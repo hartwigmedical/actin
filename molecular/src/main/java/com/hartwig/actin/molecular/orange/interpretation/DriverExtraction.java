@@ -153,6 +153,7 @@ final class DriverExtraction {
                         .isAssociatedWithDrugResistance(null)
                         .minCopies(gainLoss.minCopies())
                         .maxCopies(0)
+                        .isPartial(isPartial)
                         .build());
             }
         }
@@ -176,6 +177,7 @@ final class DriverExtraction {
                         .isAssociatedWithDrugResistance(null)
                         .minCopies(gainLoss.minCopies())
                         .maxCopies(0)
+                        .isPartial(gainLoss.interpretation() == GainLossInterpretation.PARTIAL_LOSS)
                         .build());
             }
         }

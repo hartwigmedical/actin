@@ -366,6 +366,7 @@ CREATE TABLE amplification
     isAssociatedWithDrugResistance BOOLEAN,
     minCopies int NOT NULL,
     maxCopies int NOT NULL,
+    isPartial BOOLEAN NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -392,6 +393,7 @@ CREATE TABLE loss
     isAssociatedWithDrugResistance BOOLEAN,
     minCopies int NOT NULL,
     maxCopies int NOT NULL,
+    isPartial BOOLEAN NOT NULL,
     PRIMARY KEY (id)
 );
 

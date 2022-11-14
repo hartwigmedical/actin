@@ -51,23 +51,21 @@ public class GeneIsAmplified implements EvaluationFunction {
                 double relativeMinCopies = amplification.minCopies() / ploidy;
                 double relativeMaxCopies = amplification.maxCopies() / ploidy;
 
-                boolean isFullAmp = relativeMinCopies >= HARD_PLOIDY_FACTOR && relativeMaxCopies >= HARD_PLOIDY_FACTOR;
-                boolean isPartialAmp = relativeMinCopies <= HARD_PLOIDY_FACTOR && relativeMaxCopies >= HARD_PLOIDY_FACTOR;
-                boolean isAmp = isFullAmp || isPartialAmp;
+                boolean isAmplification = relativeMaxCopies >= HARD_PLOIDY_FACTOR;
                 boolean isNearAmp = relativeMinCopies >= SOFT_PLOIDY_FACTOR && relativeMaxCopies <= HARD_PLOIDY_FACTOR;
 
                 boolean isPotentialOncogene = amplification.geneRole() == GeneRole.ONCO || amplification.geneRole() == GeneRole.BOTH;
                 boolean isLossOfFunction = amplification.proteinEffect() == ProteinEffect.LOSS_OF_FUNCTION
                         || amplification.proteinEffect() == ProteinEffect.LOSS_OF_FUNCTION_PREDICTED;
 
-                if (isAmp) {
+                if (isAmplification) {
                     if (!isPotentialOncogene) {
                         ampsOnNonOncogenes.add(amplification.event());
                     } else if (isLossOfFunction) {
                         ampsWithLossOfFunction.add(amplification.event());
                     } else if (!amplification.isReportable()) {
                         ampsThatAreUnreportable.add(amplification.event());
-                    } else if (isPartialAmp) {
+                    } else if (amplification.isPartial()) {
                         reportablePartialAmps.add(amplification.event());
                     } else {
                         reportableFullAmps.add(amplification.event());

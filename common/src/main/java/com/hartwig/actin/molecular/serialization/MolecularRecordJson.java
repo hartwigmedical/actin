@@ -282,6 +282,7 @@ public class MolecularRecordJson {
                         .isAssociatedWithDrugResistance(nullableBool(amplification, "isAssociatedWithDrugResistance"))
                         .minCopies(integer(amplification, "minCopies"))
                         .maxCopies(integer(amplification, "maxCopies"))
+                        .isPartial(bool(amplification, "isPartial"))
                         .build());
             }
             return amplifications;
@@ -300,6 +301,7 @@ public class MolecularRecordJson {
                         .isAssociatedWithDrugResistance(nullableBool(loss, "isAssociatedWithDrugResistance"))
                         .minCopies(integer(loss, "minCopies"))
                         .maxCopies(integer(loss, "maxCopies"))
+                        .isPartial(bool(loss, "isPartial"))
                         .build());
             }
             return losses;

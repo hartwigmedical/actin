@@ -233,7 +233,8 @@ class MolecularDAO {
                             AMPLIFICATION.PROTEINEFFECT,
                             AMPLIFICATION.ISASSOCIATEDWITHDRUGRESISTANCE,
                             AMPLIFICATION.MINCOPIES,
-                            AMPLIFICATION.MAXCOPIES)
+                            AMPLIFICATION.MAXCOPIES,
+                            AMPLIFICATION.ISPARTIAL)
                     .values(sampleId,
                             DataUtil.toByte(amplification.isReportable()),
                             amplification.event(),
@@ -243,7 +244,8 @@ class MolecularDAO {
                             amplification.proteinEffect().toString(),
                             DataUtil.toByte(amplification.isAssociatedWithDrugResistance()),
                             amplification.minCopies(),
-                            amplification.maxCopies())
+                            amplification.maxCopies(),
+                            DataUtil.toByte(amplification.isPartial()))
                     .execute();
         }
     }
@@ -260,7 +262,8 @@ class MolecularDAO {
                             LOSS.PROTEINEFFECT,
                             LOSS.ISASSOCIATEDWITHDRUGRESISTANCE,
                             LOSS.MINCOPIES,
-                            LOSS.MAXCOPIES)
+                            LOSS.MAXCOPIES,
+                            LOSS.ISPARTIAL)
                     .values(sampleId,
                             DataUtil.toByte(loss.isReportable()),
                             loss.event(),
@@ -270,7 +273,8 @@ class MolecularDAO {
                             loss.proteinEffect().toString(),
                             DataUtil.toByte(loss.isAssociatedWithDrugResistance()),
                             loss.minCopies(),
-                            loss.maxCopies())
+                            loss.maxCopies(),
+                            DataUtil.toByte(loss.isPartial()))
                     .execute();
         }
     }

@@ -26,6 +26,7 @@ public class GeneIsAmplifiedTest {
                 .isReportable(true)
                 .minCopies(40)
                 .maxCopies(40)
+                .isPartial(false)
                 .build();
 
         assertMolecularEvaluation(EvaluationResult.FAIL,
@@ -48,7 +49,7 @@ public class GeneIsAmplifiedTest {
 
         assertMolecularEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withPloidyAndAmplification(3D,
-                        TestAmplificationFactory.builder().from(passingAmp).minCopies(2).build())));
+                        TestAmplificationFactory.builder().from(passingAmp).isPartial(true).build())));
 
         assertMolecularEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withPloidyAndAmplification(3D,

@@ -16,6 +16,7 @@ public final class TestLossFactory {
                 .geneRole(GeneRole.UNKNOWN)
                 .proteinEffect(ProteinEffect.UNKNOWN)
                 .minCopies(0)
-                .maxCopies(0);
+                .maxCopies(0)
+                .isPartial(false);
     }
 }
