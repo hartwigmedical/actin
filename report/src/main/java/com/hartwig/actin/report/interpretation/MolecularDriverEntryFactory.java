@@ -50,7 +50,7 @@ public class MolecularDriverEntryFactory {
 
         MolecularDrivers drivers = molecular.drivers();
         entries.addAll(fromVariants(drivers.variants()));
-        entries.addAll(fromAmplifications(molecular.characteristics().ploidy(), drivers.amplifications()));
+        entries.addAll(fromAmplifications(drivers.amplifications()));
         entries.addAll(fromLosses(drivers.losses()));
         entries.addAll(fromHomozygousDisruptions(drivers.homozygousDisruptions()));
         entries.addAll(fromDisruptions(drivers.disruptions()));
@@ -97,13 +97,13 @@ public class MolecularDriverEntryFactory {
     }
 
     @NotNull
-    private Set<MolecularDriverEntry> fromAmplifications(@Nullable Double ploidy, @NotNull Set<Amplification> amplifications) {
+    private Set<MolecularDriverEntry> fromAmplifications(@NotNull Set<Amplification> amplifications) {
         Set<MolecularDriverEntry> entries = Sets.newHashSet();
 
         for (Amplification amplification : amplifications) {
             ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
 
-            String addon = ploidy != null && amplification.minCopies() < 3 * ploidy ? " (partial)" : Strings.EMPTY;
+            String addon = amplification.isPartial() ? " (partial)" : Strings.EMPTY;
             entryBuilder.driverType("Amplification" + addon);
             entryBuilder.driver(amplification.event() + ", " + amplification.minCopies() + " copies");
             entryBuilder.driverLikelihood(amplification.driverLikelihood());
