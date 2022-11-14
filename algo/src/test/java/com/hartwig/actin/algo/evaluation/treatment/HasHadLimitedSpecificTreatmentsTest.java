@@ -50,7 +50,7 @@ public class HasHadLimitedSpecificTreatmentsTest {
         treatments.add(TreatmentTestFactory.builder().name("right treatment").addCategories(TreatmentCategory.TRIAL).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
-        // Add aonther trial with unclear treatment
+        // Add another trial with unclear treatment
         treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.TRIAL).build());
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
     }

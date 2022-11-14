@@ -480,7 +480,7 @@ isContraindicationForTherapy=0), the condition is ignored for evaluation.
 | MEETS_COVID_19_INFECTION_REQUIREMENTS                   | Currently resolves to `UNDETERMINED`                                                   |                                                                       |
 | MEETS_COVID_19_VACCINATION_REQUIREMENTS                 | Currently resolves to `UNDETERMINED`                                                   |                                                                       |
 | IS_FULLY_VACCINATED_AGAINST_COVID_19                    | Currently resolves to `UNDETERMINED`                                                   |                                                                       |
-| HAS_RECEIVED_LIVE_VACCINE_WIHTIN_X_MONTHS               | Currently resolves to `UNDETERMINED`                                                   |                                                                       |
+| HAS_RECEIVED_LIVE_VACCINE_WITHIN_X_MONTHS               | Currently resolves to `UNDETERMINED`                                                   |                                                                       |
 | ADHERENCE_TO_PROTOCOL_REGARDING_ ATTENUATED_VACCINE_USE | Won't be evaluated                                                                     |                                                                       |
 
 ##### Rules related to current medication
