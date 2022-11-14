@@ -31,7 +31,7 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
     private final float ineligibilityReasonColWith;
 
     @NotNull
-    public static IneligibleActinTrialsGenerator fromTreatmentMatch(@NotNull List<EvaluatedTrial> trials, float contentWidth) {
+    public static IneligibleActinTrialsGenerator fromEvaluatedTrials(@NotNull List<EvaluatedTrial> trials, float contentWidth) {
         List<EvaluatedTrial> ineligibleTrials = Lists.newArrayList();
 
         for (EvaluatedTrial trial : trials) {

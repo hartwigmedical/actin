@@ -55,7 +55,7 @@ public class TrialMatchingChapter implements ReportChapter {
 
         List<EvaluatedTrial> trials = EvaluatedTrialFactory.create(report.treatmentMatch());
         List<TableGenerator> generators = Lists.newArrayList(EligibleActinTrialsGenerator.forClosedTrials(trials, contentWidth()),
-                IneligibleActinTrialsGenerator.fromTreatmentMatch(trials, contentWidth()));
+                IneligibleActinTrialsGenerator.fromEvaluatedTrials(trials, contentWidth()));
 
         for (int i = 0; i < generators.size(); i++) {
             TableGenerator generator = generators.get(i);
