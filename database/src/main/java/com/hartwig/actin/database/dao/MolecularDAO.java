@@ -352,9 +352,9 @@ class MolecularDAO {
                             FUSION.GENETRANSCRIPTEND,
                             FUSION.GENECONTEXTEND,
                             FUSION.FUSEDEXONDOWN,
+                            FUSION.DRIVERTYPE,
                             FUSION.PROTEINEFFECT,
-                            FUSION.ISASSOCIATEDWITHDRUGRESISTANCE,
-                            FUSION.DRIVERTYPE)
+                            FUSION.ISASSOCIATEDWITHDRUGRESISTANCE)
                     .values(sampleId,
                             DataUtil.toByte(fusion.isReportable()),
                             fusion.event(),
@@ -367,9 +367,9 @@ class MolecularDAO {
                             fusion.geneTranscriptEnd(),
                             fusion.geneContextEnd(),
                             fusion.fusedExonDown(),
+                            fusion.driverType().toString(),
                             fusion.proteinEffect().toString(),
-                            DataUtil.toByte(fusion.isAssociatedWithDrugResistance()),
-                            fusion.driverType().toString())
+                            DataUtil.toByte(fusion.isAssociatedWithDrugResistance()))
                     .execute();
         }
     }

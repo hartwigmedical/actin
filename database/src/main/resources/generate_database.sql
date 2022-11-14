@@ -476,9 +476,9 @@ CREATE TABLE fusion
     geneTranscriptEnd varchar(50) NOT NULL,
     geneContextEnd varchar(50) NOT NULL,
     fusedExonDown int NOT NULL,
+    driverType varchar(50) NOT NULL,
     proteinEffect varchar(50) NOT NULL,
     isAssociatedWithDrugResistance BOOLEAN,
-    driverType varchar(50) NOT NULL,
     PRIMARY KEY (id)
 );
 
