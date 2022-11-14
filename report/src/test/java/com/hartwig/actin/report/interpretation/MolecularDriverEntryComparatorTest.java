@@ -14,28 +14,28 @@ public class MolecularDriverEntryComparatorTest {
 
     @Test
     public void canCompareMolecularDriverEntries() {
-        MolecularDriverEntry entry1 = create(DriverLikelihood.MEDIUM, "fusion", "driver 1");
-        MolecularDriverEntry entry2 = create(DriverLikelihood.LOW, "disruption", "driver 2");
-        MolecularDriverEntry entry3 = create(DriverLikelihood.HIGH, "mutation", "driver 3");
-        MolecularDriverEntry entry4 = create(DriverLikelihood.HIGH, "amplification", "driver 4");
-        MolecularDriverEntry entry5 = create(DriverLikelihood.HIGH, "amplification", "driver 5");
-        MolecularDriverEntry entry6 = create(DriverLikelihood.HIGH, "virus", "driver 6");
-        MolecularDriverEntry entry7 = create(DriverLikelihood.HIGH, "loss", "driver 7");
-        MolecularDriverEntry entry8 = create(DriverLikelihood.HIGH, "disruption", "driver 7");
-        MolecularDriverEntry entry9 = create(DriverLikelihood.HIGH, "fusion", "driver 7");
+        MolecularDriverEntry entry1 = create(DriverLikelihood.HIGH, "mutation", "driver 3");
+        MolecularDriverEntry entry2 = create(DriverLikelihood.HIGH, "amplification", "driver 4");
+        MolecularDriverEntry entry3 = create(DriverLikelihood.HIGH, "amplification", "driver 5");
+        MolecularDriverEntry entry4 = create(DriverLikelihood.HIGH, "loss", "driver 7");
+        MolecularDriverEntry entry5 = create(DriverLikelihood.HIGH, "fusion", "driver 7");
+        MolecularDriverEntry entry6 = create(DriverLikelihood.HIGH, "disruption", "driver 7");
+        MolecularDriverEntry entry7 = create(DriverLikelihood.HIGH, "virus", "driver 6");
+        MolecularDriverEntry entry8 = create(DriverLikelihood.MEDIUM, "fusion", "driver 1");
+        MolecularDriverEntry entry9 = create(DriverLikelihood.LOW, "disruption", "driver 2");
 
-        List<MolecularDriverEntry> entries = Lists.newArrayList(entry1, entry2, entry3, entry4, entry5, entry6, entry7, entry8, entry9);
+        List<MolecularDriverEntry> entries = Lists.newArrayList(entry8, entry6, entry3, entry1, entry9, entry2, entry7, entry4, entry5);
         entries.sort(new MolecularDriverEntryComparator());
 
-        assertEquals(entry3, entries.get(0));
-        assertEquals(entry4, entries.get(1));
-        assertEquals(entry5, entries.get(2));
-        assertEquals(entry7, entries.get(3));
-        assertEquals(entry9, entries.get(4));
-        assertEquals(entry8, entries.get(5));
-        assertEquals(entry6, entries.get(6));
-        assertEquals(entry1, entries.get(7));
-        assertEquals(entry2, entries.get(8));
+        assertEquals(entry1, entries.get(0));
+        assertEquals(entry2, entries.get(1));
+        assertEquals(entry3, entries.get(2));
+        assertEquals(entry4, entries.get(3));
+        assertEquals(entry5, entries.get(4));
+        assertEquals(entry6, entries.get(5));
+        assertEquals(entry7, entries.get(6));
+        assertEquals(entry8, entries.get(7));
+        assertEquals(entry9, entries.get(8));
     }
 
     @NotNull

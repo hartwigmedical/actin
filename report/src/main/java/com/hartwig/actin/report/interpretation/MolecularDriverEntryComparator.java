@@ -12,20 +12,19 @@ public class MolecularDriverEntryComparator implements Comparator<MolecularDrive
     private static final DriverTypeComparator DRIVER_TYPE_COMPARATOR = new DriverTypeComparator();
 
     @Override
-    public int compare(@NotNull MolecularDriverEntry molecularDriverEntry1, @NotNull MolecularDriverEntry molecularDriverEntry2) {
-        int driverCompare =
-                DRIVER_LIKELIHOOD_COMPARATOR.compare(molecularDriverEntry1.driverLikelihood(), molecularDriverEntry2.driverLikelihood());
+    public int compare(@NotNull MolecularDriverEntry entry1, @NotNull MolecularDriverEntry entry2) {
+        int driverLikelihoodCompare = DRIVER_LIKELIHOOD_COMPARATOR.compare(entry1.driverLikelihood(), entry2.driverLikelihood());
 
-        if (driverCompare != 0) {
-            return driverCompare;
+        if (driverLikelihoodCompare != 0) {
+            return driverLikelihoodCompare;
         }
 
-        int driverTypeCompare = DRIVER_TYPE_COMPARATOR.compare(molecularDriverEntry1.driverType(), molecularDriverEntry2.driverType());
+        int driverTypeCompare = DRIVER_TYPE_COMPARATOR.compare(entry1.driverType(), entry2.driverType());
         if (driverTypeCompare != 0) {
             return driverTypeCompare;
         }
 
-        return molecularDriverEntry1.driver().compareTo(molecularDriverEntry2.driver());
+        return entry1.driver().compareTo(entry2.driver());
     }
 
     private static class DriverTypeComparator implements Comparator<String> {

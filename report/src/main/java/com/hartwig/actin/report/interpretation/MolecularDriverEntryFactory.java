@@ -40,7 +40,7 @@ public class MolecularDriverEntryFactory {
         return new MolecularDriverEntryFactory(trialsPerInclusionEvent);
     }
 
-    public MolecularDriverEntryFactory(@NotNull final Multimap<String, String> trialsPerInclusionEvent) {
+    private MolecularDriverEntryFactory(@NotNull final Multimap<String, String> trialsPerInclusionEvent) {
         this.trialsPerInclusionEvent = trialsPerInclusionEvent;
     }
 
