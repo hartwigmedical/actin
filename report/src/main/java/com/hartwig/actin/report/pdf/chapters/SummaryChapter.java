@@ -13,7 +13,6 @@ import com.hartwig.actin.report.interpretation.AggregatedEvidence;
 import com.hartwig.actin.report.interpretation.AggregatedEvidenceFactory;
 import com.hartwig.actin.report.interpretation.EvaluatedTrial;
 import com.hartwig.actin.report.interpretation.EvaluatedTrialFactory;
-import com.hartwig.actin.report.interpretation.EvidenceInterpreter;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenerator;
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator;
@@ -184,18 +183,11 @@ public class SummaryChapter implements ReportChapter {
         float keyWidth = 210;
         float valueWidth = contentWidth() - keyWidth;
 
-        AggregatedEvidence aggregatedEvidence = AggregatedEvidenceFactory.create(report.molecular());
         List<EvaluatedTrial> trials = EvaluatedTrialFactory.create(report.treatmentMatch());
-        EvidenceInterpreter interpreter = EvidenceInterpreter.fromEvaluatedTrials(trials);
+        AggregatedEvidence aggregatedEvidence = AggregatedEvidenceFactory.create(report.molecular());
 
         List<TableGenerator> generators = Lists.newArrayList(new PatientClinicalHistoryGenerator(report.clinical(), keyWidth, valueWidth),
-                new MolecularSummaryGenerator(report.clinical(),
-                        report.molecular(),
-                        trials,
-                        aggregatedEvidence,
-                        interpreter,
-                        keyWidth,
-                        valueWidth),
+                new MolecularSummaryGenerator(report.clinical(), report.molecular(), trials, aggregatedEvidence, keyWidth, valueWidth),
                 new EligibleApprovedTreatmentGenerator(report.clinical(), report.molecular(), contentWidth()),
                 EligibleActinTrialsGenerator.forOpenTrials(trials, contentWidth()));
 

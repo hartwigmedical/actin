@@ -38,19 +38,16 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
     private final List<EvaluatedTrial> trials;
     @NotNull
     private final AggregatedEvidence aggregatedEvidence;
-    @NotNull
-    private final EvidenceInterpreter interpreter;
     private final float keyWidth;
     private final float valueWidth;
 
     public RecentMolecularSummaryGenerator(@NotNull final ClinicalRecord clinical, @NotNull final MolecularRecord molecular,
             @NotNull final List<EvaluatedTrial> trials, @NotNull final AggregatedEvidence aggregatedEvidence,
-            @NotNull final EvidenceInterpreter interpreter, final float keyWidth, final float valueWidth) {
+            final float keyWidth, final float valueWidth) {
         this.clinical = clinical;
         this.molecular = molecular;
         this.trials = trials;
         this.aggregatedEvidence = aggregatedEvidence;
-        this.interpreter = interpreter;
         this.keyWidth = keyWidth;
         this.valueWidth = valueWidth;
     }
@@ -74,6 +71,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
             table.addCell(createPredictedTumorOriginValue(molecular.characteristics().predictedTumorOrigin()));
         }
 
+        EvidenceInterpreter interpreter = EvidenceInterpreter.fromEvaluatedTrials(trials);
         table.addCell(Cells.createKey("Events with approved treatment evidence in " + molecular.evidenceSource()));
         table.addCell(Cells.createValue(concat(interpreter.eventsWithApprovedEvidence(aggregatedEvidence))));
 

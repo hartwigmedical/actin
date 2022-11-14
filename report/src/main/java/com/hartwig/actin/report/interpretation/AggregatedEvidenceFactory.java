@@ -42,8 +42,8 @@ public final class AggregatedEvidenceFactory {
             aggregateBuilder.putAllOnLabelExperimentalTreatmentsPerEvent(evidence.onLabelExperimentalTreatmentsPerEvent());
             aggregateBuilder.putAllOffLabelExperimentalTreatmentsPerEvent(evidence.offLabelExperimentalTreatmentsPerEvent());
             aggregateBuilder.putAllPreClinicalTreatmentsPerEvent(evidence.preClinicalTreatmentsPerEvent());
-            aggregateBuilder.knownResistantTreatmentsPerEvent(evidence.knownResistantTreatmentsPerEvent());
-            aggregateBuilder.suspectResistanceTreatmentsPerEvent(evidence.suspectResistanceTreatmentsPerEvent());
+            aggregateBuilder.putAllKnownResistantTreatmentsPerEvent(evidence.knownResistantTreatmentsPerEvent());
+            aggregateBuilder.putAllSuspectResistanceTreatmentsPerEvent(evidence.suspectResistanceTreatmentsPerEvent());
         }
         return aggregateBuilder.build();
     }
@@ -53,7 +53,8 @@ public final class AggregatedEvidenceFactory {
         List<AggregatedEvidence> evidences = Lists.newArrayList();
 
         if (hasCharacteristic(characteristics.isMicrosatelliteUnstable())) {
-            evidences.add(createAggregateEvidence(MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE, characteristics.microsatelliteEvidence()));
+            evidences.add(createAggregateEvidence(MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE,
+                    characteristics.microsatelliteEvidence()));
         } else if (hasEvidence(characteristics.microsatelliteEvidence())) {
             LOGGER.warn("There is evidence for microsatellite stability without presence of signature");
         }

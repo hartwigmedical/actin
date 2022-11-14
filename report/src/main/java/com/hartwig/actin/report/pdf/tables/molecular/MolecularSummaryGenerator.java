@@ -10,7 +10,6 @@ import com.hartwig.actin.clinical.sort.PriorMolecularTestComparator;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.report.interpretation.AggregatedEvidence;
 import com.hartwig.actin.report.interpretation.EvaluatedTrial;
-import com.hartwig.actin.report.interpretation.EvidenceInterpreter;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -33,19 +32,16 @@ public class MolecularSummaryGenerator implements TableGenerator {
     private final List<EvaluatedTrial> trials;
     @NotNull
     private final AggregatedEvidence aggregatedEvidence;
-    @NotNull
-    private final EvidenceInterpreter interpreter;
     private final float keyWidth;
     private final float valueWidth;
 
     public MolecularSummaryGenerator(@NotNull final ClinicalRecord clinical, @NotNull final MolecularRecord molecular,
-            @NotNull final List<EvaluatedTrial> trials, @NotNull final AggregatedEvidence aggregatedEvidence,
-            @NotNull final EvidenceInterpreter interpreter, final float keyWidth, final float valueWidth) {
+            @NotNull final List<EvaluatedTrial> trials, @NotNull final AggregatedEvidence aggregatedEvidence, final float keyWidth,
+            final float valueWidth) {
         this.clinical = clinical;
         this.molecular = molecular;
         this.trials = trials;
         this.aggregatedEvidence = aggregatedEvidence;
-        this.interpreter = interpreter;
         this.keyWidth = keyWidth;
         this.valueWidth = valueWidth;
     }
@@ -65,9 +61,8 @@ public class MolecularSummaryGenerator implements TableGenerator {
         table.addCell(Cells.createEmpty());
 
         if (molecular.containsTumorCells()) {
-
             TableGenerator recentGenerator =
-                    new RecentMolecularSummaryGenerator(clinical, molecular, trials, aggregatedEvidence, interpreter, keyWidth, valueWidth);
+                    new RecentMolecularSummaryGenerator(clinical, molecular, trials, aggregatedEvidence, keyWidth, valueWidth);
 
             table.addCell(Cells.createTitle(recentGenerator.title()).setFontSize(7));
             table.addCell(Cells.create(recentGenerator.contents()));

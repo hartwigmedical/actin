@@ -8,6 +8,11 @@ public final class TestActionableEvidenceFactory {
     }
 
     @NotNull
+    public static ActionableEvidence createEmpty() {
+        return ImmutableActionableEvidence.builder().build();
+    }
+
+    @NotNull
     public static ActionableEvidence createExhaustive() {
         return ImmutableActionableEvidence.builder()
                 .addApprovedTreatments("approved")
