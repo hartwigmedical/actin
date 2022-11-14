@@ -10,15 +10,19 @@ import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedT
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
+import com.hartwig.actin.molecular.datamodel.driver.GeneRole;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
+import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
 import com.hartwig.actin.molecular.datamodel.driver.TestAmplificationFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestLossFactory;
+import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory;
+import com.hartwig.actin.molecular.datamodel.driver.VariantType;
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableHlaAllele;
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableMolecularImmunology;
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
@@ -59,6 +63,8 @@ public final class TestMolecularFactory {
         return ImmutableMolecularRecord.builder()
                 .from(createMinimalTestMolecularRecord())
                 .date(TODAY.minusDays(DAYS_SINCE_MOLECULAR_ANALYSIS))
+                .evidenceSource("kb")
+                .externalTrialSource("trial kb")
                 .characteristics(createProperTestCharacteristics())
                 .drivers(createProperTestDrivers())
                 .immunology(createProperTestImmunology())
@@ -76,29 +82,49 @@ public final class TestMolecularFactory {
 
     @NotNull
     private static MolecularCharacteristics createProperTestCharacteristics() {
+        // TODO Add test evidence
         return ImmutableMolecularCharacteristics.builder()
                 .purity(0.98)
+                .ploidy(3.1)
                 .predictedTumorOrigin(ImmutablePredictedTumorOrigin.builder().tumorType("Melanoma").likelihood(0.996).build())
                 .isMicrosatelliteUnstable(false)
                 .isHomologousRepairDeficient(false)
                 .tumorMutationalBurden(13.71)
+                .hasHighTumorMutationalBurden(true)
                 .tumorMutationalLoad(185)
+                .hasHighTumorMutationalLoad(true)
                 .build();
     }
 
     @NotNull
     private static MolecularDrivers createProperTestDrivers() {
+        // TODO Add evidence
+        // TODO Expand transcript impacts for variant.
         return ImmutableMolecularDrivers.builder()
                 .addVariants(TestVariantFactory.builder()
+                        .isReportable(true)
+                        .event("BRAF V600E")
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .gene("BRAF")
+                        .geneRole(GeneRole.ONCO)
+                        .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
+                        .type(VariantType.SNV)
                         .variantCopyNumber(4.1)
                         .totalCopyNumber(6.0)
+                        .isBiallelic(false)
+                        .isHotspot(true)
                         .clonalLikelihood(1.0)
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("p.V600E").build())
                         .build())
                 .addLosses(TestLossFactory.builder()
+                        .isReportable(true)
+                        .event("PTEN del")
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .gene("PTEN")
+                        .geneRole(GeneRole.TSG)
+                        .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
+                        .minCopies(0)
+                        .maxCopies(0)
                         .build())
                 .build();
     }
@@ -124,16 +150,22 @@ public final class TestMolecularFactory {
         return ImmutableMolecularDrivers.builder()
                 .from(createProperTestDrivers())
                 .addAmplifications(TestAmplificationFactory.builder()
+                        .isReportable(true)
+                        .event("MYC amp")
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .gene("MYC")
                         .minCopies(38)
                         .maxCopies(38)
                         .build())
                 .addHomozygousDisruptions(TestHomozygousDisruptionFactory.builder()
+                        .isReportable(true)
+                        .event("PTEN hom disruption")
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .gene("PTEN")
                         .build())
                 .addDisruptions(TestDisruptionFactory.builder()
+                        .isReportable(true)
+                        .event("PTEN disruption")
                         .driverLikelihood(DriverLikelihood.LOW)
                         .gene("PTEN")
                         .type("DEL")
@@ -142,6 +174,8 @@ public final class TestMolecularFactory {
                         .range("Intron 1 downstream")
                         .build())
                 .addFusions(TestFusionFactory.builder()
+                        .isReportable(true)
+                        .event("EML4 - ALK fusion")
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .geneStart("EML4")
                         .fusedExonUp(2)
@@ -150,8 +184,11 @@ public final class TestMolecularFactory {
                         .driverType(FusionDriverType.KNOWN_PAIR)
                         .build())
                 .addViruses(TestVirusFactory.builder()
+                        .isReportable(true)
+                        .event("HPV16 positive")
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .name("Human papillomavirus type 16d")
+                        .interpretation("HPV16")
                         .integrations(3)
                         .build())
                 .build();
