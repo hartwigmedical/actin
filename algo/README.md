@@ -2,7 +2,7 @@
 
 ACTIN-Algo matches a patient record (clinical & molecular data) with available treatments.
 
-This application requires Java 11+ and can be run as follows: 
+This application requires Java 11+ and can be run as follows:
 
 ```
 java -cp actin.jar com.hartwig.actin.algo.TreatmentMatcherApplication \
@@ -14,19 +14,20 @@ java -cp actin.jar com.hartwig.actin.algo.TreatmentMatcherApplication \
 ```
 
 The following assumptions are made about the inputs:
- - The clinical JSON adheres to the datamodel defined by [ACTIN-Clinical](../clinical/README.md)
- - The molecular JSON adheres to the datamodel defined by [ACTIN-Molecular](../molecular/README.md) 
- - The treatment database directory is the output directory of [ACTIN-Treatment](../treatment/README.md)
- 
-An optional flag `run_historically` can be added in which case the treatment matcher sets the date to 3 weeks after the 
+
+- The clinical JSON adheres to the datamodel defined by [ACTIN-Clinical](../clinical/README.md)
+- The molecular JSON adheres to the datamodel defined by [ACTIN-Molecular](../molecular/README.md)
+- The treatment database directory is the output directory of [ACTIN-Treatment](../treatment/README.md)
+
+An optional flag `run_historically` can be added in which case the treatment matcher sets the date to 3 weeks after the
 patient's registration date. If this flag is not set, the treatment matcher uses the current date as reference date.
- 
+
 ### Treatment matching
 
-Every treatment defined in the treatment database is evaluated independently. 
+Every treatment defined in the treatment database is evaluated independently.
 
-In case a treatment is a trial, all relevant inclusion and exclusion criteria are evaluated for this trial as well as every criterion 
-for any specific cohort within this trial.  
+In case a treatment is a trial, all relevant inclusion and exclusion criteria are evaluated for this trial as well as every criterion
+for any specific cohort within this trial.
 
 Every criterion evaluates to one of the following options:
 
@@ -39,31 +40,37 @@ Every criterion evaluates to one of the following options:
 | NOT_EVALUATED   | The evaluation of the inclusion or exclusion criterion is skipped and can be assumed to be irrelevant for determining trial eligibility. |
 | NOT_IMPLEMENTED | No algo has been implemented yet for this criterion.                                                                                     |
 
-#### Recoverable status 
+#### Recoverable status
 
 Each criterion algorithm is configured as 'recoverable' or 'unrecoverable', indicating whether the outcome of the criterion evaluation
-could potentially be recovered in case of a `FAIL`. For example, lab values may be insufficient at the moment of evaluation, leading to `FAIL`, but may be sufficient 2 weeks later
-when a new lab test has been done. Hence, lab rules can be 'recoverable', whereas a primary tumor location cannot change and primary tumor location rules are thus 'unrecoverable'. 
+could potentially be recovered in case of a `FAIL`. For example, lab values may be insufficient at the moment of evaluation, leading
+to `FAIL`, but may be sufficient 2 weeks later
+when a new lab test has been done. Hence, lab rules can be 'recoverable', whereas a primary tumor location cannot change and primary tumor
+location rules are thus 'unrecoverable'.
 
 #### Evaluation feedback
 
-Every criterion algorithm provides human-readable feedback ('messages') about its evaluation, so that a human can easily and quickly understand which 
-evaluation has been done and why the outcome of the evaluation (`PASS`,`WARN`, `FAIL`, `UNDETERMINED` or `NOT_EVALUATED`) is as it is. 
+Every criterion algorithm provides human-readable feedback ('messages') about its evaluation, so that a human can easily and quickly
+understand which
+evaluation has been done and why the outcome of the evaluation (`PASS`,`WARN`, `FAIL`, `UNDETERMINED` or `NOT_EVALUATED`) is as it is.
 
 #### Treatment eligibility
 
 Once all criteria are evaluated, the following algorithm determines whether a patient is potentially eligible for a trial:
- 1. For every cohort within a trial, the patient is considered potentially eligible for that cohort in case none of the cohort-specific 
- criteria evaluated to unrecoverable `FAIL` or `NOT_IMPLEMENTED`.
- 2. A patient is eligible for a trial in case none of its overall criteria evaluated to unrecoverable `FAIL` or `NOT_IMPLEMENTED` and the trial 
- either has no cohorts defined or has at least one cohort that is considered potentially eligible.
 
-Note that, following this logic, a patient is only considered potentially eligible for a cohort if both the cohort is considered  eligible 
+1. For every cohort within a trial, the patient is considered potentially eligible for that cohort in case none of the cohort-specific
+   criteria evaluated to unrecoverable `FAIL` or `NOT_IMPLEMENTED`.
+2. A patient is eligible for a trial in case none of its overall criteria evaluated to unrecoverable `FAIL` or `NOT_IMPLEMENTED` and the
+   trial
+   either has no cohorts defined or has at least one cohort that is considered potentially eligible.
+
+Note that, following this logic, a patient is only considered potentially eligible for a cohort if both the cohort is considered eligible
 _and_ the trial that the cohort is part of is considered eligible.
-   
+
 #### Criterion algorithms
 
-Inclusion and exclusion criteria can be defined as a set of rules that are combined using composite functions, to determine overall eligibility. 
+Inclusion and exclusion criteria can be defined as a set of rules that are combined using composite functions, to determine overall
+eligibility.
 
 The following composite functions are available:
 
@@ -74,9 +81,10 @@ The following composite functions are available:
 | NOT      | indicates that the rule should resolve to FAIL in order to PASS                 |
 | WARN_IF  | indicates that the rule should resolve to WARN in case evaluation leads to PASS |
 
-Some rules require 1 ("X") or more ("X" and "Y") additional configuration parameter(s) that can be set to match the requirements of each trial. 
-Also, note that some inclusion and exclusion criteria can be mapped to rules that are currently explicitly set to PASS or explicitly 
-won't be evaluated. 
+Some rules require 1 ("X") or more ("X" and "Y") additional configuration parameter(s) that can be set to match the requirements of each
+trial.
+Also, note that some inclusion and exclusion criteria can be mapped to rules that are currently explicitly set to PASS or explicitly
+won't be evaluated.
 
 The following rules are available:
 
@@ -101,7 +109,7 @@ The following rules are available:
 | IS_INVOLVED_IN_STUDY_PROCEDURES          | > Won't be evaluated                         |                                                                                                                                                                                                                                                                                    |
 
 ##### Rules related to tumor and lesion localization
- 
+
 | Rule                                                             | When does a patient pass evaluation?                                                                                                                                                                                                                                                                                                                                                                        | Note                                                                                                                                                                                                                                                                                                                                             |
 |------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | HAS_SOLID_PRIMARY_TUMOR                                          | All configured DOIDs equal or child of DOID 162, no DOID equal or child of DOID 1240, 712 or 4960.                                                                                                                                                                                                                                                                                                          | Resolve to `WARN` in case any DOID equal or child of DOID 2531 ("Hematologic cancer") (but does not resolve to `FAIL` already)                                                                                                                                                                                                                   |
@@ -187,24 +195,33 @@ The following rules are available:
 | HAS_PREVIOUSLY_PARTICIPATED_IN_CURRENT_TRIAL                                             | Prior tumor treatments > Treatment with category 'Trial' and trialAcronym is equal to acronym of study                                                                                                                                                                                                                                                                                                                                                                                                                                                       | `UNDETERMINED` In case treatment category = 'Trial' without trialAcronym configured                                                                                                                              |
 | IS_PARTICIPATING_IN_ANOTHER_TRIAL                                                        | Won't be evaluated                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |                                                                                                                                                                                                                  |
 
-1] 'Category' can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Transplantation, Trial, Antiviral therapy, Vaccine, Car T, TCR T,  Gene therapy, Supportive treatment.
+1] 'Category' can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Transplantation, Trial,
+Antiviral therapy, Vaccine, Car T, TCR T, Gene therapy, Supportive treatment.
 
 In addition, 3 following 'Categories' can be assigned:
+
 - Taxane - Treatment names: Paclitaxel, Docetaxel, Cabazitaxel
 - Fluoropyrimidine - Treatment names: Capecitabine, Carmofur, Doxifluridine, Fluorouracil, Tegafur
 - Tyrosine kinase inhibitors - Category = 'Targeted therapy' and (T.B.D.)
-- Nonsteroidal anti-androgen - Treatment names: Flutamide, Nilutamide, Bicalutamide, Enzalutamide, Darolutamide, Ketodarolutamide, Apalutamide
+- Nonsteroidal anti-androgen - Treatment names: Flutamide, Nilutamide, Bicalutamide, Enzalutamide, Darolutamide, Ketodarolutamide,
+  Apalutamide
 
-Notes: 
-- For category Taxane & Fluoropyrimidine, in case only 'Chemotherapy' is configured for a treatment (without further details), resolve to `UNDETERMINED`
-- For category Tyrosine kinase inhibitors, in case only 'Targeted therapy' is configured for a treatment (without further details), resolve to `UNDETERMINED`
-- For category Nonsteroidal anti-androgen, in case only 'Hormone therapy' is configured for a treatment (without further details), resolve to `UNDETERMINED`
+Notes:
 
-2] 'Category' with specified 'type' can be only one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Transplantation, Trial, Car T, Supportive treatment ; since these have a corresponding type in treatment model. For type, multiple types can be specified within one rule, separated by ";"
+- For category Taxane & Fluoropyrimidine, in case only 'Chemotherapy' is configured for a treatment (without further details), resolve
+  to `UNDETERMINED`
+- For category Tyrosine kinase inhibitors, in case only 'Targeted therapy' is configured for a treatment (without further details), resolve
+  to `UNDETERMINED`
+- For category Nonsteroidal anti-androgen, in case only 'Hormone therapy' is configured for a treatment (without further details), resolve
+  to `UNDETERMINED`
 
-Note that if the type of the requested category is not configured for a treatment, evaluation resolves to `UNDETERMINED` 
+2] 'Category' with specified 'type' can be only one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy,
+Transplantation, Trial, Car T, Supportive treatment ; since these have a corresponding type in treatment model. For type, multiple types can
+be specified within one rule, separated by ";"
 
-Finally, any trial that a patient has participated in counts as one potential treatment of any type or category. 
+Note that if the type of the requested category is not configured for a treatment, evaluation resolves to `UNDETERMINED`
+
+Finally, any trial that a patient has participated in counts as one potential treatment of any type or category.
 Trials could lead to `WARN` in case knowing the exact trial treatment is required to do a conclusive evaluation.
 
 ##### Rules related to prior primary tumors
@@ -218,43 +235,44 @@ Trials could lead to `WARN` in case knowing the exact trial treatment is require
 
 ##### Rules related to molecular results
 
-| Rule                                                       | When does a patient pass evaluation?                                                                                                                                                                                                    | Note                                                                                                                               |
-|------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
-| ACTIVATION_OR_AMPLIFICATION_OF_GENE_X                      | Conditions for activating mutation or amplification (below rules) are met                                                                                                                                                               |                                                                                                                                    |
-| ACTIVATING_MUTATION_IN_GENE_X                              | If geneRole of gene X is 'ONCO', or 'BOTH' and a high driver variant matching with protein effect gain of function (predicted)                                                                                                          | `WARN` in case of other gene role, driver likelihood, other protein effect, hotspot statuses and/or unreportability                |
-| AMPLIFICATION_OF_GENE_X                                    | If geneRole of gene X is 'ONCO', or 'BOTH' and min copy nr > 3*ploidy and protein effect is not loss of function (predicted)                                                                                                            | `WARN` in case of other gene role, partial amplification, near-amplification, other protein effect and/or unreportability          |
-| MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y                | Variant with protein impact of any Y is present in gene X and reportable                                                                                                                                                                | `WARN` in case of non-canonical transcript or unreportability                                                                      |
-| MUTATION_IN_GENE_X_OF_ANY_CODING_IMPACTS_Y                 | Variant with coding impact of any Y is present in gene X and reportable                                                                                                                                                                 | `WARN` in case of non-canonical transcript or unreportability                                                                      |
-| MUTATION_IN_GENE_X_IN_ANY_CODONS_Y                         | Variant in codon Y of gene X and reportable                                                                                                                                                                                             | `WARN` in case of non-canonical transcript or unreportability                                                                      |
-| MUTATION_IN_GENE_X_IN_EXON_Y                               | Variant in exon Y of gene X and reportable                                                                                                                                                                                              | `WARN` in case of non-canonical transcript or unreportability                                                                      |
-| MUTATION_IN_GENE_X_IN_EXON_Y_TO_EXON_Z                     | Variant in codon Y-Z of gene X and reportable                                                                                                                                                                                           | `WARN` in case of non-canonical transcript or unreportability                                                                      |
-| MUTATION_IN_GENE_X_IN_EXON_Y_OF_TYPE_Z                     | Variant in exon Y of type Z (one of: INS, INDEL, DEL, SNV, MNV) in gene X and reportable                                                                                                                                                | `WARN` in case of non-canonical transcript or unreportability                                                                      |
-| INACTIVATION_OF_GENE_X                                     | If geneRole of gene X is 'TSG' or 'BOTH', and (min copy nr < 0.5 or homozygous disruption or biallelic mutation(s) with high driver likelihood, and corresponding event does not match with protein effect gain of function (predicted) | `WARN` in case of other gene role, driver likelihood, other protein effect, biallelic status and/or reportability                  |
-| UTR_3_LOSS_IN_GENE_X                                       | Reportable hotspot variant in 3' UTR region is present in gene X                                                                                                                                                                        | `WARN` in case of other variants in 3'UTR region, disruption in 3'UTR region or unreportability                                    |
-| FUSION_IN_GENE_X                                           | Reportable fusion based on driver type in combination with gene X with high driver likelihood is found                                                                                                                                  | `WARN` in case of fusion with low driver likelihood                                                                                |
-| WILDTYPE_OF_GENE_X                                         | If geneRole is 'ONCO', no reportable variant, amplification or fusion is detected; if geneRole is 'TSG' no reportable variant, for geneRole 'BOTH' or 'UNKNOWN', no driver is detected                                                  | `WARN` in case of event is associated with protein effect 'No effect'                                                              |
-| EXON_SKIPPING_GENE_X_EXON_Y                                | Intra-gene fusion in gene X leading to skipping of exon Y                                                                                                                                                                               | `WARN` in case of reportable splice variant in splice region of exon Y of gene X                                                   |
-| MSI_SIGNATURE                                              | MS Status = MSI + at least one reportable biallelic driver in MSI genes detected                                                                                                                                                        | `WARN` in case of MSI signature without any (biallelic) driver in MSI genes detected                                               |
-| HRD_SIGNATURE                                              | HR Status = HRD + at least one reportable biallelic driver in HRD genes detected                                                                                                                                                        | `WARN` in case of HRD signature without any (biallelic) driver in HRD genes detected                                               |
-| TMB_OF_AT_LEAST_X                                          | Tumor Mutational Burden (TMB) should be => X                                                                                                                                                                                            | `WARN` in case of low purity and TMB => X-0.5                                                                                      |
-| TML_OF_AT_LEAST_X                                          | Tumor Mutational Load (TML) should be => X                                                                                                                                                                                              | `WARN` in case of low purity and TML => X-5                                                                                        |
-| TML_BETWEEN_X_AND_Y                                        | TML should be between X and Y                                                                                                                                                                                                           | `WARN` in case of low purity and TML => X-5                                                                                        |
-| HAS_HLA_TYPE_X                                             | HLA type should be type X, no somatic mutations or loss of corresponding allele in tumor                                                                                                                                                | `WARN` in case of somatic mutations or loss of allele                                                                              |
-| OVEREXPRESSION_OF_GENE_X                                   | Currently set to `UNDETERMINED` (to be supported)                                                                                                                                                                                       |                                                                                                                                    |
-| NON_EXPRESSION_OF_GENE_X                                   | Currently set to `UNDETERMINED` (to be supported)                                                                                                                                                                                       |                                                                                                                                    |
-| EXPRESSION_OF_GENE_X_BY_IHC                                | Prior molecular test > Test = IHC, Item = X and (scoreText = positive or scoreValue>0)                                                                                                                                                  |                                                                                                                                    |
-| EXPRESSION_OF_GENE_X_BY_IHC_OF_EXACTLY_Y                   | Prior molecular test > Test = IHC, Item = X and scoreValue = Y                                                                                                                                                                          | In case scoreText = "positive" or "negative", resolve to `UNDETERMINED`                                                            |
-| EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y                  | Prior molecular test > Test = IHC, Item = X and scoreValue => Y                                                                                                                                                                         | In case scoreText = "positive" or "negative", resolve to `UNDETERMINED`                                                            |
-| PD_L1_SCORE_CPS_OF_AT_LEAST_X                              | Prior molecular test > Test = IHC, Item = PD-L1, measure = CPS, scoreValue => X                                                                                                                                                         |                                                                                                                                    |
-| PD_L1_SCORE_CPS_OF_AT_MOST_X                               | Prior molecular test > Test = IHC, Item = PD-L1, measure = CPS, scoreValue <= X                                                                                                                                                         |                                                                                                                                    |
-| PD_L1_SCORE_TPS_OF_AT_MOST_X                               | Prior molecular test > Test = IHC, Item = PD-L1, measure = TPS (in %), scoreValue <= X                                                                                                                                                  |                                                                                                                                    |
-| PD_L1_STATUS_MUST_BE_AVAILABLE                             | Currently resolves to `UNDETERMINED`                                                                                                                                                                                                    |                                                                                                                                    |
-| HAS_PSMA_POSITIVE_PET_SCAN                                 | Currently resolves to `UNDETERMINED`                                                                                                                                                                                                    |                                                                                                                                    |
-| MOLECULAR_RESULTS_MUST_BE_AVAILABLE                        | Resolves to `NOT_EVALUATED`                                                                                                                                                                                                             |                                                                                                                                    |
-| MOLECULAR_TEST_MUST_HAVE_BEEN_DONE _FOR_GENE_X             | Ingestion of molecular results with experiment type 'WGS' or presence of previous molecular test for gene X                                                                                                                             | Resolve to recoverable `FAIL` in case results not present, resolve to `UNDETERMINED` in case impliesPotentialIndeterminateStatus=1 |
-| MOLECULAR_TEST_MUST_HAVE_BEEN_DONE _FOR_PROMOTER_OF_GENE_X | Previous molecular test for gene X and item contains %promoter%                                                                                                                                                                         | Resolve to recoverable `FAIL` in case results not present, resolve to `UNDETERMINED` in case impliesPotentialIndeterminateStatus=1 |
+| Rule                                                       | When does a patient pass evaluation?                                                                                                                                                                                                    | Note                                                                                                                                          |
+|------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| ACTIVATION_OR_AMPLIFICATION_OF_GENE_X                      | Conditions for activating mutation or amplification (below rules) are met                                                                                                                                                               |                                                                                                                                               |
+| ACTIVATING_MUTATION_IN_GENE_X                              | If geneRole of gene X is 'ONCO', or 'BOTH' and a high driver variant matching with protein effect gain of function (predicted)                                                                                                          | `WARN` in case of other gene role, driver likelihood, other protein effect, hotspot statuses and/or unreportability                           |
+| AMPLIFICATION_OF_GENE_X                                    | If geneRole of gene X is 'ONCO', or 'BOTH' and min copy nr > 3*ploidy and protein effect is not loss of function (predicted)                                                                                                            | `WARN` in case of other gene role, partial amplification, near-amplification, other protein effect and/or unreportability                     |
+| MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y                | Variant with protein impact of any Y is present in gene X and reportable                                                                                                                                                                | `WARN` in case of non-canonical transcript or unreportability                                                                                 |
+| MUTATION_IN_GENE_X_OF_ANY_CODING_IMPACTS_Y                 | Variant with coding impact of any Y is present in gene X and reportable                                                                                                                                                                 | `WARN` in case of non-canonical transcript or unreportability                                                                                 |
+| MUTATION_IN_GENE_X_IN_ANY_CODONS_Y                         | Variant in codon Y of gene X and reportable                                                                                                                                                                                             | `WARN` in case of non-canonical transcript or unreportability                                                                                 |
+| MUTATION_IN_GENE_X_IN_EXON_Y                               | Variant in exon Y of gene X and reportable                                                                                                                                                                                              | `WARN` in case of non-canonical transcript or unreportability                                                                                 |
+| MUTATION_IN_GENE_X_IN_EXON_Y_TO_EXON_Z                     | Variant in codon Y-Z of gene X and reportable                                                                                                                                                                                           | `WARN` in case of non-canonical transcript or unreportability                                                                                 |
+| MUTATION_IN_GENE_X_IN_EXON_Y_OF_TYPE_Z                     | Variant in exon Y of type Z (one of: INS, INDEL, DEL, SNV, MNV) in gene X and reportable                                                                                                                                                | `WARN` in case of non-canonical transcript or unreportability                                                                                 |
+| INACTIVATION_OF_GENE_X                                     | If geneRole of gene X is 'TSG' or 'BOTH', and (min copy nr < 0.5 or homozygous disruption or biallelic mutation(s) with high driver likelihood, and corresponding event does not match with protein effect gain of function (predicted) | `WARN` in case of other gene role, driver likelihood, other protein effect, biallelic status and/or reportability                             |
+| UTR_3_LOSS_IN_GENE_X                                       | Reportable hotspot variant in 3' UTR region is present in gene X                                                                                                                                                                        | `WARN` in case of other variants in 3'UTR region, disruption in 3'UTR region or unreportability                                               |
+| FUSION_IN_GENE_X                                           | Reportable fusion based on driver type in combination with gene X with high driver likelihood is found                                                                                                                                  | `WARN` in case of fusion with low driver likelihood                                                                                           |
+| WILDTYPE_OF_GENE_X                                         | No reportable variant, loss, (homozygous) disruption or fusion is detected (if geneRole is not ONCO); No reportable variant, amplification or fusion is detected (if geneRole is not TSG)                                               | `WARN` in case of event is associated with protein effect 'No effect' or if event might still be considered wild-type (amplification or loss) |
+| EXON_SKIPPING_GENE_X_EXON_Y                                | Intra-gene fusion in gene X leading to skipping of exon Y                                                                                                                                                                               | `WARN` in case of reportable splice variant in splice region of exon Y of gene X                                                              |
+| MSI_SIGNATURE                                              | MS Status = MSI + at least one reportable biallelic driver in MSI genes detected                                                                                                                                                        | `WARN` in case of MSI signature without any (biallelic) driver in MSI genes detected                                                          |
+| HRD_SIGNATURE                                              | HR Status = HRD + at least one reportable biallelic driver in HRD genes detected                                                                                                                                                        | `WARN` in case of HRD signature without any (biallelic) driver in HRD genes detected                                                          |
+| TMB_OF_AT_LEAST_X                                          | Tumor Mutational Burden (TMB) should be => X                                                                                                                                                                                            | `WARN` in case of low purity and TMB => X-0.5                                                                                                 |
+| TML_OF_AT_LEAST_X                                          | Tumor Mutational Load (TML) should be => X                                                                                                                                                                                              | `WARN` in case of low purity and TML => X-5                                                                                                   |
+| TML_BETWEEN_X_AND_Y                                        | TML should be between X and Y                                                                                                                                                                                                           | `WARN` in case of low purity and TML => X-5                                                                                                   |
+| HAS_HLA_TYPE_X                                             | HLA type should be type X, no somatic mutations or loss of corresponding allele in tumor                                                                                                                                                | `WARN` in case of somatic mutations or loss of allele                                                                                         |
+| OVEREXPRESSION_OF_GENE_X                                   | Currently set to `UNDETERMINED` (to be supported)                                                                                                                                                                                       |                                                                                                                                               |
+| NON_EXPRESSION_OF_GENE_X                                   | Currently set to `UNDETERMINED` (to be supported)                                                                                                                                                                                       |                                                                                                                                               |
+| EXPRESSION_OF_GENE_X_BY_IHC                                | Prior molecular test > Test = IHC, Item = X and (scoreText = positive or scoreValue>0)                                                                                                                                                  |                                                                                                                                               |
+| EXPRESSION_OF_GENE_X_BY_IHC_OF_EXACTLY_Y                   | Prior molecular test > Test = IHC, Item = X and scoreValue = Y                                                                                                                                                                          | In case scoreText = "positive" or "negative", resolve to `UNDETERMINED`                                                                       |
+| EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y                  | Prior molecular test > Test = IHC, Item = X and scoreValue => Y                                                                                                                                                                         | In case scoreText = "positive" or "negative", resolve to `UNDETERMINED`                                                                       |
+| PD_L1_SCORE_CPS_OF_AT_LEAST_X                              | Prior molecular test > Test = IHC, Item = PD-L1, measure = CPS, scoreValue => X                                                                                                                                                         |                                                                                                                                               |
+| PD_L1_SCORE_CPS_OF_AT_MOST_X                               | Prior molecular test > Test = IHC, Item = PD-L1, measure = CPS, scoreValue <= X                                                                                                                                                         |                                                                                                                                               |
+| PD_L1_SCORE_TPS_OF_AT_MOST_X                               | Prior molecular test > Test = IHC, Item = PD-L1, measure = TPS (in %), scoreValue <= X                                                                                                                                                  |                                                                                                                                               |
+| PD_L1_STATUS_MUST_BE_AVAILABLE                             | Currently resolves to `UNDETERMINED`                                                                                                                                                                                                    |                                                                                                                                               |
+| HAS_PSMA_POSITIVE_PET_SCAN                                 | Currently resolves to `UNDETERMINED`                                                                                                                                                                                                    |                                                                                                                                               |
+| MOLECULAR_RESULTS_MUST_BE_AVAILABLE                        | Resolves to `NOT_EVALUATED`                                                                                                                                                                                                             |                                                                                                                                               |
+| MOLECULAR_TEST_MUST_HAVE_BEEN_DONE _FOR_GENE_X             | Ingestion of molecular results with experiment type 'WGS' or presence of previous molecular test for gene X                                                                                                                             | Resolve to recoverable `FAIL` in case results not present, resolve to `UNDETERMINED` in case impliesPotentialIndeterminateStatus=1            |
+| MOLECULAR_TEST_MUST_HAVE_BEEN_DONE _FOR_PROMOTER_OF_GENE_X | Previous molecular test for gene X and item contains %promoter%                                                                                                                                                                         | Resolve to recoverable `FAIL` in case results not present, resolve to `UNDETERMINED` in case impliesPotentialIndeterminateStatus=1            |
 
 ##### Rules related to recent laboratory measurements
+
 _Blood components / blood cell components_
 
 | Rule                                        | When does a patient pass evaluation?                                                   | Note                                                                                                             |
@@ -374,12 +392,14 @@ _Other_
 
 ULN = Upper Limit of Normal, LLN = Lower Limit of Normal; implemented as refLimitUp and refLimitLow, respectively.
 
-Notes: 
- - For all lab values, the most recent available lab value (up to 90 days old) is evaluated. 
- - If the most recent lab value is within the requested range but more than 30 days old, the evaluation resolves to `WARN` instead of `PASS`
- - If the most recent lab value is out of the requested range, the second-last lab value is evaluated. 
-   - In case that a second-last lab value is available, less than 90 days old and within requested range, the evaluation resolves to `WARN`. 
-   - In case there is no applicable second-last value, or this value is also out of requested range, the evaluation resolves to `FAIL`.
+Notes:
+
+- For all lab values, the most recent available lab value (up to 90 days old) is evaluated.
+- If the most recent lab value is within the requested range but more than 30 days old, the evaluation resolves to `WARN` instead of `PASS`
+- If the most recent lab value is out of the requested range, the second-last lab value is evaluated.
+    - In case that a second-last lab value is available, less than 90 days old and within requested range, the evaluation resolves to `WARN`
+      .
+    - In case there is no applicable second-last value, or this value is also out of requested range, the evaluation resolves to `FAIL`.
 
 ##### Rules related to other conditions
 
@@ -425,7 +445,8 @@ Notes:
 | HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS                          | Currently resolves to `UNDETERMINED`                                                                                                                                                                                                         |                                                                                                                                                    |
 
 Note:
-For all Prior other conditions applies that in case the condition is indicated as having no contraindication for therapy (isContraindicationForTherapy=0), the condition is ignored for evaluation.
+For all Prior other conditions applies that in case the condition is indicated as having no contraindication for therapy (
+isContraindicationForTherapy=0), the condition is ignored for evaluation.
 
 ##### Rules related to cardiac function
 
@@ -462,7 +483,7 @@ For all Prior other conditions applies that in case the condition is indicated a
 | HAS_RECEIVED_LIVE_VACCINE_WIHTIN_X_MONTHS               | Currently resolves to `UNDETERMINED`                                                   |                                                                       |
 | ADHERENCE_TO_PROTOCOL_REGARDING_ ATTENUATED_VACCINE_USE | Won't be evaluated                                                                     |                                                                       |
 
-##### Rules related to current medication 
+##### Rules related to current medication
 
 | Rule                                                                        | When does a patient pass evaluation?                                                                                        | Note                                                                                      |
 |-----------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
@@ -488,7 +509,6 @@ For all Prior other conditions applies that in case the condition is indicated a
 | HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING                                  | Medication > categories contains "Anticoagulants" AND only 1 distinct dosage (T.B.D)                                        |                                                                                           |
 | IS_WILLING_TO_TAKE_PREMEDICATION                                            | Currently won't be evaluated                                                                                                |                                                                                           |
 
-
 BELOW IS IN-PROGRESS
 In case category is one of below, use the following logics:
 
@@ -496,8 +516,7 @@ In case category is one of below, use the following logics:
 |----------|--------------------------------------------------------------------------------------------------------|
 | Azole    | Medication > categories contains type of "Triazoles" or "Imidazoles, cutaneous" or "Imidazoles, other" |
 
-
-##### Rules related to washout period 
+##### Rules related to washout period
 
 | Rule                                                                               | When does a patient pass evaluation?                                                                                                                                                                           | Note                                                                                                 |
 |------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|
@@ -513,7 +532,9 @@ In case category is one of below, use the following logics:
 | WILL_REQUIRE_ANY_ANTICANCER_THERAPY_DURING_TRIAL                                   | won't be evaluated.                                                                                                                                                                                            |                                                                                                      |
 | HAS_RECEIVED_HERBAL_MEDICATION_OR_DIETARY_SUPPLEMENTS_WITHIN_X_WEEKS               | medication > categories like %supplements% or %herbal remedy% active X weeks prior to evaluation date                                                                                                          |                                                                                                      |
 
-*Anti-cancer medication list includes the following categories: categories like %Platinum compound%, %Pyrimidine antagonist%, %Taxane%, %Alkylating agent%, %Cytotoxic antibiotics%, %Gonadorelin agonist%, %Gonadorelin antagonist%, %Monoclonal antibody for malignancies%, %Protein kinase inhibitor%, %Anti-androgen%, %Anti-estrogen%, '%Oncolytics, other%'. 
+*Anti-cancer medication list includes the following categories: categories like %Platinum compound%, %Pyrimidine antagonist%, %Taxane%,
+%Alkylating agent%, %Cytotoxic antibiotics%, %Gonadorelin agonist%, %Gonadorelin antagonist%, %Monoclonal antibody for malignancies%,
+%Protein kinase inhibitor%, %Anti-androgen%, %Anti-estrogen%, '%Oncolytics, other%'.
 
 **Category list refers to 'categories' in the medication data model, OR one of the additionally defined categories:<br>
 1] Chemotherapy: includes all medication categories like %Platinum compound%, %Pyrimidine antagonist%, %Taxane% and %Alkylating agent%  
@@ -524,7 +545,7 @@ In case category is one of below, use the following logics:
 6] Immunosuppressants: includes medication categories like %Immunosuppressants, selective%, %Immunosuppressants, other%   
 7] Hypomethylating agents: medication drug names Azacitidine and Decitabine
 
-Note that for all configured nr of weeks, 2 weeks are subtracted from the latest medication date, since these weeks will pass by anyway. 
+Note that for all configured nr of weeks, 2 weeks are subtracted from the latest medication date, since these weeks will pass by anyway.
 
 ##### Rules related to reproduction
 
@@ -560,12 +581,15 @@ Note that for all configured nr of weeks, 2 weeks are subtracted from the latest
 | HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_Y         | Toxicities > grade => X and name like %Y%                                                                                                        |                                                                 |
 | HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y   | Toxicities > grade => X and ignoring name like %Y%.                                                                                              | Multiple names can be specified within 1 rule, separated by ";" |
 
-Note for all TOXICITY rules: 
-- In case X = 0, 1 or 2, all names corresponding to 'source = Questionnaire' are included (also if 'grade' is unknown), since toxicities are only noted in questionnaire when grade => 2.
-In case X = 3 or 4, the evaluation resolves to `UNDETERMINED` if there are names for which grade is not specified.
+Note for all TOXICITY rules:
+
+- In case X = 0, 1 or 2, all names corresponding to 'source = Questionnaire' are included (also if 'grade' is unknown), since toxicities are
+  only noted in questionnaire when grade => 2.
+  In case X = 3 or 4, the evaluation resolves to `UNDETERMINED` if there are names for which grade is not specified.
 - For all EHR toxicities, ignore the toxicity if the name of the toxicity is also indicated as a complication
 - For all EHR toxicities, only the most recent toxicity examination per toxicity is considered for evaluation.
-- In case toxicity evaluation resolves to `PASS` without support of at least one questionnaire toxicity, the evaluation resolves to `WARN` instead.
+- In case toxicity evaluation resolves to `PASS` without support of at least one questionnaire toxicity, the evaluation resolves to `WARN`
+  instead.
 
 ##### Rules related to vital function / body weight measurements
 
@@ -579,7 +603,8 @@ In case X = 3 or 4, the evaluation resolves to `UNDETERMINED` if there are names
 | HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y | Vital function > Up to 5 most recent HR measurements (in BPM) AND median value between X and Y                                                  |
 | HAS_BODY_WEIGHT_OF_AT_LEAST_X          | bodyWeight > Latest body weight measurement (in kg) => X                                                                                        |
 
-For SBP, DBP and Pulse oximetry, evaluation should resolve to `UNDETERMINED` rather than `FAIL` in case of no PASS, but at least 1 of the up to 5 most recent values would be sufficient to `PASS`.
+For SBP, DBP and Pulse oximetry, evaluation should resolve to `UNDETERMINED` rather than `FAIL` in case of no PASS, but at least 1 of the up
+to 5 most recent values would be sufficient to `PASS`.
 
 ##### Rules related to blood transfusions
 
@@ -598,14 +623,16 @@ For SBP, DBP and Pulse oximetry, evaluation should resolve to `UNDETERMINED` rat
 | HAS_HAD_SURGERY_WITHIN_LAST_X_MONTHS | Surgeries > Current date minus latest surgery date <= X months, or Prior tumor treatment > any treatment with category 'surgery' and start date <= X months. X should be => 2, in case nr of months is lower, the above rule should be used | In case treatment with category 'surgery' is present but no date available, resolve to `UNDETERMINED`                                                                                                 |
 
 ##### Rules related to lifestyle
- 
+
 | Rule                                          | When does a patient pass evaluation? |
 |-----------------------------------------------|--------------------------------------|
 | IS_ABLE_AND_WILLING_TO_NOT_USE_CONTACT_LENSES | Resolves to `WARN`                   |
 
 ### Disease Ontology ID (DOID)
- 
-For rules about e.g. primary tumor location and type, second primaries and 'other conditions', one or more DOIDs may be implemented. For more information, see https://disease-ontology.org/.
- 
+
+For rules about e.g. primary tumor location and type, second primaries and 'other conditions', one or more DOIDs may be implemented. For
+more information, see https://disease-ontology.org/.
+
 ### Version History and Download Links
- - Upcoming (first release) 
+
+- Upcoming (first release) 
