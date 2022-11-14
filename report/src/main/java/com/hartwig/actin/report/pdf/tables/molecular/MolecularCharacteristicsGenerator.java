@@ -106,7 +106,7 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
         }
 
         if (hasHighTumorMutationalLoad == null || tumorMutationalLoad == null) {
-            return Cells.createValueWarn(Formats.VALUE_UNKNOWN);
+            return Cells.createContentWarn(Formats.VALUE_UNKNOWN);
         }
 
         String interpretation = hasHighTumorMutationalLoad ? "High" : "Low";
@@ -127,7 +127,7 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
         }
 
         if (hasHighTumorMutationalBurden == null || tumorMutationalBurden == null) {
-            return Cells.createValueWarn(Formats.VALUE_UNKNOWN);
+            return Cells.createContentWarn(Formats.VALUE_UNKNOWN);
         }
 
         String interpretation = hasHighTumorMutationalBurden ? "High" : "Low";
