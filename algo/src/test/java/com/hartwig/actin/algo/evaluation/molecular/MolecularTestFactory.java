@@ -164,6 +164,21 @@ final class MolecularTestFactory {
     }
 
     @NotNull
+    public static PatientRecord withMicrosatelliteInstabilityAndHomozygousDisruption(@Nullable Boolean isMicrosatelliteUnstable,
+            @NotNull HomozygousDisruption homozygousDisruption) {
+        MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
+
+        return withMolecularRecord(ImmutableMolecularRecord.builder()
+                .from(base)
+                .characteristics(ImmutableMolecularCharacteristics.builder()
+                        .from(base.characteristics())
+                        .isMicrosatelliteUnstable(isMicrosatelliteUnstable)
+                        .build())
+                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addHomozygousDisruptions(homozygousDisruption).build())
+                .build());
+    }
+
+    @NotNull
     public static PatientRecord withHomologousRepairDeficiencyAndVariant(@Nullable Boolean isHomologousRepairDeficient,
             @NotNull Variant variant) {
         MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
@@ -189,6 +204,21 @@ final class MolecularTestFactory {
                         .isHomologousRepairDeficient(isHomologousRepairDeficient)
                         .build())
                 .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addLosses(loss).build())
+                .build());
+    }
+
+    @NotNull
+    public static PatientRecord withHomologousRepairDeficiencyAndHomozygousDisruption(@Nullable Boolean isHomologousRepairDeficient,
+            @NotNull HomozygousDisruption homozygousDisruption) {
+        MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
+
+        return withMolecularRecord(ImmutableMolecularRecord.builder()
+                .from(base)
+                .characteristics(ImmutableMolecularCharacteristics.builder()
+                        .from(base.characteristics())
+                        .isHomologousRepairDeficient(isHomologousRepairDeficient)
+                        .build())
+                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addHomozygousDisruptions(homozygousDisruption).build())
                 .build());
     }
 
