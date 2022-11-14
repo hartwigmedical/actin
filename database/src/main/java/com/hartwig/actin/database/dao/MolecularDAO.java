@@ -318,8 +318,7 @@ class MolecularDAO {
                             DISRUPTION.UNDISRUPTEDCOPYNUMBER,
                             DISRUPTION.REGIONTYPE,
                             DISRUPTION.CODINGCONTEXT,
-                            DISRUPTION.CLUSTERGROUP,
-                            DISRUPTION.DISRUPTEDRANGE)
+                            DISRUPTION.CLUSTERGROUP)
                     .values(sampleId,
                             DataUtil.toByte(disruption.isReportable()),
                             disruption.event(),
@@ -333,8 +332,7 @@ class MolecularDAO {
                             disruption.undisruptedCopyNumber(),
                             disruption.regionType().toString(),
                             disruption.codingContext().toString(),
-                            disruption.clusterGroup(),
-                            disruption.range())
+                            disruption.clusterGroup())
                     .execute();
         }
     }

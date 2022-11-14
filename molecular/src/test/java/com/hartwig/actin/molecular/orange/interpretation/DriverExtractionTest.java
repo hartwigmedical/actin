@@ -157,7 +157,6 @@ public class DriverExtractionTest {
         assertEquals("DEL", disruption.type());
         assertEquals(0.8, disruption.junctionCopyNumber(), EPSILON);
         assertEquals(2.1, disruption.undisruptedCopyNumber(), EPSILON);
-        assertEquals("Intron 1 downstream", disruption.range());
     }
 
     private static void assertFusions(@NotNull Set<Fusion> fusions) {

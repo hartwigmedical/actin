@@ -448,7 +448,6 @@ CREATE TABLE disruption
     regionType varchar(50) NOT NULL,
     codingContext varchar(50) NOT NULL,
     clusterGroup int,
-    disruptedRange varchar(50) NOT NULL,
     PRIMARY KEY (id)
 );
 

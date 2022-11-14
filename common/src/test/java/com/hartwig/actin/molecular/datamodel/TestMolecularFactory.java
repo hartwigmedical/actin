@@ -187,7 +187,6 @@ public final class TestMolecularFactory {
                         .type("DEL")
                         .junctionCopyNumber(1.1)
                         .undisruptedCopyNumber(1.8)
-                        .range("Intron 1 downstream")
                         .build())
                 .addFusions(TestFusionFactory.builder()
                         .isReportable(true)

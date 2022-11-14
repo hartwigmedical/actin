@@ -32,11 +32,6 @@ public class DisruptionComparator implements Comparator<Disruption> {
             return junctionCompare;
         }
 
-        int undisruptedCompare = Double.compare(disruption1.undisruptedCopyNumber(), disruption2.undisruptedCopyNumber());
-        if (undisruptedCompare != 0) {
-            return undisruptedCompare;
-        }
-
-        return disruption1.range().compareTo(disruption2.range());
+        return  Double.compare(disruption1.undisruptedCopyNumber(), disruption2.undisruptedCopyNumber());
     }
 }

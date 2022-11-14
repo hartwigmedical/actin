@@ -24,6 +24,4 @@ public abstract class Disruption implements Driver, GeneAlteration {
     @Nullable
     public abstract Integer clusterGroup();
 
-    @NotNull
-    public abstract String range();
 }

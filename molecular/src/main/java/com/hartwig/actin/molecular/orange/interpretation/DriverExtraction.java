@@ -222,7 +222,6 @@ final class DriverExtraction {
                         .undisruptedCopyNumber(keep3Digits(disruption.undisruptedCopyNumber()))
                         .regionType(RegionType.INTRONIC)
                         .codingContext(CodingContext.NON_CODING)
-                        .range(disruption.range())
                         .build());
             }
         }

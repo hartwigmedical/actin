@@ -115,17 +115,15 @@ public class MolecularRecordJsonTest {
         assertEquals("PTEN", homozygousDisruption.gene());
 
         assertEquals(2, drivers.disruptions().size());
-        Disruption disruption1 = findByRange(drivers.disruptions(), "Intron 1 downstream");
+        Disruption disruption1 = findByType(drivers.disruptions(), "DEL");
         assertEquals(DriverLikelihood.LOW, disruption1.driverLikelihood());
         assertEquals("NF1", disruption1.gene());
-        assertEquals("DEL", disruption1.type());
         assertEquals(1.1, disruption1.junctionCopyNumber(), EPSILON);
         assertEquals(2.0, disruption1.undisruptedCopyNumber(), EPSILON);
 
-        Disruption disruption2 = findByRange(drivers.disruptions(), "Intron 2 upstream");
+        Disruption disruption2 = findByType(drivers.disruptions(), "DUP");
         assertEquals(DriverLikelihood.LOW, disruption2.driverLikelihood());
         assertEquals("NF1", disruption2.gene());
-        assertEquals("DUP", disruption2.type());
         assertEquals(0.3, disruption2.junctionCopyNumber(), EPSILON);
         assertEquals(2.8, disruption2.undisruptedCopyNumber(), EPSILON);
 
@@ -144,14 +142,14 @@ public class MolecularRecordJsonTest {
     }
 
     @NotNull
-    private static Disruption findByRange(@NotNull Iterable<Disruption> disruptions, @NotNull String rangeToFind) {
+    private static Disruption findByType(@NotNull Iterable<Disruption> disruptions, @NotNull String typeToFind) {
         for (Disruption disruption : disruptions) {
-            if (disruption.range().equals(rangeToFind)) {
+            if (disruption.type().equals(typeToFind)) {
                 return disruption;
             }
         }
 
-        throw new IllegalStateException("Could not find disruption with range: " + rangeToFind);
+        throw new IllegalStateException("Could not find disruption with type: " + typeToFind);
     }
 
     private static void assertImmunology(@NotNull MolecularImmunology immunology) {

@@ -340,7 +340,6 @@ public class MolecularRecordJson {
                         .regionType(RegionType.valueOf(string(disruption, "regionType")))
                         .codingContext(CodingContext.valueOf(string(disruption, "codingContext")))
                         .clusterGroup(nullableInteger(disruption, "clusterGroup"))
-                        .range(string(disruption, "range"))
                         .build());
             }
             return disruptions;

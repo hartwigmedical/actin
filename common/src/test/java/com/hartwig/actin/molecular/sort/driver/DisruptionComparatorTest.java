@@ -15,24 +15,21 @@ import org.junit.Test;
 public class DisruptionComparatorTest {
 
     @Test
-    public void canCompareDisruptions() {
-        Disruption disruption1 = create("NF1", DriverLikelihood.LOW, "DUP", "intron 1");
-        Disruption disruption2 = create("NF1", DriverLikelihood.LOW, "DUP", "intron 3");
-        Disruption disruption3 = create("NF1", DriverLikelihood.HIGH, "DEL", "intron 2");
-        Disruption disruption4 = create("APC", DriverLikelihood.LOW, "BND", "intron 5");
+    public void canSortDisruptions() {
+        Disruption disruption1 = create("NF1", DriverLikelihood.HIGH, "DEL");
+        Disruption disruption2 = create("APC", DriverLikelihood.LOW, "BND");
+        Disruption disruption3 = create("NF1", DriverLikelihood.LOW, "DUP");
 
-        List<Disruption> disruptions = Lists.newArrayList(disruption1, disruption2, disruption3, disruption4);
+        List<Disruption> disruptions = Lists.newArrayList(disruption3, disruption2, disruption1);
         disruptions.sort(new DisruptionComparator());
 
-        assertEquals(disruption3, disruptions.get(0));
-        assertEquals(disruption4, disruptions.get(1));
-        assertEquals(disruption1, disruptions.get(2));
-        assertEquals(disruption2, disruptions.get(3));
+        assertEquals(disruption1, disruptions.get(0));
+        assertEquals(disruption2, disruptions.get(1));
+        assertEquals(disruption3, disruptions.get(2));
     }
 
     @NotNull
-    private static Disruption create(@NotNull String gene, @NotNull DriverLikelihood driverLikelihood, @NotNull String type,
-            @NotNull String range) {
-        return TestDisruptionFactory.builder().driverLikelihood(driverLikelihood).gene(gene).type(type).range(range).build();
+    private static Disruption create(@NotNull String gene, @NotNull DriverLikelihood driverLikelihood, @NotNull String type) {
+        return TestDisruptionFactory.builder().gene(gene).driverLikelihood(driverLikelihood).type(type).build();
     }
 }

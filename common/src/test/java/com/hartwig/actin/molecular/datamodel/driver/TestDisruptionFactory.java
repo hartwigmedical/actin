@@ -19,7 +19,6 @@ public final class TestDisruptionFactory {
                 .junctionCopyNumber(0)
                 .undisruptedCopyNumber(0)
                 .regionType(RegionType.INTRONIC)
-                .codingContext(CodingContext.NON_CODING)
-                .range(Strings.EMPTY);
+                .codingContext(CodingContext.NON_CODING);
     }
 }
