@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.report.datamodel.Report;
+import com.hartwig.actin.report.interpretation.EvaluatedTrial;
+import com.hartwig.actin.report.interpretation.EvaluatedTrialFactory;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.tables.treatment.EligibleActinTrialsGenerator;
 import com.hartwig.actin.report.pdf.tables.treatment.IneligibleActinTrialsGenerator;
@@ -51,9 +53,9 @@ public class TrialMatchingChapter implements ReportChapter {
     private void addTrialMatchingOverview(@NotNull Document document) {
         Table table = Tables.createSingleColWithWidth(contentWidth());
 
-        List<TableGenerator> generators = Lists.newArrayList(EligibleActinTrialsGenerator.forClosedTrials(report.treatmentMatch(),
-                contentWidth()),
-                IneligibleActinTrialsGenerator.fromTreatmentMatch(report.treatmentMatch(), contentWidth()));
+        List<EvaluatedTrial> trials = EvaluatedTrialFactory.create(report.treatmentMatch());
+        List<TableGenerator> generators = Lists.newArrayList(EligibleActinTrialsGenerator.forClosedTrials(trials, contentWidth()),
+                IneligibleActinTrialsGenerator.fromTreatmentMatch(trials, contentWidth()));
 
         for (int i = 0; i < generators.size(); i++) {
             TableGenerator generator = generators.get(i);

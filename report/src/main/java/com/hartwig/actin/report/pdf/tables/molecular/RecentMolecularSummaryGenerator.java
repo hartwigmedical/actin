@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -7,16 +8,12 @@ import java.util.StringJoiner;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
-import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
-import com.hartwig.actin.report.interpretation.ActinEvidenceFactory;
 import com.hartwig.actin.report.interpretation.AggregatedEvidence;
-import com.hartwig.actin.report.interpretation.AggregatedEvidenceFactory;
 import com.hartwig.actin.report.interpretation.EvaluatedTrial;
-import com.hartwig.actin.report.interpretation.EvaluatedTrialFactory;
 import com.hartwig.actin.report.interpretation.EvidenceInterpreter;
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter;
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter;
@@ -38,15 +35,22 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
     @NotNull
     private final MolecularRecord molecular;
     @NotNull
-    private final TreatmentMatch treatmentMatch;
+    private final List<EvaluatedTrial> trials;
+    @NotNull
+    private final AggregatedEvidence aggregatedEvidence;
+    @NotNull
+    private final EvidenceInterpreter interpreter;
     private final float keyWidth;
     private final float valueWidth;
 
     public RecentMolecularSummaryGenerator(@NotNull final ClinicalRecord clinical, @NotNull final MolecularRecord molecular,
-            @NotNull final TreatmentMatch treatmentMatch, final float keyWidth, final float valueWidth) {
+            @NotNull final List<EvaluatedTrial> trials, @NotNull final AggregatedEvidence aggregatedEvidence,
+            @NotNull final EvidenceInterpreter interpreter, final float keyWidth, final float valueWidth) {
         this.clinical = clinical;
         this.molecular = molecular;
-        this.treatmentMatch = treatmentMatch;
+        this.trials = trials;
+        this.aggregatedEvidence = aggregatedEvidence;
+        this.interpreter = interpreter;
         this.keyWidth = keyWidth;
         this.valueWidth = valueWidth;
     }
@@ -70,13 +74,11 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
             table.addCell(createPredictedTumorOriginValue(molecular.characteristics().predictedTumorOrigin()));
         }
 
-        AggregatedEvidence aggregatedEvidence = AggregatedEvidenceFactory.create(molecular);
-        EvidenceInterpreter interpreter = new EvidenceInterpreter(ActinEvidenceFactory.inclusionEvents(treatmentMatch));
         table.addCell(Cells.createKey("Events with approved treatment evidence in " + molecular.evidenceSource()));
         table.addCell(Cells.createValue(concat(interpreter.eventsWithApprovedEvidence(aggregatedEvidence))));
 
         table.addCell(Cells.createKey("Events with trial eligibility in " + TreatmentConstants.ACTIN_SOURCE + " database"));
-        table.addCell(Cells.createValue(concat(eventsForEligibleTrials(treatmentMatch))));
+        table.addCell(Cells.createValue(concat(eventsForEligibleTrials())));
 
         table.addCell(addIndent(Cells.createKey(
                 "Additional events with trial eligibility in NL (" + molecular.externalTrialSource() + ")")));
@@ -97,9 +99,9 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static Set<String> eventsForEligibleTrials(@NotNull TreatmentMatch treatmentMatch) {
+    private  Set<String> eventsForEligibleTrials() {
         Set<String> molecularEvents = Sets.newTreeSet(Ordering.natural());
-        for (EvaluatedTrial trial : EvaluatedTrialFactory.create(treatmentMatch)) {
+        for (EvaluatedTrial trial : trials) {
             if (trial.isPotentiallyEligible() && trial.isOpen()) {
                 molecularEvents.addAll(trial.molecularEvents());
             }

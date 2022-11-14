@@ -9,11 +9,18 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.report.datamodel.Report;
+import com.hartwig.actin.report.interpretation.ActinEvidenceFactory;
+import com.hartwig.actin.report.interpretation.AggregatedEvidence;
+import com.hartwig.actin.report.interpretation.AggregatedEvidenceFactory;
+import com.hartwig.actin.report.interpretation.EvaluatedTrial;
+import com.hartwig.actin.report.interpretation.EvaluatedTrialFactory;
+import com.hartwig.actin.report.interpretation.EvidenceInterpreter;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenerator;
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator;
 import com.hartwig.actin.report.pdf.tables.treatment.EligibleActinTrialsGenerator;
 import com.hartwig.actin.report.pdf.tables.treatment.EligibleApprovedTreatmentGenerator;
+import com.hartwig.actin.report.pdf.tables.treatment.EligibleExternalTrialsGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Styles;
@@ -177,18 +184,28 @@ public class SummaryChapter implements ReportChapter {
 
         float keyWidth = 210;
         float valueWidth = contentWidth() - keyWidth;
-        List<TableGenerator> generators = Lists.newArrayList(new PatientClinicalHistoryGenerator(report.clinical(), keyWidth, valueWidth),
-                new MolecularSummaryGenerator(report.clinical(), report.molecular(), report.treatmentMatch(), keyWidth, valueWidth),
-                new EligibleApprovedTreatmentGenerator(report.clinical(), report.molecular(), contentWidth()),
-                EligibleActinTrialsGenerator.forOpenTrials(report.treatmentMatch(), contentWidth()));
 
-        // TODO Implement
-//        if (!report.molecular().evidence().externalTrials().isEmpty()) {
-//            generators.add(new EligibleExternalTrialsGenerator(report.molecular().evidence().externalTrialSource(),
-//                    report.molecular().evidence().externalTrials(),
-//                    keyWidth,
-//                    valueWidth));
-//        }
+        AggregatedEvidence aggregatedEvidence = AggregatedEvidenceFactory.create(report.molecular());
+        List<EvaluatedTrial> trials = EvaluatedTrialFactory.create(report.treatmentMatch());
+        EvidenceInterpreter interpreter = new EvidenceInterpreter(ActinEvidenceFactory.inclusionEvents(report.treatmentMatch()));
+
+        List<TableGenerator> generators = Lists.newArrayList(new PatientClinicalHistoryGenerator(report.clinical(), keyWidth, valueWidth),
+                new MolecularSummaryGenerator(report.clinical(),
+                        report.molecular(),
+                        trials,
+                        aggregatedEvidence,
+                        interpreter,
+                        keyWidth,
+                        valueWidth),
+                new EligibleApprovedTreatmentGenerator(report.clinical(), report.molecular(), contentWidth()),
+                EligibleActinTrialsGenerator.forOpenTrials(trials, contentWidth()));
+
+        if (!aggregatedEvidence.externalEligibleTrialsPerEvent().isEmpty()) {
+            generators.add(new EligibleExternalTrialsGenerator(report.molecular().externalTrialSource(),
+                    aggregatedEvidence.externalEligibleTrialsPerEvent(),
+                    keyWidth,
+                    valueWidth));
+        }
 
         for (int i = 0; i < generators.size(); i++) {
             TableGenerator generator = generators.get(i);
