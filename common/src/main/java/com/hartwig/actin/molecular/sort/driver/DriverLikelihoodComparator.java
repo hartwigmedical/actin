@@ -35,7 +35,7 @@ public class DriverLikelihoodComparator implements Comparator<DriverLikelihood> 
                 return driverLikelihood2 == DriverLikelihood.LOW ? 0 : 1;
             }
             default: {
-                throw new IllegalStateException("Cannot compare driverLikelihood: " + driverLikelihood1);
+                throw new IllegalStateException("Cannot interpret driver Likelihood: " + driverLikelihood1);
             }
         }
     }

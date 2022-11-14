@@ -10,6 +10,8 @@ public class DisruptionComparator implements Comparator<Disruption> {
 
     private static final DriverComparator DRIVER_COMPARATOR = new DriverComparator();
 
+    private static final GeneAlterationComparator GENE_ALTERATION_COMPARATOR = new GeneAlterationComparator();
+
     @Override
     public int compare(@NotNull Disruption disruption1, @NotNull Disruption disruption2) {
         int driverCompare = DRIVER_COMPARATOR.compare(disruption1, disruption2);
@@ -17,9 +19,9 @@ public class DisruptionComparator implements Comparator<Disruption> {
             return driverCompare;
         }
 
-        int geneCompare = disruption1.gene().compareTo(disruption2.gene());
-        if (geneCompare != 0) {
-            return geneCompare;
+        int geneAlterationCompare = GENE_ALTERATION_COMPARATOR.compare(disruption1, disruption2);
+        if (geneAlterationCompare != 0) {
+            return geneAlterationCompare;
         }
 
         int typeCompare = disruption1.type().compareTo(disruption2.type());
@@ -27,11 +29,11 @@ public class DisruptionComparator implements Comparator<Disruption> {
             return typeCompare;
         }
 
-        int junctionCompare = Double.compare(disruption1.junctionCopyNumber(), disruption2.junctionCopyNumber());
+        int junctionCompare = Double.compare(disruption2.junctionCopyNumber(), disruption1.junctionCopyNumber());
         if (junctionCompare != 0) {
             return junctionCompare;
         }
 
-        return  Double.compare(disruption1.undisruptedCopyNumber(), disruption2.undisruptedCopyNumber());
+        return Double.compare(disruption1.undisruptedCopyNumber(), disruption2.undisruptedCopyNumber());
     }
 }

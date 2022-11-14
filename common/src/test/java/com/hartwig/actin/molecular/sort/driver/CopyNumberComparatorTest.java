@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberDriver;
+import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.TestAmplificationFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestLossFactory;
 
@@ -15,13 +16,15 @@ public class CopyNumberComparatorTest {
 
     @Test
     public void canSortCopyNumbers() {
-        CopyNumberDriver driver1 = TestAmplificationFactory.builder().gene("MYC").build();
-        CopyNumberDriver driver2 = TestLossFactory.builder().gene("APC").build();
+        CopyNumberDriver driver1 = TestLossFactory.builder().driverLikelihood(DriverLikelihood.HIGH).gene("MYC").build();
+        CopyNumberDriver driver2 = TestAmplificationFactory.builder().driverLikelihood(DriverLikelihood.MEDIUM).gene("MYC").build();
+        CopyNumberDriver driver3 = TestAmplificationFactory.builder().driverLikelihood(DriverLikelihood.MEDIUM).gene("NTRK").build();
 
-        List<CopyNumberDriver> copyNumberDrivers = Lists.newArrayList(driver1, driver2);
+        List<CopyNumberDriver> copyNumberDrivers = Lists.newArrayList(driver2, driver1, driver3);
         copyNumberDrivers.sort(new CopyNumberComparator());
 
-        assertEquals(driver2, copyNumberDrivers.get(0));
-        assertEquals(driver1, copyNumberDrivers.get(1));
+        assertEquals(driver1, copyNumberDrivers.get(0));
+        assertEquals(driver2, copyNumberDrivers.get(1));
+        assertEquals(driver3, copyNumberDrivers.get(2));
     }
 }

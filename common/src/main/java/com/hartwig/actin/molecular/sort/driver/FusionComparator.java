@@ -27,7 +27,21 @@ public class FusionComparator implements Comparator<Fusion> {
             return geneEndCompare;
         }
 
-        // TODO
-        return 0;
+        int geneTranscriptStartCompare = fusion1.geneTranscriptStart().compareTo(fusion2.geneTranscriptStart());
+        if (geneTranscriptStartCompare != 0) {
+            return geneTranscriptStartCompare;
+        }
+
+        int geneTranscriptEndCompare = fusion1.geneTranscriptEnd().compareTo(fusion2.geneTranscriptEnd());
+        if (geneTranscriptEndCompare != 0) {
+            return geneTranscriptEndCompare;
+        }
+
+        int geneContextStartCompare = fusion1.geneContextStart().compareTo(fusion2.geneContextStart());
+        if (geneContextStartCompare != 0) {
+            return geneContextStartCompare;
+        }
+
+        return fusion1.geneContextEnd().compareTo(fusion2.geneContextEnd());
     }
 }

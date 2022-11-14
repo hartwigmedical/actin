@@ -5,6 +5,7 @@ import java.util.Comparator;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class VirusComparator implements Comparator<Virus> {
 
@@ -17,12 +18,23 @@ public class VirusComparator implements Comparator<Virus> {
             return driverCompare;
         }
 
-        int nameCompare = virus1.name().compareTo(virus2.name());
-        if (nameCompare != 0) {
-            return nameCompare;
+        int interpretationCompare = stringCompare(virus1.interpretation(), virus2.interpretation());
+        if (interpretationCompare != 0) {
+            return interpretationCompare;
         }
 
-        // TODO
-        return 0;
+        return virus1.name().compareTo(virus2.name());
+    }
+
+    private static int stringCompare(@Nullable String string1, @Nullable String string2) {
+        if (string1 == null && string2 == null) {
+            return 0;
+        } else if (string1 == null) {
+            return 1;
+        } else if (string2 == null) {
+            return -1;
+        } else {
+            return string1.compareTo(string2);
+        }
     }
 }

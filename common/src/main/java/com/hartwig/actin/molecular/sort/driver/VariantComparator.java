@@ -10,6 +10,8 @@ public class VariantComparator implements Comparator<Variant> {
 
     private static final DriverComparator DRIVER_COMPARATOR = new DriverComparator();
 
+    private static final GeneAlterationComparator GENE_ALTERATION_COMPARATOR = new GeneAlterationComparator();
+
     @Override
     public int compare(@NotNull Variant variant1, @NotNull Variant variant2) {
         int driverCompare = DRIVER_COMPARATOR.compare(variant1, variant2);
@@ -17,12 +19,17 @@ public class VariantComparator implements Comparator<Variant> {
             return driverCompare;
         }
 
-        int geneCompare = variant1.gene().compareTo(variant2.gene());
-        if (geneCompare != 0) {
-            return geneCompare;
+        int geneAlterationCompare = GENE_ALTERATION_COMPARATOR.compare(variant1, variant2);
+        if (geneAlterationCompare != 0) {
+            return geneAlterationCompare;
         }
 
-        // TODO
-        return 0;
+        int canonicalProteinImpactCompare =
+                variant1.canonicalImpact().hgvsProteinImpact().compareTo(variant2.canonicalImpact().hgvsProteinImpact());
+        if (canonicalProteinImpactCompare != 0) {
+            return canonicalProteinImpactCompare;
+        }
+
+        return variant1.canonicalImpact().hgvsCodingImpact().compareTo(variant2.canonicalImpact().hgvsCodingImpact());
     }
 }

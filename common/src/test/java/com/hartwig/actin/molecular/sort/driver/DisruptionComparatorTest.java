@@ -10,26 +10,38 @@ import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 public class DisruptionComparatorTest {
 
     @Test
     public void canSortDisruptions() {
-        Disruption disruption1 = create("NF1", DriverLikelihood.HIGH, "DEL");
-        Disruption disruption2 = create("APC", DriverLikelihood.LOW, "BND");
-        Disruption disruption3 = create("NF1", DriverLikelihood.LOW, "DUP");
+        Disruption disruption1 = create("NF1", DriverLikelihood.HIGH, "DEL", 2D, 1D);
+        Disruption disruption2 = create("APC", DriverLikelihood.LOW, "BND", 2D, 1D);
+        Disruption disruption3 = create("NF1", DriverLikelihood.LOW, "DUP", 2D, 1D);
+        Disruption disruption4 = create("NF1", DriverLikelihood.LOW, "DUP", 1D, 0D);
+        Disruption disruption5 = create("NF1", DriverLikelihood.LOW, "DUP", 1D, 1D);
 
-        List<Disruption> disruptions = Lists.newArrayList(disruption3, disruption2, disruption1);
+        List<Disruption> disruptions = Lists.newArrayList(disruption3, disruption5, disruption4, disruption2, disruption1);
         disruptions.sort(new DisruptionComparator());
 
         assertEquals(disruption1, disruptions.get(0));
         assertEquals(disruption2, disruptions.get(1));
         assertEquals(disruption3, disruptions.get(2));
+        assertEquals(disruption4, disruptions.get(3));
+        assertEquals(disruption5, disruptions.get(4));
     }
 
     @NotNull
-    private static Disruption create(@NotNull String gene, @NotNull DriverLikelihood driverLikelihood, @NotNull String type) {
-        return TestDisruptionFactory.builder().gene(gene).driverLikelihood(driverLikelihood).type(type).build();
+    private static Disruption create(@NotNull String gene, @Nullable DriverLikelihood driverLikelihood, @NotNull String type,
+            double junctionCopyNumber, double undisruptedCopyNumber) {
+        return TestDisruptionFactory.builder()
+                .gene(gene)
+                .driverLikelihood(driverLikelihood)
+                .type(type)
+                .junctionCopyNumber(junctionCopyNumber)
+                .undisruptedCopyNumber(undisruptedCopyNumber)
+                .build();
     }
 }

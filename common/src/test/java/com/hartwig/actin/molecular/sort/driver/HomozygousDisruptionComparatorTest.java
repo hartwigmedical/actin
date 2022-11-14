@@ -15,16 +15,16 @@ import org.junit.Test;
 public class HomozygousDisruptionComparatorTest {
 
     @Test
-    public void canCompareHomozygousDisruptions() {
-        HomozygousDisruption homozygousDisruption1 = create("NF1", DriverLikelihood.HIGH);
-        HomozygousDisruption homozygousDisruption2 = create("APC", DriverLikelihood.HIGH);
+    public void canSortHomozygousDisruptions() {
+        HomozygousDisruption homozygousDisruption1 = create("APC", DriverLikelihood.HIGH);
+        HomozygousDisruption homozygousDisruption2 = create("NF1", DriverLikelihood.HIGH);
         HomozygousDisruption homozygousDisruption3 = create("APC", DriverLikelihood.LOW);
 
-        List<HomozygousDisruption> disruptions = Lists.newArrayList(homozygousDisruption1, homozygousDisruption2, homozygousDisruption3);
+        List<HomozygousDisruption> disruptions = Lists.newArrayList(homozygousDisruption2, homozygousDisruption1, homozygousDisruption3);
         disruptions.sort(new HomozygousDisruptionComparator());
 
-        assertEquals(homozygousDisruption2, disruptions.get(0));
-        assertEquals(homozygousDisruption1, disruptions.get(1));
+        assertEquals(homozygousDisruption1, disruptions.get(0));
+        assertEquals(homozygousDisruption2, disruptions.get(1));
         assertEquals(homozygousDisruption3, disruptions.get(2));
     }
 
