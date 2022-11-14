@@ -7,8 +7,12 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 import java.util.Objects;
 
+import com.hartwig.actin.algo.datamodel.ImmutableTreatmentMatch;
+import com.hartwig.actin.algo.datamodel.ImmutableTrialMatch;
 import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
+import com.hartwig.actin.algo.datamodel.TrialMatch;
+import com.hartwig.actin.treatment.datamodel.ImmutableTrialIdentification;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,21 +21,28 @@ import org.junit.Test;
 public class EvaluatedTrialFactoryTest {
 
     @Test
-    public void canCreateEvaluatedTrials() {
-        TreatmentMatch treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch();
-        List<EvaluatedTrial> trials = EvaluatedTrialFactory.create(treatmentMatch);
+    public void canCreateEvaluatedTrialsFromMinimalMatch() {
+        List<EvaluatedTrial> trials = EvaluatedTrialFactory.create(TestTreatmentMatchFactory.createMinimalTreatmentMatch());
+
+        assertTrue(trials.isEmpty());
+    }
+
+    @Test
+    public void canCreateEvaluatedTrialsFromProperMatch() {
+        List<EvaluatedTrial> trials = EvaluatedTrialFactory.create(TestTreatmentMatchFactory.createProperTreatmentMatch());
 
         assertEquals(5, trials.size());
 
-        EvaluatedTrial trial1A = findByTrialAndCohort(trials, "TEST-1", "Cohort A");
+        EvaluatedTrial trial1A = findByAcronymAndCohort(trials, "TEST-1", "Cohort A");
         assertFalse(trial1A.molecularEvents().isEmpty());
+        assertTrue(trial1A.molecularEvents().contains("BRAF V600E"));
         assertTrue(trial1A.isPotentiallyEligible());
         assertTrue(trial1A.isOpen());
         assertFalse(trial1A.hasSlotsAvailable());
         assertFalse(trial1A.warnings().isEmpty());
         assertTrue(trial1A.fails().isEmpty());
 
-        EvaluatedTrial trial1B = findByTrialAndCohort(trials, "TEST-1", "Cohort B");
+        EvaluatedTrial trial1B = findByAcronymAndCohort(trials, "TEST-1", "Cohort B");
         assertTrue(trial1B.molecularEvents().isEmpty());
         assertTrue(trial1B.isPotentiallyEligible());
         assertTrue(trial1B.isOpen());
@@ -39,7 +50,7 @@ public class EvaluatedTrialFactoryTest {
         assertFalse(trial1B.warnings().isEmpty());
         assertTrue(trial1B.fails().isEmpty());
 
-        EvaluatedTrial trial1C = findByTrialAndCohort(trials, "TEST-1", "Cohort C");
+        EvaluatedTrial trial1C = findByAcronymAndCohort(trials, "TEST-1", "Cohort C");
         assertTrue(trial1C.molecularEvents().isEmpty());
         assertFalse(trial1C.isPotentiallyEligible());
         assertFalse(trial1C.isOpen());
@@ -47,15 +58,16 @@ public class EvaluatedTrialFactoryTest {
         assertFalse(trial1C.warnings().isEmpty());
         assertFalse(trial1C.fails().isEmpty());
 
-        EvaluatedTrial trial2A = findByTrialAndCohort(trials, "TEST-2", "Cohort A");
+        EvaluatedTrial trial2A = findByAcronymAndCohort(trials, "TEST-2", "Cohort A");
         assertFalse(trial2A.molecularEvents().isEmpty());
+        assertTrue(trial2A.molecularEvents().contains("BRAF V600E"));
         assertTrue(trial2A.isPotentiallyEligible());
         assertTrue(trial2A.isOpen());
         assertFalse(trial2A.hasSlotsAvailable());
         assertTrue(trial2A.warnings().isEmpty());
         assertTrue(trial2A.fails().isEmpty());
 
-        EvaluatedTrial trial2B = findByTrialAndCohort(trials, "TEST-2", "Cohort B");
+        EvaluatedTrial trial2B = findByAcronymAndCohort(trials, "TEST-2", "Cohort B");
         assertTrue(trial2B.molecularEvents().isEmpty());
         assertFalse(trial2B.isPotentiallyEligible());
         assertTrue(trial2B.isOpen());
@@ -65,27 +77,35 @@ public class EvaluatedTrialFactoryTest {
     }
 
     @Test
-    public void canAnnotateWithMolecularEvents() {
-        TreatmentMatch treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch();
+    public void canEvaluateTrialsWithoutCohort() {
+        TrialMatch trialMatchWithoutCohort = ImmutableTrialMatch.builder()
+                .identification(ImmutableTrialIdentification.builder()
+                        .trialId("test")
+                        .open(true)
+                        .acronym("test-1")
+                        .title("Example test trial 1")
+                        .build())
+                .isPotentiallyEligible(true)
+                .build();
+
+        TreatmentMatch treatmentMatch = ImmutableTreatmentMatch.builder()
+                .from(TestTreatmentMatchFactory.createMinimalTreatmentMatch())
+                .addTrialMatches(trialMatchWithoutCohort)
+                .build();
 
         List<EvaluatedTrial> trials = EvaluatedTrialFactory.create(treatmentMatch);
-
-        assertTrue(findByTrialAndCohort(trials, "TEST-1", "Cohort A").molecularEvents().contains("BRAF V600E"));
-        assertTrue(findByTrialAndCohort(trials, "TEST-1", "Cohort B").molecularEvents().isEmpty());
-        assertTrue(findByTrialAndCohort(trials, "TEST-1", "Cohort C").molecularEvents().isEmpty());
-        assertTrue(findByTrialAndCohort(trials, "TEST-2", "Cohort A").molecularEvents().contains("BRAF V600E"));
-        assertTrue(findByTrialAndCohort(trials, "TEST-2", "Cohort B").molecularEvents().isEmpty());
+        assertEquals(1, trials.size());
     }
 
     @NotNull
-    private static EvaluatedTrial findByTrialAndCohort(@NotNull List<EvaluatedTrial> trials, @NotNull String trialToFind,
+    private static EvaluatedTrial findByAcronymAndCohort(@NotNull List<EvaluatedTrial> trials, @NotNull String acronymToFind,
             @Nullable String cohortToFind) {
         for (EvaluatedTrial trial : trials) {
-            if (trial.acronym().equals(trialToFind) && Objects.equals(trial.cohort(), cohortToFind)) {
+            if (trial.acronym().equals(acronymToFind) && Objects.equals(trial.cohort(), cohortToFind)) {
                 return trial;
             }
         }
 
-        throw new IllegalStateException("Could not find trial for cohort: " + cohortToFind);
+        throw new IllegalStateException("Could not find trial acronym " + acronymToFind + " and cohort: " + cohortToFind);
     }
 }
