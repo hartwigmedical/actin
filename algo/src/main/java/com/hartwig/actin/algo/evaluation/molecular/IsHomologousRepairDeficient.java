@@ -30,10 +30,12 @@ public class IsHomologousRepairDeficient implements EvaluationFunction {
 
         for (String gene : MolecularConstants.HRD_GENES) {
             for (Variant variant : record.molecular().drivers().variants()) {
-                if (variant.gene().equals(gene) && variant.isReportable() && variant.isBiallelic()) {
-                    hrdGenesWithBiallelicDriver.add(gene);
-                } else if (variant.gene().equals(gene) && variant.isReportable()) {
-                    hrdGenesWithNonBiallelicDriver.add(gene);
+                if (variant.gene().equals(gene) && variant.isReportable()) {
+                    if (variant.isBiallelic()) {
+                        hrdGenesWithBiallelicDriver.add(gene);
+                    } else {
+                        hrdGenesWithNonBiallelicDriver.add(gene);
+                    }
                 }
             }
 
@@ -87,8 +89,8 @@ public class IsHomologousRepairDeficient implements EvaluationFunction {
                         .result(EvaluationResult.PASS)
                         .addInclusionMolecularEvents(MolecularCharacteristicEvents.HOMOLOGOUS_REPAIR_DEFICIENT)
                         .addPassSpecificMessages(
-                                "Homologous repair deficiency (HRD) status detected, together with biallelic drivers in HRD genes: " + Format.concat(
-                                        hrdGenesWithBiallelicDriver))
+                                "Homologous repair deficiency (HRD) status detected, together with biallelic drivers in HRD genes: "
+                                        + Format.concat(hrdGenesWithBiallelicDriver))
                         .addPassGeneralMessages("HRD")
                         .build();
             } else if (!hrdGenesWithNonBiallelicDriver.isEmpty()) {

@@ -28,12 +28,14 @@ public class IsMicrosatelliteUnstable implements EvaluationFunction {
         Set<String> msiGenesWithBiallelicDriver = Sets.newHashSet();
         Set<String> msiGenesWithNonBiallelicDriver = Sets.newHashSet();
 
-        for (String gene : com.hartwig.actin.algo.evaluation.molecular.MolecularConstants.MSI_GENES) {
+        for (String gene : MolecularConstants.MSI_GENES) {
             for (Variant variant : record.molecular().drivers().variants()) {
-                if (variant.gene().equals(gene) && variant.isReportable() && variant.isBiallelic()) {
-                    msiGenesWithBiallelicDriver.add(gene);
-                } else if (variant.gene().equals(gene) && variant.isReportable()) {
-                    msiGenesWithNonBiallelicDriver.add(gene);
+                if (variant.gene().equals(gene) && variant.isReportable()) {
+                    if (variant.isBiallelic()) {
+                        msiGenesWithBiallelicDriver.add(gene);
+                    } else {
+                        msiGenesWithNonBiallelicDriver.add(gene);
+                    }
                 }
             }
 
@@ -87,8 +89,8 @@ public class IsMicrosatelliteUnstable implements EvaluationFunction {
                         .result(EvaluationResult.PASS)
                         .addInclusionMolecularEvents(MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE)
                         .addPassSpecificMessages(
-                                "Microsatellite instability (MSI) status detected, together with biallelic drivers in MSI genes: " + Format.concat(
-                                        msiGenesWithBiallelicDriver))
+                                "Microsatellite instability (MSI) status detected, together with biallelic drivers in MSI genes: "
+                                        + Format.concat(msiGenesWithBiallelicDriver))
                         .addPassGeneralMessages("MSI")
                         .build();
             } else if (!msiGenesWithNonBiallelicDriver.isEmpty()) {
@@ -106,8 +108,7 @@ public class IsMicrosatelliteUnstable implements EvaluationFunction {
                         .result(EvaluationResult.WARN)
                         .addInclusionMolecularEvents(MolecularCharacteristicEvents.MICROSATELLITE_POTENTIALLY_UNSTABLE)
                         .addWarnSpecificMessages("Microsatellite instability (MSI) detected, without drivers in MSI genes ("
-                                + Format.concat(com.hartwig.actin.algo.evaluation.molecular.MolecularConstants.MSI_GENES)
-                                + ") detected")
+                                + Format.concat(com.hartwig.actin.algo.evaluation.molecular.MolecularConstants.MSI_GENES) + ") detected")
                         .addWarnGeneralMessages("MSI")
                         .build();
             }
