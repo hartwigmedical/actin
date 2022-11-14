@@ -24,4 +24,9 @@ public final class TestActionableEvidenceFactory {
     public static ActionableEvidence withApprovedTreatment(@NotNull String treatment) {
         return ImmutableActionableEvidence.builder().addApprovedTreatments(treatment).build();
     }
+
+    @NotNull
+    public static ActionableEvidence withPreClinicalTreatment(@NotNull String treatment) {
+        return ImmutableActionableEvidence.builder().addPreClinicalTreatments(treatment).build();
+    }
 }

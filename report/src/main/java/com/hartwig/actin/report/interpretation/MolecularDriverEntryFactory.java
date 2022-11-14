@@ -81,7 +81,7 @@ public class MolecularDriverEntryFactory {
             String totalCopyString =
                     boundedTotalCopies < 1 ? Formats.singleDigitNumber(boundedTotalCopies) : Formats.noDigitNumber(boundedTotalCopies);
 
-            String driver = variant.event() + ", " + variantCopyString + "/" + totalCopyString + " copies)";
+            String driver = variant.event() + ", (" + variantCopyString + "/" + totalCopyString + " copies)";
             if (ClonalityInterpreter.isPotentiallySubclonal(variant)) {
                 driver = driver + "*";
             }
