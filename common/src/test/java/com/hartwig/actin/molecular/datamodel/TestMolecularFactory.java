@@ -23,6 +23,7 @@ import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory;
 import com.hartwig.actin.molecular.datamodel.driver.VariantType;
+import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory;
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableHlaAllele;
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableMolecularImmunology;
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
@@ -76,13 +77,13 @@ public final class TestMolecularFactory {
     public static MolecularRecord createExhaustiveTestMolecularRecord() {
         return ImmutableMolecularRecord.builder()
                 .from(createProperTestMolecularRecord())
+                .characteristics(createExhaustiveTestCharacteristics())
                 .drivers(createExhaustiveTestDrivers())
                 .build();
     }
 
     @NotNull
     private static MolecularCharacteristics createProperTestCharacteristics() {
-        // TODO Add test evidence
         return ImmutableMolecularCharacteristics.builder()
                 .purity(0.98)
                 .ploidy(3.1)
@@ -91,8 +92,21 @@ public final class TestMolecularFactory {
                 .isHomologousRepairDeficient(false)
                 .tumorMutationalBurden(13.71)
                 .hasHighTumorMutationalBurden(true)
+                .tumorMutationalBurdenEvidence(TestActionableEvidenceFactory.withApprovedTreatment("Pembro"))
                 .tumorMutationalLoad(185)
                 .hasHighTumorMutationalLoad(true)
+                .tumorMutationalLoadEvidence(TestActionableEvidenceFactory.withApprovedTreatment("Pembro"))
+                .build();
+    }
+
+    @NotNull
+    private static MolecularCharacteristics createExhaustiveTestCharacteristics() {
+        return ImmutableMolecularCharacteristics.builder()
+                .from(createProperTestCharacteristics())
+                .microsatelliteEvidence(TestActionableEvidenceFactory.createExhaustive())
+                .homologousRepairDeficiencyEvidence(TestActionableEvidenceFactory.createExhaustive())
+                .tumorMutationalBurdenEvidence(TestActionableEvidenceFactory.createExhaustive())
+                .tumorMutationalLoadEvidence(TestActionableEvidenceFactory.createExhaustive())
                 .build();
     }
 
