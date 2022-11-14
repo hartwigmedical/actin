@@ -95,7 +95,6 @@ public final class TestMolecularFactory {
                 .tumorMutationalBurdenEvidence(TestActionableEvidenceFactory.withApprovedTreatment("Pembro"))
                 .tumorMutationalLoad(185)
                 .hasHighTumorMutationalLoad(true)
-                .tumorMutationalLoadEvidence(TestActionableEvidenceFactory.withApprovedTreatment("Pembro"))
                 .build();
     }
 
