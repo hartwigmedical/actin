@@ -191,6 +191,21 @@ final class MolecularTestFactory {
     }
 
     @NotNull
+    public static PatientRecord withMicrosatelliteInstabilityAndDisruption(@Nullable Boolean isMicrosatelliteUnstable,
+            @NotNull Disruption disruption) {
+        MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
+
+        return withMolecularRecord(ImmutableMolecularRecord.builder()
+                .from(base)
+                .characteristics(ImmutableMolecularCharacteristics.builder()
+                        .from(base.characteristics())
+                        .isMicrosatelliteUnstable(isMicrosatelliteUnstable)
+                        .build())
+                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addDisruptions(disruption).build())
+                .build());
+    }
+
+    @NotNull
     public static PatientRecord withHomologousRepairDeficiencyAndVariant(@Nullable Boolean isHomologousRepairDeficient,
             @NotNull Variant variant) {
         MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
@@ -231,6 +246,21 @@ final class MolecularTestFactory {
                         .isHomologousRepairDeficient(isHomologousRepairDeficient)
                         .build())
                 .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addHomozygousDisruptions(homozygousDisruption).build())
+                .build());
+    }
+
+    @NotNull
+    public static PatientRecord withHomologousRepairDeficiencyAndDisruption(@Nullable Boolean isHomologousRepairDeficient,
+            @NotNull Disruption disruption) {
+        MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
+
+        return withMolecularRecord(ImmutableMolecularRecord.builder()
+                .from(base)
+                .characteristics(ImmutableMolecularCharacteristics.builder()
+                        .from(base.characteristics())
+                        .isHomologousRepairDeficient(isHomologousRepairDeficient)
+                        .build())
+                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addDisruptions(disruption).build())
                 .build());
     }
 
