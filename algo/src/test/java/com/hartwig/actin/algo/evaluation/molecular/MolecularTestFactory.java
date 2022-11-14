@@ -22,6 +22,8 @@ import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
+import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele;
+import com.hartwig.actin.molecular.datamodel.immunology.ImmutableMolecularImmunology;
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
 
 import org.apache.logging.log4j.util.Strings;
@@ -117,7 +119,17 @@ final class MolecularTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withMolecularImmunology(@NotNull MolecularImmunology immunology) {
+    public static PatientRecord withHlaAllele(@NotNull HlaAllele hlaAllele) {
+        return withMolecularImmunology(ImmutableMolecularImmunology.builder().isReliable(true).addHlaAlleles(hlaAllele).build());
+    }
+
+    @NotNull
+    public static PatientRecord withUnreliableMolecularImmunology() {
+        return withMolecularImmunology(ImmutableMolecularImmunology.builder().isReliable(false).build());
+    }
+
+    @NotNull
+    private static PatientRecord withMolecularImmunology(@NotNull MolecularImmunology immunology) {
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(TestMolecularFactory.createMinimalTestMolecularRecord())
                 .immunology(immunology)

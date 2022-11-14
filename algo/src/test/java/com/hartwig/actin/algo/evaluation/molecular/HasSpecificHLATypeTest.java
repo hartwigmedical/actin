@@ -5,45 +5,35 @@ import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecular
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele;
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableHlaAllele;
-import com.hartwig.actin.molecular.datamodel.immunology.ImmutableMolecularImmunology;
-import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
+import com.hartwig.actin.molecular.datamodel.immunology.TestHlaAlleleFactory;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-//TODO: Fix test
 public class HasSpecificHLATypeTest {
 
     @Test
     public void canEvaluate() {
-        String correct = "A*02:01";
-        HasSpecificHLAType function = new HasSpecificHLAType(correct);
+        HlaAllele correct = ImmutableHlaAllele.builder().name("A*02:01").tumorCopyNumber(1D).hasSomaticMutations(false).build();
+        HasSpecificHLAType function = new HasSpecificHLAType(correct.name());
 
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED,
-                function.evaluate(MolecularTestFactory.withMolecularImmunology(create(false))));
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED,
-                function.evaluate(MolecularTestFactory.withMolecularImmunology(create(false, correct))));
+                function.evaluate(MolecularTestFactory.withUnreliableMolecularImmunology()));
+
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withHlaAllele(correct)));
 
         assertMolecularEvaluation(EvaluationResult.WARN,
-                function.evaluate(MolecularTestFactory.withMolecularImmunology(create(true, correct))));
+                function.evaluate(MolecularTestFactory.withHlaAllele(TestHlaAlleleFactory.builder()
+                        .from(correct)
+                        .tumorCopyNumber(0D)
+                        .build())));
+
+        assertMolecularEvaluation(EvaluationResult.WARN,
+                function.evaluate(MolecularTestFactory.withHlaAllele(TestHlaAlleleFactory.builder()
+                        .from(correct)
+                        .hasSomaticMutations(true)
+                        .build())));
 
         assertMolecularEvaluation(EvaluationResult.FAIL,
-                function.evaluate(MolecularTestFactory.withMolecularImmunology(create(true, "other"))));
-    }
-
-    @NotNull
-    private static MolecularImmunology create(boolean isReliable, @NotNull String allele) {
-        HlaAllele hlaAllele = ImmutableHlaAllele.builder().name(allele).tumorCopyNumber(0D).hasSomaticMutations(false).build();
-        return create(isReliable, hlaAllele);
-    }
-
-    @NotNull
-    private static MolecularImmunology create(boolean isReliable, @NotNull HlaAllele... alleles) {
-        return ImmutableMolecularImmunology.builder().from(create(isReliable)).addHlaAlleles(alleles).build();
-    }
-
-    @NotNull
-    private static MolecularImmunology create(boolean isReliable) {
-        return ImmutableMolecularImmunology.builder().isReliable(isReliable).build();
+                function.evaluate(MolecularTestFactory.withHlaAllele(TestHlaAlleleFactory.builder().from(correct).name("other").build())));
     }
 }
