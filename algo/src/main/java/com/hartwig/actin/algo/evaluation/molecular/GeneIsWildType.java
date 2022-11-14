@@ -113,7 +113,8 @@ public class GeneIsWildType implements EvaluationFunction {
         if (!reportableEventsWithEffect.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages("Gene " + gene + " is not considered wild-type due to " + Format.concat(reportableEventsWithEffect))
+                    .addFailSpecificMessages(
+                            "Gene " + gene + " is not considered wild-type due to " + Format.concat(reportableEventsWithEffect))
                     .addFailGeneralMessages(gene + "not wild-type")
                     .build();
         }
