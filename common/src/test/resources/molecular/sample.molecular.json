@@ -7,91 +7,226 @@
     "month": 2,
     "day": 23
   },
+  "evidenceSource": "kb",
+  "externalTrialSource": "trial kb",
   "containsTumorCells": true,
   "hasSufficientQuality": true,
   "characteristics": {
     "purity": 0.98,
+    "ploidy": 3.1,
     "predictedTumorOrigin": {
       "tumorType": "Melanoma",
       "likelihood": 0.99
     },
     "isMicrosatelliteUnstable": false,
+    "microsatelliteEvidence": null,
     "isHomologousRepairDeficient": true,
+    "homologousRepairDeficiencyEvidence": null,
     "tumorMutationalBurden": 4.32,
-    "tumorMutationalLoad": 243
+    "hasHighTumorMutationalBurden": true,
+    "tumorMutationalBurdenEvidence": null,
+    "tumorMutationalLoad": 243,
+    "hasHighTumorMutationalLoad": true,
+    "tumorMutationalLoadEvidence": null
   },
   "drivers": {
     "variants": [
       {
+        "isReportable": true,
         "event": "BRAF V600E",
         "driverLikelihood": "HIGH",
+        "evidence": {
+          "approvedTreatments": [],
+          "externalEligibleTrials": [],
+          "onLabelExperimentalTreatments": [],
+          "offLabelExperimentalTreatments": [],
+          "preClinicalTreatments": [],
+          "knownResistantTreatments": [],
+          "suspectResistantTreatments": []
+        },
         "gene": "BRAF",
-        "impact": "p.V600E",
+        "geneRole": "ONCO",
+        "proteinEffect": "GAIN_OF_FUNCTION",
+        "isAssociatedWithDrugResistance": null,
+        "type": "SNV",
         "variantCopyNumber": 4.1,
         "totalCopyNumber": 6.0,
-        "driverType": "HOTSPOT",
-        "clonalLikelihood": 1.0
+        "isBiallelic": false,
+        "isHotspot": false,
+        "clonalLikelihood": 1.0,
+        "phaseGroup": null,
+        "canonicalImpact": {
+          "transcriptId": "",
+          "hgvsCodingImpact": "",
+          "hgvsProteinImpact": "",
+          "affectedCodon": null,
+          "affectedExon": null,
+          "isSpliceRegion": false,
+          "effects": [],
+          "codingEffect": null
+        },
+        "otherImpacts": []
       }
     ],
     "amplifications": [
       {
+        "isReportable": true,
         "event": "MYC amp",
         "driverLikelihood": "HIGH",
+        "evidence": {
+          "approvedTreatments": [],
+          "externalEligibleTrials": [],
+          "onLabelExperimentalTreatments": [],
+          "offLabelExperimentalTreatments": [],
+          "preClinicalTreatments": [],
+          "knownResistantTreatments": [],
+          "suspectResistantTreatments": []
+        },
         "gene": "MYC",
-        "copies": 38,
+        "geneRole": "UNKNOWN",
+        "proteinEffect": "UNKNOWN",
+        "isAssociatedWithDrugResistance": null,
+        "minCopies": 38,
+        "maxCopies": 38,
         "isPartial": false
       }
     ],
     "losses": [
       {
+        "isReportable": true,
         "event": "PTEN del",
         "driverLikelihood": "HIGH",
+        "evidence": {
+          "approvedTreatments": [],
+          "externalEligibleTrials": [],
+          "onLabelExperimentalTreatments": [],
+          "offLabelExperimentalTreatments": [],
+          "preClinicalTreatments": [],
+          "knownResistantTreatments": [],
+          "suspectResistantTreatments": []
+        },
         "gene": "PTEN",
+        "geneRole": "UNKNOWN",
+        "proteinEffect": "UNKNOWN",
+        "isAssociatedWithDrugResistance": null,
+        "minCopies": 0,
+        "maxCopies": 2,
         "isPartial": true
       }
     ],
     "homozygousDisruptions": [
       {
+        "isReportable": true,
         "event": "PTEN disruption",
         "driverLikelihood": "HIGH",
-        "gene": "PTEN"
+        "evidence": {
+          "approvedTreatments": [],
+          "externalEligibleTrials": [],
+          "onLabelExperimentalTreatments": [],
+          "offLabelExperimentalTreatments": [],
+          "preClinicalTreatments": [],
+          "knownResistantTreatments": [],
+          "suspectResistantTreatments": []
+        },
+        "gene": "PTEN",
+        "geneRole": "UNKNOWN",
+        "proteinEffect": "UNKNOWN",
+        "isAssociatedWithDrugResistance": null
       }
     ],
     "disruptions": [
       {
+        "isReportable": true,
         "event": "",
         "driverLikelihood": "LOW",
+        "evidence": {
+          "approvedTreatments": [],
+          "externalEligibleTrials": [],
+          "onLabelExperimentalTreatments": [],
+          "offLabelExperimentalTreatments": [],
+          "preClinicalTreatments": [],
+          "knownResistantTreatments": [],
+          "suspectResistantTreatments": []
+        },
         "gene": "NF1",
+        "geneRole": "UNKNOWN",
+        "proteinEffect": "UNKNOWN",
+        "isAssociatedWithDrugResistance": null,
         "type": "DEL",
         "junctionCopyNumber": 1.1,
         "undisruptedCopyNumber": 2.0,
-        "range": "Intron 1 downstream"
+        "regionType": "INTRONIC",
+        "codingContext": "NON_CODING",
+        "clusterGroup": null
       },
       {
+        "isReportable": true,
         "event": "",
         "driverLikelihood": "LOW",
+        "evidence": {
+          "approvedTreatments": [],
+          "externalEligibleTrials": [],
+          "onLabelExperimentalTreatments": [],
+          "offLabelExperimentalTreatments": [],
+          "preClinicalTreatments": [],
+          "knownResistantTreatments": [],
+          "suspectResistantTreatments": []
+        },
         "gene": "NF1",
+        "geneRole": "UNKNOWN",
+        "proteinEffect": "UNKNOWN",
+        "isAssociatedWithDrugResistance": null,
         "type": "DUP",
         "junctionCopyNumber": 0.3,
         "undisruptedCopyNumber": 2.8,
-        "range": "Intron 2 upstream"
+        "regionType": "INTRONIC",
+        "codingContext": "NON_CODING",
+        "clusterGroup": null
       }
     ],
     "fusions": [
       {
+        "isReportable": true,
         "event": "EML4-ALK fusion",
         "driverLikelihood": "HIGH",
-        "fiveGene": "EML4",
-        "threeGene": "ALK",
-        "details": "Exon 2 - Exon 4",
-        "driverType": "KNOWN"
+        "evidence": {
+          "approvedTreatments": [],
+          "externalEligibleTrials": [],
+          "onLabelExperimentalTreatments": [],
+          "offLabelExperimentalTreatments": [],
+          "preClinicalTreatments": [],
+          "knownResistantTreatments": [],
+          "suspectResistantTreatments": []
+        },
+        "geneStart": "EML4",
+        "geneTranscriptStart": "",
+        "geneContextStart": "",
+        "fusedExonUp": 12,
+        "geneEnd": "ALK",
+        "geneTranscriptEnd": "",
+        "geneContextEnd":  "",
+        "fusedExonDown": 10,
+        "driverType": "KNOWN_PAIR",
+        "proteinEffect": "UNKNOWN",
+        "isAssociatedWithDrugResistance": false
       }
     ],
     "viruses": [
       {
+        "isReportable": true,
         "event": "HPV positive",
         "driverLikelihood": "HIGH",
+        "evidence": {
+          "approvedTreatments": [],
+          "externalEligibleTrials": [],
+          "onLabelExperimentalTreatments": [],
+          "offLabelExperimentalTreatments": [],
+          "preClinicalTreatments": [],
+          "knownResistantTreatments": [],
+          "suspectResistantTreatments": []
+        },
         "name": "Human papillomavirus type 16",
+        "interpretation": "HPV",
         "integrations": 3
       }
     ]
@@ -116,88 +251,5 @@
         }
       ]
     }
-  ],
-  "wildTypeGenes": [
-    "KRAS"
-  ],
-  "evidence": {
-    "actinSource": "local",
-    "actinTrials": [
-      {
-        "event": "High TML",
-        "trialAcronym": "Trial 1",
-        "cohortId": "A",
-        "isInclusionCriterion": true,
-        "type": "SIGNATURE",
-        "gene": null,
-        "mutation": null
-      },
-      {
-        "event": "HR deficiency",
-        "trialAcronym": "Trial 2",
-        "cohortId": null,
-        "isInclusionCriterion": false,
-        "type": "SIGNATURE",
-        "gene": null,
-        "mutation": null
-      },
-      {
-        "event": "NF1 disruption",
-        "trialAcronym": "Trial 3",
-        "cohortId": "B",
-        "isInclusionCriterion": true,
-        "type": "INACTIVATED_GENE",
-        "gene": "NF1",
-        "mutation": null
-      }
-    ],
-    "externalTrialSource": "trials",
-    "externalTrials": [
-      {
-        "event": "High TML",
-        "trial": "Trial 1"
-      }
-    ],
-    "evidenceSource": "evidence",
-    "approvedEvidence": [
-      {
-        "event": "High TML",
-        "treatment": "Pembrolizumab"
-      },
-      {
-        "event": "High TML",
-        "treatment": "Nivolumab"
-      }
-    ],
-    "onLabelExperimentalEvidence": [
-      {
-        "event": "on-label experimental",
-        "treatment": "on-label experimental drug"
-      }
-    ],
-    "offLabelExperimentalEvidence": [
-      {
-        "event": "off-label experimental",
-        "treatment": "off-label experimental drug"
-      }
-    ],
-    "preClinicalEvidence": [
-      {
-        "event": "pre clinical",
-        "treatment": "no drug yet"
-      }
-    ],
-    "knownResistanceEvidence": [
-      {
-        "event": "known resistance",
-        "treatment": "known resistant drug"
-      }
-    ],
-    "suspectResistanceEvidence": [
-      {
-        "event": "suspect resistance",
-        "treatment": "suspect resistant drug"
-      }
-    ]
-  }
+  ]
 }

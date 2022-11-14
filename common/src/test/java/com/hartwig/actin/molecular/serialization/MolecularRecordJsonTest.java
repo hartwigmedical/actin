@@ -31,7 +31,6 @@ import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
 
 import org.jetbrains.annotations.NotNull;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class MolecularRecordJsonTest {
@@ -60,7 +59,6 @@ public class MolecularRecordJsonTest {
     }
 
     @Test
-    @Ignore
     public void canReadMolecularJson() throws IOException {
         MolecularRecord molecular = MolecularRecordJson.read(MOLECULAR_JSON);
 
