@@ -19,6 +19,7 @@ import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class GeneIsWildType implements EvaluationFunction {
 
@@ -33,6 +34,7 @@ public class GeneIsWildType implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> reportableEventsWithEffect = Sets.newHashSet();
+        Set<String> reportableEventsWithEffectPotentiallyWildtype = Sets.newHashSet();
         Set<String> reportableEventsWithNoEffect = Sets.newHashSet();
 
         for (Variant variant : record.molecular().drivers().variants()) {
@@ -54,7 +56,7 @@ public class GeneIsWildType implements EvaluationFunction {
                 if (hasNoEffect) {
                     reportableEventsWithNoEffect.add(amplification.event());
                 } else {
-                    reportableEventsWithEffect.add(amplification.event());
+                    reportableEventsWithEffectPotentiallyWildtype.add(amplification.event());
                 }
             }
         }
@@ -66,7 +68,7 @@ public class GeneIsWildType implements EvaluationFunction {
                 if (hasNoEffect) {
                     reportableEventsWithNoEffect.add(loss.event());
                 } else {
-                    reportableEventsWithEffect.add(loss.event());
+                    reportableEventsWithEffectPotentiallyWildtype.add(loss.event());
                 }
             }
         }
@@ -111,24 +113,56 @@ public class GeneIsWildType implements EvaluationFunction {
         if (!reportableEventsWithEffect.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages("Gene " + gene + " is not wild-type due to " + Format.concat(reportableEventsWithEffect))
-                    .addFailGeneralMessages("No wild-type for gene " + gene)
+                    .addFailSpecificMessages("Gene " + gene + " is not considered wild-type due to " + Format.concat(reportableEventsWithEffect))
+                    .addFailGeneralMessages(gene + "not wild-type")
                     .build();
         }
 
-        if (!reportableEventsWithNoEffect.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addWarnSpecificMessages(
-                            "Gene " + gene + " may be wild-type but consider events " + Format.concat(reportableEventsWithNoEffect))
-                    .addWarnGeneralMessages("Potential wild-type for gene " + gene)
-                    .build();
+        Evaluation potentialWarnEvaluation =
+                evaluatePotentialWarns(reportableEventsWithNoEffect, reportableEventsWithEffectPotentiallyWildtype);
+
+        if (potentialWarnEvaluation != null) {
+            return potentialWarnEvaluation;
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.PASS)
-                .addPassSpecificMessages("Gene " + gene + " is wild-type")
-                .addPassGeneralMessages("Gene " + gene + " is wild-type")
+                .addPassSpecificMessages("Gene " + gene + " is considered wild-type")
+                .addPassGeneralMessages(gene + " wild-type")
+                .addInclusionMolecularEvents(gene + "wild-type")
                 .build();
+    }
+
+    @Nullable
+    private Evaluation evaluatePotentialWarns(@NotNull Set<String> reportableEventsWithNoEffect,
+            @NotNull Set<String> reportableEventsWithEffectPotentiallyWildtype) {
+        Set<String> warnEvents = Sets.newHashSet();
+        Set<String> warnSpecificMessages = Sets.newHashSet();
+        Set<String> warnGeneralMessages = Sets.newHashSet();
+
+        if (!reportableEventsWithNoEffect.isEmpty()) {
+            warnEvents.addAll(reportableEventsWithNoEffect);
+            warnSpecificMessages.add("Reportable event(s) in " + gene + " are detected: " + Format.concat(reportableEventsWithNoEffect)
+                    + ", however these are annotated with protein effect 'no effect' and thus may potentially be considered wild-type?");
+            warnGeneralMessages.add(gene + " potentially wild-type");
+        }
+
+        if (!reportableEventsWithEffectPotentiallyWildtype.isEmpty()) {
+            warnEvents.addAll(reportableEventsWithEffectPotentiallyWildtype);
+            warnSpecificMessages.add(
+                    "Reportable event(s) in " + gene + " are detected: " + Format.concat(reportableEventsWithEffectPotentiallyWildtype)
+                            + " which may potentially be considered wild-type?");
+            warnGeneralMessages.add(gene + " potentially wild-type");
+        }
+
+        if (!warnEvents.isEmpty() && !warnSpecificMessages.isEmpty() && !warnGeneralMessages.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.WARN)
+                    .addAllInclusionMolecularEvents(warnEvents)
+                    .addAllWarnSpecificMessages(warnSpecificMessages)
+                    .addAllWarnGeneralMessages(warnGeneralMessages)
+                    .build();
+        }
+        return null;
     }
 }

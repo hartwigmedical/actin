@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular;
 
-import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation;
 
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -21,16 +21,16 @@ public class GeneIsWildTypeTest {
     public void canEvaluateVariants() {
         GeneIsWildType function = new GeneIsWildType("gene A");
 
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
-        assertEvaluation(EvaluationResult.FAIL,
+        assertMolecularEvaluation(EvaluationResult.FAIL,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
                         .isReportable(true)
                         .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
                         .build())));
 
-        assertEvaluation(EvaluationResult.WARN,
+        assertMolecularEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
                         .isReportable(true)
@@ -42,9 +42,9 @@ public class GeneIsWildTypeTest {
     public void canEvaluateAmplifications() {
         GeneIsWildType function = new GeneIsWildType("gene A");
 
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
-        assertEvaluation(EvaluationResult.FAIL,
+        assertMolecularEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withAmplification(TestAmplificationFactory.builder()
                         .gene("gene A")
                         .isReportable(true)
@@ -52,7 +52,7 @@ public class GeneIsWildTypeTest {
                         .geneRole(GeneRole.ONCO)
                         .build())));
 
-        assertEvaluation(EvaluationResult.WARN,
+        assertMolecularEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withAmplification(TestAmplificationFactory.builder()
                         .gene("gene A")
                         .isReportable(true)
@@ -60,7 +60,7 @@ public class GeneIsWildTypeTest {
                         .geneRole(GeneRole.ONCO)
                         .build())));
 
-        assertEvaluation(EvaluationResult.PASS,
+        assertMolecularEvaluation(EvaluationResult.PASS,
                 function.evaluate(MolecularTestFactory.withAmplification(TestAmplificationFactory.builder()
                         .gene("gene A")
                         .isReportable(true)
@@ -73,9 +73,9 @@ public class GeneIsWildTypeTest {
     public void canEvaluateLosses() {
         GeneIsWildType function = new GeneIsWildType("gene A");
 
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
-        assertEvaluation(EvaluationResult.FAIL,
+        assertMolecularEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withLoss(TestLossFactory.builder()
                         .gene("gene A")
                         .isReportable(true)
@@ -83,7 +83,7 @@ public class GeneIsWildTypeTest {
                         .geneRole(GeneRole.TSG)
                         .build())));
 
-        assertEvaluation(EvaluationResult.WARN,
+        assertMolecularEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withLoss(TestLossFactory.builder()
                         .gene("gene A")
                         .isReportable(true)
@@ -91,7 +91,7 @@ public class GeneIsWildTypeTest {
                         .geneRole(GeneRole.TSG)
                         .build())));
 
-        assertEvaluation(EvaluationResult.PASS,
+        assertMolecularEvaluation(EvaluationResult.PASS,
                 function.evaluate(MolecularTestFactory.withLoss(TestLossFactory.builder()
                         .gene("gene A")
                         .isReportable(true)
@@ -104,9 +104,9 @@ public class GeneIsWildTypeTest {
     public void canEvaluateHomozygousDisruptions() {
         GeneIsWildType function = new GeneIsWildType("gene A");
 
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
-        assertEvaluation(EvaluationResult.FAIL,
+        assertMolecularEvaluation(EvaluationResult.FAIL,
                 function.evaluate(MolecularTestFactory.withHomozygousDisruption(TestHomozygousDisruptionFactory.builder()
                         .gene("gene A")
                         .isReportable(true)
@@ -114,7 +114,7 @@ public class GeneIsWildTypeTest {
                         .geneRole(GeneRole.TSG)
                         .build())));
 
-        assertEvaluation(EvaluationResult.WARN,
+        assertMolecularEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withHomozygousDisruption(TestHomozygousDisruptionFactory.builder()
                         .gene("gene A")
                         .isReportable(true)
@@ -122,7 +122,7 @@ public class GeneIsWildTypeTest {
                         .geneRole(GeneRole.TSG)
                         .build())));
 
-        assertEvaluation(EvaluationResult.PASS,
+        assertMolecularEvaluation(EvaluationResult.PASS,
                 function.evaluate(MolecularTestFactory.withHomozygousDisruption(TestHomozygousDisruptionFactory.builder()
                         .gene("gene A")
                         .isReportable(true)
@@ -135,9 +135,9 @@ public class GeneIsWildTypeTest {
     public void canEvaluateDisruptions() {
         GeneIsWildType function = new GeneIsWildType("gene A");
 
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
-        assertEvaluation(EvaluationResult.FAIL,
+        assertMolecularEvaluation(EvaluationResult.FAIL,
                 function.evaluate(MolecularTestFactory.withDisruption(TestDisruptionFactory.builder()
                         .gene("gene A")
                         .isReportable(true)
@@ -145,7 +145,7 @@ public class GeneIsWildTypeTest {
                         .geneRole(GeneRole.TSG)
                         .build())));
 
-        assertEvaluation(EvaluationResult.WARN,
+        assertMolecularEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withDisruption(TestDisruptionFactory.builder()
                         .gene("gene A")
                         .isReportable(true)
@@ -153,7 +153,7 @@ public class GeneIsWildTypeTest {
                         .geneRole(GeneRole.TSG)
                         .build())));
 
-        assertEvaluation(EvaluationResult.PASS,
+        assertMolecularEvaluation(EvaluationResult.PASS,
                 function.evaluate(MolecularTestFactory.withDisruption(TestDisruptionFactory.builder()
                         .gene("gene A")
                         .isReportable(true)
@@ -166,23 +166,23 @@ public class GeneIsWildTypeTest {
     public void canEvaluateFusions() {
         GeneIsWildType function = new GeneIsWildType("gene A");
 
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
-        assertEvaluation(EvaluationResult.FAIL,
+        assertMolecularEvaluation(EvaluationResult.FAIL,
                 function.evaluate(MolecularTestFactory.withFusion(TestFusionFactory.builder()
                         .geneStart("gene A")
                         .isReportable(true)
                         .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
                         .build())));
 
-        assertEvaluation(EvaluationResult.FAIL,
+        assertMolecularEvaluation(EvaluationResult.FAIL,
                 function.evaluate(MolecularTestFactory.withFusion(TestFusionFactory.builder()
                         .geneEnd("gene A")
                         .isReportable(true)
                         .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
                         .build())));
 
-        assertEvaluation(EvaluationResult.WARN,
+        assertMolecularEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withFusion(TestFusionFactory.builder()
                         .geneStart("gene A")
                         .isReportable(true)
