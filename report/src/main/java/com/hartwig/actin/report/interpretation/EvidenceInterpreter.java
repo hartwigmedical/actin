@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.interpretation;
 
+import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -11,7 +12,16 @@ public class EvidenceInterpreter {
     @NotNull
     private final Set<String> actinInclusionEvents;
 
-    public EvidenceInterpreter(@NotNull final Set<String> actinInclusionEvents) {
+    @NotNull
+    public static EvidenceInterpreter fromEvaluatedTrials(@NotNull List<EvaluatedTrial> trials) {
+        Set<String> actinInclusionEvents = Sets.newHashSet();
+        for (EvaluatedTrial trial : trials) {
+            actinInclusionEvents.addAll(trial.molecularEvents());
+        }
+        return new EvidenceInterpreter(actinInclusionEvents);
+    }
+
+    private EvidenceInterpreter(@NotNull final Set<String> actinInclusionEvents) {
         this.actinInclusionEvents = actinInclusionEvents;
     }
 

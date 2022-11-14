@@ -1,13 +1,13 @@
 package com.hartwig.actin.report.pdf.tables.molecular;
 
+import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
 
-import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
-import com.hartwig.actin.report.interpretation.ActinEvidenceFactory;
 import com.hartwig.actin.report.interpretation.ClonalityInterpreter;
+import com.hartwig.actin.report.interpretation.EvaluatedTrial;
 import com.hartwig.actin.report.interpretation.MolecularDriverEntry;
 import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
@@ -24,15 +24,15 @@ import org.jetbrains.annotations.Nullable;
 public class MolecularDriversGenerator implements TableGenerator {
 
     @NotNull
-    private final TreatmentMatch treatmentMatch;
-    @NotNull
     private final MolecularRecord molecular;
+    @NotNull
+    private final List<EvaluatedTrial> trials;
     private final float width;
 
-    public MolecularDriversGenerator(@NotNull final TreatmentMatch treatmentMatch, @NotNull final MolecularRecord molecular,
+    public MolecularDriversGenerator(@NotNull final MolecularRecord molecular, @NotNull final List<EvaluatedTrial> trials,
             final float width) {
-        this.treatmentMatch = treatmentMatch;
         this.molecular = molecular;
+        this.trials = trials;
         this.width = width;
     }
 
@@ -56,7 +56,7 @@ public class MolecularDriversGenerator implements TableGenerator {
         table.addHeaderCell(Cells.createHeader("Best evidence in " + molecular.evidenceSource()));
         table.addHeaderCell(Cells.createHeader("Resistance in " + molecular.evidenceSource()));
 
-        MolecularDriverEntryFactory factory = new MolecularDriverEntryFactory(ActinEvidenceFactory.trialsPerInclusionEvent(treatmentMatch));
+        MolecularDriverEntryFactory factory = MolecularDriverEntryFactory.fromEvaluatedTrials(trials);
         Set<MolecularDriverEntry> entries = factory.create(molecular);
 
         for (MolecularDriverEntry entry : entries) {

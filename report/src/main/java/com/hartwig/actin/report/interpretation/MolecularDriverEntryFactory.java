@@ -1,7 +1,9 @@
 package com.hartwig.actin.report.interpretation;
 
+import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
@@ -26,6 +28,17 @@ public class MolecularDriverEntryFactory {
 
     @NotNull
     private final Multimap<String, String> trialsPerInclusionEvent;
+
+    @NotNull
+    public static MolecularDriverEntryFactory fromEvaluatedTrials(@NotNull List<EvaluatedTrial> trials) {
+        Multimap<String, String> trialsPerInclusionEvent = ArrayListMultimap.create();
+        for (EvaluatedTrial trial : trials) {
+            for (String molecularEvent : trial.molecularEvents()) {
+                trialsPerInclusionEvent.put(molecularEvent, trial.acronym());
+            }
+        }
+        return new MolecularDriverEntryFactory(trialsPerInclusionEvent);
+    }
 
     public MolecularDriverEntryFactory(@NotNull final Multimap<String, String> trialsPerInclusionEvent) {
         this.trialsPerInclusionEvent = trialsPerInclusionEvent;
