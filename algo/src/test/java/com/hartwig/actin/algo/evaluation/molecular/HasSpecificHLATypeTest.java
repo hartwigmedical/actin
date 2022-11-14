@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular;
 
-import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation;
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele;
@@ -11,6 +11,7 @@ import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
+//TODO: Fix test
 public class HasSpecificHLATypeTest {
 
     @Test
@@ -18,14 +19,15 @@ public class HasSpecificHLATypeTest {
         String correct = "A*02:01";
         HasSpecificHLAType function = new HasSpecificHLAType(correct);
 
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withMolecularImmunology(create(false))));
-        assertEvaluation(EvaluationResult.UNDETERMINED,
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED,
+                function.evaluate(MolecularTestFactory.withMolecularImmunology(create(false))));
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED,
                 function.evaluate(MolecularTestFactory.withMolecularImmunology(create(false, correct))));
 
-        assertEvaluation(EvaluationResult.PASS,
+        assertMolecularEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withMolecularImmunology(create(true, correct))));
 
-        assertEvaluation(EvaluationResult.FAIL,
+        assertMolecularEvaluation(EvaluationResult.FAIL,
                 function.evaluate(MolecularTestFactory.withMolecularImmunology(create(true, "other"))));
     }
 

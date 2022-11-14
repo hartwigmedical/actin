@@ -23,6 +23,7 @@ public class HasSpecificHLAType implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         MolecularImmunology immunology = record.molecular().immunology();
+
         if (!immunology.isReliable()) {
             return EvaluationFactory.recoverable()
                     .result(EvaluationResult.UNDETERMINED)
@@ -33,14 +34,28 @@ public class HasSpecificHLAType implements EvaluationFunction {
 
         for (HlaAllele hlaAllele : immunology.hlaAlleles()) {
             if (hlaAllele.name().equals(hlaAlleleToFind)) {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.PASS)
-                        .addPassSpecificMessages("Patient has HLA type '" + hlaAlleleToFind + "'")
-                        .addPassGeneralMessages("HLA typing")
-                        .build();
+                boolean alleleIsPresentInTumor = hlaAllele.tumorCopyNumber() >= 0.5;
+                boolean alleleHasSomaticMutations = hlaAllele.hasSomaticMutations();
+
+                if (alleleIsPresentInTumor && !alleleHasSomaticMutations) {
+                    return EvaluationFactory.unrecoverable()
+                            .result(EvaluationResult.PASS)
+                            .addPassSpecificMessages("Patient has HLA type " + hlaAllele.name() + " which is equal to required allele type "
+                                    + hlaAlleleToFind + ", this allele is present and without somatic variants in tumor")
+                            .addPassGeneralMessages("HLA type")
+                            .addInclusionMolecularEvents(hlaAllele.name())
+                            .build();
+                } else {
+                    return EvaluationFactory.unrecoverable()
+                            .result(EvaluationResult.WARN)
+                            .addWarnSpecificMessages("Patient has HLA type " + hlaAllele.name() + " which is equal to required allele type "
+                                    + hlaAlleleToFind + ", however, this allele is affected in tumor.")
+                            .addWarnGeneralMessages("HLA type")
+                            .addInclusionMolecularEvents(hlaAllele.name())
+                            .build();
+                }
             }
         }
-
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient does not have HLA type '" + hlaAlleleToFind + "'")
