@@ -41,6 +41,8 @@ public class OtherConditionRuleMapper extends RuleMapper {
                 hasHistoryOfCongestiveHeartFailureWithNYHACreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_CENTRAL_NERVOUS_SYSTEM_DISEASE,
                 hasPriorConditionWithDoidCreator(DoidConstants.CENTRAL_NERVOUS_SYSTEM_DOID));
+        map.put(EligibilityRule.HAS_HISTORY_OF_EYE_DISEASE,
+                hasPriorConditionWithDoidCreator(DoidConstants.EYE_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_GASTROINTESTINAL_DISEASE,
                 hasPriorConditionWithDoidCreator(DoidConstants.GASTROINTESTINAL_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_IMMUNE_SYSTEM_DISEASE,

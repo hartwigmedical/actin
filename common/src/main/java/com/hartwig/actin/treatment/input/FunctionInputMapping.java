@@ -225,6 +225,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_CONGESTIVE_HEART_FAILURE_WITH_AT_LEAST_NYHA_CLASS_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_CENTRAL_NERVOUS_SYSTEM_DISEASE, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_EYE_DISEASE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_GASTROINTESTINAL_DISEASE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_IMMUNE_SYSTEM_DISEASE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_INTERSTITIAL_LUNG_DISEASE, FunctionInput.NONE);

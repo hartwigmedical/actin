@@ -83,6 +83,7 @@ public final class DoidConstants {
     public static final String CARDIOVASCULAR_DISEASE_DOID = "1287";
     public static final String CENTRAL_NERVOUS_SYSTEM_DOID = "331";
     public static final String DIABETES_DOID = "9351";
+    public static final String EYE_DISEASE_DOID = "5614";
     public static final String GASTROINTESTINAL_DISEASE_DOID = "77";
     public static final String GILBERT_DISEASE_DOID = "2739";
     public static final String HEART_DISEASE_DOID = "114";
