@@ -8,9 +8,10 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HadHadIntratumoralInjectionTreatment implements EvaluationFunction {
+//TODO: Implement according to README
+public class HasHadLocalHepaticTherapyWithinWeeks implements EvaluationFunction {
 
-    HadHadIntratumoralInjectionTreatment() {
+    HasHadLocalHepaticTherapyWithinWeeks() {
     }
 
     @NotNull
@@ -18,8 +19,8 @@ public class HadHadIntratumoralInjectionTreatment implements EvaluationFunction 
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Not determined yet if patient has had previous intratumoral injection treatments")
-                .addUndeterminedGeneralMessages("Prior IT injection treatment")
+                .addUndeterminedSpecificMessages("Not determined yet if patient has had local hepatic therapy within certain weeks")
+                .addUndeterminedGeneralMessages("Undetermined local hepatic therapy")
                 .build();
     }
 }

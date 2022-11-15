@@ -60,7 +60,8 @@ public class TreatmentRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_HAD_COMPLETE_RESECTION, hasHadCompleteResectionCreator());
         map.put(EligibilityRule.HAS_HAD_PARTIAL_RESECTION, hasHadPartialResectionCreator());
         map.put(EligibilityRule.HAS_HAD_RESECTION_WITHIN_X_WEEKS, hasHadResectionWithinWeeksCreator());
-        map.put(EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT, hadHadIntratumoralInjectionTreatmentCreator());
+        map.put(EligibilityRule.HAS_HAD_LOCAL_HEPATIC_THERAPY_WITHIN_X_WEEKS, hasHadLocalHepaticTherapyWithinWeeksCreator());
+        map.put(EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT, hasHadIntratumoralInjectionTreatmentCreator());
         map.put(EligibilityRule.HAS_CUMULATIVE_ANTHRACYCLINE_EXPOSURE_OF_AT_MOST_X_MG_PER_M2_DOXORUBICIN_OR_EQUIVALENT,
                 hasLimitedCumulativeAnthracyclineExposureCreator());
         map.put(EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_CURRENT_TRIAL, hasPreviouslyParticipatedInCurrentTrialCreator());
@@ -279,8 +280,13 @@ public class TreatmentRuleMapper extends RuleMapper {
     }
 
     @NotNull
-    private FunctionCreator hadHadIntratumoralInjectionTreatmentCreator() {
-        return function -> new HadHadIntratumoralInjectionTreatment();
+    private FunctionCreator hasHadLocalHepaticTherapyWithinWeeksCreator() {
+        return function -> new HasHadLocalHepaticTherapyWithinWeeks();
+    }
+
+    @NotNull
+    private FunctionCreator hasHadIntratumoralInjectionTreatmentCreator() {
+        return function -> new HasHadIntratumoralInjectionTreatment();
     }
 
     @NotNull
