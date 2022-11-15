@@ -24,8 +24,8 @@ import static com.hartwig.actin.database.Tables.VIRUS;
 import static com.hartwig.actin.database.Tables.VIRUSEVIDENCE;
 
 import java.util.Set;
-import java.util.StringJoiner;
 
+import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.driver.Amplification;
@@ -206,19 +206,19 @@ class MolecularDAO {
                             variant.canonicalImpact().affectedCodon(),
                             variant.canonicalImpact().affectedExon(),
                             DataUtil.toByte(variant.canonicalImpact().isSpliceRegion()),
-                            concatTranscriptEffects(variant.canonicalImpact().effects()),
+                            DataUtil.concat(toStrings(variant.canonicalImpact().effects())),
                             DataUtil.nullableToString(variant.canonicalImpact().codingEffect()))
                     .execute();
         }
     }
 
     @NotNull
-    private static String concatTranscriptEffects(@NotNull Iterable<VariantEffect> effects) {
-        StringJoiner joiner = new StringJoiner("&");
+    private static Set<String> toStrings(@NotNull Set<VariantEffect> effects) {
+        Set<String> strings = Sets.newHashSet();
         for (VariantEffect effect : effects) {
-            joiner.add(effect.toString());
+            strings.add(effect.toString());
         }
-        return joiner.toString();
+        return strings;
     }
 
     private void writeAmplifications(@NotNull String sampleId, @NotNull Set<Amplification> amplifications) {

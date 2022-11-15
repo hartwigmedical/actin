@@ -17,6 +17,7 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.VariantHotspot;
+import com.hartwig.actin.molecular.orange.util.AminoAcid;
 import com.hartwig.actin.molecular.sort.driver.VariantComparator;
 
 import org.jetbrains.annotations.NotNull;
@@ -96,7 +97,7 @@ final class VariantExtraction {
         return ImmutableTranscriptImpact.builder()
                 .transcriptId(variant.canonicalTranscript())
                 .hgvsCodingImpact(variant.canonicalHgvsCodingImpact())
-                .hgvsProteinImpact(variant.canonicalHgvsProteinImpact())
+                .hgvsProteinImpact(AminoAcid.forceSingleLetterAminoAcids(variant.canonicalHgvsProteinImpact()))
                 .affectedCodon(null)
                 .affectedExon(null)
                 .isSpliceRegion(variant.canonicalCodingEffect() == PurpleCodingEffect.SPLICE)

@@ -10,6 +10,7 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
+import com.hartwig.actin.molecular.orange.util.AminoAcid;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +27,7 @@ public final class DriverEventFactory {
     @NotNull
     private static String impact(@NotNull PurpleVariant variant) {
         if (!variant.canonicalHgvsProteinImpact().isEmpty() && !variant.canonicalHgvsProteinImpact().equals("p.?")) {
-            return variant.canonicalHgvsProteinImpact();
+            return AminoAcid.forceSingleLetterAminoAcids(variant.canonicalHgvsProteinImpact());
         }
 
         if (!variant.canonicalHgvsCodingImpact().isEmpty()) {
