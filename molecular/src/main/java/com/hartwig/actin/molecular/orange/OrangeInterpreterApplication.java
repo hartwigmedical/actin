@@ -3,11 +3,15 @@ package com.hartwig.actin.molecular.orange;
 import java.io.IOException;
 import java.util.List;
 
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
+import com.hartwig.actin.clinical.serialization.ClinicalRecordJson;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.orange.curation.ExternalTrialMapping;
 import com.hartwig.actin.molecular.orange.curation.ExternalTrialMappingTsv;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
-import com.hartwig.actin.molecular.orange.interpretation.OrangeInterpreter;
+import com.hartwig.actin.molecular.orange.filter.GeneFilter;
+import com.hartwig.actin.molecular.orange.filter.GeneFilterFactory;
+import com.hartwig.actin.molecular.orange.interpretation.OrangeReader;
 import com.hartwig.actin.molecular.orange.serialization.OrangeJson;
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson;
 import com.hartwig.actin.molecular.util.MolecularPrinter;
@@ -60,16 +64,25 @@ public class OrangeInterpreterApplication {
         LOGGER.info("Reading ORANGE json from {}", config.orangeJson());
         OrangeRecord orange = OrangeJson.read(config.orangeJson());
 
-        KnownEvents knownEvents = KnownEventsLoader.readFromDir(config.serveDirectory(), RefGenomeVersion.V37);
-        ActionableEvents actionableEvents = ActionableEventsLoader.readFromDir(config.serveDirectory(), RefGenomeVersion.V37);
+        LOGGER.info("Reading gene filter tsv from {}", config.geneFilterTsv());
+        GeneFilter geneFilter = GeneFilterFactory.createFromTsv(config.geneFilterTsv());
+        LOGGER.info(" Read {} genes to include from ORANGE record", geneFilter.size());
+
+        LOGGER.info("Reading ORANGE record");
+        MolecularRecord molecular = new OrangeReader(geneFilter).read(orange);
+        MolecularPrinter.printRecord(molecular);
 
         LOGGER.info("Loading ACTIN to external trial mapping TSV from {}", config.externalTrialMappingTsv());
         List<ExternalTrialMapping> mappings = ExternalTrialMappingTsv.read(config.externalTrialMappingTsv());
         LOGGER.info(" Loaded {} mappings", mappings.size());
 
-        LOGGER.info("Interpreting ORANGE record");
-        MolecularRecord molecular = OrangeInterpreter.create(mappings).interpret(orange);
-        MolecularPrinter.printRecord(molecular);
+        KnownEvents knownEvents = KnownEventsLoader.readFromDir(config.serveDirectory(), RefGenomeVersion.V37);
+        ActionableEvents actionableEvents = ActionableEventsLoader.readFromDir(config.serveDirectory(), RefGenomeVersion.V37);
+
+        LOGGER.info("Loading clinical json from {}", config.clinicalJson());
+        ClinicalRecord clinical = ClinicalRecordJson.read(config.clinicalJson());
+
+        // TODO Annotate with clinical interpretation
 
         MolecularRecordJson.write(molecular, config.outputDirectory());
 

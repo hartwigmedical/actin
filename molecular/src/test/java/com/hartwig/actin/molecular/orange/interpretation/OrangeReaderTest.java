@@ -6,26 +6,21 @@ import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
 
-import com.google.common.collect.Lists;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
+import com.hartwig.actin.molecular.orange.filter.TestGeneFilterFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-public class OrangeInterpreterTest {
+public class OrangeReaderTest {
 
     @Test
-    public void canCreateInterpreterFromEmptyMappings() {
-        assertNotNull(OrangeInterpreter.create(Lists.newArrayList()));
-    }
-
-    @Test
-    public void canInterpretOrangeRecord() {
-        MolecularRecord record = createTestInterpreter().interpret(TestOrangeFactory.createProperTestOrangeRecord());
+    public void canReadOrangeRecord() {
+        MolecularRecord record = createTestReader().read(TestOrangeFactory.createProperTestOrangeRecord());
 
         assertEquals(TestDataFactory.TEST_PATIENT, record.patientId());
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
@@ -49,17 +44,17 @@ public class OrangeInterpreterTest {
 
     @Test
     public void canConvertSampleIdToPatientId() {
-        assertEquals("ACTN01029999", OrangeInterpreter.toPatientId("ACTN01029999T"));
-        assertEquals("ACTN01029999", OrangeInterpreter.toPatientId("ACTN01029999T2"));
+        assertEquals("ACTN01029999", OrangeReader.toPatientId("ACTN01029999T"));
+        assertEquals("ACTN01029999", OrangeReader.toPatientId("ACTN01029999T2"));
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void crashOnInvalidSampleId() {
-        OrangeInterpreter.toPatientId("no sample");
+        OrangeReader.toPatientId("no sample");
     }
 
     @NotNull
-    private static OrangeInterpreter createTestInterpreter() {
-        return new OrangeInterpreter();
+    private static OrangeReader createTestReader() {
+        return new OrangeReader(TestGeneFilterFactory.createEmpty());
     }
 }

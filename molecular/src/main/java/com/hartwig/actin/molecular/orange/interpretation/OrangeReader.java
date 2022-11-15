@@ -1,29 +1,26 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
-import java.util.List;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.orange.curation.ExternalTrialMapping;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
+import com.hartwig.actin.molecular.orange.filter.GeneFilter;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
-public class OrangeInterpreter {
+public class OrangeReader {
 
     @NotNull
-    public static OrangeInterpreter create(@NotNull List<ExternalTrialMapping> mappings) {
-        return new OrangeInterpreter();
-    }
+    private final GeneFilter geneFilter;
 
-    OrangeInterpreter() {
+    public OrangeReader(@NotNull final GeneFilter geneFilter) {
+        this.geneFilter = geneFilter;
     }
 
     @NotNull
-    public MolecularRecord interpret(@NotNull OrangeRecord record) {
+    public MolecularRecord read(@NotNull OrangeRecord record) {
         return ImmutableMolecularRecord.builder()
                 .patientId(toPatientId(record.sampleId()))
                 .sampleId(record.sampleId())
