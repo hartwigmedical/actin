@@ -28,6 +28,7 @@ final class VirusExtraction {
                     .driverLikelihood(determineDriverLikelihood(virus))
                     .evidence(ExtractionUtil.createEmptyEvidence())
                     .name(virus.name())
+                    .interpretation(virus.interpretation())
                     .integrations(virus.integrations())
                     .build());
         }
