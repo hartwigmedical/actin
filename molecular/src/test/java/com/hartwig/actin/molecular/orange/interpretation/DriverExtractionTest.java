@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
@@ -19,22 +18,8 @@ import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
-import com.hartwig.actin.molecular.orange.datamodel.linx.FusionDriverLikelihood;
-import com.hartwig.actin.molecular.orange.datamodel.linx.FusionType;
-import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxFusion;
-import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxRecord;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxTestFactory;
-import com.hartwig.actin.molecular.orange.datamodel.purple.GainLossInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTestFactory;
-import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterEntry;
-import com.hartwig.actin.molecular.orange.datamodel.virus.VirusDriverLikelihood;
-import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
@@ -43,42 +28,7 @@ public class DriverExtractionTest {
     private static final double EPSILON = 1.0E-10;
 
     @Test
-    public void canFilterDisruptionsWithLosses() {
-        String gene = "gene";
-
-        OrangeRecord record1 = withDisruptionAndGainLoss(LinxTestFactory.disruptionBuilder().gene(gene).type("DEL").build(),
-                PurpleTestFactory.gainLossBuilder().gene(gene).interpretation(GainLossInterpretation.FULL_LOSS).build());
-
-        assertEquals(0, DriverExtraction.extract(record1).disruptions().size());
-
-        OrangeRecord record2 = withDisruptionAndGainLoss(LinxTestFactory.disruptionBuilder().gene(gene).type("DUP").build(),
-                PurpleTestFactory.gainLossBuilder().gene(gene).interpretation(GainLossInterpretation.FULL_LOSS).build());
-
-        assertEquals(1, DriverExtraction.extract(record2).disruptions().size());
-
-        OrangeRecord record3 = withDisruptionAndGainLoss(LinxTestFactory.disruptionBuilder().gene(gene).type("DEL").build(),
-                PurpleTestFactory.gainLossBuilder().gene(gene).interpretation(GainLossInterpretation.FULL_GAIN).build());
-
-        assertEquals(1, DriverExtraction.extract(record3).disruptions().size());
-
-        OrangeRecord record4 = withDisruptionAndGainLoss(LinxTestFactory.disruptionBuilder().gene("other").type("DEL").build(),
-                PurpleTestFactory.gainLossBuilder().gene(gene).interpretation(GainLossInterpretation.FULL_LOSS).build());
-
-        assertEquals(1, DriverExtraction.extract(record4).disruptions().size());
-    }
-
-    @NotNull
-    private static OrangeRecord withDisruptionAndGainLoss(@NotNull LinxDisruption disruption, @NotNull PurpleGainLoss gainLoss) {
-        OrangeRecord base = TestOrangeFactory.createMinimalTestOrangeRecord();
-        return ImmutableOrangeRecord.builder()
-                .from(base)
-                .linx(ImmutableLinxRecord.builder().from(base.linx()).addDisruptions(disruption).build())
-                .purple(ImmutablePurpleRecord.builder().from(base.purple()).addGainsLosses(gainLoss).build())
-                .build();
-    }
-
-    @Test
-    public void canRemoveDriversInCaseOfNoTumorCells() {
+    public void removesDriversInCaseOfNoTumorCells() {
         OrangeRecord base = TestOrangeFactory.createProperTestOrangeRecord();
         OrangeRecord orange = ImmutableOrangeRecord.builder()
                 .from(base)
@@ -173,60 +123,5 @@ public class DriverExtractionTest {
         assertEquals(DriverLikelihood.HIGH, virus.driverLikelihood());
         assertEquals("Human papillomavirus type 16", virus.name());
         assertEquals(3, virus.integrations());
-    }
-
-    @Test
-    public void canExtractFusionDriverTypeForAllFusions() {
-        for (FusionType type : FusionType.values()) {
-            if (type != FusionType.NONE) {
-                LinxFusion fusion = ImmutableLinxFusion.builder().from(createTestFusion()).type(type).build();
-                assertNotNull(DriverExtraction.extractFusionDriverType(fusion));
-            }
-        }
-    }
-
-    @Test
-    public void canExtractDriverLikelihoodForAllFusions() {
-        LinxFusion high = ImmutableLinxFusion.builder().from(createTestFusion()).driverLikelihood(FusionDriverLikelihood.HIGH).build();
-        assertEquals(DriverLikelihood.HIGH, DriverExtraction.extractFusionDriverLikelihood(high));
-
-        LinxFusion low = ImmutableLinxFusion.builder().from(createTestFusion()).driverLikelihood(FusionDriverLikelihood.LOW).build();
-        assertEquals(DriverLikelihood.LOW, DriverExtraction.extractFusionDriverLikelihood(low));
-    }
-
-    @Test
-    public void canExtractDriverLikelihoodForAllViruses() {
-        VirusInterpreterEntry high =
-                ImmutableVirusInterpreterEntry.builder().from(createTestVirus()).driverLikelihood(VirusDriverLikelihood.HIGH).build();
-        assertEquals(DriverLikelihood.HIGH, DriverExtraction.extractVirusDriverLikelihood(high));
-
-        VirusInterpreterEntry low =
-                ImmutableVirusInterpreterEntry.builder().from(createTestVirus()).driverLikelihood(VirusDriverLikelihood.LOW).build();
-        assertEquals(DriverLikelihood.LOW, DriverExtraction.extractVirusDriverLikelihood(low));
-
-        VirusInterpreterEntry unknown =
-                ImmutableVirusInterpreterEntry.builder().from(createTestVirus()).driverLikelihood(VirusDriverLikelihood.UNKNOWN).build();
-        assertEquals(DriverLikelihood.LOW, DriverExtraction.extractVirusDriverLikelihood(unknown));
-    }
-
-    @NotNull
-    private static LinxFusion createTestFusion() {
-        return ImmutableLinxFusion.builder()
-                .type(FusionType.NONE)
-                .geneStart(Strings.EMPTY)
-                .geneContextStart(Strings.EMPTY)
-                .geneEnd(Strings.EMPTY)
-                .geneContextEnd(Strings.EMPTY)
-                .driverLikelihood(FusionDriverLikelihood.LOW)
-                .build();
-    }
-
-    @NotNull
-    private static VirusInterpreterEntry createTestVirus() {
-        return ImmutableVirusInterpreterEntry.builder()
-                .name(Strings.EMPTY)
-                .integrations(0)
-                .driverLikelihood(VirusDriverLikelihood.LOW)
-                .build();
     }
 }

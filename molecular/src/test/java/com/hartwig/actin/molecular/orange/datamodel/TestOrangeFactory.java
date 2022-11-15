@@ -22,8 +22,8 @@ import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.GainLossInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTestFactory;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
+import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
 import com.hartwig.actin.molecular.orange.datamodel.purple.VariantHotspot;
 import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterRecord;
@@ -85,7 +85,7 @@ public final class TestOrangeFactory {
     private static PurpleRecord createTestPurpleRecord() {
         return ImmutablePurpleRecord.builder()
                 .from(createMinimalTestPurpleRecord())
-                .addVariants(PurpleTestFactory.variantBuilder()
+                .addVariants(TestPurpleFactory.variantBuilder()
                         .gene("BRAF")
                         .addCanonicalEffects(PurpleVariantEffect.MISSENSE)
                         .canonicalHgvsProteinImpact("p.Val600Glu")
@@ -97,12 +97,12 @@ public final class TestOrangeFactory {
                         .driverLikelihood(1)
                         .biallelic(false)
                         .build())
-                .addGainsLosses(PurpleTestFactory.gainLossBuilder()
+                .addGainsLosses(TestPurpleFactory.gainLossBuilder()
                         .gene("MYC")
                         .interpretation(GainLossInterpretation.FULL_GAIN)
                         .minCopies(38)
                         .build())
-                .addGainsLosses(PurpleTestFactory.gainLossBuilder()
+                .addGainsLosses(TestPurpleFactory.gainLossBuilder()
                         .gene("PTEN")
                         .interpretation(GainLossInterpretation.PARTIAL_LOSS)
                         .minCopies(0)

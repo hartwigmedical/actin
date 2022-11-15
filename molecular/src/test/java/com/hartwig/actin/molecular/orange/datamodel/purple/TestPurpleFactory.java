@@ -3,9 +3,9 @@ package com.hartwig.actin.molecular.orange.datamodel.purple;
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
-public final class PurpleTestFactory {
+public final class TestPurpleFactory {
 
-    private PurpleTestFactory() {
+    private TestPurpleFactory() {
     }
 
     @NotNull
