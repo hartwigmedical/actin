@@ -42,6 +42,10 @@ final class DisruptionExtraction {
     public static Set<Disruption> extractDisruptions(@NotNull LinxRecord linx, @NotNull Set<Loss> losses) {
         Set<Disruption> disruptions = Sets.newTreeSet(new DisruptionComparator());
         for (LinxDisruption disruption : linx.disruptions()) {
+            if (disruption.clusterId() == null) {
+                throw new IllegalStateException("Cannot convert a disruption with null clusterId: " + disruption);
+            }
+
             // TODO: Linx should already filter or flag disruptions that are lost.
             // TODO: Populate region type and coding context
             if (include(disruption, losses)) {

@@ -10,7 +10,12 @@ public final class TestLinxFactory {
 
     @NotNull
     public static ImmutableLinxDisruption.Builder disruptionBuilder() {
-        return ImmutableLinxDisruption.builder().gene(Strings.EMPTY).type(Strings.EMPTY).junctionCopyNumber(0D).undisruptedCopyNumber(0D);
+        return ImmutableLinxDisruption.builder()
+                .gene(Strings.EMPTY)
+                .type(Strings.EMPTY)
+                .junctionCopyNumber(0D)
+                .undisruptedCopyNumber(0D)
+                .clusterId(0);
     }
 
     @NotNull

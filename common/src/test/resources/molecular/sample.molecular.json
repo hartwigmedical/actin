@@ -157,7 +157,7 @@
         "undisruptedCopyNumber": 2.0,
         "regionType": "INTRONIC",
         "codingContext": "NON_CODING",
-        "clusterGroup": null
+        "clusterGroup": 1
       },
       {
         "isReportable": true,
@@ -181,7 +181,7 @@
         "undisruptedCopyNumber": 2.8,
         "regionType": "INTRONIC",
         "codingContext": "NON_CODING",
-        "clusterGroup": null
+        "clusterGroup": 2
       }
     ],
     "fusions": [

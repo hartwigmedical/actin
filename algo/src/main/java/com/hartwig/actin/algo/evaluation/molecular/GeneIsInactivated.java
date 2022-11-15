@@ -118,9 +118,8 @@ public class GeneIsInactivated implements EvaluationFunction {
         Set<Integer> evaluatedClusterGroups = Sets.newHashSet();
         for (Disruption disruption : record.molecular().drivers().disruptions()) {
             if (disruption.gene().equals(gene) && disruption.isReportable()) {
-                Integer clusterGroup = disruption.clusterGroup();
-                if (clusterGroup == null || !evaluatedClusterGroups.contains(clusterGroup)) {
-                    evaluatedClusterGroups.add(clusterGroup);
+                if (!evaluatedClusterGroups.contains(disruption.clusterGroup())) {
+                    evaluatedClusterGroups.add(disruption.clusterGroup());
                     eventsThatMayBeTransPhased.add(disruption.event());
                 }
             }

@@ -447,7 +447,7 @@ CREATE TABLE disruption
     undisruptedCopyNumber double precision NOT NULL,
     regionType varchar(50) NOT NULL,
     codingContext varchar(50) NOT NULL,
-    clusterGroup int,
+    clusterGroup int NOT NULL,
     PRIMARY KEY (id)
 );
 
