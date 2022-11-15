@@ -18,6 +18,6 @@ public abstract class LinxDisruption {
 
     public abstract double undisruptedCopyNumber();
 
-    @NotNull
-    public abstract String range();
+    @Nullable
+    public abstract Integer clusterId();
 }

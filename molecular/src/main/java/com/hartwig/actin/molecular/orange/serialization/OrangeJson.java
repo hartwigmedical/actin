@@ -213,7 +213,7 @@ public final class OrangeJson {
                         .type(string(geneDisruption, "type"))
                         .junctionCopyNumber(number(geneDisruption, "junctionCopyNumber"))
                         .undisruptedCopyNumber(number(geneDisruption, "undisruptedCopyNumber"))
-                        .range(string(geneDisruption, "range"))
+                        .clusterId(nullableInteger(geneDisruption, "clusterId"))
                         .build());
             }
             return disruptions;

@@ -127,7 +127,6 @@ public final class TestOrangeFactory {
                         .type("DEL")
                         .junctionCopyNumber(0.8)
                         .undisruptedCopyNumber(2.1)
-                        .range("Intron 1 downstream")
                         .build())
                 .build();
     }

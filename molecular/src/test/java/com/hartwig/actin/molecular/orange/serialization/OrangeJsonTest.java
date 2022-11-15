@@ -139,7 +139,6 @@ public class OrangeJsonTest {
         assertEquals(1, linx.disruptions().size());
         LinxDisruption disruption = linx.disruptions().iterator().next();
         assertEquals("NF1", disruption.gene());
-        assertEquals("Intron 5 -> Intron 8", disruption.range());
     }
 
     private static void assertPeach(@NotNull PeachRecord peach) {

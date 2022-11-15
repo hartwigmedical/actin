@@ -43,6 +43,7 @@ final class DisruptionExtraction {
         Set<Disruption> disruptions = Sets.newTreeSet(new DisruptionComparator());
         for (LinxDisruption disruption : linx.disruptions()) {
             // TODO: Linx should already filter or flag disruptions that are lost.
+            // TODO: Populate region type and coding context
             if (include(disruption, losses)) {
                 disruptions.add(ImmutableDisruption.builder()
                         .from(ExtractionUtil.createBaseGeneAlteration(disruption.gene()))
@@ -55,6 +56,7 @@ final class DisruptionExtraction {
                         .undisruptedCopyNumber(ExtractionUtil.keep3Digits(disruption.undisruptedCopyNumber()))
                         .regionType(RegionType.INTRONIC)
                         .codingContext(CodingContext.NON_CODING)
+                        .clusterGroup(disruption.clusterId())
                         .build());
             }
         }

@@ -160,7 +160,8 @@
         "type": "DUP",
         "junctionCopyNumber": 1.1,
         "undisruptedCopyNumber": 1.0,
-        "firstAffectedExon": 5
+        "firstAffectedExon": 5,
+        "clusterId": null
       }
     ],
     "homozygousDisruptions": [
