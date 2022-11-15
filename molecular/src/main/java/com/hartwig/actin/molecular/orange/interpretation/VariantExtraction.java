@@ -13,7 +13,6 @@ import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.VariantEffect;
 import com.hartwig.actin.molecular.datamodel.driver.VariantType;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleEventFactory;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
@@ -37,7 +36,7 @@ final class VariantExtraction {
             variants.add(ImmutableVariant.builder()
                     .from(ExtractionUtil.createBaseGeneAlteration(variant.gene()))
                     .isReportable(true)
-                    .event(PurpleEventFactory.variantEvent(variant))
+                    .event(DriverEventFactory.variantEvent(variant))
                     .driverLikelihood(determineDriverLikelihood(variant))
                     .evidence(ExtractionUtil.createEmptyEvidence())
                     .type(extractType(variant))

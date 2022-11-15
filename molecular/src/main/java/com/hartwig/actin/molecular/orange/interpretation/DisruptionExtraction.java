@@ -16,7 +16,6 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.sort.driver.DisruptionComparator;
 import com.hartwig.actin.molecular.sort.driver.HomozygousDisruptionComparator;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 final class DisruptionExtraction {
@@ -31,7 +30,7 @@ final class DisruptionExtraction {
             homozygousDisruptions.add(ImmutableHomozygousDisruption.builder()
                     .from(ExtractionUtil.createBaseGeneAlteration(homozygous))
                     .isReportable(true)
-                    .event(Strings.EMPTY)
+                    .event(homozygous + " hom disruption")
                     .driverLikelihood(DriverLikelihood.HIGH)
                     .evidence(ExtractionUtil.createEmptyEvidence())
                     .build());
@@ -48,7 +47,7 @@ final class DisruptionExtraction {
                 disruptions.add(ImmutableDisruption.builder()
                         .from(ExtractionUtil.createBaseGeneAlteration(disruption.gene()))
                         .isReportable(true)
-                        .event(Strings.EMPTY)
+                        .event(DriverEventFactory.disruptionEvent(disruption))
                         .driverLikelihood(DriverLikelihood.LOW)
                         .evidence(ExtractionUtil.createEmptyEvidence())
                         .type(disruption.type())

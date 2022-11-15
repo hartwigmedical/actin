@@ -11,7 +11,6 @@ import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterRecord;
 import com.hartwig.actin.molecular.sort.driver.VirusComparator;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 final class VirusExtraction {
@@ -25,7 +24,7 @@ final class VirusExtraction {
         for (VirusInterpreterEntry virus : virusInterpreter.entries()) {
             viruses.add(ImmutableVirus.builder()
                     .isReportable(true)
-                    .event(Strings.EMPTY)
+                    .event(DriverEventFactory.virusEvent(virus))
                     .driverLikelihood(determineDriverLikelihood(virus))
                     .evidence(ExtractionUtil.createEmptyEvidence())
                     .name(virus.name())

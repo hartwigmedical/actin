@@ -27,7 +27,7 @@ final class FusionExtraction {
         for (LinxFusion fusion : linx.fusions()) {
             fusions.add(ImmutableFusion.builder()
                     .isReportable(true)
-                    .event(Strings.EMPTY)
+                    .event(DriverEventFactory.fusionEvent(fusion))
                     .driverLikelihood(determineDriverLikelihood(fusion))
                     .evidence(ExtractionUtil.createEmptyEvidence())
                     .geneStart(fusion.geneStart())

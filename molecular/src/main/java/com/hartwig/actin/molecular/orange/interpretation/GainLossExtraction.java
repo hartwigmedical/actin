@@ -13,7 +13,6 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.sort.driver.CopyNumberComparator;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 final class GainLossExtraction {
@@ -31,7 +30,7 @@ final class GainLossExtraction {
                 amplifications.add(ImmutableAmplification.builder()
                         .from(ExtractionUtil.createBaseGeneAlteration(gainLoss.gene()))
                         .isReportable(true)
-                        .event(Strings.EMPTY)
+                        .event(DriverEventFactory.gainLossEvent(gainLoss))
                         .driverLikelihood(isPartial ? DriverLikelihood.MEDIUM : DriverLikelihood.HIGH)
                         .evidence(ExtractionUtil.createEmptyEvidence())
                         .minCopies(gainLoss.minCopies())
@@ -52,7 +51,7 @@ final class GainLossExtraction {
                 losses.add(ImmutableLoss.builder()
                         .from(ExtractionUtil.createBaseGeneAlteration(gainLoss.gene()))
                         .isReportable(true)
-                        .event(Strings.EMPTY)
+                        .event(DriverEventFactory.gainLossEvent(gainLoss))
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .evidence(ExtractionUtil.createEmptyEvidence())
                         .minCopies(gainLoss.minCopies())
