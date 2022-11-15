@@ -18,9 +18,13 @@ public final class TestLinxFactory {
         return ImmutableLinxFusion.builder()
                 .type(FusionType.NONE)
                 .geneStart(Strings.EMPTY)
+                .geneTranscriptStart(Strings.EMPTY)
                 .geneContextStart(Strings.EMPTY)
+                .fusedExonUp(0)
                 .geneEnd(Strings.EMPTY)
+                .geneTranscriptEnd(Strings.EMPTY)
                 .geneContextEnd(Strings.EMPTY)
+                .fusedExonDown(0)
                 .driverLikelihood(FusionDriverLikelihood.LOW);
     }
 }

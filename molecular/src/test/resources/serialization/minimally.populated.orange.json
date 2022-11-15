@@ -143,10 +143,11 @@
         "fusedExonUp": 1,
         "fusedExonDown": 2,
         "geneStart": "TMPRSS2",
+        "geneTranscriptStart": "trans start",
         "geneContextStart": "Exon 1",
         "geneEnd": "ETV4",
-        "geneContextEnd": "Promoter Region",
         "geneTranscriptEnd": "ENST00000319349",
+        "geneContextEnd": "Promoter Region",
         "junctionCopyNumber": 0.881
       }
     ],

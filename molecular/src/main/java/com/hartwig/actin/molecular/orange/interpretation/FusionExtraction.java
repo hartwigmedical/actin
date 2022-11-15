@@ -13,7 +13,6 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.sort.driver.FusionComparator;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 final class FusionExtraction {
@@ -31,13 +30,13 @@ final class FusionExtraction {
                     .driverLikelihood(determineDriverLikelihood(fusion))
                     .evidence(ExtractionUtil.createEmptyEvidence())
                     .geneStart(fusion.geneStart())
-                    .geneTranscriptStart(Strings.EMPTY)
-                    .geneContextStart(Strings.EMPTY)
-                    .fusedExonUp(0)
+                    .geneTranscriptStart(fusion.geneTranscriptStart())
+                    .geneContextStart(fusion.geneContextStart())
+                    .fusedExonUp(fusion.fusedExonUp())
                     .geneEnd(fusion.geneEnd())
-                    .geneTranscriptEnd(Strings.EMPTY)
-                    .geneContextEnd(Strings.EMPTY)
-                    .fusedExonDown(0)
+                    .geneTranscriptEnd(fusion.geneTranscriptEnd())
+                    .geneContextEnd(fusion.geneContextEnd())
+                    .fusedExonDown(fusion.fusedExonDown())
                     .proteinEffect(ProteinEffect.UNKNOWN)
                     .isAssociatedWithDrugResistance(null)
                     .driverType(determineDriverType(fusion))
@@ -72,7 +71,7 @@ final class FusionExtraction {
                 return FusionDriverType.KNOWN_PAIR_DEL_DUP;
             }
             default: {
-                throw new IllegalStateException("Cannot determine fusion driver type for fusion of type: " + fusion.type());
+                throw new IllegalStateException("Cannot determine driver type for fusion of type: " + fusion.type());
             }
         }
     }
@@ -89,7 +88,7 @@ final class FusionExtraction {
             }
             default: {
                 throw new IllegalStateException(
-                        "Cannot determine driver likelihood type for fusion driver likelihood: " + fusion.driverLikelihood());
+                        "Cannot determine driver likelihood for fusion driver likelihood: " + fusion.driverLikelihood());
             }
         }
     }
