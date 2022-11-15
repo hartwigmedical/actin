@@ -133,6 +133,7 @@ public final class OrangeJson {
                         .gene(string(reportableGainLoss, "gene"))
                         .interpretation(GainLossInterpretation.valueOf(string(reportableGainLoss, "interpretation")))
                         .minCopies(integer(reportableGainLoss, "minCopies"))
+                        .maxCopies(integer(reportableGainLoss, "maxCopies"))
                         .build());
             }
             return reportableGainsLosses;

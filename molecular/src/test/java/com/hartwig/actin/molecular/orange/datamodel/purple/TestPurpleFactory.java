@@ -10,7 +10,11 @@ public final class TestPurpleFactory {
 
     @NotNull
     public static ImmutablePurpleGainLoss.Builder gainLossBuilder() {
-        return ImmutablePurpleGainLoss.builder().gene(Strings.EMPTY).interpretation(GainLossInterpretation.FULL_LOSS).minCopies(0);
+        return ImmutablePurpleGainLoss.builder()
+                .gene(Strings.EMPTY)
+                .interpretation(GainLossInterpretation.FULL_LOSS)
+                .minCopies(0)
+                .maxCopies(0);
     }
 
     @NotNull

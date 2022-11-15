@@ -34,7 +34,7 @@ final class GainLossExtraction {
                         .driverLikelihood(isPartial ? DriverLikelihood.MEDIUM : DriverLikelihood.HIGH)
                         .evidence(ExtractionUtil.createEmptyEvidence())
                         .minCopies(gainLoss.minCopies())
-                        .maxCopies(0)
+                        .maxCopies(gainLoss.maxCopies())
                         .isPartial(isPartial)
                         .build());
             }
@@ -55,7 +55,7 @@ final class GainLossExtraction {
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .evidence(ExtractionUtil.createEmptyEvidence())
                         .minCopies(gainLoss.minCopies())
-                        .maxCopies(0)
+                        .maxCopies(gainLoss.maxCopies())
                         .isPartial(gainLoss.interpretation() == GainLossInterpretation.PARTIAL_LOSS)
                         .build());
             }

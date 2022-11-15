@@ -15,4 +15,6 @@ public abstract class PurpleGainLoss {
     public abstract GainLossInterpretation interpretation();
 
     public abstract int minCopies();
+
+    public abstract int maxCopies();
 }
