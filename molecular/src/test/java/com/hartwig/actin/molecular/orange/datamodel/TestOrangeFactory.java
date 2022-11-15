@@ -88,10 +88,12 @@ public final class TestOrangeFactory {
         return ImmutablePurpleRecord.builder()
                 .containsTumorCells(true)
                 .purity(0.98)
+                .ploidy(3.1)
                 .hasSufficientQuality(true)
                 .microsatelliteStabilityStatus("MSS")
                 .tumorMutationalBurden(13D)
                 .tumorMutationalLoad(189)
+                .tumorMutationalLoadStatus("HIGH")
                 .build();
     }
 

@@ -24,12 +24,15 @@ public class CharacteristicsExtractionTest {
         MolecularCharacteristics characteristics = CharacteristicsExtraction.extract(TestOrangeFactory.createProperTestOrangeRecord());
 
         assertEquals(0.98, characteristics.purity(), EPSILON);
+        assertEquals(3.1, characteristics.ploidy(), EPSILON);
         assertEquals("Melanoma", characteristics.predictedTumorOrigin().tumorType());
         assertEquals(0.996, characteristics.predictedTumorOrigin().likelihood(), EPSILON);
         assertFalse(characteristics.isMicrosatelliteUnstable());
         assertFalse(characteristics.isHomologousRepairDeficient());
         assertEquals(13D, characteristics.tumorMutationalBurden(), EPSILON);
-        assertEquals(189, (long) characteristics.tumorMutationalLoad());
+        assertTrue(characteristics.hasHighTumorMutationalBurden());
+        assertEquals(189, (int) characteristics.tumorMutationalLoad());
+        assertTrue(characteristics.hasHighTumorMutationalLoad());
     }
 
     @Test
@@ -79,6 +82,32 @@ public class CharacteristicsExtractionTest {
         return ImmutableOrangeRecord.builder()
                 .from(base)
                 .purple(ImmutablePurpleRecord.builder().from(base.purple()).microsatelliteStabilityStatus(microsatelliteStatus).build())
+                .build();
+    }
+
+    @Test
+    public void canInterpretAllTumorLoadStates() {
+        MolecularCharacteristics high = CharacteristicsExtraction.extract(withTumorLoadStatus(CharacteristicsExtraction.TUMOR_STATUS_HIGH));
+        assertTrue(high.hasHighTumorMutationalLoad());
+
+        MolecularCharacteristics low = CharacteristicsExtraction.extract(withTumorLoadStatus(CharacteristicsExtraction.TUMOR_STATUS_LOW));
+        assertFalse(low.hasHighTumorMutationalLoad());
+
+        MolecularCharacteristics unknown =
+                CharacteristicsExtraction.extract(withTumorLoadStatus(CharacteristicsExtraction.TUMOR_STATUS_UNKNOWN));
+        assertNull(unknown.hasHighTumorMutationalLoad());
+
+        MolecularCharacteristics weird = CharacteristicsExtraction.extract(withTumorLoadStatus("not a valid status"));
+        assertNull(weird.hasHighTumorMutationalLoad());
+    }
+
+    @NotNull
+    private static OrangeRecord withTumorLoadStatus(@NotNull String tumorLoadStatus) {
+        OrangeRecord base = TestOrangeFactory.createMinimalTestOrangeRecord();
+
+        return ImmutableOrangeRecord.builder()
+                .from(base)
+                .purple(ImmutablePurpleRecord.builder().from(base.purple()).tumorMutationalLoadStatus(tumorLoadStatus).build())
                 .build();
     }
 }

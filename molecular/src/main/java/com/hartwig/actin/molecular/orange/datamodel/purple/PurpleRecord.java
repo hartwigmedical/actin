@@ -10,11 +10,13 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class PurpleRecord {
 
+    public abstract boolean hasSufficientQuality();
+
     public abstract boolean containsTumorCells();
 
     public abstract double purity();
 
-    public abstract boolean hasSufficientQuality();
+    public abstract double ploidy();
 
     @NotNull
     public abstract String microsatelliteStabilityStatus();
@@ -22,6 +24,9 @@ public abstract class PurpleRecord {
     public abstract double tumorMutationalBurden();
 
     public abstract int tumorMutationalLoad();
+
+    @NotNull
+    public abstract String tumorMutationalLoadStatus();
 
     @NotNull
     public abstract Set<PurpleVariant> variants();

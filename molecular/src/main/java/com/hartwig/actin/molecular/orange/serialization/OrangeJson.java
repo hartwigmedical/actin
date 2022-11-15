@@ -121,10 +121,12 @@ public final class OrangeJson {
             return ImmutablePurpleRecord.builder()
                     .containsTumorCells(bool(purpleFit, "hasReliablePurity"))
                     .purity(number(purpleFit, "purity"))
+                    .ploidy(number(purpleFit, "ploidy"))
                     .hasSufficientQuality(bool(purpleFit, "hasReliableQuality"))
                     .microsatelliteStabilityStatus(string(purpleCharacteristics, "microsatelliteStatus"))
                     .tumorMutationalBurden(number(purpleCharacteristics, "tumorMutationalBurdenPerMb"))
                     .tumorMutationalLoad(integer(purpleCharacteristics, "tumorMutationalLoad"))
+                    .tumorMutationalLoadStatus(string(purpleCharacteristics, "tumorMutationalLoadStatus"))
                     .variants(variants)
                     .gainsLosses(toPurpleGainsLosses(array(purple, "reportableSomaticGainsLosses")))
                     .build();

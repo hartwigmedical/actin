@@ -83,10 +83,12 @@ public class OrangeJsonTest {
     private static void assertPurple(@NotNull PurpleRecord purple) {
         assertTrue(purple.hasSufficientQuality());
         assertEquals(0.99, purple.purity(), EPSILON);
+        assertEquals(3.1, purple.ploidy(), EPSILON);
         assertTrue(purple.containsTumorCells());
         assertEquals("MSS", purple.microsatelliteStabilityStatus());
         assertEquals(13.71, purple.tumorMutationalBurden(), EPSILON);
         assertEquals(185, purple.tumorMutationalLoad());
+        assertEquals("HIGH", purple.tumorMutationalLoadStatus());
 
         assertEquals(2, purple.variants().size());
         PurpleVariant variant1 = findByGene(purple.variants(), "SF3B1");

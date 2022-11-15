@@ -26,6 +26,12 @@ final class CharacteristicsExtraction {
     static final String HOMOLOGOUS_REPAIR_PROFICIENT = "HR_PROFICIENT";
     static final String HOMOLOGOUS_REPAIR_UNKNOWN = "CANNOT_BE_DETERMINED";
 
+    static final String TUMOR_STATUS_HIGH = "HIGH";
+    static final String TUMOR_STATUS_LOW = "LOW";
+    static final String TUMOR_STATUS_UNKNOWN = "UNKNOWN";
+
+    static final double HIGH_TMB_CUTOFF = 10;
+
     private CharacteristicsExtraction() {
     }
 
@@ -38,13 +44,18 @@ final class CharacteristicsExtraction {
 
         PurpleRecord purple = record.purple();
 
+        // TODO: Make TMB interpretation inside ORANGE.
+
         return ImmutableMolecularCharacteristics.builder()
                 .purity(purple.purity())
+                .ploidy(purple.ploidy())
                 .predictedTumorOrigin(predictedTumorOrigin)
                 .isMicrosatelliteUnstable(isMSI(purple.microsatelliteStabilityStatus()))
                 .isHomologousRepairDeficient(isHRD(record.chord().hrStatus()))
                 .tumorMutationalBurden(purple.tumorMutationalBurden())
+                .hasHighTumorMutationalBurden(purple.tumorMutationalBurden() >= HIGH_TMB_CUTOFF)
                 .tumorMutationalLoad(purple.tumorMutationalLoad())
+                .hasHighTumorMutationalLoad(hasHighStatus(purple.tumorMutationalLoadStatus()))
                 .build();
     }
 
@@ -83,6 +94,24 @@ final class CharacteristicsExtraction {
         }
 
         LOGGER.warn("Cannot interpret homologous repair status '{}'", hrStatus);
+        return null;
+    }
+
+    @Nullable
+    private static Boolean hasHighStatus(@NotNull String tumorMutationalStatus) {
+        switch (tumorMutationalStatus) {
+            case TUMOR_STATUS_HIGH: {
+                return true;
+            }
+            case TUMOR_STATUS_LOW: {
+                return false;
+            }
+            case TUMOR_STATUS_UNKNOWN: {
+                return null;
+            }
+        }
+
+        LOGGER.warn("Cannot interpret tumor mutational status: {}", tumorMutationalStatus);
         return null;
     }
 }

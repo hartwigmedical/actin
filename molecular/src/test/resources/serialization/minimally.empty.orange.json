@@ -9,12 +9,14 @@
     "fit": {
       "hasReliableQuality": false,
       "hasReliablePurity": false,
-      "purity": 0.1
+      "purity": 0.1,
+      "ploidy": 2
     },
     "characteristics": {
       "microsatelliteStatus": "MSS",
       "tumorMutationalBurdenPerMb": 0,
-      "tumorMutationalLoad": 0
+      "tumorMutationalLoad": 0,
+      "tumorMutationalLoadStatus": "UNKNOWN"
     },
     "reportableSomaticVariants": [],
     "reportableGermlineVariants": [],
