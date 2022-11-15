@@ -28,6 +28,8 @@ public class MolecularRuleMapper extends RuleMapper {
     public Map<EligibilityRule, FunctionCreator> createMappings() {
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
 
+        map.put(EligibilityRule.DRIVER_EVENT_IN_ANY_GENES_X_WITH_APPROVED_THERAPY_AVAILABLE,
+                anyGeneHasDriverEventWithApprovedTherapyCreator());
         map.put(EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X, geneIsActivatedOrAmplifiedCreator());
         map.put(EligibilityRule.INACTIVATION_OF_GENE_X, geneIsInactivatedCreator());
         map.put(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X, geneHasActivatingMutationCreator());
@@ -64,6 +66,11 @@ public class MolecularRuleMapper extends RuleMapper {
                 molecularResultsAreAvailableForPromoterOfGeneCreator());
 
         return map;
+    }
+
+    @NotNull
+    private FunctionCreator anyGeneHasDriverEventWithApprovedTherapyCreator() {
+        return function -> new AnyGeneHasDriverEventWithApprovedTherapy();
     }
 
     @NotNull

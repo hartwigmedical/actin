@@ -25,6 +25,7 @@ import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerOneString;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoDoubles;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegers;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegersManyStrings;
+import com.hartwig.actin.treatment.input.single.ManyStrings;
 import com.hartwig.actin.treatment.input.single.ManyTreatmentsWithName;
 import com.hartwig.actin.treatment.input.single.OneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
@@ -312,6 +313,22 @@ public class FunctionInputResolverTest {
 
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("1", "string", "2"))));
+    }
+
+    @Test
+    public void canResolveFunctionsWithManyStringsInput() {
+        FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
+
+        EligibilityRule rule = firstOfType(FunctionInput.MANY_STRINGS);
+
+        EligibilityFunction valid = create(rule, Lists.newArrayList("string1;string2"));
+        assertTrue(resolver.hasValidInputs(valid));
+        ManyStrings input = resolver.createManyStringsInput(valid);
+
+        assertEquals(Lists.newArrayList("string1", "string2"), input.strings());
+
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("1", "2"))));
     }
 
     @Test

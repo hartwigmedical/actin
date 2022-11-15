@@ -85,6 +85,9 @@ public class ParameterizedFunctionTestFactory {
             case TWO_STRINGS: {
                 return Lists.newArrayList("string", "string");
             }
+            case MANY_STRINGS: {
+                return Lists.newArrayList("string1;string2");
+            }
             case MANY_STRINGS_ONE_INTEGER: {
                 return Lists.newArrayList("string1;string2", "1");
             }

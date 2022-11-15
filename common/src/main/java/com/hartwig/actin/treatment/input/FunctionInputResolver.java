@@ -18,6 +18,7 @@ import com.hartwig.actin.treatment.input.datamodel.TreatmentInputWithName;
 import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput;
 import com.hartwig.actin.treatment.input.datamodel.VariantTypeInput;
 import com.hartwig.actin.treatment.input.single.FunctionInput;
+import com.hartwig.actin.treatment.input.single.ImmutableManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableManyTreatmentsWithName;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerOneString;
@@ -31,6 +32,7 @@ import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegers;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegersManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegersOneString;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoStrings;
+import com.hartwig.actin.treatment.input.single.ManyStrings;
 import com.hartwig.actin.treatment.input.single.ManyTreatmentsWithName;
 import com.hartwig.actin.treatment.input.single.OneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
@@ -154,6 +156,10 @@ public class FunctionInputResolver {
                 }
                 case TWO_STRINGS: {
                     createTwoStringsInput(function);
+                    return true;
+                }
+                case MANY_STRINGS: {
+                    createManyStringsInput(function);
                     return true;
                 }
                 case MANY_STRINGS_ONE_INTEGER: {
@@ -320,6 +326,15 @@ public class FunctionInputResolver {
                 .string((String) function.parameters().get(0))
                 .integer1(Integer.parseInt((String) function.parameters().get(1)))
                 .integer2(Integer.parseInt((String) function.parameters().get(2)))
+                .build();
+    }
+
+    @NotNull
+    public ManyStrings createManyStringsInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.MANY_STRINGS, 1);
+
+        return ImmutableManyStrings.builder()
+                .strings(toStringList(function.parameters().get(0)))
                 .build();
     }
 
