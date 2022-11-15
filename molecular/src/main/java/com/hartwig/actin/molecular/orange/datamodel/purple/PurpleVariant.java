@@ -1,5 +1,7 @@
 package com.hartwig.actin.molecular.orange.datamodel.purple;
 
+import java.util.Set;
+
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,27 +11,45 @@ import org.jetbrains.annotations.Nullable;
 public abstract class PurpleVariant {
 
     @NotNull
+    public abstract PurpleVariantType type();
+
+    @NotNull
     public abstract String gene();
 
     @NotNull
-    public abstract String hgvsProteinImpact();
+    public abstract String ref();
 
     @NotNull
-    public abstract String hgvsCodingImpact();
+    public abstract String alt();
 
     @NotNull
-    public abstract String effect();
+    public abstract String canonicalTranscript();
 
-    public abstract double alleleCopyNumber();
+    @NotNull
+    public abstract Set<PurpleVariantEffect> canonicalEffects();
+
+    @NotNull
+    public abstract PurpleCodingEffect canonicalCodingEffect();
+
+    @NotNull
+    public abstract String canonicalHgvsProteinImpact();
+
+    @NotNull
+    public abstract String canonicalHgvsCodingImpact();
 
     public abstract double totalCopyNumber();
+
+    public abstract double alleleCopyNumber();
 
     @NotNull
     public abstract VariantHotspot hotspot();
 
-    public abstract boolean biallelic();
+    public abstract double clonalLikelihood();
 
     public abstract double driverLikelihood();
 
-    public abstract double clonalLikelihood();
+    public abstract boolean biallelic();
+
+    @Nullable
+    public abstract Integer localPhaseSet();
 }

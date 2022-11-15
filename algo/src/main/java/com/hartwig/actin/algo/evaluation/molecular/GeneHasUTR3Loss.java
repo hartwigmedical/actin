@@ -11,9 +11,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.molecular.datamodel.driver.CodingContext;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
-import com.hartwig.actin.molecular.datamodel.driver.Effect;
 import com.hartwig.actin.molecular.datamodel.driver.RegionType;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
+import com.hartwig.actin.molecular.datamodel.driver.VariantEffect;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,7 +35,7 @@ public class GeneHasUTR3Loss implements EvaluationFunction {
         Set<String> vusIn3UTR = Sets.newHashSet();
 
         for (Variant variant : record.molecular().drivers().variants()) {
-            if (variant.gene().equals(gene) && variant.canonicalImpact().effects().contains(Effect.THREE_PRIME_UTR)) {
+            if (variant.gene().equals(gene) && variant.canonicalImpact().effects().contains(VariantEffect.THREE_PRIME_UTR)) {
                 if (variant.isHotspot() && variant.isReportable()) {
                     hotspotsIn3UTR.add(variant.event());
                 } else if (variant.isHotspot()) {

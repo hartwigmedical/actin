@@ -5,11 +5,11 @@ import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecular
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.molecular.datamodel.driver.CodingContext;
-import com.hartwig.actin.molecular.datamodel.driver.Effect;
 import com.hartwig.actin.molecular.datamodel.driver.RegionType;
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory;
+import com.hartwig.actin.molecular.datamodel.driver.VariantEffect;
 
 import org.junit.Test;
 
@@ -36,7 +36,7 @@ public class GeneHasUTR3LossTest {
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
                         .isHotspot(false)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().addEffects(Effect.THREE_PRIME_UTR).build())
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().addEffects(VariantEffect.THREE_PRIME_UTR).build())
                         .build())));
 
         assertMolecularEvaluation(EvaluationResult.WARN,
@@ -44,7 +44,7 @@ public class GeneHasUTR3LossTest {
                         .gene("gene A")
                         .isReportable(false)
                         .isHotspot(true)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().addEffects(Effect.THREE_PRIME_UTR).build())
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().addEffects(VariantEffect.THREE_PRIME_UTR).build())
                         .build())));
 
         assertMolecularEvaluation(EvaluationResult.PASS,
@@ -52,7 +52,7 @@ public class GeneHasUTR3LossTest {
                         .gene("gene A")
                         .isReportable(true)
                         .isHotspot(true)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().addEffects(Effect.THREE_PRIME_UTR).build())
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().addEffects(VariantEffect.THREE_PRIME_UTR).build())
                         .build())));
     }
 }

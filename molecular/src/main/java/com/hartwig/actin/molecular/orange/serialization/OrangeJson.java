@@ -4,6 +4,7 @@ import static com.hartwig.actin.util.json.Json.array;
 import static com.hartwig.actin.util.json.Json.bool;
 import static com.hartwig.actin.util.json.Json.date;
 import static com.hartwig.actin.util.json.Json.integer;
+import static com.hartwig.actin.util.json.Json.nullableInteger;
 import static com.hartwig.actin.util.json.Json.nullableString;
 import static com.hartwig.actin.util.json.Json.number;
 import static com.hartwig.actin.util.json.Json.object;
@@ -52,9 +53,12 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.GainLossInterpretatio
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleGainLoss;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleVariant;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantType;
 import com.hartwig.actin.molecular.orange.datamodel.purple.VariantHotspot;
 import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterRecord;
@@ -140,16 +144,22 @@ public final class OrangeJson {
             for (JsonElement element : variantArray) {
                 JsonObject variant = element.getAsJsonObject();
                 variants.add(ImmutablePurpleVariant.builder()
+                        .type(PurpleVariantType.valueOf(string(variant, "type")))
                         .gene(string(variant, "gene"))
-                        .hgvsProteinImpact(string(variant, "canonicalHgvsProteinImpact"))
-                        .hgvsCodingImpact(string(variant, "canonicalHgvsCodingImpact"))
-                        .effect(string(variant, "canonicalEffect"))
-                        .alleleCopyNumber(number(variant, "alleleCopyNumber"))
+                        .ref(string(variant, "ref"))
+                        .alt(string(variant, "alt"))
+                        .canonicalTranscript(string(variant, "canonicalTranscript"))
+                        .canonicalEffects(PurpleVariantEffect.fromEffectString(string(variant, "canonicalEffect")))
+                        .canonicalCodingEffect(PurpleCodingEffect.valueOf(string(variant, "canonicalCodingEffect")))
+                        .canonicalHgvsProteinImpact(string(variant, "canonicalHgvsProteinImpact"))
+                        .canonicalHgvsCodingImpact(string(variant, "canonicalHgvsCodingImpact"))
                         .totalCopyNumber(number(variant, "totalCopyNumber"))
+                        .alleleCopyNumber(number(variant, "alleleCopyNumber"))
                         .hotspot(VariantHotspot.valueOf(string(variant, "hotspot")))
-                        .biallelic(bool(variant, "biallelic"))
                         .driverLikelihood(number(variant, "driverLikelihood"))
                         .clonalLikelihood(number(variant, "clonalLikelihood"))
+                        .biallelic(bool(variant, "biallelic"))
+                        .localPhaseSet(nullableInteger(variant, "localPhaseSet"))
                         .build());
             }
             return variants;

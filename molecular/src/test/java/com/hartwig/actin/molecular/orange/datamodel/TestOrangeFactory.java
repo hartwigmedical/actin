@@ -20,10 +20,10 @@ import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.GainLossInterpretation;
-import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleGainLoss;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
-import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTestFactory;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.VariantHotspot;
 import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterRecord;
@@ -85,24 +85,24 @@ public final class TestOrangeFactory {
     private static PurpleRecord createTestPurpleRecord() {
         return ImmutablePurpleRecord.builder()
                 .from(createMinimalTestPurpleRecord())
-                .addVariants(ImmutablePurpleVariant.builder()
+                .addVariants(PurpleTestFactory.variantBuilder()
                         .gene("BRAF")
-                        .hgvsProteinImpact("p.Val600Glu")
-                        .hgvsCodingImpact("c.something")
-                        .effect("missense_variant")
-                        .alleleCopyNumber(4.1)
+                        .addCanonicalEffects(PurpleVariantEffect.MISSENSE)
+                        .canonicalHgvsProteinImpact("p.Val600Glu")
+                        .canonicalHgvsCodingImpact("c.something")
                         .totalCopyNumber(6.0)
+                        .alleleCopyNumber(4.1)
                         .hotspot(VariantHotspot.HOTSPOT)
-                        .biallelic(false)
-                        .driverLikelihood(1)
                         .clonalLikelihood(0.98)
+                        .driverLikelihood(1)
+                        .biallelic(false)
                         .build())
-                .addGainsLosses(ImmutablePurpleGainLoss.builder()
+                .addGainsLosses(PurpleTestFactory.gainLossBuilder()
                         .gene("MYC")
                         .interpretation(GainLossInterpretation.FULL_GAIN)
                         .minCopies(38)
                         .build())
-                .addGainsLosses(ImmutablePurpleGainLoss.builder()
+                .addGainsLosses(PurpleTestFactory.gainLossBuilder()
                         .gene("PTEN")
                         .interpretation(GainLossInterpretation.PARTIAL_LOSS)
                         .minCopies(0)

@@ -28,11 +28,8 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxTestFactory;
 import com.hartwig.actin.molecular.orange.datamodel.purple.GainLossInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
-import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTestFactory;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
-import com.hartwig.actin.molecular.orange.datamodel.purple.VariantHotspot;
 import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
@@ -179,53 +176,6 @@ public class DriverExtractionTest {
     }
 
     @Test
-    public void canExtractImpactForAllVariants() {
-        PurpleVariant protein = ImmutablePurpleVariant.builder()
-                .from(createTestVariant())
-                .hgvsProteinImpact("p.Val600Glu")
-                .hgvsCodingImpact("c.something")
-                .effect("missense")
-                .build();
-        assertEquals("p.V600E", DriverExtraction.extractImpact(protein));
-
-        PurpleVariant coding = ImmutablePurpleVariant.builder()
-                .from(createTestVariant())
-                .hgvsProteinImpact(Strings.EMPTY)
-                .hgvsCodingImpact("c.something")
-                .effect("missense")
-                .build();
-        assertEquals("c.something", DriverExtraction.extractImpact(coding));
-
-        PurpleVariant effect = ImmutablePurpleVariant.builder()
-                .from(createTestVariant())
-                .hgvsProteinImpact(Strings.EMPTY)
-                .hgvsCodingImpact(Strings.EMPTY)
-                .effect("missense")
-                .build();
-        assertEquals("missense", DriverExtraction.extractImpact(effect));
-
-        PurpleVariant upstream = ImmutablePurpleVariant.builder()
-                .from(createTestVariant())
-                .hgvsProteinImpact(Strings.EMPTY)
-                .hgvsCodingImpact(Strings.EMPTY)
-                .effect(DriverExtraction.UPSTREAM_GENE_VARIANT)
-                .build();
-        assertEquals("upstream", DriverExtraction.extractImpact(upstream));
-    }
-
-    @Test
-    public void canInterpretDriverLikelihoods() {
-        PurpleVariant high = ImmutablePurpleVariant.builder().from(createTestVariant()).driverLikelihood(1D).build();
-        assertEquals(DriverLikelihood.HIGH, DriverExtraction.interpretDriverLikelihood(high));
-
-        PurpleVariant medium = ImmutablePurpleVariant.builder().from(createTestVariant()).driverLikelihood(0.5).build();
-        assertEquals(DriverLikelihood.MEDIUM, DriverExtraction.interpretDriverLikelihood(medium));
-
-        PurpleVariant low = ImmutablePurpleVariant.builder().from(createTestVariant()).driverLikelihood(0D).build();
-        assertEquals(DriverLikelihood.LOW, DriverExtraction.interpretDriverLikelihood(low));
-    }
-
-    @Test
     public void canExtractFusionDriverTypeForAllFusions() {
         for (FusionType type : FusionType.values()) {
             if (type != FusionType.NONE) {
@@ -257,29 +207,6 @@ public class DriverExtractionTest {
         VirusInterpreterEntry unknown =
                 ImmutableVirusInterpreterEntry.builder().from(createTestVirus()).driverLikelihood(VirusDriverLikelihood.UNKNOWN).build();
         assertEquals(DriverLikelihood.LOW, DriverExtraction.extractVirusDriverLikelihood(unknown));
-    }
-
-    @Test
-    public void canKeep3Digits() {
-        assertEquals(3, DriverExtraction.keep3Digits(3D), EPSILON);
-        assertEquals(3.123, DriverExtraction.keep3Digits(3.123), EPSILON);
-        assertEquals(3.123, DriverExtraction.keep3Digits(3.123456789), EPSILON);
-    }
-
-    @NotNull
-    private static PurpleVariant createTestVariant() {
-        return ImmutablePurpleVariant.builder()
-                .gene(Strings.EMPTY)
-                .hgvsProteinImpact(Strings.EMPTY)
-                .hgvsCodingImpact(Strings.EMPTY)
-                .effect(Strings.EMPTY)
-                .alleleCopyNumber(0D)
-                .totalCopyNumber(0D)
-                .hotspot(VariantHotspot.NON_HOTSPOT)
-                .biallelic(false)
-                .driverLikelihood(0D)
-                .clonalLikelihood(0D)
-                .build();
     }
 
     @NotNull

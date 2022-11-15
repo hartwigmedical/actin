@@ -27,6 +27,7 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.GainLossInterpretatio
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.VariantHotspot;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
@@ -82,9 +83,9 @@ public class OrangeJsonTest {
 
         assertEquals(2, purple.variants().size());
         PurpleVariant variant1 = findByGene(purple.variants(), "SF3B1");
-        assertEquals("p.Pro718Leu", variant1.hgvsProteinImpact());
-        assertEquals("c.2153C>T", variant1.hgvsCodingImpact());
-        assertEquals("missense_variant", variant1.effect());
+        assertEquals("p.Pro718Leu", variant1.canonicalHgvsProteinImpact());
+        assertEquals("c.2153C>T", variant1.canonicalHgvsCodingImpact());
+        assertTrue(variant1.canonicalEffects().contains(PurpleVariantEffect.MISSENSE));
         assertEquals(2.03, variant1.alleleCopyNumber(), EPSILON);
         assertEquals(3.02, variant1.totalCopyNumber(), EPSILON);
         assertEquals(VariantHotspot.NON_HOTSPOT, variant1.hotspot());
@@ -93,9 +94,10 @@ public class OrangeJsonTest {
         assertEquals(1.0, variant1.clonalLikelihood(), EPSILON);
 
         PurpleVariant variant2 = findByGene(purple.variants(), "BRCA1");
-        assertEquals("p.?", variant2.hgvsProteinImpact());
-        assertEquals("c.5340+1G>A", variant2.hgvsCodingImpact());
-        assertEquals("splice_donor_variant&intron_variant", variant2.effect());
+        assertEquals("p.?", variant2.canonicalHgvsProteinImpact());
+        assertEquals("c.5340+1G>A", variant2.canonicalHgvsCodingImpact());
+        assertTrue(variant2.canonicalEffects().contains(PurpleVariantEffect.SPLICE_DONOR));
+        assertTrue(variant2.canonicalEffects().contains(PurpleVariantEffect.INTRONIC));
         assertEquals(1.0, variant2.alleleCopyNumber(), EPSILON);
         assertEquals(2.0, variant2.totalCopyNumber(), EPSILON);
         assertEquals(VariantHotspot.HOTSPOT, variant2.hotspot());

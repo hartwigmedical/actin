@@ -28,7 +28,7 @@ public abstract class TranscriptImpact {
     public abstract boolean isSpliceRegion();
 
     @NotNull
-    public abstract Set<Effect> effects();
+    public abstract Set<VariantEffect> effects();
 
     @Nullable
     public abstract CodingEffect codingEffect();
