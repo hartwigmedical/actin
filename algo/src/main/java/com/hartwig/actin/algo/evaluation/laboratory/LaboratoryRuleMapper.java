@@ -80,7 +80,7 @@ public class LaboratoryRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_CREATININE_CLEARANCE_BETWEEN_X_AND_Y,
                 hasCreatinineClearanceBetweenValuesCreator(CreatinineClearanceMethod.COCKCROFT_GAULT));
         map.put(EligibilityRule.HAS_MEASURED_CREATININE_CLEARANCE_OF_AT_LEAST_X,
-                hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.MEASURED));
+                hasSufficientMeasuredCreatinineClearanceCreator());
 
         map.put(EligibilityRule.HAS_BNP_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.NT_PRO_BNP));
         map.put(EligibilityRule.HAS_TROPONIN_IT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.TROPONIN_IT));
@@ -247,6 +247,11 @@ public class LaboratoryRuleMapper extends RuleMapper {
                 throw new IllegalStateException("No lab measurement defined for " + method);
             }
         }
+    }
+
+    @NotNull
+    private FunctionCreator hasSufficientMeasuredCreatinineClearanceCreator() {
+        return function -> new HasSufficientMeasuredCreatinineClearance();
     }
 
     @NotNull
