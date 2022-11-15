@@ -1002,7 +1002,7 @@
     "qc": "PASS",
     "alleles": [
       {
-        "allele": "A*01:01",
+        "name": "A*01:01",
         "refFragments": 210,
         "refUnique": 202,
         "refShared": 8,
@@ -1023,7 +1023,7 @@
         "somaticInframeIndel": 0
       },
       {
-        "allele": "A*01:01",
+        "name": "A*01:01",
         "refFragments": 211,
         "refUnique": 203,
         "refShared": 8,
@@ -1044,7 +1044,7 @@
         "somaticInframeIndel": 0
       },
       {
-        "allele": "B*08:01",
+        "name": "B*08:01",
         "refFragments": 216,
         "refUnique": 106,
         "refShared": 110,
@@ -1065,7 +1065,7 @@
         "somaticInframeIndel": 0
       },
       {
-        "allele": "B*40:02",
+        "name": "B*40:02",
         "refFragments": 196,
         "refUnique": 83,
         "refShared": 113,
@@ -1086,7 +1086,7 @@
         "somaticInframeIndel": 0
       },
       {
-        "allele": "C*03:04",
+        "name": "C*03:04",
         "refFragments": 213,
         "refUnique": 177,
         "refShared": 36,
@@ -1107,7 +1107,7 @@
         "somaticInframeIndel": 0
       },
       {
-        "allele": "C*07:01",
+        "name": "C*07:01",
         "refFragments": 225,
         "refUnique": 187,
         "refShared": 38,

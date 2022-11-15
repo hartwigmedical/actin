@@ -38,6 +38,8 @@ public interface OrangeInterpreterConfig {
         options.addOption(ORANGE_JSON, true, "Path of the ORANGE json to be interpreted");
         options.addOption(SERVE_DIRECTORY, true, "Path towards the SERVE directory containing known and actionable events");
         options.addOption(EXTERNAL_TRIAL_MAPPING_TSV, true, "A mapping from external trial names to ACTIN trials");
+        options.addOption(CLINICAL_JSON, true, "The clinical JSON of the patient for which a sample is analyzed");
+        options.addOption(GENE_FILTER_TSV, true, "A TSV containing genes to include in the ACTIN molecular output");
 
         options.addOption(OUTPUT_DIRECTORY, true, "Directory where molecular data output will be written to");
 

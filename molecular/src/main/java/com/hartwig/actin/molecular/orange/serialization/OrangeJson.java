@@ -256,7 +256,7 @@ public final class OrangeJson {
             for (JsonElement element : array(lilac, "alleles")) {
                 JsonObject allele = element.getAsJsonObject();
                 alleles.add(ImmutableLilacHlaAllele.builder()
-                        .allele(string(allele, "allele"))
+                        .name(string(allele, "name"))
                         .tumorCopyNumber(number(allele, "tumorCopyNumber"))
                         .somaticMissense(number(allele, "somaticMissense"))
                         .somaticNonsenseOrFrameshift(number(allele, "somaticNonsenseOrFrameshift"))

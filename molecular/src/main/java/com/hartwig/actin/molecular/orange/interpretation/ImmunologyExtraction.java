@@ -39,7 +39,7 @@ final class ImmunologyExtraction {
                             || allele.somaticInframeIndel() > 0;
 
             hlaAlleles.add(ImmutableHlaAllele.builder()
-                    .name(allele.allele())
+                    .name(allele.name())
                     .tumorCopyNumber(allele.tumorCopyNumber())
                     .hasSomaticMutations(hasSomaticVariants)
                     .build());

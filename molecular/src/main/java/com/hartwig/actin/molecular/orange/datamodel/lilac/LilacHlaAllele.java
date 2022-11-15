@@ -8,8 +8,10 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class LilacHlaAllele {
 
+    // TODO Will be renamed to "allele" in upcoming version
+
     @NotNull
-    public abstract String allele();
+    public abstract String name();
 
     public abstract double tumorCopyNumber();
 
