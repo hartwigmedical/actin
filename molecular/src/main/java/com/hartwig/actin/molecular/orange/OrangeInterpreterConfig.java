@@ -21,8 +21,11 @@ public interface OrangeInterpreterConfig {
 
     String ORANGE_JSON = "orange_json";
 
+    // Params for clinical annotation and interpretation
     String SERVE_DIRECTORY = "serve_directory";
     String EXTERNAL_TRIAL_MAPPING_TSV = "external_trial_mapping_tsv";
+    String CLINICAL_JSON = "clinical_json";
+    String GENE_FILTER_TSV = "gene_filter_tsv";
 
     String OUTPUT_DIRECTORY = "output_directory";
 
@@ -53,6 +56,12 @@ public interface OrangeInterpreterConfig {
     String externalTrialMappingTsv();
 
     @NotNull
+    String clinicalJson();
+
+    @NotNull
+    String geneFilterTsv();
+
+    @NotNull
     String outputDirectory();
 
     @NotNull
@@ -66,6 +75,8 @@ public interface OrangeInterpreterConfig {
                 .orangeJson(ApplicationConfig.nonOptionalFile(cmd, ORANGE_JSON))
                 .serveDirectory(ApplicationConfig.nonOptionalDir(cmd, SERVE_DIRECTORY))
                 .externalTrialMappingTsv(ApplicationConfig.nonOptionalFile(cmd, EXTERNAL_TRIAL_MAPPING_TSV))
+                .clinicalJson(ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON))
+                .geneFilterTsv(ApplicationConfig.nonOptionalFile(cmd, GENE_FILTER_TSV))
                 .outputDirectory(ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY))
                 .build();
     }

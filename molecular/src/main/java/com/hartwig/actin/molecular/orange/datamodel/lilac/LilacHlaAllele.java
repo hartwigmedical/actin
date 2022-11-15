@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class LilacHlaAllele {
 
     @NotNull
-    public abstract String name();
+    public abstract String allele();
 
     public abstract double tumorCopyNumber();
 

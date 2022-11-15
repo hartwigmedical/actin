@@ -167,7 +167,7 @@ public class OrangeJsonTest {
         assertEquals("PASS", lilac.qc());
         assertEquals(1, lilac.alleles().size());
         LilacHlaAllele allele = lilac.alleles().iterator().next();
-        assertEquals("A*01:01", allele.name());
+        assertEquals("A*01:01", allele.allele());
         assertEquals(6.1, allele.tumorCopyNumber(), EPSILON);
         assertEquals(5.0, allele.somaticMissense(), EPSILON);
         assertEquals(4.0, allele.somaticNonsenseOrFrameshift(), EPSILON);
