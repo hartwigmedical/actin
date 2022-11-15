@@ -223,7 +223,7 @@
     "qc": "PASS",
     "alleles": [
       {
-        "name": "A*01:01",
+        "allele": "A*01:01",
         "refFragments": 20,
         "tumorFragments": 30,
         "rnaFragments": null,

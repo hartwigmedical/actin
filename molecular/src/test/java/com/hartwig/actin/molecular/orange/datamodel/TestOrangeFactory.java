@@ -163,7 +163,7 @@ public final class TestOrangeFactory {
         return ImmutableLilacRecord.builder()
                 .qc("PASS")
                 .addAlleles(ImmutableLilacHlaAllele.builder()
-                        .name("A*01:01")
+                        .allele("A*01:01")
                         .tumorCopyNumber(1.2)
                         .somaticMissense(0D)
                         .somaticNonsenseOrFrameshift(0D)
