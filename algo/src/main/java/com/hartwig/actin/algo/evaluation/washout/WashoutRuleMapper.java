@@ -78,8 +78,6 @@ public class WashoutRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_EXCL_CATEGORIES_X_WITHIN_Y_WEEKS_Z_HALF_LIVES,
                 hasRecentlyReceivedAnyCancerTherapyButSomeWithHalfLifeCreator());
         map.put(EligibilityRule.WILL_REQUIRE_ANY_ANTICANCER_THERAPY_DURING_TRIAL, willRequireAnticancerTherapyCreator());
-        map.put(EligibilityRule.HAS_RECEIVED_HERBAL_MEDICATION_OR_DIETARY_SUPPLEMENTS_WITHIN_X_WEEKS,
-                hasRecentlyReceivedHerbalMedicationOrSupplementsCreator());
 
         return map;
     }
@@ -194,16 +192,6 @@ public class WashoutRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator willRequireAnticancerTherapyCreator() {
         return function -> new WillRequireAnticancerTherapy();
-    }
-
-    @NotNull
-    private FunctionCreator hasRecentlyReceivedHerbalMedicationOrSupplementsCreator() {
-        return function -> {
-            MedicationStatusInterpreter interpreter = createInterpreterForWashout(functionInputResolver().createOneIntegerInput(function));
-
-            Set<String> categories = Sets.newHashSet("Supplement", "Herbal remedy");
-            return new HasRecentlyReceivedCancerTherapyOfCategory(categories, interpreter);
-        };
     }
 
     @NotNull

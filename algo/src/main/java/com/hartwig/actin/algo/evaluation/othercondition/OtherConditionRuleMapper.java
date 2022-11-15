@@ -33,7 +33,6 @@ public class OtherConditionRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME, hasPriorConditionWithConfiguredNameCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE, hasPriorConditionWithDoidCreator(DoidConstants.AUTOIMMUNE_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_ANGINA, hasHistoryOfAnginaCreator());
-        map.put(EligibilityRule.HAS_HISTORY_OF_BRAIN_DISEASE, hasPriorConditionWithDoidCreator(DoidConstants.BRAIN_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE, hasPriorConditionWithDoidCreator(DoidConstants.HEART_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE,
                 hasPriorConditionWithDoidCreator(DoidConstants.CARDIOVASCULAR_DISEASE_DOID));

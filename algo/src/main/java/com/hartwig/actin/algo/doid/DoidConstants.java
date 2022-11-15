@@ -79,7 +79,6 @@ public final class DoidConstants {
     public static final String AUTOIMMUNE_DISEASE_DOID = "417";
     public static final String INTERMEDIATE_CORONARY_SYNDROME_DOID = "8805";
     public static final String PRINZMETAL_ANGINA_DOID = "0111151";
-    public static final String BRAIN_DISEASE_DOID = "936";
     public static final String CARDIOVASCULAR_DISEASE_DOID = "1287";
     public static final String CENTRAL_NERVOUS_SYSTEM_DOID = "331";
     public static final String DIABETES_DOID = "9351";

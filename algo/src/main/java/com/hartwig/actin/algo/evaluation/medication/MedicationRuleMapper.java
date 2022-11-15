@@ -65,7 +65,6 @@ public class MedicationRuleMapper extends RuleMapper {
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_PGP, getsPGPInhibitingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_BCRP, getsBCRPInhibitingMedicationCreator());
         map.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING, getsStableDosingAnticoagulantMedicationCreator());
-        map.put(EligibilityRule.IS_WILLING_TO_TAKE_PREMEDICATION, isWillingToTakePremedicationCreator());
 
         return map;
     }
@@ -198,10 +197,5 @@ public class MedicationRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator getsActiveMedicationWithExactCategoryCreator(@NotNull String... categoriesToFind) {
         return function -> new CurrentlyGetsMedicationOfExactCategory(selector, Sets.newHashSet(categoriesToFind));
-    }
-
-    @NotNull
-    private FunctionCreator isWillingToTakePremedicationCreator() {
-        return function -> new IsWillingToTakePremedication();
     }
 }
