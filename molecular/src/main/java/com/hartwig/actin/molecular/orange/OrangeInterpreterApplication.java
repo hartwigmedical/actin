@@ -70,7 +70,6 @@ public class OrangeInterpreterApplication {
 
         LOGGER.info("Reading ORANGE record");
         MolecularRecord molecular = new OrangeReader(geneFilter).read(orange);
-        MolecularPrinter.printRecord(molecular);
 
         LOGGER.info("Loading ACTIN to external trial mapping TSV from {}", config.externalTrialMappingTsv());
         List<ExternalTrialMapping> mappings = ExternalTrialMappingTsv.read(config.externalTrialMappingTsv());
@@ -84,6 +83,7 @@ public class OrangeInterpreterApplication {
 
         // TODO Annotate with clinical interpretation
 
+        MolecularPrinter.printRecord(molecular);
         MolecularRecordJson.write(molecular, config.outputDirectory());
 
         LOGGER.info("Done!");
