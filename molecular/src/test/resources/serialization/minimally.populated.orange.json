@@ -219,45 +219,6 @@
     "telomericSGLs": 0,
     "LINECount": 1
   },
-  "protect": {
-    "reportableEvidences": [
-      {
-        "gene": "BRAF",
-        "transcript": "ENST00000288602",
-        "isCanonical": true,
-        "event": "p.Val600Glu",
-        "eventIsHighDriver": true,
-        "germline": false,
-        "reported": true,
-        "treatment": "Cobimetinib + Vemurafenib",
-        "onLabel": true,
-        "level": "A",
-        "direction": "RESPONSIVE",
-        "sources": [
-          {
-            "name": "VICC_CGI",
-            "sourceEvent": "hotspot",
-            "sourceUrls": [
-              ""
-            ],
-            "evidenceType": "HOTSPOT_MUTATION",
-            "rangeRank": null,
-            "evidenceUrls": [
-              ""
-            ]
-          }
-        ]
-      }
-    ],
-    "reportableTrials": [],
-    "unreportedEvidences": [],
-    "unreportedTrials": []
-  },
-  "wildTypeGenes": [
-    {
-      "gene": "KRAS"
-    }
-  ],
   "lilac": {
     "qc": "PASS",
     "alleles": [

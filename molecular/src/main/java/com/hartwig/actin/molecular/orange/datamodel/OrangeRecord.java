@@ -1,14 +1,12 @@
 package com.hartwig.actin.molecular.orange.datamodel;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
 import com.hartwig.actin.molecular.orange.datamodel.lilac.LilacRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
-import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterRecord;
 
@@ -47,9 +45,4 @@ public abstract class OrangeRecord {
     @NotNull
     public abstract ChordRecord chord();
 
-    @NotNull
-    public abstract Set<String> wildTypeGenes();
-
-    @NotNull
-    public abstract ProtectRecord protect();
 }

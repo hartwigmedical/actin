@@ -4,7 +4,6 @@ import static com.hartwig.actin.util.json.Json.array;
 import static com.hartwig.actin.util.json.Json.bool;
 import static com.hartwig.actin.util.json.Json.date;
 import static com.hartwig.actin.util.json.Json.integer;
-import static com.hartwig.actin.util.json.Json.nullableInteger;
 import static com.hartwig.actin.util.json.Json.nullableString;
 import static com.hartwig.actin.util.json.Json.number;
 import static com.hartwig.actin.util.json.Json.object;
@@ -49,15 +48,6 @@ import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
-import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceDirection;
-import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
-import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceType;
-import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectEvidence;
-import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectRecord;
-import com.hartwig.actin.molecular.orange.datamodel.protect.ImmutableProtectSource;
-import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
-import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
-import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;
 import com.hartwig.actin.molecular.orange.datamodel.purple.GainLossInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleGainLoss;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
@@ -104,8 +94,6 @@ public final class OrangeJson {
                     .virusInterpreter(toVirusInterpreterRecord(object(record, "virusInterpreter")))
                     .lilac(toLilacRecord(object(record, "lilac")))
                     .chord(toChordRecord(object(record, "chord")))
-                    .wildTypeGenes(toWildTypeGenes(array(record, "wildTypeGenes")))
-                    .protect(toProtectRecord(object(record, "protect")))
                     .build();
         }
 
@@ -283,62 +271,6 @@ public final class OrangeJson {
         @NotNull
         private static ChordRecord toChordRecord(@NotNull JsonObject chord) {
             return ImmutableChordRecord.builder().hrStatus(string(chord, "hrStatus")).build();
-        }
-
-        @NotNull
-        private static ProtectRecord toProtectRecord(@NotNull JsonObject protect) {
-            return ImmutableProtectRecord.builder()
-                    .reportableEvidences(toEvidences(array(protect, "reportableEvidences")))
-                    .unreportedEvidences(toEvidences(array(protect, "unreportedEvidences")))
-                    .reportableTrials(toEvidences(array(protect, "reportableTrials")))
-                    .unreportedTrials(toEvidences(array(protect, "unreportedTrials")))
-                    .build();
-        }
-
-        @NotNull
-        private static Set<ProtectEvidence> toEvidences(@NotNull JsonArray protectEvidencesArray) {
-            Set<ProtectEvidence> evidences = Sets.newHashSet();
-            for (JsonElement element : protectEvidencesArray) {
-                JsonObject evidence = element.getAsJsonObject();
-
-                evidences.add(ImmutableProtectEvidence.builder()
-                        .reported(bool(evidence, "reported"))
-                        .gene(nullableString(evidence, "gene"))
-                        .event(string(evidence, "event"))
-                        .treatment(string(evidence, "treatment"))
-                        .onLabel(bool(evidence, "onLabel"))
-                        .level(EvidenceLevel.valueOf(string(evidence, "level")))
-                        .direction(EvidenceDirection.valueOf(string(evidence, "direction")))
-                        .sources(toSources(array(evidence, "sources")))
-                        .build());
-            }
-            return evidences;
-        }
-
-        @NotNull
-        private static Set<ProtectSource> toSources(@NotNull JsonArray sourceArray) {
-            Set<ProtectSource> sources = Sets.newHashSet();
-            for (JsonElement element : sourceArray) {
-                JsonObject source = element.getAsJsonObject();
-
-                sources.add(ImmutableProtectSource.builder()
-                        .name(string(source, "name"))
-                        .event(string(source, "sourceEvent"))
-                        .type(EvidenceType.valueOf(string(source, "evidenceType")))
-                        .rangeRank(nullableInteger(source, "rangeRank"))
-                        .build());
-            }
-            return sources;
-        }
-
-        @NotNull
-        private static Set<String> toWildTypeGenes(@NotNull JsonArray wildTypeGeneArray) {
-            Set<String> wildTypeGenes = Sets.newHashSet();
-            for (JsonElement element : wildTypeGeneArray) {
-                JsonObject wildtypeGene = element.getAsJsonObject();
-                wildTypeGenes.add(string(wildtypeGene, "gene"));
-            }
-            return wildTypeGenes;
         }
     }
 }

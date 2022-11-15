@@ -3,12 +3,10 @@ package com.hartwig.actin.molecular.orange.serialization;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Set;
 
 import com.google.common.io.Resources;
 import com.hartwig.actin.TestDataFactory;
@@ -25,12 +23,6 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
-import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceDirection;
-import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
-import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceType;
-import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectEvidence;
-import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectRecord;
-import com.hartwig.actin.molecular.orange.datamodel.protect.ProtectSource;
 import com.hartwig.actin.molecular.orange.datamodel.purple.GainLossInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
@@ -76,8 +68,6 @@ public class OrangeJsonTest {
         assertVirusInterpreter(record.virusInterpreter());
         assertLilac(record.lilac());
         assertChord(record.chord());
-        assertProtect(record.protect());
-        assertWildTypeGenes(record.wildTypeGenes());
     }
 
     private static void assertPurple(@NotNull PurpleRecord purple) {
@@ -187,29 +177,5 @@ public class OrangeJsonTest {
 
     private static void assertChord(@NotNull ChordRecord chord) {
         assertEquals("HR_PROFICIENT", chord.hrStatus());
-    }
-
-    private static void assertProtect(@NotNull ProtectRecord protect) {
-        assertEquals(1, protect.reportableEvidences().size());
-        ProtectEvidence evidence = protect.reportableEvidences().iterator().next();
-        assertTrue(evidence.reported());
-        assertEquals("BRAF", evidence.gene());
-        assertEquals("p.Val600Glu", evidence.event());
-        assertEquals("Cobimetinib + Vemurafenib", evidence.treatment());
-        assertTrue(evidence.onLabel());
-        assertEquals(EvidenceLevel.A, evidence.level());
-        assertEquals(EvidenceDirection.RESPONSIVE, evidence.direction());
-
-        assertEquals(1, evidence.sources().size());
-        ProtectSource source = evidence.sources().iterator().next();
-        assertEquals("VICC_CGI", source.name());
-        assertEquals("hotspot", source.event());
-        assertEquals(EvidenceType.HOTSPOT_MUTATION, source.type());
-        assertNull(source.rangeRank());
-    }
-
-    private static void assertWildTypeGenes(@NotNull Set<String> wildTypeGenes) {
-        assertEquals(1, wildTypeGenes.size());
-        assertEquals("KRAS", wildTypeGenes.iterator().next());
     }
 }

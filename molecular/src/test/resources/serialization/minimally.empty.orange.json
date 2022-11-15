@@ -38,13 +38,6 @@
     "predictions": [
     ]
   },
-  "protect": {
-    "reportableEvidences": [],
-    "reportableTrials": [],
-    "unreportedEvidences": [],
-    "unreportedTrials": []
-  },
-  "wildTypeGenes": [],
   "lilac": {
     "qc": "FAIL",
     "alleles": [

@@ -1,6 +1,4 @@
-package com.hartwig.actin.molecular.orange.filter;
-
-import com.hartwig.actin.molecular.orange.datamodel.protect.EvidenceLevel;
+package com.hartwig.actin.molecular.evidence.filter;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -13,8 +11,8 @@ public abstract class ApplicabilityFilterKey {
     @NotNull
     public abstract String gene();
 
-    @NotNull
-    public abstract EvidenceLevel level();
+//    @NotNull
+//    public abstract EvidenceLevel level();
 
     @NotNull
     public abstract String treatment();
