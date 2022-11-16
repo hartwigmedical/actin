@@ -541,7 +541,7 @@ In case category is one of below, use the following logics:
 
 **Category list refers to 'categories' in the medication data model, OR one of the additionally defined categories:<br>
 1] Chemotherapy: includes all medication categories like %Platinum compound%, %Pyrimidine antagonist%, %Taxane% and %Alkylating agent%  
-2] Immunotherapy: medication drug names Pembrolizumab, Nivolumab, Ipilimumab, Cemiplimab  
+2] Immunotherapy: medication drug names Pembrolizumab, Nivolumab, Ipilimumab, Cemiplimab, Avelumab 
 3] Endocrine therapy: includes all medication categories like %Anti-androgen%, %Anti-estrogen%  
 4] PARP inhibitors: medication drug names Olaparib, Rucaparib  
 5] Gonadorelin: includes medication categories like %Gonadorelin agonist%, %Gonadorelin antagonist%   

@@ -33,7 +33,7 @@ public class WashoutRuleMapper extends RuleMapper {
     private static final Map<String, Set<String>> CATEGORIES_PER_MAIN_CATEGORY = Maps.newHashMap();
 
     static {
-        MEDICATIONS_FOR_MAIN_CATEGORY.put("Immunotherapy", Sets.newHashSet("Pembrolizumab", "Nivolumab", "Ipilimumab", "Cemiplimab"));
+        MEDICATIONS_FOR_MAIN_CATEGORY.put("Immunotherapy", Sets.newHashSet("Pembrolizumab", "Nivolumab", "Ipilimumab", "Cemiplimab", "Avelumab"));
         MEDICATIONS_FOR_MAIN_CATEGORY.put("PARP inhibitors", Sets.newHashSet("Olaparib", "Rucaparib"));
         MEDICATIONS_FOR_MAIN_CATEGORY.put("Hypomethylating agents", Sets.newHashSet("Azacitidine", "Decitabine"));
 
