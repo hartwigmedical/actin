@@ -245,6 +245,7 @@ CREATE TABLE molecular
     patientId varchar(50) NOT NULL,
     sampleId varchar(50) NOT NULL UNIQUE,
     experimentType varchar(50) NOT NULL,
+    refGenomeVersion varchar(20) NOT NULL,
     experimentDate DATE,
     evidenceSource varchar(50) NOT NULL,
     externalTrialSource varchar(50) NOT NULL,

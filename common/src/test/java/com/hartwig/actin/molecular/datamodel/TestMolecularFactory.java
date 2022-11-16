@@ -49,6 +49,7 @@ public final class TestMolecularFactory {
                 .patientId(TestDataFactory.TEST_PATIENT)
                 .sampleId(TestDataFactory.TEST_SAMPLE)
                 .type(ExperimentType.WGS)
+                .refGenomeVersion(RefGenomeVersion.V37)
                 .evidenceSource(Strings.EMPTY)
                 .externalTrialSource(Strings.EMPTY)
                 .containsTumorCells(true)

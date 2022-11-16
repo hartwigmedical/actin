@@ -25,6 +25,9 @@ public abstract class MolecularRecord {
     @NotNull
     public abstract ExperimentType type();
 
+    @NotNull
+    public abstract RefGenomeVersion refGenomeVersion();
+
     @Nullable
     public abstract LocalDate date();
 

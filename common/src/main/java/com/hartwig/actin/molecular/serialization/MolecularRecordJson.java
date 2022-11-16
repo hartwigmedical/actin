@@ -36,6 +36,7 @@ import com.google.gson.JsonParseException;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.molecular.datamodel.RefGenomeVersion;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
@@ -140,6 +141,7 @@ public class MolecularRecordJson {
                     .patientId(string(record, "patientId"))
                     .sampleId(string(record, "sampleId"))
                     .type(ExperimentType.valueOf(string(record, "type")))
+                    .refGenomeVersion(RefGenomeVersion.valueOf(string(record, "refGenomeVersion")))
                     .date(nullableDate(record, "date"))
                     .evidenceSource(string(record, "evidenceSource"))
                     .externalTrialSource(string(record, "externalTrialSource"))

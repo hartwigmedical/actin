@@ -11,6 +11,8 @@ import org.jetbrains.annotations.NotNull;
 
 public final class MolecularInterpretation {
 
+    // TODO Integrate with molecular evaluation rules
+
     private MolecularInterpretation() {
     }
 

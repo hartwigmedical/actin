@@ -4,6 +4,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.molecular.datamodel.RefGenomeVersion;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.filter.GeneFilter;
 
@@ -25,6 +26,7 @@ public class OrangeReader {
                 .patientId(toPatientId(record.sampleId()))
                 .sampleId(record.sampleId())
                 .type(ExperimentType.WGS)
+                .refGenomeVersion(RefGenomeVersion.V37)
                 .date(record.experimentDate())
                 .evidenceSource(Strings.EMPTY)
                 .externalTrialSource(Strings.EMPTY)
