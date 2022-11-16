@@ -501,6 +501,7 @@ CREATE TABLE virus
     event varchar(50) NOT NULL,
     driverLikelihood varchar(50) NOT NULL,
     name varchar(50) NOT NULL,
+    isReliable BOOLEAN NOT NULL,
     interpretation varchar(50),
     integrations int NOT NULL,
     PRIMARY KEY (id)

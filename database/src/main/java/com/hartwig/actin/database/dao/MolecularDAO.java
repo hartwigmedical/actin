@@ -384,6 +384,7 @@ class MolecularDAO {
                             VIRUS.EVENT,
                             VIRUS.DRIVERLIKELIHOOD,
                             VIRUS.NAME,
+                            VIRUS.ISRELIABLE,
                             VIRUS.INTERPRETATION,
                             VIRUS.INTEGRATIONS)
                     .values(sampleId,
@@ -391,6 +392,7 @@ class MolecularDAO {
                             virus.event(),
                             virus.driverLikelihood().toString(),
                             virus.name(),
+                            DataUtil.toByte(virus.isReliable()),
                             virus.interpretation(),
                             virus.integrations())
                     .execute();

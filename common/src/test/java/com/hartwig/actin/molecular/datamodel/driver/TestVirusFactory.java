@@ -10,6 +10,6 @@ public final class TestVirusFactory {
 
     @NotNull
     public static ImmutableVirus.Builder builder() {
-        return ImmutableVirus.builder().from(TestDriverFactory.createEmptyDriver()).name(Strings.EMPTY).integrations(0);
+        return ImmutableVirus.builder().from(TestDriverFactory.createEmptyDriver()).name(Strings.EMPTY).isReliable(false).integrations(0);
     }
 }

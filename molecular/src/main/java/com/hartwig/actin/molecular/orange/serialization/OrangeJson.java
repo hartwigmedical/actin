@@ -65,6 +65,7 @@ import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpre
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterRecord;
+import com.hartwig.actin.molecular.orange.datamodel.virus.VirusQCStatus;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -257,6 +258,7 @@ public final class OrangeJson {
                 JsonObject virus = element.getAsJsonObject();
                 entries.add(ImmutableVirusInterpreterEntry.builder()
                         .name(string(virus, "name"))
+                        .qcStatus(VirusQCStatus.valueOf(string(virus, "qcStatus")))
                         .interpretation(nullableString(virus, "interpretation"))
                         .integrations(integer(virus, "integrations"))
                         .driverLikelihood(VirusDriverLikelihood.valueOf(string(virus, "virusDriverLikelihoodType")))

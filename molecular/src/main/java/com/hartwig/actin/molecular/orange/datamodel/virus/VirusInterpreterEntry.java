@@ -11,6 +11,9 @@ public abstract class VirusInterpreterEntry {
     @NotNull
     public abstract String name();
 
+    @NotNull
+    public abstract VirusQCStatus qcStatus();
+
     @Nullable
     public abstract String interpretation();
 

@@ -24,10 +24,11 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
 import com.hartwig.actin.molecular.orange.datamodel.purple.VariantHotspot;
-import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterRecord;
+import com.hartwig.actin.molecular.orange.datamodel.virus.TestVirusInterpreterFactory;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterRecord;
+import com.hartwig.actin.molecular.orange.datamodel.virus.VirusQCStatus;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -149,9 +150,10 @@ public final class TestOrangeFactory {
     @NotNull
     private static VirusInterpreterRecord createTestVirusInterpreterRecord() {
         return ImmutableVirusInterpreterRecord.builder()
-                .addEntries(ImmutableVirusInterpreterEntry.builder()
+                .addEntries(TestVirusInterpreterFactory.builder()
                         .name("Human papillomavirus type 16")
                         .interpretation("HPV")
+                        .qcStatus(VirusQCStatus.NO_ABNORMALITIES)
                         .integrations(3)
                         .driverLikelihood(VirusDriverLikelihood.HIGH)
                         .build())

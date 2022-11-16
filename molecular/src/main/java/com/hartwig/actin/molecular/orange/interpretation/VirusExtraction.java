@@ -9,6 +9,7 @@ import com.hartwig.actin.molecular.datamodel.driver.ImmutableVirus;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterRecord;
+import com.hartwig.actin.molecular.orange.datamodel.virus.VirusQCStatus;
 import com.hartwig.actin.molecular.sort.driver.VirusComparator;
 
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +29,7 @@ final class VirusExtraction {
                     .driverLikelihood(determineDriverLikelihood(virus))
                     .evidence(ExtractionUtil.createEmptyEvidence())
                     .name(virus.name())
+                    .isReliable(virus.qcStatus() == VirusQCStatus.NO_ABNORMALITIES)
                     .interpretation(virus.interpretation())
                     .integrations(virus.integrations())
                     .build());
