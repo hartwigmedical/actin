@@ -7,8 +7,11 @@ import org.jetbrains.annotations.NotNull;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class })
-public abstract class ManyStrings {
+public abstract class OneGeneManyCodons {
 
     @NotNull
-    public abstract List<String> strings();
+    public abstract String geneName();
+
+    @NotNull
+    public abstract List<String> codons();
 }

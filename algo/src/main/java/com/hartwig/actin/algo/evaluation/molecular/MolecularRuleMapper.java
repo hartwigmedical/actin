@@ -9,11 +9,13 @@ import com.hartwig.actin.algo.evaluation.RuleMapper;
 import com.hartwig.actin.algo.evaluation.RuleMappingResources;
 import com.hartwig.actin.algo.evaluation.composite.Or;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
-import com.hartwig.actin.treatment.input.single.OneIntegerOneStringOneVariantType;
-import com.hartwig.actin.treatment.input.single.OneStringManyStrings;
+import com.hartwig.actin.treatment.input.single.OneGene;
+import com.hartwig.actin.treatment.input.single.OneGeneManyCodons;
+import com.hartwig.actin.treatment.input.single.OneGeneManyProteinImpacts;
+import com.hartwig.actin.treatment.input.single.OneGeneOneInteger;
+import com.hartwig.actin.treatment.input.single.OneGeneOneIntegerOneVariantType;
+import com.hartwig.actin.treatment.input.single.OneGeneTwoIntegers;
 import com.hartwig.actin.treatment.input.single.TwoIntegers;
-import com.hartwig.actin.treatment.input.single.TwoIntegersOneString;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -75,104 +77,104 @@ public class MolecularRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator geneIsActivatedOrAmplifiedCreator() {
         return function -> {
-            String gene = functionInputResolver().createOneStringInput(function);
-            return new Or(Lists.newArrayList(new GeneHasActivatingMutation(gene), new GeneIsAmplified(gene)));
+            OneGene gene = functionInputResolver().createOneGeneInput(function);
+            return new Or(Lists.newArrayList(new GeneHasActivatingMutation(gene.geneName()), new GeneIsAmplified(gene.geneName())));
         };
     }
 
     @NotNull
     private FunctionCreator geneIsInactivatedCreator() {
         return function -> {
-            String gene = functionInputResolver().createOneStringInput(function);
-            return new GeneIsInactivated(gene);
+            OneGene gene = functionInputResolver().createOneGeneInput(function);
+            return new GeneIsInactivated(gene.geneName());
         };
     }
 
     @NotNull
     private FunctionCreator geneHasActivatingMutationCreator() {
         return function -> {
-            String gene = functionInputResolver().createOneStringInput(function);
-            return new GeneHasActivatingMutation(gene);
+            OneGene gene = functionInputResolver().createOneGeneInput(function);
+            return new GeneHasActivatingMutation(gene.geneName());
         };
     }
 
     @NotNull
     private FunctionCreator geneHasVariantWithAnyProteinImpactsCreator() {
         return function -> {
-            OneStringManyStrings input = functionInputResolver().createOneStringManyStringsInput(function);
-            return new GeneHasVariantWithProteinImpact(input.string1(), input.additionalStrings());
+            OneGeneManyProteinImpacts input = functionInputResolver().createOneGeneManyProteinImpactsInput(function);
+            return new GeneHasVariantWithProteinImpact(input.geneName(), input.proteinImpacts());
         };
     }
 
     @NotNull
     private FunctionCreator geneHasVariantInAnyCodonsCreator() {
         return function -> {
-            OneStringManyStrings input = functionInputResolver().createOneStringManyStringsInput(function);
-            return new GeneHasVariantInCodon(input.string1(), input.additionalStrings());
+            OneGeneManyCodons input = functionInputResolver().createOneGeneManyCodonsInput(function);
+            return new GeneHasVariantInCodon(input.geneName(), input.codons());
         };
     }
 
     @NotNull
     private FunctionCreator geneHasVariantInExonCreator() {
         return function -> {
-            OneIntegerOneString input = functionInputResolver().createOneStringOneIntegerInput(function);
-            return new GeneHasVariantInExonRangeOfType(input.string(), input.integer(), input.integer(), null);
+            OneGeneOneInteger input = functionInputResolver().createOneGeneOneIntegerInput(function);
+            return new GeneHasVariantInExonRangeOfType(input.geneName(), input.integer(), input.integer(), null);
         };
     }
 
     @NotNull
     private FunctionCreator geneHasVariantInExonRangeCreator() {
         return function -> {
-            TwoIntegersOneString input = functionInputResolver().createOneStringTwoIntegersInput(function);
-            return new GeneHasVariantInExonRangeOfType(input.string(), input.integer1(), input.integer2(), null);
+            OneGeneTwoIntegers input = functionInputResolver().createOneGeneTwoIntegersInput(function);
+            return new GeneHasVariantInExonRangeOfType(input.geneName(), input.integer1(), input.integer2(), null);
         };
     }
 
     @NotNull
     private FunctionCreator geneHasVariantInExonOfTypeCreator() {
         return function -> {
-            OneIntegerOneStringOneVariantType input = functionInputResolver().createOneStringOneIntegerOneVariantTypeInput(function);
-            return new GeneHasVariantInExonRangeOfType(input.string(), input.integer(), input.integer(), input.variantType());
+            OneGeneOneIntegerOneVariantType input = functionInputResolver().createOneGeneOneIntegerOneVariantTypeInput(function);
+            return new GeneHasVariantInExonRangeOfType(input.geneName(), input.integer(), input.integer(), input.variantType());
         };
     }
 
     @NotNull
     private FunctionCreator geneHasUTR3LossCreator() {
         return function -> {
-            String gene = functionInputResolver().createOneStringInput(function);
-            return new GeneHasUTR3Loss(gene);
+            OneGene gene = functionInputResolver().createOneGeneInput(function);
+            return new GeneHasUTR3Loss(gene.geneName());
         };
     }
 
     @NotNull
     private FunctionCreator geneIsAmplifiedCreator() {
         return function -> {
-            String gene = functionInputResolver().createOneStringInput(function);
-            return new GeneIsAmplified(gene);
+            OneGene gene = functionInputResolver().createOneGeneInput(function);
+            return new GeneIsAmplified(gene.geneName());
         };
     }
 
     @NotNull
     private FunctionCreator hasFusionInGeneCreator() {
         return function -> {
-            String gene = functionInputResolver().createOneStringInput(function);
-            return new HasFusionInGene(gene);
+            OneGene gene = functionInputResolver().createOneGeneInput(function);
+            return new HasFusionInGene(gene.geneName());
         };
     }
 
     @NotNull
     private FunctionCreator geneIsWildTypeCreator() {
         return function -> {
-            String gene = functionInputResolver().createOneStringInput(function);
-            return new GeneIsWildType(gene);
+            OneGene gene = functionInputResolver().createOneGeneInput(function);
+            return new GeneIsWildType(gene.geneName());
         };
     }
 
     @NotNull
     private FunctionCreator geneHasSpecificExonSkippingCreator() {
         return function -> {
-            OneIntegerOneString input = functionInputResolver().createOneStringOneIntegerInput(function);
-            return new GeneHasSpecificExonSkipping(input.string(), input.integer());
+            OneGeneOneInteger input = functionInputResolver().createOneGeneOneIntegerInput(function);
+            return new GeneHasSpecificExonSkipping(input.geneName(), input.integer());
         };
     }
 
@@ -231,24 +233,24 @@ public class MolecularRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator geneIsExpressedByIHCCreator() {
         return function -> {
-            String gene = functionInputResolver().createOneStringInput(function);
-            return new GeneIsExpressedByIHC(gene);
+            OneGene gene = functionInputResolver().createOneGeneInput(function);
+            return new GeneIsExpressedByIHC(gene.geneName());
         };
     }
 
     @NotNull
     private FunctionCreator geneHasExactExpressionByIHCCreator() {
         return function -> {
-            OneIntegerOneString input = functionInputResolver().createOneStringOneIntegerInput(function);
-            return new GeneHasExactExpressionByIHC(input.string(), input.integer());
+            OneGeneOneInteger input = functionInputResolver().createOneGeneOneIntegerInput(function);
+            return new GeneHasExactExpressionByIHC(input.geneName(), input.integer());
         };
     }
 
     @NotNull
     private FunctionCreator geneHasSufficientExpressionByIHCCreator() {
         return function -> {
-            OneIntegerOneString input = functionInputResolver().createOneStringOneIntegerInput(function);
-            return new GeneHasSufficientExpressionByIHC(input.string(), input.integer());
+            OneGeneOneInteger input = functionInputResolver().createOneGeneOneIntegerInput(function);
+            return new GeneHasSufficientExpressionByIHC(input.geneName(), input.integer());
         };
     }
 
@@ -294,16 +296,16 @@ public class MolecularRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator molecularResultsAreAvailableForGeneCreator() {
         return function -> {
-            String gene = functionInputResolver().createOneStringInput(function);
-            return new MolecularResultsAreAvailableForGene(gene);
+            OneGene gene = functionInputResolver().createOneGeneInput(function);
+            return new MolecularResultsAreAvailableForGene(gene.geneName());
         };
     }
 
     @NotNull
     private FunctionCreator molecularResultsAreAvailableForPromoterOfGeneCreator() {
         return function -> {
-            String gene = functionInputResolver().createOneStringInput(function);
-            return new MolecularResultsAreAvailableForPromoterOfGene(gene);
+            OneGene gene = functionInputResolver().createOneGeneInput(function);
+            return new MolecularResultsAreAvailableForPromoterOfGene(gene.geneName());
         };
     }
 }

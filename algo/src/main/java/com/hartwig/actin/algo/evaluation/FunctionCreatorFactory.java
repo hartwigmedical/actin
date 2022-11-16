@@ -34,12 +34,12 @@ final class FunctionCreatorFactory {
     }
 
     @NotNull
-    public static Map<EligibilityRule, FunctionCreator> create(@NotNull DoidModel doidModel,
-            @NotNull ReferenceDateProvider referenceDateProvider) {
+    public static Map<EligibilityRule, FunctionCreator> create(@NotNull ReferenceDateProvider referenceDateProvider,
+            @NotNull DoidModel doidModel, @NotNull FunctionInputResolver functionInputResolver) {
         RuleMappingResources resources = ImmutableRuleMappingResources.builder()
                 .referenceDateProvider(referenceDateProvider)
                 .doidModel(doidModel)
-                .functionInputResolver(new FunctionInputResolver(doidModel))
+                .functionInputResolver(functionInputResolver)
                 .build();
 
         Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();

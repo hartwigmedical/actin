@@ -82,12 +82,6 @@ public class ParameterizedFunctionTestFactory {
             case ONE_STRING_ONE_INTEGER: {
                 return Lists.newArrayList("string", "1");
             }
-            case TWO_STRINGS: {
-                return Lists.newArrayList("string", "string");
-            }
-            case MANY_STRINGS: {
-                return Lists.newArrayList("string1;string2");
-            }
             case MANY_STRINGS_ONE_INTEGER: {
                 return Lists.newArrayList("string1;string2", "1");
             }
@@ -108,6 +102,27 @@ public class ParameterizedFunctionTestFactory {
             }
             case ONE_HLA_ALLELE: {
                 return Lists.newArrayList("A*02:01");
+            }
+            case ONE_GENE: {
+                return Lists.newArrayList("gene");
+            }
+            case ONE_GENE_ONE_INTEGER: {
+                return Lists.newArrayList("gene", "1");
+            }
+            case ONE_GENE_ONE_INTEGER_ONE_VARIANT_TYPE: {
+                return Lists.newArrayList("gene", "1", "INDEL");
+            }
+            case ONE_GENE_TWO_INTEGERS: {
+                return Lists.newArrayList("gene", "1", "2");
+            }
+            case ONE_GENE_MANY_CODONS: {
+                return Lists.newArrayList("gene", "V600;V601");
+            }
+            case ONE_GENE_MANY_PROTEIN_IMPACTS: {
+                return Lists.newArrayList("gene", "V600E;V601E");
+            }
+            case MANY_GENES: {
+                return Lists.newArrayList("gene1;gene2");
             }
             case ONE_DOID_TERM: {
                 return Lists.newArrayList(doidTermToUse);

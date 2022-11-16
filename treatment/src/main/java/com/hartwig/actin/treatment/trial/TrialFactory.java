@@ -8,6 +8,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.doid.DoidModel;
+import com.hartwig.actin.molecular.interpretation.MolecularInputChecker;
 import com.hartwig.actin.treatment.datamodel.Cohort;
 import com.hartwig.actin.treatment.datamodel.CohortMetadata;
 import com.hartwig.actin.treatment.datamodel.CriterionReference;
@@ -40,7 +41,9 @@ public class TrialFactory {
 
     @NotNull
     public static TrialFactory create(@NotNull String trialConfigDirectory, @NotNull DoidModel doidModel) throws IOException {
-        FunctionInputResolver functionInputResolver = new FunctionInputResolver(doidModel);
+        // TODO Feed in valid genes
+        MolecularInputChecker molecularInputChecker = new MolecularInputChecker(Sets.newHashSet());
+        FunctionInputResolver functionInputResolver = new FunctionInputResolver(doidModel, molecularInputChecker);
         EligibilityFactory eligibilityFactory = new EligibilityFactory(functionInputResolver);
 
         TrialConfigModel trialModel = TrialConfigModel.create(trialConfigDirectory, eligibilityFactory);

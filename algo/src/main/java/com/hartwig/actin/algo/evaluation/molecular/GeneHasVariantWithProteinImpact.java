@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
@@ -14,6 +15,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
+import com.hartwig.actin.molecular.interpretation.MolecularInputChecker;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -41,8 +43,10 @@ public class GeneHasVariantWithProteinImpact implements EvaluationFunction {
 
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene)) {
+                String canonicalProteinImpact = toProteinImpact(variant.canonicalImpact().hgvsProteinImpact());
+
                 for (String allowedProteinImpact : allowedProteinImpacts) {
-                    if (variant.canonicalImpact().hgvsProteinImpact().equals(allowedProteinImpact)) {
+                    if (canonicalProteinImpact.equals(allowedProteinImpact)) {
                         canonicalProteinImpactMatches.add(allowedProteinImpact);
                         if (variant.isReportable()) {
                             canonicalReportableVariantMatches.add(variant.event());
@@ -52,8 +56,8 @@ public class GeneHasVariantWithProteinImpact implements EvaluationFunction {
                     }
 
                     if (variant.isReportable()) {
-                        for (TranscriptImpact otherImpact : variant.otherImpacts()) {
-                            if (otherImpact.hgvsProteinImpact().equals(allowedProteinImpact)) {
+                        for (String otherProteinImpact : toProteinImpacts(variant.otherImpacts())) {
+                            if (otherProteinImpact.equals(allowedProteinImpact)) {
                                 reportableOtherVariantMatches.add(variant.event());
                                 reportableOtherProteinImpactMatches.add(allowedProteinImpact);
                             }
@@ -87,6 +91,31 @@ public class GeneHasVariantWithProteinImpact implements EvaluationFunction {
                 .addFailSpecificMessages("None of " + Format.concat(allowedProteinImpacts) + " detected in gene " + gene)
                 .addFailGeneralMessages("No specific variants in " + gene + " detected")
                 .build();
+    }
+
+    @NotNull
+    private static Set<String> toProteinImpacts(@NotNull Set<TranscriptImpact> impacts) {
+        Set<String> proteinImpacts = Sets.newHashSet();
+        for (TranscriptImpact impact : impacts) {
+            proteinImpacts.add(toProteinImpact(impact.hgvsProteinImpact()));
+        }
+        return proteinImpacts;
+    }
+
+    @NotNull
+    @VisibleForTesting
+    static String toProteinImpact(@NotNull String hgvsProteinImpact) {
+        String impact = hgvsProteinImpact.startsWith("p.") ? hgvsProteinImpact.substring(2) : hgvsProteinImpact;
+
+        if (impact.isEmpty()) {
+            return impact;
+        }
+
+        if (!MolecularInputChecker.isProteinImpact(impact)) {
+            throw new IllegalStateException("Cannot convert hgvs protein impact to a usable protein impact: " + hgvsProteinImpact);
+        }
+
+        return impact;
     }
 
     @Nullable
