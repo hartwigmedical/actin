@@ -12,12 +12,12 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 
 import org.jetbrains.annotations.NotNull;
 
-public class GeneIsExpressedByIHC implements EvaluationFunction {
+public class ProteinIsExpressedByIHC implements EvaluationFunction {
 
     @NotNull
     private final String gene;
 
-    GeneIsExpressedByIHC(@NotNull final String gene) {
+    ProteinIsExpressedByIHC(@NotNull final String gene) {
         this.gene = gene;
     }
 

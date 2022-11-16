@@ -54,9 +54,9 @@ public class MolecularRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_HLA_TYPE_X, hasSpecificHLATypeCreator());
         map.put(EligibilityRule.OVEREXPRESSION_OF_GENE_X, geneIsOverexpressedCreator());
         map.put(EligibilityRule.NON_EXPRESSION_OF_GENE_X, geneIsNotExpressedCreator());
-        map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC, geneIsExpressedByIHCCreator());
-        map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC_OF_EXACTLY_Y, geneHasExactExpressionByIHCCreator());
-        map.put(EligibilityRule.EXPRESSION_OF_GENE_X_BY_IHC_OF_AT_LEAST_Y, geneHasSufficientExpressionByIHCCreator());
+        map.put(EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC, proteinIsExpressedByIHCCreator());
+        map.put(EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_EXACTLY_Y, proteinHasExactExpressionByIHCCreator());
+        map.put(EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_LEAST_Y, proteinHasSufficientExpressionByIHCCreator());
         map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X, hasSufficientPDL1ByCPSByIHCCreator());
         map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X, hasLimitedPDL1ByCPSByIHCCreator());
         map.put(EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X, hasLimitedPDL1ByTPSByIHCCreator());
@@ -232,26 +232,26 @@ public class MolecularRuleMapper extends RuleMapper {
     }
 
     @NotNull
-    private FunctionCreator geneIsExpressedByIHCCreator() {
+    private FunctionCreator proteinIsExpressedByIHCCreator() {
         return function -> {
             OneGene gene = functionInputResolver().createOneGeneInput(function);
-            return new GeneIsExpressedByIHC(gene.geneName());
+            return new ProteinIsExpressedByIHC(gene.geneName());
         };
     }
 
     @NotNull
-    private FunctionCreator geneHasExactExpressionByIHCCreator() {
+    private FunctionCreator proteinHasExactExpressionByIHCCreator() {
         return function -> {
             OneGeneOneInteger input = functionInputResolver().createOneGeneOneIntegerInput(function);
-            return new GeneHasExactExpressionByIHC(input.geneName(), input.integer());
+            return new ProteinHasExactExpressionByIHC(input.geneName(), input.integer());
         };
     }
 
     @NotNull
-    private FunctionCreator geneHasSufficientExpressionByIHCCreator() {
+    private FunctionCreator proteinHasSufficientExpressionByIHCCreator() {
         return function -> {
             OneGeneOneInteger input = functionInputResolver().createOneGeneOneIntegerInput(function);
-            return new GeneHasSufficientExpressionByIHC(input.geneName(), input.integer());
+            return new ProteinHasSufficientExpressionByIHC(input.geneName(), input.integer());
         };
     }
 

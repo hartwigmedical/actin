@@ -12,12 +12,12 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-public class GeneHasExactExpressionByIHCTest {
+public class ProteinHasExactExpressionByIHCTest {
 
     @Test
     public void canEvaluate() {
         String gene = "gene 1";
-        GeneHasExactExpressionByIHC exact = new GeneHasExactExpressionByIHC(gene, 2);
+        ProteinHasExactExpressionByIHC exact = new ProteinHasExactExpressionByIHC(gene, 2);
 
         // No prior tests
         List<PriorMolecularTest> priorTests = Lists.newArrayList();
