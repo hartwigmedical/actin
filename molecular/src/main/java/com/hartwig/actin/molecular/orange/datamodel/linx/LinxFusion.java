@@ -17,9 +17,6 @@ public abstract class LinxFusion {
     @NotNull
     public abstract String geneTranscriptStart();
 
-    @NotNull
-    public abstract String geneContextStart();
-
     public abstract int fusedExonUp();
 
     @NotNull
@@ -27,9 +24,6 @@ public abstract class LinxFusion {
 
     @NotNull
     public abstract String geneTranscriptEnd();
-
-    @NotNull
-    public abstract String geneContextEnd();
 
     public abstract int fusedExonDown();
 

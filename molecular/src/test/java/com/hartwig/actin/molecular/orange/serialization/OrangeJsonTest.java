@@ -128,9 +128,7 @@ public class OrangeJsonTest {
         LinxFusion fusion = linx.fusions().iterator().next();
         assertEquals(FusionType.KNOWN_PAIR, fusion.type());
         assertEquals("TMPRSS2", fusion.geneStart());
-        assertEquals("Exon 1", fusion.geneContextStart());
         assertEquals("ETV4", fusion.geneEnd());
-        assertEquals("Promoter Region", fusion.geneContextEnd());
         assertEquals(FusionDriverLikelihood.HIGH, fusion.driverLikelihood());
 
         assertEquals(1, linx.homozygousDisruptedGenes().size());

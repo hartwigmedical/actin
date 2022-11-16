@@ -185,11 +185,9 @@ public final class OrangeJson {
                         .type(FusionType.valueOf(string(fusion, "reportedType")))
                         .geneStart(string(fusion, "geneStart"))
                         .geneTranscriptStart(string(fusion, "geneTranscriptStart"))
-                        .geneContextStart(string(fusion, "geneContextStart"))
                         .fusedExonUp(integer(fusion, "fusedExonUp"))
                         .geneEnd(string(fusion, "geneEnd"))
                         .geneTranscriptEnd(string(fusion, "geneTranscriptEnd"))
-                        .geneContextEnd(string(fusion, "geneContextEnd"))
                         .fusedExonDown(integer(fusion, "fusedExonDown"))
                         .driverLikelihood(FusionDriverLikelihood.valueOf(string(fusion, "likelihood")))
                         .build());

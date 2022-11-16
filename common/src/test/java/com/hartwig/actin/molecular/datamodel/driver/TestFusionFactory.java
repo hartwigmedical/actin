@@ -14,11 +14,9 @@ public final class TestFusionFactory {
                 .from(TestDriverFactory.createEmptyDriver())
                 .geneStart(Strings.EMPTY)
                 .geneTranscriptStart(Strings.EMPTY)
-                .geneContextStart(Strings.EMPTY)
                 .fusedExonUp(-1)
                 .geneEnd(Strings.EMPTY)
                 .geneTranscriptEnd(Strings.EMPTY)
-                .geneContextEnd(Strings.EMPTY)
                 .fusedExonDown(-1)
                 .proteinEffect(ProteinEffect.UNKNOWN)
                 .driverType(FusionDriverType.KNOWN_PAIR);
