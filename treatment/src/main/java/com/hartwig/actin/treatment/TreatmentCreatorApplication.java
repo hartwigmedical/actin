@@ -7,6 +7,8 @@ import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.doid.DoidModelFactory;
 import com.hartwig.actin.doid.datamodel.DoidEntry;
 import com.hartwig.actin.doid.serialization.DoidJson;
+import com.hartwig.actin.molecular.filter.GeneFilter;
+import com.hartwig.actin.molecular.filter.GeneFilterFactory;
 import com.hartwig.actin.treatment.datamodel.Trial;
 import com.hartwig.actin.treatment.serialization.TrialJson;
 import com.hartwig.actin.treatment.trial.EligibilityRuleUsageEvaluator;
@@ -57,7 +59,12 @@ public class TreatmentCreatorApplication {
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size());
 
         DoidModel doidModel = DoidModelFactory.createFromDoidEntry(doidEntry);
-        TrialFactory trialFactory = TrialFactory.create(config.trialConfigDirectory(), doidModel);
+
+        LOGGER.info("Reading gene filter tsv from {}", config.geneFilterTsv());
+        GeneFilter geneFilter = GeneFilterFactory.createFromTsv(config.geneFilterTsv());
+        LOGGER.info(" Read {} genes to include from ORANGE record", geneFilter.size());
+
+        TrialFactory trialFactory = TrialFactory.create(config.trialConfigDirectory(), doidModel, geneFilter);
 
         LOGGER.info("Creating trial database");
         List<Trial> trials = trialFactory.create();

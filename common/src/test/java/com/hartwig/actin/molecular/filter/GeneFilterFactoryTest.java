@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.orange.filter;
+package com.hartwig.actin.molecular.filter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -11,7 +11,7 @@ import org.junit.Test;
 
 public class GeneFilterFactoryTest {
 
-    private static final String EXAMPLE_TSV = Resources.getResource("interpretation/gene_filter.tsv").getPath();
+    private static final String EXAMPLE_TSV = Resources.getResource("filter/gene_filter.tsv").getPath();
 
     @Test
     public void canCreateFromExampleTsv() throws IOException {

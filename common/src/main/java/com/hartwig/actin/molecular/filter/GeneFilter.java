@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.orange.filter;
+package com.hartwig.actin.molecular.filter;
 
 import java.util.Set;
 

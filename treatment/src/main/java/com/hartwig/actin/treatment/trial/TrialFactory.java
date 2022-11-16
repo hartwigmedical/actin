@@ -8,6 +8,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.doid.DoidModel;
+import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker;
 import com.hartwig.actin.treatment.datamodel.Cohort;
 import com.hartwig.actin.treatment.datamodel.CohortMetadata;
@@ -40,7 +41,8 @@ public class TrialFactory {
     private final EligibilityFactory eligibilityFactory;
 
     @NotNull
-    public static TrialFactory create(@NotNull String trialConfigDirectory, @NotNull DoidModel doidModel) throws IOException {
+    public static TrialFactory create(@NotNull String trialConfigDirectory, @NotNull DoidModel doidModel, @NotNull GeneFilter geneFilter)
+            throws IOException {
         // TODO Create with specific set of allowed genes
         MolecularInputChecker molecularInputChecker = MolecularInputChecker.createAnyGeneValid();
         FunctionInputResolver functionInputResolver = new FunctionInputResolver(doidModel, molecularInputChecker);

@@ -5,8 +5,8 @@ import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion;
+import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
-import com.hartwig.actin.molecular.orange.filter.GeneFilter;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
