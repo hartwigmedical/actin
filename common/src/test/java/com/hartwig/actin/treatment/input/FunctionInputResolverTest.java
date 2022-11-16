@@ -270,14 +270,14 @@ public class FunctionInputResolverTest {
 
         EligibilityRule rule = firstOfType(FunctionInput.ONE_STRING_ONE_INTEGER);
 
-        EligibilityFunction valid = create(rule, Lists.newArrayList("doid", "1"));
+        EligibilityFunction valid = create(rule, Lists.newArrayList("string", "1"));
         assertTrue(resolver.hasValidInputs(valid));
         OneIntegerOneString inputs = resolver.createOneStringOneIntegerInput(valid);
-        assertEquals("doid", inputs.string());
+        assertEquals("string", inputs.string());
         assertEquals(1, inputs.integer());
 
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
-        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("1", "doid"))));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("1", "string"))));
     }
 
     @Test
@@ -469,6 +469,19 @@ public class FunctionInputResolverTest {
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("A*02"))));
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("A:01*02"))));
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("A*02:01", "A*02:02"))));
+    }
+
+    @Test
+    public void canDetermineIfStringIsProteinImpact() {
+        assertTrue(FunctionInputResolver.isProteinImpact("V600E"));
+        assertTrue(FunctionInputResolver.isProteinImpact("M1X"));
+
+        assertFalse(FunctionInputResolver.isProteinImpact("not a protein impact"));
+        assertFalse(FunctionInputResolver.isProteinImpact("600"));
+        assertFalse(FunctionInputResolver.isProteinImpact("V600"));
+        assertFalse(FunctionInputResolver.isProteinImpact("600E"));
+        assertFalse(FunctionInputResolver.isProteinImpact("v600e"));
+        assertFalse(FunctionInputResolver.isProteinImpact("BRAF"));
     }
 
     @Test

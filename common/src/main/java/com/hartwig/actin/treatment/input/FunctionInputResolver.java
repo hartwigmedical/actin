@@ -4,6 +4,7 @@ import static com.hartwig.actin.treatment.input.FunctionInputMapping.RULE_INPUT_
 
 import java.util.List;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
@@ -20,9 +21,11 @@ import com.hartwig.actin.treatment.input.datamodel.VariantTypeInput;
 import com.hartwig.actin.treatment.input.single.FunctionInput;
 import com.hartwig.actin.treatment.input.single.ImmutableManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableManyTreatmentsWithName;
+import com.hartwig.actin.treatment.input.single.ImmutableOneGene;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerOneString;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerOneStringOneVariantType;
+import com.hartwig.actin.treatment.input.single.ImmutableOneProteinImpact;
 import com.hartwig.actin.treatment.input.single.ImmutableOneStringManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentOneInteger;
 import com.hartwig.actin.treatment.input.single.ImmutableOneTypedTreatmentManyStrings;
@@ -34,9 +37,11 @@ import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegersOneString;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoStrings;
 import com.hartwig.actin.treatment.input.single.ManyStrings;
 import com.hartwig.actin.treatment.input.single.ManyTreatmentsWithName;
+import com.hartwig.actin.treatment.input.single.OneGene;
 import com.hartwig.actin.treatment.input.single.OneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneStringOneVariantType;
+import com.hartwig.actin.treatment.input.single.OneProteinImpact;
 import com.hartwig.actin.treatment.input.single.OneStringManyStrings;
 import com.hartwig.actin.treatment.input.single.OneTreatmentOneInteger;
 import com.hartwig.actin.treatment.input.single.OneTypedTreatmentManyStrings;
@@ -190,6 +195,14 @@ public class FunctionInputResolver {
                     createOneHlaAlleleInput(function);
                     return true;
                 }
+                case ONE_PROTEIN_IMPACT: {
+                    createOneProteinImpactInput(function);
+                    return true;
+                }
+                case ONE_GENE: {
+                    createOneGeneInput(function);
+                    return true;
+                }
                 case ONE_DOID_TERM: {
                     createOneDoidTermInput(function);
                     return true;
@@ -333,9 +346,7 @@ public class FunctionInputResolver {
     public ManyStrings createManyStringsInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.MANY_STRINGS, 1);
 
-        return ImmutableManyStrings.builder()
-                .strings(toStringList(function.parameters().get(0)))
-                .build();
+        return ImmutableManyStrings.builder().strings(toStringList(function.parameters().get(0))).build();
     }
 
     @NotNull
@@ -435,6 +446,44 @@ public class FunctionInputResolver {
         }
 
         return param;
+    }
+
+    @NotNull
+    public OneProteinImpact createOneProteinImpactInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.ONE_PROTEIN_IMPACT, 1);
+
+        String impact = (String) function.parameters().get(0);
+        if (!isProteinImpact(impact)) {
+            throw new IllegalStateException("Not a valid protein impact: " + impact);
+        }
+
+        return ImmutableOneProteinImpact.builder().impact(impact).build();
+    }
+
+    @VisibleForTesting
+    static boolean isProteinImpact(@NotNull String string) {
+        char first = string.charAt(0);
+        char last = string.charAt(string.length() -1);
+        String codon = string.substring(1, string.length() - 1);
+
+        return Character.isUpperCase(first) && Character.isUpperCase(last) && isInteger(codon);
+    }
+
+    private static boolean isInteger(@NotNull String codon) {
+        try {
+            Integer.parseInt(codon);
+            return true;
+        } catch (NumberFormatException exception) {
+            return false;
+        }
+    }
+
+    @NotNull
+    public OneGene createOneGeneInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.ONE_GENE, 1);
+
+        // TODO Check that the gene is part of general gene list.
+        return ImmutableOneGene.builder().geneName((String) function.parameters().get(0)).build();
     }
 
     @NotNull

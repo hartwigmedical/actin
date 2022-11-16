@@ -25,5 +25,7 @@ public enum FunctionInput {
     ONE_INTEGER_MANY_STRINGS,
     ONE_TUMOR_STAGE,
     ONE_HLA_ALLELE,
+    ONE_PROTEIN_IMPACT,
+    ONE_GENE,
     ONE_DOID_TERM
 }
