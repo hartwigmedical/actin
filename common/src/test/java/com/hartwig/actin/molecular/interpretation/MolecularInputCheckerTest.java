@@ -34,6 +34,7 @@ public class MolecularInputCheckerTest {
     public void canDetermineIfStringIsProteinImpact() {
         assertTrue(MolecularInputChecker.isProteinImpact("V600E"));
         assertTrue(MolecularInputChecker.isProteinImpact("M1X"));
+        assertTrue(MolecularInputChecker.isProteinImpact("H167_N173del"));
 
         assertFalse(MolecularInputChecker.isProteinImpact("M0X"));
         assertFalse(MolecularInputChecker.isProteinImpact("not a protein impact"));

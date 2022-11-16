@@ -31,10 +31,15 @@ public class MolecularInputChecker {
 
     public static boolean isProteinImpact(@NotNull String string) {
         char first = string.charAt(0);
-        char last = string.charAt(string.length() - 1);
-        String codon = string.substring(1, string.length() - 1);
+        boolean hasValidStart = Character.isUpperCase(first);
 
-        return Character.isUpperCase(first) && Character.isUpperCase(last) && isPositiveNumber(codon);
+        char last = string.charAt(string.length() - 1);
+        boolean hasValidEnd = string.endsWith("del") || Character.isUpperCase(last);
+
+        String mid = string.substring(1, string.length() - 1);
+        boolean hasValidMid = string.endsWith("del") || mid.contains("_") || isPositiveNumber(mid);
+
+        return hasValidStart && hasValidEnd && hasValidMid;
     }
 
     public static boolean isCodon(@NotNull String string) {
