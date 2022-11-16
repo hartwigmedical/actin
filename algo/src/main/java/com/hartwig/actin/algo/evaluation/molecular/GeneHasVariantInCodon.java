@@ -93,7 +93,6 @@ public class GeneHasVariantInCodon implements EvaluationFunction {
             return false;
         }
 
-        // TODO Make a more explicit datamodel.
         int codonIndexToMatch = Integer.parseInt(codonToMatch.substring(1));
         return codonIndexToMatch == affectedCodon;
     }
