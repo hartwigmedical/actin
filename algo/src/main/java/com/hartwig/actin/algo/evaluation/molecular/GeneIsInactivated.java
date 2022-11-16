@@ -132,8 +132,8 @@ public class GeneIsInactivated implements EvaluationFunction {
                     .result(EvaluationResult.PASS)
                     .addAllInclusionMolecularEvents(inactivationEventsThatQualify)
                     .addPassSpecificMessages(
-                            "Inactivation events detected for " + gene + ": " + Format.concat(inactivationEventsThatQualify))
-                    .addPassGeneralMessages("Inactivation of " + gene)
+                            "Inactivation event(s) detected for gene " + gene + ": " + Format.concat(inactivationEventsThatQualify))
+                    .addPassGeneralMessages(gene + " inactivation")
                     .build();
         }
 
@@ -149,8 +149,8 @@ public class GeneIsInactivated implements EvaluationFunction {
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("No inactivation detected of gene " + gene)
-                .addFailGeneralMessages("Molecular requirements")
+                .addFailSpecificMessages("No inactivation event(s) detected for gene " + gene)
+                .addFailGeneralMessages("No " + gene + " inactivation")
                 .build();
     }
 
@@ -165,23 +165,23 @@ public class GeneIsInactivated implements EvaluationFunction {
         if (!inactivationEventsThatAreUnreportable.isEmpty()) {
             warnEvents.addAll(inactivationEventsThatAreUnreportable);
             warnSpecificMessages.add(
-                    "Inactivation events detected for " + gene + ": " + Format.concat(inactivationEventsThatAreUnreportable)
-                            + " but considered non-reportable");
-            warnGeneralMessages.add("Potential inactivation of " + gene);
+                    "Inactivation events detected for gene " + gene + ": " + Format.concat(inactivationEventsThatAreUnreportable)
+                            + ", but considered non-reportable");
+            warnGeneralMessages.add(gene + " potential inactivation but not reportable");
         }
 
         if (!inactivationEventsNoTSG.isEmpty()) {
             warnEvents.addAll(inactivationEventsNoTSG);
-            warnSpecificMessages.add("Inactivation events detected for " + gene + ": " + Format.concat(inactivationEventsNoTSG)
-                    + " but gene is not annotated with function TSG");
-            warnGeneralMessages.add("Potential inactivation of " + gene);
+            warnSpecificMessages.add("Inactivation events detected for gene " + gene + ": " + Format.concat(inactivationEventsNoTSG)
+                    + " but gene is not annotated with gene role TSG");
+            warnGeneralMessages.add(gene + " potential inactivation but gene role not TSG");
         }
 
         if (!inactivationEventsGainOfFunction.isEmpty()) {
             warnEvents.addAll(inactivationEventsGainOfFunction);
             warnSpecificMessages.add("Inactivation events detected for " + gene + ": " + Format.concat(inactivationEventsGainOfFunction)
                     + " but no events annotated as having gain-of-function impact");
-            warnGeneralMessages.add("Potential inactivation of " + gene);
+            warnGeneralMessages.add(gene + " potential inactivation but event annotated with gain-of-function protein impact");
         }
 
         if (!reportableNonDriverVariantsWithLossOfFunction.isEmpty()) {
@@ -189,14 +189,14 @@ public class GeneIsInactivated implements EvaluationFunction {
             warnSpecificMessages.add(
                     "Inactivation events detected for " + gene + ": " + Format.concat(reportableNonDriverVariantsWithLossOfFunction)
                             + " but events are low-driver yet annotated with loss-of-function");
-            warnGeneralMessages.add("Potential inactivation of " + gene);
+            warnGeneralMessages.add(gene + " potential inactivation but low driver although also loss-of-function protein impact");
         }
 
         if (eventsThatMayBeTransPhased.size() > 1) {
             warnEvents.addAll(eventsThatMayBeTransPhased);
             warnSpecificMessages.add("Multiple events detected for " + gene + ": " + Format.concat(eventsThatMayBeTransPhased)
-                    + " that may together potentially inactivate the gene");
-            warnGeneralMessages.add("Potential inactivation of " + gene);
+                    + " that potentially together inactivate the gene?");
+            warnGeneralMessages.add(gene + " potential inactivation if considering multiple events");
         }
 
         if (!warnEvents.isEmpty() && !warnSpecificMessages.isEmpty() && !warnGeneralMessages.isEmpty()) {
