@@ -8,6 +8,15 @@ import org.junit.Test;
 public class MolecularInputCheckerTest {
 
     @Test
+    public void canDetermineIfStringIsHlaAllele() {
+        assertTrue(MolecularInputChecker.isHlaAllele("A*02:01"));
+
+        assertFalse(MolecularInputChecker.isHlaAllele("HLA-A*02:01"));
+        assertFalse(MolecularInputChecker.isHlaAllele("A*02"));
+        assertFalse(MolecularInputChecker.isHlaAllele("A:01*02"));
+    }
+
+    @Test
     public void canDetermineIfStringIsProteinImpact() {
         assertTrue(MolecularInputChecker.isProteinImpact("V600E"));
         assertTrue(MolecularInputChecker.isProteinImpact("M1X"));

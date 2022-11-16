@@ -389,16 +389,15 @@ public class FunctionInputResolverTest {
 
         EligibilityRule rule = firstOfType(FunctionInput.ONE_HLA_ALLELE);
 
-        EligibilityFunction valid = create(rule, Lists.newArrayList("A*02:01"));
+        String allele = "A*02:01";
+        EligibilityFunction valid = create(rule, Lists.newArrayList(allele));
         assertTrue(resolver.hasValidInputs(valid));
 
-        OneHlaAllele expected = ImmutableOneHlaAllele.builder().allele("A*02:01").build();
+        OneHlaAllele expected = ImmutableOneHlaAllele.builder().allele(allele).build();
         assertEquals(expected, resolver.createOneHlaAlleleInput(valid));
 
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
-        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("HLA-A*02:01"))));
-        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("A*02"))));
-        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("A:01*02"))));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("not an HLA allele"))));
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("A*02:01", "A*02:02"))));
     }
 
