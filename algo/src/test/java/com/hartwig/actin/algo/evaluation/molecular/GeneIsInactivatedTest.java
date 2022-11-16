@@ -162,6 +162,8 @@ public class GeneIsInactivatedTest {
                 .phaseGroup(2)
                 .build();
 
+        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withVariant(variantGroup1)));
+
         assertMolecularEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withVariants(variantGroup1, variantGroup2)));
 

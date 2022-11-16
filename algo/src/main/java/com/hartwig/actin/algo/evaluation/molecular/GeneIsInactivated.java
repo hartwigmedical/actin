@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.molecular;
 
+import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
@@ -79,7 +81,7 @@ public class GeneIsInactivated implements EvaluationFunction {
         }
 
         Set<String> reportableNonDriverVariantsWithLossOfFunction = Sets.newHashSet();
-        Set<String> eventsThatMayBeTransPhased = Sets.newHashSet();
+        List<String> eventsThatMayBeTransPhased = Lists.newArrayList();
         Set<Integer> evaluatedPhaseGroups = Sets.newHashSet();
 
         for (Variant variant : record.molecular().drivers().variants()) {
@@ -155,7 +157,7 @@ public class GeneIsInactivated implements EvaluationFunction {
     @Nullable
     private Evaluation evaluatePotentialWarns(@NotNull Set<String> inactivationEventsThatAreUnreportable,
             @NotNull Set<String> inactivationEventsNoTSG, @NotNull Set<String> inactivationEventsGainOfFunction,
-            @NotNull Set<String> reportableNonDriverVariantsWithLossOfFunction, @NotNull Set<String> eventsThatMayBeUnphased) {
+            @NotNull Set<String> reportableNonDriverVariantsWithLossOfFunction, @NotNull List<String> eventsThatMayBeTransPhased) {
         Set<String> warnEvents = Sets.newHashSet();
         Set<String> warnSpecificMessages = Sets.newHashSet();
         Set<String> warnGeneralMessages = Sets.newHashSet();
@@ -190,9 +192,9 @@ public class GeneIsInactivated implements EvaluationFunction {
             warnGeneralMessages.add("Potential inactivation of " + gene);
         }
 
-        if (!eventsThatMayBeUnphased.isEmpty()) {
-            warnEvents.addAll(eventsThatMayBeUnphased);
-            warnSpecificMessages.add("Multiple events detected for " + gene + ": " + Format.concat(eventsThatMayBeUnphased)
+        if (eventsThatMayBeTransPhased.size() > 1) {
+            warnEvents.addAll(eventsThatMayBeTransPhased);
+            warnSpecificMessages.add("Multiple events detected for " + gene + ": " + Format.concat(eventsThatMayBeTransPhased)
                     + " that may together potentially inactivate the gene");
             warnGeneralMessages.add("Potential inactivation of " + gene);
         }
