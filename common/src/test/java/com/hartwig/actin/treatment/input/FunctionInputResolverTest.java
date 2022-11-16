@@ -477,6 +477,7 @@ public class FunctionInputResolverTest {
         assertTrue(FunctionInputResolver.isProteinImpact("M1X"));
 
         assertFalse(FunctionInputResolver.isProteinImpact("not a protein impact"));
+        assertFalse(FunctionInputResolver.isProteinImpact("Val600Glu"));
         assertFalse(FunctionInputResolver.isProteinImpact("600"));
         assertFalse(FunctionInputResolver.isProteinImpact("V600"));
         assertFalse(FunctionInputResolver.isProteinImpact("600E"));
