@@ -125,6 +125,7 @@ public class WashoutRuleMapper extends RuleMapper {
     private EvaluationFunction createReceivedCancerTherapyOfCategoryFunction(@NotNull List<String> categoryInputs, int minWeeks) {
         MedicationStatusInterpreter interpreter = createInterpreterForWashout(minWeeks);
 
+        // TODO: Dynamically resolve inputs to names and/or categories
         Set<String> names = determineNames(categoryInputs);
         if (names != null) {
             return new HasRecentlyReceivedCancerTherapyOfName(names, interpreter);

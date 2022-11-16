@@ -17,9 +17,13 @@ import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 public class GeneHasVariantWithProteinImpact implements EvaluationFunction {
+
+    private static final Logger LOGGER = LogManager.getLogger(GeneHasVariantWithProteinImpact.class);
 
     @NotNull
     private final String gene;
@@ -112,7 +116,7 @@ public class GeneHasVariantWithProteinImpact implements EvaluationFunction {
         }
 
         if (!MolecularInputChecker.isProteinImpact(impact)) {
-            throw new IllegalStateException("Cannot convert hgvs protein impact to a usable protein impact: " + hgvsProteinImpact);
+            LOGGER.warn("Cannot convert hgvs protein impact to a usable protein impact: {}", hgvsProteinImpact);
         }
 
         return impact;
