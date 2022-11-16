@@ -18,6 +18,13 @@ public class MolecularInputChecker {
         return true;
     }
 
+    public static boolean isHlaAllele(@NotNull String string) {
+        // Expected format "A*02:01"
+        int asterixIndex = string.indexOf("*");
+        int semicolonIndex = string.indexOf(":");
+        return asterixIndex == 1 && semicolonIndex > asterixIndex;
+    }
+
     public static boolean isProteinImpact(@NotNull String string) {
         char first = string.charAt(0);
         char last = string.charAt(string.length() - 1);

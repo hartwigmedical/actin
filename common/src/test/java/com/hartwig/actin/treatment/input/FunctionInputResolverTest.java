@@ -19,12 +19,14 @@ import com.hartwig.actin.treatment.input.datamodel.ImmutableTreatmentInputWithNa
 import com.hartwig.actin.treatment.input.datamodel.TreatmentInput;
 import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput;
 import com.hartwig.actin.treatment.input.single.FunctionInput;
+import com.hartwig.actin.treatment.input.single.ImmutableOneHlaAllele;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerOneString;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoDoubles;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegers;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegersManyStrings;
 import com.hartwig.actin.treatment.input.single.ManyTreatmentsWithName;
+import com.hartwig.actin.treatment.input.single.OneHlaAllele;
 import com.hartwig.actin.treatment.input.single.OneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
 import com.hartwig.actin.treatment.input.single.OneTreatmentOneInteger;
@@ -390,7 +392,8 @@ public class FunctionInputResolverTest {
         EligibilityFunction valid = create(rule, Lists.newArrayList("A*02:01"));
         assertTrue(resolver.hasValidInputs(valid));
 
-        assertEquals("A*02:01", resolver.createOneHlaAlleleInput(valid));
+        OneHlaAllele expected = ImmutableOneHlaAllele.builder().allele("A*02:01").build();
+        assertEquals(expected, resolver.createOneHlaAlleleInput(valid));
 
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("HLA-A*02:01"))));

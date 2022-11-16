@@ -27,6 +27,7 @@ import com.hartwig.actin.treatment.input.single.ImmutableOneGeneManyProteinImpac
 import com.hartwig.actin.treatment.input.single.ImmutableOneGeneOneInteger;
 import com.hartwig.actin.treatment.input.single.ImmutableOneGeneOneIntegerOneVariantType;
 import com.hartwig.actin.treatment.input.single.ImmutableOneGeneTwoIntegers;
+import com.hartwig.actin.treatment.input.single.ImmutableOneHlaAllele;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerOneString;
 import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentOneInteger;
@@ -43,6 +44,7 @@ import com.hartwig.actin.treatment.input.single.OneGeneManyProteinImpacts;
 import com.hartwig.actin.treatment.input.single.OneGeneOneInteger;
 import com.hartwig.actin.treatment.input.single.OneGeneOneIntegerOneVariantType;
 import com.hartwig.actin.treatment.input.single.OneGeneTwoIntegers;
+import com.hartwig.actin.treatment.input.single.OneHlaAllele;
 import com.hartwig.actin.treatment.input.single.OneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
 import com.hartwig.actin.treatment.input.single.OneTreatmentOneInteger;
@@ -388,20 +390,15 @@ public class FunctionInputResolver {
     }
 
     @NotNull
-    public String createOneHlaAlleleInput(@NotNull EligibilityFunction function) {
+    public OneHlaAllele createOneHlaAlleleInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_HLA_ALLELE, 1);
 
-        // TODO Convert to HLA allele explicit datamodel
-
-        // Expected format "A*02:01"
-        String param = (String) function.parameters().get(0);
-        int asterixIndex = param.indexOf("*");
-        int semicolonIndex = param.indexOf(":");
-        if (asterixIndex != 1 || semicolonIndex <= asterixIndex) {
-            throw new IllegalArgumentException("Not a proper HLA allele: " + param);
+        String allele = (String) function.parameters().get(0);
+        if (!MolecularInputChecker.isHlaAllele(allele)) {
+            throw new IllegalArgumentException("Not a proper HLA allele: " + allele);
         }
 
-        return param;
+        return ImmutableOneHlaAllele.builder().allele(allele).build();
     }
 
     @NotNull

@@ -15,6 +15,7 @@ import com.hartwig.actin.treatment.input.single.OneGeneManyProteinImpacts;
 import com.hartwig.actin.treatment.input.single.OneGeneOneInteger;
 import com.hartwig.actin.treatment.input.single.OneGeneOneIntegerOneVariantType;
 import com.hartwig.actin.treatment.input.single.OneGeneTwoIntegers;
+import com.hartwig.actin.treatment.input.single.OneHlaAllele;
 import com.hartwig.actin.treatment.input.single.TwoIntegers;
 
 import org.jetbrains.annotations.NotNull;
@@ -215,8 +216,8 @@ public class MolecularRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasSpecificHLATypeCreator() {
         return function -> {
-            String hlaAlleleToFind = functionInputResolver().createOneHlaAlleleInput(function);
-            return new HasSpecificHLAType(hlaAlleleToFind);
+            OneHlaAllele hlaAlleleToFind = functionInputResolver().createOneHlaAlleleInput(function);
+            return new HasSpecificHLAType(hlaAlleleToFind.allele());
         };
     }
 
