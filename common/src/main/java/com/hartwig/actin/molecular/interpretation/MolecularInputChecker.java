@@ -1,11 +1,16 @@
 package com.hartwig.actin.molecular.interpretation;
 
+import java.util.Set;
+
+import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.filter.GeneFilterFactory;
 
 import org.jetbrains.annotations.NotNull;
 
 public class MolecularInputChecker {
+
+    private static final Set<String> VALID_PROTEIN_ENDINGS = Sets.newHashSet("del", "dup", "ins");
 
     @NotNull
     private final GeneFilter geneFilter;
@@ -34,12 +39,21 @@ public class MolecularInputChecker {
         boolean hasValidStart = Character.isUpperCase(first);
 
         char last = string.charAt(string.length() - 1);
-        boolean hasValidEnd = string.endsWith("del") || Character.isUpperCase(last);
+        boolean hasValidEnd = hasSpecificValidProteinEnding(string) || Character.isUpperCase(last);
 
         String mid = string.substring(1, string.length() - 1);
-        boolean hasValidMid = string.endsWith("del") || mid.contains("_") || isPositiveNumber(mid);
+        boolean hasValidMid = hasSpecificValidProteinEnding(string) || mid.contains("_") || isPositiveNumber(mid);
 
         return hasValidStart && hasValidEnd && hasValidMid;
+    }
+
+    private static boolean hasSpecificValidProteinEnding(@NotNull String string) {
+        for (String validProteinEnding : VALID_PROTEIN_ENDINGS) {
+            if (string.endsWith(validProteinEnding)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean isCodon(@NotNull String string) {
