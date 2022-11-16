@@ -12,15 +12,16 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
+import com.hartwig.actin.molecular.orange.evidence.TestEvidenceAnnotatorFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-public class OrangeReaderTest {
+public class OrangeInterpreterTest {
 
     @Test
     public void canReadOrangeRecord() {
-        MolecularRecord record = createTestReader().read(TestOrangeFactory.createProperTestOrangeRecord());
+        MolecularRecord record = createTestReader().interpret(TestOrangeFactory.createProperTestOrangeRecord());
 
         assertEquals(TestDataFactory.TEST_PATIENT, record.patientId());
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
@@ -44,17 +45,17 @@ public class OrangeReaderTest {
 
     @Test
     public void canConvertSampleIdToPatientId() {
-        assertEquals("ACTN01029999", OrangeReader.toPatientId("ACTN01029999T"));
-        assertEquals("ACTN01029999", OrangeReader.toPatientId("ACTN01029999T2"));
+        assertEquals("ACTN01029999", OrangeInterpreter.toPatientId("ACTN01029999T"));
+        assertEquals("ACTN01029999", OrangeInterpreter.toPatientId("ACTN01029999T2"));
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void crashOnInvalidSampleId() {
-        OrangeReader.toPatientId("no sample");
+        OrangeInterpreter.toPatientId("no sample");
     }
 
     @NotNull
-    private static OrangeReader createTestReader() {
-        return new OrangeReader(TestGeneFilterFactory.createNeverValid());
+    private static OrangeInterpreter createTestReader() {
+        return new OrangeInterpreter(TestGeneFilterFactory.createNeverValid(), TestEvidenceAnnotatorFactory.createWithNoEvidence());
     }
 }

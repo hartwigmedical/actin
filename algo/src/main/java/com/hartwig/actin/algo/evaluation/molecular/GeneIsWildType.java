@@ -128,9 +128,9 @@ public class GeneIsWildType implements EvaluationFunction {
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.PASS)
+                .addInclusionMolecularEvents(gene + " wild-type")
                 .addPassSpecificMessages("Gene " + gene + " is considered wild-type")
                 .addPassGeneralMessages(gene + " wild-type")
-                .addInclusionMolecularEvents(gene + "wild-type")
                 .build();
     }
 

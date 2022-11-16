@@ -7,21 +7,25 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
+import com.hartwig.actin.molecular.orange.evidence.EvidenceAnnotator;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
-public class OrangeReader {
+public class OrangeInterpreter {
 
     @NotNull
     private final GeneFilter geneFilter;
+    @NotNull
+    private final EvidenceAnnotator evidenceAnnotator;
 
-    public OrangeReader(@NotNull final GeneFilter geneFilter) {
+    public OrangeInterpreter(@NotNull final GeneFilter geneFilter, @NotNull final EvidenceAnnotator evidenceAnnotator) {
         this.geneFilter = geneFilter;
+        this.evidenceAnnotator = evidenceAnnotator;
     }
 
     @NotNull
-    public MolecularRecord read(@NotNull OrangeRecord record) {
+    public MolecularRecord interpret(@NotNull OrangeRecord record) {
         return ImmutableMolecularRecord.builder()
                 .patientId(toPatientId(record.sampleId()))
                 .sampleId(record.sampleId())

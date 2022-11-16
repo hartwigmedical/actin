@@ -40,11 +40,11 @@ public final class AminoAcid {
     }
 
     @NotNull
-    public static String forceSingleLetterAminoAcids(@NotNull String event) {
-        String convertedEvent = event;
+    public static String forceSingleLetterAminoAcids(@NotNull String impact) {
+        String convertedImpact = impact;
         for (Map.Entry<String, String> mapping : TRI_LETTER_AMINO_ACID_TO_SINGLE_LETTER.entrySet()) {
-            convertedEvent = convertedEvent.replaceAll(mapping.getKey(), mapping.getValue());
+            convertedImpact = convertedImpact.replaceAll(mapping.getKey(), mapping.getValue());
         }
-        return convertedEvent;
+        return convertedImpact;
     }
 }

@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.evidence.filter;
+package com.hartwig.actin.molecular.orange.evidence.filter;
 
 public class ApplicabilityFilterTest {
 

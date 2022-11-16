@@ -27,7 +27,7 @@ public final class DriverEventFactory {
     @NotNull
     private static String impact(@NotNull PurpleVariant variant) {
         if (!variant.canonicalHgvsProteinImpact().isEmpty() && !variant.canonicalHgvsProteinImpact().equals("p.?")) {
-            return AminoAcid.forceSingleLetterAminoAcids(variant.canonicalHgvsProteinImpact());
+            return reformatProteinImpact(variant.canonicalHgvsProteinImpact());
         }
 
         if (!variant.canonicalHgvsCodingImpact().isEmpty()) {
@@ -45,6 +45,12 @@ public final class DriverEventFactory {
             joiner.add(effect.toString());
         }
         return joiner.toString();
+    }
+
+    @NotNull
+    private static String reformatProteinImpact(@NotNull String proteinImpact) {
+        String reformatted = proteinImpact.startsWith("p.") ? proteinImpact.substring(2) : proteinImpact;
+        return AminoAcid.forceSingleLetterAminoAcids(reformatted);
     }
 
     @NotNull
