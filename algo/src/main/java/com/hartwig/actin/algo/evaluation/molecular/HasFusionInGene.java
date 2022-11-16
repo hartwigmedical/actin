@@ -89,7 +89,7 @@ public class HasFusionInGene implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No fusion detected with gene " + gene)
-                .addFailGeneralMessages("Molecular requirements")
+                .addFailGeneralMessages("No fusion in gene " + gene)
                 .build();
     }
 
@@ -104,21 +104,21 @@ public class HasFusionInGene implements EvaluationFunction {
             warnEvents.addAll(fusionsWithNoEffect);
             warnSpecificMessages.add("Fusion(s) " + Format.concat(fusionsWithNoEffect) + " detected in gene " + gene
                     + " but annotated as having no protein effect");
-            warnGeneralMessages.add("Potential fusion(s) detected in gene " + gene);
+            warnGeneralMessages.add("Fusion(s) detected in " + gene + " but annotated as having no protein effect");
         }
 
         if (!fusionsWithNoHighDriverLikelihood.isEmpty()) {
             warnEvents.addAll(fusionsWithNoHighDriverLikelihood);
             warnSpecificMessages.add("Fusion(s) " + Format.concat(fusionsWithNoHighDriverLikelihood) + " detected in gene " + gene
                     + " but not with high driver likelihood");
-            warnGeneralMessages.add("Potential fusion(s) detected in gene " + gene);
+            warnGeneralMessages.add("Fusion(s) detected in gene " + gene + " but no high driver likelihood");
         }
 
         if (!unreportableFusionsWithGainOfFunction.isEmpty()) {
             warnEvents.addAll(unreportableFusionsWithGainOfFunction);
             warnSpecificMessages.add("Fusion(s) " + Format.concat(unreportableFusionsWithGainOfFunction) + " detected in gene " + gene
                     + " but not considered reportable; however fusion is annotated as having gain-of-function");
-            warnGeneralMessages.add("Potential fusion(s) detected in gene " + gene);
+            warnGeneralMessages.add("Fusion(s) detected in gene " + gene + " but unreportable but with gain-of-function");
         }
 
         if (!warnEvents.isEmpty() && !warnSpecificMessages.isEmpty() && !warnGeneralMessages.isEmpty()) {
