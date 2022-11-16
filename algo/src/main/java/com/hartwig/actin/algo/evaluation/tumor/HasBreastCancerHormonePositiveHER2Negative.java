@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.algo.molecular.MolecularInterpretation;
+import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleEvaluator;
 import com.hartwig.actin.doid.DoidModel;
 
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +50,7 @@ public class HasBreastCancerHormonePositiveHER2Negative implements EvaluationFun
         boolean isEstrogenNegative =
                 DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.ESTROGEN_NEGATIVE_BREAST_CANCER_DOID);
 
-        boolean hasHer2Amplified = MolecularInterpretation.hasGeneAmplified(record.molecular(), "ERBB2");
+        boolean hasHer2Amplified = MolecularRuleEvaluator.geneIsAmplifiedForPatient("ERBB2", record);
 
         if (isHer2Negative && (isProgesteronePositive || isEstrogenPositive)) {
             if (hasHer2Amplified) {

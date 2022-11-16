@@ -69,8 +69,8 @@ public class HasCancerWithNeuroendocrineComponentTest {
                         .from(base.molecular())
                         .drivers(ImmutableMolecularDrivers.builder()
                                 .from(base.molecular().drivers())
-                                .addLosses(TestLossFactory.builder().gene("TP53").build())
-                                .addHomozygousDisruptions(TestHomozygousDisruptionFactory.builder().gene("RB1").build())
+                                .addLosses(TestLossFactory.builder().isReportable(true).gene("TP53").build())
+                                .addHomozygousDisruptions(TestHomozygousDisruptionFactory.builder().isReportable(true).gene("RB1").build())
                                 .build())
                         .build())
                 .build();

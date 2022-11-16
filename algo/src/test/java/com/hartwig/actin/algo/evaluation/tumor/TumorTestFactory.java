@@ -14,7 +14,10 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
+import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
+import com.hartwig.actin.molecular.datamodel.driver.GeneRole;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
+import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
 import com.hartwig.actin.molecular.datamodel.driver.TestAmplificationFactory;
 
 import org.jetbrains.annotations.NotNull;
@@ -44,9 +47,20 @@ final class TumorTestFactory {
                 .clinical(ImmutableClinicalRecord.builder().from(base.clinical()).tumor(builder().doids(doids).build()).build())
                 .molecular(ImmutableMolecularRecord.builder()
                         .from(base.molecular())
+                        .characteristics(ImmutableMolecularCharacteristics.builder()
+                                .from(base.molecular().characteristics())
+                                .ploidy(2D)
+                                .build())
                         .drivers(ImmutableMolecularDrivers.builder()
                                 .from(base.molecular().drivers())
-                                .addAmplifications(TestAmplificationFactory.builder().gene(amplifiedGene).build())
+                                .addAmplifications(TestAmplificationFactory.builder()
+                                        .isReportable(true)
+                                        .gene(amplifiedGene)
+                                        .geneRole(GeneRole.ONCO)
+                                        .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
+                                        .minCopies(20)
+                                        .maxCopies(20)
+                                        .build())
                                 .build())
                         .build())
                 .build();

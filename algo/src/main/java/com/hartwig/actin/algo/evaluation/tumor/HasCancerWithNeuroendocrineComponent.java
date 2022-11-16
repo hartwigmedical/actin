@@ -9,9 +9,8 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.algo.molecular.MolecularInterpretation;
+import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleEvaluator;
 import com.hartwig.actin.doid.DoidModel;
-import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -83,7 +82,7 @@ public class HasCancerWithNeuroendocrineComponent implements EvaluationFunction 
                     .build();
         }
 
-        if (hasNeuroendocrineMolecularProfile(record.molecular())) {
+        if (hasNeuroendocrineMolecularProfile(record)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Patient has cancer with neuroendocrine molecular profile")
@@ -98,17 +97,17 @@ public class HasCancerWithNeuroendocrineComponent implements EvaluationFunction 
                 .build();
     }
 
-    private static boolean hasNeuroendocrineMolecularProfile(@NotNull MolecularRecord molecular) {
+    private static boolean hasNeuroendocrineMolecularProfile(@NotNull PatientRecord record) {
         int inactivationCount = 0;
-        if (MolecularInterpretation.hasGeneInactivated(molecular, "TP53")) {
+        if (MolecularRuleEvaluator.geneIsInactivatedForPatient("TP53", record)) {
             inactivationCount++;
         }
 
-        if (MolecularInterpretation.hasGeneInactivated(molecular, "PTEN")) {
+        if (MolecularRuleEvaluator.geneIsInactivatedForPatient("PTEN", record)) {
             inactivationCount++;
         }
 
-        if (MolecularInterpretation.hasGeneInactivated(molecular, "RB1")) {
+        if (MolecularRuleEvaluator.geneIsInactivatedForPatient("RB1", record)) {
             inactivationCount++;
         }
 
