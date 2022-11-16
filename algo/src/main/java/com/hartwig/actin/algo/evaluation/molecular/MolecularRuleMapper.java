@@ -34,7 +34,6 @@ public class MolecularRuleMapper extends RuleMapper {
         map.put(EligibilityRule.INACTIVATION_OF_GENE_X, geneIsInactivatedCreator());
         map.put(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X, geneHasActivatingMutationCreator());
         map.put(EligibilityRule.MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y, geneHasVariantWithAnyProteinImpactsCreator());
-        map.put(EligibilityRule.MUTATION_IN_GENE_X_OF_ANY_CODING_IMPACTS_Y, geneHasVariantWithAnyCodingImpactsCreator());
         map.put(EligibilityRule.MUTATION_IN_GENE_X_IN_ANY_CODONS_Y, geneHasVariantInAnyCodonsCreator());
         map.put(EligibilityRule.MUTATION_IN_GENE_X_IN_EXON_Y, geneHasVariantInExonCreator());
         map.put(EligibilityRule.MUTATION_IN_GENE_X_IN_EXON_Y_TO_EXON_Z, geneHasVariantInExonRangeCreator());
@@ -102,14 +101,6 @@ public class MolecularRuleMapper extends RuleMapper {
         return function -> {
             OneStringManyStrings input = functionInputResolver().createOneStringManyStringsInput(function);
             return new GeneHasVariantWithProteinImpact(input.string1(), input.additionalStrings());
-        };
-    }
-
-    @NotNull
-    private FunctionCreator geneHasVariantWithAnyCodingImpactsCreator() {
-        return function -> {
-            OneStringManyStrings input = functionInputResolver().createOneStringManyStringsInput(function);
-            return new GeneHasVariantWithCodingImpact(input.string1(), input.additionalStrings());
         };
     }
 
