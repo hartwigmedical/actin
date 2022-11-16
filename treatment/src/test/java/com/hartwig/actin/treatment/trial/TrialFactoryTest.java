@@ -28,7 +28,7 @@ public class TrialFactoryTest {
     public void canCreateFromTrialConfigDirectory() throws IOException {
         assertNotNull(TrialFactory.create(TRIAL_CONFIG_DIRECTORY,
                 TestDoidModelFactory.createMinimalTestDoidModel(),
-                TestGeneFilterFactory.createEmpty()));
+                TestGeneFilterFactory.createNeverValid()));
     }
 
     @Test

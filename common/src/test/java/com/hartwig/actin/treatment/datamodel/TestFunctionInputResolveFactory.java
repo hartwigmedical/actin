@@ -1,8 +1,8 @@
 package com.hartwig.actin.treatment.datamodel;
 
-import com.google.common.collect.Sets;
 import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.doid.TestDoidModelFactory;
+import com.hartwig.actin.molecular.filter.TestGeneFilterFactory;
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker;
 import com.hartwig.actin.treatment.input.FunctionInputResolver;
 
@@ -26,7 +26,7 @@ public final class TestFunctionInputResolveFactory {
     @NotNull
     public static FunctionInputResolver createResolverWithOneValidGene(@NotNull String gene) {
         return new FunctionInputResolver(TestDoidModelFactory.createMinimalTestDoidModel(),
-                MolecularInputChecker.createSpecificGenesValid(Sets.newHashSet(gene)));
+                new MolecularInputChecker(TestGeneFilterFactory.createValidForGene(gene)));
     }
 
     @NotNull

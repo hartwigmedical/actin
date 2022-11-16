@@ -55,6 +55,6 @@ public class OrangeReaderTest {
 
     @NotNull
     private static OrangeReader createTestReader() {
-        return new OrangeReader(TestGeneFilterFactory.createEmpty());
+        return new OrangeReader(TestGeneFilterFactory.createNeverValid());
     }
 }

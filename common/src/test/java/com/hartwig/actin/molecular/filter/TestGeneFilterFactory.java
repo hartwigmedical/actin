@@ -10,7 +10,17 @@ public final class TestGeneFilterFactory {
     }
 
     @NotNull
-    public static GeneFilter createEmpty() {
-        return new GeneFilter(Sets.newHashSet());
+    public static GeneFilter createAlwaysValid() {
+        return new AlwaysValidFilter();
+    }
+
+    @NotNull
+    public static GeneFilter createValidForGene(@NotNull String gene) {
+        return new SpecificGenesFilter(Sets.newHashSet(gene));
+    }
+
+    @NotNull
+    public static GeneFilter createNeverValid() {
+        return new SpecificGenesFilter(Sets.newHashSet());
     }
 }

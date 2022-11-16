@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.interpretation;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.google.common.collect.Sets;
+import com.hartwig.actin.molecular.filter.TestGeneFilterFactory;
 
 import org.junit.Test;
 
@@ -11,8 +11,8 @@ public class MolecularInputCheckerTest {
 
     @Test
     public void canDetermineWhetherGeneIsValid() {
-        MolecularInputChecker alwaysValid = MolecularInputChecker.createAnyGeneValid();
-        MolecularInputChecker specific = MolecularInputChecker.createSpecificGenesValid(Sets.newHashSet("valid"));
+        MolecularInputChecker alwaysValid = new MolecularInputChecker(TestGeneFilterFactory.createAlwaysValid());
+        MolecularInputChecker specific = new MolecularInputChecker(TestGeneFilterFactory.createValidForGene("valid"));
 
         assertTrue(alwaysValid.isGene("valid"));
         assertTrue(specific.isGene("valid"));

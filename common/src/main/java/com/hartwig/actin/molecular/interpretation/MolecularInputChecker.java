@@ -1,34 +1,26 @@
 package com.hartwig.actin.molecular.interpretation;
 
-import java.util.Set;
-
-import com.google.common.collect.Sets;
+import com.hartwig.actin.molecular.filter.GeneFilter;
+import com.hartwig.actin.molecular.filter.GeneFilterFactory;
 
 import org.jetbrains.annotations.NotNull;
 
 public class MolecularInputChecker {
 
-    private final boolean anyGeneIsValid;
     @NotNull
-    private final Set<String> allowedGenes;
+    private final GeneFilter geneFilter;
 
     @NotNull
     public static MolecularInputChecker createAnyGeneValid() {
-        return new MolecularInputChecker(true, Sets.newHashSet());
+        return new MolecularInputChecker(GeneFilterFactory.createAlwaysValid());
     }
 
-    @NotNull
-    public static MolecularInputChecker createSpecificGenesValid(@NotNull Set<String> allowedGenes) {
-        return new MolecularInputChecker(false, allowedGenes);
-    }
-
-    public MolecularInputChecker(final boolean anyGeneIsValid, @NotNull final Set<String> allowedGenes) {
-        this.anyGeneIsValid = anyGeneIsValid;
-        this.allowedGenes = allowedGenes;
+    public MolecularInputChecker(@NotNull final GeneFilter geneFilter) {
+        this.geneFilter = geneFilter;
     }
 
     public boolean isGene(@NotNull String string) {
-        return anyGeneIsValid || allowedGenes.contains(string);
+        return geneFilter.include(string);
     }
 
     public static boolean isHlaAllele(@NotNull String string) {

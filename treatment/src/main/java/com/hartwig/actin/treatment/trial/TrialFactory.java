@@ -41,10 +41,9 @@ public class TrialFactory {
     private final EligibilityFactory eligibilityFactory;
 
     @NotNull
-    public static TrialFactory create(@NotNull String trialConfigDirectory, @NotNull DoidModel doidModel, @NotNull GeneFilter geneFilter)
-            throws IOException {
-        // TODO Create with specific set of allowed genes
-        MolecularInputChecker molecularInputChecker = MolecularInputChecker.createAnyGeneValid();
+    public static TrialFactory create(@NotNull String trialConfigDirectory, @NotNull DoidModel doidModel,
+            @NotNull GeneFilter geneFilter) throws IOException {
+        MolecularInputChecker molecularInputChecker = new MolecularInputChecker(geneFilter);
         FunctionInputResolver functionInputResolver = new FunctionInputResolver(doidModel, molecularInputChecker);
         EligibilityFactory eligibilityFactory = new EligibilityFactory(functionInputResolver);
 

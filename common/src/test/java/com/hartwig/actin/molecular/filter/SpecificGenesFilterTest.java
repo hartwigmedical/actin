@@ -8,11 +8,11 @@ import com.google.common.collect.Sets;
 
 import org.junit.Test;
 
-public class GeneFilterTest {
+public class SpecificGenesFilterTest {
 
     @Test
     public void canFilterGenes() {
-        GeneFilter filter = new GeneFilter(Sets.newHashSet("gene A"));
+        SpecificGenesFilter filter = new SpecificGenesFilter(Sets.newHashSet("gene A"));
 
         assertEquals(1, filter.size());
 

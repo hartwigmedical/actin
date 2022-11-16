@@ -16,12 +16,17 @@ public final class GeneFilterFactory {
     }
 
     @NotNull
+    public static GeneFilter createAlwaysValid() {
+        return new AlwaysValidFilter();
+    }
+
+    @NotNull
     public static GeneFilter createFromTsv(@NotNull String geneFilterTsv) throws IOException {
         List<String> lines = Files.readAllLines(new File(geneFilterTsv).toPath());
 
         Set<String> genes = Sets.newHashSet();
         genes.addAll(lines.subList(1, lines.size()));
 
-        return new GeneFilter(genes);
+        return new SpecificGenesFilter(genes);
     }
 }

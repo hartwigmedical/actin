@@ -1,31 +1,10 @@
 package com.hartwig.actin.molecular.filter;
 
-import java.util.Set;
-
-import com.google.common.annotations.VisibleForTesting;
-
 import org.jetbrains.annotations.NotNull;
 
-public class GeneFilter {
+public interface GeneFilter {
 
-    @NotNull
-    private final Set<String> allowedGenes;
+    boolean include(@NotNull String gene);
 
-    GeneFilter(@NotNull final Set<String> allowedGenes) {
-        this.allowedGenes = allowedGenes;
-    }
-
-    @NotNull
-    @VisibleForTesting
-    Set<String> allowedGenes() {
-        return allowedGenes;
-    }
-
-    public boolean include(@NotNull String gene) {
-        return allowedGenes.contains(gene);
-    }
-
-    public int size() {
-        return allowedGenes.size();
-    }
+    int size();
 }
