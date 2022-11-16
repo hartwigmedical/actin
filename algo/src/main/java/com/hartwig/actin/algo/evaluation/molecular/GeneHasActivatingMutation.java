@@ -90,8 +90,8 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("No activating mutation detected in gene " + gene)
-                .addFailGeneralMessages("No " + gene + " activating mutations(s)")
+                .addFailSpecificMessages("No activating mutation(s) detected in gene " + gene)
+                .addFailGeneralMessages("No " + gene + " activating mutation(s)")
                 .build();
     }
 
@@ -148,7 +148,7 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
         if (!nonHighDriverVariants.isEmpty()) {
             warnEvents.addAll(nonHighDriverVariants);
             warnSpecificMessages.add("Gene " + gene + " has potentially activating mutation(s) " + Format.concat(nonHighDriverVariants)
-                    + " but do not have a high driver likelihood");
+                    + " but no high driver likelihood");
             warnGeneralMessages.add(gene + " potentially activating mutation(s), no high driver likelihood");
         }
 
