@@ -644,7 +644,7 @@ CREATE TABLE evaluation
     warnGeneralMessages varchar(1000) NOT NULL,
     undeterminedSpecificMessages varchar(1000) NOT NULL,
     undeterminedGeneralMessages varchar(1000) NOT NULL,
-    failSpecificMessages varchar(1000) NOT NULL,
+    failSpecificMessages varchar(2000) NOT NULL,
     failGeneralMessages varchar(1000) NOT NULL,
     PRIMARY KEY (id)
 );
