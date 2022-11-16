@@ -16,6 +16,7 @@ import com.hartwig.actin.treatment.input.single.OneGeneOneInteger;
 import com.hartwig.actin.treatment.input.single.OneGeneOneIntegerOneVariantType;
 import com.hartwig.actin.treatment.input.single.OneGeneTwoIntegers;
 import com.hartwig.actin.treatment.input.single.OneHlaAllele;
+import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
 import com.hartwig.actin.treatment.input.single.TwoIntegers;
 
 import org.jetbrains.annotations.NotNull;
@@ -234,24 +235,24 @@ public class MolecularRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator proteinIsExpressedByIHCCreator() {
         return function -> {
-            OneGene gene = functionInputResolver().createOneGeneInput(function);
-            return new ProteinIsExpressedByIHC(gene.geneName());
+            String gene = functionInputResolver().createOneStringInput(function);
+            return new ProteinIsExpressedByIHC(gene);
         };
     }
 
     @NotNull
     private FunctionCreator proteinHasExactExpressionByIHCCreator() {
         return function -> {
-            OneGeneOneInteger input = functionInputResolver().createOneGeneOneIntegerInput(function);
-            return new ProteinHasExactExpressionByIHC(input.geneName(), input.integer());
+            OneIntegerOneString input = functionInputResolver().createOneStringOneIntegerInput(function);
+            return new ProteinHasExactExpressionByIHC(input.string(), input.integer());
         };
     }
 
     @NotNull
     private FunctionCreator proteinHasSufficientExpressionByIHCCreator() {
         return function -> {
-            OneGeneOneInteger input = functionInputResolver().createOneGeneOneIntegerInput(function);
-            return new ProteinHasSufficientExpressionByIHC(input.geneName(), input.integer());
+            OneIntegerOneString input = functionInputResolver().createOneStringOneIntegerInput(function);
+            return new ProteinHasExactExpressionByIHC(input.string(), input.integer());
         };
     }
 
