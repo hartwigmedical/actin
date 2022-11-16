@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
 import com.hartwig.actin.algo.evaluation.composite.And;
 import com.hartwig.actin.algo.evaluation.composite.Not;
@@ -29,7 +28,8 @@ public class EvaluationFunctionFactory {
     @NotNull
     public static EvaluationFunctionFactory create(@NotNull DoidModel doidModel, @NotNull ReferenceDateProvider referenceDateProvider) {
         // We assume we never check validity of a gene inside algo.
-        FunctionInputResolver functionInputResolver = new FunctionInputResolver(doidModel, new MolecularInputChecker(Sets.newHashSet()));
+        MolecularInputChecker molecularInputChecker = MolecularInputChecker.createAnyGeneValid();
+        FunctionInputResolver functionInputResolver = new FunctionInputResolver(doidModel,molecularInputChecker);
         return new EvaluationFunctionFactory(FunctionCreatorFactory.create(referenceDateProvider, doidModel, functionInputResolver),
                 functionInputResolver);
     }

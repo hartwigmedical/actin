@@ -466,11 +466,14 @@ public class FunctionInputResolver {
             throw new IllegalStateException("Not a valid gene: " + gene);
         }
 
-        // TODO Check codons
-        return ImmutableOneGeneManyCodons.builder()
-                .geneName(gene)
-                .codons(toStringList(function.parameters().get(1)))
-                .build();
+        List<String> codons = toStringList(function.parameters().get(1));
+        for (String codon : codons) {
+            if (!MolecularInputChecker.isCodon(codon)) {
+                throw new IllegalStateException("Not a valid codon: " + codon);
+            }
+        }
+
+        return ImmutableOneGeneManyCodons.builder().geneName(gene).codons(codons).build();
     }
 
     @NotNull
@@ -482,11 +485,13 @@ public class FunctionInputResolver {
             throw new IllegalStateException("Not a valid gene: " + gene);
         }
 
-        // TODO Check protein impacts
-        return ImmutableOneGeneManyProteinImpacts.builder()
-                .geneName(gene)
-                .proteinImpacts(toStringList(function.parameters().get(1)))
-                .build();
+        List<String> proteinImpacts = toStringList(function.parameters().get(1));
+        for (String proteinImpact : proteinImpacts) {
+            if (!MolecularInputChecker.isProteinImpact(proteinImpact)) {
+                throw new IllegalStateException("Not a valid protein impact: " + proteinImpact);
+            }
+        }
+        return ImmutableOneGeneManyProteinImpacts.builder().geneName(gene).proteinImpacts(proteinImpacts).build();
     }
 
     @NotNull

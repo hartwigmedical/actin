@@ -18,14 +18,29 @@ import com.hartwig.actin.treatment.datamodel.TestFunctionInputResolveFactory;
 import com.hartwig.actin.treatment.input.datamodel.ImmutableTreatmentInputWithName;
 import com.hartwig.actin.treatment.input.datamodel.TreatmentInput;
 import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput;
+import com.hartwig.actin.treatment.input.datamodel.VariantTypeInput;
 import com.hartwig.actin.treatment.input.single.FunctionInput;
+import com.hartwig.actin.treatment.input.single.ImmutableManyGenes;
+import com.hartwig.actin.treatment.input.single.ImmutableOneGene;
+import com.hartwig.actin.treatment.input.single.ImmutableOneGeneManyCodons;
+import com.hartwig.actin.treatment.input.single.ImmutableOneGeneManyProteinImpacts;
+import com.hartwig.actin.treatment.input.single.ImmutableOneGeneOneInteger;
+import com.hartwig.actin.treatment.input.single.ImmutableOneGeneOneIntegerOneVariantType;
+import com.hartwig.actin.treatment.input.single.ImmutableOneGeneTwoIntegers;
 import com.hartwig.actin.treatment.input.single.ImmutableOneHlaAllele;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerOneString;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoDoubles;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegers;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegersManyStrings;
+import com.hartwig.actin.treatment.input.single.ManyGenes;
 import com.hartwig.actin.treatment.input.single.ManyTreatmentsWithName;
+import com.hartwig.actin.treatment.input.single.OneGene;
+import com.hartwig.actin.treatment.input.single.OneGeneManyCodons;
+import com.hartwig.actin.treatment.input.single.OneGeneManyProteinImpacts;
+import com.hartwig.actin.treatment.input.single.OneGeneOneInteger;
+import com.hartwig.actin.treatment.input.single.OneGeneOneIntegerOneVariantType;
+import com.hartwig.actin.treatment.input.single.OneGeneTwoIntegers;
 import com.hartwig.actin.treatment.input.single.OneHlaAllele;
 import com.hartwig.actin.treatment.input.single.OneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
@@ -399,6 +414,135 @@ public class FunctionInputResolverTest {
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("not an HLA allele"))));
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("A*02:01", "A*02:02"))));
+    }
+
+    @Test
+    public void canResolveFunctionsWithOneGeneInput() {
+        FunctionInputResolver resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene");
+
+        EligibilityRule rule = firstOfType(FunctionInput.ONE_GENE);
+
+        EligibilityFunction valid = create(rule, Lists.newArrayList("gene"));
+        assertTrue(resolver.hasValidInputs(valid));
+
+        OneGene expected = ImmutableOneGene.builder().geneName("gene").build();
+        assertEquals(expected, resolver.createOneGeneInput(valid));
+
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("not a gene"))));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("gene", "gene"))));
+    }
+
+    @Test
+    public void canResolveFunctionsWithOneGeneOneIntegerInput() {
+        FunctionInputResolver resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene");
+
+        EligibilityRule rule = firstOfType(FunctionInput.ONE_GENE_ONE_INTEGER);
+
+        EligibilityFunction valid = create(rule, Lists.newArrayList("gene", "1"));
+        assertTrue(resolver.hasValidInputs(valid));
+
+        OneGeneOneInteger expected = ImmutableOneGeneOneInteger.builder().geneName("gene").integer(1).build();
+        assertEquals(expected, resolver.createOneGeneOneIntegerInput(valid));
+
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("gene"))));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("not a gene", "1"))));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("1", "gene"))));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("gene", "gene"))));
+    }
+
+    @Test
+    public void canResolveFunctionsWithOneGeneOneIntegerOneVariantTypeInput() {
+        FunctionInputResolver resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene");
+
+        EligibilityRule rule = firstOfType(FunctionInput.ONE_GENE_ONE_INTEGER_ONE_VARIANT_TYPE);
+
+        EligibilityFunction valid = create(rule, Lists.newArrayList("gene", "1", "SNV"));
+        assertTrue(resolver.hasValidInputs(valid));
+
+        OneGeneOneIntegerOneVariantType expected =
+                ImmutableOneGeneOneIntegerOneVariantType.builder().geneName("gene").integer(1).variantType(VariantTypeInput.SNV).build();
+        assertEquals(expected, resolver.createOneGeneOneIntegerOneVariantTypeInput(valid));
+
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("not a gene", "1", "SNV"))));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("gene", "1", "not a type"))));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("1", "gene", "SNV"))));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("gene", "gene"))));
+    }
+
+    @Test
+    public void canResolveFunctionsWithOneGeneTwoIntegers() {
+        FunctionInputResolver resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene");
+
+        EligibilityRule rule = firstOfType(FunctionInput.ONE_GENE_TWO_INTEGERS);
+
+        EligibilityFunction valid = create(rule, Lists.newArrayList("gene", "1", "2"));
+        assertTrue(resolver.hasValidInputs(valid));
+
+        OneGeneTwoIntegers expected = ImmutableOneGeneTwoIntegers.builder().geneName("gene").integer1(1).integer2(2).build();
+        assertEquals(expected, resolver.createOneGeneTwoIntegersInput(valid));
+
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("not a gene", "1", "2"))));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("gene", "1", "not a number"))));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("1", "gene", "2"))));
+    }
+
+    @Test
+    public void canResolveFunctionsWithOneGeneManyCodonsInput() {
+        FunctionInputResolver resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene");
+
+        EligibilityRule rule = firstOfType(FunctionInput.ONE_GENE_MANY_CODONS);
+
+        EligibilityFunction valid = create(rule, Lists.newArrayList("gene", "V600;V601"));
+        assertTrue(resolver.hasValidInputs(valid));
+
+        OneGeneManyCodons expected =
+                ImmutableOneGeneManyCodons.builder().geneName("gene").codons(Lists.newArrayList("V600", "V601")).build();
+        assertEquals(expected, resolver.createOneGeneManyCodonsInput(valid));
+
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("not a gene", "V600"))));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("gene", "not a codon"))));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("V600", "gene"))));
+    }
+
+    @Test
+    public void canResolveFunctionsWithOneGeneManyProteinImpactsInput() {
+        FunctionInputResolver resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene");
+
+        EligibilityRule rule = firstOfType(FunctionInput.ONE_GENE_MANY_PROTEIN_IMPACTS);
+
+        EligibilityFunction valid = create(rule, Lists.newArrayList("gene", "V600E;V601K"));
+        assertTrue(resolver.hasValidInputs(valid));
+
+        OneGeneManyProteinImpacts expected =
+                ImmutableOneGeneManyProteinImpacts.builder().geneName("gene").proteinImpacts(Lists.newArrayList("V600E", "V601K")).build();
+        assertEquals(expected, resolver.createOneGeneManyProteinImpactsInput(valid));
+
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("not a gene", "V600E"))));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("gene", "not a protein impact"))));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("V600E", "gene"))));
+    }
+
+    @Test
+    public void canResolveFunctionsWithManyGenesInput() {
+        FunctionInputResolver resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene");
+
+        EligibilityRule rule = firstOfType(FunctionInput.MANY_GENES);
+
+        EligibilityFunction valid = create(rule, Lists.newArrayList("gene;gene"));
+        assertTrue(resolver.hasValidInputs(valid));
+
+        ManyGenes expected = ImmutableManyGenes.builder().geneNames(Lists.newArrayList("gene", "gene")).build();
+        assertEquals(expected, resolver.createManyGenesInput(valid));
+
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("not a gene"))));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("gene", "gene"))));
     }
 
     @Test
