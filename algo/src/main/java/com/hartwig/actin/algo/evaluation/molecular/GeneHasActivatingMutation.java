@@ -140,14 +140,14 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
         if (!nonHighDriverGainOfFunctionVariants.isEmpty()) {
             warnEvents.addAll(nonHighDriverGainOfFunctionVariants);
             warnSpecificMessages.add(
-                    "Gene" + gene + " has potentially activating mutation(s) " + Format.concat(nonHighDriverGainOfFunctionVariants)
+                    "Gene " + gene + " has potentially activating mutation(s) " + Format.concat(nonHighDriverGainOfFunctionVariants)
                             + " that do not have high driver likelihood, but are associated with gain-of-function protein effect");
             warnGeneralMessages.add(gene + " potentially activating mutation(s), no high driver likelihood");
         }
 
         if (!nonHighDriverVariants.isEmpty()) {
             warnEvents.addAll(nonHighDriverVariants);
-            warnSpecificMessages.add("Gene" + gene + " has potentially activating mutation(s) " + Format.concat(nonHighDriverVariants)
+            warnSpecificMessages.add("Gene " + gene + " has potentially activating mutation(s) " + Format.concat(nonHighDriverVariants)
                     + " but do not have a high driver likelihood");
             warnGeneralMessages.add(gene + " potentially activating mutation(s), no high driver likelihood");
         }
