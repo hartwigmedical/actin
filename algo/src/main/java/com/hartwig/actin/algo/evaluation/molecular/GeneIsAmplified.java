@@ -34,7 +34,7 @@ public class GeneIsAmplified implements EvaluationFunction {
         if (ploidy == null) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages("Cannot determine amplification for " + gene + " without ploidy")
+                    .addFailSpecificMessages("Cannot determine amplification for gene " + gene + " without ploidy")
                     .addFailGeneralMessages("Molecular requirements")
                     .build();
         }
@@ -80,7 +80,7 @@ public class GeneIsAmplified implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addAllInclusionMolecularEvents(reportableFullAmps)
-                    .addPassSpecificMessages(gene + " is amplified")
+                    .addPassSpecificMessages("Amplification detected of gene " + gene)
                     .addPassGeneralMessages(gene + " is amplified")
                     .build();
         }
@@ -112,32 +112,32 @@ public class GeneIsAmplified implements EvaluationFunction {
 
         if (!reportablePartialAmps.isEmpty()) {
             warnEvents.addAll(reportablePartialAmps);
-            warnSpecificMessages.add(gene + " is partially amplified");
-            warnGeneralMessages.add(gene + " is partially amplified");
+            warnSpecificMessages.add("Gene " + gene + " is partially amplified and not fully amplified");
+            warnGeneralMessages.add(gene + " partially amplified");
         }
 
         if (!ampsWithLossOfFunction.isEmpty()) {
             warnEvents.addAll(ampsWithLossOfFunction);
-            warnSpecificMessages.add(gene + " is amplified but considered having loss-of-function impact");
-            warnGeneralMessages.add("Potential " + gene + " amplification");
+            warnSpecificMessages.add("Gene " + gene + " is amplified but event is annotated as having loss-of-function impact");
+            warnGeneralMessages.add(gene + " amplification with loss-of-function protein impact");
         }
 
         if (!ampsOnNonOncogenes.isEmpty()) {
             warnEvents.addAll(ampsOnNonOncogenes);
-            warnSpecificMessages.add(gene + " is amplified but not known as an oncogene");
-            warnGeneralMessages.add("Potential " + gene + " amplification");
+            warnSpecificMessages.add("Gene " + gene + " is amplified but gene " + gene + " is not known as an oncogene");
+            warnGeneralMessages.add(gene + " amplification but " + gene + " unknown as oncogene");
         }
 
         if (!ampsThatAreUnreportable.isEmpty()) {
             warnEvents.addAll(ampsThatAreUnreportable);
-            warnSpecificMessages.add(gene + " is amplified but not considered reportable");
-            warnGeneralMessages.add("Potential " + gene + " amplification");
+            warnSpecificMessages.add("Gene " + gene + " is amplified but not considered reportable");
+            warnGeneralMessages.add(gene + " amplification considered non-reportable");
         }
 
         if (!ampsThatAreNearCutoff.isEmpty()) {
             warnEvents.addAll(ampsThatAreNearCutoff);
-            warnSpecificMessages.add(gene + " is near-amplified");
-            warnGeneralMessages.add("Potential " + gene + " amplification");
+            warnSpecificMessages.add("Gene " + gene + " does not meet cut-off for amplification, but is near cut-off");
+            warnGeneralMessages.add(gene + " near cut-off for amplification");
         }
 
         if (!warnEvents.isEmpty() && !warnSpecificMessages.isEmpty() && !warnGeneralMessages.isEmpty()) {
