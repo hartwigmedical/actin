@@ -118,14 +118,14 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
             warnSpecificMessages.add(
                     "Gene " + gene + " should have activating mutation(s): " + Format.concat(activatingVariantsAssociatedWithResistance)
                             + ", however, these are (also) associated with drug resistance");
-            warnGeneralMessages.add(gene + " activating mutation(s) associated with drug resistance");
+            warnGeneralMessages.add(gene + " activating mutation(s) detected but associated with drug resistance");
         }
 
         if (!activatingVariantsInNonOncogene.isEmpty()) {
             warnEvents.addAll(activatingVariantsInNonOncogene);
             warnSpecificMessages.add("Gene " + gene + " has activating mutation(s) " + Format.concat(activatingVariantsInNonOncogene)
                     + " but gene has not been not annotated as oncogene");
-            warnGeneralMessages.add(gene + " activating mutation(s), but " + gene + " unknown as oncogene");
+            warnGeneralMessages.add(gene + " activating mutation(s) detected but " + gene + " unknown as oncogene");
         }
 
         if (!activatingVariantsWithNoGainOfFunction.isEmpty()) {
@@ -134,7 +134,7 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
                     "Gene " + gene + " has potentially activating mutation(s) " + Format.concat(activatingVariantsWithNoGainOfFunction)
                             + " that have high driver likelihood, but are not associated with protein effect gain-of-function");
             warnGeneralMessages.add(
-                    gene + " potentially activating mutation(s), not associated with having gain-of-function protein effect");
+                    gene + " potentially activating mutation(s) detected but not associated with having gain-of-function protein effect");
         }
 
         if (!nonHighDriverGainOfFunctionVariants.isEmpty()) {
@@ -142,21 +142,21 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
             warnSpecificMessages.add(
                     "Gene " + gene + " has potentially activating mutation(s) " + Format.concat(nonHighDriverGainOfFunctionVariants)
                             + " that do not have high driver likelihood, but are associated with gain-of-function protein effect");
-            warnGeneralMessages.add(gene + " potentially activating mutation(s), no high driver likelihood");
+            warnGeneralMessages.add(gene + " potentially activating mutation(s) detected based on protein effect but no high driver likelihood");
         }
 
         if (!nonHighDriverVariants.isEmpty()) {
             warnEvents.addAll(nonHighDriverVariants);
             warnSpecificMessages.add("Gene " + gene + " has potentially activating mutation(s) " + Format.concat(nonHighDriverVariants)
                     + " but no high driver likelihood");
-            warnGeneralMessages.add(gene + " potentially activating mutation(s), no high driver likelihood");
+            warnGeneralMessages.add(gene + " potentially activating mutation(s) detected but no high driver likelihood");
         }
 
         if (!unreportableMissenseOrHotspotVariants.isEmpty()) {
             warnEvents.addAll(unreportableMissenseOrHotspotVariants);
             warnSpecificMessages.add("Gene " + gene + " has potentially activating mutation(s) " + Format.concat(unreportableMissenseOrHotspotVariants)
                     + " that are missense or have hotspot status, but are not considered reportable");
-            warnGeneralMessages.add(gene + " potentially activating mutation(s), but unreportable");
+            warnGeneralMessages.add(gene + " potentially activating mutation(s) detected but is unreportable");
         }
 
         if (!warnEvents.isEmpty() && !warnSpecificMessages.isEmpty() && !warnGeneralMessages.isEmpty()) {
