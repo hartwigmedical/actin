@@ -12,6 +12,7 @@ import com.hartwig.actin.util.TabularFile;
 
 import org.jetbrains.annotations.NotNull;
 
+// TODO Move into serve
 public final class KnownGeneFile {
 
     private static final String DELIMITER = "\t";
