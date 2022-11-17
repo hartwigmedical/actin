@@ -115,7 +115,7 @@ public class GeneIsWildType implements EvaluationFunction {
                     .result(EvaluationResult.FAIL)
                     .addFailSpecificMessages(
                             "Gene " + gene + " is not considered wild-type due to " + Format.concat(reportableEventsWithEffect))
-                    .addFailGeneralMessages(gene + "not wild-type")
+                    .addFailGeneralMessages("Molecular requirements")
                     .build();
         }
 

@@ -73,7 +73,7 @@ public class GeneHasUTR3Loss implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No variants detected in 3' UTR region of " + gene)
-                .addFailGeneralMessages("No 3' UTR loss of " + gene)
+                .addFailGeneralMessages("Molecular requirements")
                 .build();
     }
 

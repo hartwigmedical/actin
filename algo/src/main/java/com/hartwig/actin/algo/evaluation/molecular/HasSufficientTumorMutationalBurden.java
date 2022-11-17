@@ -57,7 +57,7 @@ public class HasSufficientTumorMutationalBurden implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("TMB of sample " + tumorMutationalBurden + " is not within specified range")
-                .addFailGeneralMessages("Inadequate TMB")
+                .addFailGeneralMessages("Molecular requirements")
                 .build();
     }
 }

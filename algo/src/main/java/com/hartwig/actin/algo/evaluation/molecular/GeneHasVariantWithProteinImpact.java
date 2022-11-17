@@ -93,7 +93,7 @@ public class GeneHasVariantWithProteinImpact implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("None of " + Format.concat(allowedProteinImpacts) + " detected in gene " + gene)
-                .addFailGeneralMessages("No specific variants in " + gene + " detected")
+                .addFailGeneralMessages("Molecular requirements")
                 .build();
     }
 

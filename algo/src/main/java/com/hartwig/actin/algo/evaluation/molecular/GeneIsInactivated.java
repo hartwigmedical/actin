@@ -150,7 +150,7 @@ public class GeneIsInactivated implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No inactivation event(s) detected for gene " + gene)
-                .addFailGeneralMessages("No " + gene + " inactivation")
+                .addFailGeneralMessages("Molecular requirements")
                 .build();
     }
 

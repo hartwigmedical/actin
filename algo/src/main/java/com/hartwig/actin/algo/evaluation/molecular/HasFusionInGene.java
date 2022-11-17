@@ -89,7 +89,7 @@ public class HasFusionInGene implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No fusion detected with gene " + gene)
-                .addFailGeneralMessages("No fusion in gene " + gene)
+                .addFailGeneralMessages("Molecular requirements")
                 .build();
     }
 

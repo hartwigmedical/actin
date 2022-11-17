@@ -72,7 +72,7 @@ public class GeneHasSpecificExonSkipping implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No " + gene + " exon " + exonToSkip + " skipping")
-                .addFailGeneralMessages("No " + gene + " exon " + exonToSkip + " skipping")
+                .addFailGeneralMessages("Molecular requirements")
                 .build();
     }
 }
