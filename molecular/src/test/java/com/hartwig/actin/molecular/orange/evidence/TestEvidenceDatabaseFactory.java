@@ -14,6 +14,7 @@ public final class TestEvidenceDatabaseFactory {
     @NotNull
     public static EvidenceDatabase createEmptyDatabase() {
         return new EvidenceDatabase(ImmutableKnownEvents.builder().build(),
+                Lists.newArrayList(),
                 ImmutableActionableEvents.builder().build(),
                 Lists.newArrayList());
     }

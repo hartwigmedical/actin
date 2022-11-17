@@ -14,14 +14,18 @@ import com.hartwig.actin.molecular.orange.evidence.known.CodonLookup;
 import com.hartwig.actin.molecular.orange.evidence.known.CopyNumberLookup;
 import com.hartwig.actin.molecular.orange.evidence.known.ExonLookup;
 import com.hartwig.actin.molecular.orange.evidence.known.FusionLookup;
+import com.hartwig.actin.molecular.orange.evidence.known.GeneLookup;
 import com.hartwig.actin.molecular.orange.evidence.known.HotspotLookup;
+import com.hartwig.actin.molecular.serve.KnownGene;
 import com.hartwig.serve.datamodel.ActionableEvent;
 import com.hartwig.serve.datamodel.ActionableEvents;
 import com.hartwig.serve.datamodel.KnownEvents;
 import com.hartwig.serve.datamodel.common.GeneAlteration;
 import com.hartwig.serve.datamodel.fusion.KnownFusion;
+import com.hartwig.serve.datamodel.gene.KnownCopyNumber;
 import com.hartwig.serve.datamodel.hotspot.KnownHotspot;
 import com.hartwig.serve.datamodel.range.KnownCodon;
+import com.hartwig.serve.datamodel.range.KnownExon;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,21 +35,22 @@ public class EvidenceDatabase {
     @NotNull
     private final KnownEvents knownEvents;
     @NotNull
+    private final List<KnownGene> knownGenes;
+    @NotNull
     private final ActionableEvents actionableEvents;
     @NotNull
     private final List<ExternalTrialMapping> externalTrialMappings;
 
-    public EvidenceDatabase(@NotNull final KnownEvents knownEvents, @NotNull final ActionableEvents actionableEvents,
-            @NotNull final List<ExternalTrialMapping> externalTrialMappings) {
+    public EvidenceDatabase(@NotNull final KnownEvents knownEvents, @NotNull final List<KnownGene> knownGenes,
+            @NotNull final ActionableEvents actionableEvents, @NotNull final List<ExternalTrialMapping> externalTrialMappings) {
         this.knownEvents = knownEvents;
+        this.knownGenes = knownGenes;
         this.actionableEvents = actionableEvents;
         this.externalTrialMappings = externalTrialMappings;
     }
 
     @Nullable
     public GeneAlteration lookupGeneAlteration(@NotNull PurpleVariant variant) {
-        // TODO Potentially merge hotspot/codon/exon to find the most detailed gene alteration?
-        // TODO Take over gene role from general gene kb in case hotspot itself is missing?
         KnownHotspot hotspot = HotspotLookup.find(knownEvents.hotspots(), variant);
         if (hotspot != null) {
             return hotspot;
@@ -56,7 +61,12 @@ public class EvidenceDatabase {
             return codon;
         }
 
-        return ExonLookup.find(knownEvents.exons(), variant);
+        KnownExon exon =  ExonLookup.find(knownEvents.exons(), variant);
+        if (exon != null) {
+            return exon;
+        }
+
+        return GeneLookup.find(knownGenes, variant.gene());
     }
 
     @NotNull
@@ -66,7 +76,12 @@ public class EvidenceDatabase {
 
     @Nullable
     public GeneAlteration lookupGeneAlteration(@NotNull PurpleCopyNumber copyNumber) {
-        return CopyNumberLookup.findForCopyNumber(knownEvents.copyNumbers(), copyNumber);
+        KnownCopyNumber knownCopyNumber = CopyNumberLookup.findForCopyNumber(knownEvents.copyNumbers(), copyNumber);
+        if (knownCopyNumber != null) {
+            return knownCopyNumber;
+        }
+
+        return GeneLookup.find(knownGenes, copyNumber.gene());
     }
 
     @NotNull
@@ -76,7 +91,13 @@ public class EvidenceDatabase {
 
     @Nullable
     public GeneAlteration lookupGeneAlteration(@NotNull LinxHomozygousDisruption homozygousDisruption) {
-        return CopyNumberLookup.findForHomozygousDisruption(knownEvents.copyNumbers(), homozygousDisruption);
+        // Assume a homozygous disruption always has the same annotation as a loss.
+        KnownCopyNumber knownCopyNumber =  CopyNumberLookup.findForHomozygousDisruption(knownEvents.copyNumbers(), homozygousDisruption);
+        if (knownCopyNumber != null) {
+            return knownCopyNumber;
+        }
+
+        return GeneLookup.find(knownGenes, homozygousDisruption.gene());
     }
 
     @NotNull
@@ -86,8 +107,7 @@ public class EvidenceDatabase {
 
     @Nullable
     public GeneAlteration lookupGeneAlteration(@NotNull LinxDisruption disruption) {
-        // TODO Add a generic gene database.
-        return null;
+        return GeneLookup.find(knownGenes, disruption.gene());
     }
 
     @NotNull

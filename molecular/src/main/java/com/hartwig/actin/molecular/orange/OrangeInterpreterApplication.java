@@ -82,7 +82,7 @@ public class OrangeInterpreterApplication {
         LOGGER.info("Loading clinical json from {}", config.clinicalJson());
         ClinicalRecord clinical = ClinicalRecordJson.read(config.clinicalJson());
 
-        EvidenceDatabase evidenceDatabase = new EvidenceDatabase(knownEvents, actionableEvents, mappings);
+        EvidenceDatabase evidenceDatabase = new EvidenceDatabase(knownEvents, knownGenes, actionableEvents, mappings);
 
         LOGGER.info("Interpreting ORANGE record");
         MolecularRecord molecular = new OrangeInterpreter(geneFilter, evidenceDatabase).interpret(orange);

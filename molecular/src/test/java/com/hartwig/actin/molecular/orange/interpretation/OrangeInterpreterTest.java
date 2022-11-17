@@ -21,7 +21,8 @@ public class OrangeInterpreterTest {
 
     @Test
     public void canReadOrangeRecord() {
-        MolecularRecord record = createTestReader().interpret(TestOrangeFactory.createProperTestOrangeRecord());
+        OrangeInterpreter interpreter = createTestInterpreter();
+        MolecularRecord record = interpreter.interpret(TestOrangeFactory.createProperTestOrangeRecord());
 
         assertEquals(TestDataFactory.TEST_PATIENT, record.patientId());
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
@@ -55,7 +56,7 @@ public class OrangeInterpreterTest {
     }
 
     @NotNull
-    private static OrangeInterpreter createTestReader() {
+    private static OrangeInterpreter createTestInterpreter() {
         return new OrangeInterpreter(TestGeneFilterFactory.createAlwaysValid(), TestEvidenceDatabaseFactory.createEmptyDatabase());
     }
 }
