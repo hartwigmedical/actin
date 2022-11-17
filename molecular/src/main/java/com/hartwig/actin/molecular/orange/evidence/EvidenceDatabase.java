@@ -10,11 +10,18 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruptio
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
+import com.hartwig.actin.molecular.orange.evidence.known.CodonLookup;
+import com.hartwig.actin.molecular.orange.evidence.known.CopyNumberLookup;
+import com.hartwig.actin.molecular.orange.evidence.known.ExonLookup;
+import com.hartwig.actin.molecular.orange.evidence.known.FusionLookup;
+import com.hartwig.actin.molecular.orange.evidence.known.HotspotLookup;
 import com.hartwig.serve.datamodel.ActionableEvent;
 import com.hartwig.serve.datamodel.ActionableEvents;
 import com.hartwig.serve.datamodel.KnownEvents;
 import com.hartwig.serve.datamodel.common.GeneAlteration;
 import com.hartwig.serve.datamodel.fusion.KnownFusion;
+import com.hartwig.serve.datamodel.hotspot.KnownHotspot;
+import com.hartwig.serve.datamodel.range.KnownCodon;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,7 +44,19 @@ public class EvidenceDatabase {
 
     @Nullable
     public GeneAlteration lookupGeneAlteration(@NotNull PurpleVariant variant) {
-        return null;
+        // TODO Potentially merge hotspot/codon/exon to find the most detailed gene alteration?
+        // TODO Take over gene role from general gene kb in case hotspot itself is missing?
+        KnownHotspot hotspot = HotspotLookup.find(knownEvents.hotspots(), variant);
+        if (hotspot != null) {
+            return hotspot;
+        }
+
+        KnownCodon codon = CodonLookup.find(knownEvents.codons(), variant);
+        if (codon != null) {
+            return codon;
+        }
+
+        return ExonLookup.find(knownEvents.exons(), variant);
     }
 
     @NotNull
@@ -47,7 +66,7 @@ public class EvidenceDatabase {
 
     @Nullable
     public GeneAlteration lookupGeneAlteration(@NotNull PurpleCopyNumber copyNumber) {
-        return null;
+        return CopyNumberLookup.findForCopyNumber(knownEvents.copyNumbers(), copyNumber);
     }
 
     @NotNull
@@ -57,7 +76,7 @@ public class EvidenceDatabase {
 
     @Nullable
     public GeneAlteration lookupGeneAlteration(@NotNull LinxHomozygousDisruption homozygousDisruption) {
-        return null;
+        return CopyNumberLookup.findForHomozygousDisruption(knownEvents.copyNumbers(), homozygousDisruption);
     }
 
     @NotNull
@@ -67,7 +86,7 @@ public class EvidenceDatabase {
 
     @Nullable
     public GeneAlteration lookupGeneAlteration(@NotNull LinxDisruption disruption) {
-        return null;
+        return CopyNumberLookup.findForDisruption(knownEvents.copyNumbers(), disruption);
     }
 
     @NotNull
@@ -77,7 +96,7 @@ public class EvidenceDatabase {
 
     @Nullable
     public KnownFusion lookupKnownFusion(@NotNull LinxFusion fusion) {
-        return null;
+        return FusionLookup.find(knownEvents.fusions(), fusion);
     }
 
     @NotNull
