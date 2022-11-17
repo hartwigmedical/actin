@@ -1,18 +1,14 @@
 package com.hartwig.actin.molecular.filter;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-
-import com.google.common.io.Resources;
+import com.google.common.collect.Lists;
 
 import org.junit.Test;
 
 public class GeneFilterFactoryTest {
-
-    private static final String EXAMPLE_TSV = Resources.getResource("filter/gene_filter.tsv").getPath();
 
     @Test
     public void canCreateAlwaysValid() {
@@ -20,11 +16,11 @@ public class GeneFilterFactoryTest {
     }
 
     @Test
-    public void canCreateFromExampleTsv() throws IOException {
-        SpecificGenesFilter filter = (SpecificGenesFilter) GeneFilterFactory.createFromTsv(EXAMPLE_TSV);
+    public void canCreateFromKnownGenes() {
+        KnownGene knownGene = TestKnownGeneFactory.builder().gene("gene A").build();
+        GeneFilter filter = GeneFilterFactory.createFromKnownGenes(Lists.newArrayList(knownGene));
 
-        assertEquals(2, filter.allowedGenes().size());
-        assertTrue(filter.allowedGenes().contains("gene A"));
-        assertTrue(filter.allowedGenes().contains("gene B"));
+        assertTrue(filter.include("gene A"));
+        assertFalse(filter.include("gene B"));
     }
 }

@@ -1,8 +1,5 @@
 package com.hartwig.actin.molecular.filter;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.Set;
 
@@ -21,11 +18,11 @@ public final class GeneFilterFactory {
     }
 
     @NotNull
-    public static GeneFilter createFromTsv(@NotNull String geneFilterTsv) throws IOException {
-        List<String> lines = Files.readAllLines(new File(geneFilterTsv).toPath());
-
+    public static GeneFilter createFromKnownGenes(@NotNull List<KnownGene> knownGenes) {
         Set<String> genes = Sets.newHashSet();
-        genes.addAll(lines.subList(1, lines.size()));
+        for (KnownGene knownGene : knownGenes) {
+            genes.add(knownGene.gene());
+        }
 
         return new SpecificGenesFilter(genes);
     }

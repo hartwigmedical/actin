@@ -11,9 +11,4 @@ class AlwaysValidFilter implements GeneFilter {
     public boolean include(@NotNull final String gene) {
         return true;
     }
-
-    @Override
-    public int size() {
-        return Integer.MAX_VALUE;
-    }
 }

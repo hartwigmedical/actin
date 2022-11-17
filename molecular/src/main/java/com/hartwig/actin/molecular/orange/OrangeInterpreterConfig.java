@@ -25,7 +25,7 @@ public interface OrangeInterpreterConfig {
     String SERVE_DIRECTORY = "serve_directory";
     String EXTERNAL_TRIAL_MAPPING_TSV = "external_trial_mapping_tsv";
     String CLINICAL_JSON = "clinical_json";
-    String GENE_FILTER_TSV = "gene_filter_tsv";
+    String KNOWN_GENES_TSV = "known_genes_tsv";
 
     String OUTPUT_DIRECTORY = "output_directory";
 
@@ -39,7 +39,7 @@ public interface OrangeInterpreterConfig {
         options.addOption(SERVE_DIRECTORY, true, "Path towards the SERVE directory containing known and actionable events");
         options.addOption(EXTERNAL_TRIAL_MAPPING_TSV, true, "A mapping from external trial names to ACTIN trials");
         options.addOption(CLINICAL_JSON, true, "The clinical JSON of the patient for which a sample is analyzed");
-        options.addOption(GENE_FILTER_TSV, true, "A TSV containing genes to include in the ACTIN molecular output");
+        options.addOption(KNOWN_GENES_TSV, true, "A TSV containing genes to include in the ACTIN molecular output along with gene role");
 
         options.addOption(OUTPUT_DIRECTORY, true, "Directory where molecular data output will be written to");
 
@@ -61,7 +61,7 @@ public interface OrangeInterpreterConfig {
     String clinicalJson();
 
     @NotNull
-    String geneFilterTsv();
+    String knownGenesTsv();
 
     @NotNull
     String outputDirectory();
@@ -78,7 +78,7 @@ public interface OrangeInterpreterConfig {
                 .serveDirectory(ApplicationConfig.nonOptionalDir(cmd, SERVE_DIRECTORY))
                 .externalTrialMappingTsv(ApplicationConfig.nonOptionalFile(cmd, EXTERNAL_TRIAL_MAPPING_TSV))
                 .clinicalJson(ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON))
-                .geneFilterTsv(ApplicationConfig.nonOptionalFile(cmd, GENE_FILTER_TSV))
+                .knownGenesTsv(ApplicationConfig.nonOptionalFile(cmd, KNOWN_GENES_TSV))
                 .outputDirectory(ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY))
                 .build();
     }

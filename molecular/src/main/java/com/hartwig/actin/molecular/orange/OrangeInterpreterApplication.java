@@ -8,6 +8,8 @@ import com.hartwig.actin.clinical.serialization.ClinicalRecordJson;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.filter.GeneFilterFactory;
+import com.hartwig.actin.molecular.filter.KnownGene;
+import com.hartwig.actin.molecular.filter.KnownGeneFile;
 import com.hartwig.actin.molecular.orange.curation.ExternalTrialMapping;
 import com.hartwig.actin.molecular.orange.curation.ExternalTrialMappingTsv;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
@@ -65,10 +67,11 @@ public class OrangeInterpreterApplication {
         LOGGER.info("Reading ORANGE json from {}", config.orangeJson());
         OrangeRecord orange = OrangeJson.read(config.orangeJson());
 
-        LOGGER.info("Reading gene filter tsv from {}", config.geneFilterTsv());
-        GeneFilter geneFilter = GeneFilterFactory.createFromTsv(config.geneFilterTsv());
-        LOGGER.info(" Read {} genes to include from ORANGE record", geneFilter.size());
+        LOGGER.info("Reading known genes from {}", config.knownGenesTsv());
+        List<KnownGene> knownGenes = KnownGeneFile.read(config.knownGenesTsv());
+        LOGGER.info(" Read {} known genes", knownGenes.size());
 
+        GeneFilter geneFilter = GeneFilterFactory.createFromKnownGenes(knownGenes);
         KnownEvents knownEvents = KnownEventsLoader.readFromDir(config.serveDirectory(), RefGenomeVersion.V37);
         ActionableEvents actionableEvents = ActionableEventsLoader.readFromDir(config.serveDirectory(), RefGenomeVersion.V37);
 

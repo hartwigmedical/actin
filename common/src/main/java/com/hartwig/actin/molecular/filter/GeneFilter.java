@@ -6,5 +6,4 @@ public interface GeneFilter {
 
     boolean include(@NotNull String gene);
 
-    int size();
 }

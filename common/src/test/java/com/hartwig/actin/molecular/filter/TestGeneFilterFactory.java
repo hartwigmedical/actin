@@ -15,12 +15,12 @@ public final class TestGeneFilterFactory {
     }
 
     @NotNull
-    public static GeneFilter createValidForGene(@NotNull String gene) {
-        return new SpecificGenesFilter(Sets.newHashSet(gene));
+    public static GeneFilter createNeverValid() {
+        return new SpecificGenesFilter(Sets.newHashSet());
     }
 
     @NotNull
-    public static GeneFilter createNeverValid() {
-        return new SpecificGenesFilter(Sets.newHashSet());
+    public static GeneFilter createValidForGene(@NotNull String gene) {
+        return new SpecificGenesFilter(Sets.newHashSet(gene));
     }
 }
