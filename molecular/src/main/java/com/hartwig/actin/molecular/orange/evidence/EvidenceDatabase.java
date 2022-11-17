@@ -86,7 +86,8 @@ public class EvidenceDatabase {
 
     @Nullable
     public GeneAlteration lookupGeneAlteration(@NotNull LinxDisruption disruption) {
-        return CopyNumberLookup.findForDisruption(knownEvents.copyNumbers(), disruption);
+        // TODO Add a generic gene database.
+        return null;
     }
 
     @NotNull

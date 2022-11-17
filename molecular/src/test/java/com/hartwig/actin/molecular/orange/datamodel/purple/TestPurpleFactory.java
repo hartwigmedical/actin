@@ -9,21 +9,13 @@ public final class TestPurpleFactory {
     }
 
     @NotNull
-    public static ImmutablePurpleCopyNumber.Builder copyNumberBuilder() {
-        return ImmutablePurpleCopyNumber.builder()
-                .reported(true)
-                .gene(Strings.EMPTY)
-                .interpretation(CopyNumberInterpretation.FULL_LOSS)
-                .minCopies(0)
-                .maxCopies(0);
-    }
-
-    @NotNull
     public static ImmutablePurpleVariant.Builder variantBuilder() {
         return ImmutablePurpleVariant.builder()
                 .reported(true)
                 .type(PurpleVariantType.SNP)
                 .gene(Strings.EMPTY)
+                .chromosome(Strings.EMPTY)
+                .position(0)
                 .ref(Strings.EMPTY)
                 .alt(Strings.EMPTY)
                 .canonicalTranscript(Strings.EMPTY)
@@ -36,5 +28,15 @@ public final class TestPurpleFactory {
                 .clonalLikelihood(0D)
                 .driverLikelihood(0D)
                 .biallelic(false);
+    }
+
+    @NotNull
+    public static ImmutablePurpleCopyNumber.Builder copyNumberBuilder() {
+        return ImmutablePurpleCopyNumber.builder()
+                .reported(true)
+                .gene(Strings.EMPTY)
+                .interpretation(CopyNumberInterpretation.FULL_LOSS)
+                .minCopies(0)
+                .maxCopies(0);
     }
 }

@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.orange.evidence.known;
 
+
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.serve.datamodel.range.KnownCodon;
 
@@ -13,6 +14,20 @@ public final class CodonLookup {
 
     @Nullable
     public static KnownCodon find(@NotNull Iterable<KnownCodon> knownCodons, @NotNull PurpleVariant variant) {
+        for (KnownCodon knownCodon : knownCodons) {
+            if (isMatch(knownCodon, variant)) {
+                return knownCodon;
+            }
+        }
         return null;
+    }
+
+    private static boolean isMatch(@NotNull KnownCodon codon, @NotNull PurpleVariant variant) {
+        boolean geneMatch = codon.gene().equals(variant.gene());
+        boolean chromosomeMatch = codon.chromosome().equals(variant.chromosome());
+        boolean positionMatch = variant.position() >= codon.start() && variant.position() <= codon.end();
+        // TODO Implement mutation filter match.
+
+        return geneMatch && chromosomeMatch && positionMatch;
     }
 }

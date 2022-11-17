@@ -5,7 +5,6 @@ import java.util.StringJoiner;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
-import com.hartwig.actin.molecular.orange.datamodel.purple.CopyNumberInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
@@ -56,14 +55,9 @@ public final class DriverEventFactory {
 
     @NotNull
     public static String copyNumberEvent(@NotNull PurpleCopyNumber copyNumber) {
-        boolean isAmp = copyNumber.interpretation() == CopyNumberInterpretation.FULL_GAIN
-                || copyNumber.interpretation() == CopyNumberInterpretation.PARTIAL_GAIN;
-        boolean isDel = copyNumber.interpretation() == CopyNumberInterpretation.FULL_LOSS
-                || copyNumber.interpretation() == CopyNumberInterpretation.PARTIAL_LOSS;
-
-        if (isAmp) {
+        if (copyNumber.interpretation().isGain()) {
             return copyNumber.gene() + " amp";
-        } else if (isDel) {
+        } else if (copyNumber.interpretation().isLoss()) {
             return copyNumber.gene() + " del";
         } else {
             return copyNumber.gene() + " unknown";

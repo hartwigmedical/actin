@@ -19,6 +19,11 @@ public abstract class PurpleVariant {
     public abstract String gene();
 
     @NotNull
+    public abstract String chromosome();
+
+    public abstract int position();
+
+    @NotNull
     public abstract String ref();
 
     @NotNull

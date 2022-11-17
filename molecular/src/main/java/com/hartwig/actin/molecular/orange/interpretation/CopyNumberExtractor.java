@@ -37,8 +37,7 @@ class CopyNumberExtractor {
     public Set<Amplification> extractAmplifications(@NotNull PurpleRecord purple) {
         Set<Amplification> amplifications = Sets.newTreeSet(new CopyNumberComparator());
         for (PurpleCopyNumber copyNumber : purple.copyNumbers()) {
-            if (copyNumber.interpretation() == CopyNumberInterpretation.PARTIAL_GAIN
-                    || copyNumber.interpretation() == CopyNumberInterpretation.FULL_GAIN) {
+            if (copyNumber.interpretation().isGain()) {
                 if (geneFilter.include(copyNumber.gene())) {
                     boolean isPartial = copyNumber.interpretation() == CopyNumberInterpretation.PARTIAL_GAIN;
                     amplifications.add(ImmutableAmplification.builder()
@@ -63,8 +62,7 @@ class CopyNumberExtractor {
     public Set<Loss> extractLosses(@NotNull PurpleRecord purple) {
         Set<Loss> losses = Sets.newTreeSet(new CopyNumberComparator());
         for (PurpleCopyNumber copyNumber : purple.copyNumbers()) {
-            if (copyNumber.interpretation() == CopyNumberInterpretation.PARTIAL_LOSS
-                    || copyNumber.interpretation() == CopyNumberInterpretation.FULL_LOSS) {
+            if (copyNumber.interpretation().isLoss()) {
                 if (geneFilter.include(copyNumber.gene())) {
                 losses.add(ImmutableLoss.builder()
                         .from(ExtractionUtil.convertAlteration(copyNumber.gene(), evidenceDatabase.lookupGeneAlteration(copyNumber)))

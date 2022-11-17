@@ -136,6 +136,8 @@ public final class OrangeJson {
                         .reported(true)
                         .type(PurpleVariantType.valueOf(string(variant, "type")))
                         .gene(string(variant, "gene"))
+                        .chromosome(string(variant, "chromosome"))
+                        .position(integer(variant, "position"))
                         .ref(string(variant, "ref"))
                         .alt(string(variant, "alt"))
                         .canonicalTranscript(string(variant, "canonicalTranscript"))
