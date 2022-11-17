@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.filter;
+package com.hartwig.actin.molecular.serve;
 
 import java.io.File;
 import java.io.IOException;

@@ -8,8 +8,6 @@ import com.hartwig.actin.clinical.serialization.ClinicalRecordJson;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.filter.GeneFilterFactory;
-import com.hartwig.actin.molecular.filter.KnownGene;
-import com.hartwig.actin.molecular.filter.KnownGeneFile;
 import com.hartwig.actin.molecular.orange.curation.ExternalTrialMapping;
 import com.hartwig.actin.molecular.orange.curation.ExternalTrialMappingTsv;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
@@ -17,6 +15,8 @@ import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.orange.interpretation.OrangeInterpreter;
 import com.hartwig.actin.molecular.orange.serialization.OrangeJson;
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson;
+import com.hartwig.actin.molecular.serve.KnownGene;
+import com.hartwig.actin.molecular.serve.KnownGeneFile;
 import com.hartwig.actin.molecular.util.MolecularPrinter;
 import com.hartwig.serve.datamodel.ActionableEvents;
 import com.hartwig.serve.datamodel.ActionableEventsLoader;
@@ -67,9 +67,9 @@ public class OrangeInterpreterApplication {
         LOGGER.info("Reading ORANGE json from {}", config.orangeJson());
         OrangeRecord orange = OrangeJson.read(config.orangeJson());
 
-        LOGGER.info("Reading known genes from {}", config.knownGenesTsv());
+        LOGGER.info("Loading known genes from {}", config.knownGenesTsv());
         List<KnownGene> knownGenes = KnownGeneFile.read(config.knownGenesTsv());
-        LOGGER.info(" Read {} known genes", knownGenes.size());
+        LOGGER.info(" Loaded {} known genes", knownGenes.size());
 
         GeneFilter geneFilter = GeneFilterFactory.createFromKnownGenes(knownGenes);
         KnownEvents knownEvents = KnownEventsLoader.readFromDir(config.serveDirectory(), RefGenomeVersion.V37);

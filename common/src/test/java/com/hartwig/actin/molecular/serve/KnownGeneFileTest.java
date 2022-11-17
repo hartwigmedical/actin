@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.filter;
+package com.hartwig.actin.molecular.serve;
 
 import static org.junit.Assert.assertEquals;
 

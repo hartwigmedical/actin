@@ -5,6 +5,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.Lists;
+import com.hartwig.actin.molecular.serve.KnownGene;
+import com.hartwig.actin.molecular.serve.TestKnownGeneFactory;
 
 import org.junit.Test;
 

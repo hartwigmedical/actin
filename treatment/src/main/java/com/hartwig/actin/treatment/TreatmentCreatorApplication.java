@@ -9,8 +9,8 @@ import com.hartwig.actin.doid.datamodel.DoidEntry;
 import com.hartwig.actin.doid.serialization.DoidJson;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.filter.GeneFilterFactory;
-import com.hartwig.actin.molecular.filter.KnownGene;
-import com.hartwig.actin.molecular.filter.KnownGeneFile;
+import com.hartwig.actin.molecular.serve.KnownGene;
+import com.hartwig.actin.molecular.serve.KnownGeneFile;
 import com.hartwig.actin.treatment.datamodel.Trial;
 import com.hartwig.actin.treatment.serialization.TrialJson;
 import com.hartwig.actin.treatment.trial.EligibilityRuleUsageEvaluator;
@@ -62,9 +62,9 @@ public class TreatmentCreatorApplication {
 
         DoidModel doidModel = DoidModelFactory.createFromDoidEntry(doidEntry);
 
-        LOGGER.info("Reading known genes from {}", config.knownGenesTsv());
+        LOGGER.info("Loading known genes from {}", config.knownGenesTsv());
         List<KnownGene> knownGenes = KnownGeneFile.read(config.knownGenesTsv());
-        LOGGER.info(" Read {} known genes", knownGenes.size());
+        LOGGER.info(" Loaded {} known genes", knownGenes.size());
 
         GeneFilter geneFilter = GeneFilterFactory.createFromKnownGenes(knownGenes);
 
