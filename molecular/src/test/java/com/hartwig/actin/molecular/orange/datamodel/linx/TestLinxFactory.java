@@ -16,6 +16,7 @@ public final class TestLinxFactory {
     @NotNull
     public static ImmutableLinxDisruption.Builder disruptionBuilder() {
         return ImmutableLinxDisruption.builder()
+                .reported(true)
                 .gene(Strings.EMPTY)
                 .type(Strings.EMPTY)
                 .junctionCopyNumber(0D)
@@ -26,6 +27,7 @@ public final class TestLinxFactory {
     @NotNull
     public static ImmutableLinxFusion.Builder fusionBuilder() {
         return ImmutableLinxFusion.builder()
+                .reported(true)
                 .type(FusionType.NONE)
                 .geneStart(Strings.EMPTY)
                 .geneTranscriptStart(Strings.EMPTY)

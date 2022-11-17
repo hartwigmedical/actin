@@ -8,6 +8,8 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class LinxDisruption {
 
+    public abstract boolean reported();
+
     @NotNull
     public abstract String gene();
 

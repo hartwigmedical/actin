@@ -128,26 +128,12 @@ public final class OrangeJson {
         }
 
         @NotNull
-        private static Set<PurpleCopyNumber> toPurpleCopyNumbers(@NotNull JsonArray reportableGainLossArray) {
-            Set<PurpleCopyNumber> copyNumbers = Sets.newHashSet();
-            for (JsonElement element : reportableGainLossArray) {
-                JsonObject reportableGainLoss = element.getAsJsonObject();
-                copyNumbers.add(ImmutablePurpleCopyNumber.builder()
-                        .gene(string(reportableGainLoss, "gene"))
-                        .interpretation(CopyNumberInterpretation.valueOf(string(reportableGainLoss, "interpretation")))
-                        .minCopies(integer(reportableGainLoss, "minCopies"))
-                        .maxCopies(integer(reportableGainLoss, "maxCopies"))
-                        .build());
-            }
-            return copyNumbers;
-        }
-
-        @NotNull
-        private static Set<PurpleVariant> toPurpleVariants(@NotNull JsonArray variantArray) {
+        private static Set<PurpleVariant> toPurpleVariants(@NotNull JsonArray reportableVariantArray) {
             Set<PurpleVariant> variants = Sets.newHashSet();
-            for (JsonElement element : variantArray) {
+            for (JsonElement element : reportableVariantArray) {
                 JsonObject variant = element.getAsJsonObject();
                 variants.add(ImmutablePurpleVariant.builder()
+                        .reported(true)
                         .type(PurpleVariantType.valueOf(string(variant, "type")))
                         .gene(string(variant, "gene"))
                         .ref(string(variant, "ref"))
@@ -170,6 +156,22 @@ public final class OrangeJson {
         }
 
         @NotNull
+        private static Set<PurpleCopyNumber> toPurpleCopyNumbers(@NotNull JsonArray reportableGainLossArray) {
+            Set<PurpleCopyNumber> copyNumbers = Sets.newHashSet();
+            for (JsonElement element : reportableGainLossArray) {
+                JsonObject reportableGainLoss = element.getAsJsonObject();
+                copyNumbers.add(ImmutablePurpleCopyNumber.builder()
+                        .reported(true)
+                        .gene(string(reportableGainLoss, "gene"))
+                        .interpretation(CopyNumberInterpretation.valueOf(string(reportableGainLoss, "interpretation")))
+                        .minCopies(integer(reportableGainLoss, "minCopies"))
+                        .maxCopies(integer(reportableGainLoss, "maxCopies"))
+                        .build());
+            }
+            return copyNumbers;
+        }
+
+        @NotNull
         private static LinxRecord toLinxRecord(@NotNull JsonObject linx) {
             return ImmutableLinxRecord.builder()
                     .fusions(toLinxFusions(array(linx, "reportableFusions")))
@@ -184,6 +186,7 @@ public final class OrangeJson {
             for (JsonElement element : reportableFusionArray) {
                 JsonObject fusion = element.getAsJsonObject();
                 fusions.add(ImmutableLinxFusion.builder()
+                        .reported(true)
                         .type(FusionType.valueOf(string(fusion, "reportedType")))
                         .geneStart(string(fusion, "geneStart"))
                         .geneTranscriptStart(string(fusion, "geneTranscriptStart"))
@@ -208,11 +211,12 @@ public final class OrangeJson {
         }
 
         @NotNull
-        private static Set<LinxDisruption> toLinxDisruptions(@NotNull JsonArray geneDisruptionArray) {
+        private static Set<LinxDisruption> toLinxDisruptions(@NotNull JsonArray reportableGeneDisruptionArray) {
             Set<LinxDisruption> disruptions = Sets.newHashSet();
-            for (JsonElement element : geneDisruptionArray) {
+            for (JsonElement element : reportableGeneDisruptionArray) {
                 JsonObject geneDisruption = element.getAsJsonObject();
                 disruptions.add(ImmutableLinxDisruption.builder()
+                        .reported(true)
                         .gene(string(geneDisruption, "gene"))
                         .type(string(geneDisruption, "type"))
                         .junctionCopyNumber(number(geneDisruption, "junctionCopyNumber"))
@@ -256,6 +260,7 @@ public final class OrangeJson {
             for (JsonElement element : array(virusInterpreter, "reportableViruses")) {
                 JsonObject virus = element.getAsJsonObject();
                 entries.add(ImmutableVirusInterpreterEntry.builder()
+                        .reported(true)
                         .name(string(virus, "name"))
                         .qcStatus(VirusQCStatus.valueOf(string(virus, "qcStatus")))
                         .interpretation(nullableString(virus, "interpretation"))

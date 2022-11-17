@@ -11,6 +11,7 @@ public final class TestVirusInterpreterFactory {
     @NotNull
     public static ImmutableVirusInterpreterEntry.Builder builder() {
         return ImmutableVirusInterpreterEntry.builder()
+                .reported(true)
                 .name(Strings.EMPTY)
                 .qcStatus(VirusQCStatus.NO_ABNORMALITIES)
                 .integrations(0)

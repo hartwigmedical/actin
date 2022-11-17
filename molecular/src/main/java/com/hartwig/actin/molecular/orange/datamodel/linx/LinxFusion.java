@@ -8,6 +8,8 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class LinxFusion {
 
+    public abstract boolean reported();
+
     @NotNull
     public abstract FusionType type();
 

@@ -11,6 +11,7 @@ public final class TestPurpleFactory {
     @NotNull
     public static ImmutablePurpleCopyNumber.Builder copyNumberBuilder() {
         return ImmutablePurpleCopyNumber.builder()
+                .reported(true)
                 .gene(Strings.EMPTY)
                 .interpretation(CopyNumberInterpretation.FULL_LOSS)
                 .minCopies(0)
@@ -20,6 +21,7 @@ public final class TestPurpleFactory {
     @NotNull
     public static ImmutablePurpleVariant.Builder variantBuilder() {
         return ImmutablePurpleVariant.builder()
+                .reported(true)
                 .type(PurpleVariantType.SNP)
                 .gene(Strings.EMPTY)
                 .ref(Strings.EMPTY)
