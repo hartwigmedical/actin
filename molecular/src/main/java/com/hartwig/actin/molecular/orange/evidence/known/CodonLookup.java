@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.orange.evidence.known;
 
 
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
+import com.hartwig.actin.molecular.orange.evidence.algo.MutationTypeMatcher;
 import com.hartwig.serve.datamodel.range.KnownCodon;
 
 import org.jetbrains.annotations.NotNull;
@@ -26,8 +27,8 @@ public final class CodonLookup {
         boolean geneMatch = codon.gene().equals(variant.gene());
         boolean chromosomeMatch = codon.chromosome().equals(variant.chromosome());
         boolean positionMatch = variant.position() >= codon.start() && variant.position() <= codon.end();
-        // TODO Implement mutation filter match.
+        boolean isTypeMatch = MutationTypeMatcher.matches(variant, codon.applicableMutationType());
 
-        return geneMatch && chromosomeMatch && positionMatch;
+        return geneMatch && chromosomeMatch && positionMatch && isTypeMatch;
     }
 }

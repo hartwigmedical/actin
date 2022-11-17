@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.orange.evidence.known;
 
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
+import com.hartwig.actin.molecular.orange.evidence.algo.MutationTypeMatcher;
 import com.hartwig.serve.datamodel.range.KnownExon;
 
 import org.jetbrains.annotations.NotNull;
@@ -25,8 +26,8 @@ public final class ExonLookup {
         boolean geneMatch = exon.gene().equals(variant.gene());
         boolean chromosomeMatch = exon.chromosome().equals(variant.chromosome());
         boolean positionMatch = variant.position() >= exon.start() && variant.position() <= exon.end();
-        // TODO Implement mutation filter match.
+        boolean isTypeMatch = MutationTypeMatcher.matches(variant, exon.applicableMutationType());
 
-        return geneMatch && chromosomeMatch && positionMatch;
+        return geneMatch && chromosomeMatch && positionMatch && isTypeMatch;
     }
 }
