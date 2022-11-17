@@ -10,17 +10,22 @@ import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterRecord;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusQCStatus;
+import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.sort.driver.VirusComparator;
 
 import org.jetbrains.annotations.NotNull;
 
-final class VirusExtraction {
+class VirusExtractor {
 
-    private VirusExtraction() {
+    @NotNull
+    private final EvidenceDatabase evidenceDatabase;
+
+    public VirusExtractor(@NotNull final EvidenceDatabase evidenceDatabase) {
+        this.evidenceDatabase = evidenceDatabase;
     }
 
     @NotNull
-    public static Set<Virus> extract(@NotNull VirusInterpreterRecord virusInterpreter) {
+    public Set<Virus> extract(@NotNull VirusInterpreterRecord virusInterpreter) {
         Set<Virus> viruses = Sets.newTreeSet(new VirusComparator());
         for (VirusInterpreterEntry virus : virusInterpreter.entries()) {
             viruses.add(ImmutableVirus.builder()

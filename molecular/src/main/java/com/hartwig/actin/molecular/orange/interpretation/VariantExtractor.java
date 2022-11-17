@@ -12,24 +12,33 @@ import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.VariantEffect;
 import com.hartwig.actin.molecular.datamodel.driver.VariantType;
+import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.VariantHotspot;
+import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.orange.util.AminoAcid;
 import com.hartwig.actin.molecular.sort.driver.VariantComparator;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-final class VariantExtraction {
+class VariantExtractor {
 
-    private VariantExtraction() {
+    @NotNull
+    private final GeneFilter geneFilter;
+    @NotNull
+    private final EvidenceDatabase evidenceDatabase;
+
+    public VariantExtractor(@NotNull final GeneFilter geneFilter, @NotNull final EvidenceDatabase evidenceDatabase) {
+        this.geneFilter = geneFilter;
+        this.evidenceDatabase = evidenceDatabase;
     }
 
     @NotNull
-    public static Set<Variant> extract(@NotNull PurpleRecord purple) {
+    public Set<Variant> extract(@NotNull PurpleRecord purple) {
         Set<Variant> variants = Sets.newTreeSet(new VariantComparator());
         // TODO Populate "other impacts"
         // TODO Also read non-reportable variants.

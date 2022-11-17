@@ -15,7 +15,7 @@ import com.hartwig.serve.datamodel.common.GeneAlteration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class EvidenceAnnotator {
+public class EvidenceDatabase {
 
     @NotNull
     private final KnownEvents knownEvents;
@@ -24,7 +24,7 @@ public class EvidenceAnnotator {
     @NotNull
     private final List<ExternalTrialMapping> externalTrialMappings;
 
-    public EvidenceAnnotator(@NotNull final KnownEvents knownEvents, @NotNull final ActionableEvents actionableEvents,
+    public EvidenceDatabase(@NotNull final KnownEvents knownEvents, @NotNull final ActionableEvents actionableEvents,
             @NotNull final List<ExternalTrialMapping> externalTrialMappings) {
         this.knownEvents = knownEvents;
         this.actionableEvents = actionableEvents;

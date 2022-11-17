@@ -11,21 +11,30 @@ import com.hartwig.actin.molecular.datamodel.driver.ImmutableDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableHomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.RegionType;
+import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
+import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.sort.driver.DisruptionComparator;
 import com.hartwig.actin.molecular.sort.driver.HomozygousDisruptionComparator;
 
 import org.jetbrains.annotations.NotNull;
 
-final class DisruptionExtraction {
+class DisruptionExtractor {
 
-    private DisruptionExtraction() {
+    @NotNull
+    private final GeneFilter geneFilter;
+    @NotNull
+    private final EvidenceDatabase evidenceDatabase;
+
+    public DisruptionExtractor(@NotNull final GeneFilter geneFilter, @NotNull final EvidenceDatabase evidenceDatabase) {
+        this.geneFilter = geneFilter;
+        this.evidenceDatabase = evidenceDatabase;
     }
 
     @NotNull
-    public static Set<HomozygousDisruption> extractHomozygousDisruptions(@NotNull LinxRecord linx) {
+    public Set<HomozygousDisruption> extractHomozygousDisruptions(@NotNull LinxRecord linx) {
         Set<HomozygousDisruption> homozygousDisruptions = Sets.newTreeSet(new HomozygousDisruptionComparator());
         for (LinxHomozygousDisruption homozygousDisruption : linx.homozygousDisruptions()) {
             homozygousDisruptions.add(ImmutableHomozygousDisruption.builder()
@@ -40,7 +49,7 @@ final class DisruptionExtraction {
     }
 
     @NotNull
-    public static Set<Disruption> extractDisruptions(@NotNull LinxRecord linx, @NotNull Set<Loss> losses) {
+    public Set<Disruption> extractDisruptions(@NotNull LinxRecord linx, @NotNull Set<Loss> losses) {
         Set<Disruption> disruptions = Sets.newTreeSet(new DisruptionComparator());
         for (LinxDisruption disruption : linx.disruptions()) {
             if (disruption.clusterId() == null) {

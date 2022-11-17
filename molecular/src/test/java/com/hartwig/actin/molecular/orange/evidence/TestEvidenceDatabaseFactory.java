@@ -6,14 +6,14 @@ import com.hartwig.serve.datamodel.ImmutableKnownEvents;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class TestEvidenceAnnotatorFactory {
+public final class TestEvidenceDatabaseFactory {
 
-    private TestEvidenceAnnotatorFactory() {
+    private TestEvidenceDatabaseFactory() {
     }
 
     @NotNull
-    public static EvidenceAnnotator createWithNoEvidence() {
-        return new EvidenceAnnotator(ImmutableKnownEvents.builder().build(),
+    public static EvidenceDatabase createEmptyDatabase() {
+        return new EvidenceDatabase(ImmutableKnownEvents.builder().build(),
                 ImmutableActionableEvents.builder().build(),
                 Lists.newArrayList());
     }

@@ -8,20 +8,29 @@ import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableAmplification;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableLoss;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
+import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.orange.datamodel.purple.CopyNumberInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
+import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.sort.driver.CopyNumberComparator;
 
 import org.jetbrains.annotations.NotNull;
 
-final class CopyNumberExtraction {
+class CopyNumberExtractor {
 
-    private CopyNumberExtraction() {
+    @NotNull
+    private final GeneFilter geneFilter;
+    @NotNull
+    private final EvidenceDatabase evidenceDatabase;
+
+    public CopyNumberExtractor(@NotNull final GeneFilter geneFilter, @NotNull final EvidenceDatabase evidenceDatabase) {
+        this.geneFilter = geneFilter;
+        this.evidenceDatabase = evidenceDatabase;
     }
 
     @NotNull
-    public static Set<Amplification> extractAmplifications(@NotNull PurpleRecord purple) {
+    public Set<Amplification> extractAmplifications(@NotNull PurpleRecord purple) {
         Set<Amplification> amplifications = Sets.newTreeSet(new CopyNumberComparator());
         for (PurpleCopyNumber copyNumber : purple.copyNumbers()) {
             if (copyNumber.interpretation() == CopyNumberInterpretation.PARTIAL_GAIN
@@ -43,7 +52,7 @@ final class CopyNumberExtraction {
     }
 
     @NotNull
-    public static Set<Loss> extractLosses(@NotNull PurpleRecord purple) {
+    public Set<Loss> extractLosses(@NotNull PurpleRecord purple) {
         Set<Loss> losses = Sets.newTreeSet(new CopyNumberComparator());
         for (PurpleCopyNumber copyNumber : purple.copyNumbers()) {
             if (copyNumber.interpretation() == CopyNumberInterpretation.PARTIAL_LOSS

@@ -11,14 +11,14 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
 
 import org.junit.Test;
 
-public class FusionExtractionTest {
+public class FusionExtractorTest {
 
     @Test
     public void canDetermineDriverTypeForAllFusions() {
         for (FusionType type : FusionType.values()) {
             if (type != FusionType.NONE) {
                 LinxFusion fusion = TestLinxFactory.fusionBuilder().type(type).build();
-                assertNotNull(FusionExtraction.determineDriverType(fusion));
+                assertNotNull(FusionExtractor.determineDriverType(fusion));
             }
         }
     }
@@ -26,9 +26,9 @@ public class FusionExtractionTest {
     @Test
     public void canDetermineDriverLikelihoodForAllFusions() {
         LinxFusion high = TestLinxFactory.fusionBuilder().driverLikelihood(FusionDriverLikelihood.HIGH).build();
-        assertEquals(DriverLikelihood.HIGH, FusionExtraction.determineDriverLikelihood(high));
+        assertEquals(DriverLikelihood.HIGH, FusionExtractor.determineDriverLikelihood(high));
 
         LinxFusion low = TestLinxFactory.fusionBuilder().driverLikelihood(FusionDriverLikelihood.LOW).build();
-        assertEquals(DriverLikelihood.LOW, FusionExtraction.determineDriverLikelihood(low));
+        assertEquals(DriverLikelihood.LOW, FusionExtractor.determineDriverLikelihood(low));
     }
 }

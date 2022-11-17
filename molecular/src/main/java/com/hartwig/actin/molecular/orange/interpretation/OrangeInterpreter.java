@@ -7,7 +7,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
-import com.hartwig.actin.molecular.orange.evidence.EvidenceAnnotator;
+import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -17,15 +17,17 @@ public class OrangeInterpreter {
     @NotNull
     private final GeneFilter geneFilter;
     @NotNull
-    private final EvidenceAnnotator evidenceAnnotator;
+    private final EvidenceDatabase evidenceDatabase;
 
-    public OrangeInterpreter(@NotNull final GeneFilter geneFilter, @NotNull final EvidenceAnnotator evidenceAnnotator) {
+    public OrangeInterpreter(@NotNull final GeneFilter geneFilter, @NotNull final EvidenceDatabase evidenceDatabase) {
         this.geneFilter = geneFilter;
-        this.evidenceAnnotator = evidenceAnnotator;
+        this.evidenceDatabase = evidenceDatabase;
     }
 
     @NotNull
     public MolecularRecord interpret(@NotNull OrangeRecord record) {
+        DriverExtractor driverExtractor = DriverExtractor.create(geneFilter, evidenceDatabase);
+
         return ImmutableMolecularRecord.builder()
                 .patientId(toPatientId(record.sampleId()))
                 .sampleId(record.sampleId())
@@ -37,7 +39,7 @@ public class OrangeInterpreter {
                 .containsTumorCells(record.purple().containsTumorCells())
                 .hasSufficientQuality(record.purple().hasSufficientQuality())
                 .characteristics(CharacteristicsExtraction.extract(record))
-                .drivers(DriverExtraction.extract(record))
+                .drivers(driverExtractor.extract(record))
                 .immunology(ImmunologyExtraction.extract(record))
                 .pharmaco(PharmacoExtraction.extract(record))
                 .build();

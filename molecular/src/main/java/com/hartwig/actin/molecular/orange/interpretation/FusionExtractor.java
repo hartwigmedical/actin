@@ -9,19 +9,28 @@ import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableFusion;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
+import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
+import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.sort.driver.FusionComparator;
 
 import org.jetbrains.annotations.NotNull;
 
-final class FusionExtraction {
+class FusionExtractor {
 
-    private FusionExtraction() {
+    @NotNull
+    private final GeneFilter geneFilter;
+    @NotNull
+    private final EvidenceDatabase evidenceDatabase;
+
+    public FusionExtractor(@NotNull final GeneFilter geneFilter, @NotNull final EvidenceDatabase evidenceDatabase) {
+        this.geneFilter = geneFilter;
+        this.evidenceDatabase = evidenceDatabase;
     }
 
     @NotNull
-    public static Set<Fusion> extract(@NotNull LinxRecord linx) {
+    public Set<Fusion> extract(@NotNull LinxRecord linx) {
         Set<Fusion> fusions = Sets.newTreeSet(new FusionComparator());
         for (LinxFusion fusion : linx.fusions()) {
             fusions.add(ImmutableFusion.builder()

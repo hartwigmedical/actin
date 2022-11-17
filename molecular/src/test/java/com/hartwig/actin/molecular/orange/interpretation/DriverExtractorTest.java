@@ -15,15 +15,17 @@ import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
+import com.hartwig.actin.molecular.filter.TestGeneFilterFactory;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
+import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-public class DriverExtractionTest {
+public class DriverExtractorTest {
 
     private static final double EPSILON = 1.0E-10;
 
@@ -35,7 +37,8 @@ public class DriverExtractionTest {
                 .purple(ImmutablePurpleRecord.builder().from(base.purple()).containsTumorCells(false).build())
                 .build();
 
-        MolecularDrivers drivers = DriverExtraction.extract(orange);
+        DriverExtractor driverExtractor = createTestExtractor();
+        MolecularDrivers drivers = driverExtractor.extract(orange);
 
         assertTrue(drivers.variants().isEmpty());
         assertTrue(drivers.amplifications().isEmpty());
@@ -48,7 +51,8 @@ public class DriverExtractionTest {
 
     @Test
     public void canExtractFromProperTestData() {
-        MolecularDrivers drivers = DriverExtraction.extract(TestOrangeFactory.createProperTestOrangeRecord());
+        DriverExtractor driverExtractor = createTestExtractor();
+        MolecularDrivers drivers = driverExtractor.extract(TestOrangeFactory.createProperTestOrangeRecord());
 
         assertVariants(drivers.variants());
         assertAmplifications(drivers.amplifications());
@@ -123,5 +127,10 @@ public class DriverExtractionTest {
         assertEquals(DriverLikelihood.HIGH, virus.driverLikelihood());
         assertEquals("Human papillomavirus type 16", virus.name());
         assertEquals(3, virus.integrations());
+    }
+
+    @NotNull
+    private static DriverExtractor createTestExtractor() {
+        return DriverExtractor.create(TestGeneFilterFactory.createAlwaysValid(), TestEvidenceDatabaseFactory.createEmptyDatabase());
     }
 }

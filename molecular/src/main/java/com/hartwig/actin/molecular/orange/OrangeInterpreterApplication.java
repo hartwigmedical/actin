@@ -11,7 +11,7 @@ import com.hartwig.actin.molecular.filter.GeneFilterFactory;
 import com.hartwig.actin.molecular.orange.curation.ExternalTrialMapping;
 import com.hartwig.actin.molecular.orange.curation.ExternalTrialMappingTsv;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
-import com.hartwig.actin.molecular.orange.evidence.EvidenceAnnotator;
+import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.orange.interpretation.OrangeInterpreter;
 import com.hartwig.actin.molecular.orange.serialization.OrangeJson;
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson;
@@ -79,10 +79,10 @@ public class OrangeInterpreterApplication {
         LOGGER.info("Loading clinical json from {}", config.clinicalJson());
         ClinicalRecord clinical = ClinicalRecordJson.read(config.clinicalJson());
 
-        EvidenceAnnotator evidenceAnnotator = new EvidenceAnnotator(knownEvents, actionableEvents, mappings);
+        EvidenceDatabase evidenceDatabase = new EvidenceDatabase(knownEvents, actionableEvents, mappings);
 
         LOGGER.info("Interpreting ORANGE record");
-        MolecularRecord molecular = new OrangeInterpreter(geneFilter, evidenceAnnotator).interpret(orange);
+        MolecularRecord molecular = new OrangeInterpreter(geneFilter, evidenceDatabase).interpret(orange);
 
         MolecularPrinter.printRecord(molecular);
         MolecularRecordJson.write(molecular, config.outputDirectory());

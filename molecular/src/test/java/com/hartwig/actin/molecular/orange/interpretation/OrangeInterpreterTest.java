@@ -12,7 +12,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
-import com.hartwig.actin.molecular.orange.evidence.TestEvidenceAnnotatorFactory;
+import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -56,6 +56,6 @@ public class OrangeInterpreterTest {
 
     @NotNull
     private static OrangeInterpreter createTestReader() {
-        return new OrangeInterpreter(TestGeneFilterFactory.createNeverValid(), TestEvidenceAnnotatorFactory.createWithNoEvidence());
+        return new OrangeInterpreter(TestGeneFilterFactory.createNeverValid(), TestEvidenceDatabaseFactory.createEmptyDatabase());
     }
 }
