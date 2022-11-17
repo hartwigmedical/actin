@@ -81,6 +81,7 @@ public class GeneIsInactivated implements EvaluationFunction {
         }
 
         Set<String> reportableNonDriverVariantsWithLossOfFunction = Sets.newHashSet();
+        Set<String> reportableHighDriverNonBiallelicVariants = Sets.newHashSet();
         List<String> eventsThatMayBeTransPhased = Lists.newArrayList();
         Set<Integer> evaluatedPhaseGroups = Sets.newHashSet();
 
@@ -98,8 +99,7 @@ public class GeneIsInactivated implements EvaluationFunction {
                     boolean isLossOfFunction = variant.proteinEffect() == ProteinEffect.LOSS_OF_FUNCTION
                             || variant.proteinEffect() == ProteinEffect.LOSS_OF_FUNCTION_PREDICTED;
 
-                    boolean isHighDriver = variant.driverLikelihood() == DriverLikelihood.HIGH;
-                    if (isHighDriver && variant.isBiallelic()) {
+                    if (variant.driverLikelihood() == DriverLikelihood.HIGH) {
                         boolean isGainOfFunction = variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
                                 || variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
 
@@ -107,6 +107,8 @@ public class GeneIsInactivated implements EvaluationFunction {
                             inactivationEventsNoTSG.add(variant.event());
                         } else if (isGainOfFunction) {
                             inactivationEventsGainOfFunction.add(variant.event());
+                        } else if (!variant.isBiallelic()) {
+                            reportableHighDriverNonBiallelicVariants.add(variant.event());
                         } else {
                             inactivationEventsThatQualify.add(variant.event());
                         }
@@ -140,6 +142,7 @@ public class GeneIsInactivated implements EvaluationFunction {
         Evaluation potentialWarnEvaluation = evaluatePotentialWarns(inactivationEventsThatAreUnreportable,
                 inactivationEventsNoTSG,
                 inactivationEventsGainOfFunction,
+                reportableHighDriverNonBiallelicVariants,
                 reportableNonDriverVariantsWithLossOfFunction,
                 eventsThatMayBeTransPhased);
 
@@ -157,6 +160,7 @@ public class GeneIsInactivated implements EvaluationFunction {
     @Nullable
     private Evaluation evaluatePotentialWarns(@NotNull Set<String> inactivationEventsThatAreUnreportable,
             @NotNull Set<String> inactivationEventsNoTSG, @NotNull Set<String> inactivationEventsGainOfFunction,
+            @NotNull Set<String> reportableHighDriverNonBiallelicVariants,
             @NotNull Set<String> reportableNonDriverVariantsWithLossOfFunction, @NotNull List<String> eventsThatMayBeTransPhased) {
         Set<String> warnEvents = Sets.newHashSet();
         Set<String> warnSpecificMessages = Sets.newHashSet();
@@ -184,6 +188,14 @@ public class GeneIsInactivated implements EvaluationFunction {
             warnGeneralMessages.add(gene + " potential inactivation but event annotated with gain-of-function protein impact");
         }
 
+        if (!reportableHighDriverNonBiallelicVariants.isEmpty()) {
+            warnEvents.addAll(reportableHighDriverNonBiallelicVariants);
+            warnSpecificMessages.add(
+                    "Inactivation events detected for " + gene + ": " + Format.concat(reportableHighDriverNonBiallelicVariants)
+                            + " but events are not biallelic");
+            warnGeneralMessages.add(gene + " potential inactivation but not biallelic");
+        }
+
         if (!reportableNonDriverVariantsWithLossOfFunction.isEmpty()) {
             warnEvents.addAll(reportableNonDriverVariantsWithLossOfFunction);
             warnSpecificMessages.add(
@@ -192,7 +204,7 @@ public class GeneIsInactivated implements EvaluationFunction {
             warnGeneralMessages.add(gene + " potential inactivation but low driver although also loss-of-function protein impact");
         }
 
-        if (eventsThatMayBeTransPhased.size() > 1) {
+        if (eventsThatMayBeTransPhased.size() > 1 && warnEvents.isEmpty()) {
             warnEvents.addAll(eventsThatMayBeTransPhased);
             warnSpecificMessages.add("Multiple events detected for " + gene + ": " + Format.concat(eventsThatMayBeTransPhased)
                     + " that potentially together inactivate the gene?");
