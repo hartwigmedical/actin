@@ -9,6 +9,11 @@ public final class TestLinxFactory {
     }
 
     @NotNull
+    public static ImmutableLinxHomozygousDisruption.Builder homozygousDisruptionBuilder() {
+        return ImmutableLinxHomozygousDisruption.builder().gene(Strings.EMPTY);
+    }
+
+    @NotNull
     public static ImmutableLinxDisruption.Builder disruptionBuilder() {
         return ImmutableLinxDisruption.builder()
                 .gene(Strings.EMPTY)

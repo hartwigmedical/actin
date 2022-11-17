@@ -8,33 +8,33 @@ import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableAmplification;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableLoss;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
-import com.hartwig.actin.molecular.orange.datamodel.purple.GainLossInterpretation;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
+import com.hartwig.actin.molecular.orange.datamodel.purple.CopyNumberInterpretation;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.sort.driver.CopyNumberComparator;
 
 import org.jetbrains.annotations.NotNull;
 
-final class GainLossExtraction {
+final class CopyNumberExtraction {
 
-    private GainLossExtraction() {
+    private CopyNumberExtraction() {
     }
 
     @NotNull
     public static Set<Amplification> extractAmplifications(@NotNull PurpleRecord purple) {
         Set<Amplification> amplifications = Sets.newTreeSet(new CopyNumberComparator());
-        for (PurpleGainLoss gainLoss : purple.gainsLosses()) {
-            if (gainLoss.interpretation() == GainLossInterpretation.PARTIAL_GAIN
-                    || gainLoss.interpretation() == GainLossInterpretation.FULL_GAIN) {
-                boolean isPartial = gainLoss.interpretation() == GainLossInterpretation.PARTIAL_GAIN;
+        for (PurpleCopyNumber copyNumber : purple.copyNumbers()) {
+            if (copyNumber.interpretation() == CopyNumberInterpretation.PARTIAL_GAIN
+                    || copyNumber.interpretation() == CopyNumberInterpretation.FULL_GAIN) {
+                boolean isPartial = copyNumber.interpretation() == CopyNumberInterpretation.PARTIAL_GAIN;
                 amplifications.add(ImmutableAmplification.builder()
-                        .from(ExtractionUtil.createBaseGeneAlteration(gainLoss.gene()))
+                        .from(ExtractionUtil.createBaseGeneAlteration(copyNumber.gene()))
                         .isReportable(true)
-                        .event(DriverEventFactory.gainLossEvent(gainLoss))
+                        .event(DriverEventFactory.copyNumberEvent(copyNumber))
                         .driverLikelihood(isPartial ? DriverLikelihood.MEDIUM : DriverLikelihood.HIGH)
                         .evidence(ExtractionUtil.createEmptyEvidence())
-                        .minCopies(gainLoss.minCopies())
-                        .maxCopies(gainLoss.maxCopies())
+                        .minCopies(copyNumber.minCopies())
+                        .maxCopies(copyNumber.maxCopies())
                         .isPartial(isPartial)
                         .build());
             }
@@ -45,18 +45,18 @@ final class GainLossExtraction {
     @NotNull
     public static Set<Loss> extractLosses(@NotNull PurpleRecord purple) {
         Set<Loss> losses = Sets.newTreeSet(new CopyNumberComparator());
-        for (PurpleGainLoss gainLoss : purple.gainsLosses()) {
-            if (gainLoss.interpretation() == GainLossInterpretation.PARTIAL_LOSS
-                    || gainLoss.interpretation() == GainLossInterpretation.FULL_LOSS) {
+        for (PurpleCopyNumber copyNumber : purple.copyNumbers()) {
+            if (copyNumber.interpretation() == CopyNumberInterpretation.PARTIAL_LOSS
+                    || copyNumber.interpretation() == CopyNumberInterpretation.FULL_LOSS) {
                 losses.add(ImmutableLoss.builder()
-                        .from(ExtractionUtil.createBaseGeneAlteration(gainLoss.gene()))
+                        .from(ExtractionUtil.createBaseGeneAlteration(copyNumber.gene()))
                         .isReportable(true)
-                        .event(DriverEventFactory.gainLossEvent(gainLoss))
+                        .event(DriverEventFactory.copyNumberEvent(copyNumber))
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .evidence(ExtractionUtil.createEmptyEvidence())
-                        .minCopies(gainLoss.minCopies())
-                        .maxCopies(gainLoss.maxCopies())
-                        .isPartial(gainLoss.interpretation() == GainLossInterpretation.PARTIAL_LOSS)
+                        .minCopies(copyNumber.minCopies())
+                        .maxCopies(copyNumber.maxCopies())
+                        .isPartial(copyNumber.interpretation() == CopyNumberInterpretation.PARTIAL_LOSS)
                         .build());
             }
         }

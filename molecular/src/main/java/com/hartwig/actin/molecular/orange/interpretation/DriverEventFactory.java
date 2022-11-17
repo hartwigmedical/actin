@@ -4,9 +4,10 @@ import java.util.StringJoiner;
 
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
-import com.hartwig.actin.molecular.orange.datamodel.purple.GainLossInterpretation;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
+import com.hartwig.actin.molecular.orange.datamodel.purple.CopyNumberInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
@@ -54,10 +55,24 @@ public final class DriverEventFactory {
     }
 
     @NotNull
-    public static String gainLossEvent(@NotNull PurpleGainLoss gainLoss) {
-        boolean isAmp = gainLoss.interpretation() == GainLossInterpretation.FULL_GAIN
-                || gainLoss.interpretation() == GainLossInterpretation.PARTIAL_GAIN;
-        return isAmp ? gainLoss.gene() + " amp" : gainLoss.gene() + " del";
+    public static String copyNumberEvent(@NotNull PurpleCopyNumber copyNumber) {
+        boolean isAmp = copyNumber.interpretation() == CopyNumberInterpretation.FULL_GAIN
+                || copyNumber.interpretation() == CopyNumberInterpretation.PARTIAL_GAIN;
+        boolean isDel = copyNumber.interpretation() == CopyNumberInterpretation.FULL_LOSS
+                || copyNumber.interpretation() == CopyNumberInterpretation.PARTIAL_LOSS;
+
+        if (isAmp) {
+            return copyNumber.gene() + " amp";
+        } else if (isDel) {
+            return copyNumber.gene() + " del";
+        } else {
+            return copyNumber.gene() + " unknown";
+        }
+    }
+
+    @NotNull
+    public static String homozygousDisruptionEvent(@NotNull LinxHomozygousDisruption homozygousDisruption) {
+        return homozygousDisruption.gene() + " hom disruption";
     }
 
     @NotNull

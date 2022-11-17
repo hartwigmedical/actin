@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange.datamodel.purple;
 
-public enum GainLossInterpretation {
+public enum CopyNumberInterpretation {
     FULL_GAIN,
     PARTIAL_GAIN,
     FULL_LOSS,

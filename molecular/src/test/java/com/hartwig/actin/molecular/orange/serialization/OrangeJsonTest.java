@@ -20,11 +20,12 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.FusionDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.linx.FusionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
-import com.hartwig.actin.molecular.orange.datamodel.purple.GainLossInterpretation;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
+import com.hartwig.actin.molecular.orange.datamodel.purple.CopyNumberInterpretation;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
@@ -105,11 +106,11 @@ public class OrangeJsonTest {
         assertEquals(1.0, variant2.driverLikelihood(), EPSILON);
         assertEquals(1.0, variant2.clonalLikelihood(), EPSILON);
 
-        assertEquals(1, purple.gainsLosses().size());
-        PurpleGainLoss gainLoss = purple.gainsLosses().iterator().next();
-        assertEquals("SMAD4", gainLoss.gene());
-        assertEquals(GainLossInterpretation.FULL_LOSS, gainLoss.interpretation());
-        assertEquals(0, gainLoss.minCopies());
+        assertEquals(1, purple.copyNumbers().size());
+        PurpleCopyNumber copyNumber = purple.copyNumbers().iterator().next();
+        assertEquals("SMAD4", copyNumber.gene());
+        assertEquals(CopyNumberInterpretation.FULL_LOSS, copyNumber.interpretation());
+        assertEquals(0, copyNumber.minCopies());
     }
 
     @NotNull
@@ -131,8 +132,9 @@ public class OrangeJsonTest {
         assertEquals("ETV4", fusion.geneEnd());
         assertEquals(FusionDriverLikelihood.HIGH, fusion.driverLikelihood());
 
-        assertEquals(1, linx.homozygousDisruptedGenes().size());
-        assertEquals("NF1", linx.homozygousDisruptedGenes().iterator().next());
+        assertEquals(1, linx.homozygousDisruptions().size());
+        LinxHomozygousDisruption homozygousDisruption = linx.homozygousDisruptions().iterator().next();
+        assertEquals("NF1", homozygousDisruption.gene());
 
         assertEquals(1, linx.disruptions().size());
         LinxDisruption disruption = linx.disruptions().iterator().next();

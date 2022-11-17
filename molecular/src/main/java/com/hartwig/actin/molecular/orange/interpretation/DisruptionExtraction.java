@@ -12,6 +12,7 @@ import com.hartwig.actin.molecular.datamodel.driver.ImmutableHomozygousDisruptio
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.RegionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.sort.driver.DisruptionComparator;
 import com.hartwig.actin.molecular.sort.driver.HomozygousDisruptionComparator;
@@ -26,11 +27,11 @@ final class DisruptionExtraction {
     @NotNull
     public static Set<HomozygousDisruption> extractHomozygousDisruptions(@NotNull LinxRecord linx) {
         Set<HomozygousDisruption> homozygousDisruptions = Sets.newTreeSet(new HomozygousDisruptionComparator());
-        for (String homozygous : linx.homozygousDisruptedGenes()) {
+        for (LinxHomozygousDisruption homozygousDisruption : linx.homozygousDisruptions()) {
             homozygousDisruptions.add(ImmutableHomozygousDisruption.builder()
-                    .from(ExtractionUtil.createBaseGeneAlteration(homozygous))
+                    .from(ExtractionUtil.createBaseGeneAlteration(homozygousDisruption.gene()))
                     .isReportable(true)
-                    .event(homozygous + " hom disruption")
+                    .event(DriverEventFactory.homozygousDisruptionEvent(homozygousDisruption))
                     .driverLikelihood(DriverLikelihood.HIGH)
                     .evidence(ExtractionUtil.createEmptyEvidence())
                     .build());

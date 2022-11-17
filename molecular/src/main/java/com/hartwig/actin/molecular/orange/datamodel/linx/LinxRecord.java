@@ -14,7 +14,7 @@ public abstract class LinxRecord {
     public abstract Set<LinxFusion> fusions();
 
     @NotNull
-    public abstract Set<String> homozygousDisruptedGenes();
+    public abstract Set<LinxHomozygousDisruption> homozygousDisruptions();
     
     @NotNull
     public abstract Set<LinxDisruption> disruptions();

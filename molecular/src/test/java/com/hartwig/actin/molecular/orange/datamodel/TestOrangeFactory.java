@@ -18,7 +18,7 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
 import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
-import com.hartwig.actin.molecular.orange.datamodel.purple.GainLossInterpretation;
+import com.hartwig.actin.molecular.orange.datamodel.purple.CopyNumberInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
@@ -97,14 +97,14 @@ public final class TestOrangeFactory {
                         .driverLikelihood(1)
                         .biallelic(false)
                         .build())
-                .addGainsLosses(TestPurpleFactory.gainLossBuilder()
+                .addCopyNumbers(TestPurpleFactory.copyNumberBuilder()
                         .gene("MYC")
-                        .interpretation(GainLossInterpretation.FULL_GAIN)
+                        .interpretation(CopyNumberInterpretation.FULL_GAIN)
                         .minCopies(38)
                         .build())
-                .addGainsLosses(TestPurpleFactory.gainLossBuilder()
+                .addCopyNumbers(TestPurpleFactory.copyNumberBuilder()
                         .gene("PTEN")
-                        .interpretation(GainLossInterpretation.PARTIAL_LOSS)
+                        .interpretation(CopyNumberInterpretation.PARTIAL_LOSS)
                         .minCopies(0)
                         .build())
                 .build();
@@ -121,7 +121,7 @@ public final class TestOrangeFactory {
                         .fusedExonDown(4)
                         .driverLikelihood(FusionDriverLikelihood.HIGH)
                         .build())
-                .addHomozygousDisruptedGenes("TP53")
+                .addHomozygousDisruptions(TestLinxFactory.homozygousDisruptionBuilder().gene("TP53").build())
                 .addDisruptions(TestLinxFactory.disruptionBuilder()
                         .gene("RB1")
                         .type("DEL")

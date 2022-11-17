@@ -21,11 +21,11 @@ final class DriverExtraction {
             return ImmutableMolecularDrivers.builder().build();
         }
 
-        Set<Loss> losses = GainLossExtraction.extractLosses(record.purple());
+        Set<Loss> losses = CopyNumberExtraction.extractLosses(record.purple());
 
         return ImmutableMolecularDrivers.builder()
                 .variants(VariantExtraction.extract(record.purple()))
-                .amplifications(GainLossExtraction.extractAmplifications(record.purple()))
+                .amplifications(CopyNumberExtraction.extractAmplifications(record.purple()))
                 .losses(losses)
                 .homozygousDisruptions(DisruptionExtraction.extractHomozygousDisruptions(record.linx()))
                 .disruptions(DisruptionExtraction.extractDisruptions(record.linx(), losses))

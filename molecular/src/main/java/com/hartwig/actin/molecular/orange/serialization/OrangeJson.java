@@ -41,20 +41,22 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.FusionDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.linx.FusionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxFusion;
+import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
-import com.hartwig.actin.molecular.orange.datamodel.purple.GainLossInterpretation;
-import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleGainLoss;
+import com.hartwig.actin.molecular.orange.datamodel.purple.CopyNumberInterpretation;
+import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleCopyNumber;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
@@ -121,23 +123,23 @@ public final class OrangeJson {
                     .tumorMutationalLoad(integer(purpleCharacteristics, "tumorMutationalLoad"))
                     .tumorMutationalLoadStatus(string(purpleCharacteristics, "tumorMutationalLoadStatus"))
                     .variants(variants)
-                    .gainsLosses(toPurpleGainsLosses(array(purple, "reportableSomaticGainsLosses")))
+                    .copyNumbers(toPurpleCopyNumbers(array(purple, "reportableSomaticGainsLosses")))
                     .build();
         }
 
         @NotNull
-        private static Set<PurpleGainLoss> toPurpleGainsLosses(@NotNull JsonArray reportableGainLossArray) {
-            Set<PurpleGainLoss> reportableGainsLosses = Sets.newHashSet();
+        private static Set<PurpleCopyNumber> toPurpleCopyNumbers(@NotNull JsonArray reportableGainLossArray) {
+            Set<PurpleCopyNumber> copyNumbers = Sets.newHashSet();
             for (JsonElement element : reportableGainLossArray) {
                 JsonObject reportableGainLoss = element.getAsJsonObject();
-                reportableGainsLosses.add(ImmutablePurpleGainLoss.builder()
+                copyNumbers.add(ImmutablePurpleCopyNumber.builder()
                         .gene(string(reportableGainLoss, "gene"))
-                        .interpretation(GainLossInterpretation.valueOf(string(reportableGainLoss, "interpretation")))
+                        .interpretation(CopyNumberInterpretation.valueOf(string(reportableGainLoss, "interpretation")))
                         .minCopies(integer(reportableGainLoss, "minCopies"))
                         .maxCopies(integer(reportableGainLoss, "maxCopies"))
                         .build());
             }
-            return reportableGainsLosses;
+            return copyNumbers;
         }
 
         @NotNull
@@ -171,7 +173,7 @@ public final class OrangeJson {
         private static LinxRecord toLinxRecord(@NotNull JsonObject linx) {
             return ImmutableLinxRecord.builder()
                     .fusions(toLinxFusions(array(linx, "reportableFusions")))
-                    .homozygousDisruptedGenes(toHomozygousDisruptedGenes(array(linx, "homozygousDisruptions")))
+                    .homozygousDisruptions(toLinxHomozygousDisruptions(array(linx, "homozygousDisruptions")))
                     .disruptions(toLinxDisruptions(array(linx, "reportableGeneDisruptions")))
                     .build();
         }
@@ -196,14 +198,13 @@ public final class OrangeJson {
         }
 
         @NotNull
-        private static Set<String> toHomozygousDisruptedGenes(@NotNull JsonArray homozygousDisruptionArray) {
-            Set<String> homozygousDisruptedGenes = Sets.newHashSet();
+        private static Set<LinxHomozygousDisruption> toLinxHomozygousDisruptions(@NotNull JsonArray homozygousDisruptionArray) {
+            Set<LinxHomozygousDisruption> homozygousDisruptions = Sets.newHashSet();
             for (JsonElement element : homozygousDisruptionArray) {
                 JsonObject homozygousDisruption = element.getAsJsonObject();
-                homozygousDisruptedGenes.add(string(homozygousDisruption, "gene"));
+                homozygousDisruptions.add(ImmutableLinxHomozygousDisruption.builder().gene(string(homozygousDisruption, "gene")).build());
             }
-            return homozygousDisruptedGenes;
-
+            return homozygousDisruptions;
         }
 
         @NotNull
