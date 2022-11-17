@@ -32,7 +32,7 @@ class VirusExtractor {
                     .isReportable(virus.reported())
                     .event(DriverEventFactory.virusEvent(virus))
                     .driverLikelihood(determineDriverLikelihood(virus))
-                    .evidence(ExtractionUtil.createEmptyEvidence())
+                    .evidence(ExtractionUtil.convertActionableEvents(evidenceDatabase.lookUpActionableEvents(virus)))
                     .name(virus.name())
                     .isReliable(virus.qcStatus() == VirusQCStatus.NO_ABNORMALITIES)
                     .interpretation(virus.interpretation())

@@ -53,7 +53,7 @@ class VariantExtractor {
                         .isReportable(variant.reported())
                         .event(DriverEventFactory.variantEvent(variant))
                         .driverLikelihood(determineDriverLikelihood(variant))
-                        .evidence(ExtractionUtil.createEmptyEvidence())
+                        .evidence(ExtractionUtil.convertActionableEvents(evidenceDatabase.lookUpActionableEvents(variant)))
                         .type(extractType(variant))
                         .variantCopyNumber(ExtractionUtil.keep3Digits(variant.alleleCopyNumber()))
                         .totalCopyNumber(ExtractionUtil.keep3Digits(variant.totalCopyNumber()))
