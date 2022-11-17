@@ -19,9 +19,13 @@ import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.sort.driver.DisruptionComparator;
 import com.hartwig.actin.molecular.sort.driver.HomozygousDisruptionComparator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 class DisruptionExtractor {
+
+    private static final Logger LOGGER = LogManager.getLogger(DisruptionExtractor.class);
 
     @NotNull
     private final GeneFilter geneFilter;
@@ -37,13 +41,18 @@ class DisruptionExtractor {
     public Set<HomozygousDisruption> extractHomozygousDisruptions(@NotNull LinxRecord linx) {
         Set<HomozygousDisruption> homozygousDisruptions = Sets.newTreeSet(new HomozygousDisruptionComparator());
         for (LinxHomozygousDisruption homozygousDisruption : linx.homozygousDisruptions()) {
-            homozygousDisruptions.add(ImmutableHomozygousDisruption.builder()
-                    .from(ExtractionUtil.createBaseGeneAlteration(homozygousDisruption.gene()))
-                    .isReportable(true)
-                    .event(DriverEventFactory.homozygousDisruptionEvent(homozygousDisruption))
-                    .driverLikelihood(DriverLikelihood.HIGH)
-                    .evidence(ExtractionUtil.createEmptyEvidence())
-                    .build());
+            if (geneFilter.include(homozygousDisruption.gene())) {
+                homozygousDisruptions.add(ImmutableHomozygousDisruption.builder()
+                        .from(ExtractionUtil.convertAlteration(homozygousDisruption.gene(),
+                                evidenceDatabase.lookupGeneAlteration(homozygousDisruption)))
+                        .isReportable(true)
+                        .event(DriverEventFactory.homozygousDisruptionEvent(homozygousDisruption))
+                        .driverLikelihood(DriverLikelihood.HIGH)
+                        .evidence(ExtractionUtil.createEmptyEvidence())
+                        .build());
+            } else {
+                LOGGER.warn("Filtered a reported homozygous disruption on gene {}", homozygousDisruption.gene());
+            }
         }
         return homozygousDisruptions;
     }
@@ -56,22 +65,26 @@ class DisruptionExtractor {
                 throw new IllegalStateException("Cannot convert a disruption with null clusterId: " + disruption);
             }
 
-            // TODO: Linx should already filter or flag disruptions that are lost.
-            // TODO: Populate region type and coding context
-            if (include(disruption, losses)) {
-                disruptions.add(ImmutableDisruption.builder()
-                        .from(ExtractionUtil.createBaseGeneAlteration(disruption.gene()))
-                        .isReportable(true)
-                        .event(DriverEventFactory.disruptionEvent(disruption))
-                        .driverLikelihood(DriverLikelihood.LOW)
-                        .evidence(ExtractionUtil.createEmptyEvidence())
-                        .type(disruption.type())
-                        .junctionCopyNumber(ExtractionUtil.keep3Digits(disruption.junctionCopyNumber()))
-                        .undisruptedCopyNumber(ExtractionUtil.keep3Digits(disruption.undisruptedCopyNumber()))
-                        .regionType(RegionType.INTRONIC)
-                        .codingContext(CodingContext.NON_CODING)
-                        .clusterGroup(disruption.clusterId())
-                        .build());
+            if (geneFilter.include(disruption.gene())) {
+                // TODO: Linx should already filter or flag disruptions that are lost.
+                // TODO: Populate region type and coding context
+                if (include(disruption, losses)) {
+                    disruptions.add(ImmutableDisruption.builder()
+                            .from(ExtractionUtil.convertAlteration(disruption.gene(), evidenceDatabase.lookupGeneAlteration(disruption)))
+                            .isReportable(disruption.reported())
+                            .event(DriverEventFactory.disruptionEvent(disruption))
+                            .driverLikelihood(DriverLikelihood.LOW)
+                            .evidence(ExtractionUtil.createEmptyEvidence())
+                            .type(disruption.type())
+                            .junctionCopyNumber(ExtractionUtil.keep3Digits(disruption.junctionCopyNumber()))
+                            .undisruptedCopyNumber(ExtractionUtil.keep3Digits(disruption.undisruptedCopyNumber()))
+                            .regionType(RegionType.INTRONIC)
+                            .codingContext(CodingContext.NON_CODING)
+                            .clusterGroup(disruption.clusterId())
+                            .build());
+                }
+            } else if (disruption.reported()) {
+                LOGGER.warn("Filtered a reported disruption on gene {}", disruption.gene());
             }
         }
         return disruptions;

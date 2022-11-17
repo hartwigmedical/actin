@@ -22,10 +22,14 @@ import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.orange.util.AminoAcid;
 import com.hartwig.actin.molecular.sort.driver.VariantComparator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 class VariantExtractor {
+
+    private static final Logger LOGGER = LogManager.getLogger(VariantExtractor.class);
 
     @NotNull
     private final GeneFilter geneFilter;
@@ -43,22 +47,26 @@ class VariantExtractor {
         // TODO Populate "other impacts"
         // TODO Also read non-reportable variants.
         for (PurpleVariant variant : purple.variants()) {
-            variants.add(ImmutableVariant.builder()
-                    .from(ExtractionUtil.createBaseGeneAlteration(variant.gene()))
-                    .isReportable(true)
-                    .event(DriverEventFactory.variantEvent(variant))
-                    .driverLikelihood(determineDriverLikelihood(variant))
-                    .evidence(ExtractionUtil.createEmptyEvidence())
-                    .type(extractType(variant))
-                    .variantCopyNumber(ExtractionUtil.keep3Digits(variant.alleleCopyNumber()))
-                    .totalCopyNumber(ExtractionUtil.keep3Digits(variant.totalCopyNumber()))
-                    .isBiallelic(variant.biallelic())
-                    .isHotspot(variant.hotspot() == VariantHotspot.HOTSPOT)
-                    .clonalLikelihood(ExtractionUtil.keep3Digits(variant.clonalLikelihood()))
-                    .phaseGroup(variant.localPhaseSet())
-                    .canonicalImpact(extractCanonicalImpact(variant))
-                    .otherImpacts(Sets.newHashSet())
-                    .build());
+            if (geneFilter.include(variant.gene())) {
+                variants.add(ImmutableVariant.builder()
+                        .from(ExtractionUtil.convertAlteration(variant.gene(), evidenceDatabase.lookupGeneAlteration(variant)))
+                        .isReportable(variant.reported())
+                        .event(DriverEventFactory.variantEvent(variant))
+                        .driverLikelihood(determineDriverLikelihood(variant))
+                        .evidence(ExtractionUtil.createEmptyEvidence())
+                        .type(extractType(variant))
+                        .variantCopyNumber(ExtractionUtil.keep3Digits(variant.alleleCopyNumber()))
+                        .totalCopyNumber(ExtractionUtil.keep3Digits(variant.totalCopyNumber()))
+                        .isBiallelic(variant.biallelic())
+                        .isHotspot(variant.hotspot() == VariantHotspot.HOTSPOT)
+                        .clonalLikelihood(ExtractionUtil.keep3Digits(variant.clonalLikelihood()))
+                        .phaseGroup(variant.localPhaseSet())
+                        .canonicalImpact(extractCanonicalImpact(variant))
+                        .otherImpacts(Sets.newHashSet())
+                        .build());
+            } else if (variant.reported()) {
+                LOGGER.warn("Filtered a reported variant on gene {}", variant.gene());
+            }
         }
         return variants;
     }

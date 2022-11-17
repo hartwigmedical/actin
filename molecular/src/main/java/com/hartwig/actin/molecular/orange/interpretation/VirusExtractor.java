@@ -29,7 +29,7 @@ class VirusExtractor {
         Set<Virus> viruses = Sets.newTreeSet(new VirusComparator());
         for (VirusInterpreterEntry virus : virusInterpreter.entries()) {
             viruses.add(ImmutableVirus.builder()
-                    .isReportable(true)
+                    .isReportable(virus.reported())
                     .event(DriverEventFactory.virusEvent(virus))
                     .driverLikelihood(determineDriverLikelihood(virus))
                     .evidence(ExtractionUtil.createEmptyEvidence())

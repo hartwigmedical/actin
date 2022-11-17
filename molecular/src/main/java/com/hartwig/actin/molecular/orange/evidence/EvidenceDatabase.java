@@ -11,6 +11,7 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.serve.datamodel.ActionableEvents;
 import com.hartwig.serve.datamodel.KnownEvents;
 import com.hartwig.serve.datamodel.common.GeneAlteration;
+import com.hartwig.serve.datamodel.fusion.KnownFusion;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,7 +53,7 @@ public class EvidenceDatabase {
     }
 
     @Nullable
-    public GeneAlteration lookupGeneAlteration(@NotNull LinxFusion fusion) {
+    public KnownFusion lookupKnownFusion(@NotNull LinxFusion fusion) {
         return null;
     }
 }

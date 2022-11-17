@@ -14,10 +14,15 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.sort.driver.FusionComparator;
+import com.hartwig.serve.datamodel.fusion.KnownFusion;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 class FusionExtractor {
+
+    private static final Logger LOGGER = LogManager.getLogger(FusionExtractor.class);
 
     @NotNull
     private final GeneFilter geneFilter;
@@ -33,21 +38,29 @@ class FusionExtractor {
     public Set<Fusion> extract(@NotNull LinxRecord linx) {
         Set<Fusion> fusions = Sets.newTreeSet(new FusionComparator());
         for (LinxFusion fusion : linx.fusions()) {
-            fusions.add(ImmutableFusion.builder()
-                    .isReportable(true)
-                    .event(DriverEventFactory.fusionEvent(fusion))
-                    .driverLikelihood(determineDriverLikelihood(fusion))
-                    .evidence(ExtractionUtil.createEmptyEvidence())
-                    .geneStart(fusion.geneStart())
-                    .geneTranscriptStart(fusion.geneTranscriptStart())
-                    .fusedExonUp(fusion.fusedExonUp())
-                    .geneEnd(fusion.geneEnd())
-                    .geneTranscriptEnd(fusion.geneTranscriptEnd())
-                    .fusedExonDown(fusion.fusedExonDown())
-                    .proteinEffect(ProteinEffect.UNKNOWN)
-                    .isAssociatedWithDrugResistance(null)
-                    .driverType(determineDriverType(fusion))
-                    .build());
+            String fusionEvent = DriverEventFactory.fusionEvent(fusion);
+            if (geneFilter.include(fusion.geneStart()) || geneFilter.include(fusion.geneEnd())) {
+                KnownFusion knownFusion = evidenceDatabase.lookupKnownFusion(fusion);
+                fusions.add(ImmutableFusion.builder()
+                        .isReportable(fusion.reported())
+                        .event(fusionEvent)
+                        .driverLikelihood(determineDriverLikelihood(fusion))
+                        .evidence(ExtractionUtil.createEmptyEvidence())
+                        .geneStart(fusion.geneStart())
+                        .geneTranscriptStart(fusion.geneTranscriptStart())
+                        .fusedExonUp(fusion.fusedExonUp())
+                        .geneEnd(fusion.geneEnd())
+                        .geneTranscriptEnd(fusion.geneTranscriptEnd())
+                        .fusedExonDown(fusion.fusedExonDown())
+                        .proteinEffect(knownFusion != null
+                                ? ExtractionUtil.convertProteinEffect(knownFusion.proteinEffect())
+                                : ProteinEffect.UNKNOWN)
+                        .isAssociatedWithDrugResistance(knownFusion != null ? knownFusion.associatedWithDrugResistance() : null)
+                        .driverType(determineDriverType(fusion))
+                        .build());
+            } else if (fusion.reported()) {
+                LOGGER.warn("Filtered a reported fusion through gene filtering: '{}'", fusionEvent);
+            }
         }
         return fusions;
     }
@@ -99,5 +112,4 @@ class FusionExtractor {
             }
         }
     }
-
 }

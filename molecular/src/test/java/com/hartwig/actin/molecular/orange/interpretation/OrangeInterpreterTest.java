@@ -56,6 +56,6 @@ public class OrangeInterpreterTest {
 
     @NotNull
     private static OrangeInterpreter createTestReader() {
-        return new OrangeInterpreter(TestGeneFilterFactory.createNeverValid(), TestEvidenceDatabaseFactory.createEmptyDatabase());
+        return new OrangeInterpreter(TestGeneFilterFactory.createAlwaysValid(), TestEvidenceDatabaseFactory.createEmptyDatabase());
     }
 }
