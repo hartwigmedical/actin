@@ -26,6 +26,7 @@ import static com.hartwig.actin.database.Tables.VIRUSEVIDENCE;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
+import com.hartwig.actin.database.tables.records.VariantevidenceRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.driver.Amplification;
@@ -37,6 +38,7 @@ import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.VariantEffect;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele;
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
 import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype;
@@ -163,7 +165,7 @@ class MolecularDAO {
 
     private void writeVariants(@NotNull String sampleId, @NotNull Set<Variant> variants) {
         for (Variant variant : variants) {
-            context.insertInto(VARIANT,
+            int variantId = context.insertInto(VARIANT,
                             VARIANT.SAMPLEID,
                             VARIANT.ISREPORTABLE,
                             VARIANT.EVENT,
@@ -210,8 +212,21 @@ class MolecularDAO {
                             DataUtil.toByte(variant.canonicalImpact().isSpliceRegion()),
                             DataUtil.concat(toStrings(variant.canonicalImpact().effects())),
                             DataUtil.nullableToString(variant.canonicalImpact().codingEffect()))
-                    .execute();
+                    .returning(VARIANT.ID)
+                    .fetchOne()
+                    .getValue(VARIANT.ID);
+            writeVariantEvidence(variantId, sampleId, variant.evidence());
         }
+    }
+
+    private void writeVariantEvidence(int variantId, @NotNull String sampleId, @NotNull ActionableEvidence evidence) {
+        EvidenceInserter<VariantevidenceRecord> inserter = new EvidenceInserter<>(context.insertInto(VARIANTEVIDENCE,
+                VARIANTEVIDENCE.VARIANTID,
+                VARIANTEVIDENCE.SAMPLEID,
+                VARIANTEVIDENCE.TREATMENT,
+                VARIANTEVIDENCE.TYPE));
+
+        writeEvidence(inserter, variantId, sampleId, evidence);
     }
 
     @NotNull
@@ -419,6 +434,24 @@ class MolecularDAO {
                         .values(sampleId, entry.gene(), haplotype.name(), haplotype.function())
                         .execute();
             }
+        }
+    }
+
+    private static <T extends Record> void writeEvidence(@NotNull EvidenceInserter<T> inserter, int topicId, @NotNull String sampleId,
+            @NotNull ActionableEvidence evidence) {
+        writeTreatments(inserter, topicId, sampleId, evidence.approvedTreatments(), "Approved");
+        writeTreatments(inserter, topicId, sampleId, evidence.externalEligibleTrials(), "Trial");
+        writeTreatments(inserter, topicId, sampleId, evidence.onLabelExperimentalTreatments(), "On-label experimental");
+        writeTreatments(inserter, topicId, sampleId, evidence.offLabelExperimentalTreatments(), "Off-label experimental");
+        writeTreatments(inserter, topicId, sampleId, evidence.preClinicalTreatments(), "Pre-clinical");
+        writeTreatments(inserter, topicId, sampleId, evidence.knownResistantTreatments(), "Known resistant");
+        writeTreatments(inserter, topicId, sampleId, evidence.suspectResistantTreatments(), "Suspect resistant");
+    }
+
+    private static <T extends Record> void writeTreatments(@NotNull EvidenceInserter<T> inserter, int topicId, @NotNull String sampleId,
+            @NotNull Set<String> treatments, @NotNull String type) {
+        for (String treatment : treatments) {
+            inserter.write(topicId, sampleId, treatment, type);
         }
     }
 }
