@@ -69,7 +69,7 @@ public class MolecularSummaryGenerator implements TableGenerator {
         } else {
             Table noRecent = Tables.createFixedWidthCols(keyWidth, valueWidth);
 
-            noRecent.addCell(Cells.createKey(molecular.type() + " molecular results"));
+            noRecent.addCell(Cells.createKey(molecular.type() + " results"));
             noRecent.addCell(Cells.createValue("No successful WGS could be performed on the submitted biopsy"));
 
             table.addCell(Cells.create(noRecent));
@@ -82,8 +82,8 @@ public class MolecularSummaryGenerator implements TableGenerator {
     private Table prior() {
         Table table = Tables.createFixedWidthCols(keyWidth, valueWidth);
 
-        table.addCell(Cells.createKey("Previous relevant molecular results"));
-        table.addCell(Cells.createValue(concat(clinical.priorMolecularTests())));
+        table.addCell(Cells.createTitle("IHC results").setFontSize(7));
+        table.addCell(Cells.createValue(concat(clinical.priorMolecularTests()))); //TODO: Update logics for grouping
 
         return table;
     }

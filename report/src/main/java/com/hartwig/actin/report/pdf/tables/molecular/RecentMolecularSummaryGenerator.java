@@ -55,7 +55,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
     @NotNull
     @Override
     public String title() {
-        return molecular.type() + " molecular results (" + Formats.date(molecular.date()) + ")";
+        return molecular.type() + " results (" + Formats.date(molecular.date()) + ")";
     }
 
     @NotNull
