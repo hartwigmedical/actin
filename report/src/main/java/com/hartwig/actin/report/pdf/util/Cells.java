@@ -60,6 +60,13 @@ public final class Cells {
     }
 
     @NotNull
+    public static Cell createSubTitle(@NotNull String text) {
+        Cell cell = create(new Paragraph(text));
+        cell.addStyle(Styles.tableSubTitleStyle());
+        return cell;
+    }
+
+    @NotNull
     public static Cell createHeaderTest(@NotNull String text) {
         // TODO Clean up or actually use.
         PdfLinkAnnotation la1 = (PdfLinkAnnotation) new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0))

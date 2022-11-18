@@ -64,7 +64,7 @@ public class MolecularSummaryGenerator implements TableGenerator {
             TableGenerator recentGenerator =
                     new RecentMolecularSummaryGenerator(clinical, molecular, trials, aggregatedEvidence, keyWidth, valueWidth);
 
-            table.addCell(Cells.createTitle(recentGenerator.title()).setFontSize(7));
+            table.addCell(Cells.createSubTitle(recentGenerator.title()));
             table.addCell(Cells.create(recentGenerator.contents()));
         } else {
             Table noRecent = Tables.createFixedWidthCols(keyWidth, valueWidth);
@@ -82,7 +82,7 @@ public class MolecularSummaryGenerator implements TableGenerator {
     private Table prior() {
         Table table = Tables.createFixedWidthCols(keyWidth, valueWidth);
 
-        table.addCell(Cells.createTitle("IHC results").setFontSize(7));
+        table.addCell(Cells.createSubTitle("IHC results"));
         table.addCell(Cells.createValue(concat(clinical.priorMolecularTests()))); //TODO: Update logics for grouping
 
         return table;

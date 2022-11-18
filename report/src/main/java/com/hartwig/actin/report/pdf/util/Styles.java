@@ -50,6 +50,11 @@ public final class Styles {
     }
 
     @NotNull
+    public static Style tableSubTitleStyle() {
+        return new Style().setFont(fontBold()).setFontSize(7).setFontColor(Styles.PALETTE_BLUE);
+    }
+
+    @NotNull
     public static Style tableSubStyle() {
         return new Style().setFont(fontRegular()).setFontSize(6).setFontColor(Styles.PALETTE_BLACK);
     }

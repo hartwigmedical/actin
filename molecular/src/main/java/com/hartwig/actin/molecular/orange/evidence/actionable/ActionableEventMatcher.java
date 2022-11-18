@@ -62,6 +62,13 @@ public class ActionableEventMatcher {
         // TODO Split on-label and off-label
         // TODO Rename external trials based on mapping.
 
+        List<ActionableEvent> curated = curateExternalTrials(matches);
+
         return ImmutableActionabilityMatch.builder().onLabelEvents(matches).build();
+    }
+
+    @NotNull
+    private List<ActionableEvent> curateExternalTrials(@NotNull List<ActionableEvent> matches) {
+        return matches;
     }
 }
