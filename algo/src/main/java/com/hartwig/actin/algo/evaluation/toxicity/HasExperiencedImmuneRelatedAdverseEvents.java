@@ -28,7 +28,7 @@ public class HasExperiencedImmuneRelatedAdverseEvents implements EvaluationFunct
 
         EvaluationResult result = hasHadImmuneTherapy ? EvaluationResult.WARN : EvaluationResult.FAIL;
 
-        //TODO: Also use stopReason in WARN message if stopReason for immunotherapy like %toxicity%
+        //TODO: Update according to README
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has not experienced immune related adverse events");
