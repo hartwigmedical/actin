@@ -10,7 +10,7 @@ import com.hartwig.serve.datamodel.common.ProteinEffect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class GeneLookup {
+final class GeneLookup {
 
     private GeneLookup() {
     }

@@ -1,8 +1,7 @@
 package com.hartwig.actin.molecular.orange.evidence;
 
-import com.google.common.collect.Lists;
-import com.hartwig.serve.datamodel.ImmutableActionableEvents;
-import com.hartwig.serve.datamodel.ImmutableKnownEvents;
+import com.hartwig.actin.molecular.orange.evidence.actionable.TestActionableEventResolverFactory;
+import com.hartwig.actin.molecular.orange.evidence.known.TestKnownEventResolverFactory;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -13,9 +12,6 @@ public final class TestEvidenceDatabaseFactory {
 
     @NotNull
     public static EvidenceDatabase createEmptyDatabase() {
-        return new EvidenceDatabase(ImmutableKnownEvents.builder().build(),
-                Lists.newArrayList(),
-                ImmutableActionableEvents.builder().build(),
-                Lists.newArrayList());
+        return new EvidenceDatabase(TestKnownEventResolverFactory.createEmpty(), TestActionableEventResolverFactory.createEmpty());
     }
 }

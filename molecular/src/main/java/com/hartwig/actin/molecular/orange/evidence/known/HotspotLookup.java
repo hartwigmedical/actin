@@ -7,7 +7,7 @@ import com.hartwig.serve.datamodel.hotspot.VariantHotspot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class HotspotLookup {
+final class HotspotLookup {
 
     private HotspotLookup() {
     }

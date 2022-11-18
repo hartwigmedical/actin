@@ -8,7 +8,7 @@ import com.hartwig.serve.datamodel.gene.KnownCopyNumber;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class CopyNumberLookup {
+final class CopyNumberLookup {
 
     private CopyNumberLookup() {
     }

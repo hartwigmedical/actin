@@ -1,8 +1,5 @@
 package com.hartwig.actin.molecular.orange.evidence;
 
-import java.util.List;
-
-import com.hartwig.actin.molecular.orange.curation.ExternalTrialMapping;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
@@ -10,22 +7,10 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.evidence.actionable.ActionabilityMatch;
-import com.hartwig.actin.molecular.orange.evidence.actionable.ImmutableActionabilityMatch;
-import com.hartwig.actin.molecular.orange.evidence.known.CodonLookup;
-import com.hartwig.actin.molecular.orange.evidence.known.CopyNumberLookup;
-import com.hartwig.actin.molecular.orange.evidence.known.ExonLookup;
-import com.hartwig.actin.molecular.orange.evidence.known.FusionLookup;
-import com.hartwig.actin.molecular.orange.evidence.known.GeneLookup;
-import com.hartwig.actin.molecular.orange.evidence.known.HotspotLookup;
-import com.hartwig.actin.molecular.serve.KnownGene;
-import com.hartwig.serve.datamodel.ActionableEvents;
-import com.hartwig.serve.datamodel.KnownEvents;
+import com.hartwig.actin.molecular.orange.evidence.actionable.ActionableEventResolver;
+import com.hartwig.actin.molecular.orange.evidence.known.KnownEventResolver;
 import com.hartwig.serve.datamodel.common.GeneAlteration;
 import com.hartwig.serve.datamodel.fusion.KnownFusion;
-import com.hartwig.serve.datamodel.gene.KnownCopyNumber;
-import com.hartwig.serve.datamodel.hotspot.KnownHotspot;
-import com.hartwig.serve.datamodel.range.KnownCodon;
-import com.hartwig.serve.datamodel.range.KnownExon;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,100 +18,68 @@ import org.jetbrains.annotations.Nullable;
 public class EvidenceDatabase {
 
     @NotNull
-    private final KnownEvents knownEvents;
+    private final KnownEventResolver knownEventResolver;
     @NotNull
-    private final List<KnownGene> knownGenes;
-    @NotNull
-    private final ActionableEvents actionableEvents;
-    @NotNull
-    private final List<ExternalTrialMapping> externalTrialMappings;
+    private final ActionableEventResolver actionableEventResolver;
 
-    EvidenceDatabase(@NotNull final KnownEvents knownEvents, @NotNull final List<KnownGene> knownGenes,
-            @NotNull final ActionableEvents actionableEvents, @NotNull final List<ExternalTrialMapping> externalTrialMappings) {
-        this.knownEvents = knownEvents;
-        this.knownGenes = knownGenes;
-        this.actionableEvents = actionableEvents;
-        this.externalTrialMappings = externalTrialMappings;
+    EvidenceDatabase(@NotNull final KnownEventResolver knownEventResolver,
+            @NotNull final ActionableEventResolver actionableEventResolver) {
+        this.knownEventResolver = knownEventResolver;
+        this.actionableEventResolver = actionableEventResolver;
     }
 
     @Nullable
     public GeneAlteration lookupGeneAlteration(@NotNull PurpleVariant variant) {
-        KnownHotspot hotspot = HotspotLookup.find(knownEvents.hotspots(), variant);
-        if (hotspot != null) {
-            return hotspot;
-        }
-
-        KnownCodon codon = CodonLookup.find(knownEvents.codons(), variant);
-        if (codon != null) {
-            return codon;
-        }
-
-        KnownExon exon =  ExonLookup.find(knownEvents.exons(), variant);
-        if (exon != null) {
-            return exon;
-        }
-
-        return GeneLookup.find(knownGenes, variant.gene());
+        return knownEventResolver.resolveForVariant(variant);
     }
 
     @NotNull
     public ActionabilityMatch matchToActionableEvidence(@NotNull PurpleVariant variant) {
-        return ImmutableActionabilityMatch.builder().build();
+        return actionableEventResolver.resolveForVariant(variant);
     }
 
     @Nullable
     public GeneAlteration lookupGeneAlteration(@NotNull PurpleCopyNumber copyNumber) {
-        KnownCopyNumber knownCopyNumber = CopyNumberLookup.findForCopyNumber(knownEvents.copyNumbers(), copyNumber);
-        if (knownCopyNumber != null) {
-            return knownCopyNumber;
-        }
-
-        return GeneLookup.find(knownGenes, copyNumber.gene());
+        return knownEventResolver.resolveForCopyNumber(copyNumber);
     }
 
     @NotNull
     public ActionabilityMatch matchToActionableEvidence(@NotNull PurpleCopyNumber copyNumber) {
-        return ImmutableActionabilityMatch.builder().build();
+        return actionableEventResolver.resolveForCopyNumber(copyNumber);
     }
 
     @Nullable
     public GeneAlteration lookupGeneAlteration(@NotNull LinxHomozygousDisruption homozygousDisruption) {
-        // Assume a homozygous disruption always has the same annotation as a loss.
-        KnownCopyNumber knownCopyNumber =  CopyNumberLookup.findForHomozygousDisruption(knownEvents.copyNumbers(), homozygousDisruption);
-        if (knownCopyNumber != null) {
-            return knownCopyNumber;
-        }
-
-        return GeneLookup.find(knownGenes, homozygousDisruption.gene());
+        return knownEventResolver.resolveForHomozygousDisruption(homozygousDisruption);
     }
 
     @NotNull
     public ActionabilityMatch matchToActionableEvidence(@NotNull LinxHomozygousDisruption homozygousDisruption) {
-        return ImmutableActionabilityMatch.builder().build();
+        return actionableEventResolver.resolveForHomozygousDisruption(homozygousDisruption);
     }
 
     @Nullable
     public GeneAlteration lookupGeneAlteration(@NotNull LinxDisruption disruption) {
-        return GeneLookup.find(knownGenes, disruption.gene());
+        return knownEventResolver.resolveForDisruption(disruption);
     }
 
     @NotNull
     public ActionabilityMatch matchToActionableEvidence(@NotNull LinxDisruption disruption) {
-        return ImmutableActionabilityMatch.builder().build();
+        return actionableEventResolver.resolveForDisruption(disruption);
     }
 
     @Nullable
     public KnownFusion lookupKnownFusion(@NotNull LinxFusion fusion) {
-        return FusionLookup.find(knownEvents.fusions(), fusion);
+        return knownEventResolver.resolveForFusion(fusion);
     }
 
     @NotNull
     public ActionabilityMatch matchToActionableEvidence(@NotNull LinxFusion fusion) {
-        return ImmutableActionabilityMatch.builder().build();
+        return actionableEventResolver.resolveForFusion(fusion);
     }
 
     @NotNull
     public ActionabilityMatch matchToActionableEvidence(@NotNull VirusInterpreterEntry virus) {
-        return ImmutableActionabilityMatch.builder().build();
+        return actionableEventResolver.resolveForVirus(virus);
     }
 }

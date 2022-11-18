@@ -7,7 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import com.hartwig.actin.molecular.datamodel.driver.GeneAlteration;
-import com.hartwig.actin.molecular.orange.evidence.datamodel.TestEvidenceFactory;
+import com.hartwig.actin.molecular.orange.evidence.TestEvidenceFactory;
 import com.hartwig.serve.datamodel.common.GeneRole;
 import com.hartwig.serve.datamodel.common.ProteinEffect;
 

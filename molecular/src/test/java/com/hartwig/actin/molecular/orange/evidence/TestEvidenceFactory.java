@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.orange.evidence.datamodel;
+package com.hartwig.actin.molecular.orange.evidence;
 
 import com.hartwig.serve.datamodel.common.GeneAlteration;
 import com.hartwig.serve.datamodel.common.GeneRole;

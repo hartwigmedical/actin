@@ -8,7 +8,7 @@ import com.hartwig.serve.datamodel.range.KnownCodon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class CodonLookup {
+final class CodonLookup {
 
     private CodonLookup() {
     }

@@ -7,7 +7,7 @@ import com.hartwig.serve.datamodel.range.KnownExon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class ExonLookup {
+final class ExonLookup {
 
     private ExonLookup() {
     }
