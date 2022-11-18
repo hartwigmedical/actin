@@ -188,7 +188,7 @@ public class GeneIsInactivated implements EvaluationFunction {
             warnGeneralMessages.add(gene + " potential inactivation but event annotated with gain-of-function protein impact");
         }
 
-        if (!reportableHighDriverNonBiallelicVariants.isEmpty()) {
+        if (!reportableHighDriverNonBiallelicVariants.isEmpty() && !(eventsThatMayBeTransPhased.size() > 1)) {
             warnEvents.addAll(reportableHighDriverNonBiallelicVariants);
             warnSpecificMessages.add(
                     "Inactivation events detected for " + gene + ": " + Format.concat(reportableHighDriverNonBiallelicVariants)
@@ -204,7 +204,7 @@ public class GeneIsInactivated implements EvaluationFunction {
             warnGeneralMessages.add(gene + " potential inactivation but low driver although also loss-of-function protein impact");
         }
 
-        if (eventsThatMayBeTransPhased.size() > 1 && warnEvents.isEmpty()) {
+        if (eventsThatMayBeTransPhased.size() > 1) {
             warnEvents.addAll(eventsThatMayBeTransPhased);
             warnSpecificMessages.add("Multiple events detected for " + gene + ": " + Format.concat(eventsThatMayBeTransPhased)
                     + " that potentially together inactivate the gene?");
