@@ -7,7 +7,7 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.evidence.actionable.ActionabilityMatch;
-import com.hartwig.actin.molecular.orange.evidence.actionable.ActionableEventResolver;
+import com.hartwig.actin.molecular.orange.evidence.actionable.ActionableEventMatcher;
 import com.hartwig.actin.molecular.orange.evidence.known.KnownEventResolver;
 import com.hartwig.serve.datamodel.common.GeneAlteration;
 import com.hartwig.serve.datamodel.fusion.KnownFusion;
@@ -20,12 +20,12 @@ public class EvidenceDatabase {
     @NotNull
     private final KnownEventResolver knownEventResolver;
     @NotNull
-    private final ActionableEventResolver actionableEventResolver;
+    private final ActionableEventMatcher actionableEventMatcher;
 
     EvidenceDatabase(@NotNull final KnownEventResolver knownEventResolver,
-            @NotNull final ActionableEventResolver actionableEventResolver) {
+            @NotNull final ActionableEventMatcher actionableEventMatcher) {
         this.knownEventResolver = knownEventResolver;
-        this.actionableEventResolver = actionableEventResolver;
+        this.actionableEventMatcher = actionableEventMatcher;
     }
 
     @Nullable
@@ -35,7 +35,7 @@ public class EvidenceDatabase {
 
     @NotNull
     public ActionabilityMatch matchToActionableEvidence(@NotNull PurpleVariant variant) {
-        return actionableEventResolver.resolveForVariant(variant);
+        return actionableEventMatcher.matchForVariant(variant);
     }
 
     @Nullable
@@ -45,7 +45,7 @@ public class EvidenceDatabase {
 
     @NotNull
     public ActionabilityMatch matchToActionableEvidence(@NotNull PurpleCopyNumber copyNumber) {
-        return actionableEventResolver.resolveForCopyNumber(copyNumber);
+        return actionableEventMatcher.matchForCopyNumber(copyNumber);
     }
 
     @Nullable
@@ -55,7 +55,7 @@ public class EvidenceDatabase {
 
     @NotNull
     public ActionabilityMatch matchToActionableEvidence(@NotNull LinxHomozygousDisruption homozygousDisruption) {
-        return actionableEventResolver.resolveForHomozygousDisruption(homozygousDisruption);
+        return actionableEventMatcher.matchForHomozygousDisruption(homozygousDisruption);
     }
 
     @Nullable
@@ -65,7 +65,7 @@ public class EvidenceDatabase {
 
     @NotNull
     public ActionabilityMatch matchToActionableEvidence(@NotNull LinxDisruption disruption) {
-        return actionableEventResolver.resolveForDisruption(disruption);
+        return actionableEventMatcher.matchForDisruption(disruption);
     }
 
     @Nullable
@@ -75,11 +75,11 @@ public class EvidenceDatabase {
 
     @NotNull
     public ActionabilityMatch matchToActionableEvidence(@NotNull LinxFusion fusion) {
-        return actionableEventResolver.resolveForFusion(fusion);
+        return actionableEventMatcher.matchForFusion(fusion);
     }
 
     @NotNull
     public ActionabilityMatch matchToActionableEvidence(@NotNull VirusInterpreterEntry virus) {
-        return actionableEventResolver.resolveForVirus(virus);
+        return actionableEventMatcher.matchForVirus(virus);
     }
 }

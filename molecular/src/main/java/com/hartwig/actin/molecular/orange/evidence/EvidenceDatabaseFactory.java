@@ -5,7 +5,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.orange.curation.ExternalTrialMapping;
-import com.hartwig.actin.molecular.orange.evidence.actionable.ActionableEventResolver;
+import com.hartwig.actin.molecular.orange.evidence.actionable.ActionableEventMatcher;
 import com.hartwig.actin.molecular.orange.evidence.known.KnownEventResolver;
 import com.hartwig.actin.molecular.serve.KnownGene;
 import com.hartwig.serve.datamodel.ActionableEvent;
@@ -30,9 +30,9 @@ public final class EvidenceDatabaseFactory {
     public static EvidenceDatabase create(@NotNull KnownEvents knownEvents, @NotNull List<KnownGene> knownGenes,
             @NotNull ActionableEvents actionableEvents, @NotNull List<ExternalTrialMapping> externalTrialMappings) {
         KnownEventResolver knownEventResolver = new KnownEventResolver(filterKnownEvents(knownEvents, KNOWN_EVENT_SOURCES), knownGenes);
-        ActionableEventResolver actionableEventResolver =
-                new ActionableEventResolver(filterActionableEvents(actionableEvents, ACTIONABLE_EVENT_SOURCES), externalTrialMappings);
-        return new EvidenceDatabase(knownEventResolver, actionableEventResolver);
+        ActionableEventMatcher actionableEventMatcher =
+                new ActionableEventMatcher(filterActionableEvents(actionableEvents, ACTIONABLE_EVENT_SOURCES), externalTrialMappings);
+        return new EvidenceDatabase(knownEventResolver, actionableEventMatcher);
     }
 
     @NotNull

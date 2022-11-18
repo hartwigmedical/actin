@@ -9,50 +9,59 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruptio
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
+import com.hartwig.serve.datamodel.ActionableEvent;
 import com.hartwig.serve.datamodel.ActionableEvents;
 
 import org.jetbrains.annotations.NotNull;
 
-public class ActionableEventResolver {
+public class ActionableEventMatcher {
 
     @NotNull
     private final ActionableEvents actionableEvents;
     @NotNull
     private final List<ExternalTrialMapping> externalTrialMappings;
 
-    public ActionableEventResolver(@NotNull final ActionableEvents actionableEvents,
+    public ActionableEventMatcher(@NotNull final ActionableEvents actionableEvents,
             @NotNull final List<ExternalTrialMapping> externalTrialMappings) {
         this.actionableEvents = actionableEvents;
         this.externalTrialMappings = externalTrialMappings;
     }
 
     @NotNull
-    public ActionabilityMatch resolveForVariant(@NotNull PurpleVariant variant) {
+    public ActionabilityMatch matchForVariant(@NotNull PurpleVariant variant) {
+        return createMatchResult(VariantEvidence.findMatches(actionableEvents, variant));
+    }
+
+    @NotNull
+    public ActionabilityMatch matchForCopyNumber(@NotNull PurpleCopyNumber copyNumber) {
         return ImmutableActionabilityMatch.builder().build();
     }
 
     @NotNull
-    public ActionabilityMatch resolveForCopyNumber(@NotNull PurpleCopyNumber copyNumber) {
+    public ActionabilityMatch matchForHomozygousDisruption(@NotNull LinxHomozygousDisruption homozygousDisruption) {
         return ImmutableActionabilityMatch.builder().build();
     }
 
     @NotNull
-    public ActionabilityMatch resolveForHomozygousDisruption(@NotNull LinxHomozygousDisruption homozygousDisruption) {
+    public ActionabilityMatch matchForDisruption(@NotNull LinxDisruption disruption) {
         return ImmutableActionabilityMatch.builder().build();
     }
 
     @NotNull
-    public ActionabilityMatch resolveForDisruption(@NotNull LinxDisruption disruption) {
+    public ActionabilityMatch matchForFusion(@NotNull LinxFusion fusion) {
         return ImmutableActionabilityMatch.builder().build();
     }
 
     @NotNull
-    public ActionabilityMatch resolveForFusion(@NotNull LinxFusion fusion) {
+    public ActionabilityMatch matchForVirus(@NotNull VirusInterpreterEntry virus) {
         return ImmutableActionabilityMatch.builder().build();
     }
 
     @NotNull
-    public ActionabilityMatch resolveForVirus(@NotNull VirusInterpreterEntry virus) {
+    private ActionabilityMatch createMatchResult(@NotNull List<ActionableEvent> matches) {
+        // TODO Split on-label and off-label
+        // TODO Rename external trials based on mapping.
+
         return ImmutableActionabilityMatch.builder().build();
     }
 }

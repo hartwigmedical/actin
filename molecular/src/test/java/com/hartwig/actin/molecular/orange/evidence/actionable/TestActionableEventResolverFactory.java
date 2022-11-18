@@ -11,8 +11,8 @@ public final class TestActionableEventResolverFactory {
     }
 
     @NotNull
-    public static ActionableEventResolver createEmpty() {
-        return new ActionableEventResolver(ImmutableActionableEvents.builder().build(),
+    public static ActionableEventMatcher createEmpty() {
+        return new ActionableEventMatcher(ImmutableActionableEvents.builder().build(),
                 Lists.newArrayList());
     }
 }

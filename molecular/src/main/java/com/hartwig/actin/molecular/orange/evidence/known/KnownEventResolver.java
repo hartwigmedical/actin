@@ -7,6 +7,8 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
+import com.hartwig.actin.molecular.orange.evidence.matching.HotspotMatching;
+import com.hartwig.actin.molecular.orange.evidence.matching.RangeMatching;
 import com.hartwig.actin.molecular.serve.KnownGene;
 import com.hartwig.serve.datamodel.KnownEvents;
 import com.hartwig.serve.datamodel.common.GeneAlteration;
@@ -33,22 +35,53 @@ public class KnownEventResolver {
 
     @Nullable
     public GeneAlteration resolveForVariant(@NotNull PurpleVariant variant) {
-        KnownHotspot hotspot = HotspotLookup.find(knownEvents.hotspots(), variant);
+        KnownHotspot hotspot = findHotspot(knownEvents.hotspots(), variant);
         if (hotspot != null) {
             return hotspot;
         }
 
-        KnownCodon codon = CodonLookup.find(knownEvents.codons(), variant);
+        KnownCodon codon = findCodon(knownEvents.codons(), variant);
         if (codon != null) {
             return codon;
         }
 
-        KnownExon exon =  ExonLookup.find(knownEvents.exons(), variant);
+        KnownExon exon =  findExon(knownEvents.exons(), variant);
         if (exon != null) {
             return exon;
         }
 
         return GeneLookup.find(knownGenes, variant.gene());
+    }
+
+    @Nullable
+    private static KnownHotspot findHotspot(@NotNull Iterable<KnownHotspot> knownHotspots, @NotNull PurpleVariant variant) {
+        for (KnownHotspot knownHotspot : knownHotspots) {
+            if (HotspotMatching.isMatch(knownHotspot, variant)) {
+                return knownHotspot;
+            }
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private static KnownCodon findCodon(@NotNull Iterable<KnownCodon> knownCodons, @NotNull PurpleVariant variant) {
+        for (KnownCodon knownCodon : knownCodons) {
+            if (RangeMatching.isMatch(knownCodon, variant)) {
+                return knownCodon;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private static KnownExon findExon(@NotNull Iterable<KnownExon> knownExons, @NotNull PurpleVariant variant) {
+        for (KnownExon knownExon : knownExons) {
+            if (RangeMatching.isMatch(knownExon, variant)) {
+                return knownExon;
+            }
+        }
+        return null;
     }
 
     @Nullable
