@@ -117,7 +117,7 @@ public class IsHomologousRepairDeficient implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No homologous repair deficiency (HRD) status detected")
-                .addFailGeneralMessages("Molecular requirements")
+                .addFailGeneralMessages("HRD")
                 .build();
     }
 }

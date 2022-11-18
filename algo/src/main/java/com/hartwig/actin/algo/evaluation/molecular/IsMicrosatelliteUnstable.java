@@ -117,7 +117,7 @@ public class IsMicrosatelliteUnstable implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No microsatellite instability (MSI) status detected")
-                .addFailGeneralMessages("Molecular requirements")
+                .addFailGeneralMessages("MSI")
                 .build();
     }
 }

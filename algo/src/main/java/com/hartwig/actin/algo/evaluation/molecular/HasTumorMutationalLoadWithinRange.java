@@ -75,7 +75,7 @@ public class HasTumorMutationalLoadWithinRange implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("TML of sample " + tumorMutationalLoad + " is not within specified range")
-                .addFailGeneralMessages("Molecular requirements")
+                .addFailGeneralMessages("Inadequate TML")
                 .build();
     }
 }

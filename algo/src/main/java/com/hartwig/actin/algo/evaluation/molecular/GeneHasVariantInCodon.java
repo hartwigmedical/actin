@@ -84,7 +84,7 @@ public class GeneHasVariantInCodon implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No variants in codon(s) " + Format.concat(codons) + " detected in gene " + gene)
-                .addFailGeneralMessages("Molecular requirements")
+                .addFailGeneralMessages("No specific variants in codon(s) in " + gene + " detected")
                 .build();
     }
 

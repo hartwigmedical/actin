@@ -82,7 +82,7 @@ public class GeneHasVariantInExonRangeOfType implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No adequate variant in exon range " + minExon + " - " + maxExon + " detected in gene " + gene)
-                .addFailGeneralMessages("Molecular requirements")
+                .addFailGeneralMessages("No specific variants in " + gene + " detected")
                 .build();
     }
 

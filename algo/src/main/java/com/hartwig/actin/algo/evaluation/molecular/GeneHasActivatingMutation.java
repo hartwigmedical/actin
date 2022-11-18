@@ -91,7 +91,7 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No activating mutation(s) detected in gene " + gene)
-                .addFailGeneralMessages("Molecular requirements")
+                .addFailGeneralMessages("No " + gene + " activating mutation(s)")
                 .build();
     }
 
