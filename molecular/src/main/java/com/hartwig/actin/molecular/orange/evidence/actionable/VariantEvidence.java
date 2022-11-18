@@ -20,11 +20,6 @@ import org.jetbrains.annotations.NotNull;
 
 final class VariantEvidence {
 
-    //    this.genes = genes.stream()
-    //            .filter(x -> x.event() == GeneLevelEvent.ACTIVATION || x.event() == GeneLevelEvent.INACTIVATION
-    //                        || x.event() == GeneLevelEvent.ANY_MUTATION)
-    //            .collect(Collectors.toList());
-    //
     private static final Set<GeneEvent> APPLICABLE_GENE_EVENTS =
             Sets.newHashSet(GeneEvent.ACTIVATION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION);
 
