@@ -8,10 +8,14 @@ import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidence;
 import com.hartwig.actin.molecular.orange.evidence.actionable.ActionabilityMatch;
 import com.hartwig.serve.datamodel.ActionableEvent;
+import com.hartwig.serve.datamodel.Knowledgebase;
 
 import org.jetbrains.annotations.NotNull;
 
 public final class ActionableEvidenceFactory {
+
+    private static final Knowledgebase EVIDENCE_SOURCE = Knowledgebase.CKB;
+    private static final Knowledgebase EXTERNAL_TRIAL_SOURCE = Knowledgebase.ICLUSION;
 
     private ActionableEvidenceFactory() {
     }
@@ -20,8 +24,10 @@ public final class ActionableEvidenceFactory {
     public static ActionableEvidence create(@NotNull ActionabilityMatch actionabilityMatch) {
         ActionableEvidence onLabelEvidence = createOnLabelEvidence(actionabilityMatch.onLabelEvents());
         ActionableEvidence offLabelEvidence = createOffLabelEvidence(actionabilityMatch.offLabelEvents());
+        ActionableEvidence externalTrialEvidence = createExternalTrialEvidence(actionabilityMatch.onLabelEvents());
 
-        ActionableEvidence merged = ImmutableActionableEvidence.builder().from(onLabelEvidence).from(offLabelEvidence).build();
+        ActionableEvidence merged =
+                ImmutableActionableEvidence.builder().from(onLabelEvidence).from(offLabelEvidence).from(externalTrialEvidence).build();
 
         return cleanResistanceEvidence(merged);
     }
@@ -31,10 +37,12 @@ public final class ActionableEvidenceFactory {
         ImmutableActionableEvidence.Builder builder = ImmutableActionableEvidence.builder();
 
         for (ActionableEvent onLabelEvent : onLabelEvents) {
-            if (onLabelEvent.direction().isResponsive()) {
-                populateResponsiveOnLabelEvidence(builder, onLabelEvent);
-            } else {
-                populateResistantEvidence(builder, onLabelEvent);
+            if (onLabelEvent.source() == EVIDENCE_SOURCE) {
+                if (onLabelEvent.direction().isResponsive()) {
+                    populateResponsiveOnLabelEvidence(builder, onLabelEvent);
+                } else {
+                    populateResistantEvidence(builder, onLabelEvent);
+                }
             }
         }
 
@@ -46,10 +54,25 @@ public final class ActionableEvidenceFactory {
         ImmutableActionableEvidence.Builder builder = ImmutableActionableEvidence.builder();
 
         for (ActionableEvent offLabelEvent : offLabelEvents) {
-            if (offLabelEvent.direction().isResponsive()) {
-                populateResponsiveOffLabelEvidence(builder, offLabelEvent);
-            } else {
-                populateResistantEvidence(builder, offLabelEvent);
+            if (offLabelEvent.source() == EVIDENCE_SOURCE) {
+                if (offLabelEvent.direction().isResponsive()) {
+                    populateResponsiveOffLabelEvidence(builder, offLabelEvent);
+                } else {
+                    populateResistantEvidence(builder, offLabelEvent);
+                }
+            }
+        }
+
+        return builder.build();
+    }
+
+    @NotNull
+    private static ActionableEvidence createExternalTrialEvidence(@NotNull List<ActionableEvent> onLabelEvents) {
+        ImmutableActionableEvidence.Builder builder = ImmutableActionableEvidence.builder();
+
+        for (ActionableEvent onLabelEvent : onLabelEvents) {
+            if (onLabelEvent.source() == EXTERNAL_TRIAL_SOURCE && onLabelEvent.direction().isResponsive()) {
+                builder.addExternalEligibleTrials(onLabelEvent.treatment().name());
             }
         }
 
