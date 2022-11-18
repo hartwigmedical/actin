@@ -62,6 +62,6 @@ public class ActionableEventMatcher {
         // TODO Split on-label and off-label
         // TODO Rename external trials based on mapping.
 
-        return ImmutableActionabilityMatch.builder().build();
+        return ImmutableActionabilityMatch.builder().onLabelEvents(matches).build();
     }
 }

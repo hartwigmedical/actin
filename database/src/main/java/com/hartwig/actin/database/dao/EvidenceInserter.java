@@ -14,6 +14,10 @@ class EvidenceInserter<T extends Record> {
     }
 
     public void write(int topicId, @NotNull String sampleId, @NotNull String treatment, @NotNull String type) {
-        inserter.values(topicId, sampleId, treatment, type).execute();
+        inserter.values(topicId, sampleId, treatment, type);
+    }
+
+    public void execute() {
+        inserter.execute();
     }
 }

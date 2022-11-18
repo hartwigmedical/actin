@@ -227,6 +227,7 @@ class MolecularDAO {
                 VARIANTEVIDENCE.TYPE));
 
         writeEvidence(inserter, variantId, sampleId, evidence);
+        inserter.execute();
     }
 
     @NotNull
