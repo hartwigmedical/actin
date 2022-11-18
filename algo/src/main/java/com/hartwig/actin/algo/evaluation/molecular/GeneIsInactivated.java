@@ -205,7 +205,7 @@ public class GeneIsInactivated implements EvaluationFunction {
             warnEvents.addAll(reportableNonDriverVariantsWithLossOfFunction);
             warnSpecificMessages.add("Potential inactivation events detected for " + gene + ": " + Format.concat(
                     reportableNonDriverVariantsWithLossOfFunction) + " but event(s) are low-driver yet annotated with loss-of-function");
-            warnGeneralMessages.add(gene + " variant(s)" + Format.concat(reportableNonDriverVariantsWithLossOfFunction)
+            warnGeneralMessages.add("Variant(s) " + Format.concat(reportableNonDriverVariantsWithLossOfFunction)
                     + " of low driver likelihood, although also loss-of-function protein impact");
         }
 
@@ -214,7 +214,7 @@ public class GeneIsInactivated implements EvaluationFunction {
             warnSpecificMessages.add(
                     "Potential inactivation events detected for " + gene + ": " + Format.concat(reportableNonDriverVariantsOther)
                             + " but event(s) are not of high driver likelihood");
-            warnGeneralMessages.add(gene + " variant(s)" + Format.concat(reportableNonDriverVariantsOther) + " of low driver likelihood");
+            warnGeneralMessages.add("Variant(s) " + Format.concat(reportableNonDriverVariantsOther) + " of low driver likelihood");
         }
 
         if (eventsThatMayBeTransPhased.size() > 1) {
