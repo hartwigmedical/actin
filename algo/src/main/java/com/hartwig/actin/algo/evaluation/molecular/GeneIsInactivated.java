@@ -81,6 +81,7 @@ public class GeneIsInactivated implements EvaluationFunction {
         }
 
         Set<String> reportableNonDriverVariantsWithLossOfFunction = Sets.newHashSet();
+        Set<String> reportableNonDriverVariantsOther = Sets.newHashSet();
         Set<String> reportableHighDriverNonBiallelicVariants = Sets.newHashSet();
         List<String> eventsThatMayBeTransPhased = Lists.newArrayList();
         Set<Integer> evaluatedPhaseGroups = Sets.newHashSet();
@@ -114,6 +115,8 @@ public class GeneIsInactivated implements EvaluationFunction {
                         }
                     } else if (isLossOfFunction) {
                         reportableNonDriverVariantsWithLossOfFunction.add(variant.event());
+                    } else if (variant.driverLikelihood() == DriverLikelihood.MEDIUM || variant.driverLikelihood() == DriverLikelihood.LOW) {
+                        reportableNonDriverVariantsOther.add(variant.event());
                     }
                 }
             }
@@ -144,6 +147,7 @@ public class GeneIsInactivated implements EvaluationFunction {
                 inactivationEventsGainOfFunction,
                 reportableHighDriverNonBiallelicVariants,
                 reportableNonDriverVariantsWithLossOfFunction,
+                reportableNonDriverVariantsOther,
                 eventsThatMayBeTransPhased);
 
         if (potentialWarnEvaluation != null) {
@@ -161,7 +165,8 @@ public class GeneIsInactivated implements EvaluationFunction {
     private Evaluation evaluatePotentialWarns(@NotNull Set<String> inactivationEventsThatAreUnreportable,
             @NotNull Set<String> inactivationEventsNoTSG, @NotNull Set<String> inactivationEventsGainOfFunction,
             @NotNull Set<String> reportableHighDriverNonBiallelicVariants,
-            @NotNull Set<String> reportableNonDriverVariantsWithLossOfFunction, @NotNull List<String> eventsThatMayBeTransPhased) {
+            @NotNull Set<String> reportableNonDriverVariantsWithLossOfFunction, @NotNull Set<String> reportableNonDriverVariantsOther,
+            @NotNull List<String> eventsThatMayBeTransPhased) {
         Set<String> warnEvents = Sets.newHashSet();
         Set<String> warnSpecificMessages = Sets.newHashSet();
         Set<String> warnGeneralMessages = Sets.newHashSet();
@@ -191,17 +196,25 @@ public class GeneIsInactivated implements EvaluationFunction {
         if (!reportableHighDriverNonBiallelicVariants.isEmpty() && !(eventsThatMayBeTransPhased.size() > 1)) {
             warnEvents.addAll(reportableHighDriverNonBiallelicVariants);
             warnSpecificMessages.add(
-                    "Inactivation events detected for " + gene + ": " + Format.concat(reportableHighDriverNonBiallelicVariants)
-                            + " but events are not biallelic");
+                    "Inactivation event(s) detected for " + gene + ": " + Format.concat(reportableHighDriverNonBiallelicVariants)
+                            + " but event(s) are not biallelic");
             warnGeneralMessages.add(gene + " potential inactivation but not biallelic");
         }
 
         if (!reportableNonDriverVariantsWithLossOfFunction.isEmpty()) {
             warnEvents.addAll(reportableNonDriverVariantsWithLossOfFunction);
+            warnSpecificMessages.add("Potential inactivation events detected for " + gene + ": " + Format.concat(
+                    reportableNonDriverVariantsWithLossOfFunction) + " but event(s) are low-driver yet annotated with loss-of-function");
+            warnGeneralMessages.add(gene + " variant(s)" + Format.concat(reportableNonDriverVariantsWithLossOfFunction)
+                    + " of low driver likelihood, although also loss-of-function protein impact");
+        }
+
+        if (!reportableNonDriverVariantsOther.isEmpty()) {
+            warnEvents.addAll(reportableNonDriverVariantsOther);
             warnSpecificMessages.add(
-                    "Inactivation events detected for " + gene + ": " + Format.concat(reportableNonDriverVariantsWithLossOfFunction)
-                            + " but events are low-driver yet annotated with loss-of-function");
-            warnGeneralMessages.add(gene + " potential inactivation but low driver although also loss-of-function protein impact");
+                    "Potential inactivation events detected for " + gene + ": " + Format.concat(reportableNonDriverVariantsOther)
+                            + " but event(s) are not of high driver likelihood");
+            warnGeneralMessages.add(gene + " variant(s)" + Format.concat(reportableNonDriverVariantsOther) + " of low driver likelihood");
         }
 
         if (eventsThatMayBeTransPhased.size() > 1) {
