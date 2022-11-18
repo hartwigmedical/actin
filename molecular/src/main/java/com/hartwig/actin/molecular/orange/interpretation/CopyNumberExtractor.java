@@ -41,7 +41,8 @@ class CopyNumberExtractor {
                 if (geneFilter.include(copyNumber.gene())) {
                     boolean isPartial = copyNumber.interpretation() == CopyNumberInterpretation.PARTIAL_GAIN;
                     amplifications.add(ImmutableAmplification.builder()
-                            .from(ExtractionUtil.convertAlteration(copyNumber.gene(), evidenceDatabase.lookupGeneAlteration(copyNumber)))
+                            .from(GeneAlterationFactory.convertAlteration(copyNumber.gene(),
+                                    evidenceDatabase.lookupGeneAlteration(copyNumber)))
                             .isReportable(copyNumber.reported())
                             .event(DriverEventFactory.copyNumberEvent(copyNumber))
                             .driverLikelihood(isPartial ? DriverLikelihood.MEDIUM : DriverLikelihood.HIGH)
@@ -64,16 +65,17 @@ class CopyNumberExtractor {
         for (PurpleCopyNumber copyNumber : purple.copyNumbers()) {
             if (copyNumber.interpretation().isLoss()) {
                 if (geneFilter.include(copyNumber.gene())) {
-                losses.add(ImmutableLoss.builder()
-                        .from(ExtractionUtil.convertAlteration(copyNumber.gene(), evidenceDatabase.lookupGeneAlteration(copyNumber)))
-                        .isReportable(copyNumber.reported())
-                        .event(DriverEventFactory.copyNumberEvent(copyNumber))
-                        .driverLikelihood(DriverLikelihood.HIGH)
-                        .evidence(ActionableEvidenceFactory.create(evidenceDatabase.matchToActionableEvidence(copyNumber)))
-                        .minCopies(copyNumber.minCopies())
-                        .maxCopies(copyNumber.maxCopies())
-                        .isPartial(copyNumber.interpretation() == CopyNumberInterpretation.PARTIAL_LOSS)
-                        .build());
+                    losses.add(ImmutableLoss.builder()
+                            .from(GeneAlterationFactory.convertAlteration(copyNumber.gene(),
+                                    evidenceDatabase.lookupGeneAlteration(copyNumber)))
+                            .isReportable(copyNumber.reported())
+                            .event(DriverEventFactory.copyNumberEvent(copyNumber))
+                            .driverLikelihood(DriverLikelihood.HIGH)
+                            .evidence(ActionableEvidenceFactory.create(evidenceDatabase.matchToActionableEvidence(copyNumber)))
+                            .minCopies(copyNumber.minCopies())
+                            .maxCopies(copyNumber.maxCopies())
+                            .isPartial(copyNumber.interpretation() == CopyNumberInterpretation.PARTIAL_LOSS)
+                            .build());
                 } else if (copyNumber.reported()) {
                     LOGGER.warn("Filtered a reported loss on gene {}", copyNumber.gene());
                 }

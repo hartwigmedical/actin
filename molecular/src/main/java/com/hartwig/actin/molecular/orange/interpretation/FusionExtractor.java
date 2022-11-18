@@ -53,7 +53,7 @@ class FusionExtractor {
                         .geneTranscriptEnd(fusion.geneTranscriptEnd())
                         .fusedExonDown(fusion.fusedExonDown())
                         .proteinEffect(knownFusion != null
-                                ? ExtractionUtil.convertProteinEffect(knownFusion.proteinEffect())
+                                ? GeneAlterationFactory.convertProteinEffect(knownFusion.proteinEffect())
                                 : ProteinEffect.UNKNOWN)
                         .isAssociatedWithDrugResistance(knownFusion != null ? knownFusion.associatedWithDrugResistance() : null)
                         .driverType(determineDriverType(fusion))

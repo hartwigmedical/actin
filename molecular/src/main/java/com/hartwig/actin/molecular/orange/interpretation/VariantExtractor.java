@@ -49,7 +49,7 @@ class VariantExtractor {
         for (PurpleVariant variant : purple.variants()) {
             if (geneFilter.include(variant.gene())) {
                 variants.add(ImmutableVariant.builder()
-                        .from(ExtractionUtil.convertAlteration(variant.gene(), evidenceDatabase.lookupGeneAlteration(variant)))
+                        .from(GeneAlterationFactory.convertAlteration(variant.gene(), evidenceDatabase.lookupGeneAlteration(variant)))
                         .isReportable(variant.reported())
                         .event(DriverEventFactory.variantEvent(variant))
                         .driverLikelihood(determineDriverLikelihood(variant))

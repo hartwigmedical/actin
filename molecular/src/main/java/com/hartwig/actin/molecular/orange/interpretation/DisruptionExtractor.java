@@ -43,7 +43,7 @@ class DisruptionExtractor {
         for (LinxHomozygousDisruption homozygousDisruption : linx.homozygousDisruptions()) {
             if (geneFilter.include(homozygousDisruption.gene())) {
                 homozygousDisruptions.add(ImmutableHomozygousDisruption.builder()
-                        .from(ExtractionUtil.convertAlteration(homozygousDisruption.gene(),
+                        .from(GeneAlterationFactory.convertAlteration(homozygousDisruption.gene(),
                                 evidenceDatabase.lookupGeneAlteration(homozygousDisruption)))
                         .isReportable(true)
                         .event(DriverEventFactory.homozygousDisruptionEvent(homozygousDisruption))
@@ -70,7 +70,8 @@ class DisruptionExtractor {
                 // TODO: Populate region type and coding context
                 if (include(disruption, losses)) {
                     disruptions.add(ImmutableDisruption.builder()
-                            .from(ExtractionUtil.convertAlteration(disruption.gene(), evidenceDatabase.lookupGeneAlteration(disruption)))
+                            .from(GeneAlterationFactory.convertAlteration(disruption.gene(),
+                                    evidenceDatabase.lookupGeneAlteration(disruption)))
                             .isReportable(disruption.reported())
                             .event(DriverEventFactory.disruptionEvent(disruption))
                             .driverLikelihood(DriverLikelihood.LOW)
