@@ -2,7 +2,6 @@ package com.hartwig.actin.molecular.orange.evidence;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
 import com.hartwig.actin.molecular.orange.curation.ExternalTrialMapping;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
@@ -10,6 +9,8 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruptio
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
+import com.hartwig.actin.molecular.orange.evidence.actionable.ActionabilityMatch;
+import com.hartwig.actin.molecular.orange.evidence.actionable.ImmutableActionabilityMatch;
 import com.hartwig.actin.molecular.orange.evidence.known.CodonLookup;
 import com.hartwig.actin.molecular.orange.evidence.known.CopyNumberLookup;
 import com.hartwig.actin.molecular.orange.evidence.known.ExonLookup;
@@ -17,7 +18,6 @@ import com.hartwig.actin.molecular.orange.evidence.known.FusionLookup;
 import com.hartwig.actin.molecular.orange.evidence.known.GeneLookup;
 import com.hartwig.actin.molecular.orange.evidence.known.HotspotLookup;
 import com.hartwig.actin.molecular.serve.KnownGene;
-import com.hartwig.serve.datamodel.ActionableEvent;
 import com.hartwig.serve.datamodel.ActionableEvents;
 import com.hartwig.serve.datamodel.KnownEvents;
 import com.hartwig.serve.datamodel.common.GeneAlteration;
@@ -70,8 +70,8 @@ public class EvidenceDatabase {
     }
 
     @NotNull
-    public List<ActionableEvent> lookUpActionableEvents(@NotNull PurpleVariant variant) {
-        return Lists.newArrayList();
+    public ActionabilityMatch matchToActionableEvidence(@NotNull PurpleVariant variant) {
+        return ImmutableActionabilityMatch.builder().build();
     }
 
     @Nullable
@@ -85,8 +85,8 @@ public class EvidenceDatabase {
     }
 
     @NotNull
-    public List<ActionableEvent> lookUpActionableEvents(@NotNull PurpleCopyNumber copyNumber) {
-        return Lists.newArrayList();
+    public ActionabilityMatch matchToActionableEvidence(@NotNull PurpleCopyNumber copyNumber) {
+        return ImmutableActionabilityMatch.builder().build();
     }
 
     @Nullable
@@ -101,8 +101,8 @@ public class EvidenceDatabase {
     }
 
     @NotNull
-    public List<ActionableEvent> lookUpActionableEvents(@NotNull LinxHomozygousDisruption homozygousDisruption) {
-        return Lists.newArrayList();
+    public ActionabilityMatch matchToActionableEvidence(@NotNull LinxHomozygousDisruption homozygousDisruption) {
+        return ImmutableActionabilityMatch.builder().build();
     }
 
     @Nullable
@@ -111,8 +111,8 @@ public class EvidenceDatabase {
     }
 
     @NotNull
-    public List<ActionableEvent> lookUpActionableEvents(@NotNull LinxDisruption disruption) {
-        return Lists.newArrayList();
+    public ActionabilityMatch matchToActionableEvidence(@NotNull LinxDisruption disruption) {
+        return ImmutableActionabilityMatch.builder().build();
     }
 
     @Nullable
@@ -121,12 +121,12 @@ public class EvidenceDatabase {
     }
 
     @NotNull
-    public List<ActionableEvent> lookUpActionableEvents(@NotNull LinxFusion fusion) {
-        return Lists.newArrayList();
+    public ActionabilityMatch matchToActionableEvidence(@NotNull LinxFusion fusion) {
+        return ImmutableActionabilityMatch.builder().build();
     }
 
     @NotNull
-    public List<ActionableEvent> lookUpActionableEvents(@NotNull VirusInterpreterEntry virus) {
-        return Lists.newArrayList();
+    public ActionabilityMatch matchToActionableEvidence(@NotNull VirusInterpreterEntry virus) {
+        return ImmutableActionabilityMatch.builder().build();
     }
 }

@@ -1,13 +1,8 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
-import java.util.List;
-
 import com.hartwig.actin.molecular.datamodel.driver.GeneAlteration;
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidence;
-import com.hartwig.serve.datamodel.ActionableEvent;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -103,10 +98,5 @@ final class ExtractionUtil {
                 throw new IllegalStateException("Could not convert protein effect: " + input);
             }
         }
-    }
-
-    @NotNull
-    public static ActionableEvidence convertActionableEvents(@NotNull List<ActionableEvent> actionableEvents) {
-        return ImmutableActionableEvidence.builder().build();
     }
 }

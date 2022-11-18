@@ -48,7 +48,7 @@ class DisruptionExtractor {
                         .isReportable(true)
                         .event(DriverEventFactory.homozygousDisruptionEvent(homozygousDisruption))
                         .driverLikelihood(DriverLikelihood.HIGH)
-                        .evidence(ExtractionUtil.convertActionableEvents(evidenceDatabase.lookUpActionableEvents(homozygousDisruption)))
+                        .evidence(ActionableEvidenceFactory.create(evidenceDatabase.matchToActionableEvidence(homozygousDisruption)))
                         .build());
             } else {
                 LOGGER.warn("Filtered a reported homozygous disruption on gene {}", homozygousDisruption.gene());
@@ -74,7 +74,7 @@ class DisruptionExtractor {
                             .isReportable(disruption.reported())
                             .event(DriverEventFactory.disruptionEvent(disruption))
                             .driverLikelihood(DriverLikelihood.LOW)
-                            .evidence(ExtractionUtil.convertActionableEvents(evidenceDatabase.lookUpActionableEvents(disruption)))
+                            .evidence(ActionableEvidenceFactory.create(evidenceDatabase.matchToActionableEvidence(disruption)))
                             .type(disruption.type())
                             .junctionCopyNumber(ExtractionUtil.keep3Digits(disruption.junctionCopyNumber()))
                             .undisruptedCopyNumber(ExtractionUtil.keep3Digits(disruption.undisruptedCopyNumber()))
