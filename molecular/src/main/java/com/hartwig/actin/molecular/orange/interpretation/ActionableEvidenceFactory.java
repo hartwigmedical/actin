@@ -6,16 +6,13 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidence;
+import com.hartwig.actin.molecular.orange.evidence.actionable.ActionabilityConstants;
 import com.hartwig.actin.molecular.orange.evidence.actionable.ActionabilityMatch;
 import com.hartwig.serve.datamodel.ActionableEvent;
-import com.hartwig.serve.datamodel.Knowledgebase;
 
 import org.jetbrains.annotations.NotNull;
 
 public final class ActionableEvidenceFactory {
-
-    private static final Knowledgebase EVIDENCE_SOURCE = Knowledgebase.CKB;
-    private static final Knowledgebase EXTERNAL_TRIAL_SOURCE = Knowledgebase.ICLUSION;
 
     private ActionableEvidenceFactory() {
     }
@@ -39,7 +36,7 @@ public final class ActionableEvidenceFactory {
         ImmutableActionableEvidence.Builder builder = ImmutableActionableEvidence.builder();
 
         for (ActionableEvent onLabelEvent : onLabelEvents) {
-            if (onLabelEvent.source() == EVIDENCE_SOURCE) {
+            if (onLabelEvent.source() == ActionabilityConstants.EVIDENCE_SOURCE) {
                 if (onLabelEvent.direction().isResponsive()) {
                     populateResponsiveOnLabelEvidence(builder, onLabelEvent);
                 } else {
@@ -56,7 +53,7 @@ public final class ActionableEvidenceFactory {
         ImmutableActionableEvidence.Builder builder = ImmutableActionableEvidence.builder();
 
         for (ActionableEvent offLabelEvent : offLabelEvents) {
-            if (offLabelEvent.source() == EVIDENCE_SOURCE) {
+            if (offLabelEvent.source() == ActionabilityConstants.EVIDENCE_SOURCE) {
                 if (offLabelEvent.direction().isResponsive()) {
                     populateResponsiveOffLabelEvidence(builder, offLabelEvent);
                 } else {
@@ -73,7 +70,7 @@ public final class ActionableEvidenceFactory {
         ImmutableActionableEvidence.Builder builder = ImmutableActionableEvidence.builder();
 
         for (ActionableEvent onLabelEvent : onLabelEvents) {
-            if (onLabelEvent.source() == EXTERNAL_TRIAL_SOURCE && onLabelEvent.direction().isResponsive()) {
+            if (onLabelEvent.source() == ActionabilityConstants.EXTERNAL_TRIAL_SOURCE && onLabelEvent.direction().isResponsive()) {
                 builder.addExternalEligibleTrials(onLabelEvent.treatment().name());
             }
         }
@@ -130,12 +127,12 @@ public final class ActionableEvidenceFactory {
     }
 
     private static void populateResistantEvidence(@NotNull ImmutableActionableEvidence.Builder builder,
-            @NotNull ActionableEvent onLabelResistantEvent) {
-        String treatment = onLabelResistantEvent.treatment().name();
-        switch (onLabelResistantEvent.level()) {
+            @NotNull ActionableEvent resistanceEvent) {
+        String treatment = resistanceEvent.treatment().name();
+        switch (resistanceEvent.level()) {
             case A:
             case B: {
-                if (onLabelResistantEvent.direction().isCertain()) {
+                if (resistanceEvent.direction().isCertain()) {
                     builder.addKnownResistantTreatments(treatment);
                 } else {
                     builder.addSuspectResistantTreatments(treatment);

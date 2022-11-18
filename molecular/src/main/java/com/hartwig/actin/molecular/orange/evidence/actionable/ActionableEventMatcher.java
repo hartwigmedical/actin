@@ -2,7 +2,6 @@ package com.hartwig.actin.molecular.orange.evidence.actionable;
 
 import java.util.List;
 
-import com.hartwig.actin.molecular.orange.curation.ExternalTrialMapping;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
@@ -18,13 +17,9 @@ public class ActionableEventMatcher {
 
     @NotNull
     private final ActionableEvents actionableEvents;
-    @NotNull
-    private final List<ExternalTrialMapping> externalTrialMappings;
 
-    public ActionableEventMatcher(@NotNull final ActionableEvents actionableEvents,
-            @NotNull final List<ExternalTrialMapping> externalTrialMappings) {
+    public ActionableEventMatcher(@NotNull final ActionableEvents actionableEvents) {
         this.actionableEvents = actionableEvents;
-        this.externalTrialMappings = externalTrialMappings;
     }
 
     @NotNull
@@ -60,15 +55,7 @@ public class ActionableEventMatcher {
     @NotNull
     private ActionabilityMatch createMatchResult(@NotNull List<ActionableEvent> matches) {
         // TODO Split on-label and off-label
-        // TODO Rename external trials based on mapping.
-
-        List<ActionableEvent> curated = curateExternalTrials(matches);
 
         return ImmutableActionabilityMatch.builder().onLabelEvents(matches).build();
-    }
-
-    @NotNull
-    private List<ActionableEvent> curateExternalTrials(@NotNull List<ActionableEvent> matches) {
-        return matches;
     }
 }

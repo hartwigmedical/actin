@@ -28,7 +28,7 @@ public class KnownEventResolver {
     @NotNull
     private final List<KnownGene> knownGenes;
 
-    public KnownEventResolver(@NotNull final KnownEvents knownEvents, @NotNull final List<KnownGene> knownGenes) {
+    KnownEventResolver(@NotNull final KnownEvents knownEvents, @NotNull final List<KnownGene> knownGenes) {
         this.knownEvents = knownEvents;
         this.knownGenes = knownGenes;
     }
