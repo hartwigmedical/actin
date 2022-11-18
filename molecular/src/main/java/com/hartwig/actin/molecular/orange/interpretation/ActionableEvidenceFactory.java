@@ -29,7 +29,9 @@ public final class ActionableEvidenceFactory {
         ActionableEvidence merged =
                 ImmutableActionableEvidence.builder().from(onLabelEvidence).from(offLabelEvidence).from(externalTrialEvidence).build();
 
-        return cleanResistanceEvidence(merged);
+        ActionableEvidence simplified = simplifyResponsiveEvidence(merged);
+
+        return filterResistanceEvidence(simplified);
     }
 
     @NotNull
@@ -147,14 +149,43 @@ public final class ActionableEvidenceFactory {
     }
 
     @NotNull
-    private static ActionableEvidence cleanResistanceEvidence(@NotNull ActionableEvidence evidence) {
-        Set<String> treatmentsToInclude = Sets.newHashSet();
-        treatmentsToInclude.addAll(evidence.approvedTreatments());
-        treatmentsToInclude.addAll(evidence.onLabelExperimentalTreatments());
-        treatmentsToInclude.addAll(evidence.offLabelExperimentalTreatments());
+    private static ActionableEvidence simplifyResponsiveEvidence(@NotNull ActionableEvidence evidence) {
+        Set<String> treatmentsToExcludeForOnLabel = evidence.approvedTreatments();
+        Set<String> cleanedOnLabelTreatments = cleanTreatments(evidence.onLabelExperimentalTreatments(), treatmentsToExcludeForOnLabel);
 
-        Set<String> applicableKnownResistantTreatments = filterTreatments(evidence.knownResistantTreatments(), treatmentsToInclude);
-        Set<String> applicableSuspectResistantTreatments = filterTreatments(evidence.suspectResistantTreatments(), treatmentsToInclude);
+        Set<String> treatmentsToExcludeForOffLabel = Sets.newHashSet();
+        treatmentsToExcludeForOffLabel.addAll(evidence.approvedTreatments());
+        treatmentsToExcludeForOffLabel.addAll(evidence.onLabelExperimentalTreatments());
+
+        Set<String> cleanedOffLabelTreatments =
+                cleanTreatments(evidence.offLabelExperimentalTreatments(), treatmentsToExcludeForOffLabel);
+
+        Set<String> treatmentsToExcludeForPreClinical = Sets.newHashSet();
+        treatmentsToExcludeForPreClinical.addAll(evidence.approvedTreatments());
+        treatmentsToExcludeForPreClinical.addAll(evidence.onLabelExperimentalTreatments());
+        treatmentsToExcludeForPreClinical.addAll(evidence.offLabelExperimentalTreatments());
+
+        Set<String> cleanedPreClinicalTreatments = cleanTreatments(evidence.preClinicalTreatments(), treatmentsToExcludeForPreClinical);
+
+        return ImmutableActionableEvidence.builder()
+                .from(evidence)
+                .onLabelExperimentalTreatments(cleanedOnLabelTreatments)
+                .offLabelExperimentalTreatments(cleanedOffLabelTreatments)
+                .preClinicalTreatments(cleanedPreClinicalTreatments)
+                .build();
+    }
+
+    @NotNull
+    private static ActionableEvidence filterResistanceEvidence(@NotNull ActionableEvidence evidence) {
+        Set<String> treatmentsToIncludeForResistance = Sets.newHashSet();
+        treatmentsToIncludeForResistance.addAll(evidence.approvedTreatments());
+        treatmentsToIncludeForResistance.addAll(evidence.onLabelExperimentalTreatments());
+        treatmentsToIncludeForResistance.addAll(evidence.offLabelExperimentalTreatments());
+
+        Set<String> applicableKnownResistantTreatments =
+                filterTreatments(evidence.knownResistantTreatments(), treatmentsToIncludeForResistance);
+        Set<String> applicableSuspectResistantTreatments =
+                filterTreatments(evidence.suspectResistantTreatments(), treatmentsToIncludeForResistance);
 
         return ImmutableActionableEvidence.builder()
                 .from(evidence)
@@ -172,5 +203,16 @@ public final class ActionableEvidenceFactory {
             }
         }
         return filtered;
+    }
+
+    @NotNull
+    private static Set<String> cleanTreatments(@NotNull Set<String> treatments, @NotNull Set<String> treatmentsToExclude) {
+        Set<String> cleaned = Sets.newHashSet();
+        for (String treatment : treatments) {
+            if (!treatmentsToExclude.contains(treatment)) {
+                cleaned.add(treatment);
+            }
+        }
+        return cleaned;
     }
 }
