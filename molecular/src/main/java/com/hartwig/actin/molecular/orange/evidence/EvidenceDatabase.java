@@ -41,7 +41,7 @@ public class EvidenceDatabase {
     @NotNull
     private final List<ExternalTrialMapping> externalTrialMappings;
 
-    public EvidenceDatabase(@NotNull final KnownEvents knownEvents, @NotNull final List<KnownGene> knownGenes,
+    EvidenceDatabase(@NotNull final KnownEvents knownEvents, @NotNull final List<KnownGene> knownGenes,
             @NotNull final ActionableEvents actionableEvents, @NotNull final List<ExternalTrialMapping> externalTrialMappings) {
         this.knownEvents = knownEvents;
         this.knownGenes = knownGenes;
