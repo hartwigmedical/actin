@@ -23,7 +23,6 @@ public final class TestActionableEventMatcherFactory {
                 VariantEvidence.create(empty),
                 CopyNumberEvidence.create(empty),
                 HomozygousDisruptionEvidence.create(empty),
-                DisruptionEvidence.create(empty),
                 FusionEvidence.create(empty),
                 VirusEvidence.create(empty));
     }

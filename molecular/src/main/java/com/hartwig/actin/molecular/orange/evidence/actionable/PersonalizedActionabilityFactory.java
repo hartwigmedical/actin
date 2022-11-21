@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.orange.evidence.actionable;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.doid.DoidModel;
@@ -24,6 +25,7 @@ class PersonalizedActionabilityFactory {
         return new PersonalizedActionabilityFactory(doidModel, expandDoids(doidModel, clinical.tumor().doids()));
     }
 
+    @VisibleForTesting
     PersonalizedActionabilityFactory(@NotNull final DoidModel doidModel, @NotNull final Set<String> applicableDoids) {
         this.doidModel = doidModel;
         this.applicableDoids = applicableDoids;
