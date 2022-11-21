@@ -27,6 +27,7 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.VariantHotspot;
 import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterRecord;
 import com.hartwig.actin.molecular.orange.datamodel.virus.TestVirusInterpreterFactory;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusDriverLikelihood;
+import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterRecord;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusQCStatus;
 
@@ -150,8 +151,8 @@ public final class TestOrangeFactory {
         return ImmutableVirusInterpreterRecord.builder()
                 .addEntries(TestVirusInterpreterFactory.builder()
                         .name("Human papillomavirus type 16")
-                        .interpretation("HPV")
                         .qcStatus(VirusQCStatus.NO_ABNORMALITIES)
+                        .interpretation(VirusInterpretation.HPV)
                         .integrations(3)
                         .driverLikelihood(VirusDriverLikelihood.HIGH)
                         .build())

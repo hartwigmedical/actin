@@ -31,6 +31,7 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.VariantHotspot;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusDriverLikelihood;
+import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterRecord;
 
@@ -159,7 +160,7 @@ public class OrangeJsonTest {
         assertEquals(1, virusInterpreter.entries().size());
         VirusInterpreterEntry entry = virusInterpreter.entries().iterator().next();
         assertEquals("Human betaherpesvirus 6B", entry.name());
-        assertEquals("EBV", entry.interpretation());
+        assertEquals(VirusInterpretation.EBV, entry.interpretation());
         assertEquals(1, entry.integrations());
         assertEquals(VirusDriverLikelihood.HIGH, entry.driverLikelihood());
     }
