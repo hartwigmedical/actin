@@ -9,6 +9,7 @@ import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
 import com.hartwig.serve.datamodel.ActionableEvents;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ActionableEventMatcher {
 
@@ -24,33 +25,57 @@ public class ActionableEventMatcher {
     }
 
     @NotNull
+    public ActionabilityMatch matchForMicrosatelliteStatus(@Nullable Boolean isMicrosatelliteUnstable) {
+        return personalizedActionabilityFactory.create(CharacteristicsEvidence.findMicrosatelliteMatches(actionableEvents,
+                isMicrosatelliteUnstable));
+    }
+
+    @NotNull
+    public ActionabilityMatch matchForHomologousRepairStatus(@Nullable Boolean isHomologousRepairDeficient) {
+        return personalizedActionabilityFactory.create(CharacteristicsEvidence.findMicrosatelliteMatches(actionableEvents,
+                isHomologousRepairDeficient));
+    }
+
+    @NotNull
+    public ActionabilityMatch matchForHighTumorMutationalBurden(@Nullable Boolean hasHighTumorMutationalBurden) {
+        return personalizedActionabilityFactory.create(CharacteristicsEvidence.findMicrosatelliteMatches(actionableEvents,
+                hasHighTumorMutationalBurden));
+    }
+
+    @NotNull
+    public ActionabilityMatch matchForHighTumorMutationalLoad(@Nullable Boolean hasHighTumorMutationalLoad) {
+        return personalizedActionabilityFactory.create(CharacteristicsEvidence.findMicrosatelliteMatches(actionableEvents,
+                hasHighTumorMutationalLoad));
+    }
+
+    @NotNull
     public ActionabilityMatch matchForVariant(@NotNull PurpleVariant variant) {
         return personalizedActionabilityFactory.create(VariantEvidence.findMatches(actionableEvents, variant));
     }
 
     @NotNull
     public ActionabilityMatch matchForCopyNumber(@NotNull PurpleCopyNumber copyNumber) {
-        return ImmutableActionabilityMatch.builder().build();
+        return personalizedActionabilityFactory.create(CopyNumberEvidence.findMatches(actionableEvents, copyNumber));
     }
 
     @NotNull
     public ActionabilityMatch matchForHomozygousDisruption(@NotNull LinxHomozygousDisruption homozygousDisruption) {
-        return ImmutableActionabilityMatch.builder().build();
+        return personalizedActionabilityFactory.create(HomozygousDisruptionEvidence.findMatches(actionableEvents, homozygousDisruption));
     }
 
     @NotNull
     public ActionabilityMatch matchForDisruption(@NotNull LinxDisruption disruption) {
-        return ImmutableActionabilityMatch.builder().build();
+        return personalizedActionabilityFactory.create(DisruptionEvidence.findMatches(actionableEvents, disruption));
     }
 
     @NotNull
     public ActionabilityMatch matchForFusion(@NotNull LinxFusion fusion) {
-        return ImmutableActionabilityMatch.builder().build();
+        return personalizedActionabilityFactory.create(FusionEvidence.findMatches(actionableEvents, fusion));
     }
 
     @NotNull
     public ActionabilityMatch matchForVirus(@NotNull VirusInterpreterEntry virus) {
-        return ImmutableActionabilityMatch.builder().build();
+        return personalizedActionabilityFactory.create(VirusEvidence.findMatches(actionableEvents, virus));
     }
 
 }

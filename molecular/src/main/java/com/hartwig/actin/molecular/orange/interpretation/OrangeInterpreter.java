@@ -27,6 +27,7 @@ public class OrangeInterpreter {
     @NotNull
     public MolecularRecord interpret(@NotNull OrangeRecord record) {
         DriverExtractor driverExtractor = DriverExtractor.create(geneFilter, evidenceDatabase);
+        CharacteristicsExtractor characteristicsExtractor = new CharacteristicsExtractor(evidenceDatabase);
 
         return ImmutableMolecularRecord.builder()
                 .patientId(toPatientId(record.sampleId()))
@@ -38,7 +39,7 @@ public class OrangeInterpreter {
                 .externalTrialSource(Strings.EMPTY)
                 .containsTumorCells(record.purple().containsTumorCells())
                 .hasSufficientQuality(record.purple().hasSufficientQuality())
-                .characteristics(CharacteristicsExtraction.extract(record))
+                .characteristics(characteristicsExtractor.extract(record))
                 .drivers(driverExtractor.extract(record))
                 .immunology(ImmunologyExtraction.extract(record))
                 .pharmaco(PharmacoExtraction.extract(record))

@@ -45,7 +45,7 @@ class FusionExtractor {
                         .isReportable(fusion.reported())
                         .event(fusionEvent)
                         .driverLikelihood(determineDriverLikelihood(fusion))
-                        .evidence(ActionableEvidenceFactory.create(evidenceDatabase.matchToActionableEvidence(fusion)))
+                        .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForFusion(fusion)))
                         .geneStart(fusion.geneStart())
                         .geneTranscriptStart(fusion.geneTranscriptStart())
                         .fusedExonUp(fusion.fusedExonUp())

@@ -42,11 +42,11 @@ class CopyNumberExtractor {
                     boolean isPartial = copyNumber.interpretation() == CopyNumberInterpretation.PARTIAL_GAIN;
                     amplifications.add(ImmutableAmplification.builder()
                             .from(GeneAlterationFactory.convertAlteration(copyNumber.gene(),
-                                    evidenceDatabase.lookupGeneAlteration(copyNumber)))
+                                    evidenceDatabase.geneAlterationForCopyNumber(copyNumber)))
                             .isReportable(copyNumber.reported())
                             .event(DriverEventFactory.copyNumberEvent(copyNumber))
                             .driverLikelihood(isPartial ? DriverLikelihood.MEDIUM : DriverLikelihood.HIGH)
-                            .evidence(ActionableEvidenceFactory.create(evidenceDatabase.matchToActionableEvidence(copyNumber)))
+                            .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(copyNumber)))
                             .minCopies(copyNumber.minCopies())
                             .maxCopies(copyNumber.maxCopies())
                             .isPartial(isPartial)
@@ -67,11 +67,11 @@ class CopyNumberExtractor {
                 if (geneFilter.include(copyNumber.gene())) {
                     losses.add(ImmutableLoss.builder()
                             .from(GeneAlterationFactory.convertAlteration(copyNumber.gene(),
-                                    evidenceDatabase.lookupGeneAlteration(copyNumber)))
+                                    evidenceDatabase.geneAlterationForCopyNumber(copyNumber)))
                             .isReportable(copyNumber.reported())
                             .event(DriverEventFactory.copyNumberEvent(copyNumber))
                             .driverLikelihood(DriverLikelihood.HIGH)
-                            .evidence(ActionableEvidenceFactory.create(evidenceDatabase.matchToActionableEvidence(copyNumber)))
+                            .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(copyNumber)))
                             .minCopies(copyNumber.minCopies())
                             .maxCopies(copyNumber.maxCopies())
                             .isPartial(copyNumber.interpretation() == CopyNumberInterpretation.PARTIAL_LOSS)

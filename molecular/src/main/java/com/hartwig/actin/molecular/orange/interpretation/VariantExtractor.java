@@ -49,11 +49,11 @@ class VariantExtractor {
         for (PurpleVariant variant : purple.variants()) {
             if (geneFilter.include(variant.gene())) {
                 variants.add(ImmutableVariant.builder()
-                        .from(GeneAlterationFactory.convertAlteration(variant.gene(), evidenceDatabase.lookupGeneAlteration(variant)))
+                        .from(GeneAlterationFactory.convertAlteration(variant.gene(), evidenceDatabase.geneAlterationForVariant(variant)))
                         .isReportable(variant.reported())
                         .event(DriverEventFactory.variantEvent(variant))
                         .driverLikelihood(determineDriverLikelihood(variant))
-                        .evidence(ActionableEvidenceFactory.create(evidenceDatabase.matchToActionableEvidence(variant)))
+                        .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(variant)))
                         .type(extractType(variant))
                         .variantCopyNumber(ExtractionUtil.keep3Digits(variant.alleleCopyNumber()))
                         .totalCopyNumber(ExtractionUtil.keep3Digits(variant.totalCopyNumber()))

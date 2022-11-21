@@ -44,11 +44,11 @@ class DisruptionExtractor {
             if (geneFilter.include(homozygousDisruption.gene())) {
                 homozygousDisruptions.add(ImmutableHomozygousDisruption.builder()
                         .from(GeneAlterationFactory.convertAlteration(homozygousDisruption.gene(),
-                                evidenceDatabase.lookupGeneAlteration(homozygousDisruption)))
+                                evidenceDatabase.geneAlterationForHomozygousDisruption(homozygousDisruption)))
                         .isReportable(true)
                         .event(DriverEventFactory.homozygousDisruptionEvent(homozygousDisruption))
                         .driverLikelihood(DriverLikelihood.HIGH)
-                        .evidence(ActionableEvidenceFactory.create(evidenceDatabase.matchToActionableEvidence(homozygousDisruption)))
+                        .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForHomozygousDisruption(homozygousDisruption)))
                         .build());
             } else {
                 LOGGER.warn("Filtered a reported homozygous disruption on gene {}", homozygousDisruption.gene());
@@ -71,11 +71,11 @@ class DisruptionExtractor {
                 if (include(disruption, losses)) {
                     disruptions.add(ImmutableDisruption.builder()
                             .from(GeneAlterationFactory.convertAlteration(disruption.gene(),
-                                    evidenceDatabase.lookupGeneAlteration(disruption)))
+                                    evidenceDatabase.geneAlterationForDisruption(disruption)))
                             .isReportable(disruption.reported())
                             .event(DriverEventFactory.disruptionEvent(disruption))
                             .driverLikelihood(DriverLikelihood.LOW)
-                            .evidence(ActionableEvidenceFactory.create(evidenceDatabase.matchToActionableEvidence(disruption)))
+                            .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForDisruption(disruption)))
                             .type(disruption.type())
                             .junctionCopyNumber(ExtractionUtil.keep3Digits(disruption.junctionCopyNumber()))
                             .undisruptedCopyNumber(ExtractionUtil.keep3Digits(disruption.undisruptedCopyNumber()))

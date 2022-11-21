@@ -28,43 +28,63 @@ public class EvidenceDatabase {
         this.actionableEventMatcher = actionableEventMatcher;
     }
 
+    @NotNull
+    public ActionabilityMatch evidenceForMicrosatelliteStatus(@Nullable Boolean isMicrosatelliteUnstable) {
+        return actionableEventMatcher.matchForMicrosatelliteStatus(isMicrosatelliteUnstable);
+    }
+
+    @NotNull
+    public ActionabilityMatch evidenceForHomologousRepairStatus(@Nullable Boolean isHomologousRepairDeficient) {
+        return actionableEventMatcher.matchForHomologousRepairStatus(isHomologousRepairDeficient);
+    }
+
+    @NotNull
+    public ActionabilityMatch evidenceForTumorMutationalBurdenStatus(@Nullable Boolean hasHighTumorMutationalBurden) {
+        return actionableEventMatcher.matchForHighTumorMutationalBurden(hasHighTumorMutationalBurden);
+    }
+
+    @NotNull
+    public ActionabilityMatch evidenceForTumorMutationalLoadStatus(@Nullable Boolean hasHighTumorMutationalLoad) {
+        return actionableEventMatcher.matchForHighTumorMutationalLoad(hasHighTumorMutationalLoad);
+    }
+
     @Nullable
-    public GeneAlteration lookupGeneAlteration(@NotNull PurpleVariant variant) {
+    public GeneAlteration geneAlterationForVariant(@NotNull PurpleVariant variant) {
         return knownEventResolver.resolveForVariant(variant);
     }
 
     @NotNull
-    public ActionabilityMatch matchToActionableEvidence(@NotNull PurpleVariant variant) {
+    public ActionabilityMatch evidenceForVariant(@NotNull PurpleVariant variant) {
         return actionableEventMatcher.matchForVariant(variant);
     }
 
     @Nullable
-    public GeneAlteration lookupGeneAlteration(@NotNull PurpleCopyNumber copyNumber) {
+    public GeneAlteration geneAlterationForCopyNumber(@NotNull PurpleCopyNumber copyNumber) {
         return knownEventResolver.resolveForCopyNumber(copyNumber);
     }
 
     @NotNull
-    public ActionabilityMatch matchToActionableEvidence(@NotNull PurpleCopyNumber copyNumber) {
+    public ActionabilityMatch evidenceForCopyNumber(@NotNull PurpleCopyNumber copyNumber) {
         return actionableEventMatcher.matchForCopyNumber(copyNumber);
     }
 
     @Nullable
-    public GeneAlteration lookupGeneAlteration(@NotNull LinxHomozygousDisruption homozygousDisruption) {
+    public GeneAlteration geneAlterationForHomozygousDisruption(@NotNull LinxHomozygousDisruption homozygousDisruption) {
         return knownEventResolver.resolveForHomozygousDisruption(homozygousDisruption);
     }
 
     @NotNull
-    public ActionabilityMatch matchToActionableEvidence(@NotNull LinxHomozygousDisruption homozygousDisruption) {
+    public ActionabilityMatch evidenceForHomozygousDisruption(@NotNull LinxHomozygousDisruption homozygousDisruption) {
         return actionableEventMatcher.matchForHomozygousDisruption(homozygousDisruption);
     }
 
     @Nullable
-    public GeneAlteration lookupGeneAlteration(@NotNull LinxDisruption disruption) {
+    public GeneAlteration geneAlterationForDisruption(@NotNull LinxDisruption disruption) {
         return knownEventResolver.resolveForDisruption(disruption);
     }
 
     @NotNull
-    public ActionabilityMatch matchToActionableEvidence(@NotNull LinxDisruption disruption) {
+    public ActionabilityMatch evidenceForDisruption(@NotNull LinxDisruption disruption) {
         return actionableEventMatcher.matchForDisruption(disruption);
     }
 
@@ -74,12 +94,12 @@ public class EvidenceDatabase {
     }
 
     @NotNull
-    public ActionabilityMatch matchToActionableEvidence(@NotNull LinxFusion fusion) {
+    public ActionabilityMatch evidenceForFusion(@NotNull LinxFusion fusion) {
         return actionableEventMatcher.matchForFusion(fusion);
     }
 
     @NotNull
-    public ActionabilityMatch matchToActionableEvidence(@NotNull VirusInterpreterEntry virus) {
+    public ActionabilityMatch evidenceForVirus(@NotNull VirusInterpreterEntry virus) {
         return actionableEventMatcher.matchForVirus(virus);
     }
 }
