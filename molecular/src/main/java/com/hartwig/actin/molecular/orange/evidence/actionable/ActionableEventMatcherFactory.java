@@ -51,24 +51,23 @@ public class ActionableEventMatcherFactory {
     public ActionableEventMatcher create(@NotNull ActionableEvents actionableEvents) {
         ActionableEvents filtered = filterForSources(actionableEvents, ACTIONABLE_EVENT_SOURCES);
 
-        ActionableEvents curated = ImmutableActionableEvents.builder()
-                .hotspots(curateHotspots(filtered.hotspots()))
-                .ranges(curateRanges(filtered.ranges()))
-                .genes(curateGenes(filtered.genes()))
-                .fusions(curateFusions(filtered.fusions()))
-                .characteristics(curateCharacteristics(filtered.characteristics()))
-                .hla(curateHla(filtered.hla()))
-                .build();
+        ActionableEvents curated = curateExternalTrials(filtered);
 
         PersonalizedActionabilityFactory personalizedActionabilityFactory =
                 PersonalizedActionabilityFactory.fromClinicalRecord(clinical, doidModel);
 
-        SignatureEvidence signatureEvidence = SignatureEvidence.create(curated);
-        VariantEvidence variantEvidence = VariantEvidence.create(curated);
-        CopyNumberEvidence copyNumberEvidence = CopyNumberEvidence.create(curated);
-        HomozygousDisruptionEvidence homozygousDisruptionEvidence = HomozygousDisruptionEvidence.create(curated);
-        FusionEvidence fusionEvidence = FusionEvidence.create(curated);
-        VirusEvidence virusEvidence = VirusEvidence.create(curated);
+        return fromActionableEvents(personalizedActionabilityFactory, curated);
+    }
+
+    @NotNull
+    private static ActionableEventMatcher fromActionableEvents(@NotNull PersonalizedActionabilityFactory personalizedActionabilityFactory,
+            @NotNull ActionableEvents actionableEvents) {
+        SignatureEvidence signatureEvidence = SignatureEvidence.create(actionableEvents);
+        VariantEvidence variantEvidence = VariantEvidence.create(actionableEvents);
+        CopyNumberEvidence copyNumberEvidence = CopyNumberEvidence.create(actionableEvents);
+        HomozygousDisruptionEvidence homozygousDisruptionEvidence = HomozygousDisruptionEvidence.create(actionableEvents);
+        FusionEvidence fusionEvidence = FusionEvidence.create(actionableEvents);
+        VirusEvidence virusEvidence = VirusEvidence.create(actionableEvents);
 
         return new ActionableEventMatcher(personalizedActionabilityFactory,
                 signatureEvidence,
@@ -80,8 +79,20 @@ public class ActionableEventMatcherFactory {
     }
 
     @NotNull
+    private ActionableEvents curateExternalTrials(@NotNull ActionableEvents actionableEvents) {
+        return ImmutableActionableEvents.builder()
+                .hotspots(curateHotspots(actionableEvents.hotspots()))
+                .ranges(curateRanges(actionableEvents.ranges()))
+                .genes(curateGenes(actionableEvents.genes()))
+                .fusions(curateFusions(actionableEvents.fusions()))
+                .characteristics(curateCharacteristics(actionableEvents.characteristics()))
+                .hla(curateHla(actionableEvents.hla()))
+                .build();
+    }
+
+    @NotNull
     private List<ActionableHotspot> curateHotspots(@NotNull List<ActionableHotspot> hotspots) {
-        return curateActionableEvents(hotspots,
+        return curateTreatments(hotspots,
                 (event, curatedTreatmentName) -> ImmutableActionableHotspot.builder()
                         .from(event)
                         .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
@@ -90,7 +101,7 @@ public class ActionableEventMatcherFactory {
 
     @NotNull
     private List<ActionableRange> curateRanges(@NotNull List<ActionableRange> ranges) {
-        return curateActionableEvents(ranges,
+        return curateTreatments(ranges,
                 (event, curatedTreatmentName) -> ImmutableActionableRange.builder()
                         .from(event)
                         .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
@@ -99,7 +110,7 @@ public class ActionableEventMatcherFactory {
 
     @NotNull
     private List<ActionableGene> curateGenes(@NotNull List<ActionableGene> genes) {
-        return curateActionableEvents(genes,
+        return curateTreatments(genes,
                 (event, curatedTreatmentName) -> ImmutableActionableGene.builder()
                         .from(event)
                         .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
@@ -108,7 +119,7 @@ public class ActionableEventMatcherFactory {
 
     @NotNull
     private List<ActionableFusion> curateFusions(@NotNull List<ActionableFusion> fusions) {
-        return curateActionableEvents(fusions,
+        return curateTreatments(fusions,
                 (event, curatedTreatmentName) -> ImmutableActionableFusion.builder()
                         .from(event)
                         .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
@@ -117,7 +128,7 @@ public class ActionableEventMatcherFactory {
 
     @NotNull
     private List<ActionableCharacteristic> curateCharacteristics(@NotNull List<ActionableCharacteristic> characteristics) {
-        return curateActionableEvents(characteristics,
+        return curateTreatments(characteristics,
                 (event, curatedTreatmentName) -> ImmutableActionableCharacteristic.builder()
                         .from(event)
                         .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
@@ -126,7 +137,7 @@ public class ActionableEventMatcherFactory {
 
     @NotNull
     private List<ActionableHLA> curateHla(@NotNull List<ActionableHLA> hlas) {
-        return curateActionableEvents(hlas,
+        return curateTreatments(hlas,
                 (event, curatedTreatmentName) -> ImmutableActionableHLA.builder()
                         .from(event)
                         .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
@@ -134,16 +145,7 @@ public class ActionableEventMatcherFactory {
     }
 
     @NotNull
-    private String determineCuratedTreatmentName(@NotNull ActionableEvent event) {
-        if (event.source() == ActionabilityConstants.EXTERNAL_TRIAL_SOURCE) {
-            return externalTrialMapper.map(event.treatment().name());
-        }
-
-        return event.treatment().name();
-    }
-
-    @NotNull
-    private <T extends ActionableEvent> List<T> curateActionableEvents(@NotNull List<T> events, @NotNull ActionableFactory<T> factory) {
+    private <T extends ActionableEvent> List<T> curateTreatments(@NotNull List<T> events, @NotNull ActionableFactory<T> factory) {
         List<T> curated = Lists.newArrayList();
         for (T event : events) {
             String curatedTreatmentName = determineCuratedTreatmentName(event);
@@ -154,6 +156,15 @@ public class ActionableEventMatcherFactory {
             }
         }
         return curated;
+    }
+
+    @NotNull
+    private String determineCuratedTreatmentName(@NotNull ActionableEvent event) {
+        if (event.source() == ActionabilityConstants.EXTERNAL_TRIAL_SOURCE) {
+            return externalTrialMapper.map(event.treatment().name());
+        }
+
+        return event.treatment().name();
     }
 
     @NotNull
