@@ -11,11 +11,11 @@ import com.hartwig.actin.util.TabularFile;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class ExternalTrialMappingTsv {
+public final class ExternalTrialMappingFile {
 
     private static final String FIELD_DELIMITER = "\t";
 
-    private ExternalTrialMappingTsv() {
+    private ExternalTrialMappingFile() {
     }
 
     @NotNull
@@ -33,6 +33,7 @@ public final class ExternalTrialMappingTsv {
     @NotNull
     private static ExternalTrialMapping fromLine(@NotNull String line, @NotNull Map<String, Integer> fields) {
         String[] values = line.split(FIELD_DELIMITER, -1);
+
         return ImmutableExternalTrialMapping.builder()
                 .externalTrial(values[fields.get("externalTrial")])
                 .actinTrial(values[fields.get("actinTrial")])

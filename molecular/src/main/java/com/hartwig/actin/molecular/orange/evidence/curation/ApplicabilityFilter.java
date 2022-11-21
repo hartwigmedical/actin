@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.orange.evidence.filter;
+package com.hartwig.actin.molecular.orange.evidence.curation;
 
 import java.util.Set;
 

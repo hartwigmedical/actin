@@ -13,7 +13,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.filter.GeneFilterFactory;
 import com.hartwig.actin.molecular.orange.curation.ExternalTrialMapping;
-import com.hartwig.actin.molecular.orange.curation.ExternalTrialMappingTsv;
+import com.hartwig.actin.molecular.orange.curation.ExternalTrialMappingFile;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabaseFactory;
@@ -81,7 +81,7 @@ public class OrangeInterpreterApplication {
         ActionableEvents actionableEvents = ActionableEventsLoader.readFromDir(config.serveDirectory(), RefGenomeVersion.V37);
 
         LOGGER.info("Loading ACTIN to external trial mapping TSV from {}", config.externalTrialMappingTsv());
-        List<ExternalTrialMapping> mappings = ExternalTrialMappingTsv.read(config.externalTrialMappingTsv());
+        List<ExternalTrialMapping> mappings = ExternalTrialMappingFile.read(config.externalTrialMappingTsv());
         LOGGER.info(" Loaded {} mappings", mappings.size());
 
         LOGGER.info("Loading clinical json from {}", config.clinicalJson());

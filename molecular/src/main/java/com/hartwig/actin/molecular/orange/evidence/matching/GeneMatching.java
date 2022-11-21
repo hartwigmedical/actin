@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.orange.evidence.matching;
 
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
-import com.hartwig.actin.molecular.orange.evidence.algo.MutationTypeMatcher;
 import com.hartwig.serve.datamodel.MutationType;
 import com.hartwig.serve.datamodel.gene.GeneAnnotation;
 
@@ -15,7 +14,7 @@ public final class GeneMatching {
     public static boolean isMatch(@NotNull GeneAnnotation geneAnnotation, @NotNull PurpleVariant variant) {
         boolean geneMatch = geneAnnotation.gene().equals(variant.gene());
         boolean isHighDriver = variant.driverLikelihood() >= 0.8;
-        boolean typeMatch = MutationTypeMatcher.matches(variant, MutationType.ANY);
+        boolean typeMatch = MutationTypeMatching.matches(variant, MutationType.ANY);
 
         return geneMatch && isHighDriver && typeMatch;
     }

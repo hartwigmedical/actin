@@ -12,7 +12,6 @@ public final class TestKnownEventResolverFactory {
 
     @NotNull
     public static KnownEventResolver createEmpty() {
-        return new KnownEventResolver(ImmutableKnownEvents.builder().build(),
-                Lists.newArrayList());
+        return new KnownEventResolver(ImmutableKnownEvents.builder().build(), Lists.newArrayList());
     }
 }

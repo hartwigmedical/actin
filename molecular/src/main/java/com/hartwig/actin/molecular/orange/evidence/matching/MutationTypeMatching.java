@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.orange.evidence.algo;
+package com.hartwig.actin.molecular.orange.evidence.matching;
 
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
@@ -9,11 +9,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-public final class MutationTypeMatcher {
+public final class MutationTypeMatching {
 
-    private static final Logger LOGGER = LogManager.getLogger(MutationTypeMatcher.class);
+    private static final Logger LOGGER = LogManager.getLogger(MutationTypeMatching.class);
 
-    private MutationTypeMatcher() {
+    private MutationTypeMatching() {
     }
 
     public static boolean matches(@NotNull PurpleVariant variant, @NotNull MutationType typeToMatch) {
