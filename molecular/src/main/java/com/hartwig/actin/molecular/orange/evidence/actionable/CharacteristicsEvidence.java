@@ -10,7 +10,7 @@ import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class CharacteristicsEvidence {
+class CharacteristicsEvidence {
 
     private static final TumorCharacteristicType MICROSATELLITE_UNSTABLE_TYPE = TumorCharacteristicType.MICROSATELLITE_UNSTABLE;
     private static final TumorCharacteristicType HOMOLOGOUS_REPAIR_DEFICIENT_TYPE =
@@ -18,45 +18,59 @@ public final class CharacteristicsEvidence {
     private static final TumorCharacteristicType HIGH_TUMOR_MUTATIONAL_BURDEN_TYPE = TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN;
     private static final TumorCharacteristicType HIGH_TUMOR_MUTATIONAL_LOAD_TYPE = TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD;
 
-    private CharacteristicsEvidence() {
+    @NotNull
+    private final List<ActionableCharacteristic> actionableCharacteristics;
+
+    @NotNull
+    public static CharacteristicsEvidence create(@NotNull ActionableEvents actionableEvents) {
+        List<ActionableCharacteristic> applicableCharacteristics = Lists.newArrayList();
+        for (ActionableCharacteristic actionableCharacteristic : actionableEvents.characteristics()) {
+            if (actionableCharacteristic.type() == MICROSATELLITE_UNSTABLE_TYPE
+                    || actionableCharacteristic.type() == HOMOLOGOUS_REPAIR_DEFICIENT_TYPE
+                    || actionableCharacteristic.type() == HIGH_TUMOR_MUTATIONAL_BURDEN_TYPE
+                    || actionableCharacteristic.type() == HIGH_TUMOR_MUTATIONAL_LOAD_TYPE) {
+                applicableCharacteristics.add(actionableCharacteristic);
+            }
+        }
+
+        return new CharacteristicsEvidence(applicableCharacteristics);
+    }
+
+    private CharacteristicsEvidence(@NotNull final List<ActionableCharacteristic> actionableCharacteristics) {
+        this.actionableCharacteristics = actionableCharacteristics;
     }
 
     @NotNull
-    public static List<ActionableEvent> findMicrosatelliteMatches(@NotNull ActionableEvents actionableEvents,
-            boolean isMicrosatelliteUnstable) {
-        return findMatches(actionableEvents, isMicrosatelliteUnstable, MICROSATELLITE_UNSTABLE_TYPE);
+    public List<ActionableEvent> findMicrosatelliteMatches(boolean isMicrosatelliteUnstable) {
+        return findMatches(isMicrosatelliteUnstable, MICROSATELLITE_UNSTABLE_TYPE);
     }
 
     @NotNull
-    public static List<ActionableEvent> findHomologousRepairMatches(@NotNull ActionableEvents actionableEvents,
-            boolean isHomologousRepairDeficient) {
-        return findMatches(actionableEvents, isHomologousRepairDeficient, HOMOLOGOUS_REPAIR_DEFICIENT_TYPE);
+    public List<ActionableEvent> findHomologousRepairMatches(boolean isHomologousRepairDeficient) {
+        return findMatches(isHomologousRepairDeficient, HOMOLOGOUS_REPAIR_DEFICIENT_TYPE);
     }
 
     @NotNull
-    public static List<ActionableEvent> findTumorBurdenMatches(@NotNull ActionableEvents actionableEvents,
-            boolean hasHighTumorMutationalBurden) {
-        return findMatches(actionableEvents, hasHighTumorMutationalBurden, HIGH_TUMOR_MUTATIONAL_BURDEN_TYPE);
+    public List<ActionableEvent> findTumorBurdenMatches(boolean hasHighTumorMutationalBurden) {
+        return findMatches(hasHighTumorMutationalBurden, HIGH_TUMOR_MUTATIONAL_BURDEN_TYPE);
     }
 
     @NotNull
-    public static List<ActionableEvent> findTumorLoadMatches(@NotNull ActionableEvents actionableEvents,
-            boolean hasHighTumorMutationalLoad) {
-        return findMatches(actionableEvents, hasHighTumorMutationalLoad, HIGH_TUMOR_MUTATIONAL_LOAD_TYPE);
+    public List<ActionableEvent> findTumorLoadMatches(boolean hasHighTumorMutationalLoad) {
+        return findMatches(hasHighTumorMutationalLoad, HIGH_TUMOR_MUTATIONAL_LOAD_TYPE);
     }
 
     @NotNull
-    private static List<ActionableEvent> findMatches(@NotNull ActionableEvents actionableEvents, boolean hasCharacteristic,
-            @NotNull TumorCharacteristicType typeToFind) {
+    private List<ActionableEvent> findMatches(boolean hasCharacteristic, @NotNull TumorCharacteristicType typeToFind) {
         if (!hasCharacteristic) {
             return Lists.newArrayList();
         }
 
         List<ActionableEvent> applicableEvents = Lists.newArrayList();
 
-        for (ActionableCharacteristic characteristic : actionableEvents.characteristics()) {
-            if (characteristic.type() == typeToFind) {
-                applicableEvents.add(characteristic);
+        for (ActionableCharacteristic actionableCharacteristic : actionableCharacteristics) {
+            if (actionableCharacteristic.type() == typeToFind) {
+                applicableEvents.add(actionableCharacteristic);
             }
         }
         return applicableEvents;

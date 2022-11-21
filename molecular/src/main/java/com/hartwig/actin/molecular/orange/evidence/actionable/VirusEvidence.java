@@ -6,19 +6,18 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
 import com.hartwig.serve.datamodel.ActionableEvent;
 import com.hartwig.serve.datamodel.ActionableEvents;
-import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class VirusEvidence {
+public class VirusEvidence {
 
-    private static final TumorCharacteristicType HPV_POSITIVE = TumorCharacteristicType.HPV_POSITIVE;
-
-    private VirusEvidence() {
+    @NotNull
+    public static VirusEvidence create(@NotNull ActionableEvents actionableEvents) {
+        return new VirusEvidence();
     }
 
     @NotNull
-    public static List<ActionableEvent> findMatches(@NotNull ActionableEvents actionableEvents, @NotNull VirusInterpreterEntry virus) {
+    public List<ActionableEvent> findMatches(@NotNull VirusInterpreterEntry virus) {
         List<ActionableEvent> applicableEvents = Lists.newArrayList();
 
         return applicableEvents;

@@ -18,53 +18,76 @@ import com.hartwig.serve.datamodel.range.ActionableRange;
 
 import org.jetbrains.annotations.NotNull;
 
-final class VariantEvidence {
+class VariantEvidence {
 
     private static final Set<GeneEvent> APPLICABLE_GENE_EVENTS =
             Sets.newHashSet(GeneEvent.ACTIVATION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION);
 
-    private VariantEvidence() {
+    @NotNull
+    private final List<ActionableHotspot> actionableHotspots;
+    @NotNull
+    private final List<ActionableRange> actionableRanges;
+    @NotNull
+    private final List<ActionableGene> actionableGenes;
+
+    @NotNull
+    public static VariantEvidence create(@NotNull ActionableEvents actionableEvents) {
+        List<ActionableGene> applicableActionableGenes = Lists.newArrayList();
+        for (ActionableGene actionableGene : actionableEvents.genes()) {
+            if (APPLICABLE_GENE_EVENTS.contains(actionableGene.event())) {
+                applicableActionableGenes.add(actionableGene);
+            }
+        }
+
+        return new VariantEvidence(actionableEvents.hotspots(), actionableEvents.ranges(), applicableActionableGenes);
+    }
+
+    private VariantEvidence(@NotNull final List<ActionableHotspot> actionableHotspots,
+            @NotNull final List<ActionableRange> actionableRanges, @NotNull final List<ActionableGene> actionableGenes) {
+        this.actionableHotspots = actionableHotspots;
+        this.actionableRanges = actionableRanges;
+        this.actionableGenes = actionableGenes;
     }
 
     @NotNull
-    public static List<ActionableEvent> findMatches(@NotNull ActionableEvents actionableEvents, @NotNull PurpleVariant variant) {
+    public List<ActionableEvent> findMatches(@NotNull PurpleVariant variant) {
         List<ActionableEvent> applicableEvents = Lists.newArrayList();
 
-        applicableEvents.addAll(hotspotMatches(actionableEvents.hotspots(), variant));
-        applicableEvents.addAll(rangeMatches(actionableEvents.ranges(), variant));
-        applicableEvents.addAll(geneMatches(actionableEvents.genes(), variant));
+        applicableEvents.addAll(hotspotMatches(variant));
+        applicableEvents.addAll(rangeMatches(variant));
+        applicableEvents.addAll(geneMatches(variant));
 
         return applicableEvents;
     }
 
     @NotNull
-    private static List<ActionableEvent> hotspotMatches(@NotNull List<ActionableHotspot> hotspots, @NotNull PurpleVariant variant) {
+    private List<ActionableEvent> hotspotMatches(@NotNull PurpleVariant variant) {
         List<ActionableEvent> matches = Lists.newArrayList();
-        for (ActionableHotspot hotspot : hotspots) {
-            if (HotspotMatching.isMatch(hotspot, variant)) {
-                matches.add(hotspot);
+        for (ActionableHotspot actionableHotspot : actionableHotspots) {
+            if (HotspotMatching.isMatch(actionableHotspot, variant)) {
+                matches.add(actionableHotspot);
             }
         }
         return matches;
     }
 
     @NotNull
-    private static List<ActionableEvent> rangeMatches(@NotNull List<ActionableRange> ranges, @NotNull PurpleVariant variant) {
+    private List<ActionableEvent> rangeMatches(@NotNull PurpleVariant variant) {
         List<ActionableEvent> matches = Lists.newArrayList();
-        for (ActionableRange range : ranges) {
-            if (RangeMatching.isMatch(range, variant)) {
-                matches.add(range);
+        for (ActionableRange actionableRange : actionableRanges) {
+            if (RangeMatching.isMatch(actionableRange, variant)) {
+                matches.add(actionableRange);
             }
         }
         return matches;
     }
 
     @NotNull
-    private static List<ActionableEvent> geneMatches(@NotNull List<ActionableGene> genes, @NotNull PurpleVariant variant) {
+    private List<ActionableEvent> geneMatches(@NotNull PurpleVariant variant) {
         List<ActionableEvent> matches = Lists.newArrayList();
-        for (ActionableGene gene : genes) {
-            if (APPLICABLE_GENE_EVENTS.contains(gene.event()) && GeneMatching.isMatch(gene, variant)) {
-                matches.add(gene);
+        for (ActionableGene actionableGene : actionableGenes) {
+            if (GeneMatching.isMatch(actionableGene, variant)) {
+                matches.add(actionableGene);
             }
         }
         return matches;

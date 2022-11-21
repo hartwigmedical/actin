@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.orange.evidence.actionable;
 
 import com.google.common.collect.Sets;
 import com.hartwig.actin.doid.TestDoidModelFactory;
+import com.hartwig.serve.datamodel.ActionableEvents;
 import com.hartwig.serve.datamodel.ImmutableActionableEvents;
 
 import org.jetbrains.annotations.NotNull;
@@ -15,6 +16,15 @@ public final class TestActionableEventMatcherFactory {
     public static ActionableEventMatcher createEmpty() {
         PersonalizedActionabilityFactory personalizedActionabilityFactory =
                 new PersonalizedActionabilityFactory(TestDoidModelFactory.createMinimalTestDoidModel(), Sets.newHashSet());
-        return new ActionableEventMatcher(ImmutableActionableEvents.builder().build(), personalizedActionabilityFactory);
+        ActionableEvents empty = ImmutableActionableEvents.builder().build();
+
+        return new ActionableEventMatcher(personalizedActionabilityFactory,
+                CharacteristicsEvidence.create(empty),
+                VariantEvidence.create(empty),
+                CopyNumberEvidence.create(empty),
+                HomozygousDisruptionEvidence.create(empty),
+                DisruptionEvidence.create(empty),
+                FusionEvidence.create(empty),
+                VirusEvidence.create(empty));
     }
 }

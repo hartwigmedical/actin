@@ -9,13 +9,15 @@ import com.hartwig.serve.datamodel.ActionableEvents;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class DisruptionEvidence {
+public class DisruptionEvidence {
 
-    private DisruptionEvidence() {
+    @NotNull
+    public static DisruptionEvidence create(@NotNull ActionableEvents actionableEvents) {
+        return new DisruptionEvidence();
     }
 
     @NotNull
-    public static List<ActionableEvent> findMatches(@NotNull ActionableEvents actionableEvents, @NotNull LinxDisruption disruption) {
+    public List<ActionableEvent> findMatches(@NotNull LinxDisruption disruption) {
         List<ActionableEvent> applicableEvents = Lists.newArrayList();
 
         return applicableEvents;

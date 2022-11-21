@@ -9,14 +9,15 @@ import com.hartwig.serve.datamodel.ActionableEvents;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class HomozygousDisruptionEvidence {
+public class HomozygousDisruptionEvidence {
 
-    private HomozygousDisruptionEvidence() {
+    @NotNull
+    public static HomozygousDisruptionEvidence create(@NotNull ActionableEvents actionableEvents) {
+        return new HomozygousDisruptionEvidence();
     }
 
     @NotNull
-    public static List<ActionableEvent> findMatches(@NotNull ActionableEvents actionableEvents,
-            @NotNull LinxHomozygousDisruption homozygousDisruption) {
+    public List<ActionableEvent> findMatches(@NotNull LinxHomozygousDisruption homozygousDisruption) {
         List<ActionableEvent> applicableEvents = Lists.newArrayList();
 
         return applicableEvents;

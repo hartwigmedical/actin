@@ -9,13 +9,15 @@ import com.hartwig.serve.datamodel.ActionableEvents;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class CopyNumberEvidence {
+public class CopyNumberEvidence {
 
-    private CopyNumberEvidence() {
+    @NotNull
+    public static CopyNumberEvidence create(@NotNull ActionableEvents actionableEvents) {
+        return new CopyNumberEvidence();
     }
 
     @NotNull
-    public static List<ActionableEvent> findMatches(@NotNull ActionableEvents actionableEvents, @NotNull PurpleCopyNumber copyNumber) {
+    public List<ActionableEvent> findMatches( @NotNull PurpleCopyNumber copyNumber) {
         List<ActionableEvent> applicableEvents = Lists.newArrayList();
 
         return applicableEvents;

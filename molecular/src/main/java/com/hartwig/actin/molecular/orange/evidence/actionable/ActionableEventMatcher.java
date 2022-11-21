@@ -6,76 +6,91 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruptio
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
-import com.hartwig.serve.datamodel.ActionableEvents;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class ActionableEventMatcher {
 
     @NotNull
-    private final ActionableEvents actionableEvents;
-    @NotNull
     private final PersonalizedActionabilityFactory personalizedActionabilityFactory;
+    @NotNull
+    private final CharacteristicsEvidence characteristicsEvidence;
+    @NotNull
+    private final VariantEvidence variantEvidence;
+    @NotNull
+    private final CopyNumberEvidence copyNumberEvidence;
+    @NotNull
+    private final HomozygousDisruptionEvidence homozygousDisruptionEvidence;
+    @NotNull
+    private final DisruptionEvidence disruptionEvidence;
+    @NotNull
+    private final FusionEvidence fusionEvidence;
+    @NotNull
+    private final VirusEvidence virusEvidence;
 
-    public ActionableEventMatcher(@NotNull final ActionableEvents actionableEvents,
-            @NotNull final PersonalizedActionabilityFactory personalizedActionabilityFactory) {
-        this.actionableEvents = actionableEvents;
+    public ActionableEventMatcher(@NotNull final PersonalizedActionabilityFactory personalizedActionabilityFactory,
+            @NotNull final CharacteristicsEvidence characteristicsEvidence, @NotNull final VariantEvidence variantEvidence,
+            @NotNull final CopyNumberEvidence copyNumberEvidence, @NotNull final HomozygousDisruptionEvidence homozygousDisruptionEvidence,
+            @NotNull final DisruptionEvidence disruptionEvidence, @NotNull final FusionEvidence fusionEvidence,
+            @NotNull final VirusEvidence virusEvidence) {
         this.personalizedActionabilityFactory = personalizedActionabilityFactory;
+        this.characteristicsEvidence = characteristicsEvidence;
+        this.variantEvidence = variantEvidence;
+        this.copyNumberEvidence = copyNumberEvidence;
+        this.homozygousDisruptionEvidence = homozygousDisruptionEvidence;
+        this.disruptionEvidence = disruptionEvidence;
+        this.fusionEvidence = fusionEvidence;
+        this.virusEvidence = virusEvidence;
     }
 
     @NotNull
-    public ActionabilityMatch matchForMicrosatelliteStatus(@Nullable Boolean isMicrosatelliteUnstable) {
-        return personalizedActionabilityFactory.create(CharacteristicsEvidence.findMicrosatelliteMatches(actionableEvents,
-                isMicrosatelliteUnstable));
+    public ActionabilityMatch matchForMicrosatelliteStatus(boolean isMicrosatelliteUnstable) {
+        return personalizedActionabilityFactory.create(characteristicsEvidence.findMicrosatelliteMatches(isMicrosatelliteUnstable));
     }
 
     @NotNull
-    public ActionabilityMatch matchForHomologousRepairStatus(@Nullable Boolean isHomologousRepairDeficient) {
-        return personalizedActionabilityFactory.create(CharacteristicsEvidence.findHomologousRepairMatches(actionableEvents,
-                isHomologousRepairDeficient));
+    public ActionabilityMatch matchForHomologousRepairStatus(boolean isHomologousRepairDeficient) {
+        return personalizedActionabilityFactory.create(characteristicsEvidence.findHomologousRepairMatches(isHomologousRepairDeficient));
     }
 
     @NotNull
-    public ActionabilityMatch matchForHighTumorMutationalBurden(@Nullable Boolean hasHighTumorMutationalBurden) {
-        return personalizedActionabilityFactory.create(CharacteristicsEvidence.findTumorBurdenMatches(actionableEvents,
-                hasHighTumorMutationalBurden));
+    public ActionabilityMatch matchForHighTumorMutationalBurden(boolean hasHighTumorMutationalBurden) {
+        return personalizedActionabilityFactory.create(characteristicsEvidence.findTumorBurdenMatches(hasHighTumorMutationalBurden));
     }
 
     @NotNull
-    public ActionabilityMatch matchForHighTumorMutationalLoad(@Nullable Boolean hasHighTumorMutationalLoad) {
-        return personalizedActionabilityFactory.create(CharacteristicsEvidence.findTumorLoadMatches(actionableEvents,
-                hasHighTumorMutationalLoad));
+    public ActionabilityMatch matchForHighTumorMutationalLoad(boolean hasHighTumorMutationalLoad) {
+        return personalizedActionabilityFactory.create(characteristicsEvidence.findTumorLoadMatches(hasHighTumorMutationalLoad));
     }
 
     @NotNull
     public ActionabilityMatch matchForVariant(@NotNull PurpleVariant variant) {
-        return personalizedActionabilityFactory.create(VariantEvidence.findMatches(actionableEvents, variant));
+        return personalizedActionabilityFactory.create(variantEvidence.findMatches(variant));
     }
 
     @NotNull
     public ActionabilityMatch matchForCopyNumber(@NotNull PurpleCopyNumber copyNumber) {
-        return personalizedActionabilityFactory.create(CopyNumberEvidence.findMatches(actionableEvents, copyNumber));
+        return personalizedActionabilityFactory.create(copyNumberEvidence.findMatches(copyNumber));
     }
 
     @NotNull
     public ActionabilityMatch matchForHomozygousDisruption(@NotNull LinxHomozygousDisruption homozygousDisruption) {
-        return personalizedActionabilityFactory.create(HomozygousDisruptionEvidence.findMatches(actionableEvents, homozygousDisruption));
+        return personalizedActionabilityFactory.create(homozygousDisruptionEvidence.findMatches(homozygousDisruption));
     }
 
     @NotNull
     public ActionabilityMatch matchForDisruption(@NotNull LinxDisruption disruption) {
-        return personalizedActionabilityFactory.create(DisruptionEvidence.findMatches(actionableEvents, disruption));
+        return personalizedActionabilityFactory.create(disruptionEvidence.findMatches(disruption));
     }
 
     @NotNull
     public ActionabilityMatch matchForFusion(@NotNull LinxFusion fusion) {
-        return personalizedActionabilityFactory.create(FusionEvidence.findMatches(actionableEvents, fusion));
+        return personalizedActionabilityFactory.create(fusionEvidence.findMatches(fusion));
     }
 
     @NotNull
     public ActionabilityMatch matchForVirus(@NotNull VirusInterpreterEntry virus) {
-        return personalizedActionabilityFactory.create(VirusEvidence.findMatches(actionableEvents, virus));
+        return personalizedActionabilityFactory.create(virusEvidence.findMatches(virus));
     }
 
 }

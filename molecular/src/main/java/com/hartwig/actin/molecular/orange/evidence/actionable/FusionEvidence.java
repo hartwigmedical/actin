@@ -9,13 +9,15 @@ import com.hartwig.serve.datamodel.ActionableEvents;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class FusionEvidence {
+public class FusionEvidence {
 
-    private FusionEvidence() {
+    @NotNull
+    public static FusionEvidence create(@NotNull ActionableEvents actionableEvents) {
+        return new FusionEvidence();
     }
 
     @NotNull
-    public static List<ActionableEvent> findMatches(@NotNull ActionableEvents actionableEvents, @NotNull LinxFusion fusion) {
+    public  List<ActionableEvent> findMatches( @NotNull LinxFusion fusion) {
         List<ActionableEvent> applicableEvents = Lists.newArrayList();
 
         return applicableEvents;

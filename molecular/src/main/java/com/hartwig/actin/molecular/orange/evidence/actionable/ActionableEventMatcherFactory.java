@@ -62,7 +62,23 @@ public class ActionableEventMatcherFactory {
 
         PersonalizedActionabilityFactory personalizedActionabilityFactory =
                 PersonalizedActionabilityFactory.fromClinicalRecord(clinical, doidModel);
-        return new ActionableEventMatcher(curated, personalizedActionabilityFactory);
+
+        CharacteristicsEvidence characteristicsEvidence = CharacteristicsEvidence.create(curated);
+        VariantEvidence variantEvidence = VariantEvidence.create(curated);
+        CopyNumberEvidence copyNumberEvidence = CopyNumberEvidence.create(curated);
+        HomozygousDisruptionEvidence homozygousDisruptionEvidence = HomozygousDisruptionEvidence.create(curated);
+        DisruptionEvidence disruptionEvidence = DisruptionEvidence.create(curated);
+        FusionEvidence fusionEvidence = FusionEvidence.create(curated);
+        VirusEvidence virusEvidence = VirusEvidence.create(curated);
+
+        return new ActionableEventMatcher(personalizedActionabilityFactory,
+                characteristicsEvidence,
+                variantEvidence,
+                copyNumberEvidence,
+                homozygousDisruptionEvidence,
+                disruptionEvidence,
+                fusionEvidence,
+                virusEvidence);
     }
 
     @NotNull
