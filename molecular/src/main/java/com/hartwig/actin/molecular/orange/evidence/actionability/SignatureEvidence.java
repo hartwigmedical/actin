@@ -66,13 +66,13 @@ class SignatureEvidence {
             return Lists.newArrayList();
         }
 
-        List<ActionableEvent> applicableEvents = Lists.newArrayList();
+        List<ActionableEvent> matches = Lists.newArrayList();
 
         for (ActionableCharacteristic actionableCharacteristic : signatureCharacteristics) {
             if (actionableCharacteristic.type() == typeToFind) {
-                applicableEvents.add(actionableCharacteristic);
+                matches.add(actionableCharacteristic);
             }
         }
-        return applicableEvents;
+        return matches;
     }
 }

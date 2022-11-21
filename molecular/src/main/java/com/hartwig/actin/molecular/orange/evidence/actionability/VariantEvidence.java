@@ -18,7 +18,7 @@ import com.hartwig.serve.datamodel.range.ActionableRange;
 
 import org.jetbrains.annotations.NotNull;
 
-class VariantEvidence {
+class VariantEvidence implements EvidenceMatcher<PurpleVariant> {
 
     private static final Set<GeneEvent> APPLICABLE_GENE_EVENTS =
             Sets.newHashSet(GeneEvent.ACTIVATION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION);
@@ -50,14 +50,15 @@ class VariantEvidence {
     }
 
     @NotNull
+    @Override
     public List<ActionableEvent> findMatches(@NotNull PurpleVariant variant) {
-        List<ActionableEvent> applicableEvents = Lists.newArrayList();
+        List<ActionableEvent> matches = Lists.newArrayList();
 
-        applicableEvents.addAll(hotspotMatches(variant));
-        applicableEvents.addAll(rangeMatches(variant));
-        applicableEvents.addAll(geneMatches(variant));
+        matches.addAll(hotspotMatches(variant));
+        matches.addAll(rangeMatches(variant));
+        matches.addAll(geneMatches(variant));
 
-        return applicableEvents;
+        return matches;
     }
 
     @NotNull

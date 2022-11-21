@@ -66,6 +66,7 @@ public class ActionableEventMatcherFactory {
         VariantEvidence variantEvidence = VariantEvidence.create(actionableEvents);
         CopyNumberEvidence copyNumberEvidence = CopyNumberEvidence.create(actionableEvents);
         HomozygousDisruptionEvidence homozygousDisruptionEvidence = HomozygousDisruptionEvidence.create(actionableEvents);
+        DisruptionEvidence disruptionEvidence = DisruptionEvidence.create(actionableEvents);
         FusionEvidence fusionEvidence = FusionEvidence.create(actionableEvents);
         VirusEvidence virusEvidence = VirusEvidence.create(actionableEvents);
 
@@ -74,6 +75,7 @@ public class ActionableEventMatcherFactory {
                 variantEvidence,
                 copyNumberEvidence,
                 homozygousDisruptionEvidence,
+                disruptionEvidence,
                 fusionEvidence,
                 virusEvidence);
     }

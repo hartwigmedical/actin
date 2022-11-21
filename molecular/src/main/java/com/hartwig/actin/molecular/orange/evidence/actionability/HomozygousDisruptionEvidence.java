@@ -11,7 +11,7 @@ import com.hartwig.serve.datamodel.gene.GeneEvent;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HomozygousDisruptionEvidence {
+class HomozygousDisruptionEvidence implements EvidenceMatcher<LinxHomozygousDisruption>{
 
     @NotNull
     private final List<ActionableGene> actionableLosses;
@@ -33,15 +33,16 @@ public class HomozygousDisruptionEvidence {
     }
 
     @NotNull
+    @Override
     public List<ActionableEvent> findMatches(@NotNull LinxHomozygousDisruption homozygousDisruption) {
-        List<ActionableEvent> applicableEvents = Lists.newArrayList();
+        List<ActionableEvent> matches = Lists.newArrayList();
 
         for (ActionableGene actionableGene : actionableLosses) {
             if (actionableGene.gene().equals(homozygousDisruption.gene())) {
-                applicableEvents.add(actionableGene);
+                matches.add(actionableGene);
             }
         }
 
-        return applicableEvents;
+        return matches;
     }
 }

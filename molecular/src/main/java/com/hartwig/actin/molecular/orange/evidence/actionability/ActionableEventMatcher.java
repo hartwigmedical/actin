@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange.evidence.actionability;
 
-import com.google.common.collect.Lists;
+import com.google.common.annotations.VisibleForTesting;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
@@ -23,19 +23,24 @@ public class ActionableEventMatcher {
     @NotNull
     private final HomozygousDisruptionEvidence homozygousDisruptionEvidence;
     @NotNull
+    private final DisruptionEvidence disruptionEvidence;
+    @NotNull
     private final FusionEvidence fusionEvidence;
     @NotNull
     private final VirusEvidence virusEvidence;
 
-    public ActionableEventMatcher(@NotNull final PersonalizedActionabilityFactory personalizedActionabilityFactory,
+    @VisibleForTesting
+    ActionableEventMatcher(@NotNull final PersonalizedActionabilityFactory personalizedActionabilityFactory,
             @NotNull final SignatureEvidence signatureEvidence, @NotNull final VariantEvidence variantEvidence,
             @NotNull final CopyNumberEvidence copyNumberEvidence, @NotNull final HomozygousDisruptionEvidence homozygousDisruptionEvidence,
-            @NotNull final FusionEvidence fusionEvidence, @NotNull final VirusEvidence virusEvidence) {
+            @NotNull final DisruptionEvidence disruptionEvidence, @NotNull final FusionEvidence fusionEvidence,
+            @NotNull final VirusEvidence virusEvidence) {
         this.personalizedActionabilityFactory = personalizedActionabilityFactory;
         this.signatureEvidence = signatureEvidence;
         this.variantEvidence = variantEvidence;
         this.copyNumberEvidence = copyNumberEvidence;
         this.homozygousDisruptionEvidence = homozygousDisruptionEvidence;
+        this.disruptionEvidence = disruptionEvidence;
         this.fusionEvidence = fusionEvidence;
         this.virusEvidence = virusEvidence;
     }
@@ -76,8 +81,8 @@ public class ActionableEventMatcher {
     }
 
     @NotNull
-    public ActionabilityMatch matchForDisruption(@SuppressWarnings("unused") @NotNull LinxDisruption disruption) {
-        return personalizedActionabilityFactory.create(Lists.newArrayList());
+    public ActionabilityMatch matchForDisruption(@NotNull LinxDisruption disruption) {
+        return personalizedActionabilityFactory.create(disruptionEvidence.findMatches(disruption));
     }
 
     @NotNull

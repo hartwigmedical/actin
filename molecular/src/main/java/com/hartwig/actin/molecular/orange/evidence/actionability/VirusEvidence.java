@@ -12,7 +12,7 @@ import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType;
 
 import org.jetbrains.annotations.NotNull;
 
-class VirusEvidence {
+class VirusEvidence implements EvidenceMatcher<VirusInterpreterEntry> {
 
     @NotNull
     private final List<ActionableCharacteristic> virusCharacteristics;
@@ -35,6 +35,7 @@ class VirusEvidence {
     }
 
     @NotNull
+    @Override
     public List<ActionableEvent> findMatches(@NotNull VirusInterpreterEntry virus) {
         VirusInterpretation interpretation = virus.interpretation();
         if (interpretation == null) {

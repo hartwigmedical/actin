@@ -14,7 +14,7 @@ import com.hartwig.serve.datamodel.gene.GeneEvent;
 
 import org.jetbrains.annotations.NotNull;
 
-public class FusionEvidence {
+class FusionEvidence implements EvidenceMatcher<LinxFusion> {
 
     @NotNull
     private final List<ActionableGene> actionablePromiscuous;
@@ -41,22 +41,23 @@ public class FusionEvidence {
     }
 
     @NotNull
+    @Override
     public List<ActionableEvent> findMatches(@NotNull LinxFusion fusion) {
-        List<ActionableEvent> applicableEvents = Lists.newArrayList();
+        List<ActionableEvent> matches = Lists.newArrayList();
 
         for (ActionableGene actionable : actionablePromiscuous) {
             if (isPromiscuousMatch(actionable, fusion)) {
-                applicableEvents.add(actionable);
+                matches.add(actionable);
             }
         }
 
         for (ActionableFusion actionable : actionableFusions) {
             if (FusionMatching.isGeneMatch(actionable, fusion) && FusionMatching.isExonMatch(actionable, fusion)) {
-                applicableEvents.add(actionable);
+                matches.add(actionable);
             }
         }
 
-        return applicableEvents;
+        return matches;
     }
 
     private static boolean isPromiscuousMatch(@NotNull ActionableGene actionable, @NotNull LinxFusion fusion) {

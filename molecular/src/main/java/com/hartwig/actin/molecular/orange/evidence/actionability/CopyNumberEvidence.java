@@ -11,7 +11,7 @@ import com.hartwig.serve.datamodel.gene.GeneEvent;
 
 import org.jetbrains.annotations.NotNull;
 
-public class CopyNumberEvidence {
+class CopyNumberEvidence implements EvidenceMatcher<PurpleCopyNumber> {
 
     @NotNull
     private final List<ActionableGene> actionableAmplifications;
@@ -40,6 +40,7 @@ public class CopyNumberEvidence {
     }
 
     @NotNull
+    @Override
     public List<ActionableEvent> findMatches(@NotNull PurpleCopyNumber copyNumber) {
         if (copyNumber.interpretation().isGain()) {
             return findGeneMatches(actionableAmplifications, copyNumber);
