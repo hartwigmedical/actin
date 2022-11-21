@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.doid.DoidModel;
+import com.hartwig.actin.molecular.orange.evidence.curation.ApplicabilityFiltering;
 import com.hartwig.actin.molecular.orange.evidence.curation.ExternalTrialMapper;
 import com.hartwig.serve.datamodel.ActionableEvent;
 import com.hartwig.serve.datamodel.ActionableEvents;
@@ -49,7 +50,7 @@ public class ActionableEventMatcherFactory {
 
     @NotNull
     public ActionableEventMatcher create(@NotNull ActionableEvents actionableEvents) {
-        ActionableEvents filtered = filterForSources(actionableEvents, ACTIONABLE_EVENT_SOURCES);
+        ActionableEvents filtered = filterForApplicability(filterForSources(actionableEvents, ACTIONABLE_EVENT_SOURCES));
 
         ActionableEvents curated = curateExternalTrials(filtered);
 
@@ -173,22 +174,65 @@ public class ActionableEventMatcherFactory {
     private static ActionableEvents filterForSources(@NotNull ActionableEvents actionableEvents,
             @NotNull Set<Knowledgebase> sourcesToInclude) {
         return ImmutableActionableEvents.builder()
-                .hotspots(filterActionable(actionableEvents.hotspots(), sourcesToInclude))
-                .ranges(filterActionable(actionableEvents.ranges(), sourcesToInclude))
-                .genes(filterActionable(actionableEvents.genes(), sourcesToInclude))
-                .fusions(filterActionable(actionableEvents.fusions(), sourcesToInclude))
-                .characteristics(filterActionable(actionableEvents.characteristics(), sourcesToInclude))
-                .hla(filterActionable(actionableEvents.hla(), sourcesToInclude))
+                .hotspots(filterActionableForSources(actionableEvents.hotspots(), sourcesToInclude))
+                .ranges(filterActionableForSources(actionableEvents.ranges(), sourcesToInclude))
+                .genes(filterActionableForSources(actionableEvents.genes(), sourcesToInclude))
+                .fusions(filterActionableForSources(actionableEvents.fusions(), sourcesToInclude))
+                .characteristics(filterActionableForSources(actionableEvents.characteristics(), sourcesToInclude))
+                .hla(filterActionableForSources(actionableEvents.hla(), sourcesToInclude))
                 .build();
     }
 
     @NotNull
-    private static <T extends ActionableEvent> Set<T> filterActionable(@NotNull List<T> actionables,
+    private static <T extends ActionableEvent> Set<T> filterActionableForSources(@NotNull List<T> actionables,
             @NotNull Set<Knowledgebase> sourcesToInclude) {
         Set<T> filtered = Sets.newHashSet();
         for (T actionable : actionables) {
             if (sourcesToInclude.contains(actionable.source())) {
                 filtered.add(actionable);
+            }
+        }
+        return filtered;
+    }
+
+    @NotNull
+    private static ActionableEvents filterForApplicability(@NotNull ActionableEvents actionableEvents) {
+        return ImmutableActionableEvents.builder()
+                .from(actionableEvents)
+                .hotspots(filterHotspotsForApplicability(actionableEvents.hotspots()))
+                .ranges(filterRangesForApplicability(actionableEvents.ranges()))
+                .genes(filterGenesForApplicability(actionableEvents.genes()))
+                .build();
+    }
+
+    @NotNull
+    private static List<ActionableHotspot> filterHotspotsForApplicability(@NotNull List<ActionableHotspot> hotspots) {
+        List<ActionableHotspot> filtered = Lists.newArrayList();
+        for (ActionableHotspot actionableHotspot : hotspots) {
+            if (ApplicabilityFiltering.isApplicable(actionableHotspot)) {
+                filtered.add(actionableHotspot);
+            }
+        }
+        return filtered;
+    }
+
+    @NotNull
+    private static List<ActionableRange> filterRangesForApplicability(@NotNull List<ActionableRange> ranges) {
+        List<ActionableRange> filtered = Lists.newArrayList();
+        for (ActionableRange actionableRange : ranges) {
+            if (ApplicabilityFiltering.isApplicable(actionableRange)) {
+                filtered.add(actionableRange);
+            }
+        }
+        return filtered;
+    }
+
+    @NotNull
+    private static List<ActionableGene> filterGenesForApplicability(@NotNull List<ActionableGene> genes) {
+        List<ActionableGene> filtered = Lists.newArrayList();
+        for (ActionableGene actionableGene : genes) {
+            if (ApplicabilityFiltering.isApplicable(actionableGene)) {
+                filtered.add(actionableGene);
             }
         }
         return filtered;

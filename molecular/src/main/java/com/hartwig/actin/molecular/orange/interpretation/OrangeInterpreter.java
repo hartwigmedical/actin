@@ -8,8 +8,8 @@ import com.hartwig.actin.molecular.datamodel.RefGenomeVersion;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
+import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 public class OrangeInterpreter {
@@ -35,8 +35,8 @@ public class OrangeInterpreter {
                 .type(ExperimentType.WGS)
                 .refGenomeVersion(RefGenomeVersion.V37)
                 .date(record.experimentDate())
-                .evidenceSource(Strings.EMPTY)
-                .externalTrialSource(Strings.EMPTY)
+                .evidenceSource(ActionabilityConstants.EVIDENCE_SOURCE.toString())
+                .externalTrialSource(ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.toString())
                 .containsTumorCells(record.purple().containsTumorCells())
                 .hasSufficientQuality(record.purple().hasSufficientQuality())
                 .characteristics(characteristicsExtractor.extract(record))

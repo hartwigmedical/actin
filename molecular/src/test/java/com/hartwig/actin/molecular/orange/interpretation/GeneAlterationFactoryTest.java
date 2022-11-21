@@ -7,7 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import com.hartwig.actin.molecular.datamodel.driver.GeneAlteration;
-import com.hartwig.actin.molecular.orange.evidence.TestEvidenceFactory;
+import com.hartwig.actin.molecular.orange.evidence.known.TestKnownFactory;
 import com.hartwig.serve.datamodel.common.GeneRole;
 import com.hartwig.serve.datamodel.common.ProteinEffect;
 
@@ -28,16 +28,16 @@ public class GeneAlterationFactoryTest {
         for (GeneRole geneRole : GeneRole.values()) {
             for (ProteinEffect proteinEffect : ProteinEffect.values()) {
                 assertNotNull(GeneAlterationFactory.convertAlteration(Strings.EMPTY,
-                        TestEvidenceFactory.createGeneAlteration(geneRole, proteinEffect)));
+                        TestKnownFactory.createGeneAlteration(geneRole, proteinEffect)));
             }
         }
 
         GeneAlteration withDrugAssociation = GeneAlterationFactory.convertAlteration(Strings.EMPTY,
-                TestEvidenceFactory.createGeneAlteration(GeneRole.UNKNOWN, ProteinEffect.UNKNOWN, true));
+                TestKnownFactory.createGeneAlteration(GeneRole.UNKNOWN, ProteinEffect.UNKNOWN, true));
         assertTrue(withDrugAssociation.isAssociatedWithDrugResistance());
 
         GeneAlteration withNoDrugAssociation = GeneAlterationFactory.convertAlteration(Strings.EMPTY,
-                TestEvidenceFactory.createGeneAlteration(GeneRole.UNKNOWN, ProteinEffect.UNKNOWN, false));
+                TestKnownFactory.createGeneAlteration(GeneRole.UNKNOWN, ProteinEffect.UNKNOWN, false));
         assertFalse(withNoDrugAssociation.isAssociatedWithDrugResistance());
     }
 }

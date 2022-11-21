@@ -1,11 +1,14 @@
 package com.hartwig.actin.molecular.orange.evidence;
 
-import com.hartwig.serve.datamodel.common.GeneAlteration;
-import com.hartwig.serve.datamodel.common.GeneRole;
-import com.hartwig.serve.datamodel.common.ProteinEffect;
 
+import com.hartwig.serve.datamodel.MutationType;
+import com.hartwig.serve.datamodel.gene.GeneAnnotation;
+import com.hartwig.serve.datamodel.gene.GeneEvent;
+import com.hartwig.serve.datamodel.hotspot.VariantHotspot;
+import com.hartwig.serve.datamodel.range.RangeAnnotation;
+
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public final class TestEvidenceFactory {
 
@@ -13,30 +16,85 @@ public final class TestEvidenceFactory {
     }
 
     @NotNull
-    public static GeneAlteration createGeneAlteration(@NotNull GeneRole geneRole, @NotNull ProteinEffect proteinEffect) {
-        return createGeneAlteration(geneRole, proteinEffect, null);
+    public static VariantHotspot createEmptyHotspot() {
+        return new VariantHotspot() {
+            @NotNull
+            @Override
+            public String gene() {
+                return Strings.EMPTY;
+            }
+
+            @NotNull
+            @Override
+            public String ref() {
+                return Strings.EMPTY;
+            }
+
+            @NotNull
+            @Override
+            public String alt() {
+                return Strings.EMPTY;
+            }
+
+            @NotNull
+            @Override
+            public String chromosome() {
+                return Strings.EMPTY;
+            }
+
+            @Override
+            public int position() {
+                return 0;
+            }
+        };
     }
 
     @NotNull
-    public static GeneAlteration createGeneAlteration(@NotNull GeneRole geneRole, @NotNull ProteinEffect proteinEffect,
-            @Nullable Boolean associatedWithDrugResistance) {
-        return new GeneAlteration() {
+    public static RangeAnnotation createEmptyRangeAnnotation() {
+        return new RangeAnnotation() {
             @NotNull
             @Override
-            public GeneRole geneRole() {
-                return geneRole;
+            public String gene() {
+                return Strings.EMPTY;
             }
 
             @NotNull
             @Override
-            public ProteinEffect proteinEffect() {
-                return proteinEffect;
+            public MutationType applicableMutationType() {
+                return MutationType.ANY;
             }
 
-            @Nullable
+            @NotNull
             @Override
-            public Boolean associatedWithDrugResistance() {
-                return associatedWithDrugResistance;
+            public String chromosome() {
+                return Strings.EMPTY;
+            }
+
+            @Override
+            public int start() {
+                return 0;
+            }
+
+            @Override
+            public int end() {
+                return 0;
+            }
+        };
+    }
+
+    @NotNull
+    public static GeneAnnotation createEmptyGeneAnnotation() {
+        return new GeneAnnotation() {
+            @NotNull
+            @Override
+            public String gene() {
+                return Strings.EMPTY;
+            }
+
+            @NotNull
+            @Override
+            public GeneEvent event() {
+                return GeneEvent.ANY_MUTATION;
             }
         };
     }
