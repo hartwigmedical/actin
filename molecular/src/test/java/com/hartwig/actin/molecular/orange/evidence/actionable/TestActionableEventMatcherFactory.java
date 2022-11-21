@@ -19,7 +19,7 @@ public final class TestActionableEventMatcherFactory {
         ActionableEvents empty = ImmutableActionableEvents.builder().build();
 
         return new ActionableEventMatcher(personalizedActionabilityFactory,
-                CharacteristicsEvidence.create(empty),
+                SignatureEvidence.create(empty),
                 VariantEvidence.create(empty),
                 CopyNumberEvidence.create(empty),
                 HomozygousDisruptionEvidence.create(empty),

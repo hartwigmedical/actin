@@ -28,7 +28,7 @@ class VariantEvidence {
     @NotNull
     private final List<ActionableRange> actionableRanges;
     @NotNull
-    private final List<ActionableGene> actionableGenes;
+    private final List<ActionableGene> applicableActionableGenes;
 
     @NotNull
     public static VariantEvidence create(@NotNull ActionableEvents actionableEvents) {
@@ -43,10 +43,10 @@ class VariantEvidence {
     }
 
     private VariantEvidence(@NotNull final List<ActionableHotspot> actionableHotspots,
-            @NotNull final List<ActionableRange> actionableRanges, @NotNull final List<ActionableGene> actionableGenes) {
+            @NotNull final List<ActionableRange> actionableRanges, @NotNull final List<ActionableGene> applicableActionableGenes) {
         this.actionableHotspots = actionableHotspots;
         this.actionableRanges = actionableRanges;
-        this.actionableGenes = actionableGenes;
+        this.applicableActionableGenes = applicableActionableGenes;
     }
 
     @NotNull
@@ -85,7 +85,7 @@ class VariantEvidence {
     @NotNull
     private List<ActionableEvent> geneMatches(@NotNull PurpleVariant variant) {
         List<ActionableEvent> matches = Lists.newArrayList();
-        for (ActionableGene actionableGene : actionableGenes) {
+        for (ActionableGene actionableGene : applicableActionableGenes) {
             if (GeneMatching.isMatch(actionableGene, variant)) {
                 matches.add(actionableGene);
             }

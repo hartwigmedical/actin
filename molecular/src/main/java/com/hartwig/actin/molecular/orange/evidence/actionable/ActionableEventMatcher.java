@@ -14,7 +14,7 @@ public class ActionableEventMatcher {
     @NotNull
     private final PersonalizedActionabilityFactory personalizedActionabilityFactory;
     @NotNull
-    private final CharacteristicsEvidence characteristicsEvidence;
+    private final SignatureEvidence signatureEvidence;
     @NotNull
     private final VariantEvidence variantEvidence;
     @NotNull
@@ -29,12 +29,12 @@ public class ActionableEventMatcher {
     private final VirusEvidence virusEvidence;
 
     public ActionableEventMatcher(@NotNull final PersonalizedActionabilityFactory personalizedActionabilityFactory,
-            @NotNull final CharacteristicsEvidence characteristicsEvidence, @NotNull final VariantEvidence variantEvidence,
+            @NotNull final SignatureEvidence signatureEvidence, @NotNull final VariantEvidence variantEvidence,
             @NotNull final CopyNumberEvidence copyNumberEvidence, @NotNull final HomozygousDisruptionEvidence homozygousDisruptionEvidence,
             @NotNull final DisruptionEvidence disruptionEvidence, @NotNull final FusionEvidence fusionEvidence,
             @NotNull final VirusEvidence virusEvidence) {
         this.personalizedActionabilityFactory = personalizedActionabilityFactory;
-        this.characteristicsEvidence = characteristicsEvidence;
+        this.signatureEvidence = signatureEvidence;
         this.variantEvidence = variantEvidence;
         this.copyNumberEvidence = copyNumberEvidence;
         this.homozygousDisruptionEvidence = homozygousDisruptionEvidence;
@@ -45,22 +45,22 @@ public class ActionableEventMatcher {
 
     @NotNull
     public ActionabilityMatch matchForMicrosatelliteStatus(boolean isMicrosatelliteUnstable) {
-        return personalizedActionabilityFactory.create(characteristicsEvidence.findMicrosatelliteMatches(isMicrosatelliteUnstable));
+        return personalizedActionabilityFactory.create(signatureEvidence.findMicrosatelliteMatches(isMicrosatelliteUnstable));
     }
 
     @NotNull
     public ActionabilityMatch matchForHomologousRepairStatus(boolean isHomologousRepairDeficient) {
-        return personalizedActionabilityFactory.create(characteristicsEvidence.findHomologousRepairMatches(isHomologousRepairDeficient));
+        return personalizedActionabilityFactory.create(signatureEvidence.findHomologousRepairMatches(isHomologousRepairDeficient));
     }
 
     @NotNull
     public ActionabilityMatch matchForHighTumorMutationalBurden(boolean hasHighTumorMutationalBurden) {
-        return personalizedActionabilityFactory.create(characteristicsEvidence.findTumorBurdenMatches(hasHighTumorMutationalBurden));
+        return personalizedActionabilityFactory.create(signatureEvidence.findTumorBurdenMatches(hasHighTumorMutationalBurden));
     }
 
     @NotNull
     public ActionabilityMatch matchForHighTumorMutationalLoad(boolean hasHighTumorMutationalLoad) {
-        return personalizedActionabilityFactory.create(characteristicsEvidence.findTumorLoadMatches(hasHighTumorMutationalLoad));
+        return personalizedActionabilityFactory.create(signatureEvidence.findTumorLoadMatches(hasHighTumorMutationalLoad));
     }
 
     @NotNull
@@ -92,5 +92,4 @@ public class ActionableEventMatcher {
     public ActionabilityMatch matchForVirus(@NotNull VirusInterpreterEntry virus) {
         return personalizedActionabilityFactory.create(virusEvidence.findMatches(virus));
     }
-
 }

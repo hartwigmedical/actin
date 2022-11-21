@@ -10,7 +10,7 @@ import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType;
 
 import org.jetbrains.annotations.NotNull;
 
-class CharacteristicsEvidence {
+class SignatureEvidence {
 
     private static final TumorCharacteristicType MICROSATELLITE_UNSTABLE_TYPE = TumorCharacteristicType.MICROSATELLITE_UNSTABLE;
     private static final TumorCharacteristicType HOMOLOGOUS_REPAIR_DEFICIENT_TYPE =
@@ -19,25 +19,25 @@ class CharacteristicsEvidence {
     private static final TumorCharacteristicType HIGH_TUMOR_MUTATIONAL_LOAD_TYPE = TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD;
 
     @NotNull
-    private final List<ActionableCharacteristic> actionableCharacteristics;
+    private final List<ActionableCharacteristic> signatureCharacteristics;
 
     @NotNull
-    public static CharacteristicsEvidence create(@NotNull ActionableEvents actionableEvents) {
-        List<ActionableCharacteristic> applicableCharacteristics = Lists.newArrayList();
+    public static SignatureEvidence create(@NotNull ActionableEvents actionableEvents) {
+        List<ActionableCharacteristic> signatureCharacteristics = Lists.newArrayList();
         for (ActionableCharacteristic actionableCharacteristic : actionableEvents.characteristics()) {
             if (actionableCharacteristic.type() == MICROSATELLITE_UNSTABLE_TYPE
                     || actionableCharacteristic.type() == HOMOLOGOUS_REPAIR_DEFICIENT_TYPE
                     || actionableCharacteristic.type() == HIGH_TUMOR_MUTATIONAL_BURDEN_TYPE
                     || actionableCharacteristic.type() == HIGH_TUMOR_MUTATIONAL_LOAD_TYPE) {
-                applicableCharacteristics.add(actionableCharacteristic);
+                signatureCharacteristics.add(actionableCharacteristic);
             }
         }
 
-        return new CharacteristicsEvidence(applicableCharacteristics);
+        return new SignatureEvidence(signatureCharacteristics);
     }
 
-    private CharacteristicsEvidence(@NotNull final List<ActionableCharacteristic> actionableCharacteristics) {
-        this.actionableCharacteristics = actionableCharacteristics;
+    private SignatureEvidence(@NotNull final List<ActionableCharacteristic> signatureCharacteristics) {
+        this.signatureCharacteristics = signatureCharacteristics;
     }
 
     @NotNull
@@ -68,7 +68,7 @@ class CharacteristicsEvidence {
 
         List<ActionableEvent> applicableEvents = Lists.newArrayList();
 
-        for (ActionableCharacteristic actionableCharacteristic : actionableCharacteristics) {
+        for (ActionableCharacteristic actionableCharacteristic : signatureCharacteristics) {
             if (actionableCharacteristic.type() == typeToFind) {
                 applicableEvents.add(actionableCharacteristic);
             }
