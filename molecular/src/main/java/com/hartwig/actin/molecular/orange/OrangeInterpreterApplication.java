@@ -5,8 +5,6 @@ import java.util.List;
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson;
-import com.hartwig.actin.doid.DoidModel;
-import com.hartwig.actin.doid.DoidModelFactory;
 import com.hartwig.actin.doid.datamodel.DoidEntry;
 import com.hartwig.actin.doid.serialization.DoidJson;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
@@ -80,7 +78,7 @@ public class OrangeInterpreterApplication {
         KnownEvents knownEvents = KnownEventsLoader.readFromDir(config.serveDirectory(), RefGenomeVersion.V37);
         ActionableEvents actionableEvents = ActionableEventsLoader.readFromDir(config.serveDirectory(), RefGenomeVersion.V37);
 
-        LOGGER.info("Loading ACTIN to external trial mapping TSV from {}", config.externalTrialMappingTsv());
+        LOGGER.info("Loading external trial to ACTIN mapping TSV from {}", config.externalTrialMappingTsv());
         List<ExternalTrialMapping> mappings = ExternalTrialMappingFile.read(config.externalTrialMappingTsv());
         LOGGER.info(" Loaded {} mappings", mappings.size());
 
@@ -91,10 +89,8 @@ public class OrangeInterpreterApplication {
         DoidEntry doidEntry = DoidJson.readDoidOwlEntry(config.doidJson());
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size());
 
-        DoidModel doidModel = DoidModelFactory.createFromDoidEntry(doidEntry);
-
         EvidenceDatabase evidenceDatabase =
-                EvidenceDatabaseFactory.create(knownEvents, knownGenes, actionableEvents, mappings, clinical, doidModel);
+                EvidenceDatabaseFactory.create(knownEvents, knownGenes, actionableEvents, mappings, clinical, doidEntry);
 
         LOGGER.info("Interpreting ORANGE record");
         MolecularRecord molecular = new OrangeInterpreter(geneFilter, evidenceDatabase).interpret(orange);

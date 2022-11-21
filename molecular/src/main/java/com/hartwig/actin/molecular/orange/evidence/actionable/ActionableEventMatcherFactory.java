@@ -7,7 +7,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.doid.DoidModel;
-import com.hartwig.actin.molecular.orange.evidence.curation.ExternalTrialMapping;
+import com.hartwig.actin.molecular.orange.evidence.curation.ExternalTrialMapper;
 import com.hartwig.serve.datamodel.ActionableEvent;
 import com.hartwig.serve.datamodel.ActionableEvents;
 import com.hartwig.serve.datamodel.ImmutableActionableEvents;
@@ -34,15 +34,15 @@ public class ActionableEventMatcherFactory {
             Sets.newHashSet(ActionabilityConstants.EVIDENCE_SOURCE, ActionabilityConstants.EXTERNAL_TRIAL_SOURCE);
 
     @NotNull
-    private final List<ExternalTrialMapping> externalTrialMappings;
+    private final ExternalTrialMapper externalTrialMapper;
     @NotNull
     private final ClinicalRecord clinical;
     @NotNull
     private final DoidModel doidModel;
 
-    public ActionableEventMatcherFactory(@NotNull final List<ExternalTrialMapping> externalTrialMappings,
-            @NotNull final ClinicalRecord clinical, @NotNull final DoidModel doidModel) {
-        this.externalTrialMappings = externalTrialMappings;
+    public ActionableEventMatcherFactory(@NotNull final ExternalTrialMapper externalTrialMapper, @NotNull final ClinicalRecord clinical,
+            @NotNull final DoidModel doidModel) {
+        this.externalTrialMapper = externalTrialMapper;
         this.clinical = clinical;
         this.doidModel = doidModel;
     }
@@ -70,7 +70,8 @@ public class ActionableEventMatcherFactory {
         FusionEvidence fusionEvidence = FusionEvidence.create(curated);
         VirusEvidence virusEvidence = VirusEvidence.create(curated);
 
-        return new ActionableEventMatcher(personalizedActionabilityFactory, signatureEvidence,
+        return new ActionableEventMatcher(personalizedActionabilityFactory,
+                signatureEvidence,
                 variantEvidence,
                 copyNumberEvidence,
                 homozygousDisruptionEvidence,
@@ -135,12 +136,9 @@ public class ActionableEventMatcherFactory {
     @NotNull
     private String determineCuratedTreatmentName(@NotNull ActionableEvent event) {
         if (event.source() == ActionabilityConstants.EXTERNAL_TRIAL_SOURCE) {
-            for (ExternalTrialMapping externalTrialMapping : externalTrialMappings) {
-                if (externalTrialMapping.externalTrial().equals(event.treatment().name())) {
-                    return externalTrialMapping.actinTrial();
-                }
-            }
+            return externalTrialMapper.map(event.treatment().name());
         }
+
         return event.treatment().name();
     }
 
