@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.orange.curation;
+package com.hartwig.actin.molecular.orange.evidence.curation;
 
 import static org.junit.Assert.assertEquals;
 

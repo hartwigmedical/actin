@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.orange.curation;
+package com.hartwig.actin.molecular.orange.evidence.curation;
 
 import com.google.common.collect.Lists;
 
@@ -7,11 +7,6 @@ import org.jetbrains.annotations.NotNull;
 public final class ExternalTreatmentMapperTestFactory {
 
     private ExternalTreatmentMapperTestFactory() {
-    }
-
-    @NotNull
-    public static ExternalTrialMapper create() {
-        return new ExternalTrialMapper(Lists.newArrayList());
     }
 
     @NotNull

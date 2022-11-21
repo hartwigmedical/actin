@@ -7,7 +7,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.doid.DoidModel;
-import com.hartwig.actin.molecular.orange.curation.ExternalTrialMapping;
+import com.hartwig.actin.molecular.orange.evidence.curation.ExternalTrialMapping;
 import com.hartwig.serve.datamodel.ActionableEvent;
 import com.hartwig.serve.datamodel.ActionableEvents;
 import com.hartwig.serve.datamodel.ImmutableActionableEvents;

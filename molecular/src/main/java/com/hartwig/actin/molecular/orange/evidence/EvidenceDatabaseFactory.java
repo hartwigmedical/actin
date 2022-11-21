@@ -4,9 +4,9 @@ import java.util.List;
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.doid.DoidModel;
-import com.hartwig.actin.molecular.orange.curation.ExternalTrialMapping;
 import com.hartwig.actin.molecular.orange.evidence.actionable.ActionableEventMatcher;
 import com.hartwig.actin.molecular.orange.evidence.actionable.ActionableEventMatcherFactory;
+import com.hartwig.actin.molecular.orange.evidence.curation.ExternalTrialMapping;
 import com.hartwig.actin.molecular.orange.evidence.known.KnownEventResolver;
 import com.hartwig.actin.molecular.orange.evidence.known.KnownEventResolverFactory;
 import com.hartwig.actin.molecular.serve.KnownGene;
