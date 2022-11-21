@@ -22,7 +22,7 @@
     "isMicrosatelliteUnstable": false,
     "microsatelliteEvidence": null,
     "isHomologousRepairDeficient": true,
-    "homologousRepairDeficiencyEvidence": null,
+    "homologousRepairEvidence": null,
     "tumorMutationalBurden": 4.32,
     "hasHighTumorMutationalBurden": true,
     "tumorMutationalBurdenEvidence": null,

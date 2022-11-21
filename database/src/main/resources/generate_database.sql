@@ -1,5 +1,8 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
+-- TODO Drop per 1st of dec 2022
+DROP TABLE IF EXISTS homologousRepairDeficiencyEvidence;
+
 -- CLINICAL
 DROP TABLE IF EXISTS patient;
 CREATE TABLE patient
@@ -273,8 +276,8 @@ CREATE TABLE microsatelliteEvidence
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS homologousRepairDeficiencyEvidence;
-CREATE TABLE homologousRepairDeficiencyEvidence
+DROP TABLE IF EXISTS homologousRepairEvidence;
+CREATE TABLE homologousRepairEvidence
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
     treatment varchar(500) NOT NULL,

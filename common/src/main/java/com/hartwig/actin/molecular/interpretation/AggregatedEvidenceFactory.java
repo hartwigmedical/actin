@@ -61,8 +61,8 @@ public final class AggregatedEvidenceFactory {
 
         if (hasCharacteristic(characteristics.isHomologousRepairDeficient())) {
             evidences.add(createAggregateEvidence(MolecularCharacteristicEvents.HOMOLOGOUS_REPAIR_DEFICIENT,
-                    characteristics.homologousRepairDeficiencyEvidence()));
-        } else if (hasEvidence(characteristics.homologousRepairDeficiencyEvidence())) {
+                    characteristics.homologousRepairEvidence()));
+        } else if (hasEvidence(characteristics.homologousRepairEvidence())) {
             LOGGER.warn("There is evidence for homologous repair deficiency without presence of signature");
         }
 

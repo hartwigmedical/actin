@@ -11,14 +11,19 @@ import com.hartwig.actin.molecular.orange.evidence.actionable.ActionabilityMatch
 import com.hartwig.serve.datamodel.ActionableEvent;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class ActionableEvidenceFactory {
 
     private ActionableEvidenceFactory() {
     }
 
-    @NotNull
-    public static ActionableEvidence create(@NotNull ActionabilityMatch actionabilityMatch) {
+    @Nullable
+    public static ActionableEvidence create(@Nullable ActionabilityMatch actionabilityMatch) {
+        if (actionabilityMatch == null) {
+            return null;
+        }
+
         ActionableEvidence onLabelEvidence = createOnLabelEvidence(actionabilityMatch.onLabelEvents());
         ActionableEvidence offLabelEvidence = createOffLabelEvidence(actionabilityMatch.offLabelEvents());
         ActionableEvidence externalTrialEvidence = createExternalTrialEvidence(actionabilityMatch.onLabelEvents());

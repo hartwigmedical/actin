@@ -163,8 +163,7 @@ public class MolecularRecordJson {
                     .isMicrosatelliteUnstable(nullableBool(characteristics, "isMicrosatelliteUnstable"))
                     .microsatelliteEvidence(toNullableActionableEvidence(nullableObject(characteristics, "microsatelliteEvidence")))
                     .isHomologousRepairDeficient(nullableBool(characteristics, "isHomologousRepairDeficient"))
-                    .homologousRepairDeficiencyEvidence(toNullableActionableEvidence(nullableObject(characteristics,
-                            "homologousRepairDeficiencyEvidence")))
+                    .homologousRepairEvidence(toNullableActionableEvidence(nullableObject(characteristics, "homologousRepairEvidence")))
                     .tumorMutationalBurden(nullableNumber(characteristics, "tumorMutationalBurden"))
                     .hasHighTumorMutationalBurden(nullableBool(characteristics, "hasHighTumorMutationalBurden"))
                     .tumorMutationalBurdenEvidence(toNullableActionableEvidence(nullableObject(characteristics,

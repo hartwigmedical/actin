@@ -104,7 +104,7 @@ public final class TestMolecularFactory {
         return ImmutableMolecularCharacteristics.builder()
                 .from(createProperTestCharacteristics())
                 .microsatelliteEvidence(TestActionableEvidenceFactory.createExhaustive())
-                .homologousRepairDeficiencyEvidence(TestActionableEvidenceFactory.createExhaustive())
+                .homologousRepairEvidence(TestActionableEvidenceFactory.createExhaustive())
                 .tumorMutationalBurdenEvidence(TestActionableEvidenceFactory.createExhaustive())
                 .tumorMutationalLoadEvidence(TestActionableEvidenceFactory.createExhaustive())
                 .build();

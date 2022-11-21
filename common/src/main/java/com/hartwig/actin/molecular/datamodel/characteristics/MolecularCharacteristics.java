@@ -29,7 +29,7 @@ public abstract class MolecularCharacteristics {
     public abstract Boolean isHomologousRepairDeficient();
 
     @Nullable
-    public abstract ActionableEvidence homologousRepairDeficiencyEvidence();
+    public abstract ActionableEvidence homologousRepairEvidence();
 
     @Nullable
     public abstract Double tumorMutationalBurden();

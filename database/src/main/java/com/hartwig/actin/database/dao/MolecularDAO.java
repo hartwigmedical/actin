@@ -7,7 +7,7 @@ import static com.hartwig.actin.database.Tables.DISRUPTIONEVIDENCE;
 import static com.hartwig.actin.database.Tables.FUSION;
 import static com.hartwig.actin.database.Tables.FUSIONEVIDENCE;
 import static com.hartwig.actin.database.Tables.HLAALLELE;
-import static com.hartwig.actin.database.Tables.HOMOLOGOUSREPAIRDEFICIENCYEVIDENCE;
+import static com.hartwig.actin.database.Tables.HOMOLOGOUSREPAIREVIDENCE;
 import static com.hartwig.actin.database.Tables.HOMOZYGOUSDISRUPTION;
 import static com.hartwig.actin.database.Tables.HOMOZYGOUSDISRUPTIONEVIDENCE;
 import static com.hartwig.actin.database.Tables.LOSS;
@@ -26,7 +26,17 @@ import static com.hartwig.actin.database.Tables.VIRUSEVIDENCE;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
+import com.hartwig.actin.database.tables.records.AmplificationevidenceRecord;
+import com.hartwig.actin.database.tables.records.DisruptionevidenceRecord;
+import com.hartwig.actin.database.tables.records.FusionevidenceRecord;
+import com.hartwig.actin.database.tables.records.HomologousrepairevidenceRecord;
+import com.hartwig.actin.database.tables.records.HomozygousdisruptionevidenceRecord;
+import com.hartwig.actin.database.tables.records.LossevidenceRecord;
+import com.hartwig.actin.database.tables.records.MicrosatelliteevidenceRecord;
+import com.hartwig.actin.database.tables.records.TumormutationalburdenevidenceRecord;
+import com.hartwig.actin.database.tables.records.TumormutationalloadevidenceRecord;
 import com.hartwig.actin.database.tables.records.VariantevidenceRecord;
+import com.hartwig.actin.database.tables.records.VirusevidenceRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.driver.Amplification;
@@ -45,6 +55,7 @@ import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Record1;
@@ -63,7 +74,7 @@ class MolecularDAO {
         String sampleId = record.sampleId();
 
         context.delete(MICROSATELLITEEVIDENCE).where(MICROSATELLITEEVIDENCE.SAMPLEID.eq(sampleId)).execute();
-        context.delete(HOMOLOGOUSREPAIRDEFICIENCYEVIDENCE).where(HOMOLOGOUSREPAIRDEFICIENCYEVIDENCE.SAMPLEID.eq(sampleId)).execute();
+        context.delete(HOMOLOGOUSREPAIREVIDENCE).where(HOMOLOGOUSREPAIREVIDENCE.SAMPLEID.eq(sampleId)).execute();
         context.delete(TUMORMUTATIONALBURDENEVIDENCE).where(TUMORMUTATIONALBURDENEVIDENCE.SAMPLEID.eq(sampleId)).execute();
         context.delete(TUMORMUTATIONALLOADEVIDENCE).where(TUMORMUTATIONALLOADEVIDENCE.SAMPLEID.eq(sampleId)).execute();
 
@@ -119,6 +130,7 @@ class MolecularDAO {
     }
 
     private void writeMolecularDetails(@NotNull MolecularRecord record) {
+        String sampleId = record.sampleId();
         PredictedTumorOrigin predictedTumorOrigin = record.characteristics().predictedTumorOrigin();
 
         context.insertInto(MOLECULAR,
@@ -142,7 +154,7 @@ class MolecularDAO {
                         MOLECULAR.TUMORMUTATIONALLOAD,
                         MOLECULAR.HASHIGHTUMORMUTATIONALLOAD)
                 .values(record.patientId(),
-                        record.sampleId(),
+                        sampleId,
                         record.type().toString(),
                         record.refGenomeVersion().toString(),
                         record.date(),
@@ -161,6 +173,71 @@ class MolecularDAO {
                         record.characteristics().tumorMutationalLoad(),
                         DataUtil.toByte(record.characteristics().hasHighTumorMutationalLoad()))
                 .execute();
+
+        writeMicrosatelliteEvidence(sampleId, record.characteristics().microsatelliteEvidence());
+        writeHomologousRepairEvidence(sampleId, record.characteristics().homologousRepairEvidence());
+        writeTumorMutationalBurdenEvidence(sampleId, record.characteristics().tumorMutationalBurdenEvidence());
+        writeTumorMutationalLoadEvidence(sampleId, record.characteristics().tumorMutationalLoadEvidence());
+    }
+
+    private void writeMicrosatelliteEvidence(@NotNull String sampleId, @Nullable ActionableEvidence evidence) {
+        if (evidence == null) {
+            return;
+        }
+
+        CharacteristicsEvidenceInserter<MicrosatelliteevidenceRecord> inserter = new CharacteristicsEvidenceInserter<>(context.insertInto(
+                MICROSATELLITEEVIDENCE,
+                MICROSATELLITEEVIDENCE.SAMPLEID,
+                MICROSATELLITEEVIDENCE.TREATMENT,
+                MICROSATELLITEEVIDENCE.TYPE));
+
+        writeCharacteristicsEvidence(inserter, sampleId, evidence);
+        inserter.execute();
+    }
+
+    private void writeHomologousRepairEvidence(@NotNull String sampleId, @Nullable ActionableEvidence evidence) {
+        if (evidence == null) {
+            return;
+        }
+
+        CharacteristicsEvidenceInserter<HomologousrepairevidenceRecord> inserter = new CharacteristicsEvidenceInserter<>(context.insertInto(
+                HOMOLOGOUSREPAIREVIDENCE,
+                HOMOLOGOUSREPAIREVIDENCE.SAMPLEID,
+                HOMOLOGOUSREPAIREVIDENCE.TREATMENT,
+                HOMOLOGOUSREPAIREVIDENCE.TYPE));
+
+        writeCharacteristicsEvidence(inserter, sampleId, evidence);
+        inserter.execute();
+    }
+
+    private void writeTumorMutationalBurdenEvidence(@NotNull String sampleId, @Nullable ActionableEvidence evidence) {
+        if (evidence == null) {
+            return;
+        }
+
+        CharacteristicsEvidenceInserter<TumormutationalburdenevidenceRecord> inserter =
+                new CharacteristicsEvidenceInserter<>(context.insertInto(TUMORMUTATIONALBURDENEVIDENCE,
+                        TUMORMUTATIONALBURDENEVIDENCE.SAMPLEID,
+                        TUMORMUTATIONALBURDENEVIDENCE.TREATMENT,
+                        TUMORMUTATIONALBURDENEVIDENCE.TYPE));
+
+        writeCharacteristicsEvidence(inserter, sampleId, evidence);
+        inserter.execute();
+    }
+
+    private void writeTumorMutationalLoadEvidence(@NotNull String sampleId, @Nullable ActionableEvidence evidence) {
+        if (evidence == null) {
+            return;
+        }
+
+        CharacteristicsEvidenceInserter<TumormutationalloadevidenceRecord> inserter =
+                new CharacteristicsEvidenceInserter<>(context.insertInto(TUMORMUTATIONALLOADEVIDENCE,
+                        TUMORMUTATIONALLOADEVIDENCE.SAMPLEID,
+                        TUMORMUTATIONALLOADEVIDENCE.TREATMENT,
+                        TUMORMUTATIONALLOADEVIDENCE.TYPE));
+
+        writeCharacteristicsEvidence(inserter, sampleId, evidence);
+        inserter.execute();
     }
 
     private void writeVariants(@NotNull String sampleId, @NotNull Set<Variant> variants) {
@@ -219,17 +296,6 @@ class MolecularDAO {
         }
     }
 
-    private void writeVariantEvidence(int variantId, @NotNull String sampleId, @NotNull ActionableEvidence evidence) {
-        EvidenceInserter<VariantevidenceRecord> inserter = new EvidenceInserter<>(context.insertInto(VARIANTEVIDENCE,
-                VARIANTEVIDENCE.VARIANTID,
-                VARIANTEVIDENCE.SAMPLEID,
-                VARIANTEVIDENCE.TREATMENT,
-                VARIANTEVIDENCE.TYPE));
-
-        writeEvidence(inserter, variantId, sampleId, evidence);
-        inserter.execute();
-    }
-
     @NotNull
     private static Set<String> toStrings(@NotNull Set<VariantEffect> effects) {
         Set<String> strings = Sets.newHashSet();
@@ -239,9 +305,20 @@ class MolecularDAO {
         return strings;
     }
 
+    private void writeVariantEvidence(int variantId, @NotNull String sampleId, @NotNull ActionableEvidence evidence) {
+        DriverEvidenceInserter<VariantevidenceRecord> inserter = new DriverEvidenceInserter<>(context.insertInto(VARIANTEVIDENCE,
+                VARIANTEVIDENCE.VARIANTID,
+                VARIANTEVIDENCE.SAMPLEID,
+                VARIANTEVIDENCE.TREATMENT,
+                VARIANTEVIDENCE.TYPE));
+
+        writeDriverEvidence(inserter, variantId, sampleId, evidence);
+        inserter.execute();
+    }
+
     private void writeAmplifications(@NotNull String sampleId, @NotNull Set<Amplification> amplifications) {
         for (Amplification amplification : amplifications) {
-            context.insertInto(AMPLIFICATION,
+            int amplificationId = context.insertInto(AMPLIFICATION,
                             AMPLIFICATION.SAMPLEID,
                             AMPLIFICATION.ISREPORTABLE,
                             AMPLIFICATION.EVENT,
@@ -264,13 +341,28 @@ class MolecularDAO {
                             amplification.minCopies(),
                             amplification.maxCopies(),
                             DataUtil.toByte(amplification.isPartial()))
-                    .execute();
+                    .returning(AMPLIFICATION.ID)
+                    .fetchOne()
+                    .getValue(AMPLIFICATION.ID);
+            writeAmplificationEvidence(amplificationId, sampleId, amplification.evidence());
         }
+    }
+
+    private void writeAmplificationEvidence(int amplificationId, @NotNull String sampleId, @NotNull ActionableEvidence evidence) {
+        DriverEvidenceInserter<AmplificationevidenceRecord> inserter =
+                new DriverEvidenceInserter<>(context.insertInto(AMPLIFICATIONEVIDENCE,
+                        AMPLIFICATIONEVIDENCE.AMPLIFICATIONID,
+                        AMPLIFICATIONEVIDENCE.SAMPLEID,
+                        AMPLIFICATIONEVIDENCE.TREATMENT,
+                        AMPLIFICATIONEVIDENCE.TYPE));
+
+        writeDriverEvidence(inserter, amplificationId, sampleId, evidence);
+        inserter.execute();
     }
 
     private void writeLosses(@NotNull String sampleId, @NotNull Set<Loss> losses) {
         for (Loss loss : losses) {
-            context.insertInto(LOSS,
+            int lossId = context.insertInto(LOSS,
                             LOSS.SAMPLEID,
                             LOSS.ISREPORTABLE,
                             LOSS.EVENT,
@@ -293,13 +385,27 @@ class MolecularDAO {
                             loss.minCopies(),
                             loss.maxCopies(),
                             DataUtil.toByte(loss.isPartial()))
-                    .execute();
+                    .returning(LOSS.ID)
+                    .fetchOne()
+                    .getValue(LOSS.ID);
+            writeLossEvidence(lossId, sampleId, loss.evidence());
         }
+    }
+
+    private void writeLossEvidence(int lossId, @NotNull String sampleId, @NotNull ActionableEvidence evidence) {
+        DriverEvidenceInserter<LossevidenceRecord> inserter = new DriverEvidenceInserter<>(context.insertInto(LOSSEVIDENCE,
+                LOSSEVIDENCE.LOSSID,
+                LOSSEVIDENCE.SAMPLEID,
+                LOSSEVIDENCE.TREATMENT,
+                LOSSEVIDENCE.TYPE));
+
+        writeDriverEvidence(inserter, lossId, sampleId, evidence);
+        inserter.execute();
     }
 
     private void writeHomozygousDisruptions(@NotNull String sampleId, @NotNull Set<HomozygousDisruption> homozygousDisruptions) {
         for (HomozygousDisruption homozygousDisruption : homozygousDisruptions) {
-            context.insertInto(HOMOZYGOUSDISRUPTION,
+            int homozygousDisruptionId = context.insertInto(HOMOZYGOUSDISRUPTION,
                             HOMOZYGOUSDISRUPTION.SAMPLEID,
                             HOMOZYGOUSDISRUPTION.ISREPORTABLE,
                             HOMOZYGOUSDISRUPTION.EVENT,
@@ -316,13 +422,29 @@ class MolecularDAO {
                             homozygousDisruption.geneRole().toString(),
                             homozygousDisruption.proteinEffect().toString(),
                             DataUtil.toByte(homozygousDisruption.isAssociatedWithDrugResistance()))
-                    .execute();
+                    .returning(HOMOZYGOUSDISRUPTION.ID)
+                    .fetchOne()
+                    .getValue(HOMOZYGOUSDISRUPTION.ID);
+            writeHomozygousDisruptionEvidence(homozygousDisruptionId, sampleId, homozygousDisruption.evidence());
         }
+    }
+
+    private void writeHomozygousDisruptionEvidence(int homozygousDisruptionId, @NotNull String sampleId,
+            @NotNull ActionableEvidence evidence) {
+        DriverEvidenceInserter<HomozygousdisruptionevidenceRecord> inserter = new DriverEvidenceInserter<>(context.insertInto(
+                HOMOZYGOUSDISRUPTIONEVIDENCE,
+                HOMOZYGOUSDISRUPTIONEVIDENCE.HOMOZYGOUSDISRUPTIONID,
+                HOMOZYGOUSDISRUPTIONEVIDENCE.SAMPLEID,
+                HOMOZYGOUSDISRUPTIONEVIDENCE.TREATMENT,
+                HOMOZYGOUSDISRUPTIONEVIDENCE.TYPE));
+
+        writeDriverEvidence(inserter, homozygousDisruptionId, sampleId, evidence);
+        inserter.execute();
     }
 
     private void writeDisruptions(@NotNull String sampleId, @NotNull Set<Disruption> disruptions) {
         for (Disruption disruption : disruptions) {
-            context.insertInto(DISRUPTION,
+            int disruptionId = context.insertInto(DISRUPTION,
                             DISRUPTION.SAMPLEID,
                             DISRUPTION.ISREPORTABLE,
                             DISRUPTION.EVENT,
@@ -351,13 +473,27 @@ class MolecularDAO {
                             disruption.regionType().toString(),
                             disruption.codingContext().toString(),
                             disruption.clusterGroup())
-                    .execute();
+                    .returning(DISRUPTION.ID)
+                    .fetchOne()
+                    .getValue(DISRUPTION.ID);
+            writeDisruptionEvidence(disruptionId, sampleId, disruption.evidence());
         }
+    }
+
+    private void writeDisruptionEvidence(int disruptionId, @NotNull String sampleId, @NotNull ActionableEvidence evidence) {
+        DriverEvidenceInserter<DisruptionevidenceRecord> inserter = new DriverEvidenceInserter<>(context.insertInto(DISRUPTIONEVIDENCE,
+                DISRUPTIONEVIDENCE.DISRUPTIONID,
+                DISRUPTIONEVIDENCE.SAMPLEID,
+                DISRUPTIONEVIDENCE.TREATMENT,
+                DISRUPTIONEVIDENCE.TYPE));
+
+        writeDriverEvidence(inserter, disruptionId, sampleId, evidence);
+        inserter.execute();
     }
 
     private void writeFusions(@NotNull String sampleId, @NotNull Set<Fusion> fusions) {
         for (Fusion fusion : fusions) {
-            context.insertInto(FUSION,
+            int fusionId = context.insertInto(FUSION,
                             FUSION.SAMPLEID,
                             FUSION.ISREPORTABLE,
                             FUSION.EVENT,
@@ -384,13 +520,27 @@ class MolecularDAO {
                             fusion.driverType().toString(),
                             fusion.proteinEffect().toString(),
                             DataUtil.toByte(fusion.isAssociatedWithDrugResistance()))
-                    .execute();
+                    .returning(FUSION.ID)
+                    .fetchOne()
+                    .getValue(FUSION.ID);
+            writeFusionEvidence(fusionId, sampleId, fusion.evidence());
         }
+    }
+
+    private void writeFusionEvidence(int fusionId, @NotNull String sampleId, @NotNull ActionableEvidence evidence) {
+        DriverEvidenceInserter<FusionevidenceRecord> inserter = new DriverEvidenceInserter<>(context.insertInto(FUSIONEVIDENCE,
+                FUSIONEVIDENCE.FUSIONID,
+                FUSIONEVIDENCE.SAMPLEID,
+                FUSIONEVIDENCE.TREATMENT,
+                FUSIONEVIDENCE.TYPE));
+
+        writeDriverEvidence(inserter, fusionId, sampleId, evidence);
+        inserter.execute();
     }
 
     private void writeViruses(@NotNull String sampleId, @NotNull Set<Virus> viruses) {
         for (Virus virus : viruses) {
-            context.insertInto(VIRUS,
+            int virusId = context.insertInto(VIRUS,
                             VIRUS.SAMPLEID,
                             VIRUS.ISREPORTABLE,
                             VIRUS.EVENT,
@@ -407,8 +557,22 @@ class MolecularDAO {
                             DataUtil.toByte(virus.isReliable()),
                             virus.interpretation(),
                             virus.integrations())
-                    .execute();
+                    .returning(VIRUS.ID)
+                    .fetchOne()
+                    .getValue(VIRUS.ID);
+            writeVirusEvidence(virusId, sampleId, virus.evidence());
         }
+    }
+
+    private void writeVirusEvidence(int virusId, @NotNull String sampleId, @NotNull ActionableEvidence evidence) {
+        DriverEvidenceInserter<VirusevidenceRecord> inserter = new DriverEvidenceInserter<>(context.insertInto(VIRUSEVIDENCE,
+                VIRUSEVIDENCE.VIRUSID,
+                VIRUSEVIDENCE.SAMPLEID,
+                VIRUSEVIDENCE.TREATMENT,
+                VIRUSEVIDENCE.TYPE));
+
+        writeDriverEvidence(inserter, virusId, sampleId, evidence);
+        inserter.execute();
     }
 
     private void writeImmunology(@NotNull String sampleId, @NotNull MolecularImmunology immunology) {
@@ -438,19 +602,37 @@ class MolecularDAO {
         }
     }
 
-    private static <T extends Record> void writeEvidence(@NotNull EvidenceInserter<T> inserter, int topicId, @NotNull String sampleId,
-            @NotNull ActionableEvidence evidence) {
-        writeTreatments(inserter, topicId, sampleId, evidence.approvedTreatments(), "Approved");
-        writeTreatments(inserter, topicId, sampleId, evidence.externalEligibleTrials(), "Trial");
-        writeTreatments(inserter, topicId, sampleId, evidence.onLabelExperimentalTreatments(), "On-label experimental");
-        writeTreatments(inserter, topicId, sampleId, evidence.offLabelExperimentalTreatments(), "Off-label experimental");
-        writeTreatments(inserter, topicId, sampleId, evidence.preClinicalTreatments(), "Pre-clinical");
-        writeTreatments(inserter, topicId, sampleId, evidence.knownResistantTreatments(), "Known resistant");
-        writeTreatments(inserter, topicId, sampleId, evidence.suspectResistantTreatments(), "Suspect resistant");
+    private static <T extends Record> void writeCharacteristicsEvidence(@NotNull CharacteristicsEvidenceInserter<T> inserter,
+            @NotNull String sampleId, @NotNull ActionableEvidence evidence) {
+        writeCharacteristicsTreatments(inserter, sampleId, evidence.approvedTreatments(), "Approved");
+        writeCharacteristicsTreatments(inserter, sampleId, evidence.externalEligibleTrials(), "Trial");
+        writeCharacteristicsTreatments(inserter, sampleId, evidence.onLabelExperimentalTreatments(), "On-label experimental");
+        writeCharacteristicsTreatments(inserter, sampleId, evidence.offLabelExperimentalTreatments(), "Off-label experimental");
+        writeCharacteristicsTreatments(inserter, sampleId, evidence.preClinicalTreatments(), "Pre-clinical");
+        writeCharacteristicsTreatments(inserter, sampleId, evidence.knownResistantTreatments(), "Known resistant");
+        writeCharacteristicsTreatments(inserter, sampleId, evidence.suspectResistantTreatments(), "Suspect resistant");
     }
 
-    private static <T extends Record> void writeTreatments(@NotNull EvidenceInserter<T> inserter, int topicId, @NotNull String sampleId,
-            @NotNull Set<String> treatments, @NotNull String type) {
+    private static <T extends Record> void writeCharacteristicsTreatments(@NotNull CharacteristicsEvidenceInserter<T> inserter,
+            @NotNull String sampleId, @NotNull Set<String> treatments, @NotNull String type) {
+        for (String treatment : treatments) {
+            inserter.write(sampleId, treatment, type);
+        }
+    }
+
+    private static <T extends Record> void writeDriverEvidence(@NotNull DriverEvidenceInserter<T> inserter, int topicId,
+            @NotNull String sampleId, @NotNull ActionableEvidence evidence) {
+        writeDriverTreatments(inserter, topicId, sampleId, evidence.approvedTreatments(), "Approved");
+        writeDriverTreatments(inserter, topicId, sampleId, evidence.externalEligibleTrials(), "Trial");
+        writeDriverTreatments(inserter, topicId, sampleId, evidence.onLabelExperimentalTreatments(), "On-label experimental");
+        writeDriverTreatments(inserter, topicId, sampleId, evidence.offLabelExperimentalTreatments(), "Off-label experimental");
+        writeDriverTreatments(inserter, topicId, sampleId, evidence.preClinicalTreatments(), "Pre-clinical");
+        writeDriverTreatments(inserter, topicId, sampleId, evidence.knownResistantTreatments(), "Known resistant");
+        writeDriverTreatments(inserter, topicId, sampleId, evidence.suspectResistantTreatments(), "Suspect resistant");
+    }
+
+    private static <T extends Record> void writeDriverTreatments(@NotNull DriverEvidenceInserter<T> inserter, int topicId,
+            @NotNull String sampleId, @NotNull Set<String> treatments, @NotNull String type) {
         for (String treatment : treatments) {
             inserter.write(topicId, sampleId, treatment, type);
         }

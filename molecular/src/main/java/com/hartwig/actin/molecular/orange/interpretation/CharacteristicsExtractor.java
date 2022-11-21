@@ -64,7 +64,7 @@ class CharacteristicsExtractor {
                 .microsatelliteEvidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForMicrosatelliteStatus(
                         isMicrosatelliteUnstable)))
                 .isHomologousRepairDeficient(isHomologousRepairDeficient)
-                .homologousRepairDeficiencyEvidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForHomologousRepairStatus(
+                .homologousRepairEvidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForHomologousRepairStatus(
                         isHomologousRepairDeficient)))
                 .tumorMutationalBurden(purple.tumorMutationalBurden())
                 .hasHighTumorMutationalBurden(hasHighTumorMutationalBurden)

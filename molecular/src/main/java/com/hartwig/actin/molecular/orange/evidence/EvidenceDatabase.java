@@ -28,23 +28,39 @@ public class EvidenceDatabase {
         this.actionableEventMatcher = actionableEventMatcher;
     }
 
-    @NotNull
+    @Nullable
     public ActionabilityMatch evidenceForMicrosatelliteStatus(@Nullable Boolean isMicrosatelliteUnstable) {
+        if (isMicrosatelliteUnstable == null) {
+            return null;
+        }
+
         return actionableEventMatcher.matchForMicrosatelliteStatus(isMicrosatelliteUnstable);
     }
 
-    @NotNull
+    @Nullable
     public ActionabilityMatch evidenceForHomologousRepairStatus(@Nullable Boolean isHomologousRepairDeficient) {
+        if (isHomologousRepairDeficient == null) {
+            return null;
+        }
+
         return actionableEventMatcher.matchForHomologousRepairStatus(isHomologousRepairDeficient);
     }
 
-    @NotNull
+    @Nullable
     public ActionabilityMatch evidenceForTumorMutationalBurdenStatus(@Nullable Boolean hasHighTumorMutationalBurden) {
+        if (hasHighTumorMutationalBurden == null) {
+            return null;
+        }
+
         return actionableEventMatcher.matchForHighTumorMutationalBurden(hasHighTumorMutationalBurden);
     }
 
-    @NotNull
+    @Nullable
     public ActionabilityMatch evidenceForTumorMutationalLoadStatus(@Nullable Boolean hasHighTumorMutationalLoad) {
+        if (hasHighTumorMutationalLoad == null) {
+            return null;
+        }
+
         return actionableEventMatcher.matchForHighTumorMutationalLoad(hasHighTumorMutationalLoad);
     }
 
