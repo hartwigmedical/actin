@@ -20,27 +20,38 @@ SELECT DISTINCT patientId, trialId, trialAcronym, cohortDescription
 CREATE OR REPLACE VIEW evidence
 AS (
 SELECT * FROM (
-	SELECT molecular.sampleId, treatment, type, IF(isMicrosatelliteUnstable,"MSI","MSS") AS event, NULL AS driverLikelihood, NULL AS isReportableDriver FROM microsatelliteEvidence INNER JOIN molecular ON microsatelliteEvidence.sampleId=molecular.sampleId
+	SELECT molecular.sampleId, treatment, type, IF(isMicrosatelliteUnstable,"MSI","MSS") AS event, NULL AS driverLikelihood, NULL AS isReportableDriver
+	FROM microsatelliteEvidence INNER JOIN molecular ON microsatelliteEvidence.molecularId = molecular.id
 		UNION
-	SELECT molecular.sampleId, treatment, type, IF(isHomologousRepairDeficient,"HRD","HRP") AS event, NULL AS driverLikelihood, NULL AS isReportableDriver FROM homologousRepairEvidence INNER JOIN molecular ON homologousRepairEvidence.sampleId=molecular.sampleId
+	SELECT molecular.sampleId, treatment, type, IF(isHomologousRepairDeficient,"HRD","HRP") AS event, NULL AS driverLikelihood, NULL AS isReportableDriver
+	FROM homologousRepairEvidence INNER JOIN molecular ON homologousRepairEvidence.molecularId = molecular.id
 		UNION
-	SELECT molecular.sampleId, treatment, type, concat("TMB ", round(tumorMutationalBurden,1)) AS event, NULL AS driverLikelihood, NULL AS isReportableDriver FROM tumorMutationalBurdenEvidence INNER JOIN molecular ON tumorMutationalBurdenEvidence.sampleId=molecular.sampleId
+	SELECT molecular.sampleId, treatment, type, concat("TMB ", round(tumorMutationalBurden,1)) AS event, NULL AS driverLikelihood, NULL AS isReportableDriver
+	FROM tumorMutationalBurdenEvidence INNER JOIN molecular ON tumorMutationalBurdenEvidence.molecularId = molecular.id
 		UNION
-	SELECT molecular.sampleId, treatment, type, concat("TML ", tumorMutationalLoad) AS event, NULL AS driverLikelihood, NULL AS isReportableDriver FROM tumorMutationalLoadEvidence INNER JOIN molecular ON tumorMutationalLoadEvidence.sampleId=molecular.sampleId
+	SELECT molecular.sampleId, treatment, type, concat("TML ", tumorMutationalLoad) AS event, NULL AS driverLikelihood, NULL AS isReportableDriver
+	FROM tumorMutationalLoadEvidence INNER JOIN molecular ON tumorMutationalLoadEvidence.molecularId = molecular.id
 		UNION
-	SELECT variant.sampleId, treatment, variantEvidence.type, event, driverLikelihood, isReportable AS isReportableDriver FROM variantEvidence INNER JOIN variant ON variantEvidence.variantId = variant.Id
+	SELECT variant.sampleId, treatment, variantEvidence.type, event, driverLikelihood, isReportable AS isReportableDriver
+	FROM variantEvidence INNER JOIN variant ON variantEvidence.variantId = variant.Id
 		UNION
-	SELECT amplification.sampleId, treatment, type, event, driverLikelihood, isReportable AS isReportableDriver FROM amplificationEvidence INNER JOIN amplification ON amplificationEvidence.amplificationId = amplification.Id
+	SELECT amplification.sampleId, treatment, type, event, driverLikelihood, isReportable AS isReportableDriver
+	FROM amplificationEvidence INNER JOIN amplification ON amplificationEvidence.amplificationId = amplification.Id
 		UNION
-	SELECT loss.sampleId, treatment, type, event, driverLikelihood, isReportable AS isReportableDriver FROM lossEvidence INNER JOIN loss ON lossEvidence.lossId = loss.Id
+	SELECT loss.sampleId, treatment, type, event, driverLikelihood, isReportable AS isReportableDriver
+	FROM lossEvidence INNER JOIN loss ON lossEvidence.lossId = loss.Id
 		UNION
-	SELECT homozygousDisruption.sampleId, treatment, type, event, driverLikelihood, isReportable AS isReportableDriver FROM homozygousDisruptionEvidence INNER JOIN homozygousDisruption ON homozygousDisruptionEvidence.homozygousDisruptionId = homozygousDisruption.Id
+	SELECT homozygousDisruption.sampleId, treatment, type, event, driverLikelihood, isReportable AS isReportableDriver
+	FROM homozygousDisruptionEvidence INNER JOIN homozygousDisruption ON homozygousDisruptionEvidence.homozygousDisruptionId = homozygousDisruption.Id
 		UNION
-	SELECT disruption.sampleId, treatment, disruptionEvidence.type, event, driverLikelihood, isReportable AS isReportableDriver FROM disruptionEvidence INNER JOIN disruption ON disruptionEvidence.disruptionId = disruption.Id
+	SELECT disruption.sampleId, treatment, disruptionEvidence.type, event, driverLikelihood, isReportable AS isReportableDriver
+	FROM disruptionEvidence INNER JOIN disruption ON disruptionEvidence.disruptionId = disruption.Id
 		UNION
-	SELECT fusion.sampleId, treatment, type, event, driverLikelihood, isReportable AS isReportableDriver FROM fusionEvidence INNER JOIN fusion ON fusionEvidence.fusionId = fusion.Id
+	SELECT fusion.sampleId, treatment, type, event, driverLikelihood, isReportable AS isReportableDriver
+	FROM fusionEvidence INNER JOIN fusion ON fusionEvidence.fusionId = fusion.Id
 		UNION
-	SELECT virus.sampleId, treatment, virusEvidence.type, event, driverLikelihood, isReportable AS isReportableDriver FROM virusEvidence INNER JOIN virus ON virusEvidence.virusId = virus.Id)
+	SELECT virus.sampleId, treatment, virusEvidence.type, event, driverLikelihood, isReportable AS isReportableDriver
+	FROM virusEvidence INNER JOIN virus ON virusEvidence.virusId = virus.Id)
     AS a
 );
 
