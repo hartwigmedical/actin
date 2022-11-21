@@ -32,19 +32,19 @@ public class ActionableEventMatcher {
 
     @NotNull
     public ActionabilityMatch matchForHomologousRepairStatus(@Nullable Boolean isHomologousRepairDeficient) {
-        return personalizedActionabilityFactory.create(CharacteristicsEvidence.findMicrosatelliteMatches(actionableEvents,
+        return personalizedActionabilityFactory.create(CharacteristicsEvidence.findHomologousRepairMatches(actionableEvents,
                 isHomologousRepairDeficient));
     }
 
     @NotNull
     public ActionabilityMatch matchForHighTumorMutationalBurden(@Nullable Boolean hasHighTumorMutationalBurden) {
-        return personalizedActionabilityFactory.create(CharacteristicsEvidence.findMicrosatelliteMatches(actionableEvents,
+        return personalizedActionabilityFactory.create(CharacteristicsEvidence.findTumorBurdenMatches(actionableEvents,
                 hasHighTumorMutationalBurden));
     }
 
     @NotNull
     public ActionabilityMatch matchForHighTumorMutationalLoad(@Nullable Boolean hasHighTumorMutationalLoad) {
-        return personalizedActionabilityFactory.create(CharacteristicsEvidence.findMicrosatelliteMatches(actionableEvents,
+        return personalizedActionabilityFactory.create(CharacteristicsEvidence.findTumorLoadMatches(actionableEvents,
                 hasHighTumorMutationalLoad));
     }
 

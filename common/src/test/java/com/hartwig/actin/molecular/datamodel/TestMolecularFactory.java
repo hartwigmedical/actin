@@ -23,6 +23,7 @@ import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory;
 import com.hartwig.actin.molecular.datamodel.driver.VariantType;
+import com.hartwig.actin.molecular.datamodel.driver.VirusType;
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory;
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableHlaAllele;
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableMolecularImmunology;
@@ -206,7 +207,7 @@ public final class TestMolecularFactory {
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .evidence(TestActionableEvidenceFactory.createExhaustive())
                         .name("Human papillomavirus type 16d")
-                        .interpretation("HPV16")
+                        .type(VirusType.HPV)
                         .integrations(3)
                         .build())
                 .build();

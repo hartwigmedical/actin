@@ -17,7 +17,7 @@ public abstract class VirusInterpreterEntry {
     public abstract VirusQCStatus qcStatus();
 
     @Nullable
-    public abstract String interpretation();
+    public abstract VirusInterpretation interpretation();
 
     public abstract int integrations();
 

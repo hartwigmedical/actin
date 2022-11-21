@@ -69,6 +69,7 @@ import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.VariantEffect;
 import com.hartwig.actin.molecular.datamodel.driver.VariantType;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
+import com.hartwig.actin.molecular.datamodel.driver.VirusType;
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidence;
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele;
@@ -375,8 +376,8 @@ public class MolecularRecordJson {
                 viruses.add(ImmutableVirus.builder()
                         .from(toDriver(virus))
                         .name(string(virus, "name"))
+                        .type(VirusType.valueOf(string(virus, "type")))
                         .isReliable(bool(virus, "isReliable"))
-                        .interpretation(nullableString(virus, "interpretation"))
                         .integrations(integer(virus, "integrations"))
                         .build());
             }

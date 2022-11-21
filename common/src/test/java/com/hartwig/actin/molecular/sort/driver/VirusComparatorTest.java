@@ -8,19 +8,19 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
+import com.hartwig.actin.molecular.datamodel.driver.VirusType;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 public class VirusComparatorTest {
 
     @Test
     public void canSortViruses() {
-        Virus virus1 = create(DriverLikelihood.HIGH, "HPV", "Human 16");
-        Virus virus2 = create(DriverLikelihood.LOW, "EPV", "Epstein 1");
-        Virus virus3 = create(DriverLikelihood.LOW, "HPV", "Human 1");
-        Virus virus4 = create(DriverLikelihood.LOW, "HPV", "Human 2");
+        Virus virus1 = create(DriverLikelihood.HIGH, "Human 16", VirusType.HPV);
+        Virus virus2 = create(DriverLikelihood.LOW, "Epstein 1", VirusType.EBV);
+        Virus virus3 = create(DriverLikelihood.LOW, "Human 1", VirusType.HPV);
+        Virus virus4 = create(DriverLikelihood.LOW, "Human 2", VirusType.HPV);
 
         List<Virus> viruses = Lists.newArrayList(virus2, virus4, virus1, virus3);
         viruses.sort(new VirusComparator());
@@ -32,7 +32,7 @@ public class VirusComparatorTest {
     }
 
     @NotNull
-    private static Virus create(@NotNull DriverLikelihood driverLikelihood, @Nullable String interpretation, @NotNull String name) {
-        return TestVirusFactory.builder().driverLikelihood(driverLikelihood).name(name).interpretation(interpretation).build();
+    private static Virus create(@NotNull DriverLikelihood driverLikelihood, @NotNull String name, @NotNull VirusType type) {
+        return TestVirusFactory.builder().driverLikelihood(driverLikelihood).name(name).type(type).build();
     }
 }

@@ -65,11 +65,13 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.VariantHotspot;
 import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterRecord;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusDriverLikelihood;
+import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterRecord;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusQCStatus;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class OrangeJson {
 
@@ -265,12 +267,17 @@ public final class OrangeJson {
                         .reported(true)
                         .name(string(virus, "name"))
                         .qcStatus(VirusQCStatus.valueOf(string(virus, "qcStatus")))
-                        .interpretation(nullableString(virus, "interpretation"))
+                        .interpretation(toVirusInterpretation(nullableString(virus, "interpretation")))
                         .integrations(integer(virus, "integrations"))
                         .driverLikelihood(VirusDriverLikelihood.valueOf(string(virus, "virusDriverLikelihoodType")))
                         .build());
             }
             return ImmutableVirusInterpreterRecord.builder().entries(entries).build();
+        }
+
+        @Nullable
+        private static VirusInterpretation toVirusInterpretation(@Nullable String interpretation) {
+            return interpretation != null ? VirusInterpretation.valueOf(interpretation) : null;
         }
 
         @NotNull

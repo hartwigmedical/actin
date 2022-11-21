@@ -9,6 +9,7 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
+import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.util.AminoAcid;
 
@@ -81,7 +82,7 @@ public final class DriverEventFactory {
 
     @NotNull
     public static String virusEvent(@NotNull VirusInterpreterEntry virus) {
-        String interpretation = virus.interpretation();
+        VirusInterpretation interpretation = virus.interpretation();
         return interpretation != null ? interpretation + " positive" : virus.name() + " positive";
     }
 }
