@@ -58,88 +58,74 @@ SELECT * FROM (
 CREATE OR REPLACE VIEW molecularDetails
 AS (
 SELECT * FROM (
-SELECT  x.sampleId,
-	    IF(driverType='HOTSPOT',"Mutation (Hotspot)",IF(driverType='BIALLELIC',"Mutation (Biallelic VUS)",IF(driverType='VUS',"Mutation (VUS)", driverType))) AS type,
-	    x.event, concat(round(variantCopyNumber,1),"/",round(totalCopyNumber,1), " copies") AS details, driverLikelihood, group_concat(DISTINCT a.trialAcronym) AS actinTrials, group_concat(DISTINCT e.trial) AS externalTrials,
-	    IF(group_concat(DISTINCT t.type) LIKE '%Approved%', "Approved", IF(group_concat(DISTINCT t.type) LIKE '%Experimental%', "Experimental", IF(group_concat(DISTINCT t.type) LIKE '%Pre-clinical%', "Pre-clinical", group_concat(DISTINCT t.type)))) AS treatmentEvidenceResponsive,
-		IF(group_concat(DISTINCT y.type) LIKE '%Known%', "Known", IF(group_concat(DISTINCT y.type) LIKE '%Suspect%', "Suspected", group_concat(DISTINCT y.type))) AS treatmentEvidenceResistance
+SELECT  x.sampleId, IF(isHotspot,"Mutation (Hotspot)",IF(isBiallelic,"Mutation (Biallelic VUS)", "Mutation (VUS)")) AS type, x.event, concat(round(variantCopyNumber,1),"/",round(totalCopyNumber,1), " copies") AS details, driverLikelihood,
+		group_concat(DISTINCT et.treatment) AS externalTrials,
+	    IF(group_concat(DISTINCT e.type) LIKE '%Approved%', "Approved", IF(group_concat(DISTINCT e.type) LIKE '%On-label%', "On-label experimental", IF(group_concat(DISTINCT e.type) LIKE '%Off-label%', "Off-label experimental", IF(group_concat(DISTINCT e.type) LIKE '%Pre-clinical%', "Pre-clinical", NULL)))) AS treatmentEvidenceResponsive,
+		IF(group_concat(DISTINCT e.type) LIKE '%Known%', "Known", IF(group_concat(DISTINCT e.type) LIKE '%Suspect%', "Suspected", NULL)) AS treatmentEvidenceResistance
     FROM variant x
-	LEFT JOIN (SELECT * FROM actinTrialEvidence WHERE isInclusionCriterion) AS a ON x.sampleId=a.sampleId AND x.event=a.event
-	LEFT JOIN (SELECT * FROM externalTrialEvidence) AS e ON x.sampleId=e.sampleId AND x.event=e.event
-	LEFT JOIN (SELECT * FROM treatmentEvidence WHERE isResponsive) AS t ON x.sampleId=t.sampleId AND x.event=t.event
-	LEFT JOIN (SELECT * FROM treatmentEvidence WHERE NOT isResponsive) AS y ON x.sampleId=y.sampleId AND x.event=y.event
+	LEFT JOIN variantEvidence e ON x.id=e.variantId
+    LEFT JOIN (SELECT * FROM variantEvidence WHERE type='Trial') et ON x.id=et.variantId
+    WHERE isReportable
 	GROUP BY 1,3
 UNION
-SELECT  x.sampleId,
-	    IF(isPartial, "Amplification (partial)", "Amplification") AS type,
-        x.event, concat(copies," copies") AS details, driverLikelihood, group_concat(DISTINCT a.trialAcronym) AS actinTrials, group_concat(DISTINCT e.trial) AS externalTrials,
-	    IF(group_concat(DISTINCT t.type) LIKE '%Approved%', "Approved", IF(group_concat(DISTINCT t.type) LIKE '%Experimental%', "Experimental", IF(group_concat(DISTINCT t.type) LIKE '%Pre-clinical%', "Pre-clinical", group_concat(DISTINCT t.type)))) AS treatmentEvidenceResponsive,
-		IF(group_concat(DISTINCT y.type) LIKE '%Known%', "Known", IF(group_concat(DISTINCT y.type) LIKE '%Suspect%', "Suspected", group_concat(DISTINCT y.type))) AS treatmentEvidenceResistance
+SELECT  x.sampleId, IF(isPartial, "Amplification (partial)", "Amplification") AS e2ype, x.event, concat(minCopies," copies") AS details, driverLikelihood,
+		group_concat(distinct et.treatment) AS externalTrials,
+	    IF(group_concat(DISTINCT e.type) LIKE '%Approved%', "Approved", IF(group_concat(DISTINCT e.type) LIKE '%On-label%', "On-label experimental", IF(group_concat(DISTINCT e.type) LIKE '%Off-label%', "Off-label experimental", IF(group_concat(DISTINCT e.type) LIKE '%Pre-clinical%', "Pre-clinical", NULL)))) AS treatmentEvidenceResponsive,
+		IF(group_concat(DISTINCT e.type) LIKE '%Known%', "Known", IF(group_concat(DISTINCT e.type) LIKE '%Suspect%', "Suspected", NULL)) AS treatmentEvidenceResistance
 	FROM amplification x
-	LEFT JOIN (SELECT * FROM actinTrialEvidence WHERE isInclusionCriterion) AS a ON x.sampleId=a.sampleId AND x.event=a.event
-	LEFT JOIN (SELECT * FROM externalTrialEvidence) AS e ON x.sampleId=e.sampleId AND x.event=e.event
-	LEFT JOIN (SELECT * FROM treatmentEvidence WHERE isResponsive) AS t ON x.sampleId=t.sampleId AND x.event=t.event
-	LEFT JOIN (SELECT * FROM treatmentEvidence WHERE NOT isResponsive) AS y ON x.sampleId=y.sampleId AND x.event=y.event
+	LEFT JOIN amplificationEvidence e ON x.id=e.amplificationId
+	LEFT JOIN (SELECT * FROM amplificationEvidence WHERE type='Trial') et ON x.id=et.amplificationId
+    WHERE isReportable
 	GROUP BY 1,3
 UNION
-SELECT  x.sampleId,
-	    IF(isPartial, "Loss (partial)", "Loss") AS type,
-        x.event, NULL AS details, driverLikelihood, group_concat(DISTINCT a.trialAcronym) AS actinTrials, group_concat(DISTINCT e.trial) AS externalTrials,
-	    IF(group_concat(DISTINCT t.type) LIKE '%Approved%', "Approved", IF(group_concat(DISTINCT t.type) LIKE '%Experimental%', "Experimental", IF(group_concat(DISTINCT t.type) LIKE '%Pre-clinical%', "Pre-clinical", group_concat(DISTINCT t.type)))) AS treatmentEvidenceResponsive,
-		IF(group_concat(DISTINCT y.type) LIKE '%Known%', "Known", IF(group_concat(DISTINCT y.type) LIKE '%Suspect%', "Suspected", group_concat(DISTINCT y.type))) AS treatmentEvidenceResistance
+SELECT  x.sampleId, IF(isPartial, "Loss (partial)", "Loss"), x.event, NULL AS details, driverLikelihood,
+		group_concat(DISTINCT et.treatment) AS externalTrials,
+	    IF(group_concat(DISTINCT e.type) LIKE '%Approved%', "Approved", IF(group_concat(DISTINCT e.type) LIKE '%On-label%', "On-label experimental", IF(group_concat(DISTINCT e.type) LIKE '%Off-label%', "Off-label experimental", IF(group_concat(DISTINCT e.type) LIKE '%Pre-clinical%', "Pre-clinical", NULL)))) AS treatmentEvidenceResponsive,
+		IF(group_concat(DISTINCT e.type) LIKE '%Known%', "Known", IF(group_concat(DISTINCT e.type) LIKE '%Suspect%', "Suspected", NULL)) AS treatmentEvidenceResistance
     FROM loss x
-	LEFT JOIN (SELECT * FROM actinTrialEvidence WHERE isInclusionCriterion) AS a ON x.sampleId=a.sampleId AND x.event=a.event
-	LEFT JOIN (SELECT * FROM externalTrialEvidence) AS e ON x.sampleId=e.sampleId AND x.event=e.event
-	LEFT JOIN (SELECT * FROM treatmentEvidence WHERE isResponsive) AS t ON x.sampleId=t.sampleId AND x.event=t.event
-    LEFT JOIN (SELECT * FROM treatmentEvidence WHERE NOT isResponsive) AS y ON x.sampleId=y.sampleId AND x.event=y.event
+	LEFT JOIN lossEvidence e ON x.id=e.lossId
+	LEFT JOIN (SELECT * FROM lossEvidence WHERE type='Trial') et ON x.id=et.lossId
+    WHERE isReportable
 	GROUP BY 1,3
 UNION
-SELECT  x.sampleId,
-	    "Homozygous disruption" AS type,
-	    x.event, NULL AS details, driverLikelihood, group_concat(DISTINCT a.trialAcronym) AS actinTrials, group_concat(DISTINCT e.trial) AS externalTrials,
-	    IF(group_concat(DISTINCT t.type) LIKE '%Approved%', "Approved", IF(group_concat(DISTINCT t.type) LIKE '%Experimental%', "Experimental", IF(group_concat(DISTINCT t.type) LIKE '%Pre-clinical%', "Pre-clinical", group_concat(DISTINCT t.type)))) AS treatmentEvidenceResponsive,
-		IF(group_concat(DISTINCT y.type) LIKE '%Known%', "Known", IF(group_concat(DISTINCT y.type) LIKE '%Suspect%', "Suspected", group_concat(DISTINCT y.type))) AS treatmentEvidenceResistance
+SELECT  x.sampleId, "Homozygous disruption" AS e2ype, x.event, NULL AS details, driverLikelihood,
+		group_concat(DISTINCT et.treatment) AS externalTrials,
+	    IF(group_concat(DISTINCT e.type) LIKE '%Approved%', "Approved", IF(group_concat(DISTINCT e.type) LIKE '%On-label%', "On-label experimental", IF(group_concat(DISTINCT e.type) LIKE '%Off-label%', "Off-label experimental", IF(group_concat(DISTINCT e.type) LIKE '%Pre-clinical%', "Pre-clinical", NULL)))) AS treatmentEvidenceResponsive,
+		IF(group_concat(DISTINCT e.type) LIKE '%Known%', "Known", IF(group_concat(DISTINCT e.type) LIKE '%Suspect%', "Suspected", NULL)) AS treatmentEvidenceResistance
 	FROM homozygousDisruption x
-	LEFT JOIN (SELECT * FROM actinTrialEvidence WHERE isInclusionCriterion) AS a ON x.sampleId=a.sampleId AND x.event=a.event
-	LEFT JOIN (SELECT * FROM externalTrialEvidence) AS e ON x.sampleId=e.sampleId AND x.event=e.event
-	LEFT JOIN (SELECT * FROM treatmentEvidence WHERE isResponsive) AS t ON x.sampleId=t.sampleId AND x.event=t.event
-    LEFT JOIN (SELECT * FROM treatmentEvidence WHERE NOT isResponsive) AS y ON x.sampleId=y.sampleId AND x.event=y.event
+	LEFT JOIN homozygousDisruptionEvidence e ON x.id=e.homozygousDisruptionId
+	LEFT JOIN (SELECT * FROM homozygousDisruptionEvidence WHERE type='Trial') et ON x.id=et.homozygousDisruptionId
+    WHERE isReportable
 	GROUP BY 1,3
 UNION
-SELECT  x.sampleId,
-        IF(driverType='PROMISCUOUS',"Promiscuous fusion",IF(driverType='KNOWN',"Known fusion", driverType)) AS type,
-        x.event, details, driverLikelihood, group_concat(DISTINCT a.trialAcronym) AS actinTrials, group_concat(DISTINCT e.trial) AS externalTrials,
-	    IF(group_concat(DISTINCT t.type) LIKE '%Approved%', "Approved", IF(group_concat(DISTINCT t.type) LIKE '%Experimental%', "Experimental", IF(group_concat(DISTINCT t.type) LIKE '%Pre-clinical%', "Pre-clinical", group_concat(DISTINCT t.type)))) AS treatmentEvidenceResponsive,
-		IF(group_concat(DISTINCT y.type) LIKE '%Known%', "Known", IF(group_concat(DISTINCT y.type) LIKE '%Suspect%', "Suspected", group_concat(DISTINCT y.type))) AS treatmentEvidenceResistance
+SELECT  x.sampleId, IF(driverType LIKE '%PROMISCUOUS%',"Promiscuous fusion",IF(driverType LIKE '%KNOWN%',"Known fusion", driverType)) AS type, x.event, concat("Exon ", fusedExonUp, " - Exon ", fusedExonDown) AS details, driverLikelihood,
+		group_concat(DISTINCT et.treatment) AS externalTrials,
+	    IF(group_concat(DISTINCT e.type) LIKE '%Approved%', "Approved", IF(group_concat(DISTINCT e.type) LIKE '%On-label%', "On-label experimental", IF(group_concat(DISTINCT e.type) LIKE '%Off-label%', "Off-label experimental", IF(group_concat(DISTINCT e.type) LIKE '%Pre-clinical%', "Pre-clinical", NULL)))) AS treatmentEvidenceResponsive,
+		IF(group_concat(DISTINCT e.type) LIKE '%Known%', "Known", IF(group_concat(DISTINCT e.type) LIKE '%Suspect%', "Suspected", NULL)) AS treatmentEvidenceResistance
 	FROM fusion x
-	LEFT JOIN (SELECT * FROM actinTrialEvidence WHERE isInclusionCriterion) AS a ON x.sampleId=a.sampleId AND x.event=a.event
-	LEFT JOIN (SELECT * FROM externalTrialEvidence) AS e ON x.sampleId=e.sampleId AND x.event=e.event
-	LEFT JOIN (SELECT * FROM treatmentEvidence WHERE isResponsive) AS t ON x.sampleId=t.sampleId AND x.event=t.event
-    LEFT JOIN (SELECT * FROM treatmentEvidence WHERE NOT isResponsive) AS y ON x.sampleId=y.sampleId AND x.event=y.event
+	LEFT JOIN fusionEvidence e ON x.id=e.fusionId
+	LEFT JOIN (SELECT * FROM fusionEvidence WHERE type='Trial') et ON x.id=et.fusionId
+    WHERE isReportable
 	GROUP BY 1,3
 UNION
-SELECT  x.sampleId,
-        "Non-homozygous disruption" AS type,
-        x.event, concat(round(junctionCopyNumber,1), " disr. / ", round(undisruptedCopyNumber,1), " undisr. copies"), driverLikelihood, group_concat(DISTINCT a.trialAcronym) AS actinTrials, group_concat(DISTINCT e.trial) AS externalTrials,
-	    IF(group_concat(DISTINCT t.type) LIKE '%Approved%', "Approved", IF(group_concat(DISTINCT t.type) LIKE '%Experimental%', "Experimental", IF(group_concat(DISTINCT t.type) LIKE '%Pre-clinical%', "Pre-clinical", group_concat(DISTINCT t.type)))) AS treatmentEvidenceResponsive,
-		IF(group_concat(DISTINCT y.type) LIKE '%Known%', "Known", IF(group_concat(DISTINCT y.type) LIKE '%Suspect%', "Suspected", group_concat(DISTINCT y.type))) AS treatmentEvidenceResistance
+SELECT  x.sampleId,"Disruption" AS type, x.event, concat(round(junctionCopyNumber,1), " disr. / ", round(undisruptedCopyNumber,1), " undisr. copies"), driverLikelihood,
+		group_concat(DISTINCT et.treatment) AS externalTrials,
+	    IF(group_concat(DISTINCT e.type) LIKE '%Approved%', "Approved", IF(group_concat(DISTINCT e.type) LIKE '%On-label%', "On-label experimental", IF(group_concat(DISTINCT e.type) LIKE '%Off-label%', "Off-label experimental", IF(group_concat(DISTINCT e.type) LIKE '%Pre-clinical%', "Pre-clinical", NULL)))) AS treatmentEvidenceResponsive,
+		IF(group_concat(DISTINCT e.type) LIKE '%Known%', "Known", IF(group_concat(DISTINCT e.type) LIKE '%Suspect%', "Suspected", NULL)) AS treatmentEvidenceResistance
 	FROM disruption x
-	LEFT JOIN (SELECT * FROM actinTrialEvidence WHERE isInclusionCriterion) AS a ON x.sampleId=a.sampleId AND x.event=a.event
-	LEFT JOIN (SELECT * FROM externalTrialEvidence) AS e ON x.sampleId=e.sampleId AND x.event=e.event
-	LEFT JOIN (SELECT * FROM treatmentEvidence WHERE isResponsive) AS t ON x.sampleId=t.sampleId AND x.event=t.event
-    LEFT JOIN (SELECT * FROM treatmentEvidence WHERE NOT isResponsive) AS y ON x.sampleId=y.sampleId AND x.event=y.event
+	LEFT JOIN disruptionEvidence e ON x.id=e.disruptionId
+	LEFT JOIN (SELECT * FROM disruptionEvidence WHERE type='Trial') et ON x.id=et.disruptionId
+    WHERE isReportable
 	GROUP BY 1,3
 UNION
-SELECT  x.sampleId,
-	    "Virus" AS type,
-        x.event, concat(name, ", ", integrations, " integrations"), driverLikelihood, group_concat(DISTINCT a.trialAcronym) AS actinTrials, group_concat(DISTINCT e.trial) AS externalTrials,
-	    IF(group_concat(DISTINCT t.type) LIKE '%Approved%', "Approved", IF(group_concat(DISTINCT t.type) LIKE '%Experimental%', "Experimental", IF(group_concat(DISTINCT t.type) LIKE '%Pre-clinical%', "Pre-clinical", group_concat(DISTINCT t.type)))) AS treatmentEvidenceResponsive,
-		IF(group_concat(DISTINCT y.type) LIKE '%Known%', "Known", IF(group_concat(DISTINCT y.type) LIKE '%Suspect%', "Suspected", group_concat(DISTINCT y.type))) AS treatmentEvidenceResistance
+SELECT  x.sampleId, "Virus" AS type, x.event, concat(name, ", ", integrations, " integrations") AS details, driverLikelihood,
+		group_concat(DISTINCT et.treatment) AS externalTrials,
+	    IF(group_concat(DISTINCT e.type) LIKE '%Approved%', "Approved", IF(group_concat(DISTINCT e.type) LIKE '%On-label%', "On-label experimental", IF(group_concat(DISTINCT e.type) LIKE '%Off-label%', "Off-label experimental", IF(group_concat(DISTINCT e.type) LIKE '%Pre-clinical%', "Pre-clinical", NULL)))) AS treatmentEvidenceResponsive,
+		IF(group_concat(DISTINCT e.type) LIKE '%Known%', "Known", IF(group_concat(DISTINCT e.type) LIKE '%Suspect%', "Suspected", NULL)) AS treatmentEvidenceResistance
 	FROM virus x
-	LEFT JOIN (SELECT * FROM actinTrialEvidence WHERE isInclusionCriterion) AS a ON x.sampleId=a.sampleId AND x.event=a.event
-	LEFT JOIN (SELECT * FROM externalTrialEvidence) AS e ON x.sampleId=e.sampleId AND x.event=e.event
-	LEFT JOIN (SELECT * FROM treatmentEvidence WHERE isResponsive) AS t ON x.sampleId=t.sampleId AND x.event=t.event
-    LEFT JOIN (SELECT * FROM treatmentEvidence WHERE NOT isResponsive) AS y ON x.sampleId=y.sampleId AND x.event=y.event
+	LEFT JOIN virusEvidence e ON x.id=e.virusId
+	LEFT JOIN (SELECT * FROM virusEvidence WHERE type='Trial') et ON x.id=et.virusId
+    WHERE isReportable
 	GROUP BY 1,3
 ORDER BY 1,2,3)
 AS a
