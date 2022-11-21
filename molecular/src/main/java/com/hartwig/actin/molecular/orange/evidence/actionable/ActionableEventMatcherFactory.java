@@ -5,6 +5,8 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
+import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.molecular.orange.curation.ExternalTrialMapping;
 import com.hartwig.serve.datamodel.ActionableEvent;
 import com.hartwig.serve.datamodel.ActionableEvents;
@@ -33,9 +35,16 @@ public class ActionableEventMatcherFactory {
 
     @NotNull
     private final List<ExternalTrialMapping> externalTrialMappings;
+    @NotNull
+    private final ClinicalRecord clinical;
+    @NotNull
+    private final DoidModel doidModel;
 
-    public ActionableEventMatcherFactory(@NotNull final List<ExternalTrialMapping> externalTrialMappings) {
+    public ActionableEventMatcherFactory(@NotNull final List<ExternalTrialMapping> externalTrialMappings,
+            @NotNull final ClinicalRecord clinical, @NotNull final DoidModel doidModel) {
         this.externalTrialMappings = externalTrialMappings;
+        this.clinical = clinical;
+        this.doidModel = doidModel;
     }
 
     @NotNull
@@ -51,7 +60,9 @@ public class ActionableEventMatcherFactory {
                 .hla(curateHla(filtered.hla()))
                 .build();
 
-        return new ActionableEventMatcher(curated);
+        PersonalizedActionabilityFactory personalizedActionabilityFactory =
+                PersonalizedActionabilityFactory.fromClinicalRecord(clinical, doidModel);
+        return new ActionableEventMatcher(curated, personalizedActionabilityFactory);
     }
 
     @NotNull

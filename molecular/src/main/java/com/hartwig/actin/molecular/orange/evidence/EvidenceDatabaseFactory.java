@@ -2,6 +2,8 @@ package com.hartwig.actin.molecular.orange.evidence;
 
 import java.util.List;
 
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
+import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.molecular.orange.curation.ExternalTrialMapping;
 import com.hartwig.actin.molecular.orange.evidence.actionable.ActionableEventMatcher;
 import com.hartwig.actin.molecular.orange.evidence.actionable.ActionableEventMatcherFactory;
@@ -20,10 +22,11 @@ public final class EvidenceDatabaseFactory {
 
     @NotNull
     public static EvidenceDatabase create(@NotNull KnownEvents knownEvents, @NotNull List<KnownGene> knownGenes,
-            @NotNull ActionableEvents actionableEvents, @NotNull List<ExternalTrialMapping> externalTrialMappings) {
+            @NotNull ActionableEvents actionableEvents, @NotNull List<ExternalTrialMapping> externalTrialMappings,
+            @NotNull ClinicalRecord clinical, @NotNull DoidModel doidModel) {
         KnownEventResolver knownEventResolver = KnownEventResolverFactory.create(knownEvents, knownGenes);
 
-        ActionableEventMatcherFactory factory = new ActionableEventMatcherFactory(externalTrialMappings);
+        ActionableEventMatcherFactory factory = new ActionableEventMatcherFactory(externalTrialMappings, clinical, doidModel);
         ActionableEventMatcher actionableEventMatcher = factory.create(actionableEvents);
 
         return new EvidenceDatabase(knownEventResolver, actionableEventMatcher);

@@ -5,6 +5,10 @@ import java.util.List;
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson;
+import com.hartwig.actin.doid.DoidModel;
+import com.hartwig.actin.doid.DoidModelFactory;
+import com.hartwig.actin.doid.datamodel.DoidEntry;
+import com.hartwig.actin.doid.serialization.DoidJson;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.filter.GeneFilterFactory;
@@ -83,7 +87,14 @@ public class OrangeInterpreterApplication {
         LOGGER.info("Loading clinical json from {}", config.clinicalJson());
         ClinicalRecord clinical = ClinicalRecordJson.read(config.clinicalJson());
 
-        EvidenceDatabase evidenceDatabase = EvidenceDatabaseFactory.create(knownEvents, knownGenes, actionableEvents, mappings);
+        LOGGER.info("Loading DOID tree from {}", config.doidJson());
+        DoidEntry doidEntry = DoidJson.readDoidOwlEntry(config.doidJson());
+        LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size());
+
+        DoidModel doidModel = DoidModelFactory.createFromDoidEntry(doidEntry);
+
+        EvidenceDatabase evidenceDatabase =
+                EvidenceDatabaseFactory.create(knownEvents, knownGenes, actionableEvents, mappings, clinical, doidModel);
 
         LOGGER.info("Interpreting ORANGE record");
         MolecularRecord molecular = new OrangeInterpreter(geneFilter, evidenceDatabase).interpret(orange);

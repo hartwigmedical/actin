@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.StringJoiner;
 
+import com.google.common.collect.Multimap;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidence;
@@ -46,16 +47,15 @@ public class MolecularPrinter {
         printer.print(" Tumor mutational load: " + formatInteger(record.characteristics().tumorMutationalLoad()));
 
         AggregatedEvidence evidence = AggregatedEvidenceFactory.create(record);
-        printer.print("Events with evidence for approved treatment: " + concat(evidence.approvedTreatmentsPerEvent().keySet()));
-        printer.print("Events associated with external trials: " + concat(evidence.externalEligibleTrialsPerEvent().keySet()));
-        printer.print("Events with evidence for on-label experimental treatment: " + concat(evidence.onLabelExperimentalTreatmentsPerEvent()
-                .keySet()));
+        printer.print(" Events with evidence for approved treatment: " + keys(evidence.approvedTreatmentsPerEvent()));
+        printer.print(" Events associated with external trials: " + keys(evidence.externalEligibleTrialsPerEvent()));
         printer.print(
-                "Events with evidence for off-label experimental treatment: " + concat(evidence.offLabelExperimentalTreatmentsPerEvent()
-                        .keySet()));
-        printer.print("Events with evidence for pre-clinical treatment: " + concat(evidence.preClinicalTreatmentsPerEvent().keySet()));
-        printer.print("Events with known resistance evidence: " + concat(evidence.knownResistantTreatmentsPerEvent().keySet()));
-        printer.print("Events with suspect resistance evidence: " + concat(evidence.suspectResistanceTreatmentsPerEvent().keySet()));
+                " Events with evidence for on-label experimental treatment: " + keys(evidence.onLabelExperimentalTreatmentsPerEvent()));
+        printer.print(
+                " Events with evidence for off-label experimental treatment: " + keys(evidence.offLabelExperimentalTreatmentsPerEvent()));
+        printer.print(" Events with evidence for pre-clinical treatment: " + keys(evidence.preClinicalTreatmentsPerEvent()));
+        printer.print(" Events with known resistance evidence: " + keys(evidence.knownResistantTreatmentsPerEvent()));
+        printer.print(" Events with suspect resistance evidence: " + keys(evidence.suspectResistanceTreatmentsPerEvent()));
     }
 
     @NotNull
@@ -94,6 +94,11 @@ public class MolecularPrinter {
         }
 
         return bool ? "Yes" : "No";
+    }
+
+    @NotNull
+    private static String keys(@NotNull Multimap<String, String> multimap) {
+        return concat(multimap.keySet());
     }
 
     @NotNull

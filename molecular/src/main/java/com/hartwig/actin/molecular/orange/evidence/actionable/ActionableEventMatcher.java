@@ -1,14 +1,11 @@
 package com.hartwig.actin.molecular.orange.evidence.actionable;
 
-import java.util.List;
-
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
-import com.hartwig.serve.datamodel.ActionableEvent;
 import com.hartwig.serve.datamodel.ActionableEvents;
 
 import org.jetbrains.annotations.NotNull;
@@ -17,14 +14,18 @@ public class ActionableEventMatcher {
 
     @NotNull
     private final ActionableEvents actionableEvents;
+    @NotNull
+    private final PersonalizedActionabilityFactory personalizedActionabilityFactory;
 
-    public ActionableEventMatcher(@NotNull final ActionableEvents actionableEvents) {
+    public ActionableEventMatcher(@NotNull final ActionableEvents actionableEvents,
+            @NotNull final PersonalizedActionabilityFactory personalizedActionabilityFactory) {
         this.actionableEvents = actionableEvents;
+        this.personalizedActionabilityFactory = personalizedActionabilityFactory;
     }
 
     @NotNull
     public ActionabilityMatch matchForVariant(@NotNull PurpleVariant variant) {
-        return createMatchResult(VariantEvidence.findMatches(actionableEvents, variant));
+        return personalizedActionabilityFactory.create(VariantEvidence.findMatches(actionableEvents, variant));
     }
 
     @NotNull
@@ -52,10 +53,4 @@ public class ActionableEventMatcher {
         return ImmutableActionabilityMatch.builder().build();
     }
 
-    @NotNull
-    private ActionabilityMatch createMatchResult(@NotNull List<ActionableEvent> matches) {
-        // TODO Split on-label and off-label
-
-        return ImmutableActionabilityMatch.builder().onLabelEvents(matches).build();
-    }
 }
