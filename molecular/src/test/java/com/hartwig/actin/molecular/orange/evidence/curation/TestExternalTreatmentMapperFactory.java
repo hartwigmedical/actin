@@ -4,9 +4,9 @@ import com.google.common.collect.Lists;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class ExternalTreatmentMapperTestFactory {
+public final class TestExternalTreatmentMapperFactory {
 
-    private ExternalTreatmentMapperTestFactory() {
+    private TestExternalTreatmentMapperFactory() {
     }
 
     @NotNull

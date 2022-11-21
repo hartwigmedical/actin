@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.orange.evidence.actionable;
+package com.hartwig.actin.molecular.orange.evidence.actionability;
 
 import java.util.List;
 import java.util.Set;

@@ -6,8 +6,8 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidence;
-import com.hartwig.actin.molecular.orange.evidence.actionable.ActionabilityConstants;
-import com.hartwig.actin.molecular.orange.evidence.actionable.ActionabilityMatch;
+import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants;
+import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityMatch;
 import com.hartwig.serve.datamodel.ActionableEvent;
 
 import org.jetbrains.annotations.NotNull;

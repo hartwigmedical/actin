@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.orange.evidence.actionable;
+package com.hartwig.actin.molecular.orange.evidence.actionability;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;

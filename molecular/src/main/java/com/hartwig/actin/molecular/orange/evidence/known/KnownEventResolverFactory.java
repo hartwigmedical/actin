@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
-import com.hartwig.actin.molecular.orange.evidence.actionable.ActionabilityConstants;
+import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants;
 import com.hartwig.actin.molecular.serve.KnownGene;
 import com.hartwig.serve.datamodel.ImmutableKnownEvents;
 import com.hartwig.serve.datamodel.Knowledgebase;

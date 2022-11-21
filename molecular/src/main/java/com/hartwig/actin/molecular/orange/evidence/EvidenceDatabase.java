@@ -6,8 +6,8 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruptio
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
-import com.hartwig.actin.molecular.orange.evidence.actionable.ActionabilityMatch;
-import com.hartwig.actin.molecular.orange.evidence.actionable.ActionableEventMatcher;
+import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityMatch;
+import com.hartwig.actin.molecular.orange.evidence.actionability.ActionableEventMatcher;
 import com.hartwig.actin.molecular.orange.evidence.known.KnownEventResolver;
 import com.hartwig.serve.datamodel.common.GeneAlteration;
 import com.hartwig.serve.datamodel.fusion.KnownFusion;

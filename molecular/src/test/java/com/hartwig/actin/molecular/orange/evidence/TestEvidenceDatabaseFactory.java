@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange.evidence;
 
-import com.hartwig.actin.molecular.orange.evidence.actionable.TestActionableEventMatcherFactory;
+import com.hartwig.actin.molecular.orange.evidence.actionability.TestActionableEventMatcherFactory;
 import com.hartwig.actin.molecular.orange.evidence.known.TestKnownEventResolverFactory;
 
 import org.jetbrains.annotations.NotNull;
