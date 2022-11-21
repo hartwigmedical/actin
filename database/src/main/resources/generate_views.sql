@@ -17,6 +17,40 @@ SELECT DISTINCT patientId, trialId, trialAcronym, cohortDescription
     WHERE ((isEligibleTrial AND NOT trialHasCohorts AND trialOpen) OR (isEligibleTrial AND isEligibleCohort AND cohortOpen AND NOT cohortBlacklist))
 );
 
+CREATE OR REPLACE VIEW drivers
+AS (
+SELECT * FROM (
+	SELECT sampleId, event, driverLikelihood
+    FROM variant
+    WHERE isReportable
+		UNION
+	SELECT sampleId, event, driverLikelihood
+    FROM amplification
+    WHERE isReportable
+		UNION
+	SELECT sampleId, event, driverLikelihood
+    FROM loss
+    WHERE isReportable
+		UNION
+	SELECT sampleId, event, driverLikelihood
+    FROM homozygousDisruption
+    WHERE isReportable
+		UNION
+	SELECT sampleId, event, driverLikelihood
+    FROM disruption
+    WHERE isReportable
+		UNION
+	SELECT sampleId, event, driverLikelihood
+    FROM fusion
+    WHERE isReportable
+		UNION
+	SELECT sampleId, event, driverLikelihood
+    FROM virus
+    WHERE isReportable)
+    AS a
+ORDER BY 1,2
+);
+
 CREATE OR REPLACE VIEW evidence
 AS (
 SELECT * FROM (
