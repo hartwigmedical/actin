@@ -35,6 +35,8 @@ class GsonLocalDateAdapter extends TypeAdapter<LocalDate> {
         JsonToken firstToken = reader.peek();
         if (firstToken == JsonToken.NULL) {
             return null;
+        } else if (firstToken != JsonToken.NAME) {
+            throw new IllegalStateException("Unexpected first token in LocalDate reading: " + firstToken);
         }
 
         int year = -1;
