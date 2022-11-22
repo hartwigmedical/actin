@@ -27,8 +27,11 @@ public class GeneAlterationFactoryTest {
 
         for (GeneRole geneRole : GeneRole.values()) {
             for (ProteinEffect proteinEffect : ProteinEffect.values()) {
-                assertNotNull(GeneAlterationFactory.convertAlteration(Strings.EMPTY,
-                        TestKnownFactory.createGeneAlteration(geneRole, proteinEffect)));
+                GeneAlteration alteration = GeneAlterationFactory.convertAlteration(Strings.EMPTY,
+                        TestKnownFactory.createGeneAlteration(geneRole, proteinEffect));
+                assertNotNull(alteration.gene());
+                assertNotNull(alteration.geneRole());
+                assertNotNull(alteration.proteinEffect());
             }
         }
 
