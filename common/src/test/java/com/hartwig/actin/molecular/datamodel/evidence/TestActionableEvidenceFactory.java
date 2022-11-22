@@ -8,14 +8,18 @@ public final class TestActionableEvidenceFactory {
     }
 
     @NotNull
+    public static ImmutableActionableEvidence.Builder builder() {
+        return ImmutableActionableEvidence.builder();
+    }
+
+    @NotNull
     public static ActionableEvidence createEmpty() {
-        return ImmutableActionableEvidence.builder().build();
+        return builder().build();
     }
 
     @NotNull
     public static ActionableEvidence createExhaustive() {
-        return ImmutableActionableEvidence.builder()
-                .addApprovedTreatments("approved")
+        return builder().addApprovedTreatments("approved")
                 .addExternalEligibleTrials("external trial")
                 .addOnLabelExperimentalTreatments("on-label experimental")
                 .addOffLabelExperimentalTreatments("off-label experimental")
@@ -27,36 +31,36 @@ public final class TestActionableEvidenceFactory {
 
     @NotNull
     public static ActionableEvidence withApprovedTreatment(@NotNull String treatment) {
-        return ImmutableActionableEvidence.builder().addApprovedTreatments(treatment).build();
+        return builder().addApprovedTreatments(treatment).build();
     }
 
     @NotNull
     public static ActionableEvidence withExternalEligibleTrial(@NotNull String treatment) {
-        return ImmutableActionableEvidence.builder().addExternalEligibleTrials(treatment).build();
+        return builder().addExternalEligibleTrials(treatment).build();
     }
 
     @NotNull
     public static ActionableEvidence withOnLabelExperimentalTreatment(@NotNull String treatment) {
-        return ImmutableActionableEvidence.builder().addOnLabelExperimentalTreatments(treatment).build();
+        return builder().addOnLabelExperimentalTreatments(treatment).build();
     }
 
     @NotNull
     public static ActionableEvidence withOffLabelExperimentalTreatment(@NotNull String treatment) {
-        return ImmutableActionableEvidence.builder().addOffLabelExperimentalTreatments(treatment).build();
+        return builder().addOffLabelExperimentalTreatments(treatment).build();
     }
 
     @NotNull
     public static ActionableEvidence withPreClinicalTreatment(@NotNull String treatment) {
-        return ImmutableActionableEvidence.builder().addPreClinicalTreatments(treatment).build();
+        return builder().addPreClinicalTreatments(treatment).build();
     }
 
     @NotNull
     public static ActionableEvidence withKnownResistantTreatment(@NotNull String treatment) {
-        return ImmutableActionableEvidence.builder().addKnownResistantTreatments(treatment).build();
+        return builder().addKnownResistantTreatments(treatment).build();
     }
 
     @NotNull
     public static ActionableEvidence withSuspectResistantTreatment(@NotNull String treatment) {
-        return ImmutableActionableEvidence.builder().addSuspectResistantTreatments(treatment).build();
+        return builder().addSuspectResistantTreatments(treatment).build();
     }
 }

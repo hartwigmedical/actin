@@ -22,10 +22,34 @@
     "isMicrosatelliteUnstable": false,
     "microsatelliteEvidence": null,
     "isHomologousRepairDeficient": true,
-    "homologousRepairEvidence": null,
+    "homologousRepairEvidence": {
+      "approvedTreatments": [],
+      "externalEligibleTrials": [
+        "PARP trial"
+      ],
+      "onLabelExperimentalTreatments": [
+        "PARP on label"
+      ],
+      "offLabelExperimentalTreatments": [
+        "PARP off label"
+      ],
+      "preClinicalTreatments": [],
+      "knownResistantTreatments": [],
+      "suspectResistantTreatments": []
+    },
     "tumorMutationalBurden": 4.32,
     "hasHighTumorMutationalBurden": true,
-    "tumorMutationalBurdenEvidence": null,
+    "tumorMutationalBurdenEvidence": {
+      "approvedTreatments": [
+        "Pembro"
+      ],
+      "externalEligibleTrials": [],
+      "onLabelExperimentalTreatments": [],
+      "offLabelExperimentalTreatments": [],
+      "preClinicalTreatments": [],
+      "knownResistantTreatments": [],
+      "suspectResistantTreatments": []
+    },
     "tumorMutationalLoad": 243,
     "hasHighTumorMutationalLoad": true,
     "tumorMutationalLoadEvidence": null
@@ -42,31 +66,51 @@
           "onLabelExperimentalTreatments": [],
           "offLabelExperimentalTreatments": [],
           "preClinicalTreatments": [],
-          "knownResistantTreatments": [],
-          "suspectResistantTreatments": []
+          "knownResistantTreatments": [
+            "Anti-BRAF known"
+          ],
+          "suspectResistantTreatments": [
+            "Anti-BRAF suspect"
+          ]
         },
         "gene": "BRAF",
         "geneRole": "ONCO",
         "proteinEffect": "GAIN_OF_FUNCTION",
-        "isAssociatedWithDrugResistance": null,
+        "isAssociatedWithDrugResistance": true,
         "type": "SNV",
         "variantCopyNumber": 4.1,
         "totalCopyNumber": 6.0,
         "isBiallelic": false,
-        "isHotspot": false,
+        "isHotspot": true,
         "clonalLikelihood": 1.0,
-        "phaseGroup": null,
+        "phaseGroup": 2,
         "canonicalImpact": {
-          "transcriptId": "",
-          "hgvsCodingImpact": "",
-          "hgvsProteinImpact": "",
-          "affectedCodon": null,
+          "transcriptId": "ENST00000288602",
+          "hgvsCodingImpact": "c.1799T>A",
+          "hgvsProteinImpact": "p.V600E",
+          "affectedCodon": 600,
           "affectedExon": null,
           "isSpliceRegion": false,
-          "effects": [],
-          "codingEffect": null
+          "effects": [
+            "MISSENSE"
+          ],
+          "codingEffect": "MISSENSE"
         },
-        "otherImpacts": []
+        "otherImpacts": [
+          {
+            "transcriptId": "other trans",
+            "hgvsCodingImpact": "c.other",
+            "hgvsProteinImpact": "p.V601K",
+            "affectedCodon": null,
+            "affectedExon": 8,
+            "isSpliceRegion": false,
+            "effects": [
+              "MISSENSE",
+              "SPLICE_ACCEPTOR"
+            ],
+            "codingEffect": null
+          }
+        ]
       }
     ],
     "amplifications": [
@@ -79,7 +123,9 @@
           "externalEligibleTrials": [],
           "onLabelExperimentalTreatments": [],
           "offLabelExperimentalTreatments": [],
-          "preClinicalTreatments": [],
+          "preClinicalTreatments": [
+            "MYC pre-clinical"
+          ],
           "knownResistantTreatments": [],
           "suspectResistantTreatments": []
         },
@@ -88,15 +134,15 @@
         "proteinEffect": "UNKNOWN",
         "isAssociatedWithDrugResistance": null,
         "minCopies": 38,
-        "maxCopies": 38,
+        "maxCopies": 39,
         "isPartial": false
       }
     ],
     "losses": [
       {
-        "isReportable": true,
+        "isReportable": false,
         "event": "PTEN del",
-        "driverLikelihood": "HIGH",
+        "driverLikelihood": null,
         "evidence": {
           "approvedTreatments": [],
           "externalEligibleTrials": [],
@@ -107,9 +153,9 @@
           "suspectResistantTreatments": []
         },
         "gene": "PTEN",
-        "geneRole": "UNKNOWN",
-        "proteinEffect": "UNKNOWN",
-        "isAssociatedWithDrugResistance": null,
+        "geneRole": "TSG",
+        "proteinEffect": "LOSS_OF_FUNCTION",
+        "isAssociatedWithDrugResistance": false,
         "minCopies": 0,
         "maxCopies": 2,
         "isPartial": true
@@ -118,7 +164,7 @@
     "homozygousDisruptions": [
       {
         "isReportable": true,
-        "event": "PTEN disruption",
+        "event": "PTEN hom disruption",
         "driverLikelihood": "HIGH",
         "evidence": {
           "approvedTreatments": [],
@@ -130,15 +176,15 @@
           "suspectResistantTreatments": []
         },
         "gene": "PTEN",
-        "geneRole": "UNKNOWN",
-        "proteinEffect": "UNKNOWN",
-        "isAssociatedWithDrugResistance": null
+        "geneRole": "TSG",
+        "proteinEffect": "LOSS_OF_FUNCTION",
+        "isAssociatedWithDrugResistance": false
       }
     ],
     "disruptions": [
       {
         "isReportable": true,
-        "event": "",
+        "event": "NF1 disruption 1",
         "driverLikelihood": "LOW",
         "evidence": {
           "approvedTreatments": [],
@@ -161,8 +207,8 @@
         "clusterGroup": 1
       },
       {
-        "isReportable": true,
-        "event": "",
+        "isReportable": false,
+        "event": "NF1 disruption 2",
         "driverLikelihood": "LOW",
         "evidence": {
           "approvedTreatments": [],
@@ -175,20 +221,20 @@
         },
         "gene": "NF1",
         "geneRole": "UNKNOWN",
-        "proteinEffect": "UNKNOWN",
+        "proteinEffect": "NO_EFFECT",
         "isAssociatedWithDrugResistance": null,
         "type": "DUP",
         "junctionCopyNumber": 0.3,
         "undisruptedCopyNumber": 2.8,
-        "regionType": "INTRONIC",
-        "codingContext": "NON_CODING",
+        "regionType": "EXONIC",
+        "codingContext": "CODING",
         "clusterGroup": 2
       }
     ],
     "fusions": [
       {
         "isReportable": true,
-        "event": "EML4-ALK fusion",
+        "event": "EML4 - ALK fusion",
         "driverLikelihood": "HIGH",
         "evidence": {
           "approvedTreatments": [],
@@ -200,11 +246,11 @@
           "suspectResistantTreatments": []
         },
         "geneStart": "EML4",
-        "geneTranscriptStart": "",
+        "geneTranscriptStart": "ENST00000318522",
         "fusedExonUp": 12,
         "geneEnd": "ALK",
-        "geneTranscriptEnd": "",
-        "fusedExonDown": 10,
+        "geneTranscriptEnd": "ENST00000389048",
+        "fusedExonDown": 20,
         "driverType": "KNOWN_PAIR",
         "proteinEffect": "UNKNOWN",
         "isAssociatedWithDrugResistance": false

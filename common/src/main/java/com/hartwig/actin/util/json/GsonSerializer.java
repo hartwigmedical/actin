@@ -14,6 +14,7 @@ public final class GsonSerializer {
 
     @NotNull
     public static Gson create() {
+        // If we don't register an explicit type adapter for LocalDate, GSON using reflection internally to create serialize these objects
         return new GsonBuilder().serializeNulls()
                 .enableComplexMapKeySerialization()
                 .registerTypeAdapter(LocalDate.class, new GsonLocalDateAdapter())
