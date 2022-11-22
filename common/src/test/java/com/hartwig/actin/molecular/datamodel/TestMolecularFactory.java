@@ -8,6 +8,7 @@ import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
+import com.hartwig.actin.molecular.datamodel.driver.DisruptionType;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole;
@@ -186,7 +187,7 @@ public final class TestMolecularFactory {
                         .driverLikelihood(DriverLikelihood.LOW)
                         .evidence(TestActionableEvidenceFactory.createExhaustive())
                         .gene("PTEN")
-                        .type("DEL")
+                        .type(DisruptionType.DEL)
                         .junctionCopyNumber(1.1)
                         .undisruptedCopyNumber(1.8)
                         .build())

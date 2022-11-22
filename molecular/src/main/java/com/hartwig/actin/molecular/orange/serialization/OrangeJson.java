@@ -43,6 +43,7 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxHomozygous
 import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxCodingType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruptionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionType;
@@ -242,7 +243,7 @@ public final class OrangeJson {
                 disruptions.add(ImmutableLinxDisruption.builder()
                         .reported(true)
                         .gene(string(geneDisruption, "gene"))
-                        .type(string(geneDisruption, "type"))
+                        .type(LinxDisruptionType.valueOf(string(geneDisruption, "type")))
                         .junctionCopyNumber(number(geneDisruption, "junctionCopyNumber"))
                         .undisruptedCopyNumber(number(geneDisruption, "undisruptedCopyNumber"))
                         .regionType(LinxRegionType.INTRONIC)

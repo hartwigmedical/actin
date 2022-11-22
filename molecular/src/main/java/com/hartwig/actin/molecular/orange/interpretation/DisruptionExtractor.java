@@ -6,6 +6,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.driver.CodingContext;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
+import com.hartwig.actin.molecular.datamodel.driver.DisruptionType;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableDisruption;
@@ -15,6 +16,7 @@ import com.hartwig.actin.molecular.datamodel.driver.RegionType;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxCodingType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruptionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRegionType;
@@ -78,7 +80,7 @@ class DisruptionExtractor {
                             .event(DriverEventFactory.disruptionEvent(disruption))
                             .driverLikelihood(DriverLikelihood.LOW)
                             .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForDisruption(disruption)))
-                            .type(disruption.type())
+                            .type(determineDisruptionType(disruption.type()))
                             .junctionCopyNumber(ExtractionUtil.keep3Digits(disruption.junctionCopyNumber()))
                             .undisruptedCopyNumber(ExtractionUtil.keep3Digits(disruption.undisruptedCopyNumber()))
                             .regionType(determineRegionType(disruption.regionType()))
@@ -94,7 +96,7 @@ class DisruptionExtractor {
     }
 
     private static boolean include(@NotNull LinxDisruption disruption, @NotNull Set<Loss> losses) {
-        return !disruption.type().equalsIgnoreCase("del") || !isLost(losses, disruption.gene());
+        return disruption.type() != LinxDisruptionType.DEL || !isLost(losses, disruption.gene());
     }
 
     private static boolean isLost(@NotNull Set<Loss> losses, @NotNull String gene) {
@@ -104,6 +106,37 @@ class DisruptionExtractor {
             }
         }
         return false;
+    }
+
+    @NotNull
+    @VisibleForTesting
+    static DisruptionType determineDisruptionType(@NotNull LinxDisruptionType type) {
+        switch (type) {
+            case BND: {
+                return DisruptionType.BND;
+            }
+            case DEL: {
+                return DisruptionType.DEL;
+            }
+            case DUP: {
+                return DisruptionType.DUP;
+            }
+            case INF: {
+                return DisruptionType.INF;
+            }
+            case INS: {
+                return DisruptionType.INS;
+            }
+            case INV: {
+                return DisruptionType.INV;
+            }
+            case SGL: {
+                return DisruptionType.SGL;
+            }
+            default: {
+                throw new IllegalStateException("Cannot determine disruption type for linx disruption type: " + type);
+            }
+        }
     }
 
     @NotNull

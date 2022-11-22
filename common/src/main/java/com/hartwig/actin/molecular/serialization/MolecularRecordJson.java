@@ -45,6 +45,7 @@ import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 import com.hartwig.actin.molecular.datamodel.driver.CodingContext;
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
+import com.hartwig.actin.molecular.datamodel.driver.DisruptionType;
 import com.hartwig.actin.molecular.datamodel.driver.Driver;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
@@ -336,7 +337,7 @@ public class MolecularRecordJson {
                         .geneRole(GeneRole.valueOf(string(disruption, "geneRole")))
                         .proteinEffect(ProteinEffect.valueOf(string(disruption, "proteinEffect")))
                         .isAssociatedWithDrugResistance(nullableBool(disruption, "isAssociatedWithDrugResistance"))
-                        .type(string(disruption, "type"))
+                        .type(DisruptionType.valueOf(string(disruption, "type")))
                         .junctionCopyNumber(number(disruption, "junctionCopyNumber"))
                         .undisruptedCopyNumber(number(disruption, "undisruptedCopyNumber"))
                         .regionType(RegionType.valueOf(string(disruption, "regionType")))

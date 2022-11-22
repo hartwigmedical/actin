@@ -7,6 +7,7 @@ import java.util.Set;
 
 import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
+import com.hartwig.actin.molecular.datamodel.driver.DisruptionType;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
@@ -109,7 +110,7 @@ public class DriverExtractorTest {
         Disruption disruption = disruptions.iterator().next();
         assertEquals(DriverLikelihood.LOW, disruption.driverLikelihood());
         assertEquals("RB1", disruption.gene());
-        assertEquals("DEL", disruption.type());
+        assertEquals(DisruptionType.DEL, disruption.type());
         assertEquals(0.8, disruption.junctionCopyNumber(), EPSILON);
         assertEquals(2.1, disruption.undisruptedCopyNumber(), EPSILON);
     }

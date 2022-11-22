@@ -11,6 +11,7 @@ import com.hartwig.actin.molecular.orange.datamodel.lilac.ImmutableLilacHlaAllel
 import com.hartwig.actin.molecular.orange.datamodel.lilac.ImmutableLilacRecord;
 import com.hartwig.actin.molecular.orange.datamodel.lilac.LilacRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxRecord;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruptionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
@@ -142,7 +143,7 @@ public final class TestOrangeFactory {
                 .addHomozygousDisruptions(TestLinxFactory.homozygousDisruptionBuilder().gene("TP53").build())
                 .addDisruptions(TestLinxFactory.disruptionBuilder()
                         .gene("RB1")
-                        .type("DEL")
+                        .type(LinxDisruptionType.DEL)
                         .junctionCopyNumber(0.8)
                         .undisruptedCopyNumber(2.1)
                         .build())

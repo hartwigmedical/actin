@@ -14,7 +14,7 @@ public abstract class LinxDisruption {
     public abstract String gene();
 
     @NotNull
-    public abstract String type();
+    public abstract LinxDisruptionType type();
 
     public abstract double junctionCopyNumber();
 
@@ -26,6 +26,7 @@ public abstract class LinxDisruption {
     @NotNull
     public abstract LinxCodingType codingType();
 
+    // TODO Make non-null in ORANGE
     @Nullable
     public abstract Integer clusterId();
 }

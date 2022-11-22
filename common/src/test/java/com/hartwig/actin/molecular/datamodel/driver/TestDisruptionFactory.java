@@ -15,7 +15,7 @@ public final class TestDisruptionFactory {
                 .gene(Strings.EMPTY)
                 .geneRole(GeneRole.UNKNOWN)
                 .proteinEffect(ProteinEffect.UNKNOWN)
-                .type(Strings.EMPTY)
+                .type(DisruptionType.BND)
                 .junctionCopyNumber(0)
                 .undisruptedCopyNumber(0)
                 .regionType(RegionType.INTRONIC)

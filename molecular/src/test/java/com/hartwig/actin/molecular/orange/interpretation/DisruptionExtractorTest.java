@@ -11,6 +11,7 @@ import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
 import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxCodingType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruptionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRegionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
@@ -28,18 +29,25 @@ public class DisruptionExtractorTest {
         Loss loss = TestLossFactory.builder().gene(gene).build();
 
         DisruptionExtractor disruptionExtractor = createTestExtractor();
-        LinxDisruption disruption1 = TestLinxFactory.disruptionBuilder().gene(gene).type("DEL").build();
+        LinxDisruption disruption1 = TestLinxFactory.disruptionBuilder().gene(gene).type(LinxDisruptionType.DEL).build();
         assertEquals(0, disruptionExtractor.extractDisruptions(withDisruption(disruption1), Sets.newHashSet(loss)).size());
 
-        LinxDisruption disruption2 = TestLinxFactory.disruptionBuilder().gene(gene).type("DUP").build();
+        LinxDisruption disruption2 = TestLinxFactory.disruptionBuilder().gene(gene).type(LinxDisruptionType.DUP).build();
         assertEquals(1, disruptionExtractor.extractDisruptions(withDisruption(disruption2), Sets.newHashSet(loss)).size());
 
-        LinxDisruption disruption3 = TestLinxFactory.disruptionBuilder().gene("other").type("DEL").build();
+        LinxDisruption disruption3 = TestLinxFactory.disruptionBuilder().gene("other").type(LinxDisruptionType.DEL).build();
         assertEquals(1, disruptionExtractor.extractDisruptions(withDisruption(disruption3), Sets.newHashSet(loss)).size());
     }
 
     @Test
-    public void canConvertRegionTypes() {
+    public void canDetermineAllDisruptionTypes() {
+        for (LinxDisruptionType disruptionType : LinxDisruptionType.values()) {
+            assertNotNull(DisruptionExtractor.determineDisruptionType(disruptionType));
+        }
+    }
+
+    @Test
+    public void canDetermineAllRegionTypes() {
         for (LinxRegionType regionType : LinxRegionType.values()) {
             if (regionType != LinxRegionType.UNKNOWN) {
                 assertNotNull(DisruptionExtractor.determineRegionType(regionType));
@@ -48,7 +56,7 @@ public class DisruptionExtractorTest {
     }
 
     @Test
-    public void canConvertCodingTypes() {
+    public void canDetermineAllCodingTypes() {
         for (LinxCodingType codingType : LinxCodingType.values()) {
             if (codingType != LinxCodingType.UNKNOWN) {
                 assertNotNull(DisruptionExtractor.determineCodingContext(codingType));

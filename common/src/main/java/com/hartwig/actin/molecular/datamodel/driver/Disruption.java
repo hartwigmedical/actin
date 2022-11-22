@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class Disruption implements Driver, GeneAlteration {
 
     @NotNull
-    public abstract String type();
+    public abstract DisruptionType type();
 
     public abstract double junctionCopyNumber();
 

@@ -17,6 +17,7 @@ import com.hartwig.actin.molecular.datamodel.TestMolecularFactory;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
+import com.hartwig.actin.molecular.datamodel.driver.DisruptionType;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
@@ -113,13 +114,13 @@ public class MolecularRecordJsonTest {
         assertEquals("PTEN", homozygousDisruption.gene());
 
         assertEquals(2, drivers.disruptions().size());
-        Disruption disruption1 = findByType(drivers.disruptions(), "DEL");
+        Disruption disruption1 = findByType(drivers.disruptions(), DisruptionType.DEL);
         assertEquals(DriverLikelihood.LOW, disruption1.driverLikelihood());
         assertEquals("NF1", disruption1.gene());
         assertEquals(1.1, disruption1.junctionCopyNumber(), EPSILON);
         assertEquals(2.0, disruption1.undisruptedCopyNumber(), EPSILON);
 
-        Disruption disruption2 = findByType(drivers.disruptions(), "DUP");
+        Disruption disruption2 = findByType(drivers.disruptions(), DisruptionType.DUP);
         assertEquals(DriverLikelihood.LOW, disruption2.driverLikelihood());
         assertEquals("NF1", disruption2.gene());
         assertEquals(0.3, disruption2.junctionCopyNumber(), EPSILON);
@@ -140,9 +141,9 @@ public class MolecularRecordJsonTest {
     }
 
     @NotNull
-    private static Disruption findByType(@NotNull Iterable<Disruption> disruptions, @NotNull String typeToFind) {
+    private static Disruption findByType(@NotNull Iterable<Disruption> disruptions, @NotNull DisruptionType typeToFind) {
         for (Disruption disruption : disruptions) {
-            if (disruption.type().equals(typeToFind)) {
+            if (disruption.type() == typeToFind) {
                 return disruption;
             }
         }

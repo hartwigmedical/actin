@@ -501,7 +501,7 @@ class MolecularDAO {
                             disruption.geneRole().toString(),
                             disruption.proteinEffect().toString(),
                             DataUtil.toByte(disruption.isAssociatedWithDrugResistance()),
-                            disruption.type(),
+                            disruption.type().toString(),
                             disruption.junctionCopyNumber(),
                             disruption.undisruptedCopyNumber(),
                             disruption.regionType().toString(),

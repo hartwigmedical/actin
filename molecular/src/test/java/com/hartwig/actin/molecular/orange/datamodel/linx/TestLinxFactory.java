@@ -18,7 +18,7 @@ public final class TestLinxFactory {
         return ImmutableLinxDisruption.builder()
                 .reported(true)
                 .gene(Strings.EMPTY)
-                .type(Strings.EMPTY)
+                .type(LinxDisruptionType.BND)
                 .junctionCopyNumber(0D)
                 .undisruptedCopyNumber(0D)
                 .regionType(LinxRegionType.INTRONIC)

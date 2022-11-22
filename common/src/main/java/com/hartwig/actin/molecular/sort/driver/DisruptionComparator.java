@@ -24,7 +24,7 @@ public class DisruptionComparator implements Comparator<Disruption> {
             return geneAlterationCompare;
         }
 
-        int typeCompare = disruption1.type().compareTo(disruption2.type());
+        int typeCompare = disruption1.type().toString().compareTo(disruption2.type().toString());
         if (typeCompare != 0) {
             return typeCompare;
         }

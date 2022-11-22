@@ -143,7 +143,7 @@
         "fusedExonUp": 1,
         "fusedExonDown": 2,
         "geneStart": "TMPRSS2",
-        "geneTranscriptStart": "trans start",
+        "geneTranscriptStart": "ENST00000332149",
         "geneContextStart": "Exon 1",
         "geneEnd": "ETV4",
         "geneTranscriptEnd": "ENST00000319349",
