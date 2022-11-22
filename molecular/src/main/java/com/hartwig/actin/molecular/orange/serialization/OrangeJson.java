@@ -245,8 +245,8 @@ public final class OrangeJson {
                         .type(string(geneDisruption, "type"))
                         .junctionCopyNumber(number(geneDisruption, "junctionCopyNumber"))
                         .undisruptedCopyNumber(number(geneDisruption, "undisruptedCopyNumber"))
-                        .regionType(LinxRegionType.UNKNOWN)
-                        .codingType(LinxCodingType.UNKNOWN)
+                        .regionType(LinxRegionType.INTRONIC)
+                        .codingType(LinxCodingType.NON_CODING)
                         .clusterId(nullableInteger(geneDisruption, "clusterId"))
                         .build());
             }
