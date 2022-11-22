@@ -8,6 +8,8 @@ import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
+import com.hartwig.actin.molecular.datamodel.driver.CodingContext;
+import com.hartwig.actin.molecular.datamodel.driver.CodingEffect;
 import com.hartwig.actin.molecular.datamodel.driver.DisruptionType;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
@@ -15,6 +17,7 @@ import com.hartwig.actin.molecular.datamodel.driver.GeneRole;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
+import com.hartwig.actin.molecular.datamodel.driver.RegionType;
 import com.hartwig.actin.molecular.datamodel.driver.TestAmplificationFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory;
@@ -23,15 +26,16 @@ import com.hartwig.actin.molecular.datamodel.driver.TestLossFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory;
+import com.hartwig.actin.molecular.datamodel.driver.VariantEffect;
 import com.hartwig.actin.molecular.datamodel.driver.VariantType;
 import com.hartwig.actin.molecular.datamodel.driver.VirusType;
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory;
-import com.hartwig.actin.molecular.datamodel.immunology.ImmutableHlaAllele;
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableMolecularImmunology;
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
-import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutableHaplotype;
+import com.hartwig.actin.molecular.datamodel.immunology.TestHlaAlleleFactory;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutablePharmacoEntry;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
+import com.hartwig.actin.molecular.datamodel.pharmaco.TestPharmacoFactory;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -129,18 +133,27 @@ public final class TestMolecularFactory {
                         .isBiallelic(false)
                         .isHotspot(true)
                         .clonalLikelihood(1.0)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("p.V600E").build())
+                        .canonicalImpact(TestTranscriptImpactFactory.builder()
+                                .transcriptId("ENST00000288602")
+                                .hgvsCodingImpact("c.1799T>A")
+                                .hgvsProteinImpact("p.V600E")
+                                .affectedCodon(600)
+                                .isSpliceRegion(false)
+                                .addEffects(VariantEffect.MISSENSE)
+                                .codingEffect(CodingEffect.MISSENSE)
+                                .build())
                         .build())
                 .addLosses(TestLossFactory.builder()
                         .isReportable(true)
                         .event("PTEN del")
                         .driverLikelihood(DriverLikelihood.HIGH)
-                        .evidence(TestActionableEvidenceFactory.withPreClinicalTreatment("Trial"))
+                        .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial("Trial 1"))
                         .gene("PTEN")
                         .geneRole(GeneRole.TSG)
                         .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
                         .minCopies(0)
                         .maxCopies(0)
+                        .isPartial(false)
                         .build())
                 .build();
     }
@@ -149,7 +162,7 @@ public final class TestMolecularFactory {
     private static MolecularImmunology createProperTestImmunology() {
         return ImmutableMolecularImmunology.builder()
                 .isReliable(true)
-                .addHlaAlleles(ImmutableHlaAllele.builder().name("A*02:01").tumorCopyNumber(1.2).hasSomaticMutations(false).build())
+                .addHlaAlleles(TestHlaAlleleFactory.builder().name("A*02:01").tumorCopyNumber(1.2).hasSomaticMutations(false).build())
                 .build();
     }
 
@@ -157,7 +170,7 @@ public final class TestMolecularFactory {
     private static Set<PharmacoEntry> createProperTestPharmaco() {
         return Sets.newHashSet(ImmutablePharmacoEntry.builder()
                 .gene("DPYD")
-                .addHaplotypes(ImmutableHaplotype.builder().name("1* HOM").function("Normal function").build())
+                .addHaplotypes(TestPharmacoFactory.builder().name("1* HOM").function("Normal function").build())
                 .build());
     }
 
@@ -173,6 +186,7 @@ public final class TestMolecularFactory {
                         .gene("MYC")
                         .minCopies(38)
                         .maxCopies(38)
+                        .isPartial(false)
                         .build())
                 .addHomozygousDisruptions(TestHomozygousDisruptionFactory.builder()
                         .isReportable(true)
@@ -190,6 +204,8 @@ public final class TestMolecularFactory {
                         .type(DisruptionType.DEL)
                         .junctionCopyNumber(1.1)
                         .undisruptedCopyNumber(1.8)
+                        .regionType(RegionType.EXONIC)
+                        .codingContext(CodingContext.CODING)
                         .build())
                 .addFusions(TestFusionFactory.builder()
                         .isReportable(true)
@@ -197,19 +213,23 @@ public final class TestMolecularFactory {
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .evidence(TestActionableEvidenceFactory.createExhaustive())
                         .geneStart("EML4")
-                        .fusedExonUp(2)
+                        .geneTranscriptStart("ENST00000318522")
+                        .fusedExonUp(6)
                         .geneEnd("ALK")
-                        .fusedExonDown(4)
+                        .geneTranscriptEnd("ENST00000389048")
+                        .fusedExonDown(20)
+                        .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
                         .driverType(FusionDriverType.KNOWN_PAIR)
                         .build())
                 .addViruses(TestVirusFactory.builder()
                         .isReportable(true)
-                        .event("HPV16 positive")
+                        .event("HPV positive")
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .evidence(TestActionableEvidenceFactory.createExhaustive())
-                        .name("Human papillomavirus type 16d")
+                        .name("Human papillomavirus type 16")
                         .type(VirusType.HPV)
                         .integrations(3)
+                        .isReliable(true)
                         .build())
                 .build();
     }
