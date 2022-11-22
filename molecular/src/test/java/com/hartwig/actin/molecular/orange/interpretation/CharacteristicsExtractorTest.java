@@ -11,6 +11,8 @@ import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ImmutableChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCharacteristics;
+import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory;
 
 import org.jetbrains.annotations.NotNull;
@@ -67,12 +69,10 @@ public class CharacteristicsExtractorTest {
     @Test
     public void canInterpretAllMicrosatelliteInstabilityStates() {
         CharacteristicsExtractor extractor = createTestExtractor();
-        MolecularCharacteristics unstable =
-                extractor.extract(withMicrosatelliteStatus(CharacteristicsExtractor.MICROSATELLITE_UNSTABLE));
+        MolecularCharacteristics unstable = extractor.extract(withMicrosatelliteStatus(CharacteristicsExtractor.MICROSATELLITE_UNSTABLE));
         assertTrue(unstable.isMicrosatelliteUnstable());
 
-        MolecularCharacteristics stable =
-                extractor.extract(withMicrosatelliteStatus(CharacteristicsExtractor.MICROSATELLITE_STABLE));
+        MolecularCharacteristics stable = extractor.extract(withMicrosatelliteStatus(CharacteristicsExtractor.MICROSATELLITE_STABLE));
         assertFalse(stable.isMicrosatelliteUnstable());
 
         MolecularCharacteristics weird = extractor.extract(withMicrosatelliteStatus("not a valid status"));
@@ -81,12 +81,9 @@ public class CharacteristicsExtractorTest {
 
     @NotNull
     private static OrangeRecord withMicrosatelliteStatus(@NotNull String microsatelliteStatus) {
-        OrangeRecord base = TestOrangeFactory.createMinimalTestOrangeRecord();
-
-        return ImmutableOrangeRecord.builder()
-                .from(base)
-                .purple(ImmutablePurpleRecord.builder().from(base.purple()).microsatelliteStabilityStatus(microsatelliteStatus).build())
-                .build();
+        return withPurpleCharacteristics(TestPurpleFactory.characteristicsBuilder()
+                .microsatelliteStabilityStatus(microsatelliteStatus)
+                .build());
     }
 
     @Test
@@ -98,8 +95,7 @@ public class CharacteristicsExtractorTest {
         MolecularCharacteristics low = extractor.extract(withTumorLoadStatus(CharacteristicsExtractor.TUMOR_STATUS_LOW));
         assertFalse(low.hasHighTumorMutationalLoad());
 
-        MolecularCharacteristics unknown =
-                extractor.extract(withTumorLoadStatus(CharacteristicsExtractor.TUMOR_STATUS_UNKNOWN));
+        MolecularCharacteristics unknown = extractor.extract(withTumorLoadStatus(CharacteristicsExtractor.TUMOR_STATUS_UNKNOWN));
         assertNull(unknown.hasHighTumorMutationalLoad());
 
         MolecularCharacteristics weird = extractor.extract(withTumorLoadStatus("not a valid status"));
@@ -108,16 +104,23 @@ public class CharacteristicsExtractorTest {
 
     @NotNull
     private static OrangeRecord withTumorLoadStatus(@NotNull String tumorLoadStatus) {
-        OrangeRecord base = TestOrangeFactory.createMinimalTestOrangeRecord();
-
-        return ImmutableOrangeRecord.builder()
-                .from(base)
-                .purple(ImmutablePurpleRecord.builder().from(base.purple()).tumorMutationalLoadStatus(tumorLoadStatus).build())
-                .build();
+        return withPurpleCharacteristics(TestPurpleFactory.characteristicsBuilder()
+                .tumorMutationalLoadStatus(tumorLoadStatus)
+                .build());
     }
 
     @NotNull
     private static CharacteristicsExtractor createTestExtractor() {
         return new CharacteristicsExtractor(TestEvidenceDatabaseFactory.createEmptyDatabase());
+    }
+
+    @NotNull
+    private static OrangeRecord withPurpleCharacteristics(@NotNull PurpleCharacteristics characteristics) {
+        OrangeRecord base = TestOrangeFactory.createMinimalTestOrangeRecord();
+
+        return ImmutableOrangeRecord.builder()
+                .from(base)
+                .purple(ImmutablePurpleRecord.builder().from(base.purple()).characteristics(characteristics).build())
+                .build();
     }
 }

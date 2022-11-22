@@ -17,7 +17,7 @@ public final class MutationTypeMatching {
     }
 
     public static boolean matches(@NotNull PurpleVariant variant, @NotNull MutationType typeToMatch) {
-        PurpleCodingEffect effect = variant.canonicalCodingEffect();
+        PurpleCodingEffect effect = variant.canonicalImpact().codingEffect();
 
         switch (typeToMatch) {
             case NONSENSE_OR_FRAMESHIFT:

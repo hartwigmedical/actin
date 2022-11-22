@@ -9,6 +9,18 @@ public final class TestPurpleFactory {
     }
 
     @NotNull
+    public static ImmutablePurpleCharacteristics.Builder characteristicsBuilder() {
+        return ImmutablePurpleCharacteristics.builder()
+                .purity(0)
+                .ploidy(0)
+                .microsatelliteStabilityStatus(Strings.EMPTY)
+                .tumorMutationalBurden(0D)
+                .tumorMutationalBurdenStatus(Strings.EMPTY)
+                .tumorMutationalLoad(0)
+                .tumorMutationalLoadStatus(Strings.EMPTY);
+    }
+
+    @NotNull
     public static ImmutablePurpleVariant.Builder variantBuilder() {
         return ImmutablePurpleVariant.builder()
                 .reported(true)
@@ -18,16 +30,23 @@ public final class TestPurpleFactory {
                 .position(0)
                 .ref(Strings.EMPTY)
                 .alt(Strings.EMPTY)
-                .canonicalTranscript(Strings.EMPTY)
-                .canonicalCodingEffect(PurpleCodingEffect.UNDEFINED)
-                .canonicalHgvsProteinImpact(Strings.EMPTY)
-                .canonicalHgvsCodingImpact(Strings.EMPTY)
                 .totalCopyNumber(0D)
                 .alleleCopyNumber(0D)
-                .hotspot(VariantHotspot.NON_HOTSPOT)
+                .hotspot(PurpleHotspotType.NON_HOTSPOT)
                 .clonalLikelihood(0D)
                 .driverLikelihood(0D)
-                .biallelic(false);
+                .biallelic(false)
+                .canonicalImpact(transcriptImpactBuilder().build());
+    }
+
+    @NotNull
+    public static ImmutablePurpleTranscriptImpact.Builder transcriptImpactBuilder() {
+        return ImmutablePurpleTranscriptImpact.builder()
+                .transcriptId(Strings.EMPTY)
+                .hgvsCodingImpact(Strings.EMPTY)
+                .hgvsProteinImpact(Strings.EMPTY)
+                .spliceRegion(false)
+                .codingEffect(PurpleCodingEffect.UNDEFINED);
     }
 
     @NotNull

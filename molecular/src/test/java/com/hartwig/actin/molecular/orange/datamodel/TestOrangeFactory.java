@@ -19,11 +19,13 @@ import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.CopyNumberInterpretation;
+import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleCharacteristics;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCharacteristics;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleHotspotType;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
-import com.hartwig.actin.molecular.orange.datamodel.purple.VariantHotspot;
 import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterRecord;
 import com.hartwig.actin.molecular.orange.datamodel.virus.TestVirusInterpreterFactory;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusDriverLikelihood;
@@ -71,12 +73,19 @@ public final class TestOrangeFactory {
     @NotNull
     private static PurpleRecord createMinimalTestPurpleRecord() {
         return ImmutablePurpleRecord.builder()
+                .hasSufficientQuality(true)
                 .containsTumorCells(true)
+                .characteristics(createMinimalTestCharacteristics())
+                .build();
+    }
+
+    private static PurpleCharacteristics createMinimalTestCharacteristics() {
+        return ImmutablePurpleCharacteristics.builder()
                 .purity(0.98)
                 .ploidy(3.1)
-                .hasSufficientQuality(true)
                 .microsatelliteStabilityStatus("MSS")
                 .tumorMutationalBurden(13D)
+                .tumorMutationalBurdenStatus("HIGH")
                 .tumorMutationalLoad(189)
                 .tumorMutationalLoadStatus("HIGH")
                 .build();
@@ -88,15 +97,17 @@ public final class TestOrangeFactory {
                 .from(createMinimalTestPurpleRecord())
                 .addVariants(TestPurpleFactory.variantBuilder()
                         .gene("BRAF")
-                        .addCanonicalEffects(PurpleVariantEffect.MISSENSE)
-                        .canonicalHgvsProteinImpact("p.Val600Glu")
-                        .canonicalHgvsCodingImpact("c.something")
                         .totalCopyNumber(6.0)
                         .alleleCopyNumber(4.1)
-                        .hotspot(VariantHotspot.HOTSPOT)
+                        .hotspot(PurpleHotspotType.HOTSPOT)
                         .clonalLikelihood(0.98)
-                        .driverLikelihood(1)
+                        .driverLikelihood(1D)
                         .biallelic(false)
+                        .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder()
+                                .hgvsCodingImpact("c.something")
+                                .hgvsProteinImpact("p.Val600Glu")
+                                .addEffects(PurpleVariantEffect.MISSENSE)
+                                .build())
                         .build())
                 .addCopyNumbers(TestPurpleFactory.copyNumberBuilder()
                         .gene("MYC")

@@ -31,8 +31,6 @@ class CharacteristicsExtractor {
     static final String TUMOR_STATUS_LOW = "LOW";
     static final String TUMOR_STATUS_UNKNOWN = "UNKNOWN";
 
-    static final double HIGH_TMB_CUTOFF = 10;
-
     @NotNull
     private final EvidenceDatabase evidenceDatabase;
 
@@ -49,16 +47,14 @@ class CharacteristicsExtractor {
 
         PurpleRecord purple = record.purple();
 
-        // TODO: Make TMB interpretation inside ORANGE.
-
-        Boolean isMicrosatelliteUnstable = isMSI(purple.microsatelliteStabilityStatus());
+        Boolean isMicrosatelliteUnstable = isMSI(purple.characteristics().microsatelliteStabilityStatus());
         Boolean isHomologousRepairDeficient = isHRD(record.chord().hrStatus());
-        Boolean hasHighTumorMutationalBurden = purple.tumorMutationalBurden() >= HIGH_TMB_CUTOFF;
-        Boolean hasHighTumorMutationalLoad = hasHighStatus(purple.tumorMutationalLoadStatus());
+        Boolean hasHighTumorMutationalBurden = hasHighStatus(purple.characteristics().tumorMutationalBurdenStatus());
+        Boolean hasHighTumorMutationalLoad = hasHighStatus(purple.characteristics().tumorMutationalLoadStatus());
 
         return ImmutableMolecularCharacteristics.builder()
-                .purity(purple.purity())
-                .ploidy(purple.ploidy())
+                .purity(purple.characteristics().purity())
+                .ploidy(purple.characteristics().ploidy())
                 .predictedTumorOrigin(predictedTumorOrigin)
                 .isMicrosatelliteUnstable(isMicrosatelliteUnstable)
                 .microsatelliteEvidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForMicrosatelliteStatus(
@@ -66,11 +62,11 @@ class CharacteristicsExtractor {
                 .isHomologousRepairDeficient(isHomologousRepairDeficient)
                 .homologousRepairEvidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForHomologousRepairStatus(
                         isHomologousRepairDeficient)))
-                .tumorMutationalBurden(purple.tumorMutationalBurden())
+                .tumorMutationalBurden(purple.characteristics().tumorMutationalBurden())
                 .hasHighTumorMutationalBurden(hasHighTumorMutationalBurden)
                 .tumorMutationalBurdenEvidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForTumorMutationalBurdenStatus(
                         hasHighTumorMutationalBurden)))
-                .tumorMutationalLoad(purple.tumorMutationalLoad())
+                .tumorMutationalLoad(purple.characteristics().tumorMutationalLoad())
                 .hasHighTumorMutationalLoad(hasHighTumorMutationalLoad)
                 .tumorMutationalLoadEvidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForTumorMutationalLoadStatus(
                         hasHighTumorMutationalLoad)))

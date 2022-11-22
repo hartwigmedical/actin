@@ -14,10 +14,10 @@ import com.hartwig.actin.molecular.datamodel.driver.VariantEffect;
 import com.hartwig.actin.molecular.datamodel.driver.VariantType;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleHotspotType;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
-import com.hartwig.actin.molecular.orange.datamodel.purple.VariantHotspot;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.orange.util.AminoAcid;
 import com.hartwig.actin.molecular.sort.driver.VariantComparator;
@@ -44,8 +44,6 @@ class VariantExtractor {
     @NotNull
     public Set<Variant> extract(@NotNull PurpleRecord purple) {
         Set<Variant> variants = Sets.newTreeSet(new VariantComparator());
-        // TODO Populate "other impacts"
-        // TODO Also read non-reportable variants.
         for (PurpleVariant variant : purple.variants()) {
             if (geneFilter.include(variant.gene())) {
                 variants.add(ImmutableVariant.builder()
@@ -58,7 +56,7 @@ class VariantExtractor {
                         .variantCopyNumber(ExtractionUtil.keep3Digits(variant.alleleCopyNumber()))
                         .totalCopyNumber(ExtractionUtil.keep3Digits(variant.totalCopyNumber()))
                         .isBiallelic(variant.biallelic())
-                        .isHotspot(variant.hotspot() == VariantHotspot.HOTSPOT)
+                        .isHotspot(variant.hotspot() == PurpleHotspotType.HOTSPOT)
                         .clonalLikelihood(ExtractionUtil.keep3Digits(variant.clonalLikelihood()))
                         .phaseGroup(variant.localPhaseSet())
                         .canonicalImpact(extractCanonicalImpact(variant))
@@ -97,9 +95,12 @@ class VariantExtractor {
     @NotNull
     @VisibleForTesting
     static DriverLikelihood determineDriverLikelihood(@NotNull PurpleVariant variant) {
-        if (variant.driverLikelihood() >= 0.8) {
+        Double driverLikelihood = variant.driverLikelihood();
+        if (driverLikelihood == null) {
+            return null;
+        } else if (driverLikelihood >= 0.8) {
             return DriverLikelihood.HIGH;
-        } else if (variant.driverLikelihood() >= 0.2) {
+        } else if (driverLikelihood >= 0.2) {
             return DriverLikelihood.MEDIUM;
         } else {
             return DriverLikelihood.LOW;
@@ -109,17 +110,15 @@ class VariantExtractor {
     @NotNull
     @VisibleForTesting
     static TranscriptImpact extractCanonicalImpact(@NotNull PurpleVariant variant) {
-        // TODO Read splice region directly from purple rather than approximate it.
-        // TODO Populate "affected codon" and "affected exon".
         return ImmutableTranscriptImpact.builder()
-                .transcriptId(variant.canonicalTranscript())
-                .hgvsCodingImpact(variant.canonicalHgvsCodingImpact())
-                .hgvsProteinImpact(AminoAcid.forceSingleLetterAminoAcids(variant.canonicalHgvsProteinImpact()))
-                .affectedCodon(null)
-                .affectedExon(null)
-                .isSpliceRegion(variant.canonicalCodingEffect() == PurpleCodingEffect.SPLICE)
-                .effects(toEffects(variant.canonicalEffects()))
-                .codingEffect(toCodingEffect(variant.canonicalCodingEffect()))
+                .transcriptId(variant.canonicalImpact().transcriptId())
+                .hgvsCodingImpact(variant.canonicalImpact().hgvsCodingImpact())
+                .hgvsProteinImpact(AminoAcid.forceSingleLetterAminoAcids(variant.canonicalImpact().hgvsProteinImpact()))
+                .affectedCodon(variant.canonicalImpact().affectedCodon())
+                .affectedExon(variant.canonicalImpact().affectedExon())
+                .isSpliceRegion(variant.canonicalImpact().spliceRegion())
+                .effects(toEffects(variant.canonicalImpact().effects()))
+                .codingEffect(toCodingEffect(variant.canonicalImpact().codingEffect()))
                 .build();
     }
 

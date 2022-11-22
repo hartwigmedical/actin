@@ -7,15 +7,20 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTranscriptImpact;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.util.AminoAcid;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 public final class DriverEventFactory {
+
+    private static final Logger LOGGER = LogManager.getLogger(DriverEventFactory.class);
 
     private DriverEventFactory() {
     }
@@ -27,22 +32,25 @@ public final class DriverEventFactory {
 
     @NotNull
     private static String impact(@NotNull PurpleVariant variant) {
-        if (!variant.canonicalHgvsProteinImpact().isEmpty() && !variant.canonicalHgvsProteinImpact().equals("p.?")) {
-            return reformatProteinImpact(variant.canonicalHgvsProteinImpact());
+        PurpleTranscriptImpact canonical = variant.canonicalImpact();
+        if (!canonical.hgvsProteinImpact().isEmpty() && !canonical.hgvsProteinImpact().equals("p.?")) {
+            return reformatProteinImpact(canonical.hgvsProteinImpact());
         }
 
-        if (!variant.canonicalHgvsCodingImpact().isEmpty()) {
-            return variant.canonicalCodingEffect() == PurpleCodingEffect.SPLICE
-                    ? variant.canonicalHgvsCodingImpact() + " splice"
-                    : variant.canonicalHgvsCodingImpact();
+        if (!canonical.hgvsCodingImpact().isEmpty()) {
+            return canonical.codingEffect() == PurpleCodingEffect.SPLICE
+                    ? canonical.hgvsCodingImpact() + " splice"
+                    : canonical.hgvsCodingImpact();
         }
 
-        if (variant.canonicalEffects().contains(PurpleVariantEffect.UPSTREAM_GENE)) {
+        if (canonical.effects().contains(PurpleVariantEffect.UPSTREAM_GENE)) {
             return "upstream";
         }
 
+        LOGGER.warn("Unexpected variant with potentially unexpected formatting on canonical impact: {}", variant);
+
         StringJoiner joiner = new StringJoiner("&");
-        for (PurpleVariantEffect effect : variant.canonicalEffects()) {
+        for (PurpleVariantEffect effect : canonical.effects()) {
             joiner.add(effect.toString());
         }
         return joiner.toString();

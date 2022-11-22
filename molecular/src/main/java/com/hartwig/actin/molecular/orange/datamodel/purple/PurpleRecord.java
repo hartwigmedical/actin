@@ -14,19 +14,8 @@ public abstract class PurpleRecord {
 
     public abstract boolean containsTumorCells();
 
-    public abstract double purity();
-
-    public abstract double ploidy();
-
     @NotNull
-    public abstract String microsatelliteStabilityStatus();
-
-    public abstract double tumorMutationalBurden();
-
-    public abstract int tumorMutationalLoad();
-
-    @NotNull
-    public abstract String tumorMutationalLoadStatus();
+    public abstract PurpleCharacteristics characteristics();
 
     @NotNull
     public abstract Set<PurpleVariant> variants();

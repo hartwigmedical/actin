@@ -29,34 +29,26 @@ public abstract class PurpleVariant {
     @NotNull
     public abstract String alt();
 
-    @NotNull
-    public abstract String canonicalTranscript();
-
-    @NotNull
-    public abstract Set<PurpleVariantEffect> canonicalEffects();
-
-    @NotNull
-    public abstract PurpleCodingEffect canonicalCodingEffect();
-
-    @NotNull
-    public abstract String canonicalHgvsProteinImpact();
-
-    @NotNull
-    public abstract String canonicalHgvsCodingImpact();
-
     public abstract double totalCopyNumber();
 
     public abstract double alleleCopyNumber();
 
     @NotNull
-    public abstract VariantHotspot hotspot();
+    public abstract PurpleHotspotType hotspot();
 
     public abstract double clonalLikelihood();
 
-    public abstract double driverLikelihood();
+    @Nullable
+    public abstract Double driverLikelihood();
 
     public abstract boolean biallelic();
 
     @Nullable
     public abstract Integer localPhaseSet();
+
+    @NotNull
+    public abstract PurpleTranscriptImpact canonicalImpact();
+
+    @NotNull
+    public abstract Set<PurpleTranscriptImpact> otherImpacts();
 }

@@ -52,16 +52,20 @@ import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.CopyNumberInterpretation;
+import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleCharacteristics;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleCopyNumber;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
+import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleTranscriptImpact;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleVariant;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCharacteristics;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleHotspotType;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTranscriptImpact;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantType;
-import com.hartwig.actin.molecular.orange.datamodel.purple.VariantHotspot;
 import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterRecord;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusDriverLikelihood;
@@ -113,25 +117,38 @@ public final class OrangeJson {
             variants.addAll(toPurpleVariants(array(purple, "reportableGermlineVariants")));
 
             JsonObject purpleFit = object(purple, "fit");
-            JsonObject purpleCharacteristics = object(purple, "characteristics");
 
             return ImmutablePurpleRecord.builder()
-                    .containsTumorCells(bool(purpleFit, "hasReliablePurity"))
-                    .purity(number(purpleFit, "purity"))
-                    .ploidy(number(purpleFit, "ploidy"))
                     .hasSufficientQuality(bool(purpleFit, "hasReliableQuality"))
-                    .microsatelliteStabilityStatus(string(purpleCharacteristics, "microsatelliteStatus"))
-                    .tumorMutationalBurden(number(purpleCharacteristics, "tumorMutationalBurdenPerMb"))
-                    .tumorMutationalLoad(integer(purpleCharacteristics, "tumorMutationalLoad"))
-                    .tumorMutationalLoadStatus(string(purpleCharacteristics, "tumorMutationalLoadStatus"))
+                    .containsTumorCells(bool(purpleFit, "hasReliablePurity"))
+                    .characteristics(toPurpleCharacteristics(purpleFit, object(purple, "characteristics")))
                     .variants(variants)
                     .copyNumbers(toPurpleCopyNumbers(array(purple, "reportableSomaticGainsLosses")))
                     .build();
         }
 
         @NotNull
+        private static PurpleCharacteristics toPurpleCharacteristics(@NotNull JsonObject purpleFit,
+                @NotNull JsonObject purpleCharacteristics) {
+            // TODO Determine tumor mutational burden status in ORANGE
+            double tumorMutationalBurden = number(purpleCharacteristics, "tumorMutationalBurdenPerMb");
+            String tumorMutationalBurdenStatus = tumorMutationalBurden >= 10 ? "HIGH" : "LOW";
+
+            return ImmutablePurpleCharacteristics.builder()
+                    .purity(number(purpleFit, "purity"))
+                    .ploidy(number(purpleFit, "ploidy"))
+                    .microsatelliteStabilityStatus(string(purpleCharacteristics, "microsatelliteStatus"))
+                    .tumorMutationalBurden(number(purpleCharacteristics, "tumorMutationalBurdenPerMb"))
+                    .tumorMutationalBurdenStatus(tumorMutationalBurdenStatus)
+                    .tumorMutationalLoad(integer(purpleCharacteristics, "tumorMutationalLoad"))
+                    .tumorMutationalLoadStatus(string(purpleCharacteristics, "tumorMutationalLoadStatus"))
+                    .build();
+        }
+
+        @NotNull
         private static Set<PurpleVariant> toPurpleVariants(@NotNull JsonArray reportableVariantArray) {
             Set<PurpleVariant> variants = Sets.newHashSet();
+            // TODO Populate other transcript impacts in ORANGE.
             for (JsonElement element : reportableVariantArray) {
                 JsonObject variant = element.getAsJsonObject();
                 variants.add(ImmutablePurpleVariant.builder()
@@ -142,21 +159,35 @@ public final class OrangeJson {
                         .position(integer(variant, "position"))
                         .ref(string(variant, "ref"))
                         .alt(string(variant, "alt"))
-                        .canonicalTranscript(string(variant, "canonicalTranscript"))
-                        .canonicalEffects(PurpleVariantEffect.fromEffectString(string(variant, "canonicalEffect")))
-                        .canonicalCodingEffect(PurpleCodingEffect.valueOf(string(variant, "canonicalCodingEffect")))
-                        .canonicalHgvsProteinImpact(string(variant, "canonicalHgvsProteinImpact"))
-                        .canonicalHgvsCodingImpact(string(variant, "canonicalHgvsCodingImpact"))
                         .totalCopyNumber(number(variant, "totalCopyNumber"))
                         .alleleCopyNumber(number(variant, "alleleCopyNumber"))
-                        .hotspot(VariantHotspot.valueOf(string(variant, "hotspot")))
+                        .hotspot(PurpleHotspotType.valueOf(string(variant, "hotspot")))
                         .driverLikelihood(number(variant, "driverLikelihood"))
                         .clonalLikelihood(number(variant, "clonalLikelihood"))
                         .biallelic(bool(variant, "biallelic"))
                         .localPhaseSet(nullableInteger(variant, "localPhaseSet"))
+                        .canonicalImpact(toCanonicalTranscriptImpact(variant))
                         .build());
             }
             return variants;
+        }
+
+        @NotNull
+        private static PurpleTranscriptImpact toCanonicalTranscriptImpact(final JsonObject variant) {
+            // TODO Read splice region directly from purple rather than approximate it.
+            // TODO Populate "affected codon" and "affected exon".
+            PurpleCodingEffect codingEffect = PurpleCodingEffect.valueOf(string(variant, "canonicalCodingEffect"));
+
+            return ImmutablePurpleTranscriptImpact.builder()
+                    .transcriptId(string(variant, "canonicalTranscript"))
+                    .hgvsCodingImpact(string(variant, "canonicalHgvsCodingImpact"))
+                    .hgvsProteinImpact(string(variant, "canonicalHgvsProteinImpact"))
+                    .affectedCodon(null)
+                    .affectedExon(null)
+                    .spliceRegion(codingEffect == PurpleCodingEffect.SPLICE)
+                    .codingEffect(PurpleCodingEffect.valueOf(string(variant, "canonicalCodingEffect")))
+                    .effects(PurpleVariantEffect.fromEffectString(string(variant, "canonicalEffect")))
+                    .build();
         }
 
         @NotNull
