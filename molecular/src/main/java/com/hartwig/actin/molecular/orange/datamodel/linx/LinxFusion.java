@@ -11,7 +11,7 @@ public abstract class LinxFusion {
     public abstract boolean reported();
 
     @NotNull
-    public abstract FusionType type();
+    public abstract LinxFusionType type();
 
     @NotNull
     public abstract String geneStart();
@@ -30,6 +30,6 @@ public abstract class LinxFusion {
     public abstract int fusedExonDown();
 
     @NotNull
-    public abstract FusionDriverLikelihood driverLikelihood();
+    public abstract LinxFusionDriverLikelihood driverLikelihood();
 
 }

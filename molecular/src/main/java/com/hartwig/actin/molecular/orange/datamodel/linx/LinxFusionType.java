@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange.datamodel.linx;
 
-public enum FusionType {
+public enum LinxFusionType {
     NONE,
     PROMISCUOUS_3,
     PROMISCUOUS_5,

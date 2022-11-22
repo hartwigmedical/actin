@@ -20,6 +20,12 @@ public abstract class LinxDisruption {
 
     public abstract double undisruptedCopyNumber();
 
+    @NotNull
+    public abstract LinxRegionType regionType();
+
+    @NotNull
+    public abstract LinxCodingType codingType();
+
     @Nullable
     public abstract Integer clusterId();
 }

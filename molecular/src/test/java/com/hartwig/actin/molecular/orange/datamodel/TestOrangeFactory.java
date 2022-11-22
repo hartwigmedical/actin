@@ -10,9 +10,9 @@ import com.hartwig.actin.molecular.orange.datamodel.cuppa.ImmutableCuppaRecord;
 import com.hartwig.actin.molecular.orange.datamodel.lilac.ImmutableLilacHlaAllele;
 import com.hartwig.actin.molecular.orange.datamodel.lilac.ImmutableLilacRecord;
 import com.hartwig.actin.molecular.orange.datamodel.lilac.LilacRecord;
-import com.hartwig.actin.molecular.orange.datamodel.linx.FusionDriverLikelihood;
-import com.hartwig.actin.molecular.orange.datamodel.linx.FusionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxRecord;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionDriverLikelihood;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
 import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachEntry;
@@ -126,12 +126,12 @@ public final class TestOrangeFactory {
     private static LinxRecord createTestLinxRecord() {
         return ImmutableLinxRecord.builder()
                 .addFusions(TestLinxFactory.fusionBuilder()
-                        .type(FusionType.KNOWN_PAIR)
+                        .type(LinxFusionType.KNOWN_PAIR)
                         .geneStart("EML4")
                         .fusedExonUp(2)
                         .geneEnd("ALK")
                         .fusedExonDown(4)
-                        .driverLikelihood(FusionDriverLikelihood.HIGH)
+                        .driverLikelihood(LinxFusionDriverLikelihood.HIGH)
                         .build())
                 .addHomozygousDisruptions(TestLinxFactory.homozygousDisruptionBuilder().gene("TP53").build())
                 .addDisruptions(TestLinxFactory.disruptionBuilder()

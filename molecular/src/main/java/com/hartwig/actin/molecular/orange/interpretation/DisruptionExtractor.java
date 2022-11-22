@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.orange.interpretation;
 
 import java.util.Set;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.driver.CodingContext;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
@@ -12,9 +13,11 @@ import com.hartwig.actin.molecular.datamodel.driver.ImmutableHomozygousDisruptio
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.RegionType;
 import com.hartwig.actin.molecular.filter.GeneFilter;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxCodingType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRegionType;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.sort.driver.DisruptionComparator;
 import com.hartwig.actin.molecular.sort.driver.HomozygousDisruptionComparator;
@@ -67,7 +70,6 @@ class DisruptionExtractor {
 
             if (geneFilter.include(disruption.gene())) {
                 // TODO: Linx should already filter or flag disruptions that are lost.
-                // TODO: Populate region type and coding context
                 if (include(disruption, losses)) {
                     disruptions.add(ImmutableDisruption.builder()
                             .from(GeneAlterationFactory.convertAlteration(disruption.gene(),
@@ -79,8 +81,8 @@ class DisruptionExtractor {
                             .type(disruption.type())
                             .junctionCopyNumber(ExtractionUtil.keep3Digits(disruption.junctionCopyNumber()))
                             .undisruptedCopyNumber(ExtractionUtil.keep3Digits(disruption.undisruptedCopyNumber()))
-                            .regionType(RegionType.INTRONIC)
-                            .codingContext(CodingContext.NON_CODING)
+                            .regionType(determineRegionType(disruption.regionType()))
+                            .codingContext(determineCodingContext(disruption.codingType()))
                             .clusterGroup(disruption.clusterId())
                             .build());
                 }
@@ -102,5 +104,55 @@ class DisruptionExtractor {
             }
         }
         return false;
+    }
+
+    @NotNull
+    @VisibleForTesting
+    static RegionType determineRegionType(@NotNull LinxRegionType regionType) {
+        switch (regionType) {
+            case UPSTREAM: {
+                return RegionType.UPSTREAM;
+            }
+            case EXONIC: {
+                return RegionType.EXONIC;
+            }
+            case INTRONIC: {
+                return RegionType.INTRONIC;
+            }
+            case IG: {
+                return RegionType.IG;
+            }
+            case DOWNSTREAM: {
+                return RegionType.DOWNSTREAM;
+            }
+            default: {
+                throw new IllegalStateException("Cannot determine region type for linx region type: " + regionType);
+            }
+        }
+    }
+
+    @NotNull
+    @VisibleForTesting
+    static CodingContext determineCodingContext(@NotNull LinxCodingType codingType) {
+        switch (codingType) {
+            case CODING: {
+                return CodingContext.CODING;
+            }
+            case UTR_5P: {
+                return CodingContext.UTR_5P;
+            }
+            case UTR_3P: {
+                return CodingContext.UTR_3P;
+            }
+            case NON_CODING: {
+                return CodingContext.NON_CODING;
+            }
+            case ENHANCER: {
+                return CodingContext.ENHANCER;
+            }
+            default: {
+                throw new IllegalStateException("Cannot determine coding context for linx coding type: " + codingType);
+            }
+        }
     }
 }

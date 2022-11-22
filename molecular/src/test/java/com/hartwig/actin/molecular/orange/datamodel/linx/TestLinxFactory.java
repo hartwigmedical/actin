@@ -21,6 +21,8 @@ public final class TestLinxFactory {
                 .type(Strings.EMPTY)
                 .junctionCopyNumber(0D)
                 .undisruptedCopyNumber(0D)
+                .regionType(LinxRegionType.INTRONIC)
+                .codingType(LinxCodingType.NON_CODING)
                 .clusterId(0);
     }
 
@@ -28,13 +30,13 @@ public final class TestLinxFactory {
     public static ImmutableLinxFusion.Builder fusionBuilder() {
         return ImmutableLinxFusion.builder()
                 .reported(true)
-                .type(FusionType.NONE)
+                .type(LinxFusionType.NONE)
                 .geneStart(Strings.EMPTY)
                 .geneTranscriptStart(Strings.EMPTY)
                 .fusedExonUp(0)
                 .geneEnd(Strings.EMPTY)
                 .geneTranscriptEnd(Strings.EMPTY)
                 .fusedExonDown(0)
-                .driverLikelihood(FusionDriverLikelihood.LOW);
+                .driverLikelihood(LinxFusionDriverLikelihood.LOW);
     }
 }

@@ -37,16 +37,18 @@ import com.hartwig.actin.molecular.orange.datamodel.lilac.ImmutableLilacHlaAllel
 import com.hartwig.actin.molecular.orange.datamodel.lilac.ImmutableLilacRecord;
 import com.hartwig.actin.molecular.orange.datamodel.lilac.LilacHlaAllele;
 import com.hartwig.actin.molecular.orange.datamodel.lilac.LilacRecord;
-import com.hartwig.actin.molecular.orange.datamodel.linx.FusionDriverLikelihood;
-import com.hartwig.actin.molecular.orange.datamodel.linx.FusionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxRecord;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxCodingType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionDriverLikelihood;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRegionType;
 import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachEntry;
@@ -173,7 +175,7 @@ public final class OrangeJson {
         }
 
         @NotNull
-        private static PurpleTranscriptImpact toCanonicalTranscriptImpact(final JsonObject variant) {
+        private static PurpleTranscriptImpact toCanonicalTranscriptImpact(@NotNull JsonObject variant) {
             // TODO Read splice region directly from purple rather than approximate it.
             // TODO Populate "affected codon" and "affected exon".
             PurpleCodingEffect codingEffect = PurpleCodingEffect.valueOf(string(variant, "canonicalCodingEffect"));
@@ -209,30 +211,10 @@ public final class OrangeJson {
         @NotNull
         private static LinxRecord toLinxRecord(@NotNull JsonObject linx) {
             return ImmutableLinxRecord.builder()
-                    .fusions(toLinxFusions(array(linx, "reportableFusions")))
                     .homozygousDisruptions(toLinxHomozygousDisruptions(array(linx, "homozygousDisruptions")))
                     .disruptions(toLinxDisruptions(array(linx, "reportableGeneDisruptions")))
+                    .fusions(toLinxFusions(array(linx, "reportableFusions")))
                     .build();
-        }
-
-        @NotNull
-        private static Set<LinxFusion> toLinxFusions(@NotNull JsonArray reportableFusionArray) {
-            Set<LinxFusion> fusions = Sets.newHashSet();
-            for (JsonElement element : reportableFusionArray) {
-                JsonObject fusion = element.getAsJsonObject();
-                fusions.add(ImmutableLinxFusion.builder()
-                        .reported(true)
-                        .type(FusionType.valueOf(string(fusion, "reportedType")))
-                        .geneStart(string(fusion, "geneStart"))
-                        .geneTranscriptStart(string(fusion, "geneTranscriptStart"))
-                        .fusedExonUp(integer(fusion, "fusedExonUp"))
-                        .geneEnd(string(fusion, "geneEnd"))
-                        .geneTranscriptEnd(string(fusion, "geneTranscriptEnd"))
-                        .fusedExonDown(integer(fusion, "fusedExonDown"))
-                        .driverLikelihood(FusionDriverLikelihood.valueOf(string(fusion, "likelihood")))
-                        .build());
-            }
-            return fusions;
         }
 
         @NotNull
@@ -248,6 +230,7 @@ public final class OrangeJson {
         @NotNull
         private static Set<LinxDisruption> toLinxDisruptions(@NotNull JsonArray reportableGeneDisruptionArray) {
             Set<LinxDisruption> disruptions = Sets.newHashSet();
+            // TODO Read region type and coding type from ORANGE
             for (JsonElement element : reportableGeneDisruptionArray) {
                 JsonObject geneDisruption = element.getAsJsonObject();
                 disruptions.add(ImmutableLinxDisruption.builder()
@@ -256,10 +239,32 @@ public final class OrangeJson {
                         .type(string(geneDisruption, "type"))
                         .junctionCopyNumber(number(geneDisruption, "junctionCopyNumber"))
                         .undisruptedCopyNumber(number(geneDisruption, "undisruptedCopyNumber"))
+                        .regionType(LinxRegionType.UNKNOWN)
+                        .codingType(LinxCodingType.UNKNOWN)
                         .clusterId(nullableInteger(geneDisruption, "clusterId"))
                         .build());
             }
             return disruptions;
+        }
+
+        @NotNull
+        private static Set<LinxFusion> toLinxFusions(@NotNull JsonArray reportableFusionArray) {
+            Set<LinxFusion> fusions = Sets.newHashSet();
+            for (JsonElement element : reportableFusionArray) {
+                JsonObject fusion = element.getAsJsonObject();
+                fusions.add(ImmutableLinxFusion.builder()
+                        .reported(true)
+                        .type(LinxFusionType.valueOf(string(fusion, "reportedType")))
+                        .geneStart(string(fusion, "geneStart"))
+                        .geneTranscriptStart(string(fusion, "geneTranscriptStart"))
+                        .fusedExonUp(integer(fusion, "fusedExonUp"))
+                        .geneEnd(string(fusion, "geneEnd"))
+                        .geneTranscriptEnd(string(fusion, "geneTranscriptEnd"))
+                        .fusedExonDown(integer(fusion, "fusedExonDown"))
+                        .driverLikelihood(LinxFusionDriverLikelihood.valueOf(string(fusion, "likelihood")))
+                        .build());
+            }
+            return fusions;
         }
 
         @NotNull

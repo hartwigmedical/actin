@@ -3,8 +3,8 @@ package com.hartwig.actin.molecular.orange.evidence.actionability;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.molecular.orange.datamodel.linx.FusionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionType;
 import com.hartwig.actin.molecular.orange.evidence.matching.FusionMatching;
 import com.hartwig.serve.datamodel.ActionableEvent;
 import com.hartwig.serve.datamodel.ActionableEvents;
@@ -61,9 +61,9 @@ class FusionEvidence implements EvidenceMatcher<LinxFusion> {
     }
 
     private static boolean isPromiscuousMatch(@NotNull ActionableGene actionable, @NotNull LinxFusion fusion) {
-        if (fusion.type() == FusionType.PROMISCUOUS_3) {
+        if (fusion.type() == LinxFusionType.PROMISCUOUS_3) {
             return actionable.gene().equals(fusion.geneEnd());
-        } else if (fusion.type() == FusionType.PROMISCUOUS_5) {
+        } else if (fusion.type() == LinxFusionType.PROMISCUOUS_5) {
             return actionable.gene().equals(fusion.geneStart());
         } else {
             return actionable.gene().equals(fusion.geneStart()) || actionable.gene().equals(fusion.geneEnd());

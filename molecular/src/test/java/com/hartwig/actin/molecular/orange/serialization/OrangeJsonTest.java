@@ -16,10 +16,10 @@ import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaPrediction;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
 import com.hartwig.actin.molecular.orange.datamodel.lilac.LilacHlaAllele;
 import com.hartwig.actin.molecular.orange.datamodel.lilac.LilacRecord;
-import com.hartwig.actin.molecular.orange.datamodel.linx.FusionDriverLikelihood;
-import com.hartwig.actin.molecular.orange.datamodel.linx.FusionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionDriverLikelihood;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachEntry;
@@ -129,10 +129,10 @@ public class OrangeJsonTest {
     private static void assertLinx(@NotNull LinxRecord linx) {
         assertEquals(1, linx.fusions().size());
         LinxFusion fusion = linx.fusions().iterator().next();
-        assertEquals(FusionType.KNOWN_PAIR, fusion.type());
+        assertEquals(LinxFusionType.KNOWN_PAIR, fusion.type());
         assertEquals("TMPRSS2", fusion.geneStart());
         assertEquals("ETV4", fusion.geneEnd());
-        assertEquals(FusionDriverLikelihood.HIGH, fusion.driverLikelihood());
+        assertEquals(LinxFusionDriverLikelihood.HIGH, fusion.driverLikelihood());
 
         assertEquals(1, linx.homozygousDisruptions().size());
         LinxHomozygousDisruption homozygousDisruption = linx.homozygousDisruptions().iterator().next();
