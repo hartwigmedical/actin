@@ -228,7 +228,7 @@ public final class TestMolecularFactory {
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .evidence(TestActionableEvidenceFactory.createExhaustive())
                         .name("Human papillomavirus type 16")
-                        .type(VirusType.HPV)
+                        .type(VirusType.HUMAN_PAPILLOMA_VIRUS)
                         .integrations(3)
                         .isReliable(true)
                         .build())

@@ -271,7 +271,7 @@
           "suspectResistantTreatments": []
         },
         "name": "Human papillomavirus type 16",
-        "type": "HPV",
+        "type": "HUMAN_PAPILLOMA_VIRUS",
         "isReliable": true,
         "integrations": 3
       }

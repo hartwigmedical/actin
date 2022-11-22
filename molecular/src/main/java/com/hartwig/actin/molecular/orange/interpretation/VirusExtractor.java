@@ -72,19 +72,19 @@ class VirusExtractor {
 
         switch (interpretation) {
             case MCV: {
-                return VirusType.MCV;
+                return VirusType.MERKEL_CELL_VIRUS;
             }
             case EBV: {
-                return VirusType.EBV;
+                return VirusType.EPSTEIN_BARR_VIRUS;
             }
             case HPV: {
-                return VirusType.HPV;
+                return VirusType.HUMAN_PAPILLOMA_VIRUS;
             }
             case HBV: {
-                return VirusType.HBV;
+                return VirusType.HEPATITIS_B_VIRUS;
             }
             case HHV8: {
-                return VirusType.HHV8;
+                return VirusType.HUMAN_HERPES_VIRUS_8;
             }
             default: {
                 throw new IllegalStateException("Cannot determine virus type for interpretation: " + interpretation);

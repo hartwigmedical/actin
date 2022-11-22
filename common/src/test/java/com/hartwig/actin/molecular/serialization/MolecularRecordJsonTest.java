@@ -278,7 +278,7 @@ public class MolecularRecordJsonTest {
         assertEquals(DriverLikelihood.HIGH, virus.driverLikelihood());
         assertEquals(TestActionableEvidenceFactory.createEmpty(), virus.evidence());
         assertEquals("Human papillomavirus type 16", virus.name());
-        assertEquals(VirusType.HPV, virus.type());
+        assertEquals(VirusType.HUMAN_PAPILLOMA_VIRUS, virus.type());
         assertTrue(virus.isReliable());
         assertEquals(3, virus.integrations());
     }

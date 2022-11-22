@@ -17,10 +17,10 @@ public class VirusComparatorTest {
 
     @Test
     public void canSortViruses() {
-        Virus virus1 = create(DriverLikelihood.HIGH, "Human 16", VirusType.HPV);
-        Virus virus2 = create(DriverLikelihood.LOW, "Epstein 1", VirusType.EBV);
-        Virus virus3 = create(DriverLikelihood.LOW, "Human 1", VirusType.HPV);
-        Virus virus4 = create(DriverLikelihood.LOW, "Human 2", VirusType.HPV);
+        Virus virus1 = create(DriverLikelihood.HIGH, "Human 16", VirusType.HUMAN_PAPILLOMA_VIRUS);
+        Virus virus2 = create(DriverLikelihood.LOW, "Epstein 1", VirusType.EPSTEIN_BARR_VIRUS);
+        Virus virus3 = create(DriverLikelihood.LOW, "Human 1", VirusType.HUMAN_PAPILLOMA_VIRUS);
+        Virus virus4 = create(DriverLikelihood.LOW, "Human 2", VirusType.HUMAN_PAPILLOMA_VIRUS);
 
         List<Virus> viruses = Lists.newArrayList(virus2, virus4, virus1, virus3);
         viruses.sort(new VirusComparator());
