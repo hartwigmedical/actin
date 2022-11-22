@@ -127,6 +127,7 @@ public final class TestMolecularFactory {
                         .gene("BRAF")
                         .geneRole(GeneRole.ONCO)
                         .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
+                        .isAssociatedWithDrugResistance(true)
                         .type(VariantType.SNV)
                         .variantCopyNumber(4.1)
                         .totalCopyNumber(6.0)

@@ -62,7 +62,7 @@ public class MolecularDriversGenerator implements TableGenerator {
         for (MolecularDriverEntry entry : entries) {
             table.addCell(Cells.createContent(entry.driverType()));
             table.addCell(Cells.createContent(entry.driver()));
-            table.addCell(Cells.createContent(entry.driverLikelihood().display()));
+            table.addCell(Cells.createContent(formatDriverLikelihood(entry.driverLikelihood().toString())));
             table.addCell(Cells.createContent(concat(entry.actinTrials())));
             table.addCell(Cells.createContent(concat(entry.externalTrials())));
             table.addCell(Cells.createContent(nullToEmpty(entry.bestResponsiveEvidence())));
@@ -75,6 +75,11 @@ public class MolecularDriversGenerator implements TableGenerator {
         }
 
         return Tables.makeWrapping(table);
+    }
+
+    @NotNull
+    private static String formatDriverLikelihood(@NotNull String driverLikelihood) {
+        return driverLikelihood.substring(0, 1).toUpperCase() + driverLikelihood.substring(1).toLowerCase();
     }
 
     @NotNull
