@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.orange.interpretation;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidence;
@@ -44,7 +45,7 @@ public final class ActionableEvidenceFactory {
             if (onLabelEvent.source() == ActionabilityConstants.EVIDENCE_SOURCE) {
                 if (onLabelEvent.direction().isResponsive()) {
                     populateResponsiveOnLabelEvidence(builder, onLabelEvent);
-                } else {
+                } else if (onLabelEvent.direction().isResistant()) {
                     populateResistantEvidence(builder, onLabelEvent);
                 }
             }
@@ -61,7 +62,7 @@ public final class ActionableEvidenceFactory {
             if (offLabelEvent.source() == ActionabilityConstants.EVIDENCE_SOURCE) {
                 if (offLabelEvent.direction().isResponsive()) {
                     populateResponsiveOffLabelEvidence(builder, offLabelEvent);
-                } else {
+                } else if (offLabelEvent.direction().isResistant()) {
                     populateResistantEvidence(builder, offLabelEvent);
                 }
             }
@@ -151,7 +152,8 @@ public final class ActionableEvidenceFactory {
     }
 
     @NotNull
-    private static ActionableEvidence filterRedundantLowerEvidence(@NotNull ActionableEvidence evidence) {
+    @VisibleForTesting
+    static ActionableEvidence filterRedundantLowerEvidence(@NotNull ActionableEvidence evidence) {
         Set<String> treatmentsToExcludeForOnLabel = evidence.approvedTreatments();
         Set<String> cleanedOnLabelTreatments = cleanTreatments(evidence.onLabelExperimentalTreatments(), treatmentsToExcludeForOnLabel);
 

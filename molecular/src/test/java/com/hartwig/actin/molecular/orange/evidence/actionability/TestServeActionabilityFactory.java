@@ -19,9 +19,9 @@ import com.hartwig.serve.datamodel.range.ImmutableActionableRange;
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
-public final class TestActionabilityFactory {
+public final class TestServeActionabilityFactory {
 
-    private TestActionabilityFactory() {
+    private TestServeActionabilityFactory() {
     }
 
     @NotNull
