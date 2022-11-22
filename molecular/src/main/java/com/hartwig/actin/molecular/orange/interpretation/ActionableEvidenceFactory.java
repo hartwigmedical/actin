@@ -31,7 +31,7 @@ public final class ActionableEvidenceFactory {
         ActionableEvidence merged =
                 ImmutableActionableEvidence.builder().from(onLabelEvidence).from(offLabelEvidence).from(externalTrialEvidence).build();
 
-        ActionableEvidence simplified = simplifyResponsiveEvidence(merged);
+        ActionableEvidence simplified = filterRedundantLowerEvidence(merged);
 
         return filterResistanceEvidence(simplified);
     }
@@ -151,7 +151,7 @@ public final class ActionableEvidenceFactory {
     }
 
     @NotNull
-    private static ActionableEvidence simplifyResponsiveEvidence(@NotNull ActionableEvidence evidence) {
+    private static ActionableEvidence filterRedundantLowerEvidence(@NotNull ActionableEvidence evidence) {
         Set<String> treatmentsToExcludeForOnLabel = evidence.approvedTreatments();
         Set<String> cleanedOnLabelTreatments = cleanTreatments(evidence.onLabelExperimentalTreatments(), treatmentsToExcludeForOnLabel);
 
@@ -159,8 +159,7 @@ public final class ActionableEvidenceFactory {
         treatmentsToExcludeForOffLabel.addAll(evidence.approvedTreatments());
         treatmentsToExcludeForOffLabel.addAll(evidence.onLabelExperimentalTreatments());
 
-        Set<String> cleanedOffLabelTreatments =
-                cleanTreatments(evidence.offLabelExperimentalTreatments(), treatmentsToExcludeForOffLabel);
+        Set<String> cleanedOffLabelTreatments = cleanTreatments(evidence.offLabelExperimentalTreatments(), treatmentsToExcludeForOffLabel);
 
         Set<String> treatmentsToExcludeForPreClinical = Sets.newHashSet();
         treatmentsToExcludeForPreClinical.addAll(evidence.approvedTreatments());
@@ -169,11 +168,18 @@ public final class ActionableEvidenceFactory {
 
         Set<String> cleanedPreClinicalTreatments = cleanTreatments(evidence.preClinicalTreatments(), treatmentsToExcludeForPreClinical);
 
+        Set<String> treatmentsToExcludeForSuspectResistant = Sets.newHashSet();
+        treatmentsToExcludeForSuspectResistant.addAll(evidence.knownResistantTreatments());
+
+        Set<String> cleanedSuspectResistantTreatments =
+                cleanTreatments(evidence.suspectResistantTreatments(), treatmentsToExcludeForSuspectResistant);
+
         return ImmutableActionableEvidence.builder()
                 .from(evidence)
                 .onLabelExperimentalTreatments(cleanedOnLabelTreatments)
                 .offLabelExperimentalTreatments(cleanedOffLabelTreatments)
                 .preClinicalTreatments(cleanedPreClinicalTreatments)
+                .suspectResistantTreatments(cleanedSuspectResistantTreatments)
                 .build();
     }
 
