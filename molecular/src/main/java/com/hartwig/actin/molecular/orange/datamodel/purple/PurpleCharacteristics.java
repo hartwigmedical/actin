@@ -8,10 +8,6 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class PurpleCharacteristics {
 
-    public abstract double purity();
-
-    public abstract double ploidy();
-
     @NotNull
     public abstract String microsatelliteStabilityStatus();
 

@@ -20,6 +20,7 @@ import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
+import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +35,10 @@ public class DriverExtractorTest {
         OrangeRecord base = TestOrangeFactory.createProperTestOrangeRecord();
         OrangeRecord orange = ImmutableOrangeRecord.builder()
                 .from(base)
-                .purple(ImmutablePurpleRecord.builder().from(base.purple()).containsTumorCells(false).build())
+                .purple(ImmutablePurpleRecord.builder()
+                        .from(base.purple())
+                        .fit(TestPurpleFactory.fitBuilder().from(base.purple().fit()).hasReliablePurity(false).build())
+                        .build())
                 .build();
 
         DriverExtractor driverExtractor = createTestExtractor();

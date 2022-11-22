@@ -56,12 +56,14 @@ import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.CopyNumberInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleCharacteristics;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleCopyNumber;
+import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleFit;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleTranscriptImpact;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCharacteristics;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleFit;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleHotspotType;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTranscriptImpact;
@@ -118,32 +120,36 @@ public final class OrangeJson {
             variants.addAll(toPurpleVariants(array(purple, "reportableSomaticVariants")));
             variants.addAll(toPurpleVariants(array(purple, "reportableGermlineVariants")));
 
-            JsonObject purpleFit = object(purple, "fit");
-
             return ImmutablePurpleRecord.builder()
-                    .hasSufficientQuality(bool(purpleFit, "hasReliableQuality"))
-                    .containsTumorCells(bool(purpleFit, "hasReliablePurity"))
-                    .characteristics(toPurpleCharacteristics(purpleFit, object(purple, "characteristics")))
+                    .fit(toPurpleFit(object(purple, "fit")))
+                    .characteristics(toPurpleCharacteristics(object(purple, "characteristics")))
                     .variants(variants)
                     .copyNumbers(toPurpleCopyNumbers(array(purple, "reportableSomaticGainsLosses")))
                     .build();
         }
 
         @NotNull
-        private static PurpleCharacteristics toPurpleCharacteristics(@NotNull JsonObject purpleFit,
-                @NotNull JsonObject purpleCharacteristics) {
+        private static PurpleFit toPurpleFit(@NotNull JsonObject fit) {
+            return ImmutablePurpleFit.builder()
+                    .hasReliableQuality(bool(fit, "hasReliableQuality"))
+                    .hasReliablePurity(bool(fit, "hasReliablePurity"))
+                    .purity(number(fit, "purity"))
+                    .ploidy(number(fit, "ploidy"))
+                    .build();
+        }
+
+        @NotNull
+        private static PurpleCharacteristics toPurpleCharacteristics(@NotNull JsonObject characteristics) {
             // TODO Determine tumor mutational burden status in ORANGE
-            double tumorMutationalBurden = number(purpleCharacteristics, "tumorMutationalBurdenPerMb");
+            double tumorMutationalBurden = number(characteristics, "tumorMutationalBurdenPerMb");
             String tumorMutationalBurdenStatus = tumorMutationalBurden >= 10 ? "HIGH" : "LOW";
 
             return ImmutablePurpleCharacteristics.builder()
-                    .purity(number(purpleFit, "purity"))
-                    .ploidy(number(purpleFit, "ploidy"))
-                    .microsatelliteStabilityStatus(string(purpleCharacteristics, "microsatelliteStatus"))
-                    .tumorMutationalBurden(number(purpleCharacteristics, "tumorMutationalBurdenPerMb"))
+                    .microsatelliteStabilityStatus(string(characteristics, "microsatelliteStatus"))
+                    .tumorMutationalBurden(number(characteristics, "tumorMutationalBurdenPerMb"))
                     .tumorMutationalBurdenStatus(tumorMutationalBurdenStatus)
-                    .tumorMutationalLoad(integer(purpleCharacteristics, "tumorMutationalLoad"))
-                    .tumorMutationalLoadStatus(string(purpleCharacteristics, "tumorMutationalLoadStatus"))
+                    .tumorMutationalLoad(integer(characteristics, "tumorMutationalLoad"))
+                    .tumorMutationalLoadStatus(string(characteristics, "tumorMutationalLoadStatus"))
                     .build();
         }
 

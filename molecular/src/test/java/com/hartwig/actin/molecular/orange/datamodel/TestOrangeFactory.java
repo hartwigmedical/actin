@@ -22,6 +22,7 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.CopyNumberInterpretat
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleCharacteristics;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCharacteristics;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleFit;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleHotspotType;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
@@ -73,21 +74,8 @@ public final class TestOrangeFactory {
     @NotNull
     private static PurpleRecord createMinimalTestPurpleRecord() {
         return ImmutablePurpleRecord.builder()
-                .hasSufficientQuality(true)
-                .containsTumorCells(true)
-                .characteristics(createMinimalTestCharacteristics())
-                .build();
-    }
-
-    private static PurpleCharacteristics createMinimalTestCharacteristics() {
-        return ImmutablePurpleCharacteristics.builder()
-                .purity(0.98)
-                .ploidy(3.1)
-                .microsatelliteStabilityStatus("MSS")
-                .tumorMutationalBurden(13D)
-                .tumorMutationalBurdenStatus("HIGH")
-                .tumorMutationalLoad(189)
-                .tumorMutationalLoadStatus("HIGH")
+                .fit(TestPurpleFactory.fitBuilder().build())
+                .characteristics(TestPurpleFactory.characteristicsBuilder().build())
                 .build();
     }
 
@@ -95,6 +83,8 @@ public final class TestOrangeFactory {
     private static PurpleRecord createTestPurpleRecord() {
         return ImmutablePurpleRecord.builder()
                 .from(createMinimalTestPurpleRecord())
+                .fit(createTestPurpleFit())
+                .characteristics(createTestPurpleCharacteristics())
                 .addVariants(TestPurpleFactory.variantBuilder()
                         .gene("BRAF")
                         .totalCopyNumber(6.0)
@@ -119,6 +109,22 @@ public final class TestOrangeFactory {
                         .interpretation(CopyNumberInterpretation.PARTIAL_LOSS)
                         .minCopies(0)
                         .build())
+                .build();
+    }
+
+    @NotNull
+    private static PurpleFit createTestPurpleFit() {
+        return TestPurpleFactory.fitBuilder().hasReliableQuality(true).hasReliablePurity(true).purity(0.98).ploidy(3.1).build();
+    }
+
+    @NotNull
+    private static PurpleCharacteristics createTestPurpleCharacteristics() {
+        return ImmutablePurpleCharacteristics.builder()
+                .microsatelliteStabilityStatus("MSS")
+                .tumorMutationalBurden(13D)
+                .tumorMutationalBurdenStatus("HIGH")
+                .tumorMutationalLoad(189)
+                .tumorMutationalLoadStatus("HIGH")
                 .build();
     }
 

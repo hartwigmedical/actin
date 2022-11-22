@@ -74,10 +74,11 @@ public class OrangeJsonTest {
     }
 
     private static void assertPurple(@NotNull PurpleRecord purple) {
-        assertTrue(purple.hasSufficientQuality());
-        assertEquals(0.99, purple.characteristics().purity(), EPSILON);
-        assertEquals(3.1, purple.characteristics().ploidy(), EPSILON);
-        assertTrue(purple.containsTumorCells());
+        assertTrue(purple.fit().hasReliableQuality());
+        assertTrue(purple.fit().hasReliablePurity());
+        assertEquals(0.99, purple.fit().purity(), EPSILON);
+        assertEquals(3.1, purple.fit().ploidy(), EPSILON);
+
         assertEquals("MSS", purple.characteristics().microsatelliteStabilityStatus());
         assertEquals(13.71, purple.characteristics().tumorMutationalBurden(), EPSILON);
         assertEquals("HIGH", purple.characteristics().tumorMutationalBurdenStatus());

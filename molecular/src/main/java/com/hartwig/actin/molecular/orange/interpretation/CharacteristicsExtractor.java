@@ -53,8 +53,8 @@ class CharacteristicsExtractor {
         Boolean hasHighTumorMutationalLoad = hasHighStatus(purple.characteristics().tumorMutationalLoadStatus());
 
         return ImmutableMolecularCharacteristics.builder()
-                .purity(purple.characteristics().purity())
-                .ploidy(purple.characteristics().ploidy())
+                .purity(purple.fit().purity())
+                .ploidy(purple.fit().ploidy())
                 .predictedTumorOrigin(predictedTumorOrigin)
                 .isMicrosatelliteUnstable(isMicrosatelliteUnstable)
                 .microsatelliteEvidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForMicrosatelliteStatus(

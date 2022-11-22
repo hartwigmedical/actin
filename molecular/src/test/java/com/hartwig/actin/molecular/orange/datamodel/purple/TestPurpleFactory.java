@@ -9,10 +9,17 @@ public final class TestPurpleFactory {
     }
 
     @NotNull
+    public static ImmutablePurpleFit.Builder fitBuilder() {
+        return ImmutablePurpleFit.builder()
+                .hasReliableQuality(false)
+                .hasReliablePurity(false)
+                .purity(0)
+                .ploidy(0);
+    }
+
+    @NotNull
     public static ImmutablePurpleCharacteristics.Builder characteristicsBuilder() {
         return ImmutablePurpleCharacteristics.builder()
-                .purity(0)
-                .ploidy(0)
                 .microsatelliteStabilityStatus(Strings.EMPTY)
                 .tumorMutationalBurden(0D)
                 .tumorMutationalBurdenStatus(Strings.EMPTY)
