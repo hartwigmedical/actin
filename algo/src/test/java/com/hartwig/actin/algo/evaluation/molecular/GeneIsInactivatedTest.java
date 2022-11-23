@@ -151,6 +151,31 @@ public class GeneIsInactivatedTest {
                         .from(matchingVariant)
                         .canonicalImpact(TestTranscriptImpactFactory.builder().codingEffect(CodingEffect.NONE).build())
                         .build())));
+
+        // high TML and high driver likelihood variant
+        assertMolecularEvaluation(EvaluationResult.PASS,
+                function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariant(true,
+                        TestVariantFactory.builder()
+                                .from(matchingVariant)
+                                .build())));
+
+        // high TML and low driver likelihood variant
+        assertMolecularEvaluation(EvaluationResult.FAIL,
+                function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariant(true,
+                        TestVariantFactory.builder()
+                                .from(matchingVariant)
+                                .proteinEffect(ProteinEffect.UNKNOWN)
+                                .driverLikelihood(DriverLikelihood.LOW)
+                                .build())));
+
+        // low TML and low driver likelihood variant
+        assertMolecularEvaluation(EvaluationResult.WARN,
+                function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariant(false,
+                        TestVariantFactory.builder()
+                                .from(matchingVariant)
+                                .proteinEffect(ProteinEffect.UNKNOWN)
+                                .driverLikelihood(DriverLikelihood.LOW)
+                                .build())));
     }
 
     @Test

@@ -90,6 +90,7 @@ public class GeneIsInactivated implements EvaluationFunction {
         List<String> eventsThatMayBeTransPhased = Lists.newArrayList();
         Set<Integer> evaluatedPhaseGroups = Sets.newHashSet();
 
+        Boolean hasHighMutationalLoad = record.molecular().characteristics().hasHighTumorMutationalLoad();
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene) && INACTIVATING_CODING_EFFECTS.contains(variant.canonicalImpact().codingEffect())) {
                 if (!variant.isReportable()) {
@@ -121,7 +122,7 @@ public class GeneIsInactivated implements EvaluationFunction {
                         }
                     } else if (isLossOfFunction) {
                         reportableNonDriverVariantsWithLossOfFunction.add(variant.event());
-                    } else if (variant.driverLikelihood() == DriverLikelihood.MEDIUM || variant.driverLikelihood() == DriverLikelihood.LOW) {
+                    } else if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
                         reportableNonDriverVariantsOther.add(variant.event());
                     }
                 }

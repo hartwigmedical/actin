@@ -42,6 +42,7 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
         Set<String> otherMissenseOrHotspotVariants = Sets.newHashSet();
         Set<String> activatingSubclonalVariants = Sets.newHashSet();
 
+        Boolean hasHighMutationalLoad = record.molecular().characteristics().hasHighTumorMutationalLoad();
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene)) {
                 boolean isGainOfFunction = variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
@@ -64,7 +65,7 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
                     } else {
                         if (isGainOfFunction) {
                             nonHighDriverGainOfFunctionVariants.add(variant.event());
-                        } else {
+                        } else if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
                             nonHighDriverVariants.add(variant.event());
                         }
                     }

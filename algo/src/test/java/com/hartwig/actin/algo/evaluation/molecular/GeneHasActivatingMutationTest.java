@@ -86,5 +86,29 @@ public class GeneHasActivatingMutationTest {
                         .clonalLikelihood(0.2)
                         .build())));
 
+        // high TML and high driver likelihood variant
+        assertMolecularEvaluation(EvaluationResult.PASS,
+                function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariant(true,
+                        TestVariantFactory.builder()
+                                .from(activatingVariant)
+                                .build())));
+
+        // high TML and low driver likelihood variant
+        assertMolecularEvaluation(EvaluationResult.FAIL,
+                function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariant(true,
+                        TestVariantFactory.builder()
+                                .from(activatingVariant)
+                                .proteinEffect(ProteinEffect.UNKNOWN)
+                                .driverLikelihood(DriverLikelihood.LOW)
+                                .build())));
+
+        // low TML and low driver likelihood variant
+        assertMolecularEvaluation(EvaluationResult.WARN,
+                function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariant(false,
+                        TestVariantFactory.builder()
+                                .from(activatingVariant)
+                                .proteinEffect(ProteinEffect.UNKNOWN)
+                                .driverLikelihood(DriverLikelihood.LOW)
+                                .build())));
     }
 }

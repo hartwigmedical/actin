@@ -59,6 +59,20 @@ final class MolecularTestFactory {
     }
 
     @NotNull
+    public static PatientRecord withHasTumorMutationalLoadAndVariant(@Nullable Boolean hasHighTumorMutationalLoad, @NotNull Variant variant) {
+        MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
+
+        return withMolecularRecord(ImmutableMolecularRecord.builder()
+                .from(base)
+                .characteristics(ImmutableMolecularCharacteristics.builder()
+                        .from(base.characteristics())
+                        .hasHighTumorMutationalLoad(hasHighTumorMutationalLoad)
+                        .build())
+                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addVariants(variant).build())
+                .build());
+    }
+
+    @NotNull
     public static PatientRecord withVariant(@NotNull Variant variant) {
         return withMolecularDrivers(ImmutableMolecularDrivers.builder().addVariants(variant).build());
     }
