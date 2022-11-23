@@ -121,8 +121,11 @@ public class GeneIsInactivated implements EvaluationFunction {
                         }
                     } else if (isLossOfFunction) {
                         reportableNonDriverVariantsWithLossOfFunction.add(variant.event());
-                    } else if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
-                        reportableNonDriverVariantsOther.add(variant.event());
+                    } else if (variant.driverLikelihood() == DriverLikelihood.MEDIUM
+                            || variant.driverLikelihood() == DriverLikelihood.LOW) {
+                        if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
+                            reportableNonDriverVariantsOther.add(variant.event());
+                        }
                     }
                 }
             }
@@ -210,9 +213,8 @@ public class GeneIsInactivated implements EvaluationFunction {
 
         if (!inactivationSubclonalVariants.isEmpty()) {
             warnEvents.addAll(inactivationSubclonalVariants);
-            warnSpecificMessages.add(
-                    "Inactivation event(s) detected for " + gene + ": " + Format.concat(inactivationSubclonalVariants)
-                            + " but subclonal likelihood > " + Format.percentage(1 - CLONAL_CUTOFF));
+            warnSpecificMessages.add("Inactivation event(s) detected for " + gene + ": " + Format.concat(inactivationSubclonalVariants)
+                    + " but subclonal likelihood > " + Format.percentage(1 - CLONAL_CUTOFF));
             warnGeneralMessages.add(gene + " potentially inactivating event(s) " + Format.concat(inactivationSubclonalVariants)
                     + " but subclonal likelihood > " + Format.percentage(1 - CLONAL_CUTOFF));
         }
