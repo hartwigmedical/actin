@@ -48,6 +48,7 @@ public class GeneHasVariantWithProteinImpactTest {
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
                         .isReportable(true)
+                        .clonalLikelihood(1)
                         .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600E").build())
                         .build())));
 
@@ -56,6 +57,15 @@ public class GeneHasVariantWithProteinImpactTest {
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
                         .isReportable(false)
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600E").build())
+                        .build())));
+
+        // correct gene, protein impact detected in canonical, but non-reportable
+        assertMolecularEvaluation(EvaluationResult.WARN,
+                function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
+                        .gene("gene A")
+                        .isReportable(true)
+                        .clonalLikelihood(0.3)
                         .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600E").build())
                         .build())));
 

@@ -25,6 +25,9 @@ import org.jetbrains.annotations.Nullable;
 
 public class GeneIsInactivated implements EvaluationFunction {
 
+    private static final double CLONAL_CUTOFF = 0.5;
+    private static final double CLONAL_CUTOFF_PERCENTAGE = CLONAL_CUTOFF*100;
+
     static final Set<CodingEffect> INACTIVATING_CODING_EFFECTS = Sets.newHashSet();
 
     static {
@@ -82,7 +85,8 @@ public class GeneIsInactivated implements EvaluationFunction {
 
         Set<String> reportableNonDriverVariantsWithLossOfFunction = Sets.newHashSet();
         Set<String> reportableNonDriverVariantsOther = Sets.newHashSet();
-        Set<String> reportableHighDriverNonBiallelicVariants = Sets.newHashSet();
+        Set<String> inactivationHighDriverNonBiallelicVariants = Sets.newHashSet();
+        Set<String> inactivationSubclonalVariants = Sets.newHashSet();
         List<String> eventsThatMayBeTransPhased = Lists.newArrayList();
         Set<Integer> evaluatedPhaseGroups = Sets.newHashSet();
 
@@ -109,7 +113,9 @@ public class GeneIsInactivated implements EvaluationFunction {
                         } else if (isGainOfFunction) {
                             inactivationEventsGainOfFunction.add(variant.event());
                         } else if (!variant.isBiallelic()) {
-                            reportableHighDriverNonBiallelicVariants.add(variant.event());
+                            inactivationHighDriverNonBiallelicVariants.add(variant.event());
+                        } else if (variant.clonalLikelihood() < CLONAL_CUTOFF) {
+                            inactivationSubclonalVariants.add(variant.event());
                         } else {
                             inactivationEventsThatQualify.add(variant.event());
                         }
@@ -145,7 +151,8 @@ public class GeneIsInactivated implements EvaluationFunction {
         Evaluation potentialWarnEvaluation = evaluatePotentialWarns(inactivationEventsThatAreUnreportable,
                 inactivationEventsNoTSG,
                 inactivationEventsGainOfFunction,
-                reportableHighDriverNonBiallelicVariants,
+                inactivationHighDriverNonBiallelicVariants,
+                inactivationSubclonalVariants,
                 reportableNonDriverVariantsWithLossOfFunction,
                 reportableNonDriverVariantsOther,
                 eventsThatMayBeTransPhased);
@@ -164,7 +171,7 @@ public class GeneIsInactivated implements EvaluationFunction {
     @Nullable
     private Evaluation evaluatePotentialWarns(@NotNull Set<String> inactivationEventsThatAreUnreportable,
             @NotNull Set<String> inactivationEventsNoTSG, @NotNull Set<String> inactivationEventsGainOfFunction,
-            @NotNull Set<String> reportableHighDriverNonBiallelicVariants,
+            @NotNull Set<String> inactivationHighDriverNonBiallelicVariants, @NotNull Set<String> inactivationSubclonalVariants,
             @NotNull Set<String> reportableNonDriverVariantsWithLossOfFunction, @NotNull Set<String> reportableNonDriverVariantsOther,
             @NotNull List<String> eventsThatMayBeTransPhased) {
         Set<String> warnEvents = Sets.newHashSet();
@@ -193,12 +200,21 @@ public class GeneIsInactivated implements EvaluationFunction {
             warnGeneralMessages.add(gene + " potential inactivation but event annotated with gain-of-function protein impact");
         }
 
-        if (!reportableHighDriverNonBiallelicVariants.isEmpty() && !(eventsThatMayBeTransPhased.size() > 1)) {
-            warnEvents.addAll(reportableHighDriverNonBiallelicVariants);
+        if (!inactivationHighDriverNonBiallelicVariants.isEmpty() && !(eventsThatMayBeTransPhased.size() > 1)) {
+            warnEvents.addAll(inactivationHighDriverNonBiallelicVariants);
             warnSpecificMessages.add(
-                    "Inactivation event(s) detected for " + gene + ": " + Format.concat(reportableHighDriverNonBiallelicVariants)
+                    "Inactivation event(s) detected for " + gene + ": " + Format.concat(inactivationHighDriverNonBiallelicVariants)
                             + " but event(s) are not biallelic");
             warnGeneralMessages.add(gene + " potential inactivation but not biallelic");
+        }
+
+        if (!inactivationSubclonalVariants.isEmpty()) {
+            warnEvents.addAll(inactivationSubclonalVariants);
+            warnSpecificMessages.add(
+                    "Inactivation event(s) detected for " + gene + ": " + Format.concat(inactivationSubclonalVariants)
+                            + " but subclonal likelihood > " + CLONAL_CUTOFF_PERCENTAGE + "%");
+            warnGeneralMessages.add(gene + " potentially inactivating event(s) " + Format.concat(inactivationSubclonalVariants)
+                    + " but subclonal likelihood > " + CLONAL_CUTOFF_PERCENTAGE + "%");
         }
 
         if (!reportableNonDriverVariantsWithLossOfFunction.isEmpty()) {

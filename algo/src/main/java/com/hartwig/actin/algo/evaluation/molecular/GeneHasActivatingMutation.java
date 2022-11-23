@@ -20,6 +20,9 @@ import org.jetbrains.annotations.Nullable;
 
 public class GeneHasActivatingMutation implements EvaluationFunction {
 
+    private static final double CLONAL_CUTOFF = 0.5;
+    private static final double CLONAL_CUTOFF_PERCENTAGE = CLONAL_CUTOFF*100;
+
     @NotNull
     private final String gene;
 
@@ -36,7 +39,8 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
         Set<String> activatingVariantsInNonOncogene = Sets.newHashSet();
         Set<String> nonHighDriverGainOfFunctionVariants = Sets.newHashSet();
         Set<String> nonHighDriverVariants = Sets.newHashSet();
-        Set<String> unreportableMissenseOrHotspotVariants = Sets.newHashSet();
+        Set<String> otherMissenseOrHotspotVariants = Sets.newHashSet();
+        Set<String> activatingSubclonalVariants = Sets.newHashSet();
 
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene)) {
@@ -52,6 +56,8 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
                             activatingVariantsWithNoGainOfFunction.add(variant.event());
                         } else if (!isPotentialOncogene) {
                             activatingVariantsInNonOncogene.add(variant.event());
+                        } else if (variant.clonalLikelihood() < CLONAL_CUTOFF) {
+                            activatingSubclonalVariants.add(variant.event());
                         } else {
                             activatingVariants.add(variant.event());
                         }
@@ -63,7 +69,7 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
                         }
                     }
                 } else if (isMissenseOrHotspot(variant)) {
-                    unreportableMissenseOrHotspotVariants.add(variant.event());
+                    otherMissenseOrHotspotVariants.add(variant.event());
                 }
             }
         }
@@ -82,7 +88,8 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
                 activatingVariantsWithNoGainOfFunction,
                 nonHighDriverGainOfFunctionVariants,
                 nonHighDriverVariants,
-                unreportableMissenseOrHotspotVariants);
+                otherMissenseOrHotspotVariants,
+                activatingSubclonalVariants);
 
         if (potentialWarnEvaluation != null) {
             return potentialWarnEvaluation;
@@ -108,7 +115,7 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
     private Evaluation evaluatePotentialWarns(@NotNull Set<String> activatingVariantsAssociatedWithResistance,
             @NotNull Set<String> activatingVariantsInNonOncogene, @NotNull Set<String> activatingVariantsWithNoGainOfFunction,
             @NotNull Set<String> nonHighDriverGainOfFunctionVariants, @NotNull Set<String> nonHighDriverVariants,
-            @NotNull Set<String> unreportableMissenseOrHotspotVariants) {
+            @NotNull Set<String> otherMissenseOrHotspotVariants, @NotNull Set<String> highSubclonalLikelihoodReportableVariants) {
         Set<String> warnEvents = Sets.newHashSet();
         Set<String> warnSpecificMessages = Sets.newHashSet();
         Set<String> warnGeneralMessages = Sets.newHashSet();
@@ -142,7 +149,8 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
             warnSpecificMessages.add(
                     "Gene " + gene + " has potentially activating mutation(s) " + Format.concat(nonHighDriverGainOfFunctionVariants)
                             + " that do not have high driver likelihood, but are associated with gain-of-function protein effect");
-            warnGeneralMessages.add(gene + " potentially activating mutation(s) detected based on protein effect but no high driver likelihood");
+            warnGeneralMessages.add(
+                    gene + " potentially activating mutation(s) detected based on protein effect but no high driver likelihood");
         }
 
         if (!nonHighDriverVariants.isEmpty()) {
@@ -152,11 +160,21 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
             warnGeneralMessages.add(gene + " potentially activating mutation(s) detected but no high driver likelihood");
         }
 
-        if (!unreportableMissenseOrHotspotVariants.isEmpty()) {
-            warnEvents.addAll(unreportableMissenseOrHotspotVariants);
-            warnSpecificMessages.add("Gene " + gene + " has potentially activating mutation(s) " + Format.concat(unreportableMissenseOrHotspotVariants)
-                    + " that are missense or have hotspot status, but are not considered reportable");
+        if (!otherMissenseOrHotspotVariants.isEmpty()) {
+            warnEvents.addAll(otherMissenseOrHotspotVariants);
+            warnSpecificMessages.add(
+                    "Gene " + gene + " has potentially activating mutation(s) " + Format.concat(otherMissenseOrHotspotVariants)
+                            + " that are missense or have hotspot status, but are not considered reportable");
             warnGeneralMessages.add(gene + " potentially activating mutation(s) detected but is unreportable");
+        }
+
+        if (!highSubclonalLikelihoodReportableVariants.isEmpty()) {
+            warnEvents.addAll(highSubclonalLikelihoodReportableVariants);
+            warnSpecificMessages.add(
+                    "Gene " + gene + " potentially activating mutation(s) " + Format.concat(highSubclonalLikelihoodReportableVariants)
+                            + " have subclonal likelihood of > " + CLONAL_CUTOFF_PERCENTAGE + "%");
+            warnGeneralMessages.add(gene + " potentially activating mutation(s) " + Format.concat(highSubclonalLikelihoodReportableVariants)
+                    + " but subclonal likelihood > " + CLONAL_CUTOFF_PERCENTAGE + "%");
         }
 
         if (!warnEvents.isEmpty() && !warnSpecificMessages.isEmpty() && !warnGeneralMessages.isEmpty()) {

@@ -29,6 +29,7 @@ public class GeneHasActivatingMutationTest {
                 .geneRole(GeneRole.ONCO)
                 .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
                 .isAssociatedWithDrugResistance(false)
+                .clonalLikelihood(0.8)
                 .build();
 
         assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withVariant(activatingVariant)));
@@ -77,5 +78,13 @@ public class GeneHasActivatingMutationTest {
                         .isReportable(false)
                         .canonicalImpact(TestTranscriptImpactFactory.builder().codingEffect(CodingEffect.MISSENSE).build())
                         .build())));
+
+        assertMolecularEvaluation(EvaluationResult.WARN,
+                function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
+                        .from(activatingVariant)
+                        .isReportable(true)
+                        .clonalLikelihood(0.2)
+                        .build())));
+
     }
 }

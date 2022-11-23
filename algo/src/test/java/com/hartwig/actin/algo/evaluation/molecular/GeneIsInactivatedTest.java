@@ -99,6 +99,7 @@ public class GeneIsInactivatedTest {
                 .isReportable(true)
                 .driverLikelihood(DriverLikelihood.HIGH)
                 .isBiallelic(true)
+                .clonalLikelihood(1)
                 .geneRole(GeneRole.TSG)
                 .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
                 .canonicalImpact(TestTranscriptImpactFactory.builder()
@@ -136,6 +137,13 @@ public class GeneIsInactivatedTest {
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .from(matchingVariant)
                         .isBiallelic(false)
+                        .build())));
+
+        assertMolecularEvaluation(EvaluationResult.WARN,
+                function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
+                        .from(matchingVariant)
+                        .isBiallelic(true)
+                        .clonalLikelihood(0.4)
                         .build())));
 
         assertMolecularEvaluation(EvaluationResult.FAIL,

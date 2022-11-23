@@ -23,6 +23,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class GeneHasVariantWithProteinImpact implements EvaluationFunction {
 
+    private static final double CLONAL_CUTOFF = 0.5;
+    private static final double CLONAL_CUTOFF_PERCENTAGE = CLONAL_CUTOFF * 100;
+
     private static final Logger LOGGER = LogManager.getLogger(GeneHasVariantWithProteinImpact.class);
 
     @NotNull
@@ -39,6 +42,7 @@ public class GeneHasVariantWithProteinImpact implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> canonicalReportableVariantMatches = Sets.newHashSet();
+        Set<String> canonicalReportableSubclonalVariantMatches = Sets.newHashSet();
         Set<String> canonicalUnreportableVariantMatches = Sets.newHashSet();
         Set<String> canonicalProteinImpactMatches = Sets.newHashSet();
 
@@ -53,7 +57,11 @@ public class GeneHasVariantWithProteinImpact implements EvaluationFunction {
                     if (canonicalProteinImpact.equals(allowedProteinImpact)) {
                         canonicalProteinImpactMatches.add(allowedProteinImpact);
                         if (variant.isReportable()) {
-                            canonicalReportableVariantMatches.add(variant.event());
+                            if (variant.clonalLikelihood() < CLONAL_CUTOFF) {
+                                canonicalReportableSubclonalVariantMatches.add(variant.event());
+                            } else {
+                                canonicalReportableVariantMatches.add(variant.event());
+                            }
                         } else {
                             canonicalUnreportableVariantMatches.add(variant.event());
                         }
@@ -81,7 +89,8 @@ public class GeneHasVariantWithProteinImpact implements EvaluationFunction {
                     .build();
         }
 
-        Evaluation potentialWarnEvaluation = evaluatePotentialWarns(canonicalUnreportableVariantMatches,
+        Evaluation potentialWarnEvaluation = evaluatePotentialWarns(canonicalReportableSubclonalVariantMatches,
+                canonicalUnreportableVariantMatches,
                 canonicalProteinImpactMatches,
                 reportableOtherVariantMatches,
                 reportableOtherProteinImpactMatches);
@@ -123,12 +132,21 @@ public class GeneHasVariantWithProteinImpact implements EvaluationFunction {
     }
 
     @Nullable
-    private Evaluation evaluatePotentialWarns(@NotNull Set<String> canonicalUnreportableVariantMatches,
-            @NotNull Set<String> canonicalProteinImpactMatches, @NotNull Set<String> reportableOtherVariantMatches,
-            @NotNull Set<String> reportableOtherProteinImpactMatches) {
+    private Evaluation evaluatePotentialWarns(@NotNull Set<String> canonicalReportableSubclonalVariantMatches,
+            @NotNull Set<String> canonicalUnreportableVariantMatches, @NotNull Set<String> canonicalProteinImpactMatches,
+            @NotNull Set<String> reportableOtherVariantMatches, @NotNull Set<String> reportableOtherProteinImpactMatches) {
         Set<String> warnEvents = Sets.newHashSet();
         Set<String> warnSpecificMessages = Sets.newHashSet();
         Set<String> warnGeneralMessages = Sets.newHashSet();
+
+        if (!canonicalReportableSubclonalVariantMatches.isEmpty()) {
+            warnEvents.addAll(canonicalReportableSubclonalVariantMatches);
+            warnSpecificMessages.add("Variant(s) " + Format.concat(canonicalReportableSubclonalVariantMatches) + " in " + gene
+                    + " detected in canonical transcript, but subclonal likelihood of >" + CLONAL_CUTOFF_PERCENTAGE + "%");
+            warnGeneralMessages.add(
+                    "Variant(s) " + Format.concat(canonicalReportableSubclonalVariantMatches) + " found in " + gene
+                            + " but subclonal likelihood of >" + CLONAL_CUTOFF_PERCENTAGE + "%");
+        }
 
         if (!canonicalUnreportableVariantMatches.isEmpty()) {
             warnEvents.addAll(canonicalUnreportableVariantMatches);

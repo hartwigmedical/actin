@@ -39,6 +39,7 @@ public class GeneHasVariantInCodonTest {
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
                         .isReportable(true)
+                        .clonalLikelihood(1)
                         .canonicalImpact(TestTranscriptImpactFactory.builder().affectedCodon(100).build())
                         .build())));
 
@@ -47,6 +48,15 @@ public class GeneHasVariantInCodonTest {
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
                         .isReportable(false)
+                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedCodon(100).build())
+                        .build())));
+
+        // correct codon range, but subclonal
+        assertMolecularEvaluation(EvaluationResult.WARN,
+                function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
+                        .gene("gene A")
+                        .isReportable(true)
+                        .clonalLikelihood(0.3)
                         .canonicalImpact(TestTranscriptImpactFactory.builder().affectedCodon(100).build())
                         .build())));
 
