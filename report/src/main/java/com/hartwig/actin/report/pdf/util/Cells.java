@@ -1,5 +1,7 @@
 package com.hartwig.actin.report.pdf.util;
 
+import java.util.List;
+
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -17,6 +19,7 @@ import com.itextpdf.layout.element.Table;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class Cells {
 
@@ -24,7 +27,7 @@ public final class Cells {
     }
 
     @NotNull
-    public static Cell create(@NotNull IBlockElement element) {
+    public static Cell create(@Nullable IBlockElement element) {
         return create(element, 1, 1);
     }
 
@@ -144,6 +147,16 @@ public final class Cells {
     }
 
     @NotNull
+    public static Cell createValue(@NotNull List<Paragraph> paragraphs) {
+        Cell cell = create(null);
+        for (Paragraph paragraph : paragraphs) {
+            cell.add(paragraph);
+        }
+        cell.addStyle(Styles.tableHighlightStyle());
+        return cell;
+    }
+
+    @NotNull
     public static Cell createValueWarn(@NotNull String text) {
         Cell cell = createValue(text);
         cell.setFontColor(Styles.PALETTE_WARN);
@@ -179,10 +192,12 @@ public final class Cells {
     }
 
     @NotNull
-    private static Cell create(@NotNull IBlockElement element, int rows, int cols) {
+    private static Cell create(@Nullable IBlockElement element, int rows, int cols) {
         Cell cell = new Cell(rows, cols);
         cell.setBorder(Border.NO_BORDER);
-        cell.add(element);
+        if (element != null) {
+            cell.add(element);
+        }
         return cell;
     }
 }
