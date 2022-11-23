@@ -23,10 +23,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class GeneHasVariantWithProteinImpact implements EvaluationFunction {
 
-    private static final double CLONAL_CUTOFF = 0.5;
-    private static final double CLONAL_CUTOFF_PERCENTAGE = CLONAL_CUTOFF * 100;
-
     private static final Logger LOGGER = LogManager.getLogger(GeneHasVariantWithProteinImpact.class);
+
+    private static final double CLONAL_CUTOFF = 0.5;
 
     @NotNull
     private final String gene;
@@ -142,10 +141,10 @@ public class GeneHasVariantWithProteinImpact implements EvaluationFunction {
         if (!canonicalReportableSubclonalVariantMatches.isEmpty()) {
             warnEvents.addAll(canonicalReportableSubclonalVariantMatches);
             warnSpecificMessages.add("Variant(s) " + Format.concat(canonicalReportableSubclonalVariantMatches) + " in " + gene
-                    + " detected in canonical transcript, but subclonal likelihood of >" + CLONAL_CUTOFF_PERCENTAGE + "%");
+                    + " detected in canonical transcript, but subclonal likelihood of > " + Format.percentage(1 - CLONAL_CUTOFF));
             warnGeneralMessages.add(
                     "Variant(s) " + Format.concat(canonicalReportableSubclonalVariantMatches) + " found in " + gene
-                            + " but subclonal likelihood of >" + CLONAL_CUTOFF_PERCENTAGE + "%");
+                            + " but subclonal likelihood of > " + Format.percentage(1 - CLONAL_CUTOFF));
         }
 
         if (!canonicalUnreportableVariantMatches.isEmpty()) {

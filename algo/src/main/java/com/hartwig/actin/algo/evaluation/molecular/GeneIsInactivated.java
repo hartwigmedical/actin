@@ -26,7 +26,6 @@ import org.jetbrains.annotations.Nullable;
 public class GeneIsInactivated implements EvaluationFunction {
 
     private static final double CLONAL_CUTOFF = 0.5;
-    private static final double CLONAL_CUTOFF_PERCENTAGE = CLONAL_CUTOFF*100;
 
     static final Set<CodingEffect> INACTIVATING_CODING_EFFECTS = Sets.newHashSet();
 
@@ -213,9 +212,9 @@ public class GeneIsInactivated implements EvaluationFunction {
             warnEvents.addAll(inactivationSubclonalVariants);
             warnSpecificMessages.add(
                     "Inactivation event(s) detected for " + gene + ": " + Format.concat(inactivationSubclonalVariants)
-                            + " but subclonal likelihood > " + CLONAL_CUTOFF_PERCENTAGE + "%");
+                            + " but subclonal likelihood > " + Format.percentage(1 - CLONAL_CUTOFF));
             warnGeneralMessages.add(gene + " potentially inactivating event(s) " + Format.concat(inactivationSubclonalVariants)
-                    + " but subclonal likelihood > " + CLONAL_CUTOFF_PERCENTAGE + "%");
+                    + " but subclonal likelihood > " + Format.percentage(1 - CLONAL_CUTOFF));
         }
 
         if (!reportableNonDriverVariantsWithLossOfFunction.isEmpty()) {

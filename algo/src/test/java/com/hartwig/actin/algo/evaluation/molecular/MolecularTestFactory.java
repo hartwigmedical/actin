@@ -59,7 +59,18 @@ final class MolecularTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withHasTumorMutationalLoadAndVariant(@Nullable Boolean hasHighTumorMutationalLoad, @NotNull Variant variant) {
+    public static PatientRecord withVariant(@NotNull Variant variant) {
+        return withMolecularDrivers(ImmutableMolecularDrivers.builder().addVariants(variant).build());
+    }
+
+    @NotNull
+    public static PatientRecord withVariants(@NotNull Variant... variants) {
+        return withMolecularDrivers(ImmutableMolecularDrivers.builder().addAllVariants(Lists.newArrayList(variants)).build());
+    }
+
+    @NotNull
+    public static PatientRecord withHasTumorMutationalLoadAndVariant(@Nullable Boolean hasHighTumorMutationalLoad,
+            @NotNull Variant variant) {
         MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
 
         return withMolecularRecord(ImmutableMolecularRecord.builder()
@@ -70,16 +81,6 @@ final class MolecularTestFactory {
                         .build())
                 .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addVariants(variant).build())
                 .build());
-    }
-
-    @NotNull
-    public static PatientRecord withVariant(@NotNull Variant variant) {
-        return withMolecularDrivers(ImmutableMolecularDrivers.builder().addVariants(variant).build());
-    }
-
-    @NotNull
-    public static PatientRecord withVariants(@NotNull Variant... variants) {
-        return withMolecularDrivers(ImmutableMolecularDrivers.builder().addAllVariants(Lists.newArrayList(variants)).build());
     }
 
     @NotNull
