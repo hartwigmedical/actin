@@ -179,7 +179,7 @@ public class MolecularDriverEntryFactory {
         for (Fusion fusion : fusions) {
             ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
             entryBuilder.driverType(fusion.driverType().display());
-            entryBuilder.driver(fusion.event() + ", exon " + fusion.fusedExonUp() + " to exon " + fusion.fusedExonDown());
+            entryBuilder.driver(fusion.event() + ", exon " + fusion.fusedExonUp() + " - exon " + fusion.fusedExonDown());
             entryBuilder.driverLikelihood(fusion.driverLikelihood());
 
             addActionability(entryBuilder, fusion);
@@ -241,8 +241,10 @@ public class MolecularDriverEntryFactory {
         ActionableEvidence evidence = driver.evidence();
         if (!evidence.approvedTreatments().isEmpty()) {
             return "Approved";
-        } else if (!evidence.onLabelExperimentalTreatments().isEmpty() || !evidence.offLabelExperimentalTreatments().isEmpty()) {
-            return "Experimental";
+        } else if (!evidence.onLabelExperimentalTreatments().isEmpty()) {
+            return "On-label experimental";
+        } else if (!evidence.offLabelExperimentalTreatments().isEmpty()) {
+            return "Off-label experimental";
         } else if (!evidence.preClinicalTreatments().isEmpty()) {
             return "Pre-clinical";
         }
@@ -254,9 +256,9 @@ public class MolecularDriverEntryFactory {
     private static String bestResistanceEvidence(@NotNull Driver driver) {
         ActionableEvidence evidence = driver.evidence();
         if ((!evidence.knownResistantTreatments().isEmpty())) {
-            return "Known";
+            return "Known resistance";
         } else if (!evidence.suspectResistantTreatments().isEmpty()) {
-            return "Suspect";
+            return "Suspect resistance";
         }
 
         return null;
