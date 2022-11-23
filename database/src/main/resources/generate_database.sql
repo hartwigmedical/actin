@@ -158,6 +158,7 @@ CREATE TABLE toxicity
 (   id int NOT NULL AUTO_INCREMENT,
     patientId varchar(50) NOT NULL,
     name varchar(50) NOT NULL,
+    categories varchar(100) NOT NULL,
     evaluatedDate DATE NOT NULL,
     source varchar(50) NOT NULL,
     grade int,

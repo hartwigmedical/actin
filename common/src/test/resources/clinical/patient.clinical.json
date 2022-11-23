@@ -159,6 +159,9 @@
   "toxicities": [
     {
       "name": "Neuropathy",
+      "categories": [
+        "Neuropathy"
+      ],
       "evaluatedDate": {
         "year": 2019,
         "month": 4,
@@ -169,6 +172,7 @@
     },
     {
       "name": "Hand skin reaction",
+      "categories": [],
       "evaluatedDate": {
         "year": 2020,
         "month": 3,

@@ -347,8 +347,19 @@ class ClinicalDAO {
 
     private void writeToxicities(@NotNull String patientId, @NotNull List<Toxicity> toxicities) {
         for (Toxicity toxicity : toxicities) {
-            context.insertInto(TOXICITY, TOXICITY.PATIENTID, TOXICITY.NAME, TOXICITY.EVALUATEDDATE, TOXICITY.SOURCE, TOXICITY.GRADE)
-                    .values(patientId, toxicity.name(), toxicity.evaluatedDate(), toxicity.source().display(), toxicity.grade())
+            context.insertInto(TOXICITY,
+                            TOXICITY.PATIENTID,
+                            TOXICITY.NAME,
+                            TOXICITY.CATEGORIES,
+                            TOXICITY.EVALUATEDDATE,
+                            TOXICITY.SOURCE,
+                            TOXICITY.GRADE)
+                    .values(patientId,
+                            toxicity.name(),
+                            DataUtil.concat(toxicity.categories()),
+                            toxicity.evaluatedDate(),
+                            toxicity.source().display(),
+                            toxicity.grade())
                     .execute();
         }
     }

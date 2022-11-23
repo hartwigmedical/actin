@@ -16,6 +16,7 @@ public class ToxicityConfigFactory implements CurationConfigFactory<ToxicityConf
                 .input(parts[fields.get("input")])
                 .ignore(CurationUtil.isIgnoreString(parts[fields.get("name")]))
                 .name(parts[fields.get("name")])
+                .categories(CurationUtil.toCategories(parts[fields.get("categories")]))
                 .grade(ResourceFile.optionalInteger(parts[fields.get("grade")]))
                 .build();
     }

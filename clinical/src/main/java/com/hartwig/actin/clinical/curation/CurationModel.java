@@ -369,6 +369,7 @@ public class CurationModel {
                 if (!config.ignore()) {
                     toxicities.add(ImmutableToxicity.builder()
                             .name(config.name())
+                            .categories(config.categories())
                             .evaluatedDate(date)
                             .source(ToxicitySource.QUESTIONNAIRE)
                             .grade(config.grade())

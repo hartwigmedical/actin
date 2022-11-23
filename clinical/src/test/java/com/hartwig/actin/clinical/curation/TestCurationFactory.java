@@ -283,7 +283,13 @@ public final class TestCurationFactory {
     private static List<ToxicityConfig> createTestToxicityConfigs() {
         List<ToxicityConfig> configs = Lists.newArrayList();
 
-        configs.add(ImmutableToxicityConfig.builder().ignore(false).input("neuropathy gr3").name("neuropathy").grade(3).build());
+        configs.add(ImmutableToxicityConfig.builder()
+                .ignore(false)
+                .input("neuropathy gr3")
+                .name("neuropathy")
+                .addCategories("neuro")
+                .grade(3)
+                .build());
 
         return configs;
     }

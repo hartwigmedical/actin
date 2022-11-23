@@ -208,6 +208,7 @@ public class CurationModelTest {
 
         Toxicity toxicity = toxicities.get(0);
         assertEquals("neuropathy", toxicity.name());
+        assertEquals(Sets.newHashSet("neuro"), toxicity.categories());
         assertEquals(date, toxicity.evaluatedDate());
         assertEquals(ToxicitySource.QUESTIONNAIRE, toxicity.source());
         assertEquals(3, (int) toxicity.grade());

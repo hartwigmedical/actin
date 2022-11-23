@@ -306,6 +306,7 @@ public final class TestClinicalFactory {
 
         toxicities.add(ImmutableToxicity.builder()
                 .name("Nausea")
+                .addCategories("Nausea")
                 .evaluatedDate(TODAY.minusDays(DAYS_SINCE_TOXICITIES))
                 .source(ToxicitySource.EHR)
                 .grade(1)
@@ -313,8 +314,9 @@ public final class TestClinicalFactory {
 
         toxicities.add(ImmutableToxicity.builder()
                 .name("Fatigue")
+                .addCategories("Fatigue")
                 .evaluatedDate(TODAY.minusDays(DAYS_SINCE_TOXICITIES))
-                .source(ToxicitySource.EHR)
+                .source(ToxicitySource.QUESTIONNAIRE)
                 .grade(2)
                 .build());
 

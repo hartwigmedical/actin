@@ -1,5 +1,7 @@
 package com.hartwig.actin.clinical.curation.config;
 
+import java.util.Set;
+
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,6 +19,9 @@ public abstract class ToxicityConfig implements CurationConfig {
 
     @NotNull
     public abstract String name();
+
+    @NotNull
+    public abstract Set<String> categories();
 
     @Nullable
     public abstract Integer grade();

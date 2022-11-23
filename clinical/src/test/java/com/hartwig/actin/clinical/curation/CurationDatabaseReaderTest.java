@@ -223,6 +223,7 @@ public class CurationDatabaseReaderTest {
         ToxicityConfig config = configs.get(0);
         assertEquals("Neuropathy GR3", config.input());
         assertEquals("Neuropathy", config.name());
+        assertEquals(Sets.newHashSet("Neuro"), config.categories());
         assertEquals(3, (int) config.grade());
     }
 

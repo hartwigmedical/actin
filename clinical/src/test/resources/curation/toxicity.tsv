@@ -1,2 +1,2 @@
-input	name	grade
-Neuropathy GR3	Neuropathy	3
+input	name	categories	grade
+Neuropathy GR3	Neuropathy	Neuro	3

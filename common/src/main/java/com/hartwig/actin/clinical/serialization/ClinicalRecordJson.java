@@ -385,6 +385,7 @@ public final class ClinicalRecordJson {
                 JsonObject object = element.getAsJsonObject();
                 toxicityList.add(ImmutableToxicity.builder()
                         .name(string(object, "name"))
+                        .categories(stringList(object, "categories"))
                         .evaluatedDate(date(object, "evaluatedDate"))
                         .source(ToxicitySource.valueOf(string(object, "source")))
                         .grade(nullableInteger(object, "grade"))
