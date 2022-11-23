@@ -23,6 +23,7 @@ public final class ApplicabilityFiltering {
 
     static {
         NON_APPLICABLE_GENES.add("CDKN2A");
+        NON_APPLICABLE_GENES.add("TP53");
 
         NON_APPLICABLE_AMPLIFICATIONS.add("VEGFA");
     }
