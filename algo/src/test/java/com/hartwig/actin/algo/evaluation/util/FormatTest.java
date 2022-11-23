@@ -27,4 +27,14 @@ public class FormatTest {
     public void canFormatDates() {
         assertNotNull(Format.date(LocalDate.of(2021, 8, 20)));
     }
+
+    @Test
+    public void canFormatPercentages() {
+        assertEquals("50%", Format.percentage(0.500002));
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void crashOnIllegalPercentage() {
+        Format.percentage(50D);
+    }
 }
