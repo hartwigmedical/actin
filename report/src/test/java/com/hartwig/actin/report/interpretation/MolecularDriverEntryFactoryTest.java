@@ -2,6 +2,7 @@ package com.hartwig.actin.report.interpretation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
 
@@ -31,16 +32,27 @@ public class MolecularDriverEntryFactoryTest {
         assertFalse(record.drivers().variants().isEmpty());
 
         Variant firstVariant = record.drivers().variants().iterator().next();
-        EvaluatedTrial trialForVariant = EvaluatedTrialTestFactory.builder()
-                .acronym("trial")
+        EvaluatedTrial openTrialForVariant = EvaluatedTrialTestFactory.builder()
+                .acronym("trial 1")
                 .addMolecularEvents(firstVariant.event())
+                .isPotentiallyEligible(true)
+                .isOpen(true)
                 .build();
 
-        MolecularDriverEntryFactory factory = MolecularDriverEntryFactory.fromEvaluatedTrials(Lists.newArrayList(trialForVariant));
+        EvaluatedTrial closedTrialForVariant = EvaluatedTrialTestFactory.builder()
+                .acronym("trial 2")
+                .addMolecularEvents(firstVariant.event())
+                .isPotentiallyEligible(true)
+                .isOpen(false)
+                .build();
+
+        MolecularDriverEntryFactory factory =
+                MolecularDriverEntryFactory.fromEvaluatedTrials(Lists.newArrayList(openTrialForVariant, closedTrialForVariant));
         Set<MolecularDriverEntry> entries = factory.create(record);
 
         MolecularDriverEntry entry = startsWithDriver(entries, firstVariant.event());
         assertEquals(1, entry.actinTrials().size());
+        assertTrue(entry.actinTrials().contains("trial 1"));
     }
 
     @NotNull
