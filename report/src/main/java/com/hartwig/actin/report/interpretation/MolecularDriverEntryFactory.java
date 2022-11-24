@@ -72,7 +72,7 @@ public class MolecularDriverEntryFactory {
             String mutationTypeString = variant.isHotspot() ? "Hotspot" : "VUS";
             mutationTypeString = variant.isBiallelic() ? "Biallelic " + mutationTypeString : mutationTypeString;
 
-            entryBuilder.driverType("Mutation (" + mutationTypeString + "))");
+            entryBuilder.driverType("Mutation (" + mutationTypeString + ")");
 
             double boundedVariantCopies = Math.max(0, Math.min(variant.variantCopyNumber(), variant.totalCopyNumber()));
             String variantCopyString = boundedVariantCopies < 1
