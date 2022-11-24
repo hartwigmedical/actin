@@ -2,6 +2,8 @@ package com.hartwig.actin.molecular.orange;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
+import java.util.StringJoiner;
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson;
@@ -84,6 +86,12 @@ public class OrangeInterpreterApplication {
 
         LOGGER.info("Loading clinical json from {}", config.clinicalJson());
         ClinicalRecord clinical = ClinicalRecordJson.read(config.clinicalJson());
+        Set<String> tumorDoids = clinical.tumor().doids();
+        if (tumorDoids == null || tumorDoids.isEmpty()) {
+            LOGGER.warn(" No tumor DOIDs configured!");
+        } else {
+            LOGGER.info(" Tumor DOIDs determined to be: {}", concat(tumorDoids));
+        }
 
         LOGGER.info("Loading DOID tree from {}", config.doidJson());
         DoidEntry doidEntry = DoidJson.readDoidOwlEntry(config.doidJson());
@@ -99,5 +107,14 @@ public class OrangeInterpreterApplication {
         MolecularRecordJson.write(molecular, config.outputDirectory());
 
         LOGGER.info("Done!");
+    }
+
+    @NotNull
+    private static String concat(@NotNull Set<String> strings) {
+        StringJoiner joiner = new StringJoiner(", ");
+        for (String string : strings) {
+            joiner.add(string);
+        }
+        return joiner.toString();
     }
 }
