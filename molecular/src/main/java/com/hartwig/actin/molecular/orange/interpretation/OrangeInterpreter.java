@@ -7,6 +7,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
+import com.hartwig.actin.molecular.orange.datamodel.OrangeRefGenomeVersion;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants;
 
@@ -33,7 +34,7 @@ public class OrangeInterpreter {
                 .patientId(toPatientId(record.sampleId()))
                 .sampleId(record.sampleId())
                 .type(ExperimentType.WGS)
-                .refGenomeVersion(RefGenomeVersion.V37)
+                .refGenomeVersion(determineRefGenomeVersion(record.refGenomeVersion()))
                 .date(record.experimentDate())
                 .evidenceSource(ActionabilityConstants.EVIDENCE_SOURCE.toString())
                 .externalTrialSource(ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.toString())
@@ -44,6 +45,19 @@ public class OrangeInterpreter {
                 .immunology(ImmunologyExtraction.extract(record))
                 .pharmaco(PharmacoExtraction.extract(record))
                 .build();
+    }
+
+    @NotNull
+    static RefGenomeVersion determineRefGenomeVersion(@NotNull OrangeRefGenomeVersion refGenomeVersion) {
+        switch (refGenomeVersion) {
+            case V37: {
+                return RefGenomeVersion.V37;
+            } case V38: {
+                return RefGenomeVersion.V38;
+            }
+        }
+
+        throw new IllegalStateException("Could not determine ref genome version from: " + refGenomeVersion);
     }
 
     @VisibleForTesting

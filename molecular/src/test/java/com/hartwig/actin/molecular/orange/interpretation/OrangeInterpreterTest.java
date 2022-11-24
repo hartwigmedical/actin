@@ -9,8 +9,10 @@ import java.time.LocalDate;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.molecular.datamodel.RefGenomeVersion;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory;
+import com.hartwig.actin.molecular.orange.datamodel.OrangeRefGenomeVersion;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory;
 
@@ -28,6 +30,7 @@ public class OrangeInterpreterTest {
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
         assertEquals(ExperimentType.WGS, record.type());
         assertEquals(LocalDate.of(2021, 5, 6), record.date());
+        assertEquals(RefGenomeVersion.V37, record.refGenomeVersion());
         assertTrue(record.hasSufficientQuality());
 
         assertNotNull(record.characteristics());
@@ -53,6 +56,13 @@ public class OrangeInterpreterTest {
     @Test (expected = IllegalArgumentException.class)
     public void crashOnInvalidSampleId() {
         OrangeInterpreter.toPatientId("no sample");
+    }
+
+    @Test
+    public void canDetermineAllRefGenomeVersions() {
+        for (OrangeRefGenomeVersion refGenomeVersion : OrangeRefGenomeVersion.values()) {
+            assertNotNull(OrangeInterpreter.determineRefGenomeVersion(refGenomeVersion));
+        }
     }
 
     @NotNull

@@ -27,6 +27,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
+import com.hartwig.actin.molecular.orange.datamodel.OrangeRefGenomeVersion;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ImmutableChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaPrediction;
@@ -105,6 +106,7 @@ public final class OrangeJson {
             return ImmutableOrangeRecord.builder()
                     .sampleId(string(record, "sampleId"))
                     .experimentDate(date(record, "experimentDate"))
+                    .refGenomeVersion(OrangeRefGenomeVersion.valueOf(string(record, "refGenomeVersion")))
                     .purple(toPurpleRecord(object(record, "purple")))
                     .linx(toLinxRecord(object(record, "linx")))
                     .peach(toPeachRecord(array(record, "peach")))

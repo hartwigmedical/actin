@@ -48,6 +48,7 @@ public final class TestOrangeFactory {
         return ImmutableOrangeRecord.builder()
                 .sampleId(TestDataFactory.TEST_SAMPLE)
                 .experimentDate(LocalDate.of(2021, 5, 6))
+                .refGenomeVersion(OrangeRefGenomeVersion.V37)
                 .purple(createMinimalTestPurpleRecord())
                 .linx(ImmutableLinxRecord.builder().build())
                 .peach(ImmutablePeachRecord.builder().build())

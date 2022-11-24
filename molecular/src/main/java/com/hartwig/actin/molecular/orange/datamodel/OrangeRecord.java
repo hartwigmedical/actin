@@ -25,6 +25,9 @@ public abstract class OrangeRecord {
     public abstract LocalDate experimentDate();
 
     @NotNull
+    public abstract OrangeRefGenomeVersion refGenomeVersion();
+
+    @NotNull
     public abstract PurpleRecord purple();
 
     @NotNull

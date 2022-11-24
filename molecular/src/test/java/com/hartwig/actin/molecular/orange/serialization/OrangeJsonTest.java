@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import com.google.common.io.Resources;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
+import com.hartwig.actin.molecular.orange.datamodel.OrangeRefGenomeVersion;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaPrediction;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
@@ -63,6 +64,7 @@ public class OrangeJsonTest {
 
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
         assertEquals(LocalDate.of(2022, 1, 20), record.experimentDate());
+        assertEquals(OrangeRefGenomeVersion.V37, record.refGenomeVersion());
 
         assertPurple(record.purple());
         assertLinx(record.linx());
