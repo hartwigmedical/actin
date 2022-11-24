@@ -15,6 +15,7 @@ import com.hartwig.actin.molecular.filter.TestGeneFilterFactory;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRefGenomeVersion;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory;
+import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -29,8 +30,10 @@ public class OrangeInterpreterTest {
         assertEquals(TestDataFactory.TEST_PATIENT, record.patientId());
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
         assertEquals(ExperimentType.WGS, record.type());
-        assertEquals(LocalDate.of(2021, 5, 6), record.date());
         assertEquals(RefGenomeVersion.V37, record.refGenomeVersion());
+        assertEquals(LocalDate.of(2021, 5, 6), record.date());
+        assertEquals(ActionabilityConstants.EVIDENCE_SOURCE.display(), record.evidenceSource());
+        assertEquals(ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display(), record.externalTrialSource());
         assertTrue(record.hasSufficientQuality());
 
         assertNotNull(record.characteristics());

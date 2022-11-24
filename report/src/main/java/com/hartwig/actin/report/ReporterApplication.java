@@ -29,6 +29,8 @@ public class ReporterApplication {
     public static final String VERSION = ReporterApplication.class.getPackage().getImplementationVersion();
 
     public static void main(@NotNull String... args) throws IOException {
+        LOGGER.info("Running {} v{}", APPLICATION, VERSION);
+
         Options options = ReporterConfig.createOptions();
 
         ReporterConfig config = null;
@@ -51,8 +53,6 @@ public class ReporterApplication {
     }
 
     public void run() throws IOException {
-        LOGGER.info("Running {} v{}", APPLICATION, VERSION);
-
         LOGGER.info("Loading clinical record from {}", config.clinicalJson());
         ClinicalRecord clinical = ClinicalRecordJson.read(config.clinicalJson());
 
