@@ -67,12 +67,17 @@ public interface ReporterConfig {
             LOGGER.debug("Switched root level logging to DEBUG");
         }
 
+        boolean skipTrialMatchingDetails = cmd.hasOption(SKIP_TRIAL_MATCHING_DETAILS);
+        if (skipTrialMatchingDetails) {
+            LOGGER.info("Skipping trial matching details");
+        }
+
         return ImmutableReporterConfig.builder()
                 .clinicalJson(ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON))
                 .molecularJson(ApplicationConfig.nonOptionalFile(cmd, MOLECULAR_JSON))
                 .treatmentMatchJson(ApplicationConfig.nonOptionalFile(cmd, TREATMENT_MATCH_JSON))
                 .outputDirectory(ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY))
-                .skipTrialMatchingDetails(cmd.hasOption(SKIP_TRIAL_MATCHING_DETAILS))
+                .skipTrialMatchingDetails(skipTrialMatchingDetails)
                 .build();
     }
 }
