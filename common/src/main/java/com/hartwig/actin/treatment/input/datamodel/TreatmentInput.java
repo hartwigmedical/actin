@@ -31,7 +31,9 @@ public enum TreatmentInput {
     FLUOROPYRIMIDINE(TreatmentCategory.CHEMORADIOTHERAPY,
             Sets.newHashSet("Capecitabine", "Carmofur", "Doxifluridine", "Fluorouracil", "Tegafur")),
     NONSTEROIDAL_ANTI_ANDROGEN(TreatmentCategory.HORMONE_THERAPY,
-            Sets.newHashSet("Flutamide", "Nilutamide", "Bicalutamide", "Enzalutamide", "Darolutamide", "Ketodarolutamide", "Apalutamide"));
+            Sets.newHashSet("Flutamide", "Nilutamide", "Bicalutamide", "Enzalutamide", "Darolutamide", "Ketodarolutamide", "Apalutamide")),
+    NOVEL_HORMONE_THERAPY_FOR_PROSTATE(TreatmentCategory.HORMONE_THERAPY,
+            Sets.newHashSet("Abiraterone", "Apalutamide", "Darolutamide", "Enzalutamide"));
 
     @NotNull
     private final TreatmentCategory mappedCategory;
