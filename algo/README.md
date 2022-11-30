@@ -386,16 +386,18 @@ _Tumor markers_
 
 _Urine measurements_
 
-| Rule                                         | When does a patient pass evaluation? | Note |
-|----------------------------------------------|--------------------------------------|------|
-| HAS_TOTAL_PROTEIN_IN_URINE_OF_AT_LEAST_X     | Total protein in urine (TE_U) => X.  |      |
-| HAS_TOTAL_PROTEIN_IN_24H_URINE_OF_AT_LEAST_X | In g/24h. T.B.D                      |      |
+| Rule                                                         | When does a patient pass evaluation? | Note |
+|--------------------------------------------------------------|--------------------------------------|------|
+| HAS_TOTAL_PROTEIN_IN_URINE_OF_AT_LEAST_X                     | Total protein in urine (TE_U) => X.  |      |
+| HAS_TOTAL_PROTEIN_IN_24H_URINE_OF_AT_LEAST_X                 | In g/24h. T.B.D                      |      |
+| HAS_URINE_PROTEIN_TO_CREATININE_RATIO_MG_PER_MG_OF_AT_MOST_X | Currently resolves to `UNDETERMINED` |      |
 
 _Other_
 
-| Rule                                   | When does a patient pass evaluation? | Note |
-|----------------------------------------|--------------------------------------|------|
-| HAS_GLUCOSE_PL_MMOL_PER_L_OF_AT_MOST_X | Glucose /PL (GL_P) in mmol/L <= X    |      |
+| Rule                                             | When does a patient pass evaluation?     | Note |
+|--------------------------------------------------|------------------------------------------|------|
+| HAS_GLUCOSE_PL_MMOL_PER_L_OF_AT_MOST_X           | Glucose /PL (GL_P) in mmol/L <= X        |      |
+| HAS_THYROXINE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS | Free T4 (FT4) LLN<X<ULN (isOutsideRef=0) |      |
 
 ULN = Upper Limit of Normal, LLN = Lower Limit of Normal; implemented as refLimitUp and refLimitLow, respectively.
 
