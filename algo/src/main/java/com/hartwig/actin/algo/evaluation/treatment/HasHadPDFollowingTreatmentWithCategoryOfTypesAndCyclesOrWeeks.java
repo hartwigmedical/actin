@@ -30,8 +30,8 @@ public class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks imple
     @Nullable
     private final Integer minWeeks;
 
-    HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(@NotNull final TreatmentCategory category, @NotNull final List<String> types,
-            @Nullable final Integer minCycles, @Nullable final Integer minWeeks) {
+    HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(@NotNull final TreatmentCategory category,
+            @NotNull final List<String> types, @Nullable final Integer minCycles, @Nullable final Integer minWeeks) {
         this.category = category;
         this.types = types;
         this.minCycles = minCycles;
@@ -66,12 +66,14 @@ public class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks imple
                         boolean meetsMinCycles = minCycles == null || (cycles != null && cycles >= minCycles);
                         boolean meetsMinWeeks = minWeeks == null || (weeks != null && weeks >= minWeeks);
 
-                        if (stopReason.equalsIgnoreCase(STOP_REASON_PD) && meetsMinCycles && meetsMinWeeks) {
-                            hasHadTreatmentWithPDAndCyclesOrWeeks = true;
-                        } else if (stopReason.equalsIgnoreCase(STOP_REASON_PD) && minCycles != null && cycles == null) {
-                            hasHadTreatmentWithPDAndUnclearCycles = true;
-                        } else if (stopReason.equalsIgnoreCase(STOP_REASON_PD) && minWeeks != null && weeks == null) {
-                            hasHadTreatmentWithPDAndUnclearWeeks = true;
+                        if (stopReason.equalsIgnoreCase(STOP_REASON_PD)) {
+                            if (meetsMinCycles && meetsMinWeeks) {
+                                hasHadTreatmentWithPDAndCyclesOrWeeks = true;
+                            } else if (minCycles != null && cycles == null) {
+                                hasHadTreatmentWithPDAndUnclearCycles = true;
+                            } else if (minWeeks != null && weeks == null) {
+                                hasHadTreatmentWithPDAndUnclearWeeks = true;
+                            }
                         }
                     } else if (minCycles == null && minWeeks == null) {
                         hasHadTreatmentWithUnclearStopReason = true;
@@ -128,7 +130,8 @@ public class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks imple
         } else if (hasHadTreatmentWithUnclearStopReasonAndUnclearCycles) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Patient has received " + treatment() + " but with unclear stop reason & number of cycles")
+                    .addUndeterminedSpecificMessages(
+                            "Patient has received " + treatment() + " but with unclear stop reason & number of cycles")
                     .addUndeterminedGeneralMessages(category.display() + " undetermined stop reason & nr of cycles")
                     .build();
         } else if (hasHadTreatmentWithUnclearStopReasonAndUnclearWeeks) {
