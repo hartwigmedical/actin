@@ -43,6 +43,7 @@ public class TreatmentRuleMapper extends RuleMapper {
                 hasHadCombinedTreatmentNamesWithCyclesCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT, hasHadTreatmentWithCategoryCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y, hasHadTreatmentCategoryOfTypesCreator());
+        map.put(EligibilityRule.HAS_HAD_FIRST_LINE_CATEGORY_X_TREATMENT_OF_TYPES_Y, hasHadFirstLineTreatmentCategoryOfTypesCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_WITHIN_Z_WEEKS, hasHadTreatmentCategoryOfTypesWithinWeeksCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_TYPES_Y, hasHadTreatmentCategoryIgnoringTypesCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_LEAST_Y_LINES, hasHadSomeTreatmentsOfCategoryCreator());
@@ -167,6 +168,11 @@ public class TreatmentRuleMapper extends RuleMapper {
             OneTypedTreatmentManyStrings input = functionInputResolver().createOneTypedTreatmentManyStringsInput(function);
             return new HasHadSomeTreatmentsWithCategoryOfTypes(input.category(), input.strings(), 1);
         };
+    }
+
+    @NotNull
+    private FunctionCreator hasHadFirstLineTreatmentCategoryOfTypesCreator() {
+        return function -> new HasHadFirstLineTreatmentCategoryOfTypes();
     }
 
     @NotNull
