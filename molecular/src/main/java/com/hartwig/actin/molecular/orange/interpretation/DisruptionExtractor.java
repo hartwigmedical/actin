@@ -71,7 +71,6 @@ class DisruptionExtractor {
             }
 
             if (geneFilter.include(disruption.gene())) {
-                // TODO: Linx should already filter or flag disruptions that are lost.
                 if (include(disruption, losses)) {
                     disruptions.add(ImmutableDisruption.builder()
                             .from(GeneAlterationFactory.convertAlteration(disruption.gene(),
