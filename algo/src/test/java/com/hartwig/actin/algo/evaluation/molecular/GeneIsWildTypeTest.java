@@ -4,6 +4,7 @@ import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecular
 
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
 import com.hartwig.actin.molecular.datamodel.driver.TestAmplificationFactory;
@@ -27,6 +28,7 @@ public class GeneIsWildTypeTest {
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
                         .isReportable(true)
+                        .driverLikelihood(DriverLikelihood.HIGH)
                         .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
                         .build())));
 
@@ -34,7 +36,16 @@ public class GeneIsWildTypeTest {
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .gene("gene A")
                         .isReportable(true)
+                        .driverLikelihood(DriverLikelihood.HIGH)
                         .proteinEffect(ProteinEffect.NO_EFFECT)
+                        .build())));
+
+        assertMolecularEvaluation(EvaluationResult.WARN,
+                function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
+                        .gene("gene A")
+                        .isReportable(true)
+                        .driverLikelihood(DriverLikelihood.LOW)
+                        .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
                         .build())));
     }
 

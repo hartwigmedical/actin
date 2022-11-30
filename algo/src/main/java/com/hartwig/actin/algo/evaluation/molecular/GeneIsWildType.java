@@ -11,6 +11,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
+import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole;
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
@@ -43,6 +44,8 @@ public class GeneIsWildType implements EvaluationFunction {
                         variant.proteinEffect() == ProteinEffect.NO_EFFECT || variant.proteinEffect() == ProteinEffect.NO_EFFECT_PREDICTED;
                 if (hasNoEffect) {
                     reportableEventsWithNoEffect.add(variant.event());
+                } else if (variant.driverLikelihood() != DriverLikelihood.HIGH) {
+                    reportableEventsWithEffectPotentiallyWildtype.add(variant.event());
                 } else {
                     reportableEventsWithEffect.add(variant.event());
                 }
@@ -115,7 +118,7 @@ public class GeneIsWildType implements EvaluationFunction {
                     .result(EvaluationResult.FAIL)
                     .addFailSpecificMessages(
                             "Gene " + gene + " is not considered wild-type due to " + Format.concat(reportableEventsWithEffect))
-                    .addFailGeneralMessages(gene + "not wild-type")
+                    .addFailGeneralMessages(gene + " not wild-type")
                     .build();
         }
 
