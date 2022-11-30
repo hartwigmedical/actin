@@ -11,14 +11,15 @@ import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 
 import org.junit.Test;
 
-public class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesTest {
+public class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
 
     @Test
     public void canEvaluate() {
-        HasHadPDFollowingTreatmentWithCategoryOfTypesAndCycles function = new HasHadPDFollowingTreatmentWithCategoryOfTypesAndCycles(
-                TreatmentCategory.CHEMOTHERAPY,
-                Lists.newArrayList("type 1"),
-                null);
+        HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks function =
+                new HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(TreatmentCategory.CHEMOTHERAPY,
+                        Lists.newArrayList("type 1"),
+                        null,
+                        null);
 
         List<PriorTumorTreatment> treatments = Lists.newArrayList();
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
@@ -47,17 +48,18 @@ public class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesTest {
         treatments.add(TreatmentTestFactory.builder()
                 .addCategories(TreatmentCategory.CHEMOTHERAPY)
                 .chemoType("type 1")
-                .stopReason(HasHadPDFollowingTreatmentWithCategoryOfTypesAndCycles.STOP_REASON_PD)
+                .stopReason(HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks.STOP_REASON_PD)
                 .build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
     }
 
     @Test
     public void canEvaluateWithTrials() {
-        HasHadPDFollowingTreatmentWithCategoryOfTypesAndCycles function = new HasHadPDFollowingTreatmentWithCategoryOfTypesAndCycles(
-                TreatmentCategory.CHEMOTHERAPY,
-                Lists.newArrayList("type 1"),
-                null);
+        HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks function =
+                new HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(TreatmentCategory.CHEMOTHERAPY,
+                        Lists.newArrayList("type 1"),
+                        null,
+                        null);
 
         assertEvaluation(EvaluationResult.UNDETERMINED,
                 function.evaluate(TreatmentTestFactory.withPriorTumorTreatment(TreatmentTestFactory.builder()
@@ -67,14 +69,17 @@ public class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesTest {
 
     @Test
     public void canEvaluateWithCycles() {
-        HasHadPDFollowingTreatmentWithCategoryOfTypesAndCycles function =
-                new HasHadPDFollowingTreatmentWithCategoryOfTypesAndCycles(TreatmentCategory.CHEMOTHERAPY, Lists.newArrayList("type 1"), 5);
+        HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks function =
+                new HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(TreatmentCategory.CHEMOTHERAPY,
+                        Lists.newArrayList("type 1"),
+                        5,
+                        null);
 
         // Cycles not configured
         assertEvaluation(EvaluationResult.UNDETERMINED,
                 function.evaluate(TreatmentTestFactory.withPriorTumorTreatment(TreatmentTestFactory.builder()
                         .addCategories(TreatmentCategory.CHEMOTHERAPY)
-                        .stopReason(HasHadPDFollowingTreatmentWithCategoryOfTypesAndCycles.STOP_REASON_PD)
+                        .stopReason(HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks.STOP_REASON_PD)
                         .chemoType("type 1")
                         .build())));
 
@@ -82,7 +87,7 @@ public class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesTest {
         assertEvaluation(EvaluationResult.FAIL,
                 function.evaluate(TreatmentTestFactory.withPriorTumorTreatment(TreatmentTestFactory.builder()
                         .addCategories(TreatmentCategory.CHEMOTHERAPY)
-                        .stopReason(HasHadPDFollowingTreatmentWithCategoryOfTypesAndCycles.STOP_REASON_PD)
+                        .stopReason(HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks.STOP_REASON_PD)
                         .chemoType("type 1")
                         .cycles(3)
                         .build())));
@@ -91,9 +96,50 @@ public class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesTest {
         assertEvaluation(EvaluationResult.PASS,
                 function.evaluate(TreatmentTestFactory.withPriorTumorTreatment(TreatmentTestFactory.builder()
                         .addCategories(TreatmentCategory.CHEMOTHERAPY)
-                        .stopReason(HasHadPDFollowingTreatmentWithCategoryOfTypesAndCycles.STOP_REASON_PD)
+                        .stopReason(HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks.STOP_REASON_PD)
                         .chemoType("type 1")
                         .cycles(7)
+                        .build())));
+    }
+
+    @Test
+    public void canEvaluateWithWeeks() {
+        HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks function =
+                new HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(TreatmentCategory.CHEMOTHERAPY,
+                        Lists.newArrayList("type 1"),
+                        null,
+                        5);
+
+        // Dates not configured
+        assertEvaluation(EvaluationResult.UNDETERMINED,
+                function.evaluate(TreatmentTestFactory.withPriorTumorTreatment(TreatmentTestFactory.builder()
+                        .addCategories(TreatmentCategory.CHEMOTHERAPY)
+                        .stopReason(HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks.STOP_REASON_PD)
+                        .chemoType("type 1")
+                        .build())));
+
+        // Not enough weeks TODO: fix test
+        assertEvaluation(EvaluationResult.UNDETERMINED,
+                function.evaluate(TreatmentTestFactory.withPriorTumorTreatment(TreatmentTestFactory.builder()
+                        .addCategories(TreatmentCategory.CHEMOTHERAPY)
+                        .stopReason(HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks.STOP_REASON_PD)
+                        .chemoType("type 1")
+                        .startYear(1)
+                        .startMonth(3)
+                        .stopYear(1)
+                        .stopMonth(5)
+                        .build())));
+
+        // Sufficient number of cycles TODO: fix test
+        assertEvaluation(EvaluationResult.UNDETERMINED,
+                function.evaluate(TreatmentTestFactory.withPriorTumorTreatment(TreatmentTestFactory.builder()
+                        .addCategories(TreatmentCategory.CHEMOTHERAPY)
+                        .stopReason(HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks.STOP_REASON_PD)
+                        .chemoType("type 1")
+                        .startYear(1)
+                        .startMonth(3)
+                        .stopYear(1)
+                        .stopMonth(12)
                         .build())));
     }
 }

@@ -33,4 +33,11 @@ public final class DateComparison {
         Boolean isAfterDate = isAfterDate(maxDate, year, month);
         return isAfterDate != null ? !isAfterDate : null;
     }
+
+    @Nullable
+    public static Integer minMonthsBetweenDates(@Nullable Integer startYear, @Nullable Integer startMonth, @Nullable Integer stopYear,
+            @Nullable Integer stopMonth) {
+        //TODO: Implement such that it calculates the minimal nr of weeks that passed by based on start/stop year+month.  In case min is negative, resolve to 0. In case of missing all stop or start, resolve to null
+        return null;
+    }
 }

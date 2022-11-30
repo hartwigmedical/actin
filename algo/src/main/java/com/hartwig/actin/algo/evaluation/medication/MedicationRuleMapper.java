@@ -63,7 +63,9 @@ public class MedicationRuleMapper extends RuleMapper {
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X, getsCYPXInhibitingOrInducingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_CYP_X, getsCYPSubstrateMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_PGP, getsPGPInhibitingMedicationCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_PGP, getsPGPSubstrateMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_BCRP, getsBCRPInhibitingMedicationCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_BCRP, getsBCRPSubstrateMedicationCreator());
         map.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING, getsStableDosingAnticoagulantMedicationCreator());
 
         return map;
@@ -180,8 +182,18 @@ public class MedicationRuleMapper extends RuleMapper {
     }
 
     @NotNull
+    private FunctionCreator getsPGPSubstrateMedicationCreator() {
+        return function -> new CurrentlyGetsPGPSubstrateMedication();
+    }
+
+    @NotNull
     private FunctionCreator getsBCRPInhibitingMedicationCreator() {
         return function -> new CurrentlyGetsBCRPInhibitingMedication();
+    }
+
+    @NotNull
+    private FunctionCreator getsBCRPSubstrateMedicationCreator() {
+        return function -> new CurrentlyGetsBCRPSubstrateMedication();
     }
 
     @NotNull

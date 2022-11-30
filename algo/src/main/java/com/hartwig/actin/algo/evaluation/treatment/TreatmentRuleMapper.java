@@ -38,6 +38,9 @@ public class TreatmentRuleMapper extends RuleMapper {
                 hasHadAnyCancerTreatmentIgnoringCategoriesAndNamesCreator());
         map.put(EligibilityRule.HAS_HAD_TREATMENT_NAME_X, hasHadSpecificTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS, hasHadSpecificTreatmentWithinWeeksCreator());
+        map.put(EligibilityRule.HAS_HAD_COMBINED_TREATMENT_NAMES_X_WITHIN_Y_WEEKS, hasHadCombinedTreatmentNamesWithinWeeksCreator());
+        map.put(EligibilityRule.HAS_HAD_COMBINED_TREATMENT_NAMES_X_AND_BETWEEN_Y_AND_Z_CYCLES,
+                hasHadCombinedTreatmentNamesWithCyclesCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT, hasHadTreatmentWithCategoryCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y, hasHadTreatmentCategoryOfTypesCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_WITHIN_Z_WEEKS, hasHadTreatmentCategoryOfTypesWithinWeeksCreator());
@@ -53,10 +56,14 @@ public class TreatmentRuleMapper extends RuleMapper {
                 hasProgressiveDiseaseFollowingTreatmentCategoryCreator());
         map.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_CATEGORY_X_TREATMENT_OF_TYPES_Y,
                 hasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryCreator());
+        map.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_LEAST_Z_WEEKS,
+                hasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryAndMinimumWeeksCreator());
         map.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_LEAST_Z_CYCLES,
                 hasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryAndMinimumCyclesCreator());
         map.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_AT_LEAST_X_TREATMENT_LINES,
                 hasProgressiveDiseaseFollowingSomeSystemicTreatmentsCreator());
+        map.put(EligibilityRule.HAS_RADIOLOGICAL_PROGRESSIVE_DISEASE_FOLLOWING_AT_LEAST_X_TREATMENT_LINES,
+                hasRadiologicalProgressionFollowingSomeTreatmentLinesCreator());
         map.put(EligibilityRule.HAS_HAD_COMPLETE_RESECTION, hasHadCompleteResectionCreator());
         map.put(EligibilityRule.HAS_HAD_PARTIAL_RESECTION, hasHadPartialResectionCreator());
         map.put(EligibilityRule.HAS_HAD_RESECTION_WITHIN_X_WEEKS, hasHadResectionWithinWeeksCreator());
@@ -130,6 +137,16 @@ public class TreatmentRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasHadSpecificTreatmentWithinWeeksCreator() {
         return function -> new HasHadSpecificTreatmentWithinWeeks();
+    }
+
+    @NotNull
+    private FunctionCreator hasHadCombinedTreatmentNamesWithinWeeksCreator() {
+        return function -> new HasHadCombinedTreatmentNamesWithinWeeks();
+    }
+
+    @NotNull
+    private FunctionCreator hasHadCombinedTreatmentNamesWithCyclesCreator() {
+        return function -> new HasHadCombinedTreatmentNamesWithCycles();
     }
 
     @NotNull
@@ -239,7 +256,7 @@ public class TreatmentRuleMapper extends RuleMapper {
     private FunctionCreator hasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryCreator() {
         return function -> {
             OneTypedTreatmentManyStrings input = functionInputResolver().createOneTypedTreatmentManyStringsInput(function);
-            return new HasHadPDFollowingTreatmentWithCategoryOfTypesAndCycles(input.category(), input.strings(), null);
+            return new HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(input.category(), input.strings(), null, null);
         };
     }
 
@@ -248,7 +265,23 @@ public class TreatmentRuleMapper extends RuleMapper {
         return function -> {
             OneTypedTreatmentManyStringsOneInteger input =
                     functionInputResolver().createOneTypedTreatmentManyStringsOneIntegerInput(function);
-            return new HasHadPDFollowingTreatmentWithCategoryOfTypesAndCycles(input.category(), input.strings(), input.integer());
+            return new HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(input.category(),
+                    input.strings(),
+                    input.integer(),
+                    null);
+        };
+    }
+
+    //TODO: Check implementation
+    @NotNull
+    private FunctionCreator hasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryAndMinimumWeeksCreator() {
+        return function -> {
+            OneTypedTreatmentManyStringsOneInteger input =
+                    functionInputResolver().createOneTypedTreatmentManyStringsOneIntegerInput(function);
+            return new HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(input.category(),
+                    input.strings(),
+                    null,
+                    input.integer());
         };
     }
 
@@ -256,7 +289,16 @@ public class TreatmentRuleMapper extends RuleMapper {
     private FunctionCreator hasProgressiveDiseaseFollowingSomeSystemicTreatmentsCreator() {
         return function -> {
             int minSystemicTreatments = functionInputResolver().createOneIntegerInput(function);
-            return new HasHadPDFollowingSomeSystemicTreatments(minSystemicTreatments);
+            return new HasHadPDFollowingSomeSystemicTreatments(minSystemicTreatments, false);
+        };
+    }
+
+    //TODO: Check implementation
+    @NotNull
+    private FunctionCreator hasRadiologicalProgressionFollowingSomeTreatmentLinesCreator() {
+        return function -> {
+            int minSystemicTreatments = functionInputResolver().createOneIntegerInput(function);
+            return new HasHadPDFollowingSomeSystemicTreatments(minSystemicTreatments, true);
         };
     }
 
