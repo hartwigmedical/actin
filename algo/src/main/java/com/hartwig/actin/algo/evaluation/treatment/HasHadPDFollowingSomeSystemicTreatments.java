@@ -28,20 +28,22 @@ public class HasHadPDFollowingSomeSystemicTreatments implements EvaluationFuncti
 
         if (minSystemicCount >= minSystemicTreatments) {
             String stopReason = SystemicTreatmentAnalyser.stopReasonOnLastSystemicTreatment(record.clinical().priorTumorTreatments());
-            if (stopReason != null && stopReason.equals(STOP_REASON_PD) && !mustBeRadiological) {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.PASS)
-                        .addPassSpecificMessages(
-                                "Patient received at least " + minSystemicTreatments + " systemic treatments with final stop reason PD")
-                        .addPassGeneralMessages("Nr of systemic treatments")
-                        .build();
-            } else if (stopReason != null && stopReason.equals(STOP_REASON_PD)) {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.UNDETERMINED)
-                        .addUndeterminedSpecificMessages("Patient received at least " + minSystemicTreatments
-                                + " systemic treatments with final stop reason PD, undetermined if there is now radiological progression")
-                        .addUndeterminedGeneralMessages("Radiological progression after treatments")
-                        .build();
+            if (stopReason != null && stopReason.equals(STOP_REASON_PD)) {
+                if (!mustBeRadiological) {
+                    return EvaluationFactory.unrecoverable()
+                            .result(EvaluationResult.PASS)
+                            .addPassSpecificMessages(
+                                    "Patient received at least " + minSystemicTreatments + " systemic treatments with final stop reason PD")
+                            .addPassGeneralMessages("Nr of systemic treatments")
+                            .build();
+                } else {
+                    return EvaluationFactory.unrecoverable()
+                            .result(EvaluationResult.UNDETERMINED)
+                            .addUndeterminedSpecificMessages("Patient received at least " + minSystemicTreatments
+                                    + " systemic treatments with final stop reason PD, undetermined if there is now radiological progression")
+                            .addUndeterminedGeneralMessages("Radiological progression after treatments")
+                            .build();
+                }
             } else {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.UNDETERMINED)

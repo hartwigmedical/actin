@@ -57,7 +57,7 @@ public class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks imple
                     hasHadTreatment = true;
                     String stopReason = treatment.stopReason();
                     Integer cycles = treatment.cycles();
-                    Integer weeks = DateComparison.minMonthsBetweenDates(treatment.startYear(),
+                    Integer weeks = DateComparison.minWeeksBetweenDates(treatment.startYear(),
                             treatment.startMonth(),
                             treatment.stopYear(),
                             treatment.stopMonth());
