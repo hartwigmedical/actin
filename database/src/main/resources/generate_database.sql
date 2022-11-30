@@ -576,7 +576,7 @@ DROP TABLE IF EXISTS reference;
 CREATE TABLE reference
 (   id int NOT NULL AUTO_INCREMENT,
     code varchar(50) NOT NULL,
-    text varchar(5000) NOT NULL,
+    text varchar(15000) NOT NULL,
     PRIMARY KEY (id)
 );
 
