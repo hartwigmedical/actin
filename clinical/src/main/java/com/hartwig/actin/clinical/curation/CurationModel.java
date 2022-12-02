@@ -389,8 +389,8 @@ public class CurationModel {
 
         Set<ECGConfig> configs = find(database.ecgConfigs(), input.aberrationDescription());
 
-        // Assume ECGs can also be pass-through.
         if (configs.isEmpty()) {
+            LOGGER.warn(" Could not find ECG config for input '{}'", input.aberrationDescription());
             return input;
         } else if (configs.size() > 1) {
             LOGGER.warn(" Multiple ECG configs matched to '{}'", input.aberrationDescription());
@@ -419,8 +419,8 @@ public class CurationModel {
 
         Set<InfectionConfig> configs = find(database.infectionConfigs(), input.description());
 
-        // Assume infections can also be pass-through.
         if (configs.isEmpty()) {
+            LOGGER.warn(" Could not find infection config for input '{}'", input.description());
             return input;
         } else if (configs.size() > 1) {
             LOGGER.warn(" Multiple infection configs matched to '{}'", input.description());
