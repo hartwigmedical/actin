@@ -23,6 +23,7 @@ final class QuestionnaireCuration {
         OPTION_MAPPING.put("none", false);
         OPTION_MAPPING.put("no indien ja welke", false);
         OPTION_MAPPING.put("nee", false);
+        OPTION_MAPPING.put("neee", false);
         OPTION_MAPPING.put("n.v.t.", null);
         OPTION_MAPPING.put("n.v.t", null);
         OPTION_MAPPING.put("nvt", null);
