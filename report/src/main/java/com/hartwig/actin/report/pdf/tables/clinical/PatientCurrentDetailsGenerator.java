@@ -51,7 +51,8 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
         InfectionStatus infectionStatus = record.clinicalStatus().infectionStatus();
         if (infectionStatus != null && infectionStatus.hasActiveInfection()) {
             table.addCell(Cells.createKey("Significant infection"));
-            table.addCell(Cells.createValue(infectionStatus.description()));
+            String description = infectionStatus.description() != null ? infectionStatus.description() : "Unknown";
+            table.addCell(Cells.createValue(description));
         }
 
         ECG ecg = record.clinicalStatus().ecg();

@@ -400,20 +400,20 @@ public class CurationModel {
         ECGConfig config = configs.iterator().next();
         if (config.ignore()) {
             return null;
-        } else {
-            String description = !config.interpretation().isEmpty() ? config.interpretation() : null;
-            return ImmutableECG.builder()
-                    .from(input)
-                    .aberrationDescription(description)
-                    .qtcfValue(config.qtcfValue())
-                    .qtcfUnit(config.qtcfUnit())
-                    .build();
         }
+
+        String description = !config.interpretation().isEmpty() ? config.interpretation() : null;
+        return ImmutableECG.builder()
+                .from(input)
+                .aberrationDescription(description)
+                .qtcfValue(config.qtcfValue())
+                .qtcfUnit(config.qtcfUnit())
+                    .build();
     }
 
     @Nullable
     public InfectionStatus curateInfectionStatus(@Nullable InfectionStatus input) {
-        if (input == null) {
+        if (input == null || input.description() == null) {
             return null;
         }
 
@@ -428,7 +428,12 @@ public class CurationModel {
         }
 
         InfectionConfig config = configs.iterator().next();
-        return ImmutableInfectionStatus.builder().from(input).description(config.interpretation()).build();
+        if (config.ignore()) {
+            return null;
+        }
+
+        String description = !config.interpretation().isEmpty() ? config.interpretation() : null;
+        return ImmutableInfectionStatus.builder().from(input).description(description).build();
     }
 
     @Nullable

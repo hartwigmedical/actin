@@ -241,6 +241,7 @@ public class CurationModelTest {
 
         assertEquals("Cleaned infection", model.curateInfectionStatus(toInfection("Weird infection")).description());
         assertEquals("No curation needed", model.curateInfectionStatus(toInfection("No curation needed")).description());
+        assertNull(model.curateInfectionStatus(toInfection("No Infection")).description());
         assertNull(model.curateInfectionStatus(null));
 
         model.evaluate();

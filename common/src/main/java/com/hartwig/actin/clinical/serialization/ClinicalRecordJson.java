@@ -224,7 +224,7 @@ public final class ClinicalRecordJson {
 
             return ImmutableInfectionStatus.builder()
                     .hasActiveInfection(bool(object, "hasActiveInfection"))
-                    .description(string(object, "description"))
+                    .description(nullableString(object, "description"))
                     .build();
         }
 

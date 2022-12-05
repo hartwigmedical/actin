@@ -10,6 +10,6 @@ public abstract class InfectionStatus {
 
     public abstract boolean hasActiveInfection();
 
-    @NotNull
+    @Nullable
     public abstract String description();
 }

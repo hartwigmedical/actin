@@ -247,6 +247,7 @@ public final class TestCurationFactory {
         List<InfectionConfig> configs = Lists.newArrayList();
 
         configs.add(ImmutableInfectionConfig.builder().input("Weird infection").interpretation("Cleaned infection").build());
+        configs.add(ImmutableInfectionConfig.builder().input("No infection").interpretation(Strings.EMPTY).build());
 
         return configs;
     }

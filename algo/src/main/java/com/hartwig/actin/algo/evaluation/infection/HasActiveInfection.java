@@ -35,10 +35,16 @@ public class HasActiveInfection implements EvaluationFunction {
             builder.addFailSpecificMessages("Patient has no active infection");
             builder.addFailGeneralMessages("No infection present");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient has active infection: " + infection.description());
-            builder.addPassGeneralMessages("Infection presence: " + infection.description());
+            builder.addPassSpecificMessages("Patient has active infection: " + description(infection));
+            builder.addPassGeneralMessages("Infection presence: " + description(infection));
         }
 
         return builder.build();
+    }
+
+    @NotNull
+    private static String description(@NotNull InfectionStatus infection) {
+        String description = infection.description();
+        return description != null ? description : "Unknown";
     }
 }

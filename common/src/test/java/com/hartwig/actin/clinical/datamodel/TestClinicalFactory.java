@@ -102,9 +102,9 @@ public final class TestClinicalFactory {
 
     @NotNull
     private static ClinicalStatus createTestClinicalStatus() {
-        ECG ecg = ImmutableECG.builder().hasSigAberrationLatestECG(false).aberrationDescription(Strings.EMPTY).build();
+        ECG ecg = ImmutableECG.builder().hasSigAberrationLatestECG(false).build();
 
-        InfectionStatus infectionStatus = ImmutableInfectionStatus.builder().hasActiveInfection(false).description(Strings.EMPTY).build();
+        InfectionStatus infectionStatus = ImmutableInfectionStatus.builder().hasActiveInfection(false).build();
 
         return ImmutableClinicalStatus.builder().who(1).infectionStatus(infectionStatus).ecg(ecg).build();
     }

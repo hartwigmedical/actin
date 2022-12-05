@@ -13,7 +13,6 @@ import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
@@ -33,8 +32,9 @@ public class HasActiveInfectionTest {
     private static PatientRecord withInfectionStatus(@Nullable Boolean hasActiveInfection) {
         InfectionStatus infectionStatus = null;
         if (hasActiveInfection != null) {
-            infectionStatus = ImmutableInfectionStatus.builder().hasActiveInfection(hasActiveInfection).description(Strings.EMPTY).build();
+            infectionStatus = ImmutableInfectionStatus.builder().hasActiveInfection(hasActiveInfection).build();
         }
+
         ClinicalRecord base = TestClinicalFactory.createMinimalTestClinicalRecord();
         return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
