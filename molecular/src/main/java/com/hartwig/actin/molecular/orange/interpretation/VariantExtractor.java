@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
-import java.util.List;
 import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -65,7 +64,7 @@ class VariantExtractor {
                         .isBiallelic(variant.biallelic())
                         .isHotspot(variant.hotspot() == PurpleHotspotType.HOTSPOT)
                         .clonalLikelihood(ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()))
-                        .phaseGroup(selectTop(variant.localPhaseSets()))
+                        .phaseGroups(variant.localPhaseSets())
                         .canonicalImpact(extractCanonicalImpact(variant))
                         .otherImpacts(extractOtherImpacts(variant))
                         .build());
@@ -74,11 +73,6 @@ class VariantExtractor {
             }
         }
         return variants;
-    }
-
-    @Nullable
-    private static Integer selectTop(@Nullable List<Integer> localPhaseSets) {
-        return localPhaseSets != null && !localPhaseSets.isEmpty() ? localPhaseSets.iterator().next() : null;
     }
 
     @NotNull

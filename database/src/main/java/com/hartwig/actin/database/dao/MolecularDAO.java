@@ -299,7 +299,7 @@ class MolecularDAO {
                             VARIANT.ISBIALLELIC,
                             VARIANT.ISHOTSPOT,
                             VARIANT.CLONALLIKELIHOOD,
-                            VARIANT.PHASEGROUP,
+                            VARIANT.PHASEGROUPS,
                             VARIANT.CANONICALTRANSCRIPTID,
                             VARIANT.CANONICALHGVSCODINGIMPACT,
                             VARIANT.CANONICALHGVSPROTEINIMPACT,
@@ -311,7 +311,7 @@ class MolecularDAO {
                     .values(sampleId,
                             DataUtil.toByte(variant.isReportable()),
                             variant.event(),
-                            variant.driverLikelihood().toString(),
+                            variant.driverLikelihood() != null ? variant.driverLikelihood().toString() : null,
                             variant.gene(),
                             variant.geneRole().toString(),
                             variant.proteinEffect().toString(),
@@ -322,14 +322,14 @@ class MolecularDAO {
                             DataUtil.toByte(variant.isBiallelic()),
                             DataUtil.toByte(variant.isHotspot()),
                             variant.clonalLikelihood(),
-                            variant.phaseGroup(),
+                            DataUtil.concat(integersToStrings(variant.phaseGroups())),
                             variant.canonicalImpact().transcriptId(),
                             variant.canonicalImpact().hgvsCodingImpact(),
                             variant.canonicalImpact().hgvsProteinImpact(),
                             variant.canonicalImpact().affectedCodon(),
                             variant.canonicalImpact().affectedExon(),
                             DataUtil.toByte(variant.canonicalImpact().isSpliceRegion()),
-                            DataUtil.concat(toStrings(variant.canonicalImpact().effects())),
+                            DataUtil.concat(effectsToStrings(variant.canonicalImpact().effects())),
                             DataUtil.nullableToString(variant.canonicalImpact().codingEffect()))
                     .returning(VARIANT.ID)
                     .fetchOne()
@@ -338,8 +338,21 @@ class MolecularDAO {
         }
     }
 
+    @Nullable
+    private static Set<String> integersToStrings(@Nullable Set<Integer> integers) {
+        if (integers == null) {
+            return null;
+        }
+
+        Set<String> strings = Sets.newHashSet();
+        for (Integer integer : integers) {
+            strings.add(String.valueOf(integer));
+        }
+        return strings;
+    }
+
     @NotNull
-    private static Set<String> toStrings(@NotNull Set<VariantEffect> effects) {
+    private static Set<String> effectsToStrings(@NotNull Set<VariantEffect> effects) {
         Set<String> strings = Sets.newHashSet();
         for (VariantEffect effect : effects) {
             strings.add(effect.toString());

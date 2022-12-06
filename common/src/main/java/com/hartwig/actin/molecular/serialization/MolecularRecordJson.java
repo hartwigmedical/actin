@@ -6,6 +6,7 @@ import static com.hartwig.actin.util.json.Json.integer;
 import static com.hartwig.actin.util.json.Json.nullableBool;
 import static com.hartwig.actin.util.json.Json.nullableDate;
 import static com.hartwig.actin.util.json.Json.nullableInteger;
+import static com.hartwig.actin.util.json.Json.nullableIntegerList;
 import static com.hartwig.actin.util.json.Json.nullableNumber;
 import static com.hartwig.actin.util.json.Json.nullableObject;
 import static com.hartwig.actin.util.json.Json.nullableString;
@@ -227,7 +228,7 @@ public class MolecularRecordJson {
                         .isBiallelic(bool(variant, "isBiallelic"))
                         .isHotspot(bool(variant, "isHotspot"))
                         .clonalLikelihood(number(variant, "clonalLikelihood"))
-                        .phaseGroup(nullableInteger(variant, "phaseGroup"))
+                        .phaseGroups(nullableIntegerList(variant, "phaseGroups"))
                         .canonicalImpact(toTranscriptImpact(object(variant, "canonicalImpact")))
                         .otherImpacts(toTranscriptImpacts(array(variant, "otherImpacts")))
                         .build());

@@ -186,14 +186,14 @@ public class GeneIsInactivatedTest {
                 .gene("gene A")
                 .isReportable(true)
                 .canonicalImpact(TestTranscriptImpactFactory.builder().codingEffect(CodingEffect.NONSENSE_OR_FRAMESHIFT).build())
-                .phaseGroup(1)
+                .addPhaseGroups(1)
                 .build();
 
         Variant variantGroup2 = TestVariantFactory.builder()
                 .gene("gene A")
                 .isReportable(true)
                 .canonicalImpact(TestTranscriptImpactFactory.builder().codingEffect(CodingEffect.NONSENSE_OR_FRAMESHIFT).build())
-                .phaseGroup(2)
+                .addPhaseGroups(2)
                 .build();
 
         assertMolecularEvaluation(EvaluationResult.FAIL,

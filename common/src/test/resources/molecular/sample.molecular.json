@@ -83,7 +83,9 @@
         "isBiallelic": false,
         "isHotspot": true,
         "clonalLikelihood": 1.0,
-        "phaseGroup": 2,
+        "phaseGroups": [
+          2
+        ],
         "canonicalImpact": {
           "transcriptId": "ENST00000288602",
           "hgvsCodingImpact": "c.1799T>A",

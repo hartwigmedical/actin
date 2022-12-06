@@ -146,7 +146,8 @@ public class MolecularRecordJsonTest {
         assertFalse(variant.isBiallelic());
         assertTrue(variant.isHotspot());
         assertEquals(1.0, variant.clonalLikelihood(), EPSILON);
-        assertEquals(2, (int) variant.phaseGroup());
+        assertEquals(1, variant.phaseGroups().size());
+        assertTrue(variant.phaseGroups().contains(2));
 
         TranscriptImpact canonicalImpact = variant.canonicalImpact();
         assertEquals("ENST00000288602", canonicalImpact.transcriptId());
