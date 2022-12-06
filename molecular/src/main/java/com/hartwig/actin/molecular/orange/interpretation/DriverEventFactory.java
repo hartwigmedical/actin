@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular.orange.interpretation;
 
 import java.util.StringJoiner;
 
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakend;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
@@ -61,16 +61,15 @@ public final class DriverEventFactory {
         String reformatted = proteinImpact.startsWith("p.") ? proteinImpact.substring(2) : proteinImpact;
         return AminoAcid.forceSingleLetterAminoAcids(reformatted);
     }
+    
+    @NotNull
+    public static String amplificationEvent(@NotNull PurpleCopyNumber copyNumber) {
+        return copyNumber.gene() + " amp";
+    }
 
     @NotNull
-    public static String copyNumberEvent(@NotNull PurpleCopyNumber copyNumber) {
-        if (copyNumber.interpretation().isGain()) {
-            return copyNumber.gene() + " amp";
-        } else if (copyNumber.interpretation().isLoss()) {
-            return copyNumber.gene() + " del";
-        } else {
-            return copyNumber.gene() + " unknown";
-        }
+    public static String lossEvent(@NotNull PurpleCopyNumber copyNumber) {
+        return copyNumber.gene() + " del";
     }
 
     @NotNull
@@ -79,8 +78,8 @@ public final class DriverEventFactory {
     }
 
     @NotNull
-    public static String disruptionEvent(@NotNull LinxDisruption disruption) {
-        return disruption.gene() + " disruption";
+    public static String disruptionEvent(@NotNull LinxBreakend breakend) {
+        return breakend.gene() + " disruption";
     }
 
     @NotNull

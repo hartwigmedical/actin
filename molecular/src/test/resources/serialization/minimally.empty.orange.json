@@ -16,16 +16,20 @@
     "characteristics": {
       "microsatelliteStatus": "MSS",
       "tumorMutationalBurdenPerMb": 0,
+      "tumorMutationalBurdenStatus": "UNKNOWN",
       "tumorMutationalLoad": 0,
       "tumorMutationalLoadStatus": "UNKNOWN"
     },
-    "reportableSomaticVariants": [],
-    "reportableGermlineVariants": [],
-    "reportableSomaticGainsLosses": []
+    "somaticDrivers": [],
+    "germlineDrivers": null,
+    "allSomaticVariants": [],
+    "allGermlineVariants": null,
+    "allSomaticGeneCopyNumbers": []
   },
   "linx": {
-    "reportableFusions": [],
-    "reportableGeneDisruptions": [],
+    "allStructuralVariants": [],
+    "allFusions": [],
+    "allBreakends": [],
     "homozygousDisruptions": []
   },
   "virusInterpreter": {

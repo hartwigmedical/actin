@@ -9,9 +9,9 @@ import com.hartwig.actin.molecular.datamodel.driver.TestLossFactory;
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
 import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxRecord;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakend;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakendType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxCodingType;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruptionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRegionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
@@ -23,26 +23,26 @@ import org.junit.Test;
 public class DisruptionExtractorTest {
 
     @Test
-    public void canFilterDisruptionsWithLosses() {
+    public void canFilterBreakendWithLosses() {
         String gene = "gene";
 
-        Loss loss = TestLossFactory.builder().gene(gene).build();
+        Loss loss = TestLossFactory.builder().gene(gene).isReportable(true).build();
 
         DisruptionExtractor disruptionExtractor = createTestExtractor();
-        LinxDisruption disruption1 = TestLinxFactory.disruptionBuilder().gene(gene).type(LinxDisruptionType.DEL).build();
-        assertEquals(0, disruptionExtractor.extractDisruptions(withDisruption(disruption1), Sets.newHashSet(loss)).size());
+        LinxBreakend breakend1 = TestLinxFactory.breakendBuilder().gene(gene).type(LinxBreakendType.DEL).build();
+        assertEquals(0, disruptionExtractor.extractDisruptions(withBreakend(breakend1), Sets.newHashSet(loss)).size());
 
-        LinxDisruption disruption2 = TestLinxFactory.disruptionBuilder().gene(gene).type(LinxDisruptionType.DUP).build();
-        assertEquals(1, disruptionExtractor.extractDisruptions(withDisruption(disruption2), Sets.newHashSet(loss)).size());
+        LinxBreakend breakend2 = TestLinxFactory.breakendBuilder().gene(gene).type(LinxBreakendType.DUP).build();
+        assertEquals(1, disruptionExtractor.extractDisruptions(withBreakend(breakend2), Sets.newHashSet(loss)).size());
 
-        LinxDisruption disruption3 = TestLinxFactory.disruptionBuilder().gene("other").type(LinxDisruptionType.DEL).build();
-        assertEquals(1, disruptionExtractor.extractDisruptions(withDisruption(disruption3), Sets.newHashSet(loss)).size());
+        LinxBreakend breakend3 = TestLinxFactory.breakendBuilder().gene("other").type(LinxBreakendType.DEL).build();
+        assertEquals(1, disruptionExtractor.extractDisruptions(withBreakend(breakend3), Sets.newHashSet(loss)).size());
     }
 
     @Test
     public void canDetermineAllDisruptionTypes() {
-        for (LinxDisruptionType disruptionType : LinxDisruptionType.values()) {
-            assertNotNull(DisruptionExtractor.determineDisruptionType(disruptionType));
+        for (LinxBreakendType breakendType : LinxBreakendType.values()) {
+            assertNotNull(DisruptionExtractor.determineDisruptionType(breakendType));
         }
     }
 
@@ -65,10 +65,11 @@ public class DisruptionExtractorTest {
     }
 
     @NotNull
-    private static LinxRecord withDisruption(@NotNull LinxDisruption disruption) {
+    private static LinxRecord withBreakend(@NotNull LinxBreakend breakend) {
         return ImmutableLinxRecord.builder()
                 .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
-                .addDisruptions(disruption)
+                .addStructuralVariants(TestLinxFactory.structuralVariantBuilder().svId(breakend.svId()).build())
+                .addBreakends(breakend)
                 .build();
     }
 

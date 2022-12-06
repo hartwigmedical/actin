@@ -6,12 +6,17 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class PurpleCopyNumber {
+public abstract class PurpleDriver {
 
     @NotNull
     public abstract String gene();
 
-    public abstract double minCopyNumber();
+    @NotNull
+    public abstract String transcript();
 
-    public abstract double maxCopyNumber();
+    @NotNull
+    public abstract PurpleDriverType type();
+
+    public abstract double driverLikelihood();
+
 }

@@ -13,9 +13,8 @@ public final class GeneMatching {
 
     public static boolean isMatch(@NotNull GeneAnnotation geneAnnotation, @NotNull PurpleVariant variant) {
         boolean geneMatch = geneAnnotation.gene().equals(variant.gene());
-        boolean isHighDriver = variant.driverLikelihood() >= 0.8;
         boolean typeMatch = MutationTypeMatching.matches(variant, MutationType.ANY);
 
-        return geneMatch && isHighDriver && typeMatch;
+        return geneMatch && typeMatch;
     }
 }

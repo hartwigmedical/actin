@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange.evidence;
 
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakend;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
@@ -75,13 +75,23 @@ public class EvidenceDatabase {
     }
 
     @Nullable
-    public GeneAlteration geneAlterationForCopyNumber(@NotNull PurpleCopyNumber copyNumber) {
-        return knownEventResolver.resolveForCopyNumber(copyNumber);
+    public GeneAlteration geneAlterationForAmplification(@NotNull PurpleCopyNumber amp) {
+        return knownEventResolver.resolveForAmplification(amp);
     }
 
     @NotNull
-    public ActionabilityMatch evidenceForCopyNumber(@NotNull PurpleCopyNumber copyNumber) {
-        return actionableEventMatcher.matchForCopyNumber(copyNumber);
+    public ActionabilityMatch evidenceForAmplification(@NotNull PurpleCopyNumber amp) {
+        return actionableEventMatcher.matchForAmp(amp);
+    }
+
+    @Nullable
+    public GeneAlteration geneAlterationForLoss(@NotNull PurpleCopyNumber loss) {
+        return knownEventResolver.resolveForLoss(loss);
+    }
+
+    @NotNull
+    public ActionabilityMatch evidenceForLoss(@NotNull PurpleCopyNumber loss) {
+        return actionableEventMatcher.matchForLoss(loss);
     }
 
     @Nullable
@@ -95,13 +105,13 @@ public class EvidenceDatabase {
     }
 
     @Nullable
-    public GeneAlteration geneAlterationForDisruption(@NotNull LinxDisruption disruption) {
-        return knownEventResolver.resolveForDisruption(disruption);
+    public GeneAlteration geneAlterationForBreakend(@NotNull LinxBreakend breakend) {
+        return knownEventResolver.resolveForBreakend(breakend);
     }
 
     @NotNull
-    public ActionabilityMatch evidenceForDisruption(@NotNull LinxDisruption disruption) {
-        return actionableEventMatcher.matchForDisruption(disruption);
+    public ActionabilityMatch evidenceForBreakend(@NotNull LinxBreakend breakend) {
+        return actionableEventMatcher.matchForBreakend(breakend);
     }
 
     @Nullable

@@ -6,15 +6,17 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class LinxDisruption {
+public abstract class LinxBreakend {
 
     public abstract boolean reported();
+
+    public abstract int svId();
 
     @NotNull
     public abstract String gene();
 
     @NotNull
-    public abstract LinxDisruptionType type();
+    public abstract LinxBreakendType type();
 
     public abstract double junctionCopyNumber();
 
@@ -26,7 +28,4 @@ public abstract class LinxDisruption {
     @NotNull
     public abstract LinxCodingType codingType();
 
-    // TODO Make non-null in ORANGE
-    @Nullable
-    public abstract Integer clusterId();
 }

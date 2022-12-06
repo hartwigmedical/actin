@@ -71,6 +71,25 @@ public final class Json {
     }
 
     @Nullable
+    public static List<Integer> nullableIntegerList(@NotNull JsonObject object, @NotNull String field) {
+        return !isNull(object, field) ? integerList(object, field) : null;
+    }
+
+    @NotNull
+    public static List<Integer> integerList(@NotNull JsonObject object, @NotNull String field) {
+        List<Integer> values = Lists.newArrayList();
+        if (object.get(field).isJsonPrimitive()) {
+            values.add(integer(object, field));
+        } else {
+            assert object.get(field).isJsonArray();
+            for (JsonElement element : object.getAsJsonArray(field)) {
+                values.add(element.getAsJsonPrimitive().getAsInt());
+            }
+        }
+        return values;
+    }
+
+    @Nullable
     public static String optionalString(@NotNull JsonObject object, @NotNull String field) {
         return object.has(field) ? string(object, field) : null;
     }

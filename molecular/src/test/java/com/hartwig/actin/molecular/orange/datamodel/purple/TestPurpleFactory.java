@@ -10,11 +10,7 @@ public final class TestPurpleFactory {
 
     @NotNull
     public static ImmutablePurpleFit.Builder fitBuilder() {
-        return ImmutablePurpleFit.builder()
-                .hasReliableQuality(false)
-                .hasReliablePurity(false)
-                .purity(0)
-                .ploidy(0);
+        return ImmutablePurpleFit.builder().hasReliableQuality(false).hasReliablePurity(false).purity(0).ploidy(0);
     }
 
     @NotNull
@@ -37,11 +33,10 @@ public final class TestPurpleFactory {
                 .position(0)
                 .ref(Strings.EMPTY)
                 .alt(Strings.EMPTY)
-                .totalCopyNumber(0D)
-                .alleleCopyNumber(0D)
+                .adjustedCopyNumber(0D)
+                .variantCopyNumber(0D)
                 .hotspot(PurpleHotspotType.NON_HOTSPOT)
                 .clonalLikelihood(0D)
-                .driverLikelihood(0D)
                 .biallelic(false)
                 .canonicalImpact(transcriptImpactBuilder().build());
     }
@@ -49,7 +44,7 @@ public final class TestPurpleFactory {
     @NotNull
     public static ImmutablePurpleTranscriptImpact.Builder transcriptImpactBuilder() {
         return ImmutablePurpleTranscriptImpact.builder()
-                .transcriptId(Strings.EMPTY)
+                .transcript(Strings.EMPTY)
                 .hgvsCodingImpact(Strings.EMPTY)
                 .hgvsProteinImpact(Strings.EMPTY)
                 .spliceRegion(false)
@@ -58,11 +53,6 @@ public final class TestPurpleFactory {
 
     @NotNull
     public static ImmutablePurpleCopyNumber.Builder copyNumberBuilder() {
-        return ImmutablePurpleCopyNumber.builder()
-                .reported(true)
-                .gene(Strings.EMPTY)
-                .interpretation(CopyNumberInterpretation.FULL_LOSS)
-                .minCopies(0)
-                .maxCopies(0);
+        return ImmutablePurpleCopyNumber.builder().gene(Strings.EMPTY).minCopyNumber(0D).maxCopyNumber(0D);
     }
 }

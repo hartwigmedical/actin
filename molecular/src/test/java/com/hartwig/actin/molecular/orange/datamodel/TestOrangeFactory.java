@@ -11,7 +11,7 @@ import com.hartwig.actin.molecular.orange.datamodel.lilac.ImmutableLilacHlaAllel
 import com.hartwig.actin.molecular.orange.datamodel.lilac.ImmutableLilacRecord;
 import com.hartwig.actin.molecular.orange.datamodel.lilac.LilacRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxRecord;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruptionType;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakendType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
@@ -19,7 +19,6 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
 import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
-import com.hartwig.actin.molecular.orange.datamodel.purple.CopyNumberInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleCharacteristics;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCharacteristics;
@@ -89,11 +88,10 @@ public final class TestOrangeFactory {
                 .characteristics(createTestPurpleCharacteristics())
                 .addVariants(TestPurpleFactory.variantBuilder()
                         .gene("BRAF")
-                        .totalCopyNumber(6.0)
-                        .alleleCopyNumber(4.1)
+                        .adjustedCopyNumber(6.0)
+                        .variantCopyNumber(4.1)
                         .hotspot(PurpleHotspotType.HOTSPOT)
                         .clonalLikelihood(0.98)
-                        .driverLikelihood(1D)
                         .biallelic(false)
                         .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder()
                                 .hgvsCodingImpact("c.something")
@@ -101,16 +99,8 @@ public final class TestOrangeFactory {
                                 .addEffects(PurpleVariantEffect.MISSENSE)
                                 .build())
                         .build())
-                .addCopyNumbers(TestPurpleFactory.copyNumberBuilder()
-                        .gene("MYC")
-                        .interpretation(CopyNumberInterpretation.FULL_GAIN)
-                        .minCopies(38)
-                        .build())
-                .addCopyNumbers(TestPurpleFactory.copyNumberBuilder()
-                        .gene("PTEN")
-                        .interpretation(CopyNumberInterpretation.PARTIAL_LOSS)
-                        .minCopies(0)
-                        .build())
+                .addCopyNumbers(TestPurpleFactory.copyNumberBuilder().gene("MYC").minCopyNumber(38D).build())
+                .addCopyNumbers(TestPurpleFactory.copyNumberBuilder().gene("PTEN").minCopyNumber(0D).build())
                 .build();
     }
 
@@ -133,6 +123,7 @@ public final class TestOrangeFactory {
     @NotNull
     private static LinxRecord createTestLinxRecord() {
         return ImmutableLinxRecord.builder()
+                .addStructuralVariants(TestLinxFactory.structuralVariantBuilder().svId(1).clusterId(1).build())
                 .addFusions(TestLinxFactory.fusionBuilder()
                         .type(LinxFusionType.KNOWN_PAIR)
                         .geneStart("EML4")
@@ -142,9 +133,10 @@ public final class TestOrangeFactory {
                         .driverLikelihood(LinxFusionDriverLikelihood.HIGH)
                         .build())
                 .addHomozygousDisruptions(TestLinxFactory.homozygousDisruptionBuilder().gene("TP53").build())
-                .addDisruptions(TestLinxFactory.disruptionBuilder()
+                .addBreakends(TestLinxFactory.breakendBuilder()
                         .gene("RB1")
-                        .type(LinxDisruptionType.DEL)
+                        .svId(1)
+                        .type(LinxBreakendType.DEL)
                         .junctionCopyNumber(0.8)
                         .undisruptedCopyNumber(2.1)
                         .build())

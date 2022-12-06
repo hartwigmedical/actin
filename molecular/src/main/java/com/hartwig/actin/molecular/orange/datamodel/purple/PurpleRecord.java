@@ -17,6 +17,9 @@ public abstract class PurpleRecord {
     public abstract PurpleCharacteristics characteristics();
 
     @NotNull
+    public abstract Set<PurpleDriver> drivers();
+
+    @NotNull
     public abstract Set<PurpleVariant> variants();
 
     @NotNull

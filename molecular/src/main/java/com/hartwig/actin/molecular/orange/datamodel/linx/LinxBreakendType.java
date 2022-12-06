@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange.datamodel.linx;
 
-public enum LinxDisruptionType {
+public enum LinxBreakendType {
     BND,
     DEL,
     DUP,

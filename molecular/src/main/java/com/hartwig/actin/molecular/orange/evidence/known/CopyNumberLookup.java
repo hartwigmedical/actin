@@ -14,27 +14,9 @@ final class CopyNumberLookup {
     }
 
     @Nullable
-    public static KnownCopyNumber findForCopyNumber(@NotNull Iterable<KnownCopyNumber> knownCopyNumbers,
-            @NotNull PurpleCopyNumber copyNumber) {
-        if (copyNumber.interpretation().isGain()) {
-            return findForAmplification(knownCopyNumbers, copyNumber.gene());
-        } else if (copyNumber.interpretation().isLoss()) {
-            return findForLoss(knownCopyNumbers, copyNumber.gene());
-        }
-
-        return null;
-    }
-
-    @Nullable
-    public static KnownCopyNumber findForHomozygousDisruption(@NotNull Iterable<KnownCopyNumber> knownCopyNumbers,
-            @NotNull LinxHomozygousDisruption homozygousDisruption) {
-        return findForLoss(knownCopyNumbers, homozygousDisruption.gene());
-    }
-
-    @Nullable
-    private static KnownCopyNumber findForAmplification(@NotNull Iterable<KnownCopyNumber> knownCopyNumbers, @NotNull String geneToFind) {
+    public static KnownCopyNumber findForAmplification(@NotNull Iterable<KnownCopyNumber> knownCopyNumbers, @NotNull PurpleCopyNumber amp) {
         for (KnownCopyNumber knownCopyNumber : knownCopyNumbers) {
-            if (knownCopyNumber.event() == GeneEvent.AMPLIFICATION && knownCopyNumber.gene().equals(geneToFind)) {
+            if (knownCopyNumber.event() == GeneEvent.AMPLIFICATION && knownCopyNumber.gene().equals(amp.gene())) {
                 return knownCopyNumber;
             }
         }
@@ -42,7 +24,18 @@ final class CopyNumberLookup {
     }
 
     @Nullable
-    private static KnownCopyNumber findForLoss(@NotNull Iterable<KnownCopyNumber> knownCopyNumbers, @NotNull String geneToFind) {
+    public static KnownCopyNumber findForLoss(@NotNull Iterable<KnownCopyNumber> knownCopyNumbers, @NotNull PurpleCopyNumber loss) {
+        return findForDeletion(knownCopyNumbers, loss.gene());
+    }
+
+    @Nullable
+    public static KnownCopyNumber findForHomozygousDisruption(@NotNull Iterable<KnownCopyNumber> knownCopyNumbers,
+            @NotNull LinxHomozygousDisruption homozygousDisruption) {
+        return findForDeletion(knownCopyNumbers, homozygousDisruption.gene());
+    }
+
+    @Nullable
+    private static KnownCopyNumber findForDeletion(@NotNull Iterable<KnownCopyNumber> knownCopyNumbers, @NotNull String geneToFind) {
         for (KnownCopyNumber knownCopyNumber : knownCopyNumbers) {
             if (knownCopyNumber.event() == GeneEvent.DELETION && knownCopyNumber.gene().equals(geneToFind)) {
                 return knownCopyNumber;

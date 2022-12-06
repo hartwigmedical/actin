@@ -21,9 +21,10 @@ public final class TestActionableEventMatcherFactory {
         return new ActionableEventMatcher(personalizedActionabilityFactory,
                 SignatureEvidence.create(empty),
                 VariantEvidence.create(empty),
-                CopyNumberEvidence.create(empty),
+                AmplificationEvidence.create(empty),
+                LossEvidence.create(empty),
                 HomozygousDisruptionEvidence.create(empty),
-                DisruptionEvidence.create(empty),
+                BreakendEvidence.create(empty),
                 FusionEvidence.create(empty),
                 VirusEvidence.create(empty));
     }

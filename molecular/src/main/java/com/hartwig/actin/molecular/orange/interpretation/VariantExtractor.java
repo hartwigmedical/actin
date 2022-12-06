@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
+import java.util.List;
 import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -14,8 +15,11 @@ import com.hartwig.actin.molecular.datamodel.driver.VariantEffect;
 import com.hartwig.actin.molecular.datamodel.driver.VariantType;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriver;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriverType;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleHotspotType;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTranscriptImpact;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
@@ -30,6 +34,9 @@ import org.jetbrains.annotations.Nullable;
 class VariantExtractor {
 
     private static final Logger LOGGER = LogManager.getLogger(VariantExtractor.class);
+
+    private static final Set<PurpleDriverType> MUTATION_DRIVER_TYPES =
+            Sets.newHashSet(PurpleDriverType.MUTATION, PurpleDriverType.GERMLINE_MUTATION);
 
     @NotNull
     private final GeneFilter geneFilter;
@@ -50,23 +57,28 @@ class VariantExtractor {
                         .from(GeneAlterationFactory.convertAlteration(variant.gene(), evidenceDatabase.geneAlterationForVariant(variant)))
                         .isReportable(variant.reported())
                         .event(DriverEventFactory.variantEvent(variant))
-                        .driverLikelihood(determineDriverLikelihood(variant))
+                        .driverLikelihood(determineDriverLikelihood(variant, purple.drivers()))
                         .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(variant)))
                         .type(extractType(variant))
-                        .variantCopyNumber(ExtractionUtil.keep3Digits(variant.alleleCopyNumber()))
-                        .totalCopyNumber(ExtractionUtil.keep3Digits(variant.totalCopyNumber()))
+                        .variantCopyNumber(ExtractionUtil.keep3Digits(variant.variantCopyNumber()))
+                        .totalCopyNumber(ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()))
                         .isBiallelic(variant.biallelic())
                         .isHotspot(variant.hotspot() == PurpleHotspotType.HOTSPOT)
                         .clonalLikelihood(ExtractionUtil.keep3Digits(variant.clonalLikelihood()))
-                        .phaseGroup(variant.localPhaseSet())
+                        .phaseGroup(selectTop(variant.localPhaseSets()))
                         .canonicalImpact(extractCanonicalImpact(variant))
-                        .otherImpacts(Sets.newHashSet())
+                        .otherImpacts(extractOtherImpacts(variant))
                         .build());
             } else if (variant.reported()) {
                 LOGGER.warn("Filtered a reported variant on gene {}", variant.gene());
             }
         }
         return variants;
+    }
+
+    @Nullable
+    private static Integer selectTop(@Nullable List<Integer> localPhaseSets) {
+        return localPhaseSets != null && !localPhaseSets.isEmpty() ? localPhaseSets.iterator().next() : null;
     }
 
     @NotNull
@@ -92,33 +104,65 @@ class VariantExtractor {
         }
     }
 
-    @NotNull
+    @Nullable
     @VisibleForTesting
-    static DriverLikelihood determineDriverLikelihood(@NotNull PurpleVariant variant) {
-        Double driverLikelihood = variant.driverLikelihood();
-        if (driverLikelihood == null) {
+    static DriverLikelihood determineDriverLikelihood(@NotNull PurpleVariant variant, @NotNull Set<PurpleDriver> drivers) {
+        PurpleDriver mutationDriver = findBestMutationDriver(drivers, variant.gene(), variant.canonicalImpact().transcript());
+        if (mutationDriver == null) {
             return null;
-        } else if (driverLikelihood >= 0.8) {
+        }
+
+        if (mutationDriver.driverLikelihood() >= 0.8) {
             return DriverLikelihood.HIGH;
-        } else if (driverLikelihood >= 0.2) {
+        } else if (mutationDriver.driverLikelihood() >= 0.2) {
             return DriverLikelihood.MEDIUM;
         } else {
             return DriverLikelihood.LOW;
         }
     }
 
+    @Nullable
+    private static PurpleDriver findBestMutationDriver(@NotNull Set<PurpleDriver> drivers, @NotNull String geneToFind,
+            @NotNull String transcriptToFind) {
+        PurpleDriver best = null;
+        for (PurpleDriver driver : drivers) {
+            boolean hasMutationType = MUTATION_DRIVER_TYPES.contains(driver.type());
+            boolean hasMatchingGeneTranscript = driver.gene().equals(geneToFind) && driver.transcript().equals(transcriptToFind);
+            boolean isBetter = best == null || driver.driverLikelihood() > best.driverLikelihood();
+            if (hasMutationType && hasMatchingGeneTranscript && isBetter) {
+                best = driver;
+            }
+        }
+        return best;
+    }
+
     @NotNull
     @VisibleForTesting
     static TranscriptImpact extractCanonicalImpact(@NotNull PurpleVariant variant) {
+        return toTranscriptImpact(variant.canonicalImpact());
+    }
+
+    @NotNull
+    @VisibleForTesting
+    static Set<TranscriptImpact> extractOtherImpacts(@NotNull PurpleVariant variant) {
+        Set<TranscriptImpact> impacts = Sets.newHashSet();
+        for (PurpleTranscriptImpact otherImpact : variant.otherImpacts()) {
+            impacts.add(toTranscriptImpact(otherImpact));
+        }
+        return impacts;
+    }
+
+    @NotNull
+    private static TranscriptImpact toTranscriptImpact(@NotNull PurpleTranscriptImpact purpleTranscriptImpact) {
         return ImmutableTranscriptImpact.builder()
-                .transcriptId(variant.canonicalImpact().transcriptId())
-                .hgvsCodingImpact(variant.canonicalImpact().hgvsCodingImpact())
-                .hgvsProteinImpact(AminoAcid.forceSingleLetterAminoAcids(variant.canonicalImpact().hgvsProteinImpact()))
-                .affectedCodon(variant.canonicalImpact().affectedCodon())
-                .affectedExon(variant.canonicalImpact().affectedExon())
-                .isSpliceRegion(variant.canonicalImpact().spliceRegion())
-                .effects(toEffects(variant.canonicalImpact().effects()))
-                .codingEffect(toCodingEffect(variant.canonicalImpact().codingEffect()))
+                .transcriptId(purpleTranscriptImpact.transcript())
+                .hgvsCodingImpact(purpleTranscriptImpact.hgvsCodingImpact())
+                .hgvsProteinImpact(AminoAcid.forceSingleLetterAminoAcids(purpleTranscriptImpact.hgvsProteinImpact()))
+                .affectedCodon(purpleTranscriptImpact.affectedCodon())
+                .affectedExon(purpleTranscriptImpact.affectedExon())
+                .isSpliceRegion(purpleTranscriptImpact.spliceRegion())
+                .effects(toEffects(purpleTranscriptImpact.effects()))
+                .codingEffect(toCodingEffect(purpleTranscriptImpact.codingEffect()))
                 .build();
     }
 

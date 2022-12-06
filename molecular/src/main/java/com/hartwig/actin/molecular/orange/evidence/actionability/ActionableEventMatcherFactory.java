@@ -65,18 +65,19 @@ public class ActionableEventMatcherFactory {
             @NotNull ActionableEvents actionableEvents) {
         SignatureEvidence signatureEvidence = SignatureEvidence.create(actionableEvents);
         VariantEvidence variantEvidence = VariantEvidence.create(actionableEvents);
-        CopyNumberEvidence copyNumberEvidence = CopyNumberEvidence.create(actionableEvents);
+        AmplificationEvidence amplificationEvidence = AmplificationEvidence.create(actionableEvents);
+        LossEvidence lossEvidence = LossEvidence.create(actionableEvents);
         HomozygousDisruptionEvidence homozygousDisruptionEvidence = HomozygousDisruptionEvidence.create(actionableEvents);
-        DisruptionEvidence disruptionEvidence = DisruptionEvidence.create(actionableEvents);
+        BreakendEvidence breakendEvidence = BreakendEvidence.create(actionableEvents);
         FusionEvidence fusionEvidence = FusionEvidence.create(actionableEvents);
         VirusEvidence virusEvidence = VirusEvidence.create(actionableEvents);
 
         return new ActionableEventMatcher(personalizedActionabilityFactory,
                 signatureEvidence,
                 variantEvidence,
-                copyNumberEvidence,
-                homozygousDisruptionEvidence,
-                disruptionEvidence,
+                amplificationEvidence,
+                lossEvidence,
+                homozygousDisruptionEvidence, breakendEvidence,
                 fusionEvidence,
                 virusEvidence);
     }

@@ -23,6 +23,7 @@ public abstract class Variant implements Driver, GeneAlteration {
 
     public abstract double clonalLikelihood();
 
+    // TODO Turn into Set<Integer>
     @Nullable
     public abstract Integer phaseGroup();
 

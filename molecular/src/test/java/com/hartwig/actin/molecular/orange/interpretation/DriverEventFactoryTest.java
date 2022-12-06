@@ -3,7 +3,6 @@ package com.hartwig.actin.molecular.orange.interpretation;
 import static org.junit.Assert.assertEquals;
 
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
-import com.hartwig.actin.molecular.orange.datamodel.purple.CopyNumberInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
@@ -57,15 +56,15 @@ public class DriverEventFactoryTest {
 
     @Test
     public void canGenerateEventsForCopyNumbers() {
-        assertEquals("MYC amp", DriverEventFactory.copyNumberEvent(amplification("MYC")));
-        assertEquals("PTEN del", DriverEventFactory.copyNumberEvent(loss("PTEN")));
+        assertEquals("MYC amp", DriverEventFactory.amplificationEvent(copyNumber("MYC")));
+        assertEquals("PTEN del", DriverEventFactory.lossEvent(copyNumber("PTEN")));
     }
 
     @Test
     public void canGenerateEventsForDisruptions() {
         assertEquals("TP53 hom disruption",
                 DriverEventFactory.homozygousDisruptionEvent(TestLinxFactory.homozygousDisruptionBuilder().gene("TP53").build()));
-        assertEquals("TP53 disruption", DriverEventFactory.disruptionEvent(TestLinxFactory.disruptionBuilder().gene("TP53").build()));
+        assertEquals("TP53 disruption", DriverEventFactory.disruptionEvent(TestLinxFactory.breakendBuilder().gene("TP53").build()));
     }
 
     @Test
@@ -103,13 +102,8 @@ public class DriverEventFactoryTest {
     }
 
     @NotNull
-    private static PurpleCopyNumber amplification(@NotNull String gene) {
-        return TestPurpleFactory.copyNumberBuilder().interpretation(CopyNumberInterpretation.FULL_GAIN).gene(gene).build();
-    }
-
-    @NotNull
-    private static PurpleCopyNumber loss(@NotNull String gene) {
-        return TestPurpleFactory.copyNumberBuilder().interpretation(CopyNumberInterpretation.FULL_LOSS).gene(gene).build();
+    private static PurpleCopyNumber copyNumber(@NotNull String gene) {
+        return TestPurpleFactory.copyNumberBuilder().gene(gene).build();
     }
 
     @NotNull

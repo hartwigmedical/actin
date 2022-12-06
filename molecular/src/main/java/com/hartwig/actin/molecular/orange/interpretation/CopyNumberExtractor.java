@@ -9,8 +9,9 @@ import com.hartwig.actin.molecular.datamodel.driver.ImmutableAmplification;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableLoss;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.filter.GeneFilter;
-import com.hartwig.actin.molecular.orange.datamodel.purple.CopyNumberInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriver;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriverType;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.sort.driver.CopyNumberComparator;
@@ -18,10 +19,17 @@ import com.hartwig.actin.molecular.sort.driver.CopyNumberComparator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 class CopyNumberExtractor {
 
     private static final Logger LOGGER = LogManager.getLogger(CopyNumberExtractor.class);
+
+    private static final double AMP_RELATIVE_INCREASE_CUTOFF = 3;
+    private static final double DEL_RELATIVE_INCREASE_CUTOFF = 0.5;
+
+    private static final Set<PurpleDriverType> AMP_DRIVERS = Sets.newHashSet(PurpleDriverType.AMP, PurpleDriverType.PARTIAL_AMP);
+    private static final Set<PurpleDriverType> LOSS_DRIVERS = Sets.newHashSet(PurpleDriverType.DEL);
 
     @NotNull
     private final GeneFilter geneFilter;
@@ -37,50 +45,84 @@ class CopyNumberExtractor {
     public Set<Amplification> extractAmplifications(@NotNull PurpleRecord purple) {
         Set<Amplification> amplifications = Sets.newTreeSet(new CopyNumberComparator());
         for (PurpleCopyNumber copyNumber : purple.copyNumbers()) {
-            if (copyNumber.interpretation().isGain()) {
-                if (geneFilter.include(copyNumber.gene())) {
-                    boolean isPartial = copyNumber.interpretation() == CopyNumberInterpretation.PARTIAL_GAIN;
-                    amplifications.add(ImmutableAmplification.builder()
-                            .from(GeneAlterationFactory.convertAlteration(copyNumber.gene(),
-                                    evidenceDatabase.geneAlterationForCopyNumber(copyNumber)))
-                            .isReportable(copyNumber.reported())
-                            .event(DriverEventFactory.copyNumberEvent(copyNumber))
-                            .driverLikelihood(isPartial ? DriverLikelihood.MEDIUM : DriverLikelihood.HIGH)
-                            .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(copyNumber)))
-                            .minCopies(copyNumber.minCopies())
-                            .maxCopies(copyNumber.maxCopies())
-                            .isPartial(isPartial)
-                            .build());
-                } else if (copyNumber.reported()) {
-                    LOGGER.warn("Filtered a reported amplification on gene {}", copyNumber.gene());
-                }
+            double minRelativeIncrease = copyNumber.minCopyNumber() / purple.fit().ploidy();
+            double maxRelativeIncrease = copyNumber.maxCopyNumber() / purple.fit().ploidy();
+
+            boolean meetsMinRelativeIncrease = minRelativeIncrease >= AMP_RELATIVE_INCREASE_CUTOFF;
+            boolean meetsMaxRelativeIncrease = maxRelativeIncrease >= AMP_RELATIVE_INCREASE_CUTOFF;
+
+            PurpleDriver ampDriver = findAmpDriver(purple.drivers(), copyNumber.gene());
+
+            if (geneFilter.include(copyNumber.gene()) && (minRelativeIncrease > 1 || meetsMaxRelativeIncrease)) {
+                boolean isPartial = !meetsMinRelativeIncrease && meetsMaxRelativeIncrease;
+                amplifications.add(ImmutableAmplification.builder()
+                        .from(GeneAlterationFactory.convertAlteration(copyNumber.gene(),
+                                evidenceDatabase.geneAlterationForAmplification(copyNumber)))
+                        .isReportable(ampDriver != null)
+                        .event(DriverEventFactory.amplificationEvent(copyNumber))
+                        .driverLikelihood(ampDriver != null ? DriverLikelihood.HIGH : null)
+                        .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForAmplification(copyNumber)))
+                        .minCopies((int) Math.round(copyNumber.minCopyNumber()))
+                        .maxCopies((int) Math.round(copyNumber.maxCopyNumber()))
+                        .isPartial(isPartial)
+                        .build());
+            } else if (ampDriver != null) {
+                LOGGER.warn("Filtered a reported amplification on gene {}", ampDriver.gene());
             }
-        }
-        return amplifications;
+        } return amplifications;
     }
 
     @NotNull
     public Set<Loss> extractLosses(@NotNull PurpleRecord purple) {
         Set<Loss> losses = Sets.newTreeSet(new CopyNumberComparator());
         for (PurpleCopyNumber copyNumber : purple.copyNumbers()) {
-            if (copyNumber.interpretation().isLoss()) {
-                if (geneFilter.include(copyNumber.gene())) {
-                    losses.add(ImmutableLoss.builder()
-                            .from(GeneAlterationFactory.convertAlteration(copyNumber.gene(),
-                                    evidenceDatabase.geneAlterationForCopyNumber(copyNumber)))
-                            .isReportable(copyNumber.reported())
-                            .event(DriverEventFactory.copyNumberEvent(copyNumber))
-                            .driverLikelihood(DriverLikelihood.HIGH)
-                            .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(copyNumber)))
-                            .minCopies(copyNumber.minCopies())
-                            .maxCopies(copyNumber.maxCopies())
-                            .isPartial(copyNumber.interpretation() == CopyNumberInterpretation.PARTIAL_LOSS)
-                            .build());
-                } else if (copyNumber.reported()) {
-                    LOGGER.warn("Filtered a reported loss on gene {}", copyNumber.gene());
-                }
+            double minRelativeIncrease = copyNumber.minCopyNumber() / purple.fit().ploidy();
+            double maxRelativeIncrease = copyNumber.maxCopyNumber() / purple.fit().ploidy();
+
+            PurpleDriver lossDriver = findLossDriver(purple.drivers(), copyNumber.gene());
+
+            if (geneFilter.include(copyNumber.gene()) && minRelativeIncrease < 1) {
+                boolean meetsMinRelativeDecrease = minRelativeIncrease <= DEL_RELATIVE_INCREASE_CUTOFF;
+                boolean meetsMaxRelativeDecrease = maxRelativeIncrease <= DEL_RELATIVE_INCREASE_CUTOFF;
+
+                boolean isPartial = meetsMinRelativeDecrease && !meetsMaxRelativeDecrease;
+
+                losses.add(ImmutableLoss.builder()
+                        .from(GeneAlterationFactory.convertAlteration(copyNumber.gene(),
+                                evidenceDatabase.geneAlterationForLoss(copyNumber)))
+                        .isReportable(lossDriver != null)
+                        .event(DriverEventFactory.lossEvent(copyNumber))
+                        .driverLikelihood(lossDriver != null ? DriverLikelihood.HIGH : null)
+                        .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForLoss(copyNumber)))
+                        .minCopies((int) Math.round(copyNumber.minCopyNumber()))
+                        .maxCopies((int) Math.round(copyNumber.maxCopyNumber()))
+                        .isPartial(isPartial)
+                        .build());
+            } else if (lossDriver != null) {
+                LOGGER.warn("Filtered a reported loss on gene {}", lossDriver.gene());
             }
         }
         return losses;
+    }
+
+    @Nullable
+    private static PurpleDriver findAmpDriver(@NotNull Set<PurpleDriver> drivers, @NotNull String geneToFind) {
+        return findDriverOfType(drivers, AMP_DRIVERS, geneToFind);
+    }
+
+    @Nullable
+    private static PurpleDriver findLossDriver(@NotNull Set<PurpleDriver> drivers, @NotNull String geneToFind) {
+        return findDriverOfType(drivers, LOSS_DRIVERS, geneToFind);
+    }
+
+    @Nullable
+    private static PurpleDriver findDriverOfType(@NotNull Set<PurpleDriver> drivers, @NotNull Set<PurpleDriverType> allowedTypes,
+            @NotNull String geneToFind) {
+        for (PurpleDriver driver : drivers) {
+            if (allowedTypes.contains(driver.type()) && driver.gene().equals(geneToFind)) {
+                return driver;
+            }
+        }
+        return null;
     }
 }

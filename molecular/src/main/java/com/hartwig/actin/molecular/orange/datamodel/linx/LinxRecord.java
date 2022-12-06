@@ -11,10 +11,13 @@ import org.jetbrains.annotations.Nullable;
 public abstract class LinxRecord {
 
     @NotNull
+    public abstract Set<LinxStructuralVariant> structuralVariants();
+
+    @NotNull
     public abstract Set<LinxHomozygousDisruption> homozygousDisruptions();
 
     @NotNull
-    public abstract Set<LinxDisruption> disruptions();
+    public abstract Set<LinxBreakend> breakends();
 
     @NotNull
     public abstract Set<LinxFusion> fusions();

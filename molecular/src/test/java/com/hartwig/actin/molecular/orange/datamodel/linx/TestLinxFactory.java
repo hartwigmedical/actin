@@ -9,21 +9,26 @@ public final class TestLinxFactory {
     }
 
     @NotNull
+    public static ImmutableLinxStructuralVariant.Builder structuralVariantBuilder() {
+        return ImmutableLinxStructuralVariant.builder().svId(0).clusterId(0);
+    }
+
+    @NotNull
     public static ImmutableLinxHomozygousDisruption.Builder homozygousDisruptionBuilder() {
         return ImmutableLinxHomozygousDisruption.builder().gene(Strings.EMPTY);
     }
 
     @NotNull
-    public static ImmutableLinxDisruption.Builder disruptionBuilder() {
-        return ImmutableLinxDisruption.builder()
+    public static ImmutableLinxBreakend.Builder breakendBuilder() {
+        return ImmutableLinxBreakend.builder()
                 .reported(true)
+                .svId(0)
                 .gene(Strings.EMPTY)
-                .type(LinxDisruptionType.BND)
+                .type(LinxBreakendType.BND)
                 .junctionCopyNumber(0D)
                 .undisruptedCopyNumber(0D)
                 .regionType(LinxRegionType.INTRONIC)
-                .codingType(LinxCodingType.NON_CODING)
-                .clusterId(0);
+                .codingType(LinxCodingType.NON_CODING);
     }
 
     @NotNull

@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.orange.datamodel.purple;
 
+import java.util.List;
 import java.util.Set;
 
 import org.immutables.value.Value;
@@ -29,22 +30,19 @@ public abstract class PurpleVariant {
     @NotNull
     public abstract String alt();
 
-    public abstract double totalCopyNumber();
+    public abstract double adjustedCopyNumber();
 
-    public abstract double alleleCopyNumber();
+    public abstract double variantCopyNumber();
 
     @NotNull
     public abstract PurpleHotspotType hotspot();
 
     public abstract double clonalLikelihood();
 
-    @Nullable
-    public abstract Double driverLikelihood();
-
     public abstract boolean biallelic();
 
     @Nullable
-    public abstract Integer localPhaseSet();
+    public abstract List<Integer> localPhaseSets();
 
     @NotNull
     public abstract PurpleTranscriptImpact canonicalImpact();

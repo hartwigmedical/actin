@@ -18,6 +18,8 @@ class DriverExtractor {
     @NotNull
     private final CopyNumberExtractor copyNumberExtractor;
     @NotNull
+    private final HomozygousDisruptionExtractor homozygousDisruptionExtractor;
+    @NotNull
     private final DisruptionExtractor disruptionExtractor;
     @NotNull
     private final FusionExtractor fusionExtractor;
@@ -28,16 +30,18 @@ class DriverExtractor {
     public static DriverExtractor create(@NotNull GeneFilter geneFilter, @NotNull EvidenceDatabase evidenceDatabase) {
         return new DriverExtractor(new VariantExtractor(geneFilter, evidenceDatabase),
                 new CopyNumberExtractor(geneFilter, evidenceDatabase),
+                new HomozygousDisruptionExtractor(geneFilter, evidenceDatabase),
                 new DisruptionExtractor(geneFilter, evidenceDatabase),
                 new FusionExtractor(geneFilter, evidenceDatabase),
                 new VirusExtractor(evidenceDatabase));
     }
 
     private DriverExtractor(@NotNull final VariantExtractor variantExtractor, @NotNull final CopyNumberExtractor copyNumberExtractor,
-            @NotNull final DisruptionExtractor disruptionExtractor, @NotNull final FusionExtractor fusionExtractor,
-            @NotNull final VirusExtractor virusExtractor) {
+            @NotNull final HomozygousDisruptionExtractor homozygousDisruptionExtractor, @NotNull final DisruptionExtractor disruptionExtractor,
+            @NotNull final FusionExtractor fusionExtractor, @NotNull final VirusExtractor virusExtractor) {
         this.variantExtractor = variantExtractor;
         this.copyNumberExtractor = copyNumberExtractor;
+        this.homozygousDisruptionExtractor = homozygousDisruptionExtractor;
         this.disruptionExtractor = disruptionExtractor;
         this.fusionExtractor = fusionExtractor;
         this.virusExtractor = virusExtractor;
@@ -56,7 +60,7 @@ class DriverExtractor {
                 .variants(variantExtractor.extract(record.purple()))
                 .amplifications(copyNumberExtractor.extractAmplifications(record.purple()))
                 .losses(losses)
-                .homozygousDisruptions(disruptionExtractor.extractHomozygousDisruptions(record.linx()))
+                .homozygousDisruptions(homozygousDisruptionExtractor.extractHomozygousDisruptions(record.linx()))
                 .disruptions(disruptionExtractor.extractDisruptions(record.linx(), losses))
                 .fusions(fusionExtractor.extract(record.linx()))
                 .viruses(virusExtractor.extract(record.virusInterpreter()))

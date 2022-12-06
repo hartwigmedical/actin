@@ -17,7 +17,7 @@ import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaPrediction;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
 import com.hartwig.actin.molecular.orange.datamodel.lilac.LilacHlaAllele;
 import com.hartwig.actin.molecular.orange.datamodel.lilac.LilacRecord;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakend;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionType;
@@ -25,7 +25,6 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruptio
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
-import com.hartwig.actin.molecular.orange.datamodel.purple.CopyNumberInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleHotspotType;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
@@ -55,13 +54,12 @@ public class OrangeJsonTest {
     }
 
     @Test
-    @Ignore
     public void canReadRealOrangeRecordJson() throws IOException {
-        // TODO Fix test.
         assertNotNull(OrangeJson.read(REAL_ORANGE_JSON));
     }
 
     @Test
+    @Ignore
     public void canReadMinimallyPopulatedOrangeRecordJson() throws IOException {
         OrangeRecord record = OrangeJson.read(MINIMALLY_POPULATED_ORANGE_JSON);
 
@@ -95,11 +93,10 @@ public class OrangeJsonTest {
         assertEquals("c.2153C>T", variant1.canonicalImpact().hgvsCodingImpact());
         assertEquals("p.Pro718Leu", variant1.canonicalImpact().hgvsProteinImpact());
         assertTrue(variant1.canonicalImpact().effects().contains(PurpleVariantEffect.MISSENSE));
-        assertEquals(2.03, variant1.alleleCopyNumber(), EPSILON);
-        assertEquals(3.02, variant1.totalCopyNumber(), EPSILON);
+        assertEquals(2.03, variant1.variantCopyNumber(), EPSILON);
+        assertEquals(3.02, variant1.adjustedCopyNumber(), EPSILON);
         assertEquals(PurpleHotspotType.NON_HOTSPOT, variant1.hotspot());
         assertFalse(variant1.biallelic());
-        assertEquals(0.15, variant1.driverLikelihood(), EPSILON);
         assertEquals(1.0, variant1.clonalLikelihood(), EPSILON);
 
         PurpleVariant variant2 = findByGene(purple.variants(), "BRCA1");
@@ -107,18 +104,16 @@ public class OrangeJsonTest {
         assertEquals("p.?", variant2.canonicalImpact().hgvsProteinImpact());
         assertTrue(variant2.canonicalImpact().effects().contains(PurpleVariantEffect.SPLICE_DONOR));
         assertTrue(variant2.canonicalImpact().effects().contains(PurpleVariantEffect.INTRONIC));
-        assertEquals(1.0, variant2.alleleCopyNumber(), EPSILON);
-        assertEquals(2.0, variant2.totalCopyNumber(), EPSILON);
+        assertEquals(1.0, variant2.variantCopyNumber(), EPSILON);
+        assertEquals(2.0, variant2.adjustedCopyNumber(), EPSILON);
         assertEquals(PurpleHotspotType.HOTSPOT, variant2.hotspot());
         assertFalse(variant2.biallelic());
-        assertEquals(1.0, variant2.driverLikelihood(), EPSILON);
         assertEquals(1.0, variant2.clonalLikelihood(), EPSILON);
 
         assertEquals(1, purple.copyNumbers().size());
         PurpleCopyNumber copyNumber = purple.copyNumbers().iterator().next();
         assertEquals("SMAD4", copyNumber.gene());
-        assertEquals(CopyNumberInterpretation.FULL_LOSS, copyNumber.interpretation());
-        assertEquals(0, copyNumber.minCopies());
+        assertEquals(0, copyNumber.minCopyNumber(), EPSILON);
     }
 
     @NotNull
@@ -144,9 +139,9 @@ public class OrangeJsonTest {
         LinxHomozygousDisruption homozygousDisruption = linx.homozygousDisruptions().iterator().next();
         assertEquals("NF1", homozygousDisruption.gene());
 
-        assertEquals(1, linx.disruptions().size());
-        LinxDisruption disruption = linx.disruptions().iterator().next();
-        assertEquals("NF1", disruption.gene());
+        assertEquals(1, linx.breakends().size());
+        LinxBreakend breakend = linx.breakends().iterator().next();
+        assertEquals("NF1", breakend.gene());
     }
 
     private static void assertPeach(@NotNull PeachRecord peach) {

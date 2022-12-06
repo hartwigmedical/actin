@@ -4,7 +4,9 @@ import static com.hartwig.actin.util.json.Json.array;
 import static com.hartwig.actin.util.json.Json.bool;
 import static com.hartwig.actin.util.json.Json.date;
 import static com.hartwig.actin.util.json.Json.integer;
+import static com.hartwig.actin.util.json.Json.nullableArray;
 import static com.hartwig.actin.util.json.Json.nullableInteger;
+import static com.hartwig.actin.util.json.Json.nullableIntegerList;
 import static com.hartwig.actin.util.json.Json.nullableString;
 import static com.hartwig.actin.util.json.Json.number;
 import static com.hartwig.actin.util.json.Json.object;
@@ -38,26 +40,28 @@ import com.hartwig.actin.molecular.orange.datamodel.lilac.ImmutableLilacHlaAllel
 import com.hartwig.actin.molecular.orange.datamodel.lilac.ImmutableLilacRecord;
 import com.hartwig.actin.molecular.orange.datamodel.lilac.LilacHlaAllele;
 import com.hartwig.actin.molecular.orange.datamodel.lilac.LilacRecord;
-import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxDisruption;
+import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxBreakend;
 import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxRecord;
+import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxStructuralVariant;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakend;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakendType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxCodingType;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruptionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRegionType;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxStructuralVariant;
 import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
-import com.hartwig.actin.molecular.orange.datamodel.purple.CopyNumberInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleCharacteristics;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleCopyNumber;
+import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleDriver;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleFit;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleTranscriptImpact;
@@ -65,6 +69,8 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleVarian
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCharacteristics;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriver;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriverType;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleFit;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleHotspotType;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
@@ -119,15 +125,20 @@ public final class OrangeJson {
 
         @NotNull
         private static PurpleRecord toPurpleRecord(@NotNull JsonObject purple) {
+            Set<PurpleDriver> drivers = Sets.newHashSet();
+            drivers.addAll(toPurpleDrivers(array(purple, "somaticDrivers")));
+            drivers.addAll(toPurpleDrivers(nullableArray(purple, "germlineDrivers")));
+
             Set<PurpleVariant> variants = Sets.newHashSet();
-            variants.addAll(toPurpleVariants(array(purple, "reportableSomaticVariants")));
-            variants.addAll(toPurpleVariants(array(purple, "reportableGermlineVariants")));
+            variants.addAll(toPurpleVariants(array(purple, "allSomaticVariants")));
+            variants.addAll(toPurpleVariants(nullableArray(purple, "allGermlineVariants")));
 
             return ImmutablePurpleRecord.builder()
                     .fit(toPurpleFit(object(purple, "fit")))
                     .characteristics(toPurpleCharacteristics(object(purple, "characteristics")))
+                    .drivers(drivers)
                     .variants(variants)
-                    .copyNumbers(toPurpleCopyNumbers(array(purple, "reportableSomaticGainsLosses")))
+                    .copyNumbers(toPurpleCopyNumbers(array(purple, "allSomaticGeneCopyNumbers")))
                     .build();
         }
 
@@ -143,75 +154,105 @@ public final class OrangeJson {
 
         @NotNull
         private static PurpleCharacteristics toPurpleCharacteristics(@NotNull JsonObject characteristics) {
-            // TODO Determine tumor mutational burden status in ORANGE
-            double tumorMutationalBurden = number(characteristics, "tumorMutationalBurdenPerMb");
-            String tumorMutationalBurdenStatus = tumorMutationalBurden >= 10 ? "HIGH" : "LOW";
-
             return ImmutablePurpleCharacteristics.builder()
                     .microsatelliteStabilityStatus(string(characteristics, "microsatelliteStatus"))
                     .tumorMutationalBurden(number(characteristics, "tumorMutationalBurdenPerMb"))
-                    .tumorMutationalBurdenStatus(tumorMutationalBurdenStatus)
+                    .tumorMutationalBurdenStatus(string(characteristics, "tumorMutationalBurdenStatus"))
                     .tumorMutationalLoad(integer(characteristics, "tumorMutationalLoad"))
                     .tumorMutationalLoadStatus(string(characteristics, "tumorMutationalLoadStatus"))
                     .build();
         }
 
         @NotNull
-        private static Set<PurpleVariant> toPurpleVariants(@NotNull JsonArray reportableVariantArray) {
+        private static Set<PurpleDriver> toPurpleDrivers(@Nullable JsonArray driverArray) {
+            if (driverArray == null) {
+                return Sets.newHashSet();
+            }
+
+            Set<PurpleDriver> drivers = Sets.newHashSet();
+            for (JsonElement element : driverArray) {
+                JsonObject driver = element.getAsJsonObject();
+                drivers.add(ImmutablePurpleDriver.builder()
+                        .gene(string(driver, "gene"))
+                        .transcript(string(driver, "transcript"))
+                        .type(PurpleDriverType.valueOf(string(driver, "driver")))
+                        .driverLikelihood(number(driver, "driverLikelihood"))
+                        .build());
+            }
+            return drivers;
+        }
+
+        @NotNull
+        private static Set<PurpleVariant> toPurpleVariants(@Nullable JsonArray variantArray) {
+            if (variantArray == null) {
+                return Sets.newHashSet();
+            }
+
             Set<PurpleVariant> variants = Sets.newHashSet();
-            // TODO Populate other transcript impacts in ORANGE.
-            for (JsonElement element : reportableVariantArray) {
+            for (JsonElement element : variantArray) {
                 JsonObject variant = element.getAsJsonObject();
                 variants.add(ImmutablePurpleVariant.builder()
-                        .reported(true)
+                        .reported(bool(variant, "reported"))
                         .type(PurpleVariantType.valueOf(string(variant, "type")))
                         .gene(string(variant, "gene"))
                         .chromosome(string(variant, "chromosome"))
                         .position(integer(variant, "position"))
                         .ref(string(variant, "ref"))
                         .alt(string(variant, "alt"))
-                        .totalCopyNumber(number(variant, "totalCopyNumber"))
-                        .alleleCopyNumber(number(variant, "alleleCopyNumber"))
+                        .adjustedCopyNumber(number(variant, "adjustedCopyNumber"))
+                        .variantCopyNumber(number(variant, "variantCopyNumber"))
                         .hotspot(PurpleHotspotType.valueOf(string(variant, "hotspot")))
-                        .driverLikelihood(number(variant, "driverLikelihood"))
                         .clonalLikelihood(number(variant, "clonalLikelihood"))
                         .biallelic(bool(variant, "biallelic"))
-                        .localPhaseSet(nullableInteger(variant, "localPhaseSet"))
-                        .canonicalImpact(toCanonicalTranscriptImpact(variant))
+                        .localPhaseSets(nullableIntegerList(variant, "localPhaseSets"))
+                        .canonicalImpact(toPurpleTranscriptImpact(object(variant, "canonicalImpact")))
+                        .otherImpacts(toPurpleTranscriptImpacts(array(variant, "otherImpacts")))
                         .build());
             }
             return variants;
         }
 
         @NotNull
-        private static PurpleTranscriptImpact toCanonicalTranscriptImpact(@NotNull JsonObject variant) {
-            // TODO Read splice region directly from purple rather than approximate it.
-            // TODO Populate "affected codon" and "affected exon".
-            PurpleCodingEffect codingEffect = PurpleCodingEffect.valueOf(string(variant, "canonicalCodingEffect"));
+        private static Set<PurpleTranscriptImpact> toPurpleTranscriptImpacts(@NotNull JsonArray impactArray) {
+            Set<PurpleTranscriptImpact> impacts = Sets.newHashSet();
+            for (JsonElement element : impactArray) {
+                impacts.add(toPurpleTranscriptImpact(element.getAsJsonObject()));
+            }
+            return impacts;
+        }
 
+        @NotNull
+        private static PurpleTranscriptImpact toPurpleTranscriptImpact(@NotNull JsonObject impact) {
             return ImmutablePurpleTranscriptImpact.builder()
-                    .transcriptId(string(variant, "canonicalTranscript"))
-                    .hgvsCodingImpact(string(variant, "canonicalHgvsCodingImpact"))
-                    .hgvsProteinImpact(string(variant, "canonicalHgvsProteinImpact"))
-                    .affectedCodon(null)
-                    .affectedExon(null)
-                    .spliceRegion(codingEffect == PurpleCodingEffect.SPLICE)
-                    .codingEffect(PurpleCodingEffect.valueOf(string(variant, "canonicalCodingEffect")))
-                    .effects(PurpleVariantEffect.fromEffectString(string(variant, "canonicalEffect")))
+                    .transcript(string(impact, "transcript"))
+                    .hgvsCodingImpact(string(impact, "hgvsCodingImpact"))
+                    .hgvsProteinImpact(string(impact, "hgvsProteinImpact"))
+                    .affectedCodon(nullableInteger(impact, "affectedCodon"))
+                    .affectedExon(nullableInteger(impact, "affectedExon"))
+                    .spliceRegion(bool(impact, "spliceRegion"))
+                    .codingEffect(PurpleCodingEffect.valueOf(string(impact, "codingEffect")))
+                    .effects(toPurpleVariantEffects(array(impact, "effects")))
                     .build();
         }
 
         @NotNull
-        private static Set<PurpleCopyNumber> toPurpleCopyNumbers(@NotNull JsonArray reportableGainLossArray) {
+        private static Set<PurpleVariantEffect> toPurpleVariantEffects(@NotNull JsonArray effectArray) {
+            Set<PurpleVariantEffect> effects = Sets.newHashSet();
+            for (JsonElement element : effectArray) {
+                effects.add(PurpleVariantEffect.valueOf(element.getAsString()));
+            }
+            return effects;
+        }
+
+        @NotNull
+        private static Set<PurpleCopyNumber> toPurpleCopyNumbers(@NotNull JsonArray geneCopyNumberArray) {
             Set<PurpleCopyNumber> copyNumbers = Sets.newHashSet();
-            for (JsonElement element : reportableGainLossArray) {
-                JsonObject reportableGainLoss = element.getAsJsonObject();
+            for (JsonElement element : geneCopyNumberArray) {
+                JsonObject geneCopyNumber = element.getAsJsonObject();
                 copyNumbers.add(ImmutablePurpleCopyNumber.builder()
-                        .reported(true)
-                        .gene(string(reportableGainLoss, "gene"))
-                        .interpretation(CopyNumberInterpretation.valueOf(string(reportableGainLoss, "interpretation")))
-                        .minCopies(integer(reportableGainLoss, "minCopies"))
-                        .maxCopies(integer(reportableGainLoss, "maxCopies"))
+                        .gene(string(geneCopyNumber, "gene"))
+                        .minCopyNumber(number(geneCopyNumber, "minCopyNumber"))
+                        .maxCopyNumber(number(geneCopyNumber, "maxCopyNumber"))
                         .build());
             }
             return copyNumbers;
@@ -220,10 +261,24 @@ public final class OrangeJson {
         @NotNull
         private static LinxRecord toLinxRecord(@NotNull JsonObject linx) {
             return ImmutableLinxRecord.builder()
+                    .structuralVariants(toLinxStructuralVariants(array(linx, "allStructuralVariants")))
                     .homozygousDisruptions(toLinxHomozygousDisruptions(array(linx, "homozygousDisruptions")))
-                    .disruptions(toLinxDisruptions(array(linx, "reportableGeneDisruptions")))
-                    .fusions(toLinxFusions(array(linx, "reportableFusions")))
+                    .breakends(toLinxBreakends(array(linx, "allBreakends")))
+                    .fusions(toLinxFusions(array(linx, "allFusions")))
                     .build();
+        }
+
+        @NotNull
+        private static Set<LinxStructuralVariant> toLinxStructuralVariants(@NotNull JsonArray structuralVariantArray) {
+            Set<LinxStructuralVariant> structuralVariants = Sets.newHashSet();
+            for (JsonElement element : structuralVariantArray) {
+                JsonObject structuralVariant = element.getAsJsonObject();
+                structuralVariants.add(ImmutableLinxStructuralVariant.builder()
+                        .svId(integer(structuralVariant, "svId"))
+                        .clusterId(integer(structuralVariant, "clusterId"))
+                        .build());
+            }
+            return structuralVariants;
         }
 
         @NotNull
@@ -237,32 +292,31 @@ public final class OrangeJson {
         }
 
         @NotNull
-        private static Set<LinxDisruption> toLinxDisruptions(@NotNull JsonArray reportableGeneDisruptionArray) {
-            Set<LinxDisruption> disruptions = Sets.newHashSet();
-            // TODO Read region type and coding type from ORANGE
-            for (JsonElement element : reportableGeneDisruptionArray) {
-                JsonObject geneDisruption = element.getAsJsonObject();
-                disruptions.add(ImmutableLinxDisruption.builder()
-                        .reported(true)
-                        .gene(string(geneDisruption, "gene"))
-                        .type(LinxDisruptionType.valueOf(string(geneDisruption, "type")))
-                        .junctionCopyNumber(number(geneDisruption, "junctionCopyNumber"))
-                        .undisruptedCopyNumber(number(geneDisruption, "undisruptedCopyNumber"))
-                        .regionType(LinxRegionType.INTRONIC)
-                        .codingType(LinxCodingType.NON_CODING)
-                        .clusterId(nullableInteger(geneDisruption, "clusterId"))
+        private static Set<LinxBreakend> toLinxBreakends(@NotNull JsonArray breakendArray) {
+            Set<LinxBreakend> breakends = Sets.newHashSet();
+            for (JsonElement element : breakendArray) {
+                JsonObject breakend = element.getAsJsonObject();
+                breakends.add(ImmutableLinxBreakend.builder()
+                        .reported(bool(breakend, "reportedDisruption"))
+                        .svId(integer(breakend, "svId"))
+                        .gene(string(breakend, "gene"))
+                        .type(LinxBreakendType.valueOf(string(breakend, "type")))
+                        .junctionCopyNumber(number(breakend, "junctionCopyNumber"))
+                        .undisruptedCopyNumber(number(breakend, "undisruptedCopyNumber"))
+                        .regionType(LinxRegionType.valueOf(string(breakend, "regionType")))
+                        .codingType(LinxCodingType.valueOf(string(breakend, "codingType")))
                         .build());
             }
-            return disruptions;
+            return breakends;
         }
 
         @NotNull
-        private static Set<LinxFusion> toLinxFusions(@NotNull JsonArray reportableFusionArray) {
+        private static Set<LinxFusion> toLinxFusions(@NotNull JsonArray fusionArray) {
             Set<LinxFusion> fusions = Sets.newHashSet();
-            for (JsonElement element : reportableFusionArray) {
+            for (JsonElement element : fusionArray) {
                 JsonObject fusion = element.getAsJsonObject();
                 fusions.add(ImmutableLinxFusion.builder()
-                        .reported(true)
+                        .reported(bool(fusion, "reported"))
                         .type(LinxFusionType.valueOf(string(fusion, "reportedType")))
                         .geneStart(string(fusion, "geneStart"))
                         .geneTranscriptStart(string(fusion, "geneTranscriptStart"))

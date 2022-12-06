@@ -8,21 +8,18 @@ import com.hartwig.actin.molecular.datamodel.driver.CodingContext;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.DisruptionType;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
-import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableDisruption;
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableHomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.RegionType;
 import com.hartwig.actin.molecular.filter.GeneFilter;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakend;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakendType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxCodingType;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruption;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxDisruptionType;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRegionType;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxStructuralVariant;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.sort.driver.DisruptionComparator;
-import com.hartwig.actin.molecular.sort.driver.HomozygousDisruptionComparator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,73 +40,59 @@ class DisruptionExtractor {
     }
 
     @NotNull
-    public Set<HomozygousDisruption> extractHomozygousDisruptions(@NotNull LinxRecord linx) {
-        Set<HomozygousDisruption> homozygousDisruptions = Sets.newTreeSet(new HomozygousDisruptionComparator());
-        for (LinxHomozygousDisruption homozygousDisruption : linx.homozygousDisruptions()) {
-            if (geneFilter.include(homozygousDisruption.gene())) {
-                homozygousDisruptions.add(ImmutableHomozygousDisruption.builder()
-                        .from(GeneAlterationFactory.convertAlteration(homozygousDisruption.gene(),
-                                evidenceDatabase.geneAlterationForHomozygousDisruption(homozygousDisruption)))
-                        .isReportable(true)
-                        .event(DriverEventFactory.homozygousDisruptionEvent(homozygousDisruption))
-                        .driverLikelihood(DriverLikelihood.HIGH)
-                        .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForHomozygousDisruption(homozygousDisruption)))
-                        .build());
-            } else {
-                LOGGER.warn("Filtered a reported homozygous disruption on gene {}", homozygousDisruption.gene());
-            }
-        }
-        return homozygousDisruptions;
-    }
-
-    @NotNull
     public Set<Disruption> extractDisruptions(@NotNull LinxRecord linx, @NotNull Set<Loss> losses) {
         Set<Disruption> disruptions = Sets.newTreeSet(new DisruptionComparator());
-        for (LinxDisruption disruption : linx.disruptions()) {
-            if (disruption.clusterId() == null) {
-                throw new IllegalStateException("Cannot convert a disruption with null clusterId: " + disruption);
-            }
-
-            if (geneFilter.include(disruption.gene())) {
-                if (include(disruption, losses)) {
+        for (LinxBreakend breakend : linx.breakends()) {
+            if (geneFilter.include(breakend.gene())) {
+                if (include(breakend, losses)) {
                     disruptions.add(ImmutableDisruption.builder()
-                            .from(GeneAlterationFactory.convertAlteration(disruption.gene(),
-                                    evidenceDatabase.geneAlterationForDisruption(disruption)))
-                            .isReportable(disruption.reported())
-                            .event(DriverEventFactory.disruptionEvent(disruption))
+                            .from(GeneAlterationFactory.convertAlteration(breakend.gene(),
+                                    evidenceDatabase.geneAlterationForBreakend(breakend)))
+                            .isReportable(breakend.reported())
+                            .event(DriverEventFactory.disruptionEvent(breakend))
                             .driverLikelihood(DriverLikelihood.LOW)
-                            .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForDisruption(disruption)))
-                            .type(determineDisruptionType(disruption.type()))
-                            .junctionCopyNumber(ExtractionUtil.keep3Digits(disruption.junctionCopyNumber()))
-                            .undisruptedCopyNumber(ExtractionUtil.keep3Digits(disruption.undisruptedCopyNumber()))
-                            .regionType(determineRegionType(disruption.regionType()))
-                            .codingContext(determineCodingContext(disruption.codingType()))
-                            .clusterGroup(disruption.clusterId())
+                            .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForBreakend(breakend)))
+                            .type(determineDisruptionType(breakend.type()))
+                            .junctionCopyNumber(ExtractionUtil.keep3Digits(breakend.junctionCopyNumber()))
+                            .undisruptedCopyNumber(ExtractionUtil.keep3Digits(breakend.undisruptedCopyNumber()))
+                            .regionType(determineRegionType(breakend.regionType()))
+                            .codingContext(determineCodingContext(breakend.codingType()))
+                            .clusterGroup(lookupClusterId(breakend, linx.structuralVariants()))
                             .build());
                 }
-            } else if (disruption.reported()) {
-                LOGGER.warn("Filtered a reported disruption on gene {}", disruption.gene());
+            } else if (breakend.reported()) {
+                LOGGER.warn("Filtered a reported breakend on gene {}", breakend.gene());
             }
         }
         return disruptions;
     }
 
-    private static boolean include(@NotNull LinxDisruption disruption, @NotNull Set<Loss> losses) {
-        return disruption.type() != LinxDisruptionType.DEL || !isLost(losses, disruption.gene());
+    private static boolean include(@NotNull LinxBreakend breakend, @NotNull Set<Loss> losses) {
+        return breakend.type() != LinxBreakendType.DEL || !isReportedLost(losses, breakend.gene());
     }
 
-    private static boolean isLost(@NotNull Set<Loss> losses, @NotNull String gene) {
+    private static boolean isReportedLost(@NotNull Set<Loss> losses, @NotNull String gene) {
         for (Loss loss : losses) {
-            if (loss.gene().equals(gene)) {
+            if (loss.isReportable() && loss.gene().equals(gene)) {
                 return true;
             }
         }
         return false;
     }
 
+    private static int lookupClusterId(@NotNull LinxBreakend breakend, @NotNull Set<LinxStructuralVariant> structuralVariants) {
+        for (LinxStructuralVariant structuralVariant : structuralVariants) {
+            if (structuralVariant.svId() == breakend.svId()) {
+                return structuralVariant.clusterId();
+            }
+        }
+
+        throw new IllegalStateException("Could not resolve structural variant with id: " + breakend.svId());
+    }
+
     @NotNull
     @VisibleForTesting
-    static DisruptionType determineDisruptionType(@NotNull LinxDisruptionType type) {
+    static DisruptionType determineDisruptionType(@NotNull LinxBreakendType type) {
         switch (type) {
             case BND: {
                 return DisruptionType.BND;
