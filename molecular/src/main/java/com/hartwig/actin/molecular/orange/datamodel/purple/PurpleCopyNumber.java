@@ -11,7 +11,10 @@ public abstract class PurpleCopyNumber {
     @NotNull
     public abstract String gene();
 
-    public abstract double minCopyNumber();
+    @NotNull
+    public abstract PurpleCopyNumberInterpretation interpretation();
 
-    public abstract double maxCopyNumber();
+    public abstract int minCopies();
+
+    public abstract int maxCopies();
 }

@@ -24,7 +24,7 @@
     "germlineDrivers": null,
     "allSomaticVariants": [],
     "allGermlineVariants": null,
-    "allSomaticGeneCopyNumbers": []
+    "allSomaticGainsLosses": []
   },
   "linx": {
     "allStructuralVariants": [],

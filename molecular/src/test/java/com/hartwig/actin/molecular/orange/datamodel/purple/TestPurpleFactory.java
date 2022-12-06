@@ -53,6 +53,10 @@ public final class TestPurpleFactory {
 
     @NotNull
     public static ImmutablePurpleCopyNumber.Builder copyNumberBuilder() {
-        return ImmutablePurpleCopyNumber.builder().gene(Strings.EMPTY).minCopyNumber(0D).maxCopyNumber(0D);
+        return ImmutablePurpleCopyNumber.builder()
+                .gene(Strings.EMPTY)
+                .interpretation(PurpleCopyNumberInterpretation.FULL_LOSS)
+                .minCopies(0)
+                .maxCopies(0);
     }
 }

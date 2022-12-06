@@ -69,6 +69,7 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleVarian
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCharacteristics;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumberInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriver;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriverType;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleFit;
@@ -138,7 +139,7 @@ public final class OrangeJson {
                     .characteristics(toPurpleCharacteristics(object(purple, "characteristics")))
                     .drivers(drivers)
                     .variants(variants)
-                    .copyNumbers(toPurpleCopyNumbers(array(purple, "allSomaticGeneCopyNumbers")))
+                    .copyNumbers(toPurpleCopyNumbers(array(purple, "allSomaticGainsLosses")))
                     .build();
         }
 
@@ -245,14 +246,15 @@ public final class OrangeJson {
         }
 
         @NotNull
-        private static Set<PurpleCopyNumber> toPurpleCopyNumbers(@NotNull JsonArray geneCopyNumberArray) {
+        private static Set<PurpleCopyNumber> toPurpleCopyNumbers(@NotNull JsonArray gainLossArray) {
             Set<PurpleCopyNumber> copyNumbers = Sets.newHashSet();
-            for (JsonElement element : geneCopyNumberArray) {
-                JsonObject geneCopyNumber = element.getAsJsonObject();
+            for (JsonElement element : gainLossArray) {
+                JsonObject gainLoss = element.getAsJsonObject();
                 copyNumbers.add(ImmutablePurpleCopyNumber.builder()
-                        .gene(string(geneCopyNumber, "geneName"))
-                        .minCopyNumber(number(geneCopyNumber, "minCopyNumber"))
-                        .maxCopyNumber(number(geneCopyNumber, "maxCopyNumber"))
+                        .gene(string(gainLoss, "gene"))
+                        .interpretation(PurpleCopyNumberInterpretation.valueOf(string(gainLoss, "interpretation")))
+                        .minCopies(integer(gainLoss, "minCopies"))
+                        .maxCopies(integer(gainLoss, "maxCopies"))
                         .build());
             }
             return copyNumbers;

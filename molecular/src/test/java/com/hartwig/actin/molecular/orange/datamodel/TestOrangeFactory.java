@@ -22,6 +22,7 @@ import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleCharacteristics;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCharacteristics;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumberInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleFit;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleHotspotType;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
@@ -99,8 +100,16 @@ public final class TestOrangeFactory {
                                 .addEffects(PurpleVariantEffect.MISSENSE)
                                 .build())
                         .build())
-                .addCopyNumbers(TestPurpleFactory.copyNumberBuilder().gene("MYC").minCopyNumber(38D).build())
-                .addCopyNumbers(TestPurpleFactory.copyNumberBuilder().gene("PTEN").minCopyNumber(0D).build())
+                .addCopyNumbers(TestPurpleFactory.copyNumberBuilder()
+                        .gene("MYC")
+                        .interpretation(PurpleCopyNumberInterpretation.FULL_GAIN)
+                        .minCopies(38)
+                        .build())
+                .addCopyNumbers(TestPurpleFactory.copyNumberBuilder()
+                        .gene("PTEN")
+                        .interpretation(PurpleCopyNumberInterpretation.FULL_LOSS)
+                        .minCopies(0)
+                        .build())
                 .build();
     }
 

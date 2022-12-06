@@ -113,7 +113,7 @@ public class OrangeJsonTest {
         assertEquals(1, purple.copyNumbers().size());
         PurpleCopyNumber copyNumber = purple.copyNumbers().iterator().next();
         assertEquals("SMAD4", copyNumber.gene());
-        assertEquals(0, copyNumber.minCopyNumber(), EPSILON);
+        assertEquals(0, copyNumber.minCopies(), EPSILON);
     }
 
     @NotNull
