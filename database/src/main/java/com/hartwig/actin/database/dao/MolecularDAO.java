@@ -41,6 +41,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
+import com.hartwig.actin.molecular.datamodel.driver.Driver;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.Loss;
@@ -311,7 +312,7 @@ class MolecularDAO {
                     .values(sampleId,
                             DataUtil.toByte(variant.isReportable()),
                             variant.event(),
-                            variant.driverLikelihood() != null ? variant.driverLikelihood().toString() : null,
+                            driverLikelihood(variant),
                             variant.gene(),
                             variant.geneRole().toString(),
                             variant.proteinEffect().toString(),
@@ -336,19 +337,6 @@ class MolecularDAO {
                     .getValue(VARIANT.ID);
             writeVariantEvidence(variantId, variant.evidence());
         }
-    }
-
-    @Nullable
-    private static Set<String> integersToStrings(@Nullable Set<Integer> integers) {
-        if (integers == null) {
-            return null;
-        }
-
-        Set<String> strings = Sets.newHashSet();
-        for (Integer integer : integers) {
-            strings.add(String.valueOf(integer));
-        }
-        return strings;
     }
 
     @NotNull
@@ -387,7 +375,7 @@ class MolecularDAO {
                     .values(sampleId,
                             DataUtil.toByte(amplification.isReportable()),
                             amplification.event(),
-                            amplification.driverLikelihood().toString(),
+                            driverLikelihood(amplification),
                             amplification.gene(),
                             amplification.geneRole().toString(),
                             amplification.proteinEffect().toString(),
@@ -429,7 +417,7 @@ class MolecularDAO {
                     .values(sampleId,
                             DataUtil.toByte(loss.isReportable()),
                             loss.event(),
-                            loss.driverLikelihood().toString(),
+                            driverLikelihood(loss),
                             loss.gene(),
                             loss.geneRole().toString(),
                             loss.proteinEffect().toString(),
@@ -466,7 +454,7 @@ class MolecularDAO {
                     .values(sampleId,
                             DataUtil.toByte(homozygousDisruption.isReportable()),
                             homozygousDisruption.event(),
-                            homozygousDisruption.driverLikelihood().toString(),
+                            driverLikelihood(homozygousDisruption),
                             homozygousDisruption.gene(),
                             homozygousDisruption.geneRole().toString(),
                             homozygousDisruption.proteinEffect().toString(),
@@ -509,7 +497,7 @@ class MolecularDAO {
                     .values(sampleId,
                             DataUtil.toByte(disruption.isReportable()),
                             disruption.event(),
-                            disruption.driverLikelihood().toString(),
+                            driverLikelihood(disruption),
                             disruption.gene(),
                             disruption.geneRole().toString(),
                             disruption.proteinEffect().toString(),
@@ -556,7 +544,7 @@ class MolecularDAO {
                     .values(sampleId,
                             DataUtil.toByte(fusion.isReportable()),
                             fusion.event(),
-                            fusion.driverLikelihood().toString(),
+                            driverLikelihood(fusion),
                             fusion.geneStart(),
                             fusion.geneTranscriptStart(),
                             fusion.fusedExonUp(),
@@ -597,7 +585,7 @@ class MolecularDAO {
                     .values(sampleId,
                             DataUtil.toByte(virus.isReportable()),
                             virus.event(),
-                            virus.driverLikelihood().toString(),
+                            driverLikelihood(virus),
                             virus.name(),
                             virus.type().toString(),
                             DataUtil.toByte(virus.isReliable()),
@@ -617,6 +605,24 @@ class MolecularDAO {
 
         writeEvidence(inserter, virusId, evidence);
         inserter.execute();
+    }
+
+    @Nullable
+    private static String driverLikelihood(@NotNull Driver driver) {
+        return driver.driverLikelihood() != null ? driver.driverLikelihood().toString() : null;
+    }
+
+    @Nullable
+    private static Set<String> integersToStrings(@Nullable Set<Integer> integers) {
+        if (integers == null) {
+            return null;
+        }
+
+        Set<String> strings = Sets.newHashSet();
+        for (Integer integer : integers) {
+            strings.add(String.valueOf(integer));
+        }
+        return strings;
     }
 
     private void writeImmunology(@NotNull String sampleId, @NotNull MolecularImmunology immunology) {
