@@ -34,7 +34,7 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> activatingVariants = Sets.newHashSet();
         Set<String> activatingVariantsAssociatedWithResistance = Sets.newHashSet();
-        Set<String> activatingVariantsWithNoGainOfFunction = Sets.newHashSet();
+        Set<String> activatingVariantsNoHotspotAndNoGainOfFunction = Sets.newHashSet();
         Set<String> activatingVariantsInNonOncogene = Sets.newHashSet();
         Set<String> activatingSubclonalVariants = Sets.newHashSet();
         Set<String> nonHighDriverGainOfFunctionVariants = Sets.newHashSet();
@@ -52,8 +52,8 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
                     if (variant.driverLikelihood() == DriverLikelihood.HIGH) {
                         if (isAssociatedWithDrugResistance(variant)) {
                             activatingVariantsAssociatedWithResistance.add(variant.event());
-                        } else if (!isGainOfFunction) {
-                            activatingVariantsWithNoGainOfFunction.add(variant.event());
+                        } else if (!variant.isHotspot() && !isGainOfFunction) {
+                            activatingVariantsNoHotspotAndNoGainOfFunction.add(variant.event());
                         } else if (!isPotentialOncogene) {
                             activatingVariantsInNonOncogene.add(variant.event());
                         } else if (variant.clonalLikelihood() < CLONAL_CUTOFF) {
@@ -85,7 +85,7 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
 
         Evaluation potentialWarnEvaluation = evaluatePotentialWarns(activatingVariantsAssociatedWithResistance,
                 activatingVariantsInNonOncogene,
-                activatingVariantsWithNoGainOfFunction,
+                activatingVariantsNoHotspotAndNoGainOfFunction,
                 activatingSubclonalVariants,
                 nonHighDriverGainOfFunctionVariants,
                 nonHighDriverVariants,
@@ -113,7 +113,7 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
 
     @Nullable
     private Evaluation evaluatePotentialWarns(@NotNull Set<String> activatingVariantsAssociatedWithResistance,
-            @NotNull Set<String> activatingVariantsInNonOncogene, @NotNull Set<String> activatingVariantsWithNoGainOfFunction,
+            @NotNull Set<String> activatingVariantsInNonOncogene, @NotNull Set<String> activatingVariantsNoHotspotAndNoGainOfFunction,
             @NotNull Set<String> activatingSubclonalVariants, @NotNull Set<String> nonHighDriverGainOfFunctionVariants,
             @NotNull Set<String> nonHighDriverVariants, @NotNull Set<String> otherMissenseOrHotspotVariants) {
         Set<String> warnEvents = Sets.newHashSet();
@@ -135,13 +135,13 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
             warnGeneralMessages.add(gene + " activating mutation(s) detected but " + gene + " unknown as oncogene");
         }
 
-        if (!activatingVariantsWithNoGainOfFunction.isEmpty()) {
-            warnEvents.addAll(activatingVariantsWithNoGainOfFunction);
+        if (!activatingVariantsNoHotspotAndNoGainOfFunction.isEmpty()) {
+            warnEvents.addAll(activatingVariantsNoHotspotAndNoGainOfFunction);
             warnSpecificMessages.add(
-                    "Gene " + gene + " has potentially activating mutation(s) " + Format.concat(activatingVariantsWithNoGainOfFunction)
-                            + " that have high driver likelihood, but are not associated with protein effect gain-of-function");
-            warnGeneralMessages.add(
-                    gene + " potentially activating mutation(s) detected but not associated with having gain-of-function protein effect");
+                    "Gene " + gene + " has potentially activating mutation(s) " + Format.concat(activatingVariantsNoHotspotAndNoGainOfFunction)
+                            + " that have high driver likelihood, but is not a hotspot and not associated with gain of function protein effect");
+            warnGeneralMessages.add(gene
+                    + " potentially activating mutation(s) detected but is not a hotspot and not associated with having gain-of-function protein effect");
         }
 
         if (!activatingSubclonalVariants.isEmpty()) {

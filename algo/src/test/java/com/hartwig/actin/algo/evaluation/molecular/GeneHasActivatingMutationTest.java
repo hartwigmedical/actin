@@ -28,6 +28,7 @@ public class GeneHasActivatingMutationTest {
                 .driverLikelihood(DriverLikelihood.HIGH)
                 .geneRole(GeneRole.ONCO)
                 .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
+                .isHotspot(true)
                 .isAssociatedWithDrugResistance(false)
                 .clonalLikelihood(0.8)
                 .build();
@@ -56,7 +57,13 @@ public class GeneHasActivatingMutationTest {
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .from(activatingVariant)
                         .geneRole(GeneRole.UNKNOWN)
+                        .build())));
+
+        assertMolecularEvaluation(EvaluationResult.WARN,
+                function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
+                        .from(activatingVariant)
                         .proteinEffect(ProteinEffect.UNKNOWN)
+                        .isHotspot(false)
                         .build())));
 
         assertMolecularEvaluation(EvaluationResult.WARN,
@@ -89,9 +96,7 @@ public class GeneHasActivatingMutationTest {
         // high TML and high driver likelihood variant
         assertMolecularEvaluation(EvaluationResult.PASS,
                 function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariant(true,
-                        TestVariantFactory.builder()
-                                .from(activatingVariant)
-                                .build())));
+                        TestVariantFactory.builder().from(activatingVariant).build())));
 
         // high TML and low driver likelihood variant
         assertMolecularEvaluation(EvaluationResult.FAIL,
