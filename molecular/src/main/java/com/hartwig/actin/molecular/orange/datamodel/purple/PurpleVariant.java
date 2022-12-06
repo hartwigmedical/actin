@@ -37,7 +37,7 @@ public abstract class PurpleVariant {
     @NotNull
     public abstract PurpleHotspotType hotspot();
 
-    public abstract double clonalLikelihood();
+    public abstract double subclonalLikelihood();
 
     public abstract boolean biallelic();
 

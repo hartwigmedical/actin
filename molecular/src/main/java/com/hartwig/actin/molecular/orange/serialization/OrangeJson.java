@@ -202,7 +202,7 @@ public final class OrangeJson {
                         .adjustedCopyNumber(number(variant, "adjustedCopyNumber"))
                         .variantCopyNumber(number(variant, "variantCopyNumber"))
                         .hotspot(PurpleHotspotType.valueOf(string(variant, "hotspot")))
-                        .clonalLikelihood(number(variant, "clonalLikelihood"))
+                        .subclonalLikelihood(number(variant, "subclonalLikelihood"))
                         .biallelic(bool(variant, "biallelic"))
                         .localPhaseSets(nullableIntegerList(variant, "localPhaseSets"))
                         .canonicalImpact(toPurpleTranscriptImpact(object(variant, "canonicalImpact")))
@@ -250,7 +250,7 @@ public final class OrangeJson {
             for (JsonElement element : geneCopyNumberArray) {
                 JsonObject geneCopyNumber = element.getAsJsonObject();
                 copyNumbers.add(ImmutablePurpleCopyNumber.builder()
-                        .gene(string(geneCopyNumber, "gene"))
+                        .gene(string(geneCopyNumber, "geneName"))
                         .minCopyNumber(number(geneCopyNumber, "minCopyNumber"))
                         .maxCopyNumber(number(geneCopyNumber, "maxCopyNumber"))
                         .build());

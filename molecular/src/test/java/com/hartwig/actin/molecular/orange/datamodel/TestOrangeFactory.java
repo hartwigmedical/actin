@@ -91,7 +91,7 @@ public final class TestOrangeFactory {
                         .adjustedCopyNumber(6.0)
                         .variantCopyNumber(4.1)
                         .hotspot(PurpleHotspotType.HOTSPOT)
-                        .clonalLikelihood(0.98)
+                        .subclonalLikelihood(0.02)
                         .biallelic(false)
                         .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder()
                                 .hgvsCodingImpact("c.something")

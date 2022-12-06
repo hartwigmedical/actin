@@ -1,9 +1,9 @@
 {
-  "sampleId": "ACTN01029999T",
+  "sampleId": "Test",
   "experimentDate": {
     "year": 2022,
     "month": 12,
-    "day": 5
+    "day": 6
   },
   "configuredPrimaryTumor": [
     {
@@ -639,7 +639,288 @@
       }
     ],
     "germlineDrivers": [],
-    "allSomaticVariants": [],
+    "allSomaticVariants": [
+      {
+        "type": "SNP",
+        "gene": "SF3B1",
+        "genesAffected": 1,
+        "chromosome": "2",
+        "position": 198266779,
+        "ref": "G",
+        "alt": "A",
+        "worstCodingEffect": "MISSENSE",
+        "canonicalImpact": {
+          "transcript": "ENST00000335508",
+          "hgvsCodingImpact": "c.2153C\u003eT",
+          "hgvsProteinImpact": "p.Pro718Leu",
+          "affectedCodon": 2153,
+          "affectedExon": null,
+          "spliceRegion": false,
+          "effects": [
+            "MISSENSE"
+          ],
+          "codingEffect": "MISSENSE"
+        },
+        "otherImpacts": [],
+        "hotspot": "NON_HOTSPOT",
+        "reported": true,
+        "filtered": false,
+        "filter": "PASS",
+        "recovered": false,
+        "tumorDepth": {
+          "totalReadCount": 111,
+          "alleleReadCount": 74
+        },
+        "rnaDepth": null,
+        "referenceDepth": {
+          "totalReadCount": 24,
+          "alleleReadCount": 0
+        },
+        "adjustedCopyNumber": 3.02,
+        "adjustedVAF": 0.6711,
+        "minorAlleleCopyNumber": 1.0,
+        "variantCopyNumber": 2.03,
+        "biallelic": false,
+        "genotypeStatus": "HOM_REF",
+        "germlineStatus": "DIPLOID",
+        "trinucleotideContext": "AGG",
+        "mappability": 1.0,
+        "microhomology": "",
+        "repeatSequence": "A",
+        "repeatCount": 2,
+        "kataegis": "",
+        "tier": "PANEL",
+        "subclonalLikelihood": 0.0,
+        "localPhaseSets": null
+      },
+      {
+        "type": "SNP",
+        "gene": "TP63",
+        "genesAffected": 1,
+        "chromosome": "3",
+        "position": 189604330,
+        "ref": "G",
+        "alt": "T",
+        "worstCodingEffect": "MISSENSE",
+        "canonicalImpact": {
+          "transcript": "ENST00000264731",
+          "hgvsCodingImpact": "c.1497G\u003eT",
+          "hgvsProteinImpact": "p.Met499Ile",
+          "affectedCodon": 1497,
+          "affectedExon": null,
+          "spliceRegion": false,
+          "effects": [
+            "MISSENSE"
+          ],
+          "codingEffect": "MISSENSE"
+        },
+        "otherImpacts": [],
+        "hotspot": "NON_HOTSPOT",
+        "reported": true,
+        "filtered": false,
+        "filter": "PASS",
+        "recovered": false,
+        "tumorDepth": {
+          "totalReadCount": 112,
+          "alleleReadCount": 47
+        },
+        "rnaDepth": null,
+        "referenceDepth": {
+          "totalReadCount": 35,
+          "alleleReadCount": 0
+        },
+        "adjustedCopyNumber": 3.98,
+        "adjustedVAF": 0.4218,
+        "minorAlleleCopyNumber": 1.97,
+        "variantCopyNumber": 1.68,
+        "biallelic": false,
+        "genotypeStatus": "HOM_REF",
+        "germlineStatus": "DIPLOID",
+        "trinucleotideContext": "TGG",
+        "mappability": 1.0,
+        "microhomology": "",
+        "repeatSequence": "G",
+        "repeatCount": 3,
+        "kataegis": "",
+        "tier": "PANEL",
+        "subclonalLikelihood": 0.0,
+        "localPhaseSets": null
+      },
+      {
+        "type": "MNP",
+        "gene": "TERT",
+        "genesAffected": 1,
+        "chromosome": "5",
+        "position": 1295228,
+        "ref": "GG",
+        "alt": "AA",
+        "worstCodingEffect": "NONE",
+        "canonicalImpact": {
+          "transcript": "ENST00000310581",
+          "hgvsCodingImpact": "",
+          "hgvsProteinImpact": "",
+          "affectedCodon": null,
+          "affectedExon": null,
+          "spliceRegion": false,
+          "effects": [
+            "UPSTREAM_GENE"
+          ],
+          "codingEffect": "NONE"
+        },
+        "otherImpacts": [],
+        "hotspot": "HOTSPOT",
+        "reported": true,
+        "filtered": false,
+        "filter": "PASS",
+        "recovered": false,
+        "tumorDepth": {
+          "totalReadCount": 65,
+          "alleleReadCount": 56
+        },
+        "rnaDepth": null,
+        "referenceDepth": {
+          "totalReadCount": 45,
+          "alleleReadCount": 0
+        },
+        "adjustedCopyNumber": 2.0,
+        "adjustedVAF": 0.8702,
+        "minorAlleleCopyNumber": 0.0,
+        "variantCopyNumber": 1.74,
+        "biallelic": true,
+        "genotypeStatus": "HOM_REF",
+        "germlineStatus": "DIPLOID",
+        "trinucleotideContext": "AGG",
+        "mappability": 1.0,
+        "microhomology": "",
+        "repeatSequence": "G",
+        "repeatCount": 5,
+        "kataegis": "",
+        "tier": "HOTSPOT",
+        "subclonalLikelihood": 0.0,
+        "localPhaseSets": [
+          4410
+        ]
+      },
+      {
+        "type": "SNP",
+        "gene": "BRAF",
+        "genesAffected": 1,
+        "chromosome": "7",
+        "position": 140453136,
+        "ref": "A",
+        "alt": "T",
+        "worstCodingEffect": "MISSENSE",
+        "canonicalImpact": {
+          "transcript": "ENST00000288602",
+          "hgvsCodingImpact": "c.1799T\u003eA",
+          "hgvsProteinImpact": "p.Val600Glu",
+          "affectedCodon": 1799,
+          "affectedExon": null,
+          "spliceRegion": false,
+          "effects": [
+            "MISSENSE"
+          ],
+          "codingEffect": "MISSENSE"
+        },
+        "otherImpacts": [],
+        "hotspot": "HOTSPOT",
+        "reported": true,
+        "filtered": false,
+        "filter": "PASS",
+        "recovered": false,
+        "tumorDepth": {
+          "totalReadCount": 221,
+          "alleleReadCount": 150
+        },
+        "rnaDepth": null,
+        "referenceDepth": {
+          "totalReadCount": 26,
+          "alleleReadCount": 0
+        },
+        "adjustedCopyNumber": 6.02,
+        "adjustedVAF": 0.681,
+        "minorAlleleCopyNumber": 2.01,
+        "variantCopyNumber": 4.1,
+        "biallelic": false,
+        "genotypeStatus": "HOM_REF",
+        "germlineStatus": "DIPLOID",
+        "trinucleotideContext": "CAC",
+        "mappability": 1.0,
+        "microhomology": "",
+        "repeatSequence": "",
+        "repeatCount": 0,
+        "kataegis": "",
+        "tier": "HOTSPOT",
+        "subclonalLikelihood": 0.0,
+        "localPhaseSets": null
+      },
+      {
+        "type": "INDEL",
+        "gene": "CDKN2A",
+        "genesAffected": 1,
+        "chromosome": "9",
+        "position": 21971153,
+        "ref": "CCG",
+        "alt": "C",
+        "worstCodingEffect": "NONSENSE_OR_FRAMESHIFT",
+        "canonicalImpact": {
+          "transcript": "ENST00000498124",
+          "hgvsCodingImpact": "c.203_204delCG",
+          "hgvsProteinImpact": "p.Ala68fs",
+          "affectedCodon": 203,
+          "affectedExon": null,
+          "spliceRegion": false,
+          "effects": [
+            "FRAMESHIFT"
+          ],
+          "codingEffect": "NONSENSE_OR_FRAMESHIFT"
+        },
+        "otherImpacts": [
+          {
+            "transcript": "ENST00000579755",
+            "hgvsCodingImpact": "c.246_247delCG",
+            "hgvsProteinImpact": "p.Gly83fs",
+            "affectedCodon": 246,
+            "affectedExon": null,
+            "spliceRegion": false,
+            "effects": [
+              "FRAMESHIFT"
+            ],
+            "codingEffect": "NONSENSE_OR_FRAMESHIFT"
+          }
+        ],
+        "hotspot": "NEAR_HOTSPOT",
+        "reported": true,
+        "filtered": false,
+        "filter": "PASS",
+        "recovered": false,
+        "tumorDepth": {
+          "totalReadCount": 99,
+          "alleleReadCount": 99
+        },
+        "rnaDepth": null,
+        "referenceDepth": {
+          "totalReadCount": 31,
+          "alleleReadCount": 0
+        },
+        "adjustedCopyNumber": 2.0,
+        "adjustedVAF": 1.0101,
+        "minorAlleleCopyNumber": 0.0,
+        "variantCopyNumber": 2.02,
+        "biallelic": true,
+        "genotypeStatus": "HOM_REF",
+        "germlineStatus": "DIPLOID",
+        "trinucleotideContext": "TCC",
+        "mappability": 1.0,
+        "microhomology": "CG",
+        "repeatSequence": "C",
+        "repeatCount": 2,
+        "kataegis": "",
+        "tier": "PANEL",
+        "subclonalLikelihood": 0.0,
+        "localPhaseSets": null
+      }
+    ],
     "reportableSomaticVariants": [
       {
         "type": "SNP",
@@ -927,9 +1208,41 @@
     "reportableGermlineVariants": [],
     "additionalSuspectGermlineVariants": [],
     "allSomaticCopyNumbers": [],
-    "allSomaticGeneCopyNumbers": [],
+    "allSomaticGeneCopyNumbers": [
+      {
+        "maxCopyNumber": 2.0135,
+        "minCopyNumber": 0.0,
+        "somaticRegions": 3,
+        "minRegions": 10,
+        "minRegionStart": 89700300,
+        "minRegionEnd": 89712340,
+        "depthWindowCount": 0,
+        "minRegionStartSupport": "DEL",
+        "minRegionEndSupport": "DEL",
+        "minRegionMethod": "BAF_WEIGHTED",
+        "minMinorAlleleCopyNumber": 0.0,
+        "transName": "ENST00000371953",
+        "isCanonical": true,
+        "geneName": "PTEN",
+        "chromosomeBand": "q23.31",
+        "chromosome": "10",
+        "start": 89622870,
+        "end": 89731687
+      }
+    ],
     "suspectGeneCopyNumbersWithLOH": [],
-    "allSomaticGainsLosses": [],
+    "allSomaticGainsLosses": [
+      {
+        "interpretation": "PARTIAL_LOSS",
+        "chromosome": "10",
+        "chromosomeBand": "q23.31",
+        "gene": "PTEN",
+        "transcript": "ENST00000371953",
+        "isCanonical": true,
+        "minCopies": 0,
+        "maxCopies": 2
+      }
+    ],
     "reportableSomaticGainsLosses": [
       {
         "interpretation": "PARTIAL_LOSS",
@@ -974,7 +1287,64 @@
     "allFusions": [],
     "reportableFusions": [],
     "additionalSuspectFusions": [],
-    "allBreakends": [],
+    "allBreakends": [
+      {
+        "id": 152,
+        "svId": 120,
+        "isStart": true,
+        "gene": "PTEN",
+        "transcriptId": "ENST00000371953",
+        "canonical": true,
+        "geneOrientation": "Upstream",
+        "disruptive": true,
+        "reportedDisruption": true,
+        "undisruptedCopyNumber": 0.0,
+        "regionType": "INTRONIC",
+        "codingType": "CODING",
+        "biotype": "protein_coding",
+        "exonicBasePhase": 0,
+        "nextSpliceExonRank": 5,
+        "nextSpliceExonPhase": 0,
+        "nextSpliceDistance": 7291,
+        "totalExonCount": 9,
+        "type": "DEL",
+        "chromosome": "10",
+        "orientation": 1,
+        "strand": 1,
+        "chrBand": "q23.31",
+        "exonUp": 5,
+        "exonDown": 6,
+        "junctionCopyNumber": 2.0076
+      },
+      {
+        "id": 155,
+        "svId": 120,
+        "isStart": false,
+        "gene": "PTEN",
+        "transcriptId": "ENST00000371953",
+        "canonical": true,
+        "geneOrientation": "Downstream",
+        "disruptive": true,
+        "reportedDisruption": true,
+        "undisruptedCopyNumber": 0.0,
+        "regionType": "INTRONIC",
+        "codingType": "CODING",
+        "biotype": "protein_coding",
+        "exonicBasePhase": 1,
+        "nextSpliceExonRank": 7,
+        "nextSpliceExonPhase": 1,
+        "nextSpliceDistance": 5269,
+        "totalExonCount": 9,
+        "type": "DEL",
+        "chromosome": "10",
+        "orientation": -1,
+        "strand": 1,
+        "chrBand": "q23.31",
+        "exonUp": 6,
+        "exonDown": 7,
+        "junctionCopyNumber": 2.0076
+      }
+    ],
     "reportableBreakends": [
       {
         "id": 152,

@@ -97,7 +97,7 @@ public class OrangeJsonTest {
         assertEquals(3.02, variant1.adjustedCopyNumber(), EPSILON);
         assertEquals(PurpleHotspotType.NON_HOTSPOT, variant1.hotspot());
         assertFalse(variant1.biallelic());
-        assertEquals(1.0, variant1.clonalLikelihood(), EPSILON);
+        assertEquals(1.0, variant1.subclonalLikelihood(), EPSILON);
 
         PurpleVariant variant2 = findByGene(purple.variants(), "BRCA1");
         assertEquals("c.5340+1G>A", variant2.canonicalImpact().hgvsCodingImpact());
@@ -108,7 +108,7 @@ public class OrangeJsonTest {
         assertEquals(2.0, variant2.adjustedCopyNumber(), EPSILON);
         assertEquals(PurpleHotspotType.HOTSPOT, variant2.hotspot());
         assertFalse(variant2.biallelic());
-        assertEquals(1.0, variant2.clonalLikelihood(), EPSILON);
+        assertEquals(1.0, variant2.subclonalLikelihood(), EPSILON);
 
         assertEquals(1, purple.copyNumbers().size());
         PurpleCopyNumber copyNumber = purple.copyNumbers().iterator().next();

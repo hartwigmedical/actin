@@ -64,7 +64,7 @@ class VariantExtractor {
                         .totalCopyNumber(ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()))
                         .isBiallelic(variant.biallelic())
                         .isHotspot(variant.hotspot() == PurpleHotspotType.HOTSPOT)
-                        .clonalLikelihood(ExtractionUtil.keep3Digits(variant.clonalLikelihood()))
+                        .clonalLikelihood(ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()))
                         .phaseGroup(selectTop(variant.localPhaseSets()))
                         .canonicalImpact(extractCanonicalImpact(variant))
                         .otherImpacts(extractOtherImpacts(variant))

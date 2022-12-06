@@ -36,7 +36,7 @@ public final class TestPurpleFactory {
                 .adjustedCopyNumber(0D)
                 .variantCopyNumber(0D)
                 .hotspot(PurpleHotspotType.NON_HOTSPOT)
-                .clonalLikelihood(0D)
+                .subclonalLikelihood(0D)
                 .biallelic(false)
                 .canonicalImpact(transcriptImpactBuilder().build());
     }
