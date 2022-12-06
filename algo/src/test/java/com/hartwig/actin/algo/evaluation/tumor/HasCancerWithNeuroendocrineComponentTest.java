@@ -9,9 +9,10 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.doid.TestDoidModelFactory;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
+import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory;
-import com.hartwig.actin.molecular.datamodel.driver.TestLossFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -69,7 +70,11 @@ public class HasCancerWithNeuroendocrineComponentTest {
                         .from(base.molecular())
                         .drivers(ImmutableMolecularDrivers.builder()
                                 .from(base.molecular().drivers())
-                                .addLosses(TestLossFactory.builder().isReportable(true).gene("TP53").build())
+                                .addCopyNumbers(TestCopyNumberFactory.builder()
+                                        .type(CopyNumberType.LOSS)
+                                        .isReportable(true)
+                                        .gene("TP53")
+                                        .build())
                                 .addHomozygousDisruptions(TestHomozygousDisruptionFactory.builder().isReportable(true).gene("RB1").build())
                                 .build())
                         .build())

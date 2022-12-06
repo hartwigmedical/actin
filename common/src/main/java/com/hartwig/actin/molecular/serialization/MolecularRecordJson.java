@@ -42,9 +42,10 @@ import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularC
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
-import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 import com.hartwig.actin.molecular.datamodel.driver.CodingContext;
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect;
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumber;
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.DisruptionType;
 import com.hartwig.actin.molecular.datamodel.driver.Driver;
@@ -53,16 +54,14 @@ import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole;
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableAmplification;
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableCopyNumber;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableFusion;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableHomozygousDisruption;
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableLoss;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableTranscriptImpact;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableVariant;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableVirus;
-import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
 import com.hartwig.actin.molecular.datamodel.driver.RegionType;
@@ -202,8 +201,7 @@ public class MolecularRecordJson {
         private static MolecularDrivers toMolecularDrivers(@NotNull JsonObject drivers) {
             return ImmutableMolecularDrivers.builder()
                     .variants(toVariants(array(drivers, "variants")))
-                    .amplifications(toAmplifications(array(drivers, "amplifications")))
-                    .losses(toLosses(array(drivers, "losses")))
+                    .copyNumbers(toCopyNumbers(array(drivers, "copyNumbers")))
                     .homozygousDisruptions(toHomozygousDisruptions(array(drivers, "homozygousDisruptions")))
                     .disruptions(toDisruptions(array(drivers, "disruptions")))
                     .fusions(toFusions(array(drivers, "fusions")))
@@ -274,41 +272,22 @@ public class MolecularRecordJson {
         }
 
         @NotNull
-        private static Set<Amplification> toAmplifications(@NotNull JsonArray amplificationArray) {
-            Set<Amplification> amplifications = Sets.newTreeSet(new CopyNumberComparator());
-            for (JsonElement element : amplificationArray) {
-                JsonObject amplification = element.getAsJsonObject();
-                amplifications.add(ImmutableAmplification.builder()
-                        .from(toDriver(amplification))
-                        .gene(string(amplification, "gene"))
-                        .geneRole(GeneRole.valueOf(string(amplification, "geneRole")))
-                        .proteinEffect(ProteinEffect.valueOf(string(amplification, "proteinEffect")))
-                        .isAssociatedWithDrugResistance(nullableBool(amplification, "isAssociatedWithDrugResistance"))
-                        .minCopies(integer(amplification, "minCopies"))
-                        .maxCopies(integer(amplification, "maxCopies"))
-                        .isPartial(bool(amplification, "isPartial"))
+        private static Set<CopyNumber> toCopyNumbers(@NotNull JsonArray copyNumberArray) {
+            Set<CopyNumber> copyNumbers = Sets.newTreeSet(new CopyNumberComparator());
+            for (JsonElement element : copyNumberArray) {
+                JsonObject copyNumber = element.getAsJsonObject();
+                copyNumbers.add(ImmutableCopyNumber.builder()
+                        .from(toDriver(copyNumber))
+                        .gene(string(copyNumber, "gene"))
+                        .geneRole(GeneRole.valueOf(string(copyNumber, "geneRole")))
+                        .proteinEffect(ProteinEffect.valueOf(string(copyNumber, "proteinEffect")))
+                        .isAssociatedWithDrugResistance(nullableBool(copyNumber, "isAssociatedWithDrugResistance"))
+                        .type(CopyNumberType.valueOf(string(copyNumber, "type")))
+                        .minCopies(integer(copyNumber, "minCopies"))
+                        .maxCopies(integer(copyNumber, "maxCopies"))
                         .build());
             }
-            return amplifications;
-        }
-
-        @NotNull
-        private static Set<Loss> toLosses(@NotNull JsonArray lossArray) {
-            Set<Loss> losses = Sets.newTreeSet(new CopyNumberComparator());
-            for (JsonElement element : lossArray) {
-                JsonObject loss = element.getAsJsonObject();
-                losses.add(ImmutableLoss.builder()
-                        .from(toDriver(loss))
-                        .gene(string(loss, "gene"))
-                        .geneRole(GeneRole.valueOf(string(loss, "geneRole")))
-                        .proteinEffect(ProteinEffect.valueOf(string(loss, "proteinEffect")))
-                        .isAssociatedWithDrugResistance(nullableBool(loss, "isAssociatedWithDrugResistance"))
-                        .minCopies(integer(loss, "minCopies"))
-                        .maxCopies(integer(loss, "maxCopies"))
-                        .isPartial(bool(loss, "isPartial"))
-                        .build());
-            }
-            return losses;
+            return copyNumbers;
         }
 
         @NotNull

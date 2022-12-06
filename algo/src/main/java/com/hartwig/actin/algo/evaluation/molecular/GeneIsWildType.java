@@ -9,13 +9,12 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
-import com.hartwig.actin.molecular.datamodel.driver.Amplification;
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumber;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole;
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
-import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 
@@ -52,26 +51,14 @@ public class GeneIsWildType implements EvaluationFunction {
             }
         }
 
-        for (Amplification amplification : record.molecular().drivers().amplifications()) {
-            if (amplification.gene().equals(gene) && amplification.isReportable() && amplification.geneRole() != GeneRole.TSG) {
-                boolean hasNoEffect = amplification.proteinEffect() == ProteinEffect.NO_EFFECT
-                        || amplification.proteinEffect() == ProteinEffect.NO_EFFECT_PREDICTED;
+        for (CopyNumber copyNumber : record.molecular().drivers().copyNumbers()) {
+            if (copyNumber.gene().equals(gene) && copyNumber.isReportable()) {
+                boolean hasNoEffect = copyNumber.proteinEffect() == ProteinEffect.NO_EFFECT
+                        || copyNumber.proteinEffect() == ProteinEffect.NO_EFFECT_PREDICTED;
                 if (hasNoEffect) {
-                    reportableEventsWithNoEffect.add(amplification.event());
+                    reportableEventsWithNoEffect.add(copyNumber.event());
                 } else {
-                    reportableEventsWithEffectPotentiallyWildtype.add(amplification.event());
-                }
-            }
-        }
-
-        for (Loss loss : record.molecular().drivers().losses()) {
-            if (loss.gene().equals(gene) && loss.isReportable() && loss.geneRole() != GeneRole.ONCO) {
-                boolean hasNoEffect =
-                        loss.proteinEffect() == ProteinEffect.NO_EFFECT || loss.proteinEffect() == ProteinEffect.NO_EFFECT_PREDICTED;
-                if (hasNoEffect) {
-                    reportableEventsWithNoEffect.add(loss.event());
-                } else {
-                    reportableEventsWithEffectPotentiallyWildtype.add(loss.event());
+                    reportableEventsWithEffectPotentiallyWildtype.add(copyNumber.event());
                 }
             }
         }

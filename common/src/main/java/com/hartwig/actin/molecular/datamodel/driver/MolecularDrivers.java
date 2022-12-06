@@ -14,10 +14,7 @@ public abstract class MolecularDrivers {
     public abstract Set<Variant> variants();
 
     @NotNull
-    public abstract Set<Amplification> amplifications();
-
-    @NotNull
-    public abstract Set<Loss> losses();
+    public abstract Set<CopyNumber> copyNumbers();
 
     @NotNull
     public abstract Set<HomozygousDisruption> homozygousDisruptions();

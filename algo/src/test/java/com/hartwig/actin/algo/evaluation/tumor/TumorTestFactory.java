@@ -15,10 +15,11 @@ import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType;
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
-import com.hartwig.actin.molecular.datamodel.driver.TestAmplificationFactory;
+import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +40,7 @@ final class TumorTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withDoidsAndAmplification(@NotNull Set<String> doids, @NotNull String amplifiedGene) {
+    public static PatientRecord withDoidsAndAmplication(@NotNull Set<String> doids, @NotNull String amplifiedGene) {
         PatientRecord base = TestDataFactory.createMinimalTestPatientRecord();
 
         return ImmutablePatientRecord.builder()
@@ -53,11 +54,12 @@ final class TumorTestFactory {
                                 .build())
                         .drivers(ImmutableMolecularDrivers.builder()
                                 .from(base.molecular().drivers())
-                                .addAmplifications(TestAmplificationFactory.builder()
+                                .addCopyNumbers(TestCopyNumberFactory.builder()
                                         .isReportable(true)
                                         .gene(amplifiedGene)
                                         .geneRole(GeneRole.ONCO)
                                         .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
+                                        .type(CopyNumberType.FULL_GAIN)
                                         .minCopies(20)
                                         .maxCopies(20)
                                         .build())

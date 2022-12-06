@@ -1,7 +1,7 @@
 package com.hartwig.actin.database.dao;
 
-import static com.hartwig.actin.database.Tables.AMPLIFICATION;
-import static com.hartwig.actin.database.Tables.AMPLIFICATIONEVIDENCE;
+import static com.hartwig.actin.database.Tables.COPYNUMBER;
+import static com.hartwig.actin.database.Tables.COPYNUMBEREVIDENCE;
 import static com.hartwig.actin.database.Tables.DISRUPTION;
 import static com.hartwig.actin.database.Tables.DISRUPTIONEVIDENCE;
 import static com.hartwig.actin.database.Tables.FUSION;
@@ -10,8 +10,6 @@ import static com.hartwig.actin.database.Tables.HLAALLELE;
 import static com.hartwig.actin.database.Tables.HOMOLOGOUSREPAIREVIDENCE;
 import static com.hartwig.actin.database.Tables.HOMOZYGOUSDISRUPTION;
 import static com.hartwig.actin.database.Tables.HOMOZYGOUSDISRUPTIONEVIDENCE;
-import static com.hartwig.actin.database.Tables.LOSS;
-import static com.hartwig.actin.database.Tables.LOSSEVIDENCE;
 import static com.hartwig.actin.database.Tables.MICROSATELLITEEVIDENCE;
 import static com.hartwig.actin.database.Tables.MOLECULAR;
 import static com.hartwig.actin.database.Tables.PHARMACO;
@@ -26,12 +24,11 @@ import static com.hartwig.actin.database.Tables.VIRUSEVIDENCE;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
-import com.hartwig.actin.database.tables.records.AmplificationevidenceRecord;
+import com.hartwig.actin.database.tables.records.CopynumberevidenceRecord;
 import com.hartwig.actin.database.tables.records.DisruptionevidenceRecord;
 import com.hartwig.actin.database.tables.records.FusionevidenceRecord;
 import com.hartwig.actin.database.tables.records.HomologousrepairevidenceRecord;
 import com.hartwig.actin.database.tables.records.HomozygousdisruptionevidenceRecord;
-import com.hartwig.actin.database.tables.records.LossevidenceRecord;
 import com.hartwig.actin.database.tables.records.MicrosatelliteevidenceRecord;
 import com.hartwig.actin.database.tables.records.TumormutationalburdenevidenceRecord;
 import com.hartwig.actin.database.tables.records.TumormutationalloadevidenceRecord;
@@ -39,12 +36,11 @@ import com.hartwig.actin.database.tables.records.VariantevidenceRecord;
 import com.hartwig.actin.database.tables.records.VirusevidenceRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
-import com.hartwig.actin.molecular.datamodel.driver.Amplification;
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumber;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.Driver;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
-import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.VariantEffect;
@@ -93,22 +89,14 @@ class MolecularDAO {
 
         context.delete(VARIANT).where(VARIANT.SAMPLEID.eq(sampleId)).execute();
 
-        Result<Record1<Integer>> amplificationResults =
-                context.select(AMPLIFICATION.ID).from(AMPLIFICATION).where(AMPLIFICATION.SAMPLEID.eq(sampleId)).fetch();
-        for (Record amplificationResult : amplificationResults) {
-            int amplificationId = amplificationResult.getValue(AMPLIFICATION.ID);
-            context.delete(AMPLIFICATIONEVIDENCE).where(AMPLIFICATIONEVIDENCE.AMPLIFICATIONID.eq(amplificationId)).execute();
+        Result<Record1<Integer>> copyNumberResults =
+                context.select(COPYNUMBER.ID).from(COPYNUMBER).where(COPYNUMBER.SAMPLEID.eq(sampleId)).fetch();
+        for (Record copyNumberResult : copyNumberResults) {
+            int copyNumberId = copyNumberResult.getValue(COPYNUMBER.ID);
+            context.delete(COPYNUMBEREVIDENCE).where(COPYNUMBEREVIDENCE.COPYNUMBERID.eq(copyNumberId)).execute();
         }
 
-        context.delete(AMPLIFICATION).where(AMPLIFICATION.SAMPLEID.eq(sampleId)).execute();
-
-        Result<Record1<Integer>> lossResults = context.select(LOSS.ID).from(LOSS).where(LOSS.SAMPLEID.eq(sampleId)).fetch();
-        for (Record lossResult : lossResults) {
-            int lossId = lossResult.getValue(LOSS.ID);
-            context.delete(LOSSEVIDENCE).where(LOSSEVIDENCE.LOSSID.eq(lossId)).execute();
-        }
-
-        context.delete(LOSS).where(LOSS.SAMPLEID.eq(sampleId)).execute();
+        context.delete(COPYNUMBER).where(COPYNUMBER.SAMPLEID.eq(sampleId)).execute();
 
         Result<Record1<Integer>> homozygousDisruptionResults = context.select(HOMOZYGOUSDISRUPTION.ID)
                 .from(HOMOZYGOUSDISRUPTION)
@@ -160,8 +148,7 @@ class MolecularDAO {
         String sampleId = record.sampleId();
         MolecularDrivers drivers = record.drivers();
         writeVariants(sampleId, drivers.variants());
-        writeAmplifications(sampleId, drivers.amplifications());
-        writeLosses(sampleId, drivers.losses());
+        writeCopyNumbers(sampleId, drivers.copyNumbers());
         writeHomozygousDisruptions(sampleId, drivers.homozygousDisruptions());
         writeDisruptions(sampleId, drivers.disruptions());
         writeFusions(sampleId, drivers.fusions());
@@ -358,85 +345,45 @@ class MolecularDAO {
         inserter.execute();
     }
 
-    private void writeAmplifications(@NotNull String sampleId, @NotNull Set<Amplification> amplifications) {
-        for (Amplification amplification : amplifications) {
-            int amplificationId = context.insertInto(AMPLIFICATION,
-                            AMPLIFICATION.SAMPLEID,
-                            AMPLIFICATION.ISREPORTABLE,
-                            AMPLIFICATION.EVENT,
-                            AMPLIFICATION.DRIVERLIKELIHOOD,
-                            AMPLIFICATION.GENE,
-                            AMPLIFICATION.GENEROLE,
-                            AMPLIFICATION.PROTEINEFFECT,
-                            AMPLIFICATION.ISASSOCIATEDWITHDRUGRESISTANCE,
-                            AMPLIFICATION.MINCOPIES,
-                            AMPLIFICATION.MAXCOPIES,
-                            AMPLIFICATION.ISPARTIAL)
+    private void writeCopyNumbers(@NotNull String sampleId, @NotNull Set<CopyNumber> copyNumbers) {
+        for (CopyNumber copyNumber : copyNumbers) {
+            int copyNumberId = context.insertInto(COPYNUMBER,
+                            COPYNUMBER.SAMPLEID,
+                            COPYNUMBER.ISREPORTABLE,
+                            COPYNUMBER.EVENT,
+                            COPYNUMBER.DRIVERLIKELIHOOD,
+                            COPYNUMBER.GENE,
+                            COPYNUMBER.GENEROLE,
+                            COPYNUMBER.PROTEINEFFECT,
+                            COPYNUMBER.ISASSOCIATEDWITHDRUGRESISTANCE,
+                            COPYNUMBER.TYPE,
+                            COPYNUMBER.MINCOPIES,
+                            COPYNUMBER.MAXCOPIES)
                     .values(sampleId,
-                            DataUtil.toByte(amplification.isReportable()),
-                            amplification.event(),
-                            driverLikelihood(amplification),
-                            amplification.gene(),
-                            amplification.geneRole().toString(),
-                            amplification.proteinEffect().toString(),
-                            DataUtil.toByte(amplification.isAssociatedWithDrugResistance()),
-                            amplification.minCopies(),
-                            amplification.maxCopies(),
-                            DataUtil.toByte(amplification.isPartial()))
-                    .returning(AMPLIFICATION.ID)
+                            DataUtil.toByte(copyNumber.isReportable()),
+                            copyNumber.event(),
+                            driverLikelihood(copyNumber),
+                            copyNumber.gene(),
+                            copyNumber.geneRole().toString(),
+                            copyNumber.proteinEffect().toString(),
+                            DataUtil.toByte(copyNumber.isAssociatedWithDrugResistance()),
+                            copyNumber.type().toString(),
+                            copyNumber.minCopies(),
+                            copyNumber.maxCopies())
+                    .returning(COPYNUMBER.ID)
                     .fetchOne()
-                    .getValue(AMPLIFICATION.ID);
-            writeAmplificationEvidence(amplificationId, amplification.evidence());
+                    .getValue(COPYNUMBER.ID);
+            writeCopyNumberEvidence(copyNumberId, copyNumber.evidence());
         }
     }
 
-    private void writeAmplificationEvidence(int amplificationId, @NotNull ActionableEvidence evidence) {
-        EvidenceInserter<AmplificationevidenceRecord> inserter = new EvidenceInserter<>(context.insertInto(AMPLIFICATIONEVIDENCE,
-                AMPLIFICATIONEVIDENCE.AMPLIFICATIONID,
-                AMPLIFICATIONEVIDENCE.TREATMENT,
-                AMPLIFICATIONEVIDENCE.TYPE));
+    private void writeCopyNumberEvidence(int copyNumberId, @NotNull ActionableEvidence evidence) {
+        EvidenceInserter<CopynumberevidenceRecord> inserter = new EvidenceInserter<>(context.insertInto(COPYNUMBEREVIDENCE,
+                COPYNUMBEREVIDENCE.COPYNUMBERID,
+                COPYNUMBEREVIDENCE.TREATMENT,
+                COPYNUMBEREVIDENCE.TYPE));
 
-        writeEvidence(inserter, amplificationId, evidence);
-        inserter.execute();
-    }
-
-    private void writeLosses(@NotNull String sampleId, @NotNull Set<Loss> losses) {
-        for (Loss loss : losses) {
-            int lossId = context.insertInto(LOSS,
-                            LOSS.SAMPLEID,
-                            LOSS.ISREPORTABLE,
-                            LOSS.EVENT,
-                            LOSS.DRIVERLIKELIHOOD,
-                            LOSS.GENE,
-                            LOSS.GENEROLE,
-                            LOSS.PROTEINEFFECT,
-                            LOSS.ISASSOCIATEDWITHDRUGRESISTANCE,
-                            LOSS.MINCOPIES,
-                            LOSS.MAXCOPIES,
-                            LOSS.ISPARTIAL)
-                    .values(sampleId,
-                            DataUtil.toByte(loss.isReportable()),
-                            loss.event(),
-                            driverLikelihood(loss),
-                            loss.gene(),
-                            loss.geneRole().toString(),
-                            loss.proteinEffect().toString(),
-                            DataUtil.toByte(loss.isAssociatedWithDrugResistance()),
-                            loss.minCopies(),
-                            loss.maxCopies(),
-                            DataUtil.toByte(loss.isPartial()))
-                    .returning(LOSS.ID)
-                    .fetchOne()
-                    .getValue(LOSS.ID);
-            writeLossEvidence(lossId, loss.evidence());
-        }
-    }
-
-    private void writeLossEvidence(int lossId, @NotNull ActionableEvidence evidence) {
-        EvidenceInserter<LossevidenceRecord> inserter =
-                new EvidenceInserter<>(context.insertInto(LOSSEVIDENCE, LOSSEVIDENCE.LOSSID, LOSSEVIDENCE.TREATMENT, LOSSEVIDENCE.TYPE));
-
-        writeEvidence(inserter, lossId, evidence);
+        writeEvidence(inserter, copyNumberId, evidence);
         inserter.execute();
     }
 

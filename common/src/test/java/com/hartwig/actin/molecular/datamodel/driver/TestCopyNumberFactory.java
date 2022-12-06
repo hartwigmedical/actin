@@ -3,20 +3,20 @@ package com.hartwig.actin.molecular.datamodel.driver;
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
-public final class TestAmplificationFactory {
+public final class TestCopyNumberFactory {
 
-    private TestAmplificationFactory() {
+    private TestCopyNumberFactory() {
     }
 
     @NotNull
-    public static ImmutableAmplification.Builder builder() {
-        return ImmutableAmplification.builder()
+    public static ImmutableCopyNumber.Builder builder() {
+        return ImmutableCopyNumber.builder()
                 .from(TestDriverFactory.createEmptyDriver())
                 .gene(Strings.EMPTY)
                 .geneRole(GeneRole.UNKNOWN)
                 .proteinEffect(ProteinEffect.UNKNOWN)
+                .type(CopyNumberType.NONE)
                 .minCopies(0)
-                .maxCopies(0)
-                .isPartial(false);
+                .maxCopies(0);
     }
 }

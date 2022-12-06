@@ -18,9 +18,9 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion;
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
-import com.hartwig.actin.molecular.datamodel.driver.Amplification;
 import com.hartwig.actin.molecular.datamodel.driver.CodingContext;
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect;
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumber;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.DisruptionType;
 import com.hartwig.actin.molecular.datamodel.driver.Driver;
@@ -29,7 +29,6 @@ import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole;
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
-import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
 import com.hartwig.actin.molecular.datamodel.driver.RegionType;
@@ -118,8 +117,7 @@ public class MolecularRecordJsonTest {
 
     private static void assertDrivers(@NotNull MolecularDrivers drivers) {
         assertVariants(drivers.variants());
-        assertAmplifications(drivers.amplifications());
-        assertLosses(drivers.losses());
+        assertCopyNumbers(drivers.copyNumbers());
         assertHomozygousDisruptions(drivers.homozygousDisruptions());
         assertDisruptions(drivers.disruptions());
         assertFusions(drivers.fusions());
@@ -171,38 +169,30 @@ public class MolecularRecordJsonTest {
         assertNull(otherImpact.codingEffect());
     }
 
-    private static void assertAmplifications(@NotNull Set<Amplification> amplifications) {
-        assertEquals(1, amplifications.size());
+    private static void assertCopyNumbers(@NotNull Set<CopyNumber> copyNumbers) {
+        assertEquals(2, copyNumbers.size());
 
-        Amplification amplification = amplifications.iterator().next();
-        assertTrue(amplification.isReportable());
-        assertEquals("MYC amp", amplification.event());
-        assertEquals(DriverLikelihood.HIGH, amplification.driverLikelihood());
-        assertEquals(TestActionableEvidenceFactory.withPreClinicalTreatment("MYC pre-clinical"), amplification.evidence());
-        assertEquals("MYC", amplification.gene());
-        assertEquals(GeneRole.UNKNOWN, amplification.geneRole());
-        assertEquals(ProteinEffect.UNKNOWN, amplification.proteinEffect());
-        assertNull(amplification.isAssociatedWithDrugResistance());
-        assertEquals(38, amplification.minCopies());
-        assertEquals(39, amplification.maxCopies());
-        assertFalse(amplification.isPartial());
-    }
+        CopyNumber copyNumber1 = findByEvent(copyNumbers, "MYC amp");
+        assertTrue(copyNumber1.isReportable());
+        assertEquals(DriverLikelihood.HIGH, copyNumber1.driverLikelihood());
+        assertEquals(TestActionableEvidenceFactory.withPreClinicalTreatment("MYC pre-clinical"), copyNumber1.evidence());
+        assertEquals("MYC", copyNumber1.gene());
+        assertEquals(GeneRole.UNKNOWN, copyNumber1.geneRole());
+        assertEquals(ProteinEffect.UNKNOWN, copyNumber1.proteinEffect());
+        assertNull(copyNumber1.isAssociatedWithDrugResistance());
+        assertEquals(38, copyNumber1.minCopies());
+        assertEquals(39, copyNumber1.maxCopies());
 
-    private static void assertLosses(@NotNull Set<Loss> losses) {
-        assertEquals(1, losses.size());
-
-        Loss loss = losses.iterator().next();
-        assertFalse(loss.isReportable());
-        assertEquals("PTEN del", loss.event());
-        assertNull(loss.driverLikelihood());
-        assertEquals(TestActionableEvidenceFactory.createEmpty(), loss.evidence());
-        assertEquals("PTEN", loss.gene());
-        assertEquals(GeneRole.TSG, loss.geneRole());
-        assertEquals(ProteinEffect.LOSS_OF_FUNCTION, loss.proteinEffect());
-        assertFalse(loss.isAssociatedWithDrugResistance());
-        assertEquals(0, loss.minCopies());
-        assertEquals(2, loss.maxCopies());
-        assertTrue(loss.isPartial());
+        CopyNumber copyNumber2 = findByEvent(copyNumbers, "PTEN del");
+        assertFalse(copyNumber2.isReportable());
+        assertNull(copyNumber2.driverLikelihood());
+        assertEquals(TestActionableEvidenceFactory.createEmpty(), copyNumber2.evidence());
+        assertEquals("PTEN", copyNumber2.gene());
+        assertEquals(GeneRole.TSG, copyNumber2.geneRole());
+        assertEquals(ProteinEffect.LOSS_OF_FUNCTION, copyNumber2.proteinEffect());
+        assertFalse(copyNumber2.isAssociatedWithDrugResistance());
+        assertEquals(0, copyNumber2.minCopies());
+        assertEquals(2, copyNumber2.maxCopies());
     }
 
     private static void assertHomozygousDisruptions(@NotNull Set<HomozygousDisruption> homozygousDisruptions) {

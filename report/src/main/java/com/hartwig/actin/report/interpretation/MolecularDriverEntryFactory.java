@@ -8,19 +8,17 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.datamodel.driver.Amplification;
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumber;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.Driver;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
-import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
 import com.hartwig.actin.report.pdf.util.Formats;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,8 +50,7 @@ public class MolecularDriverEntryFactory {
 
         MolecularDrivers drivers = molecular.drivers();
         entries.addAll(fromVariants(drivers.variants()));
-        entries.addAll(fromAmplifications(drivers.amplifications()));
-        entries.addAll(fromLosses(drivers.losses()));
+        entries.addAll(fromCopyNumbers(drivers.copyNumbers()));
         entries.addAll(fromHomozygousDisruptions(drivers.homozygousDisruptions()));
         entries.addAll(fromDisruptions(drivers.disruptions()));
         entries.addAll(fromFusions(drivers.fusions()));
@@ -66,7 +63,7 @@ public class MolecularDriverEntryFactory {
     private Set<MolecularDriverEntry> fromVariants(@NotNull Set<Variant> variants) {
         Set<MolecularDriverEntry> entries = Sets.newHashSet();
 
-        for (Variant variant : variants) {
+        for (Variant variant : reportable(variants)) {
             ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
 
             String mutationTypeString = variant.isHotspot() ? "Hotspot" : "VUS";
@@ -98,37 +95,17 @@ public class MolecularDriverEntryFactory {
         return entries;
     }
 
-    @NotNull
-    private Set<MolecularDriverEntry> fromAmplifications(@NotNull Set<Amplification> amplifications) {
+    private Set<MolecularDriverEntry> fromCopyNumbers(@NotNull Set<CopyNumber> copyNumbers) {
         Set<MolecularDriverEntry> entries = Sets.newHashSet();
 
-        for (Amplification amplification : amplifications) {
+        for (CopyNumber copyNumber : reportable(copyNumbers)) {
             ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
 
-            String addon = amplification.isPartial() ? " (partial)" : Strings.EMPTY;
-            entryBuilder.driverType("Amplification" + addon);
-            entryBuilder.driver(amplification.event() + ", " + amplification.minCopies() + " copies");
-            entryBuilder.driverLikelihood(amplification.driverLikelihood());
+            entryBuilder.driverType(copyNumber.type().isGain() ? "Amplification" : "Loss");
+            entryBuilder.driver(copyNumber.event() + ", " + copyNumber.minCopies() + " copies");
+            entryBuilder.driverLikelihood(copyNumber.driverLikelihood());
 
-            addActionability(entryBuilder, amplification);
-
-            entries.add(entryBuilder.build());
-        }
-
-        return entries;
-    }
-
-    @NotNull
-    private Set<MolecularDriverEntry> fromLosses(@NotNull Set<Loss> losses) {
-        Set<MolecularDriverEntry> entries = Sets.newHashSet();
-
-        for (Loss loss : losses) {
-            ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
-            entryBuilder.driverType("Loss");
-            entryBuilder.driver(loss.event());
-            entryBuilder.driverLikelihood(loss.driverLikelihood());
-
-            addActionability(entryBuilder, loss);
+            addActionability(entryBuilder, copyNumber);
 
             entries.add(entryBuilder.build());
         }
@@ -140,7 +117,7 @@ public class MolecularDriverEntryFactory {
     private Set<MolecularDriverEntry> fromHomozygousDisruptions(@NotNull Set<HomozygousDisruption> homozygousDisruptions) {
         Set<MolecularDriverEntry> entries = Sets.newHashSet();
 
-        for (HomozygousDisruption homozygousDisruption : homozygousDisruptions) {
+        for (HomozygousDisruption homozygousDisruption : reportable(homozygousDisruptions)) {
             ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
             entryBuilder.driverType("Disruption (homozygous)");
             entryBuilder.driver(homozygousDisruption.gene());
@@ -158,7 +135,7 @@ public class MolecularDriverEntryFactory {
     private Set<MolecularDriverEntry> fromDisruptions(@NotNull Set<Disruption> disruptions) {
         Set<MolecularDriverEntry> entries = Sets.newHashSet();
 
-        for (Disruption disruption : disruptions) {
+        for (Disruption disruption : reportable(disruptions)) {
             ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
             entryBuilder.driverType("Disruption");
             String addon = Formats.singleDigitNumber(disruption.junctionCopyNumber()) + " disr. / "
@@ -178,7 +155,7 @@ public class MolecularDriverEntryFactory {
     private Set<MolecularDriverEntry> fromFusions(@NotNull Set<Fusion> fusions) {
         Set<MolecularDriverEntry> entries = Sets.newHashSet();
 
-        for (Fusion fusion : fusions) {
+        for (Fusion fusion : reportable(fusions)) {
             ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
             entryBuilder.driverType(fusion.driverType().display());
             entryBuilder.driver(fusion.event() + ", exon " + fusion.fusedExonUp() + " - exon " + fusion.fusedExonDown());
@@ -208,6 +185,17 @@ public class MolecularDriverEntryFactory {
         }
 
         return entries;
+    }
+
+    @NotNull
+    private static <T extends Driver> Set<T> reportable(@NotNull Set<T> drivers) {
+        Set<T> filtered = Sets.newHashSet();
+        for (T driver : drivers) {
+            if (driver.isReportable()) {
+                filtered.add(driver);
+            }
+        }
+        return filtered;
     }
 
     private void addActionability(@NotNull ImmutableMolecularDriverEntry.Builder entryBuilder, @NotNull Driver driver) {

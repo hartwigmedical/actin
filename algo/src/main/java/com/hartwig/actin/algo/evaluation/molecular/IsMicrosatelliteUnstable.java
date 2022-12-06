@@ -9,9 +9,10 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumber;
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
-import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents;
 
@@ -39,8 +40,8 @@ public class IsMicrosatelliteUnstable implements EvaluationFunction {
                 }
             }
 
-            for (Loss loss : record.molecular().drivers().losses()) {
-                if (loss.gene().equals(gene)) {
+            for (CopyNumber copyNumber : record.molecular().drivers().copyNumbers()) {
+                if (copyNumber.type() == CopyNumberType.LOSS && copyNumber.gene().equals(gene)) {
                     msiGenesWithBiallelicDriver.add(gene);
                 }
             }

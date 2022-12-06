@@ -1,7 +1,10 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
--- TODO Drop per 1st of dec 2022
-DROP TABLE IF EXISTS homologousRepairDeficiencyEvidence;
+-- TODO Drop per 1st of jan 2023
+DROP TABLE IF EXISTS amplification;
+DROP TABLE IF EXISTS amplificationEvidence;
+DROP TABLE IF EXISTS loss;
+DROP TABLE IF EXISTS lossEvidence;
 
 -- CLINICAL
 DROP TABLE IF EXISTS patient;
@@ -357,8 +360,8 @@ CREATE TABLE variantOtherImpact
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS amplification;
-CREATE TABLE amplification
+DROP TABLE IF EXISTS copyNumber;
+CREATE TABLE copyNumber
 (   id int NOT NULL AUTO_INCREMENT,
     sampleId varchar(50) NOT NULL,
     isReportable BOOLEAN NOT NULL,
@@ -368,42 +371,16 @@ CREATE TABLE amplification
     geneRole varchar(50) NOT NULL,
     proteinEffect varchar(50) NOT NULL,
     isAssociatedWithDrugResistance BOOLEAN,
-    minCopies int NOT NULL,
-    maxCopies int NOT NULL,
-    isPartial BOOLEAN NOT NULL,
-    PRIMARY KEY (id)
-);
-
-DROP TABLE IF EXISTS amplificationEvidence;
-CREATE TABLE amplificationEvidence
-(   id int NOT NULL AUTO_INCREMENT,
-    amplificationId int NOT NULL,
-    treatment varchar(500) NOT NULL,
     type varchar(50) NOT NULL,
-    PRIMARY KEY (id)
-);
-
-DROP TABLE IF EXISTS loss;
-CREATE TABLE loss
-(   id int NOT NULL AUTO_INCREMENT,
-    sampleId varchar(50) NOT NULL,
-    isReportable BOOLEAN NOT NULL,
-    event varchar(50) NOT NULL,
-    driverLikelihood varchar(50),
-    gene varchar(50) NOT NULL,
-    geneRole varchar(50) NOT NULL,
-    proteinEffect varchar(50) NOT NULL,
-    isAssociatedWithDrugResistance BOOLEAN,
     minCopies int NOT NULL,
     maxCopies int NOT NULL,
-    isPartial BOOLEAN NOT NULL,
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS lossEvidence;
-CREATE TABLE lossEvidence
+DROP TABLE IF EXISTS copyNumberEvidence;
+CREATE TABLE copyNumberEvidence
 (   id int NOT NULL AUTO_INCREMENT,
-    lossId int NOT NULL,
+    copyNumberId int NOT NULL,
     treatment varchar(500) NOT NULL,
     type varchar(50) NOT NULL,
     PRIMARY KEY (id)

@@ -9,7 +9,6 @@ import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.DisruptionType;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableDisruption;
-import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.RegionType;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakend;
@@ -40,11 +39,11 @@ class DisruptionExtractor {
     }
 
     @NotNull
-    public Set<Disruption> extractDisruptions(@NotNull LinxRecord linx, @NotNull Set<Loss> losses) {
+    public Set<Disruption> extractDisruptions(@NotNull LinxRecord linx, @NotNull Set<String> lostGenes) {
         Set<Disruption> disruptions = Sets.newTreeSet(new DisruptionComparator());
         for (LinxBreakend breakend : linx.breakends()) {
             if (geneFilter.include(breakend.gene())) {
-                if (include(breakend, losses)) {
+                if (include(breakend, lostGenes)) {
                     disruptions.add(ImmutableDisruption.builder()
                             .from(GeneAlterationFactory.convertAlteration(breakend.gene(),
                                     evidenceDatabase.geneAlterationForBreakend(breakend)))
@@ -67,17 +66,8 @@ class DisruptionExtractor {
         return disruptions;
     }
 
-    private static boolean include(@NotNull LinxBreakend breakend, @NotNull Set<Loss> losses) {
-        return breakend.type() != LinxBreakendType.DEL || !isReportedLost(losses, breakend.gene());
-    }
-
-    private static boolean isReportedLost(@NotNull Set<Loss> losses, @NotNull String gene) {
-        for (Loss loss : losses) {
-            if (loss.isReportable() && loss.gene().equals(gene)) {
-                return true;
-            }
-        }
-        return false;
+    private static boolean include(@NotNull LinxBreakend breakend, @NotNull Set<String> lostGenes) {
+        return breakend.type() != LinxBreakendType.DEL || !lostGenes.contains(breakend.gene());
     }
 
     private static int lookupClusterId(@NotNull LinxBreakend breakend, @NotNull Set<LinxStructuralVariant> structuralVariants) {

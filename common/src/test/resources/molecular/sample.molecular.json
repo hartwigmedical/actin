@@ -115,7 +115,7 @@
         ]
       }
     ],
-    "amplifications": [
+    "copyNumbers": [
       {
         "isReportable": true,
         "event": "MYC amp",
@@ -135,12 +135,10 @@
         "geneRole": "UNKNOWN",
         "proteinEffect": "UNKNOWN",
         "isAssociatedWithDrugResistance": null,
+        "type": "FULL_GAIN",
         "minCopies": 38,
-        "maxCopies": 39,
-        "isPartial": false
-      }
-    ],
-    "losses": [
+        "maxCopies": 39
+      },
       {
         "isReportable": false,
         "event": "PTEN del",
@@ -158,9 +156,9 @@
         "geneRole": "TSG",
         "proteinEffect": "LOSS_OF_FUNCTION",
         "isAssociatedWithDrugResistance": false,
+        "type": "LOSS",
         "minCopies": 0,
-        "maxCopies": 2,
-        "isPartial": true
+        "maxCopies": 2
       }
     ],
     "homozygousDisruptions": [

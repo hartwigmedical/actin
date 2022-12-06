@@ -10,6 +10,7 @@ import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedT
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.driver.CodingContext;
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect;
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType;
 import com.hartwig.actin.molecular.datamodel.driver.DisruptionType;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
@@ -18,11 +19,10 @@ import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
 import com.hartwig.actin.molecular.datamodel.driver.RegionType;
-import com.hartwig.actin.molecular.datamodel.driver.TestAmplificationFactory;
+import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory;
-import com.hartwig.actin.molecular.datamodel.driver.TestLossFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory;
@@ -144,7 +144,7 @@ public final class TestMolecularFactory {
                                 .codingEffect(CodingEffect.MISSENSE)
                                 .build())
                         .build())
-                .addLosses(TestLossFactory.builder()
+                .addCopyNumbers(TestCopyNumberFactory.builder()
                         .isReportable(true)
                         .event("PTEN del")
                         .driverLikelihood(DriverLikelihood.HIGH)
@@ -152,9 +152,9 @@ public final class TestMolecularFactory {
                         .gene("PTEN")
                         .geneRole(GeneRole.TSG)
                         .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
+                        .type(CopyNumberType.LOSS)
                         .minCopies(0)
                         .maxCopies(0)
-                        .isPartial(false)
                         .build())
                 .build();
     }
@@ -179,15 +179,15 @@ public final class TestMolecularFactory {
     private static MolecularDrivers createExhaustiveTestDrivers() {
         return ImmutableMolecularDrivers.builder()
                 .from(createProperTestDrivers())
-                .addAmplifications(TestAmplificationFactory.builder()
+                .addCopyNumbers(TestCopyNumberFactory.builder()
                         .isReportable(true)
                         .event("MYC amp")
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .evidence(TestActionableEvidenceFactory.createExhaustive())
                         .gene("MYC")
+                        .type(CopyNumberType.FULL_GAIN)
                         .minCopies(38)
                         .maxCopies(38)
-                        .isPartial(false)
                         .build())
                 .addHomozygousDisruptions(TestHomozygousDisruptionFactory.builder()
                         .isReportable(true)

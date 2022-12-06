@@ -6,5 +6,4 @@ public interface CopyNumberDriver extends Driver, GeneAlteration {
 
     int maxCopies();
 
-    boolean isPartial();
 }

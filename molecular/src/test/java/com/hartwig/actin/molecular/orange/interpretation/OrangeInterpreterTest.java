@@ -40,8 +40,7 @@ public class OrangeInterpreterTest {
 
         MolecularDrivers drivers = record.drivers();
         assertEquals(1, drivers.variants().size());
-        assertEquals(1, drivers.amplifications().size());
-        assertEquals(1, drivers.losses().size());
+        assertEquals(2, drivers.copyNumbers().size());
         assertEquals(1, drivers.homozygousDisruptions().size());
         assertEquals(1, drivers.disruptions().size());
         assertEquals(1, drivers.fusions().size());

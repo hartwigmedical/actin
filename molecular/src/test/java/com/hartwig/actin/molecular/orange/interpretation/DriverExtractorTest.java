@@ -18,8 +18,7 @@ public class DriverExtractorTest {
         MolecularDrivers drivers = driverExtractor.extract(TestOrangeFactory.createProperTestOrangeRecord());
 
         assertEquals(1, drivers.variants().size());
-        assertEquals(1, drivers.amplifications().size());
-        assertEquals(1, drivers.losses().size());
+        assertEquals(2, drivers.copyNumbers().size());
         assertEquals(1, drivers.homozygousDisruptions().size());
         assertEquals(1, drivers.disruptions().size());
         assertEquals(1, drivers.fusions().size());

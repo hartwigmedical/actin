@@ -12,11 +12,12 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect;
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumber;
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole;
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
-import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 
@@ -66,18 +67,18 @@ public class GeneIsInactivated implements EvaluationFunction {
             }
         }
 
-        for (Loss loss : record.molecular().drivers().losses()) {
-            if (loss.gene().equals(gene)) {
-                boolean isGainOfFunction = loss.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
-                        || loss.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
-                if (!loss.isReportable()) {
-                    inactivationEventsThatAreUnreportable.add(loss.event());
-                } else if (loss.geneRole() == GeneRole.ONCO || loss.geneRole() == GeneRole.UNKNOWN) {
-                    inactivationEventsNoTSG.add(loss.event());
+        for (CopyNumber copyNumber : record.molecular().drivers().copyNumbers()) {
+            if (copyNumber.type() == CopyNumberType.LOSS && copyNumber.gene().equals(gene)) {
+                boolean isGainOfFunction = copyNumber.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
+                        || copyNumber.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
+                if (!copyNumber.isReportable()) {
+                    inactivationEventsThatAreUnreportable.add(copyNumber.event());
+                } else if (copyNumber.geneRole() == GeneRole.ONCO || copyNumber.geneRole() == GeneRole.UNKNOWN) {
+                    inactivationEventsNoTSG.add(copyNumber.event());
                 } else if (isGainOfFunction) {
-                    inactivationEventsGainOfFunction.add(loss.event());
+                    inactivationEventsGainOfFunction.add(copyNumber.event());
                 } else {
-                    inactivationEventsThatQualify.add(loss.event());
+                    inactivationEventsThatQualify.add(copyNumber.event());
                 }
             }
         }

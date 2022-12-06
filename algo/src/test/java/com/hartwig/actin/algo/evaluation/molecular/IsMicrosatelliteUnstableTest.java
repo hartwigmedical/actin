@@ -3,9 +3,10 @@ package com.hartwig.actin.algo.evaluation.molecular;
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation;
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType;
+import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory;
-import com.hartwig.actin.molecular.datamodel.driver.TestLossFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory;
 
 import org.junit.Test;
@@ -22,11 +23,19 @@ public class IsMicrosatelliteUnstableTest {
 
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED,
                 function.evaluate(MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(null,
-                        TestVariantFactory.builder().gene(MolecularConstants.MSI_GENES.iterator().next()).isReportable(true).isBiallelic(true).build())));
+                        TestVariantFactory.builder()
+                                .gene(MolecularConstants.MSI_GENES.iterator().next())
+                                .isReportable(true)
+                                .isBiallelic(true)
+                                .build())));
 
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED,
                 function.evaluate(MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(null,
-                        TestVariantFactory.builder().gene(MolecularConstants.MSI_GENES.iterator().next()).isReportable(true).isBiallelic(false).build())));
+                        TestVariantFactory.builder()
+                                .gene(MolecularConstants.MSI_GENES.iterator().next())
+                                .isReportable(true)
+                                .isBiallelic(false)
+                                .build())));
 
         assertMolecularEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(true,
@@ -46,7 +55,10 @@ public class IsMicrosatelliteUnstableTest {
 
         assertMolecularEvaluation(EvaluationResult.PASS,
                 function.evaluate(MolecularTestFactory.withMicrosatelliteInstabilityAndLoss(true,
-                        TestLossFactory.builder().gene(MolecularConstants.MSI_GENES.iterator().next()).build())));
+                        TestCopyNumberFactory.builder()
+                                .type(CopyNumberType.LOSS)
+                                .gene(MolecularConstants.MSI_GENES.iterator().next())
+                                .build())));
 
         assertMolecularEvaluation(EvaluationResult.PASS,
                 function.evaluate(MolecularTestFactory.withMicrosatelliteInstabilityAndHomozygousDisruption(true,

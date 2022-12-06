@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.molecular.datamodel.driver.Amplification;
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumber;
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
 
@@ -46,32 +46,32 @@ public class GeneIsAmplified implements EvaluationFunction {
         Set<String> ampsThatAreUnreportable = Sets.newHashSet();
         Set<String> ampsThatAreNearCutoff = Sets.newHashSet();
 
-        for (Amplification amplification : record.molecular().drivers().amplifications()) {
-            if (amplification.gene().equals(gene)) {
-                double relativeMinCopies = amplification.minCopies() / ploidy;
-                double relativeMaxCopies = amplification.maxCopies() / ploidy;
+        for (CopyNumber copyNumber : record.molecular().drivers().copyNumbers()) {
+            if (copyNumber.gene().equals(gene)) {
+                double relativeMinCopies = copyNumber.minCopies() / ploidy;
+                double relativeMaxCopies = copyNumber.maxCopies() / ploidy;
 
                 boolean isAmplification = relativeMaxCopies >= HARD_PLOIDY_FACTOR;
                 boolean isNearAmp = relativeMinCopies >= SOFT_PLOIDY_FACTOR && relativeMaxCopies <= HARD_PLOIDY_FACTOR;
 
-                boolean isPotentialOncogene = amplification.geneRole() == GeneRole.ONCO || amplification.geneRole() == GeneRole.BOTH;
-                boolean isLossOfFunction = amplification.proteinEffect() == ProteinEffect.LOSS_OF_FUNCTION
-                        || amplification.proteinEffect() == ProteinEffect.LOSS_OF_FUNCTION_PREDICTED;
+                boolean isPotentialOncogene = copyNumber.geneRole() == GeneRole.ONCO || copyNumber.geneRole() == GeneRole.BOTH;
+                boolean isLossOfFunction = copyNumber.proteinEffect() == ProteinEffect.LOSS_OF_FUNCTION
+                        || copyNumber.proteinEffect() == ProteinEffect.LOSS_OF_FUNCTION_PREDICTED;
 
                 if (isAmplification) {
                     if (!isPotentialOncogene) {
-                        ampsOnNonOncogenes.add(amplification.event());
+                        ampsOnNonOncogenes.add(copyNumber.event());
                     } else if (isLossOfFunction) {
-                        ampsWithLossOfFunction.add(amplification.event());
-                    } else if (!amplification.isReportable()) {
-                        ampsThatAreUnreportable.add(amplification.event());
-                    } else if (amplification.isPartial()) {
-                        reportablePartialAmps.add(amplification.event());
+                        ampsWithLossOfFunction.add(copyNumber.event());
+                    } else if (!copyNumber.isReportable()) {
+                        ampsThatAreUnreportable.add(copyNumber.event());
+                    } else if (relativeMinCopies < HARD_PLOIDY_FACTOR) {
+                        reportablePartialAmps.add(copyNumber.event());
                     } else {
-                        reportableFullAmps.add(amplification.event());
+                        reportableFullAmps.add(copyNumber.event());
                     }
                 } else if (isNearAmp) {
-                    ampsThatAreNearCutoff.add(amplification.event());
+                    ampsThatAreNearCutoff.add(copyNumber.event());
                 }
             }
         }

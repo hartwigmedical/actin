@@ -11,11 +11,10 @@ import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteri
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
-import com.hartwig.actin.molecular.datamodel.driver.TestAmplificationFactory;
+import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory;
-import com.hartwig.actin.molecular.datamodel.driver.TestLossFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory;
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory;
@@ -126,11 +125,10 @@ public class AggregatedEvidenceFactoryTest {
                         .event("variant")
                         .evidence(TestActionableEvidenceFactory.createExhaustive())
                         .build())
-                .addAmplifications(TestAmplificationFactory.builder()
+                .addCopyNumbers(TestCopyNumberFactory.builder()
                         .event("amplification")
                         .evidence(TestActionableEvidenceFactory.createExhaustive())
                         .build())
-                .addLosses(TestLossFactory.builder().event("loss").evidence(TestActionableEvidenceFactory.createExhaustive()).build())
                 .addHomozygousDisruptions(TestHomozygousDisruptionFactory.builder()
                         .event("hom disruption")
                         .evidence(TestActionableEvidenceFactory.createExhaustive())
@@ -144,20 +142,20 @@ public class AggregatedEvidenceFactoryTest {
                 .build();
 
         AggregatedEvidence evidence = AggregatedEvidenceFactory.create(withDrivers(drivers));
-        assertEquals(7, evidence.approvedTreatmentsPerEvent().keySet().size());
-        assertEquals(7, evidence.approvedTreatmentsPerEvent().values().size());
-        assertEquals(7, evidence.externalEligibleTrialsPerEvent().keySet().size());
-        assertEquals(7, evidence.externalEligibleTrialsPerEvent().values().size());
-        assertEquals(7, evidence.onLabelExperimentalTreatmentsPerEvent().keySet().size());
-        assertEquals(7, evidence.onLabelExperimentalTreatmentsPerEvent().values().size());
-        assertEquals(7, evidence.offLabelExperimentalTreatmentsPerEvent().keySet().size());
-        assertEquals(7, evidence.offLabelExperimentalTreatmentsPerEvent().values().size());
-        assertEquals(7, evidence.preClinicalTreatmentsPerEvent().keySet().size());
-        assertEquals(7, evidence.preClinicalTreatmentsPerEvent().values().size());
-        assertEquals(7, evidence.knownResistantTreatmentsPerEvent().keySet().size());
-        assertEquals(7, evidence.knownResistantTreatmentsPerEvent().values().size());
-        assertEquals(7, evidence.suspectResistanceTreatmentsPerEvent().keySet().size());
-        assertEquals(7, evidence.suspectResistanceTreatmentsPerEvent().values().size());
+        assertEquals(6, evidence.approvedTreatmentsPerEvent().keySet().size());
+        assertEquals(6, evidence.approvedTreatmentsPerEvent().values().size());
+        assertEquals(6, evidence.externalEligibleTrialsPerEvent().keySet().size());
+        assertEquals(6, evidence.externalEligibleTrialsPerEvent().values().size());
+        assertEquals(6, evidence.onLabelExperimentalTreatmentsPerEvent().keySet().size());
+        assertEquals(6, evidence.onLabelExperimentalTreatmentsPerEvent().values().size());
+        assertEquals(6, evidence.offLabelExperimentalTreatmentsPerEvent().keySet().size());
+        assertEquals(6, evidence.offLabelExperimentalTreatmentsPerEvent().values().size());
+        assertEquals(6, evidence.preClinicalTreatmentsPerEvent().keySet().size());
+        assertEquals(6, evidence.preClinicalTreatmentsPerEvent().values().size());
+        assertEquals(6, evidence.knownResistantTreatmentsPerEvent().keySet().size());
+        assertEquals(6, evidence.knownResistantTreatmentsPerEvent().values().size());
+        assertEquals(6, evidence.suspectResistanceTreatmentsPerEvent().keySet().size());
+        assertEquals(6, evidence.suspectResistanceTreatmentsPerEvent().values().size());
     }
 
     @Test

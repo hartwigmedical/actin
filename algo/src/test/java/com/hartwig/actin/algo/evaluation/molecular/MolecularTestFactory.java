@@ -14,12 +14,11 @@ import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
-import com.hartwig.actin.molecular.datamodel.driver.Amplification;
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumber;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
-import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele;
@@ -90,24 +89,19 @@ final class MolecularTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withAmplification(@NotNull Amplification amplification) {
-        return withMolecularDrivers(ImmutableMolecularDrivers.builder().addAmplifications(amplification).build());
+    public static PatientRecord withCopyNumber(@NotNull CopyNumber copyNumber) {
+        return withMolecularDrivers(ImmutableMolecularDrivers.builder().addCopyNumbers(copyNumber).build());
     }
 
     @NotNull
-    public static PatientRecord withPloidyAndAmplification(@Nullable Double ploidy, @NotNull Amplification amplification) {
+    public static PatientRecord withPloidyAndCopyNumber(@Nullable Double ploidy, @NotNull CopyNumber copyNumber) {
         MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
 
         return withMolecularRecord(ImmutableMolecularRecord.builder()
                 .from(base)
                 .characteristics(ImmutableMolecularCharacteristics.builder().from(base.characteristics()).ploidy(ploidy).build())
-                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addAmplifications(amplification).build())
+                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addCopyNumbers(copyNumber).build())
                 .build());
-    }
-
-    @NotNull
-    public static PatientRecord withLoss(@NotNull Loss loss) {
-        return withMolecularDrivers(ImmutableMolecularDrivers.builder().addLosses(loss).build());
     }
 
     @NotNull
@@ -178,7 +172,7 @@ final class MolecularTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withMicrosatelliteInstabilityAndLoss(@Nullable Boolean isMicrosatelliteUnstable, @NotNull Loss loss) {
+    public static PatientRecord withMicrosatelliteInstabilityAndLoss(@Nullable Boolean isMicrosatelliteUnstable, @NotNull CopyNumber loss) {
         MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
 
         return withMolecularRecord(ImmutableMolecularRecord.builder()
@@ -187,7 +181,7 @@ final class MolecularTestFactory {
                         .from(base.characteristics())
                         .isMicrosatelliteUnstable(isMicrosatelliteUnstable)
                         .build())
-                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addLosses(loss).build())
+                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addCopyNumbers(loss).build())
                 .build());
     }
 
@@ -237,7 +231,8 @@ final class MolecularTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withHomologousRepairDeficiencyAndLoss(@Nullable Boolean isHomologousRepairDeficient, @NotNull Loss loss) {
+    public static PatientRecord withHomologousRepairDeficiencyAndLoss(@Nullable Boolean isHomologousRepairDeficient,
+            @NotNull CopyNumber loss) {
         MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
 
         return withMolecularRecord(ImmutableMolecularRecord.builder()
@@ -246,7 +241,7 @@ final class MolecularTestFactory {
                         .from(base.characteristics())
                         .isHomologousRepairDeficient(isHomologousRepairDeficient)
                         .build())
-                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addLosses(loss).build())
+                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addCopyNumbers(loss).build())
                 .build());
     }
 

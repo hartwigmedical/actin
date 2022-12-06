@@ -7,11 +7,10 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
-import com.hartwig.actin.molecular.datamodel.driver.TestAmplificationFactory;
+import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory;
-import com.hartwig.actin.molecular.datamodel.driver.TestLossFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory;
 
 import org.junit.Test;
@@ -50,64 +49,23 @@ public class GeneIsWildTypeTest {
     }
 
     @Test
-    public void canEvaluateAmplifications() {
+    public void canEvaluateCopyNumbers() {
         GeneIsWildType function = new GeneIsWildType("gene A");
 
         assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
         assertMolecularEvaluation(EvaluationResult.WARN,
-                function.evaluate(MolecularTestFactory.withAmplification(TestAmplificationFactory.builder()
-                        .gene("gene A")
-                        .isReportable(true)
-                        .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
-                        .geneRole(GeneRole.ONCO)
-                        .build())));
-
-        assertMolecularEvaluation(EvaluationResult.WARN,
-                function.evaluate(MolecularTestFactory.withAmplification(TestAmplificationFactory.builder()
+                function.evaluate(MolecularTestFactory.withCopyNumber(TestCopyNumberFactory.builder()
                         .gene("gene A")
                         .isReportable(true)
                         .proteinEffect(ProteinEffect.NO_EFFECT)
-                        .geneRole(GeneRole.ONCO)
                         .build())));
 
-        assertMolecularEvaluation(EvaluationResult.PASS,
-                function.evaluate(MolecularTestFactory.withAmplification(TestAmplificationFactory.builder()
+        assertMolecularEvaluation(EvaluationResult.WARN,
+                function.evaluate(MolecularTestFactory.withCopyNumber(TestCopyNumberFactory.builder()
                         .gene("gene A")
                         .isReportable(true)
                         .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
-                        .geneRole(GeneRole.TSG)
-                        .build())));
-    }
-
-    @Test
-    public void canEvaluateLosses() {
-        GeneIsWildType function = new GeneIsWildType("gene A");
-
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
-
-        assertMolecularEvaluation(EvaluationResult.WARN,
-                function.evaluate(MolecularTestFactory.withLoss(TestLossFactory.builder()
-                        .gene("gene A")
-                        .isReportable(true)
-                        .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
-                        .geneRole(GeneRole.TSG)
-                        .build())));
-
-        assertMolecularEvaluation(EvaluationResult.WARN,
-                function.evaluate(MolecularTestFactory.withLoss(TestLossFactory.builder()
-                        .gene("gene A")
-                        .isReportable(true)
-                        .proteinEffect(ProteinEffect.NO_EFFECT)
-                        .geneRole(GeneRole.TSG)
-                        .build())));
-
-        assertMolecularEvaluation(EvaluationResult.PASS,
-                function.evaluate(MolecularTestFactory.withLoss(TestLossFactory.builder()
-                        .gene("gene A")
-                        .isReportable(true)
-                        .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
-                        .geneRole(GeneRole.ONCO)
                         .build())));
     }
 

@@ -5,11 +5,10 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
-import com.hartwig.actin.molecular.datamodel.driver.Amplification;
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumber;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
-import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
@@ -94,12 +93,8 @@ public final class AggregatedEvidenceFactory {
             evidences.add(createAggregateEvidence(variant.event(), variant.evidence()));
         }
 
-        for (Amplification amplification : drivers.amplifications()) {
-            evidences.add(createAggregateEvidence(amplification.event(), amplification.evidence()));
-        }
-
-        for (Loss loss : drivers.losses()) {
-            evidences.add(createAggregateEvidence(loss.event(), loss.evidence()));
+        for (CopyNumber copyNumber : drivers.copyNumbers()) {
+            evidences.add(createAggregateEvidence(copyNumber.event(), copyNumber.evidence()));
         }
 
         for (HomozygousDisruption homozygousDisruption : drivers.homozygousDisruptions()) {

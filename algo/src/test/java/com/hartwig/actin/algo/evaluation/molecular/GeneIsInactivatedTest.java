@@ -5,15 +5,16 @@ import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecular
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect;
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumber;
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole;
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
-import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
+import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory;
-import com.hartwig.actin.molecular.datamodel.driver.TestLossFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory;
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
@@ -63,26 +64,30 @@ public class GeneIsInactivatedTest {
 
         assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
 
-        Loss matchingLoss = TestLossFactory.builder()
+        CopyNumber matchingLoss = TestCopyNumberFactory.builder()
                 .gene("gene A")
                 .isReportable(true)
                 .geneRole(GeneRole.TSG)
                 .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
+                .type(CopyNumberType.LOSS)
                 .build();
 
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withLoss(matchingLoss)));
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withCopyNumber(matchingLoss)));
 
         assertMolecularEvaluation(EvaluationResult.WARN,
-                function.evaluate(MolecularTestFactory.withLoss(TestLossFactory.builder().from(matchingLoss).isReportable(false).build())));
+                function.evaluate(MolecularTestFactory.withCopyNumber(TestCopyNumberFactory.builder()
+                        .from(matchingLoss)
+                        .isReportable(false)
+                        .build())));
 
         assertMolecularEvaluation(EvaluationResult.WARN,
-                function.evaluate(MolecularTestFactory.withLoss(TestLossFactory.builder()
+                function.evaluate(MolecularTestFactory.withCopyNumber(TestCopyNumberFactory.builder()
                         .from(matchingLoss)
                         .geneRole(GeneRole.ONCO)
                         .build())));
 
         assertMolecularEvaluation(EvaluationResult.WARN,
-                function.evaluate(MolecularTestFactory.withLoss(TestLossFactory.builder()
+                function.evaluate(MolecularTestFactory.withCopyNumber(TestCopyNumberFactory.builder()
                         .from(matchingLoss)
                         .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
                         .build())));

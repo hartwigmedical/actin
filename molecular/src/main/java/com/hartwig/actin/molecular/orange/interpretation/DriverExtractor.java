@@ -2,13 +2,13 @@ package com.hartwig.actin.molecular.orange.interpretation;
 
 import java.util.Set;
 
-import com.hartwig.actin.molecular.datamodel.driver.Amplification;
+import com.google.common.collect.Sets;
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumber;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.Driver;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
-import com.hartwig.actin.molecular.datamodel.driver.Loss;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
@@ -64,18 +64,15 @@ class DriverExtractor {
         Set<Variant> variants = variantExtractor.extract(record.purple());
         LOGGER.info(" Extracted {} variants of which {} reportable", variants.size(), reportableCount(variants));
 
-        Set<Amplification> amplifications = copyNumberExtractor.extractAmplifications(record.purple());
-        LOGGER.info(" Extracted {} amplifications of which {} reportable", amplifications.size(), reportableCount(amplifications));
-
-        Set<Loss> losses = copyNumberExtractor.extractLosses(record.purple());
-        LOGGER.info(" Extracted {} losses of which {} reportable", losses.size(), reportableCount(losses));
+        Set<CopyNumber> copyNumbers = copyNumberExtractor.extract(record.purple());
+        LOGGER.info(" Extracted {} copy numbers of which {} reportable", copyNumbers.size(), reportableCount(copyNumbers));
 
         Set<HomozygousDisruption> homozygousDisruptions = homozygousDisruptionExtractor.extractHomozygousDisruptions(record.linx());
         LOGGER.info(" Extracted {} homozygous disruptions of which {} reportable",
                 homozygousDisruptions.size(),
                 reportableCount(homozygousDisruptions));
 
-        Set<Disruption> disruptions = disruptionExtractor.extractDisruptions(record.linx(), losses);
+        Set<Disruption> disruptions = disruptionExtractor.extractDisruptions(record.linx(), reportableLostGenes(copyNumbers));
         LOGGER.info(" Extracted {} disruptions of which {} reportable", disruptions.size(), reportableCount(disruptions));
 
         Set<Fusion> fusions = fusionExtractor.extract(record.linx());
@@ -86,13 +83,23 @@ class DriverExtractor {
 
         return ImmutableMolecularDrivers.builder()
                 .variants(variants)
-                .amplifications(amplifications)
-                .losses(losses)
+                .copyNumbers(copyNumbers)
                 .homozygousDisruptions(homozygousDisruptions)
                 .disruptions(disruptions)
                 .fusions(fusions)
                 .viruses(viruses)
                 .build();
+    }
+
+    @NotNull
+    private static Set<String> reportableLostGenes(@NotNull Set<CopyNumber> copyNumbers) {
+        Set<String> lostGenes = Sets.newHashSet();
+        for (CopyNumber copyNumber : copyNumbers) {
+            if (copyNumber.isReportable() && copyNumber.type().isLoss()) {
+                lostGenes.add(copyNumber.gene());
+            }
+        }
+        return lostGenes;
     }
 
     private static <T extends Driver> int reportableCount(@NotNull Set<T> drivers) {
