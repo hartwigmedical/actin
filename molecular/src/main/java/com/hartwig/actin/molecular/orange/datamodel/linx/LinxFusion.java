@@ -29,7 +29,7 @@ public abstract class LinxFusion {
 
     public abstract int fusedExonDown();
 
-    @NotNull
+    @Nullable
     public abstract LinxFusionDriverLikelihood driverLikelihood();
 
 }

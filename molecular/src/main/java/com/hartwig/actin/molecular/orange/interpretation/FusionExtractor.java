@@ -90,6 +90,9 @@ class FusionExtractor {
             case EXON_DEL_DUP: {
                 return FusionDriverType.KNOWN_PAIR_DEL_DUP;
             }
+            case NONE: {
+                return FusionDriverType.NONE;
+            }
             default: {
                 throw new IllegalStateException("Cannot determine driver type for fusion of type: " + fusion.type());
             }
@@ -105,6 +108,9 @@ class FusionExtractor {
             }
             case LOW: {
                 return DriverLikelihood.LOW;
+            }
+            case NA: {
+                return null;
             }
             default: {
                 throw new IllegalStateException(

@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.datamodel.driver;
 import org.jetbrains.annotations.NotNull;
 
 public enum FusionDriverType {
+    NONE("None"),
     KNOWN_PAIR("Known fusion"),
     KNOWN_PAIR_IG("IG known fusion"),
     KNOWN_PAIR_DEL_DUP("Known fusion"),
