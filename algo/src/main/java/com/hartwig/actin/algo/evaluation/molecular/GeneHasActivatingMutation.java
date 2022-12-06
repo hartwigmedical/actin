@@ -42,6 +42,8 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
         Set<String> otherMissenseOrHotspotVariants = Sets.newHashSet();
 
         Boolean hasHighMutationalLoad = record.molecular().characteristics().hasHighTumorMutationalLoad();
+        Boolean isMicrosatelliteUnstable = record.molecular().characteristics().isMicrosatelliteUnstable();
+
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene)) {
                 boolean isGainOfFunction = variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
@@ -64,7 +66,8 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
                     } else {
                         if (isGainOfFunction) {
                             nonHighDriverGainOfFunctionVariants.add(variant.event());
-                        } else if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
+                        } else if (hasHighMutationalLoad == null || !hasHighMutationalLoad || isMicrosatelliteUnstable == null
+                                || !isMicrosatelliteUnstable) {
                             nonHighDriverVariants.add(variant.event());
                         }
                     }
@@ -137,9 +140,9 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
 
         if (!activatingVariantsNoHotspotAndNoGainOfFunction.isEmpty()) {
             warnEvents.addAll(activatingVariantsNoHotspotAndNoGainOfFunction);
-            warnSpecificMessages.add(
-                    "Gene " + gene + " has potentially activating mutation(s) " + Format.concat(activatingVariantsNoHotspotAndNoGainOfFunction)
-                            + " that have high driver likelihood, but is not a hotspot and not associated with gain of function protein effect");
+            warnSpecificMessages.add("Gene " + gene + " has potentially activating mutation(s) " + Format.concat(
+                    activatingVariantsNoHotspotAndNoGainOfFunction)
+                    + " that have high driver likelihood, but is not a hotspot and not associated with gain of function protein effect");
             warnGeneralMessages.add(gene
                     + " potentially activating mutation(s) detected but is not a hotspot and not associated with having gain-of-function protein effect");
         }
