@@ -57,6 +57,7 @@ public class MedicationRuleMapper extends RuleMapper {
         map.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, getsImmunosuppressantMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_PROHIBITED_MEDICATION, getsProhibitedMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION, getsQTProlongatingMedicationCreator());
+        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_ANY_CYP, getsAnyCYPInducingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_CYP_X, getsCYPXInducingMedicationCreator());
         map.put(EligibilityRule.HAS_RECEIVED_MEDICATION_INDUCING_CYP_X_WITHIN_Y_WEEKS, hasRecentlyReceivedCYPXInducingMedicationCreator());
         map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_CYP_X, getsCYPXInhibitingMedicationCreator());
@@ -134,6 +135,11 @@ public class MedicationRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator getsQTProlongatingMedicationCreator() {
         return function -> new CurrentlyGetsQTProlongatingMedication();
+    }
+
+    @NotNull
+    private FunctionCreator getsAnyCYPInducingMedicationCreator() {
+        return function -> new GetsAnyCYPInducingMedication();
     }
 
     @NotNull
