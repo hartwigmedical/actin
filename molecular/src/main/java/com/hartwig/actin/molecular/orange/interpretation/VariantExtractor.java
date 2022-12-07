@@ -34,6 +34,11 @@ class VariantExtractor {
 
     private static final Logger LOGGER = LogManager.getLogger(VariantExtractor.class);
 
+    private static final Set<PurpleCodingEffect> RELEVANT_CODING_EFFECTS = Sets.newHashSet(PurpleCodingEffect.MISSENSE,
+            PurpleCodingEffect.SPLICE,
+            PurpleCodingEffect.NONSENSE_OR_FRAMESHIFT,
+            PurpleCodingEffect.SYNONYMOUS);
+
     private static final Set<PurpleDriverType> MUTATION_DRIVER_TYPES =
             Sets.newHashSet(PurpleDriverType.MUTATION, PurpleDriverType.GERMLINE_MUTATION);
 
@@ -51,7 +56,8 @@ class VariantExtractor {
     public Set<Variant> extract(@NotNull PurpleRecord purple) {
         Set<Variant> variants = Sets.newTreeSet(new VariantComparator());
         for (PurpleVariant variant : purple.variants()) {
-            if (geneFilter.include(variant.gene())) {
+            boolean reportedOrCoding = variant.reported() || RELEVANT_CODING_EFFECTS.contains(variant.canonicalImpact().codingEffect());
+            if (geneFilter.include(variant.gene()) && reportedOrCoding) {
                 variants.add(ImmutableVariant.builder()
                         .from(GeneAlterationFactory.convertAlteration(variant.gene(), evidenceDatabase.geneAlterationForVariant(variant)))
                         .isReportable(variant.reported())

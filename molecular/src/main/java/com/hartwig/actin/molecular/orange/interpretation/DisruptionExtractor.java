@@ -77,7 +77,9 @@ class DisruptionExtractor {
             }
         }
 
-        throw new IllegalStateException("Could not resolve structural variant with id: " + breakend.svId());
+        // TODO Switch to exception once linx assures all SVs are present.
+        LOGGER.warn("Could not resolve structural variant with id: {}", breakend.svId());
+        return -1;
     }
 
     @NotNull

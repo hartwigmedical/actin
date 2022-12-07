@@ -22,6 +22,7 @@ import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleCharacteristics;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCharacteristics;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumberInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleFit;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleHotspotType;
@@ -98,6 +99,7 @@ public final class TestOrangeFactory {
                                 .hgvsCodingImpact("c.something")
                                 .hgvsProteinImpact("p.Val600Glu")
                                 .addEffects(PurpleVariantEffect.MISSENSE)
+                                .codingEffect(PurpleCodingEffect.MISSENSE)
                                 .build())
                         .build())
                 .addCopyNumbers(TestPurpleFactory.copyNumberBuilder()
