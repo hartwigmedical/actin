@@ -35,6 +35,10 @@ public class MolecularInputChecker {
     }
 
     public static boolean isProteinImpact(@NotNull String string) {
+        if (string.length() < 3) {
+            return false;
+        }
+
         char first = string.charAt(0);
         boolean hasValidStart = Character.isUpperCase(first);
 

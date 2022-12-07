@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory;
 
+import org.apache.logging.log4j.util.Strings;
 import org.junit.Test;
 
 public class MolecularInputCheckerTest {
@@ -37,6 +38,8 @@ public class MolecularInputCheckerTest {
         assertTrue(MolecularInputChecker.isProteinImpact("H167_N173del"));
         assertTrue(MolecularInputChecker.isProteinImpact("N771_N773dup"));
 
+        assertFalse(MolecularInputChecker.isProteinImpact(Strings.EMPTY));
+        assertFalse(MolecularInputChecker.isProteinImpact("MG"));
         assertFalse(MolecularInputChecker.isProteinImpact("M0X"));
         assertFalse(MolecularInputChecker.isProteinImpact("not a protein impact"));
         assertFalse(MolecularInputChecker.isProteinImpact("Val600Glu"));
