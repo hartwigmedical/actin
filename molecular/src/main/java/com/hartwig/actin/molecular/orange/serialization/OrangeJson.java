@@ -132,7 +132,7 @@ public final class OrangeJson {
 
             Set<PurpleVariant> variants = Sets.newHashSet();
             variants.addAll(toPurpleVariants(array(purple, "allSomaticVariants")));
-            variants.addAll(toPurpleVariants(nullableArray(purple, "allGermlineVariants")));
+            variants.addAll(toPurpleVariants(nullableArray(purple, "reportableGermlineVariants")));
 
             return ImmutablePurpleRecord.builder()
                     .fit(toPurpleFit(object(purple, "fit")))

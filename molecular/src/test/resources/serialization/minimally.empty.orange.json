@@ -23,7 +23,7 @@
     "somaticDrivers": [],
     "germlineDrivers": null,
     "allSomaticVariants": [],
-    "allGermlineVariants": null,
+    "reportableGermlineVariants": null,
     "allSomaticGainsLosses": []
   },
   "linx": {
