@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class MolecularInputChecker {
 
-    private static final Set<String> VALID_PROTEIN_ENDINGS = Sets.newHashSet("del", "dup", "ins");
+    private static final Set<String> VALID_PROTEIN_ENDINGS = Sets.newHashSet("del", "dup", "ins", "=");
 
     @NotNull
     private final GeneFilter geneFilter;
@@ -35,6 +35,10 @@ public class MolecularInputChecker {
     }
 
     public static boolean isProteinImpact(@NotNull String string) {
+        if (string.equals("?")) {
+            return true;
+        }
+
         if (string.length() < 3) {
             return false;
         }
@@ -61,6 +65,10 @@ public class MolecularInputChecker {
     }
 
     public static boolean isCodon(@NotNull String string) {
+        if (string.length() < 2) {
+            return false;
+        }
+
         char first = string.charAt(0);
         String codon = string.substring(1);
 

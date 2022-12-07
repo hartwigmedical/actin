@@ -33,6 +33,8 @@ public class MolecularInputCheckerTest {
 
     @Test
     public void canDetermineIfStringIsProteinImpact() {
+        assertTrue(MolecularInputChecker.isProteinImpact("?"));
+        assertTrue(MolecularInputChecker.isProteinImpact("V600="));
         assertTrue(MolecularInputChecker.isProteinImpact("V600E"));
         assertTrue(MolecularInputChecker.isProteinImpact("M1X"));
         assertTrue(MolecularInputChecker.isProteinImpact("H167_N173del"));
@@ -55,6 +57,8 @@ public class MolecularInputCheckerTest {
         assertTrue(MolecularInputChecker.isCodon("V600"));
         assertTrue(MolecularInputChecker.isCodon("M1"));
 
+        assertFalse(MolecularInputChecker.isCodon(Strings.EMPTY));
+        assertFalse(MolecularInputChecker.isCodon("M"));
         assertFalse(MolecularInputChecker.isCodon("M0"));
         assertFalse(MolecularInputChecker.isCodon("not a codon"));
         assertFalse(MolecularInputChecker.isCodon("Val600"));
