@@ -68,8 +68,8 @@ final class MolecularTestFactory {
     }
 
     @NotNull
-    public static PatientRecord withHasTumorMutationalLoadAndIsMicrosatelliteUnstableAndVariant(
-            @Nullable Boolean hasHighTumorMutationalLoad, @Nullable Boolean isMicrosatelliteUnstable, @NotNull Variant variant) {
+    public static PatientRecord withHasTumorMutationalLoadAndVariant(@Nullable Boolean hasHighTumorMutationalLoad,
+            @NotNull Variant variant) {
         MolecularRecord base = TestMolecularFactory.createMinimalTestMolecularRecord();
 
         return withMolecularRecord(ImmutableMolecularRecord.builder()
@@ -77,7 +77,6 @@ final class MolecularTestFactory {
                 .characteristics(ImmutableMolecularCharacteristics.builder()
                         .from(base.characteristics())
                         .hasHighTumorMutationalLoad(hasHighTumorMutationalLoad)
-                        .isMicrosatelliteUnstable(isMicrosatelliteUnstable)
                         .build())
                 .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addVariants(variant).build())
                 .build());

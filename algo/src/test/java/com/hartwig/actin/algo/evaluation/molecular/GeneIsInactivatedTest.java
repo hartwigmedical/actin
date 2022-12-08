@@ -159,14 +159,14 @@ public class GeneIsInactivatedTest {
 
         // high TML and high driver likelihood variant
         assertMolecularEvaluation(EvaluationResult.PASS,
-                function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndIsMicrosatelliteUnstableAndVariant(true,
-                        false,
-                        TestVariantFactory.builder().from(matchingVariant).build())));
+                function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariant(true,
+                        TestVariantFactory.builder()
+                                .from(matchingVariant)
+                                .build())));
 
         // high TML and low driver likelihood variant
         assertMolecularEvaluation(EvaluationResult.FAIL,
-                function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndIsMicrosatelliteUnstableAndVariant(true,
-                        true,
+                function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariant(true,
                         TestVariantFactory.builder()
                                 .from(matchingVariant)
                                 .proteinEffect(ProteinEffect.UNKNOWN)
@@ -175,8 +175,7 @@ public class GeneIsInactivatedTest {
 
         // low TML and low driver likelihood variant
         assertMolecularEvaluation(EvaluationResult.WARN,
-                function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndIsMicrosatelliteUnstableAndVariant(false,
-                        null,
+                function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariant(false,
                         TestVariantFactory.builder()
                                 .from(matchingVariant)
                                 .proteinEffect(ProteinEffect.UNKNOWN)
@@ -201,10 +200,7 @@ public class GeneIsInactivatedTest {
                 .addPhaseGroups(2)
                 .build();
 
-        assertMolecularEvaluation(EvaluationResult.FAIL,
-                function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndIsMicrosatelliteUnstableAndVariant(true,
-                        true,
-                        variantGroup1)));
+        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withVariant(variantGroup1)));
 
         assertMolecularEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withVariants(variantGroup1, variantGroup2)));

@@ -95,14 +95,12 @@ public class GeneHasActivatingMutationTest {
 
         // high TML and high driver likelihood variant
         assertMolecularEvaluation(EvaluationResult.PASS,
-                function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndIsMicrosatelliteUnstableAndVariant(true,
-                        true,
+                function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariant(true,
                         TestVariantFactory.builder().from(activatingVariant).build())));
 
         // high TML and low driver likelihood variant
         assertMolecularEvaluation(EvaluationResult.FAIL,
-                function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndIsMicrosatelliteUnstableAndVariant(true,
-                        true,
+                function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariant(true,
                         TestVariantFactory.builder()
                                 .from(activatingVariant)
                                 .proteinEffect(ProteinEffect.UNKNOWN)
@@ -111,8 +109,7 @@ public class GeneHasActivatingMutationTest {
 
         // low TML and low driver likelihood variant
         assertMolecularEvaluation(EvaluationResult.WARN,
-                function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndIsMicrosatelliteUnstableAndVariant(false,
-                        null,
+                function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariant(false,
                         TestVariantFactory.builder()
                                 .from(activatingVariant)
                                 .proteinEffect(ProteinEffect.UNKNOWN)
