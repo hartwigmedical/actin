@@ -90,7 +90,6 @@ public class GeneIsInactivated implements EvaluationFunction {
         Set<Integer> evaluatedPhaseGroups = Sets.newHashSet();
 
         Boolean hasHighMutationalLoad = record.molecular().characteristics().hasHighTumorMutationalLoad();
-        Boolean isMicrosatelliteUnstable = record.molecular().characteristics().isMicrosatelliteUnstable();
 
         for (Variant variant : record.molecular().drivers().variants()) {
             if (variant.gene().equals(gene) && INACTIVATING_CODING_EFFECTS.contains(variant.canonicalImpact().codingEffect())) {
