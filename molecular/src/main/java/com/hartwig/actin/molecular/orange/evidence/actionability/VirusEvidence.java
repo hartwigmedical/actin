@@ -38,7 +38,7 @@ class VirusEvidence implements EvidenceMatcher<VirusInterpreterEntry> {
     @Override
     public List<ActionableEvent> findMatches(@NotNull VirusInterpreterEntry virus) {
         VirusInterpretation interpretation = virus.interpretation();
-        if (interpretation == null) {
+        if (interpretation == null || !virus.reported()) {
             return Lists.newArrayList();
         }
 

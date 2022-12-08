@@ -36,7 +36,7 @@ class BreakendEvidence implements EvidenceMatcher<LinxBreakend> {
     public List<ActionableEvent> findMatches(@NotNull LinxBreakend breakend) {
         List<ActionableEvent> matches = Lists.newArrayList();
         for (ActionableGene actionableGene : applicableActionableGenes) {
-            if (actionableGene.gene().equals(breakend.gene())) {
+            if (breakend.reported() && actionableGene.gene().equals(breakend.gene())) {
                 matches.add(actionableGene);
             }
         }
