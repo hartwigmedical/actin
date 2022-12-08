@@ -46,13 +46,13 @@ class FusionEvidence implements EvidenceMatcher<LinxFusion> {
         List<ActionableEvent> matches = Lists.newArrayList();
 
         for (ActionableGene actionable : actionablePromiscuous) {
-            if (isPromiscuousMatch(actionable, fusion)) {
+            if (isPromiscuousMatch(actionable, fusion) && fusion.reported()) {
                 matches.add(actionable);
             }
         }
 
         for (ActionableFusion actionable : actionableFusions) {
-            if (FusionMatching.isGeneMatch(actionable, fusion) && FusionMatching.isExonMatch(actionable, fusion)) {
+            if (FusionMatching.isGeneMatch(actionable, fusion) && FusionMatching.isExonMatch(actionable, fusion) && fusion.reported()) {
                 matches.add(actionable);
             }
         }
