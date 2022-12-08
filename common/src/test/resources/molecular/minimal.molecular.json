@@ -1,0 +1,47 @@
+{
+  "patientId": "irrelevant",
+  "sampleId": "irrelevant",
+  "type": "WGS",
+  "refGenomeVersion": "V37",
+  "date": null,
+  "evidenceSource": "CKB",
+  "externalTrialSource": "iClusion",
+  "containsTumorCells": false,
+  "hasSufficientQuality": false,
+  "characteristics": {
+    "purity": null,
+    "ploidy": null,
+    "predictedTumorOrigin": null,
+    "isMicrosatelliteUnstable": null,
+    "microsatelliteEvidence": null,
+    "isHomologousRepairDeficient": null,
+    "homologousRepairEvidence": null,
+    "tumorMutationalBurden": null,
+    "hasHighTumorMutationalBurden": null,
+    "tumorMutationalBurdenEvidence": null,
+    "tumorMutationalLoad": null,
+    "hasHighTumorMutationalLoad": null,
+    "tumorMutationalLoadEvidence": null
+  },
+  "drivers": {
+    "variants": [
+    ],
+    "copyNumbers": [
+    ],
+    "homozygousDisruptions": [
+    ],
+    "disruptions": [
+    ],
+    "fusions": [
+    ],
+    "viruses": [
+    ]
+  },
+  "immunology": {
+    "isReliable": false,
+    "hlaAlleles": [
+    ]
+  },
+  "pharmaco": [
+  ]
+}

@@ -49,7 +49,9 @@ import org.junit.Test;
 public class MolecularRecordJsonTest {
 
     private static final String MOLECULAR_DIRECTORY = Resources.getResource("molecular").getPath();
-    private static final String MOLECULAR_JSON = MOLECULAR_DIRECTORY + File.separator + "sample.molecular.json";
+
+    private static final String SAMPLE_MOLECULAR_JSON = MOLECULAR_DIRECTORY + File.separator + "sample.molecular.json";
+    private static final String MINIMAL_MOLECULAR_JSON = MOLECULAR_DIRECTORY + File.separator + "minimal.molecular.json";
 
     private static final double EPSILON = 1.0E-10;
 
@@ -72,8 +74,13 @@ public class MolecularRecordJsonTest {
     }
 
     @Test
-    public void canReadMolecularJson() throws IOException {
-        MolecularRecord molecular = MolecularRecordJson.read(MOLECULAR_JSON);
+    public void canReadMinimalMolecularJson() throws IOException {
+        assertNotNull(MolecularRecordJson.read(MINIMAL_MOLECULAR_JSON));
+    }
+
+    @Test
+    public void canReadSampleMolecularJson() throws IOException {
+        MolecularRecord molecular = MolecularRecordJson.read(SAMPLE_MOLECULAR_JSON);
 
         assertEquals("ACTN01029999", molecular.patientId());
         assertEquals("ACTN01029999T", molecular.sampleId());
