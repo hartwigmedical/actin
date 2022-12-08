@@ -12,6 +12,7 @@ import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.VariantEffect;
 import com.hartwig.actin.molecular.datamodel.driver.VariantType;
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriver;
@@ -58,12 +59,21 @@ class VariantExtractor {
         for (PurpleVariant variant : purple.variants()) {
             boolean reportedOrCoding = variant.reported() || RELEVANT_CODING_EFFECTS.contains(variant.canonicalImpact().codingEffect());
             if (geneFilter.include(variant.gene()) && reportedOrCoding) {
+                PurpleDriver driver = findBestMutationDriver(purple.drivers(), variant.gene(), variant.canonicalImpact().transcript());
+                DriverLikelihood driverLikelihood = determineDriverLikelihood(variant, driver);
+
+                ActionableEvidence evidence;
+                if (driverLikelihood == DriverLikelihood.HIGH) {
+                    evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(variant));
+                } else {
+                    evidence = ActionableEvidenceFactory.createNoEvidence();
+                }
                 variants.add(ImmutableVariant.builder()
                         .from(GeneAlterationFactory.convertAlteration(variant.gene(), evidenceDatabase.geneAlterationForVariant(variant)))
                         .isReportable(variant.reported())
                         .event(DriverEventFactory.variantEvent(variant))
-                        .driverLikelihood(determineDriverLikelihood(variant, purple.drivers()))
-                        .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(variant)))
+                        .driverLikelihood(driverLikelihood)
+                        .evidence(evidence)
                         .type(extractType(variant))
                         .variantCopyNumber(ExtractionUtil.keep3Digits(variant.variantCopyNumber()))
                         .totalCopyNumber(ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()))
@@ -106,15 +116,14 @@ class VariantExtractor {
 
     @Nullable
     @VisibleForTesting
-    static DriverLikelihood determineDriverLikelihood(@NotNull PurpleVariant variant, @NotNull Set<PurpleDriver> drivers) {
-        PurpleDriver mutationDriver = findBestMutationDriver(drivers, variant.gene(), variant.canonicalImpact().transcript());
-        if (mutationDriver == null) {
+    static DriverLikelihood determineDriverLikelihood(@NotNull PurpleVariant variant, @Nullable PurpleDriver driver) {
+        if (driver == null) {
             return null;
         }
 
-        if (mutationDriver.driverLikelihood() >= 0.8) {
+        if (driver.driverLikelihood() >= 0.8) {
             return DriverLikelihood.HIGH;
-        } else if (mutationDriver.driverLikelihood() >= 0.2) {
+        } else if (driver.driverLikelihood() >= 0.2) {
             return DriverLikelihood.MEDIUM;
         } else {
             return DriverLikelihood.LOW;

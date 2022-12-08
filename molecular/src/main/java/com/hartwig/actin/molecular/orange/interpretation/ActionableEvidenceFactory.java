@@ -19,6 +19,11 @@ public final class ActionableEvidenceFactory {
     private ActionableEvidenceFactory() {
     }
 
+    @NotNull
+    public static ActionableEvidence createNoEvidence() {
+        return ImmutableActionableEvidence.builder().build();
+    }
+
     @Nullable
     public static ActionableEvidence create(@Nullable ActionabilityMatch actionabilityMatch) {
         if (actionabilityMatch == null) {
