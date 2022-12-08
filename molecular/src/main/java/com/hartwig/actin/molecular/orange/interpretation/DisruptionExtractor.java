@@ -77,7 +77,7 @@ class DisruptionExtractor {
             }
         }
 
-        // TODO Switch to exception once linx assures all SVs are present.
+        // TODO Switch to exception once linx assures all SVs are present. This will be implemented in v1.23
         LOGGER.warn("Could not resolve structural variant with id: {}", breakend.svId());
         return -1;
     }
