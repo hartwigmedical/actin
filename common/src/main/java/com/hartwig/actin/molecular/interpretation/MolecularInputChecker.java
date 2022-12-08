@@ -10,7 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class MolecularInputChecker {
 
-    private static final Set<String> VALID_PROTEIN_ENDINGS = Sets.newHashSet("del", "dup", "ins", "=");
+    private static final String TERMINATION_CODON = "Ter";
+    private static final Set<String> VALID_PROTEIN_ENDINGS = Sets.newHashSet("del", "dup", "ins", "=", "*", "fs", "Cext*?");
 
     @NotNull
     private final GeneFilter geneFilter;
@@ -44,7 +45,7 @@ public class MolecularInputChecker {
         }
 
         char first = string.charAt(0);
-        boolean hasValidStart = Character.isUpperCase(first);
+        boolean hasValidStart = Character.isUpperCase(first) || string.startsWith(TERMINATION_CODON);
 
         char last = string.charAt(string.length() - 1);
         boolean hasValidEnd = hasSpecificValidProteinEnding(string) || Character.isUpperCase(last);

@@ -36,9 +36,12 @@ public class MolecularInputCheckerTest {
         assertTrue(MolecularInputChecker.isProteinImpact("?"));
         assertTrue(MolecularInputChecker.isProteinImpact("V600="));
         assertTrue(MolecularInputChecker.isProteinImpact("V600E"));
+        assertTrue(MolecularInputChecker.isProteinImpact("V600*"));
+        assertTrue(MolecularInputChecker.isProteinImpact("V600fs"));
         assertTrue(MolecularInputChecker.isProteinImpact("M1X"));
         assertTrue(MolecularInputChecker.isProteinImpact("H167_N173del"));
         assertTrue(MolecularInputChecker.isProteinImpact("N771_N773dup"));
+        assertTrue(MolecularInputChecker.isProteinImpact("Ter1211Cext*?"));
 
         assertFalse(MolecularInputChecker.isProteinImpact(Strings.EMPTY));
         assertFalse(MolecularInputChecker.isProteinImpact("MG"));
