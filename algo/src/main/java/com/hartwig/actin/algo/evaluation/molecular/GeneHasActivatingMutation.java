@@ -66,8 +66,7 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
                     } else {
                         if (isGainOfFunction) {
                             nonHighDriverGainOfFunctionVariants.add(variant.event());
-                        } else if ((hasHighMutationalLoad == null || !hasHighMutationalLoad) && (isMicrosatelliteUnstable == null
-                                || !isMicrosatelliteUnstable)) {
+                        } else if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
                             nonHighDriverVariants.add(variant.event());
                         }
                     }

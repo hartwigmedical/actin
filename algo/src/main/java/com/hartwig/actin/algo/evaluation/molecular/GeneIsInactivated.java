@@ -118,8 +118,7 @@ public class GeneIsInactivated implements EvaluationFunction {
                         } else {
                             inactivationEventsThatQualify.add(variant.event());
                         }
-                    } else if ((hasHighMutationalLoad == null || !hasHighMutationalLoad) && (isMicrosatelliteUnstable == null
-                            || !isMicrosatelliteUnstable)) {
+                    } else if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
                         if (variant.isBiallelic()) {
                             reportableNonDriverBiallelicVariantsOther.add(variant.event());
                         } else {
