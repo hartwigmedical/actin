@@ -13,8 +13,8 @@ import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.MedicationStatus;
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
+import com.hartwig.actin.clinical.datamodel.TestMedicationFactory;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 final class WashoutTestFactory {
@@ -36,7 +36,7 @@ final class WashoutTestFactory {
 
     @NotNull
     public static ImmutableMedication.Builder builder() {
-        return ImmutableMedication.builder().name(Strings.EMPTY).codeATC(Strings.EMPTY).status(MedicationStatus.ACTIVE);
+        return TestMedicationFactory.builder().status(MedicationStatus.ACTIVE);
     }
 
     @NotNull

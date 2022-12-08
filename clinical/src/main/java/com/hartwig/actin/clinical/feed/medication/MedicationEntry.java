@@ -26,6 +26,18 @@ public abstract class MedicationEntry implements FeedEntry {
     public abstract String code5ATCDisplay();
 
     @NotNull
+    public abstract String chemicalSubgroupDisplay();
+
+    @NotNull
+    public abstract String pharmacologicalSubgroupDisplay();
+
+    @NotNull
+    public abstract String therapeuticSubgroupDisplay();
+
+    @NotNull
+    public abstract String anatomicalMainGroupDisplay();
+
+    @NotNull
     public abstract String dosageInstructionRouteDisplay();
 
     @NotNull

@@ -11,6 +11,7 @@ import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.Medication;
+import com.hartwig.actin.clinical.datamodel.TestMedicationFactory;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -57,14 +58,13 @@ public class RequiresRegularHematopoieticSupportTest {
         Medication stillRunning = support().startDate(minDate.minusWeeks(1)).stopDate(null).build();
         assertEvaluation(EvaluationResult.PASS, function.evaluate(BloodTransfusionTestFactory.withMedication(stillRunning)));
 
-        Medication wrongCategory =
-                BloodTransfusionTestFactory.medicationBuilder().from(stillRunning).categories(Sets.newHashSet("wrong")).build();
+        Medication wrongCategory = TestMedicationFactory.builder().from(stillRunning).categories(Sets.newHashSet("wrong")).build();
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(BloodTransfusionTestFactory.withMedication(wrongCategory)));
     }
 
     @NotNull
     private static ImmutableMedication.Builder support() {
-        return BloodTransfusionTestFactory.medicationBuilder()
+        return TestMedicationFactory.builder()
                 .addCategories(RequiresRegularHematopoieticSupport.HEMATOPOIETIC_MEDICATION_CATEGORIES.iterator().next());
     }
 

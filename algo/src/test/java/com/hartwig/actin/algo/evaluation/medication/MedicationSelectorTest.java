@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.medication.MedicationStatusInterpretation;
 import com.hartwig.actin.clinical.datamodel.Medication;
+import com.hartwig.actin.clinical.datamodel.TestMedicationFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -20,7 +21,7 @@ public class MedicationSelectorTest {
     public void canFilterForActive() {
         List<Medication> medications = Lists.newArrayList();
 
-        medications.add(MedicationTestFactory.builder().name("active").build());
+        medications.add(TestMedicationFactory.builder().name("active").build());
 
         List<Medication> filtered = createAlwaysActiveSelector().active(medications);
 
@@ -32,10 +33,10 @@ public class MedicationSelectorTest {
     public void canFilterOnAnyTermInName() {
         List<Medication> medications = Lists.newArrayList();
 
-        medications.add(MedicationTestFactory.builder().name("name 1").build());
-        medications.add(MedicationTestFactory.builder().name("name 1 with some extension").build());
-        medications.add(MedicationTestFactory.builder().name("name 2").build());
-        medications.add(MedicationTestFactory.builder().name("name 3").build());
+        medications.add(TestMedicationFactory.builder().name("name 1").build());
+        medications.add(TestMedicationFactory.builder().name("name 1 with some extension").build());
+        medications.add(TestMedicationFactory.builder().name("name 2").build());
+        medications.add(TestMedicationFactory.builder().name("name 3").build());
 
         List<Medication> filtered = createAlwaysActiveSelector().activeWithAnyTermInName(medications, Sets.newHashSet("Name 1", "2"));
 
@@ -49,9 +50,9 @@ public class MedicationSelectorTest {
     public void canFilterOnOneExactCategory() {
         List<Medication> medications = Lists.newArrayList();
 
-        medications.add(MedicationTestFactory.builder().name("no categories").build());
-        medications.add(MedicationTestFactory.builder().name("wrong categories").addCategories("wrong category 1").build());
-        medications.add(MedicationTestFactory.builder().name("right categories").addCategories("category 1", "category 2").build());
+        medications.add(TestMedicationFactory.builder().name("no categories").build());
+        medications.add(TestMedicationFactory.builder().name("wrong categories").addCategories("wrong category 1").build());
+        medications.add(TestMedicationFactory.builder().name("right categories").addCategories("category 1", "category 2").build());
 
         List<Medication> filtered = createAlwaysActiveSelector().activeWithExactCategory(medications, "Category 1");
 
@@ -63,10 +64,10 @@ public class MedicationSelectorTest {
     public void canFilterOnAnyExactCategory() {
         List<Medication> medications = Lists.newArrayList();
 
-        medications.add(MedicationTestFactory.builder().name("no categories").build());
-        medications.add(MedicationTestFactory.builder().name("wrong categories").addCategories("wrong category 1").build());
-        medications.add(MedicationTestFactory.builder().name("right category 1").addCategories("category 1", "category 2").build());
-        medications.add(MedicationTestFactory.builder().name("right category 2").addCategories("category 3").build());
+        medications.add(TestMedicationFactory.builder().name("no categories").build());
+        medications.add(TestMedicationFactory.builder().name("wrong categories").addCategories("wrong category 1").build());
+        medications.add(TestMedicationFactory.builder().name("right category 1").addCategories("category 1", "category 2").build());
+        medications.add(TestMedicationFactory.builder().name("right category 2").addCategories("category 3").build());
 
         List<Medication> filtered =
                 createAlwaysActiveSelector().activeWithAnyExactCategory(medications, Sets.newHashSet("Category 1", "Category 3"));
@@ -82,15 +83,15 @@ public class MedicationSelectorTest {
 
         LocalDate minStopDate = LocalDate.of(2019, 11, 20);
 
-        medications.add(MedicationTestFactory.builder().name("no categories").build());
-        medications.add(MedicationTestFactory.builder().name("wrong categories").addCategories("wrong category 1").build());
-        medications.add(MedicationTestFactory.builder()
+        medications.add(TestMedicationFactory.builder().name("no categories").build());
+        medications.add(TestMedicationFactory.builder().name("wrong categories").addCategories("wrong category 1").build());
+        medications.add(TestMedicationFactory.builder()
                 .name("right category 1 recently stopped")
                 .addCategories("category 1")
                 .stopDate(minStopDate.plusDays(1))
                 .build());
 
-        medications.add(MedicationTestFactory.builder()
+        medications.add(TestMedicationFactory.builder()
                 .name("right category 1 stopped long ago")
                 .addCategories("category 1")
                 .stopDate(minStopDate.minusDays(1))

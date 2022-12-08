@@ -20,6 +20,18 @@ public abstract class Medication {
     @NotNull
     public abstract Set<String> categories();
 
+    @NotNull
+    public abstract String chemicalSubgroupAtc();
+
+    @NotNull
+    public abstract String pharmacologicalSubgroupAtc();
+
+    @NotNull
+    public abstract String therapeuticSubgroupAtc();
+
+    @NotNull
+    public abstract String anatomicalMainGroupAtc();
+
     @Nullable
     public abstract MedicationStatus status();
 

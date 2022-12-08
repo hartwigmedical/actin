@@ -9,11 +9,9 @@ import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 final class BloodTransfusionTestFactory {
@@ -32,11 +30,6 @@ final class BloodTransfusionTestFactory {
                 .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                 .bloodTransfusions(transfusions)
                 .build());
-    }
-
-    @NotNull
-    public static ImmutableMedication.Builder medicationBuilder() {
-        return ImmutableMedication.builder().name(Strings.EMPTY).codeATC(Strings.EMPTY);
     }
 
     @NotNull

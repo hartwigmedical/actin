@@ -21,7 +21,6 @@ import com.hartwig.actin.clinical.datamodel.ImmutableECG;
 import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
-import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.Intolerance;
@@ -34,6 +33,7 @@ import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
+import com.hartwig.actin.clinical.datamodel.TestMedicationFactory;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
@@ -349,20 +349,15 @@ public class CurationModelTest {
     public void canAnnotateWithMedicationCategory() {
         CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
-        Medication proper = medicationBuilder().name("Paracetamol").build();
+        Medication proper = TestMedicationFactory.builder().name("Paracetamol").build();
         Medication annotatedProper = model.annotateWithMedicationCategory(proper);
         assertEquals(Sets.newHashSet("Acetanilide derivatives"), annotatedProper.categories());
 
-        Medication empty = medicationBuilder().name(Strings.EMPTY).build();
+        Medication empty = TestMedicationFactory.builder().name(Strings.EMPTY).build();
         Medication annotatedEmpty = model.annotateWithMedicationCategory(empty);
         assertEquals(empty, annotatedEmpty);
 
         model.evaluate();
-    }
-
-    @NotNull
-    private static ImmutableMedication.Builder medicationBuilder() {
-        return ImmutableMedication.builder().name(Strings.EMPTY).codeATC(Strings.EMPTY);
     }
 
     @Test

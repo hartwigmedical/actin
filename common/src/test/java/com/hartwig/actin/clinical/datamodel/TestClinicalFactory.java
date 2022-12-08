@@ -389,7 +389,7 @@ public final class TestClinicalFactory {
     private static List<Medication> createTestMedications() {
         List<Medication> medications = Lists.newArrayList();
 
-        medications.add(ImmutableMedication.builder()
+        medications.add(TestMedicationFactory.builder()
                 .name("Ibuprofen")
                 .codeATC("N12")
                 .addCategories("NSAIDs")

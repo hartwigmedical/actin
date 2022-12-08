@@ -10,9 +10,9 @@ import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance;
-import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.Medication;
+import com.hartwig.actin.clinical.datamodel.TestMedicationFactory;
 import com.hartwig.actin.doid.TestDoidModelFactory;
 
 import org.apache.logging.log4j.util.Strings;
@@ -83,18 +83,13 @@ public class HasContraindicationToCTTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withMedications(medications)));
 
         // Test no relevant medication
-        medications.add(medicationBuilder().name("no relevant medication").build());
+        medications.add(TestMedicationFactory.builder().name("no relevant medication").build());
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withMedications(medications)));
 
         // Test relevant medication
         String relevantMedication = HasContraindicationToCT.MEDICATIONS_BEING_CONTRAINDICATIONS_TO_CT.iterator().next();
-        medications.add(medicationBuilder().name(relevantMedication).build());
+        medications.add(TestMedicationFactory.builder().name(relevantMedication).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withMedications(medications)));
-    }
-
-    @NotNull
-    private static ImmutableMedication.Builder medicationBuilder() {
-        return ImmutableMedication.builder().name(Strings.EMPTY).codeATC(Strings.EMPTY);
     }
 
     @Test

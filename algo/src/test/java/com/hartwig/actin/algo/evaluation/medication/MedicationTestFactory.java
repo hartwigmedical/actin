@@ -7,11 +7,9 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.medication.MedicationStatusInterpretation;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 final class MedicationTestFactory {
@@ -23,14 +21,10 @@ final class MedicationTestFactory {
     public static MedicationSelector alwaysActive() {
         return new MedicationSelector(medication -> MedicationStatusInterpretation.ACTIVE);
     }
+
     @NotNull
     public static MedicationSelector alwaysStopped() {
         return new MedicationSelector(medication -> MedicationStatusInterpretation.STOPPED);
-    }
-
-    @NotNull
-    public static ImmutableMedication.Builder builder() {
-        return ImmutableMedication.builder().name(Strings.EMPTY).codeATC(Strings.EMPTY);
     }
 
     @NotNull

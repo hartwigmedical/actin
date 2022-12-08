@@ -408,7 +408,7 @@ public class CurationModel {
                 .aberrationDescription(description)
                 .qtcfValue(config.qtcfValue())
                 .qtcfUnit(config.qtcfUnit())
-                    .build();
+                .build();
     }
 
     @Nullable
@@ -513,6 +513,10 @@ public class CurationModel {
         return ImmutableMedication.builder()
                 .name(Strings.EMPTY)
                 .codeATC(Strings.EMPTY)
+                .chemicalSubgroupAtc(Strings.EMPTY)
+                .pharmacologicalSubgroupAtc(Strings.EMPTY)
+                .therapeuticSubgroupAtc(Strings.EMPTY)
+                .anatomicalMainGroupAtc(Strings.EMPTY)
                 .dosageMin(config.dosageMin())
                 .dosageMax(config.dosageMax())
                 .dosageUnit(config.dosageUnit())

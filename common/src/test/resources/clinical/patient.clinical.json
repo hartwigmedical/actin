@@ -258,6 +258,10 @@
       "codeATC": "code ATC",
       "categories": [
       ],
+      "chemicalSubgroupAtc": "chemical",
+      "pharmacologicalSubgroupAtc": "pharmacological",
+      "therapeuticSubgroupAtc": "therapeutic",
+      "anatomicalMainGroupAtc": "anatomical",
       "status": "ON_HOLD",
       "administrationRoute": "oral",
       "dosageMin": 10,
@@ -282,6 +286,10 @@
       "codeATC": "M2",
       "categories": [
       ],
+      "chemicalSubgroupAtc": "chemical",
+      "pharmacologicalSubgroupAtc": "pharmacological",
+      "therapeuticSubgroupAtc": "therapeutic",
+      "anatomicalMainGroupAtc": "anatomical",
       "status": "UNKNOWN",
       "administrationRoute": null,
       "dosageMin": null,

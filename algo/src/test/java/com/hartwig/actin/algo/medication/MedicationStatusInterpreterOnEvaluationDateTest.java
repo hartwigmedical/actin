@@ -4,11 +4,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDate;
 
-import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.MedicationStatus;
+import com.hartwig.actin.clinical.datamodel.TestMedicationFactory;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
@@ -50,12 +49,6 @@ public class MedicationStatusInterpreterOnEvaluationDateTest {
 
     @NotNull
     private static Medication create(@Nullable MedicationStatus status, @Nullable LocalDate startDate, @Nullable LocalDate stopDate) {
-        return ImmutableMedication.builder()
-                .name(Strings.EMPTY)
-                .codeATC(Strings.EMPTY)
-                .status(status)
-                .startDate(startDate)
-                .stopDate(stopDate)
-                .build();
+        return TestMedicationFactory.builder().status(status).startDate(startDate).stopDate(stopDate).build();
     }
 }
