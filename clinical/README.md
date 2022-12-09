@@ -59,6 +59,7 @@ Every patient, uniquely defined by their patient ID, has a clinical record with 
 | who                        | 1                 | Assigned WHO status of patient (0 to 5)                                                                            |
 | hasActiveInfection         | 0                 | Patient has active infection?                                                                                      |
 | activeInfectionDescription | Lung abscess      | Description of the active infection, inc ase hasActiveInfection = 1                                                |
+| hasToxicitiesGrade2        | 1                 | Patient has toxicities >= grade 2?                                                                                 |
 | hasSigAberrationLatestECG  | 1                 | Patient had significant aberration on latest ECG?                                                                  |
 | ecgAberrationDescription   | Atrial arrhythmia | Description of ECG aberration, in case hasSigAberrationLatestECG = 1                                               |
 | qtcfValue                  | NULL              | Value of QTcF (QT corrected for heart rate using Fridericia's formula), in case it was described in ECG aberration |

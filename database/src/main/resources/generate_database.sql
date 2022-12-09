@@ -49,6 +49,7 @@ CREATE TABLE clinicalStatus
     who int,
     hasActiveInfection BOOLEAN,
     activeInfectionDescription varchar(50),
+    hasToxicitiesGrade2 BOOLEAN,
     hasSigAberrationLatestECG BOOLEAN,
     ecgAberrationDescription varchar(50),
     qtcfValue int,
