@@ -206,21 +206,25 @@ N blood transfusions
 
 N medications
 
-| Field               | Example Value | Details                                                                                                |
-|---------------------|---------------|--------------------------------------------------------------------------------------------------------|
-| name                | Ibuprofen     | Medication name                                                                                        |
-| codeATC             | 99A99A        | Medication ATC code                                                                                    |
-| categories          | NSAIDs        | Type of medication                                                                                     |
-| administrationRoute | Oral          | Type of administration route of medication                                                             |
-| status              | ON_HOLD       | Status of medication                                                                                   |
-| dosageMin           | 750           | Assigned minimal dosage                                                                                |
-| dosageMax           | 1000          | Assigned maximal dosage (dosageMin and dosageMax can be equal)                                         |
-| dosageUnit          | mg            | Dosage unit                                                                                            |
-| frequency           | 1             | Assigned frequency of dosage                                                                           |
-| frequencyUnit       | day           | Frequency unit                                                                                         |
-| ifNeeded            | 0             | Determines whether the medication should be taken according to dosage prescription or only "if needed" |
-| startDate           | 2021-07-01    | Assigned start date of medication                                                                      |
-| stopDate            | 2021-10-01    | Assigned stop date of medication (if applicable)                                                       |
+| Field                      | Example Value | Details                                                                                                |
+|----------------------------|---------------|--------------------------------------------------------------------------------------------------------|
+| name                       | Ibuprofen     | Medication name                                                                                        |
+| codeATC                    |               | Medication ATC code                                                                                    |
+| categories                 | NSAIDs        | Type of medication                                                                                     |
+| chemicalSubgroupATC        |               | Chemical subgroup belonging to ATC code                                                                |
+| pharmacologicalSubgroupATC |               | Pharmacological subgroup belonging to ATC code                                                         |
+| therapeuticSubgroupATC     |               | Therapeutic subgroup belonging to ATC code                                                             |
+| anatomicalMainGroupTC      |               | Anatomical main group belonging to ATC code                                                            |
+| administrationRoute        | Oral          | Type of administration route of medication                                                             |
+| status                     | ON_HOLD       | Status of medication                                                                                   |
+| dosageMin                  | 750           | Assigned minimal dosage                                                                                |
+| dosageMax                  | 1000          | Assigned maximal dosage (dosageMin and dosageMax can be equal)                                         |
+| dosageUnit                 | mg            | Dosage unit                                                                                            |
+| frequency                  | 1             | Assigned frequency of dosage                                                                           |
+| frequencyUnit              | day           | Frequency unit                                                                                         |
+| ifNeeded                   | 0             | Determines whether the medication should be taken according to dosage prescription or only "if needed" |
+| startDate                  | 2021-07-01    | Assigned start date of medication                                                                      |
+| stopDate                   | 2021-10-01    | Assigned stop date of medication (if applicable)                                                       |
 
 ### Version History and Download Links
  - Upcoming (first release) 
