@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class PriorTumorTreatmentDescendingDateComparator implements Comparator<PriorTumorTreatment> {
 
+    //TODO: Extend logics
     @Override
     public int compare(@NotNull PriorTumorTreatment priorTumorTreatment1, @NotNull PriorTumorTreatment priorTumorTreatment2) {
         int yearCompare = intCompare(priorTumorTreatment1.startYear(), priorTumorTreatment2.startYear());
