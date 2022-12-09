@@ -10,17 +10,26 @@ import org.jetbrains.annotations.Nullable;
 
 public class PriorTumorTreatmentDescendingDateComparator implements Comparator<PriorTumorTreatment> {
 
-    //TODO: Extend logics
     @Override
     public int compare(@NotNull PriorTumorTreatment priorTumorTreatment1, @NotNull PriorTumorTreatment priorTumorTreatment2) {
-        int yearCompare = intCompare(priorTumorTreatment1.startYear(), priorTumorTreatment2.startYear());
-        if (yearCompare != 0) {
-            return yearCompare;
+        int startYearCompare = intCompare(priorTumorTreatment1.startYear(), priorTumorTreatment2.startYear());
+        if (startYearCompare != 0) {
+            return startYearCompare;
         }
 
-        int monthCompare = intCompare(priorTumorTreatment1.startMonth(), priorTumorTreatment2.startMonth());
-        if (monthCompare != 0) {
-            return monthCompare;
+        int startMonthCompare = intCompare(priorTumorTreatment1.startMonth(), priorTumorTreatment2.startMonth());
+        if (startMonthCompare != 0) {
+            return startMonthCompare;
+        }
+
+        int stopYearCompare = intCompare(priorTumorTreatment1.stopYear(), priorTumorTreatment2.stopYear());
+        if (stopYearCompare != 0) {
+            return stopYearCompare;
+        }
+
+        int stopMonthCompare = intCompare(priorTumorTreatment1.stopMonth(), priorTumorTreatment2.stopMonth());
+        if (stopMonthCompare != 0) {
+            return stopMonthCompare;
         }
 
         return toName(priorTumorTreatment1).compareTo(toName(priorTumorTreatment2));
@@ -37,9 +46,9 @@ public class PriorTumorTreatmentDescendingDateComparator implements Comparator<P
         if (int1 == null && int2 == null) {
             return 0;
         } else if (int1 == null) {
-            return 1;
-        } else if (int2 == null) {
             return -1;
+        } else if (int2 == null) {
+            return 1;
         } else {
             return int1.compareTo(int2);
         }
