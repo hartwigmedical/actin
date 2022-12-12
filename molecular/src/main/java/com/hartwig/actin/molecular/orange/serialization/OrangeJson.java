@@ -362,10 +362,20 @@ public final class OrangeJson {
         @NotNull
         private static VirusInterpreterRecord toVirusInterpreterRecord(@NotNull JsonObject virusInterpreter) {
             Set<VirusInterpreterEntry> entries = Sets.newHashSet();
-            for (JsonElement element : array(virusInterpreter, "reportableViruses")) {
+
+            entries.addAll(toVirusInterpreterEntries(array(virusInterpreter, "reportableViruses")));
+            entries.addAll(toVirusInterpreterEntries(array(virusInterpreter, "unreportedViruses")));
+
+            return ImmutableVirusInterpreterRecord.builder().entries(entries).build();
+        }
+
+        @NotNull
+        private static Set<VirusInterpreterEntry> toVirusInterpreterEntries(@NotNull JsonArray virusEntryArray) {
+            Set<VirusInterpreterEntry> entries = Sets.newHashSet();
+            for (JsonElement element : virusEntryArray) {
                 JsonObject virus = element.getAsJsonObject();
                 entries.add(ImmutableVirusInterpreterEntry.builder()
-                        .reported(true)
+                        .reported(bool(virus, "reported"))
                         .name(string(virus, "name"))
                         .qcStatus(VirusQCStatus.valueOf(string(virus, "qcStatus")))
                         .interpretation(toVirusInterpretation(nullableString(virus, "interpretation")))
@@ -373,7 +383,7 @@ public final class OrangeJson {
                         .driverLikelihood(VirusDriverLikelihood.valueOf(string(virus, "virusDriverLikelihoodType")))
                         .build());
             }
-            return ImmutableVirusInterpreterRecord.builder().entries(entries).build();
+            return entries;
         }
 
         @Nullable

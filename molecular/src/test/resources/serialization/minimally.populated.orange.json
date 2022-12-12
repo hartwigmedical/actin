@@ -175,7 +175,7 @@
     ]
   },
   "virusInterpreter": {
-    "reportableViruses": [
+    "unreportedViruses": [
       {
         "taxid": 32604,
         "name": "Human betaherpesvirus 6B",

@@ -45,9 +45,9 @@ Evidence is attached to driver events and characteristics with the following dat
 | knownResistantTreatments       | Erlotinib     | A set of treatment names which are known to be resisted by the mutation for the specific tumor type                                      |
 | suspectResistantTreatments     | Erlotinib     | A set of treatment names for which there is some evidence that they may be resisted by the mutation for the specific tumor type          |
 
-A molecular record belongs to a `sampleId` which in turn belongs to a `patientId` and has the following datamodel 
+A molecular record belongs to a `sampleId` which in turn belongs to a `patientId` and has the following datamodel
 
-### 1 molecular base data 
+### 1 molecular base data
 
 | Field                | Example Value | Details                                                                                                                                   |
 |----------------------|---------------|-------------------------------------------------------------------------------------------------------------------------------------------|
@@ -196,83 +196,138 @@ In addition to the driver fields, the following data is captured per virus:
 | haplotype         | 1* HOM                                     | Haplotypes found for the gene                       |
 | haplotypeFunction | Function impact of corresponding haplotype |                                                     |
 
-
-
 ### Interpretation of ORANGE results
 
-THIS IS WORK IN PROGRESS
+The interpretation consists of two parts:
 
-The ORANGE interpreter application maps the ORANGE output to the molecular datamodel as follows:
+- Annotating all ORANGE mutations and various characteristics with additional gene annotation and evidence
+- Mapping all fields, annotated mutations and annotated characteristics from ORANGE to the ACTIN datamodel.
 
-| Field                | Mapping                               |
-|----------------------|---------------------------------------|
-| sampleId             | The ORANGE field `sampleId`           |
-| type                 | Hard-coded to `WGS`                   |
-| date                 | The ORANGE field `experimentDate`     |
-| containsTumorCells   | The PURPLE field `hasReliablePurity`  |
-| hasSufficientQuality | The PURPLE field `hasReliableQuality` |
+#### Annotation of ORANGE drivers
+
+Every variant, copy number and disruption is annotated with `geneRole`, `proteinEffect` and `isAssociatedWithDrugResistance`. Furthermore,
+every fusion is annotated with `proteinEffect` and `isAssociatedWithDrugResistance`.
+
+The annotation algo tries the best matching entry from SERVE's mapping of the `CKB` database as follows:
+
+- For variants the algo searches in the following order:
+    - Is there a hotspot match for the specific variant? If yes, use hotspot annotation.
+    - Is there a codon match for the specific variant's mutation type? If yes, use codon annotation.
+    - Is there an exon match for the specific variant's mutation type? If yes, use exon match.
+    - Else, fall back to gene matching.
+- For copy numbers the algo searches in the following order:
+    - Is there a copy number specific match? If yes, use copy number specific match
+    - Else, fall back to gene matching.
+- Homozygous disruptions are treated as losses for the sake of annotation.
+- For disruptions a gene match is performed.
+- For fusions, the annotation algo searches in the following order:
+    - Is there a known fusion with an exon range that matches the specific fusion? If yes, use fusion annotation
+    - Else, fall back to known fusion match ignoring specific exon ranges.
+
+Do note that gene matching only ever populates the `geneRole` field. Any gene-level annotation assumes that the `proteinEffect` is unknown.
+
+#### Evidence matching for ORANGE drivers and characteristics
+
+Every (potential) driver and characteristic is annotated with evidence from SERVE. In practice all evidence comes from `CKB` except for
+external trials which is populated by `ICLUSION`. The evidence annotations happens in the following steps:
+
+- Find all on-label and off-level applicable events that match with the driver / characteristic
+- Map all events to the ACTIN evidence datamodel.
+
+An event is considered on-label in case the applicable evidence tumor doid is equal to or a child of the patient's tumor doids, and none of
+the patient's tumor doids is blacklisted by the evidence.
+
+The following evidence from SERVE is collected per driver / characteristic:
+
+| Driver / Characteristic        | Evidence collected                                                                                                                                                                                                                        |
+|--------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| microsatellite status          | All signature evidence of type `MICROSATELLITE_UNSTABLE` in case tumor has MSI                                                                                                                                                            |
+| homologous repair status       | All signature evidence of type `HOMOLOUG_RECOMBINATION_DEFICIENT` in case tumor is HRD                                                                                                                                                    |
+| tumor mutational burden status | All signature evidence of type `HIGH_TUMOR_MUTATIONAL_BURDEN` in case tumor has high TMB                                                                                                                                                  |
+| tumor mutational load status   | All signature evidence of type `HIGH_TUMOR_MUTATIONAL_LOAD` in case tumor has high TML                                                                                                                                                    |
+| variant                        | In case the variant has `HIGH` driver likelihood: the union of all evidence matching for exact hotspot, matching on range and mutation type, and matching on gene level for events of type `ACTIVATION`, `INACTIVATION` or `ANY_MUTATION` |
+| copy number                    | In case of an amplification, all gene level events of type `AMPLIFICATION`. In case of a loss, all gene level events of type `DELETION`                                                                                                   |
+| homozygous disruption          | All gene level evidence of type `DELETION`                                                                                                                                                                                                | 
+| disruption                     | All gene level evidence of type `ANY_MUTATION` in case the disruption is reported                                                                                                                                                         | 
+| fusion                         | In case the fusion is reported, the union of promiscuous matches (gene level events of type `FUSION`, `ACTIVATION` or `ANY_MUTATION`) with fusion matches (exact fusion with fused exons in the actionable exon range)                    | 
+| virus                          | For any reported virus, evidence is matched for `HPV_POSITIVE` and `EBV_POSITIVE`                                                                                                                                                         | 
+
+The evidence from CKB is mapped to ACTIN evidence model as follows:
+
+| Type of CKB evidence                      | Mapping in ACTIN evidence datamodel |
+|-------------------------------------------|-------------------------------------|
+| On-Label, certain responsive, A level     | Approved treatment                  | 
+| On-label, uncertain responsive, A-level   | On-label experimental treatment     | 
+| On-label, certain responsive, B-level     | On-label experimental treatment     |
+| On-label, uncertain responsive, B-level   | Pre-clinical treatment              |
+| On-label, responsive, C-level or D-level  | Pre-clinical treatment              |
+| Off-label, responsive, A-level            | On-label experimental treatment     | 
+| Off-label, certain responsive, B-level    | Off-label experimental treatment    |
+| Off-label, uncertain responsive, B-level  | Pre-clinical treatment              |
+| Off-label, responsive, C-level or D-level | Pre-clinical treatment              |
+| Resistant, A-level                        | Known resistant treatment           |
+| Certain resistant, B-level                | Known resistant treatment           |
+| Uncertain resistant, B-level              | Suspect resistant treatment         |
+| Resistant, C-level or D-level             | Suspect resistant treatment         |
+
+Finally:
+
+- All responsive on-label evidence from `ICLUSION` is mapped to external trials in ACTIN datamodel
+- Responsive treatments are cleaned based on their level of importance (an approved treatment will never also be a pre-clinical treatment)
+- Resistant treatments are retained only in case of responsive evidence for the same treatment (approved or experimental).
+
+#### Mapping of ORANGE records to ACTIN molecular datamodel
+
+The ACTIN datamodel is created from an ORANGE record as follows:
+
+| Field                | Mapping                                        |
+|----------------------|------------------------------------------------|
+| sampleId             | The ORANGE field `sampleId`                    |
+| type                 | Hard-coded to `WGS`                            |
+| refGenomeVersion     | Extracted from ORANGE field `refGenomeVersion` | 
+| date                 | The ORANGE field `experimentDate`              |
+| evidenceSource       | Hard-coded to `CKB`                            |
+| externalTrialSource  | Hard-coded to `ICLUSION`                       |
+| containsTumorCells   | The PURPLE field `hasReliablePurity`           |
+| hasSufficientQuality | The PURPLE field `hasReliableQuality`          |
 
 The characteristics are extracted as follows:
 
-| Field                       | Mapping                                                         |
-|-----------------------------|-----------------------------------------------------------------|
-| purity                      | The PURPLE field `purity`                                       |
-| predictedTumorOrigin        | The CUPPA best cancer-type prediction along with the likelihood |
-| isMicrosatelliteUnstable    | The interpretation of PURPLE `microsatelliteStabilityStatus`    |
-| isHomologousRepairDeficient | The interpretation of CHORD `hrStatus`                          |
-| tumorMutationalBurden       | The PURPLE field `tumorMutationalBurden`                        |
-| tumorMutationalLoad         | The PURPLE field `tumorMutationalLoad`                          |
+| Field                        | Mapping                                                         |
+|------------------------------|-----------------------------------------------------------------|
+| purity                       | The PURPLE field `purity`                                       |
+| ploidy                       | The PURPLE field `ploidy`                                       | 
+| predictedTumorOrigin         | The CUPPA best cancer-type prediction along with the likelihood |
+| isMicrosatelliteUnstable     | The interpretation of PURPLE `microsatelliteStabilityStatus`    |
+| isHomologousRepairDeficient  | The interpretation of CHORD `hrStatus`                          |
+| tumorMutationalBurden        | The PURPLE field `tumorMutationalBurden`                        |
+| hasHighTumorMutationalBurden | The interpretation of PURPLE `tumorMutationalBurdenStatus`      |
+| tumorMutationalLoad          | The PURPLE field `tumorMutationalLoad`                          |
+| hasHighTumorMutationalLoad   | The interpretation of PURPLE `tumorMutationalLoadStatus`        |
 
 The drivers are extracted from the following algorithms:
 
-| Driver Type           | Algo             | Details                                                                          |
-|-----------------------|------------------|----------------------------------------------------------------------------------|
-| variants              | PURPLE           | Union of reported somatic variants and reported germline variants.               |
-| amplifications        | PURPLE           | Union of reported somatic full gains and reported somatic partial gains.         |
-| losses                | PURPLE           | Union of reported somatic full losses and reported somatic partial losses.       |
-| homozygousDisruptions | LINX             | All reported homozygous disruptions.                                             |
-| disruptions           | LINX             | All reported somatic gene disruptions.                                           |
-| fusions               | LINX             | All reported fusions with driver type mapped to either `KNOWN` or `PROMISCUOUS`. |
-| viruses               | VirusInterpreter | All reported viruses.                                                            |
+| Driver Type           | Algo             | Details                                                                                                                            |
+|-----------------------|------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| variants              | PURPLE           | Union of all somatic variants affecting a known gene and either reported or having a coding effect, and reported germline variants |
+| copyNumbers           | PURPLE           | All somatic amplifications and losses affecting a known gene                                                                       |
+| homozygousDisruptions | LINX             | All somatic homozygous disruptions affecting a known gene                                                                          |
+| disruptions           | LINX             | All somatic gene disruptions affecting a known gene that is not also lost                                                          |
+| fusions               | LINX             | All fusions that have a known gene either as 5' or 3' partner                                                                      |
+| viruses               | VirusInterpreter | All viruses.                                                                                                                       |
 
 Note that all floating point numbers are rounded to 3 digits when ingesting data into ACTIN:
 
 - variants: `variantCopyNumber`, `totalCopyNumber`, `clonalLikelihood`
 - disruptions: `junctionCopyNumber`, `undisruptedCopyNumber`
 
+The immuno entries are extracted from LILAC as follows:
+
+- `isReliable` is set to true in case the LILAC QC value equals `PASS`
+- For each HLA allele, the field `hasSomaticVariants` is set to true in case any of `somaticMissense`, `somaticNonsenseOrFrameshift`
+  , `somaticSplice` or `somaticInframeIndel` is non-zero
+
 The pharmaco entries are extracted from PEACH.
-
-The wild-type genes are extracted from the ORANGE list of wild-type genes.
-In case the ORANGE results were not reliable, no wild-type genes will be set.
-
-The evidence is extracted from PROTECT in the following steps:
-
-1. Evidence is filtered for applicability based on ACTIN's internal applicability model. This applicability model removes evidence
-   from any source that is never considered to be applicable.
-2. Reported evidence is used exclusively for the inputs to the steps defined below
-
-For ACTIN trial evidence, the following mapping is performed based on the assumption that PROTECT has been run against a SERVE database
-containing all ACTIN molecular criteria:
-
-- `trialAcronym` and `cohortId` are extracted from the `treatment` field in PROTECT
-- `isUsedAsInclusion` is set to true in case the evidence from PROTECT is responsive
-- `type`, `gene` and `mutation` are extracted from the PROTECT `ACTIN` source data
-
-For external trial evidence, treatments are mapped to trials from the `ICLUSION` source in PROTECT
-
-For treatment evidence, the following categorization is done based on evidence from the `CKB` source in PROTECT:
-
-| Field                        | Filter                                                                                                                                                                                 |
-|------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| approvedEvidence             | A-level on-label non-predicted responsive evidence.                                                                                                                                    |
-| onLabelExperimentalEvidence  | Union of A-level that is either predicted or off-label responsive with B-level on-label non-predicted responsive evidence.                                                             |
-| offLabelExperimentalEvidence | B-level off-label non-predicted responsive evidence.                                                                                                                                   |
-| preClinicalEvidence          | All responsive evidence that is neither approved nor experimental.                                                                                                                     |
-| knownResistanceEvidence      | A or B-level non-predicted resistance evidence for a treatment for which non-preclinical evidence exists with equal or lower evidence level compared to the resistance evidence level. |
-| suspectResistanceEvidence    | Any other resistance evidence for a treatment with evidence with equal or lower evidence level compared to the resistance evidence level.                                              |
-
-Note that in case of no tumor cells, both evidence and drivers are wiped empty. Any driver (and related evidence) is considered to be
-unreliable in such a case.
 
 ### Version History and Download Links
 

@@ -10,7 +10,6 @@ public final class RangeMatching {
     private RangeMatching() {
     }
 
-    @NotNull
     public static boolean isMatch(@NotNull RangeAnnotation rangeAnnotation, @NotNull PurpleVariant variant) {
         boolean geneMatch = rangeAnnotation.gene().equals(variant.gene());
         boolean chromosomeMatch = rangeAnnotation.chromosome().equals(variant.chromosome());
