@@ -145,11 +145,8 @@ SELECT * FROM (
 	SELECT variant.sampleId, treatment, variantEvidence.type, event, driverLikelihood, isReportable AS isReportableDriver
 	FROM variantEvidence INNER JOIN variant ON variantEvidence.variantId = variant.Id
 		UNION
-	SELECT amplification.sampleId, treatment, type, event, driverLikelihood, isReportable AS isReportableDriver
-	FROM amplificationEvidence INNER JOIN amplification ON amplificationEvidence.amplificationId = amplification.Id
-		UNION
-	SELECT loss.sampleId, treatment, type, event, driverLikelihood, isReportable AS isReportableDriver
-	FROM lossEvidence INNER JOIN loss ON lossEvidence.lossId = loss.Id
+	SELECT copyNumber.sampleId, treatment, copyNumberEvidence.type, event, driverLikelihood, isReportable AS isReportableDriver
+	FROM copyNumberEvidence INNER JOIN copyNumber ON copyNumberEvidence.copyNumberId = copyNumber.Id
 		UNION
 	SELECT homozygousDisruption.sampleId, treatment, type, event, driverLikelihood, isReportable AS isReportableDriver
 	FROM homozygousDisruptionEvidence INNER JOIN homozygousDisruption ON homozygousDisruptionEvidence.homozygousDisruptionId = homozygousDisruption.Id
