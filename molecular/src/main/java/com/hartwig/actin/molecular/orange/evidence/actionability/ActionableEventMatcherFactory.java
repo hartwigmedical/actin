@@ -5,7 +5,6 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.molecular.orange.evidence.curation.ApplicabilityFiltering;
 import com.hartwig.actin.molecular.orange.evidence.curation.ExternalTrialMapper;
@@ -28,6 +27,7 @@ import com.hartwig.serve.datamodel.range.ActionableRange;
 import com.hartwig.serve.datamodel.range.ImmutableActionableRange;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ActionableEventMatcherFactory {
 
@@ -37,15 +37,15 @@ public class ActionableEventMatcherFactory {
     @NotNull
     private final ExternalTrialMapper externalTrialMapper;
     @NotNull
-    private final ClinicalRecord clinical;
-    @NotNull
     private final DoidModel doidModel;
+    @Nullable
+    private final Set<String> tumorDoids;
 
-    public ActionableEventMatcherFactory(@NotNull final ExternalTrialMapper externalTrialMapper, @NotNull final ClinicalRecord clinical,
-            @NotNull final DoidModel doidModel) {
+    public ActionableEventMatcherFactory(@NotNull final ExternalTrialMapper externalTrialMapper, @NotNull final DoidModel doidModel,
+            @Nullable final Set<String> tumorDoids) {
         this.externalTrialMapper = externalTrialMapper;
-        this.clinical = clinical;
         this.doidModel = doidModel;
+        this.tumorDoids = tumorDoids;
     }
 
     @NotNull
@@ -54,8 +54,7 @@ public class ActionableEventMatcherFactory {
 
         ActionableEvents curated = curateExternalTrials(filtered);
 
-        PersonalizedActionabilityFactory personalizedActionabilityFactory =
-                PersonalizedActionabilityFactory.fromClinicalRecord(clinical, doidModel);
+        PersonalizedActionabilityFactory personalizedActionabilityFactory = PersonalizedActionabilityFactory.create(doidModel, tumorDoids);
 
         return fromActionableEvents(personalizedActionabilityFactory, curated);
     }
@@ -77,7 +76,8 @@ public class ActionableEventMatcherFactory {
                 variantEvidence,
                 amplificationEvidence,
                 lossEvidence,
-                homozygousDisruptionEvidence, breakendEvidence,
+                homozygousDisruptionEvidence,
+                breakendEvidence,
                 fusionEvidence,
                 virusEvidence);
     }

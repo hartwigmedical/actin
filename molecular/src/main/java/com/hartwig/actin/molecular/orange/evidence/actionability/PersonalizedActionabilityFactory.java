@@ -5,7 +5,6 @@ import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.serve.datamodel.ActionableEvent;
 import com.hartwig.serve.datamodel.CancerType;
@@ -21,8 +20,8 @@ class PersonalizedActionabilityFactory {
     private final Set<String> applicableDoids;
 
     @NotNull
-    public static PersonalizedActionabilityFactory fromClinicalRecord(@NotNull ClinicalRecord clinical, @NotNull DoidModel doidModel) {
-        return new PersonalizedActionabilityFactory(doidModel, expandDoids(doidModel, clinical.tumor().doids()));
+    public static PersonalizedActionabilityFactory create(@NotNull DoidModel doidModel, @Nullable Set<String> tumorDoids) {
+        return new PersonalizedActionabilityFactory(doidModel, expandDoids(doidModel, tumorDoids));
     }
 
     @VisibleForTesting
