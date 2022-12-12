@@ -34,20 +34,23 @@ The following assumptions are made about the inputs:
   of trials in case different acronyms are used in different sources. An example can be
   found [here](https://github.com/hartwigmedical/actin/blob/master/molecular/src/test/resources/curation/external_trial_mapping.tsv).
 
-## Molecular Datamodel
+## ACTIN Molecular Datamodel
+
 ### Evidence
 
 Evidence is assigned to driver events and characteristics using the following datamodel:
 
-| Field                          | Example Value | Details                                                                                                                                  |
-|--------------------------------|---------------|------------------------------------------------------------------------------------------------------------------------------------------|
-| approvedTreatments             | Pembrolizumab | A set of treatment names which are approved based on tumor type and mutation                                                             |
-| externalEligibleTrials         | Trial A       | A set of trials for which patient may be eligible based on tumor type and mutation                                                       |
-| onLabelExperimentalTreatments  | Olaparib      | A set of treatment names which are considered on-label experimental based on tumor type and mutation                                     |
-| offLabelExperimentalTreatments | Olaparib      | A set of treatment names which are off-label experimental for specific tumor type and mutation                                           |
-| preClinicalTreatments          | New Drug A    | A set of treatment names which have not yet been introduced experimentally yet have some supportive evidence for mutation and tumor type |
-| knownResistantTreatments       | Erlotinib     | A set of treatment names which are known to be resisted by the mutation for the specific tumor type                                      |
-| suspectResistantTreatments     | Erlotinib     | A set of treatment names for which there is some evidence that they may be resisted by the mutation for the specific tumor type          |
+| Field                          | Example Value | Details                                                                                                                         |
+|--------------------------------|---------------|---------------------------------------------------------------------------------------------------------------------------------|
+| approvedTreatments             | Pembrolizumab | A set of treatment names which are approved based on tumor type and mutation                                                    |
+| externalEligibleTrials         | Trial A       | A set of trials for which patient may be eligible based on tumor type and mutation                                              |
+| onLabelExperimentalTreatments  | Olaparib      | A set of treatment names which are considered on-label experimental based on tumor type and mutation                            |
+| offLabelExperimentalTreatments | Olaparib      | A set of treatment names which are considered off-label experimental for specific tumor type and mutation                       |
+| preClinicalTreatments          | New Drug A    | A set of treatment names which are pre-clinical and have some supportive evidence for mutation and tumor type                   |
+| knownResistantTreatments       | Erlotinib     | A set of treatment names which are known to be resisted by the mutation for the specific tumor type                             |
+| suspectResistantTreatments     | Erlotinib     | A set of treatment names for which there is some evidence that they may be resisted by the mutation for the specific tumor type |
+
+### Molecular data
 
 Overall, a molecular record belongs to a `sampleId` (which belongs to a `patientId`) and has the following datamodel:
 
@@ -57,7 +60,7 @@ Overall, a molecular record belongs to a `sampleId` (which belongs to a `patient
 |----------------------|---------------|-------------------------------------------------------------------------------------------------------------------------------------------|
 | type                 | WGS           | The type of molecular experiment done, either `WGS` or `PANEL`                                                                            |
 | refGenomeVersion     | V37           | The version of the reference genome used throughout the analysis, either `V37` or `V38`                                                   |
-| date                 | 2022-01-14    | The date on which the molecular results were obtained (optional field)                                                                    |
+| date                 | 2022-01-14    | The date on which the molecular results were obtained                                                                                     |
 | evidenceSource       | CKB           | The name of the provider of the evidence. Currently always `CKB`                                                                          |
 | externalTrialSource  | ICLUSION      | The name of the provider of external trials (which are trials that may not be known in ACTIN trial database). Currently always `ICLUSION` |
 | containsTumorCells   | true          | If false, implies that the tumor cell percentage in the biopsy was lower than the lowest detectable threshold                             |
@@ -65,21 +68,21 @@ Overall, a molecular record belongs to a `sampleId` (which belongs to a `patient
 
 ### 1 molecular characteristics
 
-| Field                         | Example Value  | Details                                                                                                                |
-|-------------------------------|----------------|------------------------------------------------------------------------------------------------------------------------|
-| purity                        | 78%            | The percentage of cells in the sequenced biopsy that originated from the tumor                                         |
-| ploidy                        | 3.1            | The average number of copies of any chromosome in the tumor                                                            |
-| predictedTumorType            | Melanoma (87%) | The tumor type of origin predicted based on the molecular data along with a likelihood                                 |
-| isMicrosatelliteUnstable      | false          | If true, sample is considered microsatellite unstable. Can be left blank in case experiment does not determine MSI     |
-| microsatelliteEvidence        | See evidence   | The evidence determined for the microsatellite status of specific tumor sample                                         |                                         |
-| isHomologousRepairDeficient   | false          | If true, sample is considered homologous repair deficient. Can be left blank in case experiment does not determine HRD |
-| homologousRepairEvidence      | See evidence   | The evidence determined for the homologous repair status of specific tumor sample                                      |                                      |
-| tumorMutationalBurden         | 14.2           | Number of mutations in the genome per Mb. Can be left blank in case experiment does not determine TMB                  |
-| hasHighTumorMutationalBurden  | true           | Indicates whether the `tumorMutationalBurden` is considered high or not                                                |
-| tumorMutationalBurdenEvidence | See evidence   | The evidence determined for the tumor mutational burden status of specific tumor sample.                               |
-| tumorMutationalLoad           | 115            | Number of missense mutations across the genome. Can be left blank in case experiment does not determine TML            |
-| hasHighTumorMutationalLoad    | false          | Indicates whether the `tumorMutationalLoad` is considered high or not                                                  |
-| tumorMutationalLoadEvidence   | See evidence   | The evidence determined for the tumor mutational load of specific tumor sample                                         |
+| Field                         | Example Value  | Details                                                                                                              |
+|-------------------------------|----------------|----------------------------------------------------------------------------------------------------------------------|
+| purity                        | 78%            | The percentage of cells in the sequenced biopsy that originated from the tumor                                       |
+| ploidy                        | 3.1            | The average number of copies of any chromosome in the tumor                                                          |
+| predictedTumorType            | Melanoma (87%) | The tumor type of origin predicted based on the molecular data along with a likelihood                               |
+| isMicrosatelliteUnstable      | false          | If true, sample is considered microsatellite unstable. Should be empty in case experiment does not determine MSI     |
+| microsatelliteEvidence        | See evidence   | The evidence determined for the microsatellite status of specific tumor sample                                       |                                         |
+| isHomologousRepairDeficient   | false          | If true, sample is considered homologous repair deficient. Should be empty in case experiment does not determine HRD |
+| homologousRepairEvidence      | See evidence   | The evidence determined for the homologous repair status of specific tumor sample                                    |                                      |
+| tumorMutationalBurden         | 14.2           | Number of mutations in the genome per Mb. Should be empty in case experiment does not determine TMB                  |
+| hasHighTumorMutationalBurden  | true           | Indicates whether the `tumorMutationalBurden` is considered high or not                                              |
+| tumorMutationalBurdenEvidence | See evidence   | The evidence determined for the tumor mutational burden status of specific tumor sample.                             |
+| tumorMutationalLoad           | 115            | Number of missense mutations across the genome. Should be empty in case experiment does not determine TML            |
+| hasHighTumorMutationalLoad    | false          | Indicates whether the `tumorMutationalLoad` is considered high or not                                                |
+| tumorMutationalLoadEvidence   | See evidence   | The evidence determined for the tumor mutational load of specific tumor sample                                       |
 
 ### N driver events
 
@@ -200,18 +203,19 @@ In addition to the general driver fields, the following data is captured per vir
 | haplotype         | 1* HOM        | Haplotypes found for the gene                       |
 | haplotypeFunction |               | Function impact of corresponding haplotype          |
 
-## Interpretation 
+## Interpretation to ACTIN molecular datamodel
 
-### ORANGE 
+### ORANGE
 
-The interpretation consists of two parts:
+The interpretation of ORANGE to the ACTIN datamodel consists of two parts:
 
-1. Annotating all mutations and various characteristics in ORANGE with additional gene annotation and evidence 
+1. Annotating all mutations and various characteristics in ORANGE with additional gene and evidence annotation
 2. Mapping all fields, annotated mutations and annotated characteristics to the ACTIN datamodel.
 
 #### 1. Annotation of mutations and characteristics in ORANGE
 
 #### Additional gene annotation
+
 Every variant, copy number and disruption is annotated with `geneRole`, `proteinEffect` and `isAssociatedWithDrugResistance`. Furthermore,
 every fusion is annotated with `proteinEffect` and `isAssociatedWithDrugResistance`.
 
@@ -233,18 +237,18 @@ The annotation algo tries the best matching entry from SERVE's mapping of the `C
 
 Do note that gene matching only ever populates the `geneRole` field. Any gene-level annotation assumes that the `proteinEffect` is unknown.
 
-#### Evidence matching 
+#### Evidence annotation
 
 Every (potential) driver and characteristic is annotated with evidence from SERVE. In practice all evidence comes from `CKB` except for
 external trials which is populated by `ICLUSION`. The evidence annotations happens in the following steps:
 
-- Find all on-label and off-level applicable events that match with the driver / characteristic
-- Map all events to the ACTIN evidence datamodel.
+- Find all on-label and off-label applicable events that match with the driver / characteristic
+- Map all events to the ACTIN evidence datamodel (described above).
 
-An event is considered on-label in case the applicable evidence tumor doid is equal to or a child of the patient's tumor doids, and none of
-the patient's tumor doids is blacklisted by the evidence.
+An event is considered on-label in case the applicable evidence tumor DOID is equal to or a child of the patient's tumor doids, and none of
+the patient's tumor DOIDs is blacklisted by the evidence.
 
-The following evidence from SERVE is collected per driver / characteristic:
+Evidence from SERVE is collected per driver / characteristic according to below:
 
 | Driver / Characteristic        | Evidence collected                                                                                                                                                                                                                        |
 |--------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -254,7 +258,7 @@ The following evidence from SERVE is collected per driver / characteristic:
 | tumor mutational load status   | All signature evidence of type `HIGH_TUMOR_MUTATIONAL_LOAD` in case tumor has high TML                                                                                                                                                    |
 | variant                        | In case the variant has `HIGH` driver likelihood: the union of all evidence matching for exact hotspot, matching on range and mutation type, and matching on gene level for events of type `ACTIVATION`, `INACTIVATION` or `ANY_MUTATION` |
 | copy number                    | In case of an amplification, all gene level events of type `AMPLIFICATION`. In case of a loss, all gene level events of type `DELETION`                                                                                                   |
-| homozygous disruption          | All gene level evidence of type `DELETION`                                                                                                                                                                                                | 
+| homozygous disruption          | All gene level evidence of type `DELETION`, `INACTIVATION` or `ANY_MUTATION`                                                                                                                                                              | 
 | disruption                     | All gene level evidence of type `ANY_MUTATION` in case the disruption is reported                                                                                                                                                         | 
 | fusion                         | In case the fusion is reported, the union of promiscuous matches (gene level events of type `FUSION`, `ACTIVATION` or `ANY_MUTATION`) with fusion matches (exact fusion with fused exons in the actionable exon range)                    | 
 | virus                          | For any reported virus, evidence is matched for `HPV_POSITIVE` and `EBV_POSITIVE`                                                                                                                                                         | 
@@ -280,12 +284,15 @@ The evidence from CKB is mapped to ACTIN evidence model as follows:
 Finally:
 
 - All responsive on-label evidence from `ICLUSION` is mapped to external trials in ACTIN datamodel
-- Responsive treatments are cleaned based on their level of importance (an approved treatment will never also be a pre-clinical treatment)
-- Resistant treatments are retained only in case of responsive evidence for the same treatment (approved or experimental).
+- Responsive treatments are cleaned according to their evidence level (such that an approved treatment cannot also be a pre-clinical
+  treatment)
+- Resistant treatments are retained only in case responsive evidence for the same treatment is present as well (either approved or experimental).
 
-#### 2. Mapping of ORANGE records to ACTIN molecular datamodel
+#### 2. Mapping of all ORANGE fields to ACTIN molecular datamodel
 
-The ACTIN datamodel is created from an ORANGE record as follows:
+The ACTIN datamodel is created from the ORANGE data according to below. 
+
+Molecular base data:
 
 | Field                | Mapping                                        |
 |----------------------|------------------------------------------------|
@@ -298,7 +305,7 @@ The ACTIN datamodel is created from an ORANGE record as follows:
 | containsTumorCells   | The PURPLE field `hasReliablePurity`           |
 | hasSufficientQuality | The PURPLE field `hasReliableQuality`          |
 
-The characteristics are extracted as follows:
+Molecular characteristics:
 
 | Field                        | Mapping                                                         |
 |------------------------------|-----------------------------------------------------------------|
@@ -312,7 +319,7 @@ The characteristics are extracted as follows:
 | tumorMutationalLoad          | The PURPLE field `tumorMutationalLoad`                          |
 | hasHighTumorMutationalLoad   | The interpretation of PURPLE `tumorMutationalLoadStatus`        |
 
-The drivers are extracted from the following algorithms:
+Driver events:
 
 | Driver Type           | Algo             | Details                                                                                                                            |
 |-----------------------|------------------|------------------------------------------------------------------------------------------------------------------------------------|
@@ -328,13 +335,13 @@ Note that all floating point numbers are rounded to 3 digits when ingesting data
 - variants: `variantCopyNumber`, `totalCopyNumber`, `clonalLikelihood`
 - disruptions: `junctionCopyNumber`, `undisruptedCopyNumber`
 
-The immuno entries are extracted from LILAC as follows:
+The HLA entries are extracted from LILAC as follows:
 
 - `isReliable` is set to true in case the LILAC QC value equals `PASS`
 - For each HLA allele, the field `hasSomaticVariants` is set to true in case any of `somaticMissense`, `somaticNonsenseOrFrameshift`
   , `somaticSplice` or `somaticInframeIndel` is non-zero
 
-The pharmaco entries are extracted from PEACH.
+The pharmacogenomics entries are extracted from PEACH.
 
 ### Version History and Download Links
 
