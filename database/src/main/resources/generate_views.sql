@@ -101,11 +101,7 @@ SELECT * FROM (
     WHERE isReportable
 		UNION
 	SELECT sampleId, event, driverLikelihood
-    FROM amplification
-    WHERE isReportable
-		UNION
-	SELECT sampleId, event, driverLikelihood
-    FROM loss
+    FROM copyNumber
     WHERE isReportable
 		UNION
 	SELECT sampleId, event, driverLikelihood
