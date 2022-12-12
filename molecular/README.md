@@ -1,8 +1,9 @@
 ## ACTIN-Molecular
 
-ACTIN-Molecular interprets molecular results and maps to the datamodel described below. This molecular model is written to a per-sample json
-file. Currently, ACTIN-Molecular only supports interpretation of [ORANGE](https://github.com/hartwigmedical/hmftools/tree/master/orange)
-results as produced by [HMF Platinum](https://github.com/hartwigmedical/platinum)
+ACTIN-Molecular interprets molecular results and maps these results to the datamodel described below. In addition, the data is written to a
+per-sample JSON file. Currently, ACTIN-Molecular only supports interpretation
+of [ORANGE](https://github.com/hartwigmedical/hmftools/tree/master/orange) molecular
+results as produced by [HMF Platinum](https://github.com/hartwigmedical/platinum).
 
 The ORANGE interpreter application requires Java 11+ and can be run as follows:
 
@@ -20,20 +21,23 @@ An optional `log_debug` parameter can be provided to generate extra logging.
 
 The following assumptions are made about the inputs:
 
-- The ORANGE json is the json output from [ORANGE](https://github.com/hartwigmedical/hmftools/tree/master/orange)
+- The ORANGE JSON is the JSON output from [ORANGE](https://github.com/hartwigmedical/hmftools/tree/master/orange).
 - The SERVE directory is the output of [SERVE](https://github.com/hartwigmedical/serve/tree/master/algo) and is used for annotation and
-  interpretation of the genomic findings from ORANGE.
-- The known genes is a TSV with gene and geneRole columns and is a resource that will be moved into SERVE in the future. An example can be
-  found [here](https://github.com/hartwigmedical/actin/blob/master/common/src/test/resources/known_genes/example_known_genes.tsv)
-- The clinical json is the output of [ACTIN Clinical](https://github.com/hartwigmedical/actin/tree/master/clinical) and is used to extract
-  the primary tumor doids from, in order to determine whether evidence is on-label or off-label.
-- The external trial mapping enables mapping of external trial acronyms to those used within ACTIN, in case there is duplication of
-  trials across both sources. An example can be
-  found [here](https://github.com/hartwigmedical/actin/blob/master/molecular/src/test/resources/curation/external_trial_mapping.tsv)
+  interpretation of the genomic findings.
+- The known genes is a TSV file with gene and geneRole columns. An example can be
+  found [here](https://github.com/hartwigmedical/actin/blob/master/common/src/test/resources/known_genes/example_known_genes.tsv).
+    - This resource file will be moved into SERVE in the future.
+- The clinical JSON is the output of [ACTIN Clinical](https://github.com/hartwigmedical/actin/tree/master/clinical). This file is used to
+  extract
+  the primary tumor DOIDs, which are used to determine whether evidence is on-label or off-label.
+- The external trial mapping TSV file enables mapping of external trial acronyms to those used in ACTIN trial database, to avoid duplication
+  of trials in case different acronyms are used in different sources. An example can be
+  found [here](https://github.com/hartwigmedical/actin/blob/master/molecular/src/test/resources/curation/external_trial_mapping.tsv).
 
 ## Molecular Datamodel
+### Evidence
 
-Evidence is attached to driver events and characteristics with the following datamodel:
+Evidence is assigned to driver events and characteristics using the following datamodel:
 
 | Field                          | Example Value | Details                                                                                                                                  |
 |--------------------------------|---------------|------------------------------------------------------------------------------------------------------------------------------------------|
@@ -45,7 +49,7 @@ Evidence is attached to driver events and characteristics with the following dat
 | knownResistantTreatments       | Erlotinib     | A set of treatment names which are known to be resisted by the mutation for the specific tumor type                                      |
 | suspectResistantTreatments     | Erlotinib     | A set of treatment names for which there is some evidence that they may be resisted by the mutation for the specific tumor type          |
 
-A molecular record belongs to a `sampleId` which in turn belongs to a `patientId` and has the following datamodel
+Overall, a molecular record belongs to a `sampleId` (which belongs to a `patientId`) and has the following datamodel:
 
 ### 1 molecular base data
 
@@ -77,35 +81,35 @@ A molecular record belongs to a `sampleId` which in turn belongs to a `patientId
 | hasHighTumorMutationalLoad    | false          | Indicates whether the `tumorMutationalLoad` is considered high or not                                                  |
 | tumorMutationalLoadEvidence   | See evidence   | The evidence determined for the tumor mutational load of specific tumor sample                                         |
 
-### N drivers
+### N driver events
 
-Every molecular driver has the following fields:
+Every potential driver event has the following fields ('general driver fields'):
 
-| Field            | Example Value | Details                                                                                                     |
-|------------------|---------------|-------------------------------------------------------------------------------------------------------------|
-| isReportable     | true          | Indicates whether this driver is considered relevant enough to be explicitly mentioned in a report          |
-| event            | BRAF V600E    | A human readable string summarizing the driver event                                                        |
-| driverLikelihood | HIGH          | An optional field that indicates the likelihood that the event is a driver (either `HIGH`, `MEDIUM`, `LOW`) |
-| evidence         | See evidence  | The evidence determined for this driver in the specific tumor sample                                        |
+| Field            | Example Value | Details                                                                                                              |
+|------------------|---------------|----------------------------------------------------------------------------------------------------------------------|
+| isReportable     | true          | Indicates whether this driver event is considered relevant enough to be explicitly mentioned in a report             |
+| event            | BRAF V600E    | A human readable string summarizing the driver event                                                                 |
+| driverLikelihood | HIGH          | An optional field that indicates the likelihood that the event is a driver (either `HIGH`, `MEDIUM`, `LOW` or empty) |
+| evidence         | See evidence  | The evidence determined for this driver in the specific tumor sample                                                 |
 
-Furthermore, every driver on a specific gene (variant, copy number, disruption) has the following fields:
+Furthermore, every gene driver event is assigned the following fields ('gene driver fields'):
 
-| Field                          | Example Value    | Details                                                                                                                                                                                                               |
-|--------------------------------|------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| gene                           | BRAF             | The name of the gene                                                                                                                                                                                                  |
-| geneRole                       | ONCO             | The role of the gene in cancer (either `BOTH`, `ONCO`, `TSG`, or `UNKNOWN`                                                                                                                                            |
-| proteinEffect                  | GAIN_OF_FUNCTION | The effect the specific driver has on the gene (one of `UNKNOWN`, `AMBIGIOUS`, `NO_EFFECT`, `NO_EFFECT_PREDICTED`, `LOSS_OF_FUNCTION`, `LOSS_OF_FUNCTION_PREDICTED`, `GAIN_OF_FUNCTION`, `GAIN_OF_FUNCTION_PREDICTED` |
-| isAssociatedWithDrugResistance | true             | An optional boolean indicating the specific driver is associated with some form of drug resistance                                                                                                                    |
+| Field                          | Example Value    | Details                                                                                                                                                                                                                |
+|--------------------------------|------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| gene                           | BRAF             | The name of the gene                                                                                                                                                                                                   |
+| geneRole                       | ONCO             | The role of the gene in cancer (either `BOTH`, `ONCO`, `TSG`, or `UNKNOWN`)                                                                                                                                            |
+| proteinEffect                  | GAIN_OF_FUNCTION | The effect the specific driver has on the gene (one of `UNKNOWN`, `AMBIGIOUS`, `NO_EFFECT`, `NO_EFFECT_PREDICTED`, `LOSS_OF_FUNCTION`, `LOSS_OF_FUNCTION_PREDICTED`, `GAIN_OF_FUNCTION`, `GAIN_OF_FUNCTION_PREDICTED`) |
+| isAssociatedWithDrugResistance | true             | An optional boolean indicating the specific driver event is associated with some form of drug resistance                                                                                                               |
 
-#### N variants
+### N variants
 
-In addition to the driver and gene fields, the following data is captured per variant:
+In addition to the driver fields, the following data is captured for all detected variants:
 
 | Field             | Example Value | Details                                                                                             |
 |-------------------|---------------|-----------------------------------------------------------------------------------------------------|
 | type              | SNV           | The type of variant (one of `SNV`, `MNV`, `INSERT`, `DELETE`)                                       |
 | variantCopyNumber | 3.8           | The number of copies of this variant in the tumor                                                   |
-| totalCopyNumber   | 4.0           | The total number of copies in the tumor on the mutated position                                     |
+| totalCopyNumber   | 4.0           | The total number of copies in the tumor on the variant genomic position                             |
 | isBiallelic       | false         | Indicates whether all alleles in the tumor are affected by this variant or not                      |
 | isHotspot         | true          | Indicates whether this specific variant is a known (pathogenic) hotspot                             | 
 | clonalLikelihood  | 100%          | Likelihood that the variant exists in every tumor cell (is clonal)                                  |
@@ -128,7 +132,7 @@ The following data is captured as impact of a variant on a specific transcript:
 
 #### N copy numbers
 
-In addition to the driver and gene fields, the following data is captured per copy number:
+In addition to the driver fields, the following data is captured per copy number:
 
 | Field     | Example Value | Details                                                                        |
 |-----------|---------------|--------------------------------------------------------------------------------|
@@ -138,11 +142,11 @@ In addition to the driver and gene fields, the following data is captured per co
 
 #### N homozygous disruptions
 
-For homozygous disruptions, no additional data is captured beyond the driver and gene fields.
+For homozygous disruptions, no additional data is captured beyond the driver fields.
 
 #### N disruptions
 
-In addition to the driver and gene fields, the following data is captured per disruption:
+In addition to the driver fields, the following data is captured per disruption:
 
 | Field                 | Example Value | Details                                                                                                          |
 |-----------------------|---------------|------------------------------------------------------------------------------------------------------------------|
@@ -155,7 +159,7 @@ In addition to the driver and gene fields, the following data is captured per di
 
 #### N fusions
 
-In addition to the driver fields, the following data is captured per fusion:
+In addition to the general driver fields, the following data is captured per fusion:
 
 | Field                          | Example Value    | Details                                                                         |
 |--------------------------------|------------------|---------------------------------------------------------------------------------|
@@ -171,7 +175,7 @@ In addition to the driver fields, the following data is captured per fusion:
 
 #### N viruses
 
-In addition to the driver fields, the following data is captured per virus:
+In addition to the general driver fields, the following data is captured per virus:
 
 | Field        | Example Value                | Details                                                                                      |
 |--------------|------------------------------|----------------------------------------------------------------------------------------------|
@@ -190,21 +194,24 @@ In addition to the driver fields, the following data is captured per virus:
 
 #### N pharmaco
 
-| Field             | Example Value                              | Details                                             |
-|-------------------|--------------------------------------------|-----------------------------------------------------|
-| gene              | DPYD                                       | The gene for which the pharmaco entry is applicable |
-| haplotype         | 1* HOM                                     | Haplotypes found for the gene                       |
-| haplotypeFunction | Function impact of corresponding haplotype |                                                     |
+| Field             | Example Value | Details                                             |
+|-------------------|---------------|-----------------------------------------------------|
+| gene              | DPYD          | The gene for which the pharmaco entry is applicable |
+| haplotype         | 1* HOM        | Haplotypes found for the gene                       |
+| haplotypeFunction |               | Function impact of corresponding haplotype          |
 
-### Interpretation of ORANGE results
+## Interpretation 
+
+### ORANGE 
 
 The interpretation consists of two parts:
 
-- Annotating all ORANGE mutations and various characteristics with additional gene annotation and evidence
-- Mapping all fields, annotated mutations and annotated characteristics from ORANGE to the ACTIN datamodel.
+1. Annotating all mutations and various characteristics in ORANGE with additional gene annotation and evidence 
+2. Mapping all fields, annotated mutations and annotated characteristics to the ACTIN datamodel.
 
-#### Annotation of ORANGE drivers
+#### 1. Annotation of mutations and characteristics in ORANGE
 
+#### Additional gene annotation
 Every variant, copy number and disruption is annotated with `geneRole`, `proteinEffect` and `isAssociatedWithDrugResistance`. Furthermore,
 every fusion is annotated with `proteinEffect` and `isAssociatedWithDrugResistance`.
 
@@ -226,7 +233,7 @@ The annotation algo tries the best matching entry from SERVE's mapping of the `C
 
 Do note that gene matching only ever populates the `geneRole` field. Any gene-level annotation assumes that the `proteinEffect` is unknown.
 
-#### Evidence matching for ORANGE drivers and characteristics
+#### Evidence matching 
 
 Every (potential) driver and characteristic is annotated with evidence from SERVE. In practice all evidence comes from `CKB` except for
 external trials which is populated by `ICLUSION`. The evidence annotations happens in the following steps:
@@ -276,7 +283,7 @@ Finally:
 - Responsive treatments are cleaned based on their level of importance (an approved treatment will never also be a pre-clinical treatment)
 - Resistant treatments are retained only in case of responsive evidence for the same treatment (approved or experimental).
 
-#### Mapping of ORANGE records to ACTIN molecular datamodel
+#### 2. Mapping of ORANGE records to ACTIN molecular datamodel
 
 The ACTIN datamodel is created from an ORANGE record as follows:
 
