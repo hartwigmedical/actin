@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange.evidence.known;
 
-import com.hartwig.actin.molecular.orange.evidence.TestEvidenceFactory;
+import com.hartwig.actin.molecular.orange.evidence.TestServeFactory;
 import com.hartwig.serve.datamodel.common.GeneAlteration;
 import com.hartwig.serve.datamodel.common.GeneRole;
 import com.hartwig.serve.datamodel.common.ProteinEffect;
@@ -23,7 +23,7 @@ public final class TestServeKnownFactory {
     public static ImmutableKnownHotspot.Builder hotspotBuilder() {
         return ImmutableKnownHotspot.builder()
                 .from(createEmptyGeneAlteration())
-                .from(TestEvidenceFactory.createEmptyHotspot())
+                .from(TestServeFactory.createEmptyHotspot())
                 .inputProteinAnnotation(Strings.EMPTY);
     }
 
@@ -31,7 +31,7 @@ public final class TestServeKnownFactory {
     public static ImmutableKnownCodon.Builder codonBuilder() {
         return ImmutableKnownCodon.builder()
                 .from(createEmptyGeneAlteration())
-                .from(TestEvidenceFactory.createEmptyRangeAnnotation())
+                .from(TestServeFactory.createEmptyRangeAnnotation())
                 .inputTranscript(Strings.EMPTY)
                 .inputCodonRank(0);
     }
@@ -40,24 +40,24 @@ public final class TestServeKnownFactory {
     public static ImmutableKnownExon.Builder exonBuilder() {
         return ImmutableKnownExon.builder()
                 .from(createEmptyGeneAlteration())
-                .from(TestEvidenceFactory.createEmptyRangeAnnotation())
+                .from(TestServeFactory.createEmptyRangeAnnotation())
                 .inputTranscript(Strings.EMPTY)
                 .inputExonRank(0);
     }
 
     @NotNull
     public static ImmutableKnownCopyNumber.Builder copyNumberBuilder() {
-        return ImmutableKnownCopyNumber.builder().from(createEmptyGeneAlteration()).from(TestEvidenceFactory.createEmptyGeneAnnotation());
+        return ImmutableKnownCopyNumber.builder().from(createEmptyGeneAlteration()).from(TestServeFactory.createEmptyGeneAnnotation());
     }
 
     @NotNull
     public static ImmutableKnownFusion.Builder fusionBuilder() {
-        return ImmutableKnownFusion.builder().from(TestEvidenceFactory.createEmptyFusionPair()).proteinEffect(ProteinEffect.UNKNOWN);
+        return ImmutableKnownFusion.builder().from(TestServeFactory.createEmptyFusionPair()).proteinEffect(ProteinEffect.UNKNOWN);
     }
 
     @NotNull
     public static GeneAlteration createEmptyGeneAlteration() {
-        return createGeneAlteration(GeneRole.UNKNOWN, ProteinEffect.UNKNOWN, null);
+        return createGeneAlteration(GeneRole.UNKNOWN, ProteinEffect.UNKNOWN);
     }
 
     @NotNull

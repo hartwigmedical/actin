@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.orange.evidence.actionability;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
-import com.hartwig.actin.molecular.orange.evidence.TestEvidenceFactory;
+import com.hartwig.actin.molecular.orange.evidence.TestServeFactory;
 import com.hartwig.serve.datamodel.ActionableEvent;
 import com.hartwig.serve.datamodel.CancerType;
 import com.hartwig.serve.datamodel.EvidenceDirection;
@@ -17,6 +17,7 @@ import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType;
 import com.hartwig.serve.datamodel.fusion.ImmutableActionableFusion;
 import com.hartwig.serve.datamodel.gene.ImmutableActionableGene;
 import com.hartwig.serve.datamodel.hotspot.ImmutableActionableHotspot;
+import com.hartwig.serve.datamodel.immuno.ImmutableActionableHLA;
 import com.hartwig.serve.datamodel.range.ImmutableActionableRange;
 
 import org.apache.logging.log4j.util.Strings;
@@ -29,22 +30,22 @@ public final class TestServeActionabilityFactory {
 
     @NotNull
     public static ImmutableActionableHotspot.Builder hotspotBuilder() {
-        return ImmutableActionableHotspot.builder().from(createEmptyActionableEvent()).from(TestEvidenceFactory.createEmptyHotspot());
+        return ImmutableActionableHotspot.builder().from(createEmptyActionableEvent()).from(TestServeFactory.createEmptyHotspot());
     }
 
     @NotNull
     public static ImmutableActionableRange.Builder rangeBuilder() {
-        return ImmutableActionableRange.builder().from(createEmptyActionableEvent()).from(TestEvidenceFactory.createEmptyRangeAnnotation());
+        return ImmutableActionableRange.builder().from(createEmptyActionableEvent()).from(TestServeFactory.createEmptyRangeAnnotation());
     }
 
     @NotNull
     public static ImmutableActionableGene.Builder geneBuilder() {
-        return ImmutableActionableGene.builder().from(createEmptyActionableEvent()).from(TestEvidenceFactory.createEmptyGeneAnnotation());
+        return ImmutableActionableGene.builder().from(createEmptyActionableEvent()).from(TestServeFactory.createEmptyGeneAnnotation());
     }
 
     @NotNull
     public static ImmutableActionableFusion.Builder fusionBuilder() {
-        return ImmutableActionableFusion.builder().from(createEmptyActionableEvent()).from(TestEvidenceFactory.createEmptyFusionPair());
+        return ImmutableActionableFusion.builder().from(createEmptyActionableEvent()).from(TestServeFactory.createEmptyFusionPair());
     }
 
     @NotNull
@@ -52,6 +53,11 @@ public final class TestServeActionabilityFactory {
         return ImmutableActionableCharacteristic.builder()
                 .from(createEmptyActionableEvent())
                 .type(TumorCharacteristicType.MICROSATELLITE_STABLE);
+    }
+
+    @NotNull
+    public static ImmutableActionableHLA.Builder hlaBuilder() {
+        return ImmutableActionableHLA.builder().from(createEmptyActionableEvent()).hlaAllele(Strings.EMPTY);
     }
 
     @NotNull
@@ -66,11 +72,16 @@ public final class TestServeActionabilityFactory {
 
     @NotNull
     private static ActionableEvent createEmptyActionableEvent() {
+        return createActionableEvent(Knowledgebase.UNKNOWN, Strings.EMPTY);
+    }
+
+    @NotNull
+    public static ActionableEvent createActionableEvent(@NotNull Knowledgebase source, @NotNull String treatment) {
         return new ActionableEvent() {
             @NotNull
             @Override
             public Knowledgebase source() {
-                return Knowledgebase.UNKNOWN;
+                return source;
             }
 
             @NotNull
@@ -88,7 +99,7 @@ public final class TestServeActionabilityFactory {
             @NotNull
             @Override
             public Treatment treatment() {
-                return treatmentBuilder().build();
+                return treatmentBuilder().name(treatment).build();
             }
 
             @NotNull

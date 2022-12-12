@@ -4,9 +4,14 @@ import com.google.common.collect.Lists;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class TestExternalTreatmentMapperFactory {
+public final class TestExternalTrialMapperFactory {
 
-    private TestExternalTreatmentMapperFactory() {
+    private TestExternalTrialMapperFactory() {
+    }
+
+    @NotNull
+    public static ExternalTrialMapper createMinimalTestMapper() {
+        return new ExternalTrialMapper(Lists.newArrayList());
     }
 
     @NotNull

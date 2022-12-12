@@ -8,7 +8,7 @@ public class ExternalTrialMapperTest {
 
     @Test
     public void canMapExternalTrials() {
-        ExternalTrialMapper mapper = TestExternalTreatmentMapperFactory.create("EXT 1", "ACT 1");
+        ExternalTrialMapper mapper = TestExternalTrialMapperFactory.create("EXT 1", "ACT 1");
 
         assertEquals("ACT 1", mapper.map("EXT 1"));
         assertEquals("ACT 1", mapper.map("ACT 1"));

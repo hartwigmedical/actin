@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.orange.evidence.actionability;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.doid.DoidModel;
@@ -31,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class ActionableEventMatcherFactory {
 
-    private static final Set<Knowledgebase> ACTIONABLE_EVENT_SOURCES =
+    static final Set<Knowledgebase> ACTIONABLE_EVENT_SOURCES =
             Sets.newHashSet(ActionabilityConstants.EVIDENCE_SOURCE, ActionabilityConstants.EXTERNAL_TRIAL_SOURCE);
 
     @NotNull
@@ -81,7 +82,8 @@ public class ActionableEventMatcherFactory {
     }
 
     @NotNull
-    private ActionableEvents curateExternalTrials(@NotNull ActionableEvents actionableEvents) {
+    @VisibleForTesting
+    ActionableEvents curateExternalTrials(@NotNull ActionableEvents actionableEvents) {
         return ImmutableActionableEvents.builder()
                 .hotspots(curateHotspots(actionableEvents.hotspots()))
                 .ranges(curateRanges(actionableEvents.ranges()))
@@ -170,8 +172,8 @@ public class ActionableEventMatcherFactory {
     }
 
     @NotNull
-    private static ActionableEvents filterForSources(@NotNull ActionableEvents actionableEvents,
-            @NotNull Set<Knowledgebase> sourcesToInclude) {
+    @VisibleForTesting
+    static ActionableEvents filterForSources(@NotNull ActionableEvents actionableEvents, @NotNull Set<Knowledgebase> sourcesToInclude) {
         return ImmutableActionableEvents.builder()
                 .hotspots(filterActionableForSources(actionableEvents.hotspots(), sourcesToInclude))
                 .ranges(filterActionableForSources(actionableEvents.ranges(), sourcesToInclude))
@@ -195,7 +197,8 @@ public class ActionableEventMatcherFactory {
     }
 
     @NotNull
-    private static ActionableEvents filterForApplicability(@NotNull ActionableEvents actionableEvents) {
+    @VisibleForTesting
+    static ActionableEvents filterForApplicability(@NotNull ActionableEvents actionableEvents) {
         return ImmutableActionableEvents.builder()
                 .from(actionableEvents)
                 .hotspots(filterHotspotsForApplicability(actionableEvents.hotspots()))

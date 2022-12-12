@@ -7,6 +7,9 @@ import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.doid.TestDoidModelFactory;
 import com.hartwig.serve.datamodel.ActionableEvents;
 import com.hartwig.serve.datamodel.ImmutableActionableEvents;
+import com.hartwig.serve.datamodel.characteristic.ActionableCharacteristic;
+import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType;
+import com.hartwig.serve.datamodel.gene.GeneEvent;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -42,9 +45,16 @@ public final class TestActionableEventMatcherFactory {
         ActionableEvents actionableEvents = ImmutableActionableEvents.builder()
                 .addHotspots(TestServeActionabilityFactory.hotspotBuilder().build())
                 .addRanges(TestServeActionabilityFactory.rangeBuilder().build())
-                .addGenes(TestServeActionabilityFactory.geneBuilder().build())
+                .addGenes(TestServeActionabilityFactory.geneBuilder().event(GeneEvent.DELETION).build())
+                .addGenes(TestServeActionabilityFactory.geneBuilder().event(GeneEvent.AMPLIFICATION).build())
+                .addGenes(TestServeActionabilityFactory.geneBuilder().event(GeneEvent.ANY_MUTATION).build())
                 .addFusions(TestServeActionabilityFactory.fusionBuilder().build())
-                .addCharacteristics(TestServeActionabilityFactory.characteristicBuilder().build())
+                .addCharacteristics(create(TumorCharacteristicType.MICROSATELLITE_UNSTABLE))
+                .addCharacteristics(create(TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT))
+                .addCharacteristics(create(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN))
+                .addCharacteristics(create(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD))
+                .addCharacteristics(create(TumorCharacteristicType.HPV_POSITIVE))
+                .addCharacteristics(create(TumorCharacteristicType.EBV_POSITIVE))
                 .build();
 
         return new ActionableEventMatcher(personalizedActionabilityFactory,
@@ -55,5 +65,10 @@ public final class TestActionableEventMatcherFactory {
                 BreakendEvidence.create(actionableEvents),
                 FusionEvidence.create(actionableEvents),
                 VirusEvidence.create(actionableEvents));
+    }
+
+    @NotNull
+    private static ActionableCharacteristic create(@NotNull TumorCharacteristicType type) {
+        return TestServeActionabilityFactory.characteristicBuilder().type(type).build();
     }
 }

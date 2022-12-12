@@ -12,7 +12,7 @@ public class ApplicabilityFilteringTest {
 
     @Test
     public void canFilterHotspots() {
-        String nonApplicableGene = ApplicabilityFiltering.NON_APPLICABLE_GENES.iterator().next();
+        String nonApplicableGene = TestApplicabilityFilteringUtil.nonApplicableGene();
 
         assertFalse(ApplicabilityFiltering.isApplicable(TestServeActionabilityFactory.hotspotBuilder().gene(nonApplicableGene).build()));
         assertTrue(ApplicabilityFiltering.isApplicable(TestServeActionabilityFactory.hotspotBuilder().gene("other").build()));
@@ -20,7 +20,7 @@ public class ApplicabilityFilteringTest {
 
     @Test
     public void canFilterRanges() {
-        String nonApplicableGene = ApplicabilityFiltering.NON_APPLICABLE_GENES.iterator().next();
+        String nonApplicableGene = TestApplicabilityFilteringUtil.nonApplicableGene();
 
         assertFalse(ApplicabilityFiltering.isApplicable(TestServeActionabilityFactory.rangeBuilder().gene(nonApplicableGene).build()));
         assertTrue(ApplicabilityFiltering.isApplicable(TestServeActionabilityFactory.rangeBuilder().gene("other").build()));
@@ -28,12 +28,12 @@ public class ApplicabilityFilteringTest {
 
     @Test
     public void canFilterGenes() {
-        String nonApplicableGene = ApplicabilityFiltering.NON_APPLICABLE_GENES.iterator().next();
+        String nonApplicableGene = TestApplicabilityFilteringUtil.nonApplicableGene();
 
         assertFalse(ApplicabilityFiltering.isApplicable(TestServeActionabilityFactory.geneBuilder().gene(nonApplicableGene).build()));
         assertTrue(ApplicabilityFiltering.isApplicable(TestServeActionabilityFactory.geneBuilder().gene("other").build()));
 
-        String nonApplicableAmp = ApplicabilityFiltering.NON_APPLICABLE_AMPLIFICATIONS.iterator().next();
+        String nonApplicableAmp = TestApplicabilityFilteringUtil.nonApplicableAmplification();
         assertTrue(ApplicabilityFiltering.isApplicable(TestServeActionabilityFactory.geneBuilder()
                 .gene(nonApplicableAmp)
                 .event(GeneEvent.ANY_MUTATION)
