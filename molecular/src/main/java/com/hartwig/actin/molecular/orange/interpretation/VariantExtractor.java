@@ -23,7 +23,6 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTranscriptImpac
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
-import com.hartwig.actin.molecular.orange.util.AminoAcid;
 import com.hartwig.actin.molecular.sort.driver.VariantComparator;
 
 import org.apache.logging.log4j.LogManager;

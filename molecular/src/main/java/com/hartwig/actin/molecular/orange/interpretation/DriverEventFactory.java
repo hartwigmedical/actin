@@ -12,7 +12,6 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
-import com.hartwig.actin.molecular.orange.util.AminoAcid;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

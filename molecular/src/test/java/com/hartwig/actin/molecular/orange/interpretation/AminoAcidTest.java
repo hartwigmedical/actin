@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.orange.util;
+package com.hartwig.actin.molecular.orange.interpretation;
 
 import static org.junit.Assert.assertEquals;
 
