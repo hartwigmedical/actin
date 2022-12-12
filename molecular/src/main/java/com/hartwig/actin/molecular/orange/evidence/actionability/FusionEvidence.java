@@ -1,8 +1,10 @@
 package com.hartwig.actin.molecular.orange.evidence.actionability;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionType;
 import com.hartwig.actin.molecular.orange.evidence.matching.FusionMatching;
@@ -16,6 +18,9 @@ import org.jetbrains.annotations.NotNull;
 
 class FusionEvidence implements EvidenceMatcher<LinxFusion> {
 
+    private static final Set<GeneEvent> APPLICABLE_PROMISCUOUS_EVENTS =
+            Sets.newHashSet(GeneEvent.FUSION, GeneEvent.ACTIVATION, GeneEvent.ANY_MUTATION);
+
     @NotNull
     private final List<ActionableGene> actionablePromiscuous;
     @NotNull
@@ -25,8 +30,7 @@ class FusionEvidence implements EvidenceMatcher<LinxFusion> {
     public static FusionEvidence create(@NotNull ActionableEvents actionableEvents) {
         List<ActionableGene> actionablePromiscuous = Lists.newArrayList();
         for (ActionableGene actionableGene : actionableEvents.genes()) {
-            if (actionableGene.event() == GeneEvent.FUSION || actionableGene.event() == GeneEvent.ACTIVATION
-                    || actionableGene.event() == GeneEvent.ANY_MUTATION) {
+            if (APPLICABLE_PROMISCUOUS_EVENTS.contains(actionableGene.event())) {
                 actionablePromiscuous.add(actionableGene);
             }
         }

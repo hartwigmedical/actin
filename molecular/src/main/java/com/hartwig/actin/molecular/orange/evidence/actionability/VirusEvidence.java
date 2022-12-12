@@ -15,23 +15,29 @@ import org.jetbrains.annotations.NotNull;
 class VirusEvidence implements EvidenceMatcher<VirusInterpreterEntry> {
 
     @NotNull
-    private final List<ActionableCharacteristic> virusCharacteristics;
+    private final List<ActionableEvent> hpvCharacteristics;
+    @NotNull
+    private final List<ActionableEvent> ebvCharacteristics;
 
     @NotNull
     public static VirusEvidence create(@NotNull ActionableEvents actionableEvents) {
-        List<ActionableCharacteristic> virusCharacteristics = Lists.newArrayList();
+        List<ActionableEvent> hpvCharacteristics = Lists.newArrayList();
+        List<ActionableEvent> ebvCharacteristics = Lists.newArrayList();
         for (ActionableCharacteristic actionableCharacteristic : actionableEvents.characteristics()) {
-            if (actionableCharacteristic.type() == TumorCharacteristicType.HPV_POSITIVE
-                    || actionableCharacteristic.type() == TumorCharacteristicType.EBV_POSITIVE) {
-                virusCharacteristics.add(actionableCharacteristic);
+            if (actionableCharacteristic.type() == TumorCharacteristicType.HPV_POSITIVE) {
+                hpvCharacteristics.add(actionableCharacteristic);
+            } else if (actionableCharacteristic.type() == TumorCharacteristicType.EBV_POSITIVE) {
+                ebvCharacteristics.add(actionableCharacteristic);
             }
         }
 
-        return new VirusEvidence(virusCharacteristics);
+        return new VirusEvidence(hpvCharacteristics, ebvCharacteristics);
     }
 
-    private VirusEvidence(@NotNull final List<ActionableCharacteristic> virusCharacteristics) {
-        this.virusCharacteristics = virusCharacteristics;
+    private VirusEvidence(@NotNull final List<ActionableEvent> hpvCharacteristics,
+            @NotNull final List<ActionableEvent> ebvCharacteristics) {
+        this.hpvCharacteristics = hpvCharacteristics;
+        this.ebvCharacteristics = ebvCharacteristics;
     }
 
     @NotNull
@@ -44,36 +50,14 @@ class VirusEvidence implements EvidenceMatcher<VirusInterpreterEntry> {
 
         switch (interpretation) {
             case HPV: {
-                return hpvCharacteristics(virusCharacteristics);
+                return hpvCharacteristics;
             }
             case EBV: {
-                return ebvCharacteristics(virusCharacteristics);
+                return ebvCharacteristics;
             }
             default: {
                 return Lists.newArrayList();
             }
         }
-    }
-
-    @NotNull
-    private static List<ActionableEvent> hpvCharacteristics(@NotNull List<ActionableCharacteristic> virusCharacteristics) {
-        return filter(virusCharacteristics, TumorCharacteristicType.HPV_POSITIVE);
-    }
-
-    @NotNull
-    private static List<ActionableEvent> ebvCharacteristics(@NotNull List<ActionableCharacteristic> virusCharacteristics) {
-        return filter(virusCharacteristics, TumorCharacteristicType.EBV_POSITIVE);
-    }
-
-    @NotNull
-    private static List<ActionableEvent> filter(@NotNull List<ActionableCharacteristic> actionableCharacteristics,
-            @NotNull TumorCharacteristicType typeToFind) {
-        List<ActionableEvent> filtered = Lists.newArrayList();
-        for (ActionableCharacteristic actionableCharacteristic : actionableCharacteristics) {
-            if (actionableCharacteristic.type() == typeToFind) {
-                filtered.add(actionableCharacteristic);
-            }
-        }
-        return filtered;
     }
 }

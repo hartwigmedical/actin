@@ -65,7 +65,7 @@ class VariantEvidence implements EvidenceMatcher<PurpleVariant> {
     private List<ActionableEvent> hotspotMatches(@NotNull PurpleVariant variant) {
         List<ActionableEvent> matches = Lists.newArrayList();
         for (ActionableHotspot actionableHotspot : actionableHotspots) {
-            if (HotspotMatching.isMatch(actionableHotspot, variant)) {
+            if (variant.reported() && HotspotMatching.isMatch(actionableHotspot, variant)) {
                 matches.add(actionableHotspot);
             }
         }
@@ -76,7 +76,7 @@ class VariantEvidence implements EvidenceMatcher<PurpleVariant> {
     private List<ActionableEvent> rangeMatches(@NotNull PurpleVariant variant) {
         List<ActionableEvent> matches = Lists.newArrayList();
         for (ActionableRange actionableRange : actionableRanges) {
-            if (RangeMatching.isMatch(actionableRange, variant)) {
+            if (variant.reported() && RangeMatching.isMatch(actionableRange, variant)) {
                 matches.add(actionableRange);
             }
         }
@@ -87,7 +87,7 @@ class VariantEvidence implements EvidenceMatcher<PurpleVariant> {
     private List<ActionableEvent> geneMatches(@NotNull PurpleVariant variant) {
         List<ActionableEvent> matches = Lists.newArrayList();
         for (ActionableGene actionableGene : applicableActionableGenes) {
-            if (GeneMatching.isMatch(actionableGene, variant)) {
+            if (variant.reported() && GeneMatching.isMatch(actionableGene, variant)) {
                 matches.add(actionableGene);
             }
         }

@@ -47,7 +47,7 @@ public class EvidenceDatabaseTest {
         EvidenceDatabase database = TestEvidenceDatabaseFactory.createProperDatabase();
 
         // Assume default ORANGE objects match with default SERVE objects
-        PurpleVariant variant = TestPurpleFactory.variantBuilder().build();
+        PurpleVariant variant = TestPurpleFactory.variantBuilder().reported(true).build();
         assertNotNull(database.geneAlterationForVariant(variant));
         assertEquals(1, evidenceCount(database.evidenceForVariant(variant)));
 
@@ -57,17 +57,17 @@ public class EvidenceDatabaseTest {
 
         LinxHomozygousDisruption homozygousDisruption = TestLinxFactory.homozygousDisruptionBuilder().build();
         assertNotNull(database.geneAlterationForHomozygousDisruption(homozygousDisruption));
-        assertEquals(1, evidenceCount(database.evidenceForHomozygousDisruption(homozygousDisruption)));
+        assertEquals(2, evidenceCount(database.evidenceForHomozygousDisruption(homozygousDisruption)));
 
-        LinxBreakend breakend = TestLinxFactory.breakendBuilder().build();
+        LinxBreakend breakend = TestLinxFactory.breakendBuilder().reported(true).build();
         assertNotNull(database.geneAlterationForBreakend(breakend));
         assertEquals(1, evidenceCount(database.evidenceForBreakend(breakend)));
 
-        LinxFusion fusion = TestLinxFactory.fusionBuilder().build();
+        LinxFusion fusion = TestLinxFactory.fusionBuilder().reported(true).build();
         assertNotNull(database.lookupKnownFusion(fusion));
-        assertEquals(1, evidenceCount(database.evidenceForFusion(fusion)));
+        assertEquals(2, evidenceCount(database.evidenceForFusion(fusion)));
 
-        VirusInterpreterEntry virus = TestVirusInterpreterFactory.builder().interpretation(VirusInterpretation.HPV).build();
+        VirusInterpreterEntry virus = TestVirusInterpreterFactory.builder().reported(true).interpretation(VirusInterpretation.HPV).build();
         assertEquals(1, evidenceCount(database.evidenceForVirus(virus)));
     }
 
