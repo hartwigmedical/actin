@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.orange.evidence.actionability;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakend;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
@@ -29,7 +28,6 @@ public class ActionableEventMatcher {
     @NotNull
     private final VirusEvidence virusEvidence;
 
-    @VisibleForTesting
     ActionableEventMatcher(@NotNull final PersonalizedActionabilityFactory personalizedActionabilityFactory,
             @NotNull final SignatureEvidence signatureEvidence, @NotNull final VariantEvidence variantEvidence,
             @NotNull final CopyNumberEvidence copyNumberEvidence, @NotNull final HomozygousDisruptionEvidence homozygousDisruptionEvidence,

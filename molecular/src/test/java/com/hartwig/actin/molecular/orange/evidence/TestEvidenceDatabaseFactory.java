@@ -14,4 +14,9 @@ public final class TestEvidenceDatabaseFactory {
     public static EvidenceDatabase createEmptyDatabase() {
         return new EvidenceDatabase(TestKnownEventResolverFactory.createEmpty(), TestActionableEventMatcherFactory.createEmpty());
     }
+
+    @NotNull
+    public static EvidenceDatabase createProperDatabase() {
+        return new EvidenceDatabase(TestKnownEventResolverFactory.createProper(), TestActionableEventMatcherFactory.createProper());
+    }
 }

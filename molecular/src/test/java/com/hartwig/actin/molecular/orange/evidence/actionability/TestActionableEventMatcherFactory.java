@@ -1,6 +1,9 @@
 package com.hartwig.actin.molecular.orange.evidence.actionability;
 
+import java.util.Set;
+
 import com.google.common.collect.Sets;
+import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.doid.TestDoidModelFactory;
 import com.hartwig.serve.datamodel.ActionableEvents;
 import com.hartwig.serve.datamodel.ImmutableActionableEvents;
@@ -26,5 +29,31 @@ public final class TestActionableEventMatcherFactory {
                 BreakendEvidence.create(empty),
                 FusionEvidence.create(empty),
                 VirusEvidence.create(empty));
+    }
+
+    @NotNull
+    public static ActionableEventMatcher createProper() {
+        DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild("parent", "child");
+        Set<String> applicableDoids = Sets.newHashSet("parent");
+
+        PersonalizedActionabilityFactory personalizedActionabilityFactory =
+                new PersonalizedActionabilityFactory(doidModel, applicableDoids);
+
+        ActionableEvents actionableEvents = ImmutableActionableEvents.builder()
+                .addHotspots(TestServeActionabilityFactory.hotspotBuilder().build())
+                .addRanges(TestServeActionabilityFactory.rangeBuilder().build())
+                .addGenes(TestServeActionabilityFactory.geneBuilder().build())
+                .addFusions(TestServeActionabilityFactory.fusionBuilder().build())
+                .addCharacteristics(TestServeActionabilityFactory.characteristicBuilder().build())
+                .build();
+
+        return new ActionableEventMatcher(personalizedActionabilityFactory,
+                SignatureEvidence.create(actionableEvents),
+                VariantEvidence.create(actionableEvents),
+                CopyNumberEvidence.create(actionableEvents),
+                HomozygousDisruptionEvidence.create(actionableEvents),
+                BreakendEvidence.create(actionableEvents),
+                FusionEvidence.create(actionableEvents),
+                VirusEvidence.create(actionableEvents));
     }
 }

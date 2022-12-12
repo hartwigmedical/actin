@@ -9,12 +9,12 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.doid.datamodel.DoidEntry;
-import com.hartwig.actin.doid.datamodel.DoidEntryTestFactory;
 import com.hartwig.actin.doid.datamodel.Edge;
 import com.hartwig.actin.doid.datamodel.ImmutableDoidEntry;
 import com.hartwig.actin.doid.datamodel.ImmutableEdge;
 import com.hartwig.actin.doid.datamodel.ImmutableNode;
 import com.hartwig.actin.doid.datamodel.Node;
+import com.hartwig.actin.doid.datamodel.TestDoidEntryFactory;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +35,7 @@ public class DoidModelFactoryTest {
         nodes.add(createNode("300", null));
 
         DoidEntry entry =
-                ImmutableDoidEntry.builder().from(DoidEntryTestFactory.createMinimalTestDoidEntry()).edges(edges).nodes(nodes).build();
+                ImmutableDoidEntry.builder().from(TestDoidEntryFactory.createMinimalTestDoidEntry()).edges(edges).nodes(nodes).build();
         DoidModel model = DoidModelFactory.createFromDoidEntry(entry);
 
         assertEquals(2, model.childToParentsMap().size());

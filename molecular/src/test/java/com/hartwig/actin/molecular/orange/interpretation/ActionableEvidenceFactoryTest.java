@@ -169,7 +169,7 @@ public class ActionableEvidenceFactoryTest {
 
     @NotNull
     private static ActionableEvent evidence(@NotNull String treatment, @NotNull EvidenceLevel level, @NotNull EvidenceDirection direction) {
-        return TestServeActionabilityFactory.actionableGeneBuilder()
+        return TestServeActionabilityFactory.geneBuilder()
                 .treatment(TestServeActionabilityFactory.treatmentBuilder().name(treatment).build())
                 .source(ActionabilityConstants.EVIDENCE_SOURCE)
                 .level(level)
@@ -178,7 +178,7 @@ public class ActionableEvidenceFactoryTest {
     }
     @NotNull
     private static ActionableEvent trial(@NotNull String treatment, @NotNull EvidenceDirection direction) {
-        return TestServeActionabilityFactory.actionableGeneBuilder()
+        return TestServeActionabilityFactory.geneBuilder()
                 .treatment(TestServeActionabilityFactory.treatmentBuilder().name(treatment).build())
                 .source(ActionabilityConstants.EXTERNAL_TRIAL_SOURCE)
                 .direction(direction)

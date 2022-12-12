@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.orange.evidence;
 
 
 import com.hartwig.serve.datamodel.MutationType;
+import com.hartwig.serve.datamodel.fusion.FusionPair;
 import com.hartwig.serve.datamodel.gene.GeneAnnotation;
 import com.hartwig.serve.datamodel.gene.GeneEvent;
 import com.hartwig.serve.datamodel.hotspot.VariantHotspot;
@@ -9,6 +10,7 @@ import com.hartwig.serve.datamodel.range.RangeAnnotation;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class TestEvidenceFactory {
 
@@ -95,6 +97,47 @@ public final class TestEvidenceFactory {
             @Override
             public GeneEvent event() {
                 return GeneEvent.ANY_MUTATION;
+            }
+        };
+    }
+
+    @NotNull
+    public static FusionPair createEmptyFusionPair() {
+        return new FusionPair() {
+            @NotNull
+            @Override
+            public String geneUp() {
+                return Strings.EMPTY;
+            }
+
+            @Nullable
+            @Override
+            public Integer minExonUp() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public Integer maxExonUp() {
+                return null;
+            }
+
+            @NotNull
+            @Override
+            public String geneDown() {
+                return Strings.EMPTY;
+            }
+
+            @Nullable
+            @Override
+            public Integer minExonDown() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public Integer maxExonDown() {
+                return null;
             }
         };
     }

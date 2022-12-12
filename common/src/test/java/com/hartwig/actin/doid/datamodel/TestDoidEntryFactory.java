@@ -2,9 +2,9 @@ package com.hartwig.actin.doid.datamodel;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class DoidEntryTestFactory {
+public final class TestDoidEntryFactory {
 
-    private DoidEntryTestFactory() {
+    private TestDoidEntryFactory() {
     }
 
     @NotNull

@@ -12,6 +12,9 @@ import com.hartwig.serve.datamodel.ImmutableCancerType;
 import com.hartwig.serve.datamodel.ImmutableTreatment;
 import com.hartwig.serve.datamodel.Knowledgebase;
 import com.hartwig.serve.datamodel.Treatment;
+import com.hartwig.serve.datamodel.characteristic.ImmutableActionableCharacteristic;
+import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType;
+import com.hartwig.serve.datamodel.fusion.ImmutableActionableFusion;
 import com.hartwig.serve.datamodel.gene.ImmutableActionableGene;
 import com.hartwig.serve.datamodel.hotspot.ImmutableActionableHotspot;
 import com.hartwig.serve.datamodel.range.ImmutableActionableRange;
@@ -25,18 +28,30 @@ public final class TestServeActionabilityFactory {
     }
 
     @NotNull
-    public static ImmutableActionableHotspot.Builder actionableHotspotBuilder() {
+    public static ImmutableActionableHotspot.Builder hotspotBuilder() {
         return ImmutableActionableHotspot.builder().from(createEmptyActionableEvent()).from(TestEvidenceFactory.createEmptyHotspot());
     }
 
     @NotNull
-    public static ImmutableActionableRange.Builder actionableRangeBuilder() {
+    public static ImmutableActionableRange.Builder rangeBuilder() {
         return ImmutableActionableRange.builder().from(createEmptyActionableEvent()).from(TestEvidenceFactory.createEmptyRangeAnnotation());
     }
 
     @NotNull
-    public static ImmutableActionableGene.Builder actionableGeneBuilder() {
+    public static ImmutableActionableGene.Builder geneBuilder() {
         return ImmutableActionableGene.builder().from(createEmptyActionableEvent()).from(TestEvidenceFactory.createEmptyGeneAnnotation());
+    }
+
+    @NotNull
+    public static ImmutableActionableFusion.Builder fusionBuilder() {
+        return ImmutableActionableFusion.builder().from(createEmptyActionableEvent()).from(TestEvidenceFactory.createEmptyFusionPair());
+    }
+
+    @NotNull
+    public static ImmutableActionableCharacteristic.Builder characteristicBuilder() {
+        return ImmutableActionableCharacteristic.builder()
+                .from(createEmptyActionableEvent())
+                .type(TumorCharacteristicType.MICROSATELLITE_STABLE);
     }
 
     @NotNull
