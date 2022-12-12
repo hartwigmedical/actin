@@ -39,6 +39,11 @@ public class ApplicabilityFilteringTest {
                 .event(GeneEvent.ANY_MUTATION)
                 .build()));
 
+        assertTrue(ApplicabilityFiltering.isApplicable(TestServeActionabilityFactory.geneBuilder()
+                .gene("other gene")
+                .event(GeneEvent.AMPLIFICATION)
+                .build()));
+
         assertFalse(ApplicabilityFiltering.isApplicable(TestServeActionabilityFactory.geneBuilder()
                 .gene(nonApplicableAmp)
                 .event(GeneEvent.AMPLIFICATION)
