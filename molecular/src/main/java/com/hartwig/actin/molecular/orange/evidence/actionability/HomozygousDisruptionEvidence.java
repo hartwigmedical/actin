@@ -11,25 +11,26 @@ import com.hartwig.serve.datamodel.gene.GeneEvent;
 
 import org.jetbrains.annotations.NotNull;
 
-class HomozygousDisruptionEvidence implements EvidenceMatcher<LinxHomozygousDisruption>{
+class HomozygousDisruptionEvidence implements EvidenceMatcher<LinxHomozygousDisruption> {
 
     @NotNull
-    private final List<ActionableGene> actionableLosses;
+    private final List<ActionableGene> actionableGenes;
 
     @NotNull
     public static HomozygousDisruptionEvidence create(@NotNull ActionableEvents actionableEvents) {
-        List<ActionableGene> actionableLosses = Lists.newArrayList();
+        List<ActionableGene> actionableGenes = Lists.newArrayList();
         for (ActionableGene actionableGene : actionableEvents.genes()) {
-            if (actionableGene.event() == GeneEvent.DELETION) {
-                actionableLosses.add(actionableGene);
+            if (actionableGene.event() == GeneEvent.DELETION || actionableGene.event() == GeneEvent.ANY_MUTATION
+                    || actionableGene.event() == GeneEvent.INACTIVATION) {
+                actionableGenes.add(actionableGene);
             }
         }
 
-        return new HomozygousDisruptionEvidence(actionableLosses);
+        return new HomozygousDisruptionEvidence(actionableGenes);
     }
 
-    private HomozygousDisruptionEvidence(@NotNull final List<ActionableGene> actionableLosses) {
-        this.actionableLosses = actionableLosses;
+    private HomozygousDisruptionEvidence(@NotNull final List<ActionableGene> actionableGenes) {
+        this.actionableGenes = actionableGenes;
     }
 
     @NotNull
@@ -37,7 +38,7 @@ class HomozygousDisruptionEvidence implements EvidenceMatcher<LinxHomozygousDisr
     public List<ActionableEvent> findMatches(@NotNull LinxHomozygousDisruption homozygousDisruption) {
         List<ActionableEvent> matches = Lists.newArrayList();
 
-        for (ActionableGene actionableGene : actionableLosses) {
+        for (ActionableGene actionableGene : actionableGenes) {
             if (actionableGene.gene().equals(homozygousDisruption.gene())) {
                 matches.add(actionableGene);
             }

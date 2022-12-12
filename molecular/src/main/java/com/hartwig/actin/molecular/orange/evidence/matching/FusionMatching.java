@@ -18,14 +18,19 @@ public final class FusionMatching {
         Integer minExonUp = fusionPair.minExonUp();
         Integer maxExonUp = fusionPair.maxExonUp();
 
+        boolean meetsExonUp = true;
+        if (minExonUp != null && maxExonUp != null) {
+            meetsExonUp = fusion.fusedExonUp() >= minExonUp && fusion.fusedExonUp() <= maxExonUp;
+        }
+
         Integer minExonDown = fusionPair.minExonDown();
         Integer maxExonDown = fusionPair.maxExonDown();
 
-        if (minExonUp != null && maxExonUp != null && minExonDown != null && maxExonDown != null) {
-            return fusion.fusedExonUp() >= minExonUp && fusion.fusedExonUp() <= minExonUp && fusion.fusedExonDown() >= minExonDown
-                    && fusion.fusedExonDown() <= maxExonDown;
+        boolean meetsExonDown = true;
+        if (minExonDown != null && maxExonDown != null) {
+            meetsExonDown = fusion.fusedExonDown() >= minExonDown && fusion.fusedExonDown() <= maxExonDown;
         }
 
-        return false;
+        return meetsExonUp && meetsExonDown;
     }
 }
