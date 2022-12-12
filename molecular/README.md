@@ -33,7 +33,7 @@ The following assumptions are made about the inputs:
 
 ## Molecular Datamodel
 
-Evidence is attached to mutations or characteristics and has the following datamodel:
+Evidence is attached to driver events and characteristics with the following datamodel:
 
 | Field                          | Example Value | Details                                                                                                                                  |
 |--------------------------------|---------------|------------------------------------------------------------------------------------------------------------------------------------------|
@@ -45,17 +45,19 @@ Evidence is attached to mutations or characteristics and has the following datam
 | knownResistantTreatments       | Erlotinib     | A set of treatment names which are known to be resisted by the mutation for the specific tumor type                                      |
 | suspectResistantTreatments     | Erlotinib     | A set of treatment names for which there is some evidence that they may be resisted by the mutation for the specific tumor type          |
 
-A molecular record belongs to a `sampleId` which in turn belongs to a `patientId`. Every molecular record has the following base data:
+A molecular record belongs to a `sampleId` which in turn belongs to a `patientId` and has the following datamodel 
 
-| Field                | Example Value | Details                                                                                                       |
-|----------------------|---------------|---------------------------------------------------------------------------------------------------------------|
-| type                 | WGS           | The type of molecular experiment done, either `WGS` or `PANEL`                                                |
-| refGenomeVersion     | V37           | The version of the reference genome used in this record, either `V37` or `V38`                                |
-| date                 | 2022-01-14    | The date on which the molecular results were obtained (optional field)                                        |
-| evidenceSource       | CKB           | The name of the provider of the evidence. Currently always `CKB`                                              |
-| externalTrialSource  | ICLUSION      | The name of the provider of external trials (not known in ACTIN trial database). Currently always `ICLUSION`  |
-| containsTumorCells   | true          | If false, implies that the tumor cell percentage in the biopsy was lower than the lowest detectable threshold |
-| hasSufficientQuality | true          | If false, implies that the quality of the sample was not sufficient (e.g. too much DNA damage)                |
+### 1 molecular base data 
+
+| Field                | Example Value | Details                                                                                                                                   |
+|----------------------|---------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| type                 | WGS           | The type of molecular experiment done, either `WGS` or `PANEL`                                                                            |
+| refGenomeVersion     | V37           | The version of the reference genome used throughout the analysis, either `V37` or `V38`                                                   |
+| date                 | 2022-01-14    | The date on which the molecular results were obtained (optional field)                                                                    |
+| evidenceSource       | CKB           | The name of the provider of the evidence. Currently always `CKB`                                                                          |
+| externalTrialSource  | ICLUSION      | The name of the provider of external trials (which are trials that may not be known in ACTIN trial database). Currently always `ICLUSION` |
+| containsTumorCells   | true          | If false, implies that the tumor cell percentage in the biopsy was lower than the lowest detectable threshold                             |
+| hasSufficientQuality | true          | If false, implies that the quality of the sample was not sufficient (e.g. too much DNA damage)                                            |
 
 ### 1 molecular characteristics
 
@@ -65,7 +67,7 @@ A molecular record belongs to a `sampleId` which in turn belongs to a `patientId
 | ploidy                        | 3.1            | The average number of copies of any chromosome in the tumor                                                            |
 | predictedTumorType            | Melanoma (87%) | The tumor type of origin predicted based on the molecular data along with a likelihood                                 |
 | isMicrosatelliteUnstable      | false          | If true, sample is considered microsatellite unstable. Can be left blank in case experiment does not determine MSI     |
-| microsatelliteEvidencce       | See evidence   | The evidence determined for the microsatellite status of specific tumor sample                                         |                                         |
+| microsatelliteEvidence        | See evidence   | The evidence determined for the microsatellite status of specific tumor sample                                         |                                         |
 | isHomologousRepairDeficient   | false          | If true, sample is considered homologous repair deficient. Can be left blank in case experiment does not determine HRD |
 | homologousRepairEvidence      | See evidence   | The evidence determined for the homologous repair status of specific tumor sample                                      |                                      |
 | tumorMutationalBurden         | 14.2           | Number of mutations in the genome per Mb. Can be left blank in case experiment does not determine TMB                  |
@@ -108,10 +110,10 @@ In addition to the driver and gene fields, the following data is captured per va
 | isHotspot         | true          | Indicates whether this specific variant is a known (pathogenic) hotspot                             | 
 | clonalLikelihood  | 100%          | Likelihood that the variant exists in every tumor cell (is clonal)                                  |
 | phaseGroups       | 1, 2          | The phasing groups this variant belongs to. Variants that are phased share at least one phase group |
-| canonicalImpact   | See impact    | The impact of this variant on the canonical transcipt of the gene                                   |
+| canonicalImpact   | See impact    | The impact of this variant on the canonical transcript of the gene                                  |
 | otherImpacts      | See impact    | A set of impacts on transcripts other than the canonical transcript of the gene                     | 
 
-The following data is captured as impact of a variant on a specific transcript
+The following data is captured as impact of a variant on a specific transcript:
 
 | Field             | Example Value | Details                                                                  |
 |-------------------|---------------|--------------------------------------------------------------------------|
@@ -155,17 +157,17 @@ In addition to the driver and gene fields, the following data is captured per di
 
 In addition to the driver fields, the following data is captured per fusion:
 
-| Field                          | Example Value    | Details                                                                        |
-|--------------------------------|------------------|--------------------------------------------------------------------------------|
-| geneStart                      | EML4             | The gene that makes up the 5' part of the fusion                               |
-| geneTranscriptStart            | ENST001          | The ensembl ID of the transcript that makes up the 5' part of the fusion       |
-| fusedExonUp                    | 10               | The last exon of the 5' gene included in the fusion                            |
-| geneEnd                        | ALK              | The gene that makes up the 3' part of the fusion                               |
-| geneTranscriptEnd              | ENST002          | The ensembl ID of the transcript that makes up the 3' part of the fusion       |
-| fusedExonDown                  | 22               | The first exon of the 3' gene included in the fusion                           |
-| driverType                     | KNOWN_PAIR       | The type of driver fusion                                                      |
-| proteinEffect                  | GAIN_OF_FUNCTION | The type of protein effect of the fusion product                               |
-| isAssociatedWithDrugResistance | null             | Optional field, indiates whether the fusion is associated with drug resistance |
+| Field                          | Example Value    | Details                                                                         |
+|--------------------------------|------------------|---------------------------------------------------------------------------------|
+| geneStart                      | EML4             | The gene that makes up the 5' part of the fusion                                |
+| geneTranscriptStart            | ENST001          | The ensembl ID of the transcript that makes up the 5' part of the fusion        |
+| fusedExonUp                    | 10               | The last exon of the 5' gene included in the fusion                             |
+| geneEnd                        | ALK              | The gene that makes up the 3' part of the fusion                                |
+| geneTranscriptEnd              | ENST002          | The ensembl ID of the transcript that makes up the 3' part of the fusion        |
+| fusedExonDown                  | 22               | The first exon of the 3' gene included in the fusion                            |
+| driverType                     | KNOWN_PAIR       | The type of driver fusion                                                       |
+| proteinEffect                  | GAIN_OF_FUNCTION | The type of protein effect of the fusion product                                |
+| isAssociatedWithDrugResistance | null             | Optional field, indicates whether the fusion is associated with drug resistance |
 
 #### N viruses
 
