@@ -61,15 +61,22 @@ public final class DriverEventFactory {
         String reformatted = proteinImpact.startsWith("p.") ? proteinImpact.substring(2) : proteinImpact;
         return AminoAcid.forceSingleLetterAminoAcids(reformatted);
     }
-    
-    @NotNull
-    public static String amplificationEvent(@NotNull PurpleCopyNumber copyNumber) {
-        return copyNumber.gene() + " amp";
-    }
 
     @NotNull
-    public static String lossEvent(@NotNull PurpleCopyNumber copyNumber) {
-        return copyNumber.gene() + " del";
+    public static String copyNumberEvent(@NotNull PurpleCopyNumber copyNumber) {
+        switch (copyNumber.interpretation()) {
+            case PARTIAL_GAIN:
+            case FULL_GAIN: {
+                return copyNumber.gene() + " amp";
+            }
+            case PARTIAL_LOSS:
+            case FULL_LOSS: {
+                return copyNumber.gene() + " del";
+            }
+        }
+
+        LOGGER.warn("Unexpected copy number interpretation for generating event: {}", copyNumber.interpretation());
+        return copyNumber.gene() + " unknown copy number event";
     }
 
     @NotNull

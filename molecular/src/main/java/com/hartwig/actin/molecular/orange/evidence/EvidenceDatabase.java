@@ -75,23 +75,13 @@ public class EvidenceDatabase {
     }
 
     @Nullable
-    public GeneAlteration geneAlterationForAmplification(@NotNull PurpleCopyNumber amp) {
-        return knownEventResolver.resolveForAmplification(amp);
+    public GeneAlteration geneAlterationForCopyNumber(@NotNull PurpleCopyNumber copyNumber) {
+        return knownEventResolver.resolveForCopyNumber(copyNumber);
     }
 
     @NotNull
-    public ActionabilityMatch evidenceForAmplification(@NotNull PurpleCopyNumber amp) {
-        return actionableEventMatcher.matchForAmp(amp);
-    }
-
-    @Nullable
-    public GeneAlteration geneAlterationForLoss(@NotNull PurpleCopyNumber loss) {
-        return knownEventResolver.resolveForLoss(loss);
-    }
-
-    @NotNull
-    public ActionabilityMatch evidenceForLoss(@NotNull PurpleCopyNumber loss) {
-        return actionableEventMatcher.matchForLoss(loss);
+    public ActionabilityMatch evidenceForCopyNumber(@NotNull PurpleCopyNumber copyNumber) {
+        return actionableEventMatcher.matchForCopyNumber(copyNumber);
     }
 
     @Nullable

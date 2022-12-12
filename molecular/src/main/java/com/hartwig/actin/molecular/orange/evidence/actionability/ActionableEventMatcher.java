@@ -19,9 +19,7 @@ public class ActionableEventMatcher {
     @NotNull
     private final VariantEvidence variantEvidence;
     @NotNull
-    private final AmplificationEvidence amplificationEvidence;
-    @NotNull
-    private final LossEvidence lossEvidence;
+    private final CopyNumberEvidence copyNumberEvidence;
     @NotNull
     private final HomozygousDisruptionEvidence homozygousDisruptionEvidence;
     @NotNull
@@ -34,14 +32,13 @@ public class ActionableEventMatcher {
     @VisibleForTesting
     ActionableEventMatcher(@NotNull final PersonalizedActionabilityFactory personalizedActionabilityFactory,
             @NotNull final SignatureEvidence signatureEvidence, @NotNull final VariantEvidence variantEvidence,
-            @NotNull final AmplificationEvidence amplificationEvidence, @NotNull final LossEvidence lossEvidence,
-            @NotNull final HomozygousDisruptionEvidence homozygousDisruptionEvidence, @NotNull final BreakendEvidence breakendEvidence,
-            @NotNull final FusionEvidence fusionEvidence, @NotNull final VirusEvidence virusEvidence) {
+            @NotNull final CopyNumberEvidence copyNumberEvidence, @NotNull final HomozygousDisruptionEvidence homozygousDisruptionEvidence,
+            @NotNull final BreakendEvidence breakendEvidence, @NotNull final FusionEvidence fusionEvidence,
+            @NotNull final VirusEvidence virusEvidence) {
         this.personalizedActionabilityFactory = personalizedActionabilityFactory;
         this.signatureEvidence = signatureEvidence;
         this.variantEvidence = variantEvidence;
-        this.amplificationEvidence = amplificationEvidence;
-        this.lossEvidence = lossEvidence;
+        this.copyNumberEvidence = copyNumberEvidence;
         this.homozygousDisruptionEvidence = homozygousDisruptionEvidence;
         this.breakendEvidence = breakendEvidence;
         this.fusionEvidence = fusionEvidence;
@@ -74,13 +71,8 @@ public class ActionableEventMatcher {
     }
 
     @NotNull
-    public ActionabilityMatch matchForAmp(@NotNull PurpleCopyNumber amp) {
-        return personalizedActionabilityFactory.create(amplificationEvidence.findMatches(amp));
-    }
-
-    @NotNull
-    public ActionabilityMatch matchForLoss(@NotNull PurpleCopyNumber loss) {
-        return personalizedActionabilityFactory.create(lossEvidence.findMatches(loss));
+    public ActionabilityMatch matchForCopyNumber(@NotNull PurpleCopyNumber copyNumber) {
+        return personalizedActionabilityFactory.create(copyNumberEvidence.findMatches(copyNumber));
     }
 
     @NotNull

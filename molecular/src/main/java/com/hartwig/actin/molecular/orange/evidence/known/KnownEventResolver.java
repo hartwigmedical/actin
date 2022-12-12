@@ -85,18 +85,8 @@ public class KnownEventResolver {
     }
 
     @Nullable
-    public GeneAlteration resolveForAmplification(@NotNull PurpleCopyNumber copyNumber) {
-        KnownCopyNumber knownCopyNumber = CopyNumberLookup.findForAmplification(knownEvents.copyNumbers(), copyNumber);
-        if (knownCopyNumber != null) {
-            return knownCopyNumber;
-        }
-
-        return GeneLookup.find(knownGenes, copyNumber.gene());
-    }
-
-    @Nullable
-    public GeneAlteration resolveForLoss(@NotNull PurpleCopyNumber copyNumber) {
-        KnownCopyNumber knownCopyNumber = CopyNumberLookup.findForLoss(knownEvents.copyNumbers(), copyNumber);
+    public GeneAlteration resolveForCopyNumber(@NotNull PurpleCopyNumber copyNumber) {
+        KnownCopyNumber knownCopyNumber = CopyNumberLookup.findForCopyNumber(knownEvents.copyNumbers(), copyNumber);
         if (knownCopyNumber != null) {
             return knownCopyNumber;
         }

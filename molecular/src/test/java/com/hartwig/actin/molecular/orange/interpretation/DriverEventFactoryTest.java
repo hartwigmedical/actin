@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumberInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
@@ -56,8 +57,11 @@ public class DriverEventFactoryTest {
 
     @Test
     public void canGenerateEventsForCopyNumbers() {
-        assertEquals("MYC amp", DriverEventFactory.amplificationEvent(copyNumber("MYC")));
-        assertEquals("PTEN del", DriverEventFactory.lossEvent(copyNumber("PTEN")));
+        assertEquals("MYC amp", DriverEventFactory.copyNumberEvent(copyNumber("MYC", PurpleCopyNumberInterpretation.FULL_GAIN)));
+        assertEquals("MYC amp", DriverEventFactory.copyNumberEvent(copyNumber("MYC", PurpleCopyNumberInterpretation.PARTIAL_GAIN)));
+
+        assertEquals("PTEN del", DriverEventFactory.copyNumberEvent(copyNumber("PTEN", PurpleCopyNumberInterpretation.FULL_LOSS)));
+        assertEquals("PTEN del", DriverEventFactory.copyNumberEvent(copyNumber("PTEN", PurpleCopyNumberInterpretation.PARTIAL_LOSS)));
     }
 
     @Test
@@ -102,8 +106,8 @@ public class DriverEventFactoryTest {
     }
 
     @NotNull
-    private static PurpleCopyNumber copyNumber(@NotNull String gene) {
-        return TestPurpleFactory.copyNumberBuilder().gene(gene).build();
+    private static PurpleCopyNumber copyNumber(@NotNull String gene, @NotNull PurpleCopyNumberInterpretation interpretation) {
+        return TestPurpleFactory.copyNumberBuilder().gene(gene).interpretation(interpretation).build();
     }
 
     @NotNull

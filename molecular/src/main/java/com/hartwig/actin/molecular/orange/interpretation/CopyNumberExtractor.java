@@ -6,10 +6,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumber;
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
-import com.hartwig.actin.molecular.datamodel.driver.GeneAlteration;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableCopyNumber;
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidence;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumberInterpretation;
@@ -48,29 +45,13 @@ class CopyNumberExtractor {
             PurpleDriver driver = findCopyNumberDriver(purple.drivers(), copyNumber.gene());
 
             if (geneFilter.include(copyNumber.gene())) {
-                String event = copyNumber.gene() + " copy-neutral";
-                ActionableEvidence evidence = ImmutableActionableEvidence.builder().build();
-                GeneAlteration alteration = GeneAlterationFactory.convertAlteration(copyNumber.gene(), null);
-                if (driver != null) {
-                    if (DEL_DRIVERS.contains(driver.type())) {
-                        event = DriverEventFactory.lossEvent(copyNumber);
-                        alteration = GeneAlterationFactory.convertAlteration(copyNumber.gene(),
-                                evidenceDatabase.geneAlterationForLoss(copyNumber));
-                        evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForLoss(copyNumber));
-                    } else {
-                        event = DriverEventFactory.amplificationEvent(copyNumber);
-                        alteration = GeneAlterationFactory.convertAlteration(copyNumber.gene(),
-                                evidenceDatabase.geneAlterationForAmplification(copyNumber));
-                        evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForAmplification(copyNumber));
-                    }
-                }
-
                 copyNumbers.add(ImmutableCopyNumber.builder()
-                        .from(alteration)
+                        .from(GeneAlterationFactory.convertAlteration(copyNumber.gene(),
+                                evidenceDatabase.geneAlterationForCopyNumber(copyNumber)))
                         .isReportable(driver != null)
-                        .event(event)
+                        .event(DriverEventFactory.copyNumberEvent(copyNumber))
                         .driverLikelihood(driver != null ? DriverLikelihood.HIGH : null)
-                        .evidence(evidence)
+                        .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(copyNumber)))
                         .type(determineType(copyNumber.interpretation()))
                         .minCopies(copyNumber.minCopies())
                         .maxCopies(copyNumber.maxCopies())

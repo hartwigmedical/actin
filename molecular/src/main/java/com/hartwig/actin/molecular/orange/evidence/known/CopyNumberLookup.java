@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.orange.evidence.known;
 
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumberInterpretation;
 import com.hartwig.serve.datamodel.gene.GeneEvent;
 import com.hartwig.serve.datamodel.gene.KnownCopyNumber;
 
@@ -14,33 +15,42 @@ final class CopyNumberLookup {
     }
 
     @Nullable
-    public static KnownCopyNumber findForAmplification(@NotNull Iterable<KnownCopyNumber> knownCopyNumbers, @NotNull PurpleCopyNumber amp) {
+    public static KnownCopyNumber findForCopyNumber(@NotNull Iterable<KnownCopyNumber> knownCopyNumbers,
+            @NotNull PurpleCopyNumber copyNumber) {
         for (KnownCopyNumber knownCopyNumber : knownCopyNumbers) {
-            if (knownCopyNumber.event() == GeneEvent.AMPLIFICATION && knownCopyNumber.gene().equals(amp.gene())) {
+            boolean geneMatches = knownCopyNumber.gene().equals(copyNumber.gene());
+            boolean interpretationMatches = interpretationMatchesEvent(copyNumber.interpretation(), knownCopyNumber.event());
+            if (geneMatches && interpretationMatches) {
                 return knownCopyNumber;
             }
-        }
-        return null;
+        } return null;
     }
 
-    @Nullable
-    public static KnownCopyNumber findForLoss(@NotNull Iterable<KnownCopyNumber> knownCopyNumbers, @NotNull PurpleCopyNumber loss) {
-        return findForDeletion(knownCopyNumbers, loss.gene());
+    private static boolean interpretationMatchesEvent(@NotNull PurpleCopyNumberInterpretation interpretation, @NotNull GeneEvent event) {
+        switch (interpretation) {
+            case FULL_GAIN:
+            case PARTIAL_GAIN: {
+                return event == GeneEvent.AMPLIFICATION;
+            }
+            case FULL_LOSS:
+            case PARTIAL_LOSS: {
+                return event == GeneEvent.DELETION;
+            }
+            default: {
+                return false;
+            }
+        }
     }
 
     @Nullable
     public static KnownCopyNumber findForHomozygousDisruption(@NotNull Iterable<KnownCopyNumber> knownCopyNumbers,
             @NotNull LinxHomozygousDisruption homozygousDisruption) {
-        return findForDeletion(knownCopyNumbers, homozygousDisruption.gene());
-    }
-
-    @Nullable
-    private static KnownCopyNumber findForDeletion(@NotNull Iterable<KnownCopyNumber> knownCopyNumbers, @NotNull String geneToFind) {
         for (KnownCopyNumber knownCopyNumber : knownCopyNumbers) {
-            if (knownCopyNumber.event() == GeneEvent.DELETION && knownCopyNumber.gene().equals(geneToFind)) {
+            if (knownCopyNumber.event() == GeneEvent.DELETION && knownCopyNumber.gene().equals(homozygousDisruption.gene())) {
                 return knownCopyNumber;
             }
         }
         return null;
     }
+
 }
