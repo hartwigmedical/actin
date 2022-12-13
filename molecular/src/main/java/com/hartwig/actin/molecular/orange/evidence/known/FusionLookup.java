@@ -14,15 +14,35 @@ final class FusionLookup {
 
     @Nullable
     public static KnownFusion find(@NotNull Iterable<KnownFusion> knownFusions, @NotNull LinxFusion fusion) {
-        KnownFusion genesMatch = null;
+        KnownFusion best = null;
         for (KnownFusion knownFusion : knownFusions) {
             if (FusionMatching.isGeneMatch(knownFusion, fusion)) {
-                genesMatch = knownFusion;
-                if (FusionMatching.isExonMatch(knownFusion, fusion)) {
-                    return knownFusion;
+                boolean matchesExonUp = FusionMatching.explicitlyMatchesExonUp(knownFusion, fusion);
+                boolean matchesExonDown = FusionMatching.explicitlyMatchesExonDown(knownFusion, fusion);
+                if (matchesExonUp && matchesExonDown) {
+                    best = knownFusion;
+                } else {
+                    boolean meetsExonUp = matchesExonUp && !hasDownRequirements(knownFusion);
+                    boolean meetsExonDown = matchesExonDown && !hasUpRequirements(knownFusion);
+                    if (meetsExonUp || meetsExonDown) {
+                        if (best == null || !hasUpRequirements(best) || !hasDownRequirements(best)) {
+                            best = knownFusion;
+                        }
+                    } else if (!hasUpRequirements(knownFusion) && !hasDownRequirements(knownFusion)) {
+                        best = knownFusion;
+                    }
                 }
             }
         }
-        return genesMatch;
+
+        return best;
+    }
+
+    private static boolean hasUpRequirements(@NotNull KnownFusion knownFusion) {
+        return knownFusion.minExonUp() != null && knownFusion.maxExonUp() != null;
+    }
+
+    private static boolean hasDownRequirements(@NotNull KnownFusion knownFusion) {
+        return knownFusion.minExonDown() != null && knownFusion.maxExonDown() != null;
     }
 }

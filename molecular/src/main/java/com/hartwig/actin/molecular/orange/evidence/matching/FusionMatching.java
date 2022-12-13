@@ -18,19 +18,35 @@ public final class FusionMatching {
         Integer minExonUp = fusionPair.minExonUp();
         Integer maxExonUp = fusionPair.maxExonUp();
 
-        boolean meetsExonUp = true;
-        if (minExonUp != null && maxExonUp != null) {
-            meetsExonUp = fusion.fusedExonUp() >= minExonUp && fusion.fusedExonUp() <= maxExonUp;
-        }
+        boolean meetsExonUp = minExonUp == null || maxExonUp == null || explicitlyMatchesExonUp(fusionPair, fusion);
 
         Integer minExonDown = fusionPair.minExonDown();
         Integer maxExonDown = fusionPair.maxExonDown();
 
-        boolean meetsExonDown = true;
-        if (minExonDown != null && maxExonDown != null) {
-            meetsExonDown = fusion.fusedExonDown() >= minExonDown && fusion.fusedExonDown() <= maxExonDown;
-        }
+        boolean meetsExonDown = minExonDown == null || maxExonDown == null || explicitlyMatchesExonDown(fusionPair, fusion);
 
         return meetsExonUp && meetsExonDown;
+    }
+
+    public static boolean explicitlyMatchesExonUp(@NotNull FusionPair fusionPair, @NotNull LinxFusion fusion) {
+        Integer minExonUp = fusionPair.minExonUp();
+        Integer maxExonUp = fusionPair.maxExonUp();
+
+        if (minExonUp == null || maxExonUp == null) {
+            return false;
+        }
+
+        return fusion.fusedExonUp() >= minExonUp && fusion.fusedExonUp() <= maxExonUp;
+    }
+
+    public static boolean explicitlyMatchesExonDown(@NotNull FusionPair fusionPair, @NotNull LinxFusion fusion) {
+        Integer minExonDown = fusionPair.minExonDown();
+        Integer maxExonDown = fusionPair.maxExonDown();
+
+        if (minExonDown == null || maxExonDown == null) {
+            return false;
+        }
+
+        return fusion.fusedExonDown() >= minExonDown && fusion.fusedExonDown() <= maxExonDown;
     }
 }
