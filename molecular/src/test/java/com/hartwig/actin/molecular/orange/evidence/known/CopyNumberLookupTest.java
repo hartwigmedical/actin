@@ -20,7 +20,7 @@ import org.junit.Test;
 public class CopyNumberLookupTest {
 
     @Test
-    public void canLookupForCopyNumbers() {
+    public void canLookupCopyNumbers() {
         KnownCopyNumber amp = TestServeKnownFactory.copyNumberBuilder().gene("gene 1").event(GeneEvent.AMPLIFICATION).build();
         KnownCopyNumber del = TestServeKnownFactory.copyNumberBuilder().gene("gene 2").event(GeneEvent.DELETION).build();
         List<KnownCopyNumber> knownCopyNumbers = Lists.newArrayList(amp, del);
@@ -44,7 +44,7 @@ public class CopyNumberLookupTest {
     }
 
     @Test
-    public void canLookupForHomozygousDisruptions() {
+    public void canLookupHomozygousDisruptions() {
         KnownCopyNumber amp = TestServeKnownFactory.copyNumberBuilder().gene("gene 1").event(GeneEvent.AMPLIFICATION).build();
         KnownCopyNumber del = TestServeKnownFactory.copyNumberBuilder().gene("gene 1").event(GeneEvent.DELETION).build();
         List<KnownCopyNumber> knownCopyNumbers = Lists.newArrayList(amp, del);
