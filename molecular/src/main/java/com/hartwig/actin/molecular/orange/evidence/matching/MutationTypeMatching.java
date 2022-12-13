@@ -16,7 +16,7 @@ public final class MutationTypeMatching {
     private MutationTypeMatching() {
     }
 
-    public static boolean matches(@NotNull PurpleVariant variant, @NotNull MutationType typeToMatch) {
+    public static boolean matches(@NotNull MutationType typeToMatch, @NotNull PurpleVariant variant) {
         PurpleCodingEffect effect = variant.canonicalImpact().codingEffect();
 
         switch (typeToMatch) {

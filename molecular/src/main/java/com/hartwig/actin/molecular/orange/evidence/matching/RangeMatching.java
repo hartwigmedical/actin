@@ -14,7 +14,7 @@ public final class RangeMatching {
         boolean geneMatch = rangeAnnotation.gene().equals(variant.gene());
         boolean chromosomeMatch = rangeAnnotation.chromosome().equals(variant.chromosome());
         boolean positionMatch = variant.position() >= rangeAnnotation.start() && variant.position() <= rangeAnnotation.end();
-        boolean typeMatch = MutationTypeMatching.matches(variant, rangeAnnotation.applicableMutationType());
+        boolean typeMatch = MutationTypeMatching.matches(rangeAnnotation.applicableMutationType(), variant);
 
         return geneMatch && chromosomeMatch && positionMatch && typeMatch;
     }

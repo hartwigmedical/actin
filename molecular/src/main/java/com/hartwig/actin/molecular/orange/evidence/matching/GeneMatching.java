@@ -13,7 +13,7 @@ public final class GeneMatching {
 
     public static boolean isMatch(@NotNull GeneAnnotation geneAnnotation, @NotNull PurpleVariant variant) {
         boolean geneMatch = geneAnnotation.gene().equals(variant.gene());
-        boolean typeMatch = MutationTypeMatching.matches(variant, MutationType.ANY);
+        boolean typeMatch = MutationTypeMatching.matches(MutationType.ANY, variant);
 
         return geneMatch && typeMatch;
     }
