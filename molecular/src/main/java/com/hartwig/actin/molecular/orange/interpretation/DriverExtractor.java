@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.orange.interpretation;
 
 import java.util.Set;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumber;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
@@ -92,7 +93,8 @@ class DriverExtractor {
     }
 
     @NotNull
-    private static Set<String> reportableLostGenes(@NotNull Set<CopyNumber> copyNumbers) {
+    @VisibleForTesting
+    static Set<String> reportableLostGenes(@NotNull Iterable<CopyNumber> copyNumbers) {
         Set<String> lostGenes = Sets.newHashSet();
         for (CopyNumber copyNumber : copyNumbers) {
             if (copyNumber.isReportable() && copyNumber.type().isLoss()) {
@@ -102,7 +104,8 @@ class DriverExtractor {
         return lostGenes;
     }
 
-    private static <T extends Driver> int reportableCount(@NotNull Set<T> drivers) {
+    @VisibleForTesting
+    static <T extends Driver> int reportableCount(@NotNull Iterable<T> drivers) {
         int count = 0;
         for (T driver : drivers) {
             if (driver.isReportable()) {

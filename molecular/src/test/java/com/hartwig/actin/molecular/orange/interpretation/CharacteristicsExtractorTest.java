@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.orange.interpretation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -23,7 +24,7 @@ public class CharacteristicsExtractorTest {
     private static final double EPSILON = 1.0E-10;
 
     @Test
-    public void canExtractCharacteristics() {
+    public void canExtractCharacteristicsFromProperTestData() {
         CharacteristicsExtractor extractor = createTestExtractor();
         MolecularCharacteristics characteristics = extractor.extract(TestOrangeFactory.createProperTestOrangeRecord());
 
@@ -32,11 +33,15 @@ public class CharacteristicsExtractorTest {
         assertEquals("Melanoma", characteristics.predictedTumorOrigin().tumorType());
         assertEquals(0.996, characteristics.predictedTumorOrigin().likelihood(), EPSILON);
         assertFalse(characteristics.isMicrosatelliteUnstable());
+        assertNotNull(characteristics.microsatelliteEvidence());
         assertFalse(characteristics.isHomologousRepairDeficient());
+        assertNotNull(characteristics.homologousRepairEvidence());
         assertEquals(13D, characteristics.tumorMutationalBurden(), EPSILON);
         assertTrue(characteristics.hasHighTumorMutationalBurden());
+        assertNotNull(characteristics.tumorMutationalBurdenEvidence());
         assertEquals(189, (int) characteristics.tumorMutationalLoad());
         assertTrue(characteristics.hasHighTumorMutationalLoad());
+        assertNotNull(characteristics.tumorMutationalLoadEvidence());
     }
 
     @Test

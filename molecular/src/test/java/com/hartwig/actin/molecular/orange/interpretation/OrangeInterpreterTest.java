@@ -11,6 +11,7 @@ import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
+import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRefGenomeVersion;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
@@ -23,7 +24,13 @@ import org.junit.Test;
 public class OrangeInterpreterTest {
 
     @Test
-    public void canReadOrangeRecord() {
+    public void canHandleMinimalOrangeRecord() {
+        OrangeInterpreter interpreter = createTestInterpreter();
+        assertNotNull(interpreter.interpret(TestOrangeFactory.createMinimalTestOrangeRecord()));
+    }
+
+    @Test
+    public void canInterpretProperOrangeRecord() {
         OrangeInterpreter interpreter = createTestInterpreter();
         MolecularRecord record = interpreter.interpret(TestOrangeFactory.createProperTestOrangeRecord());
 
@@ -34,6 +41,7 @@ public class OrangeInterpreterTest {
         assertEquals(LocalDate.of(2021, 5, 6), record.date());
         assertEquals(ActionabilityConstants.EVIDENCE_SOURCE.display(), record.evidenceSource());
         assertEquals(ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display(), record.externalTrialSource());
+        assertTrue(record.containsTumorCells());
         assertTrue(record.hasSufficientQuality());
 
         assertNotNull(record.characteristics());
@@ -45,6 +53,10 @@ public class OrangeInterpreterTest {
         assertEquals(1, drivers.disruptions().size());
         assertEquals(1, drivers.fusions().size());
         assertEquals(1, drivers.viruses().size());
+
+        MolecularImmunology immunology = record.immunology();
+        assertTrue(immunology.isReliable());
+        assertEquals(1, immunology.hlaAlleles().size());
 
         assertEquals(1, record.pharmaco().size());
     }

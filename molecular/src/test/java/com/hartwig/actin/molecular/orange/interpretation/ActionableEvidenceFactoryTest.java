@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -18,6 +19,11 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 public class ActionableEvidenceFactoryTest {
+
+    @Test
+    public void canCreateNoEvidence() {
+        assertNotNull(ActionableEvidenceFactory.createNoEvidence());
+    }
 
     @Test
     public void handlesNoMatch() {
