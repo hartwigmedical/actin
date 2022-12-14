@@ -62,6 +62,7 @@ final class QuestionnaireCuration {
         STAGE_MAPPING.put("IV", TumorStage.IV);
         STAGE_MAPPING.put("4", TumorStage.IV);
         STAGE_MAPPING.put("cT3N2M1", TumorStage.IV);
+        STAGE_MAPPING.put("unknown", null);
         STAGE_MAPPING.put("onknown", null);
     }
 
