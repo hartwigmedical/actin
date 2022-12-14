@@ -5,5 +5,6 @@ public enum LesionLocationCategory {
     LIVER,
     CNS,
     BRAIN,
-    LUNG
+    LUNG,
+    LYMPH_NODE
 }
