@@ -45,13 +45,13 @@ class PersonalizedActionabilityFactory {
         return builder.build();
     }
 
-    private boolean isOnLabel(@NotNull ActionableEvent event, @NotNull Set<String> applicableDoids) {
-        if (!applicableDoids.contains(event.applicableCancerType().doid())) {
+    private boolean isOnLabel(@NotNull ActionableEvent event, @NotNull Set<String> expandedTumorDoids) {
+        if (!expandedTumorDoids.contains(event.applicableCancerType().doid())) {
             return false;
         }
 
         for (CancerType blacklist : event.blacklistCancerTypes()) {
-            if (applicableDoids.contains(blacklist.doid())) {
+            if (expandedTumorDoids.contains(blacklist.doid())) {
                 return false;
             }
         }

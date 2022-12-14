@@ -137,14 +137,14 @@ For homozygous disruptions, no additional data is captured beyond the driver fie
 
 In addition to the driver fields, the following data is captured per disruption:
 
-| Field                 | Example Value | Details                                                                                                          |
-|-----------------------|---------------|------------------------------------------------------------------------------------------------------------------|
-| type                  | BND           | The type of disruption (either `BND`, `DEL`, `DUP`, `INF`, `INS`, `INV` or `SGL`)                                |
-| junctionCopyNumber    | 1.1           | Number of copies affected by this disruption                                                                     |
-| undisruptedCopyNumber | 1.8           | Remaining number of copies not impacted by this disruption                                                       |
-| regionType            | INTRONIC      | The region whether this disruption starts or ends (either `INTRONIC`, `EXONIC`, `UPSTREAM`, `DOWNSTREAM` or `IG` |
-| codingContext         | UTR_5P        | The coding context of the disruption (either `ENHANCER`, `UTR_5P`, `CODING`, `NON_CODING`, `UTR_3P`              |
-| clusterGroup          | 3             | The ID of the cluster this disruption belongs to                                                                 |
+| Field                 | Example Value | Details                                                                                                        |
+|-----------------------|---------------|----------------------------------------------------------------------------------------------------------------|
+| type                  | BND           | The type of disruption (either `BND`, `DEL`, `DUP`, `INF`, `INS`, `INV` or `SGL`)                              |
+| junctionCopyNumber    | 1.1           | Number of copies affected by this disruption                                                                   |
+| undisruptedCopyNumber | 1.8           | Remaining number of copies not impacted by this disruption                                                     |
+| regionType            | INTRONIC      | The region where this disruption starts or ends (either `INTRONIC`, `EXONIC`, `UPSTREAM`, `DOWNSTREAM` or `IG` |
+| codingContext         | UTR_5P        | The coding context of the disruption (either `ENHANCER`, `UTR_5P`, `CODING`, `NON_CODING`, `UTR_3P`            |
+| clusterGroup          | 3             | The ID of the cluster this disruption belongs to                                                               |
 
 #### N fusions
 
@@ -183,25 +183,25 @@ In addition to the general driver fields, the following data is captured per vir
 
 #### N pharmaco
 
-| Field             | Example Value | Details                                             |
-|-------------------|---------------|-----------------------------------------------------|
-| gene              | DPYD          | The gene for which the pharmaco entry is applicable |
-| haplotype         | 1* HOM        | Haplotypes found for the gene                       |
-| haplotypeFunction |               | Function impact of corresponding haplotype          |
+| Field             | Example Value   | Details                                             |
+|-------------------|-----------------|-----------------------------------------------------|
+| gene              | DPYD            | The gene for which the pharmaco entry is applicable |
+| haplotype         | 1* HOM          | Haplotypes found for the gene                       |
+| haplotypeFunction | Normal Function | Functional impact of corresponding haplotype        |
 
 ### Evidence assignment
 
 Evidence is assigned to molecular driver events and characteristics using the following datamodel:
 
-| Field                          | Example Value | Details                                                                                                                         |
-|--------------------------------|---------------|---------------------------------------------------------------------------------------------------------------------------------|
-| approvedTreatments             | Pembrolizumab | A set of treatment names which are approved based on tumor type and mutation                                                    |
-| externalEligibleTrials         | Trial A       | A set of trials for which patient may be eligible based on tumor type and mutation                                              |
-| onLabelExperimentalTreatments  | Olaparib      | A set of treatment names which are considered on-label experimental based on tumor type and mutation                            |
-| offLabelExperimentalTreatments | Olaparib      | A set of treatment names which are considered off-label experimental for specific tumor type and mutation                       |
-| preClinicalTreatments          | New Drug A    | A set of treatment names which are pre-clinical and have some supportive evidence for mutation and tumor type                   |
-| knownResistantTreatments       | Erlotinib     | A set of treatment names which are known to be resisted by the mutation for the specific tumor type                             |
-| suspectResistantTreatments     | Erlotinib     | A set of treatment names for which there is some evidence that they may be resisted by the mutation for the specific tumor type |
+| Field                          | Example Value            | Details                                                                                                                         |
+|--------------------------------|--------------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| approvedTreatments             | Pembrolizumab, Nivolumab | A set of treatment names which are approved based on tumor type and mutation / characteristic                                   |
+| externalEligibleTrials         | Trial A                  | A set of trials for which patient may be eligible based on tumor type and mutation / characteristic                             |
+| onLabelExperimentalTreatments  | Olaparib                 | A set of treatment names which are considered on-label experimental based on tumor type and mutation /characteristic            |
+| offLabelExperimentalTreatments | Olaparib                 | A set of treatment names which are considered off-label experimental for specific tumor type and mutation /characteristic       |
+| preClinicalTreatments          | New Drug A               | A set of treatment names which are pre-clinical and have some supportive evidence for tumor type and mutation / characteristic  |
+| knownResistantTreatments       | Erlotinib                | A set of treatment names which are known to be resisted by the mutation for the specific tumor type                             |
+| suspectResistantTreatments     | Erlotinib                | A set of treatment names for which there is some evidence that they may be resisted by the mutation for the specific tumor type |
 
 ## Interpretation to ACTIN molecular datamodel
 
@@ -209,27 +209,29 @@ Evidence is assigned to molecular driver events and characteristics using the fo
 
 The interpretation of ORANGE to the ACTIN datamodel consists of two parts:
 
-1. Annotating all mutations and various characteristics in ORANGE with additional gene and evidence annotation
+1. Annotating all mutations and various characteristics in ORANGE with additional gene annotation and clinical evidence.
 2. Mapping all fields, annotated mutations and annotated characteristics to the ACTIN datamodel.
 
-#### 1. Annotation of mutations and characteristics in ORANGE
+#### 1. Annotation of mutations and characteristics
 
 #### Additional gene annotation
 
 Every variant, copy number and disruption is annotated with `geneRole`, `proteinEffect` and `isAssociatedWithDrugResistance`. Furthermore,
 every fusion is annotated with `proteinEffect` and `isAssociatedWithDrugResistance`.
 
-The annotation algo for above tries the best matching entry from SERVE's mapping of the `CKB` database as follows:
+The annotation algo tries to find the best matching entry from SERVE's mapping of the `CKB` database as follows:
 
 - For variants the algo searches in the following order:
     - Is there a hotspot match for the specific variant? If yes, use hotspot annotation.
     - Is there a codon match for the specific variant's mutation type? If yes, use codon annotation.
-    - Is there an exon match for the specific variant's mutation type? If yes, use exon match.
+    - Is there an exon match for the specific variant's mutation type? If yes, use exon annotation.
     - Else, fall back to gene matching.
 - For copy numbers the algo searches in the following order:
-    - Is there a copy number specific match? If yes, use copy number specific match.
+    - Is there a copy number specific match? If yes, use copy number specific annotation.
     - Else, fall back to gene matching.
-- For homozygous disruptions, a match with losses is performed.
+- For homozygous disruptions:
+    - Is there copy number loss specific match? If yes, use copy number loss annotation.
+    - Else, fall back to gene matching.
 - For disruptions, a gene match is performed.
 - For fusions, the algo searches in the following order:
     - Is there a known fusion with an exon range that matches the specific fusion? If yes, use fusion annotation.
@@ -241,13 +243,13 @@ Do note that gene matching only ever populates the `geneRole` field. Any gene-le
 
 Every (potential) molecular driver and characteristic is annotated with evidence from SERVE. In practice all evidence comes from `CKB`
 except for
-external trials which is populated by `ICLUSION`. The evidence annotations occurs in the following order:
+external trials which is populated by `ICLUSION`. The evidence annotations occur in the following order:
 
 1. Collect all on-label and off-label applicable evidences that match with the driver / characteristic
-1. Map the evidences to the ACTIN evidence datamodel (above).
+2. Map the evidences to the ACTIN evidence datamodel (above).
 
-Evidence is considered on-label in case the applicable evidence tumor DOID is equal to or a child of the patient's tumor doids, and none of
-the patient's tumor DOIDs is blacklisted by the evidence.
+Evidence is considered on-label in case the applicable evidence tumor DOID is equal to or a parent of the patient's tumor doids, and none of
+the patient's tumor DOIDs (or parents thereof) is blacklisted by the evidence.
 
 Evidence from SERVE is collected per driver / characteristic according as follows:
 
@@ -337,7 +339,7 @@ Note that all floating point numbers are rounded to 3 digits when ingesting data
 - variants: `variantCopyNumber`, `totalCopyNumber`, `clonalLikelihood`
 - disruptions: `junctionCopyNumber`, `undisruptedCopyNumber`
 
-Other data: 
+Other data:
 
 The HLA entries are extracted from LILAC as follows:
 
