@@ -17,14 +17,17 @@ import org.junit.Test;
 public class GeneAlterationFactoryTest {
 
     @Test
-    public void canConvertAllGeneAlterations() {
+    public void canConvertNullAlterations() {
         GeneAlteration nullAlteration = GeneAlterationFactory.convertAlteration("gene", null);
 
         assertEquals("gene", nullAlteration.gene());
         assertEquals(com.hartwig.actin.molecular.datamodel.driver.GeneRole.UNKNOWN, nullAlteration.geneRole());
         assertEquals(com.hartwig.actin.molecular.datamodel.driver.ProteinEffect.UNKNOWN, nullAlteration.proteinEffect());
         assertNull(nullAlteration.isAssociatedWithDrugResistance());
+    }
 
+    @Test
+    public void canConvertAllRolesAndEffects() {
         for (GeneRole geneRole : GeneRole.values()) {
             for (ProteinEffect proteinEffect : ProteinEffect.values()) {
                 GeneAlteration alteration = GeneAlterationFactory.convertAlteration(Strings.EMPTY,
@@ -34,7 +37,10 @@ public class GeneAlterationFactoryTest {
                 assertNotNull(alteration.proteinEffect());
             }
         }
+    }
 
+    @Test
+    public void canHandleDrugAssociations() {
         GeneAlteration withDrugAssociation = GeneAlterationFactory.convertAlteration(Strings.EMPTY,
                 TestServeKnownFactory.createGeneAlteration(GeneRole.UNKNOWN, ProteinEffect.UNKNOWN, true));
         assertTrue(withDrugAssociation.isAssociatedWithDrugResistance());
