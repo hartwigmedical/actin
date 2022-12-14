@@ -2,6 +2,7 @@ package com.hartwig.actin.clinical.curation.config;
 
 import java.util.Map;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory;
 
 import org.jetbrains.annotations.NotNull;
@@ -20,11 +21,12 @@ public class LesionLocationConfigFactory implements CurationConfigFactory<Lesion
     }
 
     @Nullable
-    private static LesionLocationCategory toCategory(@NotNull String category) {
+    @VisibleForTesting
+    static LesionLocationCategory toCategory(@NotNull String category) {
         if (category.isEmpty()) {
             return null;
         }
 
-        return LesionLocationCategory.valueOf(category.toUpperCase());
+        return LesionLocationCategory.valueOf(category.replaceAll(" ", "_").toUpperCase());
     }
 }
