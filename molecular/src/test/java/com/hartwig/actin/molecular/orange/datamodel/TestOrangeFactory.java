@@ -3,27 +3,28 @@ package com.hartwig.actin.molecular.orange.datamodel;
 import java.time.LocalDate;
 
 import com.hartwig.actin.TestDataFactory;
+import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ImmutableChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
-import com.hartwig.actin.molecular.orange.datamodel.cuppa.ImmutableCuppaPrediction;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.ImmutableCuppaRecord;
-import com.hartwig.actin.molecular.orange.datamodel.lilac.ImmutableLilacHlaAllele;
+import com.hartwig.actin.molecular.orange.datamodel.cuppa.TestCuppaFactory;
 import com.hartwig.actin.molecular.orange.datamodel.lilac.ImmutableLilacRecord;
 import com.hartwig.actin.molecular.orange.datamodel.lilac.LilacRecord;
+import com.hartwig.actin.molecular.orange.datamodel.lilac.TestLilacFactory;
 import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakendType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
-import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
-import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleCharacteristics;
+import com.hartwig.actin.molecular.orange.datamodel.peach.TestPeachFactory;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCharacteristics;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumberInterpretation;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriverType;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleFit;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleHotspotType;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
@@ -55,22 +56,8 @@ public final class TestOrangeFactory {
                 .peach(ImmutablePeachRecord.builder().build())
                 .cuppa(ImmutableCuppaRecord.builder().build())
                 .virusInterpreter(ImmutableVirusInterpreterRecord.builder().build())
-                .lilac(ImmutableLilacRecord.builder().qc(Strings.EMPTY).build())
-                .chord(ImmutableChordRecord.builder().hrStatus(Strings.EMPTY).build())
-                .build();
-    }
-
-    @NotNull
-    public static OrangeRecord createProperTestOrangeRecord() {
-        return ImmutableOrangeRecord.builder()
-                .from(createMinimalTestOrangeRecord())
-                .purple(createTestPurpleRecord())
-                .linx(createTestLinxRecord())
-                .peach(createTestPeachRecord())
-                .cuppa(createTestCuppaRecord())
-                .virusInterpreter(createTestVirusInterpreterRecord())
-                .lilac(createTestLilacRecord())
-                .chord(ImmutableChordRecord.builder().hrStatus("HR_PROFICIENT").build())
+                .lilac(createMinimalTestLilacRecord())
+                .chord(createMinimalTestChordRecord())
                 .build();
     }
 
@@ -83,11 +70,38 @@ public final class TestOrangeFactory {
     }
 
     @NotNull
+    private static LilacRecord createMinimalTestLilacRecord() {
+        return ImmutableLilacRecord.builder().qc(Strings.EMPTY).build();
+    }
+
+    @NotNull
+    private static ChordRecord createMinimalTestChordRecord() {
+        return ImmutableChordRecord.builder().hrStatus(Strings.EMPTY).build();
+    }
+
+    @NotNull
+    public static OrangeRecord createProperTestOrangeRecord() {
+        return ImmutableOrangeRecord.builder()
+                .from(createMinimalTestOrangeRecord())
+                .purple(createTestPurpleRecord())
+                .linx(createTestLinxRecord())
+                .peach(createTestPeachRecord())
+                .cuppa(createTestCuppaRecord())
+                .virusInterpreter(createTestVirusInterpreterRecord())
+                .lilac(createTestLilacRecord())
+                .chord(createTestChordRecord())
+                .build();
+    }
+
+    @NotNull
     private static PurpleRecord createTestPurpleRecord() {
         return ImmutablePurpleRecord.builder()
                 .from(createMinimalTestPurpleRecord())
                 .fit(createTestPurpleFit())
                 .characteristics(createTestPurpleCharacteristics())
+                .addDrivers(TestPurpleFactory.driverBuilder().gene("BRAF").type(PurpleDriverType.MUTATION).driverLikelihood(1D).build())
+                .addDrivers(TestPurpleFactory.driverBuilder().gene("MYC").type(PurpleDriverType.AMP).driverLikelihood(1D).build())
+                .addDrivers(TestPurpleFactory.driverBuilder().gene("PTEN").type(PurpleDriverType.DEL).driverLikelihood(1D).build())
                 .addVariants(TestPurpleFactory.variantBuilder()
                         .reported(true)
                         .gene("BRAF")
@@ -99,6 +113,7 @@ public final class TestOrangeFactory {
                         .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder()
                                 .hgvsCodingImpact("c.something")
                                 .hgvsProteinImpact("p.Val600Glu")
+                                .spliceRegion(false)
                                 .addEffects(PurpleVariantEffect.MISSENSE)
                                 .codingEffect(PurpleCodingEffect.MISSENSE)
                                 .build())
@@ -107,11 +122,13 @@ public final class TestOrangeFactory {
                         .gene("MYC")
                         .interpretation(PurpleCopyNumberInterpretation.FULL_GAIN)
                         .minCopies(38)
+                        .maxCopies(40)
                         .build())
                 .addCopyNumbers(TestPurpleFactory.copyNumberBuilder()
                         .gene("PTEN")
                         .interpretation(PurpleCopyNumberInterpretation.FULL_LOSS)
                         .minCopies(0)
+                        .maxCopies(0)
                         .build())
                 .build();
     }
@@ -123,7 +140,7 @@ public final class TestOrangeFactory {
 
     @NotNull
     private static PurpleCharacteristics createTestPurpleCharacteristics() {
-        return ImmutablePurpleCharacteristics.builder()
+        return TestPurpleFactory.characteristicsBuilder()
                 .microsatelliteStabilityStatus("MSS")
                 .tumorMutationalBurden(13D)
                 .tumorMutationalBurdenStatus("HIGH")
@@ -136,6 +153,15 @@ public final class TestOrangeFactory {
     private static LinxRecord createTestLinxRecord() {
         return ImmutableLinxRecord.builder()
                 .addStructuralVariants(TestLinxFactory.structuralVariantBuilder().svId(1).clusterId(1).build())
+                .addHomozygousDisruptions(TestLinxFactory.homozygousDisruptionBuilder().gene("TP53").build())
+                .addBreakends(TestLinxFactory.breakendBuilder()
+                        .reported(true)
+                        .svId(1)
+                        .gene("RB1")
+                        .type(LinxBreakendType.DEL)
+                        .junctionCopyNumber(0.8)
+                        .undisruptedCopyNumber(2.1)
+                        .build())
                 .addFusions(TestLinxFactory.fusionBuilder()
                         .reported(true)
                         .type(LinxFusionType.KNOWN_PAIR)
@@ -145,29 +171,20 @@ public final class TestOrangeFactory {
                         .fusedExonDown(4)
                         .driverLikelihood(LinxFusionDriverLikelihood.HIGH)
                         .build())
-                .addHomozygousDisruptions(TestLinxFactory.homozygousDisruptionBuilder().gene("TP53").build())
-                .addBreakends(TestLinxFactory.breakendBuilder()
-                        .reported(true)
-                        .gene("RB1")
-                        .svId(1)
-                        .type(LinxBreakendType.DEL)
-                        .junctionCopyNumber(0.8)
-                        .undisruptedCopyNumber(2.1)
-                        .build())
                 .build();
     }
 
     @NotNull
     private static PeachRecord createTestPeachRecord() {
         return ImmutablePeachRecord.builder()
-                .addEntries(ImmutablePeachEntry.builder().gene("DPYD").haplotype("1* HOM").function("Normal function").build())
+                .addEntries(TestPeachFactory.builder().gene("DPYD").haplotype("1* HOM").function("Normal function").build())
                 .build();
     }
 
     @NotNull
     private static CuppaRecord createTestCuppaRecord() {
         return ImmutableCuppaRecord.builder()
-                .addPredictions(ImmutableCuppaPrediction.builder().cancerType("Melanoma").likelihood(0.996).build())
+                .addPredictions(TestCuppaFactory.builder().cancerType("Melanoma").likelihood(0.996).build())
                 .build();
     }
 
@@ -189,14 +206,12 @@ public final class TestOrangeFactory {
     private static LilacRecord createTestLilacRecord() {
         return ImmutableLilacRecord.builder()
                 .qc("PASS")
-                .addAlleles(ImmutableLilacHlaAllele.builder()
-                        .allele("A*01:01")
-                        .tumorCopyNumber(1.2)
-                        .somaticMissense(0D)
-                        .somaticNonsenseOrFrameshift(0D)
-                        .somaticSplice(0D)
-                        .somaticInframeIndel(0D)
-                        .build())
+                .addAlleles(TestLilacFactory.builder().allele("A*01:01").tumorCopyNumber(1.2).build())
                 .build();
+    }
+
+    @NotNull
+    private static ChordRecord createTestChordRecord() {
+        return ImmutableChordRecord.builder().hrStatus("HR_PROFICIENT").build();
     }
 }

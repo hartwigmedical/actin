@@ -24,6 +24,15 @@ public final class TestPurpleFactory {
     }
 
     @NotNull
+    public static ImmutablePurpleDriver.Builder driverBuilder() {
+        return ImmutablePurpleDriver.builder()
+                .gene(Strings.EMPTY)
+                .transcript(Strings.EMPTY)
+                .type(PurpleDriverType.MUTATION)
+                .driverLikelihood(0D);
+    }
+
+    @NotNull
     public static ImmutablePurpleVariant.Builder variantBuilder() {
         return ImmutablePurpleVariant.builder()
                 .reported(true)
