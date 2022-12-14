@@ -186,13 +186,6 @@ public class CurationModel {
             builder.hasBoneLesions(true);
         }
 
-        if (matches.contains(LesionLocationCategory.BONE)) {
-            if (tumorDetails.hasBoneLesions() != null && !tumorDetails.hasBoneLesions()) {
-                LOGGER.debug("  Overriding presence of bone lesions");
-            }
-            builder.hasBoneLesions(true);
-        }
-
         if (matches.contains(LesionLocationCategory.LUNG)) {
             if (tumorDetails.hasLungLesions() != null && !tumorDetails.hasLungLesions()) {
                 LOGGER.debug("  Overriding presence of lung lesions");
