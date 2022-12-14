@@ -20,7 +20,7 @@ public final class TestGeneFilterFactory {
     }
 
     @NotNull
-    public static GeneFilter createValidForGene(@NotNull String gene) {
-        return new SpecificGenesFilter(Sets.newHashSet(gene));
+    public static GeneFilter createValidForGenes(@NotNull String... genes) {
+        return new SpecificGenesFilter(Sets.newHashSet(genes));
     }
 }

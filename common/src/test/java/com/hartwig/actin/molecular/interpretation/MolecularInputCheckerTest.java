@@ -13,7 +13,7 @@ public class MolecularInputCheckerTest {
     @Test
     public void canDetermineWhetherGeneIsValid() {
         MolecularInputChecker alwaysValid = new MolecularInputChecker(TestGeneFilterFactory.createAlwaysValid());
-        MolecularInputChecker specific = new MolecularInputChecker(TestGeneFilterFactory.createValidForGene("valid"));
+        MolecularInputChecker specific = new MolecularInputChecker(TestGeneFilterFactory.createValidForGenes("valid"));
 
         assertTrue(alwaysValid.isGene("valid"));
         assertTrue(specific.isGene("valid"));

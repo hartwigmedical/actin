@@ -26,7 +26,7 @@ public final class TestFunctionInputResolveFactory {
     @NotNull
     public static FunctionInputResolver createResolverWithOneValidGene(@NotNull String gene) {
         return new FunctionInputResolver(TestDoidModelFactory.createMinimalTestDoidModel(),
-                new MolecularInputChecker(TestGeneFilterFactory.createValidForGene(gene)));
+                new MolecularInputChecker(TestGeneFilterFactory.createValidForGenes(gene)));
     }
 
     @NotNull

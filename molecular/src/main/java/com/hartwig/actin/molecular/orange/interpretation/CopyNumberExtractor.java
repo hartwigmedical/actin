@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.orange.interpretation;
 
 import java.util.Set;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumber;
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType;
@@ -64,7 +65,8 @@ class CopyNumberExtractor {
     }
 
     @NotNull
-    private static CopyNumberType determineType(@NotNull PurpleCopyNumberInterpretation interpretation) {
+    @VisibleForTesting
+    static CopyNumberType determineType(@NotNull PurpleCopyNumberInterpretation interpretation) {
         switch (interpretation) {
             case FULL_GAIN: {
                 return CopyNumberType.FULL_GAIN;
