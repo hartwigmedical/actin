@@ -57,9 +57,10 @@ class VariantExtractor {
         Set<Variant> variants = Sets.newTreeSet(new VariantComparator());
         for (PurpleVariant variant : purple.variants()) {
             boolean reportedOrCoding = variant.reported() || RELEVANT_CODING_EFFECTS.contains(variant.canonicalImpact().codingEffect());
+            String event = DriverEventFactory.variantEvent(variant);
             if (geneFilter.include(variant.gene()) && reportedOrCoding) {
                 PurpleDriver driver = findBestMutationDriver(purple.drivers(), variant.gene(), variant.canonicalImpact().transcript());
-                DriverLikelihood driverLikelihood = determineDriverLikelihood(variant, driver);
+                DriverLikelihood driverLikelihood = determineDriverLikelihood(driver);
 
                 ActionableEvidence evidence;
                 if (driverLikelihood == DriverLikelihood.HIGH) {
@@ -70,10 +71,10 @@ class VariantExtractor {
                 variants.add(ImmutableVariant.builder()
                         .from(GeneAlterationFactory.convertAlteration(variant.gene(), evidenceDatabase.geneAlterationForVariant(variant)))
                         .isReportable(variant.reported())
-                        .event(DriverEventFactory.variantEvent(variant))
+                        .event(event)
                         .driverLikelihood(driverLikelihood)
                         .evidence(evidence)
-                        .type(extractType(variant))
+                        .type(determineVariantType(variant))
                         .variantCopyNumber(ExtractionUtil.keep3Digits(variant.variantCopyNumber()))
                         .totalCopyNumber(ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()))
                         .isBiallelic(variant.biallelic())
@@ -84,7 +85,7 @@ class VariantExtractor {
                         .otherImpacts(extractOtherImpacts(variant))
                         .build());
             } else if (variant.reported()) {
-                LOGGER.warn("Filtered a reported variant on gene {}", variant.gene());
+                LOGGER.warn("Filtered a reported variant through gene filtering: '{}'", event);
             }
         }
         return variants;
@@ -92,7 +93,7 @@ class VariantExtractor {
 
     @NotNull
     @VisibleForTesting
-    static VariantType extractType(@NotNull PurpleVariant variant) {
+    static VariantType determineVariantType(@NotNull PurpleVariant variant) {
         switch (variant.type()) {
             case MNP: {
                 return VariantType.MNV;
@@ -115,7 +116,7 @@ class VariantExtractor {
 
     @Nullable
     @VisibleForTesting
-    static DriverLikelihood determineDriverLikelihood(@NotNull PurpleVariant variant, @Nullable PurpleDriver driver) {
+    static DriverLikelihood determineDriverLikelihood(@Nullable PurpleDriver driver) {
         if (driver == null) {
             return null;
         }
@@ -145,14 +146,12 @@ class VariantExtractor {
     }
 
     @NotNull
-    @VisibleForTesting
-    static TranscriptImpact extractCanonicalImpact(@NotNull PurpleVariant variant) {
+    private static TranscriptImpact extractCanonicalImpact(@NotNull PurpleVariant variant) {
         return toTranscriptImpact(variant.canonicalImpact());
     }
 
     @NotNull
-    @VisibleForTesting
-    static Set<TranscriptImpact> extractOtherImpacts(@NotNull PurpleVariant variant) {
+    private static Set<TranscriptImpact> extractOtherImpacts(@NotNull PurpleVariant variant) {
         Set<TranscriptImpact> impacts = Sets.newHashSet();
         for (PurpleTranscriptImpact otherImpact : variant.otherImpacts()) {
             impacts.add(toTranscriptImpact(otherImpact));
@@ -170,7 +169,7 @@ class VariantExtractor {
                 .affectedExon(purpleTranscriptImpact.affectedExon())
                 .isSpliceRegion(purpleTranscriptImpact.spliceRegion())
                 .effects(toEffects(purpleTranscriptImpact.effects()))
-                .codingEffect(toCodingEffect(purpleTranscriptImpact.codingEffect()))
+                .codingEffect(determineCodingEffect(purpleTranscriptImpact.codingEffect()))
                 .build();
     }
 
@@ -178,14 +177,14 @@ class VariantExtractor {
     private static Set<VariantEffect> toEffects(@NotNull Set<PurpleVariantEffect> effects) {
         Set<VariantEffect> variantEffects = Sets.newHashSet();
         for (PurpleVariantEffect effect : effects) {
-            variantEffects.add(toEffect(effect));
+            variantEffects.add(determineVariantEffect(effect));
         }
         return variantEffects;
     }
 
     @NotNull
     @VisibleForTesting
-    static VariantEffect toEffect(@NotNull PurpleVariantEffect effect) {
+    static VariantEffect determineVariantEffect(@NotNull PurpleVariantEffect effect) {
         switch (effect) {
             case STOP_GAINED: {
                 return VariantEffect.STOP_GAINED;
@@ -248,7 +247,8 @@ class VariantExtractor {
     }
 
     @Nullable
-    private static CodingEffect toCodingEffect(@NotNull PurpleCodingEffect codingEffect) {
+    @VisibleForTesting
+    static CodingEffect determineCodingEffect(@NotNull PurpleCodingEffect codingEffect) {
         switch (codingEffect) {
             case NONSENSE_OR_FRAMESHIFT: {
                 return CodingEffect.NONSENSE_OR_FRAMESHIFT;

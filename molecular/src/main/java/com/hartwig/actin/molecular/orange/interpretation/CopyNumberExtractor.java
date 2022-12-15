@@ -44,13 +44,14 @@ class CopyNumberExtractor {
         Set<CopyNumber> copyNumbers = Sets.newTreeSet(new CopyNumberComparator());
         for (PurpleCopyNumber copyNumber : purple.copyNumbers()) {
             PurpleDriver driver = findCopyNumberDriver(purple.drivers(), copyNumber.gene());
+            String event = DriverEventFactory.copyNumberEvent(copyNumber);
 
             if (geneFilter.include(copyNumber.gene())) {
                 copyNumbers.add(ImmutableCopyNumber.builder()
                         .from(GeneAlterationFactory.convertAlteration(copyNumber.gene(),
                                 evidenceDatabase.geneAlterationForCopyNumber(copyNumber)))
                         .isReportable(driver != null)
-                        .event(DriverEventFactory.copyNumberEvent(copyNumber))
+                        .event(event)
                         .driverLikelihood(driver != null ? DriverLikelihood.HIGH : null)
                         .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(copyNumber)))
                         .type(determineType(copyNumber.interpretation()))
@@ -58,7 +59,7 @@ class CopyNumberExtractor {
                         .maxCopies(copyNumber.maxCopies())
                         .build());
             } else if (driver != null) {
-                LOGGER.warn("Filtered a reported copy number event on gene {}", driver.gene());
+                LOGGER.warn("Filtered a reported copy number through gene filtering: '{}'", event);
             }
         }
         return copyNumbers;

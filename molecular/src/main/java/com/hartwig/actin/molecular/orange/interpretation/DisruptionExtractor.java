@@ -42,13 +42,14 @@ class DisruptionExtractor {
     public Set<Disruption> extractDisruptions(@NotNull LinxRecord linx, @NotNull Set<String> lostGenes) {
         Set<Disruption> disruptions = Sets.newTreeSet(new DisruptionComparator());
         for (LinxBreakend breakend : linx.breakends()) {
+            String event = DriverEventFactory.disruptionEvent(breakend);
             if (geneFilter.include(breakend.gene())) {
                 if (include(breakend, lostGenes)) {
                     disruptions.add(ImmutableDisruption.builder()
                             .from(GeneAlterationFactory.convertAlteration(breakend.gene(),
                                     evidenceDatabase.geneAlterationForBreakend(breakend)))
                             .isReportable(breakend.reported())
-                            .event(DriverEventFactory.disruptionEvent(breakend))
+                            .event(event)
                             .driverLikelihood(DriverLikelihood.LOW)
                             .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForBreakend(breakend)))
                             .type(determineDisruptionType(breakend.type()))
@@ -60,7 +61,7 @@ class DisruptionExtractor {
                             .build());
                 }
             } else if (breakend.reported()) {
-                LOGGER.warn("Filtered a reported breakend on gene {}", breakend.gene());
+                LOGGER.warn("Filtered a reported breakend through gene filtering: '{}'", event);
             }
         }
         return disruptions;

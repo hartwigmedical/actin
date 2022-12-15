@@ -8,6 +8,7 @@ import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableVirus;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.datamodel.driver.VirusType;
+import com.hartwig.actin.molecular.orange.datamodel.virus.VirusDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterRecord;
@@ -19,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 class VirusExtractor {
+
+    static final VirusQCStatus QC_PASS_STATUS = VirusQCStatus.NO_ABNORMALITIES;
 
     @NotNull
     private final EvidenceDatabase evidenceDatabase;
@@ -34,10 +37,10 @@ class VirusExtractor {
             viruses.add(ImmutableVirus.builder()
                     .isReportable(virus.reported())
                     .event(DriverEventFactory.virusEvent(virus))
-                    .driverLikelihood(determineDriverLikelihood(virus))
+                    .driverLikelihood(determineDriverLikelihood(virus.driverLikelihood()))
                     .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVirus(virus)))
                     .name(virus.name())
-                    .isReliable(virus.qcStatus() == VirusQCStatus.NO_ABNORMALITIES)
+                    .isReliable(virus.qcStatus() == QC_PASS_STATUS)
                     .type(determineType(virus.interpretation()))
                     .integrations(virus.integrations())
                     .build());
@@ -47,8 +50,8 @@ class VirusExtractor {
 
     @NotNull
     @VisibleForTesting
-    static DriverLikelihood determineDriverLikelihood(@NotNull VirusInterpreterEntry virus) {
-        switch (virus.driverLikelihood()) {
+    static DriverLikelihood determineDriverLikelihood(@NotNull VirusDriverLikelihood driverLikelihood) {
+        switch (driverLikelihood) {
             case HIGH: {
                 return DriverLikelihood.HIGH;
             }
@@ -58,7 +61,7 @@ class VirusExtractor {
             }
             default: {
                 throw new IllegalStateException(
-                        "Cannot determine driver likelihood type for virus driver likelihood: " + virus.driverLikelihood());
+                        "Cannot determine driver likelihood type for virus driver likelihood: " + driverLikelihood);
             }
         }
     }
