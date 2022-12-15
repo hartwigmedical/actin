@@ -363,6 +363,7 @@ public final class OrangeJson {
         private static VirusInterpreterRecord toVirusInterpreterRecord(@NotNull JsonObject virusInterpreter) {
             Set<VirusInterpreterEntry> entries = Sets.newHashSet();
 
+            // TODO Switch to allViruses on ORANGE v2.1
             entries.addAll(toVirusInterpreterEntries(array(virusInterpreter, "reportableViruses")));
             entries.addAll(toVirusInterpreterEntries(array(virusInterpreter, "unreportedViruses")));
 
