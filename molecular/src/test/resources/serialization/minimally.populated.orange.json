@@ -154,7 +154,7 @@
     ]
   },
   "virusInterpreter": {
-    "reportableViruses": [
+    "allViruses": [
       {
         "name": "Human papillomavirus 16",
         "qcStatus": "NO_ABNORMALITIES",
@@ -162,9 +162,7 @@
         "interpretation": "HPV",
         "reported": true,
         "virusDriverLikelihoodType": "HIGH"
-      }
-    ],
-    "unreportedViruses": [
+      },
       {
         "name": "Human betaherpesvirus 6B",
         "qcStatus": "NO_ABNORMALITIES",

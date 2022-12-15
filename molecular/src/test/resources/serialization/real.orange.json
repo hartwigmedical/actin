@@ -3,7 +3,7 @@
   "experimentDate": {
     "year": 2022,
     "month": 12,
-    "day": 6
+    "day": 15
   },
   "configuredPrimaryTumor": [
     {
@@ -653,7 +653,7 @@
           "transcript": "ENST00000335508",
           "hgvsCodingImpact": "c.2153C\u003eT",
           "hgvsProteinImpact": "p.Pro718Leu",
-          "affectedCodon": 2153,
+          "affectedCodon": null,
           "affectedExon": null,
           "spliceRegion": false,
           "effects": [
@@ -706,7 +706,7 @@
           "transcript": "ENST00000264731",
           "hgvsCodingImpact": "c.1497G\u003eT",
           "hgvsProteinImpact": "p.Met499Ile",
-          "affectedCodon": 1497,
+          "affectedCodon": null,
           "affectedExon": null,
           "spliceRegion": false,
           "effects": [
@@ -814,7 +814,7 @@
           "transcript": "ENST00000288602",
           "hgvsCodingImpact": "c.1799T\u003eA",
           "hgvsProteinImpact": "p.Val600Glu",
-          "affectedCodon": 1799,
+          "affectedCodon": null,
           "affectedExon": null,
           "spliceRegion": false,
           "effects": [
@@ -867,7 +867,7 @@
           "transcript": "ENST00000498124",
           "hgvsCodingImpact": "c.203_204delCG",
           "hgvsProteinImpact": "p.Ala68fs",
-          "affectedCodon": 203,
+          "affectedCodon": null,
           "affectedExon": null,
           "spliceRegion": false,
           "effects": [
@@ -880,7 +880,7 @@
             "transcript": "ENST00000579755",
             "hgvsCodingImpact": "c.246_247delCG",
             "hgvsProteinImpact": "p.Gly83fs",
-            "affectedCodon": 246,
+            "affectedCodon": null,
             "affectedExon": null,
             "spliceRegion": false,
             "effects": [
@@ -935,7 +935,7 @@
           "transcript": "ENST00000335508",
           "hgvsCodingImpact": "c.2153C\u003eT",
           "hgvsProteinImpact": "p.Pro718Leu",
-          "affectedCodon": 2153,
+          "affectedCodon": null,
           "affectedExon": null,
           "spliceRegion": false,
           "effects": [
@@ -988,7 +988,7 @@
           "transcript": "ENST00000264731",
           "hgvsCodingImpact": "c.1497G\u003eT",
           "hgvsProteinImpact": "p.Met499Ile",
-          "affectedCodon": 1497,
+          "affectedCodon": null,
           "affectedExon": null,
           "spliceRegion": false,
           "effects": [
@@ -1096,7 +1096,7 @@
           "transcript": "ENST00000288602",
           "hgvsCodingImpact": "c.1799T\u003eA",
           "hgvsProteinImpact": "p.Val600Glu",
-          "affectedCodon": 1799,
+          "affectedCodon": null,
           "affectedExon": null,
           "spliceRegion": false,
           "effects": [
@@ -1149,7 +1149,7 @@
           "transcript": "ENST00000498124",
           "hgvsCodingImpact": "c.203_204delCG",
           "hgvsProteinImpact": "p.Ala68fs",
-          "affectedCodon": 203,
+          "affectedCodon": null,
           "affectedExon": null,
           "spliceRegion": false,
           "effects": [
@@ -1162,7 +1162,7 @@
             "transcript": "ENST00000579755",
             "hgvsCodingImpact": "c.246_247delCG",
             "hgvsProteinImpact": "p.Gly83fs",
-            "affectedCodon": 246,
+            "affectedCodon": null,
             "affectedExon": null,
             "spliceRegion": false,
             "effects": [
@@ -1549,8 +1549,8 @@
     ]
   },
   "virusInterpreter": {
-    "reportableViruses": [],
-    "unreportedViruses": []
+    "allViruses": [],
+    "reportableViruses": []
   },
   "chord": {
     "BRCA1Value": 0.0,

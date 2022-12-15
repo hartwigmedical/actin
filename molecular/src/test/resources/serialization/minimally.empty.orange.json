@@ -33,8 +33,7 @@
     "homozygousDisruptions": []
   },
   "virusInterpreter": {
-    "reportableViruses": [],
-    "unreportedViruses": []
+    "allViruses": []
   },
   "chord": {
     "hrStatus": "HR_PROFICIENT"
