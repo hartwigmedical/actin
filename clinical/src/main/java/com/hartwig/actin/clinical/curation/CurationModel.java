@@ -461,8 +461,10 @@ public class CurationModel {
             }
 
             for (LesionLocationConfig config : configs) {
-                if (config.category() == null && !config.location().isEmpty()) {
-                    // We only want to include lesions from the other lesions in actual other lesions if there is no category assigned.
+                // We only want to include lesions from the other lesions in actual other lesions
+                // if it does not override an explicit lesion location
+                boolean hasRealOtherLesion = config.category() == null || config.category() == LesionLocationCategory.LYMPH_NODE;
+                if (hasRealOtherLesion && !config.location().isEmpty()) {
                     curatedOtherLesions.add(config.location());
                 }
             }
