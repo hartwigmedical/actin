@@ -46,8 +46,6 @@ public final class DriverEventFactory {
             return "upstream";
         }
 
-        LOGGER.warn("Unexpected variant with potentially unexpected formatting on canonical impact: {}", variant);
-
         StringJoiner joiner = new StringJoiner("&");
         for (PurpleVariantEffect effect : canonical.effects()) {
             joiner.add(effect.toString());
