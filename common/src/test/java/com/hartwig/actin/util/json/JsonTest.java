@@ -66,6 +66,23 @@ public class JsonTest {
     }
 
     @Test
+    public void canExtractIntegerLists() {
+        JsonObject object = new JsonObject();
+
+        object.addProperty("nullable", (Integer) null);
+        assertNull(Json.nullableIntegerList(object, "nullable"));
+
+        JsonArray array = new JsonArray();
+        array.add(1);
+        array.add(2);
+        object.add("array1", array);
+        assertEquals(2, Json.nullableIntegerList(object, "array1").size());
+
+        object.addProperty("integer", 1);
+        assertEquals(1, Json.nullableIntegerList(object, "integer").size());
+    }
+
+    @Test
     public void canExtractStrings() {
         JsonObject object = new JsonObject();
 
