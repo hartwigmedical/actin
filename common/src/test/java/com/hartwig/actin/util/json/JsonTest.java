@@ -51,15 +51,16 @@ public class JsonTest {
         JsonObject object = new JsonObject();
 
         object.addProperty("nullable", (String) null);
-        assertNull(Json.nullableStringList(object, "nullable"));
         assertNull(Json.optionalStringList(object, "array1"));
+        assertNull(Json.nullableStringList(object, "nullable"));
 
         JsonArray array = new JsonArray();
         array.add("value1");
         array.add("value2");
         object.add("array1", array);
-        assertEquals(2, Json.nullableStringList(object, "array1").size());
         assertEquals(2, Json.optionalStringList(object, "array1").size());
+        assertEquals(2, Json.nullableStringList(object, "array1").size());
+        assertEquals(2, Json.stringList(object, "array1").size());
 
         object.addProperty("string", "string");
         assertEquals(1, Json.nullableStringList(object, "string").size());
@@ -77,6 +78,7 @@ public class JsonTest {
         array.add(2);
         object.add("array1", array);
         assertEquals(2, Json.nullableIntegerList(object, "array1").size());
+        assertEquals(2, Json.integerList(object, "array1").size());
 
         object.addProperty("integer", 1);
         assertEquals(1, Json.nullableIntegerList(object, "integer").size());
@@ -89,8 +91,9 @@ public class JsonTest {
         assertNull(Json.optionalString(object, "string"));
 
         object.addProperty("string", "value");
-        assertEquals("value", Json.nullableString(object, "string"));
         assertEquals("value", Json.optionalString(object, "string"));
+        assertEquals("value", Json.nullableString(object, "string"));
+        assertEquals("value", Json.string(object, "string"));
 
         object.addProperty("nullable", (String) null);
         assertNull(Json.nullableString(object, "nullable"));
@@ -105,6 +108,7 @@ public class JsonTest {
 
         object.addProperty("number", 12.4);
         assertEquals(12.4, Json.nullableNumber(object, "number"), EPSILON);
+        assertEquals(12.4, Json.number(object, "number"), EPSILON);
     }
 
     @Test
@@ -116,17 +120,21 @@ public class JsonTest {
 
         object.addProperty("integer", 8);
         assertEquals(8, (int) Json.nullableInteger(object, "integer"));
+        assertEquals(8, Json.integer(object, "integer"));
     }
 
     @Test
     public void canExtractBooleans() {
         JsonObject object = new JsonObject();
 
+        assertNull(Json.optionalBool(object, "bool"));
+
         object.addProperty("nullable", (String) null);
         assertNull(Json.nullableBool(object, "nullable"));
 
         object.addProperty("bool", true);
         assertTrue(Json.nullableBool(object, "bool"));
+        assertTrue(Json.bool(object, "bool"));
     }
 
     @Test
@@ -141,6 +149,8 @@ public class JsonTest {
         dateObject.addProperty("month", 4);
         dateObject.addProperty("day", 6);
         object.add("date", dateObject);
+
         assertEquals(LocalDate.of(2018, 4, 6), Json.nullableDate(object, "date"));
+        assertEquals(LocalDate.of(2018, 4, 6), Json.date(object, "date"));
     }
 }
