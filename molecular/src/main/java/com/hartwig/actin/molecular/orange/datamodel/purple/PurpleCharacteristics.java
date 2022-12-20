@@ -8,6 +8,8 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class PurpleCharacteristics {
 
+    // TODO Convert to enums.
+
     @NotNull
     public abstract String microsatelliteStabilityStatus();
 
