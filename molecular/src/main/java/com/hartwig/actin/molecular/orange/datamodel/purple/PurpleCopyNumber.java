@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class PurpleCopyNumber {
 
+    // TODO Rename to PurpleGainLoss
     @NotNull
     public abstract String gene();
 
