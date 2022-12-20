@@ -8,6 +8,8 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class ChordRecord {
 
+    // TODO Change to enum
+
     @NotNull
     public abstract String hrStatus();
 }
