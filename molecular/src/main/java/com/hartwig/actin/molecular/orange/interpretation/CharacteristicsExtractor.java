@@ -7,8 +7,11 @@ import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedT
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
+import com.hartwig.actin.molecular.orange.datamodel.chord.ChordStatus;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaPrediction;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleMicrosatelliteStatus;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTumorMutationalStatus;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 
 import org.apache.logging.log4j.LogManager;
@@ -19,17 +22,6 @@ import org.jetbrains.annotations.Nullable;
 class CharacteristicsExtractor {
 
     private static final Logger LOGGER = LogManager.getLogger(CharacteristicsExtractor.class);
-
-    static final String MICROSATELLITE_STABLE = "MSS";
-    static final String MICROSATELLITE_UNSTABLE = "MSI";
-
-    static final String HOMOLOGOUS_REPAIR_DEFICIENT = "HR_DEFICIENT";
-    static final String HOMOLOGOUS_REPAIR_PROFICIENT = "HR_PROFICIENT";
-    static final String HOMOLOGOUS_REPAIR_UNKNOWN = "CANNOT_BE_DETERMINED";
-
-    static final String TUMOR_STATUS_HIGH = "HIGH";
-    static final String TUMOR_STATUS_LOW = "LOW";
-    static final String TUMOR_STATUS_UNKNOWN = "UNKNOWN";
 
     @NotNull
     private final EvidenceDatabase evidenceDatabase;
@@ -47,7 +39,7 @@ class CharacteristicsExtractor {
 
         PurpleRecord purple = record.purple();
 
-        Boolean isMicrosatelliteUnstable = isMSI(purple.characteristics().microsatelliteStabilityStatus());
+        Boolean isMicrosatelliteUnstable = isMSI(purple.characteristics().microsatelliteStatus());
         Boolean isHomologousRepairDeficient = isHRD(record.chord().hrStatus());
         Boolean hasHighTumorMutationalBurden = hasHighStatus(purple.characteristics().tumorMutationalBurdenStatus());
         Boolean hasHighTumorMutationalLoad = hasHighStatus(purple.characteristics().tumorMutationalLoadStatus());
@@ -62,7 +54,7 @@ class CharacteristicsExtractor {
                 .isHomologousRepairDeficient(isHomologousRepairDeficient)
                 .homologousRepairEvidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForHomologousRepairStatus(
                         isHomologousRepairDeficient)))
-                .tumorMutationalBurden(purple.characteristics().tumorMutationalBurden())
+                .tumorMutationalBurden(purple.characteristics().tumorMutationalBurdenPerMb())
                 .hasHighTumorMutationalBurden(hasHighTumorMutationalBurden)
                 .tumorMutationalBurdenEvidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForTumorMutationalBurdenStatus(
                         hasHighTumorMutationalBurden)))
@@ -85,10 +77,10 @@ class CharacteristicsExtractor {
     }
 
     @Nullable
-    private static Boolean isMSI(@NotNull String microsatelliteStatus) {
-        if (microsatelliteStatus.equals(MICROSATELLITE_UNSTABLE)) {
+    private static Boolean isMSI(@NotNull PurpleMicrosatelliteStatus microsatelliteStatus) {
+        if (microsatelliteStatus == PurpleMicrosatelliteStatus.MSI) {
             return true;
-        } else if (microsatelliteStatus.equals(MICROSATELLITE_STABLE)) {
+        } else if (microsatelliteStatus == PurpleMicrosatelliteStatus.MSS) {
             return false;
         }
 
@@ -97,13 +89,13 @@ class CharacteristicsExtractor {
     }
 
     @Nullable
-    private static Boolean isHRD(@NotNull String hrStatus) {
+    private static Boolean isHRD(@NotNull ChordStatus hrStatus) {
         switch (hrStatus) {
-            case HOMOLOGOUS_REPAIR_DEFICIENT:
+            case HR_DEFICIENT:
                 return true;
-            case HOMOLOGOUS_REPAIR_PROFICIENT:
+            case HR_PROFICIENT:
                 return false;
-            case HOMOLOGOUS_REPAIR_UNKNOWN:
+            case UNKNOWN:
                 return null;
         }
 
@@ -112,15 +104,15 @@ class CharacteristicsExtractor {
     }
 
     @Nullable
-    private static Boolean hasHighStatus(@NotNull String tumorMutationalStatus) {
+    private static Boolean hasHighStatus(@NotNull PurpleTumorMutationalStatus tumorMutationalStatus) {
         switch (tumorMutationalStatus) {
-            case TUMOR_STATUS_HIGH: {
+            case HIGH: {
                 return true;
             }
-            case TUMOR_STATUS_LOW: {
+            case LOW: {
                 return false;
             }
-            case TUMOR_STATUS_UNKNOWN: {
+            case UNKNOWN: {
                 return null;
             }
         }

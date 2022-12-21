@@ -6,7 +6,7 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakend;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTranscriptImpact;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
@@ -60,20 +60,20 @@ public final class DriverEventFactory {
     }
 
     @NotNull
-    public static String copyNumberEvent(@NotNull PurpleCopyNumber copyNumber) {
-        switch (copyNumber.interpretation()) {
+    public static String gainLossEvent(@NotNull PurpleGainLoss gainLoss) {
+        switch (gainLoss.interpretation()) {
             case PARTIAL_GAIN:
             case FULL_GAIN: {
-                return copyNumber.gene() + " amp";
+                return gainLoss.gene() + " amp";
             }
             case PARTIAL_LOSS:
             case FULL_LOSS: {
-                return copyNumber.gene() + " del";
+                return gainLoss.gene() + " del";
             }
         }
 
-        LOGGER.warn("Unexpected copy number interpretation for generating event: {}", copyNumber.interpretation());
-        return copyNumber.gene() + " unknown copy number event";
+        LOGGER.warn("Unexpected copy number interpretation for generating event: {}", gainLoss.interpretation());
+        return gainLoss.gene() + " unknown copy number event";
     }
 
     @NotNull

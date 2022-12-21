@@ -23,5 +23,5 @@ public abstract class PurpleRecord {
     public abstract Set<PurpleVariant> variants();
 
     @NotNull
-    public abstract Set<PurpleCopyNumber> copyNumbers();
+    public abstract Set<PurpleGainLoss> gainsLosses();
 }

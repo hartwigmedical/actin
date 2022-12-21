@@ -10,8 +10,8 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumberInterpretation;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLossInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
 import com.hartwig.actin.molecular.serve.KnownGene;
@@ -89,13 +89,13 @@ public class KnownEventResolverTest {
         KnownGene knownGene2 = TestKnownGeneFactory.builder().gene("gene 2").build();
         KnownEventResolver resolver = new KnownEventResolver(known, Lists.newArrayList(knownGene1, knownGene2));
 
-        PurpleCopyNumber ampGene1 = amp("gene 1");
+        PurpleGainLoss ampGene1 = amp("gene 1");
         assertEquals(knownAmp, resolver.resolveForCopyNumber(ampGene1));
 
-        PurpleCopyNumber ampGene2 = amp("gene 2");
+        PurpleGainLoss ampGene2 = amp("gene 2");
         assertNotNull(resolver.resolveForCopyNumber(ampGene2));
 
-        PurpleCopyNumber ampGene3 = amp("gene 3");
+        PurpleGainLoss ampGene3 = amp("gene 3");
         assertNull(resolver.resolveForCopyNumber(ampGene3));
 
         LinxHomozygousDisruption homDisruptionGene1 = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build();
@@ -134,7 +134,7 @@ public class KnownEventResolverTest {
     }
 
     @NotNull
-    private static PurpleCopyNumber amp(@NotNull String gene) {
-        return TestPurpleFactory.copyNumberBuilder().gene(gene).interpretation(PurpleCopyNumberInterpretation.FULL_GAIN).build();
+    private static PurpleGainLoss amp(@NotNull String gene) {
+        return TestPurpleFactory.gainLossBuilder().gene(gene).interpretation(PurpleGainLossInterpretation.FULL_GAIN).build();
     }
 }

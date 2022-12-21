@@ -14,6 +14,7 @@ import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRefGenomeVersion;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
+import com.hartwig.actin.molecular.orange.datamodel.chord.ChordStatus;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaPrediction;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
 import com.hartwig.actin.molecular.orange.datamodel.lilac.LilacHlaAllele;
@@ -31,12 +32,14 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.LinxStructuralVariant;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumberInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriver;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriverType;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLossInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleHotspotType;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleMicrosatelliteStatus;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTumorMutationalStatus;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantType;
@@ -91,11 +94,11 @@ public class OrangeJsonTest {
         assertEquals(0.12, purple.fit().purity(), EPSILON);
         assertEquals(3.1, purple.fit().ploidy(), EPSILON);
 
-        assertEquals("MSS", purple.characteristics().microsatelliteStabilityStatus());
-        assertEquals(13.71, purple.characteristics().tumorMutationalBurden(), EPSILON);
-        assertEquals("HIGH", purple.characteristics().tumorMutationalBurdenStatus());
+        assertEquals(PurpleMicrosatelliteStatus.MSS, purple.characteristics().microsatelliteStatus());
+        assertEquals(13.71, purple.characteristics().tumorMutationalBurdenPerMb(), EPSILON);
+        assertEquals(PurpleTumorMutationalStatus.HIGH, purple.characteristics().tumorMutationalBurdenStatus());
         assertEquals(185, purple.characteristics().tumorMutationalLoad());
-        assertEquals("HIGH", purple.characteristics().tumorMutationalLoadStatus());
+        assertEquals(PurpleTumorMutationalStatus.HIGH, purple.characteristics().tumorMutationalLoadStatus());
 
         assertEquals(3, purple.drivers().size());
         PurpleDriver driver1 = findDriverByGene(purple.drivers(), "SF3B1");
@@ -165,12 +168,12 @@ public class OrangeJsonTest {
         assertEquals(PurpleCodingEffect.SPLICE, variant2.canonicalImpact().codingEffect());
         assertTrue(variant2.otherImpacts().isEmpty());
 
-        assertEquals(1, purple.copyNumbers().size());
-        PurpleCopyNumber copyNumber = purple.copyNumbers().iterator().next();
-        assertEquals("SMAD4", copyNumber.gene());
-        assertEquals(PurpleCopyNumberInterpretation.FULL_LOSS, copyNumber.interpretation());
-        assertEquals(0, copyNumber.minCopies());
-        assertEquals(1, copyNumber.maxCopies());
+        assertEquals(1, purple.gainsLosses().size());
+        PurpleGainLoss gainLoss = purple.gainsLosses().iterator().next();
+        assertEquals("SMAD4", gainLoss.gene());
+        assertEquals(PurpleGainLossInterpretation.FULL_LOSS, gainLoss.interpretation());
+        assertEquals(0, gainLoss.minCopies());
+        assertEquals(1, gainLoss.maxCopies());
     }
 
     @NotNull
@@ -286,6 +289,6 @@ public class OrangeJsonTest {
     }
 
     private static void assertChord(@NotNull ChordRecord chord) {
-        assertEquals("HR_PROFICIENT", chord.hrStatus());
+        assertEquals(ChordStatus.HR_PROFICIENT, chord.hrStatus());
     }
 }

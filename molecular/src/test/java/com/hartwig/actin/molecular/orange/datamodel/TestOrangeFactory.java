@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
+import com.hartwig.actin.molecular.orange.datamodel.chord.ChordStatus;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ImmutableChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.ImmutableCuppaRecord;
@@ -23,11 +24,13 @@ import com.hartwig.actin.molecular.orange.datamodel.peach.TestPeachFactory;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCharacteristics;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumberInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriverType;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleFit;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLossInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleHotspotType;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleMicrosatelliteStatus;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTumorMutationalStatus;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
 import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterRecord;
@@ -76,7 +79,7 @@ public final class TestOrangeFactory {
 
     @NotNull
     private static ChordRecord createMinimalTestChordRecord() {
-        return ImmutableChordRecord.builder().hrStatus(Strings.EMPTY).build();
+        return ImmutableChordRecord.builder().hrStatus(ChordStatus.UNKNOWN).build();
     }
 
     @NotNull
@@ -118,15 +121,15 @@ public final class TestOrangeFactory {
                                 .codingEffect(PurpleCodingEffect.MISSENSE)
                                 .build())
                         .build())
-                .addCopyNumbers(TestPurpleFactory.copyNumberBuilder()
+                .addGainsLosses(TestPurpleFactory.gainLossBuilder()
                         .gene("MYC")
-                        .interpretation(PurpleCopyNumberInterpretation.FULL_GAIN)
+                        .interpretation(PurpleGainLossInterpretation.FULL_GAIN)
                         .minCopies(38)
                         .maxCopies(40)
                         .build())
-                .addCopyNumbers(TestPurpleFactory.copyNumberBuilder()
+                .addGainsLosses(TestPurpleFactory.gainLossBuilder()
                         .gene("PTEN")
-                        .interpretation(PurpleCopyNumberInterpretation.FULL_LOSS)
+                        .interpretation(PurpleGainLossInterpretation.FULL_LOSS)
                         .minCopies(0)
                         .maxCopies(0)
                         .build())
@@ -141,11 +144,11 @@ public final class TestOrangeFactory {
     @NotNull
     private static PurpleCharacteristics createTestPurpleCharacteristics() {
         return TestPurpleFactory.characteristicsBuilder()
-                .microsatelliteStabilityStatus("MSS")
-                .tumorMutationalBurden(13D)
-                .tumorMutationalBurdenStatus("HIGH")
+                .microsatelliteStatus(PurpleMicrosatelliteStatus.MSS)
+                .tumorMutationalBurdenPerMb(13D)
+                .tumorMutationalBurdenStatus(PurpleTumorMutationalStatus.HIGH)
                 .tumorMutationalLoad(189)
-                .tumorMutationalLoadStatus("HIGH")
+                .tumorMutationalLoadStatus(PurpleTumorMutationalStatus.HIGH)
                 .build();
     }
 
@@ -220,6 +223,6 @@ public final class TestOrangeFactory {
 
     @NotNull
     private static ChordRecord createTestChordRecord() {
-        return ImmutableChordRecord.builder().hrStatus("HR_PROFICIENT").build();
+        return ImmutableChordRecord.builder().hrStatus(ChordStatus.HR_PROFICIENT).build();
     }
 }

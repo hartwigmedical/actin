@@ -10,9 +10,12 @@ import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteri
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
+import com.hartwig.actin.molecular.orange.datamodel.chord.ChordStatus;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ImmutableChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCharacteristics;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleMicrosatelliteStatus;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTumorMutationalStatus;
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory;
 
@@ -47,24 +50,18 @@ public class CharacteristicsExtractorTest {
     @Test
     public void canInterpretAllHomologousRepairStates() {
         CharacteristicsExtractor extractor = createTestExtractor();
-        MolecularCharacteristics deficient =
-                extractor.extract(withHomologousRepairStatus(CharacteristicsExtractor.HOMOLOGOUS_REPAIR_DEFICIENT));
+        MolecularCharacteristics deficient = extractor.extract(withHomologousRepairStatus(ChordStatus.HR_DEFICIENT));
         assertTrue(deficient.isHomologousRepairDeficient());
 
-        MolecularCharacteristics proficient =
-                extractor.extract(withHomologousRepairStatus(CharacteristicsExtractor.HOMOLOGOUS_REPAIR_PROFICIENT));
+        MolecularCharacteristics proficient = extractor.extract(withHomologousRepairStatus(ChordStatus.HR_PROFICIENT));
         assertFalse(proficient.isHomologousRepairDeficient());
 
-        MolecularCharacteristics unknown =
-                extractor.extract(withHomologousRepairStatus(CharacteristicsExtractor.HOMOLOGOUS_REPAIR_UNKNOWN));
+        MolecularCharacteristics unknown = extractor.extract(withHomologousRepairStatus(ChordStatus.UNKNOWN));
         assertNull(unknown.isHomologousRepairDeficient());
-
-        MolecularCharacteristics weird = extractor.extract(withHomologousRepairStatus("not a valid status"));
-        assertNull(weird.isHomologousRepairDeficient());
     }
 
     @NotNull
-    private static OrangeRecord withHomologousRepairStatus(@NotNull String hrStatus) {
+    private static OrangeRecord withHomologousRepairStatus(@NotNull ChordStatus hrStatus) {
         return ImmutableOrangeRecord.builder()
                 .from(TestOrangeFactory.createMinimalTestOrangeRecord())
                 .chord(ImmutableChordRecord.builder().hrStatus(hrStatus).build())
@@ -74,44 +71,34 @@ public class CharacteristicsExtractorTest {
     @Test
     public void canInterpretAllMicrosatelliteInstabilityStates() {
         CharacteristicsExtractor extractor = createTestExtractor();
-        MolecularCharacteristics unstable = extractor.extract(withMicrosatelliteStatus(CharacteristicsExtractor.MICROSATELLITE_UNSTABLE));
+        MolecularCharacteristics unstable = extractor.extract(withMicrosatelliteStatus(PurpleMicrosatelliteStatus.MSI));
         assertTrue(unstable.isMicrosatelliteUnstable());
 
-        MolecularCharacteristics stable = extractor.extract(withMicrosatelliteStatus(CharacteristicsExtractor.MICROSATELLITE_STABLE));
+        MolecularCharacteristics stable = extractor.extract(withMicrosatelliteStatus(PurpleMicrosatelliteStatus.MSS));
         assertFalse(stable.isMicrosatelliteUnstable());
-
-        MolecularCharacteristics weird = extractor.extract(withMicrosatelliteStatus("not a valid status"));
-        assertNull(weird.isMicrosatelliteUnstable());
     }
 
     @NotNull
-    private static OrangeRecord withMicrosatelliteStatus(@NotNull String microsatelliteStatus) {
-        return withPurpleCharacteristics(TestPurpleFactory.characteristicsBuilder()
-                .microsatelliteStabilityStatus(microsatelliteStatus)
-                .build());
+    private static OrangeRecord withMicrosatelliteStatus(@NotNull PurpleMicrosatelliteStatus microsatelliteStatus) {
+        return withPurpleCharacteristics(TestPurpleFactory.characteristicsBuilder().microsatelliteStatus(microsatelliteStatus).build());
     }
 
     @Test
     public void canInterpretAllTumorLoadStates() {
         CharacteristicsExtractor extractor = createTestExtractor();
-        MolecularCharacteristics high = extractor.extract(withTumorLoadStatus(CharacteristicsExtractor.TUMOR_STATUS_HIGH));
+        MolecularCharacteristics high = extractor.extract(withTumorLoadStatus(PurpleTumorMutationalStatus.HIGH));
         assertTrue(high.hasHighTumorMutationalLoad());
 
-        MolecularCharacteristics low = extractor.extract(withTumorLoadStatus(CharacteristicsExtractor.TUMOR_STATUS_LOW));
+        MolecularCharacteristics low = extractor.extract(withTumorLoadStatus(PurpleTumorMutationalStatus.LOW));
         assertFalse(low.hasHighTumorMutationalLoad());
 
-        MolecularCharacteristics unknown = extractor.extract(withTumorLoadStatus(CharacteristicsExtractor.TUMOR_STATUS_UNKNOWN));
+        MolecularCharacteristics unknown = extractor.extract(withTumorLoadStatus(PurpleTumorMutationalStatus.UNKNOWN));
         assertNull(unknown.hasHighTumorMutationalLoad());
-
-        MolecularCharacteristics weird = extractor.extract(withTumorLoadStatus("not a valid status"));
-        assertNull(weird.hasHighTumorMutationalLoad());
     }
 
     @NotNull
-    private static OrangeRecord withTumorLoadStatus(@NotNull String tumorLoadStatus) {
-        return withPurpleCharacteristics(TestPurpleFactory.characteristicsBuilder()
-                .tumorMutationalLoadStatus(tumorLoadStatus)
-                .build());
+    private static OrangeRecord withTumorLoadStatus(@NotNull PurpleTumorMutationalStatus tumorLoadStatus) {
+        return withPurpleCharacteristics(TestPurpleFactory.characteristicsBuilder().tumorMutationalLoadStatus(tumorLoadStatus).build());
     }
 
     @NotNull

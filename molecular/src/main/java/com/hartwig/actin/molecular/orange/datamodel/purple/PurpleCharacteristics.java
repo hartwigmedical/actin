@@ -8,18 +8,16 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class PurpleCharacteristics {
 
-    // TODO Convert to enums.
+    @NotNull
+    public abstract PurpleMicrosatelliteStatus microsatelliteStatus();
+
+    public abstract double tumorMutationalBurdenPerMb();
 
     @NotNull
-    public abstract String microsatelliteStabilityStatus();
-
-    public abstract double tumorMutationalBurden();
-
-    @NotNull
-    public abstract String tumorMutationalBurdenStatus();
+    public abstract PurpleTumorMutationalStatus tumorMutationalBurdenStatus();
 
     public abstract int tumorMutationalLoad();
 
     @NotNull
-    public abstract String tumorMutationalLoadStatus();
+    public abstract PurpleTumorMutationalStatus tumorMutationalLoadStatus();
 }

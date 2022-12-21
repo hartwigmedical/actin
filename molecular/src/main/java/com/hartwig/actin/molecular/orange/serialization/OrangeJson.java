@@ -31,6 +31,7 @@ import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRefGenomeVersion;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
+import com.hartwig.actin.molecular.orange.datamodel.chord.ChordStatus;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ImmutableChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaPrediction;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
@@ -60,22 +61,24 @@ import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleCharacteristics;
-import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleCopyNumber;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleDriver;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleFit;
+import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleGainLoss;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleTranscriptImpact;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCharacteristics;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumberInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriver;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriverType;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleFit;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLossInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleHotspotType;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleMicrosatelliteStatus;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTranscriptImpact;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTumorMutationalStatus;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantType;
@@ -139,7 +142,7 @@ public final class OrangeJson {
                     .characteristics(toPurpleCharacteristics(object(purple, "characteristics")))
                     .drivers(drivers)
                     .variants(variants)
-                    .copyNumbers(toPurpleCopyNumbers(array(purple, "allSomaticGainsLosses")))
+                    .gainsLosses(toPurpleGainsLosses(array(purple, "allSomaticGainsLosses")))
                     .build();
         }
 
@@ -156,11 +159,12 @@ public final class OrangeJson {
         @NotNull
         private static PurpleCharacteristics toPurpleCharacteristics(@NotNull JsonObject characteristics) {
             return ImmutablePurpleCharacteristics.builder()
-                    .microsatelliteStabilityStatus(string(characteristics, "microsatelliteStatus"))
-                    .tumorMutationalBurden(number(characteristics, "tumorMutationalBurdenPerMb"))
-                    .tumorMutationalBurdenStatus(string(characteristics, "tumorMutationalBurdenStatus"))
+                    .microsatelliteStatus(PurpleMicrosatelliteStatus.valueOf(string(characteristics, "microsatelliteStatus")))
+                    .tumorMutationalBurdenPerMb(number(characteristics, "tumorMutationalBurdenPerMb"))
+                    .tumorMutationalBurdenStatus(PurpleTumorMutationalStatus.valueOf(string(characteristics,
+                            "tumorMutationalBurdenStatus")))
                     .tumorMutationalLoad(integer(characteristics, "tumorMutationalLoad"))
-                    .tumorMutationalLoadStatus(string(characteristics, "tumorMutationalLoadStatus"))
+                    .tumorMutationalLoadStatus(PurpleTumorMutationalStatus.valueOf(string(characteristics, "tumorMutationalLoadStatus")))
                     .build();
         }
 
@@ -246,18 +250,18 @@ public final class OrangeJson {
         }
 
         @NotNull
-        private static Set<PurpleCopyNumber> toPurpleCopyNumbers(@NotNull JsonArray gainLossArray) {
-            Set<PurpleCopyNumber> copyNumbers = Sets.newHashSet();
+        private static Set<PurpleGainLoss> toPurpleGainsLosses(@NotNull JsonArray gainLossArray) {
+            Set<PurpleGainLoss> gainsLosses = Sets.newHashSet();
             for (JsonElement element : gainLossArray) {
                 JsonObject gainLoss = element.getAsJsonObject();
-                copyNumbers.add(ImmutablePurpleCopyNumber.builder()
+                gainsLosses.add(ImmutablePurpleGainLoss.builder()
                         .gene(string(gainLoss, "gene"))
-                        .interpretation(PurpleCopyNumberInterpretation.valueOf(string(gainLoss, "interpretation")))
+                        .interpretation(PurpleGainLossInterpretation.valueOf(string(gainLoss, "interpretation")))
                         .minCopies(integer(gainLoss, "minCopies"))
                         .maxCopies(integer(gainLoss, "maxCopies"))
                         .build());
             }
-            return copyNumbers;
+            return gainsLosses;
         }
 
         @NotNull
@@ -410,7 +414,7 @@ public final class OrangeJson {
 
         @NotNull
         private static ChordRecord toChordRecord(@NotNull JsonObject chord) {
-            return ImmutableChordRecord.builder().hrStatus(string(chord, "hrStatus")).build();
+            return ImmutableChordRecord.builder().hrStatus(ChordStatus.valueOf(string(chord, "hrStatus"))).build();
         }
     }
 }

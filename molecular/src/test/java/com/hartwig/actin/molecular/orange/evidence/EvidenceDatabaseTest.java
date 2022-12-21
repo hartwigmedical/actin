@@ -8,7 +8,7 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakend;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
 import com.hartwig.actin.molecular.orange.datamodel.virus.TestVirusInterpreterFactory;
@@ -51,9 +51,9 @@ public class EvidenceDatabaseTest {
         assertNotNull(database.geneAlterationForVariant(variant));
         assertEquals(1, evidenceCount(database.evidenceForVariant(variant)));
 
-        PurpleCopyNumber copyNumber = TestPurpleFactory.copyNumberBuilder().build();
-        assertNotNull(database.geneAlterationForCopyNumber(copyNumber));
-        assertEquals(1, evidenceCount(database.evidenceForCopyNumber(copyNumber)));
+        PurpleGainLoss gainLoss = TestPurpleFactory.gainLossBuilder().build();
+        assertNotNull(database.geneAlterationForCopyNumber(gainLoss));
+        assertEquals(1, evidenceCount(database.evidenceForCopyNumber(gainLoss)));
 
         LinxHomozygousDisruption homozygousDisruption = TestLinxFactory.homozygousDisruptionBuilder().build();
         assertNotNull(database.geneAlterationForHomozygousDisruption(homozygousDisruption));

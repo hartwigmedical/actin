@@ -6,14 +6,13 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class PurpleCopyNumber {
+public abstract class PurpleGainLoss {
 
-    // TODO Rename to PurpleGainLoss
     @NotNull
     public abstract String gene();
 
     @NotNull
-    public abstract PurpleCopyNumberInterpretation interpretation();
+    public abstract PurpleGainLossInterpretation interpretation();
 
     public abstract int minCopies();
 

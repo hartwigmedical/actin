@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.orange.evidence;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakend;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityMatch;
@@ -75,13 +75,13 @@ public class EvidenceDatabase {
     }
 
     @Nullable
-    public GeneAlteration geneAlterationForCopyNumber(@NotNull PurpleCopyNumber copyNumber) {
-        return knownEventResolver.resolveForCopyNumber(copyNumber);
+    public GeneAlteration geneAlterationForCopyNumber(@NotNull PurpleGainLoss gainLoss) {
+        return knownEventResolver.resolveForCopyNumber(gainLoss);
     }
 
     @NotNull
-    public ActionabilityMatch evidenceForCopyNumber(@NotNull PurpleCopyNumber copyNumber) {
-        return actionableEventMatcher.matchForCopyNumber(copyNumber);
+    public ActionabilityMatch evidenceForCopyNumber(@NotNull PurpleGainLoss gainLoss) {
+        return actionableEventMatcher.matchForCopyNumber(gainLoss);
     }
 
     @Nullable

@@ -15,10 +15,10 @@ import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumberInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriver;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriverType;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLossInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory;
@@ -31,34 +31,34 @@ public class CopyNumberExtractorTest {
     @Test
     public void canExtractCopyNumbers() {
         PurpleDriver driver1 = TestPurpleFactory.driverBuilder().gene("gene 1").type(PurpleDriverType.DEL).build();
-        PurpleCopyNumber copyNumber1 = TestPurpleFactory.copyNumberBuilder()
+        PurpleGainLoss gainLoss1 = TestPurpleFactory.gainLossBuilder()
                 .gene("gene 1")
                 .minCopies(0)
                 .maxCopies(1)
-                .interpretation(PurpleCopyNumberInterpretation.PARTIAL_LOSS)
+                .interpretation(PurpleGainLossInterpretation.PARTIAL_LOSS)
                 .build();
 
-        PurpleCopyNumber copyNumber2 = TestPurpleFactory.copyNumberBuilder()
+        PurpleGainLoss gainLoss2 = TestPurpleFactory.gainLossBuilder()
                 .gene("gene 2")
                 .minCopies(20)
                 .maxCopies(21)
-                .interpretation(PurpleCopyNumberInterpretation.FULL_GAIN)
+                .interpretation(PurpleGainLossInterpretation.FULL_GAIN)
                 .build();
 
-        PurpleCopyNumber copyNumber3 = TestPurpleFactory.copyNumberBuilder()
+        PurpleGainLoss gainLoss3 = TestPurpleFactory.gainLossBuilder()
                 .gene("gene 3")
                 .minCopies(20)
                 .maxCopies(20)
-                .interpretation(PurpleCopyNumberInterpretation.FULL_GAIN)
+                .interpretation(PurpleGainLossInterpretation.FULL_GAIN)
                 .build();
 
         PurpleRecord purple = ImmutablePurpleRecord.builder()
                 .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
                 .addDrivers(driver1)
-                .addCopyNumbers(copyNumber1, copyNumber2, copyNumber3)
+                .addGainsLosses(gainLoss1, gainLoss2, gainLoss3)
                 .build();
 
-        GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes(copyNumber1.gene(), copyNumber2.gene());
+        GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes(gainLoss1.gene(), gainLoss2.gene());
         CopyNumberExtractor copyNumberExtractor = new CopyNumberExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase());
 
         Set<CopyNumber> copyNumbers = copyNumberExtractor.extract(purple);
@@ -92,7 +92,7 @@ public class CopyNumberExtractorTest {
 
     @Test
     public void canDetermineTypeForAllInterpretations() {
-        for (PurpleCopyNumberInterpretation interpretation : PurpleCopyNumberInterpretation.values()) {
+        for (PurpleGainLossInterpretation interpretation : PurpleGainLossInterpretation.values()) {
             assertNotNull(CopyNumberExtractor.determineType(interpretation));
         }
     }

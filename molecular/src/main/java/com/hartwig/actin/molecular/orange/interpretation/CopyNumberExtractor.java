@@ -9,10 +9,10 @@ import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableCopyNumber;
 import com.hartwig.actin.molecular.filter.GeneFilter;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumberInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriver;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriverType;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLossInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.sort.driver.CopyNumberComparator;
@@ -42,21 +42,21 @@ class CopyNumberExtractor {
     @NotNull
     public Set<CopyNumber> extract(@NotNull PurpleRecord purple) {
         Set<CopyNumber> copyNumbers = Sets.newTreeSet(new CopyNumberComparator());
-        for (PurpleCopyNumber copyNumber : purple.copyNumbers()) {
-            PurpleDriver driver = findCopyNumberDriver(purple.drivers(), copyNumber.gene());
-            String event = DriverEventFactory.copyNumberEvent(copyNumber);
+        for (PurpleGainLoss gainLoss : purple.gainsLosses()) {
+            PurpleDriver driver = findCopyNumberDriver(purple.drivers(), gainLoss.gene());
+            String event = DriverEventFactory.gainLossEvent(gainLoss);
 
-            if (geneFilter.include(copyNumber.gene())) {
+            if (geneFilter.include(gainLoss.gene())) {
                 copyNumbers.add(ImmutableCopyNumber.builder()
-                        .from(GeneAlterationFactory.convertAlteration(copyNumber.gene(),
-                                evidenceDatabase.geneAlterationForCopyNumber(copyNumber)))
+                        .from(GeneAlterationFactory.convertAlteration(gainLoss.gene(),
+                                evidenceDatabase.geneAlterationForCopyNumber(gainLoss)))
                         .isReportable(driver != null)
                         .event(event)
                         .driverLikelihood(driver != null ? DriverLikelihood.HIGH : null)
-                        .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(copyNumber)))
-                        .type(determineType(copyNumber.interpretation()))
-                        .minCopies(copyNumber.minCopies())
-                        .maxCopies(copyNumber.maxCopies())
+                        .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(gainLoss)))
+                        .type(determineType(gainLoss.interpretation()))
+                        .minCopies(gainLoss.minCopies())
+                        .maxCopies(gainLoss.maxCopies())
                         .build());
             } else if (driver != null) {
                 LOGGER.warn("Filtered a reported copy number through gene filtering: '{}'", event);
@@ -67,7 +67,7 @@ class CopyNumberExtractor {
 
     @NotNull
     @VisibleForTesting
-    static CopyNumberType determineType(@NotNull PurpleCopyNumberInterpretation interpretation) {
+    static CopyNumberType determineType(@NotNull PurpleGainLossInterpretation interpretation) {
         switch (interpretation) {
             case FULL_GAIN: {
                 return CopyNumberType.FULL_GAIN;

@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.orange.evidence.actionability;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakend;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
 
@@ -69,8 +69,8 @@ public class ActionableEventMatcher {
     }
 
     @NotNull
-    public ActionabilityMatch matchForCopyNumber(@NotNull PurpleCopyNumber copyNumber) {
-        return personalizedActionabilityFactory.create(copyNumberEvidence.findMatches(copyNumber));
+    public ActionabilityMatch matchForCopyNumber(@NotNull PurpleGainLoss gainLoss) {
+        return personalizedActionabilityFactory.create(copyNumberEvidence.findMatches(gainLoss));
     }
 
     @NotNull

@@ -5,7 +5,7 @@ import java.util.List;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakend;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.evidence.matching.HotspotMatching;
 import com.hartwig.actin.molecular.orange.evidence.matching.RangeMatching;
@@ -85,13 +85,13 @@ public class KnownEventResolver {
     }
 
     @Nullable
-    public GeneAlteration resolveForCopyNumber(@NotNull PurpleCopyNumber copyNumber) {
-        KnownCopyNumber knownCopyNumber = CopyNumberLookup.findForCopyNumber(knownEvents.copyNumbers(), copyNumber);
+    public GeneAlteration resolveForCopyNumber(@NotNull PurpleGainLoss gainLoss) {
+        KnownCopyNumber knownCopyNumber = CopyNumberLookup.findForCopyNumber(knownEvents.copyNumbers(), gainLoss);
         if (knownCopyNumber != null) {
             return knownCopyNumber;
         }
 
-        return GeneLookup.find(knownGenes, copyNumber.gene());
+        return GeneLookup.find(knownGenes, gainLoss.gene());
     }
 
     @Nullable

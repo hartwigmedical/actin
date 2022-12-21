@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.orange.evidence.actionability;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
 import com.hartwig.serve.datamodel.ActionableEvent;
 import com.hartwig.serve.datamodel.ActionableEvents;
 import com.hartwig.serve.datamodel.gene.ActionableGene;
@@ -11,7 +11,7 @@ import com.hartwig.serve.datamodel.gene.GeneEvent;
 
 import org.jetbrains.annotations.NotNull;
 
-class CopyNumberEvidence implements EvidenceMatcher<PurpleCopyNumber>{
+class CopyNumberEvidence implements EvidenceMatcher<PurpleGainLoss>{
 
     @NotNull
     private final List<ActionableGene> actionableAmplifications;
@@ -40,15 +40,15 @@ class CopyNumberEvidence implements EvidenceMatcher<PurpleCopyNumber>{
 
     @NotNull
     @Override
-    public List<ActionableEvent> findMatches(@NotNull PurpleCopyNumber copyNumber) {
-        switch (copyNumber.interpretation()) {
+    public List<ActionableEvent> findMatches(@NotNull PurpleGainLoss gainLoss) {
+        switch (gainLoss.interpretation()) {
             case FULL_GAIN:
             case PARTIAL_GAIN: {
-                return findMatches(copyNumber, actionableAmplifications);
+                return findMatches(gainLoss, actionableAmplifications);
             }
             case FULL_LOSS:
             case PARTIAL_LOSS: {
-                return findMatches(copyNumber, actionableLosses);
+                return findMatches(gainLoss, actionableLosses);
             }
             default: {
                 return Lists.newArrayList();
@@ -57,10 +57,10 @@ class CopyNumberEvidence implements EvidenceMatcher<PurpleCopyNumber>{
     }
 
     @NotNull
-    private static List<ActionableEvent> findMatches(@NotNull PurpleCopyNumber copyNumber, @NotNull List<ActionableGene> actionableEvents) {
+    private static List<ActionableEvent> findMatches(@NotNull PurpleGainLoss gainLoss, @NotNull List<ActionableGene> actionableEvents) {
         List<ActionableEvent> matches = Lists.newArrayList();
         for (ActionableGene actionableEvent : actionableEvents) {
-            if (actionableEvent.gene().equals(copyNumber.gene())) {
+            if (actionableEvent.gene().equals(gainLoss.gene())) {
                 matches.add(actionableEvent);
             }
         }

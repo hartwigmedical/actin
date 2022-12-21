@@ -6,8 +6,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumberInterpretation;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLossInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
 import com.hartwig.serve.datamodel.ActionableEvent;
 import com.hartwig.serve.datamodel.ActionableEvents;
@@ -29,22 +29,22 @@ public class CopyNumberEvidenceTest {
 
         CopyNumberEvidence copyNumberEvidence = CopyNumberEvidence.create(actionable);
 
-        PurpleCopyNumber ampGene1 =
-                TestPurpleFactory.copyNumberBuilder().gene("gene 1").interpretation(PurpleCopyNumberInterpretation.FULL_GAIN).build();
+        PurpleGainLoss ampGene1 =
+                TestPurpleFactory.gainLossBuilder().gene("gene 1").interpretation(PurpleGainLossInterpretation.FULL_GAIN).build();
         List<ActionableEvent> ampMatches = copyNumberEvidence.findMatches(ampGene1);
 
         assertEquals(1, ampMatches.size());
         assertTrue(ampMatches.contains(gene1));
 
-        PurpleCopyNumber lossGene2 =
-                TestPurpleFactory.copyNumberBuilder().gene("gene 2").interpretation(PurpleCopyNumberInterpretation.FULL_LOSS).build();
+        PurpleGainLoss lossGene2 =
+                TestPurpleFactory.gainLossBuilder().gene("gene 2").interpretation(PurpleGainLossInterpretation.FULL_LOSS).build();
         List<ActionableEvent> delMatches = copyNumberEvidence.findMatches(lossGene2);
 
         assertEquals(1, delMatches.size());
         assertTrue(delMatches.contains(gene2));
 
-        PurpleCopyNumber lossGene1 =
-                TestPurpleFactory.copyNumberBuilder().gene("gene 1").interpretation(PurpleCopyNumberInterpretation.FULL_LOSS).build();
+        PurpleGainLoss lossGene1 =
+                TestPurpleFactory.gainLossBuilder().gene("gene 1").interpretation(PurpleGainLossInterpretation.FULL_LOSS).build();
         assertTrue(copyNumberEvidence.findMatches(lossGene1).isEmpty());
     }
 

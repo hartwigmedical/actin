@@ -1,8 +1,8 @@
 package com.hartwig.actin.molecular.orange.evidence.known;
 
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumberInterpretation;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLossInterpretation;
 import com.hartwig.serve.datamodel.gene.GeneEvent;
 import com.hartwig.serve.datamodel.gene.KnownCopyNumber;
 
@@ -15,18 +15,18 @@ final class CopyNumberLookup {
     }
 
     @Nullable
-    public static KnownCopyNumber findForCopyNumber(@NotNull Iterable<KnownCopyNumber> knownCopyNumbers,
-            @NotNull PurpleCopyNumber copyNumber) {
+    public static KnownCopyNumber findForCopyNumber(@NotNull Iterable<KnownCopyNumber> knownCopyNumbers, @NotNull PurpleGainLoss gainLoss) {
         for (KnownCopyNumber knownCopyNumber : knownCopyNumbers) {
-            boolean geneMatches = knownCopyNumber.gene().equals(copyNumber.gene());
-            boolean interpretationMatches = interpretationMatchesEvent(copyNumber.interpretation(), knownCopyNumber.event());
+            boolean geneMatches = knownCopyNumber.gene().equals(gainLoss.gene());
+            boolean interpretationMatches = interpretationMatchesEvent(gainLoss.interpretation(), knownCopyNumber.event());
             if (geneMatches && interpretationMatches) {
                 return knownCopyNumber;
             }
-        } return null;
+        }
+        return null;
     }
 
-    private static boolean interpretationMatchesEvent(@NotNull PurpleCopyNumberInterpretation interpretation, @NotNull GeneEvent event) {
+    private static boolean interpretationMatchesEvent(@NotNull PurpleGainLossInterpretation interpretation, @NotNull GeneEvent event) {
         switch (interpretation) {
             case FULL_GAIN:
             case PARTIAL_GAIN: {

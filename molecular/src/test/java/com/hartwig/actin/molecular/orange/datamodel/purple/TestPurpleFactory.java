@@ -16,11 +16,11 @@ public final class TestPurpleFactory {
     @NotNull
     public static ImmutablePurpleCharacteristics.Builder characteristicsBuilder() {
         return ImmutablePurpleCharacteristics.builder()
-                .microsatelliteStabilityStatus(Strings.EMPTY)
-                .tumorMutationalBurden(0D)
-                .tumorMutationalBurdenStatus(Strings.EMPTY)
+                .microsatelliteStatus(PurpleMicrosatelliteStatus.UNKNOWN)
+                .tumorMutationalBurdenPerMb(0D)
+                .tumorMutationalBurdenStatus(PurpleTumorMutationalStatus.UNKNOWN)
                 .tumorMutationalLoad(0)
-                .tumorMutationalLoadStatus(Strings.EMPTY);
+                .tumorMutationalLoadStatus(PurpleTumorMutationalStatus.UNKNOWN);
     }
 
     @NotNull
@@ -61,10 +61,10 @@ public final class TestPurpleFactory {
     }
 
     @NotNull
-    public static ImmutablePurpleCopyNumber.Builder copyNumberBuilder() {
-        return ImmutablePurpleCopyNumber.builder()
+    public static ImmutablePurpleGainLoss.Builder gainLossBuilder() {
+        return ImmutablePurpleGainLoss.builder()
                 .gene(Strings.EMPTY)
-                .interpretation(PurpleCopyNumberInterpretation.FULL_LOSS)
+                .interpretation(PurpleGainLossInterpretation.FULL_LOSS)
                 .minCopies(0)
                 .maxCopies(0);
     }

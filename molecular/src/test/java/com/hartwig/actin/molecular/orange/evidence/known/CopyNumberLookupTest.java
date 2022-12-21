@@ -8,8 +8,8 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumber;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCopyNumberInterpretation;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLossInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
 import com.hartwig.serve.datamodel.gene.GeneEvent;
 import com.hartwig.serve.datamodel.gene.KnownCopyNumber;
@@ -25,22 +25,22 @@ public class CopyNumberLookupTest {
         KnownCopyNumber del = TestServeKnownFactory.copyNumberBuilder().gene("gene 2").event(GeneEvent.DELETION).build();
         List<KnownCopyNumber> knownCopyNumbers = Lists.newArrayList(amp, del);
 
-        PurpleCopyNumber ampOnGene1 = create("gene 1", PurpleCopyNumberInterpretation.FULL_GAIN);
+        PurpleGainLoss ampOnGene1 = create("gene 1", PurpleGainLossInterpretation.FULL_GAIN);
         assertEquals(amp, CopyNumberLookup.findForCopyNumber(knownCopyNumbers, ampOnGene1));
 
-        PurpleCopyNumber ampOnGene2 = create("gene 2", PurpleCopyNumberInterpretation.FULL_GAIN);
+        PurpleGainLoss ampOnGene2 = create("gene 2", PurpleGainLossInterpretation.FULL_GAIN);
         assertNull(CopyNumberLookup.findForCopyNumber(knownCopyNumbers, ampOnGene2));
 
-        PurpleCopyNumber delOnGene1 = create("gene 1", PurpleCopyNumberInterpretation.FULL_LOSS);
+        PurpleGainLoss delOnGene1 = create("gene 1", PurpleGainLossInterpretation.FULL_LOSS);
         assertNull(CopyNumberLookup.findForCopyNumber(knownCopyNumbers, delOnGene1));
 
-        PurpleCopyNumber delOnGene2 = create("gene 2", PurpleCopyNumberInterpretation.FULL_LOSS);
+        PurpleGainLoss delOnGene2 = create("gene 2", PurpleGainLossInterpretation.FULL_LOSS);
         assertEquals(del, CopyNumberLookup.findForCopyNumber(knownCopyNumbers, delOnGene2));
     }
 
     @NotNull
-    private static PurpleCopyNumber create(@NotNull String gene, @NotNull PurpleCopyNumberInterpretation interpretation) {
-        return TestPurpleFactory.copyNumberBuilder().gene(gene).interpretation(interpretation).build();
+    private static PurpleGainLoss create(@NotNull String gene, @NotNull PurpleGainLossInterpretation interpretation) {
+        return TestPurpleFactory.gainLossBuilder().gene(gene).interpretation(interpretation).build();
     }
 
     @Test
