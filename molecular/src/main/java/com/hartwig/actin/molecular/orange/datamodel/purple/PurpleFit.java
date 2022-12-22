@@ -8,9 +8,9 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class PurpleFit {
 
-    public abstract boolean hasReliableQuality();
+    public abstract boolean hasSufficientQuality();
 
-    public abstract boolean hasReliablePurity();
+    public abstract boolean containsTumorCells();
 
     public abstract double purity();
 

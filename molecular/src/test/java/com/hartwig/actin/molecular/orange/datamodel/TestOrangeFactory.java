@@ -138,7 +138,7 @@ public final class TestOrangeFactory {
 
     @NotNull
     private static PurpleFit createTestPurpleFit() {
-        return TestPurpleFactory.fitBuilder().hasReliableQuality(true).hasReliablePurity(true).purity(0.98).ploidy(3.1).build();
+        return TestPurpleFactory.fitBuilder().hasSufficientQuality(true).containsTumorCells(true).purity(0.98).ploidy(3.1).build();
     }
 
     @NotNull

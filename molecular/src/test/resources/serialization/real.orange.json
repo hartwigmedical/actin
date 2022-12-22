@@ -495,9 +495,9 @@
           "NONE"
         ]
       },
-      "hasReliableQuality": true,
+      "hasSufficientQuality": true,
       "fittedPurityMethod": "NORMAL",
-      "hasReliablePurity": true,
+      "containsTumorCells": true,
       "purity": 0.99,
       "minPurity": 0.97,
       "maxPurity": 1.0,

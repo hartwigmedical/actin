@@ -8,8 +8,8 @@
   "refGenomeVersion": "V37",
   "purple": {
     "fit": {
-      "hasReliableQuality": false,
-      "hasReliablePurity": false,
+      "hasSufficientQuality": false,
+      "containsTumorCells": false,
       "purity": 0.1,
       "ploidy": 2
     },

@@ -306,8 +306,8 @@ Molecular base data:
 | date                 | The ORANGE field `experimentDate`              |
 | evidenceSource       | Hard-coded to `CKB`                            |
 | externalTrialSource  | Hard-coded to `ICLUSION`                       |
-| containsTumorCells   | The PURPLE field `hasReliablePurity`           |
-| hasSufficientQuality | The PURPLE field `hasReliableQuality`          |
+| containsTumorCells   | The PURPLE field `containsTumorCells`          |
+| hasSufficientQuality | The PURPLE field `hasSufficientQuality`        |
 
 Molecular characteristics:
 

@@ -149,8 +149,8 @@ public final class OrangeJson {
         @NotNull
         private static PurpleFit toPurpleFit(@NotNull JsonObject fit) {
             return ImmutablePurpleFit.builder()
-                    .hasReliableQuality(bool(fit, "hasReliableQuality"))
-                    .hasReliablePurity(bool(fit, "hasReliablePurity"))
+                    .hasSufficientQuality(bool(fit, "hasSufficientQuality"))
+                    .containsTumorCells(bool(fit, "containsTumorCells"))
                     .purity(number(fit, "purity"))
                     .ploidy(number(fit, "ploidy"))
                     .build();

@@ -10,7 +10,7 @@ public final class TestPurpleFactory {
 
     @NotNull
     public static ImmutablePurpleFit.Builder fitBuilder() {
-        return ImmutablePurpleFit.builder().hasReliableQuality(false).hasReliablePurity(false).purity(0).ploidy(0);
+        return ImmutablePurpleFit.builder().hasSufficientQuality(false).containsTumorCells(false).purity(0).ploidy(0);
     }
 
     @NotNull
