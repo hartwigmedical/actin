@@ -56,6 +56,9 @@ public class CharacteristicsExtractorTest {
         MolecularCharacteristics proficient = extractor.extract(withHomologousRepairStatus(ChordStatus.HR_PROFICIENT));
         assertFalse(proficient.isHomologousRepairDeficient());
 
+        MolecularCharacteristics cannotBeDetermined = extractor.extract(withHomologousRepairStatus(ChordStatus.CANNOT_BE_DETERMINED));
+        assertNull(cannotBeDetermined.isHomologousRepairDeficient());
+
         MolecularCharacteristics unknown = extractor.extract(withHomologousRepairStatus(ChordStatus.UNKNOWN));
         assertNull(unknown.isHomologousRepairDeficient());
     }
@@ -76,6 +79,9 @@ public class CharacteristicsExtractorTest {
 
         MolecularCharacteristics stable = extractor.extract(withMicrosatelliteStatus(PurpleMicrosatelliteStatus.MSS));
         assertFalse(stable.isMicrosatelliteUnstable());
+
+        MolecularCharacteristics unknown = extractor.extract(withMicrosatelliteStatus(PurpleMicrosatelliteStatus.UNKNOWN));
+        assertNull(unknown.isMicrosatelliteUnstable());
     }
 
     @NotNull

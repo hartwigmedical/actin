@@ -78,10 +78,16 @@ class CharacteristicsExtractor {
 
     @Nullable
     private static Boolean isMSI(@NotNull PurpleMicrosatelliteStatus microsatelliteStatus) {
-        if (microsatelliteStatus == PurpleMicrosatelliteStatus.MSI) {
-            return true;
-        } else if (microsatelliteStatus == PurpleMicrosatelliteStatus.MSS) {
-            return false;
+        switch (microsatelliteStatus) {
+            case MSI: {
+                return true;
+            }
+            case MSS: {
+                return false;
+            }
+            case UNKNOWN: {
+                return null;
+            }
         }
 
         LOGGER.warn("Cannot interpret microsatellite status '{}'", microsatelliteStatus);
@@ -96,6 +102,7 @@ class CharacteristicsExtractor {
             case HR_PROFICIENT:
                 return false;
             case UNKNOWN:
+            case CANNOT_BE_DETERMINED:
                 return null;
         }
 
