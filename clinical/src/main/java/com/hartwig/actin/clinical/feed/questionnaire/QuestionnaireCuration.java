@@ -42,6 +42,7 @@ final class QuestionnaireCuration {
         OPTION_MAPPING.put("uknown", null);
         OPTION_MAPPING.put("onknown", null);
         OPTION_MAPPING.put("UNKOWN", null);
+        OPTION_MAPPING.put("unknown after surgery", null);
         OPTION_MAPPING.put("-", null);
         OPTION_MAPPING.put("yes/no", null);
         OPTION_MAPPING.put("yes/no/unknown", null);
