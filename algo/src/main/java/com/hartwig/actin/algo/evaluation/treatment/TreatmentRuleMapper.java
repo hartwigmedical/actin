@@ -52,6 +52,7 @@ public class TreatmentRuleMapper extends RuleMapper {
                 hasHadSomeTreatmentsOfCategoryWithTypesCreator());
         map.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_MOST_Z_LINES,
                 hasHadLimitedTreatmentsOfCategoryWithTypesCreator());
+        map.put(EligibilityRule.HAS_RECEIVED_HER2_TARGETING_ADC, hasReceivedHER2TargetingADCCreator());
         map.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_NAME_X_TREATMENT, hasProgressiveDiseaseFollowingTreatmentNameCreator());
         map.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_CATEGORY_X_TREATMENT,
                 hasProgressiveDiseaseFollowingTreatmentCategoryCreator());
@@ -238,6 +239,11 @@ public class TreatmentRuleMapper extends RuleMapper {
                     functionInputResolver().createOneTypedTreatmentManyStringsOneIntegerInput(function);
             return new HasHadLimitedTreatmentsWithCategoryOfTypes(input.category(), input.strings(), input.integer());
         };
+    }
+
+    @NotNull
+    private FunctionCreator hasReceivedHER2TargetingADCCreator() {
+        return function -> new HasReceivedHER2TargetingADC();
     }
 
     @NotNull
