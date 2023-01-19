@@ -8,9 +8,10 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 
 import org.jetbrains.annotations.NotNull;
 
-public class HasRadiologicalProgressionFollowingSomeTreatmentLines implements EvaluationFunction {
+//TODO: Implement according to README
+public class HasRadiologicalProgressionFollowingLatestTreatmentLine implements EvaluationFunction {
 
-    HasRadiologicalProgressionFollowingSomeTreatmentLines() {
+    HasRadiologicalProgressionFollowingLatestTreatmentLine() {
     }
 
     @NotNull
@@ -18,8 +19,8 @@ public class HasRadiologicalProgressionFollowingSomeTreatmentLines implements Ev
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Trial participation in current trial currently cannot be evaluated")
-                .addUndeterminedGeneralMessages("Undetermined previous current trial participation")
+                .addUndeterminedSpecificMessages("Radiological progression following latest treatment line currently cannot be evaluated")
+                .addUndeterminedGeneralMessages("Undetermined radiological progression following latest treatment line")
                 .build();
     }
 }

@@ -65,6 +65,8 @@ public class TreatmentRuleMapper extends RuleMapper {
                 hasProgressiveDiseaseFollowingSomeSystemicTreatmentsCreator());
         map.put(EligibilityRule.HAS_RADIOLOGICAL_PROGRESSIVE_DISEASE_FOLLOWING_AT_LEAST_X_TREATMENT_LINES,
                 hasRadiologicalProgressionFollowingSomeTreatmentLinesCreator());
+        map.put(EligibilityRule.HAS_RADIOLOGICAL_PROGRESSIVE_DISEASE_AFTER_LATEST_TREATMENT_LINE,
+                hasRadiologicalProgressionFollowingLatestTreatmentLineCreator());
         map.put(EligibilityRule.HAS_HAD_COMPLETE_RESECTION, hasHadCompleteResectionCreator());
         map.put(EligibilityRule.HAS_HAD_PARTIAL_RESECTION, hasHadPartialResectionCreator());
         map.put(EligibilityRule.HAS_HAD_RESECTION_WITHIN_X_WEEKS, hasHadResectionWithinWeeksCreator());
@@ -297,6 +299,11 @@ public class TreatmentRuleMapper extends RuleMapper {
             int minSystemicTreatments = functionInputResolver().createOneIntegerInput(function);
             return new HasHadPDFollowingSomeSystemicTreatments(minSystemicTreatments, false);
         };
+    }
+
+    @NotNull
+    private FunctionCreator hasRadiologicalProgressionFollowingLatestTreatmentLineCreator() {
+        return function -> new HasRadiologicalProgressionFollowingLatestTreatmentLine();
     }
 
     //TODO: Check implementation
