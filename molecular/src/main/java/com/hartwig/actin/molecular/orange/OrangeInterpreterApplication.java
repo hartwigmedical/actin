@@ -106,7 +106,7 @@ public class OrangeInterpreterApplication {
         ClinicalRecord clinical = ClinicalRecordJson.read(config.clinicalJson());
         Set<String> tumorDoids = clinical.tumor().doids();
         if (tumorDoids == null || tumorDoids.isEmpty()) {
-            LOGGER.warn(" No tumor DOIDs configured!");
+            LOGGER.warn(" No tumor DOIDs configured in ACTIN clinical data for {}!", clinical.patientId());
         } else {
             LOGGER.info(" Tumor DOIDs determined to be: {}", concat(tumorDoids));
         }
