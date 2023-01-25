@@ -9,6 +9,7 @@ public enum LabUnit {
     MICROGRAMS_PER_LITER("ug/L"),
     MICROGRAMS_PER_MICROLITER("µg/µL"),
     MILLIGRAMS_PER_DECILITER("mg/dL"),
+    MILLIGRAMS_PER_MILLIMOLE("mg/mmol"),
     MILLIGRAMS_PER_LITER("mg/L"),
     GRAMS_PER_DECILITER("g/dL"),
     GRAMS_PER_LITER("g/L"),
