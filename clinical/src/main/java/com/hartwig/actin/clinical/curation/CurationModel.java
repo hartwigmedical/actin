@@ -285,7 +285,7 @@ public class CurationModel {
             String trimmedInput = CurationUtil.fullTrim(input);
             Set<MolecularTestConfig> configs = find(database.molecularTestConfigs(), trimmedInput);
             if (configs.isEmpty()) {
-                LOGGER.warn(" Could not find molecular test config for input '{}: {}'", type, trimmedInput);
+                LOGGER.warn(" Could not find molecular test config for type '{}' with input: '{}'", type, trimmedInput);
             }
 
             for (MolecularTestConfig config : configs) {
