@@ -178,7 +178,7 @@ public final class TestClinicalFactory {
         List<PriorMolecularTest> priorMolecularTests = Lists.newArrayList();
 
         priorMolecularTests.add(ImmutablePriorMolecularTest.builder()
-                .test("BRAF test")
+                .test("Panel NGS")
                 .item("BRAF")
                 .measure(null)
                 .scoreText("V600E positive")
