@@ -141,6 +141,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.MUTATION_IN_GENE_X_IN_EXON_Y_OF_TYPE_Z, FunctionInput.ONE_GENE_ONE_INTEGER_ONE_VARIANT_TYPE);
         RULE_INPUT_MAP.put(EligibilityRule.UTR_3_LOSS_IN_GENE_X, FunctionInput.ONE_GENE);
         RULE_INPUT_MAP.put(EligibilityRule.AMPLIFICATION_OF_GENE_X, FunctionInput.ONE_GENE);
+        RULE_INPUT_MAP.put(EligibilityRule.AMPLIFICATION_OF_GENE_X_OF_AT_LEAST_Y_COPIES, FunctionInput.ONE_GENE_ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.FUSION_IN_GENE_X, FunctionInput.ONE_GENE);
         RULE_INPUT_MAP.put(EligibilityRule.WILDTYPE_OF_GENE_X, FunctionInput.ONE_GENE);
         RULE_INPUT_MAP.put(EligibilityRule.EXON_SKIPPING_GENE_X_EXON_Y, FunctionInput.ONE_GENE_ONE_INTEGER);

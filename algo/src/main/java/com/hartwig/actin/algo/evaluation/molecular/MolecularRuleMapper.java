@@ -44,6 +44,7 @@ public class MolecularRuleMapper extends RuleMapper {
         map.put(EligibilityRule.MUTATION_IN_GENE_X_IN_EXON_Y_OF_TYPE_Z, geneHasVariantInExonOfTypeCreator());
         map.put(EligibilityRule.UTR_3_LOSS_IN_GENE_X, geneHasUTR3LossCreator());
         map.put(EligibilityRule.AMPLIFICATION_OF_GENE_X, geneIsAmplifiedCreator());
+        map.put(EligibilityRule.AMPLIFICATION_OF_GENE_X_OF_AT_LEAST_Y_COPIES, geneIsAmplifiedMinCopiesCreator());
         map.put(EligibilityRule.FUSION_IN_GENE_X, hasFusionInGeneCreator());
         map.put(EligibilityRule.WILDTYPE_OF_GENE_X, geneIsWildTypeCreator());
         map.put(EligibilityRule.EXON_SKIPPING_GENE_X_EXON_Y, geneHasSpecificExonSkippingCreator());
@@ -154,6 +155,14 @@ public class MolecularRuleMapper extends RuleMapper {
         return function -> {
             OneGene gene = functionInputResolver().createOneGeneInput(function);
             return new GeneIsAmplified(gene.geneName());
+        };
+    }
+
+    @NotNull
+    private FunctionCreator geneIsAmplifiedMinCopiesCreator() {
+        return function -> {
+            OneGeneOneDouble input = functionInputResolver().createOneGeneOneDoubleInput(function);
+            return new GeneIsAmplifiedMinCopies(input.geneName(), input.double());
         };
     }
 
