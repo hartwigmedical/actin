@@ -184,10 +184,6 @@ public class FunctionInputResolver {
                     createOneGeneInput(function);
                     return true;
                 }
-                case ONE_GENE_ONE_DOUBLE: {
-                    createOneGeneOneDoubleInput(function);
-                    return true;
-                }
                 case ONE_GENE_ONE_INTEGER: {
                     createOneGeneOneIntegerInput(function);
                     return true;
@@ -415,18 +411,6 @@ public class FunctionInputResolver {
         }
 
         return ImmutableOneGene.builder().geneName(gene).build();
-    }
-
-    @NotNull
-    public OneGeneOneDouble createOneGeneOneDoubleInput(@NotNull EligibilityFunction function) {
-        assertParamConfig(function, FunctionInput.ONE_GENE_ONE_DOUBLE, 2);
-
-        String gene = (String) function.parameters().get(0);
-        if (!molecularInputChecker.isGene(gene)) {
-            throw new IllegalStateException("Not a valid gene: " + gene);
-        }
-
-        return ImmutableGeneOneDouble.builder().geneName(gene).(Double.parseDouble((String) function.parameters().get(1))).build();
     }
 
     @NotNull

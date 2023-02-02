@@ -161,8 +161,8 @@ public class MolecularRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator geneIsAmplifiedMinCopiesCreator() {
         return function -> {
-            OneGeneOneDouble input = functionInputResolver().createOneGeneOneDoubleInput(function);
-            return new GeneIsAmplifiedMinCopies(input.geneName(), input.double());
+            OneGeneOneInteger input = functionInputResolver().createOneGeneOneIntegerInput(function);
+            return new GeneIsAmplifiedMinCopies(input.geneName(), input.integer());
         };
     }
 

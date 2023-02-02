@@ -15,7 +15,7 @@ import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-//TODO: Clean up code
+//TODO: Merge with GeneIsAmplified
 public class GeneIsAmplifiedMinCopies implements EvaluationFunction {
 
     private static final double SOFT_PLOIDY_FACTOR = 2.5;
@@ -23,9 +23,9 @@ public class GeneIsAmplifiedMinCopies implements EvaluationFunction {
 
     @NotNull
     private final String gene;
-    private final double requestedMinCopyNumber;
+    private final int requestedMinCopyNumber;
 
-    GeneIsAmplifiedMinCopies(@NotNull final String gene, final double requestedMinCopyNumber) {
+    public GeneIsAmplifiedMinCopies(@NotNull final String gene, final int requestedMinCopyNumber) {
         this.gene = gene;
         this.requestedMinCopyNumber = requestedMinCopyNumber;
     }
@@ -51,10 +51,9 @@ public class GeneIsAmplifiedMinCopies implements EvaluationFunction {
         Set<String> nonAmpsWithSufficientCopyNumber = Sets.newHashSet();
 
         for (CopyNumber copyNumber : record.molecular().drivers().copyNumbers()) {
-            if (copyNumber.gene().equals(gene)) {
+            if (copyNumber.gene().equals(gene) && copyNumber.minCopies() >= requestedMinCopyNumber) {
                 double relativeMinCopies = copyNumber.minCopies() / ploidy;
                 double relativeMaxCopies = copyNumber.maxCopies() / ploidy;
-                double minCopyNumber = copyNumber.minCopies();
 
                 boolean isAmplification = relativeMaxCopies >= HARD_PLOIDY_FACTOR;
                 boolean isNearAmp = relativeMinCopies >= SOFT_PLOIDY_FACTOR && relativeMaxCopies <= HARD_PLOIDY_FACTOR;
@@ -63,24 +62,22 @@ public class GeneIsAmplifiedMinCopies implements EvaluationFunction {
                 boolean isLossOfFunction = copyNumber.proteinEffect() == ProteinEffect.LOSS_OF_FUNCTION
                         || copyNumber.proteinEffect() == ProteinEffect.LOSS_OF_FUNCTION_PREDICTED;
 
-                if (minCopyNumber > requestedMinCopyNumber) {
-                    if (isAmplification) {
-                        if (!isPotentialOncogene) {
-                            ampsOnNonOncogenes.add(copyNumber.event());
-                        } else if (isLossOfFunction) {
-                            ampsWithLossOfFunction.add(copyNumber.event());
-                        } else if (!copyNumber.isReportable()) {
-                            ampsThatAreUnreportable.add(copyNumber.event());
-                        } else if (relativeMinCopies < HARD_PLOIDY_FACTOR) {
-                            reportablePartialAmps.add(copyNumber.event());
-                        } else {
-                            reportableFullAmps.add(copyNumber.event());
-                        }
-                    } else if (isNearAmp) {
-                        ampsThatAreNearCutoff.add(copyNumber.event());
+                if (isAmplification) {
+                    if (!isPotentialOncogene) {
+                        ampsOnNonOncogenes.add(copyNumber.event());
+                    } else if (isLossOfFunction) {
+                        ampsWithLossOfFunction.add(copyNumber.event());
+                    } else if (!copyNumber.isReportable()) {
+                        ampsThatAreUnreportable.add(copyNumber.event());
+                    } else if (relativeMinCopies < HARD_PLOIDY_FACTOR) {
+                        reportablePartialAmps.add(copyNumber.event());
                     } else {
-                        nonAmpsWithSufficientCopyNumber.add(copyNumber.event());
+                        reportableFullAmps.add(copyNumber.event());
                     }
+                } else if (isNearAmp) {
+                    ampsThatAreNearCutoff.add(copyNumber.event());
+                } else {
+                    nonAmpsWithSufficientCopyNumber.add(copyNumber.event());
                 }
             }
         }
