@@ -105,7 +105,7 @@ public class GeneIsAmplifiedMinCopies implements EvaluationFunction {
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("No amplification detected of gene " + gene)
+                .addFailSpecificMessages("No amplification detected of gene " + gene + " with min copy number of " + requestedMinCopyNumber)
                 .addFailGeneralMessages("Molecular requirements")
                 .build();
     }
