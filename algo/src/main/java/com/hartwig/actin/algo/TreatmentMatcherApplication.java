@@ -86,7 +86,7 @@ public class TreatmentMatcherApplication {
         DoidModel doidModel = DoidModelFactory.createFromDoidEntry(doidEntry);
         ReferenceDateProvider referenceDateProvider = ReferenceDateProviderFactory.create(clinical, config.runHistorically());
 
-        LOGGER.info(("Matching patient to available trials"));
+        LOGGER.info("Matching patient to available trials");
         TrialMatcher matcher = TrialMatcher.create(doidModel, referenceDateProvider);
         List<TrialMatch> trialMatches = matcher.determineEligibility(patient, trials);
 
