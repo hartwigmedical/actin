@@ -58,11 +58,14 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_BONE_METASTASES, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_BONE_METASTASES_ONLY, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_LUNG_METASTASES, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_LYMPH_NODE_METASTASES, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_VISCERAL_METASTASES, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_BIOPSY_AMENABLE_LESION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_X_MONTHS_BEFORE_IC, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.CAN_PROVIDE_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.CAN_PROVIDE_ARCHIVAL_OR_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.MEETS_SPECIFIC_REQUIREMENTS_REGARDING_BIOPSY, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_EVALUABLE_DISEASE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_MEASURABLE_DISEASE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_MEASURABLE_DISEASE_RECIST, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA, FunctionInput.NONE);

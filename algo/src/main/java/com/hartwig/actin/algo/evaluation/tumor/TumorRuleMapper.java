@@ -54,11 +54,15 @@ public class TumorRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_BONE_METASTASES, hasBoneMetastasesCreator());
         map.put(EligibilityRule.HAS_BONE_METASTASES_ONLY, hasOnlyBoneMetastasesCreator());
         map.put(EligibilityRule.HAS_LUNG_METASTASES, hasLungMetastasesCreator());
+        map.put(EligibilityRule.HAS_LYMPH_NODE_METASTASES, hasLymphNodeMetastasesCreator());
+        map.put(EligibilityRule.HAS_VISCERAL_METASTASES, hasVisceralMetastasesCreator());
         map.put(EligibilityRule.HAS_BIOPSY_AMENABLE_LESION, hasBiopsyAmenableLesionCreator());
         map.put(EligibilityRule.HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_X_MONTHS_BEFORE_IC, tumorBiopsyTakenBeforeInformedConsentCreator());
         map.put(EligibilityRule.CAN_PROVIDE_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS, canProvideFreshSampleForFurtherAnalysisCreator());
-        map.put(EligibilityRule.CAN_PROVIDE_ARCHIVAL_OR_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS, canProvideSampleForFurtherAnalysisCreator());
+        map.put(EligibilityRule.CAN_PROVIDE_ARCHIVAL_OR_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS,
+                canProvideSampleForFurtherAnalysisCreator());
         map.put(EligibilityRule.MEETS_SPECIFIC_REQUIREMENTS_REGARDING_BIOPSY, meetsSpecificBiopsyRequirementsCreator());
+        map.put(EligibilityRule.HAS_EVALUABLE_DISEASE, hasEvaluableDiseaseCreator());
         map.put(EligibilityRule.HAS_MEASURABLE_DISEASE, hasMeasurableDiseaseCreator());
         map.put(EligibilityRule.HAS_MEASURABLE_DISEASE_RECIST, hasMeasurableDiseaseRecistCreator());
         map.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA, hasSpecificProgressiveDiseaseCriteriaCreator());
@@ -239,6 +243,16 @@ public class TumorRuleMapper extends RuleMapper {
     }
 
     @NotNull
+    private FunctionCreator hasLymphNodeMetastasesCreator() {
+        return function -> new HasLymphNodeMetastases();
+    }
+
+    @NotNull
+    private FunctionCreator hasVisceralMetastasesCreator() {
+        return function -> new HasVisceralMetastases();
+    }
+
+    @NotNull
     private FunctionCreator hasBiopsyAmenableLesionCreator() {
         return function -> new HasBiopsyAmenableLesion();
     }
@@ -261,6 +275,11 @@ public class TumorRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator meetsSpecificBiopsyRequirementsCreator() {
         return function -> new MeetsSpecificBiopsyRequirements();
+    }
+
+    @NotNull
+    private FunctionCreator hasEvaluableDiseaseCreator() {
+        return function -> new HasEvaluableDisease();
     }
 
     @NotNull
