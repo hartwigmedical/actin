@@ -30,24 +30,24 @@ SELECT  x.sampleId, IF(isHotspot,"Mutation (Hotspot)",IF(isBiallelic,"Mutation (
     WHERE isReportable
 	GROUP BY 1,3
 UNION
-SELECT  x.sampleId, IF(isPartial, "Amplification (partial)", "Amplification") AS e2ype, x.event, concat(minCopies," copies") AS details, driverLikelihood,
+SELECT  x.sampleId, IF(x.type='FULL_GAIN', "Amplification", "Amplification (partial)") AS type, x.event, concat(minCopies," copies") AS details, driverLikelihood,
 		group_concat(distinct et.treatment) AS externalTrials,
 	    IF(group_concat(DISTINCT e.type) LIKE '%Approved%', "Approved", IF(group_concat(DISTINCT e.type) LIKE '%On-label%', "On-label experimental", IF(group_concat(DISTINCT e.type) LIKE '%Off-label%', "Off-label experimental", IF(group_concat(DISTINCT e.type) LIKE '%Pre-clinical%', "Pre-clinical", NULL)))) AS treatmentEvidenceResponsive,
 		IF(group_concat(DISTINCT e.type) LIKE '%Known%', "Known", IF(group_concat(DISTINCT e.type) LIKE '%Suspect%', "Suspected", NULL)) AS treatmentEvidenceResistance
-	FROM amplification x
-	LEFT JOIN amplificationEvidence e ON x.id=e.amplificationId
-	LEFT JOIN (SELECT * FROM amplificationEvidence WHERE type='Trial') et ON x.id=et.amplificationId
-    WHERE isReportable
+	FROM copyNumber x
+	LEFT JOIN copyNumberEvidence e ON x.id=e.copyNumberId
+	LEFT JOIN (SELECT * FROM copyNumberEvidence WHERE type='Trial') et ON x.id=et.copyNumberId
+    WHERE isReportable and x.type in ('FULL_GAIN','PARTIAL_GAIN')
 	GROUP BY 1,3
 UNION
-SELECT  x.sampleId, IF(isPartial, "Loss (partial)", "Loss"), x.event, NULL AS details, driverLikelihood,
+SELECT  x.sampleId, "Loss", x.event, NULL AS details, driverLikelihood,
 		group_concat(DISTINCT et.treatment) AS externalTrials,
 	    IF(group_concat(DISTINCT e.type) LIKE '%Approved%', "Approved", IF(group_concat(DISTINCT e.type) LIKE '%On-label%', "On-label experimental", IF(group_concat(DISTINCT e.type) LIKE '%Off-label%', "Off-label experimental", IF(group_concat(DISTINCT e.type) LIKE '%Pre-clinical%', "Pre-clinical", NULL)))) AS treatmentEvidenceResponsive,
 		IF(group_concat(DISTINCT e.type) LIKE '%Known%', "Known", IF(group_concat(DISTINCT e.type) LIKE '%Suspect%', "Suspected", NULL)) AS treatmentEvidenceResistance
-    FROM loss x
-	LEFT JOIN lossEvidence e ON x.id=e.lossId
-	LEFT JOIN (SELECT * FROM lossEvidence WHERE type='Trial') et ON x.id=et.lossId
-    WHERE isReportable
+    FROM copyNumber x
+	LEFT JOIN copyNumberEvidence e ON x.id=e.copyNumberId
+	LEFT JOIN (SELECT * FROM copyNumberEvidence WHERE type='Trial') et ON x.id=et.copyNumberId
+    WHERE isReportable and x.type = ('LOSS')
 	GROUP BY 1,3
 UNION
 SELECT  x.sampleId, "Homozygous disruption" AS e2ype, x.event, NULL AS details, driverLikelihood,
