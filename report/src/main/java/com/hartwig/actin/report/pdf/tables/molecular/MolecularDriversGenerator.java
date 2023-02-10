@@ -69,7 +69,7 @@ public class MolecularDriversGenerator implements TableGenerator {
             table.addCell(Cells.createContent(nullToEmpty(entry.bestResistanceEvidence())));
         }
 
-        if (hasPotentiallySubclonalVariants(molecular.drivers().variants())) {
+        if (!entries.isEmpty() && hasPotentiallySubclonalVariants(molecular.drivers().variants())) {
             String note = "* Variant has > " + Formats.percentage(ClonalityInterpreter.CLONAL_CUTOFF) + " likelihood of being sub-clonal";
             table.addCell(Cells.createSpanningSubNote(note, table));
         }

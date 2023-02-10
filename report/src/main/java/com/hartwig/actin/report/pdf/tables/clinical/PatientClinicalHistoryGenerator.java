@@ -1,8 +1,8 @@
 package com.hartwig.actin.report.pdf.tables.clinical;
 
-import java.util.List;
-import java.util.Set;
-import java.util.StringJoiner;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -21,6 +21,9 @@ import com.itextpdf.layout.element.Table;
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.joining;
 
 public class PatientClinicalHistoryGenerator implements TableGenerator {
 
@@ -82,59 +85,44 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
 
     @NotNull
     private static String priorTumorTreatmentString(@NotNull List<PriorTumorTreatment> priorTumorTreatments, boolean requireSystemic) {
-        List<PriorTumorTreatment> filtered = Lists.newArrayList();
-        for (PriorTumorTreatment priorTumorTreatment : priorTumorTreatments) {
-            if (priorTumorTreatment.isSystemic() == requireSystemic) {
-                filtered.add(priorTumorTreatment);
-            }
-        }
-        filtered.sort(new PriorTumorTreatmentDescendingDateComparator());
+        List<PriorTumorTreatment> sortedFilteredTreatments = priorTumorTreatments.stream()
+                .filter(treatment -> treatment.isSystemic() == requireSystemic)
+                .sorted(new PriorTumorTreatmentDescendingDateComparator())
+                .collect(Collectors.toList());
 
-        StringJoiner joiner = Formats.commaJoiner();
+        Map<String, List<PriorTumorTreatment>> treatmentsByName =
+                sortedFilteredTreatments.stream().collect(groupingBy(PatientClinicalHistoryGenerator::treatmentName));
+
         Set<String> evaluatedNames = Sets.newHashSet();
-        for (PriorTumorTreatment priorTumorTreatment : filtered) {
-            String treatmentName = treatmentName(priorTumorTreatment);
+        Stream<Optional<String>> annotationStream = sortedFilteredTreatments.stream().map(treatment -> {
+            String treatmentName = treatmentName(treatment);
             if (!evaluatedNames.contains(treatmentName)) {
-                StringJoiner annotationJoiner = Formats.semicolonJoiner();
-                for (String annotation : extractAnnotationsForTreatmentName(filtered, treatmentName)) {
-                    annotationJoiner.add(annotation);
-                }
-                String annotationAddition = annotationJoiner.toString();
-                String treatment = treatmentName + (!annotationAddition.isEmpty() ? " (" + annotationAddition + ")" : "");
+                evaluatedNames.add(treatmentName);
+                Optional<String> annotationOption = treatmentsByName.get(treatmentName).stream()
+                        .map(PatientClinicalHistoryGenerator::extractAnnotationForTreatment)
+                        .flatMap(Optional::stream)
+                        .reduce((x, y) -> x + "; " + y);
+                return Optional.of(treatmentName
+                        + annotationOption.map(annotation -> " (" + annotation + ")").orElse(""));
 
-                joiner.add(treatment);
+            } else {
+                return Optional.empty();
             }
-            evaluatedNames.add(treatmentName);
-        }
-        return Formats.valueOrDefault(joiner.toString(), "None");
+
+        });
+        String annotationString = annotationStream.flatMap(Optional::stream)
+                .collect(joining(", "));
+
+        return Formats.valueOrDefault(annotationString, "None");
     }
 
     @NotNull
-    private static Set<String> extractAnnotationsForTreatmentName(@NotNull List<PriorTumorTreatment> priorTumorTreatments,
-            @NotNull String treatmentNameToInclude) {
-        Set<String> annotations = Sets.newTreeSet();
-        for (PriorTumorTreatment priorTumorTreatment : priorTumorTreatments) {
-            String treatmentName = treatmentName(priorTumorTreatment);
-            if (treatmentName.equals(treatmentNameToInclude)) {
-                StringJoiner joiner = Formats.commaJoiner();
-
-                String dateString = toDateString(priorTumorTreatment.startYear(), priorTumorTreatment.startMonth());
-                if (dateString != null ) {
-                    joiner.add(dateString);
-                }
-
-                String stopReasonString = toStopReasonString(priorTumorTreatment.stopReason());
-                if (stopReasonString != null) {
-                    joiner.add(stopReasonString);
-                }
-
-                String annotation = joiner.toString();
-                if (!annotation.isEmpty()) {
-                    annotations.add(annotation);
-                }
-            }
-        }
-        return annotations;
+    private static Optional<String> extractAnnotationForTreatment(@NotNull PriorTumorTreatment priorTumorTreatment) {
+        return Stream.of(toDateRangeString(priorTumorTreatment),
+                        toStopReasonString(priorTumorTreatment.stopReason()),
+                        toNumberOfCyclesString(priorTumorTreatment.cycles())
+                ).flatMap(Optional::stream)
+                .reduce((x, y) -> x + ", " + y);
     }
 
     @NotNull
@@ -155,17 +143,16 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
                 tumorDetails = tumorDetails + " " + priorSecondPrimary.tumorType();
             }
 
-            String dateDiagnosis = toDateString(priorSecondPrimary.diagnosedYear(), priorSecondPrimary.diagnosedMonth());
-            String dateAdditionDiagnosis = Strings.EMPTY;
-            if (dateDiagnosis != null) {
-                dateAdditionDiagnosis = "diagnosed " + dateDiagnosis + ", ";
-            }
+            Optional<String> dateDiagnosisOption = toDateString(priorSecondPrimary.diagnosedYear(),
+                    priorSecondPrimary.diagnosedMonth());
+            String dateAdditionDiagnosis = dateDiagnosisOption.map(dateDiagnosis -> "diagnosed " + dateDiagnosis + ", ")
+                    .orElse(Strings.EMPTY);
 
-            String dateLastTreatment = toDateString(priorSecondPrimary.lastTreatmentYear(), priorSecondPrimary.lastTreatmentMonth());
-            String dateAdditionLastTreatment = Strings.EMPTY;
-            if (dateLastTreatment != null) {
-                dateAdditionLastTreatment = "last treatment " + dateLastTreatment + ", ";
-            }
+            Optional<String> dateLastTreatmentOption = toDateString(priorSecondPrimary.lastTreatmentYear(),
+                    priorSecondPrimary.lastTreatmentMonth());
+            String dateAdditionLastTreatment = dateLastTreatmentOption
+                    .map(dateLastTreatment -> "last treatment " + dateLastTreatment + ", ")
+                    .orElse(Strings.EMPTY);
 
             String active = priorSecondPrimary.isActive() ? "considered active" : "considered non-active";
 
@@ -181,18 +168,31 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
         }
     }
 
-    @Nullable
-    private static String toDateString(@Nullable Integer year, @Nullable Integer month) {
+    @NotNull
+    private static Optional<String> toDateRangeString(@NotNull PriorTumorTreatment priorTumorTreatment) {
+        Optional<String> startOption = toDateString(priorTumorTreatment.startYear(), priorTumorTreatment.startMonth());
+        Optional<String> stopOption = toDateString(priorTumorTreatment.stopYear(), priorTumorTreatment.stopMonth());
+        return startOption.map(startString -> startString + stopOption.map(stopString -> "-" + stopString).orElse(""))
+                .or(() -> stopOption.map(stopString -> "end: " + stopString));
+    }
+
+    @NotNull
+    private static Optional<String> toDateString(@Nullable Integer year, @Nullable Integer month) {
         if (year != null) {
-            return month != null ? month + "/" + year : String.valueOf(year);
+            return month != null ? Optional.of(month + "/" + year) : Optional.of(String.valueOf(year));
         } else {
-            return null;
+            return Optional.empty();
         }
     }
 
-    @Nullable
-    private static String toStopReasonString(@Nullable String stopReason) {
-        return stopReason != null ? "stop reason: " + stopReason : null;
+    @NotNull
+    private static Optional<String> toNumberOfCyclesString(@Nullable Integer cycles) {
+        return cycles != null ? Optional.of(cycles + " cycles") : Optional.empty();
+    }
+
+    @NotNull
+    private static Optional<String> toStopReasonString(@Nullable String stopReason) {
+        return stopReason != null ? Optional.of("stop reason: " + stopReason) : Optional.empty();
     }
 
     @NotNull
@@ -204,11 +204,8 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
                 addon = " (no contraindication for therapy)";
             }
 
-            String date = toDateString(priorOtherCondition.year(), priorOtherCondition.month());
-            String dateAddition = Strings.EMPTY;
-            if (date != null) {
-                dateAddition = " (" + date + ")";
-            }
+            Optional<String> dateOption = toDateString(priorOtherCondition.year(), priorOtherCondition.month());
+            String dateAddition = dateOption.map(date -> " (" + date + ")").orElse(Strings.EMPTY);
 
             joiner.add(priorOtherCondition.name() + dateAddition + addon);
         }

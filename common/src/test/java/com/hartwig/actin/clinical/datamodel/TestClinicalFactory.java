@@ -124,6 +124,7 @@ public final class TestClinicalFactory {
                 .name("Vemurafenib")
                 .startYear(TODAY.getYear() - YEARS_SINCE_TREATMENT_LINE_2)
                 .startMonth(TODAY.getMonthValue())
+                .stopYear(TODAY.getYear() - YEARS_SINCE_TREATMENT_LINE_2 + 1)
                 .addCategories(TreatmentCategory.TARGETED_THERAPY)
                 .isSystemic(true)
                 .targetedType("BRAF inhibitor")
