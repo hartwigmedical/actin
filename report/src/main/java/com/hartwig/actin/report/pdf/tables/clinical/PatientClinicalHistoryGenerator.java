@@ -180,12 +180,9 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static Optional<String> toDateString(@Nullable Integer year, @Nullable Integer month) {
-        if (year != null) {
-            return month != null ? Optional.of(month + "/" + year) : Optional.of(String.valueOf(year));
-        } else {
-            return Optional.empty();
-        }
+    private static Optional<String> toDateString(@Nullable Integer maybeYear, @Nullable Integer maybeMonth) {
+        return Optional.ofNullable(maybeYear).map(year ->
+                Optional.ofNullable(maybeMonth).map(month -> month + "/" + year).orElse(String.valueOf(year)));
     }
 
     @NotNull
