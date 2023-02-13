@@ -1,10 +1,13 @@
 package com.hartwig.actin.report.pdf.tables.clinical;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
@@ -187,12 +190,12 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
 
     @NotNull
     private static Optional<String> toNumberOfCyclesString(@Nullable Integer cycles) {
-        return cycles != null ? Optional.of(cycles + " cycles") : Optional.empty();
+        return Optional.ofNullable(cycles).map(num -> num + " cycles");
     }
 
     @NotNull
     private static Optional<String> toStopReasonString(@Nullable String stopReason) {
-        return stopReason != null ? Optional.of("stop reason: " + stopReason) : Optional.empty();
+        return Optional.ofNullable(stopReason).map(reason -> "stop reason: " + reason);
     }
 
     @NotNull
