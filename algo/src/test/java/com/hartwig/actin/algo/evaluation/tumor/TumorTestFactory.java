@@ -163,6 +163,11 @@ final class TumorTestFactory {
     }
 
     @NotNull
+    public static PatientRecord withLymphNodeLesions(@Nullable Boolean hasLymphNodeLesions) {
+        return withTumorDetails(builder().hasLymphNodeLesions(hasLymphNodeLesions).build());
+    }
+
+    @NotNull
     public static PatientRecord withOtherLesions(@Nullable List<String> otherLesions) {
         return withTumorDetails(builder().otherLesions(otherLesions).build());
     }

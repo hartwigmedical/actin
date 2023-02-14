@@ -34,10 +34,11 @@ public class HasBoneMetastasesOnly implements EvaluationFunction {
         Boolean hasCnsMetastases = record.clinical().tumor().hasCnsLesions();
         Boolean hasBrainMetastases = record.clinical().tumor().hasBrainLesions();
         Boolean hasLungLesions = record.clinical().tumor().hasLungLesions();
+        Boolean hasLymphNodeLesions = record.clinical().tumor().hasLymphNodeLesions();
         List<String> otherLesions = record.clinical().tumor().otherLesions();
 
         if (hasBoneMetastases && hasLiverMetastases == null && hasCnsMetastases == null && hasBrainMetastases == null
-                && hasLungLesions == null && otherLesions == null) {
+                && hasLungLesions == null && hasLymphNodeLesions == null && otherLesions == null) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
                     .addWarnSpecificMessages("Patient has bone lesions but data regarding other lesion locations is missing")
@@ -46,7 +47,8 @@ public class HasBoneMetastasesOnly implements EvaluationFunction {
         }
 
         boolean hasOtherLesion = otherLesions != null && !otherLesions.isEmpty();
-        boolean hasAnyOtherLesion = anyTrue(hasLiverMetastases, hasCnsMetastases, hasBrainMetastases, hasLungLesions, hasOtherLesion);
+        boolean hasAnyOtherLesion = anyTrue(hasLiverMetastases, hasCnsMetastases, hasBrainMetastases, hasLungLesions,
+                hasLymphNodeLesions, hasOtherLesion);
         EvaluationResult result = hasBoneMetastases && !hasAnyOtherLesion ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);

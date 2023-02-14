@@ -37,6 +37,7 @@ CREATE TABLE tumor
     hasBoneLesions BOOLEAN,
     hasLiverLesions BOOLEAN,
     hasLungLesions BOOLEAN,
+    hasLymphNodeLesions BOOLEAN,
     otherLesions varchar(500),
     biopsyLocation varchar(100),
     PRIMARY KEY (id)
