@@ -9,8 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class TumorUtil {
     @NotNull
-    public static Evaluation evaluateBooleanMetastasis(@Nullable Boolean hasMetastases,
-                                                       @NotNull String metastasisType) {
+    public static Evaluation evaluateBooleanMetastasis(@Nullable Boolean hasMetastases, @NotNull String metastasisType) {
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable();
         if (hasMetastases == null) {
             builder.result(EvaluationResult.UNDETERMINED)
