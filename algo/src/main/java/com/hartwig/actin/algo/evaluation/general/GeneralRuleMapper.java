@@ -36,6 +36,7 @@ public class GeneralRuleMapper extends RuleMapper {
         map.put(EligibilityRule.WILL_PARTICIPATE_IN_TRIAL_IN_COUNTRY_X, willParticipateInTrialInCountryCreator());
         map.put(EligibilityRule.IS_LEGALLY_INSTITUTIONALIZED, isLegallyInstitutionalizedCreator());
         map.put(EligibilityRule.IS_INVOLVED_IN_STUDY_PROCEDURES, isInvolvedInStudyProceduresCreator());
+        map.put(EligibilityRule.HAS_BMI_OF_AT_MOST_X, hasMaximumBMICreator());
 
         return map;
     }
@@ -126,5 +127,13 @@ public class GeneralRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator isLegallyInstitutionalizedCreator() {
         return function -> new IsLegallyInstitutionalized();
+    }
+
+    @NotNull
+    private FunctionCreator hasMaximumBMICreator() {
+        return function -> {
+            int maximumBMI = functionInputResolver().createOneIntegerInput(function);
+            return new HasMaximumBMI(maximumBMI);
+        };
     }
 }
