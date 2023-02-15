@@ -25,10 +25,11 @@ public class HasAnyLesion implements EvaluationFunction {
         Boolean hasBrainMetastases = record.clinical().tumor().hasBrainLesions();
         Boolean hasBoneLesions = record.clinical().tumor().hasBoneLesions();
         Boolean hasLungLesions = record.clinical().tumor().hasLungLesions();
+        Boolean hasLymphNodeLesions = record.clinical().tumor().hasLymphNodeLesions();
         List<String> otherLesions = record.clinical().tumor().otherLesions();
 
         if (hasLiverMetastases == null && hasCnsMetastases == null && hasBrainMetastases == null && hasBoneLesions == null
-                && hasLungLesions == null && otherLesions == null) {
+                && hasLungLesions == null && hasLymphNodeLesions == null && otherLesions == null) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Data about lesions is missing")
@@ -38,7 +39,8 @@ public class HasAnyLesion implements EvaluationFunction {
 
         boolean hasOtherLesions = otherLesions != null && !otherLesions.isEmpty();
         boolean hasLesions =
-                anyTrue(hasLiverMetastases, hasCnsMetastases, hasBrainMetastases, hasBoneLesions, hasLungLesions, hasOtherLesions);
+                anyTrue(hasLiverMetastases, hasCnsMetastases, hasBrainMetastases, hasBoneLesions, hasLungLesions,
+                        hasLymphNodeLesions, hasOtherLesions);
         EvaluationResult result = hasLesions ? EvaluationResult.PASS : EvaluationResult.FAIL;
 
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);

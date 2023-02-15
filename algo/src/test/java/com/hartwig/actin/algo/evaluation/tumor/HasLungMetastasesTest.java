@@ -2,19 +2,29 @@ package com.hartwig.actin.algo.evaluation.tumor;
 
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
 import org.junit.Test;
 
 public class HasLungMetastasesTest {
+    private final HasLungMetastases function = new HasLungMetastases();
 
     @Test
-    public void canEvaluate() {
-        HasLungMetastases function = new HasLungMetastases();
+    public void shouldBeUndeterminedWhenHasLungLesionsIsNull() {
+        Evaluation undetermined = function.evaluate(TumorTestFactory.withLungLesions(null));
+        assertEvaluation(EvaluationResult.UNDETERMINED, undetermined);
+    }
 
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withLungLesions(null)));
+    @Test
+    public void shouldPassWhenHasLungLesionsIsTrue() {
+        Evaluation pass = function.evaluate(TumorTestFactory.withLungLesions(true));
+        assertEvaluation(EvaluationResult.PASS, pass);
+    }
 
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withLungLesions(true)));
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withLungLesions(false)));
+    @Test
+    public void shouldFailWhenHasLungLesionsIsFalse() {
+        Evaluation fail = function.evaluate(TumorTestFactory.withLungLesions(false));
+        assertEvaluation(EvaluationResult.FAIL, fail);
     }
 }

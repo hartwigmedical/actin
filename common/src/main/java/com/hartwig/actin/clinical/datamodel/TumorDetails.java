@@ -57,6 +57,9 @@ public abstract class TumorDetails {
     public abstract Boolean hasLungLesions();
 
     @Nullable
+    public abstract Boolean hasLymphNodeLesions();
+
+    @Nullable
     public abstract List<String> otherLesions();
 
     @Nullable
