@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.general;
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
+import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.Gender;
@@ -48,6 +49,16 @@ final class GeneralTestFactory {
                 .build();
 
         return withClinicalStatus(clinicalStatus);
+    }
+
+    @NotNull
+    public static PatientRecord withBodyWeights(@NotNull Iterable<BodyWeight> bodyWeights) {
+        ClinicalRecord clinical = ImmutableClinicalRecord.builder()
+                .from(TestClinicalFactory.createMinimalTestClinicalRecord())
+                .bodyWeights(bodyWeights)
+                .build();
+
+        return withClinicalRecord(clinical);
     }
 
     @NotNull

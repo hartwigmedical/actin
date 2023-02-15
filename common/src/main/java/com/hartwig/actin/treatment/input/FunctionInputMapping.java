@@ -26,6 +26,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.WILL_PARTICIPATE_IN_TRIAL_IN_COUNTRY_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.IS_LEGALLY_INSTITUTIONALIZED, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.IS_INVOLVED_IN_STUDY_PROCEDURES, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_BMI_OF_AT_MOST_X, FunctionInput.ONE_INTEGER);
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_SOLID_PRIMARY_TUMOR, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_SOLID_PRIMARY_TUMOR_INCLUDING_LYMPHOMA, FunctionInput.NONE);
