@@ -165,6 +165,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.PD_L1_STATUS_MUST_BE_AVAILABLE, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.POSITIVE_FOR_CD8_T_CELLS_BY_IHC, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_PSMA_POSITIVE_PET_SCAN, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_GENE_X, FunctionInput.ONE_GENE);

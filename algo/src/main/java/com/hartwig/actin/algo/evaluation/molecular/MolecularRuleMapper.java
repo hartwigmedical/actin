@@ -64,6 +64,7 @@ public class MolecularRuleMapper extends RuleMapper {
         map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X, hasLimitedPDL1ByCPSByIHCCreator());
         map.put(EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X, hasLimitedPDL1ByTPSByIHCCreator());
         map.put(EligibilityRule.PD_L1_STATUS_MUST_BE_AVAILABLE, hasAvailablePDL1StatusCreator());
+        map.put(EligibilityRule.POSITIVE_FOR_CD8_T_CELLS_BY_IHC, positiveForCD8TCellsByIHCCreator());
         map.put(EligibilityRule.HAS_PSMA_POSITIVE_PET_SCAN, hasPSMAPositivePETScanCreator());
         map.put(EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE, molecularResultsAreGenerallyAvailableCreator());
         map.put(EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_GENE_X, molecularResultsAreAvailableForGeneCreator());
@@ -298,6 +299,11 @@ public class MolecularRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasAvailablePDL1StatusCreator() {
         return function -> new HasAvailablePDL1Status();
+    }
+
+    @NotNull
+    private FunctionCreator positiveForCD8TCellsByIHCCreator() {
+        return function -> new PositiveForCD8TCellsByIHC();
     }
 
     @NotNull
