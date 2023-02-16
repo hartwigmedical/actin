@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.general;
+package com.hartwig.actin.algo.evaluation.vitalfunction;
 
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -20,48 +20,46 @@ public class HasMaximumBMITest {
     @Test
     public void shouldBeUndeterminedWhenNoBodyWeightsProvided() {
         assertEvaluation(EvaluationResult.UNDETERMINED,
-                function.evaluate(GeneralTestFactory.withBodyWeights(Collections.emptyList())));
+                function.evaluate(VitalFunctionTestFactory.withBodyWeights(Collections.emptyList())));
     }
 
     @Test
     public void shouldBeUndeterminedWhenNoBodyWeightsProvidedWithExpectedUnit() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(GeneralTestFactory.withBodyWeights(
-                Collections.singleton(
-                        ImmutableBodyWeight.builder().date(now).value(70).unit("pound").build()
-                )
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withBodyWeights(
+                Collections.singletonList(ImmutableBodyWeight.builder().date(now).value(70).unit("pound").build())
         )));
     }
 
     @Test
     public void shouldPassIfLatestWeightIsLessThanWarnThreshold() {
-        Evaluation evaluation = function.evaluate(GeneralTestFactory.withBodyWeights(Arrays.asList(
+        Evaluation evaluation = function.evaluate(VitalFunctionTestFactory.withBodyWeights(Arrays.asList(
                 ImmutableBodyWeight.builder().date(now).value(70.57).unit("Kilogram").build(),
                 ImmutableBodyWeight.builder().date(lastYear).value(100.0).unit("Kilogram").build()
         )));
         assertEvaluation(EvaluationResult.PASS, evaluation);
         assertTrue(evaluation.passSpecificMessages().contains(
-                "Patient weight 70.6 kg will not exceed BMI limit of 40 for height >= 1.5 m"));
+                "Patient weight 70.6 kg will not exceed BMI limit of 40 for height >= 1.33 m"));
     }
 
     @Test
     public void shouldFailIfLatestWeightIsGreaterThanFailThreshold() {
-        Evaluation evaluation = function.evaluate(GeneralTestFactory.withBodyWeights(Arrays.asList(
+        Evaluation evaluation = function.evaluate(VitalFunctionTestFactory.withBodyWeights(Arrays.asList(
                 ImmutableBodyWeight.builder().date(now).value(180.32).unit("Kilogram").build(),
                 ImmutableBodyWeight.builder().date(lastYear).value(100.0).unit("Kilogram").build()
         )));
         assertEvaluation(EvaluationResult.FAIL, evaluation);
         assertTrue(evaluation.failSpecificMessages().contains(
-                "Patient weight 180.3 kg will exceed BMI limit of 40 for height <= 2.0 m"));
+                "Patient weight 180.3 kg will exceed BMI limit of 40 for height < 2.12 m"));
     }
 
     @Test
     public void shouldWarnIfLatestWeightIsGreaterThanWarnThreshold() {
-        Evaluation evaluation = function.evaluate(GeneralTestFactory.withBodyWeights(Arrays.asList(
+        Evaluation evaluation = function.evaluate(VitalFunctionTestFactory.withBodyWeights(Arrays.asList(
                 ImmutableBodyWeight.builder().date(now).value(100.99).unit("Kilogram").build(),
                 ImmutableBodyWeight.builder().date(lastYear).value(80.0).unit("Kilogram").build()
         )));
         assertEvaluation(EvaluationResult.WARN, evaluation);
         assertTrue(evaluation.warnSpecificMessages().contains(
-                "Patient weight 101.0 kg will exceed BMI limit of 40 for some heights between 1.5 and 2.0 m"));
+                "Patient weight 101.0 kg will exceed BMI limit of 40 for height < 1.59 m"));
     }
 }

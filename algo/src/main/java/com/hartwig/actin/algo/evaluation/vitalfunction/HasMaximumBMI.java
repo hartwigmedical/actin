@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.general;
+package com.hartwig.actin.algo.evaluation.vitalfunction;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
@@ -24,8 +24,8 @@ public class HasMaximumBMI implements EvaluationFunction {
         this.maximumBMI = maximumBMI;
     }
 
-    private double calculateWeightForBmiAndHeight(double bmi, double height) {
-        return bmi * height * height;
+    private double calculateHeightForBmiAndWeight(double bmi, double weight) {
+        return Math.sqrt(weight / bmi);
     }
 
     @NotNull
@@ -43,25 +43,23 @@ public class HasMaximumBMI implements EvaluationFunction {
         }
         BodyWeight latestWeight = latestWeightOption.get();
 
-        double warnThresholdWeight = calculateWeightForBmiAndHeight(maximumBMI, MIN_EXPECTED_HEIGHT_METRES);
-        double failThresholdWeight = calculateWeightForBmiAndHeight(maximumBMI, MAX_EXPECTED_HEIGHT_METRES);
+        double minimumRequiredHeight = calculateHeightForBmiAndWeight(maximumBMI, latestWeight.value());
 
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable();
-        if (latestWeight.value() <= warnThresholdWeight) {
+        if (minimumRequiredHeight <= MIN_EXPECTED_HEIGHT_METRES) {
             builder.result(EvaluationResult.PASS)
-                    .addPassSpecificMessages(String.format("Patient weight %.1f kg will not exceed BMI limit of %d for height >= %.1f m",
-                            latestWeight.value(), maximumBMI, MIN_EXPECTED_HEIGHT_METRES))
+                    .addPassSpecificMessages(String.format("Patient weight %.1f kg will not exceed BMI limit of %d for height >= %.2f m",
+                            latestWeight.value(), maximumBMI, minimumRequiredHeight))
                     .addPassGeneralMessages("Acceptable BMI");
-        } else if (latestWeight.value() > failThresholdWeight) {
+        } else if (minimumRequiredHeight > MAX_EXPECTED_HEIGHT_METRES) {
             builder.result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages(String.format("Patient weight %.1f kg will exceed BMI limit of %d for height <= %.1f m",
-                            latestWeight.value(), maximumBMI, MAX_EXPECTED_HEIGHT_METRES))
+                    .addFailSpecificMessages(String.format("Patient weight %.1f kg will exceed BMI limit of %d for height < %.2f m",
+                            latestWeight.value(), maximumBMI, minimumRequiredHeight))
                     .addFailGeneralMessages("Excessive BMI");
         } else {
             builder.result(EvaluationResult.WARN)
-                    .addWarnSpecificMessages(String.format("Patient weight %.1f kg will exceed BMI limit of %d for " +
-                                    "some heights between %.1f and %.1f m",
-                            latestWeight.value(), maximumBMI, MIN_EXPECTED_HEIGHT_METRES, MAX_EXPECTED_HEIGHT_METRES))
+                    .addWarnSpecificMessages(String.format("Patient weight %.1f kg will exceed BMI limit of %d for height < %.2f m",
+                            latestWeight.value(), maximumBMI, minimumRequiredHeight))
                     .addWarnGeneralMessages("Potentially high BMI");
         }
         return builder.build();
