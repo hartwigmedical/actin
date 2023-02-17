@@ -1,14 +1,14 @@
 package com.hartwig.actin.algo.evaluation.tumor;
 
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
+import static org.junit.Assert.assertTrue;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import org.junit.Test;
 
-import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
-import static org.junit.Assert.assertTrue;
-
 public class HasLymphNodeMetastasesTest {
-    private final HasLymphNodeMetastases function = new HasLymphNodeMetastases();
+
+    private static final HasLymphNodeMetastases function = new HasLymphNodeMetastases();
 
     @Test
     public void shouldBeUndeterminedWhenHasLymphNodeLesionsIsNull() {

@@ -1,14 +1,13 @@
 package com.hartwig.actin.algo.evaluation.tumor;
 
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
-
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-
 import org.junit.Test;
 
 public class HasLungMetastasesTest {
-    private final HasLungMetastases function = new HasLungMetastases();
+
+    private static final HasLungMetastases function = new HasLungMetastases();
 
     @Test
     public void shouldBeUndeterminedWhenHasLungLesionsIsNull() {

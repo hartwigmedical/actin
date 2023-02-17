@@ -16,7 +16,6 @@ import static com.hartwig.actin.util.json.Json.number;
 import static com.hartwig.actin.util.json.Json.object;
 import static com.hartwig.actin.util.json.Json.string;
 import static com.hartwig.actin.util.json.Json.stringList;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -25,7 +24,6 @@ import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Set;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -86,7 +84,6 @@ import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
 import com.hartwig.actin.clinical.sort.ClinicalRecordComparator;
 import com.hartwig.actin.util.Paths;
 import com.hartwig.actin.util.json.GsonSerializer;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -201,6 +198,7 @@ public final class ClinicalRecordJson {
                     .hasBoneLesions(nullableBool(tumor, "hasBoneLesions"))
                     .hasLiverLesions(nullableBool(tumor, "hasLiverLesions"))
                     .hasLungLesions(nullableBool(tumor, "hasLungLesions"))
+                    .hasLymphNodeLesions(nullableBool(tumor, "hasLymphNodeLesions"))
                     .otherLesions(nullableStringList(tumor, "otherLesions"))
                     .biopsyLocation(nullableString(tumor, "biopsyLocation"))
                     .build();
