@@ -1,47 +1,33 @@
 package com.hartwig.actin.clinical.serialization;
 
-import static com.hartwig.actin.util.json.Json.array;
-import static com.hartwig.actin.util.json.Json.bool;
-import static com.hartwig.actin.util.json.Json.date;
 import static com.hartwig.actin.util.json.Json.integer;
-import static com.hartwig.actin.util.json.Json.nullableArray;
-import static com.hartwig.actin.util.json.Json.nullableBool;
-import static com.hartwig.actin.util.json.Json.nullableDate;
-import static com.hartwig.actin.util.json.Json.nullableInteger;
-import static com.hartwig.actin.util.json.Json.nullableNumber;
-import static com.hartwig.actin.util.json.Json.nullableObject;
-import static com.hartwig.actin.util.json.Json.nullableString;
-import static com.hartwig.actin.util.json.Json.nullableStringList;
-import static com.hartwig.actin.util.json.Json.number;
-import static com.hartwig.actin.util.json.Json.object;
-import static com.hartwig.actin.util.json.Json.string;
-import static com.hartwig.actin.util.json.Json.stringList;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ECG;
-import com.hartwig.actin.clinical.datamodel.Gender;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
@@ -63,29 +49,22 @@ import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.Intolerance;
-import com.hartwig.actin.clinical.datamodel.LabUnit;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
-import com.hartwig.actin.clinical.datamodel.MedicationStatus;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.Surgery;
-import com.hartwig.actin.clinical.datamodel.SurgeryStatus;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
-import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
-import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
-import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
 import com.hartwig.actin.clinical.sort.ClinicalRecordComparator;
 import com.hartwig.actin.util.Paths;
 import com.hartwig.actin.util.json.GsonSerializer;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public final class ClinicalRecordJson {
 
@@ -136,364 +115,114 @@ public final class ClinicalRecordJson {
     @VisibleForTesting
     @NotNull
     static ClinicalRecord fromJson(@NotNull String json) {
-        Gson gson = new GsonBuilder().registerTypeAdapter(ClinicalRecord.class, new ClinicalRecordCreator()).create();
-        return gson.fromJson(json, ClinicalRecord.class);
+        Gson gson = new GsonBuilder()
+                .serializeNulls()
+                .enableComplexMapKeySerialization()
+                .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                .registerTypeAdapter(PatientDetails.class, new AbstractClassAdapter<PatientDetails>(ImmutablePatientDetails.class))
+                .registerTypeAdapter(TumorDetails.class, new AbstractClassAdapter<TumorDetails>(ImmutableTumorDetails.class))
+                .registerTypeAdapter(ClinicalStatus.class, new AbstractClassAdapter<ClinicalStatus>(ImmutableClinicalStatus.class))
+                .registerTypeAdapter(InfectionStatus.class, new AbstractClassAdapter<InfectionStatus>(ImmutableInfectionStatus.class))
+                .registerTypeAdapter(ECG.class, new AbstractClassAdapter<ECG>(ImmutableECG.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<String>>() {}.getType(),
+                        new ImmutableListAdapter<String>(String.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<PriorTumorTreatment>>() {}.getType(),
+                        new ImmutableListAdapter<PriorTumorTreatment>(ImmutablePriorTumorTreatment.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<PriorSecondPrimary>>() {}.getType(),
+                        new ImmutableListAdapter<PriorSecondPrimary>(ImmutablePriorSecondPrimary.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<PriorOtherCondition>>() {}.getType(),
+                        new ImmutableListAdapter<PriorOtherCondition>(ImmutablePriorOtherCondition.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<PriorMolecularTest>>() {}.getType(),
+                        new ImmutableListAdapter<PriorMolecularTest>(ImmutablePriorMolecularTest.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<Complication>>() {}.getType(),
+                        new ImmutableListAdapter<Complication>(ImmutableComplication.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<LabValue>>() {}.getType(),
+                        new ImmutableListAdapter<LabValue>(ImmutableLabValue.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<Toxicity>>() {}.getType(),
+                        new ImmutableListAdapter<Toxicity>(ImmutableToxicity.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<Intolerance>>() {}.getType(),
+                        new ImmutableListAdapter<Intolerance>(ImmutableIntolerance.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<Surgery>>() {}.getType(),
+                        new ImmutableListAdapter<Surgery>(ImmutableSurgery.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<BodyWeight>>() {}.getType(),
+                        new ImmutableListAdapter<BodyWeight>(ImmutableBodyWeight.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<VitalFunction>>() {}.getType(),
+                        new ImmutableListAdapter<VitalFunction>(ImmutableVitalFunction.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<BloodTransfusion>>() {}.getType(),
+                        new ImmutableListAdapter<BloodTransfusion>(ImmutableBloodTransfusion.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<Medication>>() {}.getType(),
+                        new ImmutableListAdapter<Medication>(ImmutableMedication.class))
+                .registerTypeAdapter(new TypeToken<ImmutableSet<String>>() {}.getType(),
+                        new ImmutableSetAdapter<String>(String.class))
+                .registerTypeAdapter(new TypeToken<ImmutableSet<TreatmentCategory>>() {}.getType(),
+                        new ImmutableSetAdapter<TreatmentCategory>(TreatmentCategory.class))
+                .create();
+        return gson.fromJson(json, ImmutableClinicalRecord.class);
     }
 
-    private static class ClinicalRecordCreator implements JsonDeserializer<ClinicalRecord> {
+    private static class LocalDateAdapter implements JsonDeserializer<LocalDate> {
 
         @Override
-        public ClinicalRecord deserialize(@NotNull JsonElement jsonElement, @NotNull Type type,
-                @NotNull JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-            JsonObject record = jsonElement.getAsJsonObject();
-
-            return ImmutableClinicalRecord.builder()
-                    .patientId(string(record, "patientId"))
-                    .patient(toPatientDetails(object(record, "patient")))
-                    .tumor(toTumorDetails(object(record, "tumor")))
-                    .clinicalStatus(toClinicalStatus(object(record, "clinicalStatus")))
-                    .priorTumorTreatments(toPriorTumorTreatments(array(record, "priorTumorTreatments")))
-                    .priorSecondPrimaries(toPriorSecondPrimaries(array(record, "priorSecondPrimaries")))
-                    .priorOtherConditions(toPriorOtherConditions(array(record, "priorOtherConditions")))
-                    .priorMolecularTests(toPriorMolecularTests(array(record, "priorMolecularTests")))
-                    .complications(toComplications(nullableArray(record, "complications")))
-                    .labValues(toLabValues(array(record, "labValues")))
-                    .toxicities(toToxicities(array(record, "toxicities")))
-                    .intolerances(toIntolerances(array(record, "intolerances")))
-                    .surgeries(toSurgeries(array(record, "surgeries")))
-                    .bodyWeights(toBodyWeights(array(record, "bodyWeights")))
-                    .vitalFunctions(toVitalFunctions(array(record, "vitalFunctions")))
-                    .bloodTransfusions(toBloodTransfusions(array(record, "bloodTransfusions")))
-                    .medications(toMedications(array(record, "medications")))
-                    .build();
-        }
-
-        @NotNull
-        private static PatientDetails toPatientDetails(@NotNull JsonObject patient) {
-            return ImmutablePatientDetails.builder()
-                    .gender(Gender.valueOf(string(patient, "gender")))
-                    .birthYear(integer(patient, "birthYear"))
-                    .registrationDate(date(patient, "registrationDate"))
-                    .questionnaireDate(nullableDate(patient, "questionnaireDate"))
-                    .build();
-        }
-
-        @NotNull
-        private static TumorDetails toTumorDetails(@NotNull JsonObject tumor) {
-            String stageString = nullableString(tumor, "stage");
-
-            return ImmutableTumorDetails.builder()
-                    .primaryTumorLocation(nullableString(tumor, "primaryTumorLocation"))
-                    .primaryTumorSubLocation(nullableString(tumor, "primaryTumorSubLocation"))
-                    .primaryTumorType(nullableString(tumor, "primaryTumorType"))
-                    .primaryTumorSubType(nullableString(tumor, "primaryTumorSubType"))
-                    .primaryTumorExtraDetails(nullableString(tumor, "primaryTumorExtraDetails"))
-                    .doids(nullableStringList(tumor, "doids"))
-                    .stage(stageString != null ? TumorStage.valueOf(stageString) : null)
-                    .hasMeasurableDisease(nullableBool(tumor, "hasMeasurableDisease"))
-                    .hasBrainLesions(nullableBool(tumor, "hasBrainLesions"))
-                    .hasActiveBrainLesions(nullableBool(tumor, "hasActiveBrainLesions"))
-                    .hasCnsLesions(nullableBool(tumor, "hasCnsLesions"))
-                    .hasActiveCnsLesions(nullableBool(tumor, "hasActiveCnsLesions"))
-                    .hasBoneLesions(nullableBool(tumor, "hasBoneLesions"))
-                    .hasLiverLesions(nullableBool(tumor, "hasLiverLesions"))
-                    .hasLungLesions(nullableBool(tumor, "hasLungLesions"))
-                    .hasLymphNodeLesions(nullableBool(tumor, "hasLymphNodeLesions"))
-                    .otherLesions(nullableStringList(tumor, "otherLesions"))
-                    .biopsyLocation(nullableString(tumor, "biopsyLocation"))
-                    .build();
-        }
-
-        @NotNull
-        private static ClinicalStatus toClinicalStatus(@NotNull JsonObject clinicalStatus) {
-            return ImmutableClinicalStatus.builder()
-                    .who(nullableInteger(clinicalStatus, "who"))
-                    .infectionStatus(toInfectionStatus(nullableObject(clinicalStatus, "infectionStatus")))
-                    .ecg(toECG(nullableObject(clinicalStatus, "ecg")))
-                    .lvef(nullableNumber(clinicalStatus, "lvef"))
-                    .build();
-        }
-
-        @Nullable
-        private static InfectionStatus toInfectionStatus(@Nullable JsonObject object) {
-            if (object == null) {
+        public LocalDate deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+            if (jsonElement.isJsonNull()) {
                 return null;
+            } else {
+                JsonObject dateObject = jsonElement.getAsJsonObject();
+                return LocalDate.of(integer(dateObject, "year"), integer(dateObject, "month"), integer(dateObject, "day"));
             }
+        }
+    }
 
-            return ImmutableInfectionStatus.builder()
-                    .hasActiveInfection(bool(object, "hasActiveInfection"))
-                    .description(nullableString(object, "description"))
-                    .build();
+    private static class AbstractClassAdapter<T> implements JsonDeserializer<T> {
+
+        private final Type concreteType;
+
+        public AbstractClassAdapter(Type concreteType) {
+            this.concreteType = concreteType;
         }
 
-        @Nullable
-        private static ECG toECG(@Nullable JsonObject object) {
-            if (object == null) {
-                return null;
-            }
+        @Override
+        public T deserialize(@NotNull JsonElement jsonElement, @NotNull Type type,
+                             @NotNull JsonDeserializationContext context) throws JsonParseException {
+            return context.deserialize(jsonElement, concreteType);
+        }
+    }
 
-            return ImmutableECG.builder()
-                    .hasSigAberrationLatestECG(bool(object, "hasSigAberrationLatestECG"))
-                    .aberrationDescription(nullableString(object, "aberrationDescription"))
-                    .qtcfValue(nullableInteger(object, "qtcfValue"))
-                    .qtcfUnit(nullableString(object, "qtcfUnit"))
-                    .build();
+    private static class ImmutableListAdapter<T> implements JsonDeserializer<ImmutableList<T>> {
+
+        private final Type concreteType;
+
+        public ImmutableListAdapter(Type concreteType) {
+            this.concreteType = concreteType;
         }
 
-        @NotNull
-        private static List<PriorTumorTreatment> toPriorTumorTreatments(@NotNull JsonArray priorTumorTreatments) {
-            List<PriorTumorTreatment> priorTumorTreatmentList = Lists.newArrayList();
-            for (JsonElement element : priorTumorTreatments) {
-                JsonObject object = element.getAsJsonObject();
-                priorTumorTreatmentList.add(ImmutablePriorTumorTreatment.builder()
-                        .name(string(object, "name"))
-                        .startYear(nullableInteger(object, "startYear"))
-                        .startMonth(nullableInteger(object, "startMonth"))
-                        .stopYear(nullableInteger(object, "stopYear"))
-                        .stopMonth(nullableInteger(object, "stopMonth"))
-                        .cycles(nullableInteger(object, "cycles"))
-                        .bestResponse(nullableString(object, "bestResponse"))
-                        .stopReason(nullableString(object, "stopReason"))
-                        .categories(toTreatmentCategories(array(object, "categories")))
-                        .isSystemic(bool(object, "isSystemic"))
-                        .chemoType(nullableString(object, "chemoType"))
-                        .immunoType(nullableString(object, "immunoType"))
-                        .targetedType(nullableString(object, "targetedType"))
-                        .hormoneType(nullableString(object, "hormoneType"))
-                        .radioType(nullableString(object, "radioType"))
-                        .carTType(nullableString(object, "carTType"))
-                        .transplantType(nullableString(object, "transplantType"))
-                        .supportiveType(nullableString(object, "supportiveType"))
-                        .trialAcronym(nullableString(object, "trialAcronym"))
-                        .build());
-            }
-            return priorTumorTreatmentList;
+        @Override
+        public ImmutableList<T> deserialize(JsonElement jsonElement, Type type,
+                                            JsonDeserializationContext context) throws JsonParseException {
+
+            return jsonElement.isJsonNull() ? null : ImmutableList.copyOf(jsonElement.getAsJsonArray().asList().stream()
+                    .map(listElement -> (T) context.deserialize(listElement, concreteType))
+                    .collect(Collectors.toList())
+            );
+        }
+    }
+
+    private static class ImmutableSetAdapter<T> implements JsonDeserializer<ImmutableSet<T>> {
+
+        private final Type concreteType;
+
+        public ImmutableSetAdapter(Type concreteType) {
+            this.concreteType = concreteType;
         }
 
-        @NotNull
-        private static Set<TreatmentCategory> toTreatmentCategories(@NotNull JsonArray categoryArray) {
-            Set<TreatmentCategory> categories = Sets.newHashSet();
-            for (JsonElement element : categoryArray) {
-                categories.add(TreatmentCategory.valueOf(element.getAsString()));
-            }
-            return categories;
-        }
+        @Override
+        public ImmutableSet<T> deserialize(JsonElement jsonElement, Type type,
+                                            JsonDeserializationContext context) throws JsonParseException {
 
-        @NotNull
-        private static List<PriorSecondPrimary> toPriorSecondPrimaries(@NotNull JsonArray priorSecondPrimaries) {
-            List<PriorSecondPrimary> priorSecondPrimaryList = Lists.newArrayList();
-            for (JsonElement element : priorSecondPrimaries) {
-                JsonObject object = element.getAsJsonObject();
-                priorSecondPrimaryList.add(ImmutablePriorSecondPrimary.builder()
-                        .tumorLocation(string(object, "tumorLocation"))
-                        .tumorSubLocation(string(object, "tumorSubLocation"))
-                        .tumorType(string(object, "tumorType"))
-                        .tumorSubType(string(object, "tumorSubType"))
-                        .doids(stringList(object, "doids"))
-                        .diagnosedYear(nullableInteger(object, "diagnosedYear"))
-                        .diagnosedMonth(nullableInteger(object, "diagnosedMonth"))
-                        .treatmentHistory(string(object, "treatmentHistory"))
-                        .lastTreatmentYear(nullableInteger(object, "lastTreatmentYear"))
-                        .lastTreatmentMonth(nullableInteger(object, "lastTreatmentMonth"))
-                        .isActive(bool(object, "isActive"))
-                        .build());
-            }
-            return priorSecondPrimaryList;
-        }
-
-        @NotNull
-        private static List<PriorOtherCondition> toPriorOtherConditions(@NotNull JsonArray priorOtherConditions) {
-            List<PriorOtherCondition> priorOtherConditionList = Lists.newArrayList();
-            for (JsonElement element : priorOtherConditions) {
-                JsonObject object = element.getAsJsonObject();
-                priorOtherConditionList.add(ImmutablePriorOtherCondition.builder()
-                        .name(string(object, "name"))
-                        .year(nullableInteger(object, "year"))
-                        .month(nullableInteger(object, "month"))
-                        .doids(stringList(object, "doids"))
-                        .category(string(object, "category"))
-                        .isContraindicationForTherapy(bool(object, "isContraindicationForTherapy"))
-                        .build());
-            }
-            return priorOtherConditionList;
-        }
-
-        @NotNull
-        private static List<PriorMolecularTest> toPriorMolecularTests(@NotNull JsonArray priorMolecularTests) {
-            List<PriorMolecularTest> priorMolecularTestList = Lists.newArrayList();
-            for (JsonElement element : priorMolecularTests) {
-                JsonObject object = element.getAsJsonObject();
-                priorMolecularTestList.add(ImmutablePriorMolecularTest.builder()
-                        .test(string(object, "test"))
-                        .item(string(object, "item"))
-                        .measure(nullableString(object, "measure"))
-                        .scoreText(nullableString(object, "scoreText"))
-                        .scoreValuePrefix(nullableString(object, "scoreValuePrefix"))
-                        .scoreValue(nullableNumber(object, "scoreValue"))
-                        .scoreValueUnit(nullableString(object, "scoreValueUnit"))
-                        .impliesPotentialIndeterminateStatus(bool(object, "impliesPotentialIndeterminateStatus"))
-                        .build());
-            }
-            return priorMolecularTestList;
-        }
-
-        @Nullable
-        private static List<Complication> toComplications(@Nullable JsonArray complications) {
-            if (complications == null) {
-                return null;
-            }
-
-            List<Complication> complicationList = Lists.newArrayList();
-            for (JsonElement element : complications) {
-                JsonObject object = element.getAsJsonObject();
-                complicationList.add(ImmutableComplication.builder()
-                        .name(string(object, "name"))
-                        .categories(stringList(object, "categories"))
-                        .year(nullableInteger(object, "year"))
-                        .month(nullableInteger(object, "month"))
-                        .build());
-            }
-            return complicationList;
-        }
-
-        @NotNull
-        private static List<LabValue> toLabValues(@NotNull JsonArray labValues) {
-            List<LabValue> labValueList = Lists.newArrayList();
-            for (JsonElement element : labValues) {
-                JsonObject object = element.getAsJsonObject();
-                labValueList.add(ImmutableLabValue.builder()
-                        .date(date(object, "date"))
-                        .code(string(object, "code"))
-                        .name(string(object, "name"))
-                        .comparator(string(object, "comparator"))
-                        .value(number(object, "value"))
-                        .unit(LabUnit.valueOf(string(object, "unit")))
-                        .refLimitLow(nullableNumber(object, "refLimitLow"))
-                        .refLimitUp(nullableNumber(object, "refLimitUp"))
-                        .isOutsideRef(nullableBool(object, "isOutsideRef"))
-                        .build());
-            }
-            return labValueList;
-        }
-
-        @NotNull
-        private static List<Toxicity> toToxicities(@NotNull JsonArray toxicities) {
-            List<Toxicity> toxicityList = Lists.newArrayList();
-            for (JsonElement element : toxicities) {
-                JsonObject object = element.getAsJsonObject();
-                toxicityList.add(ImmutableToxicity.builder()
-                        .name(string(object, "name"))
-                        .categories(stringList(object, "categories"))
-                        .evaluatedDate(date(object, "evaluatedDate"))
-                        .source(ToxicitySource.valueOf(string(object, "source")))
-                        .grade(nullableInteger(object, "grade"))
-                        .build());
-            }
-            return toxicityList;
-        }
-
-        @NotNull
-        private static List<Intolerance> toIntolerances(@NotNull JsonArray allergies) {
-            List<Intolerance> intoleranceList = Lists.newArrayList();
-            for (JsonElement element : allergies) {
-                JsonObject object = element.getAsJsonObject();
-                intoleranceList.add(ImmutableIntolerance.builder()
-                        .name(string(object, "name"))
-                        .doids(stringList(object, "doids"))
-                        .category(string(object, "category"))
-                        .subcategories(stringList(object, "subcategories"))
-                        .type(string(object, "type"))
-                        .clinicalStatus(string(object, "clinicalStatus"))
-                        .verificationStatus(string(object, "verificationStatus"))
-                        .criticality(string(object, "criticality"))
-                        .build());
-            }
-            return intoleranceList;
-        }
-
-        @NotNull
-        private static List<Surgery> toSurgeries(@NotNull JsonArray surgeries) {
-            List<Surgery> surgeryList = Lists.newArrayList();
-            for (JsonElement element : surgeries) {
-                JsonObject object = element.getAsJsonObject();
-                surgeryList.add(ImmutableSurgery.builder()
-                        .endDate(date(object, "endDate"))
-                        .status(SurgeryStatus.valueOf(string(object, "status")))
-                        .build());
-            }
-            return surgeryList;
-        }
-
-        @NotNull
-        private static List<BodyWeight> toBodyWeights(@NotNull JsonArray bodyWeights) {
-            List<BodyWeight> bodyWeightList = Lists.newArrayList();
-            for (JsonElement element : bodyWeights) {
-                JsonObject object = element.getAsJsonObject();
-                bodyWeightList.add(ImmutableBodyWeight.builder()
-                        .date(date(object, "date"))
-                        .value(number(object, "value"))
-                        .unit(string(object, "unit"))
-                        .build());
-            }
-            return bodyWeightList;
-        }
-
-        @NotNull
-        private static List<VitalFunction> toVitalFunctions(@NotNull JsonArray vitalFunctions) {
-            List<VitalFunction> vitalFunctionList = Lists.newArrayList();
-            for (JsonElement element : vitalFunctions) {
-                JsonObject object = element.getAsJsonObject();
-                vitalFunctionList.add(ImmutableVitalFunction.builder()
-                        .date(date(object, "date"))
-                        .category(VitalFunctionCategory.valueOf(string(object, "category")))
-                        .subcategory(string(object, "subcategory"))
-                        .value(number(object, "value"))
-                        .unit(string(object, "unit"))
-                        .build());
-            }
-            return vitalFunctionList;
-        }
-
-        @NotNull
-        private static List<BloodTransfusion> toBloodTransfusions(@NotNull JsonArray bloodTransfusions) {
-            List<BloodTransfusion> bloodTransfusionList = Lists.newArrayList();
-            for (JsonElement element : bloodTransfusions) {
-                JsonObject object = element.getAsJsonObject();
-                bloodTransfusionList.add(ImmutableBloodTransfusion.builder()
-                        .date(date(object, "date"))
-                        .product(string(object, "product"))
-                        .build());
-            }
-            return bloodTransfusionList;
-        }
-
-        @NotNull
-        private static List<Medication> toMedications(@NotNull JsonArray medications) {
-            List<Medication> medicationList = Lists.newArrayList();
-            for (JsonElement element : medications) {
-                JsonObject object = element.getAsJsonObject();
-                String status = nullableString(object, "status");
-                medicationList.add(ImmutableMedication.builder()
-                        .name(string(object, "name"))
-                        .codeATC(string(object, "codeATC"))
-                        .categories(stringList(object, "categories"))
-                        .chemicalSubgroupAtc(string(object, "chemicalSubgroupAtc"))
-                        .pharmacologicalSubgroupAtc(string(object, "pharmacologicalSubgroupAtc"))
-                        .therapeuticSubgroupAtc(string(object, "therapeuticSubgroupAtc"))
-                        .anatomicalMainGroupAtc(string(object, "anatomicalMainGroupAtc"))
-                        .status(status != null ? MedicationStatus.valueOf(status) : null)
-                        .administrationRoute(nullableString(object, "administrationRoute"))
-                        .dosageMin(nullableNumber(object, "dosageMin"))
-                        .dosageMax(nullableNumber(object, "dosageMax"))
-                        .dosageUnit(nullableString(object, "dosageUnit"))
-                        .frequency(nullableNumber(object, "frequency"))
-                        .frequencyUnit(nullableString(object, "frequencyUnit"))
-                        .ifNeeded(nullableBool(object, "ifNeeded"))
-                        .startDate(nullableDate(object, "startDate"))
-                        .stopDate(nullableDate(object, "stopDate"))
-                        .build());
-            }
-            return medicationList;
+            return jsonElement.isJsonNull() ? null : ImmutableSet.copyOf(jsonElement.getAsJsonArray().asList().stream()
+                    .map(listElement -> (T) context.deserialize(listElement, concreteType))
+                    .collect(Collectors.toSet())
+            );
         }
     }
 }
