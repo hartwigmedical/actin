@@ -75,7 +75,7 @@ CREATE TABLE priorTumorTreatment
     isSystemic BOOLEAN NOT NULL,
     chemoType varchar(100),
     immunoType varchar(100),
-    targetedType varchar(100),
+    targetedType varchar(200),
     hormoneType varchar(100),
     radioType varchar(100),
     carTType varchar(100),
