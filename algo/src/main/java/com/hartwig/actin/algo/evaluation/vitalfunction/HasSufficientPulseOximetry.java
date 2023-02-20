@@ -28,7 +28,8 @@ public class HasSufficientPulseOximetry implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         List<VitalFunction> pulseOximetries = VitalFunctionSelector.select(record.clinical().vitalFunctions(),
                 VitalFunctionCategory.SPO2,
-                null, MAX_PULSE_OXIMETRY_TO_USE);
+                null,
+                MAX_PULSE_OXIMETRY_TO_USE);
 
         if (pulseOximetries.isEmpty()) {
             return EvaluationFactory.recoverable()
