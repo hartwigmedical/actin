@@ -72,6 +72,7 @@ import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
+import com.hartwig.actin.doid.DoidModel;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -91,8 +92,9 @@ public class CurationModel {
     private final Multimap<Class<? extends Translation>, Translation> evaluatedTranslations = HashMultimap.create();
 
     @NotNull
-    public static CurationModel fromCurationDirectory(@NotNull String clinicalCurationDirectory) throws IOException {
-        return new CurationModel(CurationDatabaseReader.read(clinicalCurationDirectory));
+    public static CurationModel create(@NotNull String clinicalCurationDirectory, @NotNull DoidModel doidModel) throws IOException {
+        CurationDatabaseReader reader = new CurationDatabaseReader(new CurationDatabaseValidator(doidModel));
+        return new CurationModel(reader.read(clinicalCurationDirectory));
     }
 
     @VisibleForTesting

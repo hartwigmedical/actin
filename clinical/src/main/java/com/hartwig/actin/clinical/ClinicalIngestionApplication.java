@@ -7,6 +7,7 @@ import com.hartwig.actin.clinical.curation.CurationModel;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.feed.FeedModel;
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson;
+import com.hartwig.actin.doid.DoidModelFactory;
 import com.hartwig.actin.doid.datamodel.DoidEntry;
 import com.hartwig.actin.doid.serialization.DoidJson;
 
@@ -58,7 +59,7 @@ public class ClinicalIngestionApplication {
         FeedModel feedModel = FeedModel.fromFeedDirectory(config.feedDirectory());
 
         LOGGER.info("Creating clinical curation model from directory {}", config.curationDirectory());
-        CurationModel curationModel = CurationModel.fromCurationDirectory(config.curationDirectory());
+        CurationModel curationModel = CurationModel.create(config.curationDirectory(), DoidModelFactory.createFromDoidEntry(doidEntry));
 
         List<ClinicalRecord> records = new ClinicalRecordsFactory(feedModel, curationModel).create();
 

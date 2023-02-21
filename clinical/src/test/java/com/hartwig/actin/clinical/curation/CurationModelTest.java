@@ -37,6 +37,7 @@ import com.hartwig.actin.clinical.datamodel.TestMedicationFactory;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
+import com.hartwig.actin.doid.TestDoidModelFactory;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +51,7 @@ public class CurationModelTest {
 
     @Test
     public void canCreateFromCurationDirectory() throws IOException {
-        assertNotNull(CurationModel.fromCurationDirectory(CURATION_DIRECTORY));
+        assertNotNull(CurationModel.create(CURATION_DIRECTORY, TestDoidModelFactory.createMinimalTestDoidModel()));
     }
 
     @Test

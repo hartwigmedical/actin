@@ -47,7 +47,9 @@ public class CurationDatabaseReaderTest {
 
     @Test
     public void canReadFromTestDirectory() throws IOException {
-        CurationDatabase database = CurationDatabaseReader.read(CURATION_DIRECTORY);
+        CurationDatabaseValidator validator = TestCurationFactory.createMinimalTestCurationDatabaseValidator();
+        CurationDatabaseReader reader = new CurationDatabaseReader(validator);
+        CurationDatabase database = reader.read(CURATION_DIRECTORY);
 
         assertPrimaryTumorConfigs(database.primaryTumorConfigs());
         assertOncologicalHistoryConfigs(database.oncologicalHistoryConfigs());

@@ -47,7 +47,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-public final class CurationDatabaseReader {
+public class CurationDatabaseReader {
 
     private static final Logger LOGGER = LogManager.getLogger(CurationDatabaseReader.class);
 
@@ -71,16 +71,20 @@ public final class CurationDatabaseReader {
     private static final String TOXICITY_TRANSLATION_TSV = "toxicity_translation.tsv";
     private static final String BLOOD_TRANSFUSION_TRANSLATION_TSV = "blood_transfusion_translation.tsv";
 
-    private CurationDatabaseReader() {
+    @NotNull
+    private final CurationDatabaseValidator databaseValidator;
+
+    CurationDatabaseReader(@NotNull final CurationDatabaseValidator databaseValidator) {
+        this.databaseValidator = databaseValidator;
     }
 
     @NotNull
-    public static CurationDatabase read(@NotNull String clinicalCurationDirectory) throws IOException {
+    public CurationDatabase read(@NotNull String clinicalCurationDirectory) throws IOException {
         LOGGER.info("Reading clinical curation config from {}", clinicalCurationDirectory);
 
         String basePath = Paths.forceTrailingFileSeparator(clinicalCurationDirectory);
 
-        return ImmutableCurationDatabase.builder()
+        CurationDatabase database = ImmutableCurationDatabase.builder()
                 .primaryTumorConfigs(readPrimaryTumorConfigs(basePath + PRIMARY_TUMOR_TSV))
                 .oncologicalHistoryConfigs(readOncologicalHistoryConfigs(basePath + ONCOLOGICAL_HISTORY_TSV))
                 .secondPrimaryConfigs(readSecondPrimaryConfigs(basePath + SECOND_PRIMARY_TSV))
@@ -100,7 +104,12 @@ public final class CurationDatabaseReader {
                 .toxicityTranslations(readToxicityTranslations(basePath + TOXICITY_TRANSLATION_TSV))
                 .bloodTransfusionTranslations(readBloodTransfusionTranslations(basePath + BLOOD_TRANSFUSION_TRANSLATION_TSV))
                 .build();
+
+        databaseValidator.validate(database);
+
+        return database;
     }
+
 
     @NotNull
     private static List<PrimaryTumorConfig> readPrimaryTumorConfigs(@NotNull String tsv) throws IOException {

@@ -46,6 +46,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
+import com.hartwig.actin.doid.TestDoidModelFactory;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -66,7 +67,12 @@ public final class TestCurationFactory {
     }
 
     @NotNull
-    private static CurationDatabase createTestCurationDatabase() {
+    public static CurationDatabaseValidator createMinimalTestCurationDatabaseValidator() {
+        return new CurationDatabaseValidator(TestDoidModelFactory.createMinimalTestDoidModel());
+    }
+
+    @NotNull
+    public static CurationDatabase createTestCurationDatabase() {
         return ImmutableCurationDatabase.builder()
                 .primaryTumorConfigs(createTestPrimaryTumorConfigs())
                 .oncologicalHistoryConfigs(createTestOncologicalHistoryConfigs())
