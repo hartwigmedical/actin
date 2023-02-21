@@ -120,7 +120,9 @@
   "complications": [
     {
       "name": "Nausea",
-      "categories": "Other",
+      "categories": [
+        "Other"
+      ],
       "year": 2020,
       "month": null
     }
