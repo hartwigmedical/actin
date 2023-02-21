@@ -1,21 +1,20 @@
 package com.hartwig.actin.algo.evaluation.vitalfunction;
 
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
+import static org.junit.Assert.assertTrue;
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Collections;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight;
 import org.junit.Test;
 
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collections;
-
-import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
-import static org.junit.Assert.assertTrue;
-
 public class HasMaximumBMITest {
-    private final HasMaximumBMI function = new HasMaximumBMI(40);
-    private final LocalDate now = LocalDate.now();
-    private final LocalDate lastYear = now.minusYears(1);
+
+    private static final HasMaximumBMI function = new HasMaximumBMI(40);
+    private static final LocalDate now = LocalDate.now();
+    private static final LocalDate lastYear = now.minusYears(1);
 
     @Test
     public void shouldBeUndeterminedWhenNoBodyWeightsProvided() {

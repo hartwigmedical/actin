@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.vitalfunction;
 
+import java.util.Optional;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -10,22 +11,16 @@ import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.sort.BodyWeightDescendingDateComparator;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
-
 public class HasMaximumBMI implements EvaluationFunction {
 
     static final String EXPECTED_UNIT = "kilogram";
-    static final double MIN_EXPECTED_HEIGHT_METRES = 1.5;
-    static final double MAX_EXPECTED_HEIGHT_METRES = 2.0;
+    private static final double MIN_EXPECTED_HEIGHT_METRES = 1.5;
+    private static final double MAX_EXPECTED_HEIGHT_METRES = 2.0;
 
     private final int maximumBMI;
 
     HasMaximumBMI(final int maximumBMI) {
         this.maximumBMI = maximumBMI;
-    }
-
-    private double calculateHeightForBmiAndWeight(double bmi, double weight) {
-        return Math.sqrt(weight / bmi);
     }
 
     @NotNull
@@ -63,5 +58,9 @@ public class HasMaximumBMI implements EvaluationFunction {
                     .addWarnGeneralMessages("Potentially high BMI");
         }
         return builder.build();
+    }
+
+    private static double calculateHeightForBmiAndWeight(double bmi, double weight) {
+        return Math.sqrt(weight / bmi);
     }
 }
