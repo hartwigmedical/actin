@@ -21,6 +21,7 @@ public interface ClinicalIngestionConfig {
 
     String FEED_DIRECTORY = "feed_directory";
     String CURATION_DIRECTORY = "curation_directory";
+    String DOID_JSON = "doid_json";
 
     String OUTPUT_DIRECTORY = "output_directory";
 
@@ -32,6 +33,7 @@ public interface ClinicalIngestionConfig {
 
         options.addOption(FEED_DIRECTORY, true, "Directory containing the clinical feed data");
         options.addOption(CURATION_DIRECTORY, true, "Directory containing the clinical curation config data");
+        options.addOption(DOID_JSON, true, "Path to JSON file containing the full DOID tree.");
 
         options.addOption(OUTPUT_DIRECTORY, true, "Directory where clinical data output will be written to");
 
@@ -47,6 +49,9 @@ public interface ClinicalIngestionConfig {
     String curationDirectory();
 
     @NotNull
+    String doidJson();
+
+    @NotNull
     String outputDirectory();
 
     @NotNull
@@ -59,6 +64,7 @@ public interface ClinicalIngestionConfig {
         return ImmutableClinicalIngestionConfig.builder()
                 .feedDirectory(ApplicationConfig.nonOptionalDir(cmd, FEED_DIRECTORY))
                 .curationDirectory(ApplicationConfig.nonOptionalDir(cmd, CURATION_DIRECTORY))
+                .doidJson(ApplicationConfig.nonOptionalFile(cmd, DOID_JSON))
                 .outputDirectory(ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY))
                 .build();
     }
