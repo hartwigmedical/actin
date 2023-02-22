@@ -12,9 +12,9 @@ import org.junit.Test;
 
 public class HasMaximumBMITest {
 
-    private static final HasMaximumBMI function = new HasMaximumBMI(40);
-    private static final LocalDate now = LocalDate.now();
-    private static final LocalDate lastYear = now.minusYears(1);
+    private final HasMaximumBMI function = new HasMaximumBMI(40);
+    private final LocalDate now = LocalDate.now();
+    private final LocalDate lastYear = now.minusYears(1);
 
     @Test
     public void shouldBeUndeterminedWhenNoBodyWeightsProvided() {
