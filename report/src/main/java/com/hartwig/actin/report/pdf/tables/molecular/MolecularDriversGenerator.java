@@ -5,7 +5,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.datamodel.driver.Variant;
+import com.hartwig.actin.molecular.datamodel.driver.Driver;
 import com.hartwig.actin.report.interpretation.ClonalityInterpreter;
 import com.hartwig.actin.report.interpretation.EvaluatedTrial;
 import com.hartwig.actin.report.interpretation.MolecularDriverEntry;
@@ -16,7 +16,6 @@ import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;
 import com.hartwig.actin.treatment.TreatmentConstants;
 import com.itextpdf.layout.element.Table;
-
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -69,7 +68,11 @@ public class MolecularDriversGenerator implements TableGenerator {
             table.addCell(Cells.createContent(nullToEmpty(entry.bestResistanceEvidence())));
         }
 
-        if (!entries.isEmpty() && hasPotentiallySubclonalVariants(molecular.drivers().variants())) {
+        boolean hasPotentiallySubClonalVariants = molecular.drivers().variants().stream()
+                .filter(Driver::isReportable)
+                .anyMatch(ClonalityInterpreter::isPotentiallySubclonal);
+        
+        if (hasPotentiallySubClonalVariants) {
             String note = "* Variant has > " + Formats.percentage(ClonalityInterpreter.CLONAL_CUTOFF) + " likelihood of being sub-clonal";
             table.addCell(Cells.createSpanningSubNote(note, table));
         }
@@ -97,15 +100,5 @@ public class MolecularDriversGenerator implements TableGenerator {
     @NotNull
     private static String nullToEmpty(@Nullable String string) {
         return string != null ? string : Strings.EMPTY;
-    }
-
-    private static boolean hasPotentiallySubclonalVariants(@NotNull Set<Variant> variants) {
-        for (Variant variant : variants) {
-            if (ClonalityInterpreter.isPotentiallySubclonal(variant)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }
