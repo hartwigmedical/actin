@@ -45,7 +45,7 @@ public class CurationModelTest {
 
     private static final String CURATION_DIRECTORY = Resources.getResource("curation").getPath();
 
-    private CurationModel model = TestCurationFactory.createProperTestCurationModel();
+    private final CurationModel model = TestCurationFactory.createProperTestCurationModel();
 
     @Test
     public void canCreateFromCurationDirectory() throws IOException {

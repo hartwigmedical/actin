@@ -7,7 +7,7 @@ import org.junit.Test;
 
 public class HasLungMetastasesTest {
 
-    private static final HasLungMetastases function = new HasLungMetastases();
+    private final HasLungMetastases function = new HasLungMetastases();
 
     @Test
     public void shouldBeUndeterminedWhenHasLungLesionsIsNull() {

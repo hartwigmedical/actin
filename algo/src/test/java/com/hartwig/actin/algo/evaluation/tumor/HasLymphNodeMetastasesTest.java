@@ -8,7 +8,7 @@ import org.junit.Test;
 
 public class HasLymphNodeMetastasesTest {
 
-    private static final HasLymphNodeMetastases function = new HasLymphNodeMetastases();
+    private final HasLymphNodeMetastases function = new HasLymphNodeMetastases();
 
     @Test
     public void shouldBeUndeterminedWhenHasLymphNodeLesionsIsNull() {
