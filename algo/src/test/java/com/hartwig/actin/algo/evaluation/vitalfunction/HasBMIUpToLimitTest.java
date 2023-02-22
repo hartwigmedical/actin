@@ -10,9 +10,9 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight;
 import org.junit.Test;
 
-public class HasMaximumBMITest {
+public class HasBMIUpToLimitTest {
 
-    private final HasMaximumBMI function = new HasMaximumBMI(40);
+    private final HasBMIUpToLimit function = new HasBMIUpToLimit(40);
     private final LocalDate now = LocalDate.now();
     private final LocalDate lastYear = now.minusYears(1);
 

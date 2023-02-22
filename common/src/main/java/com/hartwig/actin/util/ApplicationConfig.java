@@ -2,12 +2,15 @@ package com.hartwig.actin.util;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.Locale;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.jetbrains.annotations.NotNull;
 
 public final class ApplicationConfig {
+
+    public static final Locale locale = Locale.ENGLISH;
 
     private ApplicationConfig() {
     }

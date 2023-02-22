@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.vitalfunction;
 
+import java.util.Map;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.algo.evaluation.RuleMapper;
@@ -7,8 +8,6 @@ import com.hartwig.actin.algo.evaluation.RuleMappingResources;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.single.TwoDoubles;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
 
 public class VitalFunctionRuleMapper extends RuleMapper {
 
@@ -28,7 +27,7 @@ public class VitalFunctionRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_PULSE_OXIMETRY_OF_AT_LEAST_X, hasSufficientPulseOximetryCreator());
         map.put(EligibilityRule.HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y, hasRestingHeartRateWithinBoundsCreator());
         map.put(EligibilityRule.HAS_BODY_WEIGHT_OF_AT_LEAST_X, hasSufficientBodyWeightCreator());
-        map.put(EligibilityRule.HAS_BMI_OF_AT_MOST_X, hasMaximumBMICreator());
+        map.put(EligibilityRule.HAS_BMI_OF_AT_MOST_X, hasBMIUpToLimitCreator());
 
         return map;
     }
@@ -74,10 +73,10 @@ public class VitalFunctionRuleMapper extends RuleMapper {
     }
 
     @NotNull
-    private FunctionCreator hasMaximumBMICreator() {
+    private FunctionCreator hasBMIUpToLimitCreator() {
         return function -> {
             int maximumBMI = functionInputResolver().createOneIntegerInput(function);
-            return new HasMaximumBMI(maximumBMI);
+            return new HasBMIUpToLimit(maximumBMI);
         };
     }
 }
