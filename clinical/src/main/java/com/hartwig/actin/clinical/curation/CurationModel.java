@@ -159,38 +159,45 @@ public class CurationModel {
 
         ImmutableTumorDetails.Builder builder = ImmutableTumorDetails.builder().from(tumorDetails);
         if (matches.contains(LesionLocationCategory.BRAIN)) {
-            if (tumorDetails.hasBrainLesions() != null && !tumorDetails.hasBrainLesions()) {
+            if (Boolean.FALSE.equals(tumorDetails.hasBrainLesions())) {
                 LOGGER.debug("  Overriding presence of brain lesions");
             }
             builder.hasBrainLesions(true);
         }
 
         if (matches.contains(LesionLocationCategory.CNS)) {
-            if (tumorDetails.hasCnsLesions() != null && !tumorDetails.hasCnsLesions()) {
+            if (Boolean.FALSE.equals(tumorDetails.hasCnsLesions())) {
                 LOGGER.debug("  Overriding presence of CNS lesions");
             }
             builder.hasCnsLesions(true);
         }
 
         if (matches.contains(LesionLocationCategory.LIVER)) {
-            if (tumorDetails.hasLiverLesions() != null && !tumorDetails.hasLiverLesions()) {
+            if (Boolean.FALSE.equals(tumorDetails.hasLiverLesions())) {
                 LOGGER.debug("  Overriding presence of liver lesions");
             }
             builder.hasLiverLesions(true);
         }
 
         if (matches.contains(LesionLocationCategory.BONE)) {
-            if (tumorDetails.hasBoneLesions() != null && !tumorDetails.hasBoneLesions()) {
+            if (Boolean.FALSE.equals(tumorDetails.hasBoneLesions())) {
                 LOGGER.debug("  Overriding presence of bone lesions");
             }
             builder.hasBoneLesions(true);
         }
 
         if (matches.contains(LesionLocationCategory.LUNG)) {
-            if (tumorDetails.hasLungLesions() != null && !tumorDetails.hasLungLesions()) {
+            if (Boolean.FALSE.equals(tumorDetails.hasLungLesions())) {
                 LOGGER.debug("  Overriding presence of lung lesions");
             }
             builder.hasLungLesions(true);
+        }
+
+        if (matches.contains(LesionLocationCategory.LYMPH_NODE)) {
+            if (Boolean.FALSE.equals(tumorDetails.hasLymphNodeLesions())) {
+                LOGGER.debug("  Overriding presence of lymph node lesions");
+            }
+            builder.hasLymphNodeLesions(true);
         }
 
         return builder.build();

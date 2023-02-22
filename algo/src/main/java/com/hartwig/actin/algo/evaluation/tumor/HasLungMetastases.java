@@ -14,6 +14,6 @@ public class HasLungMetastases implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return TumorUtil.evaluateBooleanMetastasis(record.clinical().tumor().hasLungLesions(), "lung");
+        return TumorMetastasisEvaluator.evaluate(record.clinical().tumor().hasLungLesions(), "lung");
     }
 }

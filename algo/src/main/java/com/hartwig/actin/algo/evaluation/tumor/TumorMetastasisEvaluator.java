@@ -7,9 +7,10 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class TumorUtil {
+public final class TumorMetastasisEvaluator {
+
     @NotNull
-    public static Evaluation evaluateBooleanMetastasis(@Nullable Boolean hasMetastases, @NotNull String metastasisType) {
+    public static Evaluation evaluate(@Nullable Boolean hasMetastases, @NotNull String metastasisType) {
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable();
         if (hasMetastases == null) {
             builder.result(EvaluationResult.UNDETERMINED)

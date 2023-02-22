@@ -2,11 +2,9 @@ package com.hartwig.actin.clinical.datamodel;
 
 import java.time.LocalDate;
 import java.util.List;
-
 import com.google.common.collect.Lists;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
-
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
@@ -95,6 +93,7 @@ public final class TestClinicalFactory {
                 .hasBoneLesions(null)
                 .hasLiverLesions(true)
                 .hasLungLesions(false)
+                .hasLymphNodeLesions(true)
                 .addOtherLesions("Lymph nodes")
                 .biopsyLocation("Liver")
                 .build();
