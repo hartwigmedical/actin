@@ -44,19 +44,19 @@ public class HasBMIUpToLimit implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable();
         if (minimumRequiredHeight <= MIN_EXPECTED_HEIGHT_METRES) {
             builder.result(EvaluationResult.PASS)
-                    .addPassSpecificMessages(String.format(ApplicationConfig.locale,
+                    .addPassSpecificMessages(String.format(ApplicationConfig.LOCALE,
                             "Patient weight %.1f kg will not exceed BMI limit of %d for height >= %.2f m",
                             latestWeight.value(), maximumBMI, minimumRequiredHeight))
                     .addPassGeneralMessages("Acceptable BMI");
         } else if (minimumRequiredHeight > MAX_EXPECTED_HEIGHT_METRES) {
             builder.result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages(String.format(ApplicationConfig.locale,
+                    .addFailSpecificMessages(String.format(ApplicationConfig.LOCALE,
                             "Patient weight %.1f kg will exceed BMI limit of %d for height < %.2f m",
                             latestWeight.value(), maximumBMI, minimumRequiredHeight))
                     .addFailGeneralMessages("Excessive BMI");
         } else {
             builder.result(EvaluationResult.WARN)
-                    .addWarnSpecificMessages(String.format(ApplicationConfig.locale,
+                    .addWarnSpecificMessages(String.format(ApplicationConfig.LOCALE,
                             "Patient weight %.1f kg will exceed BMI limit of %d for height < %.2f m",
                             latestWeight.value(), maximumBMI, minimumRequiredHeight))
                     .addWarnGeneralMessages("Potentially high BMI");

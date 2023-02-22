@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public final class ApplicationConfig {
 
-    public static final Locale locale = Locale.ENGLISH;
+    public static final Locale LOCALE = Locale.ENGLISH;
 
     private ApplicationConfig() {
     }
