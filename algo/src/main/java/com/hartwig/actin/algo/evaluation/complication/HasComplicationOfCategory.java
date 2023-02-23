@@ -1,16 +1,13 @@
 package com.hartwig.actin.algo.evaluation.complication;
 
+import java.util.Collections;
 import java.util.Set;
-
-import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
-import com.hartwig.actin.clinical.datamodel.Complication;
-
 import org.jetbrains.annotations.NotNull;
 
 public class HasComplicationOfCategory implements EvaluationFunction {
@@ -33,12 +30,8 @@ public class HasComplicationOfCategory implements EvaluationFunction {
                     .build();
         }
 
-        Set<String> complicationMatches = Sets.newHashSet();
-        for (Complication complication : record.clinical().complications()) {
-            if (hasCategory(complication.categories(), categoryToFind)) {
-                complicationMatches.add(complication.name());
-            }
-        }
+        Set<String> complicationMatches = PatternMatcher.findComplicationNamesMatchingCategories(record,
+                        Collections.singletonList(categoryToFind));
 
         if (!complicationMatches.isEmpty()) {
             if (complicationMatches.size() == 1 && complicationMatches.iterator().next().equalsIgnoreCase(categoryToFind)) {
@@ -61,15 +54,5 @@ public class HasComplicationOfCategory implements EvaluationFunction {
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient does not have complication of category " + categoryToFind)
                 .build();
-    }
-
-    private static boolean hasCategory(@NotNull Set<String> categories, @NotNull String categoryToFind) {
-        String categoryToFindLowerCase = categoryToFind.toLowerCase();
-        for (String category : categories) {
-            if (category.toLowerCase().contains(categoryToFindLowerCase)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

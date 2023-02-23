@@ -6,13 +6,16 @@ import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
+import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.Gender;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
+import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,6 +52,27 @@ final class GeneralTestFactory {
                 .build();
 
         return withClinicalStatus(clinicalStatus);
+    }
+
+    @NotNull
+    public static PatientRecord withWHOAndComplications(@NotNull Integer who, Iterable<String> complicationCategories) {
+        ClinicalStatus clinicalStatus = ImmutableClinicalStatus.builder()
+                .from(TestClinicalFactory.createMinimalTestClinicalRecord().clinicalStatus())
+                .who(who)
+                .build();
+
+        Complication complication = ImmutableComplication.builder()
+                .name(Strings.EMPTY)
+                .categories(complicationCategories)
+                .build();
+
+        ClinicalRecord clinical = ImmutableClinicalRecord.builder()
+                .from(TestClinicalFactory.createMinimalTestClinicalRecord())
+                .clinicalStatus(clinicalStatus)
+                .addComplications(complication)
+                .build();
+
+        return withClinicalRecord(clinical);
     }
 
     @NotNull
