@@ -20,7 +20,6 @@ public enum TreatmentInput {
     SURGERY(TreatmentCategory.SURGERY),
     TRANSPLANTATION(TreatmentCategory.TRANSPLANTATION),
     TRIAL(TreatmentCategory.TRIAL),
-    VACCINE(TreatmentCategory.VACCINE),
     CAR_T(TreatmentCategory.CAR_T),
     TCR_T(TreatmentCategory.TCR_T),
     GENE_THERAPY(TreatmentCategory.GENE_THERAPY),
