@@ -9,6 +9,7 @@ import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
+import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.doid.DoidModel;
 
 import org.apache.logging.log4j.LogManager;
@@ -60,11 +61,14 @@ class CurationDatabaseValidator {
     static boolean validateSecondPrimaryConfigs(@NotNull List<SecondPrimaryConfig> secondPrimaryConfigs, @NotNull DoidModel doidModel) {
         boolean allValid = true;
         for (SecondPrimaryConfig secondPrimaryConfig : secondPrimaryConfigs) {
-            if (!hasValidDoids(secondPrimaryConfig.curated().doids(), doidModel, CANCER_PARENT_DOID)) {
-                allValid = false;
-                LOGGER.warn(" Invalid second primary doids configured for '{}': {}",
-                        secondPrimaryConfig.input(),
-                        secondPrimaryConfig.curated().doids());
+            PriorSecondPrimary priorSecondPrimary = secondPrimaryConfig.curated();
+            if (priorSecondPrimary != null) {
+                if (!hasValidDoids(priorSecondPrimary.doids(), doidModel, CANCER_PARENT_DOID)) {
+                    allValid = false;
+                    LOGGER.warn(" Invalid second primary doids configured for '{}': {}",
+                            secondPrimaryConfig.input(),
+                            secondPrimaryConfig.curated().doids());
+                }
             }
         }
         return allValid;

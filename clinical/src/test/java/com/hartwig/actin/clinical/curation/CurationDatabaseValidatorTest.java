@@ -29,18 +29,18 @@ public class CurationDatabaseValidatorTest {
     }
 
     @Test
-    public void canIdentifyInvalidPrimaryTumorConfigs() {
+    public void shouldIdentifyInvalidPrimaryTumorConfigs() {
         DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild(CurationDatabaseValidator.CANCER_PARENT_DOID, "child");
 
         PrimaryTumorConfig valid = TestCurationConfigFactory.primaryTumorConfigBuilder().addDoids("child").build();
         assertTrue(CurationDatabaseValidator.validatePrimaryTumorConfigs(Lists.newArrayList(valid), doidModel));
 
-        PrimaryTumorConfig invalid = TestCurationConfigFactory.primaryTumorConfigBuilder().addDoids("invalid").build();
+        PrimaryTumorConfig invalid = TestCurationConfigFactory.primaryTumorConfigBuilder().addDoids("child", "invalid").build();
         assertFalse(CurationDatabaseValidator.validatePrimaryTumorConfigs(Lists.newArrayList(invalid), doidModel));
     }
 
     @Test
-    public void canIdentifyInvalidSecondPrimaryConfigs() {
+    public void shouldIdentifyInvalidSecondPrimaryConfigs() {
         DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild(CurationDatabaseValidator.CANCER_PARENT_DOID, "child");
 
         SecondPrimaryConfig valid = TestCurationConfigFactory.secondPrimaryConfigBuilder()
@@ -48,14 +48,17 @@ public class CurationDatabaseValidatorTest {
                 .build();
         assertTrue(CurationDatabaseValidator.validateSecondPrimaryConfigs(Lists.newArrayList(valid), doidModel));
 
+        SecondPrimaryConfig missing = TestCurationConfigFactory.secondPrimaryConfigBuilder().curated(null).build();
+        assertTrue(CurationDatabaseValidator.validateSecondPrimaryConfigs(Lists.newArrayList(missing), doidModel));
+
         SecondPrimaryConfig invalid = TestCurationConfigFactory.secondPrimaryConfigBuilder()
-                .curated(TestPriorSecondPrimaryFactory.builder().addDoids("invalid").build())
+                .curated(TestPriorSecondPrimaryFactory.builder().addDoids("child", "invalid").build())
                 .build();
         assertFalse(CurationDatabaseValidator.validateSecondPrimaryConfigs(Lists.newArrayList(invalid), doidModel));
     }
 
     @Test
-    public void canIdentifyInvalidNonOncologicalHistoryConfigs() {
+    public void shouldIdentifyInvalidNonOncologicalHistoryConfigs() {
         DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild(CurationDatabaseValidator.GENERIC_PARENT_DOID, "child");
 
         NonOncologicalHistoryConfig valid = TestCurationConfigFactory.nonOncologicalHistoryConfigBuilder()
@@ -63,23 +66,24 @@ public class CurationDatabaseValidatorTest {
                 .build();
         assertTrue(CurationDatabaseValidator.validateNonOncologicalHistoryConfigs(Lists.newArrayList(valid), doidModel));
 
-        NonOncologicalHistoryConfig other = TestCurationConfigFactory.nonOncologicalHistoryConfigBuilder().lvef(Optional.of(1D)).build();
-        assertTrue(CurationDatabaseValidator.validateNonOncologicalHistoryConfigs(Lists.newArrayList(other), doidModel));
+        NonOncologicalHistoryConfig missing =
+                TestCurationConfigFactory.nonOncologicalHistoryConfigBuilder().priorOtherCondition(Optional.empty()).build();
+        assertTrue(CurationDatabaseValidator.validateNonOncologicalHistoryConfigs(Lists.newArrayList(missing), doidModel));
 
         NonOncologicalHistoryConfig invalid = TestCurationConfigFactory.nonOncologicalHistoryConfigBuilder()
-                .priorOtherCondition(Optional.of(TestPriorOtherConditionFactory.builder().addDoids("invalid").build()))
+                .priorOtherCondition(Optional.of(TestPriorOtherConditionFactory.builder().addDoids("child", "invalid").build()))
                 .build();
         assertFalse(CurationDatabaseValidator.validateNonOncologicalHistoryConfigs(Lists.newArrayList(invalid), doidModel));
     }
 
     @Test
-    public void canIdentifyInvalidIntoleranceConfigs() {
+    public void shouldIdentifyInvalidIntoleranceConfigs() {
         DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild(CurationDatabaseValidator.GENERIC_PARENT_DOID, "child");
 
         IntoleranceConfig valid = TestCurationConfigFactory.intoleranceConfigBuilder().addDoids("child").build();
         assertTrue(CurationDatabaseValidator.validateIntoleranceConfigs(Lists.newArrayList(valid), doidModel));
 
-        IntoleranceConfig invalid = TestCurationConfigFactory.intoleranceConfigBuilder().addDoids("invalid").build();
+        IntoleranceConfig invalid = TestCurationConfigFactory.intoleranceConfigBuilder().addDoids("child", "invalid").build();
         assertFalse(CurationDatabaseValidator.validateIntoleranceConfigs(Lists.newArrayList(invalid), doidModel));
     }
 
