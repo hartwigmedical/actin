@@ -14,6 +14,6 @@ public class HasLymphNodeMetastases implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        return TumorUtil.evaluateBooleanMetastasis(record.clinical().tumor().hasLymphNodeLesions(), "lymph node");
+        return TumorMetastasisEvaluator.evaluate(record.clinical().tumor().hasLymphNodeLesions(), "lymph node");
     }
 }

@@ -73,15 +73,15 @@ CREATE TABLE priorTumorTreatment
     stopReason varchar(50),
     categories varchar(100) NOT NULL,
     isSystemic BOOLEAN NOT NULL,
-    chemoType varchar(50),
-    immunoType varchar(50),
+    chemoType varchar(100),
+    immunoType varchar(100),
     targetedType varchar(200),
-    hormoneType varchar(50),
-    radioType varchar(50),
-    carTType varchar(50),
-    transplantType varchar(50),
-    supportiveType varchar(50),
-    trialAcronym varchar(50),
+    hormoneType varchar(100),
+    radioType varchar(100),
+    carTType varchar(100),
+    transplantType varchar(100),
+    supportiveType varchar(100),
+    trialAcronym varchar(100),
     PRIMARY KEY (id)
 );
 

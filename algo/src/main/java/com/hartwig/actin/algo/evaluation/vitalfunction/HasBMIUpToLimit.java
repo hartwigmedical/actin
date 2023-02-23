@@ -1,5 +1,6 @@
-package com.hartwig.actin.algo.evaluation.general;
+package com.hartwig.actin.algo.evaluation.vitalfunction;
 
+import java.util.Optional;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -8,24 +9,19 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.sort.BodyWeightDescendingDateComparator;
+import com.hartwig.actin.util.ApplicationConfig;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
+public class HasBMIUpToLimit implements EvaluationFunction {
 
-public class HasMaximumBMI implements EvaluationFunction {
-
-    static final String EXPECTED_UNIT = "kilogram";
-    static final double MIN_EXPECTED_HEIGHT_METRES = 1.5;
-    static final double MAX_EXPECTED_HEIGHT_METRES = 2.0;
+    private static final String EXPECTED_UNIT = "kilogram";
+    private static final double MIN_EXPECTED_HEIGHT_METRES = 1.5;
+    private static final double MAX_EXPECTED_HEIGHT_METRES = 2.0;
 
     private final int maximumBMI;
 
-    HasMaximumBMI(final int maximumBMI) {
+    HasBMIUpToLimit(final int maximumBMI) {
         this.maximumBMI = maximumBMI;
-    }
-
-    private double calculateWeightForBmiAndHeight(double bmi, double height) {
-        return bmi * height * height;
     }
 
     @NotNull
@@ -43,27 +39,32 @@ public class HasMaximumBMI implements EvaluationFunction {
         }
         BodyWeight latestWeight = latestWeightOption.get();
 
-        double warnThresholdWeight = calculateWeightForBmiAndHeight(maximumBMI, MIN_EXPECTED_HEIGHT_METRES);
-        double failThresholdWeight = calculateWeightForBmiAndHeight(maximumBMI, MAX_EXPECTED_HEIGHT_METRES);
+        double minimumRequiredHeight = calculateHeightForBmiAndWeight(maximumBMI, latestWeight.value());
 
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable();
-        if (latestWeight.value() <= warnThresholdWeight) {
+        if (minimumRequiredHeight <= MIN_EXPECTED_HEIGHT_METRES) {
             builder.result(EvaluationResult.PASS)
-                    .addPassSpecificMessages(String.format("Patient weight %.1f kg will not exceed BMI limit of %d for height >= %.1f m",
-                            latestWeight.value(), maximumBMI, MIN_EXPECTED_HEIGHT_METRES))
+                    .addPassSpecificMessages(String.format(ApplicationConfig.LOCALE,
+                            "Patient weight %.1f kg will not exceed BMI limit of %d for height >= %.2f m",
+                            latestWeight.value(), maximumBMI, minimumRequiredHeight))
                     .addPassGeneralMessages("Acceptable BMI");
-        } else if (latestWeight.value() > failThresholdWeight) {
+        } else if (minimumRequiredHeight > MAX_EXPECTED_HEIGHT_METRES) {
             builder.result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages(String.format("Patient weight %.1f kg will exceed BMI limit of %d for height <= %.1f m",
-                            latestWeight.value(), maximumBMI, MAX_EXPECTED_HEIGHT_METRES))
+                    .addFailSpecificMessages(String.format(ApplicationConfig.LOCALE,
+                            "Patient weight %.1f kg will exceed BMI limit of %d for height < %.2f m",
+                            latestWeight.value(), maximumBMI, minimumRequiredHeight))
                     .addFailGeneralMessages("Excessive BMI");
         } else {
             builder.result(EvaluationResult.WARN)
-                    .addWarnSpecificMessages(String.format("Patient weight %.1f kg will exceed BMI limit of %d for " +
-                                    "some heights between %.1f and %.1f m",
-                            latestWeight.value(), maximumBMI, MIN_EXPECTED_HEIGHT_METRES, MAX_EXPECTED_HEIGHT_METRES))
+                    .addWarnSpecificMessages(String.format(ApplicationConfig.LOCALE,
+                            "Patient weight %.1f kg will exceed BMI limit of %d for height < %.2f m",
+                            latestWeight.value(), maximumBMI, minimumRequiredHeight))
                     .addWarnGeneralMessages("Potentially high BMI");
         }
         return builder.build();
+    }
+
+    private static double calculateHeightForBmiAndWeight(double bmi, double weight) {
+        return Math.sqrt(weight / bmi);
     }
 }
