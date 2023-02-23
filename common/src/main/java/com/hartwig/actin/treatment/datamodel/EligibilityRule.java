@@ -23,7 +23,6 @@ public enum EligibilityRule {
     WILL_PARTICIPATE_IN_TRIAL_IN_COUNTRY_X,
     IS_LEGALLY_INSTITUTIONALIZED,
     IS_INVOLVED_IN_STUDY_PROCEDURES,
-    HAS_BMI_OF_AT_MOST_X,
 
     // Rules related to tumor and lesion localization
     HAS_SOLID_PRIMARY_TUMOR,
@@ -364,6 +363,7 @@ public enum EligibilityRule {
     HAS_PULSE_OXIMETRY_OF_AT_LEAST_X,
     HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y,
     HAS_BODY_WEIGHT_OF_AT_LEAST_X,
+    HAS_BMI_OF_AT_MOST_X,
 
     // Rules related to blood transfusions
     REQUIRES_REGULAR_HEMATOPOIETIC_SUPPORT,
