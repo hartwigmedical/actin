@@ -216,13 +216,13 @@ public class CurationModel {
             if (configs.isEmpty()) {
                 // Same input is curated twice, so need to check if used at other place.
                 if (!trimmedInput.isEmpty() && find(database.secondPrimaryConfigs(), trimmedInput).isEmpty()) {
-                    LOGGER.warn(" Could not find oncological history config for input '{}'", trimmedInput);
+                    LOGGER.warn(" Could not find second primary or oncological history config for input '{}'", trimmedInput);
                 }
-            } else {
-                for (OncologicalHistoryConfig config : configs) {
-                    if (!config.ignore()) {
-                        priorTumorTreatments.add(config.curated());
-                    }
+            }
+
+            for (OncologicalHistoryConfig config : configs) {
+                if (!config.ignore()) {
+                    priorTumorTreatments.add(config.curated());
                 }
             }
         }
@@ -240,10 +240,10 @@ public class CurationModel {
         for (String input : inputs) {
             String trimmedInput = CurationUtil.fullTrim(input);
             Set<SecondPrimaryConfig> configs = find(database.secondPrimaryConfigs(), trimmedInput);
-            if (configs.isEmpty() && !trimmedInput.isEmpty()) {
+            if (configs.isEmpty()) {
                 // Same input is curated twice, so need to check if used at other place.
-                if (find(database.oncologicalHistoryConfigs(), trimmedInput).isEmpty()) {
-                    LOGGER.warn(" Could not find second primary config for input '{}'", trimmedInput);
+                if (!trimmedInput.isEmpty() && find(database.oncologicalHistoryConfigs(), trimmedInput).isEmpty()) {
+                    LOGGER.warn(" Could not find second primary or oncological history config for input '{}'", trimmedInput);
                 }
             }
 
