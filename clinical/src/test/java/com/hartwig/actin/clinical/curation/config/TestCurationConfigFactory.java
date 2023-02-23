@@ -1,5 +1,7 @@
 package com.hartwig.actin.clinical.curation.config;
 
+import java.util.Optional;
+
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +28,11 @@ public final class TestCurationConfigFactory {
 
     @NotNull
     public static ImmutableNonOncologicalHistoryConfig.Builder nonOncologicalHistoryConfigBuilder() {
-        return ImmutableNonOncologicalHistoryConfig.builder().input(Strings.EMPTY).ignore(false);
+        return ImmutableNonOncologicalHistoryConfig.builder()
+                .input(Strings.EMPTY)
+                .ignore(false)
+                .lvef(Optional.empty())
+                .priorOtherCondition(Optional.empty());
     }
 
     @NotNull

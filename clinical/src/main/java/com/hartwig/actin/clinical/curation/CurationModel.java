@@ -274,8 +274,8 @@ public class CurationModel {
             }
 
             for (NonOncologicalHistoryConfig config : configs) {
-                if (!config.ignore() && config.curated() instanceof PriorOtherCondition) {
-                    priorOtherConditions.add((PriorOtherCondition) config.curated());
+                if (!config.ignore() && config.priorOtherCondition().isPresent()) {
+                    priorOtherConditions.add(config.priorOtherCondition().get());
                 }
             }
         }
@@ -447,8 +447,8 @@ public class CurationModel {
         for (String input : inputs) {
             Set<NonOncologicalHistoryConfig> configs = find(database.nonOncologicalHistoryConfigs(), input);
             for (NonOncologicalHistoryConfig config : configs) {
-                if (!config.ignore() && config.curated() instanceof Double) {
-                    return (Double) config.curated();
+                if (!config.ignore() && config.lvef().isPresent()) {
+                    return config.lvef().get();
                 }
             }
         }

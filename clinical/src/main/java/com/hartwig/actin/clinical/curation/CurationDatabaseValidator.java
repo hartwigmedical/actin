@@ -77,9 +77,8 @@ class CurationDatabaseValidator {
             @NotNull DoidModel doidModel) {
         boolean allValid = true;
         for (NonOncologicalHistoryConfig nonOncologicalHistoryConfig : nonOncologicalHistoryConfigs) {
-            Object curated = nonOncologicalHistoryConfig.curated();
-            if (curated instanceof PriorOtherCondition) {
-                PriorOtherCondition priorOtherCondition = (PriorOtherCondition) curated;
+            if (nonOncologicalHistoryConfig.priorOtherCondition().isPresent()) {
+                PriorOtherCondition priorOtherCondition = nonOncologicalHistoryConfig.priorOtherCondition().get();
                 if (!hasValidDoids(priorOtherCondition.doids(), doidModel, GENERIC_PARENT_DOID)) {
                     allValid = false;
                     LOGGER.warn(" Invalid prior other condition doids configured for '{}': {}",

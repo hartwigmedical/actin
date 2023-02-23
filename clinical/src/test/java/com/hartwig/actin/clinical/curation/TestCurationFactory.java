@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.curation;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig;
@@ -14,7 +15,6 @@ import com.hartwig.actin.clinical.curation.config.ImmutableMedicationCategoryCon
 import com.hartwig.actin.clinical.curation.config.ImmutableMedicationDosageConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableMedicationNameConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableMolecularTestConfig;
-import com.hartwig.actin.clinical.curation.config.ImmutableNonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableSecondPrimaryConfig;
@@ -30,6 +30,7 @@ import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig;
+import com.hartwig.actin.clinical.curation.config.TestCurationConfigFactory;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory;
 import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation;
@@ -195,8 +196,11 @@ public final class TestCurationFactory {
                 .category(LesionLocationCategory.LUNG)
                 .build());
 
-        configs.add(ImmutableLesionLocationConfig.builder().input("Lymph node").location("Lymph node")
-                .category(LesionLocationCategory.LYMPH_NODE).build());
+        configs.add(ImmutableLesionLocationConfig.builder()
+                .input("Lymph node")
+                .location("Lymph node")
+                .category(LesionLocationCategory.LYMPH_NODE)
+                .build());
 
         configs.add(ImmutableLesionLocationConfig.builder().input("Not a lesion").location(Strings.EMPTY).build());
 
@@ -209,19 +213,23 @@ public final class TestCurationFactory {
     private static List<NonOncologicalHistoryConfig> createTestNonOncologicalHistoryConfigs() {
         List<NonOncologicalHistoryConfig> configs = Lists.newArrayList();
 
-        configs.add(ImmutableNonOncologicalHistoryConfig.builder()
+        configs.add(TestCurationConfigFactory.nonOncologicalHistoryConfigBuilder()
                 .input("sickness")
                 .ignore(false)
-                .curated(ImmutablePriorOtherCondition.builder()
+                .priorOtherCondition(Optional.of(ImmutablePriorOtherCondition.builder()
                         .name("sick")
                         .category("being sick")
                         .isContraindicationForTherapy(true)
-                        .build())
+                        .build()))
                 .build());
 
-        configs.add(ImmutableNonOncologicalHistoryConfig.builder().input("not a condition").ignore(true).build());
+        configs.add(TestCurationConfigFactory.nonOncologicalHistoryConfigBuilder().input("not a condition").ignore(true).build());
 
-        configs.add(ImmutableNonOncologicalHistoryConfig.builder().input("LVEF 0.17").ignore(false).curated(0.17).build());
+        configs.add(TestCurationConfigFactory.nonOncologicalHistoryConfigBuilder()
+                .input("LVEF 0.17")
+                .ignore(false)
+                .lvef(Optional.of(0.17))
+                .build());
 
         return configs;
     }

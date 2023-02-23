@@ -3,6 +3,8 @@ package com.hartwig.actin.clinical.curation;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Optional;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig;
@@ -57,15 +59,15 @@ public class CurationDatabaseValidatorTest {
         DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild(CurationDatabaseValidator.GENERIC_PARENT_DOID, "child");
 
         NonOncologicalHistoryConfig valid = TestCurationConfigFactory.nonOncologicalHistoryConfigBuilder()
-                .curated(TestPriorOtherConditionFactory.builder().addDoids("child").build())
+                .priorOtherCondition(Optional.of(TestPriorOtherConditionFactory.builder().addDoids("child").build()))
                 .build();
         assertTrue(CurationDatabaseValidator.validateNonOncologicalHistoryConfigs(Lists.newArrayList(valid), doidModel));
 
-        NonOncologicalHistoryConfig other = TestCurationConfigFactory.nonOncologicalHistoryConfigBuilder().curated(1).build();
+        NonOncologicalHistoryConfig other = TestCurationConfigFactory.nonOncologicalHistoryConfigBuilder().lvef(Optional.of(1D)).build();
         assertTrue(CurationDatabaseValidator.validateNonOncologicalHistoryConfigs(Lists.newArrayList(other), doidModel));
 
         NonOncologicalHistoryConfig invalid = TestCurationConfigFactory.nonOncologicalHistoryConfigBuilder()
-                .curated(TestPriorOtherConditionFactory.builder().addDoids("invalid").build())
+                .priorOtherCondition(Optional.of(TestPriorOtherConditionFactory.builder().addDoids("invalid").build()))
                 .build();
         assertFalse(CurationDatabaseValidator.validateNonOncologicalHistoryConfigs(Lists.newArrayList(invalid), doidModel));
     }
