@@ -45,8 +45,7 @@ class CurationDatabaseValidator {
     }
 
     @VisibleForTesting
-    static boolean validatePrimaryTumorConfigs(@NotNull List<PrimaryTumorConfig> primaryTumorConfigs,
-            @NotNull DoidModel doidModel) {
+    static boolean validatePrimaryTumorConfigs(@NotNull List<PrimaryTumorConfig> primaryTumorConfigs, @NotNull DoidModel doidModel) {
         boolean allValid = true;
         for (PrimaryTumorConfig primaryTumorConfig : primaryTumorConfigs) {
             if (!hasValidDoids(primaryTumorConfig.doids(), doidModel, CANCER_PARENT_DOID)) {
@@ -58,8 +57,7 @@ class CurationDatabaseValidator {
     }
 
     @VisibleForTesting
-    static boolean validateSecondPrimaryConfigs(@NotNull List<SecondPrimaryConfig> secondPrimaryConfigs,
-            @NotNull DoidModel doidModel) {
+    static boolean validateSecondPrimaryConfigs(@NotNull List<SecondPrimaryConfig> secondPrimaryConfigs, @NotNull DoidModel doidModel) {
         boolean allValid = true;
         for (SecondPrimaryConfig secondPrimaryConfig : secondPrimaryConfigs) {
             if (!hasValidDoids(secondPrimaryConfig.curated().doids(), doidModel, CANCER_PARENT_DOID)) {
@@ -108,11 +106,6 @@ class CurationDatabaseValidator {
             return false;
         }
 
-        for (String doid : doids) {
-            if (!doidModel.doidWithParents(doid).contains(expectedParentDoid)) {
-                return false;
-            }
-        }
-        return true;
+         return doids.stream().allMatch(doid -> doidModel.doidWithParents(doid).contains(expectedParentDoid));
     }
 }
