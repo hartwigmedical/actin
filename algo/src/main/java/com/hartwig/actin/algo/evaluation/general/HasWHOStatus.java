@@ -40,7 +40,7 @@ public class HasWHOStatus implements EvaluationFunction {
                     .addWarnSpecificMessages(
                             "Patient WHO status " + who + " matches requested but patient " + "has complication categories of concern: "
                                     + Format.concat(warningComplicationCategories))
-                    .addWarnGeneralMessages("Adequate WHO status but complication categories of concern")
+                    .addWarnGeneralMessages(Format.concat(warningComplicationCategories))
                     .build();
         } else if (who == requiredWHO) {
             return EvaluationFactory.unrecoverable()

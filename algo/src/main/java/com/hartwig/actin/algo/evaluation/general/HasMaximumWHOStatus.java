@@ -40,7 +40,7 @@ public class HasMaximumWHOStatus implements EvaluationFunction {
                     .addWarnSpecificMessages(
                             "Patient WHO status " + who + " equals maximum but patient " + "has complication categories of concern: "
                                     + Format.concat(warningComplicationCategories))
-                    .addWarnGeneralMessages("Adequate WHO status but complication categories of concern")
+                    .addWarnGeneralMessages(Format.concat(warningComplicationCategories))
                     .build();
         } else if (who <= maximumWHO) {
             return EvaluationFactory.unrecoverable()
