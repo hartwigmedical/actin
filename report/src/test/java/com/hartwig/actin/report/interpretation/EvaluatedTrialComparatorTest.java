@@ -2,6 +2,8 @@ package com.hartwig.actin.report.interpretation;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -16,32 +18,9 @@ import org.junit.Test;
 
 public class EvaluatedTrialComparatorTest {
 
-    @Test
-    public void canSortEvaluatedTrials() {
-        EvaluatedTrial trial1 = create("trial 3", "cohort 2 + cohort 3", "Event C");
-        EvaluatedTrial trial2 = create("trial 3", "cohort 1", "Event B");
-        EvaluatedTrial trial3 = create("trial 5", "cohort 1", "Event D", "Event A");
-        EvaluatedTrial trial4 = create("trial 5", "cohort 1", "Event C");
-        EvaluatedTrial trial5 = create("trial 1", null);
-        EvaluatedTrial trial6 = create("trial 1", "cohort 1");
-        EvaluatedTrial trial7 = create("trial 1", "cohort 2");
-        EvaluatedTrial trial8 = create("trial 2", "cohort 1");
-
-        List<EvaluatedTrial> trials = Lists.newArrayList(trial7, trial4, trial2, trial8, trial1, trial6, trial3, trial5);
-        trials.sort(new EvaluatedTrialComparator());
-
-        assertEquals(trial1, trials.get(0));
-        assertEquals(trial2, trials.get(1));
-        assertEquals(trial3, trials.get(2));
-        assertEquals(trial4, trials.get(3));
-        assertEquals(trial5, trials.get(4));
-        assertEquals(trial6, trials.get(5));
-        assertEquals(trial7, trials.get(6));
-        assertEquals(trial8, trials.get(7));
-    }
-
     @NotNull
-    private static EvaluatedTrial create(@NotNull String trialId, @Nullable String cohort, String... molecularEvents) {
+    private static EvaluatedTrial create(@NotNull String trialId, @Nullable String cohort, boolean hasSlotsAvailable,
+            String... molecularEvents) {
         Set<String> molecularEventSet = Sets.newTreeSet(Ordering.natural());
         if (molecularEvents.length > 0) {
             molecularEventSet.addAll(Lists.newArrayList(molecularEvents));
@@ -54,7 +33,34 @@ public class EvaluatedTrialComparatorTest {
                 .cohort(cohort)
                 .isPotentiallyEligible(false)
                 .isOpen(false)
-                .hasSlotsAvailable(false)
+                .hasSlotsAvailable(hasSlotsAvailable)
                 .build();
+    }
+
+    @Test
+    public void canSortEvaluatedTrials() {
+        List<EvaluatedTrial> trials = Arrays.asList(create("trial 7", "cohort 1", true),
+                create("trial 3", "cohort 2 + cohort 3", false, "Event C"),
+                create("trial 3", "cohort 1", false, "Event B"),
+                create("trial 5", "cohort 1", false, "Event D", "Event A"),
+                create("trial 5", "cohort 1", false, "Event C"),
+                create("trial 1", null, false),
+                create("trial 1", "cohort 1", false),
+                create("trial 1", "cohort 2", false),
+                create("trial 2", "cohort 1", false));
+
+        List<EvaluatedTrial> trialList = Lists.newArrayList(trials.get(7),
+                trials.get(4),
+                trials.get(2),
+                trials.get(8),
+                trials.get(1),
+                trials.get(6),
+                trials.get(0),
+                trials.get(3),
+                trials.get(5));
+        trialList.sort(new EvaluatedTrialComparator());
+        Iterator<EvaluatedTrial> trialIterator = trialList.iterator();
+
+        trials.forEach(trial -> assertEquals(trial, trialIterator.next()));
     }
 }

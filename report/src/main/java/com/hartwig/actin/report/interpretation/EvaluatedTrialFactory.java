@@ -3,15 +3,14 @@ package com.hartwig.actin.report.interpretation;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
-import com.hartwig.actin.algo.datamodel.CohortMatch;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
-import com.hartwig.actin.algo.datamodel.TrialMatch;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 
 import org.jetbrains.annotations.NotNull;
@@ -23,9 +22,7 @@ public final class EvaluatedTrialFactory {
 
     @NotNull
     public static List<EvaluatedTrial> create(@NotNull TreatmentMatch treatmentMatch) {
-        List<EvaluatedTrial> trials = Lists.newArrayList();
-
-        for (TrialMatch trialMatch : treatmentMatch.trialMatches()) {
+        return treatmentMatch.trialMatches().stream().flatMap(trialMatch -> {
             Set<String> trialWarnings = extractWarnings(trialMatch.evaluations());
             Set<String> trialFails = extractFails(trialMatch.evaluations());
             Set<String> trialInclusionEvents = extractInclusionEvents(trialMatch.evaluations());
@@ -35,24 +32,9 @@ public final class EvaluatedTrialFactory {
                     ImmutableEvaluatedTrial.builder().trialId(trialMatch.identification().trialId()).acronym(trialAcronym);
 
             boolean trialIsOpen = trialMatch.identification().open();
-            for (CohortMatch cohortMatch : trialMatch.cohorts()) {
-                Set<String> cohortWarnings = extractWarnings(cohortMatch.evaluations());
-                Set<String> cohortFails = extractFails(cohortMatch.evaluations());
-                Set<String> cohortInclusionEvents = extractInclusionEvents(cohortMatch.evaluations());
-
-                trials.add(builder.cohort(cohortMatch.metadata().description())
-                        .molecularEvents(Sets.union(trialInclusionEvents, cohortInclusionEvents))
-                        .isPotentiallyEligible(cohortMatch.isPotentiallyEligible())
-                        .isOpen(trialIsOpen && cohortMatch.metadata().open() && !cohortMatch.metadata().blacklist())
-                        .hasSlotsAvailable(cohortMatch.metadata().slotsAvailable())
-                        .warnings(Sets.union(cohortWarnings, trialWarnings))
-                        .fails(Sets.union(cohortFails, trialFails))
-                        .build());
-            }
-
             // Handle case of trial without cohorts.
             if (trialMatch.cohorts().isEmpty()) {
-                trials.add(builder.cohort(null)
+                return Stream.of(builder.cohort(null)
                         .molecularEvents(trialInclusionEvents)
                         .isPotentiallyEligible(trialMatch.isPotentiallyEligible())
                         .isOpen(trialIsOpen)
@@ -60,12 +42,19 @@ public final class EvaluatedTrialFactory {
                         .warnings(trialWarnings)
                         .fails(trialFails)
                         .build());
+            } else {
+                return trialMatch.cohorts()
+                        .stream()
+                        .map(cohortMatch -> builder.cohort(cohortMatch.metadata().description())
+                                .molecularEvents(Sets.union(trialInclusionEvents, extractInclusionEvents(cohortMatch.evaluations())))
+                                .isPotentiallyEligible(cohortMatch.isPotentiallyEligible())
+                                .isOpen(trialIsOpen && cohortMatch.metadata().open() && !cohortMatch.metadata().blacklist())
+                                .hasSlotsAvailable(cohortMatch.metadata().slotsAvailable())
+                                .warnings(Sets.union(extractWarnings(cohortMatch.evaluations()), trialWarnings))
+                                .fails(Sets.union(extractFails(cohortMatch.evaluations()), trialFails))
+                                .build());
             }
-        }
-
-        trials.sort(new EvaluatedTrialComparator());
-
-        return trials;
+        }).sorted(new EvaluatedTrialComparator()).collect(Collectors.toList());
     }
 
     @NotNull
