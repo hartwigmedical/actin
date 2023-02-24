@@ -119,6 +119,15 @@ public final class Cells {
     }
 
     @NotNull
+    public static Cell createContent(@NotNull String text, boolean greyText) {
+        Cell cell = createContent(text);
+        if (greyText) {
+            cell.setFontColor(Styles.PALETTE_MID_GREY);
+        }
+        return cell;
+    }
+
+    @NotNull
     public static Cell createContentWarn(@NotNull String text) {
         Cell cell = createContent(text);
         cell.setFontColor(Styles.PALETTE_WARN);

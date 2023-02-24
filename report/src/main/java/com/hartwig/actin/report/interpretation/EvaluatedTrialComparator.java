@@ -13,6 +13,11 @@ public class EvaluatedTrialComparator implements Comparator<EvaluatedTrial> {
 
     @Override
     public int compare(@NotNull EvaluatedTrial trial1, @NotNull EvaluatedTrial trial2) {
+        int hasSlotsAvailableCompare = Boolean.compare(!trial1.hasSlotsAvailable(), !trial2.hasSlotsAvailable());
+        if (hasSlotsAvailableCompare != 0) {
+            return hasSlotsAvailableCompare;
+        }
+
         int hasMolecularCompare = Boolean.compare(trial1.molecularEvents().isEmpty(), trial2.molecularEvents().isEmpty());
         if (hasMolecularCompare != 0) {
             return hasMolecularCompare;

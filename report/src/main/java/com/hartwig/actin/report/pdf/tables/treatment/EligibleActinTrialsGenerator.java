@@ -110,15 +110,17 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
         boolean hasTrialWithNoSlots = false;
         for (EvaluatedTrial trial : sort(trials)) {
             String addon = Strings.EMPTY;
+            boolean greyText = false;
             if (trial.isOpen() && !trial.hasSlotsAvailable()) {
                 addon = " *";
                 hasTrialWithNoSlots = true;
+                greyText = true;
             }
-            table.addCell(Cells.createContent(trial.trialId() + addon));
-            table.addCell(Cells.createContent(trial.acronym()));
-            table.addCell(Cells.createContent(trial.cohort() != null ? trial.cohort() : Strings.EMPTY));
-            table.addCell(Cells.createContent(concat(trial.molecularEvents())));
-            table.addCell(Cells.createContent(concat(trial.warnings())));
+            table.addCell(Cells.createContent(trial.trialId() + addon, greyText));
+            table.addCell(Cells.createContent(trial.acronym(), greyText));
+            table.addCell(Cells.createContent(trial.cohort() != null ? trial.cohort() : Strings.EMPTY, greyText));
+            table.addCell(Cells.createContent(concat(trial.molecularEvents()), greyText));
+            table.addCell(Cells.createContent(concat(trial.warnings()), greyText));
         }
 
         if (hasTrialWithNoSlots) {
