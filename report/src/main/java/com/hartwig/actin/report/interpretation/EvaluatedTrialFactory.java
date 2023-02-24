@@ -5,12 +5,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.TreatmentMatch;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
+
 import org.jetbrains.annotations.NotNull;
 
 public final class EvaluatedTrialFactory {
@@ -41,20 +43,18 @@ public final class EvaluatedTrialFactory {
                         .fails(trialFails)
                         .build());
             } else {
-                return trialMatch.cohorts().stream().map(cohortMatch ->
-                    builder.cohort(cohortMatch.metadata().description())
-                            .molecularEvents(Sets.union(trialInclusionEvents, extractInclusionEvents(cohortMatch.evaluations())))
-                            .isPotentiallyEligible(cohortMatch.isPotentiallyEligible())
-                            .isOpen(trialIsOpen && cohortMatch.metadata().open() && !cohortMatch.metadata().blacklist())
-                            .hasSlotsAvailable(cohortMatch.metadata().slotsAvailable())
-                            .warnings(Sets.union(extractWarnings(cohortMatch.evaluations()), trialWarnings))
-                            .fails(Sets.union(extractFails(cohortMatch.evaluations()), trialFails))
-                            .build()
-                );
+                return trialMatch.cohorts()
+                        .stream()
+                        .map(cohortMatch -> builder.cohort(cohortMatch.metadata().description())
+                                .molecularEvents(Sets.union(trialInclusionEvents, extractInclusionEvents(cohortMatch.evaluations())))
+                                .isPotentiallyEligible(cohortMatch.isPotentiallyEligible())
+                                .isOpen(trialIsOpen && cohortMatch.metadata().open() && !cohortMatch.metadata().blacklist())
+                                .hasSlotsAvailable(cohortMatch.metadata().slotsAvailable())
+                                .warnings(Sets.union(extractWarnings(cohortMatch.evaluations()), trialWarnings))
+                                .fails(Sets.union(extractFails(cohortMatch.evaluations()), trialFails))
+                                .build());
             }
-        })
-                .sorted(new EvaluatedTrialComparator())
-                .collect(Collectors.toList());
+        }).sorted(new EvaluatedTrialComparator()).collect(Collectors.toList());
     }
 
     @NotNull
