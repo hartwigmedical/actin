@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class PatternMatcher {
+final class PatternMatcher {
 
     private PatternMatcher() {
     }
