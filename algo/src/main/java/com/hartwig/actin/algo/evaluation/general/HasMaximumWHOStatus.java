@@ -1,15 +1,14 @@
 package com.hartwig.actin.algo.evaluation.general;
 
-import static com.hartwig.actin.algo.evaluation.general.HasWHOStatus.COMPLICATION_CATEGORIES_AFFECTING_WHO_STATUS;
 import java.util.Set;
+
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-
-import com.hartwig.actin.algo.evaluation.complication.PatternMatcher;
 import com.hartwig.actin.algo.evaluation.util.Format;
+
 import org.jetbrains.annotations.NotNull;
 
 public class HasMaximumWHOStatus implements EvaluationFunction {
@@ -33,14 +32,14 @@ public class HasMaximumWHOStatus implements EvaluationFunction {
                     .build();
         }
 
-        Set<String> warningComplicationCategories = PatternMatcher.findComplicationCategoriesMatchingCategories(record,
-                COMPLICATION_CATEGORIES_AFFECTING_WHO_STATUS);
+        Set<String> warningComplicationCategories = WHOFunctions.findComplicationCategoriesAffectingWHOStatus(record);
 
         if (who == maximumWHO && !warningComplicationCategories.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
-                    .addWarnSpecificMessages("Patient WHO status " + who + " equals maximum but patient " +
-                            "has complication categories of concern: " + Format.concat(warningComplicationCategories))
+                    .addWarnSpecificMessages(
+                            "Patient WHO status " + who + " equals maximum but patient " + "has complication categories of concern: "
+                                    + Format.concat(warningComplicationCategories))
                     .addWarnGeneralMessages("Adequate WHO status but complication categories of concern")
                     .build();
         } else if (who <= maximumWHO) {

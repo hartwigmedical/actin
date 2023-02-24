@@ -61,10 +61,7 @@ final class GeneralTestFactory {
                 .who(who)
                 .build();
 
-        Complication complication = ImmutableComplication.builder()
-                .name(Strings.EMPTY)
-                .categories(complicationCategories)
-                .build();
+        Complication complication = ImmutableComplication.builder().name(Strings.EMPTY).categories(complicationCategories).build();
 
         ClinicalRecord clinical = ImmutableClinicalRecord.builder()
                 .from(TestClinicalFactory.createMinimalTestClinicalRecord())

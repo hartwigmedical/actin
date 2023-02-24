@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.complication;
 
+import java.util.Collections;
 import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -12,7 +13,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
 import com.hartwig.actin.algo.medication.MedicationStatusInterpretation;
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreter;
-import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.Medication;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,14 +34,8 @@ public class HasPotentialUncontrolledTumorRelatedPain implements EvaluationFunct
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Set<String> painComplications = Sets.newHashSet();
-        if (record.clinical().complications() != null) {
-            for (Complication complication : record.clinical().complications()) {
-                if (isPotentialPainComplication(complication)) {
-                    painComplications.add(complication.name());
-                }
-            }
-        }
+        Set<String> painComplications = ComplicationFunctions.findComplicationNamesMatchingAnyCategory(record,
+                Collections.singletonList(SEVERE_PAIN_COMPLICATION));
 
         if (!painComplications.isEmpty()) {
             return EvaluationFactory.unrecoverable()
@@ -71,14 +65,5 @@ public class HasPotentialUncontrolledTumorRelatedPain implements EvaluationFunct
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has no uncontrolled tumor related pain")
                 .build();
-    }
-
-    private static boolean isPotentialPainComplication(@NotNull Complication complication) {
-        for (String category : complication.categories()) {
-            if (category.toLowerCase().contains(SEVERE_PAIN_COMPLICATION.toLowerCase())) {
-                return true;
-            }
-        }
-        return false;
     }
 }

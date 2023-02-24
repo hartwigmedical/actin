@@ -1,9 +1,11 @@
 package com.hartwig.actin.algo.evaluation.general;
 
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
+
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
+
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
@@ -33,11 +35,11 @@ public class HasMaximumWHOStatusTest {
 
     @Test
     public void shouldWarnWhenWHOIsExactMatchAndPatientHasComplicationCategoriesOfConcern() {
-        Evaluation evaluation = function.evaluate(GeneralTestFactory.withWHOAndComplications(2,
-                Collections.singletonList("Pleural Effusions")));
+        Evaluation evaluation =
+                function.evaluate(GeneralTestFactory.withWHOAndComplications(2, Collections.singletonList("Pleural Effusions")));
         assertEvaluation(EvaluationResult.WARN, evaluation);
-        assertTrue(evaluation.warnSpecificMessages().contains(
-                "Patient WHO status 2 equals maximum but patient has complication categories of concern: " +
-                        "Pleural Effusions"));
+        assertTrue(evaluation.warnSpecificMessages()
+                .contains(
+                        "Patient WHO status 2 equals maximum but patient has complication categories of concern: " + "Pleural Effusions"));
     }
 }

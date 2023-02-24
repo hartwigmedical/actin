@@ -2,12 +2,14 @@ package com.hartwig.actin.algo.evaluation.complication;
 
 import java.util.Collections;
 import java.util.Set;
+
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
+
 import org.jetbrains.annotations.NotNull;
 
 public class HasComplicationOfCategory implements EvaluationFunction {
@@ -30,8 +32,8 @@ public class HasComplicationOfCategory implements EvaluationFunction {
                     .build();
         }
 
-        Set<String> complicationMatches = PatternMatcher.findComplicationNamesMatchingCategories(record,
-                        Collections.singletonList(categoryToFind));
+        Set<String> complicationMatches =
+                ComplicationFunctions.findComplicationNamesMatchingAnyCategory(record, Collections.singletonList(categoryToFind));
 
         if (!complicationMatches.isEmpty()) {
             if (complicationMatches.size() == 1 && complicationMatches.iterator().next().equalsIgnoreCase(categoryToFind)) {
