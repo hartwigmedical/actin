@@ -14,8 +14,10 @@ import com.hartwig.actin.report.pdf.util.Constants;
 import com.hartwig.actin.util.Paths;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.pdf.CompressionConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.properties.AreaBreakType;
@@ -89,7 +91,12 @@ public class ReportWriter {
         if (writeToDisk && outputDirectory != null) {
             String outputFilePath = Paths.forceTrailingFileSeparator(outputDirectory) + patientId + ".actin.pdf";
             LOGGER.info("Writing PDF report to {}", outputFilePath);
-            writer = new PdfWriter(outputFilePath);
+            WriterProperties properties = new WriterProperties()
+                    .setFullCompressionMode(true)
+                    .setCompressionLevel(CompressionConstants.BEST_COMPRESSION)
+                    .useSmartMode();
+            writer = new PdfWriter(outputFilePath, properties);
+            writer.setCompressionLevel(9);
         } else {
             LOGGER.info("Generating in-memory PDF report");
             writer = new PdfWriter(new ByteArrayOutputStream());

@@ -34,6 +34,9 @@ public final class Styles {
     private static final String FONT_REGULAR_PATH = "fonts/nimbus-sans/NimbusSansL-Regular.ttf";
     private static final String FONT_BOLD_PATH = "fonts/nimbus-sans/NimbusSansL-Bold.ttf";
 
+    private static final PdfFont fontRegular = createFontFromProgram(loadFontProgram(FONT_REGULAR_PATH));
+    private static final PdfFont fontBold = createFontFromProgram(loadFontProgram(FONT_BOLD_PATH));
+
     @NotNull
     public static Style reportTitleStyle() {
         return new Style().setFont(fontBold()).setFontSize(11).setFontColor(Styles.PALETTE_BLACK);
@@ -116,14 +119,14 @@ public final class Styles {
 
     @NotNull
     public static PdfFont fontRegular() {
-        // Cannot be created statically as every PDF needs their own private font objects.
-        return createFontFromProgram(loadFontProgram(FONT_REGULAR_PATH));
+        // Each PDF needs its own private font objects, but static creation is allowed as long as the application only creates one report.
+        return fontRegular;
     }
 
     @NotNull
     public static PdfFont fontBold() {
-        // Cannot be created statically as every PDF needs their own private font objects.
-        return createFontFromProgram(loadFontProgram(FONT_BOLD_PATH));
+        // Each PDF needs its own private font objects, but static creation is allowed as long as the application only creates one report.
+        return fontBold;
     }
 
     @NotNull
@@ -139,8 +142,5 @@ public final class Styles {
             // Should never happen, fonts are loaded from code
             throw new IllegalStateException(exception);
         }
-    }
-
-    private Styles() {
     }
 }
