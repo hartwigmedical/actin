@@ -34,8 +34,13 @@ public final class Styles {
     private static final String FONT_REGULAR_PATH = "fonts/nimbus-sans/NimbusSansL-Regular.ttf";
     private static final String FONT_BOLD_PATH = "fonts/nimbus-sans/NimbusSansL-Bold.ttf";
 
-    private static final PdfFont fontRegular = createFontFromProgram(loadFontProgram(FONT_REGULAR_PATH));
-    private static final PdfFont fontBold = createFontFromProgram(loadFontProgram(FONT_BOLD_PATH));
+    private static PdfFont fontRegular;
+    private static PdfFont fontBold;
+
+    public static void initialize() {
+        fontRegular = createFontFromProgram(loadFontProgram(FONT_REGULAR_PATH));
+        fontBold = createFontFromProgram(loadFontProgram(FONT_BOLD_PATH));
+    }
 
     @NotNull
     public static Style reportTitleStyle() {
@@ -119,13 +124,13 @@ public final class Styles {
 
     @NotNull
     public static PdfFont fontRegular() {
-        // Each PDF needs its own private font objects, but static creation is allowed as long as the application only creates one report.
+        // Each PDF needs its own private font objects, but they can be static as long as they are re-initialized for each report.
         return fontRegular;
     }
 
     @NotNull
     public static PdfFont fontBold() {
-        // Each PDF needs its own private font objects, but static creation is allowed as long as the application only creates one report.
+        // Each PDF needs its own private font objects, but they can be static as long as they are re-initialized for each report.
         return fontBold;
     }
 

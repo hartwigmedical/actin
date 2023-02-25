@@ -11,6 +11,7 @@ import com.hartwig.actin.report.pdf.chapters.SummaryChapter;
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingChapter;
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingDetailsChapter;
 import com.hartwig.actin.report.pdf.util.Constants;
+import com.hartwig.actin.report.pdf.util.Styles;
 import com.hartwig.actin.util.Paths;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.geom.PageSize;
@@ -44,7 +45,9 @@ public class ReportWriter {
         write(report, false);
     }
 
-    public void write(@NotNull Report report, boolean skipTrialMatchingDetails) throws IOException {
+    public synchronized void write(@NotNull Report report, boolean skipTrialMatchingDetails) throws IOException {
+        LOGGER.info("Initializing output styles");
+        Styles.initialize();
         ReportChapter[] chapters;
 
         if (skipTrialMatchingDetails) {
