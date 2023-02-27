@@ -38,9 +38,9 @@ public class HasWHOStatus implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
                     .addWarnSpecificMessages(
-                            "Patient WHO status " + who + " matches requested but patient " + "has complication categories of concern: "
+                            "Patient WHO status " + who + " matches requested but patient has complication categories of concern: "
                                     + Format.concat(warningComplicationCategories))
-                    .addWarnGeneralMessages(Format.concat(warningComplicationCategories))
+                    .addWarnGeneralMessages("WHO adequate but has " + Format.concat(warningComplicationCategories))
                     .build();
         } else if (who == requiredWHO) {
             return EvaluationFactory.unrecoverable()
