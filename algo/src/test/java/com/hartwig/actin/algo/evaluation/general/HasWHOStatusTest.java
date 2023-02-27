@@ -43,7 +43,6 @@ public class HasWHOStatusTest {
                 function.evaluate(GeneralTestFactory.withWHOAndComplications(2, Collections.singletonList("Pleural Effusions")));
         assertEvaluation(EvaluationResult.WARN, evaluation);
         assertTrue(evaluation.warnSpecificMessages()
-                .contains("Patient WHO status 2 matches requested but patient has complication categories of concern: "
-                        + "Pleural Effusions"));
+                .contains("Patient WHO status 2 matches requested but patient has complication categories of concern: Pleural Effusions"));
     }
 }
