@@ -57,7 +57,7 @@ public class GeneIsInactivated implements EvaluationFunction {
                         || homozygousDisruption.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
                 if (!homozygousDisruption.isReportable()) {
                     inactivationEventsThatAreUnreportable.add(homozygousDisruption.event());
-                } else if (homozygousDisruption.geneRole() == GeneRole.ONCO || homozygousDisruption.geneRole() == GeneRole.UNKNOWN) {
+                } else if (homozygousDisruption.geneRole() == GeneRole.ONCO) {
                     inactivationEventsNoTSG.add(homozygousDisruption.event());
                 } else if (isGainOfFunction) {
                     inactivationEventsGainOfFunction.add(homozygousDisruption.event());
@@ -73,7 +73,7 @@ public class GeneIsInactivated implements EvaluationFunction {
                         || copyNumber.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
                 if (!copyNumber.isReportable()) {
                     inactivationEventsThatAreUnreportable.add(copyNumber.event());
-                } else if (copyNumber.geneRole() == GeneRole.ONCO || copyNumber.geneRole() == GeneRole.UNKNOWN) {
+                } else if (copyNumber.geneRole() == GeneRole.ONCO) {
                     inactivationEventsNoTSG.add(copyNumber.event());
                 } else if (isGainOfFunction) {
                     inactivationEventsGainOfFunction.add(copyNumber.event());
@@ -106,7 +106,7 @@ public class GeneIsInactivated implements EvaluationFunction {
                         boolean isGainOfFunction = variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
                                 || variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
 
-                        if (variant.geneRole() == GeneRole.ONCO || variant.geneRole() == GeneRole.UNKNOWN) {
+                        if (variant.geneRole() == GeneRole.ONCO) {
                             inactivationEventsNoTSG.add(variant.event());
                         } else if (!variant.isBiallelic()) {
                             inactivationHighDriverNonBiallelicVariants.add(variant.event());
@@ -189,8 +189,8 @@ public class GeneIsInactivated implements EvaluationFunction {
         if (!inactivationEventsNoTSG.isEmpty()) {
             warnEvents.addAll(inactivationEventsNoTSG);
             warnSpecificMessages.add("Inactivation events detected for gene " + gene + ": " + Format.concat(inactivationEventsNoTSG)
-                    + " but gene is not annotated with gene role TSG");
-            warnGeneralMessages.add(gene + " potential inactivation but gene role not TSG");
+                    + " but gene is annotated with gene role ONCO");
+            warnGeneralMessages.add(gene + " potential inactivation but gene role ONCO");
         }
 
         if (!inactivationEventsGainOfFunction.isEmpty()) {
