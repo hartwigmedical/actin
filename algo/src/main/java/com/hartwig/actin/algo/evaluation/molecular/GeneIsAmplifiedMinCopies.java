@@ -58,12 +58,12 @@ public class GeneIsAmplifiedMinCopies implements EvaluationFunction {
                 boolean isAmplification = relativeMaxCopies >= HARD_PLOIDY_FACTOR;
                 boolean isNearAmp = relativeMinCopies >= SOFT_PLOIDY_FACTOR && relativeMaxCopies <= HARD_PLOIDY_FACTOR;
 
-                boolean isPotentialOncogene = copyNumber.geneRole() == GeneRole.ONCO || copyNumber.geneRole() == GeneRole.BOTH;
+                boolean isNoOncogene = copyNumber.geneRole() == GeneRole.TSG;
                 boolean isLossOfFunction = copyNumber.proteinEffect() == ProteinEffect.LOSS_OF_FUNCTION
                         || copyNumber.proteinEffect() == ProteinEffect.LOSS_OF_FUNCTION_PREDICTED;
 
                 if (isAmplification) {
-                    if (!isPotentialOncogene) {
+                    if (isNoOncogene) {
                         ampsOnNonOncogenes.add(copyNumber.event());
                     } else if (isLossOfFunction) {
                         ampsWithLossOfFunction.add(copyNumber.event());
@@ -132,8 +132,8 @@ public class GeneIsAmplifiedMinCopies implements EvaluationFunction {
 
         if (!ampsOnNonOncogenes.isEmpty()) {
             warnEvents.addAll(ampsOnNonOncogenes);
-            warnSpecificMessages.add("Gene " + gene + " is amplified but gene " + gene + " is not known as an oncogene");
-            warnGeneralMessages.add(gene + " amplification but " + gene + " unknown as oncogene");
+            warnSpecificMessages.add("Gene " + gene + " is amplified but gene " + gene + " is known as TSG");
+            warnGeneralMessages.add(gene + " amplification but " + gene + " known as TSG");
         }
 
         if (!ampsThatAreUnreportable.isEmpty()) {
