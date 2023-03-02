@@ -33,17 +33,6 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
     private final float molecularEventColWidth;
     private final float checksColWidth;
 
-    private EligibleActinTrialsGenerator(@NotNull final List<EvaluatedTrial> trials, @NotNull final String title, final float trialColWidth,
-            final float acronymColWidth, final float cohortColWidth, final float molecularEventColWidth, final float checksColWidth) {
-        this.trials = trials;
-        this.title = title;
-        this.trialColWidth = trialColWidth;
-        this.acronymColWidth = acronymColWidth;
-        this.cohortColWidth = cohortColWidth;
-        this.molecularEventColWidth = molecularEventColWidth;
-        this.checksColWidth = checksColWidth;
-    }
-
     @NotNull
     public static EligibleActinTrialsGenerator forOpenTrials(@NotNull List<EvaluatedTrial> trials, float width) {
         List<EvaluatedTrial> recruitingAndEligible = Lists.newArrayList();
@@ -69,7 +58,7 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
             }
         }
 
-        String title = String.format("%s trials and cohorts that are considered ineligible (%s)",
+        String title = String.format("%s trials and cohorts that are considered eligible (%s)",
                 TreatmentConstants.ACTIN_SOURCE,
                 unavailableAndEligible.size());
         return create(unavailableAndEligible, title, contentWidth);
@@ -92,18 +81,15 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
                 checksColWidth);
     }
 
-    @NotNull
-    private static List<EvaluatedTrial> sort(@NotNull List<EvaluatedTrial> trials) {
-        return trials.stream().sorted(new EvaluatedTrialComparator()).collect(Collectors.toList());
-    }
-
-    @NotNull
-    private static String concat(@NotNull Set<String> strings) {
-        StringJoiner joiner = Formats.commaJoiner();
-        for (String string : strings) {
-            joiner.add(string);
-        }
-        return Formats.valueOrDefault(joiner.toString(), "None");
+    private EligibleActinTrialsGenerator(@NotNull final List<EvaluatedTrial> trials, @NotNull final String title, final float trialColWidth,
+            final float acronymColWidth, final float cohortColWidth, final float molecularEventColWidth, final float checksColWidth) {
+        this.trials = trials;
+        this.title = title;
+        this.trialColWidth = trialColWidth;
+        this.acronymColWidth = acronymColWidth;
+        this.cohortColWidth = cohortColWidth;
+        this.molecularEventColWidth = molecularEventColWidth;
+        this.checksColWidth = checksColWidth;
     }
 
     @NotNull
@@ -149,5 +135,19 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
         }
 
         return Tables.makeWrapping(table);
+    }
+
+    @NotNull
+    private static List<EvaluatedTrial> sort(@NotNull List<EvaluatedTrial> trials) {
+        return trials.stream().sorted(new EvaluatedTrialComparator()).collect(Collectors.toList());
+    }
+
+    @NotNull
+    private static String concat(@NotNull Set<String> strings) {
+        StringJoiner joiner = Formats.commaJoiner();
+        for (String string : strings) {
+            joiner.add(string);
+        }
+        return Formats.valueOrDefault(joiner.toString(), "None");
     }
 }

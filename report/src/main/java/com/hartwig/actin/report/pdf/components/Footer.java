@@ -26,9 +26,9 @@ public class Footer {
         PdfCanvas canvas = new PdfCanvas(page.getLastContentStream(), page.getResources(), page.getDocument());
 
         int pageNumber = page.getDocument().getPageNumber(page);
-        PdfFormXObject pageNumberTemplate = new PdfFormXObject(new Rectangle(0, 0, 450, 20));
-        canvas.addXObjectAt(pageNumberTemplate, 58, 20);
-        footerTemplates.add(new FooterTemplate(pageNumber, pageNumberTemplate));
+        PdfFormXObject template = new PdfFormXObject(new Rectangle(0, 0, 450, 20));
+        canvas.addXObjectAt(template, 58, 20);
+        footerTemplates.add(new FooterTemplate(pageNumber, template));
 
         canvas.release();
     }
@@ -59,9 +59,9 @@ public class Footer {
             canvas.showTextAligned(pageNumberParagraph, 0, 0, TextAlignment.LEFT);
 
             String disclaimer =
-                    "All results and data described in this report are for research−use−only and have not been generated using a "
+                    "All results and data described in this report are for research use only and have not been generated using a "
                             + "clinically validated and controlled procedure. These results should not be used for clinical decision making.";
-            Paragraph disclaimerParagraph = new Paragraph(disclaimer).setMaxWidth(400).addStyle(Styles.pageNumberStyle());
+            Paragraph disclaimerParagraph = new Paragraph(disclaimer).setMaxWidth(400).addStyle(Styles.deemphasizedStyle());
             canvas.showTextAligned(disclaimerParagraph, 50, 0, TextAlignment.LEFT);
         }
     }

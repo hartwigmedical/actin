@@ -128,6 +128,11 @@ public final class Styles {
     }
 
     @NotNull
+    public static Style deemphasizedStyle() {
+        return new Style().setFont(fontRegular()).setFontSize(5).setFontColor(Styles.PALETTE_MID_GREY);
+    }
+
+    @NotNull
     public static PdfFont fontRegular() {
         // Each PDF needs its own private font objects, but they can be static as long as they are re-initialized for each report.
         return fontRegular;

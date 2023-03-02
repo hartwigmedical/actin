@@ -30,7 +30,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class RecentMolecularSummaryGenerator implements TableGenerator {
 
-    private static final double PURITY_WARN_THRESHOLD = 0.20;
     @NotNull
     private final ClinicalRecord clinical;
     @NotNull
@@ -89,7 +88,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
                             Maps.immutableEntry("Gene fusions", highDriverGeneFusionsCell()),
                             Maps.immutableEntry("Virus detection", highDriverVirusDetectionsCell()),
                             Maps.immutableEntry("", Cells.createEmpty()),
-                            Maps.immutableEntry("Actionable genes with medium/low driver:", actionableGenesWithMedOrLowDriverMutation()))
+                            Maps.immutableEntry("Actionable genes with medium/low driver:", actionableGenesWithoutHighDriverMutation()))
                     .flatMap(entry -> Stream.of(Cells.createKey(entry.getKey()), entry.getValue()))
                     .forEach(table::addCell);
         } else {
@@ -106,8 +105,8 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
         if (biopsyLocation != null) {
             if (purity != null) {
                 Text biopsyText = new Text(biopsyLocation).addStyle(Styles.tableHighlightStyle());
-                Text purityText = new Text(String.format(ApplicationConfig.LOCALE, " (purity %s%%)", purity * 100));
-                purityText.addStyle((purity < PURITY_WARN_THRESHOLD) ? Styles.tableNoticeStyle() : Styles.tableHighlightStyle());
+                Text purityText = new Text(String.format(ApplicationConfig.LOCALE, " (purity %d%%)", Math.round(purity * 100)));
+                purityText.addStyle(molecular.hasSufficientQuality() ? Styles.tableNoticeStyle() : Styles.tableHighlightStyle());
                 return Cells.create(new Paragraph().addAll(Arrays.asList(biopsyText, purityText)));
             } else {
                 return Cells.createValue(biopsyLocation);
@@ -165,9 +164,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
     }
 
     @NotNull
-    private Cell actionableGenesWithMedOrLowDriverMutation() {
-        Set<DriverLikelihood> allowedLikelihoods = Set.of(DriverLikelihood.LOW, DriverLikelihood.MEDIUM);
-
+    private Cell actionableGenesWithoutHighDriverMutation() {
         Set<String> eventsWithActinTrials = trials.stream()
                 .filter(EvaluatedTrial::isPotentiallyEligible)
                 .filter(EvaluatedTrial::isOpen)
@@ -175,10 +172,10 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
                 .collect(Collectors.toSet());
 
         String genes = Stream.concat(molecular.drivers().variants().stream(), molecular.drivers().disruptions().stream())
-                .filter(driver -> driver.driverLikelihood() != null)
-                .filter(driver -> allowedLikelihoods.contains(driver.driverLikelihood()))
+                .filter(driver -> driver.driverLikelihood() != DriverLikelihood.HIGH)
                 .filter(driver -> !driver.evidence().externalEligibleTrials().isEmpty() || eventsWithActinTrials.contains(driver.event()))
                 .map(GeneAlteration::gene)
+                .distinct()
                 .collect(Collectors.joining(", "));
 
         return Cells.createValue(genes);

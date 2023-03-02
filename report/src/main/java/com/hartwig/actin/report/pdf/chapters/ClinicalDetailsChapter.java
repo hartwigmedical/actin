@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.chapters;
 
-import static com.hartwig.actin.report.pdf.ReportWriter.STANDARD_KEY_WIDTH;
+import static com.hartwig.actin.report.pdf.util.Formats.STANDARD_KEY_WIDTH;
 
 import java.util.List;
 

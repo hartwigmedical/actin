@@ -36,6 +36,24 @@ public class PriorMolecularResultGenerator {
     }
 
     @NotNull
+    public Table contents() {
+        Table table = Tables.createFixedWidthCols(keyWidth, valueWidth);
+
+        table.addCell(Cells.createSubTitle(String.format(ApplicationConfig.LOCALE,
+                "IHC results (%s)",
+                Formats.date(clinical.patient().questionnaireDate()))));
+        if (clinical.priorMolecularTests().isEmpty()) {
+            table.addCell(Cells.createValue("None"));
+        } else {
+            PriorMolecularTestInterpretation interpretation = PriorMolecularTestInterpreter.interpret(clinical.priorMolecularTests());
+            List<Paragraph> paragraphs = generatePriorTestParagraphs(interpretation);
+            table.addCell(Cells.createValue(paragraphs));
+        }
+
+        return table;
+    }
+
+    @NotNull
     private static List<Paragraph> generatePriorTestParagraphs(@NotNull PriorMolecularTestInterpretation interpretation) {
         List<Paragraph> paragraphs = Lists.newArrayList();
 
@@ -105,23 +123,5 @@ public class PriorMolecularResultGenerator {
             builder.append(scoreValueUnit);
         }
         return builder.toString();
-    }
-
-    @NotNull
-    public Table contents() {
-        Table table = Tables.createFixedWidthCols(keyWidth, valueWidth);
-
-        table.addCell(Cells.createSubTitle(String.format(ApplicationConfig.LOCALE,
-                "IHC results (%s)",
-                Formats.date(clinical.patient().questionnaireDate()))));
-        if (clinical.priorMolecularTests().isEmpty()) {
-            table.addCell(Cells.createValue("None"));
-        } else {
-            PriorMolecularTestInterpretation interpretation = PriorMolecularTestInterpreter.interpret(clinical.priorMolecularTests());
-            List<Paragraph> paragraphs = generatePriorTestParagraphs(interpretation);
-            table.addCell(Cells.createValue(paragraphs));
-        }
-
-        return table;
     }
 }

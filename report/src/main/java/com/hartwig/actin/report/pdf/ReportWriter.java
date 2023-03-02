@@ -30,7 +30,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class ReportWriter {
 
-    public static final float STANDARD_KEY_WIDTH = 210;
     private static final Logger LOGGER = LogManager.getLogger(ReportWriter.class);
 
     private final boolean writeToDisk;
@@ -47,7 +46,7 @@ public class ReportWriter {
     }
 
     public synchronized void write(@NotNull Report report, boolean skipTrialMatchingDetails) throws IOException {
-        LOGGER.info("Initializing output styles");
+        LOGGER.debug("Initializing output styles");
         Styles.initialize();
         ReportChapter[] chapters;
 
