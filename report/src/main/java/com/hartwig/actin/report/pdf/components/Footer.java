@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class Footer {
 
-    private final List<PageNumberTemplate> pageNumberTemplates = Lists.newArrayList();
+    private final List<FooterTemplate> footerTemplates = Lists.newArrayList();
 
     public Footer() {
     }
@@ -26,37 +26,42 @@ public class Footer {
         PdfCanvas canvas = new PdfCanvas(page.getLastContentStream(), page.getResources(), page.getDocument());
 
         int pageNumber = page.getDocument().getPageNumber(page);
-        PdfFormXObject pageNumberTemplate = new PdfFormXObject(new Rectangle(0, 0, 200, 20));
+        PdfFormXObject pageNumberTemplate = new PdfFormXObject(new Rectangle(0, 0, 450, 20));
         canvas.addXObjectAt(pageNumberTemplate, 58, 20);
-        pageNumberTemplates.add(new PageNumberTemplate(pageNumber, pageNumberTemplate));
+        footerTemplates.add(new FooterTemplate(pageNumber, pageNumberTemplate));
 
         canvas.release();
     }
 
     public void writePageCounts(@NotNull PdfDocument document) {
         int totalPageCount = document.getNumberOfPages();
-        for (PageNumberTemplate tpl : pageNumberTemplates) {
-            tpl.renderPageNumber(document, totalPageCount);
+        for (FooterTemplate tpl : footerTemplates) {
+            tpl.renderFooter(document, totalPageCount);
         }
     }
 
-    private static class PageNumberTemplate {
+    private static class FooterTemplate {
 
         private final int pageNumber;
         @NotNull
         private final PdfFormXObject template;
 
-        PageNumberTemplate(int pageNumber, @NotNull PdfFormXObject template) {
+        FooterTemplate(int pageNumber, @NotNull PdfFormXObject template) {
             this.pageNumber = pageNumber;
             this.template = template;
         }
 
-        void renderPageNumber(@NotNull PdfDocument document, int totalPageCount) {
+        void renderFooter(@NotNull PdfDocument document, int totalPageCount) {
             String displayString = pageNumber + "/" + totalPageCount;
 
             Canvas canvas = new Canvas(template, document);
             Paragraph pageNumberParagraph = new Paragraph().add(displayString).addStyle(Styles.pageNumberStyle());
             canvas.showTextAligned(pageNumberParagraph, 0, 0, TextAlignment.LEFT);
+
+            String disclaimer = "All results and data described in this report are for research−use−only and have not been generated using a " +
+                    "clinically validated and controlled procedure. These results should not be used for clinical decision making.";
+            Paragraph disclaimerParagraph = new Paragraph(disclaimer).setMaxWidth(400).addStyle(Styles.pageNumberStyle());
+            canvas.showTextAligned(disclaimerParagraph, 50, 0, TextAlignment.LEFT);
         }
     }
 }

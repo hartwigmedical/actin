@@ -1,5 +1,7 @@
 package com.hartwig.actin.report.pdf.chapters;
 
+import static com.hartwig.actin.report.pdf.ReportWriter.STANDARD_KEY_WIDTH;
+
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -9,11 +11,14 @@ import com.hartwig.actin.report.interpretation.EvaluatedTrialFactory;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularCharacteristicsGenerator;
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularDriversGenerator;
+import com.hartwig.actin.report.pdf.tables.molecular.PriorMolecularResultGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
+import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Styles;
 import com.hartwig.actin.report.pdf.util.Tables;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 
@@ -31,7 +36,7 @@ public class MolecularDetailsChapter implements ReportChapter {
     @NotNull
     @Override
     public String name() {
-        return "Molecular Details (" + report.molecular().type() + " performed on " + report.molecular().sampleId() + ")";
+        return "Molecular Details";
     }
 
     @NotNull
@@ -51,15 +56,24 @@ public class MolecularDetailsChapter implements ReportChapter {
     }
 
     private void addMolecularDetails(@NotNull Document document) {
+        float keyWidth = STANDARD_KEY_WIDTH;
+        PriorMolecularResultGenerator priorMolecularResultGenerator = new PriorMolecularResultGenerator(report.clinical(), keyWidth,
+                contentWidth() - keyWidth - 10);
+        Table priorMolecularResults = priorMolecularResultGenerator.contents().setBorder(Border.NO_BORDER);
+        document.add(priorMolecularResults);
+
         Table table = Tables.createSingleColWithWidth(contentWidth());
 
+        table.addCell(Cells.createEmpty());
+        table.addCell(Cells.createTitle(String.format("%s (%s, %s)", report.molecular().type(), report.molecular().sampleId(),
+                Formats.date(report.molecular().date()))));
         List<EvaluatedTrial> trials = EvaluatedTrialFactory.create(report.treatmentMatch());
         List<TableGenerator> generators = Lists.newArrayList(new MolecularCharacteristicsGenerator(report.molecular(), contentWidth()),
                 new MolecularDriversGenerator(report.molecular(), trials, contentWidth()));
 
         for (int i = 0; i < generators.size(); i++) {
             TableGenerator generator = generators.get(i);
-            table.addCell(Cells.createTitle(generator.title()));
+            table.addCell(Cells.createSubTitle(generator.title()));
             table.addCell(Cells.create(generator.contents()));
             if (i < generators.size() - 1) {
                 table.addCell(Cells.createEmpty());

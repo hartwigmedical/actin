@@ -1,5 +1,7 @@
 package com.hartwig.actin.report.pdf.chapters;
 
+import static com.hartwig.actin.report.pdf.ReportWriter.STANDARD_KEY_WIDTH;
+
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -180,7 +182,7 @@ public class SummaryChapter implements ReportChapter {
     private void addSummaryTable(@NotNull Document document) {
         Table table = Tables.createSingleColWithWidth(contentWidth());
 
-        float keyWidth = 210;
+        float keyWidth = STANDARD_KEY_WIDTH;
         float valueWidth = contentWidth() - keyWidth;
 
         List<EvaluatedTrial> trials = EvaluatedTrialFactory.create(report.treatmentMatch());

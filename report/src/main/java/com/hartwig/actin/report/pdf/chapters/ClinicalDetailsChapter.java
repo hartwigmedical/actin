@@ -1,5 +1,7 @@
 package com.hartwig.actin.report.pdf.chapters;
 
+import static com.hartwig.actin.report.pdf.ReportWriter.STANDARD_KEY_WIDTH;
+
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -8,6 +10,7 @@ import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.tables.clinical.BloodTransfusionGenerator;
 import com.hartwig.actin.report.pdf.tables.clinical.LabResultsGenerator;
 import com.hartwig.actin.report.pdf.tables.clinical.MedicationGenerator;
+import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenerator;
 import com.hartwig.actin.report.pdf.tables.clinical.PatientCurrentDetailsGenerator;
 import com.hartwig.actin.report.pdf.tables.clinical.TumorDetailsGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
@@ -54,9 +57,10 @@ public class ClinicalDetailsChapter implements ReportChapter {
     private void addClinicalDetails(final Document document) {
         Table table = Tables.createSingleColWithWidth(contentWidth());
 
-        float keyWidth = 210;
+        float keyWidth = STANDARD_KEY_WIDTH;
         float valueWidth = contentWidth() - keyWidth - 10;
-        List<TableGenerator> generators = Lists.newArrayList(new PatientCurrentDetailsGenerator(report.clinical(), keyWidth, valueWidth),
+        List<TableGenerator> generators = Lists.newArrayList(new PatientClinicalHistoryGenerator(report.clinical(), keyWidth, valueWidth),
+                new PatientCurrentDetailsGenerator(report.clinical(), keyWidth, valueWidth),
                 new TumorDetailsGenerator(report.clinical(), keyWidth, valueWidth),
                 LabResultsGenerator.fromRecord(report.clinical(), keyWidth, valueWidth),
                 new MedicationGenerator(report.clinical().medications(), contentWidth()));

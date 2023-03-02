@@ -30,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class ReportWriter {
 
+    public static final float STANDARD_KEY_WIDTH = 210;
     private static final Logger LOGGER = LogManager.getLogger(ReportWriter.class);
 
     private final boolean writeToDisk;

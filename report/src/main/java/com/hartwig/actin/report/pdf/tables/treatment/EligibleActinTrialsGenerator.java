@@ -56,7 +56,7 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
             }
         }
 
-        String title = String.format("%s trials that are closed or blacklisted but considered eligible (%s)",
+        String title = String.format("%s trials and cohorts that are considered ineligible (%s)",
                 TreatmentConstants.ACTIN_SOURCE,
                 unavailableAndEligible.size());
         return create(unavailableAndEligible, title, contentWidth);

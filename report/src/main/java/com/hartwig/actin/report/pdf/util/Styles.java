@@ -34,12 +34,13 @@ public final class Styles {
     private static final String FONT_REGULAR_PATH = "fonts/nimbus-sans/NimbusSansL-Regular.ttf";
     private static final String FONT_BOLD_PATH = "fonts/nimbus-sans/NimbusSansL-Bold.ttf";
 
-    private static PdfFont fontRegular;
-    private static PdfFont fontBold;
+    private static PdfFont fontRegular = createFont(FONT_REGULAR_PATH);
+    private static PdfFont fontBold = createFont(FONT_BOLD_PATH);
 
     public static void initialize() {
-        fontRegular = createFontFromProgram(loadFontProgram(FONT_REGULAR_PATH));
-        fontBold = createFontFromProgram(loadFontProgram(FONT_BOLD_PATH));
+        // Fonts must be re-initialized for each report
+        fontRegular = createFont(FONT_REGULAR_PATH);
+        fontBold = createFont(FONT_BOLD_PATH);
     }
 
     @NotNull
@@ -77,6 +78,10 @@ public final class Styles {
         return new Style().setFont(fontRegular()).setFontSize(7).setFontColor(Styles.PALETTE_BLACK);
     }
 
+    @NotNull
+    public static Style tableNoticeStyle() {
+        return new Style().setFont(fontBold()).setFontSize(7).setFontColor(Styles.PALETTE_WARN);
+    }
     @NotNull
     public static Style tableKeyStyle() {
         return new Style().setFont(fontRegular()).setFontSize(7).setFontColor(Styles.PALETTE_BLACK);
@@ -134,9 +139,8 @@ public final class Styles {
         return fontBold;
     }
 
-    @NotNull
-    private static PdfFont createFontFromProgram(@NotNull FontProgram program) {
-        return PdfFontFactory.createFont(program, PdfEncodings.IDENTITY_H);
+    private static PdfFont createFont(String fontPath) {
+        return PdfFontFactory.createFont(loadFontProgram(fontPath), PdfEncodings.IDENTITY_H);
     }
 
     @NotNull
