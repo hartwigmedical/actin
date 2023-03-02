@@ -1,14 +1,16 @@
 package com.hartwig.actin.algo.evaluation.general;
 
+import java.util.Set;
+
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.algo.evaluation.util.Format;
 
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Update according to README
 public class HasWHOStatus implements EvaluationFunction {
 
     private final int requiredWHO;
@@ -30,7 +32,17 @@ public class HasWHOStatus implements EvaluationFunction {
                     .build();
         }
 
-        if (who == requiredWHO) {
+        Set<String> warningComplicationCategories = WHOFunctions.findComplicationCategoriesAffectingWHOStatus(record);
+
+        if (who == requiredWHO && !warningComplicationCategories.isEmpty()) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.WARN)
+                    .addWarnSpecificMessages(
+                            "Patient WHO status " + who + " matches requested but patient has complication categories of concern: "
+                                    + Format.concat(warningComplicationCategories))
+                    .addWarnGeneralMessages("WHO adequate but has " + Format.concat(warningComplicationCategories))
+                    .build();
+        } else if (who == requiredWHO) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient WHO status " + who + " is requested WHO (WHO " + requiredWHO + ")")

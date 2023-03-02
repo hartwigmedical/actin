@@ -56,7 +56,7 @@ public class GeneHasActivatingMutationTest {
         assertMolecularEvaluation(EvaluationResult.WARN,
                 function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder()
                         .from(activatingVariant)
-                        .geneRole(GeneRole.UNKNOWN)
+                        .geneRole(GeneRole.TSG)
                         .build())));
 
         assertMolecularEvaluation(EvaluationResult.WARN,

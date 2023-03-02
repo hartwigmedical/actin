@@ -11,26 +11,6 @@ public class EvaluatedTrialComparator implements Comparator<EvaluatedTrial> {
 
     private static final String COMBINATION_COHORT_IDENTIFIER = "+";
 
-    @Override
-    public int compare(@NotNull EvaluatedTrial trial1, @NotNull EvaluatedTrial trial2) {
-        int hasMolecularCompare = Boolean.compare(trial1.molecularEvents().isEmpty(), trial2.molecularEvents().isEmpty());
-        if (hasMolecularCompare != 0) {
-            return hasMolecularCompare;
-        }
-
-        int trialCompare = trial1.trialId().compareTo(trial2.trialId());
-        if (trialCompare != 0) {
-            return trialCompare;
-        }
-
-        int cohortCompare = compareCohorts(!trial1.molecularEvents().isEmpty(), trial1.cohort(), trial2.cohort());
-        if (cohortCompare != 0) {
-            return cohortCompare;
-        }
-
-        return compareSets(trial1.molecularEvents(), trial2.molecularEvents());
-    }
-
     private static int compareCohorts(boolean hasMolecular, @Nullable String cohort1, @Nullable String cohort2) {
         if (cohort1 == null) {
             return cohort2 != null ? -1 : 0;
@@ -64,5 +44,30 @@ public class EvaluatedTrialComparator implements Comparator<EvaluatedTrial> {
             }
         }
         return 0;
+    }
+
+    @Override
+    public int compare(@NotNull EvaluatedTrial trial1, @NotNull EvaluatedTrial trial2) {
+        int hasSlotsAvailableCompare = Boolean.compare(!trial1.hasSlotsAvailable(), !trial2.hasSlotsAvailable());
+        if (hasSlotsAvailableCompare != 0) {
+            return hasSlotsAvailableCompare;
+        }
+
+        int hasMolecularCompare = Boolean.compare(trial1.molecularEvents().isEmpty(), trial2.molecularEvents().isEmpty());
+        if (hasMolecularCompare != 0) {
+            return hasMolecularCompare;
+        }
+
+        int trialCompare = trial1.trialId().compareTo(trial2.trialId());
+        if (trialCompare != 0) {
+            return trialCompare;
+        }
+
+        int cohortCompare = compareCohorts(!trial1.molecularEvents().isEmpty(), trial1.cohort(), trial2.cohort());
+        if (cohortCompare != 0) {
+            return cohortCompare;
+        }
+
+        return compareSets(trial1.molecularEvents(), trial2.molecularEvents());
     }
 }

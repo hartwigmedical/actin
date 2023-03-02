@@ -72,10 +72,10 @@ public final class Cells {
     @NotNull
     public static Cell createHeaderTest(@NotNull String text) {
         // TODO Clean up or actually use.
-        PdfLinkAnnotation la1 = (PdfLinkAnnotation) new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0))
-                .setHighlightMode(PdfAnnotation.HIGHLIGHT_NONE)
-                .setAction(PdfAction.createJavaScript("app.alert('These are all trials!!')"))
-                .setBorder(new PdfArray(new int[]{0,0,0}));
+        PdfLinkAnnotation la1 =
+                (PdfLinkAnnotation) new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0)).setHighlightMode(PdfAnnotation.HIGHLIGHT_NONE)
+                        .setAction(PdfAction.createJavaScript("app.alert('These are all trials!!')"))
+                        .setBorder(new PdfArray(new int[] { 0, 0, 0 }));
 
         Link link = new Link(text, la1);
 
@@ -116,6 +116,13 @@ public final class Cells {
     @NotNull
     public static Cell createContent(@NotNull String text) {
         return createContent(new Paragraph(text));
+    }
+
+    @NotNull
+    public static Cell createContentGrey(@NotNull String text) {
+        Cell cell = createContent(text);
+        cell.setFontColor(Styles.PALETTE_MID_GREY);
+        return cell;
     }
 
     @NotNull

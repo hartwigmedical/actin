@@ -47,7 +47,7 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
             if (variant.gene().equals(gene)) {
                 boolean isGainOfFunction = variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
                         || variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
-                boolean isPotentialOncogene = variant.geneRole() == GeneRole.ONCO || variant.geneRole() == GeneRole.BOTH;
+                boolean isNoOncogene = variant.geneRole() == GeneRole.TSG;
 
                 if (variant.isReportable()) {
                     if (variant.driverLikelihood() == DriverLikelihood.HIGH) {
@@ -55,7 +55,7 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
                             activatingVariantsAssociatedWithResistance.add(variant.event());
                         } else if (!variant.isHotspot() && !isGainOfFunction) {
                             activatingVariantsNoHotspotAndNoGainOfFunction.add(variant.event());
-                        } else if (!isPotentialOncogene) {
+                        } else if (isNoOncogene) {
                             activatingVariantsInNonOncogene.add(variant.event());
                         } else if (variant.clonalLikelihood() < CLONAL_CUTOFF) {
                             activatingSubclonalVariants.add(variant.event());
@@ -132,8 +132,8 @@ public class GeneHasActivatingMutation implements EvaluationFunction {
         if (!activatingVariantsInNonOncogene.isEmpty()) {
             warnEvents.addAll(activatingVariantsInNonOncogene);
             warnSpecificMessages.add("Gene " + gene + " has activating mutation(s) " + Format.concat(activatingVariantsInNonOncogene)
-                    + " but gene has not been not annotated as oncogene");
-            warnGeneralMessages.add(gene + " activating mutation(s) detected but " + gene + " unknown as oncogene");
+                    + " but gene known as TSG");
+            warnGeneralMessages.add(gene + " activating mutation(s) detected but " + gene + " known as TSG");
         }
 
         if (!activatingVariantsNoHotspotAndNoGainOfFunction.isEmpty()) {

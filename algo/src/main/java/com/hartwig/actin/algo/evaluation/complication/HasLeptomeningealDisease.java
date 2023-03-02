@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.complication;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -11,7 +12,6 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
-import com.hartwig.actin.clinical.datamodel.Complication;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -31,14 +31,8 @@ public class HasLeptomeningealDisease implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Set<String> leptomeningealComplications = Sets.newHashSet();
-        if (record.clinical().complications() != null) {
-            for (Complication complication : record.clinical().complications()) {
-                if (isPotentialLeptomeningealDisease(complication)) {
-                    leptomeningealComplications.add(complication.name());
-                }
-            }
-        }
+        Set<String> leptomeningealComplications = ComplicationFunctions.findComplicationNamesMatchingAnyCategory(record,
+                Collections.singletonList(LEPTOMENINGEAL_DISEASE_CATEGORY_PATTERN));
 
         if (!leptomeningealComplications.isEmpty()) {
             return EvaluationFactory.unrecoverable()
@@ -73,15 +67,6 @@ public class HasLeptomeningealDisease implements EvaluationFunction {
                 .addFailSpecificMessages("Patient has no leptomeningeal disease")
                 .addFailGeneralMessages("No leptomeningeal disease")
                 .build();
-    }
-
-    private static boolean isPotentialLeptomeningealDisease(@NotNull Complication complication) {
-       for (String category : complication.categories()) {
-           if (category.toLowerCase().contains(LEPTOMENINGEAL_DISEASE_CATEGORY_PATTERN.toLowerCase())) {
-               return true;
-           }
-       }
-       return false;
     }
 
     private static boolean isPotentialLeptomeningealLesion(@NotNull String lesion) {
