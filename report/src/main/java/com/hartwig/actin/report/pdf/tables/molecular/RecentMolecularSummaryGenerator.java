@@ -175,6 +175,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
                 .collect(Collectors.toSet());
 
         String genes = Stream.concat(molecular.drivers().variants().stream(), molecular.drivers().disruptions().stream())
+                .filter(driver -> driver.driverLikelihood() != null)
                 .filter(driver -> allowedLikelihoods.contains(driver.driverLikelihood()))
                 .filter(driver -> !driver.evidence().externalEligibleTrials().isEmpty() || eventsWithActinTrials.contains(driver.event()))
                 .map(GeneAlteration::gene)
