@@ -76,10 +76,10 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
             }
 
             Stream.of(Maps.immutableEntry("Tumor mutational load",
-                                    characteristicsGenerator.createTMLStatusCell().setBorderBottom(Border.NO_BORDER)),
+                                    characteristicsGenerator.createTMLStatusCell().setBorderTop(Border.NO_BORDER)),
                             Maps.immutableEntry("Microsatellite (in)stability",
-                                    characteristicsGenerator.createMSStabilityCell().setBorderBottom(Border.NO_BORDER)),
-                            Maps.immutableEntry("HR status", characteristicsGenerator.createHRStatusCell().setBorderBottom(Border.NO_BORDER)),
+                                    characteristicsGenerator.createMSStabilityCell().setBorderTop(Border.NO_BORDER)),
+                            Maps.immutableEntry("HR status", characteristicsGenerator.createHRStatusCell().setBorderTop(Border.NO_BORDER)),
                             Maps.immutableEntry("", Cells.createEmpty()),
                             Maps.immutableEntry("Genes with high driver mutation", genesWithHighDriverMutationCell()),
                             Maps.immutableEntry("Amplified genes", genesWithHighDriverCopyNumberCell(true)),

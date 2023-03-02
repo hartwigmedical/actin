@@ -23,9 +23,11 @@ public class TrialMatchingChapter implements ReportChapter {
 
     @NotNull
     private final Report report;
+    private final boolean skipTrialMatchingDetails;
 
-    public TrialMatchingChapter(@NotNull final Report report) {
+    public TrialMatchingChapter(@NotNull final Report report, final boolean skipTrialMatchingDetails) {
         this.report = report;
+        this.skipTrialMatchingDetails = skipTrialMatchingDetails;
     }
 
     @NotNull
@@ -54,8 +56,10 @@ public class TrialMatchingChapter implements ReportChapter {
         Table table = Tables.createSingleColWithWidth(contentWidth());
 
         List<EvaluatedTrial> trials = EvaluatedTrialFactory.create(report.treatmentMatch());
-        List<TableGenerator> generators = Lists.newArrayList(EligibleActinTrialsGenerator.forClosedTrials(trials, contentWidth()),
-                IneligibleActinTrialsGenerator.fromEvaluatedTrials(trials, contentWidth()));
+        List<TableGenerator> generators = Lists.newArrayList(
+                EligibleActinTrialsGenerator.forClosedTrials(trials, contentWidth(), skipTrialMatchingDetails),
+                IneligibleActinTrialsGenerator.fromEvaluatedTrials(trials, contentWidth(), skipTrialMatchingDetails)
+        );
 
         for (int i = 0; i < generators.size(); i++) {
             TableGenerator generator = generators.get(i);

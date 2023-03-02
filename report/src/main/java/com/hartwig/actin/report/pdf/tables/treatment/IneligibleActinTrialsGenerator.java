@@ -5,7 +5,6 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Lists;
 import com.hartwig.actin.report.interpretation.EvaluatedTrial;
 import com.hartwig.actin.report.interpretation.EvaluatedTrialComparator;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
@@ -29,16 +28,14 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
     private final float cohortColWidth;
     private final float recruitingColWidth;
     private final float ineligibilityReasonColWith;
+    private final boolean skipMatchingTrialDetails;
 
     @NotNull
-    public static IneligibleActinTrialsGenerator fromEvaluatedTrials(@NotNull List<EvaluatedTrial> trials, float contentWidth) {
-        List<EvaluatedTrial> ineligibleTrials = Lists.newArrayList();
-
-        for (EvaluatedTrial trial : trials) {
-            if (!trial.isPotentiallyEligible()) {
-                ineligibleTrials.add(trial);
-            }
-        }
+    public static IneligibleActinTrialsGenerator fromEvaluatedTrials(@NotNull List<EvaluatedTrial> trials, float contentWidth,
+            boolean skipMatchingTrialDetails) {
+        List<EvaluatedTrial> ineligibleTrials = trials.stream()
+                .filter(trial -> !trial.isPotentiallyEligible() && (trial.isOpen() || !skipMatchingTrialDetails))
+                .collect(Collectors.toList());
 
         float trialColWidth = contentWidth / 9;
         float acronymColWidth = contentWidth / 9;
@@ -52,12 +49,12 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
                 acronymColWidth,
                 cohortColWidth,
                 recruitingColWidth,
-                ineligibilityReasonColWidth);
+                ineligibilityReasonColWidth, skipMatchingTrialDetails);
     }
 
     private IneligibleActinTrialsGenerator(@NotNull final List<EvaluatedTrial> trials, @NotNull final String source,
             final float trialColWidth, final float acronymColWidth, final float cohortColWidth, final float recruitingColWidth,
-            final float ineligibilityReasonColWith) {
+            final float ineligibilityReasonColWith, final boolean skipMatchingTrialDetails) {
         this.trials = trials;
         this.source = source;
         this.trialColWidth = trialColWidth;
@@ -65,12 +62,14 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
         this.cohortColWidth = cohortColWidth;
         this.recruitingColWidth = recruitingColWidth;
         this.ineligibilityReasonColWith = ineligibilityReasonColWith;
+        this.skipMatchingTrialDetails = skipMatchingTrialDetails;
     }
 
     @NotNull
     @Override
     public String title() {
-        return source + " trials not considered eligible (" + trials.size() + ")";
+        return String.format("%s trials and cohorts that are %sconsidered ineligible (%s)", source,
+                skipMatchingTrialDetails ? "open but " : "", trials.size());
     }
 
     @NotNull

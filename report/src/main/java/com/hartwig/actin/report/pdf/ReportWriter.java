@@ -2,6 +2,9 @@ package com.hartwig.actin.report.pdf;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.hartwig.actin.report.datamodel.Report;
 import com.hartwig.actin.report.pdf.chapters.ClinicalDetailsChapter;
@@ -48,30 +51,27 @@ public class ReportWriter {
     public synchronized void write(@NotNull Report report, boolean skipTrialMatchingDetails) throws IOException {
         LOGGER.debug("Initializing output styles");
         Styles.initialize();
-        ReportChapter[] chapters;
+        List<ReportChapter> chapters = new LinkedList<>(Arrays.asList(new SummaryChapter(report), new MolecularDetailsChapter(report),
+                new ClinicalDetailsChapter(report), new TrialMatchingChapter(report, skipTrialMatchingDetails)));
 
         if (skipTrialMatchingDetails) {
             LOGGER.info("Skipping trial matching details");
-
-            chapters = new ReportChapter[] { new SummaryChapter(report), new MolecularDetailsChapter(report),
-                    new ClinicalDetailsChapter(report), new TrialMatchingChapter(report) };
         } else {
-            chapters = new ReportChapter[] { new SummaryChapter(report), new MolecularDetailsChapter(report),
-                    new ClinicalDetailsChapter(report), new TrialMatchingChapter(report), new TrialMatchingDetailsChapter(report) };
+            chapters.add(new TrialMatchingDetailsChapter(report));
         }
 
         writePdfChapters(report.patientId(), chapters);
     }
 
-    private void writePdfChapters(@NotNull String patientId, @NotNull ReportChapter[] chapters) throws IOException {
+    private void writePdfChapters(@NotNull String patientId, @NotNull List<ReportChapter> chapters) throws IOException {
         Document doc = initializeReport(patientId);
         PdfDocument pdfDocument = doc.getPdfDocument();
 
         PageEventHandler pageEventHandler = PageEventHandler.create(patientId);
         pdfDocument.addEventHandler(PdfDocumentEvent.START_PAGE, pageEventHandler);
 
-        for (int i = 0; i < chapters.length; i++) {
-            ReportChapter chapter = chapters[i];
+        for (int i = 0; i < chapters.size(); i++) {
+            ReportChapter chapter = chapters.get(i);
             pdfDocument.setDefaultPageSize(chapter.pageSize());
             pageEventHandler.chapterTitle(chapter.name());
             pageEventHandler.resetChapterPageCounter();

@@ -109,7 +109,7 @@ public final class Cells {
     public static Cell createContent(@NotNull IBlockElement element) {
         Cell cell = create(element);
         cell.addStyle(Styles.tableContentStyle());
-        cell.setBorderBottom(new SolidBorder(Styles.PALETTE_MID_GREY, 0.25F));
+        cell.setBorderTop(new SolidBorder(Styles.PALETTE_MID_GREY, 0.25F));
         return cell;
     }
 
@@ -119,7 +119,7 @@ public final class Cells {
     }
 
     @NotNull
-    public static Cell createContentGrey(@NotNull String text) {
+    public static Cell createContentDeemphasize(@NotNull String text) {
         Cell cell = createContent(text);
         cell.setFontColor(Styles.PALETTE_MID_GREY);
         return cell;

@@ -138,6 +138,11 @@ public final class TestTreatmentMatchFactory {
                 .isPotentiallyEligible(false)
                 .evaluations(createTestCohortEvaluationsTrial1CohortC())
                 .build());
+        cohorts.add(ImmutableCohortMatch.builder()
+                .metadata(createTestMetadata("D", false, false, true))
+                .isPotentiallyEligible(true)
+                .evaluations(createTestCohortEvaluationsTrial1CohortC())
+                .build());
 
         return cohorts;
     }

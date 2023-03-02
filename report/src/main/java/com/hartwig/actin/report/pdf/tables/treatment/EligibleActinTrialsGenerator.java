@@ -50,16 +50,15 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
     }
 
     @NotNull
-    public static EligibleActinTrialsGenerator forClosedTrials(@NotNull List<EvaluatedTrial> trials, float contentWidth) {
-        List<EvaluatedTrial> unavailableAndEligible = Lists.newArrayList();
-        for (EvaluatedTrial trial : trials) {
-            if (trial.isPotentiallyEligible() && !trial.isOpen()) {
-                unavailableAndEligible.add(trial);
-            }
-        }
+    public static EligibleActinTrialsGenerator forClosedTrials(@NotNull List<EvaluatedTrial> trials, float contentWidth,
+            boolean skipMatchingTrialDetails) {
+        List<EvaluatedTrial> unavailableAndEligible = trials.stream()
+                .filter(trial -> trial.isPotentiallyEligible() && !trial.isOpen())
+                .filter(trial -> !trial.molecularEvents().isEmpty() || ! skipMatchingTrialDetails)
+                .collect(Collectors.toList());
 
-        String title = String.format("%s trials and cohorts that are considered eligible (%s)",
-                TreatmentConstants.ACTIN_SOURCE,
+        String title = String.format("%s trials and cohorts that %smay be eligible, but are closed (%s)",
+                TreatmentConstants.ACTIN_SOURCE, skipMatchingTrialDetails ? "meet molecular requirements and " : "",
                 unavailableAndEligible.size());
         return create(unavailableAndEligible, title, contentWidth);
     }
@@ -103,11 +102,13 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
     public Table contents() {
         Table table = Tables.createFixedWidthCols(trialColWidth, acronymColWidth, cohortColWidth, molecularEventColWidth, checksColWidth);
 
-        table.addHeaderCell(Cells.createHeader("Trial"));
-        table.addHeaderCell(Cells.createHeader("Acronym"));
-        table.addHeaderCell(Cells.createHeader("Cohort"));
-        table.addHeaderCell(Cells.createHeader("Molecular"));
-        table.addHeaderCell(Cells.createHeader("Warnings"));
+        if (!trials.isEmpty()) {
+            table.addHeaderCell(Cells.createHeader("Trial"));
+            table.addHeaderCell(Cells.createHeader("Acronym"));
+            table.addHeaderCell(Cells.createHeader("Cohort"));
+            table.addHeaderCell(Cells.createHeader("Molecular"));
+            table.addHeaderCell(Cells.createHeader("Warnings"));
+        }
 
         boolean hasTrialWithNoSlots = false;
         for (EvaluatedTrial trial : sort(trials)) {
@@ -123,7 +124,7 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
                     concat(trial.molecularEvents()),
                     concat(trial.warnings())).map(text -> {
                 if (noSlotsAvailable) {
-                    return Cells.createContentGrey(text);
+                    return Cells.createContentDeemphasize(text);
                 } else {
                     return Cells.createContent(text);
                 }
