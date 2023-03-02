@@ -7,14 +7,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Ordering;
-import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.driver.Driver;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.GeneAlteration;
-import com.hartwig.actin.molecular.interpretation.AggregatedEvidence;
 import com.hartwig.actin.report.interpretation.EvaluatedTrial;
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
@@ -40,18 +37,14 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
     private final MolecularRecord molecular;
     @NotNull
     private final List<EvaluatedTrial> trials;
-    @NotNull
-    private final AggregatedEvidence aggregatedEvidence;
     private final float keyWidth;
     private final float valueWidth;
 
     public RecentMolecularSummaryGenerator(@NotNull final ClinicalRecord clinical, @NotNull final MolecularRecord molecular,
-            @NotNull final List<EvaluatedTrial> trials, @NotNull final AggregatedEvidence aggregatedEvidence, final float keyWidth,
-            final float valueWidth) {
+            @NotNull final List<EvaluatedTrial> trials, final float keyWidth, final float valueWidth) {
         this.clinical = clinical;
         this.molecular = molecular;
         this.trials = trials;
-        this.aggregatedEvidence = aggregatedEvidence;
         this.keyWidth = keyWidth;
         this.valueWidth = valueWidth;
     }
@@ -83,8 +76,10 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
                 table.addCell(characteristicsGenerator.createPredictedTumorOriginCell());
             }
 
-            Stream.of(Maps.immutableEntry("Tumor mutational load", characteristicsGenerator.createTMLStatusCell().setBorderBottom(Border.NO_BORDER)),
-                            Maps.immutableEntry("Microsatellite (in)stability", characteristicsGenerator.createMSStabilityCell().setBorderBottom(Border.NO_BORDER)),
+            Stream.of(Maps.immutableEntry("Tumor mutational load",
+                                    characteristicsGenerator.createTMLStatusCell().setBorderBottom(Border.NO_BORDER)),
+                            Maps.immutableEntry("Microsatellite (in)stability",
+                                    characteristicsGenerator.createMSStabilityCell().setBorderBottom(Border.NO_BORDER)),
                             Maps.immutableEntry("HR status", characteristicsGenerator.createHRStatusCell().setBorderBottom(Border.NO_BORDER)),
                             Maps.immutableEntry("", Cells.createEmpty()),
                             Maps.immutableEntry("Genes with high driver mutation", genesWithHighDriverMutationCell()),
@@ -102,17 +97,6 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
                     + "high quality whole genome sequencing", table));
         }
         return table;
-    }
-
-    @NotNull
-    private Set<String> eventsForEligibleTrials() {
-        Set<String> molecularEvents = Sets.newTreeSet(Ordering.natural());
-        for (EvaluatedTrial trial : trials) {
-            if (trial.isPotentiallyEligible() && trial.isOpen()) {
-                molecularEvents.addAll(trial.molecularEvents());
-            }
-        }
-        return molecularEvents;
     }
 
     @NotNull
@@ -142,9 +126,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
 
     @NotNull
     private Cell genesWithHighDriverMutationCell() {
-        return summaryCellForGeneAlterations(molecular.drivers()
-                .variants()
-                .stream());
+        return summaryCellForGeneAlterations(molecular.drivers().variants().stream());
     }
 
     @NotNull
@@ -157,14 +139,14 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
 
     @NotNull
     private Cell genesWithHighDriverHomozygousDisruptionCell() {
-        return summaryCellForGeneAlterations(molecular.drivers()
-                .homozygousDisruptions()
-                .stream());
+        return summaryCellForGeneAlterations(molecular.drivers().homozygousDisruptions().stream());
     }
 
     @NotNull
     private Cell highDriverGeneFusionsCell() {
-        String fusions = molecular.drivers().fusions().stream()
+        String fusions = molecular.drivers()
+                .fusions()
+                .stream()
                 .filter(fusion -> fusion.driverLikelihood() == DriverLikelihood.HIGH)
                 .map(Driver::event)
                 .collect(Collectors.joining(", "));
@@ -173,7 +155,9 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
 
     @NotNull
     private Cell highDriverVirusDetectionsCell() {
-        String fusions = molecular.drivers().viruses().stream()
+        String fusions = molecular.drivers()
+                .viruses()
+                .stream()
                 .filter(virus -> virus.driverLikelihood() == DriverLikelihood.HIGH)
                 .map(virus -> String.format("%s (%s integrations detected)", virus.event(), virus.integrations()))
                 .collect(Collectors.joining(", "));

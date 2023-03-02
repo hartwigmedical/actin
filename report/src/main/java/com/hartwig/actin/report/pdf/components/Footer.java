@@ -58,8 +58,9 @@ public class Footer {
             Paragraph pageNumberParagraph = new Paragraph().add(displayString).addStyle(Styles.pageNumberStyle());
             canvas.showTextAligned(pageNumberParagraph, 0, 0, TextAlignment.LEFT);
 
-            String disclaimer = "All results and data described in this report are for research−use−only and have not been generated using a " +
-                    "clinically validated and controlled procedure. These results should not be used for clinical decision making.";
+            String disclaimer =
+                    "All results and data described in this report are for research−use−only and have not been generated using a "
+                            + "clinically validated and controlled procedure. These results should not be used for clinical decision making.";
             Paragraph disclaimerParagraph = new Paragraph(disclaimer).setMaxWidth(400).addStyle(Styles.pageNumberStyle());
             canvas.showTextAligned(disclaimerParagraph, 50, 0, TextAlignment.LEFT);
         }

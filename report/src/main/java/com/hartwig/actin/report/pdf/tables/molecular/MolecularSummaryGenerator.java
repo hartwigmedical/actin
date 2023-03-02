@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.interpretation.AggregatedEvidence;
 import com.hartwig.actin.report.interpretation.EvaluatedTrial;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
@@ -21,18 +20,14 @@ public class MolecularSummaryGenerator implements TableGenerator {
     private final MolecularRecord molecular;
     @NotNull
     private final List<EvaluatedTrial> trials;
-    @NotNull
-    private final AggregatedEvidence aggregatedEvidence;
     private final float keyWidth;
     private final float valueWidth;
 
     public MolecularSummaryGenerator(@NotNull final ClinicalRecord clinical, @NotNull final MolecularRecord molecular,
-            @NotNull final List<EvaluatedTrial> trials, @NotNull final AggregatedEvidence aggregatedEvidence, final float keyWidth,
-            final float valueWidth) {
+            @NotNull final List<EvaluatedTrial> trials, final float keyWidth, final float valueWidth) {
         this.clinical = clinical;
         this.molecular = molecular;
         this.trials = trials;
-        this.aggregatedEvidence = aggregatedEvidence;
         this.keyWidth = keyWidth;
         this.valueWidth = valueWidth;
     }
@@ -50,7 +45,7 @@ public class MolecularSummaryGenerator implements TableGenerator {
 
         if (molecular.containsTumorCells()) {
             TableGenerator recentGenerator =
-                    new RecentMolecularSummaryGenerator(clinical, molecular, trials, aggregatedEvidence, keyWidth, valueWidth);
+                    new RecentMolecularSummaryGenerator(clinical, molecular, trials, keyWidth, valueWidth);
 
             table.addCell(Cells.createSubTitle(recentGenerator.title()));
             table.addCell(Cells.create(recentGenerator.contents()));

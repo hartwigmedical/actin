@@ -34,6 +34,31 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
     }
 
     @NotNull
+    private static String createDPYDString(@NotNull Set<PharmacoEntry> pharmaco) {
+        PharmacoEntry dpyd = findPharmacoEntry(pharmaco, "DPYD");
+        if (dpyd == null) {
+            return Formats.VALUE_UNKNOWN;
+        }
+
+        StringJoiner joiner = Formats.commaJoiner();
+        for (Haplotype haplotype : dpyd.haplotypes()) {
+            joiner.add(haplotype.name() + " (" + haplotype.function() + ")");
+        }
+        return joiner.toString();
+    }
+
+    @Nullable
+    private static PharmacoEntry findPharmacoEntry(@NotNull Set<PharmacoEntry> pharmaco, @NotNull String geneToFind) {
+        for (PharmacoEntry entry : pharmaco) {
+            if (entry.gene().equals(geneToFind)) {
+                return entry;
+            }
+        }
+
+        return null;
+    }
+
+    @NotNull
     @Override
     public String title() {
         return "General";
@@ -172,7 +197,8 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
             return Cells.createContentWarn(VALUE_NOT_AVAILABLE);
         }
 
-        @Nullable Boolean isHomologousRepairDeficient = molecular.characteristics().isHomologousRepairDeficient();
+        @Nullable
+        Boolean isHomologousRepairDeficient = molecular.characteristics().isHomologousRepairDeficient();
         if (isHomologousRepairDeficient == null) {
             return Cells.createContentWarn(Formats.VALUE_UNKNOWN);
         }
@@ -185,30 +211,5 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
         }
 
         return cell;
-    }
-
-    @NotNull
-    private static String createDPYDString(@NotNull Set<PharmacoEntry> pharmaco) {
-        PharmacoEntry dpyd = findPharmacoEntry(pharmaco, "DPYD");
-        if (dpyd == null) {
-            return Formats.VALUE_UNKNOWN;
-        }
-
-        StringJoiner joiner = Formats.commaJoiner();
-        for (Haplotype haplotype : dpyd.haplotypes()) {
-            joiner.add(haplotype.name() + " (" + haplotype.function() + ")");
-        }
-        return joiner.toString();
-    }
-
-    @Nullable
-    private static PharmacoEntry findPharmacoEntry(@NotNull Set<PharmacoEntry> pharmaco, @NotNull String geneToFind) {
-        for (PharmacoEntry entry : pharmaco) {
-            if (entry.gene().equals(geneToFind)) {
-                return entry;
-            }
-        }
-
-        return null;
     }
 }
