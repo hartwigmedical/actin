@@ -10,7 +10,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
 
-public class ComplicationFunctions {
+public final class ComplicationFunctions {
 
     public static Set<String> findComplicationNamesMatchingAnyCategory(PatientRecord record, List<String> categorySearchTerms) {
         return findComplicationsMatchingAnyCategory(record, categorySearchTerms).orElse(Stream.empty())
