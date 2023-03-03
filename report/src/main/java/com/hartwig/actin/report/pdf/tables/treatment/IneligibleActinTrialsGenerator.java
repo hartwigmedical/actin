@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.hartwig.actin.report.interpretation.EvaluatedTrial;
 import com.hartwig.actin.report.interpretation.EvaluatedTrialComparator;
@@ -73,12 +75,16 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
     @NotNull
     @Override
     public Table contents() {
-        Table table = Tables.createFixedWidthCols(trialColWidth, cohortColWidth, ineligibilityReasonColWith);
+        Table table = Tables.createFixedWidthCols(trialColWidth, cohortColWidth + ineligibilityReasonColWith);
 
         if (!trials.isEmpty()) {
-            table.addHeaderCell(Cells.createHeader("Trial"));
-            table.addHeaderCell(Cells.createHeader("Cohort"));
-            table.addHeaderCell(Cells.createHeader("Ineligibility reasons"));
+            table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Trial")));
+
+            Table headerSubTable = Tables.createFixedWidthCols(cohortColWidth, ineligibilityReasonColWith);
+            headerSubTable.addHeaderCell(Cells.createHeader("Cohort"));
+            headerSubTable.addHeaderCell(Cells.createHeader("Ineligibility reasons"));
+
+            table.addHeaderCell(Cells.createContentNoBorder(headerSubTable));
         }
 
         trials.values()
@@ -91,31 +97,45 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
                 .forEach(cohortList -> {
                     EvaluatedTrial trial = cohortList.get(0);
                     if (trial != null) {
-                        table.addCell(Cells.createContent(new Paragraph().addAll(Arrays.asList(new Text(trial.trialId()).addStyle(Styles.tableHighlightStyle()),
-                                new Text(trial.acronym()).addStyle(Styles.tableContentStyle())))));
+                        table.addCell(Cells.createContent(Cells.createContentNoBorder(new Paragraph().addAll(Arrays.asList(
+                                new Text(trial.trialId()).addStyle(Styles.tableHighlightStyle()),
+                                new Text(trial.acronym()).addStyle(Styles.tableContentStyle())
+                        )))));
 
-                        Table cohortSubTable = Tables.createFixedWidthCols(cohortColWidth);
-                        Table ineligibilitySubTable = Tables.createFixedWidthCols(ineligibilityReasonColWith);
+                        Table trialSubTable = Tables.createFixedWidthCols(cohortColWidth, ineligibilityReasonColWith);
 
                         cohortList.stream().sorted(new EvaluatedTrialComparator()).forEach(cohort -> {
-                            String cohortText = trial.cohort() == null ? "" : trial.cohort();
-                            boolean noSlotsAvailable = trial.isOpen() && !trial.hasSlotsAvailable();
+                            String cohortText = cohort.cohort() == null ? "" : cohort.cohort();
+                            boolean noSlotsAvailable = cohort.isOpen() && !cohort.hasSlotsAvailable();
                             if (noSlotsAvailable) {
                                 cohortText += " *";
                             }
-                            cohortSubTable.addCell(Cells.createContentNoBorder(cohortText));
-
                             String ineligibilityText = cohort.fails().isEmpty() ? "?" : String.join(", ", cohort.fails());
-                            ineligibilitySubTable.addCell(Cells.createContentNoBorder(ineligibilityText));
+
+                            Stream.of(cohortText, ineligibilityText).map(text -> {
+                                if (!cohort.isOpen()) {
+                                    return Cells.createContentNoBorderDeemphasize(text);
+                                } else {
+                                    return Cells.createContentNoBorder(text);
+                                }
+                            }).forEach(trialSubTable::addCell);
                         });
 
-                        table.addCell(Cells.createContent(cohortSubTable));
-                        table.addCell(Cells.createContent(ineligibilitySubTable));
+                        table.addCell(Cells.createContent(trialSubTable));
                     }
                 });
 
-        if (trials.values().stream().flatMap(Collection::stream).anyMatch(trial -> trial.isOpen() && !trial.hasSlotsAvailable())) {
-            table.addCell(Cells.createSpanningSubNote(" * Cohort currently has no slots available", table));
+        List<EvaluatedTrial> allCohorts = trials.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
+
+        String subNote = "";
+        if (allCohorts.stream().anyMatch(trial -> !trial.isOpen())) {
+            subNote += " Cohorts shown in grey are closed.";
+        }
+        if (allCohorts.stream().anyMatch(trial -> trial.isOpen() && !trial.hasSlotsAvailable())) {
+            subNote += " Cohorts with no slots available are indicated by an asterisk (*).";
+        }
+        if (!subNote.isEmpty()) {
+            table.addCell(Cells.createSpanningSubNote(subNote, table));
         }
 
         return Tables.makeWrapping(table);

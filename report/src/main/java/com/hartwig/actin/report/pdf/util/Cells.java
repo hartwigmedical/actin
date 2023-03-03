@@ -120,8 +120,25 @@ public final class Cells {
 
     @NotNull
     public static Cell createContentNoBorder(@NotNull String text) {
-        Cell cell = create(new Paragraph(text));
+        return createContentNoBorder(new Paragraph(text));
+    }
+
+    @NotNull
+    public static Cell createContentNoBorder(@NotNull IBlockElement element) {
+        Cell cell = create(element);
         cell.addStyle(Styles.tableContentStyle());
+        return cell;
+    }
+
+    @NotNull
+    public static Cell createContentNoBorderDeemphasize(@NotNull String text) {
+        return createContentNoBorderDeemphasize(new Paragraph(text));
+    }
+
+    @NotNull
+    public static Cell createContentNoBorderDeemphasize(@NotNull IBlockElement element) {
+        Cell cell = createContentNoBorder(element);
+        cell.setFontColor(Styles.PALETTE_MID_GREY);
         return cell;
     }
 
