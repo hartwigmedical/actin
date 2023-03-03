@@ -1,7 +1,9 @@
 package com.hartwig.actin.report.pdf.tables.molecular;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -20,7 +22,6 @@ import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Styles;
 import com.hartwig.actin.report.pdf.util.Tables;
 import com.hartwig.actin.util.ApplicationConfig;
-import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
@@ -75,21 +76,21 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
                 table.addCell(characteristicsGenerator.createPredictedTumorOriginCell());
             }
 
-            Stream.of(Maps.immutableEntry("Tumor mutational load",
-                                    characteristicsGenerator.createTMLStatusCell().setBorderTop(Border.NO_BORDER)),
-                            Maps.immutableEntry("Microsatellite (in)stability",
-                                    characteristicsGenerator.createMSStabilityCell().setBorderTop(Border.NO_BORDER)),
-                            Maps.immutableEntry("HR status", characteristicsGenerator.createHRStatusCell().setBorderTop(Border.NO_BORDER)),
-                            Maps.immutableEntry("", Cells.createEmpty()),
-                            Maps.immutableEntry("Genes with high driver mutation", genesWithHighDriverMutationCell()),
-                            Maps.immutableEntry("Amplified genes", genesWithHighDriverCopyNumberCell(true)),
-                            Maps.immutableEntry("Deleted genes", genesWithHighDriverCopyNumberCell(false)),
-                            Maps.immutableEntry("Homozygously disrupted genes", genesWithHighDriverHomozygousDisruptionCell()),
-                            Maps.immutableEntry("Gene fusions", highDriverGeneFusionsCell()),
-                            Maps.immutableEntry("Virus detection", highDriverVirusDetectionsCell()),
-                            Maps.immutableEntry("", Cells.createEmpty()),
-                            Maps.immutableEntry("Actionable genes with medium/low driver:", actionableGenesWithoutHighDriverMutation()))
-                    .flatMap(entry -> Stream.of(Cells.createKey(entry.getKey()), entry.getValue()))
+            Stream.of(Maps.immutableEntry("Tumor mutational load", characteristicsGenerator.createTMLStatusStringOption()),
+                            Maps.immutableEntry("Microsatellite (in)stability", characteristicsGenerator.createMSStabilityStringOption()),
+                            Maps.immutableEntry("HR status", characteristicsGenerator.createHRStatusStringOption()),
+                            Maps.immutableEntry("", Optional.of("")),
+                            Maps.immutableEntry("Genes with high driver mutation", genesWithHighDriverMutationStringOption()),
+                            Maps.immutableEntry("Amplified genes", genesWithHighDriverAmplificationStringOption()),
+                            Maps.immutableEntry("Deleted genes", genesWithHighDriverDeletionStringOption()),
+                            Maps.immutableEntry("Homozygously disrupted genes", genesWithHighDriverHomozygousDisruptionStringOption()),
+                            Maps.immutableEntry("Disrupted genes", genesWithHighDriverDisruptionStringOption()),
+                            Maps.immutableEntry("Gene fusions", highDriverGeneFusionsStringOption()),
+                            Maps.immutableEntry("Virus detection", highDriverVirusDetectionsStringOption()),
+                            Maps.immutableEntry("", Optional.of("")),
+                            Maps.immutableEntry("Actionable events with medium/low driver:", actionableEventsWithoutHighDriverMutation()))
+                    .flatMap(entry -> Stream.of(Cells.createKey(entry.getKey()),
+                            Cells.createValue(entry.getValue().orElse(Formats.VALUE_UNKNOWN))))
                     .forEach(table::addCell);
         } else {
             table.addCell(Cells.createSpanningEntry("The received biomaterial(s) did not meet the requirements that are needed for "
@@ -117,67 +118,82 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
     }
 
     @NotNull
-    private <T extends GeneAlteration & Driver> Cell summaryCellForGeneAlterations(Stream<T> geneAlterationStream) {
-        return Cells.createValue(geneAlterationStream.filter(variant -> variant.driverLikelihood() == DriverLikelihood.HIGH)
+    private <T extends GeneAlteration & Driver> Optional<String> summaryStringOptionForGeneAlterations(Stream<T> geneAlterationStream) {
+        String genes = geneAlterationStream.filter(variant -> variant.driverLikelihood() == DriverLikelihood.HIGH)
                 .map(GeneAlteration::gene)
-                .collect(Collectors.joining(", ")));
+                .collect(Collectors.joining(", "));
+        return Optional.of(genes.isEmpty() ? Formats.VALUE_NONE : genes);
     }
 
     @NotNull
-    private Cell genesWithHighDriverMutationCell() {
-        return summaryCellForGeneAlterations(molecular.drivers().variants().stream());
+    private Optional<String> genesWithHighDriverMutationStringOption() {
+        return summaryStringOptionForGeneAlterations(molecular.drivers().variants().stream());
     }
 
     @NotNull
-    private Cell genesWithHighDriverCopyNumberCell(boolean isGain) {
-        return summaryCellForGeneAlterations(molecular.drivers()
+    private Optional<String> genesWithHighDriverAmplificationStringOption() {
+        return summaryStringOptionForGeneAlterations(molecular.drivers()
                 .copyNumbers()
                 .stream()
-                .filter(copyNumber -> copyNumber.type().isGain() == isGain));
+                .filter(copyNumber -> copyNumber.type().isGain() && !copyNumber.type().isLoss()));
     }
 
     @NotNull
-    private Cell genesWithHighDriverHomozygousDisruptionCell() {
-        return summaryCellForGeneAlterations(molecular.drivers().homozygousDisruptions().stream());
+    private Optional<String> genesWithHighDriverDeletionStringOption() {
+        return summaryStringOptionForGeneAlterations(molecular.drivers()
+                .copyNumbers()
+                .stream()
+                .filter(copyNumber -> copyNumber.type().isLoss() && !copyNumber.type().isGain()));
     }
 
     @NotNull
-    private Cell highDriverGeneFusionsCell() {
+    private Optional<String> genesWithHighDriverHomozygousDisruptionStringOption() {
+        return summaryStringOptionForGeneAlterations(molecular.drivers().homozygousDisruptions().stream());
+    }
+
+    @NotNull
+    private Optional<String> genesWithHighDriverDisruptionStringOption() {
+        return summaryStringOptionForGeneAlterations(molecular.drivers().disruptions().stream());
+    }
+
+    @NotNull
+    private Optional<String> highDriverGeneFusionsStringOption() {
         String fusions = molecular.drivers()
                 .fusions()
                 .stream()
                 .filter(fusion -> fusion.driverLikelihood() == DriverLikelihood.HIGH)
                 .map(Driver::event)
                 .collect(Collectors.joining(", "));
-        return Cells.createValue(fusions);
+        return Optional.of(fusions.isEmpty() ? Formats.VALUE_NONE : fusions);
     }
 
     @NotNull
-    private Cell highDriverVirusDetectionsCell() {
+    private Optional<String> highDriverVirusDetectionsStringOption() {
         String fusions = molecular.drivers()
                 .viruses()
                 .stream()
                 .filter(virus -> virus.driverLikelihood() == DriverLikelihood.HIGH)
                 .map(virus -> String.format("%s (%s integrations detected)", virus.event(), virus.integrations()))
                 .collect(Collectors.joining(", "));
-        return Cells.createValue(fusions);
+        return Optional.of(fusions.isEmpty() ? Formats.VALUE_NONE : fusions);
     }
 
     @NotNull
-    private Cell actionableGenesWithoutHighDriverMutation() {
+    private Optional<String> actionableEventsWithoutHighDriverMutation() {
         Set<String> eventsWithActinTrials = trials.stream()
                 .filter(EvaluatedTrial::isPotentiallyEligible)
                 .filter(EvaluatedTrial::isOpen)
                 .flatMap(trial -> trial.molecularEvents().stream())
                 .collect(Collectors.toSet());
 
-        String genes = Stream.concat(molecular.drivers().variants().stream(), molecular.drivers().disruptions().stream())
+        String events = Stream.of(molecular.drivers().variants(), molecular.drivers().copyNumbers(), molecular.drivers().fusions(),
+                        molecular.drivers().disruptions(), molecular.drivers().homozygousDisruptions(), molecular.drivers().viruses())
+                .flatMap(Collection::stream)
                 .filter(driver -> driver.driverLikelihood() != DriverLikelihood.HIGH)
                 .filter(driver -> !driver.evidence().externalEligibleTrials().isEmpty() || eventsWithActinTrials.contains(driver.event()))
-                .map(GeneAlteration::gene)
-                .distinct()
+                .map(Driver::event)
                 .collect(Collectors.joining(", "));
 
-        return Cells.createValue(genes);
+        return Optional.of(events.isEmpty() ? Formats.VALUE_NONE : events);
     }
 }
