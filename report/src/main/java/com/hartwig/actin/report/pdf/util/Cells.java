@@ -119,6 +119,13 @@ public final class Cells {
     }
 
     @NotNull
+    public static Cell createContentNoBorder(@NotNull String text) {
+        Cell cell = create(new Paragraph(text));
+        cell.addStyle(Styles.tableContentStyle());
+        return cell;
+    }
+
+    @NotNull
     public static Cell createContentDeemphasize(@NotNull String text) {
         Cell cell = createContent(text);
         cell.setFontColor(Styles.PALETTE_MID_GREY);
