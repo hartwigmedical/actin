@@ -102,7 +102,9 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
             cohortList.forEach(cohort -> {
                 String cohortText = ActinTrialGeneratorFunctions.createCohortString(cohort);
                 Stream<String> cellContents = Stream.of(cohortText, concat(cohort.molecularEvents()), concat(cohort.warnings()));
-                ActinTrialGeneratorFunctions.addContentStreamToTable(cellContents, !cohort.isOpen(), trialSubTable);
+                ActinTrialGeneratorFunctions.addContentStreamToTable(cellContents,
+                        cohort.isOpen() && !cohort.hasSlotsAvailable(),
+                        trialSubTable);
             });
             ActinTrialGeneratorFunctions.insertTrialRow(cohortList, table, trialSubTable);
         });
