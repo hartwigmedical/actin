@@ -14,7 +14,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.driver.Driver;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.GeneAlteration;
-import com.hartwig.actin.report.interpretation.EvaluatedTrial;
+import com.hartwig.actin.report.interpretation.EvaluatedCohort;
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
@@ -36,12 +36,12 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
     @NotNull
     private final MolecularRecord molecular;
     @NotNull
-    private final List<EvaluatedTrial> trials;
+    private final List<EvaluatedCohort> trials;
     private final float keyWidth;
     private final float valueWidth;
 
     public RecentMolecularSummaryGenerator(@NotNull final ClinicalRecord clinical, @NotNull final MolecularRecord molecular,
-            @NotNull final List<EvaluatedTrial> trials, final float keyWidth, final float valueWidth) {
+            @NotNull final List<EvaluatedCohort> trials, final float keyWidth, final float valueWidth) {
         this.clinical = clinical;
         this.molecular = molecular;
         this.trials = trials;
@@ -175,8 +175,8 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
     @NotNull
     private Optional<String> actionableEventsWithoutHighDriverMutation() {
         Set<String> eventsWithActinTrials = trials.stream()
-                .filter(EvaluatedTrial::isPotentiallyEligible)
-                .filter(EvaluatedTrial::isOpen)
+                .filter(EvaluatedCohort::isPotentiallyEligible)
+                .filter(EvaluatedCohort::isOpen)
                 .flatMap(trial -> trial.molecularEvents().stream())
                 .collect(Collectors.toSet());
 

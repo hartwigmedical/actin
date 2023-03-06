@@ -7,7 +7,7 @@ import java.util.StringJoiner;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.driver.Driver;
 import com.hartwig.actin.report.interpretation.ClonalityInterpreter;
-import com.hartwig.actin.report.interpretation.EvaluatedTrial;
+import com.hartwig.actin.report.interpretation.EvaluatedCohort;
 import com.hartwig.actin.report.interpretation.MolecularDriverEntry;
 import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
@@ -25,10 +25,10 @@ public class MolecularDriversGenerator implements TableGenerator {
     @NotNull
     private final MolecularRecord molecular;
     @NotNull
-    private final List<EvaluatedTrial> trials;
+    private final List<EvaluatedCohort> trials;
     private final float width;
 
-    public MolecularDriversGenerator(@NotNull final MolecularRecord molecular, @NotNull final List<EvaluatedTrial> trials,
+    public MolecularDriversGenerator(@NotNull final MolecularRecord molecular, @NotNull final List<EvaluatedCohort> trials,
             final float width) {
         this.molecular = molecular;
         this.trials = trials;

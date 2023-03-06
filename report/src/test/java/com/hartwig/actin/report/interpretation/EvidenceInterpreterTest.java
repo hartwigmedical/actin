@@ -15,7 +15,7 @@ public class EvidenceInterpreterTest {
 
     @Test
     public void canInterpretEvidence() {
-        EvaluatedTrial trialWithInclusion = EvaluatedTrialTestFactory.builder().addMolecularEvents("inclusion").build();
+        EvaluatedCohort trialWithInclusion = EvaluatedCohortTestFactory.builder().addMolecularEvents("inclusion").build();
 
         EvidenceInterpreter interpreter = EvidenceInterpreter.fromEvaluatedTrials(Lists.newArrayList(trialWithInclusion));
 

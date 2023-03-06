@@ -5,7 +5,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.hartwig.actin.report.interpretation.EvaluatedTrial;
+import com.hartwig.actin.report.interpretation.EvaluatedCohort;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 public class EligibleActinTrialsGenerator implements TableGenerator {
 
     @NotNull
-    private final List<EvaluatedTrial> trials;
+    private final List<EvaluatedCohort> trials;
     @NotNull
     private final String title;
 
@@ -28,8 +28,8 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
     private final float checksColWidth;
 
     @NotNull
-    public static EligibleActinTrialsGenerator forOpenTrials(@NotNull List<EvaluatedTrial> trials, float width) {
-        List<EvaluatedTrial> recruitingAndEligible =
+    public static EligibleActinTrialsGenerator forOpenTrials(@NotNull List<EvaluatedCohort> trials, float width) {
+        List<EvaluatedCohort> recruitingAndEligible =
                 trials.stream().filter(trial -> trial.isPotentiallyEligible() && trial.isOpen()).collect(Collectors.toList());
 
         String title = String.format("%s trials that are open and considered eligible (%s)",
@@ -40,9 +40,9 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
     }
 
     @NotNull
-    public static EligibleActinTrialsGenerator forClosedTrials(@NotNull List<EvaluatedTrial> trials, float contentWidth,
+    public static EligibleActinTrialsGenerator forClosedTrials(@NotNull List<EvaluatedCohort> trials, float contentWidth,
             boolean skipMatchingTrialDetails) {
-        List<EvaluatedTrial> unavailableAndEligible = trials.stream()
+        List<EvaluatedCohort> unavailableAndEligible = trials.stream()
                 .filter(trial -> trial.isPotentiallyEligible() && !trial.isOpen())
                 .filter(trial -> !trial.molecularEvents().isEmpty() || !skipMatchingTrialDetails)
                 .collect(Collectors.toList());
@@ -55,7 +55,7 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static EligibleActinTrialsGenerator create(@NotNull List<EvaluatedTrial> trials, @NotNull String title, float width) {
+    private static EligibleActinTrialsGenerator create(@NotNull List<EvaluatedCohort> trials, @NotNull String title, float width) {
         float trialColWidth = width / 9;
         float cohortColWidth = width / 3;
         float molecularColWidth = width / 5;
@@ -64,7 +64,7 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
         return new EligibleActinTrialsGenerator(trials, title, trialColWidth, cohortColWidth, molecularColWidth, checksColWidth);
     }
 
-    private EligibleActinTrialsGenerator(@NotNull final List<EvaluatedTrial> trials, @NotNull final String title, final float trialColWidth,
+    private EligibleActinTrialsGenerator(@NotNull final List<EvaluatedCohort> trials, @NotNull final String title, final float trialColWidth,
             final float cohortColWidth, final float molecularEventColWidth, final float checksColWidth) {
         this.trials = trials;
         this.title = title;

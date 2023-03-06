@@ -7,7 +7,7 @@ import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class EvaluatedTrialComparator implements Comparator<EvaluatedTrial> {
+public class EvaluatedCohortComparator implements Comparator<EvaluatedCohort> {
 
     private static final String COMBINATION_COHORT_IDENTIFIER = "+";
 
@@ -47,7 +47,7 @@ public class EvaluatedTrialComparator implements Comparator<EvaluatedTrial> {
     }
 
     @Override
-    public int compare(@NotNull EvaluatedTrial trial1, @NotNull EvaluatedTrial trial2) {
+    public int compare(@NotNull EvaluatedCohort trial1, @NotNull EvaluatedCohort trial2) {
         int hasSlotsAvailableCompare = Boolean.compare(!trial1.hasSlotsAvailable(), !trial2.hasSlotsAvailable());
         if (hasSlotsAvailableCompare != 0) {
             return hasSlotsAvailableCompare;

@@ -32,14 +32,14 @@ public class MolecularDriverEntryFactoryTest {
         assertFalse(record.drivers().variants().isEmpty());
 
         Variant firstVariant = record.drivers().variants().iterator().next();
-        EvaluatedTrial openTrialForVariant = EvaluatedTrialTestFactory.builder()
+        EvaluatedCohort openTrialForVariant = EvaluatedCohortTestFactory.builder()
                 .acronym("trial 1")
                 .addMolecularEvents(firstVariant.event())
                 .isPotentiallyEligible(true)
                 .isOpen(true)
                 .build();
 
-        EvaluatedTrial closedTrialForVariant = EvaluatedTrialTestFactory.builder()
+        EvaluatedCohort closedTrialForVariant = EvaluatedCohortTestFactory.builder()
                 .acronym("trial 2")
                 .addMolecularEvents(firstVariant.event())
                 .isPotentiallyEligible(true)

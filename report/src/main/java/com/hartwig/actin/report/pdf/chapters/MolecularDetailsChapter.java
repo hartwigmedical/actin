@@ -6,8 +6,8 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.report.datamodel.Report;
-import com.hartwig.actin.report.interpretation.EvaluatedTrial;
-import com.hartwig.actin.report.interpretation.EvaluatedTrialFactory;
+import com.hartwig.actin.report.interpretation.EvaluatedCohort;
+import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularCharacteristicsGenerator;
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularDriversGenerator;
@@ -67,7 +67,7 @@ public class MolecularDetailsChapter implements ReportChapter {
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createTitle(String.format("%s (%s, %s)", report.molecular().type(), report.molecular().sampleId(),
                 Formats.date(report.molecular().date()))));
-        List<EvaluatedTrial> trials = EvaluatedTrialFactory.create(report.treatmentMatch());
+        List<EvaluatedCohort> trials = EvaluatedCohortFactory.create(report.treatmentMatch());
         List<TableGenerator> generators = Lists.newArrayList(new MolecularCharacteristicsGenerator(report.molecular(), contentWidth()),
                 new MolecularDriversGenerator(report.molecular(), trials, contentWidth()));
 

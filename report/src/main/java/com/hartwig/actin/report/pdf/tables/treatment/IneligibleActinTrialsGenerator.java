@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.hartwig.actin.report.interpretation.EvaluatedTrial;
+import com.hartwig.actin.report.interpretation.EvaluatedCohort;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Tables;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 public class IneligibleActinTrialsGenerator implements TableGenerator {
 
     @NotNull
-    private final List<EvaluatedTrial> trials;
+    private final List<EvaluatedCohort> trials;
     @NotNull
     private final String source;
     private final float trialColWidth;
@@ -25,9 +25,9 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
     private final boolean skipMatchingTrialDetails;
 
     @NotNull
-    public static IneligibleActinTrialsGenerator fromEvaluatedTrials(@NotNull List<EvaluatedTrial> trials, float contentWidth,
+    public static IneligibleActinTrialsGenerator fromEvaluatedTrials(@NotNull List<EvaluatedCohort> trials, float contentWidth,
             boolean skipMatchingTrialDetails) {
-        List<EvaluatedTrial> ineligibleTrials = trials.stream()
+        List<EvaluatedCohort> ineligibleTrials = trials.stream()
                 .filter(trial -> !trial.isPotentiallyEligible() && (trial.isOpen() || !skipMatchingTrialDetails))
                 .collect(Collectors.toList());
 
@@ -43,7 +43,7 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
                 skipMatchingTrialDetails);
     }
 
-    private IneligibleActinTrialsGenerator(@NotNull final List<EvaluatedTrial> trials, @NotNull final String source,
+    private IneligibleActinTrialsGenerator(@NotNull final List<EvaluatedCohort> trials, @NotNull final String source,
             final float trialColWidth, final float cohortColWidth, final float ineligibilityReasonColWith,
             final boolean skipMatchingTrialDetails) {
         this.trials = trials;

@@ -13,8 +13,8 @@ import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidence;
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory;
 import com.hartwig.actin.report.datamodel.Report;
-import com.hartwig.actin.report.interpretation.EvaluatedTrial;
-import com.hartwig.actin.report.interpretation.EvaluatedTrialFactory;
+import com.hartwig.actin.report.interpretation.EvaluatedCohort;
+import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenerator;
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator;
@@ -185,7 +185,7 @@ public class SummaryChapter implements ReportChapter {
         float keyWidth = STANDARD_KEY_WIDTH;
         float valueWidth = contentWidth() - keyWidth;
 
-        List<EvaluatedTrial> trials = EvaluatedTrialFactory.create(report.treatmentMatch());
+        List<EvaluatedCohort> trials = EvaluatedCohortFactory.create(report.treatmentMatch());
         AggregatedEvidence aggregatedEvidence = AggregatedEvidenceFactory.create(report.molecular());
 
         List<TableGenerator> generators = Lists.newArrayList(new PatientClinicalHistoryGenerator(report.clinical(), keyWidth, valueWidth),

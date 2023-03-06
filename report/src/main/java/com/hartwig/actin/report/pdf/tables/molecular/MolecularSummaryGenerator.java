@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.report.interpretation.EvaluatedTrial;
+import com.hartwig.actin.report.interpretation.EvaluatedCohort;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Tables;
@@ -19,12 +19,12 @@ public class MolecularSummaryGenerator implements TableGenerator {
     @NotNull
     private final MolecularRecord molecular;
     @NotNull
-    private final List<EvaluatedTrial> trials;
+    private final List<EvaluatedCohort> trials;
     private final float keyWidth;
     private final float valueWidth;
 
     public MolecularSummaryGenerator(@NotNull final ClinicalRecord clinical, @NotNull final MolecularRecord molecular,
-            @NotNull final List<EvaluatedTrial> trials, final float keyWidth, final float valueWidth) {
+            @NotNull final List<EvaluatedCohort> trials, final float keyWidth, final float valueWidth) {
         this.clinical = clinical;
         this.molecular = molecular;
         this.trials = trials;

@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import com.hartwig.actin.report.interpretation.EvaluatedTrial;
-import com.hartwig.actin.report.interpretation.EvaluatedTrialComparator;
+import com.hartwig.actin.report.interpretation.EvaluatedCohort;
+import com.hartwig.actin.report.interpretation.EvaluatedCohortComparator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Styles;
 import com.itextpdf.layout.element.Paragraph;
@@ -17,14 +17,14 @@ import com.itextpdf.layout.element.Text;
 
 public final class ActinTrialGeneratorFunctions {
 
-    public static Stream<List<EvaluatedTrial>> streamSortedCohorts(List<EvaluatedTrial> trials) {
-        trials.sort(new EvaluatedTrialComparator());
-        Map<String, List<EvaluatedTrial>> cohortsByTrialId = trials.stream().collect(groupingBy(EvaluatedTrial::trialId));
+    public static Stream<List<EvaluatedCohort>> streamSortedCohorts(List<EvaluatedCohort> trials) {
+        trials.sort(new EvaluatedCohortComparator());
+        Map<String, List<EvaluatedCohort>> cohortsByTrialId = trials.stream().collect(groupingBy(EvaluatedCohort::trialId));
 
-        return trials.stream().map(EvaluatedTrial::trialId).distinct().map(cohortsByTrialId::get);
+        return trials.stream().map(EvaluatedCohort::trialId).distinct().map(cohortsByTrialId::get);
     }
 
-    public static String createCohortString(EvaluatedTrial cohort) {
+    public static String createCohortString(EvaluatedCohort cohort) {
         String cohortText = cohort.cohort() == null ? "" : cohort.cohort();
         if (cohort.isOpen() && !cohort.hasSlotsAvailable()) {
             cohortText += " *";
@@ -42,8 +42,8 @@ public final class ActinTrialGeneratorFunctions {
         }).forEach(table::addCell);
     }
 
-    public static void insertTrialRow(List<EvaluatedTrial> cohortList, Table table, Table trialSubTable) {
-        EvaluatedTrial trial = cohortList.get(0);
+    public static void insertTrialRow(List<EvaluatedCohort> cohortList, Table table, Table trialSubTable) {
+        EvaluatedCohort trial = cohortList.get(0);
         if (trial != null) {
             table.addCell(Cells.createContent(Cells.createContentNoBorder(new Paragraph().addAll(Arrays.asList(new Text(trial.trialId()).addStyle(
                     Styles.tableHighlightStyle()), new Text(trial.acronym()).addStyle(Styles.tableContentStyle()))))));

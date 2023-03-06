@@ -16,17 +16,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
-public class EvaluatedTrialComparatorTest {
+public class EvaluatedCohortComparatorTest {
 
     @NotNull
-    private static EvaluatedTrial create(@NotNull String trialId, @Nullable String cohort, boolean hasSlotsAvailable,
+    private static EvaluatedCohort create(@NotNull String trialId, @Nullable String cohort, boolean hasSlotsAvailable,
             String... molecularEvents) {
         Set<String> molecularEventSet = Sets.newTreeSet(Ordering.natural());
         if (molecularEvents.length > 0) {
             molecularEventSet.addAll(Lists.newArrayList(molecularEvents));
         }
 
-        return ImmutableEvaluatedTrial.builder()
+        return ImmutableEvaluatedCohort.builder()
                 .trialId(trialId)
                 .acronym(Strings.EMPTY)
                 .molecularEvents(molecularEventSet)
@@ -39,7 +39,7 @@ public class EvaluatedTrialComparatorTest {
 
     @Test
     public void canSortEvaluatedTrials() {
-        List<EvaluatedTrial> trials = Arrays.asList(create("trial 7", "cohort 1", true),
+        List<EvaluatedCohort> trials = Arrays.asList(create("trial 7", "cohort 1", true),
                 create("trial 3", "cohort 2 + cohort 3", false, "Event C"),
                 create("trial 3", "cohort 1", false, "Event B"),
                 create("trial 5", "cohort 1", false, "Event D", "Event A"),
@@ -49,7 +49,7 @@ public class EvaluatedTrialComparatorTest {
                 create("trial 1", "cohort 2", false),
                 create("trial 2", "cohort 1", false));
 
-        List<EvaluatedTrial> trialList = Lists.newArrayList(trials.get(7),
+        List<EvaluatedCohort> trialList = Lists.newArrayList(trials.get(7),
                 trials.get(4),
                 trials.get(2),
                 trials.get(8),
@@ -58,8 +58,8 @@ public class EvaluatedTrialComparatorTest {
                 trials.get(0),
                 trials.get(3),
                 trials.get(5));
-        trialList.sort(new EvaluatedTrialComparator());
-        Iterator<EvaluatedTrial> trialIterator = trialList.iterator();
+        trialList.sort(new EvaluatedCohortComparator());
+        Iterator<EvaluatedCohort> trialIterator = trialList.iterator();
 
         trials.forEach(trial -> assertEquals(trial, trialIterator.next()));
     }
