@@ -31,7 +31,7 @@ public class EvaluatedCohortFactoryTest {
     public void canCreateEvaluatedTrialsFromProperMatch() {
         List<EvaluatedCohort> trials = EvaluatedCohortFactory.create(TestTreatmentMatchFactory.createProperTreatmentMatch());
 
-        assertEquals(6, trials.size());
+        assertEquals(5, trials.size());
 
         EvaluatedCohort trial1A = findByAcronymAndCohort(trials, "TEST-1", "Cohort A");
         assertFalse(trial1A.molecularEvents().isEmpty());

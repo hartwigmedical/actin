@@ -33,7 +33,7 @@ public class TestReportWriterApplication {
 
     @NotNull
     private static Report createTestReport() throws IOException {
-        Report report = TestReportFactory.createExhaustiveTestReport();
+        Report report = TestReportFactory.createProperTestReport();
 
         LOGGER.info("Printing clinical record");
         ClinicalPrinter.printRecord(report.clinical());

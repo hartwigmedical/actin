@@ -19,12 +19,12 @@ public class TrialMatchSummarizerTest {
         TrialMatchSummary summary = TrialMatchSummarizer.summarize(TestTreatmentMatchFactory.createProperTreatmentMatch().trialMatches());
 
         assertEquals(2, summary.trialCount());
-        assertEquals(6, summary.cohortCount());
+        assertEquals(5, summary.cohortCount());
 
         assertEquals(2, summary.eligibleTrialMap().size());
 
         List<CohortMetadata> eligibleCohorts = summary.eligibleTrialMap().get(findByTrialId(summary, "Test Trial 1"));
-        assertEquals(3, eligibleCohorts.size());
+        assertEquals(2, eligibleCohorts.size());
         assertNotNull(findByCohortId(eligibleCohorts, "A"));
         assertNotNull(findByCohortId(eligibleCohorts, "B"));
     }

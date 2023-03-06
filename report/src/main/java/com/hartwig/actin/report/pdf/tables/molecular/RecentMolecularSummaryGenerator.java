@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType;
 import com.hartwig.actin.molecular.datamodel.driver.Driver;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.GeneAlteration;
@@ -106,7 +107,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
             if (purity != null) {
                 Text biopsyText = new Text(biopsyLocation).addStyle(Styles.tableHighlightStyle());
                 Text purityText = new Text(String.format(ApplicationConfig.LOCALE, " (purity %d%%)", Math.round(purity * 100)));
-                purityText.addStyle(molecular.hasSufficientQuality() ? Styles.tableNoticeStyle() : Styles.tableHighlightStyle());
+                purityText.addStyle(molecular.hasSufficientQuality() ? Styles.tableHighlightStyle() : Styles.tableNoticeStyle());
                 return Cells.create(new Paragraph().addAll(Arrays.asList(biopsyText, purityText)));
             } else {
                 return Cells.createValue(biopsyLocation);
@@ -134,7 +135,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
         return summaryStringOptionForGeneAlterations(molecular.drivers()
                 .copyNumbers()
                 .stream()
-                .filter(copyNumber -> copyNumber.type().isGain() && !copyNumber.type().isLoss()));
+                .filter(copyNumber -> copyNumber.type() == CopyNumberType.FULL_GAIN || copyNumber.type() == CopyNumberType.PARTIAL_GAIN));
     }
 
     @NotNull
@@ -142,7 +143,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
         return summaryStringOptionForGeneAlterations(molecular.drivers()
                 .copyNumbers()
                 .stream()
-                .filter(copyNumber -> copyNumber.type().isLoss() && !copyNumber.type().isGain()));
+                .filter(copyNumber -> copyNumber.type() == CopyNumberType.LOSS));
     }
 
     @NotNull
@@ -189,7 +190,8 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
                 .filter(driver -> driver.driverLikelihood() != DriverLikelihood.HIGH);
 
         String events = Stream.concat(nonDisruptionDrivers, molecular.drivers().disruptions().stream())
-                .filter(driver -> !driver.evidence().externalEligibleTrials().isEmpty() || eventsWithActinTrials.contains(driver.event()))
+                .filter(driver -> !driver.evidence().externalEligibleTrials().isEmpty() || eventsWithActinTrials.contains(driver.event())
+                        || !driver.evidence().approvedTreatments().isEmpty())
                 .map(Driver::event)
                 .collect(Collectors.joining(", "));
 
