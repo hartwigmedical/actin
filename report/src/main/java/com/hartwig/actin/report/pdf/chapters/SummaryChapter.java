@@ -46,6 +46,45 @@ public class SummaryChapter implements ReportChapter {
     }
 
     @NotNull
+    @Override
+    public String name() {
+        return "Summary";
+    }
+
+    @NotNull
+    @Override
+    public PageSize pageSize() {
+        return PageSize.A4;
+    }
+
+    @Override
+    public void render(@NotNull Document document) {
+        addPatientDetails(document);
+        addChapterTitle(document);
+        addSummaryTable(document);
+    }
+
+    private void addPatientDetails(@NotNull Document document) {
+        Paragraph patientDetailsLine = new Paragraph();
+        patientDetailsLine.add(new Text("Gender: ").addStyle(Styles.reportHeaderLabelStyle()));
+        patientDetailsLine.add(new Text(report.clinical().patient().gender().display()).addStyle(Styles.reportHeaderValueStyle()));
+        patientDetailsLine.add(new Text(" | Birth year: ").addStyle(Styles.reportHeaderLabelStyle()));
+        patientDetailsLine.add(new Text(String.valueOf(report.clinical().patient().birthYear())).addStyle(Styles.reportHeaderValueStyle()));
+        patientDetailsLine.add(new Text(" | WHO: ").addStyle(Styles.reportHeaderLabelStyle()));
+        patientDetailsLine.add(new Text(whoStatus(report.clinical().clinicalStatus().who())).addStyle(Styles.reportHeaderValueStyle()));
+        document.add(patientDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
+
+        Paragraph tumorDetailsLine = new Paragraph();
+        tumorDetailsLine.add(new Text("Tumor: ").addStyle(Styles.reportHeaderLabelStyle()));
+        tumorDetailsLine.add(new Text(tumor(report.clinical().tumor())).addStyle(Styles.reportHeaderValueStyle()));
+        tumorDetailsLine.add(new Text(" | Lesions: ").addStyle(Styles.reportHeaderLabelStyle()));
+        tumorDetailsLine.add(new Text(lesions(report.clinical().tumor())).addStyle(Styles.reportHeaderValueStyle()));
+        tumorDetailsLine.add(new Text(" | Stage: ").addStyle(Styles.reportHeaderLabelStyle()));
+        tumorDetailsLine.add(new Text(stage(report.clinical().tumor())).addStyle(Styles.reportHeaderValueStyle()));
+        document.add(tumorDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
+    }
+
+    @NotNull
     private static String whoStatus(@Nullable Integer who) {
         return who != null ? String.valueOf(who) : Formats.VALUE_UNKNOWN;
     }
@@ -134,45 +173,6 @@ public class SummaryChapter implements ReportChapter {
             }
             return joiner.toString();
         }
-    }
-
-    @NotNull
-    @Override
-    public String name() {
-        return "Summary";
-    }
-
-    @NotNull
-    @Override
-    public PageSize pageSize() {
-        return PageSize.A4;
-    }
-
-    @Override
-    public void render(@NotNull Document document) {
-        addPatientDetails(document);
-        addChapterTitle(document);
-        addSummaryTable(document);
-    }
-
-    private void addPatientDetails(@NotNull Document document) {
-        Paragraph patientDetailsLine = new Paragraph();
-        patientDetailsLine.add(new Text("Gender: ").addStyle(Styles.reportHeaderLabelStyle()));
-        patientDetailsLine.add(new Text(report.clinical().patient().gender().display()).addStyle(Styles.reportHeaderValueStyle()));
-        patientDetailsLine.add(new Text(" | Birth year: ").addStyle(Styles.reportHeaderLabelStyle()));
-        patientDetailsLine.add(new Text(String.valueOf(report.clinical().patient().birthYear())).addStyle(Styles.reportHeaderValueStyle()));
-        patientDetailsLine.add(new Text(" | WHO: ").addStyle(Styles.reportHeaderLabelStyle()));
-        patientDetailsLine.add(new Text(whoStatus(report.clinical().clinicalStatus().who())).addStyle(Styles.reportHeaderValueStyle()));
-        document.add(patientDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
-
-        Paragraph tumorDetailsLine = new Paragraph();
-        tumorDetailsLine.add(new Text("Tumor: ").addStyle(Styles.reportHeaderLabelStyle()));
-        tumorDetailsLine.add(new Text(tumor(report.clinical().tumor())).addStyle(Styles.reportHeaderValueStyle()));
-        tumorDetailsLine.add(new Text(" | Lesions: ").addStyle(Styles.reportHeaderLabelStyle()));
-        tumorDetailsLine.add(new Text(lesions(report.clinical().tumor())).addStyle(Styles.reportHeaderValueStyle()));
-        tumorDetailsLine.add(new Text(" | Stage: ").addStyle(Styles.reportHeaderLabelStyle()));
-        tumorDetailsLine.add(new Text(stage(report.clinical().tumor())).addStyle(Styles.reportHeaderValueStyle()));
-        document.add(tumorDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
     }
 
     private void addChapterTitle(@NotNull Document document) {
