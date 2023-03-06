@@ -131,7 +131,7 @@ public final class TestTreatmentMatchFactory {
                 .build());
         cohorts.add(ImmutableCohortMatch.builder()
                 .metadata(createTestMetadata("B", true, true, false))
-                .isPotentiallyEligible(true)
+                .isPotentiallyEligible(false)
                 .build());
         cohorts.add(ImmutableCohortMatch.builder()
                 .metadata(createTestMetadata("C", false, false, false))
@@ -204,7 +204,7 @@ public final class TestTreatmentMatchFactory {
 
         cohorts.add(ImmutableCohortMatch.builder()
                 .metadata(createTestMetadata("A", true, false, false))
-                .isPotentiallyEligible(true)
+                .isPotentiallyEligible(false)
                 .evaluations(createTestCohortEvaluationsTrial2CohortA())
                 .build());
         cohorts.add(ImmutableCohortMatch.builder()

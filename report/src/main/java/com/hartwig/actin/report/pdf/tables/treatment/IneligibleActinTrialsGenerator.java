@@ -1,31 +1,22 @@
 package com.hartwig.actin.report.pdf.tables.treatment;
 
-import static java.util.stream.Collectors.groupingBy;
-
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.hartwig.actin.report.interpretation.EvaluatedTrial;
-import com.hartwig.actin.report.interpretation.EvaluatedTrialComparator;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
-import com.hartwig.actin.report.pdf.util.Styles;
 import com.hartwig.actin.report.pdf.util.Tables;
 import com.hartwig.actin.treatment.TreatmentConstants;
-import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.element.Text;
 
 import org.jetbrains.annotations.NotNull;
 
 public class IneligibleActinTrialsGenerator implements TableGenerator {
 
     @NotNull
-    private final Map<String, List<EvaluatedTrial>> trials;
+    private final List<EvaluatedTrial> trials;
     @NotNull
     private final String source;
     private final float trialColWidth;
@@ -36,9 +27,9 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
     @NotNull
     public static IneligibleActinTrialsGenerator fromEvaluatedTrials(@NotNull List<EvaluatedTrial> trials, float contentWidth,
             boolean skipMatchingTrialDetails) {
-        Map<String, List<EvaluatedTrial>> ineligibleTrials = trials.stream()
+        List<EvaluatedTrial> ineligibleTrials = trials.stream()
                 .filter(trial -> !trial.isPotentiallyEligible() && (trial.isOpen() || !skipMatchingTrialDetails))
-                .collect(groupingBy(EvaluatedTrial::trialId));
+                .collect(Collectors.toList());
 
         float trialColWidth = contentWidth / 9;
         float cohortColWidth = contentWidth / 2;
@@ -52,7 +43,7 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
                 skipMatchingTrialDetails);
     }
 
-    private IneligibleActinTrialsGenerator(@NotNull final Map<String, List<EvaluatedTrial>> trials, @NotNull final String source,
+    private IneligibleActinTrialsGenerator(@NotNull final List<EvaluatedTrial> trials, @NotNull final String source,
             final float trialColWidth, final float cohortColWidth, final float ineligibilityReasonColWith,
             final boolean skipMatchingTrialDetails) {
         this.trials = trials;
@@ -87,51 +78,25 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
             table.addHeaderCell(Cells.createContentNoBorder(headerSubTable));
         }
 
-        trials.values()
-                .stream()
-                .flatMap(Collection::stream)
-                .sorted(new EvaluatedTrialComparator())
-                .map(EvaluatedTrial::trialId)
-                .distinct()
-                .map(trials::get)
-                .forEach(cohortList -> {
-                    EvaluatedTrial trial = cohortList.get(0);
-                    if (trial != null) {
-                        table.addCell(Cells.createContent(Cells.createContentNoBorder(new Paragraph().addAll(Arrays.asList(
-                                new Text(trial.trialId()).addStyle(Styles.tableHighlightStyle()),
-                                new Text(trial.acronym()).addStyle(Styles.tableContentStyle())
-                        )))));
+        ActinTrialGeneratorFunctions.streamSortedCohorts(trials).forEach(cohortList -> {
+            Table trialSubTable = Tables.createFixedWidthCols(cohortColWidth, ineligibilityReasonColWith);
 
-                        Table trialSubTable = Tables.createFixedWidthCols(cohortColWidth, ineligibilityReasonColWith);
+            cohortList.forEach(cohort -> {
+                String cohortText = ActinTrialGeneratorFunctions.createCohortString(cohort);
+                String ineligibilityText = cohort.fails().isEmpty() ? "?" : String.join(", ", cohort.fails());
 
-                        cohortList.stream().sorted(new EvaluatedTrialComparator()).forEach(cohort -> {
-                            String cohortText = cohort.cohort() == null ? "" : cohort.cohort();
-                            boolean noSlotsAvailable = cohort.isOpen() && !cohort.hasSlotsAvailable();
-                            if (noSlotsAvailable) {
-                                cohortText += " *";
-                            }
-                            String ineligibilityText = cohort.fails().isEmpty() ? "?" : String.join(", ", cohort.fails());
-
-                            Stream.of(cohortText, ineligibilityText).map(text -> {
-                                if (!cohort.isOpen()) {
-                                    return Cells.createContentNoBorderDeemphasize(text);
-                                } else {
-                                    return Cells.createContentNoBorder(text);
-                                }
-                            }).forEach(trialSubTable::addCell);
-                        });
-
-                        table.addCell(Cells.createContent(trialSubTable));
-                    }
-                });
-
-        List<EvaluatedTrial> allCohorts = trials.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
+                ActinTrialGeneratorFunctions.addContentStreamToTable(Stream.of(cohortText, ineligibilityText),
+                        !cohort.isOpen(),
+                        trialSubTable);
+            });
+            ActinTrialGeneratorFunctions.insertTrialRow(cohortList, table, trialSubTable);
+        });
 
         String subNote = "";
-        if (allCohorts.stream().anyMatch(trial -> !trial.isOpen())) {
+        if (trials.stream().anyMatch(trial -> !trial.isOpen())) {
             subNote += " Cohorts shown in grey are closed.";
         }
-        if (allCohorts.stream().anyMatch(trial -> trial.isOpen() && !trial.hasSlotsAvailable())) {
+        if (trials.stream().anyMatch(trial -> trial.isOpen() && !trial.hasSlotsAvailable())) {
             subNote += " Cohorts with no slots available are indicated by an asterisk (*).";
         }
         if (!subNote.isEmpty()) {
