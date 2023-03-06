@@ -84,7 +84,6 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
                             Maps.immutableEntry("Amplified genes", genesWithHighDriverAmplificationStringOption()),
                             Maps.immutableEntry("Deleted genes", genesWithHighDriverDeletionStringOption()),
                             Maps.immutableEntry("Homozygously disrupted genes", genesWithHighDriverHomozygousDisruptionStringOption()),
-                            Maps.immutableEntry("Disrupted genes", genesWithHighDriverDisruptionStringOption()),
                             Maps.immutableEntry("Gene fusions", highDriverGeneFusionsStringOption()),
                             Maps.immutableEntry("Virus detection", highDriverVirusDetectionsStringOption()),
                             Maps.immutableEntry("", Optional.of("")),
@@ -152,11 +151,6 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
     }
 
     @NotNull
-    private Optional<String> genesWithHighDriverDisruptionStringOption() {
-        return summaryStringOptionForGeneAlterations(molecular.drivers().disruptions().stream());
-    }
-
-    @NotNull
     private Optional<String> highDriverGeneFusionsStringOption() {
         String fusions = molecular.drivers()
                 .fusions()
@@ -173,7 +167,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
                 .viruses()
                 .stream()
                 .filter(virus -> virus.driverLikelihood() == DriverLikelihood.HIGH)
-                .map(virus -> String.format("%s (%s integrations detected)", virus.event(), virus.integrations()))
+                .map(virus -> String.format("%s (%s integrations detected)", virus.type(), virus.integrations()))
                 .collect(Collectors.joining(", "));
         return Optional.of(fusions.isEmpty() ? Formats.VALUE_NONE : fusions);
     }
@@ -186,10 +180,15 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
                 .flatMap(trial -> trial.molecularEvents().stream())
                 .collect(Collectors.toSet());
 
-        String events = Stream.of(molecular.drivers().variants(), molecular.drivers().copyNumbers(), molecular.drivers().fusions(),
-                        molecular.drivers().disruptions(), molecular.drivers().homozygousDisruptions(), molecular.drivers().viruses())
+        Stream<? extends Driver> nonDisruptionDrivers = Stream.of(molecular.drivers().variants(),
+                        molecular.drivers().copyNumbers(),
+                        molecular.drivers().fusions(),
+                        molecular.drivers().homozygousDisruptions(),
+                        molecular.drivers().viruses())
                 .flatMap(Collection::stream)
-                .filter(driver -> driver.driverLikelihood() != DriverLikelihood.HIGH)
+                .filter(driver -> driver.driverLikelihood() != DriverLikelihood.HIGH);
+
+        String events = Stream.concat(nonDisruptionDrivers, molecular.drivers().disruptions().stream())
                 .filter(driver -> !driver.evidence().externalEligibleTrials().isEmpty() || eventsWithActinTrials.contains(driver.event()))
                 .map(Driver::event)
                 .collect(Collectors.joining(", "));
