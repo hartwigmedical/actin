@@ -57,15 +57,15 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
     @NotNull
     private static EligibleActinTrialsGenerator create(@NotNull List<EvaluatedCohort> trials, @NotNull String title, float width) {
         float trialColWidth = width / 9;
-        float cohortColWidth = width / 3;
+        float cohortColWidth = width / 4;
         float molecularColWidth = width / 5;
         float checksColWidth = width - (trialColWidth + cohortColWidth + molecularColWidth);
 
         return new EligibleActinTrialsGenerator(trials, title, trialColWidth, cohortColWidth, molecularColWidth, checksColWidth);
     }
 
-    private EligibleActinTrialsGenerator(@NotNull final List<EvaluatedCohort> trials, @NotNull final String title, final float trialColWidth,
-            final float cohortColWidth, final float molecularEventColWidth, final float checksColWidth) {
+    private EligibleActinTrialsGenerator(@NotNull final List<EvaluatedCohort> trials, @NotNull final String title,
+            final float trialColWidth, final float cohortColWidth, final float molecularEventColWidth, final float checksColWidth) {
         this.trials = trials;
         this.title = title;
         this.trialColWidth = trialColWidth;

@@ -11,6 +11,7 @@ import com.hartwig.actin.report.interpretation.EvaluatedCohort;
 import com.hartwig.actin.report.interpretation.EvaluatedCohortComparator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Styles;
+import com.hartwig.actin.report.pdf.util.Tables;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
@@ -49,6 +50,11 @@ public final class ActinTrialGeneratorFunctions {
                     new Text(trial.trialId()).addStyle(Styles.tableHighlightStyle()),
                     new Text(trial.acronym()).addStyle(Styles.tableContentStyle())
             )))));
+            if (trialSubTable.getNumberOfRows() > 2) {
+                trialSubTable = Tables.makeWrapping(trialSubTable, false);
+            } else {
+                trialSubTable.setKeepTogether(true);
+            }
             table.addCell(Cells.createContent(trialSubTable));
         }
     }

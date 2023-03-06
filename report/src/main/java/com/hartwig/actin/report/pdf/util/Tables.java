@@ -4,7 +4,6 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.UnitValue;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public final class Tables {
 
@@ -23,29 +22,24 @@ public final class Tables {
 
     @NotNull
     public static Table makeWrapping(@NotNull Table table) {
-        return makeWrapping(table, null);
+        return makeWrapping(table, true);
     }
 
     @NotNull
-    public static Table makeWrapping(@NotNull Table table, @Nullable String title) {
+    public static Table makeWrapping(@NotNull Table table, boolean printSubNotes) {
         if (table.getNumberOfRows() == 0) {
             table.addCell(Cells.createSpanningNoneEntry(table));
         }
 
-        table.addFooterCell(Cells.createSpanningSubNote("The table continues on the next page", table));
+        table.addFooterCell(Cells.createSpanningSubNote(printSubNotes ? "The table continues on the next page" : "", table));
         table.setSkipLastFooter(true);
 
-        Table wrappingTable = new Table(1).setMinWidth(table.getWidth())
-                .addHeaderCell(Cells.createSubNote("Continued from the previous page"))
-                .setSkipFirstHeader(true)
-                .addCell(Cells.create(table));
-
-        Table finalTable = new Table(1).setMinWidth(table.getWidth());
-        if (title != null) {
-            finalTable.addHeaderCell(Cells.createTitle(title));
+        Table wrappingTable = new Table(1).setMinWidth(table.getWidth());
+        if (printSubNotes) {
+            wrappingTable.addHeaderCell(Cells.createSubNote("Continued from the previous page"));
         }
-        finalTable.addCell(Cells.create(wrappingTable));
+        wrappingTable.setSkipFirstHeader(true).addCell(Cells.create(table).setPadding(0));
 
-        return finalTable;
+        return wrappingTable;
     }
 }

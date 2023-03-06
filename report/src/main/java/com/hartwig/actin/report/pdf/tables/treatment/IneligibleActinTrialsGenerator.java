@@ -32,7 +32,7 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
                 .collect(Collectors.toList());
 
         float trialColWidth = contentWidth / 9;
-        float cohortColWidth = contentWidth / 2;
+        float cohortColWidth = contentWidth / 4;
         float ineligibilityReasonColWidth = contentWidth - (trialColWidth + cohortColWidth);
 
         return new IneligibleActinTrialsGenerator(ineligibleTrials,
