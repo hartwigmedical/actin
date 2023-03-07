@@ -65,7 +65,8 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
         MolecularCharacteristicsGenerator characteristicsGenerator =
                 new MolecularCharacteristicsGenerator(molecular, keyWidth + valueWidth);
 
-        Table table = Tables.createFixedWidthCols(keyWidth, valueWidth);
+        float cellWidth = (keyWidth + valueWidth) / 4;
+        Table table = Tables.createFixedWidthCols(cellWidth, cellWidth, cellWidth, cellWidth);
 
         table.addCell(Cells.createKey("Biopsy location"));
         table.addCell(biopsySummary());
@@ -79,16 +80,16 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
             Stream.of(Maps.immutableEntry("Tumor mutational load", characteristicsGenerator.createTMLStatusStringOption()),
                             Maps.immutableEntry("Microsatellite (in)stability", characteristicsGenerator.createMSStabilityStringOption()),
                             Maps.immutableEntry("HR status", characteristicsGenerator.createHRStatusStringOption()),
-                            Maps.immutableEntry("", Optional.of("")),
                             Maps.immutableEntry("Genes with high driver mutation", genesWithHighDriverMutationStringOption()),
-                            Maps.immutableEntry("Amplified genes", genesWithHighDriverAmplificationStringOption()),
-                            Maps.immutableEntry("Deleted genes", genesWithHighDriverDeletionStringOption()),
                             Maps.immutableEntry("Homozygously disrupted genes", genesWithHighDriverHomozygousDisruptionStringOption()),
+                            Maps.immutableEntry("Amplified genes", genesWithHighDriverAmplificationStringOption()),
                             Maps.immutableEntry("Gene fusions", highDriverGeneFusionsStringOption()),
+                            Maps.immutableEntry("Deleted genes", genesWithHighDriverDeletionStringOption()),
                             Maps.immutableEntry("Virus detection", highDriverVirusDetectionsStringOption()),
-                            Maps.immutableEntry("", Optional.of("")),
-                            Maps.immutableEntry("Potentially actionable events with medium/low driver:",
-                                    actionableEventsWithoutHighDriverMutation()))
+                            Maps.immutableEntry("Potentially actionable events with medium/low driver",
+                                    actionableEventsWithoutHighDriverMutation()),
+                            Maps.immutableEntry("", Optional.of(""))
+                            )
                     .flatMap(entry -> Stream.of(Cells.createKey(entry.getKey()),
                             Cells.createValue(entry.getValue().orElse(Formats.VALUE_UNKNOWN))))
                     .forEach(table::addCell);
