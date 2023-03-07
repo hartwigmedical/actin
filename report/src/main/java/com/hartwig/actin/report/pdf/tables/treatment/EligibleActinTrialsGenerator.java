@@ -41,15 +41,15 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
 
     @NotNull
     public static EligibleActinTrialsGenerator forClosedCohorts(@NotNull List<EvaluatedCohort> cohorts, float contentWidth,
-            boolean skipMatchingTrialDetails) {
+            boolean enableExtendedMode) {
         List<EvaluatedCohort> unavailableAndEligible = cohorts.stream()
                 .filter(trial -> trial.isPotentiallyEligible() && !trial.isOpen())
-                .filter(trial -> !trial.molecularEvents().isEmpty() || !skipMatchingTrialDetails)
+                .filter(trial -> !trial.molecularEvents().isEmpty() || enableExtendedMode)
                 .collect(Collectors.toList());
 
         String title = String.format("%s trials and cohorts that %smay be eligible, but are closed (%s)",
                 TreatmentConstants.ACTIN_SOURCE,
-                skipMatchingTrialDetails ? "meet molecular requirements and " : "",
+                enableExtendedMode ? "" : "meet molecular requirements and ",
                 unavailableAndEligible.size());
         return create(unavailableAndEligible, title, contentWidth);
     }
@@ -58,7 +58,7 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
     private static EligibleActinTrialsGenerator create(@NotNull List<EvaluatedCohort> cohorts, @NotNull String title, float width) {
         float trialColWidth = width / 9;
         float cohortColWidth = width / 4;
-        float molecularColWidth = width / 5;
+        float molecularColWidth = width / 7;
         float checksColWidth = width - (trialColWidth + cohortColWidth + molecularColWidth);
 
         return new EligibleActinTrialsGenerator(cohorts, title, trialColWidth, cohortColWidth, molecularColWidth, checksColWidth);

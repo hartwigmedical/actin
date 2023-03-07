@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType;
 import com.hartwig.actin.molecular.datamodel.driver.Driver;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.GeneAlteration;
@@ -136,7 +135,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
         return summaryStringOptionForGeneAlterations(molecular.drivers()
                 .copyNumbers()
                 .stream()
-                .filter(copyNumber -> copyNumber.type() == CopyNumberType.FULL_GAIN || copyNumber.type() == CopyNumberType.PARTIAL_GAIN));
+                .filter(copyNumber -> copyNumber.type().isGain()));
     }
 
     @NotNull
@@ -144,7 +143,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
         return summaryStringOptionForGeneAlterations(molecular.drivers()
                 .copyNumbers()
                 .stream()
-                .filter(copyNumber -> copyNumber.type() == CopyNumberType.LOSS));
+                .filter(copyNumber -> copyNumber.type().isLoss()));
     }
 
     @NotNull

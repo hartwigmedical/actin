@@ -48,15 +48,14 @@ public class ReportWriter {
         write(report, false);
     }
 
-    public synchronized void write(@NotNull Report report, boolean skipTrialMatchingDetails) throws IOException {
+    public synchronized void write(@NotNull Report report, boolean enableExtendedMode) throws IOException {
         LOGGER.debug("Initializing output styles");
         Styles.initialize();
         List<ReportChapter> chapters = new LinkedList<>(Arrays.asList(new SummaryChapter(report), new MolecularDetailsChapter(report),
-                new ClinicalDetailsChapter(report), new TrialMatchingChapter(report, skipTrialMatchingDetails)));
+                new ClinicalDetailsChapter(report), new TrialMatchingChapter(report, enableExtendedMode)));
 
-        if (skipTrialMatchingDetails) {
-            LOGGER.info("Skipping trial matching details");
-        } else {
+        if (enableExtendedMode) {
+            LOGGER.info("Including trial matching details");
             chapters.add(new TrialMatchingDetailsChapter(report));
         }
 

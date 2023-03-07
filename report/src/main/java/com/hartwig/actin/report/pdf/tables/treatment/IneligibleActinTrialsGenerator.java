@@ -22,13 +22,13 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
     private final float trialColWidth;
     private final float cohortColWidth;
     private final float ineligibilityReasonColWith;
-    private final boolean skipMatchingTrialDetails;
+    private final boolean enableExtendedMode;
 
     @NotNull
     public static IneligibleActinTrialsGenerator fromEvaluatedCohorts(@NotNull List<EvaluatedCohort> cohorts, float contentWidth,
-            boolean skipMatchingTrialDetails) {
+            boolean enableExtendedMode) {
         List<EvaluatedCohort> ineligibleCohorts = cohorts.stream()
-                .filter(cohort -> !cohort.isPotentiallyEligible() && (cohort.isOpen() || !skipMatchingTrialDetails))
+                .filter(cohort -> !cohort.isPotentiallyEligible() && (cohort.isOpen() || enableExtendedMode))
                 .collect(Collectors.toList());
 
         float trialColWidth = contentWidth / 9;
@@ -40,18 +40,18 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
                 trialColWidth,
                 cohortColWidth,
                 ineligibilityReasonColWidth,
-                skipMatchingTrialDetails);
+                enableExtendedMode);
     }
 
     private IneligibleActinTrialsGenerator(@NotNull final List<EvaluatedCohort> cohorts, @NotNull final String source,
             final float trialColWidth, final float cohortColWidth, final float ineligibilityReasonColWith,
-            final boolean skipMatchingTrialDetails) {
+            final boolean enableExtendedMode) {
         this.cohorts = cohorts;
         this.source = source;
         this.trialColWidth = trialColWidth;
         this.cohortColWidth = cohortColWidth;
         this.ineligibilityReasonColWith = ineligibilityReasonColWith;
-        this.skipMatchingTrialDetails = skipMatchingTrialDetails;
+        this.enableExtendedMode = enableExtendedMode;
     }
 
     @NotNull
@@ -59,7 +59,7 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
     public String title() {
         return String.format("%s trials and cohorts that are %sconsidered ineligible (%s)",
                 source,
-                skipMatchingTrialDetails ? "open but " : "",
+                enableExtendedMode ? "" : "open but ",
                 cohorts.size());
     }
 

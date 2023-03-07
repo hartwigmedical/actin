@@ -23,11 +23,11 @@ public class TrialMatchingChapter implements ReportChapter {
 
     @NotNull
     private final Report report;
-    private final boolean skipTrialMatchingDetails;
+    private final boolean enableExtendedMode;
 
-    public TrialMatchingChapter(@NotNull final Report report, final boolean skipTrialMatchingDetails) {
+    public TrialMatchingChapter(@NotNull final Report report, final boolean enableExtendedMode) {
         this.report = report;
-        this.skipTrialMatchingDetails = skipTrialMatchingDetails;
+        this.enableExtendedMode = enableExtendedMode;
     }
 
     @NotNull
@@ -57,8 +57,8 @@ public class TrialMatchingChapter implements ReportChapter {
 
         List<EvaluatedCohort> cohorts = EvaluatedCohortFactory.create(report.treatmentMatch());
         List<TableGenerator> generators = Lists.newArrayList(
-                EligibleActinTrialsGenerator.forClosedCohorts(cohorts, contentWidth(), skipTrialMatchingDetails),
-                IneligibleActinTrialsGenerator.fromEvaluatedCohorts(cohorts, contentWidth(), skipTrialMatchingDetails)
+                EligibleActinTrialsGenerator.forClosedCohorts(cohorts, contentWidth(), enableExtendedMode),
+                IneligibleActinTrialsGenerator.fromEvaluatedCohorts(cohorts, contentWidth(), enableExtendedMode)
         );
 
         for (int i = 0; i < generators.size(); i++) {
