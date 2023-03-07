@@ -26,13 +26,13 @@ public class MolecularDriversGenerator implements TableGenerator {
     @NotNull
     private final MolecularRecord molecular;
     @NotNull
-    private final List<EvaluatedCohort> trials;
+    private final List<EvaluatedCohort> cohorts;
     private final float width;
 
-    public MolecularDriversGenerator(@NotNull final MolecularRecord molecular, @NotNull final List<EvaluatedCohort> trials,
+    public MolecularDriversGenerator(@NotNull final MolecularRecord molecular, @NotNull final List<EvaluatedCohort> cohorts,
             final float width) {
         this.molecular = molecular;
-        this.trials = trials;
+        this.cohorts = cohorts;
         this.width = width;
     }
 
@@ -56,7 +56,7 @@ public class MolecularDriversGenerator implements TableGenerator {
         table.addHeaderCell(Cells.createHeader("Best evidence in " + molecular.evidenceSource()));
         table.addHeaderCell(Cells.createHeader("Resistance in " + molecular.evidenceSource()));
 
-        MolecularDriverEntryFactory factory = MolecularDriverEntryFactory.fromEvaluatedCohorts(trials);
+        MolecularDriverEntryFactory factory = MolecularDriverEntryFactory.fromEvaluatedCohorts(cohorts);
         Set<MolecularDriverEntry> entries = factory.create(molecular);
 
         for (MolecularDriverEntry entry : entries) {

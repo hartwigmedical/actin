@@ -14,7 +14,7 @@ public class EvidenceInterpreter {
     private final Set<String> actinInclusionEvents;
 
     @NotNull
-    public static EvidenceInterpreter fromEvaluatedTrials(@NotNull List<EvaluatedCohort> cohorts) {
+    public static EvidenceInterpreter fromEvaluatedCohorts(@NotNull List<EvaluatedCohort> cohorts) {
         Set<String> actinInclusionEvents = Sets.newHashSet();
         for (EvaluatedCohort cohort : cohorts) {
             actinInclusionEvents.addAll(cohort.molecularEvents());
