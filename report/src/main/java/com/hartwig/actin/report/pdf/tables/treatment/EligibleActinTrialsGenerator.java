@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 public class EligibleActinTrialsGenerator implements TableGenerator {
 
     @NotNull
-    private final List<EvaluatedCohort> trials;
+    private final List<EvaluatedCohort> cohorts;
     @NotNull
     private final String title;
 
@@ -28,9 +28,9 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
     private final float checksColWidth;
 
     @NotNull
-    public static EligibleActinTrialsGenerator forOpenTrials(@NotNull List<EvaluatedCohort> trials, float width) {
+    public static EligibleActinTrialsGenerator forOpenCohorts(@NotNull List<EvaluatedCohort> cohorts, float width) {
         List<EvaluatedCohort> recruitingAndEligible =
-                trials.stream().filter(trial -> trial.isPotentiallyEligible() && trial.isOpen()).collect(Collectors.toList());
+                cohorts.stream().filter(cohort -> cohort.isPotentiallyEligible() && cohort.isOpen()).collect(Collectors.toList());
 
         String title = String.format("%s trials that are open and considered eligible (%s)",
                 TreatmentConstants.ACTIN_SOURCE,
@@ -40,9 +40,9 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
     }
 
     @NotNull
-    public static EligibleActinTrialsGenerator forClosedTrials(@NotNull List<EvaluatedCohort> trials, float contentWidth,
+    public static EligibleActinTrialsGenerator forClosedCohorts(@NotNull List<EvaluatedCohort> cohorts, float contentWidth,
             boolean skipMatchingTrialDetails) {
-        List<EvaluatedCohort> unavailableAndEligible = trials.stream()
+        List<EvaluatedCohort> unavailableAndEligible = cohorts.stream()
                 .filter(trial -> trial.isPotentiallyEligible() && !trial.isOpen())
                 .filter(trial -> !trial.molecularEvents().isEmpty() || !skipMatchingTrialDetails)
                 .collect(Collectors.toList());
@@ -55,18 +55,18 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static EligibleActinTrialsGenerator create(@NotNull List<EvaluatedCohort> trials, @NotNull String title, float width) {
+    private static EligibleActinTrialsGenerator create(@NotNull List<EvaluatedCohort> cohorts, @NotNull String title, float width) {
         float trialColWidth = width / 9;
         float cohortColWidth = width / 4;
         float molecularColWidth = width / 5;
         float checksColWidth = width - (trialColWidth + cohortColWidth + molecularColWidth);
 
-        return new EligibleActinTrialsGenerator(trials, title, trialColWidth, cohortColWidth, molecularColWidth, checksColWidth);
+        return new EligibleActinTrialsGenerator(cohorts, title, trialColWidth, cohortColWidth, molecularColWidth, checksColWidth);
     }
 
-    private EligibleActinTrialsGenerator(@NotNull final List<EvaluatedCohort> trials, @NotNull final String title,
+    private EligibleActinTrialsGenerator(@NotNull final List<EvaluatedCohort> cohorts, @NotNull final String title,
             final float trialColWidth, final float cohortColWidth, final float molecularEventColWidth, final float checksColWidth) {
-        this.trials = trials;
+        this.cohorts = cohorts;
         this.title = title;
         this.trialColWidth = trialColWidth;
         this.cohortColWidth = cohortColWidth;
@@ -85,7 +85,7 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
     public Table contents() {
         Table table = Tables.createFixedWidthCols(trialColWidth, cohortColWidth + molecularEventColWidth + checksColWidth);
 
-        if (!trials.isEmpty()) {
+        if (!cohorts.isEmpty()) {
             table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Trial")));
 
             Table headerSubTable = Tables.createFixedWidthCols(cohortColWidth, molecularEventColWidth, checksColWidth);
@@ -96,7 +96,7 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
             table.addHeaderCell(Cells.createContentNoBorder(headerSubTable));
         }
 
-        ActinTrialGeneratorFunctions.streamSortedCohorts(trials).forEach(cohortList -> {
+        ActinTrialGeneratorFunctions.streamSortedCohorts(cohorts).forEach(cohortList -> {
             Table trialSubTable = Tables.createFixedWidthCols(cohortColWidth, molecularEventColWidth, checksColWidth);
 
             cohortList.forEach(cohort -> {
@@ -109,7 +109,7 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
             ActinTrialGeneratorFunctions.insertTrialRow(cohortList, table, trialSubTable);
         });
 
-        if (trials.stream().anyMatch(trial -> trial.isOpen() && !trial.hasSlotsAvailable())) {
+        if (cohorts.stream().anyMatch(trial -> trial.isOpen() && !trial.hasSlotsAvailable())) {
             table.addCell(Cells.createSpanningSubNote(" * Cohort currently has no slots available", table));
         }
 

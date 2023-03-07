@@ -55,10 +55,10 @@ public class TrialMatchingChapter implements ReportChapter {
     private void addTrialMatchingOverview(@NotNull Document document) {
         Table table = Tables.createSingleColWithWidth(contentWidth());
 
-        List<EvaluatedCohort> trials = EvaluatedCohortFactory.create(report.treatmentMatch());
+        List<EvaluatedCohort> cohorts = EvaluatedCohortFactory.create(report.treatmentMatch());
         List<TableGenerator> generators = Lists.newArrayList(
-                EligibleActinTrialsGenerator.forClosedTrials(trials, contentWidth(), skipTrialMatchingDetails),
-                IneligibleActinTrialsGenerator.fromEvaluatedTrials(trials, contentWidth(), skipTrialMatchingDetails)
+                EligibleActinTrialsGenerator.forClosedCohorts(cohorts, contentWidth(), skipTrialMatchingDetails),
+                IneligibleActinTrialsGenerator.fromEvaluatedCohorts(cohorts, contentWidth(), skipTrialMatchingDetails)
         );
 
         for (int i = 0; i < generators.size(); i++) {

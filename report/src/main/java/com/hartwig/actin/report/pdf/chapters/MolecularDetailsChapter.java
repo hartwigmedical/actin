@@ -67,9 +67,9 @@ public class MolecularDetailsChapter implements ReportChapter {
         table.addCell(Cells.createEmpty());
         table.addCell(Cells.createTitle(String.format("%s (%s, %s)", report.molecular().type(), report.molecular().sampleId(),
                 Formats.date(report.molecular().date()))));
-        List<EvaluatedCohort> trials = EvaluatedCohortFactory.create(report.treatmentMatch());
+        List<EvaluatedCohort> cohorts = EvaluatedCohortFactory.create(report.treatmentMatch());
         List<TableGenerator> generators = Lists.newArrayList(new MolecularCharacteristicsGenerator(report.molecular(), contentWidth()),
-                new MolecularDriversGenerator(report.molecular(), trials, contentWidth()));
+                new MolecularDriversGenerator(report.molecular(), cohorts, contentWidth()));
 
         for (int i = 0; i < generators.size(); i++) {
             TableGenerator generator = generators.get(i);

@@ -18,11 +18,11 @@ import com.itextpdf.layout.element.Text;
 
 public final class ActinTrialGeneratorFunctions {
 
-    public static Stream<List<EvaluatedCohort>> streamSortedCohorts(List<EvaluatedCohort> trials) {
-        trials.sort(new EvaluatedCohortComparator());
-        Map<String, List<EvaluatedCohort>> cohortsByTrialId = trials.stream().collect(groupingBy(EvaluatedCohort::trialId));
+    public static Stream<List<EvaluatedCohort>> streamSortedCohorts(List<EvaluatedCohort> cohorts) {
+        cohorts.sort(new EvaluatedCohortComparator());
+        Map<String, List<EvaluatedCohort>> cohortsByTrialId = cohorts.stream().collect(groupingBy(EvaluatedCohort::trialId));
 
-        return trials.stream().map(EvaluatedCohort::trialId).distinct().map(cohortsByTrialId::get);
+        return cohorts.stream().map(EvaluatedCohort::trialId).distinct().map(cohortsByTrialId::get);
     }
 
     public static String createCohortString(EvaluatedCohort cohort) {
@@ -44,11 +44,11 @@ public final class ActinTrialGeneratorFunctions {
     }
 
     public static void insertTrialRow(List<EvaluatedCohort> cohortList, Table table, Table trialSubTable) {
-        EvaluatedCohort trial = cohortList.get(0);
-        if (trial != null) {
+        EvaluatedCohort cohort = cohortList.get(0);
+        if (cohort != null) {
             table.addCell(Cells.createContent(Cells.createContentNoBorder(new Paragraph().addAll(Arrays.asList(
-                    new Text(trial.trialId()).addStyle(Styles.tableHighlightStyle()),
-                    new Text(trial.acronym()).addStyle(Styles.tableContentStyle())
+                    new Text(cohort.trialId()).addStyle(Styles.tableHighlightStyle()),
+                    new Text(cohort.acronym()).addStyle(Styles.tableContentStyle())
             )))));
             if (trialSubTable.getNumberOfRows() > 2) {
                 trialSubTable = Tables.makeWrapping(trialSubTable, false);

@@ -21,59 +21,59 @@ import org.junit.Test;
 public class EvaluatedCohortFactoryTest {
 
     @Test
-    public void canCreateEvaluatedTrialsFromMinimalMatch() {
-        List<EvaluatedCohort> trials = EvaluatedCohortFactory.create(TestTreatmentMatchFactory.createMinimalTreatmentMatch());
+    public void canCreateEvaluatedCohortsFromMinimalMatch() {
+        List<EvaluatedCohort> cohorts = EvaluatedCohortFactory.create(TestTreatmentMatchFactory.createMinimalTreatmentMatch());
 
-        assertTrue(trials.isEmpty());
+        assertTrue(cohorts.isEmpty());
     }
 
     @Test
-    public void canCreateEvaluatedTrialsFromProperMatch() {
-        List<EvaluatedCohort> trials = EvaluatedCohortFactory.create(TestTreatmentMatchFactory.createProperTreatmentMatch());
+    public void canCreateEvaluatedCohortsFromProperMatch() {
+        List<EvaluatedCohort> cohorts = EvaluatedCohortFactory.create(TestTreatmentMatchFactory.createProperTreatmentMatch());
 
-        assertEquals(5, trials.size());
+        assertEquals(5, cohorts.size());
 
-        EvaluatedCohort trial1A = findByAcronymAndCohort(trials, "TEST-1", "Cohort A");
-        assertFalse(trial1A.molecularEvents().isEmpty());
-        assertTrue(trial1A.molecularEvents().contains("BRAF V600E"));
-        assertTrue(trial1A.isPotentiallyEligible());
-        assertTrue(trial1A.isOpen());
-        assertFalse(trial1A.hasSlotsAvailable());
-        assertFalse(trial1A.warnings().isEmpty());
-        assertTrue(trial1A.fails().isEmpty());
+        EvaluatedCohort trial1cohortA = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort A");
+        assertFalse(trial1cohortA.molecularEvents().isEmpty());
+        assertTrue(trial1cohortA.molecularEvents().contains("BRAF V600E"));
+        assertTrue(trial1cohortA.isPotentiallyEligible());
+        assertTrue(trial1cohortA.isOpen());
+        assertFalse(trial1cohortA.hasSlotsAvailable());
+        assertFalse(trial1cohortA.warnings().isEmpty());
+        assertTrue(trial1cohortA.fails().isEmpty());
 
-        EvaluatedCohort trial1B = findByAcronymAndCohort(trials, "TEST-1", "Cohort B");
-        assertTrue(trial1B.molecularEvents().isEmpty());
-        assertTrue(trial1B.isPotentiallyEligible());
-        assertTrue(trial1B.isOpen());
-        assertTrue(trial1B.hasSlotsAvailable());
-        assertFalse(trial1B.warnings().isEmpty());
-        assertTrue(trial1B.fails().isEmpty());
+        EvaluatedCohort trial1cohortB = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort B");
+        assertTrue(trial1cohortB.molecularEvents().isEmpty());
+        assertTrue(trial1cohortB.isPotentiallyEligible());
+        assertTrue(trial1cohortB.isOpen());
+        assertTrue(trial1cohortB.hasSlotsAvailable());
+        assertFalse(trial1cohortB.warnings().isEmpty());
+        assertTrue(trial1cohortB.fails().isEmpty());
 
-        EvaluatedCohort trial1C = findByAcronymAndCohort(trials, "TEST-1", "Cohort C");
-        assertTrue(trial1C.molecularEvents().isEmpty());
-        assertFalse(trial1C.isPotentiallyEligible());
-        assertFalse(trial1C.isOpen());
-        assertFalse(trial1C.hasSlotsAvailable());
-        assertFalse(trial1C.warnings().isEmpty());
-        assertFalse(trial1C.fails().isEmpty());
+        EvaluatedCohort trial1cohortC = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort C");
+        assertTrue(trial1cohortC.molecularEvents().isEmpty());
+        assertFalse(trial1cohortC.isPotentiallyEligible());
+        assertFalse(trial1cohortC.isOpen());
+        assertFalse(trial1cohortC.hasSlotsAvailable());
+        assertFalse(trial1cohortC.warnings().isEmpty());
+        assertFalse(trial1cohortC.fails().isEmpty());
 
-        EvaluatedCohort trial2A = findByAcronymAndCohort(trials, "TEST-2", "Cohort A");
-        assertFalse(trial2A.molecularEvents().isEmpty());
-        assertTrue(trial2A.molecularEvents().contains("BRAF V600E"));
-        assertTrue(trial2A.isPotentiallyEligible());
-        assertTrue(trial2A.isOpen());
-        assertFalse(trial2A.hasSlotsAvailable());
-        assertTrue(trial2A.warnings().isEmpty());
-        assertTrue(trial2A.fails().isEmpty());
+        EvaluatedCohort trial2cohortA = findByAcronymAndCohort(cohorts, "TEST-2", "Cohort A");
+        assertFalse(trial2cohortA.molecularEvents().isEmpty());
+        assertTrue(trial2cohortA.molecularEvents().contains("BRAF V600E"));
+        assertTrue(trial2cohortA.isPotentiallyEligible());
+        assertTrue(trial2cohortA.isOpen());
+        assertFalse(trial2cohortA.hasSlotsAvailable());
+        assertTrue(trial2cohortA.warnings().isEmpty());
+        assertTrue(trial2cohortA.fails().isEmpty());
 
-        EvaluatedCohort trial2B = findByAcronymAndCohort(trials, "TEST-2", "Cohort B");
-        assertTrue(trial2B.molecularEvents().isEmpty());
-        assertFalse(trial2B.isPotentiallyEligible());
-        assertTrue(trial2B.isOpen());
-        assertTrue(trial2B.hasSlotsAvailable());
-        assertTrue(trial2B.warnings().isEmpty());
-        assertFalse(trial2B.fails().isEmpty());
+        EvaluatedCohort trial2cohortB = findByAcronymAndCohort(cohorts, "TEST-2", "Cohort B");
+        assertTrue(trial2cohortB.molecularEvents().isEmpty());
+        assertFalse(trial2cohortB.isPotentiallyEligible());
+        assertTrue(trial2cohortB.isOpen());
+        assertTrue(trial2cohortB.hasSlotsAvailable());
+        assertTrue(trial2cohortB.warnings().isEmpty());
+        assertFalse(trial2cohortB.fails().isEmpty());
     }
 
     @Test
@@ -93,16 +93,16 @@ public class EvaluatedCohortFactoryTest {
                 .addTrialMatches(trialMatchWithoutCohort)
                 .build();
 
-        List<EvaluatedCohort> trials = EvaluatedCohortFactory.create(treatmentMatch);
-        assertEquals(1, trials.size());
+        List<EvaluatedCohort> cohorts = EvaluatedCohortFactory.create(treatmentMatch);
+        assertEquals(1, cohorts.size());
     }
 
     @NotNull
-    private static EvaluatedCohort findByAcronymAndCohort(@NotNull List<EvaluatedCohort> trials, @NotNull String acronymToFind,
+    private static EvaluatedCohort findByAcronymAndCohort(@NotNull List<EvaluatedCohort> evaluatedCohorts, @NotNull String acronymToFind,
             @Nullable String cohortToFind) {
-        for (EvaluatedCohort trial : trials) {
-            if (trial.acronym().equals(acronymToFind) && Objects.equals(trial.cohort(), cohortToFind)) {
-                return trial;
+        for (EvaluatedCohort evaluatedCohort : evaluatedCohorts) {
+            if (evaluatedCohort.acronym().equals(acronymToFind) && Objects.equals(evaluatedCohort.cohort(), cohortToFind)) {
+                return evaluatedCohort;
             }
         }
 

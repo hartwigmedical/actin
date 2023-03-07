@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 public class IneligibleActinTrialsGenerator implements TableGenerator {
 
     @NotNull
-    private final List<EvaluatedCohort> trials;
+    private final List<EvaluatedCohort> cohorts;
     @NotNull
     private final String source;
     private final float trialColWidth;
@@ -25,17 +25,17 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
     private final boolean skipMatchingTrialDetails;
 
     @NotNull
-    public static IneligibleActinTrialsGenerator fromEvaluatedTrials(@NotNull List<EvaluatedCohort> trials, float contentWidth,
+    public static IneligibleActinTrialsGenerator fromEvaluatedCohorts(@NotNull List<EvaluatedCohort> cohorts, float contentWidth,
             boolean skipMatchingTrialDetails) {
-        List<EvaluatedCohort> ineligibleTrials = trials.stream()
-                .filter(trial -> !trial.isPotentiallyEligible() && (trial.isOpen() || !skipMatchingTrialDetails))
+        List<EvaluatedCohort> ineligibleCohorts = cohorts.stream()
+                .filter(cohort -> !cohort.isPotentiallyEligible() && (cohort.isOpen() || !skipMatchingTrialDetails))
                 .collect(Collectors.toList());
 
         float trialColWidth = contentWidth / 9;
         float cohortColWidth = contentWidth / 4;
         float ineligibilityReasonColWidth = contentWidth - (trialColWidth + cohortColWidth);
 
-        return new IneligibleActinTrialsGenerator(ineligibleTrials,
+        return new IneligibleActinTrialsGenerator(ineligibleCohorts,
                 TreatmentConstants.ACTIN_SOURCE,
                 trialColWidth,
                 cohortColWidth,
@@ -43,10 +43,10 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
                 skipMatchingTrialDetails);
     }
 
-    private IneligibleActinTrialsGenerator(@NotNull final List<EvaluatedCohort> trials, @NotNull final String source,
+    private IneligibleActinTrialsGenerator(@NotNull final List<EvaluatedCohort> cohorts, @NotNull final String source,
             final float trialColWidth, final float cohortColWidth, final float ineligibilityReasonColWith,
             final boolean skipMatchingTrialDetails) {
-        this.trials = trials;
+        this.cohorts = cohorts;
         this.source = source;
         this.trialColWidth = trialColWidth;
         this.cohortColWidth = cohortColWidth;
@@ -60,7 +60,7 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
         return String.format("%s trials and cohorts that are %sconsidered ineligible (%s)",
                 source,
                 skipMatchingTrialDetails ? "open but " : "",
-                trials.size());
+                cohorts.size());
     }
 
     @NotNull
@@ -68,7 +68,7 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
     public Table contents() {
         Table table = Tables.createFixedWidthCols(trialColWidth, cohortColWidth + ineligibilityReasonColWith);
 
-        if (!trials.isEmpty()) {
+        if (!cohorts.isEmpty()) {
             table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Trial")));
 
             Table headerSubTable = Tables.createFixedWidthCols(cohortColWidth, ineligibilityReasonColWith);
@@ -78,7 +78,7 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
             table.addHeaderCell(Cells.createContentNoBorder(headerSubTable));
         }
 
-        ActinTrialGeneratorFunctions.streamSortedCohorts(trials).forEach(cohortList -> {
+        ActinTrialGeneratorFunctions.streamSortedCohorts(cohorts).forEach(cohortList -> {
             Table trialSubTable = Tables.createFixedWidthCols(cohortColWidth, ineligibilityReasonColWith);
 
             cohortList.forEach(cohort -> {
@@ -93,10 +93,10 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
         });
 
         String subNote = "";
-        if (trials.stream().anyMatch(trial -> !trial.isOpen())) {
+        if (cohorts.stream().anyMatch(cohort -> !cohort.isOpen())) {
             subNote += " Cohorts shown in grey are closed.";
         }
-        if (trials.stream().anyMatch(trial -> trial.isOpen() && !trial.hasSlotsAvailable())) {
+        if (cohorts.stream().anyMatch(cohort -> cohort.isOpen() && !cohort.hasSlotsAvailable())) {
             subNote += " Cohorts with no slots available are indicated by an asterisk (*).";
         }
         if (!subNote.isEmpty()) {

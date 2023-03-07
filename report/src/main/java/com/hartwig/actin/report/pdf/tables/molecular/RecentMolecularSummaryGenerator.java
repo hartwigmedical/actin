@@ -37,15 +37,15 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
     @NotNull
     private final MolecularRecord molecular;
     @NotNull
-    private final List<EvaluatedCohort> trials;
+    private final List<EvaluatedCohort> cohorts;
     private final float keyWidth;
     private final float valueWidth;
 
     public RecentMolecularSummaryGenerator(@NotNull final ClinicalRecord clinical, @NotNull final MolecularRecord molecular,
-            @NotNull final List<EvaluatedCohort> trials, final float keyWidth, final float valueWidth) {
+            @NotNull final List<EvaluatedCohort> cohorts, final float keyWidth, final float valueWidth) {
         this.clinical = clinical;
         this.molecular = molecular;
-        this.trials = trials;
+        this.cohorts = cohorts;
         this.keyWidth = keyWidth;
         this.valueWidth = valueWidth;
     }
@@ -88,7 +88,8 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
                             Maps.immutableEntry("Gene fusions", highDriverGeneFusionsStringOption()),
                             Maps.immutableEntry("Virus detection", highDriverVirusDetectionsStringOption()),
                             Maps.immutableEntry("", Optional.of("")),
-                            Maps.immutableEntry("Actionable events with medium/low driver:", actionableEventsWithoutHighDriverMutation()))
+                            Maps.immutableEntry("Potentially actionable events with medium/low driver:",
+                                    actionableEventsWithoutHighDriverMutation()))
                     .flatMap(entry -> Stream.of(Cells.createKey(entry.getKey()),
                             Cells.createValue(entry.getValue().orElse(Formats.VALUE_UNKNOWN))))
                     .forEach(table::addCell);
@@ -175,7 +176,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
 
     @NotNull
     private Optional<String> actionableEventsWithoutHighDriverMutation() {
-        Set<String> eventsWithActinTrials = trials.stream()
+        Set<String> eventsWithActinTrials = cohorts.stream()
                 .filter(EvaluatedCohort::isPotentiallyEligible)
                 .filter(EvaluatedCohort::isOpen)
                 .flatMap(trial -> trial.molecularEvents().stream())

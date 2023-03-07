@@ -27,9 +27,9 @@ public final class EvaluatedCohortFactory {
             Set<String> trialFails = extractFails(trialMatch.evaluations());
             Set<String> trialInclusionEvents = extractInclusionEvents(trialMatch.evaluations());
 
-            String trialAcronym = trialMatch.identification().acronym();
-            ImmutableEvaluatedCohort.Builder builder =
-                    ImmutableEvaluatedCohort.builder().trialId(trialMatch.identification().trialId()).acronym(trialAcronym);
+            ImmutableEvaluatedCohort.Builder builder = ImmutableEvaluatedCohort.builder()
+                    .trialId(trialMatch.identification().trialId())
+                    .acronym(trialMatch.identification().acronym());
 
             boolean trialIsOpen = trialMatch.identification().open();
             // Handle case of trial without cohorts.
@@ -50,8 +50,8 @@ public final class EvaluatedCohortFactory {
                                 .isPotentiallyEligible(cohortMatch.isPotentiallyEligible())
                                 .isOpen(trialIsOpen && cohortMatch.metadata().open() && !cohortMatch.metadata().blacklist())
                                 .hasSlotsAvailable(cohortMatch.metadata().slotsAvailable())
-                                .warnings(Sets.union(extractWarnings(cohortMatch.evaluations()), trialWarnings))
-                                .fails(Sets.union(extractFails(cohortMatch.evaluations()), trialFails))
+                                .warnings(Sets.union(trialWarnings, extractWarnings(cohortMatch.evaluations())))
+                                .fails(Sets.union(trialFails, extractFails(cohortMatch.evaluations())))
                                 .build());
             }
         }).sorted(new EvaluatedCohortComparator()).collect(Collectors.toList());

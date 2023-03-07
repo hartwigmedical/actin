@@ -19,15 +19,15 @@ public class MolecularSummaryGenerator implements TableGenerator {
     @NotNull
     private final MolecularRecord molecular;
     @NotNull
-    private final List<EvaluatedCohort> trials;
+    private final List<EvaluatedCohort> cohorts;
     private final float keyWidth;
     private final float valueWidth;
 
     public MolecularSummaryGenerator(@NotNull final ClinicalRecord clinical, @NotNull final MolecularRecord molecular,
-            @NotNull final List<EvaluatedCohort> trials, final float keyWidth, final float valueWidth) {
+            @NotNull final List<EvaluatedCohort> cohorts, final float keyWidth, final float valueWidth) {
         this.clinical = clinical;
         this.molecular = molecular;
-        this.trials = trials;
+        this.cohorts = cohorts;
         this.keyWidth = keyWidth;
         this.valueWidth = valueWidth;
     }
@@ -45,7 +45,7 @@ public class MolecularSummaryGenerator implements TableGenerator {
 
         if (molecular.containsTumorCells()) {
             TableGenerator recentGenerator =
-                    new RecentMolecularSummaryGenerator(clinical, molecular, trials, keyWidth, valueWidth);
+                    new RecentMolecularSummaryGenerator(clinical, molecular, cohorts, keyWidth, valueWidth);
 
             table.addCell(Cells.createSubTitle(recentGenerator.title()));
             table.addCell(Cells.create(recentGenerator.contents()));

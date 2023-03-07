@@ -185,13 +185,13 @@ public class SummaryChapter implements ReportChapter {
         float keyWidth = STANDARD_KEY_WIDTH;
         float valueWidth = contentWidth() - keyWidth;
 
-        List<EvaluatedCohort> trials = EvaluatedCohortFactory.create(report.treatmentMatch());
+        List<EvaluatedCohort> cohorts = EvaluatedCohortFactory.create(report.treatmentMatch());
         AggregatedEvidence aggregatedEvidence = AggregatedEvidenceFactory.create(report.molecular());
 
         List<TableGenerator> generators = Lists.newArrayList(new PatientClinicalHistoryGenerator(report.clinical(), keyWidth, valueWidth),
-                new MolecularSummaryGenerator(report.clinical(), report.molecular(), trials, keyWidth, valueWidth),
+                new MolecularSummaryGenerator(report.clinical(), report.molecular(), cohorts, keyWidth, valueWidth),
                 new EligibleApprovedTreatmentGenerator(report.clinical(), report.molecular(), contentWidth()),
-                EligibleActinTrialsGenerator.forOpenTrials(trials, contentWidth()));
+                EligibleActinTrialsGenerator.forOpenCohorts(cohorts, contentWidth()));
 
         if (!aggregatedEvidence.externalEligibleTrialsPerEvent().isEmpty()) {
             generators.add(new EligibleExternalTrialsGenerator(report.molecular().externalTrialSource(),
