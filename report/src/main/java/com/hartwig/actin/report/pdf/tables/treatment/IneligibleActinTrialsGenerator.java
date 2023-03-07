@@ -86,7 +86,7 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
                 String ineligibilityText = cohort.fails().isEmpty() ? "?" : String.join(", ", cohort.fails());
 
                 ActinTrialGeneratorFunctions.addContentStreamToTable(Stream.of(cohortText, ineligibilityText),
-                        !cohort.isOpen(),
+                        !cohort.isOpen() || !cohort.hasSlotsAvailable(),
                         trialSubTable);
             });
             ActinTrialGeneratorFunctions.insertTrialRow(cohortList, table, trialSubTable);
@@ -94,10 +94,10 @@ public class IneligibleActinTrialsGenerator implements TableGenerator {
 
         String subNote = "";
         if (cohorts.stream().anyMatch(cohort -> !cohort.isOpen())) {
-            subNote += " Cohorts shown in grey are closed.";
+            subNote += " Cohorts shown in grey are closed or have no slots available.";
         }
         if (cohorts.stream().anyMatch(cohort -> cohort.isOpen() && !cohort.hasSlotsAvailable())) {
-            subNote += " Cohorts with no slots available are indicated by an asterisk (*).";
+            subNote += " Open cohorts with no slots available are indicated by an asterisk (*).";
         }
         if (!subNote.isEmpty()) {
             table.addCell(Cells.createSpanningSubNote(subNote, table));
