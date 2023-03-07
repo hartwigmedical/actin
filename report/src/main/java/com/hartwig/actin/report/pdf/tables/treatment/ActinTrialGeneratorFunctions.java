@@ -44,8 +44,8 @@ public final class ActinTrialGeneratorFunctions {
     }
 
     public static void insertTrialRow(List<EvaluatedCohort> cohortList, Table table, Table trialSubTable) {
-        EvaluatedCohort cohort = cohortList.get(0);
-        if (cohort != null) {
+        if (!cohortList.isEmpty()) {
+            EvaluatedCohort cohort = cohortList.get(0);
             table.addCell(Cells.createContent(Cells.createContentNoBorder(new Paragraph().addAll(Arrays.asList(
                     new Text(cohort.trialId()).addStyle(Styles.tableHighlightStyle()),
                     new Text(cohort.acronym()).addStyle(Styles.tableContentStyle())
