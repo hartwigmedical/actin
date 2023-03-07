@@ -15,9 +15,9 @@ public class EvidenceInterpreterTest {
 
     @Test
     public void canInterpretEvidence() {
-        EvaluatedCohort trialWithInclusion = EvaluatedCohortTestFactory.builder().addMolecularEvents("inclusion").build();
+        EvaluatedCohort cohortWithInclusion = EvaluatedCohortTestFactory.builder().addMolecularEvents("inclusion").build();
 
-        EvidenceInterpreter interpreter = EvidenceInterpreter.fromEvaluatedTrials(Lists.newArrayList(trialWithInclusion));
+        EvidenceInterpreter interpreter = EvidenceInterpreter.fromEvaluatedTrials(Lists.newArrayList(cohortWithInclusion));
 
         AggregatedEvidence evidence = ImmutableAggregatedEvidence.builder()
                 .putApprovedTreatmentsPerEvent("approved", "treatment")

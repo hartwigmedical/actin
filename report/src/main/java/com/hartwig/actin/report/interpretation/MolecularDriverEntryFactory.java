@@ -28,12 +28,12 @@ public class MolecularDriverEntryFactory {
     private final Multimap<String, String> trialsPerInclusionEvent;
 
     @NotNull
-    public static MolecularDriverEntryFactory fromEvaluatedTrials(@NotNull List<EvaluatedCohort> trials) {
+    public static MolecularDriverEntryFactory fromEvaluatedCohorts(@NotNull List<EvaluatedCohort> evaluatedCohorts) {
         Multimap<String, String> trialsPerInclusionEvent = ArrayListMultimap.create();
-        for (EvaluatedCohort trial : trials) {
-            if (trial.isPotentiallyEligible() && trial.isOpen()) {
-                for (String molecularEvent : trial.molecularEvents()) {
-                    trialsPerInclusionEvent.put(molecularEvent, trial.acronym());
+        for (EvaluatedCohort evaluatedCohort : evaluatedCohorts) {
+            if (evaluatedCohort.isPotentiallyEligible() && evaluatedCohort.isOpen()) {
+                for (String molecularEvent : evaluatedCohort.molecularEvents()) {
+                    trialsPerInclusionEvent.put(molecularEvent, evaluatedCohort.acronym());
                 }
             }
         }

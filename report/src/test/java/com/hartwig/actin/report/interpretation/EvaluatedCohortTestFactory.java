@@ -5,9 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 public final class EvaluatedCohortTestFactory {
 
-    private EvaluatedCohortTestFactory() {
-    }
-
     @NotNull
     public static ImmutableEvaluatedCohort.Builder builder() {
         return ImmutableEvaluatedCohort.builder()

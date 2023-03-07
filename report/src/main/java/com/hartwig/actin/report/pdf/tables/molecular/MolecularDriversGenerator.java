@@ -16,6 +16,7 @@ import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;
 import com.hartwig.actin.treatment.TreatmentConstants;
 import com.itextpdf.layout.element.Table;
+
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,7 +56,7 @@ public class MolecularDriversGenerator implements TableGenerator {
         table.addHeaderCell(Cells.createHeader("Best evidence in " + molecular.evidenceSource()));
         table.addHeaderCell(Cells.createHeader("Resistance in " + molecular.evidenceSource()));
 
-        MolecularDriverEntryFactory factory = MolecularDriverEntryFactory.fromEvaluatedTrials(trials);
+        MolecularDriverEntryFactory factory = MolecularDriverEntryFactory.fromEvaluatedCohorts(trials);
         Set<MolecularDriverEntry> entries = factory.create(molecular);
 
         for (MolecularDriverEntry entry : entries) {
