@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public interface TabularTreatmentMatchWriterConfig {
 
-    Logger LOGGER = LogManager.getLogger(ReporterConfig.class);
+    Logger LOGGER = LogManager.getLogger(TabularTreatmentMatchWriterConfig.class);
 
     String TREATMENT_MATCH_JSON = "treatment_match_json";
     String OUTPUT_DIRECTORY = "output_directory";
