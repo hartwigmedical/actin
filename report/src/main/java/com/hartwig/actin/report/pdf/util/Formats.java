@@ -19,7 +19,12 @@ import org.jetbrains.annotations.Nullable;
 public final class Formats {
 
     public static final String VALUE_UNKNOWN = "Unknown";
+    public static final String VALUE_NONE = "None";
     public static final String VALUE_COMING_SOON = "Coming soon";
+    public static final String VALUE_NOT_AVAILABLE = "N/A";
+
+    public static final String COMMA_SEPARATOR = ", ";
+    public static final float STANDARD_KEY_WIDTH = 210;
 
     private static final Set<String> NON_HIGHLIGHT_VALUES = Sets.newHashSet(VALUE_UNKNOWN, VALUE_COMING_SOON);
 
@@ -75,12 +80,7 @@ public final class Formats {
 
     @NotNull
     public static StringJoiner commaJoiner() {
-        return new StringJoiner(", ");
-    }
-
-    @NotNull
-    public static StringJoiner semicolonJoiner() {
-        return new StringJoiner("; ");
+        return new StringJoiner(COMMA_SEPARATOR);
     }
 
     @NotNull

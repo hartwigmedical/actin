@@ -34,6 +34,15 @@ public final class Styles {
     private static final String FONT_REGULAR_PATH = "fonts/nimbus-sans/NimbusSansL-Regular.ttf";
     private static final String FONT_BOLD_PATH = "fonts/nimbus-sans/NimbusSansL-Bold.ttf";
 
+    private static PdfFont fontRegular = createFont(FONT_REGULAR_PATH);
+    private static PdfFont fontBold = createFont(FONT_BOLD_PATH);
+
+    public static void initialize() {
+        // Fonts must be re-initialized for each report
+        fontRegular = createFont(FONT_REGULAR_PATH);
+        fontBold = createFont(FONT_BOLD_PATH);
+    }
+
     @NotNull
     public static Style reportTitleStyle() {
         return new Style().setFont(fontBold()).setFontSize(11).setFontColor(Styles.PALETTE_BLACK);
@@ -69,6 +78,10 @@ public final class Styles {
         return new Style().setFont(fontRegular()).setFontSize(7).setFontColor(Styles.PALETTE_BLACK);
     }
 
+    @NotNull
+    public static Style tableNoticeStyle() {
+        return new Style().setFont(fontBold()).setFontSize(7).setFontColor(Styles.PALETTE_WARN);
+    }
     @NotNull
     public static Style tableKeyStyle() {
         return new Style().setFont(fontRegular()).setFontSize(7).setFontColor(Styles.PALETTE_BLACK);
@@ -115,20 +128,24 @@ public final class Styles {
     }
 
     @NotNull
+    public static Style deemphasizedStyle() {
+        return new Style().setFont(fontRegular()).setFontSize(5).setFontColor(Styles.PALETTE_MID_GREY);
+    }
+
+    @NotNull
     public static PdfFont fontRegular() {
-        // Cannot be created statically as every PDF needs their own private font objects.
-        return createFontFromProgram(loadFontProgram(FONT_REGULAR_PATH));
+        // Each PDF needs its own private font objects, but they can be static as long as they are re-initialized for each report.
+        return fontRegular;
     }
 
     @NotNull
     public static PdfFont fontBold() {
-        // Cannot be created statically as every PDF needs their own private font objects.
-        return createFontFromProgram(loadFontProgram(FONT_BOLD_PATH));
+        // Each PDF needs its own private font objects, but they can be static as long as they are re-initialized for each report.
+        return fontBold;
     }
 
-    @NotNull
-    private static PdfFont createFontFromProgram(@NotNull FontProgram program) {
-        return PdfFontFactory.createFont(program, PdfEncodings.IDENTITY_H);
+    private static PdfFont createFont(String fontPath) {
+        return PdfFontFactory.createFont(loadFontProgram(fontPath), PdfEncodings.IDENTITY_H);
     }
 
     @NotNull
@@ -139,8 +156,5 @@ public final class Styles {
             // Should never happen, fonts are loaded from code
             throw new IllegalStateException(exception);
         }
-    }
-
-    private Styles() {
     }
 }

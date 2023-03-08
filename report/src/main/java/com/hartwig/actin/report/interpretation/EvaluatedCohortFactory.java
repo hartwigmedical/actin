@@ -15,21 +15,21 @@ import com.hartwig.actin.treatment.datamodel.Eligibility;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class EvaluatedTrialFactory {
+public final class EvaluatedCohortFactory {
 
-    private EvaluatedTrialFactory() {
+    private EvaluatedCohortFactory() {
     }
 
     @NotNull
-    public static List<EvaluatedTrial> create(@NotNull TreatmentMatch treatmentMatch) {
+    public static List<EvaluatedCohort> create(@NotNull TreatmentMatch treatmentMatch) {
         return treatmentMatch.trialMatches().stream().flatMap(trialMatch -> {
             Set<String> trialWarnings = extractWarnings(trialMatch.evaluations());
             Set<String> trialFails = extractFails(trialMatch.evaluations());
             Set<String> trialInclusionEvents = extractInclusionEvents(trialMatch.evaluations());
 
-            String trialAcronym = trialMatch.identification().acronym();
-            ImmutableEvaluatedTrial.Builder builder =
-                    ImmutableEvaluatedTrial.builder().trialId(trialMatch.identification().trialId()).acronym(trialAcronym);
+            ImmutableEvaluatedCohort.Builder builder = ImmutableEvaluatedCohort.builder()
+                    .trialId(trialMatch.identification().trialId())
+                    .acronym(trialMatch.identification().acronym());
 
             boolean trialIsOpen = trialMatch.identification().open();
             // Handle case of trial without cohorts.
@@ -50,11 +50,11 @@ public final class EvaluatedTrialFactory {
                                 .isPotentiallyEligible(cohortMatch.isPotentiallyEligible())
                                 .isOpen(trialIsOpen && cohortMatch.metadata().open() && !cohortMatch.metadata().blacklist())
                                 .hasSlotsAvailable(cohortMatch.metadata().slotsAvailable())
-                                .warnings(Sets.union(extractWarnings(cohortMatch.evaluations()), trialWarnings))
-                                .fails(Sets.union(extractFails(cohortMatch.evaluations()), trialFails))
+                                .warnings(Sets.union(trialWarnings, extractWarnings(cohortMatch.evaluations())))
+                                .fails(Sets.union(trialFails, extractFails(cohortMatch.evaluations())))
                                 .build());
             }
-        }).sorted(new EvaluatedTrialComparator()).collect(Collectors.toList());
+        }).sorted(new EvaluatedCohortComparator()).collect(Collectors.toList());
     }
 
     @NotNull

@@ -7,9 +7,36 @@ import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class EvaluatedTrialComparator implements Comparator<EvaluatedTrial> {
+public class EvaluatedCohortComparator implements Comparator<EvaluatedCohort> {
 
     private static final String COMBINATION_COHORT_IDENTIFIER = "+";
+
+    @Override
+    public int compare(@NotNull EvaluatedCohort evaluatedCohort1, @NotNull EvaluatedCohort evaluatedCohort2) {
+        int hasSlotsAvailableCompare = Boolean.compare(!evaluatedCohort1.hasSlotsAvailable(), !evaluatedCohort2.hasSlotsAvailable());
+        if (hasSlotsAvailableCompare != 0) {
+            return hasSlotsAvailableCompare;
+        }
+
+        int hasMolecularCompare =
+                Boolean.compare(evaluatedCohort1.molecularEvents().isEmpty(), evaluatedCohort2.molecularEvents().isEmpty());
+        if (hasMolecularCompare != 0) {
+            return hasMolecularCompare;
+        }
+
+        int trialCompare = evaluatedCohort1.trialId().compareTo(evaluatedCohort2.trialId());
+        if (trialCompare != 0) {
+            return trialCompare;
+        }
+
+        int cohortCompare =
+                compareCohorts(!evaluatedCohort1.molecularEvents().isEmpty(), evaluatedCohort1.cohort(), evaluatedCohort2.cohort());
+        if (cohortCompare != 0) {
+            return cohortCompare;
+        }
+
+        return compareSets(evaluatedCohort1.molecularEvents(), evaluatedCohort2.molecularEvents());
+    }
 
     private static int compareCohorts(boolean hasMolecular, @Nullable String cohort1, @Nullable String cohort2) {
         if (cohort1 == null) {
@@ -44,30 +71,5 @@ public class EvaluatedTrialComparator implements Comparator<EvaluatedTrial> {
             }
         }
         return 0;
-    }
-
-    @Override
-    public int compare(@NotNull EvaluatedTrial trial1, @NotNull EvaluatedTrial trial2) {
-        int hasSlotsAvailableCompare = Boolean.compare(!trial1.hasSlotsAvailable(), !trial2.hasSlotsAvailable());
-        if (hasSlotsAvailableCompare != 0) {
-            return hasSlotsAvailableCompare;
-        }
-
-        int hasMolecularCompare = Boolean.compare(trial1.molecularEvents().isEmpty(), trial2.molecularEvents().isEmpty());
-        if (hasMolecularCompare != 0) {
-            return hasMolecularCompare;
-        }
-
-        int trialCompare = trial1.trialId().compareTo(trial2.trialId());
-        if (trialCompare != 0) {
-            return trialCompare;
-        }
-
-        int cohortCompare = compareCohorts(!trial1.molecularEvents().isEmpty(), trial1.cohort(), trial2.cohort());
-        if (cohortCompare != 0) {
-            return cohortCompare;
-        }
-
-        return compareSets(trial1.molecularEvents(), trial2.molecularEvents());
     }
 }

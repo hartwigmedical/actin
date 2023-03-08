@@ -20,7 +20,7 @@ public class MolecularDriverEntryFactoryTest {
     public void canCreateMolecularDriverEntries() {
         MolecularRecord record = TestMolecularFactory.createExhaustiveTestMolecularRecord();
 
-        MolecularDriverEntryFactory factory = MolecularDriverEntryFactory.fromEvaluatedTrials(Lists.newArrayList());
+        MolecularDriverEntryFactory factory = MolecularDriverEntryFactory.fromEvaluatedCohorts(Lists.newArrayList());
         Set<MolecularDriverEntry> entries = factory.create(record);
 
         assertEquals(7, entries.size());
@@ -32,14 +32,14 @@ public class MolecularDriverEntryFactoryTest {
         assertFalse(record.drivers().variants().isEmpty());
 
         Variant firstVariant = record.drivers().variants().iterator().next();
-        EvaluatedTrial openTrialForVariant = EvaluatedTrialTestFactory.builder()
+        EvaluatedCohort openCohortForVariant = EvaluatedCohortTestFactory.builder()
                 .acronym("trial 1")
                 .addMolecularEvents(firstVariant.event())
                 .isPotentiallyEligible(true)
                 .isOpen(true)
                 .build();
 
-        EvaluatedTrial closedTrialForVariant = EvaluatedTrialTestFactory.builder()
+        EvaluatedCohort closedCohortForVariant = EvaluatedCohortTestFactory.builder()
                 .acronym("trial 2")
                 .addMolecularEvents(firstVariant.event())
                 .isPotentiallyEligible(true)
@@ -47,7 +47,7 @@ public class MolecularDriverEntryFactoryTest {
                 .build();
 
         MolecularDriverEntryFactory factory =
-                MolecularDriverEntryFactory.fromEvaluatedTrials(Lists.newArrayList(openTrialForVariant, closedTrialForVariant));
+                MolecularDriverEntryFactory.fromEvaluatedCohorts(Lists.newArrayList(openCohortForVariant, closedCohortForVariant));
         Set<MolecularDriverEntry> entries = factory.create(record);
 
         MolecularDriverEntry entry = startsWithDriver(entries, firstVariant.event());

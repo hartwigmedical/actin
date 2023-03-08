@@ -7,7 +7,7 @@ import java.util.StringJoiner;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.driver.Driver;
 import com.hartwig.actin.report.interpretation.ClonalityInterpreter;
-import com.hartwig.actin.report.interpretation.EvaluatedTrial;
+import com.hartwig.actin.report.interpretation.EvaluatedCohort;
 import com.hartwig.actin.report.interpretation.MolecularDriverEntry;
 import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
@@ -16,6 +16,7 @@ import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;
 import com.hartwig.actin.treatment.TreatmentConstants;
 import com.itextpdf.layout.element.Table;
+
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,13 +26,13 @@ public class MolecularDriversGenerator implements TableGenerator {
     @NotNull
     private final MolecularRecord molecular;
     @NotNull
-    private final List<EvaluatedTrial> trials;
+    private final List<EvaluatedCohort> cohorts;
     private final float width;
 
-    public MolecularDriversGenerator(@NotNull final MolecularRecord molecular, @NotNull final List<EvaluatedTrial> trials,
+    public MolecularDriversGenerator(@NotNull final MolecularRecord molecular, @NotNull final List<EvaluatedCohort> cohorts,
             final float width) {
         this.molecular = molecular;
-        this.trials = trials;
+        this.cohorts = cohorts;
         this.width = width;
     }
 
@@ -55,7 +56,7 @@ public class MolecularDriversGenerator implements TableGenerator {
         table.addHeaderCell(Cells.createHeader("Best evidence in " + molecular.evidenceSource()));
         table.addHeaderCell(Cells.createHeader("Resistance in " + molecular.evidenceSource()));
 
-        MolecularDriverEntryFactory factory = MolecularDriverEntryFactory.fromEvaluatedTrials(trials);
+        MolecularDriverEntryFactory factory = MolecularDriverEntryFactory.fromEvaluatedCohorts(cohorts);
         Set<MolecularDriverEntry> entries = factory.create(molecular);
 
         for (MolecularDriverEntry entry : entries) {
