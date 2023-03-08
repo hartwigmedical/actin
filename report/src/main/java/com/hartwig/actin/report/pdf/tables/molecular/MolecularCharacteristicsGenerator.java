@@ -124,31 +124,27 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
         }).orElse(Cells.createContentWarn(Formats.VALUE_UNKNOWN));
     }
 
-    Optional<String> createTMBStatusStringOption() {
-        Boolean hasHighTumorMutationalBurden = molecular.characteristics().hasHighTumorMutationalBurden();
-        Double tumorMutationalBurden = molecular.characteristics().tumorMutationalBurden();
-        if (hasHighTumorMutationalBurden == null || tumorMutationalBurden == null) {
-            return Optional.empty();
-        }
-        return Optional.of(String.format("%s (%s)",
-                hasHighTumorMutationalBurden ? "High" : "Low",
-                Formats.singleDigitNumber(tumorMutationalBurden)));
-    }
-
     @NotNull
     private Cell createTMBStatusCell() {
         if (!molecular.containsTumorCells()) {
             return Cells.createContentWarn(Formats.VALUE_NOT_AVAILABLE);
         }
 
-        return createTMBStatusStringOption().map(value -> {
-            Cell cell = molecular.hasSufficientQuality() ? Cells.createContent(value) : Cells.createContentWarn(value);
+        Boolean hasHighTumorMutationalBurden = molecular.characteristics().hasHighTumorMutationalBurden();
+        Double tumorMutationalBurden = molecular.characteristics().tumorMutationalBurden();
+        if (hasHighTumorMutationalBurden == null || tumorMutationalBurden == null) {
+            return Cells.createContentWarn(Formats.VALUE_UNKNOWN);
+        }
 
-            if (Boolean.TRUE.equals(molecular.characteristics().hasHighTumorMutationalBurden())) {
-                cell.addStyle(Styles.tableHighlightStyle());
-            }
-            return cell;
-        }).orElse(Cells.createContentWarn(Formats.VALUE_UNKNOWN));
+        String interpretation = hasHighTumorMutationalBurden ? "High" : "Low";
+        String value = interpretation + " (" + Formats.singleDigitNumber(tumorMutationalBurden) + ")";
+        Cell cell = molecular.hasSufficientQuality() ? Cells.createContent(value) : Cells.createContentWarn(value);
+
+        if (hasHighTumorMutationalBurden) {
+            cell.addStyle(Styles.tableHighlightStyle());
+        }
+
+        return cell;
     }
 
     Optional<String> createMSStabilityStringOption() {
