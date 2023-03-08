@@ -25,7 +25,12 @@ public final class Cells {
 
     @NotNull
     public static Cell create(@Nullable IBlockElement element) {
-        return create(element, 1, 1);
+        return create(element, 1);
+    }
+
+    @NotNull
+    public static Cell create(@Nullable IBlockElement element, int cols) {
+        return create(element, 1, cols);
     }
 
     @NotNull
@@ -103,16 +108,16 @@ public final class Cells {
     }
 
     @NotNull
+    public static Cell createContent(@NotNull String text) {
+        return createContent(new Paragraph(text));
+    }
+
+    @NotNull
     public static Cell createContent(@NotNull IBlockElement element) {
         Cell cell = create(element);
         cell.addStyle(Styles.tableContentStyle());
         cell.setBorderTop(new SolidBorder(Styles.PALETTE_MID_GREY, 0.25F));
         return cell;
-    }
-
-    @NotNull
-    public static Cell createContent(@NotNull String text) {
-        return createContent(new Paragraph(text));
     }
 
     @NotNull
@@ -153,16 +158,27 @@ public final class Cells {
         return cell;
     }
 
+
     @NotNull
     public static Cell createKey(@NotNull String text) {
-        Cell cell = create(new Paragraph(text));
+        return createKey(text, 1);
+    }
+
+    @NotNull
+    public static Cell createKey(@NotNull String text, int cols) {
+        Cell cell = create(new Paragraph(text), 1, cols);
         cell.addStyle(Styles.tableKeyStyle());
         return cell;
     }
 
     @NotNull
     public static Cell createValue(@NotNull String text) {
-        Cell cell = create(new Paragraph(text));
+        return createValue(text, 1);
+    }
+
+    @NotNull
+    public static Cell createValue(@NotNull String text, int cols) {
+        Cell cell = create(new Paragraph(text), 1, cols);
         cell.addStyle(Formats.styleForTableValue(text));
         return cell;
     }

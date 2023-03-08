@@ -23,8 +23,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class MolecularCharacteristicsGenerator implements TableGenerator {
 
-    private static final String VALUE_NOT_AVAILABLE = "N/A";
-
     @NotNull
     private final MolecularRecord molecular;
     private final float width;
@@ -89,7 +87,7 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
     @NotNull
     Cell createPredictedTumorOriginCell() {
         if (!molecular.containsTumorCells()) {
-            return Cells.createContentWarn(VALUE_NOT_AVAILABLE);
+            return Cells.createContentWarn(Formats.VALUE_NOT_AVAILABLE);
         }
 
         PredictedTumorOrigin predictedTumorOrigin = molecular.characteristics().predictedTumorOrigin();
@@ -113,7 +111,7 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
     @NotNull
     private Cell createTMLStatusCell() {
         if (!molecular.containsTumorCells()) {
-            return Cells.createContentWarn(VALUE_NOT_AVAILABLE);
+            return Cells.createContentWarn(Formats.VALUE_NOT_AVAILABLE);
         }
 
         return createTMLStatusStringOption().map(value -> {
@@ -126,27 +124,31 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
         }).orElse(Cells.createContentWarn(Formats.VALUE_UNKNOWN));
     }
 
-    @NotNull
-    private Cell createTMBStatusCell() {
-        if (!molecular.containsTumorCells()) {
-            return Cells.createContentWarn(VALUE_NOT_AVAILABLE);
-        }
-
+    Optional<String> createTMBStatusStringOption() {
         Boolean hasHighTumorMutationalBurden = molecular.characteristics().hasHighTumorMutationalBurden();
         Double tumorMutationalBurden = molecular.characteristics().tumorMutationalBurden();
         if (hasHighTumorMutationalBurden == null || tumorMutationalBurden == null) {
-            return Cells.createContentWarn(Formats.VALUE_UNKNOWN);
+            return Optional.empty();
+        }
+        return Optional.of(String.format("%s (%s)",
+                hasHighTumorMutationalBurden ? "High" : "Low",
+                Formats.singleDigitNumber(tumorMutationalBurden)));
+    }
+
+    @NotNull
+    private Cell createTMBStatusCell() {
+        if (!molecular.containsTumorCells()) {
+            return Cells.createContentWarn(Formats.VALUE_NOT_AVAILABLE);
         }
 
-        String interpretation = hasHighTumorMutationalBurden ? "High" : "Low";
-        String value = interpretation + " (" + Formats.singleDigitNumber(tumorMutationalBurden) + ")";
-        Cell cell = molecular.hasSufficientQuality() ? Cells.createContent(value) : Cells.createContentWarn(value);
+        return createTMBStatusStringOption().map(value -> {
+            Cell cell = molecular.hasSufficientQuality() ? Cells.createContent(value) : Cells.createContentWarn(value);
 
-        if (hasHighTumorMutationalBurden) {
-            cell.addStyle(Styles.tableHighlightStyle());
-        }
-
-        return cell;
+            if (Boolean.TRUE.equals(molecular.characteristics().hasHighTumorMutationalBurden())) {
+                cell.addStyle(Styles.tableHighlightStyle());
+            }
+            return cell;
+        }).orElse(Cells.createContentWarn(Formats.VALUE_UNKNOWN));
     }
 
     Optional<String> createMSStabilityStringOption() {
@@ -160,7 +162,7 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
     @NotNull
     private Cell createMSStabilityCell() {
         if (!molecular.containsTumorCells()) {
-            return Cells.createContentWarn(VALUE_NOT_AVAILABLE);
+            return Cells.createContentWarn(Formats.VALUE_NOT_AVAILABLE);
         }
 
         return createMSStabilityStringOption().map(value -> {
@@ -184,7 +186,7 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
     @NotNull
     private Cell createHRStatusCell() {
         if (!molecular.containsTumorCells()) {
-            return Cells.createContentWarn(VALUE_NOT_AVAILABLE);
+            return Cells.createContentWarn(Formats.VALUE_NOT_AVAILABLE);
         }
 
         return createHRStatusStringOption().map(value -> {
