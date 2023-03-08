@@ -71,7 +71,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
         table.addCell(Cells.createKey("Biopsy location"));
         table.addCell(biopsySummary());
 
-        if (molecular.hasSufficientQuality()) {
+        if (molecular.containsTumorCells()) {
             if (TumorDetailsInterpreter.isCUP(clinical.tumor())) {
                 table.addCell(Cells.createKey("Molecular tissue of origin prediction"));
                 table.addCell(characteristicsGenerator.createPredictedTumorOriginCell());
