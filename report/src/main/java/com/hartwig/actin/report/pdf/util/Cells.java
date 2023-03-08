@@ -23,9 +23,6 @@ import org.jetbrains.annotations.Nullable;
 
 public final class Cells {
 
-    private Cells() {
-    }
-
     @NotNull
     public static Cell create(@Nullable IBlockElement element) {
         return create(element, 1, 1);
@@ -143,13 +140,6 @@ public final class Cells {
     }
 
     @NotNull
-    public static Cell createContentDeemphasize(@NotNull String text) {
-        Cell cell = createContent(text);
-        cell.setFontColor(Styles.PALETTE_MID_GREY);
-        return cell;
-    }
-
-    @NotNull
     public static Cell createContentWarn(@NotNull String text) {
         Cell cell = createContent(text);
         cell.setFontColor(Styles.PALETTE_WARN);
@@ -184,13 +174,6 @@ public final class Cells {
             cell.add(paragraph);
         }
         cell.addStyle(Styles.tableHighlightStyle());
-        return cell;
-    }
-
-    @NotNull
-    public static Cell createValueWarn(@NotNull String text) {
-        Cell cell = createValue(text);
-        cell.setFontColor(Styles.PALETTE_WARN);
         return cell;
     }
 
