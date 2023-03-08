@@ -143,6 +143,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
     private <T extends GeneAlteration & Driver> String summaryStringOptionForGeneAlterations(Stream<T> geneAlterationStream) {
         String genes = geneAlterationStream.filter(driver -> driver.driverLikelihood() == DriverLikelihood.HIGH)
                 .map(GeneAlteration::gene)
+                .distinct()
                 .collect(Collectors.joining(Formats.COMMA_SEPARATOR));
         return genes.isEmpty() ? Formats.VALUE_NONE : genes;
     }
