@@ -88,7 +88,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
                             Maps.immutableEntry("Virus detection", highDriverVirusDetectionsStringOption()),
                             Maps.immutableEntry("", Optional.of("")),
                             Maps.immutableEntry("Potentially actionable events with medium/low driver:",
-                                    actionableEventsWithoutHighDriverMutation()))
+                                    actionableEventsWithoutHighDriverLikelihood()))
                     .flatMap(entry -> Stream.of(Cells.createKey(entry.getKey()),
                             Cells.createValue(entry.getValue().orElse(Formats.VALUE_UNKNOWN))))
                     .forEach(table::addCell);
@@ -175,7 +175,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
     }
 
     @NotNull
-    private Optional<String> actionableEventsWithoutHighDriverMutation() {
+    private Optional<String> actionableEventsWithoutHighDriverLikelihood() {
         Set<String> eventsWithActinTrials = cohorts.stream()
                 .filter(EvaluatedCohort::isPotentiallyEligible)
                 .filter(EvaluatedCohort::isOpen)
