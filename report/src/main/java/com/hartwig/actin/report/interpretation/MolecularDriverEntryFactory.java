@@ -1,7 +1,10 @@
 package com.hartwig.actin.report.interpretation;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -24,6 +27,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class MolecularDriverEntryFactory {
 
+    private static final String RESPONSIVE_EVIDENCE_APPROVED_TREATMENTS = "Approved";
+
     @NotNull
     private final Multimap<String, String> trialsPerInclusionEvent;
 
@@ -45,25 +50,23 @@ public class MolecularDriverEntryFactory {
     }
 
     @NotNull
-    public Set<MolecularDriverEntry> create(@NotNull MolecularRecord molecular) {
-        Set<MolecularDriverEntry> entries = Sets.newTreeSet(new MolecularDriverEntryComparator());
-
+    public Stream<MolecularDriverEntry> create(@NotNull MolecularRecord molecular) {
         MolecularDrivers drivers = molecular.drivers();
-        entries.addAll(fromVariants(drivers.variants()));
-        entries.addAll(fromCopyNumbers(drivers.copyNumbers()));
-        entries.addAll(fromHomozygousDisruptions(drivers.homozygousDisruptions()));
-        entries.addAll(fromDisruptions(drivers.disruptions()));
-        entries.addAll(fromFusions(drivers.fusions()));
-        entries.addAll(fromViruses(drivers.viruses()));
 
-        return entries;
+        return Stream.of(fromVariants(drivers.variants()),
+                        fromCopyNumbers(drivers.copyNumbers()),
+                        fromHomozygousDisruptions(drivers.homozygousDisruptions()),
+                        fromDisruptions(drivers.disruptions()),
+                        fromFusions(drivers.fusions()),
+                        fromViruses(drivers.viruses()))
+                .flatMap(Function.identity())
+                .filter(driver -> driver.driverLikelihood() != null || !driver.externalTrials().isEmpty() || !driver.actinTrials().isEmpty()
+                        || Objects.equals(driver.bestResponsiveEvidence(), RESPONSIVE_EVIDENCE_APPROVED_TREATMENTS))
+                .sorted(new MolecularDriverEntryComparator());
     }
 
-    @NotNull
-    private Set<MolecularDriverEntry> fromVariants(@NotNull Set<Variant> variants) {
-        Set<MolecularDriverEntry> entries = Sets.newHashSet();
-
-        for (Variant variant : reportable(variants)) {
+    private Stream<MolecularDriverEntry> fromVariants(@NotNull Set<Variant> variants) {
+        return variants.stream().filter(Driver::isReportable).map(variant -> {
             ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
 
             String mutationTypeString = variant.isHotspot() ? "Hotspot" : "VUS";
@@ -89,16 +92,12 @@ public class MolecularDriverEntryFactory {
 
             addActionability(entryBuilder, variant);
 
-            entries.add(entryBuilder.build());
-        }
-
-        return entries;
+            return entryBuilder.build();
+        });
     }
 
-    private Set<MolecularDriverEntry> fromCopyNumbers(@NotNull Set<CopyNumber> copyNumbers) {
-        Set<MolecularDriverEntry> entries = Sets.newHashSet();
-
-        for (CopyNumber copyNumber : reportable(copyNumbers)) {
+    private Stream<MolecularDriverEntry> fromCopyNumbers(@NotNull Set<CopyNumber> copyNumbers) {
+        return copyNumbers.stream().filter(Driver::isReportable).map(copyNumber -> {
             ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
 
             entryBuilder.driverType(copyNumber.type().isGain() ? "Amplification" : "Loss");
@@ -107,17 +106,12 @@ public class MolecularDriverEntryFactory {
 
             addActionability(entryBuilder, copyNumber);
 
-            entries.add(entryBuilder.build());
-        }
-
-        return entries;
+            return entryBuilder.build();
+        });
     }
 
-    @NotNull
-    private Set<MolecularDriverEntry> fromHomozygousDisruptions(@NotNull Set<HomozygousDisruption> homozygousDisruptions) {
-        Set<MolecularDriverEntry> entries = Sets.newHashSet();
-
-        for (HomozygousDisruption homozygousDisruption : reportable(homozygousDisruptions)) {
+    private Stream<MolecularDriverEntry> fromHomozygousDisruptions(@NotNull Set<HomozygousDisruption> homozygousDisruptions) {
+        return homozygousDisruptions.stream().filter(Driver::isReportable).map(homozygousDisruption -> {
             ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
             entryBuilder.driverType("Disruption (homozygous)");
             entryBuilder.driver(homozygousDisruption.gene());
@@ -125,17 +119,13 @@ public class MolecularDriverEntryFactory {
 
             addActionability(entryBuilder, homozygousDisruption);
 
-            entries.add(entryBuilder.build());
-        }
-
-        return entries;
+            return entryBuilder.build();
+        });
     }
 
     @NotNull
-    private Set<MolecularDriverEntry> fromDisruptions(@NotNull Set<Disruption> disruptions) {
-        Set<MolecularDriverEntry> entries = Sets.newHashSet();
-
-        for (Disruption disruption : reportable(disruptions)) {
+    private Stream<MolecularDriverEntry> fromDisruptions(@NotNull Set<Disruption> disruptions) {
+        return disruptions.stream().filter(Driver::isReportable).map(disruption -> {
             ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
             entryBuilder.driverType("Disruption");
             String addon = Formats.singleDigitNumber(disruption.junctionCopyNumber()) + " disr. / "
@@ -145,17 +135,13 @@ public class MolecularDriverEntryFactory {
 
             addActionability(entryBuilder, disruption);
 
-            entries.add(entryBuilder.build());
-        }
-
-        return entries;
+            return entryBuilder.build();
+        });
     }
 
     @NotNull
-    private Set<MolecularDriverEntry> fromFusions(@NotNull Set<Fusion> fusions) {
-        Set<MolecularDriverEntry> entries = Sets.newHashSet();
-
-        for (Fusion fusion : reportable(fusions)) {
+    private Stream<MolecularDriverEntry> fromFusions(@NotNull Set<Fusion> fusions) {
+        return fusions.stream().filter(Driver::isReportable).map(fusion -> {
             ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
             entryBuilder.driverType(fusion.driverType().display());
             entryBuilder.driver(fusion.event() + ", exon " + fusion.fusedExonUp() + " - exon " + fusion.fusedExonDown());
@@ -163,17 +149,13 @@ public class MolecularDriverEntryFactory {
 
             addActionability(entryBuilder, fusion);
 
-            entries.add(entryBuilder.build());
-        }
-
-        return entries;
+            return entryBuilder.build();
+        });
     }
 
     @NotNull
-    private Set<MolecularDriverEntry> fromViruses(@NotNull Set<Virus> viruses) {
-        Set<MolecularDriverEntry> entries = Sets.newHashSet();
-
-        for (Virus virus : viruses) {
+    private Stream<MolecularDriverEntry> fromViruses(@NotNull Set<Virus> viruses) {
+        return viruses.stream().map(virus -> {
             ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
             entryBuilder.driverType("Virus");
             entryBuilder.driver(virus.event() + ", " + virus.integrations() + " integrations detected");
@@ -181,21 +163,8 @@ public class MolecularDriverEntryFactory {
 
             addActionability(entryBuilder, virus);
 
-            entries.add(entryBuilder.build());
-        }
-
-        return entries;
-    }
-
-    @NotNull
-    private static <T extends Driver> Set<T> reportable(@NotNull Set<T> drivers) {
-        Set<T> filtered = Sets.newHashSet();
-        for (T driver : drivers) {
-            if (driver.isReportable()) {
-                filtered.add(driver);
-            }
-        }
-        return filtered;
+            return entryBuilder.build();
+        });
     }
 
     private void addActionability(@NotNull ImmutableMolecularDriverEntry.Builder entryBuilder, @NotNull Driver driver) {
@@ -230,7 +199,7 @@ public class MolecularDriverEntryFactory {
     private static String bestResponsiveEvidence(@NotNull Driver driver) {
         ActionableEvidence evidence = driver.evidence();
         if (!evidence.approvedTreatments().isEmpty()) {
-            return "Approved";
+            return RESPONSIVE_EVIDENCE_APPROVED_TREATMENTS;
         } else if (!evidence.onLabelExperimentalTreatments().isEmpty()) {
             return "On-label experimental";
         } else if (!evidence.offLabelExperimentalTreatments().isEmpty()) {

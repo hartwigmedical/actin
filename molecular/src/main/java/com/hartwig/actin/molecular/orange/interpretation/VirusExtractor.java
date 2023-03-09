@@ -48,16 +48,18 @@ class VirusExtractor {
         return viruses;
     }
 
-    @NotNull
+    @Nullable
     @VisibleForTesting
     static DriverLikelihood determineDriverLikelihood(@NotNull VirusDriverLikelihood driverLikelihood) {
         switch (driverLikelihood) {
             case HIGH: {
                 return DriverLikelihood.HIGH;
             }
-            case LOW:
-            case UNKNOWN: {
+            case LOW: {
                 return DriverLikelihood.LOW;
+            }
+            case UNKNOWN: {
+                return null;
             }
             default: {
                 throw new IllegalStateException(
