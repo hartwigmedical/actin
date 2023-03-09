@@ -60,8 +60,8 @@ public class MolecularDriverEntryFactory {
                         fromFusions(drivers.fusions()),
                         fromViruses(drivers.viruses()))
                 .flatMap(Function.identity())
-                .filter(driver -> driver.driverLikelihood() != null || !driver.externalTrials().isEmpty() || !driver.actinTrials().isEmpty()
-                        || Objects.equals(driver.bestResponsiveEvidence(), RESPONSIVE_EVIDENCE_APPROVED_TREATMENTS))
+                .filter(entry -> entry.driverLikelihood() != null || !entry.externalTrials().isEmpty() || !entry.actinTrials().isEmpty()
+                        || Objects.equals(entry.bestResponsiveEvidence(), RESPONSIVE_EVIDENCE_APPROVED_TREATMENTS))
                 .sorted(new MolecularDriverEntryComparator());
     }
 
