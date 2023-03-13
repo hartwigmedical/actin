@@ -1,11 +1,5 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
--- TODO Drop per 1st of jan 2023
-DROP TABLE IF EXISTS amplification;
-DROP TABLE IF EXISTS amplificationEvidence;
-DROP TABLE IF EXISTS loss;
-DROP TABLE IF EXISTS lossEvidence;
-
 -- CLINICAL
 DROP TABLE IF EXISTS patient;
 CREATE TABLE patient
