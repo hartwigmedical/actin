@@ -5,9 +5,10 @@ import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+
 import org.jetbrains.annotations.NotNull;
 
-//TODO: Update according to README
+//TODO (ACTIN-37): Update according to README
 public class HasSufficientJTc implements EvaluationFunction {
 
     HasSufficientJTc() {
