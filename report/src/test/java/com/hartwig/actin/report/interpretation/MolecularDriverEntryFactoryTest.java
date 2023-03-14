@@ -54,8 +54,7 @@ public class MolecularDriverEntryFactoryTest {
 
     @Test
     public void shouldIncludeNonReportableDriversWithActinTrialMatches() {
-        MolecularRecord record = createTestMolecularRecordWithNonReportableDriverWithEvidence(
-                TestActionableEvidenceFactory.createEmpty());
+        MolecularRecord record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestActionableEvidenceFactory.createEmpty());
         String driverToFind = record.drivers().viruses().iterator().next().event();
 
         assertEquals(1, createFactoryWithCohortsForEvent(driverToFind).create(record).count());
@@ -63,8 +62,8 @@ public class MolecularDriverEntryFactoryTest {
 
     @Test
     public void shouldIncludeNonReportableDriversWithApprovedTreatmentMatches() {
-        MolecularRecord record = createTestMolecularRecordWithNonReportableDriverWithEvidence(
-                TestActionableEvidenceFactory.withApprovedTreatment("treatment"));
+        MolecularRecord record =
+                createTestMolecularRecordWithNonReportableDriverWithEvidence(TestActionableEvidenceFactory.withApprovedTreatment("treatment"));
 
         MolecularDriverEntryFactory factory = MolecularDriverEntryFactory.fromEvaluatedCohorts(Collections.emptyList());
 
@@ -73,8 +72,9 @@ public class MolecularDriverEntryFactoryTest {
 
     @Test
     public void shouldIncludeNonReportableDriversWithExternalTrialMatches() {
-        MolecularRecord record = createTestMolecularRecordWithNonReportableDriverWithEvidence(
-                TestActionableEvidenceFactory.withExternalEligibleTrial("trial 1"));
+        MolecularRecord record =
+                createTestMolecularRecordWithNonReportableDriverWithEvidence(TestActionableEvidenceFactory.withExternalEligibleTrial(
+                        "trial 1"));
 
         MolecularDriverEntryFactory factory = MolecularDriverEntryFactory.fromEvaluatedCohorts(Collections.emptyList());
 

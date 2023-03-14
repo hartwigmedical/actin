@@ -63,8 +63,9 @@ public class MolecularDriverEntryFactory {
     }
 
     private <T extends Driver> Stream<T> streamFilteredDrivers(Set<T> drivers) {
-        return drivers.stream().filter(driver -> driver.isReportable() || !driver.evidence().externalEligibleTrials().isEmpty()
-                || trialsPerInclusionEvent.containsKey(driver.event()) || !driver.evidence().approvedTreatments().isEmpty());
+        return drivers.stream()
+                .filter(driver -> driver.isReportable() || !driver.evidence().externalEligibleTrials().isEmpty()
+                        || trialsPerInclusionEvent.containsKey(driver.event()) || !driver.evidence().approvedTreatments().isEmpty());
     }
 
     private MolecularDriverEntry fromVariant(@NotNull Variant variant) {
@@ -76,9 +77,8 @@ public class MolecularDriverEntryFactory {
         entryBuilder.driverType("Mutation (" + mutationTypeString + ")");
 
         double boundedVariantCopies = Math.max(0, Math.min(variant.variantCopyNumber(), variant.totalCopyNumber()));
-        String variantCopyString = boundedVariantCopies < 1
-                ? Formats.singleDigitNumber(boundedVariantCopies)
-                : Formats.noDigitNumber(boundedVariantCopies);
+        String variantCopyString =
+                boundedVariantCopies < 1 ? Formats.singleDigitNumber(boundedVariantCopies) : Formats.noDigitNumber(boundedVariantCopies);
 
         double boundedTotalCopies = Math.max(0, variant.totalCopyNumber());
         String totalCopyString =
