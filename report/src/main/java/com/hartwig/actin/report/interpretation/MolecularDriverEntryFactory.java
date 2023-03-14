@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.interpretation;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -53,118 +52,109 @@ public class MolecularDriverEntryFactory {
     public Stream<MolecularDriverEntry> create(@NotNull MolecularRecord molecular) {
         MolecularDrivers drivers = molecular.drivers();
 
-        return Stream.of(fromVariants(drivers.variants()),
-                        fromCopyNumbers(drivers.copyNumbers()),
-                        fromHomozygousDisruptions(drivers.homozygousDisruptions()),
-                        fromDisruptions(drivers.disruptions()),
-                        fromFusions(drivers.fusions()),
-                        fromViruses(drivers.viruses()))
+        return Stream.of(streamFilteredDrivers(drivers.variants()).map(this::fromVariant),
+                        streamFilteredDrivers(drivers.copyNumbers()).map(this::fromCopyNumber),
+                        streamFilteredDrivers(drivers.homozygousDisruptions()).map(this::fromHomozygousDisruption),
+                        streamFilteredDrivers(drivers.disruptions()).map(this::fromDisruption),
+                        streamFilteredDrivers(drivers.fusions()).map(this::fromFusion),
+                        streamFilteredDrivers(drivers.viruses()).map(this::fromVirus))
                 .flatMap(Function.identity())
-                .filter(entry -> entry.driverLikelihood() != null || !entry.externalTrials().isEmpty() || !entry.actinTrials().isEmpty()
-                        || Objects.equals(entry.bestResponsiveEvidence(), RESPONSIVE_EVIDENCE_APPROVED_TREATMENTS))
                 .sorted(new MolecularDriverEntryComparator());
     }
 
-    private Stream<MolecularDriverEntry> fromVariants(@NotNull Set<Variant> variants) {
-        return variants.stream().filter(Driver::isReportable).map(variant -> {
-            ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
-
-            String mutationTypeString = variant.isHotspot() ? "Hotspot" : "VUS";
-            mutationTypeString = variant.isBiallelic() ? "Biallelic " + mutationTypeString : mutationTypeString;
-
-            entryBuilder.driverType("Mutation (" + mutationTypeString + ")");
-
-            double boundedVariantCopies = Math.max(0, Math.min(variant.variantCopyNumber(), variant.totalCopyNumber()));
-            String variantCopyString = boundedVariantCopies < 1
-                    ? Formats.singleDigitNumber(boundedVariantCopies)
-                    : Formats.noDigitNumber(boundedVariantCopies);
-
-            double boundedTotalCopies = Math.max(0, variant.totalCopyNumber());
-            String totalCopyString =
-                    boundedTotalCopies < 1 ? Formats.singleDigitNumber(boundedTotalCopies) : Formats.noDigitNumber(boundedTotalCopies);
-
-            String driver = variant.event() + " (" + variantCopyString + "/" + totalCopyString + " copies)";
-            if (ClonalityInterpreter.isPotentiallySubclonal(variant)) {
-                driver = driver + "*";
-            }
-            entryBuilder.driver(driver);
-            entryBuilder.driverLikelihood(variant.driverLikelihood());
-
-            addActionability(entryBuilder, variant);
-
-            return entryBuilder.build();
-        });
+    private <T extends Driver> Stream<T> streamFilteredDrivers(Set<T> drivers) {
+        return drivers.stream().filter(driver -> driver.isReportable() || !driver.evidence().externalEligibleTrials().isEmpty()
+                || trialsPerInclusionEvent.containsKey(driver.event()) || !driver.evidence().approvedTreatments().isEmpty());
     }
 
-    private Stream<MolecularDriverEntry> fromCopyNumbers(@NotNull Set<CopyNumber> copyNumbers) {
-        return copyNumbers.stream().filter(Driver::isReportable).map(copyNumber -> {
-            ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
+    private MolecularDriverEntry fromVariant(@NotNull Variant variant) {
+        ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
 
-            entryBuilder.driverType(copyNumber.type().isGain() ? "Amplification" : "Loss");
-            entryBuilder.driver(copyNumber.event() + ", " + copyNumber.minCopies() + " copies");
-            entryBuilder.driverLikelihood(copyNumber.driverLikelihood());
+        String mutationTypeString = variant.isHotspot() ? "Hotspot" : "VUS";
+        mutationTypeString = variant.isBiallelic() ? "Biallelic " + mutationTypeString : mutationTypeString;
 
-            addActionability(entryBuilder, copyNumber);
+        entryBuilder.driverType("Mutation (" + mutationTypeString + ")");
 
-            return entryBuilder.build();
-        });
+        double boundedVariantCopies = Math.max(0, Math.min(variant.variantCopyNumber(), variant.totalCopyNumber()));
+        String variantCopyString = boundedVariantCopies < 1
+                ? Formats.singleDigitNumber(boundedVariantCopies)
+                : Formats.noDigitNumber(boundedVariantCopies);
+
+        double boundedTotalCopies = Math.max(0, variant.totalCopyNumber());
+        String totalCopyString =
+                boundedTotalCopies < 1 ? Formats.singleDigitNumber(boundedTotalCopies) : Formats.noDigitNumber(boundedTotalCopies);
+
+        String driver = variant.event() + " (" + variantCopyString + "/" + totalCopyString + " copies)";
+        if (ClonalityInterpreter.isPotentiallySubclonal(variant)) {
+            driver = driver + "*";
+        }
+        entryBuilder.driver(driver);
+        entryBuilder.driverLikelihood(variant.driverLikelihood());
+
+        addActionability(entryBuilder, variant);
+
+        return entryBuilder.build();
     }
 
-    private Stream<MolecularDriverEntry> fromHomozygousDisruptions(@NotNull Set<HomozygousDisruption> homozygousDisruptions) {
-        return homozygousDisruptions.stream().filter(Driver::isReportable).map(homozygousDisruption -> {
-            ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
-            entryBuilder.driverType("Disruption (homozygous)");
-            entryBuilder.driver(homozygousDisruption.gene());
-            entryBuilder.driverLikelihood(homozygousDisruption.driverLikelihood());
+    private MolecularDriverEntry fromCopyNumber(@NotNull CopyNumber copyNumber) {
+        ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
 
-            addActionability(entryBuilder, homozygousDisruption);
+        entryBuilder.driverType(copyNumber.type().isGain() ? "Amplification" : "Loss");
+        entryBuilder.driver(copyNumber.event() + ", " + copyNumber.minCopies() + " copies");
+        entryBuilder.driverLikelihood(copyNumber.driverLikelihood());
 
-            return entryBuilder.build();
-        });
+        addActionability(entryBuilder, copyNumber);
+
+        return entryBuilder.build();
     }
 
-    @NotNull
-    private Stream<MolecularDriverEntry> fromDisruptions(@NotNull Set<Disruption> disruptions) {
-        return disruptions.stream().filter(Driver::isReportable).map(disruption -> {
-            ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
-            entryBuilder.driverType("Disruption");
-            String addon = Formats.singleDigitNumber(disruption.junctionCopyNumber()) + " disr. / "
-                    + Formats.singleDigitNumber(disruption.undisruptedCopyNumber()) + " undisr. copies";
-            entryBuilder.driver(disruption.gene() + ", " + disruption.type() + " (" + addon + ")");
-            entryBuilder.driverLikelihood(disruption.driverLikelihood());
+    private MolecularDriverEntry fromHomozygousDisruption(@NotNull HomozygousDisruption homozygousDisruption) {
+        ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
+        entryBuilder.driverType("Disruption (homozygous)");
+        entryBuilder.driver(homozygousDisruption.gene());
+        entryBuilder.driverLikelihood(homozygousDisruption.driverLikelihood());
 
-            addActionability(entryBuilder, disruption);
+        addActionability(entryBuilder, homozygousDisruption);
 
-            return entryBuilder.build();
-        });
+        return entryBuilder.build();
     }
 
     @NotNull
-    private Stream<MolecularDriverEntry> fromFusions(@NotNull Set<Fusion> fusions) {
-        return fusions.stream().filter(Driver::isReportable).map(fusion -> {
-            ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
-            entryBuilder.driverType(fusion.driverType().display());
-            entryBuilder.driver(fusion.event() + ", exon " + fusion.fusedExonUp() + " - exon " + fusion.fusedExonDown());
-            entryBuilder.driverLikelihood(fusion.driverLikelihood());
+    private MolecularDriverEntry fromDisruption(@NotNull Disruption disruption) {
+        ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
+        entryBuilder.driverType("Disruption");
+        String addon = Formats.singleDigitNumber(disruption.junctionCopyNumber()) + " disr. / "
+                + Formats.singleDigitNumber(disruption.undisruptedCopyNumber()) + " undisr. copies";
+        entryBuilder.driver(disruption.gene() + ", " + disruption.type() + " (" + addon + ")");
+        entryBuilder.driverLikelihood(disruption.driverLikelihood());
 
-            addActionability(entryBuilder, fusion);
+        addActionability(entryBuilder, disruption);
 
-            return entryBuilder.build();
-        });
+        return entryBuilder.build();
     }
 
     @NotNull
-    private Stream<MolecularDriverEntry> fromViruses(@NotNull Set<Virus> viruses) {
-        return viruses.stream().map(virus -> {
-            ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
-            entryBuilder.driverType("Virus");
-            entryBuilder.driver(virus.event() + ", " + virus.integrations() + " integrations detected");
-            entryBuilder.driverLikelihood(virus.driverLikelihood());
+    private MolecularDriverEntry fromFusion(@NotNull Fusion fusion) {
+        ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
+        entryBuilder.driverType(fusion.driverType().display());
+        entryBuilder.driver(fusion.event() + ", exon " + fusion.fusedExonUp() + " - exon " + fusion.fusedExonDown());
+        entryBuilder.driverLikelihood(fusion.driverLikelihood());
 
-            addActionability(entryBuilder, virus);
+        addActionability(entryBuilder, fusion);
 
-            return entryBuilder.build();
-        });
+        return entryBuilder.build();
+    }
+
+    @NotNull
+    private MolecularDriverEntry fromVirus(@NotNull Virus virus) {
+        ImmutableMolecularDriverEntry.Builder entryBuilder = ImmutableMolecularDriverEntry.builder();
+        entryBuilder.driverType("Virus");
+        entryBuilder.driver(virus.event() + ", " + virus.integrations() + " integrations detected");
+        entryBuilder.driverLikelihood(virus.driverLikelihood());
+
+        addActionability(entryBuilder, virus);
+
+        return entryBuilder.build();
     }
 
     private void addActionability(@NotNull ImmutableMolecularDriverEntry.Builder entryBuilder, @NotNull Driver driver) {

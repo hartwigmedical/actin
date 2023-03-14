@@ -8,11 +8,18 @@ import java.util.Collections;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Lists;
+import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory;
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
+import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
+import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
+import com.hartwig.actin.molecular.datamodel.driver.VirusType;
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 public class MolecularDriverEntryFactoryTest {
@@ -28,9 +35,17 @@ public class MolecularDriverEntryFactoryTest {
     }
 
     @Test
-    public void shouldSkipNonActionableDriversWithNullLikelihood() {
-        MolecularRecord record = TestMolecularFactory.createTestMolecularRecordWithDriverEvidenceAndNullLikelihood(
-                TestActionableEvidenceFactory.createEmpty());
+    public void shouldIncludeNonActionableReportableDrivers() {
+        MolecularRecord record = createTestMolecularRecordWithDriverEvidence(TestActionableEvidenceFactory.createEmpty(), true);
+
+        MolecularDriverEntryFactory factory = MolecularDriverEntryFactory.fromEvaluatedCohorts(Collections.emptyList());
+
+        assertEquals(1, factory.create(record).count());
+    }
+
+    @Test
+    public void shouldSkipNonActionableNotReportableDrivers() {
+        MolecularRecord record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestActionableEvidenceFactory.createEmpty());
 
         MolecularDriverEntryFactory factory = MolecularDriverEntryFactory.fromEvaluatedCohorts(Collections.emptyList());
 
@@ -38,8 +53,8 @@ public class MolecularDriverEntryFactoryTest {
     }
 
     @Test
-    public void shouldIncludeDriversWithNullLikelihoodAndActinTrialMatches() {
-        MolecularRecord record = TestMolecularFactory.createTestMolecularRecordWithDriverEvidenceAndNullLikelihood(
+    public void shouldIncludeNonReportableDriversWithActinTrialMatches() {
+        MolecularRecord record = createTestMolecularRecordWithNonReportableDriverWithEvidence(
                 TestActionableEvidenceFactory.createEmpty());
         String driverToFind = record.drivers().viruses().iterator().next().event();
 
@@ -47,8 +62,8 @@ public class MolecularDriverEntryFactoryTest {
     }
 
     @Test
-    public void shouldIncludeDriversWithNullLikelihoodAndApprovedTreatmentMatches() {
-        MolecularRecord record = TestMolecularFactory.createTestMolecularRecordWithDriverEvidenceAndNullLikelihood(
+    public void shouldIncludeNonReportableDriversWithApprovedTreatmentMatches() {
+        MolecularRecord record = createTestMolecularRecordWithNonReportableDriverWithEvidence(
                 TestActionableEvidenceFactory.withApprovedTreatment("treatment"));
 
         MolecularDriverEntryFactory factory = MolecularDriverEntryFactory.fromEvaluatedCohorts(Collections.emptyList());
@@ -57,8 +72,8 @@ public class MolecularDriverEntryFactoryTest {
     }
 
     @Test
-    public void shouldIncludeDriversWithNullLikelihoodAndExternalTrialMatches() {
-        MolecularRecord record = TestMolecularFactory.createTestMolecularRecordWithDriverEvidenceAndNullLikelihood(
+    public void shouldIncludeNonReportableDriversWithExternalTrialMatches() {
+        MolecularRecord record = createTestMolecularRecordWithNonReportableDriverWithEvidence(
                 TestActionableEvidenceFactory.withExternalEligibleTrial("trial 1"));
 
         MolecularDriverEntryFactory factory = MolecularDriverEntryFactory.fromEvaluatedCohorts(Collections.emptyList());
@@ -82,6 +97,34 @@ public class MolecularDriverEntryFactoryTest {
                         "Could not find molecular driver entry starting with driver: " + driverToFind));
         assertEquals(1, entry.actinTrials().size());
         assertTrue(entry.actinTrials().contains("trial 1"));
+    }
+
+    @NotNull
+    private static MolecularRecord createTestMolecularRecordWithNonReportableDriverWithEvidence(ActionableEvidence evidence) {
+        return createTestMolecularRecordWithDriverEvidence(evidence, false);
+    }
+
+    @NotNull
+    public static MolecularRecord createTestMolecularRecordWithDriverEvidence(ActionableEvidence evidence, boolean isReportable) {
+        return ImmutableMolecularRecord.builder()
+                .from(TestMolecularFactory.createMinimalTestMolecularRecord())
+                .drivers(createDriversWithEvidence(evidence, isReportable))
+                .build();
+    }
+
+    @NotNull
+    private static MolecularDrivers createDriversWithEvidence(ActionableEvidence evidence, boolean isReportable) {
+        return ImmutableMolecularDrivers.builder()
+                .addViruses(TestVirusFactory.builder()
+                        .isReportable(isReportable)
+                        .event("HPV positive")
+                        .evidence(evidence)
+                        .name("Human papillomavirus type 16")
+                        .type(VirusType.HUMAN_PAPILLOMA_VIRUS)
+                        .integrations(3)
+                        .isReliable(true)
+                        .build())
+                .build();
     }
 
     private MolecularDriverEntryFactory createFactoryWithCohortsForEvent(String event) {

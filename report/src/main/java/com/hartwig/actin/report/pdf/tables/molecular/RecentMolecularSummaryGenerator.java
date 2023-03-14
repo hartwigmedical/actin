@@ -99,6 +99,10 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
         return table;
     }
 
+    private static boolean isKeyDriver(Driver driver) {
+        return driver.driverLikelihood() == DriverLikelihood.HIGH && driver.isReportable();
+    }
+
     @NotNull
     private Cell biopsySummary() {
         String biopsyLocation = clinical.tumor().biopsyLocation();
@@ -119,7 +123,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
 
     @NotNull
     private <T extends GeneAlteration & Driver> Optional<String> summaryStringOptionForGeneAlterations(Stream<T> geneAlterationStream) {
-        String genes = geneAlterationStream.filter(variant -> variant.driverLikelihood() == DriverLikelihood.HIGH)
+        String genes = geneAlterationStream.filter(RecentMolecularSummaryGenerator::isKeyDriver)
                 .map(GeneAlteration::gene)
                 .distinct()
                 .collect(Collectors.joining(Formats.COMMA_SEPARATOR));
@@ -157,7 +161,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
         String fusions = molecular.drivers()
                 .fusions()
                 .stream()
-                .filter(fusion -> fusion.driverLikelihood() == DriverLikelihood.HIGH)
+                .filter(RecentMolecularSummaryGenerator::isKeyDriver)
                 .map(Driver::event)
                 .collect(Collectors.joining(Formats.COMMA_SEPARATOR));
         return Optional.of(fusions.isEmpty() ? Formats.VALUE_NONE : fusions);
@@ -168,7 +172,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
         String fusions = molecular.drivers()
                 .viruses()
                 .stream()
-                .filter(virus -> virus.driverLikelihood() == DriverLikelihood.HIGH)
+                .filter(RecentMolecularSummaryGenerator::isKeyDriver)
                 .map(virus -> String.format("%s (%s integrations detected)", virus.type(), virus.integrations()))
                 .collect(Collectors.joining(Formats.COMMA_SEPARATOR));
         return Optional.of(fusions.isEmpty() ? Formats.VALUE_NONE : fusions);
@@ -188,7 +192,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
                         molecular.drivers().homozygousDisruptions(),
                         molecular.drivers().viruses())
                 .flatMap(Collection::stream)
-                .filter(driver -> driver.driverLikelihood() != DriverLikelihood.HIGH);
+                .filter(driver -> driver.driverLikelihood() != DriverLikelihood.HIGH || !driver.isReportable());
 
         String events = Stream.concat(nonDisruptionDrivers, molecular.drivers().disruptions().stream())
                 .filter(driver -> !driver.evidence().externalEligibleTrials().isEmpty() || eventsWithActinTrials.contains(driver.event())

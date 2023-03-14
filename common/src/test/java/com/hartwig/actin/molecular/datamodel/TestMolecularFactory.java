@@ -29,7 +29,6 @@ import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory;
 import com.hartwig.actin.molecular.datamodel.driver.VariantEffect;
 import com.hartwig.actin.molecular.datamodel.driver.VariantType;
 import com.hartwig.actin.molecular.datamodel.driver.VirusType;
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory;
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableMolecularImmunology;
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
@@ -64,14 +63,6 @@ public final class TestMolecularFactory {
                 .characteristics(ImmutableMolecularCharacteristics.builder().build())
                 .drivers(ImmutableMolecularDrivers.builder().build())
                 .immunology(ImmutableMolecularImmunology.builder().isReliable(false).build())
-                .build();
-    }
-
-    @NotNull
-    public static MolecularRecord createTestMolecularRecordWithDriverEvidenceAndNullLikelihood(ActionableEvidence evidence) {
-        return ImmutableMolecularRecord.builder()
-                .from(createMinimalTestMolecularRecord())
-                .drivers(createDriversWithEvidenceAndNullLikelihood(evidence))
                 .build();
     }
 
@@ -122,22 +113,6 @@ public final class TestMolecularFactory {
                 .homologousRepairEvidence(TestActionableEvidenceFactory.createExhaustive())
                 .tumorMutationalBurdenEvidence(TestActionableEvidenceFactory.createExhaustive())
                 .tumorMutationalLoadEvidence(TestActionableEvidenceFactory.createExhaustive())
-                .build();
-    }
-
-    @NotNull
-    private static MolecularDrivers createDriversWithEvidenceAndNullLikelihood(ActionableEvidence evidence) {
-        return ImmutableMolecularDrivers.builder()
-                .addViruses(TestVirusFactory.builder()
-                        .isReportable(true)
-                        .event("HPV positive")
-                        .driverLikelihood(null)
-                        .evidence(evidence)
-                        .name("Human papillomavirus type 16")
-                        .type(VirusType.HUMAN_PAPILLOMA_VIRUS)
-                        .integrations(3)
-                        .isReliable(true)
-                        .build())
                 .build();
     }
 
