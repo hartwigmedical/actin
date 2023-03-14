@@ -10,13 +10,6 @@ SELECT  trial.code AS trialId, acronym AS trialAcronym, cohort.code AS cohortId,
     ORDER BY trialId
 );
 
-CREATE OR REPLACE VIEW eligibleCohorts
-AS (
-SELECT DISTINCT patientId, trialId, trialAcronym, cohortDescription
-    FROM trialEvaluation
-    WHERE ((isEligibleTrial AND NOT trialHasCohorts AND trialOpen) OR (isEligibleTrial AND isEligibleCohort AND cohortOpen AND NOT cohortBlacklist))
-);
-
 CREATE OR REPLACE VIEW molecularDetails
 AS (
 SELECT * FROM (
@@ -187,4 +180,11 @@ SELECT  DISTINCT referenceDate, referenceDateIsLive, patientId, trialMatch.code 
     WHERE cohortMatch.id NOT IN (SELECT DISTINCT cohortMatchId FROM evaluation WHERE NOT isnull(cohortMatchId))
     ORDER BY patientId, cohortId)
 AS a
+);
+
+CREATE OR REPLACE VIEW eligibleCohorts
+AS (
+SELECT DISTINCT patientId, trialId, trialAcronym, cohortDescription
+    FROM trialEvaluation
+    WHERE ((isEligibleTrial AND NOT trialHasCohorts AND trialOpen) OR (isEligibleTrial AND isEligibleCohort AND cohortOpen AND NOT cohortBlacklist))
 );
