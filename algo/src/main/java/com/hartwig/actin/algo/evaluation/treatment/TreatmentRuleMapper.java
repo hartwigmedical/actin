@@ -10,6 +10,7 @@ import com.hartwig.actin.algo.evaluation.RuleMapper;
 import com.hartwig.actin.algo.evaluation.RuleMappingResources;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.datamodel.TreatmentInput;
+import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
 import com.hartwig.actin.treatment.input.single.OneTreatmentOneInteger;
 import com.hartwig.actin.treatment.input.single.OneTypedTreatmentManyStrings;
 import com.hartwig.actin.treatment.input.single.OneTypedTreatmentManyStringsOneInteger;
@@ -140,7 +141,11 @@ public class TreatmentRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator hasHadSpecificTreatmentWithinWeeksCreator() {
-        return function -> new HasHadSpecificTreatmentWithinWeeks();
+        return function -> {
+            OneIntegerOneString input = functionInputResolver().createOneStringOneIntegerInput(function);
+            LocalDate minDate = referenceDateProvider().date().minusWeeks(input.integer());
+            return new HasHadSpecificTreatmentSinceDate(input.string(), minDate);
+        };
     }
 
     @NotNull

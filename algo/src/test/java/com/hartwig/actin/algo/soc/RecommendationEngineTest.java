@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.soc;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -12,8 +13,11 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory;
 import com.hartwig.actin.algo.doid.DoidConstants;
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
+import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
+import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.doid.TestDoidModelFactory;
@@ -59,12 +63,22 @@ public class RecommendationEngineTest {
 
     @Test
     public void shouldNotRecommendFolfiriAterCapox() {
-        // TODO: Provide patient with CAPOX history
+        assertTrue(getTreatmentResultsForPatient(patientRecordWithHistory(Stream.of(TreatmentFactory.TREATMENT_CAPOX)))
+                .noneMatch(treatment -> treatment.name().equalsIgnoreCase(TreatmentFactory.TREATMENT_FOLFIRI)));
     }
 
     @Test
     public void shouldNotRecommendFolfiriAterFolfox() {
-        // TODO: Provide patient with FOLFOX history
+        assertTrue(getTreatmentResultsForPatient(patientRecordWithHistory(Stream.of(TreatmentFactory.TREATMENT_FOLFOX)))
+                .noneMatch(treatment -> treatment.name().equalsIgnoreCase(TreatmentFactory.TREATMENT_FOLFIRI)));
+    }
+
+    @Test
+    public void shouldNotRecommendTheSameChemotherapyAgain() {
+        Stream.of("5-FU", "Capecitabine", "Irinotecan", "Oxaliplatin", TreatmentFactory.TREATMENT_CAPOX,
+                        TreatmentFactory.TREATMENT_FOLFIRI, TreatmentFactory.TREATMENT_FOLFIRINOX, TreatmentFactory.TREATMENT_FOLFOX)
+                .forEach(treatment -> assertTrue(getTreatmentResultsForPatient(patientRecordWithHistory(Stream.of(treatment)))
+                                .noneMatch(t -> t.name().equalsIgnoreCase(treatment))));
     }
 
     @Test
@@ -95,13 +109,13 @@ Pembrolizumab can be administered in a later treatment line as well, after havin
 In case of BRAF V600E, after the first line Cetuximab+Encorafenib can be given
 
 
-General rules
-If a chemotherapy treatment has been given, the treatment is typically not given again, unless the response was good and sufficient time has passed and sufficient nr of cycles have been administered
-
      */
 
     private Stream<Treatment> getTypicalTreatmentResults() {
-        PatientRecord patientRecord = patientRecord();
+        return getTreatmentResultsForPatient(patientRecord());
+    }
+
+    private Stream<Treatment> getTreatmentResultsForPatient(PatientRecord patientRecord) {
         DoidModel doidModel = TestDoidModelFactory.createWithOneDoidAndTerm(DoidConstants.COLORECTAL_CANCER_DOID, "colorectal cancer");
         RecommendationEngine engine = new RecommendationEngine(doidModel, ReferenceDateProviderFactory.create(patientRecord.clinical(),
                 false));
@@ -115,11 +129,27 @@ If a chemotherapy treatment has been given, the treatment is typically not given
     }
 
     private PatientRecord patientRecord() {
+        return patientRecordWithHistory(Stream.empty());
+    }
+
+    private PatientRecord patientRecordWithHistory(Stream<String> pastChemotherapyNames) {
         PatientRecord minimal = TestDataFactory.createMinimalTestPatientRecord();
         TumorDetails tumorDetails = ImmutableTumorDetails.builder().addDoids(DoidConstants.COLORECTAL_CANCER_DOID).build();
+        ClinicalRecord clinicalRecord = ImmutableClinicalRecord.builder()
+                .from(minimal.clinical())
+                .tumor(tumorDetails)
+                .priorTumorTreatments(pastChemotherapyNames.map(treatmentName ->
+                        ImmutablePriorTumorTreatment.builder()
+                                .name(treatmentName)
+                                .isSystemic(true)
+                                .startYear(LocalDate.now().getYear())
+                                .addCategories(TreatmentCategory.CHEMOTHERAPY)
+                                .build()
+                        ).collect(Collectors.toSet()))
+                .build();
         return ImmutablePatientRecord.builder()
                 .from(minimal)
-                .clinical(ImmutableClinicalRecord.builder().from(minimal.clinical()).tumor(tumorDetails).build())
+                .clinical(clinicalRecord)
                 .molecular(TestMolecularFactory.createMinimalTestMolecularRecord())
                 .build();
     }
