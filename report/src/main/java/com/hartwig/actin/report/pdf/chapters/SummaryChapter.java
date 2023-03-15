@@ -1,5 +1,7 @@
 package com.hartwig.actin.report.pdf.chapters;
 
+import static com.hartwig.actin.report.pdf.util.Formats.STANDARD_KEY_WIDTH;
+
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -11,8 +13,8 @@ import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidence;
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory;
 import com.hartwig.actin.report.datamodel.Report;
-import com.hartwig.actin.report.interpretation.EvaluatedTrial;
-import com.hartwig.actin.report.interpretation.EvaluatedTrialFactory;
+import com.hartwig.actin.report.interpretation.EvaluatedCohort;
+import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenerator;
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator;
@@ -180,16 +182,16 @@ public class SummaryChapter implements ReportChapter {
     private void addSummaryTable(@NotNull Document document) {
         Table table = Tables.createSingleColWithWidth(contentWidth());
 
-        float keyWidth = 210;
+        float keyWidth = STANDARD_KEY_WIDTH;
         float valueWidth = contentWidth() - keyWidth;
 
-        List<EvaluatedTrial> trials = EvaluatedTrialFactory.create(report.treatmentMatch());
+        List<EvaluatedCohort> cohorts = EvaluatedCohortFactory.create(report.treatmentMatch());
         AggregatedEvidence aggregatedEvidence = AggregatedEvidenceFactory.create(report.molecular());
 
         List<TableGenerator> generators = Lists.newArrayList(new PatientClinicalHistoryGenerator(report.clinical(), keyWidth, valueWidth),
-                new MolecularSummaryGenerator(report.clinical(), report.molecular(), trials, aggregatedEvidence, keyWidth, valueWidth),
+                new MolecularSummaryGenerator(report.clinical(), report.molecular(), cohorts, keyWidth, valueWidth),
                 new EligibleApprovedTreatmentGenerator(report.clinical(), report.molecular(), contentWidth()),
-                EligibleActinTrialsGenerator.forOpenTrials(trials, contentWidth()));
+                EligibleActinTrialsGenerator.forOpenCohorts(cohorts, contentWidth()));
 
         if (!aggregatedEvidence.externalEligibleTrialsPerEvent().isEmpty()) {
             generators.add(new EligibleExternalTrialsGenerator(report.molecular().externalTrialSource(),

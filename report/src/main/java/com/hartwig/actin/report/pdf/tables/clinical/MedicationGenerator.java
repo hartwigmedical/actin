@@ -45,7 +45,7 @@ public class MedicationGenerator implements TableGenerator {
         table.addHeaderCell(Cells.createHeader("Dosage"));
         table.addHeaderCell(Cells.createHeader("Frequency"));
 
-        for (Medication medication : medications) {
+        medications.stream().distinct().forEach(medication -> {
             table.addCell(Cells.createContent(medication.name()));
             table.addCell(Cells.createContent(concat(medication.categories())));
             table.addCell(Cells.createContent(administrationRoute(medication)));
@@ -54,7 +54,7 @@ public class MedicationGenerator implements TableGenerator {
             table.addCell(Cells.createContent(medication.status() != null ? medication.status().display() : Strings.EMPTY));
             table.addCell(Cells.createContent(dosage(medication)));
             table.addCell(Cells.createContent(frequency(medication)));
-        }
+        });
 
         return Tables.makeWrapping(table);
     }

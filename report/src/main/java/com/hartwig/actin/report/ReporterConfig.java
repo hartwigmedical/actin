@@ -25,7 +25,7 @@ public interface ReporterConfig {
 
     String OUTPUT_DIRECTORY = "output_directory";
 
-    String SKIP_TRIAL_MATCHING_DETAILS = "skip_trial_matching_details";
+    String ENABLE_EXTENDED_MODE = "enable_extended_mode";
 
     String LOG_DEBUG = "log_debug";
 
@@ -39,7 +39,7 @@ public interface ReporterConfig {
 
         options.addOption(OUTPUT_DIRECTORY, true, "Directory where the report will be written to");
 
-        options.addOption(SKIP_TRIAL_MATCHING_DETAILS, false, "If set, skips trial matching details");
+        options.addOption(ENABLE_EXTENDED_MODE, false, "If set, includes trial matching details");
 
         options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled");
 
@@ -58,7 +58,7 @@ public interface ReporterConfig {
     @NotNull
     String outputDirectory();
 
-    boolean skipTrialMatchingDetails();
+    boolean enableExtendedMode();
 
     @NotNull
     static ReporterConfig createConfig(@NotNull CommandLine cmd) throws ParseException {
@@ -67,9 +67,9 @@ public interface ReporterConfig {
             LOGGER.debug("Switched root level logging to DEBUG");
         }
 
-        boolean skipTrialMatchingDetails = cmd.hasOption(SKIP_TRIAL_MATCHING_DETAILS);
-        if (skipTrialMatchingDetails) {
-            LOGGER.info("Skipping trial matching details");
+        boolean enableExtendedMode = cmd.hasOption(ENABLE_EXTENDED_MODE);
+        if (enableExtendedMode) {
+            LOGGER.info("Including trial matching details");
         }
 
         return ImmutableReporterConfig.builder()
@@ -77,7 +77,7 @@ public interface ReporterConfig {
                 .molecularJson(ApplicationConfig.nonOptionalFile(cmd, MOLECULAR_JSON))
                 .treatmentMatchJson(ApplicationConfig.nonOptionalFile(cmd, TREATMENT_MATCH_JSON))
                 .outputDirectory(ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY))
-                .skipTrialMatchingDetails(skipTrialMatchingDetails)
+                .enableExtendedMode(enableExtendedMode)
                 .build();
     }
 }

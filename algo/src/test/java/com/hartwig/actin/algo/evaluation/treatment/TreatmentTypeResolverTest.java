@@ -68,8 +68,8 @@ public class TreatmentTypeResolverTest {
 
     @Test
     public void canHandleCategoryWithoutType() {
-        PriorTumorTreatment vaccine = TreatmentTestFactory.builder().categories(Lists.newArrayList(TreatmentCategory.VACCINE)).build();
+        PriorTumorTreatment geneTherapy = TreatmentTestFactory.builder().categories(Lists.newArrayList(TreatmentCategory.GENE_THERAPY)).build();
 
-        assertFalse(TreatmentTypeResolver.isOfType(vaccine, TreatmentCategory.VACCINE, "vaccine"));
+        assertFalse(TreatmentTypeResolver.isOfType(geneTherapy, TreatmentCategory.GENE_THERAPY, "gene therapy"));
     }
 }

@@ -23,9 +23,6 @@ import org.jetbrains.annotations.Nullable;
 
 public final class Cells {
 
-    private Cells() {
-    }
-
     @NotNull
     public static Cell create(@Nullable IBlockElement element) {
         return create(element, 1, 1);
@@ -38,11 +35,11 @@ public final class Cells {
 
     @NotNull
     public static Cell createSpanningNoneEntry(@NotNull Table table) {
-        return createSpanningEntry(table, "None");
+        return createSpanningEntry("None", table);
     }
 
     @NotNull
-    public static Cell createSpanningEntry(@NotNull Table table, @NotNull String text) {
+    public static Cell createSpanningEntry(@NotNull String text, @NotNull Table table) {
         Cell cell = create(new Paragraph(text), 1, table.getNumberOfColumns());
         cell.addStyle(Styles.tableContentStyle());
         return cell;
@@ -69,13 +66,14 @@ public final class Cells {
         return cell;
     }
 
+    @SuppressWarnings("unused")
     @NotNull
     public static Cell createHeaderTest(@NotNull String text) {
-        // TODO Clean up or actually use.
-        PdfLinkAnnotation la1 = (PdfLinkAnnotation) new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0))
-                .setHighlightMode(PdfAnnotation.HIGHLIGHT_NONE)
-                .setAction(PdfAction.createJavaScript("app.alert('These are all trials!!')"))
-                .setBorder(new PdfArray(new int[]{0,0,0}));
+        // TODO (ACTIN-33) Clean up or actually use.
+        PdfLinkAnnotation la1 =
+                (PdfLinkAnnotation) new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0)).setHighlightMode(PdfAnnotation.HIGHLIGHT_NONE)
+                        .setAction(PdfAction.createJavaScript("app.alert('These are all trials!!')"))
+                        .setBorder(new PdfArray(new int[] { 0, 0, 0 }));
 
         Link link = new Link(text, la1);
 
@@ -109,13 +107,37 @@ public final class Cells {
     public static Cell createContent(@NotNull IBlockElement element) {
         Cell cell = create(element);
         cell.addStyle(Styles.tableContentStyle());
-        cell.setBorderBottom(new SolidBorder(Styles.PALETTE_MID_GREY, 0.25F));
+        cell.setBorderTop(new SolidBorder(Styles.PALETTE_MID_GREY, 0.25F));
         return cell;
     }
 
     @NotNull
     public static Cell createContent(@NotNull String text) {
         return createContent(new Paragraph(text));
+    }
+
+    @NotNull
+    public static Cell createContentNoBorder(@NotNull String text) {
+        return createContentNoBorder(new Paragraph(text));
+    }
+
+    @NotNull
+    public static Cell createContentNoBorder(@NotNull IBlockElement element) {
+        Cell cell = create(element);
+        cell.addStyle(Styles.tableContentStyle());
+        return cell;
+    }
+
+    @NotNull
+    public static Cell createContentNoBorderDeemphasize(@NotNull String text) {
+        return createContentNoBorderDeemphasize(new Paragraph(text));
+    }
+
+    @NotNull
+    public static Cell createContentNoBorderDeemphasize(@NotNull IBlockElement element) {
+        Cell cell = createContentNoBorder(element);
+        cell.setFontColor(Styles.PALETTE_MID_GREY);
+        return cell;
     }
 
     @NotNull
@@ -153,13 +175,6 @@ public final class Cells {
             cell.add(paragraph);
         }
         cell.addStyle(Styles.tableHighlightStyle());
-        return cell;
-    }
-
-    @NotNull
-    public static Cell createValueWarn(@NotNull String text) {
-        Cell cell = createValue(text);
-        cell.setFontColor(Styles.PALETTE_WARN);
         return cell;
     }
 

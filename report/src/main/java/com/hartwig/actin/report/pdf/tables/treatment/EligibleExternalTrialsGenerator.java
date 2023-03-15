@@ -33,7 +33,7 @@ public class EligibleExternalTrialsGenerator implements TableGenerator {
     @NotNull
     @Override
     public String title() {
-        return source + " trials potentially eligible based on molecular results";
+        return String.format("%s trials potentially eligible based on molecular results (%d)", source, externalTrialsPerEvent.size());
     }
 
     @NotNull

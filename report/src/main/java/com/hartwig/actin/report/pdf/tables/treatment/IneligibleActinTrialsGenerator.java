@@ -1,122 +1,108 @@
 package com.hartwig.actin.report.pdf.tables.treatment;
 
 import java.util.List;
-import java.util.Set;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import com.google.common.collect.Lists;
-import com.hartwig.actin.report.interpretation.EvaluatedTrial;
-import com.hartwig.actin.report.interpretation.EvaluatedTrialComparator;
+import com.hartwig.actin.report.interpretation.EvaluatedCohort;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
-import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;
 import com.hartwig.actin.treatment.TreatmentConstants;
 import com.itextpdf.layout.element.Table;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 public class IneligibleActinTrialsGenerator implements TableGenerator {
 
     @NotNull
-    private final List<EvaluatedTrial> trials;
+    private final List<EvaluatedCohort> cohorts;
     @NotNull
     private final String source;
     private final float trialColWidth;
-    private final float acronymColWidth;
     private final float cohortColWidth;
-    private final float recruitingColWidth;
     private final float ineligibilityReasonColWith;
+    private final boolean enableExtendedMode;
 
     @NotNull
-    public static IneligibleActinTrialsGenerator fromEvaluatedTrials(@NotNull List<EvaluatedTrial> trials, float contentWidth) {
-        List<EvaluatedTrial> ineligibleTrials = Lists.newArrayList();
-
-        for (EvaluatedTrial trial : trials) {
-            if (!trial.isPotentiallyEligible()) {
-                ineligibleTrials.add(trial);
-            }
-        }
+    public static IneligibleActinTrialsGenerator fromEvaluatedCohorts(@NotNull List<EvaluatedCohort> cohorts, float contentWidth,
+            boolean enableExtendedMode) {
+        List<EvaluatedCohort> ineligibleCohorts = cohorts.stream()
+                .filter(cohort -> !cohort.isPotentiallyEligible() && (cohort.isOpen() || enableExtendedMode))
+                .collect(Collectors.toList());
 
         float trialColWidth = contentWidth / 9;
-        float acronymColWidth = contentWidth / 9;
-        float cohortColWidth = contentWidth / 3;
-        float recruitingColWidth = contentWidth / 11;
-        float ineligibilityReasonColWidth = contentWidth - (trialColWidth + acronymColWidth + cohortColWidth + recruitingColWidth);
+        float cohortColWidth = contentWidth / 4;
+        float ineligibilityReasonColWidth = contentWidth - (trialColWidth + cohortColWidth);
 
-        return new IneligibleActinTrialsGenerator(ineligibleTrials,
+        return new IneligibleActinTrialsGenerator(ineligibleCohorts,
                 TreatmentConstants.ACTIN_SOURCE,
                 trialColWidth,
-                acronymColWidth,
                 cohortColWidth,
-                recruitingColWidth,
-                ineligibilityReasonColWidth);
+                ineligibilityReasonColWidth,
+                enableExtendedMode);
     }
 
-    private IneligibleActinTrialsGenerator(@NotNull final List<EvaluatedTrial> trials, @NotNull final String source,
-            final float trialColWidth, final float acronymColWidth, final float cohortColWidth, final float recruitingColWidth,
-            final float ineligibilityReasonColWith) {
-        this.trials = trials;
+    private IneligibleActinTrialsGenerator(@NotNull final List<EvaluatedCohort> cohorts, @NotNull final String source,
+            final float trialColWidth, final float cohortColWidth, final float ineligibilityReasonColWith,
+            final boolean enableExtendedMode) {
+        this.cohorts = cohorts;
         this.source = source;
         this.trialColWidth = trialColWidth;
-        this.acronymColWidth = acronymColWidth;
         this.cohortColWidth = cohortColWidth;
-        this.recruitingColWidth = recruitingColWidth;
         this.ineligibilityReasonColWith = ineligibilityReasonColWith;
+        this.enableExtendedMode = enableExtendedMode;
     }
 
     @NotNull
     @Override
     public String title() {
-        return source + " trials not considered eligible (" + trials.size() + ")";
+        return String.format("%s trials and cohorts that are %sconsidered ineligible (%s)",
+                source,
+                enableExtendedMode ? "" : "open but ",
+                cohorts.size());
     }
 
     @NotNull
     @Override
     public Table contents() {
-        Table table =
-                Tables.createFixedWidthCols(trialColWidth, acronymColWidth, cohortColWidth, recruitingColWidth, ineligibilityReasonColWith);
+        Table table = Tables.createFixedWidthCols(trialColWidth, cohortColWidth + ineligibilityReasonColWith);
 
-        table.addHeaderCell(Cells.createHeader("Trial"));
-        table.addHeaderCell(Cells.createHeader("Acronym"));
-        table.addHeaderCell(Cells.createHeader("Cohort"));
-        table.addHeaderCell(Cells.createHeader("Open"));
-        table.addHeaderCell(Cells.createHeader("Ineligibility reasons"));
+        if (!cohorts.isEmpty()) {
+            table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Trial")));
 
-        boolean hasTrialWithNoSlots = false;
-        for (EvaluatedTrial trial : sort(trials)) {
-            String addon = Strings.EMPTY;
-            if (trial.isOpen() && !trial.hasSlotsAvailable()) {
-                addon = " *";
-                hasTrialWithNoSlots = true;
-            }
-            table.addCell(Cells.createContent(trial.trialId() + addon));
-            table.addCell(Cells.createContent(trial.acronym()));
-            table.addCell(Cells.createContent(trial.cohort() != null ? trial.cohort() : Strings.EMPTY));
-            table.addCell(Cells.createContentYesNo(trial.isOpen() ? "Yes" : "No"));
-            table.addCell(Cells.createContent(concat(trial.fails())));
+            Table headerSubTable = Tables.createFixedWidthCols(cohortColWidth, ineligibilityReasonColWith);
+            headerSubTable.addHeaderCell(Cells.createHeader("Cohort"));
+            headerSubTable.addHeaderCell(Cells.createHeader("Ineligibility reasons"));
+
+            table.addHeaderCell(Cells.createContentNoBorder(headerSubTable));
         }
 
-        if (hasTrialWithNoSlots) {
-            table.addCell(Cells.createSpanningSubNote(" * Cohort currently has no slots available", table));
+        ActinTrialGeneratorFunctions.streamSortedCohorts(cohorts).forEach(cohortList -> {
+            Table trialSubTable = Tables.createFixedWidthCols(cohortColWidth, ineligibilityReasonColWith);
+
+            cohortList.forEach(cohort -> {
+                String cohortText = ActinTrialGeneratorFunctions.createCohortString(cohort);
+                String ineligibilityText = cohort.fails().isEmpty() ? "?" : String.join(", ", cohort.fails());
+
+                ActinTrialGeneratorFunctions.addContentStreamToTable(Stream.of(cohortText, ineligibilityText),
+                        !cohort.isOpen() || !cohort.hasSlotsAvailable(),
+                        trialSubTable);
+            });
+            ActinTrialGeneratorFunctions.insertTrialRow(cohortList, table, trialSubTable);
+        });
+
+        String subNote = "";
+        if (cohorts.stream().anyMatch(cohort -> !cohort.isOpen())) {
+            subNote += " Cohorts shown in grey are closed or have no slots available.";
+        }
+        if (cohorts.stream().anyMatch(cohort -> cohort.isOpen() && !cohort.hasSlotsAvailable())) {
+            subNote += " Open cohorts with no slots available are indicated by an asterisk (*).";
+        }
+        if (!subNote.isEmpty()) {
+            table.addCell(Cells.createSpanningSubNote(subNote, table));
         }
 
         return Tables.makeWrapping(table);
-    }
-
-    @NotNull
-    private static List<EvaluatedTrial> sort(@NotNull List<EvaluatedTrial> trials) {
-        return trials.stream().sorted(new EvaluatedTrialComparator()).collect(Collectors.toList());
-    }
-
-    @NotNull
-    private static String concat(@NotNull Set<String> strings) {
-        StringJoiner joiner = Formats.commaJoiner();
-        for (String string : strings) {
-            joiner.add(string);
-        }
-        return Formats.valueOrDefault(joiner.toString(), "?");
     }
 }

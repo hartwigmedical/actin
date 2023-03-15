@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.StringJoiner;
 
@@ -21,8 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class MolecularCharacteristicsGenerator implements TableGenerator {
-
-    private static final String VALUE_NOT_AVAILABLE = "N/A";
 
     @NotNull
     private final MolecularRecord molecular;
@@ -57,11 +56,11 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
         MolecularCharacteristics characteristics = molecular.characteristics();
         table.addCell(createPurityCell(characteristics.purity()));
         table.addCell(Cells.createContentYesNo(Formats.yesNoUnknown(molecular.hasSufficientQuality())));
-        table.addCell(createPredictedTumorOriginCell(characteristics.predictedTumorOrigin()));
-        table.addCell(createTMLStatusCell(characteristics.hasHighTumorMutationalLoad(), characteristics.tumorMutationalLoad()));
-        table.addCell(createTMBStatusCell(characteristics.hasHighTumorMutationalBurden(), characteristics.tumorMutationalBurden()));
-        table.addCell(createMSStabilityCell(characteristics.isMicrosatelliteUnstable()));
-        table.addCell(createHRStatusCell(characteristics.isHomologousRepairDeficient()));
+        table.addCell(createPredictedTumorOriginCell());
+        table.addCell(createTMLStatusCell());
+        table.addCell(createTMBStatusCell());
+        table.addCell(createMSStabilityCell());
+        table.addCell(createHRStatusCell());
         table.addCell(Cells.createContent(createDPYDString(molecular.pharmaco())));
 
         return table;
@@ -86,11 +85,12 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private Cell createPredictedTumorOriginCell(@Nullable PredictedTumorOrigin predictedTumorOrigin) {
+    Cell createPredictedTumorOriginCell() {
         if (!molecular.containsTumorCells()) {
-            return Cells.createContentWarn(VALUE_NOT_AVAILABLE);
+            return Cells.createContentWarn(Formats.VALUE_NOT_AVAILABLE);
         }
 
+        PredictedTumorOrigin predictedTumorOrigin = molecular.characteristics().predictedTumorOrigin();
         String interpretation = TumorOriginInterpreter.interpret(predictedTumorOrigin);
         if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin) && molecular.hasSufficientQuality()) {
             return Cells.createContent(interpretation);
@@ -99,33 +99,39 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
         }
     }
 
-    @NotNull
-    private Cell createTMLStatusCell(@Nullable Boolean hasHighTumorMutationalLoad, @Nullable Integer tumorMutationalLoad) {
-        if (!molecular.containsTumorCells()) {
-            return Cells.createContentWarn(VALUE_NOT_AVAILABLE);
-        }
-
+    Optional<String> createTMLStatusStringOption() {
+        Boolean hasHighTumorMutationalLoad = molecular.characteristics().hasHighTumorMutationalLoad();
+        Integer tumorMutationalLoad = molecular.characteristics().tumorMutationalLoad();
         if (hasHighTumorMutationalLoad == null || tumorMutationalLoad == null) {
-            return Cells.createContentWarn(Formats.VALUE_UNKNOWN);
+            return Optional.empty();
         }
-
-        String interpretation = hasHighTumorMutationalLoad ? "High" : "Low";
-        String value = interpretation + " (" + tumorMutationalLoad + ")";
-        Cell cell = molecular.hasSufficientQuality() ? Cells.createContent(value) : Cells.createContentWarn(value);
-
-        if (hasHighTumorMutationalLoad) {
-            cell.addStyle(Styles.tableHighlightStyle());
-        }
-
-        return cell;
+        return Optional.of(String.format("%s (%d)", hasHighTumorMutationalLoad ? "High" : "Low", tumorMutationalLoad));
     }
 
     @NotNull
-    private Cell createTMBStatusCell(@Nullable Boolean hasHighTumorMutationalBurden, @Nullable Double tumorMutationalBurden) {
+    private Cell createTMLStatusCell() {
         if (!molecular.containsTumorCells()) {
-            return Cells.createContentWarn(VALUE_NOT_AVAILABLE);
+            return Cells.createContentWarn(Formats.VALUE_NOT_AVAILABLE);
         }
 
+        return createTMLStatusStringOption().map(value -> {
+            Cell cell = molecular.hasSufficientQuality() ? Cells.createContent(value) : Cells.createContentWarn(value);
+
+            if (Boolean.TRUE.equals(molecular.characteristics().hasHighTumorMutationalLoad())) {
+                cell.addStyle(Styles.tableHighlightStyle());
+            }
+            return cell;
+        }).orElse(Cells.createContentWarn(Formats.VALUE_UNKNOWN));
+    }
+
+    @NotNull
+    private Cell createTMBStatusCell() {
+        if (!molecular.containsTumorCells()) {
+            return Cells.createContentWarn(Formats.VALUE_NOT_AVAILABLE);
+        }
+
+        Boolean hasHighTumorMutationalBurden = molecular.characteristics().hasHighTumorMutationalBurden();
+        Double tumorMutationalBurden = molecular.characteristics().tumorMutationalBurden();
         if (hasHighTumorMutationalBurden == null || tumorMutationalBurden == null) {
             return Cells.createContentWarn(Formats.VALUE_UNKNOWN);
         }
@@ -141,44 +147,52 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
         return cell;
     }
 
-    @NotNull
-    private Cell createMSStabilityCell(@Nullable Boolean isMicrosatelliteUnstable) {
-        if (!molecular.containsTumorCells()) {
-            return Cells.createContentWarn(VALUE_NOT_AVAILABLE);
-        }
-
+    Optional<String> createMSStabilityStringOption() {
+        Boolean isMicrosatelliteUnstable = molecular.characteristics().isMicrosatelliteUnstable();
         if (isMicrosatelliteUnstable == null) {
-            return Cells.createContentWarn(Formats.VALUE_UNKNOWN);
+            return Optional.empty();
         }
-
-        String status = isMicrosatelliteUnstable ? "Unstable" : "Stable";
-        Cell cell = molecular.hasSufficientQuality() ? Cells.createContent(status) : Cells.createContentWarn(status);
-
-        if (isMicrosatelliteUnstable) {
-            cell.addStyle(Styles.tableHighlightStyle());
-        }
-
-        return cell;
+        return Optional.of(isMicrosatelliteUnstable ? "Unstable" : "Stable");
     }
 
     @NotNull
-    private Cell createHRStatusCell(@Nullable Boolean isHomologousRepairDeficient) {
+    private Cell createMSStabilityCell() {
         if (!molecular.containsTumorCells()) {
-            return Cells.createContentWarn(VALUE_NOT_AVAILABLE);
+            return Cells.createContentWarn(Formats.VALUE_NOT_AVAILABLE);
         }
 
+        return createMSStabilityStringOption().map(value -> {
+            Cell cell = molecular.hasSufficientQuality() ? Cells.createContent(value) : Cells.createContentWarn(value);
+
+            if (Boolean.TRUE.equals(molecular.characteristics().isMicrosatelliteUnstable())) {
+                cell.addStyle(Styles.tableHighlightStyle());
+            }
+            return cell;
+        }).orElse(Cells.createContentWarn(Formats.VALUE_UNKNOWN));
+    }
+
+    Optional<String> createHRStatusStringOption() {
+        Boolean isHomologousRepairDeficient = molecular.characteristics().isHomologousRepairDeficient();
         if (isHomologousRepairDeficient == null) {
-            return Cells.createContentWarn(Formats.VALUE_UNKNOWN);
+            return Optional.empty();
+        }
+        return Optional.of(isHomologousRepairDeficient ? "Deficient" : "Proficient");
+    }
+
+    @NotNull
+    private Cell createHRStatusCell() {
+        if (!molecular.containsTumorCells()) {
+            return Cells.createContentWarn(Formats.VALUE_NOT_AVAILABLE);
         }
 
-        String status = isHomologousRepairDeficient ? "Deficient" : "Proficient";
-        Cell cell = molecular.hasSufficientQuality() ? Cells.createContent(status) : Cells.createContentWarn(status);
+        return createHRStatusStringOption().map(value -> {
+            Cell cell = molecular.hasSufficientQuality() ? Cells.createContent(value) : Cells.createContentWarn(value);
 
-        if (isHomologousRepairDeficient) {
-            cell.addStyle(Styles.tableHighlightStyle());
-        }
-
-        return cell;
+            if (Boolean.TRUE.equals(molecular.characteristics().isHomologousRepairDeficient())) {
+                cell.addStyle(Styles.tableHighlightStyle());
+            }
+            return cell;
+        }).orElse(Cells.createContentWarn(Formats.VALUE_UNKNOWN));
     }
 
     @NotNull

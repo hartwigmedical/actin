@@ -1,5 +1,8 @@
 package com.hartwig.actin.report.pdf.tables.clinical;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.joining;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,9 +28,6 @@ import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.joining;
-
 public class PatientClinicalHistoryGenerator implements TableGenerator {
 
     @NotNull
@@ -44,7 +44,7 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
     @NotNull
     @Override
     public String title() {
-        return "Patient clinical history (" + Formats.date(record.patient().questionnaireDate()) + ")";
+        return "Clinical Summary";
     }
 
     @NotNull
@@ -55,7 +55,7 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
         table.addCell(Cells.createKey("Relevant systemic treatment history"));
         table.addCell(Cells.createValue(relevantSystemicPreTreatmentHistory(record)));
 
-        table.addCell(Cells.createKey("Other oncological history"));
+        table.addCell(Cells.createKey("Relevant other oncological history"));
         String nonSystemicHistory = relevantNonSystemicPreTreatmentHistory(record);
         String secondPrimaryHistory = secondPrimaryHistory(record);
         if (!nonSystemicHistory.isEmpty() && !secondPrimaryHistory.isEmpty()) {

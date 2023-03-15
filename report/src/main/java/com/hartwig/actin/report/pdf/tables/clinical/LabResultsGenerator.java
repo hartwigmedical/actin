@@ -2,11 +2,10 @@ package com.hartwig.actin.report.pdf.tables.clinical;
 
 import java.time.LocalDate;
 import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
-import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.interpretation.LabInterpretation;
@@ -55,6 +54,7 @@ public class LabResultsGenerator implements TableGenerator {
         this.valueWidth = valueWidth;
     }
 
+
     @NotNull
     @Override
     public String title() {
@@ -64,7 +64,13 @@ public class LabResultsGenerator implements TableGenerator {
     @NotNull
     @Override
     public Table contents() {
-        Set<LocalDate> dates = selectDates(labInterpretation.allDates());
+        List<LocalDate> dates = labInterpretation.allDates()
+                .stream()
+                .sorted(Comparator.reverseOrder())
+                .distinct()
+                .limit(MAX_LAB_DATES)
+                .sorted()
+                .collect(Collectors.toList());
 
         Table table = Tables.createFixedWidthCols(defineWidths());
 
@@ -137,19 +143,6 @@ public class LabResultsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static Set<LocalDate> selectDates(@NotNull Set<LocalDate> allDates) {
-        Set<LocalDate> selected = Sets.newTreeSet(Comparator.reverseOrder());
-
-        Iterator<LocalDate> iterator = allDates.iterator();
-        for (int i = 0; i < MAX_LAB_DATES; i++) {
-            if (iterator.hasNext()) {
-                selected.add(iterator.next());
-            }
-        }
-        return selected;
-    }
-
-    @NotNull
     private float[] defineWidths() {
         float[] widths = new float[3 + MAX_LAB_DATES];
         widths[0] = key1Width;
@@ -161,7 +154,7 @@ public class LabResultsGenerator implements TableGenerator {
         return widths;
     }
 
-    private void addLabMeasurements(@NotNull Table table, @NotNull Set<LocalDate> dates, @NotNull LabMeasurement measurement) {
+    private void addLabMeasurements(@NotNull Table table, @NotNull List<LocalDate> dates, @NotNull LabMeasurement measurement) {
         table.addCell(Cells.createKey(buildLimitString(labInterpretation.mostRecentValue(measurement))));
 
         for (LocalDate date : dates) {
@@ -174,7 +167,7 @@ public class LabResultsGenerator implements TableGenerator {
                 }
                 joiner.add(value);
 
-                if (lab.isOutsideRef() != null && lab.isOutsideRef()) {
+                if (lab.isOutsideRef() != null && Boolean.TRUE.equals(lab.isOutsideRef())) {
                     style = Styles.tableWarnStyle();
                 }
             }
