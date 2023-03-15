@@ -45,7 +45,7 @@ public class MolecularSummaryGenerator implements TableGenerator {
 
         if (molecular.containsTumorCells()) {
             TableGenerator recentGenerator =
-                    new RecentMolecularSummaryGenerator(clinical, molecular, cohorts, keyWidth, valueWidth);
+                    new WGSSummaryGenerator(clinical, molecular, cohorts, keyWidth, valueWidth);
 
             table.addCell(Cells.createSubTitle(recentGenerator.title()));
             table.addCell(Cells.create(recentGenerator.contents()));

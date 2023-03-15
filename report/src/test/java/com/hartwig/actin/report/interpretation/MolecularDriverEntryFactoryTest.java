@@ -15,7 +15,6 @@ import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
-import com.hartwig.actin.molecular.datamodel.driver.VirusType;
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory;
 
@@ -117,12 +116,7 @@ public class MolecularDriverEntryFactoryTest {
         return ImmutableMolecularDrivers.builder()
                 .addViruses(TestVirusFactory.builder()
                         .isReportable(isReportable)
-                        .event("HPV positive")
                         .evidence(evidence)
-                        .name("Human papillomavirus type 16")
-                        .type(VirusType.HUMAN_PAPILLOMA_VIRUS)
-                        .integrations(3)
-                        .isReliable(true)
                         .build())
                 .build();
     }

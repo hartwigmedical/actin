@@ -52,17 +52,17 @@ public class MolecularDriverEntryFactory {
     public Stream<MolecularDriverEntry> create(@NotNull MolecularRecord molecular) {
         MolecularDrivers drivers = molecular.drivers();
 
-        return Stream.of(streamFilteredDrivers(drivers.variants()).map(this::fromVariant),
-                        streamFilteredDrivers(drivers.copyNumbers()).map(this::fromCopyNumber),
-                        streamFilteredDrivers(drivers.homozygousDisruptions()).map(this::fromHomozygousDisruption),
-                        streamFilteredDrivers(drivers.disruptions()).map(this::fromDisruption),
-                        streamFilteredDrivers(drivers.fusions()).map(this::fromFusion),
-                        streamFilteredDrivers(drivers.viruses()).map(this::fromVirus))
+        return Stream.of(streamAndFilterDrivers(drivers.variants()).map(this::fromVariant),
+                        streamAndFilterDrivers(drivers.copyNumbers()).map(this::fromCopyNumber),
+                        streamAndFilterDrivers(drivers.homozygousDisruptions()).map(this::fromHomozygousDisruption),
+                        streamAndFilterDrivers(drivers.disruptions()).map(this::fromDisruption),
+                        streamAndFilterDrivers(drivers.fusions()).map(this::fromFusion),
+                        streamAndFilterDrivers(drivers.viruses()).map(this::fromVirus))
                 .flatMap(Function.identity())
                 .sorted(new MolecularDriverEntryComparator());
     }
 
-    private <T extends Driver> Stream<T> streamFilteredDrivers(Set<T> drivers) {
+    private <T extends Driver> Stream<T> streamAndFilterDrivers(Set<T> drivers) {
         return drivers.stream()
                 .filter(driver -> driver.isReportable() || !driver.evidence().externalEligibleTrials().isEmpty()
                         || trialsPerInclusionEvent.containsKey(driver.event()) || !driver.evidence().approvedTreatments().isEmpty());
