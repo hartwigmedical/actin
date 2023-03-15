@@ -27,4 +27,7 @@ public abstract class Treatment {
 
     @NotNull
     public abstract Set<EligibilityFunction> eligibilityFunctions();
+
+    @NotNull
+    public abstract Set<Integer> lines();
 }
