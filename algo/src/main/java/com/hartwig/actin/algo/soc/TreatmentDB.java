@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
-import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
@@ -15,7 +14,7 @@ import com.hartwig.actin.treatment.datamodel.ImmutableTreatment;
 import com.hartwig.actin.treatment.datamodel.Treatment;
 import com.hartwig.actin.treatment.datamodel.TreatmentComponent;
 
-public class TreatmentFactory {
+public class TreatmentDB {
 
     public static final String TREATMENT_CAPOX = "CAPOX";
     public static final String TREATMENT_FOLFIRI = "FOLFIRI";
@@ -29,20 +28,14 @@ public class TreatmentFactory {
     private static final int SCORE_PEMBROLIZUMAB = 6;
     private static final int SCORE_TARGETED_THERAPY = 5;
     private static final String RECENT_TREATMENT_THRESHOLD_WEEKS = "104";
-    private final EligibilityFunction isColorectalCancer;
-    private final DoidModel doidModel;
-
-    public TreatmentFactory(DoidModel doidModel) {
-        this.doidModel = doidModel;
-        isColorectalCancer = ImmutableEligibilityFunction.builder()
+    private static final EligibilityFunction isColorectalCancer = ImmutableEligibilityFunction.builder()
                 .rule(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X)
                 .addParameters("colorectal cancer")
                 .build();
-    }
 
-    public Stream<Treatment> loadTreatments() {
+    public static Stream<Treatment> loadTreatments() {
         return Stream.of(combinableChemotherapies(),
-                combinableChemotherapies().map(this::addBevacizumabToTreatment),
+                combinableChemotherapies().map(TreatmentDB::addBevacizumabToTreatment),
                 antiEGFRTherapies(),
                 antiEGFRTherapies().flatMap(therapy -> combinableChemotherapies().map(chemo -> addComponentsToTreatment(therapy,
                         chemo.name(),
@@ -53,7 +46,7 @@ public class TreatmentFactory {
                 otherTreatments()).flatMap(Function.identity());
     }
 
-    private Stream<Treatment> combinableChemotherapies() {
+    private static Stream<Treatment> combinableChemotherapies() {
         return Stream.of(createChemotherapy("5-FU", Set.of(TreatmentComponent.FLUOROURACIL), SCORE_MONOTHERAPY),
                 createChemotherapy("Capecitabine", Set.of(TreatmentComponent.CAPECITABINE), SCORE_MONOTHERAPY),
                 createChemotherapy("Irinotecan", Set.of(TreatmentComponent.IRINOTECAN), SCORE_MONOTHERAPY),
@@ -75,11 +68,11 @@ public class TreatmentFactory {
                         SCORE_MULTITHERAPY));
     }
 
-    private Treatment createChemotherapy(String name, Set<TreatmentComponent> components, int score) {
+    private static Treatment createChemotherapy(String name, Set<TreatmentComponent> components, int score) {
         return createChemotherapy(name, components, score, false, Set.of(1, 2), Collections.emptySet());
     }
 
-    private Treatment createChemotherapy(String name, Set<TreatmentComponent> components, int score, boolean isOptional, Set<Integer> lines,
+    private static Treatment createChemotherapy(String name, Set<TreatmentComponent> components, int score, boolean isOptional, Set<Integer> lines,
             Set<EligibilityFunction> extraFunctions) {
         return ImmutableTreatment.builder()
                 .name(name)
@@ -93,12 +86,12 @@ public class TreatmentFactory {
                 .build();
     }
 
-    private Stream<Treatment> antiEGFRTherapies() {
+    private static Stream<Treatment> antiEGFRTherapies() {
         return Stream.of(createAntiEGFRTherapy("Cetuximab", TreatmentComponent.CETUXIMAB, SCORE_TARGETED_THERAPY),
                 createAntiEGFRTherapy("Pantitumumab", TreatmentComponent.PANTITUMUMAB, SCORE_TARGETED_THERAPY));
     }
 
-    private Treatment createAntiEGFRTherapy(String name, TreatmentComponent component, int score) {
+    private static Treatment createAntiEGFRTherapy(String name, TreatmentComponent component, int score) {
         // TODO: require left-sided tumor
         return ImmutableTreatment.builder()
                 .name(name)
@@ -112,7 +105,7 @@ public class TreatmentFactory {
 
     }
 
-    private Stream<Treatment> otherTreatments() {
+    private static Stream<Treatment> otherTreatments() {
         return Stream.of(createChemotherapy("Lonsurf",
                         Set.of(TreatmentComponent.TRIFLURIDINE, TreatmentComponent.TIPIRACIL),
                         SCORE_LONSURF,
@@ -144,7 +137,7 @@ public class TreatmentFactory {
                         .build());
     }
 
-    private Treatment addBevacizumabToTreatment(Treatment treatment) {
+    private static Treatment addBevacizumabToTreatment(Treatment treatment) {
         return addComponentsToTreatment(treatment,
                 "Bevacizumab",
                 Set.of(TreatmentComponent.BEVACIZUMAB),
@@ -153,7 +146,7 @@ public class TreatmentFactory {
                 treatment.lines());
     }
 
-    private Treatment addComponentsToTreatment(Treatment treatment, String name, Set<TreatmentComponent> components,
+    private static Treatment addComponentsToTreatment(Treatment treatment, String name, Set<TreatmentComponent> components,
             TreatmentCategory category, int score, Set<Integer> lines) {
         return ImmutableTreatment.builder()
                 .from(treatment)
@@ -165,7 +158,7 @@ public class TreatmentFactory {
                 .build();
     }
 
-    private EligibilityFunction eligibleIfGenesAreWildType(Stream<String> genes) {
+    private static EligibilityFunction eligibleIfGenesAreWildType(Stream<String> genes) {
         return ImmutableEligibilityFunction.builder()
                 .rule(EligibilityRule.AND)
                 .addAllParameters(genes.map(gene -> ImmutableEligibilityFunction.builder()
@@ -175,7 +168,7 @@ public class TreatmentFactory {
                 .build();
     }
 
-    private EligibilityFunction eligibleIfTreatmentNotInHistory(String treatmentName) {
+    private static EligibilityFunction eligibleIfTreatmentNotInHistory(String treatmentName) {
         return ImmutableEligibilityFunction.builder()
                 .rule(EligibilityRule.NOT)
                 .addParameters(ImmutableEligibilityFunction.builder()

@@ -5,6 +5,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -54,14 +56,14 @@ public class RecommendationEngineTest {
 
     @Test
     public void shouldNotRecommendFolfiriAterCapox() {
-        assertTrue(getTreatmentResultsForPatient(patientRecordWithHistory(Stream.of(TreatmentFactory.TREATMENT_CAPOX))).noneMatch(treatment -> treatment.name()
-                .equalsIgnoreCase(TreatmentFactory.TREATMENT_FOLFIRI)));
+        assertTrue(getTreatmentResultsForPatient(patientRecordWithHistory(List.of(TreatmentDB.TREATMENT_CAPOX))).noneMatch(treatment -> treatment.name()
+                .equalsIgnoreCase(TreatmentDB.TREATMENT_FOLFIRI)));
     }
 
     @Test
     public void shouldNotRecommendFolfiriAterFolfox() {
-        assertTrue(getTreatmentResultsForPatient(patientRecordWithHistory(Stream.of(TreatmentFactory.TREATMENT_FOLFOX))).noneMatch(treatment -> treatment.name()
-                .equalsIgnoreCase(TreatmentFactory.TREATMENT_FOLFIRI)));
+        assertTrue(getTreatmentResultsForPatient(patientRecordWithHistory(List.of(TreatmentDB.TREATMENT_FOLFOX))).noneMatch(treatment -> treatment.name()
+                .equalsIgnoreCase(TreatmentDB.TREATMENT_FOLFIRI)));
     }
 
     @Test
@@ -70,19 +72,20 @@ public class RecommendationEngineTest {
                         "Capecitabine",
                         "Irinotecan",
                         "Oxaliplatin",
-                        TreatmentFactory.TREATMENT_CAPOX,
-                        TreatmentFactory.TREATMENT_FOLFIRI,
-                        TreatmentFactory.TREATMENT_FOLFIRINOX,
-                        TreatmentFactory.TREATMENT_FOLFOX)
-                .forEach(treatment -> assertTrue(getTreatmentResultsForPatient(patientRecordWithHistory(Stream.of(treatment))).noneMatch(t -> t.name()
+                        TreatmentDB.TREATMENT_CAPOX,
+                        TreatmentDB.TREATMENT_FOLFIRI,
+                        TreatmentDB.TREATMENT_FOLFIRINOX,
+                        TreatmentDB.TREATMENT_FOLFOX)
+                .forEach(treatment -> assertTrue(getTreatmentResultsForPatient(patientRecordWithHistory(List.of(treatment))).noneMatch(t -> t.name()
                         .equalsIgnoreCase(treatment))));
     }
 
     @Test
     public void shouldRecommendAntiEGFRTherapyForPatientsMatchingMolecularCriteria() {
-        assertAntiEGFRTreatmentCount(getTreatmentResultsForPatient(patientRecordWithHistoryAndMolecular(Stream.empty(),
+        List<String> firstLineChemotherapies = List.of(TreatmentDB.TREATMENT_CAPOX);
+        assertAntiEGFRTreatmentCount(getTreatmentResultsForPatient(patientRecordWithHistoryAndMolecular(firstLineChemotherapies,
                 TestMolecularFactory.createProperTestMolecularRecord())), 0);
-        assertAntiEGFRTreatmentCount(getTypicalTreatmentResults(), 18);
+        assertAntiEGFRTreatmentCount(getTreatmentResultsForPatient(patientRecordWithHistory(firstLineChemotherapies)), 18);
     }
 
     private void assertAntiEGFRTreatmentCount(Stream<Treatment> treatmentResults, int count) {
@@ -108,15 +111,17 @@ public class RecommendationEngineTest {
                 .drivers(ImmutableMolecularDrivers.builder().from(minimal.drivers()).addVariants(variant).build())
                 .build();
 
-        assertTrue(getTreatmentResultsForPatient(patientRecordWithHistoryAndMolecular(Stream.empty(),
-                molecularRecord)).anyMatch(treatment -> treatment.name().equals("Pembrolizumab")));
+        assertTrue(getTreatmentResultsForPatient(patientRecordWithHistoryAndMolecular(Collections.emptyList(), molecularRecord)).anyMatch(
+                treatment -> treatment.name().equals("Pembrolizumab")));
     }
 
     @Test
     public void shouldRecommendCetuximabAndEncorafenibForBRAFV600E() {
-        assertFalse(getTypicalTreatmentResults().anyMatch(treatment -> treatment.name().equals("Cetuximab + Encorafenib")));
+        List<String> firstLineChemotherapies = List.of(TreatmentDB.TREATMENT_CAPOX);
+        assertFalse(getTreatmentResultsForPatient(patientRecordWithHistory(firstLineChemotherapies)).anyMatch(treatment -> treatment.name()
+                .equals("Cetuximab + Encorafenib")));
 
-        assertTrue(getTreatmentResultsForPatient(patientRecordWithHistoryAndMolecular(Stream.empty(),
+        assertTrue(getTreatmentResultsForPatient(patientRecordWithHistoryAndMolecular(firstLineChemotherapies,
                 TestMolecularFactory.createProperTestMolecularRecord())).anyMatch(treatment -> treatment.name()
                 .equals("Cetuximab + Encorafenib")));
     }
@@ -139,8 +144,7 @@ public class RecommendationEngineTest {
         DoidModel doidModel = TestDoidModelFactory.createWithOneDoidAndTerm(DoidConstants.COLORECTAL_CANCER_DOID, "colorectal cancer");
         RecommendationEngine engine =
                 new RecommendationEngine(doidModel, ReferenceDateProviderFactory.create(patientRecord.clinical(), false));
-        TreatmentFactory treatmentFactory = new TreatmentFactory(doidModel);
-        return engine.determineAvailableTreatments(patientRecord, treatmentFactory.loadTreatments()).orElseThrow();
+        return engine.determineAvailableTreatments(patientRecord, TreatmentDB.loadTreatments());
     }
 
     private void assertSpecificMonotherapyNotRecommended(TreatmentComponent monotherapy) {
@@ -149,25 +153,27 @@ public class RecommendationEngineTest {
     }
 
     private PatientRecord patientRecord() {
-        return patientRecordWithHistory(Stream.empty());
+        return patientRecordWithHistory(Collections.emptyList());
     }
 
-    private PatientRecord patientRecordWithHistory(Stream<String> pastChemotherapyNames) {
+    private PatientRecord patientRecordWithHistory(List<String> pastChemotherapyNames) {
         return patientRecordWithHistoryAndMolecular(pastChemotherapyNames, TestMolecularFactory.createMinimalTestMolecularRecord());
     }
 
-    private PatientRecord patientRecordWithHistoryAndMolecular(Stream<String> pastChemotherapyNames, MolecularRecord molecularRecord) {
+    private PatientRecord patientRecordWithHistoryAndMolecular(List<String> pastChemotherapyNames, MolecularRecord molecularRecord) {
         PatientRecord minimal = TestDataFactory.createMinimalTestPatientRecord();
         TumorDetails tumorDetails = ImmutableTumorDetails.builder().addDoids(DoidConstants.COLORECTAL_CANCER_DOID).build();
         ClinicalRecord clinicalRecord = ImmutableClinicalRecord.builder()
                 .from(minimal.clinical())
                 .tumor(tumorDetails)
-                .priorTumorTreatments(pastChemotherapyNames.map(treatmentName -> ImmutablePriorTumorTreatment.builder()
-                        .name(treatmentName)
-                        .isSystemic(true)
-                        .startYear(LocalDate.now().getYear())
-                        .addCategories(TreatmentCategory.CHEMOTHERAPY)
-                        .build()).collect(Collectors.toSet()))
+                .priorTumorTreatments(pastChemotherapyNames.stream()
+                        .map(treatmentName -> ImmutablePriorTumorTreatment.builder()
+                                .name(treatmentName)
+                                .isSystemic(true)
+                                .startYear(LocalDate.now().getYear())
+                                .addCategories(TreatmentCategory.CHEMOTHERAPY)
+                                .build())
+                        .collect(Collectors.toSet()))
                 .build();
         return ImmutablePatientRecord.builder().from(minimal).clinical(clinicalRecord).molecular(molecularRecord).build();
     }

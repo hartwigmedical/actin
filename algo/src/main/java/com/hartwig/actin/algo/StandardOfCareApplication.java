@@ -6,6 +6,8 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.PatientRecordFactory;
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory;
+import com.hartwig.actin.algo.soc.RecommendationEngine;
+import com.hartwig.actin.algo.soc.TreatmentDB;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson;
 import com.hartwig.actin.clinical.util.ClinicalPrinter;
@@ -73,6 +75,10 @@ public class StandardOfCareApplication {
 
         DoidModel doidModel = DoidModelFactory.createFromDoidEntry(doidEntry);
         ReferenceDateProvider referenceDateProvider = ReferenceDateProviderFactory.create(clinical, config.runHistorically());
+
+        RecommendationEngine recommendationEngine = new RecommendationEngine(doidModel, referenceDateProvider);
+        LOGGER.info("Recommended treatments descending order of preference:");
+        recommendationEngine.determineAvailableTreatments(patient, TreatmentDB.loadTreatments()).forEach(LOGGER::info);
 
         LOGGER.info("Done!");
     }
