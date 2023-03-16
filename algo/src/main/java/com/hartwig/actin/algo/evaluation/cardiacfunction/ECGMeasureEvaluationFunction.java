@@ -17,7 +17,7 @@ import com.hartwig.actin.clinical.datamodel.ECGMeasure;
 
 import org.jetbrains.annotations.NotNull;
 
-public class EcgMeasureEvaluationFunction implements EvaluationFunction {
+public class ECGMeasureEvaluationFunction implements EvaluationFunction {
 
     enum ThresholdCriteria {
         MAXIMUM(Comparator.comparingDouble(Number::doubleValue).reversed(),
@@ -41,15 +41,15 @@ public class EcgMeasureEvaluationFunction implements EvaluationFunction {
     private final double threshold;
     private final String measureName;
     private final String expectedUnit;
-    private final Function<ECG, Optional<ECGMeasure>> extractingECG;
+    private final Function<ECG, Optional<ECGMeasure>> extractingECGMeasure;
     private final ThresholdCriteria thresholdCriteria;
 
-    public EcgMeasureEvaluationFunction(final String measureName, final double threshold, final String expectedUnit,
-            final Function<ECG, Optional<ECGMeasure>> extractingECG, final ThresholdCriteria thresholdCriteria) {
+    public ECGMeasureEvaluationFunction(final String measureName, final double threshold, final String expectedUnit,
+            final Function<ECG, Optional<ECGMeasure>> extractingECGMeasure, final ThresholdCriteria thresholdCriteria) {
         this.threshold = threshold;
         this.measureName = measureName;
         this.expectedUnit = expectedUnit;
-        this.extractingECG = extractingECG;
+        this.extractingECGMeasure = extractingECGMeasure;
         this.thresholdCriteria = thresholdCriteria;
     }
 
@@ -57,7 +57,7 @@ public class EcgMeasureEvaluationFunction implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return Optional.ofNullable(record.clinical().clinicalStatus().ecg())
-                .flatMap(extractingECG)
+                .flatMap(extractingECGMeasure)
                 .map(evaluate())
                 .orElse(EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.UNDETERMINED)

@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.cardiacfunction;
 
 import java.util.Optional;
 
-public class HasLimitedQTCF extends EcgMeasureEvaluationFunction {
+public class HasLimitedQTCF extends ECGMeasureEvaluationFunction {
 
     public HasLimitedQTCF(final double maxQTCF) {
         super("QTCF",
