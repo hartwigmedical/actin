@@ -3,6 +3,7 @@ package com.hartwig.actin.report.pdf.tables.molecular;
 import java.util.List;
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
+import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.report.interpretation.EvaluatedCohort;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
@@ -10,9 +11,13 @@ import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Tables;
 import com.itextpdf.layout.element.Table;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 public class MolecularSummaryGenerator implements TableGenerator {
+
+    private static final Logger LOGGER = LogManager.getLogger(MolecularSummaryGenerator.class);
 
     @NotNull
     private final ClinicalRecord clinical;
@@ -44,8 +49,11 @@ public class MolecularSummaryGenerator implements TableGenerator {
         Table table = Tables.createSingleColWithWidth(keyWidth + valueWidth);
 
         if (molecular.containsTumorCells()) {
-            TableGenerator wgsGenerator =
-                    new WGSSummaryGenerator(clinical, molecular, cohorts, keyWidth, valueWidth);
+            if (molecular.type() != ExperimentType.WGS) {
+                LOGGER.warn("Generating WGS results for non-WGS sample");
+            }
+
+            TableGenerator wgsGenerator = new WGSSummaryGenerator(clinical, molecular, cohorts, keyWidth, valueWidth);
 
             table.addCell(Cells.createSubTitle(wgsGenerator.title()));
             table.addCell(Cells.create(wgsGenerator.contents()));
