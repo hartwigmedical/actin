@@ -44,11 +44,11 @@ public class MolecularSummaryGenerator implements TableGenerator {
         Table table = Tables.createSingleColWithWidth(keyWidth + valueWidth);
 
         if (molecular.containsTumorCells()) {
-            TableGenerator recentGenerator =
+            TableGenerator wgsGenerator =
                     new WGSSummaryGenerator(clinical, molecular, cohorts, keyWidth, valueWidth);
 
-            table.addCell(Cells.createSubTitle(recentGenerator.title()));
-            table.addCell(Cells.create(recentGenerator.contents()));
+            table.addCell(Cells.createSubTitle(wgsGenerator.title()));
+            table.addCell(Cells.create(wgsGenerator.contents()));
         } else {
             Table noRecent = Tables.createFixedWidthCols(keyWidth, valueWidth);
 
