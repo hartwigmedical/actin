@@ -76,8 +76,8 @@ public class CardiacFunctionRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasSufficientJTcCreator() {
         return function -> {
-            double minQTCF = functionInputResolver().createOneDoubleInput(function);
-            return new HasSufficientJTc(minQTCF);
+            double minJTC = functionInputResolver().createOneDoubleInput(function);
+            return new HasSufficientJTc(minJTC);
         };
     }
 
