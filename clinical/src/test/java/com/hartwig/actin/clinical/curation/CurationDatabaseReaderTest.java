@@ -168,7 +168,7 @@ public class CurationDatabaseReaderTest {
     }
 
     private static void assertECGConfigs(@NotNull List<ECGConfig> configs) {
-        assertEquals(3, configs.size());
+        assertEquals(4, configs.size());
 
         ECGConfig sinus = find(configs, "Sinus Tachycardia");
         assertEquals("Sinus tachycardia", sinus.interpretation());

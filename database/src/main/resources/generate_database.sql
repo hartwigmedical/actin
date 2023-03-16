@@ -49,6 +49,8 @@ CREATE TABLE clinicalStatus
     ecgAberrationDescription varchar(50),
     qtcfValue int,
     qtcfUnit varchar(50),
+    jtcValue int,
+    jtcUnit varchar(50),
     lvef double precision,
     PRIMARY KEY (id)
 );

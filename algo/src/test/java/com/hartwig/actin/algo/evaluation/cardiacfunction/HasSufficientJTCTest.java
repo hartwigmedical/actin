@@ -8,13 +8,13 @@ import com.hartwig.actin.clinical.datamodel.ImmutableECGMeasure;
 import org.junit.Before;
 import org.junit.Test;
 
-public class HasLimitedQTCFTest {
+public class HasSufficientJTCTest {
 
-    private HasLimitedQTCF victim;
+    private HasSufficientJTc victim;
 
     @Before
     public void setUp() {
-        victim = new HasLimitedQTCF(450D);
+        victim = new HasSufficientJTc(450D);
     }
 
     @Test
@@ -26,15 +26,15 @@ public class HasLimitedQTCFTest {
     public void evaluatesToUndeterminedWhenWrongUnit() {
         assertEvaluation(EvaluationResult.UNDETERMINED,
                 victim.evaluate(CardiacFunctionTestFactory.withECG(CardiacFunctionTestFactory.builder()
-                        .qtcfMeasure(ImmutableECGMeasure.builder().value(400).unit("wrong unit").build())
+                        .qtcfMeasure(ImmutableECGMeasure.builder().value(500).unit("wrong unit").build())
                         .build())));
     }
 
     @Test
-    public void evaluatesToPassWhenBelowThreshold() {
+    public void evaluatesToPassWhenAboveThreshold() {
         assertEvaluation(EvaluationResult.PASS,
                 victim.evaluate(CardiacFunctionTestFactory.withECG(CardiacFunctionTestFactory.builder()
-                        .qtcfMeasure(ImmutableECGMeasure.builder().value(300).unit(ECGUnits.MILLISECONDS).build())
+                        .qtcfMeasure(ImmutableECGMeasure.builder().value(500).unit(ECGUnits.MILLISECONDS).build())
                         .build())));
     }
 
@@ -47,10 +47,10 @@ public class HasLimitedQTCFTest {
     }
 
     @Test
-    public void evaluatesToFailWhenAboveThreshold() {
+    public void evaluatesToFailWhenBelowThreshold() {
         assertEvaluation(EvaluationResult.FAIL,
                 victim.evaluate(CardiacFunctionTestFactory.withECG(CardiacFunctionTestFactory.builder()
-                        .qtcfMeasure(ImmutableECGMeasure.builder().value(500).unit(ECGUnits.MILLISECONDS).build())
+                        .qtcfMeasure(ImmutableECGMeasure.builder().value(300).unit(ECGUnits.MILLISECONDS).build())
                         .build())));
     }
 }

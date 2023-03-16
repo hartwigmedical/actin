@@ -3,37 +3,54 @@ package com.hartwig.actin.algo.evaluation.cardiacfunction;
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.clinical.datamodel.ImmutableECGMeasure;
 
+import org.junit.Before;
 import org.junit.Test;
 
 public class HasSufficientQTCFTest {
 
+    private HasSufficientQTCF victim;
+
+    @Before
+    public void setUp() {
+        victim = new HasSufficientQTCF(450D);
+    }
+
     @Test
-    public void canEvaluate() {
-        HasSufficientQTCF function = new HasSufficientQTCF(450D);
+    public void evaluatesToUndeterminedWhenNoEcgPresent() {
+        assertEvaluation(EvaluationResult.UNDETERMINED, victim.evaluate(CardiacFunctionTestFactory.withECG(null)));
+    }
 
-        // No ECG info known
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(CardiacFunctionTestFactory.withECG(null)));
-
-        // Wrong unit
+    @Test
+    public void evaluatesToUndeterminedWhenWrongUnit() {
         assertEvaluation(EvaluationResult.UNDETERMINED,
-                function.evaluate(CardiacFunctionTestFactory.withECG(CardiacFunctionTestFactory.builder()
-                        .qtcfValue(300)
-                        .qtcfUnit("wrong unit")
+                victim.evaluate(CardiacFunctionTestFactory.withECG(CardiacFunctionTestFactory.builder()
+                        .qtcfMeasure(ImmutableECGMeasure.builder().value(500).unit("wrong unit").build())
                         .build())));
+    }
 
-        // Above min threshold
+    @Test
+    public void evaluatesToPassWhenEqualThreshold() {
         assertEvaluation(EvaluationResult.PASS,
-                function.evaluate(CardiacFunctionTestFactory.withECG(CardiacFunctionTestFactory.builder()
-                        .qtcfValue(500)
-                        .qtcfUnit(QTCFFunctions.EXPECTED_QTCF_UNIT)
+                victim.evaluate(CardiacFunctionTestFactory.withECG(CardiacFunctionTestFactory.builder()
+                        .qtcfMeasure(ImmutableECGMeasure.builder().value(450).unit(ECGUnits.MILLISECONDS).build())
                         .build())));
+    }
 
-        // Below min threshold
+    @Test
+    public void evaluatesToPassWhenAboveThreshold() {
+        assertEvaluation(EvaluationResult.PASS,
+                victim.evaluate(CardiacFunctionTestFactory.withECG(CardiacFunctionTestFactory.builder()
+                        .qtcfMeasure(ImmutableECGMeasure.builder().value(500).unit(ECGUnits.MILLISECONDS).build())
+                        .build())));
+    }
+
+    @Test
+    public void evaluatesToFailWhenBelowThreshold() {
         assertEvaluation(EvaluationResult.FAIL,
-                function.evaluate(CardiacFunctionTestFactory.withECG(CardiacFunctionTestFactory.builder()
-                        .qtcfValue(300)
-                        .qtcfUnit(QTCFFunctions.EXPECTED_QTCF_UNIT)
+                victim.evaluate(CardiacFunctionTestFactory.withECG(CardiacFunctionTestFactory.builder()
+                        .qtcfMeasure(ImmutableECGMeasure.builder().value(300).unit(ECGUnits.MILLISECONDS).build())
                         .build())));
     }
 }

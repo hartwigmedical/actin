@@ -18,6 +18,7 @@ import static com.hartwig.actin.database.Tables.TUMOR;
 import static com.hartwig.actin.database.Tables.VITALFUNCTION;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
@@ -25,6 +26,7 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ECG;
+import com.hartwig.actin.clinical.datamodel.ECGMeasure;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.LabValue;
@@ -103,7 +105,11 @@ class ClinicalDAO {
                         PATIENT.GENDER,
                         PATIENT.REGISTRATIONDATE,
                         PATIENT.QUESTIONNAIREDATE)
-                .values(patientId, patient.birthYear(), patient.gender().display(), patient.registrationDate(), patient.questionnaireDate())
+                .values(patientId,
+                        patient.birthYear(),
+                        patient.gender().display(),
+                        patient.registrationDate(),
+                        patient.questionnaireDate())
                 .execute();
     }
 
@@ -153,8 +159,9 @@ class ClinicalDAO {
 
     private void writeClinicalStatus(@NotNull String patientId, @NotNull ClinicalStatus clinicalStatus) {
         InfectionStatus infectionStatus = clinicalStatus.infectionStatus();
-        ECG ecg = clinicalStatus.ecg();
-
+        Optional<ECG> ecg = Optional.ofNullable(clinicalStatus.ecg());
+        Optional<ECGMeasure> qtcfMeasure = ecg.map(ECG::qtcfMeasure);
+        Optional<ECGMeasure> jtcMeasure = ecg.map(ECG::jtcMeasure);
         context.insertInto(CLINICALSTATUS,
                         CLINICALSTATUS.PATIENTID,
                         CLINICALSTATUS.WHO,
@@ -164,20 +171,25 @@ class ClinicalDAO {
                         CLINICALSTATUS.ECGABERRATIONDESCRIPTION,
                         CLINICALSTATUS.QTCFVALUE,
                         CLINICALSTATUS.QTCFUNIT,
+                        CLINICALSTATUS.JTCVALUE,
+                        CLINICALSTATUS.JTCUNIT,
                         CLINICALSTATUS.LVEF)
                 .values(patientId,
                         clinicalStatus.who(),
                         DataUtil.toByte(infectionStatus != null ? infectionStatus.hasActiveInfection() : null),
                         infectionStatus != null ? infectionStatus.description() : null,
-                        DataUtil.toByte(ecg != null ? ecg.hasSigAberrationLatestECG() : null),
-                        ecg != null ? ecg.aberrationDescription() : null,
-                        ecg != null ? ecg.qtcfValue() : null,
-                        ecg != null ? ecg.qtcfUnit() : null,
+                        DataUtil.toByte(ecg.map(ECG::hasSigAberrationLatestECG).orElse(null)),
+                        ecg.map(ECG::aberrationDescription).orElse(null),
+                        qtcfMeasure.map(ECGMeasure::value).orElse(null),
+                        qtcfMeasure.map(ECGMeasure::unit).orElse(null),
+                        jtcMeasure.map(ECGMeasure::value).orElse(null),
+                        jtcMeasure.map(ECGMeasure::unit).orElse(null),
                         clinicalStatus.lvef())
                 .execute();
     }
 
-    private void writePriorTumorTreatments(@NotNull String patientId, @NotNull List<PriorTumorTreatment> priorTumorTreatments) {
+    private void writePriorTumorTreatments(@NotNull String patientId,
+            @NotNull List<PriorTumorTreatment> priorTumorTreatments) {
         for (PriorTumorTreatment priorTumorTreatment : priorTumorTreatments) {
             context.insertInto(PRIORTUMORTREATMENT,
                             PRIORTUMORTREATMENT.PATIENTID,
@@ -224,7 +236,8 @@ class ClinicalDAO {
         }
     }
 
-    private void writePriorSecondPrimaries(@NotNull String patientId, @NotNull List<PriorSecondPrimary> priorSecondPrimaries) {
+    private void writePriorSecondPrimaries(@NotNull String patientId,
+            @NotNull List<PriorSecondPrimary> priorSecondPrimaries) {
         for (PriorSecondPrimary priorSecondPrimary : priorSecondPrimaries) {
             context.insertInto(PRIORSECONDPRIMARY,
                             PRIORSECONDPRIMARY.PATIENTID,
@@ -255,7 +268,8 @@ class ClinicalDAO {
         }
     }
 
-    private void writePriorOtherConditions(@NotNull String patientId, @NotNull List<PriorOtherCondition> priorOtherConditions) {
+    private void writePriorOtherConditions(@NotNull String patientId,
+            @NotNull List<PriorOtherCondition> priorOtherConditions) {
         for (PriorOtherCondition priorOtherCondition : priorOtherConditions) {
             context.insertInto(PRIOROTHERCONDITION,
                             PRIOROTHERCONDITION.PATIENTID,
@@ -276,7 +290,8 @@ class ClinicalDAO {
         }
     }
 
-    private void writePriorMolecularTests(@NotNull String patientId, @NotNull List<PriorMolecularTest> priorMolecularTests) {
+    private void writePriorMolecularTests(@NotNull String patientId,
+            @NotNull List<PriorMolecularTest> priorMolecularTests) {
         for (PriorMolecularTest priorMolecularTest : priorMolecularTests) {
             context.insertInto(PRIORMOLECULARTEST,
                             PRIORMOLECULARTEST.PATIENTID,
@@ -428,7 +443,10 @@ class ClinicalDAO {
 
     private void writeBloodTransfusions(@NotNull String patientId, @NotNull List<BloodTransfusion> bloodTransfusions) {
         for (BloodTransfusion bloodTransfusion : bloodTransfusions) {
-            context.insertInto(BLOODTRANSFUSION, BLOODTRANSFUSION.PATIENTID, BLOODTRANSFUSION.DATE, BLOODTRANSFUSION.PRODUCT)
+            context.insertInto(BLOODTRANSFUSION,
+                            BLOODTRANSFUSION.PATIENTID,
+                            BLOODTRANSFUSION.DATE,
+                            BLOODTRANSFUSION.PRODUCT)
                     .values(patientId, bloodTransfusion.date(), bloodTransfusion.product())
                     .execute();
         }

@@ -30,8 +30,10 @@ public class CardiacFunctionRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_QTCF_OF_AT_LEAST_X, hasSufficientQTCFCreator());
         map.put(EligibilityRule.HAS_JTC_OF_AT_LEAST_X, hasSufficientJTcCreator());
         map.put(EligibilityRule.HAS_LONG_QT_SYNDROME, hasLongQTSyndromeCreator());
-        map.put(EligibilityRule.HAS_NORMAL_CARDIAC_FUNCTION_BY_MUGA_OR_TTE, hasNormalCardiacFunctionByMUGAOrTTECreator());
-        map.put(EligibilityRule.HAS_FAMILY_HISTORY_OF_IDIOPATHIC_SUDDEN_DEATH, hasFamilyHistoryOfIdiopathicSuddenDeathCreator());
+        map.put(EligibilityRule.HAS_NORMAL_CARDIAC_FUNCTION_BY_MUGA_OR_TTE,
+                hasNormalCardiacFunctionByMUGAOrTTECreator());
+        map.put(EligibilityRule.HAS_FAMILY_HISTORY_OF_IDIOPATHIC_SUDDEN_DEATH,
+                hasFamilyHistoryOfIdiopathicSuddenDeathCreator());
         map.put(EligibilityRule.HAS_FAMILY_HISTORY_OF_LONG_QT_SYNDROME, hasFamilyHistoryOfLongQTSyndromeCreator());
 
         return map;
@@ -73,7 +75,10 @@ public class CardiacFunctionRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator hasSufficientJTcCreator() {
-        return function -> new HasSufficientJTc();
+        return function -> {
+            double minQTCF = functionInputResolver().createOneDoubleInput(function);
+            return new HasSufficientJTc(minQTCF);
+        };
     }
 
     @NotNull

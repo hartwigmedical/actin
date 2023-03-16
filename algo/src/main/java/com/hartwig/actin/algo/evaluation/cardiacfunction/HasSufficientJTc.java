@@ -1,26 +1,14 @@
 package com.hartwig.actin.algo.evaluation.cardiacfunction;
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import java.util.Optional;
 
-import org.jetbrains.annotations.NotNull;
+public class HasSufficientJTc extends EcgMeasureEvaluationFunction {
 
-//TODO (ACTIN-37): Update according to README
-public class HasSufficientJTc implements EvaluationFunction {
-
-    HasSufficientJTc() {
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("JTc currently cannot be determined")
-                .addUndeterminedGeneralMessages("Undetermined JTc")
-                .build();
+    public HasSufficientJTc(final double minJTC) {
+        super("JTC",
+                minJTC,
+                ECGUnits.MILLISECONDS,
+                ecg -> Optional.ofNullable(ecg.qtcfMeasure()),
+                ThresholdCriteria.MINIMUM);
     }
 }
