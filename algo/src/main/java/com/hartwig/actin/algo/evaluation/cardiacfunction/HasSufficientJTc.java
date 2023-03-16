@@ -5,7 +5,7 @@ import java.util.Optional;
 public class HasSufficientJTc extends ECGMeasureEvaluationFunction {
 
     public HasSufficientJTc(final double minJTC) {
-        super("JTC",
+        super(ECGMeasures.JTC,
                 minJTC,
                 ECGUnits.MILLISECONDS,
                 ecg -> Optional.ofNullable(ecg.qtcfMeasure()),

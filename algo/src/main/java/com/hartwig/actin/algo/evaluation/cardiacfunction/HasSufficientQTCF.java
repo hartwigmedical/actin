@@ -5,7 +5,7 @@ import java.util.Optional;
 public class HasSufficientQTCF extends ECGMeasureEvaluationFunction {
 
     public HasSufficientQTCF(final double minQTCF) {
-        super("QTCF",
+        super(ECGMeasures.QTCF,
                 minQTCF,
                 ECGUnits.MILLISECONDS,
                 ecg -> Optional.ofNullable(ecg.qtcfMeasure()),
