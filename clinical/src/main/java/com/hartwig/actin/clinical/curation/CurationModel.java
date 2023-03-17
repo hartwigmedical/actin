@@ -409,13 +409,13 @@ public class CurationModel {
         return ImmutableECG.builder()
                 .from(input)
                 .aberrationDescription(description)
-                .qtcfMeasure(maybeEcgMeasure(config.qtcfValue(), config.qtcfUnit()))
-                .jtcMeasure(maybeEcgMeasure(config.jtcValue(), config.jtcUnit()))
+                .qtcfMeasure(maybeECGMeasure(config.qtcfValue(), config.qtcfUnit()))
+                .jtcMeasure(maybeECGMeasure(config.jtcValue(), config.jtcUnit()))
                 .build();
     }
 
     @Nullable
-    private static ImmutableECGMeasure maybeEcgMeasure(@Nullable final Integer value, @Nullable final String unit) {
+    private static ImmutableECGMeasure maybeECGMeasure(@Nullable final Integer value, @Nullable final String unit) {
         if (value == null || unit == null) {
             return null;
         }

@@ -183,6 +183,12 @@ public class CurationDatabaseReaderTest {
         assertEquals(470, (int) qtcf.qtcfValue());
         assertEquals("ms", qtcf.qtcfUnit());
 
+        ECGConfig jtc = find(configs, "jtc");
+        assertTrue(jtc.isJTC());
+        assertFalse(jtc.ignore());
+        assertEquals(570, (int) jtc.jtcValue());
+        assertEquals("ms", jtc.jtcUnit());
+
         ECGConfig weird = find(configs, "weird");
         assertTrue(weird.ignore());
     }

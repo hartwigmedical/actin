@@ -17,7 +17,7 @@ import com.hartwig.actin.clinical.datamodel.ECGMeasure;
 
 import org.jetbrains.annotations.NotNull;
 
-public class ECGMeasureEvaluationFunction implements EvaluationFunction {
+class ECGMeasureEvaluationFunction implements EvaluationFunction {
 
     enum ThresholdCriteria {
         MAXIMUM(Comparator.comparingDouble(Number::doubleValue).reversed(),
@@ -30,8 +30,7 @@ public class ECGMeasureEvaluationFunction implements EvaluationFunction {
         private final String failMessageTemplate;
         private final String passMessageTemplate;
 
-        ThresholdCriteria(final Comparator<Number> comparator, final String failMessageTemplate,
-                final String passMessageTemplate) {
+        ThresholdCriteria(final Comparator<Number> comparator, final String failMessageTemplate, final String passMessageTemplate) {
             this.comparator = comparator;
             this.failMessageTemplate = failMessageTemplate;
             this.passMessageTemplate = passMessageTemplate;
@@ -39,12 +38,12 @@ public class ECGMeasureEvaluationFunction implements EvaluationFunction {
     }
 
     private final double threshold;
-    private final String measureName;
-    private final String expectedUnit;
+    private final ECGMeasureName measureName;
+    private final ECGUnit expectedUnit;
     private final Function<ECG, Optional<ECGMeasure>> extractingECGMeasure;
     private final ThresholdCriteria thresholdCriteria;
 
-    public ECGMeasureEvaluationFunction(final String measureName, final double threshold, final String expectedUnit,
+    public ECGMeasureEvaluationFunction(final ECGMeasureName measureName, final double threshold, final ECGUnit expectedUnit,
             final Function<ECG, Optional<ECGMeasure>> extractingECGMeasure, final ThresholdCriteria thresholdCriteria) {
         this.threshold = threshold;
         this.measureName = measureName;
@@ -58,7 +57,7 @@ public class ECGMeasureEvaluationFunction implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return Optional.ofNullable(record.clinical().clinicalStatus().ecg())
                 .flatMap(extractingECGMeasure)
-                .map(evaluate())
+                .map(this::evaluate)
                 .orElse(EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.UNDETERMINED)
                         .addUndeterminedSpecificMessages(format("No %s known", measureName))
@@ -67,40 +66,61 @@ public class ECGMeasureEvaluationFunction implements EvaluationFunction {
     }
 
     @NotNull
-    private Function<ECGMeasure, ImmutableEvaluation> evaluate() {
-        return m -> {
-            if (!m.unit().equals(expectedUnit)) {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.UNDETERMINED)
-                        .addUndeterminedSpecificMessages("%s measure not in '%s': %s",
-                                measureName,
-                                expectedUnit,
-                                m.unit())
-                        .addUndeterminedGeneralMessages(format("Unrecognized unit of %s evaluation", measureName))
-                        .build();
-            }
-            EvaluationResult result = thresholdCriteria.comparator.compare(m.value(), threshold) >= 0
-                    ? EvaluationResult.PASS
-                    : EvaluationResult.FAIL;
-            ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
-            if (result == EvaluationResult.FAIL) {
-                builder.addFailSpecificMessages(format(thresholdCriteria.failMessageTemplate,
-                        measureName,
-                        m.value(),
-                        m.unit(),
-                        threshold)).addFailGeneralMessages(generalMessage(measureName));
-            } else {
-                builder.addPassSpecificMessages(format(thresholdCriteria.passMessageTemplate,
-                        measureName,
-                        m.value(),
-                        m.unit(),
-                        threshold)).addPassGeneralMessages(generalMessage(measureName));
-            }
-            return builder.build();
-        };
+    private Evaluation evaluate(final ECGMeasure measure) {
+        if (!measure.unit().equals(expectedUnit.getSymbol())) {
+            return EvaluationFactory.unrecoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages("%s measure not in '%s': %s",
+                            measureName.name(),
+                            expectedUnit.getSymbol(),
+                            measure.unit())
+                    .addUndeterminedGeneralMessages(format("Unrecognized unit of %s evaluation", measureName))
+                    .build();
+        }
+        EvaluationResult result =
+                thresholdCriteria.comparator.compare(measure.value(), threshold) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
+        if (result == EvaluationResult.FAIL) {
+            builder.addFailSpecificMessages(format(thresholdCriteria.failMessageTemplate,
+                    measureName,
+                    measure.value(),
+                    measure.unit(),
+                    threshold)).addFailGeneralMessages(generalMessage(measureName.name()));
+        } else {
+            builder.addPassSpecificMessages(format(thresholdCriteria.passMessageTemplate,
+                    measureName,
+                    measure.value(),
+                    measure.unit(),
+                    threshold)).addPassGeneralMessages(generalMessage(measureName.name()));
+        }
+        return builder.build();
     }
 
     private static String generalMessage(final String measureName) {
         return format("%s requirements", measureName);
+    }
+
+    static ECGMeasureEvaluationFunction hasLimitedQTCF(final double maxQTCF) {
+        return new ECGMeasureEvaluationFunction(ECGMeasureName.QTCF,
+                maxQTCF,
+                ECGUnit.MILLISECONDS,
+                ecg -> Optional.ofNullable(ecg.qtcfMeasure()),
+                ECGMeasureEvaluationFunction.ThresholdCriteria.MAXIMUM);
+    }
+
+    static ECGMeasureEvaluationFunction hasSufficientQTCF(final double minQTCF) {
+        return new ECGMeasureEvaluationFunction(ECGMeasureName.QTCF,
+                minQTCF,
+                ECGUnit.MILLISECONDS,
+                ecg -> Optional.ofNullable(ecg.qtcfMeasure()),
+                ThresholdCriteria.MINIMUM);
+    }
+
+    static ECGMeasureEvaluationFunction hasSufficientJTc(final double maxQTCF) {
+        return new ECGMeasureEvaluationFunction(ECGMeasureName.JTC,
+                maxQTCF,
+                ECGUnit.MILLISECONDS,
+                ecg -> Optional.ofNullable(ecg.jtcMeasure()),
+                ThresholdCriteria.MINIMUM);
     }
 }

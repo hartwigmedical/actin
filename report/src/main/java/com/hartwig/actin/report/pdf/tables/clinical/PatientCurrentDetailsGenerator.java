@@ -66,12 +66,12 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
                 table.addCell(Cells.createValue(description));
             }
 
-            final ECGMeasure qtcfMeasure = ecg.qtcfMeasure();
+            ECGMeasure qtcfMeasure = ecg.qtcfMeasure();
             if (qtcfMeasure != null) {
                 createMeasureCells(table, "QTcF", qtcfMeasure);
             }
 
-            final ECGMeasure jtcMeasure = ecg.jtcMeasure();
+            ECGMeasure jtcMeasure = ecg.jtcMeasure();
             if (qtcfMeasure != null) {
                 createMeasureCells(table, "JTc", jtcMeasure);
             }
