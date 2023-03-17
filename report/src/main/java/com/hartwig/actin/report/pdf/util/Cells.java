@@ -66,9 +66,10 @@ public final class Cells {
         return cell;
     }
 
+    @SuppressWarnings("unused")
     @NotNull
     public static Cell createHeaderTest(@NotNull String text) {
-        // TODO Clean up or actually use.
+        // TODO (ACTIN-33) Clean up or actually use.
         PdfLinkAnnotation la1 =
                 (PdfLinkAnnotation) new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0)).setHighlightMode(PdfAnnotation.HIGHLIGHT_NONE)
                         .setAction(PdfAction.createJavaScript("app.alert('These are all trials!!')"))
