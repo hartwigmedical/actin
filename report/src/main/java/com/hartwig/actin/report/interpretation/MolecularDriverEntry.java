@@ -18,7 +18,7 @@ public abstract class MolecularDriverEntry {
     @NotNull
     public abstract String driver();
 
-    @NotNull
+    @Nullable
     public abstract DriverLikelihood driverLikelihood();
 
     @NotNull

@@ -29,7 +29,7 @@ import com.itextpdf.layout.element.Text;
 
 import org.jetbrains.annotations.NotNull;
 
-public class RecentMolecularSummaryGenerator implements TableGenerator {
+public class WGSSummaryGenerator implements TableGenerator {
 
     @NotNull
     private final ClinicalRecord clinical;
@@ -40,7 +40,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
     private final float keyWidth;
     private final float valueWidth;
 
-    public RecentMolecularSummaryGenerator(@NotNull final ClinicalRecord clinical, @NotNull final MolecularRecord molecular,
+    public WGSSummaryGenerator(@NotNull final ClinicalRecord clinical, @NotNull final MolecularRecord molecular,
             @NotNull final List<EvaluatedCohort> cohorts, final float keyWidth, final float valueWidth) {
         this.clinical = clinical;
         this.molecular = molecular;
@@ -80,15 +80,15 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
                             Maps.immutableEntry("Microsatellite (in)stability", characteristicsGenerator.createMSStabilityStringOption()),
                             Maps.immutableEntry("HR status", characteristicsGenerator.createHRStatusStringOption()),
                             Maps.immutableEntry("", Optional.of("")),
-                            Maps.immutableEntry("Genes with high driver mutation", genesWithHighDriverMutationStringOption()),
-                            Maps.immutableEntry("Amplified genes", genesWithHighDriverAmplificationStringOption()),
-                            Maps.immutableEntry("Deleted genes", genesWithHighDriverDeletionStringOption()),
-                            Maps.immutableEntry("Homozygously disrupted genes", genesWithHighDriverHomozygousDisruptionStringOption()),
-                            Maps.immutableEntry("Gene fusions", highDriverGeneFusionsStringOption()),
-                            Maps.immutableEntry("Virus detection", highDriverVirusDetectionsStringOption()),
+                            Maps.immutableEntry("Genes with high driver mutation", genesWithKeyDriverMutationStringOption()),
+                            Maps.immutableEntry("Amplified genes", genesWithKeyDriverAmplificationStringOption()),
+                            Maps.immutableEntry("Deleted genes", genesWithKeyDriverDeletionStringOption()),
+                            Maps.immutableEntry("Homozygously disrupted genes", genesWithKeyDriverHomozygousDisruptionStringOption()),
+                            Maps.immutableEntry("Gene fusions", keyDriverGeneFusionsStringOption()),
+                            Maps.immutableEntry("Virus detection", keyDriverVirusDetectionsStringOption()),
                             Maps.immutableEntry("", Optional.of("")),
                             Maps.immutableEntry("Potentially actionable events with medium/low driver:",
-                                    actionableEventsWithoutHighDriverMutation()))
+                                    actionableEventsThatAreNotKeyDrivers()))
                     .flatMap(entry -> Stream.of(Cells.createKey(entry.getKey()),
                             Cells.createValue(entry.getValue().orElse(Formats.VALUE_UNKNOWN))))
                     .forEach(table::addCell);
@@ -97,6 +97,10 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
                     + "high quality whole genome sequencing", table));
         }
         return table;
+    }
+
+    private static boolean isKeyDriver(Driver driver) {
+        return driver.driverLikelihood() == DriverLikelihood.HIGH && driver.isReportable();
     }
 
     @NotNull
@@ -119,7 +123,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
 
     @NotNull
     private <T extends GeneAlteration & Driver> Optional<String> summaryStringOptionForGeneAlterations(Stream<T> geneAlterationStream) {
-        String genes = geneAlterationStream.filter(variant -> variant.driverLikelihood() == DriverLikelihood.HIGH)
+        String genes = geneAlterationStream.filter(WGSSummaryGenerator::isKeyDriver)
                 .map(GeneAlteration::gene)
                 .distinct()
                 .collect(Collectors.joining(Formats.COMMA_SEPARATOR));
@@ -127,12 +131,12 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
     }
 
     @NotNull
-    private Optional<String> genesWithHighDriverMutationStringOption() {
+    private Optional<String> genesWithKeyDriverMutationStringOption() {
         return summaryStringOptionForGeneAlterations(molecular.drivers().variants().stream());
     }
 
     @NotNull
-    private Optional<String> genesWithHighDriverAmplificationStringOption() {
+    private Optional<String> genesWithKeyDriverAmplificationStringOption() {
         return summaryStringOptionForGeneAlterations(molecular.drivers()
                 .copyNumbers()
                 .stream()
@@ -140,7 +144,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
     }
 
     @NotNull
-    private Optional<String> genesWithHighDriverDeletionStringOption() {
+    private Optional<String> genesWithKeyDriverDeletionStringOption() {
         return summaryStringOptionForGeneAlterations(molecular.drivers()
                 .copyNumbers()
                 .stream()
@@ -148,34 +152,34 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
     }
 
     @NotNull
-    private Optional<String> genesWithHighDriverHomozygousDisruptionStringOption() {
+    private Optional<String> genesWithKeyDriverHomozygousDisruptionStringOption() {
         return summaryStringOptionForGeneAlterations(molecular.drivers().homozygousDisruptions().stream());
     }
 
     @NotNull
-    private Optional<String> highDriverGeneFusionsStringOption() {
+    private Optional<String> keyDriverGeneFusionsStringOption() {
         String fusions = molecular.drivers()
                 .fusions()
                 .stream()
-                .filter(fusion -> fusion.driverLikelihood() == DriverLikelihood.HIGH)
+                .filter(WGSSummaryGenerator::isKeyDriver)
                 .map(Driver::event)
                 .collect(Collectors.joining(Formats.COMMA_SEPARATOR));
         return Optional.of(fusions.isEmpty() ? Formats.VALUE_NONE : fusions);
     }
 
     @NotNull
-    private Optional<String> highDriverVirusDetectionsStringOption() {
+    private Optional<String> keyDriverVirusDetectionsStringOption() {
         String fusions = molecular.drivers()
                 .viruses()
                 .stream()
-                .filter(virus -> virus.driverLikelihood() == DriverLikelihood.HIGH)
+                .filter(WGSSummaryGenerator::isKeyDriver)
                 .map(virus -> String.format("%s (%s integrations detected)", virus.type(), virus.integrations()))
                 .collect(Collectors.joining(Formats.COMMA_SEPARATOR));
         return Optional.of(fusions.isEmpty() ? Formats.VALUE_NONE : fusions);
     }
 
     @NotNull
-    private Optional<String> actionableEventsWithoutHighDriverMutation() {
+    private Optional<String> actionableEventsThatAreNotKeyDrivers() {
         Set<String> eventsWithActinTrials = cohorts.stream()
                 .filter(EvaluatedCohort::isPotentiallyEligible)
                 .filter(EvaluatedCohort::isOpen)
@@ -188,7 +192,7 @@ public class RecentMolecularSummaryGenerator implements TableGenerator {
                         molecular.drivers().homozygousDisruptions(),
                         molecular.drivers().viruses())
                 .flatMap(Collection::stream)
-                .filter(driver -> driver.driverLikelihood() != DriverLikelihood.HIGH);
+                .filter(driver -> !isKeyDriver(driver));
 
         String events = Stream.concat(nonDisruptionDrivers, molecular.drivers().disruptions().stream())
                 .filter(driver -> !driver.evidence().externalEligibleTrials().isEmpty() || eventsWithActinTrials.contains(driver.event())

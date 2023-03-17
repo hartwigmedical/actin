@@ -5,6 +5,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
@@ -72,8 +74,14 @@ public class VirusExtractorTest {
 
     @Test
     public void canDetermineDriverLikelihoodForAllVirusDriverLikelihoods() {
+        Map<VirusDriverLikelihood, DriverLikelihood> expectedDriverLikelihoodLookup = new HashMap<>();
+        expectedDriverLikelihoodLookup.put(VirusDriverLikelihood.LOW, DriverLikelihood.LOW);
+        expectedDriverLikelihoodLookup.put(VirusDriverLikelihood.HIGH, DriverLikelihood.HIGH);
+        expectedDriverLikelihoodLookup.put(VirusDriverLikelihood.UNKNOWN, null);
+
         for (VirusDriverLikelihood virusDriverLikelihood : VirusDriverLikelihood.values()) {
-            assertNotNull(VirusExtractor.determineDriverLikelihood(virusDriverLikelihood));
+            assertEquals(expectedDriverLikelihoodLookup.get(virusDriverLikelihood),
+                    VirusExtractor.determineDriverLikelihood(virusDriverLikelihood));
         }
     }
 
