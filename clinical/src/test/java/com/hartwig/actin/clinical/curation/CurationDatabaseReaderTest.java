@@ -176,6 +176,9 @@ public class CurationDatabaseReaderTest {
         assertFalse(sinus.isQTCF());
         assertNull(sinus.qtcfValue());
         assertNull(sinus.qtcfUnit());
+        assertFalse(sinus.isJTC());
+        assertNull(sinus.jtcValue());
+        assertNull(sinus.jtcUnit());
 
         ECGConfig qtcf = find(configs, "qtcf");
         assertTrue(qtcf.isQTCF());

@@ -132,8 +132,8 @@ public class CurationModel {
     }
 
     @NotNull
-    public TumorDetails overrideKnownLesionLocations(@NotNull TumorDetails tumorDetails,
-            @Nullable String biopsyLocation, @Nullable List<String> otherLesions) {
+    public TumorDetails overrideKnownLesionLocations(@NotNull TumorDetails tumorDetails, @Nullable String biopsyLocation,
+            @Nullable List<String> otherLesions) {
         Set<LesionLocationCategory> matches = Sets.newHashSet();
         List<String> lesionsToCheck = Lists.newArrayList();
 
@@ -217,8 +217,7 @@ public class CurationModel {
             if (configs.isEmpty()) {
                 // Same input is curated twice, so need to check if used at other place.
                 if (!trimmedInput.isEmpty() && find(database.secondPrimaryConfigs(), trimmedInput).isEmpty()) {
-                    LOGGER.warn(" Could not find second primary or oncological history config for input '{}'",
-                            trimmedInput);
+                    LOGGER.warn(" Could not find second primary or oncological history config for input '{}'", trimmedInput);
                 }
             }
 
@@ -245,8 +244,7 @@ public class CurationModel {
             if (configs.isEmpty()) {
                 // Same input is curated twice, so need to check if used at other place.
                 if (!trimmedInput.isEmpty() && find(database.oncologicalHistoryConfigs(), trimmedInput).isEmpty()) {
-                    LOGGER.warn(" Could not find second primary or oncological history config for input '{}'",
-                            trimmedInput);
+                    LOGGER.warn(" Could not find second primary or oncological history config for input '{}'", trimmedInput);
                 }
             }
 
@@ -481,8 +479,7 @@ public class CurationModel {
             for (LesionLocationConfig config : configs) {
                 // We only want to include lesions from the other lesions in actual other lesions
                 // if it does not override an explicit lesion location
-                boolean hasRealOtherLesion =
-                        config.category() == null || config.category() == LesionLocationCategory.LYMPH_NODE;
+                boolean hasRealOtherLesion = config.category() == null || config.category() == LesionLocationCategory.LYMPH_NODE;
                 if (hasRealOtherLesion && !config.location().isEmpty()) {
                     curatedOtherLesions.add(config.location());
                 }
@@ -631,9 +628,7 @@ public class CurationModel {
         }
 
         evaluatedTranslations.put(AdministrationRouteTranslation.class, translation);
-        return !translation.translatedAdministrationRoute().isEmpty()
-                ? translation.translatedAdministrationRoute()
-                : null;
+        return !translation.translatedAdministrationRoute().isEmpty() ? translation.translatedAdministrationRoute() : null;
     }
 
     @Nullable
@@ -681,11 +676,7 @@ public class CurationModel {
         }
 
         evaluatedTranslations.put(LaboratoryTranslation.class, translation);
-        return ImmutableLabValue.builder()
-                .from(input)
-                .code(translation.translatedCode())
-                .name(translation.translatedName())
-                .build();
+        return ImmutableLabValue.builder().from(input).code(translation.translatedCode()).name(translation.translatedName()).build();
     }
 
     @Nullable
@@ -697,9 +688,7 @@ public class CurationModel {
             }
         }
 
-        LOGGER.warn(" Could not find laboratory translation for lab value with code '{}' and name '{}'",
-                input.code(),
-                trimmedName);
+        LOGGER.warn(" Could not find laboratory translation for lab value with code '{}' and name '{}'", input.code(), trimmedName);
         return null;
     }
 
@@ -750,36 +739,29 @@ public class CurationModel {
             }
         }
 
-        LOGGER.warn(" Could not find blood transfusion translation for blood transfusion with product '{}'",
-                trimmedProduct);
+        LOGGER.warn(" Could not find blood transfusion translation for blood transfusion with product '{}'", trimmedProduct);
         return null;
     }
 
     public void evaluate() {
         int warnCount = 0;
-        for (Map.Entry<Class<? extends CurationConfig>, Collection<String>> entry : evaluatedCurationInputs.asMap()
-                .entrySet()) {
+        for (Map.Entry<Class<? extends CurationConfig>, Collection<String>> entry : evaluatedCurationInputs.asMap().entrySet()) {
             List<? extends CurationConfig> configs = configsForClass(entry.getKey());
             Collection<String> evaluated = entry.getValue();
             for (CurationConfig config : configs) {
                 // TODO: Raise warnings for unused medication dosage once more final
-                if (!evaluated.contains(config.input().toLowerCase())
-                        && !(config instanceof ImmutableMedicationDosageConfig)) {
+                if (!evaluated.contains(config.input().toLowerCase()) && !(config instanceof ImmutableMedicationDosageConfig)) {
                     warnCount++;
-                    LOGGER.warn(" Curation key '{}' not used for class {}",
-                            config.input(),
-                            entry.getKey().getSimpleName());
+                    LOGGER.warn(" Curation key '{}' not used for class {}", config.input(), entry.getKey().getSimpleName());
                 }
             }
         }
 
-        for (Map.Entry<Class<? extends Translation>, Collection<Translation>> entry : evaluatedTranslations.asMap()
-                .entrySet()) {
+        for (Map.Entry<Class<? extends Translation>, Collection<Translation>> entry : evaluatedTranslations.asMap().entrySet()) {
             List<? extends Translation> translations = translationsForClass(entry.getKey());
             Collection<Translation> evaluated = entry.getValue();
             for (Translation translation : translations) {
-                if (!evaluated.contains(translation)
-                        && !(translation instanceof ImmutableBloodTransfusionTranslation)) {
+                if (!evaluated.contains(translation) && !(translation instanceof ImmutableBloodTransfusionTranslation)) {
                     warnCount++;
                     LOGGER.warn(" Translation '{}' not used", translation);
                 }

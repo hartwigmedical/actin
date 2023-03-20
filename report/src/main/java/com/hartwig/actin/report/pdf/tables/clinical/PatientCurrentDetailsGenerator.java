@@ -29,8 +29,7 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
     private final float keyWidth;
     private final float valueWidth;
 
-    public PatientCurrentDetailsGenerator(@NotNull final ClinicalRecord record, final float keyWidth,
-            final float valueWidth) {
+    public PatientCurrentDetailsGenerator(@NotNull final ClinicalRecord record, final float keyWidth, final float valueWidth) {
         this.record = record;
         this.keyWidth = keyWidth;
         this.valueWidth = valueWidth;
@@ -150,8 +149,7 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
         StringJoiner joiner = Formats.commaJoiner();
         for (Intolerance intolerance : intolerances) {
             if (!intolerance.name().equalsIgnoreCase("none")) {
-                String addition =
-                        !intolerance.category().isEmpty() ? " (" + intolerance.category() + ")" : Strings.EMPTY;
+                String addition = !intolerance.category().isEmpty() ? " (" + intolerance.category() + ")" : Strings.EMPTY;
                 joiner.add(intolerance.name() + addition);
             }
         }

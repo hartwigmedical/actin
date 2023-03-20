@@ -67,12 +67,12 @@ class ECGMeasureEvaluationFunction implements EvaluationFunction {
 
     @NotNull
     private Evaluation evaluate(final ECGMeasure measure) {
-        if (!measure.unit().equals(expectedUnit.getSymbol())) {
+        if (!measure.unit().equals(expectedUnit.symbol())) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("%s measure not in '%s': %s",
                             measureName.name(),
-                            expectedUnit.getSymbol(),
+                            expectedUnit.symbol(),
                             measure.unit())
                     .addUndeterminedGeneralMessages(format("Unrecognized unit of %s evaluation", measureName))
                     .build();
@@ -98,29 +98,5 @@ class ECGMeasureEvaluationFunction implements EvaluationFunction {
 
     private static String generalMessage(final String measureName) {
         return format("%s requirements", measureName);
-    }
-
-    static ECGMeasureEvaluationFunction hasLimitedQTCF(final double maxQTCF) {
-        return new ECGMeasureEvaluationFunction(ECGMeasureName.QTCF,
-                maxQTCF,
-                ECGUnit.MILLISECONDS,
-                ecg -> Optional.ofNullable(ecg.qtcfMeasure()),
-                ECGMeasureEvaluationFunction.ThresholdCriteria.MAXIMUM);
-    }
-
-    static ECGMeasureEvaluationFunction hasSufficientQTCF(final double minQTCF) {
-        return new ECGMeasureEvaluationFunction(ECGMeasureName.QTCF,
-                minQTCF,
-                ECGUnit.MILLISECONDS,
-                ecg -> Optional.ofNullable(ecg.qtcfMeasure()),
-                ThresholdCriteria.MINIMUM);
-    }
-
-    static ECGMeasureEvaluationFunction hasSufficientJTc(final double maxQTCF) {
-        return new ECGMeasureEvaluationFunction(ECGMeasureName.JTC,
-                maxQTCF,
-                ECGUnit.MILLISECONDS,
-                ecg -> Optional.ofNullable(ecg.jtcMeasure()),
-                ThresholdCriteria.MINIMUM);
     }
 }

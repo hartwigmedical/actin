@@ -105,11 +105,7 @@ class ClinicalDAO {
                         PATIENT.GENDER,
                         PATIENT.REGISTRATIONDATE,
                         PATIENT.QUESTIONNAIREDATE)
-                .values(patientId,
-                        patient.birthYear(),
-                        patient.gender().display(),
-                        patient.registrationDate(),
-                        patient.questionnaireDate())
+                .values(patientId, patient.birthYear(), patient.gender().display(), patient.registrationDate(), patient.questionnaireDate())
                 .execute();
     }
 
@@ -188,8 +184,7 @@ class ClinicalDAO {
                 .execute();
     }
 
-    private void writePriorTumorTreatments(@NotNull String patientId,
-            @NotNull List<PriorTumorTreatment> priorTumorTreatments) {
+    private void writePriorTumorTreatments(@NotNull String patientId, @NotNull List<PriorTumorTreatment> priorTumorTreatments) {
         for (PriorTumorTreatment priorTumorTreatment : priorTumorTreatments) {
             context.insertInto(PRIORTUMORTREATMENT,
                             PRIORTUMORTREATMENT.PATIENTID,
@@ -236,8 +231,7 @@ class ClinicalDAO {
         }
     }
 
-    private void writePriorSecondPrimaries(@NotNull String patientId,
-            @NotNull List<PriorSecondPrimary> priorSecondPrimaries) {
+    private void writePriorSecondPrimaries(@NotNull String patientId, @NotNull List<PriorSecondPrimary> priorSecondPrimaries) {
         for (PriorSecondPrimary priorSecondPrimary : priorSecondPrimaries) {
             context.insertInto(PRIORSECONDPRIMARY,
                             PRIORSECONDPRIMARY.PATIENTID,
@@ -268,8 +262,7 @@ class ClinicalDAO {
         }
     }
 
-    private void writePriorOtherConditions(@NotNull String patientId,
-            @NotNull List<PriorOtherCondition> priorOtherConditions) {
+    private void writePriorOtherConditions(@NotNull String patientId, @NotNull List<PriorOtherCondition> priorOtherConditions) {
         for (PriorOtherCondition priorOtherCondition : priorOtherConditions) {
             context.insertInto(PRIOROTHERCONDITION,
                             PRIOROTHERCONDITION.PATIENTID,
@@ -290,8 +283,7 @@ class ClinicalDAO {
         }
     }
 
-    private void writePriorMolecularTests(@NotNull String patientId,
-            @NotNull List<PriorMolecularTest> priorMolecularTests) {
+    private void writePriorMolecularTests(@NotNull String patientId, @NotNull List<PriorMolecularTest> priorMolecularTests) {
         for (PriorMolecularTest priorMolecularTest : priorMolecularTests) {
             context.insertInto(PRIORMOLECULARTEST,
                             PRIORMOLECULARTEST.PATIENTID,
@@ -443,10 +435,7 @@ class ClinicalDAO {
 
     private void writeBloodTransfusions(@NotNull String patientId, @NotNull List<BloodTransfusion> bloodTransfusions) {
         for (BloodTransfusion bloodTransfusion : bloodTransfusions) {
-            context.insertInto(BLOODTRANSFUSION,
-                            BLOODTRANSFUSION.PATIENTID,
-                            BLOODTRANSFUSION.DATE,
-                            BLOODTRANSFUSION.PRODUCT)
+            context.insertInto(BLOODTRANSFUSION, BLOODTRANSFUSION.PATIENTID, BLOODTRANSFUSION.DATE, BLOODTRANSFUSION.PRODUCT)
                     .values(patientId, bloodTransfusion.date(), bloodTransfusion.product())
                     .execute();
         }
