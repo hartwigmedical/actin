@@ -168,7 +168,7 @@ public class CurationDatabaseReaderTest {
     }
 
     private static void assertECGConfigs(@NotNull List<ECGConfig> configs) {
-        assertEquals(3, configs.size());
+        assertEquals(4, configs.size());
 
         ECGConfig sinus = find(configs, "Sinus Tachycardia");
         assertEquals("Sinus tachycardia", sinus.interpretation());
@@ -176,12 +176,21 @@ public class CurationDatabaseReaderTest {
         assertFalse(sinus.isQTCF());
         assertNull(sinus.qtcfValue());
         assertNull(sinus.qtcfUnit());
+        assertFalse(sinus.isJTC());
+        assertNull(sinus.jtcValue());
+        assertNull(sinus.jtcUnit());
 
         ECGConfig qtcf = find(configs, "qtcf");
         assertTrue(qtcf.isQTCF());
         assertFalse(qtcf.ignore());
         assertEquals(470, (int) qtcf.qtcfValue());
         assertEquals("ms", qtcf.qtcfUnit());
+
+        ECGConfig jtc = find(configs, "jtc");
+        assertTrue(jtc.isJTC());
+        assertFalse(jtc.ignore());
+        assertEquals(570, (int) jtc.jtcValue());
+        assertEquals("ms", jtc.jtcUnit());
 
         ECGConfig weird = find(configs, "weird");
         assertTrue(weird.ignore());
