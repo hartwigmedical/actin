@@ -1,6 +1,9 @@
 package com.hartwig.actin.algo;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.PatientRecordFactory;
@@ -18,6 +21,7 @@ import com.hartwig.actin.doid.serialization.DoidJson;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson;
 import com.hartwig.actin.molecular.util.MolecularPrinter;
+import com.hartwig.actin.treatment.datamodel.Treatment;
 
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -78,7 +82,14 @@ public class StandardOfCareApplication {
 
         RecommendationEngine recommendationEngine = new RecommendationEngine(doidModel, referenceDateProvider);
         LOGGER.info("Recommended treatments descending order of preference:");
-        recommendationEngine.determineAvailableTreatments(patient, TreatmentDB.loadTreatments()).forEach(LOGGER::info);
+        recommendationEngine.availableTreatmentsByScore(patient, TreatmentDB.loadTreatments())
+                .entrySet()
+                .stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByKey()))
+                .forEach(entry -> LOGGER.info("Score=" + entry.getKey() + ": " + entry.getValue()
+                        .stream()
+                        .map(Treatment::name)
+                        .collect(Collectors.joining(", "))));
 
         LOGGER.info("Done!");
     }

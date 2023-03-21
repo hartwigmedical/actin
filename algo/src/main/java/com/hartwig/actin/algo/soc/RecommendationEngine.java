@@ -1,8 +1,11 @@
 package com.hartwig.actin.algo.soc;
 
+import static java.util.stream.Collectors.groupingBy;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -23,7 +26,7 @@ public class RecommendationEngine {
     private final DoidModel doidModel;
     private final EvaluationFunctionFactory evaluationFunctionFactory;
 
-    public RecommendationEngine(final DoidModel doidModel, ReferenceDateProvider referenceDateProvider) {
+    public RecommendationEngine(DoidModel doidModel, ReferenceDateProvider referenceDateProvider) {
         this.doidModel = doidModel;
         this.evaluationFunctionFactory = EvaluationFunctionFactory.create(doidModel, referenceDateProvider);
     }
@@ -45,6 +48,10 @@ public class RecommendationEngine {
                         .noneMatch(evaluation -> evaluation.result() == EvaluationResult.FAIL)
                 )
                 .filter(treatment -> treatment.score() >= 0).sorted(Comparator.comparing(Treatment::score).reversed());
+    }
+
+    public Map<Integer, List<Treatment>> availableTreatmentsByScore(PatientRecord patientRecord, Stream<Treatment> treatments) {
+        return determineAvailableTreatments(patientRecord, treatments).collect(groupingBy(Treatment::score));
     }
 
     public int determineTreatmentLineForPatient(PatientRecord patientRecord) {
