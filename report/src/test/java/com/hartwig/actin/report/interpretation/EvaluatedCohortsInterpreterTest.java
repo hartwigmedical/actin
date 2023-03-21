@@ -18,10 +18,11 @@ public class EvaluatedCohortsInterpreterTest {
     private static final String CLOSED_COHORT = "CLOSED";
     private static final String ELIGIBLE_COHORT = "ELIGIBLE";
     private static final String ELIGIBLE_COHORT_2 = "ELIGIBLE2";
+    private static final String ELIGIBLE_EVENT = "event";
 
     @Test
     public void shouldReturnAllEligibleAndOpenCohortsForDriver() {
-        List<String> matchingTrials = createInterpreter().trialsForDriver(driverForEvent(ELIGIBLE_COHORT));
+        List<String> matchingTrials = createInterpreter().trialsForDriver(driverForEvent(ELIGIBLE_EVENT));
 
         assertEquals(2, matchingTrials.size());
         assertTrue(matchingTrials.contains(ELIGIBLE_COHORT));
@@ -41,7 +42,7 @@ public class EvaluatedCohortsInterpreterTest {
     @Test
     public void shouldIndicateDriverIsActionableIfEventMatchesEligibleTrial() {
         assertFalse(createInterpreter().driverIsActionable(driverForEvent(INELIGIBLE_COHORT)));
-        assertTrue(createInterpreter().driverIsActionable(driverForEvent(ELIGIBLE_COHORT)));
+        assertTrue(createInterpreter().driverIsActionable(driverForEvent(ELIGIBLE_EVENT)));
     }
 
     @Test
@@ -86,7 +87,7 @@ public class EvaluatedCohortsInterpreterTest {
     private static EvaluatedCohortsInterpreter createInterpreter() {
         return new EvaluatedCohortsInterpreter(List.of(evaluatedCohort(INELIGIBLE_COHORT, false, true),
                 evaluatedCohort(CLOSED_COHORT, true, false),
-                evaluatedCohort(ELIGIBLE_COHORT, true, true),
-                evaluatedCohort(ELIGIBLE_COHORT_2, true, true, ELIGIBLE_COHORT)));
+                evaluatedCohort(ELIGIBLE_COHORT, true, true, ELIGIBLE_EVENT),
+                evaluatedCohort(ELIGIBLE_COHORT_2, true, true, ELIGIBLE_EVENT)));
     }
 }
