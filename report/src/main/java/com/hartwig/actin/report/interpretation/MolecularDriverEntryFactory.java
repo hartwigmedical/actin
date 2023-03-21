@@ -1,21 +1,16 @@
 package com.hartwig.actin.report.interpretation;
 
-import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
-import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumber;
 import com.hartwig.actin.molecular.datamodel.driver.Disruption;
 import com.hartwig.actin.molecular.datamodel.driver.Driver;
 import com.hartwig.actin.molecular.datamodel.driver.Fusion;
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
-import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
@@ -26,46 +21,22 @@ import org.jetbrains.annotations.Nullable;
 
 public class MolecularDriverEntryFactory {
 
-    private static final String RESPONSIVE_EVIDENCE_APPROVED_TREATMENTS = "Approved";
+    private final MolecularDriversInterpreter molecularDriversInterpreter;
 
-    @NotNull
-    private final Multimap<String, String> trialsPerInclusionEvent;
-
-    @NotNull
-    public static MolecularDriverEntryFactory fromEvaluatedCohorts(@NotNull List<EvaluatedCohort> evaluatedCohorts) {
-        Multimap<String, String> trialsPerInclusionEvent = ArrayListMultimap.create();
-        for (EvaluatedCohort evaluatedCohort : evaluatedCohorts) {
-            if (evaluatedCohort.isPotentiallyEligible() && evaluatedCohort.isOpen()) {
-                for (String molecularEvent : evaluatedCohort.molecularEvents()) {
-                    trialsPerInclusionEvent.put(molecularEvent, evaluatedCohort.acronym());
-                }
-            }
-        }
-        return new MolecularDriverEntryFactory(trialsPerInclusionEvent);
-    }
-
-    private MolecularDriverEntryFactory(@NotNull final Multimap<String, String> trialsPerInclusionEvent) {
-        this.trialsPerInclusionEvent = trialsPerInclusionEvent;
+    public MolecularDriverEntryFactory(MolecularDriversInterpreter molecularDriversInterpreter) {
+        this.molecularDriversInterpreter = molecularDriversInterpreter;
     }
 
     @NotNull
-    public Stream<MolecularDriverEntry> create(@NotNull MolecularRecord molecular) {
-        MolecularDrivers drivers = molecular.drivers();
-
-        return Stream.of(streamAndFilterDrivers(drivers.variants()).map(this::fromVariant),
-                        streamAndFilterDrivers(drivers.copyNumbers()).map(this::fromCopyNumber),
-                        streamAndFilterDrivers(drivers.homozygousDisruptions()).map(this::fromHomozygousDisruption),
-                        streamAndFilterDrivers(drivers.disruptions()).map(this::fromDisruption),
-                        streamAndFilterDrivers(drivers.fusions()).map(this::fromFusion),
-                        streamAndFilterDrivers(drivers.viruses()).map(this::fromVirus))
+    public Stream<MolecularDriverEntry> create() {
+        return Stream.of(molecularDriversInterpreter.filteredVariants().map(this::fromVariant),
+                        molecularDriversInterpreter.filteredCopyNumbers().map(this::fromCopyNumber),
+                        molecularDriversInterpreter.filteredHomozygousDisruptions().map(this::fromHomozygousDisruption),
+                        molecularDriversInterpreter.filteredDisruptions().map(this::fromDisruption),
+                        molecularDriversInterpreter.filteredFusions().map(this::fromFusion),
+                        molecularDriversInterpreter.filteredViruses().map(this::fromVirus))
                 .flatMap(Function.identity())
                 .sorted(new MolecularDriverEntryComparator());
-    }
-
-    private <T extends Driver> Stream<T> streamAndFilterDrivers(Set<T> drivers) {
-        return drivers.stream()
-                .filter(driver -> driver.isReportable() || !driver.evidence().externalEligibleTrials().isEmpty()
-                        || trialsPerInclusionEvent.containsKey(driver.event()) || !driver.evidence().approvedTreatments().isEmpty());
     }
 
     private MolecularDriverEntry fromVariant(@NotNull Variant variant) {
@@ -158,22 +129,11 @@ public class MolecularDriverEntryFactory {
     }
 
     private void addActionability(@NotNull ImmutableMolecularDriverEntry.Builder entryBuilder, @NotNull Driver driver) {
-        entryBuilder.actinTrials(inclusiveActinTrials(driver));
+        entryBuilder.actinTrials(molecularDriversInterpreter.trialsForDriver(driver));
         entryBuilder.externalTrials(externalTrials(driver));
 
         entryBuilder.bestResponsiveEvidence(bestResponsiveEvidence(driver));
         entryBuilder.bestResistanceEvidence(bestResistanceEvidence(driver));
-    }
-
-    @NotNull
-    private Set<String> inclusiveActinTrials(@NotNull Driver driver) {
-        Set<String> trials = Sets.newTreeSet(Ordering.natural());
-
-        if (trialsPerInclusionEvent.containsKey(driver.event())) {
-            trials.addAll(trialsPerInclusionEvent.get(driver.event()));
-        }
-
-        return trials;
     }
 
     @NotNull
@@ -189,7 +149,7 @@ public class MolecularDriverEntryFactory {
     private static String bestResponsiveEvidence(@NotNull Driver driver) {
         ActionableEvidence evidence = driver.evidence();
         if (!evidence.approvedTreatments().isEmpty()) {
-            return RESPONSIVE_EVIDENCE_APPROVED_TREATMENTS;
+            return "Approved";
         } else if (!evidence.onLabelExperimentalTreatments().isEmpty()) {
             return "On-label experimental";
         } else if (!evidence.offLabelExperimentalTreatments().isEmpty()) {
