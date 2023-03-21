@@ -1,11 +1,5 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
--- TODO Drop per 1st of jan 2023
-DROP TABLE IF EXISTS amplification;
-DROP TABLE IF EXISTS amplificationEvidence;
-DROP TABLE IF EXISTS loss;
-DROP TABLE IF EXISTS lossEvidence;
-
 -- CLINICAL
 DROP TABLE IF EXISTS patient;
 CREATE TABLE patient
@@ -55,6 +49,8 @@ CREATE TABLE clinicalStatus
     ecgAberrationDescription varchar(50),
     qtcfValue int,
     qtcfUnit varchar(50),
+    jtcValue int,
+    jtcUnit varchar(50),
     lvef double precision,
     PRIMARY KEY (id)
 );

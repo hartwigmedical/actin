@@ -57,23 +57,17 @@ public class CardiacFunctionRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator hasLimitedQTCFCreator() {
-        return function -> {
-            double maxQTCF = functionInputResolver().createOneDoubleInput(function);
-            return new HasLimitedQTCF(maxQTCF);
-        };
+        return function -> ECGMeasureEvaluationFunctions.hasLimitedQTCF(functionInputResolver().createOneDoubleInput(function));
     }
 
     @NotNull
     private FunctionCreator hasSufficientQTCFCreator() {
-        return function -> {
-            double minQTCF = functionInputResolver().createOneDoubleInput(function);
-            return new HasSufficientQTCF(minQTCF);
-        };
+        return function -> ECGMeasureEvaluationFunctions.hasSufficientQTCF(functionInputResolver().createOneDoubleInput(function));
     }
 
     @NotNull
     private FunctionCreator hasSufficientJTcCreator() {
-        return function -> new HasSufficientJTc();
+        return function -> ECGMeasureEvaluationFunctions.hasSufficientJTc(functionInputResolver().createOneDoubleInput(function));
     }
 
     @NotNull

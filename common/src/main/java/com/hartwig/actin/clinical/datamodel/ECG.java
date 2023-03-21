@@ -14,8 +14,8 @@ public abstract class ECG {
     public abstract String aberrationDescription();
 
     @Nullable
-    public abstract Integer qtcfValue();
+    public abstract ECGMeasure qtcfMeasure();
 
     @Nullable
-    public abstract String qtcfUnit();
+    public abstract ECGMeasure jtcMeasure();
 }

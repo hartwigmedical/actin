@@ -10,13 +10,6 @@ SELECT  trial.code AS trialId, acronym AS trialAcronym, cohort.code AS cohortId,
     ORDER BY trialId
 );
 
-CREATE OR REPLACE VIEW eligibleCohorts
-AS (
-SELECT DISTINCT patientId, trialId, trialAcronym, cohortDescription
-    FROM trialEvaluation
-    WHERE ((isEligibleTrial AND NOT trialHasCohorts AND trialOpen) OR (isEligibleTrial AND isEligibleCohort AND cohortOpen AND NOT cohortBlacklist))
-);
-
 CREATE OR REPLACE VIEW molecularDetails
 AS (
 SELECT * FROM (
@@ -166,7 +159,8 @@ SELECT  referenceDate, referenceDateIsLive, patientId, trialMatch.code AS trialI
         cohortMatch.code AS cohortId, cohortMatch.description AS cohortDescription, cohortMatch.open AS cohortOpen,
         cohortMatch.slotsAvailable AS cohortSlotsAvailable, cohortMatch.blacklist AS cohortBlacklist, cohortMatch.isEligible AS isEligibleCohort,
         eligibility AS eligibilityRule, result, recoverable, passSpecificMessages, passGeneralMessages, warnSpecificMessages, warnGeneralMessages,
-        undeterminedSpecificMessages, undeterminedGeneralMessages, failSpecificMessages, failGeneralMessages
+        undeterminedSpecificMessages, undeterminedGeneralMessages, failSpecificMessages, failGeneralMessages,
+        inclusionMolecularEvents, exclusionMolecularEvents
     FROM evaluation
     INNER JOIN trialMatch ON trialMatch.id = evaluation.trialMatchId
     INNER JOIN treatmentMatch ON treatmentMatch.id = trialMatch.treatmentMatchId
@@ -179,7 +173,8 @@ SELECT  DISTINCT referenceDate, referenceDateIsLive, patientId, trialMatch.code 
         cohortMatch.slotsAvailable AS cohortSlotsAvailable, cohortMatch.blacklist AS cohortBlacklist, cohortMatch.isEligible AS isEligibleCohort,
         NULL AS eligibilityRule, NULL AS result, NULL as recoverable, NULL AS passSpecificMessages, NULL AS passGeneralMessages,
         NULL AS warnSpecificMessages, NULL AS warnGeneralMessages, NULL AS undeterminedSpecificMessages,
-        NULL AS undeterminedGeneralMessages, NULL AS failSpecificMessages, NULL AS failGeneralMessages
+        NULL AS undeterminedGeneralMessages, NULL AS failSpecificMessages, NULL AS failGeneralMessages,
+        NULL AS inclusionMolecularEvents, NULL AS exclusionMolecularEvents
     FROM cohortMatch
     INNER JOIN trialMatch ON trialMatch.id = cohortMatch.trialMatchId
     INNER JOIN treatmentMatch ON treatmentMatch.id = trialMatch.treatmentMatchId
@@ -187,4 +182,11 @@ SELECT  DISTINCT referenceDate, referenceDateIsLive, patientId, trialMatch.code 
     WHERE cohortMatch.id NOT IN (SELECT DISTINCT cohortMatchId FROM evaluation WHERE NOT isnull(cohortMatchId))
     ORDER BY patientId, cohortId)
 AS a
+);
+
+CREATE OR REPLACE VIEW eligibleCohorts
+AS (
+SELECT DISTINCT patientId, trialId, trialAcronym, cohortDescription
+    FROM trialEvaluation
+    WHERE ((isEligibleTrial AND NOT trialHasCohorts AND trialOpen) OR (isEligibleTrial AND isEligibleCohort AND cohortOpen AND NOT cohortBlacklist))
 );

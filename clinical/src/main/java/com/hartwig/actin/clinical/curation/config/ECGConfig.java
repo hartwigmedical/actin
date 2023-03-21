@@ -25,4 +25,12 @@ public abstract class ECGConfig implements CurationConfig {
 
     @Nullable
     public abstract String qtcfUnit();
+
+    public abstract boolean isJTC();
+
+    @Nullable
+    public abstract Integer jtcValue();
+
+    @Nullable
+    public abstract String jtcUnit();
 }
