@@ -39,8 +39,8 @@ public class MolecularDriversSummarizerTest {
     @Test
     public void shouldReturnKeyVariants() {
         Set<Variant> variants = Set.of(variant(EXPECTED_GENE, DriverLikelihood.HIGH, true),
-                        variant("non-reportable", DriverLikelihood.HIGH, false),
-                        variant("medium likelihood", DriverLikelihood.MEDIUM, true));
+                variant("non-reportable", DriverLikelihood.HIGH, false),
+                variant("medium likelihood", DriverLikelihood.MEDIUM, true));
 
         MolecularDrivers molecularDrivers = ImmutableMolecularDrivers.builder().addAllVariants(variants).build();
         assertExpectedStreamResult(summarizer(molecularDrivers).keyGenesWithVariants());
@@ -137,10 +137,10 @@ public class MolecularDriversSummarizerTest {
                 copyNumber(CopyNumberType.LOSS, "expected loss", DriverLikelihood.HIGH, false),
                 copyNumber(CopyNumberType.FULL_GAIN, "no evidence", DriverLikelihood.LOW, true));
 
-        Set<HomozygousDisruption> homozygousDisruptions = Set.of(
-                homozygousDisruption("key HD", DriverLikelihood.HIGH, true, approvedTreatment),
-                homozygousDisruption("expected non-reportable HD", DriverLikelihood.HIGH, false, approvedTreatment),
-                homozygousDisruption("expected null likelihood HD", null, true, externalEvidence));
+        Set<HomozygousDisruption> homozygousDisruptions =
+                Set.of(homozygousDisruption("key HD", DriverLikelihood.HIGH, true, approvedTreatment),
+                        homozygousDisruption("expected non-reportable HD", DriverLikelihood.HIGH, false, approvedTreatment),
+                        homozygousDisruption("expected null likelihood HD", null, true, externalEvidence));
 
         Set<Disruption> disruptions = Set.of(disruption("expected key disruption", DriverLikelihood.HIGH, true),
                 disruption("expected non-reportable disruption", DriverLikelihood.LOW, false, approvedTreatment),
@@ -170,11 +170,11 @@ public class MolecularDriversSummarizerTest {
         assertTrue(otherActionableEvents.stream().allMatch(event -> event.startsWith("expected")));
     }
 
-    private Variant variant(String name, DriverLikelihood driverLikelihood, boolean isReportable) {
+    private static Variant variant(String name, DriverLikelihood driverLikelihood, boolean isReportable) {
         return variant(name, driverLikelihood, isReportable, TestActionableEvidenceFactory.createEmpty());
     }
 
-    private Variant variant(String name, DriverLikelihood driverLikelihood, boolean isReportable, ActionableEvidence evidence) {
+    private static Variant variant(String name, DriverLikelihood driverLikelihood, boolean isReportable, ActionableEvidence evidence) {
         return TestVariantFactory.builder()
                 .gene(name)
                 .event(name)
@@ -184,7 +184,7 @@ public class MolecularDriversSummarizerTest {
                 .build();
     }
 
-    private CopyNumber copyNumber(CopyNumberType type, String name, DriverLikelihood driverLikelihood, boolean isReportable) {
+    private static CopyNumber copyNumber(CopyNumberType type, String name, DriverLikelihood driverLikelihood, boolean isReportable) {
         return TestCopyNumberFactory.builder()
                 .type(type)
                 .gene(name)
@@ -194,11 +194,11 @@ public class MolecularDriversSummarizerTest {
                 .build();
     }
 
-    private HomozygousDisruption homozygousDisruption(String name, DriverLikelihood driverLikelihood, boolean isReportable) {
+    private static HomozygousDisruption homozygousDisruption(String name, DriverLikelihood driverLikelihood, boolean isReportable) {
         return homozygousDisruption(name, driverLikelihood, isReportable, TestActionableEvidenceFactory.createEmpty());
     }
 
-    private HomozygousDisruption homozygousDisruption(String name, DriverLikelihood driverLikelihood, boolean isReportable,
+    private static HomozygousDisruption homozygousDisruption(String name, DriverLikelihood driverLikelihood, boolean isReportable,
             ActionableEvidence evidence) {
         return TestHomozygousDisruptionFactory.builder()
                 .gene(name)
@@ -209,11 +209,12 @@ public class MolecularDriversSummarizerTest {
                 .build();
     }
 
-    private Disruption disruption(String name, DriverLikelihood driverLikelihood, boolean isReportable) {
+    private static Disruption disruption(String name, DriverLikelihood driverLikelihood, boolean isReportable) {
         return disruption(name, driverLikelihood, isReportable, TestActionableEvidenceFactory.createEmpty());
     }
 
-    private Disruption disruption(String name, DriverLikelihood driverLikelihood, boolean isReportable, ActionableEvidence evidence) {
+    private static Disruption disruption(String name, DriverLikelihood driverLikelihood, boolean isReportable,
+            ActionableEvidence evidence) {
         return TestDisruptionFactory.builder()
                 .gene(name)
                 .event(name)
@@ -223,11 +224,11 @@ public class MolecularDriversSummarizerTest {
                 .build();
     }
 
-    private Fusion fusion(String event, DriverLikelihood driverLikelihood, boolean isReportable) {
+    private static Fusion fusion(String event, DriverLikelihood driverLikelihood, boolean isReportable) {
         return fusion(event, driverLikelihood, isReportable, TestActionableEvidenceFactory.createEmpty());
     }
 
-    private Fusion fusion(String event, DriverLikelihood driverLikelihood, boolean isReportable, ActionableEvidence evidence) {
+    private static Fusion fusion(String event, DriverLikelihood driverLikelihood, boolean isReportable, ActionableEvidence evidence) {
         return TestFusionFactory.builder()
                 .event(event)
                 .driverLikelihood(driverLikelihood)
@@ -236,7 +237,7 @@ public class MolecularDriversSummarizerTest {
                 .build();
     }
 
-    private Virus virus(String event, DriverLikelihood driverLikelihood, boolean isReportable) {
+    private static Virus virus(String event, DriverLikelihood driverLikelihood, boolean isReportable) {
         return TestVirusFactory.builder()
                 .event(event)
                 .driverLikelihood(driverLikelihood)
@@ -246,11 +247,11 @@ public class MolecularDriversSummarizerTest {
                 .build();
     }
 
-    private MolecularDriversSummarizer summarizer(MolecularDrivers molecularDrivers) {
+    private static MolecularDriversSummarizer summarizer(MolecularDrivers molecularDrivers) {
         return MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(molecularDrivers, Collections.emptyList());
     }
 
-    private void assertExpectedStreamResult(Stream<String> keyEntryStream) {
+    private static void assertExpectedStreamResult(Stream<String> keyEntryStream) {
         Set<String> keyEntries = keyEntryStream.collect(Collectors.toSet());
         assertEquals(1, keyEntries.size());
         assertTrue(keyEntries.contains(EXPECTED_GENE));

@@ -85,7 +85,8 @@ public class EvaluatedCohortsInterpreterTest {
 
     private static EvaluatedCohortsInterpreter createInterpreter() {
         return new EvaluatedCohortsInterpreter(List.of(evaluatedCohort(INELIGIBLE_COHORT, false, true),
-                evaluatedCohort(CLOSED_COHORT, true, false), evaluatedCohort(ELIGIBLE_COHORT, true, true),
+                evaluatedCohort(CLOSED_COHORT, true, false),
+                evaluatedCohort(ELIGIBLE_COHORT, true, true),
                 evaluatedCohort(ELIGIBLE_COHORT_2, true, true, ELIGIBLE_COHORT)));
     }
 }

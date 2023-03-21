@@ -13,12 +13,12 @@ import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 
-public class MolecularDriversDetails {
+public class MolecularDriversInterpreter {
 
     private final MolecularDrivers molecularDrivers;
     private final EvaluatedCohortsInterpreter evaluatedCohortsInterpreter;
 
-    public MolecularDriversDetails(MolecularDrivers molecularDrivers, EvaluatedCohortsInterpreter evaluatedCohortsInterpreter) {
+    public MolecularDriversInterpreter(MolecularDrivers molecularDrivers, EvaluatedCohortsInterpreter evaluatedCohortsInterpreter) {
         this.molecularDrivers = molecularDrivers;
         this.evaluatedCohortsInterpreter = evaluatedCohortsInterpreter;
     }

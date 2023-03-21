@@ -21,7 +21,7 @@ import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFact
 
 import org.junit.Test;
 
-public class MolecularDriversDetailsTest {
+public class MolecularDriversInterpreterTest {
 
     public static final String EVENT_VARIANT = "variant";
     public static final String EVENT_CN = "CN";
@@ -71,13 +71,14 @@ public class MolecularDriversDetailsTest {
     }
 
     private static void assertCountForRecordAndCohorts(int expectedCount, MolecularRecord molecularRecord, List<EvaluatedCohort> cohorts) {
-        MolecularDriversDetails details = new MolecularDriversDetails(molecularRecord.drivers(), new EvaluatedCohortsInterpreter(cohorts));
-        assertEquals(expectedCount, details.filteredVariants().count());
-        assertEquals(expectedCount, details.filteredCopyNumbers().count());
-        assertEquals(expectedCount, details.filteredHomozygousDisruptions().count());
-        assertEquals(expectedCount, details.filteredDisruptions().count());
-        assertEquals(expectedCount, details.filteredFusions().count());
-        assertEquals(expectedCount, details.filteredViruses().count());
+        MolecularDriversInterpreter interpreter =
+                new MolecularDriversInterpreter(molecularRecord.drivers(), new EvaluatedCohortsInterpreter(cohorts));
+        assertEquals(expectedCount, interpreter.filteredVariants().count());
+        assertEquals(expectedCount, interpreter.filteredCopyNumbers().count());
+        assertEquals(expectedCount, interpreter.filteredHomozygousDisruptions().count());
+        assertEquals(expectedCount, interpreter.filteredDisruptions().count());
+        assertEquals(expectedCount, interpreter.filteredFusions().count());
+        assertEquals(expectedCount, interpreter.filteredViruses().count());
     }
 
     private static MolecularRecord createTestMolecularRecordWithNonReportableDriverWithEvidence(ActionableEvidence evidence) {

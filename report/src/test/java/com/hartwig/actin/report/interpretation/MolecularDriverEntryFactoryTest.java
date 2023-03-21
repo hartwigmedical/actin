@@ -124,10 +124,11 @@ public class MolecularDriverEntryFactoryTest {
 
     private static MolecularDriverEntryFactory createFactoryForMolecularRecordAndCohorts(MolecularRecord molecular,
             List<EvaluatedCohort> cohorts) {
-        return new MolecularDriverEntryFactory(new MolecularDriversDetails(molecular.drivers(), new EvaluatedCohortsInterpreter(cohorts)));
+        return new MolecularDriverEntryFactory(new MolecularDriversInterpreter(molecular.drivers(),
+                new EvaluatedCohortsInterpreter(cohorts)));
     }
 
-    private MolecularDriverEntryFactory createFactoryWithCohortsForEvent(MolecularRecord molecularRecord, String event) {
+    private static MolecularDriverEntryFactory createFactoryWithCohortsForEvent(MolecularRecord molecularRecord, String event) {
         EvaluatedCohort openCohortForVariant = EvaluatedCohortTestFactory.builder()
                 .acronym("trial 1")
                 .addMolecularEvents(event)
