@@ -21,23 +21,20 @@ import org.jetbrains.annotations.Nullable;
 
 public class MolecularDriverEntryFactory {
 
-    private static final String RESPONSIVE_EVIDENCE_APPROVED_TREATMENTS = "Approved";
+    private final MolecularDriversDetails molecularDriversDetails;
 
-    @NotNull
-    private final MolecularDriversInterpreter molecularDriversInterpreter;
-
-    public MolecularDriverEntryFactory(@NotNull MolecularDriversInterpreter molecularDriversInterpreter) {
-        this.molecularDriversInterpreter = molecularDriversInterpreter;
+    public MolecularDriverEntryFactory(MolecularDriversDetails molecularDriversDetails) {
+        this.molecularDriversDetails = molecularDriversDetails;
     }
 
     @NotNull
     public Stream<MolecularDriverEntry> create() {
-        return Stream.of(molecularDriversInterpreter.filteredVariants().map(this::fromVariant),
-                        molecularDriversInterpreter.filteredCopyNumbers().map(this::fromCopyNumber),
-                        molecularDriversInterpreter.filteredHomozygousDisruptions().map(this::fromHomozygousDisruption),
-                        molecularDriversInterpreter.filteredDisruptions().map(this::fromDisruption),
-                        molecularDriversInterpreter.filteredFusions().map(this::fromFusion),
-                        molecularDriversInterpreter.filteredViruses().map(this::fromVirus))
+        return Stream.of(molecularDriversDetails.filteredVariants().map(this::fromVariant),
+                        molecularDriversDetails.filteredCopyNumbers().map(this::fromCopyNumber),
+                        molecularDriversDetails.filteredHomozygousDisruptions().map(this::fromHomozygousDisruption),
+                        molecularDriversDetails.filteredDisruptions().map(this::fromDisruption),
+                        molecularDriversDetails.filteredFusions().map(this::fromFusion),
+                        molecularDriversDetails.filteredViruses().map(this::fromVirus))
                 .flatMap(Function.identity())
                 .sorted(new MolecularDriverEntryComparator());
     }
@@ -132,7 +129,7 @@ public class MolecularDriverEntryFactory {
     }
 
     private void addActionability(@NotNull ImmutableMolecularDriverEntry.Builder entryBuilder, @NotNull Driver driver) {
-        entryBuilder.actinTrials(molecularDriversInterpreter.getTrialsForDriver(driver));
+        entryBuilder.actinTrials(molecularDriversDetails.trialsForDriver(driver));
         entryBuilder.externalTrials(externalTrials(driver));
 
         entryBuilder.bestResponsiveEvidence(bestResponsiveEvidence(driver));
@@ -152,7 +149,7 @@ public class MolecularDriverEntryFactory {
     private static String bestResponsiveEvidence(@NotNull Driver driver) {
         ActionableEvidence evidence = driver.evidence();
         if (!evidence.approvedTreatments().isEmpty()) {
-            return RESPONSIVE_EVIDENCE_APPROVED_TREATMENTS;
+            return "Approved";
         } else if (!evidence.onLabelExperimentalTreatments().isEmpty()) {
             return "On-label experimental";
         } else if (!evidence.offLabelExperimentalTreatments().isEmpty()) {

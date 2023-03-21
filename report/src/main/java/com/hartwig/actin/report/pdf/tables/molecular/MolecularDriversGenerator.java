@@ -9,8 +9,9 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.report.interpretation.ClonalityInterpreter;
 import com.hartwig.actin.report.interpretation.EvaluatedCohort;
+import com.hartwig.actin.report.interpretation.EvaluatedCohortsInterpreter;
 import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory;
-import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter;
+import com.hartwig.actin.report.interpretation.MolecularDriversDetails;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -57,9 +58,9 @@ public class MolecularDriversGenerator implements TableGenerator {
         table.addHeaderCell(Cells.createHeader("Best evidence in " + molecular.evidenceSource()));
         table.addHeaderCell(Cells.createHeader("Resistance in " + molecular.evidenceSource()));
 
-        MolecularDriversInterpreter molecularDriversInterpreter =
-                MolecularDriversInterpreter.fromMolecularDriversAndEvaluatedCohorts(molecular.drivers(), cohorts);
-        MolecularDriverEntryFactory factory = new MolecularDriverEntryFactory(molecularDriversInterpreter);
+        MolecularDriversDetails molecularDriversDetails = new MolecularDriversDetails(molecular.drivers(),
+                new EvaluatedCohortsInterpreter(cohorts));
+        MolecularDriverEntryFactory factory = new MolecularDriverEntryFactory(molecularDriversDetails);
 
         factory.create().forEach(entry -> {
             table.addCell(Cells.createContent(entry.driverType()));
@@ -71,7 +72,7 @@ public class MolecularDriversGenerator implements TableGenerator {
             table.addCell(Cells.createContent(nullToEmpty(entry.bestResistanceEvidence())));
         });
 
-        if (molecularDriversInterpreter.hasPotentiallySubClonalVariants()) {
+        if (molecularDriversDetails.hasPotentiallySubClonalVariants()) {
             String note = "* Variant has > " + Formats.percentage(ClonalityInterpreter.CLONAL_CUTOFF) + " likelihood of being sub-clonal";
             table.addCell(Cells.createSpanningSubNote(note, table));
         }

@@ -12,10 +12,11 @@ import com.google.common.collect.Maps;
 import com.hartwig.actin.molecular.datamodel.driver.Driver;
 
 public class EvaluatedCohortsInterpreter {
-    private final Map<String, List<String>> trialsByInclusionEvent;
+
+    private final Map<String, List<String>> eligibleTrialsByInclusionEvent;
 
     public EvaluatedCohortsInterpreter(List<EvaluatedCohort> evaluatedCohorts) {
-        trialsByInclusionEvent = evaluatedCohorts.stream()
+        eligibleTrialsByInclusionEvent = evaluatedCohorts.stream()
                 .filter(EvaluatedCohort::isPotentiallyEligible)
                 .filter(EvaluatedCohort::isOpen)
                 .flatMap(cohort -> cohort.molecularEvents().stream().map(event -> Maps.immutableEntry(event, cohort.acronym())))
@@ -23,11 +24,12 @@ public class EvaluatedCohortsInterpreter {
                 .collect(groupingBy(Map.Entry::getKey, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
     }
 
-    public boolean hasTrialMatchingEvent(String event) {
-        return trialsByInclusionEvent.containsKey(event);
+    public List<String> trialsForDriver(Driver driver) {
+        return Optional.ofNullable(eligibleTrialsByInclusionEvent.get(driver.event())).orElse(Collections.emptyList());
     }
 
-    public List<String> getTrialsForDriver(Driver driver) {
-        return Optional.ofNullable(trialsByInclusionEvent.get(driver.event())).orElse(Collections.emptyList());
+    public boolean driverIsActionable(Driver driver) {
+        return !driver.evidence().externalEligibleTrials().isEmpty() || eligibleTrialsByInclusionEvent.containsKey(driver.event())
+                || !driver.evidence().approvedTreatments().isEmpty();
     }
 }

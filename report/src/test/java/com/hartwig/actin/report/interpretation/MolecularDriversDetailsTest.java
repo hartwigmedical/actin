@@ -1,20 +1,13 @@
 package com.hartwig.actin.report.interpretation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory;
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumber;
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType;
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory;
@@ -28,7 +21,7 @@ import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFact
 
 import org.junit.Test;
 
-public class MolecularDriversInterpreterTest {
+public class MolecularDriversDetailsTest {
 
     public static final String EVENT_VARIANT = "variant";
     public static final String EVENT_CN = "CN";
@@ -73,40 +66,18 @@ public class MolecularDriversInterpreterTest {
         assertCountForRecord(1, record);
     }
 
-    @Test
-    public void shouldIndicatePartialAmplificationsInKeySummary() {
-        String partialAmpEvent = "partial amp";
-        String fullAmpEvent = "full amp";
-
-        Set<CopyNumber> copyNumbers = Stream.of(TestCopyNumberFactory.builder().type(CopyNumberType.FULL_GAIN).gene(fullAmpEvent),
-                        TestCopyNumberFactory.builder().type(CopyNumberType.PARTIAL_GAIN).gene(partialAmpEvent))
-                .map(builder -> builder.driverLikelihood(DriverLikelihood.HIGH).isReportable(true).build())
-                .collect(Collectors.toSet());
-
-        MolecularDrivers molecularDrivers = ImmutableMolecularDrivers.builder().addAllCopyNumbers(copyNumbers).build();
-
-        MolecularDriversInterpreter interpreter =
-                MolecularDriversInterpreter.fromMolecularDriversAndEvaluatedCohorts(molecularDrivers, Collections.emptyList());
-
-        Set<String> amplificationGenes = interpreter.keyAmplificationGenes().collect(Collectors.toSet());
-        assertEquals(2, amplificationGenes.size());
-        assertTrue(amplificationGenes.contains(partialAmpEvent + " (partial)"));
-        assertTrue(amplificationGenes.contains(fullAmpEvent));
-    }
-
     private static void assertCountForRecord(int expectedCount, MolecularRecord molecularRecord) {
         assertCountForRecordAndCohorts(expectedCount, molecularRecord, Collections.emptyList());
     }
 
     private static void assertCountForRecordAndCohorts(int expectedCount, MolecularRecord molecularRecord, List<EvaluatedCohort> cohorts) {
-        MolecularDriversInterpreter interpreter =
-                MolecularDriversInterpreter.fromMolecularDriversAndEvaluatedCohorts(molecularRecord.drivers(), cohorts);
-        assertEquals(expectedCount, interpreter.filteredVariants().count());
-        assertEquals(expectedCount, interpreter.filteredCopyNumbers().count());
-        assertEquals(expectedCount, interpreter.filteredHomozygousDisruptions().count());
-        assertEquals(expectedCount, interpreter.filteredDisruptions().count());
-        assertEquals(expectedCount, interpreter.filteredFusions().count());
-        assertEquals(expectedCount, interpreter.filteredViruses().count());
+        MolecularDriversDetails details = new MolecularDriversDetails(molecularRecord.drivers(), new EvaluatedCohortsInterpreter(cohorts));
+        assertEquals(expectedCount, details.filteredVariants().count());
+        assertEquals(expectedCount, details.filteredCopyNumbers().count());
+        assertEquals(expectedCount, details.filteredHomozygousDisruptions().count());
+        assertEquals(expectedCount, details.filteredDisruptions().count());
+        assertEquals(expectedCount, details.filteredFusions().count());
+        assertEquals(expectedCount, details.filteredViruses().count());
     }
 
     private static MolecularRecord createTestMolecularRecordWithNonReportableDriverWithEvidence(ActionableEvidence evidence) {
@@ -139,7 +110,7 @@ public class MolecularDriversInterpreterTest {
                 .build();
     }
 
-    private List<EvaluatedCohort> createCohortsForEvents(List<String> events) {
+    private static List<EvaluatedCohort> createCohortsForEvents(List<String> events) {
         EvaluatedCohort openCohortForVariant = EvaluatedCohortTestFactory.builder()
                 .acronym("trial 1")
                 .addAllMolecularEvents(events)

@@ -9,7 +9,7 @@ import com.google.common.collect.Maps;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.report.interpretation.EvaluatedCohort;
-import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter;
+import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer;
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
@@ -31,7 +31,7 @@ public class WGSSummaryGenerator implements TableGenerator {
     @NotNull
     private final MolecularRecord molecular;
     @NotNull
-    private final MolecularDriversInterpreter interpreter;
+    private final MolecularDriversSummarizer summarizer;
     private final float keyWidth;
     private final float valueWidth;
 
@@ -39,7 +39,7 @@ public class WGSSummaryGenerator implements TableGenerator {
             @NotNull final List<EvaluatedCohort> cohorts, final float keyWidth, final float valueWidth) {
         this.clinical = clinical;
         this.molecular = molecular;
-        this.interpreter = MolecularDriversInterpreter.fromMolecularDriversAndEvaluatedCohorts(molecular.drivers(), cohorts);
+        this.summarizer = MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(molecular.drivers(), cohorts);
         this.keyWidth = keyWidth;
         this.valueWidth = valueWidth;
     }
@@ -77,15 +77,15 @@ public class WGSSummaryGenerator implements TableGenerator {
                                     characteristicsGenerator.createMSStabilityStringOption().orElse(Formats.VALUE_UNKNOWN)),
                             Maps.immutableEntry("HR status", characteristicsGenerator.createHRStatusStringOption().orElse(Formats.VALUE_UNKNOWN)),
                             Maps.immutableEntry("", ""),
-                            Maps.immutableEntry("Genes with high driver mutation", formatStream(interpreter.keyVariantGenes())),
-                            Maps.immutableEntry("Amplified genes", formatStream(interpreter.keyAmplificationGenes())),
-                            Maps.immutableEntry("Deleted genes", formatStream(interpreter.keyDeletionGenes())),
-                            Maps.immutableEntry("Homozygously disrupted genes", formatStream(interpreter.keyHomozygousDisruptionGenes())),
-                            Maps.immutableEntry("Gene fusions", formatStream(interpreter.keyFusionEvents())),
-                            Maps.immutableEntry("Virus detection", formatStream(interpreter.keyVirusEvents())),
+                            Maps.immutableEntry("Genes with high driver mutation", formatStream(summarizer.keyGenesWithVariants())),
+                            Maps.immutableEntry("Amplified genes", formatStream(summarizer.keyAmplifiedGenes())),
+                            Maps.immutableEntry("Deleted genes", formatStream(summarizer.keyDeletedGenes())),
+                            Maps.immutableEntry("Homozygously disrupted genes", formatStream(summarizer.keyHomozygouslyDisruptedGenes())),
+                            Maps.immutableEntry("Gene fusions", formatStream(summarizer.keyFusionEvents())),
+                            Maps.immutableEntry("Virus detection", formatStream(summarizer.keyVirusEvents())),
                             Maps.immutableEntry("", ""),
                             Maps.immutableEntry("Potentially actionable events with medium/low driver:",
-                                    formatStream(interpreter.actionableEventsThatAreNotKeyDrivers())))
+                                    formatStream(summarizer.actionableEventsThatAreNotKeyDrivers())))
                     .flatMap(entry -> Stream.of(Cells.createKey(entry.getKey()), Cells.createValue(entry.getValue())))
                     .forEach(table::addCell);
         } else {

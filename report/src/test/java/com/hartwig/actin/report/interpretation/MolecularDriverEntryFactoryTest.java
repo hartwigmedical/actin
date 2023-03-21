@@ -124,8 +124,7 @@ public class MolecularDriverEntryFactoryTest {
 
     private static MolecularDriverEntryFactory createFactoryForMolecularRecordAndCohorts(MolecularRecord molecular,
             List<EvaluatedCohort> cohorts) {
-        return new MolecularDriverEntryFactory(MolecularDriversInterpreter.fromMolecularDriversAndEvaluatedCohorts(molecular.drivers(),
-                cohorts));
+        return new MolecularDriverEntryFactory(new MolecularDriversDetails(molecular.drivers(), new EvaluatedCohortsInterpreter(cohorts)));
     }
 
     private MolecularDriverEntryFactory createFactoryWithCohortsForEvent(MolecularRecord molecularRecord, String event) {
