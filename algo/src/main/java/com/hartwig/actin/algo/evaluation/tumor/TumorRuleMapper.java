@@ -164,7 +164,8 @@ public class TumorRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator hasLocallyAdvancedCancerCreator() {
-        return function -> new HasLocallyAdvancedCancer();
+        return function -> new DerivedTumorStageEvaluationFunction(TumorStageDerivationFunction.defaultRules(doidModel()),
+                new HasLocallyAdvancedCancer());
     }
 
     @NotNull
