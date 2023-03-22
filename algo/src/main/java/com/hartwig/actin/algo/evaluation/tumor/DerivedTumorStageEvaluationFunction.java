@@ -41,20 +41,20 @@ public class DerivedTumorStageEvaluationFunction implements EvaluationFunction {
         }
         Set<TumorStage> derivedStages = tumorStageDerivationFunction.apply(record.clinical().tumor());
         Map<TumorStage, Evaluation> derivedResults = derivedStages.stream().collect(toMap(s -> s, s -> evaluatedDerivedStage(record, s)));
-        if (allDerivedResultsMatch(derivedResults, EvaluationResult.PASS)) {
-            return combineEvaluationResults(derivedResults, accumulateAllMessagesInUndermined(), EvaluationResult.PASS);
-        } else if (anyDerivedResultMatches(derivedResults, EvaluationResult.PASS)) {
-            return combineEvaluationResults(derivedResults, accumulateAllMessagesInUndermined(), EvaluationResult.UNDETERMINED);
-        } else if (anyDerivedResultMatches(derivedResults, EvaluationResult.WARN)) {
-            return combineEvaluationResults(derivedResults, accumulateAllMessagesInUndermined(), EvaluationResult.WARN);
-        } else {
-            return combineEvaluationResults(derivedResults, accumulateAllMessagesInUndermined(), EvaluationResult.FAIL);
-        }
-    }
 
-    @NotNull
-    private static List<String> withDerivedSuffix(final TumorStage key, final Set<String> messages) {
-        return messages.stream().map(m -> format("%s [Implied by derived tumor stage %s]", m, key)).collect(toList());
+        if (derivedResults.size() == 1) {
+            return addDerivedSuffixToAllMessages(derivedResults.entrySet().iterator().next());
+        }
+
+        if (allDerivedResultsMatch(derivedResults, EvaluationResult.PASS)) {
+            return combineEvaluationResults(derivedResults, accumulateAllMessagesInPass(), EvaluationResult.PASS);
+        } else if (anyDerivedResultMatches(derivedResults, EvaluationResult.PASS)) {
+            return combineEvaluationResults(derivedResults, accumulateAllMessagesInUndetermined(), EvaluationResult.UNDETERMINED);
+        } else if (anyDerivedResultMatches(derivedResults, EvaluationResult.WARN)) {
+            return combineEvaluationResults(derivedResults, accumulateAllMessagesInWarn(), EvaluationResult.WARN);
+        } else {
+            return combineEvaluationResults(derivedResults, accumulateAllMessagesInFail(), EvaluationResult.FAIL);
+        }
     }
 
     private static boolean anyDerivedResultMatches(final Map<TumorStage, Evaluation> derivedResults, final EvaluationResult warn) {
@@ -68,11 +68,32 @@ public class DerivedTumorStageEvaluationFunction implements EvaluationFunction {
     private static ImmutableEvaluation combineEvaluationResults(final Map<TumorStage, Evaluation> derivedResults,
             final BiConsumer<ImmutableEvaluation.Builder, Map.Entry<TumorStage, Evaluation>> messageAccumulator,
             final EvaluationResult pass) {
-        return derivedResults.entrySet().stream().collect(toEvaluationBuilder(messageAccumulator)).result(pass).recoverable(false).build();
+        return derivedResults.entrySet()
+                .stream()
+                .collect(toEvaluationBuilder(messageAccumulator.andThen(accumulateMolecularEvents())))
+                .result(pass)
+                .recoverable(false)
+                .build();
+    }
+
+    private static BiConsumer<ImmutableEvaluation.Builder, Map.Entry<TumorStage, Evaluation>> accumulateMolecularEvents() {
+        return (b, e) -> b.addAllInclusionMolecularEvents(withDerivedSuffix(e.getKey(), e.getValue().inclusionMolecularEvents()))
+                .addAllExclusionMolecularEvents(withDerivedSuffix(e.getKey(), e.getValue().exclusionMolecularEvents()));
+    }
+
+    private static BiConsumer<ImmutableEvaluation.Builder, Map.Entry<TumorStage, Evaluation>> accumulateAllMessagesInPass() {
+        return (b, e) -> b.addAllPassGeneralMessages(withDerivedSuffix(e.getKey(), e.getValue().passGeneralMessages()))
+                .addAllPassGeneralMessages(withDerivedSuffix(e.getKey(), e.getValue().warnGeneralMessages()))
+                .addAllPassGeneralMessages(withDerivedSuffix(e.getKey(), e.getValue().failGeneralMessages()))
+                .addAllPassGeneralMessages(withDerivedSuffix(e.getKey(), e.getValue().undeterminedGeneralMessages()))
+                .addAllPassSpecificMessages(withDerivedSuffix(e.getKey(), e.getValue().passSpecificMessages()))
+                .addAllPassSpecificMessages(withDerivedSuffix(e.getKey(), e.getValue().failSpecificMessages()))
+                .addAllPassSpecificMessages(withDerivedSuffix(e.getKey(), e.getValue().undeterminedSpecificMessages()));
     }
 
     private static BiConsumer<ImmutableEvaluation.Builder, Map.Entry<TumorStage, Evaluation>> accumulateAllMessagesInUndetermined() {
         return (b, e) -> b.addAllUndeterminedGeneralMessages(withDerivedSuffix(e.getKey(), e.getValue().passGeneralMessages()))
+                .addAllUndeterminedGeneralMessages(withDerivedSuffix(e.getKey(), e.getValue().warnGeneralMessages()))
                 .addAllUndeterminedGeneralMessages(withDerivedSuffix(e.getKey(), e.getValue().failGeneralMessages()))
                 .addAllUndeterminedGeneralMessages(withDerivedSuffix(e.getKey(), e.getValue().undeterminedGeneralMessages()))
                 .addAllUndeterminedSpecificMessages(withDerivedSuffix(e.getKey(), e.getValue().passSpecificMessages()))
@@ -82,6 +103,7 @@ public class DerivedTumorStageEvaluationFunction implements EvaluationFunction {
 
     private static BiConsumer<ImmutableEvaluation.Builder, Map.Entry<TumorStage, Evaluation>> accumulateAllMessagesInWarn() {
         return (b, e) -> b.addAllWarnGeneralMessages(withDerivedSuffix(e.getKey(), e.getValue().passGeneralMessages()))
+                .addAllWarnGeneralMessages(withDerivedSuffix(e.getKey(), e.getValue().warnGeneralMessages()))
                 .addAllWarnGeneralMessages(withDerivedSuffix(e.getKey(), e.getValue().failGeneralMessages()))
                 .addAllWarnGeneralMessages(withDerivedSuffix(e.getKey(), e.getValue().undeterminedGeneralMessages()))
                 .addAllWarnSpecificMessages(withDerivedSuffix(e.getKey(), e.getValue().passSpecificMessages()))
@@ -96,6 +118,24 @@ public class DerivedTumorStageEvaluationFunction implements EvaluationFunction {
                 .addAllFailSpecificMessages(withDerivedSuffix(e.getKey(), e.getValue().passSpecificMessages()))
                 .addAllFailSpecificMessages(withDerivedSuffix(e.getKey(), e.getValue().failSpecificMessages()))
                 .addAllFailSpecificMessages(withDerivedSuffix(e.getKey(), e.getValue().undeterminedSpecificMessages()));
+    }
+
+    private static List<String> withDerivedSuffix(final TumorStage key, final Set<String> messages) {
+        return messages.stream().map(m -> format("%s [Implied by derived tumor stage %s]", m, key)).collect(toList());
+    }
+
+    private static Evaluation addDerivedSuffixToAllMessages(final Map.Entry<TumorStage, Evaluation> stageAndEvaluation) {
+        Evaluation original = stageAndEvaluation.getValue();
+        TumorStage derivedStage = stageAndEvaluation.getKey();
+        return ImmutableEvaluation.copyOf(original)
+                .withUndeterminedGeneralMessages(withDerivedSuffix(derivedStage, original.undeterminedGeneralMessages()))
+                .withUndeterminedSpecificMessages(withDerivedSuffix(derivedStage, original.undeterminedSpecificMessages()))
+                .withPassGeneralMessages(withDerivedSuffix(derivedStage, original.passGeneralMessages()))
+                .withPassSpecificMessages(withDerivedSuffix(derivedStage, original.passSpecificMessages()))
+                .withWarnGeneralMessages(withDerivedSuffix(derivedStage, original.warnGeneralMessages()))
+                .withWarnSpecificMessages(withDerivedSuffix(derivedStage, original.warnSpecificMessages()))
+                .withFailGeneralMessages(withDerivedSuffix(derivedStage, original.failGeneralMessages()))
+                .withFailSpecificMessages(withDerivedSuffix(derivedStage, original.failSpecificMessages()));
     }
 
     private static Collector<Map.Entry<TumorStage, Evaluation>, ImmutableEvaluation.Builder, ImmutableEvaluation.Builder> toEvaluationBuilder(

@@ -158,39 +158,42 @@ public class TumorRuleMapper extends RuleMapper {
     private FunctionCreator hasTumorStageCreator() {
         return function -> {
             TumorStage stageToMatch = functionInputResolver().createOneTumorStageInput(function);
-            return new HasTumorStage(doidModel(), stageToMatch);
+            return new HasTumorStage(new TumorStageDerivationFunction(doidModel()), stageToMatch);
         };
     }
 
     @NotNull
     private FunctionCreator hasLocallyAdvancedCancerCreator() {
-        return function -> new DerivedTumorStageEvaluationFunction(TumorStageDerivationFunction.defaultRules(doidModel()),
+        return function -> new DerivedTumorStageEvaluationFunction(new TumorStageDerivationFunction(doidModel()),
                 new HasLocallyAdvancedCancer());
     }
 
     @NotNull
     private FunctionCreator hasMetastaticCancerCreator() {
-        return function -> new HasMetastaticCancer(doidModel());
+        return function -> new DerivedTumorStageEvaluationFunction(new TumorStageDerivationFunction(doidModel()),
+                new HasMetastaticCancer(doidModel()));
     }
 
     @NotNull
     private FunctionCreator hasUnresectableCancerCreator() {
-        return function -> new HasUnresectableCancer();
+        return function -> new DerivedTumorStageEvaluationFunction(new TumorStageDerivationFunction(doidModel()),
+                new HasUnresectableCancer());
     }
 
     @NotNull
     private FunctionCreator hasUnresectableStageIIICancerCreator() {
-        return function -> new HasUnresectableStageIIICancer();
+        return function -> new DerivedTumorStageEvaluationFunction(new TumorStageDerivationFunction(doidModel()),
+                new HasUnresectableStageIIICancer());
     }
 
     @NotNull
     private FunctionCreator hasRecurrentCancerCreator() {
-        return function -> new HasRecurrentCancer();
+        return function -> new DerivedTumorStageEvaluationFunction(new TumorStageDerivationFunction(doidModel()), new HasRecurrentCancer());
     }
 
     @NotNull
     private FunctionCreator hasIncurableCancerCreator() {
-        return function -> new HasIncurableCancer();
+        return function -> new DerivedTumorStageEvaluationFunction(new TumorStageDerivationFunction(doidModel()), new HasIncurableCancer());
     }
 
     @NotNull
