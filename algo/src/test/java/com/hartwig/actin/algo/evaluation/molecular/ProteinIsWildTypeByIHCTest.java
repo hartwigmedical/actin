@@ -13,7 +13,7 @@ import org.junit.Test;
 
 public class ProteinIsWildTypeByIHCTest {
 
-    public static final String PROTEIN = "p53";
+    private static final String PROTEIN = "p53";
 
     @Test
     public void shouldReturnUndeterminedForEmptyListOfTests() {
