@@ -75,6 +75,7 @@ public enum EligibilityRule {
     HAS_SUPERSCAN_BONE_SCAN,
     HAS_CHILD_PUGH_CLASS_X_LIVER_SCORE,
     HAS_BCLC_STAGE_X,
+    HAS_LEFT_SIDED_COLORECTAL_TUMOR,
 
     // Rules related to previous cancer treatments
     IS_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT,

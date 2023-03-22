@@ -8,7 +8,7 @@ public enum TreatmentComponent {
     FLUOROURACIL,  // 5-FU
     IRINOTECAN,
     OXALIPLATIN,
-    PANTITUMUMAB,
+    PANITUMUMAB,
     PEMBROLIZUMAB,
     TIPIRACIL,
     TRIFLURIDINE

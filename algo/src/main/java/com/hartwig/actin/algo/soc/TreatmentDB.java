@@ -17,9 +17,14 @@ import com.hartwig.actin.treatment.datamodel.TreatmentComponent;
 public class TreatmentDB {
 
     public static final String TREATMENT_CAPOX = "CAPOX";
+    public static final String TREATMENT_CETUXIMAB = "Cetuximab";
     public static final String TREATMENT_FOLFIRI = "FOLFIRI";
     public static final String TREATMENT_FOLFIRINOX = "FOLFIRINOX";
     public static final String TREATMENT_FOLFOX = "FOLFOX";
+    public static final String TREATMENT_LONSURF = "Lonsurf";
+    public static final String TREATMENT_PANITUMUMAB = "Panitumumab";
+    public static final String TREATMENT_PEMBROLIZUMAB = "Pembrolizumab";
+
     private static final int SCORE_CETUXIMAB_PLUS_ENCORAFENIB = 4;
     private static final int SCORE_LONSURF = 2;
     private static final int SCORE_MONOTHERAPY = 3;
@@ -87,33 +92,33 @@ public class TreatmentDB {
     }
 
     private static Stream<Treatment> antiEGFRTherapies() {
-        return Stream.of(createAntiEGFRTherapy("Cetuximab", TreatmentComponent.CETUXIMAB, SCORE_TARGETED_THERAPY),
-                createAntiEGFRTherapy("Pantitumumab", TreatmentComponent.PANTITUMUMAB, SCORE_TARGETED_THERAPY));
+        return Stream.of(createAntiEGFRTherapy(TREATMENT_CETUXIMAB, TreatmentComponent.CETUXIMAB),
+                createAntiEGFRTherapy(TREATMENT_PANITUMUMAB, TreatmentComponent.PANITUMUMAB));
     }
 
-    private static Treatment createAntiEGFRTherapy(String name, TreatmentComponent component, int score) {
-        // TODO: require left-sided tumor
+    private static Treatment createAntiEGFRTherapy(String name, TreatmentComponent component) {
         return ImmutableTreatment.builder()
                 .name(name)
                 .addCategories(TreatmentCategory.TARGETED_THERAPY)
                 .addComponents(component)
                 .isOptional(false)
-                .score(score)
+                .score(TreatmentDB.SCORE_TARGETED_THERAPY)
                 .lines(Set.of(2, 3))
-                .addEligibilityFunctions(isColorectalCancer, eligibleIfGenesAreWildType(Stream.of("KRAS", "NRAS", "BRAF")))
+                .addEligibilityFunctions(isColorectalCancer, eligibleIfGenesAreWildType(Stream.of("KRAS", "NRAS", "BRAF")),
+                        ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR).build())
                 .build();
 
     }
 
     private static Stream<Treatment> otherTreatments() {
-        return Stream.of(createChemotherapy("Lonsurf",
+        return Stream.of(createChemotherapy(TREATMENT_LONSURF,
                         Set.of(TreatmentComponent.TRIFLURIDINE, TreatmentComponent.TIPIRACIL),
                         SCORE_LONSURF,
                         true,
                         Set.of(3),
-                        Collections.emptySet()),
+                        Set.of(eligibleIfTreatmentNotInHistory("trifluridine"))),
                 ImmutableTreatment.builder()
-                        .name("Pembrolizumab")
+                        .name(TREATMENT_PEMBROLIZUMAB)
                         .addComponents(TreatmentComponent.PEMBROLIZUMAB)
                         .addCategories(TreatmentCategory.IMMUNOTHERAPY)
                         .isOptional(false)

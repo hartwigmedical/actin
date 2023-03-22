@@ -39,7 +39,9 @@ public class RecommendationEngine {
                 .orElse(Collections.emptySet());
 
         if (!expandedTumorDoids.contains(DoidConstants.COLORECTAL_CANCER_DOID)) {
-            throw new IllegalArgumentException("No colorectal cancer reported in patient clinical record. SOC recommendation not supported");
+            throw new IllegalArgumentException("No colorectal cancer reported in patient clinical record. SOC recommendation not supported.");
+        } else if (Stream.of("5777", "169", "1800").anyMatch(expandedTumorDoids::contains)) {
+            throw new IllegalArgumentException("SOC recommendation only supported for colorectal carcinoma");
         }
 
         return treatments.filter(treatment -> treatment.lines().contains(determineTreatmentLineForPatient(patientRecord)))

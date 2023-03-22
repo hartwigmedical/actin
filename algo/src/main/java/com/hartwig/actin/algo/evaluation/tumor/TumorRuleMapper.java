@@ -74,6 +74,7 @@ public class TumorRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_SUPERSCAN_BONE_SCAN, hasSuperScanBoneScanCreator());
         map.put(EligibilityRule.HAS_CHILD_PUGH_CLASS_X_LIVER_SCORE, hasChildPughClassCreator());
         map.put(EligibilityRule.HAS_BCLC_STAGE_X, hasBCLCStageCreator());
+        map.put(EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR, hasLeftSidedColorectalTumorCreator());
 
         return map;
     }
@@ -335,5 +336,10 @@ public class TumorRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasBCLCStageCreator() {
         return function -> new HasBCLCStage();
+    }
+
+    @NotNull
+    private FunctionCreator hasLeftSidedColorectalTumorCreator() {
+        return function -> new HasLeftSidedColorectalTumor(doidModel());
     }
 }
