@@ -474,7 +474,7 @@ CREATE TABLE virus
     sampleId varchar(50) NOT NULL,
     isReportable BOOLEAN NOT NULL,
     event varchar(50) NOT NULL,
-    driverLikelihood varchar(50) NOT NULL,
+    driverLikelihood varchar(50),
     name varchar(50) NOT NULL,
     type varchar(50) NOT NULL,
     isReliable BOOLEAN NOT NULL,
