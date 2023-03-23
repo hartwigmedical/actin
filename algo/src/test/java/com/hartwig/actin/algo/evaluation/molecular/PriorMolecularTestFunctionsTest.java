@@ -32,7 +32,7 @@ public class PriorMolecularTestFunctionsTest {
         PriorMolecularTest test3 = MolecularTestFactory.priorBuilder().test("IHC").item("gene 2").build();
 
         List<PriorMolecularTest> filtered =
-                PriorMolecularTestFunctions.allIHCTestsForGene(Lists.newArrayList(test1, test2, test3), "gene 1");
+                PriorMolecularTestFunctions.allIHCTestsForItem(Lists.newArrayList(test1, test2, test3), "gene 1");
 
         assertEquals(1, filtered.size());
         assertTrue(filtered.contains(test2));

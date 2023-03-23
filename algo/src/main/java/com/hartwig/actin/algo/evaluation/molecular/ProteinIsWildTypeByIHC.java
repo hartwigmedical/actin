@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular;
 
-import java.util.stream.Stream;
+import java.util.Set;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ProteinIsWildTypeByIHC implements EvaluationFunction {
 
-    private static final String IHC = "IHC";
+    private static final Set<String> WILD_TYPE_QUERY_STRINGS = Set.of("wildtype", "wild-type", "wild type");
     private final String protein;
 
     ProteinIsWildTypeByIHC(String protein) {
@@ -22,11 +22,8 @@ public class ProteinIsWildTypeByIHC implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        boolean hasWildTypeResult = record.clinical()
-                .priorMolecularTests()
-                .stream()
-                .filter(test -> test.test().equals(IHC) && test.item().equals(protein))
-                .map(test -> Stream.of("wildtype", "wild-type", "wild type").anyMatch(query -> query.equalsIgnoreCase(test.scoreText())))
+        boolean hasWildTypeResult = PriorMolecularTestFunctions.allIHCTestsForItemStream(record.clinical().priorMolecularTests(), protein)
+                .map(test -> WILD_TYPE_QUERY_STRINGS.stream().anyMatch(query -> query.equalsIgnoreCase(test.scoreText())))
                 .reduce(Boolean::logicalAnd)
                 .orElse(false);
 

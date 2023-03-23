@@ -26,7 +26,7 @@ public class ProteinHasSufficientExpressionByIHC implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        List<PriorMolecularTest> ihcTests = PriorMolecularTestFunctions.allIHCTestsForGene(record.clinical().priorMolecularTests(), gene);
+        List<PriorMolecularTest> ihcTests = PriorMolecularTestFunctions.allIHCTestsForItem(record.clinical().priorMolecularTests(), gene);
         boolean mightMeetMinExpressionLevelByIHC = false;
         for (PriorMolecularTest ihcTest : ihcTests) {
             Double scoreValue = ihcTest.scoreValue();

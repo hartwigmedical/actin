@@ -24,7 +24,7 @@ public class ProteinIsExpressedByIHC implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        List<PriorMolecularTest> ihcTests = PriorMolecularTestFunctions.allIHCTestsForGene(record.clinical().priorMolecularTests(), gene);
+        List<PriorMolecularTest> ihcTests = PriorMolecularTestFunctions.allIHCTestsForItem(record.clinical().priorMolecularTests(), gene);
         for (PriorMolecularTest ihcTest : ihcTests) {
             boolean isExpressed = false;
 
