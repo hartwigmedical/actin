@@ -22,10 +22,11 @@ public class ProteinIsWildTypeByIHC implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        boolean hasWildTypeResult = PriorMolecularTestFunctions.allIHCTestsForItemStream(record.clinical().priorMolecularTests(), protein)
-                .map(test -> WILD_TYPE_QUERY_STRINGS.stream().anyMatch(query -> query.equalsIgnoreCase(test.scoreText())))
-                .reduce(Boolean::logicalAnd)
-                .orElse(false);
+        boolean hasWildTypeResult =
+                PriorMolecularTestFunctions.allIHCTestsForProteinStream(record.clinical().priorMolecularTests(), protein)
+                        .map(test -> WILD_TYPE_QUERY_STRINGS.stream().anyMatch(query -> query.equalsIgnoreCase(test.scoreText())))
+                        .reduce(Boolean::logicalAnd)
+                        .orElse(false);
 
         if (hasWildTypeResult) {
             return EvaluationFactory.unrecoverable()

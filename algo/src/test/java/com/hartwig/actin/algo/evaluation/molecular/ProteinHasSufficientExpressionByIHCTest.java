@@ -17,37 +17,36 @@ public class ProteinHasSufficientExpressionByIHCTest {
 
     @Test
     public void canEvaluate() {
-        String gene = "gene 1";
-        ProteinHasSufficientExpressionByIHC exact = new ProteinHasSufficientExpressionByIHC(gene, 2);
+        String protein = "protein 1";
+        ProteinHasSufficientExpressionByIHC exact = new ProteinHasSufficientExpressionByIHC(protein, 2);
 
         // No prior tests
         List<PriorMolecularTest> priorTests = Lists.newArrayList();
         assertEvaluation(EvaluationResult.UNDETERMINED, exact.evaluate(MolecularTestFactory.withPriorTests(priorTests)));
 
         // Add test with no result
-        priorTests.add(ihcBuilder(gene).build());
+        priorTests.add(ihcBuilder(protein).build());
         assertEvaluation(EvaluationResult.FAIL, exact.evaluate(MolecularTestFactory.withPriorTests(priorTests)));
 
         // Add test with too low result
-        priorTests.add(ihcBuilder(gene).scoreValue(1D).build());
+        priorTests.add(ihcBuilder(protein).scoreValue(1D).build());
         assertEvaluation(EvaluationResult.FAIL, exact.evaluate(MolecularTestFactory.withPriorTests(priorTests)));
 
         // Add test with too low result but a suitable comparator
-        priorTests.add(ihcBuilder(gene).scoreValuePrefix(ValueComparison.LARGER_THAN).scoreValue(1D).build());
+        priorTests.add(ihcBuilder(protein).scoreValuePrefix(ValueComparison.LARGER_THAN).scoreValue(1D).build());
         assertEvaluation(EvaluationResult.UNDETERMINED, exact.evaluate(MolecularTestFactory.withPriorTests(priorTests)));
 
         // Add test with valid result
-        priorTests.add(ihcBuilder(gene).scoreValue(3D).build());
+        priorTests.add(ihcBuilder(protein).scoreValue(3D).build());
         assertEvaluation(EvaluationResult.PASS, exact.evaluate(MolecularTestFactory.withPriorTests(priorTests)));
 
         // Test with unclear result
         assertEvaluation(EvaluationResult.UNDETERMINED,
-                exact.evaluate(MolecularTestFactory.withPriorTests(Lists.newArrayList(ihcBuilder(gene).scoreText("Negative")
-                        .build()))));
+                exact.evaluate(MolecularTestFactory.withPriorTests(Lists.newArrayList(ihcBuilder(protein).scoreText("Negative").build()))));
     }
 
     @NotNull
-    private static ImmutablePriorMolecularTest.Builder ihcBuilder(@NotNull String gene) {
-        return MolecularTestFactory.priorBuilder().test("IHC").item(gene);
+    private static ImmutablePriorMolecularTest.Builder ihcBuilder(@NotNull String protein) {
+        return MolecularTestFactory.priorBuilder().test("IHC").item(protein);
     }
 }

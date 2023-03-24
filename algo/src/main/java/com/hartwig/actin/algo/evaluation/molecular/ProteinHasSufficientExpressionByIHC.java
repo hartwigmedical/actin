@@ -15,18 +15,19 @@ import org.jetbrains.annotations.NotNull;
 public class ProteinHasSufficientExpressionByIHC implements EvaluationFunction {
 
     @NotNull
-    private final String gene;
+    private final String protein;
     private final int minExpressionLevel;
 
-    ProteinHasSufficientExpressionByIHC(@NotNull final String gene, final int minExpressionLevel) {
-        this.gene = gene;
+    ProteinHasSufficientExpressionByIHC(@NotNull final String protein, final int minExpressionLevel) {
+        this.protein = protein;
         this.minExpressionLevel = minExpressionLevel;
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        List<PriorMolecularTest> ihcTests = PriorMolecularTestFunctions.allIHCTestsForItem(record.clinical().priorMolecularTests(), gene);
+        List<PriorMolecularTest> ihcTests =
+                PriorMolecularTestFunctions.allIHCTestsForProtein(record.clinical().priorMolecularTests(), protein);
         boolean mightMeetMinExpressionLevelByIHC = false;
         for (PriorMolecularTest ihcTest : ihcTests) {
             Double scoreValue = ihcTest.scoreValue();
@@ -39,8 +40,8 @@ public class ProteinHasSufficientExpressionByIHC implements EvaluationFunction {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages(
-                                    "Gene " + gene + " has expression level of at least " + minExpressionLevel + " (by IHC)")
-                            .addPassGeneralMessages("Adequate " + gene + " IHC expression level")
+                                    "Protein " + protein + " has expression level of at least " + minExpressionLevel + " (by IHC)")
+                            .addPassGeneralMessages("Adequate " + protein + " IHC expression level")
                             .build();
                 } else if (evaluation == EvaluationResult.UNDETERMINED) {
                     mightMeetMinExpressionLevelByIHC = true;
@@ -57,21 +58,22 @@ public class ProteinHasSufficientExpressionByIHC implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages(
-                            "Unknown if gene " + gene + " expression level is at least " + minExpressionLevel + " (by IHC)")
-                    .addUndeterminedGeneralMessages("Unknown " + gene + " exact IHC expression level")
+                            "Unknown if protein " + protein + " expression level is at least " + minExpressionLevel + " (by IHC)")
+                    .addUndeterminedGeneralMessages("Unknown " + protein + " exact IHC expression level")
                     .build();
         } else if (ihcTests.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("No test result found; gene " + gene + " has not been tested by IHC")
-                    .addUndeterminedGeneralMessages("No " + gene + " IHC test result")
+                    .addUndeterminedSpecificMessages("No test result found; protein " + protein + " has not been tested by IHC")
+                    .addUndeterminedGeneralMessages("No " + protein + " IHC test result")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Gene " + gene + " does not meet required expression level " + minExpressionLevel + " (by IHC)")
-                .addFailGeneralMessages("Insufficient " + gene + "exact IHC expression level")
+                .addFailSpecificMessages(
+                        "Protein " + protein + " does not meet required expression level " + minExpressionLevel + " (by IHC)")
+                .addFailGeneralMessages("Insufficient " + protein + "exact IHC expression level")
                 .build();
     }
 }

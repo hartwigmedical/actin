@@ -15,16 +15,17 @@ import org.jetbrains.annotations.NotNull;
 public class ProteinIsExpressedByIHC implements EvaluationFunction {
 
     @NotNull
-    private final String gene;
+    private final String protein;
 
-    ProteinIsExpressedByIHC(@NotNull final String gene) {
-        this.gene = gene;
+    ProteinIsExpressedByIHC(@NotNull final String protein) {
+        this.protein = protein;
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        List<PriorMolecularTest> ihcTests = PriorMolecularTestFunctions.allIHCTestsForItem(record.clinical().priorMolecularTests(), gene);
+        List<PriorMolecularTest> ihcTests =
+                PriorMolecularTestFunctions.allIHCTestsForProtein(record.clinical().priorMolecularTests(), protein);
         for (PriorMolecularTest ihcTest : ihcTests) {
             boolean isExpressed = false;
 
@@ -42,8 +43,8 @@ public class ProteinIsExpressedByIHC implements EvaluationFunction {
             if (isExpressed) {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
-                        .addPassSpecificMessages("Gene " + gene + " has been determined to be expressed (by IHC)")
-                        .addPassGeneralMessages(gene + " expression by IHC")
+                        .addPassSpecificMessages("Protein " + protein + " has been determined to be expressed (by IHC)")
+                        .addPassGeneralMessages(protein + " expression by IHC")
                         .build();
             }
         }
@@ -51,14 +52,14 @@ public class ProteinIsExpressedByIHC implements EvaluationFunction {
         if (!ihcTests.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages("No expression of gene " + gene + " detected by prior IHC test(s)")
-                    .addFailGeneralMessages("No " + gene + " expression by IHC")
+                    .addFailSpecificMessages("No expression of protein " + protein + " detected by prior IHC test(s)")
+                    .addFailGeneralMessages("No " + protein + " expression by IHC")
                     .build();
         } else {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("No test result found; gene " + gene + " has not been tested by IHC")
-                    .addUndeterminedGeneralMessages("No " + gene + " IHC test result")
+                    .addUndeterminedSpecificMessages("No test result found; protein " + protein + " has not been tested by IHC")
+                    .addUndeterminedGeneralMessages("No " + protein + " IHC test result")
                     .build();
         }
     }

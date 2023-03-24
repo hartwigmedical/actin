@@ -26,13 +26,13 @@ public class PriorMolecularTestFunctionsTest {
     }
 
     @Test
-    public void canFilterPriorMolecularTestsOnIHCForGene() {
-        PriorMolecularTest test1 = MolecularTestFactory.priorBuilder().test("Archer").item("gene 1").build();
-        PriorMolecularTest test2 = MolecularTestFactory.priorBuilder().test("IHC").item("gene 1").build();
-        PriorMolecularTest test3 = MolecularTestFactory.priorBuilder().test("IHC").item("gene 2").build();
+    public void canFilterPriorMolecularTestsOnIHCForProtein() {
+        PriorMolecularTest test1 = MolecularTestFactory.priorBuilder().test("Archer").item("protein 1").build();
+        PriorMolecularTest test2 = MolecularTestFactory.priorBuilder().test("IHC").item("protein 1").build();
+        PriorMolecularTest test3 = MolecularTestFactory.priorBuilder().test("IHC").item("protein 2").build();
 
         List<PriorMolecularTest> filtered =
-                PriorMolecularTestFunctions.allIHCTestsForItem(Lists.newArrayList(test1, test2, test3), "gene 1");
+                PriorMolecularTestFunctions.allIHCTestsForProtein(Lists.newArrayList(test1, test2, test3), "protein 1");
 
         assertEquals(1, filtered.size());
         assertTrue(filtered.contains(test2));
