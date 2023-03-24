@@ -37,7 +37,7 @@ public class DerivedTumorStageEvaluationFunction implements EvaluationFunction {
         Map<TumorStage, Evaluation> derivedResults = derivedStages.stream().collect(toMap(s -> s, s -> evaluatedDerivedStage(record, s)));
 
         if (derivedResults.size() == 1) {
-            return DerivedTumorStageEvaluationFactory.follow(derivedResults.entrySet().iterator().next());
+            return DerivedTumorStageEvaluationFactory.follow(derivedResults);
         }
         if (allDerivedResultsMatch(derivedResults, EvaluationResult.PASS)) {
             return DerivedTumorStageEvaluationFactory.pass(derivedResults);

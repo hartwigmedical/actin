@@ -11,15 +11,22 @@ import java.util.stream.Stream;
 
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 
 public class DerivedTumorStageEvaluationFactory {
 
-    public static Evaluation follow(Map.Entry<TumorStage, Evaluation> derived) {
-        Evaluation toFollow = derived.getValue();
-        return ImmutableEvaluation.builder().from(toFollow).build();
+    public static Evaluation follow(Map<TumorStage, Evaluation> derived) {
+        switch (derived.values().iterator().next().result()) {
+            case PASS:
+                return pass(derived);
+            case UNDETERMINED:
+                return undetermined(derived);
+            case WARN:
+                return warn(derived);
+            default:
+                return fail(derived);
+        }
     }
 
     static Evaluation pass(Map<TumorStage, Evaluation> derived) {

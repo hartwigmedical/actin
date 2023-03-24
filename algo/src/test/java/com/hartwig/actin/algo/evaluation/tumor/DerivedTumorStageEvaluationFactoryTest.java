@@ -17,6 +17,18 @@ public class DerivedTumorStageEvaluationFactoryTest {
     public static final String HAS_UNRESECTABLE_CANCER = "has unresectable cancer";
 
     @Test
+    public void followGivenStageUsesCorrectFunction() {
+        Evaluation evaluation = DerivedTumorStageEvaluationFactory.follow(Map.of(TumorStage.IV,
+                evaluationWithResult(EvaluationResult.PASS, HAS_UNRESECTABLE_CANCER).addPassSpecificMessages(
+                        "Tumor stage IV is considered unresectable cancer").build()));
+        assertThat(evaluation.result()).isEqualTo(EvaluationResult.PASS);
+        assertThat(evaluation.passSpecificMessages()).containsOnly(
+                "Tumor stage details are missing but based on lesion localization tumor stage should be IV. "
+                        + "Tumor stage IV is considered unresectable cancer.");
+        assertThat(evaluation.passGeneralMessages()).containsOnly("Derived tumor stage of IV has unresectable cancer");
+    }
+
+    @Test
     public void createEvaluationWithDerivedDataForPass() {
         Evaluation evaluation = DerivedTumorStageEvaluationFactory.pass(Map.of(TumorStage.IV,
                 evaluationWithResult(EvaluationResult.PASS, HAS_UNRESECTABLE_CANCER).addPassSpecificMessages(
