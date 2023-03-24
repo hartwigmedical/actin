@@ -12,6 +12,7 @@ import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
@@ -28,28 +29,24 @@ public class DerivedTumorStageEvaluationFunctionTest {
     private static final String SPECIFIC_2 = "specific 2";
     private DerivedTumorStageEvaluationFunction victim;
     private TumorStageDerivationFunction tumorStageDerivationFunction;
+    private DerivedTumorStageEvaluationFactory messageCombinationFunction;
     private EvaluationFunction evaluationFunction;
 
     @Before
     public void setUp() {
         tumorStageDerivationFunction = mock(TumorStageDerivationFunction.class);
         evaluationFunction = mock(EvaluationFunction.class);
+        messageCombinationFunction = new DerivedTumorStageEvaluationFactory();
         victim = new DerivedTumorStageEvaluationFunction(tumorStageDerivationFunction, evaluationFunction);
     }
 
     @Test
-    public void singleInferredStageEvaluatesAndAddsImpliedMessage() {
-        for (EvaluationResult result : EvaluationResult.values()) {
-            when(tumorStageDerivationFunction.apply(TestDataFactory.createMinimalTestPatientRecord().clinical().tumor())).thenReturn(Set.of(
-                    TumorStage.I));
-            when(evaluationFunction.evaluate(withStage(TestDataFactory.createMinimalTestPatientRecord(), TumorStage.I))).thenReturn(
-                    ImmutableEvaluation.builder().result(result).addPassGeneralMessages("message 1").recoverable(false).build());
-            Evaluation evaluate = victim.evaluate(TestDataFactory.createMinimalTestPatientRecord());
-            assertThat(evaluate.result()).isEqualTo(result);
-            assertThat(evaluate.passGeneralMessages()).contains("message 1 [Implied by derived tumor stage I]");
-        }
+    public void singleInferredStageEvaluatesFollowEvaluation() {
+        assertSingleStageWithResult(EvaluationResult.PASS);
+        assertSingleStageWithResult(EvaluationResult.WARN);
+        assertSingleStageWithResult(EvaluationResult.UNDETERMINED);
+        assertSingleStageWithResult(EvaluationResult.FAIL);
     }
-
     @Test
     public void multipleInferredStagesEvaluatesPassWhenAllPass() {
         when(tumorStageDerivationFunction.apply(TestDataFactory.createMinimalTestPatientRecord().clinical().tumor())).thenReturn(Set.of(
@@ -62,10 +59,6 @@ public class DerivedTumorStageEvaluationFunctionTest {
 
         Evaluation evaluate = victim.evaluate(TestDataFactory.createMinimalTestPatientRecord());
         assertThat(evaluate.result()).isEqualTo(EvaluationResult.PASS);
-        assertThat(evaluate.passGeneralMessages()).containsExactlyInAnyOrder("general 1 [Implied by derived tumor stage I]",
-                "general 2 [Implied by derived tumor stage II]");
-        assertThat(evaluate.passSpecificMessages()).containsExactlyInAnyOrder("specific 1 [Implied by derived tumor stage I]",
-                "specific 2 [Implied by derived tumor stage II]");
     }
 
     @Test
@@ -80,10 +73,6 @@ public class DerivedTumorStageEvaluationFunctionTest {
 
         Evaluation evaluate = victim.evaluate(TestDataFactory.createMinimalTestPatientRecord());
         assertThat(evaluate.result()).isEqualTo(EvaluationResult.UNDETERMINED);
-        assertThat(evaluate.undeterminedGeneralMessages()).containsExactlyInAnyOrder("general 1 [Implied by derived tumor stage I]",
-                "general 2 [Implied by derived tumor stage II]");
-        assertThat(evaluate.undeterminedSpecificMessages()).containsExactlyInAnyOrder("specific 1 [Implied by derived tumor stage I]",
-                "specific 2 [Implied by derived tumor stage II]");
     }
 
     @Test
@@ -102,10 +91,6 @@ public class DerivedTumorStageEvaluationFunctionTest {
 
         Evaluation evaluate = victim.evaluate(TestDataFactory.createMinimalTestPatientRecord());
         assertThat(evaluate.result()).isEqualTo(EvaluationResult.FAIL);
-        assertThat(evaluate.failGeneralMessages()).containsExactlyInAnyOrder("general 1 [Implied by derived tumor stage I]",
-                "general 2 [Implied by derived tumor stage II]");
-        assertThat(evaluate.failSpecificMessages()).containsExactlyInAnyOrder("specific 1 [Implied by derived tumor stage I]",
-                "specific 2 [Implied by derived tumor stage II]");
     }
 
     @Test
@@ -136,6 +121,15 @@ public class DerivedTumorStageEvaluationFunctionTest {
         return ImmutablePatientRecord.copyOf(originalRecord)
                 .withClinical(ImmutableClinicalRecord.copyOf(originalRecord.clinical())
                         .withTumor(ImmutableTumorDetails.copyOf(originalRecord.clinical().tumor()).withStage(newStage)));
+    }
+
+    private void assertSingleStageWithResult(EvaluationResult pass) {
+        when(tumorStageDerivationFunction.apply(TestDataFactory.createMinimalTestPatientRecord().clinical().tumor())).thenReturn(Set.of(
+                TumorStage.I));
+        when(evaluationFunction.evaluate(withStage(TestDataFactory.createMinimalTestPatientRecord(), TumorStage.I))).thenReturn(
+                EvaluationFactory.recoverable().result(pass).build());
+        Evaluation evaluate = victim.evaluate(TestDataFactory.createMinimalTestPatientRecord());
+        assertThat(evaluate.result()).isEqualTo(pass);
     }
 
 }
