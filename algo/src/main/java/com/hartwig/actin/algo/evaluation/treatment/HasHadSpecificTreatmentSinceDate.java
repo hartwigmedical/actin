@@ -39,10 +39,10 @@ public class HasHadSpecificTreatmentSinceDate implements EvaluationFunction {
             return EvaluationFactory.pass(String.format("Treatment matching '%s' administered since %s", query, Format.date(minDate)),
                     "Matching treatment since date");
         } else if (matchingTreatments.stream().anyMatch(treatment -> treatmentSinceMinDate(treatment, true))) {
-            return EvaluationFactory.warn(String.format("Treatment matching '%s' administered with unknown date", query),
+            return EvaluationFactory.undetermined(String.format("Treatment matching '%s' administered with unknown date", query),
                     "Matching treatment with unknown date");
         } else if (!matchingTreatments.isEmpty()) {
-            return EvaluationFactory.fail(String.format("Treatment matching '%s' administered before %s", query, Format.date(minDate)),
+            return EvaluationFactory.fail(String.format("All treatments matching '%s' administered before %s", query, Format.date(minDate)),
                     "Matching treatment with earlier date");
         } else {
             return EvaluationFactory.fail(String.format("No treatments matching '%s' in prior tumor history", query),
@@ -51,18 +51,18 @@ public class HasHadSpecificTreatmentSinceDate implements EvaluationFunction {
     }
 
     private boolean treatmentSinceMinDate(PriorTumorTreatment treatment, boolean includeUnknown) {
-        return yearAndMonthSinceEndDate(treatment.stopYear(), treatment.stopMonth()).orElse(yearAndMonthSinceEndDate(treatment.startYear(),
+        return yearAndMonthSinceMinDate(treatment.stopYear(), treatment.stopMonth()).orElse(yearAndMonthSinceMinDate(treatment.startYear(),
                 treatment.startMonth()).orElse(includeUnknown));
     }
 
-    private Optional<Boolean> yearAndMonthSinceEndDate(@Nullable Integer nullableYear, @Nullable Integer nullableMonth) {
-        return Optional.ofNullable(nullableYear).map(year -> {
+    private Optional<Boolean> yearAndMonthSinceMinDate(@Nullable Integer nullableYear, @Nullable Integer nullableMonth) {
+        return Optional.ofNullable(nullableYear).flatMap(year -> {
             if (year > minDate.getYear()) {
-                return true;
+                return Optional.of(true);
             } else if (year == minDate.getYear()) {
-                return Optional.ofNullable(nullableMonth).map(month -> month >= minDate.getMonthValue()).orElse(true);
+                return Optional.ofNullable(nullableMonth).map(month -> month >= minDate.getMonthValue());
             } else {
-                return false;
+                return Optional.of(false);
             }
         });
     }

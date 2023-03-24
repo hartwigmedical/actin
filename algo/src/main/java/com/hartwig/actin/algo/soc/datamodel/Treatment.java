@@ -1,8 +1,9 @@
-package com.hartwig.actin.treatment.datamodel;
+package com.hartwig.actin.algo.soc.datamodel;
 
 import java.util.Set;
 
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
+import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;

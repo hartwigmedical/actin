@@ -1,11 +1,8 @@
 package com.hartwig.actin.algo.soc;
 
-import static java.util.stream.Collectors.groupingBy;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -13,13 +10,16 @@ import java.util.stream.Stream;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
+import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory;
+import com.hartwig.actin.algo.soc.datamodel.EvaluatedTreatment;
+import com.hartwig.actin.algo.soc.datamodel.ImmutableEvaluatedTreatment;
+import com.hartwig.actin.algo.soc.datamodel.Treatment;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.doid.DoidModel;
-import com.hartwig.actin.treatment.datamodel.Treatment;
 
 public class RecommendationEngine {
 
@@ -31,11 +31,9 @@ public class RecommendationEngine {
         this.evaluationFunctionFactory = EvaluationFunctionFactory.create(doidModel, referenceDateProvider);
     }
 
-    public Stream<Treatment> determineAvailableTreatments(PatientRecord patientRecord, Stream<Treatment> treatments) {
+    public Stream<EvaluatedTreatment> determineAvailableTreatments(PatientRecord patientRecord, Stream<Treatment> treatments) {
         Set<String> expandedTumorDoids = Optional.ofNullable(patientRecord.clinical().tumor().doids())
-                .map(doids -> doids.stream()
-                        .flatMap(doid -> doidModel.doidWithParents(doid).stream())
-                        .collect(Collectors.toSet()))
+                .map(doids -> doids.stream().flatMap(doid -> doidModel.doidWithParents(doid).stream()).collect(Collectors.toSet()))
                 .orElse(Collections.emptySet());
 
         if (!expandedTumorDoids.contains(DoidConstants.COLORECTAL_CANCER_DOID)) {
@@ -45,21 +43,33 @@ public class RecommendationEngine {
         }
 
         return treatments.filter(treatment -> treatment.lines().contains(determineTreatmentLineForPatient(patientRecord)))
-                .filter(treatment -> treatment.eligibilityFunctions().stream()
-                        .map(eligibilityFunction -> evaluationFunctionFactory.create(eligibilityFunction).evaluate(patientRecord))
-                        .noneMatch(evaluation -> evaluation.result() == EvaluationResult.FAIL)
-                )
-                .filter(treatment -> treatment.score() >= 0).sorted(Comparator.comparing(Treatment::score).reversed());
+                .map(treatment -> {
+                    List<Evaluation> evaluations = treatment.eligibilityFunctions()
+                            .stream()
+                            .map(eligibilityFunction -> evaluationFunctionFactory.create(eligibilityFunction).evaluate(patientRecord))
+                            .collect(Collectors.toList());
+                    return (EvaluatedTreatment) ImmutableEvaluatedTreatment.builder()
+                            .treatment(treatment)
+                            .evaluations(evaluations)
+                            .score(treatment.score())
+                            .build();
+                })
+                .filter(evaluatedTreatment -> evaluatedTreatment.evaluations()
+                        .stream()
+                        .noneMatch(evaluation -> evaluation.result() == EvaluationResult.FAIL && !evaluation.recoverable()))
+                .filter(evaluatedTreatment -> evaluatedTreatment.score() >= 0)
+                .sorted(Comparator.comparing(EvaluatedTreatment::score).reversed());
     }
 
-    public Map<Integer, List<Treatment>> availableTreatmentsByScore(PatientRecord patientRecord, Stream<Treatment> treatments) {
-        return determineAvailableTreatments(patientRecord, treatments).collect(groupingBy(Treatment::score));
+    public EvaluatedTreatmentInterpreter provideRecommendations(PatientRecord patientRecord, Stream<Treatment> treatments) {
+        return new EvaluatedTreatmentInterpreter(determineAvailableTreatments(patientRecord, treatments).collect(Collectors.toList()));
     }
 
-    public int determineTreatmentLineForPatient(PatientRecord patientRecord) {
+    private int determineTreatmentLineForPatient(PatientRecord patientRecord) {
         List<PriorTumorTreatment> priorTumorTreatments = patientRecord.clinical().priorTumorTreatments();
-        if (priorTumorTreatments.stream().anyMatch(prior -> prior.categories().contains(TreatmentCategory.CHEMOTHERAPY)
-                || prior.categories().contains(TreatmentCategory.IMMUNOTHERAPY))) {
+        if (priorTumorTreatments.stream()
+                .anyMatch(prior -> prior.categories().contains(TreatmentCategory.CHEMOTHERAPY) || prior.categories()
+                        .contains(TreatmentCategory.IMMUNOTHERAPY))) {
             return priorTumorTreatments.stream().anyMatch(prior -> prior.categories().contains(TreatmentCategory.TARGETED_THERAPY)) ? 3 : 2;
         } else {
             return 1;
@@ -67,6 +77,7 @@ public class RecommendationEngine {
     }
 
     public Boolean patientHasExhaustedStandardOfCare(PatientRecord patientRecord, Stream<Treatment> treatments) {
-        return determineAvailableTreatments(patientRecord, treatments).allMatch(Treatment::isOptional);
+        return determineAvailableTreatments(patientRecord, treatments).allMatch(evaluatedTreatment -> evaluatedTreatment.treatment()
+                .isOptional());
     }
 }

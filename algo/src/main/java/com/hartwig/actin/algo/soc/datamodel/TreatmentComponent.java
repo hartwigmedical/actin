@@ -1,4 +1,4 @@
-package com.hartwig.actin.treatment.datamodel;
+package com.hartwig.actin.algo.soc.datamodel;
 
 public enum TreatmentComponent {
     BEVACIZUMAB,

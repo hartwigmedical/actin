@@ -17,6 +17,7 @@ import com.hartwig.actin.PatientRecordFactory;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory;
 import com.hartwig.actin.algo.doid.DoidConstants;
+import com.hartwig.actin.algo.soc.datamodel.EvaluatedTreatment;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
@@ -33,8 +34,8 @@ import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularC
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory;
 import com.hartwig.actin.molecular.datamodel.driver.Variant;
-import com.hartwig.actin.treatment.datamodel.Treatment;
-import com.hartwig.actin.treatment.datamodel.TreatmentComponent;
+import com.hartwig.actin.algo.soc.datamodel.Treatment;
+import com.hartwig.actin.algo.soc.datamodel.TreatmentComponent;
 
 import org.jetbrains.annotations.Nullable;
 import org.junit.Ignore;
@@ -98,7 +99,8 @@ public class RecommendationEngineTest {
         List<String> firstLineChemotherapies = List.of(TreatmentDB.TREATMENT_CAPOX);
         assertAntiEGFRTreatmentCount(getTreatmentResultsForPatient(patientRecordWithHistoryAndMolecular(firstLineChemotherapies,
                 Collections.emptyList(),
-                TestMolecularFactory.createMinimalTestMolecularRecord(), "Ascending colon")), 0);
+                TestMolecularFactory.createMinimalTestMolecularRecord(),
+                "Ascending colon")), 0);
     }
 
     private void assertAntiEGFRTreatmentCount(Stream<Treatment> treatmentResults, int count) {
@@ -190,7 +192,7 @@ public class RecommendationEngineTest {
     private static Stream<Treatment> getTreatmentResultsForPatient(PatientRecord patientRecord) {
         DoidModel doidModel = TestDoidModelFactory.createWithOneDoidAndTerm(DoidConstants.COLORECTAL_CANCER_DOID, "colorectal cancer");
         RecommendationEngine engine = new RecommendationEngine(doidModel, ReferenceDateProviderTestFactory.createCurrentDateProvider());
-        return engine.determineAvailableTreatments(patientRecord, TreatmentDB.loadTreatments());
+        return engine.determineAvailableTreatments(patientRecord, TreatmentDB.loadTreatments()).map(EvaluatedTreatment::treatment);
     }
 
     private static void assertSpecificMonotherapyNotRecommended(TreatmentComponent monotherapy) {

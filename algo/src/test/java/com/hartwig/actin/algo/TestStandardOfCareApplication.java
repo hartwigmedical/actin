@@ -11,6 +11,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.PatientRecordFactory;
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory;
 import com.hartwig.actin.algo.doid.DoidConstants;
+import com.hartwig.actin.algo.soc.EvaluatedTreatmentInterpreter;
 import com.hartwig.actin.algo.soc.RecommendationEngine;
 import com.hartwig.actin.algo.soc.TreatmentDB;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
@@ -28,7 +29,6 @@ import com.hartwig.actin.doid.serialization.DoidJson;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory;
 import com.hartwig.actin.molecular.util.MolecularPrinter;
-import com.hartwig.actin.treatment.datamodel.Treatment;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -58,23 +58,11 @@ public class TestStandardOfCareApplication {
 
         RecommendationEngine recommendationEngine =
                 new RecommendationEngine(doidModel, ReferenceDateProviderTestFactory.createCurrentDateProvider());
-        List<Treatment> recommendedTreatments =
-                recommendationEngine.determineAvailableTreatments(patient, TreatmentDB.loadTreatments()).collect(Collectors.toList());
+        EvaluatedTreatmentInterpreter recommendationInterpreter =
+                recommendationEngine.provideRecommendations(patient, TreatmentDB.loadTreatments());
 
-        if (recommendedTreatments.isEmpty()) {
-            LOGGER.info("No treatments available");
-        } else {
-            int bestScore = recommendedTreatments.get(0).score();
-            String recommendedTreatmentNames = recommendedTreatments.stream()
-                    .filter(t -> t.score() == bestScore)
-                    .map(Treatment::name)
-                    .collect(Collectors.joining(", "));
-            LOGGER.info(String.format("Recommended treatments: %s", recommendedTreatmentNames));
-
-            LOGGER.info("Treatment,Score\n" + recommendedTreatments.stream()
-                    .map(t -> t.name() + "," + t.score())
-                    .collect(Collectors.joining("\n")));
-        }
+        LOGGER.info(recommendationInterpreter.summarize());
+        LOGGER.info(recommendationInterpreter.csv());
     }
 
     private static PatientRecord patient() {

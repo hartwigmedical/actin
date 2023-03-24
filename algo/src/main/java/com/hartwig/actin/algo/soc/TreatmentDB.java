@@ -10,9 +10,9 @@ import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
-import com.hartwig.actin.treatment.datamodel.ImmutableTreatment;
-import com.hartwig.actin.treatment.datamodel.Treatment;
-import com.hartwig.actin.treatment.datamodel.TreatmentComponent;
+import com.hartwig.actin.algo.soc.datamodel.ImmutableTreatment;
+import com.hartwig.actin.algo.soc.datamodel.Treatment;
+import com.hartwig.actin.algo.soc.datamodel.TreatmentComponent;
 
 public class TreatmentDB {
 
@@ -34,9 +34,9 @@ public class TreatmentDB {
     private static final int SCORE_TARGETED_THERAPY = 5;
     private static final String RECENT_TREATMENT_THRESHOLD_WEEKS = "104";
     private static final EligibilityFunction isColorectalCancer = ImmutableEligibilityFunction.builder()
-                .rule(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X)
-                .addParameters("colorectal cancer")
-                .build();
+            .rule(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X)
+            .addParameters("colorectal cancer")
+            .build();
 
     public static Stream<Treatment> loadTreatments() {
         return Stream.of(combinableChemotherapies(),
@@ -77,8 +77,8 @@ public class TreatmentDB {
         return createChemotherapy(name, components, score, false, Set.of(1, 2), Collections.emptySet());
     }
 
-    private static Treatment createChemotherapy(String name, Set<TreatmentComponent> components, int score, boolean isOptional, Set<Integer> lines,
-            Set<EligibilityFunction> extraFunctions) {
+    private static Treatment createChemotherapy(String name, Set<TreatmentComponent> components, int score, boolean isOptional,
+            Set<Integer> lines, Set<EligibilityFunction> extraFunctions) {
         return ImmutableTreatment.builder()
                 .name(name)
                 .addCategories(TreatmentCategory.CHEMOTHERAPY)
@@ -104,7 +104,8 @@ public class TreatmentDB {
                 .isOptional(false)
                 .score(TreatmentDB.SCORE_TARGETED_THERAPY)
                 .lines(Set.of(2, 3))
-                .addEligibilityFunctions(isColorectalCancer, eligibleIfGenesAreWildType(Stream.of("KRAS", "NRAS", "BRAF")),
+                .addEligibilityFunctions(isColorectalCancer,
+                        eligibleIfGenesAreWildType(Stream.of("KRAS", "NRAS", "BRAF")),
                         ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR).build())
                 .build();
 
