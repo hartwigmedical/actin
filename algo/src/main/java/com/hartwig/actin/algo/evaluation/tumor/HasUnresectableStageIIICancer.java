@@ -12,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasUnresectableStageIIICancer implements EvaluationFunction {
 
+    private static final String DISPLAY_NAME = "has unresectable stage III cancer";
+
     HasUnresectableStageIIICancer() {
     }
 
@@ -35,7 +37,7 @@ public class HasUnresectableStageIIICancer implements EvaluationFunction {
             result = EvaluationResult.FAIL;
         }
 
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result).displayName(DISPLAY_NAME);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has no unresectable stage III cancer");
             builder.addFailGeneralMessages("No unresectable stage III cancer");

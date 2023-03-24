@@ -18,6 +18,9 @@ import org.jetbrains.annotations.NotNull;
 public class HasMetastaticCancer implements EvaluationFunction {
 
     static final Set<String> STAGE_II_POTENTIALLY_METASTATIC_CANCERS = Sets.newHashSet();
+    private static final String METASTATIC_CANCER = "Metastatic cancer";
+    private static final String NOT_METASTATIC_CANCER = "Not metastatic cancer";
+    private static final String DISPLAY_NAME = "has metastatic cancer";
 
     static {
         STAGE_II_POTENTIALLY_METASTATIC_CANCERS.add(DoidConstants.BRAIN_CANCER_DOID);
@@ -60,19 +63,20 @@ public class HasMetastaticCancer implements EvaluationFunction {
             result = EvaluationResult.FAIL;
         }
 
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result).displayName(DISPLAY_NAME);
+
         if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Tumor stage " + stage + " is considered locally advanced");
-            builder.addPassGeneralMessages("Locally advanced cancer");
+            builder.addPassSpecificMessages("Tumor stage " + stage + " is considered metastatic");
+            builder.addPassGeneralMessages(METASTATIC_CANCER);
         } else if (result == EvaluationResult.WARN) {
-            builder.addWarnSpecificMessages("Could not be determined if tumor stage " + stage + " is considered locally advanced");
-            builder.addWarnGeneralMessages("Locally advanced cancer");
+            builder.addWarnSpecificMessages("Could not be determined if tumor stage " + stage + " is considered metastatic");
+            builder.addWarnGeneralMessages(METASTATIC_CANCER);
         } else if (result == EvaluationResult.UNDETERMINED) {
-            builder.addUndeterminedSpecificMessages("Could not be determined if tumor stage " + stage + " is considered locally advanced");
-            builder.addUndeterminedGeneralMessages("Locally advanced cancer");
+            builder.addUndeterminedSpecificMessages("Could not be determined if tumor stage " + stage + " is considered metastatic");
+            builder.addUndeterminedGeneralMessages(METASTATIC_CANCER);
         } else if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Tumor stage " + stage + " is not considered locally advanced");
-            builder.addFailGeneralMessages("No locally advanced cancer");
+            builder.addFailSpecificMessages("Tumor stage " + stage + " is not considered metastatic");
+            builder.addFailGeneralMessages(NOT_METASTATIC_CANCER);
         }
 
         return builder.build();

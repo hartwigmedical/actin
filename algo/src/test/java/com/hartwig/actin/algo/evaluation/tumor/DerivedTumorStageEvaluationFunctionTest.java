@@ -11,7 +11,6 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
@@ -23,20 +22,14 @@ import org.junit.Test;
 
 public class DerivedTumorStageEvaluationFunctionTest {
 
-    private static final String GENERAL_1 = "general 1";
-    private static final String SPECIFIC_1 = "specific 1";
-    private static final String GENERAL_2 = "general 2";
-    private static final String SPECIFIC_2 = "specific 2";
     private DerivedTumorStageEvaluationFunction victim;
     private TumorStageDerivationFunction tumorStageDerivationFunction;
-    private DerivedTumorStageEvaluationFactory messageCombinationFunction;
     private EvaluationFunction evaluationFunction;
 
     @Before
     public void setUp() {
         tumorStageDerivationFunction = mock(TumorStageDerivationFunction.class);
         evaluationFunction = mock(EvaluationFunction.class);
-        messageCombinationFunction = new DerivedTumorStageEvaluationFactory();
         victim = new DerivedTumorStageEvaluationFunction(tumorStageDerivationFunction, evaluationFunction);
     }
 
@@ -47,15 +40,16 @@ public class DerivedTumorStageEvaluationFunctionTest {
         assertSingleStageWithResult(EvaluationResult.UNDETERMINED);
         assertSingleStageWithResult(EvaluationResult.FAIL);
     }
+
     @Test
     public void multipleInferredStagesEvaluatesPassWhenAllPass() {
         when(tumorStageDerivationFunction.apply(TestDataFactory.createMinimalTestPatientRecord().clinical().tumor())).thenReturn(Set.of(
                 TumorStage.I,
                 TumorStage.II));
         when(evaluationFunction.evaluate(withStage(TestDataFactory.createMinimalTestPatientRecord(), TumorStage.I))).thenReturn(
-                evaluationBuilderWith(EvaluationResult.PASS).addPassGeneralMessages(GENERAL_1).addPassSpecificMessages(SPECIFIC_1).build());
+                evaluationWith(EvaluationResult.PASS));
         when(evaluationFunction.evaluate(withStage(TestDataFactory.createMinimalTestPatientRecord(), TumorStage.II))).thenReturn(
-                evaluationBuilderWith(EvaluationResult.PASS).addPassGeneralMessages(GENERAL_2).addPassSpecificMessages(SPECIFIC_2).build());
+                evaluationWith(EvaluationResult.PASS));
 
         Evaluation evaluate = victim.evaluate(TestDataFactory.createMinimalTestPatientRecord());
         assertThat(evaluate.result()).isEqualTo(EvaluationResult.PASS);
@@ -67,9 +61,9 @@ public class DerivedTumorStageEvaluationFunctionTest {
                 TumorStage.I,
                 TumorStage.II));
         when(evaluationFunction.evaluate(withStage(TestDataFactory.createMinimalTestPatientRecord(), TumorStage.I))).thenReturn(
-                evaluationBuilderWith(EvaluationResult.PASS).addPassGeneralMessages(GENERAL_1).addPassSpecificMessages(SPECIFIC_1).build());
+                evaluationWith(EvaluationResult.PASS));
         when(evaluationFunction.evaluate(withStage(TestDataFactory.createMinimalTestPatientRecord(), TumorStage.II))).thenReturn(
-                evaluationBuilderWith(EvaluationResult.FAIL).addFailGeneralMessages(GENERAL_2).addFailSpecificMessages(SPECIFIC_2).build());
+                evaluationWith(EvaluationResult.FAIL));
 
         Evaluation evaluate = victim.evaluate(TestDataFactory.createMinimalTestPatientRecord());
         assertThat(evaluate.result()).isEqualTo(EvaluationResult.UNDETERMINED);
@@ -81,13 +75,9 @@ public class DerivedTumorStageEvaluationFunctionTest {
                 TumorStage.I,
                 TumorStage.II));
         when(evaluationFunction.evaluate(withStage(TestDataFactory.createMinimalTestPatientRecord(), TumorStage.I))).thenReturn(
-                evaluationBuilderWith(EvaluationResult.UNDETERMINED).addPassGeneralMessages(GENERAL_1)
-                        .addPassSpecificMessages(SPECIFIC_1)
-                        .build());
+                evaluationWith(EvaluationResult.UNDETERMINED));
         when(evaluationFunction.evaluate(withStage(TestDataFactory.createMinimalTestPatientRecord(), TumorStage.II))).thenReturn(
-                evaluationBuilderWith(EvaluationResult.UNDETERMINED).addFailGeneralMessages(GENERAL_2)
-                        .addFailSpecificMessages(SPECIFIC_2)
-                        .build());
+                evaluationWith(EvaluationResult.UNDETERMINED));
 
         Evaluation evaluate = victim.evaluate(TestDataFactory.createMinimalTestPatientRecord());
         assertThat(evaluate.result()).isEqualTo(EvaluationResult.FAIL);
@@ -99,22 +89,16 @@ public class DerivedTumorStageEvaluationFunctionTest {
                 TumorStage.I,
                 TumorStage.II));
         when(evaluationFunction.evaluate(withStage(TestDataFactory.createMinimalTestPatientRecord(), TumorStage.I))).thenReturn(
-                evaluationBuilderWith(EvaluationResult.WARN).addPassGeneralMessages(GENERAL_1).addPassSpecificMessages(SPECIFIC_1).build());
+                evaluationWith(EvaluationResult.WARN));
         when(evaluationFunction.evaluate(withStage(TestDataFactory.createMinimalTestPatientRecord(), TumorStage.II))).thenReturn(
-                evaluationBuilderWith(EvaluationResult.UNDETERMINED).addUndeterminedGeneralMessages(GENERAL_2)
-                        .addUndeterminedSpecificMessages(SPECIFIC_2)
-                        .build());
+                evaluationWith(EvaluationResult.UNDETERMINED));
 
         Evaluation evaluate = victim.evaluate(TestDataFactory.createMinimalTestPatientRecord());
         assertThat(evaluate.result()).isEqualTo(EvaluationResult.WARN);
-        assertThat(evaluate.warnGeneralMessages()).containsExactlyInAnyOrder("general 1 [Implied by derived tumor stage I]",
-                "general 2 [Implied by derived tumor stage II]");
-        assertThat(evaluate.warnSpecificMessages()).containsExactlyInAnyOrder("specific 1 [Implied by derived tumor stage I]",
-                "specific 2 [Implied by derived tumor stage II]");
     }
 
-    private static ImmutableEvaluation.Builder evaluationBuilderWith(final EvaluationResult result) {
-        return ImmutableEvaluation.builder().result(result).recoverable(false);
+    private static Evaluation evaluationWith(final EvaluationResult result) {
+        return EvaluationFactory.unrecoverable().result(result).displayName("test").build();
     }
 
     private static PatientRecord withStage(final PatientRecord originalRecord, final TumorStage newStage) {

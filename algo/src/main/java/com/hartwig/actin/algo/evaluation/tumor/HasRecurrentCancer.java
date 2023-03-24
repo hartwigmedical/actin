@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasRecurrentCancer implements EvaluationFunction {
 
+    private static final String DISPLAY_NAME = "has recurrent cancer";
+
     HasRecurrentCancer() {
     }
 
@@ -17,6 +19,7 @@ public class HasRecurrentCancer implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return EvaluationFactory.unrecoverable()
+                .displayName(DISPLAY_NAME)
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Currently cannot be determined if cancer is recurrent")
                 .addUndeterminedGeneralMessages("Undetermined recurrent cancer")

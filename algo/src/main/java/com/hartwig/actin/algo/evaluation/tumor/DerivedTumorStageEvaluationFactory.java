@@ -1,8 +1,11 @@
 package com.hartwig.actin.algo.evaluation.tumor;
 
-import java.util.List;
+import static java.lang.String.format;
+
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -12,8 +15,6 @@ import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 
-import org.jetbrains.annotations.NotNull;
-
 public class DerivedTumorStageEvaluationFactory {
 
     public static Evaluation follow(Map.Entry<TumorStage, Evaluation> derived) {
@@ -22,84 +23,75 @@ public class DerivedTumorStageEvaluationFactory {
     }
 
     static Evaluation pass(Map<TumorStage, Evaluation> derived) {
-        Evaluation firstPass = derived.values().iterator().next();
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.PASS)
-                .addAllPassSpecificMessages(passedMessage(derived, firstPass.passSpecificMessages()))
-                .addAllPassGeneralMessages(passedMessage(derived, firstPass.passGeneralMessages()))
+                .addPassSpecificMessages(format("%s %s.",
+                        preamble(derived),
+                        stageImpliedMessages(derived, Evaluation::passSpecificMessages)))
+                .addPassGeneralMessages(format("Derived tumor stage of %s %s", stagesFrom(derived.keySet().stream()), displayName(derived)))
                 .build();
     }
 
     static Evaluation undetermined(Map<TumorStage, Evaluation> derived) {
-        Map.Entry<TumorStage, Evaluation> passingDerivation =
-                derived.entrySet().stream().filter(e -> e.getValue().result().equals(EvaluationResult.PASS)).findFirst().orElseThrow();
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages(undeterminedMessage(derived,
-                        passingDerivation,
-                        passingDerivation.getValue().undeterminedSpecificMessages()))
-                .addUndeterminedGeneralMessages(undeterminedMessage(derived,
-                        passingDerivation,
-                        passingDerivation.getValue().undeterminedGeneralMessages()))
+                .addUndeterminedSpecificMessages(format("%s %s It is undetermined whether the patient %s.",
+                        preamble(derived),
+                        stageImpliedMessages(derived, Evaluation::undeterminedSpecificMessages),
+                        displayName(derived)))
+                .addUndeterminedGeneralMessages(format("From derived tumor stage of %s it is undetermined if %s",
+                        stagesFrom(derived.keySet().stream()),
+                        displayName(derived)))
                 .build();
     }
 
     static Evaluation warn(Map<TumorStage, Evaluation> derived) {
-        List<Map.Entry<TumorStage, Evaluation>> warningDerivations =
-                derived.entrySet().stream().filter(e -> e.getValue().result().equals(EvaluationResult.WARN)).collect(Collectors.toList());
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.WARN)
-                .addWarnSpecificMessages(warnMessage(derived,
-                        warningDerivations,
-                        warningDerivations.stream().flatMap(e -> e.getValue().warnSpecificMessages().stream()).collect(Collectors.toSet())))
-                .addWarnGeneralMessages(warnMessage(derived,
-                        warningDerivations,
-                        warningDerivations.stream().flatMap(e -> e.getValue().warnGeneralMessages().stream()).collect(Collectors.toSet())))
+                .addWarnSpecificMessages(format("%s %s.",
+                        preamble(derived),
+                        stageImpliedMessages(derived, Evaluation::warnSpecificMessages)))
+                .addWarnGeneralMessages(format("Derived tumor stage of %s %s", stagesFrom(derived.keySet().stream()), displayName(derived)))
                 .build();
     }
 
     static Evaluation fail(Map<TumorStage, Evaluation> derived) {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages(failMessage(derived))
-                .addFailGeneralMessages(failMessage(derived))
+                .addFailSpecificMessages(format("%s %s.",
+                        preamble(derived),
+                        stageImpliedMessages(derived, Evaluation::failSpecificMessages)))
+                .addFailGeneralMessages(format("Derived tumor stage of %s %s",
+                        stagesFrom(derived.keySet().stream()),
+                        negate(displayName(derived))))
                 .build();
     }
 
-    private static List<String> passedMessage(Map<TumorStage, Evaluation> derived, Set<String> messages) {
-        return List.of(String.format("%s, and evaluation passes for all with message [%s]", preamble(derived), joinedMessages(messages)));
+    private static String displayName(Map<TumorStage, Evaluation> derived) {
+        return derived.values()
+                .stream()
+                .findFirst()
+                .flatMap(e -> Optional.ofNullable(e.displayName()))
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "All evaluation functions used with derived tumor stage must define a display name"));
     }
 
-    private static String warnMessage(Map<TumorStage, Evaluation> derived, List<Map.Entry<TumorStage, Evaluation>> warningDerivations,
-            Set<String> messages) {
-        return String.format("%s Tumor stages [%s] had warnings with messages [%s], hence the result the result is a warning",
-                preamble(derived),
-                stagesFrom(warningDerivations.stream().map(Map.Entry::getKey)),
-                joinedMessages(messages));
+    private static String negate(String diplayName) {
+        return diplayName.replace("has", "does not have").replace("is", "is not");
     }
 
-    private static String failMessage(Map<TumorStage, Evaluation> derived) {
-        return String.format("%s None of these possible staged passed on warned, hence the result is a failure", preamble(derived));
+    private static String stageImpliedMessages(Map<TumorStage, Evaluation> derived, Function<Evaluation, Set<String>> extractingMessages) {
+        return derived.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey())
+                .map(Map.Entry::getValue)
+                .map(evaluation -> format(String.join(",", extractingMessages.apply(evaluation))))
+                .collect(Collectors.joining(". "));
     }
 
-    private static String undeterminedMessage(Map<TumorStage, Evaluation> derived, Map.Entry<TumorStage, Evaluation> passingDerivation,
-            Set<String> messages) {
-        return String.format(
-                "%s Only tumor stage [%s] passed with message [%s], but the others did not, hence the result the is undetermined",
-                preamble(derived),
-                passingDerivation.getKey(),
-                joinedMessages(messages));
-    }
-
-    @NotNull
     private static String preamble(Map<TumorStage, Evaluation> derived) {
-        return String.format("Tumor stage details are missing. Based on lesion localization tumor stage should be [%s].",
+        return format("Tumor stage details are missing but based on lesion localization tumor stage should be %s.",
                 stagesFrom(derived.keySet().stream()));
-    }
-
-    @NotNull
-    private static String joinedMessages(final Set<String> firstPass) {
-        return String.join(",", firstPass);
     }
 
     private static String stagesFrom(Stream<TumorStage> stream) {
