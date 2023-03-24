@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
@@ -30,40 +29,30 @@ public class HasHadSpecificTreatmentSinceDate implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Set<PriorTumorTreatment> matchingTreatments = record.clinical().priorTumorTreatments().stream()
+        Set<PriorTumorTreatment> matchingTreatments = record.clinical()
+                .priorTumorTreatments()
+                .stream()
                 .filter(treatment -> treatment.name().toLowerCase().contains(query))
                 .collect(Collectors.toSet());
 
-        if (matchingTreatments.stream().anyMatch(treatment -> treatmentSinceMinDate(treatment, false)))
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.PASS)
-                    .addPassGeneralMessages("Matching treatment since date")
-                    .addPassSpecificMessages(String.format("Treatment matching '%s' administered since %s", query, Format.date(minDate)))
-                    .build();
-        else if (matchingTreatments.stream().anyMatch(treatment -> treatmentSinceMinDate(treatment, true))) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addWarnGeneralMessages("Matching treatment with unknown date")
-                    .addWarnSpecificMessages(String.format("Treatment matching '%s' administered with unknown date", query))
-                    .build();
+        if (matchingTreatments.stream().anyMatch(treatment -> treatmentSinceMinDate(treatment, false))) {
+            return EvaluationFactory.pass(String.format("Treatment matching '%s' administered since %s", query, Format.date(minDate)),
+                    "Matching treatment since date");
+        } else if (matchingTreatments.stream().anyMatch(treatment -> treatmentSinceMinDate(treatment, true))) {
+            return EvaluationFactory.warn(String.format("Treatment matching '%s' administered with unknown date", query),
+                    "Matching treatment with unknown date");
         } else if (!matchingTreatments.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.FAIL)
-                    .addFailGeneralMessages("Matching treatment with earlier date")
-                    .addFailSpecificMessages(String.format("Treatment matching '%s' administered before %s", query, Format.date(minDate)))
-                    .build();
+            return EvaluationFactory.fail(String.format("Treatment matching '%s' administered before %s", query, Format.date(minDate)),
+                    "Matching treatment with earlier date");
         } else {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.FAIL)
-                    .addFailGeneralMessages("No matching treatments found")
-                    .addFailSpecificMessages(String.format("No treatments matching '%s' in prior tumor history", query))
-                    .build();
+            return EvaluationFactory.fail(String.format("No treatments matching '%s' in prior tumor history", query),
+                    "No matching treatments found");
         }
     }
 
     private boolean treatmentSinceMinDate(PriorTumorTreatment treatment, boolean includeUnknown) {
-        return yearAndMonthSinceEndDate(treatment.stopYear(), treatment.stopMonth())
-                .orElse(yearAndMonthSinceEndDate(treatment.startYear(), treatment.startMonth()).orElse(includeUnknown));
+        return yearAndMonthSinceEndDate(treatment.stopYear(), treatment.stopMonth()).orElse(yearAndMonthSinceEndDate(treatment.startYear(),
+                treatment.startMonth()).orElse(includeUnknown));
     }
 
     private Optional<Boolean> yearAndMonthSinceEndDate(@Nullable Integer nullableYear, @Nullable Integer nullableMonth) {
@@ -71,9 +60,7 @@ public class HasHadSpecificTreatmentSinceDate implements EvaluationFunction {
             if (year > minDate.getYear()) {
                 return true;
             } else if (year == minDate.getYear()) {
-                return Optional.ofNullable(nullableMonth)
-                        .map(month -> month >= minDate.getMonthValue())
-                        .orElse(true);
+                return Optional.ofNullable(nullableMonth).map(month -> month >= minDate.getMonthValue()).orElse(true);
             } else {
                 return false;
             }

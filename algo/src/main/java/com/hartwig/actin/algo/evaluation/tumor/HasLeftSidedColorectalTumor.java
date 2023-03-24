@@ -14,8 +14,16 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasLeftSidedColorectalTumor implements EvaluationFunction {
 
-    private static final Set<String> LEFT_SUB_LOCATIONS = Set.of("rectum", "descending colon", "sigmoid");
-    private static final Set<String> RIGHT_SUB_LOCATIONS = Set.of("transverse colon", "ascending colon", "caecum", "cecum");
+    private static final Set<String> LEFT_SUB_LOCATIONS =
+            Set.of("rectum", "descending colon", "colon sigmoid", "colon descendens", "rectosigmoid");
+    private static final Set<String> RIGHT_SUB_LOCATIONS = Set.of("ascending colon",
+            "colon ascendens",
+            "caecum",
+            "cecum",
+            "transverse colon",
+            "colon transversum",
+            "flexura hepatica",
+            "hepatic flexure");
     private final DoidModel doidModel;
 
     HasLeftSidedColorectalTumor(DoidModel doidModel) {

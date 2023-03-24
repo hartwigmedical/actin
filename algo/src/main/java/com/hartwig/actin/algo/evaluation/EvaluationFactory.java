@@ -44,4 +44,12 @@ public final class EvaluationFactory {
                 .addUndeterminedGeneralMessages(generalMessage)
                 .build();
     }
+
+    public static Evaluation warn(String specificMessage, String generalMessage) {
+        return EvaluationFactory.unrecoverable()
+                .result(EvaluationResult.WARN)
+                .addWarnSpecificMessages(specificMessage)
+                .addWarnGeneralMessages(generalMessage)
+                .build();
+    }
 }

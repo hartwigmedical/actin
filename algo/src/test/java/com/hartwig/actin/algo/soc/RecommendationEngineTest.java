@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
+import com.hartwig.actin.PatientRecordFactory;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory;
 import com.hartwig.actin.algo.doid.DoidConstants;
@@ -20,6 +21,7 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.doid.DoidModel;
@@ -34,6 +36,7 @@ import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.treatment.datamodel.Treatment;
 import com.hartwig.actin.treatment.datamodel.TreatmentComponent;
 
+import org.jetbrains.annotations.Nullable;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -88,6 +91,14 @@ public class RecommendationEngineTest {
                 Collections.emptyList(),
                 TestMolecularFactory.createProperTestMolecularRecord())), 0);
         assertAntiEGFRTreatmentCount(getTreatmentResultsForPatient(patientRecordWithChemoHistory(firstLineChemotherapies)), 18);
+    }
+
+    @Test
+    public void shouldNotRecommendAntiEGFRTherapyForPatientsMatchingMolecularCriteriaButWithRightSidedTumor() {
+        List<String> firstLineChemotherapies = List.of(TreatmentDB.TREATMENT_CAPOX);
+        assertAntiEGFRTreatmentCount(getTreatmentResultsForPatient(patientRecordWithHistoryAndMolecular(firstLineChemotherapies,
+                Collections.emptyList(),
+                TestMolecularFactory.createMinimalTestMolecularRecord(), "Ascending colon")), 0);
     }
 
     private void assertAntiEGFRTreatmentCount(Stream<Treatment> treatmentResults, int count) {
@@ -206,16 +217,23 @@ public class RecommendationEngineTest {
 
     private static PatientRecord patientRecordWithHistoryAndMolecular(List<String> pastChemotherapyNames,
             List<String> pastTargetedTherapyNames, MolecularRecord molecularRecord) {
-        PatientRecord minimal = TestDataFactory.createMinimalTestPatientRecord();
-        TumorDetails tumorDetails = ImmutableTumorDetails.builder().addDoids(DoidConstants.COLORECTAL_CANCER_DOID).build();
+        return patientRecordWithHistoryAndMolecular(pastChemotherapyNames, pastTargetedTherapyNames, molecularRecord, null);
+    }
+
+    private static PatientRecord patientRecordWithHistoryAndMolecular(List<String> pastChemotherapyNames,
+            List<String> pastTargetedTherapyNames, MolecularRecord molecularRecord, @Nullable String tumorSubLocation) {
+        TumorDetails tumorDetails = ImmutableTumorDetails.builder()
+                .addDoids(DoidConstants.COLORECTAL_CANCER_DOID)
+                .primaryTumorSubLocation(tumorSubLocation)
+                .build();
         ClinicalRecord clinicalRecord = ImmutableClinicalRecord.builder()
-                .from(minimal.clinical())
+                .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                 .tumor(tumorDetails)
                 .priorTumorTreatments(Stream.concat(priorTreatmentStreamFromNames(pastChemotherapyNames, TreatmentCategory.CHEMOTHERAPY),
                                 priorTreatmentStreamFromNames(pastTargetedTherapyNames, TreatmentCategory.TARGETED_THERAPY))
                         .collect(Collectors.toSet()))
                 .build();
-        return ImmutablePatientRecord.builder().from(minimal).clinical(clinicalRecord).molecular(molecularRecord).build();
+        return PatientRecordFactory.fromInputs(clinicalRecord, molecularRecord);
     }
 
     private static Stream<ImmutablePriorTumorTreatment> priorTreatmentStreamFromNames(List<String> names, TreatmentCategory category) {
