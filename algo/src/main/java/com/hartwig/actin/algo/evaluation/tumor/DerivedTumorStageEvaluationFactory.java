@@ -16,17 +16,21 @@ import com.hartwig.actin.clinical.datamodel.TumorStage;
 
 public class DerivedTumorStageEvaluationFactory {
 
-    public static Evaluation follow(Map<TumorStage, Evaluation> derived) {
-        switch (derived.values().iterator().next().result()) {
+    public static Evaluation follow(Map.Entry<TumorStage, Evaluation> derived) {
+        switch (derived.getValue().result()) {
             case PASS:
-                return pass(derived);
+                return pass(mapOf(derived));
             case UNDETERMINED:
-                return undetermined(derived);
+                return undetermined(mapOf(derived));
             case WARN:
-                return warn(derived);
+                return warn(mapOf(derived));
             default:
-                return fail(derived);
+                return fail(mapOf(derived));
         }
+    }
+
+    private static Map<TumorStage, Evaluation> mapOf(Map.Entry<TumorStage, Evaluation> derived) {
+        return Map.of(derived.getKey(), derived.getValue());
     }
 
     static Evaluation pass(Map<TumorStage, Evaluation> derived) {
@@ -83,8 +87,8 @@ public class DerivedTumorStageEvaluationFactory {
                         "All evaluation functions used with derived tumor stage must define a display name"));
     }
 
-    private static String negate(String diplayName) {
-        return diplayName.replace("has", "does not have").replace("is", "is not");
+    private static String negate(String displayName) {
+        return displayName.replace("has", "does not have").replace("is", "is not");
     }
 
     private static String stageImpliedMessages(Map<TumorStage, Evaluation> derived, Function<Evaluation, Set<String>> extractingMessages) {
@@ -92,7 +96,7 @@ public class DerivedTumorStageEvaluationFactory {
                 .stream()
                 .sorted(Map.Entry.comparingByKey())
                 .map(Map.Entry::getValue)
-                .map(evaluation -> format(String.join(",", extractingMessages.apply(evaluation))))
+                .map(evaluation -> format(String.join("; ", extractingMessages.apply(evaluation))))
                 .collect(Collectors.joining(". "));
     }
 

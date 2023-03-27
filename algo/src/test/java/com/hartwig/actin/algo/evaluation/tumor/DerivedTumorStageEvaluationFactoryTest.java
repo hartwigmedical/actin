@@ -18,7 +18,7 @@ public class DerivedTumorStageEvaluationFactoryTest {
 
     @Test
     public void followGivenStageUsesCorrectFunction() {
-        Evaluation evaluation = DerivedTumorStageEvaluationFactory.follow(Map.of(TumorStage.IV,
+        Evaluation evaluation = DerivedTumorStageEvaluationFactory.follow(Map.entry(TumorStage.IV,
                 evaluationWithResult(EvaluationResult.PASS, HAS_UNRESECTABLE_CANCER).addPassSpecificMessages(
                         "Tumor stage IV is considered unresectable cancer").build()));
         assertThat(evaluation.result()).isEqualTo(EvaluationResult.PASS);
@@ -74,7 +74,7 @@ public class DerivedTumorStageEvaluationFactoryTest {
                 evaluationWithResult(EvaluationResult.FAIL, HAS_UNRESECTABLE_CANCER).addFailSpecificMessages(
                         "Stage I is not considered unresectable cancer").build(),
                 TumorStage.II,
-                evaluationWithResult(EvaluationResult.FAIL, HAS_UNRESECTABLE_CANCER).addFailSpecificMessages(
+                evaluationWithResult(EvaluationResult.UNDETERMINED, HAS_UNRESECTABLE_CANCER).addFailSpecificMessages(
                         "Stage II is not considered unresectable cancer").build()));
         assertThat(evaluation.result()).isEqualTo(EvaluationResult.FAIL);
         assertThat(evaluation.failSpecificMessages()).containsOnly(

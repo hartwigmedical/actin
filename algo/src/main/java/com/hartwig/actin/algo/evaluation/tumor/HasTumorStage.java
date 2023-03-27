@@ -1,5 +1,7 @@
 package com.hartwig.actin.algo.evaluation.tumor;
 
+import static java.util.stream.Collectors.toSet;
+
 import java.util.Set;
 
 import com.hartwig.actin.PatientRecord;
@@ -27,7 +29,7 @@ public class HasTumorStage implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         TumorStage stage = record.clinical().tumor().stage();
         if (stage == null) {
-            final Set<TumorStage> derivedStages = tumorStageDerivationFunction.apply(record.clinical().tumor());
+            final Set<TumorStage> derivedStages = tumorStageDerivationFunction.apply(record.clinical().tumor()).collect(toSet());
             if (derivedStages.size() == 1) {
                 return evaluateWithStage(derivedStages.iterator().next());
             } else if (derivedStages.stream().map(this::evaluateWithStage).anyMatch(e -> e.result().equals(EvaluationResult.PASS))) {
@@ -40,7 +42,7 @@ public class HasTumorStage implements EvaluationFunction {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.FAIL)
                         .addFailSpecificMessages("Tumor stage details are missing")
-                        .addFailSpecificMessages("Missing tumor stage details")
+                        .addFailGeneralMessages("Missing tumor stage details")
                         .build();
             }
         }
@@ -48,7 +50,7 @@ public class HasTumorStage implements EvaluationFunction {
         return evaluateWithStage(stage);
     }
 
-    private ImmutableEvaluation evaluateWithStage(final TumorStage stage) {
+    private ImmutableEvaluation evaluateWithStage(TumorStage stage) {
         boolean hasTumorStage = stage == stageToMatch || stage.category() == stageToMatch;
 
         EvaluationResult result = hasTumorStage ? EvaluationResult.PASS : EvaluationResult.FAIL;

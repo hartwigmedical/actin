@@ -16,7 +16,7 @@ public class HasTumorStageTest {
     @Test
     public void canEvaluate() {
         HasTumorStage function =
-                new HasTumorStage(new TumorStageDerivationFunction(TestDoidModelFactory.createMinimalTestDoidModel()), TumorStage.III);
+                new HasTumorStage(TumorStageDerivationFunction.create(TestDoidModelFactory.createMinimalTestDoidModel()), TumorStage.III);
 
         final Evaluation evaluate = function.evaluate(TumorTestFactory.withTumorStage(null));
         assertEvaluation(EvaluationResult.FAIL, evaluate);
@@ -25,11 +25,12 @@ public class HasTumorStageTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IV)));
     }
 
-    @Ignore("To refactor based on ACTIN-2 rules")
+
+
     @Test
     public void canEvaluateBasedOnLesions() {
         HasTumorStage function =
-                new HasTumorStage(new TumorStageDerivationFunction(TestDoidModelFactory.createMinimalTestDoidModel()), TumorStage.IV);
+                new HasTumorStage(TumorStageDerivationFunction.create(TestDoidModelFactory.createMinimalTestDoidModel()), TumorStage.IV);
 
         assertEvaluation(EvaluationResult.PASS,
                 function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder()

@@ -18,12 +18,14 @@ public class TumorStageDerivationFunctionTest {
 
     @Before
     public void setUp() {
-        victim = new TumorStageDerivationFunction(TestDoidModelFactory.createMinimalTestDoidModel());
+        victim = TumorStageDerivationFunction.create(TestDoidModelFactory.createMinimalTestDoidModel());
     }
 
     @Test
     public void existingStageIsReturnedWithoutDerivation() {
-        assertThat(victim.apply(tumorBuilder(TumorStage.IV).build())).containsOnly(TumorStage.IV);
+        for (TumorStage value : TumorStage.values()) {
+            assertThat(victim.apply(tumorBuilder(value).build())).containsOnly(value);
+        }
     }
 
     @Test
@@ -47,6 +49,6 @@ public class TumorStageDerivationFunctionTest {
     }
 
     private static ImmutableTumorDetails.Builder tumorBuilder(final TumorStage stage) {
-        return ImmutableTumorDetails.builder().stage(stage).doids(List.of(DoidConstants.BREAST_CANCER_DOID));
+        return TumorTestFactory.builder().stage(stage).doids(List.of(DoidConstants.BREAST_CANCER_DOID));
     }
 }
