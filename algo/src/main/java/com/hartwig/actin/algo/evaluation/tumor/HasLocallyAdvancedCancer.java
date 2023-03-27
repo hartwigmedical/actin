@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasLocallyAdvancedCancer implements EvaluationFunction {
 
-    public static final String DISPLAY_NAME = "has locally advanced cancer";
+    public static final String DISPLAY_NAME = "locally advanced";
 
     HasLocallyAdvancedCancer() {
     }

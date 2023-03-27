@@ -20,7 +20,7 @@ public class HasMetastaticCancer implements EvaluationFunction {
     static final Set<String> STAGE_II_POTENTIALLY_METASTATIC_CANCERS = Sets.newHashSet();
     private static final String METASTATIC_CANCER = "Metastatic cancer";
     private static final String NOT_METASTATIC_CANCER = "Not metastatic cancer";
-    private static final String DISPLAY_NAME = "has metastatic cancer";
+    private static final String DISPLAY_NAME = "metastatic";
 
     static {
         STAGE_II_POTENTIALLY_METASTATIC_CANCERS.add(DoidConstants.BRAIN_CANCER_DOID);

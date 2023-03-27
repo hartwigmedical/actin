@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasUnresectableStageIIICancer implements EvaluationFunction {
 
-    private static final String DISPLAY_NAME = "has unresectable stage III cancer";
+    private static final String DISPLAY_NAME = "unresectable stage III";
 
     HasUnresectableStageIIICancer() {
     }

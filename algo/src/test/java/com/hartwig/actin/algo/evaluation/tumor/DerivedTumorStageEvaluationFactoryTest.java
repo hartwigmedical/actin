@@ -14,7 +14,7 @@ import org.junit.Test;
 
 public class DerivedTumorStageEvaluationFactoryTest {
 
-    private static final String HAS_UNRESECTABLE_CANCER = "has unresectable cancer";
+    private static final String HAS_UNRESECTABLE_CANCER = "unresectable";
 
     @Test
     public void followGivenStageUsesCorrectFunction() {
@@ -25,7 +25,7 @@ public class DerivedTumorStageEvaluationFactoryTest {
         assertThat(evaluation.passSpecificMessages()).containsOnly(
                 "Tumor stage details are missing but based on lesion localization tumor stage should be IV. "
                         + "Tumor stage IV is considered unresectable cancer.");
-        assertThat(evaluation.passGeneralMessages()).containsOnly("Derived tumor stage of IV has unresectable cancer");
+        assertThat(evaluation.passGeneralMessages()).containsOnly("From derived tumor stage(s) of IV tumor is considered unresectable");
     }
 
     @Test

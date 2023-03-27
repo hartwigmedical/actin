@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasRecurrentCancer implements EvaluationFunction {
 
-    private static final String DISPLAY_NAME = "has recurrent cancer";
+    private static final String DISPLAY_NAME = "recurrent";
 
     HasRecurrentCancer() {
     }
