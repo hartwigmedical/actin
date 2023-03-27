@@ -16,7 +16,7 @@ import com.hartwig.actin.clinical.datamodel.TumorStage;
 
 public class DerivedTumorStageEvaluationFactory {
 
-    public static Evaluation follow(Map.Entry<TumorStage, Evaluation> derived) {
+    static Evaluation follow(Map.Entry<TumorStage, Evaluation> derived) {
         switch (derived.getValue().result()) {
             case PASS:
                 return pass(mapOf(derived));
