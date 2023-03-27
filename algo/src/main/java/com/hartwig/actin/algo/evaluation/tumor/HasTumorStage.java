@@ -36,7 +36,7 @@ public class HasTumorStage implements EvaluationFunction {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.UNDETERMINED)
                         .addUndeterminedSpecificMessages("No tumor stage details present, but multiple possible derived are possible")
-                        .addUndeterminedGeneralMessages("No tumor stage details present, but multiple possible derived are possible")
+                        .addUndeterminedGeneralMessages("Missing tumor stage details")
                         .build();
             } else {
                 return EvaluationFactory.unrecoverable()
