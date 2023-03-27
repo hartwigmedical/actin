@@ -72,10 +72,10 @@ public class CurationDatabaseReader {
     private static final String BLOOD_TRANSFUSION_TRANSLATION_TSV = "blood_transfusion_translation.tsv";
 
     @NotNull
-    private final CurationDatabaseValidator databaseValidator;
+    private final CurationValidator curationValidator;
 
-    CurationDatabaseReader(@NotNull final CurationDatabaseValidator databaseValidator) {
-        this.databaseValidator = databaseValidator;
+    CurationDatabaseReader(@NotNull final CurationValidator curationValidator) {
+        this.curationValidator = curationValidator;
     }
 
     @NotNull
@@ -84,7 +84,7 @@ public class CurationDatabaseReader {
 
         String basePath = Paths.forceTrailingFileSeparator(clinicalCurationDirectory);
 
-        CurationDatabase database = ImmutableCurationDatabase.builder()
+        return ImmutableCurationDatabase.builder()
                 .primaryTumorConfigs(readPrimaryTumorConfigs(basePath + PRIMARY_TUMOR_TSV))
                 .oncologicalHistoryConfigs(readOncologicalHistoryConfigs(basePath + ONCOLOGICAL_HISTORY_TSV))
                 .secondPrimaryConfigs(readSecondPrimaryConfigs(basePath + SECOND_PRIMARY_TSV))
@@ -104,16 +104,11 @@ public class CurationDatabaseReader {
                 .toxicityTranslations(readToxicityTranslations(basePath + TOXICITY_TRANSLATION_TSV))
                 .bloodTransfusionTranslations(readBloodTransfusionTranslations(basePath + BLOOD_TRANSFUSION_TRANSLATION_TSV))
                 .build();
-
-        databaseValidator.validate(database);
-
-        return database;
     }
 
-
     @NotNull
-    private static List<PrimaryTumorConfig> readPrimaryTumorConfigs(@NotNull String tsv) throws IOException {
-        List<PrimaryTumorConfig> configs = CurationConfigFile.read(tsv, new PrimaryTumorConfigFactory());
+    private List<PrimaryTumorConfig> readPrimaryTumorConfigs(@NotNull String tsv) throws IOException {
+        List<PrimaryTumorConfig> configs = CurationConfigFile.read(tsv, new PrimaryTumorConfigFactory(curationValidator));
         LOGGER.info(" Read {} primary tumor configs from {}", configs.size(), tsv);
         return configs;
     }
@@ -126,8 +121,8 @@ public class CurationDatabaseReader {
     }
 
     @NotNull
-    private static List<SecondPrimaryConfig> readSecondPrimaryConfigs(@NotNull String tsv) throws IOException {
-        List<SecondPrimaryConfig> configs = CurationConfigFile.read(tsv, new SecondPrimaryConfigFactory());
+    private List<SecondPrimaryConfig> readSecondPrimaryConfigs(@NotNull String tsv) throws IOException {
+        List<SecondPrimaryConfig> configs = CurationConfigFile.read(tsv, new SecondPrimaryConfigFactory(curationValidator));
         LOGGER.info(" Read {} second primary configs from {}", configs.size(), tsv);
         return configs;
     }
@@ -140,8 +135,8 @@ public class CurationDatabaseReader {
     }
 
     @NotNull
-    private static List<NonOncologicalHistoryConfig> readNonOncologicalHistoryConfigs(@NotNull String tsv) throws IOException {
-        List<NonOncologicalHistoryConfig> configs = CurationConfigFile.read(tsv, new NonOncologicalHistoryConfigFactory());
+    private List<NonOncologicalHistoryConfig> readNonOncologicalHistoryConfigs(@NotNull String tsv) throws IOException {
+        List<NonOncologicalHistoryConfig> configs = CurationConfigFile.read(tsv, new NonOncologicalHistoryConfigFactory(curationValidator));
         LOGGER.info(" Read {} non-oncological history configs from {}", configs.size(), tsv);
         return configs;
     }
@@ -203,8 +198,8 @@ public class CurationDatabaseReader {
     }
 
     @NotNull
-    private static List<IntoleranceConfig> readIntoleranceConfigs(@NotNull String tsv) throws IOException {
-        List<IntoleranceConfig> configs = CurationConfigFile.read(tsv, new IntoleranceConfigFactory());
+    private List<IntoleranceConfig> readIntoleranceConfigs(@NotNull String tsv) throws IOException {
+        List<IntoleranceConfig> configs = CurationConfigFile.read(tsv, new IntoleranceConfigFactory(curationValidator));
         LOGGER.info(" Read {} intolerance configs from {}", configs.size(), tsv);
         return configs;
     }

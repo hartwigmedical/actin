@@ -68,8 +68,8 @@ public final class TestCurationFactory {
     }
 
     @NotNull
-    public static CurationDatabaseValidator createMinimalTestCurationDatabaseValidator() {
-        return new CurationDatabaseValidator(TestDoidModelFactory.createMinimalTestDoidModel());
+    public static CurationValidator createMinimalTestCurationDatabaseValidator() {
+        return new CurationValidator(TestDoidModelFactory.createMinimalTestDoidModel());
     }
 
     @NotNull

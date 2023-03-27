@@ -94,7 +94,7 @@ public class CurationModel {
 
     @NotNull
     public static CurationModel create(@NotNull String clinicalCurationDirectory, @NotNull DoidModel doidModel) throws IOException {
-        CurationDatabaseReader reader = new CurationDatabaseReader(new CurationDatabaseValidator(doidModel));
+        CurationDatabaseReader reader = new CurationDatabaseReader(new CurationValidator(doidModel));
         return new CurationModel(reader.read(clinicalCurationDirectory));
     }
 

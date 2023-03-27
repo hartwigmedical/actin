@@ -47,7 +47,7 @@ public class CurationDatabaseReaderTest {
 
     @Test
     public void canReadFromTestDirectory() throws IOException {
-        CurationDatabaseValidator validator = TestCurationFactory.createMinimalTestCurationDatabaseValidator();
+        CurationValidator validator = TestCurationFactory.createMinimalTestCurationDatabaseValidator();
         CurationDatabaseReader reader = new CurationDatabaseReader(validator);
         CurationDatabase database = reader.read(CURATION_DIRECTORY);
 

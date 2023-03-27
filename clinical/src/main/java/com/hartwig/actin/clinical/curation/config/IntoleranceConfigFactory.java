@@ -1,20 +1,34 @@
 package com.hartwig.actin.clinical.curation.config;
 
 import java.util.Map;
+import java.util.Set;
 
 import com.hartwig.actin.clinical.curation.CurationUtil;
+import com.hartwig.actin.clinical.curation.CurationValidator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 public class IntoleranceConfigFactory implements CurationConfigFactory<IntoleranceConfig> {
 
+    private static final Logger LOGGER = LogManager.getLogger(IntoleranceConfigFactory.class);
+
+    private final CurationValidator curationValidator;
+
+    public IntoleranceConfigFactory(final CurationValidator curationValidator) {
+        this.curationValidator = curationValidator;
+    }
+
     @NotNull
     @Override
     public IntoleranceConfig create(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
-        return ImmutableIntoleranceConfig.builder()
-                .input(parts[fields.get("input")])
-                .name(parts[fields.get("name")])
-                .doids(CurationUtil.toDOIDs(parts[fields.get("doids")]))
-                .build();
+        String input = parts[fields.get("input")];
+        Set<String> doids = CurationUtil.toDOIDs(parts[fields.get("doids")]);
+        if (!curationValidator.isValidGenericDoidSet(doids)) {
+            LOGGER.warn("No valid doids provided for intolerance config with input '{}': '{}'", input, doids);
+        }
+
+        return ImmutableIntoleranceConfig.builder().input(input).name(parts[fields.get("name")]).doids(doids).build();
     }
 }
