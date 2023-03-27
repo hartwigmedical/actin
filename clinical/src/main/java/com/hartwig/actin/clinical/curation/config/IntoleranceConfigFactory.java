@@ -25,7 +25,7 @@ public class IntoleranceConfigFactory implements CurationConfigFactory<Intoleran
     public IntoleranceConfig create(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
         String input = parts[fields.get("input")];
         Set<String> doids = CurationUtil.toDOIDs(parts[fields.get("doids")]);
-        if (!curationValidator.isValidGenericDoidSet(doids)) {
+        if (!curationValidator.isValidDiseaseDoidSet(doids)) {
             LOGGER.warn("No valid doids provided for intolerance config with input '{}': '{}'", input, doids);
         }
 

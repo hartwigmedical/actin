@@ -52,7 +52,7 @@ public class NonOncologicalHistoryConfigFactory implements CurationConfigFactory
             @NotNull String[] parts) {
         if (!isLVEF(fields, parts)) {
             Set<String> doids = CurationUtil.toDOIDs(parts[fields.get("doids")]);
-            if (!curationValidator.isValidGenericDoidSet(doids)) {
+            if (!curationValidator.isValidDiseaseDoidSet(doids)) {
                 LOGGER.warn("No valid doids provided for non-oncological history config with input '{}': '{}'", input, doids);
             }
 

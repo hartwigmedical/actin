@@ -7,8 +7,8 @@ import com.hartwig.actin.doid.DoidModel;
 
 public class CurationValidator {
 
-    static final String GENERIC_PARENT_DOID = "4"; // "disease"
-    static final String CANCER_PARENT_DOID = "14566"; // "disease of cellular proliferation"
+    static final String DISEASE_DOID = "4";
+    static final String DISEASE_OF_CELLULAR_PROLIFERATION_DOID = "14566";
 
     private final DoidModel doidModel;
 
@@ -17,11 +17,11 @@ public class CurationValidator {
     }
 
     public boolean isValidCancerDoidSet(Set<String> doids) {
-        return hasValidDoids(doids, doidModel, CANCER_PARENT_DOID);
+        return hasValidDoids(doids, doidModel, DISEASE_OF_CELLULAR_PROLIFERATION_DOID);
     }
 
-    public boolean isValidGenericDoidSet(Set<String> doids) {
-        return hasValidDoids(doids, doidModel, GENERIC_PARENT_DOID);
+    public boolean isValidDiseaseDoidSet(Set<String> doids) {
+        return hasValidDoids(doids, doidModel, DISEASE_DOID);
     }
 
     @VisibleForTesting

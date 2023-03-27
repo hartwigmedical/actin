@@ -15,13 +15,14 @@ public class CurationValidatorTest {
 
     @Test
     public void shouldIdentifyInvalidCancerDoidSets() {
-        DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild(CurationValidator.CANCER_PARENT_DOID, "child");
+        DoidModel doidModel =
+                TestDoidModelFactory.createWithOneParentChild(CurationValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID, "child");
         CurationValidator curationValidator = new CurationValidator(doidModel);
 
         Set<String> valid = Sets.newHashSet("child");
         assertTrue(curationValidator.isValidCancerDoidSet(valid));
 
-        Set<String> generic = Sets.newHashSet(CurationValidator.GENERIC_PARENT_DOID);
+        Set<String> generic = Sets.newHashSet(CurationValidator.DISEASE_DOID);
         assertFalse(curationValidator.isValidCancerDoidSet(generic));
 
         Set<String> notAllValid = Sets.newHashSet("child", "other");
@@ -29,18 +30,18 @@ public class CurationValidatorTest {
     }
 
     @Test
-    public void shouldIdentifyInvalidGenericDoidSets() {
-        DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild(CurationValidator.GENERIC_PARENT_DOID, "child");
+    public void shouldIdentifyInvalidDiseaseDoidSets() {
+        DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild(CurationValidator.DISEASE_DOID, "child");
         CurationValidator curationValidator = new CurationValidator(doidModel);
 
         Set<String> valid = Sets.newHashSet("child");
-        assertTrue(curationValidator.isValidGenericDoidSet(valid));
+        assertTrue(curationValidator.isValidDiseaseDoidSet(valid));
 
-        Set<String> cancer = Sets.newHashSet(CurationValidator.CANCER_PARENT_DOID);
-        assertFalse(curationValidator.isValidGenericDoidSet(cancer));
+        Set<String> cancer = Sets.newHashSet(CurationValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID);
+        assertFalse(curationValidator.isValidDiseaseDoidSet(cancer));
 
         Set<String> notAllValid = Sets.newHashSet("child", "other");
-        assertFalse(curationValidator.isValidGenericDoidSet(notAllValid));
+        assertFalse(curationValidator.isValidDiseaseDoidSet(notAllValid));
     }
 
     @Test
