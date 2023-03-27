@@ -60,6 +60,7 @@ public class MolecularRuleMapper extends RuleMapper {
         map.put(EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_EXACTLY_Y, proteinHasExactExpressionByIHCCreator());
         map.put(EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_LEAST_Y, proteinHasSufficientExpressionByIHCCreator());
         map.put(EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_MOST_Y, proteinHasLimitedExpressionByIHCCreator());
+        map.put(EligibilityRule.PROTEIN_X_IS_WILD_TYPE_BY_IHC, proteinIsWildTypeByIHCCreator());
         map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X, hasSufficientPDL1ByCPSByIHCCreator());
         map.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X, hasLimitedPDL1ByCPSByIHCCreator());
         map.put(EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X, hasLimitedPDL1ByTPSByIHCCreator());
@@ -265,6 +266,11 @@ public class MolecularRuleMapper extends RuleMapper {
             OneIntegerOneString input = functionInputResolver().createOneStringOneIntegerInput(function);
             return new ProteinHasExactExpressionByIHC(input.string(), input.integer());
         };
+    }
+
+    @NotNull
+    private FunctionCreator proteinIsWildTypeByIHCCreator() {
+        return function -> new ProteinIsWildTypeByIHC(functionInputResolver().createOneStringInput(function));
     }
 
     @NotNull

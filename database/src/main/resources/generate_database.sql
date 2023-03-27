@@ -49,6 +49,8 @@ CREATE TABLE clinicalStatus
     ecgAberrationDescription varchar(50),
     qtcfValue int,
     qtcfUnit varchar(50),
+    jtcValue int,
+    jtcUnit varchar(50),
     lvef double precision,
     PRIMARY KEY (id)
 );
@@ -472,7 +474,7 @@ CREATE TABLE virus
     sampleId varchar(50) NOT NULL,
     isReportable BOOLEAN NOT NULL,
     event varchar(50) NOT NULL,
-    driverLikelihood varchar(50) NOT NULL,
+    driverLikelihood varchar(50),
     name varchar(50) NOT NULL,
     type varchar(50) NOT NULL,
     isReliable BOOLEAN NOT NULL,

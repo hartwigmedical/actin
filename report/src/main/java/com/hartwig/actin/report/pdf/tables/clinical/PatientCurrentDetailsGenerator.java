@@ -6,6 +6,7 @@ import java.util.StringJoiner;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ECG;
+import com.hartwig.actin.clinical.datamodel.ECGMeasure;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.Surgery;
@@ -64,9 +65,14 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
                 table.addCell(Cells.createValue(description));
             }
 
-            if (ecg.qtcfValue() != null && ecg.qtcfUnit() != null) {
-                table.addCell(Cells.createKey("QTcF"));
-                table.addCell(Cells.createValue(Formats.twoDigitNumber(ecg.qtcfValue()) + " " + ecg.qtcfUnit()));
+            ECGMeasure qtcfMeasure = ecg.qtcfMeasure();
+            if (qtcfMeasure != null) {
+                createMeasureCells(table, "QTcF", qtcfMeasure);
+            }
+
+            ECGMeasure jtcMeasure = ecg.jtcMeasure();
+            if (qtcfMeasure != null) {
+                createMeasureCells(table, "JTc", jtcMeasure);
             }
         }
 
@@ -87,6 +93,11 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
         }
 
         return table;
+    }
+
+    private static void createMeasureCells(final Table table, final String key, final ECGMeasure measure) {
+        table.addCell(Cells.createKey(key));
+        table.addCell(Cells.createValue(Formats.twoDigitNumber(measure.value())) + " " + measure.unit());
     }
 
     //TODO: For source EHR, only consider the most recent value of each toxicity and write these with "From EHR: " for clarity

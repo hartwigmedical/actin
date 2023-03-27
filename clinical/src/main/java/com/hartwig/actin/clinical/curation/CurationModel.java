@@ -54,6 +54,7 @@ import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableECG;
+import com.hartwig.actin.clinical.datamodel.ImmutableECGMeasure;
 import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
@@ -408,9 +409,17 @@ public class CurationModel {
         return ImmutableECG.builder()
                 .from(input)
                 .aberrationDescription(description)
-                .qtcfValue(config.qtcfValue())
-                .qtcfUnit(config.qtcfUnit())
+                .qtcfMeasure(maybeECGMeasure(config.qtcfValue(), config.qtcfUnit()))
+                .jtcMeasure(maybeECGMeasure(config.jtcValue(), config.jtcUnit()))
                 .build();
+    }
+
+    @Nullable
+    private static ImmutableECGMeasure maybeECGMeasure(@Nullable final Integer value, @Nullable final String unit) {
+        if (value == null || unit == null) {
+            return null;
+        }
+        return ImmutableECGMeasure.builder().value(value).unit(unit).build();
     }
 
     @Nullable

@@ -1,15 +1,17 @@
 package com.hartwig.actin.report.pdf.tables.molecular;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.StringJoiner;
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.datamodel.driver.Driver;
+import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.report.interpretation.ClonalityInterpreter;
 import com.hartwig.actin.report.interpretation.EvaluatedCohort;
-import com.hartwig.actin.report.interpretation.MolecularDriverEntry;
+import com.hartwig.actin.report.interpretation.EvaluatedCohortsInterpreter;
 import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory;
+import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -56,24 +58,21 @@ public class MolecularDriversGenerator implements TableGenerator {
         table.addHeaderCell(Cells.createHeader("Best evidence in " + molecular.evidenceSource()));
         table.addHeaderCell(Cells.createHeader("Resistance in " + molecular.evidenceSource()));
 
-        MolecularDriverEntryFactory factory = MolecularDriverEntryFactory.fromEvaluatedCohorts(cohorts);
-        Set<MolecularDriverEntry> entries = factory.create(molecular);
+        MolecularDriversInterpreter molecularDriversInterpreter =
+                new MolecularDriversInterpreter(molecular.drivers(), new EvaluatedCohortsInterpreter(cohorts));
+        MolecularDriverEntryFactory factory = new MolecularDriverEntryFactory(molecularDriversInterpreter);
 
-        for (MolecularDriverEntry entry : entries) {
+        factory.create().forEach(entry -> {
             table.addCell(Cells.createContent(entry.driverType()));
             table.addCell(Cells.createContent(entry.driver()));
-            table.addCell(Cells.createContent(formatDriverLikelihood(entry.driverLikelihood().toString())));
+            table.addCell(Cells.createContent(formatDriverLikelihood(entry.driverLikelihood())));
             table.addCell(Cells.createContent(concat(entry.actinTrials())));
             table.addCell(Cells.createContent(concat(entry.externalTrials())));
             table.addCell(Cells.createContent(nullToEmpty(entry.bestResponsiveEvidence())));
             table.addCell(Cells.createContent(nullToEmpty(entry.bestResistanceEvidence())));
-        }
+        });
 
-        boolean hasPotentiallySubClonalVariants = molecular.drivers().variants().stream()
-                .filter(Driver::isReportable)
-                .anyMatch(ClonalityInterpreter::isPotentiallySubclonal);
-        
-        if (hasPotentiallySubClonalVariants) {
+        if (molecularDriversInterpreter.hasPotentiallySubClonalVariants()) {
             String note = "* Variant has > " + Formats.percentage(ClonalityInterpreter.CLONAL_CUTOFF) + " likelihood of being sub-clonal";
             table.addCell(Cells.createSpanningSubNote(note, table));
         }
@@ -82,8 +81,8 @@ public class MolecularDriversGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static String formatDriverLikelihood(@NotNull String driverLikelihood) {
-        return driverLikelihood.substring(0, 1).toUpperCase() + driverLikelihood.substring(1).toLowerCase();
+    private static String formatDriverLikelihood(@Nullable DriverLikelihood driverLikelihood) {
+        return Optional.ofNullable(driverLikelihood).map(DriverLikelihood::toString).orElse(Formats.VALUE_UNKNOWN);
     }
 
     @NotNull

@@ -18,6 +18,15 @@ public class ECGConfigFactory implements CurationConfigFactory<ECGConfig> {
             qtcfUnit = parts[fields.get("qtcfUnit")];
         }
 
+        boolean isJTC = parts[fields.get("isJTC")].equals("1");
+        Integer jtcValue = null;
+        String jtcUnit = null;
+
+        if (isJTC) {
+            jtcValue = Integer.parseInt(parts[fields.get("jtcValue")]);
+            jtcUnit = parts[fields.get("jtcUnit")];
+        }
+
         String interpretation = parts[fields.get("interpretation")];
         return ImmutableECGConfig.builder()
                 .input(parts[fields.get("input")])
@@ -26,6 +35,9 @@ public class ECGConfigFactory implements CurationConfigFactory<ECGConfig> {
                 .isQTCF(isQTCF)
                 .qtcfValue(qtcfValue)
                 .qtcfUnit(qtcfUnit)
+                .isJTC(isJTC)
+                .jtcValue(jtcValue)
+                .jtcUnit(jtcUnit)
                 .build();
     }
 }
