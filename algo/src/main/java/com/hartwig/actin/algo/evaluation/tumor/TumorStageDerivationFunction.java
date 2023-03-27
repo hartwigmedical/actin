@@ -1,5 +1,8 @@
 package com.hartwig.actin.algo.evaluation.tumor;
 
+import static com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.hasConfiguredDoids;
+import static com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.isOfDoidType;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,15 +36,15 @@ class TumorStageDerivationFunction {
     }
 
     Stream<TumorStage> apply(TumorDetails tumor) {
-        return !DoidEvaluationFunctions.hasConfiguredDoids(tumor.doids())
-                ? Stream.empty()
-                : Optional.ofNullable(tumor.stage())
-                        .map(Stream::of)
-                        .orElse(derivationRules.entrySet()
-                                .stream()
-                                .filter(rule -> rule.getKey().test(tumor))
-                                .map(Map.Entry::getValue)
-                                .flatMap(Set::stream));
+        return hasConfiguredDoids(tumor.doids()) && hasNoTumorStage(tumor) ? derivationRules.entrySet()
+                .stream()
+                .filter(rule -> rule.getKey().test(tumor))
+                .map(Map.Entry::getValue)
+                .flatMap(Set::stream) : Stream.empty();
+    }
+
+    private static boolean hasNoTumorStage(TumorDetails tumor) {
+        return tumor.stage() == null;
     }
 
     private static Predicate<TumorDetails> hasAtLeastCategorizedLesions(int min, DoidModel doidModel) {
@@ -69,8 +72,6 @@ class TumorStageDerivationFunction {
 
     private static boolean evaluateMetastases(@Nullable Boolean hasLesions, Set<String> tumorDoids, String doidToMatch,
             DoidModel doidModel) {
-        return Optional.ofNullable(hasLesions)
-                .map(h -> h && !DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, doidToMatch))
-                .orElse(false);
+        return Optional.ofNullable(hasLesions).map(h -> h && !isOfDoidType(doidModel, tumorDoids, doidToMatch)).orElse(false);
     }
 }
