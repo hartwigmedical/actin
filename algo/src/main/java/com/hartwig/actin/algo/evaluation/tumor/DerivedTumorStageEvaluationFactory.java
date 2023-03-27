@@ -46,11 +46,11 @@ public class DerivedTumorStageEvaluationFactory {
     static Evaluation undetermined(Map<TumorStage, Evaluation> derived) {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages(format("%s %s It is unclear whether the patient %s.",
+                .addUndeterminedSpecificMessages(format("%s %s It is unclear whether the tumor is %s.",
                         preamble(derived),
                         stageImpliedMessages(derived, Evaluation::undeterminedSpecificMessages),
                         displayName(derived)))
-                .addUndeterminedGeneralMessages(format("From derived tumor stage(s) of %s it is unclear if tumor %s",
+                .addUndeterminedGeneralMessages(format("From derived tumor stage(s) of %s it is unclear if tumor is %s",
                         stagesFrom(derived.keySet().stream()),
                         displayName(derived)))
                 .build();
