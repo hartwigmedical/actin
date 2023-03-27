@@ -14,7 +14,7 @@ import org.junit.Test;
 
 public class DerivedTumorStageEvaluationFactoryTest {
 
-    public static final String HAS_UNRESECTABLE_CANCER = "has unresectable cancer";
+    private static final String HAS_UNRESECTABLE_CANCER = "has unresectable cancer";
 
     @Test
     public void followGivenStageUsesCorrectFunction() {
