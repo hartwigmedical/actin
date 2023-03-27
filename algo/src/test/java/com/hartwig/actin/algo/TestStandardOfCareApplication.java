@@ -37,8 +37,13 @@ import org.jetbrains.annotations.NotNull;
 public class TestStandardOfCareApplication {
 
     private static final Logger LOGGER = LogManager.getLogger(TestStandardOfCareApplication.class);
-    private static final String DOID_JSON_PATH =
-            String.join(File.separator, System.getProperty("user.home"), "hmf", "repos", "common-resources-public", "doid.json");
+    private static final String DOID_JSON_PATH = String.join(File.separator,
+            System.getProperty("user.home"),
+            "hmf",
+            "repos",
+            "common-resources-public",
+            "disease_ontology",
+            "doid.json");
 
     public static void main(@NotNull String... args) throws IOException {
         new TestStandardOfCareApplication().run();
