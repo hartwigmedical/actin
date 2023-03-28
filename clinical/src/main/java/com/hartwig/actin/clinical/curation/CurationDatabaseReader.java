@@ -74,7 +74,7 @@ public class CurationDatabaseReader {
     @NotNull
     private final CurationValidator curationValidator;
 
-    CurationDatabaseReader(@NotNull final CurationValidator curationValidator) {
+    CurationDatabaseReader(@NotNull CurationValidator curationValidator) {
         this.curationValidator = curationValidator;
     }
 

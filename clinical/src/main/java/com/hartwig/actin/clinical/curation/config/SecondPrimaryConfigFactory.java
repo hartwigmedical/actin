@@ -19,13 +19,13 @@ public class SecondPrimaryConfigFactory implements CurationConfigFactory<SecondP
 
     private final CurationValidator curationValidator;
 
-    public SecondPrimaryConfigFactory(final CurationValidator curationValidator) {
+    public SecondPrimaryConfigFactory(CurationValidator curationValidator) {
         this.curationValidator = curationValidator;
     }
 
     @NotNull
     @Override
-    public SecondPrimaryConfig create(@NotNull final Map<String, Integer> fields, @NotNull final String[] parts) {
+    public SecondPrimaryConfig create(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
         String input = parts[fields.get("input")];
         boolean ignore = CurationUtil.isIgnoreString(parts[fields.get("name")]);
 
@@ -41,7 +41,7 @@ public class SecondPrimaryConfigFactory implements CurationConfigFactory<SecondP
             @NotNull String[] parts) {
         Set<String> doids = CurationUtil.toDOIDs(parts[fields.get("doids")]);
         if (!curationValidator.isValidCancerDoidSet(doids)) {
-            LOGGER.warn("No valid doids provided for second primary config with input '{}': '{}'", input, doids);
+            LOGGER.warn("Second primary config with input '{}' contains at least one invalid doid: '{}'", input, doids);
         }
 
         return ImmutablePriorSecondPrimary.builder()

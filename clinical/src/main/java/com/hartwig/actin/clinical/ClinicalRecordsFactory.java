@@ -67,7 +67,7 @@ public class ClinicalRecordsFactory {
     @NotNull
     private final CurationModel curation;
 
-    public ClinicalRecordsFactory(@NotNull final FeedModel feed, @NotNull final CurationModel curation) {
+    public ClinicalRecordsFactory(@NotNull FeedModel feed, @NotNull CurationModel curation) {
         this.feed = feed;
         this.curation = curation;
     }

@@ -2,7 +2,6 @@ package com.hartwig.actin.clinical.curation;
 
 import java.util.Set;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.hartwig.actin.doid.DoidModel;
 
 public class CurationValidator {
@@ -24,8 +23,7 @@ public class CurationValidator {
         return hasValidDoids(doids, doidModel, DISEASE_DOID);
     }
 
-    @VisibleForTesting
-    static boolean hasValidDoids(Set<String> doids, DoidModel doidModel, String expectedParentDoid) {
+    private static boolean hasValidDoids(Set<String> doids, DoidModel doidModel, String expectedParentDoid) {
         if (doids.isEmpty()) {
             return false;
         }

@@ -5,7 +5,9 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.HashMultimap;
@@ -274,11 +276,11 @@ public class CurationModel {
                 LOGGER.warn(" Could not find non-oncological history config for input '{}'", trimmedInput);
             }
 
-            for (NonOncologicalHistoryConfig config : configs) {
-                if (!config.ignore() && config.priorOtherCondition().isPresent()) {
-                    priorOtherConditions.add(config.priorOtherCondition().get());
-                }
-            }
+            priorOtherConditions.addAll(configs.stream()
+                    .filter(config -> !config.ignore())
+                    .map(NonOncologicalHistoryConfig::priorOtherCondition)
+                    .flatMap(Optional::stream)
+                    .collect(Collectors.toList()));
         }
 
         return priorOtherConditions;
@@ -453,16 +455,12 @@ public class CurationModel {
             return null;
         }
 
-        for (String input : inputs) {
-            Set<NonOncologicalHistoryConfig> configs = find(database.nonOncologicalHistoryConfigs(), input);
-            for (NonOncologicalHistoryConfig config : configs) {
-                if (!config.ignore() && config.lvef().isPresent()) {
-                    return config.lvef().get();
-                }
-            }
-        }
-
-        return null;
+        return inputs.stream()
+                .flatMap(input -> find(database.nonOncologicalHistoryConfigs(), input).stream())
+                .filter(config -> !config.ignore())
+                .flatMap(config -> config.lvef().stream())
+                .findFirst()
+                .orElse(null);
     }
 
     @Nullable

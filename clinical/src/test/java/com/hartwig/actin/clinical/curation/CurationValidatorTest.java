@@ -27,6 +27,9 @@ public class CurationValidatorTest {
 
         Set<String> notAllValid = Sets.newHashSet("child", "other");
         assertFalse(curationValidator.isValidCancerDoidSet(notAllValid));
+
+        Set<String> empty = Sets.newHashSet();
+        assertFalse(curationValidator.isValidCancerDoidSet(empty));
     }
 
     @Test
@@ -42,11 +45,8 @@ public class CurationValidatorTest {
 
         Set<String> notAllValid = Sets.newHashSet("child", "other");
         assertFalse(curationValidator.isValidDiseaseDoidSet(notAllValid));
-    }
 
-    @Test
-    public void emptyDoidsIsInvalid() {
-        DoidModel doidModel = TestDoidModelFactory.createMinimalTestDoidModel();
-        assertFalse(CurationValidator.hasValidDoids(Sets.newHashSet(), doidModel, "parent"));
+        Set<String> empty = Sets.newHashSet();
+        assertFalse(curationValidator.isValidDiseaseDoidSet(empty));
     }
 }

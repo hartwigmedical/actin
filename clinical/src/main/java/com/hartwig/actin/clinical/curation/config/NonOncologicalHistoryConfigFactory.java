@@ -20,7 +20,7 @@ public class NonOncologicalHistoryConfigFactory implements CurationConfigFactory
 
     private final CurationValidator curationValidator;
 
-    public NonOncologicalHistoryConfigFactory(final CurationValidator curationValidator) {
+    public NonOncologicalHistoryConfigFactory(CurationValidator curationValidator) {
         this.curationValidator = curationValidator;
     }
 
@@ -53,7 +53,7 @@ public class NonOncologicalHistoryConfigFactory implements CurationConfigFactory
         if (!isLVEF(fields, parts)) {
             Set<String> doids = CurationUtil.toDOIDs(parts[fields.get("doids")]);
             if (!curationValidator.isValidDiseaseDoidSet(doids)) {
-                LOGGER.warn("No valid doids provided for non-oncological history config with input '{}': '{}'", input, doids);
+                LOGGER.warn("Non-oncological history config with input '{}' contains at least one invalid doid: '{}'", input, doids);
             }
 
             return Optional.of(ImmutablePriorOtherCondition.builder()

@@ -16,17 +16,17 @@ public class PrimaryTumorConfigFactory implements CurationConfigFactory<PrimaryT
 
     private final CurationValidator curationValidator;
 
-    public PrimaryTumorConfigFactory(final CurationValidator curationValidator) {
+    public PrimaryTumorConfigFactory(CurationValidator curationValidator) {
         this.curationValidator = curationValidator;
     }
 
     @NotNull
     @Override
-    public PrimaryTumorConfig create(@NotNull final Map<String, Integer> fields, @NotNull final String[] parts) {
+    public PrimaryTumorConfig create(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
         String input = parts[fields.get("input")];
         Set<String> doids = CurationUtil.toDOIDs(parts[fields.get("doids")]);
         if (!curationValidator.isValidCancerDoidSet(doids)) {
-            LOGGER.warn("No valid doids provided for primary tumor config with input '{}': '{}'", input, doids);
+            LOGGER.warn("Primary tumor config with input '{}' contains at least one invalid doid: '{}'", input, doids);
         }
 
         return ImmutablePrimaryTumorConfig.builder()

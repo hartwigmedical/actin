@@ -16,7 +16,7 @@ public class IntoleranceConfigFactory implements CurationConfigFactory<Intoleran
 
     private final CurationValidator curationValidator;
 
-    public IntoleranceConfigFactory(final CurationValidator curationValidator) {
+    public IntoleranceConfigFactory(CurationValidator curationValidator) {
         this.curationValidator = curationValidator;
     }
 
@@ -26,7 +26,7 @@ public class IntoleranceConfigFactory implements CurationConfigFactory<Intoleran
         String input = parts[fields.get("input")];
         Set<String> doids = CurationUtil.toDOIDs(parts[fields.get("doids")]);
         if (!curationValidator.isValidDiseaseDoidSet(doids)) {
-            LOGGER.warn("No valid doids provided for intolerance config with input '{}': '{}'", input, doids);
+            LOGGER.warn("Intolerance config with input '{}' contains at least one invalid doid: '{}'", input, doids);
         }
 
         return ImmutableIntoleranceConfig.builder().input(input).name(parts[fields.get("name")]).doids(doids).build();
