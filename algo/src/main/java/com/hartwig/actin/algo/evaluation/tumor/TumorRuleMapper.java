@@ -188,12 +188,14 @@ public class TumorRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator hasRecurrentCancerCreator() {
-        return function -> new DerivedTumorStageEvaluationFunction(TumorStageDerivationFunction.create(doidModel()), new HasRecurrentCancer());
+        return function -> new DerivedTumorStageEvaluationFunction(TumorStageDerivationFunction.create(doidModel()),
+                new HasRecurrentCancer());
     }
 
     @NotNull
     private FunctionCreator hasIncurableCancerCreator() {
-        return function -> new DerivedTumorStageEvaluationFunction(TumorStageDerivationFunction.create(doidModel()), new HasIncurableCancer());
+        return function -> new DerivedTumorStageEvaluationFunction(TumorStageDerivationFunction.create(doidModel()),
+                new HasIncurableCancer());
     }
 
     @NotNull
