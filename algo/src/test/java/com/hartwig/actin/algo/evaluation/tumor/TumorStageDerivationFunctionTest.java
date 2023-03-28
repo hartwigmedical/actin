@@ -22,33 +22,38 @@ public class TumorStageDerivationFunctionTest {
     }
 
     @Test
-    public void existingStageIsReturnedWithoutDerivation() {
-        for (TumorStage value : TumorStage.values()) {
-            assertThat(victim.apply(tumorBuilder(value).build())).containsOnly(value);
-        }
-    }
-
-    @Test
-    public void noDoidsConfiguredReturnsEmptySetOfDerivation() {
+    public void shouldReturnEmptySetOfDerivationWhenNoDoidsConfigured() {
         assertThat(victim.apply(ImmutableTumorDetails.builder().stage(null).doids(null).build())).isEmpty();
     }
 
     @Test
+    public void shouldReturnEmptySetOfDerivationWhenNoLesionDetailsConfigured() {
+        assertThat(victim.apply(tumorBuilderWithNoStage().build())).isEmpty();
+    }
+
+    @Test
     public void stageIAndIIWhenNoLesions() {
-        assertThat(victim.apply(tumorBuilder(null).build())).containsOnly(TumorStage.I, TumorStage.II);
+        assertThat(victim.apply(tumorBuilderWithNoStage().hasBoneLesions(false)
+                .hasBrainLesions(false)
+                .hasLiverLesions(false)
+                .hasLymphNodeLesions(false)
+                .hasBoneLesions(false)
+                .hasCnsLesions(false)
+                .hasLungLesions(false)
+                .build())).containsOnly(TumorStage.I, TumorStage.II);
     }
 
     @Test
     public void stageIIIAndIVWhenOneCategorizedLocation() {
-        assertThat(victim.apply(tumorBuilder(null).hasLymphNodeLesions(true).build())).containsOnly(TumorStage.III, TumorStage.IV);
+        assertThat(victim.apply(tumorBuilderWithNoStage().hasLymphNodeLesions(true).build())).containsOnly(TumorStage.III, TumorStage.IV);
     }
 
     @Test
     public void stageIVWhenMultipleLesions() {
-        assertThat(victim.apply(tumorBuilder(null).hasBoneLesions(true).hasBrainLesions(true).build())).containsOnly(TumorStage.IV);
+        assertThat(victim.apply(tumorBuilderWithNoStage().hasBoneLesions(true).hasBrainLesions(true).build())).containsOnly(TumorStage.IV);
     }
 
-    private static ImmutableTumorDetails.Builder tumorBuilder(final TumorStage stage) {
-        return TumorTestFactory.builder().stage(stage).doids(List.of(DoidConstants.BREAST_CANCER_DOID));
+    private static ImmutableTumorDetails.Builder tumorBuilderWithNoStage() {
+        return TumorTestFactory.builder().stage(null).doids(List.of(DoidConstants.BREAST_CANCER_DOID));
     }
 }

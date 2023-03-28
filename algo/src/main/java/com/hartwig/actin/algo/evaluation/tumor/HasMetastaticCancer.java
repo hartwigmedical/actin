@@ -63,7 +63,7 @@ public class HasMetastaticCancer implements EvaluationFunction {
             result = EvaluationResult.FAIL;
         }
 
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result).displayName(DISPLAY_NAME);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
 
         if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Tumor stage " + stage + " is considered metastatic");

@@ -12,8 +12,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasLocallyAdvancedCancer implements EvaluationFunction {
 
-    public static final String DISPLAY_NAME = "locally advanced";
-
     HasLocallyAdvancedCancer() {
     }
 
@@ -39,7 +37,7 @@ public class HasLocallyAdvancedCancer implements EvaluationFunction {
             result = EvaluationResult.FAIL;
         }
 
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result).displayName(DISPLAY_NAME);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Tumor stage " + stage + " is considered locally advanced");
             builder.addPassGeneralMessages("Locally advanced cancer");

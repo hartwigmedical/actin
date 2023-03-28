@@ -12,8 +12,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasIncurableCancer implements EvaluationFunction {
 
-    private static final String DISPLAY_NAME = "incurable";
-
     HasIncurableCancer() {
     }
 
@@ -39,7 +37,7 @@ public class HasIncurableCancer implements EvaluationFunction {
             result = EvaluationResult.FAIL;
         }
 
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result).displayName(DISPLAY_NAME);
+        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Stage " + stage + " cancer is not considered incurable");
             builder.addFailGeneralMessages("No incurable cancer");

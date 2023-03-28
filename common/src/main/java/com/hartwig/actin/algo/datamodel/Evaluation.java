@@ -44,7 +44,4 @@ public abstract class Evaluation {
 
     @NotNull
     public abstract Set<String> failGeneralMessages();
-
-    @Nullable
-    public abstract String displayName();
 }

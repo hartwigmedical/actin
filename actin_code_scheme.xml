@@ -30,8 +30,8 @@
         </formatting-settings>
     </DBN-SQL>
     <JavaCodeStyleSettings>
-        <option name="GENERATE_FINAL_LOCALS" value="true" />
-        <option name="GENERATE_FINAL_PARAMETERS" value="true" />
+        <option name="GENERATE_FINAL_LOCALS" value="false" />
+        <option name="GENERATE_FINAL_PARAMETERS" value="false" />
         <option name="ANNOTATION_PARAMETER_WRAP" value="2" />
         <option name="ALIGN_MULTILINE_ANNOTATION_PARAMETERS" value="true" />
         <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="9999" />

@@ -11,6 +11,7 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.evaluation.EvaluationAssert;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
@@ -34,63 +35,79 @@ public class DerivedTumorStageEvaluationFunctionTest {
     }
 
     @Test
-    public void singleInferredStageEvaluatesFollowEvaluation() {
-        assertSingleStageWithResult(EvaluationResult.PASS);
-        assertSingleStageWithResult(EvaluationResult.WARN);
-        assertSingleStageWithResult(EvaluationResult.UNDETERMINED);
-        assertSingleStageWithResult(EvaluationResult.FAIL);
+    public void shouldReturnOriginalFunctionWhenTumorDetailsNotNull() {
+        Evaluation originalEvaluation = evaluationWith(EvaluationResult.PASS);
+        when(evaluationFunction.evaluate(TestDataFactory.createProperTestPatientRecord())).thenReturn(originalEvaluation);
+        assertThat(victim.evaluate(TestDataFactory.createProperTestPatientRecord())).isEqualTo(originalEvaluation);
     }
 
     @Test
-    public void multipleInferredStagesEvaluatesPassWhenAllPass() {
+    public void shouldReturnOriginalFunctionWhenNoDerivedStagesPossible() {
+        Evaluation originalEvaluation = evaluationWith(EvaluationResult.UNDETERMINED);
+        when(evaluationFunction.evaluate(TestDataFactory.createMinimalTestPatientRecord())).thenReturn(originalEvaluation);
+        when(tumorStageDerivationFunction.apply(TestDataFactory.createMinimalTestPatientRecord()
+                .clinical()
+                .tumor())).thenReturn(Stream.empty());
+        assertThat(victim.evaluate(TestDataFactory.createMinimalTestPatientRecord())).isEqualTo(originalEvaluation);
+    }
+
+    @Test
+    public void shouldFollowEvaluationWhenAnySingleInferredStage() {
+        for (EvaluationResult evaluationResult : EvaluationResult.values()) {
+            assertSingleStageWithResult(evaluationResult);
+        }
+    }
+
+    @Test
+    public void shouldEvaluatePassWhenMultipleDerivedStagesAllEvaluatePass() {
         when(tumorStageDerivationFunction.apply(TestDataFactory.createMinimalTestPatientRecord().clinical().tumor())).thenReturn(Stream.of(
                 TumorStage.I,
                 TumorStage.II));
         when(evaluationFunction.evaluate(withStage(TumorStage.I))).thenReturn(evaluationWith(EvaluationResult.PASS));
         when(evaluationFunction.evaluate(withStage(TumorStage.II))).thenReturn(evaluationWith(EvaluationResult.PASS));
 
-        Evaluation evaluate = victim.evaluate(TestDataFactory.createMinimalTestPatientRecord());
-        assertThat(evaluate.result()).isEqualTo(EvaluationResult.PASS);
+        Evaluation evaluation = victim.evaluate(TestDataFactory.createMinimalTestPatientRecord());
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, evaluation);
     }
 
     @Test
-    public void multipleInferredStagesEvaluatesUndeterminedIfAtLeastOnePasses() {
+    public void shouldEvaluatePassWhenMultipleDerivedAndAtLeastOnePasses() {
         when(tumorStageDerivationFunction.apply(TestDataFactory.createMinimalTestPatientRecord().clinical().tumor())).thenReturn(Stream.of(
                 TumorStage.I,
                 TumorStage.II));
         when(evaluationFunction.evaluate(withStage(TumorStage.I))).thenReturn(evaluationWith(EvaluationResult.PASS));
         when(evaluationFunction.evaluate(withStage(TumorStage.II))).thenReturn(evaluationWith(EvaluationResult.FAIL));
 
-        Evaluation evaluate = victim.evaluate(TestDataFactory.createMinimalTestPatientRecord());
-        assertThat(evaluate.result()).isEqualTo(EvaluationResult.UNDETERMINED);
+        Evaluation evaluation = victim.evaluate(TestDataFactory.createMinimalTestPatientRecord());
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluation);
     }
 
     @Test
-    public void multipleInferredStagesEvaluatesFailedIfNoPassOrWarn() {
+    public void shouldEvaluateFailWhenMultipleDerivedAndNoPassOrWarn() {
         when(tumorStageDerivationFunction.apply(TestDataFactory.createMinimalTestPatientRecord().clinical().tumor())).thenReturn(Stream.of(
                 TumorStage.I,
                 TumorStage.II));
         when(evaluationFunction.evaluate(withStage(TumorStage.I))).thenReturn(evaluationWith(EvaluationResult.UNDETERMINED));
         when(evaluationFunction.evaluate(withStage(TumorStage.II))).thenReturn(evaluationWith(EvaluationResult.UNDETERMINED));
 
-        Evaluation evaluate = victim.evaluate(TestDataFactory.createMinimalTestPatientRecord());
-        assertThat(evaluate.result()).isEqualTo(EvaluationResult.FAIL);
+        Evaluation evaluation = victim.evaluate(TestDataFactory.createMinimalTestPatientRecord());
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, evaluation);
     }
 
     @Test
-    public void multipleInferredStagesEvaluatesWarnIfAtLeastOneWarnsAndNoPasses() {
+    public void shouldEvaluateWarnWhenMultipleDerivedAndAtLeastOneWarnAndNoPass() {
         when(tumorStageDerivationFunction.apply(TestDataFactory.createMinimalTestPatientRecord().clinical().tumor())).thenReturn(Stream.of(
                 TumorStage.I,
                 TumorStage.II));
         when(evaluationFunction.evaluate(withStage(TumorStage.I))).thenReturn(evaluationWith(EvaluationResult.WARN));
         when(evaluationFunction.evaluate(withStage(TumorStage.II))).thenReturn(evaluationWith(EvaluationResult.UNDETERMINED));
 
-        Evaluation evaluate = victim.evaluate(TestDataFactory.createMinimalTestPatientRecord());
-        assertThat(evaluate.result()).isEqualTo(EvaluationResult.WARN);
+        Evaluation evaluation = victim.evaluate(TestDataFactory.createMinimalTestPatientRecord());
+        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, evaluation);
     }
 
     private static Evaluation evaluationWith(EvaluationResult result) {
-        return EvaluationFactory.unrecoverable().result(result).displayName("test").build();
+        return EvaluationFactory.unrecoverable().result(result).build();
     }
 
     private static PatientRecord withStage(TumorStage newStage) {
@@ -100,11 +117,11 @@ public class DerivedTumorStageEvaluationFunctionTest {
                                 .withStage(newStage)));
     }
 
-    private void assertSingleStageWithResult(EvaluationResult result) {
+    private void assertSingleStageWithResult(EvaluationResult expectedResult) {
         when(tumorStageDerivationFunction.apply(TestDataFactory.createMinimalTestPatientRecord().clinical().tumor())).thenReturn(Stream.of(
                 TumorStage.I));
-        when(evaluationFunction.evaluate(withStage(TumorStage.I))).thenReturn(evaluationWith(result));
-        Evaluation evaluate = victim.evaluate(TestDataFactory.createMinimalTestPatientRecord());
-        assertThat(evaluate.result()).isEqualTo(result);
+        when(evaluationFunction.evaluate(withStage(TumorStage.I))).thenReturn(evaluationWith(expectedResult));
+        Evaluation evaluation = victim.evaluate(TestDataFactory.createMinimalTestPatientRecord());
+        EvaluationAssert.assertEvaluation(expectedResult, evaluation);
     }
 }

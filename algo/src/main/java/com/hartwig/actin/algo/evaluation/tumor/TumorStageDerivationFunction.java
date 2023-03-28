@@ -5,6 +5,7 @@ import static com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.is
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -27,7 +28,8 @@ class TumorStageDerivationFunction {
     }
 
     static TumorStageDerivationFunction create(DoidModel doidModel) {
-        return new TumorStageDerivationFunction(Map.of(hasExactlyCategorizedLesions(0, doidModel).and(hasNoUncategorizedLesions()),
+        return new TumorStageDerivationFunction(Map.of(hasKnownLesionDetails().and(hasExactlyCategorizedLesions(0, doidModel).and(
+                        hasNoUncategorizedLesions())),
                 Set.of(TumorStage.I, TumorStage.II),
                 hasExactlyCategorizedLesions(1, doidModel),
                 Set.of(TumorStage.III, TumorStage.IV),
@@ -68,6 +70,15 @@ class TumorStageDerivationFunction {
 
     private static Predicate<TumorDetails> hasNoUncategorizedLesions() {
         return tumor -> Optional.ofNullable(tumor.otherLesions()).map(List::isEmpty).orElse(true);
+    }
+
+    private static Predicate<TumorDetails> hasKnownLesionDetails() {
+        return tumor -> Stream.of(tumor.hasLiverLesions(),
+                tumor.hasLymphNodeLesions(),
+                tumor.hasCnsLesions(),
+                tumor.hasBrainLesions(),
+                tumor.hasLungLesions(),
+                tumor.hasBoneLesions()).allMatch(Objects::nonNull);
     }
 
     private static boolean evaluateMetastases(@Nullable Boolean hasLesions, Set<String> tumorDoids, String doidToMatch,

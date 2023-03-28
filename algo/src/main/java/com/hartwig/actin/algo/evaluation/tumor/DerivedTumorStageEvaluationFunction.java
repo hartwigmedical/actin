@@ -3,11 +3,13 @@ package com.hartwig.actin.algo.evaluation.tumor;
 import static java.util.stream.Collectors.toMap;
 
 import java.util.Map;
+import java.util.Set;
 
 import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
@@ -33,17 +35,62 @@ class DerivedTumorStageEvaluationFunction implements EvaluationFunction {
         }
         Map<TumorStage, Evaluation> derivedResults =
                 tumorStageDerivationFunction.apply(record.clinical().tumor()).collect(toMap(s -> s, s -> evaluatedDerivedStage(record, s)));
-        if (derivedResults.size() == 1) {
-            return DerivedTumorStageEvaluationFactory.follow(derivedResults.entrySet().iterator().next());
+
+        if (derivedResults.isEmpty()){
+            return originalFunction.evaluate(record);
         }
+
+        if (derivedResults.size() == 1) {
+            return follow(derivedResults);
+        }
+
         if (allDerivedResultsMatch(derivedResults, EvaluationResult.PASS)) {
-            return DerivedTumorStageEvaluationFactory.pass(derivedResults);
+            return createEvaluationForDerivedResult(derivedResults, EvaluationResult.PASS);
         } else if (anyDerivedResultMatches(derivedResults, EvaluationResult.PASS)) {
-            return DerivedTumorStageEvaluationFactory.undetermined(derivedResults);
+            return createEvaluationForDerivedResult(derivedResults, EvaluationResult.UNDETERMINED);
         } else if (anyDerivedResultMatches(derivedResults, EvaluationResult.WARN)) {
-            return DerivedTumorStageEvaluationFactory.warn(derivedResults);
+            return createEvaluationForDerivedResult(derivedResults, EvaluationResult.WARN);
         } else {
-            return DerivedTumorStageEvaluationFactory.fail(derivedResults);
+            return createEvaluationForDerivedResult(derivedResults, EvaluationResult.FAIL);
+        }
+    }
+
+    private static Evaluation follow(Map<TumorStage, Evaluation> derivedResults) {
+        Evaluation singleDerivedResult = derivedResults.values().iterator().next();
+        return derivableResult(singleDerivedResult)
+                ? createEvaluationForDerivedResult(derivedResults, singleDerivedResult.result())
+                : singleDerivedResult;
+    }
+
+    private static boolean derivableResult(Evaluation singleDerivedResult) {
+        return Set.of(EvaluationResult.PASS, EvaluationResult.FAIL, EvaluationResult.UNDETERMINED, EvaluationResult.WARN)
+                .contains(singleDerivedResult.result());
+    }
+
+    static Evaluation createEvaluationForDerivedResult(Map<TumorStage, Evaluation> derived, EvaluationResult result) {
+        switch (result) {
+            case PASS:
+                return DerivedTumorStageEvaluation.create(derived,
+                        ImmutableEvaluation.Builder::addPassSpecificMessages,
+                        ImmutableEvaluation.Builder::addPassGeneralMessages,
+                        result);
+            case UNDETERMINED:
+                return DerivedTumorStageEvaluation.create(derived,
+                        ImmutableEvaluation.Builder::addUndeterminedSpecificMessages,
+                        ImmutableEvaluation.Builder::addUndeterminedGeneralMessages,
+                        result);
+            case WARN:
+                return DerivedTumorStageEvaluation.create(derived,
+                        ImmutableEvaluation.Builder::addWarnSpecificMessages,
+                        ImmutableEvaluation.Builder::addWarnGeneralMessages,
+                        result);
+            case FAIL:
+                return DerivedTumorStageEvaluation.create(derived,
+                        ImmutableEvaluation.Builder::addFailSpecificMessages,
+                        ImmutableEvaluation.Builder::addFailGeneralMessages,
+                        result);
+            default:
+                throw new IllegalArgumentException();
         }
     }
 
