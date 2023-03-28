@@ -50,7 +50,7 @@ public class DerivedTumorStageEvaluationFactory {
                         preamble(derived),
                         stageImpliedMessages(derived, Evaluation::undeterminedSpecificMessages),
                         displayName(derived)))
-                .addUndeterminedGeneralMessages(format("From derived tumor stage(s) of %s it is unclear if tumor is %s",
+                .addUndeterminedGeneralMessages(format("Tumor stage(s) of %s is/are unclear whether tumor is %s.",
                         stagesFrom(derived.keySet().stream()),
                         displayName(derived)))
                 .build();
@@ -72,14 +72,14 @@ public class DerivedTumorStageEvaluationFactory {
                 .addFailSpecificMessages(format("%s %s.",
                         preamble(derived),
                         stageImpliedMessages(derived, Evaluation::failSpecificMessages)))
-                .addFailGeneralMessages(format("From derived tumor stage(s) of %s tumor is not considered %s",
+                .addFailGeneralMessages(format("Tumor stage(s) of %s is/are not considered %s",
                         stagesFrom(derived.keySet().stream()),
                         displayName(derived)))
                 .build();
     }
 
     private static String passOrWarnGeneralMessage(Map<TumorStage, Evaluation> derived) {
-        return format("From derived tumor stage(s) of %s tumor is considered %s",
+        return format("Tumor stage(s) of %s is/are considered %s",
                 stagesFrom(derived.keySet().stream()),
                 displayName(derived));
     }

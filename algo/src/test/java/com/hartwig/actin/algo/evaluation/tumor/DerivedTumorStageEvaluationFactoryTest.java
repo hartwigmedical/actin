@@ -25,7 +25,7 @@ public class DerivedTumorStageEvaluationFactoryTest {
         assertThat(evaluation.passSpecificMessages()).containsOnly(
                 "Tumor stage details are missing but based on lesion localization tumor stage should be IV. "
                         + "Tumor stage IV is considered unresectable cancer.");
-        assertThat(evaluation.passGeneralMessages()).containsOnly("From derived tumor stage(s) of IV tumor is considered unresectable");
+        assertThat(evaluation.passGeneralMessages()).containsOnly("Tumor stage(s) of IV is/are considered unresectable");
     }
 
     @Test
@@ -37,7 +37,7 @@ public class DerivedTumorStageEvaluationFactoryTest {
         assertThat(evaluation.passSpecificMessages()).containsOnly(
                 "Tumor stage details are missing but based on lesion localization tumor stage should be IV. "
                         + "Tumor stage IV is considered unresectable cancer.");
-        assertThat(evaluation.passGeneralMessages()).containsOnly("Derived tumor stage of IV has unresectable cancer");
+        assertThat(evaluation.passGeneralMessages()).containsOnly("Tumor stage(s) of IV is/are considered unresectable");
     }
 
     @Test
@@ -52,20 +52,20 @@ public class DerivedTumorStageEvaluationFactoryTest {
         assertThat(evaluation.undeterminedSpecificMessages()).containsOnly(
                 "Tumor stage details are missing but based on lesion localization tumor stage should be III or IV. "
                         + "Stage III is unclear if patient has unresectable cancer. Stage IV is considered unresectable cancer. "
-                        + "It is undetermined whether the patient has unresectable cancer.");
+                        + "It is unclear whether the tumor is unresectable.");
         assertThat(evaluation.undeterminedGeneralMessages()).containsOnly(
-                "From derived tumor stage of III or IV it is undetermined if has unresectable cancer");
+                "Tumor stage(s) of III or IV is/are unclear whether tumor is unresectable.");
     }
 
     @Test
     public void createEvaluationWithDerivedDataForWarn() {
         Evaluation evaluation = DerivedTumorStageEvaluationFactory.warn(Map.of(TumorStage.II,
-                evaluationWithResult(EvaluationResult.PASS, "is metastatic cancer").addWarnSpecificMessages(
+                evaluationWithResult(EvaluationResult.PASS, "metastatic").addWarnSpecificMessages(
                         "Stage II combined with brain, head or neck primary is potentially metastatic").build()));
         assertThat(evaluation.result()).isEqualTo(EvaluationResult.WARN);
         assertThat(evaluation.warnSpecificMessages()).containsOnly(
                 "Tumor stage details are missing but based on lesion localization tumor stage should be II. Stage II combined with brain, head or neck primary is potentially metastatic.");
-        assertThat(evaluation.warnGeneralMessages()).containsOnly("Derived tumor stage of II is metastatic cancer");
+        assertThat(evaluation.warnGeneralMessages()).containsOnly("Tumor stage(s) of II is/are considered metastatic");
     }
 
     @Test
@@ -79,7 +79,7 @@ public class DerivedTumorStageEvaluationFactoryTest {
         assertThat(evaluation.result()).isEqualTo(EvaluationResult.FAIL);
         assertThat(evaluation.failSpecificMessages()).containsOnly(
                 "Tumor stage details are missing but based on lesion localization tumor stage should be I or II. Stage I is not considered unresectable cancer. Stage II is not considered unresectable cancer.");
-        assertThat(evaluation.failGeneralMessages()).containsOnly("Derived tumor stage of I or II does not have unresectable cancer");
+        assertThat(evaluation.failGeneralMessages()).containsOnly("Tumor stage(s) of I or II is/are not considered unresectable");
     }
 
     private static ImmutableEvaluation.Builder evaluationWithResult(EvaluationResult pass, String displayName) {
