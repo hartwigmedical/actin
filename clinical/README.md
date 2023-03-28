@@ -7,8 +7,9 @@ This application requires Java 11+ and can be run as follows:
 
 ```
 java -cp actin.jar com.hartwig.actin.clinical.ClinicalIngestionApplication \
-   -feed_directory /path/to/feed
-   -curation_directory /path/to/curation
+   -feed_directory /path/to/feed_file_dir \
+   -curation_directory /path/to/curation_file_dir \
+   -doid_json /path/to/full_doid_tree_json_file \
    -output_directory /path/to/where/clinical_json_files/are/written
 ```
 

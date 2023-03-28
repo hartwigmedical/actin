@@ -47,7 +47,9 @@ public class CurationDatabaseReaderTest {
 
     @Test
     public void canReadFromTestDirectory() throws IOException {
-        CurationDatabase database = CurationDatabaseReader.read(CURATION_DIRECTORY);
+        CurationValidator validator = TestCurationFactory.createMinimalTestCurationDatabaseValidator();
+        CurationDatabaseReader reader = new CurationDatabaseReader(validator);
+        CurationDatabase database = reader.read(CURATION_DIRECTORY);
 
         assertPrimaryTumorConfigs(database.primaryTumorConfigs());
         assertOncologicalHistoryConfigs(database.oncologicalHistoryConfigs());
@@ -143,8 +145,10 @@ public class CurationDatabaseReaderTest {
         assertEquals(4, configs.size());
         NonOncologicalHistoryConfig config1 = find(configs, "Levercirrose/ sarcoidose");
         assertFalse(config1.ignore());
+        assertTrue(config1.priorOtherCondition().isPresent());
+        assertFalse(config1.lvef().isPresent());
 
-        PriorOtherCondition curated1 = (PriorOtherCondition) config1.curated();
+        PriorOtherCondition curated1 = config1.priorOtherCondition().get();
         assertEquals("Liver cirrhosis and sarcoidosis", curated1.name());
         assertEquals(2019, (int) curated1.year());
         assertEquals(7, (int) curated1.month());
@@ -156,14 +160,18 @@ public class CurationDatabaseReaderTest {
 
         NonOncologicalHistoryConfig config2 = find(configs, "NA");
         assertTrue(config2.ignore());
-        assertNull(config2.curated());
+        assertFalse(config2.lvef().isPresent());
+        assertFalse(config2.priorOtherCondition().isPresent());
 
         NonOncologicalHistoryConfig config3 = find(configs, "LVEF 0.17");
         assertFalse(config3.ignore());
-        assertEquals(0.17, (Double) config3.curated(), EPSILON);
+        assertTrue(config3.lvef().isPresent());
+        assertFalse(config3.priorOtherCondition().isPresent());
+        assertEquals(0.17, config3.lvef().get(), EPSILON);
 
         NonOncologicalHistoryConfig config4 = find(configs, "No contraindication");
-        PriorOtherCondition curated4 = (PriorOtherCondition) config4.curated();
+        assertTrue(config4.priorOtherCondition().isPresent());
+        PriorOtherCondition curated4 = config4.priorOtherCondition().get();
         assertTrue(curated4.isContraindicationForTherapy());
     }
 
