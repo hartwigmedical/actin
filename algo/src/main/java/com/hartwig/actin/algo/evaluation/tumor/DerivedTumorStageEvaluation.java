@@ -14,7 +14,7 @@ import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 
-public class DerivedTumorStageEvaluation {
+final class DerivedTumorStageEvaluation {
 
     static Evaluation create(Map<TumorStage, Evaluation> derived, BiConsumer<ImmutableEvaluation.Builder, String> addSpecific,
             BiConsumer<ImmutableEvaluation.Builder, String> addGeneral, EvaluationResult result) {

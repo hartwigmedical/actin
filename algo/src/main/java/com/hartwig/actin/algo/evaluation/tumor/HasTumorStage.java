@@ -29,7 +29,7 @@ public class HasTumorStage implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         TumorStage stage = record.clinical().tumor().stage();
         if (stage == null) {
-            final Set<TumorStage> derivedStages = tumorStageDerivationFunction.apply(record.clinical().tumor()).collect(toSet());
+            Set<TumorStage> derivedStages = tumorStageDerivationFunction.apply(record.clinical().tumor()).collect(toSet());
             if (derivedStages.size() == 1) {
                 return evaluateWithStage(derivedStages.iterator().next());
             } else if (derivedStages.stream().map(this::evaluateWithStage).anyMatch(e -> e.result().equals(EvaluationResult.PASS))) {

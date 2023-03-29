@@ -23,7 +23,7 @@ public class TumorStageDerivationFunctionTest {
 
     @Test
     public void shouldReturnEmptySetOfDerivationWhenNoDoidsConfigured() {
-        assertThat(victim.apply(ImmutableTumorDetails.builder().stage(null).doids(null).build())).isEmpty();
+        assertThat(victim.apply(tumorBuilderWithNoStage().build())).isEmpty();
     }
 
     @Test

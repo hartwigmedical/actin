@@ -36,7 +36,7 @@ class DerivedTumorStageEvaluationFunction implements EvaluationFunction {
         Map<TumorStage, Evaluation> derivedResults =
                 tumorStageDerivationFunction.apply(record.clinical().tumor()).collect(toMap(s -> s, s -> evaluatedDerivedStage(record, s)));
 
-        if (derivedResults.isEmpty()){
+        if (derivedResults.isEmpty()) {
             return originalFunction.evaluate(record);
         }
 
@@ -50,6 +50,8 @@ class DerivedTumorStageEvaluationFunction implements EvaluationFunction {
             return createEvaluationForDerivedResult(derivedResults, EvaluationResult.UNDETERMINED);
         } else if (anyDerivedResultMatches(derivedResults, EvaluationResult.WARN)) {
             return createEvaluationForDerivedResult(derivedResults, EvaluationResult.WARN);
+        } else if (allDerivedResultsMatch(derivedResults, EvaluationResult.NOT_EVALUATED)) {
+            return createEvaluationForDerivedResult(derivedResults, EvaluationResult.NOT_EVALUATED);
         } else {
             return createEvaluationForDerivedResult(derivedResults, EvaluationResult.FAIL);
         }
