@@ -179,6 +179,30 @@
       "logicalDefinitionAxioms": [],
       "domainRangeAxioms": [],
       "propertyChainAxioms": []
+    },
+    {
+      "id" : "http://purl.obolibrary.org/obo/DOID_8718",
+      "meta" : {
+        "definition" : {
+          "val" : "A carcinoma in situ that is characterized by the spread of cancer in the respiratory system and the lack of invasion of surrounding tissues.",
+          "xrefs" : [ "url:http://en.wikipedia.org/wiki/Carcinoma_in_situ" ]
+        },
+        "synonyms" : [ {
+          "pred" : "hasExactSynonym",
+          "val" : "carcinoma in situ of respiratory tract (disorder)",
+          "xrefs" : [ ]
+        } ],
+        "basicPropertyValues" : [ {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+          "val" : "DOID:8965"
+        }, {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+          "val" : "disease_ontology"
+        } ],
+        "deprecated" : true
+      },
+      "type" : "CLASS",
+      "lbl" : "obsolete carcinoma in situ of respiratory system"
     }
   ]
 }
