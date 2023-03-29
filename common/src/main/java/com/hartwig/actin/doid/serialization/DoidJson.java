@@ -250,7 +250,7 @@ public final class DoidJson {
 
         DatamodelCheckerFactory.metadataChecker().check(metadata);
 
-        JsonArray xrefArray = array(metadata, "xrefs");
+        JsonArray xrefArray = optionalArray(metadata, "xrefs");
         List<Xref> xrefs = Lists.newArrayList();
         if (xrefArray != null) {
             JsonDatamodelChecker xrefChecker = DatamodelCheckerFactory.metadataXrefChecker();
