@@ -18,17 +18,9 @@ public class DerivedTumorStageEvaluationTest {
     @Test
     public void shouldUseMessageFromWorstOutcomeAlongWithDerivationNote() {
         Evaluation evaluation = DerivedTumorStageEvaluation.create(Map.of(TumorStage.I,
-                        EvaluationFactory.unrecoverable()
-                                .result(EvaluationResult.PASS)
-                                .addPassSpecificMessages("Pass specific message")
-                                .addPassGeneralMessages("Pass general message")
-                                .build(),
+                        EvaluationFactory.pass("Pass specific message", "Pass general message"),
                         TumorStage.II,
-                        EvaluationFactory.unrecoverable()
-                                .result(EvaluationResult.UNDETERMINED)
-                                .addPassSpecificMessages("Undetermined specific message")
-                                .addPassGeneralMessages("Undetermined general message")
-                                .build()),
+                        EvaluationFactory.undetermined("Undetermined specific message", "Undetermined general message")),
                 ImmutableEvaluation.Builder::addUndeterminedSpecificMessages,
                 ImmutableEvaluation.Builder::addUndeterminedGeneralMessages,
                 EvaluationResult.UNDETERMINED);
