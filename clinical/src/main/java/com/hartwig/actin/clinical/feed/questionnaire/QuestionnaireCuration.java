@@ -29,7 +29,8 @@ final class QuestionnaireCuration {
         OPTION_MAPPING.put("n.v.t", null);
         OPTION_MAPPING.put("nvt", null);
         OPTION_MAPPING.put("nvt.", null);
-        OPTION_MAPPING.put("NA", false);
+        OPTION_MAPPING.put("NA", null);
+        OPTION_MAPPING.put("na", null);
         OPTION_MAPPING.put("yes", true);
         OPTION_MAPPING.put("tes", true);
         OPTION_MAPPING.put("Yes", true);
@@ -55,12 +56,17 @@ final class QuestionnaireCuration {
         STAGE_MAPPING.put("II", TumorStage.II);
         STAGE_MAPPING.put("2", TumorStage.II);
         STAGE_MAPPING.put("IIa", TumorStage.IIA);
+        STAGE_MAPPING.put("IIA", TumorStage.IIA);
         STAGE_MAPPING.put("IIb", TumorStage.IIB);
+        STAGE_MAPPING.put("IIB", TumorStage.IIB);
         STAGE_MAPPING.put("III", TumorStage.III);
         STAGE_MAPPING.put("3", TumorStage.III);
         STAGE_MAPPING.put("IIIa", TumorStage.IIIA);
+        STAGE_MAPPING.put("IIIA", TumorStage.IIIA);
         STAGE_MAPPING.put("IIIb", TumorStage.IIIB);
+        STAGE_MAPPING.put("IIIB", TumorStage.IIIB);
         STAGE_MAPPING.put("IIIc", TumorStage.IIIC);
+        STAGE_MAPPING.put("IIIC", TumorStage.IIIC);
         STAGE_MAPPING.put("IV", TumorStage.IV);
         STAGE_MAPPING.put("IIII", TumorStage.IV);
         STAGE_MAPPING.put("4", TumorStage.IV);

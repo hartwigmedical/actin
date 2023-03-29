@@ -380,10 +380,7 @@ public class QuestionnaireExtractionTest {
         assertNotNull(infectionStatus);
         assertFalse(infectionStatus.hasActiveInfection());
 
-        ECG ecg = questionnaire.ecg();
-        assertNotNull(ecg);
-        assertFalse(ecg.hasSigAberrationLatestECG());
-        assertEquals("NA", ecg.aberrationDescription());
+        assertNull(questionnaire.ecg());
 
         List<String> complications = questionnaire.complications();
         assertEquals(1, complications.size());

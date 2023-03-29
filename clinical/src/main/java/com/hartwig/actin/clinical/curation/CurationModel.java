@@ -5,7 +5,9 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.HashMultimap;
@@ -54,6 +56,7 @@ import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableECG;
+import com.hartwig.actin.clinical.datamodel.ImmutableECGMeasure;
 import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
@@ -72,6 +75,7 @@ import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
+import com.hartwig.actin.doid.DoidModel;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -91,8 +95,9 @@ public class CurationModel {
     private final Multimap<Class<? extends Translation>, Translation> evaluatedTranslations = HashMultimap.create();
 
     @NotNull
-    public static CurationModel fromCurationDirectory(@NotNull String clinicalCurationDirectory) throws IOException {
-        return new CurationModel(CurationDatabaseReader.read(clinicalCurationDirectory));
+    public static CurationModel create(@NotNull String clinicalCurationDirectory, @NotNull DoidModel doidModel) throws IOException {
+        CurationDatabaseReader reader = new CurationDatabaseReader(new CurationValidator(doidModel));
+        return new CurationModel(reader.read(clinicalCurationDirectory));
     }
 
     @VisibleForTesting
@@ -271,11 +276,11 @@ public class CurationModel {
                 LOGGER.warn(" Could not find non-oncological history config for input '{}'", trimmedInput);
             }
 
-            for (NonOncologicalHistoryConfig config : configs) {
-                if (!config.ignore() && config.curated() instanceof PriorOtherCondition) {
-                    priorOtherConditions.add((PriorOtherCondition) config.curated());
-                }
-            }
+            priorOtherConditions.addAll(configs.stream()
+                    .filter(config -> !config.ignore())
+                    .map(NonOncologicalHistoryConfig::priorOtherCondition)
+                    .flatMap(Optional::stream)
+                    .collect(Collectors.toList()));
         }
 
         return priorOtherConditions;
@@ -406,9 +411,17 @@ public class CurationModel {
         return ImmutableECG.builder()
                 .from(input)
                 .aberrationDescription(description)
-                .qtcfValue(config.qtcfValue())
-                .qtcfUnit(config.qtcfUnit())
+                .qtcfMeasure(maybeECGMeasure(config.qtcfValue(), config.qtcfUnit()))
+                .jtcMeasure(maybeECGMeasure(config.jtcValue(), config.jtcUnit()))
                 .build();
+    }
+
+    @Nullable
+    private static ImmutableECGMeasure maybeECGMeasure(@Nullable final Integer value, @Nullable final String unit) {
+        if (value == null || unit == null) {
+            return null;
+        }
+        return ImmutableECGMeasure.builder().value(value).unit(unit).build();
     }
 
     @Nullable
@@ -442,16 +455,12 @@ public class CurationModel {
             return null;
         }
 
-        for (String input : inputs) {
-            Set<NonOncologicalHistoryConfig> configs = find(database.nonOncologicalHistoryConfigs(), input);
-            for (NonOncologicalHistoryConfig config : configs) {
-                if (!config.ignore() && config.curated() instanceof Double) {
-                    return (Double) config.curated();
-                }
-            }
-        }
-
-        return null;
+        return inputs.stream()
+                .flatMap(input -> find(database.nonOncologicalHistoryConfigs(), input).stream())
+                .filter(config -> !config.ignore())
+                .flatMap(config -> config.lvef().stream())
+                .findFirst()
+                .orElse(null);
     }
 
     @Nullable

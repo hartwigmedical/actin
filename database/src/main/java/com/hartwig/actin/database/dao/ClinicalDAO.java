@@ -18,6 +18,7 @@ import static com.hartwig.actin.database.Tables.TUMOR;
 import static com.hartwig.actin.database.Tables.VITALFUNCTION;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
@@ -25,6 +26,7 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ECG;
+import com.hartwig.actin.clinical.datamodel.ECGMeasure;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.LabValue;
@@ -153,8 +155,9 @@ class ClinicalDAO {
 
     private void writeClinicalStatus(@NotNull String patientId, @NotNull ClinicalStatus clinicalStatus) {
         InfectionStatus infectionStatus = clinicalStatus.infectionStatus();
-        ECG ecg = clinicalStatus.ecg();
-
+        Optional<ECG> ecg = Optional.ofNullable(clinicalStatus.ecg());
+        Optional<ECGMeasure> qtcfMeasure = ecg.map(ECG::qtcfMeasure);
+        Optional<ECGMeasure> jtcMeasure = ecg.map(ECG::jtcMeasure);
         context.insertInto(CLINICALSTATUS,
                         CLINICALSTATUS.PATIENTID,
                         CLINICALSTATUS.WHO,
@@ -164,15 +167,19 @@ class ClinicalDAO {
                         CLINICALSTATUS.ECGABERRATIONDESCRIPTION,
                         CLINICALSTATUS.QTCFVALUE,
                         CLINICALSTATUS.QTCFUNIT,
+                        CLINICALSTATUS.JTCVALUE,
+                        CLINICALSTATUS.JTCUNIT,
                         CLINICALSTATUS.LVEF)
                 .values(patientId,
                         clinicalStatus.who(),
                         DataUtil.toByte(infectionStatus != null ? infectionStatus.hasActiveInfection() : null),
                         infectionStatus != null ? infectionStatus.description() : null,
-                        DataUtil.toByte(ecg != null ? ecg.hasSigAberrationLatestECG() : null),
-                        ecg != null ? ecg.aberrationDescription() : null,
-                        ecg != null ? ecg.qtcfValue() : null,
-                        ecg != null ? ecg.qtcfUnit() : null,
+                        DataUtil.toByte(ecg.map(ECG::hasSigAberrationLatestECG).orElse(null)),
+                        ecg.map(ECG::aberrationDescription).orElse(null),
+                        qtcfMeasure.map(ECGMeasure::value).orElse(null),
+                        qtcfMeasure.map(ECGMeasure::unit).orElse(null),
+                        jtcMeasure.map(ECGMeasure::value).orElse(null),
+                        jtcMeasure.map(ECGMeasure::unit).orElse(null),
                         clinicalStatus.lvef())
                 .execute();
     }

@@ -1,5 +1,9 @@
 package com.hartwig.actin.clinical.curation.config;
 
+import java.util.Optional;
+
+import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
+
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,6 +19,8 @@ public abstract class NonOncologicalHistoryConfig implements CurationConfig {
     @Override
     public abstract boolean ignore();
 
-    @Nullable
-    public abstract Object curated();
+    public abstract Optional<Double> lvef();
+
+    public abstract Optional<PriorOtherCondition> priorOtherCondition();
+
 }

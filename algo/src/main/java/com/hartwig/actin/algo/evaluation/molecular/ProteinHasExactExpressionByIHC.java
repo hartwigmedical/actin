@@ -14,18 +14,19 @@ import org.jetbrains.annotations.NotNull;
 public class ProteinHasExactExpressionByIHC implements EvaluationFunction {
 
     @NotNull
-    private final String gene;
+    private final String protein;
     private final int expressionLevel;
 
-    public ProteinHasExactExpressionByIHC(@NotNull final String gene, final int expressionLevel) {
-        this.gene = gene;
+    public ProteinHasExactExpressionByIHC(@NotNull final String protein, final int expressionLevel) {
+        this.protein = protein;
         this.expressionLevel = expressionLevel;
     }
 
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        List<PriorMolecularTest> ihcTests = PriorMolecularTestFunctions.allIHCTestsForGene(record.clinical().priorMolecularTests(), gene);
+        List<PriorMolecularTest> ihcTests =
+                PriorMolecularTestFunctions.allIHCTestsForProtein(record.clinical().priorMolecularTests(), protein);
         boolean hasPositiveOrNegativeResult = false;
         for (PriorMolecularTest ihcTest : ihcTests) {
             Double scoreValue = ihcTest.scoreValue();
@@ -35,7 +36,7 @@ public class ProteinHasExactExpressionByIHC implements EvaluationFunction {
                 if (expressionLevel == Math.round(scoreValue) && (scoreValuePrefix == null || scoreValuePrefix.isEmpty())) {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
-                            .addPassSpecificMessages("Gene " + gene + " has exact expression level " + expressionLevel + " (by IHC)")
+                            .addPassSpecificMessages("Protein " + protein + " has exact expression level " + expressionLevel + " (by IHC)")
                             .build();
                 }
             }
@@ -50,21 +51,21 @@ public class ProteinHasExactExpressionByIHC implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages(
-                            "Unknown if gene " + gene + " expression level is exactly " + expressionLevel + " (by IHC)")
-                    .addUndeterminedGeneralMessages("Unknown " + gene + " IHC test result")
+                            "Unknown if protein " + protein + " expression level is exactly " + expressionLevel + " (by IHC)")
+                    .addUndeterminedGeneralMessages("Unknown " + protein + " IHC test result")
                     .build();
         } else if (ihcTests.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("No test result found; gene " + gene + " has not been tested by IHC")
-                    .addUndeterminedGeneralMessages("No " + gene + " IHC test result")
+                    .addUndeterminedSpecificMessages("No test result found; protein " + protein + " has not been tested by IHC")
+                    .addUndeterminedGeneralMessages("No " + protein + " IHC test result")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Gene " + gene + " does not have exact expression level " + expressionLevel + " (by IHC)")
-                .addFailGeneralMessages("No " + gene + " expression by IHC")
+                .addFailSpecificMessages("Protein " + protein + " does not have exact expression level " + expressionLevel + " (by IHC)")
+                .addFailGeneralMessages("No " + protein + " expression by IHC")
                 .build();
     }
 }

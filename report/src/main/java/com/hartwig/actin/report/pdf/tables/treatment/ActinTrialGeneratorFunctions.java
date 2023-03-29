@@ -16,7 +16,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
 
-public final class ActinTrialGeneratorFunctions {
+final class ActinTrialGeneratorFunctions {
 
     public static Stream<List<EvaluatedCohort>> streamSortedCohorts(List<EvaluatedCohort> cohorts) {
         cohorts.sort(new EvaluatedCohortComparator());
@@ -46,10 +46,8 @@ public final class ActinTrialGeneratorFunctions {
     public static void insertTrialRow(List<EvaluatedCohort> cohortList, Table table, Table trialSubTable) {
         if (!cohortList.isEmpty()) {
             EvaluatedCohort cohort = cohortList.get(0);
-            table.addCell(Cells.createContent(Cells.createContentNoBorder(new Paragraph().addAll(Arrays.asList(
-                    new Text(cohort.trialId()).addStyle(Styles.tableHighlightStyle()),
-                    new Text(cohort.acronym()).addStyle(Styles.tableContentStyle())
-            )))));
+            table.addCell(Cells.createContent(Cells.createContentNoBorder(new Paragraph().addAll(Arrays.asList(new Text(cohort.trialId()).addStyle(
+                    Styles.tableHighlightStyle()), new Text(cohort.acronym()).addStyle(Styles.tableContentStyle()))))));
             if (trialSubTable.getNumberOfRows() > 2) {
                 trialSubTable = Tables.makeWrapping(trialSubTable, false);
             } else {

@@ -6,12 +6,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
 import com.google.common.collect.Sets;
-import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.curation.TestCurationFactory;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
@@ -39,9 +37,6 @@ import org.junit.Test;
 
 public class ClinicalRecordsFactoryTest {
 
-    private static final String FEED_DIRECTORY = Resources.getResource("feed").getPath();
-    private static final String CURATION_DIRECTORY = Resources.getResource("curation").getPath();
-
     private static final String TEST_PATIENT = "ACTN01029999";
 
     private static final double EPSILON = 1.0E-10;
@@ -50,11 +45,6 @@ public class ClinicalRecordsFactoryTest {
     public void canGeneratePatientIds() {
         assertEquals("ACTN01029999", ClinicalRecordsFactory.toPatientId("ACTN-01-02-9999"));
         assertEquals("ACTN01029999", ClinicalRecordsFactory.toPatientId("01-02-9999"));
-    }
-
-    @Test
-    public void canCreateFromFeedAndCurationDirectories() throws IOException {
-        assertNotNull(ClinicalRecordsFactory.fromFeedAndCurationDirectories(FEED_DIRECTORY, CURATION_DIRECTORY));
     }
 
     @Test

@@ -3,8 +3,13 @@ package com.hartwig.actin.clinical;
 import java.io.IOException;
 import java.util.List;
 
+import com.hartwig.actin.clinical.curation.CurationModel;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
+import com.hartwig.actin.clinical.feed.FeedModel;
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson;
+import com.hartwig.actin.doid.DoidModelFactory;
+import com.hartwig.actin.doid.datamodel.DoidEntry;
+import com.hartwig.actin.doid.serialization.DoidJson;
 
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -46,11 +51,17 @@ public class ClinicalIngestionApplication {
     public void run() throws IOException {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION);
 
-        String feedDirectory = config.feedDirectory();
-        String curationDirectory = config.curationDirectory();
+        LOGGER.info("Loading DOID tree from {}", config.doidJson());
+        DoidEntry doidEntry = DoidJson.readDoidOwlEntry(config.doidJson());
+        LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size());
 
-        LOGGER.info("Creating clinical model from feed directory {} and curation direction {}", feedDirectory, curationDirectory);
-        List<ClinicalRecord> records = ClinicalRecordsFactory.fromFeedAndCurationDirectories(feedDirectory, curationDirectory);
+        LOGGER.info("Creating clinical feed model from directory {}", config.feedDirectory());
+        FeedModel feedModel = FeedModel.fromFeedDirectory(config.feedDirectory());
+
+        LOGGER.info("Creating clinical curation model from directory {}", config.curationDirectory());
+        CurationModel curationModel = CurationModel.create(config.curationDirectory(), DoidModelFactory.createFromDoidEntry(doidEntry));
+
+        List<ClinicalRecord> records = new ClinicalRecordsFactory(feedModel, curationModel).create();
 
         String outputDirectory = config.outputDirectory();
         LOGGER.info("Writing {} clinical records to {}", records.size(), outputDirectory);
