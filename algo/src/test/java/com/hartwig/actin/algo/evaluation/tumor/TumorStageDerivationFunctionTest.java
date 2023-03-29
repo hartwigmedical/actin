@@ -32,7 +32,7 @@ public class TumorStageDerivationFunctionTest {
     }
 
     @Test
-    public void stageIAndIIWhenNoLesions() {
+    public void shouldReturnStageIAndIIWhenNoLesions() {
         assertThat(victim.apply(tumorBuilderWithNoStage().hasBoneLesions(false)
                 .hasBrainLesions(false)
                 .hasLiverLesions(false)
@@ -44,12 +44,12 @@ public class TumorStageDerivationFunctionTest {
     }
 
     @Test
-    public void stageIIIAndIVWhenOneCategorizedLocation() {
+    public void shouldReturnStageIIIAndIVWhenOneCategorizedLocation() {
         assertThat(victim.apply(tumorBuilderWithNoStage().hasLymphNodeLesions(true).build())).containsOnly(TumorStage.III, TumorStage.IV);
     }
 
     @Test
-    public void stageIVWhenMultipleLesions() {
+    public void shouldReturnStageIVWhenMultipleLesions() {
         assertThat(victim.apply(tumorBuilderWithNoStage().hasBoneLesions(true).hasBrainLesions(true).build())).containsOnly(TumorStage.IV);
     }
 
