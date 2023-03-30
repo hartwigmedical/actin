@@ -33,17 +33,10 @@ public class HasTumorStage implements EvaluationFunction {
             if (derivedStages.size() == 1) {
                 return evaluateWithStage(derivedStages.iterator().next());
             } else if (derivedStages.stream().map(this::evaluateWithStage).anyMatch(e -> e.result().equals(EvaluationResult.PASS))) {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.UNDETERMINED)
-                        .addUndeterminedSpecificMessages("No tumor stage details present, but multiple possible derived are possible")
-                        .addUndeterminedGeneralMessages("Missing tumor stage details")
-                        .build();
+                return EvaluationFactory.undetermined("No tumor stage details present, but multiple possible derived are possible",
+                        "Missing tumor stage details");
             } else {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.FAIL)
-                        .addFailSpecificMessages("Tumor stage details are missing")
-                        .addFailGeneralMessages("Missing tumor stage details")
-                        .build();
+                return EvaluationFactory.fail("Tumor stage details are missing", "Missing tumor stage details");
             }
         }
 

@@ -105,7 +105,7 @@ public class DerivedTumorStageEvaluationFunctionTest {
     }
 
     @Test
-    public void shouldEvaluateNotEvaluatedWhenMultipleDerivedAndAtAllAreNotEvaluated() {
+    public void shouldEvaluateNotEvaluatedWhenMultipleDerivedAndAllAreNotEvaluated() {
         when(tumorStageDerivationFunction.apply(MINIMAL_TEST_PATIENT_RECORD.clinical().tumor())).thenReturn(Stream.of(TumorStage.I,
                 TumorStage.II));
         when(evaluationFunction.evaluate(withStage(TumorStage.I))).thenReturn(withResult(EvaluationResult.NOT_EVALUATED));

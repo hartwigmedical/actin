@@ -28,7 +28,7 @@ public class HasTumorStageTest {
     }
 
     @Test
-    public void canEvaluate() {
+    public void shouldEvaluateNormallyWhenTumorStageExists() {
         when(derivationFunction.apply(any())).thenReturn(Stream.empty());
         assertEvaluation(EvaluationResult.FAIL, victim.evaluate(TumorTestFactory.withTumorStage(null)));
         assertEvaluation(EvaluationResult.PASS, victim.evaluate(TumorTestFactory.withTumorStage(TumorStage.III)));
@@ -37,19 +37,19 @@ public class HasTumorStageTest {
     }
 
     @Test
-    public void singleDerivedTumorShouldFollowNonDerivedEvaluation() {
+    public void shouldFollowNonDerivedEvaluationWhenSingleDerivedTumor() {
         assertDerivedEvaluation(EvaluationResult.PASS, TumorStage.III);
         assertDerivedEvaluation(EvaluationResult.PASS, TumorStage.IIIB);
         assertDerivedEvaluation(EvaluationResult.FAIL, TumorStage.IV);
     }
 
     @Test
-    public void multipleDerivedTumorStagesWhereOnePassesShouldBeEvaluatedUndetermined() {
+    public void shouldEvaluateUndeterminedWhenMultipleDerivedTumorStagesWhereOnePasses() {
         assertDerivedEvaluation(EvaluationResult.UNDETERMINED, TumorStage.III, TumorStage.IIIB);
     }
 
     @Test
-    public void multipleDerivedTumorStagesWhereAllFailShouldBeEvaluatedFail() {
+    public void shouldEvaluateFailWhenMultipleDerivedTumorStagesWhereAllFail() {
         assertDerivedEvaluation(EvaluationResult.FAIL, TumorStage.I, TumorStage.II);
     }
 

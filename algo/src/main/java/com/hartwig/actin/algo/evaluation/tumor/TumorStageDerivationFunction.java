@@ -28,7 +28,7 @@ class TumorStageDerivationFunction {
     }
 
     static TumorStageDerivationFunction create(DoidModel doidModel) {
-        return new TumorStageDerivationFunction(Map.of(hasKnownLesionDetails().and(hasExactlyCategorizedLesions(0, doidModel).and(
+        return new TumorStageDerivationFunction(Map.of(hasAllKnownLesionDetails().and(hasExactlyCategorizedLesions(0, doidModel).and(
                         hasNoUncategorizedLesions())),
                 Set.of(TumorStage.I, TumorStage.II),
                 hasExactlyCategorizedLesions(1, doidModel),
@@ -72,7 +72,7 @@ class TumorStageDerivationFunction {
         return tumor -> Optional.ofNullable(tumor.otherLesions()).map(List::isEmpty).orElse(true);
     }
 
-    private static Predicate<TumorDetails> hasKnownLesionDetails() {
+    private static Predicate<TumorDetails> hasAllKnownLesionDetails() {
         return tumor -> Stream.of(tumor.hasLiverLesions(),
                 tumor.hasLymphNodeLesions(),
                 tumor.hasCnsLesions(),

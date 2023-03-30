@@ -4,25 +4,18 @@ import static java.lang.String.format;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 
 final class DerivedTumorStageEvaluation {
 
-    static Evaluation create(Map<TumorStage, Evaluation> derived, BiConsumer<ImmutableEvaluation.Builder, String> addSpecific,
-            BiConsumer<ImmutableEvaluation.Builder, String> addGeneral, EvaluationResult result) {
+    static Evaluation create(Map<TumorStage, Evaluation> derived, BiFunction<String, String, Evaluation> createEvaluation) {
         Evaluation worstEvaluation = worstEvaluation(derived);
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
-        addSpecific.accept(builder, allSpecificMessagesFrom(derived, worstEvaluation));
-        addGeneral.accept(builder, allGeneralMessagesFrom(worstEvaluation));
-        return builder.build();
+        return createEvaluation.apply(allSpecificMessagesFrom(derived, worstEvaluation), allGeneralMessagesFrom(worstEvaluation));
     }
 
     private static Evaluation worstEvaluation(Map<TumorStage, Evaluation> derived) {

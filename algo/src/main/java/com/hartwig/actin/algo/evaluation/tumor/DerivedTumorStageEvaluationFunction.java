@@ -9,7 +9,7 @@ import com.hartwig.actin.ImmutablePatientRecord;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
@@ -41,7 +41,7 @@ class DerivedTumorStageEvaluationFunction implements EvaluationFunction {
         }
 
         if (derivedResults.size() == 1) {
-            return follow(derivedResults);
+            return followResultOfSingleDerivation(derivedResults);
         }
 
         if (allDerivedResultsMatch(derivedResults, EvaluationResult.PASS)) {
@@ -57,7 +57,7 @@ class DerivedTumorStageEvaluationFunction implements EvaluationFunction {
         }
     }
 
-    private static Evaluation follow(Map<TumorStage, Evaluation> derivedResults) {
+    private static Evaluation followResultOfSingleDerivation(Map<TumorStage, Evaluation> derivedResults) {
         Evaluation singleDerivedResult = derivedResults.values().iterator().next();
         return derivableResult(singleDerivedResult)
                 ? createEvaluationForDerivedResult(derivedResults, singleDerivedResult.result())
@@ -72,25 +72,13 @@ class DerivedTumorStageEvaluationFunction implements EvaluationFunction {
     static Evaluation createEvaluationForDerivedResult(Map<TumorStage, Evaluation> derived, EvaluationResult result) {
         switch (result) {
             case PASS:
-                return DerivedTumorStageEvaluation.create(derived,
-                        ImmutableEvaluation.Builder::addPassSpecificMessages,
-                        ImmutableEvaluation.Builder::addPassGeneralMessages,
-                        result);
+                return DerivedTumorStageEvaluation.create(derived, EvaluationFactory::pass);
             case UNDETERMINED:
-                return DerivedTumorStageEvaluation.create(derived,
-                        ImmutableEvaluation.Builder::addUndeterminedSpecificMessages,
-                        ImmutableEvaluation.Builder::addUndeterminedGeneralMessages,
-                        result);
+                return DerivedTumorStageEvaluation.create(derived, EvaluationFactory::undetermined);
             case WARN:
-                return DerivedTumorStageEvaluation.create(derived,
-                        ImmutableEvaluation.Builder::addWarnSpecificMessages,
-                        ImmutableEvaluation.Builder::addWarnGeneralMessages,
-                        result);
+                return DerivedTumorStageEvaluation.create(derived, EvaluationFactory::warn);
             case FAIL:
-                return DerivedTumorStageEvaluation.create(derived,
-                        ImmutableEvaluation.Builder::addFailSpecificMessages,
-                        ImmutableEvaluation.Builder::addFailGeneralMessages,
-                        result);
+                return DerivedTumorStageEvaluation.create(derived, EvaluationFactory::fail);
             default:
                 throw new IllegalArgumentException();
         }
