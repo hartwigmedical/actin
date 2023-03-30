@@ -79,6 +79,8 @@ class DerivedTumorStageEvaluationFunction implements EvaluationFunction {
                 return DerivedTumorStageEvaluation.create(derived, EvaluationFactory::warn);
             case FAIL:
                 return DerivedTumorStageEvaluation.create(derived, EvaluationFactory::fail);
+            case NOT_EVALUATED:
+                return DerivedTumorStageEvaluation.create(derived, EvaluationFactory::notEvaluated);
             default:
                 throw new IllegalArgumentException();
         }

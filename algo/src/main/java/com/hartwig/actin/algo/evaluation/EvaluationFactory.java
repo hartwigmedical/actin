@@ -50,6 +50,13 @@ public final class EvaluationFactory {
                 .build();
     }
 
+    public static Evaluation notEvaluated(String specificMessage, String generalMessage) {
+        return unrecoverable().result(EvaluationResult.NOT_EVALUATED)
+                .addWarnSpecificMessages(specificMessage)
+                .addWarnGeneralMessages(generalMessage)
+                .build();
+    }
+
     private static Evaluation buildFailEvaluation(ImmutableEvaluation.Builder builder, String specificMessage, String generalMessage) {
         return builder.result(EvaluationResult.FAIL)
                 .addFailSpecificMessages(specificMessage)
