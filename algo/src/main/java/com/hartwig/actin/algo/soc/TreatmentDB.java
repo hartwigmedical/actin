@@ -33,10 +33,12 @@ public class TreatmentDB {
     private static final int SCORE_PEMBROLIZUMAB = 6;
     private static final int SCORE_TARGETED_THERAPY = 5;
     private static final String RECENT_TREATMENT_THRESHOLD_WEEKS = "104";
-    private static final EligibilityFunction isColorectalCancer = ImmutableEligibilityFunction.builder()
-            .rule(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X)
-            .addParameters("colorectal cancer")
-            .build();
+    private static final EligibilityFunction IS_COLORECTAL_CANCER =
+            eligibilityFunction(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X, "colorectal cancer");
+
+    private static final EligibilityFunction IS_YOUNG_AND_FIT = eligibilityFunction(EligibilityRule.AND,
+            eligibilityFunction(EligibilityRule.NOT, eligibilityFunction(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, "75")),
+            eligibilityFunction(EligibilityRule.HAS_WHO_STATUS_OF_AT_MOST_X, "1"));
 
     public static Stream<Treatment> loadTreatments() {
         return Stream.of(combinableChemotherapies(),
@@ -56,25 +58,25 @@ public class TreatmentDB {
                 createChemotherapy("Capecitabine", Set.of(TreatmentComponent.CAPECITABINE), SCORE_MONOTHERAPY),
                 createChemotherapy("Irinotecan", Set.of(TreatmentComponent.IRINOTECAN), SCORE_MONOTHERAPY),
                 createChemotherapy("Oxaliplatin", Set.of(TreatmentComponent.OXALIPLATIN), -1),
-                createChemotherapy(TREATMENT_CAPOX,
-                        Set.of(TreatmentComponent.CAPECITABINE, TreatmentComponent.OXALIPLATIN),
-                        SCORE_MULTITHERAPY),
+                createMultiChemotherapy(TREATMENT_CAPOX, Set.of(TreatmentComponent.CAPECITABINE, TreatmentComponent.OXALIPLATIN)),
                 createChemotherapy(TREATMENT_FOLFIRI,
                         Set.of(TreatmentComponent.FLUOROURACIL, TreatmentComponent.IRINOTECAN),
                         SCORE_MULTITHERAPY,
                         false,
                         Set.of(1, 2),
-                        Set.of(eligibleIfTreatmentNotInHistory(TREATMENT_CAPOX), eligibleIfTreatmentNotInHistory(TREATMENT_FOLFOX))),
-                createChemotherapy(TREATMENT_FOLFOX,
-                        Set.of(TreatmentComponent.FLUOROURACIL, TreatmentComponent.OXALIPLATIN),
-                        SCORE_MULTITHERAPY),
-                createChemotherapy(TREATMENT_FOLFIRINOX,
-                        Set.of(TreatmentComponent.FLUOROURACIL, TreatmentComponent.OXALIPLATIN, TreatmentComponent.IRINOTECAN),
-                        SCORE_MULTITHERAPY));
+                        Set.of(eligibleIfTreatmentNotInHistory(TREATMENT_CAPOX), eligibleIfTreatmentNotInHistory(TREATMENT_FOLFOX),
+                                IS_YOUNG_AND_FIT)),
+                createMultiChemotherapy(TREATMENT_FOLFOX, Set.of(TreatmentComponent.FLUOROURACIL, TreatmentComponent.OXALIPLATIN)),
+                createMultiChemotherapy(TREATMENT_FOLFIRINOX,
+                        Set.of(TreatmentComponent.FLUOROURACIL, TreatmentComponent.OXALIPLATIN, TreatmentComponent.IRINOTECAN)));
     }
 
     private static Treatment createChemotherapy(String name, Set<TreatmentComponent> components, int score) {
         return createChemotherapy(name, components, score, false, Set.of(1, 2), Collections.emptySet());
+    }
+
+    private static Treatment createMultiChemotherapy(String name, Set<TreatmentComponent> components) {
+        return createChemotherapy(name, components, SCORE_MULTITHERAPY, false, Set.of(1, 2), Set.of(IS_YOUNG_AND_FIT));
     }
 
     private static Treatment createChemotherapy(String name, Set<TreatmentComponent> components, int score, boolean isOptional,
@@ -86,7 +88,7 @@ public class TreatmentDB {
                 .score(score)
                 .isOptional(isOptional)
                 .lines(lines)
-                .addEligibilityFunctions(isColorectalCancer, eligibleIfTreatmentNotInHistory(name))
+                .addEligibilityFunctions(IS_COLORECTAL_CANCER, eligibleIfTreatmentNotInHistory(name))
                 .addAllEligibilityFunctions(extraFunctions)
                 .build();
     }
@@ -104,9 +106,9 @@ public class TreatmentDB {
                 .isOptional(false)
                 .score(TreatmentDB.SCORE_TARGETED_THERAPY)
                 .lines(Set.of(2, 3))
-                .addEligibilityFunctions(isColorectalCancer,
+                .addEligibilityFunctions(IS_COLORECTAL_CANCER,
                         eligibleIfGenesAreWildType(Stream.of("KRAS", "NRAS", "BRAF")),
-                        ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR).build())
+                        eligibilityFunction(EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR))
                 .build();
 
     }
@@ -125,8 +127,7 @@ public class TreatmentDB {
                         .isOptional(false)
                         .score(SCORE_PEMBROLIZUMAB)
                         .lines(Set.of(1, 2))
-                        .addEligibilityFunctions(isColorectalCancer,
-                                ImmutableEligibilityFunction.builder().rule(EligibilityRule.MSI_SIGNATURE).build())
+                        .addEligibilityFunctions(IS_COLORECTAL_CANCER, eligibilityFunction(EligibilityRule.MSI_SIGNATURE))
                         .build(),
                 ImmutableTreatment.builder()
                         .name("Cetuximab + Encorafenib")
@@ -135,11 +136,8 @@ public class TreatmentDB {
                         .isOptional(false)
                         .score(SCORE_CETUXIMAB_PLUS_ENCORAFENIB)
                         .lines(Set.of(2, 3))
-                        .addEligibilityFunctions(isColorectalCancer,
-                                ImmutableEligibilityFunction.builder()
-                                        .rule(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X)
-                                        .addParameters("BRAF")
-                                        .build())
+                        .addEligibilityFunctions(IS_COLORECTAL_CANCER,
+                                eligibilityFunction(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X, "BRAF"))
                         .build());
     }
 
@@ -165,29 +163,22 @@ public class TreatmentDB {
     }
 
     private static EligibilityFunction eligibleIfGenesAreWildType(Stream<String> genes) {
-        return ImmutableEligibilityFunction.builder()
-                .rule(EligibilityRule.AND)
-                .addAllParameters(genes.map(gene -> ImmutableEligibilityFunction.builder()
-                        .rule(EligibilityRule.WILDTYPE_OF_GENE_X)
-                        .addParameters(gene)
-                        .build()).collect(Collectors.toSet()))
-                .build();
+        return eligibilityFunction(EligibilityRule.AND,
+                genes.map(gene -> eligibilityFunction(EligibilityRule.WILDTYPE_OF_GENE_X, gene))
+                        .collect(Collectors.toList())
+                        .toArray(Object[]::new));
     }
 
     private static EligibilityFunction eligibleIfTreatmentNotInHistory(String treatmentName) {
-        return ImmutableEligibilityFunction.builder()
-                .rule(EligibilityRule.NOT)
-                .addParameters(ImmutableEligibilityFunction.builder()
-                        .rule(EligibilityRule.OR)
-                        .addParameters(ImmutableEligibilityFunction.builder()
-                                        .rule(EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS)
-                                        .addParameters(treatmentName, RECENT_TREATMENT_THRESHOLD_WEEKS)
-                                        .build(),
-                                ImmutableEligibilityFunction.builder()
-                                        .rule(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_NAME_X_TREATMENT)
-                                        .addParameters(treatmentName)
-                                        .build())
-                        .build())
-                .build();
+        return eligibilityFunction(EligibilityRule.NOT,
+                eligibilityFunction(EligibilityRule.OR,
+                        eligibilityFunction(EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS,
+                                treatmentName,
+                                RECENT_TREATMENT_THRESHOLD_WEEKS),
+                        eligibilityFunction(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_NAME_X_TREATMENT, treatmentName)));
+    }
+
+    private static EligibilityFunction eligibilityFunction(EligibilityRule rule, Object... parameters) {
+        return ImmutableEligibilityFunction.builder().rule(rule).addParameters(parameters).build();
     }
 }

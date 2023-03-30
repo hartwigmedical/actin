@@ -56,7 +56,7 @@ public class RecommendationEngine {
                 })
                 .filter(evaluatedTreatment -> evaluatedTreatment.evaluations()
                         .stream()
-                        .noneMatch(evaluation -> evaluation.result() == EvaluationResult.FAIL && !evaluation.recoverable()))
+                        .noneMatch(evaluation -> evaluation.result() == EvaluationResult.FAIL))
                 .filter(evaluatedTreatment -> evaluatedTreatment.score() >= 0)
                 .sorted(Comparator.comparing(EvaluatedTreatment::score).reversed());
     }
