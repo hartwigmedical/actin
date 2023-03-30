@@ -16,32 +16,32 @@ public class ProteinIsExpressedByIHCTest {
 
     @Test
     public void canEvaluate() {
-        String gene = "gene 1";
-        ProteinIsExpressedByIHC function = new ProteinIsExpressedByIHC(gene);
+        String protein = "protein 1";
+        ProteinIsExpressedByIHC function = new ProteinIsExpressedByIHC(protein);
 
         // No prior tests
         List<PriorMolecularTest> priorTests = Lists.newArrayList();
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withPriorTests(priorTests)));
 
         // Add test with no result
-        priorTests.add(ihcBuilder(gene).build());
+        priorTests.add(ihcBuilder(protein).build());
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorTests(priorTests)));
 
         // Add test with negative result
-        priorTests.add(ihcBuilder(gene).scoreText("negative").build());
+        priorTests.add(ihcBuilder(protein).scoreText("negative").build());
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorTests(priorTests)));
 
         // Add test with positive result
-        priorTests.add(ihcBuilder(gene).scoreValue(2D).build());
+        priorTests.add(ihcBuilder(protein).scoreValue(2D).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withPriorTests(priorTests)));
 
         // Also works for score texts.
-        List<PriorMolecularTest> otherPriorTests = Lists.newArrayList(ihcBuilder(gene).scoreText("positive").build());
+        List<PriorMolecularTest> otherPriorTests = Lists.newArrayList(ihcBuilder(protein).scoreText("positive").build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withPriorTests(otherPriorTests)));
     }
 
     @NotNull
-    private static ImmutablePriorMolecularTest.Builder ihcBuilder(@NotNull String gene) {
-        return MolecularTestFactory.priorBuilder().test("IHC").item(gene);
+    private static ImmutablePriorMolecularTest.Builder ihcBuilder(@NotNull String protein) {
+        return MolecularTestFactory.priorBuilder().test("IHC").item(protein);
     }
 }

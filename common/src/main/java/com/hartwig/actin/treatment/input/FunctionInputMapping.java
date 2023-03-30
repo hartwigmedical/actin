@@ -161,6 +161,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_EXACTLY_Y, FunctionInput.ONE_STRING_ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_LEAST_Y, FunctionInput.ONE_STRING_ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_MOST_Y, FunctionInput.ONE_STRING_ONE_INTEGER);
+        RULE_INPUT_MAP.put(EligibilityRule.PROTEIN_X_IS_WILD_TYPE_BY_IHC, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);

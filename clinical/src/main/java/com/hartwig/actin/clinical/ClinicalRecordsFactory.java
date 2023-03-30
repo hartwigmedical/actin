@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical;
 
-import java.io.IOException;
 import java.util.List;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -68,21 +67,12 @@ public class ClinicalRecordsFactory {
     @NotNull
     private final CurationModel curation;
 
-    @NotNull
-    public static List<ClinicalRecord> fromFeedAndCurationDirectories(@NotNull String clinicalFeedDirectory,
-            @NotNull String clinicalCurationDirectory) throws IOException {
-        return new ClinicalRecordsFactory(FeedModel.fromFeedDirectory(clinicalFeedDirectory),
-                CurationModel.fromCurationDirectory(clinicalCurationDirectory)).create();
-    }
-
-    @VisibleForTesting
-    ClinicalRecordsFactory(@NotNull final FeedModel feed, @NotNull final CurationModel curation) {
+    public ClinicalRecordsFactory(@NotNull FeedModel feed, @NotNull CurationModel curation) {
         this.feed = feed;
         this.curation = curation;
     }
 
     @NotNull
-    @VisibleForTesting
     List<ClinicalRecord> create() {
         List<ClinicalRecord> records = Lists.newArrayList();
         LOGGER.info("Creating clinical model");
@@ -336,7 +326,10 @@ public class ClinicalRecordsFactory {
     private List<Surgery> extractSurgeries(@NotNull String subject) {
         List<Surgery> surgeries = Lists.newArrayList();
         for (EncounterEntry entry : feed.uniqueEncounterEntries(subject)) {
-            surgeries.add(ImmutableSurgery.builder().endDate(entry.periodEnd()).status(resolveSurgeryStatus(entry.encounterStatus())).build());
+            surgeries.add(ImmutableSurgery.builder()
+                    .endDate(entry.periodEnd())
+                    .status(resolveSurgeryStatus(entry.encounterStatus()))
+                    .build());
         }
         return surgeries;
     }

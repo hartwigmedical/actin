@@ -6,11 +6,12 @@ import java.util.Set;
 import java.util.StringJoiner;
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.datamodel.driver.Driver;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.report.interpretation.ClonalityInterpreter;
 import com.hartwig.actin.report.interpretation.EvaluatedCohort;
+import com.hartwig.actin.report.interpretation.EvaluatedCohortsInterpreter;
 import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory;
+import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -57,8 +58,11 @@ public class MolecularDriversGenerator implements TableGenerator {
         table.addHeaderCell(Cells.createHeader("Best evidence in " + molecular.evidenceSource()));
         table.addHeaderCell(Cells.createHeader("Resistance in " + molecular.evidenceSource()));
 
-        MolecularDriverEntryFactory factory = MolecularDriverEntryFactory.fromEvaluatedCohorts(cohorts);
-        factory.create(molecular).forEach(entry -> {
+        MolecularDriversInterpreter molecularDriversInterpreter =
+                new MolecularDriversInterpreter(molecular.drivers(), new EvaluatedCohortsInterpreter(cohorts));
+        MolecularDriverEntryFactory factory = new MolecularDriverEntryFactory(molecularDriversInterpreter);
+
+        factory.create().forEach(entry -> {
             table.addCell(Cells.createContent(entry.driverType()));
             table.addCell(Cells.createContent(entry.driver()));
             table.addCell(Cells.createContent(formatDriverLikelihood(entry.driverLikelihood())));
@@ -68,11 +72,7 @@ public class MolecularDriversGenerator implements TableGenerator {
             table.addCell(Cells.createContent(nullToEmpty(entry.bestResistanceEvidence())));
         });
 
-        boolean hasPotentiallySubClonalVariants = molecular.drivers().variants().stream()
-                .filter(Driver::isReportable)
-                .anyMatch(ClonalityInterpreter::isPotentiallySubclonal);
-        
-        if (hasPotentiallySubClonalVariants) {
+        if (molecularDriversInterpreter.hasPotentiallySubClonalVariants()) {
             String note = "* Variant has > " + Formats.percentage(ClonalityInterpreter.CLONAL_CUTOFF) + " likelihood of being sub-clonal";
             table.addCell(Cells.createSpanningSubNote(note, table));
         }

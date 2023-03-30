@@ -22,34 +22,38 @@ public final class EvaluationFactory {
     }
 
     public static Evaluation pass(String specificMessage, String generalMessage) {
-        return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.PASS)
+        return unrecoverable().result(EvaluationResult.PASS)
                 .addPassSpecificMessages(specificMessage)
                 .addPassGeneralMessages(generalMessage)
                 .build();
     }
 
     public static Evaluation fail(String specificMessage, String generalMessage) {
-        return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages(specificMessage)
-                .addFailGeneralMessages(generalMessage)
-                .build();
+        return buildFailEvaluation(unrecoverable(), specificMessage, generalMessage);
+    }
+
+    public static Evaluation recoverableFail(String specificMessage, String generalMessage) {
+        return buildFailEvaluation(recoverable(), specificMessage, generalMessage);
     }
 
     public static Evaluation undetermined(String specificMessage, String generalMessage) {
-        return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.UNDETERMINED)
+        return unrecoverable().result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages(specificMessage)
                 .addUndeterminedGeneralMessages(generalMessage)
                 .build();
     }
 
     public static Evaluation warn(String specificMessage, String generalMessage) {
-        return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.WARN)
+        return unrecoverable().result(EvaluationResult.WARN)
                 .addWarnSpecificMessages(specificMessage)
                 .addWarnGeneralMessages(generalMessage)
+                .build();
+    }
+
+    private static Evaluation buildFailEvaluation(ImmutableEvaluation.Builder builder, String specificMessage, String generalMessage) {
+        return builder.result(EvaluationResult.FAIL)
+                .addFailSpecificMessages(specificMessage)
+                .addFailGeneralMessages(generalMessage)
                 .build();
     }
 }
