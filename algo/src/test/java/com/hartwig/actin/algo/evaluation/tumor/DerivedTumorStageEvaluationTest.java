@@ -8,7 +8,6 @@ import java.util.Map;
 
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 
@@ -22,9 +21,7 @@ public class DerivedTumorStageEvaluationTest {
                         EvaluationFactory.pass("Pass specific message", "Pass general message"),
                         TumorStage.II,
                         EvaluationFactory.undetermined("Undetermined specific message", "Undetermined general message")),
-                ImmutableEvaluation.Builder::addUndeterminedSpecificMessages,
-                ImmutableEvaluation.Builder::addUndeterminedGeneralMessages,
-                EvaluationResult.UNDETERMINED);
+                EvaluationFactory::undetermined);
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation);
         assertThat(evaluation.undeterminedSpecificMessages()).containsOnly(
                 "Undetermined specific message. Tumor stage has been implied to be I or II");
