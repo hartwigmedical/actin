@@ -39,13 +39,13 @@ public class HasUnresectableCancer implements EvaluationFunction {
 
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Patient has no unresectable cancer");
+            builder.addFailSpecificMessages("Tumor stage " + stage + " is not considered unresectable");
             builder.addFailGeneralMessages("No unresectable cancer");
         } else if (result == EvaluationResult.UNDETERMINED) {
-            builder.addUndeterminedSpecificMessages("Unclear if patient has unresectable cancer");
+            builder.addUndeterminedSpecificMessages("Tumor stage " + stage + " is not unclear whether unresectable");
             builder.addUndeterminedGeneralMessages("Unclear resectability of cancer");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient has unresectable cancer");
+            builder.addPassSpecificMessages("Tumor stage " + stage + " is considered unresectable");
             builder.addPassGeneralMessages("Unresectable cancer");
         }
 

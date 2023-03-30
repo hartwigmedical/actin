@@ -162,7 +162,7 @@ public final class DoidJson {
     private static GraphMetadata extractGraphMetadata(@Nullable JsonObject metadata) {
         DatamodelCheckerFactory.graphMetadataChecker().check(metadata);
 
-        JsonArray xrefArray = array(metadata, "xrefs");
+        JsonArray xrefArray = optionalArray(metadata, "xrefs");
         List<Xref> xrefs = Lists.newArrayList();
         if (xrefArray != null) {
             JsonDatamodelChecker xrefChecker = DatamodelCheckerFactory.metadataXrefChecker();
@@ -250,7 +250,7 @@ public final class DoidJson {
 
         DatamodelCheckerFactory.metadataChecker().check(metadata);
 
-        JsonArray xrefArray = array(metadata, "xrefs");
+        JsonArray xrefArray = optionalArray(metadata, "xrefs");
         List<Xref> xrefs = Lists.newArrayList();
         if (xrefArray != null) {
             JsonDatamodelChecker xrefChecker = DatamodelCheckerFactory.metadataXrefChecker();

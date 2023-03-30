@@ -39,10 +39,10 @@ public class HasIncurableCancer implements EvaluationFunction {
 
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Patient should have no incurable cancer");
+            builder.addFailSpecificMessages("Stage " + stage + " cancer is not considered incurable");
             builder.addFailGeneralMessages("No incurable cancer");
         } else if (result == EvaluationResult.UNDETERMINED) {
-            builder.addUndeterminedSpecificMessages("Undetermined if patient has incurable cancer");
+            builder.addUndeterminedSpecificMessages("Could not be determined if stage " + stage + " cancer is considered incurable");
             builder.addUndeterminedGeneralMessages("Undetermined if cancer incurable");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Stage IV cancer is considered incurable");

@@ -1,30 +1,26 @@
 package com.hartwig.actin.algo.evaluation.tumor;
 
+import static java.util.stream.Collectors.toSet;
+
 import java.util.Set;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.doid.DoidConstants;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
-import com.hartwig.actin.doid.DoidModel;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class HasTumorStage implements EvaluationFunction {
 
-    @NotNull
-    private final DoidModel doidModel;
-    @NotNull
+    private final TumorStageDerivationFunction tumorStageDerivationFunction;
     private final TumorStage stageToMatch;
 
-    HasTumorStage(@NotNull final DoidModel doidModel, @NotNull final TumorStage stageToMatch) {
-        this.doidModel = doidModel;
+    HasTumorStage(final TumorStageDerivationFunction tumorStageDerivationFunction, final TumorStage stageToMatch) {
+        this.tumorStageDerivationFunction = tumorStageDerivationFunction;
         this.stageToMatch = stageToMatch;
     }
 
@@ -32,19 +28,22 @@ public class HasTumorStage implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         TumorStage stage = record.clinical().tumor().stage();
-
         if (stage == null) {
-            stage = resolveTumorStageFromLesions(record.clinical().tumor());
+            Set<TumorStage> derivedStages = tumorStageDerivationFunction.apply(record.clinical().tumor()).collect(toSet());
+            if (derivedStages.size() == 1) {
+                return evaluateWithStage(derivedStages.iterator().next());
+            } else if (derivedStages.stream().map(this::evaluateWithStage).anyMatch(e -> e.result().equals(EvaluationResult.PASS))) {
+                return EvaluationFactory.undetermined("No tumor stage details present, but multiple possible derived are possible",
+                        "Missing tumor stage details");
+            } else {
+                return EvaluationFactory.fail("Tumor stage details are missing", "Missing tumor stage details");
+            }
         }
 
-        if (stage == null) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Tumor stage details are missing")
-                    .addUndeterminedGeneralMessages("Missing tumor stage details")
-                    .build();
-        }
+        return evaluateWithStage(stage);
+    }
 
+    private ImmutableEvaluation evaluateWithStage(TumorStage stage) {
         boolean hasTumorStage = stage == stageToMatch || stage.category() == stageToMatch;
 
         EvaluationResult result = hasTumorStage ? EvaluationResult.PASS : EvaluationResult.FAIL;
@@ -59,33 +58,5 @@ public class HasTumorStage implements EvaluationFunction {
         }
 
         return builder.build();
-    }
-
-    @Nullable
-    private TumorStage resolveTumorStageFromLesions(@NotNull TumorDetails tumor) {
-        Set<String> tumorDoids = tumor.doids();
-        if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
-            return null;
-        }
-
-        boolean hasLiverMetastases = evaluateMetastases(tumor.hasLiverLesions(), tumorDoids, DoidConstants.LIVER_CANCER_DOID);
-        boolean hasCnsMetastases = evaluateMetastases(tumor.hasCnsLesions(), tumorDoids, DoidConstants.CNS_CANCER_DOID);
-        boolean hasBrainMetastases = evaluateMetastases(tumor.hasBrainLesions(), tumorDoids, DoidConstants.BRAIN_CANCER_DOID);
-        boolean hasLungMetastases = evaluateMetastases(tumor.hasLungLesions(), tumorDoids, DoidConstants.LUNG_CANCER_DOID);
-        boolean hasBoneMetastases = evaluateMetastases(tumor.hasBoneLesions(), tumorDoids, DoidConstants.BONE_CANCER_DOID);
-
-        if (hasLiverMetastases || hasCnsMetastases || hasBrainMetastases || hasLungMetastases || hasBoneMetastases) {
-            return TumorStage.IV;
-        }
-
-        return null;
-    }
-
-    private boolean evaluateMetastases(@Nullable Boolean hasLesions, @NotNull Set<String> tumorDoids, @NotNull String doidToMatch) {
-        if (hasLesions == null) {
-            return false;
-        }
-
-        return hasLesions && !DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, doidToMatch);
     }
 }
