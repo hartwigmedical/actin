@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.othercondition;
 
 import java.util.Set;
 
-import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -32,12 +31,8 @@ public class HasHadPriorConditionWithDoid implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         String doidTerm = doidModel.resolveTermForDoid(doidToFind);
 
-        Set<String> conditions = Sets.newHashSet();
-        for (PriorOtherCondition condition : OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())) {
-            if (conditionHasDoid(condition, doidToFind)) {
-                conditions.add(condition.name());
-            }
-        }
+        Set<String> conditions =
+                OtherConditionSelector.selectConditionsMatchingDoid(record.clinical().priorOtherConditions(), doidToFind, doidModel);
 
         if (!conditions.isEmpty()) {
             return EvaluationFactory.unrecoverable()
