@@ -1,9 +1,9 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
@@ -60,23 +60,17 @@ public class SystemicTreatmentAnalyserTest {
     }
 
     @Test
-    public void canDetermineStopReasonOnLastSystemicTreatment() {
+    public void canDetermineLastSystemicTreatment() {
         List<PriorTumorTreatment> treatments = Lists.newArrayList();
-        assertNull(SystemicTreatmentAnalyser.stopReasonOnLastSystemicTreatment(treatments));
+        assertEquals(Optional.empty(), SystemicTreatmentAnalyser.lastSystemicTreatment(treatments));
 
         treatments.add(TreatmentTestFactory.builder().isSystemic(false).build());
-        assertNull(SystemicTreatmentAnalyser.stopReasonOnLastSystemicTreatment(treatments));
-
-        treatments.add(TreatmentTestFactory.builder().isSystemic(true).build());
-        assertNull(SystemicTreatmentAnalyser.stopReasonOnLastSystemicTreatment(treatments));
+        assertEquals(Optional.empty(), SystemicTreatmentAnalyser.lastSystemicTreatment(treatments));
 
         treatments.add(TreatmentTestFactory.builder().isSystemic(true).startYear(2020).stopReason("reason 1").build());
-        assertEquals("reason 1", SystemicTreatmentAnalyser.stopReasonOnLastSystemicTreatment(treatments));
+        assertEquals("reason 1", SystemicTreatmentAnalyser.lastSystemicTreatment(treatments).map(PriorTumorTreatment::stopReason).orElseThrow());
 
         treatments.add(TreatmentTestFactory.builder().isSystemic(true).startYear(2021).stopReason("reason 2").build());
-        assertEquals("reason 2", SystemicTreatmentAnalyser.stopReasonOnLastSystemicTreatment(treatments));
-
-        treatments.add(TreatmentTestFactory.builder().isSystemic(true).startYear(2022).stopReason(null).build());
-        assertNull(SystemicTreatmentAnalyser.stopReasonOnLastSystemicTreatment(treatments));
+        assertEquals("reason 2", SystemicTreatmentAnalyser.lastSystemicTreatment(treatments).map(PriorTumorTreatment::stopReason).orElseThrow());
     }
 }

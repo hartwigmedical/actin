@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment;
 
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -38,7 +39,20 @@ public class HasHadPDFollowingSpecificTreatmentTest {
         treatments.add(TreatmentTestFactory.builder()
                 .addCategories(TreatmentCategory.CHEMOTHERAPY)
                 .name("treatment 1")
-                .stopReason(HasHadPDFollowingTreatmentWithCategory.STOP_REASON_PD)
+                .stopReason(HasHadPDFollowingTreatmentWithCategory.PD_LABEL)
+                .build());
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
+    }
+
+    @Test
+    public void shouldPassForMatchingTreatmentWhenPDIsIndicatedInBestResponse() {
+        HasHadPDFollowingSpecificTreatment function =
+                new HasHadPDFollowingSpecificTreatment(Sets.newHashSet("treatment 1", "treatment 2"), TreatmentCategory.CHEMOTHERAPY);
+
+        List<PriorTumorTreatment> treatments = Collections.singletonList(TreatmentTestFactory.builder()
+                .addCategories(TreatmentCategory.CHEMOTHERAPY)
+                .name("treatment 1")
+                .bestResponse(HasHadPDFollowingTreatmentWithCategory.PD_LABEL)
                 .build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
     }
@@ -51,7 +65,7 @@ public class HasHadPDFollowingSpecificTreatmentTest {
         List<PriorTumorTreatment> treatments = Lists.newArrayList();
 
         // Right category but different stop reason
-        treatments.add(TreatmentTestFactory.builder().name(treatment).stopReason("toxicity").build());
+        treatments.add(TreatmentTestFactory.builder().name(treatment).stopReason("toxicity").bestResponse("improved").build());
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Right category but no stop reason
@@ -59,10 +73,7 @@ public class HasHadPDFollowingSpecificTreatmentTest {
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Right category and right stop reason
-        treatments.add(TreatmentTestFactory.builder()
-                .name(treatment)
-                .stopReason(HasHadPDFollowingSpecificTreatment.STOP_REASON_PD)
-                .build());
+        treatments.add(TreatmentTestFactory.builder().name(treatment).stopReason(HasHadPDFollowingSpecificTreatment.PD_LABEL).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
     }
 

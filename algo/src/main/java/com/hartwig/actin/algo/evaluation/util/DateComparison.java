@@ -1,13 +1,16 @@
 package com.hartwig.actin.algo.evaluation.util;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class DateComparison {
 
-//    private static final double WEEKS_PER_MONTH = 52 / 12D;
+    //    private static final double WEEKS_PER_MONTH = 52 / 12D;
 
     private DateComparison() {
     }
@@ -36,11 +39,14 @@ public final class DateComparison {
         return isAfterDate != null ? !isAfterDate : null;
     }
 
-    @Nullable
-    public static Integer minWeeksBetweenDates(@Nullable Integer startYear, @Nullable Integer startMonth, @Nullable Integer stopYear,
+    public static Optional<Long> minWeeksBetweenDates(@Nullable Integer startYear, @Nullable Integer startMonth, @Nullable Integer stopYear,
             @Nullable Integer stopMonth) {
-        //TODO: Implement such that it calculates the minimal nr of weeks that passed by based on start/stop year+month.
-        // In case min is negative, resolve to 0. In case of missing all stop or start, resolve to null
-        return null;
+        if (startYear != null && stopYear != null) {
+            return Optional.of(Math.max(0,
+                    ChronoUnit.WEEKS.between(YearMonth.of(startYear, Optional.ofNullable(startMonth).orElse(12)).atEndOfMonth(),
+                            YearMonth.of(stopYear, Optional.ofNullable(stopMonth).orElse(1)).atDay(1))));
+        } else {
+            return Optional.empty();
+        }
     }
 }

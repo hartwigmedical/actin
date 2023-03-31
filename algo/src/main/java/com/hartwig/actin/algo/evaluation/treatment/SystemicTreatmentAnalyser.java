@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -46,7 +47,7 @@ final class SystemicTreatmentAnalyser {
             if (systemic.size() > 1) {
                 systemic.sort(new PriorTumorTreatmentDescendingDateComparator());
                 for (int i = 1; i < systemic.size(); i++) {
-                    if (isInterrupted(systemic.get(i), systemic.get(i-1), treatments)) {
+                    if (isInterrupted(systemic.get(i), systemic.get(i - 1), treatments)) {
                         systemicCount++;
                     }
                 }
@@ -56,18 +57,17 @@ final class SystemicTreatmentAnalyser {
         return systemicCount;
     }
 
-    @Nullable
-    public static String stopReasonOnLastSystemicTreatment(@NotNull List<PriorTumorTreatment> priorTumorTreatments) {
-        PriorTumorTreatment last = null;
+    public static Optional<PriorTumorTreatment> lastSystemicTreatment(@NotNull List<PriorTumorTreatment> priorTumorTreatments) {
+        Optional<PriorTumorTreatment> lastOption = Optional.empty();
         for (PriorTumorTreatment treatment : priorTumorTreatments) {
             if (treatment.isSystemic()) {
-                if (last == null || (last.startYear() == null && treatment.startYear() != null) || isAfter(treatment, last)) {
-                    last = treatment;
+                if (lastOption.map(last -> (last.startYear() == null && treatment.startYear() != null) || isAfter(treatment, last))
+                        .orElse(true)) {
+                    lastOption = Optional.of(treatment);
                 }
             }
         }
-
-        return last != null ? last.stopReason() : null;
+        return lastOption;
     }
 
     private static boolean isInterrupted(@NotNull PriorTumorTreatment mostRecent, @NotNull PriorTumorTreatment leastRecent,

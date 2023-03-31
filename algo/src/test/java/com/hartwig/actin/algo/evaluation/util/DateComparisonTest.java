@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.util;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -38,5 +39,27 @@ public class DateComparisonTest {
 
         assertFalse(DateComparison.isBeforeDate(maxDate, 2021, null));
         assertFalse(DateComparison.isBeforeDate(maxDate, 2021, 8));
+    }
+
+    @Test
+    public void minWeeksBetweenDatesShouldReturnEmptyForNullStartOrStopYear() {
+        assertThat(DateComparison.minWeeksBetweenDates(null, null, null, null)).isEmpty();
+        assertThat(DateComparison.minWeeksBetweenDates(1900, null, null, null)).isEmpty();
+        assertThat(DateComparison.minWeeksBetweenDates(null, 2000, null, null)).isEmpty();
+    }
+
+    @Test
+    public void minWeeksBetweenDatesShouldCalculateNumberOfWeeksUsingYearsAndMonths() {
+        assertThat(DateComparison.minWeeksBetweenDates(2023, 1, 2023, 3)).contains(4L);
+    }
+
+    @Test
+    public void minWeeksBetweenDatesShouldAssumeMinimumDurationWhenMonthsNotProvided() {
+        assertThat(DateComparison.minWeeksBetweenDates(2021, null, 2023, null)).contains(52L);
+    }
+
+    @Test
+    public void minWeeksBetweenDatesShouldReturnZeroWhenStopDateIsBeforeStartDate() {
+        assertThat(DateComparison.minWeeksBetweenDates(2023, 3, 2023, 1)).contains(0L);
     }
 }

@@ -1,16 +1,18 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
+import java.util.Optional;
+
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 
 import org.jetbrains.annotations.NotNull;
 
 public class HasHadPDFollowingSomeSystemicTreatments implements EvaluationFunction {
 
-    static final String STOP_REASON_PD = "PD";
+    static final String PD_LABEL = "PD";
 
     private final int minSystemicTreatments;
     private final boolean mustBeRadiological;
@@ -27,44 +29,35 @@ public class HasHadPDFollowingSomeSystemicTreatments implements EvaluationFuncti
         int maxSystemicCount = SystemicTreatmentAnalyser.maxSystemicTreatments(record.clinical().priorTumorTreatments());
 
         if (minSystemicCount >= minSystemicTreatments) {
-            String stopReason = SystemicTreatmentAnalyser.stopReasonOnLastSystemicTreatment(record.clinical().priorTumorTreatments());
-            if (stopReason != null && stopReason.equals(STOP_REASON_PD)) {
+            Optional<PriorTumorTreatment> lastTreatmentOption =
+                    SystemicTreatmentAnalyser.lastSystemicTreatment(record.clinical().priorTumorTreatments());
+            if (lastTreatmentOption.map(lastTreatment -> PD_LABEL.equalsIgnoreCase(lastTreatment.stopReason()) || PD_LABEL.equalsIgnoreCase(
+                    lastTreatment.bestResponse())).orElse(false)) {
                 if (!mustBeRadiological) {
-                    return EvaluationFactory.unrecoverable()
-                            .result(EvaluationResult.PASS)
-                            .addPassSpecificMessages(
-                                    "Patient received at least " + minSystemicTreatments + " systemic treatments with final stop reason PD")
-                            .addPassGeneralMessages("Nr of systemic treatments")
-                            .build();
+                    return EvaluationFactory.pass(
+                            "Patient received at least " + minSystemicTreatments + " systemic treatments ending with PD",
+                            "Nr of systemic treatments");
                 } else {
-                    return EvaluationFactory.unrecoverable()
-                            .result(EvaluationResult.UNDETERMINED)
-                            .addUndeterminedSpecificMessages("Patient received at least " + minSystemicTreatments
-                                    + " systemic treatments with final stop reason PD, undetermined if there is now radiological progression")
-                            .addUndeterminedGeneralMessages("Radiological progression after treatments")
-                            .build();
+                    return EvaluationFactory.undetermined("Patient received at least " + minSystemicTreatments
+                                    + " systemic treatments ending with PD, undetermined if there is now radiological progression",
+                            "Radiological progression after treatments");
                 }
+            } else if (lastTreatmentOption.map(lastTreatment -> lastTreatment.stopReason() == null || lastTreatment.bestResponse() == null)
+                    .orElse(true)) {
+                return EvaluationFactory.undetermined(
+                        "Patient received at least " + minSystemicTreatments + " systemic treatments but unclear PD status",
+                        "Nr of systemic treatments with PD");
             } else {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.UNDETERMINED)
-                        .addUndeterminedSpecificMessages("Patient received at least " + minSystemicTreatments
-                                + " systemic treatments but undetermined final stop reason")
-                        .addUndeterminedGeneralMessages("Nr of systemic treatments with PD")
-                        .build();
+                return EvaluationFactory.fail("Patient received at least " + minSystemicTreatments + " systemic treatments with no PD",
+                        "No PD after systemic treatment");
             }
         } else if (maxSystemicCount >= minSystemicTreatments) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages(
-                            "Undetermined if patient received at least " + minSystemicTreatments + " systemic treatments")
-                    .addUndeterminedGeneralMessages("Nr of systemic treatments with PD")
-                    .build();
+            return EvaluationFactory.undetermined(
+                    "Undetermined if patient received at least " + minSystemicTreatments + " systemic treatments",
+                    "Nr of systemic treatments with PD");
         }
 
-        return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Patient did not receive at least " + minSystemicTreatments + " systemic treatments")
-                .addFailGeneralMessages("Nr of systemic treatments with PD")
-                .build();
+        return EvaluationFactory.fail("Patient did not receive at least " + minSystemicTreatments + " systemic treatments",
+                "Nr of systemic treatments with PD");
     }
 }

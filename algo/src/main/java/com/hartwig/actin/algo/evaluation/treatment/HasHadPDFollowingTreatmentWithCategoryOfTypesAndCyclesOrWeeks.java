@@ -1,13 +1,12 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.Nullable;
 
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.DateComparison;
@@ -19,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks implements EvaluationFunction {
 
-    static final String STOP_REASON_PD = "PD";
+    static final String PD_LABEL = "PD";
 
     @NotNull
     private final TreatmentCategory category;
@@ -46,9 +45,9 @@ public class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks imple
         boolean hasHadTreatmentWithPDAndCyclesOrWeeks = false;
         boolean hasHadTreatmentWithPDAndUnclearCycles = false;
         boolean hasHadTreatmentWithPDAndUnclearWeeks = false;
-        boolean hasHadTreatmentWithUnclearStopReason = false;
-        boolean hasHadTreatmentWithUnclearStopReasonAndUnclearCycles = false;
-        boolean hasHadTreatmentWithUnclearStopReasonAndUnclearWeeks = false;
+        boolean hasHadTreatmentWithUnclearPDStatus = false;
+        boolean hasHadTreatmentWithUnclearPDStatusAndUnclearCycles = false;
+        boolean hasHadTreatmentWithUnclearPDStatusAndUnclearWeeks = false;
 
         boolean hasHadTrial = false;
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
@@ -56,31 +55,32 @@ public class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks imple
                 if (hasValidType(treatment)) {
                     hasHadTreatment = true;
                     String stopReason = treatment.stopReason();
+                    String bestResponse = treatment.bestResponse();
                     Integer cycles = treatment.cycles();
-                    Integer weeks = DateComparison.minWeeksBetweenDates(treatment.startYear(),
+                    Optional<Long> weeksOption = DateComparison.minWeeksBetweenDates(treatment.startYear(),
                             treatment.startMonth(),
                             treatment.stopYear(),
                             treatment.stopMonth());
 
-                    if (stopReason != null) {
+                    if (stopReason != null || bestResponse != null) {
                         boolean meetsMinCycles = minCycles == null || (cycles != null && cycles >= minCycles);
-                        boolean meetsMinWeeks = minWeeks == null || (weeks != null && weeks >= minWeeks);
+                        boolean meetsMinWeeks = minWeeks == null || weeksOption.map(weeks -> weeks >= minWeeks).orElse(false);
 
-                        if (stopReason.equalsIgnoreCase(STOP_REASON_PD)) {
+                        if (PD_LABEL.equalsIgnoreCase(stopReason) || PD_LABEL.equalsIgnoreCase(bestResponse)) {
                             if (meetsMinCycles && meetsMinWeeks) {
                                 hasHadTreatmentWithPDAndCyclesOrWeeks = true;
                             } else if (minCycles != null && cycles == null) {
                                 hasHadTreatmentWithPDAndUnclearCycles = true;
-                            } else if (minWeeks != null && weeks == null) {
+                            } else if (minWeeks != null && weeksOption.isEmpty()) {
                                 hasHadTreatmentWithPDAndUnclearWeeks = true;
                             }
                         }
                     } else if (minCycles == null && minWeeks == null) {
-                        hasHadTreatmentWithUnclearStopReason = true;
+                        hasHadTreatmentWithUnclearPDStatus = true;
                     } else if (minCycles != null && cycles == null) {
-                        hasHadTreatmentWithUnclearStopReasonAndUnclearCycles = true;
-                    } else if (minWeeks != null && weeks == null) {
-                        hasHadTreatmentWithUnclearStopReasonAndUnclearWeeks = true;
+                        hasHadTreatmentWithUnclearPDStatusAndUnclearCycles = true;
+                    } else if (minWeeks != null && weeksOption.isEmpty()) {
+                        hasHadTreatmentWithUnclearPDStatusAndUnclearWeeks = true;
                     }
                 } else if (!TreatmentTypeResolver.hasTypeConfigured(treatment, category)) {
                     hasPotentiallyHadTreatment = true;
@@ -93,73 +93,46 @@ public class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks imple
         }
 
         if (hasHadTreatmentWithPDAndCyclesOrWeeks) {
-            ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(EvaluationResult.PASS);
             if (minCycles == null && minWeeks == null) {
-                return builder.addPassSpecificMessages("Patient has received " + treatment() + " with stop reason PD")
-                        .addPassGeneralMessages(category.display() + " treatment with PD")
-                        .build();
+                return EvaluationFactory.pass(hasTreatmentSpecificMessage(" with PD"), hasTreatmentGeneralMessage(" with PD"));
             } else if (minCycles != null) {
-                return builder.addPassSpecificMessages(
-                                "Patient has received " + treatment() + " with stop reason PD and at least " + minCycles + " cycles")
-                        .addPassGeneralMessages(category.display() + " treatment with PD and sufficient cycles")
-                        .build();
+                return EvaluationFactory.pass(hasTreatmentSpecificMessage(" with PD and at least " + minCycles + " cycles"),
+                        hasTreatmentGeneralMessage(" with PD and sufficient cycles"));
             } else {
-                return builder.addPassSpecificMessages(
-                                "Patient has received " + treatment() + " with stop reason PD for at least " + minWeeks + " weeks")
-                        .addPassGeneralMessages(category.display() + " treatment with PD and sufficient nr of weeks")
-                        .build();
+                return EvaluationFactory.pass(hasTreatmentSpecificMessage(" with PD for at least " + minWeeks + " weeks"),
+                        hasTreatmentGeneralMessage(" with PD for sufficient weeks"));
             }
         } else if (hasHadTreatmentWithPDAndUnclearCycles) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Patient has received " + treatment() + " with PD but undetermined nr of cycles")
-                    .addUndeterminedGeneralMessages(category.display() + " with PD but undetermined nr of cycles")
-                    .build();
+            return undetermined(" with PD but unknown nr of cycles");
         } else if (hasHadTreatmentWithPDAndUnclearWeeks) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Patient has received " + treatment() + " with PD but with undetermined stop reason")
-                    .addUndeterminedGeneralMessages(category.display() + " with PD undetermined stop reason")
-                    .build();
-        } else if (hasHadTreatmentWithUnclearStopReason) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Patient has received " + treatment() + " but with undetermined stop reason")
-                    .addUndeterminedGeneralMessages(category.display() + " undetermined stop reason")
-                    .build();
-        } else if (hasHadTreatmentWithUnclearStopReasonAndUnclearCycles) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages(
-                            "Patient has received " + treatment() + " but with unclear stop reason & number of cycles")
-                    .addUndeterminedGeneralMessages(category.display() + " undetermined stop reason & nr of cycles")
-                    .build();
-        } else if (hasHadTreatmentWithUnclearStopReasonAndUnclearWeeks) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Patient has received " + treatment() + " but with unclear stop reason & nr of weeks")
-                    .addUndeterminedGeneralMessages(category.display() + " undetermined stop reason & nr of weeks")
-                    .build();
+            return undetermined(" with PD but unknown nr of weeks");
+        } else if (hasHadTreatmentWithUnclearPDStatus) {
+            return undetermined(" with unclear PD status");
+        } else if (hasHadTreatmentWithUnclearPDStatusAndUnclearCycles) {
+            return undetermined(" with unclear PD status & nr of cycles");
+        } else if (hasHadTreatmentWithUnclearPDStatusAndUnclearWeeks) {
+            return undetermined(" with unclear PD status & nr of weeks");
         } else if (hasPotentiallyHadTreatment || hasHadTrial) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Undetermined whether patient has received " + treatment())
-                    .addUndeterminedGeneralMessages("Undetermined received" + category.display())
-                    .build();
+            return EvaluationFactory.undetermined("Unclear whether patient has received " + treatment(),
+                    "Unclear if received " + category.display());
         } else if (hasHadTreatment) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages("Patient has received " + treatment() + " but not with stop reason PD")
-                    .addFailGeneralMessages("No PD after " + category.display())
-                    .build();
+            return EvaluationFactory.fail("Patient has received " + treatment() + " but not with PD", "No PD after " + category.display());
         } else {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages("No " + treatment() + " treatment with PD")
-                    .addFailGeneralMessages("No " + category.display())
-                    .build();
+            return EvaluationFactory.fail("No " + treatment() + " treatment with PD", "No " + category.display());
         }
 
+    }
+
+    private String hasTreatmentSpecificMessage(String suffix) {
+        return "Patient has received " + treatment() + suffix;
+    }
+
+    private String hasTreatmentGeneralMessage(String suffix) {
+        return category.display() + suffix;
+    }
+
+    private Evaluation undetermined(String suffix) {
+        return EvaluationFactory.undetermined(hasTreatmentSpecificMessage(suffix), hasTreatmentGeneralMessage(suffix));
     }
 
     private boolean hasValidType(@NotNull PriorTumorTreatment treatment) {
