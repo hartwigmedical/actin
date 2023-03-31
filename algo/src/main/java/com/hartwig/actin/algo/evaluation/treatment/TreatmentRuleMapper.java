@@ -14,6 +14,7 @@ import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
 import com.hartwig.actin.treatment.input.single.OneTreatmentOneInteger;
 import com.hartwig.actin.treatment.input.single.OneTypedTreatmentManyStrings;
 import com.hartwig.actin.treatment.input.single.OneTypedTreatmentManyStringsOneInteger;
+import com.hartwig.actin.treatment.input.single.TwoIntegersManyStrings;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -155,7 +156,10 @@ public class TreatmentRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator hasHadCombinedTreatmentNamesWithCyclesCreator() {
-        return function -> new HasHadCombinedTreatmentNamesWithCycles();
+        return function -> {
+            TwoIntegersManyStrings input = functionInputResolver().createManyStringsTwoIntegersInput(function);
+            return new HasHadCombinedTreatmentNamesWithCycles(input.strings(), input.integer1(), input.integer2());
+        };
     }
 
     @NotNull
