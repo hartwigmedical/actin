@@ -17,7 +17,7 @@ public class HasComplicationOfCategory implements EvaluationFunction {
     @NotNull
     private final String categoryToFind;
 
-    public HasComplicationOfCategory(@NotNull String categoryToFind) {
+    HasComplicationOfCategory(@NotNull String categoryToFind) {
         this.categoryToFind = categoryToFind;
     }
 

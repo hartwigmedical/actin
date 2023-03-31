@@ -11,7 +11,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.FunctionCreator;
 import com.hartwig.actin.algo.evaluation.RuleMapper;
 import com.hartwig.actin.algo.evaluation.RuleMappingResources;
-import com.hartwig.actin.algo.evaluation.complication.HasComplicationOfCategory;
 import com.hartwig.actin.algo.evaluation.composite.Or;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 
@@ -20,9 +19,9 @@ import org.jetbrains.annotations.NotNull;
 public class OtherConditionRuleMapper extends RuleMapper {
 
     private static final String HYPOTENSION_NAME = "hypotension";
-    private static final String CARDIAC_DISEASE_COMPLICATION_CATEGORY = "Cardiac disease";
-    private static final String EYE_DISEASE_COMPLICATION_CATEGORY = "Eye disease";
-    public static final String CEREBROVASCULAR_ACCIDENT_COMPLICATION_CATEGORY = "Cerebrovascular accident";
+    private static final String CARDIAC_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY = "cardiac disease";
+    private static final String EYE_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY = "eye disease";
+    private static final String CEREBROVASCULAR_ACCIDENT_COMPLICATION_AND_TOXICITY_CATEGORY = "cerebrovascular accident";
 
     public OtherConditionRuleMapper(@NotNull final RuleMappingResources resources) {
         super(resources);
@@ -38,8 +37,9 @@ public class OtherConditionRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE, hasPriorConditionWithDoidCreator(DoidConstants.AUTOIMMUNE_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_ANGINA, hasHistoryOfAnginaCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE,
-                hasPriorConditionWithDoidOrComplicationOfCategoryCreator(DoidConstants.HEART_DISEASE_DOID,
-                        CARDIAC_DISEASE_COMPLICATION_CATEGORY));
+                hasPriorConditionWithDoidComplicationOrToxicityCategoryCreator(DoidConstants.HEART_DISEASE_DOID,
+                        CARDIAC_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY,
+                        CARDIAC_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY));
         map.put(EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE,
                 hasPriorConditionWithDoidCreator(DoidConstants.CARDIOVASCULAR_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_CONGESTIVE_HEART_FAILURE_WITH_AT_LEAST_NYHA_CLASS_X,
@@ -47,8 +47,9 @@ public class OtherConditionRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_HISTORY_OF_CENTRAL_NERVOUS_SYSTEM_DISEASE,
                 hasPriorConditionWithDoidCreator(DoidConstants.CENTRAL_NERVOUS_SYSTEM_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_EYE_DISEASE,
-                hasPriorConditionWithDoidOrComplicationOfCategoryCreator(DoidConstants.EYE_DISEASE_DOID,
-                        EYE_DISEASE_COMPLICATION_CATEGORY));
+                hasPriorConditionWithDoidComplicationOrToxicityCategoryCreator(DoidConstants.EYE_DISEASE_DOID,
+                        EYE_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY,
+                        EYE_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY));
         map.put(EligibilityRule.HAS_HISTORY_OF_GASTROINTESTINAL_DISEASE,
                 hasPriorConditionWithDoidCreator(DoidConstants.GASTROINTESTINAL_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_IMMUNE_SYSTEM_DISEASE,
@@ -62,8 +63,9 @@ public class OtherConditionRuleMapper extends RuleMapper {
                 hasRecentPriorConditionWithDoidCreator(DoidConstants.MYOCARDIAL_INFARCT_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_PNEUMONITIS, hasHistoryOfPneumonitisCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_STROKE,
-                hasPriorConditionWithDoidOrComplicationOfCategoryCreator(DoidConstants.STROKE_DOID,
-                        CEREBROVASCULAR_ACCIDENT_COMPLICATION_CATEGORY));
+                hasPriorConditionWithDoidComplicationOrToxicityCategoryCreator(DoidConstants.STROKE_DOID,
+                        CEREBROVASCULAR_ACCIDENT_COMPLICATION_AND_TOXICITY_CATEGORY,
+                        CEREBROVASCULAR_ACCIDENT_COMPLICATION_AND_TOXICITY_CATEGORY));
         map.put(EligibilityRule.HAS_HISTORY_OF_THROMBOEMBOLIC_EVENT, hasHistoryOfThromboembolicEventCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_ARTERIAL_THROMBOEMBOLIC_EVENT, hasHistoryOfThromboembolicEventCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_VENOUS_THROMBOEMBOLIC_EVENT, hasHistoryOfThromboembolicEventCreator());
@@ -111,9 +113,12 @@ public class OtherConditionRuleMapper extends RuleMapper {
     }
 
     @NotNull
-    private FunctionCreator hasPriorConditionWithDoidOrComplicationOfCategoryCreator(@NotNull String doidToFind, @NotNull String category) {
-        return function -> new Or(List.of(new HasHadPriorConditionWithDoid(doidModel(), doidToFind),
-                new HasComplicationOfCategory(category)));
+    private FunctionCreator hasPriorConditionWithDoidComplicationOrToxicityCategoryCreator(@NotNull String doidToFind,
+            @NotNull String complicationCategory, @NotNull String toxicityCategory) {
+        return function -> new HasHadPriorConditionWithDoidComplicationOrToxicity(doidModel(),
+                doidToFind,
+                complicationCategory,
+                toxicityCategory);
     }
 
     @NotNull
