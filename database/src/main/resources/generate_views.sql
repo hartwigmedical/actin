@@ -21,7 +21,7 @@ SELECT  x.sampleId, IF(isHotspot,"Mutation (Hotspot)",IF(isBiallelic,"Mutation (
 	LEFT JOIN variantEvidence e ON x.id=e.variantId
     LEFT JOIN (SELECT * FROM variantEvidence WHERE type='Trial') et ON x.id=et.variantId
     WHERE isReportable
-	GROUP BY 1,3
+	GROUP BY 1,2,3,4,5
 UNION
 SELECT  x.sampleId, IF(x.type='FULL_GAIN', "Amplification", "Amplification (partial)") AS type, x.event, concat(minCopies," copies") AS details, driverLikelihood,
 		group_concat(distinct et.treatment) AS externalTrials,
@@ -31,7 +31,7 @@ SELECT  x.sampleId, IF(x.type='FULL_GAIN', "Amplification", "Amplification (part
 	LEFT JOIN copyNumberEvidence e ON x.id=e.copyNumberId
 	LEFT JOIN (SELECT * FROM copyNumberEvidence WHERE type='Trial') et ON x.id=et.copyNumberId
     WHERE isReportable and x.type in ('FULL_GAIN','PARTIAL_GAIN')
-	GROUP BY 1,3
+	GROUP BY 1,2,3,4,5
 UNION
 SELECT  x.sampleId, "Loss", x.event, NULL AS details, driverLikelihood,
 		group_concat(DISTINCT et.treatment) AS externalTrials,
@@ -41,9 +41,9 @@ SELECT  x.sampleId, "Loss", x.event, NULL AS details, driverLikelihood,
 	LEFT JOIN copyNumberEvidence e ON x.id=e.copyNumberId
 	LEFT JOIN (SELECT * FROM copyNumberEvidence WHERE type='Trial') et ON x.id=et.copyNumberId
     WHERE isReportable and x.type = ('LOSS')
-	GROUP BY 1,3
+	GROUP BY 1,2,3,4,5
 UNION
-SELECT  x.sampleId, "Homozygous disruption" AS e2ype, x.event, NULL AS details, driverLikelihood,
+SELECT  x.sampleId, "Homozygous disruption" AS type, x.event, NULL AS details, driverLikelihood,
 		group_concat(DISTINCT et.treatment) AS externalTrials,
 	    IF(group_concat(DISTINCT e.type) LIKE '%Approved%', "Approved", IF(group_concat(DISTINCT e.type) LIKE '%On-label%', "On-label experimental", IF(group_concat(DISTINCT e.type) LIKE '%Off-label%', "Off-label experimental", IF(group_concat(DISTINCT e.type) LIKE '%Pre-clinical%', "Pre-clinical", NULL)))) AS treatmentEvidenceResponsive,
 		IF(group_concat(DISTINCT e.type) LIKE '%Known%', "Known", IF(group_concat(DISTINCT e.type) LIKE '%Suspect%', "Suspected", NULL)) AS treatmentEvidenceResistance
@@ -51,7 +51,7 @@ SELECT  x.sampleId, "Homozygous disruption" AS e2ype, x.event, NULL AS details, 
 	LEFT JOIN homozygousDisruptionEvidence e ON x.id=e.homozygousDisruptionId
 	LEFT JOIN (SELECT * FROM homozygousDisruptionEvidence WHERE type='Trial') et ON x.id=et.homozygousDisruptionId
     WHERE isReportable
-	GROUP BY 1,3
+	GROUP BY 1,2,3,4,5
 UNION
 SELECT  x.sampleId, IF(driverType LIKE '%PROMISCUOUS%',"Promiscuous fusion",IF(driverType LIKE '%KNOWN%',"Known fusion", driverType)) AS type, x.event, concat("Exon ", fusedExonUp, " - Exon ", fusedExonDown) AS details, driverLikelihood,
 		group_concat(DISTINCT et.treatment) AS externalTrials,
@@ -61,7 +61,7 @@ SELECT  x.sampleId, IF(driverType LIKE '%PROMISCUOUS%',"Promiscuous fusion",IF(d
 	LEFT JOIN fusionEvidence e ON x.id=e.fusionId
 	LEFT JOIN (SELECT * FROM fusionEvidence WHERE type='Trial') et ON x.id=et.fusionId
     WHERE isReportable
-	GROUP BY 1,3
+	GROUP BY 1,2,3,4,5
 UNION
 SELECT  x.sampleId,"Disruption" AS type, x.event, concat(round(junctionCopyNumber,1), " disr. / ", round(undisruptedCopyNumber,1), " undisr. copies"), driverLikelihood,
 		group_concat(DISTINCT et.treatment) AS externalTrials,
@@ -71,7 +71,7 @@ SELECT  x.sampleId,"Disruption" AS type, x.event, concat(round(junctionCopyNumbe
 	LEFT JOIN disruptionEvidence e ON x.id=e.disruptionId
 	LEFT JOIN (SELECT * FROM disruptionEvidence WHERE type='Trial') et ON x.id=et.disruptionId
     WHERE isReportable
-	GROUP BY 1,3
+	GROUP BY 1,2,3,4,5
 UNION
 SELECT  x.sampleId, "Virus" AS type, x.event, concat(name, ", ", integrations, " integrations") AS details, driverLikelihood,
 		group_concat(DISTINCT et.treatment) AS externalTrials,
@@ -81,7 +81,7 @@ SELECT  x.sampleId, "Virus" AS type, x.event, concat(name, ", ", integrations, "
 	LEFT JOIN virusEvidence e ON x.id=e.virusId
 	LEFT JOIN (SELECT * FROM virusEvidence WHERE type='Trial') et ON x.id=et.virusId
     WHERE isReportable
-	GROUP BY 1,3
+	GROUP BY 1,2,3,4,5
 ORDER BY 1,2,3)
 AS a
 );
