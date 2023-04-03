@@ -68,9 +68,23 @@ public class SystemicTreatmentAnalyserTest {
         assertEquals(Optional.empty(), SystemicTreatmentAnalyser.lastSystemicTreatment(treatments));
 
         treatments.add(TreatmentTestFactory.builder().isSystemic(true).startYear(2020).stopReason("reason 1").build());
-        assertEquals("reason 1", SystemicTreatmentAnalyser.lastSystemicTreatment(treatments).map(PriorTumorTreatment::stopReason).orElseThrow());
+        assertEquals("reason 1",
+                SystemicTreatmentAnalyser.lastSystemicTreatment(treatments).map(PriorTumorTreatment::stopReason).orElseThrow());
 
         treatments.add(TreatmentTestFactory.builder().isSystemic(true).startYear(2021).stopReason("reason 2").build());
-        assertEquals("reason 2", SystemicTreatmentAnalyser.lastSystemicTreatment(treatments).map(PriorTumorTreatment::stopReason).orElseThrow());
+        assertEquals("reason 2",
+                SystemicTreatmentAnalyser.lastSystemicTreatment(treatments).map(PriorTumorTreatment::stopReason).orElseThrow());
+
+        treatments.add(TreatmentTestFactory.builder().isSystemic(true).startYear(2021).startMonth(1).stopReason("reason 3").build());
+        assertEquals("reason 3",
+                SystemicTreatmentAnalyser.lastSystemicTreatment(treatments).map(PriorTumorTreatment::stopReason).orElseThrow());
+
+        treatments.add(TreatmentTestFactory.builder().isSystemic(true).startYear(2021).startMonth(10).stopReason("reason 4").build());
+        assertEquals("reason 4",
+                SystemicTreatmentAnalyser.lastSystemicTreatment(treatments).map(PriorTumorTreatment::stopReason).orElseThrow());
+
+        treatments.add(TreatmentTestFactory.builder().isSystemic(true).startYear(2021).startMonth(8).stopReason("reason 5").build());
+        assertEquals("reason 4",
+                SystemicTreatmentAnalyser.lastSystemicTreatment(treatments).map(PriorTumorTreatment::stopReason).orElseThrow());
     }
 }

@@ -77,7 +77,6 @@ class HasHadCombinedTreatmentNamesWithCycles implements EvaluationFunction {
             return EvaluationFactory.pass(
                     "Found matching treatments: " + formatTreatmentList(matchingPriorTreatments.get(EvaluationResult.PASS), true),
                     "Found matching treatments");
-
         } else if (matchingPriorTreatments.containsKey(EvaluationResult.UNDETERMINED)) {
             return EvaluationFactory.undetermined("Unknown cycles for matching prior treatments: " + formatTreatmentList(
                     matchingPriorTreatments.get(EvaluationResult.UNDETERMINED),

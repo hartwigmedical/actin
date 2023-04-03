@@ -58,16 +58,29 @@ final class SystemicTreatmentAnalyser {
     }
 
     public static Optional<PriorTumorTreatment> lastSystemicTreatment(@NotNull List<PriorTumorTreatment> priorTumorTreatments) {
-        Optional<PriorTumorTreatment> lastOption = Optional.empty();
-        for (PriorTumorTreatment treatment : priorTumorTreatments) {
-            if (treatment.isSystemic()) {
-                if (lastOption.map(last -> (last.startYear() == null && treatment.startYear() != null) || isAfter(treatment, last))
-                        .orElse(true)) {
-                    lastOption = Optional.of(treatment);
-                }
+        return priorTumorTreatments.stream()
+                .filter(PriorTumorTreatment::isSystemic)
+                .max(SystemicTreatmentAnalyser::compareTreatmentsByStartDate);
+    }
+
+    private static int compareTreatmentsByStartDate(@NotNull PriorTumorTreatment treatment1, @NotNull PriorTumorTreatment treatment2) {
+        int yearComparison = compareNullableIntegers(treatment1.startYear(), treatment2.startYear());
+        return yearComparison != 0 ? yearComparison : compareNullableIntegers(treatment1.startMonth(), treatment2.startMonth());
+    }
+
+    private static Integer compareNullableIntegers(@Nullable Integer first, @Nullable Integer second) {
+        // Nulls are considered less than non-nulls
+        if (first != null) {
+            if (second != null) {
+                return Integer.compare(first, second);
+            } else {
+                return 1;
             }
+        } else if (second != null) {
+            return -1;
+        } else {
+            return 0;
         }
-        return lastOption;
     }
 
     private static boolean isInterrupted(@NotNull PriorTumorTreatment mostRecent, @NotNull PriorTumorTreatment leastRecent,
