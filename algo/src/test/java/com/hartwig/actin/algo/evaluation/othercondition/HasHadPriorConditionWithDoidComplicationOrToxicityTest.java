@@ -33,6 +33,7 @@ public class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
     private static final String COMPLICATION_NAME = "complication";
     private static final String TOXICITY_NAME = "toxicity";
     private static final String DOID_TERM = "some disease";
+
     private EvaluationFunction victim;
 
     @Before
@@ -80,14 +81,14 @@ public class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
     public void shouldEvaluatePassWhenToxicityFromQuestionnaireMatchesCategory() {
         assertPassEvaluationWithMessages(victim.evaluate(copyOf(PATIENT_RECORD).withClinical(ImmutableClinicalRecord.copyOf(PATIENT_RECORD.clinical())
                         .withToxicities(toxicity(ToxicitySource.QUESTIONNAIRE, 1)))),
-                "Patient has toxicity(s) toxicity, which is indicative of some disease");
+                "Patient has toxicity(ies) toxicity, which is indicative of some disease");
     }
 
     @Test
     public void shouldEvaluatePassWhenToxicityWithAtLeastGradeTwoMatchesCategory() {
         assertPassEvaluationWithMessages(victim.evaluate(copyOf(PATIENT_RECORD).withClinical(ImmutableClinicalRecord.copyOf(PATIENT_RECORD.clinical())
-                        .withToxicities(toxicity(ToxicitySource.QUESTIONNAIRE, 2)))),
-                "Patient has toxicity(s) toxicity, which is indicative of some disease");
+                        .withToxicities(toxicity(ToxicitySource.EHR, 2)))),
+                "Patient has toxicity(ies) toxicity, which is indicative of some disease");
     }
 
     @Test
@@ -106,7 +107,7 @@ public class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
                         .withToxicities(toxicity(ToxicitySource.QUESTIONNAIRE, 2))
                         .withComplications(complication())
                         .withPriorOtherConditions(priorOtherCondition()))),
-                "Patient has toxicity(s) toxicity, which is indicative of some disease",
+                "Patient has toxicity(ies) toxicity, which is indicative of some disease",
                 "Patient has complication(s) complication, which is indicative of some disease",
                 "Patient has condition(s) other condition, which is indicative of some disease");
     }
@@ -140,6 +141,6 @@ public class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
     private static void assertPassEvaluationWithMessages(Evaluation evaluation, String... passSpecificMessages) {
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, evaluation);
         assertThat(evaluation.passSpecificMessages()).containsOnly(passSpecificMessages);
-        assertThat(evaluation.passGeneralMessages()).containsOnly("Relevant non-oncological condition of category some disease");
+        assertThat(evaluation.passGeneralMessages()).containsOnly("Relevant non-oncological condition some disease");
     }
 }

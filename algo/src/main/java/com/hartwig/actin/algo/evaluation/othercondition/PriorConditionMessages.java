@@ -7,9 +7,15 @@ import com.hartwig.actin.algo.evaluation.util.Format;
 final class PriorConditionMessages {
 
     enum Characteristic {
-        CONDITION,
-        TOXICITY,
-        COMPLICATION
+        CONDITION("condition(s)"),
+        TOXICITY("toxicity(ies)"),
+        COMPLICATION("complication(s)");
+
+        private final String displayText;
+
+        Characteristic(String displayText) {
+            this.displayText = displayText;
+        }
     }
 
     static String failSpecific(String doidTerm) {
@@ -21,13 +27,10 @@ final class PriorConditionMessages {
     }
 
     static String passGeneral(String doidTerm) {
-        return "Relevant non-oncological condition of category " + doidTerm;
+        return "Relevant non-oncological condition " + doidTerm;
     }
 
     static String passSpecific(Characteristic characteristic, Iterable<String> matches, String doidTerm) {
-        return format("Patient has %s(s) %s, which is indicative of %s",
-                characteristic.toString().toLowerCase(),
-                Format.concat(matches),
-                doidTerm);
+        return format("Patient has %s %s, which is indicative of %s", characteristic.displayText, Format.concat(matches), doidTerm);
     }
 }

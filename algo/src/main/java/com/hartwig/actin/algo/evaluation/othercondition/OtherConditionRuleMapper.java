@@ -36,20 +36,14 @@ public class OtherConditionRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME, hasPriorConditionWithConfiguredNameCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE, hasPriorConditionWithDoidCreator(DoidConstants.AUTOIMMUNE_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_ANGINA, hasHistoryOfAnginaCreator());
-        map.put(EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE,
-                hasPriorConditionWithDoidComplicationOrToxicityCategoryCreator(DoidConstants.HEART_DISEASE_DOID,
-                        CARDIAC_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY,
-                        CARDIAC_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY));
+        map.put(EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE, hasHistoryOfCardiacDiseaseCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE,
                 hasPriorConditionWithDoidCreator(DoidConstants.CARDIOVASCULAR_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_CONGESTIVE_HEART_FAILURE_WITH_AT_LEAST_NYHA_CLASS_X,
                 hasHistoryOfCongestiveHeartFailureWithNYHACreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_CENTRAL_NERVOUS_SYSTEM_DISEASE,
                 hasPriorConditionWithDoidCreator(DoidConstants.CENTRAL_NERVOUS_SYSTEM_DOID));
-        map.put(EligibilityRule.HAS_HISTORY_OF_EYE_DISEASE,
-                hasPriorConditionWithDoidComplicationOrToxicityCategoryCreator(DoidConstants.EYE_DISEASE_DOID,
-                        EYE_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY,
-                        EYE_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY));
+        map.put(EligibilityRule.HAS_HISTORY_OF_EYE_DISEASE, hasHistoryOfEyeDiseaseCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_GASTROINTESTINAL_DISEASE,
                 hasPriorConditionWithDoidCreator(DoidConstants.GASTROINTESTINAL_DISEASE_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_IMMUNE_SYSTEM_DISEASE,
@@ -62,10 +56,7 @@ public class OtherConditionRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT_WITHIN_X_MONTHS,
                 hasRecentPriorConditionWithDoidCreator(DoidConstants.MYOCARDIAL_INFARCT_DOID));
         map.put(EligibilityRule.HAS_HISTORY_OF_PNEUMONITIS, hasHistoryOfPneumonitisCreator());
-        map.put(EligibilityRule.HAS_HISTORY_OF_STROKE,
-                hasPriorConditionWithDoidComplicationOrToxicityCategoryCreator(DoidConstants.STROKE_DOID,
-                        CEREBROVASCULAR_ACCIDENT_COMPLICATION_AND_TOXICITY_CATEGORY,
-                        CEREBROVASCULAR_ACCIDENT_COMPLICATION_AND_TOXICITY_CATEGORY));
+        map.put(EligibilityRule.HAS_HISTORY_OF_STROKE, hasHistoryOfStrokeCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_THROMBOEMBOLIC_EVENT, hasHistoryOfThromboembolicEventCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_ARTERIAL_THROMBOEMBOLIC_EVENT, hasHistoryOfThromboembolicEventCreator());
         map.put(EligibilityRule.HAS_HISTORY_OF_VENOUS_THROMBOEMBOLIC_EVENT, hasHistoryOfThromboembolicEventCreator());
@@ -110,15 +101,6 @@ public class OtherConditionRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasPriorConditionWithDoidCreator(@NotNull String doidToFind) {
         return function -> new HasHadPriorConditionWithDoid(doidModel(), doidToFind);
-    }
-
-    @NotNull
-    private FunctionCreator hasPriorConditionWithDoidComplicationOrToxicityCategoryCreator(@NotNull String doidToFind,
-            @NotNull String complicationCategory, @NotNull String toxicityCategory) {
-        return function -> new HasHadPriorConditionWithDoidComplicationOrToxicity(doidModel(),
-                doidToFind,
-                complicationCategory,
-                toxicityCategory);
     }
 
     @NotNull
@@ -217,5 +199,29 @@ public class OtherConditionRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasAdequateVeinAccessCreator() {
         return function -> new HasAdequateVeinAccess();
+    }
+
+    @NotNull
+    private FunctionCreator hasHistoryOfEyeDiseaseCreator() {
+        return function -> new HasHadPriorConditionWithDoidComplicationOrToxicity(doidModel(),
+                DoidConstants.EYE_DISEASE_DOID,
+                EYE_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY,
+                EYE_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY);
+    }
+
+    @NotNull
+    private FunctionCreator hasHistoryOfCardiacDiseaseCreator() {
+        return function -> new HasHadPriorConditionWithDoidComplicationOrToxicity(doidModel(),
+                DoidConstants.HEART_DISEASE_DOID,
+                CARDIAC_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY,
+                CARDIAC_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY);
+    }
+
+    @NotNull
+    private FunctionCreator hasHistoryOfStrokeCreator() {
+        return function -> new HasHadPriorConditionWithDoidComplicationOrToxicity(doidModel(),
+                DoidConstants.STROKE_DOID,
+                CEREBROVASCULAR_ACCIDENT_COMPLICATION_AND_TOXICITY_CATEGORY,
+                CEREBROVASCULAR_ACCIDENT_COMPLICATION_AND_TOXICITY_CATEGORY);
     }
 }
