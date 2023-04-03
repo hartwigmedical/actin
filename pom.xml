@@ -23,7 +23,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <actin.version>1.0</actin.version>
-        <serve.version>2.0</serve.version>
+        <serve.version>2.0.1</serve.version>
 
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
