@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
+import static com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.PD_LABEL;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +40,7 @@ public class HasHadPDFollowingSpecificTreatmentTest {
         treatments.add(TreatmentTestFactory.builder()
                 .addCategories(TreatmentCategory.CHEMOTHERAPY)
                 .name("treatment 1")
-                .stopReason(HasHadPDFollowingTreatmentWithCategory.PD_LABEL)
+                .stopReason(PD_LABEL)
                 .build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
     }
@@ -52,7 +53,7 @@ public class HasHadPDFollowingSpecificTreatmentTest {
         List<PriorTumorTreatment> treatments = Collections.singletonList(TreatmentTestFactory.builder()
                 .addCategories(TreatmentCategory.CHEMOTHERAPY)
                 .name("treatment 1")
-                .bestResponse(HasHadPDFollowingTreatmentWithCategory.PD_LABEL)
+                .bestResponse(PD_LABEL)
                 .build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
     }
@@ -73,7 +74,7 @@ public class HasHadPDFollowingSpecificTreatmentTest {
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Right category and right stop reason
-        treatments.add(TreatmentTestFactory.builder().name(treatment).stopReason(HasHadPDFollowingSpecificTreatment.PD_LABEL).build());
+        treatments.add(TreatmentTestFactory.builder().name(treatment).stopReason(PD_LABEL).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
     }
 

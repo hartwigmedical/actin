@@ -1,5 +1,7 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
+import static com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.treatmentResultedInPDOption;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -17,8 +19,6 @@ import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import org.jetbrains.annotations.NotNull;
 
 public class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks implements EvaluationFunction {
-
-    static final String PD_LABEL = "PD";
 
     @NotNull
     private final TreatmentCategory category;
@@ -54,19 +54,18 @@ public class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks imple
             if (treatment.categories().contains(category)) {
                 if (hasValidType(treatment)) {
                     hasHadTreatment = true;
-                    String stopReason = treatment.stopReason();
-                    String bestResponse = treatment.bestResponse();
                     Integer cycles = treatment.cycles();
+                    Optional<Boolean> treatmentResultedInPDOption = treatmentResultedInPDOption(treatment);
                     Optional<Long> weeksOption = DateComparison.minWeeksBetweenDates(treatment.startYear(),
                             treatment.startMonth(),
                             treatment.stopYear(),
                             treatment.stopMonth());
 
-                    if (stopReason != null || bestResponse != null) {
+                    if (treatmentResultedInPDOption.isPresent()) {
                         boolean meetsMinCycles = minCycles == null || (cycles != null && cycles >= minCycles);
                         boolean meetsMinWeeks = minWeeks == null || weeksOption.map(weeks -> weeks >= minWeeks).orElse(false);
 
-                        if (PD_LABEL.equalsIgnoreCase(stopReason) || PD_LABEL.equalsIgnoreCase(bestResponse)) {
+                        if (treatmentResultedInPDOption.get()) {
                             if (meetsMinCycles && meetsMinWeeks) {
                                 hasHadTreatmentWithPDAndCyclesOrWeeks = true;
                             } else if (minCycles != null && cycles == null) {

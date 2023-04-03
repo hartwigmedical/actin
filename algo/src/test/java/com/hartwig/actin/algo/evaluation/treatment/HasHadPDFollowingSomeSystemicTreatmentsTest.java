@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
+import static com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.PD_LABEL;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,12 +27,7 @@ public class HasHadPDFollowingSomeSystemicTreatmentsTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add one systemic with stop reason PD
-        treatments.add(TreatmentTestFactory.builder()
-                .name("treatment 1")
-                .isSystemic(true)
-                .startYear(2020)
-                .stopReason(HasHadPDFollowingSomeSystemicTreatments.PD_LABEL)
-                .build());
+        treatments.add(TreatmentTestFactory.builder().name("treatment 1").isSystemic(true).startYear(2020).stopReason(PD_LABEL).build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add a later systemic with other stop reason
@@ -53,7 +49,7 @@ public class HasHadPDFollowingSomeSystemicTreatmentsTest {
                 .name("treatment 1")
                 .isSystemic(true)
                 .startYear(2021)
-                .bestResponse(HasHadPDFollowingSomeSystemicTreatments.PD_LABEL)
+                .bestResponse(PD_LABEL)
                 .build());
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
     }
@@ -71,12 +67,7 @@ public class HasHadPDFollowingSomeSystemicTreatmentsTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add one systemic with stop reason PD
-        treatments.add(TreatmentTestFactory.builder()
-                .name("treatment 1")
-                .isSystemic(true)
-                .startYear(2020)
-                .stopReason(HasHadPDFollowingSomeSystemicTreatments.PD_LABEL)
-                .build());
+        treatments.add(TreatmentTestFactory.builder().name("treatment 1").isSystemic(true).startYear(2020).stopReason(PD_LABEL).build());
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
 
         // Add a later systemic with other stop reason

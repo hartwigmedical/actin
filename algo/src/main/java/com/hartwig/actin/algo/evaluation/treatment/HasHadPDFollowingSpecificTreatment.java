@@ -1,5 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
+import static com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.treatmentResultedInPDOption;
+
+import java.util.Optional;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -17,8 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class HasHadPDFollowingSpecificTreatment implements EvaluationFunction {
-
-    static final String PD_LABEL = "PD";
 
     @NotNull
     private final Set<String> names;
@@ -45,14 +46,13 @@ public class HasHadPDFollowingSpecificTreatment implements EvaluationFunction {
                 hasHadTreatmentWithWarnType = true;
             }
 
-            String stopReason = treatment.stopReason();
-            String bestResponse = treatment.bestResponse();
             for (String name : names) {
                 if (treatment.name().toLowerCase().contains(name.toLowerCase())) {
                     treatmentsWithExactType.add(treatment.name());
-                    if (PD_LABEL.equalsIgnoreCase(stopReason) || PD_LABEL.equalsIgnoreCase(bestResponse)) {
+                    Optional<Boolean> treatmentResultedInPDOption = treatmentResultedInPDOption(treatment);
+                    if (treatmentResultedInPDOption.orElse(false)) {
                         treatmentsWithPD.add(treatment.name());
-                    } else if (stopReason == null || bestResponse == null) {
+                    } else if (treatmentResultedInPDOption.isEmpty()) {
                         hasHadTreatmentWithUnclearPDStatus = true;
                     }
                 }

@@ -1,5 +1,9 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
+import static com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.treatmentResultedInPDOption;
+
+import java.util.Optional;
+
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
@@ -10,8 +14,6 @@ import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import org.jetbrains.annotations.NotNull;
 
 public class HasHadPDFollowingTreatmentWithCategory implements EvaluationFunction {
-
-    static final String PD_LABEL = "PD";
 
     @NotNull
     private final TreatmentCategory category;
@@ -29,9 +31,10 @@ public class HasHadPDFollowingTreatmentWithCategory implements EvaluationFunctio
 
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             if (treatment.categories().contains(category)) {
-                if (PD_LABEL.equalsIgnoreCase(treatment.stopReason()) || PD_LABEL.equalsIgnoreCase(treatment.bestResponse())) {
+                Optional<Boolean> treatmentResultedInPDOption = treatmentResultedInPDOption(treatment);
+                if (treatmentResultedInPDOption.orElse(false)) {
                     hasHadPDFollowingTreatmentWithCategory = true;
-                } else if (treatment.stopReason() == null || treatment.bestResponse() == null) {
+                } else if (treatmentResultedInPDOption.isEmpty()) {
                     hasHadTreatmentWithUnclearPDStatus = true;
                 }
             }
