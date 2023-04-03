@@ -27,7 +27,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
+import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.doid.DoidModel;
@@ -44,6 +44,17 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 public class RecommendationEngineTest {
+
+    private static final List<String> CHEMO_TREATMENT_NAME_STREAM = List.of("5-FU",
+            "Capecitabine",
+            "Irinotecan",
+            "Oxaliplatin",
+            TreatmentDB.TREATMENT_CAPOX,
+            TreatmentDB.TREATMENT_FOLFIRI,
+            TreatmentDB.TREATMENT_FOLFIRINOX,
+            TreatmentDB.TREATMENT_FOLFOX);
+    public static final PatientRecord MINIMAL_PATIENT_RECORD = TestDataFactory.createMinimalTestPatientRecord();
+    public static final String PD_STATUS = "PD";
 
     @Test
     public void shouldNotRecommendCapecitabineCombinedWithIrinotecan() {
@@ -74,17 +85,54 @@ public class RecommendationEngineTest {
     }
 
     @Test
-    public void shouldNotRecommendTheSameChemotherapyAgain() {
-        Stream.of("5-FU",
-                        "Capecitabine",
-                        "Irinotecan",
-                        "Oxaliplatin",
-                        TreatmentDB.TREATMENT_CAPOX,
-                        TreatmentDB.TREATMENT_FOLFIRI,
-                        TreatmentDB.TREATMENT_FOLFIRINOX,
-                        TreatmentDB.TREATMENT_FOLFOX)
-                .forEach(treatment -> assertTrue(getTreatmentResultsForPatient(patientRecordWithChemoHistory(List.of(treatment))).noneMatch(
-                        t -> t.name().equalsIgnoreCase(treatment))));
+    public void shouldNotRecommendTheSameChemotherapyAfterRecentTreatment() {
+        CHEMO_TREATMENT_NAME_STREAM.forEach(treatmentName -> assertTrue(getTreatmentResultsForPatient(patientRecordWithChemoHistory(List.of(
+                treatmentName))).noneMatch(t -> t.name().equalsIgnoreCase(treatmentName))));
+    }
+
+    @Test
+    public void shouldNotRecommendTheSameChemotherapyAfterStopReasonPD() {
+        CHEMO_TREATMENT_NAME_STREAM.forEach(treatmentName -> {
+            PatientRecord patientRecord = patientWithTreatment(ImmutablePriorTumorTreatment.builder()
+                    .name(treatmentName)
+                    .isSystemic(true)
+                    .startYear(LocalDate.now().minusYears(3).getYear())
+                    .addCategories(TreatmentCategory.CHEMOTHERAPY)
+                    .stopReason(PD_STATUS)
+                    .build());
+
+            assertTrue(getTreatmentResultsForPatient(patientRecord).noneMatch(t -> t.name().equalsIgnoreCase(treatmentName)));
+        });
+    }
+
+    @Test
+    public void shouldNotRecommendTheSameChemotherapyAfterBestResponsePD() {
+        CHEMO_TREATMENT_NAME_STREAM.forEach(treatmentName -> {
+            PatientRecord patientRecord = patientWithTreatment(ImmutablePriorTumorTreatment.builder()
+                    .name(treatmentName)
+                    .isSystemic(true)
+                    .startYear(LocalDate.now().minusYears(3).getYear())
+                    .addCategories(TreatmentCategory.CHEMOTHERAPY)
+                    .bestResponse(PD_STATUS)
+                    .build());
+
+            assertTrue(getTreatmentResultsForPatient(patientRecord).noneMatch(t -> t.name().equalsIgnoreCase(treatmentName)));
+        });
+    }
+
+    @Test
+    public void shouldNotRecommendTheSameChemotherapyAfter12Cycles() {
+        CHEMO_TREATMENT_NAME_STREAM.forEach(treatmentName -> {
+            PatientRecord patientRecord = patientWithTreatment(ImmutablePriorTumorTreatment.builder()
+                    .name(treatmentName)
+                    .isSystemic(true)
+                    .startYear(LocalDate.now().minusYears(3).getYear())
+                    .addCategories(TreatmentCategory.CHEMOTHERAPY)
+                    .cycles(12)
+                    .build());
+
+            assertTrue(getTreatmentResultsForPatient(patientRecord).noneMatch(t -> t.name().equalsIgnoreCase(treatmentName)));
+        });
     }
 
     @Test
@@ -101,7 +149,7 @@ public class RecommendationEngineTest {
         List<String> firstLineChemotherapies = List.of(TreatmentDB.TREATMENT_CAPOX);
         assertAntiEGFRTreatmentCount(getTreatmentResultsForPatient(patientRecordWithHistoryAndMolecular(firstLineChemotherapies,
                 Collections.emptyList(),
-                TestMolecularFactory.createMinimalTestMolecularRecord(),
+                MINIMAL_PATIENT_RECORD.molecular(),
                 "Ascending colon")), 0);
     }
 
@@ -122,7 +170,7 @@ public class RecommendationEngineTest {
 
         Variant variant = TestVariantFactory.builder().gene("MLH1").isReportable(true).isBiallelic(true).build();
 
-        MolecularRecord minimal = TestMolecularFactory.createMinimalTestMolecularRecord();
+        MolecularRecord minimal = MINIMAL_PATIENT_RECORD.molecular();
         MolecularRecord molecularRecord = ImmutableMolecularRecord.builder()
                 .from(minimal)
                 .characteristics(ImmutableMolecularCharacteristics.builder()
@@ -153,7 +201,7 @@ public class RecommendationEngineTest {
     public void shouldRecommendLonsurfAfterChemoAndTargetedTherapy() {
         PatientRecord record = patientRecordWithHistoryAndMolecular(List.of(TreatmentDB.TREATMENT_CAPOX),
                 List.of(TreatmentDB.TREATMENT_PANITUMUMAB),
-                TestMolecularFactory.createMinimalTestMolecularRecord());
+                MINIMAL_PATIENT_RECORD.molecular());
         assertTrue(getTreatmentResultsForPatient(record).anyMatch(treatment -> treatment.name().equals(TreatmentDB.TREATMENT_LONSURF)));
     }
 
@@ -161,13 +209,13 @@ public class RecommendationEngineTest {
     public void shouldNotRecommendLonsurfAfterTrifluridine() {
         PatientRecord record = patientRecordWithHistoryAndMolecular(List.of(TreatmentDB.TREATMENT_CAPOX, "trifluridine"),
                 List.of(TreatmentDB.TREATMENT_PANITUMUMAB),
-                TestMolecularFactory.createMinimalTestMolecularRecord());
+                MINIMAL_PATIENT_RECORD.molecular());
         assertFalse(getTreatmentResultsForPatient(record).anyMatch(treatment -> treatment.name().equals(TreatmentDB.TREATMENT_LONSURF)));
     }
 
     @Test
     public void shouldThrowExceptionIfPatientDoesNotHaveColorectalCancer() {
-        assertThrows(IllegalArgumentException.class, () -> getTreatmentResultsForPatient(TestDataFactory.createMinimalTestPatientRecord()));
+        assertThrows(IllegalArgumentException.class, () -> getTreatmentResultsForPatient(MINIMAL_PATIENT_RECORD));
     }
 
     @Test
@@ -179,13 +227,12 @@ public class RecommendationEngineTest {
 
     @Test
     public void shouldNotRecommendMultiChemotherapyForPatientsAged75OrOlder() {
-        ClinicalRecord minimalClinical = TestClinicalFactory.createMinimalTestClinicalRecord();
         TumorDetails tumorDetails = ImmutableTumorDetails.builder().addDoids(DoidConstants.COLORECTAL_CANCER_DOID).build();
 
-        PatientRecord patientRecord = ImmutablePatientRecord.copyOf(TestDataFactory.createMinimalTestPatientRecord())
-                .withClinical(ImmutableClinicalRecord.copyOf(minimalClinical)
+        PatientRecord patientRecord = ImmutablePatientRecord.copyOf(MINIMAL_PATIENT_RECORD)
+                .withClinical(ImmutableClinicalRecord.copyOf(MINIMAL_PATIENT_RECORD.clinical())
                         .withTumor(tumorDetails)
-                        .withPatient(ImmutablePatientDetails.copyOf(minimalClinical.patient())
+                        .withPatient(ImmutablePatientDetails.copyOf(MINIMAL_PATIENT_RECORD.clinical().patient())
                                 .withBirthYear(LocalDate.now().minusYears(76).getYear())));
 
         assertMultiChemotherapyNotRecommended(patientRecord);
@@ -193,13 +240,12 @@ public class RecommendationEngineTest {
 
     @Test
     public void shouldNotRecommendMultiChemotherapyForPatientsWithWHOStatusGreaterThan1() {
-        ClinicalRecord minimalClinical = TestClinicalFactory.createMinimalTestClinicalRecord();
         TumorDetails tumorDetails = ImmutableTumorDetails.builder().addDoids(DoidConstants.COLORECTAL_CANCER_DOID).build();
 
-        PatientRecord patientRecord = ImmutablePatientRecord.copyOf(TestDataFactory.createMinimalTestPatientRecord())
-                .withClinical(ImmutableClinicalRecord.copyOf(minimalClinical)
+        PatientRecord patientRecord = ImmutablePatientRecord.copyOf(MINIMAL_PATIENT_RECORD)
+                .withClinical(ImmutableClinicalRecord.copyOf(MINIMAL_PATIENT_RECORD.clinical())
                         .withTumor(tumorDetails)
-                        .withClinicalStatus(ImmutableClinicalStatus.copyOf(minimalClinical.clinicalStatus()).withWho(2)));
+                        .withClinicalStatus(ImmutableClinicalStatus.copyOf(MINIMAL_PATIENT_RECORD.clinical().clinicalStatus()).withWho(2)));
 
         assertMultiChemotherapyNotRecommended(patientRecord);
     }
@@ -236,16 +282,14 @@ public class RecommendationEngineTest {
     }
 
     private static PatientRecord patientRecordWithTumorDoids(String tumorDoid) {
-        PatientRecord minimal = TestDataFactory.createMinimalTestPatientRecord();
         TumorDetails tumorDetails = ImmutableTumorDetails.builder().addDoids(DoidConstants.COLORECTAL_CANCER_DOID, tumorDoid).build();
-        ClinicalRecord clinicalRecord = ImmutableClinicalRecord.builder().from(minimal.clinical()).tumor(tumorDetails).build();
-        return ImmutablePatientRecord.builder().from(minimal).clinical(clinicalRecord).build();
+        ClinicalRecord clinicalRecord =
+                ImmutableClinicalRecord.builder().from(MINIMAL_PATIENT_RECORD.clinical()).tumor(tumorDetails).build();
+        return ImmutablePatientRecord.builder().from(MINIMAL_PATIENT_RECORD).clinical(clinicalRecord).build();
     }
 
     private static PatientRecord patientRecordWithChemoHistory(List<String> pastChemotherapyNames) {
-        return patientRecordWithHistoryAndMolecular(pastChemotherapyNames,
-                Collections.emptyList(),
-                TestMolecularFactory.createMinimalTestMolecularRecord());
+        return patientRecordWithHistoryAndMolecular(pastChemotherapyNames, Collections.emptyList(), MINIMAL_PATIENT_RECORD.molecular());
     }
 
     private static PatientRecord patientRecordWithHistoryAndMolecular(List<String> pastChemotherapyNames,
@@ -260,13 +304,20 @@ public class RecommendationEngineTest {
                 .primaryTumorSubLocation(tumorSubLocation)
                 .build();
         ClinicalRecord clinicalRecord = ImmutableClinicalRecord.builder()
-                .from(TestClinicalFactory.createMinimalTestClinicalRecord())
+                .from(MINIMAL_PATIENT_RECORD.clinical())
                 .tumor(tumorDetails)
                 .priorTumorTreatments(Stream.concat(priorTreatmentStreamFromNames(pastChemotherapyNames, TreatmentCategory.CHEMOTHERAPY),
                                 priorTreatmentStreamFromNames(pastTargetedTherapyNames, TreatmentCategory.TARGETED_THERAPY))
                         .collect(Collectors.toSet()))
                 .build();
         return PatientRecordFactory.fromInputs(clinicalRecord, molecularRecord);
+    }
+
+    private static ImmutablePatientRecord patientWithTreatment(PriorTumorTreatment treatment) {
+        return ImmutablePatientRecord.copyOf(MINIMAL_PATIENT_RECORD)
+                .withClinical(ImmutableClinicalRecord.copyOf(MINIMAL_PATIENT_RECORD.clinical())
+                        .withPriorTumorTreatments(treatment)
+                        .withTumor(ImmutableTumorDetails.builder().addDoids(DoidConstants.COLORECTAL_CANCER_DOID).build()));
     }
 
     private static Stream<ImmutablePriorTumorTreatment> priorTreatmentStreamFromNames(List<String> names, TreatmentCategory category) {

@@ -32,6 +32,7 @@ public class TreatmentDB {
     private static final int SCORE_MULTITHERAPY = 5;
     private static final int SCORE_PEMBROLIZUMAB = 6;
     private static final int SCORE_TARGETED_THERAPY = 5;
+    private static final String CHEMO_MAX_CYCLES = "12";
     private static final String RECENT_TREATMENT_THRESHOLD_WEEKS = "104";
     private static final EligibilityFunction IS_COLORECTAL_CANCER =
             eligibilityFunction(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X, "colorectal cancer");
@@ -175,7 +176,9 @@ public class TreatmentDB {
                         eligibilityFunction(EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS,
                                 treatmentName,
                                 RECENT_TREATMENT_THRESHOLD_WEEKS),
-                        eligibilityFunction(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_NAME_X_TREATMENT, treatmentName)));
+                        eligibilityFunction(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_NAME_X_TREATMENT, treatmentName),
+                        eligibilityFunction(EligibilityRule.HAS_HAD_COMBINED_TREATMENT_NAMES_X_AND_BETWEEN_Y_AND_Z_CYCLES,
+                                treatmentName, CHEMO_MAX_CYCLES, CHEMO_MAX_CYCLES)));
     }
 
     private static EligibilityFunction eligibilityFunction(EligibilityRule rule, Object... parameters) {
