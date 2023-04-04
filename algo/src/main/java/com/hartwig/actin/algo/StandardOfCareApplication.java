@@ -56,7 +56,7 @@ public class StandardOfCareApplication {
         this.config = config;
     }
 
-    public void run() throws IOException {
+    private void run() throws IOException {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION);
 
         LOGGER.info("Loading clinical record from {}", config.clinicalJson());

@@ -19,9 +19,10 @@ public class HasHadSpecificTreatmentSinceDate implements EvaluationFunction {
 
     @NotNull
     private final String query;
+    @NotNull
     private final LocalDate minDate;
 
-    HasHadSpecificTreatmentSinceDate(@NotNull String treatmentName, LocalDate minDate) {
+    HasHadSpecificTreatmentSinceDate(@NotNull String treatmentName, @NotNull LocalDate minDate) {
         this.query = treatmentName.toLowerCase();
         this.minDate = minDate;
     }

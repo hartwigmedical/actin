@@ -10,8 +10,6 @@ import org.jetbrains.annotations.Nullable;
 
 public final class DateComparison {
 
-    //    private static final double WEEKS_PER_MONTH = 52 / 12D;
-
     private DateComparison() {
     }
 
