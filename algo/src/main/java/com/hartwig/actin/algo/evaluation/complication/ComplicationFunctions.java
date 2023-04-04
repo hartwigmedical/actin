@@ -1,5 +1,7 @@
 package com.hartwig.actin.algo.evaluation.complication;
 
+import static com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -32,8 +34,7 @@ public final class ComplicationFunctions {
                                 .from(complication)
                                 .categories(complication.categories()
                                         .stream()
-                                        .filter(category -> categorySearchTerms.stream()
-                                                .anyMatch(term -> category.toLowerCase().contains(term.toLowerCase())))
+                                        .filter(category -> stringCaseInsensitivelyMatchesQueryCollection(category, categorySearchTerms))
                                         .collect(Collectors.toList()))
                                 .build())
                         .filter(complication -> !complication.categories().isEmpty()));

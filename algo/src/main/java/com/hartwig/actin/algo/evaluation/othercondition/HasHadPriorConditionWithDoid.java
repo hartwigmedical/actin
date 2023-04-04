@@ -1,8 +1,8 @@
 package com.hartwig.actin.algo.evaluation.othercondition;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
@@ -32,12 +32,10 @@ public class HasHadPriorConditionWithDoid implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         String doidTerm = doidModel.resolveTermForDoid(doidToFind);
 
-        Set<String> conditions = Sets.newHashSet();
-        for (PriorOtherCondition condition : OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())) {
-            if (conditionHasDoid(condition, doidToFind)) {
-                conditions.add(condition.name());
-            }
-        }
+        Set<String> conditions = OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions()).stream()
+                .filter(priorOtherCondition -> conditionHasDoid(priorOtherCondition, doidToFind))
+                .map(PriorOtherCondition::name)
+                .collect(Collectors.toSet());
 
         if (!conditions.isEmpty()) {
             return EvaluationFactory.unrecoverable()
@@ -55,11 +53,6 @@ public class HasHadPriorConditionWithDoid implements EvaluationFunction {
     }
 
     private boolean conditionHasDoid(@NotNull PriorOtherCondition condition, @NotNull String doidToFind) {
-        for (String doid : condition.doids()) {
-            if (doidModel.doidWithParents(doid).contains(doidToFind)) {
-                return true;
-            }
-        }
-        return false;
+        return condition.doids().stream().anyMatch(doid -> doidModel.doidWithParents(doid).contains(doidToFind));
     }
 }
