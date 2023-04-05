@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo;
+package com.hartwig.actin.algo.soc;
 
 import com.hartwig.actin.util.ApplicationConfig;
 

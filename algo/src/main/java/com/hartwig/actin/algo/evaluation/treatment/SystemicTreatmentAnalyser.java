@@ -68,7 +68,7 @@ final class SystemicTreatmentAnalyser {
         return yearComparison != 0 ? yearComparison : compareNullableIntegers(treatment1.startMonth(), treatment2.startMonth());
     }
 
-    private static Integer compareNullableIntegers(@Nullable Integer first, @Nullable Integer second) {
+    private static int compareNullableIntegers(@Nullable Integer first, @Nullable Integer second) {
         // Nulls are considered less than non-nulls
         if (first != null) {
             if (second != null) {

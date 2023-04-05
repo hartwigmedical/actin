@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo;
+package com.hartwig.actin.algo.soc;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,9 +11,6 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.PatientRecordFactory;
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory;
 import com.hartwig.actin.algo.doid.DoidConstants;
-import com.hartwig.actin.algo.soc.EvaluatedTreatmentInterpreter;
-import com.hartwig.actin.algo.soc.RecommendationEngine;
-import com.hartwig.actin.algo.soc.TreatmentDB;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
@@ -62,7 +59,7 @@ public class TestStandardOfCareApplication {
         DoidModel doidModel = DoidModelFactory.createFromDoidEntry(doidEntry);
 
         RecommendationEngine recommendationEngine =
-                new RecommendationEngine(doidModel, ReferenceDateProviderTestFactory.createCurrentDateProvider());
+                RecommendationEngine.create(doidModel, ReferenceDateProviderTestFactory.createCurrentDateProvider());
         EvaluatedTreatmentInterpreter recommendationInterpreter =
                 recommendationEngine.provideRecommendations(patient, TreatmentDB.loadTreatments());
 

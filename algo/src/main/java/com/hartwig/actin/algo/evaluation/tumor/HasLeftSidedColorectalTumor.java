@@ -24,9 +24,10 @@ public class HasLeftSidedColorectalTumor implements EvaluationFunction {
             "colon transversum",
             "flexura hepatica",
             "hepatic flexure");
+    @NotNull
     private final DoidModel doidModel;
 
-    HasLeftSidedColorectalTumor(DoidModel doidModel) {
+    HasLeftSidedColorectalTumor(@NotNull DoidModel doidModel) {
         this.doidModel = doidModel;
     }
 

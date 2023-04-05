@@ -14,7 +14,9 @@ import com.hartwig.actin.algo.soc.datamodel.ImmutableTreatment;
 import com.hartwig.actin.algo.soc.datamodel.Treatment;
 import com.hartwig.actin.algo.soc.datamodel.TreatmentComponent;
 
-public class TreatmentDB {
+import org.jetbrains.annotations.NotNull;
+
+class TreatmentDB {
 
     public static final String TREATMENT_CAPOX = "CAPOX";
     public static final String TREATMENT_CETUXIMAB = "Cetuximab";
@@ -41,7 +43,8 @@ public class TreatmentDB {
             eligibilityFunction(EligibilityRule.NOT, eligibilityFunction(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, "75")),
             eligibilityFunction(EligibilityRule.HAS_WHO_STATUS_OF_AT_MOST_X, "1"));
 
-    public static Stream<Treatment> loadTreatments() {
+    @NotNull
+    static Stream<Treatment> loadTreatments() {
         return Stream.of(combinableChemotherapies(),
                 combinableChemotherapies().map(TreatmentDB::addBevacizumabToTreatment),
                 antiEGFRTherapies(),

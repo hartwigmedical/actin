@@ -256,7 +256,7 @@ public class RecommendationEngineTest {
 
     private static Stream<Treatment> getTreatmentResultsForPatient(PatientRecord patientRecord) {
         DoidModel doidModel = TestDoidModelFactory.createWithOneDoidAndTerm(DoidConstants.COLORECTAL_CANCER_DOID, "colorectal cancer");
-        RecommendationEngine engine = new RecommendationEngine(doidModel, ReferenceDateProviderTestFactory.createCurrentDateProvider());
+        RecommendationEngine engine = RecommendationEngine.create(doidModel, ReferenceDateProviderTestFactory.createCurrentDateProvider());
         return engine.determineAvailableTreatments(patientRecord, TreatmentDB.loadTreatments()).map(EvaluatedTreatment::treatment);
     }
 

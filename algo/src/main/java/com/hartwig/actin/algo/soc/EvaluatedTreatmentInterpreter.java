@@ -11,15 +11,19 @@ import java.util.stream.Stream;
 
 import com.hartwig.actin.algo.soc.datamodel.EvaluatedTreatment;
 
-public class EvaluatedTreatmentInterpreter {
+import org.jetbrains.annotations.NotNull;
 
+class EvaluatedTreatmentInterpreter {
+
+    @NotNull
     private final List<EvaluatedTreatment> recommendedTreatments;
 
-    public EvaluatedTreatmentInterpreter(List<EvaluatedTreatment> recommendedTreatments) {
+    EvaluatedTreatmentInterpreter(@NotNull List<EvaluatedTreatment> recommendedTreatments) {
         this.recommendedTreatments = recommendedTreatments;
     }
 
-    public String summarize() {
+    @NotNull
+    String summarize() {
         if (recommendedTreatments.isEmpty()) {
             return "No treatments available";
         } else {
@@ -31,7 +35,8 @@ public class EvaluatedTreatmentInterpreter {
         }
     }
 
-    public String csv() {
+    @NotNull
+    String csv() {
         return "Treatment,Score,Warnings\n" + recommendedTreatments.stream().map(t -> {
             String warningSummary = t.evaluations()
                     .stream()
@@ -43,7 +48,8 @@ public class EvaluatedTreatmentInterpreter {
         }).collect(Collectors.joining("\n"));
     }
 
-    public String listAvailableTreatmentsByScore() {
+    @NotNull
+    String listAvailableTreatmentsByScore() {
         return availableTreatmentsByScore().entrySet()
                 .stream()
                 .sorted(Collections.reverseOrder(Map.Entry.comparingByKey()))
