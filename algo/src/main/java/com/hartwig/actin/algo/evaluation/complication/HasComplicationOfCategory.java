@@ -63,6 +63,6 @@ public class HasComplicationOfCategory implements EvaluationFunction {
     private static boolean hasComplicationsWithoutCategories(@NotNull PatientRecord record) {
         List<Complication> complications = record.clinical().complications();
         return Boolean.TRUE.equals(record.clinical().clinicalStatus().hasComplications()) && complications != null && complications.stream()
-                .anyMatch(complication -> complication.categories().isEmpty());
+                .anyMatch(ComplicationFunctions::isYesInputComplication);
     }
 }

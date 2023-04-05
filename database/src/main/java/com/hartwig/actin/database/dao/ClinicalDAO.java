@@ -169,7 +169,8 @@ class ClinicalDAO {
                         CLINICALSTATUS.QTCFUNIT,
                         CLINICALSTATUS.JTCVALUE,
                         CLINICALSTATUS.JTCUNIT,
-                        CLINICALSTATUS.LVEF)
+                        CLINICALSTATUS.LVEF,
+                        CLINICALSTATUS.HASCOMPLICATIONS)
                 .values(patientId,
                         clinicalStatus.who(),
                         DataUtil.toByte(infectionStatus != null ? infectionStatus.hasActiveInfection() : null),
@@ -180,7 +181,8 @@ class ClinicalDAO {
                         qtcfMeasure.map(ECGMeasure::unit).orElse(null),
                         jtcMeasure.map(ECGMeasure::value).orElse(null),
                         jtcMeasure.map(ECGMeasure::unit).orElse(null),
-                        clinicalStatus.lvef())
+                        clinicalStatus.lvef(),
+                        DataUtil.toByte(clinicalStatus.hasComplications()))
                 .execute();
     }
 

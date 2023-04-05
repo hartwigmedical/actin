@@ -29,6 +29,11 @@ final class ComplicationTestFactory {
     }
 
     @NotNull
+    public static Complication yesInputComplication() {
+        return builder().build();
+    }
+
+    @NotNull
     public static PatientRecord withComplication(@NotNull Complication complication) {
         return withComplications(Lists.newArrayList(complication));
     }

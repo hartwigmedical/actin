@@ -58,6 +58,6 @@ public class HasSpecificComplication implements EvaluationFunction {
     private static boolean hasComplicationsWithoutNames(@NotNull PatientRecord record) {
         List<Complication> complications = record.clinical().complications();
         return Boolean.TRUE.equals(record.clinical().clinicalStatus().hasComplications()) && complications != null && complications.stream()
-                .anyMatch(complication -> complication.name().isEmpty());
+                .anyMatch(ComplicationFunctions::isYesInputComplication);
     }
 }

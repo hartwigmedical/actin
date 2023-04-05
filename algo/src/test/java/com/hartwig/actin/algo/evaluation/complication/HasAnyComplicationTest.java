@@ -2,8 +2,11 @@ package com.hartwig.actin.algo.evaluation.complication;
 
 import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
+import java.util.List;
+
 import com.google.common.collect.Lists;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
 
 import org.junit.Test;
 

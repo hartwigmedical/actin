@@ -10,6 +10,8 @@ import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
 
+import org.jetbrains.annotations.NotNull;
+
 public final class ComplicationFunctions {
 
     public static Set<String> findComplicationNamesMatchingAnyCategory(PatientRecord record, List<String> categorySearchTerms) {
@@ -22,6 +24,10 @@ public final class ComplicationFunctions {
         return findComplicationsMatchingAnyCategory(record, categorySearchTerms).orElse(Stream.empty())
                 .flatMap(complication -> complication.categories().stream())
                 .collect(Collectors.toSet());
+    }
+
+    public static boolean isYesInputComplication(@NotNull Complication complication) {
+        return complication.name().isEmpty() && complication.categories().isEmpty();
     }
 
     private static Optional<Stream<ImmutableComplication>> findComplicationsMatchingAnyCategory(PatientRecord record,
