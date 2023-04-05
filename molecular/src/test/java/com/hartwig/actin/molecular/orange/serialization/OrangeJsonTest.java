@@ -1,5 +1,7 @@
 package com.hartwig.actin.molecular.orange.serialization;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.groups.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -25,10 +27,8 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.LinxCodingType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionType;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRegionType;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxStructuralVariant;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
@@ -199,17 +199,19 @@ public class OrangeJsonTest {
     }
 
     private static void assertLinx(@NotNull LinxRecord linx) {
-        assertEquals(1, linx.structuralVariants().size());
-        LinxStructuralVariant structuralVariant = linx.structuralVariants().iterator().next();
-        assertEquals(1, structuralVariant.svId());
-        assertEquals(2, structuralVariant.clusterId());
+        assertThat(linx.structuralVariants()).hasSize(2)
+                .extracting("svId", "clusterId")
+                .contains(tuple(1, 2), tuple(4, 5));
 
-        assertEquals(1, linx.homozygousDisruptions().size());
-        LinxHomozygousDisruption homozygousDisruption = linx.homozygousDisruptions().iterator().next();
-        assertEquals("NF1", homozygousDisruption.gene());
+        assertThat(linx.homozygousDisruptions()).hasSize(2)
+                .extracting("gene")
+                .contains("NF1", "NF2");
 
-        assertEquals(1, linx.breakends().size());
-        LinxBreakend breakend = linx.breakends().iterator().next();
+        assertThat(linx.breakends()).hasSize(2)
+                .extracting("svId", "gene", "junctionCopyNumber", "undisruptedCopyNumber")
+                .contains(tuple(1, "NF1", 1.1, 1.0), tuple(2, "NF2", 1.2, 1.1));
+
+        LinxBreakend breakend = linx.breakends().stream().filter(b -> b.svId() == 1).findAny().orElseThrow();
         assertFalse(breakend.reported());
         assertEquals(1, breakend.svId());
         assertEquals("NF1", breakend.gene());

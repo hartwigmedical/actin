@@ -116,13 +116,19 @@
     ]
   },
   "linx": {
-    "allStructuralVariants": [
+    "allGermlineStructuralVariants": [
       {
         "svId": 1,
         "clusterId": 2
       }
     ],
-    "allFusions": [
+    "allSomaticStructuralVariants": [
+      {
+        "svId": 4,
+        "clusterId": 5
+      }
+    ],
+    "allSomaticFusions": [
       {
         "reported": true,
         "reportedType": "KNOWN_PAIR",
@@ -135,7 +141,7 @@
         "geneTranscriptEnd": "ENST00000319349"
       }
     ],
-    "allBreakends": [
+    "allGermlineBreakends": [
       {
         "reportedDisruption": false,
         "svId": 1,
@@ -147,9 +153,26 @@
         "codingType": "UTR_3P"
       }
     ],
-    "homozygousDisruptions": [
+    "allSomaticBreakends": [
+      {
+        "reportedDisruption": false,
+        "svId": 2,
+        "gene": "NF2",
+        "type": "DUP",
+        "junctionCopyNumber": 1.2,
+        "undisruptedCopyNumber": 1.1,
+        "regionType": "EXONIC",
+        "codingType": "UTR_3P"
+      }
+    ],
+    "germlineHomozygousDisruptions": [
       {
         "gene": "NF1"
+      }
+    ],
+    "somaticHomozygousDisruptions": [
+      {
+        "gene": "NF2"
       }
     ]
   },
