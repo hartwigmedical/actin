@@ -300,6 +300,13 @@ public final class TestCurationFactory {
                 .curated(null)
                 .build());
 
+        configs.add(ImmutableComplicationConfig.builder()
+                .input("vomit")
+                .ignore(false)
+                .impliesUnknownComplicationState(false)
+                .curated(ImmutableComplication.builder().name("Vomit").addCategories("Vomit category").build())
+                .build());
+
         return configs;
     }
 

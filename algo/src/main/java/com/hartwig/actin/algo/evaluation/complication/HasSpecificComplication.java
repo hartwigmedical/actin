@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.complication;
 
+import java.util.Optional;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -26,7 +27,7 @@ public class HasSpecificComplication implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> complications = Sets.newHashSet();
-        if (record.clinical().complications() == null) {
+        if (record.clinical().complications() == null || hasComplicationsWithoutNames(record)) {
             return EvaluationFactory.recoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedGeneralMessages("Unknown complication status")
@@ -52,5 +53,14 @@ public class HasSpecificComplication implements EvaluationFunction {
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient does not have complication " + termToFind)
                 .build();
+    }
+
+    @NotNull
+    private static Boolean hasComplicationsWithoutNames(@NotNull PatientRecord record) {
+        return Optional.ofNullable(record.clinical().clinicalStatus().hasComplications())
+                .map(hasComplications -> hasComplications && Optional.ofNullable(record.clinical().complications())
+                        .map(complications -> complications.stream().allMatch(complication -> complication.name().isEmpty()))
+                        .orElse(false))
+                .orElse(false);
     }
 }

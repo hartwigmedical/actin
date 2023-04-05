@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.complication;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import com.hartwig.actin.PatientRecord;
@@ -24,7 +26,7 @@ public class HasComplicationOfCategory implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        if (record.clinical().complications() == null) {
+        if (record.clinical().complications() == null || hasCategoriesWithoutNames(record)) {
             return EvaluationFactory.recoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedGeneralMessages("Unknown complication status")
@@ -56,5 +58,14 @@ public class HasComplicationOfCategory implements EvaluationFunction {
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient does not have complication of category " + categoryToFind)
                 .build();
+    }
+
+    @NotNull
+    private static Boolean hasCategoriesWithoutNames(@NotNull PatientRecord record) {
+        return Optional.ofNullable(record.clinical().clinicalStatus().hasComplications())
+                .map(hasComplications -> hasComplications && Optional.ofNullable(record.clinical().complications())
+                        .map(List::isEmpty)
+                        .orElse(false))
+                .orElse(false);
     }
 }

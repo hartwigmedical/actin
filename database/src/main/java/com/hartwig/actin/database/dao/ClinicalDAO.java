@@ -311,18 +311,20 @@ class ClinicalDAO {
     private void writeComplications(@NotNull String patientId, @Nullable List<Complication> complications) {
         if (complications != null) {
             for (Complication complication : complications) {
-                context.insertInto(COMPLICATION,
-                                COMPLICATION.PATIENTID,
-                                COMPLICATION.NAME,
-                                COMPLICATION.CATEGORIES,
-                                COMPLICATION.YEAR,
-                                COMPLICATION.MONTH)
-                        .values(patientId,
-                                complication.name(),
-                                DataUtil.concat(complication.categories()),
-                                complication.year(),
-                                complication.month())
-                        .execute();
+                if (!complication.name().isEmpty()) {
+                    context.insertInto(COMPLICATION,
+                                    COMPLICATION.PATIENTID,
+                                    COMPLICATION.NAME,
+                                    COMPLICATION.CATEGORIES,
+                                    COMPLICATION.YEAR,
+                                    COMPLICATION.MONTH)
+                            .values(patientId,
+                                    complication.name(),
+                                    DataUtil.concat(complication.categories()),
+                                    complication.year(),
+                                    complication.month())
+                            .execute();
+                }
             }
         }
     }
