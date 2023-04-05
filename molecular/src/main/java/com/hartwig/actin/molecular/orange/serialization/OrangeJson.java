@@ -267,10 +267,13 @@ public final class OrangeJson {
         @NotNull
         private static LinxRecord toLinxRecord(@NotNull JsonObject linx) {
             return ImmutableLinxRecord.builder()
-                    .structuralVariants(toLinxStructuralVariants(array(linx, "allStructuralVariants")))
-                    .homozygousDisruptions(toLinxHomozygousDisruptions(array(linx, "homozygousDisruptions")))
-                    .breakends(toLinxBreakends(array(linx, "allBreakends")))
-                    .fusions(toLinxFusions(array(linx, "allFusions")))
+                    .addAllStructuralVariants(toLinxStructuralVariants(array(linx, "allGermlineStructuralVariants")))
+                    .addAllStructuralVariants(toLinxStructuralVariants(array(linx, "allSomaticStructuralVariants")))
+                    .addAllHomozygousDisruptions(toLinxHomozygousDisruptions(array(linx, "germlineHomozygousDisruptions")))
+                    .addAllHomozygousDisruptions(toLinxHomozygousDisruptions(array(linx, "somaticHomozygousDisruptions")))
+                    .addAllBreakends(toLinxBreakends(array(linx, "allGermlineBreakends")))
+                    .addAllBreakends(toLinxBreakends(array(linx, "allSomaticBreakends")))
+                    .fusions(toLinxFusions(array(linx, "allSomaticFusions")))
                     .build();
         }
 

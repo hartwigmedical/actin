@@ -57,7 +57,7 @@ public class OrangeJsonTest {
     private static final String MINIMALLY_EMPTY_ORANGE_JSON = Resources.getResource("serialization/minimally.empty.orange.json").getPath();
     private static final String MINIMALLY_POPULATED_ORANGE_JSON =
             Resources.getResource("serialization/minimally.populated.orange.json").getPath();
-    private static final String REAL_ORANGE_JSON = Resources.getResource("serialization/real.orange.json").getPath();
+    private static final String REAL_ORANGE_JSON = Resources.getResource("serialization/real.v2.3.orange.json").getPath();
 
     private static final double EPSILON = 1.0E-2;
 
