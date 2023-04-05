@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.complication;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import com.hartwig.actin.PatientRecord;
@@ -11,6 +10,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
+import com.hartwig.actin.clinical.datamodel.Complication;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +26,7 @@ public class HasComplicationOfCategory implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        if (record.clinical().complications() == null || hasCategoriesWithoutNames(record)) {
+        if (record.clinical().complications() == null || hasComplicationsWithoutCategories(record)) {
             return EvaluationFactory.recoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedGeneralMessages("Unknown complication status")
@@ -60,12 +60,9 @@ public class HasComplicationOfCategory implements EvaluationFunction {
                 .build();
     }
 
-    @NotNull
-    private static Boolean hasCategoriesWithoutNames(@NotNull PatientRecord record) {
-        return Optional.ofNullable(record.clinical().clinicalStatus().hasComplications())
-                .map(hasComplications -> hasComplications && Optional.ofNullable(record.clinical().complications())
-                        .map(List::isEmpty)
-                        .orElse(false))
-                .orElse(false);
+    private static boolean hasComplicationsWithoutCategories(@NotNull PatientRecord record) {
+        List<Complication> complications = record.clinical().complications();
+        return Boolean.TRUE.equals(record.clinical().clinicalStatus().hasComplications()) && complications != null && complications.stream()
+                .anyMatch(complication -> complication.categories().isEmpty());
     }
 }

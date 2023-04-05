@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.complication;
 
-import java.util.Optional;
+import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -55,12 +55,9 @@ public class HasSpecificComplication implements EvaluationFunction {
                 .build();
     }
 
-    @NotNull
-    private static Boolean hasComplicationsWithoutNames(@NotNull PatientRecord record) {
-        return Optional.ofNullable(record.clinical().clinicalStatus().hasComplications())
-                .map(hasComplications -> hasComplications && Optional.ofNullable(record.clinical().complications())
-                        .map(complications -> complications.stream().allMatch(complication -> complication.name().isEmpty()))
-                        .orElse(false))
-                .orElse(false);
+    private static boolean hasComplicationsWithoutNames(@NotNull PatientRecord record) {
+        List<Complication> complications = record.clinical().complications();
+        return Boolean.TRUE.equals(record.clinical().clinicalStatus().hasComplications()) && complications != null && complications.stream()
+                .anyMatch(complication -> complication.name().isEmpty());
     }
 }
