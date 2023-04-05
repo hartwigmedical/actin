@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.toxicity;
 
-import static org.junit.Assert.assertEquals;
+import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -21,7 +21,6 @@ import org.junit.Test;
 public class HasIntoleranceForPD1OrPDL1InhibitorsTest {
 
     private static final String DOID_AUTOIMMUNE_DISEASE_OF_CARDIOVASCULAR_SYSTEM = "0060051";
-    private static final PatientRecord MINIMAL_PATIENT = TestDataFactory.createMinimalTestPatientRecord();
 
     @Test
     public void shouldPassWhenPatientHasIntoleranceMatchingList() {
@@ -29,21 +28,20 @@ public class HasIntoleranceForPD1OrPDL1InhibitorsTest {
             PatientRecord record = patient(Collections.singletonList(ToxicityTestFactory.intolerance()
                     .name("intolerance to " + term.toUpperCase())
                     .build()), DOID_AUTOIMMUNE_DISEASE_OF_CARDIOVASCULAR_SYSTEM);
-            assertEquals(EvaluationResult.PASS, function().evaluate(record).result());
+            assertEvaluation(EvaluationResult.PASS, function().evaluate(record));
         });
     }
 
     @Test
     public void shouldWarnWhenPatientHasPriorConditionBelongingToAutoimmuneDiseaseDoid() {
-        assertEquals(EvaluationResult.WARN,
-                function().evaluate(patient(Collections.emptyList(), DOID_AUTOIMMUNE_DISEASE_OF_CARDIOVASCULAR_SYSTEM)).result());
+        assertEvaluation(EvaluationResult.WARN,
+                function().evaluate(patient(Collections.emptyList(), DOID_AUTOIMMUNE_DISEASE_OF_CARDIOVASCULAR_SYSTEM)));
     }
 
     @Test
     public void shouldFailWhenPatientHasNoMatchingIntoleranceOrAutoimmuneDiseaseCondition() {
-        assertEquals(EvaluationResult.FAIL,
-                function().evaluate(patient(Collections.singletonList(ToxicityTestFactory.intolerance().name("other").build()), "123"))
-                        .result());
+        assertEvaluation(EvaluationResult.FAIL,
+                function().evaluate(patient(Collections.singletonList(ToxicityTestFactory.intolerance().name("other").build()), "123")));
     }
 
     private static HasIntoleranceForPD1OrPDL1Inhibitors function() {
@@ -52,10 +50,11 @@ public class HasIntoleranceForPD1OrPDL1InhibitorsTest {
     }
 
     private static PatientRecord patient(Collection<Intolerance> intolerances, String priorConditionDoid) {
+        PatientRecord minimalPatient = TestDataFactory.createMinimalTestPatientRecord();
         PriorOtherCondition priorCondition =
                 TestPriorOtherConditionFactory.builder().addDoids(priorConditionDoid).isContraindicationForTherapy(true).build();
-        return ImmutablePatientRecord.copyOf(MINIMAL_PATIENT)
-                .withClinical(ImmutableClinicalRecord.copyOf(MINIMAL_PATIENT.clinical())
+        return ImmutablePatientRecord.copyOf(minimalPatient)
+                .withClinical(ImmutableClinicalRecord.copyOf(minimalPatient.clinical())
                         .withIntolerances(intolerances)
                         .withPriorOtherConditions(priorCondition));
     }

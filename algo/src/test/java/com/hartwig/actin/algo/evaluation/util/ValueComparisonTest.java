@@ -1,6 +1,11 @@
 package com.hartwig.actin.algo.evaluation.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Collections;
+import java.util.List;
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
@@ -45,4 +50,25 @@ public class ValueComparisonTest {
         assertEquals(EvaluationResult.UNDETERMINED, ValueComparison.evaluateVersusMaxValue(1D, ValueComparison.LARGER_THAN_OR_EQUAL, 2D));
     }
 
+    @Test
+    public void shouldReturnTrueIfStringInCollectionMatchesValue() {
+        assertTrue(ValueComparison.stringCaseInsensitivelyMatchesQueryCollection("HAYneedleSTACK",
+                List.of("Missing", "Unknown", "Needle", "Another")));
+    }
+
+    @Test
+    public void shouldReturnFalseIfNoStringInCollectionMatchesValue() {
+        assertFalse(ValueComparison.stringCaseInsensitivelyMatchesQueryCollection("HAYneedleSTACK",
+                List.of("Missing", "Unknown", "Another")));
+    }
+
+    @Test
+    public void shouldReturnFalseForEmptyValue() {
+        assertFalse(ValueComparison.stringCaseInsensitivelyMatchesQueryCollection("", List.of("Missing", "Unknown", "Another")));
+    }
+
+    @Test
+    public void shouldReturnFalseForEmptyCollection() {
+        assertFalse(ValueComparison.stringCaseInsensitivelyMatchesQueryCollection("HAYneedleSTACK", Collections.emptyList()));
+    }
 }

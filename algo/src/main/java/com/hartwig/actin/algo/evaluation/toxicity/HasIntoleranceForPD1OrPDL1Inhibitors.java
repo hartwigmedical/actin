@@ -23,9 +23,10 @@ public class HasIntoleranceForPD1OrPDL1Inhibitors implements EvaluationFunction 
     static final List<String> INTOLERANCE_TERMS =
             List.of("Pembrolizumab", "Nivolumab", "Cemiplimab", "Avelumab", "Atezolizumab", "Durvalumab", "PD-1", "PD-L1");
 
+    @NotNull
     private final DoidModel doidModel;
 
-    HasIntoleranceForPD1OrPDL1Inhibitors(DoidModel doidModel) {
+    HasIntoleranceForPD1OrPDL1Inhibitors(@NotNull DoidModel doidModel) {
         this.doidModel = doidModel;
     }
 

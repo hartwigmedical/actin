@@ -38,10 +38,6 @@ public class ToxicityRuleMapper extends RuleMapper {
         return map;
     }
 
-    private FunctionCreator hasIntoleranceToPD1OrPDL1InhibitorsCreator() {
-        return function -> new HasIntoleranceForPD1OrPDL1Inhibitors(doidModel());
-    }
-
     @NotNull
     private FunctionCreator hasIntoleranceWithSpecificNameCreator() {
         return function -> {
@@ -66,6 +62,11 @@ public class ToxicityRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasIntoleranceRelatedToStudyMedicationCreator() {
         return function -> new HasIntoleranceRelatedToStudyMedication();
+    }
+
+    @NotNull
+    private FunctionCreator hasIntoleranceToPD1OrPDL1InhibitorsCreator() {
+        return function -> new HasIntoleranceForPD1OrPDL1Inhibitors(doidModel());
     }
 
     @NotNull
