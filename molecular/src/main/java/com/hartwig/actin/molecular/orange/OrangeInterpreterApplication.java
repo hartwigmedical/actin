@@ -28,7 +28,7 @@ import com.hartwig.serve.datamodel.ActionableEvents;
 import com.hartwig.serve.datamodel.ActionableEventsLoader;
 import com.hartwig.serve.datamodel.KnownEvents;
 import com.hartwig.serve.datamodel.KnownEventsLoader;
-import com.hartwig.serve.datamodel.refgenome.RefGenomeVersion;
+import com.hartwig.serve.datamodel.RefGenome;
 
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -94,7 +94,7 @@ public class OrangeInterpreterApplication {
     @NotNull
     private static EvidenceDatabase loadEvidenceDatabase(@NotNull OrangeInterpreterConfig config,
             @NotNull OrangeRefGenomeVersion refGenomeVersion, @NotNull List<KnownGene> knownGenes) throws IOException {
-        RefGenomeVersion serveRefGenomeVersion = toServeRefGenomeVersion(refGenomeVersion);
+        RefGenome serveRefGenomeVersion = toServeRefGenomeVersion(refGenomeVersion);
         KnownEvents knownEvents = KnownEventsLoader.readFromDir(config.serveDirectory(), serveRefGenomeVersion);
         ActionableEvents actionableEvents = ActionableEventsLoader.readFromDir(config.serveDirectory(), serveRefGenomeVersion);
 
@@ -119,13 +119,13 @@ public class OrangeInterpreterApplication {
     }
 
     @NotNull
-    private static RefGenomeVersion toServeRefGenomeVersion(@NotNull OrangeRefGenomeVersion refGenomeVersion) {
+    private static RefGenome toServeRefGenomeVersion(@NotNull OrangeRefGenomeVersion refGenomeVersion) {
         switch (refGenomeVersion) {
             case V37: {
-                return RefGenomeVersion.V37;
+                return RefGenome.V37;
             }
             case V38: {
-                return RefGenomeVersion.V38;
+                return RefGenome.V38;
             }
         }
 

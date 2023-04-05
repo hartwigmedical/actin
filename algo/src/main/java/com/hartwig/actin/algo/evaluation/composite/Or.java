@@ -17,7 +17,7 @@ public class Or implements EvaluationFunction {
     @NotNull
     private final List<EvaluationFunction> functions;
 
-    public Or(@NotNull final List<EvaluationFunction> functions) {
+    public Or(@NotNull List<EvaluationFunction> functions) {
         this.functions = functions;
     }
 

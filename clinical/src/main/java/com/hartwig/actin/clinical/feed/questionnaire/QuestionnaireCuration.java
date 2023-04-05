@@ -53,6 +53,7 @@ final class QuestionnaireCuration {
         OPTION_MAPPING.put("YES related to prostatecarcinoma", true);
 
         STAGE_MAPPING.put("I", TumorStage.I);
+        STAGE_MAPPING.put("1", TumorStage.I);
         STAGE_MAPPING.put("II", TumorStage.II);
         STAGE_MAPPING.put("2", TumorStage.II);
         STAGE_MAPPING.put("IIa", TumorStage.IIA);

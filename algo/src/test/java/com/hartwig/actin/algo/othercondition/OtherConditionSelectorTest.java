@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
@@ -20,7 +21,7 @@ public class OtherConditionSelectorTest {
         PriorOtherCondition relevant = create(true);
         PriorOtherCondition irrelevant = create(false);
 
-        List<PriorOtherCondition> filtered = OtherConditionSelector.selectClinicallyRelevant(Lists.newArrayList(relevant, irrelevant));
+        Set<PriorOtherCondition> filtered = OtherConditionSelector.selectClinicallyRelevant(Lists.newArrayList(relevant, irrelevant));
 
         assertEquals(1, filtered.size());
         assertTrue(filtered.contains(relevant));
