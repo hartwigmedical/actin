@@ -113,6 +113,8 @@ public class ClinicalRecordsFactoryTest {
         assertNotNull(ecg);
         assertTrue(ecg.hasSigAberrationLatestECG());
         assertEquals("Sinus", ecg.aberrationDescription());
+
+        assertEquals(clinicalStatus.hasComplications(), true);
     }
 
     private static void assertToxicities(@NotNull List<Toxicity> toxicities) {

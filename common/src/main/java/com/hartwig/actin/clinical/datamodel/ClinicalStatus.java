@@ -19,4 +19,7 @@ public abstract class ClinicalStatus {
 
     @Nullable
     public abstract Double lvef();
+
+    @Nullable
+    public abstract Boolean hasComplications();
 }

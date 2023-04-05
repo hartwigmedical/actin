@@ -1,11 +1,13 @@
 package com.hartwig.actin.algo.evaluation.complication;
 
+import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
@@ -27,11 +29,7 @@ public class HasSpecificComplication implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> complications = Sets.newHashSet();
         if (record.clinical().complications() == null) {
-            return EvaluationFactory.recoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedGeneralMessages("Unknown complication status")
-                    .addUndeterminedSpecificMessages("Unknown complication status")
-                    .build();
+            return undetermined();
         }
 
         for (Complication complication : record.clinical().complications()) {
@@ -48,9 +46,28 @@ public class HasSpecificComplication implements EvaluationFunction {
                     .build();
         }
 
+        if (hasComplicationsWithoutNames(record)) {
+            return undetermined();
+        }
+
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient does not have complication " + termToFind)
                 .build();
+    }
+
+    @NotNull
+    private static ImmutableEvaluation undetermined() {
+        return EvaluationFactory.recoverable()
+                .result(EvaluationResult.UNDETERMINED)
+                .addUndeterminedGeneralMessages("Unknown complication status")
+                .addUndeterminedSpecificMessages("Unknown complication status")
+                .build();
+    }
+
+    private static boolean hasComplicationsWithoutNames(@NotNull PatientRecord record) {
+        List<Complication> complications = record.clinical().complications();
+        return Boolean.TRUE.equals(record.clinical().clinicalStatus().hasComplications()) && complications != null && complications.stream()
+                .anyMatch(ComplicationFunctions::isYesInputComplication);
     }
 }
