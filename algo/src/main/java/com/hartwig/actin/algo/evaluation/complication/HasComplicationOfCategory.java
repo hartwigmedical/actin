@@ -7,6 +7,7 @@ import java.util.Set;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
@@ -26,12 +27,8 @@ public class HasComplicationOfCategory implements EvaluationFunction {
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        if (record.clinical().complications() == null || hasComplicationsWithoutCategories(record)) {
-            return EvaluationFactory.recoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedGeneralMessages("Unknown complication status")
-                    .addUndeterminedSpecificMessages("Unknown complication status")
-                    .build();
+        if (record.clinical().complications() == null) {
+            return undetermined();
         }
 
         Set<String> complicationMatches =
@@ -54,9 +51,22 @@ public class HasComplicationOfCategory implements EvaluationFunction {
             }
         }
 
+        if (hasComplicationsWithoutCategories(record)) {
+            return undetermined();
+        }
+
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient does not have complication of category " + categoryToFind)
+                .build();
+    }
+
+    @NotNull
+    private static ImmutableEvaluation undetermined() {
+        return EvaluationFactory.recoverable()
+                .result(EvaluationResult.UNDETERMINED)
+                .addUndeterminedGeneralMessages("Unknown complication status")
+                .addUndeterminedSpecificMessages("Unknown complication status")
                 .build();
     }
 

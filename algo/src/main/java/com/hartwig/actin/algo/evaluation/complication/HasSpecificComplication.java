@@ -7,6 +7,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
@@ -27,12 +28,8 @@ public class HasSpecificComplication implements EvaluationFunction {
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> complications = Sets.newHashSet();
-        if (record.clinical().complications() == null || hasComplicationsWithoutNames(record)) {
-            return EvaluationFactory.recoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedGeneralMessages("Unknown complication status")
-                    .addUndeterminedSpecificMessages("Unknown complication status")
-                    .build();
+        if (record.clinical().complications() == null) {
+            return undetermined();
         }
 
         for (Complication complication : record.clinical().complications()) {
@@ -49,9 +46,22 @@ public class HasSpecificComplication implements EvaluationFunction {
                     .build();
         }
 
+        if (hasComplicationsWithoutNames(record)) {
+            return undetermined();
+        }
+
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient does not have complication " + termToFind)
+                .build();
+    }
+
+    @NotNull
+    private static ImmutableEvaluation undetermined() {
+        return EvaluationFactory.recoverable()
+                .result(EvaluationResult.UNDETERMINED)
+                .addUndeterminedGeneralMessages("Unknown complication status")
+                .addUndeterminedSpecificMessages("Unknown complication status")
                 .build();
     }
 
