@@ -1,5 +1,7 @@
 package com.hartwig.actin.algo.evaluation.util;
 
+import java.util.Collection;
+
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
 
 import org.jetbrains.annotations.NotNull;
@@ -52,5 +54,9 @@ public final class ValueComparison {
                 return true;
             }
         }
+    }
+
+    public static boolean stringCaseInsensitivelyMatchesQueryCollection(String value, Collection<String> collection) {
+        return collection.stream().anyMatch(termToFind -> value.toLowerCase().contains(termToFind.toLowerCase()));
     }
 }
