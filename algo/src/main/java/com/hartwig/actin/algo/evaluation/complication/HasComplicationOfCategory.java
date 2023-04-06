@@ -65,8 +65,8 @@ public class HasComplicationOfCategory implements EvaluationFunction {
     private static ImmutableEvaluation undetermined() {
         return EvaluationFactory.recoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedGeneralMessages("Unknown complication status")
-                .addUndeterminedSpecificMessages("Unknown complication status")
+                .addUndeterminedGeneralMessages("Complications present, but unknown category")
+                .addUndeterminedSpecificMessages("Patient has complications but undetermined which category of complications")
                 .build();
     }
 
