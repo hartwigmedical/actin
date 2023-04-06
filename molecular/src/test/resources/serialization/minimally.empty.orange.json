@@ -27,13 +27,13 @@
     "allSomaticGainsLosses": []
   },
   "linx": {
-    "allGermlineStructuralVariants": [],
     "allSomaticStructuralVariants": [],
     "allSomaticFusions": [],
-    "allGermlineBreakends": [],
     "allSomaticBreakends": [],
-    "germlineHomozygousDisruptions": [],
-    "somaticHomozygousDisruptions": []
+    "somaticHomozygousDisruptions": [],
+    "allGermlineStructuralVariants": null,
+    "allGermlineBreakends": null,
+    "germlineHomozygousDisruptions": null
   },
   "virusInterpreter": {
     "allViruses": []
