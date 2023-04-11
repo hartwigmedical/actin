@@ -374,29 +374,23 @@ public final class OrangeJson {
 
         private static Optional<PeachRecord> toPeachRecord(@Nullable JsonArray nullablePeachArray) {
             return Optional.ofNullable(nullablePeachArray).map(peachArray -> {
-                Set<PeachEntry> entries = Sets.newHashSet();
-                for (JsonElement element : peachArray) {
-                    JsonObject peach = element.getAsJsonObject();
-                    entries.add(ImmutablePeachEntry.builder()
-                            .gene(string(peach, "gene"))
-                            .haplotype(string(peach, "haplotype"))
-                            .function(string(peach, "function"))
-                            .build());
-                }
-                return ImmutablePeachRecord.builder().entries(entries).build();
+                Set<PeachEntry> peachEntries = extractSetFromJson(peachArray,
+                        peach -> ImmutablePeachEntry.builder()
+                                .gene(string(peach, "gene"))
+                                .haplotype(string(peach, "haplotype"))
+                                .function(string(peach, "function"))
+                                .build());
+                return ImmutablePeachRecord.builder().entries(peachEntries).build();
             });
         }
 
         private static Optional<CuppaRecord> toCuppaRecord(@Nullable JsonObject nullableCuppa) {
             return Optional.ofNullable(nullableCuppa).map(cuppa -> {
-                Set<CuppaPrediction> predictions = Sets.newHashSet();
-                for (JsonElement element : array(cuppa, "predictions")) {
-                    JsonObject prediction = element.getAsJsonObject();
-                    predictions.add(ImmutableCuppaPrediction.builder()
-                            .cancerType(string(prediction, "cancerType"))
-                            .likelihood(number(prediction, "likelihood"))
-                            .build());
-                }
+                Set<CuppaPrediction> predictions = extractSetFromJson(array(cuppa, "predictions"),
+                        prediction -> ImmutableCuppaPrediction.builder()
+                                .cancerType(string(prediction, "cancerType"))
+                                .likelihood(number(prediction, "likelihood"))
+                                .build());
                 return ImmutableCuppaRecord.builder().predictions(predictions).build();
             });
         }
