@@ -1,7 +1,9 @@
 package com.hartwig.actin.molecular.orange.datamodel;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
+import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
 import com.hartwig.actin.molecular.orange.datamodel.lilac.LilacRecord;
@@ -25,6 +27,9 @@ public abstract class OrangeRecord {
     public abstract LocalDate experimentDate();
 
     @NotNull
+    public abstract ExperimentType experimentType();
+
+    @NotNull
     public abstract OrangeRefGenomeVersion refGenomeVersion();
 
     @NotNull
@@ -33,19 +38,15 @@ public abstract class OrangeRecord {
     @NotNull
     public abstract LinxRecord linx();
 
-    @NotNull
-    public abstract PeachRecord peach();
+    public abstract Optional<PeachRecord> peach();
 
-    @NotNull
-    public abstract CuppaRecord cuppa();
+    public abstract Optional<CuppaRecord> cuppa();
 
-    @NotNull
-    public abstract VirusInterpreterRecord virusInterpreter();
+    public abstract Optional<VirusInterpreterRecord> virusInterpreter();
 
     @NotNull
     public abstract LilacRecord lilac();
 
-    @NotNull
-    public abstract ChordRecord chord();
+    public abstract Optional<ChordRecord> chord();
 
 }

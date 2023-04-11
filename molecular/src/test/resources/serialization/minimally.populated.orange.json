@@ -5,6 +5,7 @@
     "month": 1,
     "day": 20
   },
+  "experimentType": "FULL_GENOME",
   "refGenomeVersion": "V37",
   "purple": {
     "fit": {

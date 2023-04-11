@@ -13,6 +13,7 @@ import java.time.LocalDate;
 
 import com.google.common.io.Resources;
 import com.hartwig.actin.TestDataFactory;
+import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRefGenomeVersion;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
@@ -77,15 +78,16 @@ public class OrangeJsonTest {
 
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
         assertEquals(LocalDate.of(2022, 1, 20), record.experimentDate());
+        assertEquals(ExperimentType.WGS, record.experimentType());
         assertEquals(OrangeRefGenomeVersion.V37, record.refGenomeVersion());
 
         assertPurple(record.purple());
         assertLinx(record.linx());
-        assertPeach(record.peach());
-        assertCuppa(record.cuppa());
-        assertVirusInterpreter(record.virusInterpreter());
+        assertPeach(record.peach().get());
+        assertCuppa(record.cuppa().get());
+        assertVirusInterpreter(record.virusInterpreter().get());
         assertLilac(record.lilac());
-        assertChord(record.chord());
+        assertChord(record.chord().get());
     }
 
     private static void assertPurple(@NotNull PurpleRecord purple) {
@@ -234,7 +236,7 @@ public class OrangeJsonTest {
         assertEquals(LinxFusionDriverLikelihood.HIGH, fusion.driverLikelihood());
     }
 
-    private static void assertPeach(@NotNull PeachRecord peach) {
+    private static void assertPeach(PeachRecord peach) {
         assertEquals(1, peach.entries().size());
         PeachEntry entry = peach.entries().iterator().next();
         assertEquals("DPYD", entry.gene());
