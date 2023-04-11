@@ -16,7 +16,13 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
@@ -266,57 +272,92 @@ public final class OrangeJson {
 
         @NotNull
         private static LinxRecord toLinxRecord(@NotNull JsonObject linx) {
+            LinxStructuralVariant idOffsets = findMaxSvIdAndClusterId(array(linx, "allSomaticStructuralVariants"));
+
             return ImmutableLinxRecord.builder()
-                    .addAllStructuralVariants(toLinxStructuralVariants(array(linx, "allGermlineStructuralVariants")))
-                    .addAllStructuralVariants(toLinxStructuralVariants(array(linx, "allSomaticStructuralVariants")))
-                    .addAllHomozygousDisruptions(toLinxHomozygousDisruptions(array(linx, "germlineHomozygousDisruptions")))
-                    .addAllHomozygousDisruptions(toLinxHomozygousDisruptions(array(linx, "somaticHomozygousDisruptions")))
-                    .addAllBreakends(toLinxBreakends(array(linx, "allGermlineBreakends")))
-                    .addAllBreakends(toLinxBreakends(array(linx, "allSomaticBreakends")))
+                    .structuralVariants(extractLinxFeaturesAndConvertGermline(linx,
+                            "allSomaticStructuralVariants",
+                            "allGermlineStructuralVariants",
+                            OrangeRecordCreator::toLinxStructuralVariants,
+                            idOffsets))
+                    .homozygousDisruptions(toLinxHomozygousDisruptions(array(linx, "somaticHomozygousDisruptions"),
+                            nullableArray(linx, "germlineHomozygousDisruptions")))
+                    .breakends(extractLinxFeaturesAndConvertGermline(linx,
+                            "allSomaticBreakends",
+                            "allGermlineBreakends",
+                            OrangeRecordCreator::toLinxBreakends,
+                            idOffsets))
                     .fusions(toLinxFusions(array(linx, "allSomaticFusions")))
                     .build();
         }
 
         @NotNull
-        private static Set<LinxStructuralVariant> toLinxStructuralVariants(@NotNull JsonArray structuralVariantArray) {
-            Set<LinxStructuralVariant> structuralVariants = Sets.newHashSet();
-            for (JsonElement element : structuralVariantArray) {
-                JsonObject structuralVariant = element.getAsJsonObject();
-                structuralVariants.add(ImmutableLinxStructuralVariant.builder()
-                        .svId(integer(structuralVariant, "svId"))
-                        .clusterId(integer(structuralVariant, "clusterId"))
-                        .build());
-            }
-            return structuralVariants;
+        private static LinxStructuralVariant linxStructuralVariantFromSvAndCluster(int svId, int clusterId) {
+            return ImmutableLinxStructuralVariant.builder().svId(svId).clusterId(clusterId).build();
         }
 
         @NotNull
-        private static Set<LinxHomozygousDisruption> toLinxHomozygousDisruptions(@NotNull JsonArray homozygousDisruptionArray) {
-            Set<LinxHomozygousDisruption> homozygousDisruptions = Sets.newHashSet();
-            for (JsonElement element : homozygousDisruptionArray) {
-                JsonObject homozygousDisruption = element.getAsJsonObject();
-                homozygousDisruptions.add(ImmutableLinxHomozygousDisruption.builder().gene(string(homozygousDisruption, "gene")).build());
-            }
-            return homozygousDisruptions;
+        private static LinxStructuralVariant findMaxSvIdAndClusterId(JsonArray jsonArray) {
+            LinxStructuralVariant zeroOffset = linxStructuralVariantFromSvAndCluster(0, 0);
+            return toLinxStructuralVariants(jsonArray, zeroOffset).stream()
+                    .reduce(zeroOffset,
+                            (x, y) -> linxStructuralVariantFromSvAndCluster(Math.max(x.svId(), y.svId()),
+                                    Math.max(x.clusterId(), y.clusterId())));
         }
 
         @NotNull
-        private static Set<LinxBreakend> toLinxBreakends(@NotNull JsonArray breakendArray) {
-            Set<LinxBreakend> breakends = Sets.newHashSet();
-            for (JsonElement element : breakendArray) {
-                JsonObject breakend = element.getAsJsonObject();
-                breakends.add(ImmutableLinxBreakend.builder()
-                        .reported(bool(breakend, "reportedDisruption"))
-                        .svId(integer(breakend, "svId"))
-                        .gene(string(breakend, "gene"))
-                        .type(LinxBreakendType.valueOf(string(breakend, "type")))
-                        .junctionCopyNumber(number(breakend, "junctionCopyNumber"))
-                        .undisruptedCopyNumber(number(breakend, "undisruptedCopyNumber"))
-                        .regionType(LinxRegionType.valueOf(string(breakend, "regionType")))
-                        .codingType(LinxCodingType.valueOf(string(breakend, "codingType")))
-                        .build());
-            }
-            return breakends;
+        private static <T> Set<T> extractLinxFeaturesAndConvertGermline(@NotNull JsonObject linx, @NotNull String somaticKey,
+                @NotNull String germlineKey, BiFunction<JsonArray, LinxStructuralVariant, Set<T>> extractor,
+                LinxStructuralVariant idOffsets) {
+            return Stream.of(Optional.of(Map.entry(array(linx, somaticKey), linxStructuralVariantFromSvAndCluster(0, 0))),
+                            Optional.ofNullable(nullableArray(linx, germlineKey)).map(array -> Map.entry(array, idOffsets)))
+                    .map(entryOption -> entryOption.map(arrayAndOffset -> extractor.apply(arrayAndOffset.getKey(),
+                            arrayAndOffset.getValue())))
+                    .flatMap(Optional::stream)
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toSet());
+        }
+
+        @NotNull
+        private static Set<LinxStructuralVariant> toLinxStructuralVariants(@NotNull JsonArray structuralVariantArray,
+                @NotNull LinxStructuralVariant idOffsets) {
+            return structuralVariantArray.asList()
+                    .stream()
+                    .map(JsonElement::getAsJsonObject)
+                    .map(sv -> linxStructuralVariantFromSvAndCluster(integer(sv, "svId") + idOffsets.svId(),
+                            integer(sv, "clusterId") + idOffsets.clusterId()))
+                    .collect(Collectors.toSet());
+        }
+
+        @NotNull
+        private static Set<LinxHomozygousDisruption> toLinxHomozygousDisruptions(@NotNull JsonArray somaticHomozygousDisruptionArray,
+                @Nullable JsonArray germlineHomozygousDisruptionArray) {
+            return Stream.of(Optional.of(somaticHomozygousDisruptionArray), Optional.ofNullable(germlineHomozygousDisruptionArray))
+                    .flatMap(Optional::stream)
+                    .flatMap(jsonArray -> jsonArray.asList().stream())
+                    .map(JsonElement::getAsJsonObject)
+                    .map(homozygousDisruption -> ImmutableLinxHomozygousDisruption.builder()
+                            .gene(string(homozygousDisruption, "gene"))
+                            .build())
+                    .collect(Collectors.toSet());
+        }
+
+        @NotNull
+        private static Set<LinxBreakend> toLinxBreakends(@NotNull JsonArray somaticBreakendArray, LinxStructuralVariant idOffsets) {
+            return somaticBreakendArray.asList()
+                    .stream()
+                    .map(JsonElement::getAsJsonObject)
+                    .map(breakend -> ImmutableLinxBreakend.builder()
+                            .reported(bool(breakend, "reportedDisruption"))
+                            .svId(integer(breakend, "svId") + idOffsets.svId())
+                            .gene(string(breakend, "gene"))
+                            .type(LinxBreakendType.valueOf(string(breakend, "type")))
+                            .junctionCopyNumber(number(breakend, "junctionCopyNumber"))
+                            .undisruptedCopyNumber(number(breakend, "undisruptedCopyNumber"))
+                            .regionType(LinxRegionType.valueOf(string(breakend, "regionType")))
+                            .codingType(LinxCodingType.valueOf(string(breakend, "codingType")))
+                            .build())
+                    .collect(Collectors.toSet());
         }
 
         @NotNull

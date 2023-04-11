@@ -138,7 +138,7 @@
     "allSomaticBreakends": [
       {
         "reportedDisruption": false,
-        "svId": 1,
+        "svId": 2,
         "gene": "NF1",
         "type": "DUP",
         "junctionCopyNumber": 1.1,
