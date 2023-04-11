@@ -60,8 +60,8 @@ public class HasSpecificComplication implements EvaluationFunction {
     private static ImmutableEvaluation undetermined() {
         return EvaluationFactory.recoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedGeneralMessages("Unknown complication status")
-                .addUndeterminedSpecificMessages("Unknown complication status")
+                .addUndeterminedSpecificMessages("Patient has complications but undetermined which type of complications")
+                .addUndeterminedGeneralMessages("Complications present, but unknown type")
                 .build();
     }
 
