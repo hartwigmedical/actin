@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo.evaluation.tumor;
 
 import java.util.Collection;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.hartwig.actin.PatientRecord;
@@ -33,7 +32,11 @@ public class HasMinimumSitesWithLesions implements EvaluationFunction {
                 tumorDetails.hasLungLesions(),
                 tumorDetails.hasLymphNodeLesions()).filter(Boolean.TRUE::equals).count();
 
-        int otherLesionCount = Optional.ofNullable(tumorDetails.otherLesions()).map(Collection::size).orElse(0);
+        int otherLesionCount = (int) Stream.concat(Stream.ofNullable(tumorDetails.otherLesions()).flatMap(Collection::stream),
+                        Stream.ofNullable(tumorDetails.biopsyLocation()))
+                .filter(lesion -> !(lesion.toLowerCase().contains("lymph") && Boolean.TRUE.equals(tumorDetails.hasLymphNodeLesions())))
+                .count();
+
         int sitesWithLesionsLowerBound = distinctCategorizedLesionLocations + Math.min(otherLesionCount, 1);
         int sitesWithLesionsUpperBound = distinctCategorizedLesionLocations + otherLesionCount + 1;
 

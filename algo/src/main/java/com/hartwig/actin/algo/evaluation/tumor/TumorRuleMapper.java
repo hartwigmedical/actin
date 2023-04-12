@@ -266,9 +266,7 @@ public class TumorRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator hasMinimumSitesWithLesionsCreator() {
-        return function -> {
-            return new HasMinimumSitesWithLesions(functionInputResolver().createOneIntegerInput(function));
-        };
+        return function -> new HasMinimumSitesWithLesions(functionInputResolver().createOneIntegerInput(function));
     }
 
     @NotNull
