@@ -169,7 +169,8 @@ class ClinicalDAO {
                         CLINICALSTATUS.QTCFUNIT,
                         CLINICALSTATUS.JTCVALUE,
                         CLINICALSTATUS.JTCUNIT,
-                        CLINICALSTATUS.LVEF)
+                        CLINICALSTATUS.LVEF,
+                        CLINICALSTATUS.HASCOMPLICATIONS)
                 .values(patientId,
                         clinicalStatus.who(),
                         DataUtil.toByte(infectionStatus != null ? infectionStatus.hasActiveInfection() : null),
@@ -180,7 +181,8 @@ class ClinicalDAO {
                         qtcfMeasure.map(ECGMeasure::unit).orElse(null),
                         jtcMeasure.map(ECGMeasure::value).orElse(null),
                         jtcMeasure.map(ECGMeasure::unit).orElse(null),
-                        clinicalStatus.lvef())
+                        clinicalStatus.lvef(),
+                        DataUtil.toByte(clinicalStatus.hasComplications()))
                 .execute();
     }
 
@@ -311,18 +313,20 @@ class ClinicalDAO {
     private void writeComplications(@NotNull String patientId, @Nullable List<Complication> complications) {
         if (complications != null) {
             for (Complication complication : complications) {
-                context.insertInto(COMPLICATION,
-                                COMPLICATION.PATIENTID,
-                                COMPLICATION.NAME,
-                                COMPLICATION.CATEGORIES,
-                                COMPLICATION.YEAR,
-                                COMPLICATION.MONTH)
-                        .values(patientId,
-                                complication.name(),
-                                DataUtil.concat(complication.categories()),
-                                complication.year(),
-                                complication.month())
-                        .execute();
+                if (!complication.name().isEmpty()) {
+                    context.insertInto(COMPLICATION,
+                                    COMPLICATION.PATIENTID,
+                                    COMPLICATION.NAME,
+                                    COMPLICATION.CATEGORIES,
+                                    COMPLICATION.YEAR,
+                                    COMPLICATION.MONTH)
+                            .values(patientId,
+                                    complication.name(),
+                                    DataUtil.concat(complication.categories()),
+                                    complication.year(),
+                                    complication.month())
+                            .execute();
+                }
             }
         }
     }

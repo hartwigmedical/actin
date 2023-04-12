@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
@@ -187,6 +188,9 @@ public class ClinicalRecordsFactory {
                 .infectionStatus(curation.curateInfectionStatus(questionnaire.infectionStatus()))
                 .ecg(curation.curateECG(questionnaire.ecg()))
                 .lvef(curation.determineLVEF(questionnaire.nonOncologicalHistory()))
+                .hasComplications(Optional.ofNullable(extractComplications(questionnaire))
+                        .map(complications -> !complications.isEmpty())
+                        .orElse(null))
                 .build();
     }
 

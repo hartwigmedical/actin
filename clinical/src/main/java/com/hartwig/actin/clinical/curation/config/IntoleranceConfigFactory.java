@@ -14,6 +14,8 @@ public class IntoleranceConfigFactory implements CurationConfigFactory<Intoleran
 
     private static final Logger LOGGER = LogManager.getLogger(IntoleranceConfigFactory.class);
 
+    private static final String INTOLERANCE_INPUT_TO_IGNORE_FOR_DOID_CURATION = "Geen";
+
     private final CurationValidator curationValidator;
 
     public IntoleranceConfigFactory(CurationValidator curationValidator) {
@@ -25,7 +27,8 @@ public class IntoleranceConfigFactory implements CurationConfigFactory<Intoleran
     public IntoleranceConfig create(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
         String input = parts[fields.get("input")];
         Set<String> doids = CurationUtil.toDOIDs(parts[fields.get("doids")]);
-        if (!curationValidator.isValidDiseaseDoidSet(doids)) {
+        // TODO Should consider how to model "we know for certain this patient has no intolerances".
+        if (!input.equalsIgnoreCase(INTOLERANCE_INPUT_TO_IGNORE_FOR_DOID_CURATION) && !curationValidator.isValidDiseaseDoidSet(doids)) {
             LOGGER.warn("Intolerance config with input '{}' contains at least one invalid doid: '{}'", input, doids);
         }
 

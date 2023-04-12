@@ -356,6 +356,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_INTOLERANCE_BELONGING_TO_DOID_TERM_X, FunctionInput.ONE_DOID_TERM);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_INTOLERANCE_TO_TAXANE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_INTOLERANCE_RELATED_TO_STUDY_MEDICATION, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_INTOLERANCE_FOR_PD_1_OR_PD_L1_INHIBITORS, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HISTORY_OF_ANAPHYLAXIS, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_EXPERIENCED_IMMUNE_RELATED_ADVERSE_EVENTS, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X, FunctionInput.ONE_INTEGER);

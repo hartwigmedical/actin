@@ -2,15 +2,17 @@ package com.hartwig.actin.report.pdf.tables.molecular;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Maps;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.report.interpretation.EvaluatedCohort;
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer;
-import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter;
+import com.hartwig.actin.report.interpretation.TumorOriginInterpreter;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -66,12 +68,9 @@ public class WGSSummaryGenerator implements TableGenerator {
         table.addCell(biopsySummary());
 
         if (molecular.containsTumorCells()) {
-            if (TumorDetailsInterpreter.isCUP(clinical.tumor())) {
-                table.addCell(Cells.createKey("Molecular tissue of origin prediction"));
-                table.addCell(characteristicsGenerator.createPredictedTumorOriginCell());
-            }
-
-            Stream.of(Maps.immutableEntry("Tumor mutational load",
+            Stream.of(Maps.immutableEntry("Molecular tissue of origin prediction",
+                                    createHighConfidenceTumorOriginPredictionOption().orElse("Inconclusive")),
+                            Maps.immutableEntry("Tumor mutational load",
                                     characteristicsGenerator.createTMLStatusStringOption().orElse(Formats.VALUE_UNKNOWN)),
                             Maps.immutableEntry("Microsatellite (in)stability",
                                     characteristicsGenerator.createMSStabilityStringOption().orElse(Formats.VALUE_UNKNOWN)),
@@ -110,6 +109,15 @@ public class WGSSummaryGenerator implements TableGenerator {
             }
         } else {
             return Cells.createValue(Formats.VALUE_UNKNOWN);
+        }
+    }
+
+    private Optional<String> createHighConfidenceTumorOriginPredictionOption() {
+        PredictedTumorOrigin predictedTumorOrigin = molecular.characteristics().predictedTumorOrigin();
+        if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin) && molecular.hasSufficientQuality()) {
+            return Optional.of(TumorOriginInterpreter.interpret(predictedTumorOrigin));
+        } else {
+            return Optional.empty();
         }
     }
 

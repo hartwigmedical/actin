@@ -66,6 +66,7 @@ Every patient, uniquely defined by their patient ID, has a clinical record with 
 | qtcfValue                  | NULL              | Value of QTcF (QT corrected for heart rate using Fridericia's formula), in case it was described in ECG aberration |
 | qtcfUnit                   | NULL              | Unit of QTcF, in case it was described in ECG aberration                                                           |
 | lvef                       | NULL              | Left ventricle ejection fraction (LVEF)                                                                            |
+| hasComplications           | 0                 | Patient has cancer related complications?                                                                          |
 
 N prior tumor treatments
 
