@@ -201,17 +201,16 @@ public class OrangeJsonTest {
     }
 
     private static void assertLinx(@NotNull LinxRecord linx) {
-        assertThat(linx.structuralVariants()).hasSize(2)
+        assertThat(linx.structuralVariants()).hasSize(1)
                 .extracting("svId", "clusterId")
-                .contains(tuple(1, 2), tuple(5, 7));
+                .contains(tuple(1, 2));
 
-        assertThat(linx.homozygousDisruptions()).hasSize(2)
+        assertThat(linx.homozygousDisruptions()).hasSize(1)
                 .extracting("gene")
-                .contains("NF1", "NF2");
-
-        assertThat(linx.breakends()).hasSize(2)
+                .contains("NF1");
+        assertThat(linx.breakends()).hasSize(1)
                 .extracting("svId", "gene", "junctionCopyNumber", "undisruptedCopyNumber")
-                .contains(tuple(2, "NF1", 1.1, 1.0), tuple(3, "NF2", 1.2, 1.1));
+                .contains(tuple(2, "NF1", 1.1, 1.0));
 
         LinxBreakend breakend = linx.breakends().stream().filter(b -> b.svId() == 2).findAny().orElseThrow();
         assertFalse(breakend.reported());
