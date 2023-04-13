@@ -271,7 +271,7 @@ public final class OrangeJson {
         @NotNull
         private static LinxRecord toLinxRecord(@NotNull JsonObject linx) {
             for (String arrayField : List.of("allGermlineStructuralVariants", "allGermlineBreakends", "germlineHomozygousDisruptions")) {
-                throwIfArrayFieldNonEmpty(linx, arrayField);
+                throwIfGermlineArrayFieldNonEmpty(linx, arrayField);
             }
 
             return ImmutableLinxRecord.builder()
@@ -282,9 +282,10 @@ public final class OrangeJson {
                     .build();
         }
 
-        private static void throwIfArrayFieldNonEmpty(@NotNull JsonObject json, @NotNull String arrayField) {
+        private static void throwIfGermlineArrayFieldNonEmpty(@NotNull JsonObject json, @NotNull String arrayField) {
             if (!Optional.ofNullable(nullableArray(json, arrayField)).map(JsonArray::isEmpty).orElse(true)) {
-                throw new RuntimeException(arrayField + " must be null or empty");
+                throw new RuntimeException(arrayField + " must be null or empty because ACTIN only accepts ORANGE output that has been "
+                        + "scrubbed of germline data. Please use the JSON output from the 'orange_no_germline' directory.");
             }
         }
 
