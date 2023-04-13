@@ -52,8 +52,10 @@ public class LaboratoryRuleMapper extends RuleMapper {
 
         map.put(EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO));
         map.put(EligibilityRule.HAS_PT_ULN_OF_AT_MOST_X, hasLimitedLabValueULNCreator(LabMeasurement.PROTHROMBIN_TIME));
+        map.put(EligibilityRule.HAS_PT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS, hasLabValueWithinRefCreator(LabMeasurement.PROTHROMBIN_TIME));
         map.put(EligibilityRule.HAS_APTT_ULN_OF_AT_MOST_X,
                 hasLimitedLabValueULNCreator(LabMeasurement.ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME));
+        map.put(EligibilityRule.HAS_APTT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS, hasLabValueWithinRefCreator(LabMeasurement.ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME));
         map.put(EligibilityRule.HAS_PTT_ULN_OF_AT_MOST_X, hasLimitedPTTCreator());
         map.put(EligibilityRule.HAS_D_DIMER_OUTSIDE_REF_UPPER_LIMIT, hasLabValueOutsideRefLimitUpCreator(LabMeasurement.DDIMER));
 
