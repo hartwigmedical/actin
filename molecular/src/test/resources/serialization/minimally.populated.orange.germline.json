@@ -153,9 +153,29 @@
         "gene": "NF1"
       }
     ],
-    "allGermlineStructuralVariants": null,
-    "allGermlineBreakends": null,
-    "germlineHomozygousDisruptions": null
+    "allGermlineStructuralVariants": [
+      {
+        "svId": 4,
+        "clusterId": 5
+      }
+    ],
+    "allGermlineBreakends": [
+      {
+        "reportedDisruption": false,
+        "svId": 2,
+        "gene": "NF2",
+        "type": "DUP",
+        "junctionCopyNumber": 1.2,
+        "undisruptedCopyNumber": 1.1,
+        "regionType": "EXONIC",
+        "codingType": "UTR_3P"
+      }
+    ],
+    "germlineHomozygousDisruptions": [
+      {
+        "gene": "NF2"
+      }
+    ]
   },
   "virusInterpreter": {
     "allViruses": [

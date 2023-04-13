@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -269,12 +270,22 @@ public final class OrangeJson {
 
         @NotNull
         private static LinxRecord toLinxRecord(@NotNull JsonObject linx) {
+            for (String arrayField : List.of("allGermlineStructuralVariants", "allGermlineBreakends", "germlineHomozygousDisruptions")) {
+                throwIfArrayFieldNonEmpty(linx, arrayField);
+            }
+
             return ImmutableLinxRecord.builder()
                     .structuralVariants(toLinxStructuralVariants(array(linx, "allSomaticStructuralVariants")))
                     .homozygousDisruptions(toLinxHomozygousDisruptions(array(linx, "somaticHomozygousDisruptions")))
                     .breakends(toLinxBreakends(array(linx, "allSomaticBreakends")))
                     .fusions(toLinxFusions(array(linx, "allSomaticFusions")))
                     .build();
+        }
+
+        private static void throwIfArrayFieldNonEmpty(@NotNull JsonObject json, @NotNull String arrayField) {
+            if (!Optional.ofNullable(nullableArray(json, arrayField)).map(JsonArray::isEmpty).orElse(true)) {
+                throw new RuntimeException(arrayField + " must be null or empty");
+            }
         }
 
         @NotNull

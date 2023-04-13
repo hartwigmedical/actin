@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -58,6 +59,8 @@ public class OrangeJsonTest {
     private static final String MINIMALLY_EMPTY_ORANGE_JSON = Resources.getResource("serialization/minimally.empty.orange.json").getPath();
     private static final String MINIMALLY_POPULATED_ORANGE_JSON =
             Resources.getResource("serialization/minimally.populated.orange.json").getPath();
+    private static final String MINIMALLY_POPULATED_ORANGE_JSON_WITH_GERMLINE =
+            Resources.getResource("serialization/minimally.populated.orange.germline.json").getPath();
     private static final String REAL_ORANGE_JSON = Resources.getResource("serialization/real.v2.3.orange.json").getPath();
 
     private static final double EPSILON = 1.0E-2;
@@ -88,6 +91,11 @@ public class OrangeJsonTest {
         assertVirusInterpreter(record.virusInterpreter().orElseThrow());
         assertLilac(record.lilac());
         assertChord(record.chord().orElseThrow());
+    }
+
+    @Test
+    public void shouldThrowWhenOrangeRecordJsonContainsLinxGermlineFeatures() {
+        assertThrows(RuntimeException.class, () -> OrangeJson.read(MINIMALLY_POPULATED_ORANGE_JSON_WITH_GERMLINE));
     }
 
     private static void assertPurple(@NotNull PurpleRecord purple) {
