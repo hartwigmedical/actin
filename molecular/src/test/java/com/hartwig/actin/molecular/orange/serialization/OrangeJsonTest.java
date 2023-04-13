@@ -83,11 +83,11 @@ public class OrangeJsonTest {
 
         assertPurple(record.purple());
         assertLinx(record.linx());
-        assertPeach(record.peach().get());
-        assertCuppa(record.cuppa().get());
-        assertVirusInterpreter(record.virusInterpreter().get());
+        assertPeach(record.peach().orElseThrow());
+        assertCuppa(record.cuppa().orElseThrow());
+        assertVirusInterpreter(record.virusInterpreter().orElseThrow());
         assertLilac(record.lilac());
-        assertChord(record.chord().get());
+        assertChord(record.chord().orElseThrow());
     }
 
     private static void assertPurple(@NotNull PurpleRecord purple) {
@@ -235,7 +235,7 @@ public class OrangeJsonTest {
         assertEquals(LinxFusionDriverLikelihood.HIGH, fusion.driverLikelihood());
     }
 
-    private static void assertPeach(PeachRecord peach) {
+    private static void assertPeach(@NotNull PeachRecord peach) {
         assertEquals(1, peach.entries().size());
         PeachEntry entry = peach.entries().iterator().next();
         assertEquals("DPYD", entry.gene());
