@@ -57,6 +57,7 @@ public class TumorRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_LYMPH_NODE_METASTASES, hasLymphNodeMetastasesCreator());
         map.put(EligibilityRule.HAS_VISCERAL_METASTASES, hasVisceralMetastasesCreator());
         map.put(EligibilityRule.HAS_BIOPSY_AMENABLE_LESION, hasBiopsyAmenableLesionCreator());
+        map.put(EligibilityRule.HAS_PRESENCE_OF_LESIONS_IN_AT_LEAST_X_SITES, hasMinimumSitesWithLesionsCreator());
         map.put(EligibilityRule.HAS_COLLECTED_TUMOR_BIOPSY_WITHIN_X_MONTHS_BEFORE_IC, tumorBiopsyTakenBeforeInformedConsentCreator());
         map.put(EligibilityRule.CAN_PROVIDE_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS, canProvideFreshSampleForFurtherAnalysisCreator());
         map.put(EligibilityRule.CAN_PROVIDE_ARCHIVAL_OR_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS,
@@ -261,6 +262,11 @@ public class TumorRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasBiopsyAmenableLesionCreator() {
         return function -> new HasBiopsyAmenableLesion();
+    }
+
+    @NotNull
+    private FunctionCreator hasMinimumSitesWithLesionsCreator() {
+        return function -> new HasMinimumSitesWithLesions(functionInputResolver().createOneIntegerInput(function));
     }
 
     @NotNull
