@@ -17,7 +17,7 @@ public class HasMinimumSitesWithLesions implements EvaluationFunction {
 
     private final int minimumSitesWithLesions;
 
-    public HasMinimumSitesWithLesions(int minimumSitesWithLesions) {
+    HasMinimumSitesWithLesions(int minimumSitesWithLesions) {
         this.minimumSitesWithLesions = minimumSitesWithLesions;
     }
 
