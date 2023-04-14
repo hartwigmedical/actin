@@ -2,16 +2,19 @@ package com.hartwig.actin.soc.evaluation.treatment
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import java.util.*
-import java.util.function.Function
-import java.util.function.Predicate
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation
+import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
+import com.hartwig.actin.soc.evaluation.EvaluationFactory
+import com.hartwig.actin.soc.evaluation.EvaluationFunction
+import com.hartwig.actin.util.ApplicationConfig
 
 internal class HasHadCombinedTreatmentNamesWithCycles(private val treatmentNames: List<String>, private val minCycles: Int, private val maxCycles: Int) : EvaluationFunction {
-    fun evaluate(record: PatientRecord): Evaluation {
-        val evaluationsByResult: Map<EvaluationResult, List<Evaluation>> = treatmentNames.stream()
+
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val evaluationsByResult: Map<EvaluationResult, List<Evaluation>> = treatmentNames
                 .map { treatmentName: String -> evaluatePriorTreatmentsMatchingName(record.clinical().priorTumorTreatments(), treatmentName) }
-                .collect(Collectors.groupingBy<Evaluation, EvaluationResult>(Function { obj: Evaluation -> obj.result() }))
+                .groupBy { it.result() }
         val builder: ImmutableEvaluation.Builder = EvaluationFactory.unrecoverable()
         return if (evaluationsByResult.containsKey(EvaluationResult.FAIL)) {
             val failEvaluations = evaluationsByResult[EvaluationResult.FAIL]!!
@@ -37,14 +40,15 @@ internal class HasHadCombinedTreatmentNamesWithCycles(private val treatmentNames
     }
 
     private fun evaluatePriorTreatmentsMatchingName(priorTumorTreatments: List<PriorTumorTreatment>, treatmentName: String): Evaluation {
-        val query = treatmentName.lowercase(Locale.getDefault())
-        val matchingPriorTreatments: Map<EvaluationResult, List<PriorTumorTreatment>> = priorTumorTreatments.stream()
-                .filter(Predicate<PriorTumorTreatment> { prior: PriorTumorTreatment -> prior.name().lowercase(Locale.getDefault()).contains(query) })
-                .collect(Collectors.groupingBy<PriorTumorTreatment, EvaluationResult>(Function<PriorTumorTreatment, EvaluationResult> { prior: PriorTumorTreatment ->
-                    Optional.ofNullable<Int>(prior.cycles())
-                            .map<EvaluationResult>(Function<Int, EvaluationResult> { cycles: Int -> if (cycles >= minCycles && cycles <= maxCycles) EvaluationResult.PASS else EvaluationResult.FAIL })
-                            .orElse(EvaluationResult.UNDETERMINED)
-                }))
+        val query = treatmentName.lowercase(ApplicationConfig.LOCALE)
+        val matchingPriorTreatments: Map<EvaluationResult, List<PriorTumorTreatment>> = priorTumorTreatments
+                .filter { it.name().lowercase(ApplicationConfig.LOCALE).contains(query) }
+                .groupBy { prior: PriorTumorTreatment -> when (prior.cycles()) {
+                        null -> EvaluationResult.UNDETERMINED
+                        in minCycles..maxCycles -> EvaluationResult.PASS
+                        else -> EvaluationResult.FAIL
+                    }
+                }
         return if (matchingPriorTreatments.isEmpty()) {
             EvaluationFactory.fail("No prior treatments found matching $treatmentName", GENERAL_FAIL_MESSAGE)
         } else if (matchingPriorTreatments.containsKey(EvaluationResult.PASS)) {
@@ -66,13 +70,11 @@ internal class HasHadCombinedTreatmentNamesWithCycles(private val treatmentNames
     companion object {
         private const val GENERAL_FAIL_MESSAGE = "No treatments with cycles"
         private fun formatTreatmentList(treatments: List<PriorTumorTreatment>, includeCycles: Boolean): String {
-            return treatments.stream()
-                    .map(Function<PriorTumorTreatment, String> { prior: PriorTumorTreatment -> prior.name() + if (includeCycles) String.format(" (%d cycles)", prior.cycles()) else "" })
-                    .collect(Collectors.joining(", "))
+            return treatments.joinToString(", ") { prior: PriorTumorTreatment -> prior.name() + if (includeCycles) String.format(" (%d cycles)", prior.cycles()) else "" }
         }
 
-        private fun getMessagesForEvaluations(evaluations: List<Evaluation>, messageExtractor: Function<Evaluation, Set<String>>): Set<String> {
-            return evaluations.stream().map(messageExtractor).flatMap { obj: Set<String> -> obj.stream() }.collect(Collectors.toSet<String>())
+        private fun getMessagesForEvaluations(evaluations: List<Evaluation>, messageExtractor: (Evaluation) -> Set<String>): Set<String> {
+            return evaluations.flatMap(messageExtractor).toSet()
         }
     }
 }

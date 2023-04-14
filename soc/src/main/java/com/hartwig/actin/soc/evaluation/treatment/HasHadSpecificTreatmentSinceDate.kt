@@ -3,6 +3,11 @@ package com.hartwig.actin.soc.evaluation.treatment
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
+import com.hartwig.actin.soc.evaluation.EvaluationFactory
+import com.hartwig.actin.soc.evaluation.EvaluationFunction
+import com.hartwig.actin.soc.evaluation.util.Format
+import java.time.LocalDate
 import java.util.*
 import java.util.function.Function
 import java.util.function.Predicate
@@ -16,19 +21,18 @@ class HasHadSpecificTreatmentSinceDate internal constructor(treatmentName: Strin
         this.minDate = minDate
     }
 
-    fun evaluate(record: PatientRecord): Evaluation {
+    override fun evaluate(record: PatientRecord): Evaluation {
         val matchingTreatments: Set<PriorTumorTreatment> = record.clinical()
                 .priorTumorTreatments()
-                .stream()
-                .filter(Predicate { treatment: PriorTumorTreatment -> treatment.name().lowercase(Locale.getDefault()).contains(query) })
-                .collect(Collectors.toSet<PriorTumorTreatment>())
-        return if (matchingTreatments.stream().anyMatch(Predicate<PriorTumorTreatment> { treatment: PriorTumorTreatment -> treatmentSinceMinDate(treatment, false) })) {
+                .filter { treatment: PriorTumorTreatment -> treatment.name().lowercase(Locale.getDefault()).contains(query) }
+                .toSet()
+        return if (matchingTreatments.any { treatment: PriorTumorTreatment -> treatmentSinceMinDate(treatment, false) }) {
             EvaluationFactory.pass(java.lang.String.format("Treatment matching '%s' administered since %s", query, Format.date(minDate)),
                     "Matching treatment since date")
         } else if (matchingTreatments.stream().anyMatch(Predicate<PriorTumorTreatment> { treatment: PriorTumorTreatment -> treatmentSinceMinDate(treatment, true) })) {
             EvaluationFactory.undetermined(String.format("Treatment matching '%s' administered with unknown date", query),
                     "Matching treatment with unknown date")
-        } else if (!matchingTreatments.isEmpty()) {
+        } else if (matchingTreatments.isNotEmpty()) {
             EvaluationFactory.fail(java.lang.String.format("All treatments matching '%s' administered before %s", query, Format.date(minDate)),
                     "Matching treatment with earlier date")
         } else {
@@ -44,10 +48,10 @@ class HasHadSpecificTreatmentSinceDate internal constructor(treatmentName: Strin
 
     private fun yearAndMonthSinceMinDate(nullableYear: Int?, nullableMonth: Int?): Optional<Boolean> {
         return Optional.ofNullable(nullableYear).flatMap { year: Int ->
-            if (year > minDate.getYear()) {
+            if (year > minDate.year) {
                 return@flatMap Optional.of(true)
-            } else if (year == minDate.getYear()) {
-                return@flatMap Optional.ofNullable(nullableMonth).map(Function<Int, Boolean> { month: Int -> month >= minDate.getMonthValue() })
+            } else if (year == minDate.year) {
+                return@flatMap Optional.ofNullable(nullableMonth).map { month: Int -> month >= minDate.monthValue }
             } else {
                 return@flatMap Optional.of(false)
             }

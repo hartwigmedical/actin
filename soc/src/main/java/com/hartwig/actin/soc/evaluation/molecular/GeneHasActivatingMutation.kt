@@ -1,22 +1,24 @@
 package com.hartwig.actin.soc.evaluation.molecular
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.molecular.datamodel.driver.GeneRole
-import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.driver.Variant
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.molecular.datamodel.driver.*
+import com.hartwig.actin.soc.evaluation.EvaluationFactory
+import com.hartwig.actin.soc.evaluation.EvaluationFunction
+import com.hartwig.actin.soc.evaluation.util.Format
 
 class GeneHasActivatingMutation internal constructor(private val gene: String) : EvaluationFunction {
-    fun evaluate(record: PatientRecord): Evaluation {
-        val activatingVariants: MutableSet<String> = Sets.newHashSet()
-        val activatingVariantsAssociatedWithResistance: MutableSet<String> = Sets.newHashSet()
-        val activatingVariantsNoHotspotAndNoGainOfFunction: MutableSet<String> = Sets.newHashSet()
-        val activatingVariantsInNonOncogene: MutableSet<String> = Sets.newHashSet()
-        val activatingSubclonalVariants: MutableSet<String> = Sets.newHashSet()
-        val nonHighDriverGainOfFunctionVariants: MutableSet<String> = Sets.newHashSet()
-        val nonHighDriverVariants: MutableSet<String> = Sets.newHashSet()
-        val otherMissenseOrHotspotVariants: MutableSet<String> = Sets.newHashSet()
+
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val activatingVariants: MutableSet<String> = mutableSetOf()
+        val activatingVariantsAssociatedWithResistance: MutableSet<String> = mutableSetOf()
+        val activatingVariantsNoHotspotAndNoGainOfFunction: MutableSet<String> = mutableSetOf()
+        val activatingVariantsInNonOncogene: MutableSet<String> = mutableSetOf()
+        val activatingSubclonalVariants: MutableSet<String> = mutableSetOf()
+        val nonHighDriverGainOfFunctionVariants: MutableSet<String> = mutableSetOf()
+        val nonHighDriverVariants: MutableSet<String> = mutableSetOf()
+        val otherMissenseOrHotspotVariants: MutableSet<String> = mutableSetOf()
         val hasHighMutationalLoad = record.molecular().characteristics().hasHighTumorMutationalLoad()
         for (variant in record.molecular().drivers().variants()) {
             if (variant.gene() == gene) {
@@ -75,51 +77,51 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
                                        activatingVariantsInNonOncogene: Set<String>, activatingVariantsNoHotspotAndNoGainOfFunction: Set<String>,
                                        activatingSubclonalVariants: Set<String>, nonHighDriverGainOfFunctionVariants: Set<String>,
                                        nonHighDriverVariants: Set<String>, otherMissenseOrHotspotVariants: Set<String>): Evaluation? {
-        val warnEvents: MutableSet<String> = Sets.newHashSet()
-        val warnSpecificMessages: MutableSet<String> = Sets.newHashSet()
-        val warnGeneralMessages: MutableSet<String> = Sets.newHashSet()
-        if (!activatingVariantsAssociatedWithResistance.isEmpty()) {
+        val warnEvents: MutableSet<String> = mutableSetOf()
+        val warnSpecificMessages: MutableSet<String> = mutableSetOf()
+        val warnGeneralMessages: MutableSet<String> = mutableSetOf()
+        if (activatingVariantsAssociatedWithResistance.isNotEmpty()) {
             warnEvents.addAll(activatingVariantsAssociatedWithResistance)
             warnSpecificMessages.add(
                     "Gene " + gene + " should have activating mutation(s): " + Format.concat(activatingVariantsAssociatedWithResistance) + ", however, these are (also) associated with drug resistance")
             warnGeneralMessages.add("$gene activating mutation(s) detected but associated with drug resistance")
         }
-        if (!activatingVariantsInNonOncogene.isEmpty()) {
+        if (activatingVariantsInNonOncogene.isNotEmpty()) {
             warnEvents.addAll(activatingVariantsInNonOncogene)
             warnSpecificMessages.add("Gene " + gene + " has activating mutation(s) " + Format.concat(activatingVariantsInNonOncogene) + " but gene known as TSG")
             warnGeneralMessages.add("$gene activating mutation(s) detected but $gene known as TSG")
         }
-        if (!activatingVariantsNoHotspotAndNoGainOfFunction.isEmpty()) {
+        if (activatingVariantsNoHotspotAndNoGainOfFunction.isNotEmpty()) {
             warnEvents.addAll(activatingVariantsNoHotspotAndNoGainOfFunction)
             warnSpecificMessages.add("Gene $gene has potentially activating mutation(s) " + Format.concat(
                     activatingVariantsNoHotspotAndNoGainOfFunction) + " that have high driver likelihood, but is not a hotspot and not associated with gain of function protein effect")
             warnGeneralMessages.add(gene
                     + " potentially activating mutation(s) detected but is not a hotspot and not associated with having gain-of-function protein effect")
         }
-        if (!activatingSubclonalVariants.isEmpty()) {
+        if (activatingSubclonalVariants.isNotEmpty()) {
             warnEvents.addAll(activatingSubclonalVariants)
             warnSpecificMessages.add("Gene " + gene + " potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) + " have subclonal likelihood of > " + Format.percentage(1 - CLONAL_CUTOFF))
             warnGeneralMessages.add(gene + " potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) + " but subclonal likelihood > " + Format.percentage(1 - CLONAL_CUTOFF))
         }
-        if (!nonHighDriverGainOfFunctionVariants.isEmpty()) {
+        if (nonHighDriverGainOfFunctionVariants.isNotEmpty()) {
             warnEvents.addAll(nonHighDriverGainOfFunctionVariants)
             warnSpecificMessages.add(
                     "Gene " + gene + " has potentially activating mutation(s) " + Format.concat(nonHighDriverGainOfFunctionVariants) + " that do not have high driver likelihood, but are associated with gain-of-function protein effect")
             warnGeneralMessages.add(
                     "$gene potentially activating mutation(s) detected based on protein effect but no high driver likelihood")
         }
-        if (!nonHighDriverVariants.isEmpty()) {
+        if (nonHighDriverVariants.isNotEmpty()) {
             warnEvents.addAll(nonHighDriverVariants)
             warnSpecificMessages.add("Gene " + gene + " has potentially activating mutation(s) " + Format.concat(nonHighDriverVariants) + " but no high driver likelihood")
             warnGeneralMessages.add("$gene potentially activating mutation(s) detected but no high driver likelihood")
         }
-        if (!otherMissenseOrHotspotVariants.isEmpty()) {
+        if (otherMissenseOrHotspotVariants.isNotEmpty()) {
             warnEvents.addAll(otherMissenseOrHotspotVariants)
             warnSpecificMessages.add(
                     "Gene " + gene + " has potentially activating mutation(s) " + Format.concat(otherMissenseOrHotspotVariants) + " that are missense or have hotspot status, but are not considered reportable")
             warnGeneralMessages.add("$gene potentially activating mutation(s) detected but is unreportable")
         }
-        return if (!warnEvents.isEmpty() && !warnSpecificMessages.isEmpty() && !warnGeneralMessages.isEmpty()) {
+        return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {
             EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
                     .addAllInclusionMolecularEvents(warnEvents)

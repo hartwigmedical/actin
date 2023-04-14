@@ -2,19 +2,26 @@ package com.hartwig.actin.soc.evaluation.treatment
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.treatmentResultedInPDOption
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation
+import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import com.hartwig.actin.soc.evaluation.EvaluationFactory
+import com.hartwig.actin.soc.evaluation.EvaluationFunction
+import com.hartwig.actin.soc.evaluation.treatment.ProgressiveDiseaseFunctions.treatmentResultedInPDOption
+import com.hartwig.actin.soc.evaluation.util.Format
 import java.util.*
 
 class HasHadPDFollowingSpecificTreatment internal constructor(private val names: Set<String>, warnCategory: TreatmentCategory?) : EvaluationFunction {
+
     private val warnCategory: TreatmentCategory?
 
     init {
         this.warnCategory = warnCategory
     }
 
-    fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentsWithPD: MutableSet<String> = Sets.newHashSet()
-        val treatmentsWithExactType: MutableSet<String> = Sets.newHashSet()
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val treatmentsWithPD: MutableSet<String> = mutableSetOf()
+        val treatmentsWithExactType: MutableSet<String> = mutableSetOf()
         var hasHadTreatmentWithUnclearPDStatus = false
         var hasHadTreatmentWithWarnType = false
         for (treatment in record.clinical().priorTumorTreatments()) {
@@ -26,11 +33,10 @@ class HasHadPDFollowingSpecificTreatment internal constructor(private val names:
             for (name in names) {
                 if (treatment.name().lowercase(Locale.getDefault()).contains(name.lowercase(Locale.getDefault()))) {
                     treatmentsWithExactType.add(treatment.name())
-                    val treatmentResultedInPDOption: Optional<Boolean> = treatmentResultedInPDOption(treatment)
-                    if (treatmentResultedInPDOption.orElse(false)) {
-                        treatmentsWithPD.add(treatment.name())
-                    } else if (treatmentResultedInPDOption.isEmpty) {
-                        hasHadTreatmentWithUnclearPDStatus = true
+                    when (treatmentResultedInPDOption(treatment)) {
+                        true -> treatmentsWithPD.add(treatment.name())
+                        null -> hasHadTreatmentWithUnclearPDStatus = true
+                        else -> {}
                     }
                 }
             }

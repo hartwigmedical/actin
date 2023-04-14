@@ -1,13 +1,19 @@
 package com.hartwig.actin.soc.evaluation.molecular
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
+import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
+import com.hartwig.actin.soc.evaluation.EvaluationFactory
+import com.hartwig.actin.soc.evaluation.EvaluationFunction
+import com.hartwig.actin.soc.evaluation.util.Format
 
 class IsMicrosatelliteUnstable internal constructor() : EvaluationFunction {
-    fun evaluate(record: PatientRecord): Evaluation {
-        val msiGenesWithBiallelicDriver: MutableSet<String> = Sets.newHashSet()
-        val msiGenesWithNonBiallelicDriver: MutableSet<String> = Sets.newHashSet()
+
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val msiGenesWithBiallelicDriver: MutableSet<String> = mutableSetOf()
+        val msiGenesWithNonBiallelicDriver: MutableSet<String> = mutableSetOf()
         for (gene in MolecularConstants.MSI_GENES) {
             for (variant in record.molecular().drivers().variants()) {
                 if (variant.gene() == gene && variant.isReportable) {
@@ -36,31 +42,19 @@ class IsMicrosatelliteUnstable internal constructor() : EvaluationFunction {
         }
         val isMicrosatelliteUnstable = record.molecular().characteristics().isMicrosatelliteUnstable
         if (isMicrosatelliteUnstable == null) {
-            return if (!msiGenesWithBiallelicDriver.isEmpty()) {
-                EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.UNDETERMINED)
-                        .addUndeterminedSpecificMessages(
-                                "Unknown microsatellite instability (MSI) status, but biallelic drivers in MSI genes: " + Format.concat(
-                                        msiGenesWithBiallelicDriver) + " are detected; an MSI test may be recommended")
-                        .addUndeterminedGeneralMessages("Unknown MSI status")
-                        .build()
-            } else if (!msiGenesWithNonBiallelicDriver.isEmpty()) {
-                EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.UNDETERMINED)
-                        .addUndeterminedSpecificMessages(
-                                "Unknown microsatellite instability (MSI) status, but non-biallelic drivers in MSI genes: " + Format.concat(
-                                        msiGenesWithNonBiallelicDriver) + " are detected; an MSI test may be recommended")
-                        .addUndeterminedGeneralMessages("Unknown MSI status")
-                        .build()
+            return if (msiGenesWithBiallelicDriver.isNotEmpty()) {
+                EvaluationFactory.undetermined("Unknown microsatellite instability (MSI) status, but biallelic drivers in MSI genes: "
+                        + Format.concat(msiGenesWithBiallelicDriver) + " are detected; an MSI test may be recommended",
+                        "Unknown MSI status")
+            } else if (msiGenesWithNonBiallelicDriver.isNotEmpty()) {
+                EvaluationFactory.undetermined("Unknown microsatellite instability (MSI) status, but non-biallelic drivers in MSI genes: "
+                        + Format.concat(msiGenesWithNonBiallelicDriver) + " are detected; an MSI test may be recommended",
+                        "Unknown MSI status")
             } else {
-                EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.FAIL)
-                        .addFailSpecificMessages("Unknown microsatellite instability (MSI) status")
-                        .addFailGeneralMessages("Unknown MSI status")
-                        .build()
+                EvaluationFactory.fail("Unknown microsatellite instability (MSI) status", "Unknown MSI status")
             }
         } else if (isMicrosatelliteUnstable) {
-            return if (!msiGenesWithBiallelicDriver.isEmpty()) {
+            return if (msiGenesWithBiallelicDriver.isNotEmpty()) {
                 EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
                         .addInclusionMolecularEvents(MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE)
@@ -68,13 +62,13 @@ class IsMicrosatelliteUnstable internal constructor() : EvaluationFunction {
                                 + Format.concat(msiGenesWithBiallelicDriver))
                         .addPassGeneralMessages("MSI")
                         .build()
-            } else if (!msiGenesWithNonBiallelicDriver.isEmpty()) {
+            } else if (msiGenesWithNonBiallelicDriver.isNotEmpty()) {
                 EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.WARN)
                         .addInclusionMolecularEvents(MolecularCharacteristicEvents.MICROSATELLITE_POTENTIALLY_UNSTABLE)
                         .addWarnSpecificMessages(
                                 ("Microsatellite instability (MSI) detected, together with non-biallelic drivers in MSI genes ("
-                                        + Format.concat(com.hartwig.actin.algo.evaluation.molecular.MolecularConstants.MSI_GENES)
+                                        + Format.concat(MolecularConstants.MSI_GENES)
                                         ) + ") were detected")
                         .addWarnGeneralMessages("MSI")
                         .build()
@@ -83,15 +77,11 @@ class IsMicrosatelliteUnstable internal constructor() : EvaluationFunction {
                         .result(EvaluationResult.WARN)
                         .addInclusionMolecularEvents(MolecularCharacteristicEvents.MICROSATELLITE_POTENTIALLY_UNSTABLE)
                         .addWarnSpecificMessages(("Microsatellite instability (MSI) detected, without drivers in MSI genes ("
-                                + Format.concat(com.hartwig.actin.algo.evaluation.molecular.MolecularConstants.MSI_GENES)) + ") detected")
+                                + Format.concat(MolecularConstants.MSI_GENES)) + ") detected")
                         .addWarnGeneralMessages("MSI")
                         .build()
             }
         }
-        return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("No microsatellite instability (MSI) status detected")
-                .addFailGeneralMessages("MSI")
-                .build()
+        return EvaluationFactory.fail("No microsatellite instability (MSI) status detected", "MSI")
     }
 }

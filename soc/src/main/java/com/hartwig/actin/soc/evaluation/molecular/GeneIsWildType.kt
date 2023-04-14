@@ -1,16 +1,21 @@
 package com.hartwig.actin.soc.evaluation.molecular
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
+import com.hartwig.actin.soc.evaluation.EvaluationFactory
+import com.hartwig.actin.soc.evaluation.EvaluationFunction
+import com.hartwig.actin.soc.evaluation.util.Format
 
 class GeneIsWildType internal constructor(private val gene: String) : EvaluationFunction {
-    fun evaluate(record: PatientRecord): Evaluation {
-        val reportableEventsWithEffect: MutableSet<String> = Sets.newHashSet()
-        val reportableEventsWithEffectPotentiallyWildtype: MutableSet<String> = Sets.newHashSet()
-        val reportableEventsWithNoEffect: MutableSet<String> = Sets.newHashSet()
+
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val reportableEventsWithEffect: MutableSet<String> = mutableSetOf()
+        val reportableEventsWithEffectPotentiallyWildtype: MutableSet<String> = mutableSetOf()
+        val reportableEventsWithNoEffect: MutableSet<String> = mutableSetOf()
         for (variant in record.molecular().drivers().variants()) {
             if (variant.gene() == gene && variant.isReportable) {
                 val hasNoEffect = variant.proteinEffect() == ProteinEffect.NO_EFFECT || variant.proteinEffect() == ProteinEffect.NO_EFFECT_PREDICTED
@@ -66,13 +71,9 @@ class GeneIsWildType internal constructor(private val gene: String) : Evaluation
                 }
             }
         }
-        if (!reportableEventsWithEffect.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages(
-                            "Gene " + gene + " is not considered wild-type due to " + Format.concat(reportableEventsWithEffect))
-                    .addFailGeneralMessages("$gene not wild-type")
-                    .build()
+        if (reportableEventsWithEffect.isNotEmpty()) {
+            return EvaluationFactory.fail("Gene " + gene + " is not considered wild-type due to " + Format.concat(reportableEventsWithEffect),
+                    "$gene not wild-type")
         }
         val potentialWarnEvaluation = evaluatePotentialWarns(reportableEventsWithNoEffect, reportableEventsWithEffectPotentiallyWildtype)
         return potentialWarnEvaluation
@@ -86,9 +87,9 @@ class GeneIsWildType internal constructor(private val gene: String) : Evaluation
 
     private fun evaluatePotentialWarns(reportableEventsWithNoEffect: Set<String>,
                                        reportableEventsWithEffectPotentiallyWildtype: Set<String>): Evaluation? {
-        val warnEvents: MutableSet<String> = Sets.newHashSet()
-        val warnSpecificMessages: MutableSet<String> = Sets.newHashSet()
-        val warnGeneralMessages: MutableSet<String> = Sets.newHashSet()
+        val warnEvents: MutableSet<String> = mutableSetOf()
+        val warnSpecificMessages: MutableSet<String> = mutableSetOf()
+        val warnGeneralMessages: MutableSet<String> = mutableSetOf()
         if (!reportableEventsWithNoEffect.isEmpty()) {
             warnEvents.addAll(reportableEventsWithNoEffect)
             warnSpecificMessages.add("Reportable event(s) in " + gene + " are detected: " + Format.concat(reportableEventsWithNoEffect) + ", however these are annotated with protein effect 'no effect' and thus may potentially be considered wild-type?")
