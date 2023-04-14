@@ -5,6 +5,7 @@
     "month": 1,
     "day": 20
   },
+  "experimentType": "TARGETED",
   "refGenomeVersion": "V37",
   "purple": {
     "fit": {
@@ -27,22 +28,18 @@
     "allSomaticGainsLosses": []
   },
   "linx": {
-    "allStructuralVariants": [],
-    "allFusions": [],
-    "allBreakends": [],
-    "homozygousDisruptions": []
+    "allSomaticStructuralVariants": [],
+    "allSomaticFusions": [],
+    "allSomaticBreakends": [],
+    "somaticHomozygousDisruptions": [],
+    "allGermlineStructuralVariants": null,
+    "allGermlineBreakends": null,
+    "germlineHomozygousDisruptions": null
   },
-  "virusInterpreter": {
-    "allViruses": []
-  },
-  "chord": {
-    "hrStatus": "HR_PROFICIENT"
-  },
-  "peach": [],
-  "cuppa": {
-    "predictions": [
-    ]
-  },
+  "virusInterpreter": null,
+  "chord": null,
+  "peach": null,
+  "cuppa": null,
   "lilac": {
     "qc": "FAIL",
     "alleles": [

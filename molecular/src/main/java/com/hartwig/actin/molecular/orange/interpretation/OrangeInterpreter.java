@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion;
@@ -33,7 +32,7 @@ public class OrangeInterpreter {
         return ImmutableMolecularRecord.builder()
                 .patientId(toPatientId(record.sampleId()))
                 .sampleId(record.sampleId())
-                .type(ExperimentType.WGS)
+                .type(record.experimentType())
                 .refGenomeVersion(determineRefGenomeVersion(record.refGenomeVersion()))
                 .date(record.experimentDate())
                 .evidenceSource(ActionabilityConstants.EVIDENCE_SOURCE.display())

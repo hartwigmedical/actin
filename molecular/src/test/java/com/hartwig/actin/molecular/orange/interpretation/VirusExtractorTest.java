@@ -12,7 +12,6 @@ import java.util.Set;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.datamodel.driver.VirusType;
-import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
 import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterRecord;
 import com.hartwig.actin.molecular.orange.datamodel.virus.TestVirusInterpreterFactory;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusDriverLikelihood;
@@ -48,7 +47,6 @@ public class VirusExtractorTest {
                 .build();
 
         VirusInterpreterRecord virusInterpreter = ImmutableVirusInterpreterRecord.builder()
-                .from(TestOrangeFactory.createMinimalTestOrangeRecord().virusInterpreter())
                 .addEntries(virusEntry1, virusEntry2)
                 .build();
 
