@@ -8,14 +8,14 @@ import com.hartwig.actin.treatment.datamodel.EligibilityRule
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction
 
 internal object TreatmentDB {
-    private const val TREATMENT_CAPOX = "CAPOX"
-    private const val TREATMENT_CETUXIMAB = "Cetuximab"
-    private const val TREATMENT_FOLFIRI = "FOLFIRI"
-    private const val TREATMENT_FOLFIRINOX = "FOLFIRINOX"
-    private const val TREATMENT_FOLFOX = "FOLFOX"
-    private const val TREATMENT_LONSURF = "Lonsurf"
-    private const val TREATMENT_PANITUMUMAB = "Panitumumab"
-    private const val TREATMENT_PEMBROLIZUMAB = "Pembrolizumab"
+    const val TREATMENT_CAPOX = "CAPOX"
+    const val TREATMENT_CETUXIMAB = "Cetuximab"
+    const val TREATMENT_FOLFIRI = "FOLFIRI"
+    const val TREATMENT_FOLFIRINOX = "FOLFIRINOX"
+    const val TREATMENT_FOLFOX = "FOLFOX"
+    const val TREATMENT_LONSURF = "Lonsurf"
+    const val TREATMENT_PANITUMUMAB = "Panitumumab"
+    const val TREATMENT_PEMBROLIZUMAB = "Pembrolizumab"
     private const val SCORE_CETUXIMAB_PLUS_ENCORAFENIB = 4
     private const val SCORE_LONSURF = 2
     private const val SCORE_MONOTHERAPY = 3
@@ -139,15 +139,15 @@ internal object TreatmentDB {
                                          category: TreatmentCategory, score: Int, lines: Set<Int>): Treatment {
         return treatment.copy(
             name = treatment.name + " + " + name,
-            components = components,
-            categories = setOf(category),
+            components = treatment.components + components,
+            categories = treatment.categories + category,
             score = score,
             lines = lines
         )
     }
 
     private fun eligibleIfGenesAreWildType(genes: List<String>): EligibilityFunction {
-        return eligibilityFunction(EligibilityRule.AND, genes.map { eligibilityFunction(EligibilityRule.WILDTYPE_OF_GENE_X, it) })
+        return eligibilityFunction(EligibilityRule.AND, *genes.map { eligibilityFunction(EligibilityRule.WILDTYPE_OF_GENE_X, it) }.toTypedArray())
     }
 
     private fun eligibleIfTreatmentNotInHistory(treatmentName: String): EligibilityFunction {

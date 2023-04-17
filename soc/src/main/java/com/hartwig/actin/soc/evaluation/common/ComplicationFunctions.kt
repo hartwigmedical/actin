@@ -11,7 +11,10 @@ object ComplicationFunctions {
     }
 
     fun findComplicationCategoriesMatchingAnyCategory(record: PatientRecord, categorySearchTerms: List<String>): Set<String> {
-        return findComplicationsMatchingAnyCategory(record, categorySearchTerms)?.flatMap { it.categories() }?.toSet() ?: emptySet()
+        return findComplicationsMatchingAnyCategory(record, categorySearchTerms)
+                ?.flatMap { it.categories() }
+                ?.toSet()
+                ?: emptySet()
     }
 
     fun isYesInputComplication(complication: Complication): Boolean {
