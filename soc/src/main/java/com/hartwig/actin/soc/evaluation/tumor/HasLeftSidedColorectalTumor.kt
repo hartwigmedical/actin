@@ -2,8 +2,13 @@ package com.hartwig.actin.soc.evaluation.tumor
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.doid.DoidConstants
-import java.util.*
+import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.soc.doid.DoidConstants
+import com.hartwig.actin.soc.evaluation.EvaluationFactory
+import com.hartwig.actin.soc.evaluation.EvaluationFunction
+import com.hartwig.actin.util.ApplicationConfig
+
+private const val TUMOR_SUB_LOCATION_SIDE_TEMPLATE = "Tumor sub-location %s is on %s side"
 
 class HasLeftSidedColorectalTumor internal constructor(doidModel: DoidModel) : EvaluationFunction {
     private val doidModel: DoidModel
@@ -12,29 +17,27 @@ class HasLeftSidedColorectalTumor internal constructor(doidModel: DoidModel) : E
         this.doidModel = doidModel
     }
 
-    fun evaluate(record: PatientRecord): Evaluation {
+    override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.clinical().tumor().doids()
         return if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
             EvaluationFactory.undetermined("Unable to identify tumor type", "Tumor type")
         } else if (!DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.COLORECTAL_CANCER_DOID)) {
             EvaluationFactory.fail("Tumor is not colorectal cancer", "Tumor type")
         } else {
-            Optional.ofNullable(record.clinical().tumor().primaryTumorSubLocation())
-                    .filter { subLocation: String -> !subLocation.isEmpty() }
-                    .map { obj: String -> obj.lowercase(Locale.getDefault()) }
-                    .map<Any> { subLocation: String ->
-                        if (LEFT_SUB_LOCATIONS.stream().anyMatch { s: String? -> subLocation.contains(s!!) }) {
-                            return@map EvaluationFactory.pass(String.format("Tumor sub-location %s is on left side", subLocation),
-                                    "Tumor location")
-                        } else if (RIGHT_SUB_LOCATIONS.stream().anyMatch { s: String? -> subLocation.contains(s!!) }) {
-                            return@map EvaluationFactory.fail(String.format("Tumor sub-location %s is on right side", subLocation),
-                                    "Tumor location")
-                        } else {
-                            return@map EvaluationFactory.undetermined("Unknown tumor sub-location $subLocation", "Tumor location")
-                        }
-                    }
-                    .orElse(EvaluationFactory.undetermined("Tumor sub-location not provided", "Tumor location"))
+            val subLocation = record.clinical().tumor().primaryTumorSubLocation()?.lowercase(ApplicationConfig.LOCALE)
+            when {
+                subLocation.isNullOrEmpty() -> EvaluationFactory.undetermined("Tumor sub-location not provided", "Tumor location")
+                stringContainsAnyMember(subLocation, LEFT_SUB_LOCATIONS) ->
+                    EvaluationFactory.pass(String.format(TUMOR_SUB_LOCATION_SIDE_TEMPLATE, subLocation, "left"), "Tumor location")
+                stringContainsAnyMember(subLocation, RIGHT_SUB_LOCATIONS) ->
+                    EvaluationFactory.fail(String.format(TUMOR_SUB_LOCATION_SIDE_TEMPLATE, subLocation, "right"), "Tumor location")
+                else -> EvaluationFactory.undetermined("Unknown tumor sub-location $subLocation", "Tumor location")
+            }
         }
+    }
+
+    private fun stringContainsAnyMember(string: String, collection: Collection<String>): Boolean {
+        return collection.any { string.contains(it) }
     }
 
     companion object {

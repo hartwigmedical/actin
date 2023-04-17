@@ -1,10 +1,14 @@
 package com.hartwig.actin.soc.evaluation.tumor
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.soc.evaluation.EvaluationFactory
+import com.hartwig.actin.soc.evaluation.EvaluationFunction
+import com.hartwig.actin.soc.evaluation.tumor.DoidEvaluationFunctions.isOfAtLeastOneDoidType
 
 class PrimaryTumorLocationBelongsToDoid(doidModel: DoidModel, doidToMatch: String) : EvaluationFunction {
+
     private val doidModel: DoidModel
     private val doidToMatch: String
 
@@ -13,55 +17,30 @@ class PrimaryTumorLocationBelongsToDoid(doidModel: DoidModel, doidToMatch: Strin
         this.doidToMatch = doidToMatch
     }
 
-    fun evaluate(record: PatientRecord): Evaluation {
-        val doidTerm: String = doidModel.resolveTermForDoid(doidToMatch)
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val doidTerm: String? = doidModel.resolveTermForDoid(doidToMatch)
         val tumorDoids = record.clinical().tumor().doids()
-        if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Tumor type of patient is not configured")
-                    .addUndeterminedGeneralMessages("Unknown tumor type")
-                    .build()
+        return when {
+            !DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) ->
+                EvaluationFactory.undetermined("Tumor type of patient is not configured", "Unknown tumor type")
+
+            DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, doidToMatch) ->
+                EvaluationFactory.pass("Patient has $doidTerm", "Tumor type")
+
+            isPotentialAdenoSquamousMatch(tumorDoids!!, doidToMatch) ->
+                EvaluationFactory.warn("Unclear whether tumor type of patient can be considered " + doidTerm
+                            + ", because patient has adenosquamous tumor type", "Tumor type")
+
+            isUndeterminateUnderMainCancerType(tumorDoids, doidToMatch) -> EvaluationFactory.undetermined(
+                    "Could not determine based on configured tumor type if patient may have $doidTerm", "Tumor type")
+
+            else -> EvaluationFactory.fail("Patient has no $doidTerm", "Tumor type")
         }
-        if (DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, doidToMatch)) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient has $doidTerm")
-                    .addPassGeneralMessages("Tumor type")
-                    .build()
-        }
-        if (isPotentialAdenoSquamousMatch(tumorDoids!!, doidToMatch)) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addWarnSpecificMessages("Unclear whether tumor type of patient can be considered " + doidTerm
-                            + ", because patient has adenosquamous tumor type")
-                    .addWarnGeneralMessages("Tumor type")
-                    .build()
-        }
-        return if (isUndeterminateUnderMainCancerType(tumorDoids, doidToMatch)) {
-            EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Could not determine based on configured tumor type if patient may have $doidTerm")
-                    .addUndeterminedGeneralMessages("Tumor type")
-                    .build()
-        } else EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Patient has no $doidTerm")
-                .addFailGeneralMessages("Tumor type")
-                .build()
     }
 
     private fun isPotentialAdenoSquamousMatch(patientDoids: Set<String>, doidToMatch: String): Boolean {
-        val doidTreeToMatch: Set<String> = doidModel.doidWithParents(doidToMatch)
-        val patientDoidTree = expandToFullDoidTree(patientDoids)
-        for (doidEntryToMatch in doidTreeToMatch) {
-            for (mapping in doidModel.adenoSquamousMappingsForDoid(doidEntryToMatch)) {
-                if (patientDoidTree.contains(mapping.adenoSquamousDoid())) {
-                    return true
-                }
-            }
-        }
-        return false
+        val doidTreeToMatch: Set<String> = doidModel.adenoSquamousMappingsForDoid(doidToMatch).map { it.adenoSquamousDoid() }.toSet()
+        return isOfAtLeastOneDoidType(doidModel, patientDoids, doidTreeToMatch)
     }
 
     private fun isUndeterminateUnderMainCancerType(tumorDoids: Set<String>, doidToMatch: String): Boolean {
@@ -77,13 +56,5 @@ class PrimaryTumorLocationBelongsToDoid(doidModel: DoidModel, doidToMatch: Strin
             }
         }
         return false
-    }
-
-    private fun expandToFullDoidTree(doids: Set<String>): Set<String> {
-        val doidTree: MutableSet<String> = Sets.newHashSet()
-        for (doid in doids) {
-            doidTree.addAll(doidModel.doidWithParents(doid))
-        }
-        return doidTree
     }
 }

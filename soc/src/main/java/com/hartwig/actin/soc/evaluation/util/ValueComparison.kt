@@ -1,6 +1,7 @@
 package com.hartwig.actin.soc.evaluation.util
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.util.ApplicationConfig
 import java.util.Locale
 
 object ValueComparison {
@@ -49,6 +50,7 @@ object ValueComparison {
     }
 
     fun stringCaseInsensitivelyMatchesQueryCollection(value: String, collection: Collection<String>): Boolean {
-        return collection.any { termToFind: String -> value.lowercase(Locale.getDefault()).contains(termToFind.lowercase(Locale.getDefault())) }
+        return collection.any { termToFind: String ->
+            value.lowercase(ApplicationConfig.LOCALE).contains(termToFind.lowercase(ApplicationConfig.LOCALE)) }
     }
 }

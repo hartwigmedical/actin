@@ -2,14 +2,12 @@ package com.hartwig.actin.soc.evaluation.treatment
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
 import com.hartwig.actin.soc.evaluation.EvaluationFactory
 import com.hartwig.actin.soc.evaluation.EvaluationFunction
 import com.hartwig.actin.soc.evaluation.util.Format
 import java.time.LocalDate
 import java.util.*
-import java.util.function.Function
 import java.util.function.Predicate
 
 class HasHadSpecificTreatmentSinceDate internal constructor(treatmentName: String, minDate: LocalDate) : EvaluationFunction {
