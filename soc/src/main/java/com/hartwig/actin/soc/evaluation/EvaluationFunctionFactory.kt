@@ -14,6 +14,7 @@ import com.hartwig.actin.treatment.input.composite.CompositeRules
 
 class EvaluationFunctionFactory(functionCreatorMap: Map<EligibilityRule, FunctionCreator>,
                                 functionInputResolver: FunctionInputResolver) {
+
     private val functionCreatorMap: Map<EligibilityRule, FunctionCreator>
     private val functionInputResolver: FunctionInputResolver
 

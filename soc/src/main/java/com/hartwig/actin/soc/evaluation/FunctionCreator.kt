@@ -3,6 +3,7 @@ package com.hartwig.actin.soc.evaluation
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction
 
 interface FunctionCreator {
+
     fun create(eligibilityFunction: EligibilityFunction): EvaluationFunction
 
     companion object {

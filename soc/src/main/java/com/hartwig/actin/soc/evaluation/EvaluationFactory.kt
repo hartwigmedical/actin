@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation
 
 object EvaluationFactory {
+
     fun recoverable(): ImmutableEvaluation.Builder {
         return ImmutableEvaluation.builder().recoverable(true)
     }

@@ -6,6 +6,7 @@ import com.hartwig.actin.treatment.datamodel.EligibilityRule
 import com.hartwig.actin.treatment.input.FunctionInputResolver
 
 abstract class RuleMapper(private val resources: RuleMappingResources) {
+
     protected fun referenceDateProvider(): ReferenceDateProvider {
         return resources.referenceDateProvider
     }

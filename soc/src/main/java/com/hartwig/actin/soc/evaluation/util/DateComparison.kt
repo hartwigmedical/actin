@@ -6,19 +6,12 @@ import java.time.temporal.ChronoUnit
 
 object DateComparison {
     fun isAfterDate(minDate: LocalDate, year: Int?, month: Int?): Boolean? {
-        if (year == null) {
-            return null
-        } else if (year > minDate.year) {
-            return true
-        } else if (year < minDate.year) {
-            return false
-        }
-
-        // Year is equal, check month
-        return if (month == null || month == minDate.monthValue) {
-            null
-        } else {
-            month > minDate.monthValue
+        return when {
+            year == null -> null
+            year > minDate.year -> true
+            year == minDate.year ->
+                if (month == null || month == minDate.monthValue) null else month > minDate.monthValue
+            else -> false
         }
     }
 

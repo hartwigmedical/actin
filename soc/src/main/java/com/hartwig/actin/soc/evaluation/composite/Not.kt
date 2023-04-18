@@ -7,6 +7,7 @@ import com.hartwig.actin.algo.datamodel.ImmutableEvaluation
 import com.hartwig.actin.soc.evaluation.EvaluationFunction
 
 class Not(function: EvaluationFunction) : EvaluationFunction {
+
     private val function: EvaluationFunction
 
     init {
