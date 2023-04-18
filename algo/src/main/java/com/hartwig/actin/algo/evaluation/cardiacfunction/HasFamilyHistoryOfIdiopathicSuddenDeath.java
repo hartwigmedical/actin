@@ -19,7 +19,7 @@ public class HasFamilyHistoryOfIdiopathicSuddenDeath implements EvaluationFuncti
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Currently undetermined if patient has family history of idiopathic sudden death")
-                .addUndeterminedGeneralMessages("Undetermined family history")
+                .addUndeterminedGeneralMessages("Undetermined family history of idopathic sudden death")
                 .build();
     }
 }
