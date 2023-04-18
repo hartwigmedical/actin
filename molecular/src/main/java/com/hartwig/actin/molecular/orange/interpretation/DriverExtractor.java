@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
+import java.util.Collections;
 import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -79,7 +80,7 @@ class DriverExtractor {
         Set<Fusion> fusions = fusionExtractor.extract(record.linx());
         LOGGER.info(" Extracted {} fusions of which {} reportable", fusions.size(), reportableCount(fusions));
 
-        Set<Virus> viruses = virusExtractor.extract(record.virusInterpreter());
+        Set<Virus> viruses = record.virusInterpreter().map(virusExtractor::extract).orElse(Collections.emptySet());
         LOGGER.info(" Extracted {} viruses of which {} reportable", viruses.size(), reportableCount(viruses));
 
         return ImmutableMolecularDrivers.builder()

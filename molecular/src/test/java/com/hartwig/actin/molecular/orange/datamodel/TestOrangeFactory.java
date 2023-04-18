@@ -1,8 +1,10 @@
 package com.hartwig.actin.molecular.orange.datamodel;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import com.hartwig.actin.TestDataFactory;
+import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordStatus;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ImmutableChordRecord;
@@ -53,14 +55,15 @@ public final class TestOrangeFactory {
         return ImmutableOrangeRecord.builder()
                 .sampleId(TestDataFactory.TEST_SAMPLE)
                 .experimentDate(LocalDate.of(2021, 5, 6))
+                .experimentType(ExperimentType.WGS)
                 .refGenomeVersion(OrangeRefGenomeVersion.V37)
                 .purple(createMinimalTestPurpleRecord())
                 .linx(ImmutableLinxRecord.builder().build())
-                .peach(ImmutablePeachRecord.builder().build())
-                .cuppa(ImmutableCuppaRecord.builder().build())
-                .virusInterpreter(ImmutableVirusInterpreterRecord.builder().build())
+                .peach(Optional.empty())
+                .cuppa(Optional.empty())
+                .virusInterpreter(Optional.empty())
                 .lilac(createMinimalTestLilacRecord())
-                .chord(createMinimalTestChordRecord())
+                .chord(Optional.empty())
                 .build();
     }
 
@@ -78,21 +81,16 @@ public final class TestOrangeFactory {
     }
 
     @NotNull
-    private static ChordRecord createMinimalTestChordRecord() {
-        return ImmutableChordRecord.builder().hrStatus(ChordStatus.UNKNOWN).build();
-    }
-
-    @NotNull
     public static OrangeRecord createProperTestOrangeRecord() {
         return ImmutableOrangeRecord.builder()
                 .from(createMinimalTestOrangeRecord())
                 .purple(createTestPurpleRecord())
                 .linx(createTestLinxRecord())
-                .peach(createTestPeachRecord())
-                .cuppa(createTestCuppaRecord())
-                .virusInterpreter(createTestVirusInterpreterRecord())
+                .peach(Optional.of(createTestPeachRecord()))
+                .cuppa(Optional.of(createTestCuppaRecord()))
+                .virusInterpreter(Optional.of(createTestVirusInterpreterRecord()))
                 .lilac(createTestLilacRecord())
-                .chord(createTestChordRecord())
+                .chord(Optional.of(createTestChordRecord()))
                 .build();
     }
 

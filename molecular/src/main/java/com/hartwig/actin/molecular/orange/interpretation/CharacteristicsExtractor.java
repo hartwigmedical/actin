@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
-import java.util.Set;
+import java.util.Comparator;
 
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
@@ -32,15 +32,15 @@ class CharacteristicsExtractor {
 
     @NotNull
     public MolecularCharacteristics extract(@NotNull OrangeRecord record) {
-        CuppaPrediction best = findBestCuppaPrediction(record.cuppa().predictions());
-        PredictedTumorOrigin predictedTumorOrigin = best != null
-                ? ImmutablePredictedTumorOrigin.builder().tumorType(best.cancerType()).likelihood(best.likelihood()).build()
-                : null;
+        PredictedTumorOrigin predictedTumorOrigin = record.cuppa()
+                .flatMap(c -> c.predictions().stream().max(Comparator.comparing(CuppaPrediction::likelihood)))
+                .map(best -> ImmutablePredictedTumorOrigin.builder().tumorType(best.cancerType()).likelihood(best.likelihood()).build())
+                .orElse(null);
 
         PurpleRecord purple = record.purple();
 
         Boolean isMicrosatelliteUnstable = isMSI(purple.characteristics().microsatelliteStatus());
-        Boolean isHomologousRepairDeficient = isHRD(record.chord().hrStatus());
+        Boolean isHomologousRepairDeficient = record.chord().map(c -> isHRD(c.hrStatus())).orElse(null);
         Boolean hasHighTumorMutationalBurden = hasHighStatus(purple.characteristics().tumorMutationalBurdenStatus());
         Boolean hasHighTumorMutationalLoad = hasHighStatus(purple.characteristics().tumorMutationalLoadStatus());
 
@@ -63,17 +63,6 @@ class CharacteristicsExtractor {
                 .tumorMutationalLoadEvidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForTumorMutationalLoadStatus(
                         hasHighTumorMutationalLoad)))
                 .build();
-    }
-
-    @Nullable
-    private static CuppaPrediction findBestCuppaPrediction(@NotNull Set<CuppaPrediction> predictions) {
-        CuppaPrediction best = null;
-        for (CuppaPrediction prediction : predictions) {
-            if (best == null || prediction.likelihood() > best.likelihood()) {
-                best = prediction;
-            }
-        }
-        return best;
     }
 
     @Nullable

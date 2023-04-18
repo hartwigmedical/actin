@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.orange.interpretation;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Optional;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -45,7 +46,7 @@ public class PharmacoExtractionTest {
         OrangeRecord base = TestOrangeFactory.createMinimalTestOrangeRecord();
         return ImmutableOrangeRecord.builder()
                 .from(base)
-                .peach(ImmutablePeachRecord.builder().from(base.peach()).entries(Sets.newHashSet(peachEntries)).build())
+                .peach(Optional.of(ImmutablePeachRecord.builder().entries(Sets.newHashSet(peachEntries)).build()))
                 .build();
     }
 

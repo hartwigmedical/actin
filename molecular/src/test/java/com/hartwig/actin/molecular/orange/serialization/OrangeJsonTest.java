@@ -1,9 +1,12 @@
 package com.hartwig.actin.molecular.orange.serialization;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.groups.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -11,6 +14,7 @@ import java.time.LocalDate;
 
 import com.google.common.io.Resources;
 import com.hartwig.actin.TestDataFactory;
+import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRefGenomeVersion;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
@@ -25,10 +29,8 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.LinxCodingType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionDriverLikelihood;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionType;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRegionType;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxStructuralVariant;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.PeachRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
@@ -57,7 +59,9 @@ public class OrangeJsonTest {
     private static final String MINIMALLY_EMPTY_ORANGE_JSON = Resources.getResource("serialization/minimally.empty.orange.json").getPath();
     private static final String MINIMALLY_POPULATED_ORANGE_JSON =
             Resources.getResource("serialization/minimally.populated.orange.json").getPath();
-    private static final String REAL_ORANGE_JSON = Resources.getResource("serialization/real.orange.json").getPath();
+    private static final String MINIMALLY_POPULATED_ORANGE_JSON_WITH_GERMLINE =
+            Resources.getResource("serialization/minimally.populated.orange.germline.json").getPath();
+    private static final String REAL_ORANGE_JSON = Resources.getResource("serialization/real.v2.3.orange.json").getPath();
 
     private static final double EPSILON = 1.0E-2;
 
@@ -77,15 +81,21 @@ public class OrangeJsonTest {
 
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
         assertEquals(LocalDate.of(2022, 1, 20), record.experimentDate());
+        assertEquals(ExperimentType.WGS, record.experimentType());
         assertEquals(OrangeRefGenomeVersion.V37, record.refGenomeVersion());
 
         assertPurple(record.purple());
         assertLinx(record.linx());
-        assertPeach(record.peach());
-        assertCuppa(record.cuppa());
-        assertVirusInterpreter(record.virusInterpreter());
+        assertPeach(record.peach().orElseThrow());
+        assertCuppa(record.cuppa().orElseThrow());
+        assertVirusInterpreter(record.virusInterpreter().orElseThrow());
         assertLilac(record.lilac());
-        assertChord(record.chord());
+        assertChord(record.chord().orElseThrow());
+    }
+
+    @Test
+    public void shouldThrowWhenOrangeRecordJsonContainsLinxGermlineFeatures() {
+        assertThrows(RuntimeException.class, () -> OrangeJson.read(MINIMALLY_POPULATED_ORANGE_JSON_WITH_GERMLINE));
     }
 
     private static void assertPurple(@NotNull PurpleRecord purple) {
@@ -199,19 +209,20 @@ public class OrangeJsonTest {
     }
 
     private static void assertLinx(@NotNull LinxRecord linx) {
-        assertEquals(1, linx.structuralVariants().size());
-        LinxStructuralVariant structuralVariant = linx.structuralVariants().iterator().next();
-        assertEquals(1, structuralVariant.svId());
-        assertEquals(2, structuralVariant.clusterId());
+        assertThat(linx.structuralVariants()).hasSize(1)
+                .extracting("svId", "clusterId")
+                .contains(tuple(1, 2));
 
-        assertEquals(1, linx.homozygousDisruptions().size());
-        LinxHomozygousDisruption homozygousDisruption = linx.homozygousDisruptions().iterator().next();
-        assertEquals("NF1", homozygousDisruption.gene());
+        assertThat(linx.homozygousDisruptions()).hasSize(1)
+                .extracting("gene")
+                .contains("NF1");
+        assertThat(linx.breakends()).hasSize(1)
+                .extracting("svId", "gene", "junctionCopyNumber", "undisruptedCopyNumber")
+                .contains(tuple(2, "NF1", 1.1, 1.0));
 
-        assertEquals(1, linx.breakends().size());
-        LinxBreakend breakend = linx.breakends().iterator().next();
+        LinxBreakend breakend = linx.breakends().stream().filter(b -> b.svId() == 2).findAny().orElseThrow();
         assertFalse(breakend.reported());
-        assertEquals(1, breakend.svId());
+        assertEquals(2, breakend.svId());
         assertEquals("NF1", breakend.gene());
         assertEquals(LinxBreakendType.DUP, breakend.type());
         assertEquals(1.1, breakend.junctionCopyNumber(), EPSILON);

@@ -19,6 +19,7 @@ import com.hartwig.serve.datamodel.fusion.KnownFusion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 class FusionExtractor {
 
@@ -99,7 +100,7 @@ class FusionExtractor {
         }
     }
 
-    @NotNull
+    @Nullable
     @VisibleForTesting
     static DriverLikelihood determineDriverLikelihood(@NotNull LinxFusion fusion) {
         switch (fusion.driverLikelihood()) {
