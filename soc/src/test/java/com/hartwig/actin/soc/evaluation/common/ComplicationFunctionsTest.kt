@@ -7,7 +7,8 @@ import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication
 import com.hartwig.actin.soc.evaluation.general.WHOFunctions.COMPLICATION_CATEGORIES_AFFECTING_WHO_STATUS
-import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ComplicationFunctionsTest {
@@ -15,9 +16,9 @@ class ComplicationFunctionsTest {
     fun shouldReturnEmptyForCategorySearchWhenComplicationsAreNull() {
         val record: PatientRecord = TestDataFactory.createMinimalTestPatientRecord()
         val filteredComplicationNames = ComplicationFunctions.findComplicationNamesMatchingAnyCategory(record, COMPLICATION_CATEGORIES_AFFECTING_WHO_STATUS)
-        Assert.assertTrue(filteredComplicationNames.isEmpty())
+        assertTrue(filteredComplicationNames.isEmpty())
         val filteredComplicationCategories = ComplicationFunctions.findComplicationCategoriesMatchingAnyCategory(record, COMPLICATION_CATEGORIES_AFFECTING_WHO_STATUS)
-        Assert.assertTrue(filteredComplicationCategories.isEmpty())
+        assertTrue(filteredComplicationCategories.isEmpty())
     }
 
     @Test
@@ -38,13 +39,13 @@ class ComplicationFunctionsTest {
                                 .withHasComplications(true)))
 
         val filteredComplicationNames = ComplicationFunctions.findComplicationNamesMatchingAnyCategory(record, COMPLICATION_CATEGORIES_AFFECTING_WHO_STATUS)
-        Assert.assertEquals(2, filteredComplicationNames.size.toLong())
-        Assert.assertTrue(filteredComplicationNames.contains("first matching"))
-        Assert.assertTrue(filteredComplicationNames.contains("second matching"))
+        assertEquals(2, filteredComplicationNames.size.toLong())
+        assertTrue(filteredComplicationNames.contains("first matching"))
+        assertTrue(filteredComplicationNames.contains("second matching"))
         val filteredComplicationCategories = ComplicationFunctions.findComplicationCategoriesMatchingAnyCategory(record, COMPLICATION_CATEGORIES_AFFECTING_WHO_STATUS)
-        Assert.assertEquals(3, filteredComplicationCategories.size.toLong())
-        Assert.assertTrue(filteredComplicationCategories.contains("the ascites category"))
-        Assert.assertTrue(filteredComplicationCategories.contains("Pleural Effusions"))
-        Assert.assertTrue(filteredComplicationCategories.contains("chronic pain issues"))
+        assertEquals(3, filteredComplicationCategories.size.toLong())
+        assertTrue(filteredComplicationCategories.contains("the ascites category"))
+        assertTrue(filteredComplicationCategories.contains("Pleural Effusions"))
+        assertTrue(filteredComplicationCategories.contains("chronic pain issues"))
     }
 }

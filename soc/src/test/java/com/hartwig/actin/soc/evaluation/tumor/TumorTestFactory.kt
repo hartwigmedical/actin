@@ -4,11 +4,19 @@ import com.google.common.collect.Sets
 import com.hartwig.actin.ImmutablePatientRecord
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestDataFactory
-import com.hartwig.actin.clinical.datamodel.*
+import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
+import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
+import com.hartwig.actin.clinical.datamodel.TumorDetails
+import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics
-import com.hartwig.actin.molecular.datamodel.driver.*
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.driver.GeneRole
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers
+import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 
 internal object TumorTestFactory {
     fun builder(): ImmutableTumorDetails.Builder {
@@ -19,7 +27,7 @@ internal object TumorTestFactory {
         return withDoids(Sets.newHashSet(*doids))
     }
 
-    fun withDoidsAndAmplication(doids: Set<String?>, amplifiedGene: String): PatientRecord {
+    fun withDoidsAndAmplication(doids: Set<String>, amplifiedGene: String): PatientRecord {
         val base = TestDataFactory.createMinimalTestPatientRecord()
         return ImmutablePatientRecord.builder()
                 .from(base)
@@ -111,7 +119,7 @@ internal object TumorTestFactory {
         return withTumorDetails(builder().hasBoneLesions(hasBoneLesions).hasLiverLesions(hasLiverLesions).build())
     }
 
-    fun withBoneAndOtherLesions(hasBoneLesions: Boolean?, otherLesions: List<String?>): PatientRecord {
+    fun withBoneAndOtherLesions(hasBoneLesions: Boolean?, otherLesions: List<String>): PatientRecord {
         return withTumorDetails(builder().hasBoneLesions(hasBoneLesions).otherLesions(otherLesions).build())
     }
 
@@ -127,7 +135,7 @@ internal object TumorTestFactory {
         return withTumorDetails(builder().hasLymphNodeLesions(hasLymphNodeLesions).build())
     }
 
-    fun withOtherLesions(otherLesions: List<String?>?): PatientRecord {
+    fun withOtherLesions(otherLesions: List<String>?): PatientRecord {
         return withTumorDetails(builder().otherLesions(otherLesions).build())
     }
 
@@ -141,7 +149,7 @@ internal object TumorTestFactory {
                 .build()
     }
 
-    fun withMolecularExperimentType(type: ExperimentType?): PatientRecord {
+    fun withMolecularExperimentType(type: ExperimentType): PatientRecord {
         val base = TestDataFactory.createMinimalTestPatientRecord()
         return ImmutablePatientRecord.builder()
                 .from(base)

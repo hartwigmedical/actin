@@ -20,6 +20,6 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasLeftSidedColorectalTumorCreator(): FunctionCreator {
-        return FunctionCreator { function -> HasLeftSidedColorectalTumor(doidModel()) }
+        return FunctionCreator { HasLeftSidedColorectalTumor(doidModel()) }
     }
 }

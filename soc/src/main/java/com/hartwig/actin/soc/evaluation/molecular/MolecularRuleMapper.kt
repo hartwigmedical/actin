@@ -28,5 +28,5 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private val isMicrosatelliteUnstableCreator: FunctionCreator
-        get() = FunctionCreator { function -> IsMicrosatelliteUnstable() }
+        get() = FunctionCreator { IsMicrosatelliteUnstable() }
 }
