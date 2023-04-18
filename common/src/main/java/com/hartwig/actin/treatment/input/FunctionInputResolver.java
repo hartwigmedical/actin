@@ -218,6 +218,7 @@ public class FunctionInputResolver {
                 }
             }
         } catch (Exception exception) {
+            LOGGER.warn(exception.getMessage());
             return false;
         }
     }

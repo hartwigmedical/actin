@@ -1,8 +1,11 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
+import static com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.treatmentResultedInPDOption;
+
+import java.util.Optional;
+
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
@@ -11,8 +14,6 @@ import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import org.jetbrains.annotations.NotNull;
 
 public class HasHadPDFollowingTreatmentWithCategory implements EvaluationFunction {
-
-    static final String STOP_REASON_PD = "PD";
 
     @NotNull
     private final TreatmentCategory category;
@@ -25,19 +26,16 @@ public class HasHadPDFollowingTreatmentWithCategory implements EvaluationFunctio
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
         boolean hasHadPDFollowingTreatmentWithCategory = false;
-        boolean hasHadTreatmentWithUnclearStopReason = false;
+        boolean hasHadTreatmentWithUnclearPDStatus = false;
         boolean hasHadTrial = false;
 
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
             if (treatment.categories().contains(category)) {
-                String stopReason = treatment.stopReason();
-
-                if (stopReason != null) {
-                    if (stopReason.equalsIgnoreCase(STOP_REASON_PD)) {
-                        hasHadPDFollowingTreatmentWithCategory = true;
-                    }
-                } else {
-                    hasHadTreatmentWithUnclearStopReason = true;
+                Optional<Boolean> treatmentResultedInPDOption = treatmentResultedInPDOption(treatment);
+                if (treatmentResultedInPDOption.orElse(false)) {
+                    hasHadPDFollowingTreatmentWithCategory = true;
+                } else if (treatmentResultedInPDOption.isEmpty()) {
+                    hasHadTreatmentWithUnclearPDStatus = true;
                 }
             }
 
@@ -47,30 +45,18 @@ public class HasHadPDFollowingTreatmentWithCategory implements EvaluationFunctio
         }
 
         if (hasHadPDFollowingTreatmentWithCategory) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient has had progressive disease following treatment with category " + category.display())
-                    .addPassGeneralMessages(category.display() + " treatment with PD")
-                    .build();
-        } else if (hasHadTreatmentWithUnclearStopReason) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages(
-                            "Patient has had treatment with category " + category.display() + " but stop reason undetermined")
-                    .addUndeterminedGeneralMessages("Undetermined " + category.display() + " treatment with PD")
-                    .build();
+            return EvaluationFactory.pass("Patient has had progressive disease following treatment with category " + category.display(),
+                    category.display() + " treatment with PD");
+        } else if (hasHadTreatmentWithUnclearPDStatus) {
+            return EvaluationFactory.undetermined(
+                    "Patient has had treatment with category " + category.display() + " but unclear PD status",
+                    "Had " + category.display() + " treatment with unclear PD status");
         } else if (hasHadTrial) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Patient has had trial with unclear treatment category")
-                    .addUndeterminedGeneralMessages("Trial treatment")
-                    .build();
+            return EvaluationFactory.undetermined("Patient has had trial with unclear treatment category", "Trial treatment");
+        } else {
+            return EvaluationFactory.fail("Patient has no progressive disease following treatment with category " + category.display(),
+                    "No " + category.display() + " treatment with PD");
         }
 
-        return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Patient has no progressive disease following treatment with category " + category.display())
-                .addFailGeneralMessages("No " + category.display() + " treatment with PD")
-                .build();
     }
 }

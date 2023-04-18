@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -46,7 +47,7 @@ final class SystemicTreatmentAnalyser {
             if (systemic.size() > 1) {
                 systemic.sort(new PriorTumorTreatmentDescendingDateComparator());
                 for (int i = 1; i < systemic.size(); i++) {
-                    if (isInterrupted(systemic.get(i), systemic.get(i-1), treatments)) {
+                    if (isInterrupted(systemic.get(i), systemic.get(i - 1), treatments)) {
                         systemicCount++;
                     }
                 }
@@ -56,18 +57,30 @@ final class SystemicTreatmentAnalyser {
         return systemicCount;
     }
 
-    @Nullable
-    public static String stopReasonOnLastSystemicTreatment(@NotNull List<PriorTumorTreatment> priorTumorTreatments) {
-        PriorTumorTreatment last = null;
-        for (PriorTumorTreatment treatment : priorTumorTreatments) {
-            if (treatment.isSystemic()) {
-                if (last == null || (last.startYear() == null && treatment.startYear() != null) || isAfter(treatment, last)) {
-                    last = treatment;
-                }
-            }
-        }
+    public static Optional<PriorTumorTreatment> lastSystemicTreatment(@NotNull List<PriorTumorTreatment> priorTumorTreatments) {
+        return priorTumorTreatments.stream()
+                .filter(PriorTumorTreatment::isSystemic)
+                .max(SystemicTreatmentAnalyser::compareTreatmentsByStartDate);
+    }
 
-        return last != null ? last.stopReason() : null;
+    private static int compareTreatmentsByStartDate(@NotNull PriorTumorTreatment treatment1, @NotNull PriorTumorTreatment treatment2) {
+        int yearComparison = compareNullableIntegers(treatment1.startYear(), treatment2.startYear());
+        return yearComparison != 0 ? yearComparison : compareNullableIntegers(treatment1.startMonth(), treatment2.startMonth());
+    }
+
+    private static int compareNullableIntegers(@Nullable Integer first, @Nullable Integer second) {
+        // Nulls are considered less than non-nulls
+        if (first != null) {
+            if (second != null) {
+                return Integer.compare(first, second);
+            } else {
+                return 1;
+            }
+        } else if (second != null) {
+            return -1;
+        } else {
+            return 0;
+        }
     }
 
     private static boolean isInterrupted(@NotNull PriorTumorTreatment mostRecent, @NotNull PriorTumorTreatment leastRecent,

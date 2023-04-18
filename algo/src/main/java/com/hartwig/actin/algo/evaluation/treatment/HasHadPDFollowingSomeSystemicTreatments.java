@@ -1,16 +1,16 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
+import java.util.List;
+
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 
 import org.jetbrains.annotations.NotNull;
 
 public class HasHadPDFollowingSomeSystemicTreatments implements EvaluationFunction {
-
-    static final String STOP_REASON_PD = "PD";
 
     private final int minSystemicTreatments;
     private final boolean mustBeRadiological;
@@ -23,48 +23,40 @@ public class HasHadPDFollowingSomeSystemicTreatments implements EvaluationFuncti
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        int minSystemicCount = SystemicTreatmentAnalyser.minSystemicTreatments(record.clinical().priorTumorTreatments());
-        int maxSystemicCount = SystemicTreatmentAnalyser.maxSystemicTreatments(record.clinical().priorTumorTreatments());
+        List<PriorTumorTreatment> priorTumorTreatments = record.clinical().priorTumorTreatments();
+        int minSystemicCount = SystemicTreatmentAnalyser.minSystemicTreatments(priorTumorTreatments);
+        int maxSystemicCount = SystemicTreatmentAnalyser.maxSystemicTreatments(priorTumorTreatments);
 
         if (minSystemicCount >= minSystemicTreatments) {
-            String stopReason = SystemicTreatmentAnalyser.stopReasonOnLastSystemicTreatment(record.clinical().priorTumorTreatments());
-            if (stopReason != null && stopReason.equals(STOP_REASON_PD)) {
-                if (!mustBeRadiological) {
-                    return EvaluationFactory.unrecoverable()
-                            .result(EvaluationResult.PASS)
-                            .addPassSpecificMessages(
-                                    "Patient received at least " + minSystemicTreatments + " systemic treatments with final stop reason PD")
-                            .addPassGeneralMessages("Nr of systemic treatments")
-                            .build();
-                } else {
-                    return EvaluationFactory.unrecoverable()
-                            .result(EvaluationResult.UNDETERMINED)
-                            .addUndeterminedSpecificMessages("Patient received at least " + minSystemicTreatments
-                                    + " systemic treatments with final stop reason PD, undetermined if there is now radiological progression")
-                            .addUndeterminedGeneralMessages("Radiological progression after treatments")
-                            .build();
-                }
-            } else {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.UNDETERMINED)
-                        .addUndeterminedSpecificMessages("Patient received at least " + minSystemicTreatments
-                                + " systemic treatments but undetermined final stop reason")
-                        .addUndeterminedGeneralMessages("Nr of systemic treatments with PD")
-                        .build();
-            }
+            return SystemicTreatmentAnalyser.lastSystemicTreatment(priorTumorTreatments)
+                    .flatMap(ProgressiveDiseaseFunctions::treatmentResultedInPDOption)
+                    .map(treatmentResultedInPD -> {
+                        if (treatmentResultedInPD) {
+                            if (!mustBeRadiological) {
+                                return EvaluationFactory.pass(
+                                        "Patient received at least " + minSystemicTreatments + " systemic treatments ending with PD",
+                                        "Nr of systemic treatments");
+                            } else {
+                                return EvaluationFactory.undetermined("Patient received at least " + minSystemicTreatments
+                                                + " systemic treatments ending with PD, undetermined if there is now radiological progression",
+                                        "Radiological progression after treatments");
+                            }
+                        } else {
+                            return EvaluationFactory.fail(
+                                    "Patient received at least " + minSystemicTreatments + " systemic treatments with no PD",
+                                    "No PD after systemic treatment");
+                        }
+                    })
+                    .orElse(EvaluationFactory.undetermined(
+                            "Patient received at least " + minSystemicTreatments + " systemic treatments but unclear PD status",
+                            "Nr of systemic treatments with PD"));
         } else if (maxSystemicCount >= minSystemicTreatments) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages(
-                            "Undetermined if patient received at least " + minSystemicTreatments + " systemic treatments")
-                    .addUndeterminedGeneralMessages("Nr of systemic treatments with PD")
-                    .build();
+            return EvaluationFactory.undetermined(
+                    "Undetermined if patient received at least " + minSystemicTreatments + " systemic treatments",
+                    "Nr of systemic treatments with PD");
         }
 
-        return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Patient did not receive at least " + minSystemicTreatments + " systemic treatments")
-                .addFailGeneralMessages("Nr of systemic treatments with PD")
-                .build();
+        return EvaluationFactory.fail("Patient did not receive at least " + minSystemicTreatments + " systemic treatments",
+                "Nr of systemic treatments with PD");
     }
 }

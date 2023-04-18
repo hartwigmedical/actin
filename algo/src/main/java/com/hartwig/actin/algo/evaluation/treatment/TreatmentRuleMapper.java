@@ -10,9 +10,11 @@ import com.hartwig.actin.algo.evaluation.RuleMapper;
 import com.hartwig.actin.algo.evaluation.RuleMappingResources;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.input.datamodel.TreatmentInput;
+import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
 import com.hartwig.actin.treatment.input.single.OneTreatmentOneInteger;
 import com.hartwig.actin.treatment.input.single.OneTypedTreatmentManyStrings;
 import com.hartwig.actin.treatment.input.single.OneTypedTreatmentManyStringsOneInteger;
+import com.hartwig.actin.treatment.input.single.TwoIntegersManyStrings;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -140,7 +142,11 @@ public class TreatmentRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator hasHadSpecificTreatmentWithinWeeksCreator() {
-        return function -> new HasHadSpecificTreatmentWithinWeeks();
+        return function -> {
+            OneIntegerOneString input = functionInputResolver().createOneStringOneIntegerInput(function);
+            LocalDate minDate = referenceDateProvider().date().minusWeeks(input.integer());
+            return new HasHadSpecificTreatmentSinceDate(input.string(), minDate);
+        };
     }
 
     @NotNull
@@ -150,7 +156,10 @@ public class TreatmentRuleMapper extends RuleMapper {
 
     @NotNull
     private FunctionCreator hasHadCombinedTreatmentNamesWithCyclesCreator() {
-        return function -> new HasHadCombinedTreatmentNamesWithCycles();
+        return function -> {
+            TwoIntegersManyStrings input = functionInputResolver().createManyStringsTwoIntegersInput(function);
+            return new HasHadCombinedTreatmentNamesWithCycles(input.strings(), input.integer1(), input.integer2());
+        };
     }
 
     @NotNull

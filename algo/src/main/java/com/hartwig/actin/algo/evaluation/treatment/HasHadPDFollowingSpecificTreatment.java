@@ -1,5 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment;
 
+import static com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.treatmentResultedInPDOption;
+
+import java.util.Optional;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -18,8 +21,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class HasHadPDFollowingSpecificTreatment implements EvaluationFunction {
 
-    static final String STOP_REASON_PD = "PD";
-
     @NotNull
     private final Set<String> names;
     @Nullable
@@ -35,7 +36,7 @@ public class HasHadPDFollowingSpecificTreatment implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> treatmentsWithPD = Sets.newHashSet();
         Set<String> treatmentsWithExactType = Sets.newHashSet();
-        boolean hasHadTreatmentWithUnclearStopReason = false;
+        boolean hasHadTreatmentWithUnclearPDStatus = false;
         boolean hasHadTreatmentWithWarnType = false;
 
         for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
@@ -45,16 +46,14 @@ public class HasHadPDFollowingSpecificTreatment implements EvaluationFunction {
                 hasHadTreatmentWithWarnType = true;
             }
 
-            String stopReason = treatment.stopReason();
             for (String name : names) {
                 if (treatment.name().toLowerCase().contains(name.toLowerCase())) {
                     treatmentsWithExactType.add(treatment.name());
-                    if (stopReason != null) {
-                        if (stopReason.equalsIgnoreCase(STOP_REASON_PD)) {
-                            treatmentsWithPD.add(treatment.name());
-                        }
-                    } else {
-                        hasHadTreatmentWithUnclearStopReason = true;
+                    Optional<Boolean> treatmentResultedInPDOption = treatmentResultedInPDOption(treatment);
+                    if (treatmentResultedInPDOption.orElse(false)) {
+                        treatmentsWithPD.add(treatment.name());
+                    } else if (treatmentResultedInPDOption.isEmpty()) {
+                        hasHadTreatmentWithUnclearPDStatus = true;
                     }
                 }
             }
@@ -63,7 +62,7 @@ public class HasHadPDFollowingSpecificTreatment implements EvaluationFunction {
         EvaluationResult result;
         if (!treatmentsWithPD.isEmpty()) {
             result = EvaluationResult.PASS;
-        } else if (hasHadTreatmentWithUnclearStopReason || hasHadTreatmentWithWarnType) {
+        } else if (hasHadTreatmentWithUnclearPDStatus || hasHadTreatmentWithWarnType) {
             result = EvaluationResult.UNDETERMINED;
         } else {
             result = EvaluationResult.FAIL;
@@ -72,8 +71,7 @@ public class HasHadPDFollowingSpecificTreatment implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             if (!treatmentsWithExactType.isEmpty()) {
-                builder.addFailSpecificMessages(
-                        "Patient has received " + Format.concat(treatmentsWithExactType) + " treatment, but stop reason was not PD");
+                builder.addFailSpecificMessages("Patient has received " + Format.concat(treatmentsWithExactType) + " treatment, but no PD");
             } else {
                 builder.addFailSpecificMessages("Patient has not received specific " + Format.concat(names) + " treatment");
             }
@@ -83,13 +81,12 @@ public class HasHadPDFollowingSpecificTreatment implements EvaluationFunction {
                 builder.addUndeterminedSpecificMessages(
                         "Undetermined whether patient has received specific " + Format.concat(names) + " treatment");
             } else {
-                builder.addUndeterminedSpecificMessages("Patient has received " + Format.concat(treatmentsWithExactType)
-                        + " treatment but undetermined if stop reason is PD");
+                builder.addUndeterminedSpecificMessages(
+                        "Patient has received " + Format.concat(treatmentsWithExactType) + " treatment but undetermined if PD occurred");
             }
-            builder.addUndeterminedGeneralMessages("Undetermined treatment with PD");
+            builder.addUndeterminedGeneralMessages("Undetermined treatment or PD");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages(
-                    "Patient has received specific " + Format.concat(treatmentsWithPD) + " treatment with stop reason PD");
+            builder.addPassSpecificMessages("Patient has received specific " + Format.concat(treatmentsWithPD) + " treatment with PD");
             builder.addPassGeneralMessages("Treatment with PD");
         }
 
