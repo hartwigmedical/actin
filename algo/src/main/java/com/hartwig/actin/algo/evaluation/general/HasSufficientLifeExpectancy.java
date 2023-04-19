@@ -19,7 +19,7 @@ public class HasSufficientLifeExpectancy implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.NOT_EVALUATED)
                 .addPassSpecificMessages("Currently assumed that requested life expectancy will be met")
-                .addPassGeneralMessages("Life expectancy assumed")
+                .addPassGeneralMessages("Sufficient life expectancy is assumed")
                 .build();
     }
 }

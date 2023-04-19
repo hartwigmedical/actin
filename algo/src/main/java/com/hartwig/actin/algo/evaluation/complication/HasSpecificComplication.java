@@ -42,17 +42,22 @@ public class HasSpecificComplication implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has complication " + Format.concat(complications))
-                    .addPassGeneralMessages(Format.concat(complications))
+                    .addPassGeneralMessages("Present " + Format.concat(complications))
                     .build();
         }
 
         if (hasComplicationsWithoutNames(record)) {
-            return undetermined();
+            return EvaluationFactory.recoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages("Patient has complications but type of complications unknown. Undetermined if belonging to " + termToFind)
+                    .addUndeterminedGeneralMessages("Complications present, unknown if belonging to " + termToFind)
+                    .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient does not have complication " + termToFind)
+                .addFailGeneralMessages("Complication " + termToFind + " not present")
                 .build();
     }
 
@@ -60,8 +65,8 @@ public class HasSpecificComplication implements EvaluationFunction {
     private static ImmutableEvaluation undetermined() {
         return EvaluationFactory.recoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Patient has complications but undetermined which type of complications")
-                .addUndeterminedGeneralMessages("Complications present, but unknown type")
+                .addUndeterminedSpecificMessages("Undetermined whether patient has cancer-related complications")
+                .addUndeterminedGeneralMessages("Undetermined complication status")
                 .build();
     }
 

@@ -18,8 +18,8 @@ public class CanGiveAdequateInformedConsent implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.NOT_EVALUATED)
-                .addPassSpecificMessages("Currently assumed that adequate IC can/will be given")
-                .addPassGeneralMessages("Adequate IC")
+                .addPassSpecificMessages("Currently assumed that adequate informed consent can/will be given")
+                .addPassGeneralMessages("Adequate informed consent")
                 .build();
     }
 }

@@ -27,8 +27,8 @@ public class HasWHOStatus implements EvaluationFunction {
         if (who == null) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("WHO status is missing")
-                    .addUndeterminedGeneralMessages("WHO status missing")
+                    .addUndeterminedSpecificMessages("WHO status is unknown")
+                    .addUndeterminedGeneralMessages("WHO status unknown")
                     .build();
         }
 
@@ -40,7 +40,7 @@ public class HasWHOStatus implements EvaluationFunction {
                     .addWarnSpecificMessages(
                             "Patient WHO status " + who + " matches requested but patient has complication categories of concern: "
                                     + Format.concat(warningComplicationCategories))
-                    .addWarnGeneralMessages("WHO adequate but has " + Format.concat(warningComplicationCategories))
+                    .addWarnGeneralMessages("WHO currently adequate, but patient has " + Format.concat(warningComplicationCategories))
                     .build();
         } else if (who == requiredWHO) {
             return EvaluationFactory.unrecoverable()
@@ -51,14 +51,14 @@ public class HasWHOStatus implements EvaluationFunction {
         } else if (Math.abs(who - requiredWHO) == 1) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
-                    .addWarnSpecificMessages("Patient WHO status " + who + " is close t requested WHO (WHO " + requiredWHO + ")")
-                    .addWarnGeneralMessages("Inadequate WHO status")
+                    .addWarnSpecificMessages("Patient WHO status " + who + " is close to requested WHO (WHO " + requiredWHO + ")")
+                    .addWarnGeneralMessages("WHO status is " + who + ", but should be " + requiredWHO)
                     .build();
         } else {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
                     .addFailSpecificMessages("Patient WHO status " + who + " is not requested WHO (WHO " + requiredWHO + ")")
-                    .addFailGeneralMessages("Inadequate WHO status")
+                    .addFailGeneralMessages("WHO status is " + who + ", but should be " + requiredWHO)
                     .build();
         }
     }

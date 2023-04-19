@@ -34,14 +34,15 @@ public class HasPotentialUncontrolledTumorRelatedPain implements EvaluationFunct
     @NotNull
     @Override
     public Evaluation evaluate(@NotNull PatientRecord record) {
-        Set<String> painComplications = ComplicationFunctions.findComplicationNamesMatchingAnyCategory(record,
-                Collections.singletonList(SEVERE_PAIN_COMPLICATION));
+        Set<String> painComplications =
+                ComplicationFunctions.findComplicationNamesMatchingAnyCategory(record, Collections.singletonList(SEVERE_PAIN_COMPLICATION));
 
         if (!painComplications.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient has complication related to pain: " + Format.concat(painComplications))
-                    .addPassGeneralMessages(Format.concat(painComplications))
+                    .addPassSpecificMessages("Patient has complication related to pain: " + Format.concat(painComplications)
+                            + ", potentially indicating uncontrolled tumor related pain")
+                    .addPassGeneralMessages("Present " + Format.concat(painComplications))
                     .build();
         }
 
@@ -56,14 +57,16 @@ public class HasPotentialUncontrolledTumorRelatedPain implements EvaluationFunct
         if (!activePainMedications.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient receives pain medication: " + Format.concat(activePainMedications))
-                    .addPassGeneralMessages(Format.concat(activePainMedications))
+                    .addPassSpecificMessages("Patient receives pain medication: " + Format.concat(activePainMedications)
+                            + ", potentially indicating uncontrolled tumor related pain")
+                    .addPassGeneralMessages("Present " + Format.concat(activePainMedications))
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Patient has no uncontrolled tumor related pain")
+                .addFailSpecificMessages("Patient does not have uncontrolled tumor related pain")
+                .addFailGeneralMessages("No potential uncontrolled tumor related pain")
                 .build();
     }
 }

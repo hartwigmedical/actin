@@ -27,8 +27,8 @@ public class HasMaximumWHOStatus implements EvaluationFunction {
         if (who == null) {
             return EvaluationFactory.recoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("WHO status is missing")
-                    .addUndeterminedGeneralMessages("WHO status missing")
+                    .addUndeterminedSpecificMessages("WHO status is unknown")
+                    .addUndeterminedGeneralMessages("WHO status unknown")
                     .build();
         }
 
@@ -40,7 +40,7 @@ public class HasMaximumWHOStatus implements EvaluationFunction {
                     .addWarnSpecificMessages(
                             "Patient WHO status " + who + " equals maximum but patient has complication categories of concern: "
                                     + Format.concat(warningComplicationCategories))
-                    .addWarnGeneralMessages("WHO adequate but has " + Format.concat(warningComplicationCategories))
+                    .addWarnGeneralMessages("WHO currently adequate, but patient has " + Format.concat(warningComplicationCategories))
                     .build();
         } else if (who <= maximumWHO) {
             return EvaluationFactory.unrecoverable()

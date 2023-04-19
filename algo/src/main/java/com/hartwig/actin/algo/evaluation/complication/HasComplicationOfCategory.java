@@ -39,14 +39,14 @@ public class HasComplicationOfCategory implements EvaluationFunction {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Patient has complication " + Format.concat(complicationMatches))
-                        .addPassGeneralMessages(Format.concat(complicationMatches))
+                        .addPassGeneralMessages("Present " + Format.concat(complicationMatches))
                         .build();
             } else {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages(
                                 "Patient has complication " + Format.concat(complicationMatches) + " of category " + categoryToFind)
-                        .addPassGeneralMessages(Format.concat(complicationMatches))
+                        .addPassGeneralMessages("Present " + Format.concat(complicationMatches))
                         .build();
             }
         }
@@ -65,8 +65,8 @@ public class HasComplicationOfCategory implements EvaluationFunction {
     private static ImmutableEvaluation undetermined() {
         return EvaluationFactory.recoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedGeneralMessages("Complications present, but unknown category")
                 .addUndeterminedSpecificMessages("Patient has complications but undetermined which category of complications")
+                .addUndeterminedGeneralMessages("Complications present, but unknown type")
                 .build();
     }
 
