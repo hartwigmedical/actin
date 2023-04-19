@@ -18,7 +18,8 @@ public class IsEligibleForOnLabelTreatment implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Anything related to SOC can not be determined yet")
+                .addUndeterminedSpecificMessages("Potential eligibility for on-label treatment undetermined")
+                .addUndeterminedGeneralMessages("Adequate exhaustion of SOC currently undetermined")
                 .build();
     }
 }

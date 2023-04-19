@@ -20,14 +20,14 @@ public class HasHadAnyCancerTreatment implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
                     .addFailSpecificMessages("Patient has not had any prior cancer treatments")
-                    .addFailGeneralMessages("Prior cancer treatment")
+                    .addFailGeneralMessages("Has not had any cancer treatment")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.PASS)
                 .addPassSpecificMessages("Patient has had prior cancer treatment")
-                .addPassGeneralMessages("Prior cancer treatment")
+                .addPassGeneralMessages("Had had any cancer treatment")
                 .build();
     }
 }

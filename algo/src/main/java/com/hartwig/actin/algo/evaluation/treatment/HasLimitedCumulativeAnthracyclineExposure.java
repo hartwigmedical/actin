@@ -70,7 +70,7 @@ public class HasLimitedCumulativeAnthracyclineExposure implements EvaluationFunc
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Patient has received anthracycline chemotherapy, exact dosage cannot be determined")
-                    .addUndeterminedGeneralMessages("Anthracycline exposure")
+                    .addUndeterminedGeneralMessages("Undetermined dosage of anthracycline exposure")
                     .build();
         } else if (hasChemoWithoutType && hasSuspectPrimaryTumor) {
             return EvaluationFactory.unrecoverable()
@@ -78,14 +78,14 @@ public class HasLimitedCumulativeAnthracyclineExposure implements EvaluationFunc
                     .addUndeterminedSpecificMessages(
                             "Patient has cancer type that is associated with potential anthracycline chemotherapy, "
                                     + "undetermined if anthracycline chemotherapy has been given")
-                    .addUndeterminedGeneralMessages("Anthracycline exposure")
+                    .addUndeterminedGeneralMessages("Undetermined (dosage of) anthracycline exposure")
                     .build();
         } else if (hasSuspectPriorTumorWithSuspectTreatmentHistory) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages(
                             "Patient has had a prior tumor that is associated with potential anthracycline chemotherapy")
-                    .addUndeterminedGeneralMessages("Anthracycline exposure")
+                    .addUndeterminedGeneralMessages("Undetermined (dosage of) anthracycline exposure")
                     .build();
         }
 
@@ -93,7 +93,7 @@ public class HasLimitedCumulativeAnthracyclineExposure implements EvaluationFunc
                 .result(EvaluationResult.PASS)
                 .addPassSpecificMessages(
                         "Patient should not have been exposed to anthracycline chemotherapy, thus not exceeding maximum dose")
-                .addPassGeneralMessages("Anthracycline exposure")
+                .addPassGeneralMessages("Limited cumulative anthracycline exposure")
                 .build();
     }
 

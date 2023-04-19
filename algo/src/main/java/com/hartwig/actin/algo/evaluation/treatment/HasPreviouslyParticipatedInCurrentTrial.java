@@ -19,7 +19,7 @@ public class HasPreviouslyParticipatedInCurrentTrial implements EvaluationFuncti
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Trial participation in current trial currently cannot be evaluated")
-                .addUndeterminedGeneralMessages("Undetermined previous current trial participation")
+                .addUndeterminedGeneralMessages("Undetermined if participated previously in current trial")
                 .build();
     }
 }

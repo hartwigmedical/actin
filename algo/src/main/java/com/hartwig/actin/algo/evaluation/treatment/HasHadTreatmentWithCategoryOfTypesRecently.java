@@ -54,26 +54,28 @@ public class HasHadTreatmentWithCategoryOfTypesRecently implements EvaluationFun
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has received " + Format.concat(types) + " " + category.display() + " treatment")
-                    .addPassGeneralMessages(category.display() + " treatment")
+                    .addPassGeneralMessages("Received " + Format.concat(types) + " " + category.display() + " treatment")
                     .build();
         } else if (hasInconclusiveDate) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages(
                             "Patient has received " + Format.concat(types) + " " + category.display() + " treatment with inconclusive date")
-                    .addUndeterminedGeneralMessages("Inconclusive " + category.display() + " treatment")
+                    .addUndeterminedGeneralMessages(
+                            "Received " + Format.concat(types) + " " + category.display() + " treatment but inconclusive date")
                     .build();
         } else if (hasHadTrialAfterMinDate) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Patient has participated in a trial recently")
-                    .addUndeterminedGeneralMessages("Inconclusive " + category.display() + " treatment")
+                    .addUndeterminedSpecificMessages(
+                            "Patient has participated in a trial recently, inconclusive " + category.display() + " treatment")
+                    .addUndeterminedGeneralMessages("Inconclusive " + category.display() + " treatment due to trial participation")
                     .build();
         } else {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
                     .addFailSpecificMessages("Patient has not received " + Format.concat(types) + " " + category.display() + " treatment")
-                    .addFailGeneralMessages("No " + category.display() + " treatment")
+                    .addFailGeneralMessages("Not received " + Format.concat(types) + " " + category.display() + " treatment")
                     .build();
         }
     }

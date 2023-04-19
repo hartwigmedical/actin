@@ -42,20 +42,20 @@ public class HasHadCompleteResection implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has had a complete resection")
-                    .addPassGeneralMessages("Complete resection")
+                    .addPassGeneralMessages("Had had complete resection")
                     .build();
         } else if (hasHadPotentialCompleteResection) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Could not be determined whether patient has had a complete resection")
-                    .addUndeterminedSpecificMessages("Complete resection")
+                    .addUndeterminedSpecificMessages("Complete resection undetermined")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has not had a complete resection")
-                .addFailGeneralMessages("Complete resection")
+                .addFailGeneralMessages("Has not had complete resection")
                 .build();
     }
 }

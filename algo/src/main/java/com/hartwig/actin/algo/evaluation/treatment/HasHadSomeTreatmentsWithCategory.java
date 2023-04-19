@@ -38,20 +38,21 @@ public class HasHadSomeTreatmentsWithCategory implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has received at least " + minTreatmentLines + " lines of " + category.display())
-                    .addPassGeneralMessages(category.display() + " treatment")
+                    .addPassGeneralMessages("Received at least " + minTreatmentLines + " lines of " + category.display())
                     .build();
         } else if (numTreatmentLines + numOtherTrials >= minTreatmentLines) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages(
                             "Patient may have received at least " + minTreatmentLines + " lines of " + category.display())
-                    .addUndeterminedGeneralMessages(category.display() + " treatment")
+                    .addUndeterminedGeneralMessages(
+                            "Undetermined if received at least " + minTreatmentLines + " lines of " + category.display())
                     .build();
         } else {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
                     .addFailSpecificMessages("Patient has not received at least " + minTreatmentLines + " lines of " + category.display())
-                    .addFailGeneralMessages("No " + category.display() + " treatment")
+                    .addFailGeneralMessages("Not received at least " + minTreatmentLines + " lines of " + category.display())
                     .build();
         }
     }

@@ -20,7 +20,7 @@ public class HasHadCombinedTreatmentNamesWithinWeeks implements EvaluationFuncti
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Combined treatment with specific nr of weeks currently cannot be determined")
-                .addUndeterminedGeneralMessages("Undetermined combined treatment")
+                .addUndeterminedGeneralMessages("Undetermined combined treatment with specific nr of weeks")
                 .build();
     }
 }

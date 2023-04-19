@@ -42,20 +42,20 @@ public class HasHadPartialResection implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has had a partial resection")
-                    .addPassGeneralMessages("Partial resection")
+                    .addPassGeneralMessages("Had had partial resection")
                     .build();
         } else if (hasHadPotentialPartialResection) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Could not be determined whether patient has had a partial resection")
-                    .addUndeterminedSpecificMessages("Partial resection")
+                    .addUndeterminedSpecificMessages("Partial resection undetermined")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has not had a partial resection")
-                .addFailGeneralMessages("Partial resection")
+                .addFailGeneralMessages("Has not had partial resection")
                 .build();
     }
 }

@@ -20,7 +20,7 @@ public class HasHadLocalHepaticTherapyWithinWeeks implements EvaluationFunction 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Not determined yet if patient has had local hepatic therapy within certain weeks")
-                .addUndeterminedGeneralMessages("Undetermined local hepatic therapy")
+                .addUndeterminedGeneralMessages("Undetermined if patient has had local hepatic therapy")
                 .build();
     }
 }
