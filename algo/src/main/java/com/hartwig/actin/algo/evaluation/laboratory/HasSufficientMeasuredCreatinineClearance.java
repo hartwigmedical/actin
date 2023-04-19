@@ -19,7 +19,7 @@ public class HasSufficientMeasuredCreatinineClearance implements EvaluationFunct
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Currently directly measured creatinine clearance cannot be detetermined")
+                .addUndeterminedSpecificMessages("Currently directly measured creatinine clearance cannot be determined")
                 .addUndeterminedGeneralMessages("Undetermined measured creatinine clearance")
                 .build();
     }

@@ -38,7 +38,9 @@ public class HasLimitedBilirubinPercentageOfTotal implements LabEvaluationFuncti
         if (mostRecentTotal == null || mostRecentTotal.date().isBefore(minValidDate)) {
             return EvaluationFactory.recoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("No recent measurement found for total bilirubin")
+                    .addUndeterminedSpecificMessages(
+                            "No recent measurement found for total bilirubin, hence bilirubin percentage of total bilirubin could not be determined")
+                    .addUndeterminedGeneralMessages("Bilirubin percentage of total bilirubin could not be determined")
                     .build();
         }
 
@@ -48,10 +50,11 @@ public class HasLimitedBilirubinPercentageOfTotal implements LabEvaluationFuncti
         ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         String messageStart = labValue.code() + " as percentage of " + mostRecentTotal.code();
         if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages(messageStart + " exceeds " + maxPercentage + "%");
-            builder.addFailGeneralMessages(labValue.code() + " exceeding " + maxPercentage + "%");
+            builder.addFailSpecificMessages(messageStart + " exceeds maximum percentage of " + maxPercentage + "%");
+            builder.addFailGeneralMessages(messageStart + " exceeding " + maxPercentage + "%");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages(messageStart + "is below maximum percentage of " + maxPercentage + "%");
+            builder.addPassSpecificMessages(messageStart + " is below maximum percentage of " + maxPercentage + "%");
+            builder.addPassGeneralMessages(messageStart + " below " + maxPercentage + "%");
         }
 
         return builder.build();

@@ -20,7 +20,7 @@ public class ProteinHasLimitedExpressionByIHCCreator implements EvaluationFuncti
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Currently limited expression by IHC cannot be evaluated")
-                .addUndeterminedGeneralMessages("Undetermined limited IHC gene expression")
+                .addUndeterminedGeneralMessages("Limited IHC gene expression currently undetermined")
                 .build();
     }
 }

@@ -38,6 +38,7 @@ public class HasLimitedPDL1ByIHC implements EvaluationFunction {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("PD-L1 expression measured by " + measure + " does not exceed maximum of " + maxPDL1)
+                            .addPassGeneralMessages("PD-L1 expression below " + maxPDL1)
                             .build();
                 }
             }
@@ -48,8 +49,10 @@ public class HasLimitedPDL1ByIHC implements EvaluationFunction {
         if (!pdl1Tests.isEmpty()) {
             builder.addFailSpecificMessages(
                     "At least one PD-L1 IHC tests measured by " + measure + " found where level exceeds maximum of " + maxPDL1);
+            builder.addFailGeneralMessages("PD-L1 expression exceeds " + maxPDL1);
         } else {
             builder.addFailSpecificMessages("No IHC test result found; PD-L1 has not been measured by " + measure);
+            builder.addFailGeneralMessages("PD-L1 expression not tested by IHC");
         }
 
         return builder.build();

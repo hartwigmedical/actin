@@ -18,7 +18,7 @@ public class HasAvailablePDL1Status implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Availability of PD-L1 status currently cannot be determined")
-                .addUndeterminedGeneralMessages("PD-L1 status availability")
+                .addUndeterminedGeneralMessages("PD-L1 status not yet determined")
                 .build();
     }
 }

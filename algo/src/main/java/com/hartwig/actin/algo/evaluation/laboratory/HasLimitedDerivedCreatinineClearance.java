@@ -109,10 +109,13 @@ public class HasLimitedDerivedCreatinineClearance implements LabEvaluationFuncti
             builder.addFailGeneralMessages(code + " too high");
         } else if (result == EvaluationResult.UNDETERMINED) {
             builder.addUndeterminedSpecificMessages(code + " evaluation led to ambiguous results");
+            builder.addUndeterminedGeneralMessages(code + " undetermined");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("limited " + code);
+            builder.addPassGeneralMessages("limited " + code);
         } else if (result == EvaluationResult.WARN) {
             builder.addWarnSpecificMessages("limited " + code);
+            builder.addWarnGeneralMessages("limited " + code);
         }
         return builder.build();
     }

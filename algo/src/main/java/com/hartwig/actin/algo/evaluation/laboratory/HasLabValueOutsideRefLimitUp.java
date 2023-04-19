@@ -22,6 +22,7 @@ public class HasLabValueOutsideRefLimitUp implements LabEvaluationFunction {
             return EvaluationFactory.recoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Could not determine whether " + labValue.code() + " is outside ref limit up")
+                    .addUndeterminedGeneralMessages("Undetermined if " + labValue.code() + " is outside ref limit up")
                     .build();
         }
 
