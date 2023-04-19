@@ -42,7 +42,7 @@ public class HasIntoleranceForPD1OrPDL1Inhibitors implements EvaluationFunction 
 
         if (!intolerances.isEmpty()) {
             return EvaluationFactory.pass("Patient has PD-1/PD-L1 intolerance(s) " + Format.concat(intolerances),
-                    "Patient has intolerance(s)");
+                    "Patient has PD-1/PD-L1 intolerance(s): " + Format.concat(intolerances));
         } else {
             Set<String> autoImmuneDiseaseTerms = OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())
                     .stream()
@@ -53,9 +53,11 @@ public class HasIntoleranceForPD1OrPDL1Inhibitors implements EvaluationFunction 
 
             if (!autoImmuneDiseaseTerms.isEmpty()) {
                 return EvaluationFactory.warn("Patient has autoimmune disease condition(s) " + Format.concat(autoImmuneDiseaseTerms)
-                        + " which may indicate intolerance for immunotherapy", "Patient may have intolerance");
+                                + " which may indicate intolerance for immunotherapy",
+                        "Patient may have PD-1/PD-L1 intolerance due to autoimmune disease");
             } else {
-                return EvaluationFactory.fail("Patient does not have PD-1/PD-L1 intolerance", "Patient does not have intolerance");
+                return EvaluationFactory.fail("Patient does not have PD-1/PD-L1 intolerance",
+                        "Patient does not have PD-1/PD-L1 intolerance");
             }
         }
     }

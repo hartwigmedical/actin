@@ -32,9 +32,10 @@ public class HasExperiencedImmuneRelatedAdverseEvents implements EvaluationFunct
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has not experienced immune related adverse events");
+            builder.addFailGeneralMessages("No experience of immune related adverse events");
         } else if (result == EvaluationResult.WARN) {
             builder.addWarnSpecificMessages("Patient may have experienced immune related adverse events by immunotherapy treatment");
-            builder.addWarnGeneralMessages("Potential immunotherapy related adverse events");
+            builder.addWarnGeneralMessages("Undetermined previous occurrence of immunotherapy related adverse events");
         }
         return builder.build();
     }

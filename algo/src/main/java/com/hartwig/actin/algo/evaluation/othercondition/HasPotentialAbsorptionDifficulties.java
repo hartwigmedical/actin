@@ -54,7 +54,7 @@ public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has potential absorption difficulties due to " + Format.concat(conditions))
-                    .addPassGeneralMessages("Potential absorption difficulties")
+                    .addPassGeneralMessages("Potential absorption difficulties: " + Format.concat(conditions))
                     .build();
         }
 
@@ -71,7 +71,7 @@ public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has potential absorption difficulties due to " + Format.concat(complications))
-                    .addPassGeneralMessages("Potential absorption difficulties")
+                    .addPassGeneralMessages("Potential absorption difficulties: " + Format.concat(complications))
                     .build();
         }
 
@@ -90,7 +90,7 @@ public class HasPotentialAbsorptionDifficulties implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has potential absorption difficulties due to " + Format.concat(toxicities))
-                    .addPassGeneralMessages("Potential absorption difficulties")
+                    .addPassGeneralMessages("Potential absorption difficulties: " + Format.concat(toxicities))
                     .build();
         }
 

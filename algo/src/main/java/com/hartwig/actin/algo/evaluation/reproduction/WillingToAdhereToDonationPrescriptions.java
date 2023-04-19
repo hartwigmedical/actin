@@ -19,6 +19,7 @@ public class WillingToAdhereToDonationPrescriptions implements EvaluationFunctio
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.NOT_EVALUATED)
                 .addPassSpecificMessages("Assumed that patient will adhere to relevant sperm/egg donation prescriptions")
+                .addPassGeneralMessages("Assumed adherence to relevant sperm/egg donation prescriptions")
                 .build();
     }
 }

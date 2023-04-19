@@ -34,7 +34,7 @@ public class HasOralMedicationDifficulties implements EvaluationFunction {
                         return EvaluationFactory.unrecoverable()
                                 .result(EvaluationResult.PASS)
                                 .addPassSpecificMessages("Patient has potential oral medication difficulties due to " + complication.name())
-                                .addPassGeneralMessages("Potential oral medication difficulties")
+                                .addPassGeneralMessages("Potential oral medication difficulties: " + complication.name())
                                 .build();
                     }
                 }

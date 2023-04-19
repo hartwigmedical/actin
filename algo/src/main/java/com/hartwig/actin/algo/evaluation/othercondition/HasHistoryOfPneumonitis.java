@@ -42,7 +42,7 @@ public class HasHistoryOfPneumonitis implements EvaluationFunction {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has pneumonitis: " + doidModel.resolveTermForDoid(doid))
-                            .addPassGeneralMessages("Pneumonitis")
+                            .addPassGeneralMessages("History of pneumonitis")
                             .build();
                 }
             }
@@ -55,7 +55,7 @@ public class HasHistoryOfPneumonitis implements EvaluationFunction {
                         return EvaluationFactory.unrecoverable()
                                 .result(EvaluationResult.PASS)
                                 .addPassSpecificMessages("Patient has pneumonitis: " + toxicity.name())
-                                .addPassGeneralMessages("Pneumonitis")
+                                .addPassGeneralMessages("History of pneumonitis")
                                 .build();
                     }
                 }
@@ -65,7 +65,7 @@ public class HasHistoryOfPneumonitis implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has no pneumonitis")
-                .addFailGeneralMessages("No pneumonitis")
+                .addFailGeneralMessages("No history of pneumonitis")
                 .build();
     }
 }

@@ -55,27 +55,27 @@ public class HasHistoryOfSecondMalignancyWithinYears implements EvaluationFuncti
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has history of recent previous malignancy")
-                    .addPassGeneralMessages("Second primary")
+                    .addPassGeneralMessages("Patient has history of recent previous malignancy")
                     .build();
         } else if (hasPotentialMatch) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Patient has history of previous malignancy but unclear whether it is recent enough")
-                    .addUndeterminedGeneralMessages("Second primary history")
+                    .addUndeterminedGeneralMessages("Patient has history of recent previous malignancy, unclear dates")
                     .build();
         } else {
             if (record.clinical().priorSecondPrimaries().isEmpty() || hasUsableData) {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.FAIL)
                         .addFailSpecificMessages("Patient has no history of recent previous malignancy")
-                        .addFailGeneralMessages("No previous malignancy")
+                        .addFailGeneralMessages("No recent previous malignancy")
                         .build();
             } else {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.UNDETERMINED)
-                        .addUndeterminedSpecificMessages("Patient has previous malignancy, but no dates available. "
-                                + " Cannot be determined if previous malignancy was recent")
-                        .addUndeterminedGeneralMessages("Second primary history")
+                        .addUndeterminedSpecificMessages(
+                                "Patient has previous malignancy, but no dates available so cannot be determined if previous malignancy was recent")
+                        .addUndeterminedGeneralMessages("Second primary history, dates unknown")
                         .build();
             }
         }

@@ -19,7 +19,7 @@ public class HasMRIScanDocumentingStableDisease implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Currently presence of MRI scan documenting stable disease is undetermined")
-                .addUndeterminedGeneralMessages("Undetermined MRI scan documenting SD")
+                .addUndeterminedGeneralMessages("Undetermined presence of MRI scan documenting stable disease")
                 .build();
     }
 }

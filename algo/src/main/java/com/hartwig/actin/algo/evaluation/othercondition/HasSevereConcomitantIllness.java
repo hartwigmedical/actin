@@ -31,7 +31,7 @@ public class HasSevereConcomitantIllness implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
                     .addWarnSpecificMessages("Patient may have severe concomitant illnesses based on WHO status of " + whoStatus)
-                    .addWarnGeneralMessages("Potential severe concomitant illnesses")
+                    .addWarnGeneralMessages("Potential severe concomitant illnesses due to WHO " + whoStatus)
                     .build();
         }
 
@@ -39,7 +39,7 @@ public class HasSevereConcomitantIllness implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("WHO status of patient is WHO 5")
-                    .addPassGeneralMessages("Severe concomitant illnesses")
+                    .addPassGeneralMessages("Severe concomitant illnesses due to WHO 5")
                     .build();
         }
 

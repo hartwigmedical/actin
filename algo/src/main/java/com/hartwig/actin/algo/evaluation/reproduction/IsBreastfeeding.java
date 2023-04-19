@@ -21,11 +21,13 @@ public class IsBreastfeeding implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
                     .addFailSpecificMessages("Patient is male thus won't be breastfeeding")
+                    .addFailGeneralMessages("No breastfeeding")
                     .build();
         } else {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.NOT_EVALUATED)
                     .addPassSpecificMessages("It is assumed that patient won't be breastfeeding")
+                    .addPassGeneralMessages("Assumed no breastfeeding")
                     .build();
         }
     }
