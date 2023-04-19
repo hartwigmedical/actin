@@ -15,6 +15,7 @@
 
     <properties>
         <kotlin.version>1.8.0</kotlin.version>
+        <kotlin.code.style>official</kotlin.code.style>
     </properties>
 
     <dependencies>
