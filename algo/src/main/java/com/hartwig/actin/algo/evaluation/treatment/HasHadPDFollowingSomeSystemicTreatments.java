@@ -49,7 +49,7 @@ public class HasHadPDFollowingSomeSystemicTreatments implements EvaluationFuncti
                     })
                     .orElse(EvaluationFactory.undetermined(
                             "Patient received at least " + minSystemicTreatments + " systemic treatments but unclear PD status",
-                            "At least " + minSystemicTreatments + " systemic treatments but undetermined if PD"));
+                            "Has had at least " + minSystemicTreatments + " systemic treatments but undetermined if PD"));
         } else if (maxSystemicCount >= minSystemicTreatments) {
             return EvaluationFactory.undetermined(
                     "Undetermined if patient received at least " + minSystemicTreatments + " systemic treatments",

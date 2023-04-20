@@ -50,7 +50,7 @@ public class HasHadPDFollowingTreatmentWithCategory implements EvaluationFunctio
         } else if (hasHadTreatmentWithUnclearPDStatus) {
             return EvaluationFactory.undetermined(
                     "Patient has had treatment with category " + category.display() + " but unclear PD status",
-                    "Has had " + category.display() + " treatment, undetermined PD status");
+                    "Has had " + category.display() + " treatment but undetermined PD status");
         } else if (hasHadTrial) {
             return EvaluationFactory.undetermined("Patient has had trial with unclear treatment category",
                     "Trial treatment of unclear treatment category");

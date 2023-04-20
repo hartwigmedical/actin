@@ -45,14 +45,14 @@ public class CurrentlyGetsMedicationOfApproximateCategory implements EvaluationF
                     .addPassSpecificMessages(
                             "Patient currently gets medication " + Format.concat(medications) + ", which belong(s) to category "
                                     + categoryTermToFind)
-                    .addPassGeneralMessages(categoryTermToFind + " medication")
+                    .addPassGeneralMessages(categoryTermToFind + " medication use")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient currently does not get medication of category " + categoryTermToFind)
-                .addFailGeneralMessages("No " + categoryTermToFind + " medication")
+                .addFailGeneralMessages("No " + categoryTermToFind + " medication use")
                 .build();
     }
 }

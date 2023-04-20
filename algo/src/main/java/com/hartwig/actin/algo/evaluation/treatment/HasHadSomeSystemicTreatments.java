@@ -35,7 +35,7 @@ public class HasHadSomeSystemicTreatments implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient did not receive at least " + minSystemicTreatments + " systemic treatments");
-            builder.addFailGeneralMessages("Not received at least " + minSystemicTreatments + " systemic treatments");
+            builder.addFailGeneralMessages("Has not received at least " + minSystemicTreatments + " systemic treatments");
         } else if (result == EvaluationResult.UNDETERMINED) {
             builder.addUndeterminedSpecificMessages(
                     "Could not determine if patient received at least " + minSystemicTreatments + " systemic treatments");
