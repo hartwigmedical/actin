@@ -19,7 +19,7 @@ public class HasCytologicalDocumentationOfTumorType implements EvaluationFunctio
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.NOT_EVALUATED)
                 .addPassSpecificMessages("Currently it is assumed that cytological documentation of tumor type has been done or can be done")
-                .addPassGeneralMessages("Cytological documentation")
+                .addPassGeneralMessages("Cytological documentation assumed")
                 .build();
     }
 }

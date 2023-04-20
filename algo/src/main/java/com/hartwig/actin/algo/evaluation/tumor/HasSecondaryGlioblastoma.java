@@ -31,7 +31,7 @@ public class HasSecondaryGlioblastoma implements EvaluationFunction {
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages(
                             "No tumor location/type configured for patient, unknown if patient has secondary glioblastoma")
-                    .addUndeterminedGeneralMessages("Unconfigured tumor location/type")
+                    .addUndeterminedGeneralMessages("Undetermined secondary glioblastoma")
                     .build();
         }
 
@@ -39,8 +39,10 @@ public class HasSecondaryGlioblastoma implements EvaluationFunction {
             if (doidModel.doidWithParents(tumorDoid).contains(DoidConstants.GLIOBLASTOMA_DOID)) {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.WARN)
-                        .addWarnSpecificMessages("Patient may have secondary glioblastoma")
-                        .addWarnGeneralMessages("Potential secondary glioblastoma")
+                        .addWarnSpecificMessages(
+                                "Patient has cancer belonging to " + doidModel.resolveTermForDoid(DoidConstants.GLIOBLASTOMA_DOID)
+                                        + ", unclear if this is considered secondary glioblastoma")
+                        .addWarnGeneralMessages("Unclear if considered secondary glioblastoma")
                         .build();
             }
         }
@@ -48,7 +50,7 @@ public class HasSecondaryGlioblastoma implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has no (secondary) glioblastoma")
-                .addFailGeneralMessages("No secondary glioblastoma")
+                .addFailGeneralMessages("Tumor type")
                 .build();
     }
 }

@@ -19,7 +19,7 @@ public class HasSpecificProgressiveDiseaseCriteria implements EvaluationFunction
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Tumor progression according to specific criteria currently cannot be determined")
-                .addUndeterminedGeneralMessages("Specific tumor progression criteria")
+                .addUndeterminedGeneralMessages("Specific tumor progression criteria undetermined")
                 .build();
     }
 }

@@ -40,7 +40,7 @@ public class HasProstateCancerWithSmallCellComponent implements EvaluationFuncti
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Could not determine whether patient has prostate cancer with small cell histology")
-                    .addUndeterminedGeneralMessages("Tumor type")
+                    .addUndeterminedGeneralMessages("Undetermined prostate cancer with small cell histology")
                     .build();
         }
 
@@ -75,7 +75,7 @@ public class HasProstateCancerWithSmallCellComponent implements EvaluationFuncti
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
                     .addWarnGeneralMessages("Patient has prostate cancer but potentially no small cell histology")
-                    .addWarnSpecificMessages("Tumor type")
+                    .addWarnSpecificMessages("Undetermined prostate cancer with small cell histology")
                     .build();
         }
 
@@ -84,7 +84,7 @@ public class HasProstateCancerWithSmallCellComponent implements EvaluationFuncti
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedGeneralMessages("Patient has prostate cancer but with no configured histology subtype")
-                    .addUndeterminedSpecificMessages("Tumor type")
+                    .addUndeterminedSpecificMessages("Undetermined prostate cancer with small cell histology")
                     .build();
         }
 

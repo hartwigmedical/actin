@@ -23,8 +23,8 @@ public class HasLocallyAdvancedCancer implements EvaluationFunction {
         if (stage == null) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Tumor stage details are missing")
-                    .addUndeterminedGeneralMessages("Missing tumor stage details")
+                    .addUndeterminedSpecificMessages("Tumor stage details are missing, if cancer is locally advanced cannot be determined")
+                    .addUndeterminedGeneralMessages("Undetermined locally advanced cancer")
                     .build();
         }
 
@@ -43,7 +43,7 @@ public class HasLocallyAdvancedCancer implements EvaluationFunction {
             builder.addPassGeneralMessages("Locally advanced cancer");
         } else if (result == EvaluationResult.WARN) {
             builder.addWarnSpecificMessages("Could not be determined if tumor stage " + stage + " is considered locally advanced");
-            builder.addWarnGeneralMessages("Locally advanced cancer");
+            builder.addWarnGeneralMessages("Unclear if locally advanced cancer for stage " + stage);
         } else if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Tumor stage " + stage + " is not considered locally advanced");
             builder.addFailGeneralMessages("No locally advanced cancer");

@@ -53,11 +53,11 @@ public class HasRestingHeartRateWithinBounds implements EvaluationFunction {
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has does not have median heart rate between " + minMedianRestingHeartRate + " and "
                     + maxMedianRestingHeartRate);
-            builder.addFailGeneralMessages("heart rate requirements");
+            builder.addFailGeneralMessages("Heart rate outside range");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages(
                     "Patient has median heart rate between " + minMedianRestingHeartRate + " and " + maxMedianRestingHeartRate);
-            builder.addPassGeneralMessages("heart rate requirements");
+            builder.addPassGeneralMessages("Heart rate within range");
         }
 
         return builder.build();

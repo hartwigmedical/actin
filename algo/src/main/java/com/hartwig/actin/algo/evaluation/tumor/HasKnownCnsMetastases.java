@@ -44,8 +44,8 @@ public class HasKnownCnsMetastases implements EvaluationFunction {
             builder.addFailGeneralMessages("No known CNS metastases");
         } else if (result == EvaluationResult.PASS) {
             if (hasAtLeastActiveBrainMetastases) {
-                builder.addPassSpecificMessages("Brain metastases are present");
-                builder.addPassGeneralMessages("Brain metastases");
+                builder.addPassSpecificMessages("Brain metastases are present, these are considered CNS metastases");
+                builder.addPassGeneralMessages("Brain (CNS) metastases");
             } else {
                 builder.addPassSpecificMessages("CNS metastases are present");
                 builder.addPassGeneralMessages("CNS metastases");

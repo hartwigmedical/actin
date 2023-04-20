@@ -18,7 +18,7 @@ public class HasLowRiskOfHemorrhageUponTreatment implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Currently can't determine whether there is low risk of hemorrhage upon treatment")
+                .addUndeterminedSpecificMessages("Currently undetermined whether there is low risk of hemorrhage upon treatment")
                 .addUndeterminedGeneralMessages("Hemorrhage risk upon treatment undetermined")
                 .build();
     }

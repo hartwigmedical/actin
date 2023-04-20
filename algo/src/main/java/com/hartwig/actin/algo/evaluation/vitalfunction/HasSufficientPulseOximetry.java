@@ -56,8 +56,10 @@ public class HasSufficientPulseOximetry implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has median pulse oximetry below " + minMedianPulseOximetry);
+            builder.addFailGeneralMessages("Pulse oximetry below " + minMedianPulseOximetry);
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient has median pulse oximetry exceeding " + minMedianPulseOximetry);
+            builder.addPassGeneralMessages("Pulse oximetry above " + minMedianPulseOximetry);
         }
 
         return builder.build();

@@ -52,7 +52,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
                     .result(EvaluationResult.WARN)
                     .addWarnSpecificMessages("Unclear whether tumor type of patient can be considered " + doidTerm
                             + ", because patient has adenosquamous tumor type")
-                    .addWarnGeneralMessages("Tumor type")
+                    .addWarnGeneralMessages("Unclear if tumor type is considered " + doidTerm)
                     .build();
         }
 
@@ -60,7 +60,7 @@ public class PrimaryTumorLocationBelongsToDoid implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Could not determine based on configured tumor type if patient may have " + doidTerm)
-                    .addUndeterminedGeneralMessages("Tumor type")
+                    .addUndeterminedGeneralMessages("Undetermined if " + doidTerm)
                     .build();
         }
 

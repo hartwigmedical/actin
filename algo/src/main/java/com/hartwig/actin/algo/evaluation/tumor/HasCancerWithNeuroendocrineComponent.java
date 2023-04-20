@@ -46,7 +46,7 @@ public class HasCancerWithNeuroendocrineComponent implements EvaluationFunction 
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Could not determine whether tumor of patient may have a neuroendocrine component")
-                    .addUndeterminedGeneralMessages("Neuroendocrine component")
+                    .addUndeterminedGeneralMessages("Undetermined neuroendocrine component")
                     .build();
         }
 
@@ -60,7 +60,7 @@ public class HasCancerWithNeuroendocrineComponent implements EvaluationFunction 
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has cancer with neuroendocrine component")
-                    .addPassGeneralMessages("Neuroendocrine component")
+                    .addPassGeneralMessages("Presence of neuroendocrine component")
                     .build();
         }
 
@@ -78,22 +78,23 @@ public class HasCancerWithNeuroendocrineComponent implements EvaluationFunction 
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Patient has cancer with small cell component, "
                             + "undetermined if neuroendocrine component could be present as well")
-                    .addUndeterminedGeneralMessages("Neuroendocrine component")
+                    .addUndeterminedGeneralMessages("Undetermined neuroendocrine component")
                     .build();
         }
 
         if (hasNeuroendocrineMolecularProfile(record)) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Patient has cancer with neuroendocrine molecular profile")
-                    .addUndeterminedGeneralMessages("Neuroendocrine component")
+                    .addUndeterminedSpecificMessages(
+                            "Patient has cancer with neuroendocrine molecular profile, undetermind if considered neuroendocrine component")
+                    .addUndeterminedGeneralMessages("Undetermined neuroendocrine component")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient does not have cancer with neuroendocrine component")
-                .addFailGeneralMessages("Neuroendocrine component")
+                .addFailGeneralMessages("No neuroendocrine component")
                 .build();
     }
 
