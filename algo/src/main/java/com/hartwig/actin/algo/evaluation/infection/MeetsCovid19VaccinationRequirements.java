@@ -19,7 +19,7 @@ public class MeetsCovid19VaccinationRequirements implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Currently COVID-19 vaccination status cannot be determined")
-                .addUndeterminedSpecificMessages("COVID-19 vaccination status unknown")
+                .addUndeterminedGeneralMessages("COVID-19 vaccination status unknown")
                 .build();
     }
 }

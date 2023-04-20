@@ -61,9 +61,9 @@ public class HasHadSomeSpecificTreatments implements EvaluationFunction {
             String undeterminedSpecificMessage =
                     warnCategory != null ? "Patient has received " + warnCategory.display() + " or trial treatment " + warnTreatments.size()
                             + " times" : "Patient has received " + Format.concat(warnTreatments) + " treatments including trials";
-            String undeterminedGeneralMessage =
-                    warnCategory != null ? "Has received " + warnCategory.display() + " or trial treatment " + warnTreatments.size()
-                            + " times" : "Has received " + Format.concat(warnTreatments) + " treatments including trials";
+            String undeterminedGeneralMessage = warnCategory != null
+                    ? "Received " + warnCategory.display() + " or trials " + warnTreatments.size() + " times"
+                    : "Received " + Format.concat(warnTreatments) + " treatments including trials";
 
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)

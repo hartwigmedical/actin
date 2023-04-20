@@ -33,7 +33,7 @@ public class HasHadRecentBloodTransfusion implements EvaluationFunction {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Patient has received recent blood transfusion of product " + productString)
-                        .addPassSpecificMessages("Has had recent blood transfusion " + productString)
+                        .addPassGeneralMessages("Has had recent blood transfusion " + productString)
                         .build();
             }
         }

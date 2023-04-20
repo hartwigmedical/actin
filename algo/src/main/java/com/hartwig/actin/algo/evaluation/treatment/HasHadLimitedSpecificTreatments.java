@@ -53,10 +53,11 @@ public class HasHadLimitedSpecificTreatments implements EvaluationFunction {
         if (matchTreatments.size() > maxTreatmentLines) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages("Patient has received " + Format.concat(matchTreatments) + " " + matchTreatments.size()
-                            + " times, exceeding max " + maxTreatmentLines + " lines")
+                    .addFailSpecificMessages(
+                            "Patient has received " + matchTreatments.size() + " treatments (" + Format.concat(matchTreatments) + ") "
+                                    + " which is exceeding the max nr of " + maxTreatmentLines + " lines")
                     .addFailGeneralMessages(
-                            "Received " + Format.concat(matchTreatments) + " " + matchTreatments.size() + " times, exceeding max "
+                            matchTreatments.size() + " treatments (" + Format.concat(matchTreatments) + ") " + " exceeding the max nr of "
                                     + maxTreatmentLines + " lines")
                     .build();
         } else if (warnTreatments.size() > maxTreatmentLines) {
@@ -71,11 +72,8 @@ public class HasHadLimitedSpecificTreatments implements EvaluationFunction {
         } else {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient has received " + Format.concat(names) + " less than " + maxTreatmentLines
-                            + " times, which is below max " + maxTreatmentLines + " lines")
-                    .addPassGeneralMessages(
-                            "Received " + Format.concat(matchTreatments) + " " + matchTreatments.size() + " times, which is below max "
-                                    + maxTreatmentLines + " lines")
+                    .addPassSpecificMessages("Patient has received " + Format.concat(names) + " less than " + maxTreatmentLines + " times")
+                    .addPassGeneralMessages("Received " + Format.concat(names) + " less than " + maxTreatmentLines + " times")
                     .build();
         }
     }

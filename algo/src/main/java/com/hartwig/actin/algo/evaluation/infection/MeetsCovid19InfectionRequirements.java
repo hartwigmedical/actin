@@ -19,7 +19,7 @@ public class MeetsCovid19InfectionRequirements implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Currently COVID-19 infection status cannot be determined")
-                .addUndeterminedSpecificMessages("COVID-19 infection status unknown")
+                .addUndeterminedGeneralMessages("COVID-19 infection status unknown")
                 .build();
     }
 }

@@ -35,11 +35,11 @@ public class HasHadPDFollowingSomeSystemicTreatments implements EvaluationFuncti
                             if (!mustBeRadiological) {
                                 return EvaluationFactory.pass(
                                         "Patient received at least " + minSystemicTreatments + " systemic treatments ending with PD",
-                                        "Nr of systemic treatments with PD at least " + minSystemicTreatments);
+                                        "Has received " + minSystemicTreatments + " systemic treatments with PD");
                             } else {
                                 return EvaluationFactory.undetermined("Patient received at least " + minSystemicTreatments
-                                                + " systemic treatments ending with PD, undetermined if there is now radiological progression",
-                                        "Undetermined if at least " + minSystemicTreatments + " systemic treatments with PD");
+                                                + " systemic treatments ending with PD, undetermined if there is currently radiological progression",
+                                        "Undetermined if currently there is radiological progression");
                             }
                         } else {
                             return EvaluationFactory.fail(
@@ -49,7 +49,7 @@ public class HasHadPDFollowingSomeSystemicTreatments implements EvaluationFuncti
                     })
                     .orElse(EvaluationFactory.undetermined(
                             "Patient received at least " + minSystemicTreatments + " systemic treatments but unclear PD status",
-                            "Undetermined if at least " + minSystemicTreatments + " systemic treatments with PD"));
+                            "At least " + minSystemicTreatments + " systemic treatments but undetermined if PD"));
         } else if (maxSystemicCount >= minSystemicTreatments) {
             return EvaluationFactory.undetermined(
                     "Undetermined if patient received at least " + minSystemicTreatments + " systemic treatments",
@@ -57,6 +57,6 @@ public class HasHadPDFollowingSomeSystemicTreatments implements EvaluationFuncti
         }
 
         return EvaluationFactory.fail("Patient did not receive at least " + minSystemicTreatments + " systemic treatments",
-                "Nr of systemic treatments with PD not at least " + minSystemicTreatments);
+                "Nr of systemic treatments with PD is less than " + minSystemicTreatments);
     }
 }
