@@ -1,7 +1,5 @@
 package com.hartwig.actin.molecular.orange.evidence.known;
 
-import java.util.List;
-
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakend;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
@@ -9,7 +7,6 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.evidence.matching.HotspotMatching;
 import com.hartwig.actin.molecular.orange.evidence.matching.RangeMatching;
-import com.hartwig.actin.molecular.serve.KnownGene;
 import com.hartwig.serve.datamodel.KnownEvents;
 import com.hartwig.serve.datamodel.common.GeneAlteration;
 import com.hartwig.serve.datamodel.fusion.KnownFusion;
@@ -25,12 +22,9 @@ public class KnownEventResolver {
 
     @NotNull
     private final KnownEvents knownEvents;
-    @NotNull
-    private final List<KnownGene> knownGenes;
 
-    KnownEventResolver(@NotNull final KnownEvents knownEvents, @NotNull final List<KnownGene> knownGenes) {
+    KnownEventResolver(@NotNull final KnownEvents knownEvents) {
         this.knownEvents = knownEvents;
-        this.knownGenes = knownGenes;
     }
 
     @Nullable
@@ -45,16 +39,17 @@ public class KnownEventResolver {
             return codon;
         }
 
-        KnownExon exon =  findExon(knownEvents.exons(), variant);
+        KnownExon exon = findExon(knownEvents.exons(), variant);
         if (exon != null) {
             return exon;
         }
 
-        return GeneLookup.find(knownGenes, variant.gene());
+        return GeneLookup.find(knownEvents.genes(), variant.gene());
     }
 
     @Nullable
-    private static KnownHotspot findHotspot(@NotNull Iterable<KnownHotspot> knownHotspots, @NotNull PurpleVariant variant) {
+    private static KnownHotspot findHotspot(@NotNull Iterable<KnownHotspot> knownHotspots,
+            @NotNull PurpleVariant variant) {
         for (KnownHotspot knownHotspot : knownHotspots) {
             if (HotspotMatching.isMatch(knownHotspot, variant)) {
                 return knownHotspot;
@@ -91,23 +86,24 @@ public class KnownEventResolver {
             return knownCopyNumber;
         }
 
-        return GeneLookup.find(knownGenes, gainLoss.gene());
+        return GeneLookup.find(knownEvents.genes(), gainLoss.gene());
     }
 
     @Nullable
     public GeneAlteration resolveForHomozygousDisruption(@NotNull LinxHomozygousDisruption homozygousDisruption) {
         // Assume a homozygous disruption always has the same annotation as a loss.
-        KnownCopyNumber knownCopyNumber =  CopyNumberLookup.findForHomozygousDisruption(knownEvents.copyNumbers(), homozygousDisruption);
+        KnownCopyNumber knownCopyNumber =
+                CopyNumberLookup.findForHomozygousDisruption(knownEvents.copyNumbers(), homozygousDisruption);
         if (knownCopyNumber != null) {
             return knownCopyNumber;
         }
 
-        return GeneLookup.find(knownGenes, homozygousDisruption.gene());
+        return GeneLookup.find(knownEvents.genes(), homozygousDisruption.gene());
     }
 
     @Nullable
     public GeneAlteration resolveForBreakend(@NotNull LinxBreakend breakend) {
-        return GeneLookup.find(knownGenes, breakend.gene());
+        return GeneLookup.find(knownEvents.genes(), breakend.gene());
     }
 
     @Nullable

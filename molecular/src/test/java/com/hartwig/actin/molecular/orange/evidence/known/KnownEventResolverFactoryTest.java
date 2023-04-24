@@ -17,7 +17,7 @@ public class KnownEventResolverFactoryTest {
 
     @Test
     public void canCreateFromEmptyInputs() {
-        assertNotNull(KnownEventResolverFactory.create(ImmutableKnownEvents.builder().build(), Lists.newArrayList()));
+        assertNotNull(KnownEventResolverFactory.create(ImmutableKnownEvents.builder().build()));
     }
 
     @Test

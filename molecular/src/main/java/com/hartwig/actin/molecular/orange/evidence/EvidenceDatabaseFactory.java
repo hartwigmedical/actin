@@ -12,7 +12,6 @@ import com.hartwig.actin.molecular.orange.evidence.curation.ExternalTrialMapper;
 import com.hartwig.actin.molecular.orange.evidence.curation.ExternalTrialMapping;
 import com.hartwig.actin.molecular.orange.evidence.known.KnownEventResolver;
 import com.hartwig.actin.molecular.orange.evidence.known.KnownEventResolverFactory;
-import com.hartwig.actin.molecular.serve.KnownGene;
 import com.hartwig.serve.datamodel.ActionableEvents;
 import com.hartwig.serve.datamodel.KnownEvents;
 
@@ -25,15 +24,16 @@ public final class EvidenceDatabaseFactory {
     }
 
     @NotNull
-    public static EvidenceDatabase create(@NotNull KnownEvents knownEvents, @NotNull List<KnownGene> knownGenes,
-            @NotNull ActionableEvents actionableEvents, @NotNull List<ExternalTrialMapping> externalTrialMappings,
-            @NotNull DoidEntry doidEntry, @Nullable Set<String> tumorDoids) {
+    public static EvidenceDatabase create(@NotNull KnownEvents knownEvents, @NotNull ActionableEvents actionableEvents,
+            @NotNull List<ExternalTrialMapping> externalTrialMappings, @NotNull DoidEntry doidEntry,
+            @Nullable Set<String> tumorDoids) {
         ExternalTrialMapper externalTrialMapper = new ExternalTrialMapper(externalTrialMappings);
         DoidModel doidModel = DoidModelFactory.createFromDoidEntry(doidEntry);
-        ActionableEventMatcherFactory factory = new ActionableEventMatcherFactory(externalTrialMapper, doidModel, tumorDoids);
+        ActionableEventMatcherFactory factory =
+                new ActionableEventMatcherFactory(externalTrialMapper, doidModel, tumorDoids);
         ActionableEventMatcher actionableEventMatcher = factory.create(actionableEvents);
 
-        KnownEventResolver knownEventResolver = KnownEventResolverFactory.create(knownEvents, knownGenes);
+        KnownEventResolver knownEventResolver = KnownEventResolverFactory.create(knownEvents);
 
         return new EvidenceDatabase(knownEventResolver, actionableEventMatcher);
     }

@@ -6,6 +6,7 @@ import com.hartwig.serve.datamodel.common.GeneRole;
 import com.hartwig.serve.datamodel.common.ProteinEffect;
 import com.hartwig.serve.datamodel.fusion.ImmutableKnownFusion;
 import com.hartwig.serve.datamodel.gene.ImmutableKnownCopyNumber;
+import com.hartwig.serve.datamodel.gene.ImmutableKnownGene;
 import com.hartwig.serve.datamodel.hotspot.ImmutableKnownHotspot;
 import com.hartwig.serve.datamodel.range.ImmutableKnownCodon;
 import com.hartwig.serve.datamodel.range.ImmutableKnownExon;
@@ -43,6 +44,13 @@ public final class TestServeKnownFactory {
                 .from(TestServeFactory.createEmptyRangeAnnotation())
                 .inputTranscript(Strings.EMPTY)
                 .inputExonRank(0);
+    }
+
+    @NotNull
+    public static ImmutableKnownGene.Builder geneBuilder() {
+        return ImmutableKnownGene.builder()
+                .gene(Strings.EMPTY)
+                .geneRole(GeneRole.UNKNOWN);
     }
 
     @NotNull

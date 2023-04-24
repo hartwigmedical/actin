@@ -38,7 +38,6 @@ public interface OrangeInterpreterConfig {
 
         options.addOption(ORANGE_JSON, true, "Path of the ORANGE json to be interpreted");
         options.addOption(SERVE_DIRECTORY, true, "Path towards the SERVE directory containing known and actionable events");
-        options.addOption(KNOWN_GENES_TSV, true, "A TSV containing genes to include in the ACTIN molecular output along with gene role");
         options.addOption(EXTERNAL_TRIAL_MAPPING_TSV, true, "A mapping from external trial names to ACTIN trials");
         options.addOption(CLINICAL_JSON, true, "The clinical JSON of the patient for which a sample is analyzed");
         options.addOption(DOID_JSON, true, "Path to JSON file containing the full DOID tree.");
@@ -55,9 +54,6 @@ public interface OrangeInterpreterConfig {
 
     @NotNull
     String serveDirectory();
-
-    @NotNull
-    String knownGenesTsv();
 
     @NotNull
     String externalTrialMappingTsv();
@@ -81,7 +77,6 @@ public interface OrangeInterpreterConfig {
         return ImmutableOrangeInterpreterConfig.builder()
                 .orangeJson(ApplicationConfig.nonOptionalFile(cmd, ORANGE_JSON))
                 .serveDirectory(ApplicationConfig.nonOptionalDir(cmd, SERVE_DIRECTORY))
-                .knownGenesTsv(ApplicationConfig.nonOptionalFile(cmd, KNOWN_GENES_TSV))
                 .externalTrialMappingTsv(ApplicationConfig.nonOptionalFile(cmd, EXTERNAL_TRIAL_MAPPING_TSV))
                 .clinicalJson(ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON))
                 .doidJson(ApplicationConfig.nonOptionalFile(cmd, DOID_JSON))

@@ -21,8 +21,6 @@ import com.hartwig.actin.molecular.orange.evidence.curation.ExternalTrialMapping
 import com.hartwig.actin.molecular.orange.interpretation.OrangeInterpreter;
 import com.hartwig.actin.molecular.orange.serialization.OrangeJson;
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson;
-import com.hartwig.actin.molecular.serve.KnownGene;
-import com.hartwig.actin.molecular.serve.KnownGeneFile;
 import com.hartwig.actin.molecular.util.MolecularPrinter;
 import com.hartwig.serve.datamodel.ActionableEvents;
 import com.hartwig.serve.datamodel.ActionableEventsLoader;
@@ -73,16 +71,14 @@ public class OrangeInterpreterApplication {
         LOGGER.info("Reading ORANGE json from {}", config.orangeJson());
         OrangeRecord orange = OrangeJson.read(config.orangeJson());
 
-        LOGGER.info("Loading known genes from {}", config.knownGenesTsv());
-        List<KnownGene> knownGenes = KnownGeneFile.read(config.knownGenesTsv());
-        LOGGER.info(" Loaded {} known genes", knownGenes.size());
-
-        GeneFilter geneFilter = GeneFilterFactory.createFromKnownGenes(knownGenes);
-
         LOGGER.info("Loading evidence database");
-        EvidenceDatabase evidenceDatabase = loadEvidenceDatabase(config, orange.refGenomeVersion(), knownGenes);
+        KnownEvents knownEvents = KnownEventsLoader.readFromDir(config.serveDirectory(),
+                toServeRefGenomeVersion(orange.refGenomeVersion()));
+        EvidenceDatabase evidenceDatabase =
+                loadEvidenceDatabase(config, toServeRefGenomeVersion(orange.refGenomeVersion()), knownEvents);
 
         LOGGER.info("Interpreting ORANGE record");
+        GeneFilter geneFilter = GeneFilterFactory.createFromKnownGenes(knownEvents.genes());
         MolecularRecord molecular = new OrangeInterpreter(geneFilter, evidenceDatabase).interpret(orange);
 
         MolecularPrinter.printRecord(molecular);
@@ -93,10 +89,9 @@ public class OrangeInterpreterApplication {
 
     @NotNull
     private static EvidenceDatabase loadEvidenceDatabase(@NotNull OrangeInterpreterConfig config,
-            @NotNull OrangeRefGenomeVersion refGenomeVersion, @NotNull List<KnownGene> knownGenes) throws IOException {
-        RefGenome serveRefGenomeVersion = toServeRefGenomeVersion(refGenomeVersion);
-        KnownEvents knownEvents = KnownEventsLoader.readFromDir(config.serveDirectory(), serveRefGenomeVersion);
-        ActionableEvents actionableEvents = ActionableEventsLoader.readFromDir(config.serveDirectory(), serveRefGenomeVersion);
+            @NotNull RefGenome serveRefGenomeVersion, @NotNull KnownEvents knownEvents) throws IOException {
+        ActionableEvents actionableEvents =
+                ActionableEventsLoader.readFromDir(config.serveDirectory(), serveRefGenomeVersion);
 
         LOGGER.info("Loading external trial to ACTIN mapping TSV from {}", config.externalTrialMappingTsv());
         List<ExternalTrialMapping> mappings = ExternalTrialMappingFile.read(config.externalTrialMappingTsv());
@@ -115,7 +110,7 @@ public class OrangeInterpreterApplication {
         DoidEntry doidEntry = DoidJson.readDoidOwlEntry(config.doidJson());
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size());
 
-        return EvidenceDatabaseFactory.create(knownEvents, knownGenes, actionableEvents, mappings, doidEntry, tumorDoids);
+        return EvidenceDatabaseFactory.create(knownEvents, actionableEvents, mappings, doidEntry, tumorDoids);
     }
 
     @NotNull
@@ -129,7 +124,8 @@ public class OrangeInterpreterApplication {
             }
         }
 
-        throw new IllegalStateException("Could not convert ORANGE ref genome version to SERVE ref genome version: " + refGenomeVersion);
+        throw new IllegalStateException(
+                "Could not convert ORANGE ref genome version to SERVE ref genome version: " + refGenomeVersion);
     }
 
     @NotNull

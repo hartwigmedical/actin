@@ -1,11 +1,11 @@
 package com.hartwig.actin.molecular.orange.evidence.known;
 
-import java.util.List;
+import java.util.Set;
 
-import com.hartwig.actin.molecular.serve.KnownGene;
 import com.hartwig.serve.datamodel.common.GeneAlteration;
 import com.hartwig.serve.datamodel.common.GeneRole;
 import com.hartwig.serve.datamodel.common.ProteinEffect;
+import com.hartwig.serve.datamodel.gene.KnownGene;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +16,7 @@ final class GeneLookup {
     }
 
     @Nullable
-    public static GeneAlteration find(@NotNull List<KnownGene> knownGenes, @NotNull String gene) {
+    public static GeneAlteration find(@NotNull Set<KnownGene> knownGenes, @NotNull String gene) {
         for (KnownGene knownGene : knownGenes) {
             if (knownGene.gene().equals(gene)) {
                 return fromKnownGene(knownGene);
@@ -31,7 +31,7 @@ final class GeneLookup {
             @NotNull
             @Override
             public GeneRole geneRole() {
-                return toServeGeneRole(knownGene.geneRole());
+                return knownGene.geneRole();
             }
 
             @NotNull
@@ -46,26 +46,5 @@ final class GeneLookup {
                 return null;
             }
         };
-    }
-
-    @NotNull
-    private static GeneRole toServeGeneRole(@NotNull com.hartwig.actin.molecular.datamodel.driver.GeneRole geneRole) {
-        switch (geneRole) {
-            case BOTH: {
-                return GeneRole.BOTH;
-            }
-            case ONCO: {
-                return GeneRole.ONCO;
-            }
-            case TSG: {
-                return GeneRole.TSG;
-            }
-            case UNKNOWN: {
-                return GeneRole.UNKNOWN;
-            }
-            default: {
-                throw new IllegalStateException("Could not convert gene role: " + geneRole);
-            }
-        }
     }
 }
