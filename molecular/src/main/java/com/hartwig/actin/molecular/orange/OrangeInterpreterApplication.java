@@ -72,10 +72,9 @@ public class OrangeInterpreterApplication {
         OrangeRecord orange = OrangeJson.read(config.orangeJson());
 
         LOGGER.info("Loading evidence database");
-        KnownEvents knownEvents = KnownEventsLoader.readFromDir(config.serveDirectory(),
-                toServeRefGenomeVersion(orange.refGenomeVersion()));
-        EvidenceDatabase evidenceDatabase =
-                loadEvidenceDatabase(config, toServeRefGenomeVersion(orange.refGenomeVersion()), knownEvents);
+        RefGenome serveRefGenomeVersion = toServeRefGenomeVersion(orange.refGenomeVersion());
+        KnownEvents knownEvents = KnownEventsLoader.readFromDir(config.serveDirectory(), serveRefGenomeVersion);
+        EvidenceDatabase evidenceDatabase = loadEvidenceDatabase(config, serveRefGenomeVersion, knownEvents);
 
         LOGGER.info("Interpreting ORANGE record");
         GeneFilter geneFilter = GeneFilterFactory.createFromKnownGenes(knownEvents.genes());
