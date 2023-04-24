@@ -2,7 +2,6 @@ package com.hartwig.actin.report.pdf.tables.treatment;
 
 import static java.util.stream.Collectors.groupingBy;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -46,8 +45,9 @@ final class ActinTrialGeneratorFunctions {
     public static void insertTrialRow(List<EvaluatedCohort> cohortList, Table table, Table trialSubTable) {
         if (!cohortList.isEmpty()) {
             EvaluatedCohort cohort = cohortList.get(0);
-            table.addCell(Cells.createContent(Cells.createContentNoBorder(new Paragraph().addAll(Arrays.asList(new Text(cohort.trialId()).addStyle(
-                    Styles.tableHighlightStyle()), new Text(cohort.acronym()).addStyle(Styles.tableContentStyle()))))));
+            table.addCell(Cells.createContent(Cells.createContentNoBorder(new Paragraph().addAll(List.of(new Text(
+                            cohort.trialId() + "\n").addStyle(Styles.tableHighlightStyle()),
+                    new Text(cohort.acronym()).addStyle(Styles.tableContentStyle()))))));
             if (trialSubTable.getNumberOfRows() > 2) {
                 trialSubTable = Tables.makeWrapping(trialSubTable, false);
             } else {
