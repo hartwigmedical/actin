@@ -65,8 +65,6 @@ public class OrangeJsonTest {
 
     private static final double EPSILON = 1.0E-2;
 
-
-
     @Test
     public void canReadMinimallyEmptyOrangeRecordJson() throws IOException {
         assertNotNull(OrangeJson.read(MINIMALLY_EMPTY_ORANGE_JSON));
