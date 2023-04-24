@@ -87,10 +87,9 @@ public class OrangeInterpreterApplication {
     }
 
     @NotNull
-    private static EvidenceDatabase loadEvidenceDatabase(@NotNull OrangeInterpreterConfig config,
-            @NotNull RefGenome serveRefGenomeVersion, @NotNull KnownEvents knownEvents) throws IOException {
-        ActionableEvents actionableEvents =
-                ActionableEventsLoader.readFromDir(config.serveDirectory(), serveRefGenomeVersion);
+    private static EvidenceDatabase loadEvidenceDatabase(@NotNull OrangeInterpreterConfig config, @NotNull RefGenome serveRefGenomeVersion,
+            @NotNull KnownEvents knownEvents) throws IOException {
+        ActionableEvents actionableEvents = ActionableEventsLoader.readFromDir(config.serveDirectory(), serveRefGenomeVersion);
 
         LOGGER.info("Loading external trial to ACTIN mapping TSV from {}", config.externalTrialMappingTsv());
         List<ExternalTrialMapping> mappings = ExternalTrialMappingFile.read(config.externalTrialMappingTsv());
@@ -123,8 +122,7 @@ public class OrangeInterpreterApplication {
             }
         }
 
-        throw new IllegalStateException(
-                "Could not convert ORANGE ref genome version to SERVE ref genome version: " + refGenomeVersion);
+        throw new IllegalStateException("Could not convert ORANGE ref genome version to SERVE ref genome version: " + refGenomeVersion);
     }
 
     @NotNull

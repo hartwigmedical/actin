@@ -25,12 +25,10 @@ public final class EvidenceDatabaseFactory {
 
     @NotNull
     public static EvidenceDatabase create(@NotNull KnownEvents knownEvents, @NotNull ActionableEvents actionableEvents,
-            @NotNull List<ExternalTrialMapping> externalTrialMappings, @NotNull DoidEntry doidEntry,
-            @Nullable Set<String> tumorDoids) {
+            @NotNull List<ExternalTrialMapping> externalTrialMappings, @NotNull DoidEntry doidEntry, @Nullable Set<String> tumorDoids) {
         ExternalTrialMapper externalTrialMapper = new ExternalTrialMapper(externalTrialMappings);
         DoidModel doidModel = DoidModelFactory.createFromDoidEntry(doidEntry);
-        ActionableEventMatcherFactory factory =
-                new ActionableEventMatcherFactory(externalTrialMapper, doidModel, tumorDoids);
+        ActionableEventMatcherFactory factory = new ActionableEventMatcherFactory(externalTrialMapper, doidModel, tumorDoids);
         ActionableEventMatcher actionableEventMatcher = factory.create(actionableEvents);
 
         KnownEventResolver knownEventResolver = KnownEventResolverFactory.create(knownEvents);

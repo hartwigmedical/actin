@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.orange.evidence.known;
 
-import java.util.List;
 import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -10,7 +9,6 @@ import com.hartwig.serve.datamodel.ImmutableKnownEvents;
 import com.hartwig.serve.datamodel.Knowledgebase;
 import com.hartwig.serve.datamodel.KnownEvent;
 import com.hartwig.serve.datamodel.KnownEvents;
-import com.hartwig.serve.datamodel.gene.KnownGene;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -49,8 +47,7 @@ public final class KnownEventResolverFactory {
         return filtered;
     }
 
-    private static boolean hasAtLeastOneSourceToInclude(@NotNull Set<Knowledgebase> sources,
-            @NotNull Set<Knowledgebase> sourcesToInclude) {
+    private static boolean hasAtLeastOneSourceToInclude(@NotNull Set<Knowledgebase> sources, @NotNull Set<Knowledgebase> sourcesToInclude) {
         for (Knowledgebase source : sources) {
             if (sourcesToInclude.contains(source)) {
                 return true;

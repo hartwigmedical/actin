@@ -48,9 +48,7 @@ public final class TestServeKnownFactory {
 
     @NotNull
     public static ImmutableKnownGene.Builder geneBuilder() {
-        return ImmutableKnownGene.builder()
-                .gene(Strings.EMPTY)
-                .geneRole(GeneRole.UNKNOWN);
+        return ImmutableKnownGene.builder().gene(Strings.EMPTY).geneRole(GeneRole.UNKNOWN);
     }
 
     @NotNull

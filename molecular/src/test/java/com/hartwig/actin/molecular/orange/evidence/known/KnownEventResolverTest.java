@@ -32,13 +32,8 @@ public class KnownEventResolverTest {
 
     @Test
     public void canResolveKnownEventsForVariants() {
-        KnownHotspot hotspot = TestServeKnownFactory.hotspotBuilder()
-                .gene("gene 1")
-                .chromosome("12")
-                .position(10)
-                .ref("A")
-                .alt("T")
-                .build();
+        KnownHotspot hotspot =
+                TestServeKnownFactory.hotspotBuilder().gene("gene 1").chromosome("12").position(10).ref("A").alt("T").build();
         KnownCodon codon = TestServeKnownFactory.codonBuilder()
                 .gene("gene 1")
                 .chromosome("12")
@@ -55,12 +50,7 @@ public class KnownEventResolverTest {
                 .build();
 
         KnownGene knownGene = knownGeneWithName("gene 1");
-        KnownEvents known = ImmutableKnownEvents.builder()
-                .addHotspots(hotspot)
-                .addCodons(codon)
-                .addExons(exon)
-                .addGenes(knownGene)
-                .build();
+        KnownEvents known = ImmutableKnownEvents.builder().addHotspots(hotspot).addCodons(codon).addExons(exon).addGenes(knownGene).build();
         KnownEventResolver resolver = new KnownEventResolver(known);
 
         PurpleVariant hotspotMatch = TestPurpleFactory.variantBuilder()
@@ -69,9 +59,7 @@ public class KnownEventResolverTest {
                 .position(10)
                 .ref("A")
                 .alt("T")
-                .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder()
-                        .codingEffect(PurpleCodingEffect.MISSENSE)
-                        .build())
+                .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder().codingEffect(PurpleCodingEffect.MISSENSE).build())
                 .build();
 
         assertEquals(hotspot, resolver.resolveForVariant(hotspotMatch));
@@ -91,18 +79,13 @@ public class KnownEventResolverTest {
 
     @Test
     public void canResolveKnownEventsForGeneMutations() {
-        KnownCopyNumber knownAmp =
-                TestServeKnownFactory.copyNumberBuilder().gene("gene 1").event(GeneEvent.AMPLIFICATION).build();
-        KnownCopyNumber knownDel =
-                TestServeKnownFactory.copyNumberBuilder().gene("gene 1").event(GeneEvent.DELETION).build();
+        KnownCopyNumber knownAmp = TestServeKnownFactory.copyNumberBuilder().gene("gene 1").event(GeneEvent.AMPLIFICATION).build();
+        KnownCopyNumber knownDel = TestServeKnownFactory.copyNumberBuilder().gene("gene 1").event(GeneEvent.DELETION).build();
 
         KnownGene knownGene1 = knownGeneWithName("gene 1");
         KnownGene knownGene2 = knownGeneWithName("gene 2");
 
-        KnownEvents known = ImmutableKnownEvents.builder()
-                .addCopyNumbers(knownAmp, knownDel)
-                .addGenes(knownGene1, knownGene2)
-                .build();
+        KnownEvents known = ImmutableKnownEvents.builder().addCopyNumbers(knownAmp, knownDel).addGenes(knownGene1, knownGene2).build();
 
         KnownEventResolver resolver = new KnownEventResolver(known);
 
@@ -115,16 +98,13 @@ public class KnownEventResolverTest {
         PurpleGainLoss ampGene3 = amp("gene 3");
         assertNull(resolver.resolveForCopyNumber(ampGene3));
 
-        LinxHomozygousDisruption homDisruptionGene1 =
-                TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build();
+        LinxHomozygousDisruption homDisruptionGene1 = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build();
         assertEquals(knownDel, resolver.resolveForHomozygousDisruption(homDisruptionGene1));
 
-        LinxHomozygousDisruption homDisruptionGene2 =
-                TestLinxFactory.homozygousDisruptionBuilder().gene("gene 2").build();
+        LinxHomozygousDisruption homDisruptionGene2 = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 2").build();
         assertNotNull(resolver.resolveForHomozygousDisruption(homDisruptionGene2));
 
-        LinxHomozygousDisruption homDisruptionGene3 =
-                TestLinxFactory.homozygousDisruptionBuilder().gene("gene 3").build();
+        LinxHomozygousDisruption homDisruptionGene3 = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 3").build();
         assertNull(resolver.resolveForHomozygousDisruption(homDisruptionGene3));
 
         LinxBreakend breakendGene1 = TestLinxFactory.breakendBuilder().gene("gene 1").build();
@@ -153,10 +133,7 @@ public class KnownEventResolverTest {
 
     @NotNull
     private static PurpleGainLoss amp(@NotNull String gene) {
-        return TestPurpleFactory.gainLossBuilder()
-                .gene(gene)
-                .interpretation(PurpleGainLossInterpretation.FULL_GAIN)
-                .build();
+        return TestPurpleFactory.gainLossBuilder().gene(gene).interpretation(PurpleGainLossInterpretation.FULL_GAIN).build();
     }
 
     @NotNull
