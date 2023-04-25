@@ -18,8 +18,8 @@ public class HasFamilyHistoryOfLongQTSyndrome implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Currently undetermined if patient has family history of Long QT syndrome")
-                .addUndeterminedGeneralMessages("Undetermined family history")
+                .addUndeterminedSpecificMessages("Currently undetermined if patient has family history of long QT syndrome")
+                .addUndeterminedGeneralMessages("Undetermined family history of long QT syndrome")
                 .build();
     }
 }

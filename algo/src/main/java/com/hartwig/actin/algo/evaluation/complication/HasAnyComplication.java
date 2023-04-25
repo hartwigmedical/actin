@@ -35,13 +35,19 @@ public class HasAnyComplication implements EvaluationFunction {
                                                 .map(name -> name.isEmpty() ? "Unknown" : name))
                                         .orElse(Stream.empty())
                                         .collect(Collectors.toList())))
-                                .addPassGeneralMessages("Present complication")
+                                .addPassGeneralMessages("Present complication(s): "
+                                        + Format.concat(Optional.ofNullable(record.clinical().complications())
+                                                .map(complications -> complications.stream()
+                                                        .map(Complication::name)
+                                                        .map(name -> name.isEmpty() ? "Unknown" : name))
+                                                .orElse(Stream.empty())
+                                                .collect(Collectors.toList())))
                                 .build();
                     } else {
                         return EvaluationFactory.unrecoverable()
                                 .result(EvaluationResult.FAIL)
-                                .addFailSpecificMessages("Patient has no complications")
-                                .addFailGeneralMessages("No complications")
+                                .addFailSpecificMessages("Patient has no cancer-related complications")
+                                .addFailGeneralMessages("No cancer-related complications present")
                                 .build();
                     }
                 })

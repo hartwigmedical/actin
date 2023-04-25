@@ -18,7 +18,7 @@ public class HasHistoryOfCongestiveHeartFailureWithNYHA implements EvaluationFun
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Currently undetermined if patient has history of congestive heart failure")
+                .addUndeterminedSpecificMessages("Currently undetermined if patient has history of congestive heart failure with NYHA class")
                 .addUndeterminedGeneralMessages("Undetermined congestive heart failure")
                 .build();
     }

@@ -24,7 +24,7 @@ public class CurrentlyGetsCYPXSubstrateMedication implements EvaluationFunction 
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages(
                         "Currently not determined if patient gets " + termToFind + " substrate medication")
-                .addUndeterminedGeneralMessages("CYP medication requirements")
+                .addUndeterminedGeneralMessages("CYP medication requirements undetermined")
                 .build();
     }
 }

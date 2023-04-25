@@ -18,8 +18,8 @@ public class IsFullyVaccinatedCovid19 implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Unknown if patient is fully vaccinated against Covid-19")
-                .addUndeterminedGeneralMessages("Unknown Covid-19 vaccination status")
+                .addUndeterminedSpecificMessages("Unknown if patient is fully vaccinated against COVID-19")
+                .addUndeterminedGeneralMessages("COVID-19 vaccination status unknown")
                 .build();
     }
 }

@@ -52,8 +52,10 @@ public class HasRecentlyReceivedCancerTherapyOfCategory implements EvaluationFun
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has not received recent treatments of category " + Format.concat(categoriesToFind));
+            builder.addFailGeneralMessages("Washout period requirements " + Format.concat(categoriesToFind));
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient has recently received treatment with medication " + categoryFound);
+            builder.addPassGeneralMessages("Washout period requirements " + Format.concat(categoriesToFind));
         }
 
         return builder.build();

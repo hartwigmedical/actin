@@ -44,7 +44,7 @@ public class RequiresRegularHematopoieticSupport implements EvaluationFunction {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Patient has had blood transfusion " + inBetweenRange)
-                        .addPassGeneralMessages("Hematopoietic support")
+                        .addPassGeneralMessages("Has received recent hematopoietic support")
                         .build();
             }
         }
@@ -59,11 +59,10 @@ public class RequiresRegularHematopoieticSupport implements EvaluationFunction {
             boolean runningBetweenDates = start != null && start.isBefore(minDate) && (stop == null || stop.isAfter(minDate));
             boolean activeBetweenDates = startedBetweenDates || stoppedBetweenDates || runningBetweenDates;
 
-            //TODO (ACTIN-36): Check updated implementation
             boolean hasMatchingCategory = false;
             for (String category : medication.categories()) {
-                for (String match : HEMATOPOIETIC_MEDICATION_CATEGORIES) {
-                    if (category.toLowerCase().contains(match)) {
+                for (String hematopoieticMedicationCategory : HEMATOPOIETIC_MEDICATION_CATEGORIES) {
+                    if (category.toLowerCase().contains(hematopoieticMedicationCategory)) {
                         hasMatchingCategory = true;
                         break;
                     }
@@ -79,14 +78,14 @@ public class RequiresRegularHematopoieticSupport implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has had medications " + Format.concat(medications) + " " + inBetweenRange)
-                    .addPassGeneralMessages("Hematopoietic support")
+                    .addPassGeneralMessages("Has received recent hematopoietic support")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has not received blood transfusions or hematopoietic medication " + inBetweenRange)
-                .addFailGeneralMessages("No hematopoietic support")
+                .addFailGeneralMessages("Has not received recent hematopoietic support")
                 .build();
     }
 }

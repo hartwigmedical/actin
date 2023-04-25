@@ -21,12 +21,14 @@ public class TumorBiopsyTakenBeforeInformedConsent implements EvaluationFunction
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Currently can't determine whether patient has taken a biopsy prior to IC without WGS")
+                    .addUndeterminedGeneralMessages("Undetermined if biopsy has been obtained before IC")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.PASS)
                 .addPassSpecificMessages("It is currently assumed that patient has taken a tumor biopsy prior to IC")
+                .addPassGeneralMessages("Biopsy taken before provided IC")
                 .build();
     }
 }

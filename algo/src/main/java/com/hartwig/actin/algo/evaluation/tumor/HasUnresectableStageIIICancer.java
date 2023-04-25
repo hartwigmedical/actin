@@ -23,8 +23,9 @@ public class HasUnresectableStageIIICancer implements EvaluationFunction {
         if (stage == null) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Tumor stage details are missing")
-                    .addUndeterminedGeneralMessages("Missing tumor stage details")
+                    .addUndeterminedSpecificMessages(
+                            "Tumor stage details are missing, if cancer is unresectable stage III cannot be determined")
+                    .addUndeterminedGeneralMessages("Undetermined unresectable stage III cancer")
                     .build();
         }
 
@@ -41,7 +42,7 @@ public class HasUnresectableStageIIICancer implements EvaluationFunction {
             builder.addFailGeneralMessages("No unresectable stage III cancer");
         } else if (result == EvaluationResult.UNDETERMINED) {
             builder.addUndeterminedSpecificMessages("Undetermined if stage III cancer is considered unresectable");
-            builder.addUndeterminedGeneralMessages("Undetermined stage III resectability");
+            builder.addUndeterminedGeneralMessages("Undetermined if cancer is unresectable stage III");
         }
 
         return builder.build();

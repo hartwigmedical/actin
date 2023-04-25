@@ -41,12 +41,14 @@ public class HasLimitedLabValue implements LabEvaluationFunction {
         EvaluationResult result = ValueComparison.evaluateVersusMaxValue(convertedValue, labValue.comparator(), maxValue);
         ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages(labValue.code() + " is insufficient");
-            builder.addFailGeneralMessages(labValue.code() + " insufficient");
+            builder.addFailSpecificMessages(labValue.code() + " exceeds limit");
+            builder.addFailGeneralMessages(labValue.code() + " exceeds limit");
         } else if (result == EvaluationResult.UNDETERMINED) {
             builder.addUndeterminedSpecificMessages(labValue.code() + " sufficiency could not be evaluated");
+            builder.addUndeterminedGeneralMessages(labValue.code() + " undetermined");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages(labValue.code() + " is sufficient");
+            builder.addPassSpecificMessages(labValue.code() + " is within limit");
+            builder.addPassGeneralMessages(labValue.code() + " within limit");
         }
 
         return builder.build();

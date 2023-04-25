@@ -22,14 +22,14 @@ public class CanProvideFreshSampleForFurtherAnalysis implements EvaluationFuncti
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages(
                             "Can't determine whether patient can provide fresh sample for FFPE analysis without WGS")
-                    .addUndeterminedGeneralMessages("FFPE analysis")
+                    .addUndeterminedGeneralMessages("Unknown if fresh sample available for FFPE analysis")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.PASS)
                 .addPassSpecificMessages("It is assumed that patient can provide fresh sample for FFPE analysis (presence of WGS analysis)")
-                .addPassGeneralMessages("FFPE analysis")
+                .addPassGeneralMessages("Fresh sample provision ability for FFPE analysis assumed")
                 .build();
     }
 }

@@ -40,8 +40,10 @@ public class HasRecentlyReceivedRadiotherapy implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has not recently received radiotherapy");
+            builder.addFailGeneralMessages("No recent radiotherapy");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient has recently received radiotherapy");
+            builder.addPassGeneralMessages("Recent radiotherapy");
         }
 
         return builder.build();

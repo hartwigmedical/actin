@@ -38,7 +38,7 @@ public class HasContraindicationToMRI implements EvaluationFunction {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has a contraindication to MRI due to " + doidModel.resolveTermForDoid(doid))
-                            .addPassGeneralMessages("MRI contraindication")
+                            .addPassGeneralMessages("Potential MRI contraindication: " + doidModel.resolveTermForDoid(doid))
                             .build();
                 }
             }
@@ -48,7 +48,7 @@ public class HasContraindicationToMRI implements EvaluationFunction {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has a contraindication to MRI due to condition " + condition.name())
-                            .addPassGeneralMessages("MRI contraindication")
+                            .addPassGeneralMessages("Potential MRI contraindication: " + condition.name())
                             .build();
                 }
             }
@@ -60,7 +60,7 @@ public class HasContraindicationToMRI implements EvaluationFunction {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has a contraindication to MRI due to intolerance " + intolerance.name())
-                            .addPassGeneralMessages("MRI contraindication")
+                            .addPassGeneralMessages("Potential MRI contraindication: " + intolerance.name())
                             .build();
                 }
             }
@@ -69,7 +69,7 @@ public class HasContraindicationToMRI implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No potential contraindications to MRI identified")
-                .addFailGeneralMessages("No potential MRI contraindication")
+                .addFailGeneralMessages("No potential contraindications to MRI")
                 .build();
     }
 }

@@ -53,7 +53,8 @@ public class HasHadLimitedTreatmentsWithCategoryOfTypes implements EvaluationFun
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has received at most " + maxTreatmentLines + " lines of " + Format.concat(types) + " "
                             + category.display())
-                    .addPassGeneralMessages(category.display() + " treatment")
+                    .addPassGeneralMessages(
+                            "Has received at most " + maxTreatmentLines + " lines of " + Format.concat(types) + " " + category.display())
                     .build();
         } else if (numMatchingTreatmentLines <= maxTreatmentLines) {
             return EvaluationFactory.unrecoverable()
@@ -61,7 +62,9 @@ public class HasHadLimitedTreatmentsWithCategoryOfTypes implements EvaluationFun
                     .addUndeterminedSpecificMessages(
                             "Can't determine whether patient has received at most " + maxTreatmentLines + " lines of "
                                     + Format.concat(types) + " " + category.display())
-                    .addUndeterminedGeneralMessages("Unclear " + category.display() + " treatment")
+                    .addUndeterminedGeneralMessages(
+                            "Unclear if has received at most " + maxTreatmentLines + " lines of " + Format.concat(types) + " "
+                                    + category.display())
                     .build();
         } else {
             return EvaluationFactory.unrecoverable()
@@ -69,7 +72,8 @@ public class HasHadLimitedTreatmentsWithCategoryOfTypes implements EvaluationFun
                     .addFailSpecificMessages(
                             "Patient has not received at most " + maxTreatmentLines + " lines of " + Format.concat(types) + " "
                                     + category.display())
-                    .addFailGeneralMessages("No " + category.display() + " treatment")
+                    .addFailGeneralMessages("Has not received at most " + maxTreatmentLines + " lines of " + Format.concat(types) + " "
+                            + category.display())
                     .build();
         }
     }

@@ -19,7 +19,7 @@ public class HasExhaustedSOCTreatments implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Anything related to exhaustion of SOC treatment can not be determined yet")
-                .addUndeterminedGeneralMessages("SOC exhaustion")
+                .addUndeterminedGeneralMessages("Undetermined if exhaustion of SOC")
                 .build();
     }
 }

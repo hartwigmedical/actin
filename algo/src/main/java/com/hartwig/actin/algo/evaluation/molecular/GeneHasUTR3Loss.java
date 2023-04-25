@@ -60,7 +60,7 @@ public class GeneHasUTR3Loss implements EvaluationFunction {
                     .addAllInclusionMolecularEvents(hotspotsIn3UTR)
                     .addPassSpecificMessages(
                             "3' UTR hotspot mutation(s) in " + gene + " should lead to 3' UTR loss: " + Format.concat(hotspotsIn3UTR))
-                    .addPassGeneralMessages("3' UTR loss of " + gene)
+                    .addPassGeneralMessages("Present 3' UTR loss of " + gene)
                     .build();
         }
 

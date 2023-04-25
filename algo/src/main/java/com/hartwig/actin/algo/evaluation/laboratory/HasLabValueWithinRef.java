@@ -21,7 +21,8 @@ public class HasLabValueWithinRef implements LabEvaluationFunction {
         if (isOutsideRef == null) {
             return EvaluationFactory.recoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Could not determine whether " + labValue.code() + " is within ref")
+                    .addUndeterminedSpecificMessages("Could not determine whether " + labValue.code() + " is within ref range")
+                    .addUndeterminedGeneralMessages("Undetermined if " + labValue.code() + " is within ref range")
                     .build();
         }
 
@@ -32,6 +33,7 @@ public class HasLabValueWithinRef implements LabEvaluationFunction {
             builder.addFailGeneralMessages(labValue.code() + " out of range");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages(labValue.code() + " is within reference values");
+            builder.addPassGeneralMessages(labValue.code() + " within range");
         }
 
         return builder.build();

@@ -44,13 +44,14 @@ public class HasHadOrganTransplant implements EvaluationFunction {
                 }
 
                 if (isPass) {
-                    ImmutableEvaluation.Builder builder =
-                            EvaluationFactory.unrecoverable().result(EvaluationResult.PASS).addPassGeneralMessages("Organ transplant");
+                    ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(EvaluationResult.PASS);
 
                     if (minYear != null) {
                         builder.addPassSpecificMessages("Patient has had an organ transplant at some point in or after " + minYear);
+                        builder.addPassGeneralMessages("Patient had organ transplant in or after " + minYear);
                     } else {
-                        builder.addPassSpecificMessages("Organ transplant");
+                        builder.addPassSpecificMessages("Patient has had an organ transplant");
+                        builder.addPassGeneralMessages("Has had organ transplant");
                     }
                     return builder.build();
                 }
@@ -61,7 +62,7 @@ public class HasHadOrganTransplant implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Patient has had organ transplant but in unclear year")
-                    .addUndeterminedGeneralMessages("Unclear organ transplant")
+                    .addUndeterminedGeneralMessages("Date of previous organ transplant unknown")
                     .build();
         }
 

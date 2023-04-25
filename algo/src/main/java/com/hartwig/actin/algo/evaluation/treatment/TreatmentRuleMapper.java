@@ -36,8 +36,6 @@ public class TreatmentRuleMapper extends RuleMapper {
         map.put(EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES, hasHadSomeSystemicTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES, hasHadLimitedSystemicTreatmentsCreator());
         map.put(EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT, hasHadAnyCancerTreatmentCreator());
-        map.put(EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT_IGNORING_CATEGORIES_WITH_NAME_X,
-                hasHadAnyCancerTreatmentIgnoringCategoriesAndNamesCreator());
         map.put(EligibilityRule.HAS_HAD_TREATMENT_NAME_X, hasHadSpecificTreatmentCreator());
         map.put(EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS, hasHadSpecificTreatmentWithinWeeksCreator());
         map.put(EligibilityRule.HAS_HAD_COMBINED_TREATMENT_NAMES_X_WITHIN_Y_WEEKS, hasHadCombinedTreatmentNamesWithinWeeksCreator());
@@ -125,11 +123,6 @@ public class TreatmentRuleMapper extends RuleMapper {
     @NotNull
     private FunctionCreator hasHadAnyCancerTreatmentCreator() {
         return function -> new HasHadAnyCancerTreatment();
-    }
-
-    @NotNull
-    private FunctionCreator hasHadAnyCancerTreatmentIgnoringCategoriesAndNamesCreator() {
-        return function -> new HasHadAnyCancerTreatmentIgnoringCategoriesAndNames();
     }
 
     @NotNull

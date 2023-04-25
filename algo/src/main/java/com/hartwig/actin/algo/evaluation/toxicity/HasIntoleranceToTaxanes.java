@@ -42,12 +42,14 @@ public class HasIntoleranceToTaxanes implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has allergy to a taxane: " + Format.concat(allergies))
+                    .addPassGeneralMessages("Taxane allergy: " + Format.concat(allergies))
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has no known allergy to taxanes")
+                .addFailGeneralMessages("No known taxane allergy")
                 .build();
     }
 }

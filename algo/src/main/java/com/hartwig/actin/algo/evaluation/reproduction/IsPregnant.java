@@ -21,11 +21,13 @@ public class IsPregnant implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
                     .addFailSpecificMessages("Patient is male, hence won't be pregnant")
+                    .addFailGeneralMessages("No pregnancy")
                     .build();
         } else {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.NOT_EVALUATED)
                     .addPassSpecificMessages("It is assumed that patient won't be pregnant")
+                    .addPassGeneralMessages("Assumed not pregnant")
                     .build();
         }
     }

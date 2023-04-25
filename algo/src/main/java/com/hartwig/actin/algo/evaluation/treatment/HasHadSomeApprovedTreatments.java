@@ -22,15 +22,15 @@ public class HasHadSomeApprovedTreatments implements EvaluationFunction {
         if (record.clinical().priorTumorTreatments().isEmpty() && minApprovedTreatments > 0) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages("Patient has had no prior tumor treatment")
-                    .addFailGeneralMessages("No prior treatment")
+                    .addFailSpecificMessages("Patient has not had prior tumor treatment, and thus no approved treatments")
+                    .addFailGeneralMessages("Has not had approved treatments")
                     .build();
         }
-        
+
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Currently the number of approved treatments cannot be determined")
-                .addUndeterminedGeneralMessages("Approved treatments")
+                .addUndeterminedGeneralMessages("Undetermined nr of approved treatments")
                 .build();
     }
 }

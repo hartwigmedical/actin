@@ -22,8 +22,8 @@ public class HasMeasurableDisease implements EvaluationFunction {
         if (hasMeasurableDisease == null) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Data regarding measurable disease is missing")
-                    .addUndeterminedGeneralMessages("Missing measurable disease details")
+                    .addUndeterminedSpecificMessages("Data regarding measurable disease is missing, unknown if measurable")
+                    .addUndeterminedGeneralMessages("Undetermined measurable disease")
                     .build();
         }
 

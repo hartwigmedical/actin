@@ -19,6 +19,7 @@ public class CanUseAdequateAnticonception implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.NOT_EVALUATED)
                 .addPassSpecificMessages("Assumed that patient will adhere to relevant anticonception prescriptions")
+                .addPassGeneralMessages("Assumed adherence to anticonception prescriptions")
                 .build();
     }
 }

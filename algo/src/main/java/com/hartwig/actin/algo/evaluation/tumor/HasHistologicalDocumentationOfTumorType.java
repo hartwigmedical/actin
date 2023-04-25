@@ -20,7 +20,7 @@ public class HasHistologicalDocumentationOfTumorType implements EvaluationFuncti
                 .result(EvaluationResult.NOT_EVALUATED)
                 .addPassSpecificMessages(
                         "Currently it is assumed that histological documentation of tumor type has been done or can be done")
-                .addPassGeneralMessages("Histological documentation")
+                .addPassGeneralMessages("Histological documentation assumed")
                 .build();
     }
 }

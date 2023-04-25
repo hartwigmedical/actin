@@ -33,10 +33,10 @@ public class CurrentlyGetsMedicationOfName implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient currently does not get medication with name " + Format.concat(termsToFind));
-            builder.addFailGeneralMessages("No " + Format.concat(termsToFind) + " medication");
+            builder.addFailGeneralMessages("No " + Format.concat(termsToFind) + " medication use");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient currently gets medication with name " + Format.concat(termsToFind));
-            builder.addPassGeneralMessages(Format.concat(termsToFind) + " medication");
+            builder.addPassGeneralMessages(Format.concat(termsToFind) + " medication use");
         }
 
         return builder.build();

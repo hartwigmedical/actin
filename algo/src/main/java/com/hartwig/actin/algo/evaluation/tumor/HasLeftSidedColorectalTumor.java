@@ -46,15 +46,18 @@ public class HasLeftSidedColorectalTumor implements EvaluationFunction {
                     .map(subLocation -> {
                         if (LEFT_SUB_LOCATIONS.stream().anyMatch(subLocation::contains)) {
                             return EvaluationFactory.pass(String.format("Tumor sub-location %s is on left side", subLocation),
-                                    "Tumor location");
+                                    "Left-sided CRC tumor");
                         } else if (RIGHT_SUB_LOCATIONS.stream().anyMatch(subLocation::contains)) {
                             return EvaluationFactory.fail(String.format("Tumor sub-location %s is on right side", subLocation),
-                                    "Tumor location");
+                                    "Right-sided CRC tumor");
                         } else {
-                            return EvaluationFactory.undetermined("Unknown tumor sub-location " + subLocation, "Tumor location");
+                            return EvaluationFactory.undetermined(
+                                    "Unknown tumor sub-location " + subLocation + ", left-sidedness is unknown",
+                                    "Unknown sidedness of tumor");
                         }
                     })
-                    .orElse(EvaluationFactory.undetermined("Tumor sub-location not provided", "Tumor location"));
+                    .orElse(EvaluationFactory.undetermined("Tumor sub-location not provided, left-sidedness is unknown",
+                            "Unknown sidedness of tumor"));
         }
     }
 }

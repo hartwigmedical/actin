@@ -30,6 +30,7 @@ public class HasSufficientLVEF implements EvaluationFunction {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.UNDETERMINED)
                         .addUndeterminedSpecificMessages("No LVEF known")
+                        .addUndeterminedGeneralMessages("LVEF unknown")
                         .build();
             }
         }
@@ -38,8 +39,10 @@ public class HasSufficientLVEF implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("LVEF of " + lvef + " is below minimum LVEF of " + minLVEF);
+            builder.addFailGeneralMessages("LVEF of " + lvef + " below " + minLVEF);
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("LVEF of " + lvef + " exceeds minimum LVEF required ");
+            builder.addPassGeneralMessages("LVEF of " + lvef + " exceeds " + minLVEF);
         }
 
         return builder.build();

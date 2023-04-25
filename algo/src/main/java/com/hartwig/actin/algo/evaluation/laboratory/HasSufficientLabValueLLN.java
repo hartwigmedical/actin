@@ -28,8 +28,10 @@ public class HasSufficientLabValueLLN implements LabEvaluationFunction {
             builder.addFailGeneralMessages(labValue.code() + " below minimal LLN");
         } else if (result == EvaluationResult.UNDETERMINED) {
             builder.addUndeterminedSpecificMessages(labValue.code() + " could not be evaluated against minimal LLN");
+            builder.addUndeterminedGeneralMessages(labValue.code() + " undetermined");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages(labValue.code() + " is not below minimal LLN");
+            builder.addPassSpecificMessages(labValue.code() + " is sufficient (exceeds minimal LLN)");
+            builder.addPassGeneralMessages(labValue.code() + " sufficient");
         }
 
         return builder.build();

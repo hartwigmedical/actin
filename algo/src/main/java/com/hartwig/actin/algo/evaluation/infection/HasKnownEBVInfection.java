@@ -43,7 +43,7 @@ public class HasKnownEBVInfection implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has no known EBV infection")
-                .addFailGeneralMessages("Requested infection(s) not present")
+                .addFailGeneralMessages("EBV infection(s) not present")
                 .build();
     }
 }

@@ -46,10 +46,10 @@ public class HasAnyLesion implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient does not have any lesions");
-            builder.addFailGeneralMessages("Lesion presence");
+            builder.addFailGeneralMessages("No lesions present");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient has at least one lesion");
-            builder.addPassGeneralMessages("Lesion presence");
+            builder.addPassGeneralMessages("Lesions present");
         }
 
         return builder.build();

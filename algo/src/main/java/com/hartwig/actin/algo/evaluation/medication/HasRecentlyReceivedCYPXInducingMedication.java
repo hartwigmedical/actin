@@ -24,7 +24,7 @@ public class HasRecentlyReceivedCYPXInducingMedication implements EvaluationFunc
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages(
                         "Currently not determined if patient has recently received " + termToFind + " inducing medication")
-                .addUndeterminedGeneralMessages("CYP medication requirements")
+                .addUndeterminedGeneralMessages("CYP medication requirements undetermined")
                 .build();
     }
 }

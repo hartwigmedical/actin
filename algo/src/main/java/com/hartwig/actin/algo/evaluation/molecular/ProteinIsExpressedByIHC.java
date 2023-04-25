@@ -44,7 +44,7 @@ public class ProteinIsExpressedByIHC implements EvaluationFunction {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Protein " + protein + " has been determined to be expressed (by IHC)")
-                        .addPassGeneralMessages(protein + " expression by IHC")
+                        .addPassGeneralMessages(protein + " has expression by IHC")
                         .build();
             }
         }

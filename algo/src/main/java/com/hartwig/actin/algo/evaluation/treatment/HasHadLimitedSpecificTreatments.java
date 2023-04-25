@@ -54,8 +54,11 @@ public class HasHadLimitedSpecificTreatments implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
                     .addFailSpecificMessages(
-                            "Patient has received " + Format.concat(matchTreatments) + " " + matchTreatments.size() + " times")
-                    .addFailGeneralMessages("Nr of specific treatments")
+                            "Patient has received " + matchTreatments.size() + " treatments (" + Format.concat(matchTreatments) + ") "
+                                    + " which is exceeding the max nr of " + maxTreatmentLines + " lines")
+                    .addFailGeneralMessages(
+                            matchTreatments.size() + " treatments (" + Format.concat(matchTreatments) + ") " + " exceeding the max nr of "
+                                    + maxTreatmentLines + " lines")
                     .build();
         } else if (warnTreatments.size() > maxTreatmentLines) {
             String undeterminedMessage =
@@ -64,13 +67,13 @@ public class HasHadLimitedSpecificTreatments implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages(undeterminedMessage)
-                    .addUndeterminedSpecificMessages("Nr of specific treatments")
+                    .addUndeterminedGeneralMessages(undeterminedMessage)
                     .build();
         } else {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has received " + Format.concat(names) + " less than " + maxTreatmentLines + " times")
-                    .addPassGeneralMessages("Nr of specific treatments")
+                    .addPassGeneralMessages("Received " + Format.concat(names) + " less than " + maxTreatmentLines + " times")
                     .build();
         }
     }

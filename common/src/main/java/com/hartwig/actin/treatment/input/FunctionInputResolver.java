@@ -13,14 +13,11 @@ import com.hartwig.actin.molecular.interpretation.MolecularInputChecker;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.input.composite.CompositeInput;
 import com.hartwig.actin.treatment.input.composite.CompositeRules;
-import com.hartwig.actin.treatment.input.datamodel.ImmutableTreatmentInputWithName;
 import com.hartwig.actin.treatment.input.datamodel.TreatmentInput;
-import com.hartwig.actin.treatment.input.datamodel.TreatmentInputWithName;
 import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput;
 import com.hartwig.actin.treatment.input.datamodel.VariantTypeInput;
 import com.hartwig.actin.treatment.input.single.FunctionInput;
 import com.hartwig.actin.treatment.input.single.ImmutableManyGenes;
-import com.hartwig.actin.treatment.input.single.ImmutableManyTreatmentsWithName;
 import com.hartwig.actin.treatment.input.single.ImmutableOneGene;
 import com.hartwig.actin.treatment.input.single.ImmutableOneGeneManyCodons;
 import com.hartwig.actin.treatment.input.single.ImmutableOneGeneManyProteinImpacts;
@@ -37,7 +34,6 @@ import com.hartwig.actin.treatment.input.single.ImmutableTwoDoubles;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegers;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegersManyStrings;
 import com.hartwig.actin.treatment.input.single.ManyGenes;
-import com.hartwig.actin.treatment.input.single.ManyTreatmentsWithName;
 import com.hartwig.actin.treatment.input.single.OneGene;
 import com.hartwig.actin.treatment.input.single.OneGeneManyCodons;
 import com.hartwig.actin.treatment.input.single.OneGeneManyProteinImpacts;
@@ -158,10 +154,6 @@ public class FunctionInputResolver {
                 }
                 case MANY_STRINGS_TWO_INTEGERS: {
                     createManyStringsTwoIntegersInput(function);
-                    return true;
-                }
-                case MANY_TREATMENTS_WITH_NAME: {
-                    createManyTreatmentsWithNames(function);
                     return true;
                 }
                 case ONE_INTEGER_ONE_STRING: {
@@ -348,22 +340,6 @@ public class FunctionInputResolver {
     }
 
     @NotNull
-    public ManyTreatmentsWithName createManyTreatmentsWithNames(@NotNull EligibilityFunction function) {
-        assertParamType(function, FunctionInput.MANY_TREATMENTS_WITH_NAME);
-
-        List<TreatmentInputWithName> treatmentsWithName = Lists.newArrayList();
-        for (Object param : function.parameters()) {
-            treatmentsWithName.add(toTreatmentWithName(param));
-        }
-
-        if (treatmentsWithName.isEmpty()) {
-            throw new IllegalStateException("Missing treatment with name input for function: " + function.rule());
-        }
-
-        return ImmutableManyTreatmentsWithName.builder().treatmentsWithName(treatmentsWithName).build();
-    }
-
-    @NotNull
     public OneIntegerOneString createOneIntegerOneStringInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.ONE_INTEGER_ONE_STRING, 2);
 
@@ -539,24 +515,6 @@ public class FunctionInputResolver {
             functions.add((EligibilityFunction) input);
         }
         return functions;
-    }
-
-    @NotNull
-    private static TreatmentInputWithName toTreatmentWithName(@NotNull Object param) {
-        String[] parts = ((String) param).split(MANY_STRING_SEPARATOR);
-
-        if (parts.length > 2) {
-            throw new IllegalStateException("No valid treatment with name input: " + param);
-        }
-
-        TreatmentInput treatment = TreatmentInput.fromString(parts[0].trim());
-        String name = null;
-        if (parts.length > 1) {
-            String nameInput = parts[1].trim();
-            name = !nameInput.isEmpty() ? nameInput : null;
-        }
-
-        return ImmutableTreatmentInputWithName.builder().treatment(treatment).name(name).build();
     }
 
     @NotNull

@@ -7,7 +7,6 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.PatientRecord;
 import com.hartwig.actin.algo.datamodel.Evaluation;
 import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
 import com.hartwig.actin.algo.evaluation.EvaluationFactory;
 import com.hartwig.actin.algo.evaluation.EvaluationFunction;
 import com.hartwig.actin.algo.evaluation.util.Format;
@@ -29,7 +28,11 @@ public class HasSpecificComplication implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         Set<String> complications = Sets.newHashSet();
         if (record.clinical().complications() == null) {
-            return undetermined();
+            return EvaluationFactory.recoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages("Undetermined whether patient has cancer-related complications")
+                    .addUndeterminedGeneralMessages("Undetermined complication status")
+                    .build();
         }
 
         for (Complication complication : record.clinical().complications()) {
@@ -42,26 +45,23 @@ public class HasSpecificComplication implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has complication " + Format.concat(complications))
-                    .addPassGeneralMessages(Format.concat(complications))
+                    .addPassGeneralMessages("Present " + Format.concat(complications))
                     .build();
         }
 
         if (hasComplicationsWithoutNames(record)) {
-            return undetermined();
+            return EvaluationFactory.recoverable()
+                    .result(EvaluationResult.UNDETERMINED)
+                    .addUndeterminedSpecificMessages(
+                            "Patient has complications but type of complications unknown. Undetermined if belonging to " + termToFind)
+                    .addUndeterminedGeneralMessages("Complications present, unknown if belonging to " + termToFind)
+                    .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient does not have complication " + termToFind)
-                .build();
-    }
-
-    @NotNull
-    private static ImmutableEvaluation undetermined() {
-        return EvaluationFactory.recoverable()
-                .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Patient has complications but undetermined which type of complications")
-                .addUndeterminedGeneralMessages("Complications present, but unknown type")
+                .addFailGeneralMessages("Complication " + termToFind + " not present")
                 .build();
     }
 

@@ -55,24 +55,27 @@ public class HasHadSomeSpecificTreatments implements EvaluationFunction {
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages(
                             "Patient has received " + Format.concat(matchTreatments) + " " + matchTreatments.size() + " times")
-                    .addPassGeneralMessages("Nr of specific treatments")
+                    .addPassGeneralMessages("Has received " + Format.concat(matchTreatments) + " " + matchTreatments.size() + " times")
                     .build();
         } else if (warnTreatments.size() >= minTreatmentLines) {
-            String undeterminedMessage =
+            String undeterminedSpecificMessage =
                     warnCategory != null ? "Patient has received " + warnCategory.display() + " or trial treatment " + warnTreatments.size()
                             + " times" : "Patient has received " + Format.concat(warnTreatments) + " treatments including trials";
+            String undeterminedGeneralMessage = warnCategory != null
+                    ? "Received " + warnCategory.display() + " or trials " + warnTreatments.size() + " times"
+                    : "Received " + Format.concat(warnTreatments) + " treatments including trials";
 
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages(undeterminedMessage)
-                    .addUndeterminedGeneralMessages("Nr of specific treatments")
+                    .addUndeterminedSpecificMessages(undeterminedSpecificMessage)
+                    .addUndeterminedGeneralMessages(undeterminedGeneralMessage)
                     .build();
         } else {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
                     .addFailSpecificMessages(
                             "Patient has not received " + Format.concat(names) + " at least " + minTreatmentLines + " times")
-                    .addFailGeneralMessages("Nr of specific treatments")
+                    .addFailGeneralMessages("Has not received " + Format.concat(names) + " at least " + minTreatmentLines + " times")
                     .build();
         }
     }

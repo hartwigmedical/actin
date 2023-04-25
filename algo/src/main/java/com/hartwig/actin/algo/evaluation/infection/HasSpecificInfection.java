@@ -43,7 +43,7 @@ public class HasSpecificInfection implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has no known infection with " + doidTerm)
-                .addFailGeneralMessages("Requested infection(s) not present")
+                .addFailGeneralMessages("Specific infection(s) not present")
                 .build();
     }
 }

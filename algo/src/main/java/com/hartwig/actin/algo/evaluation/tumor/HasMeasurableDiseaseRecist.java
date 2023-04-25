@@ -40,8 +40,8 @@ public class HasMeasurableDiseaseRecist implements EvaluationFunction {
         if (hasMeasurableDisease == null) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Data regarding measurable disease is missing")
-                    .addUndeterminedGeneralMessages("Missing measurable disease details")
+                    .addUndeterminedSpecificMessages("Data regarding measurable disease is missing, unknown if measurable by RECIST")
+                    .addUndeterminedGeneralMessages("Undetermined RECIST measurable disease")
                     .build();
         }
 
@@ -60,8 +60,8 @@ public class HasMeasurableDiseaseRecist implements EvaluationFunction {
             builder.addFailGeneralMessages("No measurable disease");
         } else if (result == EvaluationResult.WARN) {
             builder.addWarnSpecificMessages("Patient has measurable disease, "
-                    + "but given the patient's tumor type uncertain if this has been evaluated against RECIST?");
-            builder.addWarnGeneralMessages("Measurable disease");
+                    + " but given the patient's tumor type uncertain if this has been evaluated against RECIST?");
+            builder.addWarnGeneralMessages("Measurable disease by RECIST unknown");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient has measurable disease");
             builder.addPassGeneralMessages("Measurable disease");

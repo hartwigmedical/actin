@@ -19,7 +19,7 @@ public class CurrentlyGetsBCRPInhibitingMedication implements EvaluationFunction
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Currently not determined if patient gets BCRP inhibiting/inducing medication")
-                .addUndeterminedGeneralMessages("BCRP medication requirements")
+                .addUndeterminedGeneralMessages("BCRP medication requirements undetermined")
                 .build();
     }
 }

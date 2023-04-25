@@ -19,7 +19,7 @@ public class IsWillingToNotUseContactLenses implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.WARN)
                 .addWarnSpecificMessages("Cannot be evaluated if patient is willing/able not to use contact lenses")
-                .addWarnGeneralMessages("Use of contact lenses")
+                .addWarnGeneralMessages("Potential willingness/ability not to use contact lenses unknown")
                 .build();
     }
 }

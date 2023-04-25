@@ -36,12 +36,14 @@ public class HasIntoleranceWithSpecificName implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has allergy " + Format.concat(allergies))
+                    .addPassGeneralMessages("Present " + Format.concat(allergies))
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has no allergies with name " + termToFind)
+                .addFailGeneralMessages("No allergies with name " + termToFind)
                 .build();
     }
 }

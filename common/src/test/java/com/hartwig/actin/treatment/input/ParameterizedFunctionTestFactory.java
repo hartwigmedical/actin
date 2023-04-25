@@ -88,9 +88,6 @@ public class ParameterizedFunctionTestFactory {
             case MANY_STRINGS_TWO_INTEGERS: {
                 return Lists.newArrayList("string1;string2", "1", "2");
             }
-            case MANY_TREATMENTS_WITH_NAME: {
-                return Lists.newArrayList(TreatmentInput.IMMUNOTHERAPY.display() + ";name1", TreatmentInput.CHEMOTHERAPY.display());
-            }
             case ONE_INTEGER_ONE_STRING: {
                 return Lists.newArrayList("1", "string");
             }

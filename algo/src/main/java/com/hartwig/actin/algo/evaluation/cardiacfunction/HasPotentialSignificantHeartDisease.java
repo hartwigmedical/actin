@@ -45,8 +45,8 @@ public class HasPotentialSignificantHeartDisease implements EvaluationFunction {
         if (ecg != null && ecg.hasSigAberrationLatestECG()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient has significant aberration on latest ECG")
-                    .addPassGeneralMessages("Potential heart disease")
+                    .addPassSpecificMessages("Patient has significant aberration on latest ECG and therefore potentially significant cardiac disease")
+                    .addPassGeneralMessages("Present ECG aberrations - potentially significant cardiac disease")
                     .build();
         }
 
@@ -70,15 +70,15 @@ public class HasPotentialSignificantHeartDisease implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages(
-                            "Patient has " + Format.concat(heartConditions) + ", which classifies as potential heart disease")
-                    .addPassGeneralMessages("Present " + Format.concat(heartConditions))
+                            "Patient has " + Format.concat(heartConditions) + " and therefore potentially significant cardiac disease")
+                    .addPassGeneralMessages("Present " + Format.concat(heartConditions) + " - potentially significant cardiac disease")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Patient has no potential significant heart disease")
-                .addFailGeneralMessages("Potential heart disease")
+                .addFailSpecificMessages("Patient has no potential significant cardiac disease")
+                .addFailGeneralMessages("No potential significant cardiac disease")
                 .build();
     }
 

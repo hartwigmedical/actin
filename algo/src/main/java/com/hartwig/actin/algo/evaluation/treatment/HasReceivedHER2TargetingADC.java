@@ -20,7 +20,7 @@ public class HasReceivedHER2TargetingADC implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Currently undetermined if patient received HER2 targeting ADC")
-                .addUndeterminedGeneralMessages("Undetermined HER2-targeting ADC status")
+                .addUndeterminedGeneralMessages("Undetermined if has received HER2-targeting ADC")
                 .build();
     }
 }

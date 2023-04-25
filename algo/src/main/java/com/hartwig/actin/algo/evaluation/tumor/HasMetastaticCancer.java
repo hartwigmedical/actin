@@ -19,7 +19,7 @@ public class HasMetastaticCancer implements EvaluationFunction {
 
     static final Set<String> STAGE_II_POTENTIALLY_METASTATIC_CANCERS = Sets.newHashSet();
     private static final String METASTATIC_CANCER = "Metastatic cancer";
-    private static final String NOT_METASTATIC_CANCER = "Not metastatic cancer";
+    private static final String NOT_METASTATIC_CANCER = "No metastatic cancer";
 
     static {
         STAGE_II_POTENTIALLY_METASTATIC_CANCERS.add(DoidConstants.BRAIN_CANCER_DOID);
@@ -41,8 +41,8 @@ public class HasMetastaticCancer implements EvaluationFunction {
         if (stage == null) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Tumor stage details are missing")
-                    .addUndeterminedGeneralMessages("Missing tumor stage details")
+                    .addUndeterminedSpecificMessages("Tumor stage details are missing, if cancer is metastatic cannot be determined")
+                    .addUndeterminedGeneralMessages("Undetermined metastatic cancer")
                     .build();
         }
 
@@ -69,10 +69,10 @@ public class HasMetastaticCancer implements EvaluationFunction {
             builder.addPassGeneralMessages(METASTATIC_CANCER);
         } else if (result == EvaluationResult.WARN) {
             builder.addWarnSpecificMessages("Could not be determined if tumor stage " + stage + " is considered metastatic");
-            builder.addWarnGeneralMessages(METASTATIC_CANCER);
+            builder.addWarnGeneralMessages("Undetermined " + METASTATIC_CANCER);
         } else if (result == EvaluationResult.UNDETERMINED) {
             builder.addUndeterminedSpecificMessages("Could not be determined if tumor stage " + stage + " is considered metastatic");
-            builder.addUndeterminedGeneralMessages(METASTATIC_CANCER);
+            builder.addUndeterminedGeneralMessages("Undetermined " + METASTATIC_CANCER);
         } else if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Tumor stage " + stage + " is not considered metastatic");
             builder.addFailGeneralMessages(NOT_METASTATIC_CANCER);

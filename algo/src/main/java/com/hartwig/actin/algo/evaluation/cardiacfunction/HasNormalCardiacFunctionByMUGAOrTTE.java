@@ -20,15 +20,15 @@ public class HasNormalCardiacFunctionByMUGAOrTTE implements EvaluationFunction {
         if (lvef != null && lvef < 0.5) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
-                    .addWarnSpecificMessages("LVEF of " + lvef + " exceeds 50%")
-                    .addWarnGeneralMessages("LVEF > 50%")
+                    .addWarnSpecificMessages("LVEF of " + lvef + " below 50%, uncertain if patient has normal cardiac function by MUGA or TTE")
+                    .addWarnGeneralMessages("LVEF < 50%, uncertain if cardiac function is considered normal")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Currently normal cardiac function by MUGA or TTE cannot be determined")
-                .addUndeterminedGeneralMessages("Undetermined cardiac function by MUGA or TTE")
+                .addUndeterminedSpecificMessages("Normal cardiac function by MUGA or TTE cannot be determined")
+                .addUndeterminedGeneralMessages("Undetermined normal cardiac function by MUGA or TTE")
                 .build();
     }
 }

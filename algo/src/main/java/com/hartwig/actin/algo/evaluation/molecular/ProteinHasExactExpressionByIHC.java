@@ -37,6 +37,7 @@ public class ProteinHasExactExpressionByIHC implements EvaluationFunction {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Protein " + protein + " has exact expression level " + expressionLevel + " (by IHC)")
+                            .addPassGeneralMessages("Protein " + protein + " has expression level " + expressionLevel)
                             .build();
                 }
             }

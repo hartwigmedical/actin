@@ -18,8 +18,8 @@ public class GeneIsOverexpressed implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("RNA gene expression not yet supported")
-                .addFailGeneralMessages("RNA gene expression unsupported")
+                .addFailSpecificMessages("RNA gene expression not yet evaluated")
+                .addFailGeneralMessages("RNA gene expression not yet evaluated")
                 .build();
     }
 }

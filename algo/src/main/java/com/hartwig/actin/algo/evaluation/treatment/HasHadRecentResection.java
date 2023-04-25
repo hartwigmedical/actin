@@ -61,26 +61,26 @@ public class HasHadRecentResection implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has had a recent resection")
-                    .addPassGeneralMessages("Recent resection")
+                    .addPassGeneralMessages("Has had recent resection")
                     .build();
         } else if (hasHadResectionAfterMoreLenientMinDate) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
                     .addWarnSpecificMessages("Patient has had a reasonably recent resection")
-                    .addWarnGeneralMessages("Recent resection")
+                    .addWarnGeneralMessages("Has had reasonably recent resection")
                     .build();
         } else if (mayHaveHadResectionAfterMinDate) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Patient may have had a recent resection")
-                    .addUndeterminedGeneralMessages("Recent resection")
+                    .addUndeterminedGeneralMessages("Unknown if has had recent resection")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has not had a recent resection")
-                .addFailGeneralMessages("Recent resection")
+                .addFailGeneralMessages("Has not had recent resection")
                 .build();
     }
 }

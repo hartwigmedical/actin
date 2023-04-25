@@ -54,7 +54,8 @@ public class HasHadSomeTreatmentsWithCategoryOfTypes implements EvaluationFuncti
                     .addPassSpecificMessages(
                             "Patient has received at least " + minTreatmentLines + " lines of " + Format.concat(types) + " "
                                     + category.display())
-                    .addPassGeneralMessages(category.display() + " treatment")
+                    .addPassGeneralMessages(
+                            "Received at least " + minTreatmentLines + " lines of " + Format.concat(types) + " " + category.display())
                     .build();
         } else if (numMatchingTreatmentLines + numApproximateTreatmentLines + numOtherTrials >= minTreatmentLines) {
             return EvaluationFactory.unrecoverable()
@@ -62,7 +63,9 @@ public class HasHadSomeTreatmentsWithCategoryOfTypes implements EvaluationFuncti
                     .addUndeterminedSpecificMessages(
                             "Can't determine whether patient has received at least " + minTreatmentLines + " lines of " + Format.concat(
                                     types) + " " + category.display())
-                    .addUndeterminedGeneralMessages("Unclear " + category.display() + " treatment")
+                    .addUndeterminedGeneralMessages(
+                            "Undetermined if received at least " + minTreatmentLines + " lines of " + Format.concat(types) + " "
+                                    + category.display())
                     .build();
         } else {
             return EvaluationFactory.unrecoverable()
@@ -70,7 +73,8 @@ public class HasHadSomeTreatmentsWithCategoryOfTypes implements EvaluationFuncti
                     .addFailSpecificMessages(
                             "Patient has not received at least " + minTreatmentLines + " lines of " + Format.concat(types) + " "
                                     + category.display())
-                    .addFailGeneralMessages("No " + category.display() + " treatment")
+                    .addFailGeneralMessages(
+                            "Not received at least " + minTreatmentLines + " lines of " + Format.concat(types) + " " + category.display())
                     .build();
         }
     }

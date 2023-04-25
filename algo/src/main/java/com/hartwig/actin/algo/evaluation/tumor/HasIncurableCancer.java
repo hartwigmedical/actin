@@ -23,8 +23,9 @@ public class HasIncurableCancer implements EvaluationFunction {
         if (stage == null) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Tumor stage details are missing")
-                    .addUndeterminedGeneralMessages("Missing tumor stage details")
+                    .addUndeterminedSpecificMessages(
+                            "Tumor stage details are missing, if cancer is considered incurable cannot be determined")
+                    .addUndeterminedGeneralMessages("Undetermined incurable cancer")
                     .build();
         }
 
@@ -43,7 +44,7 @@ public class HasIncurableCancer implements EvaluationFunction {
             builder.addFailGeneralMessages("No incurable cancer");
         } else if (result == EvaluationResult.UNDETERMINED) {
             builder.addUndeterminedSpecificMessages("Could not be determined if stage " + stage + " cancer is considered incurable");
-            builder.addUndeterminedGeneralMessages("Undetermined if cancer incurable");
+            builder.addUndeterminedGeneralMessages("Undetermined if cancer is incurable by stage " + stage);
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Stage IV cancer is considered incurable");
             builder.addPassGeneralMessages("Incurable cancer");

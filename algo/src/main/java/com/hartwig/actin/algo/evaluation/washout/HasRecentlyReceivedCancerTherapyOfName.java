@@ -23,8 +23,7 @@ public class HasRecentlyReceivedCancerTherapyOfName implements EvaluationFunctio
     @NotNull
     private final MedicationStatusInterpreter interpreter;
 
-    HasRecentlyReceivedCancerTherapyOfName(@NotNull final Set<String> namesToFind,
-            @NotNull final MedicationStatusInterpreter interpreter) {
+    HasRecentlyReceivedCancerTherapyOfName(@NotNull final Set<String> namesToFind, @NotNull final MedicationStatusInterpreter interpreter) {
         this.namesToFind = namesToFind;
         this.interpreter = interpreter;
     }
@@ -49,8 +48,10 @@ public class HasRecentlyReceivedCancerTherapyOfName implements EvaluationFunctio
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has not received recent treatments with name " + Format.concat(namesToFind));
+            builder.addFailGeneralMessages("Washout period requirements " + Format.concat(namesToFind));
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient has recently received treatment with medication " + Format.concat(namesFound));
+            builder.addPassGeneralMessages("Washout period requirements " + Format.concat(namesToFind));
         }
 
         return builder.build();

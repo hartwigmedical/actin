@@ -43,7 +43,7 @@ public class HasCancerWithSmallCellComponent implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Could not determine whether tumor of patient may have a small component")
-                    .addUndeterminedGeneralMessages("Small cell component")
+                    .addUndeterminedGeneralMessages("Undetermined small cell component")
                     .build();
         }
 
@@ -55,14 +55,14 @@ public class HasCancerWithSmallCellComponent implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has cancer with small cell component")
-                    .addPassGeneralMessages("Small cell component")
+                    .addPassGeneralMessages("Presence of small cell component")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient does not have cancer with small cell component")
-                .addFailGeneralMessages("Small cell component")
+                .addFailGeneralMessages("No small cell component")
                 .build();
     }
 }

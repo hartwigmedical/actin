@@ -27,6 +27,7 @@ public class HasHadPriorConditionWithName implements EvaluationFunction {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Patient has history of " + nameToFind)
+                        .addPassGeneralMessages("History of " + nameToFind)
                         .build();
             }
         }
@@ -34,6 +35,7 @@ public class HasHadPriorConditionWithName implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has no history of " + nameToFind)
+                .addFailGeneralMessages("No history of " + nameToFind)
                 .build();
     }
 }
