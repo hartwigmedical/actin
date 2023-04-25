@@ -59,11 +59,10 @@ public class RequiresRegularHematopoieticSupport implements EvaluationFunction {
             boolean runningBetweenDates = start != null && start.isBefore(minDate) && (stop == null || stop.isAfter(minDate));
             boolean activeBetweenDates = startedBetweenDates || stoppedBetweenDates || runningBetweenDates;
 
-            //TODO (ACTIN-36): Check updated implementation
             boolean hasMatchingCategory = false;
             for (String category : medication.categories()) {
-                for (String match : HEMATOPOIETIC_MEDICATION_CATEGORIES) {
-                    if (category.toLowerCase().contains(match)) {
+                for (String hematopoieticMedicationCategory : HEMATOPOIETIC_MEDICATION_CATEGORIES) {
+                    if (category.toLowerCase().contains(hematopoieticMedicationCategory)) {
                         hasMatchingCategory = true;
                         break;
                     }
