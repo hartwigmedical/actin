@@ -1,153 +1,132 @@
-package com.hartwig.actin.algo.evaluation.molecular;
+package com.hartwig.actin.algo.evaluation.molecular
 
-import java.util.List;
-import java.util.Set;
+import com.google.common.collect.Sets
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationFactory.unrecoverable
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.Format.percentage
 
-import com.google.common.collect.Sets;
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.algo.evaluation.util.Format;
-import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact;
-import com.hartwig.actin.molecular.datamodel.driver.Variant;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-public class GeneHasVariantInCodon implements EvaluationFunction {
-
-    private static final double CLONAL_CUTOFF = 0.5;
-
-    @NotNull
-    private final String gene;
-    @NotNull
-    private final List<String> codons;
-
-    GeneHasVariantInCodon(@NotNull final String gene, @NotNull final List<String> codons) {
-        this.gene = gene;
-        this.codons = codons;
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        Set<String> canonicalReportableVariantMatches = Sets.newHashSet();
-        Set<String> canonicalReportableSubclonalVariantMatches = Sets.newHashSet();
-        Set<String> canonicalUnreportableVariantMatches = Sets.newHashSet();
-        Set<String> canonicalCodonMatches = Sets.newHashSet();
-
-        Set<String> reportableOtherVariantMatches = Sets.newHashSet();
-        Set<String> reportableOtherCodonMatches = Sets.newHashSet();
-
-        for (Variant variant : record.molecular().drivers().variants()) {
-            if (variant.gene().equals(gene)) {
-                for (String codon : codons) {
+class GeneHasVariantInCodon internal constructor(private val gene: String, private val codons: List<String>) : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val canonicalReportableVariantMatches: MutableSet<String> = Sets.newHashSet()
+        val canonicalReportableSubclonalVariantMatches: MutableSet<String> = Sets.newHashSet()
+        val canonicalUnreportableVariantMatches: MutableSet<String> = Sets.newHashSet()
+        val canonicalCodonMatches: MutableSet<String> = Sets.newHashSet()
+        val reportableOtherVariantMatches: MutableSet<String> = Sets.newHashSet()
+        val reportableOtherCodonMatches: MutableSet<String> = Sets.newHashSet()
+        for (variant in record.molecular().drivers().variants()) {
+            if (variant.gene() == gene) {
+                for (codon in codons) {
                     if (isCodonMatch(variant.canonicalImpact().affectedCodon(), codon)) {
-                        canonicalCodonMatches.add(codon);
-                        if (variant.isReportable()) {
+                        canonicalCodonMatches.add(codon)
+                        if (variant.isReportable) {
                             if (variant.clonalLikelihood() < CLONAL_CUTOFF) {
-                                canonicalReportableSubclonalVariantMatches.add(variant.event());
+                                canonicalReportableSubclonalVariantMatches.add(variant.event())
                             } else {
-                                canonicalReportableVariantMatches.add(variant.event());
+                                canonicalReportableVariantMatches.add(variant.event())
                             }
                         } else {
-                            canonicalUnreportableVariantMatches.add(variant.event());
+                            canonicalUnreportableVariantMatches.add(variant.event())
                         }
                     }
-
-                    if (variant.isReportable()) {
-                        for (TranscriptImpact otherImpact : variant.otherImpacts()) {
+                    if (variant.isReportable) {
+                        for (otherImpact in variant.otherImpacts()) {
                             if (isCodonMatch(otherImpact.affectedCodon(), codon)) {
-                                reportableOtherVariantMatches.add(variant.event());
-                                reportableOtherCodonMatches.add(codon);
+                                reportableOtherVariantMatches.add(variant.event())
+                                reportableOtherCodonMatches.add(codon)
                             }
                         }
                     }
                 }
             }
         }
-
         if (!canonicalReportableVariantMatches.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.PASS)
-                    .addAllInclusionMolecularEvents(canonicalReportableVariantMatches)
-                    .addPassSpecificMessages("Variant(s) in codon(s) " + Format.concat(canonicalCodonMatches) + " in gene " + gene
-                            + " detected in canonical transcript")
-                    .addPassGeneralMessages("Variant(s) in codon(s) " + Format.concat(canonicalCodonMatches) + " found in " + gene)
-                    .build();
+            return unrecoverable()
+                .result(EvaluationResult.PASS)
+                .addAllInclusionMolecularEvents(canonicalReportableVariantMatches)
+                .addPassSpecificMessages(
+                    "Variant(s) in codon(s) " + concat(canonicalCodonMatches) + " in gene " + gene
+                            + " detected in canonical transcript"
+                )
+                .addPassGeneralMessages("Variant(s) in codon(s) " + concat(canonicalCodonMatches) + " found in " + gene)
+                .build()
         }
-
-        Evaluation potentialWarnEvaluation = evaluatePotentialWarns(canonicalReportableSubclonalVariantMatches,
-                canonicalUnreportableVariantMatches,
-                canonicalCodonMatches,
-                reportableOtherVariantMatches,
-                reportableOtherCodonMatches);
-
-        if (potentialWarnEvaluation != null) {
-            return potentialWarnEvaluation;
-        }
-
-        return EvaluationFactory.unrecoverable()
+        val potentialWarnEvaluation = evaluatePotentialWarns(
+            canonicalReportableSubclonalVariantMatches,
+            canonicalUnreportableVariantMatches,
+            canonicalCodonMatches,
+            reportableOtherVariantMatches,
+            reportableOtherCodonMatches
+        )
+        return potentialWarnEvaluation
+            ?: unrecoverable()
                 .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("No variants in codon(s) " + Format.concat(codons) + " detected in gene " + gene)
-                .addFailGeneralMessages("No specific variants in codon(s) in " + gene + " detected")
-                .build();
+                .addFailSpecificMessages("No variants in codon(s) " + concat(codons) + " detected in gene " + gene)
+                .addFailGeneralMessages("No specific variants in codon(s) in $gene detected")
+                .build()
     }
 
-    private static boolean isCodonMatch(@Nullable Integer affectedCodon, @NotNull String codonToMatch) {
-        if (affectedCodon == null) {
-            return false;
-        }
-
-        int codonIndexToMatch = Integer.parseInt(codonToMatch.substring(1));
-        return codonIndexToMatch == affectedCodon;
-    }
-
-    @Nullable
-    private Evaluation evaluatePotentialWarns(@NotNull Set<String> canonicalReportableSubclonalVariantMatches,
-            @NotNull Set<String> canonicalUnreportableVariantMatches, @NotNull Set<String> canonicalCodonMatches,
-            @NotNull Set<String> reportableOtherVariantMatches, @NotNull Set<String> reportableOtherCodonMatches) {
-        Set<String> warnEvents = Sets.newHashSet();
-        Set<String> warnSpecificMessages = Sets.newHashSet();
-        Set<String> warnGeneralMessages = Sets.newHashSet();
-
+    private fun evaluatePotentialWarns(
+        canonicalReportableSubclonalVariantMatches: Set<String>,
+        canonicalUnreportableVariantMatches: Set<String>, canonicalCodonMatches: Set<String>,
+        reportableOtherVariantMatches: Set<String>, reportableOtherCodonMatches: Set<String>
+    ): Evaluation? {
+        val warnEvents: MutableSet<String> = Sets.newHashSet()
+        val warnSpecificMessages: MutableSet<String> = Sets.newHashSet()
+        val warnGeneralMessages: MutableSet<String> = Sets.newHashSet()
         if (!canonicalReportableSubclonalVariantMatches.isEmpty()) {
-            warnEvents.addAll(canonicalReportableSubclonalVariantMatches);
-            warnSpecificMessages.add("Variant(s) in codon(s) " + Format.concat(canonicalReportableSubclonalVariantMatches) + " in " + gene
-                    + " detected in canonical transcript, but subclonal likelihood of > " + Format.percentage(1 - CLONAL_CUTOFF));
+            warnEvents.addAll(canonicalReportableSubclonalVariantMatches)
+            warnSpecificMessages.add(
+                "Variant(s) in codon(s) " + concat(canonicalReportableSubclonalVariantMatches) + " in " + gene
+                        + " detected in canonical transcript, but subclonal likelihood of > " + percentage(1 - CLONAL_CUTOFF)
+            )
             warnGeneralMessages.add(
-                    "Variant(s) in codon(s) " + Format.concat(canonicalReportableSubclonalVariantMatches) + " found in " + gene
-                            + " but subclonal likelihood of > " + Format.percentage(1 - CLONAL_CUTOFF));
+                "Variant(s) in codon(s) " + concat(canonicalReportableSubclonalVariantMatches) + " found in " + gene
+                        + " but subclonal likelihood of > " + percentage(1 - CLONAL_CUTOFF)
+            )
         }
-
         if (!canonicalUnreportableVariantMatches.isEmpty()) {
-            warnEvents.addAll(canonicalUnreportableVariantMatches);
-            warnSpecificMessages.add("Variant(s) in codon(s) " + Format.concat(canonicalCodonMatches) + " in " + gene
-                    + " detected in canonical transcript, but not considered reportable");
+            warnEvents.addAll(canonicalUnreportableVariantMatches)
+            warnSpecificMessages.add(
+                "Variant(s) in codon(s) " + concat(canonicalCodonMatches) + " in " + gene
+                        + " detected in canonical transcript, but not considered reportable"
+            )
             warnGeneralMessages.add(
-                    "Variant(s) in codon(s) " + Format.concat(canonicalCodonMatches) + " found in canonical transcript of gene " + gene);
+                "Variant(s) in codon(s) " + concat(canonicalCodonMatches) + " found in canonical transcript of gene " + gene
+            )
         }
-
         if (!reportableOtherVariantMatches.isEmpty()) {
-            warnEvents.addAll(reportableOtherVariantMatches);
-            warnSpecificMessages.add("Variant(s) in codon(s) " + Format.concat(reportableOtherCodonMatches) + " in " + gene
-                    + " detected, but in non-canonical transcript");
+            warnEvents.addAll(reportableOtherVariantMatches)
+            warnSpecificMessages.add(
+                "Variant(s) in codon(s) " + concat(reportableOtherCodonMatches) + " in " + gene
+                        + " detected, but in non-canonical transcript"
+            )
             warnGeneralMessages.add(
-                    "Variant(s) in codon(s) " + Format.concat(canonicalCodonMatches) + " found in non-canonical transcript of gene "
-                            + gene);
+                "Variant(s) in codon(s) " + concat(canonicalCodonMatches) + " found in non-canonical transcript of gene "
+                        + gene
+            )
         }
+        return if (!warnEvents.isEmpty() && !warnSpecificMessages.isEmpty() && !warnGeneralMessages.isEmpty()) {
+            unrecoverable()
+                .result(EvaluationResult.WARN)
+                .addAllInclusionMolecularEvents(warnEvents)
+                .addAllWarnSpecificMessages(warnSpecificMessages)
+                .addAllWarnGeneralMessages(warnGeneralMessages)
+                .build()
+        } else null
+    }
 
-        if (!warnEvents.isEmpty() && !warnSpecificMessages.isEmpty() && !warnGeneralMessages.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addAllInclusionMolecularEvents(warnEvents)
-                    .addAllWarnSpecificMessages(warnSpecificMessages)
-                    .addAllWarnGeneralMessages(warnGeneralMessages)
-                    .build();
+    companion object {
+        private const val CLONAL_CUTOFF = 0.5
+        private fun isCodonMatch(affectedCodon: Int?, codonToMatch: String): Boolean {
+            if (affectedCodon == null) {
+                return false
+            }
+            val codonIndexToMatch = codonToMatch.substring(1).toInt()
+            return codonIndexToMatch == affectedCodon
         }
-
-        return null;
     }
 }

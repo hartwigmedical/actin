@@ -1,46 +1,38 @@
-package com.hartwig.actin.algo.evaluation.molecular;
+package com.hartwig.actin.algo.evaluation.molecular
 
-import java.util.Set;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationFactory.unrecoverable
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+class ProteinIsWildTypeByIHC internal constructor(private val protein: String) : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val hasOnlyWildTypeResults = PriorMolecularTestFunctions.allIHCTestsForProtein(record.clinical().priorMolecularTests(), protein)
+            .all { test: PriorMolecularTest -> WILD_TYPE_QUERY_STRINGS.any { it.equals(test.scoreText(), ignoreCase = true) } }
 
-import org.jetbrains.annotations.NotNull;
-
-public class ProteinIsWildTypeByIHC implements EvaluationFunction {
-
-    private static final Set<String> WILD_TYPE_QUERY_STRINGS = Set.of("wildtype", "wild-type", "wild type");
-    private final String protein;
-
-    ProteinIsWildTypeByIHC(String protein) {
-        this.protein = protein;
+        return if (hasOnlyWildTypeResults) {
+            unrecoverable()
+                .result(EvaluationResult.PASS)
+                .addPassSpecificMessages(String.format("Protein %s is wild type according to IHC", protein))
+                .addPassGeneralMessages(String.format("%s wild type", protein))
+                .build()
+        } else {
+            unrecoverable()
+                .result(EvaluationResult.UNDETERMINED)
+                .addUndeterminedSpecificMessages(
+                    String.format(
+                        "Could not determine if protein %s is wild type according to IHC",
+                        protein
+                    )
+                )
+                .addUndeterminedGeneralMessages(String.format("%s wild type status unknown", protein))
+                .build()
+        }
     }
 
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        boolean hasWildTypeResult =
-                PriorMolecularTestFunctions.allIHCTestsForProteinStream(record.clinical().priorMolecularTests(), protein)
-                        .map(test -> WILD_TYPE_QUERY_STRINGS.stream().anyMatch(query -> query.equalsIgnoreCase(test.scoreText())))
-                        .reduce(Boolean::logicalAnd)
-                        .orElse(false);
-
-        if (hasWildTypeResult) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages(String.format("Protein %s is wild type according to IHC", protein))
-                    .addPassGeneralMessages(String.format("%s wild type", protein))
-                    .build();
-        } else {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages(String.format("Could not determine if protein %s is wild type according to IHC",
-                            protein))
-                    .addUndeterminedGeneralMessages(String.format("%s wild type status unknown", protein))
-                    .build();
-        }
+    companion object {
+        private val WILD_TYPE_QUERY_STRINGS = setOf("wildtype", "wild-type", "wild type")
     }
 }

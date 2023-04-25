@@ -4,22 +4,24 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.util.ApplicationConfig
 
 object ValueComparison {
+
     const val LARGER_THAN = ">"
     const val LARGER_THAN_OR_EQUAL = ">="
     const val SMALLER_THAN = "<"
     const val SMALLER_THAN_OR_EQUAL = "<="
+
     fun evaluateVersusMinValue(value: Double, comparator: String?, minValue: Double): EvaluationResult {
         if (!canBeDetermined(value, comparator, minValue)) {
             return EvaluationResult.UNDETERMINED
         }
-        return if (java.lang.Double.compare(value, minValue) >= 0) EvaluationResult.PASS else EvaluationResult.FAIL
+        return if (value.compareTo(minValue) >= 0) EvaluationResult.PASS else EvaluationResult.FAIL
     }
 
     fun evaluateVersusMaxValue(value: Double, comparator: String?, maxValue: Double): EvaluationResult {
         if (!canBeDetermined(value, comparator, maxValue)) {
             return EvaluationResult.UNDETERMINED
         }
-        return if (java.lang.Double.compare(value, maxValue) <= 0) EvaluationResult.PASS else EvaluationResult.FAIL
+        return if (value.compareTo(maxValue) <= 0) EvaluationResult.PASS else EvaluationResult.FAIL
     }
 
     private fun canBeDetermined(value: Double, comparator: String?, refValue: Double): Boolean {

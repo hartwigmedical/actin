@@ -1,55 +1,53 @@
-package com.hartwig.actin.algo.evaluation.molecular;
+package com.hartwig.actin.algo.evaluation.molecular
 
-import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
+import org.junit.Test
 
-import java.util.Collections;
-import java.util.List;
-
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest;
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
-
-import org.junit.Test;
-
-public class ProteinIsWildTypeByIHCTest {
-
-    private static final String PROTEIN = "p53";
-
+class ProteinIsWildTypeByIHCTest {
     @Test
-    public void shouldReturnUndeterminedForEmptyListOfTests() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function().evaluate(MolecularTestFactory.withPriorTests(Collections.emptyList())));
+    fun shouldReturnUndeterminedForEmptyListOfTests() {
+        assertEvaluation(EvaluationResult.UNDETERMINED, function().evaluate(MolecularTestFactory.withPriorTests(emptyList())))
     }
 
     @Test
-    public void shouldReturnUndeterminedForTestsThatDoNotMeetCriteria() {
-        List<PriorMolecularTest> priorTests = List.of(builder().test("other").build(), builder().item("other").build());
-        assertEvaluation(EvaluationResult.UNDETERMINED, function().evaluate(MolecularTestFactory.withPriorTests(priorTests)));
+    fun shouldReturnUndeterminedForTestsThatDoNotMeetCriteria() {
+        val priorTests = listOf(builder().test("other").build(), builder().item("other").build())
+        assertEvaluation(EvaluationResult.UNDETERMINED, function().evaluate(MolecularTestFactory.withPriorTests(priorTests)))
     }
 
     @Test
-    public void shouldReturnPassWhenAllMatchingTestsIndicateWildType() {
-        List<PriorMolecularTest> priorTests = List.of(builder().test("other").build(),
-                builder().item("other").build(),
-                builder().build(),
-                builder().scoreText("WILD TYPE").build(),
-                builder().scoreText("WILD-type").build());
-        assertEvaluation(EvaluationResult.PASS, function().evaluate(MolecularTestFactory.withPriorTests(priorTests)));
+    fun shouldReturnPassWhenAllMatchingTestsIndicateWildType() {
+        val priorTests = listOf(
+            builder().test("other").build(),
+            builder().item("other").build(),
+            builder().build(),
+            builder().scoreText("WILD TYPE").build(),
+            builder().scoreText("WILD-type").build()
+        )
+        assertEvaluation(EvaluationResult.PASS, function().evaluate(MolecularTestFactory.withPriorTests(priorTests)))
     }
 
     @Test
-    public void shouldReturnUndeterminedWhenSomeMatchingTestsDoNotIndicateWildType() {
-        List<PriorMolecularTest> priorTests = List.of(builder().build(),
-                builder().scoreText("WILD TYPE").build(),
-                builder().scoreText("WILD-type").build(),
-                builder().scoreText("other").build());
-        assertEvaluation(EvaluationResult.UNDETERMINED, function().evaluate(MolecularTestFactory.withPriorTests(priorTests)));
+    fun shouldReturnUndeterminedWhenSomeMatchingTestsDoNotIndicateWildType() {
+        val priorTests = listOf(
+            builder().build(),
+            builder().scoreText("WILD TYPE").build(),
+            builder().scoreText("WILD-type").build(),
+            builder().scoreText("other").build()
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, function().evaluate(MolecularTestFactory.withPriorTests(priorTests)))
     }
 
-    private static ProteinIsWildTypeByIHC function() {
-        return new ProteinIsWildTypeByIHC(PROTEIN);
-    }
+    companion object {
+        private const val PROTEIN = "p53"
+        private fun function(): ProteinIsWildTypeByIHC {
+            return ProteinIsWildTypeByIHC(PROTEIN)
+        }
 
-    private static ImmutablePriorMolecularTest.Builder builder() {
-        return MolecularTestFactory.priorBuilder().test("IHC").item(PROTEIN).scoreText("WildType");
+        private fun builder(): ImmutablePriorMolecularTest.Builder {
+            return MolecularTestFactory.priorBuilder().test("IHC").item(PROTEIN).scoreText("WildType")
+        }
     }
 }
