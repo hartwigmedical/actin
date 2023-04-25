@@ -1,65 +1,48 @@
-package com.hartwig.actin.algo.evaluation.general;
+package com.hartwig.actin.algo.evaluation.general
 
-import java.util.Set;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.util.Format.concat
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.algo.evaluation.util.Format;
+class HasWHOStatus internal constructor(private val requiredWHO: Int) : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val who = record.clinical().clinicalStatus().who()
+        val warningComplicationCategories = WHOFunctions.findComplicationCategoriesAffectingWHOStatus(record)
+        return when {
+            who == null -> {
+                EvaluationFactory.undetermined("WHO status is unknown", "WHO status unknown")
+            }
 
-import org.jetbrains.annotations.NotNull;
+            who == requiredWHO && warningComplicationCategories.isNotEmpty() -> {
+                EvaluationFactory.warn(
+                    "Patient WHO status $who matches requested but patient has complication categories of concern: "
+                            + concat(warningComplicationCategories), "WHO currently adequate, but patient has " +
+                            concat(warningComplicationCategories)
+                )
+            }
 
-public class HasWHOStatus implements EvaluationFunction {
+            who == requiredWHO -> {
+                EvaluationFactory.pass(
+                    "Patient WHO status $who is requested WHO (WHO $requiredWHO)",
+                    "Adequate WHO status"
+                )
+            }
 
-    private final int requiredWHO;
+            Math.abs(who - requiredWHO) == 1 -> {
+                EvaluationFactory.warn(
+                    "Patient WHO status $who is close to requested WHO (WHO $requiredWHO)",
+                    "WHO status is $who, but should be $requiredWHO"
+                )
+            }
 
-    HasWHOStatus(final int requiredWHO) {
-        this.requiredWHO = requiredWHO;
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        Integer who = record.clinical().clinicalStatus().who();
-
-        if (who == null) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("WHO status is unknown")
-                    .addUndeterminedGeneralMessages("WHO status unknown")
-                    .build();
-        }
-
-        Set<String> warningComplicationCategories = WHOFunctions.findComplicationCategoriesAffectingWHOStatus(record);
-
-        if (who == requiredWHO && !warningComplicationCategories.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addWarnSpecificMessages(
-                            "Patient WHO status " + who + " matches requested but patient has complication categories of concern: "
-                                    + Format.concat(warningComplicationCategories))
-                    .addWarnGeneralMessages("WHO currently adequate, but patient has " + Format.concat(warningComplicationCategories))
-                    .build();
-        } else if (who == requiredWHO) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient WHO status " + who + " is requested WHO (WHO " + requiredWHO + ")")
-                    .addPassGeneralMessages("Adequate WHO status")
-                    .build();
-        } else if (Math.abs(who - requiredWHO) == 1) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addWarnSpecificMessages("Patient WHO status " + who + " is close to requested WHO (WHO " + requiredWHO + ")")
-                    .addWarnGeneralMessages("WHO status is " + who + ", but should be " + requiredWHO)
-                    .build();
-        } else {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages("Patient WHO status " + who + " is not requested WHO (WHO " + requiredWHO + ")")
-                    .addFailGeneralMessages("WHO status is " + who + ", but should be " + requiredWHO)
-                    .build();
+            else -> {
+                EvaluationFactory.fail(
+                    "Patient WHO status $who is not requested WHO (WHO $requiredWHO)",
+                    "WHO status is $who, but should be $requiredWHO"
+                )
+            }
         }
     }
 }

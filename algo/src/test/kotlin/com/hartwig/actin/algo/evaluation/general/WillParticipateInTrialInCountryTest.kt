@@ -1,20 +1,16 @@
-package com.hartwig.actin.algo.evaluation.general;
+package com.hartwig.actin.algo.evaluation.general
 
-import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
+import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import org.junit.Test
 
-import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-
-import org.junit.Test;
-
-public class WillParticipateInTrialInCountryTest {
-
+class WillParticipateInTrialInCountryTest {
     @Test
-    public void canEvaluate() {
-        WillParticipateInTrialInCountry netherlands = new WillParticipateInTrialInCountry("The Netherlands");
-        assertEvaluation(EvaluationResult.PASS, netherlands.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
-
-        WillParticipateInTrialInCountry germany = new WillParticipateInTrialInCountry("Germany");
-        assertEvaluation(EvaluationResult.FAIL, germany.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+    fun canEvaluate() {
+        val netherlands = WillParticipateInTrialInCountry("The Netherlands")
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, netherlands.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
+        val germany = WillParticipateInTrialInCountry("Germany")
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, germany.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
     }
 }

@@ -1,39 +1,33 @@
-package com.hartwig.actin.algo.evaluation.composite;
+package com.hartwig.actin.algo.evaluation.composite
 
-import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.TestEvaluationFunctionFactory
+import org.junit.Assert
+import org.junit.Test
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.TestEvaluationFunctionFactory;
-
-import org.junit.Test;
-
-public class WarnIfTest {
+class WarnIfTest {
 
     @Test
-    public void canWarnIf() {
-        PatientRecord patient = TestDataFactory.createProperTestPatientRecord();
-
-        assertEvaluation(EvaluationResult.WARN, new WarnIf(TestEvaluationFunctionFactory.pass()).evaluate(patient));
-        assertEvaluation(EvaluationResult.WARN, new WarnIf(TestEvaluationFunctionFactory.warn()).evaluate(patient));
-        assertEvaluation(EvaluationResult.PASS, new WarnIf(TestEvaluationFunctionFactory.fail()).evaluate(patient));
-        assertEvaluation(EvaluationResult.PASS, new WarnIf(TestEvaluationFunctionFactory.undetermined()).evaluate(patient));
-        assertEvaluation(EvaluationResult.PASS, new WarnIf(TestEvaluationFunctionFactory.notImplemented()).evaluate(patient));
-        assertEvaluation(EvaluationResult.PASS, new WarnIf(TestEvaluationFunctionFactory.notEvaluated()).evaluate(patient));
+    fun canWarnIf() {
+        val patient: PatientRecord = TestDataFactory.createProperTestPatientRecord()
+        assertEvaluation(EvaluationResult.WARN, WarnIf(TestEvaluationFunctionFactory.pass()).evaluate(patient))
+        assertEvaluation(EvaluationResult.WARN, WarnIf(TestEvaluationFunctionFactory.warn()).evaluate(patient))
+        assertEvaluation(EvaluationResult.PASS, WarnIf(TestEvaluationFunctionFactory.fail()).evaluate(patient))
+        assertEvaluation(EvaluationResult.PASS, WarnIf(TestEvaluationFunctionFactory.undetermined()).evaluate(patient))
+        assertEvaluation(EvaluationResult.PASS, WarnIf(TestEvaluationFunctionFactory.notImplemented()).evaluate(patient))
+        assertEvaluation(EvaluationResult.PASS, WarnIf(TestEvaluationFunctionFactory.notEvaluated()).evaluate(patient))
     }
 
     @Test
-    public void canMoveMessagesToWarnOnPass() {
-        Evaluation result = new WarnIf(TestEvaluationFunctionFactory.pass()).evaluate(TestDataFactory.createMinimalTestPatientRecord());
-
-        assertTrue(result.passSpecificMessages().isEmpty());
-        assertTrue(result.passGeneralMessages().isEmpty());
-        assertFalse(result.warnSpecificMessages().isEmpty());
-        assertFalse(result.warnGeneralMessages().isEmpty());
+    fun canMoveMessagesToWarnOnPass() {
+        val result: Evaluation = WarnIf(TestEvaluationFunctionFactory.pass()).evaluate(TestDataFactory.createMinimalTestPatientRecord())
+        Assert.assertTrue(result.passSpecificMessages().isEmpty())
+        Assert.assertTrue(result.passGeneralMessages().isEmpty())
+        Assert.assertFalse(result.warnSpecificMessages().isEmpty())
+        Assert.assertFalse(result.warnGeneralMessages().isEmpty())
     }
 }

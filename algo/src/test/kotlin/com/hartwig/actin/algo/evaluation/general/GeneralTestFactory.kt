@@ -1,109 +1,75 @@
-package com.hartwig.actin.algo.evaluation.general;
+package com.hartwig.actin.algo.evaluation.general
 
-import com.hartwig.actin.ImmutablePatientRecord;
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.clinical.datamodel.BodyWeight;
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
-import com.hartwig.actin.clinical.datamodel.Complication;
-import com.hartwig.actin.clinical.datamodel.Gender;
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
-import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
-import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
-import com.hartwig.actin.clinical.datamodel.PatientDetails;
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
+import com.hartwig.actin.ImmutablePatientRecord
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.clinical.datamodel.*
+import org.apache.logging.log4j.util.Strings
 
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-final class GeneralTestFactory {
-
-    private GeneralTestFactory() {
+internal object GeneralTestFactory {
+    fun withBirthYear(birthYear: Int): PatientRecord {
+        val patientDetails: PatientDetails = ImmutablePatientDetails.builder()
+            .from(TestClinicalFactory.createMinimalTestClinicalRecord().patient())
+            .birthYear(birthYear)
+            .build()
+        return withPatientDetails(patientDetails)
     }
 
-    @NotNull
-    public static PatientRecord withBirthYear(int birthYear) {
-        PatientDetails patientDetails = ImmutablePatientDetails.builder()
-                .from(TestClinicalFactory.createMinimalTestClinicalRecord().patient())
-                .birthYear(birthYear)
-                .build();
-
-        return withPatientDetails(patientDetails);
+    fun withGender(gender: Gender): PatientRecord {
+        val patientDetails: PatientDetails = ImmutablePatientDetails.builder()
+            .from(TestClinicalFactory.createMinimalTestClinicalRecord().patient())
+            .gender(gender)
+            .build()
+        return withPatientDetails(patientDetails)
     }
 
-    @NotNull
-    public static PatientRecord withGender(@NotNull Gender gender) {
-        PatientDetails patientDetails = ImmutablePatientDetails.builder()
-                .from(TestClinicalFactory.createMinimalTestClinicalRecord().patient())
-                .gender(gender)
-                .build();
-
-        return withPatientDetails(patientDetails);
+    fun withWHO(who: Int?): PatientRecord {
+        val clinicalStatus: ClinicalStatus = ImmutableClinicalStatus.builder()
+            .from(TestClinicalFactory.createMinimalTestClinicalRecord().clinicalStatus())
+            .who(who)
+            .build()
+        return withClinicalStatus(clinicalStatus)
     }
 
-    @NotNull
-    public static PatientRecord withWHO(@Nullable Integer who) {
-        ClinicalStatus clinicalStatus = ImmutableClinicalStatus.builder()
-                .from(TestClinicalFactory.createMinimalTestClinicalRecord().clinicalStatus())
-                .who(who)
-                .build();
-
-        return withClinicalStatus(clinicalStatus);
+    fun withWHOAndComplications(who: Int, complicationCategories: Iterable<String>): PatientRecord {
+        val clinicalStatus: ClinicalStatus = ImmutableClinicalStatus.builder()
+            .from(TestClinicalFactory.createMinimalTestClinicalRecord().clinicalStatus())
+            .who(who)
+            .build()
+        val complication: Complication = ImmutableComplication.builder().name(Strings.EMPTY).categories(complicationCategories).build()
+        val clinical: ClinicalRecord = ImmutableClinicalRecord.builder()
+            .from(TestClinicalFactory.createMinimalTestClinicalRecord())
+            .clinicalStatus(clinicalStatus)
+            .addComplications(complication)
+            .build()
+        return withClinicalRecord(clinical)
     }
 
-    @NotNull
-    public static PatientRecord withWHOAndComplications(@NotNull Integer who, Iterable<String> complicationCategories) {
-        ClinicalStatus clinicalStatus = ImmutableClinicalStatus.builder()
-                .from(TestClinicalFactory.createMinimalTestClinicalRecord().clinicalStatus())
-                .who(who)
-                .build();
-
-        Complication complication = ImmutableComplication.builder().name(Strings.EMPTY).categories(complicationCategories).build();
-
-        ClinicalRecord clinical = ImmutableClinicalRecord.builder()
-                .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                .clinicalStatus(clinicalStatus)
-                .addComplications(complication)
-                .build();
-
-        return withClinicalRecord(clinical);
+    fun withBodyWeights(bodyWeights: Iterable<BodyWeight?>): PatientRecord {
+        val clinical: ClinicalRecord = ImmutableClinicalRecord.builder()
+            .from(TestClinicalFactory.createMinimalTestClinicalRecord())
+            .bodyWeights(bodyWeights)
+            .build()
+        return withClinicalRecord(clinical)
     }
 
-    @NotNull
-    public static PatientRecord withBodyWeights(@NotNull Iterable<BodyWeight> bodyWeights) {
-        ClinicalRecord clinical = ImmutableClinicalRecord.builder()
-                .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                .bodyWeights(bodyWeights)
-                .build();
-
-        return withClinicalRecord(clinical);
+    private fun withPatientDetails(patientDetails: PatientDetails): PatientRecord {
+        val clinical: ClinicalRecord = ImmutableClinicalRecord.builder()
+            .from(TestClinicalFactory.createMinimalTestClinicalRecord())
+            .patient(patientDetails)
+            .build()
+        return withClinicalRecord(clinical)
     }
 
-    @NotNull
-    private static PatientRecord withPatientDetails(@NotNull PatientDetails patientDetails) {
-        ClinicalRecord clinical = ImmutableClinicalRecord.builder()
-                .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                .patient(patientDetails)
-                .build();
-
-        return withClinicalRecord(clinical);
+    private fun withClinicalStatus(clinicalStatus: ClinicalStatus): PatientRecord {
+        val clinical: ClinicalRecord = ImmutableClinicalRecord.builder()
+            .from(TestClinicalFactory.createMinimalTestClinicalRecord())
+            .clinicalStatus(clinicalStatus)
+            .build()
+        return withClinicalRecord(clinical)
     }
 
-    @NotNull
-    private static PatientRecord withClinicalStatus(@NotNull ClinicalStatus clinicalStatus) {
-        ClinicalRecord clinical = ImmutableClinicalRecord.builder()
-                .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                .clinicalStatus(clinicalStatus)
-                .build();
-
-        return withClinicalRecord(clinical);
-    }
-
-    @NotNull
-    private static PatientRecord withClinicalRecord(@NotNull ClinicalRecord clinical) {
-        return ImmutablePatientRecord.builder().from(TestDataFactory.createMinimalTestPatientRecord()).clinical(clinical).build();
+    private fun withClinicalRecord(clinical: ClinicalRecord): PatientRecord {
+        return ImmutablePatientRecord.builder().from(TestDataFactory.createMinimalTestPatientRecord()).clinical(clinical).build()
     }
 }

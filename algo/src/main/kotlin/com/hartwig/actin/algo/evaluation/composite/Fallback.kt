@@ -1,28 +1,13 @@
-package com.hartwig.actin.algo.evaluation.composite;
+package com.hartwig.actin.algo.evaluation.composite
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-import org.jetbrains.annotations.NotNull;
-
-public class Fallback implements EvaluationFunction {
-
-    @NotNull
-    private final EvaluationFunction primary;
-    @NotNull
-    private final EvaluationFunction secondary;
-
-    public Fallback(@NotNull final EvaluationFunction primary, @NotNull final EvaluationFunction secondary) {
-        this.primary = primary;
-        this.secondary = secondary;
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        Evaluation primaryEvaluation = primary.evaluate(record);
-        return primaryEvaluation.result() != EvaluationResult.UNDETERMINED ? primaryEvaluation : secondary.evaluate(record);
+class Fallback(private val primary: EvaluationFunction, private val secondary: EvaluationFunction) : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val primaryEvaluation = primary.evaluate(record)
+        return if (primaryEvaluation.result() != EvaluationResult.UNDETERMINED) primaryEvaluation else secondary.evaluate(record)
     }
 }

@@ -1,92 +1,85 @@
-package com.hartwig.actin.algo.soc;
+package com.hartwig.actin.algo.soc
 
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.PatientRecordFactory
+import com.hartwig.actin.clinical.util.ClinicalPrinter
+import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.doid.DoidModelFactory
+import com.hartwig.actin.doid.datamodel.DoidEntry
+import com.hartwig.actin.doid.serialization.DoidJson
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
+import com.hartwig.actin.molecular.util.MolecularPrinter
+import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory
+import com.hartwig.actin.algo.doid.DoidConstants
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
+import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
+import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.TumorDetails
+import org.apache.logging.log4j.LogManager
+import java.io.File
+import java.io.IOException
+import java.time.LocalDate
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.PatientRecordFactory;
-import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory;
-import com.hartwig.actin.algo.doid.DoidConstants;
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
-import com.hartwig.actin.clinical.datamodel.TumorDetails;
-import com.hartwig.actin.clinical.util.ClinicalPrinter;
-import com.hartwig.actin.doid.DoidModel;
-import com.hartwig.actin.doid.DoidModelFactory;
-import com.hartwig.actin.doid.datamodel.DoidEntry;
-import com.hartwig.actin.doid.serialization.DoidJson;
-import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory;
-import com.hartwig.actin.molecular.util.MolecularPrinter;
+class TestStandardOfCareApplication {
+    @Throws(IOException::class)
+    fun run() {
+        val patient = patient()
+        LOGGER.info("Running ACTIN Test SOC Application with clinical record")
+        ClinicalPrinter.printRecord(patient.clinical())
+        LOGGER.info("and molecular record")
+        MolecularPrinter.printRecord(patient.molecular())
+        LOGGER.info("Loading DOID tree from {}", DOID_JSON_PATH)
+        val doidEntry: DoidEntry = DoidJson.readDoidOwlEntry(DOID_JSON_PATH)
+        LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size)
+        val doidModel: DoidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
+        val recommendationEngine = RecommendationEngine.create(doidModel, ReferenceDateProviderTestFactory.createCurrentDateProvider())
+        val recommendationInterpreter = recommendationEngine.provideRecommendations(patient, TreatmentDB.loadTreatments())
+        LOGGER.info(recommendationInterpreter.summarize())
+        LOGGER.info(recommendationInterpreter.csv())
+    }
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-
-public class TestStandardOfCareApplication {
-
-    private static final Logger LOGGER = LogManager.getLogger(TestStandardOfCareApplication.class);
-    private static final String DOID_JSON_PATH = String.join(File.separator,
+    companion object {
+        private val LOGGER = LogManager.getLogger(TestStandardOfCareApplication::class.java)
+        private val DOID_JSON_PATH = java.lang.String.join(
+            File.separator,
             System.getProperty("user.home"),
             "hmf",
             "repos",
             "common-resources-public",
             "disease_ontology",
-            "doid.json");
+            "doid.json"
+        )
 
-    public static void main(@NotNull String... args) throws IOException {
-        new TestStandardOfCareApplication().run();
-    }
+        @Throws(IOException::class)
+        @JvmStatic
+        fun main(args: Array<String>) {
+            TestStandardOfCareApplication().run()
+        }
 
-    public void run() throws IOException {
-        PatientRecord patient = patient();
-        LOGGER.info("Running ACTIN Test SOC Application with clinical record");
-        ClinicalPrinter.printRecord(patient.clinical());
-        LOGGER.info("and molecular record");
-        MolecularPrinter.printRecord(patient.molecular());
-
-        LOGGER.info("Loading DOID tree from {}", DOID_JSON_PATH);
-        DoidEntry doidEntry = DoidJson.readDoidOwlEntry(DOID_JSON_PATH);
-        LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size());
-        DoidModel doidModel = DoidModelFactory.createFromDoidEntry(doidEntry);
-
-        RecommendationEngine recommendationEngine =
-                RecommendationEngine.create(doidModel, ReferenceDateProviderTestFactory.createCurrentDateProvider());
-        EvaluatedTreatmentInterpreter recommendationInterpreter =
-                recommendationEngine.provideRecommendations(patient, TreatmentDB.loadTreatments());
-
-        LOGGER.info(recommendationInterpreter.summarize());
-        LOGGER.info(recommendationInterpreter.csv());
-    }
-
-    private static PatientRecord patient() {
-        TumorDetails tumorDetails = ImmutableTumorDetails.builder().addDoids(DoidConstants.COLORECTAL_CANCER_DOID).build();
-        ClinicalRecord clinicalRecord = ImmutableClinicalRecord.builder()
+        private fun patient(): PatientRecord {
+            val tumorDetails: TumorDetails = ImmutableTumorDetails.builder().addDoids(DoidConstants.COLORECTAL_CANCER_DOID).build()
+            val clinicalRecord: ClinicalRecord = ImmutableClinicalRecord.builder()
                 .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                 .tumor(tumorDetails)
-                .priorTumorTreatments(priorTreatmentStreamFromNames(List.of("CAPOX"), TreatmentCategory.CHEMOTHERAPY))
-                .build();
-        MolecularRecord molecularRecord = TestMolecularFactory.createProperTestMolecularRecord();
+                .priorTumorTreatments(priorTreatmentStreamFromNames(listOf("CAPOX"), TreatmentCategory.CHEMOTHERAPY))
+                .build()
+            val molecularRecord: MolecularRecord = TestMolecularFactory.createProperTestMolecularRecord()
+            return PatientRecordFactory.fromInputs(clinicalRecord, molecularRecord)
+        }
 
-        return PatientRecordFactory.fromInputs(clinicalRecord, molecularRecord);
-    }
-
-    private static Set<ImmutablePriorTumorTreatment> priorTreatmentStreamFromNames(List<String> names, TreatmentCategory category) {
-        return names.stream()
-                .map(treatmentName -> ImmutablePriorTumorTreatment.builder()
-                        .name(treatmentName)
-                        .isSystemic(true)
-                        .startYear(LocalDate.now().getYear())
-                        .addCategories(category)
-                        .build())
-                .collect(Collectors.toSet());
+        private fun priorTreatmentStreamFromNames(names: List<String>, category: TreatmentCategory): Set<ImmutablePriorTumorTreatment> {
+            return names.map { treatmentName: String ->
+                ImmutablePriorTumorTreatment.builder()
+                    .name(treatmentName)
+                    .isSystemic(true)
+                    .startYear(LocalDate.now().year)
+                    .addCategories(category)
+                    .build()
+            }.toSet()
+        }
     }
 }

@@ -1,51 +1,26 @@
-package com.hartwig.actin.algo.evaluation.general;
+package com.hartwig.actin.algo.evaluation.general
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-import org.jetbrains.annotations.NotNull;
+class HasAtLeastCertainAge internal constructor(private val referenceYear: Int, private val minAge: Int) : EvaluationFunction {
 
-public class HasAtLeastCertainAge implements EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val age = referenceYear - record.clinical().patient().birthYear()
+        return when {
+            age > minAge ->
+                EvaluationFactory.pass("Patient is at least $minAge years old", "Age above $minAge")
 
-    private final int referenceYear;
-    private final int minAge;
+            age == minAge ->
+                EvaluationFactory.undetermined(
+                    "Patient birth year is " + record.clinical().patient().birthYear() +
+                            ", could not determine whether patient is at least $minAge years old", "Undetermined if age is above $minAge"
+                )
 
-    HasAtLeastCertainAge(final int referenceYear, final int minAge) {
-        this.referenceYear = referenceYear;
-        this.minAge = minAge;
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        int age = referenceYear - record.clinical().patient().birthYear();
-
-        EvaluationResult result;
-        if (age > minAge) {
-            result = EvaluationResult.PASS;
-        } else if (age == minAge) {
-            result = EvaluationResult.UNDETERMINED;
-        } else {
-            result = EvaluationResult.FAIL;
+            else ->
+                EvaluationFactory.fail("Patient is younger than $minAge years old", "Age below $minAge")
         }
-
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Patient is younger than " + minAge + " years old");
-            builder.addFailGeneralMessages("Age below " + minAge);
-        } else if (result == EvaluationResult.UNDETERMINED) {
-            builder.addUndeterminedSpecificMessages("Patient birth year is " + record.clinical().patient().birthYear()
-                    + ", could not determine whether patient is at least " + minAge + " years old");
-            builder.addUndeterminedGeneralMessages("Undetermined if age is above " + minAge);
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient is at least " + minAge + " years old");
-            builder.addPassGeneralMessages("Age above " + minAge);
-        }
-
-        return builder.build();
     }
 }

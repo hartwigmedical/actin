@@ -1,50 +1,33 @@
-package com.hartwig.actin.algo.evaluation.util;
+package com.hartwig.actin.algo.evaluation.util
 
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.time.temporal.ChronoUnit;
-import java.util.Optional;
+import java.time.LocalDate
+import java.time.YearMonth
+import java.time.temporal.ChronoUnit
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+object DateComparison {
+    fun isAfterDate(minDate: LocalDate, year: Int?, month: Int?): Boolean? {
+        return when {
+            year == null -> null
+            year > minDate.year -> true
+            year == minDate.year ->
+                if (month == null || month == minDate.monthValue) null else month > minDate.monthValue
 
-public final class DateComparison {
-
-    private DateComparison() {
-    }
-
-    @Nullable
-    public static Boolean isAfterDate(@NotNull LocalDate minDate, @Nullable Integer year, @Nullable Integer month) {
-        if (year == null) {
-            return null;
-        } else if (year > minDate.getYear()) {
-            return true;
-        } else if (year < minDate.getYear()) {
-            return false;
-        }
-
-        // Year is equal, check month
-        if (month == null || month == minDate.getMonthValue()) {
-            return null;
-        } else {
-            return month > minDate.getMonthValue();
+            else -> false
         }
     }
 
-    @Nullable
-    public static Boolean isBeforeDate(@NotNull LocalDate maxDate, @Nullable Integer year, @Nullable Integer month) {
-        Boolean isAfterDate = isAfterDate(maxDate, year, month);
-        return isAfterDate != null ? !isAfterDate : null;
+    fun isBeforeDate(maxDate: LocalDate, year: Int?, month: Int?): Boolean? {
+        return isAfterDate(maxDate, year, month)?.not()
     }
 
-    public static Optional<Long> minWeeksBetweenDates(@Nullable Integer startYear, @Nullable Integer startMonth, @Nullable Integer stopYear,
-            @Nullable Integer stopMonth) {
-        if (startYear != null && stopYear != null) {
-            return Optional.of(Math.max(0,
-                    ChronoUnit.WEEKS.between(YearMonth.of(startYear, Optional.ofNullable(startMonth).orElse(12)).atEndOfMonth(),
-                            YearMonth.of(stopYear, Optional.ofNullable(stopMonth).orElse(1)).atDay(1))));
+    fun minWeeksBetweenDates(startYear: Int?, startMonth: Int?, stopYear: Int?, stopMonth: Int?): Long? {
+        return if (startYear != null && stopYear != null) {
+            ChronoUnit.WEEKS.between(
+                YearMonth.of(startYear, startMonth ?: 12).atEndOfMonth(),
+                YearMonth.of(stopYear, stopMonth ?: 1).atDay(1)
+            ).coerceAtLeast(0)
         } else {
-            return Optional.empty();
+            null
         }
     }
 }

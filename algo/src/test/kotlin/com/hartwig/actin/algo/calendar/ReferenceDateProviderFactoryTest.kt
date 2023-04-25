@@ -1,26 +1,19 @@
-package com.hartwig.actin.algo.calendar;
+package com.hartwig.actin.algo.calendar
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
+import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory.create
+import org.junit.Assert
+import org.junit.Test
 
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
-
-import org.junit.Test;
-
-public class ReferenceDateProviderFactoryTest {
-
+class ReferenceDateProviderFactoryTest {
     @Test
-    public void canCreateAllFlavors() {
-        ClinicalRecord clinical = TestClinicalFactory.createMinimalTestClinicalRecord();
-
-        ReferenceDateProvider provider1 = ReferenceDateProviderFactory.create(clinical, true);
-        assertNotNull(provider1.date());
-        assertFalse(provider1.isLive());
-
-        ReferenceDateProvider provider2 = ReferenceDateProviderFactory.create(clinical, false);
-        assertNotNull(provider2.date());
-        assertTrue(provider2.isLive());
+    fun canCreateAllFlavors() {
+        val clinical = TestClinicalFactory.createMinimalTestClinicalRecord()
+        val provider1 = create(clinical, true)
+        Assert.assertNotNull(provider1.date())
+        Assert.assertFalse(provider1.isLive)
+        val provider2 = create(clinical, false)
+        Assert.assertNotNull(provider2.date())
+        Assert.assertTrue(provider2.isLive)
     }
 }

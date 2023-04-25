@@ -1,64 +1,54 @@
-package com.hartwig.actin.algo.evaluation;
+package com.hartwig.actin.algo.evaluation
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import org.junit.Assert
 
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-
-import org.jetbrains.annotations.NotNull;
-
-public final class EvaluationAssert {
-
-    private EvaluationAssert() {
-    }
-
-    public static void assertMolecularEvaluation(@NotNull EvaluationResult expected, @NotNull Evaluation actual) {
-        assertEvaluation(expected, actual);
+object EvaluationAssert {
+    fun assertMolecularEvaluation(expected: EvaluationResult, actual: Evaluation) {
+        assertEvaluation(expected, actual)
         if (actual.result() == EvaluationResult.PASS || actual.result() == EvaluationResult.WARN) {
-            assertFalse(actual.inclusionMolecularEvents().isEmpty());
+            Assert.assertFalse(actual.inclusionMolecularEvents().isEmpty())
         } else {
-            assertTrue(actual.inclusionMolecularEvents().isEmpty());
+            Assert.assertTrue(actual.inclusionMolecularEvents().isEmpty())
         }
     }
 
-    public static void assertEvaluation(@NotNull EvaluationResult expected, @NotNull Evaluation actual) {
-        assertEquals(expected, actual.result());
-
+    fun assertEvaluation(expected: EvaluationResult, actual: Evaluation) {
+        Assert.assertEquals(expected, actual.result())
         if (actual.result() == EvaluationResult.PASS) {
-            assertFalse(actual.passSpecificMessages().isEmpty());
-            assertTrue(actual.warnSpecificMessages().isEmpty());
-            assertTrue(actual.warnGeneralMessages().isEmpty());
-            assertTrue(actual.undeterminedSpecificMessages().isEmpty());
-            assertTrue(actual.undeterminedGeneralMessages().isEmpty());
-            assertTrue(actual.failSpecificMessages().isEmpty());
-            assertTrue(actual.failGeneralMessages().isEmpty());
+            Assert.assertFalse(actual.passSpecificMessages().isEmpty())
+            Assert.assertTrue(actual.warnSpecificMessages().isEmpty())
+            Assert.assertTrue(actual.warnGeneralMessages().isEmpty())
+            Assert.assertTrue(actual.undeterminedSpecificMessages().isEmpty())
+            Assert.assertTrue(actual.undeterminedGeneralMessages().isEmpty())
+            Assert.assertTrue(actual.failSpecificMessages().isEmpty())
+            Assert.assertTrue(actual.failGeneralMessages().isEmpty())
         } else if (actual.result() == EvaluationResult.WARN) {
-            assertTrue(actual.passSpecificMessages().isEmpty());
-            assertTrue(actual.passGeneralMessages().isEmpty());
-            assertFalse(actual.warnSpecificMessages().isEmpty());
-            assertTrue(actual.undeterminedSpecificMessages().isEmpty());
-            assertTrue(actual.undeterminedGeneralMessages().isEmpty());
-            assertTrue(actual.failSpecificMessages().isEmpty());
-            assertTrue(actual.failGeneralMessages().isEmpty());
+            Assert.assertTrue(actual.passSpecificMessages().isEmpty())
+            Assert.assertTrue(actual.passGeneralMessages().isEmpty())
+            Assert.assertFalse(actual.warnSpecificMessages().isEmpty())
+            Assert.assertTrue(actual.undeterminedSpecificMessages().isEmpty())
+            Assert.assertTrue(actual.undeterminedGeneralMessages().isEmpty())
+            Assert.assertTrue(actual.failSpecificMessages().isEmpty())
+            Assert.assertTrue(actual.failGeneralMessages().isEmpty())
         } else if (actual.result() == EvaluationResult.UNDETERMINED) {
-            assertTrue(actual.passSpecificMessages().isEmpty());
-            assertTrue(actual.passSpecificMessages().isEmpty());
-            assertTrue(actual.passGeneralMessages().isEmpty());
-            assertTrue(actual.warnSpecificMessages().isEmpty());
-            assertTrue(actual.warnGeneralMessages().isEmpty());
-            assertFalse(actual.undeterminedSpecificMessages().isEmpty());
-            assertTrue(actual.failSpecificMessages().isEmpty());
-            assertTrue(actual.failGeneralMessages().isEmpty());
+            Assert.assertTrue(actual.passSpecificMessages().isEmpty())
+            Assert.assertTrue(actual.passSpecificMessages().isEmpty())
+            Assert.assertTrue(actual.passGeneralMessages().isEmpty())
+            Assert.assertTrue(actual.warnSpecificMessages().isEmpty())
+            Assert.assertTrue(actual.warnGeneralMessages().isEmpty())
+            Assert.assertFalse(actual.undeterminedSpecificMessages().isEmpty())
+            Assert.assertTrue(actual.failSpecificMessages().isEmpty())
+            Assert.assertTrue(actual.failGeneralMessages().isEmpty())
         } else if (actual.result() == EvaluationResult.FAIL) {
-            assertTrue(actual.passSpecificMessages().isEmpty());
-            assertTrue(actual.passGeneralMessages().isEmpty());
-            assertTrue(actual.warnSpecificMessages().isEmpty());
-            assertTrue(actual.warnGeneralMessages().isEmpty());
-            assertTrue(actual.undeterminedSpecificMessages().isEmpty());
-            assertTrue(actual.undeterminedGeneralMessages().isEmpty());
-            assertFalse(actual.failSpecificMessages().isEmpty());
+            Assert.assertTrue(actual.passSpecificMessages().isEmpty())
+            Assert.assertTrue(actual.passGeneralMessages().isEmpty())
+            Assert.assertTrue(actual.warnSpecificMessages().isEmpty())
+            Assert.assertTrue(actual.warnGeneralMessages().isEmpty())
+            Assert.assertTrue(actual.undeterminedSpecificMessages().isEmpty())
+            Assert.assertTrue(actual.undeterminedGeneralMessages().isEmpty())
+            Assert.assertFalse(actual.failSpecificMessages().isEmpty())
         }
     }
 }

@@ -1,15 +1,13 @@
-package com.hartwig.actin.algo.evaluation.general;
+package com.hartwig.actin.algo.evaluation.general
 
-import static org.junit.Assert.assertNotNull;
+import org.junit.Assert
+import org.junit.Test
 
-import org.junit.Test;
-
-public class PerformanceScoreTest  {
-
+class PerformanceScoreTest {
     @Test
-    public void canConvertAllDisplays() {
-        for (PerformanceScore performanceScore : PerformanceScore.values()) {
-            assertNotNull(performanceScore.display());
+    fun canConvertAllDisplays() {
+        for (performanceScore in PerformanceScore.values()) {
+            Assert.assertNotNull(performanceScore.display())
         }
     }
 }

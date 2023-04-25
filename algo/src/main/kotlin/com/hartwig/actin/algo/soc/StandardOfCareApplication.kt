@@ -1,83 +1,74 @@
-package com.hartwig.actin.algo.soc;
+package com.hartwig.actin.algo.soc
 
-import java.io.IOException;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.PatientRecordFactory
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
+import com.hartwig.actin.clinical.util.ClinicalPrinter
+import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.doid.DoidModelFactory
+import com.hartwig.actin.doid.datamodel.DoidEntry
+import com.hartwig.actin.doid.serialization.DoidJson
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.serialization.MolecularRecordJson
+import com.hartwig.actin.molecular.util.MolecularPrinter
+import com.hartwig.actin.algo.calendar.ReferenceDateProvider
+import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
+import org.apache.commons.cli.DefaultParser
+import org.apache.commons.cli.HelpFormatter
+import org.apache.commons.cli.Options
+import java.io.IOException
+import org.apache.commons.cli.ParseException
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
+import kotlin.system.exitProcess
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.PatientRecordFactory;
-import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
-import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory;
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
-import com.hartwig.actin.clinical.serialization.ClinicalRecordJson;
-import com.hartwig.actin.clinical.util.ClinicalPrinter;
-import com.hartwig.actin.doid.DoidModel;
-import com.hartwig.actin.doid.DoidModelFactory;
-import com.hartwig.actin.doid.datamodel.DoidEntry;
-import com.hartwig.actin.doid.serialization.DoidJson;
-import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.serialization.MolecularRecordJson;
-import com.hartwig.actin.molecular.util.MolecularPrinter;
+class StandardOfCareApplication private constructor(config: StandardOfCareConfig) {
+    private val config: StandardOfCareConfig
 
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
+    init {
+        this.config = config
+    }
 
-public class StandardOfCareApplication {
+    @Throws(IOException::class)
+    private fun run() {
+        LOGGER.info("Running {} v{}", APPLICATION, VERSION)
+        LOGGER.info("Loading clinical record from {}", config.clinicalJson)
+        val clinical: ClinicalRecord = ClinicalRecordJson.read(config.clinicalJson)
+        ClinicalPrinter.printRecord(clinical)
+        LOGGER.info("Loading molecular record from {}", config.molecularJson)
+        val molecular: MolecularRecord = MolecularRecordJson.read(config.molecularJson)
+        MolecularPrinter.printRecord(molecular)
+        val patient: PatientRecord = PatientRecordFactory.fromInputs(clinical, molecular)
+        LOGGER.info("Loading DOID tree from {}", config.doidJson)
+        val doidEntry: DoidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
+        LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size)
+        val doidModel: DoidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
+        val referenceDateProvider: ReferenceDateProvider = ReferenceDateProviderFactory.create(clinical, config.runHistorically)
+        val recommendationEngine: RecommendationEngine = RecommendationEngine.create(doidModel, referenceDateProvider)
+        LOGGER.info("Recommended treatments descending order of preference:")
+        LOGGER.info(recommendationEngine.provideRecommendations(patient, TreatmentDB.loadTreatments()).listAvailableTreatmentsByScore())
+        LOGGER.info("Done!")
+    }
 
-    private static final Logger LOGGER = LogManager.getLogger(StandardOfCareApplication.class);
+    companion object {
 
-    private static final String APPLICATION = "ACTIN Standard of Care";
-    private static final String VERSION = StandardOfCareApplication.class.getPackage().getImplementationVersion();
+        private val LOGGER: Logger = LogManager.getLogger(StandardOfCareApplication::class.java)
+        private const val APPLICATION = "ACTIN Standard of Care"
+        private val VERSION = StandardOfCareApplication::class.java.getPackage().implementationVersion
 
-    public static void main(@NotNull String... args) throws IOException {
-        Options options = StandardOfCareConfig.createOptions();
-
-        StandardOfCareConfig config = null;
-        try {
-            config = StandardOfCareConfig.createConfig(new DefaultParser().parse(options, args));
-        } catch (ParseException exception) {
-            LOGGER.warn(exception);
-            new HelpFormatter().printHelp(APPLICATION, options);
-            System.exit(1);
+        @Throws(IOException::class)
+        @JvmStatic
+        fun main(args: Array<String>) {
+            val options: Options = StandardOfCareConfig.createOptions()
+            try {
+                val config = StandardOfCareConfig.createConfig(DefaultParser().parse(options, args))
+                StandardOfCareApplication(config).run()
+            } catch (exception: ParseException) {
+                LOGGER.warn(exception)
+                HelpFormatter().printHelp(APPLICATION, options)
+                exitProcess(1)
+            }
         }
-
-        new StandardOfCareApplication(config).run();
-    }
-
-    @NotNull
-    private final StandardOfCareConfig config;
-
-    private StandardOfCareApplication(@NotNull final StandardOfCareConfig config) {
-        this.config = config;
-    }
-
-    private void run() throws IOException {
-        LOGGER.info("Running {} v{}", APPLICATION, VERSION);
-
-        LOGGER.info("Loading clinical record from {}", config.clinicalJson());
-        ClinicalRecord clinical = ClinicalRecordJson.read(config.clinicalJson());
-        ClinicalPrinter.printRecord(clinical);
-
-        LOGGER.info("Loading molecular record from {}", config.molecularJson());
-        MolecularRecord molecular = MolecularRecordJson.read(config.molecularJson());
-        MolecularPrinter.printRecord(molecular);
-
-        PatientRecord patient = PatientRecordFactory.fromInputs(clinical, molecular);
-
-        LOGGER.info("Loading DOID tree from {}", config.doidJson());
-        DoidEntry doidEntry = DoidJson.readDoidOwlEntry(config.doidJson());
-        LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size());
-
-        DoidModel doidModel = DoidModelFactory.createFromDoidEntry(doidEntry);
-        ReferenceDateProvider referenceDateProvider = ReferenceDateProviderFactory.create(clinical, config.runHistorically());
-
-        RecommendationEngine recommendationEngine = RecommendationEngine.create(doidModel, referenceDateProvider);
-        LOGGER.info("Recommended treatments descending order of preference:");
-        LOGGER.info(recommendationEngine.provideRecommendations(patient, TreatmentDB.loadTreatments()).listAvailableTreatmentsByScore());
-
-        LOGGER.info("Done!");
     }
 }

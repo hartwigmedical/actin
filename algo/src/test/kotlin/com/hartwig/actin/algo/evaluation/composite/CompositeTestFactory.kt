@@ -1,61 +1,58 @@
-package com.hartwig.actin.algo.evaluation.composite;
+package com.hartwig.actin.algo.evaluation.composite
 
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.datamodel.ImmutableEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-import org.jetbrains.annotations.NotNull;
+internal object CompositeTestFactory {
 
-final class CompositeTestFactory {
+    private val DEFAULT_RESULT = EvaluationResult.PASS
+    private const val DEFAULT_RECOVERABLE = false
+    private const val DEFAULT_INCLUDE_MOLECULAR = false
+    private const val DEFAULT_INDEX = 1
 
-    private static final EvaluationResult DEFAULT_RESULT = EvaluationResult.PASS;
-
-    private static final boolean DEFAULT_RECOVERABLE = false;
-    private static final boolean DEFAULT_INCLUDE_MOLECULAR = false;
-    private static final int DEFAULT_INDEX = 1;
-
-    private CompositeTestFactory() {
+    fun create(result: EvaluationResult, includeMolecular: Boolean): EvaluationFunction {
+        return create(result, DEFAULT_RECOVERABLE, includeMolecular, DEFAULT_INDEX)
     }
 
-    @NotNull
-    public static Evaluation create(@NotNull EvaluationResult result, boolean includeMolecular) {
-        return create(result, DEFAULT_RECOVERABLE, includeMolecular, DEFAULT_INDEX);
+    fun create(recoverable: Boolean, index: Int): EvaluationFunction {
+        return create(DEFAULT_RESULT, recoverable, DEFAULT_INCLUDE_MOLECULAR, index)
     }
 
-    @NotNull
-    public static Evaluation create(boolean recoverable, int index) {
-        return create(DEFAULT_RESULT, recoverable, DEFAULT_INCLUDE_MOLECULAR, index);
+    fun create(result: EvaluationResult, index: Int): EvaluationFunction {
+        return create(result, DEFAULT_RECOVERABLE, DEFAULT_INCLUDE_MOLECULAR, index)
     }
 
-    @NotNull
-    public static Evaluation create(@NotNull EvaluationResult result, int index) {
-        return create(result, DEFAULT_RECOVERABLE, DEFAULT_INCLUDE_MOLECULAR, index);
+    fun create(result: EvaluationResult, includeMolecular: Boolean, index: Int): EvaluationFunction {
+        return create(result, DEFAULT_RECOVERABLE, includeMolecular, index)
     }
 
-    @NotNull
-    public static Evaluation create(@NotNull EvaluationResult result, boolean includeMolecular, int index) {
-        return create(result, DEFAULT_RECOVERABLE, includeMolecular, index);
-    }
-
-    @NotNull
-    private static Evaluation create(@NotNull EvaluationResult result, boolean recoverable, boolean includeMolecular, int index) {
-        ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder()
-                .result(result)
-                .recoverable(recoverable)
-                .addPassSpecificMessages("pass specific " + index)
-                .addPassGeneralMessages("pass general " + index)
-                .addWarnSpecificMessages("warn specific " + index)
-                .addWarnGeneralMessages("warn general " + index)
-                .addUndeterminedSpecificMessages("undetermined specific " + index)
-                .addUndeterminedGeneralMessages("undetermined general " + index)
-                .addFailSpecificMessages("fail specific " + index)
-                .addFailGeneralMessages("fail general " + index);
-
+    private fun create(result: EvaluationResult, recoverable: Boolean, includeMolecular: Boolean, index: Int): EvaluationFunction {
+        val builder = ImmutableEvaluation.builder()
+            .result(result)
+            .recoverable(recoverable)
+            .addPassSpecificMessages("pass specific $index")
+            .addPassGeneralMessages("pass general $index")
+            .addWarnSpecificMessages("warn specific $index")
+            .addWarnGeneralMessages("warn general $index")
+            .addUndeterminedSpecificMessages("undetermined specific $index")
+            .addUndeterminedGeneralMessages("undetermined general $index")
+            .addFailSpecificMessages("fail specific $index")
+            .addFailGeneralMessages("fail general $index")
         if (includeMolecular) {
-            builder.addInclusionMolecularEvents("inclusion event " + index);
-            builder.addExclusionMolecularEvents("exclusion event " + index);
+            builder.addInclusionMolecularEvents("inclusion event $index")
+            builder.addExclusionMolecularEvents("exclusion event $index")
         }
+        return evaluationFunction { builder.build() }
+    }
 
-        return builder.build();
+    private fun evaluationFunction(function: (PatientRecord) -> Evaluation): EvaluationFunction {
+        return object : EvaluationFunction {
+            override fun evaluate(record: PatientRecord): Evaluation {
+                return function(record)
+            }
+        }
     }
 }

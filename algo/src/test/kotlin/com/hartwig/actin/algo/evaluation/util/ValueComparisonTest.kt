@@ -1,74 +1,71 @@
-package com.hartwig.actin.algo.evaluation.util;
+package com.hartwig.actin.algo.evaluation.util
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import junit.framework.TestCase.assertEquals
+import org.apache.logging.log4j.util.Strings
+import org.junit.Assert
+import org.junit.Test
 
-import java.util.Collections;
-import java.util.List;
-
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-
-import org.apache.logging.log4j.util.Strings;
-import org.junit.Test;
-
-public class ValueComparisonTest {
-
+class ValueComparisonTest {
     @Test
-    public void canEvaluateVersusMinValue() {
-        assertEquals(EvaluationResult.PASS, ValueComparison.evaluateVersusMinValue(4D, Strings.EMPTY, 2D));
-        assertEquals(EvaluationResult.PASS, ValueComparison.evaluateVersusMinValue(4D, null, 2D));
-        assertEquals(EvaluationResult.FAIL, ValueComparison.evaluateVersusMinValue(1D, Strings.EMPTY, 2D));
-        assertEquals(EvaluationResult.FAIL, ValueComparison.evaluateVersusMinValue(1D, null, 2D));
-
-        assertEquals(EvaluationResult.PASS, ValueComparison.evaluateVersusMinValue(4D, ValueComparison.LARGER_THAN, 2D));
-        assertEquals(EvaluationResult.PASS, ValueComparison.evaluateVersusMinValue(4D, ValueComparison.LARGER_THAN_OR_EQUAL, 2D));
-        assertEquals(EvaluationResult.FAIL, ValueComparison.evaluateVersusMinValue(1D, ValueComparison.SMALLER_THAN, 2D));
-        assertEquals(EvaluationResult.FAIL, ValueComparison.evaluateVersusMinValue(1D, ValueComparison.SMALLER_THAN_OR_EQUAL, 2D));
-
-        assertEquals(EvaluationResult.UNDETERMINED, ValueComparison.evaluateVersusMinValue(4D, ValueComparison.SMALLER_THAN, 2D));
-        assertEquals(EvaluationResult.UNDETERMINED, ValueComparison.evaluateVersusMinValue(4D, ValueComparison.SMALLER_THAN_OR_EQUAL, 2D));
-        assertEquals(EvaluationResult.UNDETERMINED, ValueComparison.evaluateVersusMinValue(1D, ValueComparison.LARGER_THAN, 2D));
-        assertEquals(EvaluationResult.UNDETERMINED, ValueComparison.evaluateVersusMinValue(1D, ValueComparison.LARGER_THAN_OR_EQUAL, 2D));
+    fun canEvaluateVersusMinValue() {
+        assertEquals(EvaluationResult.PASS, ValueComparison.evaluateVersusMinValue(4.0, Strings.EMPTY, 2.0))
+        assertEquals(EvaluationResult.PASS, ValueComparison.evaluateVersusMinValue(4.0, null, 2.0))
+        assertEquals(EvaluationResult.FAIL, ValueComparison.evaluateVersusMinValue(1.0, Strings.EMPTY, 2.0))
+        assertEquals(EvaluationResult.FAIL, ValueComparison.evaluateVersusMinValue(1.0, null, 2.0))
+        assertEquals(EvaluationResult.PASS, ValueComparison.evaluateVersusMinValue(4.0, ValueComparison.LARGER_THAN, 2.0))
+        assertEquals(EvaluationResult.PASS, ValueComparison.evaluateVersusMinValue(4.0, ValueComparison.LARGER_THAN_OR_EQUAL, 2.0))
+        assertEquals(EvaluationResult.FAIL, ValueComparison.evaluateVersusMinValue(1.0, ValueComparison.SMALLER_THAN, 2.0))
+        assertEquals(EvaluationResult.FAIL, ValueComparison.evaluateVersusMinValue(1.0, ValueComparison.SMALLER_THAN_OR_EQUAL, 2.0))
+        assertEquals(EvaluationResult.UNDETERMINED, ValueComparison.evaluateVersusMinValue(4.0, ValueComparison.SMALLER_THAN, 2.0))
+        assertEquals(EvaluationResult.UNDETERMINED, ValueComparison.evaluateVersusMinValue(4.0, ValueComparison.SMALLER_THAN_OR_EQUAL, 2.0))
+        assertEquals(EvaluationResult.UNDETERMINED, ValueComparison.evaluateVersusMinValue(1.0, ValueComparison.LARGER_THAN, 2.0))
+        assertEquals(EvaluationResult.UNDETERMINED, ValueComparison.evaluateVersusMinValue(1.0, ValueComparison.LARGER_THAN_OR_EQUAL, 2.0))
     }
 
     @Test
-    public void canEvaluateVersusMaxValue() {
-        assertEquals(EvaluationResult.PASS, ValueComparison.evaluateVersusMaxValue(1D, Strings.EMPTY, 2D));
-        assertEquals(EvaluationResult.PASS, ValueComparison.evaluateVersusMaxValue(1D, null, 2D));
-        assertEquals(EvaluationResult.FAIL, ValueComparison.evaluateVersusMaxValue(4D, Strings.EMPTY, 2D));
-        assertEquals(EvaluationResult.FAIL, ValueComparison.evaluateVersusMaxValue(4D, null, 2D));
-
-        assertEquals(EvaluationResult.PASS, ValueComparison.evaluateVersusMaxValue(1D, ValueComparison.SMALLER_THAN, 2D));
-        assertEquals(EvaluationResult.PASS, ValueComparison.evaluateVersusMaxValue(1D, ValueComparison.SMALLER_THAN_OR_EQUAL, 2D));
-        assertEquals(EvaluationResult.FAIL, ValueComparison.evaluateVersusMaxValue(4D, ValueComparison.LARGER_THAN, 2D));
-        assertEquals(EvaluationResult.FAIL, ValueComparison.evaluateVersusMaxValue(4D, ValueComparison.LARGER_THAN_OR_EQUAL, 2D));
-
-        assertEquals(EvaluationResult.UNDETERMINED, ValueComparison.evaluateVersusMaxValue(4D, ValueComparison.SMALLER_THAN, 2D));
-        assertEquals(EvaluationResult.UNDETERMINED, ValueComparison.evaluateVersusMaxValue(4D, ValueComparison.SMALLER_THAN_OR_EQUAL, 2D));
-        assertEquals(EvaluationResult.UNDETERMINED, ValueComparison.evaluateVersusMaxValue(1D, ValueComparison.LARGER_THAN, 2D));
-        assertEquals(EvaluationResult.UNDETERMINED, ValueComparison.evaluateVersusMaxValue(1D, ValueComparison.LARGER_THAN_OR_EQUAL, 2D));
+    fun canEvaluateVersusMaxValue() {
+        assertEquals(EvaluationResult.PASS, ValueComparison.evaluateVersusMaxValue(1.0, Strings.EMPTY, 2.0))
+        assertEquals(EvaluationResult.PASS, ValueComparison.evaluateVersusMaxValue(1.0, null, 2.0))
+        assertEquals(EvaluationResult.FAIL, ValueComparison.evaluateVersusMaxValue(4.0, Strings.EMPTY, 2.0))
+        assertEquals(EvaluationResult.FAIL, ValueComparison.evaluateVersusMaxValue(4.0, null, 2.0))
+        assertEquals(EvaluationResult.PASS, ValueComparison.evaluateVersusMaxValue(1.0, ValueComparison.SMALLER_THAN, 2.0))
+        assertEquals(EvaluationResult.PASS, ValueComparison.evaluateVersusMaxValue(1.0, ValueComparison.SMALLER_THAN_OR_EQUAL, 2.0))
+        assertEquals(EvaluationResult.FAIL, ValueComparison.evaluateVersusMaxValue(4.0, ValueComparison.LARGER_THAN, 2.0))
+        assertEquals(EvaluationResult.FAIL, ValueComparison.evaluateVersusMaxValue(4.0, ValueComparison.LARGER_THAN_OR_EQUAL, 2.0))
+        assertEquals(EvaluationResult.UNDETERMINED, ValueComparison.evaluateVersusMaxValue(4.0, ValueComparison.SMALLER_THAN, 2.0))
+        assertEquals(EvaluationResult.UNDETERMINED, ValueComparison.evaluateVersusMaxValue(4.0, ValueComparison.SMALLER_THAN_OR_EQUAL, 2.0))
+        assertEquals(EvaluationResult.UNDETERMINED, ValueComparison.evaluateVersusMaxValue(1.0, ValueComparison.LARGER_THAN, 2.0))
+        assertEquals(EvaluationResult.UNDETERMINED, ValueComparison.evaluateVersusMaxValue(1.0, ValueComparison.LARGER_THAN_OR_EQUAL, 2.0))
     }
 
     @Test
-    public void shouldReturnTrueIfStringInCollectionMatchesValue() {
-        assertTrue(ValueComparison.stringCaseInsensitivelyMatchesQueryCollection("HAYneedleSTACK",
-                List.of("Missing", "Unknown", "Needle", "Another")));
+    fun shouldReturnTrueIfStringInCollectionMatchesValue() {
+        Assert.assertTrue(
+            ValueComparison.stringCaseInsensitivelyMatchesQueryCollection(
+                "HAYneedleSTACK",
+                listOf("Missing", "Unknown", "Needle", "Another")
+            )
+        )
     }
 
     @Test
-    public void shouldReturnFalseIfNoStringInCollectionMatchesValue() {
-        assertFalse(ValueComparison.stringCaseInsensitivelyMatchesQueryCollection("HAYneedleSTACK",
-                List.of("Missing", "Unknown", "Another")));
+    fun shouldReturnFalseIfNoStringInCollectionMatchesValue() {
+        Assert.assertFalse(
+            ValueComparison.stringCaseInsensitivelyMatchesQueryCollection(
+                "HAYneedleSTACK",
+                listOf("Missing", "Unknown", "Another")
+            )
+        )
     }
 
     @Test
-    public void shouldReturnFalseForEmptyValue() {
-        assertFalse(ValueComparison.stringCaseInsensitivelyMatchesQueryCollection("", List.of("Missing", "Unknown", "Another")));
+    fun shouldReturnFalseForEmptyValue() {
+        Assert.assertFalse(ValueComparison.stringCaseInsensitivelyMatchesQueryCollection("", listOf("Missing", "Unknown", "Another")))
     }
 
     @Test
-    public void shouldReturnFalseForEmptyCollection() {
-        assertFalse(ValueComparison.stringCaseInsensitivelyMatchesQueryCollection("HAYneedleSTACK", Collections.emptyList()));
+    fun shouldReturnFalseForEmptyCollection() {
+        Assert.assertFalse(ValueComparison.stringCaseInsensitivelyMatchesQueryCollection("HAYneedleSTACK", emptyList()))
     }
 }

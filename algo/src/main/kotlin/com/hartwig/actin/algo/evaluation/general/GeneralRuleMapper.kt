@@ -1,129 +1,97 @@
-package com.hartwig.actin.algo.evaluation.general;
+package com.hartwig.actin.algo.evaluation.general
 
-import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.evaluation.FunctionCreator;
-import com.hartwig.actin.algo.evaluation.RuleMapper;
-import com.hartwig.actin.algo.evaluation.RuleMappingResources;
-import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import org.jetbrains.annotations.NotNull;
+import com.hartwig.actin.algo.evaluation.FunctionCreator
+import com.hartwig.actin.algo.evaluation.RuleMapper
+import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.treatment.datamodel.EligibilityFunction
+import com.hartwig.actin.treatment.datamodel.EligibilityRule
 
-import java.util.Map;
-
-public class GeneralRuleMapper extends RuleMapper {
-
-    public GeneralRuleMapper(@NotNull final RuleMappingResources resources) {
-        super(resources);
+class GeneralRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
+    override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
+        return mapOf(
+            EligibilityRule.IS_AT_LEAST_X_YEARS_OLD to hasAtLeastCertainAgeCreator(),
+            EligibilityRule.IS_MALE to isMaleCreator,
+            EligibilityRule.IS_FEMALE to isFemaleCreator,
+            EligibilityRule.HAS_WHO_STATUS_OF_AT_MOST_X to hasMaximumWHOStatusCreator(),
+            EligibilityRule.HAS_WHO_STATUS_OF_AT_EXACTLY_X to hasWHOStatusCreator(),
+            EligibilityRule.HAS_KARNOFSKY_SCORE_OF_AT_LEAST_X to hasMinimumKarnofskyScoreCreator(),
+            EligibilityRule.HAS_LANSKY_SCORE_OF_AT_LEAST_X to hasMinimumLanskyScoreCreator(),
+            EligibilityRule.CAN_GIVE_ADEQUATE_INFORMED_CONSENT to canGiveAdequateInformedConsentCreator(),
+            EligibilityRule.HAS_RAPIDLY_DETERIORATING_CONDITION to hasRapidlyDeterioratingConditionCreator(),
+            EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS to hasSufficientLifeExpectancyCreator(),
+            EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS to hasSufficientLifeExpectancyCreator(),
+            EligibilityRule.IS_TREATED_IN_HOSPITAL_X to isTreatedInHospitalCreator,
+            EligibilityRule.WILL_PARTICIPATE_IN_TRIAL_IN_COUNTRY_X to willParticipateInTrialInCountryCreator(),
+            EligibilityRule.IS_LEGALLY_INSTITUTIONALIZED to isLegallyInstitutionalizedCreator,
+            EligibilityRule.IS_INVOLVED_IN_STUDY_PROCEDURES to isInvolvedInStudyProceduresCreator,
+        )
     }
 
-    @NotNull
-    @Override
-    public Map<EligibilityRule, FunctionCreator> createMappings() {
-        Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
-
-        map.put(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, hasAtLeastCertainAgeCreator());
-        map.put(EligibilityRule.IS_MALE, isMaleCreator());
-        map.put(EligibilityRule.IS_FEMALE, isFemaleCreator());
-        map.put(EligibilityRule.HAS_WHO_STATUS_OF_AT_MOST_X, hasMaximumWHOStatusCreator());
-        map.put(EligibilityRule.HAS_WHO_STATUS_OF_AT_EXACTLY_X, hasWHOStatusCreator());
-        map.put(EligibilityRule.HAS_KARNOFSKY_SCORE_OF_AT_LEAST_X, hasMinimumKarnofskyScoreCreator());
-        map.put(EligibilityRule.HAS_LANSKY_SCORE_OF_AT_LEAST_X, hasMinimumLanskyScoreCreator());
-        map.put(EligibilityRule.CAN_GIVE_ADEQUATE_INFORMED_CONSENT, canGiveAdequateInformedConsentCreator());
-        map.put(EligibilityRule.HAS_RAPIDLY_DETERIORATING_CONDITION, hasRapidlyDeterioratingConditionCreator());
-        map.put(EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS, hasSufficientLifeExpectancyCreator());
-        map.put(EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS, hasSufficientLifeExpectancyCreator());
-        map.put(EligibilityRule.IS_TREATED_IN_HOSPITAL_X, isTreatedInHospitalCreator());
-        map.put(EligibilityRule.WILL_PARTICIPATE_IN_TRIAL_IN_COUNTRY_X, willParticipateInTrialInCountryCreator());
-        map.put(EligibilityRule.IS_LEGALLY_INSTITUTIONALIZED, isLegallyInstitutionalizedCreator());
-        map.put(EligibilityRule.IS_INVOLVED_IN_STUDY_PROCEDURES, isInvolvedInStudyProceduresCreator());
-
-        return map;
+    private fun hasAtLeastCertainAgeCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val minAge: Int = functionInputResolver().createOneIntegerInput(function)
+            HasAtLeastCertainAge(referenceDateProvider().year(), minAge)
+        }
     }
 
-    @NotNull
-    private FunctionCreator hasAtLeastCertainAgeCreator() {
-        return function -> {
-            int minAge = functionInputResolver().createOneIntegerInput(function);
-            return new HasAtLeastCertainAge(referenceDateProvider().year(), minAge);
-        };
+    private val isMaleCreator: FunctionCreator
+        get() = FunctionCreator { IsMale() }
+    private val isFemaleCreator: FunctionCreator
+        get() = FunctionCreator { IsFemale() }
+
+    private fun hasMaximumWHOStatusCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val maximumWHO = functionInputResolver().createOneIntegerInput(function)
+            HasMaximumWHOStatus(maximumWHO)
+        }
     }
 
-    @NotNull
-    private FunctionCreator isMaleCreator() {
-        return function -> new IsMale();
+    private fun hasWHOStatusCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction? ->
+            val requiredWHO = functionInputResolver().createOneIntegerInput(function!!)
+            HasWHOStatus(requiredWHO)
+        }
     }
 
-    @NotNull
-    private FunctionCreator isFemaleCreator() {
-        return function -> new IsFemale();
+    private fun hasMinimumKarnofskyScoreCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val minScore = functionInputResolver().createOneIntegerInput(function)
+            HasMinimumLanskyKarnofskyScore(PerformanceScore.KARNOFSKY, minScore)
+        }
     }
 
-    @NotNull
-    private FunctionCreator hasMaximumWHOStatusCreator() {
-        return function -> {
-            int maximumWHO = functionInputResolver().createOneIntegerInput(function);
-            return new HasMaximumWHOStatus(maximumWHO);
-        };
+    private fun hasMinimumLanskyScoreCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val minScore = functionInputResolver().createOneIntegerInput(function)
+            HasMinimumLanskyKarnofskyScore(PerformanceScore.LANSKY, minScore)
+        }
     }
 
-    @NotNull
-    private FunctionCreator hasWHOStatusCreator() {
-        return function -> {
-            int requiredWHO = functionInputResolver().createOneIntegerInput(function);
-            return new HasWHOStatus(requiredWHO);
-        };
+    private fun canGiveAdequateInformedConsentCreator(): FunctionCreator {
+        return FunctionCreator { CanGiveAdequateInformedConsent() }
     }
 
-    @NotNull
-    private FunctionCreator hasMinimumKarnofskyScoreCreator() {
-        return function -> {
-            int minScore = functionInputResolver().createOneIntegerInput(function);
-            return new HasMinimumLanskyKarnofskyScore(PerformanceScore.KARNOFSKY, minScore);
-        };
+    private val isInvolvedInStudyProceduresCreator: FunctionCreator
+        get() = FunctionCreator { IsInvolvedInStudyProcedures() }
+
+    private fun hasRapidlyDeterioratingConditionCreator(): FunctionCreator {
+        return FunctionCreator { HasRapidlyDeterioratingCondition() }
     }
 
-    @NotNull
-    private FunctionCreator hasMinimumLanskyScoreCreator() {
-        return function -> {
-            int minScore = functionInputResolver().createOneIntegerInput(function);
-            return new HasMinimumLanskyKarnofskyScore(PerformanceScore.LANSKY, minScore);
-        };
+    private fun hasSufficientLifeExpectancyCreator(): FunctionCreator {
+        return FunctionCreator { HasSufficientLifeExpectancy() }
     }
 
-    @NotNull
-    private FunctionCreator canGiveAdequateInformedConsentCreator() {
-        return function -> new CanGiveAdequateInformedConsent();
+    private val isTreatedInHospitalCreator: FunctionCreator
+        get() = FunctionCreator { IsTreatedInHospital() }
+
+    private fun willParticipateInTrialInCountryCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val country = functionInputResolver().createOneStringInput(function)
+            WillParticipateInTrialInCountry(country)
+        }
     }
 
-    @NotNull
-    private FunctionCreator isInvolvedInStudyProceduresCreator() {
-        return function -> new IsInvolvedInStudyProcedures();
-    }
-
-    @NotNull
-    private FunctionCreator hasRapidlyDeterioratingConditionCreator() {
-        return function -> new HasRapidlyDeterioratingCondition();
-    }
-
-    @NotNull
-    private FunctionCreator hasSufficientLifeExpectancyCreator() {
-        return function -> new HasSufficientLifeExpectancy();
-    }
-
-    @NotNull
-    private FunctionCreator isTreatedInHospitalCreator() {
-        return function -> new IsTreatedInHospital();
-    }
-
-    @NotNull
-    private FunctionCreator willParticipateInTrialInCountryCreator() {
-        return function -> {
-            String country = functionInputResolver().createOneStringInput(function);
-            return new WillParticipateInTrialInCountry(country);
-        };
-    }
-
-    @NotNull
-    private FunctionCreator isLegallyInstitutionalizedCreator() {
-        return function -> new IsLegallyInstitutionalized();
-    }
+    private val isLegallyInstitutionalizedCreator: FunctionCreator
+        get() = FunctionCreator { IsLegallyInstitutionalized() }
 }
