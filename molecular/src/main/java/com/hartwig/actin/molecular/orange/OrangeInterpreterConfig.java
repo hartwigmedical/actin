@@ -23,7 +23,6 @@ public interface OrangeInterpreterConfig {
 
     // Params for clinical annotation and interpretation
     String SERVE_DIRECTORY = "serve_directory";
-    String KNOWN_GENES_TSV = "known_genes_tsv";
     String EXTERNAL_TRIAL_MAPPING_TSV = "external_trial_mapping_tsv";
     String CLINICAL_JSON = "clinical_json";
     String DOID_JSON = "doid_json";

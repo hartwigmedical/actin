@@ -31,6 +31,7 @@ public final class KnownEventResolverFactory {
                 .hotspots(filterKnown(knownEvents.hotspots()))
                 .codons(filterKnown(knownEvents.codons()))
                 .exons(filterKnown(knownEvents.exons()))
+                .genes(filterKnown(knownEvents.genes()))
                 .copyNumbers(filterKnown(knownEvents.copyNumbers()))
                 .fusions(filterKnown(knownEvents.fusions()))
                 .build();
