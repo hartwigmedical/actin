@@ -30,7 +30,7 @@ public class CanProvideSampleForFurtherAnalysis implements EvaluationFunction {
                 .result(EvaluationResult.PASS)
                 .addPassSpecificMessages(
                         "It is assumed that patient can provide archival/fresh sample for FFPE analysis (presence of WGS analysis)")
-                .addPassGeneralMessages("Sample provision ability for FFPE analysis assumed")
+                .addPassGeneralMessages("Unknown if sample available for FFPE analysis")
                 .build();
     }
 }

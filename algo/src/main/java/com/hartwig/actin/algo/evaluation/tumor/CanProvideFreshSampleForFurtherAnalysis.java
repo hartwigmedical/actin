@@ -22,7 +22,7 @@ public class CanProvideFreshSampleForFurtherAnalysis implements EvaluationFuncti
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages(
                             "Can't determine whether patient can provide fresh sample for FFPE analysis without WGS")
-                    .addUndeterminedGeneralMessages("Undetermined provision of fresh sample for FFPE analysis")
+                    .addUndeterminedGeneralMessages("Unknown if fresh sample available for FFPE analysis")
                     .build();
         }
 

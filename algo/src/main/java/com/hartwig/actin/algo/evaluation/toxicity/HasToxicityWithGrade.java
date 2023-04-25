@@ -72,15 +72,15 @@ public class HasToxicityWithGrade implements EvaluationFunction {
             if (hasAtLeastOneMatchingQuestionnaireToxicity) {
                 return EvaluationFactory.recoverable()
                         .result(EvaluationResult.PASS)
-                        .addPassSpecificMessages("Toxicities with grade => " + minGrade + " found: " + Format.concat(toxicities))
-                        .addPassGeneralMessages("Toxicities grade => " + minGrade + " found: " + Format.concat(toxicities))
+                        .addPassSpecificMessages("Toxicities with grade >= " + minGrade + " found: " + Format.concat(toxicities))
+                        .addPassGeneralMessages("Toxicities grade >= " + minGrade + " found: " + Format.concat(toxicities))
                         .build();
             } else {
                 return EvaluationFactory.recoverable()
                         .result(EvaluationResult.WARN)
-                        .addWarnSpecificMessages("Toxicities with grade => " + minGrade + " found: " + Format.concat(toxicities)
+                        .addWarnSpecificMessages("Toxicities with grade >= " + minGrade + " found: " + Format.concat(toxicities)
                                 + " but source is not questionnaire")
-                        .addWarnGeneralMessages("Toxicities grade => " + minGrade + " found: " + Format.concat(toxicities)
+                        .addWarnGeneralMessages("Toxicities grade >= " + minGrade + " found: " + Format.concat(toxicities)
                                 + " but source is not questionnaire")
                         .build();
             }
@@ -96,7 +96,7 @@ public class HasToxicityWithGrade implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No toxicities found with grade " + minGrade + " or higher")
-                .addFailGeneralMessages("Grade =>" + minGrade + " toxicities not present")
+                .addFailGeneralMessages("Grade >=" + minGrade + " toxicities not present")
                 .build();
     }
 

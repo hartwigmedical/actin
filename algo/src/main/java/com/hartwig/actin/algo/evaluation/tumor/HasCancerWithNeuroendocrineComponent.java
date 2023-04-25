@@ -87,7 +87,7 @@ public class HasCancerWithNeuroendocrineComponent implements EvaluationFunction 
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages(
                             "Patient has cancer with neuroendocrine molecular profile, undetermind if considered neuroendocrine component")
-                    .addUndeterminedGeneralMessages("Undetermined neuroendocrine component")
+                    .addUndeterminedGeneralMessages("Undetermined if neuroendocrine component")
                     .build();
         }
 
