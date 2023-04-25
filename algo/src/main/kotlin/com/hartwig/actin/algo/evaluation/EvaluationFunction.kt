@@ -1,12 +1,9 @@
-package com.hartwig.actin.algo.evaluation;
+package com.hartwig.actin.algo.evaluation
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
 
-import org.jetbrains.annotations.NotNull;
+interface EvaluationFunction {
 
-public interface EvaluationFunction {
-
-    @NotNull
-    Evaluation evaluate(@NotNull PatientRecord record);
+    fun evaluate(record: PatientRecord): Evaluation
 }

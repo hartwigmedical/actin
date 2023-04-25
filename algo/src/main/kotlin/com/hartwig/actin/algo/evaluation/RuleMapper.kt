@@ -1,39 +1,23 @@
-package com.hartwig.actin.algo.evaluation;
+package com.hartwig.actin.algo.evaluation
 
-import java.util.Map;
+import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.algo.calendar.ReferenceDateProvider
+import com.hartwig.actin.treatment.datamodel.EligibilityRule
+import com.hartwig.actin.treatment.input.FunctionInputResolver
 
-import com.hartwig.actin.algo.calendar.ReferenceDateProvider;
-import com.hartwig.actin.doid.DoidModel;
-import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.input.FunctionInputResolver;
+abstract class RuleMapper(private val resources: RuleMappingResources) {
 
-import org.jetbrains.annotations.NotNull;
-
-public abstract class RuleMapper {
-
-    @NotNull
-    private final RuleMappingResources resources;
-
-    public RuleMapper(@NotNull final RuleMappingResources resources) {
-        this.resources = resources;
+    protected fun referenceDateProvider(): ReferenceDateProvider {
+        return resources.referenceDateProvider
     }
 
-    @NotNull
-    protected ReferenceDateProvider referenceDateProvider() {
-        return resources.referenceDateProvider();
+    protected fun doidModel(): DoidModel {
+        return resources.doidModel
     }
 
-    @NotNull
-    protected DoidModel doidModel() {
-        return resources.doidModel();
+    protected fun functionInputResolver(): FunctionInputResolver {
+        return resources.functionInputResolver
     }
 
-    @NotNull
-    protected FunctionInputResolver functionInputResolver() {
-        return resources.functionInputResolver();
-    }
-
-    @NotNull
-    public abstract Map<EligibilityRule, FunctionCreator> createMappings();
-
+    abstract fun createMappings(): Map<EligibilityRule, FunctionCreator>
 }

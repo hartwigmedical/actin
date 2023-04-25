@@ -1,11 +1,16 @@
-package com.hartwig.actin.algo.evaluation;
+package com.hartwig.actin.algo.evaluation
 
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
+import com.hartwig.actin.treatment.datamodel.EligibilityFunction
 
-import org.jetbrains.annotations.NotNull;
+interface FunctionCreator {
 
-public interface FunctionCreator {
+    fun create(eligibilityFunction: EligibilityFunction): EvaluationFunction
 
-    @NotNull
-    EvaluationFunction create(@NotNull EligibilityFunction function);
+    companion object {
+        operator fun invoke(createEvaluationFunction: (EligibilityFunction) -> EvaluationFunction): FunctionCreator =
+            object : FunctionCreator {
+                override fun create(eligibilityFunction: EligibilityFunction): EvaluationFunction =
+                    createEvaluationFunction(eligibilityFunction)
+            }
+    }
 }
