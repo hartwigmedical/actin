@@ -19,6 +19,7 @@ public class ParticipatesInAnotherTrial implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.NOT_EVALUATED)
                 .addPassSpecificMessages("Assumed that patient is not currently participating in another trial")
+                .addPassGeneralMessages("Assumed not participating in another trial")
                 .build();
     }
 }

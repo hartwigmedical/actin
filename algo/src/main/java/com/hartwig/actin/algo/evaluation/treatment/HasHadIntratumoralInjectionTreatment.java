@@ -19,7 +19,7 @@ public class HasHadIntratumoralInjectionTreatment implements EvaluationFunction 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Not determined yet if patient has had previous intratumoral injection treatments")
-                .addUndeterminedGeneralMessages("Prior IT injection treatment")
+                .addUndeterminedGeneralMessages("Prior IT injection treatment cannot be determined")
                 .build();
     }
 }

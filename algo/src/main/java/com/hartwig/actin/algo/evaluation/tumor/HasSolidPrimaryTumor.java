@@ -43,7 +43,7 @@ public class HasSolidPrimaryTumor implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("No tumor location/type configured for patient, unknown if solid primary tumor")
-                    .addUndeterminedGeneralMessages("Unconfigured tumor location/type")
+                    .addUndeterminedGeneralMessages("Undetermined solid primary tumor")
                     .build();
         }
 
@@ -59,7 +59,7 @@ public class HasSolidPrimaryTumor implements EvaluationFunction {
             builder.addFailGeneralMessages("Tumor type");
         } else if (result == EvaluationResult.WARN) {
             builder.addWarnSpecificMessages("Unclear if tumor type of patient should be considered solid or non-solid");
-            builder.addWarnGeneralMessages("Tumor type");
+            builder.addWarnGeneralMessages("Unclear if primary tumor is considered solid");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient has solid primary tumor");
             builder.addPassGeneralMessages("Tumor type");

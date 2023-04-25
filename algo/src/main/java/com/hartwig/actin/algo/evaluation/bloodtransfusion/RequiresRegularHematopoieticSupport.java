@@ -44,7 +44,7 @@ public class RequiresRegularHematopoieticSupport implements EvaluationFunction {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Patient has had blood transfusion " + inBetweenRange)
-                        .addPassGeneralMessages("Hematopoietic support")
+                        .addPassGeneralMessages("Has received recent hematopoietic support")
                         .build();
             }
         }
@@ -79,14 +79,14 @@ public class RequiresRegularHematopoieticSupport implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has had medications " + Format.concat(medications) + " " + inBetweenRange)
-                    .addPassGeneralMessages("Hematopoietic support")
+                    .addPassGeneralMessages("Has received recent hematopoietic support")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has not received blood transfusions or hematopoietic medication " + inBetweenRange)
-                .addFailGeneralMessages("No hematopoietic support")
+                .addFailGeneralMessages("Has not received recent hematopoietic support")
                 .build();
     }
 }

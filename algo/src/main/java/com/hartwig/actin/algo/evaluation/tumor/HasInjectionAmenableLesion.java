@@ -20,7 +20,7 @@ public class HasInjectionAmenableLesion implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Injection amenability of lesions currently cannot be determined")
-                .addUndeterminedGeneralMessages("Injection amenability")
+                .addUndeterminedGeneralMessages("Injection amenability undetermined")
                 .build();
     }
 }

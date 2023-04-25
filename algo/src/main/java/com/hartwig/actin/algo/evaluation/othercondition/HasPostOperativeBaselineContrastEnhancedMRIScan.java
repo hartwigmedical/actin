@@ -19,7 +19,7 @@ public class HasPostOperativeBaselineContrastEnhancedMRIScan implements Evaluati
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Currently presence of post-operative baseline contrast enhancing MRI scan is undetermined")
-                .addUndeterminedGeneralMessages("Undetermined specific MRI scan")
+                .addUndeterminedGeneralMessages("Undetermined presence post-operative baseline contrast enhancing MRI scan")
                 .build();
     }
 }

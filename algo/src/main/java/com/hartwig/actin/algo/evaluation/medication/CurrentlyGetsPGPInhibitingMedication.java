@@ -19,7 +19,7 @@ public class CurrentlyGetsPGPInhibitingMedication implements EvaluationFunction 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Currently not determined if patient gets PGP inhibiting/inducing medication")
-                .addUndeterminedGeneralMessages("PGP medication requirements")
+                .addUndeterminedGeneralMessages("PGP medication requirements undetermined")
                 .build();
     }
 }

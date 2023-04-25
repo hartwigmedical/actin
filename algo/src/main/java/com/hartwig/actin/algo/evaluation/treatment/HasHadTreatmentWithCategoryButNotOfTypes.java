@@ -50,20 +50,21 @@ public class HasHadTreatmentWithCategoryButNotOfTypes implements EvaluationFunct
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient received " + category.display() + ", ignoring " + Format.concat(ignoreTypes))
-                    .addPassGeneralMessages(category.display() + " treatment")
+                    .addPassGeneralMessages("Received " + category.display() + ", ignoring " + Format.concat(ignoreTypes))
                     .build();
         } else if (hasHadOtherTrial) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages(
                             "Patient may have received " + category.display() + " in a trial, ignoring " + Format.concat(ignoreTypes))
-                    .addUndeterminedGeneralMessages(category.display() + " treatment")
+                    .addUndeterminedGeneralMessages(
+                            "Undetermined if received " + category.display() + ", ignoring " + Format.concat(ignoreTypes))
                     .build();
         } else {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
                     .addFailSpecificMessages("Patient has not received " + category.display() + ", ignoring " + Format.concat(ignoreTypes))
-                    .addFailGeneralMessages("No " + category.display() + " treatment")
+                    .addFailGeneralMessages("Not received " + category.display() + ", ignoring " + Format.concat(ignoreTypes))
                     .build();
         }
     }

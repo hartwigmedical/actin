@@ -39,14 +39,14 @@ public class HasComplicationOfCategory implements EvaluationFunction {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Patient has complication " + Format.concat(complicationMatches))
-                        .addPassGeneralMessages(Format.concat(complicationMatches))
+                        .addPassGeneralMessages("Present complication(s): " + Format.concat(complicationMatches))
                         .build();
             } else {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages(
                                 "Patient has complication " + Format.concat(complicationMatches) + " of category " + categoryToFind)
-                        .addPassGeneralMessages(Format.concat(complicationMatches))
+                        .addPassGeneralMessages("Present complication(s): " + Format.concat(complicationMatches))
                         .build();
             }
         }
@@ -58,6 +58,7 @@ public class HasComplicationOfCategory implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient does not have complication of category " + categoryToFind)
+                .addFailGeneralMessages("Has no complication of category " + categoryToFind)
                 .build();
     }
 
@@ -65,8 +66,8 @@ public class HasComplicationOfCategory implements EvaluationFunction {
     private static ImmutableEvaluation undetermined() {
         return EvaluationFactory.recoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedGeneralMessages("Complications present, but unknown category")
                 .addUndeterminedSpecificMessages("Patient has complications but undetermined which category of complications")
+                .addUndeterminedGeneralMessages("Complications present, but unknown type")
                 .build();
     }
 

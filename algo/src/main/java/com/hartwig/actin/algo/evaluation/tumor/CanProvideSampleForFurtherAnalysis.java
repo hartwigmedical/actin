@@ -22,7 +22,7 @@ public class CanProvideSampleForFurtherAnalysis implements EvaluationFunction {
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages(
                             "Can't determine whether patient can provide archival/fresh sample for FFPE analysis without WGS")
-                    .addUndeterminedGeneralMessages("FFPE analysis")
+                    .addUndeterminedGeneralMessages("Undetermined provision of sample for FFPE analysis")
                     .build();
         }
 
@@ -30,7 +30,7 @@ public class CanProvideSampleForFurtherAnalysis implements EvaluationFunction {
                 .result(EvaluationResult.PASS)
                 .addPassSpecificMessages(
                         "It is assumed that patient can provide archival/fresh sample for FFPE analysis (presence of WGS analysis)")
-                .addPassGeneralMessages("FFPE analysis")
+                .addPassGeneralMessages("Unknown if sample available for FFPE analysis")
                 .build();
     }
 }

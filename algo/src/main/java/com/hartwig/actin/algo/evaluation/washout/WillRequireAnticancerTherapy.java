@@ -19,6 +19,7 @@ public class WillRequireAnticancerTherapy implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.NOT_EVALUATED)
                 .addPassSpecificMessages("Currently not evaluated whether anticancer therapy is required")
+                .addPassGeneralMessages("Anticancer therapy requirement not assumed")
                 .build();
     }
 }

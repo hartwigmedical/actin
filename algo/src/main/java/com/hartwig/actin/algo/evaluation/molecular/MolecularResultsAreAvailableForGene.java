@@ -51,7 +51,7 @@ public class MolecularResultsAreAvailableForGene implements EvaluationFunction {
         } else if (record.molecular().type() == ExperimentType.WGS && !record.molecular().containsTumorCells()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Patient has had WGS but biopsy contained no tumor cells.")
+                    .addUndeterminedSpecificMessages("Patient has had WGS but biopsy contained no tumor cells")
                     .addUndeterminedGeneralMessages("Molecular requirements")
                     .build();
         } else if (hasIndeterminatePriorTestForGene) {

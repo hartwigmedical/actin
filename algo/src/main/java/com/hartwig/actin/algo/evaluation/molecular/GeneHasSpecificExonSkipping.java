@@ -55,7 +55,7 @@ public class GeneHasSpecificExonSkipping implements EvaluationFunction {
                     .addAllInclusionMolecularEvents(fusionSkippingEvents)
                     .addPassSpecificMessages(
                             "Exon " + exonToSkip + " skipped in gene " + gene + " due to " + Format.concat(fusionSkippingEvents))
-                    .addPassGeneralMessages(gene + " exon " + exonToSkip + " skipping")
+                    .addPassGeneralMessages("Present " + gene + " exon " + exonToSkip + " skipping")
                     .build();
         }
 

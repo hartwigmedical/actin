@@ -22,10 +22,10 @@ public class HasHistoryOfSecondMalignancy implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has no previous second malignancy");
-            builder.addFailGeneralMessages("No previous malignancy");
+            builder.addFailGeneralMessages("No previous second malignancy");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient has previous second malignancy");
-            builder.addPassGeneralMessages("Previous primary tumor history");
+            builder.addPassSpecificMessages("Patient has second malignancy");
+            builder.addPassGeneralMessages("Presence of second malignancy");
         }
 
         return builder.build();

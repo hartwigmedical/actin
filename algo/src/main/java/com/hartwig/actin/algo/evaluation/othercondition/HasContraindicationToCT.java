@@ -44,7 +44,7 @@ public class HasContraindicationToCT implements EvaluationFunction {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has a contraindication to CT due to " + doidModel.resolveTermForDoid(doid))
-                            .addPassGeneralMessages("CT contraindication")
+                            .addPassGeneralMessages("Potential CT contraindication: " + doidModel.resolveTermForDoid(doid))
                             .build();
                 }
             }
@@ -54,7 +54,7 @@ public class HasContraindicationToCT implements EvaluationFunction {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has a contraindication to CT due to condition " + condition.name())
-                            .addPassGeneralMessages("CT contraindication")
+                            .addPassGeneralMessages("Potential CT contraindication: " + condition.name())
                             .build();
                 }
             }
@@ -66,7 +66,7 @@ public class HasContraindicationToCT implements EvaluationFunction {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has a contraindication to CT due to intolerance " + intolerance.name())
-                            .addPassGeneralMessages("CT contraindication")
+                            .addPassGeneralMessages("Potential CT contraindication: " + intolerance.name())
                             .build();
                 }
             }
@@ -78,7 +78,7 @@ public class HasContraindicationToCT implements EvaluationFunction {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has a contraindication to CT due to medication " + medication.name())
-                            .addPassGeneralMessages("CT contraindication")
+                            .addPassGeneralMessages("Potential CT contraindication: " + medication.name())
                             .build();
                 }
             }
@@ -91,7 +91,7 @@ public class HasContraindicationToCT implements EvaluationFunction {
                         return EvaluationFactory.unrecoverable()
                                 .result(EvaluationResult.PASS)
                                 .addPassSpecificMessages("Patient has a contraindication to CT due to complication " + complication.name())
-                                .addPassGeneralMessages("CT contraindication")
+                                .addPassGeneralMessages("Potential CT contraindication: " + complication.name())
                                 .build();
                     }
                 }
@@ -101,7 +101,7 @@ public class HasContraindicationToCT implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No potential contraindications to CT identified")
-                .addFailGeneralMessages("No potential CT contraindication")
+                .addFailGeneralMessages("No potential contraindications to CT")
                 .build();
     }
 }

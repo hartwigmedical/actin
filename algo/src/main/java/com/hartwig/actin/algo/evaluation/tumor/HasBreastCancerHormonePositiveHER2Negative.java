@@ -30,7 +30,7 @@ public class HasBreastCancerHormonePositiveHER2Negative implements EvaluationFun
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Could not determine whether patient has hormone-positive HER2-negative breast cancer")
-                    .addUndeterminedGeneralMessages("Tumor type")
+                    .addUndeterminedGeneralMessages("Undetermined HR+ HR- breast cancer type")
                     .build();
         }
 
@@ -56,8 +56,8 @@ public class HasBreastCancerHormonePositiveHER2Negative implements EvaluationFun
             if (hasHer2Amplified) {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.WARN)
-                        .addWarnSpecificMessages("Patient has her2-negative hormone-positive breast cancer but with HER2 amplified")
-                        .addWarnGeneralMessages("Inconsistent her2 status")
+                        .addWarnSpecificMessages("Patient has HER2-negative hormone-positive breast cancer but with HER2 amplified")
+                        .addWarnGeneralMessages("Unclear HER2 status")
                         .build();
             } else {
                 return EvaluationFactory.unrecoverable()
@@ -71,8 +71,8 @@ public class HasBreastCancerHormonePositiveHER2Negative implements EvaluationFun
         if ((isProgesteronePositive || isEstrogenPositive) && !isHer2Negative && !isHer2Positive) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
-                    .addWarnSpecificMessages("Patient has hormone-positive breast cancer but with unclear her2 status")
-                    .addWarnGeneralMessages("Unclear her2 status")
+                    .addWarnSpecificMessages("Patient has hormone-positive breast cancer but with unclear HER2 status")
+                    .addWarnGeneralMessages("Unclear HER2 status")
                     .build();
         }
 
@@ -86,7 +86,7 @@ public class HasBreastCancerHormonePositiveHER2Negative implements EvaluationFun
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Patient has no her2-negative hormone-positive breast cancer")
+                .addFailSpecificMessages("Patient has no HER2-negative hormone-positive breast cancer")
                 .addFailGeneralMessages("Tumor type")
                 .build();
     }

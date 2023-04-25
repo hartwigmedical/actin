@@ -52,8 +52,10 @@ public class HasSufficientBodyWeight implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient has body weight below " + minBodyWeight);
+            builder.addFailGeneralMessages("Body weight below " + minBodyWeight);
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient has body weight above " + minBodyWeight);
+            builder.addPassGeneralMessages("Body weight above " + minBodyWeight);
         }
 
         return builder.build();

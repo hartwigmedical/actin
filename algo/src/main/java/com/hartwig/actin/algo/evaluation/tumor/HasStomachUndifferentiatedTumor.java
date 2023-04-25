@@ -37,7 +37,7 @@ public class HasStomachUndifferentiatedTumor implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Could not determine whether patient has undifferentiated stomach tumor")
-                    .addUndeterminedGeneralMessages("Undifferentiated stomach tumor")
+                    .addUndeterminedGeneralMessages("Undetermined undifferentiated stomach tumor")
                     .build();
         }
 
@@ -48,14 +48,14 @@ public class HasStomachUndifferentiatedTumor implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has undifferentiated stomach tumor")
-                    .addPassGeneralMessages("Undifferentiated stomach tumor")
+                    .addPassGeneralMessages("Tumor type")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient does not have undifferentiated stomach tumor")
-                .addFailGeneralMessages("Undifferentiated stomach tumor")
+                .addFailGeneralMessages("Tumor type")
                 .build();
     }
 }

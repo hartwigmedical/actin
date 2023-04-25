@@ -19,7 +19,7 @@ public class CurrentlyGetsProhibitedMedicationCreator implements EvaluationFunct
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Currently not determined if patient gets prohibited medication")
-                .addUndeterminedGeneralMessages("Potential use of prohibited medication")
+                .addUndeterminedGeneralMessages("Undetermined if using prohibited medication")
                 .build();
     }
 }

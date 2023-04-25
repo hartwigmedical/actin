@@ -72,22 +72,27 @@ public class HasHadPDFollowingSpecificTreatment implements EvaluationFunction {
         if (result == EvaluationResult.FAIL) {
             if (!treatmentsWithExactType.isEmpty()) {
                 builder.addFailSpecificMessages("Patient has received " + Format.concat(treatmentsWithExactType) + " treatment, but no PD");
+                builder.addFailGeneralMessages("Received " + Format.concat(treatmentsWithExactType) + " treatment, but no PD");
             } else {
                 builder.addFailSpecificMessages("Patient has not received specific " + Format.concat(names) + " treatment");
+                builder.addFailGeneralMessages("Not received specific " + Format.concat(names) + " treatment");
             }
             builder.addFailGeneralMessages("No treatment with PD");
         } else if (result == EvaluationResult.UNDETERMINED) {
             if (hasHadTreatmentWithWarnType) {
                 builder.addUndeterminedSpecificMessages(
                         "Undetermined whether patient has received specific " + Format.concat(names) + " treatment");
+                builder.addUndeterminedGeneralMessages("Undetermined if received specific " + Format.concat(names) + " treatment");
             } else {
                 builder.addUndeterminedSpecificMessages(
                         "Patient has received " + Format.concat(treatmentsWithExactType) + " treatment but undetermined if PD occurred");
+                builder.addUndeterminedGeneralMessages(
+                        "Received " + Format.concat(treatmentsWithExactType) + " treatment but undetermined if PD");
             }
             builder.addUndeterminedGeneralMessages("Undetermined treatment or PD");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient has received specific " + Format.concat(treatmentsWithPD) + " treatment with PD");
-            builder.addPassGeneralMessages("Treatment with PD");
+            builder.addPassGeneralMessages("Has received " + Format.concat(treatmentsWithPD) + " treatment with PD");
         }
 
         return builder.build();

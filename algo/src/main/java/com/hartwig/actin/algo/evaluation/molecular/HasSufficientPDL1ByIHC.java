@@ -37,7 +37,9 @@ public class HasSufficientPDL1ByIHC implements EvaluationFunction {
                 if (evaluation == EvaluationResult.PASS) {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
-                            .addPassSpecificMessages("PD-L1 expression measured by " + measure + " meets at least desired level of " + minPDL1)
+                            .addPassSpecificMessages(
+                                    "PD-L1 expression measured by " + measure + " meets at least desired level of " + minPDL1)
+                            .addPassGeneralMessages("PD-L1 expression exceeds " + minPDL1)
                             .build();
                 }
             }
@@ -47,8 +49,10 @@ public class HasSufficientPDL1ByIHC implements EvaluationFunction {
 
         if (!pdl1Tests.isEmpty()) {
             builder.addFailSpecificMessages("No PD-L1 IHC test found where level exceeds desired level of " + minPDL1);
+            builder.addFailGeneralMessages("PD-L1 expression does not exceed " + minPDL1);
         } else {
             builder.addFailSpecificMessages("No test result found; PD-L1 has not been tested by IHC");
+            builder.addFailGeneralMessages("PD-L1 expression not tested by IHC");
         }
 
         return builder.build();

@@ -19,7 +19,7 @@ public class IsInvolvedInStudyProcedures implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.NOT_EVALUATED)
                 .addPassSpecificMessages("Currently assumed that patient is not involved with the trial of interest")
-                .addPassGeneralMessages("No contacts with trial of interest assumed")
+                .addPassGeneralMessages("Assumed patient is not involved with trial of interest")
                 .build();
     }
 }

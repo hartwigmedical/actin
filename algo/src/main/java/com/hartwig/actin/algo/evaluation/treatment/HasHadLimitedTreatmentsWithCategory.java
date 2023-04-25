@@ -37,21 +37,23 @@ public class HasHadLimitedTreatmentsWithCategory implements EvaluationFunction {
         if (numTreatmentLines + numOtherTrials <= maxTreatmentLines) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient has received at most " + maxTreatmentLines + " lines of " + category.display())
-                    .addPassGeneralMessages(category.display() + " treatment")
+                    .addPassSpecificMessages(
+                            "Patient has received at most " + maxTreatmentLines + " lines of " + category.display() + " treatment")
+                    .addPassGeneralMessages("Has received at most " + maxTreatmentLines + " lines of " + category.display())
                     .build();
         } else if (numTreatmentLines <= maxTreatmentLines) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages(
-                            "Patient may have received more than " + maxTreatmentLines + " lines of " + category.display())
-                    .addUndeterminedGeneralMessages(category.display() + " treatment")
+                            "Patient may have received more than " + maxTreatmentLines + " lines of " + category.display() + " treatment")
+                    .addUndeterminedGeneralMessages(
+                            "Undetermined if received at most " + maxTreatmentLines + " lines of " + category.display())
                     .build();
         } else {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
                     .addFailSpecificMessages("Patient has received more than " + maxTreatmentLines + " lines of " + category.display())
-                    .addFailGeneralMessages("No " + category.display() + " treatment")
+                    .addFailGeneralMessages("Has not received at most " + maxTreatmentLines + " lines of " + category.display())
                     .build();
         }
     }

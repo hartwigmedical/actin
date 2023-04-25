@@ -24,12 +24,14 @@ public class HasSufficientLabValueULN implements LabEvaluationFunction {
 
         ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
         if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages(labValue.code() + " is insufficient versus ULN");
+            builder.addFailSpecificMessages(labValue.code() + " is insufficient versus maximum ULN");
             builder.addFailGeneralMessages(labValue.code() + " insufficient");
         } else if (result == EvaluationResult.UNDETERMINED) {
-            builder.addUndeterminedSpecificMessages(labValue.code() + " sufficiency could not be evaluated versus ULN");
+            builder.addUndeterminedSpecificMessages(labValue.code() + " could not be evaluated versus maximum ULN");
+            builder.addUndeterminedGeneralMessages(labValue.code() + " undetermined");
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages(labValue.code() + " is sufficient versus ULN");
+            builder.addPassSpecificMessages(labValue.code() + " sufficient (exceeds maximum ULN)");
+            builder.addPassGeneralMessages(labValue.code() + " sufficient");
         }
 
         return builder.build();

@@ -36,13 +36,14 @@ public class HasAtLeastCertainAge implements EvaluationFunction {
         ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Patient is younger than " + minAge + " years old");
-            builder.addFailGeneralMessages("Inadequate age");
+            builder.addFailGeneralMessages("Age below " + minAge);
         } else if (result == EvaluationResult.UNDETERMINED) {
-            builder.addUndeterminedSpecificMessages("Could not determine whether patient is at least " + minAge + " years old");
-            builder.addUndeterminedGeneralMessages("Undetermined age");
+            builder.addUndeterminedSpecificMessages("Patient birth year is " + record.clinical().patient().birthYear()
+                    + ", could not determine whether patient is at least " + minAge + " years old");
+            builder.addUndeterminedGeneralMessages("Undetermined if age is above " + minAge);
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages("Patient is at least " + minAge + " years old");
-            builder.addPassGeneralMessages("Adequate age");
+            builder.addPassGeneralMessages("Age above " + minAge);
         }
 
         return builder.build();

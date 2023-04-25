@@ -18,8 +18,8 @@ public class MeetsCovid19VaccinationRequirements implements EvaluationFunction {
     public Evaluation evaluate(@NotNull PatientRecord record) {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Currently Covid-19 vaccination status cannot be determined")
-                .addUndeterminedSpecificMessages("COVID-19 vaccination status")
+                .addUndeterminedSpecificMessages("Currently COVID-19 vaccination status cannot be determined")
+                .addUndeterminedGeneralMessages("COVID-19 vaccination status unknown")
                 .build();
     }
 }

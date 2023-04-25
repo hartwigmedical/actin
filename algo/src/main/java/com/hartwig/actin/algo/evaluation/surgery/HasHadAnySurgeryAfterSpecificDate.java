@@ -66,13 +66,13 @@ public class HasHadAnySurgeryAfterSpecificDate implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has had or will get surgery after " + Format.date(minDate))
-                    .addPassGeneralMessages("Recent surgery")
+                    .addPassGeneralMessages("Surgery after " + Format.date(minDate))
                     .build();
         } else if (hasUnexpectedSurgeryAfterEval || hasUnexpectedSurgeryBetweenMinAndEval) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
                     .addWarnSpecificMessages("Patient may have had or may get surgery after " + Format.date(minDate))
-                    .addWarnGeneralMessages("Recent surgery")
+                    .addWarnGeneralMessages("Potential recent surgery")
                     .build();
         }
 
@@ -87,7 +87,7 @@ public class HasHadAnySurgeryAfterSpecificDate implements EvaluationFunction {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has had surgery after " + Format.date(minDate))
-                            .addPassGeneralMessages("Recent surgery")
+                            .addPassGeneralMessages("Has had surgery after " + Format.date(minDate))
                             .build();
                 }
             }
@@ -97,7 +97,7 @@ public class HasHadAnySurgeryAfterSpecificDate implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Patient has had surgery but undetermined how long ago")
-                    .addUndeterminedGeneralMessages("Recent surgery")
+                    .addUndeterminedGeneralMessages("Undetermined if previous surgery is recent")
                     .build();
         }
 
@@ -105,14 +105,14 @@ public class HasHadAnySurgeryAfterSpecificDate implements EvaluationFunction {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.FAIL)
                     .addFailSpecificMessages("Recent surgery got cancelled")
-                    .addFailGeneralMessages("Recent surgery")
+                    .addFailGeneralMessages("No recent surgery")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has not received surgery in past nr of months")
-                .addFailGeneralMessages("Recent surgery")
+                .addFailGeneralMessages("No recent surgery")
                 .build();
     }
 }

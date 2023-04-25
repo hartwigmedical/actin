@@ -41,13 +41,17 @@ public class HasIntoleranceWithSpecificDoid implements EvaluationFunction {
         if (!allergies.isEmpty()) {
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient has allergy " + Format.concat(allergies))
+                    .addPassSpecificMessages(
+                            "Patient has allergy " + Format.concat(allergies) + " belonging to " + doidModel.resolveTermForDoid(doidToFind))
+                    .addPassGeneralMessages(
+                            "Present allergy " + Format.concat(allergies) + " belonging to " + doidModel.resolveTermForDoid(doidToFind))
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient has no allergies with doid" + doidModel.resolveTermForDoid(doidToFind))
+                .addFailGeneralMessages("No allergies belonging to " + doidModel.resolveTermForDoid(doidToFind))
                 .build();
     }
 }

@@ -19,7 +19,7 @@ public class CurrentlyGetsPGPSubstrateMedication implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Currently not determined if patient gets PGP substrate medication")
-                .addUndeterminedGeneralMessages("PGP medication requirements")
+                .addUndeterminedGeneralMessages("PGP medication requirements undetermined")
                 .build();
     }
 }

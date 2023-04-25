@@ -19,7 +19,7 @@ public class IsLegallyInstitutionalized implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.NOT_EVALUATED)
                 .addPassSpecificMessages("Currently assumed that patient is not legally institutionalized")
-                .addPassGeneralMessages("No legal institutionalization assumed")
+                .addPassGeneralMessages("Assumed patient is not legally institutionalized")
                 .build();
     }
 }

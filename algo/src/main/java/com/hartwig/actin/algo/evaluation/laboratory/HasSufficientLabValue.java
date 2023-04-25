@@ -46,8 +46,10 @@ public class HasSufficientLabValue implements LabEvaluationFunction {
             builder.addFailGeneralMessages(labValue.code() + " insufficient");
         } else if (result == EvaluationResult.UNDETERMINED) {
             builder.addUndeterminedSpecificMessages(labValue.code() + " sufficiency could not be evaluated");
+            builder.addUndeterminedGeneralMessages(labValue.code() + " undetermined");
         } else if (result == EvaluationResult.PASS) {
             builder.addPassSpecificMessages(labValue.code() + " is sufficient");
+            builder.addPassGeneralMessages(labValue.code() + " sufficient");
         }
 
         return builder.build();

@@ -19,7 +19,7 @@ public class HasRapidlyDeterioratingCondition implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.NOT_EVALUATED)
                 .addPassSpecificMessages("Currently assumed that patient condition is not rapidly deteriorating")
-                .addPassGeneralMessages("No rapidly deteriorating condition")
+                .addPassGeneralMessages("Patient condition assumed not to be rapidly deteriorating")
                 .build();
     }
 }

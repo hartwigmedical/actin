@@ -19,7 +19,7 @@ public class HasAdequateVeinAccess implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Currently adequate vein access cannot be determined")
-                .addUndeterminedGeneralMessages("Adequate vein access")
+                .addUndeterminedGeneralMessages("Adequate vein access undetermined")
                 .build();
     }
 }

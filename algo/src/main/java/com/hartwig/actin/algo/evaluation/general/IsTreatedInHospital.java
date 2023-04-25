@@ -19,7 +19,7 @@ public class IsTreatedInHospital implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.NOT_EVALUATED)
                 .addPassSpecificMessages("Currently exact hospital of treatment is not determined")
-                .addPassGeneralMessages("No hospital evaluated")
+                .addPassGeneralMessages("Specific hospital not evaluated")
                 .build();
     }
 }

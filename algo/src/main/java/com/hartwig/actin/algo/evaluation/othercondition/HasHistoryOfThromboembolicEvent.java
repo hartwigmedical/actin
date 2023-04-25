@@ -19,7 +19,7 @@ public class HasHistoryOfThromboembolicEvent implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Currently history regarding thromboembolic events cannot be determined")
-                .addUndeterminedGeneralMessages("Undetermined thromboembolic events")
+                .addUndeterminedGeneralMessages("Undetermined history of thromboembolic events")
                 .build();
     }
 }

@@ -30,7 +30,7 @@ public class HasLongQTSyndrome implements EvaluationFunction {
                     return EvaluationFactory.unrecoverable()
                             .result(EvaluationResult.PASS)
                             .addPassSpecificMessages("Patient has long QT syndrome")
-                            .addPassGeneralMessages("Presence long QT syndrome")
+                            .addPassGeneralMessages("Presence of long QT syndrome")
                             .build();
                 }
             }
@@ -38,8 +38,8 @@ public class HasLongQTSyndrome implements EvaluationFunction {
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Patient has no long QT syndrome")
-                .addFailGeneralMessages("No presence long QT syndrome")
+                .addFailSpecificMessages("Patient does not have long QT syndrome")
+                .addFailGeneralMessages("No presence of long QT syndrome")
                 .build();
     }
 }

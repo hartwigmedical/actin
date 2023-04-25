@@ -46,16 +46,17 @@ public class HasHadPDFollowingTreatmentWithCategory implements EvaluationFunctio
 
         if (hasHadPDFollowingTreatmentWithCategory) {
             return EvaluationFactory.pass("Patient has had progressive disease following treatment with category " + category.display(),
-                    category.display() + " treatment with PD");
+                    "Has had " + category.display() + " treatment with PD");
         } else if (hasHadTreatmentWithUnclearPDStatus) {
             return EvaluationFactory.undetermined(
                     "Patient has had treatment with category " + category.display() + " but unclear PD status",
-                    "Had " + category.display() + " treatment with unclear PD status");
+                    "Has had " + category.display() + " treatment but undetermined PD status");
         } else if (hasHadTrial) {
-            return EvaluationFactory.undetermined("Patient has had trial with unclear treatment category", "Trial treatment");
+            return EvaluationFactory.undetermined("Patient has had trial with unclear treatment category",
+                    "Trial treatment of unclear treatment category");
         } else {
             return EvaluationFactory.fail("Patient has no progressive disease following treatment with category " + category.display(),
-                    "No " + category.display() + " treatment with PD");
+                    "Has not had " + category.display() + " treatment with PD");
         }
 
     }

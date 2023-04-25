@@ -19,7 +19,7 @@ public class GetsAnyCYPInducingMedication implements EvaluationFunction {
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Currently not determined if patient gets any CYP inducing medication")
-                .addUndeterminedGeneralMessages("Potential any CYP inducing medication")
+                .addUndeterminedGeneralMessages("Potential any CYP inducing medication undetermined")
                 .build();
     }
 }

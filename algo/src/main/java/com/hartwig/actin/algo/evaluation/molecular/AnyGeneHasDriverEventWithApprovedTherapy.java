@@ -20,7 +20,7 @@ public class AnyGeneHasDriverEventWithApprovedTherapy implements EvaluationFunct
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Driver events in genes with approved therapy are currently not determined")
-                .addUndeterminedGeneralMessages("Undetermined driver events with approved therapy")
+                .addUndeterminedGeneralMessages("Undetermined if there are driver events with approved therapy")
                 .build();
     }
 }

@@ -47,7 +47,7 @@ public class HasOvarianCancerWithMucinousComponent implements EvaluationFunction
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages("Could not determine whether patient has ovarian cancer with mucinous component")
-                    .addUndeterminedGeneralMessages("Ovarian mucinous cancer")
+                    .addUndeterminedGeneralMessages("Undetermined ovarian mucinous cancer")
                     .build();
         }
 
@@ -60,14 +60,14 @@ public class HasOvarianCancerWithMucinousComponent implements EvaluationFunction
             return EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages("Patient has ovarian cancer with mucinous component")
-                    .addPassGeneralMessages("Ovarian mucinous cancer")
+                    .addPassGeneralMessages("Tumor type")
                     .build();
         }
 
         return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Patient does not have ovarian cancer with mucinous component")
-                .addFailGeneralMessages("Ovarian mucinous cancer")
+                .addFailGeneralMessages("Tumor type")
                 .build();
     }
 }
