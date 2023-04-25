@@ -101,7 +101,7 @@ import org.jetbrains.annotations.Nullable;
 public final class OrangeJson {
 
     private static final String ORANGE_EXPERIMENT_TYPE_PANEL = "TARGETED";
-    private static final String ORANGE_EXPERIMENT_TYPE_WGS = "FULL_GENOME";
+    private static final String ORANGE_EXPERIMENT_TYPE_WGS = "WHOLE_GENOME";
 
     private OrangeJson() {
     }
