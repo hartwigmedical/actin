@@ -40,8 +40,8 @@ public class HasSecondaryGlioblastoma implements EvaluationFunction {
                 return EvaluationFactory.unrecoverable()
                         .result(EvaluationResult.WARN)
                         .addWarnSpecificMessages(
-                                "Patient has cancer belonging to " + doidModel.resolveTermForDoid(DoidConstants.GLIOBLASTOMA_DOID)
-                                        + ", unclear if this is considered secondary glioblastoma")
+                                "Patient has " + doidModel.resolveTermForDoid(tumorDoid) + ", belonging to " + doidModel.resolveTermForDoid(
+                                        DoidConstants.GLIOBLASTOMA_DOID) + ", unclear if this is considered secondary glioblastoma")
                         .addWarnGeneralMessages("Unclear if considered secondary glioblastoma")
                         .build();
             }
