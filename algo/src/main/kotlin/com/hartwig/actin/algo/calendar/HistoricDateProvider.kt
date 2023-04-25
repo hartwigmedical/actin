@@ -1,37 +1,22 @@
-package com.hartwig.actin.algo.calendar;
+package com.hartwig.actin.algo.calendar
 
-import java.time.LocalDate;
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import java.time.LocalDate
 
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
-
-import org.jetbrains.annotations.NotNull;
-
-class HistoricDateProvider implements ReferenceDateProvider {
-
-    @NotNull
-    private final LocalDate historicDate;
-
-    @NotNull
-    public static HistoricDateProvider fromClinical(@NotNull ClinicalRecord clinical) {
-        LocalDate historicDate = clinical.patient().registrationDate().plusWeeks(3);
-        LocalDate currentDate = LocalDate.now();
-        LocalDate effectiveDate = currentDate.isBefore(historicDate) ? currentDate : historicDate;
-
-        return new HistoricDateProvider(effectiveDate);
+internal class HistoricDateProvider private constructor(private val historicDate: LocalDate) : ReferenceDateProvider {
+    override fun date(): LocalDate {
+        return historicDate
     }
 
-    private HistoricDateProvider(@NotNull final LocalDate historicDate) {
-        this.historicDate = historicDate;
-    }
+    override val isLive: Boolean
+        get() = false
 
-    @NotNull
-    @Override
-    public LocalDate date() {
-        return historicDate;
-    }
-
-    @Override
-    public boolean isLive() {
-        return false;
+    companion object {
+        fun fromClinical(clinical: ClinicalRecord): HistoricDateProvider {
+            val historicDate = clinical.patient().registrationDate().plusWeeks(3)
+            val currentDate = LocalDate.now()
+            val effectiveDate = if (currentDate.isBefore(historicDate)) currentDate else historicDate
+            return HistoricDateProvider(effectiveDate)
+        }
     }
 }

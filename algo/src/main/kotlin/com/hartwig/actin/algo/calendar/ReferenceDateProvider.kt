@@ -1,21 +1,15 @@
-package com.hartwig.actin.algo.calendar;
+package com.hartwig.actin.algo.calendar
 
-import java.time.LocalDate;
+import java.time.LocalDate
 
-import org.jetbrains.annotations.NotNull;
-
-public interface ReferenceDateProvider {
-
-    @NotNull
-    LocalDate date();
-
-    boolean isLive();
-
-    default int year() {
-        return date().getYear();
+interface ReferenceDateProvider {
+    fun date(): LocalDate
+    val isLive: Boolean
+    fun year(): Int {
+        return date().year
     }
 
-    default int month() {
-        return date().getMonthValue();
+    fun month(): Int {
+        return date().monthValue
     }
 }
