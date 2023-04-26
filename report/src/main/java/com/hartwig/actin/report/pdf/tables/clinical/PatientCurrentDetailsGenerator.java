@@ -52,8 +52,8 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
         InfectionStatus infectionStatus = record.clinicalStatus().infectionStatus();
         if (infectionStatus != null && infectionStatus.hasActiveInfection()) {
             table.addCell(Cells.createKey("Significant infection"));
-            String description = infectionStatus.description() != null ? infectionStatus.description() : "Unknown";
-            table.addCell(Cells.createValue(description));
+            String description = infectionStatus.description();
+            table.addCell(Cells.createValue(description != null ? description : "Yes (infection details unknown)"));
         }
 
         ECG ecg = record.clinicalStatus().ecg();
@@ -71,7 +71,7 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
             }
 
             ECGMeasure jtcMeasure = ecg.jtcMeasure();
-            if (qtcfMeasure != null) {
+            if (jtcMeasure != null) {
                 createMeasureCells(table, "JTc", jtcMeasure);
             }
         }
@@ -82,7 +82,7 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
         }
 
         table.addCell(Cells.createKey("Cancer-related complications"));
-        table.addCell(Cells.createValue(complications(record.complications())));
+        table.addCell(Cells.createValue(complications(record)));
 
         table.addCell(Cells.createKey("Known allergies"));
         table.addCell(Cells.createValue(allergies(record.intolerances())));
@@ -116,12 +116,14 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static String complications(@Nullable List<Complication> complications) {
-        StringJoiner joiner = Formats.commaJoiner();
+    private static String complications(@NotNull ClinicalRecord record) {
+        List<Complication> complications = record.complications();
+        boolean hasComplications = Boolean.TRUE.equals(record.clinicalStatus().hasComplications());
         if (complications == null) {
-            return "Unknown";
+            return hasComplications ? "Yes (complication details unknown)" : "Unknown";
         }
 
+        StringJoiner joiner = Formats.commaJoiner();
         for (Complication complication : complications) {
 
             String date = toDateString(complication.year(), complication.month());
@@ -132,7 +134,7 @@ public class PatientCurrentDetailsGenerator implements TableGenerator {
 
             joiner.add(complication.name() + dateAddition);
         }
-        return Formats.valueOrDefault(joiner.toString(), "None");
+        return Formats.valueOrDefault(joiner.toString(), hasComplications ? "Yes (complication details unknown)" : "None");
     }
 
     @Nullable
