@@ -1,150 +1,130 @@
-package com.hartwig.actin.algo.evaluation.treatment;
+package com.hartwig.actin.algo.evaluation.treatment
 
-import static com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.treatmentResultedInPDOption;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFactory.fail
+import com.hartwig.actin.algo.evaluation.EvaluationFactory.pass
+import com.hartwig.actin.algo.evaluation.EvaluationFactory.undetermined
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.util.DateComparison.minWeeksBetweenDates
+import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.TreatmentCategory
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.Nullable;
-
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.algo.evaluation.util.DateComparison;
-import com.hartwig.actin.algo.evaluation.util.Format;
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
-
-import org.jetbrains.annotations.NotNull;
-
-public class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks implements EvaluationFunction {
-
-    @NotNull
-    private final TreatmentCategory category;
-    @NotNull
-    private final List<String> types;
-    @Nullable
-    private final Integer minCycles;
-    @Nullable
-    private final Integer minWeeks;
-
-    HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(@NotNull final TreatmentCategory category,
-            @NotNull final List<String> types, @Nullable final Integer minCycles, @Nullable final Integer minWeeks) {
-        this.category = category;
-        this.types = types;
-        this.minCycles = minCycles;
-        this.minWeeks = minWeeks;
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        boolean hasHadTreatment = false;
-        boolean hasPotentiallyHadTreatment = false;
-        boolean hasHadTreatmentWithPDAndCyclesOrWeeks = false;
-        boolean hasHadTreatmentWithPDAndUnclearCycles = false;
-        boolean hasHadTreatmentWithPDAndUnclearWeeks = false;
-        boolean hasHadTreatmentWithUnclearPDStatus = false;
-        boolean hasHadTreatmentWithUnclearPDStatusAndUnclearCycles = false;
-        boolean hasHadTreatmentWithUnclearPDStatusAndUnclearWeeks = false;
-
-        boolean hasHadTrial = false;
-        for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
+class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks internal constructor(
+    private val category: TreatmentCategory,
+    private val types: List<String>, private val minCycles: Int?, private val minWeeks: Int?
+) : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        var hasHadTreatment = false
+        var hasPotentiallyHadTreatment = false
+        var hasHadTreatmentWithPDAndCyclesOrWeeks = false
+        var hasHadTreatmentWithPDAndUnclearCycles = false
+        var hasHadTreatmentWithPDAndUnclearWeeks = false
+        var hasHadTreatmentWithUnclearPDStatus = false
+        var hasHadTreatmentWithUnclearPDStatusAndUnclearCycles = false
+        var hasHadTreatmentWithUnclearPDStatusAndUnclearWeeks = false
+        var hasHadTrial = false
+        for (treatment in record.clinical().priorTumorTreatments()) {
             if (treatment.categories().contains(category)) {
                 if (hasValidType(treatment)) {
-                    hasHadTreatment = true;
-                    Integer cycles = treatment.cycles();
-                    Optional<Boolean> treatmentResultedInPDOption = treatmentResultedInPDOption(treatment);
-                    Optional<Long> weeksOption = DateComparison.minWeeksBetweenDates(treatment.startYear(),
-                            treatment.startMonth(),
-                            treatment.stopYear(),
-                            treatment.stopMonth());
-
-                    if (treatmentResultedInPDOption.isPresent()) {
-                        boolean meetsMinCycles = minCycles == null || (cycles != null && cycles >= minCycles);
-                        boolean meetsMinWeeks = minWeeks == null || weeksOption.map(weeks -> weeks >= minWeeks).orElse(false);
-
-                        if (treatmentResultedInPDOption.get()) {
+                    hasHadTreatment = true
+                    val cycles = treatment.cycles()
+                    val treatmentResultedInPDOption = ProgressiveDiseaseFunctions.treatmentResultedInPDOption(treatment)
+                    val durationWeeks: Long? = minWeeksBetweenDates(
+                        treatment.startYear(),
+                        treatment.startMonth(),
+                        treatment.stopYear(),
+                        treatment.stopMonth()
+                    )
+                    if (treatmentResultedInPDOption != null) {
+                        val meetsMinCycles = minCycles == null || cycles != null && cycles >= minCycles
+                        val meetsMinWeeks = when (minWeeks) {
+                            null -> true
+                            else -> durationWeeks?.let { it >= minWeeks } ?: false
+                        }
+                        if (treatmentResultedInPDOption) {
                             if (meetsMinCycles && meetsMinWeeks) {
-                                hasHadTreatmentWithPDAndCyclesOrWeeks = true;
+                                hasHadTreatmentWithPDAndCyclesOrWeeks = true
                             } else if (minCycles != null && cycles == null) {
-                                hasHadTreatmentWithPDAndUnclearCycles = true;
-                            } else if (minWeeks != null && weeksOption.isEmpty()) {
-                                hasHadTreatmentWithPDAndUnclearWeeks = true;
+                                hasHadTreatmentWithPDAndUnclearCycles = true
+                            } else if (minWeeks != null && durationWeeks == null) {
+                                hasHadTreatmentWithPDAndUnclearWeeks = true
                             }
                         }
                     } else if (minCycles == null && minWeeks == null) {
-                        hasHadTreatmentWithUnclearPDStatus = true;
+                        hasHadTreatmentWithUnclearPDStatus = true
                     } else if (minCycles != null && cycles == null) {
-                        hasHadTreatmentWithUnclearPDStatusAndUnclearCycles = true;
-                    } else if (minWeeks != null && weeksOption.isEmpty()) {
-                        hasHadTreatmentWithUnclearPDStatusAndUnclearWeeks = true;
+                        hasHadTreatmentWithUnclearPDStatusAndUnclearCycles = true
+                    } else if (minWeeks != null && durationWeeks == null) {
+                        hasHadTreatmentWithUnclearPDStatusAndUnclearWeeks = true
                     }
                 } else if (!TreatmentTypeResolver.hasTypeConfigured(treatment, category)) {
-                    hasPotentiallyHadTreatment = true;
+                    hasPotentiallyHadTreatment = true
                 }
             }
-
             if (treatment.categories().contains(TreatmentCategory.TRIAL)) {
-                hasHadTrial = true;
+                hasHadTrial = true
             }
         }
-
-        if (hasHadTreatmentWithPDAndCyclesOrWeeks) {
+        return if (hasHadTreatmentWithPDAndCyclesOrWeeks) {
             if (minCycles == null && minWeeks == null) {
-                return EvaluationFactory.pass(hasTreatmentSpecificMessage(" with PD"), hasTreatmentGeneralMessage(" with PD"));
+                pass(hasTreatmentSpecificMessage(" with PD"), hasTreatmentGeneralMessage(" with PD"))
             } else if (minCycles != null) {
-                return EvaluationFactory.pass(hasTreatmentSpecificMessage(" with PD and at least " + minCycles + " cycles"),
-                        hasTreatmentGeneralMessage(" with PD and sufficient cycles"));
+                pass(
+                    hasTreatmentSpecificMessage(" with PD and at least $minCycles cycles"),
+                    hasTreatmentGeneralMessage(" with PD and sufficient cycles")
+                )
             } else {
-                return EvaluationFactory.pass(hasTreatmentSpecificMessage(" with PD for at least " + minWeeks + " weeks"),
-                        hasTreatmentGeneralMessage(" with PD for sufficient weeks"));
+                pass(
+                    hasTreatmentSpecificMessage(" with PD for at least $minWeeks weeks"),
+                    hasTreatmentGeneralMessage(" with PD for sufficient weeks")
+                )
             }
         } else if (hasHadTreatmentWithPDAndUnclearCycles) {
-            return undetermined(" with PD but unknown nr of cycles");
+            undetermined(" with PD but unknown nr of cycles")
         } else if (hasHadTreatmentWithPDAndUnclearWeeks) {
-            return undetermined(" with PD but unknown nr of weeks");
+            undetermined(" with PD but unknown nr of weeks")
         } else if (hasHadTreatmentWithUnclearPDStatus) {
-            return undetermined(" with unclear PD status");
+            undetermined(" with unclear PD status")
         } else if (hasHadTreatmentWithUnclearPDStatusAndUnclearCycles) {
-            return undetermined(" with unclear PD status & nr of cycles");
+            undetermined(" with unclear PD status & nr of cycles")
         } else if (hasHadTreatmentWithUnclearPDStatusAndUnclearWeeks) {
-            return undetermined(" with unclear PD status & nr of weeks");
+            undetermined(" with unclear PD status & nr of weeks")
         } else if (hasPotentiallyHadTreatment || hasHadTrial) {
-            return EvaluationFactory.undetermined("Unclear whether patient has received " + treatment(),
-                    "Unclear if received " + category.display());
+            undetermined(
+                "Unclear whether patient has received " + treatment(),
+                "Unclear if received " + category.display()
+            )
         } else if (hasHadTreatment) {
-            return EvaluationFactory.fail("Patient has received " + treatment() + " but not with PD", "No PD after " + category.display());
+            fail("Patient has received " + treatment() + " but not with PD", "No PD after " + category.display())
         } else {
-            return EvaluationFactory.fail("No " + treatment() + " treatment with PD", "No " + category.display());
+            fail("No " + treatment() + " treatment with PD", "No " + category.display())
         }
-
     }
 
-    private String hasTreatmentSpecificMessage(String suffix) {
-        return "Patient has received " + treatment() + suffix;
+    private fun hasTreatmentSpecificMessage(suffix: String): String {
+        return "Patient has received " + treatment() + suffix
     }
 
-    private String hasTreatmentGeneralMessage(String suffix) {
-        return category.display() + suffix;
+    private fun hasTreatmentGeneralMessage(suffix: String): String {
+        return category.display() + suffix
     }
 
-    private Evaluation undetermined(String suffix) {
-        return EvaluationFactory.undetermined(hasTreatmentSpecificMessage(suffix), hasTreatmentGeneralMessage(suffix));
+    private fun undetermined(suffix: String): Evaluation {
+        return undetermined(hasTreatmentSpecificMessage(suffix), hasTreatmentGeneralMessage(suffix))
     }
 
-    private boolean hasValidType(@NotNull PriorTumorTreatment treatment) {
-        for (String type : types) {
+    private fun hasValidType(treatment: PriorTumorTreatment): Boolean {
+        for (type in types) {
             if (TreatmentTypeResolver.isOfType(treatment, category, type)) {
-                return true;
+                return true
             }
         }
-        return false;
+        return false
     }
 
-    @NotNull
-    private String treatment() {
-        return Format.concat(types) + " " + category.display() + " treatment";
+    private fun treatment(): String {
+        return concat(types) + " " + category.display() + " treatment"
     }
 }

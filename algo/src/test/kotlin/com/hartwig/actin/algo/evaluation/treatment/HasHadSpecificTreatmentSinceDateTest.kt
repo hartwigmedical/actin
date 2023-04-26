@@ -1,104 +1,112 @@
-package com.hartwig.actin.algo.evaluation.treatment;
+package com.hartwig.actin.algo.evaluation.treatment
 
-import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import org.junit.Test
+import java.time.LocalDate
 
-import java.time.LocalDate;
-import java.util.List;
+class HasHadSpecificTreatmentSinceDateTest {
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
+    private val function = HasHadSpecificTreatmentSinceDate(TREATMENT_QUERY, targetDate)
 
-import org.junit.Test;
+    @Test
+    fun shouldFailWhenTreatmentNotFound() {
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(listOf(nonMatchingTreatment)))
+        )
+    }
 
-public class HasHadSpecificTreatmentSinceDateTest {
+    @Test
+    fun shouldFailWhenMatchingTreatmentIsOlderByYear() {
+        val priorTumorTreatments: List<PriorTumorTreatment> = listOf(nonMatchingTreatment, olderTreatment)
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)))
+    }
 
-    private static final String TREATMENT_QUERY = "treatment";
-    private static final int YEARS_TO_SUBTRACT = 3;
+    @Test
+    fun shouldFailWhenMatchingTreatmentIsOlderByMonth() {
+        val olderDate: LocalDate = targetDate.minusMonths(1)
+        val priorTumorTreatments: List<PriorTumorTreatment> =
+            listOf(nonMatchingTreatment, matchingTreatment(olderDate.year, olderDate.monthValue))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)))
+    }
 
-    private final LocalDate targetDate = LocalDate.now().minusYears(1);
-    private final LocalDate recentDate = LocalDate.now().minusMonths(4);
-    private final HasHadSpecificTreatmentSinceDate function = new HasHadSpecificTreatmentSinceDate(TREATMENT_QUERY, targetDate);
+    @Test
+    fun shouldPassWhenPriorTreatmentsIncludeMatchingTreatmentWithinRange() {
+        val priorTumorTreatments: List<PriorTumorTreatment> =
+            listOf(nonMatchingTreatment, olderTreatment, matchingTreatment(recentDate.year, recentDate.monthValue))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)))
+    }
 
-    private final PriorTumorTreatment nonMatchingTreatment = TreatmentTestFactory.builder()
+    @Test
+    fun shouldReturnUndeterminedWhenMatchingTreatmentHasUnknownYear() {
+        val priorTumorTreatments: List<PriorTumorTreatment> = listOf(nonMatchingTreatment, matchingTreatment(null, 10))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments))
+        )
+    }
+
+    @Test
+    fun shouldReturnUndeterminedWhenMatchingTreatmentMatchesYearWithUnknownMonth() {
+        val priorTumorTreatments: List<PriorTumorTreatment> = listOf(nonMatchingTreatment, matchingTreatment(targetDate.year, null))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments))
+        )
+    }
+
+    @Test
+    fun shouldFailWhenPriorTreatmentHasUnknownStopDateButOlderStartDate() {
+        val olderDate: LocalDate = LocalDate.now().minusYears(YEARS_TO_SUBTRACT.toLong())
+        val priorTumorTreatments: List<PriorTumorTreatment> = listOf(
+            nonMatchingTreatment,
+            olderTreatment,
+            matchingTreatment(null, null, olderDate.year, olderDate.monthValue)
+        )
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)))
+    }
+
+    @Test
+    fun shouldPassWhenPriorTreatmentHasUnknownStopDateButStartDateInRange() {
+        val priorTumorTreatments: List<PriorTumorTreatment> = listOf(
+            nonMatchingTreatment,
+            matchingTreatment(LocalDate.now().minusYears(YEARS_TO_SUBTRACT.toLong()).year, null),
+            matchingTreatment(LocalDate.now().year, null, recentDate.year, recentDate.monthValue)
+        )
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)))
+    }
+
+    companion object {
+        private const val TREATMENT_QUERY = "treatment"
+        private const val YEARS_TO_SUBTRACT = 3
+        private val targetDate: LocalDate = LocalDate.now().minusYears(1)
+        private val recentDate: LocalDate = LocalDate.now().minusMonths(4)
+        private val nonMatchingTreatment: PriorTumorTreatment = TreatmentTestFactory.builder()
             .name("other")
             .addCategories(TreatmentCategory.RADIOTHERAPY)
-            .startYear(LocalDate.now().getYear())
-            .startMonth(LocalDate.now().getMonthValue())
-            .build();
+            .startYear(LocalDate.now().year)
+            .startMonth(LocalDate.now().monthValue)
+            .build()
+        private val olderTreatment: PriorTumorTreatment =
+            matchingTreatment(LocalDate.now().minusYears(YEARS_TO_SUBTRACT.toLong()).year, null)
 
-    private final PriorTumorTreatment olderTreatment = matchingTreatment(LocalDate.now().minusYears(YEARS_TO_SUBTRACT).getYear(), null);
-
-    @Test
-    public void shouldFailWhenTreatmentNotFound() {
-        assertEvaluation(EvaluationResult.FAIL,
-                function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(List.of(nonMatchingTreatment))));
-    }
-
-    @Test
-    public void shouldFailWhenMatchingTreatmentIsOlderByYear() {
-        List<PriorTumorTreatment> priorTumorTreatments = List.of(nonMatchingTreatment, olderTreatment);
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
-    }
-
-    @Test
-    public void shouldFailWhenMatchingTreatmentIsOlderByMonth() {
-        LocalDate olderDate = targetDate.minusMonths(1);
-        List<PriorTumorTreatment> priorTumorTreatments =
-                List.of(nonMatchingTreatment, matchingTreatment(olderDate.getYear(), olderDate.getMonthValue()));
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
-    }
-
-    @Test
-    public void shouldPassWhenPriorTreatmentsIncludeMatchingTreatmentWithinRange() {
-        List<PriorTumorTreatment> priorTumorTreatments =
-                List.of(nonMatchingTreatment, olderTreatment, matchingTreatment(recentDate.getYear(), recentDate.getMonthValue()));
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
-    }
-
-    @Test
-    public void shouldReturnUndeterminedWhenMatchingTreatmentHasUnknownYear() {
-        List<PriorTumorTreatment> priorTumorTreatments = List.of(nonMatchingTreatment, matchingTreatment(null, 10));
-        assertEvaluation(EvaluationResult.UNDETERMINED,
-                function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
-    }
-
-    @Test
-    public void shouldReturnUndeterminedWhenMatchingTreatmentMatchesYearWithUnknownMonth() {
-        List<PriorTumorTreatment> priorTumorTreatments = List.of(nonMatchingTreatment, matchingTreatment(targetDate.getYear(), null));
-        assertEvaluation(EvaluationResult.UNDETERMINED,
-                function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
-    }
-
-    @Test
-    public void shouldFailWhenPriorTreatmentHasUnknownStopDateButOlderStartDate() {
-        LocalDate olderDate = LocalDate.now().minusYears(YEARS_TO_SUBTRACT);
-        List<PriorTumorTreatment> priorTumorTreatments = List.of(nonMatchingTreatment,
-                olderTreatment,
-                matchingTreatment(null, null, olderDate.getYear(), olderDate.getMonthValue()));
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
-    }
-
-    @Test
-    public void shouldPassWhenPriorTreatmentHasUnknownStopDateButStartDateInRange() {
-        List<PriorTumorTreatment> priorTumorTreatments = List.of(nonMatchingTreatment,
-                matchingTreatment(LocalDate.now().minusYears(YEARS_TO_SUBTRACT).getYear(), null),
-                matchingTreatment(LocalDate.now().getYear(), null, recentDate.getYear(), recentDate.getMonthValue()));
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(priorTumorTreatments)));
-    }
-
-    private PriorTumorTreatment matchingTreatment(Integer stopYear, Integer stopMonth) {
-        return matchingTreatment(stopYear, stopMonth, null, null);
-    }
-
-    private PriorTumorTreatment matchingTreatment(Integer stopYear, Integer stopMonth, Integer startYear, Integer startMonth) {
-        return TreatmentTestFactory.builder()
-                .name("specific " + TREATMENT_QUERY)
+        private fun matchingTreatment(
+            stopYear: Int?,
+            stopMonth: Int?,
+            startYear: Int? = null,
+            startMonth: Int? = null
+        ): PriorTumorTreatment {
+            return TreatmentTestFactory.builder()
+                .name("specific $TREATMENT_QUERY")
                 .addCategories(TreatmentCategory.CHEMOTHERAPY)
                 .stopYear(stopYear)
                 .stopMonth(stopMonth)
                 .startYear(startYear)
                 .startMonth(startMonth)
-                .build();
+                .build()
+        }
     }
 }

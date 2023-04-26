@@ -1,54 +1,44 @@
-package com.hartwig.actin.algo.evaluation.treatment;
+package com.hartwig.actin.algo.evaluation.treatment
 
-import java.util.List;
+import com.hartwig.actin.ImmutablePatientRecord
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
+import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary
+import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
+import org.apache.logging.log4j.util.Strings
 
-import com.google.common.collect.Lists;
-import com.hartwig.actin.ImmutablePatientRecord;
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary;
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
+internal object TreatmentTestFactory {
 
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
-
-final class TreatmentTestFactory {
-
-    private TreatmentTestFactory() {
+    fun builder(): ImmutablePriorTumorTreatment.Builder {
+        return ImmutablePriorTumorTreatment.builder().isSystemic(false).name(Strings.EMPTY)
     }
 
-    @NotNull
-    public static ImmutablePriorTumorTreatment.Builder builder() {
-        return ImmutablePriorTumorTreatment.builder().isSystemic(false).name(Strings.EMPTY);
+    fun withPriorTumorTreatment(priorTumorTreatment: PriorTumorTreatment): PatientRecord {
+        return withPriorTumorTreatments(listOf(priorTumorTreatment))
     }
 
-    @NotNull
-    public static PatientRecord withPriorTumorTreatment(@NotNull PriorTumorTreatment priorTumorTreatment) {
-        return withPriorTumorTreatments(Lists.newArrayList(priorTumorTreatment));
-    }
-
-    @NotNull
-    public static PatientRecord withPriorTumorTreatments(@NotNull List<PriorTumorTreatment> priorTumorTreatments) {
+    fun withPriorTumorTreatments(priorTumorTreatments: List<PriorTumorTreatment>): PatientRecord {
         return ImmutablePatientRecord.builder()
-                .from(TestDataFactory.createMinimalTestPatientRecord())
-                .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                        .priorTumorTreatments(priorTumorTreatments)
-                        .build())
-                .build();
+            .from(TestDataFactory.createMinimalTestPatientRecord())
+            .clinical(
+                ImmutableClinicalRecord.builder()
+                    .from(TestClinicalFactory.createMinimalTestClinicalRecord())
+                    .priorTumorTreatments(priorTumorTreatments)
+                    .build()
+            )
+            .build()
     }
 
-    @NotNull
-    public static ImmutablePriorSecondPrimary.Builder priorSecondPrimaryBuilder() {
+    fun priorSecondPrimaryBuilder(): ImmutablePriorSecondPrimary.Builder {
         return ImmutablePriorSecondPrimary.builder()
-                .tumorLocation(Strings.EMPTY)
-                .tumorSubLocation(Strings.EMPTY)
-                .tumorType(Strings.EMPTY)
-                .tumorSubType(Strings.EMPTY)
-                .treatmentHistory(Strings.EMPTY)
-                .isActive(false);
+            .tumorLocation(Strings.EMPTY)
+            .tumorSubLocation(Strings.EMPTY)
+            .tumorType(Strings.EMPTY)
+            .tumorSubType(Strings.EMPTY)
+            .treatmentHistory(Strings.EMPTY)
+            .isActive(false)
     }
 }

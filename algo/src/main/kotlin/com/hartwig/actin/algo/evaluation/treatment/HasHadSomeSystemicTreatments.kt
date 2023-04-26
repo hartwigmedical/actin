@@ -1,50 +1,35 @@
-package com.hartwig.actin.algo.evaluation.treatment;
+package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-import org.jetbrains.annotations.NotNull;
+class HasHadSomeSystemicTreatments internal constructor(private val minSystemicTreatments: Int) : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val minSystemicCount = SystemicTreatmentAnalyser.minSystemicTreatments(record.clinical().priorTumorTreatments())
+        val maxSystemicCount = SystemicTreatmentAnalyser.maxSystemicTreatments(record.clinical().priorTumorTreatments())
+        return when {
+            minSystemicCount >= minSystemicTreatments -> {
+                EvaluationFactory.pass(
+                    "Patient received at least $minSystemicTreatments systemic treatments",
+                    "Received at least $minSystemicTreatments systemic treatments"
+                )
+            }
 
-public class HasHadSomeSystemicTreatments implements EvaluationFunction {
+            maxSystemicCount >= minSystemicTreatments -> {
+                EvaluationFactory.undetermined(
+                    "Could not determine if patient received at least $minSystemicTreatments systemic treatments",
+                    "Undetermined if received at least $minSystemicTreatments systemic treatments"
+                )
+            }
 
-    private final int minSystemicTreatments;
-
-    HasHadSomeSystemicTreatments(final int minSystemicTreatments) {
-        this.minSystemicTreatments = minSystemicTreatments;
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        int minSystemicCount = SystemicTreatmentAnalyser.minSystemicTreatments(record.clinical().priorTumorTreatments());
-        int maxSystemicCount = SystemicTreatmentAnalyser.maxSystemicTreatments(record.clinical().priorTumorTreatments());
-
-        EvaluationResult result;
-        if (minSystemicCount >= minSystemicTreatments) {
-            result = EvaluationResult.PASS;
-        } else if (maxSystemicCount >= minSystemicTreatments) {
-            result = EvaluationResult.UNDETERMINED;
-        } else {
-            result = EvaluationResult.FAIL;
+            else -> {
+                EvaluationFactory.fail(
+                    "Patient did not receive at least $minSystemicTreatments systemic treatments",
+                    "Has not received at least $minSystemicTreatments systemic treatments"
+                )
+            }
         }
-
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Patient did not receive at least " + minSystemicTreatments + " systemic treatments");
-            builder.addFailGeneralMessages("Has not received at least " + minSystemicTreatments + " systemic treatments");
-        } else if (result == EvaluationResult.UNDETERMINED) {
-            builder.addUndeterminedSpecificMessages(
-                    "Could not determine if patient received at least " + minSystemicTreatments + " systemic treatments");
-            builder.addUndeterminedGeneralMessages("Undetermined if received at least " + minSystemicTreatments + " systemic treatments");
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient received at least " + minSystemicTreatments + " systemic treatments");
-            builder.addPassGeneralMessages("Received at least " + minSystemicTreatments + " systemic treatments");
-        }
-
-        return builder.build();
     }
 }

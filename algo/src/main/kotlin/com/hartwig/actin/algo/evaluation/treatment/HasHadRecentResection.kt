@@ -1,86 +1,60 @@
-package com.hartwig.actin.algo.evaluation.treatment;
+package com.hartwig.actin.algo.evaluation.treatment
 
-import java.time.LocalDate;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.util.DateComparison.isAfterDate
+import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import com.hartwig.actin.util.ApplicationConfig
+import java.time.LocalDate
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.algo.evaluation.util.DateComparison;
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
-
-import org.jetbrains.annotations.NotNull;
-
-public class HasHadRecentResection implements EvaluationFunction {
-
-    static final String RESECTION_KEYWORD = "resection";
-
-    @NotNull
-    private final LocalDate minDate;
-
-    HasHadRecentResection(@NotNull final LocalDate minDate) {
-        this.minDate = minDate;
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        boolean hasHadResectionAfterMinDate = false;
-        boolean hasHadResectionAfterMoreLenientMinDate = false;
-        boolean mayHaveHadResectionAfterMinDate = false;
-
-        for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
-            Boolean isPastMinDate = DateComparison.isAfterDate(minDate, treatment.startYear(), treatment.startMonth());
-            Boolean isPastMoreLenientMinDate =
-                    DateComparison.isAfterDate(minDate.minusWeeks(2), treatment.startYear(), treatment.startMonth());
-            boolean isResection = treatment.name().toLowerCase().contains(RESECTION_KEYWORD.toLowerCase());
-            boolean isPotentialResection = treatment.categories().contains(TreatmentCategory.SURGERY) && treatment.name().isEmpty();
-
+class HasHadRecentResection internal constructor(private val minDate: LocalDate) : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        var hasHadResectionAfterMinDate = false
+        var hasHadResectionAfterMoreLenientMinDate = false
+        var mayHaveHadResectionAfterMinDate = false
+        for (treatment in record.clinical().priorTumorTreatments()) {
+            val isPastMinDate = isAfterDate(minDate, treatment.startYear(), treatment.startMonth())
+            val isPastMoreLenientMinDate = isAfterDate(minDate.minusWeeks(2), treatment.startYear(), treatment.startMonth())
+            val isResection =
+                treatment.name().lowercase(ApplicationConfig.LOCALE).contains(RESECTION_KEYWORD.lowercase(ApplicationConfig.LOCALE))
+            val isPotentialResection = treatment.categories().contains(TreatmentCategory.SURGERY) && treatment.name().isEmpty()
             if (isResection) {
                 if (isPastMinDate == null) {
-                    mayHaveHadResectionAfterMinDate = true;
+                    mayHaveHadResectionAfterMinDate = true
                 }
-
                 if (isPastMinDate != null && isPastMinDate) {
-                    hasHadResectionAfterMinDate = true;
+                    hasHadResectionAfterMinDate = true
                 }
-
                 if (isPastMoreLenientMinDate != null && isPastMoreLenientMinDate) {
-                    hasHadResectionAfterMoreLenientMinDate = true;
+                    hasHadResectionAfterMoreLenientMinDate = true
                 }
             }
-
             if (isPastMinDate != null && isPastMinDate && isPotentialResection) {
-                mayHaveHadResectionAfterMinDate = true;
+                mayHaveHadResectionAfterMinDate = true
             }
         }
+        return when {
+            hasHadResectionAfterMinDate -> {
+                EvaluationFactory.pass("Patient has had a recent resection", "Has had recent resection")
+            }
 
-        if (hasHadResectionAfterMinDate) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient has had a recent resection")
-                    .addPassGeneralMessages("Has had recent resection")
-                    .build();
-        } else if (hasHadResectionAfterMoreLenientMinDate) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addWarnSpecificMessages("Patient has had a reasonably recent resection")
-                    .addWarnGeneralMessages("Has had reasonably recent resection")
-                    .build();
-        } else if (mayHaveHadResectionAfterMinDate) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Patient may have had a recent resection")
-                    .addUndeterminedGeneralMessages("Unknown if has had recent resection")
-                    .build();
+            hasHadResectionAfterMoreLenientMinDate -> {
+                EvaluationFactory.warn("Patient has had a reasonably recent resection", "Has had reasonably recent resection")
+            }
+
+            mayHaveHadResectionAfterMinDate -> {
+                EvaluationFactory.undetermined("Patient may have had a recent resection", "Unknown if has had recent resection")
+            }
+
+            else -> {
+                EvaluationFactory.fail("Patient has not had a recent resection", "Has not had recent resection")
+            }
         }
+    }
 
-        return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Patient has not had a recent resection")
-                .addFailGeneralMessages("Has not had recent resection")
-                .build();
+    companion object {
+        const val RESECTION_KEYWORD = "resection"
     }
 }

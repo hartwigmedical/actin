@@ -1,26 +1,16 @@
-package com.hartwig.actin.algo.evaluation.treatment;
+package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-
-import org.jetbrains.annotations.NotNull;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
 //TODO: Implement according to README
-public class HasHadCombinedTreatmentNamesWithinWeeks implements EvaluationFunction {
-
-    HasHadCombinedTreatmentNamesWithinWeeks() {
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Combined treatment with specific nr of weeks currently cannot be determined")
-                .addUndeterminedGeneralMessages("Undetermined combined treatment with specific nr of weeks")
-                .build();
+class HasHadCombinedTreatmentNamesWithinWeeks internal constructor() : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        return EvaluationFactory.undetermined(
+            "Combined treatment with specific nr of weeks currently cannot be determined",
+            "Undetermined combined treatment with specific nr of weeks"
+        )
     }
 }

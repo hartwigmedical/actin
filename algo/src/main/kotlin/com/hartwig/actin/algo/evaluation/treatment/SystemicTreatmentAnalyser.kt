@@ -1,141 +1,115 @@
-package com.hartwig.actin.algo.evaluation.treatment;
+package com.hartwig.actin.algo.evaluation.treatment
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
+import com.hartwig.actin.clinical.sort.PriorTumorTreatmentDescendingDateComparator
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
-import com.hartwig.actin.clinical.sort.PriorTumorTreatmentDescendingDateComparator;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-final class SystemicTreatmentAnalyser {
-
-    private SystemicTreatmentAnalyser() {
-    }
-
-    public static int maxSystemicTreatments(@NotNull List<PriorTumorTreatment> treatments) {
-        int systemicCount = 0;
-        for (PriorTumorTreatment treatment : treatments) {
-            if (treatment.isSystemic()) {
-                systemicCount++;
+internal object SystemicTreatmentAnalyser {
+    fun maxSystemicTreatments(treatments: List<PriorTumorTreatment>): Int {
+        var systemicCount = 0
+        for (treatment in treatments) {
+            if (treatment.isSystemic) {
+                systemicCount++
             }
         }
-        return systemicCount;
+        return systemicCount
     }
 
-    public static int minSystemicTreatments(@NotNull List<PriorTumorTreatment> treatments) {
-        Map<String, List<PriorTumorTreatment>> systemicByName = Maps.newHashMap();
+    fun minSystemicTreatments(treatments: List<PriorTumorTreatment>): Int {
+        val systemicByName = treatments.filter { it.isSystemic }.groupBy { it.name() }
 
-        for (PriorTumorTreatment treatment : treatments) {
-            if (treatment.isSystemic()) {
-                List<PriorTumorTreatment> systemic = systemicByName.get(treatment.name());
-                if (systemic == null) {
-                    systemic = Lists.newArrayList();
-                }
-                systemic.add(treatment);
-                systemicByName.put(treatment.name(), systemic);
-            }
-        }
-
-        int systemicCount = 0;
-        for (List<PriorTumorTreatment> systemic : systemicByName.values()) {
-            systemicCount++;
-            if (systemic.size() > 1) {
-                systemic.sort(new PriorTumorTreatmentDescendingDateComparator());
-                for (int i = 1; i < systemic.size(); i++) {
-                    if (isInterrupted(systemic.get(i), systemic.get(i - 1), treatments)) {
-                        systemicCount++;
+        var systemicCount = 0
+        for (systemicWithName in systemicByName.values) {
+            systemicCount++
+            if (systemicWithName.size > 1) {
+                val sortedWithName = systemicWithName.sortedWith(PriorTumorTreatmentDescendingDateComparator())
+                for (i in 1 until sortedWithName.size) {
+                    if (isInterrupted(sortedWithName[i], sortedWithName[i - 1], treatments)) {
+                        systemicCount++
                     }
                 }
             }
         }
-
-        return systemicCount;
+        return systemicCount
     }
 
-    public static Optional<PriorTumorTreatment> lastSystemicTreatment(@NotNull List<PriorTumorTreatment> priorTumorTreatments) {
-        return priorTumorTreatments.stream()
-                .filter(PriorTumorTreatment::isSystemic)
-                .max(SystemicTreatmentAnalyser::compareTreatmentsByStartDate);
+    fun lastSystemicTreatment(priorTumorTreatments: List<PriorTumorTreatment>): PriorTumorTreatment? {
+        return priorTumorTreatments.filter { it.isSystemic }
+            .maxWithOrNull { treatment1, treatment2 -> compareTreatmentsByStartDate(treatment1, treatment2) }
     }
 
-    private static int compareTreatmentsByStartDate(@NotNull PriorTumorTreatment treatment1, @NotNull PriorTumorTreatment treatment2) {
-        int yearComparison = compareNullableIntegers(treatment1.startYear(), treatment2.startYear());
-        return yearComparison != 0 ? yearComparison : compareNullableIntegers(treatment1.startMonth(), treatment2.startMonth());
+    private fun compareTreatmentsByStartDate(treatment1: PriorTumorTreatment, treatment2: PriorTumorTreatment): Int {
+        val yearComparison = compareNullableIntegers(treatment1.startYear(), treatment2.startYear())
+        return if (yearComparison != 0) yearComparison else compareNullableIntegers(treatment1.startMonth(), treatment2.startMonth())
     }
 
-    private static int compareNullableIntegers(@Nullable Integer first, @Nullable Integer second) {
+    private fun compareNullableIntegers(first: Int?, second: Int?): Int {
         // Nulls are considered less than non-nulls
-        if (first != null) {
+        return if (first != null) {
             if (second != null) {
-                return Integer.compare(first, second);
+                Integer.compare(first, second)
             } else {
-                return 1;
+                1
             }
         } else if (second != null) {
-            return -1;
+            -1
         } else {
-            return 0;
+            0
         }
     }
 
-    private static boolean isInterrupted(@NotNull PriorTumorTreatment mostRecent, @NotNull PriorTumorTreatment leastRecent,
-            @NotNull List<PriorTumorTreatment> treatments) {
+    private fun isInterrupted(
+        mostRecent: PriorTumorTreatment, leastRecent: PriorTumorTreatment,
+        treatments: List<PriorTumorTreatment>
+    ): Boolean {
         // Treatments with ambiguous timeline are never considered interrupted.
         if (!isAfter(mostRecent, leastRecent)) {
-            return false;
+            return false
         }
-
-        for (PriorTumorTreatment treatment : treatments) {
-            if (!treatment.name().equals(mostRecent.name()) && isAfter(treatment, leastRecent) && isBefore(treatment, mostRecent)) {
-                return true;
+        for (treatment in treatments) {
+            if (treatment.name() != mostRecent.name() && isAfter(treatment, leastRecent) && isBefore(treatment, mostRecent)) {
+                return true
             }
         }
-
-        return false;
+        return false
     }
 
-    private static boolean isBefore(@NotNull PriorTumorTreatment first, @NotNull PriorTumorTreatment second) {
-        if (isLower(first.startYear(), second.startYear())) {
-            return true;
+    private fun isBefore(first: PriorTumorTreatment, second: PriorTumorTreatment): Boolean {
+        return if (isLower(first.startYear(), second.startYear())) {
+            true
         } else {
-            return isEqual(first.startYear(), second.startYear()) && isLower(first.startMonth(), second.startMonth());
+            isEqual(first.startYear(), second.startYear()) && isLower(
+                first.startMonth(),
+                second.startMonth()
+            )
         }
     }
 
-    private static boolean isAfter(@NotNull PriorTumorTreatment first, @NotNull PriorTumorTreatment second) {
-        if (isHigher(first.startYear(), second.startYear())) {
-            return true;
+    private fun isAfter(first: PriorTumorTreatment, second: PriorTumorTreatment): Boolean {
+        return if (isHigher(first.startYear(), second.startYear())) {
+            true
         } else {
-            return isEqual(first.startYear(), second.startYear()) && isHigher(first.startMonth(), second.startMonth());
+            isEqual(first.startYear(), second.startYear()) && isHigher(
+                first.startMonth(),
+                second.startMonth()
+            )
         }
     }
 
-    private static boolean isHigher(@Nullable Integer int1, @Nullable Integer int2) {
-        if (int1 == null || int2 == null) {
-            return false;
-        }
-
-        return int1 > int2;
+    private fun isHigher(int1: Int?, int2: Int?): Boolean {
+        return if (int1 == null || int2 == null) {
+            false
+        } else int1 > int2
     }
 
-    private static boolean isLower(@Nullable Integer int1, @Nullable Integer int2) {
-        if (int1 == null || int2 == null) {
-            return false;
-        }
-
-        return int1 < int2;
+    private fun isLower(int1: Int?, int2: Int?): Boolean {
+        return if (int1 == null || int2 == null) {
+            false
+        } else int1 < int2
     }
 
-    private static boolean isEqual(@Nullable Integer int1, @Nullable Integer int2) {
-        if (int1 == null || int2 == null) {
-            return false;
-        }
-
-        return int1.equals(int2);
+    private fun isEqual(int1: Int?, int2: Int?): Boolean {
+        return if (int1 == null || int2 == null) {
+            false
+        } else int1 == int2
     }
 }

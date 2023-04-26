@@ -1,38 +1,52 @@
-package com.hartwig.actin.algo.evaluation.treatment;
+package com.hartwig.actin.algo.evaluation.treatment
 
-import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import org.junit.Test
 
-import com.google.common.collect.Lists;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
-
-import org.junit.Test;
-
-public class HasHadCompleteResectionTest {
-
+class HasHadCompleteResectionTest {
     @Test
-    public void canEvaluate() {
-        HasHadCompleteResection function = new HasHadCompleteResection();
+    fun canEvaluate() {
+        val function = HasHadCompleteResection()
 
         // FAIL without any prior tumor treatments.
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(Lists.newArrayList())));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(emptyList())))
 
         // PASS on a complete resection
-        assertEvaluation(EvaluationResult.PASS,
-                function.evaluate(TreatmentTestFactory.withPriorTumorTreatment(TreatmentTestFactory.builder()
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                TreatmentTestFactory.withPriorTumorTreatment(
+                    TreatmentTestFactory.builder()
                         .name(HasHadCompleteResection.COMPLETE_RESECTION)
-                        .build())));
+                        .build()
+                )
+            )
+        )
 
         // UNDETERMINED when the resection is not fully specified.
-        assertEvaluation(EvaluationResult.UNDETERMINED,
-                function.evaluate(TreatmentTestFactory.withPriorTumorTreatment(TreatmentTestFactory.builder()
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(
+                TreatmentTestFactory.withPriorTumorTreatment(
+                    TreatmentTestFactory.builder()
                         .name("some form of " + HasHadCompleteResection.RESECTION_KEYWORD)
-                        .build())));
+                        .build()
+                )
+            )
+        )
 
         // UNDETERMINED in case of unspecified surgery
-        assertEvaluation(EvaluationResult.UNDETERMINED,
-                function.evaluate(TreatmentTestFactory.withPriorTumorTreatment(TreatmentTestFactory.builder()
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(
+                TreatmentTestFactory.withPriorTumorTreatment(
+                    TreatmentTestFactory.builder()
                         .addCategories(TreatmentCategory.SURGERY)
-                        .build())));
+                        .build()
+                )
+            )
+        )
     }
 }

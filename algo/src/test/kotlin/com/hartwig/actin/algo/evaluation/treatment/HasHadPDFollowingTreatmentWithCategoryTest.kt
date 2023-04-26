@@ -1,66 +1,68 @@
-package com.hartwig.actin.algo.evaluation.treatment;
+package com.hartwig.actin.algo.evaluation.treatment
 
-import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
-import static com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.PD_LABEL;
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.PD_LABEL
+import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import org.junit.Test
 
-import java.util.Collections;
-import java.util.List;
-
-import com.google.common.collect.Lists;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
-
-import org.junit.Test;
-
-public class HasHadPDFollowingTreatmentWithCategoryTest {
-
+class HasHadPDFollowingTreatmentWithCategoryTest {
     @Test
-    public void canEvaluate() {
-        HasHadPDFollowingTreatmentWithCategory function = new HasHadPDFollowingTreatmentWithCategory(TreatmentCategory.CHEMOTHERAPY);
-
-        List<PriorTumorTreatment> treatments = Lists.newArrayList();
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
+    fun canEvaluate() {
+        val function = HasHadPDFollowingTreatmentWithCategory(TreatmentCategory.CHEMOTHERAPY)
+        val treatments: MutableList<PriorTumorTreatment> = mutableListOf()
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
 
         // Wrong category
-        treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.RADIOTHERAPY).build());
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
+        treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.RADIOTHERAPY).build())
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
 
         // Right category but no PD
-        treatments.add(TreatmentTestFactory.builder()
+        treatments.add(
+            TreatmentTestFactory.builder()
                 .addCategories(TreatmentCategory.CHEMOTHERAPY)
                 .stopReason("toxicity")
                 .bestResponse("improved")
-                .build());
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
+                .build()
+        )
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
 
         // Right category and missing stop reason
-        treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.CHEMOTHERAPY).build());
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
+        treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.CHEMOTHERAPY).build())
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
 
         // Right category, type and stop reason PD
-        treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.CHEMOTHERAPY).stopReason(PD_LABEL).build());
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
+        treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.CHEMOTHERAPY).stopReason(PD_LABEL).build())
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
     }
 
     @Test
-    public void shouldPassForMatchingCategoryWhenPDIsIndicatedInBestResponse() {
-        HasHadPDFollowingTreatmentWithCategory function = new HasHadPDFollowingTreatmentWithCategory(TreatmentCategory.CHEMOTHERAPY);
-        List<PriorTumorTreatment> treatments = Collections.singletonList(TreatmentTestFactory.builder()
+    fun shouldPassForMatchingCategoryWhenPDIsIndicatedInBestResponse() {
+        val function = HasHadPDFollowingTreatmentWithCategory(TreatmentCategory.CHEMOTHERAPY)
+        val treatments = listOf<PriorTumorTreatment>(
+            TreatmentTestFactory.builder()
                 .addCategories(TreatmentCategory.CHEMOTHERAPY)
                 .bestResponse(PD_LABEL)
-                .build());
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)));
+                .build()
+        )
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
     }
 
     @Test
-    public void canEvaluateWithTrial() {
-        HasHadPDFollowingTreatmentWithCategory function = new HasHadPDFollowingTreatmentWithCategory(TreatmentCategory.CHEMOTHERAPY);
+    fun canEvaluateWithTrial() {
+        val function = HasHadPDFollowingTreatmentWithCategory(TreatmentCategory.CHEMOTHERAPY)
 
         // Add one trial
-        assertEvaluation(EvaluationResult.UNDETERMINED,
-                function.evaluate(TreatmentTestFactory.withPriorTumorTreatment(TreatmentTestFactory.builder()
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(
+                TreatmentTestFactory.withPriorTumorTreatment(
+                    TreatmentTestFactory.builder()
                         .addCategories(TreatmentCategory.TRIAL)
-                        .build())));
+                        .build()
+                )
+            )
+        )
     }
 }

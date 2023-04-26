@@ -1,75 +1,61 @@
-package com.hartwig.actin.algo.evaluation.treatment;
+package com.hartwig.actin.algo.evaluation.treatment
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentTypeResolver.isOfType
+import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
+import org.junit.Test
 
-import com.google.common.collect.Lists;
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
-
-import org.junit.Test;
-
-public class TreatmentTypeResolverTest {
-
+class TreatmentTypeResolverTest {
     @Test
-    public void canResolveAllTypes() {
-        ImmutablePriorTumorTreatment.Builder builder = TreatmentTestFactory.builder()
-                .chemoType("chemo")
-                .immunoType("immuno")
-                .targetedType("targeted")
-                .hormoneType("hormone")
-                .radioType("radio")
-                .carTType("car-t")
-                .transplantType("transplant")
-                .supportiveType("supportive");
-
-        PriorTumorTreatment chemo = builder.categories(Lists.newArrayList(TreatmentCategory.CHEMOTHERAPY)).build();
-        assertTrue(TreatmentTypeResolver.isOfType(chemo, TreatmentCategory.CHEMOTHERAPY, "chemo"));
-        assertFalse(TreatmentTypeResolver.isOfType(chemo, TreatmentCategory.CHEMOTHERAPY, "immuno"));
-
-        PriorTumorTreatment immuno = builder.categories(Lists.newArrayList(TreatmentCategory.IMMUNOTHERAPY)).build();
-        assertTrue(TreatmentTypeResolver.isOfType(immuno, TreatmentCategory.IMMUNOTHERAPY, "immuno"));
-        assertFalse(TreatmentTypeResolver.isOfType(immuno, TreatmentCategory.IMMUNOTHERAPY, "targeted"));
-
-        PriorTumorTreatment targeted = builder.categories(Lists.newArrayList(TreatmentCategory.TARGETED_THERAPY)).build();
-        assertTrue(TreatmentTypeResolver.isOfType(targeted, TreatmentCategory.TARGETED_THERAPY, "targeted"));
-        assertFalse(TreatmentTypeResolver.isOfType(targeted, TreatmentCategory.TARGETED_THERAPY, "hormone"));
-
-        PriorTumorTreatment hormone = builder.categories(Lists.newArrayList(TreatmentCategory.HORMONE_THERAPY)).build();
-        assertTrue(TreatmentTypeResolver.isOfType(hormone, TreatmentCategory.HORMONE_THERAPY, "hormone"));
-        assertFalse(TreatmentTypeResolver.isOfType(hormone, TreatmentCategory.HORMONE_THERAPY, "radio"));
-
-        PriorTumorTreatment radio = builder.categories(Lists.newArrayList(TreatmentCategory.RADIOTHERAPY)).build();
-        assertTrue(TreatmentTypeResolver.isOfType(radio, TreatmentCategory.RADIOTHERAPY, "radio"));
-        assertFalse(TreatmentTypeResolver.isOfType(radio, TreatmentCategory.RADIOTHERAPY, "car-t"));
-
-        PriorTumorTreatment carT = builder.categories(Lists.newArrayList(TreatmentCategory.CAR_T)).build();
-        assertTrue(TreatmentTypeResolver.isOfType(carT, TreatmentCategory.CAR_T, "car-t"));
-        assertFalse(TreatmentTypeResolver.isOfType(carT, TreatmentCategory.CAR_T, "transplant"));
-
-        PriorTumorTreatment transplant = builder.categories(Lists.newArrayList(TreatmentCategory.TRANSPLANTATION)).build();
-        assertTrue(TreatmentTypeResolver.isOfType(transplant, TreatmentCategory.TRANSPLANTATION, "transplant"));
-        assertFalse(TreatmentTypeResolver.isOfType(transplant, TreatmentCategory.TRANSPLANTATION, "supportive"));
-
-        PriorTumorTreatment supportive = builder.categories(Lists.newArrayList(TreatmentCategory.SUPPORTIVE_TREATMENT)).build();
-        assertTrue(TreatmentTypeResolver.isOfType(supportive, TreatmentCategory.SUPPORTIVE_TREATMENT, "supportive"));
-        assertFalse(TreatmentTypeResolver.isOfType(supportive, TreatmentCategory.SUPPORTIVE_TREATMENT, "chemo"));
+    fun canResolveAllTypes() {
+        val builder = TreatmentTestFactory.builder()
+            .chemoType("chemo")
+            .immunoType("immuno")
+            .targetedType("targeted")
+            .hormoneType("hormone")
+            .radioType("radio")
+            .carTType("car-t")
+            .transplantType("transplant")
+            .supportiveType("supportive")
+        val chemo: PriorTumorTreatment = builder.categories(listOf(TreatmentCategory.CHEMOTHERAPY)).build()
+        assertTrue(isOfType(chemo, TreatmentCategory.CHEMOTHERAPY, "chemo"))
+        assertFalse(isOfType(chemo, TreatmentCategory.CHEMOTHERAPY, "immuno"))
+        val immuno: PriorTumorTreatment = builder.categories(listOf(TreatmentCategory.IMMUNOTHERAPY)).build()
+        assertTrue(isOfType(immuno, TreatmentCategory.IMMUNOTHERAPY, "immuno"))
+        assertFalse(isOfType(immuno, TreatmentCategory.IMMUNOTHERAPY, "targeted"))
+        val targeted: PriorTumorTreatment = builder.categories(listOf(TreatmentCategory.TARGETED_THERAPY)).build()
+        assertTrue(isOfType(targeted, TreatmentCategory.TARGETED_THERAPY, "targeted"))
+        assertFalse(isOfType(targeted, TreatmentCategory.TARGETED_THERAPY, "hormone"))
+        val hormone: PriorTumorTreatment = builder.categories(listOf(TreatmentCategory.HORMONE_THERAPY)).build()
+        assertTrue(isOfType(hormone, TreatmentCategory.HORMONE_THERAPY, "hormone"))
+        assertFalse(isOfType(hormone, TreatmentCategory.HORMONE_THERAPY, "radio"))
+        val radio: PriorTumorTreatment = builder.categories(listOf(TreatmentCategory.RADIOTHERAPY)).build()
+        assertTrue(isOfType(radio, TreatmentCategory.RADIOTHERAPY, "radio"))
+        assertFalse(isOfType(radio, TreatmentCategory.RADIOTHERAPY, "car-t"))
+        val carT: PriorTumorTreatment = builder.categories(listOf(TreatmentCategory.CAR_T)).build()
+        assertTrue(isOfType(carT, TreatmentCategory.CAR_T, "car-t"))
+        assertFalse(isOfType(carT, TreatmentCategory.CAR_T, "transplant"))
+        val transplant: PriorTumorTreatment = builder.categories(listOf(TreatmentCategory.TRANSPLANTATION)).build()
+        assertTrue(isOfType(transplant, TreatmentCategory.TRANSPLANTATION, "transplant"))
+        assertFalse(isOfType(transplant, TreatmentCategory.TRANSPLANTATION, "supportive"))
+        val supportive: PriorTumorTreatment = builder.categories(listOf(TreatmentCategory.SUPPORTIVE_TREATMENT)).build()
+        assertTrue(isOfType(supportive, TreatmentCategory.SUPPORTIVE_TREATMENT, "supportive"))
+        assertFalse(isOfType(supportive, TreatmentCategory.SUPPORTIVE_TREATMENT, "chemo"))
     }
 
     @Test
-    public void canRetrieveAcronymForTrial() {
-        String acronym = "acronym";
-
-        PriorTumorTreatment trial = TreatmentTestFactory.builder().addCategories(TreatmentCategory.TRIAL).trialAcronym(acronym).build();
-
-        assertTrue(TreatmentTypeResolver.isOfType(trial, TreatmentCategory.TRIAL, acronym));
+    fun canRetrieveAcronymForTrial() {
+        val acronym = "acronym"
+        val trial: PriorTumorTreatment = TreatmentTestFactory.builder().addCategories(TreatmentCategory.TRIAL).trialAcronym(acronym).build()
+        assertTrue(isOfType(trial, TreatmentCategory.TRIAL, acronym))
     }
 
     @Test
-    public void canHandleCategoryWithoutType() {
-        PriorTumorTreatment geneTherapy = TreatmentTestFactory.builder().categories(Lists.newArrayList(TreatmentCategory.GENE_THERAPY)).build();
-
-        assertFalse(TreatmentTypeResolver.isOfType(geneTherapy, TreatmentCategory.GENE_THERAPY, "gene therapy"));
+    fun canHandleCategoryWithoutType() {
+        val geneTherapy: PriorTumorTreatment =
+            TreatmentTestFactory.builder().categories(listOf(TreatmentCategory.GENE_THERAPY)).build()
+        assertFalse(isOfType(geneTherapy, TreatmentCategory.GENE_THERAPY, "gene therapy"))
     }
 }

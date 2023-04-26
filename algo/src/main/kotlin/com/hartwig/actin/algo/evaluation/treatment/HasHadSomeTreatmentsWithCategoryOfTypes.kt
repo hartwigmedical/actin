@@ -1,90 +1,60 @@
-package com.hartwig.actin.algo.evaluation.treatment;
+package com.hartwig.actin.algo.evaluation.treatment
 
-import java.util.List;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.TreatmentCategory
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.algo.evaluation.util.Format;
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
-
-import org.jetbrains.annotations.NotNull;
-
-public class HasHadSomeTreatmentsWithCategoryOfTypes implements EvaluationFunction {
-
-    @NotNull
-    private final TreatmentCategory category;
-    @NotNull
-    private final List<String> types;
-    private final int minTreatmentLines;
-
-    HasHadSomeTreatmentsWithCategoryOfTypes(@NotNull final TreatmentCategory category, @NotNull final List<String> types,
-            final int minTreatmentLines) {
-        this.category = category;
-        this.types = types;
-        this.minTreatmentLines = minTreatmentLines;
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        int numMatchingTreatmentLines = 0;
-        int numApproximateTreatmentLines = 0;
-        int numOtherTrials = 0;
-        for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
+class HasHadSomeTreatmentsWithCategoryOfTypes internal constructor(
+    private val category: TreatmentCategory, private val types: List<String>,
+    private val minTreatmentLines: Int
+) : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        var numMatchingTreatmentLines = 0
+        var numApproximateTreatmentLines = 0
+        var numOtherTrials = 0
+        for (treatment in record.clinical().priorTumorTreatments()) {
             if (treatment.categories().contains(category)) {
                 if (TreatmentTypeResolver.hasTypeConfigured(treatment, category)) {
                     if (hasValidType(treatment)) {
-                        numMatchingTreatmentLines++;
+                        numMatchingTreatmentLines++
                     }
                 } else {
-                    numApproximateTreatmentLines++;
+                    numApproximateTreatmentLines++
                 }
             } else if (treatment.categories().contains(TreatmentCategory.TRIAL)) {
-                numOtherTrials++;
+                numOtherTrials++
             }
         }
-
-        if (numMatchingTreatmentLines >= minTreatmentLines) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages(
-                            "Patient has received at least " + minTreatmentLines + " lines of " + Format.concat(types) + " "
-                                    + category.display())
-                    .addPassGeneralMessages(
-                            "Received at least " + minTreatmentLines + " lines of " + Format.concat(types) + " " + category.display())
-                    .build();
+        return if (numMatchingTreatmentLines >= minTreatmentLines) {
+            EvaluationFactory.pass(
+                "Patient has received at least $minTreatmentLines lines of ${concat(types)} ${category.display()}",
+                "Received at least " + minTreatmentLines + " lines of " + concat(types) + " " + category.display()
+            )
         } else if (numMatchingTreatmentLines + numApproximateTreatmentLines + numOtherTrials >= minTreatmentLines) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages(
-                            "Can't determine whether patient has received at least " + minTreatmentLines + " lines of " + Format.concat(
-                                    types) + " " + category.display())
-                    .addUndeterminedGeneralMessages(
-                            "Undetermined if received at least " + minTreatmentLines + " lines of " + Format.concat(types) + " "
-                                    + category.display())
-                    .build();
+            EvaluationFactory.undetermined(
+                "Can't determine whether patient has received at least $minTreatmentLines lines of "
+                        + concat(types) + " " + category.display(), "Undetermined if received at least $minTreatmentLines lines of "
+                        + concat(types) + " " + category.display()
+            )
         } else {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages(
-                            "Patient has not received at least " + minTreatmentLines + " lines of " + Format.concat(types) + " "
-                                    + category.display())
-                    .addFailGeneralMessages(
-                            "Not received at least " + minTreatmentLines + " lines of " + Format.concat(types) + " " + category.display())
-                    .build();
+            EvaluationFactory.fail(
+                "Patient has not received at least $minTreatmentLines lines of " + concat(types) + " "
+                        + category.display(), "Not received at least " + minTreatmentLines + " lines of " + concat(types) + " "
+                        + category.display()
+            )
         }
     }
 
-    private boolean hasValidType(@NotNull PriorTumorTreatment treatment) {
-        for (String type : types) {
+    private fun hasValidType(treatment: PriorTumorTreatment): Boolean {
+        for (type in types) {
             if (TreatmentTypeResolver.isOfType(treatment, category, type)) {
-                return true;
+                return true
             }
         }
-        return false;
+        return false
     }
 }

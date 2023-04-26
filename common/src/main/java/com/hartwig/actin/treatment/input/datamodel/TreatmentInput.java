@@ -48,7 +48,7 @@ public enum TreatmentInput {
         this.mappedNames = mappedNames;
     }
 
-    @Nullable
+    @NotNull
     public TreatmentCategory mappedCategory() {
         return mappedCategory;
     }

@@ -1,93 +1,66 @@
-package com.hartwig.actin.algo.evaluation.treatment;
+package com.hartwig.actin.algo.evaluation.treatment
 
-import java.time.LocalDate;
-import java.util.List;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.util.DateComparison.isAfterDate
+import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import java.time.LocalDate
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.algo.evaluation.util.DateComparison;
-import com.hartwig.actin.algo.evaluation.util.Format;
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
-
-import org.jetbrains.annotations.NotNull;
-
-public class HasHadTreatmentWithCategoryOfTypesRecently implements EvaluationFunction {
-
-    @NotNull
-    private final TreatmentCategory category;
-    @NotNull
-    private final List<String> types;
-    @NotNull
-    private final LocalDate minDate;
-
-    HasHadTreatmentWithCategoryOfTypesRecently(@NotNull final TreatmentCategory category, @NotNull final List<String> types,
-            @NotNull final LocalDate minDate) {
-        this.category = category;
-        this.types = types;
-        this.minDate = minDate;
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        boolean hasHadValidTreatment = false;
-        boolean hasHadTrialAfterMinDate = false;
-        boolean hasInconclusiveDate = false;
-        for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
-            Boolean startedPastMinDate = DateComparison.isAfterDate(minDate, treatment.startYear(), treatment.startMonth());
+class HasHadTreatmentWithCategoryOfTypesRecently internal constructor(
+    private val category: TreatmentCategory, private val types: List<String>,
+    private val minDate: LocalDate
+) : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        var hasHadValidTreatment = false
+        var hasHadTrialAfterMinDate = false
+        var hasInconclusiveDate = false
+        for (treatment in record.clinical().priorTumorTreatments()) {
+            val startedPastMinDate = isAfterDate(minDate, treatment.startYear(), treatment.startMonth())
             if (hasValidCategoryAndType(treatment)) {
                 if (startedPastMinDate == null) {
-                    hasInconclusiveDate = true;
+                    hasInconclusiveDate = true
                 } else if (startedPastMinDate) {
-                    hasHadValidTreatment = true;
+                    hasHadValidTreatment = true
                 }
             } else if (treatment.categories().contains(TreatmentCategory.TRIAL) && startedPastMinDate != null && startedPastMinDate) {
-                hasHadTrialAfterMinDate = true;
+                hasHadTrialAfterMinDate = true
             }
         }
-
-        if (hasHadValidTreatment) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient has received " + Format.concat(types) + " " + category.display() + " treatment")
-                    .addPassGeneralMessages("Received " + Format.concat(types) + " " + category.display() + " treatment")
-                    .build();
+        return if (hasHadValidTreatment) {
+            EvaluationFactory.pass(
+                "Patient has received " + concat(types) + " " + category.display() + " treatment",
+                "Received " + concat(types) + " " + category.display() + " treatment"
+            )
         } else if (hasInconclusiveDate) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages(
-                            "Patient has received " + Format.concat(types) + " " + category.display() + " treatment with inconclusive date")
-                    .addUndeterminedGeneralMessages(
-                            "Received " + Format.concat(types) + " " + category.display() + " treatment but inconclusive date")
-                    .build();
+            EvaluationFactory.undetermined(
+                "Patient has received " + concat(types) + " " + category.display() + " treatment with inconclusive date",
+                "Received " + concat(types) + " " + category.display() + " treatment but inconclusive date"
+            )
         } else if (hasHadTrialAfterMinDate) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages(
-                            "Patient has participated in a trial recently, inconclusive " + category.display() + " treatment")
-                    .addUndeterminedGeneralMessages("Inconclusive " + category.display() + " treatment due to trial participation")
-                    .build();
+            EvaluationFactory.undetermined(
+                "Patient has participated in a trial recently, inconclusive " + category.display() + " treatment",
+                "Inconclusive " + category.display() + " treatment due to trial participation"
+            )
         } else {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.FAIL)
-                    .addFailSpecificMessages("Patient has not received " + Format.concat(types) + " " + category.display() + " treatment")
-                    .addFailGeneralMessages("Not received " + Format.concat(types) + " " + category.display() + " treatment")
-                    .build();
+            EvaluationFactory.fail(
+                "Patient has not received " + concat(types) + " " + category.display() + " treatment",
+                "Not received " + concat(types) + " " + category.display() + " treatment"
+            )
         }
     }
 
-    private boolean hasValidCategoryAndType(@NotNull PriorTumorTreatment treatment) {
+    private fun hasValidCategoryAndType(treatment: PriorTumorTreatment): Boolean {
         if (treatment.categories().contains(category)) {
-            for (String type : types) {
+            for (type in types) {
                 if (TreatmentTypeResolver.isOfType(treatment, category, type)) {
-                    return true;
+                    return true
                 }
             }
         }
-        return false;
+        return false
     }
 }

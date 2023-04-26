@@ -1,73 +1,89 @@
-package com.hartwig.actin.algo.evaluation.treatment;
+package com.hartwig.actin.algo.evaluation.treatment
 
-import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
+import com.hartwig.actin.ImmutablePatientRecord
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
+import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import org.junit.Test
 
-import java.util.List;
+class HasHadCombinedTreatmentNamesWithCyclesTest {
 
-import com.hartwig.actin.ImmutablePatientRecord;
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
-
-import org.jetbrains.annotations.Nullable;
-import org.junit.Test;
-
-public class HasHadCombinedTreatmentNamesWithCyclesTest {
-
-    private static final PriorTumorTreatment MATCHING_PRIOR_TREATMENT = treatment("always MATCHing treatment", 11);
-    private static final PriorTumorTreatment TEST_TREATMENT_WITH_WRONG_CYCLES = treatment("also test", 3);
-    private static final PriorTumorTreatment TEST_TREATMENT_WITH_NULL_CYCLES = treatment("another TEST", null);
-    public static final PriorTumorTreatment NON_MATCHING_TREATMENT = treatment("unknown", 10);
-
-    private final HasHadCombinedTreatmentNamesWithCycles function =
-            new HasHadCombinedTreatmentNamesWithCycles(List.of("Matching", "Test"), 8, 12);
+    private val function = HasHadCombinedTreatmentNamesWithCycles(listOf("Matching", "Test"), 8, 12)
 
     @Test
-    public void shouldPassWhenAllQueryTreatmentNamesHaveAtLeastOneMatchWithRequiredCycles() {
-        assertEvaluation(EvaluationResult.PASS,
-                function.evaluate(patientRecordWithTreatmentHistory(List.of(MATCHING_PRIOR_TREATMENT,
-                        treatment("TEST TREATMENT", 8),
-                        TEST_TREATMENT_WITH_WRONG_CYCLES,
-                        TEST_TREATMENT_WITH_NULL_CYCLES,
-                        NON_MATCHING_TREATMENT))));
+    fun shouldPassWhenAllQueryTreatmentNamesHaveAtLeastOneMatchWithRequiredCycles() {
+        val treatmentHistory = listOf(
+            MATCHING_PRIOR_TREATMENT,
+            treatment("TEST TREATMENT", 8),
+            TEST_TREATMENT_WITH_WRONG_CYCLES,
+            TEST_TREATMENT_WITH_NULL_CYCLES,
+            NON_MATCHING_TREATMENT
+        )
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(patientRecordWithTreatmentHistory(treatmentHistory)))
     }
 
     @Test
-    public void shouldReturnUndeterminedWhenAnyQueryTreatmentNameHasAtLeastOneMatchWithNullCyclesAndNoneWithRequiredCycles() {
-        assertEvaluation(EvaluationResult.UNDETERMINED,
-                function.evaluate(patientRecordWithTreatmentHistory(List.of(MATCHING_PRIOR_TREATMENT,
-                        TEST_TREATMENT_WITH_WRONG_CYCLES,
-                        TEST_TREATMENT_WITH_NULL_CYCLES,
-                        NON_MATCHING_TREATMENT))));
+    fun shouldReturnUndeterminedWhenAnyQueryTreatmentNameHasAtLeastOneMatchWithNullCyclesAndNoneWithRequiredCycles() {
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED, function.evaluate(
+                patientRecordWithTreatmentHistory(
+                    listOf(
+                        MATCHING_PRIOR_TREATMENT,
+                        TEST_TREATMENT_WITH_WRONG_CYCLES, TEST_TREATMENT_WITH_NULL_CYCLES, NON_MATCHING_TREATMENT
+                    )
+                )
+            )
+        )
     }
 
     @Test
-    public void shouldFailWhenAnyQueryTreatmentNameHasAllMatchesWithKnownCycleCountOutsideRange() {
-        assertEvaluation(EvaluationResult.FAIL,
-                function.evaluate(patientRecordWithTreatmentHistory(List.of(MATCHING_PRIOR_TREATMENT,
-                        TEST_TREATMENT_WITH_WRONG_CYCLES,
-                        NON_MATCHING_TREATMENT))));
+    fun shouldFailWhenAnyQueryTreatmentNameHasAllMatchesWithKnownCycleCountOutsideRange() {
+        assertEvaluation(
+            EvaluationResult.FAIL, function.evaluate(
+                patientRecordWithTreatmentHistory(
+                    listOf(
+                        MATCHING_PRIOR_TREATMENT,
+                        TEST_TREATMENT_WITH_WRONG_CYCLES, NON_MATCHING_TREATMENT
+                    )
+                )
+            )
+        )
     }
 
     @Test
-    public void shouldFailWhenAnyQueryTreatmentNameHasNoMatchingTreatmentsInHistory() {
-        assertEvaluation(EvaluationResult.FAIL,
-                function.evaluate(patientRecordWithTreatmentHistory(List.of(MATCHING_PRIOR_TREATMENT,
-                        TEST_TREATMENT_WITH_WRONG_CYCLES,
-                        NON_MATCHING_TREATMENT))));
+    fun shouldFailWhenAnyQueryTreatmentNameHasNoMatchingTreatmentsInHistory() {
+        assertEvaluation(
+            EvaluationResult.FAIL, function.evaluate(
+                patientRecordWithTreatmentHistory(
+                    listOf(
+                        MATCHING_PRIOR_TREATMENT,
+                        TEST_TREATMENT_WITH_WRONG_CYCLES, NON_MATCHING_TREATMENT
+                    )
+                )
+            )
+        )
     }
 
-    private static PatientRecord patientRecordWithTreatmentHistory(List<PriorTumorTreatment> priorTumorTreatments) {
-        PatientRecord minimal = TestDataFactory.createMinimalTestPatientRecord();
-        ClinicalRecord clinicalRecord = ImmutableClinicalRecord.copyOf(minimal.clinical()).withPriorTumorTreatments(priorTumorTreatments);
-        return ImmutablePatientRecord.copyOf(minimal).withClinical(clinicalRecord);
-    }
+    companion object {
+        private val MATCHING_PRIOR_TREATMENT: PriorTumorTreatment = treatment("always MATCHing treatment", 11)
+        private val TEST_TREATMENT_WITH_WRONG_CYCLES: PriorTumorTreatment = treatment("also test", 3)
+        private val TEST_TREATMENT_WITH_NULL_CYCLES: PriorTumorTreatment = treatment("another TEST", null)
+        val NON_MATCHING_TREATMENT: PriorTumorTreatment = treatment("unknown", 10)
 
-    private static PriorTumorTreatment treatment(String name, @Nullable Integer numCycles) {
-        return ImmutablePriorTumorTreatment.builder().name(name).isSystemic(true).cycles(numCycles).build();
+        private fun patientRecordWithTreatmentHistory(priorTumorTreatments: List<PriorTumorTreatment>): PatientRecord {
+            val minimal: PatientRecord = TestDataFactory.createMinimalTestPatientRecord()
+            val clinicalRecord: ClinicalRecord =
+                ImmutableClinicalRecord.copyOf(minimal.clinical()).withPriorTumorTreatments(priorTumorTreatments)
+            return ImmutablePatientRecord.copyOf(minimal).withClinical(clinicalRecord)
+        }
+
+        private fun treatment(name: String, numCycles: Int?): PriorTumorTreatment {
+            return ImmutablePriorTumorTreatment.builder().name(name).isSystemic(true).cycles(numCycles).build()
+        }
     }
 }

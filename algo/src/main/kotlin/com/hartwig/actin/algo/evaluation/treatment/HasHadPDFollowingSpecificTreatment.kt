@@ -1,100 +1,70 @@
-package com.hartwig.actin.algo.evaluation.treatment;
+package com.hartwig.actin.algo.evaluation.treatment
 
-import static com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.treatmentResultedInPDOption;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.treatmentResultedInPDOption
+import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.util.ApplicationConfig
 
-import java.util.Optional;
-import java.util.Set;
+class HasHadPDFollowingSpecificTreatment internal constructor(private val names: Set<String>, warnCategory: TreatmentCategory?) :
+    EvaluationFunction {
 
-import com.google.common.collect.Sets;
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.algo.evaluation.util.Format;
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
+    private val warnCategory: TreatmentCategory?
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-public class HasHadPDFollowingSpecificTreatment implements EvaluationFunction {
-
-    @NotNull
-    private final Set<String> names;
-    @Nullable
-    private final TreatmentCategory warnCategory;
-
-    HasHadPDFollowingSpecificTreatment(@NotNull final Set<String> names, @Nullable final TreatmentCategory warnCategory) {
-        this.names = names;
-        this.warnCategory = warnCategory;
+    init {
+        this.warnCategory = warnCategory
     }
 
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        Set<String> treatmentsWithPD = Sets.newHashSet();
-        Set<String> treatmentsWithExactType = Sets.newHashSet();
-        boolean hasHadTreatmentWithUnclearPDStatus = false;
-        boolean hasHadTreatmentWithWarnType = false;
-
-        for (PriorTumorTreatment treatment : record.clinical().priorTumorTreatments()) {
-            boolean isWarnCategory = warnCategory != null && treatment.categories().contains(warnCategory);
-            boolean isTrial = treatment.categories().contains(TreatmentCategory.TRIAL);
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val treatmentsWithPD: MutableSet<String> = mutableSetOf()
+        val treatmentsWithExactType: MutableSet<String> = mutableSetOf()
+        var hasHadTreatmentWithUnclearPDStatus = false
+        var hasHadTreatmentWithWarnType = false
+        for (treatment in record.clinical().priorTumorTreatments()) {
+            val isWarnCategory = warnCategory != null && treatment.categories().contains(warnCategory)
+            val isTrial = treatment.categories().contains(TreatmentCategory.TRIAL)
             if (isWarnCategory || isTrial) {
-                hasHadTreatmentWithWarnType = true;
+                hasHadTreatmentWithWarnType = true
             }
-
-            for (String name : names) {
-                if (treatment.name().toLowerCase().contains(name.toLowerCase())) {
-                    treatmentsWithExactType.add(treatment.name());
-                    Optional<Boolean> treatmentResultedInPDOption = treatmentResultedInPDOption(treatment);
-                    if (treatmentResultedInPDOption.orElse(false)) {
-                        treatmentsWithPD.add(treatment.name());
-                    } else if (treatmentResultedInPDOption.isEmpty()) {
-                        hasHadTreatmentWithUnclearPDStatus = true;
+            for (name in names) {
+                if (treatment.name().lowercase(ApplicationConfig.LOCALE).contains(name.lowercase(ApplicationConfig.LOCALE))) {
+                    treatmentsWithExactType.add(treatment.name())
+                    when (treatmentResultedInPDOption(treatment)) {
+                        true -> treatmentsWithPD.add(treatment.name())
+                        null -> hasHadTreatmentWithUnclearPDStatus = true
+                        else -> {}
                     }
                 }
             }
         }
-
-        EvaluationResult result;
-        if (!treatmentsWithPD.isEmpty()) {
-            result = EvaluationResult.PASS;
-        } else if (hasHadTreatmentWithUnclearPDStatus || hasHadTreatmentWithWarnType) {
-            result = EvaluationResult.UNDETERMINED;
+        return if (treatmentsWithPD.isNotEmpty()) {
+            EvaluationFactory.pass(
+                "Patient has received specific " + Format.concat(treatmentsWithPD) + " treatment with PD",
+                "Has received " + Format.concat(treatmentsWithPD) + " treatment with PD"
+            )
+        } else if (hasHadTreatmentWithWarnType) {
+            EvaluationFactory.undetermined(
+                "Undetermined whether patient has received specific " + Format.concat(names) + "treatment",
+                "Undetermined if received specific " + Format.concat(names) + " treatment"
+            )
+        } else if (hasHadTreatmentWithUnclearPDStatus) {
+            EvaluationFactory.undetermined(
+                "Patient has received " + Format.concat(treatmentsWithExactType) + " treatment but undetermined if PD occurred",
+                "Received " + Format.concat(treatmentsWithExactType) + " treatment but undetermined if PD"
+            )
+        } else if (treatmentsWithExactType.isNotEmpty()) {
+            EvaluationFactory.fail(
+                "Patient has received " + Format.concat(treatmentsWithExactType) + " treatment, but no PD",
+                "Received " + Format.concat(treatmentsWithExactType) + " treatment, but no PD"
+            )
         } else {
-            result = EvaluationResult.FAIL;
+            EvaluationFactory.fail(
+                "Patient has not received specific " + Format.concat(names) + "treatment",
+                "Not received specific " + Format.concat(names) + " treatment"
+            )
         }
-
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
-        if (result == EvaluationResult.FAIL) {
-            if (!treatmentsWithExactType.isEmpty()) {
-                builder.addFailSpecificMessages("Patient has received " + Format.concat(treatmentsWithExactType) + " treatment, but no PD");
-                builder.addFailGeneralMessages("Received " + Format.concat(treatmentsWithExactType) + " treatment, but no PD");
-            } else {
-                builder.addFailSpecificMessages("Patient has not received specific " + Format.concat(names) + " treatment");
-                builder.addFailGeneralMessages("Not received specific " + Format.concat(names) + " treatment");
-            }
-            builder.addFailGeneralMessages("No treatment with PD");
-        } else if (result == EvaluationResult.UNDETERMINED) {
-            if (hasHadTreatmentWithWarnType) {
-                builder.addUndeterminedSpecificMessages(
-                        "Undetermined whether patient has received specific " + Format.concat(names) + " treatment");
-                builder.addUndeterminedGeneralMessages("Undetermined if received specific " + Format.concat(names) + " treatment");
-            } else {
-                builder.addUndeterminedSpecificMessages(
-                        "Patient has received " + Format.concat(treatmentsWithExactType) + " treatment but undetermined if PD occurred");
-                builder.addUndeterminedGeneralMessages(
-                        "Received " + Format.concat(treatmentsWithExactType) + " treatment but undetermined if PD");
-            }
-            builder.addUndeterminedGeneralMessages("Undetermined treatment or PD");
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient has received specific " + Format.concat(treatmentsWithPD) + " treatment with PD");
-            builder.addPassGeneralMessages("Has received " + Format.concat(treatmentsWithPD) + " treatment with PD");
-        }
-
-        return builder.build();
     }
 }

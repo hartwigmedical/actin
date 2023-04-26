@@ -1,60 +1,63 @@
-package com.hartwig.actin.algo.evaluation.treatment;
+package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
+import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import com.hartwig.actin.util.ApplicationConfig
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-final class TreatmentTypeResolver {
-
-    private TreatmentTypeResolver() {
+internal object TreatmentTypeResolver {
+    fun isOfType(
+        treatment: PriorTumorTreatment, category: TreatmentCategory,
+        typeToFind: String
+    ): Boolean {
+        val type = resolveType(treatment, category)
+        return type != null && type.lowercase(ApplicationConfig.LOCALE).contains(typeToFind.lowercase(ApplicationConfig.LOCALE))
     }
 
-    public static boolean isOfType(@NotNull PriorTumorTreatment treatment, @NotNull TreatmentCategory category,
-            @NotNull String typeToFind) {
-        String type = resolveType(treatment, category);
-
-        return type != null && type.toLowerCase().contains(typeToFind.toLowerCase());
+    fun hasTypeConfigured(treatment: PriorTumorTreatment, category: TreatmentCategory): Boolean {
+        val type = resolveType(treatment, category)
+        return !type.isNullOrEmpty()
     }
 
-    public static boolean hasTypeConfigured(@NotNull PriorTumorTreatment treatment, @NotNull TreatmentCategory category) {
-        String type = resolveType(treatment, category);
-        return type != null && !type.isEmpty();
-    }
+    private fun resolveType(treatment: PriorTumorTreatment, category: TreatmentCategory): String? {
+        return when (category) {
+            TreatmentCategory.CHEMOTHERAPY -> {
+                treatment.chemoType()
+            }
 
-    @Nullable
-    private static String resolveType(@NotNull PriorTumorTreatment treatment, @NotNull TreatmentCategory category) {
-        switch (category) {
-            case CHEMOTHERAPY: {
-                return treatment.chemoType();
+            TreatmentCategory.IMMUNOTHERAPY -> {
+                treatment.immunoType()
             }
-            case IMMUNOTHERAPY: {
-                return treatment.immunoType();
+
+            TreatmentCategory.TARGETED_THERAPY -> {
+                treatment.targetedType()
             }
-            case TARGETED_THERAPY: {
-                return treatment.targetedType();
+
+            TreatmentCategory.HORMONE_THERAPY -> {
+                treatment.hormoneType()
             }
-            case HORMONE_THERAPY: {
-                return treatment.hormoneType();
+
+            TreatmentCategory.RADIOTHERAPY -> {
+                treatment.radioType()
             }
-            case RADIOTHERAPY: {
-                return treatment.radioType();
+
+            TreatmentCategory.TRANSPLANTATION -> {
+                treatment.transplantType()
             }
-            case TRANSPLANTATION: {
-                return treatment.transplantType();
+
+            TreatmentCategory.SUPPORTIVE_TREATMENT -> {
+                treatment.supportiveType()
             }
-            case SUPPORTIVE_TREATMENT: {
-                return treatment.supportiveType();
+
+            TreatmentCategory.CAR_T -> {
+                treatment.carTType()
             }
-            case CAR_T: {
-                return treatment.carTType();
+
+            TreatmentCategory.TRIAL -> {
+                treatment.trialAcronym()
             }
-            case TRIAL: {
-                return treatment.trialAcronym();
-            }
-            default: {
-                return null;
+
+            else -> {
+                null
             }
         }
     }
