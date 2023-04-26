@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -42,26 +43,36 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
     @Override
     public Table contents() {
         float colWidth = width / 12;
-        Table table = Tables.createFixedWidthCols(colWidth, colWidth, colWidth * 3, colWidth, colWidth, colWidth, colWidth, colWidth * 3);
+        Table table = Tables.createFixedWidthCols(colWidth,
+                colWidth,
+                colWidth * 2,
+                colWidth,
+                colWidth,
+                colWidth,
+                colWidth,
+                colWidth * 2,
+                colWidth * 2);
 
-        table.addHeaderCell(Cells.createHeader("Purity"));
-        table.addHeaderCell(Cells.createHeader("Sufficient Quality"));
-        table.addHeaderCell(Cells.createHeader("Predicted tumor origin"));
-        table.addHeaderCell(Cells.createHeader("TML Status"));
-        table.addHeaderCell(Cells.createHeader("TMB Status"));
-        table.addHeaderCell(Cells.createHeader("MS Stability"));
-        table.addHeaderCell(Cells.createHeader("HR Status"));
-        table.addHeaderCell(Cells.createHeader("DPYD"));
+        List.of("Purity",
+                "Sufficient Quality",
+                "Predicted tumor origin",
+                "TML Status",
+                "TMB Status",
+                "MS Stability",
+                "HR Status",
+                "DPYD",
+                "UGT1A1").forEach(title -> table.addHeaderCell(Cells.createHeader(title)));
 
         MolecularCharacteristics characteristics = molecular.characteristics();
-        table.addCell(createPurityCell(characteristics.purity()));
-        table.addCell(Cells.createContentYesNo(Formats.yesNoUnknown(molecular.hasSufficientQuality())));
-        table.addCell(createPredictedTumorOriginCell());
-        table.addCell(createTMLStatusCell());
-        table.addCell(createTMBStatusCell());
-        table.addCell(createMSStabilityCell());
-        table.addCell(createHRStatusCell());
-        table.addCell(Cells.createContent(createDPYDString(molecular.pharmaco())));
+        List.of(createPurityCell(characteristics.purity()),
+                Cells.createContentYesNo(Formats.yesNoUnknown(molecular.hasSufficientQuality())),
+                createPredictedTumorOriginCell(),
+                createTMLStatusCell(),
+                createTMBStatusCell(),
+                createMSStabilityCell(),
+                createHRStatusCell(),
+                Cells.createContent(createPeachSummaryForGene(molecular.pharmaco(), "DPYD")),
+                Cells.createContent(createPeachSummaryForGene(molecular.pharmaco(), "UGT1A1"))).forEach(table::addCell);
 
         return table;
     }
@@ -196,14 +207,14 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static String createDPYDString(@NotNull Set<PharmacoEntry> pharmaco) {
-        PharmacoEntry dpyd = findPharmacoEntry(pharmaco, "DPYD");
-        if (dpyd == null) {
+    private static String createPeachSummaryForGene(@NotNull Set<PharmacoEntry> pharmaco, String gene) {
+        PharmacoEntry pharmacoEntry = findPharmacoEntry(pharmaco, gene);
+        if (pharmacoEntry == null) {
             return Formats.VALUE_UNKNOWN;
         }
 
         StringJoiner joiner = Formats.commaJoiner();
-        for (Haplotype haplotype : dpyd.haplotypes()) {
+        for (Haplotype haplotype : pharmacoEntry.haplotypes()) {
             joiner.add(haplotype.name() + " (" + haplotype.function() + ")");
         }
         return joiner.toString();
