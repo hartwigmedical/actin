@@ -1,33 +1,36 @@
-package com.hartwig.actin.algo.evaluation.cardiacfunction;
+package com.hartwig.actin.algo.evaluation.cardiacfunction
 
-import java.util.Optional;
+import com.hartwig.actin.algo.evaluation.cardiacfunction.ECGMeasureEvaluationFunction.ThresholdCriteria
+import com.hartwig.actin.clinical.datamodel.ECG
 
-public class ECGMeasureEvaluationFunctions {
-
-    private ECGMeasureEvaluationFunctions() {
+object ECGMeasureEvaluationFunctions {
+    fun hasLimitedQTCF(maxQTCF: Double): ECGMeasureEvaluationFunction {
+        return ECGMeasureEvaluationFunction(
+            ECGMeasureName.QTCF,
+            maxQTCF,
+            ECGUnit.MILLISECONDS,
+            { ecg: ECG -> ecg.qtcfMeasure() },
+            ThresholdCriteria.MAXIMUM
+        )
     }
 
-    static ECGMeasureEvaluationFunction hasLimitedQTCF(final double maxQTCF) {
-        return new ECGMeasureEvaluationFunction(ECGMeasureName.QTCF,
-                maxQTCF,
-                ECGUnit.MILLISECONDS,
-                ecg -> Optional.ofNullable(ecg.qtcfMeasure()),
-                ECGMeasureEvaluationFunction.ThresholdCriteria.MAXIMUM);
+    fun hasSufficientQTCF(minQTCF: Double): ECGMeasureEvaluationFunction {
+        return ECGMeasureEvaluationFunction(
+            ECGMeasureName.QTCF,
+            minQTCF,
+            ECGUnit.MILLISECONDS,
+            { ecg: ECG -> ecg.qtcfMeasure() },
+            ThresholdCriteria.MINIMUM
+        )
     }
 
-    static ECGMeasureEvaluationFunction hasSufficientQTCF(final double minQTCF) {
-        return new ECGMeasureEvaluationFunction(ECGMeasureName.QTCF,
-                minQTCF,
-                ECGUnit.MILLISECONDS,
-                ecg -> Optional.ofNullable(ecg.qtcfMeasure()),
-                ECGMeasureEvaluationFunction.ThresholdCriteria.MINIMUM);
-    }
-
-    static ECGMeasureEvaluationFunction hasSufficientJTc(final double maxQTCF) {
-        return new ECGMeasureEvaluationFunction(ECGMeasureName.JTC,
-                maxQTCF,
-                ECGUnit.MILLISECONDS,
-                ecg -> Optional.ofNullable(ecg.jtcMeasure()),
-                ECGMeasureEvaluationFunction.ThresholdCriteria.MINIMUM);
+    fun hasSufficientJTc(maxQTCF: Double): ECGMeasureEvaluationFunction {
+        return ECGMeasureEvaluationFunction(
+            ECGMeasureName.JTC,
+            maxQTCF,
+            ECGUnit.MILLISECONDS,
+            { ecg: ECG -> ecg.jtcMeasure() },
+            ThresholdCriteria.MINIMUM
+        )
     }
 }

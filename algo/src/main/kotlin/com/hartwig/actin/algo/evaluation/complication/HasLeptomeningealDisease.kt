@@ -1,75 +1,45 @@
-package com.hartwig.actin.algo.evaluation.complication;
+package com.hartwig.actin.algo.evaluation.complication
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.util.Format.concat
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.algo.evaluation.util.Format;
+class HasLeptomeningealDisease internal constructor() : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val leptomeningealComplications = ComplicationFunctions.findComplicationNamesMatchingAnyCategory(
+            record, listOf(
+                LEPTOMENINGEAL_DISEASE_CATEGORY_PATTERN
+            )
+        )
+        if (leptomeningealComplications.isNotEmpty()) {
+            return EvaluationFactory.pass(
+                "Patient has complication " + concat(leptomeningealComplications), "Present " + concat(leptomeningealComplications)
+            )
+        }
+        val hasCnsLesions = record.clinical().tumor().hasCnsLesions()
+        val otherLesions = record.clinical().tumor().otherLesions()
+        val potentialMeningealLesions = if (hasCnsLesions != null && otherLesions != null && hasCnsLesions) {
+            otherLesions.filter { isPotentialLeptomeningealLesion(it) }.toSet()
+        } else emptySet()
 
-import org.jetbrains.annotations.NotNull;
-
-public class HasLeptomeningealDisease implements EvaluationFunction {
-
-    private static final String LEPTOMENINGEAL_DISEASE_CATEGORY_PATTERN = "leptomeningeal disease";
-    private static final Set<List<String>> LESION_WARNING_PATTERNS = Sets.newHashSet();
-
-    static {
-        LESION_WARNING_PATTERNS.add(Lists.newArrayList("leptomeningeal"));
-        LESION_WARNING_PATTERNS.add(Lists.newArrayList("carcinomatous", "meningitis"));
+        return if (potentialMeningealLesions.isNotEmpty()) {
+            EvaluationFactory.warn(
+                "Patient has lesions indicating potential leptomeningeal disease: " + concat(potentialMeningealLesions),
+                "Presence of lesions potentially indicating leptomeningeal disease"
+            )
+        } else EvaluationFactory.fail(
+            "Patient does not have leptomeningeal disease", "No leptomeningeal disease"
+        )
     }
 
-    HasLeptomeningealDisease() {
-    }
+    companion object {
+        private const val LEPTOMENINGEAL_DISEASE_CATEGORY_PATTERN = "leptomeningeal disease"
+        private val LESION_WARNING_PATTERNS = setOf(listOf("leptomeningeal"), listOf("carcinomatous", "meningitis"))
 
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        Set<String> leptomeningealComplications = ComplicationFunctions.findComplicationNamesMatchingAnyCategory(record,
-                Collections.singletonList(LEPTOMENINGEAL_DISEASE_CATEGORY_PATTERN));
-
-        if (!leptomeningealComplications.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient has complication " + Format.concat(leptomeningealComplications))
-                    .addPassGeneralMessages("Present " + Format.concat(leptomeningealComplications))
-                    .build();
+        private fun isPotentialLeptomeningealLesion(lesion: String): Boolean {
+            return PatternMatcher.isMatch(lesion, LESION_WARNING_PATTERNS)
         }
-
-        Boolean hasCnsLesions = record.clinical().tumor().hasCnsLesions();
-        List<String> otherLesions = record.clinical().tumor().otherLesions();
-        Set<String> potentialMeningealLesions = Sets.newHashSet();
-        if (hasCnsLesions != null && otherLesions != null && hasCnsLesions) {
-            for (String otherLesion : otherLesions) {
-                if (isPotentialLeptomeningealLesion(otherLesion)) {
-                    potentialMeningealLesions.add(otherLesion);
-                }
-            }
-        }
-
-        if (!potentialMeningealLesions.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addWarnSpecificMessages(
-                            "Patient has lesions indicating potential leptomeningeal disease: " + Format.concat(potentialMeningealLesions))
-                    .addWarnGeneralMessages("Presence of lesions potentially indicating leptomeningeal disease")
-                    .build();
-        }
-
-        return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Patient does not have leptomeningeal disease")
-                .addFailGeneralMessages("No leptomeningeal disease")
-                .build();
-    }
-
-    private static boolean isPotentialLeptomeningealLesion(@NotNull String lesion) {
-        return PatternMatcher.isMatch(lesion, LESION_WARNING_PATTERNS);
     }
 }

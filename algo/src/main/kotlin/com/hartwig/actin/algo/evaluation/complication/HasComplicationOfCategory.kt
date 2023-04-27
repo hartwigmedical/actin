@@ -1,79 +1,51 @@
-package com.hartwig.actin.algo.evaluation.complication;
+package com.hartwig.actin.algo.evaluation.complication
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.util.Format.concat
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.algo.evaluation.util.Format;
-import com.hartwig.actin.clinical.datamodel.Complication;
-
-import org.jetbrains.annotations.NotNull;
-
-public class HasComplicationOfCategory implements EvaluationFunction {
-
-    @NotNull
-    private final String categoryToFind;
-
-    HasComplicationOfCategory(@NotNull String categoryToFind) {
-        this.categoryToFind = categoryToFind;
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
+class HasComplicationOfCategory internal constructor(private val categoryToFind: String) : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
         if (record.clinical().complications() == null) {
-            return undetermined();
+            return undetermined()
         }
-
-        Set<String> complicationMatches =
-                ComplicationFunctions.findComplicationNamesMatchingAnyCategory(record, Collections.singletonList(categoryToFind));
-
-        if (!complicationMatches.isEmpty()) {
-            if (complicationMatches.size() == 1 && complicationMatches.iterator().next().equalsIgnoreCase(categoryToFind)) {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.PASS)
-                        .addPassSpecificMessages("Patient has complication " + Format.concat(complicationMatches))
-                        .addPassGeneralMessages("Present complication(s): " + Format.concat(complicationMatches))
-                        .build();
+        val complicationMatches = ComplicationFunctions.findComplicationNamesMatchingAnyCategory(record, listOf(categoryToFind))
+        if (complicationMatches.isNotEmpty()) {
+            return if (complicationMatches.size == 1 && complicationMatches.iterator().next().equals(categoryToFind, ignoreCase = true)) {
+                EvaluationFactory.pass(
+                    "Patient has complication " + concat(complicationMatches),
+                    "Present complication(s): " + concat(complicationMatches)
+                )
             } else {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.PASS)
-                        .addPassSpecificMessages(
-                                "Patient has complication " + Format.concat(complicationMatches) + " of category " + categoryToFind)
-                        .addPassGeneralMessages("Present complication(s): " + Format.concat(complicationMatches))
-                        .build();
+                EvaluationFactory.pass(
+                    "Patient has complication " + concat(complicationMatches) + " of category " + categoryToFind,
+                    "Present complication(s): " + concat(complicationMatches)
+                )
             }
         }
+        return if (hasComplicationsWithoutCategories(record)) {
+            undetermined()
+        } else
+            EvaluationFactory.fail(
+                "Patient does not have complication of category $categoryToFind",
+                "Has no complication of category $categoryToFind"
+            )
+    }
 
-        if (hasComplicationsWithoutCategories(record)) {
-            return undetermined();
+    companion object {
+        private fun undetermined(): Evaluation {
+            return EvaluationFactory.undetermined(
+                "Patient has complications but undetermined which category of complications",
+                "Complications present, but unknown type"
+            )
         }
 
-        return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Patient does not have complication of category " + categoryToFind)
-                .addFailGeneralMessages("Has no complication of category " + categoryToFind)
-                .build();
-    }
-
-    @NotNull
-    private static ImmutableEvaluation undetermined() {
-        return EvaluationFactory.recoverable()
-                .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Patient has complications but undetermined which category of complications")
-                .addUndeterminedGeneralMessages("Complications present, but unknown type")
-                .build();
-    }
-
-    private static boolean hasComplicationsWithoutCategories(@NotNull PatientRecord record) {
-        List<Complication> complications = record.clinical().complications();
-        return Boolean.TRUE.equals(record.clinical().clinicalStatus().hasComplications()) && complications != null && complications.stream()
-                .anyMatch(ComplicationFunctions::isYesInputComplication);
+        private fun hasComplicationsWithoutCategories(record: PatientRecord): Boolean {
+            val complications = record.clinical().complications()
+            return record.clinical().clinicalStatus().hasComplications() == true && complications != null &&
+                    complications.any { ComplicationFunctions.isYesInputComplication(it) }
+        }
     }
 }

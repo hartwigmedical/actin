@@ -1,30 +1,19 @@
-package com.hartwig.actin.algo.evaluation.complication;
+package com.hartwig.actin.algo.evaluation.complication
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.hartwig.actin.algo.evaluation.complication.PatternMatcher.isMatch
+import org.junit.Assert
+import org.junit.Test
 
-import java.util.List;
-import java.util.Set;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
-import org.junit.Test;
-
-public class PatternMatcherTest {
-
+class PatternMatcherTest {
     @Test
-    public void canMatchPatterns() {
-        Set<List<String>> patterns = Sets.newHashSet();
-
-        assertFalse(PatternMatcher.isMatch("term", patterns));
-
-        patterns.add(Lists.newArrayList("found", "pattern"));
-        assertFalse(PatternMatcher.isMatch("the pattern is not found here", patterns));
-        assertTrue(PatternMatcher.isMatch("we found the pattern here", patterns));
-
-        patterns.add(Lists.newArrayList("1", "2", "3", "4"));
-        assertFalse(PatternMatcher.isMatch("something completely different", patterns));
-        assertTrue(PatternMatcher.isMatch("we can count 1, 2, 3, 4, 5, 6", patterns));
+    fun canMatchPatterns() {
+        val patterns: MutableSet<List<String>> = mutableSetOf()
+        Assert.assertFalse(isMatch("term", patterns))
+        patterns.add(listOf("found", "pattern"))
+        Assert.assertFalse(isMatch("the pattern is not found here", patterns))
+        Assert.assertTrue(isMatch("we found the pattern here", patterns))
+        patterns.add(listOf("1", "2", "3", "4"))
+        Assert.assertFalse(isMatch("something completely different", patterns))
+        Assert.assertTrue(isMatch("we can count 1, 2, 3, 4, 5, 6", patterns))
     }
 }

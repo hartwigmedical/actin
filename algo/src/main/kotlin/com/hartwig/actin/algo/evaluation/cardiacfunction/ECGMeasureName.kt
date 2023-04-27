@@ -1,5 +1,5 @@
-package com.hartwig.actin.algo.evaluation.cardiacfunction;
+package com.hartwig.actin.algo.evaluation.cardiacfunction
 
-enum ECGMeasureName {
+internal enum class ECGMeasureName {
     QTCF, JTC
 }

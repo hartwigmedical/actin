@@ -1,102 +1,71 @@
-package com.hartwig.actin.algo.evaluation.cardiacfunction;
+package com.hartwig.actin.algo.evaluation.cardiacfunction
 
-import static java.lang.String.format;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFactory.unrecoverable
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.clinical.datamodel.ECG
+import com.hartwig.actin.clinical.datamodel.ECGMeasure
 
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.function.Function;
+class ECGMeasureEvaluationFunction internal constructor(
+    private val measureName: ECGMeasureName,
+    private val threshold: Double,
+    private val expectedUnit: ECGUnit,
+    private val extractingECGMeasure: (ECG) -> ECGMeasure?,
+    private val thresholdCriteria: ThresholdCriteria
+) : EvaluationFunction {
+    internal enum class ThresholdCriteria(
+        val comparator: Comparator<Number>, val failMessageTemplate: String, val passMessageTemplate: String
+    ) {
+        MAXIMUM(
+            Comparator.comparingDouble { obj: Number -> obj.toDouble() }.reversed(),
+            "%s of %s %s does not exceed minimum threshold of %s",
+            "%s of %s %s is above or equal to minimum threshold of %s"
+        ),
+        MINIMUM(
+            Comparator.comparingDouble { obj: Number -> obj.toDouble() },
+            "%s of %s %s exceeds maximum threshold of %s",
+            "%s of %s %s is below or equal to maximum threshold of %s"
+        )
+    }
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.clinical.datamodel.ECG;
-import com.hartwig.actin.clinical.datamodel.ECGMeasure;
+    override fun evaluate(record: PatientRecord): Evaluation {
+        return record.clinical().clinicalStatus().ecg()?.let(extractingECGMeasure)?.let { measure: ECGMeasure -> this.evaluate(measure) }
+            ?: EvaluationFactory.undetermined(
+                String.format("No %s known", measureName), String.format("Undetermined %s", measureName)
+            )
+    }
 
-import org.jetbrains.annotations.NotNull;
-
-class ECGMeasureEvaluationFunction implements EvaluationFunction {
-
-    enum ThresholdCriteria {
-        MAXIMUM(Comparator.comparingDouble(Number::doubleValue).reversed(),
-                "%s of %s %s does not exceed minimum threshold of %s",
-                "%s of %s %s is above or equal to minimum threshold of %s"),
-        MINIMUM(Comparator.comparingDouble(Number::doubleValue),
-                "%s of %s %s exceeds maximum threshold of %s",
-                "%s of %s %s is below or equal to maximum threshold of %s");
-        private final Comparator<Number> comparator;
-        private final String failMessageTemplate;
-        private final String passMessageTemplate;
-
-        ThresholdCriteria(final Comparator<Number> comparator, final String failMessageTemplate, final String passMessageTemplate) {
-            this.comparator = comparator;
-            this.failMessageTemplate = failMessageTemplate;
-            this.passMessageTemplate = passMessageTemplate;
+    private fun evaluate(measure: ECGMeasure): Evaluation {
+        if (measure.unit() != expectedUnit.symbol()) {
+            return unrecoverable().result(EvaluationResult.UNDETERMINED).addUndeterminedSpecificMessages(
+                "%s measure not in '%s': %s", measureName.name, expectedUnit.symbol(), measure.unit()
+            ).addUndeterminedGeneralMessages(String.format("Unrecognized unit of %s evaluation", measureName)).build()
         }
-    }
-
-    private final double threshold;
-    private final ECGMeasureName measureName;
-    private final ECGUnit expectedUnit;
-    private final Function<ECG, Optional<ECGMeasure>> extractingECGMeasure;
-    private final ThresholdCriteria thresholdCriteria;
-
-    public ECGMeasureEvaluationFunction(final ECGMeasureName measureName, final double threshold, final ECGUnit expectedUnit,
-            final Function<ECG, Optional<ECGMeasure>> extractingECGMeasure, final ThresholdCriteria thresholdCriteria) {
-        this.threshold = threshold;
-        this.measureName = measureName;
-        this.expectedUnit = expectedUnit;
-        this.extractingECGMeasure = extractingECGMeasure;
-        this.thresholdCriteria = thresholdCriteria;
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        return Optional.ofNullable(record.clinical().clinicalStatus().ecg())
-                .flatMap(extractingECGMeasure)
-                .map(this::evaluate)
-                .orElse(EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.UNDETERMINED)
-                        .addUndeterminedSpecificMessages(format("No %s known", measureName))
-                        .addUndeterminedGeneralMessages(format("Undetermined %s", measureName))
-                        .build());
-    }
-
-    @NotNull
-    private Evaluation evaluate(final ECGMeasure measure) {
-        if (!measure.unit().equals(expectedUnit.symbol())) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("%s measure not in '%s': %s",
-                            measureName.name(),
-                            expectedUnit.symbol(),
-                            measure.unit())
-                    .addUndeterminedGeneralMessages(format("Unrecognized unit of %s evaluation", measureName))
-                    .build();
-        }
-        EvaluationResult result =
-                thresholdCriteria.comparator.compare(measure.value(), threshold) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
+        val result =
+            if (thresholdCriteria.comparator.compare(measure.value(), threshold) >= 0) EvaluationResult.PASS else EvaluationResult.FAIL
+        val builder = unrecoverable().result(result)
         if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages(format(thresholdCriteria.failMessageTemplate,
-                    measureName,
-                    measure.value(),
-                    measure.unit(),
-                    threshold)).addFailGeneralMessages(generalMessage(measureName.name()));
+            builder.addFailSpecificMessages(
+                String.format(
+                    thresholdCriteria.failMessageTemplate, measureName, measure.value(), measure.unit(), threshold
+                )
+            ).addFailGeneralMessages(generalMessage(measureName.name))
         } else {
-            builder.addPassSpecificMessages(format(thresholdCriteria.passMessageTemplate,
-                    measureName,
-                    measure.value(),
-                    measure.unit(),
-                    threshold)).addPassGeneralMessages(generalMessage(measureName.name()));
+            builder.addPassSpecificMessages(
+                String.format(
+                    thresholdCriteria.passMessageTemplate, measureName, measure.value(), measure.unit(), threshold
+                )
+            ).addPassGeneralMessages(generalMessage(measureName.name))
         }
-        return builder.build();
+        return builder.build()
     }
 
-    private static String generalMessage(final String measureName) {
-        return format("%s requirements", measureName);
+    companion object {
+        private fun generalMessage(measureName: String): String {
+            return String.format("%s requirements", measureName)
+        }
     }
 }

@@ -1,50 +1,21 @@
-package com.hartwig.actin.algo.evaluation.cardiacfunction;
+package com.hartwig.actin.algo.evaluation.cardiacfunction
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-import org.jetbrains.annotations.NotNull;
-
-public class HasSufficientLVEF implements EvaluationFunction {
-
-    private final double minLVEF;
-    private final boolean passIfUnknown;
-
-    HasSufficientLVEF(final double minLVEF, final boolean passIfUnknown) {
-        this.minLVEF = minLVEF;
-        this.passIfUnknown = passIfUnknown;
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        Double lvef = record.clinical().clinicalStatus().lvef();
-        if (lvef == null) {
-            if (passIfUnknown) {
-                return EvaluationFactory.unrecoverable().result(EvaluationResult.PASS).addPassSpecificMessages("No LVEF known").build();
-            } else {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.UNDETERMINED)
-                        .addUndeterminedSpecificMessages("No LVEF known")
-                        .addUndeterminedGeneralMessages("LVEF unknown")
-                        .build();
-            }
+class HasSufficientLVEF internal constructor(private val minLVEF: Double, private val passIfUnknown: Boolean) : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val lvef = record.clinical().clinicalStatus().lvef() ?: return if (passIfUnknown) {
+            EvaluationFactory.pass("No LVEF known", "LVEF unknown")
+        } else {
+            EvaluationFactory.undetermined("No LVEF known", "LVEF unknown")
         }
-
-        EvaluationResult result = Double.compare(lvef, minLVEF) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("LVEF of " + lvef + " is below minimum LVEF of " + minLVEF);
-            builder.addFailGeneralMessages("LVEF of " + lvef + " below " + minLVEF);
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("LVEF of " + lvef + " exceeds minimum LVEF required ");
-            builder.addPassGeneralMessages("LVEF of " + lvef + " exceeds " + minLVEF);
+        return if (lvef.compareTo(minLVEF) >= 0) {
+            EvaluationFactory.pass("LVEF of $lvef exceeds minimum LVEF required ", "LVEF of $lvef exceeds $minLVEF")
+        } else {
+            EvaluationFactory.fail("LVEF of $lvef is below minimum LVEF of $minLVEF", "LVEF of $lvef below $minLVEF")
         }
-
-        return builder.build();
     }
 }

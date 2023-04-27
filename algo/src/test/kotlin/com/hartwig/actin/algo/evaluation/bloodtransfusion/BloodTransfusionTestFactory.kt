@@ -1,52 +1,42 @@
-package com.hartwig.actin.algo.evaluation.bloodtransfusion;
+package com.hartwig.actin.algo.evaluation.bloodtransfusion
 
-import java.util.List;
+import com.hartwig.actin.ImmutablePatientRecord
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.clinical.datamodel.BloodTransfusion
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
+import com.hartwig.actin.clinical.datamodel.Medication
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 
-import com.google.common.collect.Lists;
-import com.hartwig.actin.ImmutablePatientRecord;
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.Medication;
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
-
-import org.jetbrains.annotations.NotNull;
-
-final class BloodTransfusionTestFactory {
-
-    private BloodTransfusionTestFactory() {
+internal object BloodTransfusionTestFactory {
+    fun withBloodTransfusion(transfusion: BloodTransfusion): PatientRecord {
+        return withBloodTransfusions(listOf(transfusion))
     }
 
-    @NotNull
-    public static PatientRecord withBloodTransfusion(@NotNull BloodTransfusion transfusion) {
-        return withBloodTransfusions(Lists.newArrayList(transfusion));
-    }
-
-    @NotNull
-    public static PatientRecord withBloodTransfusions(@NotNull List<BloodTransfusion> transfusions) {
-        return withClinicalRecord(ImmutableClinicalRecord.builder()
+    fun withBloodTransfusions(transfusions: List<BloodTransfusion>): PatientRecord {
+        return withClinicalRecord(
+            ImmutableClinicalRecord.builder()
                 .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                 .bloodTransfusions(transfusions)
-                .build());
+                .build()
+        )
     }
 
-    @NotNull
-    public static PatientRecord withMedication(@NotNull Medication medication) {
-        return withMedications(Lists.newArrayList(medication));
+    fun withMedication(medication: Medication): PatientRecord {
+        return withMedications(listOf(medication))
     }
 
-    @NotNull
-    public static PatientRecord withMedications(@NotNull List<Medication> medications) {
-        return withClinicalRecord(ImmutableClinicalRecord.builder()
+    fun withMedications(medications: List<Medication>): PatientRecord {
+        return withClinicalRecord(
+            ImmutableClinicalRecord.builder()
                 .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                 .medications(medications)
-                .build());
+                .build()
+        )
     }
 
-    @NotNull
-    private static PatientRecord withClinicalRecord(@NotNull ClinicalRecord clinical) {
-        return ImmutablePatientRecord.builder().from(TestDataFactory.createMinimalTestPatientRecord()).clinical(clinical).build();
+    private fun withClinicalRecord(clinical: ClinicalRecord): PatientRecord {
+        return ImmutablePatientRecord.builder().from(TestDataFactory.createMinimalTestPatientRecord()).clinical(clinical).build()
     }
 }

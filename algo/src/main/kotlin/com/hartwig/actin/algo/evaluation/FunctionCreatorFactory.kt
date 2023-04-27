@@ -2,6 +2,9 @@ package com.hartwig.actin.algo.evaluation
 
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider
+import com.hartwig.actin.algo.evaluation.bloodtransfusion.BloodTransfusionRuleMapper
+import com.hartwig.actin.algo.evaluation.cardiacfunction.CardiacFunctionRuleMapper
+import com.hartwig.actin.algo.evaluation.complication.ComplicationRuleMapper
 import com.hartwig.actin.algo.evaluation.general.GeneralRuleMapper
 import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleMapper
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentRuleMapper
@@ -21,7 +24,12 @@ internal object FunctionCreatorFactory {
         )
 
         return listOf(
-            GeneralRuleMapper(resources), MolecularRuleMapper(resources), TreatmentRuleMapper(resources),
+            BloodTransfusionRuleMapper(resources),
+            CardiacFunctionRuleMapper(resources),
+            ComplicationRuleMapper(resources),
+            GeneralRuleMapper(resources),
+            MolecularRuleMapper(resources),
+            TreatmentRuleMapper(resources),
             TumorRuleMapper(resources)
         )
             .map { it.createMappings() }.reduce { acc, map -> acc + map }

@@ -1,104 +1,50 @@
-package com.hartwig.actin.algo.evaluation.cardiacfunction;
+package com.hartwig.actin.algo.evaluation.cardiacfunction
 
-import java.util.Set;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.doid.DoidConstants
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
+import com.hartwig.actin.algo.othercondition.OtherConditionSelector
+import com.hartwig.actin.doid.DoidModel
 
-import com.google.common.collect.Sets;
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.doid.DoidConstants;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.algo.evaluation.util.Format;
-import com.hartwig.actin.algo.othercondition.OtherConditionSelector;
-import com.hartwig.actin.clinical.datamodel.ECG;
-import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
-import com.hartwig.actin.doid.DoidModel;
-
-import org.jetbrains.annotations.NotNull;
-
-public class HasPotentialSignificantHeartDisease implements EvaluationFunction {
-
-    static final Set<String> HEART_DISEASE_DOIDS = Sets.newHashSet();
-    static final Set<String> HEART_DISEASE_TERMS = Sets.newHashSet();
-
-    static {
-        HEART_DISEASE_DOIDS.add(DoidConstants.HEART_DISEASE_DOID);
-        HEART_DISEASE_DOIDS.add(DoidConstants.HYPERTENSION_DOID);
-        HEART_DISEASE_DOIDS.add(DoidConstants.CORONARY_ARTERY_DISEASE_DOID);
-
-        HEART_DISEASE_TERMS.add("angina");
-        HEART_DISEASE_TERMS.add("pacemaker");
-    }
-
-    @NotNull
-    private final DoidModel doidModel;
-
-    HasPotentialSignificantHeartDisease(@NotNull final DoidModel doidModel) {
-        this.doidModel = doidModel;
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        ECG ecg = record.clinical().clinicalStatus().ecg();
+class HasPotentialSignificantHeartDisease internal constructor(private val doidModel: DoidModel) : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val ecg = record.clinical().clinicalStatus().ecg()
         if (ecg != null && ecg.hasSigAberrationLatestECG()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient has significant aberration on latest ECG and therefore potentially significant cardiac disease")
-                    .addPassGeneralMessages("Present ECG aberrations - potentially significant cardiac disease")
-                    .build();
+            return EvaluationFactory.pass(
+                "Patient has significant aberration on latest ECG and therefore potentially significant cardiac disease",
+                "Present ECG aberrations - potentially significant cardiac disease"
+            )
         }
+        val heartConditions = OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())
+            .filter { condition -> isPotentiallyHeartDisease(condition.name()) || containsPotentialHeartDiseaseDoid(condition.doids()) }
+            .map { it.name() }.toSet()
 
-        Set<String> heartConditions = Sets.newHashSet();
-        for (PriorOtherCondition condition : OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())) {
-            boolean hasHeartDiseaseDoid = false;
-            for (String doid : condition.doids()) {
-                if (isPotentialHearthDiseaseDoid(doid)) {
-                    hasHeartDiseaseDoid = true;
-                }
-            }
-
-            boolean hasHeartDiseaseTerm = isPotentiallyHeartDisease(condition.name());
-
-            if (hasHeartDiseaseDoid || hasHeartDiseaseTerm) {
-                heartConditions.add(condition.name());
-            }
-        }
-
-        if (!heartConditions.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages(
-                            "Patient has " + Format.concat(heartConditions) + " and therefore potentially significant cardiac disease")
-                    .addPassGeneralMessages("Present " + Format.concat(heartConditions) + " - potentially significant cardiac disease")
-                    .build();
-        }
-
-        return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Patient has no potential significant cardiac disease")
-                .addFailGeneralMessages("No potential significant cardiac disease")
-                .build();
+        return if (heartConditions.isNotEmpty()) {
+            EvaluationFactory.pass(
+                "Patient has " + concat(heartConditions) + " and therefore potentially significant cardiac disease",
+                "Present " + concat(heartConditions) + " - potentially significant cardiac disease"
+            )
+        } else EvaluationFactory.fail(
+            "Patient has no potential significant cardiac disease", "No potential significant cardiac disease"
+        )
     }
 
-    private static boolean isPotentiallyHeartDisease(@NotNull String name) {
-        String lowerCaseName = name.toLowerCase();
-        for (String heartDiseaseTerm : HEART_DISEASE_TERMS) {
-            if (lowerCaseName.contains(heartDiseaseTerm.toLowerCase())) {
-                return true;
-            }
-        }
-        return false;
+    private fun containsPotentialHeartDiseaseDoid(doids: Collection<String>): Boolean {
+        val expanded = doids.flatMap { doidModel.doidWithParents(it) }.toSet()
+        return HEART_DISEASE_DOIDS.any { expanded.contains(it) }
     }
 
-    private boolean isPotentialHearthDiseaseDoid(@NotNull String doid) {
-        Set<String> expanded = doidModel.doidWithParents(doid);
-        for (String heartDiseaseDoid : HEART_DISEASE_DOIDS) {
-            if (expanded.contains(heartDiseaseDoid)) {
-                return true;
-            }
+    companion object {
+        val HEART_DISEASE_DOIDS =
+            setOf(DoidConstants.HEART_DISEASE_DOID, DoidConstants.HYPERTENSION_DOID, DoidConstants.CORONARY_ARTERY_DISEASE_DOID)
+        val HEART_DISEASE_TERMS = setOf("angina", "pacemaker")
+
+        private fun isPotentiallyHeartDisease(name: String): Boolean {
+            return stringCaseInsensitivelyMatchesQueryCollection(name, HEART_DISEASE_TERMS)
         }
-        return false;
     }
 }

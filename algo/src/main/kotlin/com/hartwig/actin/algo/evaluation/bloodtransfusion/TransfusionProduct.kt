@@ -1,20 +1,9 @@
-package com.hartwig.actin.algo.evaluation.bloodtransfusion;
+package com.hartwig.actin.algo.evaluation.bloodtransfusion
 
-import org.jetbrains.annotations.NotNull;
+enum class TransfusionProduct(private val display: String) {
+    ERYTHROCYTE("Erythrocyte"), THROMBOCYTE("Thrombocyte");
 
-public enum TransfusionProduct {
-    ERYTHROCYTE("Erythrocyte"),
-    THROMBOCYTE("Thrombocyte");
-
-    @NotNull
-    private final String display;
-
-    TransfusionProduct(@NotNull final String display) {
-        this.display = display;
-    }
-
-    @NotNull
-    public String display() {
-        return display;
+    fun display(): String {
+        return display
     }
 }

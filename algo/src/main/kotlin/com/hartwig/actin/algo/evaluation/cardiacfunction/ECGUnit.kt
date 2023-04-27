@@ -1,15 +1,9 @@
-package com.hartwig.actin.algo.evaluation.cardiacfunction;
+package com.hartwig.actin.algo.evaluation.cardiacfunction
 
-enum ECGUnit {
+internal enum class ECGUnit(private val symbol: String) {
     MILLISECONDS("ms");
 
-    private final String symbol;
-
-    ECGUnit(final String symbol) {
-        this.symbol = symbol;
-    }
-
-    public String symbol() {
-        return symbol;
+    fun symbol(): String {
+        return symbol
     }
 }
