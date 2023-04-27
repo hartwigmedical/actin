@@ -1,29 +1,27 @@
-package com.hartwig.actin.algo.evaluation.tumor;
+package com.hartwig.actin.algo.evaluation.tumor
 
-import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import org.junit.Test;
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import org.junit.Test
 
-public class HasLiverMetastasesTest {
-
-    private final HasLiverMetastases function = new HasLiverMetastases();
+class HasLiverMetastasesTest {
+    private val function: HasLiverMetastases = HasLiverMetastases()
 
     @Test
-    public void shouldBeUndeterminedWhenHasLiverLesionsIsNull() {
-        Evaluation undetermined = function.evaluate(TumorTestFactory.withLiverLesions(null));
-        assertEvaluation(EvaluationResult.UNDETERMINED, undetermined);
+    fun shouldBeUndeterminedWhenHasLiverLesionsIsNull() {
+        val undetermined = function.evaluate(TumorTestFactory.withLiverLesions(null))
+        assertEvaluation(EvaluationResult.UNDETERMINED, undetermined)
     }
 
     @Test
-    public void shouldPassWhenHasLiverLesionsIsTrue() {
-        Evaluation pass = function.evaluate(TumorTestFactory.withLiverLesions(true));
-        assertEvaluation(EvaluationResult.PASS, pass);
+    fun shouldPassWhenHasLiverLesionsIsTrue() {
+        val pass = function.evaluate(TumorTestFactory.withLiverLesions(true))
+        assertEvaluation(EvaluationResult.PASS, pass)
     }
 
     @Test
-    public void shouldFailWhenHasLiverLesionsIsFalse() {
-        Evaluation fail = function.evaluate(TumorTestFactory.withLiverLesions(false));
-        assertEvaluation(EvaluationResult.FAIL, fail);
+    fun shouldFailWhenHasLiverLesionsIsFalse() {
+        val fail = function.evaluate(TumorTestFactory.withLiverLesions(false))
+        assertEvaluation(EvaluationResult.FAIL, fail)
     }
 }

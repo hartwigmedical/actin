@@ -1,62 +1,53 @@
-package com.hartwig.actin.algo.evaluation.tumor;
+package com.hartwig.actin.algo.evaluation.tumor
 
-import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.clinical.datamodel.TumorStage
+import org.junit.Before
+import org.junit.Test
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.stream.Stream;
-
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.clinical.datamodel.TumorDetails;
-import com.hartwig.actin.clinical.datamodel.TumorStage;
-
-import org.junit.Before;
-import org.junit.Test;
-
-public class HasTumorStageTest {
-
-    private TumorStageDerivationFunction derivationFunction;
-    private HasTumorStage victim;
+class HasTumorStageTest {
+    private var derivationFunction: TumorStageDerivationFunction? = null
+    private var victim: HasTumorStage? = null
 
     @Before
-    public void setUp() {
-        derivationFunction = mock(TumorStageDerivationFunction.class);
-        victim = new HasTumorStage(derivationFunction, TumorStage.III);
+    fun setUp() {
+        derivationFunction = Mockito.mock(TumorStageDerivationFunction::class.java)
+        victim = HasTumorStage(derivationFunction!!, TumorStage.III)
     }
 
     @Test
-    public void shouldEvaluateNormallyWhenTumorStageExists() {
-        when(derivationFunction.apply(any())).thenReturn(Stream.empty());
-        assertEvaluation(EvaluationResult.FAIL, victim.evaluate(TumorTestFactory.withTumorStage(null)));
-        assertEvaluation(EvaluationResult.PASS, victim.evaluate(TumorTestFactory.withTumorStage(TumorStage.III)));
-        assertEvaluation(EvaluationResult.PASS, victim.evaluate(TumorTestFactory.withTumorStage(TumorStage.IIIB)));
-        assertEvaluation(EvaluationResult.FAIL, victim.evaluate(TumorTestFactory.withTumorStage(TumorStage.IV)));
+    fun shouldEvaluateNormallyWhenTumorStageExists() {
+        Mockito.`when`(derivationFunction!!.apply(ArgumentMatchers.any())).thenReturn(emptyList())
+        assertEvaluation(EvaluationResult.FAIL, victim!!.evaluate(TumorTestFactory.withTumorStage(null)))
+        assertEvaluation(EvaluationResult.PASS, victim!!.evaluate(TumorTestFactory.withTumorStage(TumorStage.III)))
+        assertEvaluation(EvaluationResult.PASS, victim!!.evaluate(TumorTestFactory.withTumorStage(TumorStage.IIIB)))
+        assertEvaluation(EvaluationResult.FAIL, victim!!.evaluate(TumorTestFactory.withTumorStage(TumorStage.IV)))
     }
 
     @Test
-    public void shouldFollowNonDerivedEvaluationWhenSingleDerivedTumor() {
-        assertDerivedEvaluation(EvaluationResult.PASS, TumorStage.III);
-        assertDerivedEvaluation(EvaluationResult.PASS, TumorStage.IIIB);
-        assertDerivedEvaluation(EvaluationResult.FAIL, TumorStage.IV);
+    fun shouldFollowNonDerivedEvaluationWhenSingleDerivedTumor() {
+        assertDerivedEvaluation(EvaluationResult.PASS, TumorStage.III)
+        assertDerivedEvaluation(EvaluationResult.PASS, TumorStage.IIIB)
+        assertDerivedEvaluation(EvaluationResult.FAIL, TumorStage.IV)
     }
 
     @Test
-    public void shouldEvaluateUndeterminedWhenMultipleDerivedTumorStagesWhereOnePasses() {
-        assertDerivedEvaluation(EvaluationResult.UNDETERMINED, TumorStage.III, TumorStage.IIIB);
+    fun shouldEvaluateUndeterminedWhenMultipleDerivedTumorStagesWhereOnePasses() {
+        assertDerivedEvaluation(EvaluationResult.UNDETERMINED, TumorStage.III, TumorStage.IIIB)
     }
 
     @Test
-    public void shouldEvaluateFailWhenMultipleDerivedTumorStagesWhereAllFail() {
-        assertDerivedEvaluation(EvaluationResult.FAIL, TumorStage.I, TumorStage.II);
+    fun shouldEvaluateFailWhenMultipleDerivedTumorStagesWhereAllFail() {
+        assertDerivedEvaluation(EvaluationResult.FAIL, TumorStage.I, TumorStage.II)
     }
 
-    private void assertDerivedEvaluation(EvaluationResult expectedResult, TumorStage... derivedStages) {
-        PatientRecord patientRecord = TumorTestFactory.withTumorStage(null);
-        TumorDetails tumorDetails = patientRecord.clinical().tumor();
-        when(derivationFunction.apply(tumorDetails)).thenReturn(Stream.of(derivedStages));
-        assertEvaluation(expectedResult, victim.evaluate(patientRecord));
+    private fun assertDerivedEvaluation(expectedResult: EvaluationResult, vararg derivedStages: TumorStage) {
+        val patientRecord = TumorTestFactory.withTumorStage(null)
+        val tumorDetails = patientRecord.clinical().tumor()
+        Mockito.`when`(derivationFunction!!.apply(tumorDetails)).thenReturn(listOf(*derivedStages))
+        assertEvaluation(expectedResult, victim!!.evaluate(patientRecord))
     }
 }

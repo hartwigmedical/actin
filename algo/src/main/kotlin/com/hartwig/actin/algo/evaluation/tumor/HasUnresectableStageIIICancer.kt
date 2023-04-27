@@ -1,54 +1,32 @@
-package com.hartwig.actin.algo.evaluation.tumor;
+package com.hartwig.actin.algo.evaluation.tumor
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.clinical.datamodel.TumorStage;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.clinical.datamodel.TumorStage
 
-import org.jetbrains.annotations.NotNull;
+class HasUnresectableStageIIICancer internal constructor() : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val stage = record.clinical().tumor().stage()
+            ?: return EvaluationFactory.undetermined(
+                "Tumor stage details are missing, if cancer is unresectable stage III cannot be determined",
+                "Undetermined unresectable stage III cancer"
+            )
 
-public class HasUnresectableStageIIICancer implements EvaluationFunction {
-
-    HasUnresectableStageIIICancer() {
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        TumorStage stage = record.clinical().tumor().stage();
-
-        if (stage == null) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages(
-                            "Tumor stage details are missing, if cancer is unresectable stage III cannot be determined")
-                    .addUndeterminedGeneralMessages("Undetermined unresectable stage III cancer")
-                    .build();
-        }
-
-        EvaluationResult result;
-        if (isStageMatch(stage, TumorStage.III)) {
-            result = EvaluationResult.UNDETERMINED;
+        return if (isStageMatch(stage, TumorStage.III)) {
+            EvaluationFactory.undetermined(
+                "Undetermined if stage III cancer is considered unresectable",
+                "Undetermined if cancer is unresectable stage III"
+            )
         } else {
-            result = EvaluationResult.FAIL;
+            EvaluationFactory.fail("Patient has no unresectable stage III cancer", "No unresectable stage III cancer")
         }
-
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Patient has no unresectable stage III cancer");
-            builder.addFailGeneralMessages("No unresectable stage III cancer");
-        } else if (result == EvaluationResult.UNDETERMINED) {
-            builder.addUndeterminedSpecificMessages("Undetermined if stage III cancer is considered unresectable");
-            builder.addUndeterminedGeneralMessages("Undetermined if cancer is unresectable stage III");
-        }
-
-        return builder.build();
     }
 
-    private static boolean isStageMatch(@NotNull TumorStage stage, @NotNull TumorStage stageToMatch) {
-        return stage == stageToMatch || stage.category() == stageToMatch;
+    companion object {
+        private fun isStageMatch(stage: TumorStage, stageToMatch: TumorStage): Boolean {
+            return stage == stageToMatch || stage.category() == stageToMatch
+        }
     }
 }

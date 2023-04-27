@@ -1,63 +1,64 @@
-package com.hartwig.actin.algo.evaluation.tumor;
+package com.hartwig.actin.algo.evaluation.tumor
 
-import java.util.Optional;
-import java.util.Set;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.algo.doid.DoidConstants
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.util.ApplicationConfig
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.doid.DoidConstants;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.doid.DoidModel;
+private const val TUMOR_SUB_LOCATION_SIDE_TEMPLATE = "Tumor sub-location %s is on %s side"
 
-import org.jetbrains.annotations.NotNull;
+class HasLeftSidedColorectalTumor internal constructor(doidModel: DoidModel) : EvaluationFunction {
+    private val doidModel: DoidModel
 
-public class HasLeftSidedColorectalTumor implements EvaluationFunction {
+    init {
+        this.doidModel = doidModel
+    }
 
-    private static final Set<String> LEFT_SUB_LOCATIONS =
-            Set.of("rectum", "descending colon", "colon sigmoid", "colon descendens", "rectosigmoid");
-    private static final Set<String> RIGHT_SUB_LOCATIONS = Set.of("ascending colon",
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val tumorDoids = record.clinical().tumor().doids()
+        return if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
+            EvaluationFactory.undetermined("Unable to identify tumor type", "Tumor type")
+        } else if (!DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.COLORECTAL_CANCER_DOID)) {
+            EvaluationFactory.fail("Tumor is not colorectal cancer", "Tumor type")
+        } else {
+            val subLocation = record.clinical().tumor().primaryTumorSubLocation()?.lowercase(ApplicationConfig.LOCALE)
+            when {
+                subLocation.isNullOrEmpty() -> EvaluationFactory.undetermined(
+                    "Tumor sub-location not provided, left-sidedness is unknown", "Unknown sidedness of tumor"
+                )
+
+                stringContainsAnyMember(subLocation, LEFT_SUB_LOCATIONS) ->
+                    EvaluationFactory.pass(String.format(TUMOR_SUB_LOCATION_SIDE_TEMPLATE, subLocation, "left"), "Left-sided CRC tumor")
+
+                stringContainsAnyMember(subLocation, RIGHT_SUB_LOCATIONS) ->
+                    EvaluationFactory.fail(String.format(TUMOR_SUB_LOCATION_SIDE_TEMPLATE, subLocation, "right"), "Right-sided CRC tumor")
+
+                else -> EvaluationFactory.undetermined(
+                    "Unknown tumor sub-location $subLocation, left-sidedness is unknown",
+                    "Unknown sidedness of tumor"
+                )
+            }
+        }
+    }
+
+    private fun stringContainsAnyMember(string: String, collection: Collection<String>): Boolean {
+        return collection.any { string.contains(it) }
+    }
+
+    companion object {
+        private val LEFT_SUB_LOCATIONS = setOf("rectum", "descending colon", "colon sigmoid", "colon descendens", "rectosigmoid")
+        private val RIGHT_SUB_LOCATIONS = setOf(
+            "ascending colon",
             "colon ascendens",
             "caecum",
             "cecum",
             "transverse colon",
             "colon transversum",
             "flexura hepatica",
-            "hepatic flexure");
-    @NotNull
-    private final DoidModel doidModel;
-
-    HasLeftSidedColorectalTumor(@NotNull DoidModel doidModel) {
-        this.doidModel = doidModel;
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        Set<String> tumorDoids = record.clinical().tumor().doids();
-        if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
-            return EvaluationFactory.undetermined("Unable to identify tumor type", "Tumor type");
-        } else if (!DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.COLORECTAL_CANCER_DOID)) {
-            return EvaluationFactory.fail("Tumor is not colorectal cancer", "Tumor type");
-        } else {
-            return Optional.ofNullable(record.clinical().tumor().primaryTumorSubLocation())
-                    .filter(subLocation -> !subLocation.isEmpty())
-                    .map(String::toLowerCase)
-                    .map(subLocation -> {
-                        if (LEFT_SUB_LOCATIONS.stream().anyMatch(subLocation::contains)) {
-                            return EvaluationFactory.pass(String.format("Tumor sub-location %s is on left side", subLocation),
-                                    "Left-sided CRC tumor");
-                        } else if (RIGHT_SUB_LOCATIONS.stream().anyMatch(subLocation::contains)) {
-                            return EvaluationFactory.fail(String.format("Tumor sub-location %s is on right side", subLocation),
-                                    "Right-sided CRC tumor");
-                        } else {
-                            return EvaluationFactory.undetermined(
-                                    "Unknown tumor sub-location " + subLocation + ", left-sidedness is unknown",
-                                    "Unknown sidedness of tumor");
-                        }
-                    })
-                    .orElse(EvaluationFactory.undetermined("Tumor sub-location not provided, left-sidedness is unknown",
-                            "Unknown sidedness of tumor"));
-        }
+            "hepatic flexure"
+        )
     }
 }

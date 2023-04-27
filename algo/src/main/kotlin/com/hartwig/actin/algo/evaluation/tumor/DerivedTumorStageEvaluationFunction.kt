@@ -1,102 +1,91 @@
-package com.hartwig.actin.algo.evaluation.tumor;
+package com.hartwig.actin.algo.evaluation.tumor
 
-import static java.util.stream.Collectors.toMap;
+import com.hartwig.actin.ImmutablePatientRecord
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
+import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
+import com.hartwig.actin.clinical.datamodel.TumorStage
 
-import java.util.Map;
-import java.util.Set;
-
-import com.hartwig.actin.ImmutablePatientRecord;
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
-import com.hartwig.actin.clinical.datamodel.TumorStage;
-
-import org.jetbrains.annotations.NotNull;
-
-class DerivedTumorStageEvaluationFunction implements EvaluationFunction {
-
-    private final TumorStageDerivationFunction tumorStageDerivationFunction;
-    private final EvaluationFunction originalFunction;
-
-    DerivedTumorStageEvaluationFunction(TumorStageDerivationFunction tumorStageDerivationFunction, EvaluationFunction originalFunction) {
-        this.tumorStageDerivationFunction = tumorStageDerivationFunction;
-        this.originalFunction = originalFunction;
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(PatientRecord record) {
+internal class DerivedTumorStageEvaluationFunction(
+    private val tumorStageDerivationFunction: TumorStageDerivationFunction,
+    private val originalFunction: EvaluationFunction
+) : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
         if (record.clinical().tumor().stage() != null) {
-            return originalFunction.evaluate(record);
+            return originalFunction.evaluate(record)
         }
-        Map<TumorStage, Evaluation> derivedResults =
-                tumorStageDerivationFunction.apply(record.clinical().tumor()).collect(toMap(s -> s, s -> evaluatedDerivedStage(record, s)));
+        val derivedResults = tumorStageDerivationFunction.apply(record.clinical().tumor())
+            .associateWith { tumorStage -> evaluatedDerivedStage(record, tumorStage) }
 
         if (derivedResults.isEmpty()) {
-            return originalFunction.evaluate(record);
+            return originalFunction.evaluate(record)
         }
-
-        if (derivedResults.size() == 1) {
-            return followResultOfSingleDerivation(derivedResults);
+        if (derivedResults.size == 1) {
+            return followResultOfSingleDerivation(derivedResults)
         }
-
-        if (allDerivedResultsMatch(derivedResults, EvaluationResult.PASS)) {
-            return createEvaluationForDerivedResult(derivedResults, EvaluationResult.PASS);
+        return if (allDerivedResultsMatch(derivedResults, EvaluationResult.PASS)) {
+            createEvaluationForDerivedResult(derivedResults, EvaluationResult.PASS)
         } else if (anyDerivedResultMatches(derivedResults, EvaluationResult.PASS)) {
-            return createEvaluationForDerivedResult(derivedResults, EvaluationResult.UNDETERMINED);
+            createEvaluationForDerivedResult(derivedResults, EvaluationResult.UNDETERMINED)
         } else if (anyDerivedResultMatches(derivedResults, EvaluationResult.WARN)) {
-            return createEvaluationForDerivedResult(derivedResults, EvaluationResult.WARN);
+            createEvaluationForDerivedResult(derivedResults, EvaluationResult.WARN)
         } else if (allDerivedResultsMatch(derivedResults, EvaluationResult.NOT_EVALUATED)) {
-            return createEvaluationForDerivedResult(derivedResults, EvaluationResult.NOT_EVALUATED);
+            createEvaluationForDerivedResult(derivedResults, EvaluationResult.NOT_EVALUATED)
         } else {
-            return createEvaluationForDerivedResult(derivedResults, EvaluationResult.FAIL);
+            createEvaluationForDerivedResult(derivedResults, EvaluationResult.FAIL)
         }
     }
 
-    private static Evaluation followResultOfSingleDerivation(Map<TumorStage, Evaluation> derivedResults) {
-        Evaluation singleDerivedResult = derivedResults.values().iterator().next();
-        return derivableResult(singleDerivedResult)
-                ? createEvaluationForDerivedResult(derivedResults, singleDerivedResult.result())
-                : singleDerivedResult;
+    private fun evaluatedDerivedStage(record: PatientRecord, newStage: TumorStage): Evaluation {
+        return originalFunction.evaluate(
+            ImmutablePatientRecord.copyOf(record)
+                .withClinical(
+                    ImmutableClinicalRecord.copyOf(record.clinical())
+                        .withTumor(ImmutableTumorDetails.copyOf(record.clinical().tumor()).withStage(newStage))
+                )
+        )
     }
 
-    private static boolean derivableResult(Evaluation singleDerivedResult) {
-        return Set.of(EvaluationResult.PASS, EvaluationResult.FAIL, EvaluationResult.UNDETERMINED, EvaluationResult.WARN)
-                .contains(singleDerivedResult.result());
-    }
-
-    static Evaluation createEvaluationForDerivedResult(Map<TumorStage, Evaluation> derived, EvaluationResult result) {
-        switch (result) {
-            case PASS:
-                return DerivedTumorStageEvaluation.create(derived, EvaluationFactory::pass);
-            case UNDETERMINED:
-                return DerivedTumorStageEvaluation.create(derived, EvaluationFactory::undetermined);
-            case WARN:
-                return DerivedTumorStageEvaluation.create(derived, EvaluationFactory::warn);
-            case FAIL:
-                return DerivedTumorStageEvaluation.create(derived, EvaluationFactory::fail);
-            case NOT_EVALUATED:
-                return DerivedTumorStageEvaluation.create(derived, EvaluationFactory::notEvaluated);
-            default:
-                throw new IllegalArgumentException();
+    companion object {
+        private fun followResultOfSingleDerivation(derivedResults: Map<TumorStage, Evaluation>): Evaluation {
+            val singleDerivedResult = derivedResults.values.iterator().next()
+            return if (derivableResult(singleDerivedResult)) createEvaluationForDerivedResult(
+                derivedResults,
+                singleDerivedResult.result()
+            ) else singleDerivedResult
         }
-    }
 
-    private static boolean anyDerivedResultMatches(Map<TumorStage, Evaluation> derivedResults, EvaluationResult result) {
-        return derivedResults.values().stream().anyMatch(e -> e.result().equals(result));
-    }
+        private fun derivableResult(singleDerivedResult: Evaluation): Boolean {
+            return singleDerivedResult.result() in
+                    setOf(EvaluationResult.PASS, EvaluationResult.FAIL, EvaluationResult.UNDETERMINED, EvaluationResult.WARN)
+        }
 
-    private static boolean allDerivedResultsMatch(Map<TumorStage, Evaluation> derivedResults, EvaluationResult result) {
-        return derivedResults.values().stream().allMatch(e -> e.result().equals(result));
-    }
+        fun createEvaluationForDerivedResult(derived: Map<TumorStage, Evaluation>, result: EvaluationResult): Evaluation {
+            return when (result) {
+                EvaluationResult.PASS -> DerivedTumorStageEvaluation.create(derived, EvaluationFactory::pass)
 
-    private Evaluation evaluatedDerivedStage(PatientRecord record, TumorStage newStage) {
-        return originalFunction.evaluate(ImmutablePatientRecord.copyOf(record)
-                .withClinical(ImmutableClinicalRecord.copyOf(record.clinical())
-                        .withTumor(ImmutableTumorDetails.copyOf(record.clinical().tumor()).withStage(newStage))));
+                EvaluationResult.UNDETERMINED -> DerivedTumorStageEvaluation.create(derived, EvaluationFactory::undetermined)
+
+                EvaluationResult.WARN -> DerivedTumorStageEvaluation.create(derived, EvaluationFactory::warn)
+
+                EvaluationResult.FAIL -> DerivedTumorStageEvaluation.create(derived, EvaluationFactory::fail)
+
+                EvaluationResult.NOT_EVALUATED -> DerivedTumorStageEvaluation.create(derived, EvaluationFactory::notEvaluated)
+
+                else -> throw IllegalArgumentException()
+            }
+        }
+
+        private fun anyDerivedResultMatches(derivedResults: Map<TumorStage, Evaluation>, result: EvaluationResult): Boolean {
+            return derivedResults.values.any { it.result() == result }
+        }
+
+        private fun allDerivedResultsMatch(derivedResults: Map<TumorStage, Evaluation>, result: EvaluationResult): Boolean {
+            return derivedResults.values.all { it.result() == result }
+        }
     }
 }

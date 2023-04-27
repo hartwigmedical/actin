@@ -1,51 +1,18 @@
-package com.hartwig.actin.algo.evaluation.tumor;
+package com.hartwig.actin.algo.evaluation.tumor
 
-import java.util.Set;
+import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
+import com.hartwig.actin.clinical.datamodel.TumorDetails
 
-import com.hartwig.actin.clinical.datamodel.TumorDetails;
-
-import org.jetbrains.annotations.NotNull;
-
-final class TumorTypeEvaluationFunctions {
-
-    private TumorTypeEvaluationFunctions() {
+internal object TumorTypeEvaluationFunctions {
+    fun hasTumorWithType(tumor: TumorDetails, validTypes: Set<String>): Boolean {
+        return listOf(tumor.primaryTumorType(), tumor.primaryTumorSubType()).any { stringNotNullAndMatchesCollection(it, validTypes) }
     }
 
-    public static boolean hasTumorWithType(@NotNull TumorDetails tumor, @NotNull Set<String> validTypes) {
-        String primaryTumorType = tumor.primaryTumorType();
-        String lowerCaseType = primaryTumorType != null ? primaryTumorType.toLowerCase() : null;
-
-        String primaryTumorSubType = tumor.primaryTumorSubType();
-        String lowerCaseSubType = primaryTumorSubType != null ? primaryTumorSubType.toLowerCase() : null;
-
-        for (String validType : validTypes) {
-            if (lowerCaseType != null) {
-                if (lowerCaseType.contains(validType.toLowerCase())) {
-                    return true;
-                }
-            }
-
-            if (lowerCaseSubType != null) {
-                if (lowerCaseSubType.contains(validType.toLowerCase())) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+    fun hasTumorWithDetails(tumor: TumorDetails, validDetails: Set<String>): Boolean {
+        return stringNotNullAndMatchesCollection(tumor.primaryTumorExtraDetails(), validDetails)
     }
 
-    public static boolean hasTumorWithDetails(@NotNull TumorDetails tumor, @NotNull Set<String> validDetails) {
-        String primaryTumorExtraDetails = tumor.primaryTumorExtraDetails();
-        if (primaryTumorExtraDetails != null) {
-            String lowerCaseDetails = primaryTumorExtraDetails.toLowerCase();
-            for (String validDetail : validDetails) {
-                if (lowerCaseDetails.contains(validDetail.toLowerCase())) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+    private fun stringNotNullAndMatchesCollection(nullableString: String?, collection: Collection<String>): Boolean {
+        return nullableString != null && stringCaseInsensitivelyMatchesQueryCollection(nullableString, collection)
     }
 }

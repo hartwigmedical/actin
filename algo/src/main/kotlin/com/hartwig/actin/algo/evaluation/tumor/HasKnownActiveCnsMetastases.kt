@@ -1,72 +1,44 @@
-package com.hartwig.actin.algo.evaluation.tumor;
+package com.hartwig.actin.algo.evaluation.tumor
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-import org.jetbrains.annotations.NotNull;
-
-public class HasKnownActiveCnsMetastases implements EvaluationFunction {
-
-    HasKnownActiveCnsMetastases() {
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        Boolean hasCnsMetastases = record.clinical().tumor().hasCnsLesions();
-        Boolean hasActiveCnsLesions = record.clinical().tumor().hasActiveCnsLesions();
-        Boolean hasBrainMetastases = record.clinical().tumor().hasBrainLesions();
-        Boolean hasActiveBrainMetastases = record.clinical().tumor().hasActiveBrainLesions();
+class HasKnownActiveCnsMetastases internal constructor() : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val hasCnsMetastases = record.clinical().tumor().hasCnsLesions()
+        var hasActiveCnsLesions = record.clinical().tumor().hasActiveCnsLesions()
+        val hasBrainMetastases = record.clinical().tumor().hasBrainLesions()
+        var hasActiveBrainMetastases = record.clinical().tumor().hasActiveBrainLesions()
 
         // If a patient is known to have no cns metastases, update active to false in case it is unknown.
         if (hasCnsMetastases != null && !hasCnsMetastases) {
-            hasActiveCnsLesions = hasActiveCnsLesions != null ? hasActiveCnsLesions : false;
+            hasActiveCnsLesions = hasActiveCnsLesions ?: false
         }
 
         // If a patient is known to have no brain metastases, update active to false in case it is unknown.
         if (hasBrainMetastases != null && !hasBrainMetastases) {
-            hasActiveBrainMetastases = hasActiveBrainMetastases != null ? hasActiveBrainMetastases : false;
+            hasActiveBrainMetastases = hasActiveBrainMetastases ?: false
         }
-
         if (hasActiveCnsLesions == null && hasActiveBrainMetastases == null) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Data regarding presence of active CNS metastases is missing")
-                    .addUndeterminedGeneralMessages("Missing active CNS metastases data")
-                    .build();
+            return EvaluationFactory.undetermined(
+                "Data regarding presence of active CNS metastases is missing",
+                "Missing active CNS metastases data"
+            )
         }
+        return when {
+            hasActiveCnsLesions == true ->
+                EvaluationFactory.pass("Active CNS metastases are present", "Active CNS metastases")
 
-        boolean hasActiveCnsMetastases = hasActiveCnsLesions != null && hasActiveCnsLesions;
+            hasActiveBrainMetastases == true ->
+                EvaluationFactory.pass(
+                    "Active brain metastases are present, these are considered CNS metastases",
+                    "Active brain (CNS) metastases"
+                )
 
-        boolean hasAtLeastActiveBrainMetastases = false;
-        if (hasActiveBrainMetastases != null && hasActiveBrainMetastases) {
-            hasActiveCnsMetastases = true;
-            hasAtLeastActiveBrainMetastases = true;
+            else ->
+                EvaluationFactory.fail("No known active CNS metastases present", "No known active CNS metastases")
         }
-
-        EvaluationResult result = hasActiveCnsMetastases ? EvaluationResult.PASS : EvaluationResult.FAIL;
-
-        //TODO: Check code
-        if (result == EvaluationResult.FAIL) {
-            ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
-            builder.addFailSpecificMessages("No known active CNS metastases present");
-            builder.addFailGeneralMessages("No known active CNS metastases");
-            return builder.build();
-        } else if (result == EvaluationResult.PASS) {
-            ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
-            if (hasAtLeastActiveBrainMetastases) {
-                builder.addPassSpecificMessages("Active brain metastases are present, these are considered CNS metastases");
-                builder.addPassGeneralMessages("Active brain (CNS) metastases");
-            } else {
-                builder.addPassSpecificMessages("Active CNS metastases are present");
-                builder.addPassGeneralMessages("Active CNS metastases");
-            }
-            return builder.build();
-        }
-        return null;
     }
 }

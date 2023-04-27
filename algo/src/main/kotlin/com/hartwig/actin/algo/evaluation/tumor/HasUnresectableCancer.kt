@@ -1,58 +1,38 @@
-package com.hartwig.actin.algo.evaluation.tumor;
+package com.hartwig.actin.algo.evaluation.tumor
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.clinical.datamodel.TumorStage;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.clinical.datamodel.TumorStage
 
-import org.jetbrains.annotations.NotNull;
+class HasUnresectableCancer internal constructor() : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val stage = record.clinical().tumor().stage() ?: return EvaluationFactory.undetermined(
+            "Tumor stage details are missing, if cancer is unresectable cannot be determined", "Undetermined unresectable cancer"
+        )
 
-public class HasUnresectableCancer implements EvaluationFunction {
+        return when {
+            isStageMatch(stage, TumorStage.IV) -> {
+                EvaluationFactory.pass("Tumor stage $stage is considered unresectable", "Unresectable cancer")
+            }
 
-    HasUnresectableCancer() {
+            isStageMatch(stage, TumorStage.III) -> {
+                EvaluationFactory.undetermined(
+                    "Tumor stage $stage is not unclear whether unresectable",
+                    "Unclear if cancer is unresectable"
+                )
+            }
+
+            else -> {
+                EvaluationFactory.fail("Tumor stage $stage is not considered unresectable", "No unresectable cancer")
+            }
+        }
     }
 
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        TumorStage stage = record.clinical().tumor().stage();
-
-        if (stage == null) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Tumor stage details are missing, if cancer is unresectable cannot be determined")
-                    .addUndeterminedGeneralMessages("Undetermined unresectable cancer")
-                    .build();
+    companion object {
+        private fun isStageMatch(stage: TumorStage, stageToMatch: TumorStage): Boolean {
+            return stage == stageToMatch || stage.category() == stageToMatch
         }
-
-        EvaluationResult result;
-        if (isStageMatch(stage, TumorStage.IV)) {
-            result = EvaluationResult.PASS;
-        } else if (isStageMatch(stage, TumorStage.III)) {
-            result = EvaluationResult.UNDETERMINED;
-        } else {
-            result = EvaluationResult.FAIL;
-        }
-
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Tumor stage " + stage + " is not considered unresectable");
-            builder.addFailGeneralMessages("No unresectable cancer");
-        } else if (result == EvaluationResult.UNDETERMINED) {
-            builder.addUndeterminedSpecificMessages("Tumor stage " + stage + " is not unclear whether unresectable");
-            builder.addUndeterminedGeneralMessages("Unclear if cancer is unresectable");
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Tumor stage " + stage + " is considered unresectable");
-            builder.addPassGeneralMessages("Unresectable cancer");
-        }
-
-        return builder.build();
-    }
-
-    private static boolean isStageMatch(@NotNull TumorStage stage, @NotNull TumorStage stageToMatch) {
-        return stage == stageToMatch || stage.category() == stageToMatch;
     }
 }

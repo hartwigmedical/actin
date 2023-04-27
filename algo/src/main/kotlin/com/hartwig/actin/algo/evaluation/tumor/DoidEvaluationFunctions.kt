@@ -1,153 +1,120 @@
-package com.hartwig.actin.algo.evaluation.tumor;
+package com.hartwig.actin.algo.evaluation.tumor
 
-import java.util.Set;
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
+import org.apache.logging.log4j.LogManager
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Sets;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.doid.DoidModel;
+internal object DoidEvaluationFunctions {
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-final class DoidEvaluationFunctions {
-
-    private static final Logger LOGGER = LogManager.getLogger(DoidEvaluationFunctions.class);
-
-    private DoidEvaluationFunctions() {
+    private val LOGGER = LogManager.getLogger(DoidEvaluationFunctions::class.java)
+    fun hasConfiguredDoids(tumorDoids: Set<String?>?): Boolean {
+        return !tumorDoids.isNullOrEmpty()
     }
 
-    public static boolean hasConfiguredDoids(@Nullable Set<String> tumorDoids) {
-        return tumorDoids != null && !tumorDoids.isEmpty();
+    fun isOfDoidType(doidModel: DoidModel, tumorDoids: Set<String>?, doidToMatch: String): Boolean {
+        return isOfAtLeastOneDoidType(doidModel, tumorDoids, setOf(doidToMatch))
     }
 
-    public static boolean isOfDoidType(@NotNull DoidModel doidModel, @Nullable Set<String> tumorDoids, @NotNull String doidToMatch) {
-        return isOfAtLeastOneDoidType(doidModel, tumorDoids, Sets.newHashSet(doidToMatch));
-    }
-
-    public static boolean isOfAtLeastOneDoidType(@NotNull DoidModel doidModel, @Nullable Set<String> tumorDoids,
-            @NotNull Set<String> doidsToMatch) {
-        Set<String> fullExpandedDoidTree = createFullExpandedDoidTree(doidModel, tumorDoids);
-        for (String doidToMatch : doidsToMatch) {
+    fun isOfAtLeastOneDoidType(doidModel: DoidModel, tumorDoids: Set<String>?, doidsToMatch: Set<String>): Boolean {
+        val fullExpandedDoidTree = createFullExpandedDoidTree(doidModel, tumorDoids)
+        for (doidToMatch in doidsToMatch) {
             if (fullExpandedDoidTree.contains(doidToMatch)) {
-                return true;
+                return true
             }
         }
-
-        return false;
+        return false
     }
 
-    public static boolean isOfAtLeastOneDoidTerm(@NotNull DoidModel doidModel, @Nullable Set<String> tumorDoids,
-            @NotNull Set<String> doidTermsToMatch) {
-        Set<String> fullExpandedDoidTree = createFullExpandedDoidTree(doidModel, tumorDoids);
-        for (String doid : fullExpandedDoidTree) {
-            String term = doidModel.resolveTermForDoid(doid);
+    fun isOfAtLeastOneDoidTerm(doidModel: DoidModel, tumorDoids: Set<String>?, doidTermsToMatch: Set<String>): Boolean {
+        for (doid in createFullExpandedDoidTree(doidModel, tumorDoids)) {
+            val term: String? = doidModel.resolveTermForDoid(doid)
             if (term == null) {
-                LOGGER.warn("Could not resolve term for doid '{}'", doid);
+                LOGGER.warn("Could not resolve term for doid '{}'", doid)
             } else {
-                for (String doidTermToMatch : doidTermsToMatch) {
-                    if (term.toLowerCase().contains(doidTermToMatch.toLowerCase())) {
-                        return true;
-                    }
+                if (stringCaseInsensitivelyMatchesQueryCollection(term, doidTermsToMatch)) {
+                    return true
                 }
             }
         }
-
-        return false;
+        return false
     }
 
-    public static boolean isOfExactDoid(@Nullable Set<String> tumorDoids, @NotNull String doidToMatch) {
-        return tumorDoids != null && tumorDoids.equals(Sets.newHashSet(doidToMatch));
+    fun isOfExactDoid(tumorDoids: Set<String>?, doidToMatch: String): Boolean {
+        return tumorDoids != null && tumorDoids == setOf(doidToMatch)
     }
 
-    public static boolean isOfDoidCombinationType(@Nullable Set<String> tumorDoids, @NotNull Set<String> validDoidCombination) {
-        Set<Set<String>> validDoidCombinations = Sets.newHashSet();
-        validDoidCombinations.add(validDoidCombination);
-
-        return hasAtLeastOneCombinationOfDoids(tumorDoids, validDoidCombinations);
+    fun isOfDoidCombinationType(tumorDoids: Set<String>?, validDoidCombination: Set<String>): Boolean {
+        val validDoidCombinations: Set<Set<String>> = setOf(validDoidCombination)
+        return hasAtLeastOneCombinationOfDoids(tumorDoids, validDoidCombinations)
     }
 
-    public static boolean isOfExclusiveDoidType(@NotNull DoidModel doidModel, @Nullable Set<String> tumorDoids,
-            @NotNull String doidToMatch) {
-        EvaluationResult result =
-                evaluateForExclusiveMatchWithFailAndWarns(doidModel, tumorDoids, doidToMatch, Sets.newHashSet(), Sets.newHashSet());
-
-        return result == EvaluationResult.PASS;
+    fun isOfExclusiveDoidType(
+        doidModel: DoidModel, tumorDoids: Set<String>?,
+        doidToMatch: String
+    ): Boolean {
+        return evaluateForExclusiveMatchWithFailAndWarns(
+            doidModel,
+            tumorDoids,
+            doidToMatch,
+            emptySet(),
+            emptySet()
+        ) == EvaluationResult.PASS
     }
 
-    @NotNull
-    public static EvaluationResult evaluateForExclusiveMatchWithFailAndWarns(@NotNull DoidModel doidModel, @Nullable Set<String> tumorDoids,
-            @NotNull String doidToMatch, @NotNull Set<String> failDoids, @NotNull Set<String> warnDoids) {
+    fun evaluateForExclusiveMatchWithFailAndWarns(
+        doidModel: DoidModel, tumorDoids: Set<String>?,
+        doidToMatch: String, failDoids: Set<String>, warnDoids: Set<String>
+    ): EvaluationResult {
         if (tumorDoids == null) {
-            return EvaluationResult.FAIL;
+            return EvaluationResult.FAIL
         }
-
-        boolean allDoidsAreMatch = true;
-        boolean hasAtLeastOneFailDoid = false;
-        boolean hasAtLeastOneWarnDoid = false;
-        for (String doid : tumorDoids) {
-            Set<String> expandedDoids = doidModel.doidWithParents(doid);
+        var allDoidsAreMatch = true
+        var hasAtLeastOneFailDoid = false
+        var hasAtLeastOneWarnDoid = false
+        for (doid in tumorDoids) {
+            val expandedDoids: Set<String> = doidModel.doidWithParents(doid)
             if (!expandedDoids.contains(doidToMatch)) {
-                allDoidsAreMatch = false;
+                allDoidsAreMatch = false
             }
-
-            for (String failDoid : failDoids) {
+            for (failDoid in failDoids) {
                 if (expandedDoids.contains(failDoid)) {
-                    hasAtLeastOneFailDoid = true;
-                    break;
+                    hasAtLeastOneFailDoid = true
+                    break
                 }
             }
-
-            for (String warnDoid : warnDoids) {
+            for (warnDoid in warnDoids) {
                 if (expandedDoids.contains(warnDoid)) {
-                    hasAtLeastOneWarnDoid = true;
-                    break;
+                    hasAtLeastOneWarnDoid = true
+                    break
                 }
             }
         }
-
-        if (allDoidsAreMatch && !hasAtLeastOneFailDoid) {
-            return hasAtLeastOneWarnDoid ? EvaluationResult.WARN : EvaluationResult.PASS;
-        }
-
-        return EvaluationResult.FAIL;
+        return if (allDoidsAreMatch && !hasAtLeastOneFailDoid) {
+            if (hasAtLeastOneWarnDoid) EvaluationResult.WARN else EvaluationResult.PASS
+        } else EvaluationResult.FAIL
     }
 
-    @VisibleForTesting
-    static boolean hasAtLeastOneCombinationOfDoids(@Nullable Set<String> tumorDoids, @NotNull Set<Set<String>> validDoidCombinations) {
+    fun hasAtLeastOneCombinationOfDoids(tumorDoids: Set<String?>?, validDoidCombinations: Set<Set<String>>): Boolean {
         if (tumorDoids == null) {
-            return false;
+            return false
         }
-
-        for (Set<String> validDoidCombination : validDoidCombinations) {
-            boolean containsAll = true;
-            for (String doid : validDoidCombination) {
+        for (validDoidCombination in validDoidCombinations) {
+            var containsAll = true
+            for (doid in validDoidCombination) {
                 if (!tumorDoids.contains(doid)) {
-                    containsAll = false;
-                    break;
+                    containsAll = false
+                    break
                 }
             }
-
             if (containsAll) {
-                return true;
+                return true
             }
         }
-
-        return false;
+        return false
     }
 
-    @NotNull
-    private static Set<String> createFullExpandedDoidTree(@NotNull DoidModel doidModel, @Nullable Set<String> doidsToExpand) {
-        if (doidsToExpand == null) {
-            return Sets.newHashSet();
-        }
-
-        Set<String> expanded = Sets.newHashSet();
-        for (String doid : doidsToExpand) {
-            expanded.addAll(doidModel.doidWithParents(doid));
-        }
-        return expanded;
+    private fun createFullExpandedDoidTree(doidModel: DoidModel, doidsToExpand: Set<String>?): Set<String> {
+        return doidsToExpand?.flatMap { doidModel.doidWithParents(it) }?.toSet() ?: emptySet()
     }
 }

@@ -1,58 +1,33 @@
-package com.hartwig.actin.algo.evaluation.tumor;
+package com.hartwig.actin.algo.evaluation.tumor
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.clinical.datamodel.TumorStage;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.clinical.datamodel.TumorStage
 
-import org.jetbrains.annotations.NotNull;
-
-public class HasLocallyAdvancedCancer implements EvaluationFunction {
-
-    HasLocallyAdvancedCancer() {
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        TumorStage stage = record.clinical().tumor().stage();
-
-        if (stage == null) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Tumor stage details are missing, if cancer is locally advanced cannot be determined")
-                    .addUndeterminedGeneralMessages("Undetermined locally advanced cancer")
-                    .build();
-        }
-
-        EvaluationResult result;
-        if (isStageMatch(stage, TumorStage.III)) {
-            result = EvaluationResult.PASS;
+class HasLocallyAdvancedCancer internal constructor() : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val stage = record.clinical().tumor().stage()
+            ?: return EvaluationFactory.undetermined(
+                "Tumor stage details are missing, if cancer is locally advanced cannot be determined",
+                "Undetermined locally advanced cancer"
+            )
+        return if (isStageMatch(stage, TumorStage.III)) {
+            EvaluationFactory.pass("Tumor stage $stage is considered locally advanced", "Locally advanced cancer")
         } else if (isStageMatch(stage, TumorStage.II)) {
-            result = EvaluationResult.WARN;
+            EvaluationFactory.warn(
+                "Could not be determined if tumor stage $stage is considered locally advanced",
+                "Unclear if locally advanced cancer for stage $stage"
+            )
         } else {
-            result = EvaluationResult.FAIL;
+            EvaluationFactory.fail("Tumor stage $stage is not considered locally advanced", "No locally advanced cancer")
         }
-
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
-        if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Tumor stage " + stage + " is considered locally advanced");
-            builder.addPassGeneralMessages("Locally advanced cancer");
-        } else if (result == EvaluationResult.WARN) {
-            builder.addWarnSpecificMessages("Could not be determined if tumor stage " + stage + " is considered locally advanced");
-            builder.addWarnGeneralMessages("Unclear if locally advanced cancer for stage " + stage);
-        } else if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Tumor stage " + stage + " is not considered locally advanced");
-            builder.addFailGeneralMessages("No locally advanced cancer");
-        }
-
-        return builder.build();
     }
 
-    private static boolean isStageMatch(@NotNull TumorStage stage, @NotNull TumorStage stageToMatch) {
-        return stage == stageToMatch || stage.category() == stageToMatch;
+    companion object {
+        private fun isStageMatch(stage: TumorStage, stageToMatch: TumorStage): Boolean {
+            return stage == stageToMatch || stage.category() == stageToMatch
+        }
     }
 }

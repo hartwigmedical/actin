@@ -1,65 +1,68 @@
-package com.hartwig.actin.algo.evaluation.tumor;
+package com.hartwig.actin.algo.evaluation.tumor
 
-import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.algo.doid.DoidConstants
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory.withDoids
+import org.junit.Test
 
-import java.util.stream.Stream;
-
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.doid.DoidConstants;
-import com.hartwig.actin.doid.DoidModel;
-import com.hartwig.actin.doid.TestDoidModelFactory;
-
-import org.jetbrains.annotations.Nullable;
-import org.junit.Test;
-
-public class HasLeftSidedColorectalTumorTest {
-
+class HasLeftSidedColorectalTumorTest {
     @Test
-    public void shouldReturnUndeterminedWhenNoTumorDoidsConfigured() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function().evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+    fun shouldReturnUndeterminedWhenNoTumorDoidsConfigured() {
+        assertEvaluation(EvaluationResult.UNDETERMINED, function().evaluate(TestDataFactory.createMinimalTestPatientRecord()))
     }
 
     @Test
-    public void shouldFailWhenTumorIsNotColorectal() {
-        assertEvaluation(EvaluationResult.FAIL, function().evaluate(TumorTestFactory.withDoids(DoidConstants.PROSTATE_CANCER_DOID)));
+    fun shouldFailWhenTumorIsNotColorectal() {
+        assertEvaluation(EvaluationResult.FAIL, function().evaluate(withDoids(DoidConstants.PROSTATE_CANCER_DOID)))
     }
 
     @Test
-    public void shouldReturnUndeterminedWhenTumorSubLocationIsUnknownOrMissing() {
-        Stream.of(null, "", "unknown")
-                .forEach(subLocation -> assertEvaluation(EvaluationResult.UNDETERMINED,
-                        function().evaluate(patientWithTumorSubLocation(subLocation))));
+    fun shouldReturnUndeterminedWhenTumorSubLocationIsUnknownOrMissing() {
+        listOf(null, "", "unknown")
+            .forEach { subLocation: String? ->
+                assertEvaluation(EvaluationResult.UNDETERMINED, function().evaluate(patientWithTumorSubLocation(subLocation)))
+            }
     }
 
     @Test
-    public void shouldPassWhenLeftTumorSubLocationProvided() {
-        Stream.of("Rectum", "Descending Colon", "COLON sigmoid", "colon descendens", "rectosigmoid", "Colon sigmoideum")
-                .forEach(subLocation -> assertEvaluation(EvaluationResult.PASS,
-                        function().evaluate(patientWithTumorSubLocation(subLocation))));
+    fun shouldPassWhenLeftTumorSubLocationProvided() {
+        listOf("Rectum", "Descending Colon", "COLON sigmoid", "colon descendens", "rectosigmoid", "Colon sigmoideum")
+            .forEach { subLocation: String? ->
+                assertEvaluation(EvaluationResult.PASS, function().evaluate(patientWithTumorSubLocation(subLocation)))
+            }
     }
 
     @Test
-    public void shouldFailWhenRightTumorSubLocationProvided() {
-        Stream.of("Ascending colon",
-                        "Colon ascendens",
-                        "caecum",
-                        "cecum",
-                        "transverse COLON",
-                        "colon transversum",
-                        "flexura hepatica",
-                        "hepatic flexure")
-                .forEach(subLocation -> assertEvaluation(EvaluationResult.FAIL,
-                        function().evaluate(patientWithTumorSubLocation(subLocation))));
+    fun shouldFailWhenRightTumorSubLocationProvided() {
+        listOf(
+            "Ascending colon",
+            "Colon ascendens",
+            "caecum",
+            "cecum",
+            "transverse COLON",
+            "colon transversum",
+            "flexura hepatica",
+            "hepatic flexure"
+        )
+            .forEach { subLocation: String? ->
+                assertEvaluation(EvaluationResult.FAIL, function().evaluate(patientWithTumorSubLocation(subLocation)))
+            }
     }
 
-    private static PatientRecord patientWithTumorSubLocation(@Nullable String subLocation) {
-        return TumorTestFactory.withDoidAndSubLocation(DoidConstants.COLORECTAL_CANCER_DOID, subLocation);
-    }
+    companion object {
+        private fun patientWithTumorSubLocation(subLocation: String?): PatientRecord {
+            return TumorTestFactory.withDoidAndSubLocation(DoidConstants.COLORECTAL_CANCER_DOID, subLocation)
+        }
 
-    private static HasLeftSidedColorectalTumor function() {
-        DoidModel doidModel = TestDoidModelFactory.createWithOneDoidAndTerm(DoidConstants.COLORECTAL_CANCER_DOID, "colorectal cancer");
-        return new HasLeftSidedColorectalTumor(doidModel);
+        private fun function(): HasLeftSidedColorectalTumor {
+            val doidModel: DoidModel =
+                TestDoidModelFactory.createWithOneDoidAndTerm(DoidConstants.COLORECTAL_CANCER_DOID, "colorectal cancer")
+            return HasLeftSidedColorectalTumor(doidModel)
+        }
     }
 }

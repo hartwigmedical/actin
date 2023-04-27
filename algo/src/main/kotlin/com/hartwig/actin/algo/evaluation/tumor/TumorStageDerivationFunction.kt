@@ -1,88 +1,81 @@
-package com.hartwig.actin.algo.evaluation.tumor;
+package com.hartwig.actin.algo.evaluation.tumor
 
-import static com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.hasConfiguredDoids;
-import static com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.isOfDoidType;
+import com.hartwig.actin.algo.doid.DoidConstants
+import com.hartwig.actin.clinical.datamodel.TumorDetails
+import com.hartwig.actin.clinical.datamodel.TumorStage
+import com.hartwig.actin.doid.DoidModel
+import java.util.function.Predicate
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
-
-import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.doid.DoidConstants;
-import com.hartwig.actin.clinical.datamodel.TumorDetails;
-import com.hartwig.actin.clinical.datamodel.TumorStage;
-import com.hartwig.actin.doid.DoidModel;
-
-import org.jetbrains.annotations.Nullable;
-
-class TumorStageDerivationFunction {
-
-    private final Map<Predicate<TumorDetails>, Set<TumorStage>> derivationRules;
-
-    private TumorStageDerivationFunction(Map<Predicate<TumorDetails>, Set<TumorStage>> derivationRules) {
-        this.derivationRules = derivationRules;
+internal class TumorStageDerivationFunction private constructor(private val derivationRules: Map<Predicate<TumorDetails>, Set<TumorStage>>) {
+    fun apply(tumor: TumorDetails): List<TumorStage> {
+        return if (DoidEvaluationFunctions.hasConfiguredDoids(tumor.doids()) && hasNoTumorStage(tumor)) {
+            derivationRules.entries
+                .filter { it.key.test(tumor) }
+                .flatMap { it.value }
+        } else {
+            emptyList()
+        }
     }
 
-    static TumorStageDerivationFunction create(DoidModel doidModel) {
-        return new TumorStageDerivationFunction(Map.of(hasAllKnownLesionDetails().and(hasExactlyCategorizedLesions(0, doidModel).and(
-                        hasNoUncategorizedLesions())),
-                Set.of(TumorStage.I, TumorStage.II),
-                hasExactlyCategorizedLesions(1, doidModel),
-                Set.of(TumorStage.III, TumorStage.IV),
-                hasAtLeastCategorizedLesions(2, doidModel),
-                Set.of(TumorStage.IV)));
-    }
+    companion object {
+        fun create(doidModel: DoidModel): TumorStageDerivationFunction {
+            return TumorStageDerivationFunction(
+                mapOf(
+                    hasAllKnownLesionDetails().and(
+                        hasExactlyCategorizedLesions(0, doidModel).and(
+                            hasNoUncategorizedLesions()
+                        )
+                    ) to setOf(TumorStage.I, TumorStage.II),
+                    hasExactlyCategorizedLesions(1, doidModel) to setOf(TumorStage.III, TumorStage.IV),
+                    hasAtLeastCategorizedLesions(2, doidModel) to setOf(TumorStage.IV)
+                )
+            )
+        }
 
-    Stream<TumorStage> apply(TumorDetails tumor) {
-        return hasConfiguredDoids(tumor.doids()) && hasNoTumorStage(tumor) ? derivationRules.entrySet()
-                .stream()
-                .filter(rule -> rule.getKey().test(tumor))
-                .map(Map.Entry::getValue)
-                .flatMap(Set::stream) : Stream.empty();
-    }
+        private fun hasNoTumorStage(tumor: TumorDetails): Boolean {
+            return tumor.stage() == null
+        }
 
-    private static boolean hasNoTumorStage(TumorDetails tumor) {
-        return tumor.stage() == null;
-    }
+        private fun hasAtLeastCategorizedLesions(min: Int, doidModel: DoidModel): Predicate<TumorDetails> {
+            return Predicate<TumorDetails> { tumor: TumorDetails -> lesionCount(doidModel, tumor) >= min }
+        }
 
-    private static Predicate<TumorDetails> hasAtLeastCategorizedLesions(int min, DoidModel doidModel) {
-        return tumor -> lesionCount(doidModel, tumor) >= min;
-    }
+        private fun hasExactlyCategorizedLesions(count: Int, doidModel: DoidModel): Predicate<TumorDetails> {
+            return Predicate<TumorDetails> { tumor: TumorDetails -> lesionCount(doidModel, tumor) == count }
+        }
 
-    private static Predicate<TumorDetails> hasExactlyCategorizedLesions(int count, DoidModel doidModel) {
-        return tumor -> lesionCount(doidModel, tumor) == count;
-    }
+        private fun lesionCount(doidModel: DoidModel, tumor: TumorDetails): Int {
+            return listOf(
+                tumor.hasLiverLesions() to DoidConstants.LIVER_CANCER_DOID,
+                tumor.hasLymphNodeLesions() to DoidConstants.LYMPH_NODE_CANCER_DOID,
+                tumor.hasCnsLesions() to DoidConstants.CNS_CANCER_DOID,
+                tumor.hasBrainLesions() to DoidConstants.BRAIN_CANCER_DOID,
+                tumor.hasLungLesions() to DoidConstants.LUNG_CANCER_DOID,
+                tumor.hasBoneLesions() to DoidConstants.BONE_CANCER_DOID
+            ).count {
+                evaluateMetastases(it.first, tumor.doids(), it.second, doidModel)
+            }
+        }
 
-    private static long lesionCount(DoidModel doidModel, TumorDetails tumor) {
-        return Stream.of(Maps.immutableEntry(tumor.hasLiverLesions(), DoidConstants.LIVER_CANCER_DOID),
-                        Maps.immutableEntry(tumor.hasLymphNodeLesions(), DoidConstants.LYMPH_NODE_CANCER_DOID),
-                        Maps.immutableEntry(tumor.hasCnsLesions(), DoidConstants.CNS_CANCER_DOID),
-                        Maps.immutableEntry(tumor.hasBrainLesions(), DoidConstants.BRAIN_CANCER_DOID),
-                        Maps.immutableEntry(tumor.hasLungLesions(), DoidConstants.LUNG_CANCER_DOID),
-                        Maps.immutableEntry(tumor.hasBoneLesions(), DoidConstants.BONE_CANCER_DOID))
-                .filter(entry -> evaluateMetastases(entry.getKey(), tumor.doids(), entry.getValue(), doidModel))
-                .count();
-    }
+        private fun hasNoUncategorizedLesions(): Predicate<TumorDetails> {
+            return Predicate<TumorDetails> { tumor: TumorDetails -> tumor.otherLesions().isNullOrEmpty() }
+        }
 
-    private static Predicate<TumorDetails> hasNoUncategorizedLesions() {
-        return tumor -> Optional.ofNullable(tumor.otherLesions()).map(List::isEmpty).orElse(true);
-    }
+        private fun hasAllKnownLesionDetails(): Predicate<TumorDetails> {
+            return Predicate<TumorDetails> { tumor: TumorDetails ->
+                listOf(
+                    tumor.hasLiverLesions(),
+                    tumor.hasLymphNodeLesions(),
+                    tumor.hasCnsLesions(),
+                    tumor.hasBrainLesions(),
+                    tumor.hasLungLesions(),
+                    tumor.hasBoneLesions()
+                ).all { it != null }
+            }
+        }
 
-    private static Predicate<TumorDetails> hasAllKnownLesionDetails() {
-        return tumor -> Stream.of(tumor.hasLiverLesions(),
-                tumor.hasLymphNodeLesions(),
-                tumor.hasCnsLesions(),
-                tumor.hasBrainLesions(),
-                tumor.hasLungLesions(),
-                tumor.hasBoneLesions()).allMatch(Objects::nonNull);
-    }
-
-    private static boolean evaluateMetastases(@Nullable Boolean hasLesions, Set<String> tumorDoids, String doidToMatch,
-            DoidModel doidModel) {
-        return Optional.ofNullable(hasLesions).map(h -> h && !isOfDoidType(doidModel, tumorDoids, doidToMatch)).orElse(false);
+        private fun evaluateMetastases(hasLesions: Boolean?, tumorDoids: Set<String>?, doidToMatch: String, doidModel: DoidModel): Boolean {
+            return (hasLesions ?: false) && !DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, doidToMatch)
+        }
     }
 }

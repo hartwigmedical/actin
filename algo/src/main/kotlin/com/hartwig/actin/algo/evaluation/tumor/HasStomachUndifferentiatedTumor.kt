@@ -1,61 +1,32 @@
-package com.hartwig.actin.algo.evaluation.tumor;
+package com.hartwig.actin.algo.evaluation.tumor
 
-import java.util.Set;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.doid.DoidConstants
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.doid.DoidModel
 
-import com.google.common.collect.Sets;
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.doid.DoidConstants;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.doid.DoidModel;
-
-import org.jetbrains.annotations.NotNull;
-
-public class HasStomachUndifferentiatedTumor implements EvaluationFunction {
-
-    static final Set<String> UNDIFFERENTIATED_TYPES = Sets.newHashSet();
-
-    static {
-        UNDIFFERENTIATED_TYPES.add("Undifferentiated");
+class HasStomachUndifferentiatedTumor internal constructor(private val doidModel: DoidModel) : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val tumorDoids = record.clinical().tumor().doids()
+        if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) || (record.clinical().tumor().primaryTumorType() == null
+                    && record.clinical().tumor().primaryTumorSubType() == null)
+        ) {
+            return EvaluationFactory.undetermined(
+                "Could not determine whether patient has undifferentiated stomach tumor",
+                "Undetermined undifferentiated stomach tumor"
+            )
+        }
+        val isStomachCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.STOMACH_CANCER_DOID)
+        val isUndifferentiatedType = TumorTypeEvaluationFunctions.hasTumorWithType(record.clinical().tumor(), UNDIFFERENTIATED_TYPES)
+        return if (isStomachCancer && isUndifferentiatedType) {
+            EvaluationFactory.pass("Patient has undifferentiated stomach tumor", "Tumor type")
+        } else
+            EvaluationFactory.fail("Patient does not have undifferentiated stomach tumor", "Tumor type")
     }
 
-    @NotNull
-    private final DoidModel doidModel;
-
-    HasStomachUndifferentiatedTumor(@NotNull final DoidModel doidModel) {
-        this.doidModel = doidModel;
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        Set<String> tumorDoids = record.clinical().tumor().doids();
-        if ((!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) || (record.clinical().tumor().primaryTumorType() == null
-                && record.clinical().tumor().primaryTumorSubType() == null)) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Could not determine whether patient has undifferentiated stomach tumor")
-                    .addUndeterminedGeneralMessages("Undetermined undifferentiated stomach tumor")
-                    .build();
-        }
-
-        boolean isStomachCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.STOMACH_CANCER_DOID);
-        boolean isUndifferentiatedType = TumorTypeEvaluationFunctions.hasTumorWithType(record.clinical().tumor(), UNDIFFERENTIATED_TYPES);
-
-        if (isStomachCancer && isUndifferentiatedType) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient has undifferentiated stomach tumor")
-                    .addPassGeneralMessages("Tumor type")
-                    .build();
-        }
-
-        return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Patient does not have undifferentiated stomach tumor")
-                .addFailGeneralMessages("Tumor type")
-                .build();
+    companion object {
+        val UNDIFFERENTIATED_TYPES = setOf("Undifferentiated")
     }
 }

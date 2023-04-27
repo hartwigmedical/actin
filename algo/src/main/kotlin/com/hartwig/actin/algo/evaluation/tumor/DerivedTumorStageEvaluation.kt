@@ -1,44 +1,39 @@
-package com.hartwig.actin.algo.evaluation.tumor;
+package com.hartwig.actin.algo.evaluation.tumor
 
-import static java.lang.String.format;
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.clinical.datamodel.TumorStage
 
-import java.util.Map;
-import java.util.Set;
-import java.util.function.BiFunction;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.clinical.datamodel.TumorStage;
-
-final class DerivedTumorStageEvaluation {
-
-    static Evaluation create(Map<TumorStage, Evaluation> derived, BiFunction<String, String, Evaluation> createEvaluation) {
-        Evaluation worstEvaluation = worstEvaluation(derived);
-        return createEvaluation.apply(allSpecificMessagesFrom(derived, worstEvaluation), allGeneralMessagesFrom(worstEvaluation));
+internal object DerivedTumorStageEvaluation {
+    fun create(derived: Map<TumorStage, Evaluation>, createEvaluation: (String, String) -> Evaluation): Evaluation {
+        val worstEvaluation = worstEvaluation(derived)
+        return createEvaluation(allSpecificMessagesFrom(derived, worstEvaluation), allGeneralMessagesFrom(worstEvaluation))
     }
 
-    private static Evaluation worstEvaluation(Map<TumorStage, Evaluation> derived) {
-        return derived.values().stream().min((e1, e2) -> e1.equals(e2) ? 0 : e1.result().isWorseThan(e2.result()) ? -1 : 1).orElseThrow();
+    private fun worstEvaluation(derived: Map<TumorStage, Evaluation>): Evaluation {
+        return derived.values
+            .minWith { e1: Evaluation, e2: Evaluation -> if (e1 == e2) 0 else if (e1.result().isWorseThan(e2.result())) -1 else 1 }
     }
 
-    private static String allSpecificMessagesFrom(Map<TumorStage, Evaluation> derived, Evaluation worstEvaluation) {
-        return format("%s. Tumor stage has been implied to be %s",
-                Stream.of(worstEvaluation.passSpecificMessages(),
-                        worstEvaluation.warnSpecificMessages(),
-                        worstEvaluation.failSpecificMessages(),
-                        worstEvaluation.undeterminedSpecificMessages()).flatMap(Set::stream).collect(Collectors.joining(". ")),
-                stagesFrom(derived.keySet().stream()));
+    private fun allSpecificMessagesFrom(derived: Map<TumorStage, Evaluation>, worstEvaluation: Evaluation): String {
+        val aggregatedMessage = listOf(
+            worstEvaluation.passSpecificMessages(), worstEvaluation.warnSpecificMessages(),
+            worstEvaluation.failSpecificMessages(), worstEvaluation.undeterminedSpecificMessages()
+        )
+            .flatten()
+            .joinToString(". ")
+        return String.format("%s. Tumor stage has been implied to be %s", aggregatedMessage, stagesFrom(derived.keys))
     }
 
-    private static String allGeneralMessagesFrom(Evaluation worstEvaluation) {
-        return Stream.of(worstEvaluation.passGeneralMessages(),
-                worstEvaluation.warnGeneralMessages(),
-                worstEvaluation.failGeneralMessages(),
-                worstEvaluation.undeterminedGeneralMessages()).flatMap(Set::stream).collect(Collectors.joining(". "));
+    private fun allGeneralMessagesFrom(worstEvaluation: Evaluation): String {
+        return listOf(
+            worstEvaluation.passGeneralMessages(), worstEvaluation.warnGeneralMessages(), worstEvaluation.failGeneralMessages(),
+            worstEvaluation.undeterminedGeneralMessages()
+        )
+            .flatten()
+            .joinToString(". ")
     }
 
-    private static String stagesFrom(Stream<TumorStage> stream) {
-        return stream.sorted().map(TumorStage::toString).collect(Collectors.joining(" or "));
+    private fun stagesFrom(stages: Collection<TumorStage>): String {
+        return stages.sorted().joinToString(" or ") { it.toString() }
     }
 }
