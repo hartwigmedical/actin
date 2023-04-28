@@ -1,22 +1,20 @@
-package com.hartwig.actin.algo.evaluation.laboratory;
+package com.hartwig.actin.algo.evaluation.laboratory
 
-import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
+import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import org.junit.Test
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-
-import org.junit.Test;
-
-public class HasLabValueOutsideRefLimitUpTest {
-
+class HasLabValueOutsideRefLimitUpTest {
     @Test
-    public void canEvaluate() {
-        HasLabValueOutsideRefLimitUp function = new HasLabValueOutsideRefLimitUp();
-        PatientRecord record = TestDataFactory.createMinimalTestPatientRecord();
-
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record, LabTestFactory.builder().value(5D).refLimitUp(null).build()));
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record, LabTestFactory.builder().value(5D).refLimitUp(3D).build()));
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record, LabTestFactory.builder().value(5D).refLimitUp(7D).build()));
+    fun canEvaluate() {
+        val function = HasLabValueOutsideRefLimitUp()
+        val record = TestDataFactory.createMinimalTestPatientRecord()
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(record, LabTestFactory.builder().value(5.0).refLimitUp(null).build())
+        )
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record, LabTestFactory.builder().value(5.0).refLimitUp(3.0).build()))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record, LabTestFactory.builder().value(5.0).refLimitUp(7.0).build()))
     }
 }

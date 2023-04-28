@@ -1,41 +1,21 @@
-package com.hartwig.actin.algo.evaluation.laboratory;
+package com.hartwig.actin.algo.evaluation.laboratory
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.clinical.datamodel.LabValue;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.clinical.datamodel.LabValue
 
-import org.jetbrains.annotations.NotNull;
-
-public class HasLabValueOutsideRefLimitUp implements LabEvaluationFunction {
-
-    HasLabValueOutsideRefLimitUp() {
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
-        Double refLimitUp = labValue.refLimitUp();
-        if (refLimitUp == null) {
-            return EvaluationFactory.recoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Could not determine whether " + labValue.code() + " is outside ref limit up")
-                    .addUndeterminedGeneralMessages("Undetermined if " + labValue.code() + " is outside ref limit up")
-                    .build();
+class HasLabValueOutsideRefLimitUp internal constructor() : LabEvaluationFunction {
+    override fun evaluate(record: PatientRecord, labValue: LabValue): Evaluation {
+        val refLimitUp = labValue.refLimitUp()
+            ?: return EvaluationFactory.undetermined(
+                "Could not determine whether " + labValue.code() + " is outside ref limit up",
+                "Undetermined if " + labValue.code() + " is outside ref limit up"
+            )
+        return if (labValue.value().compareTo(refLimitUp) > 0) {
+            EvaluationFactory.pass(labValue.code() + " is outside ref limit up", labValue.code() + " out of range")
+        } else {
+            EvaluationFactory.fail(labValue.code() + " is below ref limit up", labValue.code() + " within range")
         }
-
-        EvaluationResult result = Double.compare(labValue.value(), refLimitUp) > 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages(labValue.code() + " is below ref limit up");
-            builder.addFailGeneralMessages(labValue.code() + " within range");
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages(labValue.code() + " is outside ref limit up");
-            builder.addPassGeneralMessages(labValue.code() + " out of range");
-        }
-
-        return builder.build();
     }
 }

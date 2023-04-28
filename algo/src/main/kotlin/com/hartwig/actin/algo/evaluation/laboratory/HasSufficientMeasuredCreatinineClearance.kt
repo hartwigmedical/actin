@@ -1,26 +1,18 @@
-package com.hartwig.actin.algo.evaluation.laboratory;
+package com.hartwig.actin.algo.evaluation.laboratory
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-
-import org.jetbrains.annotations.NotNull;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationFactory.unrecoverable
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
 //TODO: implement according to README
-public class HasSufficientMeasuredCreatinineClearance implements EvaluationFunction {
-
-    HasSufficientMeasuredCreatinineClearance() {
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Currently directly measured creatinine clearance cannot be determined")
-                .addUndeterminedGeneralMessages("Undetermined measured creatinine clearance")
-                .build();
+class HasSufficientMeasuredCreatinineClearance internal constructor() : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        return unrecoverable()
+            .result(EvaluationResult.UNDETERMINED)
+            .addUndeterminedSpecificMessages("Currently directly measured creatinine clearance cannot be determined")
+            .addUndeterminedGeneralMessages("Undetermined measured creatinine clearance")
+            .build()
     }
 }

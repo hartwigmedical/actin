@@ -1,28 +1,24 @@
-package com.hartwig.actin.algo.evaluation.toxicity;
+package com.hartwig.actin.algo.evaluation.toxicity
 
-import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.clinical.datamodel.Intolerance
+import org.junit.Test
 
-import com.google.common.collect.Lists;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.clinical.datamodel.Intolerance;
-
-import org.junit.Test;
-
-public class HasIntoleranceToTaxanesTest {
-
+class HasIntoleranceToTaxanesTest {
     @Test
-    public void canEvaluate() {
-        HasIntoleranceToTaxanes function = new HasIntoleranceToTaxanes();
+    fun canEvaluate() {
+        val function = HasIntoleranceToTaxanes()
 
         // No allergies
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withIntolerances(Lists.newArrayList())));
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withIntolerances(emptyList())))
 
         // Mismatch allergy
-        Intolerance mismatch = ToxicityTestFactory.intolerance().name("mismatch").build();
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withIntolerance(mismatch)));
+        val mismatch: Intolerance = ToxicityTestFactory.intolerance().name("mismatch").build()
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withIntolerance(mismatch)))
 
         // Matching allergy
-        Intolerance match = ToxicityTestFactory.intolerance().name(HasIntoleranceToTaxanes.TAXANES.iterator().next()).build();
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withIntolerance(match)));
+        val match: Intolerance = ToxicityTestFactory.intolerance().name(HasIntoleranceToTaxanes.TAXANES.iterator().next()).build()
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withIntolerance(match)))
     }
 }

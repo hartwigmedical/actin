@@ -1,61 +1,41 @@
-package com.hartwig.actin.algo.evaluation.priortumor;
+package com.hartwig.actin.algo.evaluation.priortumor
 
-import java.time.LocalDate;
-import java.util.Map;
+import com.hartwig.actin.algo.evaluation.FunctionCreator
+import com.hartwig.actin.algo.evaluation.RuleMapper
+import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.treatment.datamodel.EligibilityFunction
+import com.hartwig.actin.treatment.datamodel.EligibilityRule
 
-import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.evaluation.FunctionCreator;
-import com.hartwig.actin.algo.evaluation.RuleMapper;
-import com.hartwig.actin.algo.evaluation.RuleMappingResources;
-import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-
-import org.jetbrains.annotations.NotNull;
-
-public class PreviousTumorRuleMapper extends RuleMapper {
-
-    public PreviousTumorRuleMapper(@NotNull final RuleMappingResources resources) {
-        super(resources);
+class PreviousTumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
+    override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
+        return mapOf(
+            EligibilityRule.HAS_ACTIVE_SECOND_MALIGNANCY to hasActiveSecondMalignancyCreator(),
+            EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY to hasHistoryOfSecondMalignancyCreator(),
+            EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_TERM_X to hasHistoryOfSecondMalignancyWithDoidTermCreator(),
+            EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_WITHIN_X_YEARS to hasHistoryOfSecondMalignancyWithinYearsCreator(),
+        )
     }
 
-    @NotNull
-    @Override
-    public Map<EligibilityRule, FunctionCreator> createMappings() {
-        Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
-
-        map.put(EligibilityRule.HAS_ACTIVE_SECOND_MALIGNANCY, hasActiveSecondMalignancyCreator());
-        map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY, hasHistoryOfSecondMalignancyCreator());
-        map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_TERM_X,
-                hasHistoryOfSecondMalignancyWithDoidTermCreator());
-        map.put(EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_WITHIN_X_YEARS, hasHistoryOfSecondMalignancyWithinYearsCreator());
-
-        return map;
+    private fun hasActiveSecondMalignancyCreator(): FunctionCreator {
+        return FunctionCreator { HasActiveSecondMalignancy() }
     }
 
-    @NotNull
-    private FunctionCreator hasActiveSecondMalignancyCreator() {
-        return function -> new HasActiveSecondMalignancy();
+    private fun hasHistoryOfSecondMalignancyCreator(): FunctionCreator {
+        return FunctionCreator { HasHistoryOfSecondMalignancy() }
     }
 
-    @NotNull
-    private FunctionCreator hasHistoryOfSecondMalignancyCreator() {
-        return function -> new HasHistoryOfSecondMalignancy();
+    private fun hasHistoryOfSecondMalignancyWithDoidTermCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val doidTermToMatch = functionInputResolver().createOneDoidTermInput(function)
+            HasHistoryOfSecondMalignancyWithDoid(doidModel(), doidModel().resolveDoidForTerm(doidTermToMatch)!!)
+        }
     }
 
-    @NotNull
-    private FunctionCreator hasHistoryOfSecondMalignancyWithDoidTermCreator() {
-        return function -> {
-            String doidTermToMatch = functionInputResolver().createOneDoidTermInput(function);
-            return new HasHistoryOfSecondMalignancyWithDoid(doidModel(), doidModel().resolveDoidForTerm(doidTermToMatch));
-        };
-    }
-
-    @NotNull
-    private FunctionCreator hasHistoryOfSecondMalignancyWithinYearsCreator() {
-        return function -> {
-            int maxYears = functionInputResolver().createOneIntegerInput(function);
-            LocalDate minDate = referenceDateProvider().date().minusYears(maxYears);
-
-            return new HasHistoryOfSecondMalignancyWithinYears(minDate);
-        };
+    private fun hasHistoryOfSecondMalignancyWithinYearsCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val maxYears = functionInputResolver().createOneIntegerInput(function)
+            val minDate = referenceDateProvider().date().minusYears(maxYears.toLong())
+            HasHistoryOfSecondMalignancyWithinYears(minDate)
+        }
     }
 }

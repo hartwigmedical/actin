@@ -1,102 +1,93 @@
-package com.hartwig.actin.algo.evaluation.toxicity;
+package com.hartwig.actin.algo.evaluation.toxicity
 
-import java.time.LocalDate;
-import java.util.List;
+import com.google.common.collect.Lists
+import com.hartwig.actin.ImmutablePatientRecord
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.clinical.datamodel.Complication
+import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
+import com.hartwig.actin.clinical.datamodel.ImmutableComplication
+import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance
+import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.ImmutableToxicity
+import com.hartwig.actin.clinical.datamodel.Intolerance
+import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
+import com.hartwig.actin.clinical.datamodel.Toxicity
+import com.hartwig.actin.clinical.datamodel.ToxicitySource
+import org.apache.logging.log4j.util.Strings
+import java.time.LocalDate
 
-import com.google.common.collect.Lists;
-import com.hartwig.actin.ImmutablePatientRecord;
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.clinical.datamodel.Complication;
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
-import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance;
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
-import com.hartwig.actin.clinical.datamodel.Intolerance;
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
-import com.hartwig.actin.clinical.datamodel.Toxicity;
-import com.hartwig.actin.clinical.datamodel.ToxicitySource;
-
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
-
-final class ToxicityTestFactory {
-
-    private ToxicityTestFactory() {
-    }
-
-    @NotNull
-    public static PatientRecord withToxicities(@NotNull List<Toxicity> toxicities) {
+internal object ToxicityTestFactory {
+    fun withToxicities(toxicities: List<Toxicity>): PatientRecord {
         return ImmutablePatientRecord.builder()
-                .from(TestDataFactory.createMinimalTestPatientRecord())
-                .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                        .toxicities(toxicities)
-                        .build())
-                .build();
+            .from(TestDataFactory.createMinimalTestPatientRecord())
+            .clinical(
+                ImmutableClinicalRecord.builder()
+                    .from(TestClinicalFactory.createMinimalTestClinicalRecord())
+                    .toxicities(toxicities)
+                    .build()
+            )
+            .build()
     }
 
-    @NotNull
-    public static PatientRecord withToxicityThatIsAlsoComplication(@NotNull Toxicity toxicity) {
-        Complication complication = ImmutableComplication.builder().name(toxicity.name()).build();
-
+    fun withToxicityThatIsAlsoComplication(toxicity: Toxicity): PatientRecord {
+        val complication: Complication? = ImmutableComplication.builder().name(toxicity.name()).build()
         return ImmutablePatientRecord.builder()
-                .from(TestDataFactory.createMinimalTestPatientRecord())
-                .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                        .toxicities(Lists.newArrayList(toxicity))
-                        .complications(Lists.newArrayList(complication))
-                        .build())
-                .build();
+            .from(TestDataFactory.createMinimalTestPatientRecord())
+            .clinical(
+                ImmutableClinicalRecord.builder()
+                    .from(TestClinicalFactory.createMinimalTestClinicalRecord())
+                    .toxicities(Lists.newArrayList(toxicity))
+                    .complications(Lists.newArrayList(complication))
+                    .build()
+            )
+            .build()
     }
 
-    @NotNull
-    public static ImmutableToxicity.Builder toxicity() {
-        return ImmutableToxicity.builder().name(Strings.EMPTY).evaluatedDate(LocalDate.of(2020, 1, 1)).source(ToxicitySource.EHR);
+    fun toxicity(): ImmutableToxicity.Builder {
+        return ImmutableToxicity.builder().name(Strings.EMPTY).evaluatedDate(LocalDate.of(2020, 1, 1)).source(ToxicitySource.EHR)
     }
 
-    @NotNull
-    public static PatientRecord withPriorTumorTreatments(@NotNull List<PriorTumorTreatment> treatments) {
+    fun withPriorTumorTreatments(treatments: List<PriorTumorTreatment>): PatientRecord {
         return ImmutablePatientRecord.builder()
-                .from(TestDataFactory.createMinimalTestPatientRecord())
-                .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                        .priorTumorTreatments(treatments)
-                        .build())
-                .build();
+            .from(TestDataFactory.createMinimalTestPatientRecord())
+            .clinical(
+                ImmutableClinicalRecord.builder()
+                    .from(TestClinicalFactory.createMinimalTestClinicalRecord())
+                    .priorTumorTreatments(treatments)
+                    .build()
+            )
+            .build()
     }
 
-    @NotNull
-    public static ImmutablePriorTumorTreatment.Builder treatment() {
-        return ImmutablePriorTumorTreatment.builder().name(Strings.EMPTY).isSystemic(false);
+    fun treatment(): ImmutablePriorTumorTreatment.Builder {
+        return ImmutablePriorTumorTreatment.builder().name(Strings.EMPTY).isSystemic(false)
     }
 
-    @NotNull
-    public static PatientRecord withIntolerance(@NotNull Intolerance intolerance) {
-        return withIntolerances(Lists.newArrayList(intolerance));
+    fun withIntolerance(intolerance: Intolerance): PatientRecord {
+        return withIntolerances(Lists.newArrayList(intolerance))
     }
 
-    @NotNull
-    public static PatientRecord withIntolerances(@NotNull List<Intolerance> intolerances) {
+    fun withIntolerances(intolerances: List<Intolerance>): PatientRecord {
         return ImmutablePatientRecord.builder()
-                .from(TestDataFactory.createMinimalTestPatientRecord())
-                .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                        .intolerances(intolerances)
-                        .build())
-                .build();
+            .from(TestDataFactory.createMinimalTestPatientRecord())
+            .clinical(
+                ImmutableClinicalRecord.builder()
+                    .from(TestClinicalFactory.createMinimalTestClinicalRecord())
+                    .intolerances(intolerances)
+                    .build()
+            )
+            .build()
     }
 
-    @NotNull
-    public static ImmutableIntolerance.Builder intolerance() {
+    fun intolerance(): ImmutableIntolerance.Builder {
         return ImmutableIntolerance.builder()
-                .name(Strings.EMPTY)
-                .category(Strings.EMPTY)
-                .type(Strings.EMPTY)
-                .clinicalStatus(Strings.EMPTY)
-                .verificationStatus(Strings.EMPTY)
-                .criticality(Strings.EMPTY);
+            .name(Strings.EMPTY)
+            .category(Strings.EMPTY)
+            .type(Strings.EMPTY)
+            .clinicalStatus(Strings.EMPTY)
+            .verificationStatus(Strings.EMPTY)
+            .criticality(Strings.EMPTY)
     }
 }

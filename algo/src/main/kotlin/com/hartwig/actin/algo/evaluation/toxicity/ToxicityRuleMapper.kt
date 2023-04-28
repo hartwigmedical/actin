@@ -1,105 +1,80 @@
-package com.hartwig.actin.algo.evaluation.toxicity;
+package com.hartwig.actin.algo.evaluation.toxicity
 
-import java.util.Map;
+import com.google.common.collect.Sets
+import com.hartwig.actin.algo.evaluation.FunctionCreator
+import com.hartwig.actin.algo.evaluation.RuleMapper
+import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.treatment.datamodel.EligibilityFunction
+import com.hartwig.actin.treatment.datamodel.EligibilityRule
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.hartwig.actin.algo.evaluation.FunctionCreator;
-import com.hartwig.actin.algo.evaluation.RuleMapper;
-import com.hartwig.actin.algo.evaluation.RuleMappingResources;
-import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.input.single.OneIntegerManyStrings;
-import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
-
-import org.jetbrains.annotations.NotNull;
-
-public class ToxicityRuleMapper extends RuleMapper {
-
-    public ToxicityRuleMapper(@NotNull final RuleMappingResources resources) {
-        super(resources);
+class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
+    override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
+        return mapOf(
+            EligibilityRule.HAS_INTOLERANCE_TO_NAME_X to hasIntoleranceWithSpecificNameCreator(),
+            EligibilityRule.HAS_INTOLERANCE_BELONGING_TO_DOID_TERM_X to hasIntoleranceWithSpecificDoidTermCreator(),
+            EligibilityRule.HAS_INTOLERANCE_TO_TAXANE to hasIntoleranceToTaxaneCreator(),
+            EligibilityRule.HAS_INTOLERANCE_RELATED_TO_STUDY_MEDICATION to hasIntoleranceRelatedToStudyMedicationCreator(),
+            EligibilityRule.HAS_INTOLERANCE_FOR_PD_1_OR_PD_L1_INHIBITORS to hasIntoleranceToPD1OrPDL1InhibitorsCreator(),
+            EligibilityRule.HAS_HISTORY_OF_ANAPHYLAXIS to hasHistoryAnaphylaxisCreator(),
+            EligibilityRule.HAS_EXPERIENCED_IMMUNE_RELATED_ADVERSE_EVENTS to hasExperiencedImmuneRelatedAdverseEventsCreator(),
+            EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X to hasToxicityWithGradeCreator(),
+            EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_Y to hasToxicityWithGradeAndNameCreator(),
+            EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y to hasToxicityWithGradeIgnoringNamesCreator()
+        )
     }
 
-    @NotNull
-    @Override
-    public Map<EligibilityRule, FunctionCreator> createMappings() {
-        Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
-
-        map.put(EligibilityRule.HAS_INTOLERANCE_TO_NAME_X, hasIntoleranceWithSpecificNameCreator());
-        map.put(EligibilityRule.HAS_INTOLERANCE_BELONGING_TO_DOID_TERM_X, hasIntoleranceWithSpecificDoidTermCreator());
-        map.put(EligibilityRule.HAS_INTOLERANCE_TO_TAXANE, hasIntoleranceToTaxaneCreator());
-        map.put(EligibilityRule.HAS_INTOLERANCE_RELATED_TO_STUDY_MEDICATION, hasIntoleranceRelatedToStudyMedicationCreator());
-        map.put(EligibilityRule.HAS_INTOLERANCE_FOR_PD_1_OR_PD_L1_INHIBITORS, hasIntoleranceToPD1OrPDL1InhibitorsCreator());
-        map.put(EligibilityRule.HAS_HISTORY_OF_ANAPHYLAXIS, hasHistoryAnaphylaxisCreator());
-        map.put(EligibilityRule.HAS_EXPERIENCED_IMMUNE_RELATED_ADVERSE_EVENTS, hasExperiencedImmuneRelatedAdverseEventsCreator());
-        map.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X, hasToxicityWithGradeCreator());
-        map.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_Y, hasToxicityWithGradeAndNameCreator());
-        map.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y, hasToxicityWithGradeIgnoringNamesCreator());
-
-        return map;
+    private fun hasIntoleranceWithSpecificNameCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val termToFind = functionInputResolver().createOneStringInput(function)
+            HasIntoleranceWithSpecificName(termToFind)
+        }
     }
 
-    @NotNull
-    private FunctionCreator hasIntoleranceWithSpecificNameCreator() {
-        return function -> {
-            String termToFind = functionInputResolver().createOneStringInput(function);
-            return new HasIntoleranceWithSpecificName(termToFind);
-        };
+    private fun hasIntoleranceWithSpecificDoidTermCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val doidTermToFind = functionInputResolver().createOneDoidTermInput(function)
+            HasIntoleranceWithSpecificDoid(doidModel(), doidModel().resolveDoidForTerm(doidTermToFind)!!)
+        }
     }
 
-    @NotNull
-    private FunctionCreator hasIntoleranceWithSpecificDoidTermCreator() {
-        return function -> {
-            String doidTermToFind = functionInputResolver().createOneDoidTermInput(function);
-            return new HasIntoleranceWithSpecificDoid(doidModel(), doidModel().resolveDoidForTerm(doidTermToFind));
-        };
+    private fun hasIntoleranceToTaxaneCreator(): FunctionCreator {
+        return FunctionCreator { HasIntoleranceToTaxanes() }
     }
 
-    @NotNull
-    private FunctionCreator hasIntoleranceToTaxaneCreator() {
-        return function -> new HasIntoleranceToTaxanes();
+    private fun hasIntoleranceRelatedToStudyMedicationCreator(): FunctionCreator {
+        return FunctionCreator { HasIntoleranceRelatedToStudyMedication() }
     }
 
-    @NotNull
-    private FunctionCreator hasIntoleranceRelatedToStudyMedicationCreator() {
-        return function -> new HasIntoleranceRelatedToStudyMedication();
+    private fun hasIntoleranceToPD1OrPDL1InhibitorsCreator(): FunctionCreator {
+        return FunctionCreator { HasIntoleranceForPD1OrPDL1Inhibitors(doidModel()) }
     }
 
-    @NotNull
-    private FunctionCreator hasIntoleranceToPD1OrPDL1InhibitorsCreator() {
-        return function -> new HasIntoleranceForPD1OrPDL1Inhibitors(doidModel());
+    private fun hasHistoryAnaphylaxisCreator(): FunctionCreator {
+        return FunctionCreator { HasHistoryOfAnaphylaxis() }
     }
 
-    @NotNull
-    private FunctionCreator hasHistoryAnaphylaxisCreator() {
-        return function -> new HasHistoryOfAnaphylaxis();
+    private fun hasExperiencedImmuneRelatedAdverseEventsCreator(): FunctionCreator {
+        return FunctionCreator { HasExperiencedImmuneRelatedAdverseEvents() }
     }
 
-    @NotNull
-    private FunctionCreator hasExperiencedImmuneRelatedAdverseEventsCreator() {
-        return function -> new HasExperiencedImmuneRelatedAdverseEvents();
+    private fun hasToxicityWithGradeCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val minGrade = functionInputResolver().createOneIntegerInput(function)
+            HasToxicityWithGrade(minGrade, null, Sets.newHashSet())
+        }
     }
 
-    @NotNull
-    private FunctionCreator hasToxicityWithGradeCreator() {
-        return function -> {
-            int minGrade = functionInputResolver().createOneIntegerInput(function);
-            return new HasToxicityWithGrade(minGrade, null, Sets.newHashSet());
-        };
+    private fun hasToxicityWithGradeAndNameCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneIntegerOneStringInput(function)
+            HasToxicityWithGrade(input.integer(), input.string(), Sets.newHashSet())
+        }
     }
 
-    @NotNull
-    private FunctionCreator hasToxicityWithGradeAndNameCreator() {
-        return function -> {
-            OneIntegerOneString input = functionInputResolver().createOneIntegerOneStringInput(function);
-            return new HasToxicityWithGrade(input.integer(), input.string(), Sets.newHashSet());
-        };
-    }
-
-    @NotNull
-    private FunctionCreator hasToxicityWithGradeIgnoringNamesCreator() {
-        return function -> {
-            OneIntegerManyStrings input = functionInputResolver().createOneIntegerManyStringsInput(function);
-            return new HasToxicityWithGrade(input.integer(), null, Sets.newHashSet(input.strings()));
-        };
+    private fun hasToxicityWithGradeIgnoringNamesCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneIntegerManyStringsInput(function)
+            HasToxicityWithGrade(input.integer(), null, Sets.newHashSet(input.strings()))
+        }
     }
 }

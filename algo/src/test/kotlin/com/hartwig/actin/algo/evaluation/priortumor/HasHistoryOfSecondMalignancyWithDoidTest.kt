@@ -1,34 +1,27 @@
-package com.hartwig.actin.algo.evaluation.priortumor;
+package com.hartwig.actin.algo.evaluation.priortumor
 
-import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
+import com.hartwig.actin.doid.TestDoidModelFactory
+import org.junit.Test
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
-import com.hartwig.actin.doid.DoidModel;
-import com.hartwig.actin.doid.TestDoidModelFactory;
-
-import org.junit.Test;
-
-public class HasHistoryOfSecondMalignancyWithDoidTest {
-
+class HasHistoryOfSecondMalignancyWithDoidTest {
     @Test
-    public void canEvaluate() {
-        DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild("100", "200");
-        HasHistoryOfSecondMalignancyWithDoid function = new HasHistoryOfSecondMalignancyWithDoid(doidModel, "100");
+    fun canEvaluate() {
+        val doidModel = TestDoidModelFactory.createWithOneParentChild("100", "200")
+        val function = HasHistoryOfSecondMalignancyWithDoid(doidModel, "100")
 
         // No prior tumors.
-        List<PriorSecondPrimary> priorTumors = Lists.newArrayList();
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimaries(priorTumors)));
+        val priorTumors: MutableList<PriorSecondPrimary> = mutableListOf()
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimaries(priorTumors)))
 
         // Wrong doid
-        priorTumors.add(PriorTumorTestFactory.builder().addDoids("300").build());
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimaries(priorTumors)));
+        priorTumors.add(PriorTumorTestFactory.builder().addDoids("300").build())
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimaries(priorTumors)))
 
         // Right doid
-        priorTumors.add(PriorTumorTestFactory.builder().addDoids("200").build());
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimaries(priorTumors)));
+        priorTumors.add(PriorTumorTestFactory.builder().addDoids("200").build())
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimaries(priorTumors)))
     }
 }

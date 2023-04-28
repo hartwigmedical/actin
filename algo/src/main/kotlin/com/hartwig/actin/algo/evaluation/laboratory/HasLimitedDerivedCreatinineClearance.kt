@@ -1,122 +1,105 @@
-package com.hartwig.actin.algo.evaluation.laboratory;
+package com.hartwig.actin.algo.evaluation.laboratory
 
-import java.util.List;
-import java.util.Set;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverable
+import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMaxValue
+import com.hartwig.actin.clinical.datamodel.LabValue
+import org.apache.logging.log4j.LogManager
 
-import com.google.common.collect.Sets;
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.util.ValueComparison;
-import com.hartwig.actin.clinical.datamodel.LabValue;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-
-public class HasLimitedDerivedCreatinineClearance implements LabEvaluationFunction {
-
-    private static final Logger LOGGER = LogManager.getLogger(HasLimitedDerivedCreatinineClearance.class);
-
-    private final int referenceYear;
-    @NotNull
-    private final CreatinineClearanceMethod method;
-    private final double maxCreatinineClearance;
-
-    HasLimitedDerivedCreatinineClearance(final int referenceYear, @NotNull final CreatinineClearanceMethod method,
-            final double maxCreatinineClearance) {
-        this.referenceYear = referenceYear;
-        this.method = method;
-        this.maxCreatinineClearance = maxCreatinineClearance;
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record, @NotNull LabValue labValue) {
-        switch (method) {
-            case EGFR_MDRD:
-                return evaluateMDRD(record, labValue);
-            case EGFR_CKD_EPI:
-                return evaluateCKDEPI(record, labValue);
-            case COCKCROFT_GAULT:
-                return evaluateCockcroftGault(record, labValue);
-            default: {
-                LOGGER.warn("No creatinine clearance function implemented for '{}'", method);
-                return EvaluationFactory.recoverable().result(EvaluationResult.NOT_IMPLEMENTED).build();
+class HasLimitedDerivedCreatinineClearance internal constructor(
+    private val referenceYear: Int, private val method: CreatinineClearanceMethod,
+    private val maxCreatinineClearance: Double
+) : LabEvaluationFunction {
+    override fun evaluate(record: PatientRecord, labValue: LabValue): Evaluation {
+        return when (method) {
+            CreatinineClearanceMethod.EGFR_MDRD -> evaluateMDRD(record, labValue)
+            CreatinineClearanceMethod.EGFR_CKD_EPI -> evaluateCKDEPI(record, labValue)
+            CreatinineClearanceMethod.COCKCROFT_GAULT -> evaluateCockcroftGault(record, labValue)
+            else -> {
+                LOGGER.warn("No creatinine clearance function implemented for '{}'", method)
+                recoverable().result(EvaluationResult.NOT_IMPLEMENTED).build()
             }
         }
     }
 
-    @NotNull
-    private Evaluation evaluateMDRD(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
-        List<Double> mdrdValues = CreatinineFunctions.calcMDRD(record.clinical().patient().birthYear(),
-                referenceYear,
-                record.clinical().patient().gender(),
-                creatinine);
-
-        return evaluateValues("MDRD", mdrdValues, creatinine.comparator());
+    private fun evaluateMDRD(record: PatientRecord, creatinine: LabValue): Evaluation {
+        val mdrdValues = CreatinineFunctions.calcMDRD(
+            record.clinical().patient().birthYear(),
+            referenceYear,
+            record.clinical().patient().gender(),
+            creatinine
+        )
+        return evaluateValues("MDRD", mdrdValues, creatinine.comparator())
     }
 
-    @NotNull
-    private Evaluation evaluateCKDEPI(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
-        List<Double> ckdepiValues = CreatinineFunctions.calcCKDEPI(record.clinical().patient().birthYear(),
-                referenceYear,
-                record.clinical().patient().gender(),
-                creatinine);
-
-        return evaluateValues("CKDEPI", ckdepiValues, creatinine.comparator());
+    private fun evaluateCKDEPI(record: PatientRecord, creatinine: LabValue): Evaluation {
+        val ckdepiValues = CreatinineFunctions.calcCKDEPI(
+            record.clinical().patient().birthYear(),
+            referenceYear,
+            record.clinical().patient().gender(),
+            creatinine
+        )
+        return evaluateValues("CKDEPI", ckdepiValues, creatinine.comparator())
     }
 
-    @NotNull
-    private Evaluation evaluateCockcroftGault(@NotNull PatientRecord record, @NotNull LabValue creatinine) {
-        Double weight = CreatinineFunctions.determineWeight(record.clinical().bodyWeights());
-        double cockcroftGault = CreatinineFunctions.calcCockcroftGault(record.clinical().patient().birthYear(),
-                referenceYear,
-                record.clinical().patient().gender(),
-                weight,
-                creatinine);
-
-        EvaluationResult result = ValueComparison.evaluateVersusMaxValue(cockcroftGault, creatinine.comparator(), maxCreatinineClearance);
-
+    private fun evaluateCockcroftGault(record: PatientRecord, creatinine: LabValue): Evaluation {
+        val weight = CreatinineFunctions.determineWeight(record.clinical().bodyWeights())
+        val cockcroftGault = CreatinineFunctions.calcCockcroftGault(
+            record.clinical().patient().birthYear(),
+            referenceYear,
+            record.clinical().patient().gender(),
+            weight,
+            creatinine
+        )
+        var result = evaluateVersusMaxValue(cockcroftGault, creatinine.comparator(), maxCreatinineClearance)
         if (weight == null) {
             if (result == EvaluationResult.FAIL) {
-                result = EvaluationResult.UNDETERMINED;
+                result = EvaluationResult.UNDETERMINED
             } else if (result == EvaluationResult.PASS) {
-                result = EvaluationResult.WARN;
+                result = EvaluationResult.WARN
             }
         }
-
-        return toEvaluation(result, "Cockcroft-Gault");
+        return toEvaluation(result, "Cockcroft-Gault")
     }
 
-    @NotNull
-    private Evaluation evaluateValues(@NotNull String code, @NotNull List<Double> values, @NotNull String comparator) {
-        Set<EvaluationResult> evaluations = Sets.newHashSet();
-        for (Double value : values) {
-            evaluations.add(ValueComparison.evaluateVersusMaxValue(value, comparator, maxCreatinineClearance));
-        }
-
-        return toEvaluation(CreatinineFunctions.interpretEGFREvaluations(evaluations), code);
+    private fun evaluateValues(code: String, values: List<Double>, comparator: String): Evaluation {
+        val evaluations = values.map { evaluateVersusMaxValue(it, comparator, maxCreatinineClearance) }.toSet()
+        return toEvaluation(CreatinineFunctions.interpretEGFREvaluations(evaluations), code)
     }
 
-    @NotNull
-    private static Evaluation toEvaluation(@NotNull EvaluationResult result, @NotNull String code) {
-        ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages(code + " is too high");
-            builder.addFailGeneralMessages(code + " too high");
-        } else if (result == EvaluationResult.UNDETERMINED) {
-            builder.addUndeterminedSpecificMessages(code + " evaluation led to ambiguous results");
-            builder.addUndeterminedGeneralMessages(code + " undetermined");
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("limited " + code);
-            builder.addPassGeneralMessages("limited " + code);
-        } else if (result == EvaluationResult.WARN) {
-            builder.addWarnSpecificMessages("limited " + code);
-            builder.addWarnGeneralMessages("limited " + code);
+    companion object {
+        private val LOGGER = LogManager.getLogger(
+            HasLimitedDerivedCreatinineClearance::class.java
+        )
+
+        private fun toEvaluation(result: EvaluationResult, code: String): Evaluation {
+            val builder = recoverable().result(result)
+            when (result) {
+                EvaluationResult.FAIL -> {
+                    builder.addFailSpecificMessages("$code is too high")
+                    builder.addFailGeneralMessages("$code too high")
+                }
+
+                EvaluationResult.UNDETERMINED -> {
+                    builder.addUndeterminedSpecificMessages("$code evaluation led to ambiguous results")
+                    builder.addUndeterminedGeneralMessages("$code undetermined")
+                }
+
+                EvaluationResult.PASS -> {
+                    builder.addPassSpecificMessages("limited $code")
+                    builder.addPassGeneralMessages("limited $code")
+                }
+
+                EvaluationResult.WARN -> {
+                    builder.addWarnSpecificMessages("limited $code")
+                    builder.addWarnGeneralMessages("limited $code")
+                }
+
+                else -> {}
+            }
+            return builder.build()
         }
-        return builder.build();
     }
 }

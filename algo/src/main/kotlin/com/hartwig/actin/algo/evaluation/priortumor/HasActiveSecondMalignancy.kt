@@ -1,41 +1,16 @@
-package com.hartwig.actin.algo.evaluation.priortumor;
+package com.hartwig.actin.algo.evaluation.priortumor
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-import org.jetbrains.annotations.NotNull;
-
-public class HasActiveSecondMalignancy implements EvaluationFunction {
-
-    HasActiveSecondMalignancy() {
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        boolean hasMatch = false;
-        for (PriorSecondPrimary priorSecondPrimary : record.clinical().priorSecondPrimaries()) {
-            if (priorSecondPrimary.isActive()) {
-                hasMatch = true;
-            }
+class HasActiveSecondMalignancy internal constructor() : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        return if (record.clinical().priorSecondPrimaries().any { it.isActive }) {
+            EvaluationFactory.pass("Patient has second malignancy considered active", "Presence of second malignancy considered active")
+        } else {
+            EvaluationFactory.fail("Patient has no active second malignancy", "No active second malignancy")
         }
-
-        EvaluationResult result = hasMatch ? EvaluationResult.PASS : EvaluationResult.FAIL;
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Patient has no active second malignancy");
-            builder.addFailGeneralMessages("No active second malignancy");
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient has second malignancy considered active");
-            builder.addPassGeneralMessages("Presence of second malignancy considered active");
-        }
-
-        return builder.build();
     }
 }
-

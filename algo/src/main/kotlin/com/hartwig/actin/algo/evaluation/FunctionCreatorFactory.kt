@@ -6,7 +6,10 @@ import com.hartwig.actin.algo.evaluation.bloodtransfusion.BloodTransfusionRuleMa
 import com.hartwig.actin.algo.evaluation.cardiacfunction.CardiacFunctionRuleMapper
 import com.hartwig.actin.algo.evaluation.complication.ComplicationRuleMapper
 import com.hartwig.actin.algo.evaluation.general.GeneralRuleMapper
+import com.hartwig.actin.algo.evaluation.laboratory.LaboratoryRuleMapper
 import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleMapper
+import com.hartwig.actin.algo.evaluation.priortumor.PreviousTumorRuleMapper
+import com.hartwig.actin.algo.evaluation.toxicity.ToxicityRuleMapper
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentRuleMapper
 import com.hartwig.actin.algo.evaluation.tumor.TumorRuleMapper
 import com.hartwig.actin.treatment.datamodel.EligibilityRule
@@ -28,7 +31,10 @@ internal object FunctionCreatorFactory {
             CardiacFunctionRuleMapper(resources),
             ComplicationRuleMapper(resources),
             GeneralRuleMapper(resources),
+            LaboratoryRuleMapper(resources),
             MolecularRuleMapper(resources),
+            PreviousTumorRuleMapper(resources),
+            ToxicityRuleMapper(resources),
             TreatmentRuleMapper(resources),
             TumorRuleMapper(resources)
         )

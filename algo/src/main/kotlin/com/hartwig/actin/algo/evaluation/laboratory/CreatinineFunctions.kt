@@ -1,108 +1,65 @@
-package com.hartwig.actin.algo.evaluation.laboratory;
+package com.hartwig.actin.algo.evaluation.laboratory
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.clinical.datamodel.BodyWeight
+import com.hartwig.actin.clinical.datamodel.Gender
+import com.hartwig.actin.clinical.datamodel.LabValue
+import java.time.LocalDate
+import kotlin.math.pow
 
-import com.google.common.collect.Lists;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.clinical.datamodel.BodyWeight;
-import com.hartwig.actin.clinical.datamodel.Gender;
-import com.hartwig.actin.clinical.datamodel.LabValue;
+internal object CreatinineFunctions {
+    private const val DEFAULT_MIN_WEIGHT_FEMALE = 50.0
+    private const val DEFAULT_MIN_WEIGHT_MALE = 65.0
+    fun calcMDRD(birthYear: Int, referenceYear: Int, gender: Gender, creatinine: LabValue): List<Double> {
+        val age = referenceYear - birthYear
+        val base = 175 * (creatinine.value() / 88.4).pow(-1.154) * age.toDouble().pow(-0.203)
+        val adjusted = if (gender == Gender.FEMALE) base * 0.742 else base
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-final class CreatinineFunctions {
-
-    private static final double DEFAULT_MIN_WEIGHT_FEMALE = 50D;
-    private static final double DEFAULT_MIN_WEIGHT_MALE = 65D;
-
-    private CreatinineFunctions() {
+        return listOf(adjusted, adjusted * 1.212)
     }
 
-    @NotNull
-    public static List<Double> calcMDRD(int birthYear, int referenceYear, @NotNull Gender gender, @NotNull LabValue creatinine) {
-        List<Double> mdrdValues = Lists.newArrayList();
-
-        int age = referenceYear - birthYear;
-
-        double base = 175 * Math.pow(creatinine.value() / 88.4, -1.154) * Math.pow(age, -0.203);
-
-        double adjusted = base;
-        if (gender == Gender.FEMALE) {
-            adjusted = base * 0.742;
-        }
-
-        mdrdValues.add(adjusted);
-        mdrdValues.add(adjusted * 1.212);
-
-        return mdrdValues;
+    fun calcCKDEPI(birthYear: Int, referenceYear: Int, gender: Gender, creatinine: LabValue): List<Double> {
+        val age = referenceYear - birthYear
+        val isFemale = gender == Gender.FEMALE
+        val correction = if (isFemale) 61.9 else 79.6
+        val power = if (isFemale) -0.329 else -0.411
+        val factor1 = (creatinine.value() / correction).coerceAtMost(1.0).pow(power)
+        val factor2 = (creatinine.value() / correction).coerceAtLeast(1.0).pow(-1.209)
+        val base = 141 * factor1 * factor2 * 0.993.pow(age.toDouble())
+        val adjusted = if (isFemale) base * 1.018 else base
+        return listOf(adjusted, adjusted * 1.159)
     }
 
-    @NotNull
-    public static List<Double> calcCKDEPI(int birthYear, int referenceYear, @NotNull Gender gender, @NotNull LabValue creatinine) {
-        List<Double> ckdepiValues = Lists.newArrayList();
-
-        int age = referenceYear - birthYear;
-
-        boolean isFemale = gender == Gender.FEMALE;
-        double correction = isFemale ? 61.9 : 79.6;
-        double power = isFemale ? -0.329 : -0.411;
-
-        double factor1 = Math.pow(Math.min(creatinine.value() / correction, 1), power);
-        double factor2 = Math.pow(Math.max(creatinine.value() / correction, 1), -1.209);
-
-        double base = 141 * factor1 * factor2 * Math.pow(0.993, age);
-
-        double adjusted = base;
-        if (isFemale) {
-            adjusted = base * 1.018;
-        }
-
-        ckdepiValues.add(adjusted);
-        ckdepiValues.add(adjusted * 1.159);
-
-        return ckdepiValues;
-    }
-
-    @NotNull
-    public static EvaluationResult interpretEGFREvaluations(@NotNull Set<EvaluationResult> evaluations) {
-        if (evaluations.contains(EvaluationResult.FAIL)) {
-            return evaluations.contains(EvaluationResult.PASS) ? EvaluationResult.UNDETERMINED : EvaluationResult.FAIL;
+    fun interpretEGFREvaluations(evaluations: Set<EvaluationResult>): EvaluationResult {
+        return if (evaluations.contains(EvaluationResult.FAIL)) {
+            if (evaluations.contains(EvaluationResult.PASS)) EvaluationResult.UNDETERMINED else EvaluationResult.FAIL
         } else if (evaluations.contains(EvaluationResult.UNDETERMINED)) {
-            return EvaluationResult.UNDETERMINED;
+            EvaluationResult.UNDETERMINED
         } else {
-            return  EvaluationResult.PASS;
+            EvaluationResult.PASS
         }
     }
 
-    public static double calcCockcroftGault(int birthYear, int referenceYear, @NotNull Gender gender, @Nullable Double weight,
-            @NotNull LabValue creatinine) {
-        boolean isFemale = gender == Gender.FEMALE;
-
-        double effectiveWeight =
-                Objects.requireNonNullElse(weight, isFemale ? DEFAULT_MIN_WEIGHT_FEMALE : DEFAULT_MIN_WEIGHT_MALE);
-
-        int age = referenceYear - birthYear;
-
-        double base = (140 - age) * effectiveWeight / (0.81 * creatinine.value());
-
-        return isFemale ? base * 0.85 : base;
+    fun calcCockcroftGault(
+        birthYear: Int, referenceYear: Int, gender: Gender, weight: Double?,
+        creatinine: LabValue
+    ): Double {
+        val isFemale = gender == Gender.FEMALE
+        val effectiveWeight = weight ?: if (isFemale) DEFAULT_MIN_WEIGHT_FEMALE else DEFAULT_MIN_WEIGHT_MALE
+        val age = referenceYear - birthYear
+        val base = (140 - age) * effectiveWeight / (0.81 * creatinine.value())
+        return if (isFemale) base * 0.85 else base
     }
 
-    @Nullable
-    public static Double determineWeight(@NotNull List<BodyWeight> bodyWeights) {
-        Double weight = null;
-        LocalDate mostRecentDate = null;
-        for (BodyWeight bodyWeight : bodyWeights) {
+    fun determineWeight(bodyWeights: List<BodyWeight>): Double? {
+        var weight: Double? = null
+        var mostRecentDate: LocalDate? = null
+        for (bodyWeight in bodyWeights) {
             if (mostRecentDate == null || bodyWeight.date().isAfter(mostRecentDate)) {
-                weight = bodyWeight.value();
-                mostRecentDate = bodyWeight.date();
+                weight = bodyWeight.value()
+                mostRecentDate = bodyWeight.date()
             }
         }
-
-        return weight;
+        return weight
     }
 }

@@ -1,84 +1,59 @@
-package com.hartwig.actin.algo.evaluation.priortumor;
+package com.hartwig.actin.algo.evaluation.priortumor
 
-import java.time.LocalDate;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import java.time.LocalDate
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
-
-import org.jetbrains.annotations.NotNull;
-
-public class HasHistoryOfSecondMalignancyWithinYears implements EvaluationFunction {
-
-    @NotNull
-    private final LocalDate minDate;
-
-    public HasHistoryOfSecondMalignancyWithinYears(@NotNull final LocalDate minDate) {
-        this.minDate = minDate;
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        boolean hasMatch = false;
-        boolean hasPotentialMatch = false;
-        boolean hasUsableData = false;
-        for (PriorSecondPrimary priorSecondPrimary : record.clinical().priorSecondPrimaries()) {
-            LocalDate effectiveMinDate = minDate.minusYears(1);
-            Integer secondPrimaryYear = priorSecondPrimary.diagnosedYear();
-            Integer secondPrimaryMonth = priorSecondPrimary.diagnosedMonth();
+class HasHistoryOfSecondMalignancyWithinYears(private val minDate: LocalDate) : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        var hasMatch = false
+        var hasPotentialMatch = false
+        var hasUsableData = false
+        for (priorSecondPrimary in record.clinical().priorSecondPrimaries()) {
+            var effectiveMinDate = minDate.minusYears(1)
+            var secondPrimaryYear = priorSecondPrimary.diagnosedYear()
+            var secondPrimaryMonth = priorSecondPrimary.diagnosedMonth()
             if (priorSecondPrimary.lastTreatmentYear() != null) {
-                effectiveMinDate = minDate;
-                secondPrimaryYear = priorSecondPrimary.lastTreatmentYear();
-                if (priorSecondPrimary.lastTreatmentMonth() != null) {
-                    secondPrimaryMonth = priorSecondPrimary.lastTreatmentMonth();
+                effectiveMinDate = minDate
+                secondPrimaryYear = priorSecondPrimary.lastTreatmentYear()
+                secondPrimaryMonth = if (priorSecondPrimary.lastTreatmentMonth() != null) {
+                    priorSecondPrimary.lastTreatmentMonth()
                 } else {
-                    secondPrimaryMonth = null;
+                    null
                 }
             }
-
             if (secondPrimaryYear != null) {
-                hasUsableData = true;
-                LocalDate secondPrimaryDate = LocalDate.of(secondPrimaryYear, secondPrimaryMonth != null ? secondPrimaryMonth : 1, 1);
+                hasUsableData = true
+                val secondPrimaryDate = LocalDate.of(secondPrimaryYear, secondPrimaryMonth ?: 1, 1)
                 if (!secondPrimaryDate.isBefore(effectiveMinDate)) {
-                    hasMatch = true;
-                } else if (secondPrimaryYear.equals(effectiveMinDate.getYear()) && secondPrimaryMonth == null) {
-                    hasPotentialMatch = true;
+                    hasMatch = true
+                } else if (secondPrimaryYear == effectiveMinDate.year && secondPrimaryMonth == null) {
+                    hasPotentialMatch = true
                 }
             }
         }
-
-        if (hasMatch) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Patient has history of recent previous malignancy")
-                    .addPassGeneralMessages("Patient has history of recent previous malignancy")
-                    .build();
+        return if (hasMatch) {
+            EvaluationFactory.pass(
+                "Patient has history of recent previous malignancy", "Patient has history of recent previous malignancy"
+            )
         } else if (hasPotentialMatch) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Patient has history of previous malignancy but unclear whether it is recent enough")
-                    .addUndeterminedGeneralMessages("Patient has history of recent previous malignancy, unclear dates")
-                    .build();
+            EvaluationFactory.undetermined(
+                "Patient has history of previous malignancy but unclear whether it is recent enough",
+                "Patient has history of recent previous malignancy, unclear dates"
+            )
         } else {
             if (record.clinical().priorSecondPrimaries().isEmpty() || hasUsableData) {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.FAIL)
-                        .addFailSpecificMessages("Patient has no history of recent previous malignancy")
-                        .addFailGeneralMessages("No recent previous malignancy")
-                        .build();
+                EvaluationFactory.fail(
+                    "Patient has no history of recent previous malignancy", "No recent previous malignancy"
+                )
             } else {
-                return EvaluationFactory.unrecoverable()
-                        .result(EvaluationResult.UNDETERMINED)
-                        .addUndeterminedSpecificMessages(
-                                "Patient has previous malignancy, but no dates available so cannot be determined if previous malignancy was recent")
-                        .addUndeterminedGeneralMessages("Second primary history, dates unknown")
-                        .build();
+                EvaluationFactory.undetermined(
+                    "Patient has previous malignancy, but no dates available so cannot be determined if previous malignancy was recent",
+                    "Second primary history, dates unknown"
+                )
             }
         }
     }
 }
-

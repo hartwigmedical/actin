@@ -1,27 +1,21 @@
-package com.hartwig.actin.algo.evaluation.priortumor;
+package com.hartwig.actin.algo.evaluation.priortumor
 
-import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
+import org.junit.Test
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
-
-import org.junit.Test;
-
-public class HasHistoryOfSecondMalignancyTest {
-
+class HasHistoryOfSecondMalignancyTest {
     @Test
-    public void canEvaluate() {
-        HasHistoryOfSecondMalignancy function = new HasHistoryOfSecondMalignancy();
+    fun canEvaluate() {
+        val function = HasHistoryOfSecondMalignancy()
 
         // No active prior tumors.
-        List<PriorSecondPrimary> priorTumors = Lists.newArrayList();
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimaries(priorTumors)));
+        val priorTumors: MutableList<PriorSecondPrimary> = mutableListOf()
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimaries(priorTumors)))
 
         // One prior tumor
-        priorTumors.add(PriorTumorTestFactory.builder().build());
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimaries(priorTumors)));
+        priorTumors.add(PriorTumorTestFactory.builder().build())
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimaries(priorTumors)))
     }
 }
