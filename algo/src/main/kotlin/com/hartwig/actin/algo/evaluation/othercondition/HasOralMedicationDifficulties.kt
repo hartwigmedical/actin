@@ -1,50 +1,28 @@
-package com.hartwig.actin.algo.evaluation.othercondition;
+package com.hartwig.actin.algo.evaluation.othercondition
 
-import java.util.Set;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 
-import com.google.common.collect.Sets;
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.clinical.datamodel.Complication;
-
-import org.jetbrains.annotations.NotNull;
-
-public class HasOralMedicationDifficulties implements EvaluationFunction {
-
-    static final Set<String> COMPLICATIONS_CAUSING_SWALLOW_DIFFICULTIES = Sets.newHashSet();
-
-    static {
-        COMPLICATIONS_CAUSING_SWALLOW_DIFFICULTIES.add("tube");
-        COMPLICATIONS_CAUSING_SWALLOW_DIFFICULTIES.add("swallow");
-    }
-
-    HasOralMedicationDifficulties() {
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        if (record.clinical().complications() != null) {
-            for (Complication complication : record.clinical().complications()) {
-                for (String termToFind : COMPLICATIONS_CAUSING_SWALLOW_DIFFICULTIES) {
-                    if (complication.name().toLowerCase().contains(termToFind.toLowerCase())) {
-                        return EvaluationFactory.unrecoverable()
-                                .result(EvaluationResult.PASS)
-                                .addPassSpecificMessages("Patient has potential oral medication difficulties due to " + complication.name())
-                                .addPassGeneralMessages("Potential oral medication difficulties: " + complication.name())
-                                .build();
-                    }
-                }
+class HasOralMedicationDifficulties internal constructor() : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        for (complication in record.clinical().complications() ?: emptyList()) {
+            if (stringCaseInsensitivelyMatchesQueryCollection(complication.name(), COMPLICATIONS_CAUSING_SWALLOW_DIFFICULTIES)) {
+                return EvaluationFactory.pass(
+                    "Patient has potential oral medication difficulties due to " + complication.name(),
+                    "Potential oral medication difficulties: " + complication.name()
+                )
             }
         }
+        return EvaluationFactory.fail(
+            "No potential reasons for difficulty with oral medication identified",
+            "No potential oral medication difficulties identified"
+        )
+    }
 
-        return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("No potential reasons for difficulty with oral medication identified")
-                .addFailGeneralMessages("No potential oral medication difficulties identified")
-                .build();
+    companion object {
+        val COMPLICATIONS_CAUSING_SWALLOW_DIFFICULTIES = setOf("tube", "swallow")
     }
 }

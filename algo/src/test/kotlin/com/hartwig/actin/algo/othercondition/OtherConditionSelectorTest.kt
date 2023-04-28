@@ -1,38 +1,30 @@
-package com.hartwig.actin.algo.othercondition;
+package com.hartwig.actin.algo.othercondition
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.google.common.collect.Lists
+import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition
+import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
+import org.apache.logging.log4j.util.Strings
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Test
 
-import java.util.List;
-import java.util.Set;
-
-import com.google.common.collect.Lists;
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
-import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
-
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
-
-public class OtherConditionSelectorTest {
-
+class OtherConditionSelectorTest {
     @Test
-    public void canSelectClinicallyRelevant() {
-        PriorOtherCondition relevant = create(true);
-        PriorOtherCondition irrelevant = create(false);
-
-        Set<PriorOtherCondition> filtered = OtherConditionSelector.selectClinicallyRelevant(Lists.newArrayList(relevant, irrelevant));
-
-        assertEquals(1, filtered.size());
-        assertTrue(filtered.contains(relevant));
+    fun canSelectClinicallyRelevant() {
+        val relevant = create(true)
+        val irrelevant = create(false)
+        val filtered = OtherConditionSelector.selectClinicallyRelevant(Lists.newArrayList(relevant, irrelevant))
+        assertEquals(1, filtered.size.toLong())
+        assertTrue(filtered.contains(relevant))
     }
 
-    @NotNull
-    private static PriorOtherCondition create(boolean isContraindicationForTherapy) {
-        return ImmutablePriorOtherCondition.builder()
+    companion object {
+        private fun create(isContraindicationForTherapy: Boolean): PriorOtherCondition {
+            return ImmutablePriorOtherCondition.builder()
                 .name(Strings.EMPTY)
                 .category(Strings.EMPTY)
                 .isContraindicationForTherapy(isContraindicationForTherapy)
-                .build();
+                .build()
+        }
     }
 }

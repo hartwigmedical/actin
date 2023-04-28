@@ -1,36 +1,25 @@
-package com.hartwig.actin.algo.evaluation.othercondition;
+package com.hartwig.actin.algo.evaluation.othercondition
 
-import static java.lang.String.format;
+import com.hartwig.actin.algo.evaluation.util.Format.concat
 
-import com.hartwig.actin.algo.evaluation.util.Format;
-
-final class PriorConditionMessages {
-
-    enum Characteristic {
-        CONDITION("condition(s)"),
-        TOXICITY("toxicity(ies)"),
-        COMPLICATION("complication(s)");
-
-        private final String displayText;
-
-        Characteristic(String displayText) {
-            this.displayText = displayText;
-        }
+internal object PriorConditionMessages {
+    fun failSpecific(doidTerm: String?): String {
+        return "Patient has no other condition belonging to category $doidTerm"
     }
 
-    static String failSpecific(String doidTerm) {
-        return "Patient has no other condition belonging to category " + doidTerm;
+    fun failGeneral(): String {
+        return "No relevant non-oncological condition"
     }
 
-    static String failGeneral() {
-        return "No relevant non-oncological condition";
+    fun passGeneral(doidTerm: String?): String {
+        return "Relevant non-oncological condition $doidTerm"
     }
 
-    static String passGeneral(String doidTerm) {
-        return "Relevant non-oncological condition " + doidTerm;
+    fun passSpecific(characteristic: Characteristic, matches: Iterable<String>, doidTerm: String?): String {
+        return String.format("Patient has %s %s, which is indicative of %s", characteristic.displayText, concat(matches), doidTerm)
     }
 
-    static String passSpecific(Characteristic characteristic, Iterable<String> matches, String doidTerm) {
-        return format("Patient has %s %s, which is indicative of %s", characteristic.displayText, Format.concat(matches), doidTerm);
+    internal enum class Characteristic(val displayText: String) {
+        CONDITION("condition(s)"), TOXICITY("toxicity(ies)"), COMPLICATION("complication(s)")
     }
 }

@@ -1,34 +1,18 @@
-package com.hartwig.actin.algo.othercondition;
+package com.hartwig.actin.algo.othercondition
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
+import com.hartwig.actin.doid.DoidModel
 
-import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
-import com.hartwig.actin.doid.DoidModel;
-
-import org.jetbrains.annotations.NotNull;
-
-public final class OtherConditionSelector {
-
-    private OtherConditionSelector() {
+object OtherConditionSelector {
+    fun selectClinicallyRelevant(conditions: List<PriorOtherCondition>): List<PriorOtherCondition> {
+        return conditions.filter { it.isContraindicationForTherapy }
     }
 
-    @NotNull
-    public static Set<PriorOtherCondition> selectClinicallyRelevant(@NotNull List<PriorOtherCondition> conditions) {
-        return conditions.stream().filter(PriorOtherCondition::isContraindicationForTherapy).collect(Collectors.toSet());
+    fun selectConditionsMatchingDoid(conditions: List<PriorOtherCondition>, doidToFind: String, doidModel: DoidModel): Set<String> {
+        return selectClinicallyRelevant(conditions).filter { conditionHasDoid(it, doidToFind, doidModel) }.map { it.name() }.toSet()
     }
 
-    public static Set<String> selectConditionsMatchingDoid(@NotNull List<PriorOtherCondition> conditions, @NotNull String doidToFind,
-            @NotNull DoidModel doidModel) {
-        return selectClinicallyRelevant(conditions).stream()
-                .filter(condition -> conditionHasDoid(condition, doidToFind, doidModel))
-                .map(PriorOtherCondition::name)
-                .collect(Collectors.toSet());
-    }
-
-    private static boolean conditionHasDoid(@NotNull PriorOtherCondition condition, @NotNull String doidToFind,
-            @NotNull DoidModel doidModel) {
-        return condition.doids().stream().anyMatch(doid -> doidModel.doidWithParents(doid).contains(doidToFind));
+    private fun conditionHasDoid(condition: PriorOtherCondition, doidToFind: String, doidModel: DoidModel): Boolean {
+        return condition.doids().any { doidModel.doidWithParents(it).contains(doidToFind) }
     }
 }

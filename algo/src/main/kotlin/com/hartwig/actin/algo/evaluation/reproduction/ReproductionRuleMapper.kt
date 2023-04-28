@@ -1,51 +1,33 @@
-package com.hartwig.actin.algo.evaluation.reproduction;
+package com.hartwig.actin.algo.evaluation.reproduction
 
-import java.util.Map;
+import com.hartwig.actin.algo.evaluation.FunctionCreator
+import com.hartwig.actin.algo.evaluation.RuleMapper
+import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.treatment.datamodel.EligibilityRule
 
-import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.evaluation.FunctionCreator;
-import com.hartwig.actin.algo.evaluation.RuleMapper;
-import com.hartwig.actin.algo.evaluation.RuleMappingResources;
-import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-
-import org.jetbrains.annotations.NotNull;
-
-public class ReproductionRuleMapper extends RuleMapper {
-
-    public ReproductionRuleMapper(@NotNull final RuleMappingResources resources) {
-        super(resources);
+class ReproductionRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
+    override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
+        return mapOf(
+            EligibilityRule.IS_BREASTFEEDING to isBreastfeedingCreator(),
+            EligibilityRule.IS_PREGNANT to isPregnantCreator(),
+            EligibilityRule.USES_ADEQUATE_ANTICONCEPTION to canUseAdequateAnticonceptionCreator(),
+            EligibilityRule.ADHERES_TO_SPERM_OR_EGG_DONATION_PRESCRIPTIONS to willingToAdhereToDonationPrescriptionsCreator()
+        )
     }
 
-    @NotNull
-    public Map<EligibilityRule, FunctionCreator> createMappings() {
-        Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
-
-        map.put(EligibilityRule.IS_BREASTFEEDING, isBreastfeedingCreator());
-        map.put(EligibilityRule.IS_PREGNANT, isPregnantCreator());
-        map.put(EligibilityRule.USES_ADEQUATE_ANTICONCEPTION, canUseAdequateAnticonceptionCreator());
-        map.put(EligibilityRule.ADHERES_TO_SPERM_OR_EGG_DONATION_PRESCRIPTIONS, willingToAdhereToDonationPrescriptionsCreator());
-
-        return map;
+    private fun isBreastfeedingCreator(): FunctionCreator {
+        return FunctionCreator { IsBreastfeeding() }
     }
 
-    @NotNull
-    private FunctionCreator isBreastfeedingCreator() {
-        return function -> new IsBreastfeeding();
+    private fun isPregnantCreator(): FunctionCreator {
+        return FunctionCreator { IsPregnant() }
     }
 
-    @NotNull
-    private FunctionCreator isPregnantCreator() {
-        return function -> new IsPregnant();
+    private fun canUseAdequateAnticonceptionCreator(): FunctionCreator {
+        return FunctionCreator { CanUseAdequateAnticonception() }
     }
 
-    @NotNull
-    private FunctionCreator canUseAdequateAnticonceptionCreator() {
-        return function -> new CanUseAdequateAnticonception();
+    private fun willingToAdhereToDonationPrescriptionsCreator(): FunctionCreator {
+        return FunctionCreator { WillingToAdhereToDonationPrescriptions() }
     }
-
-    @NotNull
-    private FunctionCreator willingToAdhereToDonationPrescriptionsCreator() {
-        return function -> new WillingToAdhereToDonationPrescriptions();
-    }
-
 }

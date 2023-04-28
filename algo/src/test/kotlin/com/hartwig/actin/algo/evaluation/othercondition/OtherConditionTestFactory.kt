@@ -1,105 +1,98 @@
-package com.hartwig.actin.algo.evaluation.othercondition;
+package com.hartwig.actin.algo.evaluation.othercondition
 
-import java.util.List;
+import com.hartwig.actin.ImmutablePatientRecord
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.clinical.datamodel.Complication
+import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
+import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus
+import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition
+import com.hartwig.actin.clinical.datamodel.Intolerance
+import com.hartwig.actin.clinical.datamodel.Medication
+import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
+import com.hartwig.actin.clinical.datamodel.Toxicity
+import org.apache.logging.log4j.util.Strings
 
-import com.google.common.collect.Lists;
-import com.hartwig.actin.ImmutablePatientRecord;
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.clinical.datamodel.Complication;
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
-import com.hartwig.actin.clinical.datamodel.Intolerance;
-import com.hartwig.actin.clinical.datamodel.Medication;
-import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
-import com.hartwig.actin.clinical.datamodel.Toxicity;
-
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-final class OtherConditionTestFactory {
-
-    private OtherConditionTestFactory() {
+internal object OtherConditionTestFactory {
+    fun withPriorOtherCondition(condition: PriorOtherCondition): PatientRecord {
+        return withPriorOtherConditions(listOf(condition))
     }
 
-    @NotNull
-    public static PatientRecord withPriorOtherCondition(@NotNull PriorOtherCondition condition) {
-        return withPriorOtherConditions(Lists.newArrayList(condition));
-    }
-
-    @NotNull
-    public static PatientRecord withPriorOtherConditions(@NotNull List<PriorOtherCondition> conditions) {
+    fun withPriorOtherConditions(conditions: List<PriorOtherCondition>): PatientRecord {
         return ImmutablePatientRecord.builder()
-                .from(TestDataFactory.createMinimalTestPatientRecord())
-                .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                        .priorOtherConditions(conditions)
-                        .build())
-                .build();
+            .from(TestDataFactory.createMinimalTestPatientRecord())
+            .clinical(
+                ImmutableClinicalRecord.builder()
+                    .from(TestClinicalFactory.createMinimalTestClinicalRecord())
+                    .priorOtherConditions(conditions)
+                    .build()
+            )
+            .build()
     }
 
-    @NotNull
-    public static ImmutablePriorOtherCondition.Builder builder() {
-        return ImmutablePriorOtherCondition.builder().name(Strings.EMPTY).category(Strings.EMPTY).isContraindicationForTherapy(true);
+    fun builder(): ImmutablePriorOtherCondition.Builder {
+        return ImmutablePriorOtherCondition.builder().name(Strings.EMPTY).category(Strings.EMPTY).isContraindicationForTherapy(true)
     }
 
-    @NotNull
-    public static PatientRecord withComplications(@NotNull List<Complication> complications) {
+    fun withComplications(complications: List<Complication>): PatientRecord {
         return ImmutablePatientRecord.builder()
-                .from(TestDataFactory.createMinimalTestPatientRecord())
-                .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                        .complications(complications)
-                        .build())
-                .build();
+            .from(TestDataFactory.createMinimalTestPatientRecord())
+            .clinical(
+                ImmutableClinicalRecord.builder()
+                    .from(TestClinicalFactory.createMinimalTestClinicalRecord())
+                    .complications(complications)
+                    .build()
+            )
+            .build()
     }
 
-    @NotNull
-    public static PatientRecord withToxicities(@NotNull List<Toxicity> toxicities) {
+    fun withToxicities(toxicities: List<Toxicity>): PatientRecord {
         return ImmutablePatientRecord.builder()
-                .from(TestDataFactory.createMinimalTestPatientRecord())
-                .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                        .toxicities(toxicities)
-                        .build())
-                .build();
+            .from(TestDataFactory.createMinimalTestPatientRecord())
+            .clinical(
+                ImmutableClinicalRecord.builder()
+                    .from(TestClinicalFactory.createMinimalTestClinicalRecord())
+                    .toxicities(toxicities)
+                    .build()
+            )
+            .build()
     }
 
-    @NotNull
-    public static PatientRecord withIntolerances(@NotNull List<Intolerance> intolerances) {
+    fun withIntolerances(intolerances: List<Intolerance>): PatientRecord {
         return ImmutablePatientRecord.builder()
-                .from(TestDataFactory.createMinimalTestPatientRecord())
-                .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                        .intolerances(intolerances)
-                        .build())
-                .build();
+            .from(TestDataFactory.createMinimalTestPatientRecord())
+            .clinical(
+                ImmutableClinicalRecord.builder()
+                    .from(TestClinicalFactory.createMinimalTestClinicalRecord())
+                    .intolerances(intolerances)
+                    .build()
+            )
+            .build()
     }
 
-    @NotNull
-    public static PatientRecord withMedications(@NotNull List<Medication> medications) {
+    fun withMedications(medications: List<Medication>): PatientRecord {
         return ImmutablePatientRecord.builder()
-                .from(TestDataFactory.createMinimalTestPatientRecord())
-                .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                        .medications(medications)
-                        .build())
-                .build();
+            .from(TestDataFactory.createMinimalTestPatientRecord())
+            .clinical(
+                ImmutableClinicalRecord.builder()
+                    .from(TestClinicalFactory.createMinimalTestClinicalRecord())
+                    .medications(medications)
+                    .build()
+            )
+            .build()
     }
 
-    @NotNull
-    public static PatientRecord withWHO(@Nullable Integer who) {
-        PatientRecord base = TestDataFactory.createMinimalTestPatientRecord();
-
+    fun withWHO(who: Int?): PatientRecord {
+        val base = TestDataFactory.createMinimalTestPatientRecord()
         return ImmutablePatientRecord.builder()
-                .from(base)
-                .clinical(ImmutableClinicalRecord.builder()
-                        .from(base.clinical())
-                        .clinicalStatus(ImmutableClinicalStatus.builder().from(base.clinical().clinicalStatus()).who(who).build())
-                        .build())
-                .build();
+            .from(base)
+            .clinical(
+                ImmutableClinicalRecord.builder()
+                    .from(base.clinical())
+                    .clinicalStatus(ImmutableClinicalStatus.builder().from(base.clinical().clinicalStatus()).who(who).build())
+                    .build()
+            )
+            .build()
     }
 }

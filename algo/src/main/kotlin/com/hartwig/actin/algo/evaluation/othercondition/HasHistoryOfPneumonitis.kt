@@ -1,71 +1,41 @@
-package com.hartwig.actin.algo.evaluation.othercondition;
+package com.hartwig.actin.algo.evaluation.othercondition
 
-import java.util.Set;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.doid.DoidConstants
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
+import com.hartwig.actin.algo.othercondition.OtherConditionSelector
+import com.hartwig.actin.clinical.datamodel.ToxicitySource
+import com.hartwig.actin.doid.DoidModel
 
-import com.google.common.collect.Sets;
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.doid.DoidConstants;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.algo.othercondition.OtherConditionSelector;
-import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
-import com.hartwig.actin.clinical.datamodel.Toxicity;
-import com.hartwig.actin.clinical.datamodel.ToxicitySource;
-import com.hartwig.actin.doid.DoidModel;
-
-import org.jetbrains.annotations.NotNull;
-
-public class HasHistoryOfPneumonitis implements EvaluationFunction {
-
-    static final Set<String> TOXICITIES_CAUSING_PNEUMONITIS = Sets.newHashSet();
-
-    static {
-        TOXICITIES_CAUSING_PNEUMONITIS.add("pneumonia");
-        TOXICITIES_CAUSING_PNEUMONITIS.add("pneumonitis");
-    }
-
-    @NotNull
-    private final DoidModel doidModel;
-
-    HasHistoryOfPneumonitis(@NotNull final DoidModel doidModel) {
-        this.doidModel = doidModel;
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        for (PriorOtherCondition condition : OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())) {
-            for (String doid : condition.doids()) {
+class HasHistoryOfPneumonitis internal constructor(private val doidModel: DoidModel) : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())) {
+            for (doid in condition.doids()) {
                 if (doidModel.doidWithParents(doid).contains(DoidConstants.PNEUMONITIS_DOID)) {
-                    return EvaluationFactory.unrecoverable()
-                            .result(EvaluationResult.PASS)
-                            .addPassSpecificMessages("Patient has pneumonitis: " + doidModel.resolveTermForDoid(doid))
-                            .addPassGeneralMessages("History of pneumonitis")
-                            .build();
+                    return EvaluationFactory.pass(
+                        "Patient has pneumonitis: " + doidModel.resolveTermForDoid(doid),
+                        "History of pneumonitis"
+                    )
                 }
             }
         }
-
-        for (Toxicity toxicity : record.clinical().toxicities()) {
-            if (toxicity.source() == ToxicitySource.QUESTIONNAIRE || (toxicity.grade() != null && toxicity.grade() >= 2)) {
-                for (String termToFind : TOXICITIES_CAUSING_PNEUMONITIS) {
-                    if (toxicity.name().toLowerCase().contains(termToFind.toLowerCase())) {
-                        return EvaluationFactory.unrecoverable()
-                                .result(EvaluationResult.PASS)
-                                .addPassSpecificMessages("Patient has pneumonitis: " + toxicity.name())
-                                .addPassGeneralMessages("History of pneumonitis")
-                                .build();
-                    }
+        for (toxicity in record.clinical().toxicities()) {
+            if (toxicity.source() == ToxicitySource.QUESTIONNAIRE || (toxicity.grade() ?: 0) >= 2) {
+                if (stringCaseInsensitivelyMatchesQueryCollection(toxicity.name(), TOXICITIES_CAUSING_PNEUMONITIS)) {
+                    return EvaluationFactory.pass(
+                        "Patient has pneumonitis: " + toxicity.name(),
+                        "History of pneumonitis"
+                    )
                 }
             }
         }
+        return EvaluationFactory.fail("Patient has no pneumonitis", "No history of pneumonitis")
+    }
 
-        return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Patient has no pneumonitis")
-                .addFailGeneralMessages("No history of pneumonitis")
-                .build();
+    companion object {
+        val TOXICITIES_CAUSING_PNEUMONITIS = setOf("pneumonia", "pneumonitis")
     }
 }
