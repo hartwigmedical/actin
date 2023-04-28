@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo
 
-import com.google.common.collect.Lists
 import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory.createCurrentDateProvider
 import com.hartwig.actin.algo.datamodel.CohortMatch
@@ -23,30 +22,30 @@ class TrialMatcherTest {
         val patient = TestDataFactory.createProperTestPatientRecord()
         val trial = TestTreatmentFactory.createProperTestTrial()
         val matcher = TrialMatcher(createTestEvaluationFunctionFactory())
-        val matches = matcher.determineEligibility(patient, Lists.newArrayList(trial))
+        val matches = matcher.determineEligibility(patient, listOf(trial))
         Assert.assertEquals(1, matches.size.toLong())
         assertTrialMatch(matches[0])
     }
 
     @Test
     fun canDeterminePotentialEligibility() {
-        val evaluations: MutableList<Evaluation?>? = Lists.newArrayList()
+        val evaluations: MutableList<Evaluation> = mutableListOf()
         evaluations.add(EvaluationTestFactory.withResult(EvaluationResult.PASS))
-        Assert.assertTrue(TrialMatcher.Companion.isPotentiallyEligible(evaluations))
+        Assert.assertTrue(TrialMatcher.isPotentiallyEligible(evaluations))
         evaluations.add(
             ImmutableEvaluation.builder()
                 .from(EvaluationTestFactory.withResult(EvaluationResult.FAIL))
                 .recoverable(true)
                 .build()
         )
-        Assert.assertTrue(TrialMatcher.Companion.isPotentiallyEligible(evaluations))
+        Assert.assertTrue(TrialMatcher.isPotentiallyEligible(evaluations))
         evaluations.add(
             ImmutableEvaluation.builder()
                 .from(EvaluationTestFactory.withResult(EvaluationResult.FAIL))
                 .recoverable(false)
                 .build()
         )
-        Assert.assertFalse(TrialMatcher.Companion.isPotentiallyEligible(evaluations))
+        Assert.assertFalse(TrialMatcher.isPotentiallyEligible(evaluations))
     }
 
     companion object {
@@ -81,7 +80,7 @@ class TrialMatcherTest {
         }
 
         private fun findEvaluationResultForRule(
-            evaluations: MutableMap<Eligibility?, Evaluation?>,
+            evaluations: Map<Eligibility, Evaluation>,
             ruleToFind: EligibilityRule
         ): EvaluationResult {
             for ((key, value) in evaluations) {
@@ -92,7 +91,7 @@ class TrialMatcherTest {
             throw IllegalStateException("Cannot find evaluation for rule '$ruleToFind'")
         }
 
-        private fun findCohort(cohorts: MutableList<CohortMatch?>, cohortIdToFind: String): CohortMatch {
+        private fun findCohort(cohorts: List<CohortMatch>, cohortIdToFind: String): CohortMatch {
             for (cohort in cohorts) {
                 if (cohort.metadata().cohortId() == cohortIdToFind) {
                     return cohort

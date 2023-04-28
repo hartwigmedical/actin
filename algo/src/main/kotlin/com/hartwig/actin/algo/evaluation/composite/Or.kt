@@ -1,18 +1,20 @@
 package com.hartwig.actin.algo.evaluation.composite
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-class Or(private val functions: List<EvaluationFunction>) : EvaluationFunction {
+class Or(functions: List<EvaluationFunction>) : EvaluationFunction {
+    private val functions: List<EvaluationFunction>
+
+    init {
+        this.functions = functions
+    }
+
     override fun evaluate(record: PatientRecord): Evaluation {
-        val evaluations: MutableSet<Evaluation> = Sets.newHashSet()
-        for (function in functions) {
-            evaluations.add(function.evaluate(record))
-        }
+        val evaluations = functions.map { it.evaluate(record) }.toSet()
         var best: EvaluationResult? = null
         var recoverable: Boolean? = null
         for (eval in evaluations) {
@@ -24,7 +26,7 @@ class Or(private val functions: List<EvaluationFunction>) : EvaluationFunction {
             }
         }
         check(!(best == null || recoverable == null)) { "Could not determine OR result for functions: $functions" }
-        val builder = ImmutableEvaluation.builder().result(best).recoverable(recoverable)
+        val builder: ImmutableEvaluation.Builder = ImmutableEvaluation.builder().result(best).recoverable(recoverable)
         for (eval in evaluations) {
             if (eval.result() == best) {
                 builder.addAllInclusionMolecularEvents(eval.inclusionMolecularEvents())

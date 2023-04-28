@@ -1,8 +1,5 @@
 package com.hartwig.actin.algo
 
-import com.google.common.annotations.VisibleForTesting
-import com.google.common.collect.Lists
-import com.google.common.collect.Maps
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider
 import com.hartwig.actin.algo.datamodel.CohortMatch
@@ -19,52 +16,36 @@ import com.hartwig.actin.treatment.datamodel.Eligibility
 import com.hartwig.actin.treatment.datamodel.Trial
 import com.hartwig.actin.treatment.sort.EligibilityComparator
 
-class TrialMatcher @VisibleForTesting internal constructor(private val evaluationFunctionFactory: EvaluationFunctionFactory) {
-    fun determineEligibility(patient: PatientRecord, trials: MutableList<Trial?>): MutableList<TrialMatch?> {
-        val trialMatches: MutableList<TrialMatch?>? = Lists.newArrayList()
+class TrialMatcher internal constructor(private val evaluationFunctionFactory: EvaluationFunctionFactory) {
+    fun determineEligibility(patient: PatientRecord, trials: List<Trial>): List<TrialMatch> {
+        val trialMatches: MutableList<TrialMatch> = mutableListOf()
         for (trial in trials) {
             val trialEvaluations = evaluateEligibility(patient, trial.generalEligibility())
             val passesAllTrialEvaluations = isPotentiallyEligible(trialEvaluations.values)
             var hasEligibleCohort = false
-            val cohortMatches: MutableList<CohortMatch?>? = Lists.newArrayList()
-            for (cohort in trial.cohorts()) {
-                if (cohort.metadata().evaluable()) {
-                    val cohortEvaluations = evaluateEligibility(patient, cohort.eligibility())
-                    val isPotentiallyEligible = isPotentiallyEligible(cohortEvaluations.values)
-                    if (isPotentiallyEligible) {
-                        hasEligibleCohort = true
-                    }
-                    cohortMatches.add(
-                        ImmutableCohortMatch.builder()
-                            .metadata(cohort.metadata())
-                            .isPotentiallyEligible(isPotentiallyEligible && passesAllTrialEvaluations)
-                            .evaluations(cohortEvaluations)
-                            .build()
-                    )
+            val cohortMatches: List<CohortMatch> = trial.cohorts().filter { it.metadata().evaluable() }.map { cohort ->
+                val cohortEvaluations = evaluateEligibility(patient, cohort.eligibility())
+                val isPotentiallyEligible = isPotentiallyEligible(cohortEvaluations.values)
+                if (isPotentiallyEligible) {
+                    hasEligibleCohort = true
                 }
-            }
-            cohortMatches.sort(CohortMatchComparator())
+                ImmutableCohortMatch.builder().metadata(cohort.metadata())
+                    .isPotentiallyEligible(isPotentiallyEligible && passesAllTrialEvaluations).evaluations(cohortEvaluations).build()
+            }.sortedWith(CohortMatchComparator())
+
             val isEligible = passesAllTrialEvaluations && (trial.cohorts().isEmpty() || hasEligibleCohort)
             trialMatches.add(
-                ImmutableTrialMatch.builder()
-                    .identification(trial.identification())
-                    .isPotentiallyEligible(isEligible)
-                    .evaluations(trialEvaluations)
-                    .cohorts(cohortMatches)
-                    .build()
+                ImmutableTrialMatch.builder().identification(trial.identification()).isPotentiallyEligible(isEligible)
+                    .evaluations(trialEvaluations).cohorts(cohortMatches).build()
             )
         }
-        trialMatches.sort(TrialMatchComparator())
-        return trialMatches
+        return trialMatches.sortedWith(TrialMatchComparator())
     }
 
-    private fun evaluateEligibility(patient: PatientRecord, eligibility: MutableList<Eligibility?>): MutableMap<Eligibility?, Evaluation?> {
-        val evaluations: MutableMap<Eligibility?, Evaluation?>? = Maps.newTreeMap(EligibilityComparator())
-        for (entry in eligibility) {
-            val evaluator = evaluationFunctionFactory.create(entry.function())
-            evaluations[entry] = evaluator.evaluate(patient)
+    private fun evaluateEligibility(patient: PatientRecord, eligibility: List<Eligibility>): Map<Eligibility, Evaluation> {
+        return eligibility.sortedWith(EligibilityComparator()).associateWith {
+            evaluationFunctionFactory.create(it.function()).evaluate(patient)
         }
-        return evaluations
     }
 
     companion object {
@@ -72,16 +53,10 @@ class TrialMatcher @VisibleForTesting internal constructor(private val evaluatio
             return TrialMatcher(EvaluationFunctionFactory.create(doidModel, referenceDateProvider))
         }
 
-        @VisibleForTesting
-        fun isPotentiallyEligible(evaluations: Iterable<Evaluation?>): Boolean {
-            for (evaluation in evaluations) {
-                if (!evaluation.recoverable() && (evaluation.result() == EvaluationResult.FAIL
-                            || evaluation.result() == EvaluationResult.NOT_IMPLEMENTED)
-                ) {
-                    return false
-                }
+        fun isPotentiallyEligible(evaluations: Iterable<Evaluation>): Boolean {
+            return evaluations.none {
+                !it.recoverable() && (it.result() == EvaluationResult.FAIL || it.result() == EvaluationResult.NOT_IMPLEMENTED)
             }
-            return true
         }
     }
 }

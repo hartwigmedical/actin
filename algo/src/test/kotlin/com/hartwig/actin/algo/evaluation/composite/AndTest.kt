@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.composite
 
-import com.google.common.collect.Lists
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.algo.datamodel.Evaluation
@@ -59,7 +58,7 @@ class AndTest {
         val function2: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, 2)
         val function3: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, 3)
         val function4: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, 4)
-        val result: Evaluation = And(Lists.newArrayList(function1, function2, function3, function4)).evaluate(TEST_PATIENT)
+        val result: Evaluation = And(listOf(function1, function2, function3, function4)).evaluate(TEST_PATIENT)
         Assert.assertEquals(2, result.passSpecificMessages().size.toLong())
         Assert.assertTrue(result.passSpecificMessages().contains("pass specific 1"))
         Assert.assertTrue(result.passSpecificMessages().contains("pass specific 2"))
@@ -91,7 +90,7 @@ class AndTest {
         val function1: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, true, 1)
         val function2: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, true, 2)
         val function3: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, true, 3)
-        val result: Evaluation = And(Lists.newArrayList(function1, function2, function3)).evaluate(TEST_PATIENT)
+        val result: Evaluation = And(listOf(function1, function2, function3)).evaluate(TEST_PATIENT)
         Assert.assertEquals(2, result.inclusionMolecularEvents().size.toLong())
         Assert.assertTrue(result.inclusionMolecularEvents().contains("inclusion event 1"))
         Assert.assertTrue(result.inclusionMolecularEvents().contains("inclusion event 2"))
@@ -104,7 +103,7 @@ class AndTest {
     fun properlyRespectsRecoverable() {
         val recoverable: EvaluationFunction = CompositeTestFactory.create(true, 1)
         val unrecoverable: EvaluationFunction = CompositeTestFactory.create(false, 2)
-        val result: Evaluation = And(Lists.newArrayList(recoverable, unrecoverable)).evaluate(TEST_PATIENT)
+        val result: Evaluation = And(listOf(recoverable, unrecoverable)).evaluate(TEST_PATIENT)
         Assert.assertFalse(result.recoverable())
         Assert.assertEquals(1, result.undeterminedGeneralMessages().size.toLong())
         Assert.assertTrue(result.undeterminedGeneralMessages().contains("undetermined general 2"))
@@ -112,7 +111,7 @@ class AndTest {
 
     @Test(expected = IllegalStateException::class)
     fun crashOnNoFunctionsToEvaluate() {
-        And(Lists.newArrayList()).evaluate(TEST_PATIENT)
+        And(emptyList()).evaluate(TEST_PATIENT)
     }
 
     companion object {
@@ -142,7 +141,7 @@ class AndTest {
         }
 
         private fun evaluate(function1: EvaluationFunction, function2: EvaluationFunction): Evaluation {
-            return And(Lists.newArrayList(function1, function2)).evaluate(TEST_PATIENT)
+            return And(listOf(function1, function2)).evaluate(TEST_PATIENT)
         }
     }
 }

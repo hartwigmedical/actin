@@ -6,9 +6,15 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-class WarnIf(private val function: EvaluationFunction) : EvaluationFunction {
+class WarnIf(function: EvaluationFunction) : EvaluationFunction {
+    private val function: EvaluationFunction
+
+    init {
+        this.function = function
+    }
+
     override fun evaluate(record: PatientRecord): Evaluation {
-        val evaluation = function.evaluate(record)
+        val evaluation: Evaluation = function.evaluate(record)
         if (evaluation.result() == EvaluationResult.PASS) {
             return ImmutableEvaluation.builder()
                 .result(EvaluationResult.WARN)
@@ -21,7 +27,7 @@ class WarnIf(private val function: EvaluationFunction) : EvaluationFunction {
         } else if (evaluation.result() == EvaluationResult.WARN) {
             return evaluation
         }
-        val builder = ImmutableEvaluation.builder()
+        val builder: ImmutableEvaluation.Builder = ImmutableEvaluation.builder()
             .result(EvaluationResult.PASS)
             .recoverable(evaluation.recoverable())
             .addAllInclusionMolecularEvents(evaluation.inclusionMolecularEvents())

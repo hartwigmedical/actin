@@ -7,22 +7,18 @@ import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.core.config.Configurator
-import org.immutables.value.Value
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
 
-@Value.Immutable
-@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
-interface TreatmentMatcherConfig {
-    open fun clinicalJson(): String
-    open fun molecularJson(): String
-    open fun treatmentDatabaseDirectory(): String
-    open fun doidJson(): String
-    open fun outputDirectory(): String
-    open fun runHistorically(): Boolean
+data class TreatmentMatcherConfig(
+    val clinicalJson: String,
+    val molecularJson: String,
+    val treatmentDatabaseDirectory: String,
+    val doidJson: String,
+    val outputDirectory: String,
+    val runHistorically: Boolean,
+) {
 
     companion object {
-        open fun createOptions(): Options {
+        fun createOptions(): Options {
             val options = Options()
             options.addOption(CLINICAL_JSON, true, "File containing the clinical record of the patient")
             options.addOption(MOLECULAR_JSON, true, "File containing the most recent molecular record of the patient")
@@ -39,7 +35,7 @@ interface TreatmentMatcherConfig {
         }
 
         @Throws(ParseException::class)
-        open fun createConfig(cmd: CommandLine): TreatmentMatcherConfig {
+        fun createConfig(cmd: CommandLine): TreatmentMatcherConfig {
             if (cmd.hasOption(LOG_DEBUG)) {
                 Configurator.setRootLevel(Level.DEBUG)
                 LOGGER.debug("Switched root level logging to DEBUG")
@@ -48,23 +44,23 @@ interface TreatmentMatcherConfig {
             if (runHistorically) {
                 LOGGER.info("Configured to run in historic mode")
             }
-            return ImmutableTreatmentMatcherConfig.builder()
-                .clinicalJson(ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON))
-                .molecularJson(ApplicationConfig.nonOptionalFile(cmd, MOLECULAR_JSON))
-                .treatmentDatabaseDirectory(ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DATABASE_DIRECTORY))
-                .doidJson(ApplicationConfig.nonOptionalFile(cmd, DOID_JSON))
-                .outputDirectory(ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY))
-                .runHistorically(runHistorically)
-                .build()
+            return TreatmentMatcherConfig(
+                clinicalJson = ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON),
+                molecularJson = ApplicationConfig.nonOptionalFile(cmd, MOLECULAR_JSON),
+                treatmentDatabaseDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DATABASE_DIRECTORY),
+                doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
+                outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
+                runHistorically = runHistorically,
+            )
         }
 
         val LOGGER = LogManager.getLogger(TreatmentMatcherConfig::class.java)
-        val CLINICAL_JSON: String? = "clinical_json"
-        val MOLECULAR_JSON: String? = "molecular_json"
-        val TREATMENT_DATABASE_DIRECTORY: String? = "treatment_database_directory"
-        val DOID_JSON: String? = "doid_json"
-        val OUTPUT_DIRECTORY: String? = "output_directory"
-        val RUN_HISTORICALLY: String? = "run_historically"
-        val LOG_DEBUG: String? = "log_debug"
+        const val CLINICAL_JSON = "clinical_json"
+        const val MOLECULAR_JSON = "molecular_json"
+        const val TREATMENT_DATABASE_DIRECTORY = "treatment_database_directory"
+        const val DOID_JSON = "doid_json"
+        const val OUTPUT_DIRECTORY = "output_directory"
+        const val RUN_HISTORICALLY = "run_historically"
+        const val LOG_DEBUG = "log_debug"
     }
 }

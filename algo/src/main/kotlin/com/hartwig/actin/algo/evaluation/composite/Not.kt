@@ -6,9 +6,16 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-class Not(private val function: EvaluationFunction) : EvaluationFunction {
+class Not(function: EvaluationFunction) : EvaluationFunction {
+
+    private val function: EvaluationFunction
+
+    init {
+        this.function = function
+    }
+
     override fun evaluate(record: PatientRecord): Evaluation {
-        val evaluation = function.evaluate(record)
+        val evaluation: Evaluation = function.evaluate(record)
         val negatedResult: EvaluationResult
         val inclusionMolecularEvents: Set<String>
         val exclusionMolecularEvents: Set<String>
