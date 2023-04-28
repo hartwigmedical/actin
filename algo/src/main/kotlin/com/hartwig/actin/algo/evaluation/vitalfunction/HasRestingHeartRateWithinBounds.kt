@@ -1,65 +1,44 @@
-package com.hartwig.actin.algo.evaluation.vitalfunction;
+package com.hartwig.actin.algo.evaluation.vitalfunction
 
-import java.util.List;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverable
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.clinical.datamodel.VitalFunction;
-import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
-
-import org.jetbrains.annotations.NotNull;
-
-public class HasRestingHeartRateWithinBounds implements EvaluationFunction {
-
-    static final String UNIT_TO_SELECT = "BPM";
-
-    private static final int MAX_HEART_RATES_TO_USE = 5;
-
-    private final double minMedianRestingHeartRate;
-    private final double maxMedianRestingHeartRate;
-
-    public HasRestingHeartRateWithinBounds(final double minMedianRestingHeartRate, final double maxMedianRestingHeartRate) {
-        this.minMedianRestingHeartRate = minMedianRestingHeartRate;
-        this.maxMedianRestingHeartRate = maxMedianRestingHeartRate;
+class HasRestingHeartRateWithinBounds(private val minMedianRestingHeartRate: Double, private val maxMedianRestingHeartRate: Double) :
+    EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val heartRates = VitalFunctionSelector.select(
+            record.clinical().vitalFunctions(),
+            VitalFunctionCategory.HEART_RATE,
+            UNIT_TO_SELECT,
+            MAX_HEART_RATES_TO_USE
+        )
+        if (heartRates.isEmpty()) {
+            return recoverable()
+                .result(EvaluationResult.UNDETERMINED)
+                .addUndeterminedSpecificMessages("No heart rate data found")
+                .build()
+        }
+        val median = VitalFunctionFunctions.determineMedianValue(heartRates)
+        return if (median.compareTo(minMedianRestingHeartRate) >= 0 && median.compareTo(maxMedianRestingHeartRate) <= 0) {
+            EvaluationFactory.pass(
+                "Patient has median heart rate between $minMedianRestingHeartRate and $maxMedianRestingHeartRate",
+                "Heart rate within range"
+            )
+        } else {
+            EvaluationFactory.fail(
+                "Patient does not have median heart rate between $minMedianRestingHeartRate and $maxMedianRestingHeartRate",
+                "Heart rate outside range"
+            )
+        }
     }
 
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        List<VitalFunction> heartRates = VitalFunctionSelector.select(record.clinical().vitalFunctions(),
-                VitalFunctionCategory.HEART_RATE,
-                UNIT_TO_SELECT,
-                MAX_HEART_RATES_TO_USE);
-
-        if (heartRates.isEmpty()) {
-            return EvaluationFactory.recoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("No heart rate data found")
-                    .build();
-        }
-
-        double median = VitalFunctionFunctions.determineMedianValue(heartRates);
-
-        EvaluationResult result =
-                Double.compare(median, minMedianRestingHeartRate) >= 0 && Double.compare(median, maxMedianRestingHeartRate) <= 0
-                        ? EvaluationResult.PASS
-                        : EvaluationResult.FAIL;
-
-        ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Patient has does not have median heart rate between " + minMedianRestingHeartRate + " and "
-                    + maxMedianRestingHeartRate);
-            builder.addFailGeneralMessages("Heart rate outside range");
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages(
-                    "Patient has median heart rate between " + minMedianRestingHeartRate + " and " + maxMedianRestingHeartRate);
-            builder.addPassGeneralMessages("Heart rate within range");
-        }
-
-        return builder.build();
+    companion object {
+        const val UNIT_TO_SELECT: String = "BPM"
+        private const val MAX_HEART_RATES_TO_USE = 5
     }
 }

@@ -1,82 +1,64 @@
-package com.hartwig.actin.algo.evaluation.vitalfunction;
+package com.hartwig.actin.algo.evaluation.vitalfunction
 
-import java.util.Map;
-import com.google.common.collect.Maps;
-import com.hartwig.actin.algo.evaluation.FunctionCreator;
-import com.hartwig.actin.algo.evaluation.RuleMapper;
-import com.hartwig.actin.algo.evaluation.RuleMappingResources;
-import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.input.single.TwoDoubles;
-import org.jetbrains.annotations.NotNull;
+import com.hartwig.actin.algo.evaluation.FunctionCreator
+import com.hartwig.actin.algo.evaluation.RuleMapper
+import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.treatment.datamodel.EligibilityFunction
+import com.hartwig.actin.treatment.datamodel.EligibilityRule
 
-public class VitalFunctionRuleMapper extends RuleMapper {
-
-    public VitalFunctionRuleMapper(@NotNull final RuleMappingResources resources) {
-        super(resources);
+class VitalFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
+    override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
+        return mapOf(
+            EligibilityRule.HAS_SBP_MMHG_OF_AT_LEAST_X to hasSufficientBloodPressureCreator(BloodPressureCategory.SYSTOLIC),
+            EligibilityRule.HAS_SBP_MMHG_OF_AT_MOST_X to hasLimitedBloodPressureCreator(BloodPressureCategory.SYSTOLIC),
+            EligibilityRule.HAS_DBP_MMHG_OF_AT_LEAST_X to hasSufficientBloodPressureCreator(BloodPressureCategory.DIASTOLIC),
+            EligibilityRule.HAS_DBP_MMHG_OF_AT_MOST_X to hasLimitedBloodPressureCreator(BloodPressureCategory.DIASTOLIC),
+            EligibilityRule.HAS_PULSE_OXIMETRY_OF_AT_LEAST_X to hasSufficientPulseOximetryCreator(),
+            EligibilityRule.HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y to hasRestingHeartRateWithinBoundsCreator(),
+            EligibilityRule.HAS_BODY_WEIGHT_OF_AT_LEAST_X to hasSufficientBodyWeightCreator(),
+            EligibilityRule.HAS_BMI_OF_AT_MOST_X to hasBMIUpToLimitCreator()
+        )
     }
 
-    @NotNull
-    @Override
-    public Map<EligibilityRule, FunctionCreator> createMappings() {
-        Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
-
-        map.put(EligibilityRule.HAS_SBP_MMHG_OF_AT_LEAST_X, hasSufficientBloodPressureCreator(BloodPressureCategory.SYSTOLIC));
-        map.put(EligibilityRule.HAS_SBP_MMHG_OF_AT_MOST_X, hasLimitedBloodPressureCreator(BloodPressureCategory.SYSTOLIC));
-        map.put(EligibilityRule.HAS_DBP_MMHG_OF_AT_LEAST_X, hasSufficientBloodPressureCreator(BloodPressureCategory.DIASTOLIC));
-        map.put(EligibilityRule.HAS_DBP_MMHG_OF_AT_MOST_X, hasLimitedBloodPressureCreator(BloodPressureCategory.DIASTOLIC));
-        map.put(EligibilityRule.HAS_PULSE_OXIMETRY_OF_AT_LEAST_X, hasSufficientPulseOximetryCreator());
-        map.put(EligibilityRule.HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y, hasRestingHeartRateWithinBoundsCreator());
-        map.put(EligibilityRule.HAS_BODY_WEIGHT_OF_AT_LEAST_X, hasSufficientBodyWeightCreator());
-        map.put(EligibilityRule.HAS_BMI_OF_AT_MOST_X, hasBMIUpToLimitCreator());
-
-        return map;
+    private fun hasSufficientBloodPressureCreator(category: BloodPressureCategory): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val minMedianBloodPressure = functionInputResolver().createOneDoubleInput(function)
+            HasSufficientBloodPressure(category, minMedianBloodPressure)
+        }
     }
 
-    @NotNull
-    private FunctionCreator hasSufficientBloodPressureCreator(@NotNull BloodPressureCategory category) {
-        return function -> {
-            double minMedianBloodPressure = functionInputResolver().createOneDoubleInput(function);
-            return new HasSufficientBloodPressure(category, minMedianBloodPressure);
-        };
+    private fun hasLimitedBloodPressureCreator(category: BloodPressureCategory): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val maxMedianBloodPressure = functionInputResolver().createOneDoubleInput(function)
+            HasLimitedBloodPressure(category, maxMedianBloodPressure)
+        }
     }
 
-    @NotNull
-    private FunctionCreator hasLimitedBloodPressureCreator(@NotNull BloodPressureCategory category) {
-        return function -> {
-            double maxMedianBloodPressure = functionInputResolver().createOneDoubleInput(function);
-            return new HasLimitedBloodPressure(category, maxMedianBloodPressure);
-        };
+    private fun hasSufficientPulseOximetryCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val minMedianPulseOximetry = functionInputResolver().createOneDoubleInput(function)
+            HasSufficientPulseOximetry(minMedianPulseOximetry)
+        }
     }
 
-    @NotNull
-    private FunctionCreator hasSufficientPulseOximetryCreator() {
-        return function -> {
-            double minMedianPulseOximetry = functionInputResolver().createOneDoubleInput(function);
-            return new HasSufficientPulseOximetry(minMedianPulseOximetry);
-        };
+    private fun hasRestingHeartRateWithinBoundsCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val input = functionInputResolver().createTwoDoublesInput(function)
+            HasRestingHeartRateWithinBounds(input.double1(), input.double2())
+        }
     }
 
-    @NotNull
-    private FunctionCreator hasRestingHeartRateWithinBoundsCreator() {
-        return function -> {
-            TwoDoubles input = functionInputResolver().createTwoDoublesInput(function);
-            return new HasRestingHeartRateWithinBounds(input.double1(), input.double2());
-        };
+    private fun hasSufficientBodyWeightCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val minBodyWeight = functionInputResolver().createOneDoubleInput(function)
+            HasSufficientBodyWeight(minBodyWeight)
+        }
     }
 
-    @NotNull
-    private FunctionCreator hasSufficientBodyWeightCreator() {
-        return function -> {
-            double minBodyWeight = functionInputResolver().createOneDoubleInput(function);
-            return new HasSufficientBodyWeight(minBodyWeight);
-        };
-    }
-
-    @NotNull
-    private FunctionCreator hasBMIUpToLimitCreator() {
-        return function -> {
-            int maximumBMI = functionInputResolver().createOneIntegerInput(function);
-            return new HasBMIUpToLimit(maximumBMI);
-        };
+    private fun hasBMIUpToLimitCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val maximumBMI = functionInputResolver().createOneIntegerInput(function)
+            HasBMIUpToLimit(maximumBMI)
+        }
     }
 }

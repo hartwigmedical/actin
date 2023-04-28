@@ -1,67 +1,47 @@
-package com.hartwig.actin.algo.evaluation.vitalfunction;
+package com.hartwig.actin.algo.evaluation.vitalfunction
 
-import java.util.List;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverable
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.clinical.datamodel.VitalFunction;
-import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
-
-import org.jetbrains.annotations.NotNull;
-
-public class HasSufficientPulseOximetry implements EvaluationFunction {
-
-    private static final int MAX_PULSE_OXIMETRY_TO_USE = 5;
-
-    private final double minMedianPulseOximetry;
-
-    HasSufficientPulseOximetry(final double minMedianPulseOximetry) {
-        this.minMedianPulseOximetry = minMedianPulseOximetry;
+class HasSufficientPulseOximetry internal constructor(private val minMedianPulseOximetry: Double) : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val pulseOximetries = VitalFunctionSelector.select(
+            record.clinical().vitalFunctions(),
+            VitalFunctionCategory.SPO2,
+            null,
+            MAX_PULSE_OXIMETRY_TO_USE
+        )
+        if (pulseOximetries.isEmpty()) {
+            return recoverable()
+                .result(EvaluationResult.UNDETERMINED)
+                .addUndeterminedSpecificMessages("No pulse oximetries readouts found")
+                .build()
+        }
+        val median = VitalFunctionFunctions.determineMedianValue(pulseOximetries)
+        return if (median.compareTo(minMedianPulseOximetry) >= 0) {
+            EvaluationFactory.pass(
+                "Patient has median pulse oximetry exceeding $minMedianPulseOximetry",
+                "Pulse oximetry above $minMedianPulseOximetry"
+            )
+        } else if (pulseOximetries.any { it.value().compareTo(minMedianPulseOximetry) >= 0 }) {
+            return EvaluationFactory.undetermined(
+                "Patient has median pulse oximetry below $minMedianPulseOximetry but also at least one "
+                        + "measure above $minMedianPulseOximetry", "Pulse oximetry requirements"
+            )
+        } else {
+            EvaluationFactory.fail(
+                "Patient has median pulse oximetry below $minMedianPulseOximetry",
+                "Pulse oximetry below $minMedianPulseOximetry"
+            )
+        }
     }
 
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        List<VitalFunction> pulseOximetries = VitalFunctionSelector.select(record.clinical().vitalFunctions(),
-                VitalFunctionCategory.SPO2,
-                null,
-                MAX_PULSE_OXIMETRY_TO_USE);
-
-        if (pulseOximetries.isEmpty()) {
-            return EvaluationFactory.recoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("No pulse oximetries readouts found")
-                    .build();
-        }
-
-        double median = VitalFunctionFunctions.determineMedianValue(pulseOximetries);
-        EvaluationResult result = Double.compare(median, minMedianPulseOximetry) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
-
-        if (result == EvaluationResult.FAIL) {
-            for (VitalFunction pulseOximetry : pulseOximetries) {
-                if (Double.compare(pulseOximetry.value(), minMedianPulseOximetry) >= 0) {
-                    return EvaluationFactory.recoverable()
-                            .result(EvaluationResult.UNDETERMINED)
-                            .addUndeterminedSpecificMessages("Patient has median pulse oximetry below " + minMedianPulseOximetry
-                                    + " but also at least one measure above " + minMedianPulseOximetry)
-                            .build();
-                }
-            }
-        }
-
-        ImmutableEvaluation.Builder builder = EvaluationFactory.recoverable().result(result);
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Patient has median pulse oximetry below " + minMedianPulseOximetry);
-            builder.addFailGeneralMessages("Pulse oximetry below " + minMedianPulseOximetry);
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient has median pulse oximetry exceeding " + minMedianPulseOximetry);
-            builder.addPassGeneralMessages("Pulse oximetry above " + minMedianPulseOximetry);
-        }
-
-        return builder.build();
+    companion object {
+        private const val MAX_PULSE_OXIMETRY_TO_USE = 5
     }
 }

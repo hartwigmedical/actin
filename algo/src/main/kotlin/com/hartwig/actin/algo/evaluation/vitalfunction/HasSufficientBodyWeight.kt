@@ -1,63 +1,30 @@
-package com.hartwig.actin.algo.evaluation.vitalfunction;
+package com.hartwig.actin.algo.evaluation.vitalfunction
 
-import java.util.List;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.clinical.sort.BodyWeightDescendingDateComparator
 
-import com.google.common.collect.Lists;
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.clinical.datamodel.BodyWeight;
-import com.hartwig.actin.clinical.sort.BodyWeightDescendingDateComparator;
+class HasSufficientBodyWeight internal constructor(private val minBodyWeight: Double) : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val mostRecent = record.clinical().bodyWeights().sortedWith(BodyWeightDescendingDateComparator()).firstOrNull()
+            ?: return EvaluationFactory.undetermined("No body weights found", "No body weights found")
 
-import org.jetbrains.annotations.NotNull;
-
-public class HasSufficientBodyWeight implements EvaluationFunction {
-
-    static final String EXPECTED_UNIT = "kilogram";
-
-    private final double minBodyWeight;
-
-    HasSufficientBodyWeight(final double minBodyWeight) {
-        this.minBodyWeight = minBodyWeight;
+        if (!mostRecent.unit().equals(EXPECTED_UNIT, ignoreCase = true)) {
+            return EvaluationFactory.undetermined(
+                "Most recent body weight not measured in $EXPECTED_UNIT",
+                "Invalid body weight unit"
+            )
+        }
+        return if (mostRecent.value().compareTo(minBodyWeight) >= 0) {
+            EvaluationFactory.pass("Patient has body weight above $minBodyWeight", "Body weight above $minBodyWeight")
+        } else {
+            EvaluationFactory.fail("Patient has body weight below $minBodyWeight", "Body weight below $minBodyWeight")
+        }
     }
 
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        List<BodyWeight> weights = Lists.newArrayList(record.clinical().bodyWeights());
-
-        if (weights.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("No body weights found")
-                    .build();
-        }
-
-        weights.sort(new BodyWeightDescendingDateComparator());
-
-        BodyWeight mostRecent = weights.get(0);
-
-        if (!mostRecent.unit().equalsIgnoreCase(EXPECTED_UNIT)) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages("Most recent body weight not measured in " + EXPECTED_UNIT)
-                    .build();
-        }
-
-        EvaluationResult result = Double.compare(mostRecent.value(), minBodyWeight) >= 0 ? EvaluationResult.PASS : EvaluationResult.FAIL;
-
-        ImmutableEvaluation.Builder builder = EvaluationFactory.unrecoverable().result(result);
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Patient has body weight below " + minBodyWeight);
-            builder.addFailGeneralMessages("Body weight below " + minBodyWeight);
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient has body weight above " + minBodyWeight);
-            builder.addPassGeneralMessages("Body weight above " + minBodyWeight);
-        }
-
-        return builder.build();
+    companion object {
+        const val EXPECTED_UNIT: String = "kilogram"
     }
 }

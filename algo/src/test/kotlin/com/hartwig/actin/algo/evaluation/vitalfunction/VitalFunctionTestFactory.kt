@@ -1,55 +1,47 @@
-package com.hartwig.actin.algo.evaluation.vitalfunction;
+package com.hartwig.actin.algo.evaluation.vitalfunction
 
-import java.time.LocalDate;
-import java.util.List;
+import com.hartwig.actin.ImmutablePatientRecord
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.clinical.datamodel.BodyWeight
+import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight
+import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
+import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
+import com.hartwig.actin.clinical.datamodel.VitalFunction
+import org.apache.logging.log4j.util.Strings
+import java.time.LocalDate
 
-import com.hartwig.actin.ImmutablePatientRecord;
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.clinical.datamodel.BodyWeight;
-import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight;
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction;
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
-import com.hartwig.actin.clinical.datamodel.VitalFunction;
-
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
-
-final class VitalFunctionTestFactory {
-
-    private VitalFunctionTestFactory() {
-    }
-
-    @NotNull
-    public static PatientRecord withBodyWeights(@NotNull List<BodyWeight> bodyWeights) {
+internal object VitalFunctionTestFactory {
+    fun withBodyWeights(bodyWeights: List<BodyWeight>): PatientRecord {
         return ImmutablePatientRecord.builder()
-                .from(TestDataFactory.createMinimalTestPatientRecord())
-                .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                        .bodyWeights(bodyWeights)
-                        .build())
-                .build();
+            .from(TestDataFactory.createMinimalTestPatientRecord())
+            .clinical(
+                ImmutableClinicalRecord.builder()
+                    .from(TestClinicalFactory.createMinimalTestClinicalRecord())
+                    .bodyWeights(bodyWeights)
+                    .build()
+            )
+            .build()
     }
 
-    @NotNull
-    public static ImmutableBodyWeight.Builder bodyWeight() {
-        return ImmutableBodyWeight.builder().date(LocalDate.of(2017, 7, 7)).value(0D).unit(Strings.EMPTY);
+    fun bodyWeight(): ImmutableBodyWeight.Builder {
+        return ImmutableBodyWeight.builder().date(LocalDate.of(2017, 7, 7)).value(0.0).unit(Strings.EMPTY)
     }
 
-    @NotNull
-    public static PatientRecord withVitalFunctions(@NotNull List<VitalFunction> vitalFunctions) {
+    fun withVitalFunctions(vitalFunctions: List<VitalFunction>): PatientRecord {
         return ImmutablePatientRecord.builder()
-                .from(TestDataFactory.createMinimalTestPatientRecord())
-                .clinical(ImmutableClinicalRecord.builder()
-                        .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                        .vitalFunctions(vitalFunctions)
-                        .build())
-                .build();
+            .from(TestDataFactory.createMinimalTestPatientRecord())
+            .clinical(
+                ImmutableClinicalRecord.builder()
+                    .from(TestClinicalFactory.createMinimalTestClinicalRecord())
+                    .vitalFunctions(vitalFunctions)
+                    .build()
+            )
+            .build()
     }
 
-    @NotNull
-    public static ImmutableVitalFunction.Builder vitalFunction() {
-        return ImmutableVitalFunction.builder().date(LocalDate.of(2017, 7, 7)).subcategory(Strings.EMPTY).value(0D).unit(Strings.EMPTY);
+    fun vitalFunction(): ImmutableVitalFunction.Builder {
+        return ImmutableVitalFunction.builder().date(LocalDate.of(2017, 7, 7)).subcategory(Strings.EMPTY).value(0.0).unit(Strings.EMPTY)
     }
 }

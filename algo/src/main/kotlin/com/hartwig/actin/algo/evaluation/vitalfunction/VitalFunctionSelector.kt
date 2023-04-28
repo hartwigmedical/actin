@@ -1,79 +1,39 @@
-package com.hartwig.actin.algo.evaluation.vitalfunction;
+package com.hartwig.actin.algo.evaluation.vitalfunction
 
-import java.time.LocalDate;
-import java.util.List;
+import com.hartwig.actin.clinical.datamodel.VitalFunction
+import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
+import com.hartwig.actin.clinical.sort.VitalFunctionDescendingDateComparator
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.hartwig.actin.clinical.datamodel.VitalFunction;
-import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
-import com.hartwig.actin.clinical.sort.VitalFunctionDescendingDateComparator;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-final class VitalFunctionSelector {
-
-    private static final int MAX_BLOOD_PRESSURES_TO_USE = 5;
-    private static final int MAX_AGE_MONTHS = 1;
-
-    private VitalFunctionSelector() {
+internal object VitalFunctionSelector {
+    private const val MAX_BLOOD_PRESSURES_TO_USE = 5
+    private const val MAX_AGE_MONTHS = 1
+    fun select(
+        vitalFunctions: List<VitalFunction>, categoryToFind: VitalFunctionCategory,
+        unitToFind: String?, maxEntries: Int
+    ): List<VitalFunction> {
+        return vitalFunctions.filter {
+            it.category() == categoryToFind && (unitToFind == null || it.unit().equals(unitToFind, ignoreCase = true))
+        }
+            .sortedWith(VitalFunctionDescendingDateComparator())
+            .take(maxEntries)
     }
 
-    @NotNull
-    public static List<VitalFunction> select(@NotNull List<VitalFunction> vitalFunctions, @NotNull VitalFunctionCategory categoryToFind,
-            @Nullable String unitToFind, int maxEntries) {
-        List<VitalFunction> result = Lists.newArrayList();
-        for (VitalFunction vitalFunction : vitalFunctions) {
-            if (vitalFunction.category() == categoryToFind && (unitToFind == null || vitalFunction.unit().equalsIgnoreCase(unitToFind))) {
-                result.add(vitalFunction);
-            }
+    fun selectBloodPressures(vitalFunctions: List<VitalFunction>, category: BloodPressureCategory): List<VitalFunction> {
+        val result =
+            vitalFunctions.asSequence().filter { isBloodPressure(it) && it.subcategory().equals(category.display(), ignoreCase = true) }
+                .groupBy { it.date() }
+                .map { VitalFunctionFunctions.selectMedianFunction(it.value) }
+                .sortedWith(VitalFunctionDescendingDateComparator())
+                .take(MAX_BLOOD_PRESSURES_TO_USE).toList()
+
+        return if (result.isEmpty()) result else {
+            val mostRecent = result[0].date()
+            result.takeWhile { !it.date().isBefore(mostRecent.minusMonths(MAX_AGE_MONTHS.toLong())) }
         }
-
-        result.sort(new VitalFunctionDescendingDateComparator());
-
-        result = result.subList(0, Math.min(result.size(), maxEntries));
-
-        return result;
     }
 
-    @NotNull
-    public static List<VitalFunction> selectBloodPressures(@NotNull List<VitalFunction> vitalFunctions,
-            @NotNull BloodPressureCategory category) {
-        Multimap<LocalDate, VitalFunction> vitalFunctionsPerDate = ArrayListMultimap.create();
-        for (VitalFunction vitalFunction : vitalFunctions) {
-            boolean isBloodPressure = isBloodPressure(vitalFunction);
-            boolean isCategoryMatch = vitalFunction.subcategory().equalsIgnoreCase(category.display());
-            if (isBloodPressure && isCategoryMatch) {
-                vitalFunctionsPerDate.put(vitalFunction.date(), vitalFunction);
-            }
-        }
-
-        List<VitalFunction> result = extractMedians(vitalFunctionsPerDate);
-        result.sort(new VitalFunctionDescendingDateComparator());
-
-        result = result.subList(0, Math.min(result.size(), MAX_BLOOD_PRESSURES_TO_USE));
-
-        if (!result.isEmpty()) {
-            LocalDate mostRecent = result.get(0).date();
-            result.removeIf(function -> function.date().isBefore(mostRecent.minusMonths(MAX_AGE_MONTHS)));
-        }
-
-        return result;
-    }
-
-    @NotNull
-    private static List<VitalFunction> extractMedians(@NotNull Multimap<LocalDate, VitalFunction> vitalFunctionsPerDate) {
-        List<VitalFunction> mediansPerDay = Lists.newArrayList();
-        for (LocalDate date : vitalFunctionsPerDate.keySet()) {
-            mediansPerDay.add(VitalFunctionFunctions.selectMedianFunction(vitalFunctionsPerDate.get(date)));
-        }
-        return mediansPerDay;
-    }
-
-    private static boolean isBloodPressure(@NotNull VitalFunction vitalFunction) {
-        return vitalFunction.category() == VitalFunctionCategory.ARTERIAL_BLOOD_PRESSURE
-                || vitalFunction.category() == VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE;
+    private fun isBloodPressure(vitalFunction: VitalFunction): Boolean {
+        return (vitalFunction.category() == VitalFunctionCategory.ARTERIAL_BLOOD_PRESSURE
+                || vitalFunction.category() == VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE)
     }
 }

@@ -18,6 +18,8 @@ import com.hartwig.actin.algo.evaluation.surgery.SurgeryRuleMapper
 import com.hartwig.actin.algo.evaluation.toxicity.ToxicityRuleMapper
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentRuleMapper
 import com.hartwig.actin.algo.evaluation.tumor.TumorRuleMapper
+import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionRuleMapper
+import com.hartwig.actin.algo.evaluation.washout.WashoutRuleMapper
 import com.hartwig.actin.treatment.datamodel.EligibilityRule
 import com.hartwig.actin.treatment.input.FunctionInputResolver
 
@@ -48,7 +50,9 @@ internal object FunctionCreatorFactory {
             SurgeryRuleMapper(resources),
             ToxicityRuleMapper(resources),
             TreatmentRuleMapper(resources),
-            TumorRuleMapper(resources)
+            TumorRuleMapper(resources),
+            VitalFunctionRuleMapper(resources),
+            WashoutRuleMapper(resources)
         )
             .map { it.createMappings() }.reduce { acc, map -> acc + map }
     }

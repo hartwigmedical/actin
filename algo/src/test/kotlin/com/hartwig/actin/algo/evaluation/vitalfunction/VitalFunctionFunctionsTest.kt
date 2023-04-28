@@ -1,47 +1,36 @@
-package com.hartwig.actin.algo.evaluation.vitalfunction;
+package com.hartwig.actin.algo.evaluation.vitalfunction
 
-import static org.junit.Assert.assertEquals;
+import com.hartwig.actin.clinical.datamodel.VitalFunction
+import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
+import org.junit.Assert
+import org.junit.Test
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
-import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction;
-import com.hartwig.actin.clinical.datamodel.VitalFunction;
-import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
-
-import org.junit.Test;
-
-public class VitalFunctionFunctionsTest {
-
-    private static final double EPSILON = 1.0E-10;
-
+class VitalFunctionFunctionsTest {
     @Test
-    public void canSelectMedianFunction() {
-        List<VitalFunction> vitalFunctions = Lists.newArrayList();
-
-        ImmutableVitalFunction.Builder builder = VitalFunctionTestFactory.vitalFunction().category(VitalFunctionCategory.HEART_RATE);
-        vitalFunctions.add(builder.value(1D).build());
-        assertEquals(1D, VitalFunctionFunctions.selectMedianFunction(vitalFunctions).value(), EPSILON);
-
-        vitalFunctions.add(builder.value(2D).build());
-        assertEquals(1D, VitalFunctionFunctions.selectMedianFunction(vitalFunctions).value(), EPSILON);
-
-        vitalFunctions.add(builder.value(3D).build());
-        assertEquals(2D, VitalFunctionFunctions.selectMedianFunction(vitalFunctions).value(), EPSILON);
+    fun canSelectMedianFunction() {
+        val vitalFunctions: MutableList<VitalFunction> = mutableListOf()
+        val builder = VitalFunctionTestFactory.vitalFunction().category(VitalFunctionCategory.HEART_RATE)
+        vitalFunctions.add(builder.value(1.0).build())
+        Assert.assertEquals(1.0, VitalFunctionFunctions.selectMedianFunction(vitalFunctions).value(), EPSILON)
+        vitalFunctions.add(builder.value(2.0).build())
+        Assert.assertEquals(1.0, VitalFunctionFunctions.selectMedianFunction(vitalFunctions).value(), EPSILON)
+        vitalFunctions.add(builder.value(3.0).build())
+        Assert.assertEquals(2.0, VitalFunctionFunctions.selectMedianFunction(vitalFunctions).value(), EPSILON)
     }
 
     @Test
-    public void canDetermineMedianValue() {
-        List<VitalFunction> vitalFunctions = Lists.newArrayList();
+    fun canDetermineMedianValue() {
+        val vitalFunctions: MutableList<VitalFunction> = mutableListOf()
+        val builder = VitalFunctionTestFactory.vitalFunction().category(VitalFunctionCategory.HEART_RATE)
+        vitalFunctions.add(builder.value(1.0).build())
+        Assert.assertEquals(1.0, VitalFunctionFunctions.determineMedianValue(vitalFunctions), EPSILON)
+        vitalFunctions.add(builder.value(2.0).build())
+        Assert.assertEquals(1.5, VitalFunctionFunctions.determineMedianValue(vitalFunctions), EPSILON)
+        vitalFunctions.add(builder.value(3.0).build())
+        Assert.assertEquals(2.0, VitalFunctionFunctions.determineMedianValue(vitalFunctions), EPSILON)
+    }
 
-        ImmutableVitalFunction.Builder builder = VitalFunctionTestFactory.vitalFunction().category(VitalFunctionCategory.HEART_RATE);
-        vitalFunctions.add(builder.value(1D).build());
-        assertEquals(1D, VitalFunctionFunctions.determineMedianValue(vitalFunctions), EPSILON);
-
-        vitalFunctions.add(builder.value(2D).build());
-        assertEquals(1.5, VitalFunctionFunctions.determineMedianValue(vitalFunctions), EPSILON);
-
-        vitalFunctions.add(builder.value(3D).build());
-        assertEquals(2D, VitalFunctionFunctions.determineMedianValue(vitalFunctions), EPSILON);
+    companion object {
+        private const val EPSILON = 1.0E-10
     }
 }
