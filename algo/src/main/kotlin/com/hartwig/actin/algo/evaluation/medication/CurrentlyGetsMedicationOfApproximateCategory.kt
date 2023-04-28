@@ -1,58 +1,31 @@
-package com.hartwig.actin.algo.evaluation.medication;
+package com.hartwig.actin.algo.evaluation.medication
 
-import java.util.Set;
-
-import com.google.common.collect.Sets;
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import com.hartwig.actin.algo.evaluation.util.Format;
-import com.hartwig.actin.clinical.datamodel.Medication;
-
-import org.jetbrains.annotations.NotNull;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 
 //TODO: Update according to README
-public class CurrentlyGetsMedicationOfApproximateCategory implements EvaluationFunction {
+class CurrentlyGetsMedicationOfApproximateCategory internal constructor(
+    private val selector: MedicationSelector,
+    private val categoryTermToFind: String
+) : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val medications = selector.active(record.clinical().medications())
+            .filter { stringCaseInsensitivelyMatchesQueryCollection(categoryTermToFind, it.categories()) }
+            .map { it.name() }
 
-    @NotNull
-    private final MedicationSelector selector;
-    @NotNull
-    private final String categoryTermToFind;
-
-    CurrentlyGetsMedicationOfApproximateCategory(@NotNull final MedicationSelector selector,
-            @NotNull final String categoryTermToFind) {
-        this.selector = selector;
-        this.categoryTermToFind = categoryTermToFind;
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        Set<String> medications = Sets.newHashSet();
-        for (Medication medication : selector.active(record.clinical().medications())) {
-            for (String category : medication.categories()) {
-                if (category.toLowerCase().contains(categoryTermToFind.toLowerCase())) {
-                    medications.add(medication.name());
-                }
-            }
-        }
-
-        if (!medications.isEmpty()) {
-            return EvaluationFactory.unrecoverable()
-                    .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages(
-                            "Patient currently gets medication " + Format.concat(medications) + ", which belong(s) to category "
-                                    + categoryTermToFind)
-                    .addPassGeneralMessages(categoryTermToFind + " medication use")
-                    .build();
-        }
-
-        return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Patient currently does not get medication of category " + categoryTermToFind)
-                .addFailGeneralMessages("No " + categoryTermToFind + " medication use")
-                .build();
+        return if (medications.isNotEmpty()) {
+            EvaluationFactory.pass(
+                "Patient currently gets medication " + concat(medications) + ", which belong(s) to category "
+                        + categoryTermToFind, "$categoryTermToFind medication use"
+            )
+        } else
+            EvaluationFactory.fail(
+                "Patient currently does not get medication of category $categoryTermToFind",
+                "No $categoryTermToFind medication use"
+            )
     }
 }

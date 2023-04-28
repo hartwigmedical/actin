@@ -1,39 +1,34 @@
-package com.hartwig.actin.algo.evaluation.medication;
+package com.hartwig.actin.algo.evaluation.medication
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.hartwig.actin.algo.evaluation.medication.MedicationDosage.hasMatchingDosing
+import com.hartwig.actin.clinical.datamodel.Medication
+import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
+import org.junit.Test
 
-import com.hartwig.actin.clinical.datamodel.Medication;
-import com.hartwig.actin.clinical.datamodel.TestMedicationFactory;
-
-import org.junit.Test;
-
-public class MedicationDosageTest {
-
+class MedicationDosageTest {
     @Test
-    public void canAssessDosingStability() {
-        Medication dosing1 = TestMedicationFactory.builder()
-                .dosageMin(1D)
-                .dosageMax(2D)
-                .dosageUnit("unit 1")
-                .frequency(3D)
-                .frequencyUnit("unit 2")
-                .ifNeeded(false)
-                .build();
-
-        Medication dosing2 = TestMedicationFactory.builder()
-                .dosageMin(2D)
-                .dosageMax(3D)
-                .dosageUnit("unit 2")
-                .frequency(4D)
-                .frequencyUnit("unit 1")
-                .ifNeeded(false)
-                .build();
-
-        assertTrue(MedicationDosage.hasMatchingDosing(dosing1, dosing1));
-        assertTrue(MedicationDosage.hasMatchingDosing(dosing2, dosing2));
-        assertFalse(MedicationDosage.hasMatchingDosing(dosing1, dosing2));
-        assertFalse(MedicationDosage.hasMatchingDosing(dosing1, TestMedicationFactory.builder().build()));
+    fun canAssessDosingStability() {
+        val dosing1: Medication = TestMedicationFactory.builder()
+            .dosageMin(1.0)
+            .dosageMax(2.0)
+            .dosageUnit("unit 1")
+            .frequency(3.0)
+            .frequencyUnit("unit 2")
+            .ifNeeded(false)
+            .build()
+        val dosing2: Medication = TestMedicationFactory.builder()
+            .dosageMin(2.0)
+            .dosageMax(3.0)
+            .dosageUnit("unit 2")
+            .frequency(4.0)
+            .frequencyUnit("unit 1")
+            .ifNeeded(false)
+            .build()
+        assertTrue(hasMatchingDosing(dosing1, dosing1))
+        assertTrue(hasMatchingDosing(dosing2, dosing2))
+        assertFalse(hasMatchingDosing(dosing1, dosing2))
+        assertFalse(hasMatchingDosing(dosing1, TestMedicationFactory.builder().build()))
     }
-
 }

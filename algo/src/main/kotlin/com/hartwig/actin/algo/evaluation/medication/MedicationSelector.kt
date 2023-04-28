@@ -1,99 +1,44 @@
-package com.hartwig.actin.algo.evaluation.medication;
+package com.hartwig.actin.algo.evaluation.medication
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Set;
+import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
+import com.hartwig.actin.algo.medication.MedicationStatusInterpretation
+import com.hartwig.actin.algo.medication.MedicationStatusInterpreter
+import com.hartwig.actin.clinical.datamodel.Medication
+import com.hartwig.actin.util.ApplicationConfig
+import java.time.LocalDate
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.hartwig.actin.algo.medication.MedicationStatusInterpretation;
-import com.hartwig.actin.algo.medication.MedicationStatusInterpreter;
-import com.hartwig.actin.clinical.datamodel.Medication;
-
-import org.jetbrains.annotations.NotNull;
-
-class MedicationSelector {
-
-    @NotNull
-    private final MedicationStatusInterpreter interpreter;
-
-    public MedicationSelector(@NotNull final MedicationStatusInterpreter interpreter) {
-        this.interpreter = interpreter;
+internal class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
+    fun active(medications: List<Medication>): List<Medication> {
+        return medications.filter(::isActive)
     }
 
-    @NotNull
-    public List<Medication> active(@NotNull List<Medication> medications) {
-        List<Medication> filtered = Lists.newArrayList();
-        for (Medication medication : medications) {
-            MedicationStatusInterpretation status = interpreter.interpret(medication);
-            if (status == MedicationStatusInterpretation.ACTIVE) {
-                filtered.add(medication);
-            }
+    fun activeWithAnyTermInName(medications: List<Medication>, termsToFind: Set<String>): List<Medication> {
+        return active(medications).filter { stringCaseInsensitivelyMatchesQueryCollection(it.name(), termsToFind) }
+    }
+
+    fun activeWithExactCategory(medications: List<Medication>, categoryToFind: String): List<Medication> {
+        return activeWithAnyExactCategory(medications, setOf(categoryToFind))
+    }
+
+    fun activeWithAnyExactCategory(medications: List<Medication>, categoriesToFind: Set<String>): List<Medication> {
+        val lowercaseCategoriesToFind = categoriesToFind.map { it.lowercase(ApplicationConfig.LOCALE) }.toSet()
+        return active(medications).filter { medication ->
+            medication.categories().any { lowercaseCategoriesToFind.contains(it.lowercase(ApplicationConfig.LOCALE)) }
         }
-        return filtered;
     }
 
-    @NotNull
-    public List<Medication> activeWithAnyTermInName(@NotNull List<Medication> medications, @NotNull Set<String> termsToFind) {
-        List<Medication> filtered = Lists.newArrayList();
-        for (Medication medication : active(medications)) {
-            boolean isMatch = false;
-            for (String termToFind : termsToFind) {
-                if (medication.name().toLowerCase().contains(termToFind.toLowerCase())) {
-                    isMatch = true;
-                }
-            }
-            if (isMatch) {
-                filtered.add(medication);
-            }
-        }
-        return filtered;
+    fun activeOrRecentlyStoppedWithCategory(
+        medications: List<Medication>, categoryToFind: String, minStopDate: LocalDate
+    ): List<Medication> {
+        return medications.filter { medication -> medication.categories().any { it.equals(categoryToFind, ignoreCase = true) } }
+            .filter { isActive(it) || isRecentlyStopped(it, minStopDate) }
     }
 
-    @NotNull
-    public List<Medication> activeWithExactCategory(@NotNull List<Medication> medications, @NotNull String categoryToFind) {
-        return activeWithAnyExactCategory(medications, Sets.newHashSet(categoryToFind));
+    private fun isRecentlyStopped(medication: Medication, minStopDate: LocalDate): Boolean {
+        return medication.stopDate()?.isAfter(minStopDate) ?: false
     }
 
-    @NotNull
-    public List<Medication> activeWithAnyExactCategory(@NotNull List<Medication> medications, @NotNull Set<String> categoriesToFind) {
-        List<Medication> filtered = Lists.newArrayList();
-        for (Medication medication : active(medications)) {
-            boolean isMatch = false;
-            for (String category : medication.categories()) {
-                for (String categoryToFind : categoriesToFind) {
-                    if (category.equalsIgnoreCase(categoryToFind)) {
-                        isMatch = true;
-                        break;
-                    }
-                }
-            }
-            if (isMatch) {
-                filtered.add(medication);
-            }
-        }
-        return filtered;
-    }
-
-    @NotNull
-    public List<Medication> activeOrRecentlyStoppedWithCategory(@NotNull List<Medication> medications, @NotNull String categoryToFind,
-            @NotNull LocalDate minStopDate) {
-        List<Medication> filtered = Lists.newArrayList();
-        for (Medication medication : medications) {
-            boolean isMatch = false;
-            for (String category : medication.categories()) {
-                if (category.equalsIgnoreCase(categoryToFind)) {
-                    boolean isActive = interpreter.interpret(medication) == MedicationStatusInterpretation.ACTIVE;
-                    boolean isRecentlyStopped = medication.stopDate() != null && medication.stopDate().isAfter(minStopDate);
-                    if (isActive || isRecentlyStopped) {
-                        isMatch = true;
-                    }
-                }
-            }
-            if (isMatch) {
-                filtered.add(medication);
-            }
-        }
-        return filtered;
+    private fun isActive(medication: Medication): Boolean {
+        return interpreter.interpret(medication) == MedicationStatusInterpretation.ACTIVE
     }
 }

@@ -1,219 +1,181 @@
-package com.hartwig.actin.algo.evaluation.medication;
+package com.hartwig.actin.algo.evaluation.medication
 
-import java.time.LocalDate;
-import java.util.Map;
+import com.hartwig.actin.algo.evaluation.FunctionCreator
+import com.hartwig.actin.algo.evaluation.RuleMapper
+import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.algo.medication.MedicationStatusInterpreter
+import com.hartwig.actin.algo.medication.MedicationStatusInterpreterOnEvaluationDate
+import com.hartwig.actin.treatment.datamodel.EligibilityFunction
+import com.hartwig.actin.treatment.datamodel.EligibilityRule
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.hartwig.actin.algo.evaluation.FunctionCreator;
-import com.hartwig.actin.algo.evaluation.RuleMapper;
-import com.hartwig.actin.algo.evaluation.RuleMappingResources;
-import com.hartwig.actin.algo.medication.MedicationStatusInterpreter;
-import com.hartwig.actin.algo.medication.MedicationStatusInterpreterOnEvaluationDate;
-import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
+class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
+    private val selector: MedicationSelector
 
-import org.jetbrains.annotations.NotNull;
-
-public class MedicationRuleMapper extends RuleMapper {
-
-    // Medication categories
-    private static final String ANTICOAGULANTS = "Anticoagulants";
-    private static final String VITAMIN_K_ANTAGONISTS = "Vitamin K Antagonists";
-    private static final String TRIAZOLES = "Triazoles";
-    private static final String CUTANEOUS_IMIDAZOLES = "Imidazoles, cutaneous";
-    private static final String OTHER_IMIDAZOLES = "Imidazoles, other";
-    private static final String BISPHOSPHONATES = "Bisphosphonates";
-    private static final String CALCIUM_REGULATORY_MEDICATION = "Calcium regulatory medication";
-    private static final String GONADORELIN_ANTAGONISTS = "Gonadorelin antagonists";
-    private static final String GONADORELIN_AGONISTS = "Gonadorelin agonists";
-    private static final String SELECTIVE_IMMUNOSUPPRESSANTS = "Immunosuppressants, selective";
-    private static final String OTHER_IMMUNOSUPPRESSANTS = "Immunosuppressants, other";
-
-    @NotNull
-    private final MedicationSelector selector;
-
-    public MedicationRuleMapper(@NotNull final RuleMappingResources resources) {
-        super(resources);
-
-        MedicationStatusInterpreter interpreter = new MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date());
-        this.selector = new MedicationSelector(interpreter);
+    init {
+        val interpreter: MedicationStatusInterpreter = MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date())
+        selector = MedicationSelector(interpreter)
     }
 
-    @NotNull
-    @Override
-    public Map<EligibilityRule, FunctionCreator> createMappings() {
-        Map<EligibilityRule, FunctionCreator> map = Maps.newHashMap();
-
-        map.put(EligibilityRule.CURRENTLY_GETS_NAME_X_MEDICATION, getsActiveMedicationWithConfiguredNameCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_CATEGORY_X_MEDICATION, getsActiveMedicationWithApproximateCategoryCreator());
-        map.put(EligibilityRule.HAS_RECEIVED_CATEGORY_X_MEDICATION_WITHIN_Y_WEEKS,
-                hasRecentlyReceivedMedicationOfApproximateCategoryCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_ANTICOAGULANT_MEDICATION, getsAnticoagulantMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_AZOLE_MEDICATION, getsAzoleMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_BONE_RESORPTIVE_MEDICATION, getsBoneResorptiveMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_COUMARIN_DERIVATIVE_MEDICATION, getsCoumarinDerivativeMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_GONADORELIN_MEDICATION, getsGonadorelinMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION, getsImmunosuppressantMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_PROHIBITED_MEDICATION, getsProhibitedMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION, getsQTProlongatingMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_ANY_CYP, getsAnyCYPInducingMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_CYP_X, getsCYPXInducingMedicationCreator());
-        map.put(EligibilityRule.HAS_RECEIVED_MEDICATION_INDUCING_CYP_X_WITHIN_Y_WEEKS, hasRecentlyReceivedCYPXInducingMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_CYP_X, getsCYPXInhibitingMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X, getsCYPXInhibitingOrInducingMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_CYP_X, getsCYPSubstrateMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_PGP, getsPGPInhibitingMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_PGP, getsPGPSubstrateMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_BCRP, getsBCRPInhibitingMedicationCreator());
-        map.put(EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_BCRP, getsBCRPSubstrateMedicationCreator());
-        map.put(EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING, getsStableDosingAnticoagulantMedicationCreator());
-
-        return map;
+    override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
+        return mapOf(
+            EligibilityRule.CURRENTLY_GETS_NAME_X_MEDICATION to getsActiveMedicationWithConfiguredNameCreator(),
+            EligibilityRule.CURRENTLY_GETS_CATEGORY_X_MEDICATION to getsActiveMedicationWithApproximateCategoryCreator(),
+            EligibilityRule.HAS_RECEIVED_CATEGORY_X_MEDICATION_WITHIN_Y_WEEKS to hasRecentlyReceivedMedicationOfApproximateCategoryCreator(),
+            EligibilityRule.CURRENTLY_GETS_ANTICOAGULANT_MEDICATION to getsAnticoagulantMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_AZOLE_MEDICATION to getsAzoleMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_BONE_RESORPTIVE_MEDICATION to getsBoneResorptiveMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_COUMARIN_DERIVATIVE_MEDICATION to getsCoumarinDerivativeMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_GONADORELIN_MEDICATION to getsGonadorelinMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION to getsImmunosuppressantMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_PROHIBITED_MEDICATION to getsProhibitedMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION to getsQTProlongatingMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_ANY_CYP to getsAnyCYPInducingMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_CYP_X to getsCYPXInducingMedicationCreator(),
+            EligibilityRule.HAS_RECEIVED_MEDICATION_INDUCING_CYP_X_WITHIN_Y_WEEKS to hasRecentlyReceivedCYPXInducingMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_CYP_X to getsCYPXInhibitingMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X to getsCYPXInhibitingOrInducingMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_CYP_X to getsCYPSubstrateMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_PGP to getsPGPInhibitingMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_PGP to getsPGPSubstrateMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_BCRP to getsBCRPInhibitingMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_BCRP to getsBCRPSubstrateMedicationCreator(),
+            EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING to getsStableDosingAnticoagulantMedicationCreator(),
+        )
     }
 
-    @NotNull
-    private FunctionCreator getsActiveMedicationWithConfiguredNameCreator() {
-        return function -> {
-            String termToFind = functionInputResolver().createOneStringInput(function);
-            return new CurrentlyGetsMedicationOfName(selector, Sets.newHashSet(termToFind));
-        };
+    private fun getsActiveMedicationWithConfiguredNameCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val termToFind = functionInputResolver().createOneStringInput(function)
+            CurrentlyGetsMedicationOfName(selector, setOf(termToFind))
+        }
     }
 
-    @NotNull
-    private FunctionCreator getsActiveMedicationWithApproximateCategoryCreator() {
-        return function -> {
-            String categoryTermToFind = functionInputResolver().createOneStringInput(function);
-            return new CurrentlyGetsMedicationOfApproximateCategory(selector, categoryTermToFind);
-        };
+    private fun getsActiveMedicationWithApproximateCategoryCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val categoryTermToFind = functionInputResolver().createOneStringInput(function)
+            CurrentlyGetsMedicationOfApproximateCategory(selector, categoryTermToFind)
+        }
     }
 
-    @NotNull
-    private FunctionCreator hasRecentlyReceivedMedicationOfApproximateCategoryCreator() {
-        return function -> {
-            OneIntegerOneString input = functionInputResolver().createOneStringOneIntegerInput(function);
-            LocalDate maxStopDate = referenceDateProvider().date().minusWeeks(input.integer());
-            return new HasRecentlyReceivedMedicationOfApproximateCategory(selector, input.string(), maxStopDate);
-        };
+    private fun hasRecentlyReceivedMedicationOfApproximateCategoryCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneStringOneIntegerInput(function)
+            val maxStopDate = referenceDateProvider().date().minusWeeks(input.integer().toLong())
+            HasRecentlyReceivedMedicationOfApproximateCategory(selector, input.string(), maxStopDate)
+        }
     }
 
-    @NotNull
-    private FunctionCreator getsAnticoagulantMedicationCreator() {
-        return getsActiveMedicationWithExactCategoryCreator(ANTICOAGULANTS, VITAMIN_K_ANTAGONISTS);
+    private fun getsAnticoagulantMedicationCreator(): FunctionCreator {
+        return getsActiveMedicationWithExactCategoryCreator(ANTICOAGULANTS, VITAMIN_K_ANTAGONISTS)
     }
 
-    @NotNull
-    private FunctionCreator getsAzoleMedicationCreator() {
-        return getsActiveMedicationWithExactCategoryCreator(TRIAZOLES, CUTANEOUS_IMIDAZOLES, OTHER_IMIDAZOLES);
+    private fun getsAzoleMedicationCreator(): FunctionCreator {
+        return getsActiveMedicationWithExactCategoryCreator(TRIAZOLES, CUTANEOUS_IMIDAZOLES, OTHER_IMIDAZOLES)
     }
 
-    @NotNull
-    private FunctionCreator getsBoneResorptiveMedicationCreator() {
-        return getsActiveMedicationWithExactCategoryCreator(BISPHOSPHONATES, CALCIUM_REGULATORY_MEDICATION);
+    private fun getsBoneResorptiveMedicationCreator(): FunctionCreator {
+        return getsActiveMedicationWithExactCategoryCreator(BISPHOSPHONATES, CALCIUM_REGULATORY_MEDICATION)
     }
 
-    @NotNull
-    private FunctionCreator getsCoumarinDerivativeMedicationCreator() {
-        return getsActiveMedicationWithExactCategoryCreator(VITAMIN_K_ANTAGONISTS);
+    private fun getsCoumarinDerivativeMedicationCreator(): FunctionCreator {
+        return getsActiveMedicationWithExactCategoryCreator(VITAMIN_K_ANTAGONISTS)
     }
 
-    @NotNull
-    private FunctionCreator getsGonadorelinMedicationCreator() {
-        return getsActiveMedicationWithExactCategoryCreator(GONADORELIN_ANTAGONISTS, GONADORELIN_AGONISTS);
+    private fun getsGonadorelinMedicationCreator(): FunctionCreator {
+        return getsActiveMedicationWithExactCategoryCreator(GONADORELIN_ANTAGONISTS, GONADORELIN_AGONISTS)
     }
 
-    @NotNull
-    private FunctionCreator getsImmunosuppressantMedicationCreator() {
-        return getsActiveMedicationWithExactCategoryCreator(SELECTIVE_IMMUNOSUPPRESSANTS, OTHER_IMMUNOSUPPRESSANTS);
+    private fun getsImmunosuppressantMedicationCreator(): FunctionCreator {
+        return getsActiveMedicationWithExactCategoryCreator(SELECTIVE_IMMUNOSUPPRESSANTS, OTHER_IMMUNOSUPPRESSANTS)
     }
 
-    @NotNull
-    private FunctionCreator getsProhibitedMedicationCreator() {
-        return function -> new CurrentlyGetsProhibitedMedicationCreator();
+    private fun getsProhibitedMedicationCreator(): FunctionCreator {
+        return FunctionCreator { CurrentlyGetsProhibitedMedicationCreator() }
     }
 
-    @NotNull
-    private FunctionCreator getsQTProlongatingMedicationCreator() {
-        return function -> new CurrentlyGetsQTProlongatingMedication();
+    private fun getsQTProlongatingMedicationCreator(): FunctionCreator {
+        return FunctionCreator { CurrentlyGetsQTProlongatingMedication() }
     }
 
-    @NotNull
-    private FunctionCreator getsAnyCYPInducingMedicationCreator() {
-        return function -> new GetsAnyCYPInducingMedication();
+    private fun getsAnyCYPInducingMedicationCreator(): FunctionCreator {
+        return FunctionCreator { GetsAnyCYPInducingMedication() }
     }
 
-    @NotNull
-    private FunctionCreator getsCYPXInducingMedicationCreator() {
-        return function -> {
-            String termToFind = functionInputResolver().createOneStringInput(function);
-            return new CurrentlyGetsCYPXInducingMedication(termToFind);
-        };
+    private fun getsCYPXInducingMedicationCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val termToFind = functionInputResolver().createOneStringInput(function)
+            CurrentlyGetsCYPXInducingMedication(termToFind)
+        }
     }
 
-    @NotNull
-    private FunctionCreator hasRecentlyReceivedCYPXInducingMedicationCreator() {
-        return function -> {
-            OneIntegerOneString input = functionInputResolver().createOneStringOneIntegerInput(function);
-            return new HasRecentlyReceivedCYPXInducingMedication(input.string());
-        };
+    private fun hasRecentlyReceivedCYPXInducingMedicationCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneStringOneIntegerInput(function)
+            HasRecentlyReceivedCYPXInducingMedication(input.string())
+        }
     }
 
-    @NotNull
-    private FunctionCreator getsCYPXInhibitingMedicationCreator() {
-        return function -> {
-            String termToFind = functionInputResolver().createOneStringInput(function);
-            return new CurrentlyGetsCYPXInhibitingMedication(termToFind);
-        };
+    private fun getsCYPXInhibitingMedicationCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val termToFind = functionInputResolver().createOneStringInput(function)
+            CurrentlyGetsCYPXInhibitingMedication(termToFind)
+        }
     }
 
-    @NotNull
-    private FunctionCreator getsCYPXInhibitingOrInducingMedicationCreator() {
-        return function -> {
-            String termToFind = functionInputResolver().createOneStringInput(function);
-            return new CurrentlyGetsCYPXInhibitingOrInducingMedication(termToFind);
-        };
+    private fun getsCYPXInhibitingOrInducingMedicationCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val termToFind = functionInputResolver().createOneStringInput(function)
+            CurrentlyGetsCYPXInhibitingOrInducingMedication(termToFind)
+        }
     }
 
-    @NotNull
-    private FunctionCreator getsCYPSubstrateMedicationCreator() {
-        return function -> {
-            String termToFind = functionInputResolver().createOneStringInput(function);
-            return new CurrentlyGetsCYPXSubstrateMedication(termToFind);
-        };
+    private fun getsCYPSubstrateMedicationCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val termToFind = functionInputResolver().createOneStringInput(function)
+            CurrentlyGetsCYPXSubstrateMedication(termToFind)
+        }
     }
 
-    @NotNull
-    private FunctionCreator getsPGPInhibitingMedicationCreator() {
-        return function -> new CurrentlyGetsPGPInhibitingMedication();
+    private fun getsPGPInhibitingMedicationCreator(): FunctionCreator {
+        return FunctionCreator { CurrentlyGetsPGPInhibitingMedication() }
     }
 
-    @NotNull
-    private FunctionCreator getsPGPSubstrateMedicationCreator() {
-        return function -> new CurrentlyGetsPGPSubstrateMedication();
+    private fun getsPGPSubstrateMedicationCreator(): FunctionCreator {
+        return FunctionCreator { CurrentlyGetsPGPSubstrateMedication() }
     }
 
-    @NotNull
-    private FunctionCreator getsBCRPInhibitingMedicationCreator() {
-        return function -> new CurrentlyGetsBCRPInhibitingMedication();
+    private fun getsBCRPInhibitingMedicationCreator(): FunctionCreator {
+        return FunctionCreator { CurrentlyGetsBCRPInhibitingMedication() }
     }
 
-    @NotNull
-    private FunctionCreator getsBCRPSubstrateMedicationCreator() {
-        return function -> new CurrentlyGetsBCRPSubstrateMedication();
+    private fun getsBCRPSubstrateMedicationCreator(): FunctionCreator {
+        return FunctionCreator { CurrentlyGetsBCRPSubstrateMedication() }
     }
 
-    @NotNull
-    private FunctionCreator getsStableDosingAnticoagulantMedicationCreator() {
-        return getsStableMedicationOfCategoryCreator(ANTICOAGULANTS);
+    private fun getsStableDosingAnticoagulantMedicationCreator(): FunctionCreator {
+        return getsStableMedicationOfCategoryCreator(ANTICOAGULANTS)
     }
 
-    @NotNull
-    private FunctionCreator getsStableMedicationOfCategoryCreator(@NotNull String... categoriesToFind) {
-        return function -> new CurrentlyGetsStableMedicationOfCategory(selector, Sets.newHashSet(categoriesToFind));
+    private fun getsStableMedicationOfCategoryCreator(vararg categoriesToFind: String): FunctionCreator {
+        return FunctionCreator { CurrentlyGetsStableMedicationOfCategory(selector, setOf(*categoriesToFind)) }
     }
 
-    @NotNull
-    private FunctionCreator getsActiveMedicationWithExactCategoryCreator(@NotNull String... categoriesToFind) {
-        return function -> new CurrentlyGetsMedicationOfExactCategory(selector, Sets.newHashSet(categoriesToFind));
+    private fun getsActiveMedicationWithExactCategoryCreator(vararg categoriesToFind: String): FunctionCreator {
+        return FunctionCreator { CurrentlyGetsMedicationOfExactCategory(selector, setOf(*categoriesToFind)) }
+    }
+
+    companion object {
+        // Medication categories
+        private const val ANTICOAGULANTS = "Anticoagulants"
+        private const val VITAMIN_K_ANTAGONISTS = "Vitamin K Antagonists"
+        private const val TRIAZOLES = "Triazoles"
+        private const val CUTANEOUS_IMIDAZOLES = "Imidazoles, cutaneous"
+        private const val OTHER_IMIDAZOLES = "Imidazoles, other"
+        private const val BISPHOSPHONATES = "Bisphosphonates"
+        private const val CALCIUM_REGULATORY_MEDICATION = "Calcium regulatory medication"
+        private const val GONADORELIN_ANTAGONISTS = "Gonadorelin antagonists"
+        private const val GONADORELIN_AGONISTS = "Gonadorelin agonists"
+        private const val SELECTIVE_IMMUNOSUPPRESSANTS = "Immunosuppressants, selective"
+        private const val OTHER_IMMUNOSUPPRESSANTS = "Immunosuppressants, other"
     }
 }

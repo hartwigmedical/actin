@@ -1,18 +1,14 @@
-package com.hartwig.actin.algo.evaluation.medication;
+package com.hartwig.actin.algo.evaluation.medication
 
-import static com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation;
+import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import org.junit.Test
 
-import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-
-import org.junit.Test;
-
-public class HasRecentlyReceivedCYPXInducingMedicationTest {
-
+class HasRecentlyReceivedCYPXInducingMedicationTest {
     @Test
-    public void canEvaluate() {
-        HasRecentlyReceivedCYPXInducingMedication function = new HasRecentlyReceivedCYPXInducingMedication("CYP9A9");
-
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()));
+    fun canEvaluate() {
+        val function = HasRecentlyReceivedCYPXInducingMedication("CYP9A9")
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
     }
 }

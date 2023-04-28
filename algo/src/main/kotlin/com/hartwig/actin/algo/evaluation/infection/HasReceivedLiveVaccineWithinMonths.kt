@@ -1,25 +1,15 @@
-package com.hartwig.actin.algo.evaluation.infection;
+package com.hartwig.actin.algo.evaluation.infection
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
-import org.jetbrains.annotations.NotNull;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-public class HasReceivedLiveVaccineWithinMonths implements EvaluationFunction {
-
-    HasReceivedLiveVaccineWithinMonths() {
+class HasReceivedLiveVaccineWithinMonths internal constructor() : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        return EvaluationFactory.undetermined(
+            "Unknown if patient has received a live vaccine within nr of months",
+            "Unknown live vaccine status"
+        )
     }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Unknown if patient has received a live vaccine within nr of months")
-                .addUndeterminedGeneralMessages("Unknown live vaccine status")
-                .build();
-    }
-
 }

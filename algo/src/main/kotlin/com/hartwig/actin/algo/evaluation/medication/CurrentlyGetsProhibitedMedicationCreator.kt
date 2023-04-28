@@ -1,25 +1,15 @@
-package com.hartwig.actin.algo.evaluation.medication;
+package com.hartwig.actin.algo.evaluation.medication
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-import org.jetbrains.annotations.NotNull;
-
-public class CurrentlyGetsProhibitedMedicationCreator implements EvaluationFunction {
-
-    CurrentlyGetsProhibitedMedicationCreator() {
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Currently not determined if patient gets prohibited medication")
-                .addUndeterminedGeneralMessages("Undetermined if using prohibited medication")
-                .build();
+class CurrentlyGetsProhibitedMedicationCreator internal constructor() : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        return EvaluationFactory.undetermined(
+            "Currently not determined if patient gets prohibited medication",
+            "Undetermined if using prohibited medication"
+        )
     }
 }

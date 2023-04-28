@@ -1,25 +1,15 @@
-package com.hartwig.actin.algo.evaluation.infection;
+package com.hartwig.actin.algo.evaluation.infection
 
-import com.hartwig.actin.PatientRecord;
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.hartwig.actin.algo.evaluation.EvaluationFactory;
-import com.hartwig.actin.algo.evaluation.EvaluationFunction;
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-import org.jetbrains.annotations.NotNull;
-
-public class IsFullyVaccinatedCovid19 implements EvaluationFunction {
-
-    IsFullyVaccinatedCovid19() {
-    }
-
-    @NotNull
-    @Override
-    public Evaluation evaluate(@NotNull PatientRecord record) {
-        return EvaluationFactory.unrecoverable()
-                .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Unknown if patient is fully vaccinated against COVID-19")
-                .addUndeterminedGeneralMessages("COVID-19 vaccination status unknown")
-                .build();
+class IsFullyVaccinatedCovid19 internal constructor() : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        return EvaluationFactory.undetermined(
+            "Unknown if patient is fully vaccinated against COVID-19",
+            "COVID-19 vaccination status unknown"
+        )
     }
 }
