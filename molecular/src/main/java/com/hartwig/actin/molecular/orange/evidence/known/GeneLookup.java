@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.orange.evidence.known;
 
 import java.util.Set;
 
+import com.hartwig.actin.molecular.filter.GeneAggregator;
 import com.hartwig.serve.datamodel.common.GeneAlteration;
 import com.hartwig.serve.datamodel.common.GeneRole;
 import com.hartwig.serve.datamodel.common.ProteinEffect;
@@ -17,7 +18,7 @@ final class GeneLookup {
 
     @Nullable
     public static GeneAlteration find(@NotNull Set<KnownGene> knownGenes, @NotNull String gene) {
-        for (KnownGene knownGene : knownGenes) {
+        for (KnownGene knownGene : GeneAggregator.aggregate(knownGenes)) {
             if (knownGene.gene().equals(gene)) {
                 return fromKnownGene(knownGene);
             }

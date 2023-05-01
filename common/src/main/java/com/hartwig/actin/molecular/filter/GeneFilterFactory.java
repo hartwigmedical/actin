@@ -19,6 +19,6 @@ public final class GeneFilterFactory {
 
     @NotNull
     public static GeneFilter createFromKnownGenes(@NotNull Collection<KnownGene> knownGenes) {
-        return new SpecificGenesFilter(knownGenes.stream().map(KnownGene::gene).collect(Collectors.toSet()));
+        return new SpecificGenesFilter(GeneAggregator.aggregate(knownGenes).stream().map(KnownGene::gene).collect(Collectors.toSet()));
     }
 }
