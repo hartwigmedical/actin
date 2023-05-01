@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.medication
 
-import com.hartwig.actin.algo.medication.MedicationStatusInterpretation
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
 import org.junit.Assert
@@ -11,7 +10,7 @@ class MedicationSelectorTest {
     @Test
     fun canFilterForActive() {
         val medications = listOf(TestMedicationFactory.builder().name("active").build())
-        val filtered = createAlwaysActiveSelector().active(medications)
+        val filtered = MedicationTestFactory.alwaysActive().active(medications)
         Assert.assertEquals(1, filtered.size.toLong())
         Assert.assertEquals("active", filtered[0].name())
     }
@@ -24,7 +23,7 @@ class MedicationSelectorTest {
             TestMedicationFactory.builder().name("name 2").build(),
             TestMedicationFactory.builder().name("name 3").build()
         )
-        val filtered = createAlwaysActiveSelector().activeWithAnyTermInName(medications, setOf("Name 1", "2"))
+        val filtered = MedicationTestFactory.alwaysActive().activeWithAnyTermInName(medications, setOf("Name 1", "2"))
         Assert.assertEquals(3, filtered.size.toLong())
         Assert.assertNotNull(findByName(filtered, "name 1"))
         Assert.assertNotNull(findByName(filtered, "name 1 with some extension"))
@@ -38,7 +37,7 @@ class MedicationSelectorTest {
             TestMedicationFactory.builder().name("wrong categories").addCategories("wrong category 1").build(),
             TestMedicationFactory.builder().name("right categories").addCategories("category 1", "category 2").build(),
         )
-        val filtered = createAlwaysActiveSelector().activeWithExactCategory(medications, "Category 1")
+        val filtered = MedicationTestFactory.alwaysActive().activeWithExactCategory(medications, "Category 1")
         Assert.assertEquals(1, filtered.size.toLong())
         Assert.assertEquals("right categories", filtered[0].name())
     }
@@ -51,7 +50,7 @@ class MedicationSelectorTest {
             TestMedicationFactory.builder().name("right category 1").addCategories("category 1", "category 2").build(),
             TestMedicationFactory.builder().name("right category 2").addCategories("category 3").build()
         )
-        val filtered = createAlwaysActiveSelector().activeWithAnyExactCategory(medications, setOf("Category 1", "Category 3"))
+        val filtered = MedicationTestFactory.alwaysActive().activeWithAnyExactCategory(medications, setOf("Category 1", "Category 3"))
         Assert.assertEquals(2, filtered.size.toLong())
         Assert.assertNotNull(findByName(medications, "right category 1"))
         Assert.assertNotNull(findByName(medications, "right category 2"))
@@ -74,7 +73,7 @@ class MedicationSelectorTest {
                 .stopDate(minStopDate.minusDays(1))
                 .build()
         )
-        val filtered = createAlwaysInactiveSelector().activeOrRecentlyStoppedWithCategory(medications, "Category 1", minStopDate)
+        val filtered = MedicationTestFactory.alwaysInactive().activeOrRecentlyStoppedWithCategory(medications, "Category 1", minStopDate)
         Assert.assertEquals(1, filtered.size.toLong())
         Assert.assertNotNull(findByName(medications, "right category 1 recently stopped"))
     }
@@ -87,14 +86,6 @@ class MedicationSelectorTest {
                 }
             }
             throw IllegalStateException("Could not find medication with name: $nameToFind")
-        }
-
-        private fun createAlwaysActiveSelector(): MedicationSelector {
-            return MedicationSelector { MedicationStatusInterpretation.ACTIVE }
-        }
-
-        private fun createAlwaysInactiveSelector(): MedicationSelector {
-            return MedicationSelector { MedicationStatusInterpretation.CANCELLED }
         }
     }
 }

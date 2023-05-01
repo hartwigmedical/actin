@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasCardiacArrhythmia internal constructor() : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val ecg = record.clinical().clinicalStatus().ecg()
-            ?: return EvaluationFactory.undetermined(
+            ?: return EvaluationFactory.fail(
                 "ECG details are missing, it is assumed there are no abnormalities",
                 "Assumed no ECG abnormalities"
             )

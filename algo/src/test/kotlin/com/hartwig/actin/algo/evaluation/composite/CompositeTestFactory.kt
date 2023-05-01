@@ -45,7 +45,8 @@ internal object CompositeTestFactory {
             builder.addInclusionMolecularEvents("inclusion event $index")
             builder.addExclusionMolecularEvents("exclusion event $index")
         }
-        return evaluationFunction { builder.build() }
+        val evaluation = builder.build()
+        return evaluationFunction { evaluation }
     }
 
     private fun evaluationFunction(function: (PatientRecord) -> Evaluation): EvaluationFunction {

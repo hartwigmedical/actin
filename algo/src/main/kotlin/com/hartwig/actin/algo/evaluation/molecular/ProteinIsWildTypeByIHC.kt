@@ -9,26 +9,26 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 
 class ProteinIsWildTypeByIHC internal constructor(private val protein: String) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasOnlyWildTypeResults = PriorMolecularTestFunctions.allIHCTestsForProtein(record.clinical().priorMolecularTests(), protein)
-            .all { test: PriorMolecularTest -> WILD_TYPE_QUERY_STRINGS.any { it.equals(test.scoreText(), ignoreCase = true) } }
+        val allIHCTestsForProtein = PriorMolecularTestFunctions.allIHCTestsForProtein(record.clinical().priorMolecularTests(), protein)
+        val hasOnlyWildTypeResults = allIHCTestsForProtein.isNotEmpty() && allIHCTestsForProtein.all { test: PriorMolecularTest ->
+            WILD_TYPE_QUERY_STRINGS.any {
+                it.equals(
+                    test.scoreText(),
+                    ignoreCase = true
+                )
+            }
+        }
 
         return if (hasOnlyWildTypeResults) {
-            unrecoverable()
-                .result(EvaluationResult.PASS)
+            unrecoverable().result(EvaluationResult.PASS)
                 .addPassSpecificMessages(String.format("Protein %s is wild type according to IHC", protein))
-                .addPassGeneralMessages(String.format("%s wild type", protein))
-                .build()
+                .addPassGeneralMessages(String.format("%s wild type", protein)).build()
         } else {
-            unrecoverable()
-                .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages(
-                    String.format(
-                        "Could not determine if protein %s is wild type according to IHC",
-                        protein
-                    )
+            unrecoverable().result(EvaluationResult.UNDETERMINED).addUndeterminedSpecificMessages(
+                String.format(
+                    "Could not determine if protein %s is wild type according to IHC", protein
                 )
-                .addUndeterminedGeneralMessages(String.format("%s wild type status unknown", protein))
-                .build()
+            ).addUndeterminedGeneralMessages(String.format("%s wild type status unknown", protein)).build()
         }
     }
 

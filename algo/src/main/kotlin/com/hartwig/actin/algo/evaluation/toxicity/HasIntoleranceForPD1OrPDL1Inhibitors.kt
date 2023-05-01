@@ -27,11 +27,11 @@ class HasIntoleranceForPD1OrPDL1Inhibitors internal constructor(private val doid
             val autoImmuneDiseaseTerms =
                 OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions()).flatMap { it.doids() }
                     .filter { doidModel.doidWithParents(it).contains(DoidConstants.AUTOIMMUNE_DISEASE_DOID) }
-                    .mapNotNull { doidModel.resolveTermForDoid(it) }.toSet()
+                    .map { doidModel.resolveTermForDoid(it) }.toSet()
 
             if (autoImmuneDiseaseTerms.isNotEmpty()) {
                 warn(
-                    "Patient has autoimmune disease condition(s) " + concat(autoImmuneDiseaseTerms) + " which may indicate intolerance for immunotherapy",
+                    "Patient has autoimmune disease condition(s) " + concat(autoImmuneDiseaseTerms.filterNotNull()) + " which may indicate intolerance for immunotherapy",
                     "Patient may have PD-1/PD-L1 intolerance due to autoimmune disease"
                 )
             } else {

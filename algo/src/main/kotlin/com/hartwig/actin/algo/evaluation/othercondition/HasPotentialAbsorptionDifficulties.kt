@@ -17,12 +17,12 @@ class HasPotentialAbsorptionDifficulties internal constructor(private val doidMo
     override fun evaluate(record: PatientRecord): Evaluation {
         val conditions = OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions()).flatMap { it.doids() }
             .filter { doidModel.doidWithParents(it).contains(DoidConstants.GASTROINTESTINAL_SYSTEM_DISEASE_DOID) }
-            .mapNotNull { doidModel.resolveTermForDoid(it) }
+            .map { doidModel.resolveTermForDoid(it) }
 
         if (conditions.isNotEmpty()) {
             return EvaluationFactory.pass(
-                "Patient has potential absorption difficulties due to " + concat(conditions),
-                "Potential absorption difficulties: " + concat(conditions)
+                "Patient has potential absorption difficulties due to " + concat(conditions.filterNotNull()),
+                "Potential absorption difficulties: " + concat(conditions.filterNotNull())
             )
         }
         val complications =
