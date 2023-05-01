@@ -1,6 +1,7 @@
-package com.hartwig.actin.molecular.filter;
+package com.hartwig.actin.molecular.orange.evidence.known;
 
 import java.util.Collection;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.hartwig.serve.datamodel.common.GeneRole;
@@ -8,9 +9,9 @@ import com.hartwig.serve.datamodel.gene.KnownGene;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class GeneAggregator {
+final class GeneAggregator {
 
-    public static Collection<KnownGene> aggregate(@NotNull Collection<KnownGene> rawGenes) {
+    static Set<KnownGene> aggregate(@NotNull Collection<KnownGene> rawGenes) {
         return rawGenes.stream()
                 .collect(Collectors.groupingBy(KnownGene::gene))
                 .values()

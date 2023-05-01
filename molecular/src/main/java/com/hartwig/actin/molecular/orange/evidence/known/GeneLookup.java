@@ -2,7 +2,6 @@ package com.hartwig.actin.molecular.orange.evidence.known;
 
 import java.util.Set;
 
-import com.hartwig.actin.molecular.filter.GeneAggregator;
 import com.hartwig.serve.datamodel.common.GeneAlteration;
 import com.hartwig.serve.datamodel.common.GeneRole;
 import com.hartwig.serve.datamodel.common.ProteinEffect;

@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.filter;
+package com.hartwig.actin.molecular.orange.evidence.known;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.hartwig.serve.datamodel.common.GeneRole;
 import com.hartwig.serve.datamodel.gene.ImmutableKnownGene;
+import com.hartwig.serve.datamodel.gene.KnownGene;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -13,8 +14,8 @@ import org.junit.Test;
 public class GeneAggregatorTest {
 
     private static final String GENE = "gene";
-    private static final ImmutableKnownGene ONCO_GENE = gene(GENE, GeneRole.ONCO);
-    private static final ImmutableKnownGene UNKNOWN_GENE = gene(GENE, GeneRole.UNKNOWN);
+    private static final KnownGene ONCO_GENE = gene(GeneRole.ONCO);
+    private static final KnownGene UNKNOWN_GENE = gene(GeneRole.UNKNOWN);
 
     @Test
     public void shouldUseKnownGeneRolesWhenMultipleRoles() {
@@ -28,13 +29,13 @@ public class GeneAggregatorTest {
 
     @Test
     public void shouldNotAggregateWhenNotRequired() {
-        ImmutableKnownGene anotherGene = ONCO_GENE.withGene("another_gene");
+        ImmutableKnownGene anotherGene = ImmutableKnownGene.copyOf(ONCO_GENE).withGene("another_gene");
         assertThat(GeneAggregator.aggregate(Set.of(ONCO_GENE, anotherGene))).containsOnly(ONCO_GENE, anotherGene);
     }
 
     @NotNull
-    private static ImmutableKnownGene gene(String name, GeneRole role) {
-        return ImmutableKnownGene.builder().gene(name).geneRole(role).build();
+    private static KnownGene gene(GeneRole role) {
+        return ImmutableKnownGene.builder().gene(GeneAggregatorTest.GENE).geneRole(role).build();
     }
 
 }

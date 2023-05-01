@@ -1,5 +1,7 @@
 package com.hartwig.actin.molecular.orange.evidence.known;
 
+import java.util.Collections;
+
 import com.hartwig.serve.datamodel.ImmutableKnownEvents;
 import com.hartwig.serve.datamodel.KnownEvents;
 
@@ -12,7 +14,7 @@ public final class TestKnownEventResolverFactory {
 
     @NotNull
     public static KnownEventResolver createEmpty() {
-        return new KnownEventResolver(ImmutableKnownEvents.builder().build());
+        return new KnownEventResolver(ImmutableKnownEvents.builder().build(), Collections.emptySet());
     }
 
     @NotNull
@@ -26,6 +28,6 @@ public final class TestKnownEventResolverFactory {
                 .addFusions(TestServeKnownFactory.fusionBuilder().build())
                 .build();
 
-        return new KnownEventResolver(knownEvents);
+        return new KnownEventResolver(knownEvents, knownEvents.genes());
     }
 }

@@ -21,7 +21,7 @@ public final class KnownEventResolverFactory {
 
     @NotNull
     public static KnownEventResolver create(@NotNull KnownEvents knownEvents) {
-        return new KnownEventResolver(filterKnownEvents(knownEvents));
+        return new KnownEventResolver(filterKnownEvents(knownEvents), GeneAggregator.aggregate(knownEvents.genes()));
     }
 
     @NotNull

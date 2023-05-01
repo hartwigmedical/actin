@@ -51,7 +51,7 @@ public class KnownEventResolverTest {
 
         KnownGene knownGene = knownGeneWithName("gene 1");
         KnownEvents known = ImmutableKnownEvents.builder().addHotspots(hotspot).addCodons(codon).addExons(exon).addGenes(knownGene).build();
-        KnownEventResolver resolver = new KnownEventResolver(known);
+        KnownEventResolver resolver = new KnownEventResolver(known, known.genes());
 
         PurpleVariant hotspotMatch = TestPurpleFactory.variantBuilder()
                 .gene("gene 1")
@@ -87,7 +87,7 @@ public class KnownEventResolverTest {
 
         KnownEvents known = ImmutableKnownEvents.builder().addCopyNumbers(knownAmp, knownDel).addGenes(knownGene1, knownGene2).build();
 
-        KnownEventResolver resolver = new KnownEventResolver(known);
+        KnownEventResolver resolver = new KnownEventResolver(known, known.genes());
 
         PurpleGainLoss ampGene1 = amp("gene 1");
         assertEquals(knownAmp, resolver.resolveForCopyNumber(ampGene1));
@@ -122,7 +122,7 @@ public class KnownEventResolverTest {
         KnownFusion fusion = TestServeKnownFactory.fusionBuilder().geneUp("up").geneDown("down").build();
         KnownEvents known = ImmutableKnownEvents.builder().addFusions(fusion).build();
 
-        KnownEventResolver resolver = new KnownEventResolver(known);
+        KnownEventResolver resolver = new KnownEventResolver(known, known.genes());
 
         LinxFusion fusionMatch = TestLinxFactory.fusionBuilder().geneStart("up").geneEnd("down").build();
         assertEquals(fusion, resolver.resolveForFusion(fusionMatch));
