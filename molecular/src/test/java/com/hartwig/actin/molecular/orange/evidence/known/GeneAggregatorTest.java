@@ -8,7 +8,6 @@ import com.hartwig.serve.datamodel.common.GeneRole;
 import com.hartwig.serve.datamodel.gene.ImmutableKnownGene;
 import com.hartwig.serve.datamodel.gene.KnownGene;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 public class GeneAggregatorTest {
@@ -33,9 +32,7 @@ public class GeneAggregatorTest {
         assertThat(GeneAggregator.aggregate(Set.of(ONCO_GENE, anotherGene))).containsOnly(ONCO_GENE, anotherGene);
     }
 
-    @NotNull
     private static KnownGene gene(GeneRole role) {
         return ImmutableKnownGene.builder().gene(GeneAggregatorTest.GENE).geneRole(role).build();
     }
-
 }
