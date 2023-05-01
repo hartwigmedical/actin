@@ -1,12 +1,10 @@
 package com.hartwig.actin.molecular.orange.evidence.known;
 
-import java.util.List;
 import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants;
-import com.hartwig.actin.molecular.serve.KnownGene;
 import com.hartwig.serve.datamodel.ImmutableKnownEvents;
 import com.hartwig.serve.datamodel.Knowledgebase;
 import com.hartwig.serve.datamodel.KnownEvent;
@@ -22,8 +20,8 @@ public final class KnownEventResolverFactory {
     }
 
     @NotNull
-    public static KnownEventResolver create(@NotNull KnownEvents knownEvents, @NotNull List<KnownGene> knownGenes) {
-        return new KnownEventResolver(filterKnownEvents(knownEvents), knownGenes);
+    public static KnownEventResolver create(@NotNull KnownEvents knownEvents) {
+        return new KnownEventResolver(filterKnownEvents(knownEvents), GeneAggregator.aggregate(knownEvents.genes()));
     }
 
     @NotNull
@@ -33,6 +31,7 @@ public final class KnownEventResolverFactory {
                 .hotspots(filterKnown(knownEvents.hotspots()))
                 .codons(filterKnown(knownEvents.codons()))
                 .exons(filterKnown(knownEvents.exons()))
+                .genes(filterKnown(knownEvents.genes()))
                 .copyNumbers(filterKnown(knownEvents.copyNumbers()))
                 .fusions(filterKnown(knownEvents.fusions()))
                 .build();

@@ -9,12 +9,12 @@ import com.hartwig.actin.doid.datamodel.DoidEntry;
 import com.hartwig.actin.doid.serialization.DoidJson;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.filter.GeneFilterFactory;
-import com.hartwig.actin.molecular.serve.KnownGene;
-import com.hartwig.actin.molecular.serve.KnownGeneFile;
 import com.hartwig.actin.treatment.datamodel.Trial;
 import com.hartwig.actin.treatment.serialization.TrialJson;
 import com.hartwig.actin.treatment.trial.EligibilityRuleUsageEvaluator;
 import com.hartwig.actin.treatment.trial.TrialFactory;
+import com.hartwig.serve.datamodel.gene.KnownGene;
+import com.hartwig.serve.datamodel.serialization.KnownGeneFile;
 
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
