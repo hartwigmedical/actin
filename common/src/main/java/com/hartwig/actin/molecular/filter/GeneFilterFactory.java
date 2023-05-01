@@ -1,10 +1,9 @@
 package com.hartwig.actin.molecular.filter;
 
-import java.util.List;
-import java.util.Set;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
-import com.google.common.collect.Sets;
-import com.hartwig.actin.molecular.serve.KnownGene;
+import com.hartwig.serve.datamodel.gene.KnownGene;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -19,12 +18,7 @@ public final class GeneFilterFactory {
     }
 
     @NotNull
-    public static GeneFilter createFromKnownGenes(@NotNull List<KnownGene> knownGenes) {
-        Set<String> genes = Sets.newHashSet();
-        for (KnownGene knownGene : knownGenes) {
-            genes.add(knownGene.gene());
-        }
-
-        return new SpecificGenesFilter(genes);
+    public static GeneFilter createFromKnownGenes(@NotNull Collection<KnownGene> knownGenes) {
+        return new SpecificGenesFilter(knownGenes.stream().map(KnownGene::gene).collect(Collectors.toSet()));
     }
 }
