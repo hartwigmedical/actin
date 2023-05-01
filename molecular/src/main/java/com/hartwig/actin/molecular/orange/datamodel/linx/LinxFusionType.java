@@ -8,5 +8,6 @@ public enum LinxFusionType {
     IG_PROMISCUOUS,
     KNOWN_PAIR,
     IG_KNOWN_PAIR,
-    EXON_DEL_DUP
+    EXON_DEL_DUP,
+    PROMISCUOUS_ENHANCER_TARGET
 }

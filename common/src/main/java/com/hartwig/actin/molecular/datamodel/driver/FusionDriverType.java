@@ -10,7 +10,8 @@ public enum FusionDriverType {
     PROMISCUOUS_3("3' promiscuous fusion"),
     PROMISCUOUS_5("5' promiscuous fusion"),
     PROMISCUOUS_BOTH("3' and 5' promiscuous fusion"),
-    PROMISCUOUS_IG("IG promiscuous fusion");
+    PROMISCUOUS_IG("IG promiscuous fusion"),
+    PROMISCUOUS_ENHANCER_TARGET("Promiscuous enhancer target fusion");
 
     @NotNull
     private final String display;
