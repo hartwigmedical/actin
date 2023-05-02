@@ -257,9 +257,6 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
                 CreatinineClearanceMethod.EGFR_MDRD -> LabMeasurement.EGFR_MDRD
                 CreatinineClearanceMethod.EGFR_CKD_EPI -> LabMeasurement.EGFR_CKD_EPI
                 CreatinineClearanceMethod.COCKCROFT_GAULT -> LabMeasurement.CREATININE_CLEARANCE_CG
-                else -> {
-                    throw IllegalStateException("No lab measurement defined for $method")
-                }
             }
         }
 

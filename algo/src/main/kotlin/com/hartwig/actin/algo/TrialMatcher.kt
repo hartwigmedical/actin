@@ -19,24 +19,32 @@ import com.hartwig.actin.treatment.sort.EligibilityComparator
 class TrialMatcher internal constructor(private val evaluationFunctionFactory: EvaluationFunctionFactory) {
     fun determineEligibility(patient: PatientRecord, trials: List<Trial>): List<TrialMatch> {
         val trialMatches: MutableList<TrialMatch> = mutableListOf()
+
         for (trial in trials) {
             val trialEvaluations = evaluateEligibility(patient, trial.generalEligibility())
             val passesAllTrialEvaluations = isPotentiallyEligible(trialEvaluations.values)
             var hasEligibleCohort = false
-            val cohortMatches: List<CohortMatch> = trial.cohorts().filter { it.metadata().evaluable() }.map { cohort ->
-                val cohortEvaluations = evaluateEligibility(patient, cohort.eligibility())
-                val isPotentiallyEligible = isPotentiallyEligible(cohortEvaluations.values)
-                if (isPotentiallyEligible) {
-                    hasEligibleCohort = true
+            val cohortMatches: MutableList<CohortMatch> = mutableListOf()
+
+            trial.cohorts().filter { it.metadata().evaluable() }.forEach { cohort ->
+                if (cohort.metadata().evaluable()) {
+                    val cohortEvaluations = evaluateEligibility(patient, cohort.eligibility())
+                    val isPotentiallyEligible = isPotentiallyEligible(cohortEvaluations.values)
+                    if (isPotentiallyEligible) {
+                        hasEligibleCohort = true
+                    }
+                    cohortMatches.add(
+                        ImmutableCohortMatch.builder().metadata(cohort.metadata())
+                            .isPotentiallyEligible(isPotentiallyEligible && passesAllTrialEvaluations).evaluations(cohortEvaluations)
+                            .build()
+                    )
                 }
-                ImmutableCohortMatch.builder().metadata(cohort.metadata())
-                    .isPotentiallyEligible(isPotentiallyEligible && passesAllTrialEvaluations).evaluations(cohortEvaluations).build()
-            }.sortedWith(CohortMatchComparator())
+            }
 
             val isEligible = passesAllTrialEvaluations && (trial.cohorts().isEmpty() || hasEligibleCohort)
             trialMatches.add(
                 ImmutableTrialMatch.builder().identification(trial.identification()).isPotentiallyEligible(isEligible)
-                    .evaluations(trialEvaluations).cohorts(cohortMatches).build()
+                    .evaluations(trialEvaluations).cohorts(cohortMatches.sortedWith(CohortMatchComparator())).build()
             )
         }
         return trialMatches.sortedWith(TrialMatchComparator())

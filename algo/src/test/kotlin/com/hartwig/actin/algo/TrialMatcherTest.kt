@@ -66,7 +66,7 @@ class TrialMatcherTest {
             Assert.assertEquals(3, trialMatch.cohorts().size.toLong())
             val cohortA = findCohort(trialMatch.cohorts(), "A")
             Assert.assertEquals(1, cohortA.evaluations().size.toLong())
-            Assert.assertTrue(cohortA.isPotentiallyEligible)
+            Assert.assertFalse(cohortA.isPotentiallyEligible)
             Assert.assertEquals(EvaluationResult.FAIL, findEvaluationResultForRule(cohortA.evaluations(), EligibilityRule.NOT))
             val cohortB = findCohort(trialMatch.cohorts(), "B")
             Assert.assertTrue(cohortB.isPotentiallyEligible)

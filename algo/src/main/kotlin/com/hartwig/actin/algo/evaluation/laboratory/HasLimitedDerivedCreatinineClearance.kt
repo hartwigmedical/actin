@@ -6,7 +6,6 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverable
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMaxValue
 import com.hartwig.actin.clinical.datamodel.LabValue
-import org.apache.logging.log4j.LogManager
 
 class HasLimitedDerivedCreatinineClearance internal constructor(
     private val referenceYear: Int, private val method: CreatinineClearanceMethod,
@@ -17,10 +16,6 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
             CreatinineClearanceMethod.EGFR_MDRD -> evaluateMDRD(record, labValue)
             CreatinineClearanceMethod.EGFR_CKD_EPI -> evaluateCKDEPI(record, labValue)
             CreatinineClearanceMethod.COCKCROFT_GAULT -> evaluateCockcroftGault(record, labValue)
-            else -> {
-                LOGGER.warn("No creatinine clearance function implemented for '{}'", method)
-                recoverable().result(EvaluationResult.NOT_IMPLEMENTED).build()
-            }
         }
     }
 
@@ -70,10 +65,6 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(
-            HasLimitedDerivedCreatinineClearance::class.java
-        )
-
         private fun toEvaluation(result: EvaluationResult, code: String): Evaluation {
             val builder = recoverable().result(result)
             when (result) {
