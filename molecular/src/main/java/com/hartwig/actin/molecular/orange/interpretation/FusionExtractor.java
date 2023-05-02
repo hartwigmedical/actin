@@ -56,7 +56,9 @@ class FusionExtractor {
                         .driverType(determineDriverType(fusion))
                         .build());
             } else if (fusion.reported()) {
-                throw new IllegalStateException("Filtered a reported fusion through gene filtering: '" + fusionEvent + "'");
+                throw new IllegalStateException(
+                        "Filtered a reported fusion through gene filtering: '" + fusionEvent + "'. Please make sure either '"
+                                + fusion.geneStart() + "' or '" + fusion.geneEnd() + "' is configured as a known gene.");
             }
         }
         return fusions;

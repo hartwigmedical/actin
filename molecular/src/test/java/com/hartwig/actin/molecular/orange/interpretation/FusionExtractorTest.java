@@ -63,7 +63,7 @@ public class FusionExtractorTest {
     }
 
     @Test (expected = IllegalStateException.class)
-    public void throwExceptionWhenFilteringReportedFusion() {
+    public void shouldThrowExceptionWhenFilteringReportedFusion() {
         LinxFusion linxFusion = TestLinxFactory.fusionBuilder().reported(true).geneStart("other start").geneEnd("other end").build();
 
         LinxRecord linx = ImmutableLinxRecord.builder()

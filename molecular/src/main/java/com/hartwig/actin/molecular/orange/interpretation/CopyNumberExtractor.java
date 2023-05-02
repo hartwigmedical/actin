@@ -55,7 +55,9 @@ class CopyNumberExtractor {
                         .maxCopies(gainLoss.maxCopies())
                         .build());
             } else if (driver != null) {
-                throw new IllegalStateException("Filtered a reported copy number through gene filtering: '" + event + "'");
+                throw new IllegalStateException(
+                        "Filtered a reported copy number through gene filtering: '" + event + "'. Please make sure '" + gainLoss.gene()
+                                + "' is configured as a known gene.");
             }
         }
         return copyNumbers;

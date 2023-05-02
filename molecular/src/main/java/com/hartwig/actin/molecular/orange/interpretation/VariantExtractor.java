@@ -81,7 +81,9 @@ class VariantExtractor {
                         .otherImpacts(extractOtherImpacts(variant))
                         .build());
             } else if (variant.reported()) {
-                throw new IllegalStateException("Filtered a reported variant through gene filtering: '" + event + "'");
+                throw new IllegalStateException(
+                        "Filtered a reported variant through gene filtering: '" + event + "'. Please make sure '" + variant.gene()
+                                + "' is configured as a known gene.");
             }
         }
         return variants;

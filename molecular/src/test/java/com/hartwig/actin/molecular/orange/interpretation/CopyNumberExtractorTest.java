@@ -80,7 +80,7 @@ public class CopyNumberExtractorTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void throwExceptionWhenFilteringReportedCopyNumber() {
+    public void shouldThrowExceptionWhenFilteringReportedCopyNumber() {
         PurpleDriver driver = TestPurpleFactory.driverBuilder().gene("gene 1").type(PurpleDriverType.DEL).build();
         PurpleGainLoss gainLoss =
                 TestPurpleFactory.gainLossBuilder().gene("gene 1").interpretation(PurpleGainLossInterpretation.PARTIAL_LOSS).build();

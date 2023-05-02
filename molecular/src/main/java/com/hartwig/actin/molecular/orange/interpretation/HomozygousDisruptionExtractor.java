@@ -41,7 +41,8 @@ class HomozygousDisruptionExtractor {
                         .build());
             } else {
                 throw new IllegalStateException(
-                        "Filtered a reported homozygous disruption through gene filtering: '" + homozygousDisruption.gene() + "'");
+                        "Filtered a reported homozygous disruption through gene filtering: '" + homozygousDisruption.gene() + "'. "
+                                + "Please make sure '" + homozygousDisruption.gene() + "' is configured as a known gene.");
             }
         }
         return homozygousDisruptions;

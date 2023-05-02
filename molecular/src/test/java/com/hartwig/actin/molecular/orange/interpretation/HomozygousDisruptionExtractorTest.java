@@ -43,7 +43,7 @@ public class HomozygousDisruptionExtractorTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void throwExceptionWhenFilteringReportedHomozygousDisruption() {
+    public void shouldThrowExceptionWhenFilteringReportedHomozygousDisruption() {
         LinxHomozygousDisruption linxHomDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build();
 
         LinxRecord linx = ImmutableLinxRecord.builder()

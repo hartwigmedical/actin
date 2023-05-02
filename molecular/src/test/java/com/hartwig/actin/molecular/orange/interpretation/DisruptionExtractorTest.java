@@ -71,7 +71,7 @@ public class DisruptionExtractorTest {
     }
 
     @Test (expected = IllegalStateException.class)
-    public void throwExceptionWhenFilteringReportedDisruption() {
+    public void shouldThrowExceptionWhenFilteringReportedDisruption() {
         LinxBreakend linxBreakend = TestLinxFactory.breakendBuilder().gene("gene 1").reported(true).build();
         LinxRecord linx = ImmutableLinxRecord.builder()
                 .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())

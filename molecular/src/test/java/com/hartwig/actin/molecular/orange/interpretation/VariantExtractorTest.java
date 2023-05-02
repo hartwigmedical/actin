@@ -144,7 +144,7 @@ public class VariantExtractorTest {
     }
 
     @Test (expected = IllegalStateException.class)
-    public void throwExceptionWhenFilteringReportedVariant() {
+    public void shouldThrowExceptionWhenFilteringReportedVariant() {
         PurpleVariant purpleVariant = TestPurpleFactory.variantBuilder()
                 .reported(true)
                 .gene("gene 1")
