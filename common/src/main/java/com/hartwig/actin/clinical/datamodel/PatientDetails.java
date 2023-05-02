@@ -21,4 +21,7 @@ public abstract class PatientDetails {
     @Nullable
     public abstract LocalDate questionnaireDate();
 
+    @Nullable
+    public abstract String otherMolecularPatientId();
+
 }

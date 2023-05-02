@@ -104,8 +104,14 @@ class ClinicalDAO {
                         PATIENT.BIRTHYEAR,
                         PATIENT.GENDER,
                         PATIENT.REGISTRATIONDATE,
-                        PATIENT.QUESTIONNAIREDATE)
-                .values(patientId, patient.birthYear(), patient.gender().display(), patient.registrationDate(), patient.questionnaireDate())
+                        PATIENT.QUESTIONNAIREDATE,
+                        PATIENT.OTHERMOLECULARPATIENTID)
+                .values(patientId,
+                        patient.birthYear(),
+                        patient.gender().display(),
+                        patient.registrationDate(),
+                        patient.questionnaireDate(),
+                        patient.otherMolecularPatientId())
                 .execute();
     }
 

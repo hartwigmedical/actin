@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 public final class TestFeedFactory {
 
     static final String TEST_SUBJECT = "ACTN-01-02-9999";
+    public static final String TEST_GAYA_SUBJECT = "GAYA-01-02-9999";
 
     private TestFeedFactory() {
     }

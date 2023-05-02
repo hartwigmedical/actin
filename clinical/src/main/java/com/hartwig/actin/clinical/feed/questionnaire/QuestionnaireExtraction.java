@@ -79,6 +79,7 @@ public final class QuestionnaireExtraction {
                 .infectionStatus(toInfectionStatus(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION))))
                 .ecg(toECG(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG))))
                 .complications(toList(value(entry, mapping.get(QuestionnaireKey.COMPLICATIONS))))
+                .genayaSubjectNumber(value(entry, mapping.get(QuestionnaireKey.GENAYA_SUBJECT_NUMBER)))
                 .build();
     }
 

@@ -40,6 +40,7 @@ final class QuestionnaireMapping {
         KEYS_V1_6.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
         KEYS_V1_6.put(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG, "Significant aberration on latest ECG");
         KEYS_V1_6.put(QuestionnaireKey.COMPLICATIONS, "Cancer-related complications (e.g. pleural effusion)");
+        KEYS_V1_6.put(QuestionnaireKey.GENAYA_SUBJECT_NUMBER, "GENAYA subjectno");
 
         KEYS_V1_5.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, "Treatment history current tumor");
         KEYS_V1_5.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, "Other oncological history");
@@ -62,6 +63,7 @@ final class QuestionnaireMapping {
         KEYS_V1_5.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
         KEYS_V1_5.put(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG, "Significant aberration on latest ECG");
         KEYS_V1_5.put(QuestionnaireKey.COMPLICATIONS, "Cancer-related complications (e.g. pleural effusion)");
+        KEYS_V1_5.put(QuestionnaireKey.GENAYA_SUBJECT_NUMBER, null);
 
         KEYS_V1_4.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, "Treatment history current tumor");
         KEYS_V1_4.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, "Other oncological history");
@@ -84,6 +86,7 @@ final class QuestionnaireMapping {
         KEYS_V1_4.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
         KEYS_V1_4.put(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG, "Significant aberration on latest ECG");
         KEYS_V1_4.put(QuestionnaireKey.COMPLICATIONS, "Cancer-related complications (e.g. pleural effusion)");
+        KEYS_V1_4.put(QuestionnaireKey.GENAYA_SUBJECT_NUMBER, null);
 
         KEYS_V1_3.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, "Treatment history current tumor");
         KEYS_V1_3.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, "Other oncological history");
@@ -106,6 +109,7 @@ final class QuestionnaireMapping {
         KEYS_V1_3.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
         KEYS_V1_3.put(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG, "Significant aberration on latest ECG");
         KEYS_V1_3.put(QuestionnaireKey.COMPLICATIONS, "Cancer-related complications (e.g. pleural effusion)");
+        KEYS_V1_3.put(QuestionnaireKey.GENAYA_SUBJECT_NUMBER, null);
 
         KEYS_V1_2.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, "Treatment history current tumor");
         KEYS_V1_2.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, "Other oncological history");
@@ -128,6 +132,7 @@ final class QuestionnaireMapping {
         KEYS_V1_2.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
         KEYS_V1_2.put(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG, "Significant aberration on latest ECG");
         KEYS_V1_2.put(QuestionnaireKey.COMPLICATIONS, "Cancer-related complications (e.g. pleural effusion)");
+        KEYS_V1_2.put(QuestionnaireKey.GENAYA_SUBJECT_NUMBER, null);
 
         KEYS_V1_1.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, "Treatment history current tumor");
         KEYS_V1_1.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, "Other oncological history");
@@ -150,6 +155,7 @@ final class QuestionnaireMapping {
         KEYS_V1_1.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
         KEYS_V1_1.put(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG, "Significant aberration on latest ECG");
         KEYS_V1_1.put(QuestionnaireKey.COMPLICATIONS, "Cancer-related complications (e.g. pleural effusion)");
+        KEYS_V1_1.put(QuestionnaireKey.GENAYA_SUBJECT_NUMBER, null);
 
         KEYS_V1_0.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, "Treatment history current tumor");
         KEYS_V1_0.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, "Other oncological history");
@@ -172,6 +178,7 @@ final class QuestionnaireMapping {
         KEYS_V1_0.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
         KEYS_V1_0.put(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG, "Significant aberration on latest ECG");
         KEYS_V1_0.put(QuestionnaireKey.COMPLICATIONS, "Cancer-related complications (e.g. pleural effusion)");
+        KEYS_V1_0.put(QuestionnaireKey.GENAYA_SUBJECT_NUMBER, null);
 
         KEYS_V0_2.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, "Treatment history current tumor");
         KEYS_V0_2.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, "Other oncological history (e.g. second primary)");
@@ -194,6 +201,7 @@ final class QuestionnaireMapping {
         KEYS_V0_2.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
         KEYS_V0_2.put(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG, "Significant aberration on latest ECG");
         KEYS_V0_2.put(QuestionnaireKey.COMPLICATIONS, "Other (e.g. pleural effusion)");
+        KEYS_V0_2.put(QuestionnaireKey.GENAYA_SUBJECT_NUMBER, null);
 
         KEYS_V0_1.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, null);
         KEYS_V0_1.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, null);
@@ -216,6 +224,7 @@ final class QuestionnaireMapping {
         KEYS_V0_1.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
         KEYS_V0_1.put(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG, "Significant aberration on latest ECG");
         KEYS_V0_1.put(QuestionnaireKey.COMPLICATIONS, "Other (e.g. Osteoporosis, Pleural effusion)");
+        KEYS_V0_1.put(QuestionnaireKey.GENAYA_SUBJECT_NUMBER, null);
     }
 
     @NotNull
