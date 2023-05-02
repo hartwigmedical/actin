@@ -147,6 +147,7 @@ public class ClinicalRecordsFactory {
                 .birthYear(patient.birthYear())
                 .registrationDate(patient.periodStart())
                 .questionnaireDate(questionnaire != null ? questionnaire.date() : null)
+                .otherMolecularPatientId(questionnaire != null ? questionnaire.genayaSubjectNumber() : null)
                 .build();
     }
 
