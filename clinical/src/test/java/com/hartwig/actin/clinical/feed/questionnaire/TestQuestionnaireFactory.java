@@ -59,7 +59,7 @@ public final class TestQuestionnaireFactory {
                 + "Significant aberration on latest ECG: Sinus\n"
                 + "Cancer-related complications (e.g. pleural effusion): vomit\n"
                 + "\n"
-                + "GENAYA subjectno:";
+                + "GENAYA subjectno: GAYA-01-02-9999";
         // @formatter:on
     }
 
