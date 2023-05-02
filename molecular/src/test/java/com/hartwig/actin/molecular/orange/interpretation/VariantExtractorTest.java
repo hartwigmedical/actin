@@ -97,16 +97,10 @@ public class VariantExtractorTest {
                 .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder().codingEffect(PurpleCodingEffect.NONE).build())
                 .build();
 
-        PurpleVariant purpleVariant3 = TestPurpleFactory.variantBuilder()
-                .reported(true)
-                .gene("gene 3")
-                .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder().codingEffect(PurpleCodingEffect.SPLICE).build())
-                .build();
-
         PurpleRecord purple = ImmutablePurpleRecord.builder()
                 .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
                 .addDrivers(driver1, driver2, driver3)
-                .addVariants(purpleVariant1, purpleVariant2, purpleVariant3)
+                .addVariants(purpleVariant1, purpleVariant2)
                 .build();
 
         GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes(purpleVariant1.gene(), purpleVariant2.gene());
@@ -147,6 +141,24 @@ public class VariantExtractorTest {
         assertTrue(other.effects().contains(VariantEffect.SPLICE_DONOR));
         assertTrue(other.effects().contains(VariantEffect.SYNONYMOUS));
         assertEquals(CodingEffect.SPLICE, other.codingEffect());
+    }
+
+    @Test (expected = IllegalStateException.class)
+    public void shouldThrowExceptionWhenFilteringReportedVariant() {
+        PurpleVariant purpleVariant = TestPurpleFactory.variantBuilder()
+                .reported(true)
+                .gene("gene 1")
+                .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder().codingEffect(PurpleCodingEffect.SPLICE).build())
+                .build();
+
+        PurpleRecord purple = ImmutablePurpleRecord.builder()
+                .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
+                .addVariants(purpleVariant)
+                .build();
+
+        GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes("weird gene");
+        VariantExtractor variantExtractor = new VariantExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase());
+        variantExtractor.extract(purple);
     }
 
     @Test

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -35,7 +36,7 @@ public class DisruptionExtractorTest {
     @Test
     public void canExtractBreakends() {
         LinxStructuralVariant structuralVariant1 = TestLinxFactory.structuralVariantBuilder().svId(1).clusterId(5).build();
-        LinxBreakend breakend1 = TestLinxFactory.breakendBuilder()
+        LinxBreakend linxBreakend = TestLinxFactory.breakendBuilder()
                 .gene("gene 1")
                 .reported(true)
                 .type(LinxBreakendType.DUP)
@@ -45,15 +46,14 @@ public class DisruptionExtractorTest {
                 .codingType(LinxCodingType.CODING)
                 .svId(1)
                 .build();
-        LinxBreakend breakend2 = TestLinxFactory.breakendBuilder().gene("gene 2").reported(true).build();
 
         LinxRecord linx = ImmutableLinxRecord.builder()
                 .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
                 .addStructuralVariants(structuralVariant1)
-                .addBreakends(breakend1, breakend2)
+                .addBreakends(linxBreakend)
                 .build();
 
-        GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes(breakend1.gene());
+        GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes(linxBreakend.gene());
         DisruptionExtractor disruptionExtractor = new DisruptionExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase());
 
         Set<Disruption> disruptions = disruptionExtractor.extractDisruptions(linx, Sets.newHashSet());
@@ -68,6 +68,19 @@ public class DisruptionExtractorTest {
         assertEquals(RegionType.EXONIC, disruption.regionType());
         assertEquals(CodingContext.CODING, disruption.codingContext());
         assertEquals(5, disruption.clusterGroup());
+    }
+
+    @Test (expected = IllegalStateException.class)
+    public void shouldThrowExceptionWhenFilteringReportedDisruption() {
+        LinxBreakend linxBreakend = TestLinxFactory.breakendBuilder().gene("gene 1").reported(true).build();
+        LinxRecord linx = ImmutableLinxRecord.builder()
+                .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
+                .addBreakends(linxBreakend)
+                .build();
+
+        GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes("weird gene");
+        DisruptionExtractor disruptionExtractor = new DisruptionExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase());
+        disruptionExtractor.extractDisruptions(linx, Collections.emptySet());
     }
 
     @Test
