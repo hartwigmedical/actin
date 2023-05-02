@@ -91,6 +91,9 @@ class FusionExtractor {
             case EXON_DEL_DUP: {
                 return FusionDriverType.KNOWN_PAIR_DEL_DUP;
             }
+            case PROMISCUOUS_ENHANCER_TARGET: {
+                return FusionDriverType.PROMISCUOUS_ENHANCER_TARGET;
+            }
             case NONE: {
                 return FusionDriverType.NONE;
             }

@@ -27,7 +27,8 @@ public class HasFusionInGene implements EvaluationFunction {
     static final Set<FusionDriverType> ALLOWED_DRIVER_TYPES_FOR_GENE_3 = Sets.newHashSet(FusionDriverType.KNOWN_PAIR,
             FusionDriverType.KNOWN_PAIR_DEL_DUP,
             FusionDriverType.PROMISCUOUS_BOTH,
-            FusionDriverType.PROMISCUOUS_3);
+            FusionDriverType.PROMISCUOUS_3,
+            FusionDriverType.PROMISCUOUS_ENHANCER_TARGET);
 
     @NotNull
     private final String gene;
