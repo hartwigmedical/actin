@@ -1,10 +1,7 @@
 package com.hartwig.actin.molecular.orange.evidence.known;
 
-import java.util.List;
+import java.util.Collections;
 
-import com.google.common.collect.Lists;
-import com.hartwig.actin.molecular.serve.KnownGene;
-import com.hartwig.actin.molecular.serve.TestKnownGeneFactory;
 import com.hartwig.serve.datamodel.ImmutableKnownEvents;
 import com.hartwig.serve.datamodel.KnownEvents;
 
@@ -17,7 +14,7 @@ public final class TestKnownEventResolverFactory {
 
     @NotNull
     public static KnownEventResolver createEmpty() {
-        return new KnownEventResolver(ImmutableKnownEvents.builder().build(), Lists.newArrayList());
+        return new KnownEventResolver(ImmutableKnownEvents.builder().build(), Collections.emptySet());
     }
 
     @NotNull
@@ -26,13 +23,11 @@ public final class TestKnownEventResolverFactory {
                 .addHotspots(TestServeKnownFactory.hotspotBuilder().build())
                 .addCodons(TestServeKnownFactory.codonBuilder().build())
                 .addExons(TestServeKnownFactory.exonBuilder().build())
+                .addGenes(TestServeKnownFactory.geneBuilder().build())
                 .addCopyNumbers(TestServeKnownFactory.copyNumberBuilder().build())
                 .addFusions(TestServeKnownFactory.fusionBuilder().build())
                 .build();
 
-        List<KnownGene> knownGenes = Lists.newArrayList();
-        knownGenes.add(TestKnownGeneFactory.builder().build());
-
-        return new KnownEventResolver(knownEvents, knownGenes);
+        return new KnownEventResolver(knownEvents, knownEvents.genes());
     }
 }

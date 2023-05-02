@@ -80,6 +80,7 @@ public class ClinicalRecordsFactoryTest {
         assertEquals(Gender.MALE, patient.gender());
         assertEquals(LocalDate.of(2021, 6, 1), patient.registrationDate());
         assertEquals(LocalDate.of(2021, 8, 1), patient.questionnaireDate());
+        assertEquals("GAYA-01-02-9999", patient.otherMolecularPatientId());
     }
 
     private static void assertTumorDetails(@NotNull TumorDetails tumor) {

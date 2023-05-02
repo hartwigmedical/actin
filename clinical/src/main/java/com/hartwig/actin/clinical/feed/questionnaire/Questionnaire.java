@@ -87,4 +87,7 @@ public abstract class Questionnaire {
     @Nullable
     public abstract List<String> complications();
 
+    @Nullable
+    public abstract String genayaSubjectNumber();
+
 }

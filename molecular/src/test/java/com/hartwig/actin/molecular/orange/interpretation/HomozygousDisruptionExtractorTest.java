@@ -22,15 +22,14 @@ public class HomozygousDisruptionExtractorTest {
 
     @Test
     public void canExtractHomozygousDisruptions() {
-        LinxHomozygousDisruption homDisruption1 = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build();
-        LinxHomozygousDisruption homDisruption2 = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 2").build();
+        LinxHomozygousDisruption linxHomDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build();
 
         LinxRecord linx = ImmutableLinxRecord.builder()
                 .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
-                .addHomozygousDisruptions(homDisruption1, homDisruption2)
+                .addHomozygousDisruptions(linxHomDisruption)
                 .build();
 
-        GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes(homDisruption1.gene());
+        GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes(linxHomDisruption.gene());
         HomozygousDisruptionExtractor homDisruptionExtractor =
                 new HomozygousDisruptionExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase());
 
@@ -41,5 +40,21 @@ public class HomozygousDisruptionExtractorTest {
         assertTrue(homDisruption.isReportable());
         assertEquals(DriverLikelihood.HIGH, homDisruption.driverLikelihood());
         assertEquals("gene 1", homDisruption.gene());
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void shouldThrowExceptionWhenFilteringReportedHomozygousDisruption() {
+        LinxHomozygousDisruption linxHomDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build();
+
+        LinxRecord linx = ImmutableLinxRecord.builder()
+                .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
+                .addHomozygousDisruptions(linxHomDisruption)
+                .build();
+
+        GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes("other gene");
+        HomozygousDisruptionExtractor homDisruptionExtractor =
+                new HomozygousDisruptionExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase());
+
+        homDisruptionExtractor.extractHomozygousDisruptions(linx);
     }
 }

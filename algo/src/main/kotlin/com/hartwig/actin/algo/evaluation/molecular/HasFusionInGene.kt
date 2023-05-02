@@ -112,7 +112,8 @@ class HasFusionInGene internal constructor(private val gene: String) : Evaluatio
             FusionDriverType.KNOWN_PAIR,
             FusionDriverType.KNOWN_PAIR_DEL_DUP,
             FusionDriverType.PROMISCUOUS_BOTH,
-            FusionDriverType.PROMISCUOUS_3
+            FusionDriverType.PROMISCUOUS_3,
+            FusionDriverType.PROMISCUOUS_ENHANCER_TARGET
         )
     }
 }
