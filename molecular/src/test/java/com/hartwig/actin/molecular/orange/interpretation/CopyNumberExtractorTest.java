@@ -79,6 +79,30 @@ public class CopyNumberExtractorTest {
         assertEquals(21, gene2.maxCopies());
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void throwExceptionWhenFilteringReportedCopyNumber() {
+        PurpleDriver driver = TestPurpleFactory.driverBuilder().gene("gene 1").type(PurpleDriverType.DEL).build();
+        PurpleGainLoss gainLoss =
+                TestPurpleFactory.gainLossBuilder().gene("gene 1").interpretation(PurpleGainLossInterpretation.PARTIAL_LOSS).build();
+
+        PurpleRecord purple = ImmutablePurpleRecord.builder()
+                .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
+                .addDrivers(driver)
+                .addGainsLosses(gainLoss)
+                .build();
+
+        GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes("weird gene");
+        CopyNumberExtractor copyNumberExtractor = new CopyNumberExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase());
+        copyNumberExtractor.extract(purple);
+    }
+
+    @Test
+    public void canDetermineTypeForAllInterpretations() {
+        for (PurpleGainLossInterpretation interpretation : PurpleGainLossInterpretation.values()) {
+            assertNotNull(CopyNumberExtractor.determineType(interpretation));
+        }
+    }
+
     @NotNull
     private static CopyNumber findByGene(@NotNull Iterable<CopyNumber> copyNumbers, @NotNull String geneToFind) {
         for (CopyNumber copyNumber : copyNumbers) {
@@ -88,12 +112,5 @@ public class CopyNumberExtractorTest {
         }
 
         throw new IllegalStateException("Could not find copy number for gene: " + geneToFind);
-    }
-
-    @Test
-    public void canDetermineTypeForAllInterpretations() {
-        for (PurpleGainLossInterpretation interpretation : PurpleGainLossInterpretation.values()) {
-            assertNotNull(CopyNumberExtractor.determineType(interpretation));
-        }
     }
 }

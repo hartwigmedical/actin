@@ -25,14 +25,10 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.sort.driver.VariantComparator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 class VariantExtractor {
-
-    private static final Logger LOGGER = LogManager.getLogger(VariantExtractor.class);
 
     private static final Set<PurpleCodingEffect> RELEVANT_CODING_EFFECTS = Sets.newHashSet(PurpleCodingEffect.MISSENSE,
             PurpleCodingEffect.SPLICE,
@@ -85,7 +81,7 @@ class VariantExtractor {
                         .otherImpacts(extractOtherImpacts(variant))
                         .build());
             } else if (variant.reported()) {
-                LOGGER.warn("Filtered a reported variant through gene filtering: '{}'", event);
+                throw new IllegalStateException("Filtered a reported variant through gene filtering: '" + event + "'");
             }
         }
         return variants;

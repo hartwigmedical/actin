@@ -27,7 +27,7 @@ public class FusionExtractorTest {
 
     @Test
     public void canExtractFusions() {
-        LinxFusion fusion1 = TestLinxFactory.fusionBuilder()
+        LinxFusion linxFusion = TestLinxFactory.fusionBuilder()
                 .reported(true)
                 .type(LinxFusionType.PROMISCUOUS_5)
                 .geneStart("gene start")
@@ -39,11 +39,9 @@ public class FusionExtractorTest {
                 .driverLikelihood(LinxFusionDriverLikelihood.HIGH)
                 .build();
 
-        LinxFusion fusion2 = TestLinxFactory.fusionBuilder().reported(true).geneStart("other start").geneEnd("other end").build();
-
         LinxRecord linx = ImmutableLinxRecord.builder()
                 .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
-                .addFusions(fusion1, fusion2)
+                .addFusions(linxFusion)
                 .build();
 
         GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes("gene end");
@@ -62,6 +60,20 @@ public class FusionExtractorTest {
         assertEquals("trans end", fusion.geneTranscriptEnd());
         assertEquals(4, fusion.fusedExonDown());
         assertEquals(FusionDriverType.PROMISCUOUS_5, fusion.driverType());
+    }
+
+    @Test (expected = IllegalStateException.class)
+    public void throwExceptionWhenFilteringReportedFusion() {
+        LinxFusion linxFusion = TestLinxFactory.fusionBuilder().reported(true).geneStart("other start").geneEnd("other end").build();
+
+        LinxRecord linx = ImmutableLinxRecord.builder()
+                .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
+                .addFusions(linxFusion)
+                .build();
+
+        GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes("weird gene");
+        FusionExtractor fusionExtractor = new FusionExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase());
+        fusionExtractor.extract(linx);
     }
 
     @Test

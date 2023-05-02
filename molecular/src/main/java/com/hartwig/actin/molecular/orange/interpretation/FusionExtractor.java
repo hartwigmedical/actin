@@ -16,14 +16,10 @@ import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.sort.driver.FusionComparator;
 import com.hartwig.serve.datamodel.fusion.KnownFusion;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 class FusionExtractor {
-
-    private static final Logger LOGGER = LogManager.getLogger(FusionExtractor.class);
 
     @NotNull
     private final GeneFilter geneFilter;
@@ -60,7 +56,7 @@ class FusionExtractor {
                         .driverType(determineDriverType(fusion))
                         .build());
             } else if (fusion.reported()) {
-                LOGGER.warn("Filtered a reported fusion through gene filtering: '{}'", fusionEvent);
+                throw new IllegalStateException("Filtered a reported fusion through gene filtering: '" + fusionEvent + "'");
             }
         }
         return fusions;

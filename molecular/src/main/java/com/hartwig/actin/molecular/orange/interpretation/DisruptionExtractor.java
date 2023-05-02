@@ -61,7 +61,7 @@ class DisruptionExtractor {
                             .build());
                 }
             } else if (breakend.reported()) {
-                LOGGER.warn("Filtered a reported breakend through gene filtering: '{}'", event);
+                throw new IllegalStateException("Filtered a reported breakend through gene filtering: '" + event + "'");
             }
         }
         return disruptions;

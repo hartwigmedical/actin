@@ -17,14 +17,10 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.sort.driver.CopyNumberComparator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 class CopyNumberExtractor {
-
-    private static final Logger LOGGER = LogManager.getLogger(CopyNumberExtractor.class);
 
     private static final Set<PurpleDriverType> AMP_DRIVERS = Sets.newHashSet(PurpleDriverType.AMP, PurpleDriverType.PARTIAL_AMP);
     private static final Set<PurpleDriverType> DEL_DRIVERS = Sets.newHashSet(PurpleDriverType.DEL);
@@ -59,7 +55,7 @@ class CopyNumberExtractor {
                         .maxCopies(gainLoss.maxCopies())
                         .build());
             } else if (driver != null) {
-                LOGGER.warn("Filtered a reported copy number through gene filtering: '{}'", event);
+                throw new IllegalStateException("Filtered a reported copy number through gene filtering: '" + event + "'");
             }
         }
         return copyNumbers;

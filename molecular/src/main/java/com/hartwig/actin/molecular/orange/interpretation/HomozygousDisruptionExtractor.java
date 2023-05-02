@@ -12,13 +12,9 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.sort.driver.HomozygousDisruptionComparator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 class HomozygousDisruptionExtractor {
-
-    private static final Logger LOGGER = LogManager.getLogger(HomozygousDisruptionExtractor.class);
 
     @NotNull
     private final GeneFilter geneFilter;
@@ -44,7 +40,8 @@ class HomozygousDisruptionExtractor {
                         .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForHomozygousDisruption(homozygousDisruption)))
                         .build());
             } else {
-                LOGGER.warn("Filtered a reported homozygous disruption on gene {}", homozygousDisruption.gene());
+                throw new IllegalStateException(
+                        "Filtered a reported homozygous disruption through gene filtering: '" + homozygousDisruption.gene() + "'");
             }
         }
         return homozygousDisruptions;
