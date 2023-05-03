@@ -43,7 +43,7 @@ class TestStandardOfCareApplication {
         val recommendationInterpreter = recommendationEngine.provideRecommendations(patient, TreatmentDB.loadTreatments())
         LOGGER.info(recommendationInterpreter.summarize())
         LOGGER.info(recommendationInterpreter.csv())
-        
+
         return 0
     }
 
