@@ -21,44 +21,42 @@ import com.hartwig.actin.clinical.datamodel.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import org.apache.logging.log4j.LogManager
 import java.io.File
-import java.io.IOException
 import java.time.LocalDate
+import kotlin.system.exitProcess
 
 class TestStandardOfCareApplication {
-    @Throws(IOException::class)
-    fun run() {
+    fun run(): Int {
         val patient = patient()
+
         LOGGER.info("Running ACTIN Test SOC Application with clinical record")
         ClinicalPrinter.printRecord(patient.clinical())
+
         LOGGER.info("and molecular record")
         MolecularPrinter.printRecord(patient.molecular())
+
         LOGGER.info("Loading DOID tree from {}", DOID_JSON_PATH)
         val doidEntry: DoidEntry = DoidJson.readDoidOwlEntry(DOID_JSON_PATH)
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size)
         val doidModel: DoidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
+
         val recommendationEngine = RecommendationEngine.create(doidModel, ReferenceDateProviderTestFactory.createCurrentDateProvider())
         val recommendationInterpreter = recommendationEngine.provideRecommendations(patient, TreatmentDB.loadTreatments())
         LOGGER.info(recommendationInterpreter.summarize())
         LOGGER.info(recommendationInterpreter.csv())
+        
+        return 0
     }
 
     companion object {
         private val LOGGER = LogManager.getLogger(TestStandardOfCareApplication::class.java)
-        private val DOID_JSON_PATH = java.lang.String.join(
-            File.separator,
+        private val DOID_JSON_PATH = listOf(
             System.getProperty("user.home"),
             "hmf",
             "repos",
             "common-resources-public",
             "disease_ontology",
             "doid.json"
-        )
-
-        @Throws(IOException::class)
-        @JvmStatic
-        fun main(args: Array<String>) {
-            TestStandardOfCareApplication().run()
-        }
+        ).joinToString(File.separator)
 
         private fun patient(): PatientRecord {
             val tumorDetails: TumorDetails = ImmutableTumorDetails.builder().addDoids(DoidConstants.COLORECTAL_CANCER_DOID).build()
@@ -83,3 +81,5 @@ class TestStandardOfCareApplication {
         }
     }
 }
+
+fun main(): Unit = exitProcess(TestStandardOfCareApplication().run())

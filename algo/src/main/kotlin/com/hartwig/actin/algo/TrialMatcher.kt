@@ -16,7 +16,7 @@ import com.hartwig.actin.treatment.datamodel.Eligibility
 import com.hartwig.actin.treatment.datamodel.Trial
 import com.hartwig.actin.treatment.sort.EligibilityComparator
 
-class TrialMatcher internal constructor(private val evaluationFunctionFactory: EvaluationFunctionFactory) {
+class TrialMatcher(private val evaluationFunctionFactory: EvaluationFunctionFactory) {
     fun determineEligibility(patient: PatientRecord, trials: List<Trial>): List<TrialMatch> {
         val trialMatches: MutableList<TrialMatch> = mutableListOf()
 

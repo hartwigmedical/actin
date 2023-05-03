@@ -18,11 +18,11 @@ import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import java.io.IOException
 import kotlin.system.exitProcess
 
-class TreatmentMatcherApplication private constructor(private val config: TreatmentMatcherConfig) {
-    @Throws(IOException::class)
+class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
         LOGGER.info("Loading clinical record from {}", config.clinicalJson)
@@ -56,22 +56,21 @@ class TreatmentMatcherApplication private constructor(private val config: Treatm
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(TreatmentMatcherApplication::class.java)
-        private const val APPLICATION = "ACTIN Treatment Matcher"
-        private val VERSION = TreatmentMatcherApplication::class.java.getPackage().implementationVersion
+        val LOGGER: Logger = LogManager.getLogger(TreatmentMatcherApplication::class.java)
+        const val APPLICATION = "ACTIN Treatment Matcher"
+        val VERSION: String = TreatmentMatcherApplication::class.java.getPackage().implementationVersion
+    }
+}
 
-        @Throws(IOException::class)
-        @JvmStatic
-        fun main(args: Array<String>) {
-            val options: Options = TreatmentMatcherConfig.createOptions()
-            try {
-                val config = TreatmentMatcherConfig.createConfig(DefaultParser().parse(options, args))
-                TreatmentMatcherApplication(config).run()
-            } catch (exception: ParseException) {
-                LOGGER.warn(exception)
-                HelpFormatter().printHelp(APPLICATION, options)
-                exitProcess(1)
-            }
-        }
+@Throws(IOException::class)
+fun main(args: Array<String>) {
+    val options: Options = TreatmentMatcherConfig.createOptions()
+    try {
+        val config = TreatmentMatcherConfig.createConfig(DefaultParser().parse(options, args))
+        TreatmentMatcherApplication(config).run()
+    } catch (exception: ParseException) {
+        TreatmentMatcherApplication.LOGGER.warn(exception)
+        HelpFormatter().printHelp(TreatmentMatcherApplication.APPLICATION, options)
+        exitProcess(1)
     }
 }
