@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.LocalDate
 
@@ -20,7 +21,9 @@ class HasRestingHeartRateWithinBoundsTest {
 
         // Fail when median drops below 60
         heartRates.add(heartRate().date(referenceDate).value(40.0).build())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)))
+        val actual = function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates))
+        assertEvaluation(EvaluationResult.FAIL, actual)
+        assertTrue(actual.recoverable())
 
         // Succeed again when median back in range
         heartRates.add(heartRate().date(referenceDate).value(80.0).build())

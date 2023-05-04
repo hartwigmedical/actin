@@ -31,7 +31,7 @@ class HasLimitedBloodPressure internal constructor(
                         + "but also at least one measure below $maxMedianBloodPressure", "$categoryDisplay requirements"
             )
         } else {
-            EvaluationFactory.fail(
+            EvaluationFactory.recoverableFail(
                 "Patient has median $categoryDisplay exceeding $maxMedianBloodPressure",
                 "$categoryDisplay above limit"
             )

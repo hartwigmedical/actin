@@ -15,7 +15,7 @@ class HasLabValueOutsideRefLimitUp internal constructor() : LabEvaluationFunctio
         return if (labValue.value().compareTo(refLimitUp) > 0) {
             EvaluationFactory.pass(labValue.code() + " is outside ref limit up", labValue.code() + " out of range")
         } else {
-            EvaluationFactory.fail(labValue.code() + " is below ref limit up", labValue.code() + " within range")
+            EvaluationFactory.recoverableFail(labValue.code() + " is below ref limit up", labValue.code() + " within range")
         }
     }
 }

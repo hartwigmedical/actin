@@ -38,7 +38,7 @@ class HasSufficientBloodPressure internal constructor(
             }
 
             else -> {
-                EvaluationFactory.fail(
+                EvaluationFactory.recoverableFail(
                     "Patient has median $categoryDisplay below $minMedianBloodPressure",
                     "$categoryDisplay below limit"
                 )

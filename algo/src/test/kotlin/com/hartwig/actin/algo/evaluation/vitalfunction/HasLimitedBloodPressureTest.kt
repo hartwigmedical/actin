@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.LocalDate
 
@@ -40,7 +41,9 @@ class HasLimitedBloodPressureTest {
         bloodPressures.add(systolic().date(referenceDate.plusDays(3)).value(110.0).build())
         bloodPressures.add(systolic().date(referenceDate.plusDays(4)).value(110.0).build())
         bloodPressures.add(systolic().date(referenceDate.plusDays(5)).value(110.0).build())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(bloodPressures)))
+        val actual = function.evaluate(VitalFunctionTestFactory.withVitalFunctions(bloodPressures))
+        assertEvaluation(EvaluationResult.FAIL, actual)
+        assertTrue(actual.recoverable())
     }
 
     @Test

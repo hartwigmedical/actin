@@ -30,7 +30,7 @@ class HasRestingHeartRateWithinBounds(private val minMedianRestingHeartRate: Dou
                 "Heart rate within range"
             )
         } else {
-            EvaluationFactory.fail(
+            EvaluationFactory.recoverableFail(
                 "Patient does not have median heart rate between $minMedianRestingHeartRate and $maxMedianRestingHeartRate",
                 "Heart rate outside range"
             )

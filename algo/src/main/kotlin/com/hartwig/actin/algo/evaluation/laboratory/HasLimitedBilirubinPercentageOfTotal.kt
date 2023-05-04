@@ -24,7 +24,10 @@ class HasLimitedBilirubinPercentageOfTotal internal constructor(private val maxP
         return if ((100 * (labValue.value() / mostRecentTotal.value())).compareTo(maxPercentage) <= 0) {
             EvaluationFactory.pass("$messageStart is below maximum percentage of $maxPercentage%", "$messageStart below $maxPercentage%")
         } else {
-            EvaluationFactory.fail("$messageStart exceeds maximum percentage of $maxPercentage%", "$messageStart exceeding $maxPercentage%")
+            EvaluationFactory.recoverableFail(
+                "$messageStart exceeds maximum percentage of $maxPercentage%",
+                "$messageStart exceeding $maxPercentage%"
+            )
         }
     }
 }

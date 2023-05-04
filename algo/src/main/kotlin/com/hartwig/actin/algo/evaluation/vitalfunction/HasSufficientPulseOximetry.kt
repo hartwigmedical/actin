@@ -34,7 +34,7 @@ class HasSufficientPulseOximetry internal constructor(private val minMedianPulse
                         + "measure above $minMedianPulseOximetry", "Pulse oximetry requirements"
             )
         } else {
-            EvaluationFactory.fail(
+            EvaluationFactory.recoverableFail(
                 "Patient has median pulse oximetry below $minMedianPulseOximetry",
                 "Pulse oximetry below $minMedianPulseOximetry"
             )

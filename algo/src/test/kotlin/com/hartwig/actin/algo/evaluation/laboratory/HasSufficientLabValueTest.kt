@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.util.ValueComparison
 import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class HasSufficientLabValueTest {
@@ -22,7 +23,9 @@ class HasSufficientLabValueTest {
                 LabTestFactory.forMeasurement(measurement).value(300.0).comparator(ValueComparison.SMALLER_THAN).build()
             )
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record, LabTestFactory.forMeasurement(measurement).value(100.0).build()))
+        val actual = function.evaluate(record, LabTestFactory.forMeasurement(measurement).value(100.0).build())
+        assertEvaluation(EvaluationResult.FAIL, actual)
+        assertTrue(actual.recoverable())
     }
 
     @Test

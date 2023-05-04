@@ -45,8 +45,8 @@ object EvaluationFactory {
 
     fun notEvaluated(specificMessage: String, generalMessage: String): Evaluation {
         return unrecoverable().result(EvaluationResult.NOT_EVALUATED)
-            .addWarnSpecificMessages(specificMessage)
-            .addWarnGeneralMessages(generalMessage)
+            .addPassSpecificMessages(specificMessage)
+            .addPassGeneralMessages(generalMessage)
             .build()
     }
 

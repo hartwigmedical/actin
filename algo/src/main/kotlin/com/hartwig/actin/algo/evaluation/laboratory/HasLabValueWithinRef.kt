@@ -13,7 +13,7 @@ class HasLabValueWithinRef internal constructor() : LabEvaluationFunction {
                 "Undetermined if " + labValue.code() + " is within ref range"
             )
         return if (isOutsideRef) {
-            EvaluationFactory.fail(labValue.code() + " is not within reference values", labValue.code() + " out of range")
+            EvaluationFactory.recoverableFail(labValue.code() + " is not within reference values", labValue.code() + " out of range")
         } else {
             EvaluationFactory.pass(labValue.code() + " is within reference values", labValue.code() + " within range")
         }

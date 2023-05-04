@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.LocalDate
 
@@ -17,7 +18,9 @@ class HasLimitedBilirubinPercentageOfTotalTest {
         val valid = LabTestFactory.withLabValue(validBilirubin)
         val directBili = LabTestFactory.forMeasurement(LabMeasurement.DIRECT_BILIRUBIN)
         assertEvaluation(EvaluationResult.PASS, function.evaluate(valid, directBili.value(3.0).build()))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(valid, directBili.value(8.0).build()))
+        val actual = function.evaluate(valid, directBili.value(8.0).build())
+        assertEvaluation(EvaluationResult.FAIL, actual)
+        assertTrue(actual.recoverable())
 
         // Cannot determine if no total bilirubin
         assertEvaluation(

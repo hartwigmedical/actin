@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.LocalDate
 
@@ -44,7 +45,9 @@ class HasSufficientPulseOximetryTest {
         pulses.add(pulse().date(referenceDate.plusDays(1)).value(20.0).build())
         pulses.add(pulse().date(referenceDate.plusDays(1)).value(20.0).build())
         pulses.add(pulse().date(referenceDate.plusDays(1)).value(20.0).build())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulses)))
+        val actual = function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulses))
+        assertEvaluation(EvaluationResult.FAIL, actual)
+        assertTrue(actual.recoverable())
     }
 
     companion object {
