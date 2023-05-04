@@ -10,7 +10,7 @@ object Format {
     private val DATE_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy")
     private val PERCENTAGE_FORMAT: DecimalFormat = DecimalFormat("#'%'", DecimalFormatSymbols.getInstance(ApplicationConfig.LOCALE))
     fun concat(strings: Iterable<String>): String {
-        return strings.distinct().joinToString("; ")
+        return strings.distinct().sorted().joinToString("; ")
     }
 
     fun date(date: LocalDate): String {
