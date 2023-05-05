@@ -5,10 +5,8 @@ import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
-import java.util.Set;
-import java.util.StringJoiner;
-
-import com.google.common.collect.Sets;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -22,13 +20,7 @@ public final class Format {
 
     @NotNull
     public static String concat(@NotNull Iterable<String> strings) {
-        Set<String> unique = Sets.newHashSet(strings);
-
-        StringJoiner joiner = new StringJoiner("; ");
-        for (String string : unique) {
-            joiner.add(string);
-        }
-        return joiner.toString();
+        return StreamSupport.stream(strings.spliterator(), false).distinct().sorted().collect(Collectors.joining("; "));
     }
 
     @NotNull
