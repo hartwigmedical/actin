@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.datamodel;
 
-public enum Purpose {
+public enum Intent {
     ADJUVANT,
     NEOADJUVANT,
     INDUCTION,

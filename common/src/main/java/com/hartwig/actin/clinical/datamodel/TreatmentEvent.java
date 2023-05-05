@@ -28,6 +28,9 @@ public abstract class TreatmentEvent {
     public abstract YearMonth endMonth();
 
     @Nullable
+    public abstract Boolean ongoing();
+
+    @Nullable
     public abstract Integer chemoCycles();
 
     @Nullable
@@ -40,5 +43,8 @@ public abstract class TreatmentEvent {
     public abstract String stopReasonDetail();
 
     @Nullable
-    public abstract Purpose purpose();
+    public abstract Set<Toxicity> toxicities();
+
+    @Nullable
+    public abstract Intent intent();
 }
