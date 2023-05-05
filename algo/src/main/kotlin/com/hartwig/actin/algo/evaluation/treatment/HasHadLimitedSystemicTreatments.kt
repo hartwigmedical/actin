@@ -1,0 +1,35 @@
+package com.hartwig.actin.algo.evaluation.treatment
+
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+
+class HasHadLimitedSystemicTreatments internal constructor(private val maxSystemicTreatments: Int) : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val minSystemicCount = SystemicTreatmentAnalyser.minSystemicTreatments(record.clinical().priorTumorTreatments())
+        val maxSystemicCount = SystemicTreatmentAnalyser.maxSystemicTreatments(record.clinical().priorTumorTreatments())
+        return when {
+            maxSystemicCount <= maxSystemicTreatments -> {
+                EvaluationFactory.pass(
+                    "Patient has received at most $maxSystemicTreatments systemic treatments",
+                    "Has received at most $maxSystemicTreatments systemic treatments"
+                )
+            }
+
+            minSystemicCount <= maxSystemicTreatments -> {
+                EvaluationFactory.undetermined(
+                    "Could not determine if patient received at most $maxSystemicTreatments systemic treatments",
+                    "Undetermined if received more than $maxSystemicTreatments systemic treatments"
+                )
+            }
+
+            else -> {
+                EvaluationFactory.fail(
+                    "Patient has received more than $maxSystemicTreatments systemic treatments",
+                    "Has received more than $maxSystemicTreatments systemic treatments"
+                )
+            }
+        }
+    }
+}
