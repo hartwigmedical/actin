@@ -24,7 +24,7 @@ class HasSufficientBloodPressure internal constructor(
         val median = VitalFunctionFunctions.determineMedianValue(relevant)
         return when {
             median.compareTo(minMedianBloodPressure) >= 0 -> {
-                EvaluationFactory.pass(
+                EvaluationFactory.recoverablePass(
                     "Patient has median $categoryDisplay exceeding $minMedianBloodPressure",
                     "$categoryDisplay above limit"
                 )

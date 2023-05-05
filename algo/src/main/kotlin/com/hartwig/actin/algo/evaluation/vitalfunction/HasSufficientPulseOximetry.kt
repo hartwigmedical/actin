@@ -24,7 +24,7 @@ class HasSufficientPulseOximetry internal constructor(private val minMedianPulse
         }
         val median = VitalFunctionFunctions.determineMedianValue(pulseOximetries)
         return if (median.compareTo(minMedianPulseOximetry) >= 0) {
-            EvaluationFactory.pass(
+            EvaluationFactory.recoverablePass(
                 "Patient has median pulse oximetry exceeding $minMedianPulseOximetry",
                 "Pulse oximetry above $minMedianPulseOximetry"
             )

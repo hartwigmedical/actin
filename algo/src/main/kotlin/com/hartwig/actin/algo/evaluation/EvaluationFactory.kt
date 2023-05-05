@@ -15,10 +15,11 @@ object EvaluationFactory {
     }
 
     fun pass(specificMessage: String, generalMessage: String): Evaluation {
-        return unrecoverable().result(EvaluationResult.PASS)
-            .addPassSpecificMessages(specificMessage)
-            .addPassGeneralMessages(generalMessage)
-            .build()
+        return buildPassEvaluation(unrecoverable(), specificMessage, generalMessage)
+    }
+
+    fun recoverablePass(specificMessage: String, generalMessage: String): Evaluation {
+        return buildPassEvaluation(recoverable(), specificMessage, generalMessage)
     }
 
     fun fail(specificMessage: String, generalMessage: String): Evaluation {
@@ -45,6 +46,13 @@ object EvaluationFactory {
 
     fun notEvaluated(specificMessage: String, generalMessage: String): Evaluation {
         return unrecoverable().result(EvaluationResult.NOT_EVALUATED)
+            .addPassSpecificMessages(specificMessage)
+            .addPassGeneralMessages(generalMessage)
+            .build()
+    }
+
+    private fun buildPassEvaluation(builder: ImmutableEvaluation.Builder, specificMessage: String, generalMessage: String): Evaluation {
+        return builder.result(EvaluationResult.PASS)
             .addPassSpecificMessages(specificMessage)
             .addPassGeneralMessages(generalMessage)
             .build()

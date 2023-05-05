@@ -25,7 +25,7 @@ class HasRestingHeartRateWithinBounds(private val minMedianRestingHeartRate: Dou
         }
         val median = VitalFunctionFunctions.determineMedianValue(heartRates)
         return if (median.compareTo(minMedianRestingHeartRate) >= 0 && median.compareTo(maxMedianRestingHeartRate) <= 0) {
-            EvaluationFactory.pass(
+            EvaluationFactory.recoverablePass(
                 "Patient has median heart rate between $minMedianRestingHeartRate and $maxMedianRestingHeartRate",
                 "Heart rate within range"
             )

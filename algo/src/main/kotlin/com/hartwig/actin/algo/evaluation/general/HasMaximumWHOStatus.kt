@@ -12,7 +12,7 @@ class HasMaximumWHOStatus internal constructor(private val maximumWHO: Int) : Ev
         val who = record.clinical().clinicalStatus().who()
         val warningComplicationCategories: Set<String> = WHOFunctions.findComplicationCategoriesAffectingWHOStatus(record)
         return when {
-            who == null -> EvaluationFactory.undetermined("WHO status unknown", "WHO status unknown")
+            who == null -> EvaluationFactory.undetermined("WHO status is unknown", "WHO status unknown")
             who == maximumWHO && warningComplicationCategories.isNotEmpty() -> EvaluationFactory.warn(
                 "Patient WHO status " + who + " equals maximum but patient has complication categories of concern: " + Format.concat(
                     warningComplicationCategories

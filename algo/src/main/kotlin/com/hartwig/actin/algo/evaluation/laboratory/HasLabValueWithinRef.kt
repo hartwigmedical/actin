@@ -15,7 +15,7 @@ class HasLabValueWithinRef internal constructor() : LabEvaluationFunction {
         return if (isOutsideRef) {
             EvaluationFactory.recoverableFail(labValue.code() + " is not within reference values", labValue.code() + " out of range")
         } else {
-            EvaluationFactory.pass(labValue.code() + " is within reference values", labValue.code() + " within range")
+            EvaluationFactory.recoverablePass(labValue.code() + " is within reference values", labValue.code() + " within range")
         }
     }
 }

@@ -24,7 +24,10 @@ class HasLimitedBloodPressure internal constructor(
 
         val median = VitalFunctionFunctions.determineMedianValue(relevant)
         return if (median.compareTo(maxMedianBloodPressure) <= 0) {
-            EvaluationFactory.pass("Patient has median $categoryDisplay below $maxMedianBloodPressure", "$categoryDisplay below limit")
+            EvaluationFactory.recoverablePass(
+                "Patient has median $categoryDisplay below $maxMedianBloodPressure",
+                "$categoryDisplay below limit"
+            )
         } else if (relevant.any { it.value().compareTo(maxMedianBloodPressure) <= 0 }) {
             EvaluationFactory.undetermined(
                 "Patient has median $categoryDisplay blood pressure above $maxMedianBloodPressure "
