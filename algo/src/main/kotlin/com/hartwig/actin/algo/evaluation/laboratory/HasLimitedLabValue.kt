@@ -15,24 +15,24 @@ class HasLimitedLabValue(private val maxValue: Double, private val measurement: 
         val convertedValue = LabUnitConverter.convert(measurement, labValue, targetUnit)
             ?: return recoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Could not convert value for " + labValue.code() + " to " + targetUnit.display())
+                .addUndeterminedSpecificMessages("Could not convert value for ${labValue.code()} to ${targetUnit.display()}")
                 .build()
         val result = evaluateVersusMaxValue(convertedValue, labValue.comparator(), maxValue)
         val builder = recoverable().result(result)
         when (result) {
             EvaluationResult.FAIL -> {
-                builder.addFailSpecificMessages(labValue.code() + " exceeds limit")
-                builder.addFailGeneralMessages(labValue.code() + " exceeds limit")
+                builder.addFailSpecificMessages("${labValue.code()} exceeds limit")
+                builder.addFailGeneralMessages("${labValue.code()} exceeds limit")
             }
 
             EvaluationResult.UNDETERMINED -> {
-                builder.addUndeterminedSpecificMessages(labValue.code() + " sufficiency could not be evaluated")
-                builder.addUndeterminedGeneralMessages(labValue.code() + " undetermined")
+                builder.addUndeterminedSpecificMessages("${labValue.code()} sufficiency could not be evaluated")
+                builder.addUndeterminedGeneralMessages("${labValue.code()} undetermined")
             }
 
             EvaluationResult.PASS -> {
-                builder.addPassSpecificMessages(labValue.code() + " is within limit")
-                builder.addPassGeneralMessages(labValue.code() + " within limit")
+                builder.addPassSpecificMessages("${labValue.code()} is within limit")
+                builder.addPassGeneralMessages("${labValue.code()} within limit")
             }
 
             else -> {}

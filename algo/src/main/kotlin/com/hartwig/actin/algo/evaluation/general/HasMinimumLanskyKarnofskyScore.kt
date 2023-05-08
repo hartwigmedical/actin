@@ -9,8 +9,8 @@ class HasMinimumLanskyKarnofskyScore internal constructor(private val performanc
     EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val who = record.clinical().clinicalStatus().who() ?: return EvaluationFactory.recoverableUndetermined(
-            "Cannot evaluate " + performanceScore.display() + " performance score because WHO is missing",
-            "Missing " + performanceScore.display() + " score"
+            "Cannot evaluate ${performanceScore.display()} performance score because WHO is missing",
+            "Missing ${performanceScore.display()} score"
         )
         val passScore = toMinScoreForWHO(who)
         val undeterminedScore = toMaxScoreForWHO(who)
@@ -18,28 +18,28 @@ class HasMinimumLanskyKarnofskyScore internal constructor(private val performanc
         return when {
             passScore >= minScore -> {
                 EvaluationFactory.pass(
-                    performanceScore.display() + " score based on WHO score is at least " + minScore,
-                    "Minimum " + performanceScore.display() + " requirements"
+                    "${performanceScore.display()} score based on WHO score is at least $minScore",
+                    "Minimum ${performanceScore.display()} requirements"
                 )
             }
 
             undeterminedScore >= minScore -> {
                 EvaluationFactory.undetermined(
-                    "Not clear whether " + performanceScore.display() + " score based on WHO score is at least " + minScore,
-                    "Undetermined minimum " + performanceScore.display() + " requirements"
+                    "Not clear whether ${performanceScore.display()} score based on WHO score is at least $minScore",
+                    "Undetermined minimum ${performanceScore.display()} requirements"
                 )
             }
 
             warnScore >= minScore -> {
                 EvaluationFactory.warn(
-                    performanceScore.display() + " score based on WHO score exceeds requested score of " + minScore,
-                    "Minimum " + performanceScore.display() + " requirements"
+                    "${performanceScore.display()} score based on WHO score exceeds requested score of $minScore",
+                    "Minimum ${performanceScore.display()} requirements"
                 )
             }
 
             else -> EvaluationFactory.fail(
-                performanceScore.display() + " score based on WHO score is below " + minScore,
-                "Minimum " + performanceScore.display() + " requirements"
+                "${performanceScore.display()} score based on WHO score is below $minScore",
+                "Minimum ${performanceScore.display()} requirements"
             )
         }
     }

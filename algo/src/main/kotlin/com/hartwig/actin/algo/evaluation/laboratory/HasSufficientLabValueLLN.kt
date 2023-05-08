@@ -12,18 +12,18 @@ class HasSufficientLabValueLLN internal constructor(private val minLLNFactor: Do
         val builder = recoverable().result(result)
         when (result) {
             EvaluationResult.FAIL -> {
-                builder.addFailSpecificMessages(labValue.code() + " is below minimal LLN")
-                builder.addFailGeneralMessages(labValue.code() + " below minimal LLN")
+                builder.addFailSpecificMessages("${labValue.code()} is below minimal LLN")
+                builder.addFailGeneralMessages("${labValue.code()} below minimal LLN")
             }
 
             EvaluationResult.UNDETERMINED -> {
-                builder.addUndeterminedSpecificMessages(labValue.code() + " could not be evaluated against minimal LLN")
-                builder.addUndeterminedGeneralMessages(labValue.code() + " undetermined")
+                builder.addUndeterminedSpecificMessages("${labValue.code()} could not be evaluated against minimal LLN")
+                builder.addUndeterminedGeneralMessages("${labValue.code()} undetermined")
             }
 
             EvaluationResult.PASS -> {
-                builder.addPassSpecificMessages(labValue.code() + " is sufficient (exceeds minimal LLN)")
-                builder.addPassGeneralMessages(labValue.code() + " sufficient")
+                builder.addPassSpecificMessages("${labValue.code()} is sufficient (exceeds minimal LLN)")
+                builder.addPassGeneralMessages("${labValue.code()} sufficient")
             }
 
             else -> {}

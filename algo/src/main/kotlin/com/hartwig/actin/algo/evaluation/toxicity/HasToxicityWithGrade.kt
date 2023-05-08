@@ -44,19 +44,19 @@ class HasToxicityWithGrade internal constructor(
         if (toxicities.isNotEmpty()) {
             return if (hasAtLeastOneMatchingQuestionnaireToxicity) {
                 EvaluationFactory.recoverablePass(
-                    "Toxicities with grade >= " + minGrade + " found: " + concat(toxicities),
-                    "Toxicities grade >= " + minGrade + " found: " + concat(toxicities)
+                    "Toxicities with grade >= $minGrade found: ${concat(toxicities)}",
+                    "Toxicities grade >= $minGrade found: ${concat(toxicities)}"
                 )
             } else {
                 EvaluationFactory.recoverableWarn(
-                    "Toxicities with grade >= " + minGrade + " found: " + concat(toxicities) + " but source is not questionnaire",
-                    "Toxicities grade >= " + minGrade + " found: " + concat(toxicities) + " but source is not questionnaire"
+                    "Toxicities with grade >= $minGrade found: ${concat(toxicities)} but source is not questionnaire",
+                    "Toxicities grade >= $minGrade found: ${concat(toxicities)} but source is not questionnaire"
                 )
             }
         } else if (hasUnresolvableQuestionnaireToxicities) {
             return EvaluationFactory.undetermined(
-                "The exact grade (2, 3 or 4) is not known for toxicities: " + concat(unresolvableToxicities),
-                concat(unresolvableToxicities) + " present, but grade 2/3/4 unknown"
+                "The exact grade (2, 3 or 4) is not known for toxicities: ${concat(unresolvableToxicities)}",
+                "${concat(unresolvableToxicities)} present, but grade 2/3/4 unknown"
             )
         }
         return EvaluationFactory.fail(

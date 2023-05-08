@@ -12,18 +12,18 @@ class HasSufficientLabValueULN internal constructor(private val minULNFactor: Do
         val builder = recoverable().result(result)
         when (result) {
             EvaluationResult.FAIL -> {
-                builder.addFailSpecificMessages(labValue.code() + " is insufficient versus maximum ULN")
-                builder.addFailGeneralMessages(labValue.code() + " insufficient")
+                builder.addFailSpecificMessages("${labValue.code()} is insufficient versus maximum ULN")
+                builder.addFailGeneralMessages("${labValue.code()} insufficient")
             }
 
             EvaluationResult.UNDETERMINED -> {
-                builder.addUndeterminedSpecificMessages(labValue.code() + " could not be evaluated versus maximum ULN")
-                builder.addUndeterminedGeneralMessages(labValue.code() + " undetermined")
+                builder.addUndeterminedSpecificMessages("${labValue.code()} could not be evaluated versus maximum ULN")
+                builder.addUndeterminedGeneralMessages("${labValue.code()} undetermined")
             }
 
             EvaluationResult.PASS -> {
-                builder.addPassSpecificMessages(labValue.code() + " sufficient (exceeds maximum ULN)")
-                builder.addPassGeneralMessages(labValue.code() + " sufficient")
+                builder.addPassSpecificMessages("${labValue.code()} sufficient (exceeds maximum ULN)")
+                builder.addPassGeneralMessages("${labValue.code()} sufficient")
             }
 
             else -> {}
