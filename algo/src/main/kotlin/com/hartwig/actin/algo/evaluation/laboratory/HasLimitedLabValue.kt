@@ -19,15 +19,23 @@ class HasLimitedLabValue(private val maxValue: Double, private val measurement: 
                 .build()
         val result = evaluateVersusMaxValue(convertedValue, labValue.comparator(), maxValue)
         val builder = recoverable().result(result)
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages(labValue.code() + " exceeds limit")
-            builder.addFailGeneralMessages(labValue.code() + " exceeds limit")
-        } else if (result == EvaluationResult.UNDETERMINED) {
-            builder.addUndeterminedSpecificMessages(labValue.code() + " sufficiency could not be evaluated")
-            builder.addUndeterminedGeneralMessages(labValue.code() + " undetermined")
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages(labValue.code() + " is within limit")
-            builder.addPassGeneralMessages(labValue.code() + " within limit")
+        when (result) {
+            EvaluationResult.FAIL -> {
+                builder.addFailSpecificMessages(labValue.code() + " exceeds limit")
+                builder.addFailGeneralMessages(labValue.code() + " exceeds limit")
+            }
+
+            EvaluationResult.UNDETERMINED -> {
+                builder.addUndeterminedSpecificMessages(labValue.code() + " sufficiency could not be evaluated")
+                builder.addUndeterminedGeneralMessages(labValue.code() + " undetermined")
+            }
+
+            EvaluationResult.PASS -> {
+                builder.addPassSpecificMessages(labValue.code() + " is within limit")
+                builder.addPassGeneralMessages(labValue.code() + " within limit")
+            }
+
+            else -> {}
         }
         return builder.build()
     }

@@ -8,7 +8,7 @@ import com.hartwig.actin.clinical.datamodel.LabValue
 class HasLabValueOutsideRefLimitUp internal constructor() : LabEvaluationFunction {
     override fun evaluate(record: PatientRecord, labValue: LabValue): Evaluation {
         val refLimitUp = labValue.refLimitUp()
-            ?: return EvaluationFactory.undetermined(
+            ?: return EvaluationFactory.recoverableUndetermined(
                 "Could not determine whether " + labValue.code() + " is outside ref limit up",
                 "Undetermined if " + labValue.code() + " is outside ref limit up"
             )

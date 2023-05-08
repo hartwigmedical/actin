@@ -31,7 +31,7 @@ class HasSufficientBloodPressure internal constructor(
             }
 
             relevant.any { it.value().compareTo(minMedianBloodPressure) >= 0 } -> {
-                EvaluationFactory.undetermined(
+                EvaluationFactory.recoverableUndetermined(
                     "Patient has median $categoryDisplay blood pressure below $minMedianBloodPressure "
                             + "but also at least one measure above $minMedianBloodPressure", "$categoryDisplay requirements"
                 )

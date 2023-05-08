@@ -8,7 +8,7 @@ import com.hartwig.actin.clinical.datamodel.LabValue
 class HasLabValueWithinRef internal constructor() : LabEvaluationFunction {
     override fun evaluate(record: PatientRecord, labValue: LabValue): Evaluation {
         val isOutsideRef = labValue.isOutsideRef
-            ?: return EvaluationFactory.undetermined(
+            ?: return EvaluationFactory.recoverableUndetermined(
                 "Could not determine whether " + labValue.code() + " is within ref range",
                 "Undetermined if " + labValue.code() + " is within ref range"
             )

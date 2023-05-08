@@ -2,57 +2,45 @@ package com.hartwig.actin.algo.evaluation.general
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverable
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.unrecoverable
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
 class HasMinimumLanskyKarnofskyScore internal constructor(private val performanceScore: PerformanceScore, private val minScore: Int) :
     EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val who = record.clinical().clinicalStatus().who()
-            ?: return recoverable()
-                .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages(
-                    "Cannot evaluate " + performanceScore.display() + " performance score because WHO is missing"
-                )
-                .addUndeterminedGeneralMessages("Missing " + performanceScore.display() + " score")
-                .build()
+        val who = record.clinical().clinicalStatus().who() ?: return EvaluationFactory.recoverableUndetermined(
+            "Cannot evaluate " + performanceScore.display() + " performance score because WHO is missing",
+            "Missing " + performanceScore.display() + " score"
+        )
         val passScore = toMinScoreForWHO(who)
         val undeterminedScore = toMaxScoreForWHO(who)
         val warnScore = toMaxScoreForWHO((who - 1).coerceAtLeast(0))
         return when {
             passScore >= minScore -> {
-                unrecoverable()
-                    .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages(performanceScore.display() + " score based on WHO score is at least " + minScore)
-                    .addPassGeneralMessages("Minimum " + performanceScore.display() + " requirements")
-                    .build()
+                EvaluationFactory.pass(
+                    performanceScore.display() + " score based on WHO score is at least " + minScore,
+                    "Minimum " + performanceScore.display() + " requirements"
+                )
             }
 
             undeterminedScore >= minScore -> {
-                unrecoverable()
-                    .result(EvaluationResult.UNDETERMINED)
-                    .addUndeterminedSpecificMessages(
-                        "Not clear whether " + performanceScore.display() + " score based on WHO score is at least " + minScore
-                    )
-                    .addUndeterminedSpecificMessages("Undetermined minimum " + performanceScore.display() + " requirements")
-                    .build()
+                EvaluationFactory.undetermined(
+                    "Not clear whether " + performanceScore.display() + " score based on WHO score is at least " + minScore,
+                    "Undetermined minimum " + performanceScore.display() + " requirements"
+                )
             }
 
             warnScore >= minScore -> {
-                unrecoverable()
-                    .result(EvaluationResult.WARN)
-                    .addWarnSpecificMessages(performanceScore.display() + " score based on WHO score exceeds requested score of " + minScore)
-                    .addWarnSpecificMessages("Minimum " + performanceScore.display() + " requirements")
-                    .build()
+                EvaluationFactory.warn(
+                    performanceScore.display() + " score based on WHO score exceeds requested score of " + minScore,
+                    "Minimum " + performanceScore.display() + " requirements"
+                )
             }
 
-            else -> unrecoverable()
-                .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages(performanceScore.display() + " score based on WHO score is below " + minScore)
-                .addFailGeneralMessages("Minimum " + performanceScore.display() + " requirements")
-                .build()
+            else -> EvaluationFactory.fail(
+                performanceScore.display() + " score based on WHO score is below " + minScore,
+                "Minimum " + performanceScore.display() + " requirements"
+            )
         }
     }
 

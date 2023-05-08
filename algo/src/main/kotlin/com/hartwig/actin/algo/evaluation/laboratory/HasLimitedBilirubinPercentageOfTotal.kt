@@ -15,7 +15,7 @@ class HasLimitedBilirubinPercentageOfTotal internal constructor(private val maxP
         check(labValue.code() == LabMeasurement.DIRECT_BILIRUBIN.code()) { "Bilirubin percentage must take direct bilirubin as input" }
         val mostRecentTotal = interpretation.mostRecentValue(LabMeasurement.TOTAL_BILIRUBIN)
         if (mostRecentTotal == null || mostRecentTotal.date().isBefore(minValidDate)) {
-            return EvaluationFactory.undetermined(
+            return EvaluationFactory.recoverableUndetermined(
                 "No recent measurement found for total bilirubin, hence bilirubin percentage of total bilirubin could not be determined",
                 "Bilirubin percentage of total bilirubin could not be determined"
             )
