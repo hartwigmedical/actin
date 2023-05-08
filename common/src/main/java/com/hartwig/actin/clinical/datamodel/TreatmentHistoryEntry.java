@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class TreatmentEvent {
+public abstract class TreatmentHistoryEntry {
 
     @NotNull
     public abstract Set<Treatment> treatments();
