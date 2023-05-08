@@ -1,0 +1,44 @@
+package com.hartwig.actin.algo.evaluation.complication
+
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.medication.MedicationStatusInterpretation
+import com.hartwig.actin.algo.medication.MedicationStatusInterpreter
+
+class HasPotentialUncontrolledTumorRelatedPain internal constructor(private val interpreter: MedicationStatusInterpreter) :
+    EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val painComplications = ComplicationFunctions.findComplicationNamesMatchingAnyCategory(record, listOf(SEVERE_PAIN_COMPLICATION))
+        if (painComplications.isNotEmpty()) {
+            return EvaluationFactory.pass(
+                "Patient has complication related to pain: " + concat(painComplications) +
+                        ", potentially indicating uncontrolled tumor related pain", "Present " + concat(painComplications)
+            )
+        }
+        val activePainMedications = record.clinical().medications()
+            .filter {
+                it.name().equals(SEVERE_PAIN_MEDICATION, ignoreCase = true)
+                        && interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE
+            }
+            .map { it.name() }
+
+        return if (activePainMedications.isNotEmpty()) {
+            EvaluationFactory.pass(
+                "Patient receives pain medication: " + concat(activePainMedications) +
+                        ", potentially indicating uncontrolled tumor related pain", "Present " + concat(activePainMedications)
+            )
+        } else
+            EvaluationFactory.fail(
+                "Patient does not have uncontrolled tumor related pain",
+                "No potential uncontrolled tumor related pain"
+            )
+    }
+
+    companion object {
+        const val SEVERE_PAIN_COMPLICATION = "pain"
+        const val SEVERE_PAIN_MEDICATION = "hydromorphone"
+    }
+}

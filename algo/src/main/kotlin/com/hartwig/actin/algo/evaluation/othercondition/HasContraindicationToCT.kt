@@ -1,0 +1,63 @@
+package com.hartwig.actin.algo.evaluation.othercondition
+
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.doid.DoidConstants
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
+import com.hartwig.actin.algo.othercondition.OtherConditionSelector
+import com.hartwig.actin.doid.DoidModel
+
+class HasContraindicationToCT internal constructor(private val doidModel: DoidModel) : EvaluationFunction {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())) {
+            for (doid in condition.doids()) {
+                if (doidModel.doidWithParents(doid).contains(DoidConstants.KIDNEY_DISEASE_DOID)) {
+                    return EvaluationFactory.pass(
+                        "Patient has a contraindication to CT due to " + doidModel.resolveTermForDoid(doid),
+                        "Potential CT contraindication: " + doidModel.resolveTermForDoid(doid)
+                    )
+                }
+            }
+            if (stringCaseInsensitivelyMatchesQueryCollection(condition.name(), OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_CT)) {
+                return EvaluationFactory.pass(
+                    "Patient has a contraindication to CT due to condition " + condition.name(),
+                    "Potential CT contraindication: " + condition.name()
+                )
+            }
+        }
+        for (intolerance in record.clinical().intolerances()) {
+            if (stringCaseInsensitivelyMatchesQueryCollection(intolerance.name(), INTOLERANCES_BEING_CONTRAINDICATIONS_TO_CT)) {
+                return EvaluationFactory.pass(
+                    "Patient has a contraindication to CT due to intolerance " + intolerance.name(),
+                    "Potential CT contraindication: " + intolerance.name()
+                )
+            }
+        }
+        for (medication in record.clinical().medications()) {
+            if (stringCaseInsensitivelyMatchesQueryCollection(medication.name(), MEDICATIONS_BEING_CONTRAINDICATIONS_TO_CT)) {
+                return EvaluationFactory.pass(
+                    "Patient has a contraindication to CT due to medication " + medication.name(),
+                    "Potential CT contraindication: " + medication.name()
+                )
+            }
+        }
+        for (complication in record.clinical().complications() ?: emptyList()) {
+            if (stringCaseInsensitivelyMatchesQueryCollection(complication.name(), COMPLICATIONS_BEING_CONTRAINDICATIONS_TO_CT)) {
+                return EvaluationFactory.pass(
+                    "Patient has a contraindication to CT due to complication " + complication.name(),
+                    "Potential CT contraindication: " + complication.name()
+                )
+            }
+        }
+        return EvaluationFactory.fail("No potential contraindications to CT identified", "No potential contraindications to CT")
+    }
+
+    companion object {
+        val OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_CT = setOf("claustrophobia")
+        val INTOLERANCES_BEING_CONTRAINDICATIONS_TO_CT = setOf("contrast agent")
+        val MEDICATIONS_BEING_CONTRAINDICATIONS_TO_CT = setOf("metformin")
+        val COMPLICATIONS_BEING_CONTRAINDICATIONS_TO_CT = setOf("hyperthyroidism")
+    }
+}
