@@ -1,6 +1,7 @@
 package com.hartwig.actin.util.json;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -18,6 +19,7 @@ public final class GsonSerializer {
         return new GsonBuilder().serializeNulls()
                 .enableComplexMapKeySerialization()
                 .registerTypeAdapter(LocalDate.class, new GsonLocalDateAdapter())
+                .registerTypeHierarchyAdapter(Set.class, new GsonSetAdapter<>())
                 .create();
     }
 }
