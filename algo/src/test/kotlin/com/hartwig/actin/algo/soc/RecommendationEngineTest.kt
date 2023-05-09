@@ -184,7 +184,7 @@ class RecommendationEngineTest {
 
     @Test
     fun shouldRecommendCetuximabAndEncorafenibForBRAFV600E() {
-        val firstLineChemotherapies = java.util.List.of(TreatmentDB.TREATMENT_CAPOX)
+        val firstLineChemotherapies = listOf(TreatmentDB.TREATMENT_CAPOX)
         Assert.assertFalse(getTreatmentResultsForPatient(patientRecordWithChemoHistory(firstLineChemotherapies)).any {
             it.name == "Cetuximab + Encorafenib"
         })
@@ -286,7 +286,7 @@ class RecommendationEngineTest {
         }
 
         private fun assertMultiChemotherapyNotRecommended(patientRecord: PatientRecord) {
-            val chemotherapyComponents = java.util.Set.of(
+            val chemotherapyComponents = setOf(
                 TreatmentComponent.FLUOROURACIL,
                 TreatmentComponent.OXALIPLATIN,
                 TreatmentComponent.IRINOTECAN,

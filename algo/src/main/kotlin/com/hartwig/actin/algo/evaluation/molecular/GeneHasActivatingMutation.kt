@@ -50,7 +50,7 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
                 }
             }
         }
-        if (!activatingVariants.isEmpty()) {
+        if (activatingVariants.isNotEmpty()) {
             return EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.PASS)
                 .addAllInclusionMolecularEvents(activatingVariants)

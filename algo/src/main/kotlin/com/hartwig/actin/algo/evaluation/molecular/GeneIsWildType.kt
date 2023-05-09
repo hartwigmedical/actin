@@ -96,19 +96,19 @@ class GeneIsWildType internal constructor(private val gene: String) : Evaluation
         val warnEvents: MutableSet<String> = mutableSetOf()
         val warnSpecificMessages: MutableSet<String> = mutableSetOf()
         val warnGeneralMessages: MutableSet<String> = mutableSetOf()
-        if (!reportableEventsWithNoEffect.isEmpty()) {
+        if (reportableEventsWithNoEffect.isNotEmpty()) {
             warnEvents.addAll(reportableEventsWithNoEffect)
             warnSpecificMessages.add("Reportable event(s) in " + gene + " are detected: " + Format.concat(reportableEventsWithNoEffect) + ", however these are annotated with protein effect 'no effect' and thus may potentially be considered wild-type?")
             warnGeneralMessages.add("$gene potentially wild-type")
         }
-        if (!reportableEventsWithEffectPotentiallyWildtype.isEmpty()) {
+        if (reportableEventsWithEffectPotentiallyWildtype.isNotEmpty()) {
             warnEvents.addAll(reportableEventsWithEffectPotentiallyWildtype)
             warnSpecificMessages.add(
                 "Reportable event(s) in " + gene + " are detected: " + Format.concat(reportableEventsWithEffectPotentiallyWildtype) + " which may potentially be considered wild-type?"
             )
             warnGeneralMessages.add("$gene potentially wild-type")
         }
-        return if (!warnEvents.isEmpty() && !warnSpecificMessages.isEmpty() && !warnGeneralMessages.isEmpty()) {
+        return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {
             EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.WARN)
                 .addAllInclusionMolecularEvents(warnEvents)

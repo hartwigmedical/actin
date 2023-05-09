@@ -7,6 +7,7 @@ internal object PriorConditionMessages {
         return "Patient has no other condition belonging to category $doidTerm"
     }
 
+    @JvmStatic
     fun failGeneral(): String {
         return "No relevant non-oncological condition"
     }

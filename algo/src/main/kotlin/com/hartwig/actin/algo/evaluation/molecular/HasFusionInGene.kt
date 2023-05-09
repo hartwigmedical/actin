@@ -42,7 +42,7 @@ class HasFusionInGene internal constructor(private val gene: String) : Evaluatio
                 }
             }
         }
-        if (!matchingFusions.isEmpty()) {
+        if (matchingFusions.isNotEmpty()) {
             return unrecoverable()
                 .result(EvaluationResult.PASS)
                 .addAllInclusionMolecularEvents(matchingFusions)
@@ -67,7 +67,7 @@ class HasFusionInGene internal constructor(private val gene: String) : Evaluatio
         val warnEvents: MutableSet<String> = Sets.newHashSet()
         val warnSpecificMessages: MutableSet<String> = Sets.newHashSet()
         val warnGeneralMessages: MutableSet<String> = Sets.newHashSet()
-        if (!fusionsWithNoEffect.isEmpty()) {
+        if (fusionsWithNoEffect.isNotEmpty()) {
             warnEvents.addAll(fusionsWithNoEffect)
             warnSpecificMessages.add(
                 "Fusion(s) " + concat(fusionsWithNoEffect) + " detected in gene " + gene
@@ -75,7 +75,7 @@ class HasFusionInGene internal constructor(private val gene: String) : Evaluatio
             )
             warnGeneralMessages.add("Fusion(s) detected in $gene but annotated as having no protein effect")
         }
-        if (!fusionsWithNoHighDriverLikelihood.isEmpty()) {
+        if (fusionsWithNoHighDriverLikelihood.isNotEmpty()) {
             warnEvents.addAll(fusionsWithNoHighDriverLikelihood)
             warnSpecificMessages.add(
                 "Fusion(s) " + concat(fusionsWithNoHighDriverLikelihood) + " detected in gene " + gene
@@ -83,7 +83,7 @@ class HasFusionInGene internal constructor(private val gene: String) : Evaluatio
             )
             warnGeneralMessages.add("Fusion(s) detected in gene $gene but no high driver likelihood")
         }
-        if (!unreportableFusionsWithGainOfFunction.isEmpty()) {
+        if (unreportableFusionsWithGainOfFunction.isNotEmpty()) {
             warnEvents.addAll(unreportableFusionsWithGainOfFunction)
             warnSpecificMessages.add(
                 "Fusion(s) " + concat(unreportableFusionsWithGainOfFunction) + " detected in gene " + gene
@@ -91,7 +91,7 @@ class HasFusionInGene internal constructor(private val gene: String) : Evaluatio
             )
             warnGeneralMessages.add("Fusion(s) detected in gene $gene but unreportable but with gain-of-function")
         }
-        return if (!warnEvents.isEmpty() && !warnSpecificMessages.isEmpty() && !warnGeneralMessages.isEmpty()) {
+        return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {
             unrecoverable()
                 .result(EvaluationResult.WARN)
                 .addAllInclusionMolecularEvents(warnEvents)

@@ -54,18 +54,13 @@ class GeneIsInactivated internal constructor(private val gene: String) : Evaluat
         val inactivationHighDriverNonBiallelicVariants: MutableSet<String> = mutableSetOf()
         val inactivationSubclonalVariants: MutableSet<String> = mutableSetOf()
         val eventsThatMayBeTransPhased: MutableList<String> = mutableListOf()
-        val evaluatedPhaseGroups: MutableSet<Int?> = mutableSetOf()
         val hasHighMutationalLoad = record.molecular().characteristics().hasHighTumorMutationalLoad()
         for (variant in record.molecular().drivers().variants()) {
             if (variant.gene() == gene && INACTIVATING_CODING_EFFECTS.contains(variant.canonicalImpact().codingEffect())) {
                 if (!variant.isReportable) {
                     inactivationEventsThatAreUnreportable.add(variant.event())
                 } else {
-                    val phaseGroup: Int? = null
-                    if (phaseGroup == null || !evaluatedPhaseGroups.contains(phaseGroup)) {
-                        evaluatedPhaseGroups.add(phaseGroup)
-                        eventsThatMayBeTransPhased.add(variant.event())
-                    }
+                    eventsThatMayBeTransPhased.add(variant.event())
                     if (variant.driverLikelihood() == DriverLikelihood.HIGH) {
                         val isGainOfFunction = (variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
                                 || variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
@@ -99,7 +94,7 @@ class GeneIsInactivated internal constructor(private val gene: String) : Evaluat
                 }
             }
         }
-        if (!inactivationEventsThatQualify.isEmpty()) {
+        if (inactivationEventsThatQualify.isNotEmpty()) {
             return unrecoverable()
                 .result(EvaluationResult.PASS)
                 .addAllInclusionMolecularEvents(inactivationEventsThatQualify)
@@ -145,7 +140,7 @@ class GeneIsInactivated internal constructor(private val gene: String) : Evaluat
             )
             warnGeneralMessages.add("$gene potential inactivation but not reportable")
         }
-        if (!inactivationEventsNoTSG.isEmpty()) {
+        if (inactivationEventsNoTSG.isNotEmpty()) {
             warnEvents.addAll(inactivationEventsNoTSG)
             warnSpecificMessages.add(
                 "Inactivation events detected for gene " + gene + ": " + concat(inactivationEventsNoTSG)
@@ -153,7 +148,7 @@ class GeneIsInactivated internal constructor(private val gene: String) : Evaluat
             )
             warnGeneralMessages.add("$gene potential inactivation but gene role ONCO")
         }
-        if (!inactivationEventsGainOfFunction.isEmpty()) {
+        if (inactivationEventsGainOfFunction.isNotEmpty()) {
             warnEvents.addAll(inactivationEventsGainOfFunction)
             warnSpecificMessages.add(
                 "Inactivation events detected for " + gene + ": " + concat(inactivationEventsGainOfFunction)
@@ -161,7 +156,7 @@ class GeneIsInactivated internal constructor(private val gene: String) : Evaluat
             )
             warnGeneralMessages.add("$gene potential inactivation but event annotated with gain-of-function protein impact")
         }
-        if (!inactivationHighDriverNonBiallelicVariants.isEmpty() && eventsThatMayBeTransPhased.size <= 1) {
+        if (inactivationHighDriverNonBiallelicVariants.isNotEmpty() && eventsThatMayBeTransPhased.size <= 1) {
             warnEvents.addAll(inactivationHighDriverNonBiallelicVariants)
             warnSpecificMessages.add(
                 "Inactivation event(s) detected for " + gene + ": " + concat(inactivationHighDriverNonBiallelicVariants)
@@ -169,7 +164,7 @@ class GeneIsInactivated internal constructor(private val gene: String) : Evaluat
             )
             warnGeneralMessages.add("$gene potential inactivation but not biallelic")
         }
-        if (!inactivationSubclonalVariants.isEmpty()) {
+        if (inactivationSubclonalVariants.isNotEmpty()) {
             warnEvents.addAll(inactivationSubclonalVariants)
             warnSpecificMessages.add(
                 "Inactivation event(s) detected for " + gene + ": " + concat(inactivationSubclonalVariants)
@@ -180,7 +175,7 @@ class GeneIsInactivated internal constructor(private val gene: String) : Evaluat
                         + " but subclonal likelihood > " + percentage(1 - CLONAL_CUTOFF)
             )
         }
-        if (!reportableNonDriverBiallelicVariantsOther.isEmpty()) {
+        if (reportableNonDriverBiallelicVariantsOther.isNotEmpty()) {
             warnEvents.addAll(reportableNonDriverBiallelicVariantsOther)
             warnSpecificMessages.add(
                 "Potential inactivation events detected for " + gene + ": " + concat(reportableNonDriverBiallelicVariantsOther)
@@ -188,7 +183,7 @@ class GeneIsInactivated internal constructor(private val gene: String) : Evaluat
             )
             warnGeneralMessages.add("Variant(s) " + concat(reportableNonDriverBiallelicVariantsOther) + " of low driver likelihood")
         }
-        if (!reportableNonDriverNonBiallelicVariantsOther.isEmpty()) {
+        if (reportableNonDriverNonBiallelicVariantsOther.isNotEmpty()) {
             warnEvents.addAll(reportableNonDriverNonBiallelicVariantsOther)
             warnSpecificMessages.add(
                 "Potential inactivation events detected for $gene: " + concat(
@@ -204,11 +199,11 @@ class GeneIsInactivated internal constructor(private val gene: String) : Evaluat
             warnEvents.addAll(eventsThatMayBeTransPhased)
             warnSpecificMessages.add(
                 "Multiple events detected for " + gene + ": " + concat(eventsThatMayBeTransPhased)
-                        + " that potentially together inactivate the gene?"
+                        + " that potentially together inactivate the gene"
             )
             warnGeneralMessages.add("$gene potential inactivation if considering multiple events")
         }
-        return if (!warnEvents.isEmpty() && !warnSpecificMessages.isEmpty() && !warnGeneralMessages.isEmpty()) {
+        return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {
             unrecoverable()
                 .result(EvaluationResult.WARN)
                 .addAllInclusionMolecularEvents(warnEvents)

@@ -19,12 +19,12 @@ internal class EvaluatedTreatmentInterpreter(recommendedTreatments: List<Evaluat
     }
 
     fun csv(): String {
-        return "Treatment,Score,Warnings\n" + recommendedTreatments.map { evaluatedTreatment: EvaluatedTreatment ->
+        return "Treatment,Score,Warnings\n" + recommendedTreatments.joinToString("\n") { evaluatedTreatment: EvaluatedTreatment ->
             val warningSummary: String = evaluatedTreatment.evaluations.toSet().flatMap { eval ->
                 setOf(eval.failSpecificMessages(), eval.warnSpecificMessages(), eval.undeterminedSpecificMessages()).flatten()
             }.joinToString()
             listOf(evaluatedTreatment.treatment.name, evaluatedTreatment.score, warningSummary).joinToString()
-        }.joinToString("\n")
+        }
     }
 
     fun listAvailableTreatmentsByScore(): String {
