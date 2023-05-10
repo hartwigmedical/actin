@@ -59,13 +59,7 @@ class GeneIsInactivated internal constructor(private val gene: String) : Evaluat
                 } else {
                     val phaseGroups: Set<Int>? = variant.phaseGroups()
                     if (phaseGroups != null) {
-                        var hasExistingPhaseGroup = false
-                        for (phaseGroup in phaseGroups) {
-                            if (evaluatedPhaseGroups.contains(phaseGroup)) {
-                                hasExistingPhaseGroup = true
-                            }
-                        }
-                        if (!hasExistingPhaseGroup) {
+                        if (phaseGroups.none { evaluatedPhaseGroups.contains(it) }) {
                             eventsThatMayBeTransPhased.add(variant.event())
                         }
                         evaluatedPhaseGroups.addAll(phaseGroups)
