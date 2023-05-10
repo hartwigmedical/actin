@@ -3,27 +3,16 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
-import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.driver.GeneRole
-import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
-import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory
-import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
-import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
-import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
-import com.hartwig.actin.molecular.datamodel.driver.Variant
+import com.hartwig.actin.molecular.datamodel.driver.*
 import org.junit.Test
 
 class GeneIsInactivatedTest {
+
     @Test
     fun canEvaluateOnHomozygousDisruptions() {
         val function = GeneIsInactivated("gene A")
         assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
+
         val matchingHomDisruption: HomozygousDisruption = TestHomozygousDisruptionFactory.builder()
             .gene("gene A")
             .isReportable(true)
@@ -34,6 +23,7 @@ class GeneIsInactivatedTest {
             EvaluationResult.PASS,
             function.evaluate(MolecularTestFactory.withHomozygousDisruption(matchingHomDisruption))
         )
+
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -45,6 +35,7 @@ class GeneIsInactivatedTest {
                 )
             )
         )
+
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -56,6 +47,7 @@ class GeneIsInactivatedTest {
                 )
             )
         )
+
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -73,6 +65,7 @@ class GeneIsInactivatedTest {
     fun canEvaluateOnLosses() {
         val function = GeneIsInactivated("gene A")
         assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
+
         val matchingLoss: CopyNumber = TestCopyNumberFactory.builder()
             .gene("gene A")
             .isReportable(true)
@@ -81,6 +74,7 @@ class GeneIsInactivatedTest {
             .type(CopyNumberType.LOSS)
             .build()
         assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withCopyNumber(matchingLoss)))
+
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -92,6 +86,7 @@ class GeneIsInactivatedTest {
                 )
             )
         )
+
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -103,6 +98,7 @@ class GeneIsInactivatedTest {
                 )
             )
         )
+
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -120,6 +116,7 @@ class GeneIsInactivatedTest {
     fun canEvaluateOnVariants() {
         val function = GeneIsInactivated("gene A")
         assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
+
         val matchingVariant: Variant = TestVariantFactory.builder()
             .gene("gene A")
             .isReportable(true)
@@ -135,6 +132,7 @@ class GeneIsInactivatedTest {
             )
             .build()
         assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withVariant(matchingVariant)))
+
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -146,6 +144,7 @@ class GeneIsInactivatedTest {
                 )
             )
         )
+
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -157,6 +156,7 @@ class GeneIsInactivatedTest {
                 )
             )
         )
+
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -168,6 +168,7 @@ class GeneIsInactivatedTest {
                 )
             )
         )
+
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -179,6 +180,7 @@ class GeneIsInactivatedTest {
                 )
             )
         )
+
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -190,6 +192,7 @@ class GeneIsInactivatedTest {
                 )
             )
         )
+
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -202,6 +205,7 @@ class GeneIsInactivatedTest {
                 )
             )
         )
+
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
@@ -235,14 +239,13 @@ class GeneIsInactivatedTest {
                     true,
                     TestVariantFactory.builder()
                         .from(matchingVariant)
-                        .proteinEffect(ProteinEffect.UNKNOWN)
                         .driverLikelihood(DriverLikelihood.LOW)
                         .build()
                 )
             )
         )
 
-        // low TML and low driver likelihood variant
+        // low TML and low driver non-biallelic likelihood variant
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -250,8 +253,23 @@ class GeneIsInactivatedTest {
                     false,
                     TestVariantFactory.builder()
                         .from(matchingVariant)
-                        .proteinEffect(ProteinEffect.UNKNOWN)
                         .driverLikelihood(DriverLikelihood.LOW)
+                        .isBiallelic(false)
+                        .build()
+                )
+            )
+        )
+
+        // low TML and low driver biallelic likelihood variant
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                MolecularTestFactory.withHasTumorMutationalLoadAndVariant(
+                    false,
+                    TestVariantFactory.builder()
+                        .from(matchingVariant)
+                        .driverLikelihood(DriverLikelihood.LOW)
+                        .isBiallelic(true)
                         .build()
                 )
             )
@@ -273,15 +291,18 @@ class GeneIsInactivatedTest {
             .canonicalImpact(TestTranscriptImpactFactory.builder().codingEffect(CodingEffect.NONSENSE_OR_FRAMESHIFT).build())
             .addPhaseGroups(2)
             .build()
-        assertMolecularEvaluation(EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withVariant(variantGroup1)))
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariant(true, variantGroup1))
+        )
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withVariants(variantGroup1, variantGroup2))
+            function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariants(true, variantGroup1, variantGroup2))
         )
         val disruption: Disruption = TestDisruptionFactory.builder().gene("gene A").isReportable(true).clusterGroup(1).build()
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withVariantAndDisruption(variantGroup1, disruption))
+            function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariantAndDisruption(true, variantGroup1, disruption))
         )
     }
 }

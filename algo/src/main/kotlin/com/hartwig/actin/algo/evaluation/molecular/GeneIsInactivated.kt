@@ -7,11 +7,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory.unrecoverable
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.percentage
-import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.driver.GeneRole
-import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.driver.*
 
 class GeneIsInactivated internal constructor(private val gene: String) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -54,13 +50,25 @@ class GeneIsInactivated internal constructor(private val gene: String) : Evaluat
         val inactivationHighDriverNonBiallelicVariants: MutableSet<String> = mutableSetOf()
         val inactivationSubclonalVariants: MutableSet<String> = mutableSetOf()
         val eventsThatMayBeTransPhased: MutableList<String> = mutableListOf()
+        val evaluatedPhaseGroups: MutableSet<Int?> = mutableSetOf()
         val hasHighMutationalLoad = record.molecular().characteristics().hasHighTumorMutationalLoad()
         for (variant in record.molecular().drivers().variants()) {
             if (variant.gene() == gene && INACTIVATING_CODING_EFFECTS.contains(variant.canonicalImpact().codingEffect())) {
                 if (!variant.isReportable) {
                     inactivationEventsThatAreUnreportable.add(variant.event())
                 } else {
-                    eventsThatMayBeTransPhased.add(variant.event())
+                    val phaseGroups: Set<Int>? = variant.phaseGroups()
+                    if (phaseGroups != null) {
+                        for (phaseGroup in phaseGroups) {
+                            if (!evaluatedPhaseGroups.contains(phaseGroup)) {
+                                eventsThatMayBeTransPhased.add(variant.event())
+                            }
+                            evaluatedPhaseGroups.add(phaseGroup)
+                        }
+                    } else {
+                        eventsThatMayBeTransPhased.add(variant.event())
+                    }
+
                     if (variant.driverLikelihood() == DriverLikelihood.HIGH) {
                         val isGainOfFunction = (variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
                                 || variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
@@ -85,6 +93,7 @@ class GeneIsInactivated internal constructor(private val gene: String) : Evaluat
                 }
             }
         }
+
         val evaluatedClusterGroups: MutableSet<Int> = mutableSetOf()
         for (disruption in record.molecular().drivers().disruptions()) {
             if (disruption.gene() == gene && disruption.isReportable) {
@@ -94,6 +103,7 @@ class GeneIsInactivated internal constructor(private val gene: String) : Evaluat
                 }
             }
         }
+
         if (inactivationEventsThatQualify.isNotEmpty()) {
             return unrecoverable()
                 .result(EvaluationResult.PASS)
@@ -104,6 +114,7 @@ class GeneIsInactivated internal constructor(private val gene: String) : Evaluat
                 .addPassGeneralMessages("$gene inactivation")
                 .build()
         }
+
         val potentialWarnEvaluation = evaluatePotentialWarns(
             inactivationEventsThatAreUnreportable,
             inactivationEventsNoTSG,
@@ -114,6 +125,7 @@ class GeneIsInactivated internal constructor(private val gene: String) : Evaluat
             reportableNonDriverNonBiallelicVariantsOther,
             eventsThatMayBeTransPhased
         )
+
         return potentialWarnEvaluation
             ?: unrecoverable()
                 .result(EvaluationResult.FAIL)
