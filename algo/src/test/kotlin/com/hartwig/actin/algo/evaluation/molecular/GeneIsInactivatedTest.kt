@@ -279,6 +279,7 @@ class GeneIsInactivatedTest {
     @Test
     fun canMergeMultipleUnphasedVariants() {
         val function = GeneIsInactivated("gene A")
+
         val variantGroup1: Variant = TestVariantFactory.builder()
             .gene("gene A")
             .isReportable(true)
@@ -291,14 +292,28 @@ class GeneIsInactivatedTest {
             .canonicalImpact(TestTranscriptImpactFactory.builder().codingEffect(CodingEffect.NONSENSE_OR_FRAMESHIFT).build())
             .addPhaseGroups(2)
             .build()
+
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariant(true, variantGroup1))
         )
+
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(
+                MolecularTestFactory.withHasTumorMutationalLoadAndVariants(
+                    true,
+                    variantGroup1,
+                    TestVariantFactory.builder().from(variantGroup1).addPhaseGroups(1, 2).build()
+                )
+            )
+        )
+
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariants(true, variantGroup1, variantGroup2))
         )
+
         val disruption: Disruption = TestDisruptionFactory.builder().gene("gene A").isReportable(true).clusterGroup(1).build()
         assertMolecularEvaluation(
             EvaluationResult.WARN,
