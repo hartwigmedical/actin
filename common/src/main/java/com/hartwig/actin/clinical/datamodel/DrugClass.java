@@ -1,5 +1,8 @@
 package com.hartwig.actin.clinical.datamodel;
 
 public enum DrugClass {
-    OTHER
+    PLATINUM_COMPOUND,
+    PYRIMIDINE_ANTAGONIST,
+    TOPO1_INHIBITOR,
+    MONOCLONAL_ANTIBODY
 }

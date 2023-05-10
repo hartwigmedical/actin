@@ -6,11 +6,5 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class TreatmentTypes {
-
-    @NotNull
-    public abstract TreatmentCategory category();
-
-    @NotNull
-    public abstract String name();
+public abstract class SurgeryHistoryEntry implements TreatmentHistoryEntry {
 }

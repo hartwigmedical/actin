@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.datamodel;
 
-import java.util.List;
+import java.util.Set;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -14,8 +14,8 @@ public abstract class Drug {
     public abstract String name();
 
     @NotNull
-    public abstract List<DrugClass> drugClasses();
+    public abstract Set<DrugClass> drugClasses();
 
     @NotNull
-    public abstract List<String> synonyms();
+    public abstract Set<String> synonyms();
 }

@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.datamodel;
 
-import java.time.LocalDate;
+import java.util.Collections;
 import java.util.Set;
 
 import org.immutables.value.Value;
@@ -9,14 +9,10 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class ToxicityEvaluation {
+public abstract class Radiotherapy implements Therapy {
 
     @NotNull
-    public abstract Set<Toxicity> toxicities();
-
-    @NotNull
-    public abstract LocalDate evaluatedDate();
-
-    @NotNull
-    public abstract ToxicitySource source();
+    public Set<Drug> drugs() {
+        return Collections.emptySet();
+    }
 }

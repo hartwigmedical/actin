@@ -10,11 +10,13 @@ public interface Treatment {
     String name();
 
     @NotNull
-    Set<TreatmentTypes> types();
+    Set<TreatmentType> types();
 
     @NotNull
     Set<TreatmentCategory> categories();
 
     @NotNull
     Set<String> synonyms();
+
+    boolean isSystemic();
 }

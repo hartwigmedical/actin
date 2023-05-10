@@ -12,15 +12,6 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class TherapyHistoryEntry implements TreatmentHistoryEntry {
 
-    @NotNull
-    public abstract Set<Treatment> treatments();
-
-    @Nullable
-    public abstract Year startYear();
-
-    @Nullable
-    public abstract YearMonth startMonth();
-
     @Nullable
     public abstract Year endYear();
 
@@ -44,7 +35,4 @@ public abstract class TherapyHistoryEntry implements TreatmentHistoryEntry {
 
     @Nullable
     public abstract Set<Toxicity> toxicities();
-
-    @Nullable
-    public abstract Intent intent();
 }
