@@ -3,11 +3,16 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.unrecoverable
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.percentage
-import com.hartwig.actin.molecular.datamodel.driver.*
+import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.driver.GeneRole
+import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 
 class GeneIsInactivated internal constructor(private val gene: String) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -125,11 +130,7 @@ class GeneIsInactivated internal constructor(private val gene: String) : Evaluat
         )
 
         return potentialWarnEvaluation
-            ?: unrecoverable()
-                .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("No inactivation event(s) detected for gene $gene")
-                .addFailGeneralMessages("No $gene inactivation")
-                .build()
+            ?: EvaluationFactory.fail("No inactivation event(s) detected for gene $gene", "No $gene inactivation")
     }
 
     private fun evaluatePotentialWarns(
@@ -225,12 +226,6 @@ class GeneIsInactivated internal constructor(private val gene: String) : Evaluat
 
     companion object {
         private const val CLONAL_CUTOFF = 0.5
-        val INACTIVATING_CODING_EFFECTS: MutableSet<CodingEffect?> = mutableSetOf()
-
-        init {
-            INACTIVATING_CODING_EFFECTS.add(CodingEffect.NONSENSE_OR_FRAMESHIFT)
-            INACTIVATING_CODING_EFFECTS.add(CodingEffect.MISSENSE)
-            INACTIVATING_CODING_EFFECTS.add(CodingEffect.SPLICE)
-        }
+        val INACTIVATING_CODING_EFFECTS = setOf(CodingEffect.NONSENSE_OR_FRAMESHIFT, CodingEffect.MISSENSE, CodingEffect.SPLICE)
     }
 }

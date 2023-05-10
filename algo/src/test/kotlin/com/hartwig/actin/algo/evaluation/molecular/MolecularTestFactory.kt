@@ -11,7 +11,13 @@ import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics
-import com.hartwig.actin.molecular.datamodel.driver.*
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.driver.Fusion
+import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers
+import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers
+import com.hartwig.actin.molecular.datamodel.driver.Variant
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableMolecularImmunology
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology
@@ -42,13 +48,6 @@ internal object MolecularTestFactory {
         return withMolecularDrivers(ImmutableMolecularDrivers.builder().addVariants(variant).build())
     }
 
-    fun withHasTumorMutationalLoadAndVariant(
-        hasHighTumorMutationalLoad: Boolean?,
-        variant: Variant
-    ): PatientRecord {
-        return withHasTumorMutationalLoadAndVariants(hasHighTumorMutationalLoad, variant)
-    }
-
     fun withHasTumorMutationalLoadAndVariants(
         hasHighTumorMutationalLoad: Boolean?,
         vararg variants: Variant
@@ -63,7 +62,7 @@ internal object MolecularTestFactory {
                         .hasHighTumorMutationalLoad(hasHighTumorMutationalLoad)
                         .build()
                 )
-                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addAllVariants(listOf(*variants)).build())
+                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addVariants(*variants).build())
                 .build()
         )
     }
