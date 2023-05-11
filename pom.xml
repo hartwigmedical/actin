@@ -139,11 +139,6 @@
             </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
-                <artifactId>soc</artifactId>
-                <version>${actin.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hartwig.actin</groupId>
                 <artifactId>report</artifactId>
                 <version>${actin.version}</version>
             </dependency>
