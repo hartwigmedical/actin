@@ -18,19 +18,27 @@ class HasSufficientLabValue internal constructor(
         val convertedValue = LabUnitConverter.convert(measurement, labValue, targetUnit)
             ?: return recoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Could not convert value for " + labValue.code() + " to " + targetUnit.display())
+                .addUndeterminedSpecificMessages("Could not convert value for ${labValue.code()} to ${targetUnit.display()}")
                 .build()
         val result = evaluateVersusMinValue(convertedValue, labValue.comparator(), minValue)
         val builder = recoverable().result(result)
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages(labValue.code() + " is insufficient")
-            builder.addFailGeneralMessages(labValue.code() + " insufficient")
-        } else if (result == EvaluationResult.UNDETERMINED) {
-            builder.addUndeterminedSpecificMessages(labValue.code() + " sufficiency could not be evaluated")
-            builder.addUndeterminedGeneralMessages(labValue.code() + " undetermined")
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages(labValue.code() + " is sufficient")
-            builder.addPassGeneralMessages(labValue.code() + " sufficient")
+        when (result) {
+            EvaluationResult.FAIL -> {
+                builder.addFailSpecificMessages("${labValue.code()} is insufficient")
+                builder.addFailGeneralMessages("${labValue.code()} insufficient")
+            }
+
+            EvaluationResult.UNDETERMINED -> {
+                builder.addUndeterminedSpecificMessages("${labValue.code()} sufficiency could not be evaluated")
+                builder.addUndeterminedGeneralMessages("${labValue.code()} undetermined")
+            }
+
+            EvaluationResult.PASS -> {
+                builder.addPassSpecificMessages("${labValue.code()} is sufficient")
+                builder.addPassGeneralMessages("${labValue.code()} sufficient")
+            }
+
+            else -> {}
         }
         return builder.build()
     }

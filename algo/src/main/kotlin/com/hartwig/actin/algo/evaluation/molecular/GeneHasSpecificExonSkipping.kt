@@ -27,7 +27,7 @@ class GeneHasSpecificExonSkipping internal constructor(private val gene: String,
                 exonSplicingVariants.add(variant.event())
             }
         }
-        if (!fusionSkippingEvents.isEmpty()) {
+        if (fusionSkippingEvents.isNotEmpty()) {
             return unrecoverable()
                 .result(EvaluationResult.PASS)
                 .addAllInclusionMolecularEvents(fusionSkippingEvents)
@@ -37,7 +37,7 @@ class GeneHasSpecificExonSkipping internal constructor(private val gene: String,
                 .addPassGeneralMessages("Present $gene exon $exonToSkip skipping")
                 .build()
         }
-        return if (!exonSplicingVariants.isEmpty()) {
+        return if (exonSplicingVariants.isNotEmpty()) {
             unrecoverable()
                 .result(EvaluationResult.WARN)
                 .addAllInclusionMolecularEvents(exonSplicingVariants)

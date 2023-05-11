@@ -23,12 +23,12 @@ class HasMetastaticCancer internal constructor(private val doidModel: DoidModel)
             if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
                 EvaluationFactory.undetermined(
                     "Could not be determined if tumor stage $stage is considered metastatic",
-                    "Undetermined " + METASTATIC_CANCER
+                    "Undetermined $METASTATIC_CANCER"
                 )
             } else if (DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, tumorDoids, STAGE_II_POTENTIALLY_METASTATIC_CANCERS)) {
                 EvaluationFactory.warn(
                     "Could not be determined if tumor stage $stage is considered metastatic",
-                    "Undetermined " + METASTATIC_CANCER
+                    "Undetermined $METASTATIC_CANCER"
                 )
             } else {
                 failEvaluation(stage)
@@ -40,8 +40,8 @@ class HasMetastaticCancer internal constructor(private val doidModel: DoidModel)
 
     companion object {
         val STAGE_II_POTENTIALLY_METASTATIC_CANCERS = setOf(DoidConstants.BRAIN_CANCER_DOID, DoidConstants.HEAD_AND_NECK_CANCER_DOID)
-        private val METASTATIC_CANCER: String = "Metastatic cancer"
-        private val NOT_METASTATIC_CANCER: String = "No metastatic cancer"
+        private const val METASTATIC_CANCER: String = "Metastatic cancer"
+        private const val NOT_METASTATIC_CANCER: String = "No metastatic cancer"
 
         private fun isStageMatch(stage: TumorStage, stageToMatch: TumorStage): Boolean {
             return stage == stageToMatch || stage.category() == stageToMatch

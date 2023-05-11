@@ -80,32 +80,32 @@ class GeneIsAmplified internal constructor(private val gene: String) : Evaluatio
         val warnEvents: MutableSet<String> = Sets.newHashSet()
         val warnSpecificMessages: MutableSet<String> = Sets.newHashSet()
         val warnGeneralMessages: MutableSet<String> = Sets.newHashSet()
-        if (!reportablePartialAmps.isEmpty()) {
+        if (reportablePartialAmps.isNotEmpty()) {
             warnEvents.addAll(reportablePartialAmps)
             warnSpecificMessages.add("Gene $gene is partially amplified and not fully amplified")
             warnGeneralMessages.add("$gene partially amplified")
         }
-        if (!ampsWithLossOfFunction.isEmpty()) {
+        if (ampsWithLossOfFunction.isNotEmpty()) {
             warnEvents.addAll(ampsWithLossOfFunction)
             warnSpecificMessages.add("Gene $gene is amplified but event is annotated as having loss-of-function impact")
             warnGeneralMessages.add("$gene amplification with loss-of-function protein impact")
         }
-        if (!ampsOnNonOncogenes.isEmpty()) {
+        if (ampsOnNonOncogenes.isNotEmpty()) {
             warnEvents.addAll(ampsOnNonOncogenes)
             warnSpecificMessages.add("Gene $gene is amplified but gene $gene is known as TSG")
             warnGeneralMessages.add("$gene amplification but $gene known as TSG")
         }
-        if (!ampsThatAreUnreportable.isEmpty()) {
+        if (ampsThatAreUnreportable.isNotEmpty()) {
             warnEvents.addAll(ampsThatAreUnreportable)
             warnSpecificMessages.add("Gene $gene is amplified but not considered reportable")
             warnGeneralMessages.add("$gene amplification considered non-reportable")
         }
-        if (!ampsThatAreNearCutoff.isEmpty()) {
+        if (ampsThatAreNearCutoff.isNotEmpty()) {
             warnEvents.addAll(ampsThatAreNearCutoff)
             warnSpecificMessages.add("Gene $gene does not meet cut-off for amplification, but is near cut-off")
             warnGeneralMessages.add("$gene near cut-off for amplification")
         }
-        return if (!warnEvents.isEmpty() && !warnSpecificMessages.isEmpty() && !warnGeneralMessages.isEmpty()) {
+        return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {
             unrecoverable()
                 .result(EvaluationResult.WARN)
                 .addAllInclusionMolecularEvents(warnEvents)

@@ -51,6 +51,6 @@ class HasCancerOfUnknownPrimary internal constructor(private val doidModel: Doid
     }
 
     companion object {
-        val CUP_PRIMARY_TUMOR_SUB_LOCATION: String = "CUP"
+        const val CUP_PRIMARY_TUMOR_SUB_LOCATION: String = "CUP"
     }
 }

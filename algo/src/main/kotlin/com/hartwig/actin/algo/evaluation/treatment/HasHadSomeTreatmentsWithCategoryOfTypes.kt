@@ -8,9 +8,8 @@ import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory
 
-class HasHadSomeTreatmentsWithCategoryOfTypes internal constructor(
-    private val category: TreatmentCategory, private val types: List<String>,
-    private val minTreatmentLines: Int
+class HasHadSomeTreatmentsWithCategoryOfTypes(
+    private val category: TreatmentCategory, private val types: List<String>, private val minTreatmentLines: Int
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         var numMatchingTreatmentLines = 0
@@ -36,15 +35,13 @@ class HasHadSomeTreatmentsWithCategoryOfTypes internal constructor(
             )
         } else if (numMatchingTreatmentLines + numApproximateTreatmentLines + numOtherTrials >= minTreatmentLines) {
             EvaluationFactory.undetermined(
-                "Can't determine whether patient has received at least $minTreatmentLines lines of "
-                        + concat(types) + " " + category.display(), "Undetermined if received at least $minTreatmentLines lines of "
-                        + concat(types) + " " + category.display()
+                "Can't determine whether patient has received at least $minTreatmentLines lines of " + concat(types) + " " + category.display(),
+                "Undetermined if received at least $minTreatmentLines lines of " + concat(types) + " " + category.display()
             )
         } else {
             EvaluationFactory.fail(
-                "Patient has not received at least $minTreatmentLines lines of " + concat(types) + " "
-                        + category.display(), "Not received at least " + minTreatmentLines + " lines of " + concat(types) + " "
-                        + category.display()
+                "Patient has not received at least $minTreatmentLines lines of " + concat(types) + " " + category.display(),
+                "Not received at least " + minTreatmentLines + " lines of " + concat(types) + " " + category.display()
             )
         }
     }

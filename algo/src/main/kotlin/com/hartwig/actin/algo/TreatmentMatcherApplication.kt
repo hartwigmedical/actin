@@ -25,31 +25,35 @@ import kotlin.system.exitProcess
 class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
+
         LOGGER.info("Loading clinical record from {}", config.clinicalJson)
         val clinical = ClinicalRecordJson.read(config.clinicalJson)
         ClinicalPrinter.printRecord(clinical)
+
         LOGGER.info("Loading molecular record from {}", config.molecularJson)
         val molecular = MolecularRecordJson.read(config.molecularJson)
         MolecularPrinter.printRecord(molecular)
         val patient = PatientRecordFactory.fromInputs(clinical, molecular)
+
         LOGGER.info("Loading trials from {}", config.treatmentDatabaseDirectory)
         val trials = TrialJson.readFromDir(config.treatmentDatabaseDirectory)
         LOGGER.info(" Loaded {} trials", trials.size)
+
         LOGGER.info("Loading DOID tree from {}", config.doidJson)
         val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size)
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
+
         val referenceDateProvider = create(clinical, config.runHistorically)
         LOGGER.info("Matching patient to available trials")
         val matcher: TrialMatcher = TrialMatcher.create(doidModel, referenceDateProvider)
         val trialMatches = matcher.determineEligibility(patient, trials)
-        val match: TreatmentMatch = ImmutableTreatmentMatch.builder()
-            .patientId(patient.patientId())
-            .sampleId(patient.molecular().sampleId())
-            .referenceDate(referenceDateProvider.date())
-            .referenceDateIsLive(referenceDateProvider.isLive)
-            .trialMatches(trialMatches)
-            .build()
+
+        val match: TreatmentMatch =
+            ImmutableTreatmentMatch.builder().patientId(patient.patientId()).sampleId(patient.molecular().sampleId())
+                .referenceDate(referenceDateProvider.date()).referenceDateIsLive(referenceDateProvider.isLive).trialMatches(trialMatches)
+                .build()
+
         TreatmentMatchPrinter.printMatch(match)
         TreatmentMatchJson.write(match, config.outputDirectory)
         LOGGER.info("Done!")

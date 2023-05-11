@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
+import kotlin.math.abs
 
 class HasWHOStatus internal constructor(private val requiredWHO: Int) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -12,7 +13,7 @@ class HasWHOStatus internal constructor(private val requiredWHO: Int) : Evaluati
         val warningComplicationCategories = WHOFunctions.findComplicationCategoriesAffectingWHOStatus(record)
         return when {
             who == null -> {
-                EvaluationFactory.undetermined("WHO status is unknown", "WHO status unknown")
+                EvaluationFactory.recoverableUndetermined("WHO status is unknown", "WHO status unknown")
             }
 
             who == requiredWHO && warningComplicationCategories.isNotEmpty() -> {
@@ -30,8 +31,8 @@ class HasWHOStatus internal constructor(private val requiredWHO: Int) : Evaluati
                 )
             }
 
-            Math.abs(who - requiredWHO) == 1 -> {
-                EvaluationFactory.warn(
+            abs(who - requiredWHO) == 1 -> {
+                EvaluationFactory.recoverableFail(
                     "Patient WHO status $who is close to requested WHO (WHO $requiredWHO)",
                     "WHO status is $who, but should be $requiredWHO"
                 )

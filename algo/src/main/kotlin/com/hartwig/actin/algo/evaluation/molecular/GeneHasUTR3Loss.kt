@@ -33,7 +33,7 @@ class GeneHasUTR3Loss internal constructor(private val gene: String) : Evaluatio
                 disruptionsIn3UTR.add(disruption.event())
             }
         }
-        if (!hotspotsIn3UTR.isEmpty()) {
+        if (hotspotsIn3UTR.isNotEmpty()) {
             return unrecoverable()
                 .result(EvaluationResult.PASS)
                 .addAllInclusionMolecularEvents(hotspotsIn3UTR)
@@ -59,7 +59,7 @@ class GeneHasUTR3Loss internal constructor(private val gene: String) : Evaluatio
         val warnEvents: MutableSet<String> = Sets.newHashSet()
         val warnSpecificMessages: MutableSet<String> = Sets.newHashSet()
         val warnGeneralMessages: MutableSet<String> = Sets.newHashSet()
-        if (!hotspotsIn3UTRUnreportable.isEmpty()) {
+        if (hotspotsIn3UTRUnreportable.isNotEmpty()) {
             warnEvents.addAll(hotspotsIn3UTRUnreportable)
             warnSpecificMessages.add(
                 "Hotspot mutation detected in 3' UTR region of " + gene + " which may lead to 3' UTR loss: "
@@ -67,14 +67,14 @@ class GeneHasUTR3Loss internal constructor(private val gene: String) : Evaluatio
             )
             warnGeneralMessages.add("Potential 3' UTR loss of $gene")
         }
-        if (!vusIn3UTR.isEmpty()) {
+        if (vusIn3UTR.isNotEmpty()) {
             warnEvents.addAll(vusIn3UTR)
             warnSpecificMessages.add(
                 "VUS mutation detected in 3' UTR region of " + gene + " which may lead to 3' UTR loss: " + concat(vusIn3UTR)
             )
             warnGeneralMessages.add("Potential 3' UTR loss of $gene")
         }
-        if (!disruptionsIn3UTR.isEmpty()) {
+        if (disruptionsIn3UTR.isNotEmpty()) {
             warnEvents.addAll(disruptionsIn3UTR)
             warnSpecificMessages.add(
                 "Disruption(s) detected in 3' UTR region of $gene which may lead to 3' UTR loss: " + concat(
@@ -83,7 +83,7 @@ class GeneHasUTR3Loss internal constructor(private val gene: String) : Evaluatio
             )
             warnGeneralMessages.add("Potential 3' UTR loss of $gene")
         }
-        return if (!warnEvents.isEmpty() && !warnSpecificMessages.isEmpty() && !warnGeneralMessages.isEmpty()) {
+        return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {
             unrecoverable()
                 .result(EvaluationResult.WARN)
                 .addAllInclusionMolecularEvents(warnEvents)

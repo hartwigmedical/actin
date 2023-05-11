@@ -26,11 +26,11 @@ internal class RecommendationEngine private constructor(doidModel: DoidModel, ev
         require(DoidConstants.COLORECTAL_CANCER_DOID in expandedTumorDoids) { "No colorectal cancer reported in patient clinical record. SOC recommendation not supported." }
         require((EXCLUDED_TUMOR_DOIDS intersect expandedTumorDoids.toSet()).isEmpty()) { "SOC recommendation only supported for colorectal carcinoma" }
 
-        return treatments.filter { determineTreatmentLineForPatient(patientRecord) in it.lines }
+        return treatments.asSequence().filter { determineTreatmentLineForPatient(patientRecord) in it.lines }
             .map { evaluateTreatmentForPatient(it, patientRecord) }
             .filter { treatmentHasNoFailedEvaluations(it) }
             .filter { it.score >= 0 }
-            .sortedByDescending { it.score }
+            .sortedByDescending { it.score }.toList()
     }
 
     fun provideRecommendations(patientRecord: PatientRecord, treatments: List<Treatment>): EvaluatedTreatmentInterpreter {

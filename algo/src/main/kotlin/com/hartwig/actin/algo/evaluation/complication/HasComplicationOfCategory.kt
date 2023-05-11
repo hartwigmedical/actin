@@ -36,7 +36,7 @@ class HasComplicationOfCategory internal constructor(private val categoryToFind:
 
     companion object {
         private fun undetermined(): Evaluation {
-            return EvaluationFactory.undetermined(
+            return EvaluationFactory.recoverableUndetermined(
                 "Patient has complications but undetermined which category of complications",
                 "Complications present, but unknown type"
             )

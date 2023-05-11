@@ -49,7 +49,7 @@ class GeneHasVariantWithProteinImpact internal constructor(private val gene: Str
                 }
             }
         }
-        if (!canonicalReportableVariantMatches.isEmpty()) {
+        if (canonicalReportableVariantMatches.isNotEmpty()) {
             return unrecoverable()
                 .result(EvaluationResult.PASS)
                 .addAllInclusionMolecularEvents(canonicalReportableVariantMatches)
@@ -83,7 +83,7 @@ class GeneHasVariantWithProteinImpact internal constructor(private val gene: Str
         val warnEvents: MutableSet<String> = Sets.newHashSet()
         val warnSpecificMessages: MutableSet<String> = Sets.newHashSet()
         val warnGeneralMessages: MutableSet<String> = Sets.newHashSet()
-        if (!canonicalReportableSubclonalVariantMatches.isEmpty()) {
+        if (canonicalReportableSubclonalVariantMatches.isNotEmpty()) {
             warnEvents.addAll(canonicalReportableSubclonalVariantMatches)
             warnSpecificMessages.add(
                 "Variant(s) " + concat(canonicalReportableSubclonalVariantMatches) + " in " + gene
@@ -94,7 +94,7 @@ class GeneHasVariantWithProteinImpact internal constructor(private val gene: Str
                         + " but subclonal likelihood of > " + percentage(1 - CLONAL_CUTOFF)
             )
         }
-        if (!canonicalUnreportableVariantMatches.isEmpty()) {
+        if (canonicalUnreportableVariantMatches.isNotEmpty()) {
             warnEvents.addAll(canonicalUnreportableVariantMatches)
             warnSpecificMessages.add(
                 "Variant(s) " + concat(canonicalProteinImpactMatches) + " in " + gene
@@ -102,7 +102,7 @@ class GeneHasVariantWithProteinImpact internal constructor(private val gene: Str
             )
             warnGeneralMessages.add(concat(canonicalProteinImpactMatches) + " found in " + gene)
         }
-        if (!reportableOtherVariantMatches.isEmpty()) {
+        if (reportableOtherVariantMatches.isNotEmpty()) {
             warnEvents.addAll(reportableOtherVariantMatches)
             warnSpecificMessages.add(
                 "Variant(s) " + concat(reportableOtherProteinImpactMatches) + " in " + gene
@@ -112,7 +112,7 @@ class GeneHasVariantWithProteinImpact internal constructor(private val gene: Str
                 concat(reportableOtherProteinImpactMatches) + " found in non-canonical transcript of gene " + gene
             )
         }
-        return if (!warnEvents.isEmpty() && !warnSpecificMessages.isEmpty() && !warnGeneralMessages.isEmpty()) {
+        return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {
             unrecoverable()
                 .result(EvaluationResult.WARN)
                 .addAllInclusionMolecularEvents(warnEvents)
