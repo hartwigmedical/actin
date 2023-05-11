@@ -35,4 +35,10 @@ public abstract class TherapyHistoryEntry implements TreatmentHistoryEntry {
 
     @Nullable
     public abstract Set<Toxicity> toxicities();
+
+    @Nullable
+    public abstract Set<LocationCategory> locationCategories();
+
+    @Nullable
+    public abstract Set<String> locations();
 }

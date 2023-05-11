@@ -10,9 +10,6 @@ public interface Treatment {
     String name();
 
     @NotNull
-    Set<TreatmentType> types();
-
-    @NotNull
     Set<TreatmentCategory> categories();
 
     @NotNull

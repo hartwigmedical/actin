@@ -20,4 +20,10 @@ public interface TreatmentHistoryEntry {
 
     @Nullable
     Intent intent();
+
+    @Nullable
+    Boolean isTrial();
+
+    @Nullable
+    String trialAcronym();
 }

@@ -15,4 +15,10 @@ public abstract class Radiotherapy implements Therapy {
     public Set<Drug> drugs() {
         return Collections.emptySet();
     }
+
+    @Nullable
+    public abstract String radioType();
+
+    @Nullable
+    public abstract Boolean isInternal();
 }
