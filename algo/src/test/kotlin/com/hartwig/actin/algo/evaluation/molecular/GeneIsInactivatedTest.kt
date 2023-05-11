@@ -27,7 +27,7 @@ class GeneIsInactivatedTest {
             ).build()
 
     @Test
-    fun shouldFailWithNoMatchingGeneAlterations() {
+    fun shouldFailWithoutAnyAlterations() {
         assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
     }
 
@@ -39,7 +39,7 @@ class GeneIsInactivatedTest {
     }
 
     @Test
-    fun shouldWarnWithMatchingUnreportableTSGHomozygousDisruption() {
+    fun shouldWarnWhenTSGHomozygousDisruptionIsNotReportable() {
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
                 MolecularTestFactory.withHomozygousDisruption(
@@ -50,7 +50,7 @@ class GeneIsInactivatedTest {
     }
 
     @Test
-    fun shouldWarnWithMatchingOncoHomozygousDisruption() {
+    fun shouldWarnWhenHomozygouslyDisruptedGeneIsAnOncogene() {
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
                 MolecularTestFactory.withHomozygousDisruption(
@@ -61,7 +61,7 @@ class GeneIsInactivatedTest {
     }
 
     @Test
-    fun shouldWarnWithMatchingTSGHomozygousDisruptionWithGainOfFunctionEffect() {
+    fun shouldWarnWhenTSGHomozygousDisruptionImpliesGainOfFunction() {
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
                 MolecularTestFactory.withHomozygousDisruption(
@@ -77,7 +77,7 @@ class GeneIsInactivatedTest {
     }
 
     @Test
-    fun shouldWarnWithMatchingUnreportableTSGLoss() {
+    fun shouldWarnWhenTSGLossIsNotReportable() {
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
                 MolecularTestFactory.withCopyNumber(ImmutableCopyNumber.copyOf(matchingLoss).withIsReportable(false))
@@ -86,7 +86,7 @@ class GeneIsInactivatedTest {
     }
 
     @Test
-    fun shouldWarnWithMatchingOncoLoss() {
+    fun shouldWarnWhenLostGeneIsAnOncogene() {
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
                 MolecularTestFactory.withCopyNumber(ImmutableCopyNumber.copyOf(matchingLoss).withGeneRole(GeneRole.ONCO))
@@ -95,7 +95,7 @@ class GeneIsInactivatedTest {
     }
 
     @Test
-    fun shouldWarnWithMatchingTSGLossWithGainOfFunctionEffect() {
+    fun shouldWarnWhenLostGeneImpliesGainOfFunction() {
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
                 MolecularTestFactory.withCopyNumber(
@@ -111,41 +111,41 @@ class GeneIsInactivatedTest {
     }
 
     @Test
-    fun shouldWarnWithMatchingUnreportableTSGVariant() {
+    fun shouldWarnWhenTSGVariantIsNotReportable() {
         assertResultForVariant(EvaluationResult.WARN, ImmutableVariant.copyOf(matchingVariant).withIsReportable(false))
     }
 
     @Test
-    fun shouldWarnWithMatchingOncoVariant() {
+    fun shouldWarnWhenVariantAffectsOncogene() {
         assertResultForVariant(EvaluationResult.WARN, ImmutableVariant.copyOf(matchingVariant).withGeneRole(GeneRole.ONCO))
     }
 
     @Test
-    fun shouldWarnWithMatchingTSGVariantWithGainOfFunctionEffect() {
+    fun shouldWarnWhenTSGVariantImpliesGainOfFunction() {
         assertResultForVariant(
             EvaluationResult.WARN, ImmutableVariant.copyOf(matchingVariant).withProteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
         )
     }
 
     @Test
-    fun shouldWarnWithMatchingTSGVariantWithMediumDriverLikelihood() {
+    fun shouldWarnWhenTSGVariantHasNoHighDriverLikelihood() {
         assertResultForVariant(
             EvaluationResult.WARN, ImmutableVariant.copyOf(matchingVariant).withDriverLikelihood(DriverLikelihood.MEDIUM)
         )
     }
 
     @Test
-    fun shouldWarnWithNonBiallelicMatchingTSGVariant() {
+    fun shouldWarnWhenTSGVariantIsNotBiallelic() {
         assertResultForVariant(EvaluationResult.WARN, ImmutableVariant.copyOf(matchingVariant).withIsBiallelic(false))
     }
 
     @Test
-    fun shouldWarnWithMatchingTSGVariantWithLowerClonalLikelihood() {
+    fun shouldWarnWhenTSGVariantIsSubclonal() {
         assertResultForVariant(EvaluationResult.WARN, ImmutableVariant.copyOf(matchingVariant).withClonalLikelihood(0.4))
     }
 
     @Test
-    fun shouldFailWithMatchingTSGVariantWithNoCodingEffect() {
+    fun shouldFailWhenTSGVariantHasNoCodingImpact() {
         assertResultForVariant(
             EvaluationResult.FAIL, ImmutableVariant.copyOf(matchingVariant).withCanonicalImpact(
                 TestTranscriptImpactFactory.builder().codingEffect(CodingEffect.NONE).build()
@@ -154,19 +154,19 @@ class GeneIsInactivatedTest {
     }
 
     @Test
-    fun shouldPassWithMatchingTSGVariantAndHighTMLAndHighDriverLikelihood() {
+    fun shouldPassWhenTSGVariantInHighTMLSample() {
         assertResultForMutationalLoadAndVariant(EvaluationResult.PASS, true, TestVariantFactory.builder().from(matchingVariant).build())
     }
 
     @Test
-    fun shouldFailWithMatchingTSGVariantAndHighTMLAndLowDriverLikelihood() {
+    fun shouldFailWhenTSGVariantHasNoHighDriverLikelihoodInHighTMLSample() {
         assertResultForMutationalLoadAndVariant(
             EvaluationResult.FAIL, true, ImmutableVariant.copyOf(matchingVariant).withDriverLikelihood(DriverLikelihood.LOW)
         )
     }
 
     @Test
-    fun shouldWarnWithNonBiallelicMatchingTSGVariantAndLowTMLAndLowDriverLikelihood() {
+    fun shouldWarnWhenTSGVariantIsNonBiallelicAndNonHighDriverInLowTMLSample() {
         assertResultForMutationalLoadAndVariant(
             EvaluationResult.WARN,
             false,
@@ -176,22 +176,14 @@ class GeneIsInactivatedTest {
     }
 
     @Test
-    fun shouldWarnWithBiallelicMatchingTSGVariantAndLowTMLAndLowDriverLikelihood() {
+    fun shouldWarnWhenTSGVariantIsNonHighDriverButBiallelicInLowTMLSample() {
         assertResultForMutationalLoadAndVariant(
             EvaluationResult.WARN, false, TestVariantFactory.builder().from(matchingVariant).driverLikelihood(DriverLikelihood.LOW).build()
         )
     }
 
     @Test
-    fun shouldFailWithSingleMatchingVariantWithInactivatingEffect() {
-        assertMolecularEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariants(true, variantWithPhaseGroups(setOf(1))))
-        )
-    }
-
-    @Test
-    fun shouldFailWithMultipleMatchingVariantsWithOverlappingPhaseGroupsAndInactivatingEffects() {
+    fun shouldFailWithMultipleLowDriverVariantsWithOverlappingPhaseGroupsAndInactivatingEffects() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 MolecularTestFactory.withHasTumorMutationalLoadAndVariants(
@@ -202,7 +194,7 @@ class GeneIsInactivatedTest {
     }
 
     @Test
-    fun shouldWarnWithMultipleMatchingVariantsWithNonOverlappingPhaseGroupsAndInactivatingEffects() {
+    fun shouldWarnWithMultipleLowDriverVariantsWithNonOverlappingPhaseGroupsAndInactivatingEffects() {
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
                 MolecularTestFactory.withHasTumorMutationalLoadAndVariants(
@@ -213,7 +205,7 @@ class GeneIsInactivatedTest {
     }
 
     @Test
-    fun shouldWarnWithMultipleMatchingVariantsWithUnknownPhaseGroupsAndInactivatingEffects() {
+    fun shouldWarnWithMultipleLowDriverVariantsWithUnknownPhaseGroupsAndInactivatingEffects() {
         val variant1 = variantWithPhaseGroups(null)
         // Add copy number to make distinct:
         val variant2 = ImmutableVariant.copyOf(variant1).withVariantCopyNumber(1.0)
@@ -226,8 +218,9 @@ class GeneIsInactivatedTest {
     }
 
     @Test
-    fun shouldWarnWithMatchingVariantWithInactivatingEffectAndMatchingDisruption() {
-        val disruption: Disruption = TestDisruptionFactory.builder().gene(GENE).isReportable(true).clusterGroup(1).build()
+    fun shouldWarnWithLowDriverVariantWithInactivatingEffectAndLowDriverDisruption() {
+        val disruption: Disruption =
+            TestDisruptionFactory.builder().gene(GENE).isReportable(true).clusterGroup(1).driverLikelihood(DriverLikelihood.LOW).build()
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
                 MolecularTestFactory.withHasTumorMutationalLoadAndVariantAndDisruption(
@@ -251,5 +244,6 @@ class GeneIsInactivatedTest {
 
     private fun variantWithPhaseGroups(phaseGroups: Set<Int>?): Variant = TestVariantFactory.builder().gene(GENE).isReportable(true)
         .canonicalImpact(TestTranscriptImpactFactory.builder().codingEffect(CodingEffect.NONSENSE_OR_FRAMESHIFT).build())
+        .driverLikelihood(DriverLikelihood.LOW)
         .phaseGroups(phaseGroups).build()
 }
