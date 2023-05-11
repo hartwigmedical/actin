@@ -38,7 +38,7 @@ class GeneHasVariantInExonRangeOfType internal constructor(
                 }
             }
         }
-        if (!canonicalReportableVariantMatches.isEmpty()) {
+        if (canonicalReportableVariantMatches.isNotEmpty()) {
             return unrecoverable()
                 .result(EvaluationResult.PASS)
                 .addAllInclusionMolecularEvents(canonicalReportableVariantMatches)
@@ -65,7 +65,7 @@ class GeneHasVariantInExonRangeOfType internal constructor(
         val warnEvents: MutableSet<String> = Sets.newHashSet()
         val warnSpecificMessages: MutableSet<String> = Sets.newHashSet()
         val warnGeneralMessages: MutableSet<String> = Sets.newHashSet()
-        if (!canonicalUnreportableVariantMatches.isEmpty()) {
+        if (canonicalUnreportableVariantMatches.isNotEmpty()) {
             warnEvents.addAll(canonicalUnreportableVariantMatches)
             warnSpecificMessages.add(
                 "Variant(s) in exon range " + minExon + " - " + maxExon + " in gene " + gene
@@ -73,7 +73,7 @@ class GeneHasVariantInExonRangeOfType internal constructor(
             )
             warnGeneralMessages.add("Adequate variant(s) found in $gene")
         }
-        if (!reportableOtherVariantMatches.isEmpty()) {
+        if (reportableOtherVariantMatches.isNotEmpty()) {
             warnEvents.addAll(reportableOtherVariantMatches)
             warnSpecificMessages.add(
                 "Variant(s) in exon range " + minExon + " - " + maxExon + " in gene " + gene
@@ -81,7 +81,7 @@ class GeneHasVariantInExonRangeOfType internal constructor(
             )
             warnGeneralMessages.add("Adequate variant(s) found in non-canonical transcript of gene $gene")
         }
-        return if (!warnEvents.isEmpty() && !warnSpecificMessages.isEmpty() && !warnGeneralMessages.isEmpty()) {
+        return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {
             unrecoverable()
                 .result(EvaluationResult.WARN)
                 .addAllInclusionMolecularEvents(warnEvents)

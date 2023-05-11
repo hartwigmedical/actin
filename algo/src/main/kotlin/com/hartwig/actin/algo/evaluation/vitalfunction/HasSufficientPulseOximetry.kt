@@ -29,7 +29,7 @@ class HasSufficientPulseOximetry internal constructor(private val minMedianPulse
                 "Pulse oximetry above $minMedianPulseOximetry"
             )
         } else if (pulseOximetries.any { it.value().compareTo(minMedianPulseOximetry) >= 0 }) {
-            return EvaluationFactory.undetermined(
+            return EvaluationFactory.recoverableUndetermined(
                 "Patient has median pulse oximetry below $minMedianPulseOximetry but also at least one "
                         + "measure above $minMedianPulseOximetry", "Pulse oximetry requirements"
             )

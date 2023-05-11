@@ -48,8 +48,12 @@
 
         <immutables.version>2.9.2</immutables.version>
 
+        <kotlin.version>1.8.21</kotlin.version>
+        <kotlin.code.style>official</kotlin.code.style>
+
         <junit.version>4.13.2</junit.version>
         <assertj-core.version>3.24.2</assertj-core.version>
+        <mockk-jvm.version>1.13.5</mockk-jvm.version>
     </properties>
 
     <build>
@@ -139,11 +143,6 @@
             </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
-                <artifactId>soc</artifactId>
-                <version>${actin.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hartwig.actin</groupId>
                 <artifactId>report</artifactId>
                 <version>${actin.version}</version>
             </dependency>
@@ -216,6 +215,11 @@
                 <version>${immutables.version}</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>junit</groupId>
@@ -227,6 +231,12 @@
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
                 <version>${assertj-core.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.mockk</groupId>
+                <artifactId>mockk-jvm</artifactId>
+                <version>${mockk-jvm.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

@@ -41,7 +41,7 @@ class HasBreastCancerHormonePositiveHER2Negative internal constructor(private va
                 }
             }
 
-            (isProgesteronePositive || isEstrogenPositive) && !isHer2Negative && !isHer2Positive -> {
+            (isProgesteronePositive || isEstrogenPositive) && !isHer2Positive -> {
                 EvaluationFactory.warn(
                     "Patient has hormone-positive breast cancer but with unclear HER2 status",
                     "Unclear HER2 status"

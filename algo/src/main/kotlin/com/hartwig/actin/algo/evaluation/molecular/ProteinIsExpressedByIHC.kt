@@ -30,7 +30,7 @@ class ProteinIsExpressedByIHC internal constructor(private val protein: String) 
                     .build()
             }
         }
-        return if (!ihcTests.isEmpty()) {
+        return if (ihcTests.isNotEmpty()) {
             unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No expression of protein $protein detected by prior IHC test(s)")

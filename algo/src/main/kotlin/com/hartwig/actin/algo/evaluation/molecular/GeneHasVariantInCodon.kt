@@ -43,7 +43,7 @@ class GeneHasVariantInCodon internal constructor(private val gene: String, priva
                 }
             }
         }
-        if (!canonicalReportableVariantMatches.isEmpty()) {
+        if (canonicalReportableVariantMatches.isNotEmpty()) {
             return unrecoverable()
                 .result(EvaluationResult.PASS)
                 .addAllInclusionMolecularEvents(canonicalReportableVariantMatches)
@@ -77,7 +77,7 @@ class GeneHasVariantInCodon internal constructor(private val gene: String, priva
         val warnEvents: MutableSet<String> = Sets.newHashSet()
         val warnSpecificMessages: MutableSet<String> = Sets.newHashSet()
         val warnGeneralMessages: MutableSet<String> = Sets.newHashSet()
-        if (!canonicalReportableSubclonalVariantMatches.isEmpty()) {
+        if (canonicalReportableSubclonalVariantMatches.isNotEmpty()) {
             warnEvents.addAll(canonicalReportableSubclonalVariantMatches)
             warnSpecificMessages.add(
                 "Variant(s) in codon(s) " + concat(canonicalReportableSubclonalVariantMatches) + " in " + gene
@@ -88,7 +88,7 @@ class GeneHasVariantInCodon internal constructor(private val gene: String, priva
                         + " but subclonal likelihood of > " + percentage(1 - CLONAL_CUTOFF)
             )
         }
-        if (!canonicalUnreportableVariantMatches.isEmpty()) {
+        if (canonicalUnreportableVariantMatches.isNotEmpty()) {
             warnEvents.addAll(canonicalUnreportableVariantMatches)
             warnSpecificMessages.add(
                 "Variant(s) in codon(s) " + concat(canonicalCodonMatches) + " in " + gene
@@ -98,7 +98,7 @@ class GeneHasVariantInCodon internal constructor(private val gene: String, priva
                 "Variant(s) in codon(s) " + concat(canonicalCodonMatches) + " found in canonical transcript of gene " + gene
             )
         }
-        if (!reportableOtherVariantMatches.isEmpty()) {
+        if (reportableOtherVariantMatches.isNotEmpty()) {
             warnEvents.addAll(reportableOtherVariantMatches)
             warnSpecificMessages.add(
                 "Variant(s) in codon(s) " + concat(reportableOtherCodonMatches) + " in " + gene
@@ -109,7 +109,7 @@ class GeneHasVariantInCodon internal constructor(private val gene: String, priva
                         + gene
             )
         }
-        return if (!warnEvents.isEmpty() && !warnSpecificMessages.isEmpty() && !warnGeneralMessages.isEmpty()) {
+        return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {
             unrecoverable()
                 .result(EvaluationResult.WARN)
                 .addAllInclusionMolecularEvents(warnEvents)

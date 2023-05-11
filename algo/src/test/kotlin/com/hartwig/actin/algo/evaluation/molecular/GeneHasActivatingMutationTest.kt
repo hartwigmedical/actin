@@ -136,7 +136,7 @@ class GeneHasActivatingMutationTest {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withHasTumorMutationalLoadAndVariant(
+                MolecularTestFactory.withHasTumorMutationalLoadAndVariants(
                     true,
                     TestVariantFactory.builder().from(activatingVariant).build()
                 )
@@ -147,7 +147,7 @@ class GeneHasActivatingMutationTest {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withHasTumorMutationalLoadAndVariant(
+                MolecularTestFactory.withHasTumorMutationalLoadAndVariants(
                     true,
                     TestVariantFactory.builder()
                         .from(activatingVariant)
@@ -162,7 +162,7 @@ class GeneHasActivatingMutationTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withHasTumorMutationalLoadAndVariant(
+                MolecularTestFactory.withHasTumorMutationalLoadAndVariants(
                     false,
                     TestVariantFactory.builder()
                         .from(activatingVariant)

@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.general
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
-import org.junit.Assert
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class HasWHOStatusTest {
@@ -20,9 +20,14 @@ class HasWHOStatusTest {
     }
 
     @Test
-    fun shouldWarnWhenWHODifferenceIsExactlyOne() {
-        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, function.evaluate(GeneralTestFactory.withWHO(1)))
-        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, function.evaluate(GeneralTestFactory.withWHO(3)))
+    fun shouldReturnRecoverableFailWhenWHODifferenceIsExactlyOne() {
+        val evaluationFor1 = function.evaluate(GeneralTestFactory.withWHO(1))
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, evaluationFor1)
+        assertTrue(evaluationFor1.recoverable())
+
+        val evaluationFor3 = function.evaluate(GeneralTestFactory.withWHO(3))
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, evaluationFor3)
+        assertTrue(evaluationFor3.recoverable())
     }
 
     @Test
@@ -34,7 +39,7 @@ class HasWHOStatusTest {
     fun shouldWarnWhenWHOIsExactMatchAndPatientHasComplicationCategoriesOfConcern() {
         val evaluation = function.evaluate(GeneralTestFactory.withWHOAndComplications(2, listOf("Pleural Effusions")))
         EvaluationAssert.assertEvaluation(EvaluationResult.WARN, evaluation)
-        Assert.assertTrue(
+        assertTrue(
             evaluation.warnSpecificMessages()
                 .contains("Patient WHO status 2 matches requested but patient has complication categories of concern: Pleural Effusions")
         )

@@ -15,7 +15,7 @@ class ProteinHasExactExpressionByIHC(private val protein: String, private val ex
             if (scoreValue != null) {
                 val scoreValuePrefix = ihcTest.scoreValuePrefix()
                 // We assume IHC prior molecular tests always have integer score values.
-                if (expressionLevel.toLong() == Math.round(scoreValue) && (scoreValuePrefix == null || scoreValuePrefix.isEmpty())) {
+                if (expressionLevel.toLong() == Math.round(scoreValue) && scoreValuePrefix.isNullOrEmpty()) {
                     return unrecoverable()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages("Protein $protein has exact expression level $expressionLevel (by IHC)")

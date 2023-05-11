@@ -13,11 +13,6 @@
     <version>${actin.version}</version>
     <name>HMF ACTIN - Algo</name>
 
-    <properties>
-        <kotlin.version>1.8.21</kotlin.version>
-        <kotlin.code.style>official</kotlin.code.style>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.hartwig.actin</groupId>
@@ -28,6 +23,10 @@
             <groupId>org.immutables</groupId>
             <artifactId>value</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
         </dependency>
 
         <dependency>
@@ -41,20 +40,15 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>io.mockk</groupId>
+            <artifactId>mockk-jvm</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.hartwig.actin</groupId>
             <artifactId>common</artifactId>
             <scope>test</scope>
             <type>test-jar</type>
-        </dependency>
-        <dependency>
-            <groupId>io.mockk</groupId>
-            <artifactId>mockk-jvm</artifactId>
-            <version>1.13.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib-jdk8</artifactId>
-            <version>${kotlin.version}</version>
         </dependency>
     </dependencies>
 

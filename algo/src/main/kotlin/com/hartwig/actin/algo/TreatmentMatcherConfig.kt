@@ -6,6 +6,7 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.config.Configurator
 
 data class TreatmentMatcherConfig(
@@ -54,13 +55,13 @@ data class TreatmentMatcherConfig(
             )
         }
 
-        val LOGGER = LogManager.getLogger(TreatmentMatcherConfig::class.java)
-        const val CLINICAL_JSON = "clinical_json"
-        const val MOLECULAR_JSON = "molecular_json"
-        const val TREATMENT_DATABASE_DIRECTORY = "treatment_database_directory"
-        const val DOID_JSON = "doid_json"
-        const val OUTPUT_DIRECTORY = "output_directory"
-        const val RUN_HISTORICALLY = "run_historically"
-        const val LOG_DEBUG = "log_debug"
+        val LOGGER: Logger = LogManager.getLogger(TreatmentMatcherConfig::class.java)
+        private const val CLINICAL_JSON = "clinical_json"
+        private const val MOLECULAR_JSON = "molecular_json"
+        private const val TREATMENT_DATABASE_DIRECTORY = "treatment_database_directory"
+        private const val DOID_JSON = "doid_json"
+        private const val OUTPUT_DIRECTORY = "output_directory"
+        private const val RUN_HISTORICALLY = "run_historically"
+        private const val LOG_DEBUG = "log_debug"
     }
 }

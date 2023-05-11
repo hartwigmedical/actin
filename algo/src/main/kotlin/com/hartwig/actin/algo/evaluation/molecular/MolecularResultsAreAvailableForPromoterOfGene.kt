@@ -2,9 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverable
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.unrecoverable
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import java.util.*
 
@@ -23,25 +21,14 @@ class MolecularResultsAreAvailableForPromoterOfGene internal constructor(private
             }
         }
         if (hasValidPriorTest) {
-            return unrecoverable()
-                .result(EvaluationResult.PASS)
-                .addPassSpecificMessages("$gene promoter has been tested in a prior molecular test")
-                .addPassGeneralMessages("Molecular requirements")
-                .build()
+            return EvaluationFactory.pass("$gene promoter has been tested in a prior molecular test", "Molecular requirements")
         } else if (hasIndeterminatePriorTest) {
-            return unrecoverable()
-                .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages(
-                    "$gene promoter has been tested in a prior molecular test but with indeterminate status"
-                )
-                .addUndeterminedGeneralMessages("Molecular requirements")
-                .build()
+            return EvaluationFactory.undetermined(
+                "$gene promoter has been tested in a prior molecular test but with indeterminate status",
+                "Molecular requirements"
+            )
         }
-        return recoverable()
-            .result(EvaluationResult.FAIL)
-            .addFailSpecificMessages("$gene has not been tested")
-            .addFailGeneralMessages("Molecular requirements")
-            .build()
+        return EvaluationFactory.recoverableFail("$gene has not been tested", "Molecular requirements")
     }
 
     companion object {

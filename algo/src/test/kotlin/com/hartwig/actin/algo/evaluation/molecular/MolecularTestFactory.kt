@@ -48,13 +48,9 @@ internal object MolecularTestFactory {
         return withMolecularDrivers(ImmutableMolecularDrivers.builder().addVariants(variant).build())
     }
 
-    fun withVariants(vararg variants: Variant): PatientRecord {
-        return withMolecularDrivers(ImmutableMolecularDrivers.builder().addAllVariants(listOf(*variants)).build())
-    }
-
-    fun withHasTumorMutationalLoadAndVariant(
+    fun withHasTumorMutationalLoadAndVariants(
         hasHighTumorMutationalLoad: Boolean?,
-        variant: Variant
+        vararg variants: Variant
     ): PatientRecord {
         val base = TestMolecularFactory.createMinimalTestMolecularRecord()
         return withMolecularRecord(
@@ -66,13 +62,29 @@ internal object MolecularTestFactory {
                         .hasHighTumorMutationalLoad(hasHighTumorMutationalLoad)
                         .build()
                 )
-                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addVariants(variant).build())
+                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addVariants(*variants).build())
                 .build()
         )
     }
 
-    fun withVariantAndDisruption(variant: Variant, disruption: Disruption): PatientRecord {
-        return withMolecularDrivers(ImmutableMolecularDrivers.builder().addVariants(variant).addDisruptions(disruption).build())
+    fun withHasTumorMutationalLoadAndVariantAndDisruption(
+        hasHighTumorMutationalLoad: Boolean?,
+        variant: Variant,
+        disruption: Disruption
+    ): PatientRecord {
+        val base = TestMolecularFactory.createMinimalTestMolecularRecord()
+        return withMolecularRecord(
+            ImmutableMolecularRecord.builder()
+                .from(base)
+                .characteristics(
+                    ImmutableMolecularCharacteristics.builder()
+                        .from(base.characteristics())
+                        .hasHighTumorMutationalLoad(hasHighTumorMutationalLoad)
+                        .build()
+                )
+                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addVariants(variant).addDisruptions(disruption).build())
+                .build()
+        )
     }
 
     fun withCopyNumber(copyNumber: CopyNumber): PatientRecord {

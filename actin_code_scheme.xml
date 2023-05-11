@@ -29,6 +29,7 @@
             <option name="ITERATION_ELEMENTS_WRAPPING" value="chop_down_if_not_single"/>
         </formatting-settings>
     </DBN-SQL>
+    <JavaCodeStyleSettings>
         <option name="GENERATE_FINAL_LOCALS" value="false" />
         <option name="GENERATE_FINAL_PARAMETERS" value="false" />
         <option name="ANNOTATION_PARAMETER_WRAP" value="2" />

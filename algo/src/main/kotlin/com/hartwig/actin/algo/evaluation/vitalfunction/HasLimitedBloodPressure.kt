@@ -29,7 +29,7 @@ class HasLimitedBloodPressure internal constructor(
                 "$categoryDisplay below limit"
             )
         } else if (relevant.any { it.value().compareTo(maxMedianBloodPressure) <= 0 }) {
-            EvaluationFactory.undetermined(
+            EvaluationFactory.recoverableUndetermined(
                 "Patient has median $categoryDisplay blood pressure above $maxMedianBloodPressure "
                         + "but also at least one measure below $maxMedianBloodPressure", "$categoryDisplay requirements"
             )

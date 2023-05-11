@@ -20,15 +20,23 @@ class HasSolidPrimaryTumor internal constructor(private val doidModel: DoidModel
             doidModel, tumorDoids, DoidConstants.CANCER_DOID, NON_SOLID_CANCER_DOIDS, WARN_SOLID_CANCER_DOIDS
         )
         val builder = unrecoverable().result(result)
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Patient has non-solid primary tumor")
-            builder.addFailGeneralMessages("Tumor type")
-        } else if (result == EvaluationResult.WARN) {
-            builder.addWarnSpecificMessages("Unclear if tumor type of patient should be considered solid or non-solid")
-            builder.addWarnGeneralMessages("Unclear if primary tumor is considered solid")
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Patient has solid primary tumor")
-            builder.addPassGeneralMessages("Tumor type")
+        when (result) {
+            EvaluationResult.FAIL -> {
+                builder.addFailSpecificMessages("Patient has non-solid primary tumor")
+                builder.addFailGeneralMessages("Tumor type")
+            }
+
+            EvaluationResult.WARN -> {
+                builder.addWarnSpecificMessages("Unclear if tumor type of patient should be considered solid or non-solid")
+                builder.addWarnGeneralMessages("Unclear if primary tumor is considered solid")
+            }
+
+            EvaluationResult.PASS -> {
+                builder.addPassSpecificMessages("Patient has solid primary tumor")
+                builder.addPassGeneralMessages("Tumor type")
+            }
+
+            else -> {}
         }
         return builder.build()
     }

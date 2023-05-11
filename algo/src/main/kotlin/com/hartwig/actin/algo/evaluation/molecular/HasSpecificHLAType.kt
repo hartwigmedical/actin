@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverable
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.unrecoverable
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
@@ -11,11 +11,7 @@ class HasSpecificHLAType internal constructor(private val hlaAlleleToFind: Strin
     override fun evaluate(record: PatientRecord): Evaluation {
         val immunology = record.molecular().immunology()
         if (!immunology.isReliable) {
-            return recoverable()
-                .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("HLA typing has not been performed reliably")
-                .addUndeterminedGeneralMessages("HLA typing")
-                .build()
+            return EvaluationFactory.recoverableUndetermined("HLA typing has not been performed reliably", "HLA typing")
         }
         var hasAlleleUnmodifiedInTumor = false
         var hasAlleleModifiedInTumor = false
@@ -51,10 +47,6 @@ class HasSpecificHLAType internal constructor(private val hlaAlleleToFind: Strin
                 .addWarnGeneralMessages("HLA type")
                 .build()
         }
-        return unrecoverable()
-            .result(EvaluationResult.FAIL)
-            .addFailSpecificMessages("Patient does not have HLA type '$hlaAlleleToFind'")
-            .addFailGeneralMessages("HLA typing")
-            .build()
+        return EvaluationFactory.fail("Patient does not have HLA type '$hlaAlleleToFind'", "HLA typing")
     }
 }

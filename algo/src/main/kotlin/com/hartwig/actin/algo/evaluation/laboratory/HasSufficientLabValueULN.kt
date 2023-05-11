@@ -10,15 +10,23 @@ class HasSufficientLabValueULN internal constructor(private val minULNFactor: Do
     override fun evaluate(record: PatientRecord, labValue: LabValue): Evaluation {
         val result = LabEvaluation.evaluateVersusMinULN(labValue, minULNFactor)
         val builder = recoverable().result(result)
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages(labValue.code() + " is insufficient versus maximum ULN")
-            builder.addFailGeneralMessages(labValue.code() + " insufficient")
-        } else if (result == EvaluationResult.UNDETERMINED) {
-            builder.addUndeterminedSpecificMessages(labValue.code() + " could not be evaluated versus maximum ULN")
-            builder.addUndeterminedGeneralMessages(labValue.code() + " undetermined")
-        } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages(labValue.code() + " sufficient (exceeds maximum ULN)")
-            builder.addPassGeneralMessages(labValue.code() + " sufficient")
+        when (result) {
+            EvaluationResult.FAIL -> {
+                builder.addFailSpecificMessages("${labValue.code()} is insufficient versus maximum ULN")
+                builder.addFailGeneralMessages("${labValue.code()} insufficient")
+            }
+
+            EvaluationResult.UNDETERMINED -> {
+                builder.addUndeterminedSpecificMessages("${labValue.code()} could not be evaluated versus maximum ULN")
+                builder.addUndeterminedGeneralMessages("${labValue.code()} undetermined")
+            }
+
+            EvaluationResult.PASS -> {
+                builder.addPassSpecificMessages("${labValue.code()} sufficient (exceeds maximum ULN)")
+                builder.addPassGeneralMessages("${labValue.code()} sufficient")
+            }
+
+            else -> {}
         }
         return builder.build()
     }
