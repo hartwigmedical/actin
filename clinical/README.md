@@ -73,7 +73,6 @@ N prior tumor treatments
 | Field          | Example Value     | Details                                           |
 |----------------|-------------------|---------------------------------------------------|
 | name           | Ipilimumab        | Treatment name                                    |
-| cycles         | 6                 | Nr of cycles received                             |
 | startYear      | 2021              | Year in which treatment was started               |
 | startMonth     | 11                | Month in which treatment was started              |
 | stopYear       | 2021              | Year in which treatment was stopped               |
