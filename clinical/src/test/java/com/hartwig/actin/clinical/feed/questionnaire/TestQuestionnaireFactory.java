@@ -36,7 +36,7 @@ public final class TestQuestionnaireFactory {
                 + "\n"
                 + "Tumor details\n"
                 + "Primary tumor location: ovary\n"
-                + "Primary tumor type serous:\n"
+                + "Primary tumor type: serous\n"
                 + "Biopsy location: lymph node\n"
                 + "Stage: 4\n"
                 + "CNS lesions:\n"
