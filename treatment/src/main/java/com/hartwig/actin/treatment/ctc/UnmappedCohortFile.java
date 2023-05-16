@@ -6,8 +6,8 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import com.google.common.collect.Sets;
 import com.hartwig.actin.util.ResourceFile;
 import com.hartwig.actin.util.TabularFile;
 
@@ -21,12 +21,11 @@ public final class UnmappedCohortFile {
     public static Set<Integer> read(@NotNull String tsv) throws IOException {
         List<String> lines = Files.readAllLines(new File(tsv).toPath());
 
-        Set<Integer> unmappedCohorts = Sets.newTreeSet();
         Map<String, Integer> fields = TabularFile.createFields(lines.get(0).split(DELIMITER));
-        for (String line : lines.subList(1, lines.size())) {
-            String[] parts = line.split(DELIMITER, -1);
-            unmappedCohorts.add(ResourceFile.integer(parts[fields.get("cohortId")]));
-        }
-        return unmappedCohorts;
+
+        return lines.subList(1, lines.size())
+                .stream()
+                .map(line -> ResourceFile.integer(line.split(DELIMITER, -1)[fields.get("cohortId")]))
+                .collect(Collectors.toSet());
     }
 }

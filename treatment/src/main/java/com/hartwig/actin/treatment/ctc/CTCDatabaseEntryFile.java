@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import com.google.common.collect.Lists;
 import com.hartwig.actin.util.ResourceFile;
 import com.hartwig.actin.util.TabularFile;
 
@@ -20,12 +20,9 @@ public final class CTCDatabaseEntryFile {
     public static List<CTCDatabaseEntry> read(@NotNull String tsv) throws IOException {
         List<String> lines = Files.readAllLines(new File(tsv).toPath());
 
-        List<CTCDatabaseEntry> entries = Lists.newArrayList();
         Map<String, Integer> fields = TabularFile.createFields(lines.get(0).split(DELIMITER));
-        for (String line : lines.subList(1, lines.size())) {
-            entries.add(create(fields, line.split(DELIMITER, -1)));
-        }
-        return entries;
+
+        return lines.subList(1, lines.size()).stream().map(line -> create(fields, line.split(DELIMITER, -1))).collect(Collectors.toList());
     }
 
     @NotNull
