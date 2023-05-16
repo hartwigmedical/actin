@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.datamodel;
 
+import java.time.Month;
 import java.time.Year;
-import java.time.YearMonth;
 import java.util.Set;
 
 import org.immutables.value.Value;
@@ -10,19 +10,19 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class TherapyHistoryEntry implements TreatmentHistoryEntry {
+public abstract class TherapyHistoryDetails {
 
     @Nullable
-    public abstract Year endYear();
+    public abstract Year stopYear();
 
     @Nullable
-    public abstract YearMonth endMonth();
+    public abstract Month stopMonth();
 
     @Nullable
     public abstract Boolean ongoing();
 
     @Nullable
-    public abstract Integer chemoCycles();
+    public abstract Integer cycles();
 
     @Nullable
     public abstract TreatmentResponse bestResponse();

@@ -62,6 +62,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
+import com.hartwig.actin.clinical.datamodel.ImmutableToxicityEvaluation;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.Intolerance;
@@ -73,6 +74,7 @@ import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
+import com.hartwig.actin.clinical.datamodel.ToxicityEvaluation;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.doid.DoidModel;
@@ -357,12 +359,12 @@ public class CurationModel {
     }
 
     @NotNull
-    public List<Toxicity> curateQuestionnaireToxicities(@Nullable List<String> inputs, @NotNull LocalDate date) {
+    public List<ToxicityEvaluation> curateQuestionnaireToxicities(@Nullable List<String> inputs, @NotNull LocalDate date) {
         if (inputs == null) {
             return Lists.newArrayList();
         }
 
-        List<Toxicity> toxicities = Lists.newArrayList();
+        List<ToxicityEvaluation> toxicityEvaluations = Lists.newArrayList();
         for (String input : inputs) {
             String trimmedInput = CurationUtil.fullTrim(input);
             Set<ToxicityConfig> configs = find(database.toxicityConfigs(), trimmedInput);
@@ -372,18 +374,20 @@ public class CurationModel {
 
             for (ToxicityConfig config : configs) {
                 if (!config.ignore()) {
-                    toxicities.add(ImmutableToxicity.builder()
-                            .name(config.name())
-                            .categories(config.categories())
+                    toxicityEvaluations.add(ImmutableToxicityEvaluation.builder()
+                            .toxicities(Set.of(ImmutableToxicity.builder()
+                                    .name(config.name())
+                                    .categories(config.categories())
+                                    .grade(config.grade())
+                                    .build()))
                             .evaluatedDate(date)
                             .source(ToxicitySource.QUESTIONNAIRE)
-                            .grade(config.grade())
                             .build());
                 }
             }
         }
 
-        return toxicities;
+        return toxicityEvaluations;
     }
 
     @Nullable

@@ -35,6 +35,7 @@ import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 import com.hartwig.actin.clinical.datamodel.TestMedicationFactory;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
+import com.hartwig.actin.clinical.datamodel.ToxicityEvaluation;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.doid.TestDoidModelFactory;
@@ -219,15 +220,18 @@ public class CurationModelTest {
     @Test
     public void canCurateQuestionnaireToxicities() {
         LocalDate date = LocalDate.of(2018, 5, 21);
-        List<Toxicity> toxicities = model.curateQuestionnaireToxicities(Lists.newArrayList("neuropathy gr3", "cannot curate"), date);
+        List<ToxicityEvaluation> toxicityEvaluations =
+                model.curateQuestionnaireToxicities(Lists.newArrayList("neuropathy gr3", "cannot curate"), date);
 
-        assertEquals(1, toxicities.size());
+        assertEquals(1, toxicityEvaluations.size());
 
-        Toxicity toxicity = toxicities.get(0);
+        ToxicityEvaluation toxicityEvaluation = toxicityEvaluations.get(0);
+        assertEquals(date, toxicityEvaluation.evaluatedDate());
+        assertEquals(ToxicitySource.QUESTIONNAIRE, toxicityEvaluation.source());
+
+        Toxicity toxicity = toxicityEvaluation.toxicities().iterator().next();
         assertEquals("neuropathy", toxicity.name());
         assertEquals(Sets.newHashSet("neuro"), toxicity.categories());
-        assertEquals(date, toxicity.evaluatedDate());
-        assertEquals(ToxicitySource.QUESTIONNAIRE, toxicity.source());
         assertEquals(3, (int) toxicity.grade());
 
         assertTrue(model.curateQuestionnaireToxicities(null, date).isEmpty());
@@ -419,8 +423,7 @@ public class CurationModelTest {
 
     @Test
     public void canTranslateToxicities() {
-        Toxicity test =
-                ImmutableToxicity.builder().name("Pijn").evaluatedDate(LocalDate.of(2020, 11, 11)).source(ToxicitySource.EHR).build();
+        Toxicity test = ImmutableToxicity.builder().name("Pijn").build();
 
         Toxicity translated = model.translateToxicity(test);
         assertEquals("Pain", translated.name());

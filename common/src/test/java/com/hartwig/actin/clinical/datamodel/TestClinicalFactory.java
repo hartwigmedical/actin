@@ -1,10 +1,14 @@
 package com.hartwig.actin.clinical.datamodel;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+
 import com.google.common.collect.Lists;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
+
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,9 +59,9 @@ public final class TestClinicalFactory {
                 .priorMolecularTests(createTestPriorMolecularTests())
                 .complications(createTestComplications())
                 .labValues(createTestLabValues())
-                .toxicities(createTestToxicities())
+                .toxicityEvaluations(createTestToxicityEvaluations())
                 .intolerances(createTestIntolerances())
-                .surgeries(createTestSurgeries())
+                .surgeries(createTestSurgeryHistory())
                 .bodyWeights(createTestBodyWeights())
                 .vitalFunctions(createTestVitalFunctions())
                 .bloodTransfusions(createTestBloodTransfusions())
@@ -301,26 +305,17 @@ public final class TestClinicalFactory {
     }
 
     @NotNull
-    private static List<Toxicity> createTestToxicities() {
-        List<Toxicity> toxicities = Lists.newArrayList();
-
-        toxicities.add(ImmutableToxicity.builder()
-                .name("Nausea")
-                .addCategories("Nausea")
-                .evaluatedDate(TODAY.minusDays(DAYS_SINCE_TOXICITIES))
-                .source(ToxicitySource.EHR)
-                .grade(1)
-                .build());
-
-        toxicities.add(ImmutableToxicity.builder()
-                .name("Fatigue")
-                .addCategories("Fatigue")
-                .evaluatedDate(TODAY.minusDays(DAYS_SINCE_TOXICITIES))
-                .source(ToxicitySource.QUESTIONNAIRE)
-                .grade(2)
-                .build());
-
-        return toxicities;
+    private static List<ToxicityEvaluation> createTestToxicityEvaluations() {
+        return List.of(ImmutableToxicityEvaluation.builder()
+                        .evaluatedDate(TODAY.minusDays(DAYS_SINCE_TOXICITIES))
+                        .source(ToxicitySource.EHR)
+                        .toxicities(Set.of(ImmutableToxicity.builder().name("Nausea").addCategories("Nausea").grade(1).build()))
+                        .build(),
+                ImmutableToxicityEvaluation.builder()
+                        .evaluatedDate(TODAY.minusDays(DAYS_SINCE_TOXICITIES))
+                        .source(ToxicitySource.QUESTIONNAIRE)
+                        .toxicities(Set.of(ImmutableToxicity.builder().name("Fatigue").addCategories("Fatigue").grade(2).build()))
+                        .build());
     }
 
     @NotNull
@@ -340,12 +335,14 @@ public final class TestClinicalFactory {
     }
 
     @NotNull
-    private static List<Surgery> createTestSurgeries() {
-        List<Surgery> surgeries = Lists.newArrayList();
-
-        surgeries.add(ImmutableSurgery.builder().endDate(TODAY.minusDays(DAYS_SINCE_SURGERY)).status(SurgeryStatus.FINISHED).build());
-
-        return surgeries;
+    private static List<TreatmentHistoryEntry> createTestSurgeryHistory() {
+        return Collections.singletonList(ImmutableTreatmentHistoryEntry.builder()
+                .treatments(Set.of(ImmutableSurgery.builder().name("test surgery").synonyms(Collections.emptySet()).build()))
+                .surgeryHistoryDetails(ImmutableSurgeryHistoryDetails.builder()
+                        .endDate(TODAY.minusDays(DAYS_SINCE_SURGERY))
+                        .status(SurgeryStatus.FINISHED)
+                        .build())
+                .build());
     }
 
     @NotNull

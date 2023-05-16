@@ -1,7 +1,10 @@
 package com.hartwig.actin.clinical;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
@@ -20,7 +23,10 @@ import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutableSurgery;
+import com.hartwig.actin.clinical.datamodel.ImmutableSurgeryHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
+import com.hartwig.actin.clinical.datamodel.ImmutableToxicityEvaluation;
+import com.hartwig.actin.clinical.datamodel.ImmutableTreatmentHistoryEntry;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction;
 import com.hartwig.actin.clinical.datamodel.Intolerance;
@@ -31,15 +37,15 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.Surgery;
 import com.hartwig.actin.clinical.datamodel.SurgeryStatus;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
+import com.hartwig.actin.clinical.datamodel.ToxicityEvaluation;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
+import com.hartwig.actin.clinical.datamodel.TreatmentHistoryEntry;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
 import com.hartwig.actin.clinical.feed.FeedModel;
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
-import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
 import com.hartwig.actin.clinical.feed.lab.LabEntry;
 import com.hartwig.actin.clinical.feed.lab.LabExtraction;
@@ -98,7 +104,7 @@ public class ClinicalRecordsFactory {
                     .priorMolecularTests(extractPriorMolecularTests(questionnaire))
                     .complications(extractComplications(questionnaire))
                     .labValues(extractLabValues(subject))
-                    .toxicities(extractToxicities(subject, questionnaire))
+                    .toxicityEvaluations(extractToxicities(subject, questionnaire))
                     .intolerances(extractIntolerances(subject))
                     .surgeries(extractSurgeries(subject))
                     .bodyWeights(extractBodyWeights(subject))
@@ -269,28 +275,27 @@ public class ClinicalRecordsFactory {
     }
 
     @NotNull
-    private List<Toxicity> extractToxicities(@NotNull String subject, @Nullable Questionnaire questionnaire) {
-        List<Toxicity> toxicities = Lists.newArrayList();
+    private List<ToxicityEvaluation> extractToxicities(@NotNull String subject, @Nullable Questionnaire questionnaire) {
+        List<ToxicityEvaluation> toxicityEvaluations = Lists.newArrayList();
         if (questionnaire != null) {
             List<String> unresolvedToxicities = questionnaire.unresolvedToxicities();
-            toxicities.addAll(curation.curateQuestionnaireToxicities(unresolvedToxicities, questionnaire.date()));
+            toxicityEvaluations.addAll(curation.curateQuestionnaireToxicities(unresolvedToxicities, questionnaire.date()));
         }
 
         List<QuestionnaireEntry> toxicityQuestionnaires = feed.toxicityQuestionnaireEntries(subject);
         for (QuestionnaireEntry entry : toxicityQuestionnaires) {
             Integer grade = extractGrade(entry);
             if (grade != null) {
-                Toxicity toxicity = ImmutableToxicity.builder()
-                        .name(entry.itemText())
+                Toxicity toxicity = ImmutableToxicity.builder().name(entry.itemText()).grade(grade).build();
+
+                toxicityEvaluations.add(ImmutableToxicityEvaluation.builder()
+                        .toxicities(Set.of(curation.translateToxicity(toxicity)))
                         .evaluatedDate(entry.authored())
                         .source(ToxicitySource.EHR)
-                        .grade(grade)
-                        .build();
-
-                toxicities.add(curation.translateToxicity(toxicity));
+                        .build());
             }
         }
-        return toxicities;
+        return toxicityEvaluations;
     }
 
     @Nullable
@@ -328,15 +333,20 @@ public class ClinicalRecordsFactory {
     }
 
     @NotNull
-    private List<Surgery> extractSurgeries(@NotNull String subject) {
-        List<Surgery> surgeries = Lists.newArrayList();
-        for (EncounterEntry entry : feed.uniqueEncounterEntries(subject)) {
-            surgeries.add(ImmutableSurgery.builder()
-                    .endDate(entry.periodEnd())
-                    .status(resolveSurgeryStatus(entry.encounterStatus()))
-                    .build());
-        }
-        return surgeries;
+    private List<TreatmentHistoryEntry> extractSurgeries(@NotNull String subject) {
+        return feed.uniqueEncounterEntries(subject)
+                .stream()
+                .map(encounterEntry -> ImmutableTreatmentHistoryEntry.builder()
+                        .treatments(Collections.singleton(ImmutableSurgery.builder()
+                                .name("extracted surgery")
+                                .synonyms(Collections.emptySet())
+                                .build()))
+                        .surgeryHistoryDetails(ImmutableSurgeryHistoryDetails.builder()
+                                .endDate(encounterEntry.periodEnd())
+                                .status(resolveSurgeryStatus(encounterEntry.encounterStatus()))
+                                .build())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @NotNull

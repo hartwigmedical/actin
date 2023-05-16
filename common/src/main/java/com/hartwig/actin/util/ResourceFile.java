@@ -1,6 +1,8 @@
 package com.hartwig.actin.util;
 
 import java.time.LocalDate;
+import java.time.Month;
+import java.time.Year;
 import java.time.format.DateTimeFormatter;
 
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +50,18 @@ public final class ResourceFile {
     @Nullable
     public static Integer optionalInteger(@NotNull String integer) {
         return hasValue(integer) ? integer(integer) : null;
+    }
+
+    @Nullable
+    public static Year optionalYear(@NotNull String year) {
+        Integer yearNumber = optionalInteger(year);
+        return (yearNumber != null) ? Year.of(yearNumber) : null;
+    }
+
+    @Nullable
+    public static Month optionalMonth(@NotNull String month) {
+        Integer monthNumber = optionalInteger(month);
+        return (monthNumber != null) ? Month.of(monthNumber) : null;
     }
 
     public static int integer(@NotNull String integer) {

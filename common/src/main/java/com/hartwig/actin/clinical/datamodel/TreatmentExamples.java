@@ -28,26 +28,19 @@ public class TreatmentExamples {
         Chemotherapy folfirinox = ImmutableChemotherapy.builder()
                 .name("FOLFIRINOX")
                 .isSystemic(true)
-                .isOptional(false)
-                .score(5)
-                .types(Collections.emptySet())
                 .addCategories(TreatmentCategory.CHEMOTHERAPY)
-                .addEligibilityFunctions(IS_YOUNG_AND_FIT)
-                .addLines(1, 2)
+                //                .addEligibilityFunctions(IS_YOUNG_AND_FIT)
+                //                .addLines(1, 2)
                 .synonyms(Collections.emptySet())
                 .addDrugs(oxaliplatin, fluorouracil, irinotecan)
                 .maxCycles(8)
                 .build();
 
-        Radiotherapy brachytherapy = ImmutableRadiotherapy.builder()
-                .name("Brachytherapy")
-                .isSystemic(false)
-                .isOptional(true)
-                .score(5)
-                .addTypes(treatmentType("brachytherapy", TreatmentCategory.RADIOTHERAPY))
+        Radiotherapy brachytherapy = ImmutableRadiotherapy.builder().name("Brachytherapy").isSystemic(false)
+                //                .addTypes(treatmentType("brachytherapy", TreatmentCategory.RADIOTHERAPY))
                 .addCategories(TreatmentCategory.RADIOTHERAPY)
-                .addEligibilityFunctions(IS_YOUNG_AND_FIT)
-                .addLines(1)
+                //                .addEligibilityFunctions(IS_YOUNG_AND_FIT)
+                //                .addLines(1)
                 .synonyms(Collections.emptySet())
                 .build();
 
@@ -55,21 +48,15 @@ public class TreatmentExamples {
                 .name("FOLFIRINOX + radiotherapy")
                 .addTherapies(folfirinox, brachytherapy)
                 .isSystemic(true)
-                .isOptional(false)
-                .score(5)
-                .addLines(1, 2)
+                //                .addLines(1, 2)
                 .synonyms(Collections.emptySet())
                 .build();
 
-        Immunotherapy pembrolizumab = ImmutableImmunotherapy.builder()
-                .name("Pembrolizumab")
-                .isSystemic(true)
-                .isOptional(false)
-                .score(5)
-                .addTypes(treatmentType("Anti-PD-1", TreatmentCategory.IMMUNOTHERAPY))
+        Immunotherapy pembrolizumab = ImmutableImmunotherapy.builder().name("Pembrolizumab").isSystemic(true)
+                //                .addTypes(treatmentType("Anti-PD-1", TreatmentCategory.IMMUNOTHERAPY))
                 .addCategories(TreatmentCategory.IMMUNOTHERAPY)
-                .addEligibilityFunctions(eligibilityFunction(EligibilityRule.MSI_SIGNATURE))
-                .addLines(1, 2)
+                //                .addEligibilityFunctions(eligibilityFunction(EligibilityRule.MSI_SIGNATURE))
+                //                .addLines(1, 2)
                 .synonyms(Collections.emptySet())
                 .addDrugs(drug("Pembrolizumab", DrugClass.MONOCLONAL_ANTIBODY))
                 .build();
@@ -78,8 +65,6 @@ public class TreatmentExamples {
                 .name("FOLFIRINOX + pembrolizumab")
                 .addTherapies(folfirinox, pembrolizumab)
                 .isSystemic(true)
-                .isOptional(false)
-                .score(5)
                 .synonyms(Collections.emptySet())
                 .build();
 
@@ -88,8 +73,11 @@ public class TreatmentExamples {
 
         Surgery colectomy = ImmutableSurgery.builder().name("Colectomy").synonyms(Collections.emptySet()).build();
 
-        SurgeryHistoryEntry surgeryHistoryEntry =
-                ImmutableSurgeryHistoryEntry.builder().addTreatments(colectomy).startYear(Year.of(2021)).intent(Intent.MAINTENANCE).build();
+        TreatmentHistoryEntry surgeryHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
+                .addTreatments(colectomy)
+                .startYear(Year.of(2021))
+                .intent(Intent.MAINTENANCE)
+                .build();
 
         List<TreatmentHistoryEntry> treatmentHistory = List.of(therapyHistoryEntry(Set.of(folfirinox), 2020, Intent.NEOADJUVANT),
                 surgeryHistoryEntry,
@@ -134,7 +122,7 @@ public class TreatmentExamples {
     }
 
     @NotNull
-    private static TherapyHistoryEntry therapyHistoryEntry(Set<Therapy> therapies, int startYear, Intent intent) {
-        return ImmutableTherapyHistoryEntry.builder().treatments(therapies).startYear(Year.of(startYear)).intent(intent).build();
+    private static TreatmentHistoryEntry therapyHistoryEntry(Set<Therapy> therapies, int startYear, Intent intent) {
+        return ImmutableTreatmentHistoryEntry.builder().treatments(therapies).startYear(Year.of(startYear)).intent(intent).build();
     }
 }

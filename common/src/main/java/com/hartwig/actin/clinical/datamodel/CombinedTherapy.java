@@ -16,16 +16,13 @@ public abstract class CombinedTherapy implements Therapy {
     @NotNull
     public abstract Set<Therapy> therapies();
 
-    @NotNull
-    public Set<TreatmentType> types() {
-        return extractFromComponents(Therapy::types);
-    }
-
+    @Override
     @NotNull
     public Set<TreatmentCategory> categories() {
         return extractFromComponents(Therapy::categories);
     }
 
+    @Override
     @NotNull
     public Set<Drug> drugs() {
         return extractFromComponents(Therapy::drugs);
