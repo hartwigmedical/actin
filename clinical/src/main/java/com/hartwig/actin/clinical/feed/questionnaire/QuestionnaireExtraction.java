@@ -83,7 +83,7 @@ public final class QuestionnaireExtraction {
                 .infectionStatus(toInfectionStatus(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION))))
                 .ecg(toECG(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG))))
                 .complications(toList(value(entry, mapping.get(QuestionnaireKey.COMPLICATIONS))))
-                .genayaSubjectNumber(value(entry, mapping.get(QuestionnaireKey.GENAYA_SUBJECT_NUMBER), true))
+                .genayaSubjectNumber(optionalValue(entry, mapping.get(QuestionnaireKey.GENAYA_SUBJECT_NUMBER)))
                 .build();
     }
 
@@ -196,17 +196,17 @@ public final class QuestionnaireExtraction {
 
     @Nullable
     private static String value(@NotNull QuestionnaireEntry entry, @Nullable String key) {
-        return value(entry, key, false);
-    }
-
-    @Nullable
-    private static String value(@NotNull QuestionnaireEntry entry, @Nullable String key, boolean isOptional) {
-        return value(entry, key, isOptional, 0);
+        return value(entry, key, false, 0);
     }
 
     @Nullable
     private static String value(@NotNull QuestionnaireEntry entry, @Nullable String key, int lineOffset) {
         return value(entry, key, false, lineOffset);
+    }
+
+    @Nullable
+    private static String optionalValue(@NotNull QuestionnaireEntry entry, @Nullable String key) {
+        return value(entry, key, true, 0);
     }
 
     @Nullable
