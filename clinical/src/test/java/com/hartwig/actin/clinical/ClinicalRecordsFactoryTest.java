@@ -36,6 +36,7 @@ import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
 import com.hartwig.actin.clinical.feed.TestFeedFactory;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 public class ClinicalRecordsFactoryTest {
@@ -143,7 +144,8 @@ public class ClinicalRecordsFactoryTest {
                 .orElseThrow(() -> new IllegalStateException("Could not find toxicity with name: " + name));
     }
 
-    private static void assertToxicityEvaluations(@NotNull List<ToxicityEvaluation> toxicityEvaluations) {
+    private static void assertToxicityEvaluations(@Nullable List<ToxicityEvaluation> toxicityEvaluations) {
+        assertNotNull(toxicityEvaluations);
         assertEquals(2, toxicityEvaluations.size());
 
         ToxicityEvaluation toxicity1 = findToxicityEvaluationByName(toxicityEvaluations, "Nausea");
@@ -181,10 +183,12 @@ public class ClinicalRecordsFactoryTest {
         assertEquals(SurgeryStatus.PLANNED, surgery.status());
     }
 
-    private static void assertSurgicalTreatments(@NotNull List<TreatmentHistoryEntry> surgicalTreatments) {
+    private static void assertSurgicalTreatments(@Nullable List<TreatmentHistoryEntry> surgicalTreatments) {
+        assertNotNull(surgicalTreatments);
         assertEquals(1, surgicalTreatments.size());
 
         SurgeryHistoryDetails surgery = surgicalTreatments.get(0).surgeryHistoryDetails();
+        assertNotNull(surgery);
         assertEquals(LocalDate.of(2015, 10, 10), surgery.endDate());
         assertEquals(SurgeryStatus.PLANNED, surgery.status());
     }
