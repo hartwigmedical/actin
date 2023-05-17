@@ -25,6 +25,7 @@ public enum TreatmentInput {
     GENE_THERAPY(TreatmentCategory.GENE_THERAPY),
     TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY),
     PROPHYLACTIC_TREATMENT(TreatmentCategory.PROPHYLACTIC_TREATMENT),
+    ABLATION(TreatmentCategory.ABLATION),
 
     TAXANE(TreatmentCategory.CHEMORADIOTHERAPY, Sets.newHashSet("Paclitaxel", "Docetaxel", "Cabazitaxel")),
     FLUOROPYRIMIDINE(TreatmentCategory.CHEMORADIOTHERAPY,

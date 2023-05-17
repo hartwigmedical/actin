@@ -214,7 +214,8 @@ class ClinicalDAO {
                             PRIORTUMORTREATMENT.CARTTYPE,
                             PRIORTUMORTREATMENT.TRANSPLANTTYPE,
                             PRIORTUMORTREATMENT.SUPPORTIVETYPE,
-                            PRIORTUMORTREATMENT.TRIALACRONYM)
+                            PRIORTUMORTREATMENT.TRIALACRONYM,
+                            PRIORTUMORTREATMENT.ABLATIONTYPE)
                     .values(patientId,
                             priorTumorTreatment.name(),
                             priorTumorTreatment.startYear(),
@@ -234,7 +235,8 @@ class ClinicalDAO {
                             priorTumorTreatment.carTType(),
                             priorTumorTreatment.transplantType(),
                             priorTumorTreatment.supportiveType(),
-                            priorTumorTreatment.trialAcronym())
+                            priorTumorTreatment.trialAcronym(),
+                            priorTumorTreatment.ablationType())
                     .execute();
         }
     }

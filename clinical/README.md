@@ -90,6 +90,7 @@ N prior tumor treatments
 | transplantType |                   | Type of transplantation therapy (if applicable)   |
 | supportiveType |                   | Type of supportive treatment (if applicable)      |
 | trialAcronym   |                   | Acronym of trial (if applicable)                  |
+| ablationType   |                   | Type of ablation (if applicable)                  |
 
 N prior second primaries   
 
