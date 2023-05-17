@@ -66,4 +66,6 @@ public abstract class PriorTumorTreatment {
     @Nullable
     public abstract String trialAcronym();
 
+    @Nullable
+    public abstract String ablationType();
 }

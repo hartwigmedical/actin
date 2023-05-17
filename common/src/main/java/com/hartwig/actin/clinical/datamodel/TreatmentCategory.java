@@ -20,7 +20,7 @@ public enum TreatmentCategory {
     TCR_T(false),
     GENE_THERAPY(false),
     PROPHYLACTIC_TREATMENT(false),
-    THERMAL_THERAPY(false);
+    ABLATION(true);
 
     private final boolean hasType;
 

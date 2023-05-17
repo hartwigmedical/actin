@@ -111,6 +111,7 @@ public class CurationDatabaseReaderTest {
         assertNull(curated.transplantType());
         assertNull(curated.supportiveType());
         assertNull(curated.trialAcronym());
+        assertNull(curated.ablationType());
     }
 
     private static void assertSecondPrimaryConfigs(@NotNull List<SecondPrimaryConfig> configs) {
