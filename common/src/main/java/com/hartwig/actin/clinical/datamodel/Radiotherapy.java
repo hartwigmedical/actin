@@ -11,6 +11,8 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class Radiotherapy implements Therapy {
 
+    public final TreatmentType treatmentType = TreatmentType.RADIOTHERAPY;
+
     @NotNull
     public Set<Drug> drugs() {
         return Collections.emptySet();

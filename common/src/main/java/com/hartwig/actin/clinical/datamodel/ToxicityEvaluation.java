@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class ToxicityEvaluation {
 
     @NotNull
-    public abstract Set<Toxicity> toxicities();
+    public abstract Set<ObservedToxicity> toxicities();
 
     @NotNull
     public abstract LocalDate evaluatedDate();

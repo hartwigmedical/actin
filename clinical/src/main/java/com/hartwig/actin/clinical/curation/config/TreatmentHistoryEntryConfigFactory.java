@@ -9,11 +9,13 @@ import com.hartwig.actin.clinical.curation.CurationUtil;
 import com.hartwig.actin.clinical.datamodel.ImmutableChemotherapy;
 import com.hartwig.actin.clinical.datamodel.ImmutableCombinedTherapy;
 import com.hartwig.actin.clinical.datamodel.ImmutableImmunotherapy;
+import com.hartwig.actin.clinical.datamodel.ImmutableObservedToxicity;
 import com.hartwig.actin.clinical.datamodel.ImmutableOtherTherapy;
 import com.hartwig.actin.clinical.datamodel.ImmutableRadiotherapy;
-import com.hartwig.actin.clinical.datamodel.ImmutableSurgery;
+import com.hartwig.actin.clinical.datamodel.ImmutableSurgicalTreatment;
 import com.hartwig.actin.clinical.datamodel.ImmutableTherapyHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutableTreatmentHistoryEntry;
+import com.hartwig.actin.clinical.datamodel.ObservedToxicity;
 import com.hartwig.actin.clinical.datamodel.StopReason;
 import com.hartwig.actin.clinical.datamodel.Therapy;
 import com.hartwig.actin.clinical.datamodel.TherapyHistoryDetails;
@@ -22,6 +24,7 @@ import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.TreatmentHistoryEntry;
 import com.hartwig.actin.clinical.datamodel.TreatmentResponse;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
+import com.hartwig.actin.util.ApplicationConfig;
 import com.hartwig.actin.util.ResourceFile;
 
 import org.jetbrains.annotations.NotNull;
@@ -42,18 +45,19 @@ public class TreatmentHistoryEntryConfigFactory implements CurationConfigFactory
     @NotNull
     private static TreatmentHistoryEntry curateObject(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
         Set<TreatmentCategory> categories = TreatmentCategoryResolver.fromStringList(parts[fields.get("category")]);
+        boolean isTrial = categories.contains(TreatmentCategory.TRIAL);
 
         Set<Therapy> therapies =
                 categories.stream().filter(cat -> cat != TreatmentCategory.SURGERY && cat != TreatmentCategory.TRIAL).map(cat -> {
                     switch (cat) {
                         case CHEMOTHERAPY:
-                            return chemotherapy(fields, parts);
+                            return chemotherapy(fields, parts, isTrial);
                         case RADIOTHERAPY:
-                            return radiotherapy(fields, parts);
+                            return radiotherapy(fields, parts, isTrial);
                         case IMMUNOTHERAPY:
-                            return immunotherapy(fields, parts);
+                            return immunotherapy(fields, parts, isTrial);
                         default:
-                            return otherTherapy(fields, parts, cat);
+                            return otherTherapy(fields, parts, cat, isTrial);
                     }
                 }).collect(Collectors.toSet());
 
@@ -75,21 +79,30 @@ public class TreatmentHistoryEntryConfigFactory implements CurationConfigFactory
             TreatmentResponse bestResponse = (bestResponseString != null) ? TreatmentResponse.createFromString(bestResponseString) : null;
             String stopReasonDetail = ResourceFile.optionalString(parts[fields.get("stopReason")]);
 
+            Set<ObservedToxicity> toxicities;
+            if (stopReasonDetail != null) {
+                toxicities = stopReasonDetail.toLowerCase(ApplicationConfig.LOCALE).contains("toxicity")
+                        ? Set.of(ImmutableObservedToxicity.builder().name(stopReasonDetail).categories(Collections.emptySet()).build())
+                        : Collections.emptySet();
+            } else {
+                toxicities = null;
+            }
+
             therapyHistoryDetails = ImmutableTherapyHistoryDetails.builder()
-                    .stopYear(ResourceFile.optionalYear(parts[fields.get("stopYear")]))
-                    .stopMonth(ResourceFile.optionalMonth(parts[fields.get("stopMonth")]))
+                    .stopYear(ResourceFile.optionalInteger(parts[fields.get("stopYear")]))
+                    .stopMonth(ResourceFile.optionalInteger(parts[fields.get("stopMonth")]))
                     .cycles(ResourceFile.optionalInteger(parts[fields.get("cycles")]))
                     .bestResponse(bestResponse)
                     .stopReasonDetail(stopReasonDetail)
                     .stopReason((stopReasonDetail != null) ? StopReason.createFromString(stopReasonDetail) : null)
-                    // TODO: toxicities
+                    .toxicities(toxicities)
                     .build();
 
         } else if (categories.contains(TreatmentCategory.SURGERY)) {
             treatments = Set.of(surgery(fields, parts));
             therapyHistoryDetails = null;
         } else if (categories.contains(TreatmentCategory.TRIAL)) {
-            treatments = Set.of(otherTherapy(fields, parts, TreatmentCategory.TRIAL));
+            treatments = Set.of(otherTherapy(fields, parts, TreatmentCategory.TRIAL, true));
             therapyHistoryDetails = null;
         } else {
             throw new IllegalStateException("No treatment category resolved for input " + parts[fields.get("name")]);
@@ -97,8 +110,8 @@ public class TreatmentHistoryEntryConfigFactory implements CurationConfigFactory
 
         return ImmutableTreatmentHistoryEntry.builder()
                 .treatments(treatments)
-                .startYear(ResourceFile.optionalYear(parts[fields.get("startYear")]))
-                .startMonth(ResourceFile.optionalMonth(parts[fields.get("startMonth")]))
+                .startYear(ResourceFile.optionalInteger(parts[fields.get("startYear")]))
+                .startMonth(ResourceFile.optionalInteger(parts[fields.get("startMonth")]))
                 .isTrial(categories.contains(TreatmentCategory.TRIAL))
                 .trialAcronym(ResourceFile.optionalString(parts[fields.get("trialAcronym")]))
                 .therapyHistoryDetails(therapyHistoryDetails)
@@ -106,43 +119,63 @@ public class TreatmentHistoryEntryConfigFactory implements CurationConfigFactory
     }
 
     private static Treatment surgery(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
-        return ImmutableSurgery.builder().name(parts[fields.get("name")]).build();
+        return ImmutableSurgicalTreatment.builder().name(parts[fields.get("name")]).build();
     }
 
-    // TODO: Set TRIAL category on all treatments when included
-    private static Therapy chemotherapy(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
-        return ImmutableChemotherapy.builder()
+    private static Therapy chemotherapy(@NotNull Map<String, Integer> fields, @NotNull String[] parts, boolean isTrial) {
+        ImmutableChemotherapy.Builder builder = ImmutableChemotherapy.builder()
                 .name(parts[fields.get("name")])
                 .addCategories(TreatmentCategory.CHEMOTHERAPY)
                 .drugs(Collections.emptySet())  // TODO
-                .synonyms(Collections.emptySet())
-                .build();
+                .synonyms(Collections.emptySet());
+
+        if (isTrial) {
+            builder.addCategories(TreatmentCategory.TRIAL);
+        }
+
+        return builder.build();
     }
 
-    private static Therapy radiotherapy(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
-        return ImmutableRadiotherapy.builder()
+    private static Therapy radiotherapy(@NotNull Map<String, Integer> fields, @NotNull String[] parts, boolean isTrial) {
+        ImmutableRadiotherapy.Builder builder = ImmutableRadiotherapy.builder()
                 .name(parts[fields.get("name")])
                 .addCategories(TreatmentCategory.RADIOTHERAPY)
                 .synonyms(Collections.emptySet())
-                .radioType(ResourceFile.optionalString(parts[fields.get("radioType")]))
-                .build();
+                .radioType(ResourceFile.optionalString(parts[fields.get("radioType")]));
+
+        if (isTrial) {
+            builder.addCategories(TreatmentCategory.TRIAL);
+        }
+
+        return builder.build();
     }
 
-    private static Therapy immunotherapy(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
-        return ImmutableImmunotherapy.builder()
+    private static Therapy immunotherapy(@NotNull Map<String, Integer> fields, @NotNull String[] parts, boolean isTrial) {
+        ImmutableImmunotherapy.Builder builder = ImmutableImmunotherapy.builder()
                 .name(parts[fields.get("name")])
                 .addCategories(TreatmentCategory.IMMUNOTHERAPY)
                 .drugs(Collections.emptySet())  // TODO
-                .synonyms(Collections.emptySet())
-                .build();
+                .synonyms(Collections.emptySet());
+
+        if (isTrial) {
+            builder.addCategories(TreatmentCategory.TRIAL);
+        }
+
+        return builder.build();
     }
 
-    private static Therapy otherTherapy(@NotNull Map<String, Integer> fields, @NotNull String[] parts, TreatmentCategory category) {
-        return ImmutableOtherTherapy.builder()
+    private static Therapy otherTherapy(@NotNull Map<String, Integer> fields, @NotNull String[] parts, TreatmentCategory category,
+            boolean isTrial) {
+        ImmutableOtherTherapy.Builder builder = ImmutableOtherTherapy.builder()
                 .name(parts[fields.get("name")])
                 .addCategories(category)
                 .drugs(Collections.emptySet())  // TODO
-                .synonyms(Collections.emptySet())
-                .build();
+                .synonyms(Collections.emptySet());
+
+        if (isTrial) {
+            builder.addCategories(TreatmentCategory.TRIAL);
+        }
+
+        return builder.build();
     }
 }

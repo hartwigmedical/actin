@@ -60,8 +60,10 @@ public final class TestClinicalFactory {
                 .complications(createTestComplications())
                 .labValues(createTestLabValues())
                 .toxicityEvaluations(createTestToxicityEvaluations())
+                .toxicities(createTestToxicities())
                 .intolerances(createTestIntolerances())
-                .surgeries(createTestSurgeryHistory())
+                .surgeries(createTestSurgeries())
+                .surgicalTreatments(createTestSurgicalHistory())
                 .bodyWeights(createTestBodyWeights())
                 .vitalFunctions(createTestVitalFunctions())
                 .bloodTransfusions(createTestBloodTransfusions())
@@ -305,16 +307,34 @@ public final class TestClinicalFactory {
     }
 
     @NotNull
+    private static List<Toxicity> createTestToxicities() {
+        return List.of(ImmutableToxicity.builder()
+                        .name("Nausea")
+                        .addCategories("Nausea")
+                        .evaluatedDate(TODAY.minusDays(DAYS_SINCE_TOXICITIES))
+                        .source(ToxicitySource.EHR)
+                        .grade(1)
+                        .build(),
+                ImmutableToxicity.builder()
+                        .name("Fatigue")
+                        .addCategories("Fatigue")
+                        .evaluatedDate(TODAY.minusDays(DAYS_SINCE_TOXICITIES))
+                        .source(ToxicitySource.QUESTIONNAIRE)
+                        .grade(2)
+                        .build());
+    }
+
+    @NotNull
     private static List<ToxicityEvaluation> createTestToxicityEvaluations() {
         return List.of(ImmutableToxicityEvaluation.builder()
                         .evaluatedDate(TODAY.minusDays(DAYS_SINCE_TOXICITIES))
                         .source(ToxicitySource.EHR)
-                        .toxicities(Set.of(ImmutableToxicity.builder().name("Nausea").addCategories("Nausea").grade(1).build()))
+                        .toxicities(Set.of(ImmutableObservedToxicity.builder().name("Nausea").addCategories("Nausea").grade(1).build()))
                         .build(),
                 ImmutableToxicityEvaluation.builder()
                         .evaluatedDate(TODAY.minusDays(DAYS_SINCE_TOXICITIES))
                         .source(ToxicitySource.QUESTIONNAIRE)
-                        .toxicities(Set.of(ImmutableToxicity.builder().name("Fatigue").addCategories("Fatigue").grade(2).build()))
+                        .toxicities(Set.of(ImmutableObservedToxicity.builder().name("Fatigue").addCategories("Fatigue").grade(2).build()))
                         .build());
     }
 
@@ -335,9 +355,17 @@ public final class TestClinicalFactory {
     }
 
     @NotNull
-    private static List<TreatmentHistoryEntry> createTestSurgeryHistory() {
+    private static List<Surgery> createTestSurgeries() {
+        return Collections.singletonList(ImmutableSurgery.builder()
+                .endDate(TODAY.minusDays(DAYS_SINCE_SURGERY))
+                .status(SurgeryStatus.FINISHED)
+                .build());
+    }
+
+    @NotNull
+    private static List<TreatmentHistoryEntry> createTestSurgicalHistory() {
         return Collections.singletonList(ImmutableTreatmentHistoryEntry.builder()
-                .treatments(Set.of(ImmutableSurgery.builder().name("test surgery").synonyms(Collections.emptySet()).build()))
+                .treatments(Set.of(ImmutableSurgicalTreatment.builder().name("test surgery").synonyms(Collections.emptySet()).build()))
                 .surgeryHistoryDetails(ImmutableSurgeryHistoryDetails.builder()
                         .endDate(TODAY.minusDays(DAYS_SINCE_SURGERY))
                         .status(SurgeryStatus.FINISHED)

@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.datamodel;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 import org.immutables.value.Value;
@@ -16,6 +17,13 @@ public abstract class Toxicity {
     @NotNull
     public abstract Set<String> categories();
 
+    @NotNull
+    public abstract LocalDate evaluatedDate();
+
+    @NotNull
+    public abstract ToxicitySource source();
+
     @Nullable
     public abstract Integer grade();
+
 }

@@ -1,7 +1,5 @@
 package com.hartwig.actin.clinical.datamodel;
 
-import java.time.Month;
-import java.time.Year;
 import java.util.Set;
 
 import org.immutables.value.Value;
@@ -13,10 +11,10 @@ import org.jetbrains.annotations.Nullable;
 public abstract class TherapyHistoryDetails {
 
     @Nullable
-    public abstract Year stopYear();
+    public abstract Integer stopYear();
 
     @Nullable
-    public abstract Month stopMonth();
+    public abstract Integer stopMonth();
 
     @Nullable
     public abstract Boolean ongoing();
@@ -34,7 +32,7 @@ public abstract class TherapyHistoryDetails {
     public abstract String stopReasonDetail();
 
     @Nullable
-    public abstract Set<Toxicity> toxicities();
+    public abstract Set<ObservedToxicity> toxicities();
 
     @Nullable
     public abstract Set<LocationCategory> locationCategories();

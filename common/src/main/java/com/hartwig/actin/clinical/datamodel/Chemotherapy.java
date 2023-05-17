@@ -8,5 +8,7 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class Chemotherapy implements Therapy {
 
+    public final TreatmentType treatmentType = TreatmentType.CHEMOTHERAPY;
+
     public abstract int maxCycles();
 }

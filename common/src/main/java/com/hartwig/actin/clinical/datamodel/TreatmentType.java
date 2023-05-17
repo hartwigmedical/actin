@@ -1,16 +1,24 @@
 package com.hartwig.actin.clinical.datamodel;
 
-import org.immutables.value.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import java.lang.reflect.Type;
 
-@Value.Immutable
-@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class TreatmentType {
+public enum TreatmentType {
 
-    @NotNull
-    public abstract TreatmentCategory category();
+    CHEMOTHERAPY(Chemotherapy.class),
+    COMBINED_THERAPY(CombinedTherapy.class),
+    IMMUNOTHERAPY(Immunotherapy.class),
+    OTHER_THERAPY(OtherTherapy.class),
+    RADIOTHERAPY(Radiotherapy.class),
+    SURGERY(SurgicalTreatment.class),
+    TARGETED_THERAPY(TargetedTherapy.class);
 
-    @NotNull
-    public abstract String name();
+    private final Type treatmentClass;
+
+    TreatmentType(final Type treatmentClass) {
+        this.treatmentClass = treatmentClass;
+    }
+
+    public Type treatmentClass() {
+        return treatmentClass;
+    }
 }

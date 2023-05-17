@@ -3,7 +3,6 @@ package com.hartwig.actin.clinical;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -21,9 +20,11 @@ import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
+import com.hartwig.actin.clinical.datamodel.ImmutableObservedToxicity;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutableSurgery;
 import com.hartwig.actin.clinical.datamodel.ImmutableSurgeryHistoryDetails;
+import com.hartwig.actin.clinical.datamodel.ImmutableSurgicalTreatment;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicityEvaluation;
 import com.hartwig.actin.clinical.datamodel.ImmutableTreatmentHistoryEntry;
@@ -37,6 +38,7 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.Surgery;
 import com.hartwig.actin.clinical.datamodel.SurgeryStatus;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicityEvaluation;
@@ -93,6 +95,19 @@ public class ClinicalRecordsFactory {
                 throw new IllegalStateException("Cannot create clinical records. Duplicate patientId: " + patientId);
             }
 
+            List<Toxicity> extractedToxicities = extractToxicities(subject, questionnaire);
+            List<ToxicityEvaluation> toxicityEvaluations = extractedToxicities.stream()
+                    .map(toxicity -> ImmutableToxicityEvaluation.builder()
+                            .toxicities(Collections.singleton(ImmutableObservedToxicity.builder()
+                                    .name(toxicity.name())
+                                    .addAllCategories(toxicity.categories())
+                                    .grade(toxicity.grade())
+                                    .build()))
+                            .evaluatedDate(toxicity.evaluatedDate())
+                            .source(toxicity.source())
+                            .build())
+                    .collect(Collectors.toList());
+
             records.add(ImmutableClinicalRecord.builder()
                     .patientId(patientId)
                     .patient(extractPatientDetails(subject, questionnaire))
@@ -104,9 +119,11 @@ public class ClinicalRecordsFactory {
                     .priorMolecularTests(extractPriorMolecularTests(questionnaire))
                     .complications(extractComplications(questionnaire))
                     .labValues(extractLabValues(subject))
-                    .toxicityEvaluations(extractToxicities(subject, questionnaire))
+                    .toxicities(extractedToxicities)
+                    .toxicityEvaluations(toxicityEvaluations)
                     .intolerances(extractIntolerances(subject))
                     .surgeries(extractSurgeries(subject))
+                    .surgicalTreatments(extractSurgicalTreatments(subject))
                     .bodyWeights(extractBodyWeights(subject))
                     .vitalFunctions(extractVitalFunctions(subject))
                     .bloodTransfusions(extractBloodTransfusions(subject))
@@ -275,27 +292,28 @@ public class ClinicalRecordsFactory {
     }
 
     @NotNull
-    private List<ToxicityEvaluation> extractToxicities(@NotNull String subject, @Nullable Questionnaire questionnaire) {
-        List<ToxicityEvaluation> toxicityEvaluations = Lists.newArrayList();
+    private List<Toxicity> extractToxicities(@NotNull String subject, @Nullable Questionnaire questionnaire) {
+        List<Toxicity> toxicities = Lists.newArrayList();
         if (questionnaire != null) {
             List<String> unresolvedToxicities = questionnaire.unresolvedToxicities();
-            toxicityEvaluations.addAll(curation.curateQuestionnaireToxicities(unresolvedToxicities, questionnaire.date()));
+            toxicities.addAll(curation.curateQuestionnaireToxicities(unresolvedToxicities, questionnaire.date()));
         }
 
         List<QuestionnaireEntry> toxicityQuestionnaires = feed.toxicityQuestionnaireEntries(subject);
         for (QuestionnaireEntry entry : toxicityQuestionnaires) {
             Integer grade = extractGrade(entry);
             if (grade != null) {
-                Toxicity toxicity = ImmutableToxicity.builder().name(entry.itemText()).grade(grade).build();
-
-                toxicityEvaluations.add(ImmutableToxicityEvaluation.builder()
-                        .toxicities(Set.of(curation.translateToxicity(toxicity)))
+                Toxicity toxicity = ImmutableToxicity.builder()
+                        .name(entry.itemText())
                         .evaluatedDate(entry.authored())
                         .source(ToxicitySource.EHR)
-                        .build());
+                        .grade(grade)
+                        .build();
+
+                toxicities.add(curation.translateToxicity(toxicity));
             }
         }
-        return toxicityEvaluations;
+        return toxicities;
     }
 
     @Nullable
@@ -333,11 +351,22 @@ public class ClinicalRecordsFactory {
     }
 
     @NotNull
-    private List<TreatmentHistoryEntry> extractSurgeries(@NotNull String subject) {
+    private List<Surgery> extractSurgeries(@NotNull String subject) {
+        return feed.uniqueEncounterEntries(subject)
+                .stream()
+                .map(entry -> ImmutableSurgery.builder()
+                        .endDate(entry.periodEnd())
+                        .status(resolveSurgeryStatus(entry.encounterStatus()))
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @NotNull
+    private List<TreatmentHistoryEntry> extractSurgicalTreatments(@NotNull String subject) {
         return feed.uniqueEncounterEntries(subject)
                 .stream()
                 .map(encounterEntry -> ImmutableTreatmentHistoryEntry.builder()
-                        .treatments(Collections.singleton(ImmutableSurgery.builder()
+                        .treatments(Collections.singleton(ImmutableSurgicalTreatment.builder()
                                 .name("extracted surgery")
                                 .synonyms(Collections.emptySet())
                                 .build()))

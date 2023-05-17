@@ -62,7 +62,6 @@ import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
-import com.hartwig.actin.clinical.datamodel.ImmutableToxicityEvaluation;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.Intolerance;
@@ -74,7 +73,6 @@ import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
-import com.hartwig.actin.clinical.datamodel.ToxicityEvaluation;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.doid.DoidModel;
@@ -359,12 +357,12 @@ public class CurationModel {
     }
 
     @NotNull
-    public List<ToxicityEvaluation> curateQuestionnaireToxicities(@Nullable List<String> inputs, @NotNull LocalDate date) {
+    public List<Toxicity> curateQuestionnaireToxicities(@Nullable List<String> inputs, @NotNull LocalDate date) {
         if (inputs == null) {
             return Lists.newArrayList();
         }
 
-        List<ToxicityEvaluation> toxicityEvaluations = Lists.newArrayList();
+        List<Toxicity> toxicities = Lists.newArrayList();
         for (String input : inputs) {
             String trimmedInput = CurationUtil.fullTrim(input);
             Set<ToxicityConfig> configs = find(database.toxicityConfigs(), trimmedInput);
@@ -374,20 +372,18 @@ public class CurationModel {
 
             for (ToxicityConfig config : configs) {
                 if (!config.ignore()) {
-                    toxicityEvaluations.add(ImmutableToxicityEvaluation.builder()
-                            .toxicities(Set.of(ImmutableToxicity.builder()
-                                    .name(config.name())
-                                    .categories(config.categories())
-                                    .grade(config.grade())
-                                    .build()))
+                    toxicities.add(ImmutableToxicity.builder()
+                            .name(config.name())
+                            .categories(config.categories())
                             .evaluatedDate(date)
                             .source(ToxicitySource.QUESTIONNAIRE)
+                            .grade(config.grade())
                             .build());
                 }
             }
         }
 
-        return toxicityEvaluations;
+        return toxicities;
     }
 
     @Nullable
@@ -698,7 +694,7 @@ public class CurationModel {
 
     @NotNull
     public Toxicity translateToxicity(@NotNull Toxicity input) {
-        ToxicityTranslation translation = findToxicityTranslation(input);
+        ToxicityTranslation translation = findToxicityTranslation(input.name());
 
         if (translation == null) {
             LOGGER.warn("Could not find translation for toxicity with input '{}'", input.name());
@@ -710,8 +706,8 @@ public class CurationModel {
     }
 
     @Nullable
-    private ToxicityTranslation findToxicityTranslation(@NotNull Toxicity input) {
-        String trimmedToxicity = input.name().trim();
+    private ToxicityTranslation findToxicityTranslation(@NotNull String toxicityName) {
+        String trimmedToxicity = toxicityName.trim();
         for (ToxicityTranslation entry : database.toxicityTranslations()) {
             if (entry.toxicity().equals(trimmedToxicity)) {
                 return entry;

@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.datamodel;
 
-import java.util.Set;
+import java.time.LocalDate;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -8,14 +8,11 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class Surgery implements Treatment {
+public abstract class Surgery {
 
     @NotNull
-    public Set<TreatmentCategory> categories() {
-        return Set.of(TreatmentCategory.SURGERY);
-    }
+    public abstract LocalDate endDate();
 
-    public boolean isSystemic() {
-        return false;
-    }
+    @NotNull
+    public abstract SurgeryStatus status();
 }

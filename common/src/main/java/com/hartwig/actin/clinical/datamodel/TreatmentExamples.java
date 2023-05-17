@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical.datamodel;
 
 import java.io.IOException;
-import java.time.Year;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -71,13 +70,10 @@ public class TreatmentExamples {
         Chemotherapy folfirinoxLocoRegional =
                 ImmutableChemotherapy.copyOf(folfirinox).withName("FOLFIRINOX loco-regional").withIsSystemic(false);
 
-        Surgery colectomy = ImmutableSurgery.builder().name("Colectomy").synonyms(Collections.emptySet()).build();
+        SurgicalTreatment colectomy = ImmutableSurgicalTreatment.builder().name("Colectomy").synonyms(Collections.emptySet()).build();
 
-        TreatmentHistoryEntry surgeryHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
-                .addTreatments(colectomy)
-                .startYear(Year.of(2021))
-                .intent(Intent.MAINTENANCE)
-                .build();
+        TreatmentHistoryEntry surgeryHistoryEntry =
+                ImmutableTreatmentHistoryEntry.builder().addTreatments(colectomy).startYear(2021).intent(Intent.MAINTENANCE).build();
 
         List<TreatmentHistoryEntry> treatmentHistory = List.of(therapyHistoryEntry(Set.of(folfirinox), 2020, Intent.NEOADJUVANT),
                 surgeryHistoryEntry,
@@ -107,11 +103,6 @@ public class TreatmentExamples {
     }
 
     @NotNull
-    private static ImmutableTreatmentType treatmentType(@NotNull String name, @NotNull TreatmentCategory category) {
-        return ImmutableTreatmentType.builder().name(name).category(category).build();
-    }
-
-    @NotNull
     private static Drug drug(@NotNull String name, @NotNull DrugClass drugClass) {
         return ImmutableDrug.builder().name(name).addDrugClasses(drugClass).synonyms(Collections.emptySet()).build();
     }
@@ -123,6 +114,6 @@ public class TreatmentExamples {
 
     @NotNull
     private static TreatmentHistoryEntry therapyHistoryEntry(Set<Therapy> therapies, int startYear, Intent intent) {
-        return ImmutableTreatmentHistoryEntry.builder().treatments(therapies).startYear(Year.of(startYear)).intent(intent).build();
+        return ImmutableTreatmentHistoryEntry.builder().treatments(therapies).startYear(startYear).intent(intent).build();
     }
 }

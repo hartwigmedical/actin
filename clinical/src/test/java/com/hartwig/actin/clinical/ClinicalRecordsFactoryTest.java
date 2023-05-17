@@ -22,8 +22,10 @@ import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.MedicationStatus;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
+import com.hartwig.actin.clinical.datamodel.Surgery;
 import com.hartwig.actin.clinical.datamodel.SurgeryHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.SurgeryStatus;
+import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicityEvaluation;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TreatmentHistoryEntry;
@@ -67,9 +69,11 @@ public class ClinicalRecordsFactoryTest {
         assertPatientDetails(record.patient());
         assertTumorDetails(record.tumor());
         assertClinicalStatus(record.clinicalStatus());
-        assertToxicities(record.toxicityEvaluations());
+        assertToxicities(record.toxicities());
+        assertToxicityEvaluations(record.toxicityEvaluations());
         assertAllergies(record.intolerances());
         assertSurgeries(record.surgeries());
+        assertSurgicalTreatments(record.surgicalTreatments());
         assertBodyWeights(record.bodyWeights());
         assertVitalFunctions(record.vitalFunctions());
         assertBloodTransfusions(record.bloodTransfusions());
@@ -119,23 +123,44 @@ public class ClinicalRecordsFactoryTest {
         assertEquals(clinicalStatus.hasComplications(), true);
     }
 
-    private static void assertToxicities(@NotNull List<ToxicityEvaluation> toxicityEvaluations) {
+    private static void assertToxicities(@NotNull List<Toxicity> toxicities) {
+        assertEquals(2, toxicities.size());
+
+        Toxicity toxicity1 = findByName(toxicities, "Nausea");
+        assertEquals(ToxicitySource.EHR, toxicity1.source());
+        assertEquals(2, (int) toxicity1.grade());
+
+        Toxicity toxicity2 = findByName(toxicities, "Pain");
+        assertEquals(ToxicitySource.EHR, toxicity2.source());
+        assertEquals(0, (int) toxicity2.grade());
+    }
+
+    @NotNull
+    private static Toxicity findByName(@NotNull List<Toxicity> toxicities, @NotNull String name) {
+        return toxicities.stream()
+                .filter(toxicity -> toxicity.name().equals(name))
+                .findAny()
+                .orElseThrow(() -> new IllegalStateException("Could not find toxicity with name: " + name));
+    }
+
+    private static void assertToxicityEvaluations(@NotNull List<ToxicityEvaluation> toxicityEvaluations) {
         assertEquals(2, toxicityEvaluations.size());
 
-        ToxicityEvaluation toxicity1 = findByName(toxicityEvaluations, "Nausea");
+        ToxicityEvaluation toxicity1 = findToxicityEvaluationByName(toxicityEvaluations, "Nausea");
         assertEquals(ToxicitySource.EHR, toxicity1.source());
         assertEquals(2, (int) toxicity1.toxicities().iterator().next().grade());
 
-        ToxicityEvaluation toxicity2 = findByName(toxicityEvaluations, "Pain");
+        ToxicityEvaluation toxicity2 = findToxicityEvaluationByName(toxicityEvaluations, "Pain");
         assertEquals(ToxicitySource.EHR, toxicity2.source());
         assertEquals(0, (int) toxicity2.toxicities().iterator().next().grade());
     }
 
     @NotNull
-    private static ToxicityEvaluation findByName(@NotNull List<ToxicityEvaluation> toxicityEvaluations, @NotNull String name) {
+    private static ToxicityEvaluation findToxicityEvaluationByName(@NotNull List<ToxicityEvaluation> toxicityEvaluations,
+            @NotNull String name) {
         return toxicityEvaluations.stream()
                 .filter(toxicityEvaluation -> toxicityEvaluation.toxicities().iterator().next().name().equals(name))
-                .findFirst()
+                .findAny()
                 .orElseThrow(() -> new IllegalStateException("Could not find toxicity with name: " + name));
     }
 
@@ -148,10 +173,18 @@ public class ClinicalRecordsFactoryTest {
         assertEquals("Unknown", intolerance.criticality());
     }
 
-    private static void assertSurgeries(@NotNull List<TreatmentHistoryEntry> surgeries) {
+    private static void assertSurgeries(@NotNull List<Surgery> surgeries) {
         assertEquals(1, surgeries.size());
 
-        SurgeryHistoryDetails surgery = surgeries.get(0).surgeryHistoryDetails();
+        Surgery surgery = surgeries.get(0);
+        assertEquals(LocalDate.of(2015, 10, 10), surgery.endDate());
+        assertEquals(SurgeryStatus.PLANNED, surgery.status());
+    }
+
+    private static void assertSurgicalTreatments(@NotNull List<TreatmentHistoryEntry> surgicalTreatments) {
+        assertEquals(1, surgicalTreatments.size());
+
+        SurgeryHistoryDetails surgery = surgicalTreatments.get(0).surgeryHistoryDetails();
         assertEquals(LocalDate.of(2015, 10, 10), surgery.endDate());
         assertEquals(SurgeryStatus.PLANNED, surgery.status());
     }

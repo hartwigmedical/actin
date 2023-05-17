@@ -1,6 +1,8 @@
 package com.hartwig.actin.clinical.serialization;
 
 import static com.hartwig.actin.util.json.Json.integer;
+import static com.hartwig.actin.util.json.Json.string;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -10,6 +12,7 @@ import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -24,46 +27,71 @@ import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
+import com.hartwig.actin.clinical.datamodel.Chemotherapy;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
+import com.hartwig.actin.clinical.datamodel.CombinedTherapy;
 import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ECG;
+import com.hartwig.actin.clinical.datamodel.Immunotherapy;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight;
+import com.hartwig.actin.clinical.datamodel.ImmutableChemotherapy;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
+import com.hartwig.actin.clinical.datamodel.ImmutableCombinedTherapy;
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableECG;
+import com.hartwig.actin.clinical.datamodel.ImmutableImmunotherapy;
 import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
+import com.hartwig.actin.clinical.datamodel.ImmutableObservedToxicity;
+import com.hartwig.actin.clinical.datamodel.ImmutableOtherTherapy;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.ImmutableRadiotherapy;
 import com.hartwig.actin.clinical.datamodel.ImmutableSurgery;
+import com.hartwig.actin.clinical.datamodel.ImmutableSurgeryHistoryDetails;
+import com.hartwig.actin.clinical.datamodel.ImmutableSurgicalTreatment;
+import com.hartwig.actin.clinical.datamodel.ImmutableTargetedTherapy;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
+import com.hartwig.actin.clinical.datamodel.ImmutableToxicityEvaluation;
+import com.hartwig.actin.clinical.datamodel.ImmutableTreatmentHistoryEntry;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
+import com.hartwig.actin.clinical.datamodel.ObservedToxicity;
+import com.hartwig.actin.clinical.datamodel.OtherTherapy;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.Radiotherapy;
 import com.hartwig.actin.clinical.datamodel.Surgery;
+import com.hartwig.actin.clinical.datamodel.SurgeryHistoryDetails;
+import com.hartwig.actin.clinical.datamodel.SurgicalTreatment;
+import com.hartwig.actin.clinical.datamodel.TargetedTherapy;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
+import com.hartwig.actin.clinical.datamodel.ToxicityEvaluation;
+import com.hartwig.actin.clinical.datamodel.Treatment;
 import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
+import com.hartwig.actin.clinical.datamodel.TreatmentHistoryEntry;
+import com.hartwig.actin.clinical.datamodel.TreatmentType;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
 import com.hartwig.actin.clinical.sort.ClinicalRecordComparator;
 import com.hartwig.actin.util.Paths;
 import com.hartwig.actin.util.json.GsonSerializer;
+
 import org.jetbrains.annotations.NotNull;
 
 public final class ClinicalRecordJson {
@@ -115,8 +143,7 @@ public final class ClinicalRecordJson {
     @VisibleForTesting
     @NotNull
     static ClinicalRecord fromJson(@NotNull String json) {
-        Gson gson = new GsonBuilder()
-                .serializeNulls()
+        Gson gson = new GsonBuilder().serializeNulls()
                 .enableComplexMapKeySerialization()
                 .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
                 .registerTypeAdapter(PatientDetails.class, new AbstractClassAdapter<PatientDetails>(ImmutablePatientDetails.class))
@@ -124,38 +151,69 @@ public final class ClinicalRecordJson {
                 .registerTypeAdapter(ClinicalStatus.class, new AbstractClassAdapter<ClinicalStatus>(ImmutableClinicalStatus.class))
                 .registerTypeAdapter(InfectionStatus.class, new AbstractClassAdapter<InfectionStatus>(ImmutableInfectionStatus.class))
                 .registerTypeAdapter(ECG.class, new AbstractClassAdapter<ECG>(ImmutableECG.class))
-                .registerTypeAdapter(new TypeToken<ImmutableList<String>>() {}.getType(),
-                        new ImmutableListAdapter<String>(String.class))
-                .registerTypeAdapter(new TypeToken<ImmutableList<PriorTumorTreatment>>() {}.getType(),
-                        new ImmutableListAdapter<PriorTumorTreatment>(ImmutablePriorTumorTreatment.class))
-                .registerTypeAdapter(new TypeToken<ImmutableList<PriorSecondPrimary>>() {}.getType(),
-                        new ImmutableListAdapter<PriorSecondPrimary>(ImmutablePriorSecondPrimary.class))
-                .registerTypeAdapter(new TypeToken<ImmutableList<PriorOtherCondition>>() {}.getType(),
-                        new ImmutableListAdapter<PriorOtherCondition>(ImmutablePriorOtherCondition.class))
-                .registerTypeAdapter(new TypeToken<ImmutableList<PriorMolecularTest>>() {}.getType(),
-                        new ImmutableListAdapter<PriorMolecularTest>(ImmutablePriorMolecularTest.class))
-                .registerTypeAdapter(new TypeToken<ImmutableList<Complication>>() {}.getType(),
-                        new ImmutableListAdapter<Complication>(ImmutableComplication.class))
-                .registerTypeAdapter(new TypeToken<ImmutableList<LabValue>>() {}.getType(),
-                        new ImmutableListAdapter<LabValue>(ImmutableLabValue.class))
-                .registerTypeAdapter(new TypeToken<ImmutableList<Toxicity>>() {}.getType(),
-                        new ImmutableListAdapter<Toxicity>(ImmutableToxicity.class))
-                .registerTypeAdapter(new TypeToken<ImmutableList<Intolerance>>() {}.getType(),
-                        new ImmutableListAdapter<Intolerance>(ImmutableIntolerance.class))
-                .registerTypeAdapter(new TypeToken<ImmutableList<Surgery>>() {}.getType(),
-                        new ImmutableListAdapter<Surgery>(ImmutableSurgery.class))
-                .registerTypeAdapter(new TypeToken<ImmutableList<BodyWeight>>() {}.getType(),
-                        new ImmutableListAdapter<BodyWeight>(ImmutableBodyWeight.class))
-                .registerTypeAdapter(new TypeToken<ImmutableList<VitalFunction>>() {}.getType(),
-                        new ImmutableListAdapter<VitalFunction>(ImmutableVitalFunction.class))
-                .registerTypeAdapter(new TypeToken<ImmutableList<BloodTransfusion>>() {}.getType(),
-                        new ImmutableListAdapter<BloodTransfusion>(ImmutableBloodTransfusion.class))
-                .registerTypeAdapter(new TypeToken<ImmutableList<Medication>>() {}.getType(),
-                        new ImmutableListAdapter<Medication>(ImmutableMedication.class))
-                .registerTypeAdapter(new TypeToken<ImmutableSet<String>>() {}.getType(),
-                        new ImmutableSetAdapter<String>(String.class))
-                .registerTypeAdapter(new TypeToken<ImmutableSet<TreatmentCategory>>() {}.getType(),
-                        new ImmutableSetAdapter<TreatmentCategory>(TreatmentCategory.class))
+                .registerTypeAdapter(Chemotherapy.class, new AbstractClassAdapter<Chemotherapy>(ImmutableChemotherapy.class))
+                .registerTypeAdapter(CombinedTherapy.class, new AbstractClassAdapter<CombinedTherapy>(ImmutableCombinedTherapy.class))
+                .registerTypeAdapter(Immunotherapy.class, new AbstractClassAdapter<Immunotherapy>(ImmutableImmunotherapy.class))
+                .registerTypeAdapter(OtherTherapy.class, new AbstractClassAdapter<OtherTherapy>(ImmutableOtherTherapy.class))
+                .registerTypeAdapter(Radiotherapy.class, new AbstractClassAdapter<Radiotherapy>(ImmutableRadiotherapy.class))
+                .registerTypeAdapter(SurgicalTreatment.class, new AbstractClassAdapter<SurgicalTreatment>(ImmutableSurgicalTreatment.class))
+                .registerTypeAdapter(TargetedTherapy.class, new AbstractClassAdapter<TargetedTherapy>(ImmutableTargetedTherapy.class))
+                .registerTypeAdapter(SurgeryHistoryDetails.class,
+                        new AbstractClassAdapter<SurgeryHistoryDetails>(ImmutableSurgeryHistoryDetails.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<String>>() {
+                }.getType(), new ImmutableListAdapter<String>(String.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<TreatmentHistoryEntry>>() {
+                }.getType(), new ImmutableListAdapter<TreatmentHistoryEntry>(ImmutableTreatmentHistoryEntry.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<PriorTumorTreatment>>() {
+                }.getType(), new ImmutableListAdapter<PriorTumorTreatment>(ImmutablePriorTumorTreatment.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<PriorSecondPrimary>>() {
+                }.getType(), new ImmutableListAdapter<PriorSecondPrimary>(ImmutablePriorSecondPrimary.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<PriorOtherCondition>>() {
+                }.getType(), new ImmutableListAdapter<PriorOtherCondition>(ImmutablePriorOtherCondition.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<PriorMolecularTest>>() {
+                }.getType(), new ImmutableListAdapter<PriorMolecularTest>(ImmutablePriorMolecularTest.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<Complication>>() {
+                }.getType(), new ImmutableListAdapter<Complication>(ImmutableComplication.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<LabValue>>() {
+                }.getType(), new ImmutableListAdapter<LabValue>(ImmutableLabValue.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<Toxicity>>() {
+                }.getType(), new ImmutableListAdapter<Toxicity>(ImmutableToxicity.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<ToxicityEvaluation>>() {
+                }.getType(), new ImmutableListAdapter<ToxicityEvaluation>(ImmutableToxicityEvaluation.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<Intolerance>>() {
+                }.getType(), new ImmutableListAdapter<Intolerance>(ImmutableIntolerance.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<Surgery>>() {
+                }.getType(), new ImmutableListAdapter<Surgery>(ImmutableSurgery.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<BodyWeight>>() {
+                }.getType(), new ImmutableListAdapter<BodyWeight>(ImmutableBodyWeight.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<VitalFunction>>() {
+                }.getType(), new ImmutableListAdapter<VitalFunction>(ImmutableVitalFunction.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<BloodTransfusion>>() {
+                }.getType(), new ImmutableListAdapter<BloodTransfusion>(ImmutableBloodTransfusion.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<Medication>>() {
+                }.getType(), new ImmutableListAdapter<Medication>(ImmutableMedication.class))
+                .registerTypeAdapter(new TypeToken<ImmutableSet<String>>() {
+                }.getType(), new ImmutableSetAdapter<String>(String.class))
+                .registerTypeAdapter(new TypeToken<ImmutableSet<TreatmentCategory>>() {
+                }.getType(), new ImmutableSetAdapter<TreatmentCategory>(TreatmentCategory.class))
+                .registerTypeAdapter(new TypeToken<ImmutableSet<Treatment>>() {
+                }.getType(), new TreatmentSetAdapter())
+                .registerTypeAdapter(new TypeToken<ImmutableSet<Chemotherapy>>() {
+                }.getType(), new ImmutableSetAdapter<Chemotherapy>(ImmutableChemotherapy.class))
+                .registerTypeAdapter(new TypeToken<ImmutableSet<CombinedTherapy>>() {
+                }.getType(), new ImmutableSetAdapter<CombinedTherapy>(ImmutableCombinedTherapy.class))
+                .registerTypeAdapter(new TypeToken<ImmutableSet<Immunotherapy>>() {
+                }.getType(), new ImmutableSetAdapter<Immunotherapy>(ImmutableImmunotherapy.class))
+                .registerTypeAdapter(new TypeToken<ImmutableSet<OtherTherapy>>() {
+                }.getType(), new ImmutableSetAdapter<OtherTherapy>(ImmutableOtherTherapy.class))
+                .registerTypeAdapter(new TypeToken<ImmutableSet<Radiotherapy>>() {
+                }.getType(), new ImmutableSetAdapter<Radiotherapy>(ImmutableRadiotherapy.class))
+                .registerTypeAdapter(new TypeToken<ImmutableSet<SurgicalTreatment>>() {
+                }.getType(), new ImmutableSetAdapter<SurgicalTreatment>(ImmutableSurgicalTreatment.class))
+                .registerTypeAdapter(new TypeToken<ImmutableSet<TargetedTherapy>>() {
+                }.getType(), new ImmutableSetAdapter<TargetedTherapy>(ImmutableTargetedTherapy.class))
+                .registerTypeAdapter(new TypeToken<ImmutableSet<ObservedToxicity>>() {
+                }.getType(), new ImmutableSetAdapter<ObservedToxicity>(ImmutableObservedToxicity.class))
                 .create();
         return gson.fromJson(json, ImmutableClinicalRecord.class);
     }
@@ -216,13 +274,33 @@ public final class ClinicalRecordJson {
         }
 
         @Override
-        public ImmutableSet<T> deserialize(JsonElement jsonElement, Type type,
-                                            JsonDeserializationContext context) throws JsonParseException {
+        public ImmutableSet<T> deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context)
+                throws JsonParseException {
 
-            return jsonElement.isJsonNull() ? null : ImmutableSet.copyOf(jsonElement.getAsJsonArray().asList().stream()
-                    .map(listElement -> (T) context.deserialize(listElement, concreteType))
-                    .collect(Collectors.toSet())
-            );
+            return jsonElement.isJsonNull()
+                    ? null
+                    : ImmutableSet.copyOf(jsonElement.getAsJsonArray()
+                            .asList()
+                            .stream()
+                            .map(listElement -> (T) context.deserialize(listElement, concreteType))
+                            .collect(Collectors.toSet()));
+        }
+    }
+
+    private static class TreatmentSetAdapter implements JsonDeserializer<ImmutableSet<Treatment>> {
+        @Override
+        public ImmutableSet<Treatment> deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context)
+                throws JsonParseException {
+
+            return jsonElement.isJsonNull()
+                    ? null
+                    : ImmutableSet.copyOf(jsonElement.getAsJsonArray()
+                            .asList()
+                            .stream()
+                            .peek(element -> System.out.println(element.getAsJsonObject()))
+                            .map(listElement -> (Treatment) context.deserialize(listElement,
+                                    TreatmentType.valueOf(string(listElement.getAsJsonObject(), "treatmentType")).treatmentClass()))
+                            .collect(Collectors.toSet()));
         }
     }
 }

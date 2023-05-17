@@ -1,7 +1,5 @@
 package com.hartwig.actin.clinical.datamodel;
 
-import java.time.Month;
-import java.time.Year;
 import java.util.Set;
 
 import org.immutables.value.Value;
@@ -16,10 +14,10 @@ public abstract class TreatmentHistoryEntry {
     public abstract Set<Treatment> treatments();
 
     @Nullable
-    public abstract Year startYear();
+    public abstract Integer startYear();
 
     @Nullable
-    public abstract Month startMonth();
+    public abstract Integer startMonth();
 
     @Nullable
     public abstract Intent intent();
