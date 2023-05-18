@@ -6,7 +6,6 @@ import java.util.StringJoiner;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -14,25 +13,32 @@ import org.jetbrains.annotations.NotNull;
 final class QuestionnaireReader {
 
     @VisibleForTesting
-    static final Set<String> TERMS_TO_CLEAN = Sets.newHashSet();
-
-    static {
-        TERMS_TO_CLEAN.add("{");
-        TERMS_TO_CLEAN.add("}");
-
-        TERMS_TO_CLEAN.add("\\tab");
-        TERMS_TO_CLEAN.add("\\li0");
-        TERMS_TO_CLEAN.add("\\ri0");
-        TERMS_TO_CLEAN.add("\\sa0");
-        TERMS_TO_CLEAN.add("\\sb0");
-        TERMS_TO_CLEAN.add("\\fi0");
-        TERMS_TO_CLEAN.add("\\ql");
-        TERMS_TO_CLEAN.add("\\par");
-        TERMS_TO_CLEAN.add("\\f2");
-        TERMS_TO_CLEAN.add("\\ltrch");
-    }
+    static final Set<String> TERMS_TO_CLEAN = Set.of("{",
+            "}",
+            "\\tab",
+            "\\li0",
+            "\\ri0",
+            "\\sa0",
+            "\\sb0",
+            "\\fi0",
+            "\\ql",
+            "\\par",
+            "\\f2",
+            "\\ltrch",
+            "Tumor details",
+            "Clinical details",
+            "Clinical information");
 
     private QuestionnaireReader() {
+    }
+
+    @NotNull
+    public static String cleanedContents(@NotNull QuestionnaireEntry entry) {
+        String contents = entry.itemAnswerValueValueString();
+        for (String str : TERMS_TO_CLEAN) {
+            contents = contents.replace(str, Strings.EMPTY);
+        }
+        return contents;
     }
 
     @NotNull
@@ -55,12 +61,7 @@ final class QuestionnaireReader {
             curLine.add(lines[i]);
         }
         merged.add(curLine.toString());
-
-        String[] mergedLines = new String[merged.size()];
-        for (int j = 0; j < merged.size(); j++) {
-            mergedLines[j] = merged.get(j);
-        }
-        return mergedLines;
+        return merged.toArray(new String[0]);
     }
 
     private static boolean hasValue(@NotNull String line) {
