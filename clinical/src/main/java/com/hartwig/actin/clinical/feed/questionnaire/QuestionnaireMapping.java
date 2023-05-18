@@ -1,12 +1,15 @@
 package com.hartwig.actin.clinical.feed.questionnaire;
 
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.Maps;
 
 import org.jetbrains.annotations.NotNull;
 
 final class QuestionnaireMapping {
+
+    static final Set<QuestionnaireKey> OPTIONAL_KEYS = Set.of(QuestionnaireKey.GENAYA_SUBJECT_NUMBER);
 
     static final Map<QuestionnaireKey, String> KEYS_V1_6 = Maps.newHashMap();
     static final Map<QuestionnaireKey, String> KEYS_V1_5 = Maps.newHashMap();
@@ -63,11 +66,9 @@ final class QuestionnaireMapping {
         KEYS_V1_5.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
         KEYS_V1_5.put(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG, "Significant aberration on latest ECG");
         KEYS_V1_5.put(QuestionnaireKey.COMPLICATIONS, "Cancer-related complications (e.g. pleural effusion)");
-        KEYS_V1_5.put(QuestionnaireKey.GENAYA_SUBJECT_NUMBER, null);
 
         KEYS_V1_4.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, "Treatment history current tumor");
         KEYS_V1_4.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, "Other oncological history (e.g. radiotherapy, second primary)");
-        KEYS_V1_4.put(QuestionnaireKey.SECONDARY_PRIMARY, null);
         KEYS_V1_4.put(QuestionnaireKey.NON_ONCOLOGICAL_HISTORY, "Non-oncological history");
         KEYS_V1_4.put(QuestionnaireKey.PRIMARY_TUMOR_LOCATION, "Primary tumor location");
         KEYS_V1_4.put(QuestionnaireKey.PRIMARY_TUMOR_TYPE, "Primary tumor type");
@@ -80,17 +81,14 @@ final class QuestionnaireMapping {
         KEYS_V1_4.put(QuestionnaireKey.HAS_LIVER_LESIONS, "Liver lesions");
         KEYS_V1_4.put(QuestionnaireKey.OTHER_LESIONS, "Other lesions (e.g. lymph node, pulmonal)");
         KEYS_V1_4.put(QuestionnaireKey.IHC_TEST_RESULTS, "Previous Molecular tests");
-        KEYS_V1_4.put(QuestionnaireKey.PDL1_TEST_RESULTS, null);
         KEYS_V1_4.put(QuestionnaireKey.WHO_STATUS, "WHO status");
         KEYS_V1_4.put(QuestionnaireKey.UNRESOLVED_TOXICITIES, "Unresolved toxicities grade => 2");
         KEYS_V1_4.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
         KEYS_V1_4.put(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG, "Significant aberration on latest ECG");
         KEYS_V1_4.put(QuestionnaireKey.COMPLICATIONS, "Cancer-related complications (e.g. pleural effusion)");
-        KEYS_V1_4.put(QuestionnaireKey.GENAYA_SUBJECT_NUMBER, null);
 
         KEYS_V1_3.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, "Treatment history current tumor");
         KEYS_V1_3.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, "Other oncological history (e.g. radiotherapy, second primary)");
-        KEYS_V1_3.put(QuestionnaireKey.SECONDARY_PRIMARY, null);
         KEYS_V1_3.put(QuestionnaireKey.NON_ONCOLOGICAL_HISTORY, "Non-oncological history");
         KEYS_V1_3.put(QuestionnaireKey.PRIMARY_TUMOR_LOCATION, "Primary tumor location");
         KEYS_V1_3.put(QuestionnaireKey.PRIMARY_TUMOR_TYPE, "Primary tumor type");
@@ -102,18 +100,14 @@ final class QuestionnaireMapping {
         KEYS_V1_3.put(QuestionnaireKey.HAS_BONE_LESIONS, "Bone lesions");
         KEYS_V1_3.put(QuestionnaireKey.HAS_LIVER_LESIONS, "Liver lesions");
         KEYS_V1_3.put(QuestionnaireKey.OTHER_LESIONS, "Other lesions (e.g. lymph node, pulmonal)");
-        KEYS_V1_3.put(QuestionnaireKey.IHC_TEST_RESULTS, null);
-        KEYS_V1_3.put(QuestionnaireKey.PDL1_TEST_RESULTS, null);
         KEYS_V1_3.put(QuestionnaireKey.WHO_STATUS, "WHO status");
         KEYS_V1_3.put(QuestionnaireKey.UNRESOLVED_TOXICITIES, "Unresolved toxicities grade => 2");
         KEYS_V1_3.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
         KEYS_V1_3.put(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG, "Significant aberration on latest ECG");
         KEYS_V1_3.put(QuestionnaireKey.COMPLICATIONS, "Cancer-related complications (e.g. pleural effusion)");
-        KEYS_V1_3.put(QuestionnaireKey.GENAYA_SUBJECT_NUMBER, null);
 
         KEYS_V1_2.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, "Treatment history current tumor");
         KEYS_V1_2.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, "Other oncological history (e.g. radiotherapy, second primary)");
-        KEYS_V1_2.put(QuestionnaireKey.SECONDARY_PRIMARY, null);
         KEYS_V1_2.put(QuestionnaireKey.NON_ONCOLOGICAL_HISTORY, "Non-oncological history");
         KEYS_V1_2.put(QuestionnaireKey.PRIMARY_TUMOR_LOCATION, "Primary tumor location");
         KEYS_V1_2.put(QuestionnaireKey.PRIMARY_TUMOR_TYPE, "Primary tumor type");
@@ -125,18 +119,14 @@ final class QuestionnaireMapping {
         KEYS_V1_2.put(QuestionnaireKey.HAS_BONE_LESIONS, "Bone lesions yes/no/unknown");
         KEYS_V1_2.put(QuestionnaireKey.HAS_LIVER_LESIONS, "Liver lesions yes/no/unknown");
         KEYS_V1_2.put(QuestionnaireKey.OTHER_LESIONS, "Other lesions (e.g. lymph node, pulmonal)");
-        KEYS_V1_2.put(QuestionnaireKey.IHC_TEST_RESULTS, null);
-        KEYS_V1_2.put(QuestionnaireKey.PDL1_TEST_RESULTS, null);
         KEYS_V1_2.put(QuestionnaireKey.WHO_STATUS, "WHO status");
         KEYS_V1_2.put(QuestionnaireKey.UNRESOLVED_TOXICITIES, "Unresolved toxicities grade => 2");
         KEYS_V1_2.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
         KEYS_V1_2.put(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG, "Significant aberration on latest ECG");
         KEYS_V1_2.put(QuestionnaireKey.COMPLICATIONS, "Cancer-related complications (e.g. pleural effusion)");
-        KEYS_V1_2.put(QuestionnaireKey.GENAYA_SUBJECT_NUMBER, null);
 
         KEYS_V1_1.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, "Treatment history current tumor");
         KEYS_V1_1.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, "Other oncological history (e.g. radiotherapy, second primary)");
-        KEYS_V1_1.put(QuestionnaireKey.SECONDARY_PRIMARY, null);
         KEYS_V1_1.put(QuestionnaireKey.NON_ONCOLOGICAL_HISTORY, "Non-oncological history");
         KEYS_V1_1.put(QuestionnaireKey.PRIMARY_TUMOR_LOCATION, "Primary tumor location");
         KEYS_V1_1.put(QuestionnaireKey.PRIMARY_TUMOR_TYPE, "Primary tumor type");
@@ -148,18 +138,14 @@ final class QuestionnaireMapping {
         KEYS_V1_1.put(QuestionnaireKey.HAS_BONE_LESIONS, "Bone lesions yes/no/unknown");
         KEYS_V1_1.put(QuestionnaireKey.HAS_LIVER_LESIONS, "Liver lesions yes/no/unknown");
         KEYS_V1_1.put(QuestionnaireKey.OTHER_LESIONS, "Other lesions (e.g. lymph node, pulmonal)");
-        KEYS_V1_1.put(QuestionnaireKey.IHC_TEST_RESULTS, null);
-        KEYS_V1_1.put(QuestionnaireKey.PDL1_TEST_RESULTS, null);
         KEYS_V1_1.put(QuestionnaireKey.WHO_STATUS, "WHO status");
         KEYS_V1_1.put(QuestionnaireKey.UNRESOLVED_TOXICITIES, "Unresolved toxicities grade => 2");
         KEYS_V1_1.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
         KEYS_V1_1.put(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG, "Significant aberration on latest ECG");
         KEYS_V1_1.put(QuestionnaireKey.COMPLICATIONS, "Cancer-related complications (e.g. pleural effusion)");
-        KEYS_V1_1.put(QuestionnaireKey.GENAYA_SUBJECT_NUMBER, null);
 
         KEYS_V1_0.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, "Treatment history current tumor");
         KEYS_V1_0.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, "Other oncological history (e.g. radiotherapy, second primary)");
-        KEYS_V1_0.put(QuestionnaireKey.SECONDARY_PRIMARY, null);
         KEYS_V1_0.put(QuestionnaireKey.NON_ONCOLOGICAL_HISTORY, "Non-oncological history");
         KEYS_V1_0.put(QuestionnaireKey.PRIMARY_TUMOR_LOCATION, "Primary tumor location");
         KEYS_V1_0.put(QuestionnaireKey.PRIMARY_TUMOR_TYPE, "Primary tumor type");
@@ -171,18 +157,14 @@ final class QuestionnaireMapping {
         KEYS_V1_0.put(QuestionnaireKey.HAS_BONE_LESIONS, "Bone lesions yes/no/unknown");
         KEYS_V1_0.put(QuestionnaireKey.HAS_LIVER_LESIONS, "Liver lesions yes/no/unknown");
         KEYS_V1_0.put(QuestionnaireKey.OTHER_LESIONS, "Other lesions (e.g. lymph node, pulmonal)");
-        KEYS_V1_0.put(QuestionnaireKey.IHC_TEST_RESULTS, null);
-        KEYS_V1_0.put(QuestionnaireKey.PDL1_TEST_RESULTS, null);
         KEYS_V1_0.put(QuestionnaireKey.WHO_STATUS, "WHO status");
         KEYS_V1_0.put(QuestionnaireKey.UNRESOLVED_TOXICITIES, "Unresolved toxicities grade => 2");
         KEYS_V1_0.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
         KEYS_V1_0.put(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG, "Significant aberration on latest ECG");
         KEYS_V1_0.put(QuestionnaireKey.COMPLICATIONS, "Cancer-related complications (e.g. pleural effusion)");
-        KEYS_V1_0.put(QuestionnaireKey.GENAYA_SUBJECT_NUMBER, null);
 
         KEYS_V0_2.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, "Treatment history current tumor");
         KEYS_V0_2.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, "Other oncological history (e.g. second primary)");
-        KEYS_V0_2.put(QuestionnaireKey.SECONDARY_PRIMARY, null);
         KEYS_V0_2.put(QuestionnaireKey.NON_ONCOLOGICAL_HISTORY, "Non-oncological history");
         KEYS_V0_2.put(QuestionnaireKey.PRIMARY_TUMOR_LOCATION, "Tumor location");
         KEYS_V0_2.put(QuestionnaireKey.PRIMARY_TUMOR_TYPE, "Tumor type");
@@ -193,38 +175,30 @@ final class QuestionnaireMapping {
         KEYS_V0_2.put(QuestionnaireKey.HAS_BRAIN_LESIONS, "Brain lesions yes/no/unknown");
         KEYS_V0_2.put(QuestionnaireKey.HAS_BONE_LESIONS, "Bone lesions yes/no/unknown");
         KEYS_V0_2.put(QuestionnaireKey.HAS_LIVER_LESIONS, "Liver lesions yes/no/unknown");
-        KEYS_V0_2.put(QuestionnaireKey.OTHER_LESIONS, null);
-        KEYS_V0_2.put(QuestionnaireKey.IHC_TEST_RESULTS, null);
-        KEYS_V0_2.put(QuestionnaireKey.PDL1_TEST_RESULTS, null);
+        KEYS_V0_2.put(QuestionnaireKey.HAS_BIOPTABLE_LESION, "Biopsy amenable yes/no/unknown");
         KEYS_V0_2.put(QuestionnaireKey.WHO_STATUS, "WHO status");
         KEYS_V0_2.put(QuestionnaireKey.UNRESOLVED_TOXICITIES, "Unresolved toxicities grade => 2");
         KEYS_V0_2.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
         KEYS_V0_2.put(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG, "Significant aberration on latest ECG");
         KEYS_V0_2.put(QuestionnaireKey.COMPLICATIONS, "Other (e.g. pleural effusion)");
-        KEYS_V0_2.put(QuestionnaireKey.GENAYA_SUBJECT_NUMBER, null);
 
-        KEYS_V0_1.put(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR, null);
-        KEYS_V0_1.put(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY, null);
-        KEYS_V0_1.put(QuestionnaireKey.SECONDARY_PRIMARY, null);
         KEYS_V0_1.put(QuestionnaireKey.NON_ONCOLOGICAL_HISTORY, "Other");
         KEYS_V0_1.put(QuestionnaireKey.PRIMARY_TUMOR_LOCATION, "Oncological");
-        KEYS_V0_1.put(QuestionnaireKey.PRIMARY_TUMOR_TYPE, null);
-        KEYS_V0_1.put(QuestionnaireKey.BIOPSY_LOCATION, null);
-        KEYS_V0_1.put(QuestionnaireKey.STAGE, null);
         KEYS_V0_1.put(QuestionnaireKey.HAS_MEASURABLE_DISEASE, "Has measurable lesion (RECIST) yes/no");
         KEYS_V0_1.put(QuestionnaireKey.HAS_CNS_LESIONS, "CNS lesions yes/no/unknown");
         KEYS_V0_1.put(QuestionnaireKey.HAS_BRAIN_LESIONS, "Brain lesions yes/no/unknown");
         KEYS_V0_1.put(QuestionnaireKey.HAS_BONE_LESIONS, "Bone lesions yes/no/unknown");
         KEYS_V0_1.put(QuestionnaireKey.HAS_LIVER_LESIONS, "Liver lesions yes/no/unknown");
-        KEYS_V0_1.put(QuestionnaireKey.OTHER_LESIONS, null);
-        KEYS_V0_1.put(QuestionnaireKey.IHC_TEST_RESULTS, null);
-        KEYS_V0_1.put(QuestionnaireKey.PDL1_TEST_RESULTS, null);
+        KEYS_V0_1.put(QuestionnaireKey.HAS_BIOPTABLE_LESION, "Has bioptable lesion yes/no");
         KEYS_V0_1.put(QuestionnaireKey.WHO_STATUS, "WHO status");
         KEYS_V0_1.put(QuestionnaireKey.UNRESOLVED_TOXICITIES, "Unresolved toxicities from prior anti-tumor therapy grade => 2");
         KEYS_V0_1.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
         KEYS_V0_1.put(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG, "Significant aberration on latest ECG");
         KEYS_V0_1.put(QuestionnaireKey.COMPLICATIONS, "Other (e.g. Osteoporosis, Pleural effusion)");
-        KEYS_V0_1.put(QuestionnaireKey.GENAYA_SUBJECT_NUMBER, null);
+        KEYS_V0_1.put(QuestionnaireKey.V0_1_TNM_CRITERIA, "TNM criteria: T N M ");
+        KEYS_V0_1.put(QuestionnaireKey.V0_1_INFORMATION, "Information");
+        KEYS_V0_1.put(QuestionnaireKey.V0_1_SIGNIFICANT_ABERRATION_LATEST_LUNG_TEST, "Significant aberration on latest lung function test");
+        KEYS_V0_1.put(QuestionnaireKey.V0_1_LATEST_LVEF, "Latest LVEF (%)");
     }
 
     @NotNull

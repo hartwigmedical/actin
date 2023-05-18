@@ -1,27 +1,11 @@
 package com.hartwig.actin.clinical.feed.questionnaire;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 public class QuestionnaireMappingTest {
-
-    @Test
-    public void allMappingsAreComplete() {
-        for (QuestionnaireKey key : QuestionnaireKey.values()) {
-            assertTrue(QuestionnaireMapping.KEYS_V1_6.containsKey(key));
-            assertTrue(QuestionnaireMapping.KEYS_V1_5.containsKey(key));
-            assertTrue(QuestionnaireMapping.KEYS_V1_4.containsKey(key));
-            assertTrue(QuestionnaireMapping.KEYS_V1_3.containsKey(key));
-            assertTrue(QuestionnaireMapping.KEYS_V1_2.containsKey(key));
-            assertTrue(QuestionnaireMapping.KEYS_V1_1.containsKey(key));
-            assertTrue(QuestionnaireMapping.KEYS_V1_0.containsKey(key));
-            assertTrue(QuestionnaireMapping.KEYS_V0_2.containsKey(key));
-            assertTrue(QuestionnaireMapping.KEYS_V0_1.containsKey(key));
-        }
-    }
 
     @Test
     public void canRetrieveMappingForQuestionnaire() {
