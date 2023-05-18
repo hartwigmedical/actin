@@ -113,7 +113,20 @@ public class QuestionnaireExtractionTest {
 
     @Test
     public void shouldBeAbleToExtractDataFromQuestionnaireV1_5() {
-        Questionnaire questionnaire = QuestionnaireExtraction.extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_5()));
+        assertExtractionForQuestionnaireV1_5(TestQuestionnaireFactory.createTestQuestionnaireValueV1_5());
+    }
+
+    @Test
+    public void shouldBeAbleToExtractDataFromAlternateQuestionnaireV1_5() {
+        String rawQuestionnaire = TestQuestionnaireFactory.createTestQuestionnaireValueV1_5()
+                .replace("- IHC test", "-IHC test")
+                .replace("- PD L1 test", "-PD L1 test");
+
+        assertExtractionForQuestionnaireV1_5(rawQuestionnaire);
+    }
+
+    private void assertExtractionForQuestionnaireV1_5(@NotNull String rawQuestionnaire) {
+        Questionnaire questionnaire = QuestionnaireExtraction.extract(entry(rawQuestionnaire));
 
         assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
         assertEquals("ovary", questionnaire.tumorLocation());

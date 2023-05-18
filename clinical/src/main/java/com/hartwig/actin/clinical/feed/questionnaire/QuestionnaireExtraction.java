@@ -77,6 +77,11 @@ public final class QuestionnaireExtraction {
             return Map.entry(questionnaireKey, questionnaireContents.substring(valueStartPosition, nextFieldStartPosition).trim());
         }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
+        String rawIHCTestString = rawValuesByKey.get(QuestionnaireKey.IHC_TEST_RESULTS);
+        String IHCTestString = (rawIHCTestString != null && rawIHCTestString.endsWith("-"))
+                ? rawIHCTestString.substring(0, rawIHCTestString.length() - 1)
+                : rawIHCTestString;
+
         LesionData brainLesionData = LesionData.fromString(rawValuesByKey.get(QuestionnaireKey.HAS_BRAIN_LESIONS));
         LesionData cnsLesionData = LesionData.fromString(rawValuesByKey.get(QuestionnaireKey.HAS_CNS_LESIONS));
 
@@ -92,7 +97,7 @@ public final class QuestionnaireExtraction {
                 .otherOncologicalHistory(toList(rawValuesByKey.get(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY)))
                 .secondaryPrimaries(QuestionnaireCuration.toSecondaryPrimaries(rawValuesByKey.get(QuestionnaireKey.SECONDARY_PRIMARY)))
                 .nonOncologicalHistory(toList(rawValuesByKey.get(QuestionnaireKey.NON_ONCOLOGICAL_HISTORY)))
-                .ihcTestResults(toList(rawValuesByKey.get(QuestionnaireKey.IHC_TEST_RESULTS)))
+                .ihcTestResults(toList(IHCTestString))
                 .pdl1TestResults(toList(rawValuesByKey.get(QuestionnaireKey.PDL1_TEST_RESULTS)))
                 .hasMeasurableDisease(toOption(rawValuesByKey.get(QuestionnaireKey.HAS_MEASURABLE_DISEASE)))
                 .hasBrainLesions(brainLesionData.present())

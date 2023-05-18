@@ -36,8 +36,9 @@ final class QuestionnaireMapping {
         KEYS_V1_6.put(QuestionnaireKey.HAS_BONE_LESIONS, "Bone lesions");
         KEYS_V1_6.put(QuestionnaireKey.HAS_LIVER_LESIONS, "Liver lesions");
         KEYS_V1_6.put(QuestionnaireKey.OTHER_LESIONS, "Other lesions (e.g. lymph node, pulmonal)");
-        KEYS_V1_6.put(QuestionnaireKey.IHC_TEST_RESULTS, "Previous Molecular tests - IHC test results");
-        KEYS_V1_6.put(QuestionnaireKey.PDL1_TEST_RESULTS, "- PD L1 test results");
+        KEYS_V1_6.put(QuestionnaireKey.PREVIOUS_MOLECULAR_TESTS, "Previous Molecular tests");
+        KEYS_V1_6.put(QuestionnaireKey.IHC_TEST_RESULTS, "IHC test results");
+        KEYS_V1_6.put(QuestionnaireKey.PDL1_TEST_RESULTS, "PD L1 test results");
         KEYS_V1_6.put(QuestionnaireKey.WHO_STATUS, "WHO status");
         KEYS_V1_6.put(QuestionnaireKey.UNRESOLVED_TOXICITIES, "Unresolved toxicities grade => 2");
         KEYS_V1_6.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
@@ -59,8 +60,9 @@ final class QuestionnaireMapping {
         KEYS_V1_5.put(QuestionnaireKey.HAS_BONE_LESIONS, "Bone lesions");
         KEYS_V1_5.put(QuestionnaireKey.HAS_LIVER_LESIONS, "Liver lesions");
         KEYS_V1_5.put(QuestionnaireKey.OTHER_LESIONS, "Other lesions (e.g. lymph node, pulmonal)");
-        KEYS_V1_5.put(QuestionnaireKey.IHC_TEST_RESULTS, "Previous Molecular tests - IHC test results");
-        KEYS_V1_5.put(QuestionnaireKey.PDL1_TEST_RESULTS, "- PD L1 test results");
+        KEYS_V1_5.put(QuestionnaireKey.PREVIOUS_MOLECULAR_TESTS, "Previous Molecular tests");
+        KEYS_V1_5.put(QuestionnaireKey.IHC_TEST_RESULTS, "IHC test results");
+        KEYS_V1_5.put(QuestionnaireKey.PDL1_TEST_RESULTS, "PD L1 test results");
         KEYS_V1_5.put(QuestionnaireKey.WHO_STATUS, "WHO status");
         KEYS_V1_5.put(QuestionnaireKey.UNRESOLVED_TOXICITIES, "Unresolved toxicities grade => 2");
         KEYS_V1_5.put(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION, "Significant current infection");
