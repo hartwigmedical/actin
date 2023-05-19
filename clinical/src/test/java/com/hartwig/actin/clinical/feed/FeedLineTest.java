@@ -1,6 +1,8 @@
 package com.hartwig.actin.clinical.feed;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -34,6 +36,9 @@ public class FeedLineTest {
 
         assertEquals("string ", line.string("stringProper"));
         assertEquals("string", line.trimmed("stringProper"));
+
+        assertTrue(line.hasColumn("stringProper"));
+        assertFalse(line.hasColumn("nonexistent"));
 
         assertEquals(Gender.MALE, line.gender("gender"));
         assertEquals(LocalDate.of(2019, 1, 1), line.date("date"));

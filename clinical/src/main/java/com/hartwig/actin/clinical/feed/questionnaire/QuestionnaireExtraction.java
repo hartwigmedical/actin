@@ -54,49 +54,51 @@ public final class QuestionnaireExtraction {
         }
 
         Map<QuestionnaireKey, String> mapping = QuestionnaireMapping.mapping(entry);
+        String[] lines = QuestionnaireReader.read(entry);
 
-        LesionData brainLesionData = LesionData.forKey(entry, mapping, QuestionnaireKey.HAS_BRAIN_LESIONS);
-        LesionData cnsLesionData = LesionData.forKey(entry, mapping, QuestionnaireKey.HAS_CNS_LESIONS);
+        LesionData brainLesionData = LesionData.forKey(lines, mapping, QuestionnaireKey.HAS_BRAIN_LESIONS);
+        LesionData cnsLesionData = LesionData.forKey(lines, mapping, QuestionnaireKey.HAS_CNS_LESIONS);
 
         return ImmutableQuestionnaire.builder()
                 .date(entry.authored())
-                .tumorLocation(value(entry, mapping.get(QuestionnaireKey.PRIMARY_TUMOR_LOCATION)))
-                .tumorType(tumorType(entry, mapping))
-                .biopsyLocation(value(entry, mapping.get(QuestionnaireKey.BIOPSY_LOCATION)))
-                .stage(toStage(value(entry, mapping.get(QuestionnaireKey.STAGE))))
-                .treatmentHistoryCurrentTumor(toList(value(entry, mapping.get(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR))))
-                .otherOncologicalHistory(toList(value(entry, mapping.get(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY))))
-                .secondaryPrimaries(toSecondaryPrimaries(entry, mapping, QuestionnaireKey.SECONDARY_PRIMARY))
-                .nonOncologicalHistory(toList(value(entry, mapping.get(QuestionnaireKey.NON_ONCOLOGICAL_HISTORY))))
-                .ihcTestResults(toList(value(entry, mapping.get(QuestionnaireKey.IHC_TEST_RESULTS))))
-                .pdl1TestResults(toList(value(entry, mapping.get(QuestionnaireKey.PDL1_TEST_RESULTS))))
-                .hasMeasurableDisease(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_MEASURABLE_DISEASE))))
+                .tumorLocation(value(lines, mapping.get(QuestionnaireKey.PRIMARY_TUMOR_LOCATION)))
+                .tumorType(QuestionnaireVersion.version(entry) == QuestionnaireVersion.V0_1 ?
+                        "Unknown" : value(lines, mapping.get(QuestionnaireKey.PRIMARY_TUMOR_TYPE)))
+                .biopsyLocation(value(lines, mapping.get(QuestionnaireKey.BIOPSY_LOCATION)))
+                .stage(toStage(value(lines, mapping.get(QuestionnaireKey.STAGE))))
+                .treatmentHistoryCurrentTumor(toList(value(lines, mapping.get(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR))))
+                .otherOncologicalHistory(toList(value(lines, mapping.get(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY))))
+                .secondaryPrimaries(toSecondaryPrimaries(lines, mapping, QuestionnaireKey.SECONDARY_PRIMARY))
+                .nonOncologicalHistory(toList(value(lines, mapping.get(QuestionnaireKey.NON_ONCOLOGICAL_HISTORY))))
+                .ihcTestResults(toList(value(lines, mapping.get(QuestionnaireKey.IHC_TEST_RESULTS))))
+                .pdl1TestResults(toList(value(lines, mapping.get(QuestionnaireKey.PDL1_TEST_RESULTS))))
+                .hasMeasurableDisease(toOption(value(lines, mapping.get(QuestionnaireKey.HAS_MEASURABLE_DISEASE))))
                 .hasBrainLesions(brainLesionData.present())
                 .hasActiveBrainLesions(brainLesionData.active())
                 .hasCnsLesions(cnsLesionData.present())
                 .hasActiveCnsLesions(cnsLesionData.active())
-                .hasBoneLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_BONE_LESIONS))))
-                .hasLiverLesions(toOption(value(entry, mapping.get(QuestionnaireKey.HAS_LIVER_LESIONS))))
-                .otherLesions(otherLesions(entry, mapping))
-                .whoStatus(toWHO(value(entry, mapping.get(QuestionnaireKey.WHO_STATUS))))
-                .unresolvedToxicities(toList(value(entry, mapping.get(QuestionnaireKey.UNRESOLVED_TOXICITIES))))
-                .infectionStatus(toInfectionStatus(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION))))
-                .ecg(toECG(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG))))
-                .complications(toList(value(entry, mapping.get(QuestionnaireKey.COMPLICATIONS))))
-                .genayaSubjectNumber(optionalValue(entry, mapping.get(QuestionnaireKey.GENAYA_SUBJECT_NUMBER)))
+                .hasBoneLesions(toOption(value(lines, mapping.get(QuestionnaireKey.HAS_BONE_LESIONS))))
+                .hasLiverLesions(toOption(value(lines, mapping.get(QuestionnaireKey.HAS_LIVER_LESIONS))))
+                .otherLesions(otherLesions(entry, lines, mapping))
+                .whoStatus(toWHO(value(lines, mapping.get(QuestionnaireKey.WHO_STATUS))))
+                .unresolvedToxicities(toList(value(lines, mapping.get(QuestionnaireKey.UNRESOLVED_TOXICITIES))))
+                .infectionStatus(toInfectionStatus(value(lines, mapping.get(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION))))
+                .ecg(toECG(value(lines, mapping.get(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG))))
+                .complications(toList(value(lines, mapping.get(QuestionnaireKey.COMPLICATIONS))))
+                .genayaSubjectNumber(optionalValue(lines, mapping.get(QuestionnaireKey.GENAYA_SUBJECT_NUMBER)))
                 .build();
     }
 
     @Nullable
-    private static List<String> toSecondaryPrimaries(@NotNull QuestionnaireEntry entry, @NotNull Map<QuestionnaireKey, String> mapping,
+    private static List<String> toSecondaryPrimaries(@NotNull String[] lines, @NotNull Map<QuestionnaireKey, String> mapping,
             @NotNull QuestionnaireKey secondaryPrimaryKey) {
-        String secondaryPrimary = value(entry, mapping.get(secondaryPrimaryKey));
+        String secondaryPrimary = value(lines, mapping.get(secondaryPrimaryKey));
         if (secondaryPrimary == null) {
             return null;
         }
 
         List<String> secondaryPrimaries = Lists.newArrayList();
-        String lastTreatmentInfo = value(entry, mapping.get(secondaryPrimaryKey), 1);
+        String lastTreatmentInfo = value(lines, mapping.get(secondaryPrimaryKey), 1);
         if (lastTreatmentInfo.isEmpty()) {
             secondaryPrimaries.add(secondaryPrimary);
         } else {
@@ -142,22 +144,12 @@ public final class QuestionnaireExtraction {
     }
 
     @Nullable
-    private static String tumorType(@NotNull QuestionnaireEntry entry, @NotNull Map<QuestionnaireKey, String> mapping) {
-        QuestionnaireVersion version = QuestionnaireVersion.version(entry);
-        if (version == QuestionnaireVersion.V0_1) {
-            // In v0.1 we have no field yet for tumor type.
-            return "Unknown";
-        } else {
-            return value(entry, mapping.get(QuestionnaireKey.PRIMARY_TUMOR_TYPE));
-        }
-    }
-
-    @Nullable
-    private static List<String> otherLesions(@NotNull QuestionnaireEntry entry, @NotNull Map<QuestionnaireKey, String> mapping) {
+    private static List<String> otherLesions(@NotNull QuestionnaireEntry entry, @NotNull String[] lines,
+            @NotNull Map<QuestionnaireKey, String> mapping) {
         QuestionnaireVersion version = QuestionnaireVersion.version(entry);
         if (version == QuestionnaireVersion.V0_1) {
             //In v0.1, the format for primary tumor location is "$location ($otherLesions)"
-            String input = value(entry, mapping.get(QuestionnaireKey.PRIMARY_TUMOR_LOCATION));
+            String input = value(lines, mapping.get(QuestionnaireKey.PRIMARY_TUMOR_LOCATION));
             if (input.contains("(") && input.contains(")")) {
                 int start = input.indexOf("(");
                 int end = input.indexOf(")");
@@ -166,7 +158,7 @@ public final class QuestionnaireExtraction {
                 return null;
             }
         } else {
-            return toList(value(entry, mapping.get(QuestionnaireKey.OTHER_LESIONS)));
+            return toList(value(lines, mapping.get(QuestionnaireKey.OTHER_LESIONS)));
         }
     }
 
@@ -195,60 +187,47 @@ public final class QuestionnaireExtraction {
     }
 
     @Nullable
-    private static String value(@NotNull QuestionnaireEntry entry, @Nullable String key) {
-        return value(entry, key, false, 0);
+    private static String value(@NotNull String[] lines, @Nullable String key) {
+        return value(lines, key, false, 0);
     }
 
     @Nullable
-    private static String value(@NotNull QuestionnaireEntry entry, @Nullable String key, int lineOffset) {
-        return value(entry, key, false, lineOffset);
+    private static String value(@NotNull String[] lines, @Nullable String key, int lineOffset) {
+        return value(lines, key, false, lineOffset);
     }
 
     @Nullable
-    private static String optionalValue(@NotNull QuestionnaireEntry entry, @Nullable String key) {
-        return value(entry, key, true, 0);
+    private static String optionalValue(@NotNull String[] lines, @Nullable String key) {
+        return value(lines, key, true, 0);
     }
 
     @Nullable
-    private static String value(@NotNull QuestionnaireEntry entry, @Nullable String key, boolean isOptional, int lineOffset) {
-        LookupResult result = lookup(entry, key, isOptional);
+    private static String value(@NotNull String[] lines, @Nullable String key, boolean isOptional, int lineOffset) {
+        Integer lineIndex = lookup(lines, key, isOptional);
 
-        String line = result != null ? result.lines[result.lineIndex + lineOffset] : null;
+        String line = lineIndex != null ? lines[lineIndex + lineOffset] : null;
         return line != null ? line.substring(line.indexOf(KEY_VALUE_SEPARATOR) + 1).trim() : null;
     }
 
     @Nullable
-    private static LookupResult lookup(@NotNull QuestionnaireEntry entry, @Nullable String key, boolean isOptional) {
+    private static Integer lookup(@NotNull String[] lines, @Nullable String key, boolean isOptional) {
         if (key == null) {
             return null;
         }
 
-        String[] lines = QuestionnaireReader.read(entry);
-
         for (int i = 0; i < lines.length; i++) {
             if (lines[i].contains(key)) {
-                return new LookupResult(lines, i);
+                return i;
             }
         }
 
         if (isOptional) {
-            LOGGER.debug("Key '{}' not present but skipped since it is configured as optional in questionnaire '{}'", key, entry);
+            LOGGER.debug("Key '{}' not present but skipped since it is configured as optional in questionnaire '{}'", key,
+                    String.join("\n", lines));
             return null;
         }
 
-        throw new IllegalStateException("Could not find key " + key + " in questionnaire " + entry);
-    }
-
-    private static class LookupResult {
-
-        @NotNull
-        private final String[] lines;
-        private final int lineIndex;
-
-        public LookupResult(@NotNull final String[] lines, final int lineIndex) {
-            this.lines = lines;
-            this.lineIndex = lineIndex;
-        }
+        throw new IllegalStateException("Could not find key " + key + " in questionnaire " + String.join("\n", lines));
     }
 
     private static class LesionData {
@@ -264,12 +243,12 @@ public final class QuestionnaireExtraction {
         }
 
         @NotNull
-        static LesionData forKey(@NotNull QuestionnaireEntry entry, @NotNull Map<QuestionnaireKey, String> mapping,
+        static LesionData forKey(@NotNull String[] lines, @NotNull Map<QuestionnaireKey, String> mapping,
                 @NotNull QuestionnaireKey key) {
-            Boolean present = toOption(value(entry, mapping.get(key)));
+            Boolean present = toOption(value(lines, mapping.get(key)));
             Boolean active = null;
             if (present != null) {
-                Boolean activeOption = toOption(value(entry, mapping.get(key), ACTIVE_LINE_OFFSET));
+                Boolean activeOption = toOption(value(lines, mapping.get(key), ACTIVE_LINE_OFFSET));
                 if (activeOption != null) {
                     active = present ? activeOption : false;
                 }

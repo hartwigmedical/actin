@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 public class QuestionnaireEntryCreator implements FeedEntryCreator<QuestionnaireEntry> {
 
     private static final String MANUAL_QUESTIONNAIRE_DESCRIPTION = "INT Consult";
+    public static final String QUESTIONNAIRE_TEXT_FIELD = "item_answer_value_valueString";
 
     private final boolean invalidateManualQuestionnaires;
 
@@ -23,7 +24,7 @@ public class QuestionnaireEntryCreator implements FeedEntryCreator<Questionnaire
                 .authored(line.date("authored"))
                 .description(line.string("description"))
                 .itemText(line.string("item_text"))
-                .itemAnswerValueValueString(line.string("item_answer_value_valueString"))
+                .itemAnswerValueValueString(line.string(line.hasColumn(QUESTIONNAIRE_TEXT_FIELD) ? QUESTIONNAIRE_TEXT_FIELD : "text"))
                 .build();
     }
 
