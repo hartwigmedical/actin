@@ -4,14 +4,12 @@ import static com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireCuratio
 import static com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireCuration.toStage;
 import static com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireCuration.toWHO;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.clinical.datamodel.ECG;
-import com.hartwig.actin.clinical.datamodel.ImmutableECG;
-import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
-import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,19 +54,20 @@ public final class QuestionnaireExtraction {
         Map<QuestionnaireKey, String> mapping = QuestionnaireMapping.mapping(entry);
         String[] lines = QuestionnaireReader.read(entry);
 
-        LesionData brainLesionData = LesionData.forKey(lines, mapping, QuestionnaireKey.HAS_BRAIN_LESIONS);
-        LesionData cnsLesionData = LesionData.forKey(lines, mapping, QuestionnaireKey.HAS_CNS_LESIONS);
+        LesionData brainLesionData = lesionData(lines, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS));
+        LesionData cnsLesionData = lesionData(lines, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS));
 
         return ImmutableQuestionnaire.builder()
                 .date(entry.authored())
                 .tumorLocation(value(lines, mapping.get(QuestionnaireKey.PRIMARY_TUMOR_LOCATION)))
-                .tumorType(QuestionnaireVersion.version(entry) == QuestionnaireVersion.V0_1 ?
-                        "Unknown" : value(lines, mapping.get(QuestionnaireKey.PRIMARY_TUMOR_TYPE)))
+                .tumorType(QuestionnaireVersion.version(entry) == QuestionnaireVersion.V0_1
+                        ? "Unknown"
+                        : value(lines, mapping.get(QuestionnaireKey.PRIMARY_TUMOR_TYPE)))
                 .biopsyLocation(value(lines, mapping.get(QuestionnaireKey.BIOPSY_LOCATION)))
                 .stage(toStage(value(lines, mapping.get(QuestionnaireKey.STAGE))))
                 .treatmentHistoryCurrentTumor(toList(value(lines, mapping.get(QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR))))
                 .otherOncologicalHistory(toList(value(lines, mapping.get(QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY))))
-                .secondaryPrimaries(toSecondaryPrimaries(lines, mapping, QuestionnaireKey.SECONDARY_PRIMARY))
+                .secondaryPrimaries(secondaryPrimaries(lines, mapping.get(QuestionnaireKey.SECONDARY_PRIMARY)))
                 .nonOncologicalHistory(toList(value(lines, mapping.get(QuestionnaireKey.NON_ONCOLOGICAL_HISTORY))))
                 .ihcTestResults(toList(value(lines, mapping.get(QuestionnaireKey.IHC_TEST_RESULTS))))
                 .pdl1TestResults(toList(value(lines, mapping.get(QuestionnaireKey.PDL1_TEST_RESULTS))))
@@ -82,65 +81,21 @@ public final class QuestionnaireExtraction {
                 .otherLesions(otherLesions(entry, lines, mapping))
                 .whoStatus(toWHO(value(lines, mapping.get(QuestionnaireKey.WHO_STATUS))))
                 .unresolvedToxicities(toList(value(lines, mapping.get(QuestionnaireKey.UNRESOLVED_TOXICITIES))))
-                .infectionStatus(toInfectionStatus(value(lines, mapping.get(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION))))
-                .ecg(toECG(value(lines, mapping.get(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG))))
+                .infectionStatus(QuestionnaireCuration.toInfectionStatus(value(lines,
+                        mapping.get(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION))))
+                .ecg(QuestionnaireCuration.toECG(value(lines, mapping.get(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG))))
                 .complications(toList(value(lines, mapping.get(QuestionnaireKey.COMPLICATIONS))))
                 .genayaSubjectNumber(optionalValue(lines, mapping.get(QuestionnaireKey.GENAYA_SUBJECT_NUMBER)))
                 .build();
     }
 
     @Nullable
-    private static List<String> toSecondaryPrimaries(@NotNull String[] lines, @NotNull Map<QuestionnaireKey, String> mapping,
-            @NotNull QuestionnaireKey secondaryPrimaryKey) {
-        String secondaryPrimary = value(lines, mapping.get(secondaryPrimaryKey));
-        if (secondaryPrimary == null) {
+    private static List<String> secondaryPrimaries(@NotNull String[] lines, @Nullable String secondaryPrimaryKey) {
+        List<String> extractedValues = (secondaryPrimaryKey == null) ? null : values(lines, secondaryPrimaryKey, 1);
+        if (extractedValues == null || extractedValues.get(0).isEmpty()) {
             return null;
         }
-
-        List<String> secondaryPrimaries = Lists.newArrayList();
-        String lastTreatmentInfo = value(lines, mapping.get(secondaryPrimaryKey), 1);
-        if (lastTreatmentInfo.isEmpty()) {
-            secondaryPrimaries.add(secondaryPrimary);
-        } else {
-            secondaryPrimaries.add(secondaryPrimary + " | " + lastTreatmentInfo);
-        }
-
-        return secondaryPrimaries;
-    }
-
-    @Nullable
-    private static InfectionStatus toInfectionStatus(@Nullable String significantCurrentInfection) {
-        Boolean hasActiveInfection = null;
-        if (QuestionnaireCuration.isConfiguredOption(significantCurrentInfection)) {
-            hasActiveInfection = toOption(significantCurrentInfection);
-        } else if (significantCurrentInfection != null && !significantCurrentInfection.isEmpty()) {
-            hasActiveInfection = true;
-        }
-
-        if (hasActiveInfection == null || significantCurrentInfection == null) {
-            return null;
-        }
-
-        return ImmutableInfectionStatus.builder().hasActiveInfection(hasActiveInfection).description(significantCurrentInfection).build();
-    }
-
-    @Nullable
-    private static ECG toECG(@Nullable String significantAberrationLatestECG) {
-        Boolean hasSignificantAberrationLatestECG = null;
-        if (QuestionnaireCuration.isConfiguredOption(significantAberrationLatestECG)) {
-            hasSignificantAberrationLatestECG = toOption(significantAberrationLatestECG);
-        } else if (significantAberrationLatestECG != null && !significantAberrationLatestECG.isEmpty()) {
-            hasSignificantAberrationLatestECG = true;
-        }
-
-        if (hasSignificantAberrationLatestECG == null || significantAberrationLatestECG == null) {
-            return null;
-        }
-
-        return ImmutableECG.builder()
-                .hasSigAberrationLatestECG(hasSignificantAberrationLatestECG)
-                .aberrationDescription(significantAberrationLatestECG)
-                .build();
+        return QuestionnaireCuration.toSecondaryPrimaries(extractedValues.get(0), extractedValues.get(1));
     }
 
     @Nullable
@@ -160,6 +115,13 @@ public final class QuestionnaireExtraction {
         } else {
             return toList(value(lines, mapping.get(QuestionnaireKey.OTHER_LESIONS)));
         }
+    }
+
+    private static LesionData lesionData(@NotNull String[] lines, @NotNull String keyString) {
+        List<String> extractedValues = values(lines, keyString, ACTIVE_LINE_OFFSET);
+        return (extractedValues == null)
+                ? new LesionData(null, null)
+                : LesionData.fromString(extractedValues.get(0), extractedValues.get(1));
     }
 
     @Nullable
@@ -188,25 +150,41 @@ public final class QuestionnaireExtraction {
 
     @Nullable
     private static String value(@NotNull String[] lines, @Nullable String key) {
-        return value(lines, key, false, 0);
-    }
-
-    @Nullable
-    private static String value(@NotNull String[] lines, @Nullable String key, int lineOffset) {
-        return value(lines, key, false, lineOffset);
+        return value(lines, key, false);
     }
 
     @Nullable
     private static String optionalValue(@NotNull String[] lines, @Nullable String key) {
-        return value(lines, key, true, 0);
+        return value(lines, key, true);
     }
 
     @Nullable
-    private static String value(@NotNull String[] lines, @Nullable String key, boolean isOptional, int lineOffset) {
+    private static String value(@NotNull String[] lines, @Nullable String key, boolean isOptional) {
         Integer lineIndex = lookup(lines, key, isOptional);
 
-        String line = lineIndex != null ? lines[lineIndex + lineOffset] : null;
-        return line != null ? line.substring(line.indexOf(KEY_VALUE_SEPARATOR) + 1).trim() : null;
+        String line = lineIndex != null ? lines[lineIndex] : null;
+        return line != null ? extractValue(line) : null;
+    }
+
+    @Nullable
+    private static List<String> values(@NotNull String[] lines, @Nullable String key, int lineOffset) {
+        Integer lineIndex = lookup(lines, key, false);
+        if (lineIndex != null) {
+            List<String> extractedValues = Arrays.stream(lines, lineIndex, lineIndex + lineOffset + 1)
+                    .map(QuestionnaireExtraction::extractValue)
+                    .collect(Collectors.toList());
+
+            if (extractedValues.size() < lineOffset + 1) {
+                throw new RuntimeException(String.format("Failed to extract %d lines for key '%s'", lineOffset + 1, key));
+            }
+            return extractedValues;
+        }
+        return null;
+    }
+
+    @NotNull
+    private static String extractValue(String line) {
+        return line.substring(line.indexOf(KEY_VALUE_SEPARATOR) + 1).trim();
     }
 
     @Nullable
@@ -228,43 +206,5 @@ public final class QuestionnaireExtraction {
         }
 
         throw new IllegalStateException("Could not find key " + key + " in questionnaire " + String.join("\n", lines));
-    }
-
-    private static class LesionData {
-
-        @Nullable
-        private final Boolean present;
-        @Nullable
-        private final Boolean active;
-
-        public LesionData(@Nullable final Boolean present, @Nullable final Boolean active) {
-            this.present = present;
-            this.active = active;
-        }
-
-        @NotNull
-        static LesionData forKey(@NotNull String[] lines, @NotNull Map<QuestionnaireKey, String> mapping,
-                @NotNull QuestionnaireKey key) {
-            Boolean present = toOption(value(lines, mapping.get(key)));
-            Boolean active = null;
-            if (present != null) {
-                Boolean activeOption = toOption(value(lines, mapping.get(key), ACTIVE_LINE_OFFSET));
-                if (activeOption != null) {
-                    active = present ? activeOption : false;
-                }
-            }
-
-            return new LesionData(present, active);
-        }
-
-        @Nullable
-        public Boolean present() {
-            return present;
-        }
-
-        @Nullable
-        public Boolean active() {
-            return active;
-        }
     }
 }

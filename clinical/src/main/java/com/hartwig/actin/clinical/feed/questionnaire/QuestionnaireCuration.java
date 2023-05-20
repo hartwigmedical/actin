@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.feed.questionnaire;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -13,7 +14,6 @@ import com.hartwig.actin.clinical.datamodel.TumorStage;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -134,24 +134,9 @@ final class QuestionnaireCuration {
         }
     }
 
-    @Nullable
-    static List<String> toSecondaryPrimaries(@Nullable String input) {
-        if (input == null) {
-            return null;
-        }
-        String[] tokens = input.split("- Last date of active treatment:");
-        String secondaryPrimary = tokens.length > 0 ? tokens[0].trim() : Strings.EMPTY;
-        if (secondaryPrimary.isEmpty()) {
-            return null;
-        }
-
-        if (tokens.length >= 2) {
-            String lastTreatmentInfo = tokens[1].trim();
-            if (!lastTreatmentInfo.isEmpty()) {
-                return List.of(secondaryPrimary + " | " + lastTreatmentInfo);
-            }
-        }
-        return List.of(secondaryPrimary);
+    @NotNull
+    static List<String> toSecondaryPrimaries(@NotNull String secondaryPrimary, @NotNull String lastTreatmentInfo) {
+        return Collections.singletonList(secondaryPrimary + (lastTreatmentInfo.isEmpty() ? "" : (" | " + lastTreatmentInfo)));
     }
 
     @Nullable

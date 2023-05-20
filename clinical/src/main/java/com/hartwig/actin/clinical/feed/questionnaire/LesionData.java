@@ -19,13 +19,10 @@ class LesionData {
 
     @NotNull
     static LesionData fromString(@NotNull String presentInput, @NotNull String activeInput) {
-        String[] tokens = input.split(".{0,2}Active.*:");
-        Boolean present = tokens.length > 0 ? toOption(tokens[0].trim()) : null;
+        Boolean present = toOption(presentInput);
         Boolean active = null;
-        if (present != null && tokens.length >= 2) {
-            String remainingText = tokens[1].trim();
-            String activeOptionText = remainingText.contains(" ") ? remainingText.substring(0, remainingText.indexOf(" ")) : remainingText;
-            Boolean activeOption = toOption(activeOptionText);
+        if (present != null) {
+            Boolean activeOption = toOption(activeInput);
             if (activeOption != null) {
                 active = present ? activeOption : false;
             }

@@ -53,19 +53,12 @@ public class QuestionnaireCurationTest {
 
     @Test
     public void shouldExtractSecondaryPrimaryAndLastTreatmentDateWhenAvailable() {
-        assertEquals(Collections.singletonList("sarcoma | Feb 2020"),
-                QuestionnaireCuration.toSecondaryPrimaries("sarcoma - Last date of active treatment: Feb 2020  "));
+        assertEquals(Collections.singletonList("sarcoma | Feb 2020"), QuestionnaireCuration.toSecondaryPrimaries("sarcoma", "Feb 2020"));
     }
 
     @Test
     public void shouldExtractSecondaryPrimaryWhenLastTreatmentDateNotAvailable() {
-        assertEquals(Collections.singletonList("sarcoma"),
-                QuestionnaireCuration.toSecondaryPrimaries("sarcoma - Last date of active treatment: "));
-    }
-
-    @Test
-    public void shouldExtractNullWhenSecondaryPrimaryNotAvailable() {
-        assertNull(QuestionnaireCuration.toSecondaryPrimaries("- Last date of active treatment: "));
+        assertEquals(Collections.singletonList("sarcoma"), QuestionnaireCuration.toSecondaryPrimaries("sarcoma", ""));
     }
 
     @Test
