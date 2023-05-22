@@ -25,11 +25,7 @@ final class ActinTrialGeneratorFunctions {
     }
 
     public static String createCohortString(EvaluatedCohort cohort) {
-        String cohortText = cohort.cohort() == null ? "" : cohort.cohort();
-        if (cohort.isOpen() && !cohort.hasSlotsAvailable()) {
-            cohortText += " *";
-        }
-        return cohortText;
+        return cohort.cohort() == null ? "" : cohort.cohort();
     }
 
     public static void addContentStreamToTable(Stream<String> cellContent, boolean deemphasizeContent, Table table) {
