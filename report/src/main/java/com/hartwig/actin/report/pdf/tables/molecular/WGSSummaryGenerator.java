@@ -70,8 +70,7 @@ public class WGSSummaryGenerator implements TableGenerator {
         if (molecular.containsTumorCells()) {
             Stream.of(Maps.immutableEntry("Molecular tissue of origin prediction",
                                     createHighConfidenceTumorOriginPredictionOption().orElse("Inconclusive")),
-                            Maps.immutableEntry("Tumor mutational load",
-                                    characteristicsGenerator.createTMLStatusStringOption().orElse(Formats.VALUE_UNKNOWN)),
+                            Maps.immutableEntry("Tumor mutational load / burden", characteristicsGenerator.createTMLAndTMBStatusString()),
                             Maps.immutableEntry("Microsatellite (in)stability",
                                     characteristicsGenerator.createMSStabilityStringOption().orElse(Formats.VALUE_UNKNOWN)),
                             Maps.immutableEntry("HR status", characteristicsGenerator.createHRStatusStringOption().orElse(Formats.VALUE_UNKNOWN)),
