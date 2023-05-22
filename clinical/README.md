@@ -217,7 +217,7 @@ N medications
 | chemicalSubgroupATC        |               | Chemical subgroup belonging to ATC code                                                                |
 | pharmacologicalSubgroupATC |               | Pharmacological subgroup belonging to ATC code                                                         |
 | therapeuticSubgroupATC     |               | Therapeutic subgroup belonging to ATC code                                                             |
-| anatomicalMainGroupTC      |               | Anatomical main group belonging to ATC code                                                            |
+| anatomicalMainGroupATC     |               | Anatomical main group belonging to ATC code                                                            |
 | administrationRoute        | Oral          | Type of administration route of medication                                                             |
 | status                     | ON_HOLD       | Status of medication                                                                                   |
 | dosageMin                  | 750           | Assigned minimal dosage                                                                                |
