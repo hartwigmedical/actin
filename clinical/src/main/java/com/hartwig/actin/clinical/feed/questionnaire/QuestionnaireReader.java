@@ -19,7 +19,7 @@ final class QuestionnaireReader {
 
     @NotNull
     public static String[] read(@NotNull QuestionnaireEntry entry) {
-        return merge(clean(entry.itemAnswerValueValueString().split("\n")));
+        return merge(clean(entry.itemAnswerValueValueString()).split("\n"));
     }
 
     @NotNull
@@ -54,17 +54,10 @@ final class QuestionnaireReader {
     }
 
     @NotNull
-    private static String[] clean(@NotNull String[] lines) {
-        String[] cleaned = new String[lines.length];
-        for (int i = 0; i < lines.length; i++) {
-            String clean = lines[i];
-            for (String term : TERMS_TO_CLEAN) {
-                while (clean.contains(term)) {
-                    clean = clean.replace(term, Strings.EMPTY);
-                }
-            }
-            cleaned[i] = clean;
+    private static String clean(@NotNull String entryText) {
+        for (String str : TERMS_TO_CLEAN) {
+            entryText = entryText.replace(str, Strings.EMPTY);
         }
-        return cleaned;
+        return entryText;
     }
 }
