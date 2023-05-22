@@ -2,7 +2,6 @@ package com.hartwig.actin.report.pdf.tables.molecular;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -68,8 +67,7 @@ public class WGSSummaryGenerator implements TableGenerator {
         table.addCell(biopsySummary());
 
         if (molecular.containsTumorCells()) {
-            Stream.of(Maps.immutableEntry("Molecular tissue of origin prediction",
-                                    createHighConfidenceTumorOriginPredictionOption().orElse("Inconclusive")),
+            Stream.of(Maps.immutableEntry("Molecular tissue of origin prediction", createHighConfidenceTumorOriginPrediction()),
                             Maps.immutableEntry("Tumor mutational load / burden", characteristicsGenerator.createTMLAndTMBStatusString()),
                             Maps.immutableEntry("Microsatellite (in)stability",
                                     characteristicsGenerator.createMSStabilityStringOption().orElse(Formats.VALUE_UNKNOWN)),
@@ -111,12 +109,16 @@ public class WGSSummaryGenerator implements TableGenerator {
         }
     }
 
-    private Optional<String> createHighConfidenceTumorOriginPredictionOption() {
+    private String createHighConfidenceTumorOriginPrediction() {
         PredictedTumorOrigin predictedTumorOrigin = molecular.characteristics().predictedTumorOrigin();
         if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin) && molecular.hasSufficientQuality()) {
-            return Optional.of(TumorOriginInterpreter.interpret(predictedTumorOrigin));
+            return TumorOriginInterpreter.interpret(predictedTumorOrigin);
+        } else if (molecular.hasSufficientQuality() && predictedTumorOrigin != null) {
+            return String.format("Inconclusive (%s %s)",
+                    predictedTumorOrigin.tumorType(),
+                    Formats.percentage(predictedTumorOrigin.likelihood()));
         } else {
-            return Optional.empty();
+            return Formats.VALUE_UNKNOWN;
         }
     }
 
