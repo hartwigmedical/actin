@@ -33,3 +33,4 @@ chmod 600 ~/actin.login
 
 From now on any change made to the database definition in generate_database.sql is
 automatically taken into account by the generated Java code.
+
