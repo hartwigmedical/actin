@@ -14,9 +14,10 @@ class HasMaximumWHOStatus internal constructor(private val maximumWHO: Int) : Ev
         return when {
             who == null -> EvaluationFactory.undetermined("WHO status is unknown", "WHO status unknown")
             who == maximumWHO && warningComplicationCategories.isNotEmpty() -> EvaluationFactory.warn(
-                "Patient WHO status $who equals maximum but patient has complication categories of concern: " + Format.concat(
-                    warningComplicationCategories
-                ), "WHO currently adequate, but patient has " + Format.concat(warningComplicationCategories)
+                "Patient WHO status $who equals maximum but patient has complication categories of concern: " + Format.concatWithAnd(
+                    warningComplicationCategories + ", potentially indicating deterioration"
+                ),
+                "WHO currently adequate, but patient has " + Format.concatWithAnd(warningComplicationCategories) + ", potentially indicating deterioration"
             )
 
             who <= maximumWHO -> EvaluationFactory.pass(
