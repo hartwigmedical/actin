@@ -13,10 +13,14 @@ import com.hartwig.actin.clinical.datamodel.ImmutableECG;
 import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class QuestionnaireExtraction {
+
+    private static final Logger LOGGER = LogManager.getLogger(QuestionnaireExtraction.class);
 
     static final String KEY_VALUE_SEPARATOR = ":";
     static final String VALUE_LIST_SEPARATOR_1 = ",";
@@ -79,7 +83,7 @@ public final class QuestionnaireExtraction {
                 .infectionStatus(toInfectionStatus(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION))))
                 .ecg(toECG(value(entry, mapping.get(QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG))))
                 .complications(toList(value(entry, mapping.get(QuestionnaireKey.COMPLICATIONS))))
-                .genayaSubjectNumber(value(entry, mapping.get(QuestionnaireKey.GENAYA_SUBJECT_NUMBER)))
+                .genayaSubjectNumber(optionalValue(entry, mapping.get(QuestionnaireKey.GENAYA_SUBJECT_NUMBER)))
                 .build();
     }
 
@@ -192,20 +196,29 @@ public final class QuestionnaireExtraction {
 
     @Nullable
     private static String value(@NotNull QuestionnaireEntry entry, @Nullable String key) {
-        return value(entry, key, 0);
+        return value(entry, key, false, 0);
     }
 
     @Nullable
     private static String value(@NotNull QuestionnaireEntry entry, @Nullable String key, int lineOffset) {
+        return value(entry, key, false, lineOffset);
+    }
 
-        LookupResult result = lookup(entry, key);
+    @Nullable
+    private static String optionalValue(@NotNull QuestionnaireEntry entry, @Nullable String key) {
+        return value(entry, key, true, 0);
+    }
+
+    @Nullable
+    private static String value(@NotNull QuestionnaireEntry entry, @Nullable String key, boolean isOptional, int lineOffset) {
+        LookupResult result = lookup(entry, key, isOptional);
 
         String line = result != null ? result.lines[result.lineIndex + lineOffset] : null;
         return line != null ? line.substring(line.indexOf(KEY_VALUE_SEPARATOR) + 1).trim() : null;
     }
 
     @Nullable
-    private static LookupResult lookup(@NotNull QuestionnaireEntry entry, @Nullable String key) {
+    private static LookupResult lookup(@NotNull QuestionnaireEntry entry, @Nullable String key, boolean isOptional) {
         if (key == null) {
             return null;
         }
@@ -216,6 +229,11 @@ public final class QuestionnaireExtraction {
             if (lines[i].contains(key)) {
                 return new LookupResult(lines, i);
             }
+        }
+
+        if (isOptional) {
+            LOGGER.debug("Key '{}' not present but skipped since it is configured as optional in questionnaire '{}'", key, entry);
+            return null;
         }
 
         throw new IllegalStateException("Could not find key " + key + " in questionnaire " + entry);

@@ -56,6 +56,10 @@ internal object TreatmentTypeResolver {
                 treatment.trialAcronym()
             }
 
+            TreatmentCategory.ABLATION -> {
+                treatment.ablationType()
+            }
+
             else -> {
                 null
             }

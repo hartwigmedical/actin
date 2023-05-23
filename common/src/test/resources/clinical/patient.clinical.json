@@ -72,7 +72,8 @@
       "carTType": null,
       "transplantType": null,
       "supportiveType": null,
-      "trialAcronym": null
+      "trialAcronym": null,
+      "ablationType": null
     }
   ],
   "priorSecondPrimaries": [
