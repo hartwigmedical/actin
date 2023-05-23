@@ -13,7 +13,7 @@ class MolecularResultsAreAvailableForGene internal constructor(private val gene:
             return unrecoverable()
                 .result(EvaluationResult.PASS)
                 .addPassSpecificMessages("WGS has successfully been performed so molecular results are available for gene $gene")
-                .addPassGeneralMessages("Molecular requirements")
+                .addPassGeneralMessages("WGS results available for $gene")
                 .build()
         }
         var hasPassPriorTestForGene = false
@@ -31,25 +31,25 @@ class MolecularResultsAreAvailableForGene internal constructor(private val gene:
             return unrecoverable()
                 .result(EvaluationResult.PASS)
                 .addPassSpecificMessages("$gene has been tested in a prior molecular test")
-                .addPassGeneralMessages("Molecular requirements")
+                .addPassGeneralMessages("$gene tested before")
                 .build()
         } else if (record.molecular().type() == ExperimentType.WGS && !record.molecular().containsTumorCells()) {
             return unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Patient has had WGS but biopsy contained no tumor cells")
-                .addUndeterminedGeneralMessages("Molecular requirements")
+                .addUndeterminedGeneralMessages("Sample purity too low")
                 .build()
         } else if (hasIndeterminatePriorTestForGene) {
             return unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("$gene has been tested in a prior molecular test but with indeterminate status")
-                .addUndeterminedGeneralMessages("Molecular requirements")
+                .addUndeterminedGeneralMessages("$gene tested before but indeterminate status")
                 .build()
         }
         return unrecoverable()
             .result(EvaluationResult.FAIL)
             .addFailSpecificMessages("$gene has not been tested")
-            .addFailGeneralMessages("Molecular requirements")
+            .addFailGeneralMessages("$gene not tested")
             .build()
     }
 }

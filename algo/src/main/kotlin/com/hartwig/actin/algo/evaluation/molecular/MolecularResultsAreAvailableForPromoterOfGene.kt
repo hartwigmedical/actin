@@ -21,14 +21,14 @@ class MolecularResultsAreAvailableForPromoterOfGene internal constructor(private
             }
         }
         if (hasValidPriorTest) {
-            return EvaluationFactory.pass("$gene promoter has been tested in a prior molecular test", "Molecular requirements")
+            return EvaluationFactory.pass("$gene promoter has been tested in a prior molecular test", "$gene promotor tested before")
         } else if (hasIndeterminatePriorTest) {
             return EvaluationFactory.undetermined(
                 "$gene promoter has been tested in a prior molecular test but with indeterminate status",
-                "Molecular requirements"
+                "$gene promotor tested before but indeterminate status"
             )
         }
-        return EvaluationFactory.recoverableFail("$gene has not been tested", "Molecular requirements")
+        return EvaluationFactory.recoverableFail("$gene has not been tested", "$gene not tested")
     }
 
     companion object {
