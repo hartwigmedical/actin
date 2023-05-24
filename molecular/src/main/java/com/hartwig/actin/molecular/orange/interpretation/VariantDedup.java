@@ -9,7 +9,6 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 
 public final class VariantDedup {
 
@@ -20,8 +19,7 @@ public final class VariantDedup {
     private static final Set<PurpleVariantEffect> PHASED_EFFECTS =
             Set.of(PurpleVariantEffect.PHASED_INFRAME_DELETION, PurpleVariantEffect.PHASED_INFRAME_INSERTION);
 
-    @NotNull
-    public static Set<PurpleVariant> apply(@NotNull Set<PurpleVariant> variants) {
+    public static Set<PurpleVariant> apply(Set<PurpleVariant> variants) {
         return variants.stream().filter(variant -> include(variant, variants)).collect(Collectors.toSet());
     }
 
@@ -34,16 +32,11 @@ public final class VariantDedup {
         }
     }
 
-    private static boolean hasCanonicalPhasedEffect(@NotNull PurpleVariant variant) {
-        for (PurpleVariantEffect effect : variant.canonicalImpact().effects()) {
-            if (PHASED_EFFECTS.contains(effect)) {
-                return true;
-            }
-        }
-        return false;
+    private static boolean hasCanonicalPhasedEffect(PurpleVariant variant) {
+        return variant.canonicalImpact().effects().stream().anyMatch(PHASED_EFFECTS::contains);
     }
 
-    private static boolean hasSameEffectWithHigherVCN(@NotNull Set<PurpleVariant> variants, @NotNull PurpleVariant variantToMatch) {
+    private static boolean hasSameEffectWithHigherVCN(Set<PurpleVariant> variants, PurpleVariant variantToMatch) {
         // We assume that variants with same effect have unique hgvs coding impact.
         Double minVariantCopyNumber = null;
         String uniqueHgvsCodingImpact = null;
