@@ -27,7 +27,7 @@ public class QuestionnaireEntryCreator implements FeedEntryCreator<Questionnaire
                 .authored(line.date("authored"))
                 .description(line.string("description"))
                 .itemText(line.string("item_text"))
-                .itemAnswerValueValueString(questionnaireRawEntryMapper.correctQuestionnairesUsingMap(line.string(line.hasColumn(
+                .itemAnswerValueValueString(questionnaireRawEntryMapper.correctQuestionnaireEntry(line.string(line.hasColumn(
                         QUESTIONNAIRE_TEXT_FIELD) ? QUESTIONNAIRE_TEXT_FIELD : "text")))
                 .build();
     }

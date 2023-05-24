@@ -25,7 +25,7 @@ public class QuestionnaireRawEntryMapper {
         return new QuestionnaireRawEntryMapper(correctionMap);
     }
 
-    public String correctQuestionnairesUsingMap(String rawQuestionnaireText) {
+    public String correctQuestionnaireEntry(String rawQuestionnaireText) {
         String correctedQuestionnaireText = rawQuestionnaireText;
         for (Map.Entry<String, String> correctionEntry : correctionMap.entrySet()) {
             correctedQuestionnaireText = correctedQuestionnaireText.replace(correctionEntry.getKey(), correctionEntry.getValue());

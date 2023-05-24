@@ -115,7 +115,6 @@ class FeedFileReader<T extends FeedEntry> {
     @NotNull
     @VisibleForTesting
     static String fixLineBreaks(@NotNull String input) {
-        // Every 4 line breaks should become 2 line breaks. Every original 2 line breaks should become 1 line break.
         return input.replace("\\n", "\n");
     }
 
