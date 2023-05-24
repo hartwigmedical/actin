@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.general
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import org.junit.Assert
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class HasMaximumWHOStatusTest {
@@ -32,9 +32,12 @@ class HasMaximumWHOStatusTest {
     fun shouldWarnWhenWHOIsExactMatchAndPatientHasComplicationCategoriesOfConcern() {
         val evaluation: Evaluation = function.evaluate(GeneralTestFactory.withWHOAndComplications(2, listOf("Pleural Effusions")))
         assertEvaluation(EvaluationResult.WARN, evaluation)
-        Assert.assertTrue(
+        assertTrue(
             evaluation.warnSpecificMessages()
-                .contains("Patient WHO status 2 equals maximum but patient has complication categories of concern: Pleural Effusions")
+                .contains(
+                    "Patient WHO status 2 equals maximum but patient has complication categories of concern: Pleural Effusions" +
+                            ", potentially indicating deterioration"
+                )
         )
     }
 }

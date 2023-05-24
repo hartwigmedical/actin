@@ -43,7 +43,9 @@ public final class ApplicabilityFiltering {
         if (actionableGene.event() == GeneEvent.AMPLIFICATION) {
             for (String nonApplicableGene : NON_APPLICABLE_AMPLIFICATIONS) {
                 if (actionableGene.gene().equals(nonApplicableGene)) {
-                    LOGGER.debug("{} is considered non-applicable", actionableGene);
+                    LOGGER.debug("Evidence for '{}' on gene {} is considered non-applicable",
+                            actionableGene.sourceEvent(),
+                            actionableGene.gene());
                     return false;
                 }
             }
@@ -55,7 +57,7 @@ public final class ApplicabilityFiltering {
     @VisibleForTesting
     static <T extends ActionableEvent> boolean eventIsApplicable(@NotNull String gene, @NotNull T event) {
         if (NON_APPLICABLE_GENES.contains(gene)) {
-            LOGGER.debug("{} is considered non-applicable", event);
+            LOGGER.debug("Evidence for '{}' on gene {} is considered non-applicable", event.sourceEvent(), gene);
             return false;
         }
 
