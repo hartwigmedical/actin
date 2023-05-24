@@ -22,14 +22,16 @@ public final class VariantDedup {
 
     @NotNull
     public static Set<PurpleVariant> apply(@NotNull Set<PurpleVariant> variants) {
-        return variants.stream()
-                .peek(variant -> {
-                    if (hasCanonicalPhasedEffect(variant) && hasSameEffectWithHigherVCN(variants, variant)) {
-                        LOGGER.debug("Dedup'ing variant '{}'", variant);
-                    }
-                })
-                .filter(variant -> !(hasCanonicalPhasedEffect(variant) && hasSameEffectWithHigherVCN(variants, variant)))
-                .collect(Collectors.toSet());
+        return variants.stream().filter(variant -> include(variant, variants)).collect(Collectors.toSet());
+    }
+
+    private static boolean include(PurpleVariant variant, Set<PurpleVariant> variants) {
+        if (hasCanonicalPhasedEffect(variant) && hasSameEffectWithHigherVCN(variants, variant)) {
+            LOGGER.debug("Dedup'ing variant '{}'", variant);
+            return false;
+        } else {
+            return true;
+        }
     }
 
     private static boolean hasCanonicalPhasedEffect(@NotNull PurpleVariant variant) {
