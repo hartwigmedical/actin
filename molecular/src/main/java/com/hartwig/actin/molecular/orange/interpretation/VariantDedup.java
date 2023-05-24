@@ -1,8 +1,8 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTranscriptImpact;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
@@ -22,15 +22,14 @@ public final class VariantDedup {
 
     @NotNull
     public static Set<PurpleVariant> apply(@NotNull Set<PurpleVariant> variants) {
-        Set<PurpleVariant> filtered = Sets.newHashSet();
-        for (PurpleVariant variant : variants) {
-            if (hasCanonicalPhasedEffect(variant) && hasSameEffectWithHigherVCN(variants, variant)) {
-                LOGGER.debug("Dedup'ing variant '{}'", variant);
-            } else {
-                filtered.add(variant);
-            }
-        }
-        return filtered;
+        return variants.stream()
+                .peek(variant -> {
+                    if (hasCanonicalPhasedEffect(variant) && hasSameEffectWithHigherVCN(variants, variant)) {
+                        LOGGER.debug("Dedup'ing variant '{}'", variant);
+                    }
+                })
+                .filter(variant -> !(hasCanonicalPhasedEffect(variant) && hasSameEffectWithHigherVCN(variants, variant)))
+                .collect(Collectors.toSet());
     }
 
     private static boolean hasCanonicalPhasedEffect(@NotNull PurpleVariant variant) {
