@@ -1,8 +1,8 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Collections;
 import java.util.Set;
 
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
@@ -12,6 +12,12 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
 import org.junit.Test;
 
 public class VariantDedupTest {
+
+    @Test
+    public void shouldWorkOnEmptySetOfVariants() {
+        Set<PurpleVariant> dedup = VariantDedup.apply(Collections.emptySet());
+        assertThat(dedup).isEmpty();
+    }
 
     @Test
     public void shouldDedupVariantsThatAreInterpretedAsPhasedInframe() {
@@ -55,8 +61,21 @@ public class VariantDedupTest {
         Set<PurpleVariant> variants = Set.of(variant1, variant2, variant3, variant4);
         Set<PurpleVariant> dedup = VariantDedup.apply(variants);
 
-        assertEquals(2, dedup.size());
-        assertTrue(dedup.contains(variant3));
-        assertTrue(dedup.contains(variant4));
+        assertThat(dedup.size()).isEqualTo(2);
+        assertThat(dedup).contains(variant3);
+        assertThat(dedup).contains(variant4);
+    }
+
+    @Test
+    public void shouldNotDedupUnrelatedVariants() {
+        PurpleVariant variant1 = TestPurpleFactory.variantBuilder().gene("gene 1").build();
+        PurpleVariant variant2 = TestPurpleFactory.variantBuilder().gene("gene 2").build();
+
+        Set<PurpleVariant> variants = Set.of(variant1, variant2);
+        Set<PurpleVariant> dedup = VariantDedup.apply(variants);
+
+        assertThat(dedup.size()).isEqualTo(2);
+        assertThat(dedup).contains(variant1);
+        assertThat(dedup).contains(variant2);
     }
 }
