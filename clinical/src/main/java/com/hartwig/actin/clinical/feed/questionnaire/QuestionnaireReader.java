@@ -55,9 +55,10 @@ final class QuestionnaireReader {
 
     @NotNull
     private static String clean(@NotNull String entryText) {
+        String cleanText = entryText;
         for (String str : TERMS_TO_CLEAN) {
-            entryText = entryText.replace(str, Strings.EMPTY);
+            cleanText = cleanText.replace(str, Strings.EMPTY);
         }
-        return entryText;
+        return cleanText;
     }
 }
