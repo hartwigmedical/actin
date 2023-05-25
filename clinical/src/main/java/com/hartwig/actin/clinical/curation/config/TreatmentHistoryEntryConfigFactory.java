@@ -29,11 +29,11 @@ import com.hartwig.actin.util.ResourceFile;
 
 import org.jetbrains.annotations.NotNull;
 
-public class TreatmentHistoryEntryConfigFactory implements CurationConfigFactory<ImmutableTreatmentHistoryEntryConfig> {
+public class TreatmentHistoryEntryConfigFactory implements CurationConfigFactory<TreatmentHistoryEntryConfig> {
 
     @NotNull
     @Override
-    public ImmutableTreatmentHistoryEntryConfig create(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
+    public TreatmentHistoryEntryConfig create(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
         boolean ignore = CurationUtil.isIgnoreString(parts[fields.get("name")]);
         return ImmutableTreatmentHistoryEntryConfig.builder()
                 .input(parts[fields.get("input")])
