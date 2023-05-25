@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory.fail
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.pass
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.undetermined
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 
 class HasHadPDFollowingTreatmentWithCategory internal constructor(private val category: TreatmentCategory) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {

@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.datamodel;
+package com.hartwig.actin.clinical.datamodel.treatment;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class OtherTherapy implements Therapy {
+public abstract class Immunotherapy implements Therapy {
 
-    public final TreatmentType treatmentType = TreatmentType.OTHER_THERAPY;
+    public final TreatmentType treatmentType = TreatmentType.IMMUNOTHERAPY;
 }

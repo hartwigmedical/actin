@@ -2,6 +2,9 @@ package com.hartwig.actin.clinical.datamodel;
 
 import java.util.List;
 
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
+
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

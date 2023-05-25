@@ -1,6 +1,8 @@
-package com.hartwig.actin.clinical.datamodel;
+package com.hartwig.actin.clinical.datamodel.treatment.history;
 
 import java.time.LocalDate;
+
+import com.hartwig.actin.clinical.datamodel.SurgeryStatus;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;

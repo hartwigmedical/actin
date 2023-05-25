@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
 
 import org.apache.logging.log4j.util.Strings;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.datamodel;
+package com.hartwig.actin.clinical.datamodel.treatment;
 
 import java.util.Set;
 
@@ -14,11 +14,8 @@ public abstract class RecommendationCriteria {
 
     public abstract boolean isOptional();
 
-    public abstract int score();
+    public abstract int expectedValue();
 
     @NotNull
     public abstract Set<EligibilityFunction> eligibilityFunctions();
-
-    @NotNull
-    public abstract Set<Integer> lines();
 }

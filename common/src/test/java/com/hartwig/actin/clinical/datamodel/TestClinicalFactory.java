@@ -7,6 +7,13 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.TestDataFactory;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableSurgicalTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableSurgeryHistoryDetails;
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
 import org.apache.logging.log4j.util.Strings;

@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.util.ApplicationConfig
 
 internal object TreatmentTypeResolver {

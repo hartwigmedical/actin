@@ -27,41 +27,28 @@ import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
-import com.hartwig.actin.clinical.datamodel.Chemotherapy;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
-import com.hartwig.actin.clinical.datamodel.CombinedTherapy;
 import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ECG;
-import com.hartwig.actin.clinical.datamodel.Immunotherapy;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight;
-import com.hartwig.actin.clinical.datamodel.ImmutableChemotherapy;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
-import com.hartwig.actin.clinical.datamodel.ImmutableCombinedTherapy;
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutableECG;
-import com.hartwig.actin.clinical.datamodel.ImmutableImmunotherapy;
 import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance;
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
 import com.hartwig.actin.clinical.datamodel.ImmutableObservedToxicity;
-import com.hartwig.actin.clinical.datamodel.ImmutableOtherTherapy;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary;
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.ImmutableRadiotherapy;
 import com.hartwig.actin.clinical.datamodel.ImmutableSurgery;
-import com.hartwig.actin.clinical.datamodel.ImmutableSurgeryHistoryDetails;
-import com.hartwig.actin.clinical.datamodel.ImmutableSurgicalTreatment;
-import com.hartwig.actin.clinical.datamodel.ImmutableTargetedTherapy;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicityEvaluation;
-import com.hartwig.actin.clinical.datamodel.ImmutableTreatmentHistoryEntry;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
@@ -69,25 +56,38 @@ import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.ObservedToxicity;
-import com.hartwig.actin.clinical.datamodel.OtherTherapy;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.Radiotherapy;
 import com.hartwig.actin.clinical.datamodel.Surgery;
-import com.hartwig.actin.clinical.datamodel.SurgeryHistoryDetails;
-import com.hartwig.actin.clinical.datamodel.SurgicalTreatment;
-import com.hartwig.actin.clinical.datamodel.TargetedTherapy;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicityEvaluation;
-import com.hartwig.actin.clinical.datamodel.Treatment;
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
-import com.hartwig.actin.clinical.datamodel.TreatmentHistoryEntry;
-import com.hartwig.actin.clinical.datamodel.TreatmentType;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
+import com.hartwig.actin.clinical.datamodel.treatment.Chemotherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.CombinedTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.Immunotherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableChemotherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableCombinedTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableImmunotherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRadiotherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableSurgicalTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableTargetedTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.OtherTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.SurgicalTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.TargetedTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType;
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableSurgeryHistoryDetails;
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
+import com.hartwig.actin.clinical.datamodel.treatment.history.SurgeryHistoryDetails;
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
 import com.hartwig.actin.clinical.sort.ClinicalRecordComparator;
 import com.hartwig.actin.util.Paths;
 import com.hartwig.actin.util.json.GsonSerializer;
@@ -221,7 +221,8 @@ public final class ClinicalRecordJson {
     private static class LocalDateAdapter implements JsonDeserializer<LocalDate> {
 
         @Override
-        public LocalDate deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+        public LocalDate deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext)
+                throws JsonParseException {
             if (jsonElement.isJsonNull()) {
                 return null;
             } else {
@@ -240,8 +241,8 @@ public final class ClinicalRecordJson {
         }
 
         @Override
-        public T deserialize(@NotNull JsonElement jsonElement, @NotNull Type type,
-                             @NotNull JsonDeserializationContext context) throws JsonParseException {
+        public T deserialize(@NotNull JsonElement jsonElement, @NotNull Type type, @NotNull JsonDeserializationContext context)
+                throws JsonParseException {
             return context.deserialize(jsonElement, concreteType);
         }
     }
@@ -255,13 +256,16 @@ public final class ClinicalRecordJson {
         }
 
         @Override
-        public ImmutableList<T> deserialize(JsonElement jsonElement, Type type,
-                                            JsonDeserializationContext context) throws JsonParseException {
+        public ImmutableList<T> deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context)
+                throws JsonParseException {
 
-            return jsonElement.isJsonNull() ? null : ImmutableList.copyOf(jsonElement.getAsJsonArray().asList().stream()
-                    .map(listElement -> (T) context.deserialize(listElement, concreteType))
-                    .collect(Collectors.toList())
-            );
+            return jsonElement.isJsonNull()
+                    ? null
+                    : ImmutableList.copyOf(jsonElement.getAsJsonArray()
+                            .asList()
+                            .stream()
+                            .map(listElement -> (T) context.deserialize(listElement, concreteType))
+                            .collect(Collectors.toList()));
         }
     }
 

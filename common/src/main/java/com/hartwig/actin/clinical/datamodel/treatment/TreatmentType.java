@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.datamodel;
+package com.hartwig.actin.clinical.datamodel.treatment;
 
 import java.lang.reflect.Type;
 

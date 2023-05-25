@@ -2,7 +2,7 @@ package com.hartwig.actin.treatment.input.single;
 
 import java.util.List;
 
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;

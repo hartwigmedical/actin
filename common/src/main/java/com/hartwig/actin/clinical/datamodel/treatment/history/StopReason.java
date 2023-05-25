@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.datamodel;
+package com.hartwig.actin.clinical.datamodel.treatment.history;
 
 import com.hartwig.actin.util.ApplicationConfig;
 

@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.datamodel;
+package com.hartwig.actin.clinical.datamodel.treatment;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
