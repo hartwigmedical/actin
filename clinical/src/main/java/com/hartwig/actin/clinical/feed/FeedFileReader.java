@@ -115,29 +115,7 @@ class FeedFileReader<T extends FeedEntry> {
     @NotNull
     @VisibleForTesting
     static String fixLineBreaks(@NotNull String input) {
-        // Every 4 line breaks should become 2 line breaks. Every original 2 line breaks should become 1 line break.
-        String magicString = "$magic-string$";
-        if (input.contains(magicString)) {
-            throw new IllegalStateException("input string is not allowed to contain magic string: " + magicString);
-        }
-
-        String reformatted = input;
-        while (reformatted.contains("\\n\\n\\n\\n")) {
-            reformatted = reformatted.replace("\\n\\n\\n\\n", magicString);
-        }
-
-        while (reformatted.contains("\\n\\n")) {
-            reformatted = reformatted.replace("\\n\\n", "\\n");
-        }
-
-        while (reformatted.contains(magicString)) {
-            reformatted = reformatted.replace(magicString, "\\n\\n");
-        }
-
-        while (reformatted.contains("\\n")) {
-            reformatted = reformatted.replace("\\n", "\n");
-        }
-        return reformatted;
+        return input.replace("\\n", "\n");
     }
 
     private static boolean allEmpty(@NotNull String[] array) {

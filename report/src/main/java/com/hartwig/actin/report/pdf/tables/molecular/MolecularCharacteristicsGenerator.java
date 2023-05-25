@@ -110,6 +110,24 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
         }
     }
 
+    String createTMLAndTMBStatusString() {
+        Boolean hasHighTumorMutationalLoad = molecular.characteristics().hasHighTumorMutationalLoad();
+        Integer tumorMutationalLoad = molecular.characteristics().tumorMutationalLoad();
+        String TMLString = (tumorMutationalLoad == null || hasHighTumorMutationalLoad == null)
+                ? Formats.VALUE_UNKNOWN
+                : String.format("TML %s (%d)", hasHighTumorMutationalLoad ? "high" : "low", tumorMutationalLoad);
+
+        Boolean hasHighTumorMutationalBurden = molecular.characteristics().hasHighTumorMutationalBurden();
+        Double tumorMutationalBurden = molecular.characteristics().tumorMutationalBurden();
+        String TMBString = (tumorMutationalBurden == null || hasHighTumorMutationalBurden == null)
+                ? Formats.VALUE_UNKNOWN
+                : String.format("TMB %s (%s)",
+                        hasHighTumorMutationalBurden ? "high" : "low",
+                        Formats.singleDigitNumber(tumorMutationalBurden));
+
+        return String.format("%s / %s", TMLString, TMBString);
+    }
+
     Optional<String> createTMLStatusStringOption() {
         Boolean hasHighTumorMutationalLoad = molecular.characteristics().hasHighTumorMutationalLoad();
         Integer tumorMutationalLoad = molecular.characteristics().tumorMutationalLoad();

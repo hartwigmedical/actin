@@ -24,7 +24,7 @@ class HasMeasurableDiseaseRecist internal constructor(private val doidModel: Doi
                 "Measurable disease by RECIST unknown"
             )
         } else if (hasMeasurableDisease) {
-            EvaluationFactory.pass("Patient has measurable disease", "Measurable disease")
+            EvaluationFactory.pass("Patient has measurable disease", "Has measurable disease")
         } else {
             EvaluationFactory.fail("Patient has no measurable disease", "No measurable disease")
         }

@@ -1,12 +1,20 @@
 package com.hartwig.actin.clinical.feed.questionnaire;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 import com.google.common.collect.Maps;
+import com.hartwig.actin.clinical.datamodel.ECG;
+import com.hartwig.actin.clinical.datamodel.ImmutableECG;
+import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
+import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 final class QuestionnaireCuration {
@@ -80,7 +88,7 @@ final class QuestionnaireCuration {
     }
 
     @Nullable
-    public static Boolean toOption(@Nullable String option) {
+    static Boolean toOption(@Nullable String option) {
         if (option == null || option.isEmpty()) {
             return null;
         }
@@ -98,7 +106,7 @@ final class QuestionnaireCuration {
     }
 
     @Nullable
-    public static TumorStage toStage(@Nullable String stage) {
+    static TumorStage toStage(@Nullable String stage) {
         if (stage == null || stage.isEmpty()) {
             return null;
         }
@@ -124,5 +132,50 @@ final class QuestionnaireCuration {
             LOGGER.warn("WHO status not between 0 and 5: '{}'", value);
             return null;
         }
+    }
+
+    @NotNull
+    static List<String> toSecondaryPrimaries(@NotNull String secondaryPrimary, @NotNull String lastTreatmentInfo) {
+        return Collections.singletonList(secondaryPrimary + (lastTreatmentInfo.isEmpty() ? "" : (" | " + lastTreatmentInfo)));
+    }
+
+    @Nullable
+    static InfectionStatus toInfectionStatus(@Nullable String significantCurrentInfection) {
+        return buildFromDescription(significantCurrentInfection, QuestionnaireCuration::buildInfectionStatus);
+    }
+
+    @Nullable
+    static ECG toECG(@Nullable String significantAberrationLatestECG) {
+        return buildFromDescription(significantAberrationLatestECG, QuestionnaireCuration::buildECG);
+    }
+
+    @NotNull
+    private static InfectionStatus buildInfectionStatus(@NotNull Boolean hasActiveInfection, @Nullable String description) {
+        return ImmutableInfectionStatus.builder().hasActiveInfection(hasActiveInfection).description(description).build();
+    }
+
+    @NotNull
+    private static ECG buildECG(@NotNull Boolean hasSignificantAberrationLatestECG, @Nullable String description) {
+        return ImmutableECG.builder()
+                .hasSigAberrationLatestECG(hasSignificantAberrationLatestECG)
+                .aberrationDescription(description)
+                .build();
+    }
+
+    @Nullable
+    private static <T> T buildFromDescription(@Nullable String description, BiFunction<Boolean, String, T> buildFunction) {
+        Boolean present;
+        if (isConfiguredOption(description)) {
+            present = toOption(description);
+        } else if (description != null && !description.isEmpty()) {
+            present = true;
+        } else {
+            present = null;
+        }
+        if (present == null) {
+            return null;
+        }
+
+        return buildFunction.apply(present, description);
     }
 }

@@ -16,7 +16,7 @@ class GeneIsAmplifiedMinCopies(private val gene: String, private val requestedMi
             ?: return unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Cannot determine amplification for gene $gene without ploidy")
-                .addFailGeneralMessages("Molecular requirements")
+                .addFailGeneralMessages("Undetermined amplification for $gene")
                 .build()
         val reportableFullAmps: MutableSet<String> = Sets.newHashSet()
         val reportablePartialAmps: MutableSet<String> = Sets.newHashSet()
@@ -75,7 +75,7 @@ class GeneIsAmplifiedMinCopies(private val gene: String, private val requestedMi
             ?: unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No amplification detected of gene $gene with min copy number of $requestedMinCopyNumber")
-                .addFailGeneralMessages("Molecular requirements")
+                .addFailGeneralMessages("No sufficient copies of $gene")
                 .build()
     }
 
