@@ -4,42 +4,22 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 final class QuestionnaireReader {
 
-    @VisibleForTesting
-    static final Set<String> TERMS_TO_CLEAN = Sets.newHashSet();
-
-    static {
-        TERMS_TO_CLEAN.add("{");
-        TERMS_TO_CLEAN.add("}");
-
-        TERMS_TO_CLEAN.add("\\tab");
-        TERMS_TO_CLEAN.add("\\li0");
-        TERMS_TO_CLEAN.add("\\ri0");
-        TERMS_TO_CLEAN.add("\\sa0");
-        TERMS_TO_CLEAN.add("\\sb0");
-        TERMS_TO_CLEAN.add("\\fi0");
-        TERMS_TO_CLEAN.add("\\ql");
-        TERMS_TO_CLEAN.add("\\par");
-        TERMS_TO_CLEAN.add("\\f2");
-        TERMS_TO_CLEAN.add("\\ltrch");
-    }
+    static final Set<String> TERMS_TO_CLEAN =
+            Set.of("{", "}", "\\tab", "\\li0", "\\ri0", "\\sa0", "\\sb0", "\\fi0", "\\ql", "\\par", "\\f2", "\\ltrch");
 
     private QuestionnaireReader() {
     }
 
     @NotNull
     public static String[] read(@NotNull QuestionnaireEntry entry) {
-        String[] lines = entry.itemAnswerValueValueString().split("\n");
-
-        return merge(clean(lines));
+        return merge(clean(entry.itemAnswerValueValueString()).split("\n"));
     }
 
     @NotNull
@@ -47,8 +27,9 @@ final class QuestionnaireReader {
         List<String> merged = Lists.newArrayList();
 
         StringJoiner curLine = newValueStringJoiner();
-        for (int i = 0; i < lines.length; i++) {
-            if (!(i == 0 || hasValue(lines[i - 1]) && !hasValue(lines[i]) && (i == lines.length - 1 || hasValue(lines[i + 1])))) {
+        curLine.add(lines[0]);
+        for (int i = 1; i < lines.length; i++) {
+            if (hasValue(lines[i]) || !hasValue(lines[i - 1]) || canContinueToNextLine(lines, i)) {
                 merged.add(curLine.toString());
                 curLine = newValueStringJoiner();
             }
@@ -56,11 +37,11 @@ final class QuestionnaireReader {
         }
         merged.add(curLine.toString());
 
-        String[] mergedLines = new String[merged.size()];
-        for (int j = 0; j < merged.size(); j++) {
-            mergedLines[j] = merged.get(j);
-        }
-        return mergedLines;
+        return merged.toArray(new String[0]);
+    }
+
+    private static boolean canContinueToNextLine(@NotNull String[] lines, int i) {
+        return i != lines.length - 1 && !hasValue(lines[i + 1]);
     }
 
     private static boolean hasValue(@NotNull String line) {
@@ -73,17 +54,11 @@ final class QuestionnaireReader {
     }
 
     @NotNull
-    private static String[] clean(@NotNull String[] lines) {
-        String[] cleaned = new String[lines.length];
-        for (int i = 0; i < lines.length; i++) {
-            String clean = lines[i];
-            for (String term : TERMS_TO_CLEAN) {
-                while (clean.contains(term)) {
-                    clean = clean.replace(term, Strings.EMPTY);
-                }
-            }
-            cleaned[i] = clean;
+    private static String clean(@NotNull String entryText) {
+        String cleanText = entryText;
+        for (String str : TERMS_TO_CLEAN) {
+            cleanText = cleanText.replace(str, Strings.EMPTY);
         }
-        return cleaned;
+        return cleanText;
     }
 }
