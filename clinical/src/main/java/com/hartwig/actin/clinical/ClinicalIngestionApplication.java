@@ -56,7 +56,7 @@ public class ClinicalIngestionApplication {
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size());
 
         LOGGER.info("Creating clinical feed model from directory {}", config.feedDirectory());
-        FeedModel feedModel = FeedModel.fromFeedDirectory(config.feedDirectory());
+        FeedModel feedModel = FeedModel.fromFeedAndCurationDirectories(config.feedDirectory(), config.curationDirectory());
 
         LOGGER.info("Creating clinical curation model from directory {}", config.curationDirectory());
         CurationModel curationModel = CurationModel.create(config.curationDirectory(), DoidModelFactory.createFromDoidEntry(doidEntry));

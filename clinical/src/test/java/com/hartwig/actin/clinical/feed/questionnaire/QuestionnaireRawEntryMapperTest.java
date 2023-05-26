@@ -13,7 +13,7 @@ public class QuestionnaireRawEntryMapperTest {
     @Test
     public void shouldReplaceStringInQuestionnaireEntryUsingFileMapping() throws IOException {
         QuestionnaireRawEntryMapper questionnaireRawEntryMapper =
-                QuestionnaireRawEntryMapper.createFromFile(Resources.getResource("feed/questionnaire_mapping.tsv").getPath());
+                QuestionnaireRawEntryMapper.createFromFile(Resources.getResource("curation/questionnaire_mapping.tsv").getPath());
         assertEquals("a much better entry", questionnaireRawEntryMapper.correctQuestionnaireEntry("a problematic, incorrect entry"));
     }
 }

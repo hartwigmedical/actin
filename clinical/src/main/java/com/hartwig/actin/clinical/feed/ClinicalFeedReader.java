@@ -38,13 +38,13 @@ public final class ClinicalFeedReader {
     }
 
     @NotNull
-    public static ClinicalFeed read(@NotNull String clinicalFeedDirectory) throws IOException {
+    public static ClinicalFeed read(@NotNull String clinicalFeedDirectory, @NotNull String curationDirectory) throws IOException {
         LOGGER.info("Reading clinical feed data from {}", clinicalFeedDirectory);
 
         String basePath = Paths.forceTrailingFileSeparator(clinicalFeedDirectory);
         ClinicalFeed feed = ImmutableClinicalFeed.builder()
                 .patientEntries(readPatientEntries(basePath + PATIENT_TSV))
-                .questionnaireEntries(readAllQuestionnaires(basePath))
+                .questionnaireEntries(readAllQuestionnaires(basePath, Paths.forceTrailingFileSeparator(curationDirectory)))
                 .encounterEntries(readEncounterEntries(basePath + ENCOUNTER_TSV))
                 .medicationEntries(readMedicationEntries(basePath + MEDICATION_TSV))
                 .labEntries(readLabEntries(basePath + LAB_TSV))
@@ -66,9 +66,10 @@ public final class ClinicalFeedReader {
     }
 
     @NotNull
-    private static List<QuestionnaireEntry> readAllQuestionnaires(@NotNull String basePath) throws IOException {
+    private static List<QuestionnaireEntry> readAllQuestionnaires(@NotNull String basePath, @NotNull String curationPath)
+            throws IOException {
         QuestionnaireRawEntryMapper questionnaireRawEntryMapper =
-                QuestionnaireRawEntryMapper.createFromFile(basePath + QUESTIONNAIRE_MAPPING_TSV);
+                QuestionnaireRawEntryMapper.createFromFile(curationPath + QUESTIONNAIRE_MAPPING_TSV);
         List<QuestionnaireEntry> baseQuestionnaires = readQuestionnaireEntries(basePath + QUESTIONNAIRE_TSV, questionnaireRawEntryMapper);
         List<QuestionnaireEntry> manualQuestionnaires =
                 readManualQuestionnaireEntries(basePath + MANUAL_QUESTIONNAIRE_TSV, questionnaireRawEntryMapper);
