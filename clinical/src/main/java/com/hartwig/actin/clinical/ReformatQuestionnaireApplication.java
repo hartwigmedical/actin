@@ -3,8 +3,6 @@ package com.hartwig.actin.clinical;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.List;
-import java.util.StringJoiner;
 
 import com.hartwig.actin.util.ApplicationConfig;
 
@@ -49,13 +47,8 @@ public class ReformatQuestionnaireApplication {
     }
 
     public void run() throws IOException {
-        List<String> lines = Files.readAllLines(new File(questionnaireFile).toPath());
+        String questionnaire = String.join("\\n", Files.readAllLines(new File(questionnaireFile).toPath()));
 
-        StringJoiner joiner = new StringJoiner("\\n\\n");
-        for (String line : lines) {
-            joiner.add(line.trim());
-        }
-
-        System.out.println(joiner);
+        System.out.println(questionnaire);
     }
 }
