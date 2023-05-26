@@ -44,7 +44,7 @@ class HasWHOStatusTest {
             evaluation.warnSpecificMessages()
                 .contains(
                     "Patient WHO status 2 matches requested but patient has complication categories of concern: " +
-                            "Pleural Effusions, potentially indicating deterioration"
+                            "pleural effusions, potentially indicating deterioration"
                 )
         )
     }

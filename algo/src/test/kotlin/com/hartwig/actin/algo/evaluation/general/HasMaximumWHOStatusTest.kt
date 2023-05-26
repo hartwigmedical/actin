@@ -35,7 +35,7 @@ class HasMaximumWHOStatusTest {
         assertTrue(
             evaluation.warnSpecificMessages()
                 .contains(
-                    "Patient WHO status 2 equals maximum but patient has complication categories of concern: Pleural Effusions" +
+                    "Patient WHO status 2 equals maximum but patient has complication categories of concern: pleural effusions" +
                             ", potentially indicating deterioration"
                 )
         )
