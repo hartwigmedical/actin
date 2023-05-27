@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.datamodel.treatment.history;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 import com.hartwig.actin.clinical.datamodel.LocationCategory;
@@ -20,7 +21,7 @@ public abstract class TherapyHistoryDetails {
     public abstract Integer stopMonth();
 
     @Nullable
-    public abstract Boolean ongoing();
+    public abstract LocalDate ongoingAsOf();
 
     @Nullable
     public abstract Integer cycles();

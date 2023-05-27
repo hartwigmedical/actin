@@ -31,6 +31,7 @@ import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryCon
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableSecondPrimaryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableToxicityConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableTreatmentHistoryEntryConfig;
 import com.hartwig.actin.clinical.curation.config.InfectionConfig;
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
@@ -43,6 +44,7 @@ import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
+import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig;
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory;
 import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
@@ -71,10 +73,11 @@ import com.hartwig.actin.clinical.datamodel.MedicationStatus;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
 import com.hartwig.actin.doid.DoidModel;
 
 import org.apache.logging.log4j.LogManager;
@@ -206,6 +209,15 @@ public class CurationModel {
         }
 
         return builder.build();
+    }
+
+    @NotNull
+    public List<TreatmentHistoryEntry> curateTreatmentHistory(@NotNull List<String> inputs) {
+        return inputs.stream()
+                .flatMap(input -> find(database.treatmentHistoryEntryConfigs(), CurationUtil.fullTrim(input)).stream()
+                        .filter(config -> !config.ignore())
+                        .map(TreatmentHistoryEntryConfig::curated))
+                .collect(Collectors.toList());
     }
 
     @NotNull
@@ -801,6 +813,8 @@ public class CurationModel {
             return database.medicationCategoryConfigs();
         } else if (classToLookUp == ImmutableIntoleranceConfig.class) {
             return database.intoleranceConfigs();
+        } else if (classToLookUp == ImmutableTreatmentHistoryEntryConfig.class) {
+            return database.treatmentHistoryEntryConfigs();
         }
         throw new IllegalStateException("Class not found in curation database: " + classToLookUp);
     }

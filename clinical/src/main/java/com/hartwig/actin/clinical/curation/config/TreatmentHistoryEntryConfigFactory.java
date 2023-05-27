@@ -125,8 +125,9 @@ public class TreatmentHistoryEntryConfigFactory implements CurationConfigFactory
     private static Therapy chemotherapy(@NotNull Map<String, Integer> fields, @NotNull String[] parts, boolean isTrial) {
         ImmutableChemotherapy.Builder builder = ImmutableChemotherapy.builder()
                 .name(parts[fields.get("name")])
+                .isSystemic(true)
                 .addCategories(TreatmentCategory.CHEMOTHERAPY)
-                .drugs(Collections.emptySet())  // TODO
+                .drugs(Collections.emptySet())
                 .synonyms(Collections.emptySet());
 
         if (isTrial) {
@@ -154,7 +155,7 @@ public class TreatmentHistoryEntryConfigFactory implements CurationConfigFactory
         ImmutableImmunotherapy.Builder builder = ImmutableImmunotherapy.builder()
                 .name(parts[fields.get("name")])
                 .addCategories(TreatmentCategory.IMMUNOTHERAPY)
-                .drugs(Collections.emptySet())  // TODO
+                .drugs(Collections.emptySet())
                 .synonyms(Collections.emptySet());
 
         if (isTrial) {
@@ -166,10 +167,8 @@ public class TreatmentHistoryEntryConfigFactory implements CurationConfigFactory
 
     private static Therapy otherTherapy(@NotNull Map<String, Integer> fields, @NotNull String[] parts, TreatmentCategory category,
             boolean isTrial) {
-        ImmutableOtherTherapy.Builder builder = ImmutableOtherTherapy.builder()
-                .name(parts[fields.get("name")])
-                .addCategories(category)
-                .drugs(Collections.emptySet())  // TODO
+        ImmutableOtherTherapy.Builder builder =
+                ImmutableOtherTherapy.builder().name(parts[fields.get("name")]).addCategories(category).drugs(Collections.emptySet())
                 .synonyms(Collections.emptySet());
 
         if (isTrial) {

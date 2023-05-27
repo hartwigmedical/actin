@@ -10,5 +10,6 @@ public abstract class Chemotherapy implements Therapy {
 
     public final TreatmentType treatmentType = TreatmentType.CHEMOTHERAPY;
 
-    public abstract int maxCycles();
+    @Nullable
+    public abstract Integer maxCycles();
 }

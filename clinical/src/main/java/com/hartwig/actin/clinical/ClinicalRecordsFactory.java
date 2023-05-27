@@ -1,9 +1,12 @@
 package com.hartwig.actin.clinical;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
@@ -113,6 +116,7 @@ public class ClinicalRecordsFactory {
                     .patient(extractPatientDetails(subject, questionnaire))
                     .tumor(extractTumorDetails(questionnaire))
                     .clinicalStatus(extractClinicalStatus(questionnaire))
+                    .treatmentHistory(extractTreatmentHistory(questionnaire))
                     .priorTumorTreatments(extractPriorTumorTreatments(questionnaire))
                     .priorSecondPrimaries(extractPriorSecondPrimaries(questionnaire))
                     .priorOtherConditions(extractPriorOtherConditions(questionnaire))
@@ -216,6 +220,19 @@ public class ClinicalRecordsFactory {
                         .map(complications -> !complications.isEmpty())
                         .orElse(null))
                 .build();
+    }
+
+    @NotNull
+    private List<TreatmentHistoryEntry> extractTreatmentHistory(@Nullable Questionnaire questionnaire) {
+        if (questionnaire == null) {
+            return Collections.emptyList();
+        }
+        List<String> fullHistoryInput = Stream.of(questionnaire.treatmentHistoryCurrentTumor(), questionnaire.otherOncologicalHistory())
+                .filter(Objects::nonNull)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+
+        return curation.curateTreatmentHistory(fullHistoryInput);
     }
 
     @NotNull

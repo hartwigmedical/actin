@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
@@ -67,9 +68,12 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
 import com.hartwig.actin.clinical.datamodel.treatment.Chemotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.CombinedTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.Drug;
+import com.hartwig.actin.clinical.datamodel.treatment.DrugClass;
 import com.hartwig.actin.clinical.datamodel.treatment.Immunotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableChemotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableCombinedTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableImmunotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment;
@@ -81,6 +85,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.SurgicalTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TargetedTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType;
@@ -151,6 +156,7 @@ public final class ClinicalRecordJson {
                 .registerTypeAdapter(ClinicalStatus.class, new AbstractClassAdapter<ClinicalStatus>(ImmutableClinicalStatus.class))
                 .registerTypeAdapter(InfectionStatus.class, new AbstractClassAdapter<InfectionStatus>(ImmutableInfectionStatus.class))
                 .registerTypeAdapter(ECG.class, new AbstractClassAdapter<ECG>(ImmutableECG.class))
+                .registerTypeAdapter(Drug.class, new AbstractClassAdapter<Drug>(ImmutableDrug.class))
                 .registerTypeAdapter(Chemotherapy.class, new AbstractClassAdapter<Chemotherapy>(ImmutableChemotherapy.class))
                 .registerTypeAdapter(CombinedTherapy.class, new AbstractClassAdapter<CombinedTherapy>(ImmutableCombinedTherapy.class))
                 .registerTypeAdapter(Immunotherapy.class, new AbstractClassAdapter<Immunotherapy>(ImmutableImmunotherapy.class))
@@ -158,6 +164,8 @@ public final class ClinicalRecordJson {
                 .registerTypeAdapter(Radiotherapy.class, new AbstractClassAdapter<Radiotherapy>(ImmutableRadiotherapy.class))
                 .registerTypeAdapter(SurgicalTreatment.class, new AbstractClassAdapter<SurgicalTreatment>(ImmutableSurgicalTreatment.class))
                 .registerTypeAdapter(TargetedTherapy.class, new AbstractClassAdapter<TargetedTherapy>(ImmutableTargetedTherapy.class))
+                .registerTypeAdapter(Treatment.class, new TreatmentAdapter())
+                .registerTypeAdapter(Therapy.class, new TreatmentAdapter())
                 .registerTypeAdapter(SurgeryHistoryDetails.class,
                         new AbstractClassAdapter<SurgeryHistoryDetails>(ImmutableSurgeryHistoryDetails.class))
                 .registerTypeAdapter(new TypeToken<ImmutableList<String>>() {
@@ -196,8 +204,14 @@ public final class ClinicalRecordJson {
                 }.getType(), new ImmutableSetAdapter<String>(String.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<TreatmentCategory>>() {
                 }.getType(), new ImmutableSetAdapter<TreatmentCategory>(TreatmentCategory.class))
+                .registerTypeAdapter(new TypeToken<ImmutableSet<Therapy>>() {
+                }.getType(), new ImmutableSetAdapter<Therapy>(Therapy.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<Treatment>>() {
-                }.getType(), new TreatmentSetAdapter())
+                }.getType(), new ImmutableSetAdapter<Treatment>(Treatment.class))
+                .registerTypeAdapter(new TypeToken<ImmutableSet<Drug>>() {
+                }.getType(), new ImmutableSetAdapter<Drug>(ImmutableDrug.class))
+                .registerTypeAdapter(new TypeToken<ImmutableSet<DrugClass>>() {
+                }.getType(), new ImmutableSetAdapter<DrugClass>(DrugClass.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<Chemotherapy>>() {
                 }.getType(), new ImmutableSetAdapter<Chemotherapy>(ImmutableChemotherapy.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<CombinedTherapy>>() {
@@ -247,6 +261,12 @@ public final class ClinicalRecordJson {
         }
     }
 
+    static <T> Stream<T> deserializeJsonCollection(JsonElement jsonElement, JsonDeserializationContext context, Type type) {
+        return jsonElement.isJsonNull()
+                ? null
+                : jsonElement.getAsJsonArray().asList().stream().map(listElement -> context.deserialize(listElement, type));
+    }
+
     private static class ImmutableListAdapter<T> implements JsonDeserializer<ImmutableList<T>> {
 
         private final Type concreteType;
@@ -259,13 +279,9 @@ public final class ClinicalRecordJson {
         public ImmutableList<T> deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context)
                 throws JsonParseException {
 
-            return jsonElement.isJsonNull()
-                    ? null
-                    : ImmutableList.copyOf(jsonElement.getAsJsonArray()
-                            .asList()
-                            .stream()
-                            .map(listElement -> (T) context.deserialize(listElement, concreteType))
-                            .collect(Collectors.toList()));
+            return (ImmutableList<T>) ImmutableList.copyOf(deserializeJsonCollection(jsonElement,
+                    context,
+                    concreteType).collect(Collectors.toList()));
         }
     }
 
@@ -281,30 +297,21 @@ public final class ClinicalRecordJson {
         public ImmutableSet<T> deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context)
                 throws JsonParseException {
 
-            return jsonElement.isJsonNull()
-                    ? null
-                    : ImmutableSet.copyOf(jsonElement.getAsJsonArray()
-                            .asList()
-                            .stream()
-                            .map(listElement -> (T) context.deserialize(listElement, concreteType))
-                            .collect(Collectors.toSet()));
+            return (ImmutableSet<T>) ImmutableSet.copyOf(deserializeJsonCollection(jsonElement,
+                    context,
+                    concreteType).collect(Collectors.toSet()));
         }
     }
 
-    private static class TreatmentSetAdapter implements JsonDeserializer<ImmutableSet<Treatment>> {
+    private static class TreatmentAdapter implements JsonDeserializer<Treatment> {
+
         @Override
-        public ImmutableSet<Treatment> deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context)
-                throws JsonParseException {
+        public Treatment deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
 
             return jsonElement.isJsonNull()
                     ? null
-                    : ImmutableSet.copyOf(jsonElement.getAsJsonArray()
-                            .asList()
-                            .stream()
-                            .peek(element -> System.out.println(element.getAsJsonObject()))
-                            .map(listElement -> (Treatment) context.deserialize(listElement,
-                                    TreatmentType.valueOf(string(listElement.getAsJsonObject(), "treatmentType")).treatmentClass()))
-                            .collect(Collectors.toSet()));
+                    : (Treatment) context.deserialize(jsonElement,
+                            TreatmentType.valueOf(string(jsonElement.getAsJsonObject(), "treatmentType")).treatmentClass());
         }
     }
 }
