@@ -385,7 +385,6 @@ public class ClinicalRecordsFactory {
                 .map(encounterEntry -> ImmutableTreatmentHistoryEntry.builder()
                         .treatments(Collections.singleton(ImmutableSurgicalTreatment.builder()
                                 .name("extracted surgery")
-                                .synonyms(Collections.emptySet())
                                 .build()))
                         .surgeryHistoryDetails(ImmutableSurgeryHistoryDetails.builder()
                                 .endDate(encounterEntry.periodEnd())

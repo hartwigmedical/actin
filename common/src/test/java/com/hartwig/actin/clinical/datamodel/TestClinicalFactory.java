@@ -138,7 +138,7 @@ public final class TestClinicalFactory {
 
     @NotNull
     private static Drug drug(@NotNull String name, @NotNull DrugClass drugClass) {
-        return ImmutableDrug.builder().name(name).addDrugClasses(drugClass).synonyms(Collections.emptySet()).build();
+        return ImmutableDrug.builder().name(name).addDrugClasses(drugClass).build();
     }
 
     @NotNull
@@ -156,44 +156,47 @@ public final class TestClinicalFactory {
                 .name("FOLFIRINOX")
                 .isSystemic(true)
                 .addCategories(TreatmentCategory.CHEMOTHERAPY)
-                .synonyms(Collections.emptySet())
                 .addDrugs(oxaliplatin, fluorouracil, irinotecan)
                 .maxCycles(8)
+                .recommendationCriteriaByDoid(Collections.emptyMap())
                 .build();
 
         Radiotherapy brachytherapy = ImmutableRadiotherapy.builder()
                 .name("Brachytherapy")
                 .isSystemic(false)
                 .addCategories(TreatmentCategory.RADIOTHERAPY)
-                .synonyms(Collections.emptySet())
+                .recommendationCriteriaByDoid(Collections.emptyMap())
                 .build();
 
         CombinedTherapy radioFolfirinox = ImmutableCombinedTherapy.builder()
                 .name("FOLFIRINOX + radiotherapy")
                 .addTherapies(folfirinox, brachytherapy)
                 .isSystemic(true)
-                .synonyms(Collections.emptySet())
+                .recommendationCriteriaByDoid(Collections.emptyMap())
                 .build();
 
         Immunotherapy pembrolizumab = ImmutableImmunotherapy.builder()
                 .name("Pembrolizumab")
                 .isSystemic(true)
                 .addCategories(TreatmentCategory.IMMUNOTHERAPY)
-                .synonyms(Collections.emptySet())
                 .addDrugs(drug("Pembrolizumab", DrugClass.MONOCLONAL_ANTIBODY))
+                .recommendationCriteriaByDoid(Collections.emptyMap())
                 .build();
 
         CombinedTherapy folfirinoxAndPembrolizumab = ImmutableCombinedTherapy.builder()
                 .name("FOLFIRINOX + pembrolizumab")
                 .addTherapies(folfirinox, pembrolizumab)
                 .isSystemic(true)
-                .synonyms(Collections.emptySet())
+                .recommendationCriteriaByDoid(Collections.emptyMap())
                 .build();
 
-        Chemotherapy folfirinoxLocoRegional =
-                ImmutableChemotherapy.copyOf(folfirinox).withName("FOLFIRINOX loco-regional").withIsSystemic(false);
+        Chemotherapy folfirinoxLocoRegional = ImmutableChemotherapy.copyOf(folfirinox)
+                .withName("FOLFIRINOX loco-regional")
+                .withIsSystemic(false)
+                .withRecommendationCriteriaByDoid(Collections.emptyMap());
 
-        SurgicalTreatment colectomy = ImmutableSurgicalTreatment.builder().name("Colectomy").synonyms(Collections.emptySet()).build();
+        SurgicalTreatment colectomy =
+                ImmutableSurgicalTreatment.builder().name("Colectomy").recommendationCriteriaByDoid(Collections.emptyMap()).build();
 
         TreatmentHistoryEntry surgeryHistoryEntry =
                 ImmutableTreatmentHistoryEntry.builder().addTreatments(colectomy).startYear(2021).intent(Intent.MAINTENANCE).build();
@@ -455,7 +458,7 @@ public final class TestClinicalFactory {
     @NotNull
     private static List<TreatmentHistoryEntry> createTestSurgicalHistory() {
         return Collections.singletonList(ImmutableTreatmentHistoryEntry.builder()
-                .treatments(Set.of(ImmutableSurgicalTreatment.builder().name("test surgery").synonyms(Collections.emptySet()).build()))
+                .treatments(Set.of(ImmutableSurgicalTreatment.builder().name("test surgery").build()))
                 .surgeryHistoryDetails(ImmutableSurgeryHistoryDetails.builder()
                         .endDate(TODAY.minusDays(DAYS_SINCE_SURGERY))
                         .status(SurgeryStatus.FINISHED)

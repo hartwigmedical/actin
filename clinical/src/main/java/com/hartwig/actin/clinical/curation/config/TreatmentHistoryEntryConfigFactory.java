@@ -70,7 +70,6 @@ public class TreatmentHistoryEntryConfigFactory implements CurationConfigFactory
                             .name(parts[fields.get("name")])
                             .therapies(therapies)
                             .isSystemic(therapies.stream().anyMatch(Treatment::isSystemic))
-                            .synonyms(Collections.emptySet())
                             .build();
 
             treatments = categories.contains(TreatmentCategory.SURGERY) ? Set.of(therapy, surgery(fields, parts)) : Set.of(therapy);
@@ -127,8 +126,7 @@ public class TreatmentHistoryEntryConfigFactory implements CurationConfigFactory
                 .name(parts[fields.get("name")])
                 .isSystemic(true)
                 .addCategories(TreatmentCategory.CHEMOTHERAPY)
-                .drugs(Collections.emptySet())
-                .synonyms(Collections.emptySet());
+                .drugs(Collections.emptySet());
 
         if (isTrial) {
             builder.addCategories(TreatmentCategory.TRIAL);
@@ -141,7 +139,6 @@ public class TreatmentHistoryEntryConfigFactory implements CurationConfigFactory
         ImmutableRadiotherapy.Builder builder = ImmutableRadiotherapy.builder()
                 .name(parts[fields.get("name")])
                 .addCategories(TreatmentCategory.RADIOTHERAPY)
-                .synonyms(Collections.emptySet())
                 .radioType(ResourceFile.optionalString(parts[fields.get("radioType")]));
 
         if (isTrial) {
@@ -155,8 +152,7 @@ public class TreatmentHistoryEntryConfigFactory implements CurationConfigFactory
         ImmutableImmunotherapy.Builder builder = ImmutableImmunotherapy.builder()
                 .name(parts[fields.get("name")])
                 .addCategories(TreatmentCategory.IMMUNOTHERAPY)
-                .drugs(Collections.emptySet())
-                .synonyms(Collections.emptySet());
+                .drugs(Collections.emptySet());
 
         if (isTrial) {
             builder.addCategories(TreatmentCategory.TRIAL);
@@ -168,8 +164,7 @@ public class TreatmentHistoryEntryConfigFactory implements CurationConfigFactory
     private static Therapy otherTherapy(@NotNull Map<String, Integer> fields, @NotNull String[] parts, TreatmentCategory category,
             boolean isTrial) {
         ImmutableOtherTherapy.Builder builder =
-                ImmutableOtherTherapy.builder().name(parts[fields.get("name")]).addCategories(category).drugs(Collections.emptySet())
-                .synonyms(Collections.emptySet());
+                ImmutableOtherTherapy.builder().name(parts[fields.get("name")]).addCategories(category).drugs(Collections.emptySet());
 
         if (isTrial) {
             builder.addCategories(TreatmentCategory.TRIAL);

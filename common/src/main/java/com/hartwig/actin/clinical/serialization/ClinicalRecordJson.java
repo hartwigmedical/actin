@@ -11,11 +11,13 @@ import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
@@ -78,11 +80,13 @@ import com.hartwig.actin.clinical.datamodel.treatment.ImmutableImmunotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRadiotherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRecommendationCriteria;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableSurgicalTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableTargetedTherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.OtherTherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.RecommendationCriteria;
 import com.hartwig.actin.clinical.datamodel.treatment.SurgicalTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TargetedTherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
@@ -228,6 +232,8 @@ public final class ClinicalRecordJson {
                 }.getType(), new ImmutableSetAdapter<TargetedTherapy>(ImmutableTargetedTherapy.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<ObservedToxicity>>() {
                 }.getType(), new ImmutableSetAdapter<ObservedToxicity>(ImmutableObservedToxicity.class))
+                .registerTypeAdapter(new TypeToken<ImmutableMap<String, RecommendationCriteria>>() {
+                }.getType(), new ImmutableMapAdapter<String, RecommendationCriteria>(ImmutableRecommendationCriteria.class))
                 .create();
         return gson.fromJson(json, ImmutableClinicalRecord.class);
     }
@@ -300,6 +306,25 @@ public final class ClinicalRecordJson {
             return (ImmutableSet<T>) ImmutableSet.copyOf(deserializeJsonCollection(jsonElement,
                     context,
                     concreteType).collect(Collectors.toSet()));
+        }
+    }
+
+    private static class ImmutableMapAdapter<K, V> implements JsonDeserializer<ImmutableMap<K, V>> {
+
+        private final Type concreteType;
+
+        public ImmutableMapAdapter(Type concreteType) {
+            this.concreteType = concreteType;
+        }
+
+        @Override
+        public ImmutableMap<K, V> deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
+            return (ImmutableMap<K, V>) ImmutableMap.copyOf(json.getAsJsonObject()
+                    .asMap()
+                    .entrySet()
+                    .stream()
+                    .map(entry -> Map.entry(entry.getKey(), context.deserialize(entry.getValue(), concreteType)))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
         }
     }
 
