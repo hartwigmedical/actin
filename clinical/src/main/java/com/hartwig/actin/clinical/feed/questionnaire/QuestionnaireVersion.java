@@ -46,7 +46,7 @@ enum QuestionnaireVersion {
     }
 
     private boolean isMatch(@NotNull QuestionnaireEntry entry) {
-        String[] lines = entry.itemAnswerValueValueString().split("\n");
+        String[] lines = entry.text().split("\n");
 
         boolean match = false;
         for (String line : lines) {

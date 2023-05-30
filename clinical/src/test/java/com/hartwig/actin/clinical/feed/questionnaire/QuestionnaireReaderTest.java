@@ -31,7 +31,7 @@ public class QuestionnaireReaderTest {
     private static QuestionnaireEntry entry(@NotNull String questionnaire) {
         return ImmutableQuestionnaireEntry.builder()
                 .from(TestQuestionnaireFactory.createTestQuestionnaireEntry())
-                .itemAnswerValueValueString(questionnaire)
+                .text(questionnaire)
                 .build();
     }
 }

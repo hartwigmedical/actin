@@ -24,8 +24,6 @@ public final class QuestionnaireExtraction {
     static final String VALUE_LIST_SEPARATOR_1 = ",";
     static final String VALUE_LIST_SEPARATOR_2 = ";";
 
-    private static final String BLOOD_TRANSFUSION_DESCRIPTION = "Aanvraag bloedproducten_test";
-    private static final String TOXICITY_DESCRIPTION = "ONC Kuuroverzicht";
     private static final String ACTIN_QUESTIONNAIRE_KEYWORD = "ACTIN Questionnaire";
 
     private static final int ACTIVE_LINE_OFFSET = 1;
@@ -33,16 +31,8 @@ public final class QuestionnaireExtraction {
     private QuestionnaireExtraction() {
     }
 
-    public static boolean isBloodTransfusionEntry(@NotNull QuestionnaireEntry entry) {
-        return entry.description().equals(BLOOD_TRANSFUSION_DESCRIPTION);
-    }
-
-    public static boolean isToxicityEntry(@NotNull QuestionnaireEntry entry) {
-        return entry.description().equals(TOXICITY_DESCRIPTION);
-    }
-
     public static boolean isActualQuestionnaire(@NotNull QuestionnaireEntry entry) {
-        return entry.itemAnswerValueValueString().contains(ACTIN_QUESTIONNAIRE_KEYWORD);
+        return entry.text().contains(ACTIN_QUESTIONNAIRE_KEYWORD);
     }
 
     @Nullable
@@ -105,7 +95,7 @@ public final class QuestionnaireExtraction {
         if (version == QuestionnaireVersion.V0_1) {
             //In v0.1, the format for primary tumor location is "$location ($otherLesions)"
             String input = value(lines, mapping.get(QuestionnaireKey.PRIMARY_TUMOR_LOCATION));
-            if (input.contains("(") && input.contains(")")) {
+            if (input != null && input.contains("(") && input.contains(")")) {
                 int start = input.indexOf("(");
                 int end = input.indexOf(")");
                 return toList(input.substring(start + 1, end));

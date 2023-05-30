@@ -19,7 +19,7 @@ final class QuestionnaireReader {
 
     @NotNull
     public static String[] read(@NotNull QuestionnaireEntry entry) {
-        return merge(clean(entry.itemAnswerValueValueString()).split("\n"));
+        return merge(clean(entry.text()).split("\n"));
     }
 
     @NotNull

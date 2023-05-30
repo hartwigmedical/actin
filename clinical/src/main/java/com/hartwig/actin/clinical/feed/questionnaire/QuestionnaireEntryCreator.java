@@ -7,33 +7,28 @@ import org.jetbrains.annotations.NotNull;
 
 public class QuestionnaireEntryCreator implements FeedEntryCreator<QuestionnaireEntry> {
 
-    private static final String MANUAL_QUESTIONNAIRE_DESCRIPTION = "INT Consult";
-    public static final String QUESTIONNAIRE_TEXT_FIELD = "item_answer_value_valueString";
+    private static final String QUESTIONNAIRE_DESCRIPTION = "INT Consult";
 
-    private final boolean invalidateManualQuestionnaires;
     private final QuestionnaireRawEntryMapper questionnaireRawEntryMapper;
 
-    public QuestionnaireEntryCreator(final boolean invalidateManualQuestionnaires,
-            final QuestionnaireRawEntryMapper questionnaireRawEntryMapper) {
-        this.invalidateManualQuestionnaires = invalidateManualQuestionnaires;
+    public QuestionnaireEntryCreator(QuestionnaireRawEntryMapper questionnaireRawEntryMapper) {
         this.questionnaireRawEntryMapper = questionnaireRawEntryMapper;
     }
 
     @NotNull
     @Override
-    public QuestionnaireEntry fromLine(@NotNull final FeedLine line) {
+    public QuestionnaireEntry fromLine(@NotNull FeedLine line) {
         return ImmutableQuestionnaireEntry.builder()
                 .subject(line.trimmed("subject"))
                 .authored(line.date("authored"))
                 .description(line.string("description"))
                 .itemText(line.string("item_text"))
-                .itemAnswerValueValueString(questionnaireRawEntryMapper.correctQuestionnaireEntry(line.string(line.hasColumn(
-                        QUESTIONNAIRE_TEXT_FIELD) ? QUESTIONNAIRE_TEXT_FIELD : "text")))
+                .text(questionnaireRawEntryMapper.correctQuestionnaireEntry(line.string("text")))
                 .build();
     }
 
     @Override
-    public boolean isValid(@NotNull final FeedLine line) {
-        return !invalidateManualQuestionnaires || !line.string("description").equals(MANUAL_QUESTIONNAIRE_DESCRIPTION);
+    public boolean isValid(@NotNull FeedLine line) {
+        return line.string("description").equals(QUESTIONNAIRE_DESCRIPTION);
     }
 }

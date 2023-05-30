@@ -7,8 +7,8 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.Gender;
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
 import com.hartwig.actin.clinical.feed.bodyweight.ImmutableBodyWeightEntry;
-import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
-import com.hartwig.actin.clinical.feed.encounter.ImmutableEncounterEntry;
+import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry;
+import com.hartwig.actin.clinical.feed.digitalfile.ImmutableDigitalFileEntry;
 import com.hartwig.actin.clinical.feed.intolerance.ImmutableIntoleranceEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
 import com.hartwig.actin.clinical.feed.lab.ImmutableLabEntry;
@@ -20,6 +20,8 @@ import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.ImmutableQuestionnaireEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.TestQuestionnaireFactory;
+import com.hartwig.actin.clinical.feed.surgery.ImmutableSurgeryEntry;
+import com.hartwig.actin.clinical.feed.surgery.SurgeryEntry;
 import com.hartwig.actin.clinical.feed.vitalfunction.ImmutableVitalFunctionEntry;
 import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry;
 
@@ -48,7 +50,8 @@ public final class TestFeedFactory {
         return ImmutableClinicalFeed.builder()
                 .patientEntries(createTestPatientEntries())
                 .questionnaireEntries(createTestQuestionnaireEntries())
-                .encounterEntries(createTestEncounterEntries())
+                .digitalFileEntries(createTestDigitalFileEntries())
+                .surgeryEntries(createTestSurgeryEntries())
                 .medicationEntries(createTestMedicationEntries())
                 .labEntries(createTestLabEntries())
                 .vitalFunctionEntries(createTestVitalFunctionEntries())
@@ -73,39 +76,38 @@ public final class TestFeedFactory {
         ImmutableQuestionnaireEntry.Builder questionnaireBuilder =
                 ImmutableQuestionnaireEntry.builder().from(TestQuestionnaireFactory.createTestQuestionnaireEntry());
 
-        List<QuestionnaireEntry> entries = Lists.newArrayList();
-        entries.add(questionnaireBuilder.subject(TEST_SUBJECT).authored(LocalDate.of(2021, 7, 1)).build());
-        entries.add(questionnaireBuilder.subject(TEST_SUBJECT).authored(LocalDate.of(2021, 8, 1)).build());
+        return List.of(questionnaireBuilder.subject(TEST_SUBJECT).authored(LocalDate.of(2021, 7, 1)).build(),
+                questionnaireBuilder.subject(TEST_SUBJECT).authored(LocalDate.of(2021, 8, 1)).build());
+    }
 
-        ImmutableQuestionnaireEntry.Builder toxicityBuilder = ImmutableQuestionnaireEntry.builder()
+    @NotNull
+    private static List<DigitalFileEntry> createTestDigitalFileEntries() {
+        ImmutableDigitalFileEntry.Builder toxicityBuilder = ImmutableDigitalFileEntry.builder()
                 .subject(TEST_SUBJECT)
                 .authored(LocalDate.of(2020, 6, 6))
                 .description("ONC Kuuroverzicht");
 
-        entries.add(toxicityBuilder.itemText("Nausea").itemAnswerValueValueString("2").build());
-        entries.add(toxicityBuilder.itemText("Vomiting").itemAnswerValueValueString(Strings.EMPTY).build());
-        entries.add(toxicityBuilder.itemText("Pain").itemAnswerValueValueString("0. Not applicable").build());
-
-        ImmutableQuestionnaireEntry.Builder bloodTransfusionBuilder = ImmutableQuestionnaireEntry.builder()
+        ImmutableDigitalFileEntry.Builder bloodTransfusionBuilder = ImmutableDigitalFileEntry.builder()
                 .subject(TEST_SUBJECT)
                 .authored(LocalDate.of(2020, 7, 7))
                 .description("Aanvraag bloedproducten_test")
                 .itemText(Strings.EMPTY);
 
-        entries.add(bloodTransfusionBuilder.itemAnswerValueValueString("Product").build());
-
-        return entries;
+        return List.of(toxicityBuilder.itemText("Nausea").itemAnswerValueValueString("2").build(),
+                toxicityBuilder.itemText("Vomiting").itemAnswerValueValueString(Strings.EMPTY).build(),
+                toxicityBuilder.itemText("Pain").itemAnswerValueValueString("0. Not applicable").build(),
+                bloodTransfusionBuilder.itemAnswerValueValueString("Product").build());
     }
 
     @NotNull
-    private static List<EncounterEntry> createTestEncounterEntries() {
-        List<EncounterEntry> entries = Lists.newArrayList();
+    private static List<SurgeryEntry> createTestSurgeryEntries() {
+        List<SurgeryEntry> entries = Lists.newArrayList();
 
-        ImmutableEncounterEntry.Builder builder = ImmutableEncounterEntry.builder()
+        ImmutableSurgeryEntry.Builder builder = ImmutableSurgeryEntry.builder()
                 .subject(TEST_SUBJECT)
                 .classDisplay("surgery")
                 .codeCodingDisplayOriginal("diagnostics")
-                .encounterStatus("planned")
+                .surgeryStatus("planned")
                 .procedureStatus("planned");
 
         entries.add(builder.periodStart(LocalDate.of(2015, 10, 10)).periodEnd(LocalDate.of(2015, 10, 10)).build());
