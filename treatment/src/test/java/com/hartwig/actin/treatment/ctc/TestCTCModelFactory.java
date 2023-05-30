@@ -39,7 +39,7 @@ public final class TestCTCModelFactory {
                 .studyStatus("Open")
                 .cohortId(1)
                 .cohortName("Cohort A-1")
-                .cohortStatus("Closed")
+                .cohortStatus("Gesloten")
                 .cohortSlotsNumberAvailable(0)
                 .build();
 

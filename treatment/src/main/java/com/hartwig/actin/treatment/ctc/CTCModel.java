@@ -9,9 +9,13 @@ import com.hartwig.actin.treatment.datamodel.CohortMetadata;
 import com.hartwig.actin.treatment.datamodel.ImmutableCohortMetadata;
 import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 public class CTCModel {
+
+    private static final Logger LOGGER = LogManager.getLogger(CTCModel.class);
 
     @NotNull
     private final CTCDatabase ctcDatabase;
@@ -28,31 +32,34 @@ public class CTCModel {
 
     @NotNull
     public CohortMetadata resolveForCohortConfig(@NotNull CohortDefinitionConfig cohortConfig) {
-        /*
-        not_in_ctc_overview_unknown_why
-not_in_ctc_overview_unknown_why
-not_in_ctc_overview_unknown_why
-not_in_ctc_overview_unknown_why
-not_in_ctc_overview_unknown_why
-not_in_ctc_overview_unknown_why
-not_in_ctc_overview_unknown_why
-not_in_ctc_overview_unknown_why
-not_in_ctc_overview_unknown_why
-not_in_ctc_overview_unknown_why
-not_in_ctc_overview_unknown_why
-not_in_ctc_overview_unknown_why
-wont_be_mapped_because_closed
-wont_be_mapped_because_closed
-wont_be_mapped_because_closed
-wont_be_mapped_because_not_available
-         */
+        InterpretedCohortStatus interpretedCohortStatus = CohortStatusInterpreter.interpret(ctcDatabase.entries(), cohortConfig);
+
+        if (interpretedCohortStatus == null) {
+            interpretedCohortStatus = fromCohortConfig(cohortConfig);
+        }
+
         return ImmutableCohortMetadata.builder()
                 .cohortId(cohortConfig.cohortId())
                 .evaluable(cohortConfig.evaluable())
-                .open(cohortConfig.open())
-                .slotsAvailable(cohortConfig.slotsAvailable())
+                .open(interpretedCohortStatus.open())
+                .slotsAvailable(interpretedCohortStatus.slotsAvailable())
                 .blacklist(cohortConfig.blacklist())
                 .description(cohortConfig.description())
                 .build();
+    }
+
+    @NotNull
+    private static InterpretedCohortStatus fromCohortConfig(@NotNull CohortDefinitionConfig cohortConfig) {
+        Boolean open = cohortConfig.open();
+        Boolean slotsAvailable = cohortConfig.slotsAvailable();
+
+        if (open == null || slotsAvailable == null) {
+            LOGGER.warn("Missing open and slots available data for cohort '{}' of trial '{}'. "
+                    + "Assuming cohort is closed with no slots available", cohortConfig.cohortId(), cohortConfig.trialId());
+            open = false;
+            slotsAvailable = false;
+        }
+
+        return ImmutableInterpretedCohortStatus.builder().open(open).slotsAvailable(slotsAvailable).build();
     }
 }

@@ -12,11 +12,9 @@ import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker;
 import com.hartwig.actin.treatment.ctc.CTCModel;
 import com.hartwig.actin.treatment.datamodel.Cohort;
-import com.hartwig.actin.treatment.datamodel.CohortMetadata;
 import com.hartwig.actin.treatment.datamodel.CriterionReference;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.ImmutableCohort;
-import com.hartwig.actin.treatment.datamodel.ImmutableCohortMetadata;
 import com.hartwig.actin.treatment.datamodel.ImmutableCriterionReference;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibility;
 import com.hartwig.actin.treatment.datamodel.ImmutableTrial;
@@ -96,8 +94,7 @@ public class TrialFactory {
 
         for (CohortDefinitionConfig cohortConfig : trialConfigModel.cohortsForTrial(trialId)) {
             String cohortId = cohortConfig.cohortId();
-            cohorts.add(ImmutableCohort.builder()
-                    .metadata(resolveMetadata(cohortConfig))
+            cohorts.add(ImmutableCohort.builder().metadata(ctcModel.resolveForCohortConfig(cohortConfig))
                     .eligibility(toEligibility(trialConfigModel.specificInclusionCriteriaForCohort(trialId, cohortId), references))
                     .build());
         }
@@ -105,18 +102,6 @@ public class TrialFactory {
         cohorts.sort(new CohortComparator());
 
         return cohorts;
-    }
-
-    @NotNull
-    private static CohortMetadata resolveMetadata(@NotNull CohortDefinitionConfig cohortConfig) {
-        return ImmutableCohortMetadata.builder()
-                .cohortId(cohortConfig.cohortId())
-                .evaluable(cohortConfig.evaluable())
-                .open(cohortConfig.open())
-                .slotsAvailable(cohortConfig.slotsAvailable())
-                .blacklist(cohortConfig.blacklist())
-                .description(cohortConfig.description())
-                .build();
     }
 
     @NotNull
