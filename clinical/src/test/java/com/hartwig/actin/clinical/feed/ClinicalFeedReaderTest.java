@@ -26,12 +26,13 @@ import org.junit.Test;
 public class ClinicalFeedReaderTest {
 
     private static final String CLINICAL_FEED_DIRECTORY = Resources.getResource("feed").getPath();
+    private static final String CURATION_DIRECTORY = Resources.getResource("curation").getPath();
 
     private static final double EPSILON = 1.0E-10;
 
     @Test
     public void canReadFromTestDirectory() throws IOException {
-        ClinicalFeed feed = ClinicalFeedReader.read(CLINICAL_FEED_DIRECTORY);
+        ClinicalFeed feed = ClinicalFeedReader.read(CLINICAL_FEED_DIRECTORY, CURATION_DIRECTORY);
 
         assertPatients(feed.patientEntries());
         assertQuestionnaires(feed.questionnaireEntries());
@@ -56,17 +57,11 @@ public class ClinicalFeedReaderTest {
     }
 
     private static void assertQuestionnaires(@NotNull List<QuestionnaireEntry> entries) {
-        assertEquals(5, entries.size());
+        assertEquals(4, entries.size());
 
-        QuestionnaireEntry entry1 = findByAuthoredDate(entries, LocalDate.of(2020, 8, 28));
-        assertEquals("ACTN-01-02-9999", entry1.subject());
-        assertEquals("INT Consult", entry1.description());
-        assertEquals("Beloop", entry1.itemText());
-
-        assertEquals(30, entry1.itemAnswerValueValueString().split("\n").length);
-        assertTrue(entry1.itemAnswerValueValueString().startsWith("ACTIN Questionnaire"));
-        assertTrue(entry1.itemAnswerValueValueString().contains("CNS lesions yes/no/unknown"));
-        assertTrue(entry1.itemAnswerValueValueString().contains("Cancer-related complications (e.g. pleural effusion)"));
+        QuestionnaireEntry entry1 = findByAuthoredDate(entries, LocalDate.of(2021, 12, 17));
+        assertEquals("Aanvraag bloedproducten_test", entry1.description());
+        assertEquals("Erytrocytenconcentraat", entry1.itemAnswerValueValueString());
 
         QuestionnaireEntry entry2 = findByAuthoredDate(entries, LocalDate.of(2021, 6, 6));
         assertEquals("ACTN-01-02-9999", entry2.subject());
@@ -88,10 +83,6 @@ public class ClinicalFeedReaderTest {
         assertEquals("ONC Kuuroverzicht", entry4.description());
         assertEquals("Pain", entry4.itemText());
         assertEquals("0. Not applicable", entry4.itemAnswerValueValueString());
-
-        QuestionnaireEntry entry5 = findByAuthoredDate(entries, LocalDate.of(2021, 12, 17));
-        assertEquals("Aanvraag bloedproducten_test", entry5.description());
-        assertEquals("Erytrocytenconcentraat", entry5.itemAnswerValueValueString());
     }
 
     @NotNull

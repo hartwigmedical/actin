@@ -13,6 +13,10 @@ object Format {
         return strings.distinct().sorted().joinToString("; ")
     }
 
+    fun concatLowercaseWithAnd(strings: Iterable<String>): String {
+        return strings.map { it.lowercase(ApplicationConfig.LOCALE) }.distinct().sorted().joinToString(" and ")
+    }
+
     fun date(date: LocalDate): String {
         return DATE_FORMAT.format(date)
     }

@@ -15,7 +15,7 @@ class GeneIsAmplified internal constructor(private val gene: String) : Evaluatio
             ?: return unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Cannot determine amplification for gene $gene without ploidy")
-                .addFailGeneralMessages("Molecular requirements")
+                .addFailGeneralMessages("Undetermined amplification for $gene")
                 .build()
         val reportableFullAmps: MutableSet<String> = Sets.newHashSet()
         val reportablePartialAmps: MutableSet<String> = Sets.newHashSet()
@@ -68,7 +68,7 @@ class GeneIsAmplified internal constructor(private val gene: String) : Evaluatio
             ?: unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No amplification detected of gene $gene")
-                .addFailGeneralMessages("Molecular requirements")
+                .addFailGeneralMessages("No amplification $gene")
                 .build()
     }
 

@@ -73,7 +73,6 @@ N prior tumor treatments
 | Field          | Example Value     | Details                                           |
 |----------------|-------------------|---------------------------------------------------|
 | name           | Ipilimumab        | Treatment name                                    |
-| cycles         | 6                 | Nr of cycles received                             |
 | startYear      | 2021              | Year in which treatment was started               |
 | startMonth     | 11                | Month in which treatment was started              |
 | stopYear       | 2021              | Year in which treatment was stopped               |
@@ -91,6 +90,7 @@ N prior tumor treatments
 | transplantType |                   | Type of transplantation therapy (if applicable)   |
 | supportiveType |                   | Type of supportive treatment (if applicable)      |
 | trialAcronym   |                   | Acronym of trial (if applicable)                  |
+| ablationType   |                   | Type of ablation (if applicable)                  |
 
 N prior second primaries   
 
@@ -217,7 +217,7 @@ N medications
 | chemicalSubgroupATC        |               | Chemical subgroup belonging to ATC code                                                                |
 | pharmacologicalSubgroupATC |               | Pharmacological subgroup belonging to ATC code                                                         |
 | therapeuticSubgroupATC     |               | Therapeutic subgroup belonging to ATC code                                                             |
-| anatomicalMainGroupTC      |               | Anatomical main group belonging to ATC code                                                            |
+| anatomicalMainGroupATC     |               | Anatomical main group belonging to ATC code                                                            |
 | administrationRoute        | Oral          | Type of administration route of medication                                                             |
 | status                     | ON_HOLD       | Status of medication                                                                                   |
 | dosageMin                  | 750           | Assigned minimal dosage                                                                                |

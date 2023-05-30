@@ -19,7 +19,7 @@ import org.junit.Test;
 public class QuestionnaireExtractionTest {
 
     @Test
-    public void canDetermineIsActualQuestionnaire() {
+    public void shouldBeAbleToDetermineThatQuestionnaireEntryIsAQuestionnaire() {
         assertTrue(QuestionnaireExtraction.isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_5())));
         assertTrue(QuestionnaireExtraction.isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_4())));
         assertTrue(QuestionnaireExtraction.isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_3())));
@@ -33,8 +33,18 @@ public class QuestionnaireExtractionTest {
     }
 
     @Test
-    public void canExtractFromQuestionnaireV1_5() {
-        Questionnaire questionnaire = QuestionnaireExtraction.extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_5()));
+    public void shouldBeAbleToHandleMissingGENAYASubjectNumberFromQuestionnaire() {
+        QuestionnaireEntry entryWithMissingSubjectNumber =
+                entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_6().replace("GENAYA subjectno: GAYA-01-02-9999", ""));
+
+        Questionnaire questionnaire = QuestionnaireExtraction.extract(entryWithMissingSubjectNumber);
+
+        assertNull(questionnaire.genayaSubjectNumber());
+    }
+
+    @Test
+    public void shouldBeAbleToExtractDataFromQuestionnaireV1_6() {
+        Questionnaire questionnaire = QuestionnaireExtraction.extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_6()));
 
         assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
         assertEquals("ovary", questionnaire.tumorLocation());
@@ -97,10 +107,94 @@ public class QuestionnaireExtractionTest {
         List<String> complications = questionnaire.complications();
         assertEquals(1, complications.size());
         assertTrue(complications.contains("vomit"));
+
+        assertEquals("GAYA-01-02-9999", questionnaire.genayaSubjectNumber());
     }
 
     @Test
-    public void canExtractFromQuestionnaireV1_4() {
+    public void shouldBeAbleToExtractDataFromQuestionnaireV1_5() {
+        assertExtractionForQuestionnaireV1_5(TestQuestionnaireFactory.createTestQuestionnaireValueV1_5());
+    }
+
+    @Test
+    public void shouldBeAbleToExtractDataFromAlternateQuestionnaireV1_5() {
+        String rawQuestionnaire = TestQuestionnaireFactory.createTestQuestionnaireValueV1_5()
+                .replace("- IHC test", "-IHC test")
+                .replace("- PD L1 test", "-PD L1 test");
+
+        assertExtractionForQuestionnaireV1_5(rawQuestionnaire);
+    }
+
+    private void assertExtractionForQuestionnaireV1_5(@NotNull String rawQuestionnaire) {
+        Questionnaire questionnaire = QuestionnaireExtraction.extract(entry(rawQuestionnaire));
+
+        assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
+        assertEquals("ovary", questionnaire.tumorLocation());
+        assertEquals("serous", questionnaire.tumorType());
+        assertEquals("lymph node", questionnaire.biopsyLocation());
+
+        List<String> treatmentHistory = questionnaire.treatmentHistoryCurrentTumor();
+        assertEquals(2, treatmentHistory.size());
+        assertTrue(treatmentHistory.contains("cisplatin"));
+        assertTrue(treatmentHistory.contains("nivolumab"));
+
+        List<String> otherOncologicalHistory = questionnaire.otherOncologicalHistory();
+        assertEquals(1, otherOncologicalHistory.size());
+        assertTrue(otherOncologicalHistory.contains("surgery"));
+
+        List<String> secondaryPrimaries = questionnaire.secondaryPrimaries();
+        assertEquals(1, secondaryPrimaries.size());
+        assertTrue(secondaryPrimaries.contains("sarcoma | Feb 2020"));
+
+        List<String> nonOncologicalHistory = questionnaire.nonOncologicalHistory();
+        assertEquals(1, nonOncologicalHistory.size());
+        assertTrue(nonOncologicalHistory.contains("diabetes"));
+
+        assertEquals(TumorStage.IV, questionnaire.stage());
+        assertTrue(questionnaire.hasMeasurableDisease());
+        assertTrue(questionnaire.hasBrainLesions());
+        assertTrue(questionnaire.hasActiveBrainLesions());
+        assertNull(questionnaire.hasCnsLesions());
+        assertNull(questionnaire.hasActiveCnsLesions());
+        assertFalse(questionnaire.hasBoneLesions());
+        assertFalse(questionnaire.hasLiverLesions());
+
+        List<String> otherLesions = questionnaire.otherLesions();
+        assertEquals(2, otherLesions.size());
+        assertTrue(otherLesions.contains("pulmonal"));
+        assertTrue(otherLesions.contains("abdominal"));
+
+        List<String> ihcTestResults = questionnaire.ihcTestResults();
+        assertEquals(1, ihcTestResults.size());
+        assertTrue(ihcTestResults.contains("ERBB2 3+"));
+
+        List<String> pdl1TestResults = questionnaire.pdl1TestResults();
+        assertEquals(1, pdl1TestResults.size());
+        assertTrue(pdl1TestResults.contains("Positive"));
+
+        assertEquals(0, (int) questionnaire.whoStatus());
+        List<String> unresolvedToxicities = questionnaire.unresolvedToxicities();
+        assertEquals(1, unresolvedToxicities.size());
+        assertTrue(unresolvedToxicities.contains("toxic"));
+
+        InfectionStatus infectionStatus = questionnaire.infectionStatus();
+        assertNotNull(infectionStatus);
+        assertFalse(infectionStatus.hasActiveInfection());
+
+        ECG ecg = questionnaire.ecg();
+        assertNotNull(ecg);
+        assertTrue(ecg.hasSigAberrationLatestECG());
+        assertEquals("Sinus", ecg.aberrationDescription());
+
+        List<String> complications = questionnaire.complications();
+        assertEquals(1, complications.size());
+        assertTrue(complications.contains("vomit"));
+
+        assertNull(questionnaire.genayaSubjectNumber());
+    }
+
+    @Test
+    public void shouldBeAbleToExtractDataFromQuestionnaireV1_4() {
         Questionnaire questionnaire = QuestionnaireExtraction.extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_4()));
 
         assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
@@ -156,10 +250,12 @@ public class QuestionnaireExtractionTest {
         List<String> complications = questionnaire.complications();
         assertEquals(1, complications.size());
         assertTrue(complications.contains("nausea"));
+
+        assertNull(questionnaire.genayaSubjectNumber());
     }
 
     @Test
-    public void canExtractFromQuestionnaireV1_3() {
+    public void shouldBeAbleToExtractDataFromQuestionnaireV1_3() {
         Questionnaire questionnaire = QuestionnaireExtraction.extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_3()));
 
         assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
@@ -213,10 +309,12 @@ public class QuestionnaireExtractionTest {
         List<String> complications = questionnaire.complications();
         assertEquals(1, complications.size());
         assertTrue(complications.contains("nausea"));
+
+        assertNull(questionnaire.genayaSubjectNumber());
     }
 
     @Test
-    public void canExtractFromQuestionnaireV1_2() {
+    public void shouldBeAbleToExtractDataFromQuestionnaireV1_2() {
         Questionnaire questionnaire = QuestionnaireExtraction.extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_2()));
 
         assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
@@ -270,10 +368,12 @@ public class QuestionnaireExtractionTest {
         List<String> complications = questionnaire.complications();
         assertEquals(1, complications.size());
         assertTrue(complications.contains("nausea"));
+
+        assertNull(questionnaire.genayaSubjectNumber());
     }
 
     @Test
-    public void canExtractFromQuestionnaireV1_1() {
+    public void shouldBeAbleToExtractDataFromQuestionnaireV1_1() {
         Questionnaire questionnaire = QuestionnaireExtraction.extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_1()));
 
         assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
@@ -327,10 +427,12 @@ public class QuestionnaireExtractionTest {
         List<String> complications = questionnaire.complications();
         assertEquals(1, complications.size());
         assertTrue(complications.contains("nausea"));
+
+        assertNull(questionnaire.genayaSubjectNumber());
     }
 
     @Test
-    public void canExtractFromQuestionnaireV1_0() {
+    public void shouldBeAbleToExtractDataFromQuestionnaireV1_0() {
         Questionnaire questionnaire = QuestionnaireExtraction.extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0()));
 
         assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
@@ -385,10 +487,12 @@ public class QuestionnaireExtractionTest {
         List<String> complications = questionnaire.complications();
         assertEquals(1, complications.size());
         assertTrue(complications.contains("ascites"));
+
+        assertNull(questionnaire.genayaSubjectNumber());
     }
 
     @Test
-    public void canExtractFromQuestionnaireV0_2() {
+    public void shouldBeAbleToExtractDataFromQuestionnaireV0_2() {
         Questionnaire questionnaire = QuestionnaireExtraction.extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_2()));
 
         assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
@@ -436,10 +540,12 @@ public class QuestionnaireExtractionTest {
         List<String> complications = questionnaire.complications();
         assertEquals(1, complications.size());
         assertTrue(complications.contains("pleural effusion"));
+
+        assertNull(questionnaire.genayaSubjectNumber());
     }
 
     @Test
-    public void canExtractFromQuestionnaireV0_1() {
+    public void shouldBeAbleToExtractDataFromQuestionnaireV0_1() {
         Questionnaire questionnaire = QuestionnaireExtraction.extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_1()));
 
         assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
@@ -487,6 +593,8 @@ public class QuestionnaireExtractionTest {
         assertEquals("No", ecg.aberrationDescription());
 
         assertTrue(questionnaire.complications().isEmpty());
+
+        assertNull(questionnaire.genayaSubjectNumber());
     }
 
     @Test

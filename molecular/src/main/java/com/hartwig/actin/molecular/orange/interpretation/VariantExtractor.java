@@ -51,7 +51,7 @@ class VariantExtractor {
     @NotNull
     public Set<Variant> extract(@NotNull PurpleRecord purple) {
         Set<Variant> variants = Sets.newTreeSet(new VariantComparator());
-        for (PurpleVariant variant : purple.variants()) {
+        for (PurpleVariant variant : VariantDedup.apply(purple.variants())) {
             boolean reportedOrCoding = variant.reported() || RELEVANT_CODING_EFFECTS.contains(variant.canonicalImpact().codingEffect());
             String event = DriverEventFactory.variantEvent(variant);
             if (geneFilter.include(variant.gene()) && reportedOrCoding) {

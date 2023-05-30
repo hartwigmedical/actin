@@ -57,14 +57,15 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
 
         table.addCell(Cells.createKey("Relevant other oncological history"));
         String nonSystemicHistory = relevantNonSystemicPreTreatmentHistory(record);
+        if (!nonSystemicHistory.isEmpty()) {
+            table.addCell(Cells.createValue(nonSystemicHistory));
+        } else {
+            table.addCell(Cells.createValue("None"));
+        }
+
+        table.addCell(Cells.createKey("Previous primary tumor"));
         String secondPrimaryHistory = secondPrimaryHistory(record);
-        if (!nonSystemicHistory.isEmpty() && !secondPrimaryHistory.isEmpty()) {
-            table.addCell(Cells.createValue(nonSystemicHistory));
-            table.addCell(Cells.createEmpty());
-            table.addCell(Cells.createValue(secondPrimaryHistory));
-        } else if (!nonSystemicHistory.isEmpty()) {
-            table.addCell(Cells.createValue(nonSystemicHistory));
-        } else if (!secondPrimaryHistory.isEmpty()) {
+        if (!secondPrimaryHistory.isEmpty()) {
             table.addCell(Cells.createValue(secondPrimaryHistory));
         } else {
             table.addCell(Cells.createValue("None"));
@@ -159,13 +160,7 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
             joiner.add(tumorDetails + " (" + dateAdditionDiagnosis + dateAdditionLastTreatment + active + ")");
         }
 
-        if (record.priorSecondPrimaries().size() > 1) {
-            return "Previous primary tumors: " + joiner;
-        } else if (!record.priorSecondPrimaries().isEmpty()) {
-            return "Previous primary tumor: " + joiner;
-        } else {
-            return Strings.EMPTY;
-        }
+        return joiner.toString();
     }
 
     @NotNull

@@ -28,15 +28,29 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
     private final float checksColWidth;
 
     @NotNull
-    public static EligibleActinTrialsGenerator forOpenCohorts(@NotNull List<EvaluatedCohort> cohorts, float width) {
-        List<EvaluatedCohort> recruitingAndEligible =
-                cohorts.stream().filter(cohort -> cohort.isPotentiallyEligible() && cohort.isOpen()).collect(Collectors.toList());
+    public static EligibleActinTrialsGenerator forOpenCohortsWithSlots(@NotNull List<EvaluatedCohort> cohorts, float width) {
+        List<EvaluatedCohort> recruitingAndEligible = cohorts.stream()
+                .filter(cohort -> cohort.isPotentiallyEligible() && cohort.isOpen() && cohort.hasSlotsAvailable())
+                .collect(Collectors.toList());
 
-        String title = String.format("%s trials that are open and considered eligible (%s)",
+        String title = String.format("%s trials that are open and considered eligible and currently have slots available (%s)",
                 TreatmentConstants.ACTIN_SOURCE,
                 recruitingAndEligible.size());
 
         return create(recruitingAndEligible, title, width);
+    }
+
+    @NotNull
+    public static EligibleActinTrialsGenerator forOpenCohortsWithNoSlots(@NotNull List<EvaluatedCohort> cohorts, float width) {
+        List<EvaluatedCohort> recruitingAndEligibleWithNoSlots = cohorts.stream()
+                .filter(cohort -> cohort.isPotentiallyEligible() && cohort.isOpen() && !cohort.hasSlotsAvailable())
+                .collect(Collectors.toList());
+
+        String title = String.format("%s trials that are open and considered eligible but currently have no slots available (%s)",
+                TreatmentConstants.ACTIN_SOURCE,
+                recruitingAndEligibleWithNoSlots.size());
+
+        return create(recruitingAndEligibleWithNoSlots, title, width);
     }
 
     @NotNull
@@ -108,10 +122,6 @@ public class EligibleActinTrialsGenerator implements TableGenerator {
             });
             ActinTrialGeneratorFunctions.insertTrialRow(cohortList, table, trialSubTable);
         });
-
-        if (cohorts.stream().anyMatch(trial -> trial.isOpen() && !trial.hasSlotsAvailable())) {
-            table.addCell(Cells.createSpanningSubNote(" * Cohort currently has no slots available", table));
-        }
 
         return Tables.makeWrapping(table);
     }

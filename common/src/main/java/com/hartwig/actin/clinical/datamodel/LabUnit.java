@@ -14,6 +14,8 @@ public enum LabUnit {
     GRAMS_PER_DECILITER("g/dL"),
     GRAMS_PER_LITER("g/L"),
     KILOGRAMS_PER_LITER("kg/L"),
+    MICROGRAMS_PER_GRAM("µg/g"),
+    GRAMS("g"),
     PICOMOLES_PER_LITER("pmol/L"),
     NANOMOLES_PER_LITER("nmol/L"),
     MICROMOLES_PER_LITER("umol/L"),

@@ -27,8 +27,9 @@ public class FeedModel {
     private final ClinicalFeed feed;
 
     @NotNull
-    public static FeedModel fromFeedDirectory(@NotNull String clinicalFeedDirectory) throws IOException {
-        return new FeedModel(ClinicalFeedReader.read(clinicalFeedDirectory));
+    public static FeedModel fromFeedAndCurationDirectories(@NotNull String clinicalFeedDirectory, @NotNull String curationDirectory)
+            throws IOException {
+        return new FeedModel(ClinicalFeedReader.read(clinicalFeedDirectory, curationDirectory));
     }
 
     @VisibleForTesting

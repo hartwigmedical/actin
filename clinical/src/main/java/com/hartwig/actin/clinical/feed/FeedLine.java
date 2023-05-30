@@ -34,6 +34,11 @@ public class FeedLine {
     }
 
     @NotNull
+    public Boolean hasColumn(@NotNull String column) {
+        return fields.containsKey(column);
+    }
+
+    @NotNull
     public String trimmed(@NotNull String column) {
         return string(column).trim();
     }

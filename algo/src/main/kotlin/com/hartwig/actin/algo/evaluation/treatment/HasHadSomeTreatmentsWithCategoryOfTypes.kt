@@ -30,18 +30,18 @@ class HasHadSomeTreatmentsWithCategoryOfTypes(
         }
         return if (numMatchingTreatmentLines >= minTreatmentLines) {
             EvaluationFactory.pass(
-                "Patient has received at least $minTreatmentLines lines of ${concat(types)} ${category.display()}",
-                "Received at least " + minTreatmentLines + " lines of " + concat(types) + " " + category.display()
+                "Patient has received at least $minTreatmentLines line(s) of ${concat(types)} ${category.display()}",
+                "Received at least $minTreatmentLines line(s) of ${concat(types)} ${category.display()}"
             )
         } else if (numMatchingTreatmentLines + numApproximateTreatmentLines + numOtherTrials >= minTreatmentLines) {
             EvaluationFactory.undetermined(
-                "Can't determine whether patient has received at least $minTreatmentLines lines of " + concat(types) + " " + category.display(),
-                "Undetermined if received at least $minTreatmentLines lines of " + concat(types) + " " + category.display()
+                "Can't determine whether patient has received at least $minTreatmentLines line(s) of ${concat(types)} ${category.display()}",
+                "Undetermined if received at least $minTreatmentLines line(s) of ${concat(types)} ${category.display()}"
             )
         } else {
             EvaluationFactory.fail(
-                "Patient has not received at least $minTreatmentLines lines of " + concat(types) + " " + category.display(),
-                "Not received at least " + minTreatmentLines + " lines of " + concat(types) + " " + category.display()
+                "Patient has not received at least $minTreatmentLines line(s) of ${concat(types)} ${category.display()}",
+                "Not received at least $minTreatmentLines line(s) of ${concat(types)} ${category.display()}"
             )
         }
     }

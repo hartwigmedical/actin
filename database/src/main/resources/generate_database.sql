@@ -80,6 +80,7 @@ CREATE TABLE priorTumorTreatment
     transplantType varchar(100),
     supportiveType varchar(100),
     trialAcronym varchar(100),
+    ablationType varchar(100),
     PRIMARY KEY (id)
 );
 

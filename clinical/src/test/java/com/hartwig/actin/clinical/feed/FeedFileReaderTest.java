@@ -17,10 +17,4 @@ public class FeedFileReaderTest {
         assertEquals("test \" test", cleaned[2]);
         assertEquals("test \" test", cleaned[3]);
     }
-
-    @Test
-    public void canFixLineBreaks() {
-        String input = "test\\n\\ntest2\\n\\n\\n\\ntest3";
-        assertEquals("test\ntest2\n\ntest3", FeedFileReader.fixLineBreaks(input));
-    }
 }
