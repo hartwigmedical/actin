@@ -1,4 +1,4 @@
-package com.hartwig.actin.treatment.ctc;
+package com.hartwig.actin.treatment.ctc.config;
 
 import java.io.IOException;
 import java.util.List;

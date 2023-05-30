@@ -10,7 +10,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker;
-import com.hartwig.actin.treatment.ctc.CTCDatabase;
+import com.hartwig.actin.treatment.ctc.CTCModel;
 import com.hartwig.actin.treatment.datamodel.Cohort;
 import com.hartwig.actin.treatment.datamodel.CohortMetadata;
 import com.hartwig.actin.treatment.datamodel.CriterionReference;
@@ -37,28 +37,28 @@ import org.jetbrains.annotations.NotNull;
 public class TrialFactory {
 
     @NotNull
-    private final TrialConfigModel trialModel;
+    private final TrialConfigModel trialConfigModel;
     @NotNull
-    private final CTCDatabase ctcDatabase;
+    private final CTCModel ctcModel;
     @NotNull
     private final EligibilityFactory eligibilityFactory;
 
     @NotNull
-    public static TrialFactory create(@NotNull String trialConfigDirectory, @NotNull CTCDatabase ctcDatabase, @NotNull DoidModel doidModel,
+    public static TrialFactory create(@NotNull String trialConfigDirectory, @NotNull CTCModel ctcModel, @NotNull DoidModel doidModel,
             @NotNull GeneFilter geneFilter) throws IOException {
         MolecularInputChecker molecularInputChecker = new MolecularInputChecker(geneFilter);
         FunctionInputResolver functionInputResolver = new FunctionInputResolver(doidModel, molecularInputChecker);
         EligibilityFactory eligibilityFactory = new EligibilityFactory(functionInputResolver);
 
-        TrialConfigModel trialModel = TrialConfigModel.create(trialConfigDirectory, eligibilityFactory);
+        TrialConfigModel trialConfigModel = TrialConfigModel.create(trialConfigDirectory, eligibilityFactory);
 
-        return new TrialFactory(trialModel, ctcDatabase, eligibilityFactory);
+        return new TrialFactory(trialConfigModel, ctcModel, eligibilityFactory);
     }
 
     @VisibleForTesting
-    TrialFactory(@NotNull TrialConfigModel trialModel, @NotNull CTCDatabase ctcDatabase, @NotNull EligibilityFactory eligibilityFactory) {
-        this.trialModel = trialModel;
-        this.ctcDatabase = ctcDatabase;
+    TrialFactory(@NotNull TrialConfigModel trialConfigModel, @NotNull CTCModel ctcModel, @NotNull EligibilityFactory eligibilityFactory) {
+        this.trialConfigModel = trialConfigModel;
+        this.ctcModel = ctcModel;
         this.eligibilityFactory = eligibilityFactory;
     }
 
@@ -66,13 +66,13 @@ public class TrialFactory {
     public List<Trial> create() {
         List<Trial> trials = Lists.newArrayList();
 
-        for (TrialDefinitionConfig trialConfig : trialModel.trials()) {
+        for (TrialDefinitionConfig trialConfig : trialConfigModel.trials()) {
             String trialId = trialConfig.trialId();
 
-            List<InclusionCriteriaReferenceConfig> references = trialModel.referencesForTrial(trialId);
+            List<InclusionCriteriaReferenceConfig> references = trialConfigModel.referencesForTrial(trialId);
             trials.add(ImmutableTrial.builder()
                     .identification(toIdentification(trialConfig))
-                    .generalEligibility(toEligibility(trialModel.generalInclusionCriteriaForTrial(trialId), references))
+                    .generalEligibility(toEligibility(trialConfigModel.generalInclusionCriteriaForTrial(trialId), references))
                     .cohorts(cohortsForTrial(trialId, references))
                     .build());
         }
@@ -81,7 +81,7 @@ public class TrialFactory {
     }
 
     @NotNull
-    private static TrialIdentification toIdentification(final TrialDefinitionConfig trialConfig) {
+    private static TrialIdentification toIdentification(@NotNull TrialDefinitionConfig trialConfig) {
         return ImmutableTrialIdentification.builder()
                 .trialId(trialConfig.trialId())
                 .open(trialConfig.open())
@@ -94,11 +94,11 @@ public class TrialFactory {
     private List<Cohort> cohortsForTrial(@NotNull String trialId, @NotNull List<InclusionCriteriaReferenceConfig> references) {
         List<Cohort> cohorts = Lists.newArrayList();
 
-        for (CohortDefinitionConfig cohortConfig : trialModel.cohortsForTrial(trialId)) {
+        for (CohortDefinitionConfig cohortConfig : trialConfigModel.cohortsForTrial(trialId)) {
             String cohortId = cohortConfig.cohortId();
             cohorts.add(ImmutableCohort.builder()
-                    .metadata(toMetadata(cohortConfig))
-                    .eligibility(toEligibility(trialModel.specificInclusionCriteriaForCohort(trialId, cohortId), references))
+                    .metadata(resolveMetadata(cohortConfig))
+                    .eligibility(toEligibility(trialConfigModel.specificInclusionCriteriaForCohort(trialId, cohortId), references))
                     .build());
         }
 
@@ -108,7 +108,7 @@ public class TrialFactory {
     }
 
     @NotNull
-    private static CohortMetadata toMetadata(@NotNull CohortDefinitionConfig cohortConfig) {
+    private static CohortMetadata resolveMetadata(@NotNull CohortDefinitionConfig cohortConfig) {
         return ImmutableCohortMetadata.builder()
                 .cohortId(cohortConfig.cohortId())
                 .evaluable(cohortConfig.evaluable())

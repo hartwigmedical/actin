@@ -1,4 +1,4 @@
-package com.hartwig.actin.treatment.ctc;
+package com.hartwig.actin.treatment.ctc.config;
 
 import java.util.List;
 import java.util.Set;

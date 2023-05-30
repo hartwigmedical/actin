@@ -1,4 +1,4 @@
-package com.hartwig.actin.treatment.ctc;
+package com.hartwig.actin.treatment.ctc.config;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;

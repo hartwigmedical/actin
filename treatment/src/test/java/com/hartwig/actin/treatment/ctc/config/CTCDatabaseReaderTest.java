@@ -1,4 +1,4 @@
-package com.hartwig.actin.treatment.ctc;
+package com.hartwig.actin.treatment.ctc.config;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

@@ -10,7 +10,7 @@ import java.util.List;
 import com.google.common.io.Resources;
 import com.hartwig.actin.doid.TestDoidModelFactory;
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory;
-import com.hartwig.actin.treatment.ctc.TestCTCDatabaseFactory;
+import com.hartwig.actin.treatment.ctc.TestCTCModelFactory;
 import com.hartwig.actin.treatment.datamodel.Cohort;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
@@ -28,7 +28,7 @@ public class TrialFactoryTest {
     @Test
     public void canCreateFromTrialConfigDirectory() throws IOException {
         assertNotNull(TrialFactory.create(TRIAL_CONFIG_DIRECTORY,
-                TestCTCDatabaseFactory.createMinimalTestCTCDatabase(),
+                TestCTCModelFactory.createMinimalTestCTCDatabase(),
                 TestDoidModelFactory.createMinimalTestDoidModel(),
                 TestGeneFilterFactory.createNeverValid()));
     }
@@ -36,7 +36,7 @@ public class TrialFactoryTest {
     @Test
     public void canCreateFromProperTestModel() {
         TrialFactory factory = new TrialFactory(new TrialConfigModel(TestTrialConfigFactory.createProperTestTrialConfigDatabase()),
-                TestCTCDatabaseFactory.createMinimalTestCTCDatabase(),
+                TestCTCModelFactory.createProperTestCTCDatabase(),
                 TestEligibilityFactoryFactory.createTestEligibilityFactory());
         List<Trial> trials = factory.create();
 
