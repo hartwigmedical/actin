@@ -30,7 +30,7 @@ public final class CohortStatusInterpreter {
                     cohortConfig.trialId());
             return null;
         } else if (isMissingEntry(ctcCohortIds)) {
-            LOGGER.warn("CTC entry missing for cohort '{}' of trial '{}'! Setting cohort to closed without slots",
+            LOGGER.info("CTC entry missing for cohort '{}' of trial '{}'! Setting cohort to closed without slots",
                     cohortConfig.cohortId(),
                     cohortConfig.trialId());
             return closedWithoutSlots();
@@ -45,26 +45,21 @@ public final class CohortStatusInterpreter {
     }
 
     @NotNull
-    private static InterpretedCohortStatus consolidatedCohortStatus(@NotNull List<CTCDatabaseEntry> allEntries,
+    private static InterpretedCohortStatus consolidatedCohortStatus(@NotNull List<CTCDatabaseEntry> entries,
             @NotNull Set<Integer> configuredCohortIds) {
-        List<CTCDatabaseEntry> entries =
-                allEntries.stream().filter(entry -> configuredCohortIds.contains(entry.cohortId())).collect(Collectors.toList());
-
         boolean hasAtLeastOneOpen = false;
         boolean hasAtLeastOneSlotsAvailable = false;
         for (CTCDatabaseEntry entry : entries) {
             if (configuredCohortIds.contains(entry.cohortId())) {
                 String cohortStatus = entry.cohortStatus();
                 if (cohortStatus == null) {
-                    LOGGER.warn("Cohort status missing for CTC entry with cohort ID: {}", entry.cohortId());
+                    LOGGER.warn("Cohort status missing for CTC entry with cohort ID: {}: {}", entry.cohortId(), entry);
                 } else if (CTCCohortStatus.fromCohortStatusString(entry.cohortStatus()) == CTCCohortStatus.OPEN) {
                     hasAtLeastOneOpen = true;
                 }
 
                 Integer cohortSlotsAvailable = entry.cohortSlotsNumberAvailable();
-                if (cohortSlotsAvailable == null) {
-                    LOGGER.warn("Cohort status missing for CTC entry with cohort ID: {}", entry.cohortId());
-                } else if (cohortSlotsAvailable > 0) {
+                if (cohortSlotsAvailable != null && cohortSlotsAvailable > 0) {
                     hasAtLeastOneSlotsAvailable = true;
                 }
             }
@@ -94,5 +89,4 @@ public final class CohortStatusInterpreter {
     private static InterpretedCohortStatus closedWithoutSlots() {
         return ImmutableInterpretedCohortStatus.builder().open(false).slotsAvailable(false).build();
     }
-
 }
