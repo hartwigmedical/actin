@@ -22,9 +22,11 @@ public abstract class CohortDefinitionConfig implements TrialConfig {
 
     public abstract boolean evaluable();
 
-    public abstract boolean open();
+    @Nullable
+    public abstract Boolean open();
 
-    public abstract boolean slotsAvailable();
+    @Nullable
+    public abstract Boolean slotsAvailable();
 
     public abstract boolean blacklist();
 

@@ -20,8 +20,8 @@ public class CohortDefinitionConfigFactory implements TrialConfigFactory<CohortD
                 .cohortId(parts[fields.get("cohortId")])
                 .ctcCohortIds(toSet(parts[fields.get("ctcCohortIds")]))
                 .evaluable(ResourceFile.bool(parts[fields.get("evaluable")]))
-                .open(ResourceFile.bool(parts[fields.get("open")]))
-                .slotsAvailable(ResourceFile.bool(parts[fields.get("slotsAvailable")]))
+                .open(ResourceFile.optionalBool(parts[fields.get("open")]))
+                .slotsAvailable(ResourceFile.optionalBool(parts[fields.get("slotsAvailable")]))
                 .blacklist(ResourceFile.bool(parts[fields.get("blacklist")]))
                 .description(parts[fields.get("description")])
                 .build();
