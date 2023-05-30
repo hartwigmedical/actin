@@ -9,6 +9,8 @@ import com.hartwig.actin.doid.datamodel.DoidEntry;
 import com.hartwig.actin.doid.serialization.DoidJson;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.filter.GeneFilterFactory;
+import com.hartwig.actin.treatment.ctc.CTCDatabase;
+import com.hartwig.actin.treatment.ctc.CTCDatabaseReader;
 import com.hartwig.actin.treatment.datamodel.Trial;
 import com.hartwig.actin.treatment.serialization.TrialJson;
 import com.hartwig.actin.treatment.trial.EligibilityRuleUsageEvaluator;
@@ -68,7 +70,8 @@ public class TreatmentCreatorApplication {
 
         GeneFilter geneFilter = GeneFilterFactory.createFromKnownGenes(knownGenes);
 
-        TrialFactory trialFactory = TrialFactory.create(config.trialConfigDirectory(), doidModel, geneFilter);
+        CTCDatabase ctcDatabase = CTCDatabaseReader.read(config.ctcConfigDirectory());
+        TrialFactory trialFactory = TrialFactory.create(config.trialConfigDirectory(), ctcDatabase, doidModel, geneFilter);
 
         LOGGER.info("Creating trial database");
         List<Trial> trials = trialFactory.create();

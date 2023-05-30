@@ -10,6 +10,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker;
+import com.hartwig.actin.treatment.ctc.CTCDatabase;
 import com.hartwig.actin.treatment.datamodel.Cohort;
 import com.hartwig.actin.treatment.datamodel.CohortMetadata;
 import com.hartwig.actin.treatment.datamodel.CriterionReference;
@@ -38,10 +39,12 @@ public class TrialFactory {
     @NotNull
     private final TrialConfigModel trialModel;
     @NotNull
+    private final CTCDatabase ctcDatabase;
+    @NotNull
     private final EligibilityFactory eligibilityFactory;
 
     @NotNull
-    public static TrialFactory create(@NotNull String trialConfigDirectory, @NotNull DoidModel doidModel,
+    public static TrialFactory create(@NotNull String trialConfigDirectory, @NotNull CTCDatabase ctcDatabase, @NotNull DoidModel doidModel,
             @NotNull GeneFilter geneFilter) throws IOException {
         MolecularInputChecker molecularInputChecker = new MolecularInputChecker(geneFilter);
         FunctionInputResolver functionInputResolver = new FunctionInputResolver(doidModel, molecularInputChecker);
@@ -49,12 +52,13 @@ public class TrialFactory {
 
         TrialConfigModel trialModel = TrialConfigModel.create(trialConfigDirectory, eligibilityFactory);
 
-        return new TrialFactory(trialModel, eligibilityFactory);
+        return new TrialFactory(trialModel, ctcDatabase, eligibilityFactory);
     }
 
     @VisibleForTesting
-    TrialFactory(@NotNull final TrialConfigModel trialModel, @NotNull final EligibilityFactory eligibilityFactory) {
+    TrialFactory(@NotNull TrialConfigModel trialModel, @NotNull CTCDatabase ctcDatabase, @NotNull EligibilityFactory eligibilityFactory) {
         this.trialModel = trialModel;
+        this.ctcDatabase = ctcDatabase;
         this.eligibilityFactory = eligibilityFactory;
     }
 
