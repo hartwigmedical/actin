@@ -33,8 +33,6 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
                             activatingVariantsNoHotspotAndNoGainOfFunction.add(variant.event())
                         } else if (isNoOncogene) {
                             activatingVariantsInNonOncogene.add(variant.event())
-                        } else if (variant.clonalLikelihood() < CLONAL_CUTOFF) {
-                            activatingSubclonalVariants.add(variant.event())
                         } else {
                             activatingVariants.add(variant.event())
                         }
@@ -44,6 +42,9 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
                         } else if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
                             nonHighDriverVariants.add(variant.event())
                         }
+                    }
+                    if (variant.clonalLikelihood() < CLONAL_CUTOFF) {
+                        activatingSubclonalVariants.add(variant.event())
                     }
                 } else if (isMissenseOrHotspot(variant)) {
                     otherMissenseOrHotspotVariants.add(variant.event())
