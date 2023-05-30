@@ -27,7 +27,7 @@ class HasLeftSidedColorectalTumor internal constructor(doidModel: DoidModel) : E
             val subLocation = record.clinical().tumor().primaryTumorSubLocation()?.lowercase(ApplicationConfig.LOCALE)
             when {
                 subLocation.isNullOrEmpty() -> EvaluationFactory.undetermined(
-                    "Tumor sub-location not provided, left-sidedness is unknown", "Unknown sidedness of tumor"
+                    "Tumor sub-location unknown, left-sidedness is unknown", "Unknown sidedness of tumor"
                 )
 
                 stringContainsAnyMember(subLocation, LEFT_SUB_LOCATIONS) ->
