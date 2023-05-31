@@ -27,24 +27,18 @@ final class QuestionnaireReader {
         List<String> merged = Lists.newArrayList();
 
         StringJoiner curLine = newValueStringJoiner();
-        curLine.add(lines[0]);
-        for (int i = 1; i < lines.length; i++) {
-            if (hasValue(lines[i]) || !hasValue(lines[i - 1]) || canContinueToNextLine(lines, i)) {
+        for (int i = 0; i < lines.length; i++) {
+            curLine.add(lines[i]);
+            if (lines[i].isEmpty() || i == lines.length - 1 || isField(lines[i + 1]) || lines[i + 1].isEmpty()) {
                 merged.add(curLine.toString());
                 curLine = newValueStringJoiner();
             }
-            curLine.add(lines[i]);
         }
-        merged.add(curLine.toString());
 
         return merged.toArray(new String[0]);
     }
 
-    private static boolean canContinueToNextLine(@NotNull String[] lines, int i) {
-        return i != lines.length - 1 && !hasValue(lines[i + 1]);
-    }
-
-    private static boolean hasValue(@NotNull String line) {
+    private static boolean isField(@NotNull String line) {
         return line.contains(QuestionnaireExtraction.KEY_VALUE_SEPARATOR);
     }
 
