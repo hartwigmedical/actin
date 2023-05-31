@@ -204,7 +204,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasHadAdjuvantTreatmentWithCategoryCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val treatment = functionInputResolver().createOneTreatmentInput(function)
-            HasHadAdjuvantTreatmentWithCategory(treatment.mappedCategory())
+            HasHadAdjuvantTreatmentWithCategory(treatment.mappedCategory(), treatment.mappedNames())
         }
     }
 

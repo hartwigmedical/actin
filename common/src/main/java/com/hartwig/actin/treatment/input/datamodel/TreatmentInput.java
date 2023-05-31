@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 public enum TreatmentInput {
     CHEMOTHERAPY(TreatmentCategory.CHEMOTHERAPY),
     RADIOTHERAPY(TreatmentCategory.RADIOTHERAPY),
-    CHEMORADIOTHERAPY((TreatmentCategory.CHEMORADIOTHERAPY)),
+    CHEMORADIOTHERAPY(TreatmentCategory.CHEMORADIOTHERAPY),
     TARGETED_THERAPY(TreatmentCategory.TARGETED_THERAPY),
     IMMUNOTHERAPY(TreatmentCategory.IMMUNOTHERAPY),
     HORMONE_THERAPY(TreatmentCategory.HORMONE_THERAPY),
