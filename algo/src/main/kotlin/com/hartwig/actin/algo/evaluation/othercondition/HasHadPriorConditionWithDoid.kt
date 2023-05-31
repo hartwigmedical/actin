@@ -18,7 +18,7 @@ class HasHadPriorConditionWithDoid internal constructor(private val doidModel: D
         return if (conditions.isNotEmpty()) {
             pass(
                 PriorConditionMessages.passSpecific(Characteristic.CONDITION, conditions, doidTerm),
-                PriorConditionMessages.passGeneral(doidTerm)
+                PriorConditionMessages.passGeneral(conditions)
             )
         } else fail(
             PriorConditionMessages.failSpecific(doidTerm),
