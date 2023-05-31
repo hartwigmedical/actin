@@ -17,6 +17,7 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
         val activatingVariantsInNonOncogene: MutableSet<String> = mutableSetOf()
         val activatingSubclonalVariants: MutableSet<String> = mutableSetOf()
         val nonHighDriverGainOfFunctionVariants: MutableSet<String> = mutableSetOf()
+        val nonHighDriverSubclonalVariants: MutableSet<String> = mutableSetOf()
         val nonHighDriverVariants: MutableSet<String> = mutableSetOf()
         val otherMissenseOrHotspotVariants: MutableSet<String> = mutableSetOf()
         val hasHighMutationalLoad = record.molecular().characteristics().hasHighTumorMutationalLoad()
@@ -35,6 +36,8 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
                             activatingVariantsNoHotspotAndNoGainOfFunction.add(variant.event())
                         } else if (isNoOncogene) {
                             activatingVariantsInNonOncogene.add(variant.event())
+                        } else if (variant.clonalLikelihood() < CLONAL_CUTOFF) {
+                            activatingSubclonalVariants.add(variant.event())
                         } else {
                             activatingVariants.add(variant.event())
                         }
@@ -42,11 +45,12 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
                         if (isGainOfFunction) {
                             nonHighDriverGainOfFunctionVariants.add(variant.event())
                         } else if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
-                            nonHighDriverVariants.add(variant.event())
+                            if (variant.clonalLikelihood() < CLONAL_CUTOFF) {
+                                nonHighDriverSubclonalVariants.add(variant.event())
+                            } else {
+                                nonHighDriverVariants.add(variant.event())
+                            }
                         }
-                    }
-                    if (variant.clonalLikelihood() < CLONAL_CUTOFF) {
-                        activatingSubclonalVariants.add(variant.event())
                     }
                 } else if (isMissenseOrHotspot(variant)) {
                     otherMissenseOrHotspotVariants.add(variant.event())
@@ -66,6 +70,7 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
             activatingVariantsNoHotspotAndNoGainOfFunction,
             activatingSubclonalVariants,
             nonHighDriverGainOfFunctionVariants,
+            nonHighDriverSubclonalVariants,
             nonHighDriverVariants,
             otherMissenseOrHotspotVariants
         )
@@ -81,6 +86,7 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
         activatingVariantsNoHotspotAndNoGainOfFunction: Set<String>,
         activatingSubclonalVariants: Set<String>,
         nonHighDriverGainOfFunctionVariants: Set<String>,
+        nonHighDriverSubclonalVariants: Set<String>,
         nonHighDriverVariants: Set<String>,
         otherMissenseOrHotspotVariants: Set<String>
     ): Evaluation? {
@@ -137,6 +143,20 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
             )
             warnGeneralMessages.add(
                 "$gene potentially activating mutation(s) detected based on protein effect but no high driver likelihood"
+            )
+        }
+
+        if (nonHighDriverSubclonalVariants.isNotEmpty()) {
+            warnEvents.addAll(nonHighDriverSubclonalVariants)
+            warnSpecificMessages.add(
+                "Gene $gene potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) +
+                        " have subclonal likelihood of > " + Format.percentage(1 - CLONAL_CUTOFF) +
+                        " and no high driver likelihood"
+            )
+            warnGeneralMessages.add(
+                gene + " potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) +
+                        " but subclonal likelihood > " + Format.percentage(1 - CLONAL_CUTOFF) +
+                        " and no high driver likelihood"
             )
         }
 
