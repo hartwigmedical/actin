@@ -161,9 +161,11 @@ public final class QuestionnaireExtraction {
     @Nullable
     private static String value(@NotNull String[] lines, @Nullable String key, boolean isOptional) {
         Integer lineIndex = lookup(lines, key, isOptional);
-
-        String line = lineIndex != null ? lines[lineIndex] : null;
-        return line != null ? extractValue(line) : null;
+        if (lineIndex == null) {
+            return null;
+        }
+        String extracted = extractValue(lines[lineIndex]);
+        return extracted.isEmpty() ? null : extracted;
     }
 
     @Nullable
