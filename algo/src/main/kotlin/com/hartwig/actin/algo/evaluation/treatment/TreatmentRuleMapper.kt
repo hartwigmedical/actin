@@ -10,9 +10,11 @@ import com.hartwig.actin.treatment.datamodel.EligibilityRule
 class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
-            EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT to isEligibleForCurativeTreatmentCreator,
+            EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT to isEligibleForCurativeTreatmentCreator(),
+            EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_TREATMENT_X to isEligibleForOnLabelTreatmentCreator(),
+            EligibilityRule.IS_ELIGIBLE_FOR_PALLIATIVE_RADIOTHERAPY to isEligibleForPalliativeRadiotherapyCreator(),
+            EligibilityRule.IS_ELIGIBLE_FOR_LOCO_REGIONAL_THERAPY to isEligibleForLocoRegionalTherapyCreator(),
             EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS to hasExhaustedSOCTreatmentsCreator(),
-            EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_TREATMENT_X to isEligibleForOnLabelTreatmentCreator,
             EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES to hasHadSomeApprovedTreatmentCreator(),
             EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES to hasHadSomeSystemicTreatmentCreator(),
             EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES to hasHadLimitedSystemicTreatmentsCreator(),
@@ -51,15 +53,25 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         )
     }
 
-    private val isEligibleForCurativeTreatmentCreator: FunctionCreator
-        get() = FunctionCreator { IsEligibleForCurativeTreatment() }
+    private fun isEligibleForCurativeTreatmentCreator(): FunctionCreator {
+        return FunctionCreator { IsEligibleForCurativeTreatment() }
+    }
+
+    private fun isEligibleForOnLabelTreatmentCreator(): FunctionCreator {
+        return FunctionCreator { IsEligibleForOnLabelTreatment() }
+    }
+
+    private fun isEligibleForPalliativeRadiotherapyCreator(): FunctionCreator {
+        return FunctionCreator { IsEligibleForPalliativeRadiotherapy() }
+    }
+
+    private fun isEligibleForLocoRegionalTherapyCreator(): FunctionCreator {
+        return FunctionCreator { IsEligibleForLocoRegionalTherapy() }
+    }
 
     private fun hasExhaustedSOCTreatmentsCreator(): FunctionCreator {
         return FunctionCreator { HasExhaustedSOCTreatments() }
     }
-
-    private val isEligibleForOnLabelTreatmentCreator: FunctionCreator
-        get() = FunctionCreator { IsEligibleForOnLabelTreatment() }
 
     private fun hasHadSomeApprovedTreatmentCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
