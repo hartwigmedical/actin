@@ -52,7 +52,7 @@ public final class QuestionnaireExtraction {
         }
 
         Map<QuestionnaireKey, String> mapping = QuestionnaireMapping.mapping(entry);
-        String[] lines = QuestionnaireReader.read(entry);
+        String[] lines = QuestionnaireReader.read(entry, QuestionnaireMapping.keyStrings(entry));
 
         LesionData brainLesionData = lesionData(lines, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS));
         LesionData cnsLesionData = lesionData(lines, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS));

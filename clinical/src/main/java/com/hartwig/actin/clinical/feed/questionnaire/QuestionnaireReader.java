@@ -18,18 +18,18 @@ final class QuestionnaireReader {
     }
 
     @NotNull
-    public static String[] read(@NotNull QuestionnaireEntry entry) {
-        return merge(clean(entry.itemAnswerValueValueString()).split("\n"));
+    public static String[] read(@NotNull QuestionnaireEntry entry, @NotNull List<String> validKeys) {
+        return merge(clean(entry.itemAnswerValueValueString()).split("\n"), validKeys);
     }
 
     @NotNull
-    private static String[] merge(@NotNull String[] lines) {
+    private static String[] merge(@NotNull String[] lines, @NotNull List<String> validKeys) {
         List<String> merged = Lists.newArrayList();
 
         StringJoiner curLine = newValueStringJoiner();
         for (int i = 0; i < lines.length; i++) {
             curLine.add(lines[i]);
-            if (lines[i].isEmpty() || i == lines.length - 1 || isField(lines[i + 1]) || lines[i + 1].isEmpty()) {
+            if (lines[i].isEmpty() || i == lines.length - 1 || isField(lines[i + 1], validKeys) || lines[i + 1].isEmpty()) {
                 merged.add(curLine.toString());
                 curLine = newValueStringJoiner();
             }
@@ -38,8 +38,8 @@ final class QuestionnaireReader {
         return merged.toArray(new String[0]);
     }
 
-    private static boolean isField(@NotNull String line) {
-        return line.contains(QuestionnaireExtraction.KEY_VALUE_SEPARATOR);
+    private static boolean isField(@NotNull String line, @NotNull List<String> validKeys) {
+        return line.contains(QuestionnaireExtraction.KEY_VALUE_SEPARATOR) && validKeys.stream().anyMatch(line::contains);
     }
 
     @NotNull
