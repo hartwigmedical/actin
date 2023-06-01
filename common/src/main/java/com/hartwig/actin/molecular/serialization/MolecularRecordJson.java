@@ -149,6 +149,7 @@ public class MolecularRecordJson {
                     .externalTrialSource(string(record, "externalTrialSource"))
                     .containsTumorCells(bool(record, "containsTumorCells"))
                     .hasSufficientQuality(bool(record, "hasSufficientQuality"))
+                    .hasSufficientQualityExcludingPurity(bool(record, "hasSufficientQualityExcludingPurity"))
                     .characteristics(toMolecularCharacteristics(object(record, "characteristics")))
                     .drivers(toMolecularDrivers(object(record, "drivers")))
                     .immunology(toMolecularImmunology(object(record, "immunology")))

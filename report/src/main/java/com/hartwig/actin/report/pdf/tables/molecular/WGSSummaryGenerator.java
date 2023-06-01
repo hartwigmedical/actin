@@ -127,7 +127,7 @@ public class WGSSummaryGenerator implements TableGenerator {
         PredictedTumorOrigin predictedTumorOrigin = molecular.characteristics().predictedTumorOrigin();
         if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin) && molecular.hasSufficientQuality()) {
             return TumorOriginInterpreter.interpret(predictedTumorOrigin);
-        } else if (molecular.hasSufficientQuality() && predictedTumorOrigin != null) {
+        } else if ((molecular.hasSufficientQuality() || molecular.hasSufficientQualityExcludingPurity()) && predictedTumorOrigin != null) {
             return String.format("Inconclusive (%s %s)",
                     predictedTumorOrigin.tumorType(),
                     Formats.percentage(predictedTumorOrigin.likelihood()));

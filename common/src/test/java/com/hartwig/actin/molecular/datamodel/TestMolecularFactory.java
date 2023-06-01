@@ -60,6 +60,7 @@ public final class TestMolecularFactory {
                 .externalTrialSource(Strings.EMPTY)
                 .containsTumorCells(true)
                 .hasSufficientQuality(true)
+                .hasSufficientQualityExcludingPurity(true)
                 .characteristics(ImmutableMolecularCharacteristics.builder().build())
                 .drivers(ImmutableMolecularDrivers.builder().build())
                 .immunology(ImmutableMolecularImmunology.builder().isReliable(false).build())

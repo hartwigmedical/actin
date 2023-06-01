@@ -1,10 +1,12 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
@@ -15,6 +17,8 @@ import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRefGenomeVersion;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
+import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleFit;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleQCStatus;
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory;
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants;
 
@@ -43,6 +47,7 @@ public class OrangeInterpreterTest {
         assertEquals(ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display(), record.externalTrialSource());
         assertTrue(record.containsTumorCells());
         assertTrue(record.hasSufficientQuality());
+        assertTrue(record.hasSufficientQualityExcludingPurity());
 
         assertNotNull(record.characteristics());
 
@@ -77,6 +82,21 @@ public class OrangeInterpreterTest {
         for (OrangeRefGenomeVersion refGenomeVersion : OrangeRefGenomeVersion.values()) {
             assertNotNull(OrangeInterpreter.determineRefGenomeVersion(refGenomeVersion));
         }
+    }
+
+    @Test
+    public void shouldDetermineQualityExcludingPurityToBeSufficientWhenOnlyLowPurityWarningIsPresent() {
+        assertTrue(OrangeInterpreter.determineSufficientQualityExcludingPurity(purpleFitWithQCStatus(PurpleQCStatus.WARN_LOW_PURITY)));
+    }
+
+    @Test
+    public void shouldDetermineQualityExcludingPurityToNotBeSufficientWhenOtherWarningIsPresent() {
+        assertFalse(OrangeInterpreter.determineSufficientQualityExcludingPurity(purpleFitWithQCStatus(PurpleQCStatus.WARN_DELETED_GENES)));
+    }
+
+    @NotNull
+    private static ImmutablePurpleFit purpleFitWithQCStatus(PurpleQCStatus status) {
+        return ImmutablePurpleFit.copyOf(TestOrangeFactory.createMinimalTestOrangeRecord().purple().fit()).withQcStatuses(Set.of(status));
     }
 
     @NotNull

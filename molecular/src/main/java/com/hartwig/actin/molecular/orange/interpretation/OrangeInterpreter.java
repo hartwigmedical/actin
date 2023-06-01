@@ -1,5 +1,7 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
+import java.util.Set;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
@@ -7,6 +9,8 @@ import com.hartwig.actin.molecular.datamodel.RefGenomeVersion;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRefGenomeVersion;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleFit;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleQCStatus;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants;
 
@@ -39,6 +43,7 @@ public class OrangeInterpreter {
                 .externalTrialSource(ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display())
                 .containsTumorCells(record.purple().fit().containsTumorCells())
                 .hasSufficientQuality(record.purple().fit().hasSufficientQuality())
+                .hasSufficientQualityExcludingPurity(determineSufficientQualityExcludingPurity(record.purple().fit()))
                 .characteristics(characteristicsExtractor.extract(record))
                 .drivers(driverExtractor.extract(record))
                 .immunology(ImmunologyExtraction.extract(record))
@@ -51,12 +56,18 @@ public class OrangeInterpreter {
         switch (refGenomeVersion) {
             case V37: {
                 return RefGenomeVersion.V37;
-            } case V38: {
+            }
+            case V38: {
                 return RefGenomeVersion.V38;
             }
         }
 
         throw new IllegalStateException("Could not determine ref genome version from: " + refGenomeVersion);
+    }
+
+    static boolean determineSufficientQualityExcludingPurity(PurpleFit fit) {
+        Set<PurpleQCStatus> allowableQCStatuses = Set.of(PurpleQCStatus.PASS, PurpleQCStatus.WARN_LOW_PURITY);
+        return fit.hasSufficientQuality() || allowableQCStatuses.containsAll(fit.qcStatuses());
     }
 
     @VisibleForTesting

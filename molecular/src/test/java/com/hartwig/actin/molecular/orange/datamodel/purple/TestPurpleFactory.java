@@ -1,5 +1,7 @@
 package com.hartwig.actin.molecular.orange.datamodel.purple;
 
+import java.util.Collections;
+
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,7 +12,12 @@ public final class TestPurpleFactory {
 
     @NotNull
     public static ImmutablePurpleFit.Builder fitBuilder() {
-        return ImmutablePurpleFit.builder().hasSufficientQuality(false).containsTumorCells(false).purity(0).ploidy(0);
+        return ImmutablePurpleFit.builder()
+                .hasSufficientQuality(false)
+                .containsTumorCells(false)
+                .purity(0)
+                .ploidy(0)
+                .qcStatuses(Collections.emptySet());
     }
 
     @NotNull

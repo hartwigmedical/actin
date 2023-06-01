@@ -41,6 +41,8 @@ public abstract class MolecularRecord {
 
     public abstract boolean hasSufficientQuality();
 
+    public abstract boolean hasSufficientQualityExcludingPurity();
+
     @NotNull
     public abstract MolecularCharacteristics characteristics();
 

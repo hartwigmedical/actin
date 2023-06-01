@@ -91,6 +91,7 @@ public class MolecularRecordJsonTest {
         assertEquals("trial kb", molecular.externalTrialSource());
         assertTrue(molecular.containsTumorCells());
         assertTrue(molecular.hasSufficientQuality());
+        assertTrue(molecular.hasSufficientQualityExcludingPurity());
 
         assertCharacteristics(molecular.characteristics());
         assertDrivers(molecular.drivers());
