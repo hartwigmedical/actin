@@ -75,6 +75,7 @@ import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
+import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireRawEntryMapper;
 import com.hartwig.actin.doid.DoidModel;
 
 import org.apache.logging.log4j.LogManager;
@@ -90,6 +91,8 @@ public class CurationModel {
     @NotNull
     private final CurationDatabase database;
     @NotNull
+    private final QuestionnaireRawEntryMapper questionnaireRawEntryMapper;
+    @NotNull
     private final Multimap<Class<? extends CurationConfig>, String> evaluatedCurationInputs = HashMultimap.create();
     @NotNull
     private final Multimap<Class<? extends Translation>, Translation> evaluatedTranslations = HashMultimap.create();
@@ -97,12 +100,15 @@ public class CurationModel {
     @NotNull
     public static CurationModel create(@NotNull String clinicalCurationDirectory, @NotNull DoidModel doidModel) throws IOException {
         CurationDatabaseReader reader = new CurationDatabaseReader(new CurationValidator(doidModel));
-        return new CurationModel(reader.read(clinicalCurationDirectory));
+        QuestionnaireRawEntryMapper questionnaireRawEntryMapper =
+                QuestionnaireRawEntryMapper.createFromCurationDirectory(clinicalCurationDirectory);
+        return new CurationModel(reader.read(clinicalCurationDirectory), questionnaireRawEntryMapper);
     }
 
     @VisibleForTesting
-    CurationModel(@NotNull final CurationDatabase database) {
+    CurationModel(@NotNull final CurationDatabase database, @NotNull final QuestionnaireRawEntryMapper questionnaireRawEntryMapper) {
         this.database = database;
+        this.questionnaireRawEntryMapper = questionnaireRawEntryMapper;
     }
 
     @NotNull
@@ -769,6 +775,11 @@ public class CurationModel {
         }
 
         LOGGER.info(" {} warnings raised during curation model evaluation", warnCount);
+    }
+
+    @NotNull
+    public QuestionnaireRawEntryMapper questionnaireRawEntryMapper() {
+        return questionnaireRawEntryMapper;
     }
 
     @NotNull

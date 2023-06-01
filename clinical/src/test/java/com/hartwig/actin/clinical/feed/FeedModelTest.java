@@ -19,11 +19,10 @@ import org.junit.Test;
 public class FeedModelTest {
 
     private static final String CLINICAL_FEED_DIRECTORY = Resources.getResource("feed").getPath();
-    private static final String CURATION_DIRECTORY = Resources.getResource("curation").getPath();
 
     @Test
     public void canCreateFromFeedDirectory() throws IOException {
-        assertNotNull(FeedModel.fromFeedAndCurationDirectories(CLINICAL_FEED_DIRECTORY, CURATION_DIRECTORY));
+        assertNotNull(FeedModel.fromFeedDirectory(CLINICAL_FEED_DIRECTORY));
     }
 
     @Test(expected = IllegalStateException.class)

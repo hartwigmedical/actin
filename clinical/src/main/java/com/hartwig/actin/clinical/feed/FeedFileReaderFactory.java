@@ -16,7 +16,6 @@ import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 import com.hartwig.actin.clinical.feed.patient.PatientEntryCreator;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntryCreator;
-import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireRawEntryMapper;
 import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry;
 import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntryCreator;
 
@@ -33,8 +32,8 @@ public final class FeedFileReaderFactory {
     }
 
     @NotNull
-    public static FeedFileReader<QuestionnaireEntry> createQuestionnaireReader(QuestionnaireRawEntryMapper questionnaireRawEntryMapper) {
-        return new FeedFileReader<>(new QuestionnaireEntryCreator(questionnaireRawEntryMapper), true);
+    public static FeedFileReader<QuestionnaireEntry> createQuestionnaireReader() {
+        return new FeedFileReader<>(new QuestionnaireEntryCreator(), true);
     }
 
     @NotNull

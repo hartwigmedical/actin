@@ -9,12 +9,6 @@ public class QuestionnaireEntryCreator implements FeedEntryCreator<Questionnaire
 
     private static final String QUESTIONNAIRE_DESCRIPTION = "INT Consult";
 
-    private final QuestionnaireRawEntryMapper questionnaireRawEntryMapper;
-
-    public QuestionnaireEntryCreator(QuestionnaireRawEntryMapper questionnaireRawEntryMapper) {
-        this.questionnaireRawEntryMapper = questionnaireRawEntryMapper;
-    }
-
     @NotNull
     @Override
     public QuestionnaireEntry fromLine(@NotNull FeedLine line) {
@@ -23,7 +17,7 @@ public class QuestionnaireEntryCreator implements FeedEntryCreator<Questionnaire
                 .authored(line.date("authored"))
                 .description(line.string("description"))
                 .itemText(line.string("item_text"))
-                .text(questionnaireRawEntryMapper.correctQuestionnaireEntry(line.string("text")))
+                .text(line.string("text"))
                 .build();
     }
 

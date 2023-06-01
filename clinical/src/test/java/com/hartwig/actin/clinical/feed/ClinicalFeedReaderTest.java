@@ -28,13 +28,11 @@ import org.junit.Test;
 public class ClinicalFeedReaderTest {
 
     private static final String CLINICAL_FEED_DIRECTORY = Resources.getResource("feed").getPath();
-    private static final String CURATION_DIRECTORY = Resources.getResource("curation").getPath();
-
     private static final double EPSILON = 1.0E-10;
 
     @Test
     public void canReadFromTestDirectory() throws IOException {
-        ClinicalFeed feed = ClinicalFeedReader.read(CLINICAL_FEED_DIRECTORY, CURATION_DIRECTORY);
+        ClinicalFeed feed = ClinicalFeedReader.read(CLINICAL_FEED_DIRECTORY);
 
         assertPatients(feed.patientEntries());
         assertQuestionnaires(feed.questionnaireEntries());

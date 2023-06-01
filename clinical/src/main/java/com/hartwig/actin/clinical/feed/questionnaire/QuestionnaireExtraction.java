@@ -28,7 +28,10 @@ public final class QuestionnaireExtraction {
 
     private static final int ACTIVE_LINE_OFFSET = 1;
 
-    private QuestionnaireExtraction() {
+    private final QuestionnaireRawEntryMapper questionnaireRawEntryMapper;
+
+    public QuestionnaireExtraction(QuestionnaireRawEntryMapper questionnaireRawEntryMapper) {
+        this.questionnaireRawEntryMapper = questionnaireRawEntryMapper;
     }
 
     public static boolean isActualQuestionnaire(@NotNull QuestionnaireEntry entry) {
@@ -36,13 +39,13 @@ public final class QuestionnaireExtraction {
     }
 
     @Nullable
-    public static Questionnaire extract(@Nullable QuestionnaireEntry entry) {
+    public Questionnaire extract(@Nullable QuestionnaireEntry entry) {
         if (entry == null || !isActualQuestionnaire(entry)) {
             return null;
         }
 
         Map<QuestionnaireKey, String> mapping = QuestionnaireMapping.mapping(entry);
-        String[] lines = QuestionnaireReader.read(entry);
+        String[] lines = QuestionnaireReader.read(questionnaireRawEntryMapper.correctQuestionnaireEntry(entry.text()));
 
         LesionData brainLesionData = lesionData(lines, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS));
         LesionData cnsLesionData = lesionData(lines, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS));

@@ -76,11 +76,12 @@ public class ClinicalRecordsFactory {
     List<ClinicalRecord> create() {
         List<ClinicalRecord> records = Lists.newArrayList();
         LOGGER.info("Creating clinical model");
+        QuestionnaireExtraction extraction = new QuestionnaireExtraction(curation.questionnaireRawEntryMapper());
         for (String subject : feed.subjects()) {
             String patientId = toPatientId(subject);
             LOGGER.info(" Extracting data for patient {}", patientId);
 
-            Questionnaire questionnaire = QuestionnaireExtraction.extract(feed.latestQuestionnaireEntry(subject));
+            Questionnaire questionnaire = extraction.extract(feed.latestQuestionnaireEntry(subject));
 
             if (containsPatientId(records, patientId)) {
                 throw new IllegalStateException("Cannot create clinical records. Duplicate patientId: " + patientId);

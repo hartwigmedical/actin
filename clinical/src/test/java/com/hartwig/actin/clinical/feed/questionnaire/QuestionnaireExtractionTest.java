@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 import com.hartwig.actin.clinical.datamodel.ECG;
@@ -37,14 +38,14 @@ public class QuestionnaireExtractionTest {
         QuestionnaireEntry entryWithMissingSubjectNumber =
                 entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_6().replace("GENAYA subjectno: GAYA-01-02-9999", ""));
 
-        Questionnaire questionnaire = QuestionnaireExtraction.extract(entryWithMissingSubjectNumber);
+        Questionnaire questionnaire = extraction().extract(entryWithMissingSubjectNumber);
 
         assertNull(questionnaire.genayaSubjectNumber());
     }
 
     @Test
     public void shouldBeAbleToExtractDataFromQuestionnaireV1_6() {
-        Questionnaire questionnaire = QuestionnaireExtraction.extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_6()));
+        Questionnaire questionnaire = extraction().extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_6()));
 
         assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
         assertEquals("ovary", questionnaire.tumorLocation());
@@ -126,7 +127,7 @@ public class QuestionnaireExtractionTest {
     }
 
     private void assertExtractionForQuestionnaireV1_5(@NotNull String rawQuestionnaire) {
-        Questionnaire questionnaire = QuestionnaireExtraction.extract(entry(rawQuestionnaire));
+        Questionnaire questionnaire = extraction().extract(entry(rawQuestionnaire));
 
         assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
         assertEquals("ovary", questionnaire.tumorLocation());
@@ -195,7 +196,7 @@ public class QuestionnaireExtractionTest {
 
     @Test
     public void shouldBeAbleToExtractDataFromQuestionnaireV1_4() {
-        Questionnaire questionnaire = QuestionnaireExtraction.extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_4()));
+        Questionnaire questionnaire = extraction().extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_4()));
 
         assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
         assertEquals("ovary", questionnaire.tumorLocation());
@@ -256,7 +257,7 @@ public class QuestionnaireExtractionTest {
 
     @Test
     public void shouldBeAbleToExtractDataFromQuestionnaireV1_3() {
-        Questionnaire questionnaire = QuestionnaireExtraction.extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_3()));
+        Questionnaire questionnaire = extraction().extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_3()));
 
         assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
         assertEquals("ovary", questionnaire.tumorLocation());
@@ -315,7 +316,7 @@ public class QuestionnaireExtractionTest {
 
     @Test
     public void shouldBeAbleToExtractDataFromQuestionnaireV1_2() {
-        Questionnaire questionnaire = QuestionnaireExtraction.extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_2()));
+        Questionnaire questionnaire = extraction().extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_2()));
 
         assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
         assertEquals("ovary", questionnaire.tumorLocation());
@@ -374,7 +375,7 @@ public class QuestionnaireExtractionTest {
 
     @Test
     public void shouldBeAbleToExtractDataFromQuestionnaireV1_1() {
-        Questionnaire questionnaire = QuestionnaireExtraction.extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_1()));
+        Questionnaire questionnaire = extraction().extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_1()));
 
         assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
         assertEquals("ovary", questionnaire.tumorLocation());
@@ -433,7 +434,7 @@ public class QuestionnaireExtractionTest {
 
     @Test
     public void shouldBeAbleToExtractDataFromQuestionnaireV1_0() {
-        Questionnaire questionnaire = QuestionnaireExtraction.extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0()));
+        Questionnaire questionnaire = extraction().extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0()));
 
         assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
         assertEquals("lung", questionnaire.tumorLocation());
@@ -493,7 +494,7 @@ public class QuestionnaireExtractionTest {
 
     @Test
     public void shouldBeAbleToExtractDataFromQuestionnaireV0_2() {
-        Questionnaire questionnaire = QuestionnaireExtraction.extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_2()));
+        Questionnaire questionnaire = extraction().extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_2()));
 
         assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
         assertEquals("cholangio", questionnaire.tumorLocation());
@@ -546,7 +547,7 @@ public class QuestionnaireExtractionTest {
 
     @Test
     public void shouldBeAbleToExtractDataFromQuestionnaireV0_1() {
-        Questionnaire questionnaire = QuestionnaireExtraction.extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_1()));
+        Questionnaire questionnaire = extraction().extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_1()));
 
         assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
         assertEquals("Cholangiocarcinoom (lever, lymph retroperitoneaal)", questionnaire.tumorLocation());
@@ -599,8 +600,13 @@ public class QuestionnaireExtractionTest {
 
     @Test
     public void canExtractFromMissingOrInvalidEntry() {
-        assertNull(QuestionnaireExtraction.extract(null));
-        assertNull(QuestionnaireExtraction.extract(entry("Does not exist")));
+        assertNull(extraction().extract(null));
+        assertNull(extraction().extract(entry("Does not exist")));
+    }
+
+    @NotNull
+    private QuestionnaireExtraction extraction() {
+        return new QuestionnaireExtraction(new QuestionnaireRawEntryMapper(Collections.emptyMap()));
     }
 
     @NotNull
