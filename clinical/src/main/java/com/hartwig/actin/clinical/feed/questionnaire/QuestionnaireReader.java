@@ -29,7 +29,7 @@ final class QuestionnaireReader {
         StringJoiner curLine = newValueStringJoiner();
         for (int i = 0; i < lines.length; i++) {
             curLine.add(lines[i]);
-            if (lines[i].isEmpty() || i == lines.length - 1 || isField(lines[i + 1], validKeys) || lines[i + 1].isEmpty()) {
+            if (lines[i].trim().isEmpty() || i == lines.length - 1 || isField(lines[i + 1], validKeys) || lines[i + 1].trim().isEmpty()) {
                 merged.add(curLine.toString());
                 curLine = newValueStringJoiner();
             }
