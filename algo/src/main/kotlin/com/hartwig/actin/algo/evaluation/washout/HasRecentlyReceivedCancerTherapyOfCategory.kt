@@ -5,34 +5,32 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.algo.medication.MedicationStatusInterpretation
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreter
-import com.hartwig.actin.util.ApplicationConfig
 
-class HasRecentlyReceivedCancerTherapyOfCategory internal constructor(
+class HasRecentlyReceivedCancerTherapyOfCategory(
     private val categoriesToFind: Set<String>,
     private val interpreter: MedicationStatusInterpreter
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val activeMedicationCategories = record.clinical().medications()
+        val activeMedicationsMatchingCategories = record.clinical().medications()
             .filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
-            .flatMap { it.categories() }
-            .map { it.lowercase(ApplicationConfig.LOCALE) }
+            .filter { medication -> categoriesToFind.any { stringCaseInsensitivelyMatchesQueryCollection(it, medication.categories()) } }
 
-        val foundCategory = categoriesToFind.find { categoryToFind ->
-            val lowercaseCategory = categoryToFind.lowercase(ApplicationConfig.LOCALE)
-            activeMedicationCategories.any { it.contains(lowercaseCategory) }
-        }
+        val foundCategories = activeMedicationsMatchingCategories.flatMap { it.categories() }.distinct()
+        val foundMedicationNames = activeMedicationsMatchingCategories.map { it.name() }.filter { it.isNotEmpty() }.distinct()
 
-        return if (foundCategory != null) {
+        return if (activeMedicationsMatchingCategories.isNotEmpty()) {
+            val foundMedicationString = if (foundMedicationNames.isNotEmpty()) ": ${concat(foundMedicationNames)}" else ""
             EvaluationFactory.pass(
-                "Patient has recently received treatment with medication $foundCategory",
-                "Washout period requirements " + concat(categoriesToFind)
+                "Patient has recently received medication of category ${concat(foundCategories)}$foundMedicationString",
+                "Has recently received medication of category ${concat(foundCategories)}$foundMedicationString"
             )
         } else {
             EvaluationFactory.fail(
                 "Patient has not received recent treatments of category " + concat(categoriesToFind),
-                "Washout period requirements " + concat(categoriesToFind)
+                "Has not received recent treatments of category " + concat(categoriesToFind)
             )
         }
     }
