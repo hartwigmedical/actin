@@ -213,7 +213,7 @@ The following rules are available:
 1] 'Category' can be one of: Chemotherapy, Hormone therapy, Immunotherapy, Targeted therapy, Radiotherapy, Surgery, Transplantation, Trial,
 Antiviral therapy, Vaccine, Car T, TCR T, Gene therapy, Supportive treatment.
 
-In addition, 5 following 'Categories' can be assigned:
+In addition, the following 'Categories' can be assigned:
 
 - Taxane - Treatment names: Paclitaxel, Docetaxel, Cabazitaxel
 - Fluoropyrimidine - Treatment names: Capecitabine, Carmofur, Doxifluridine, Fluorouracil, Tegafur

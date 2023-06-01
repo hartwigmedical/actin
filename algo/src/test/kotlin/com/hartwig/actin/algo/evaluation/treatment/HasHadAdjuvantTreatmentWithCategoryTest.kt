@@ -6,86 +6,44 @@ import com.hartwig.actin.clinical.datamodel.TreatmentCategory
 import org.junit.Test
 
 class HasHadAdjuvantTreatmentWithCategoryTest {
-    private val categoryFunction = HasHadAdjuvantTreatmentWithCategory(CATEGORY, null)
-    private val specificFunction = HasHadAdjuvantTreatmentWithCategory(CATEGORY, setOf("specific", "another"))
+    private val function = HasHadAdjuvantTreatmentWithCategory(MATCH_CATEGORY)
 
     @Test
     fun shouldFailForEmptyTreatmentList() {
-        assertEvaluation(EvaluationResult.FAIL, categoryFunction.evaluate(TreatmentTestFactory.withPriorTumorTreatments(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(emptyList())))
     }
 
     @Test
     fun shouldFailForAdjuvantTreatmentNotMatchingCategory() {
-        assertResultForCategoryAndName(EvaluationResult.FAIL, TreatmentCategory.IMMUNOTHERAPY, "adjuvant treatment")
+        assertResultForCategoryAndName(EvaluationResult.FAIL, OTHER_CATEGORY, "adjuvant treatment")
     }
 
     @Test
     fun shouldFailForNonAdjuvantTreatmentMatchingCategory() {
-        assertResultForCategoryAndName(EvaluationResult.FAIL, CATEGORY, "typical treatment")
+        assertResultForCategoryAndName(EvaluationResult.FAIL, MATCH_CATEGORY, "typical treatment")
     }
 
     @Test
     fun shouldFailForNeoadjuvantTreatmentMatchingCategory() {
-        assertResultForCategoryAndName(EvaluationResult.FAIL, CATEGORY, "neoadjuvant treatment")
+        assertResultForCategoryAndName(EvaluationResult.FAIL, MATCH_CATEGORY, "neoadjuvant treatment")
     }
 
     @Test
     fun shouldPassForAdjuvantTreatmentMatchingCategory() {
-        assertResultForCategoryAndName(EvaluationResult.PASS, CATEGORY, "adjuvant treatment")
+        assertResultForCategoryAndName(EvaluationResult.PASS, MATCH_CATEGORY, "adjuvant treatment")
     }
 
     @Test
     fun shouldPassForNeoadjuvantAndAdjuvantTreatmentMatchingCategory() {
-        assertResultForCategoryAndName(EvaluationResult.PASS, CATEGORY, "neoadjuvant and adjuvant treatment")
-    }
-
-    @Test
-    fun shouldFailForNonAdjuvantTreatmentMatchingType() {
-        assertResultForCategoryAndTypeAndName(EvaluationResult.FAIL, specificFunction, CATEGORY, "another", "treatment")
-    }
-
-    @Test
-    fun shouldFailForAdjuvantTreatmentMatchingTypeButNotCategory() {
-        assertResultForCategoryAndTypeAndName(
-            EvaluationResult.FAIL,
-            specificFunction,
-            TreatmentCategory.IMMUNOTHERAPY,
-            "another",
-            "adjuvant treatment"
-        )
-    }
-
-    @Test
-    fun shouldPassForAdjuvantTreatmentMatchingType() {
-        assertResultForCategoryAndTypeAndName(EvaluationResult.PASS, specificFunction, CATEGORY, "another", "adjuvant treatment")
-    }
-
-    @Test
-    fun shouldFailForAdjuvantTreatmentMatchingCategoryButNotType() {
-        assertResultForCategoryAndTypeAndName(EvaluationResult.FAIL, specificFunction, CATEGORY, "unrelated", "adjuvant treatment")
-    }
-
-    @Test
-    fun shouldWarnForAdjuvantTreatmentMatchingCategoryWithNoType() {
-        assertResultForCategoryAndTypeAndName(EvaluationResult.WARN, specificFunction, CATEGORY, "", "adjuvant treatment")
+        assertResultForCategoryAndName(EvaluationResult.PASS, MATCH_CATEGORY, "neoadjuvant and adjuvant treatment")
     }
 
     private fun assertResultForCategoryAndName(expectedResult: EvaluationResult, category: TreatmentCategory, name: String) {
-        assertResultForCategoryAndTypeAndName(expectedResult, categoryFunction, category, "", name)
-    }
-
-    private fun assertResultForCategoryAndTypeAndName(
-        expectedResult: EvaluationResult,
-        function: HasHadAdjuvantTreatmentWithCategory,
-        category: TreatmentCategory,
-        type: String,
-        name: String
-    ) {
         assertEvaluation(
             expectedResult, function.evaluate(
                 TreatmentTestFactory.withPriorTumorTreatments(
                     listOf(
-                        TreatmentTestFactory.builder().addCategories(category).targetedType(type).name(name).build()
+                        TreatmentTestFactory.builder().addCategories(category).name(name).build()
                     )
                 )
             )
@@ -93,6 +51,7 @@ class HasHadAdjuvantTreatmentWithCategoryTest {
     }
 
     companion object {
-        private val CATEGORY = TreatmentCategory.TARGETED_THERAPY
+        private val MATCH_CATEGORY = TreatmentCategory.TARGETED_THERAPY
+        private val OTHER_CATEGORY = TreatmentCategory.IMMUNOTHERAPY
     }
 }
