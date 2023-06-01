@@ -72,7 +72,7 @@ public class OrangeInterpreterTest {
         assertEquals("ACTN01029999", OrangeInterpreter.toPatientId("ACTN01029999T2"));
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void crashOnInvalidSampleId() {
         OrangeInterpreter.toPatientId("no sample");
     }
@@ -85,6 +85,11 @@ public class OrangeInterpreterTest {
     }
 
     @Test
+    public void shouldDetermineQualityExcludingPurityToBeSufficientWhenOnlyPassStatusIsPresent() {
+        assertTrue(OrangeInterpreter.determineSufficientQualityExcludingPurity(purpleFitWithQCStatus(PurpleQCStatus.PASS)));
+    }
+
+    @Test
     public void shouldDetermineQualityExcludingPurityToBeSufficientWhenOnlyLowPurityWarningIsPresent() {
         assertTrue(OrangeInterpreter.determineSufficientQualityExcludingPurity(purpleFitWithQCStatus(PurpleQCStatus.WARN_LOW_PURITY)));
     }
@@ -94,9 +99,20 @@ public class OrangeInterpreterTest {
         assertFalse(OrangeInterpreter.determineSufficientQualityExcludingPurity(purpleFitWithQCStatus(PurpleQCStatus.WARN_DELETED_GENES)));
     }
 
+    @Test
+    public void shouldDetermineQualityExcludingPurityToNotBeSufficientWhenOtherWarningIsPresentWithLowPurityWarning() {
+        assertFalse(OrangeInterpreter.determineSufficientQualityExcludingPurity(purpleFitWithQCStatuses(Set.of(PurpleQCStatus.WARN_LOW_PURITY,
+                PurpleQCStatus.WARN_DELETED_GENES))));
+    }
+
     @NotNull
     private static ImmutablePurpleFit purpleFitWithQCStatus(PurpleQCStatus status) {
-        return ImmutablePurpleFit.copyOf(TestOrangeFactory.createMinimalTestOrangeRecord().purple().fit()).withQcStatuses(Set.of(status));
+        return purpleFitWithQCStatuses(Set.of(status));
+    }
+
+    @NotNull
+    private static ImmutablePurpleFit purpleFitWithQCStatuses(Set<PurpleQCStatus> statuses) {
+        return ImmutablePurpleFit.copyOf(TestOrangeFactory.createMinimalTestOrangeRecord().purple().fit()).withQcStatuses(statuses);
     }
 
     @NotNull
