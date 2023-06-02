@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.curation;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -282,11 +283,11 @@ public class CurationModel {
                 LOGGER.warn(" Could not find non-oncological history config for input '{}'", trimmedInput);
             }
 
-            priorOtherConditions.addAll(configs.stream()
+            configs.stream()
                     .filter(config -> !config.ignore())
                     .map(NonOncologicalHistoryConfig::priorOtherCondition)
                     .flatMap(Optional::stream)
-                    .collect(Collectors.toList()));
+                    .forEach(priorOtherConditions::add);
         }
 
         return priorOtherConditions;
@@ -833,15 +834,10 @@ public class CurationModel {
 
     @NotNull
     private <T extends CurationConfig> Set<T> find(@NotNull List<T> configs, @NotNull String input) {
-        Set<T> results = Sets.newHashSet();
         if (!configs.isEmpty()) {
             evaluatedCurationInputs.put(configs.get(0).getClass(), input.toLowerCase());
-            for (T config : configs) {
-                if (config.input().equalsIgnoreCase(input)) {
-                    results.add(config);
-                }
-            }
+            return configs.stream().filter(config -> config.input().equalsIgnoreCase(input)).collect(Collectors.toSet());
         }
-        return results;
+        return Collections.emptySet();
     }
 }

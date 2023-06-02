@@ -1,8 +1,10 @@
 package com.hartwig.actin.clinical;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -75,17 +77,20 @@ public class ClinicalRecordsFactory {
     @NotNull
     List<ClinicalRecord> create() {
         List<ClinicalRecord> records = Lists.newArrayList();
-        LOGGER.info("Creating clinical model");
+        Set<String> processedPatientIds = new HashSet<>();
         QuestionnaireExtraction extraction = new QuestionnaireExtraction(curation.questionnaireRawEntryMapper());
+
+        LOGGER.info("Creating clinical model");
         for (String subject : feed.subjects()) {
             String patientId = toPatientId(subject);
+            if (processedPatientIds.contains(patientId)) {
+                throw new IllegalStateException("Cannot create clinical records. Duplicate patientId: " + patientId);
+            }
+            processedPatientIds.add(patientId);
+
             LOGGER.info(" Extracting data for patient {}", patientId);
 
             Questionnaire questionnaire = extraction.extract(feed.latestQuestionnaireEntry(subject));
-
-            if (containsPatientId(records, patientId)) {
-                throw new IllegalStateException("Cannot create clinical records. Duplicate patientId: " + patientId);
-            }
 
             records.add(ImmutableClinicalRecord.builder()
                     .patientId(patientId)
@@ -113,10 +118,6 @@ public class ClinicalRecordsFactory {
         curation.evaluate();
 
         return records;
-    }
-
-    private static boolean containsPatientId(@NotNull List<ClinicalRecord> records, @NotNull String patientId) {
-        return records.stream().anyMatch(record -> record.patientId().equals(patientId));
     }
 
     @NotNull
