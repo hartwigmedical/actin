@@ -52,7 +52,7 @@ public final class QuestionnaireExtraction {
         }
 
         Map<QuestionnaireKey, String> mapping = QuestionnaireMapping.mapping(entry);
-        String[] lines = QuestionnaireReader.read(entry);
+        String[] lines = QuestionnaireReader.read(entry, QuestionnaireMapping.keyStrings(entry));
 
         LesionData brainLesionData = lesionData(lines, mapping.get(QuestionnaireKey.HAS_BRAIN_LESIONS));
         LesionData cnsLesionData = lesionData(lines, mapping.get(QuestionnaireKey.HAS_CNS_LESIONS));
@@ -161,9 +161,11 @@ public final class QuestionnaireExtraction {
     @Nullable
     private static String value(@NotNull String[] lines, @Nullable String key, boolean isOptional) {
         Integer lineIndex = lookup(lines, key, isOptional);
-
-        String line = lineIndex != null ? lines[lineIndex] : null;
-        return line != null ? extractValue(line) : null;
+        if (lineIndex == null) {
+            return null;
+        }
+        String extracted = extractValue(lines[lineIndex]);
+        return extracted.isEmpty() ? null : extracted;
     }
 
     @Nullable
