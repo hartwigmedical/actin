@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.feed;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -11,32 +12,31 @@ import java.util.List;
 import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.datamodel.Gender;
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
-import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
 import com.hartwig.actin.clinical.feed.lab.LabEntry;
 import com.hartwig.actin.clinical.feed.medication.MedicationEntry;
 import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
+import com.hartwig.actin.clinical.feed.surgery.SurgeryEntry;
 import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 public class ClinicalFeedReaderTest {
 
     private static final String CLINICAL_FEED_DIRECTORY = Resources.getResource("feed").getPath();
-    private static final String CURATION_DIRECTORY = Resources.getResource("curation").getPath();
-
     private static final double EPSILON = 1.0E-10;
 
     @Test
     public void canReadFromTestDirectory() throws IOException {
-        ClinicalFeed feed = ClinicalFeedReader.read(CLINICAL_FEED_DIRECTORY, CURATION_DIRECTORY);
+        ClinicalFeed feed = ClinicalFeedReader.read(CLINICAL_FEED_DIRECTORY);
 
         assertPatients(feed.patientEntries());
         assertQuestionnaires(feed.questionnaireEntries());
-        assertEncounters(feed.encounterEntries());
+        assertSurgeries(feed.surgeryEntries());
         assertMedication(feed.medicationEntries());
         assertLab(feed.labEntries());
         assertVitalFunctions(feed.vitalFunctionEntries());
@@ -57,32 +57,16 @@ public class ClinicalFeedReaderTest {
     }
 
     private static void assertQuestionnaires(@NotNull List<QuestionnaireEntry> entries) {
-        assertEquals(4, entries.size());
+        assertEquals(1, entries.size());
 
-        QuestionnaireEntry entry1 = findByAuthoredDate(entries, LocalDate.of(2021, 12, 17));
-        assertEquals("Aanvraag bloedproducten_test", entry1.description());
-        assertEquals("Erytrocytenconcentraat", entry1.itemAnswerValueValueString());
-
-        QuestionnaireEntry entry2 = findByAuthoredDate(entries, LocalDate.of(2021, 6, 6));
-        assertEquals("ACTN-01-02-9999", entry2.subject());
-        assertEquals("ONC Kuuroverzicht", entry2.description());
-        assertEquals("Nausea", entry2.itemText());
-        assertEquals("0", entry2.itemAnswerValueValueString());
-
-        QuestionnaireEntry entry3 = findByAuthoredDate(entries, LocalDate.of(2021, 8, 16));
-        assertEquals("ACTN-01-02-9999", entry3.subject());
-        assertEquals("INT Consult", entry3.description());
-        assertEquals("Beloop", entry3.itemText());
-        assertEquals(26, entry3.itemAnswerValueValueString().split("\n").length);
-        assertTrue(entry3.itemAnswerValueValueString().startsWith("ACTIN Questionnaire"));
-        assertTrue(entry3.itemAnswerValueValueString().contains("CNS lesions yes/no/unknown"));
-        assertTrue(entry3.itemAnswerValueValueString().contains("Other (e.g. Osteoporosis, Pleural effusion)"));
-
-        QuestionnaireEntry entry4 = findByAuthoredDate(entries, LocalDate.of(2021, 8, 8));
-        assertEquals("ACTN-01-02-9999", entry4.subject());
-        assertEquals("ONC Kuuroverzicht", entry4.description());
-        assertEquals("Pain", entry4.itemText());
-        assertEquals("0. Not applicable", entry4.itemAnswerValueValueString());
+        QuestionnaireEntry entry = findByAuthoredDate(entries, LocalDate.of(2021, 8, 16));
+        assertEquals("ACTN-01-02-9999", entry.subject());
+        assertEquals("INT Consult", entry.description());
+        assertEquals("Beloop", entry.itemText());
+        assertEquals(26, entry.text().split("\n").length);
+        assertTrue(entry.text().startsWith("ACTIN Questionnaire"));
+        assertTrue(entry.text().contains("CNS lesions yes/no/unknown"));
+        assertTrue(entry.text().contains("Other (e.g. Osteoporosis, Pleural effusion)"));
     }
 
     @NotNull
@@ -96,10 +80,10 @@ public class ClinicalFeedReaderTest {
         throw new IllegalStateException("No questionnaire entry found for date '" + dateToFind + "'");
     }
 
-    private static void assertEncounters(@NotNull List<EncounterEntry> entries) {
+    private static void assertSurgeries(@NotNull List<SurgeryEntry> entries) {
         assertEquals(1, entries.size());
 
-        EncounterEntry entry = entries.get(0);
+        SurgeryEntry entry = entries.get(0);
 
         assertEquals("ACTN-01-02-9999", entry.subject());
         assertEquals("surgery", entry.classDisplay());
@@ -121,12 +105,12 @@ public class ClinicalFeedReaderTest {
         assertEquals("MILLIGRAM", entry.dosageInstructionDoseQuantityUnit());
         assertEquals(200, entry.dosageInstructionDoseQuantityValue(), EPSILON);
         assertTrue(entry.dosageInstructionFrequencyUnit().isEmpty());
-        assertEquals(0, entry.dosageInstructionFrequencyValue(), EPSILON);
-        assertEquals(0, entry.dosageInstructionMaxDosePerAdministration(), EPSILON);
+        assertDoubleEquals(0, entry.dosageInstructionFrequencyValue());
+        assertDoubleEquals(0, entry.dosageInstructionMaxDosePerAdministration());
         assertEquals("Excreta: nvt", entry.dosageInstructionPatientInstruction());
         assertTrue(entry.dosageInstructionAsNeededDisplay().isEmpty());
         assertTrue(entry.dosageInstructionPeriodBetweenDosagesUnit().isEmpty());
-        assertEquals(0, entry.dosageInstructionPeriodBetweenDosagesValue(), EPSILON);
+        assertDoubleEquals(0, entry.dosageInstructionPeriodBetweenDosagesValue());
         assertEquals("200 milligram inlooptijd: 30 minuten, via 0,2 um filter", entry.dosageInstructionText());
         assertTrue(entry.status().isEmpty());
         assertNull(entry.active());
@@ -136,6 +120,11 @@ public class ClinicalFeedReaderTest {
         assertEquals(LocalDate.of(2019, 6, 7), entry.periodOfUseValuePeriodStart());
         assertEquals(LocalDate.of(2019, 6, 7), entry.periodOfUseValuePeriodEnd());
         assertEquals("Definitief", entry.stopTypeDisplay());
+    }
+
+    private static void assertDoubleEquals(double expected, @Nullable Double actual) {
+        assertNotNull(actual);
+        assertEquals(expected, actual, EPSILON);
     }
 
     private static void assertLab(@NotNull List<LabEntry> entries) {

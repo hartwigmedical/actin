@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.feed.encounter;
+package com.hartwig.actin.clinical.feed.surgery;
 
 import java.time.LocalDate;
 
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class EncounterEntry implements FeedEntry {
+public abstract class SurgeryEntry implements FeedEntry {
 
     @NotNull
     @Override
