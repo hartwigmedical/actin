@@ -9,7 +9,7 @@ public class DigitalFileEntryCreator implements FeedEntryCreator<DigitalFileEntr
 
     @NotNull
     @Override
-    public DigitalFileEntry fromLine(@NotNull final FeedLine line) {
+    public DigitalFileEntry fromLine(@NotNull FeedLine line) {
         return ImmutableDigitalFileEntry.builder()
                 .subject(line.trimmed("subject"))
                 .authored(line.date("authored"))
@@ -20,7 +20,7 @@ public class DigitalFileEntryCreator implements FeedEntryCreator<DigitalFileEntr
     }
 
     @Override
-    public boolean isValid(@NotNull final FeedLine line) {
+    public boolean isValid(@NotNull FeedLine line) {
         return true;
     }
 }

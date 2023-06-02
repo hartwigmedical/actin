@@ -90,7 +90,7 @@ public class ClinicalFeedReaderTest {
         assertEquals(LocalDate.of(2020, 8, 28), entry.periodStart());
         assertEquals(LocalDate.of(2020, 8, 28), entry.periodEnd());
         assertEquals("diagnostics stomach", entry.codeCodingDisplayOriginal());
-        assertEquals("planned", entry.surgeryStatus());
+        assertEquals("planned", entry.encounterStatus());
         assertEquals("planned", entry.procedureStatus());
     }
 

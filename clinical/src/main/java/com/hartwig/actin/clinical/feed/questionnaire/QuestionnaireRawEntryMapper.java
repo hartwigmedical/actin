@@ -36,7 +36,7 @@ public class QuestionnaireRawEntryMapper {
     }
 
     @NotNull
-    private static List<String> splitAndParseLineBreaks(final String line) {
+    private static List<String> splitAndParseLineBreaks(String line) {
         return Arrays.stream(line.split("\t", 2)).map(entry -> entry.replace("\\n", "\n")).collect(Collectors.toList());
     }
 

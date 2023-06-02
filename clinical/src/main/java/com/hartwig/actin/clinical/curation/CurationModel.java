@@ -106,7 +106,7 @@ public class CurationModel {
     }
 
     @VisibleForTesting
-    CurationModel(@NotNull final CurationDatabase database, @NotNull final QuestionnaireRawEntryMapper questionnaireRawEntryMapper) {
+    CurationModel(@NotNull CurationDatabase database, @NotNull QuestionnaireRawEntryMapper questionnaireRawEntryMapper) {
         this.database = database;
         this.questionnaireRawEntryMapper = questionnaireRawEntryMapper;
     }
@@ -423,7 +423,7 @@ public class CurationModel {
     }
 
     @Nullable
-    private static ImmutableECGMeasure maybeECGMeasure(@Nullable final Integer value, @Nullable final String unit) {
+    private static ImmutableECGMeasure maybeECGMeasure(@Nullable Integer value, @Nullable String unit) {
         if (value == null || unit == null) {
             return null;
         }

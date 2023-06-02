@@ -107,7 +107,7 @@ public final class TestFeedFactory {
                 .subject(TEST_SUBJECT)
                 .classDisplay("surgery")
                 .codeCodingDisplayOriginal("diagnostics")
-                .surgeryStatus("planned")
+                .encounterStatus("planned")
                 .procedureStatus("planned");
 
         entries.add(builder.periodStart(LocalDate.of(2015, 10, 10)).periodEnd(LocalDate.of(2015, 10, 10)).build());

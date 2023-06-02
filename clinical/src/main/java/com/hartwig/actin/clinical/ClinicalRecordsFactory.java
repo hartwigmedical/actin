@@ -299,7 +299,7 @@ public class ClinicalRecordsFactory {
                 .stream()
                 .map(entry -> ImmutableSurgery.builder()
                         .endDate(entry.periodEnd())
-                        .status(resolveSurgeryStatus(entry.surgeryStatus()))
+                        .status(resolveSurgeryStatus(entry.encounterStatus()))
                         .build())
                 .collect(Collectors.toList());
     }

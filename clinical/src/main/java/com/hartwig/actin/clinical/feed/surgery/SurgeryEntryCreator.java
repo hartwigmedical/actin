@@ -21,7 +21,7 @@ public class SurgeryEntryCreator implements FeedEntryCreator<SurgeryEntry> {
                 .periodStart(line.date("period_start"))
                 .periodEnd(line.date("period_end"))
                 .codeCodingDisplayOriginal(line.string("code_coding_display_original"))
-                .surgeryStatus(line.string("encounter_status"))
+                .encounterStatus(line.string("encounter_status"))
                 .procedureStatus(line.string("procedure_status"))
                 .build();
     }

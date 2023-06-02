@@ -29,7 +29,7 @@ public abstract class SurgeryEntry implements FeedEntry {
     public abstract String codeCodingDisplayOriginal();
 
     @NotNull
-    public abstract String surgeryStatus();
+    public abstract String encounterStatus();
 
     @NotNull
     public abstract String procedureStatus();
