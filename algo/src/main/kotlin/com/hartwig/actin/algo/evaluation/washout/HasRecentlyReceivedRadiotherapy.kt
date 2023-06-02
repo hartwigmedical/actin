@@ -17,7 +17,7 @@ class HasRecentlyReceivedRadiotherapy internal constructor(private val reference
                 year == null || year == referenceYear && (month == null || month == referenceMonth)
             }
         return if (hasReceivedRadiotherapy) {
-            EvaluationFactory.pass("Patient has recently received radiotherapy", "Recent radiotherapy")
+            EvaluationFactory.pass("Patient has recently received radiotherapy", "Has recently received radiotherapy")
         } else {
             EvaluationFactory.fail("Patient has not recently received radiotherapy", "No recent radiotherapy")
         }

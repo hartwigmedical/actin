@@ -9,7 +9,7 @@ import com.hartwig.actin.algo.medication.MedicationStatusInterpretation
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreter
 import com.hartwig.actin.util.ApplicationConfig
 
-class HasRecentlyReceivedCancerTherapyOfName internal constructor(
+class HasRecentlyReceivedCancerTherapyOfName(
     private val namesToFind: Set<String>,
     private val interpreter: MedicationStatusInterpreter
 ) : EvaluationFunction {
@@ -25,12 +25,12 @@ class HasRecentlyReceivedCancerTherapyOfName internal constructor(
         return if (namesFound.isNotEmpty()) {
             EvaluationFactory.pass(
                 "Patient has recently received treatment with medication " + concat(namesFound),
-                "Washout period requirements " + concat(namesToFind)
+                "Has recently received treatment with medication " + concat(namesFound)
             )
         } else {
             EvaluationFactory.fail(
                 "Patient has not received recent treatments with name " + concat(namesToFind),
-                "Washout period requirements " + concat(namesToFind)
+                "Has not received recent treatments with name " + concat(namesToFind)
             )
         }
     }

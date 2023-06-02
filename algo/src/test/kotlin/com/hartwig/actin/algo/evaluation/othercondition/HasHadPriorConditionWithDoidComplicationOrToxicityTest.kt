@@ -66,6 +66,7 @@ class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
                         .withPriorOtherConditions(priorOtherCondition())
                 )
             ),
+            "other condition",
             "Patient has condition(s) other condition, which is indicative of some disease"
         )
     }
@@ -80,7 +81,8 @@ class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
                     )
                         .withComplications(complication())
                 )
-            ), "Patient has complication(s) complication, which is indicative of some disease"
+
+            ), "complication", "Patient has complication(s) complication, which is indicative of some disease"
         )
     }
 
@@ -95,6 +97,7 @@ class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
                         .withToxicities(toxicity(ToxicitySource.QUESTIONNAIRE, 1))
                 )
             ),
+            "toxicity",
             "Patient has toxicity(ies) toxicity, which is indicative of some disease"
         )
     }
@@ -110,6 +113,7 @@ class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
                         .withToxicities(toxicity(ToxicitySource.EHR, 2))
                 )
             ),
+            "toxicity",
             "Patient has toxicity(ies) toxicity, which is indicative of some disease"
         )
     }
@@ -143,6 +147,7 @@ class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
                         .withPriorOtherConditions(priorOtherCondition())
                 )
             ),
+            "complication and other condition and toxicity",
             "Patient has toxicity(ies) toxicity, which is indicative of some disease",
             "Patient has complication(s) complication, which is indicative of some disease",
             "Patient has condition(s) other condition, which is indicative of some disease"
@@ -182,10 +187,10 @@ class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
                 .build()
         }
 
-        private fun assertPassEvaluationWithMessages(evaluation: Evaluation, vararg passSpecificMessages: String) {
+        private fun assertPassEvaluationWithMessages(evaluation: Evaluation, matchedNames: String, vararg passSpecificMessages: String) {
             assertEvaluation(EvaluationResult.PASS, evaluation)
             Assertions.assertThat(evaluation.passSpecificMessages()).containsOnly(*passSpecificMessages)
-            Assertions.assertThat(evaluation.passGeneralMessages()).containsOnly("Relevant non-oncological condition some disease")
+            Assertions.assertThat(evaluation.passGeneralMessages()).containsOnly("Patient has $matchedNames")
         }
     }
 }

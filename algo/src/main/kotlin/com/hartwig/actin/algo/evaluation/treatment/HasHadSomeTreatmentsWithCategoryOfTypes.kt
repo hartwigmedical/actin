@@ -31,7 +31,7 @@ class HasHadSomeTreatmentsWithCategoryOfTypes(
         return if (numMatchingTreatmentLines >= minTreatmentLines) {
             EvaluationFactory.pass(
                 "Patient has received at least $minTreatmentLines line(s) of ${concat(types)} ${category.display()}",
-                "Received at least $minTreatmentLines line(s) of ${concat(types)} ${category.display()}"
+                "Has received at least $minTreatmentLines line(s) of ${concat(types)} ${category.display()}"
             )
         } else if (numMatchingTreatmentLines + numApproximateTreatmentLines + numOtherTrials >= minTreatmentLines) {
             EvaluationFactory.undetermined(
@@ -41,7 +41,7 @@ class HasHadSomeTreatmentsWithCategoryOfTypes(
         } else {
             EvaluationFactory.fail(
                 "Patient has not received at least $minTreatmentLines line(s) of ${concat(types)} ${category.display()}",
-                "Not received at least $minTreatmentLines line(s) of ${concat(types)} ${category.display()}"
+                "Has not received at least $minTreatmentLines line(s) of ${concat(types)} ${category.display()}"
             )
         }
     }

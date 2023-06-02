@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.othercondition
 
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 
 internal object PriorConditionMessages {
@@ -12,8 +13,8 @@ internal object PriorConditionMessages {
         return "No relevant non-oncological condition"
     }
 
-    fun passGeneral(doidTerm: String?): String {
-        return "Relevant non-oncological condition $doidTerm"
+    fun passGeneral(matches: Iterable<String>): String {
+        return "Patient has ${Format.concatLowercaseWithAnd(matches)}"
     }
 
     fun passSpecific(characteristic: Characteristic, matches: Iterable<String>, doidTerm: String?): String {

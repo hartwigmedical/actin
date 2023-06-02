@@ -22,7 +22,7 @@ class HasHadSomeTreatmentsWithCategory internal constructor(private val category
         return if (numTreatmentLines >= minTreatmentLines) {
             EvaluationFactory.pass(
                 "Patient has received at least $minTreatmentLines line(s) of ${category.display()}",
-                "Received at least $minTreatmentLines line(s) of ${category.display()}"
+                "Has received at least $minTreatmentLines line(s) of ${category.display()}"
             )
         } else if (numTreatmentLines + numOtherTrials >= minTreatmentLines) {
             EvaluationFactory.undetermined(
@@ -32,7 +32,7 @@ class HasHadSomeTreatmentsWithCategory internal constructor(private val category
         } else {
             EvaluationFactory.fail(
                 "Patient has not received at least $minTreatmentLines line(s) of ${category.display()}",
-                "Not received at least $minTreatmentLines line(s) of ${category.display()}"
+                "Has not received at least $minTreatmentLines line(s) of ${category.display()}"
             )
         }
     }
