@@ -6,10 +6,12 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
 import com.google.common.io.Resources;
+import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
 
 import org.junit.Test;
@@ -17,11 +19,10 @@ import org.junit.Test;
 public class FeedModelTest {
 
     private static final String CLINICAL_FEED_DIRECTORY = Resources.getResource("feed").getPath();
-    private static final String CURATION_DIRECTORY = Resources.getResource("curation").getPath();
 
     @Test
     public void canCreateFromFeedDirectory() throws IOException {
-        assertNotNull(FeedModel.fromFeedAndCurationDirectories(CLINICAL_FEED_DIRECTORY, CURATION_DIRECTORY));
+        assertNotNull(FeedModel.fromFeedDirectory(CLINICAL_FEED_DIRECTORY));
     }
 
     @Test(expected = IllegalStateException.class)
@@ -50,7 +51,7 @@ public class FeedModelTest {
     public void canRetrieveToxicityQuestionnaireEntries() {
         FeedModel model = TestFeedFactory.createProperTestFeedModel();
 
-        List<QuestionnaireEntry> toxicities = model.toxicityQuestionnaireEntries(TestFeedFactory.TEST_SUBJECT);
+        List<DigitalFileEntry> toxicities = model.toxicityEntries(TestFeedFactory.TEST_SUBJECT);
 
         assertEquals(3, toxicities.size());
     }
@@ -59,15 +60,17 @@ public class FeedModelTest {
     public void canDetermineLatestQuestionnaire() {
         FeedModel model = TestFeedFactory.createProperTestFeedModel();
 
-        assertNotNull(model.latestQuestionnaireEntry(TestFeedFactory.TEST_SUBJECT));
+        QuestionnaireEntry latest = model.latestQuestionnaireEntry(TestFeedFactory.TEST_SUBJECT);
+        assertNotNull(latest);
+        assertEquals(LocalDate.of(2021, 8, 1), latest.authored());
         assertNull(model.latestQuestionnaireEntry("Does not exist"));
     }
 
     @Test
-    public void canRetrieveUniqueEncounterEntries() {
+    public void canRetrieveUniqueSurgeryEntries() {
         FeedModel model = TestFeedFactory.createProperTestFeedModel();
 
-        assertEquals(1, model.uniqueEncounterEntries(TestFeedFactory.TEST_SUBJECT).size());
+        assertEquals(1, model.uniqueSurgeryEntries(TestFeedFactory.TEST_SUBJECT).size());
     }
 
     @Test
