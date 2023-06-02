@@ -72,7 +72,7 @@ public class OrangeInterpreter {
         return recordQCStatusesInSet(record, Set.of(PurpleQCStatus.PASS, PurpleQCStatus.WARN_LOW_PURITY));
     }
 
-    static boolean recordQCStatusesInSet(OrangeRecord record, Set<PurpleQCStatus> allowableQCStatuses) {
+    private static boolean recordQCStatusesInSet(OrangeRecord record, Set<PurpleQCStatus> allowableQCStatuses) {
         return allowableQCStatuses.containsAll(record.purple().fit().qcStatuses());
     }
 
