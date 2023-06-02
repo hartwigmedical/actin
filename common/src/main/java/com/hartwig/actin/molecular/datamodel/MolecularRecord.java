@@ -39,9 +39,9 @@ public abstract class MolecularRecord {
 
     public abstract boolean containsTumorCells();
 
-    public abstract boolean hasSufficientQuality();
+    public abstract boolean hasSufficientQualityAndPurity();
 
-    public abstract boolean hasSufficientQualityExcludingPurity();
+    public abstract boolean hasSufficientQuality();
 
     @NotNull
     public abstract MolecularCharacteristics characteristics();

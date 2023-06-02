@@ -9,7 +9,6 @@ import com.hartwig.actin.molecular.datamodel.RefGenomeVersion;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRefGenomeVersion;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleFit;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleQCStatus;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants;
@@ -42,8 +41,8 @@ public class OrangeInterpreter {
                 .evidenceSource(ActionabilityConstants.EVIDENCE_SOURCE.display())
                 .externalTrialSource(ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display())
                 .containsTumorCells(record.purple().fit().containsTumorCells())
-                .hasSufficientQuality(record.purple().fit().hasSufficientQuality())
-                .hasSufficientQualityExcludingPurity(determineSufficientQualityExcludingPurity(record.purple().fit()))
+                .hasSufficientQualityAndPurity(hasSufficientQualityAndPurity(record))
+                .hasSufficientQuality(hasSufficientQuality(record))
                 .characteristics(characteristicsExtractor.extract(record))
                 .drivers(driverExtractor.extract(record))
                 .immunology(ImmunologyExtraction.extract(record))
@@ -65,9 +64,16 @@ public class OrangeInterpreter {
         throw new IllegalStateException("Could not determine ref genome version from: " + refGenomeVersion);
     }
 
-    static boolean determineSufficientQualityExcludingPurity(PurpleFit fit) {
-        Set<PurpleQCStatus> allowableQCStatuses = Set.of(PurpleQCStatus.PASS, PurpleQCStatus.WARN_LOW_PURITY);
-        return fit.hasSufficientQuality() || allowableQCStatuses.containsAll(fit.qcStatuses());
+    static boolean hasSufficientQualityAndPurity(@NotNull OrangeRecord record) {
+        return recordQCStatusesInSet(record, Set.of(PurpleQCStatus.PASS));
+    }
+
+    static boolean hasSufficientQuality(@NotNull OrangeRecord record) {
+        return recordQCStatusesInSet(record, Set.of(PurpleQCStatus.PASS, PurpleQCStatus.WARN_LOW_PURITY));
+    }
+
+    static boolean recordQCStatusesInSet(OrangeRecord record, Set<PurpleQCStatus> allowableQCStatuses) {
+        return allowableQCStatuses.containsAll(record.purple().fit().qcStatuses());
     }
 
     @VisibleForTesting

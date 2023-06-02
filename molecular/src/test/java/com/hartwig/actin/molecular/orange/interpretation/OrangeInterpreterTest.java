@@ -15,9 +15,12 @@ import com.hartwig.actin.molecular.datamodel.RefGenomeVersion;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory;
+import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
+import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRefGenomeVersion;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
 import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleFit;
+import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleQCStatus;
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory;
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants;
@@ -46,8 +49,8 @@ public class OrangeInterpreterTest {
         assertEquals(ActionabilityConstants.EVIDENCE_SOURCE.display(), record.evidenceSource());
         assertEquals(ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display(), record.externalTrialSource());
         assertTrue(record.containsTumorCells());
+        assertTrue(record.hasSufficientQualityAndPurity());
         assertTrue(record.hasSufficientQuality());
-        assertTrue(record.hasSufficientQualityExcludingPurity());
 
         assertNotNull(record.characteristics());
 
@@ -86,33 +89,36 @@ public class OrangeInterpreterTest {
 
     @Test
     public void shouldDetermineQualityExcludingPurityToBeSufficientWhenOnlyPassStatusIsPresent() {
-        assertTrue(OrangeInterpreter.determineSufficientQualityExcludingPurity(purpleFitWithQCStatus(PurpleQCStatus.PASS)));
+        assertTrue(OrangeInterpreter.hasSufficientQuality(orangeRecordWithQCStatus(PurpleQCStatus.PASS)));
     }
 
     @Test
     public void shouldDetermineQualityExcludingPurityToBeSufficientWhenOnlyLowPurityWarningIsPresent() {
-        assertTrue(OrangeInterpreter.determineSufficientQualityExcludingPurity(purpleFitWithQCStatus(PurpleQCStatus.WARN_LOW_PURITY)));
+        assertTrue(OrangeInterpreter.hasSufficientQuality(orangeRecordWithQCStatus(PurpleQCStatus.WARN_LOW_PURITY)));
     }
 
     @Test
     public void shouldDetermineQualityExcludingPurityToNotBeSufficientWhenOtherWarningIsPresent() {
-        assertFalse(OrangeInterpreter.determineSufficientQualityExcludingPurity(purpleFitWithQCStatus(PurpleQCStatus.WARN_DELETED_GENES)));
+        assertFalse(OrangeInterpreter.hasSufficientQuality(orangeRecordWithQCStatus(PurpleQCStatus.WARN_DELETED_GENES)));
     }
 
     @Test
     public void shouldDetermineQualityExcludingPurityToNotBeSufficientWhenOtherWarningIsPresentWithLowPurityWarning() {
-        assertFalse(OrangeInterpreter.determineSufficientQualityExcludingPurity(purpleFitWithQCStatuses(Set.of(PurpleQCStatus.WARN_LOW_PURITY,
+        assertFalse(OrangeInterpreter.hasSufficientQuality(orangeRecordWithQCStatuses(Set.of(PurpleQCStatus.WARN_LOW_PURITY,
                 PurpleQCStatus.WARN_DELETED_GENES))));
     }
 
     @NotNull
-    private static ImmutablePurpleFit purpleFitWithQCStatus(PurpleQCStatus status) {
-        return purpleFitWithQCStatuses(Set.of(status));
+    private static OrangeRecord orangeRecordWithQCStatus(PurpleQCStatus status) {
+        return orangeRecordWithQCStatuses(Set.of(status));
     }
 
     @NotNull
-    private static ImmutablePurpleFit purpleFitWithQCStatuses(Set<PurpleQCStatus> statuses) {
-        return ImmutablePurpleFit.copyOf(TestOrangeFactory.createMinimalTestOrangeRecord().purple().fit()).withQcStatuses(statuses);
+    private static OrangeRecord orangeRecordWithQCStatuses(Set<PurpleQCStatus> statuses) {
+        OrangeRecord minimal = TestOrangeFactory.createMinimalTestOrangeRecord();
+        return ImmutableOrangeRecord.copyOf(minimal)
+                .withPurple(ImmutablePurpleRecord.copyOf(minimal.purple())
+                        .withFit(ImmutablePurpleFit.copyOf(minimal.purple().fit()).withQcStatuses(statuses)));
     }
 
     @NotNull

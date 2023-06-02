@@ -8,7 +8,7 @@
   "externalTrialSource": "iClusion",
   "containsTumorCells": false,
   "hasSufficientQuality": false,
-  "hasSufficientQualityExcludingPurity": false,
+  "hasSufficientQualityAndPurity": false,
   "characteristics": {
     "purity": null,
     "ploidy": null,
