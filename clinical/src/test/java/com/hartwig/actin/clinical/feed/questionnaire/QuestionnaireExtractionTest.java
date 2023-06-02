@@ -237,7 +237,7 @@ public class QuestionnaireExtractionTest {
         assertNull(questionnaire.pdl1TestResults());
 
         assertEquals(0, (int) questionnaire.whoStatus());
-        assertTrue(questionnaire.unresolvedToxicities().isEmpty());
+        assertNull(questionnaire.unresolvedToxicities());
 
         InfectionStatus infectionStatus = questionnaire.infectionStatus();
         assertNotNull(infectionStatus);
@@ -296,7 +296,7 @@ public class QuestionnaireExtractionTest {
         assertNull(questionnaire.pdl1TestResults());
 
         assertEquals(0, (int) questionnaire.whoStatus());
-        assertTrue(questionnaire.unresolvedToxicities().isEmpty());
+        assertNull(questionnaire.unresolvedToxicities());
 
         InfectionStatus infectionStatus = questionnaire.infectionStatus();
         assertNotNull(infectionStatus);
@@ -355,7 +355,7 @@ public class QuestionnaireExtractionTest {
         assertNull(questionnaire.pdl1TestResults());
 
         assertEquals(0, (int) questionnaire.whoStatus());
-        assertTrue(questionnaire.unresolvedToxicities().isEmpty());
+        assertNull(questionnaire.unresolvedToxicities());
 
         InfectionStatus infectionStatus = questionnaire.infectionStatus();
         assertNotNull(infectionStatus);
@@ -414,7 +414,7 @@ public class QuestionnaireExtractionTest {
         assertNull(questionnaire.pdl1TestResults());
 
         assertEquals(0, (int) questionnaire.whoStatus());
-        assertTrue(questionnaire.unresolvedToxicities().isEmpty());
+        assertNull(questionnaire.unresolvedToxicities());
 
         InfectionStatus infectionStatus = questionnaire.infectionStatus();
         assertNotNull(infectionStatus);
@@ -530,7 +530,7 @@ public class QuestionnaireExtractionTest {
 
         assertEquals(2, (int) questionnaire.whoStatus());
 
-        assertTrue(questionnaire.unresolvedToxicities().isEmpty());
+        assertNull(questionnaire.unresolvedToxicities());
 
         InfectionStatus infectionStatus = questionnaire.infectionStatus();
         assertNotNull(infectionStatus);
@@ -593,7 +593,7 @@ public class QuestionnaireExtractionTest {
         assertFalse(ecg.hasSigAberrationLatestECG());
         assertEquals("No", ecg.aberrationDescription());
 
-        assertTrue(questionnaire.complications().isEmpty());
+        assertNull(questionnaire.complications());
 
         assertNull(questionnaire.genayaSubjectNumber());
     }
