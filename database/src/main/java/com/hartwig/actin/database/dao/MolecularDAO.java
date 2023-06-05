@@ -191,7 +191,7 @@ class MolecularDAO {
                         record.evidenceSource(),
                         record.externalTrialSource(),
                         DataUtil.toByte(record.containsTumorCells()),
-                        DataUtil.toByte(record.hasSufficientQuality()),
+                        DataUtil.toByte(record.hasSufficientQualityAndPurity()),
                         record.characteristics().purity(),
                         record.characteristics().ploidy(),
                         predictedTumorOrigin != null ? predictedTumorOrigin.tumorType() : null,

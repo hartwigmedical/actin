@@ -1,5 +1,7 @@
 package com.hartwig.actin.molecular.orange.datamodel.purple;
 
+import java.util.Set;
+
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,4 +17,6 @@ public abstract class PurpleFit {
     public abstract double purity();
 
     public abstract double ploidy();
+
+    public abstract Set<PurpleQCStatus> qcStatuses();
 }

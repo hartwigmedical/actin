@@ -65,7 +65,7 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
 
         MolecularCharacteristics characteristics = molecular.characteristics();
         List.of(createPurityCell(characteristics.purity()),
-                Cells.createContentYesNo(Formats.yesNoUnknown(molecular.hasSufficientQuality())),
+                Cells.createContentYesNo(Formats.yesNoUnknown(molecular.hasSufficientQualityAndPurity())),
                 createPredictedTumorOriginCell(),
                 createTMLStatusCell(),
                 createTMBStatusCell(),
@@ -103,7 +103,7 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
 
         PredictedTumorOrigin predictedTumorOrigin = molecular.characteristics().predictedTumorOrigin();
         String interpretation = TumorOriginInterpreter.interpret(predictedTumorOrigin);
-        if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin) && molecular.hasSufficientQuality()) {
+        if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin) && molecular.hasSufficientQualityAndPurity()) {
             return Cells.createContent(interpretation);
         } else {
             return Cells.createContentWarn(interpretation);
@@ -144,7 +144,7 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
         }
 
         return createTMLStatusStringOption().map(value -> {
-            Cell cell = molecular.hasSufficientQuality() ? Cells.createContent(value) : Cells.createContentWarn(value);
+            Cell cell = molecular.hasSufficientQualityAndPurity() ? Cells.createContent(value) : Cells.createContentWarn(value);
 
             if (Boolean.TRUE.equals(molecular.characteristics().hasHighTumorMutationalLoad())) {
                 cell.addStyle(Styles.tableHighlightStyle());
@@ -167,7 +167,7 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
 
         String interpretation = hasHighTumorMutationalBurden ? "High" : "Low";
         String value = interpretation + " (" + Formats.singleDigitNumber(tumorMutationalBurden) + ")";
-        Cell cell = molecular.hasSufficientQuality() ? Cells.createContent(value) : Cells.createContentWarn(value);
+        Cell cell = molecular.hasSufficientQualityAndPurity() ? Cells.createContent(value) : Cells.createContentWarn(value);
 
         if (hasHighTumorMutationalBurden) {
             cell.addStyle(Styles.tableHighlightStyle());
@@ -191,7 +191,7 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
         }
 
         return createMSStabilityStringOption().map(value -> {
-            Cell cell = molecular.hasSufficientQuality() ? Cells.createContent(value) : Cells.createContentWarn(value);
+            Cell cell = molecular.hasSufficientQualityAndPurity() ? Cells.createContent(value) : Cells.createContentWarn(value);
 
             if (Boolean.TRUE.equals(molecular.characteristics().isMicrosatelliteUnstable())) {
                 cell.addStyle(Styles.tableHighlightStyle());
@@ -215,7 +215,7 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
         }
 
         return createHRStatusStringOption().map(value -> {
-            Cell cell = molecular.hasSufficientQuality() ? Cells.createContent(value) : Cells.createContentWarn(value);
+            Cell cell = molecular.hasSufficientQualityAndPurity() ? Cells.createContent(value) : Cells.createContentWarn(value);
 
             if (Boolean.TRUE.equals(molecular.characteristics().isHomologousRepairDeficient())) {
                 cell.addStyle(Styles.tableHighlightStyle());

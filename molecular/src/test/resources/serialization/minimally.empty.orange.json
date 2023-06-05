@@ -9,6 +9,9 @@
   "refGenomeVersion": "V37",
   "purple": {
     "fit": {
+      "qc": {
+        "status": []
+      },
       "hasSufficientQuality": false,
       "containsTumorCells": false,
       "purity": 0.1,
