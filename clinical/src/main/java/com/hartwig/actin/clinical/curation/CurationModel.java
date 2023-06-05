@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.curation;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -78,6 +79,7 @@ import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
+import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireRawEntryMapper;
 import com.hartwig.actin.doid.DoidModel;
 
 import org.apache.logging.log4j.LogManager;
@@ -93,6 +95,8 @@ public class CurationModel {
     @NotNull
     private final CurationDatabase database;
     @NotNull
+    private final QuestionnaireRawEntryMapper questionnaireRawEntryMapper;
+    @NotNull
     private final Multimap<Class<? extends CurationConfig>, String> evaluatedCurationInputs = HashMultimap.create();
     @NotNull
     private final Multimap<Class<? extends Translation>, Translation> evaluatedTranslations = HashMultimap.create();
@@ -100,12 +104,15 @@ public class CurationModel {
     @NotNull
     public static CurationModel create(@NotNull String clinicalCurationDirectory, @NotNull DoidModel doidModel) throws IOException {
         CurationDatabaseReader reader = new CurationDatabaseReader(new CurationValidator(doidModel));
-        return new CurationModel(reader.read(clinicalCurationDirectory));
+        QuestionnaireRawEntryMapper questionnaireRawEntryMapper =
+                QuestionnaireRawEntryMapper.createFromCurationDirectory(clinicalCurationDirectory);
+        return new CurationModel(reader.read(clinicalCurationDirectory), questionnaireRawEntryMapper);
     }
 
     @VisibleForTesting
-    CurationModel(@NotNull final CurationDatabase database) {
+    CurationModel(@NotNull CurationDatabase database, @NotNull QuestionnaireRawEntryMapper questionnaireRawEntryMapper) {
         this.database = database;
+        this.questionnaireRawEntryMapper = questionnaireRawEntryMapper;
     }
 
     @NotNull
@@ -288,11 +295,11 @@ public class CurationModel {
                 LOGGER.warn(" Could not find non-oncological history config for input '{}'", trimmedInput);
             }
 
-            priorOtherConditions.addAll(configs.stream()
+            configs.stream()
                     .filter(config -> !config.ignore())
                     .map(NonOncologicalHistoryConfig::priorOtherCondition)
                     .flatMap(Optional::stream)
-                    .collect(Collectors.toList()));
+                    .forEach(priorOtherConditions::add);
         }
 
         return priorOtherConditions;
@@ -429,7 +436,7 @@ public class CurationModel {
     }
 
     @Nullable
-    private static ImmutableECGMeasure maybeECGMeasure(@Nullable final Integer value, @Nullable final String unit) {
+    private static ImmutableECGMeasure maybeECGMeasure(@Nullable Integer value, @Nullable String unit) {
         if (value == null || unit == null) {
             return null;
         }
@@ -784,6 +791,11 @@ public class CurationModel {
     }
 
     @NotNull
+    public QuestionnaireRawEntryMapper questionnaireRawEntryMapper() {
+        return questionnaireRawEntryMapper;
+    }
+
+    @NotNull
     private List<? extends CurationConfig> configsForClass(@NotNull Class<? extends CurationConfig> classToLookUp) {
         if (classToLookUp == ImmutablePrimaryTumorConfig.class) {
             return database.primaryTumorConfigs();
@@ -836,15 +848,10 @@ public class CurationModel {
 
     @NotNull
     private <T extends CurationConfig> Set<T> find(@NotNull List<T> configs, @NotNull String input) {
-        Set<T> results = Sets.newHashSet();
         if (!configs.isEmpty()) {
             evaluatedCurationInputs.put(configs.get(0).getClass(), input.toLowerCase());
-            for (T config : configs) {
-                if (config.input().equalsIgnoreCase(input)) {
-                    results.add(config);
-                }
-            }
+            return configs.stream().filter(config -> config.input().equalsIgnoreCase(input)).collect(Collectors.toSet());
         }
-        return results;
+        return Collections.emptySet();
     }
 }

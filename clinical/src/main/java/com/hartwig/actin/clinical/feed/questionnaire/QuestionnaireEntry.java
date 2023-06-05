@@ -26,7 +26,7 @@ public abstract class QuestionnaireEntry implements FeedEntry {
     public abstract String itemText();
 
     @NotNull
-    public abstract String itemAnswerValueValueString();
+    public abstract String text();
 
 }
 

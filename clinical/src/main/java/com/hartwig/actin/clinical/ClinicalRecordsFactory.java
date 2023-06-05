@@ -2,14 +2,17 @@ package com.hartwig.actin.clinical;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.hartwig.actin.clinical.curation.CurationModel;
 import com.hartwig.actin.clinical.curation.CurationUtil;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
@@ -50,16 +53,12 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEn
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
 import com.hartwig.actin.clinical.feed.FeedModel;
-import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
-import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
-import com.hartwig.actin.clinical.feed.lab.LabEntry;
+import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry;
 import com.hartwig.actin.clinical.feed.lab.LabExtraction;
 import com.hartwig.actin.clinical.feed.medication.MedicationEntry;
 import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire;
-import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction;
-import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry;
 import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionExtraction;
 import com.hartwig.actin.clinical.sort.ClinicalRecordComparator;
 import com.hartwig.actin.clinical.sort.LabValueDescendingDateComparator;
@@ -87,16 +86,20 @@ public class ClinicalRecordsFactory {
     @NotNull
     List<ClinicalRecord> create() {
         List<ClinicalRecord> records = Lists.newArrayList();
+        Set<String> processedPatientIds = new HashSet<>();
+        QuestionnaireExtraction extraction = new QuestionnaireExtraction(curation.questionnaireRawEntryMapper());
+
         LOGGER.info("Creating clinical model");
         for (String subject : feed.subjects()) {
             String patientId = toPatientId(subject);
-            LOGGER.info(" Extracting data for patient {}", patientId);
-
-            Questionnaire questionnaire = QuestionnaireExtraction.extract(feed.latestQuestionnaireEntry(subject));
-
-            if (containsPatientId(records, patientId)) {
+            if (processedPatientIds.contains(patientId)) {
                 throw new IllegalStateException("Cannot create clinical records. Duplicate patientId: " + patientId);
             }
+            processedPatientIds.add(patientId);
+
+            LOGGER.info(" Extracting data for patient {}", patientId);
+
+            Questionnaire questionnaire = extraction.extract(feed.latestQuestionnaireEntry(subject));
 
             List<Toxicity> extractedToxicities = extractToxicities(subject, questionnaire);
             List<ToxicityEvaluation> toxicityEvaluations = extractedToxicities.stream()
@@ -140,16 +143,6 @@ public class ClinicalRecordsFactory {
         curation.evaluate();
 
         return records;
-    }
-
-    private static boolean containsPatientId(@NotNull List<ClinicalRecord> records, @NotNull String patientId) {
-        for (ClinicalRecord record : records) {
-            if (record.patientId().equals(patientId)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     @NotNull
@@ -207,19 +200,17 @@ public class ClinicalRecordsFactory {
 
     @NotNull
     private ClinicalStatus extractClinicalStatus(@Nullable Questionnaire questionnaire) {
-        if (questionnaire == null) {
-            return ImmutableClinicalStatus.builder().build();
-        }
-
-        return ImmutableClinicalStatus.builder()
-                .who(questionnaire.whoStatus())
-                .infectionStatus(curation.curateInfectionStatus(questionnaire.infectionStatus()))
-                .ecg(curation.curateECG(questionnaire.ecg()))
-                .lvef(curation.determineLVEF(questionnaire.nonOncologicalHistory()))
-                .hasComplications(Optional.ofNullable(extractComplications(questionnaire))
-                        .map(complications -> !complications.isEmpty())
-                        .orElse(null))
-                .build();
+        return (questionnaire == null)
+                ? ImmutableClinicalStatus.builder().build()
+                : ImmutableClinicalStatus.builder()
+                        .who(questionnaire.whoStatus())
+                        .infectionStatus(curation.curateInfectionStatus(questionnaire.infectionStatus()))
+                        .ecg(curation.curateECG(questionnaire.ecg()))
+                        .lvef(curation.determineLVEF(questionnaire.nonOncologicalHistory()))
+                        .hasComplications(Optional.ofNullable(extractComplications(questionnaire))
+                                .map(complications -> !complications.isEmpty())
+                                .orElse(null))
+                        .build();
     }
 
     @NotNull
@@ -237,104 +228,79 @@ public class ClinicalRecordsFactory {
 
     @NotNull
     private List<PriorTumorTreatment> extractPriorTumorTreatments(@Nullable Questionnaire questionnaire) {
-        if (questionnaire == null) {
-            return Lists.newArrayList();
-        }
-
-        List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
-
-        List<String> treatmentHistories = questionnaire.treatmentHistoryCurrentTumor();
-        priorTumorTreatments.addAll(curation.curatePriorTumorTreatments(treatmentHistories));
-
-        List<String> otherOncologicalHistories = questionnaire.otherOncologicalHistory();
-        priorTumorTreatments.addAll(curation.curatePriorTumorTreatments(otherOncologicalHistories));
-
-        return priorTumorTreatments;
+        return (questionnaire == null)
+                ? Collections.emptyList()
+                : Stream.of(questionnaire.treatmentHistoryCurrentTumor(), questionnaire.otherOncologicalHistory())
+                        .flatMap(entry -> curation.curatePriorTumorTreatments(entry).stream())
+                        .collect(Collectors.toList());
     }
 
     @NotNull
     private List<PriorSecondPrimary> extractPriorSecondPrimaries(@Nullable Questionnaire questionnaire) {
-        if (questionnaire == null) {
-            return Lists.newArrayList();
-        }
-
-        List<PriorSecondPrimary> priorSecondPrimaries = Lists.newArrayList();
-        priorSecondPrimaries.addAll(curation.curatePriorSecondPrimaries(questionnaire.otherOncologicalHistory()));
-        priorSecondPrimaries.addAll(curation.curatePriorSecondPrimaries(questionnaire.secondaryPrimaries()));
-        return priorSecondPrimaries;
+        return (questionnaire == null)
+                ? Collections.emptyList()
+                : Stream.of(questionnaire.otherOncologicalHistory(), questionnaire.secondaryPrimaries())
+                        .flatMap(entry -> curation.curatePriorSecondPrimaries(entry).stream())
+                        .collect(Collectors.toList());
     }
 
     @NotNull
     private List<PriorOtherCondition> extractPriorOtherConditions(@Nullable Questionnaire questionnaire) {
-        if (questionnaire == null) {
-            return Lists.newArrayList();
-        }
-
-        List<String> nonOncologicalHistories = questionnaire.nonOncologicalHistory();
-        return curation.curatePriorOtherConditions(nonOncologicalHistories);
+        return (questionnaire == null)
+                ? Collections.emptyList()
+                : curation.curatePriorOtherConditions(questionnaire.nonOncologicalHistory());
     }
 
     @NotNull
     private List<PriorMolecularTest> extractPriorMolecularTests(@Nullable Questionnaire questionnaire) {
-        if (questionnaire == null) {
-            return Lists.newArrayList();
-        }
-
-        List<PriorMolecularTest> priorMolecularTests = Lists.newArrayList();
-        priorMolecularTests.addAll(curation.curatePriorMolecularTests("IHC", questionnaire.ihcTestResults()));
-        priorMolecularTests.addAll(curation.curatePriorMolecularTests("PD-L1", questionnaire.pdl1TestResults()));
-        return priorMolecularTests;
+        return (questionnaire == null)
+                ? Collections.emptyList()
+                : Stream.of(Maps.immutableEntry("IHC", questionnaire.ihcTestResults()),
+                                Maps.immutableEntry("PD-L1", questionnaire.pdl1TestResults()))
+                        .flatMap(entry -> curation.curatePriorMolecularTests(entry.getKey(), entry.getValue()).stream())
+                        .collect(Collectors.toList());
     }
 
     @Nullable
     private List<Complication> extractComplications(@Nullable Questionnaire questionnaire) {
-        if (questionnaire != null) {
-            List<String> complications = questionnaire.complications();
-            return curation.curateComplications(complications);
-        } else {
-            return null;
-        }
+        return (questionnaire != null) ? curation.curateComplications(questionnaire.complications()) : null;
     }
 
     @NotNull
     private List<LabValue> extractLabValues(@NotNull String subject) {
-        List<LabValue> values = Lists.newArrayList();
-        for (LabEntry entry : feed.labEntries(subject)) {
-            values.add(curation.translateLabValue(LabExtraction.extract(entry)));
-        }
-
-        values.sort(new LabValueDescendingDateComparator());
-
-        return values;
+        return feed.labEntries(subject)
+                .stream()
+                .map(LabExtraction::extract)
+                .map(curation::translateLabValue)
+                .sorted(new LabValueDescendingDateComparator())
+                .collect(Collectors.toList());
     }
 
     @NotNull
     private List<Toxicity> extractToxicities(@NotNull String subject, @Nullable Questionnaire questionnaire) {
-        List<Toxicity> toxicities = Lists.newArrayList();
-        if (questionnaire != null) {
-            List<String> unresolvedToxicities = questionnaire.unresolvedToxicities();
-            toxicities.addAll(curation.curateQuestionnaireToxicities(unresolvedToxicities, questionnaire.date()));
-        }
-
-        List<QuestionnaireEntry> toxicityQuestionnaires = feed.toxicityQuestionnaireEntries(subject);
-        for (QuestionnaireEntry entry : toxicityQuestionnaires) {
-            Integer grade = extractGrade(entry);
+        List<Toxicity> toxicities = feed.toxicityEntries(subject).stream().flatMap(toxicityEntry -> {
+            Integer grade = extractGrade(toxicityEntry);
             if (grade != null) {
-                Toxicity toxicity = ImmutableToxicity.builder()
-                        .name(entry.itemText())
-                        .evaluatedDate(entry.authored())
+                return Stream.of(ImmutableToxicity.builder()
+                        .name(toxicityEntry.itemText())
+                        .evaluatedDate(toxicityEntry.authored())
                         .source(ToxicitySource.EHR)
                         .grade(grade)
-                        .build();
-
-                toxicities.add(curation.translateToxicity(toxicity));
+                        .build());
+            } else {
+                return Stream.empty();
             }
+        }).map(curation::translateToxicity).collect(Collectors.toList());
+
+        if (questionnaire != null) {
+            toxicities.addAll(curation.curateQuestionnaireToxicities(questionnaire.unresolvedToxicities(), questionnaire.date()));
         }
+
         return toxicities;
     }
 
     @Nullable
-    private static Integer extractGrade(@NotNull QuestionnaireEntry entry) {
+    private static Integer extractGrade(@NotNull DigitalFileEntry entry) {
         String value = entry.itemAnswerValueValueString();
         if (value.isEmpty()) {
             return null;
@@ -352,24 +318,23 @@ public class ClinicalRecordsFactory {
 
     @NotNull
     private List<Intolerance> extractIntolerances(@NotNull String subject) {
-        List<Intolerance> intolerances = Lists.newArrayList();
-        for (IntoleranceEntry entry : feed.intoleranceEntries(subject)) {
-            Intolerance intolerance = ImmutableIntolerance.builder()
-                    .name(CurationUtil.capitalizeFirstLetterOnly(entry.codeText()))
-                    .category(CurationUtil.capitalizeFirstLetterOnly(entry.category()))
-                    .type(CurationUtil.capitalizeFirstLetterOnly(entry.isSideEffect()))
-                    .clinicalStatus(CurationUtil.capitalizeFirstLetterOnly(entry.clinicalStatus()))
-                    .verificationStatus(CurationUtil.capitalizeFirstLetterOnly(entry.verificationStatus()))
-                    .criticality(CurationUtil.capitalizeFirstLetterOnly(entry.criticality()))
-                    .build();
-            intolerances.add(curation.curateIntolerance(intolerance));
-        }
-        return intolerances;
+        return feed.intoleranceEntries(subject)
+                .stream()
+                .map(entry -> ImmutableIntolerance.builder()
+                        .name(CurationUtil.capitalizeFirstLetterOnly(entry.codeText()))
+                        .category(CurationUtil.capitalizeFirstLetterOnly(entry.category()))
+                        .type(CurationUtil.capitalizeFirstLetterOnly(entry.isSideEffect()))
+                        .clinicalStatus(CurationUtil.capitalizeFirstLetterOnly(entry.clinicalStatus()))
+                        .verificationStatus(CurationUtil.capitalizeFirstLetterOnly(entry.verificationStatus()))
+                        .criticality(CurationUtil.capitalizeFirstLetterOnly(entry.criticality()))
+                        .build())
+                .map(curation::curateIntolerance)
+                .collect(Collectors.toList());
     }
 
     @NotNull
     private List<Surgery> extractSurgeries(@NotNull String subject) {
-        return feed.uniqueEncounterEntries(subject)
+        return feed.uniqueSurgeryEntries(subject)
                 .stream()
                 .map(entry -> ImmutableSurgery.builder()
                         .endDate(entry.periodEnd())
@@ -380,12 +345,10 @@ public class ClinicalRecordsFactory {
 
     @NotNull
     private List<TreatmentHistoryEntry> extractSurgicalTreatments(@NotNull String subject) {
-        return feed.uniqueEncounterEntries(subject)
+        return feed.uniqueSurgeryEntries(subject)
                 .stream()
                 .map(encounterEntry -> ImmutableTreatmentHistoryEntry.builder()
-                        .treatments(Collections.singleton(ImmutableSurgicalTreatment.builder()
-                                .name("extracted surgery")
-                                .build()))
+                        .treatments(Collections.singleton(ImmutableSurgicalTreatment.builder().name("extracted surgery").build()))
                         .surgeryHistoryDetails(ImmutableSurgeryHistoryDetails.builder()
                                 .endDate(encounterEntry.periodEnd())
                                 .status(resolveSurgeryStatus(encounterEntry.encounterStatus()))
@@ -409,42 +372,40 @@ public class ClinicalRecordsFactory {
 
     @NotNull
     private List<BodyWeight> extractBodyWeights(@NotNull String subject) {
-        List<BodyWeight> bodyWeights = Lists.newArrayList();
-        for (BodyWeightEntry entry : feed.uniqueBodyWeightEntries(subject)) {
-            bodyWeights.add(ImmutableBodyWeight.builder()
-                    .date(entry.effectiveDateTime())
-                    .value(entry.valueQuantityValue())
-                    .unit(entry.valueQuantityUnit())
-                    .build());
-        }
-        return bodyWeights;
+        return feed.uniqueBodyWeightEntries(subject)
+                .stream()
+                .map(entry -> ImmutableBodyWeight.builder()
+                        .date(entry.effectiveDateTime())
+                        .value(entry.valueQuantityValue())
+                        .unit(entry.valueQuantityUnit())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @NotNull
     private List<VitalFunction> extractVitalFunctions(@NotNull String subject) {
-        List<VitalFunction> vitalFunctions = Lists.newArrayList();
-        for (VitalFunctionEntry entry : feed.vitalFunctionEntries(subject)) {
-            vitalFunctions.add(ImmutableVitalFunction.builder()
-                    .date(entry.effectiveDateTime())
-                    .category(VitalFunctionExtraction.determineCategory(entry.codeDisplayOriginal()))
-                    .subcategory(entry.componentCodeDisplay())
-                    .value(entry.quantityValue())
-                    .unit(entry.quantityUnit())
-                    .build());
-        }
-        return vitalFunctions;
+        return feed.vitalFunctionEntries(subject)
+                .stream()
+                .map(entry -> ImmutableVitalFunction.builder()
+                        .date(entry.effectiveDateTime())
+                        .category(VitalFunctionExtraction.determineCategory(entry.codeDisplayOriginal()))
+                        .subcategory(entry.componentCodeDisplay())
+                        .value(entry.quantityValue())
+                        .unit(entry.quantityUnit())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @NotNull
     private List<BloodTransfusion> extractBloodTransfusions(@NotNull String subject) {
-        List<BloodTransfusion> bloodTransfusions = Lists.newArrayList();
-        for (QuestionnaireEntry entry : feed.bloodTransfusionQuestionnaireEntries(subject)) {
-            bloodTransfusions.add(curation.translateBloodTransfusion(ImmutableBloodTransfusion.builder()
-                    .date(entry.authored())
-                    .product(entry.itemAnswerValueValueString())
-                    .build()));
-        }
-        return bloodTransfusions;
+        return feed.bloodTransfusionEntries(subject)
+                .stream()
+                .map(entry -> ImmutableBloodTransfusion.builder()
+                        .date(entry.authored())
+                        .product(entry.itemAnswerValueValueString())
+                        .build())
+                .map(curation::translateBloodTransfusion)
+                .collect(Collectors.toList());
     }
 
     @NotNull

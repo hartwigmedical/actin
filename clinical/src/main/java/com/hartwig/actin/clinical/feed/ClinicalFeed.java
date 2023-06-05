@@ -3,7 +3,8 @@ package com.hartwig.actin.clinical.feed;
 import java.util.List;
 
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
-import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
+import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry;
+import com.hartwig.actin.clinical.feed.surgery.SurgeryEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
 import com.hartwig.actin.clinical.feed.lab.LabEntry;
 import com.hartwig.actin.clinical.feed.medication.MedicationEntry;
@@ -23,10 +24,13 @@ public abstract class ClinicalFeed {
     public abstract List<PatientEntry> patientEntries();
 
     @NotNull
+    public abstract List<DigitalFileEntry> digitalFileEntries();
+
+    @NotNull
     public abstract List<QuestionnaireEntry> questionnaireEntries();
 
     @NotNull
-    public abstract List<EncounterEntry> encounterEntries();
+    public abstract List<SurgeryEntry> surgeryEntries();
 
     @NotNull
     public abstract List<MedicationEntry> medicationEntries();

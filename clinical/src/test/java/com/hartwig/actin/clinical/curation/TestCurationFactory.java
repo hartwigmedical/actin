@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,6 +51,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.ImmutableChemotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
+import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireRawEntryMapper;
 import com.hartwig.actin.doid.TestDoidModelFactory;
 
 import org.apache.logging.log4j.util.Strings;
@@ -62,12 +64,12 @@ public final class TestCurationFactory {
 
     @NotNull
     public static CurationModel createProperTestCurationModel() {
-        return new CurationModel(createTestCurationDatabase());
+        return new CurationModel(createTestCurationDatabase(), questionnaireRawEntryMapper());
     }
 
     @NotNull
     public static CurationModel createMinimalTestCurationModel() {
-        return new CurationModel(ImmutableCurationDatabase.builder().build());
+        return new CurationModel(ImmutableCurationDatabase.builder().build(), questionnaireRawEntryMapper());
     }
 
     @NotNull
@@ -360,5 +362,10 @@ public final class TestCurationFactory {
     private static List<BloodTransfusionTranslation> createTestBloodTransfusionTranslations() {
         return List.of(ImmutableBloodTransfusionTranslation.builder().product("Product").translatedProduct("Translated product").build(),
                 ImmutableBloodTransfusionTranslation.builder().product("Not used").translatedProduct("never used").build());
+    }
+
+    @NotNull
+    private static QuestionnaireRawEntryMapper questionnaireRawEntryMapper() {
+        return new QuestionnaireRawEntryMapper(Collections.emptyMap());
     }
 }

@@ -39,7 +39,7 @@ class HasHadTreatmentWithCategoryButNotOfTypes internal constructor(
                     )
                 )
                 .addPassGeneralMessages(
-                    "Received " + category.display() + ", ignoring " + concat(
+                    "Has received " + category.display() + ", ignoring " + concat(
                         ignoreTypes
                     )
                 )
@@ -67,7 +67,7 @@ class HasHadTreatmentWithCategoryButNotOfTypes internal constructor(
                     )
                 )
                 .addFailGeneralMessages(
-                    "Not received " + category.display() + ", ignoring " + concat(
+                    "Has not received " + category.display() + ", ignoring " + concat(
                         ignoreTypes
                     )
                 )

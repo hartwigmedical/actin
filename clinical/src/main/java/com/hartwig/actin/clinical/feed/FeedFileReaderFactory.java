@@ -2,8 +2,10 @@ package com.hartwig.actin.clinical.feed;
 
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntryCreator;
-import com.hartwig.actin.clinical.feed.encounter.EncounterEntry;
-import com.hartwig.actin.clinical.feed.encounter.EncounterEntryCreator;
+import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry;
+import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntryCreator;
+import com.hartwig.actin.clinical.feed.surgery.SurgeryEntry;
+import com.hartwig.actin.clinical.feed.surgery.SurgeryEntryCreator;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntryCreator;
 import com.hartwig.actin.clinical.feed.lab.LabEntry;
@@ -14,7 +16,6 @@ import com.hartwig.actin.clinical.feed.patient.PatientEntry;
 import com.hartwig.actin.clinical.feed.patient.PatientEntryCreator;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntryCreator;
-import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireRawEntryMapper;
 import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry;
 import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntryCreator;
 
@@ -31,21 +32,18 @@ public final class FeedFileReaderFactory {
     }
 
     @NotNull
-    public static FeedFileReader<QuestionnaireEntry> createQuestionnaireReader(QuestionnaireRawEntryMapper questionnaireRawEntryMapper) {
-        // Questionnaires have line breaks in the free-text field
-        // We filter manual questionnaires.
-        return new FeedFileReader<>(new QuestionnaireEntryCreator(true, questionnaireRawEntryMapper), true);
+    public static FeedFileReader<QuestionnaireEntry> createQuestionnaireReader() {
+        return new FeedFileReader<>(new QuestionnaireEntryCreator(), true);
     }
 
     @NotNull
-    public static FeedFileReader<QuestionnaireEntry> createManualQuestionnaireReader(
-            QuestionnaireRawEntryMapper questionnaireRawEntryMapper) {
-        return new FeedFileReader<>(new QuestionnaireEntryCreator(false, questionnaireRawEntryMapper), true);
+    public static FeedFileReader<DigitalFileEntry> createDigitalFileReader() {
+        return FeedFileReader.create(new DigitalFileEntryCreator());
     }
 
     @NotNull
-    public static FeedFileReader<EncounterEntry> createEncounterReader() {
-        return FeedFileReader.create(new EncounterEntryCreator());
+    public static FeedFileReader<SurgeryEntry> createSurgeryReader() {
+        return FeedFileReader.create(new SurgeryEntryCreator());
     }
 
     @NotNull

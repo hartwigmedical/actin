@@ -16,6 +16,13 @@ class FormatTest {
     }
 
     @Test
+    fun shouldFormatCaseInsensitive() {
+        assertEquals("x and y", Format.concatLowercaseWithAnd(setOf("X", "Y")))
+        assertEquals("x and y", Format.concatLowercaseWithAnd(setOf("x", "y")))
+        assertEquals("x", Format.concatLowercaseWithAnd(setOf("X")))
+    }
+
+    @Test
     fun shouldSortIterablesBeforeConcat() {
         assertEquals("string1; string2; string3", Format.concat(listOf("string2", "string3", "string1")))
     }

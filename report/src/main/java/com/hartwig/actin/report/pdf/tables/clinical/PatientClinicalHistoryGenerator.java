@@ -160,13 +160,7 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
             joiner.add(tumorDetails + " (" + dateAdditionDiagnosis + dateAdditionLastTreatment + active + ")");
         }
 
-        if (record.priorSecondPrimaries().size() > 1) {
-            return "Previous primary tumors: " + joiner;
-        } else if (!record.priorSecondPrimaries().isEmpty()) {
-            return "Previous primary tumor: " + joiner;
-        } else {
-            return Strings.EMPTY;
-        }
+        return joiner.toString();
     }
 
     @NotNull
