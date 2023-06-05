@@ -88,24 +88,31 @@ public class OrangeInterpreterTest {
     }
 
     @Test
-    public void shouldDetermineQualityExcludingPurityToBeSufficientWhenOnlyPassStatusIsPresent() {
-        assertTrue(OrangeInterpreter.hasSufficientQuality(orangeRecordWithQCStatus(PurpleQCStatus.PASS)));
+    public void shouldDetermineQualityAndPurityToBeSufficientWhenOnlyPassStatusIsPresent() {
+        OrangeRecord record = orangeRecordWithQCStatus(PurpleQCStatus.PASS);
+        assertTrue(OrangeInterpreter.hasSufficientQuality(record));
+        assertTrue(OrangeInterpreter.hasSufficientQualityAndPurity(record));
     }
 
     @Test
-    public void shouldDetermineQualityExcludingPurityToBeSufficientWhenOnlyLowPurityWarningIsPresent() {
-        assertTrue(OrangeInterpreter.hasSufficientQuality(orangeRecordWithQCStatus(PurpleQCStatus.WARN_LOW_PURITY)));
+    public void shouldDetermineQualityButNotPurityToBeSufficientWhenOnlyLowPurityWarningIsPresent() {
+        OrangeRecord record = orangeRecordWithQCStatus(PurpleQCStatus.WARN_LOW_PURITY);
+        assertTrue(OrangeInterpreter.hasSufficientQuality(record));
+        assertFalse(OrangeInterpreter.hasSufficientQualityAndPurity(record));
     }
 
     @Test
-    public void shouldDetermineQualityExcludingPurityToNotBeSufficientWhenOtherWarningIsPresent() {
-        assertFalse(OrangeInterpreter.hasSufficientQuality(orangeRecordWithQCStatus(PurpleQCStatus.WARN_DELETED_GENES)));
+    public void shouldDetermineQualityAndPurityToNotBeSufficientWhenOtherWarningIsPresent() {
+        OrangeRecord record = orangeRecordWithQCStatus(PurpleQCStatus.WARN_DELETED_GENES);
+        assertFalse(OrangeInterpreter.hasSufficientQuality(record));
+        assertFalse(OrangeInterpreter.hasSufficientQualityAndPurity(record));
     }
 
     @Test
     public void shouldDetermineQualityExcludingPurityToNotBeSufficientWhenOtherWarningIsPresentWithLowPurityWarning() {
-        assertFalse(OrangeInterpreter.hasSufficientQuality(orangeRecordWithQCStatuses(Set.of(PurpleQCStatus.WARN_LOW_PURITY,
-                PurpleQCStatus.WARN_DELETED_GENES))));
+        OrangeRecord record = orangeRecordWithQCStatuses(Set.of(PurpleQCStatus.WARN_LOW_PURITY, PurpleQCStatus.WARN_DELETED_GENES));
+        assertFalse(OrangeInterpreter.hasSufficientQuality(record));
+        assertFalse(OrangeInterpreter.hasSufficientQualityAndPurity(record));
     }
 
     @NotNull
