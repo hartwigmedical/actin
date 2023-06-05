@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.datamodel;
 
-public enum LocationCategory {
+public enum BodyLocationCategory {
     BONE,
     LIVER,
     CNS,

@@ -14,7 +14,7 @@ public abstract class RecommendationCriteria {
 
     public abstract boolean isOptional();
 
-    public abstract int expectedValue();
+    public abstract int expectedBenefitScore();
 
     @NotNull
     public abstract Set<EligibilityFunction> eligibilityFunctions();

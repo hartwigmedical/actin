@@ -158,21 +158,18 @@ public final class TestClinicalFactory {
                 .addCategories(TreatmentCategory.CHEMOTHERAPY)
                 .addDrugs(oxaliplatin, fluorouracil, irinotecan)
                 .maxCycles(8)
-                .recommendationCriteriaByDoid(Collections.emptyMap())
                 .build();
 
         Radiotherapy brachytherapy = ImmutableRadiotherapy.builder()
                 .name("Brachytherapy")
                 .isSystemic(false)
                 .addCategories(TreatmentCategory.RADIOTHERAPY)
-                .recommendationCriteriaByDoid(Collections.emptyMap())
                 .build();
 
         CombinedTherapy radioFolfirinox = ImmutableCombinedTherapy.builder()
                 .name("FOLFIRINOX + radiotherapy")
                 .addTherapies(folfirinox, brachytherapy)
                 .isSystemic(true)
-                .recommendationCriteriaByDoid(Collections.emptyMap())
                 .build();
 
         Immunotherapy pembrolizumab = ImmutableImmunotherapy.builder()
@@ -180,23 +177,18 @@ public final class TestClinicalFactory {
                 .isSystemic(true)
                 .addCategories(TreatmentCategory.IMMUNOTHERAPY)
                 .addDrugs(drug("Pembrolizumab", DrugClass.MONOCLONAL_ANTIBODY))
-                .recommendationCriteriaByDoid(Collections.emptyMap())
                 .build();
 
         CombinedTherapy folfirinoxAndPembrolizumab = ImmutableCombinedTherapy.builder()
                 .name("FOLFIRINOX + pembrolizumab")
                 .addTherapies(folfirinox, pembrolizumab)
                 .isSystemic(true)
-                .recommendationCriteriaByDoid(Collections.emptyMap())
                 .build();
 
-        Chemotherapy folfirinoxLocoRegional = ImmutableChemotherapy.copyOf(folfirinox)
-                .withName("FOLFIRINOX loco-regional")
-                .withIsSystemic(false)
-                .withRecommendationCriteriaByDoid(Collections.emptyMap());
+        Chemotherapy folfirinoxLocoRegional =
+                ImmutableChemotherapy.copyOf(folfirinox).withName("FOLFIRINOX loco-regional").withIsSystemic(false);
 
-        SurgicalTreatment colectomy =
-                ImmutableSurgicalTreatment.builder().name("Colectomy").recommendationCriteriaByDoid(Collections.emptyMap()).build();
+        SurgicalTreatment colectomy = ImmutableSurgicalTreatment.builder().name("Colectomy").build();
 
         TreatmentHistoryEntry surgeryHistoryEntry =
                 ImmutableTreatmentHistoryEntry.builder().addTreatments(colectomy).startYear(2021).intent(Intent.MAINTENANCE).build();

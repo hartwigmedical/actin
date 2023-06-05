@@ -9,8 +9,8 @@ public enum TreatmentResponse {
     PROGRESSIVE_DISEASE,
     STABLE_DISEASE,
     MIXED,
-    PARTIAL_REMISSION,
-    COMPLETE_REMISSION,
+    PARTIAL_RESPONSE,
+    COMPLETE_RESPONSE,
     REMISSION;
 
     @Nullable
@@ -23,9 +23,9 @@ public enum TreatmentResponse {
             case "MIXED":
                 return MIXED;
             case "PR":
-                return PARTIAL_REMISSION;
+                return PARTIAL_RESPONSE;
             case "CR":  // not seen in existing curation
-                return COMPLETE_REMISSION;
+                return COMPLETE_RESPONSE;
             case "REMISSION":
                 return REMISSION;
             default:

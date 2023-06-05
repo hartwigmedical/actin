@@ -100,7 +100,7 @@ public class CurationDatabaseReaderTest {
         assertIntegerEquals(2021, therapyHistoryDetails.stopYear());
         assertNull(therapyHistoryDetails.stopMonth());
         assertIntegerEquals(6, therapyHistoryDetails.cycles());
-        assertEquals(TreatmentResponse.PARTIAL_REMISSION, therapyHistoryDetails.bestResponse());
+        assertEquals(TreatmentResponse.PARTIAL_RESPONSE, therapyHistoryDetails.bestResponse());
         assertEquals(StopReason.TOXICITY, therapyHistoryDetails.stopReason());
         assertEquals(Set.of(TreatmentCategory.CHEMOTHERAPY), treatment.categories());
         assertTrue(treatment.isSystemic());
