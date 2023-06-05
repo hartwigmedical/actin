@@ -51,13 +51,11 @@ class HasSolidPrimaryTumorTest {
 
     companion object {
         private fun createTestDoidModel(): DoidModel {
-            val childParentMap: MutableMap<String, String> = mutableMapOf()
-            for (nonSolidDoid in HasSolidPrimaryTumor.NON_SOLID_CANCER_DOIDS) {
-                childParentMap[nonSolidDoid] = DoidConstants.CANCER_DOID
-            }
-            for (warnDoid in HasSolidPrimaryTumor.WARN_SOLID_CANCER_DOIDS) {
-                childParentMap[warnDoid] = DoidConstants.CANCER_DOID
-            }
+            val childParentMap: Map<String, String> = listOf(
+                HasSolidPrimaryTumor.NON_SOLID_CANCER_DOIDS,
+                HasSolidPrimaryTumor.WARN_SOLID_CANCER_DOIDS
+            ).flatten().associateWith { DoidConstants.CANCER_DOID }
+
             return TestDoidModelFactory.createWithChildToParentMap(childParentMap)
         }
     }

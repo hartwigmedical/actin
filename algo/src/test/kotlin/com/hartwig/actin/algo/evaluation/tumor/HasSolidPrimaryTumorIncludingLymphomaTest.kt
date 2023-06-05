@@ -8,42 +8,53 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
 
 class HasSolidPrimaryTumorIncludingLymphomaTest {
+    val function = HasSolidPrimaryTumorIncludingLymphoma(createTestDoidModel())
+
     @Test
-    fun canEvaluate() {
-        val function = HasSolidPrimaryTumorIncludingLymphoma(createTestDoidModel())
+    fun shouldReturnUndeterminedForNullDoids() {
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids(null)))
-        assertEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(TumorTestFactory.withDoids(DoidConstants.CANCER_DOID))
-        )
+    }
+
+    @Test
+    fun shouldPassForCancerDoid() {
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoids(DoidConstants.CANCER_DOID)))
+    }
+
+    @Test
+    fun shouldPassForBenignNeoplasmDoid() {
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoids(DoidConstants.BENIGN_NEOPLASM_DOID)))
+    }
+
+    @Test
+    fun shouldWarnForWarnSolidCancerDoids() {
         val firstWarnDoid: String = HasSolidPrimaryTumorIncludingLymphoma.WARN_SOLID_CANCER_DOIDS.iterator().next()
         assertEvaluation(
-            EvaluationResult.WARN,
-            function.evaluate(TumorTestFactory.withDoids(DoidConstants.CANCER_DOID, firstWarnDoid))
+            EvaluationResult.WARN, function.evaluate(TumorTestFactory.withDoids(DoidConstants.CANCER_DOID, firstWarnDoid))
         )
+    }
+
+    @Test
+    fun shouldFailForNonSolidCancerDoids() {
+        val firstWarnDoid: String = HasSolidPrimaryTumorIncludingLymphoma.WARN_SOLID_CANCER_DOIDS.iterator().next()
         val firstNonSolidDoid: String = HasSolidPrimaryTumorIncludingLymphoma.NON_SOLID_CANCER_DOIDS.iterator().next()
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(
-                TumorTestFactory.withDoids(
-                    DoidConstants.CANCER_DOID,
-                    firstWarnDoid,
-                    firstNonSolidDoid
-                )
-            )
+            function.evaluate(TumorTestFactory.withDoids(DoidConstants.CANCER_DOID, firstWarnDoid, firstNonSolidDoid))
         )
+    }
+
+    @Test
+    fun shouldFailForNonCancerDoids() {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids("arbitrary doid")))
     }
 
     companion object {
         private fun createTestDoidModel(): DoidModel {
-            val childParentMap: MutableMap<String, String> = mutableMapOf()
-            for (nonSolidDoid in HasSolidPrimaryTumorIncludingLymphoma.NON_SOLID_CANCER_DOIDS) {
-                childParentMap[nonSolidDoid] = DoidConstants.CANCER_DOID
-            }
-            for (warnDoid in HasSolidPrimaryTumorIncludingLymphoma.WARN_SOLID_CANCER_DOIDS) {
-                childParentMap[warnDoid] = DoidConstants.CANCER_DOID
-            }
+            val childParentMap: Map<String, String> = listOf(
+                HasSolidPrimaryTumorIncludingLymphoma.NON_SOLID_CANCER_DOIDS,
+                HasSolidPrimaryTumorIncludingLymphoma.WARN_SOLID_CANCER_DOIDS
+            ).flatten().associateWith { DoidConstants.CANCER_DOID }
+
             return TestDoidModelFactory.createWithChildToParentMap(childParentMap)
         }
     }
