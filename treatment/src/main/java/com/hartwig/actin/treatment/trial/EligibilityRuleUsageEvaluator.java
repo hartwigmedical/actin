@@ -42,6 +42,7 @@ public final class EligibilityRuleUsageEvaluator {
         UNUSED_RULES_TO_KEEP.add(EligibilityRule.HAS_POTENTIAL_HYPOCALCEMIA);
         UNUSED_RULES_TO_KEEP.add(EligibilityRule.HAS_RAPIDLY_DETERIORATING_CONDITION);
         UNUSED_RULES_TO_KEEP.add(EligibilityRule.MUTATION_IN_GENE_X_IN_EXON_Y_TO_EXON_Z);
+        UNUSED_RULES_TO_KEEP.add(EligibilityRule.HAS_HAD_PARTIAL_RESECTION);
     }
 
     private EligibilityRuleUsageEvaluator() {
