@@ -8,7 +8,7 @@ import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteri
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordStatus;
-import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaPrediction;
+import com.hartwig.actin.molecular.datamodel.characteristics.CuppaPrediction;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleMicrosatelliteStatus;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTumorMutationalStatus;
@@ -34,7 +34,11 @@ class CharacteristicsExtractor {
     public MolecularCharacteristics extract(@NotNull OrangeRecord record) {
         PredictedTumorOrigin predictedTumorOrigin = record.cuppa()
                 .flatMap(c -> c.predictions().stream().max(Comparator.comparing(CuppaPrediction::likelihood)))
-                .map(best -> ImmutablePredictedTumorOrigin.builder().tumorType(best.cancerType()).likelihood(best.likelihood()).build())
+                .map(best -> ImmutablePredictedTumorOrigin.builder()
+                        .tumorType(best.cancerType())
+                        .likelihood(best.likelihood())
+                        .predictions(record.cuppa().orElseThrow().predictions())
+                        .build())
                 .orElse(null);
 
         PurpleRecord purple = record.purple();

@@ -200,7 +200,13 @@ public final class TestOrangeFactory {
     @NotNull
     private static CuppaRecord createTestCuppaRecord() {
         return ImmutableCuppaRecord.builder()
-                .addPredictions(TestCuppaFactory.builder().cancerType("Melanoma").likelihood(0.996).build())
+                .addPredictions(TestCuppaFactory.builder()
+                        .cancerType("Melanoma")
+                        .likelihood(0.996)
+                        .snvPairwiseClassifier(0.979)
+                        .genomicPositionClassifier(0.99)
+                        .featureClassifier(0.972)
+                        .build())
                 .build();
     }
 

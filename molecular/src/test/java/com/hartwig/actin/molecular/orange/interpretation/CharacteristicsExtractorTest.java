@@ -6,7 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import com.hartwig.actin.molecular.datamodel.characteristics.CuppaPrediction;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
+import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
@@ -20,6 +22,7 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 public class CharacteristicsExtractorTest {
@@ -31,19 +34,28 @@ public class CharacteristicsExtractorTest {
         CharacteristicsExtractor extractor = createTestExtractor();
         MolecularCharacteristics characteristics = extractor.extract(TestOrangeFactory.createProperTestOrangeRecord());
 
-        assertEquals(0.98, characteristics.purity(), EPSILON);
-        assertEquals(3.1, characteristics.ploidy(), EPSILON);
-        assertEquals("Melanoma", characteristics.predictedTumorOrigin().tumorType());
-        assertEquals(0.996, characteristics.predictedTumorOrigin().likelihood(), EPSILON);
-        assertFalse(characteristics.isMicrosatelliteUnstable());
+        assertDoubleEquals(0.98, characteristics.purity());
+        assertDoubleEquals(3.1, characteristics.ploidy());
+
+        PredictedTumorOrigin predictedOrigin = characteristics.predictedTumorOrigin();
+        assertNotNull(predictedOrigin);
+        assertEquals("Melanoma", predictedOrigin.tumorType());
+        assertEquals(0.996, predictedOrigin.likelihood(), EPSILON);
+        assertEquals(1, predictedOrigin.predictions().size());
+        CuppaPrediction cuppaPrediction = predictedOrigin.predictions().iterator().next();
+        assertDoubleEquals(0.979, cuppaPrediction.snvPairwiseClassifier());
+        assertDoubleEquals(0.99, cuppaPrediction.genomicPositionClassifier());
+        assertDoubleEquals(0.972, cuppaPrediction.featureClassifier());
+
+        assertEquals(false, characteristics.isMicrosatelliteUnstable());
         assertNotNull(characteristics.microsatelliteEvidence());
-        assertFalse(characteristics.isHomologousRepairDeficient());
+        assertEquals(false, characteristics.isHomologousRepairDeficient());
         assertNotNull(characteristics.homologousRepairEvidence());
         assertEquals(13D, characteristics.tumorMutationalBurden(), EPSILON);
-        assertTrue(characteristics.hasHighTumorMutationalBurden());
+        assertEquals(true, characteristics.hasHighTumorMutationalBurden());
         assertNotNull(characteristics.tumorMutationalBurdenEvidence());
         assertEquals(189, (int) characteristics.tumorMutationalLoad());
-        assertTrue(characteristics.hasHighTumorMutationalLoad());
+        assertEquals(true, characteristics.hasHighTumorMutationalLoad());
         assertNotNull(characteristics.tumorMutationalLoadEvidence());
     }
 
@@ -100,6 +112,11 @@ public class CharacteristicsExtractorTest {
 
         MolecularCharacteristics unknown = extractor.extract(withTumorLoadStatus(PurpleTumorMutationalStatus.UNKNOWN));
         assertNull(unknown.hasHighTumorMutationalLoad());
+    }
+
+    private static void assertDoubleEquals(double expected, @Nullable Double actual) {
+        assertNotNull(actual);
+        assertEquals(expected, actual, EPSILON);
     }
 
     @NotNull

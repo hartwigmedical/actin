@@ -11,6 +11,7 @@ import static com.hartwig.actin.util.json.Json.nullableObject;
 import static com.hartwig.actin.util.json.Json.nullableString;
 import static com.hartwig.actin.util.json.Json.number;
 import static com.hartwig.actin.util.json.Json.object;
+import static com.hartwig.actin.util.json.Json.optionalNumber;
 import static com.hartwig.actin.util.json.Json.string;
 
 import java.io.File;
@@ -33,15 +34,15 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
+import com.hartwig.actin.molecular.datamodel.characteristics.CuppaPrediction;
+import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableCuppaPrediction;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRefGenomeVersion;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordStatus;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ImmutableChordRecord;
-import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaPrediction;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
-import com.hartwig.actin.molecular.orange.datamodel.cuppa.ImmutableCuppaPrediction;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.ImmutableCuppaRecord;
 import com.hartwig.actin.molecular.orange.datamodel.lilac.ImmutableLilacHlaAllele;
 import com.hartwig.actin.molecular.orange.datamodel.lilac.ImmutableLilacRecord;
@@ -366,6 +367,9 @@ public final class OrangeJson {
                         prediction -> ImmutableCuppaPrediction.builder()
                                 .cancerType(string(prediction, "cancerType"))
                                 .likelihood(number(prediction, "likelihood"))
+                                .snvPairwiseClassifier(optionalNumber(prediction, "snvPairwiseClassifier"))
+                                .genomicPositionClassifier(optionalNumber(prediction, "genomicPositionClassifier"))
+                                .featureClassifier(optionalNumber(prediction, "featureClassifier"))
                                 .build());
                 return ImmutableCuppaRecord.builder().predictions(predictions).build();
             });

@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.orange.datamodel.cuppa;
+package com.hartwig.actin.molecular.datamodel.characteristics;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -12,4 +12,13 @@ public abstract class CuppaPrediction {
     public abstract String cancerType();
 
     public abstract double likelihood();
+
+    @Nullable
+    public abstract Double snvPairwiseClassifier();
+
+    @Nullable
+    public abstract Double genomicPositionClassifier();
+
+    @Nullable
+    public abstract Double featureClassifier();
 }

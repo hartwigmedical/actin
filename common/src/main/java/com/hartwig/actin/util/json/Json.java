@@ -105,6 +105,11 @@ public final class Json {
     }
 
     @Nullable
+    public static Double optionalNumber(@NotNull JsonObject object, @NotNull String field) {
+        return object.has(field) ? nullableNumber(object, field) : null;
+    }
+
+    @Nullable
     public static Double nullableNumber(@NotNull JsonObject object, @NotNull String field) {
         return !isNull(object, field) ? number(object, field) : null;
     }
