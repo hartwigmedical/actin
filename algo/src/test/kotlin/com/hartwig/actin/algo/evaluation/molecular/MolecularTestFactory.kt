@@ -333,6 +333,27 @@ internal object MolecularTestFactory {
         )
     }
 
+    fun withTumorMutationalBurdenAndHasSufficientQualityAndPurityAndHasSufficientQuality(
+        tumorMutationalBurden: Double?,
+        hasSufficientQualityAndPurity: Boolean,
+        hasSufficientQuality: Boolean,
+    ): PatientRecord {
+        val base = TestMolecularFactory.createMinimalTestMolecularRecord()
+        return withMolecularRecord(
+            ImmutableMolecularRecord.builder()
+                .from(base)
+                .characteristics(
+                    ImmutableMolecularCharacteristics.builder()
+                        .from(base.characteristics())
+                        .tumorMutationalBurden(tumorMutationalBurden)
+                        .build()
+                )
+                .hasSufficientQualityAndPurity(hasSufficientQualityAndPurity)
+                .hasSufficientQuality(hasSufficientQuality)
+                .build()
+        )
+    }
+
     fun withTumorMutationalLoad(tumorMutationalLoad: Int?): PatientRecord {
         val base = TestMolecularFactory.createMinimalTestMolecularRecord()
         return withMolecularRecord(
@@ -363,6 +384,27 @@ internal object MolecularTestFactory {
                         .build()
                 )
                 .hasSufficientQualityAndPurity(hasSufficientQualityAndPurity)
+                .build()
+        )
+    }
+
+    fun withTumorMutationalLoadAndHasSufficientQualityAndPurityAndHasSufficientQuality(
+        tumorMutationalLoad: Int?,
+        hasSufficientQualityAndPurity: Boolean,
+        hasSufficientQuality: Boolean
+    ): PatientRecord {
+        val base = TestMolecularFactory.createMinimalTestMolecularRecord()
+        return withMolecularRecord(
+            ImmutableMolecularRecord.builder()
+                .from(base)
+                .characteristics(
+                    ImmutableMolecularCharacteristics.builder()
+                        .from(base.characteristics())
+                        .tumorMutationalLoad(tumorMutationalLoad)
+                        .build()
+                )
+                .hasSufficientQualityAndPurity(hasSufficientQualityAndPurity)
+                .hasSufficientQuality(hasSufficientQuality)
                 .build()
         )
     }
