@@ -2,6 +2,9 @@ package com.hartwig.actin.util.json;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
@@ -155,5 +158,15 @@ public final class Json {
 
     private static boolean isNull(@NotNull JsonObject object, @NotNull String field) {
         return object.get(field).isJsonNull();
+    }
+
+    @NotNull
+    public static <T> List<T> extractListFromJson(@NotNull JsonArray jsonArray, Function<JsonObject, T> extractor) {
+        return jsonArray.asList().stream().map(JsonElement::getAsJsonObject).map(extractor).collect(Collectors.toList());
+    }
+
+    @NotNull
+    public static <T> Set<T> extractSetFromJson(@NotNull JsonArray jsonArray, Function<JsonObject, T> extractor) {
+        return jsonArray.asList().stream().map(JsonElement::getAsJsonObject).map(extractor).collect(Collectors.toSet());
     }
 }

@@ -3,6 +3,8 @@ package com.hartwig.actin.molecular.orange.serialization;
 import static com.hartwig.actin.util.json.Json.array;
 import static com.hartwig.actin.util.json.Json.bool;
 import static com.hartwig.actin.util.json.Json.date;
+import static com.hartwig.actin.util.json.Json.extractListFromJson;
+import static com.hartwig.actin.util.json.Json.extractSetFromJson;
 import static com.hartwig.actin.util.json.Json.integer;
 import static com.hartwig.actin.util.json.Json.nullableArray;
 import static com.hartwig.actin.util.json.Json.nullableInteger;
@@ -21,7 +23,6 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Sets;
@@ -363,7 +364,7 @@ public final class OrangeJson {
 
         private static Optional<CuppaRecord> toCuppaRecord(@Nullable JsonObject nullableCuppa) {
             return Optional.ofNullable(nullableCuppa).map(cuppa -> {
-                Set<CuppaPrediction> predictions = extractSetFromJson(array(cuppa, "predictions"),
+                List<CuppaPrediction> predictions = extractListFromJson(array(cuppa, "predictions"),
                         prediction -> ImmutableCuppaPrediction.builder()
                                 .cancerType(string(prediction, "cancerType"))
                                 .likelihood(number(prediction, "likelihood"))
@@ -423,9 +424,5 @@ public final class OrangeJson {
                     .map(chord -> ImmutableChordRecord.builder().hrStatus(ChordStatus.valueOf(string(chord, "hrStatus"))).build());
         }
 
-        @NotNull
-        private static <T> Set<T> extractSetFromJson(@NotNull JsonArray jsonArray, Function<JsonObject, T> extractor) {
-            return jsonArray.asList().stream().map(JsonElement::getAsJsonObject).map(extractor).collect(Collectors.toSet());
-        }
     }
 }

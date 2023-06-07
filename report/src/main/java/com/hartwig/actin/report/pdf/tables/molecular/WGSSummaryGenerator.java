@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.molecular;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -8,6 +9,7 @@ import java.util.stream.Stream;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.molecular.datamodel.characteristics.CuppaPrediction;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.report.interpretation.EvaluatedCohort;
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer;
@@ -128,9 +130,25 @@ public class WGSSummaryGenerator implements TableGenerator {
         if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin) && molecular.hasSufficientQualityAndPurity()) {
             return TumorOriginInterpreter.interpret(predictedTumorOrigin);
         } else if (molecular.hasSufficientQuality() && predictedTumorOrigin != null) {
-            return String.format("Inconclusive (%s %s)",
-                    predictedTumorOrigin.tumorType(),
-                    Formats.percentage(predictedTumorOrigin.likelihood()));
+            List<CuppaPrediction> predictionsMeetingThreshold = predictedTumorOrigin.predictions()
+                    .stream()
+                    .filter(prediction -> prediction.likelihood() > 0.10)
+                    .sorted(Comparator.comparing(CuppaPrediction::likelihood, Comparator.reverseOrder()))
+                    .limit(3)
+                    .collect(Collectors.toList());
+
+            if (predictionsMeetingThreshold.isEmpty()) {
+                return String.format("Inconclusive (%s %s)",
+                        predictedTumorOrigin.tumorType(),
+                        Formats.percentage(predictedTumorOrigin.likelihood()));
+            } else {
+                return String.format("Inconclusive (%s)",
+                        predictionsMeetingThreshold.stream()
+                                .map(prediction -> String.format("%s %s",
+                                        prediction.cancerType(),
+                                        Formats.percentage(prediction.likelihood())))
+                                .collect(Collectors.joining(", ")));
+            }
         } else {
             return Formats.VALUE_UNKNOWN;
         }
