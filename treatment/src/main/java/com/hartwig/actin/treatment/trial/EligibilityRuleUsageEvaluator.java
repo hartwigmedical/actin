@@ -56,6 +56,7 @@ public final class EligibilityRuleUsageEvaluator {
         UNUSED_RULES_TO_KEEP.add(EligibilityRule.HAS_HAD_COMPLETE_RESECTION);
         UNUSED_RULES_TO_KEEP.add(EligibilityRule.MEETS_SPECIFIC_REQUIREMENTS_REGARDING_BIOPSY);
         UNUSED_RULES_TO_KEEP.add(EligibilityRule.PD_L1_STATUS_MUST_BE_AVAILABLE);
+        UNUSED_RULES_TO_KEEP.add(EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR);
     }
 
     private EligibilityRuleUsageEvaluator() {
