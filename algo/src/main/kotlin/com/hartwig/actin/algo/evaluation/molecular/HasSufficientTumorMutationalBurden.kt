@@ -25,14 +25,16 @@ class HasSufficientTumorMutationalBurden internal constructor(private val minTum
                 .build()
         }
         val tumorMutationalBurdenIsAlmostAllowed = minTumorMutationalBurden - tumorMutationalBurden <= 0.5
-        return if (tumorMutationalBurdenIsAlmostAllowed && !record.molecular().hasSufficientQualityAndPurity()) {
+        return if (tumorMutationalBurdenIsAlmostAllowed && record.molecular().hasSufficientQuality() && !record.molecular()
+                .hasSufficientQualityAndPurity()
+        ) {
             unrecoverable()
                 .result(EvaluationResult.WARN)
                 .addWarnSpecificMessages(
                     "TMB of sample " + tumorMutationalBurden + " almost exceeds " + minTumorMutationalBurden
-                            + " while data quality is insufficient (perhaps a few mutations are missed)"
+                            + " while purity is low: perhaps a few mutations are missed and TMB may be adequate?"
                 )
-                .addWarnGeneralMessages("Inadequate TMB")
+                .addWarnGeneralMessages("TMB almost sufficient with low purity")
                 .addInclusionMolecularEvents(MolecularCharacteristicEvents.ALMOST_SUFFICIENT_TUMOR_MUTATIONAL_BURDEN)
                 .build()
         } else unrecoverable()
