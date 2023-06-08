@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.DateComparison.isAfterDate
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.util.ApplicationConfig
 import java.time.LocalDate
 

@@ -8,10 +8,10 @@ import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity
 import com.hartwig.actin.clinical.datamodel.Intolerance
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.clinical.datamodel.Toxicity
 import com.hartwig.actin.clinical.datamodel.ToxicitySource

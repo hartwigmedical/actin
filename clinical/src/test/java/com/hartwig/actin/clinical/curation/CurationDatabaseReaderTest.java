@@ -2,11 +2,13 @@ package com.hartwig.actin.clinical.curation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
@@ -25,18 +27,27 @@ import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
+import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig;
 import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation;
 import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation;
+import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
+import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason;
+import com.hartwig.actin.clinical.datamodel.treatment.history.TherapyHistoryDetails;
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.junit.Before;
 import org.junit.Test;
 
 public class CurationDatabaseReaderTest {
@@ -44,35 +55,18 @@ public class CurationDatabaseReaderTest {
     private static final double EPSILON = 1.0E-10;
 
     private static final String CURATION_DIRECTORY = Resources.getResource("curation").getPath();
+    private final CurationDatabaseReader reader =
+            new CurationDatabaseReader(TestCurationFactory.createMinimalTestCurationDatabaseValidator());
+    private CurationDatabase database;
 
-    @Test
-    public void canReadFromTestDirectory() throws IOException {
-        CurationValidator validator = TestCurationFactory.createMinimalTestCurationDatabaseValidator();
-        CurationDatabaseReader reader = new CurationDatabaseReader(validator);
-        CurationDatabase database = reader.read(CURATION_DIRECTORY);
-
-        assertPrimaryTumorConfigs(database.primaryTumorConfigs());
-        assertOncologicalHistoryConfigs(database.oncologicalHistoryConfigs());
-        assertSecondPrimaryConfigs(database.secondPrimaryConfigs());
-        assertLesionLocationConfigs(database.lesionLocationConfigs());
-        assertNonOncologicalHistoryConfigs(database.nonOncologicalHistoryConfigs());
-        assertECGConfigs(database.ecgConfigs());
-        assertInfectionConfigs(database.infectionConfigs());
-        assertComplicationConfigs(database.complicationConfigs());
-        assertToxicityConfigs(database.toxicityConfigs());
-        assertMolecularTestConfigs(database.molecularTestConfigs());
-        assertMedicationNameConfigs(database.medicationNameConfigs());
-        assertMedicationDosageConfigs(database.medicationDosageConfigs());
-        assertMedicationCategoryConfigs(database.medicationCategoryConfigs());
-        assertAllergyConfigs(database.intoleranceConfigs());
-
-        assertAdministrationRouteTranslations(database.administrationRouteTranslations());
-        assertLaboratoryTranslations(database.laboratoryTranslations());
-        assertToxicityTranslations(database.toxicityTranslations());
-        assertBloodTransfusionTranslations(database.bloodTransfusionTranslations());
+    @Before
+    public void createDatabase() throws IOException {
+        database = reader.read(CURATION_DIRECTORY);
     }
 
-    private static void assertPrimaryTumorConfigs(@NotNull List<PrimaryTumorConfig> configs) {
+    @Test
+    public void shouldReadPrimaryTumorConfigs() {
+        List<PrimaryTumorConfig> configs = database.primaryTumorConfigs();
         assertEquals(1, configs.size());
 
         PrimaryTumorConfig config = configs.get(0);
@@ -86,19 +80,49 @@ public class CurationDatabaseReaderTest {
         assertTrue(config.doids().contains("299"));
     }
 
-    private static void assertOncologicalHistoryConfigs(@NotNull List<OncologicalHistoryConfig> configs) {
+    @Test
+    public void shouldReadTreatmentHistoryEntryConfigs() {
+        List<TreatmentHistoryEntryConfig> configs = database.treatmentHistoryEntryConfigs();
+        assertEquals(1, configs.size());
+
+        TreatmentHistoryEntryConfig config = find(configs, "Capecitabine/Oxaliplatin 2020-2021");
+        assertFalse(config.ignore());
+
+        TreatmentHistoryEntry curated = config.curated();
+        assertNotNull(curated);
+        Treatment treatment = curated.treatments().iterator().next();
+        assertEquals("Capecitabine+Oxaliplatin", treatment.name());
+        assertIntegerEquals(2020, curated.startYear());
+        assertNull(curated.startMonth());
+
+        TherapyHistoryDetails therapyHistoryDetails = curated.therapyHistoryDetails();
+        assertNotNull(therapyHistoryDetails);
+        assertIntegerEquals(2021, therapyHistoryDetails.stopYear());
+        assertNull(therapyHistoryDetails.stopMonth());
+        assertIntegerEquals(6, therapyHistoryDetails.cycles());
+        assertEquals(TreatmentResponse.PARTIAL_RESPONSE, therapyHistoryDetails.bestResponse());
+        assertEquals(StopReason.TOXICITY, therapyHistoryDetails.stopReason());
+        assertEquals(Set.of(TreatmentCategory.CHEMOTHERAPY), treatment.categories());
+        assertTrue(treatment.isSystemic());
+        assertNull(curated.trialAcronym());
+    }
+
+    @Test
+    public void shouldReadOncologicalHistoryConfigs() {
+        List<OncologicalHistoryConfig> configs = database.oncologicalHistoryConfigs();
         assertEquals(1, configs.size());
 
         OncologicalHistoryConfig config = find(configs, "Capecitabine/Oxaliplatin 2020-2021");
         assertFalse(config.ignore());
 
         PriorTumorTreatment curated = config.curated();
+        assertNotNull(curated);
         assertEquals("Capecitabine+Oxaliplatin", curated.name());
-        assertEquals(2020, (int) curated.startYear());
+        assertIntegerEquals(2020, curated.startYear());
         assertNull(curated.startMonth());
-        assertEquals(2021, (int) curated.stopYear());
+        assertIntegerEquals(2021, curated.stopYear());
         assertNull(curated.stopMonth());
-        assertEquals(6, (int) curated.cycles());
+        assertIntegerEquals(6, curated.cycles());
         assertEquals("PR", curated.bestResponse());
         assertEquals("toxicity", curated.stopReason());
         assertEquals(Sets.newHashSet(TreatmentCategory.CHEMOTHERAPY), curated.categories());
@@ -114,27 +138,32 @@ public class CurationDatabaseReaderTest {
         assertNull(curated.ablationType());
     }
 
-    private static void assertSecondPrimaryConfigs(@NotNull List<SecondPrimaryConfig> configs) {
+    @Test
+    public void shouldReadSecondPrimaryConfigs() {
+        List<SecondPrimaryConfig> configs = database.secondPrimaryConfigs();
         assertEquals(1, configs.size());
 
         SecondPrimaryConfig config = find(configs, "basaalcelcarcinoom (2014) | 2014");
         assertFalse(config.ignore());
 
         PriorSecondPrimary curated = config.curated();
+        assertNotNull(curated);
         assertEquals(Strings.EMPTY, curated.tumorLocation());
         assertEquals(Strings.EMPTY, curated.tumorSubLocation());
         assertEquals("Carcinoma", curated.tumorType());
         assertEquals("Basal cell carcinoma", curated.tumorSubType());
         assertEquals(Sets.newHashSet("2513"), curated.doids());
-        assertEquals(2014, (int) curated.diagnosedYear());
-        assertEquals(1, (int) curated.diagnosedMonth());
+        assertIntegerEquals(2014, curated.diagnosedYear());
+        assertIntegerEquals(1, curated.diagnosedMonth());
         assertEquals("None", curated.treatmentHistory());
-        assertEquals(2014, (int) curated.lastTreatmentYear());
-        assertEquals(2, (int) curated.lastTreatmentMonth());
+        assertIntegerEquals(2014, curated.lastTreatmentYear());
+        assertIntegerEquals(2, curated.lastTreatmentMonth());
         assertFalse(curated.isActive());
     }
 
-    private static void assertLesionLocationConfigs(@NotNull List<LesionLocationConfig> configs) {
+    @Test
+    public void shouldReadLesionLocationConfigs() {
+        List<LesionLocationConfig> configs = database.lesionLocationConfigs();
         assertEquals(1, configs.size());
 
         LesionLocationConfig config = configs.get(0);
@@ -142,7 +171,9 @@ public class CurationDatabaseReaderTest {
         assertEquals("Liver", config.location());
     }
 
-    private static void assertNonOncologicalHistoryConfigs(@NotNull List<NonOncologicalHistoryConfig> configs) {
+    @Test
+    public void shouldReadNonOncologicalHistoryConfigs() {
+        List<NonOncologicalHistoryConfig> configs = database.nonOncologicalHistoryConfigs();
         assertEquals(4, configs.size());
         NonOncologicalHistoryConfig config1 = find(configs, "Levercirrose/ sarcoidose");
         assertFalse(config1.ignore());
@@ -151,8 +182,8 @@ public class CurationDatabaseReaderTest {
 
         PriorOtherCondition curated1 = config1.priorOtherCondition().get();
         assertEquals("Liver cirrhosis and sarcoidosis", curated1.name());
-        assertEquals(2019, (int) curated1.year());
-        assertEquals(7, (int) curated1.month());
+        assertIntegerEquals(2019, curated1.year());
+        assertIntegerEquals(7, curated1.month());
         assertEquals("Liver disease", curated1.category());
         assertEquals(2, curated1.doids().size());
         assertTrue(curated1.doids().contains("5082"));
@@ -176,7 +207,9 @@ public class CurationDatabaseReaderTest {
         assertTrue(curated4.isContraindicationForTherapy());
     }
 
-    private static void assertECGConfigs(@NotNull List<ECGConfig> configs) {
+    @Test
+    public void shouldReadECGConfigs() {
+        List<ECGConfig> configs = database.ecgConfigs();
         assertEquals(4, configs.size());
 
         ECGConfig sinus = find(configs, "Sinus Tachycardia");
@@ -192,20 +225,22 @@ public class CurationDatabaseReaderTest {
         ECGConfig qtcf = find(configs, "qtcf");
         assertTrue(qtcf.isQTCF());
         assertFalse(qtcf.ignore());
-        assertEquals(470, (int) qtcf.qtcfValue());
+        assertIntegerEquals(470, qtcf.qtcfValue());
         assertEquals("ms", qtcf.qtcfUnit());
 
         ECGConfig jtc = find(configs, "jtc");
         assertTrue(jtc.isJTC());
         assertFalse(jtc.ignore());
-        assertEquals(570, (int) jtc.jtcValue());
+        assertIntegerEquals(570, jtc.jtcValue());
         assertEquals("ms", jtc.jtcUnit());
 
         ECGConfig weird = find(configs, "weird");
         assertTrue(weird.ignore());
     }
 
-    private static void assertInfectionConfigs(@NotNull List<InfectionConfig> configs) {
+    @Test
+    public void shouldReadInfectionConfigs() {
+        List<InfectionConfig> configs = database.infectionConfigs();
         assertEquals(2, configs.size());
 
         InfectionConfig config1 = find(configs, "YES lung abces");
@@ -215,37 +250,47 @@ public class CurationDatabaseReaderTest {
         assertEquals("No", config2.interpretation());
     }
 
-    private static void assertComplicationConfigs(@NotNull List<ComplicationConfig> configs) {
+    @Test
+    public void shouldReadComplicationConfigs() {
+        List<ComplicationConfig> configs = database.complicationConfigs();
         assertEquals(2, configs.size());
 
         ComplicationConfig config1 = find(configs, "something");
         assertFalse(config1.ignore());
         assertFalse(config1.impliesUnknownComplicationState());
-        assertEquals("curated something", config1.curated().name());
-        assertEquals(2, config1.curated().categories().size());
-        assertEquals(2000, (int) config1.curated().year());
-        assertEquals(1, (int) config1.curated().month());
+        Complication curated1 = config1.curated();
+        assertNotNull(curated1);
+        assertEquals("curated something", curated1.name());
+        assertEquals(2, curated1.categories().size());
+        assertIntegerEquals(2000, curated1.year());
+        assertIntegerEquals(1, curated1.month());
 
         ComplicationConfig config2 = find(configs, "unknown");
         assertFalse(config2.ignore());
         assertTrue(config2.impliesUnknownComplicationState());
-        assertEquals(Strings.EMPTY, config2.curated().name());
-        assertEquals(0, config2.curated().categories().size());
-        assertNull(config2.curated().year());
-        assertNull(config2.curated().month());
+        Complication curated2 = config2.curated();
+        assertNotNull(curated2);
+        assertEquals(Strings.EMPTY, curated2.name());
+        assertEquals(0, curated2.categories().size());
+        assertNull(curated2.year());
+        assertNull(curated2.month());
     }
 
-    private static void assertToxicityConfigs(@NotNull List<ToxicityConfig> configs) {
+    @Test
+    public void shouldReadToxicityConfigs() {
+        List<ToxicityConfig> configs = database.toxicityConfigs();
         assertEquals(1, configs.size());
 
         ToxicityConfig config = configs.get(0);
         assertEquals("Neuropathy GR3", config.input());
         assertEquals("Neuropathy", config.name());
         assertEquals(Sets.newHashSet("Neuro"), config.categories());
-        assertEquals(3, (int) config.grade());
+        assertIntegerEquals(3, config.grade());
     }
 
-    private static void assertMolecularTestConfigs(@NotNull List<MolecularTestConfig> configs) {
+    @Test
+    public void shouldReadMolecularTestConfigs() {
+        List<MolecularTestConfig> configs = database.molecularTestConfigs();
         assertEquals(1, configs.size());
 
         MolecularTestConfig config = configs.get(0);
@@ -262,7 +307,9 @@ public class CurationDatabaseReaderTest {
                 .build(), config.curated());
     }
 
-    private static void assertMedicationNameConfigs(@NotNull List<MedicationNameConfig> configs) {
+    @Test
+    public void shouldReadMedicationNameConfigs() {
+        List<MedicationNameConfig> configs = database.medicationNameConfigs();
         assertEquals(2, configs.size());
 
         MedicationNameConfig config1 = find(configs, "A en B");
@@ -273,16 +320,18 @@ public class CurationDatabaseReaderTest {
         assertTrue(config2.ignore());
     }
 
-    private static void assertMedicationDosageConfigs(@NotNull List<MedicationDosageConfig> configs) {
+    @Test
+    public void shouldReadMedicationDosageConfigs() {
+        List<MedicationDosageConfig> configs = database.medicationDosageConfigs();
         assertEquals(2, configs.size());
 
         MedicationDosageConfig config1 = find(configs, "once per day 50-60 mg");
-        assertEquals(50, config1.dosageMin(), EPSILON);
-        assertEquals(60, config1.dosageMax(), EPSILON);
+        assertDoubleEquals(50, config1.dosageMin());
+        assertDoubleEquals(60, config1.dosageMax());
         assertEquals("mg", config1.dosageUnit());
-        assertEquals(1, config1.frequency(), EPSILON);
+        assertDoubleEquals(1, config1.frequency());
         assertEquals("day", config1.frequencyUnit());
-        assertFalse(config1.ifNeeded());
+        assertEquals(Boolean.FALSE, config1.ifNeeded());
 
         MedicationDosageConfig config2 = find(configs, "empty");
         assertNull(config2.dosageMin());
@@ -293,7 +342,9 @@ public class CurationDatabaseReaderTest {
         assertNull(config2.ifNeeded());
     }
 
-    private static void assertMedicationCategoryConfigs(@NotNull List<MedicationCategoryConfig> configs) {
+    @Test
+    public void shouldReadMedicationCategoryConfigs() {
+        List<MedicationCategoryConfig> configs = database.medicationCategoryConfigs();
         assertEquals(2, configs.size());
 
         MedicationCategoryConfig paracetamol = find(configs, "Paracetamol");
@@ -303,7 +354,9 @@ public class CurationDatabaseReaderTest {
         assertEquals(Sets.newHashSet("Beta2 sympathomimetics", "Corticosteroids"), formoterol.categories());
     }
 
-    private static void assertAllergyConfigs(@NotNull List<IntoleranceConfig> configs) {
+    @Test
+    public void shouldReadAllergyConfigs() {
+        List<IntoleranceConfig> configs = database.intoleranceConfigs();
         assertEquals(1, configs.size());
 
         IntoleranceConfig config = find(configs, "Clindamycine");
@@ -322,7 +375,9 @@ public class CurationDatabaseReaderTest {
         throw new IllegalStateException("Could not find input '" + input + "' in configs");
     }
 
-    private static void assertAdministrationRouteTranslations(@NotNull List<AdministrationRouteTranslation> translations) {
+    @Test
+    public void shouldReadAdministrationRouteTranslations() {
+        List<AdministrationRouteTranslation> translations = database.administrationRouteTranslations();
         assertEquals(1, translations.size());
 
         AdministrationRouteTranslation translation = translations.get(0);
@@ -330,7 +385,9 @@ public class CurationDatabaseReaderTest {
         assertEquals("Oral", translation.translatedAdministrationRoute());
     }
 
-    private static void assertLaboratoryTranslations(@NotNull List<LaboratoryTranslation> translations) {
+    @Test
+    public void shouldReadLaboratoryTranslations() {
+        List<LaboratoryTranslation> translations = database.laboratoryTranslations();
         assertEquals(1, translations.size());
 
         LaboratoryTranslation translation = translations.get(0);
@@ -340,7 +397,9 @@ public class CurationDatabaseReaderTest {
         assertEquals("Adrenocorticotropic hormone", translation.translatedName());
     }
 
-    private static void assertToxicityTranslations(@NotNull List<ToxicityTranslation> translations) {
+    @Test
+    public void shouldReadToxicityTranslations() {
+        List<ToxicityTranslation> translations = database.toxicityTranslations();
         assertEquals(1, translations.size());
 
         ToxicityTranslation translation = translations.get(0);
@@ -348,11 +407,23 @@ public class CurationDatabaseReaderTest {
         assertEquals("Pain", translation.translatedToxicity());
     }
 
-    private static void assertBloodTransfusionTranslations(@NotNull List<BloodTransfusionTranslation> translations) {
+    @Test
+    public void shouldReadBloodTransfusionTranslations() {
+        List<BloodTransfusionTranslation> translations = database.bloodTransfusionTranslations();
         assertEquals(1, translations.size());
 
         BloodTransfusionTranslation translation = translations.get(0);
         assertEquals("Thrombocytenconcentraat", translation.product());
         assertEquals("Thrombocyte concentrate", translation.translatedProduct());
+    }
+
+    private void assertIntegerEquals(int expected, @Nullable Integer actual) {
+        assertNotNull(actual);
+        assertEquals(expected, (int) actual);
+    }
+
+    private void assertDoubleEquals(double expected, @Nullable Double actual) {
+        assertNotNull(actual);
+        assertEquals(expected, actual, EPSILON);
     }
 }

@@ -22,10 +22,10 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import org.junit.Assert
 import org.junit.Test

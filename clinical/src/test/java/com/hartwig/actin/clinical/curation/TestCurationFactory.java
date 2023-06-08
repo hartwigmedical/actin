@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig;
 import com.hartwig.actin.clinical.curation.config.ECGConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableComplicationConfig;
@@ -20,6 +19,7 @@ import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryCon
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableSecondPrimaryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableToxicityConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableTreatmentHistoryEntryConfig;
 import com.hartwig.actin.clinical.curation.config.InfectionConfig;
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
@@ -33,6 +33,7 @@ import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig;
 import com.hartwig.actin.clinical.curation.config.TestCurationConfigFactory;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
+import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig;
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory;
 import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
@@ -46,8 +47,10 @@ import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary;
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableChemotherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireRawEntryMapper;
 import com.hartwig.actin.doid.TestDoidModelFactory;
 
@@ -78,6 +81,7 @@ public final class TestCurationFactory {
     public static CurationDatabase createTestCurationDatabase() {
         return ImmutableCurationDatabase.builder()
                 .primaryTumorConfigs(createTestPrimaryTumorConfigs())
+                .treatmentHistoryEntryConfigs(createTestTreatmentHistoryEntryConfigs())
                 .oncologicalHistoryConfigs(createTestOncologicalHistoryConfigs())
                 .secondPrimaryConfigs(createTestSecondPrimaryConfigs())
                 .lesionLocationConfigs(createTestLesionLocationConfigs())
@@ -100,9 +104,7 @@ public final class TestCurationFactory {
 
     @NotNull
     private static List<PrimaryTumorConfig> createTestPrimaryTumorConfigs() {
-        List<PrimaryTumorConfig> configs = Lists.newArrayList();
-
-        configs.add(ImmutablePrimaryTumorConfig.builder()
+        return List.of(ImmutablePrimaryTumorConfig.builder()
                 .input("Unknown | Carcinoma")
                 .primaryTumorLocation("Unknown")
                 .primaryTumorSubLocation("CUP")
@@ -111,48 +113,56 @@ public final class TestCurationFactory {
                 .primaryTumorExtraDetails(Strings.EMPTY)
                 .addDoids("299")
                 .build());
+    }
 
-        return configs;
+    @NotNull
+    private static List<TreatmentHistoryEntryConfig> createTestTreatmentHistoryEntryConfigs() {
+        ImmutableChemotherapy cisplatin =
+                ImmutableChemotherapy.builder().name("Cisplatin").addCategories(TreatmentCategory.CHEMOTHERAPY).isSystemic(true).build();
+
+        return List.of(ImmutableTreatmentHistoryEntryConfig.builder()
+                        .input("Cis 2020 2021")
+                        .ignore(false)
+                        .curated(ImmutableTreatmentHistoryEntry.builder().addTreatments(cisplatin).startYear(2020).build())
+                        .build(),
+                ImmutableTreatmentHistoryEntryConfig.builder()
+                        .input("Cis 2020 2021")
+                        .ignore(false)
+                        .curated(ImmutableTreatmentHistoryEntry.builder().addTreatments(cisplatin).startYear(2021).build())
+                        .build(),
+                ImmutableTreatmentHistoryEntryConfig.builder().input("no systemic treatment").ignore(true).build());
     }
 
     @NotNull
     private static List<OncologicalHistoryConfig> createTestOncologicalHistoryConfigs() {
-        List<OncologicalHistoryConfig> configs = Lists.newArrayList();
-
-        configs.add(ImmutableOncologicalHistoryConfig.builder()
-                .input("Cis 2020 2021")
-                .ignore(false)
-                .curated(ImmutablePriorTumorTreatment.builder()
-                        .name("Cisplatin")
-                        .startYear(2020)
-                        .addCategories(TreatmentCategory.CHEMOTHERAPY)
-                        .isSystemic(true)
-                        .chemoType("platinum")
-                        .build())
-                .build());
-
-        configs.add(ImmutableOncologicalHistoryConfig.builder()
-                .input("Cis 2020 2021")
-                .ignore(false)
-                .curated(ImmutablePriorTumorTreatment.builder()
-                        .name("Cisplatin")
-                        .startYear(2021)
-                        .addCategories(TreatmentCategory.CHEMOTHERAPY)
-                        .isSystemic(true)
-                        .chemoType("platinum")
-                        .build())
-                .build());
-
-        configs.add(ImmutableOncologicalHistoryConfig.builder().input("no systemic treatment").ignore(true).build());
-
-        return configs;
+        return List.of(ImmutableOncologicalHistoryConfig.builder()
+                        .input("Cis 2020 2021")
+                        .ignore(false)
+                        .curated(ImmutablePriorTumorTreatment.builder()
+                                .name("Cisplatin")
+                                .startYear(2020)
+                                .addCategories(TreatmentCategory.CHEMOTHERAPY)
+                                .isSystemic(true)
+                                .chemoType("platinum")
+                                .build())
+                        .build(),
+                ImmutableOncologicalHistoryConfig.builder()
+                        .input("Cis 2020 2021")
+                        .ignore(false)
+                        .curated(ImmutablePriorTumorTreatment.builder()
+                                .name("Cisplatin")
+                                .startYear(2021)
+                                .addCategories(TreatmentCategory.CHEMOTHERAPY)
+                                .isSystemic(true)
+                                .chemoType("platinum")
+                                .build())
+                        .build(),
+                ImmutableOncologicalHistoryConfig.builder().input("no systemic treatment").ignore(true).build());
     }
 
     @NotNull
     private static List<SecondPrimaryConfig> createTestSecondPrimaryConfigs() {
-        List<SecondPrimaryConfig> configs = Lists.newArrayList();
-
-        configs.add(ImmutableSecondPrimaryConfig.builder()
+        return List.of(ImmutableSecondPrimaryConfig.builder()
                 .input("Breast cancer Jan-2018")
                 .ignore(false)
                 .curated(ImmutablePriorSecondPrimary.builder()
@@ -166,172 +176,117 @@ public final class TestCurationFactory {
                         .isActive(false)
                         .build())
                 .build());
-
-        return configs;
     }
 
     @NotNull
     private static List<LesionLocationConfig> createTestLesionLocationConfigs() {
-        List<LesionLocationConfig> configs = Lists.newArrayList();
-
-        configs.add(ImmutableLesionLocationConfig.builder().input("Abdominal").location("Abdominal").build());
-
-        configs.add(ImmutableLesionLocationConfig.builder()
-                .input("Lever")
-                .location("Liver")
-                .category(LesionLocationCategory.LIVER)
-                .build());
-
-        configs.add(ImmutableLesionLocationConfig.builder().input("Cns").location("CNS").category(LesionLocationCategory.CNS).build());
-
-        configs.add(ImmutableLesionLocationConfig.builder()
-                .input("Brain")
-                .location("Brain")
-                .category(LesionLocationCategory.BRAIN)
-                .build());
-
-        configs.add(ImmutableLesionLocationConfig.builder().input("Bone").location("Bone").category(LesionLocationCategory.BONE).build());
-
-        configs.add(ImmutableLesionLocationConfig.builder()
-                .input("Pulmonal")
-                .location("Lung")
-                .category(LesionLocationCategory.LUNG)
-                .build());
-
-        configs.add(ImmutableLesionLocationConfig.builder()
-                .input("Lymph node")
-                .location("Lymph node")
-                .category(LesionLocationCategory.LYMPH_NODE)
-                .build());
-
-        configs.add(ImmutableLesionLocationConfig.builder().input("Not a lesion").location(Strings.EMPTY).build());
-
-        configs.add(ImmutableLesionLocationConfig.builder().input("No").location(Strings.EMPTY).build());
-
-        return configs;
+        return List.of(ImmutableLesionLocationConfig.builder().input("Abdominal").location("Abdominal").build(),
+                ImmutableLesionLocationConfig.builder().input("Lever").location("Liver").category(LesionLocationCategory.LIVER).build(),
+                ImmutableLesionLocationConfig.builder().input("Cns").location("CNS").category(LesionLocationCategory.CNS).build(),
+                ImmutableLesionLocationConfig.builder().input("Brain").location("Brain").category(LesionLocationCategory.BRAIN).build(),
+                ImmutableLesionLocationConfig.builder().input("Bone").location("Bone").category(LesionLocationCategory.BONE).build(),
+                ImmutableLesionLocationConfig.builder().input("Pulmonal").location("Lung").category(LesionLocationCategory.LUNG).build(),
+                ImmutableLesionLocationConfig.builder()
+                        .input("Lymph node")
+                        .location("Lymph node")
+                        .category(LesionLocationCategory.LYMPH_NODE)
+                        .build(),
+                ImmutableLesionLocationConfig.builder().input("Not a lesion").location(Strings.EMPTY).build(),
+                ImmutableLesionLocationConfig.builder().input("No").location(Strings.EMPTY).build());
     }
 
     @NotNull
     private static List<NonOncologicalHistoryConfig> createTestNonOncologicalHistoryConfigs() {
-        List<NonOncologicalHistoryConfig> configs = Lists.newArrayList();
-
-        configs.add(TestCurationConfigFactory.nonOncologicalHistoryConfigBuilder()
-                .input("sickness")
-                .ignore(false)
-                .priorOtherCondition(Optional.of(ImmutablePriorOtherCondition.builder()
-                        .name("sick")
-                        .category("being sick")
-                        .isContraindicationForTherapy(true)
-                        .build()))
-                .build());
-
-        configs.add(TestCurationConfigFactory.nonOncologicalHistoryConfigBuilder().input("not a condition").ignore(true).build());
-
-        configs.add(TestCurationConfigFactory.nonOncologicalHistoryConfigBuilder()
-                .input("LVEF 0.17")
-                .ignore(false)
-                .lvef(Optional.of(0.17))
-                .build());
-
-        return configs;
+        return List.of(TestCurationConfigFactory.nonOncologicalHistoryConfigBuilder()
+                        .input("sickness")
+                        .ignore(false)
+                        .priorOtherCondition(Optional.of(ImmutablePriorOtherCondition.builder()
+                                .name("sick")
+                                .category("being sick")
+                                .isContraindicationForTherapy(true)
+                                .build()))
+                        .build(),
+                TestCurationConfigFactory.nonOncologicalHistoryConfigBuilder().input("not a condition").ignore(true).build(),
+                TestCurationConfigFactory.nonOncologicalHistoryConfigBuilder()
+                        .input("LVEF 0.17")
+                        .ignore(false)
+                        .lvef(Optional.of(0.17))
+                        .build());
     }
 
     @NotNull
     private static List<ECGConfig> createTestECGConfigs() {
-        List<ECGConfig> configs = Lists.newArrayList();
-
-        configs.add(ImmutableECGConfig.builder()
-                .input("Weird aberration")
-                .ignore(false)
-                .interpretation("Cleaned aberration")
-                .isQTCF(false)
-                .isJTC(false)
-                .build());
-
-        configs.add(ImmutableECGConfig.builder()
-                .input("No aberration")
-                .ignore(true)
-                .interpretation(Strings.EMPTY)
-                .isQTCF(false)
-                .isJTC(false)
-                .build());
-
-        configs.add(ImmutableECGConfig.builder()
-                .input("Yes but unknown what aberration")
-                .ignore(false)
-                .interpretation(Strings.EMPTY)
-                .isQTCF(false)
-                .isJTC(false)
-                .build());
-
-        return configs;
+        return List.of(ImmutableECGConfig.builder()
+                        .input("Weird aberration")
+                        .ignore(false)
+                        .interpretation("Cleaned aberration")
+                        .isQTCF(false)
+                        .isJTC(false)
+                        .build(),
+                ImmutableECGConfig.builder()
+                        .input("No aberration")
+                        .ignore(true)
+                        .interpretation(Strings.EMPTY)
+                        .isQTCF(false)
+                        .isJTC(false)
+                        .build(),
+                ImmutableECGConfig.builder()
+                        .input("Yes but unknown what aberration")
+                        .ignore(false)
+                        .interpretation(Strings.EMPTY)
+                        .isQTCF(false)
+                        .isJTC(false)
+                        .build());
     }
 
     @NotNull
     private static List<InfectionConfig> createTestInfectionConfigs() {
-        List<InfectionConfig> configs = Lists.newArrayList();
-
-        configs.add(ImmutableInfectionConfig.builder().input("Weird infection").interpretation("Cleaned infection").build());
-        configs.add(ImmutableInfectionConfig.builder().input("No infection").interpretation(Strings.EMPTY).build());
-
-        return configs;
+        return List.of(ImmutableInfectionConfig.builder().input("Weird infection").interpretation("Cleaned infection").build(),
+                ImmutableInfectionConfig.builder().input("No infection").interpretation(Strings.EMPTY).build());
     }
 
     @NotNull
     private static List<ComplicationConfig> createTestComplicationConfigs() {
-        List<ComplicationConfig> configs = Lists.newArrayList();
-
-        configs.add(ImmutableComplicationConfig.builder()
-                .input("Term")
-                .ignore(false)
-                .impliesUnknownComplicationState(false)
-                .curated(ImmutableComplication.builder().name("Curated").addCategories("Curated category").build())
-                .build());
-
-        configs.add(ImmutableComplicationConfig.builder()
-                .input("Unknown")
-                .ignore(false)
-                .impliesUnknownComplicationState(true)
-                .curated(ImmutableComplication.builder().name(Strings.EMPTY).build())
-                .build());
-
-        configs.add(ImmutableComplicationConfig.builder()
-                .input("None")
-                .ignore(true)
-                .impliesUnknownComplicationState(false)
-                .curated(null)
-                .build());
-
-        configs.add(ImmutableComplicationConfig.builder()
-                .input("vomit")
-                .ignore(false)
-                .impliesUnknownComplicationState(false)
-                .curated(ImmutableComplication.builder().name("Vomit").addCategories("Vomit category").build())
-                .build());
-
-        return configs;
+        return List.of(ImmutableComplicationConfig.builder()
+                        .input("Term")
+                        .ignore(false)
+                        .impliesUnknownComplicationState(false)
+                        .curated(ImmutableComplication.builder().name("Curated").addCategories("Curated category").build())
+                        .build(),
+                ImmutableComplicationConfig.builder()
+                        .input("Unknown")
+                        .ignore(false)
+                        .impliesUnknownComplicationState(true)
+                        .curated(ImmutableComplication.builder().name(Strings.EMPTY).build())
+                        .build(),
+                ImmutableComplicationConfig.builder()
+                        .input("None")
+                        .ignore(true)
+                        .impliesUnknownComplicationState(false)
+                        .curated(null)
+                        .build(),
+                ImmutableComplicationConfig.builder()
+                        .input("vomit")
+                        .ignore(false)
+                        .impliesUnknownComplicationState(false)
+                        .curated(ImmutableComplication.builder().name("Vomit").addCategories("Vomit category").build())
+                        .build());
     }
 
     @NotNull
     private static List<ToxicityConfig> createTestToxicityConfigs() {
-        List<ToxicityConfig> configs = Lists.newArrayList();
-
-        configs.add(ImmutableToxicityConfig.builder()
+        return List.of(ImmutableToxicityConfig.builder()
                 .ignore(false)
                 .input("neuropathy gr3")
                 .name("neuropathy")
                 .addCategories("neuro")
                 .grade(3)
                 .build());
-
-        return configs;
     }
 
     @NotNull
     private static List<MolecularTestConfig> createTestMolecularTestConfigs() {
-        List<MolecularTestConfig> configs = Lists.newArrayList();
-
-        configs.add(ImmutableMolecularTestConfig.builder()
+        return List.of(ImmutableMolecularTestConfig.builder()
                 .input("IHC ERBB2 3+")
                 .ignore(false)
                 .curated(ImmutablePriorMolecularTest.builder()
@@ -345,25 +300,17 @@ public final class TestCurationFactory {
                         .impliesPotentialIndeterminateStatus(false)
                         .build())
                 .build());
-
-        return configs;
     }
 
     @NotNull
     private static List<MedicationNameConfig> createTestMedicationNameConfigs() {
-        List<MedicationNameConfig> configs = Lists.newArrayList();
-
-        configs.add(ImmutableMedicationNameConfig.builder().input("A en B").ignore(false).name("A and B").build());
-        configs.add(ImmutableMedicationNameConfig.builder().input("No medication").ignore(true).name(Strings.EMPTY).build());
-
-        return configs;
+        return List.of(ImmutableMedicationNameConfig.builder().input("A en B").ignore(false).name("A and B").build(),
+                ImmutableMedicationNameConfig.builder().input("No medication").ignore(true).name(Strings.EMPTY).build());
     }
 
     @NotNull
     private static List<MedicationDosageConfig> createTestMedicationDosageConfigs() {
-        List<MedicationDosageConfig> configs = Lists.newArrayList();
-
-        configs.add(ImmutableMedicationDosageConfig.builder()
+        return List.of(ImmutableMedicationDosageConfig.builder()
                 .input("50-60 mg per day")
                 .dosageMin(50D)
                 .dosageMax(60D)
@@ -372,76 +319,49 @@ public final class TestCurationFactory {
                 .frequencyUnit("day")
                 .ifNeeded(false)
                 .build());
-
-        return configs;
     }
 
     @NotNull
     private static List<MedicationCategoryConfig> createTestMedicationCategoryConfigs() {
-        List<MedicationCategoryConfig> configs = Lists.newArrayList();
-
-        configs.add(ImmutableMedicationCategoryConfig.builder().input("Paracetamol").addCategories("Acetanilide derivatives").build());
-
-        return configs;
+        return List.of(ImmutableMedicationCategoryConfig.builder().input("Paracetamol").addCategories("Acetanilide derivatives").build());
     }
 
     @NotNull
     private static List<IntoleranceConfig> createTestIntoleranceConfigs() {
-        List<IntoleranceConfig> configs = Lists.newArrayList();
-
-        configs.add(ImmutableIntoleranceConfig.builder().input("Latex type 1").name("Latex (type 1)").addDoids("0060532").build());
-
-        return configs;
+        return List.of(ImmutableIntoleranceConfig.builder().input("Latex type 1").name("Latex (type 1)").addDoids("0060532").build());
     }
 
     @NotNull
     private static List<AdministrationRouteTranslation> createTestAdministrationRouteTranslations() {
-        List<AdministrationRouteTranslation> configs = Lists.newArrayList();
-
-        configs.add(ImmutableAdministrationRouteTranslation.builder()
-                .administrationRoute("ignore")
-                .translatedAdministrationRoute(Strings.EMPTY)
-                .build());
-
-        configs.add(ImmutableAdministrationRouteTranslation.builder()
-                .administrationRoute("oraal")
-                .translatedAdministrationRoute("oral")
-                .build());
-
-        return configs;
+        return List.of(ImmutableAdministrationRouteTranslation.builder()
+                        .administrationRoute("ignore")
+                        .translatedAdministrationRoute(Strings.EMPTY)
+                        .build(),
+                ImmutableAdministrationRouteTranslation.builder()
+                        .administrationRoute("oraal")
+                        .translatedAdministrationRoute("oral")
+                        .build());
     }
 
     @NotNull
     private static List<LaboratoryTranslation> createTestLaboratoryTranslations() {
-        List<LaboratoryTranslation> translations = Lists.newArrayList();
-
-        translations.add(ImmutableLaboratoryTranslation.builder()
+        return List.of(ImmutableLaboratoryTranslation.builder()
                 .code("CO")
                 .translatedCode("CODE")
                 .name("naam")
                 .translatedName("Name")
                 .build());
-
-        return translations;
     }
 
     @NotNull
     private static List<ToxicityTranslation> createTestToxicityTranslations() {
-        List<ToxicityTranslation> translations = Lists.newArrayList();
-
-        translations.add(ImmutableToxicityTranslation.builder().toxicity("Pijn").translatedToxicity("Pain").build());
-
-        return translations;
+        return List.of(ImmutableToxicityTranslation.builder().toxicity("Pijn").translatedToxicity("Pain").build());
     }
 
     @NotNull
     private static List<BloodTransfusionTranslation> createTestBloodTransfusionTranslations() {
-        List<BloodTransfusionTranslation> translations = Lists.newArrayList();
-
-        translations.add(ImmutableBloodTransfusionTranslation.builder().product("Product").translatedProduct("Translated product").build());
-        translations.add(ImmutableBloodTransfusionTranslation.builder().product("Not used").translatedProduct("never used").build());
-
-        return translations;
+        return List.of(ImmutableBloodTransfusionTranslation.builder().product("Product").translatedProduct("Translated product").build(),
+                ImmutableBloodTransfusionTranslation.builder().product("Not used").translatedProduct("never used").build());
     }
 
     @NotNull

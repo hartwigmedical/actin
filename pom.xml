@@ -237,6 +237,12 @@
                 <groupId>io.mockk</groupId>
                 <artifactId>mockk-jvm</artifactId>
                 <version>${mockk-jvm.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                </exclusions>
                 <scope>test</scope>
             </dependency>
             <dependency>

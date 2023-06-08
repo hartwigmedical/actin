@@ -32,6 +32,8 @@ import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig;
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfigFactory;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfigFactory;
+import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig;
+import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfigFactory;
 import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation;
 import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslationFactory;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
@@ -87,6 +89,7 @@ public class CurationDatabaseReader {
         return ImmutableCurationDatabase.builder()
                 .primaryTumorConfigs(readPrimaryTumorConfigs(basePath + PRIMARY_TUMOR_TSV))
                 .oncologicalHistoryConfigs(readOncologicalHistoryConfigs(basePath + ONCOLOGICAL_HISTORY_TSV))
+                .treatmentHistoryEntryConfigs(readTreatmentHistoryEntryConfigs(basePath + ONCOLOGICAL_HISTORY_TSV))
                 .secondPrimaryConfigs(readSecondPrimaryConfigs(basePath + SECOND_PRIMARY_TSV))
                 .lesionLocationConfigs(readLesionLocationConfigs(basePath + LESION_LOCATION_TSV))
                 .nonOncologicalHistoryConfigs(readNonOncologicalHistoryConfigs(basePath + NON_ONCOLOGICAL_HISTORY_TSV))
@@ -117,6 +120,13 @@ public class CurationDatabaseReader {
     private static List<OncologicalHistoryConfig> readOncologicalHistoryConfigs(@NotNull String tsv) throws IOException {
         List<OncologicalHistoryConfig> configs = CurationConfigFile.read(tsv, new OncologicalHistoryConfigFactory());
         LOGGER.info(" Read {} oncological history configs from {}", configs.size(), tsv);
+        return configs;
+    }
+
+    @NotNull
+    private static List<TreatmentHistoryEntryConfig> readTreatmentHistoryEntryConfigs(@NotNull String tsv) throws IOException {
+        List<TreatmentHistoryEntryConfig> configs = CurationConfigFile.read(tsv, new TreatmentHistoryEntryConfigFactory());
+        LOGGER.info(" Read {} treatment history entry configs from {}", configs.size(), tsv);
         return configs;
     }
 

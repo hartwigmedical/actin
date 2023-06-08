@@ -3,8 +3,8 @@ package com.hartwig.actin.clinical.curation.config;
 import java.util.Map;
 
 import com.hartwig.actin.clinical.curation.CurationUtil;
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment;
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 import com.hartwig.actin.util.ResourceFile;
 
