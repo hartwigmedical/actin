@@ -1,8 +1,6 @@
 package com.hartwig.actin.algo.evaluation.util
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.util.ApplicationConfig
-
 object ValueComparison {
 
     const val LARGER_THAN = ">"
@@ -36,7 +34,7 @@ object ValueComparison {
 
     fun stringCaseInsensitivelyMatchesQueryCollection(value: String, collection: Collection<String>): Boolean {
         return collection.any { termToFind: String ->
-            value.lowercase(ApplicationConfig.LOCALE).contains(termToFind.lowercase(ApplicationConfig.LOCALE))
+            value.lowercase().contains(termToFind.lowercase())
         }
     }
 }

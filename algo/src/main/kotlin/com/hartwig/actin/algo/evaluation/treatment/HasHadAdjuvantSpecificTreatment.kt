@@ -7,7 +7,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
-import com.hartwig.actin.util.ApplicationConfig
 import java.util.Locale
 
 class HasHadAdjuvantSpecificTreatment internal constructor(private val names: Set<String>, private val warnCategory: TreatmentCategory) :
@@ -15,7 +14,7 @@ class HasHadAdjuvantSpecificTreatment internal constructor(private val names: Se
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val adjuvantTreatments = record.clinical().priorTumorTreatments()
-            .filter { it.name().lowercase(ApplicationConfig.LOCALE).replace("neoadjuvant", "").contains("adjuvant") }
+            .filter { it.name().lowercase().replace("neoadjuvant", "").contains("adjuvant") }
 
         val matchTreatments: MutableList<String> = Lists.newArrayList()
         val warnTreatments: MutableList<String> = Lists.newArrayList()

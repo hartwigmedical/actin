@@ -70,7 +70,7 @@ class HasBreastCancerHormonePositiveHER2NegativeTest {
         val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
         val function = HasBreastCancerHormonePositiveHER2Negative(doidModel)
         val match = setOf(DoidConstants.HER2_NEGATIVE_BREAST_CANCER_DOID, DoidConstants.PROGESTERONE_POSITIVE_BREAST_CANCER_DOID)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoidsAndAmplication(match, "KRAS")))
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(TumorTestFactory.withDoidsAndAmplication(match, "ERBB2")))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoidsAndAmplification(match, "KRAS")))
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(TumorTestFactory.withDoidsAndAmplification(match, "ERBB2")))
     }
 }

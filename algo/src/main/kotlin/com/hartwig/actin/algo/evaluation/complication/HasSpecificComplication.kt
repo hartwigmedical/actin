@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
-import com.hartwig.actin.util.ApplicationConfig
 
 class HasSpecificComplication internal constructor(private val termToFind: String) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -15,7 +14,7 @@ class HasSpecificComplication internal constructor(private val termToFind: Strin
         )
 
         val matchingComplications = complications.map { it.name() }
-            .filter { it.lowercase().contains(termToFind.lowercase(ApplicationConfig.LOCALE)) }
+            .filter { it.lowercase().contains(termToFind.lowercase()) }
 
         if (matchingComplications.isNotEmpty()) {
             return EvaluationFactory.pass(

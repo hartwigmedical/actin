@@ -11,7 +11,6 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.datamodel.Toxicity
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
-import com.hartwig.actin.util.ApplicationConfig
 
 //TODO: In case X => 2, ignore EHR toxicities in evaluation
 class HasToxicityWithGrade internal constructor(
@@ -32,8 +31,8 @@ class HasToxicityWithGrade internal constructor(
                 grade = DEFAULT_QUESTIONNAIRE_GRADE
             }
             val gradeMatch = grade != null && grade >= minGrade
-            val nameMatch = nameFilter == null || toxicity.name().lowercase(ApplicationConfig.LOCALE)
-                .contains(nameFilter.lowercase(ApplicationConfig.LOCALE))
+            val nameMatch = nameFilter == null || toxicity.name().lowercase()
+                .contains(nameFilter.lowercase())
             if (gradeMatch && nameMatch) {
                 if (toxicity.source() == ToxicitySource.QUESTIONNAIRE) {
                     hasAtLeastOneMatchingQuestionnaireToxicity = true
