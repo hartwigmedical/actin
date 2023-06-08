@@ -136,8 +136,7 @@ public class TreatmentHistoryEntryConfigFactory implements CurationConfigFactory
     }
 
     private static Therapy radiotherapy(@NotNull Map<String, Integer> fields, @NotNull String[] parts, boolean isTrial) {
-        ImmutableRadiotherapy.Builder builder = ImmutableRadiotherapy.builder()
-                .name(parts[fields.get("name")])
+        ImmutableRadiotherapy.Builder builder = ImmutableRadiotherapy.builder().name(parts[fields.get("name")]).isSystemic(false)
                 .addCategories(TreatmentCategory.RADIOTHERAPY)
                 .radioType(ResourceFile.optionalString(parts[fields.get("radioType")]));
 
@@ -149,8 +148,7 @@ public class TreatmentHistoryEntryConfigFactory implements CurationConfigFactory
     }
 
     private static Therapy immunotherapy(@NotNull Map<String, Integer> fields, @NotNull String[] parts, boolean isTrial) {
-        ImmutableImmunotherapy.Builder builder = ImmutableImmunotherapy.builder()
-                .name(parts[fields.get("name")])
+        ImmutableImmunotherapy.Builder builder = ImmutableImmunotherapy.builder().name(parts[fields.get("name")]).isSystemic(true)
                 .addCategories(TreatmentCategory.IMMUNOTHERAPY)
                 .drugs(Collections.emptySet());
 
@@ -163,8 +161,11 @@ public class TreatmentHistoryEntryConfigFactory implements CurationConfigFactory
 
     private static Therapy otherTherapy(@NotNull Map<String, Integer> fields, @NotNull String[] parts, TreatmentCategory category,
             boolean isTrial) {
-        ImmutableOtherTherapy.Builder builder =
-                ImmutableOtherTherapy.builder().name(parts[fields.get("name")]).addCategories(category).drugs(Collections.emptySet());
+        ImmutableOtherTherapy.Builder builder = ImmutableOtherTherapy.builder()
+                .name(parts[fields.get("name")])
+                .isSystemic(!Set.of(TreatmentCategory.ABLATION, TreatmentCategory.TRANSPLANTATION).contains(category))
+                .addCategories(category)
+                .drugs(Collections.emptySet());
 
         if (isTrial) {
             builder.addCategories(TreatmentCategory.TRIAL);
