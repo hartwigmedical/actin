@@ -44,7 +44,7 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
     @NotNull
     @Override
     public String title() {
-        return "Clinical Summary";
+        return "Clinical summary";
     }
 
     @NotNull

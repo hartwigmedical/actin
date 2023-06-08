@@ -1,5 +1,12 @@
 package com.hartwig.actin.report.interpretation;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import com.hartwig.actin.molecular.datamodel.characteristics.CuppaPrediction;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.report.pdf.util.Formats;
 
@@ -8,11 +15,15 @@ import org.jetbrains.annotations.Nullable;
 
 public final class TumorOriginInterpreter {
 
+    public static final double LIKELIHOOD_CONFIDENCE_THRESHOLD = 0.8;
+    public static final double LIKELIHOOD_DISPLAY_THRESHOLD = 0.1;
+    public static final int MAX_PREDICTIONS_TO_DISPLAY = 3;
+
     private TumorOriginInterpreter() {
     }
 
     public static boolean hasConfidentPrediction(@Nullable PredictedTumorOrigin predictedTumorOrigin) {
-        return predictedTumorOrigin != null && Double.compare(predictedTumorOrigin.likelihood(), 0.8) >= 0;
+        return predictedTumorOrigin != null && Double.compare(predictedTumorOrigin.likelihood(), LIKELIHOOD_CONFIDENCE_THRESHOLD) >= 0;
     }
 
     @NotNull
@@ -22,5 +33,33 @@ public final class TumorOriginInterpreter {
         }
 
         return predictedTumorOrigin.tumorType() + " (" + Formats.percentage(predictedTumorOrigin.likelihood()) + ")";
+    }
+
+    @NotNull
+    public static List<CuppaPrediction> predictionsToDisplay(@Nullable PredictedTumorOrigin predictedTumorOrigin) {
+        return predictedTumorOrigin == null
+                ? Collections.emptyList()
+                : streamNBestPredictions(predictedTumorOrigin, MAX_PREDICTIONS_TO_DISPLAY).filter(prediction -> prediction.likelihood()
+                        > LIKELIHOOD_DISPLAY_THRESHOLD).collect(Collectors.toList());
+    }
+
+    public static double greatestOmittedLikelihood(@NotNull PredictedTumorOrigin predictedTumorOrigin) {
+        List<Double> topLikelihoods =
+                streamNBestPredictions(predictedTumorOrigin, MAX_PREDICTIONS_TO_DISPLAY + 1).map(CuppaPrediction::likelihood)
+                        .collect(Collectors.toList());
+        for (Double likelihood : topLikelihoods) {
+            if (likelihood < LIKELIHOOD_DISPLAY_THRESHOLD) {
+                return likelihood;
+            }
+        }
+        return topLikelihoods.get(topLikelihoods.size() - 1);
+    }
+
+    @NotNull
+    private static Stream<CuppaPrediction> streamNBestPredictions(@NotNull PredictedTumorOrigin predictedTumorOrigin, int limit) {
+        return predictedTumorOrigin.predictions()
+                .stream()
+                .sorted(Comparator.comparing(CuppaPrediction::likelihood, Comparator.reverseOrder()))
+                .limit(limit);
     }
 }

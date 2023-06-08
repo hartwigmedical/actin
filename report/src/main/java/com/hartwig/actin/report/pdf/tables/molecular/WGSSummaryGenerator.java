@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -130,12 +129,7 @@ public class WGSSummaryGenerator implements TableGenerator {
         if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin) && molecular.hasSufficientQualityAndPurity()) {
             return TumorOriginInterpreter.interpret(predictedTumorOrigin);
         } else if (molecular.hasSufficientQuality() && predictedTumorOrigin != null) {
-            List<CuppaPrediction> predictionsMeetingThreshold = predictedTumorOrigin.predictions()
-                    .stream()
-                    .filter(prediction -> prediction.likelihood() > 0.10)
-                    .sorted(Comparator.comparing(CuppaPrediction::likelihood, Comparator.reverseOrder()))
-                    .limit(3)
-                    .collect(Collectors.toList());
+            List<CuppaPrediction> predictionsMeetingThreshold = TumorOriginInterpreter.predictionsToDisplay(predictedTumorOrigin);
 
             if (predictionsMeetingThreshold.isEmpty()) {
                 return String.format("Inconclusive (%s %s)",

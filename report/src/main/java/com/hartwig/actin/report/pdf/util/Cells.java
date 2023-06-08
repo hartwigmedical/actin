@@ -9,6 +9,7 @@ import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
+import com.itextpdf.layout.Style;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Cell;
@@ -105,8 +106,13 @@ public final class Cells {
 
     @NotNull
     public static Cell createContent(@NotNull IBlockElement element) {
+        return createContent(element, Styles.tableContentStyle());
+    }
+
+    @NotNull
+    public static Cell createContent(@NotNull IBlockElement element, Style style) {
         Cell cell = create(element);
-        cell.addStyle(Styles.tableContentStyle());
+        cell.addStyle(style);
         cell.setBorderTop(new SolidBorder(Styles.PALETTE_MID_GREY, 0.25F));
         return cell;
     }
@@ -114,6 +120,11 @@ public final class Cells {
     @NotNull
     public static Cell createContent(@NotNull String text) {
         return createContent(new Paragraph(text));
+    }
+
+    @NotNull
+    public static Cell createContentBold(@NotNull String text) {
+        return createContent(new Paragraph(text), Styles.tableHighlightStyle());
     }
 
     @NotNull
