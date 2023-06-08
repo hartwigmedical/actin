@@ -1,10 +1,8 @@
 package com.hartwig.actin.algo.evaluation.complication
 
-import com.hartwig.actin.util.ApplicationConfig
-
 internal object PatternMatcher {
     fun isMatch(term: String, patterns: Set<List<String>>): Boolean {
-        val termToEvaluate = term.lowercase(ApplicationConfig.LOCALE)
+        val termToEvaluate = term.lowercase()
         for (pattern in patterns) {
             var patternMatch = true
             var prevIndexOf = -1

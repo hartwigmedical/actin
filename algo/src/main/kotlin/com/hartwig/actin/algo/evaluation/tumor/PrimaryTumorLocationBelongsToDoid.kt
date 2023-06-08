@@ -6,7 +6,6 @@ import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.isOfAtLeastOneDoidType
-import com.hartwig.actin.util.ApplicationConfig
 
 class PrimaryTumorLocationBelongsToDoid(
     private val doidModel: DoidModel,
@@ -27,8 +26,8 @@ class PrimaryTumorLocationBelongsToDoid(
             tumorBelongsToDoid && subLocationQuery != null -> {
                 val subLocation = record.clinical().tumor().primaryTumorSubLocation()
                 when {
-                    subLocation != null && subLocation.lowercase(ApplicationConfig.LOCALE)
-                        .contains(subLocationQuery.lowercase(ApplicationConfig.LOCALE)) ->
+                    subLocation != null && subLocation.lowercase()
+                        .contains(subLocationQuery.lowercase()) ->
                         EvaluationFactory.pass("Tumor belongs to $doidTerm with sub-location $subLocation")
 
                     subLocation == null -> EvaluationFactory.warn("Tumor belongs to $doidTerm with unknown sub-location")

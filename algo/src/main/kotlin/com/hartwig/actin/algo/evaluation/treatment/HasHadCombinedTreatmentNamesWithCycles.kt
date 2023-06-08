@@ -7,7 +7,6 @@ import com.hartwig.actin.algo.datamodel.ImmutableEvaluation
 import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.util.ApplicationConfig
 
 internal class HasHadCombinedTreatmentNamesWithCycles(
     private val treatmentNames: List<String>,
@@ -44,9 +43,9 @@ internal class HasHadCombinedTreatmentNamesWithCycles(
     }
 
     private fun evaluatePriorTreatmentsMatchingName(priorTumorTreatments: List<PriorTumorTreatment>, treatmentName: String): Evaluation {
-        val query = treatmentName.lowercase(ApplicationConfig.LOCALE)
+        val query = treatmentName.lowercase()
         val matchingPriorTreatments: Map<EvaluationResult, List<PriorTumorTreatment>> = priorTumorTreatments
-            .filter { it.name().lowercase(ApplicationConfig.LOCALE).contains(query) }
+            .filter { it.name().lowercase().contains(query) }
             .groupBy { prior: PriorTumorTreatment ->
                 when (prior.cycles()) {
                     null -> EvaluationResult.UNDETERMINED

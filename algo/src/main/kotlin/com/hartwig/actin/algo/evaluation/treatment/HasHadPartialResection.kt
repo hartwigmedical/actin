@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
-import com.hartwig.actin.util.ApplicationConfig
 
 class HasHadPartialResection internal constructor() : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -15,7 +14,7 @@ class HasHadPartialResection internal constructor() : EvaluationFunction {
             if (treatment.name().equals(PARTIAL_RESECTION, ignoreCase = true)) {
                 hasHadPartialResection = true
             }
-            if (treatment.name().lowercase(ApplicationConfig.LOCALE).contains(RESECTION_KEYWORD.lowercase(ApplicationConfig.LOCALE))) {
+            if (treatment.name().lowercase().contains(RESECTION_KEYWORD.lowercase())) {
                 hasHadPotentialPartialResection = true
             }
             if (treatment.categories().contains(TreatmentCategory.SURGERY) && treatment.name().isEmpty()) {
