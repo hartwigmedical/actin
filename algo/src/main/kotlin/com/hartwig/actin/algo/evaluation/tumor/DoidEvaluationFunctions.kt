@@ -1,8 +1,8 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
+import com.hartwig.actin.doid.DoidModel
 import org.apache.logging.log4j.LogManager
 
 internal object DoidEvaluationFunctions {
@@ -50,49 +50,33 @@ internal object DoidEvaluationFunctions {
     }
 
     fun isOfExclusiveDoidType(
-        doidModel: DoidModel, tumorDoids: Set<String>?,
-        doidToMatch: String
+        doidModel: DoidModel, tumorDoids: Set<String>?, doidToMatch: String
     ): Boolean {
-        return evaluateForExclusiveMatchWithFailAndWarns(
-            doidModel,
-            tumorDoids,
-            doidToMatch,
-            emptySet(),
-            emptySet()
+        return evaluateAllDoidsMatchWithFailAndWarns(
+            doidModel, tumorDoids, setOf(doidToMatch), emptySet(), emptySet()
         ) == EvaluationResult.PASS
     }
 
-    fun evaluateForExclusiveMatchWithFailAndWarns(
-        doidModel: DoidModel, tumorDoids: Set<String>?,
-        doidToMatch: String, failDoids: Set<String>, warnDoids: Set<String>
+    fun evaluateAllDoidsMatchWithFailAndWarns(
+        doidModel: DoidModel, tumorDoids: Set<String>?, doidsToMatch: Set<String>, failDoids: Set<String>, warnDoids: Set<String>
     ): EvaluationResult {
         if (tumorDoids == null) {
             return EvaluationResult.FAIL
         }
-        var allDoidsAreMatch = true
-        var hasAtLeastOneFailDoid = false
-        var hasAtLeastOneWarnDoid = false
-        for (doid in tumorDoids) {
-            val expandedDoids: Set<String> = doidModel.doidWithParents(doid)
-            if (!expandedDoids.contains(doidToMatch)) {
-                allDoidsAreMatch = false
-            }
-            for (failDoid in failDoids) {
-                if (expandedDoids.contains(failDoid)) {
-                    hasAtLeastOneFailDoid = true
-                    break
-                }
-            }
-            for (warnDoid in warnDoids) {
-                if (expandedDoids.contains(warnDoid)) {
-                    hasAtLeastOneWarnDoid = true
-                    break
-                }
-            }
+        val (allDoidsMatch, hasFailDoid, hasWarnDoid) = tumorDoids.map { doid ->
+            val expandedDoids = doidModel.doidWithParents(doid)
+            Triple(
+                setsIntersect(expandedDoids, doidsToMatch),
+                setsIntersect(expandedDoids, failDoids),
+                setsIntersect(expandedDoids, warnDoids)
+            )
+        }.reduce { acc, triple -> Triple(acc.first && triple.first, acc.second || triple.second, acc.third || triple.third) }
+
+        return when {
+            !allDoidsMatch || hasFailDoid -> EvaluationResult.FAIL
+            hasWarnDoid -> EvaluationResult.WARN
+            else -> EvaluationResult.PASS
         }
-        return if (allDoidsAreMatch && !hasAtLeastOneFailDoid) {
-            if (hasAtLeastOneWarnDoid) EvaluationResult.WARN else EvaluationResult.PASS
-        } else EvaluationResult.FAIL
     }
 
     fun hasAtLeastOneCombinationOfDoids(tumorDoids: Set<String?>?, validDoidCombinations: Set<Set<String>>): Boolean {
@@ -116,5 +100,9 @@ internal object DoidEvaluationFunctions {
 
     private fun createFullExpandedDoidTree(doidModel: DoidModel, doidsToExpand: Set<String>?): Set<String> {
         return doidsToExpand?.flatMap { doidModel.doidWithParents(it) }?.toSet() ?: emptySet()
+    }
+
+    private fun <T> setsIntersect(setA: Set<T>, setB: Set<T>): Boolean {
+        return setA.intersect(setB).isNotEmpty()
     }
 }

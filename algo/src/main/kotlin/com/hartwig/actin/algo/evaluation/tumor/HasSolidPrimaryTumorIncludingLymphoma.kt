@@ -18,10 +18,10 @@ class HasSolidPrimaryTumorIncludingLymphoma internal constructor(private val doi
                 "Undetermined solid primary tumor"
             )
         }
-        val result = DoidEvaluationFunctions.evaluateForExclusiveMatchWithFailAndWarns(
+        val result = DoidEvaluationFunctions.evaluateAllDoidsMatchWithFailAndWarns(
             doidModel,
             tumorDoids,
-            DoidConstants.CANCER_DOID,
+            setOf(DoidConstants.CANCER_DOID, DoidConstants.BENIGN_NEOPLASM_DOID),
             NON_SOLID_CANCER_DOIDS,
             WARN_SOLID_CANCER_DOIDS
         )
