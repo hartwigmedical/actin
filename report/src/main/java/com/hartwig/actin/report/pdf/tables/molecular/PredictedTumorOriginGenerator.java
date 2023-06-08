@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.pdf.tables.molecular;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.IntStream;
@@ -19,7 +18,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class PredictedTumorOriginGenerator implements TableGenerator {
 
-    public static final int PADDING_LEFT = 12;
+    public static final int PADDING_LEFT = 20;
+    public static final int PADDING_RIGHT = 25;
     @NotNull
     private final MolecularRecord molecular;
     private final float width;
@@ -50,17 +50,18 @@ public class PredictedTumorOriginGenerator implements TableGenerator {
             return Tables.createSingleColWithWidth(width).addCell(Cells.createContentNoBorder(message));
         } else {
             int numColumns = predictions.size() + 1;
-            float[] widths = new float[numColumns];
-            Arrays.fill(widths, width / numColumns);
-
-            Table table = new Table(widths);
+            Table table = new Table(numColumns);
 
             table.addHeaderCell(Cells.createEmpty());
             IntStream.range(0, predictions.size())
-                    .forEach(i -> table.addHeaderCell(Cells.createHeader(String.format("%d. %s", i + 1, predictions.get(i).cancerType()))));
+                    .mapToObj(i -> String.format("%d. %s", i + 1, predictions.get(i).cancerType()))
+                    .map(text -> Cells.createHeader(text).setPaddingLeft(PADDING_LEFT))
+                    .forEach(table::addHeaderCell);
 
             table.addCell(Cells.createContentBold("Combined prediction score"));
-            predictions.stream().map(p -> Cells.createContentBold(Formats.percentage(p.likelihood()))).forEach(table::addCell);
+            predictions.stream()
+                    .map(p -> Cells.createContentBold(Formats.percentage(p.likelihood())).setPaddingLeft(PADDING_LEFT))
+                    .forEach(table::addCell);
 
             table.addCell(Cells.createContent("This score is calculated by combining information on:"));
             predictions.stream().map(p -> Cells.createContent("")).forEach(table::addCell);
@@ -88,7 +89,7 @@ public class PredictedTumorOriginGenerator implements TableGenerator {
         predictions.stream()
                 .map(classifierFunction)
                 .map(v -> v == null ? Formats.VALUE_UNKNOWN : Formats.percentage(v))
-                .map(Cells::createContent)
+                .map(text -> Cells.createContent(text).setPaddingLeft(PADDING_LEFT).setPaddingRight(PADDING_RIGHT))
                 .forEach(table::addCell);
     }
 }
