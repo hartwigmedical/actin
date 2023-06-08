@@ -584,7 +584,6 @@ Note that for all configured nr of weeks, 2 weeks are subtracted from the latest
 | IS_PREGNANT                                    | Applicable only for women. Won't be evaluated       |
 | USES_ADEQUATE_ANTICONCEPTION                   | Won't be evaluated                                  |
 | ADHERES_TO_SPERM_OR_EGG_DONATION_PRESCRIPTIONS | Won't be evaluated                                  |
-| IS_WOMAN_OF_CHILD_BEARING_POTENTIAL            | Currently resolves to `UNDETERMINED` in case female |
 
 ##### Rules related to complications
 
