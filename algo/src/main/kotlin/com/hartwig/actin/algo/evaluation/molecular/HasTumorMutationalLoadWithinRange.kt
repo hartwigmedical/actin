@@ -45,14 +45,16 @@ class HasTumorMutationalLoadWithinRange internal constructor(
             }
         }
         val tumorMutationalLoadIsAlmostAllowed = minTumorMutationalLoad - tumorMutationalLoad <= 5
-        return if (tumorMutationalLoadIsAlmostAllowed && !record.molecular().hasSufficientQualityAndPurity()) {
+        return if (tumorMutationalLoadIsAlmostAllowed && record.molecular().hasSufficientQuality() && !record.molecular()
+                .hasSufficientQualityAndPurity()
+        ) {
             unrecoverable()
                 .result(EvaluationResult.WARN)
                 .addWarnSpecificMessages(
                     "TML of sample " + tumorMutationalLoad + " almost exceeds " + minTumorMutationalLoad
-                            + " while data quality is insufficient (perhaps a few mutations are missed)"
+                            + " while purity is low: perhaps a few mutations are missed and TML is adequate"
                 )
-                .addWarnGeneralMessages("Inadequate TML")
+                .addWarnGeneralMessages("TML almost sufficient with low purity")
                 .addInclusionMolecularEvents(MolecularCharacteristicEvents.ALMOST_SUFFICIENT_TUMOR_MUTATIONAL_LOAD)
                 .build()
         } else unrecoverable()
