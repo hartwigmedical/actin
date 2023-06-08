@@ -45,8 +45,7 @@ class HasTumorMutationalLoadWithinRange internal constructor(
             }
         }
         val tumorMutationalLoadIsAlmostAllowed = minTumorMutationalLoad - tumorMutationalLoad <= 5
-        val hasSufficientQuality = record.molecular().hasSufficientQuality()
-        return if (tumorMutationalLoadIsAlmostAllowed && !hasSufficientQuality) {
+        return if (tumorMutationalLoadIsAlmostAllowed && !record.molecular().hasSufficientQualityAndPurity()) {
             unrecoverable()
                 .result(EvaluationResult.WARN)
                 .addWarnSpecificMessages(
