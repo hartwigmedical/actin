@@ -52,7 +52,7 @@ class HasTumorMutationalLoadWithinRange internal constructor(
                 .result(EvaluationResult.WARN)
                 .addWarnSpecificMessages(
                     "TML of sample " + tumorMutationalLoad + " almost exceeds " + minTumorMutationalLoad
-                            + " while purity is low: perhaps a few mutations are missed and TML may be adequate?"
+                            + " while purity is low: perhaps a few mutations are missed and TML is adequate"
                 )
                 .addWarnGeneralMessages("TML almost sufficient with low purity")
                 .addInclusionMolecularEvents(MolecularCharacteristicEvents.ALMOST_SUFFICIENT_TUMOR_MUTATIONAL_LOAD)

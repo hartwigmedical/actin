@@ -316,27 +316,8 @@ internal object MolecularTestFactory {
 
     fun withTumorMutationalBurdenAndHasSufficientQualityAndPurity(
         tumorMutationalBurden: Double?,
-        hasSufficientQualityAndPurity: Boolean
-    ): PatientRecord {
-        val base = TestMolecularFactory.createMinimalTestMolecularRecord()
-        return withMolecularRecord(
-            ImmutableMolecularRecord.builder()
-                .from(base)
-                .characteristics(
-                    ImmutableMolecularCharacteristics.builder()
-                        .from(base.characteristics())
-                        .tumorMutationalBurden(tumorMutationalBurden)
-                        .build()
-                )
-                .hasSufficientQualityAndPurity(hasSufficientQualityAndPurity)
-                .build()
-        )
-    }
-
-    fun withTumorMutationalBurdenAndHasSufficientQualityAndPurityAndHasSufficientQuality(
-        tumorMutationalBurden: Double?,
         hasSufficientQualityAndPurity: Boolean,
-        hasSufficientQuality: Boolean,
+        hasSufficientQuality: Boolean
     ): PatientRecord {
         val base = TestMolecularFactory.createMinimalTestMolecularRecord()
         return withMolecularRecord(
@@ -370,25 +351,6 @@ internal object MolecularTestFactory {
     }
 
     fun withTumorMutationalLoadAndHasSufficientQualityAndPurity(
-        tumorMutationalLoad: Int?,
-        hasSufficientQualityAndPurity: Boolean
-    ): PatientRecord {
-        val base = TestMolecularFactory.createMinimalTestMolecularRecord()
-        return withMolecularRecord(
-            ImmutableMolecularRecord.builder()
-                .from(base)
-                .characteristics(
-                    ImmutableMolecularCharacteristics.builder()
-                        .from(base.characteristics())
-                        .tumorMutationalLoad(tumorMutationalLoad)
-                        .build()
-                )
-                .hasSufficientQualityAndPurity(hasSufficientQualityAndPurity)
-                .build()
-        )
-    }
-
-    fun withTumorMutationalLoadAndHasSufficientQualityAndPurityAndHasSufficientQuality(
         tumorMutationalLoad: Int?,
         hasSufficientQualityAndPurity: Boolean,
         hasSufficientQuality: Boolean
