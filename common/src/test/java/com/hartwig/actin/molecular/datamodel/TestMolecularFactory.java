@@ -114,12 +114,26 @@ public final class TestMolecularFactory {
                 .tumorType("Melanoma")
                 .likelihood(0.996)
                 .predictions(List.of(ImmutableCuppaPrediction.builder()
-                        .cancerType("Melanoma")
-                        .likelihood(0.996)
-                        .snvPairwiseClassifier(0.979)
-                        .genomicPositionClassifier(0.99)
-                        .featureClassifier(0.972)
-                        .build()))
+                                .cancerType("Melanoma")
+                                .likelihood(0.996)
+                                .snvPairwiseClassifier(0.979)
+                                .genomicPositionClassifier(0.99)
+                                .featureClassifier(0.972)
+                                .build(),
+                        ImmutableCuppaPrediction.builder()
+                                .cancerType("Lung")
+                                .likelihood(0.001)
+                                .snvPairwiseClassifier(0.0009)
+                                .genomicPositionClassifier(0.011)
+                                .featureClassifier(0.0102)
+                                .build(),
+                        ImmutableCuppaPrediction.builder()
+                                .cancerType("Esophagus/Stomach")
+                                .likelihood(0.0016)
+                                .snvPairwiseClassifier(0.0004)
+                                .genomicPositionClassifier(0.006)
+                                .featureClassifier(0.0002)
+                                .build()))
                 .build();
     }
 
