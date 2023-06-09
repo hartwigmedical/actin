@@ -70,8 +70,7 @@ public final class TestOrangeFactory {
 
     @NotNull
     private static PurpleRecord createMinimalTestPurpleRecord() {
-        return ImmutablePurpleRecord.builder()
-                .fit(TestPurpleFactory.fitBuilder().build())
+        return ImmutablePurpleRecord.builder().fit(TestPurpleFactory.fitBuilder().addQcStatuses(PurpleQCStatus.FAIL_NO_TUMOR).build())
                 .characteristics(TestPurpleFactory.characteristicsBuilder().build())
                 .build();
     }

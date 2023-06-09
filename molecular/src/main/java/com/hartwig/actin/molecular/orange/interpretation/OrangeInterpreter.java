@@ -32,6 +32,10 @@ public class OrangeInterpreter {
         DriverExtractor driverExtractor = DriverExtractor.create(geneFilter, evidenceDatabase);
         CharacteristicsExtractor characteristicsExtractor = new CharacteristicsExtractor(evidenceDatabase);
 
+        if (record.purple().fit().qcStatuses().isEmpty()) {
+            throw new IllegalStateException("Cannot interpret purple record with empty QC states");
+        }
+
         return ImmutableMolecularRecord.builder()
                 .patientId(toPatientId(record.sampleId()))
                 .sampleId(record.sampleId())
