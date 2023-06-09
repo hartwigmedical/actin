@@ -115,6 +115,12 @@ public class OrangeInterpreterTest {
         assertFalse(OrangeInterpreter.hasSufficientQualityAndPurity(record));
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void shouldThrowExceptionOnEmptyQCStates() {
+        OrangeInterpreter interpreter = createTestInterpreter();
+        interpreter.interpret(orangeRecordWithQCStatuses(Set.of()));
+    }
+
     @NotNull
     private static OrangeRecord orangeRecordWithQCStatus(PurpleQCStatus status) {
         return orangeRecordWithQCStatuses(Set.of(status));
