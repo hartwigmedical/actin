@@ -72,12 +72,9 @@ public class PredictedTumorOriginGenerator implements TableGenerator {
             table.addCell(Cells.createContent("This score is calculated by combining information on:"));
             predictions.stream().map(p -> Cells.createContent("")).forEach(table::addCell);
 
-            addCellWithPadding("(1) SNV types", table);
-            addClassifierCells(predictions, CuppaPrediction::snvPairwiseClassifier, table);
-            addCellWithPadding("(2) SNV genomic localisation distribution", table);
-            addClassifierCells(predictions, CuppaPrediction::genomicPositionClassifier, table);
-            addCellWithPadding("(3) Driver genes and passenger characteristics", table);
-            addClassifierCells(predictions, CuppaPrediction::featureClassifier, table);
+            addClassifierRow("(1) SNV types", predictions, CuppaPrediction::snvPairwiseClassifier, table);
+            addClassifierRow("(2) SNV genomic localisation distribution", predictions, CuppaPrediction::genomicPositionClassifier, table);
+            addClassifierRow("(3) Driver genes and passenger characteristics", predictions, CuppaPrediction::featureClassifier, table);
 
             table.addCell(Cells.createSpanningSubNote(String.format("Other cohorts have a combined prediction of %s or lower",
                     Formats.percentage(TumorOriginInterpreter.greatestOmittedLikelihood(predictedTumorOrigin))), table));
@@ -86,12 +83,10 @@ public class PredictedTumorOriginGenerator implements TableGenerator {
         }
     }
 
-    private static void addCellWithPadding(String text, Table table) {
-        table.addCell(Cells.createContent(text).setPaddingLeft(PADDING_LEFT));
-    }
+    private static void addClassifierRow(String classifierText, List<CuppaPrediction> predictions,
+            Function<CuppaPrediction, Double> classifierFunction, Table table) {
+        table.addCell(Cells.createContent(classifierText).setPaddingLeft(PADDING_LEFT));
 
-    private static void addClassifierCells(List<CuppaPrediction> predictions, Function<CuppaPrediction, Double> classifierFunction,
-            Table table) {
         predictions.stream()
                 .map(classifierFunction)
                 .map(v -> v == null ? Formats.VALUE_UNKNOWN : Formats.percentage(v))
