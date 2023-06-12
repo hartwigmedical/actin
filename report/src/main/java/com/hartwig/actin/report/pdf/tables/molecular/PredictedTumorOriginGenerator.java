@@ -11,7 +11,9 @@ import com.hartwig.actin.report.interpretation.TumorOriginInterpreter;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
+import com.hartwig.actin.report.pdf.util.Styles;
 import com.hartwig.actin.report.pdf.util.Tables;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
 
 import org.jetbrains.annotations.NotNull;
@@ -59,9 +61,13 @@ public class PredictedTumorOriginGenerator implements TableGenerator {
                     .forEach(table::addHeaderCell);
 
             table.addCell(Cells.createContentBold("Combined prediction score"));
-            predictions.stream()
-                    .map(p -> Cells.createContentBold(Formats.percentage(p.likelihood())).setPaddingLeft(PADDING_LEFT))
-                    .forEach(table::addCell);
+            predictions.stream().map(p -> {
+                Cell likelihoodCell = Cells.createContentBold(Formats.percentage(p.likelihood())).setPaddingLeft(PADDING_LEFT);
+                if (!TumorOriginInterpreter.likelihoodMeetsConfidenceThreshold(p.likelihood())) {
+                    likelihoodCell.addStyle(Styles.tableNoticeStyle());
+                }
+                return likelihoodCell;
+            }).forEach(table::addCell);
 
             table.addCell(Cells.createContent("This score is calculated by combining information on:"));
             predictions.stream().map(p -> Cells.createContent("")).forEach(table::addCell);

@@ -23,7 +23,11 @@ public final class TumorOriginInterpreter {
     }
 
     public static boolean hasConfidentPrediction(@Nullable PredictedTumorOrigin predictedTumorOrigin) {
-        return predictedTumorOrigin != null && Double.compare(predictedTumorOrigin.likelihood(), LIKELIHOOD_CONFIDENCE_THRESHOLD) >= 0;
+        return predictedTumorOrigin != null && likelihoodMeetsConfidenceThreshold(predictedTumorOrigin.likelihood());
+    }
+
+    public static boolean likelihoodMeetsConfidenceThreshold(double likelihood) {
+        return Double.compare(likelihood, LIKELIHOOD_CONFIDENCE_THRESHOLD) >= 0;
     }
 
     @NotNull

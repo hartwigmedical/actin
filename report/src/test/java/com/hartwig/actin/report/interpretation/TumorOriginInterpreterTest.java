@@ -32,6 +32,17 @@ public class TumorOriginInterpreterTest {
     }
 
     @Test
+    public void shouldReturnFalseForLikelihoodBelowConfidenceThreshold() {
+        assertFalse(TumorOriginInterpreter.likelihoodMeetsConfidenceThreshold(0.5));
+    }
+
+    @Test
+    public void shouldReturnTrueForLikelihoodThatMeetsConfidenceThreshold() {
+        assertTrue(TumorOriginInterpreter.likelihoodMeetsConfidenceThreshold(0.8));
+        assertTrue(TumorOriginInterpreter.likelihoodMeetsConfidenceThreshold(1.0));
+    }
+
+    @Test
     public void canInterpretPredictedTumorOrigins() {
         assertEquals(Formats.VALUE_UNKNOWN, TumorOriginInterpreter.interpret(null));
 
