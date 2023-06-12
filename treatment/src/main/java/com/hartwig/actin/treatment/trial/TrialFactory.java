@@ -79,10 +79,10 @@ public class TrialFactory {
     }
 
     @NotNull
-    private static TrialIdentification toIdentification(@NotNull TrialDefinitionConfig trialConfig) {
+    private TrialIdentification toIdentification(@NotNull TrialDefinitionConfig trialConfig) {
         return ImmutableTrialIdentification.builder()
                 .trialId(trialConfig.trialId())
-                .open(trialConfig.open())
+                .open(ctcModel.isTrialOpen(trialConfig))
                 .acronym(trialConfig.acronym())
                 .title(trialConfig.title())
                 .build();
@@ -94,7 +94,8 @@ public class TrialFactory {
 
         for (CohortDefinitionConfig cohortConfig : trialConfigModel.cohortsForTrial(trialId)) {
             String cohortId = cohortConfig.cohortId();
-            cohorts.add(ImmutableCohort.builder().metadata(ctcModel.resolveForCohortConfig(cohortConfig))
+            cohorts.add(ImmutableCohort.builder()
+                    .metadata(ctcModel.resolveForCohort(cohortConfig))
                     .eligibility(toEligibility(trialConfigModel.specificInclusionCriteriaForCohort(trialId, cohortId), references))
                     .build());
         }

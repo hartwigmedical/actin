@@ -8,10 +8,12 @@ import com.hartwig.actin.treatment.ctc.config.CTCDatabaseReader;
 import com.hartwig.actin.treatment.datamodel.CohortMetadata;
 import com.hartwig.actin.treatment.datamodel.ImmutableCohortMetadata;
 import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig;
+import com.hartwig.actin.treatment.trial.config.TrialDefinitionConfig;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CTCModel {
 
@@ -30,8 +32,26 @@ public class CTCModel {
         this.ctcDatabase = ctcDatabase;
     }
 
+    @Nullable
+    public Boolean isTrialOpen(@NotNull TrialDefinitionConfig trialConfig) {
+        Boolean openInCTC = TrialStatusInterpreter.interpret(ctcDatabase.entries(), trialConfig);
+
+        if (openInCTC != null) {
+            if (openInCTC != trialConfig.open()) {
+                LOGGER.warn("CTC and internal trial config are inconsistent in terms of study status for {} ({})."
+                        + " Taking CTC study status where open = {}", trialConfig.trialId(), trialConfig.acronym(), openInCTC);
+            }
+            return openInCTC;
+        }
+
+        LOGGER.warn("No study status found in CTC for trial {} ({}). Reverting to internal trial config",
+                trialConfig.trialId(),
+                trialConfig.acronym());
+        return trialConfig.open();
+    }
+
     @NotNull
-    public CohortMetadata resolveForCohortConfig(@NotNull CohortDefinitionConfig cohortConfig) {
+    public CohortMetadata resolveForCohort(@NotNull CohortDefinitionConfig cohortConfig) {
         InterpretedCohortStatus interpretedCohortStatus = CohortStatusInterpreter.interpret(ctcDatabase.entries(), cohortConfig);
 
         if (interpretedCohortStatus == null) {
