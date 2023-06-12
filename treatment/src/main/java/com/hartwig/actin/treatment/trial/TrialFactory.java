@@ -94,8 +94,7 @@ public class TrialFactory {
 
         for (CohortDefinitionConfig cohortConfig : trialConfigModel.cohortsForTrial(trialId)) {
             String cohortId = cohortConfig.cohortId();
-            cohorts.add(ImmutableCohort.builder()
-                    .metadata(ctcModel.resolveForCohort(cohortConfig))
+            cohorts.add(ImmutableCohort.builder().metadata(ctcModel.resolveCohortMetadata(cohortConfig))
                     .eligibility(toEligibility(trialConfigModel.specificInclusionCriteriaForCohort(trialId, cohortId), references))
                     .build());
         }

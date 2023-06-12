@@ -51,7 +51,7 @@ public class CTCModel {
     }
 
     @NotNull
-    public CohortMetadata resolveForCohort(@NotNull CohortDefinitionConfig cohortConfig) {
+    public CohortMetadata resolveCohortMetadata(@NotNull CohortDefinitionConfig cohortConfig) {
         InterpretedCohortStatus interpretedCohortStatus = CohortStatusInterpreter.interpret(ctcDatabase.entries(), cohortConfig);
 
         if (interpretedCohortStatus == null) {
