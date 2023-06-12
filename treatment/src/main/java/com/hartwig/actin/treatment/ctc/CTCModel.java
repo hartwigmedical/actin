@@ -34,7 +34,7 @@ public class CTCModel {
 
     @Nullable
     public Boolean isTrialOpen(@NotNull TrialDefinitionConfig trialConfig) {
-        Boolean openInCTC = TrialStatusInterpreter.interpret(ctcDatabase.entries(), trialConfig);
+        Boolean openInCTC = TrialStatusInterpreter.isOpen(ctcDatabase.entries(), trialConfig);
 
         if (openInCTC != null) {
             if (openInCTC != trialConfig.open()) {

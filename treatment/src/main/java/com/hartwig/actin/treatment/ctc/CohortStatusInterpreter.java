@@ -54,7 +54,7 @@ public final class CohortStatusInterpreter {
                 String cohortStatus = entry.cohortStatus();
                 if (cohortStatus == null) {
                     LOGGER.warn("Cohort status missing for CTC entry with cohort ID: {}: {}", entry.cohortId(), entry);
-                } else if (CTCCohortStatus.fromCohortStatusString(entry.cohortStatus()) == CTCCohortStatus.OPEN) {
+                } else if (CTCStatus.fromStatusString(entry.cohortStatus()) == CTCStatus.OPEN) {
                     hasAtLeastOneOpen = true;
                 }
 
