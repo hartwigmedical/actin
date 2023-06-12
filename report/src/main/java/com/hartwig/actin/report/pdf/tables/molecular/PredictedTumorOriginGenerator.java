@@ -18,8 +18,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class PredictedTumorOriginGenerator implements TableGenerator {
 
-    public static final int PADDING_LEFT = 20;
-    public static final int PADDING_RIGHT = 25;
+    private static final int PADDING_LEFT = 20;
+    private static final int PADDING_RIGHT = 25;
     @NotNull
     private final MolecularRecord molecular;
     private final float width;
@@ -41,11 +41,11 @@ public class PredictedTumorOriginGenerator implements TableGenerator {
         PredictedTumorOrigin predictedTumorOrigin = molecular.characteristics().predictedTumorOrigin();
         List<CuppaPrediction> predictions = TumorOriginInterpreter.predictionsToDisplay(predictedTumorOrigin);
 
-        if (predictions.isEmpty() || predictedTumorOrigin == null) {
+        if (predictions.isEmpty()) {
             String message = predictedTumorOrigin == null
                     ? Formats.VALUE_UNKNOWN
                     : String.format("All tumor cohorts have a prediction lower than 10%%. Highest prediction: %s (%s)",
-                            predictedTumorOrigin.tumorType(),
+                            predictedTumorOrigin.cancerType(),
                             Formats.percentage(predictedTumorOrigin.likelihood()));
             return Tables.createSingleColWithWidth(width).addCell(Cells.createContentNoBorder(message));
         } else {

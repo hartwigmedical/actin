@@ -15,9 +15,9 @@ import org.jetbrains.annotations.Nullable;
 
 public final class TumorOriginInterpreter {
 
-    public static final double LIKELIHOOD_CONFIDENCE_THRESHOLD = 0.8;
-    public static final double LIKELIHOOD_DISPLAY_THRESHOLD = 0.1;
-    public static final int MAX_PREDICTIONS_TO_DISPLAY = 3;
+    private static final double LIKELIHOOD_CONFIDENCE_THRESHOLD = 0.8;
+    private static final double LIKELIHOOD_DISPLAY_THRESHOLD = 0.1;
+    private static final int MAX_PREDICTIONS_TO_DISPLAY = 3;
 
     private TumorOriginInterpreter() {
     }
@@ -32,7 +32,7 @@ public final class TumorOriginInterpreter {
             return Formats.VALUE_UNKNOWN;
         }
 
-        return predictedTumorOrigin.tumorType() + " (" + Formats.percentage(predictedTumorOrigin.likelihood()) + ")";
+        return predictedTumorOrigin.cancerType() + " (" + Formats.percentage(predictedTumorOrigin.likelihood()) + ")";
     }
 
     @NotNull

@@ -26,17 +26,16 @@ public class TumorOriginInterpreterTest {
     @Test
     public void canDetermineConfidenceOfPredictedTumorOrigin() {
         assertFalse(TumorOriginInterpreter.hasConfidentPrediction(null));
-        assertFalse(TumorOriginInterpreter.hasConfidentPrediction(withLikelihood(0.4)));
-        assertTrue(TumorOriginInterpreter.hasConfidentPrediction(withLikelihood(0.8)));
-        assertTrue(TumorOriginInterpreter.hasConfidentPrediction(withLikelihood(0.99)));
+        assertFalse(TumorOriginInterpreter.hasConfidentPrediction(withPredictions(0.4)));
+        assertTrue(TumorOriginInterpreter.hasConfidentPrediction(withPredictions(0.8)));
+        assertTrue(TumorOriginInterpreter.hasConfidentPrediction(withPredictions(0.99)));
     }
 
     @Test
     public void canInterpretPredictedTumorOrigins() {
         assertEquals(Formats.VALUE_UNKNOWN, TumorOriginInterpreter.interpret(null));
 
-        PredictedTumorOrigin origin = ImmutablePredictedTumorOrigin.builder().tumorType("something").likelihood(0.9).build();
-        assertEquals("something (90%)", TumorOriginInterpreter.interpret(origin));
+        assertEquals("type 1 (90%)", TumorOriginInterpreter.interpret(withPredictions(0.9)));
     }
 
     @Test
@@ -75,8 +74,8 @@ public class TumorOriginInterpreterTest {
 
     @NotNull
     private static PredictedTumorOrigin withPredictions(double... likelihoods) {
-        return ImmutablePredictedTumorOrigin.copyOf(withLikelihood(likelihoods[0]))
-                .withPredictions(IntStream.range(0, likelihoods.length)
+        return ImmutablePredictedTumorOrigin.builder()
+                .predictions(IntStream.range(0, likelihoods.length)
                         .mapToObj(i -> ImmutableCuppaPrediction.builder()
                                 .cancerType(String.format("type %s", i + 1))
                                 .likelihood(likelihoods[i])
@@ -84,11 +83,7 @@ public class TumorOriginInterpreterTest {
                                 .genomicPositionClassifier(likelihoods[i])
                                 .featureClassifier(likelihoods[i])
                                 .build())
-                        .collect(Collectors.toList()));
-    }
-
-    @NotNull
-    private static PredictedTumorOrigin withLikelihood(double likelihood) {
-        return ImmutablePredictedTumorOrigin.builder().tumorType("type 1").likelihood(likelihood).build();
+                        .collect(Collectors.toList()))
+                .build();
     }
 }

@@ -6,11 +6,16 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 public class JsonTest {
@@ -103,6 +108,8 @@ public class JsonTest {
     public void canExtractNumbers() {
         JsonObject object = new JsonObject();
 
+        assertNull(Json.optionalNumber(object, "number"));
+
         object.addProperty("nullable", (String) null);
         assertNull(Json.nullableNumber(object, "nullable"));
 
@@ -152,5 +159,43 @@ public class JsonTest {
 
         assertEquals(LocalDate.of(2018, 4, 6), Json.nullableDate(object, "date"));
         assertEquals(LocalDate.of(2018, 4, 6), Json.date(object, "date"));
+    }
+
+    @Test
+    public void shouldExtractEmptyJsonArrayToEmptyList() {
+        assertEquals(Collections.emptyList(), Json.extractListFromJson(new JsonArray(), JsonTest::getIndex));
+    }
+
+    @Test
+    public void shouldExtractJsonArrayToList() {
+        List<Integer> list = List.of(3, 2, 1);
+        assertEquals(list, Json.extractListFromJson(jsonArrayFromCollection(list), JsonTest::getIndex));
+    }
+
+    @Test
+    public void shouldExtractEmptyJsonArrayToEmptySet() {
+        assertEquals(Collections.emptySet(), Json.extractSetFromJson(new JsonArray(), JsonTest::getIndex));
+    }
+
+    @Test
+    public void shouldExtractJsonArrayToSet() {
+        Set<Integer> set = Set.of(3, 2, 1);
+        assertEquals(set, Json.extractSetFromJson(jsonArrayFromCollection(set), JsonTest::getIndex));
+    }
+
+    @NotNull
+    private static JsonArray jsonArrayFromCollection(Collection<Integer> collection) {
+        JsonArray jsonArray = new JsonArray();
+        collection.stream().map(i -> {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("index", i);
+            return jsonObject;
+        }).forEach(jsonArray::add);
+
+        return jsonArray;
+    }
+
+    private static int getIndex(JsonObject jsonObject) {
+        return jsonObject.get("index").getAsInt();
     }
 }

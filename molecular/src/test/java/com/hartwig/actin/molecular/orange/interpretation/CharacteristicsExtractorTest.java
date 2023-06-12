@@ -39,10 +39,12 @@ public class CharacteristicsExtractorTest {
 
         PredictedTumorOrigin predictedOrigin = characteristics.predictedTumorOrigin();
         assertNotNull(predictedOrigin);
-        assertEquals("Melanoma", predictedOrigin.tumorType());
+        assertEquals("Melanoma", predictedOrigin.cancerType());
         assertEquals(0.996, predictedOrigin.likelihood(), EPSILON);
         assertEquals(1, predictedOrigin.predictions().size());
         CuppaPrediction cuppaPrediction = predictedOrigin.predictions().iterator().next();
+        assertEquals("Melanoma", cuppaPrediction.cancerType());
+        assertEquals(0.996, cuppaPrediction.likelihood(), EPSILON);
         assertDoubleEquals(0.979, cuppaPrediction.snvPairwiseClassifier());
         assertDoubleEquals(0.99, cuppaPrediction.genomicPositionClassifier());
         assertDoubleEquals(0.972, cuppaPrediction.featureClassifier());

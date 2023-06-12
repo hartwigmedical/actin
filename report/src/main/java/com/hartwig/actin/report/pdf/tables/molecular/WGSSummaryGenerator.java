@@ -133,7 +133,7 @@ public class WGSSummaryGenerator implements TableGenerator {
 
             if (predictionsMeetingThreshold.isEmpty()) {
                 return String.format("Inconclusive (%s %s)",
-                        predictedTumorOrigin.tumorType(),
+                        predictedTumorOrigin.cancerType(),
                         Formats.percentage(predictedTumorOrigin.likelihood()));
             } else {
                 return String.format("Inconclusive (%s)",

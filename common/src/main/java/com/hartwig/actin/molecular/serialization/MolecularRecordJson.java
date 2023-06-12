@@ -14,7 +14,6 @@ import static com.hartwig.actin.util.json.Json.nullableObject;
 import static com.hartwig.actin.util.json.Json.nullableString;
 import static com.hartwig.actin.util.json.Json.number;
 import static com.hartwig.actin.util.json.Json.object;
-import static com.hartwig.actin.util.json.Json.optionalNumber;
 import static com.hartwig.actin.util.json.Json.string;
 import static com.hartwig.actin.util.json.Json.stringList;
 
@@ -189,15 +188,13 @@ public class MolecularRecordJson {
             }
 
             return ImmutablePredictedTumorOrigin.builder()
-                    .tumorType(string(predictedTumorOrigin, "tumorType"))
-                    .likelihood(number(predictedTumorOrigin, "likelihood"))
                     .predictions(extractListFromJson(array(predictedTumorOrigin, "predictions"),
                             prediction -> ImmutableCuppaPrediction.builder()
                                     .cancerType(string(prediction, "cancerType"))
                                     .likelihood(number(prediction, "likelihood"))
-                                    .snvPairwiseClassifier(optionalNumber(prediction, "snvPairwiseClassifier"))
-                                    .genomicPositionClassifier(optionalNumber(prediction, "genomicPositionClassifier"))
-                                    .featureClassifier(optionalNumber(prediction, "featureClassifier"))
+                                    .snvPairwiseClassifier(number(prediction, "snvPairwiseClassifier"))
+                                    .genomicPositionClassifier(number(prediction, "genomicPositionClassifier"))
+                                    .featureClassifier(number(prediction, "featureClassifier"))
                                     .build()))
                     .build();
         }

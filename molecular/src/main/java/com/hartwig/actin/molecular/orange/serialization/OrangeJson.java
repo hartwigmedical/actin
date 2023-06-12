@@ -13,7 +13,6 @@ import static com.hartwig.actin.util.json.Json.nullableObject;
 import static com.hartwig.actin.util.json.Json.nullableString;
 import static com.hartwig.actin.util.json.Json.number;
 import static com.hartwig.actin.util.json.Json.object;
-import static com.hartwig.actin.util.json.Json.optionalNumber;
 import static com.hartwig.actin.util.json.Json.string;
 
 import java.io.File;
@@ -363,17 +362,25 @@ public final class OrangeJson {
         }
 
         private static Optional<CuppaRecord> toCuppaRecord(@Nullable JsonObject nullableCuppa) {
-            return Optional.ofNullable(nullableCuppa).map(cuppa -> {
-                List<CuppaPrediction> predictions = extractListFromJson(array(cuppa, "predictions"),
-                        prediction -> ImmutableCuppaPrediction.builder()
-                                .cancerType(string(prediction, "cancerType"))
-                                .likelihood(number(prediction, "likelihood"))
-                                .snvPairwiseClassifier(optionalNumber(prediction, "snvPairwiseClassifier"))
-                                .genomicPositionClassifier(optionalNumber(prediction, "genomicPositionClassifier"))
-                                .featureClassifier(optionalNumber(prediction, "featureClassifier"))
-                                .build());
-                return ImmutableCuppaRecord.builder().predictions(predictions).build();
-            });
+            return Optional.ofNullable(nullableCuppa)
+                    .map(cuppa -> ImmutableCuppaRecord.builder()
+                            .predictions(extractListFromJson(array(cuppa, "predictions"), OrangeRecordCreator::toCuppaPrediction))
+                            .build());
+        }
+
+        private static CuppaPrediction toCuppaPrediction(JsonObject prediction) {
+            for (String field : List.of("snvPairwiseClassifier", "genomicPositionClassifier", "featureClassifier")) {
+                if (!prediction.has(field)) {
+                    throw new IllegalStateException(String.format("Missing field %s: cuppa not run in expected configuration", field));
+                }
+            }
+            return ImmutableCuppaPrediction.builder()
+                    .cancerType(string(prediction, "cancerType"))
+                    .likelihood(number(prediction, "likelihood"))
+                    .snvPairwiseClassifier(number(prediction, "snvPairwiseClassifier"))
+                    .genomicPositionClassifier(number(prediction, "genomicPositionClassifier"))
+                    .featureClassifier(number(prediction, "featureClassifier"))
+                    .build();
         }
 
         private static Optional<VirusInterpreterRecord> toVirusInterpreterRecord(@Nullable JsonObject nullableVirusInterpreter) {

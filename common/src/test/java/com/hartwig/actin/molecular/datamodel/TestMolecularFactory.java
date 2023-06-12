@@ -111,8 +111,6 @@ public final class TestMolecularFactory {
     @NotNull
     private static ImmutablePredictedTumorOrigin createProperPredictedTumorOrigin() {
         return ImmutablePredictedTumorOrigin.builder()
-                .tumorType("Melanoma")
-                .likelihood(0.996)
                 .predictions(List.of(ImmutableCuppaPrediction.builder()
                                 .cancerType("Melanoma")
                                 .likelihood(0.996)

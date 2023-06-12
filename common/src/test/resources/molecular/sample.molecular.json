@@ -17,8 +17,6 @@
     "purity": 0.98,
     "ploidy": 3.1,
     "predictedTumorOrigin": {
-      "tumorType": "Melanoma",
-      "likelihood": 0.99,
       "predictions": [
         {
           "cancerType": "Melanoma",

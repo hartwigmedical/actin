@@ -84,7 +84,7 @@ public class MolecularPrinter {
             return "Not determined";
         }
 
-        return predictedTumorOrigin.tumorType() + " (" + formatPercentage(predictedTumorOrigin.likelihood()) + ")";
+        return predictedTumorOrigin.cancerType() + " (" + formatPercentage(predictedTumorOrigin.likelihood()) + ")";
     }
 
     @NotNull

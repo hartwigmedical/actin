@@ -63,8 +63,7 @@ public class OrangeJsonTest {
             Resources.getResource("serialization/minimally.populated.orange.json").getPath();
     private static final String MINIMALLY_POPULATED_ORANGE_JSON_WITH_GERMLINE =
             Resources.getResource("serialization/minimally.populated.orange.germline.json").getPath();
-    private static final String REAL_ORANGE_JSON = Resources.getResource("serialization/real.v2.4.0.orange.json").getPath();
-    private static final String NEXT_ORANGE_JSON = Resources.getResource("serialization/real.NEXT.orange.json").getPath();
+    private static final String REAL_ORANGE_JSON = Resources.getResource("serialization/real.NEXT.orange.json").getPath();
 
     private static final double EPSILON = 1.0E-2;
 
@@ -76,11 +75,6 @@ public class OrangeJsonTest {
     @Test
     public void canReadRealOrangeRecordJson() throws IOException {
         assertNotNull(OrangeJson.read(REAL_ORANGE_JSON));
-    }
-
-    @Test
-    public void canReadNextOrangeRecordJson() throws IOException {
-        assertNotNull(OrangeJson.read(NEXT_ORANGE_JSON));
     }
 
     @Test

@@ -11,9 +11,15 @@ import org.jetbrains.annotations.Nullable;
 public abstract class PredictedTumorOrigin {
 
     @NotNull
-    public abstract String tumorType();
+    @Value.Derived
+    public String cancerType() {
+        return predictions().get(0).cancerType();
+    }
 
-    public abstract double likelihood();
+    @Value.Derived
+    public double likelihood() {
+        return predictions().get(0).likelihood();
+    }
 
     @NotNull
     public abstract List<CuppaPrediction> predictions();

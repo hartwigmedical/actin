@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
@@ -156,17 +157,22 @@ public final class Json {
         return LocalDate.of(integer(dateObject, "year"), integer(dateObject, "month"), integer(dateObject, "day"));
     }
 
-    private static boolean isNull(@NotNull JsonObject object, @NotNull String field) {
-        return object.get(field).isJsonNull();
-    }
-
     @NotNull
     public static <T> List<T> extractListFromJson(@NotNull JsonArray jsonArray, Function<JsonObject, T> extractor) {
-        return jsonArray.asList().stream().map(JsonElement::getAsJsonObject).map(extractor).collect(Collectors.toList());
+        return jsonArraytoObjectStream(jsonArray, extractor).collect(Collectors.toList());
     }
 
     @NotNull
     public static <T> Set<T> extractSetFromJson(@NotNull JsonArray jsonArray, Function<JsonObject, T> extractor) {
-        return jsonArray.asList().stream().map(JsonElement::getAsJsonObject).map(extractor).collect(Collectors.toSet());
+        return jsonArraytoObjectStream(jsonArray, extractor).collect(Collectors.toSet());
+    }
+
+    @NotNull
+    private static <T> Stream<T> jsonArraytoObjectStream(@NotNull JsonArray jsonArray, Function<JsonObject, T> extractor) {
+        return jsonArray.asList().stream().map(JsonElement::getAsJsonObject).map(extractor);
+    }
+
+    private static boolean isNull(@NotNull JsonObject object, @NotNull String field) {
+        return object.get(field).isJsonNull();
     }
 }
