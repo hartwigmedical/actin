@@ -1,116 +1,101 @@
-package com.hartwig.actin.clinical.feed;
+package com.hartwig.actin.clinical.feed
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.google.common.annotations.VisibleForTesting
+import com.google.common.collect.Ordering
+import com.google.common.collect.Sets
+import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry
+import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry
+import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry
+import com.hartwig.actin.clinical.feed.lab.LabEntry
+import com.hartwig.actin.clinical.feed.medication.MedicationEntry
+import com.hartwig.actin.clinical.feed.patient.PatientEntry
+import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry
+import com.hartwig.actin.clinical.feed.surgery.SurgeryEntry
+import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry
+import java.io.IOException
+import java.util.function.BinaryOperator
+import java.util.function.Function
+import java.util.stream.Collectors
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Ordering;
-import com.google.common.collect.Sets;
-import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
-import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry;
-import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
-import com.hartwig.actin.clinical.feed.lab.LabEntry;
-import com.hartwig.actin.clinical.feed.medication.MedicationEntry;
-import com.hartwig.actin.clinical.feed.patient.PatientEntry;
-import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
-import com.hartwig.actin.clinical.feed.surgery.SurgeryEntry;
-import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-public class FeedModel {
-
-    @NotNull
-    private final ClinicalFeed feed;
-
-    @NotNull
-    public static FeedModel fromFeedDirectory(@NotNull String clinicalFeedDirectory) throws IOException {
-        return new FeedModel(ClinicalFeedReader.read(clinicalFeedDirectory));
-    }
-
-    @VisibleForTesting
-    FeedModel(@NotNull final ClinicalFeed feed) {
-        this.feed = feed;
-    }
-
-    @NotNull
-    public Set<String> subjects() {
-        Set<String> subjects = Sets.newTreeSet(Ordering.natural());
-        for (PatientEntry entry : feed.patientEntries()) {
-            subjects.add(entry.subject());
+class FeedModel @VisibleForTesting internal constructor(private val feed: ClinicalFeed) {
+    fun subjects(): Set<String> {
+        val subjects: MutableSet<String> = Sets.newTreeSet(Ordering.natural())
+        for (entry in feed.patientEntries()) {
+            subjects.add(entry!!.subject())
         }
-        return subjects;
+        return subjects
     }
 
-    @NotNull
-    public PatientEntry patientEntry(@NotNull String subject) {
+    fun patientEntry(subject: String): PatientEntry {
         return entriesForSubject(feed.patientEntries(), subject).stream()
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Could not find patient for subject " + subject));
+            .findFirst()
+            .orElseThrow { IllegalStateException("Could not find patient for subject $subject") }
     }
 
-    @NotNull
-    public List<DigitalFileEntry> bloodTransfusionEntries(@NotNull String subject) {
+    fun bloodTransfusionEntries(subject: String): List<DigitalFileEntry?> {
         return entriesForSubject(feed.digitalFileEntries(), subject).stream()
-                .filter(DigitalFileEntry::isBloodTransfusionEntry)
-                .collect(Collectors.toList());
+            .filter { obj: DigitalFileEntry? -> obj!!.isBloodTransfusionEntry }
+            .collect(Collectors.toList())
     }
 
-    @NotNull
-    public List<DigitalFileEntry> toxicityEntries(@NotNull String subject) {
+    fun toxicityEntries(subject: String): List<DigitalFileEntry?> {
         return entriesForSubject(feed.digitalFileEntries(), subject).stream()
-                .filter(DigitalFileEntry::isToxicityEntry)
-                .collect(Collectors.toList());
+            .filter { obj: DigitalFileEntry? -> obj!!.isToxicityEntry }
+            .collect(Collectors.toList())
     }
 
-    @Nullable
-    public QuestionnaireEntry latestQuestionnaireEntry(@NotNull String subject) {
+    fun latestQuestionnaireEntry(subject: String): QuestionnaireEntry? {
         return entriesForSubject(feed.questionnaireEntries(), subject).stream()
-                .max(Comparator.comparing(QuestionnaireEntry::authored))
-                .orElse(null);
+            .max(Comparator.comparing { obj: QuestionnaireEntry? -> obj!!.authored() })
+            .orElse(null)
     }
 
-    @NotNull
-    public List<SurgeryEntry> uniqueSurgeryEntries(@NotNull String subject) {
-        return new ArrayList<>(entriesForSubject(feed.surgeryEntries(), subject).stream()
-                .collect(Collectors.toMap(surgery -> List.of(surgery.periodStart(), surgery.periodEnd()),
-                        surgery -> surgery,
-                        (surgery1, surgery2) -> surgery1))
-                .values());
+    fun uniqueSurgeryEntries(subject: String): List<SurgeryEntry?> {
+        return ArrayList(
+            entriesForSubject(feed.surgeryEntries(), subject).stream()
+                .collect(
+                    Collectors.toMap(
+                        Function { surgery: SurgeryEntry? ->
+                            java.util.List.of(
+                                surgery!!.periodStart(), surgery.periodEnd()
+                            )
+                        },
+                        Function { surgery: SurgeryEntry? -> surgery },
+                        BinaryOperator { surgery1: SurgeryEntry?, surgery2: SurgeryEntry? -> surgery1 })
+                )
+                .values
+        )
     }
 
-    @NotNull
-    public List<MedicationEntry> medicationEntries(@NotNull String subject) {
-        return entriesForSubject(feed.medicationEntries(), subject);
+    fun medicationEntries(subject: String): List<MedicationEntry?> {
+        return entriesForSubject(feed.medicationEntries(), subject)
     }
 
-    @NotNull
-    public List<LabEntry> labEntries(@NotNull String subject) {
-        return entriesForSubject(feed.labEntries(), subject);
+    fun labEntries(subject: String): List<LabEntry?> {
+        return entriesForSubject(feed.labEntries(), subject)
     }
 
-    @NotNull
-    public List<VitalFunctionEntry> vitalFunctionEntries(@NotNull String subject) {
-        return entriesForSubject(feed.vitalFunctionEntries(), subject);
+    fun vitalFunctionEntries(subject: String): List<VitalFunctionEntry?> {
+        return entriesForSubject(feed.vitalFunctionEntries(), subject)
     }
 
-    @NotNull
-    public List<IntoleranceEntry> intoleranceEntries(@NotNull String subject) {
-        return entriesForSubject(feed.intoleranceEntries(), subject);
+    fun intoleranceEntries(subject: String): List<IntoleranceEntry?> {
+        return entriesForSubject(feed.intoleranceEntries(), subject)
     }
 
-    @NotNull
-    public List<BodyWeightEntry> uniqueBodyWeightEntries(@NotNull String subject) {
-        return entriesForSubject(feed.bodyWeightEntries(), subject).stream().distinct().collect(Collectors.toList());
+    fun uniqueBodyWeightEntries(subject: String): List<BodyWeightEntry?> {
+        return entriesForSubject(feed.bodyWeightEntries(), subject).stream().distinct().collect(Collectors.toList())
     }
 
-    @NotNull
-    private static <T extends FeedEntry> List<T> entriesForSubject(@NotNull List<T> allEntries, @NotNull String subject) {
-        return allEntries.stream().filter(entry -> entry.subject().equals(subject)).collect(Collectors.toList());
+    companion object {
+        @JvmStatic
+        @Throws(IOException::class)
+        fun fromFeedDirectory(clinicalFeedDirectory: String): FeedModel {
+            return FeedModel(ClinicalFeedReader.read(clinicalFeedDirectory))
+        }
+
+        private fun <T : FeedEntry?> entriesForSubject(allEntries: List<T>, subject: String): List<T> {
+            return allEntries.stream().filter { entry: T -> entry!!.subject() == subject }.collect(Collectors.toList())
+        }
     }
 }

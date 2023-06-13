@@ -1,23 +1,21 @@
-package com.hartwig.actin.clinical.feed.vitalfunction;
+package com.hartwig.actin.clinical.feed.vitalfunction
 
-import static org.junit.Assert.assertEquals;
+import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
+import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionExtraction.determineCategory
+import org.junit.Assert
+import org.junit.Test
 
-import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
-
-import org.junit.Test;
-
-public class VitalFunctionExtractionTest {
-
+class VitalFunctionExtractionTest {
     @Test
-    public void canDetermineVitalFunctionCategory() {
-        assertEquals(VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE, VitalFunctionExtraction.determineCategory("NIBP"));
-        assertEquals(VitalFunctionCategory.ARTERIAL_BLOOD_PRESSURE, VitalFunctionExtraction.determineCategory("ABP"));
-        assertEquals(VitalFunctionCategory.HEART_RATE, VitalFunctionExtraction.determineCategory("HR"));
-        assertEquals(VitalFunctionCategory.SPO2, VitalFunctionExtraction.determineCategory("SpO2"));
+    fun canDetermineVitalFunctionCategory() {
+        Assert.assertEquals(VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE, determineCategory("NIBP"))
+        Assert.assertEquals(VitalFunctionCategory.ARTERIAL_BLOOD_PRESSURE, determineCategory("ABP"))
+        Assert.assertEquals(VitalFunctionCategory.HEART_RATE, determineCategory("HR"))
+        Assert.assertEquals(VitalFunctionCategory.SPO2, determineCategory("SpO2"))
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void crashOnInvalidVitalFunctionCategory() {
-        VitalFunctionExtraction.determineCategory("not a category");
+    @Test(expected = IllegalArgumentException::class)
+    fun crashOnInvalidVitalFunctionCategory() {
+        determineCategory("not a category")
     }
 }

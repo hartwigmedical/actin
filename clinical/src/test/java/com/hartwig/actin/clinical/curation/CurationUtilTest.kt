@@ -1,57 +1,50 @@
-package com.hartwig.actin.clinical.curation;
+package com.hartwig.actin.clinical.curation
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.google.common.collect.Sets
+import com.hartwig.actin.clinical.curation.CurationUtil.capitalizeFirstLetterOnly
+import com.hartwig.actin.clinical.curation.CurationUtil.fullTrim
+import com.hartwig.actin.clinical.curation.CurationUtil.toCategories
+import com.hartwig.actin.clinical.curation.CurationUtil.toDOIDs
+import org.apache.logging.log4j.util.Strings
+import org.junit.Assert
+import org.junit.Test
 
-import java.util.Set;
-
-import com.google.common.collect.Sets;
-
-import org.apache.logging.log4j.util.Strings;
-import org.junit.Test;
-
-public class CurationUtilTest {
-
+class CurationUtilTest {
     @Test
-    public void canCapitalizeFirstLetterOnly() {
-        assertEquals("Hi", CurationUtil.capitalizeFirstLetterOnly("hi"));
-        assertEquals("Hi", CurationUtil.capitalizeFirstLetterOnly("Hi"));
-        assertEquals("Hi", CurationUtil.capitalizeFirstLetterOnly("hI"));
-        assertEquals("H", CurationUtil.capitalizeFirstLetterOnly("h"));
-        assertEquals("H", CurationUtil.capitalizeFirstLetterOnly("H"));
-
-        assertEquals(Strings.EMPTY, CurationUtil.capitalizeFirstLetterOnly(Strings.EMPTY));
+    fun canCapitalizeFirstLetterOnly() {
+        Assert.assertEquals("Hi", capitalizeFirstLetterOnly("hi"))
+        Assert.assertEquals("Hi", capitalizeFirstLetterOnly("Hi"))
+        Assert.assertEquals("Hi", capitalizeFirstLetterOnly("hI"))
+        Assert.assertEquals("H", capitalizeFirstLetterOnly("h"))
+        Assert.assertEquals("H", capitalizeFirstLetterOnly("H"))
+        Assert.assertEquals(Strings.EMPTY, capitalizeFirstLetterOnly(Strings.EMPTY))
     }
 
     @Test
-    public void canFullTrim() {
-        assertEquals(Strings.EMPTY, CurationUtil.fullTrim(Strings.EMPTY));
-        assertEquals("hi", CurationUtil.fullTrim("hi"));
-        assertEquals("this is a normal sentence", CurationUtil.fullTrim("this is a normal sentence"));
-        assertEquals("this is a weird sentence", CurationUtil.fullTrim(" this     is  a weird   sentence  "));
+    fun canFullTrim() {
+        Assert.assertEquals(Strings.EMPTY, fullTrim(Strings.EMPTY))
+        Assert.assertEquals("hi", fullTrim("hi"))
+        Assert.assertEquals("this is a normal sentence", fullTrim("this is a normal sentence"))
+        Assert.assertEquals("this is a weird sentence", fullTrim(" this     is  a weird   sentence  "))
     }
 
     @Test
-    public void canConvertToDOIDs() {
-        assertEquals(Sets.newHashSet("123"), CurationUtil.toDOIDs("123"));
-
-        Set<String> multiple = CurationUtil.toDOIDs("123;456");
-        assertEquals(2, multiple.size());
-        assertTrue(multiple.contains("123"));
-        assertTrue(multiple.contains("456"));
-
-        assertTrue(CurationUtil.toDOIDs(Strings.EMPTY).isEmpty());
+    fun canConvertToDOIDs() {
+        Assert.assertEquals(Sets.newHashSet("123"), toDOIDs("123"))
+        val multiple = toDOIDs("123;456")
+        Assert.assertEquals(2, multiple.size.toLong())
+        Assert.assertTrue(multiple.contains("123"))
+        Assert.assertTrue(multiple.contains("456"))
+        Assert.assertTrue(toDOIDs(Strings.EMPTY).isEmpty())
     }
 
     @Test
-    public void canConvertToCategories() {
-        assertEquals(Sets.newHashSet("category1"), CurationUtil.toCategories("category1"));
-
-        Set<String> multiple = CurationUtil.toCategories("category1;category2");
-        assertEquals(2, multiple.size());
-        assertTrue(multiple.contains("category1"));
-        assertTrue(multiple.contains("category2"));
-
-        assertTrue(CurationUtil.toCategories(Strings.EMPTY).isEmpty());
+    fun canConvertToCategories() {
+        Assert.assertEquals(Sets.newHashSet("category1"), toCategories("category1"))
+        val multiple = toCategories("category1;category2")
+        Assert.assertEquals(2, multiple.size.toLong())
+        Assert.assertTrue(multiple.contains("category1"))
+        Assert.assertTrue(multiple.contains("category2"))
+        Assert.assertTrue(toCategories(Strings.EMPTY).isEmpty())
     }
 }

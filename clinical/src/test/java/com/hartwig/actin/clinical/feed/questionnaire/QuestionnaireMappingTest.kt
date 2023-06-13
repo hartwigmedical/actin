@@ -1,55 +1,71 @@
-package com.hartwig.actin.clinical.feed.questionnaire;
+package com.hartwig.actin.clinical.feed.questionnaire
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireMapping.mapping
+import org.junit.Assert
+import org.junit.Test
 
-import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
-
-public class QuestionnaireMappingTest {
-
+class QuestionnaireMappingTest {
     @Test
-    public void allMappingsAreComplete() {
-        for (QuestionnaireKey key : QuestionnaireKey.values()) {
-            assertTrue(QuestionnaireMapping.KEYS_V1_6.containsKey(key));
-            assertTrue(QuestionnaireMapping.KEYS_V1_5.containsKey(key));
-            assertTrue(QuestionnaireMapping.KEYS_V1_4.containsKey(key));
-            assertTrue(QuestionnaireMapping.KEYS_V1_3.containsKey(key));
-            assertTrue(QuestionnaireMapping.KEYS_V1_2.containsKey(key));
-            assertTrue(QuestionnaireMapping.KEYS_V1_1.containsKey(key));
-            assertTrue(QuestionnaireMapping.KEYS_V1_0.containsKey(key));
-            assertTrue(QuestionnaireMapping.KEYS_V0_2.containsKey(key));
-            assertTrue(QuestionnaireMapping.KEYS_V0_1.containsKey(key));
+    fun allMappingsAreComplete() {
+        for (key in QuestionnaireKey.values()) {
+            Assert.assertTrue(QuestionnaireMapping.KEYS_V1_6.containsKey(key))
+            Assert.assertTrue(QuestionnaireMapping.KEYS_V1_5.containsKey(key))
+            Assert.assertTrue(QuestionnaireMapping.KEYS_V1_4.containsKey(key))
+            Assert.assertTrue(QuestionnaireMapping.KEYS_V1_3.containsKey(key))
+            Assert.assertTrue(QuestionnaireMapping.KEYS_V1_2.containsKey(key))
+            Assert.assertTrue(QuestionnaireMapping.KEYS_V1_1.containsKey(key))
+            Assert.assertTrue(QuestionnaireMapping.KEYS_V1_0.containsKey(key))
+            Assert.assertTrue(QuestionnaireMapping.KEYS_V0_2.containsKey(key))
+            Assert.assertTrue(QuestionnaireMapping.KEYS_V0_1.containsKey(key))
         }
     }
 
     @Test
-    public void canRetrieveMappingForQuestionnaire() {
-        assertEquals(QuestionnaireMapping.KEYS_V1_6,
-                QuestionnaireMapping.mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_6())));
-        assertEquals(QuestionnaireMapping.KEYS_V1_5,
-                QuestionnaireMapping.mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_5())));
-        assertEquals(QuestionnaireMapping.KEYS_V1_4,
-                QuestionnaireMapping.mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_4())));
-        assertEquals(QuestionnaireMapping.KEYS_V1_3,
-                QuestionnaireMapping.mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_3())));
-        assertEquals(QuestionnaireMapping.KEYS_V1_2,
-                QuestionnaireMapping.mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_2())));
-        assertEquals(QuestionnaireMapping.KEYS_V1_1,
-                QuestionnaireMapping.mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_1())));
-        assertEquals(QuestionnaireMapping.KEYS_V1_0,
-                QuestionnaireMapping.mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0())));
-        assertEquals(QuestionnaireMapping.KEYS_V0_2,
-                QuestionnaireMapping.mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_2())));
-        assertEquals(QuestionnaireMapping.KEYS_V0_1,
-                QuestionnaireMapping.mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_1())));
+    fun canRetrieveMappingForQuestionnaire() {
+        Assert.assertEquals(
+            QuestionnaireMapping.KEYS_V1_6,
+            mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_6()))
+        )
+        Assert.assertEquals(
+            QuestionnaireMapping.KEYS_V1_5,
+            mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_5()))
+        )
+        Assert.assertEquals(
+            QuestionnaireMapping.KEYS_V1_4,
+            mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_4()))
+        )
+        Assert.assertEquals(
+            QuestionnaireMapping.KEYS_V1_3,
+            mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_3()))
+        )
+        Assert.assertEquals(
+            QuestionnaireMapping.KEYS_V1_2,
+            mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_2()))
+        )
+        Assert.assertEquals(
+            QuestionnaireMapping.KEYS_V1_1,
+            mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_1()))
+        )
+        Assert.assertEquals(
+            QuestionnaireMapping.KEYS_V1_0,
+            mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0()))
+        )
+        Assert.assertEquals(
+            QuestionnaireMapping.KEYS_V0_2,
+            mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_2()))
+        )
+        Assert.assertEquals(
+            QuestionnaireMapping.KEYS_V0_1,
+            mapping(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_1()))
+        )
     }
 
-    @NotNull
-    private static QuestionnaireEntry entry(@NotNull String questionnaire) {
-        return ImmutableQuestionnaireEntry.builder()
+    companion object {
+        private fun entry(questionnaire: String): QuestionnaireEntry {
+            return ImmutableQuestionnaireEntry.builder()
                 .from(TestQuestionnaireFactory.createTestQuestionnaireEntry())
                 .text(questionnaire)
-                .build();
+                .build()
+        }
     }
 }

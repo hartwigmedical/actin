@@ -1,619 +1,485 @@
-package com.hartwig.actin.clinical.feed.questionnaire;
+package com.hartwig.actin.clinical.feed.questionnaire
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import com.hartwig.actin.clinical.datamodel.TumorStage
+import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction.Companion.isActualQuestionnaire
+import org.junit.Assert
+import org.junit.Test
+import java.time.LocalDate
 
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
-
-import com.hartwig.actin.clinical.datamodel.ECG;
-import com.hartwig.actin.clinical.datamodel.InfectionStatus;
-import com.hartwig.actin.clinical.datamodel.TumorStage;
-
-import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
-
-public class QuestionnaireExtractionTest {
-
+class QuestionnaireExtractionTest {
     @Test
-    public void shouldBeAbleToDetermineThatQuestionnaireEntryIsAQuestionnaire() {
-        assertTrue(QuestionnaireExtraction.isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_5())));
-        assertTrue(QuestionnaireExtraction.isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_4())));
-        assertTrue(QuestionnaireExtraction.isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_3())));
-        assertTrue(QuestionnaireExtraction.isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_2())));
-        assertTrue(QuestionnaireExtraction.isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_1())));
-        assertTrue(QuestionnaireExtraction.isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0())));
-        assertTrue(QuestionnaireExtraction.isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_2())));
-        assertTrue(QuestionnaireExtraction.isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_1())));
-
-        assertFalse(QuestionnaireExtraction.isActualQuestionnaire(entry("Does not exist")));
+    fun shouldBeAbleToDetermineThatQuestionnaireEntryIsAQuestionnaire() {
+        Assert.assertTrue(isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_5())))
+        Assert.assertTrue(isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_4())))
+        Assert.assertTrue(isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_3())))
+        Assert.assertTrue(isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_2())))
+        Assert.assertTrue(isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_1())))
+        Assert.assertTrue(isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0())))
+        Assert.assertTrue(isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_2())))
+        Assert.assertTrue(isActualQuestionnaire(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_1())))
+        Assert.assertFalse(isActualQuestionnaire(entry("Does not exist")))
     }
 
     @Test
-    public void shouldBeAbleToHandleMissingGENAYASubjectNumberFromQuestionnaire() {
-        QuestionnaireEntry entryWithMissingSubjectNumber =
-                entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_6().replace("GENAYA subjectno: GAYA-01-02-9999", ""));
-
-        Questionnaire questionnaire = extraction().extract(entryWithMissingSubjectNumber);
-
-        assertNull(questionnaire.genayaSubjectNumber());
+    fun shouldBeAbleToHandleMissingGENAYASubjectNumberFromQuestionnaire() {
+        val entryWithMissingSubjectNumber =
+            entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_6().replace("GENAYA subjectno: GAYA-01-02-9999", ""))
+        val questionnaire = extraction().extract(entryWithMissingSubjectNumber)
+        Assert.assertNull(questionnaire!!.genayaSubjectNumber())
     }
 
     @Test
-    public void shouldBeAbleToExtractDataFromQuestionnaireV1_6() {
-        Questionnaire questionnaire = extraction().extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_6()));
-
-        assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
-        assertEquals("ovary", questionnaire.tumorLocation());
-        assertEquals("serous", questionnaire.tumorType());
-        assertEquals("lymph node", questionnaire.biopsyLocation());
-
-        List<String> treatmentHistory = questionnaire.treatmentHistoryCurrentTumor();
-        assertEquals(2, treatmentHistory.size());
-        assertTrue(treatmentHistory.contains("cisplatin"));
-        assertTrue(treatmentHistory.contains("nivolumab"));
-
-        List<String> otherOncologicalHistory = questionnaire.otherOncologicalHistory();
-        assertEquals(1, otherOncologicalHistory.size());
-        assertTrue(otherOncologicalHistory.contains("surgery"));
-
-        List<String> secondaryPrimaries = questionnaire.secondaryPrimaries();
-        assertEquals(1, secondaryPrimaries.size());
-        assertTrue(secondaryPrimaries.contains("sarcoma | Feb 2020"));
-
-        List<String> nonOncologicalHistory = questionnaire.nonOncologicalHistory();
-        assertEquals(1, nonOncologicalHistory.size());
-        assertTrue(nonOncologicalHistory.contains("diabetes"));
-
-        assertEquals(TumorStage.IV, questionnaire.stage());
-        assertTrue(questionnaire.hasMeasurableDisease());
-        assertTrue(questionnaire.hasBrainLesions());
-        assertTrue(questionnaire.hasActiveBrainLesions());
-        assertNull(questionnaire.hasCnsLesions());
-        assertNull(questionnaire.hasActiveCnsLesions());
-        assertFalse(questionnaire.hasBoneLesions());
-        assertFalse(questionnaire.hasLiverLesions());
-
-        List<String> otherLesions = questionnaire.otherLesions();
-        assertEquals(2, otherLesions.size());
-        assertTrue(otherLesions.contains("pulmonal"));
-        assertTrue(otherLesions.contains("abdominal"));
-
-        List<String> ihcTestResults = questionnaire.ihcTestResults();
-        assertEquals(1, ihcTestResults.size());
-        assertTrue(ihcTestResults.contains("ERBB2 3+"));
-
-        List<String> pdl1TestResults = questionnaire.pdl1TestResults();
-        assertEquals(1, pdl1TestResults.size());
-        assertTrue(pdl1TestResults.contains("Positive"));
-
-        assertEquals(0, (int) questionnaire.whoStatus());
-        List<String> unresolvedToxicities = questionnaire.unresolvedToxicities();
-        assertEquals(1, unresolvedToxicities.size());
-        assertTrue(unresolvedToxicities.contains("toxic"));
-
-        InfectionStatus infectionStatus = questionnaire.infectionStatus();
-        assertNotNull(infectionStatus);
-        assertFalse(infectionStatus.hasActiveInfection());
-
-        ECG ecg = questionnaire.ecg();
-        assertNotNull(ecg);
-        assertTrue(ecg.hasSigAberrationLatestECG());
-        assertEquals("Sinus", ecg.aberrationDescription());
-
-        List<String> complications = questionnaire.complications();
-        assertEquals(1, complications.size());
-        assertTrue(complications.contains("vomit"));
-
-        assertEquals("GAYA-01-02-9999", questionnaire.genayaSubjectNumber());
+    fun shouldBeAbleToExtractDataFromQuestionnaireV1_6() {
+        val questionnaire = extraction().extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_6()))
+        Assert.assertEquals(LocalDate.of(2020, 8, 28), questionnaire!!.date())
+        Assert.assertEquals("ovary", questionnaire.tumorLocation())
+        Assert.assertEquals("serous", questionnaire.tumorType())
+        Assert.assertEquals("lymph node", questionnaire.biopsyLocation())
+        val treatmentHistory = questionnaire.treatmentHistoryCurrentTumor()
+        Assert.assertEquals(2, treatmentHistory!!.size.toLong())
+        Assert.assertTrue(treatmentHistory.contains("cisplatin"))
+        Assert.assertTrue(treatmentHistory.contains("nivolumab"))
+        val otherOncologicalHistory = questionnaire.otherOncologicalHistory()
+        Assert.assertEquals(1, otherOncologicalHistory!!.size.toLong())
+        Assert.assertTrue(otherOncologicalHistory.contains("surgery"))
+        val secondaryPrimaries = questionnaire.secondaryPrimaries()
+        Assert.assertEquals(1, secondaryPrimaries!!.size.toLong())
+        Assert.assertTrue(secondaryPrimaries.contains("sarcoma | Feb 2020"))
+        val nonOncologicalHistory = questionnaire.nonOncologicalHistory()
+        Assert.assertEquals(1, nonOncologicalHistory!!.size.toLong())
+        Assert.assertTrue(nonOncologicalHistory.contains("diabetes"))
+        Assert.assertEquals(TumorStage.IV, questionnaire.stage())
+        Assert.assertTrue(questionnaire.hasMeasurableDisease()!!)
+        Assert.assertTrue(questionnaire.hasBrainLesions()!!)
+        Assert.assertTrue(questionnaire.hasActiveBrainLesions()!!)
+        Assert.assertNull(questionnaire.hasCnsLesions())
+        Assert.assertNull(questionnaire.hasActiveCnsLesions())
+        Assert.assertFalse(questionnaire.hasBoneLesions()!!)
+        Assert.assertFalse(questionnaire.hasLiverLesions()!!)
+        val otherLesions = questionnaire.otherLesions()
+        Assert.assertEquals(2, otherLesions!!.size.toLong())
+        Assert.assertTrue(otherLesions.contains("pulmonal"))
+        Assert.assertTrue(otherLesions.contains("abdominal"))
+        val ihcTestResults = questionnaire.ihcTestResults()
+        Assert.assertEquals(1, ihcTestResults!!.size.toLong())
+        Assert.assertTrue(ihcTestResults.contains("ERBB2 3+"))
+        val pdl1TestResults = questionnaire.pdl1TestResults()
+        Assert.assertEquals(1, pdl1TestResults!!.size.toLong())
+        Assert.assertTrue(pdl1TestResults.contains("Positive"))
+        Assert.assertEquals(0, (questionnaire.whoStatus() as Int).toLong())
+        val unresolvedToxicities = questionnaire.unresolvedToxicities()
+        Assert.assertEquals(1, unresolvedToxicities!!.size.toLong())
+        Assert.assertTrue(unresolvedToxicities.contains("toxic"))
+        val infectionStatus = questionnaire.infectionStatus()
+        Assert.assertNotNull(infectionStatus)
+        Assert.assertFalse(infectionStatus!!.hasActiveInfection())
+        val ecg = questionnaire.ecg()
+        Assert.assertNotNull(ecg)
+        Assert.assertTrue(ecg!!.hasSigAberrationLatestECG())
+        Assert.assertEquals("Sinus", ecg.aberrationDescription())
+        val complications = questionnaire.complications()
+        Assert.assertEquals(1, complications!!.size.toLong())
+        Assert.assertTrue(complications.contains("vomit"))
+        Assert.assertEquals("GAYA-01-02-9999", questionnaire.genayaSubjectNumber())
     }
 
     @Test
-    public void shouldBeAbleToExtractDataFromQuestionnaireV1_5() {
-        assertExtractionForQuestionnaireV1_5(TestQuestionnaireFactory.createTestQuestionnaireValueV1_5());
+    fun shouldBeAbleToExtractDataFromQuestionnaireV1_5() {
+        assertExtractionForQuestionnaireV1_5(TestQuestionnaireFactory.createTestQuestionnaireValueV1_5())
     }
 
     @Test
-    public void shouldBeAbleToExtractDataFromAlternateQuestionnaireV1_5() {
-        String rawQuestionnaire = TestQuestionnaireFactory.createTestQuestionnaireValueV1_5()
-                .replace("- IHC test", "-IHC test")
-                .replace("- PD L1 test", "-PD L1 test");
-
-        assertExtractionForQuestionnaireV1_5(rawQuestionnaire);
+    fun shouldBeAbleToExtractDataFromAlternateQuestionnaireV1_5() {
+        val rawQuestionnaire = TestQuestionnaireFactory.createTestQuestionnaireValueV1_5()
+            .replace("- IHC test", "-IHC test")
+            .replace("- PD L1 test", "-PD L1 test")
+        assertExtractionForQuestionnaireV1_5(rawQuestionnaire)
     }
 
-    private void assertExtractionForQuestionnaireV1_5(@NotNull String rawQuestionnaire) {
-        Questionnaire questionnaire = extraction().extract(entry(rawQuestionnaire));
-
-        assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
-        assertEquals("ovary", questionnaire.tumorLocation());
-        assertEquals("serous", questionnaire.tumorType());
-        assertEquals("lymph node", questionnaire.biopsyLocation());
-
-        List<String> treatmentHistory = questionnaire.treatmentHistoryCurrentTumor();
-        assertEquals(2, treatmentHistory.size());
-        assertTrue(treatmentHistory.contains("cisplatin"));
-        assertTrue(treatmentHistory.contains("nivolumab"));
-
-        List<String> otherOncologicalHistory = questionnaire.otherOncologicalHistory();
-        assertEquals(1, otherOncologicalHistory.size());
-        assertTrue(otherOncologicalHistory.contains("surgery"));
-
-        List<String> secondaryPrimaries = questionnaire.secondaryPrimaries();
-        assertEquals(1, secondaryPrimaries.size());
-        assertTrue(secondaryPrimaries.contains("sarcoma | Feb 2020"));
-
-        List<String> nonOncologicalHistory = questionnaire.nonOncologicalHistory();
-        assertEquals(1, nonOncologicalHistory.size());
-        assertTrue(nonOncologicalHistory.contains("diabetes"));
-
-        assertEquals(TumorStage.IV, questionnaire.stage());
-        assertTrue(questionnaire.hasMeasurableDisease());
-        assertTrue(questionnaire.hasBrainLesions());
-        assertTrue(questionnaire.hasActiveBrainLesions());
-        assertNull(questionnaire.hasCnsLesions());
-        assertNull(questionnaire.hasActiveCnsLesions());
-        assertFalse(questionnaire.hasBoneLesions());
-        assertFalse(questionnaire.hasLiverLesions());
-
-        List<String> otherLesions = questionnaire.otherLesions();
-        assertEquals(2, otherLesions.size());
-        assertTrue(otherLesions.contains("pulmonal"));
-        assertTrue(otherLesions.contains("abdominal"));
-
-        List<String> ihcTestResults = questionnaire.ihcTestResults();
-        assertEquals(1, ihcTestResults.size());
-        assertTrue(ihcTestResults.contains("ERBB2 3+"));
-
-        List<String> pdl1TestResults = questionnaire.pdl1TestResults();
-        assertEquals(1, pdl1TestResults.size());
-        assertTrue(pdl1TestResults.contains("Positive"));
-
-        assertEquals(0, (int) questionnaire.whoStatus());
-        List<String> unresolvedToxicities = questionnaire.unresolvedToxicities();
-        assertEquals(1, unresolvedToxicities.size());
-        assertTrue(unresolvedToxicities.contains("toxic"));
-
-        InfectionStatus infectionStatus = questionnaire.infectionStatus();
-        assertNotNull(infectionStatus);
-        assertFalse(infectionStatus.hasActiveInfection());
-
-        ECG ecg = questionnaire.ecg();
-        assertNotNull(ecg);
-        assertTrue(ecg.hasSigAberrationLatestECG());
-        assertEquals("Sinus", ecg.aberrationDescription());
-
-        List<String> complications = questionnaire.complications();
-        assertEquals(1, complications.size());
-        assertTrue(complications.contains("vomit"));
-
-        assertNull(questionnaire.genayaSubjectNumber());
+    private fun assertExtractionForQuestionnaireV1_5(rawQuestionnaire: String) {
+        val questionnaire = extraction().extract(entry(rawQuestionnaire))
+        Assert.assertEquals(LocalDate.of(2020, 8, 28), questionnaire!!.date())
+        Assert.assertEquals("ovary", questionnaire.tumorLocation())
+        Assert.assertEquals("serous", questionnaire.tumorType())
+        Assert.assertEquals("lymph node", questionnaire.biopsyLocation())
+        val treatmentHistory = questionnaire.treatmentHistoryCurrentTumor()
+        Assert.assertEquals(2, treatmentHistory!!.size.toLong())
+        Assert.assertTrue(treatmentHistory.contains("cisplatin"))
+        Assert.assertTrue(treatmentHistory.contains("nivolumab"))
+        val otherOncologicalHistory = questionnaire.otherOncologicalHistory()
+        Assert.assertEquals(1, otherOncologicalHistory!!.size.toLong())
+        Assert.assertTrue(otherOncologicalHistory.contains("surgery"))
+        val secondaryPrimaries = questionnaire.secondaryPrimaries()
+        Assert.assertEquals(1, secondaryPrimaries!!.size.toLong())
+        Assert.assertTrue(secondaryPrimaries.contains("sarcoma | Feb 2020"))
+        val nonOncologicalHistory = questionnaire.nonOncologicalHistory()
+        Assert.assertEquals(1, nonOncologicalHistory!!.size.toLong())
+        Assert.assertTrue(nonOncologicalHistory.contains("diabetes"))
+        Assert.assertEquals(TumorStage.IV, questionnaire.stage())
+        Assert.assertTrue(questionnaire.hasMeasurableDisease()!!)
+        Assert.assertTrue(questionnaire.hasBrainLesions()!!)
+        Assert.assertTrue(questionnaire.hasActiveBrainLesions()!!)
+        Assert.assertNull(questionnaire.hasCnsLesions())
+        Assert.assertNull(questionnaire.hasActiveCnsLesions())
+        Assert.assertFalse(questionnaire.hasBoneLesions()!!)
+        Assert.assertFalse(questionnaire.hasLiverLesions()!!)
+        val otherLesions = questionnaire.otherLesions()
+        Assert.assertEquals(2, otherLesions!!.size.toLong())
+        Assert.assertTrue(otherLesions.contains("pulmonal"))
+        Assert.assertTrue(otherLesions.contains("abdominal"))
+        val ihcTestResults = questionnaire.ihcTestResults()
+        Assert.assertEquals(1, ihcTestResults!!.size.toLong())
+        Assert.assertTrue(ihcTestResults.contains("ERBB2 3+"))
+        val pdl1TestResults = questionnaire.pdl1TestResults()
+        Assert.assertEquals(1, pdl1TestResults!!.size.toLong())
+        Assert.assertTrue(pdl1TestResults.contains("Positive"))
+        Assert.assertEquals(0, (questionnaire.whoStatus() as Int).toLong())
+        val unresolvedToxicities = questionnaire.unresolvedToxicities()
+        Assert.assertEquals(1, unresolvedToxicities!!.size.toLong())
+        Assert.assertTrue(unresolvedToxicities.contains("toxic"))
+        val infectionStatus = questionnaire.infectionStatus()
+        Assert.assertNotNull(infectionStatus)
+        Assert.assertFalse(infectionStatus!!.hasActiveInfection())
+        val ecg = questionnaire.ecg()
+        Assert.assertNotNull(ecg)
+        Assert.assertTrue(ecg!!.hasSigAberrationLatestECG())
+        Assert.assertEquals("Sinus", ecg.aberrationDescription())
+        val complications = questionnaire.complications()
+        Assert.assertEquals(1, complications!!.size.toLong())
+        Assert.assertTrue(complications.contains("vomit"))
+        Assert.assertNull(questionnaire.genayaSubjectNumber())
     }
 
     @Test
-    public void shouldBeAbleToExtractDataFromQuestionnaireV1_4() {
-        Questionnaire questionnaire = extraction().extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_4()));
-
-        assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
-        assertEquals("ovary", questionnaire.tumorLocation());
-        assertEquals("serous", questionnaire.tumorType());
-        assertEquals("Lymph node", questionnaire.biopsyLocation());
-
-        List<String> treatmentHistory = questionnaire.treatmentHistoryCurrentTumor();
-        assertEquals(2, treatmentHistory.size());
-        assertTrue(treatmentHistory.contains("cisplatin"));
-        assertTrue(treatmentHistory.contains("nivolumab"));
-
-        List<String> otherOncologicalHistory = questionnaire.otherOncologicalHistory();
-        assertEquals(1, otherOncologicalHistory.size());
-        assertTrue(otherOncologicalHistory.contains("surgery"));
-
-        assertNull(questionnaire.secondaryPrimaries());
-
-        List<String> nonOncologicalHistory = questionnaire.nonOncologicalHistory();
-        assertEquals(1, nonOncologicalHistory.size());
-        assertTrue(nonOncologicalHistory.contains("diabetes"));
-
-        assertEquals(TumorStage.III, questionnaire.stage());
-        assertTrue(questionnaire.hasMeasurableDisease());
-        assertNull(questionnaire.hasBrainLesions());
-        assertNull(questionnaire.hasActiveBrainLesions());
-        assertNull(questionnaire.hasCnsLesions());
-        assertNull(questionnaire.hasActiveCnsLesions());
-        assertFalse(questionnaire.hasBoneLesions());
-        assertFalse(questionnaire.hasLiverLesions());
-
-        List<String> otherLesions = questionnaire.otherLesions();
-        assertEquals(1, otherLesions.size());
-        assertTrue(otherLesions.contains("pulmonal"));
-
-        List<String> ihcTestResults = questionnaire.ihcTestResults();
-        assertEquals(1, ihcTestResults.size());
-        assertTrue(ihcTestResults.contains("IHC ERBB2 3+"));
-        assertNull(questionnaire.pdl1TestResults());
-
-        assertEquals(0, (int) questionnaire.whoStatus());
-        assertNull(questionnaire.unresolvedToxicities());
-
-        InfectionStatus infectionStatus = questionnaire.infectionStatus();
-        assertNotNull(infectionStatus);
-        assertFalse(infectionStatus.hasActiveInfection());
-
-        ECG ecg = questionnaire.ecg();
-        assertNotNull(ecg);
-        assertTrue(ecg.hasSigAberrationLatestECG());
-        assertEquals("Sinus", ecg.aberrationDescription());
-
-        List<String> complications = questionnaire.complications();
-        assertEquals(1, complications.size());
-        assertTrue(complications.contains("nausea"));
-
-        assertNull(questionnaire.genayaSubjectNumber());
+    fun shouldBeAbleToExtractDataFromQuestionnaireV1_4() {
+        val questionnaire = extraction().extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_4()))
+        Assert.assertEquals(LocalDate.of(2020, 8, 28), questionnaire!!.date())
+        Assert.assertEquals("ovary", questionnaire.tumorLocation())
+        Assert.assertEquals("serous", questionnaire.tumorType())
+        Assert.assertEquals("Lymph node", questionnaire.biopsyLocation())
+        val treatmentHistory = questionnaire.treatmentHistoryCurrentTumor()
+        Assert.assertEquals(2, treatmentHistory!!.size.toLong())
+        Assert.assertTrue(treatmentHistory.contains("cisplatin"))
+        Assert.assertTrue(treatmentHistory.contains("nivolumab"))
+        val otherOncologicalHistory = questionnaire.otherOncologicalHistory()
+        Assert.assertEquals(1, otherOncologicalHistory!!.size.toLong())
+        Assert.assertTrue(otherOncologicalHistory.contains("surgery"))
+        Assert.assertNull(questionnaire.secondaryPrimaries())
+        val nonOncologicalHistory = questionnaire.nonOncologicalHistory()
+        Assert.assertEquals(1, nonOncologicalHistory!!.size.toLong())
+        Assert.assertTrue(nonOncologicalHistory.contains("diabetes"))
+        Assert.assertEquals(TumorStage.III, questionnaire.stage())
+        Assert.assertTrue(questionnaire.hasMeasurableDisease()!!)
+        Assert.assertNull(questionnaire.hasBrainLesions())
+        Assert.assertNull(questionnaire.hasActiveBrainLesions())
+        Assert.assertNull(questionnaire.hasCnsLesions())
+        Assert.assertNull(questionnaire.hasActiveCnsLesions())
+        Assert.assertFalse(questionnaire.hasBoneLesions()!!)
+        Assert.assertFalse(questionnaire.hasLiverLesions()!!)
+        val otherLesions = questionnaire.otherLesions()
+        Assert.assertEquals(1, otherLesions!!.size.toLong())
+        Assert.assertTrue(otherLesions.contains("pulmonal"))
+        val ihcTestResults = questionnaire.ihcTestResults()
+        Assert.assertEquals(1, ihcTestResults!!.size.toLong())
+        Assert.assertTrue(ihcTestResults.contains("IHC ERBB2 3+"))
+        Assert.assertNull(questionnaire.pdl1TestResults())
+        Assert.assertEquals(0, (questionnaire.whoStatus() as Int).toLong())
+        Assert.assertNull(questionnaire.unresolvedToxicities())
+        val infectionStatus = questionnaire.infectionStatus()
+        Assert.assertNotNull(infectionStatus)
+        Assert.assertFalse(infectionStatus!!.hasActiveInfection())
+        val ecg = questionnaire.ecg()
+        Assert.assertNotNull(ecg)
+        Assert.assertTrue(ecg!!.hasSigAberrationLatestECG())
+        Assert.assertEquals("Sinus", ecg.aberrationDescription())
+        val complications = questionnaire.complications()
+        Assert.assertEquals(1, complications!!.size.toLong())
+        Assert.assertTrue(complications.contains("nausea"))
+        Assert.assertNull(questionnaire.genayaSubjectNumber())
     }
 
     @Test
-    public void shouldBeAbleToExtractDataFromQuestionnaireV1_3() {
-        Questionnaire questionnaire = extraction().extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_3()));
-
-        assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
-        assertEquals("ovary", questionnaire.tumorLocation());
-        assertEquals("serous", questionnaire.tumorType());
-        assertEquals("Lymph node", questionnaire.biopsyLocation());
-
-        List<String> treatmentHistory = questionnaire.treatmentHistoryCurrentTumor();
-        assertEquals(2, treatmentHistory.size());
-        assertTrue(treatmentHistory.contains("cisplatin"));
-        assertTrue(treatmentHistory.contains("nivolumab"));
-
-        List<String> otherOncologicalHistory = questionnaire.otherOncologicalHistory();
-        assertEquals(1, otherOncologicalHistory.size());
-        assertTrue(otherOncologicalHistory.contains("surgery"));
-
-        assertNull(questionnaire.secondaryPrimaries());
-
-        List<String> nonOncologicalHistory = questionnaire.nonOncologicalHistory();
-        assertEquals(1, nonOncologicalHistory.size());
-        assertTrue(nonOncologicalHistory.contains("diabetes"));
-
-        assertEquals(TumorStage.III, questionnaire.stage());
-        assertTrue(questionnaire.hasMeasurableDisease());
-        assertNull(questionnaire.hasBrainLesions());
-        assertNull(questionnaire.hasActiveBrainLesions());
-        assertNull(questionnaire.hasCnsLesions());
-        assertNull(questionnaire.hasActiveCnsLesions());
-        assertFalse(questionnaire.hasBoneLesions());
-        assertFalse(questionnaire.hasLiverLesions());
-
-        List<String> otherLesions = questionnaire.otherLesions();
-        assertEquals(1, otherLesions.size());
-        assertTrue(otherLesions.contains("pulmonal"));
-
-        assertNull(questionnaire.ihcTestResults());
-        assertNull(questionnaire.pdl1TestResults());
-
-        assertEquals(0, (int) questionnaire.whoStatus());
-        assertNull(questionnaire.unresolvedToxicities());
-
-        InfectionStatus infectionStatus = questionnaire.infectionStatus();
-        assertNotNull(infectionStatus);
-        assertFalse(infectionStatus.hasActiveInfection());
-
-        ECG ecg = questionnaire.ecg();
-        assertNotNull(ecg);
-        assertTrue(ecg.hasSigAberrationLatestECG());
-        assertEquals("Sinus", ecg.aberrationDescription());
-
-        List<String> complications = questionnaire.complications();
-        assertEquals(1, complications.size());
-        assertTrue(complications.contains("nausea"));
-
-        assertNull(questionnaire.genayaSubjectNumber());
+    fun shouldBeAbleToExtractDataFromQuestionnaireV1_3() {
+        val questionnaire = extraction().extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_3()))
+        Assert.assertEquals(LocalDate.of(2020, 8, 28), questionnaire!!.date())
+        Assert.assertEquals("ovary", questionnaire.tumorLocation())
+        Assert.assertEquals("serous", questionnaire.tumorType())
+        Assert.assertEquals("Lymph node", questionnaire.biopsyLocation())
+        val treatmentHistory = questionnaire.treatmentHistoryCurrentTumor()
+        Assert.assertEquals(2, treatmentHistory!!.size.toLong())
+        Assert.assertTrue(treatmentHistory.contains("cisplatin"))
+        Assert.assertTrue(treatmentHistory.contains("nivolumab"))
+        val otherOncologicalHistory = questionnaire.otherOncologicalHistory()
+        Assert.assertEquals(1, otherOncologicalHistory!!.size.toLong())
+        Assert.assertTrue(otherOncologicalHistory.contains("surgery"))
+        Assert.assertNull(questionnaire.secondaryPrimaries())
+        val nonOncologicalHistory = questionnaire.nonOncologicalHistory()
+        Assert.assertEquals(1, nonOncologicalHistory!!.size.toLong())
+        Assert.assertTrue(nonOncologicalHistory.contains("diabetes"))
+        Assert.assertEquals(TumorStage.III, questionnaire.stage())
+        Assert.assertTrue(questionnaire.hasMeasurableDisease()!!)
+        Assert.assertNull(questionnaire.hasBrainLesions())
+        Assert.assertNull(questionnaire.hasActiveBrainLesions())
+        Assert.assertNull(questionnaire.hasCnsLesions())
+        Assert.assertNull(questionnaire.hasActiveCnsLesions())
+        Assert.assertFalse(questionnaire.hasBoneLesions()!!)
+        Assert.assertFalse(questionnaire.hasLiverLesions()!!)
+        val otherLesions = questionnaire.otherLesions()
+        Assert.assertEquals(1, otherLesions!!.size.toLong())
+        Assert.assertTrue(otherLesions.contains("pulmonal"))
+        Assert.assertNull(questionnaire.ihcTestResults())
+        Assert.assertNull(questionnaire.pdl1TestResults())
+        Assert.assertEquals(0, (questionnaire.whoStatus() as Int).toLong())
+        Assert.assertNull(questionnaire.unresolvedToxicities())
+        val infectionStatus = questionnaire.infectionStatus()
+        Assert.assertNotNull(infectionStatus)
+        Assert.assertFalse(infectionStatus!!.hasActiveInfection())
+        val ecg = questionnaire.ecg()
+        Assert.assertNotNull(ecg)
+        Assert.assertTrue(ecg!!.hasSigAberrationLatestECG())
+        Assert.assertEquals("Sinus", ecg.aberrationDescription())
+        val complications = questionnaire.complications()
+        Assert.assertEquals(1, complications!!.size.toLong())
+        Assert.assertTrue(complications.contains("nausea"))
+        Assert.assertNull(questionnaire.genayaSubjectNumber())
     }
 
     @Test
-    public void shouldBeAbleToExtractDataFromQuestionnaireV1_2() {
-        Questionnaire questionnaire = extraction().extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_2()));
-
-        assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
-        assertEquals("ovary", questionnaire.tumorLocation());
-        assertEquals("serous", questionnaire.tumorType());
-        assertEquals("Lymph node", questionnaire.biopsyLocation());
-
-        List<String> treatmentHistory = questionnaire.treatmentHistoryCurrentTumor();
-        assertEquals(2, treatmentHistory.size());
-        assertTrue(treatmentHistory.contains("cisplatin"));
-        assertTrue(treatmentHistory.contains("nivolumab"));
-
-        List<String> otherOncologicalHistory = questionnaire.otherOncologicalHistory();
-        assertEquals(1, otherOncologicalHistory.size());
-        assertTrue(otherOncologicalHistory.contains("surgery"));
-
-        assertNull(questionnaire.secondaryPrimaries());
-
-        List<String> nonOncologicalHistory = questionnaire.nonOncologicalHistory();
-        assertEquals(1, nonOncologicalHistory.size());
-        assertTrue(nonOncologicalHistory.contains("diabetes"));
-
-        assertEquals(TumorStage.III, questionnaire.stage());
-        assertTrue(questionnaire.hasMeasurableDisease());
-        assertNull(questionnaire.hasBrainLesions());
-        assertNull(questionnaire.hasActiveBrainLesions());
-        assertNull(questionnaire.hasCnsLesions());
-        assertNull(questionnaire.hasActiveCnsLesions());
-        assertFalse(questionnaire.hasBoneLesions());
-        assertFalse(questionnaire.hasLiverLesions());
-
-        List<String> otherLesions = questionnaire.otherLesions();
-        assertEquals(1, otherLesions.size());
-        assertTrue(otherLesions.contains("pulmonal"));
-
-        assertNull(questionnaire.ihcTestResults());
-        assertNull(questionnaire.pdl1TestResults());
-
-        assertEquals(0, (int) questionnaire.whoStatus());
-        assertNull(questionnaire.unresolvedToxicities());
-
-        InfectionStatus infectionStatus = questionnaire.infectionStatus();
-        assertNotNull(infectionStatus);
-        assertFalse(infectionStatus.hasActiveInfection());
-
-        ECG ecg = questionnaire.ecg();
-        assertNotNull(ecg);
-        assertTrue(ecg.hasSigAberrationLatestECG());
-        assertEquals("Sinus", ecg.aberrationDescription());
-
-        List<String> complications = questionnaire.complications();
-        assertEquals(1, complications.size());
-        assertTrue(complications.contains("nausea"));
-
-        assertNull(questionnaire.genayaSubjectNumber());
+    fun shouldBeAbleToExtractDataFromQuestionnaireV1_2() {
+        val questionnaire = extraction().extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_2()))
+        Assert.assertEquals(LocalDate.of(2020, 8, 28), questionnaire!!.date())
+        Assert.assertEquals("ovary", questionnaire.tumorLocation())
+        Assert.assertEquals("serous", questionnaire.tumorType())
+        Assert.assertEquals("Lymph node", questionnaire.biopsyLocation())
+        val treatmentHistory = questionnaire.treatmentHistoryCurrentTumor()
+        Assert.assertEquals(2, treatmentHistory!!.size.toLong())
+        Assert.assertTrue(treatmentHistory.contains("cisplatin"))
+        Assert.assertTrue(treatmentHistory.contains("nivolumab"))
+        val otherOncologicalHistory = questionnaire.otherOncologicalHistory()
+        Assert.assertEquals(1, otherOncologicalHistory!!.size.toLong())
+        Assert.assertTrue(otherOncologicalHistory.contains("surgery"))
+        Assert.assertNull(questionnaire.secondaryPrimaries())
+        val nonOncologicalHistory = questionnaire.nonOncologicalHistory()
+        Assert.assertEquals(1, nonOncologicalHistory!!.size.toLong())
+        Assert.assertTrue(nonOncologicalHistory.contains("diabetes"))
+        Assert.assertEquals(TumorStage.III, questionnaire.stage())
+        Assert.assertTrue(questionnaire.hasMeasurableDisease()!!)
+        Assert.assertNull(questionnaire.hasBrainLesions())
+        Assert.assertNull(questionnaire.hasActiveBrainLesions())
+        Assert.assertNull(questionnaire.hasCnsLesions())
+        Assert.assertNull(questionnaire.hasActiveCnsLesions())
+        Assert.assertFalse(questionnaire.hasBoneLesions()!!)
+        Assert.assertFalse(questionnaire.hasLiverLesions()!!)
+        val otherLesions = questionnaire.otherLesions()
+        Assert.assertEquals(1, otherLesions!!.size.toLong())
+        Assert.assertTrue(otherLesions.contains("pulmonal"))
+        Assert.assertNull(questionnaire.ihcTestResults())
+        Assert.assertNull(questionnaire.pdl1TestResults())
+        Assert.assertEquals(0, (questionnaire.whoStatus() as Int).toLong())
+        Assert.assertNull(questionnaire.unresolvedToxicities())
+        val infectionStatus = questionnaire.infectionStatus()
+        Assert.assertNotNull(infectionStatus)
+        Assert.assertFalse(infectionStatus!!.hasActiveInfection())
+        val ecg = questionnaire.ecg()
+        Assert.assertNotNull(ecg)
+        Assert.assertTrue(ecg!!.hasSigAberrationLatestECG())
+        Assert.assertEquals("Sinus", ecg.aberrationDescription())
+        val complications = questionnaire.complications()
+        Assert.assertEquals(1, complications!!.size.toLong())
+        Assert.assertTrue(complications.contains("nausea"))
+        Assert.assertNull(questionnaire.genayaSubjectNumber())
     }
 
     @Test
-    public void shouldBeAbleToExtractDataFromQuestionnaireV1_1() {
-        Questionnaire questionnaire = extraction().extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_1()));
-
-        assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
-        assertEquals("ovary", questionnaire.tumorLocation());
-        assertEquals("serous", questionnaire.tumorType());
-        assertEquals("Lymph node", questionnaire.biopsyLocation());
-
-        List<String> treatmentHistory = questionnaire.treatmentHistoryCurrentTumor();
-        assertEquals(2, treatmentHistory.size());
-        assertTrue(treatmentHistory.contains("cisplatin"));
-        assertTrue(treatmentHistory.contains("nivolumab"));
-
-        List<String> otherOncologicalHistory = questionnaire.otherOncologicalHistory();
-        assertEquals(1, otherOncologicalHistory.size());
-        assertTrue(otherOncologicalHistory.contains("surgery"));
-
-        assertNull(questionnaire.secondaryPrimaries());
-
-        List<String> nonOncologicalHistory = questionnaire.nonOncologicalHistory();
-        assertEquals(1, nonOncologicalHistory.size());
-        assertTrue(nonOncologicalHistory.contains("diabetes"));
-
-        assertEquals(TumorStage.III, questionnaire.stage());
-        assertTrue(questionnaire.hasMeasurableDisease());
-        assertNull(questionnaire.hasBrainLesions());
-        assertNull(questionnaire.hasActiveBrainLesions());
-        assertNull(questionnaire.hasCnsLesions());
-        assertNull(questionnaire.hasActiveCnsLesions());
-        assertFalse(questionnaire.hasBoneLesions());
-        assertFalse(questionnaire.hasLiverLesions());
-
-        List<String> otherLesions = questionnaire.otherLesions();
-        assertEquals(1, otherLesions.size());
-        assertTrue(otherLesions.contains("pulmonal"));
-
-        assertNull(questionnaire.ihcTestResults());
-        assertNull(questionnaire.pdl1TestResults());
-
-        assertEquals(0, (int) questionnaire.whoStatus());
-        assertNull(questionnaire.unresolvedToxicities());
-
-        InfectionStatus infectionStatus = questionnaire.infectionStatus();
-        assertNotNull(infectionStatus);
-        assertFalse(infectionStatus.hasActiveInfection());
-
-        ECG ecg = questionnaire.ecg();
-        assertNotNull(ecg);
-        assertTrue(ecg.hasSigAberrationLatestECG());
-        assertEquals("Sinus", ecg.aberrationDescription());
-
-        List<String> complications = questionnaire.complications();
-        assertEquals(1, complications.size());
-        assertTrue(complications.contains("nausea"));
-
-        assertNull(questionnaire.genayaSubjectNumber());
+    fun shouldBeAbleToExtractDataFromQuestionnaireV1_1() {
+        val questionnaire = extraction().extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_1()))
+        Assert.assertEquals(LocalDate.of(2020, 8, 28), questionnaire!!.date())
+        Assert.assertEquals("ovary", questionnaire.tumorLocation())
+        Assert.assertEquals("serous", questionnaire.tumorType())
+        Assert.assertEquals("Lymph node", questionnaire.biopsyLocation())
+        val treatmentHistory = questionnaire.treatmentHistoryCurrentTumor()
+        Assert.assertEquals(2, treatmentHistory!!.size.toLong())
+        Assert.assertTrue(treatmentHistory.contains("cisplatin"))
+        Assert.assertTrue(treatmentHistory.contains("nivolumab"))
+        val otherOncologicalHistory = questionnaire.otherOncologicalHistory()
+        Assert.assertEquals(1, otherOncologicalHistory!!.size.toLong())
+        Assert.assertTrue(otherOncologicalHistory.contains("surgery"))
+        Assert.assertNull(questionnaire.secondaryPrimaries())
+        val nonOncologicalHistory = questionnaire.nonOncologicalHistory()
+        Assert.assertEquals(1, nonOncologicalHistory!!.size.toLong())
+        Assert.assertTrue(nonOncologicalHistory.contains("diabetes"))
+        Assert.assertEquals(TumorStage.III, questionnaire.stage())
+        Assert.assertTrue(questionnaire.hasMeasurableDisease()!!)
+        Assert.assertNull(questionnaire.hasBrainLesions())
+        Assert.assertNull(questionnaire.hasActiveBrainLesions())
+        Assert.assertNull(questionnaire.hasCnsLesions())
+        Assert.assertNull(questionnaire.hasActiveCnsLesions())
+        Assert.assertFalse(questionnaire.hasBoneLesions()!!)
+        Assert.assertFalse(questionnaire.hasLiverLesions()!!)
+        val otherLesions = questionnaire.otherLesions()
+        Assert.assertEquals(1, otherLesions!!.size.toLong())
+        Assert.assertTrue(otherLesions.contains("pulmonal"))
+        Assert.assertNull(questionnaire.ihcTestResults())
+        Assert.assertNull(questionnaire.pdl1TestResults())
+        Assert.assertEquals(0, (questionnaire.whoStatus() as Int).toLong())
+        Assert.assertNull(questionnaire.unresolvedToxicities())
+        val infectionStatus = questionnaire.infectionStatus()
+        Assert.assertNotNull(infectionStatus)
+        Assert.assertFalse(infectionStatus!!.hasActiveInfection())
+        val ecg = questionnaire.ecg()
+        Assert.assertNotNull(ecg)
+        Assert.assertTrue(ecg!!.hasSigAberrationLatestECG())
+        Assert.assertEquals("Sinus", ecg.aberrationDescription())
+        val complications = questionnaire.complications()
+        Assert.assertEquals(1, complications!!.size.toLong())
+        Assert.assertTrue(complications.contains("nausea"))
+        Assert.assertNull(questionnaire.genayaSubjectNumber())
     }
 
     @Test
-    public void shouldBeAbleToExtractDataFromQuestionnaireV1_0() {
-        Questionnaire questionnaire = extraction().extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0()));
-
-        assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
-        assertEquals("lung", questionnaire.tumorLocation());
-        assertEquals("small-cell carcinoma", questionnaire.tumorType());
-        assertEquals("Liver", questionnaire.biopsyLocation());
-
-        List<String> treatmentHistory = questionnaire.treatmentHistoryCurrentTumor();
-        assertEquals(1, treatmentHistory.size());
-        assertTrue(treatmentHistory.contains("capecitabine JAN 2020- JUL 2021"));
-
-        List<String> otherOncologicalHistory = questionnaire.otherOncologicalHistory();
-        assertEquals(1, otherOncologicalHistory.size());
-        assertTrue(otherOncologicalHistory.contains("surgery JUN 2021"));
-
-        assertNull(questionnaire.secondaryPrimaries());
-
-        List<String> nonOncologicalHistory = questionnaire.nonOncologicalHistory();
-        assertEquals(1, nonOncologicalHistory.size());
-        assertTrue(nonOncologicalHistory.contains("NO"));
-
-        assertEquals(TumorStage.IV, questionnaire.stage());
-        assertTrue(questionnaire.hasMeasurableDisease());
-        assertNull(questionnaire.hasBrainLesions());
-        assertNull(questionnaire.hasActiveBrainLesions());
-        assertFalse(questionnaire.hasCnsLesions());
-        assertNull(questionnaire.hasActiveCnsLesions());
-        assertFalse(questionnaire.hasBoneLesions());
-        assertFalse(questionnaire.hasLiverLesions());
-
-        List<String> otherLesions = questionnaire.otherLesions();
-        assertEquals(3, otherLesions.size());
-        assertTrue(otherLesions.contains("peritoneal"));
-        assertTrue(otherLesions.contains("lymph nodes"));
-        assertTrue(otherLesions.contains("lung"));
-
-        assertNull(questionnaire.ihcTestResults());
-        assertNull(questionnaire.pdl1TestResults());
-
-        assertEquals(1, (int) questionnaire.whoStatus());
-
-        List<String> unresolvedToxicities = questionnaire.unresolvedToxicities();
-        assertEquals(1, unresolvedToxicities.size());
-        assertTrue(unresolvedToxicities.contains("NA"));
-
-        InfectionStatus infectionStatus = questionnaire.infectionStatus();
-        assertNotNull(infectionStatus);
-        assertFalse(infectionStatus.hasActiveInfection());
-
-        assertNull(questionnaire.ecg());
-
-        List<String> complications = questionnaire.complications();
-        assertEquals(1, complications.size());
-        assertTrue(complications.contains("ascites"));
-
-        assertNull(questionnaire.genayaSubjectNumber());
+    fun shouldBeAbleToExtractDataFromQuestionnaireV1_0() {
+        val questionnaire = extraction().extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0()))
+        Assert.assertEquals(LocalDate.of(2020, 8, 28), questionnaire!!.date())
+        Assert.assertEquals("lung", questionnaire.tumorLocation())
+        Assert.assertEquals("small-cell carcinoma", questionnaire.tumorType())
+        Assert.assertEquals("Liver", questionnaire.biopsyLocation())
+        val treatmentHistory = questionnaire.treatmentHistoryCurrentTumor()
+        Assert.assertEquals(1, treatmentHistory!!.size.toLong())
+        Assert.assertTrue(treatmentHistory.contains("capecitabine JAN 2020- JUL 2021"))
+        val otherOncologicalHistory = questionnaire.otherOncologicalHistory()
+        Assert.assertEquals(1, otherOncologicalHistory!!.size.toLong())
+        Assert.assertTrue(otherOncologicalHistory.contains("surgery JUN 2021"))
+        Assert.assertNull(questionnaire.secondaryPrimaries())
+        val nonOncologicalHistory = questionnaire.nonOncologicalHistory()
+        Assert.assertEquals(1, nonOncologicalHistory!!.size.toLong())
+        Assert.assertTrue(nonOncologicalHistory.contains("NO"))
+        Assert.assertEquals(TumorStage.IV, questionnaire.stage())
+        Assert.assertTrue(questionnaire.hasMeasurableDisease()!!)
+        Assert.assertNull(questionnaire.hasBrainLesions())
+        Assert.assertNull(questionnaire.hasActiveBrainLesions())
+        Assert.assertFalse(questionnaire.hasCnsLesions()!!)
+        Assert.assertNull(questionnaire.hasActiveCnsLesions())
+        Assert.assertFalse(questionnaire.hasBoneLesions()!!)
+        Assert.assertFalse(questionnaire.hasLiverLesions()!!)
+        val otherLesions = questionnaire.otherLesions()
+        Assert.assertEquals(3, otherLesions!!.size.toLong())
+        Assert.assertTrue(otherLesions.contains("peritoneal"))
+        Assert.assertTrue(otherLesions.contains("lymph nodes"))
+        Assert.assertTrue(otherLesions.contains("lung"))
+        Assert.assertNull(questionnaire.ihcTestResults())
+        Assert.assertNull(questionnaire.pdl1TestResults())
+        Assert.assertEquals(1, (questionnaire.whoStatus() as Int).toLong())
+        val unresolvedToxicities = questionnaire.unresolvedToxicities()
+        Assert.assertEquals(1, unresolvedToxicities!!.size.toLong())
+        Assert.assertTrue(unresolvedToxicities.contains("NA"))
+        val infectionStatus = questionnaire.infectionStatus()
+        Assert.assertNotNull(infectionStatus)
+        Assert.assertFalse(infectionStatus!!.hasActiveInfection())
+        Assert.assertNull(questionnaire.ecg())
+        val complications = questionnaire.complications()
+        Assert.assertEquals(1, complications!!.size.toLong())
+        Assert.assertTrue(complications.contains("ascites"))
+        Assert.assertNull(questionnaire.genayaSubjectNumber())
     }
 
     @Test
-    public void shouldBeAbleToExtractDataFromQuestionnaireV0_2() {
-        Questionnaire questionnaire = extraction().extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_2()));
-
-        assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
-        assertEquals("cholangio", questionnaire.tumorLocation());
-        assertEquals("carcinoma", questionnaire.tumorType());
-        assertEquals("liver", questionnaire.biopsyLocation());
-
-        List<String> treatmentHistory = questionnaire.treatmentHistoryCurrentTumor();
-        assertEquals(1, treatmentHistory.size());
-        assertTrue(treatmentHistory.contains("capecitabine"));
-
-        List<String> otherOncologicalHistory = questionnaire.otherOncologicalHistory();
-        assertEquals(1, otherOncologicalHistory.size());
-        assertTrue(otherOncologicalHistory.contains("radiotherapy"));
-
-        assertNull(questionnaire.secondaryPrimaries());
-
-        List<String> nonOncologicalHistory = questionnaire.nonOncologicalHistory();
-        assertEquals(1, nonOncologicalHistory.size());
-        assertTrue(nonOncologicalHistory.contains("NA"));
-
-        assertEquals(TumorStage.IV, questionnaire.stage());
-        assertTrue(questionnaire.hasMeasurableDisease());
-        assertNull(questionnaire.hasBrainLesions());
-        assertNull(questionnaire.hasActiveBrainLesions());
-        assertNull(questionnaire.hasCnsLesions());
-        assertNull(questionnaire.hasActiveCnsLesions());
-        assertFalse(questionnaire.hasBoneLesions());
-        assertFalse(questionnaire.hasLiverLesions());
-        assertNull(questionnaire.otherLesions());
-
-        assertNull(questionnaire.ihcTestResults());
-        assertNull(questionnaire.pdl1TestResults());
-
-        assertEquals(2, (int) questionnaire.whoStatus());
-
-        assertNull(questionnaire.unresolvedToxicities());
-
-        InfectionStatus infectionStatus = questionnaire.infectionStatus();
-        assertNotNull(infectionStatus);
-        assertFalse(infectionStatus.hasActiveInfection());
-
-        assertNull(questionnaire.ecg());
-
-        List<String> complications = questionnaire.complications();
-        assertEquals(1, complications.size());
-        assertTrue(complications.contains("pleural effusion"));
-
-        assertNull(questionnaire.genayaSubjectNumber());
+    fun shouldBeAbleToExtractDataFromQuestionnaireV0_2() {
+        val questionnaire = extraction().extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_2()))
+        Assert.assertEquals(LocalDate.of(2020, 8, 28), questionnaire!!.date())
+        Assert.assertEquals("cholangio", questionnaire.tumorLocation())
+        Assert.assertEquals("carcinoma", questionnaire.tumorType())
+        Assert.assertEquals("liver", questionnaire.biopsyLocation())
+        val treatmentHistory = questionnaire.treatmentHistoryCurrentTumor()
+        Assert.assertEquals(1, treatmentHistory!!.size.toLong())
+        Assert.assertTrue(treatmentHistory.contains("capecitabine"))
+        val otherOncologicalHistory = questionnaire.otherOncologicalHistory()
+        Assert.assertEquals(1, otherOncologicalHistory!!.size.toLong())
+        Assert.assertTrue(otherOncologicalHistory.contains("radiotherapy"))
+        Assert.assertNull(questionnaire.secondaryPrimaries())
+        val nonOncologicalHistory = questionnaire.nonOncologicalHistory()
+        Assert.assertEquals(1, nonOncologicalHistory!!.size.toLong())
+        Assert.assertTrue(nonOncologicalHistory.contains("NA"))
+        Assert.assertEquals(TumorStage.IV, questionnaire.stage())
+        Assert.assertTrue(questionnaire.hasMeasurableDisease()!!)
+        Assert.assertNull(questionnaire.hasBrainLesions())
+        Assert.assertNull(questionnaire.hasActiveBrainLesions())
+        Assert.assertNull(questionnaire.hasCnsLesions())
+        Assert.assertNull(questionnaire.hasActiveCnsLesions())
+        Assert.assertFalse(questionnaire.hasBoneLesions()!!)
+        Assert.assertFalse(questionnaire.hasLiverLesions()!!)
+        Assert.assertNull(questionnaire.otherLesions())
+        Assert.assertNull(questionnaire.ihcTestResults())
+        Assert.assertNull(questionnaire.pdl1TestResults())
+        Assert.assertEquals(2, (questionnaire.whoStatus() as Int).toLong())
+        Assert.assertNull(questionnaire.unresolvedToxicities())
+        val infectionStatus = questionnaire.infectionStatus()
+        Assert.assertNotNull(infectionStatus)
+        Assert.assertFalse(infectionStatus!!.hasActiveInfection())
+        Assert.assertNull(questionnaire.ecg())
+        val complications = questionnaire.complications()
+        Assert.assertEquals(1, complications!!.size.toLong())
+        Assert.assertTrue(complications.contains("pleural effusion"))
+        Assert.assertNull(questionnaire.genayaSubjectNumber())
     }
 
     @Test
-    public void shouldBeAbleToExtractDataFromQuestionnaireV0_1() {
-        Questionnaire questionnaire = extraction().extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_1()));
-
-        assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
-        assertEquals("Cholangiocarcinoom (lever, lymph retroperitoneaal)", questionnaire.tumorLocation());
-        assertEquals("Unknown", questionnaire.tumorType());
-        assertNull(questionnaire.biopsyLocation());
-        assertNull(questionnaire.treatmentHistoryCurrentTumor());
-        assertNull(questionnaire.otherOncologicalHistory());
-        assertNull(questionnaire.secondaryPrimaries());
-
-        List<String> nonOncologicalHistory = questionnaire.nonOncologicalHistory();
-        assertEquals(1, nonOncologicalHistory.size());
-        assertTrue(nonOncologicalHistory.contains("Diabetes Mellitus type 2"));
-
-        assertNull(questionnaire.stage());
-        assertTrue(questionnaire.hasMeasurableDisease());
-        assertNull(questionnaire.hasBrainLesions());
-        assertNull(questionnaire.hasActiveBrainLesions());
-        assertNull(questionnaire.hasCnsLesions());
-        assertNull(questionnaire.hasActiveCnsLesions());
-        assertTrue(questionnaire.hasBoneLesions());
-        assertTrue(questionnaire.hasLiverLesions());
-
-        List<String> otherLesions = questionnaire.otherLesions();
-        assertEquals(2, otherLesions.size());
-        assertTrue(otherLesions.contains("lever"));
-        assertTrue(otherLesions.contains("lymph retroperitoneaal"));
-
-        assertNull(questionnaire.ihcTestResults());
-        assertNull(questionnaire.pdl1TestResults());
-
-        assertEquals(1, (int) questionnaire.whoStatus());
-
-        List<String> unresolvedToxicities = questionnaire.unresolvedToxicities();
-        assertEquals(1, unresolvedToxicities.size());
-        assertTrue(unresolvedToxicities.contains("Neuropathy GR3"));
-
-        InfectionStatus infectionStatus = questionnaire.infectionStatus();
-        assertNotNull(infectionStatus);
-        assertFalse(infectionStatus.hasActiveInfection());
-
-        ECG ecg = questionnaire.ecg();
-        assertNotNull(ecg);
-        assertFalse(ecg.hasSigAberrationLatestECG());
-        assertEquals("No", ecg.aberrationDescription());
-
-        assertNull(questionnaire.complications());
-
-        assertNull(questionnaire.genayaSubjectNumber());
+    fun shouldBeAbleToExtractDataFromQuestionnaireV0_1() {
+        val questionnaire = extraction().extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV0_1()))
+        Assert.assertEquals(LocalDate.of(2020, 8, 28), questionnaire!!.date())
+        Assert.assertEquals("Cholangiocarcinoom (lever, lymph retroperitoneaal)", questionnaire.tumorLocation())
+        Assert.assertEquals("Unknown", questionnaire.tumorType())
+        Assert.assertNull(questionnaire.biopsyLocation())
+        Assert.assertNull(questionnaire.treatmentHistoryCurrentTumor())
+        Assert.assertNull(questionnaire.otherOncologicalHistory())
+        Assert.assertNull(questionnaire.secondaryPrimaries())
+        val nonOncologicalHistory = questionnaire.nonOncologicalHistory()
+        Assert.assertEquals(1, nonOncologicalHistory!!.size.toLong())
+        Assert.assertTrue(nonOncologicalHistory.contains("Diabetes Mellitus type 2"))
+        Assert.assertNull(questionnaire.stage())
+        Assert.assertTrue(questionnaire.hasMeasurableDisease()!!)
+        Assert.assertNull(questionnaire.hasBrainLesions())
+        Assert.assertNull(questionnaire.hasActiveBrainLesions())
+        Assert.assertNull(questionnaire.hasCnsLesions())
+        Assert.assertNull(questionnaire.hasActiveCnsLesions())
+        Assert.assertTrue(questionnaire.hasBoneLesions()!!)
+        Assert.assertTrue(questionnaire.hasLiverLesions()!!)
+        val otherLesions = questionnaire.otherLesions()
+        Assert.assertEquals(2, otherLesions!!.size.toLong())
+        Assert.assertTrue(otherLesions.contains("lever"))
+        Assert.assertTrue(otherLesions.contains("lymph retroperitoneaal"))
+        Assert.assertNull(questionnaire.ihcTestResults())
+        Assert.assertNull(questionnaire.pdl1TestResults())
+        Assert.assertEquals(1, (questionnaire.whoStatus() as Int).toLong())
+        val unresolvedToxicities = questionnaire.unresolvedToxicities()
+        Assert.assertEquals(1, unresolvedToxicities!!.size.toLong())
+        Assert.assertTrue(unresolvedToxicities.contains("Neuropathy GR3"))
+        val infectionStatus = questionnaire.infectionStatus()
+        Assert.assertNotNull(infectionStatus)
+        Assert.assertFalse(infectionStatus!!.hasActiveInfection())
+        val ecg = questionnaire.ecg()
+        Assert.assertNotNull(ecg)
+        Assert.assertFalse(ecg!!.hasSigAberrationLatestECG())
+        Assert.assertEquals("No", ecg.aberrationDescription())
+        Assert.assertNull(questionnaire.complications())
+        Assert.assertNull(questionnaire.genayaSubjectNumber())
     }
 
     @Test
-    public void canExtractFromMissingOrInvalidEntry() {
-        assertNull(extraction().extract(null));
-        assertNull(extraction().extract(entry("Does not exist")));
+    fun canExtractFromMissingOrInvalidEntry() {
+        Assert.assertNull(extraction().extract(null))
+        Assert.assertNull(extraction().extract(entry("Does not exist")))
     }
 
-    @NotNull
-    private QuestionnaireExtraction extraction() {
-        return new QuestionnaireExtraction(new QuestionnaireRawEntryMapper(Collections.emptyMap()));
+    private fun extraction(): QuestionnaireExtraction {
+        return QuestionnaireExtraction(QuestionnaireRawEntryMapper(emptyMap()))
     }
 
-    @NotNull
-    private static QuestionnaireEntry entry(@NotNull String questionnaire) {
-        return ImmutableQuestionnaireEntry.builder()
+    companion object {
+        private fun entry(questionnaire: String): QuestionnaireEntry {
+            return ImmutableQuestionnaireEntry.builder()
                 .from(TestQuestionnaireFactory.createTestQuestionnaireEntry())
                 .text(questionnaire)
-                .build();
+                .build()
+        }
     }
 }

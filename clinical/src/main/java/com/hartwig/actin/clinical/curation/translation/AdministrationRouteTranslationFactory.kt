@@ -1,17 +1,10 @@
-package com.hartwig.actin.clinical.curation.translation;
+package com.hartwig.actin.clinical.curation.translation
 
-import java.util.Map;
-
-import org.jetbrains.annotations.NotNull;
-
-public class AdministrationRouteTranslationFactory implements TranslationFactory<AdministrationRouteTranslation> {
-
-    @NotNull
-    @Override
-    public AdministrationRouteTranslation create(@NotNull final Map<String, Integer> fields, @NotNull final String[] parts) {
+class AdministrationRouteTranslationFactory : TranslationFactory<AdministrationRouteTranslation> {
+    override fun create(fields: Map<String?, Int?>, parts: Array<String?>): AdministrationRouteTranslation {
         return ImmutableAdministrationRouteTranslation.builder()
-                .administrationRoute(parts[fields.get("administrationRoute")])
-                .translatedAdministrationRoute(parts[fields.get("translatedAdministrationRoute")])
-                .build();
+            .administrationRoute(parts[fields["administrationRoute"]!!])
+            .translatedAdministrationRoute(parts[fields["translatedAdministrationRoute"]!!])
+            .build()
     }
 }

@@ -1,18 +1,15 @@
-package com.hartwig.actin.clinical.feed.medication;
+package com.hartwig.actin.clinical.feed.medication
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import com.hartwig.actin.clinical.feed.medication.MedicationEntryCreator.Companion.isActive
+import org.apache.logging.log4j.util.Strings
+import org.junit.Assert
+import org.junit.Test
 
-import org.apache.logging.log4j.util.Strings;
-import org.junit.Test;
-
-public class MedicationEntryCreatorTest {
-
+class MedicationEntryCreatorTest {
     @Test
-    public void canInterpretActiveField() {
-        assertFalse(MedicationEntryCreator.isActive("stopped"));
-        assertTrue(MedicationEntryCreator.isActive("active"));
-        assertNull(MedicationEntryCreator.isActive(Strings.EMPTY));
+    fun canInterpretActiveField() {
+        Assert.assertFalse(isActive("stopped")!!)
+        Assert.assertTrue(isActive("active")!!)
+        Assert.assertNull(isActive(Strings.EMPTY))
     }
 }

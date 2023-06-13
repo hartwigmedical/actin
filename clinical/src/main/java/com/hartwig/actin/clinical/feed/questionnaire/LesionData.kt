@@ -1,43 +1,26 @@
-package com.hartwig.actin.clinical.feed.questionnaire;
+package com.hartwig.actin.clinical.feed.questionnaire
 
-import static com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireCuration.toOption;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-class LesionData {
-
-    @Nullable
-    private final Boolean present;
-    @Nullable
-    private final Boolean active;
-
-    public LesionData(@Nullable final Boolean present, @Nullable final Boolean active) {
-        this.present = present;
-        this.active = active;
+internal class LesionData(private val present: Boolean?, private val active: Boolean?) {
+    fun present(): Boolean? {
+        return present
     }
 
-    @NotNull
-    static LesionData fromString(@NotNull String presentInput, @NotNull String activeInput) {
-        Boolean present = toOption(presentInput);
-        Boolean active = null;
-        if (present != null) {
-            Boolean activeOption = toOption(activeInput);
-            if (activeOption != null) {
-                active = present ? activeOption : false;
+    fun active(): Boolean? {
+        return active
+    }
+
+    companion object {
+        @JvmStatic
+        fun fromString(presentInput: String, activeInput: String): LesionData {
+            val present = QuestionnaireCuration.toOption(presentInput)
+            var active: Boolean? = null
+            if (present != null) {
+                val activeOption = QuestionnaireCuration.toOption(activeInput)
+                if (activeOption != null) {
+                    active = if (present) activeOption else false
+                }
             }
+            return LesionData(present, active)
         }
-
-        return new LesionData(present, active);
-    }
-
-    @Nullable
-    public Boolean present() {
-        return present;
-    }
-
-    @Nullable
-    public Boolean active() {
-        return active;
     }
 }

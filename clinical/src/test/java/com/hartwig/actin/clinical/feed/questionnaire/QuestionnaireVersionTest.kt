@@ -1,39 +1,38 @@
-package com.hartwig.actin.clinical.feed.questionnaire;
+package com.hartwig.actin.clinical.feed.questionnaire
 
-import static org.junit.Assert.assertEquals;
+import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireVersion.Companion.version
+import org.junit.Assert
+import org.junit.Test
 
-import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
-
-public class QuestionnaireVersionTest {
-
+class QuestionnaireVersionTest {
     @Test
-    public void canResolveAllVersions() {
-        assertVersion(QuestionnaireVersion.V1_6, TestQuestionnaireFactory.createTestQuestionnaireValueV1_6());
-        assertVersion(QuestionnaireVersion.V1_5, TestQuestionnaireFactory.createTestQuestionnaireValueV1_5());
-        assertVersion(QuestionnaireVersion.V1_4, TestQuestionnaireFactory.createTestQuestionnaireValueV1_4());
-        assertVersion(QuestionnaireVersion.V1_3, TestQuestionnaireFactory.createTestQuestionnaireValueV1_3());
-        assertVersion(QuestionnaireVersion.V1_2, TestQuestionnaireFactory.createTestQuestionnaireValueV1_2());
-        assertVersion(QuestionnaireVersion.V1_1, TestQuestionnaireFactory.createTestQuestionnaireValueV1_1());
-        assertVersion(QuestionnaireVersion.V1_0, TestQuestionnaireFactory.createTestQuestionnaireValueV1_0());
-        assertVersion(QuestionnaireVersion.V0_2, TestQuestionnaireFactory.createTestQuestionnaireValueV0_2());
-        assertVersion(QuestionnaireVersion.V0_1, TestQuestionnaireFactory.createTestQuestionnaireValueV0_1());
+    fun canResolveAllVersions() {
+        assertVersion(QuestionnaireVersion.V1_6, TestQuestionnaireFactory.createTestQuestionnaireValueV1_6())
+        assertVersion(QuestionnaireVersion.V1_5, TestQuestionnaireFactory.createTestQuestionnaireValueV1_5())
+        assertVersion(QuestionnaireVersion.V1_4, TestQuestionnaireFactory.createTestQuestionnaireValueV1_4())
+        assertVersion(QuestionnaireVersion.V1_3, TestQuestionnaireFactory.createTestQuestionnaireValueV1_3())
+        assertVersion(QuestionnaireVersion.V1_2, TestQuestionnaireFactory.createTestQuestionnaireValueV1_2())
+        assertVersion(QuestionnaireVersion.V1_1, TestQuestionnaireFactory.createTestQuestionnaireValueV1_1())
+        assertVersion(QuestionnaireVersion.V1_0, TestQuestionnaireFactory.createTestQuestionnaireValueV1_0())
+        assertVersion(QuestionnaireVersion.V0_2, TestQuestionnaireFactory.createTestQuestionnaireValueV0_2())
+        assertVersion(QuestionnaireVersion.V0_1, TestQuestionnaireFactory.createTestQuestionnaireValueV0_1())
     }
 
-    private static void assertVersion(@NotNull QuestionnaireVersion expected, @NotNull String questionnaire) {
-        assertEquals(expected, QuestionnaireVersion.version(entry(questionnaire)));
+    @Test(expected = IllegalStateException::class)
+    fun crashOnUnresolvedVersion() {
+        version(entry("Not an entry"))
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void crashOnUnresolvedVersion() {
-        QuestionnaireVersion.version(entry("Not an entry"));
-    }
+    companion object {
+        private fun assertVersion(expected: QuestionnaireVersion, questionnaire: String) {
+            Assert.assertEquals(expected, version(entry(questionnaire)))
+        }
 
-    @NotNull
-    private static QuestionnaireEntry entry(@NotNull String questionnaire) {
-        return ImmutableQuestionnaireEntry.builder()
+        private fun entry(questionnaire: String): QuestionnaireEntry {
+            return ImmutableQuestionnaireEntry.builder()
                 .from(TestQuestionnaireFactory.createTestQuestionnaireEntry())
                 .text(questionnaire)
-                .build();
+                .build()
+        }
     }
 }

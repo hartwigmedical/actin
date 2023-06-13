@@ -1,26 +1,22 @@
-package com.hartwig.actin.clinical.feed.lab;
+package com.hartwig.actin.clinical.feed.lab
 
-import static org.junit.Assert.assertEquals;
+import com.hartwig.actin.clinical.datamodel.LabUnit
+import com.hartwig.actin.clinical.feed.lab.LabUnitResolver.resolve
+import org.junit.Assert
+import org.junit.Test
+import java.util.*
 
-import com.hartwig.actin.clinical.datamodel.LabUnit;
-
-import org.junit.Test;
-
-public class LabUnitResolverTest {
-
+class LabUnitResolverTest {
     @Test
-    public void canResolveLabUnits() {
-        LabUnit unit = LabUnit.CELLS_PER_CUBIC_MILLIMETER;
-
-        assertEquals(unit, LabUnitResolver.resolve(unit.display().toLowerCase()));
+    fun canResolveLabUnits() {
+        val unit = LabUnit.CELLS_PER_CUBIC_MILLIMETER
+        Assert.assertEquals(unit, resolve(unit.display().lowercase(Locale.getDefault())))
     }
 
     @Test
-    public void canCurateLabUnits() {
-        String firstCurated = LabUnitResolver.CURATION_MAP.keySet().iterator().next();
-
-        LabUnit unit = LabUnitResolver.resolve(firstCurated);
-
-        assertEquals(LabUnitResolver.CURATION_MAP.get(firstCurated), unit);
+    fun canCurateLabUnits() {
+        val firstCurated = LabUnitResolver.CURATION_MAP.keys.iterator().next()
+        val unit = resolve(firstCurated)
+        Assert.assertEquals(LabUnitResolver.CURATION_MAP[firstCurated], unit)
     }
 }

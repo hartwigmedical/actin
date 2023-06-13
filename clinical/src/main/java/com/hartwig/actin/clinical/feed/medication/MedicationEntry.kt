@@ -1,96 +1,39 @@
-package com.hartwig.actin.clinical.feed.medication;
+package com.hartwig.actin.clinical.feed.medication
 
-import java.time.LocalDate;
-
-import com.hartwig.actin.clinical.feed.FeedEntry;
-
-import org.immutables.value.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.hartwig.actin.clinical.feed.FeedEntry
+import org.immutables.value.Value
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
+import java.time.LocalDate
 
 @Value.Immutable
-@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class MedicationEntry implements FeedEntry {
-
-    @NotNull
-    @Override
-    public abstract String subject();
-
-    @NotNull
-    public abstract String codeText();
-
-    @NotNull
-    public abstract String code5ATCCode();
-
-    @NotNull
-    public abstract String code5ATCDisplay();
-
-    @NotNull
-    public abstract String chemicalSubgroupDisplay();
-
-    @NotNull
-    public abstract String pharmacologicalSubgroupDisplay();
-
-    @NotNull
-    public abstract String therapeuticSubgroupDisplay();
-
-    @NotNull
-    public abstract String anatomicalMainGroupDisplay();
-
-    @NotNull
-    public abstract String dosageInstructionRouteDisplay();
-
-    @NotNull
-    public abstract String dosageInstructionDoseQuantityUnit();
-
-    public abstract double dosageInstructionDoseQuantityValue();
-
-    @NotNull
-    public abstract String dosageInstructionFrequencyUnit();
-
-    @Nullable
-    public abstract Double dosageInstructionFrequencyValue();
-
-    @Nullable
-    public abstract Double dosageInstructionMaxDosePerAdministration();
-
-    @NotNull
-    public abstract String dosageInstructionPatientInstruction();
-
-    @NotNull
-    public abstract String dosageInstructionAsNeededDisplay();
-
-    @NotNull
-    public abstract String dosageInstructionPeriodBetweenDosagesUnit();
-
-    @Nullable
-    public abstract Double dosageInstructionPeriodBetweenDosagesValue();
-
-    @NotNull
-    public abstract String dosageInstructionText();
-
-    @NotNull
-    public abstract String status();
-
-    @Nullable
-    public abstract Boolean active();
-
-    @NotNull
-    public abstract String dosageDoseValue();
-
-    @NotNull
-    public abstract String dosageRateQuantityUnit();
-
-    @NotNull
-    public abstract String dosageDoseUnitDisplayOriginal();
-
-    @NotNull
-    public abstract LocalDate periodOfUseValuePeriodStart();
-
-    @Nullable
-    public abstract LocalDate periodOfUseValuePeriodEnd();
-
-    @NotNull
-    public abstract String stopTypeDisplay();
-
+@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
+abstract class MedicationEntry : FeedEntry {
+    abstract override fun subject(): String
+    abstract fun codeText(): String
+    abstract fun code5ATCCode(): String
+    abstract fun code5ATCDisplay(): String
+    abstract fun chemicalSubgroupDisplay(): String
+    abstract fun pharmacologicalSubgroupDisplay(): String
+    abstract fun therapeuticSubgroupDisplay(): String
+    abstract fun anatomicalMainGroupDisplay(): String
+    abstract fun dosageInstructionRouteDisplay(): String
+    abstract fun dosageInstructionDoseQuantityUnit(): String
+    abstract fun dosageInstructionDoseQuantityValue(): Double
+    abstract fun dosageInstructionFrequencyUnit(): String
+    abstract fun dosageInstructionFrequencyValue(): Double?
+    abstract fun dosageInstructionMaxDosePerAdministration(): Double?
+    abstract fun dosageInstructionPatientInstruction(): String
+    abstract fun dosageInstructionAsNeededDisplay(): String
+    abstract fun dosageInstructionPeriodBetweenDosagesUnit(): String
+    abstract fun dosageInstructionPeriodBetweenDosagesValue(): Double?
+    abstract fun dosageInstructionText(): String
+    abstract fun status(): String
+    abstract fun active(): Boolean?
+    abstract fun dosageDoseValue(): String
+    abstract fun dosageRateQuantityUnit(): String
+    abstract fun dosageDoseUnitDisplayOriginal(): String
+    abstract fun periodOfUseValuePeriodStart(): LocalDate
+    abstract fun periodOfUseValuePeriodEnd(): LocalDate?
+    abstract fun stopTypeDisplay(): String
 }

@@ -1,39 +1,20 @@
-package com.hartwig.actin.clinical.feed.lab;
+package com.hartwig.actin.clinical.feed.lab
 
-import java.time.LocalDate;
-
-import com.hartwig.actin.clinical.feed.FeedEntry;
-
-import org.immutables.value.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.hartwig.actin.clinical.feed.FeedEntry
+import org.immutables.value.Value
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
+import java.time.LocalDate
 
 @Value.Immutable
-@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class LabEntry implements FeedEntry {
-
-    @NotNull
-    @Override
-    public abstract String subject();
-
-    @NotNull
-    public abstract String codeCodeOriginal();
-
-    @NotNull
-    public abstract String codeDisplayOriginal();
-
-    @NotNull
-    public abstract String valueQuantityComparator();
-
-    public abstract double valueQuantityValue();
-
-    @NotNull
-    public abstract String valueQuantityUnit();
-
-    @NotNull
-    public abstract String referenceRangeText();
-
-    @NotNull
-    public abstract LocalDate effectiveDateTime();
-
+@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
+abstract class LabEntry : FeedEntry {
+    abstract override fun subject(): String
+    abstract fun codeCodeOriginal(): String
+    abstract fun codeDisplayOriginal(): String
+    abstract fun valueQuantityComparator(): String
+    abstract fun valueQuantityValue(): Double
+    abstract fun valueQuantityUnit(): String
+    abstract fun referenceRangeText(): String
+    abstract fun effectiveDateTime(): LocalDate
 }

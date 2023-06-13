@@ -1,73 +1,58 @@
-package com.hartwig.actin.clinical.feed;
+package com.hartwig.actin.clinical.feed
 
-import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry;
-import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntryCreator;
-import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry;
-import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntryCreator;
-import com.hartwig.actin.clinical.feed.surgery.SurgeryEntry;
-import com.hartwig.actin.clinical.feed.surgery.SurgeryEntryCreator;
-import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry;
-import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntryCreator;
-import com.hartwig.actin.clinical.feed.lab.LabEntry;
-import com.hartwig.actin.clinical.feed.lab.LabEntryCreator;
-import com.hartwig.actin.clinical.feed.medication.MedicationEntry;
-import com.hartwig.actin.clinical.feed.medication.MedicationEntryCreator;
-import com.hartwig.actin.clinical.feed.patient.PatientEntry;
-import com.hartwig.actin.clinical.feed.patient.PatientEntryCreator;
-import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
-import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntryCreator;
-import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry;
-import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntryCreator;
+import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry
+import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntryCreator
+import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry
+import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntryCreator
+import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry
+import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntryCreator
+import com.hartwig.actin.clinical.feed.lab.LabEntry
+import com.hartwig.actin.clinical.feed.lab.LabEntryCreator
+import com.hartwig.actin.clinical.feed.medication.MedicationEntry
+import com.hartwig.actin.clinical.feed.medication.MedicationEntryCreator
+import com.hartwig.actin.clinical.feed.patient.PatientEntry
+import com.hartwig.actin.clinical.feed.patient.PatientEntryCreator
+import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry
+import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntryCreator
+import com.hartwig.actin.clinical.feed.surgery.SurgeryEntry
+import com.hartwig.actin.clinical.feed.surgery.SurgeryEntryCreator
+import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry
+import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntryCreator
 
-import org.jetbrains.annotations.NotNull;
-
-public final class FeedFileReaderFactory {
-
-    private FeedFileReaderFactory() {
+object FeedFileReaderFactory {
+    fun createPatientReader(): FeedFileReader<PatientEntry> {
+        return FeedFileReader.Companion.create<PatientEntry>(PatientEntryCreator())
     }
 
-    @NotNull
-    public static FeedFileReader<PatientEntry> createPatientReader() {
-        return FeedFileReader.create(new PatientEntryCreator());
+    fun createQuestionnaireReader(): FeedFileReader<QuestionnaireEntry> {
+        return FeedFileReader(QuestionnaireEntryCreator(), true)
     }
 
-    @NotNull
-    public static FeedFileReader<QuestionnaireEntry> createQuestionnaireReader() {
-        return new FeedFileReader<>(new QuestionnaireEntryCreator(), true);
+    fun createDigitalFileReader(): FeedFileReader<DigitalFileEntry> {
+        return FeedFileReader.Companion.create<DigitalFileEntry>(DigitalFileEntryCreator())
     }
 
-    @NotNull
-    public static FeedFileReader<DigitalFileEntry> createDigitalFileReader() {
-        return FeedFileReader.create(new DigitalFileEntryCreator());
+    fun createSurgeryReader(): FeedFileReader<SurgeryEntry> {
+        return FeedFileReader.Companion.create<SurgeryEntry>(SurgeryEntryCreator())
     }
 
-    @NotNull
-    public static FeedFileReader<SurgeryEntry> createSurgeryReader() {
-        return FeedFileReader.create(new SurgeryEntryCreator());
+    fun createMedicationReader(): FeedFileReader<MedicationEntry> {
+        return FeedFileReader.Companion.create<MedicationEntry>(MedicationEntryCreator())
     }
 
-    @NotNull
-    public static FeedFileReader<MedicationEntry> createMedicationReader() {
-        return FeedFileReader.create(new MedicationEntryCreator());
+    fun createLabReader(): FeedFileReader<LabEntry> {
+        return FeedFileReader.Companion.create<LabEntry>(LabEntryCreator())
     }
 
-    @NotNull
-    public static FeedFileReader<LabEntry> createLabReader() {
-        return FeedFileReader.create(new LabEntryCreator());
+    fun createVitalFunctionReader(): FeedFileReader<VitalFunctionEntry> {
+        return FeedFileReader.Companion.create<VitalFunctionEntry>(VitalFunctionEntryCreator())
     }
 
-    @NotNull
-    public static FeedFileReader<VitalFunctionEntry> createVitalFunctionReader() {
-        return FeedFileReader.create(new VitalFunctionEntryCreator());
+    fun createIntoleranceReader(): FeedFileReader<IntoleranceEntry> {
+        return FeedFileReader.Companion.create<IntoleranceEntry>(IntoleranceEntryCreator())
     }
 
-    @NotNull
-    public static FeedFileReader<IntoleranceEntry> createIntoleranceReader() {
-        return FeedFileReader.create(new IntoleranceEntryCreator());
-    }
-
-    @NotNull
-    public static FeedFileReader<BodyWeightEntry> createBodyWeightReader() {
-        return FeedFileReader.create(new BodyWeightEntryCreator());
+    fun createBodyWeightReader(): FeedFileReader<BodyWeightEntry> {
+        return FeedFileReader.Companion.create<BodyWeightEntry>(BodyWeightEntryCreator())
     }
 }

@@ -1,110 +1,92 @@
-package com.hartwig.actin.clinical.feed;
+package com.hartwig.actin.clinical.feed
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import com.google.common.io.Resources
+import com.hartwig.actin.clinical.feed.FeedModel.Companion.fromFeedDirectory
+import org.junit.Assert
+import org.junit.Test
+import java.io.IOException
+import java.time.LocalDate
 
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Set;
-
-import com.google.common.io.Resources;
-import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry;
-import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry;
-
-import org.junit.Test;
-
-public class FeedModelTest {
-
-    private static final String CLINICAL_FEED_DIRECTORY = Resources.getResource("feed").getPath();
-
+class FeedModelTest {
     @Test
-    public void canCreateFromFeedDirectory() throws IOException {
-        assertNotNull(FeedModel.fromFeedDirectory(CLINICAL_FEED_DIRECTORY));
+    @Throws(IOException::class)
+    fun canCreateFromFeedDirectory() {
+        Assert.assertNotNull(fromFeedDirectory(CLINICAL_FEED_DIRECTORY))
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void crashOnInvalidSubject() {
-        FeedModel model = TestFeedFactory.createProperTestFeedModel();
-
-        model.patientEntry("does not exist");
+    @Test(expected = IllegalStateException::class)
+    fun crashOnInvalidSubject() {
+        val model = TestFeedFactory.createProperTestFeedModel()
+        model.patientEntry("does not exist")
     }
 
     @Test
-    public void canRetrieveSubjects() {
-        FeedModel model = TestFeedFactory.createProperTestFeedModel();
-
-        Set<String> subjects = model.subjects();
-        assertEquals(1, subjects.size());
-        assertTrue(subjects.contains(TestFeedFactory.TEST_SUBJECT));
+    fun canRetrieveSubjects() {
+        val model = TestFeedFactory.createProperTestFeedModel()
+        val subjects: Set<String?> = model.subjects()
+        Assert.assertEquals(1, subjects.size.toLong())
+        Assert.assertTrue(subjects.contains(TestFeedFactory.TEST_SUBJECT))
     }
 
     @Test
-    public void canRetrievePatientEntry() {
-        FeedModel model = TestFeedFactory.createProperTestFeedModel();
-        assertNotNull(model.patientEntry(TestFeedFactory.TEST_SUBJECT));
+    fun canRetrievePatientEntry() {
+        val model = TestFeedFactory.createProperTestFeedModel()
+        Assert.assertNotNull(model.patientEntry(TestFeedFactory.TEST_SUBJECT))
     }
 
     @Test
-    public void canRetrieveToxicityQuestionnaireEntries() {
-        FeedModel model = TestFeedFactory.createProperTestFeedModel();
-
-        List<DigitalFileEntry> toxicities = model.toxicityEntries(TestFeedFactory.TEST_SUBJECT);
-
-        assertEquals(3, toxicities.size());
+    fun canRetrieveToxicityQuestionnaireEntries() {
+        val model = TestFeedFactory.createProperTestFeedModel()
+        val toxicities = model.toxicityEntries(TestFeedFactory.TEST_SUBJECT)
+        Assert.assertEquals(3, toxicities.size.toLong())
     }
 
     @Test
-    public void canDetermineLatestQuestionnaire() {
-        FeedModel model = TestFeedFactory.createProperTestFeedModel();
-
-        QuestionnaireEntry latest = model.latestQuestionnaireEntry(TestFeedFactory.TEST_SUBJECT);
-        assertNotNull(latest);
-        assertEquals(LocalDate.of(2021, 8, 1), latest.authored());
-        assertNull(model.latestQuestionnaireEntry("Does not exist"));
+    fun canDetermineLatestQuestionnaire() {
+        val model = TestFeedFactory.createProperTestFeedModel()
+        val latest = model.latestQuestionnaireEntry(TestFeedFactory.TEST_SUBJECT)
+        Assert.assertNotNull(latest)
+        Assert.assertEquals(LocalDate.of(2021, 8, 1), latest!!.authored())
+        Assert.assertNull(model.latestQuestionnaireEntry("Does not exist"))
     }
 
     @Test
-    public void canRetrieveUniqueSurgeryEntries() {
-        FeedModel model = TestFeedFactory.createProperTestFeedModel();
-
-        assertEquals(1, model.uniqueSurgeryEntries(TestFeedFactory.TEST_SUBJECT).size());
+    fun canRetrieveUniqueSurgeryEntries() {
+        val model = TestFeedFactory.createProperTestFeedModel()
+        Assert.assertEquals(1, model.uniqueSurgeryEntries(TestFeedFactory.TEST_SUBJECT).size.toLong())
     }
 
     @Test
-    public void canRetrieveMedicationEntries() {
-        FeedModel model = TestFeedFactory.createProperTestFeedModel();
-
-        assertNotNull(model.medicationEntries(TestFeedFactory.TEST_SUBJECT));
+    fun canRetrieveMedicationEntries() {
+        val model = TestFeedFactory.createProperTestFeedModel()
+        Assert.assertNotNull(model.medicationEntries(TestFeedFactory.TEST_SUBJECT))
     }
 
     @Test
-    public void canRetrieveLabEntries() {
-        FeedModel model = TestFeedFactory.createProperTestFeedModel();
-
-        assertNotNull(model.labEntries(TestFeedFactory.TEST_SUBJECT));
+    fun canRetrieveLabEntries() {
+        val model = TestFeedFactory.createProperTestFeedModel()
+        Assert.assertNotNull(model.labEntries(TestFeedFactory.TEST_SUBJECT))
     }
 
     @Test
-    public void canRetrieveVitalFunctionEntries() {
-        FeedModel model = TestFeedFactory.createProperTestFeedModel();
-
-        assertNotNull(model.vitalFunctionEntries(TestFeedFactory.TEST_SUBJECT));
+    fun canRetrieveVitalFunctionEntries() {
+        val model = TestFeedFactory.createProperTestFeedModel()
+        Assert.assertNotNull(model.vitalFunctionEntries(TestFeedFactory.TEST_SUBJECT))
     }
 
     @Test
-    public void canRetrieveIntoleranceEntries() {
-        FeedModel model = TestFeedFactory.createProperTestFeedModel();
-
-        assertNotNull(model.intoleranceEntries(TestFeedFactory.TEST_SUBJECT));
+    fun canRetrieveIntoleranceEntries() {
+        val model = TestFeedFactory.createProperTestFeedModel()
+        Assert.assertNotNull(model.intoleranceEntries(TestFeedFactory.TEST_SUBJECT))
     }
 
     @Test
-    public void canRetrieveBodyWeightEntries() {
-        FeedModel model = TestFeedFactory.createProperTestFeedModel();
+    fun canRetrieveBodyWeightEntries() {
+        val model = TestFeedFactory.createProperTestFeedModel()
+        Assert.assertNotNull(model.uniqueBodyWeightEntries(TestFeedFactory.TEST_SUBJECT))
+    }
 
-        assertNotNull(model.uniqueBodyWeightEntries(TestFeedFactory.TEST_SUBJECT));
+    companion object {
+        private val CLINICAL_FEED_DIRECTORY = Resources.getResource("feed").path
     }
 }

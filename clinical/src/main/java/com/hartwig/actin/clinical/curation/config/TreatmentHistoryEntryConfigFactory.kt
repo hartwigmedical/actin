@@ -1,176 +1,140 @@
-package com.hartwig.actin.clinical.curation.config;
+package com.hartwig.actin.clinical.curation.config
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.hartwig.actin.clinical.datamodel.ImmutableObservedToxicity
+import com.hartwig.actin.clinical.datamodel.treatment.Treatment
+import java.util.function.Function
+import java.util.function.Predicate
 
-import com.hartwig.actin.clinical.curation.CurationUtil;
-import com.hartwig.actin.clinical.datamodel.ImmutableObservedToxicity;
-import com.hartwig.actin.clinical.datamodel.ObservedToxicity;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableChemotherapy;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableCombinedTherapy;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableImmunotherapy;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTherapy;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRadiotherapy;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableSurgicalTreatment;
-import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
-import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTherapyHistoryDetails;
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
-import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason;
-import com.hartwig.actin.clinical.datamodel.treatment.history.TherapyHistoryDetails;
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse;
-import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
-import com.hartwig.actin.util.ApplicationConfig;
-import com.hartwig.actin.util.ResourceFile;
-
-import org.jetbrains.annotations.NotNull;
-
-public class TreatmentHistoryEntryConfigFactory implements CurationConfigFactory<TreatmentHistoryEntryConfig> {
-
-    @NotNull
-    @Override
-    public TreatmentHistoryEntryConfig create(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
-        boolean ignore = CurationUtil.isIgnoreString(parts[fields.get("name")]);
+class TreatmentHistoryEntryConfigFactory : CurationConfigFactory<TreatmentHistoryEntryConfig> {
+    override fun create(fields: Map<String?, Int?>, parts: Array<String>): TreatmentHistoryEntryConfig {
+        val ignore: Boolean = CurationUtil.isIgnoreString(parts[fields["name"]!!])
         return ImmutableTreatmentHistoryEntryConfig.builder()
-                .input(parts[fields.get("input")])
-                .ignore(ignore)
-                .curated(!ignore ? curateObject(fields, parts) : null)
-                .build();
+            .input(parts[fields["input"]!!])
+            .ignore(ignore)
+            .curated(if (!ignore) curateObject(fields, parts) else null)
+            .build()
     }
 
-    @NotNull
-    private static TreatmentHistoryEntry curateObject(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
-        Set<TreatmentCategory> categories = TreatmentCategoryResolver.fromStringList(parts[fields.get("category")]);
-        boolean isTrial = categories.contains(TreatmentCategory.TRIAL);
-
-        Set<Therapy> therapies =
-                categories.stream().filter(cat -> cat != TreatmentCategory.SURGERY && cat != TreatmentCategory.TRIAL).map(cat -> {
-                    switch (cat) {
-                        case CHEMOTHERAPY:
-                            return chemotherapy(fields, parts, isTrial);
-                        case RADIOTHERAPY:
-                            return radiotherapy(fields, parts, isTrial);
-                        case IMMUNOTHERAPY:
-                            return immunotherapy(fields, parts, isTrial);
-                        default:
-                            return otherTherapy(fields, parts, cat, isTrial);
-                    }
-                }).collect(Collectors.toSet());
-
-        Set<Treatment> treatments;
-        TherapyHistoryDetails therapyHistoryDetails;
-        if (!therapies.isEmpty()) {
-            Treatment therapy = (therapies.size() == 1)
-                    ? therapies.iterator().next()
-                    : ImmutableCombinedTherapy.builder()
-                            .name(parts[fields.get("name")])
-                            .therapies(therapies)
-                            .isSystemic(therapies.stream().anyMatch(Treatment::isSystemic))
-                            .build();
-
-            treatments = categories.contains(TreatmentCategory.SURGERY) ? Set.of(therapy, surgery(fields, parts)) : Set.of(therapy);
-
-            String bestResponseString = ResourceFile.optionalString(parts[fields.get("bestResponse")]);
-            TreatmentResponse bestResponse = (bestResponseString != null) ? TreatmentResponse.createFromString(bestResponseString) : null;
-            String stopReasonDetail = ResourceFile.optionalString(parts[fields.get("stopReason")]);
-
-            Set<ObservedToxicity> toxicities;
-            if (stopReasonDetail != null) {
-                toxicities = stopReasonDetail.toLowerCase(ApplicationConfig.LOCALE).contains("toxicity")
-                        ? Set.of(ImmutableObservedToxicity.builder().name(stopReasonDetail).categories(Collections.emptySet()).build())
-                        : Collections.emptySet();
-            } else {
-                toxicities = null;
-            }
-
-            therapyHistoryDetails = ImmutableTherapyHistoryDetails.builder()
-                    .stopYear(ResourceFile.optionalInteger(parts[fields.get("stopYear")]))
-                    .stopMonth(ResourceFile.optionalInteger(parts[fields.get("stopMonth")]))
-                    .cycles(ResourceFile.optionalInteger(parts[fields.get("cycles")]))
+    companion object {
+        private fun curateObject(fields: Map<String?, Int?>, parts: Array<String>): TreatmentHistoryEntry {
+            val categories: Set<TreatmentCategory> = TreatmentCategoryResolver.fromStringList(parts[fields["category"]!!])
+            val isTrial = categories.contains(TreatmentCategory.TRIAL)
+            val therapies: Set<Therapy> = categories.stream()
+                .filter(Predicate<TreatmentCategory> { cat: TreatmentCategory -> cat != TreatmentCategory.SURGERY && cat != TreatmentCategory.TRIAL })
+                .map(
+                    Function<TreatmentCategory, Therapy> { cat: TreatmentCategory ->
+                        when (cat) {
+                            TreatmentCategory.CHEMOTHERAPY -> return@map chemotherapy(fields, parts, isTrial)
+                            TreatmentCategory.RADIOTHERAPY -> return@map radiotherapy(fields, parts, isTrial)
+                            TreatmentCategory.IMMUNOTHERAPY -> return@map immunotherapy(fields, parts, isTrial)
+                            else -> return@map otherTherapy(fields, parts, cat, isTrial)
+                        }
+                    }).collect(Collectors.toSet<Therapy>())
+            val treatments: Set<Treatment>
+            val therapyHistoryDetails: TherapyHistoryDetails?
+            if (!therapies.isEmpty()) {
+                val therapy: Treatment = if (therapies.size == 1) therapies.iterator().next() else ImmutableCombinedTherapy.builder()
+                    .name(parts[fields["name"]!!])
+                    .therapies(therapies)
+                    .isSystemic(therapies.stream().anyMatch(Predicate<Therapy> { obj: Therapy -> obj.isSystemic() }))
+                    .build()
+                treatments = if (categories.contains(TreatmentCategory.SURGERY)) java.util.Set.of(
+                    therapy,
+                    surgery(fields, parts)
+                ) else java.util.Set.of(therapy)
+                val bestResponseString: String = ResourceFile.optionalString(parts[fields["bestResponse"]!!])
+                val bestResponse: TreatmentResponse? =
+                    if (bestResponseString != null) TreatmentResponse.createFromString(bestResponseString) else null
+                val stopReasonDetail: String = ResourceFile.optionalString(parts[fields["stopReason"]!!])
+                val toxicities: Set<ObservedToxicity>?
+                toxicities = if (stopReasonDetail != null) {
+                    if (stopReasonDetail.lowercase(ApplicationConfig.LOCALE).contains("toxicity")) java.util.Set.of(
+                        ImmutableObservedToxicity.builder().name(stopReasonDetail).categories(
+                            emptySet()
+                        ).build()
+                    ) else emptySet<ObservedToxicity>()
+                } else {
+                    null
+                }
+                therapyHistoryDetails = ImmutableTherapyHistoryDetails.builder()
+                    .stopYear(ResourceFile.optionalInteger(parts[fields["stopYear"]!!]))
+                    .stopMonth(ResourceFile.optionalInteger(parts[fields["stopMonth"]!!]))
+                    .cycles(ResourceFile.optionalInteger(parts[fields["cycles"]!!]))
                     .bestResponse(bestResponse)
                     .stopReasonDetail(stopReasonDetail)
-                    .stopReason((stopReasonDetail != null) ? StopReason.createFromString(stopReasonDetail) : null)
+                    .stopReason(if (stopReasonDetail != null) StopReason.createFromString(stopReasonDetail) else null)
                     .toxicities(toxicities)
-                    .build();
-
-        } else if (categories.contains(TreatmentCategory.SURGERY)) {
-            treatments = Set.of(surgery(fields, parts));
-            therapyHistoryDetails = null;
-        } else if (categories.contains(TreatmentCategory.TRIAL)) {
-            treatments = Set.of(otherTherapy(fields, parts, TreatmentCategory.TRIAL, true));
-            therapyHistoryDetails = null;
-        } else {
-            throw new IllegalStateException("No treatment category resolved for input " + parts[fields.get("name")]);
+                    .build()
+            } else if (categories.contains(TreatmentCategory.SURGERY)) {
+                treatments = java.util.Set.of(surgery(fields, parts))
+                therapyHistoryDetails = null
+            } else if (categories.contains(TreatmentCategory.TRIAL)) {
+                treatments = java.util.Set.of(otherTherapy(fields, parts, TreatmentCategory.TRIAL, true))
+                therapyHistoryDetails = null
+            } else {
+                throw IllegalStateException("No treatment category resolved for input " + parts[fields["name"]!!])
+            }
+            return ImmutableTreatmentHistoryEntry.builder()
+                .treatments(treatments)
+                .startYear(ResourceFile.optionalInteger(parts[fields["startYear"]!!]))
+                .startMonth(ResourceFile.optionalInteger(parts[fields["startMonth"]!!]))
+                .isTrial(categories.contains(TreatmentCategory.TRIAL))
+                .trialAcronym(ResourceFile.optionalString(parts[fields["trialAcronym"]!!]))
+                .therapyHistoryDetails(therapyHistoryDetails)
+                .build()
         }
 
-        return ImmutableTreatmentHistoryEntry.builder()
-                .treatments(treatments)
-                .startYear(ResourceFile.optionalInteger(parts[fields.get("startYear")]))
-                .startMonth(ResourceFile.optionalInteger(parts[fields.get("startMonth")]))
-                .isTrial(categories.contains(TreatmentCategory.TRIAL))
-                .trialAcronym(ResourceFile.optionalString(parts[fields.get("trialAcronym")]))
-                .therapyHistoryDetails(therapyHistoryDetails)
-                .build();
-    }
+        private fun surgery(fields: Map<String?, Int?>, parts: Array<String>): Treatment {
+            return ImmutableSurgicalTreatment.builder().name(parts[fields["name"]!!]).build()
+        }
 
-    private static Treatment surgery(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
-        return ImmutableSurgicalTreatment.builder().name(parts[fields.get("name")]).build();
-    }
-
-    private static Therapy chemotherapy(@NotNull Map<String, Integer> fields, @NotNull String[] parts, boolean isTrial) {
-        ImmutableChemotherapy.Builder builder = ImmutableChemotherapy.builder()
-                .name(parts[fields.get("name")])
+        private fun chemotherapy(fields: Map<String?, Int?>, parts: Array<String>, isTrial: Boolean): Therapy {
+            val builder: ImmutableChemotherapy.Builder = ImmutableChemotherapy.builder()
+                .name(parts[fields["name"]!!])
                 .isSystemic(true)
                 .addCategories(TreatmentCategory.CHEMOTHERAPY)
-                .drugs(Collections.emptySet());
-
-        if (isTrial) {
-            builder.addCategories(TreatmentCategory.TRIAL);
+                .drugs(emptySet())
+            if (isTrial) {
+                builder.addCategories(TreatmentCategory.TRIAL)
+            }
+            return builder.build()
         }
 
-        return builder.build();
-    }
-
-    private static Therapy radiotherapy(@NotNull Map<String, Integer> fields, @NotNull String[] parts, boolean isTrial) {
-        ImmutableRadiotherapy.Builder builder = ImmutableRadiotherapy.builder().name(parts[fields.get("name")]).isSystemic(false)
+        private fun radiotherapy(fields: Map<String?, Int?>, parts: Array<String>, isTrial: Boolean): Therapy {
+            val builder: ImmutableRadiotherapy.Builder = ImmutableRadiotherapy.builder().name(parts[fields["name"]!!]).isSystemic(false)
                 .addCategories(TreatmentCategory.RADIOTHERAPY)
-                .radioType(ResourceFile.optionalString(parts[fields.get("radioType")]));
-
-        if (isTrial) {
-            builder.addCategories(TreatmentCategory.TRIAL);
+                .radioType(ResourceFile.optionalString(parts[fields["radioType"]!!]))
+            if (isTrial) {
+                builder.addCategories(TreatmentCategory.TRIAL)
+            }
+            return builder.build()
         }
 
-        return builder.build();
-    }
-
-    private static Therapy immunotherapy(@NotNull Map<String, Integer> fields, @NotNull String[] parts, boolean isTrial) {
-        ImmutableImmunotherapy.Builder builder = ImmutableImmunotherapy.builder().name(parts[fields.get("name")]).isSystemic(true)
+        private fun immunotherapy(fields: Map<String?, Int?>, parts: Array<String>, isTrial: Boolean): Therapy {
+            val builder: ImmutableImmunotherapy.Builder = ImmutableImmunotherapy.builder().name(parts[fields["name"]!!]).isSystemic(true)
                 .addCategories(TreatmentCategory.IMMUNOTHERAPY)
-                .drugs(Collections.emptySet());
-
-        if (isTrial) {
-            builder.addCategories(TreatmentCategory.TRIAL);
+                .drugs(emptySet())
+            if (isTrial) {
+                builder.addCategories(TreatmentCategory.TRIAL)
+            }
+            return builder.build()
         }
 
-        return builder.build();
-    }
-
-    private static Therapy otherTherapy(@NotNull Map<String, Integer> fields, @NotNull String[] parts, TreatmentCategory category,
-            boolean isTrial) {
-        ImmutableOtherTherapy.Builder builder = ImmutableOtherTherapy.builder()
-                .name(parts[fields.get("name")])
-                .isSystemic(!Set.of(TreatmentCategory.ABLATION, TreatmentCategory.TRANSPLANTATION).contains(category))
+        private fun otherTherapy(
+            fields: Map<String?, Int?>, parts: Array<String>, category: TreatmentCategory,
+            isTrial: Boolean
+        ): Therapy {
+            val builder: ImmutableOtherTherapy.Builder = ImmutableOtherTherapy.builder()
+                .name(parts[fields["name"]!!])
+                .isSystemic(
+                    !java.util.Set.of<TreatmentCategory>(TreatmentCategory.ABLATION, TreatmentCategory.TRANSPLANTATION).contains(category)
+                )
                 .addCategories(category)
-                .drugs(Collections.emptySet());
-
-        if (isTrial) {
-            builder.addCategories(TreatmentCategory.TRIAL);
+                .drugs(emptySet())
+            if (isTrial) {
+                builder.addCategories(TreatmentCategory.TRIAL)
+            }
+            return builder.build()
         }
-
-        return builder.build();
     }
 }

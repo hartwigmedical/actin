@@ -1,33 +1,27 @@
-package com.hartwig.actin.clinical.curation;
+package com.hartwig.actin.clinical.curation
 
-import java.util.Set;
+import com.hartwig.actin.doid.DoidModel
 
-import com.hartwig.actin.doid.DoidModel;
-
-public class CurationValidator {
-
-    static final String DISEASE_DOID = "4";
-    static final String DISEASE_OF_CELLULAR_PROLIFERATION_DOID = "14566";
-
-    private final DoidModel doidModel;
-
-    public CurationValidator(final DoidModel doidModel) {
-        this.doidModel = doidModel;
+class CurationValidator(private val doidModel: DoidModel) {
+    fun isValidCancerDoidSet(doids: Set<String?>): Boolean {
+        return hasValidDoids(doids, doidModel, DISEASE_OF_CELLULAR_PROLIFERATION_DOID)
     }
 
-    public boolean isValidCancerDoidSet(Set<String> doids) {
-        return hasValidDoids(doids, doidModel, DISEASE_OF_CELLULAR_PROLIFERATION_DOID);
+    fun isValidDiseaseDoidSet(doids: Set<String?>): Boolean {
+        return hasValidDoids(doids, doidModel, DISEASE_DOID)
     }
 
-    public boolean isValidDiseaseDoidSet(Set<String> doids) {
-        return hasValidDoids(doids, doidModel, DISEASE_DOID);
-    }
-
-    private static boolean hasValidDoids(Set<String> doids, DoidModel doidModel, String expectedParentDoid) {
-        if (doids.isEmpty()) {
-            return false;
+    companion object {
+        const val DISEASE_DOID = "4"
+        const val DISEASE_OF_CELLULAR_PROLIFERATION_DOID = "14566"
+        private fun hasValidDoids(doids: Set<String?>, doidModel: DoidModel, expectedParentDoid: String): Boolean {
+            return if (doids.isEmpty()) {
+                false
+            } else doids.stream().allMatch { doid: String? ->
+                doidModel.doidWithParents(
+                    doid!!
+                ).contains(expectedParentDoid)
+            }
         }
-
-         return doids.stream().allMatch(doid -> doidModel.doidWithParents(doid).contains(expectedParentDoid));
     }
 }

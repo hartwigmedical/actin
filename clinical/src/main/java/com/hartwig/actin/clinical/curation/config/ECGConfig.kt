@@ -1,36 +1,23 @@
-package com.hartwig.actin.clinical.curation.config;
+package com.hartwig.actin.clinical.curation.config
 
-import org.immutables.value.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.immutables.value.Value
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 
 @Value.Immutable
-@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class ECGConfig implements CurationConfig {
+@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
+abstract class ECGConfig : CurationConfig {
+    abstract override fun input(): String
+    abstract override fun ignore(): Boolean
+    abstract fun interpretation(): String
 
-    @NotNull
-    @Override
-    public abstract String input();
+    @JvmField
+    abstract val isQTCF: Boolean
+    abstract fun qtcfValue(): Int?
+    abstract fun qtcfUnit(): String?
 
-    @Override
-    public abstract boolean ignore();
-
-    @NotNull
-    public abstract String interpretation();
-
-    public abstract boolean isQTCF();
-
-    @Nullable
-    public abstract Integer qtcfValue();
-
-    @Nullable
-    public abstract String qtcfUnit();
-
-    public abstract boolean isJTC();
-
-    @Nullable
-    public abstract Integer jtcValue();
-
-    @Nullable
-    public abstract String jtcUnit();
+    @JvmField
+    abstract val isJTC: Boolean
+    abstract fun jtcValue(): Int?
+    abstract fun jtcUnit(): String?
 }

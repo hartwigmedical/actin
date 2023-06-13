@@ -1,24 +1,17 @@
-package com.hartwig.actin.clinical.curation.config;
+package com.hartwig.actin.clinical.curation.config
 
-import java.util.Map;
+import com.hartwig.actin.util.ResourceFile
 
-import com.hartwig.actin.util.ResourceFile;
-
-import org.jetbrains.annotations.NotNull;
-
-public class MedicationDosageConfigFactory implements CurationConfigFactory<MedicationDosageConfig> {
-
-    @NotNull
-    @Override
-    public MedicationDosageConfig create(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
+class MedicationDosageConfigFactory : CurationConfigFactory<MedicationDosageConfig> {
+    override fun create(fields: Map<String?, Int?>, parts: Array<String>): MedicationDosageConfig {
         return ImmutableMedicationDosageConfig.builder()
-                .input(parts[fields.get("input")])
-                .dosageMin(ResourceFile.optionalNumber(parts[fields.get("dosageMin")]))
-                .dosageMax(ResourceFile.optionalNumber(parts[fields.get("dosageMax")]))
-                .dosageUnit(ResourceFile.optionalString(parts[fields.get("dosageUnit")]))
-                .frequency(ResourceFile.optionalNumber(parts[fields.get("frequency")]))
-                .frequencyUnit(ResourceFile.optionalString(parts[fields.get("frequencyUnit")]))
-                .ifNeeded(ResourceFile.optionalBool(parts[fields.get("ifNeeded")]))
-                .build();
+            .input(parts[fields["input"]!!])
+            .dosageMin(ResourceFile.optionalNumber(parts[fields["dosageMin"]!!]))
+            .dosageMax(ResourceFile.optionalNumber(parts[fields["dosageMax"]!!]))
+            .dosageUnit(ResourceFile.optionalString(parts[fields["dosageUnit"]!!]))
+            .frequency(ResourceFile.optionalNumber(parts[fields["frequency"]!!]))
+            .frequencyUnit(ResourceFile.optionalString(parts[fields["frequencyUnit"]!!]))
+            .ifNeeded(ResourceFile.optionalBool(parts[fields["ifNeeded"]!!]))
+            .build()
     }
 }

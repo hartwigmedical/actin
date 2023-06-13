@@ -1,11 +1,6 @@
-package com.hartwig.actin.clinical.feed;
+package com.hartwig.actin.clinical.feed
 
-import org.jetbrains.annotations.NotNull;
-
-public interface FeedEntryCreator<T extends FeedEntry> {
-
-    @NotNull
-    T fromLine(@NotNull FeedLine line);
-
-    boolean isValid(@NotNull FeedLine line);
+interface FeedEntryCreator<T : FeedEntry?> {
+    fun fromLine(line: FeedLine): T
+    fun isValid(line: FeedLine): Boolean
 }

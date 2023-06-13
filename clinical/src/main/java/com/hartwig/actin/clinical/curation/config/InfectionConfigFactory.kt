@@ -1,17 +1,10 @@
-package com.hartwig.actin.clinical.curation.config;
+package com.hartwig.actin.clinical.curation.config
 
-import java.util.Map;
-
-import org.jetbrains.annotations.NotNull;
-
-public class InfectionConfigFactory implements CurationConfigFactory<InfectionConfig> {
-
-    @NotNull
-    @Override
-    public InfectionConfig create(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
+class InfectionConfigFactory : CurationConfigFactory<InfectionConfig> {
+    override fun create(fields: Map<String?, Int?>, parts: Array<String>): InfectionConfig {
         return ImmutableInfectionConfig.builder()
-                .input(parts[fields.get("input")])
-                .interpretation(parts[fields.get("interpretation")])
-                .build();
+            .input(parts[fields["input"]!!])
+            .interpretation(parts[fields["interpretation"]!!])
+            .build()
     }
 }

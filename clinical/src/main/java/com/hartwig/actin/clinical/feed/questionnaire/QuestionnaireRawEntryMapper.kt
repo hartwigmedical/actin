@@ -1,50 +1,46 @@
-package com.hartwig.actin.clinical.feed.questionnaire;
+package com.hartwig.actin.clinical.feed.questionnaire
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import com.hartwig.actin.util.Paths
+import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.Path
+import java.util.*
+import java.util.stream.Collectors
 
-import com.hartwig.actin.util.Paths;
-
-import org.jetbrains.annotations.NotNull;
-
-public class QuestionnaireRawEntryMapper {
-
-    private static final String QUESTIONNAIRE_MAPPING_TSV = "questionnaire_mapping.tsv";
-
-    private final Map<String, String> correctionMap;
-
-    public QuestionnaireRawEntryMapper(Map<String, String> correctionMap) {
-        this.correctionMap = correctionMap;
-    }
-
-    public static QuestionnaireRawEntryMapper createFromCurationDirectory(String curationDirectory) throws IOException {
-        Path filePath = Path.of(Paths.forceTrailingFileSeparator(curationDirectory) + QUESTIONNAIRE_MAPPING_TSV);
-
-        try (Stream<String> fileStream = Files.lines(filePath)) {
-            Map<String, String> correctionMap = fileStream.map(QuestionnaireRawEntryMapper::splitAndParseLineBreaks)
-                    .collect(HashMap::new, (m, cols) -> m.put(cols.get(0), cols.get(1)), HashMap::putAll);
-
-            return new QuestionnaireRawEntryMapper(correctionMap);
+class QuestionnaireRawEntryMapper(private val correctionMap: Map<String, String>) {
+    fun correctQuestionnaireEntry(rawQuestionnaireText: String): String {
+        var correctedQuestionnaireText = rawQuestionnaireText
+        for ((key, value) in correctionMap) {
+            correctedQuestionnaireText = correctedQuestionnaireText.replace(key, value)
         }
+        return correctedQuestionnaireText
     }
 
-    @NotNull
-    private static List<String> splitAndParseLineBreaks(String line) {
-        return Arrays.stream(line.split("\t", 2)).map(entry -> entry.replace("\\n", "\n")).collect(Collectors.toList());
-    }
+    companion object {
+        private const val QUESTIONNAIRE_MAPPING_TSV = "questionnaire_mapping.tsv"
 
-    public String correctQuestionnaireEntry(String rawQuestionnaireText) {
-        String correctedQuestionnaireText = rawQuestionnaireText;
-        for (Map.Entry<String, String> correctionEntry : correctionMap.entrySet()) {
-            correctedQuestionnaireText = correctedQuestionnaireText.replace(correctionEntry.getKey(), correctionEntry.getValue());
+        @JvmStatic
+        @Throws(IOException::class)
+        fun createFromCurationDirectory(curationDirectory: String?): QuestionnaireRawEntryMapper {
+            val filePath = Path.of(Paths.forceTrailingFileSeparator(curationDirectory!!) + QUESTIONNAIRE_MAPPING_TSV)
+            Files.lines(filePath).use { fileStream ->
+                val correctionMap: Map<String, String> = fileStream.map { line: String -> splitAndParseLineBreaks(line) }
+                    .collect(
+                        { HashMap() },
+                        { m: HashMap<String, String>, cols: List<String> ->
+                            m[cols[0]] = cols[1]
+                        }) { obj: HashMap<String, String>, m: HashMap<String, String>? ->
+                        obj.putAll(
+                            m!!
+                        )
+                    }
+                return QuestionnaireRawEntryMapper(correctionMap)
+            }
         }
-        return correctedQuestionnaireText;
+
+        private fun splitAndParseLineBreaks(line: String): List<String> {
+            return Arrays.stream(line.split("\t".toRegex(), limit = 2).toTypedArray()).map { entry: String -> entry.replace("\\n", "\n") }
+                .collect(Collectors.toList())
+        }
     }
 }

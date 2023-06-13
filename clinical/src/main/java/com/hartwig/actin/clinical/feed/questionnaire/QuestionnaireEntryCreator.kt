@@ -1,30 +1,24 @@
-package com.hartwig.actin.clinical.feed.questionnaire;
+package com.hartwig.actin.clinical.feed.questionnaire
 
-import java.util.Set;
+import com.hartwig.actin.clinical.feed.FeedEntryCreator
+import com.hartwig.actin.clinical.feed.FeedLine
 
-import com.hartwig.actin.clinical.feed.FeedEntryCreator;
-import com.hartwig.actin.clinical.feed.FeedLine;
-
-import org.jetbrains.annotations.NotNull;
-
-public class QuestionnaireEntryCreator implements FeedEntryCreator<QuestionnaireEntry> {
-
-    private static final Set<String> QUESTIONNAIRE_DESCRIPTIONS = Set.of("INT Consult", "consultation");
-
-    @NotNull
-    @Override
-    public QuestionnaireEntry fromLine(@NotNull FeedLine line) {
+class QuestionnaireEntryCreator : FeedEntryCreator<QuestionnaireEntry> {
+    override fun fromLine(line: FeedLine): QuestionnaireEntry {
         return ImmutableQuestionnaireEntry.builder()
-                .subject(line.trimmed("subject"))
-                .authored(line.date("authored"))
-                .description(line.string("description"))
-                .itemText(line.string("item_text"))
-                .text(line.string("text"))
-                .build();
+            .subject(line.trimmed("subject"))
+            .authored(line.date("authored"))
+            .description(line.string("description"))
+            .itemText(line.string("item_text"))
+            .text(line.string("text"))
+            .build()
     }
 
-    @Override
-    public boolean isValid(@NotNull FeedLine line) {
-        return QUESTIONNAIRE_DESCRIPTIONS.contains(line.string("description"));
+    override fun isValid(line: FeedLine): Boolean {
+        return QUESTIONNAIRE_DESCRIPTIONS.contains(line.string("description"))
+    }
+
+    companion object {
+        private val QUESTIONNAIRE_DESCRIPTIONS = setOf("INT Consult", "consultation")
     }
 }

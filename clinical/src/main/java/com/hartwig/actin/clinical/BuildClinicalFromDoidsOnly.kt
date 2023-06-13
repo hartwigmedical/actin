@@ -1,94 +1,77 @@
-package com.hartwig.actin.clinical;
+package com.hartwig.actin.clinical
 
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.Set;
+import com.google.common.collect.Lists
+import com.google.common.collect.Sets
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.clinical.datamodel.Gender
+import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
+import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus
+import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails
+import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
+import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
+import org.apache.commons.cli.CommandLine
+import org.apache.commons.cli.DefaultParser
+import org.apache.commons.cli.Options
+import org.apache.commons.cli.ParseException
+import org.apache.logging.log4j.LogManager
+import java.io.IOException
+import java.time.LocalDate
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.Gender;
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
-import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
-import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
-import com.hartwig.actin.clinical.serialization.ClinicalRecordJson;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-
-public class BuildClinicalFromDoidsOnly {
-
-    private static final Logger LOGGER = LogManager.getLogger(BuildClinicalFromDoidsOnly.class);
-
-    private static final String OUTPUT_DIRECTORY = "output_directory";
-    private static final String PATIENT = "patient";
-    private static final String PRIMARY_TUMOR_DOIDS = "primary_tumor_doids";
-
-    private static final String APPLICATION = "ACTIN Build Clinical From Doids Only";
-    private static final String VERSION = BuildClinicalFromDoidsOnly.class.getPackage().getImplementationVersion();
-
-    public static void main(@NotNull String... args) throws IOException, ParseException {
-        Options options = createOptions();
-
-        new BuildClinicalFromDoidsOnly(new DefaultParser().parse(options, args)).run();
+class BuildClinicalFromDoidsOnly(private val command: CommandLine) {
+    @Throws(IOException::class)
+    fun run() {
+        LOGGER.info("Running {} v{}", APPLICATION, VERSION)
+        val patientId = command.getOptionValue(PATIENT)
+        val doids = toStringSet(command.getOptionValue(PRIMARY_TUMOR_DOIDS), ";")
+        LOGGER.info("Creating clinical record for {} with doids {}", patientId, doids)
+        val record = createRecord(patientId, doids)
+        val outputDirectory = command.getOptionValue(OUTPUT_DIRECTORY)
+        LOGGER.info("Writing clinical record for {} to {}", patientId, outputDirectory)
+        ClinicalRecordJson.write(Lists.newArrayList(record), outputDirectory)
+        LOGGER.info("Done!")
     }
 
-    @NotNull
-    private final CommandLine command;
+    companion object {
+        private val LOGGER = LogManager.getLogger(BuildClinicalFromDoidsOnly::class.java)
+        private const val OUTPUT_DIRECTORY = "output_directory"
+        private const val PATIENT = "patient"
+        private const val PRIMARY_TUMOR_DOIDS = "primary_tumor_doids"
+        private const val APPLICATION = "ACTIN Build Clinical From Doids Only"
+        private val VERSION = BuildClinicalFromDoidsOnly::class.java.getPackage().implementationVersion
 
-    public BuildClinicalFromDoidsOnly(@NotNull final CommandLine command) {
-        this.command = command;
-    }
+        @Throws(IOException::class, ParseException::class)
+        @JvmStatic
+        fun main(args: Array<String>) {
+            val options = createOptions()
+            BuildClinicalFromDoidsOnly(DefaultParser().parse(options, args)).run()
+        }
 
-    public void run() throws IOException {
-        LOGGER.info("Running {} v{}", APPLICATION, VERSION);
-
-        String patientId = command.getOptionValue(PATIENT);
-        Set<String> doids = toStringSet(command.getOptionValue(PRIMARY_TUMOR_DOIDS), ";");
-
-        LOGGER.info("Creating clinical record for {} with doids {}", patientId, doids);
-        ClinicalRecord record = createRecord(patientId, doids);
-
-        String outputDirectory = command.getOptionValue(OUTPUT_DIRECTORY);
-        LOGGER.info("Writing clinical record for {} to {}", patientId, outputDirectory);
-        ClinicalRecordJson.write(Lists.newArrayList(record), outputDirectory);
-
-        LOGGER.info("Done!");
-    }
-
-    @NotNull
-    private static ClinicalRecord createRecord(@NotNull String patientId, @NotNull Set<String> doids) {
-        return ImmutableClinicalRecord.builder()
+        private fun createRecord(patientId: String, doids: Set<String>): ClinicalRecord {
+            return ImmutableClinicalRecord.builder()
                 .patientId(patientId)
-                .patient(ImmutablePatientDetails.builder()
+                .patient(
+                    ImmutablePatientDetails.builder()
                         .gender(Gender.FEMALE)
-                        .birthYear(LocalDate.now().getYear())
+                        .birthYear(LocalDate.now().year)
                         .registrationDate(LocalDate.now())
-                        .build())
+                        .build()
+                )
                 .tumor(ImmutableTumorDetails.builder().doids(doids).build())
                 .clinicalStatus(ImmutableClinicalStatus.builder().build())
-                .build();
-    }
+                .build()
+        }
 
-    @NotNull
-    private static Options createOptions() {
-        Options options = new Options();
+        private fun createOptions(): Options {
+            val options = Options()
+            options.addOption(OUTPUT_DIRECTORY, true, "Directory where clinical data output will be written to")
+            options.addOption(PATIENT, true, "The patient for which clinical data is generated")
+            options.addOption(PRIMARY_TUMOR_DOIDS, true, "A semicolon-separated list of DOIDs representing the primary tumor of patient.")
+            return options
+        }
 
-        options.addOption(OUTPUT_DIRECTORY, true, "Directory where clinical data output will be written to");
-        options.addOption(PATIENT, true, "The patient for which clinical data is generated");
-        options.addOption(PRIMARY_TUMOR_DOIDS, true, "A semicolon-separated list of DOIDs representing the primary tumor of patient.");
-
-        return options;
-    }
-
-    @NotNull
-    private static Set<String> toStringSet(@NotNull String paramValue, @NotNull String separator) {
-        return !paramValue.isEmpty() ? Sets.newHashSet(paramValue.split(separator)) : Sets.newHashSet();
+        private fun toStringSet(paramValue: String, separator: String): Set<String> {
+            return if (!paramValue.isEmpty()) Sets.newHashSet(*paramValue.split(separator.toRegex()).dropLastWhile { it.isEmpty() }
+                .toTypedArray()) else Sets.newHashSet()
+        }
     }
 }

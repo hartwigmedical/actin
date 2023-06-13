@@ -1,43 +1,32 @@
-package com.hartwig.actin.clinical.curation.config;
+package com.hartwig.actin.clinical.curation.config
 
-import java.util.Map;
-
-import org.jetbrains.annotations.NotNull;
-
-public class ECGConfigFactory implements CurationConfigFactory<ECGConfig> {
-
-    @NotNull
-    @Override
-    public ECGConfig create(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
-        boolean isQTCF = parts[fields.get("isQTCF")].equals("1");
-        Integer qtcfValue = null;
-        String qtcfUnit = null;
-
+class ECGConfigFactory : CurationConfigFactory<ECGConfig> {
+    override fun create(fields: Map<String?, Int?>, parts: Array<String>): ECGConfig {
+        val isQTCF = parts[fields["isQTCF"]!!] == "1"
+        var qtcfValue: Int? = null
+        var qtcfUnit: String? = null
         if (isQTCF) {
-            qtcfValue = Integer.parseInt(parts[fields.get("qtcfValue")]);
-            qtcfUnit = parts[fields.get("qtcfUnit")];
+            qtcfValue = parts[fields["qtcfValue"]!!].toInt()
+            qtcfUnit = parts[fields["qtcfUnit"]!!]
         }
-
-        boolean isJTC = parts[fields.get("isJTC")].equals("1");
-        Integer jtcValue = null;
-        String jtcUnit = null;
-
+        val isJTC = parts[fields["isJTC"]!!] == "1"
+        var jtcValue: Int? = null
+        var jtcUnit: String? = null
         if (isJTC) {
-            jtcValue = Integer.parseInt(parts[fields.get("jtcValue")]);
-            jtcUnit = parts[fields.get("jtcUnit")];
+            jtcValue = parts[fields["jtcValue"]!!].toInt()
+            jtcUnit = parts[fields["jtcUnit"]!!]
         }
-
-        String interpretation = parts[fields.get("interpretation")];
+        val interpretation = parts[fields["interpretation"]!!]
         return ImmutableECGConfig.builder()
-                .input(parts[fields.get("input")])
-                .ignore(interpretation.equals("NULL"))
-                .interpretation(interpretation)
-                .isQTCF(isQTCF)
-                .qtcfValue(qtcfValue)
-                .qtcfUnit(qtcfUnit)
-                .isJTC(isJTC)
-                .jtcValue(jtcValue)
-                .jtcUnit(jtcUnit)
-                .build();
+            .input(parts[fields["input"]!!])
+            .ignore(interpretation == "NULL")
+            .interpretation(interpretation)
+            .isQTCF(isQTCF)
+            .qtcfValue(qtcfValue)
+            .qtcfUnit(qtcfUnit)
+            .isJTC(isJTC)
+            .jtcValue(jtcValue)
+            .jtcUnit(jtcUnit)
+            .build()
     }
 }

@@ -1,56 +1,44 @@
-package com.hartwig.actin.clinical.feed.lab;
+package com.hartwig.actin.clinical.feed.lab
 
-import java.util.Map;
+import com.google.common.annotations.VisibleForTesting
+import com.google.common.collect.Maps
+import com.hartwig.actin.clinical.datamodel.LabUnit
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Maps;
-import com.hartwig.actin.clinical.datamodel.LabUnit;
-
-import org.jetbrains.annotations.NotNull;
-
-final class LabUnitResolver {
-
+internal object LabUnitResolver {
+    @JvmField
     @VisibleForTesting
-    static final Map<String, LabUnit> CURATION_MAP = Maps.newHashMap();
+    val CURATION_MAP: MutableMap<String, LabUnit> = Maps.newHashMap()
 
-    static {
-        CURATION_MAP.put("10*6/L", LabUnit.MILLIONS_PER_LITER);
-        CURATION_MAP.put("*10E6/l", LabUnit.MILLIONS_PER_LITER);
-        CURATION_MAP.put("10*9/L", LabUnit.BILLIONS_PER_LITER);
-        CURATION_MAP.put("*10E9/l", LabUnit.BILLIONS_PER_LITER);
-        CURATION_MAP.put("10*12/L", LabUnit.TRILLIONS_PER_LITER);
-        CURATION_MAP.put("% van de leukocyten", LabUnit.PERCENTAGE_OF_LEUKOCYTES);
-        CURATION_MAP.put("% van de T-cellen", LabUnit.PERCENTAGE_OF_T_CELLS);
-
-        CURATION_MAP.put("mmol/mol Kreatinine", LabUnit.MILLIMOLES_PER_MOLE);
-        CURATION_MAP.put("µg/L", LabUnit.MICROGRAMS_PER_LITER);
-        CURATION_MAP.put("µmol/L", LabUnit.MICROMOLES_PER_LITER);
-        CURATION_MAP.put("micromol/l", LabUnit.MICROMOLES_PER_LITER);
-        CURATION_MAP.put("E/ml", LabUnit.UNITS_PER_MILLILITER);
+    init {
+        CURATION_MAP["10*6/L"] = LabUnit.MILLIONS_PER_LITER
+        CURATION_MAP["*10E6/l"] = LabUnit.MILLIONS_PER_LITER
+        CURATION_MAP["10*9/L"] = LabUnit.BILLIONS_PER_LITER
+        CURATION_MAP["*10E9/l"] = LabUnit.BILLIONS_PER_LITER
+        CURATION_MAP["10*12/L"] = LabUnit.TRILLIONS_PER_LITER
+        CURATION_MAP["% van de leukocyten"] = LabUnit.PERCENTAGE_OF_LEUKOCYTES
+        CURATION_MAP["% van de T-cellen"] = LabUnit.PERCENTAGE_OF_T_CELLS
+        CURATION_MAP["mmol/mol Kreatinine"] = LabUnit.MILLIMOLES_PER_MOLE
+        CURATION_MAP["µg/L"] = LabUnit.MICROGRAMS_PER_LITER
+        CURATION_MAP["µmol/L"] = LabUnit.MICROMOLES_PER_LITER
+        CURATION_MAP["micromol/l"] = LabUnit.MICROMOLES_PER_LITER
+        CURATION_MAP["E/ml"] = LabUnit.UNITS_PER_MILLILITER
 
         // L/L is an implied unit used for hematocrit
-        CURATION_MAP.put("L/L", LabUnit.NONE);
-
-        CURATION_MAP.put("mol/mol", LabUnit.NONE);
-
-        CURATION_MAP.put("Ratio", LabUnit.NONE);
+        CURATION_MAP["L/L"] = LabUnit.NONE
+        CURATION_MAP["mol/mol"] = LabUnit.NONE
+        CURATION_MAP["Ratio"] = LabUnit.NONE
     }
 
-    private LabUnitResolver() {
-    }
-
-    @NotNull
-    public static LabUnit resolve(@NotNull String unit) {
+    @JvmStatic
+    fun resolve(unit: String): LabUnit {
         if (CURATION_MAP.containsKey(unit)) {
-            return CURATION_MAP.get(unit);
+            return CURATION_MAP[unit]!!
         }
-
-        for (LabUnit labUnit : LabUnit.values()) {
-            if (labUnit.display().equalsIgnoreCase(unit)) {
-                return labUnit;
+        for (labUnit in LabUnit.values()) {
+            if (labUnit.display().equals(unit, ignoreCase = true)) {
+                return labUnit
             }
         }
-
-        throw new IllegalStateException("Could not map lab unit: '" + unit + "'");
+        throw IllegalStateException("Could not map lab unit: '$unit'")
     }
 }

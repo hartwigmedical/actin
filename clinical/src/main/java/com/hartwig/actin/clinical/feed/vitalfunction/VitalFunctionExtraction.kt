@@ -1,39 +1,21 @@
-package com.hartwig.actin.clinical.feed.vitalfunction;
+package com.hartwig.actin.clinical.feed.vitalfunction
 
-import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
+import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-public final class VitalFunctionExtraction {
-
-    private VitalFunctionExtraction() {
+object VitalFunctionExtraction {
+    @JvmStatic
+    fun determineCategory(string: String): VitalFunctionCategory {
+        return toCategory(string)
+            ?: throw IllegalArgumentException("Could not determine category for vital function: $string")
     }
 
-    @NotNull
-    public static VitalFunctionCategory determineCategory(@NotNull String string) {
-        VitalFunctionCategory category = toCategory(string);
-        if (category == null) {
-            throw new IllegalArgumentException("Could not determine category for vital function: " + string);
-        }
-        return category;
-    }
-
-    @Nullable
-    public static VitalFunctionCategory toCategory(@NotNull String string) {
-        switch (string) {
-            case "NIBP":
-            case "NIBPLILI":
-            case "NIBPLIRE":
-                return VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE;
-            case "ABP":
-                return VitalFunctionCategory.ARTERIAL_BLOOD_PRESSURE;
-            case "HR":
-                return VitalFunctionCategory.HEART_RATE;
-            case "SpO2":
-                return VitalFunctionCategory.SPO2;
-            default:
-                return null;
+    fun toCategory(string: String): VitalFunctionCategory? {
+        return when (string) {
+            "NIBP", "NIBPLILI", "NIBPLIRE" -> VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE
+            "ABP" -> VitalFunctionCategory.ARTERIAL_BLOOD_PRESSURE
+            "HR" -> VitalFunctionCategory.HEART_RATE
+            "SpO2" -> VitalFunctionCategory.SPO2
+            else -> null
         }
     }
 }

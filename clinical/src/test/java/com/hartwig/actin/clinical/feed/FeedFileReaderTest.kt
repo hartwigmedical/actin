@@ -1,20 +1,17 @@
-package com.hartwig.actin.clinical.feed;
+package com.hartwig.actin.clinical.feed
 
-import static org.junit.Assert.assertEquals;
+import com.hartwig.actin.clinical.feed.FeedFileReader.Companion.cleanQuotes
+import org.junit.Assert
+import org.junit.Test
 
-import org.junit.Test;
-
-public class FeedFileReaderTest {
-
+class FeedFileReaderTest {
     @Test
-    public void canCleanQuotes() {
-        String[] input = new String[] { "\"test\"", "test", "\"test \"\" test\"", "test \" test" };
-
-        String[] cleaned = FeedFileReader.cleanQuotes(input);
-
-        assertEquals("test", cleaned[0]);
-        assertEquals("test", cleaned[1]);
-        assertEquals("test \" test", cleaned[2]);
-        assertEquals("test \" test", cleaned[3]);
+    fun canCleanQuotes() {
+        val input = arrayOf("\"test\"", "test", "\"test \"\" test\"", "test \" test")
+        val cleaned: Array<String> = cleanQuotes(input)
+        Assert.assertEquals("test", cleaned[0])
+        Assert.assertEquals("test", cleaned[1])
+        Assert.assertEquals("test \" test", cleaned[2])
+        Assert.assertEquals("test \" test", cleaned[3])
     }
 }

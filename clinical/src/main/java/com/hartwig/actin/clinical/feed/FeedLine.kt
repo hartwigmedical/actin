@@ -1,73 +1,49 @@
-package com.hartwig.actin.clinical.feed;
+package com.hartwig.actin.clinical.feed
 
-import java.time.LocalDate;
-import java.util.Map;
+import com.hartwig.actin.clinical.datamodel.Gender
+import org.apache.logging.log4j.util.Strings
+import java.time.LocalDate
 
-import com.hartwig.actin.clinical.datamodel.Gender;
-
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-public class FeedLine {
-
-    static final String NULL_STRING = "NULL";
-
-    @NotNull
-    private final Map<String, Integer> fields;
-    @NotNull
-    private final String[] parts;
-
-    FeedLine(@NotNull final Map<String, Integer> fields, @NotNull final String[] parts) {
-        this.fields = fields;
-        this.parts = parts;
+class FeedLine internal constructor(private val fields: Map<String, Int>, private val parts: Array<String>) {
+    fun string(column: String): String {
+        require(fields.containsKey(column)) { "No column found with header '$column'" }
+        val string = parts[fields[column]!!]
+        return if (string != NULL_STRING) string else Strings.EMPTY
     }
 
-    @NotNull
-    public String string(@NotNull String column) {
-        if (!fields.containsKey(column)) {
-            throw new IllegalArgumentException("No column found with header '" + column + "'");
-        }
-
-        String string = parts[fields.get(column)];
-        return !string.equals(NULL_STRING) ? string : Strings.EMPTY;
+    fun hasColumn(column: String): Boolean {
+        return fields.containsKey(column)
     }
 
-    @NotNull
-    public Boolean hasColumn(@NotNull String column) {
-        return fields.containsKey(column);
+    fun trimmed(column: String): String {
+        return string(column).trim { it <= ' ' }
     }
 
-    @NotNull
-    public String trimmed(@NotNull String column) {
-        return string(column).trim();
+    fun gender(column: String): Gender {
+        return FeedParseFunctions.parseGender(string(column))
     }
 
-    @NotNull
-    public Gender gender(@NotNull String column) {
-        return FeedParseFunctions.parseGender(string(column));
+    fun date(column: String): LocalDate {
+        return FeedParseFunctions.parseDate(string(column))
     }
 
-    @NotNull
-    public LocalDate date(@NotNull String column) {
-        return FeedParseFunctions.parseDate(string(column));
+    fun optionalDate(column: String): LocalDate? {
+        return FeedParseFunctions.parseOptionalDate(string(column))
     }
 
-    @Nullable
-    public LocalDate optionalDate(@NotNull String column) {
-        return FeedParseFunctions.parseOptionalDate(string(column));
+    fun number(column: String): Double {
+        return FeedParseFunctions.parseDouble(string(column))
     }
 
-    public double number(@NotNull String column) {
-        return FeedParseFunctions.parseDouble(string(column));
+    fun optionalNumber(column: String): Double? {
+        return FeedParseFunctions.parseOptionalDouble(string(column))
     }
 
-    @Nullable
-    public Double optionalNumber(@NotNull String column) {
-        return FeedParseFunctions.parseOptionalDouble(string(column));
+    fun integer(column: String): Int {
+        return string(column).toInt()
     }
 
-    public int integer(@NotNull String column) {
-        return Integer.parseInt(string(column));
+    companion object {
+        const val NULL_STRING = "NULL"
     }
 }

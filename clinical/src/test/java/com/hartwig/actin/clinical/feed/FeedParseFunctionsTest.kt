@@ -1,48 +1,48 @@
-package com.hartwig.actin.clinical.feed;
+package com.hartwig.actin.clinical.feed
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import com.hartwig.actin.clinical.datamodel.Gender
+import com.hartwig.actin.clinical.feed.FeedParseFunctions.parseDate
+import com.hartwig.actin.clinical.feed.FeedParseFunctions.parseGender
+import com.hartwig.actin.clinical.feed.FeedParseFunctions.parseOptionalDate
+import com.hartwig.actin.clinical.feed.FeedParseFunctions.parseOptionalDouble
+import org.apache.logging.log4j.util.Strings
+import org.junit.Assert
+import org.junit.Test
+import java.time.LocalDate
 
-import java.time.LocalDate;
-
-import com.hartwig.actin.clinical.datamodel.Gender;
-
-import org.apache.logging.log4j.util.Strings;
-import org.junit.Test;
-
-public class FeedParseFunctionsTest {
-
-    private static final double EPSILON = 1.0E-10;
-
+class FeedParseFunctionsTest {
     @Test
-    public void canParseGender() {
-        assertEquals(Gender.MALE, FeedParseFunctions.parseGender("Male"));
-        assertEquals(Gender.FEMALE, FeedParseFunctions.parseGender("Female"));
+    fun canParseGender() {
+        Assert.assertEquals(Gender.MALE, parseGender("Male"))
+        Assert.assertEquals(Gender.FEMALE, parseGender("Female"))
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void throwsExceptionOnInvalidGender() {
-        FeedParseFunctions.parseGender("no gender");
+    @Test(expected = IllegalArgumentException::class)
+    fun throwsExceptionOnInvalidGender() {
+        parseGender("no gender")
     }
 
     @Test
-    public void canParseDates() {
-        assertNull(FeedParseFunctions.parseOptionalDate(Strings.EMPTY));
-
-        LocalDate correct = LocalDate.of(2020, 10, 23);
-        assertEquals(correct, FeedParseFunctions.parseOptionalDate("2020-10-23 13:10:55.0000000"));
-        assertEquals(correct, FeedParseFunctions.parseOptionalDate("2020-10-23 13:10:55.000"));
+    fun canParseDates() {
+        Assert.assertNull(parseOptionalDate(Strings.EMPTY))
+        val correct = LocalDate.of(2020, 10, 23)
+        Assert.assertEquals(correct, parseOptionalDate("2020-10-23 13:10:55.0000000"))
+        Assert.assertEquals(correct, parseOptionalDate("2020-10-23 13:10:55.000"))
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void crashOnInvalidDate() {
-        FeedParseFunctions.parseDate("2020-23-10");
+    @Test(expected = IllegalArgumentException::class)
+    fun crashOnInvalidDate() {
+        parseDate("2020-23-10")
     }
 
     @Test
-    public void canParseDoubles() {
-        assertNull(FeedParseFunctions.parseOptionalDouble(Strings.EMPTY));
-        assertEquals(2.1, FeedParseFunctions.parseOptionalDouble("2.1"), EPSILON);
-        assertEquals(2.1, FeedParseFunctions.parseOptionalDouble("2,1"), EPSILON);
+    fun canParseDoubles() {
+        Assert.assertNull(parseOptionalDouble(Strings.EMPTY))
+        Assert.assertEquals(2.1, parseOptionalDouble("2.1")!!, EPSILON)
+        Assert.assertEquals(2.1, parseOptionalDouble("2,1")!!, EPSILON)
+    }
+
+    companion object {
+        private const val EPSILON = 1.0E-10
     }
 }

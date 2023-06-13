@@ -1,130 +1,108 @@
-package com.hartwig.actin.clinical.feed;
+package com.hartwig.actin.clinical.feed
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.List;
-import java.util.Map;
+import com.google.common.annotations.VisibleForTesting
+import com.google.common.collect.Lists
+import com.hartwig.actin.util.TabularFile
+import java.io.File
+import java.io.IOException
+import java.nio.file.Files
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
-import com.hartwig.actin.util.TabularFile;
-
-import org.jetbrains.annotations.NotNull;
-
-class FeedFileReader<T extends FeedEntry> {
-
-    private static final String DELIMITER = "\t";
-
-    @NotNull
-    private final FeedEntryCreator<T> feedEntryCreator;
-    private final boolean expectLineBreaks;
-
-    @NotNull
-    public static <T extends FeedEntry> FeedFileReader<T> create(@NotNull FeedEntryCreator<T> feedEntryCreator) {
-        return new FeedFileReader<>(feedEntryCreator, false);
-    }
-
-    public FeedFileReader(@NotNull final FeedEntryCreator<T> feedEntryCreator, final boolean expectLineBreaks) {
-        this.feedEntryCreator = feedEntryCreator;
-        this.expectLineBreaks = expectLineBreaks;
-    }
-
-    @NotNull
-    public List<T> read(@NotNull String feedTsv) throws IOException {
-        List<String> lines = Files.readAllLines(new File(feedTsv).toPath());
-
-        Map<String, Integer> fields = TabularFile.createFields(splitFeedLine(lines.get(0)));
-        List<T> entries = Lists.newArrayList();
-        if (lines.size() > 1) {
-            StringBuilder curLine = new StringBuilder(lines.get(1));
-            for (String line : lines.subList(2, lines.size())) {
+class FeedFileReader<T : FeedEntry?>(private val feedEntryCreator: FeedEntryCreator<T>, private val expectLineBreaks: Boolean) {
+    @Throws(IOException::class)
+    fun read(feedTsv: String): List<T> {
+        val lines = Files.readAllLines(File(feedTsv).toPath())
+        val fields = TabularFile.createFields(splitFeedLine(lines[0]))
+        val entries: MutableList<T> = Lists.newArrayList()
+        if (lines.size > 1) {
+            var curLine = StringBuilder(lines[1])
+            for (line in lines.subList(2, lines.size)) {
                 // Entries appear on multiple lines in case they contain hard line breaks so append to the end.
                 if (!hasExpectedFields(line, fields)) {
-                    String lineToAppend = expectLineBreaks ? line.replaceAll(DELIMITER, "") : line;
+                    val lineToAppend = if (expectLineBreaks) line.replace(DELIMITER.toRegex(), "") else line
                     if (expectLineBreaks) {
-                        curLine.append("\n").append(lineToAppend);
+                        curLine.append("\n").append(lineToAppend)
                     } else if (hasExpectedFields(curLine.toString(), fields)) {
                         // Apparently the new unfinished line is the start of a new entry.
-                        addToEntries(entries, fields, curLine.toString());
-                        curLine = new StringBuilder(lineToAppend);
+                        addToEntries(entries, fields, curLine.toString())
+                        curLine = StringBuilder(lineToAppend)
                     } else {
                         // The unfinished new line is part of something that is building up towards a valid entry.
-                        curLine.append(lineToAppend);
+                        curLine.append(lineToAppend)
                     }
                 } else if (!hasExpectedFields(curLine.toString(), fields)) {
                     // This should only happen in case an unexpected line break happened in the first column.
-                    curLine.append(line);
+                    curLine.append(line)
                 } else {
-                    addToEntries(entries, fields, curLine.toString());
-                    curLine = new StringBuilder(line);
+                    addToEntries(entries, fields, curLine.toString())
+                    curLine = StringBuilder(line)
                 }
             }
             // Need to add the final accumulated entry
-            addToEntries(entries, fields, curLine.toString());
+            addToEntries(entries, fields, curLine.toString())
         }
-
-        return entries;
+        return entries
     }
 
-    private static boolean hasExpectedFields(@NotNull String line, @NotNull Map<String, Integer> fields) {
-        return splitFeedLine(line).length == fields.size();
-    }
-
-    @NotNull
-    private static String[] splitFeedLine(@NotNull String line) {
-        return cleanQuotes(line.split(DELIMITER));
-    }
-
-    @NotNull
-    @VisibleForTesting
-    static String[] cleanQuotes(@NotNull String[] inputs) {
-        String[] cleaned = new String[inputs.length];
-
-        for (int i = 0; i < inputs.length; i++) {
-            cleaned[i] = cleanQuotes(inputs[i]);
-        }
-
-        return cleaned;
-    }
-
-    @NotNull
-    private static String cleanQuotes(@NotNull String input) {
-        int firstQuote = input.indexOf("\"");
-        int lastQuote = input.lastIndexOf("\"");
-        String cleaned = input;
-        if (firstQuote >= 0 && lastQuote >= 0 && lastQuote > firstQuote) {
-            cleaned = input.substring(firstQuote + 1, lastQuote);
-        }
-
-        // Replace all double quotes with single quotes.
-        return cleaned.replaceAll("\"\"", "\"");
-    }
-
-    private void addToEntries(@NotNull List<T> entries, @NotNull Map<String, Integer> fields, @NotNull String line) {
-        String reformatted = fixLineBreaks(line);
-        String[] parts = splitFeedLine(reformatted);
+    private fun addToEntries(entries: MutableList<T>, fields: Map<String, Int>, line: String) {
+        val reformatted = fixLineBreaks(line)
+        val parts = splitFeedLine(reformatted)
         if (!allEmpty(parts)) {
-            FeedLine feedLine = new FeedLine(fields, parts);
+            val feedLine = FeedLine(fields, parts)
             if (feedEntryCreator.isValid(feedLine)) {
-                entries.add(feedEntryCreator.fromLine(feedLine));
+                entries.add(feedEntryCreator.fromLine(feedLine))
             }
         }
     }
 
-    @NotNull
-    @VisibleForTesting
-    static String fixLineBreaks(@NotNull String input) {
-        return input.replace("\\n", "\n");
-    }
-
-    private static boolean allEmpty(@NotNull String[] array) {
-        for (String entry : array) {
-            if (!entry.isEmpty()) {
-                return false;
-            }
+    companion object {
+        private const val DELIMITER = "\t"
+        fun <T : FeedEntry?> create(feedEntryCreator: FeedEntryCreator<T>): FeedFileReader<T> {
+            return FeedFileReader(feedEntryCreator, false)
         }
 
-        return true;
+        private fun hasExpectedFields(line: String, fields: Map<String, Int>): Boolean {
+            return splitFeedLine(line).size == fields.size
+        }
+
+        private fun splitFeedLine(line: String): Array<String?> {
+            return cleanQuotes(line.split(DELIMITER.toRegex()).dropLastWhile { it.isEmpty() }
+                .toTypedArray())
+        }
+
+        @JvmStatic
+        @VisibleForTesting
+        fun cleanQuotes(inputs: Array<String>): Array<String?> {
+            val cleaned = arrayOfNulls<String>(inputs.size)
+            for (i in inputs.indices) {
+                cleaned[i] = cleanQuotes(inputs[i])
+            }
+            return cleaned
+        }
+
+        private fun cleanQuotes(input: String): String {
+            val firstQuote = input.indexOf("\"")
+            val lastQuote = input.lastIndexOf("\"")
+            var cleaned = input
+            if (firstQuote >= 0 && lastQuote >= 0 && lastQuote > firstQuote) {
+                cleaned = input.substring(firstQuote + 1, lastQuote)
+            }
+
+            // Replace all double quotes with single quotes.
+            return cleaned.replace("\"\"".toRegex(), "\"")
+        }
+
+        @VisibleForTesting
+        fun fixLineBreaks(input: String): String {
+            return input.replace("\\n", "\n")
+        }
+
+        private fun allEmpty(array: Array<String?>): Boolean {
+            for (entry in array) {
+                if (!entry!!.isEmpty()) {
+                    return false
+                }
+            }
+            return true
+        }
     }
 }

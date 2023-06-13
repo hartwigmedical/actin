@@ -1,42 +1,23 @@
-package com.hartwig.actin.clinical.feed.intolerance;
+package com.hartwig.actin.clinical.feed.intolerance
 
-import java.time.LocalDate;
-
-import com.hartwig.actin.clinical.feed.FeedEntry;
-
-import org.immutables.value.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.hartwig.actin.clinical.feed.FeedEntry
+import org.immutables.value.Value
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
+import java.time.LocalDate
 
 @Value.Immutable
-@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class IntoleranceEntry implements FeedEntry {
+@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
+abstract class IntoleranceEntry : FeedEntry {
+    abstract override fun subject(): String
+    abstract fun assertedDate(): LocalDate
+    abstract fun category(): String
+    abstract fun categoryAllergyCategoryDisplay(): String
+    abstract fun clinicalStatus(): String
+    abstract fun verificationStatus(): String
+    abstract fun codeText(): String
+    abstract fun criticality(): String
 
-    @NotNull
-    @Override
-    public abstract String subject();
-
-    @NotNull
-    public abstract LocalDate assertedDate();
-
-    @NotNull
-    public abstract String category();
-
-    @NotNull
-    public abstract String categoryAllergyCategoryDisplay();
-
-    @NotNull
-    public abstract String clinicalStatus();
-
-    @NotNull
-    public abstract String verificationStatus();
-
-    @NotNull
-    public abstract String codeText();
-
-    @NotNull
-    public abstract String criticality();
-
-    @NotNull
-    public abstract String isSideEffect();
+    @JvmField
+    abstract val isSideEffect: String
 }

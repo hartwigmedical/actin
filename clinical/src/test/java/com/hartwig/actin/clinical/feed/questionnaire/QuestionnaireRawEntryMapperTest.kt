@@ -1,19 +1,16 @@
-package com.hartwig.actin.clinical.feed.questionnaire;
+package com.hartwig.actin.clinical.feed.questionnaire
 
-import static org.junit.Assert.assertEquals;
+import com.google.common.io.Resources
+import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireRawEntryMapper.Companion.createFromCurationDirectory
+import org.junit.Assert
+import org.junit.Test
+import java.io.IOException
 
-import java.io.IOException;
-
-import com.google.common.io.Resources;
-
-import org.junit.Test;
-
-public class QuestionnaireRawEntryMapperTest {
-
+class QuestionnaireRawEntryMapperTest {
     @Test
-    public void shouldReplaceStringInQuestionnaireEntryUsingFileMapping() throws IOException {
-        QuestionnaireRawEntryMapper questionnaireRawEntryMapper =
-                QuestionnaireRawEntryMapper.createFromCurationDirectory(Resources.getResource("curation").getPath());
-        assertEquals("a much better entry", questionnaireRawEntryMapper.correctQuestionnaireEntry("a problematic, incorrect entry"));
+    @Throws(IOException::class)
+    fun shouldReplaceStringInQuestionnaireEntryUsingFileMapping() {
+        val questionnaireRawEntryMapper = createFromCurationDirectory(Resources.getResource("curation").path)
+        Assert.assertEquals("a much better entry", questionnaireRawEntryMapper.correctQuestionnaireEntry("a problematic, incorrect entry"))
     }
 }

@@ -1,109 +1,84 @@
-package com.hartwig.actin.clinical.feed.lab;
+package com.hartwig.actin.clinical.feed.lab
 
-import com.google.common.annotations.VisibleForTesting;
-import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
-import com.hartwig.actin.clinical.datamodel.LabValue;
-import com.hartwig.actin.clinical.feed.FeedParseFunctions;
+import com.google.common.annotations.VisibleForTesting
+import com.hartwig.actin.clinical.datamodel.ImmutableLabValue
+import com.hartwig.actin.clinical.datamodel.LabValue
+import com.hartwig.actin.clinical.feed.FeedParseFunctions
+import org.apache.logging.log4j.LogManager
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+object LabExtraction {
+    private val LOGGER = LogManager.getLogger(LabExtraction::class.java)
 
-public final class LabExtraction {
-
-    private static final Logger LOGGER = LogManager.getLogger(LabExtraction.class);
-
-    private LabExtraction() {
-    }
-
-    @NotNull
-    public static LabValue extract(@NotNull LabEntry entry) {
-        Limits limits = extractLimits(entry.referenceRangeText());
-        double value = entry.valueQuantityValue();
-        Boolean isOutsideRef = null;
+    @JvmStatic
+    fun extract(entry: LabEntry): LabValue {
+        val limits = extractLimits(entry.referenceRangeText())
+        val value = entry.valueQuantityValue()
+        var isOutsideRef: Boolean? = null
         if (limits.lower() != null || limits.upper() != null) {
-            isOutsideRef = (limits.lower() != null && value < limits.lower()) || (limits.upper() != null && value > limits.upper());
+            isOutsideRef = limits.lower() != null && value < limits.lower()!! || limits.upper() != null && value > limits.upper()!!
         }
-
         return ImmutableLabValue.builder()
-                .date(entry.effectiveDateTime())
-                .code(entry.codeCodeOriginal())
-                .name(entry.codeDisplayOriginal())
-                .comparator(entry.valueQuantityComparator())
-                .value(value)
-                .unit(LabUnitResolver.resolve(entry.valueQuantityUnit()))
-                .refLimitLow(limits.lower())
-                .refLimitUp(limits.upper())
-                .isOutsideRef(isOutsideRef)
-                .build();
+            .date(entry.effectiveDateTime())
+            .code(entry.codeCodeOriginal())
+            .name(entry.codeDisplayOriginal())
+            .comparator(entry.valueQuantityComparator())
+            .value(value)
+            .unit(LabUnitResolver.resolve(entry.valueQuantityUnit()))
+            .refLimitLow(limits.lower())
+            .refLimitUp(limits.upper())
+            .isOutsideRef(isOutsideRef)
+            .build()
     }
 
-    @NotNull
+    @JvmStatic
     @VisibleForTesting
-    static Limits extractLimits(@NotNull String referenceRangeText) {
-        Double lower = null;
-        Double upper = null;
-
+    fun extractLimits(referenceRangeText: String): Limits {
+        var lower: Double? = null
+        var upper: Double? = null
         if (referenceRangeText.contains(">")) {
-            int index = referenceRangeText.indexOf(">");
-            lower = FeedParseFunctions.parseDouble(referenceRangeText.substring(index + 1).trim());
+            val index = referenceRangeText.indexOf(">")
+            lower = FeedParseFunctions.parseDouble(referenceRangeText.substring(index + 1).trim { it <= ' ' })
         } else if (referenceRangeText.contains("<")) {
-            int index = referenceRangeText.indexOf("<");
-            upper = FeedParseFunctions.parseDouble(referenceRangeText.substring(index + 1).trim());
+            val index = referenceRangeText.indexOf("<")
+            upper = FeedParseFunctions.parseDouble(referenceRangeText.substring(index + 1).trim { it <= ' ' })
         } else if (referenceRangeText.contains("-")) {
-            int separatingHyphenIndex = findSeparatingHyphenIndex(referenceRangeText);
-            lower = FeedParseFunctions.parseDouble(referenceRangeText.substring(0, separatingHyphenIndex));
-            upper = FeedParseFunctions.parseDouble(referenceRangeText.substring(separatingHyphenIndex + 1));
+            val separatingHyphenIndex = findSeparatingHyphenIndex(referenceRangeText)
+            lower = FeedParseFunctions.parseDouble(referenceRangeText.substring(0, separatingHyphenIndex))
+            upper = FeedParseFunctions.parseDouble(referenceRangeText.substring(separatingHyphenIndex + 1))
         } else if (!referenceRangeText.isEmpty()) {
-            LOGGER.warn("Could not parse lab value referenceRangeText '{}'", referenceRangeText);
+            LOGGER.warn("Could not parse lab value referenceRangeText '{}'", referenceRangeText)
         }
-
-        return new Limits(lower, upper);
+        return Limits(lower, upper)
     }
 
+    @JvmStatic
     @VisibleForTesting
-    static int findSeparatingHyphenIndex(@NotNull String referenceRangeText) {
-        assert referenceRangeText.contains("-");
-
-        boolean isReadingDigit = false;
-        for (int i = 0; i < referenceRangeText.length(); i++) {
-            if (isReadingDigit && referenceRangeText.charAt(i) == '-') {
-                return i;
-            } else if (isDigit(referenceRangeText.charAt(i))) {
-                isReadingDigit = true;
+    fun findSeparatingHyphenIndex(referenceRangeText: String): Int {
+        assert(referenceRangeText.contains("-"))
+        var isReadingDigit = false
+        for (i in 0 until referenceRangeText.length) {
+            if (isReadingDigit && referenceRangeText[i] == '-') {
+                return i
+            } else if (isDigit(referenceRangeText[i])) {
+                isReadingDigit = true
             }
         }
-
-        throw new IllegalArgumentException("Could not determine separating hyphen index from " + referenceRangeText);
+        throw IllegalArgumentException("Could not determine separating hyphen index from $referenceRangeText")
     }
 
-    private static boolean isDigit(char character) {
-        return character >= '0' && character <= '9';
+    private fun isDigit(character: Char): Boolean {
+        return character >= '0' && character <= '9'
     }
 
-    static class Limits {
-
-        @Nullable
-        private final Double lower;
-        @Nullable
-        private final Double upper;
-
-        Limits(@Nullable final Double lower, @Nullable final Double upper) {
-            this.lower = lower;
-            this.upper = upper;
+    class Limits(private val lower: Double?, private val upper: Double?) {
+        @VisibleForTesting
+        fun lower(): Double? {
+            return lower
         }
 
-        @Nullable
         @VisibleForTesting
-        Double lower() {
-            return lower;
-        }
-
-        @Nullable
-        @VisibleForTesting
-        public Double upper() {
-            return upper;
+        fun upper(): Double? {
+            return upper
         }
     }
 }

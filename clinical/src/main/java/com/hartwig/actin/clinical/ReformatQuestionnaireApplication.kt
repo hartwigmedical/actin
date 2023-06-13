@@ -1,54 +1,44 @@
-package com.hartwig.actin.clinical;
+package com.hartwig.actin.clinical
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
+import com.hartwig.actin.util.ApplicationConfig
+import org.apache.commons.cli.DefaultParser
+import org.apache.commons.cli.HelpFormatter
+import org.apache.commons.cli.Options
+import org.apache.commons.cli.ParseException
+import org.apache.logging.log4j.LogManager
+import java.io.File
+import java.io.IOException
+import java.nio.file.Files
 
-import com.hartwig.actin.util.ApplicationConfig;
+class ReformatQuestionnaireApplication private constructor(private val questionnaireFile: String) {
+    @Throws(IOException::class)
+    fun run() {
+        val questionnaire = java.lang.String.join("\\n", Files.readAllLines(File(questionnaireFile).toPath()))
+        println(questionnaire)
+    }
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
+    companion object {
+        private val LOGGER = LogManager.getLogger(
+            ReformatQuestionnaireApplication::class.java
+        )
+        private const val QUESTIONNAIRE = "questionnaire"
+        private const val APPLICATION = "ACTIN Questionnaire Reformat"
 
-public class ReformatQuestionnaireApplication {
-
-    private static final Logger LOGGER = LogManager.getLogger(ReformatQuestionnaireApplication.class);
-
-    private static final String QUESTIONNAIRE = "questionnaire";
-    private static final String APPLICATION = "ACTIN Questionnaire Reformat";
-
-    public static void main(@NotNull String... args) throws IOException {
-        Options options = new Options();
-        options.addOption(QUESTIONNAIRE, true, "File containing the questionnaire txt");
-
-        String questionnaireFile = null;
-        try {
-            CommandLine cmd = new DefaultParser().parse(options, args);
-            questionnaireFile = ApplicationConfig.nonOptionalFile(cmd, QUESTIONNAIRE);
-        } catch (ParseException exception) {
-            LOGGER.warn(exception);
-            new HelpFormatter().printHelp(APPLICATION, options);
-            System.exit(1);
+        @Throws(IOException::class)
+        @JvmStatic
+        fun main(args: Array<String>) {
+            val options = Options()
+            options.addOption(QUESTIONNAIRE, true, "File containing the questionnaire txt")
+            var questionnaireFile: String? = null
+            try {
+                val cmd = DefaultParser().parse(options, args)
+                questionnaireFile = ApplicationConfig.nonOptionalFile(cmd, QUESTIONNAIRE)
+            } catch (exception: ParseException) {
+                LOGGER.warn(exception)
+                HelpFormatter().printHelp(APPLICATION, options)
+                System.exit(1)
+            }
+            ReformatQuestionnaireApplication(questionnaireFile!!).run()
         }
-
-        new ReformatQuestionnaireApplication(questionnaireFile).run();
-    }
-
-    @NotNull
-    private final String questionnaireFile;
-
-    private ReformatQuestionnaireApplication(@NotNull final String questionnaireFile) {
-        this.questionnaireFile = questionnaireFile;
-    }
-
-    public void run() throws IOException {
-        String questionnaire = String.join("\\n", Files.readAllLines(new File(questionnaireFile).toPath()));
-
-        System.out.println(questionnaire);
     }
 }

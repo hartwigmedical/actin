@@ -1,15 +1,13 @@
-package com.hartwig.actin.clinical.curation.config;
+package com.hartwig.actin.clinical.curation.config
 
-import static org.junit.Assert.assertEquals;
+import com.hartwig.actin.clinical.curation.config.LesionLocationConfigFactory.Companion.toCategory
+import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
+import org.junit.Assert
+import org.junit.Test
 
-import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory;
-
-import org.junit.Test;
-
-public class LesionLocationConfigFactoryTest {
-
+class LesionLocationConfigFactoryTest {
     @Test
-    public void canResolveCategories() {
-        assertEquals(LesionLocationCategory.LYMPH_NODE, LesionLocationConfigFactory.toCategory("LYMPH NODE"));
+    fun canResolveCategories() {
+        Assert.assertEquals(LesionLocationCategory.LYMPH_NODE, toCategory("LYMPH NODE"))
     }
 }

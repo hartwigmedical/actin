@@ -1,27 +1,26 @@
-package com.hartwig.actin.clinical.feed;
+package com.hartwig.actin.clinical.feed
 
-import java.util.List;
+import com.google.common.collect.Lists
+import com.hartwig.actin.clinical.feed.ClinicalFeedValidation.validate
+import com.hartwig.actin.clinical.feed.patient.ImmutablePatientEntry
+import com.hartwig.actin.clinical.feed.patient.PatientEntry
+import org.junit.Test
 
-import com.google.common.collect.Lists;
-import com.hartwig.actin.clinical.feed.patient.ImmutablePatientEntry;
-import com.hartwig.actin.clinical.feed.patient.PatientEntry;
-
-import org.junit.Test;
-
-public class ClinicalFeedValidationTest {
-
+class ClinicalFeedValidationTest {
     @Test
-    public void standardTestFeedIsValid() {
-        ClinicalFeedValidation.validate(TestFeedFactory.createTestClinicalFeed());
+    fun standardTestFeedIsValid() {
+        validate(TestFeedFactory.createTestClinicalFeed())
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void doNotAllowDuplicatePatients() {
-        ClinicalFeed basisFeed = TestFeedFactory.createTestClinicalFeed();
-
-        List<PatientEntry> patients = Lists.newArrayList(ImmutablePatientEntry.builder().from(basisFeed.patientEntries().get(0)).build(),
-                ImmutablePatientEntry.builder().from(basisFeed.patientEntries().get(0)).build());
-
-        ClinicalFeedValidation.validate(ImmutableClinicalFeed.builder().from(basisFeed).patientEntries(patients).build());
+    @Test(expected = IllegalStateException::class)
+    fun doNotAllowDuplicatePatients() {
+        val basisFeed = TestFeedFactory.createTestClinicalFeed()
+        val patients: List<PatientEntry> = Lists.newArrayList<PatientEntry>(
+            ImmutablePatientEntry.builder().from(
+                basisFeed.patientEntries()[0]
+            ).build(),
+            ImmutablePatientEntry.builder().from(basisFeed.patientEntries()[0]).build()
+        )
+        validate(ImmutableClinicalFeed.builder().from(basisFeed).patientEntries(patients).build())
     }
 }

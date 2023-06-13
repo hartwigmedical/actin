@@ -1,11 +1,6 @@
-package com.hartwig.actin.clinical.curation.config;
+package com.hartwig.actin.clinical.curation.config
 
-import org.jetbrains.annotations.NotNull;
-
-public interface CurationConfig {
-
-    @NotNull
-    String input();
-
-    boolean ignore();
+interface CurationConfig {
+    fun input(): String
+    fun ignore(): Boolean
 }

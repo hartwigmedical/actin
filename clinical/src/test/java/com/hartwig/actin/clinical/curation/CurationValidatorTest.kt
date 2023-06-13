@@ -1,52 +1,36 @@
-package com.hartwig.actin.clinical.curation;
+package com.hartwig.actin.clinical.curation
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.google.common.collect.Sets
+import com.hartwig.actin.doid.TestDoidModelFactory
+import org.junit.Assert
+import org.junit.Test
 
-import java.util.Set;
-
-import com.google.common.collect.Sets;
-import com.hartwig.actin.doid.DoidModel;
-import com.hartwig.actin.doid.TestDoidModelFactory;
-
-import org.junit.Test;
-
-public class CurationValidatorTest {
-
+class CurationValidatorTest {
     @Test
-    public void shouldIdentifyInvalidCancerDoidSets() {
-        DoidModel doidModel =
-                TestDoidModelFactory.createWithOneParentChild(CurationValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID, "child");
-        CurationValidator curationValidator = new CurationValidator(doidModel);
-
-        Set<String> valid = Sets.newHashSet("child");
-        assertTrue(curationValidator.isValidCancerDoidSet(valid));
-
-        Set<String> generic = Sets.newHashSet(CurationValidator.DISEASE_DOID);
-        assertFalse(curationValidator.isValidCancerDoidSet(generic));
-
-        Set<String> notAllValid = Sets.newHashSet("child", "other");
-        assertFalse(curationValidator.isValidCancerDoidSet(notAllValid));
-
-        Set<String> empty = Sets.newHashSet();
-        assertFalse(curationValidator.isValidCancerDoidSet(empty));
+    fun shouldIdentifyInvalidCancerDoidSets() {
+        val doidModel = TestDoidModelFactory.createWithOneParentChild(CurationValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID, "child")
+        val curationValidator = CurationValidator(doidModel)
+        val valid: Set<String?> = Sets.newHashSet("child")
+        Assert.assertTrue(curationValidator.isValidCancerDoidSet(valid))
+        val generic: Set<String?> = Sets.newHashSet(CurationValidator.DISEASE_DOID)
+        Assert.assertFalse(curationValidator.isValidCancerDoidSet(generic))
+        val notAllValid: Set<String?> = Sets.newHashSet("child", "other")
+        Assert.assertFalse(curationValidator.isValidCancerDoidSet(notAllValid))
+        val empty: Set<String?> = Sets.newHashSet()
+        Assert.assertFalse(curationValidator.isValidCancerDoidSet(empty))
     }
 
     @Test
-    public void shouldIdentifyInvalidDiseaseDoidSets() {
-        DoidModel doidModel = TestDoidModelFactory.createWithOneParentChild(CurationValidator.DISEASE_DOID, "child");
-        CurationValidator curationValidator = new CurationValidator(doidModel);
-
-        Set<String> valid = Sets.newHashSet("child");
-        assertTrue(curationValidator.isValidDiseaseDoidSet(valid));
-
-        Set<String> cancer = Sets.newHashSet(CurationValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID);
-        assertFalse(curationValidator.isValidDiseaseDoidSet(cancer));
-
-        Set<String> notAllValid = Sets.newHashSet("child", "other");
-        assertFalse(curationValidator.isValidDiseaseDoidSet(notAllValid));
-
-        Set<String> empty = Sets.newHashSet();
-        assertFalse(curationValidator.isValidDiseaseDoidSet(empty));
+    fun shouldIdentifyInvalidDiseaseDoidSets() {
+        val doidModel = TestDoidModelFactory.createWithOneParentChild(CurationValidator.DISEASE_DOID, "child")
+        val curationValidator = CurationValidator(doidModel)
+        val valid: Set<String?> = Sets.newHashSet("child")
+        Assert.assertTrue(curationValidator.isValidDiseaseDoidSet(valid))
+        val cancer: Set<String?> = Sets.newHashSet(CurationValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID)
+        Assert.assertFalse(curationValidator.isValidDiseaseDoidSet(cancer))
+        val notAllValid: Set<String?> = Sets.newHashSet("child", "other")
+        Assert.assertFalse(curationValidator.isValidDiseaseDoidSet(notAllValid))
+        val empty: Set<String?> = Sets.newHashSet()
+        Assert.assertFalse(curationValidator.isValidDiseaseDoidSet(empty))
     }
 }

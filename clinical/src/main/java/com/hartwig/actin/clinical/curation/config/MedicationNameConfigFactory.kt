@@ -1,22 +1,14 @@
-package com.hartwig.actin.clinical.curation.config;
+package com.hartwig.actin.clinical.curation.config
 
-import java.util.Map;
+import com.hartwig.actin.clinical.curation.CurationUtil
 
-import com.hartwig.actin.clinical.curation.CurationUtil;
-
-import org.jetbrains.annotations.NotNull;
-
-public class MedicationNameConfigFactory implements CurationConfigFactory<MedicationNameConfig> {
-
-    @NotNull
-    @Override
-    public MedicationNameConfig create(@NotNull Map<String, Integer> fields, @NotNull String[] parts) {
-        String name = parts[fields.get("name")];
-
+class MedicationNameConfigFactory : CurationConfigFactory<MedicationNameConfig> {
+    override fun create(fields: Map<String?, Int?>, parts: Array<String>): MedicationNameConfig {
+        val name = parts[fields["name"]!!]
         return ImmutableMedicationNameConfig.builder()
-                .input(parts[fields.get("input")])
-                .ignore(CurationUtil.isIgnoreString(name))
-                .name(name)
-                .build();
+            .input(parts[fields["input"]!!])
+            .ignore(CurationUtil.isIgnoreString(name))
+            .name(name)
+            .build()
     }
 }
