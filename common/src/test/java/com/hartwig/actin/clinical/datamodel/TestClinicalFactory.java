@@ -404,6 +404,21 @@ public final class TestClinicalFactory {
                 .stopDate(TODAY.plusDays(DAYS_UNTIL_MEDICATION_END))
                 .build());
 
+        medications.add(TestMedicationFactory.builder()
+                .name("Prednison")
+                .codeATC("N13")
+                .addCategories("NSAIDs")
+                .status(MedicationStatus.ACTIVE)
+                .dosageMin(750D)
+                .dosageMax(1000D)
+                .dosageUnit("mg")
+                .frequency(1D)
+                .frequencyUnit("day")
+                .ifNeeded(false)
+                .startDate(TODAY.minusDays(DAYS_SINCE_MEDICATION_START))
+                .stopDate(TODAY.plusDays(DAYS_UNTIL_MEDICATION_END))
+                .build());
+
         return medications;
     }
 }

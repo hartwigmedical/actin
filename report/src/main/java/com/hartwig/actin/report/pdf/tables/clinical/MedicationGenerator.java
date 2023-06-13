@@ -1,8 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.clinical;
 
 import java.util.List;
-import java.util.Set;
-import java.util.StringJoiner;
 
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
@@ -34,26 +32,24 @@ public class MedicationGenerator implements TableGenerator {
     @NotNull
     @Override
     public Table contents() {
-        Table table = Tables.createFixedWidthCols(1, 1, 1, 1, 1, 1, 1, 1).setWidth(totalWidth);
+        Table table = Tables.createFixedWidthCols(1, 1, 1, 1, 1, 1).setWidth(totalWidth);
 
         table.addHeaderCell(Cells.createHeader("Medication"));
-        table.addHeaderCell(Cells.createHeader("Categories"));
         table.addHeaderCell(Cells.createHeader("Administration route"));
         table.addHeaderCell(Cells.createHeader("Start date"));
         table.addHeaderCell(Cells.createHeader("Stop date"));
-        table.addHeaderCell(Cells.createHeader("Status"));
         table.addHeaderCell(Cells.createHeader("Dosage"));
         table.addHeaderCell(Cells.createHeader("Frequency"));
 
         medications.stream().distinct().forEach(medication -> {
-            table.addCell(Cells.createContent(medication.name()));
-            table.addCell(Cells.createContent(concat(medication.categories())));
-            table.addCell(Cells.createContent(administrationRoute(medication)));
-            table.addCell(Cells.createContent(Formats.date(medication.startDate(), Strings.EMPTY)));
-            table.addCell(Cells.createContent(Formats.date(medication.stopDate(), Strings.EMPTY)));
-            table.addCell(Cells.createContent(medication.status() != null ? medication.status().display() : Strings.EMPTY));
-            table.addCell(Cells.createContent(dosage(medication)));
-            table.addCell(Cells.createContent(frequency(medication)));
+            if (medication.status().display().equals("Active")) {
+                table.addCell(Cells.createContent(medication.name()));
+                table.addCell(Cells.createContent(administrationRoute(medication)));
+                table.addCell(Cells.createContent(Formats.date(medication.startDate(), Strings.EMPTY)));
+                table.addCell(Cells.createContent(Formats.date(medication.stopDate(), Strings.EMPTY)));
+                table.addCell(Cells.createContent(dosage(medication)));
+                table.addCell(Cells.createContent(frequency(medication)));
+            }
         });
 
         return Tables.makeWrapping(table);
@@ -83,14 +79,5 @@ public class MedicationGenerator implements TableGenerator {
             result += (" / " + medication.frequencyUnit());
         }
         return result;
-    }
-
-    @NotNull
-    private static String concat(@NotNull Set<String> categories) {
-        StringJoiner joiner = new StringJoiner(", ");
-        for (String category : categories) {
-            joiner.add(category);
-        }
-        return Formats.valueOrDefault(joiner.toString(), "None");
     }
 }
