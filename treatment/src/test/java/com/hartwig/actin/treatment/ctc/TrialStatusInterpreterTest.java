@@ -21,14 +21,14 @@ public class TrialStatusInterpreterTest {
 
     @Test
     public void shouldReturnNullForEmptyCTCDatabase() {
-        assertNull(TrialStatusInterpreter.isOpen(List.of(), createConfig("trial 1", true)));
+        assertNull(TrialStatusInterpreter.isOpen(List.of(), createConfig("trial 1")));
     }
 
     @Test
     public void shouldResolveToOpenForTrialsWithAtLeastOneOpenEntry() {
         CTCDatabaseEntry entry1 = createEntry(STUDY_METC_1, "Gesloten");
         CTCDatabaseEntry entry2 = createEntry(STUDY_METC_1, "Open");
-        TrialDefinitionConfig config = createConfig(TrialStatusInterpreter.extractTrialId(entry1), true);
+        TrialDefinitionConfig config = createConfig(TrialStatusInterpreter.extractTrialId(entry1));
 
         assertEquals(true, TrialStatusInterpreter.isOpen(List.of(entry1, entry2), config));
     }
@@ -37,18 +37,9 @@ public class TrialStatusInterpreterTest {
     public void shouldResolveToClosedForTrialsWithClosedEntriesExclusively() {
         CTCDatabaseEntry entry1 = createEntry(STUDY_METC_1, "Gesloten");
         CTCDatabaseEntry entry2 = createEntry(STUDY_METC_2, "Open");
-        TrialDefinitionConfig config = createConfig(TrialStatusInterpreter.extractTrialId(entry1), true);
+        TrialDefinitionConfig config = createConfig(TrialStatusInterpreter.extractTrialId(entry1));
 
         assertEquals(false, TrialStatusInterpreter.isOpen(List.of(entry1, entry2), config));
-    }
-
-    @Test
-    public void shouldFollowCTCInCaseOfInconsistency() {
-        CTCDatabaseEntry entry1 = createEntry(STUDY_METC_1, "Gesloten");
-        CTCDatabaseEntry entry2 = createEntry(STUDY_METC_1, "Open");
-        TrialDefinitionConfig config = createConfig(TrialStatusInterpreter.extractTrialId(entry1), false);
-
-        assertEquals(true, TrialStatusInterpreter.isOpen(List.of(entry1, entry2), config));
     }
 
     @NotNull
@@ -57,7 +48,7 @@ public class TrialStatusInterpreterTest {
     }
 
     @NotNull
-    private static TrialDefinitionConfig createConfig(@NotNull String trialId, boolean isOpen) {
-        return ImmutableTrialDefinitionConfig.builder().trialId(trialId).open(isOpen).acronym(Strings.EMPTY).title(Strings.EMPTY).build();
+    private static TrialDefinitionConfig createConfig(@NotNull String trialId) {
+        return ImmutableTrialDefinitionConfig.builder().trialId(trialId).open(false).acronym(Strings.EMPTY).title(Strings.EMPTY).build();
     }
 }
