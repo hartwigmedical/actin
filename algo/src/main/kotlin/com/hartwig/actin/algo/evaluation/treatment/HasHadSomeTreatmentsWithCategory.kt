@@ -4,7 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 
 class HasHadSomeTreatmentsWithCategory internal constructor(private val category: TreatmentCategory, private val minTreatmentLines: Int) :
     EvaluationFunction {
@@ -22,7 +22,7 @@ class HasHadSomeTreatmentsWithCategory internal constructor(private val category
         return if (numTreatmentLines >= minTreatmentLines) {
             EvaluationFactory.pass(
                 "Patient has received at least $minTreatmentLines line(s) of ${category.display()}",
-                "Received at least $minTreatmentLines line(s) of ${category.display()}"
+                "Has received at least $minTreatmentLines line(s) of ${category.display()}"
             )
         } else if (numTreatmentLines + numOtherTrials >= minTreatmentLines) {
             EvaluationFactory.undetermined(
@@ -32,7 +32,7 @@ class HasHadSomeTreatmentsWithCategory internal constructor(private val category
         } else {
             EvaluationFactory.fail(
                 "Patient has not received at least $minTreatmentLines line(s) of ${category.display()}",
-                "Not received at least $minTreatmentLines line(s) of ${category.display()}"
+                "Has not received at least $minTreatmentLines line(s) of ${category.display()}"
             )
         }
     }

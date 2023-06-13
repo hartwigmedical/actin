@@ -4,7 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 
 class HasRecentlyReceivedRadiotherapy internal constructor(private val referenceYear: Int, private val referenceMonth: Int) :
     EvaluationFunction {
@@ -17,7 +17,7 @@ class HasRecentlyReceivedRadiotherapy internal constructor(private val reference
                 year == null || year == referenceYear && (month == null || month == referenceMonth)
             }
         return if (hasReceivedRadiotherapy) {
-            EvaluationFactory.pass("Patient has recently received radiotherapy", "Recent radiotherapy")
+            EvaluationFactory.pass("Patient has recently received radiotherapy", "Has recently received radiotherapy")
         } else {
             EvaluationFactory.fail("Patient has not recently received radiotherapy", "No recent radiotherapy")
         }

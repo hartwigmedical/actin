@@ -314,8 +314,9 @@ internal object MolecularTestFactory {
         )
     }
 
-    fun withTumorMutationalBurdenAndHasSufficientQuality(
+    fun withTumorMutationalBurdenAndHasSufficientQualityAndPurity(
         tumorMutationalBurden: Double?,
+        hasSufficientQualityAndPurity: Boolean,
         hasSufficientQuality: Boolean
     ): PatientRecord {
         val base = TestMolecularFactory.createMinimalTestMolecularRecord()
@@ -328,6 +329,7 @@ internal object MolecularTestFactory {
                         .tumorMutationalBurden(tumorMutationalBurden)
                         .build()
                 )
+                .hasSufficientQualityAndPurity(hasSufficientQualityAndPurity)
                 .hasSufficientQuality(hasSufficientQuality)
                 .build()
         )
@@ -348,8 +350,9 @@ internal object MolecularTestFactory {
         )
     }
 
-    fun withTumorMutationalLoadAndHasSufficientQuality(
+    fun withTumorMutationalLoadAndHasSufficientQualityAndPurity(
         tumorMutationalLoad: Int?,
+        hasSufficientQualityAndPurity: Boolean,
         hasSufficientQuality: Boolean
     ): PatientRecord {
         val base = TestMolecularFactory.createMinimalTestMolecularRecord()
@@ -362,6 +365,7 @@ internal object MolecularTestFactory {
                         .tumorMutationalLoad(tumorMutationalLoad)
                         .build()
                 )
+                .hasSufficientQualityAndPurity(hasSufficientQualityAndPurity)
                 .hasSufficientQuality(hasSufficientQuality)
                 .build()
         )

@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.curation;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,6 +32,7 @@ import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryCon
 import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableSecondPrimaryConfig;
 import com.hartwig.actin.clinical.curation.config.ImmutableToxicityConfig;
+import com.hartwig.actin.clinical.curation.config.ImmutableTreatmentHistoryEntryConfig;
 import com.hartwig.actin.clinical.curation.config.InfectionConfig;
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig;
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig;
@@ -43,6 +45,7 @@ import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig;
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig;
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig;
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig;
+import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig;
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory;
 import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation;
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation;
@@ -71,10 +74,12 @@ import com.hartwig.actin.clinical.datamodel.MedicationStatus;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
+import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireRawEntryMapper;
 import com.hartwig.actin.doid.DoidModel;
 
 import org.apache.logging.log4j.LogManager;
@@ -90,6 +95,8 @@ public class CurationModel {
     @NotNull
     private final CurationDatabase database;
     @NotNull
+    private final QuestionnaireRawEntryMapper questionnaireRawEntryMapper;
+    @NotNull
     private final Multimap<Class<? extends CurationConfig>, String> evaluatedCurationInputs = HashMultimap.create();
     @NotNull
     private final Multimap<Class<? extends Translation>, Translation> evaluatedTranslations = HashMultimap.create();
@@ -97,12 +104,15 @@ public class CurationModel {
     @NotNull
     public static CurationModel create(@NotNull String clinicalCurationDirectory, @NotNull DoidModel doidModel) throws IOException {
         CurationDatabaseReader reader = new CurationDatabaseReader(new CurationValidator(doidModel));
-        return new CurationModel(reader.read(clinicalCurationDirectory));
+        QuestionnaireRawEntryMapper questionnaireRawEntryMapper =
+                QuestionnaireRawEntryMapper.createFromCurationDirectory(clinicalCurationDirectory);
+        return new CurationModel(reader.read(clinicalCurationDirectory), questionnaireRawEntryMapper);
     }
 
     @VisibleForTesting
-    CurationModel(@NotNull final CurationDatabase database) {
+    CurationModel(@NotNull CurationDatabase database, @NotNull QuestionnaireRawEntryMapper questionnaireRawEntryMapper) {
         this.database = database;
+        this.questionnaireRawEntryMapper = questionnaireRawEntryMapper;
     }
 
     @NotNull
@@ -209,6 +219,15 @@ public class CurationModel {
     }
 
     @NotNull
+    public List<TreatmentHistoryEntry> curateTreatmentHistory(@NotNull List<String> inputs) {
+        return inputs.stream()
+                .flatMap(input -> find(database.treatmentHistoryEntryConfigs(), CurationUtil.fullTrim(input)).stream()
+                        .filter(config -> !config.ignore())
+                        .map(TreatmentHistoryEntryConfig::curated))
+                .collect(Collectors.toList());
+    }
+
+    @NotNull
     public List<PriorTumorTreatment> curatePriorTumorTreatments(@Nullable List<String> inputs) {
         if (inputs == null) {
             return Lists.newArrayList();
@@ -276,11 +295,11 @@ public class CurationModel {
                 LOGGER.warn(" Could not find non-oncological history config for input '{}'", trimmedInput);
             }
 
-            priorOtherConditions.addAll(configs.stream()
+            configs.stream()
                     .filter(config -> !config.ignore())
                     .map(NonOncologicalHistoryConfig::priorOtherCondition)
                     .flatMap(Optional::stream)
-                    .collect(Collectors.toList()));
+                    .forEach(priorOtherConditions::add);
         }
 
         return priorOtherConditions;
@@ -417,7 +436,7 @@ public class CurationModel {
     }
 
     @Nullable
-    private static ImmutableECGMeasure maybeECGMeasure(@Nullable final Integer value, @Nullable final String unit) {
+    private static ImmutableECGMeasure maybeECGMeasure(@Nullable Integer value, @Nullable String unit) {
         if (value == null || unit == null) {
             return null;
         }
@@ -694,7 +713,7 @@ public class CurationModel {
 
     @NotNull
     public Toxicity translateToxicity(@NotNull Toxicity input) {
-        ToxicityTranslation translation = findToxicityTranslation(input);
+        ToxicityTranslation translation = findToxicityTranslation(input.name());
 
         if (translation == null) {
             LOGGER.warn("Could not find translation for toxicity with input '{}'", input.name());
@@ -706,8 +725,8 @@ public class CurationModel {
     }
 
     @Nullable
-    private ToxicityTranslation findToxicityTranslation(@NotNull Toxicity input) {
-        String trimmedToxicity = input.name().trim();
+    private ToxicityTranslation findToxicityTranslation(@NotNull String toxicityName) {
+        String trimmedToxicity = toxicityName.trim();
         for (ToxicityTranslation entry : database.toxicityTranslations()) {
             if (entry.toxicity().equals(trimmedToxicity)) {
                 return entry;
@@ -772,6 +791,11 @@ public class CurationModel {
     }
 
     @NotNull
+    public QuestionnaireRawEntryMapper questionnaireRawEntryMapper() {
+        return questionnaireRawEntryMapper;
+    }
+
+    @NotNull
     private List<? extends CurationConfig> configsForClass(@NotNull Class<? extends CurationConfig> classToLookUp) {
         if (classToLookUp == ImmutablePrimaryTumorConfig.class) {
             return database.primaryTumorConfigs();
@@ -801,6 +825,8 @@ public class CurationModel {
             return database.medicationCategoryConfigs();
         } else if (classToLookUp == ImmutableIntoleranceConfig.class) {
             return database.intoleranceConfigs();
+        } else if (classToLookUp == ImmutableTreatmentHistoryEntryConfig.class) {
+            return database.treatmentHistoryEntryConfigs();
         }
         throw new IllegalStateException("Class not found in curation database: " + classToLookUp);
     }
@@ -822,15 +848,10 @@ public class CurationModel {
 
     @NotNull
     private <T extends CurationConfig> Set<T> find(@NotNull List<T> configs, @NotNull String input) {
-        Set<T> results = Sets.newHashSet();
         if (!configs.isEmpty()) {
             evaluatedCurationInputs.put(configs.get(0).getClass(), input.toLowerCase());
-            for (T config : configs) {
-                if (config.input().equalsIgnoreCase(input)) {
-                    results.add(config);
-                }
-            }
+            return configs.stream().filter(config -> config.input().equalsIgnoreCase(input)).collect(Collectors.toSet());
         }
-        return results;
+        return Collections.emptySet();
     }
 }

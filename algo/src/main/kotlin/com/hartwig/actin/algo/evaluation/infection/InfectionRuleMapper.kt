@@ -18,8 +18,6 @@ class InfectionRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION to hasSpecificInfectionCreator(DoidConstants.CYTOMEGALOVIRUS_DOID),
             EligibilityRule.HAS_KNOWN_TUBERCULOSIS_INFECTION to hasSpecificInfectionCreator(DoidConstants.TUBERCULOSIS_DOID),
             EligibilityRule.MEETS_COVID_19_INFECTION_REQUIREMENTS to meetsCovid19InfectionRequirementsCreator(),
-            EligibilityRule.MEETS_COVID_19_VACCINATION_REQUIREMENTS to meetsCovid19VaccinationRequirementsCreator(),
-            EligibilityRule.IS_FULLY_VACCINATED_AGAINST_COVID_19 to isFullyVaccinatedCovid19Creator(),
             EligibilityRule.HAS_RECEIVED_LIVE_VACCINE_WITHIN_X_MONTHS to hasReceivedLiveVaccineWithinMonthsCreator(),
             EligibilityRule.ADHERENCE_TO_PROTOCOL_REGARDING_ATTENUATED_VACCINE_USE to canAdhereToAttenuatedVaccineUseCreator(),
         )
@@ -39,14 +37,6 @@ class InfectionRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun meetsCovid19InfectionRequirementsCreator(): FunctionCreator {
         return FunctionCreator { MeetsCovid19InfectionRequirements() }
-    }
-
-    private fun meetsCovid19VaccinationRequirementsCreator(): FunctionCreator {
-        return FunctionCreator { MeetsCovid19VaccinationRequirements() }
-    }
-
-    private fun isFullyVaccinatedCovid19Creator(): FunctionCreator {
-        return FunctionCreator { IsFullyVaccinatedCovid19() }
     }
 
     private fun hasReceivedLiveVaccineWithinMonthsCreator(): FunctionCreator {

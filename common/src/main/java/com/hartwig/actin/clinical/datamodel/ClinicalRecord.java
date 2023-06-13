@@ -2,6 +2,9 @@ package com.hartwig.actin.clinical.datamodel;
 
 import java.util.List;
 
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
+
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,6 +25,9 @@ public abstract class ClinicalRecord {
     @NotNull
     public abstract ClinicalStatus clinicalStatus();
 
+    @Nullable
+    public abstract List<TreatmentHistoryEntry> treatmentHistory();
+
     @NotNull
     public abstract List<PriorTumorTreatment> priorTumorTreatments();
 
@@ -40,11 +46,17 @@ public abstract class ClinicalRecord {
     @NotNull
     public abstract List<LabValue> labValues();
 
+    @Nullable
+    public abstract List<ToxicityEvaluation> toxicityEvaluations();
+
     @NotNull
     public abstract List<Toxicity> toxicities();
 
     @NotNull
     public abstract List<Intolerance> intolerances();
+
+    @Nullable
+    public abstract List<TreatmentHistoryEntry> surgicalTreatments();
 
     @NotNull
     public abstract List<Surgery> surgeries();

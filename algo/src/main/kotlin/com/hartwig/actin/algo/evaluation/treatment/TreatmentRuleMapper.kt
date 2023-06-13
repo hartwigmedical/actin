@@ -10,9 +10,11 @@ import com.hartwig.actin.treatment.datamodel.EligibilityRule
 class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
-            EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT to isEligibleForCurativeTreatmentCreator,
+            EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT to isEligibleForCurativeTreatmentCreator(),
+            EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_TREATMENT_X to isEligibleForOnLabelTreatmentCreator(),
+            EligibilityRule.IS_ELIGIBLE_FOR_PALLIATIVE_RADIOTHERAPY to isEligibleForPalliativeRadiotherapyCreator(),
+            EligibilityRule.IS_ELIGIBLE_FOR_LOCO_REGIONAL_THERAPY to isEligibleForLocoRegionalTherapyCreator(),
             EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS to hasExhaustedSOCTreatmentsCreator(),
-            EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_TREATMENT_X to isEligibleForOnLabelTreatmentCreator,
             EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES to hasHadSomeApprovedTreatmentCreator(),
             EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES to hasHadSomeSystemicTreatmentCreator(),
             EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES to hasHadLimitedSystemicTreatmentsCreator(),
@@ -30,6 +32,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES to hasHadLimitedTreatmentsOfCategoryCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_LEAST_Z_LINES to hasHadSomeTreatmentsOfCategoryWithTypesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_MOST_Z_LINES to hasHadLimitedTreatmentsOfCategoryWithTypesCreator(),
+            EligibilityRule.HAS_HAD_ADJUVANT_CATEGORY_X_TREATMENT to hasHadAdjuvantTreatmentWithCategoryCreator(),
             EligibilityRule.HAS_RECEIVED_HER2_TARGETING_ADC to hasReceivedHER2TargetingADCCreator(),
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_NAME_X_TREATMENT to hasProgressiveDiseaseFollowingTreatmentNameCreator(),
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_CATEGORY_X_TREATMENT to hasProgressiveDiseaseFollowingTreatmentCategoryCreator(),
@@ -50,15 +53,25 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         )
     }
 
-    private val isEligibleForCurativeTreatmentCreator: FunctionCreator
-        get() = FunctionCreator { IsEligibleForCurativeTreatment() }
+    private fun isEligibleForCurativeTreatmentCreator(): FunctionCreator {
+        return FunctionCreator { IsEligibleForCurativeTreatment() }
+    }
+
+    private fun isEligibleForOnLabelTreatmentCreator(): FunctionCreator {
+        return FunctionCreator { IsEligibleForOnLabelTreatment() }
+    }
+
+    private fun isEligibleForPalliativeRadiotherapyCreator(): FunctionCreator {
+        return FunctionCreator { IsEligibleForPalliativeRadiotherapy() }
+    }
+
+    private fun isEligibleForLocoRegionalTherapyCreator(): FunctionCreator {
+        return FunctionCreator { IsEligibleForLocoRegionalTherapy() }
+    }
 
     private fun hasExhaustedSOCTreatmentsCreator(): FunctionCreator {
         return FunctionCreator { HasExhaustedSOCTreatments() }
     }
-
-    private val isEligibleForOnLabelTreatmentCreator: FunctionCreator
-        get() = FunctionCreator { IsEligibleForOnLabelTreatment() }
 
     private fun hasHadSomeApprovedTreatmentCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
@@ -197,6 +210,20 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 function
             )
             HasHadLimitedTreatmentsWithCategoryOfTypes(input.category(), input.strings(), input.integer())
+        }
+    }
+
+    private fun hasHadAdjuvantTreatmentWithCategoryCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val treatment = functionInputResolver().createOneTreatmentInput(function)
+            if (treatment.mappedNames() == null) {
+                return@FunctionCreator HasHadAdjuvantTreatmentWithCategory(treatment.mappedCategory())
+            } else {
+                return@FunctionCreator HasHadAdjuvantSpecificTreatment(
+                    treatment.mappedNames()!!,
+                    treatment.mappedCategory()
+                )
+            }
         }
     }
 

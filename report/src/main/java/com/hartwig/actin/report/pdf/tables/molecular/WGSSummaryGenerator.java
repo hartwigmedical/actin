@@ -67,8 +67,10 @@ public class WGSSummaryGenerator implements TableGenerator {
         table.addCell(biopsySummary());
 
         if (molecular.containsTumorCells()) {
-            Stream.of(Maps.immutableEntry("Molecular tissue of origin prediction", createHighConfidenceTumorOriginPrediction()),
-                            Maps.immutableEntry("Tumor mutational load / burden", characteristicsGenerator.createTMLAndTMBStatusString()),
+            table.addCell(Cells.createKey("Molecular tissue of origin prediction"));
+            table.addCell(tumorOriginPredictionCell());
+
+            Stream.of(Maps.immutableEntry("Tumor mutational load / burden", characteristicsGenerator.createTMLAndTMBStatusString()),
                             Maps.immutableEntry("Microsatellite (in)stability",
                                     characteristicsGenerator.createMSStabilityStringOption().orElse(Formats.VALUE_UNKNOWN)),
                             Maps.immutableEntry("HR status", characteristicsGenerator.createHRStatusStringOption().orElse(Formats.VALUE_UNKNOWN)),
@@ -98,8 +100,8 @@ public class WGSSummaryGenerator implements TableGenerator {
         if (biopsyLocation != null) {
             if (purity != null) {
                 Text biopsyText = new Text(biopsyLocation).addStyle(Styles.tableHighlightStyle());
-                Text purityText = new Text(String.format(ApplicationConfig.LOCALE, " (purity %d%%)", Math.round(purity * 100)));
-                purityText.addStyle(molecular.hasSufficientQuality() ? Styles.tableHighlightStyle() : Styles.tableNoticeStyle());
+                Text purityText = new Text(String.format(" (purity %s)", Formats.percentage(purity)));
+                purityText.addStyle(molecular.hasSufficientQualityAndPurity() ? Styles.tableHighlightStyle() : Styles.tableNoticeStyle());
                 return Cells.create(new Paragraph().addAll(Arrays.asList(biopsyText, purityText)));
             } else {
                 return Cells.createValue(biopsyLocation);
@@ -109,9 +111,21 @@ public class WGSSummaryGenerator implements TableGenerator {
         }
     }
 
-    private String createHighConfidenceTumorOriginPrediction() {
+    @NotNull
+    private Cell tumorOriginPredictionCell() {
+        Paragraph paragraph = new Paragraph(new Text(tumorOriginPrediction()).addStyle(Styles.tableHighlightStyle()));
+        Double purity = molecular.characteristics().purity();
+        if (purity != null && purity < 0.2) {
+            Text purityText = new Text(String.format(" (tumor purity %s)", Formats.percentage(purity))).addStyle(Styles.tableNoticeStyle());
+            paragraph.add(purityText);
+        }
+        return Cells.create(paragraph);
+    }
+
+    @NotNull
+    private String tumorOriginPrediction() {
         PredictedTumorOrigin predictedTumorOrigin = molecular.characteristics().predictedTumorOrigin();
-        if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin) && molecular.hasSufficientQuality()) {
+        if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin) && molecular.hasSufficientQualityAndPurity()) {
             return TumorOriginInterpreter.interpret(predictedTumorOrigin);
         } else if (molecular.hasSufficientQuality() && predictedTumorOrigin != null) {
             return String.format("Inconclusive (%s %s)",
@@ -122,6 +136,7 @@ public class WGSSummaryGenerator implements TableGenerator {
         }
     }
 
+    @NotNull
     private String formatStream(Stream<String> stream) {
         String collected = stream.collect(Collectors.joining(Formats.COMMA_SEPARATOR));
         return collected.isEmpty() ? Formats.VALUE_NONE : collected;

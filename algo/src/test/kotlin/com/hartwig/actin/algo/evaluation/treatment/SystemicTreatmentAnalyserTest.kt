@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.lastSystemicTreatment
 import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.maxSystemicTreatments
 import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.minSystemicTreatments
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test

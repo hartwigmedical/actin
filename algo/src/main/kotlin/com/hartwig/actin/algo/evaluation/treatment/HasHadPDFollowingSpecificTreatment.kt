@@ -2,12 +2,11 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.treatmentResultedInPDOption
 import com.hartwig.actin.algo.evaluation.util.Format
-import com.hartwig.actin.util.ApplicationConfig
 
 class HasHadPDFollowingSpecificTreatment internal constructor(private val names: Set<String>, warnCategory: TreatmentCategory?) :
     EvaluationFunction {
@@ -30,7 +29,7 @@ class HasHadPDFollowingSpecificTreatment internal constructor(private val names:
                 hasHadTreatmentWithWarnType = true
             }
             for (name in names) {
-                if (treatment.name().lowercase(ApplicationConfig.LOCALE).contains(name.lowercase(ApplicationConfig.LOCALE))) {
+                if (treatment.name().lowercase().contains(name.lowercase())) {
                     treatmentsWithExactType.add(treatment.name())
                     when (treatmentResultedInPDOption(treatment)) {
                         true -> treatmentsWithPD.add(treatment.name())
@@ -53,17 +52,17 @@ class HasHadPDFollowingSpecificTreatment internal constructor(private val names:
         } else if (hasHadTreatmentWithUnclearPDStatus) {
             EvaluationFactory.undetermined(
                 "Patient has received " + Format.concat(treatmentsWithExactType) + " treatment but undetermined if PD occurred",
-                "Received " + Format.concat(treatmentsWithExactType) + " treatment but undetermined if PD"
+                "Has received " + Format.concat(treatmentsWithExactType) + " treatment but undetermined if PD"
             )
         } else if (treatmentsWithExactType.isNotEmpty()) {
             EvaluationFactory.fail(
                 "Patient has received " + Format.concat(treatmentsWithExactType) + " treatment, but no PD",
-                "Received " + Format.concat(treatmentsWithExactType) + " treatment, but no PD"
+                "Has received " + Format.concat(treatmentsWithExactType) + " treatment, but no PD"
             )
         } else {
             EvaluationFactory.fail(
                 "Patient has not received specific " + Format.concat(names) + "treatment",
-                "Not received specific " + Format.concat(names) + " treatment"
+                "Has not received specific " + Format.concat(names) + " treatment"
             )
         }
     }

@@ -6,7 +6,6 @@ import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.util.ApplicationConfig
 
 private const val TUMOR_SUB_LOCATION_SIDE_TEMPLATE = "Tumor sub-location %s is on %s side"
 
@@ -24,10 +23,10 @@ class HasLeftSidedColorectalTumor internal constructor(doidModel: DoidModel) : E
         } else if (!DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.COLORECTAL_CANCER_DOID)) {
             EvaluationFactory.fail("Tumor is not colorectal cancer", "Tumor type")
         } else {
-            val subLocation = record.clinical().tumor().primaryTumorSubLocation()?.lowercase(ApplicationConfig.LOCALE)
+            val subLocation = record.clinical().tumor().primaryTumorSubLocation()?.lowercase()
             when {
                 subLocation.isNullOrEmpty() -> EvaluationFactory.undetermined(
-                    "Tumor sub-location not provided, left-sidedness is unknown", "Unknown sidedness of tumor"
+                    "Tumor sub-location unknown, left-sidedness is unknown", "Unknown sidedness of tumor"
                 )
 
                 stringContainsAnyMember(subLocation, LEFT_SUB_LOCATIONS) ->

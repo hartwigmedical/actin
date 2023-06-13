@@ -81,6 +81,7 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLossInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleHotspotType;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleMicrosatelliteStatus;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleQCStatus;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTranscriptImpact;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTumorMutationalStatus;
@@ -173,7 +174,17 @@ public final class OrangeJson {
                     .containsTumorCells(bool(fit, "containsTumorCells"))
                     .purity(number(fit, "purity"))
                     .ploidy(number(fit, "ploidy"))
+                    .qcStatuses(toPurpleQCStatuses(object(fit, "qc")))
                     .build();
+        }
+
+        @NotNull
+        private static Set<PurpleQCStatus> toPurpleQCStatuses(@NotNull JsonObject qc) {
+            return array(qc, "status").asList()
+                    .stream()
+                    .map(JsonElement::getAsString)
+                    .map(PurpleQCStatus::valueOf)
+                    .collect(Collectors.toSet());
         }
 
         @NotNull

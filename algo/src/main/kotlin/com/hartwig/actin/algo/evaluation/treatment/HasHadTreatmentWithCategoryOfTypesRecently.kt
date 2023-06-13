@@ -6,8 +6,8 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.DateComparison.isAfterDate
 import com.hartwig.actin.algo.evaluation.util.Format.concat
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import java.time.LocalDate
 
 class HasHadTreatmentWithCategoryOfTypesRecently internal constructor(
@@ -33,12 +33,12 @@ class HasHadTreatmentWithCategoryOfTypesRecently internal constructor(
         return if (hasHadValidTreatment) {
             EvaluationFactory.pass(
                 "Patient has received " + concat(types) + " " + category.display() + " treatment",
-                "Received " + concat(types) + " " + category.display() + " treatment"
+                "Has received " + concat(types) + " " + category.display() + " treatment"
             )
         } else if (hasInconclusiveDate) {
             EvaluationFactory.undetermined(
                 "Patient has received " + concat(types) + " " + category.display() + " treatment with inconclusive date",
-                "Received " + concat(types) + " " + category.display() + " treatment but inconclusive date"
+                "Has received " + concat(types) + " " + category.display() + " treatment but inconclusive date"
             )
         } else if (hasHadTrialAfterMinDate) {
             EvaluationFactory.undetermined(
@@ -48,7 +48,7 @@ class HasHadTreatmentWithCategoryOfTypesRecently internal constructor(
         } else {
             EvaluationFactory.fail(
                 "Patient has not received " + concat(types) + " " + category.display() + " treatment",
-                "Not received " + concat(types) + " " + category.display() + " treatment"
+                "Has not received " + concat(types) + " " + category.display() + " treatment"
             )
         }
     }

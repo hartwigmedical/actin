@@ -5,8 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.DateComparison.isAfterDate
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory
-import com.hartwig.actin.util.ApplicationConfig
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import java.time.LocalDate
 
 class HasHadRecentResection internal constructor(private val minDate: LocalDate) : EvaluationFunction {
@@ -18,7 +17,7 @@ class HasHadRecentResection internal constructor(private val minDate: LocalDate)
             val isPastMinDate = isAfterDate(minDate, treatment.startYear(), treatment.startMonth())
             val isPastMoreLenientMinDate = isAfterDate(minDate.minusWeeks(2), treatment.startYear(), treatment.startMonth())
             val isResection =
-                treatment.name().lowercase(ApplicationConfig.LOCALE).contains(RESECTION_KEYWORD.lowercase(ApplicationConfig.LOCALE))
+                treatment.name().lowercase().contains(RESECTION_KEYWORD.lowercase())
             val isPotentialResection = treatment.categories().contains(TreatmentCategory.SURGERY) && treatment.name().isEmpty()
             if (isResection) {
                 if (isPastMinDate == null) {

@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.unrecoverable
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 
 class HasHadTreatmentWithCategoryButNotOfTypes internal constructor(
     private val category: TreatmentCategory,
@@ -39,7 +39,7 @@ class HasHadTreatmentWithCategoryButNotOfTypes internal constructor(
                     )
                 )
                 .addPassGeneralMessages(
-                    "Received " + category.display() + ", ignoring " + concat(
+                    "Has received " + category.display() + ", ignoring " + concat(
                         ignoreTypes
                     )
                 )
@@ -67,7 +67,7 @@ class HasHadTreatmentWithCategoryButNotOfTypes internal constructor(
                     )
                 )
                 .addFailGeneralMessages(
-                    "Not received " + category.display() + ", ignoring " + concat(
+                    "Has not received " + category.display() + ", ignoring " + concat(
                         ignoreTypes
                     )
                 )

@@ -40,6 +40,7 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLossInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleHotspotType;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleMicrosatelliteStatus;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleQCStatus;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTumorMutationalStatus;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
@@ -103,6 +104,8 @@ public class OrangeJsonTest {
         assertFalse(purple.fit().containsTumorCells());
         assertEquals(0.12, purple.fit().purity(), EPSILON);
         assertEquals(3.1, purple.fit().ploidy(), EPSILON);
+        assertEquals(1, purple.fit().qcStatuses().size());
+        assertTrue(purple.fit().qcStatuses().contains(PurpleQCStatus.PASS));
 
         assertEquals(PurpleMicrosatelliteStatus.MSS, purple.characteristics().microsatelliteStatus());
         assertEquals(13.71, purple.characteristics().tumorMutationalBurdenPerMb(), EPSILON);

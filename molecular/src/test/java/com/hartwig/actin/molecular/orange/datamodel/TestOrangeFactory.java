@@ -31,6 +31,7 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleFit;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLossInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleHotspotType;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleMicrosatelliteStatus;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleQCStatus;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTumorMutationalStatus;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
@@ -69,8 +70,7 @@ public final class TestOrangeFactory {
 
     @NotNull
     private static PurpleRecord createMinimalTestPurpleRecord() {
-        return ImmutablePurpleRecord.builder()
-                .fit(TestPurpleFactory.fitBuilder().build())
+        return ImmutablePurpleRecord.builder().fit(TestPurpleFactory.fitBuilder().addQcStatuses(PurpleQCStatus.FAIL_NO_TUMOR).build())
                 .characteristics(TestPurpleFactory.characteristicsBuilder().build())
                 .build();
     }
@@ -136,7 +136,13 @@ public final class TestOrangeFactory {
 
     @NotNull
     private static PurpleFit createTestPurpleFit() {
-        return TestPurpleFactory.fitBuilder().hasSufficientQuality(true).containsTumorCells(true).purity(0.98).ploidy(3.1).build();
+        return TestPurpleFactory.fitBuilder()
+                .hasSufficientQuality(true)
+                .containsTumorCells(true)
+                .purity(0.98)
+                .ploidy(3.1)
+                .addQcStatuses(PurpleQCStatus.PASS)
+                .build();
     }
 
     @NotNull

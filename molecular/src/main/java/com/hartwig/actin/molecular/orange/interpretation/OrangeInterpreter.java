@@ -1,5 +1,7 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
+import java.util.Set;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
@@ -7,6 +9,7 @@ import com.hartwig.actin.molecular.datamodel.RefGenomeVersion;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRefGenomeVersion;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleQCStatus;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants;
 
@@ -29,6 +32,10 @@ public class OrangeInterpreter {
         DriverExtractor driverExtractor = DriverExtractor.create(geneFilter, evidenceDatabase);
         CharacteristicsExtractor characteristicsExtractor = new CharacteristicsExtractor(evidenceDatabase);
 
+        if (record.purple().fit().qcStatuses().isEmpty()) {
+            throw new IllegalStateException("Cannot interpret purple record with empty QC states");
+        }
+
         return ImmutableMolecularRecord.builder()
                 .patientId(toPatientId(record.sampleId()))
                 .sampleId(record.sampleId())
@@ -38,7 +45,8 @@ public class OrangeInterpreter {
                 .evidenceSource(ActionabilityConstants.EVIDENCE_SOURCE.display())
                 .externalTrialSource(ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display())
                 .containsTumorCells(record.purple().fit().containsTumorCells())
-                .hasSufficientQuality(record.purple().fit().hasSufficientQuality())
+                .hasSufficientQualityAndPurity(hasSufficientQualityAndPurity(record))
+                .hasSufficientQuality(hasSufficientQuality(record))
                 .characteristics(characteristicsExtractor.extract(record))
                 .drivers(driverExtractor.extract(record))
                 .immunology(ImmunologyExtraction.extract(record))
@@ -51,12 +59,25 @@ public class OrangeInterpreter {
         switch (refGenomeVersion) {
             case V37: {
                 return RefGenomeVersion.V37;
-            } case V38: {
+            }
+            case V38: {
                 return RefGenomeVersion.V38;
             }
         }
 
         throw new IllegalStateException("Could not determine ref genome version from: " + refGenomeVersion);
+    }
+
+    static boolean hasSufficientQualityAndPurity(@NotNull OrangeRecord record) {
+        return recordQCStatusesInSet(record, Set.of(PurpleQCStatus.PASS));
+    }
+
+    static boolean hasSufficientQuality(@NotNull OrangeRecord record) {
+        return recordQCStatusesInSet(record, Set.of(PurpleQCStatus.PASS, PurpleQCStatus.WARN_LOW_PURITY));
+    }
+
+    private static boolean recordQCStatusesInSet(OrangeRecord record, Set<PurpleQCStatus> allowableQCStatuses) {
+        return allowableQCStatuses.containsAll(record.purple().fit().qcStatuses());
     }
 
     @VisibleForTesting

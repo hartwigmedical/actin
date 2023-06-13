@@ -1,8 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import org.junit.Test
 import java.time.LocalDate

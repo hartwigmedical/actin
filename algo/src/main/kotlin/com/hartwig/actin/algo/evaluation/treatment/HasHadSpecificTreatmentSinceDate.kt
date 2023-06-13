@@ -2,12 +2,11 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.DateComparison.isAfterDate
 import com.hartwig.actin.algo.evaluation.util.Format
-import com.hartwig.actin.util.ApplicationConfig
 import java.time.LocalDate
 
 class HasHadSpecificTreatmentSinceDate internal constructor(treatmentName: String, minDate: LocalDate) : EvaluationFunction {
@@ -16,13 +15,13 @@ class HasHadSpecificTreatmentSinceDate internal constructor(treatmentName: Strin
     private val minDate: LocalDate
 
     init {
-        query = treatmentName.lowercase(ApplicationConfig.LOCALE)
+        query = treatmentName.lowercase()
         this.minDate = minDate
     }
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val matchingTreatments: List<PriorTumorTreatment> = record.clinical().priorTumorTreatments()
-            .filter { it.name().lowercase(ApplicationConfig.LOCALE).contains(query) }
+            .filter { it.name().lowercase().contains(query) }
 
         return when {
             matchingTreatments.any { treatmentSinceMinDate(it, false) } ->

@@ -37,7 +37,8 @@ class HasHadPriorConditionWithDoidComplicationOrToxicity internal constructor(
                 passSpecificMessages(
                     doidTerm, matchingConditions, matchingComplications, matchingToxicities
                 )
-            ).addPassGeneralMessages(PriorConditionMessages.passGeneral(doidTerm)).build()
+            ).addPassGeneralMessages(PriorConditionMessages.passGeneral(matchingConditions + matchingComplications + matchingToxicities))
+                .build()
         } else fail(PriorConditionMessages.failSpecific(doidTerm), PriorConditionMessages.failGeneral())
     }
 

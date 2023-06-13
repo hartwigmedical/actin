@@ -1,6 +1,11 @@
 package com.hartwig.actin.clinical.feed.questionnaire;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.collect.Maps;
 
@@ -252,5 +257,30 @@ final class QuestionnaireMapping {
             default:
                 throw new IllegalStateException("Questionnaire version not supported for mapping: " + version);
         }
+    }
+
+    @NotNull
+    public static List<String> keyStrings(@NotNull QuestionnaireEntry entry) {
+        Stream<String> versionSpecificAdditionalStrings;
+        switch (QuestionnaireVersion.version(entry)) {
+            case V0_1:
+                versionSpecificAdditionalStrings = Stream.of("TNM criteria",
+                        "Information",
+                        "Significant aberration on latest lung function test",
+                        "Latest LVEF (%)",
+                        "Has bioptable lesion");
+                break;
+            case V0_2:
+                versionSpecificAdditionalStrings = Stream.of("Biopsy amenable yes/no/unknown");
+                break;
+            default:
+                versionSpecificAdditionalStrings = Stream.empty();
+        }
+
+        return Stream.of(mapping(entry).values().stream().filter(Objects::nonNull),
+                        versionSpecificAdditionalStrings,
+                        Stream.of("Last date of active treatment", "Active", "Symptomatic"))
+                .flatMap(Function.identity())
+                .collect(Collectors.toList());
     }
 }

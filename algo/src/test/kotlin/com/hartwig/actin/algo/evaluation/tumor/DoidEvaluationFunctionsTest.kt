@@ -118,10 +118,10 @@ class DoidEvaluationFunctionsTest {
         private val WARN_DOIDS: Set<String> = setOf("4", "5")
         private val MATCHING_TEST_MODEL = createTestDoidModelForMatching()
         private fun hasExclusiveTumorTypeOfDoid(vararg tumorDoids: String): EvaluationResult {
-            return DoidEvaluationFunctions.evaluateForExclusiveMatchWithFailAndWarns(
+            return DoidEvaluationFunctions.evaluateAllDoidsMatchWithFailAndWarns(
                 MATCHING_TEST_MODEL,
                 setOf(*tumorDoids),
-                MATCH_DOID,
+                setOf(MATCH_DOID),
                 FAIL_DOIDS,
                 WARN_DOIDS
             )

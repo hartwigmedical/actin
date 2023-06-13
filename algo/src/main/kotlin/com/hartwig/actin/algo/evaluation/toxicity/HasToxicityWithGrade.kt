@@ -11,7 +11,6 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.datamodel.Toxicity
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
-import com.hartwig.actin.util.ApplicationConfig
 
 //TODO: In case X => 2, ignore EHR toxicities in evaluation
 class HasToxicityWithGrade internal constructor(
@@ -32,8 +31,8 @@ class HasToxicityWithGrade internal constructor(
                 grade = DEFAULT_QUESTIONNAIRE_GRADE
             }
             val gradeMatch = grade != null && grade >= minGrade
-            val nameMatch = nameFilter == null || toxicity.name().lowercase(ApplicationConfig.LOCALE)
-                .contains(nameFilter.lowercase(ApplicationConfig.LOCALE))
+            val nameMatch = nameFilter == null || toxicity.name().lowercase()
+                .contains(nameFilter.lowercase())
             if (gradeMatch && nameMatch) {
                 if (toxicity.source() == ToxicitySource.QUESTIONNAIRE) {
                     hasAtLeastOneMatchingQuestionnaireToxicity = true
@@ -42,21 +41,23 @@ class HasToxicityWithGrade internal constructor(
             }
         }
         if (toxicities.isNotEmpty()) {
+            val toxicityString = formatToxicities(toxicities)
             return if (hasAtLeastOneMatchingQuestionnaireToxicity) {
                 EvaluationFactory.recoverablePass(
-                    "Toxicities with grade >= $minGrade found: ${concat(toxicities)}",
-                    "Toxicities grade >= $minGrade found: ${concat(toxicities)}"
+                    "Toxicities with grade >= $minGrade$toxicityString",
+                    "Toxicities grade >= $minGrade$toxicityString"
                 )
             } else {
                 EvaluationFactory.recoverableWarn(
-                    "Toxicities with grade >= $minGrade found: ${concat(toxicities)} but source is not questionnaire",
-                    "Toxicities grade >= $minGrade found: ${concat(toxicities)} but source is not questionnaire"
+                    "Toxicities with grade >= $minGrade$toxicityString but source is not questionnaire",
+                    "Toxicities grade >= $minGrade$toxicityString but source is not questionnaire"
                 )
             }
         } else if (hasUnresolvableQuestionnaireToxicities) {
+            val toxicityString = formatToxicities(unresolvableToxicities)
             return EvaluationFactory.undetermined(
-                "The exact grade (2, 3 or 4) is not known for toxicities: ${concat(unresolvableToxicities)}",
-                "${concat(unresolvableToxicities)} present, but grade 2/3/4 unknown"
+                "Unknown grade (2, 3 or 4) for toxicities$toxicityString",
+                "Toxicities with unknown grade$toxicityString"
             )
         }
         return EvaluationFactory.fail(
@@ -101,6 +102,11 @@ class HasToxicityWithGrade internal constructor(
 
         private fun applyIgnoreFilters(toxicities: List<Toxicity>, ignoreFilters: Set<String>): List<Toxicity> {
             return toxicities.filterNot { stringCaseInsensitivelyMatchesQueryCollection(it.name(), ignoreFilters) }
+        }
+
+        private fun formatToxicities(toxicityNames: Iterable<String>): String {
+            val toxicityListing = concat(toxicityNames.filter { it.isNotEmpty() })
+            return if (toxicityListing.isNotEmpty()) " ($toxicityListing)" else ""
         }
     }
 }

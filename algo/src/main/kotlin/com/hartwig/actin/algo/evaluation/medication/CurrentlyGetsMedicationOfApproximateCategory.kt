@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
-import com.hartwig.actin.util.ApplicationConfig
 
 //TODO: Update according to README
 class CurrentlyGetsMedicationOfApproximateCategory internal constructor(
@@ -13,9 +12,9 @@ class CurrentlyGetsMedicationOfApproximateCategory internal constructor(
     private val categoryTermToFind: String
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val lowercaseTermToFind = categoryTermToFind.lowercase(ApplicationConfig.LOCALE)
+        val lowercaseTermToFind = categoryTermToFind.lowercase()
         val medications = selector.active(record.clinical().medications())
-            .filter { medication -> medication.categories().any { it.lowercase(ApplicationConfig.LOCALE).contains(lowercaseTermToFind) } }
+            .filter { medication -> medication.categories().any { it.lowercase().contains(lowercaseTermToFind) } }
             .map { it.name() }
 
         return if (medications.isNotEmpty()) {

@@ -58,7 +58,7 @@ class HasPotentialAbsorptionDifficulties internal constructor(private val doidMo
 
         private fun isOfCategory(complication: Complication, categoryToFind: String): Boolean {
             return complication.categories().any {
-                it.lowercase(ApplicationConfig.LOCALE).contains(
+                it.lowercase().contains(
                     categoryToFind.lowercase(
                         ApplicationConfig.LOCALE
                     )

@@ -10,22 +10,18 @@ import com.hartwig.actin.doid.config.TestDoidManualConfigFactory
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import org.junit.Test
 
+private const val PARENT_DOID = "100"
+private const val CHILD_DOID = "200"
+
+private const val SUB_LOCATION = "specific"
+
 class PrimaryTumorLocationBelongsToDoidTest {
+    private val subLocationFunction = PrimaryTumorLocationBelongsToDoid(simpleDoidModel, CHILD_DOID, SUB_LOCATION)
+
     @Test
-    fun canEvaluate() {
-        val doidModel: DoidModel = TestDoidModelFactory.createWithOneParentChild("100", "200")
-        val function100 = PrimaryTumorLocationBelongsToDoid(doidModel, "100")
-        assertEvaluation(EvaluationResult.PASS, function100.evaluate(TumorTestFactory.withDoids("100")))
-        assertEvaluation(EvaluationResult.PASS, function100.evaluate(TumorTestFactory.withDoids("200")))
-        assertEvaluation(EvaluationResult.PASS, function100.evaluate(TumorTestFactory.withDoids("10", "100")))
-        assertEvaluation(EvaluationResult.FAIL, function100.evaluate(TumorTestFactory.withDoids("50", "250")))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function100.evaluate(TumorTestFactory.withDoids(null)))
-        val function200 = PrimaryTumorLocationBelongsToDoid(doidModel, "200")
-        assertEvaluation(EvaluationResult.FAIL, function200.evaluate(TumorTestFactory.withDoids("100")))
-        assertEvaluation(EvaluationResult.PASS, function200.evaluate(TumorTestFactory.withDoids("200")))
-        assertEvaluation(EvaluationResult.FAIL, function200.evaluate(TumorTestFactory.withDoids("10", "100")))
-        assertEvaluation(EvaluationResult.FAIL, function200.evaluate(TumorTestFactory.withDoids("50", "250")))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function200.evaluate(TumorTestFactory.withDoids(emptySet())))
+    fun shouldEvaluateWhetherTumorDoidMatchesTarget() {
+        assertResultsForFunction(PrimaryTumorLocationBelongsToDoid(simpleDoidModel, PARENT_DOID, null), true)
+        assertResultsForFunction(PrimaryTumorLocationBelongsToDoid(simpleDoidModel, CHILD_DOID, null), false)
     }
 
     @Test
@@ -40,14 +36,14 @@ class PrimaryTumorLocationBelongsToDoidTest {
             stomachLymphoma to stomachCancer, stomachCancer to cancer
         )
         val doidModel: DoidModel = TestDoidModelFactory.createWithMainCancerTypeAndChildToParentMap(stomachCancer, childToParentMap)
-        val function = PrimaryTumorLocationBelongsToDoid(doidModel, stomachCarcinoma)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids("something else")))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids(cancer)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids(stomachLymphoma)))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids(stomachCancer)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoids(stomachCarcinoma)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoids(stomachAdenocarcinoma)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoids("something else", stomachAdenocarcinoma)))
+        val function = PrimaryTumorLocationBelongsToDoid(doidModel, stomachCarcinoma, null)
+        assertResultForDoid(EvaluationResult.FAIL, function, "something else")
+        assertResultForDoid(EvaluationResult.FAIL, function, cancer)
+        assertResultForDoid(EvaluationResult.FAIL, function, stomachLymphoma)
+        assertResultForDoid(EvaluationResult.UNDETERMINED, function, stomachCancer)
+        assertResultForDoid(EvaluationResult.PASS, function, stomachCarcinoma)
+        assertResultForDoid(EvaluationResult.PASS, function, stomachAdenocarcinoma)
+        assertResultForDoids(EvaluationResult.PASS, function, setOf("something else", stomachAdenocarcinoma))
     }
 
     @Test
@@ -56,9 +52,70 @@ class PrimaryTumorLocationBelongsToDoidTest {
             ImmutableAdenoSquamousMapping.builder().adenoSquamousDoid("1").squamousDoid("2").adenoDoid("3").build()
         val config: DoidManualConfig = TestDoidManualConfigFactory.createWithOneAdenoSquamousMapping(mapping)
         val doidModel: DoidModel = TestDoidModelFactory.createWithDoidManualConfig(config)
-        val function = PrimaryTumorLocationBelongsToDoid(doidModel, "2")
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids("4")))
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(TumorTestFactory.withDoids("1")))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoids("2")))
+        val function = PrimaryTumorLocationBelongsToDoid(doidModel, "2", null)
+        assertResultForDoid(EvaluationResult.FAIL, function, "4")
+        assertResultForDoid(EvaluationResult.WARN, function, "1")
+        assertResultForDoid(EvaluationResult.PASS, function, "2")
+    }
+
+    private fun assertResultsForFunction(function: PrimaryTumorLocationBelongsToDoid, doidToMatchIsParent: Boolean) {
+        val expectedResultForParentDoid = if (doidToMatchIsParent) EvaluationResult.PASS else EvaluationResult.FAIL
+        assertResultForDoid(expectedResultForParentDoid, function, PARENT_DOID)
+        assertResultForDoid(EvaluationResult.PASS, function, CHILD_DOID)
+        assertResultForDoids(expectedResultForParentDoid, function, setOf("10", PARENT_DOID))
+        assertResultForDoids(EvaluationResult.FAIL, function, setOf("50", "250"))
+        assertResultForDoids(EvaluationResult.UNDETERMINED, function, null)
+        assertResultForDoids(EvaluationResult.UNDETERMINED, function, emptySet())
+    }
+
+    private fun assertResultForDoid(
+        expectedResult: EvaluationResult,
+        function: PrimaryTumorLocationBelongsToDoid,
+        doid: String
+    ) {
+        assertResultForDoids(expectedResult, function, setOf(doid))
+    }
+
+    private fun assertResultForDoids(
+        expectedResult: EvaluationResult,
+        function: PrimaryTumorLocationBelongsToDoid,
+        doids: Set<String>?
+    ) {
+        assertEvaluation(expectedResult, function.evaluate(TumorTestFactory.withDoids(doids)))
+    }
+
+    @Test
+    fun shouldFailWhenSubLocationMatchesAndTumorDoidDoesNotMatch() {
+        assertEvaluation(EvaluationResult.FAIL, subLocationFunction.evaluate(TumorTestFactory.withDoidAndSubLocation("10", SUB_LOCATION)))
+    }
+
+    @Test
+    fun shouldBeUndeterminedWhenSubLocationQueryProvidedAndTumorDoidsNotProvided() {
+        assertResultForDoids(EvaluationResult.UNDETERMINED, subLocationFunction, null)
+    }
+
+    @Test
+    fun shouldWarnWhenSubLocationQueryProvidedAndDoidMatchAndTumorSubLocationIsNull() {
+        assertResultForDoid(EvaluationResult.WARN, subLocationFunction, CHILD_DOID)
+    }
+
+    @Test
+    fun shouldWarnWhenSubLocationQueryProvidedAndDoidMatchAndTumorSubLocationDoesNotMatch() {
+        assertEvaluation(
+            EvaluationResult.WARN,
+            subLocationFunction.evaluate(TumorTestFactory.withDoidAndSubLocation(CHILD_DOID, "another"))
+        )
+    }
+
+    @Test
+    fun shouldPassWhenSubLocationAndDoidMatch() {
+        assertEvaluation(
+            EvaluationResult.PASS,
+            subLocationFunction.evaluate(TumorTestFactory.withDoidAndSubLocation(CHILD_DOID, SUB_LOCATION))
+        )
+    }
+
+    companion object {
+        private val simpleDoidModel: DoidModel = TestDoidModelFactory.createWithOneParentChild(PARENT_DOID, CHILD_DOID)
     }
 }
