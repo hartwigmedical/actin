@@ -30,7 +30,7 @@ public final class CohortStatusInterpreter {
                     cohortConfig.trialId());
             return null;
         } else if (isMissingEntry(ctcCohortIds)) {
-            LOGGER.info("CTC entry missing for cohort '{}' of trial '{}'! Setting cohort to closed without slots",
+            LOGGER.info("CTC entry missing for unknown reason for cohort '{}' of trial '{}'! Setting cohort to closed without slots",
                     cohortConfig.cohortId(),
                     cohortConfig.trialId());
             return closedWithoutSlots();

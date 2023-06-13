@@ -19,6 +19,8 @@ public class CTCModel {
 
     private static final Logger LOGGER = LogManager.getLogger(CTCModel.class);
 
+    public static final String CTC_TRIAL_PREFIX = "MEC";
+
     @NotNull
     private final CTCDatabase ctcDatabase;
 
@@ -34,6 +36,13 @@ public class CTCModel {
 
     @Nullable
     public Boolean isTrialOpen(@NotNull TrialDefinitionConfig trialConfig) {
+        if (!trialConfig.trialId().startsWith(CTC_TRIAL_PREFIX)) {
+            LOGGER.debug("Skipping study status retrieval for {} ({}) since study is not deemed a CTC trial",
+                    trialConfig.trialId(),
+                    trialConfig.acronym());
+            return trialConfig.open();
+        }
+
         Boolean openInCTC = TrialStatusInterpreter.isOpen(ctcDatabase.entries(), trialConfig);
 
         if (openInCTC != null) {

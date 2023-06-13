@@ -6,14 +6,10 @@ import com.google.common.annotations.VisibleForTesting;
 import com.hartwig.actin.treatment.ctc.config.CTCDatabaseEntry;
 import com.hartwig.actin.treatment.trial.config.TrialDefinitionConfig;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class TrialStatusInterpreter {
-
-    private static final Logger LOGGER = LogManager.getLogger(TrialStatusInterpreter.class);
 
     @Nullable
     public static Boolean isOpen(@NotNull List<CTCDatabaseEntry> entries, @NotNull TrialDefinitionConfig trialConfig) {
@@ -33,15 +29,12 @@ public final class TrialStatusInterpreter {
             return false;
         }
 
-        LOGGER.warn("Could not resolve study status for {} ({}) as it does not exist in CTC database",
-                trialConfig.trialId(),
-                trialConfig.acronym());
         return null;
     }
 
     @VisibleForTesting
     @NotNull
     static String extractTrialId(@NotNull CTCDatabaseEntry entry) {
-        return "MEC " + entry.studyMETC();
+        return CTCModel.CTC_TRIAL_PREFIX + " " + entry.studyMETC();
     }
 }
