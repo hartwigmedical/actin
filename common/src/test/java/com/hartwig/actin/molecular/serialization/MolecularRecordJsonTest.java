@@ -18,6 +18,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion;
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
+import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.driver.CodingContext;
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect;
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumber;
@@ -103,9 +104,10 @@ public class MolecularRecordJsonTest {
         assertEquals(0.98, characteristics.purity(), EPSILON);
         assertEquals(3.1, characteristics.ploidy(), EPSILON);
 
-        assertNotNull(characteristics.predictedTumorOrigin());
-        assertEquals("Melanoma", characteristics.predictedTumorOrigin().tumorType());
-        assertEquals(0.99, characteristics.predictedTumorOrigin().likelihood(), EPSILON);
+        PredictedTumorOrigin predictedTumorOrigin = characteristics.predictedTumorOrigin();
+        assertNotNull(predictedTumorOrigin);
+        assertEquals("Melanoma", predictedTumorOrigin.cancerType());
+        assertEquals(0.996, predictedTumorOrigin.likelihood(), EPSILON);
 
         assertFalse(characteristics.isMicrosatelliteUnstable());
         assertNull(characteristics.microsatelliteEvidence());

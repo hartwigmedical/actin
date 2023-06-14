@@ -194,7 +194,7 @@ class MolecularDAO {
                         DataUtil.toByte(record.hasSufficientQualityAndPurity()),
                         record.characteristics().purity(),
                         record.characteristics().ploidy(),
-                        predictedTumorOrigin != null ? predictedTumorOrigin.tumorType() : null,
+                        predictedTumorOrigin != null ? predictedTumorOrigin.cancerType() : null,
                         predictedTumorOrigin != null ? predictedTumorOrigin.likelihood() : null,
                         DataUtil.toByte(record.characteristics().isMicrosatelliteUnstable()),
                         DataUtil.toByte(record.characteristics().isHomologousRepairDeficient()),

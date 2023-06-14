@@ -1,10 +1,12 @@
 package com.hartwig.actin.molecular.datamodel;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
 import com.hartwig.actin.TestDataFactory;
+import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableCuppaPrediction;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
@@ -95,7 +97,7 @@ public final class TestMolecularFactory {
         return ImmutableMolecularCharacteristics.builder()
                 .purity(0.98)
                 .ploidy(3.1)
-                .predictedTumorOrigin(ImmutablePredictedTumorOrigin.builder().tumorType("Melanoma").likelihood(0.996).build())
+                .predictedTumorOrigin(createProperPredictedTumorOrigin())
                 .isMicrosatelliteUnstable(false)
                 .isHomologousRepairDeficient(false)
                 .tumorMutationalBurden(13.71)
@@ -103,6 +105,33 @@ public final class TestMolecularFactory {
                 .tumorMutationalBurdenEvidence(TestActionableEvidenceFactory.withApprovedTreatment("Pembro"))
                 .tumorMutationalLoad(185)
                 .hasHighTumorMutationalLoad(true)
+                .build();
+    }
+
+    @NotNull
+    private static ImmutablePredictedTumorOrigin createProperPredictedTumorOrigin() {
+        return ImmutablePredictedTumorOrigin.builder()
+                .predictions(List.of(ImmutableCuppaPrediction.builder()
+                                .cancerType("Melanoma")
+                                .likelihood(0.996)
+                                .snvPairwiseClassifier(0.979)
+                                .genomicPositionClassifier(0.99)
+                                .featureClassifier(0.972)
+                                .build(),
+                        ImmutableCuppaPrediction.builder()
+                                .cancerType("Lung")
+                                .likelihood(0.001)
+                                .snvPairwiseClassifier(0.0009)
+                                .genomicPositionClassifier(0.011)
+                                .featureClassifier(0.0102)
+                                .build(),
+                        ImmutableCuppaPrediction.builder()
+                                .cancerType("Esophagus/Stomach")
+                                .likelihood(0.0016)
+                                .snvPairwiseClassifier(0.0004)
+                                .genomicPositionClassifier(0.006)
+                                .featureClassifier(0.0002)
+                                .build()))
                 .build();
     }
 
