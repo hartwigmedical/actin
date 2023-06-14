@@ -8,20 +8,6 @@ import com.google.common.collect.Sets
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.ECGConfig
-import com.hartwig.actin.clinical.curation.config.ImmutableComplicationConfig
-import com.hartwig.actin.clinical.curation.config.ImmutableECGConfig
-import com.hartwig.actin.clinical.curation.config.ImmutableInfectionConfig
-import com.hartwig.actin.clinical.curation.config.ImmutableIntoleranceConfig
-import com.hartwig.actin.clinical.curation.config.ImmutableLesionLocationConfig
-import com.hartwig.actin.clinical.curation.config.ImmutableMedicationCategoryConfig
-import com.hartwig.actin.clinical.curation.config.ImmutableMedicationDosageConfig
-import com.hartwig.actin.clinical.curation.config.ImmutableMedicationNameConfig
-import com.hartwig.actin.clinical.curation.config.ImmutableMolecularTestConfig
-import com.hartwig.actin.clinical.curation.config.ImmutableNonOncologicalHistoryConfig
-import com.hartwig.actin.clinical.curation.config.ImmutableOncologicalHistoryConfig
-import com.hartwig.actin.clinical.curation.config.ImmutablePrimaryTumorConfig
-import com.hartwig.actin.clinical.curation.config.ImmutableSecondPrimaryConfig
-import com.hartwig.actin.clinical.curation.config.ImmutableToxicityConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
@@ -37,7 +23,6 @@ import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation
-import com.hartwig.actin.clinical.curation.translation.ImmutableBloodTransfusionTranslation
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation
 import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation
 import com.hartwig.actin.clinical.curation.translation.Translation
@@ -606,16 +591,16 @@ class CurationModel @VisibleForTesting internal constructor(
             val configs: List<CurationConfig> = configsForClass(key)
             for (config in configs) {
                 // TODO: Raise warnings for unused medication dosage once more final
-                if (!evaluated.contains(config.input.lowercase()) && config !is ImmutableMedicationDosageConfig) {
+                if (!evaluated.contains(config.input.lowercase()) && config !is MedicationDosageConfig) {
                     warnCount++
                     LOGGER.warn(" Curation key '{}' not used for class {}", config.input, key.simpleName)
                 }
             }
         }
         for ((key, evaluated) in evaluatedTranslations.asMap().entries) {
-            val translations: List<Translation?> = translationsForClass(key)
+            val translations: List<Translation> = translationsForClass(key)
             for (translation in translations) {
-                if (!evaluated.contains(translation) && translation !is ImmutableBloodTransfusionTranslation) {
+                if (!evaluated.contains(translation) && translation !is BloodTransfusionTranslation) {
                     warnCount++
                     LOGGER.warn(" Translation '{}' not used", translation)
                 }
@@ -630,59 +615,59 @@ class CurationModel @VisibleForTesting internal constructor(
 
     private fun configsForClass(classToLookUp: Class<out CurationConfig>): List<CurationConfig> {
         when (classToLookUp) {
-            ImmutablePrimaryTumorConfig::class.java -> {
+            PrimaryTumorConfig::class.java -> {
                 return database.primaryTumorConfigs
             }
 
-            ImmutableOncologicalHistoryConfig::class.java -> {
+            OncologicalHistoryConfig::class.java -> {
                 return database.oncologicalHistoryConfigs
             }
 
-            ImmutableSecondPrimaryConfig::class.java -> {
+            SecondPrimaryConfig::class.java -> {
                 return database.secondPrimaryConfigs
             }
 
-            ImmutableLesionLocationConfig::class.java -> {
+            LesionLocationConfig::class.java -> {
                 return database.lesionLocationConfigs
             }
 
-            ImmutableNonOncologicalHistoryConfig::class.java -> {
+            NonOncologicalHistoryConfig::class.java -> {
                 return database.nonOncologicalHistoryConfigs
             }
 
-            ImmutableComplicationConfig::class.java -> {
+            ComplicationConfig::class.java -> {
                 return database.complicationConfigs
             }
 
-            ImmutableECGConfig::class.java -> {
+            ECGConfig::class.java -> {
                 return database.ecgConfigs
             }
 
-            ImmutableInfectionConfig::class.java -> {
+            InfectionConfig::class.java -> {
                 return database.infectionConfigs
             }
 
-            ImmutableToxicityConfig::class.java -> {
+            ToxicityConfig::class.java -> {
                 return database.toxicityConfigs
             }
 
-            ImmutableMolecularTestConfig::class.java -> {
+            MolecularTestConfig::class.java -> {
                 return database.molecularTestConfigs
             }
 
-            ImmutableMedicationNameConfig::class.java -> {
+            MedicationNameConfig::class.java -> {
                 return database.medicationNameConfigs
             }
 
-            ImmutableMedicationDosageConfig::class.java -> {
+            MedicationDosageConfig::class.java -> {
                 return database.medicationDosageConfigs
             }
 
-            ImmutableMedicationCategoryConfig::class.java -> {
+            MedicationCategoryConfig::class.java -> {
                 return database.medicationCategoryConfigs
             }
 
-            ImmutableIntoleranceConfig::class.java -> {
+            IntoleranceConfig::class.java -> {
                 return database.intoleranceConfigs
             }
 
@@ -690,7 +675,7 @@ class CurationModel @VisibleForTesting internal constructor(
         }
     }
 
-    private fun translationsForClass(classToLookup: Class<out Translation>): List<Translation?> {
+    private fun translationsForClass(classToLookup: Class<out Translation>): List<Translation> {
         when (classToLookup) {
             AdministrationRouteTranslation::class.java -> {
                 return database.administrationRouteTranslations
