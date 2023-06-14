@@ -6,33 +6,26 @@ import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.util.ResourceFile
 import org.apache.logging.log4j.LogManager
-import java.util.*
+import java.util.Optional
 
 class NonOncologicalHistoryConfigFactory(private val curationValidator: CurationValidator) :
     CurationConfigFactory<NonOncologicalHistoryConfig> {
-    override fun create(fields: Map<String?, Int?>, parts: Array<String>): NonOncologicalHistoryConfig {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): NonOncologicalHistoryConfig {
         val input = parts[fields["input"]!!]
         val ignore = CurationUtil.isIgnoreString(parts[fields["name"]!!])
-        return ImmutableNonOncologicalHistoryConfig.builder()
-            .input(input)
-            .ignore(ignore)
-            .lvef(if (!ignore) toCuratedLVEF(fields, parts) else Optional.empty())
-            .priorOtherCondition(if (!ignore) toCuratedPriorOtherCondition(fields, input, parts) else Optional.empty())
-            .build()
+        return NonOncologicalHistoryConfig(
+            input = input,
+            ignore = ignore,
+            lvef = if (!ignore) toCuratedLVEF(fields, parts) else Optional.empty(),
+            priorOtherCondition = if (!ignore) toCuratedPriorOtherCondition(fields, input, parts) else Optional.empty()
+        )
     }
 
-    private fun toCuratedPriorOtherCondition(
-        fields: Map<String?, Int?>, input: String,
-        parts: Array<String>
-    ): Optional<PriorOtherCondition> {
+    private fun toCuratedPriorOtherCondition(fields: Map<String, Int>, input: String, parts: Array<String>): Optional<PriorOtherCondition> {
         return if (!isLVEF(fields, parts)) {
             val doids = CurationUtil.toDOIDs(parts[fields["doids"]!!])
             if (!curationValidator.isValidDiseaseDoidSet(doids)) {
-                LOGGER.warn(
-                    "Non-oncological history config with input '{}' contains at least one invalid doid: '{}'",
-                    input,
-                    doids
-                )
+                LOGGER.warn("Non-oncological history config with input '$input' contains at least one invalid doid: '$doids'")
             }
             Optional.of(
                 ImmutablePriorOtherCondition.builder()
@@ -50,19 +43,13 @@ class NonOncologicalHistoryConfigFactory(private val curationValidator: Curation
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(
-            NonOncologicalHistoryConfigFactory::class.java
-        )
+        private val LOGGER = LogManager.getLogger(NonOncologicalHistoryConfigFactory::class.java)
 
-        private fun toCuratedLVEF(fields: Map<String?, Int?>, parts: Array<String>): Optional<Double> {
-            return if (isLVEF(fields, parts)) {
-                Optional.of(java.lang.Double.valueOf(parts[fields["lvefValue"]!!]))
-            } else {
-                Optional.empty()
-            }
+        private fun toCuratedLVEF(fields: Map<String, Int>, parts: Array<String>): Optional<Double> {
+            return if (isLVEF(fields, parts)) Optional.of(java.lang.Double.valueOf(parts[fields["lvefValue"]!!])) else Optional.empty()
         }
 
-        private fun isLVEF(fields: Map<String?, Int?>, parts: Array<String>): Boolean {
+        private fun isLVEF(fields: Map<String, Int>, parts: Array<String>): Boolean {
             return parts[fields["isLVEF"]!!] == "1"
         }
     }

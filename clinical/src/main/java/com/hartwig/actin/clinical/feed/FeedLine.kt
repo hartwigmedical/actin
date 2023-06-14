@@ -4,7 +4,7 @@ import com.hartwig.actin.clinical.datamodel.Gender
 import org.apache.logging.log4j.util.Strings
 import java.time.LocalDate
 
-class FeedLine internal constructor(private val fields: Map<String, Int>, private val parts: Array<String>) {
+class FeedLine(private val fields: Map<String, Int>, private val parts: Array<String>) {
     fun string(column: String): String {
         require(fields.containsKey(column)) { "No column found with header '$column'" }
         val string = parts[fields[column]!!]

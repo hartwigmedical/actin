@@ -16,17 +16,18 @@ object FeedParseFunctions {
 
     @JvmStatic
     fun parseGender(gender: String): Gender {
-        if (gender.equals("male", ignoreCase = true)) {
-            return Gender.MALE
-        } else if (gender.equals("female", ignoreCase = true)) {
-            return Gender.FEMALE
+        return when {
+            gender.equals("male", ignoreCase = true) -> Gender.MALE
+
+            gender.equals("female", ignoreCase = true) -> Gender.FEMALE
+
+            else -> throw IllegalArgumentException("Could not resolve gender: $gender")
         }
-        throw IllegalArgumentException("Could not resolve gender: $gender")
     }
 
     @JvmStatic
     fun parseOptionalDate(date: String): LocalDate? {
-        return if (!date.isEmpty()) parseDate(date) else null
+        return if (date.isNotEmpty()) parseDate(date) else null
     }
 
     @JvmStatic
@@ -50,7 +51,7 @@ object FeedParseFunctions {
 
     @JvmStatic
     fun parseOptionalDouble(number: String): Double? {
-        return if (!number.isEmpty()) parseDouble(number) else null
+        return if (number.isNotEmpty()) parseDouble(number) else null
     }
 
     fun parseDouble(number: String): Double {

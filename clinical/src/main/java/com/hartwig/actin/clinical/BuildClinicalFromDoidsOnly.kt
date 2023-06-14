@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical
 
 import com.google.common.collect.Lists
-import com.google.common.collect.Sets
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.Gender
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
@@ -70,8 +69,7 @@ class BuildClinicalFromDoidsOnly(private val command: CommandLine) {
         }
 
         private fun toStringSet(paramValue: String, separator: String): Set<String> {
-            return if (!paramValue.isEmpty()) Sets.newHashSet(*paramValue.split(separator.toRegex()).dropLastWhile { it.isEmpty() }
-                .toTypedArray()) else Sets.newHashSet()
+            return if (paramValue.isNotEmpty()) paramValue.split(separator.toRegex()).dropLastWhile { it.isEmpty() }.toSet() else emptySet()
         }
     }
 }

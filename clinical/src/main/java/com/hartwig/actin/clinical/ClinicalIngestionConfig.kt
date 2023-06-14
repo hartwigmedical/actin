@@ -6,20 +6,24 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.config.Configurator
-import org.immutables.value.Value
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
 
-@Value.Immutable
-@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
-interface ClinicalIngestionConfig {
-    fun feedDirectory(): String
-    fun curationDirectory(): String
-    fun doidJson(): String
-    fun outputDirectory(): String
+data class ClinicalIngestionConfig(
+    val feedDirectory: String,
+    val curationDirectory: String,
+    val doidJson: String,
+    val outputDirectory: String
+) {
 
     companion object {
+        val LOGGER: Logger = LogManager.getLogger(ClinicalIngestionConfig::class.java)
+        private const val FEED_DIRECTORY = "feed_directory"
+        private const val CURATION_DIRECTORY = "curation_directory"
+        private const val DOID_JSON = "doid_json"
+        private const val OUTPUT_DIRECTORY = "output_directory"
+        private const val LOG_DEBUG = "log_debug"
+
         fun createOptions(): Options {
             val options = Options()
             options.addOption(FEED_DIRECTORY, true, "Directory containing the clinical feed data")
@@ -36,19 +40,12 @@ interface ClinicalIngestionConfig {
                 Configurator.setRootLevel(Level.DEBUG)
                 LOGGER.debug("Switched root level logging to DEBUG")
             }
-            return ImmutableClinicalIngestionConfig.builder()
-                .feedDirectory(ApplicationConfig.nonOptionalDir(cmd, FEED_DIRECTORY))
-                .curationDirectory(ApplicationConfig.nonOptionalDir(cmd, CURATION_DIRECTORY))
-                .doidJson(ApplicationConfig.nonOptionalFile(cmd, DOID_JSON))
-                .outputDirectory(ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY))
-                .build()
+            return ClinicalIngestionConfig(
+                feedDirectory = ApplicationConfig.nonOptionalDir(cmd, FEED_DIRECTORY),
+                curationDirectory = ApplicationConfig.nonOptionalDir(cmd, CURATION_DIRECTORY),
+                doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
+                outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY)
+            )
         }
-
-        val LOGGER = LogManager.getLogger(ClinicalIngestionConfig::class.java)
-        const val FEED_DIRECTORY = "feed_directory"
-        const val CURATION_DIRECTORY = "curation_directory"
-        const val DOID_JSON = "doid_json"
-        const val OUTPUT_DIRECTORY = "output_directory"
-        const val LOG_DEBUG = "log_debug"
     }
 }

@@ -1,10 +1,6 @@
 package com.hartwig.actin.clinical.feed.questionnaire
 
 import com.google.common.collect.Maps
-import java.util.*
-import java.util.function.Function
-import java.util.stream.Collectors
-import java.util.stream.Stream
 
 internal object QuestionnaireMapping {
     @JvmField
@@ -237,8 +233,7 @@ internal object QuestionnaireMapping {
 
     @JvmStatic
     fun mapping(entry: QuestionnaireEntry): Map<QuestionnaireKey, String?> {
-        val version: QuestionnaireVersion = QuestionnaireVersion.Companion.version(entry)
-        return when (version) {
+        return when (QuestionnaireVersion.version(entry)) {
             QuestionnaireVersion.V1_6 -> KEYS_V1_6
             QuestionnaireVersion.V1_5 -> KEYS_V1_5
             QuestionnaireVersion.V1_4 -> KEYS_V1_4
@@ -248,14 +243,12 @@ internal object QuestionnaireMapping {
             QuestionnaireVersion.V1_0 -> KEYS_V1_0
             QuestionnaireVersion.V0_2 -> KEYS_V0_2
             QuestionnaireVersion.V0_1 -> KEYS_V0_1
-            else -> throw IllegalStateException("Questionnaire version not supported for mapping: $version")
         }
     }
 
-    fun keyStrings(entry: QuestionnaireEntry): List<String?> {
-        val versionSpecificAdditionalStrings: Stream<String?>
-        versionSpecificAdditionalStrings = when (QuestionnaireVersion.Companion.version(entry)) {
-            QuestionnaireVersion.V0_1 -> Stream.of(
+    fun keyStrings(entry: QuestionnaireEntry): List<String> {
+        val versionSpecificAdditionalStrings: List<String> = when (QuestionnaireVersion.version(entry)) {
+            QuestionnaireVersion.V0_1 -> listOf(
                 "TNM criteria",
                 "Information",
                 "Significant aberration on latest lung function test",
@@ -263,15 +256,13 @@ internal object QuestionnaireMapping {
                 "Has bioptable lesion"
             )
 
-            QuestionnaireVersion.V0_2 -> Stream.of("Biopsy amenable yes/no/unknown")
-            else -> Stream.empty()
+            QuestionnaireVersion.V0_2 -> listOf("Biopsy amenable yes/no/unknown")
+            else -> emptyList()
         }
-        return Stream.of(
-            mapping(entry).values.stream().filter { obj: String? -> Objects.nonNull(obj) },
+        return listOf(
+            mapping(entry).values.filterNotNull(),
             versionSpecificAdditionalStrings,
-            Stream.of("Last date of active treatment", "Active", "Symptomatic")
-        )
-            .flatMap(Function.identity())
-            .collect(Collectors.toList())
+            listOf("Last date of active treatment", "Active", "Symptomatic")
+        ).flatten()
     }
 }

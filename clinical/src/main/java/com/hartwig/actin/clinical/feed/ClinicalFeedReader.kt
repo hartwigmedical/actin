@@ -21,26 +21,26 @@ object ClinicalFeedReader {
     fun read(clinicalFeedDirectory: String): ClinicalFeed {
         LOGGER.info("Reading clinical feed data from {}", clinicalFeedDirectory)
         val basePath = Paths.forceTrailingFileSeparator(clinicalFeedDirectory)
-        val feed: ClinicalFeed = ImmutableClinicalFeed.builder()
-            .patientEntries(readEntriesFromFile(basePath, PATIENT_TSV, FeedFileReaderFactory.createPatientReader()))
-            .questionnaireEntries(readEntriesFromFile(basePath, QUESTIONNAIRE_TSV, FeedFileReaderFactory.createQuestionnaireReader()))
-            .digitalFileEntries(readEntriesFromFile(basePath, DIGITAL_FILE_TSV, FeedFileReaderFactory.createDigitalFileReader()))
-            .surgeryEntries(readEntriesFromFile(basePath, SURGERY_TSV, FeedFileReaderFactory.createSurgeryReader()))
-            .medicationEntries(readEntriesFromFile(basePath, MEDICATION_TSV, FeedFileReaderFactory.createMedicationReader()))
-            .labEntries(readEntriesFromFile(basePath, LAB_TSV, FeedFileReaderFactory.createLabReader()))
-            .vitalFunctionEntries(readEntriesFromFile(basePath, VITAL_FUNCTION_TSV, FeedFileReaderFactory.createVitalFunctionReader()))
-            .intoleranceEntries(readEntriesFromFile(basePath, INTOLERANCE_TSV, FeedFileReaderFactory.createIntoleranceReader()))
-            .bodyWeightEntries(readEntriesFromFile(basePath, BODY_WEIGHT_TSV, FeedFileReaderFactory.createBodyWeightReader()))
-            .build()
+        val feed = ClinicalFeed(
+            patientEntries = readEntriesFromFile(basePath, PATIENT_TSV, FeedFileReaderFactory.createPatientReader()),
+            questionnaireEntries = readEntriesFromFile(basePath, QUESTIONNAIRE_TSV, FeedFileReaderFactory.createQuestionnaireReader()),
+            digitalFileEntries = readEntriesFromFile(basePath, DIGITAL_FILE_TSV, FeedFileReaderFactory.createDigitalFileReader()),
+            surgeryEntries = readEntriesFromFile(basePath, SURGERY_TSV, FeedFileReaderFactory.createSurgeryReader()),
+            medicationEntries = readEntriesFromFile(basePath, MEDICATION_TSV, FeedFileReaderFactory.createMedicationReader()),
+            labEntries = readEntriesFromFile(basePath, LAB_TSV, FeedFileReaderFactory.createLabReader()),
+            vitalFunctionEntries = readEntriesFromFile(basePath, VITAL_FUNCTION_TSV, FeedFileReaderFactory.createVitalFunctionReader()),
+            intoleranceEntries = readEntriesFromFile(basePath, INTOLERANCE_TSV, FeedFileReaderFactory.createIntoleranceReader()),
+            bodyWeightEntries = readEntriesFromFile(basePath, BODY_WEIGHT_TSV, FeedFileReaderFactory.createBodyWeightReader()),
+        )
         ClinicalFeedValidation.validate(feed)
         return feed
     }
 
     @Throws(IOException::class)
-    private fun <T : FeedEntry?> readEntriesFromFile(
+    private fun <T : FeedEntry> readEntriesFromFile(
         basePath: String, fileName: String,
         fileReader: FeedFileReader<T>
-    ): List<T?> {
+    ): List<T> {
         val filePath = basePath + fileName
         val entries = fileReader.read(filePath)
         LOGGER.info(" Read {} entries from {}", entries.size, filePath)

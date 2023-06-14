@@ -6,17 +6,17 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.util.ResourceFile
 
 class MolecularTestConfigFactory : CurationConfigFactory<MolecularTestConfig> {
-    override fun create(fields: Map<String?, Int?>, parts: Array<String>): MolecularTestConfig {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): MolecularTestConfig {
         val ignore = CurationUtil.isIgnoreString(parts[fields["test"]!!])
-        return ImmutableMolecularTestConfig.builder()
-            .input(parts[fields["input"]!!])
-            .ignore(ignore)
-            .curated(if (!ignore) curateObject(fields, parts) else null)
-            .build()
+        return MolecularTestConfig(
+            input = parts[fields["input"]!!],
+            ignore = ignore,
+            curated = if (!ignore) curateObject(fields, parts) else null
+        )
     }
 
     companion object {
-        private fun curateObject(fields: Map<String?, Int?>, parts: Array<String>): PriorMolecularTest {
+        private fun curateObject(fields: Map<String, Int>, parts: Array<String>): PriorMolecularTest {
             return ImmutablePriorMolecularTest.builder()
                 .test(parts[fields["test"]!!])
                 .item(parts[fields["item"]!!])

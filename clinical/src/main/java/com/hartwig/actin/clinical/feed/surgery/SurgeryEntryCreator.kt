@@ -5,15 +5,15 @@ import com.hartwig.actin.clinical.feed.FeedLine
 
 class SurgeryEntryCreator : FeedEntryCreator<SurgeryEntry> {
     override fun fromLine(line: FeedLine): SurgeryEntry {
-        return ImmutableSurgeryEntry.builder()
-            .subject(line.trimmed("subject"))
-            .classDisplay(line.string("class_display"))
-            .periodStart(line.date("period_start"))
-            .periodEnd(line.date("period_end"))
-            .codeCodingDisplayOriginal(line.string("code_coding_display_original"))
-            .encounterStatus(line.string("encounter_status"))
-            .procedureStatus(line.string("procedure_status"))
-            .build()
+        return SurgeryEntry(
+            subject = line.trimmed("subject"),
+            classDisplay = line.string("class_display"),
+            periodStart = line.date("period_start"),
+            periodEnd = line.date("period_end"),
+            codeCodingDisplayOriginal = line.string("code_coding_display_original"),
+            encounterStatus = line.string("encounter_status"),
+            procedureStatus = line.string("procedure_status"),
+        )
     }
 
     override fun isValid(line: FeedLine): Boolean {

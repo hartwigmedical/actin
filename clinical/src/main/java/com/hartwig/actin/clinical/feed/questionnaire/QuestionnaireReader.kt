@@ -7,11 +7,11 @@ import java.util.*
 internal object QuestionnaireReader {
     @JvmField
     val TERMS_TO_CLEAN = setOf("{", "}", "\\tab", "\\li0", "\\ri0", "\\sa0", "\\sb0", "\\u000ci0", "\\ql", "\\par", "\\u000c2", "\\ltrch")
-    fun read(entryText: String, validKeys: List<String?>): Array<String> {
+    fun read(entryText: String, validKeys: List<String>): Array<String> {
         return merge(clean(entryText).split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray(), validKeys)
     }
 
-    private fun merge(lines: Array<String>, validKeys: List<String?>): Array<String> {
+    private fun merge(lines: Array<String>, validKeys: List<String>): Array<String> {
         val merged: MutableList<String> = Lists.newArrayList()
         var curLine = newValueStringJoiner()
         for (i in lines.indices) {
@@ -29,16 +29,12 @@ internal object QuestionnaireReader {
         return merged.toTypedArray()
     }
 
-    private fun isField(line: String, validKeys: List<String?>): Boolean {
-        return line.contains(QuestionnaireExtraction.Companion.KEY_VALUE_SEPARATOR) && validKeys.stream().anyMatch { s: String? ->
-            line.contains(
-                s!!
-            )
-        }
+    private fun isField(line: String, validKeys: List<String>): Boolean {
+        return line.contains(QuestionnaireExtraction.KEY_VALUE_SEPARATOR) && validKeys.any { line.contains(it) }
     }
 
     private fun newValueStringJoiner(): StringJoiner {
-        return StringJoiner(QuestionnaireExtraction.Companion.VALUE_LIST_SEPARATOR_1)
+        return StringJoiner(QuestionnaireExtraction.VALUE_LIST_SEPARATOR_1)
     }
 
     private fun clean(entryText: String): String {

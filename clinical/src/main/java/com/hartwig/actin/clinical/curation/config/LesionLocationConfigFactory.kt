@@ -5,12 +5,12 @@ import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import java.util.*
 
 class LesionLocationConfigFactory : CurationConfigFactory<LesionLocationConfig> {
-    override fun create(fields: Map<String?, Int?>, parts: Array<String>): LesionLocationConfig {
-        return ImmutableLesionLocationConfig.builder()
-            .input(parts[fields["input"]!!])
-            .location(parts[fields["location"]!!])
-            .category(toCategory(parts[fields["category"]!!]))
-            .build()
+    override fun create(fields: Map<String, Int>, parts: Array<String>): LesionLocationConfig {
+        return LesionLocationConfig(
+            input = parts[fields["input"]!!],
+            location = parts[fields["location"]!!],
+            category = toCategory(parts[fields["category"]!!])
+        )
     }
 
     companion object {

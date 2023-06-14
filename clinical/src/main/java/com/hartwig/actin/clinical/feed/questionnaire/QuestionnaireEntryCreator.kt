@@ -5,13 +5,13 @@ import com.hartwig.actin.clinical.feed.FeedLine
 
 class QuestionnaireEntryCreator : FeedEntryCreator<QuestionnaireEntry> {
     override fun fromLine(line: FeedLine): QuestionnaireEntry {
-        return ImmutableQuestionnaireEntry.builder()
-            .subject(line.trimmed("subject"))
-            .authored(line.date("authored"))
-            .description(line.string("description"))
-            .itemText(line.string("item_text"))
-            .text(line.string("text"))
-            .build()
+        return QuestionnaireEntry(
+            subject = line.trimmed("subject"),
+            authored = line.date("authored"),
+            description = line.string("description"),
+            itemText = line.string("item_text"),
+            text = line.string("text")
+        )
     }
 
     override fun isValid(line: FeedLine): Boolean {

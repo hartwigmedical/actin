@@ -21,7 +21,7 @@ import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntryCreator
 
 object FeedFileReaderFactory {
     fun createPatientReader(): FeedFileReader<PatientEntry> {
-        return FeedFileReader.Companion.create<PatientEntry>(PatientEntryCreator())
+        return FeedFileReader.create(PatientEntryCreator())
     }
 
     fun createQuestionnaireReader(): FeedFileReader<QuestionnaireEntry> {
@@ -29,30 +29,30 @@ object FeedFileReaderFactory {
     }
 
     fun createDigitalFileReader(): FeedFileReader<DigitalFileEntry> {
-        return FeedFileReader.Companion.create<DigitalFileEntry>(DigitalFileEntryCreator())
+        return FeedFileReader.create(DigitalFileEntryCreator())
     }
 
     fun createSurgeryReader(): FeedFileReader<SurgeryEntry> {
-        return FeedFileReader.Companion.create<SurgeryEntry>(SurgeryEntryCreator())
+        return FeedFileReader.create(SurgeryEntryCreator())
     }
 
     fun createMedicationReader(): FeedFileReader<MedicationEntry> {
-        return FeedFileReader.Companion.create<MedicationEntry>(MedicationEntryCreator())
+        return FeedFileReader.create(MedicationEntryCreator())
     }
 
     fun createLabReader(): FeedFileReader<LabEntry> {
-        return FeedFileReader.Companion.create<LabEntry>(LabEntryCreator())
+        return FeedFileReader.create(LabEntryCreator())
     }
 
     fun createVitalFunctionReader(): FeedFileReader<VitalFunctionEntry> {
-        return FeedFileReader.Companion.create<VitalFunctionEntry>(VitalFunctionEntryCreator())
+        return FeedFileReader.create(VitalFunctionEntryCreator())
     }
 
     fun createIntoleranceReader(): FeedFileReader<IntoleranceEntry> {
-        return FeedFileReader.Companion.create<IntoleranceEntry>(IntoleranceEntryCreator())
+        return FeedFileReader.create(IntoleranceEntryCreator())
     }
 
     fun createBodyWeightReader(): FeedFileReader<BodyWeightEntry> {
-        return FeedFileReader.Companion.create<BodyWeightEntry>(BodyWeightEntryCreator())
+        return FeedFileReader.create(BodyWeightEntryCreator())
     }
 }

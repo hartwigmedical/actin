@@ -14,35 +14,28 @@ import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
-import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation
 import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation
-import org.immutables.value.Value
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
 
-@Value.Immutable
-@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
-abstract class CurationDatabase {
-    abstract fun primaryTumorConfigs(): List<PrimaryTumorConfig?>
-    abstract fun oncologicalHistoryConfigs(): List<OncologicalHistoryConfig?>
-    abstract fun treatmentHistoryEntryConfigs(): List<TreatmentHistoryEntryConfig?>
-    abstract fun secondPrimaryConfigs(): List<SecondPrimaryConfig?>
-    abstract fun lesionLocationConfigs(): List<LesionLocationConfig?>
-    abstract fun nonOncologicalHistoryConfigs(): List<NonOncologicalHistoryConfig?>
-    abstract fun ecgConfigs(): List<ECGConfig?>
-    abstract fun infectionConfigs(): List<InfectionConfig?>
-    abstract fun complicationConfigs(): List<ComplicationConfig?>
-    abstract fun toxicityConfigs(): List<ToxicityConfig?>
-    abstract fun molecularTestConfigs(): List<MolecularTestConfig?>
-    abstract fun medicationNameConfigs(): List<MedicationNameConfig?>
-    abstract fun medicationDosageConfigs(): List<MedicationDosageConfig?>
-    abstract fun medicationCategoryConfigs(): List<MedicationCategoryConfig?>
-    abstract fun intoleranceConfigs(): List<IntoleranceConfig?>
-    abstract fun administrationRouteTranslations(): List<AdministrationRouteTranslation?>
-    abstract fun laboratoryTranslations(): List<LaboratoryTranslation?>
-    abstract fun toxicityTranslations(): List<ToxicityTranslation?>
-    abstract fun bloodTransfusionTranslations(): List<BloodTransfusionTranslation?>
-}
+data class CurationDatabase(
+    val primaryTumorConfigs: List<PrimaryTumorConfig>,
+    val oncologicalHistoryConfigs: List<OncologicalHistoryConfig>,
+    val secondPrimaryConfigs: List<SecondPrimaryConfig>,
+    val lesionLocationConfigs: List<LesionLocationConfig>,
+    val nonOncologicalHistoryConfigs: List<NonOncologicalHistoryConfig>,
+    val ecgConfigs: List<ECGConfig>,
+    val infectionConfigs: List<InfectionConfig>,
+    val complicationConfigs: List<ComplicationConfig>,
+    val toxicityConfigs: List<ToxicityConfig>,
+    val molecularTestConfigs: List<MolecularTestConfig>,
+    val medicationNameConfigs: List<MedicationNameConfig>,
+    val medicationDosageConfigs: List<MedicationDosageConfig>,
+    val medicationCategoryConfigs: List<MedicationCategoryConfig>,
+    val intoleranceConfigs: List<IntoleranceConfig>,
+    val administrationRouteTranslations: List<AdministrationRouteTranslation>,
+    val laboratoryTranslations: List<LaboratoryTranslation>,
+    val toxicityTranslations: List<ToxicityTranslation>,
+    val bloodTransfusionTranslations: List<BloodTransfusionTranslation>
+)

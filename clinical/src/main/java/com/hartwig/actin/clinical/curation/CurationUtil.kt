@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical.curation
 
 import com.google.common.collect.Sets
-import java.util.*
 
 object CurationUtil {
     private const val IGNORE = "<ignore>"
@@ -15,7 +14,7 @@ object CurationUtil {
     fun capitalizeFirstLetterOnly(string: String): String {
         return if (string.isEmpty()) {
             string
-        } else string.substring(0, 1).uppercase(Locale.getDefault()) + string.substring(1).lowercase(Locale.getDefault())
+        } else string.substring(0, 1).uppercase() + string.substring(1).lowercase()
     }
 
     @JvmStatic

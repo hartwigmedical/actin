@@ -5,12 +5,12 @@ import com.hartwig.actin.clinical.feed.FeedLine
 
 class BodyWeightEntryCreator : FeedEntryCreator<BodyWeightEntry> {
     override fun fromLine(line: FeedLine): BodyWeightEntry {
-        return ImmutableBodyWeightEntry.builder()
-            .subject(line.trimmed("subject"))
-            .valueQuantityValue(line.number("valueQuantity_value"))
-            .valueQuantityUnit(line.string("valueQuantity_unit"))
-            .effectiveDateTime(line.date("effectiveDateTime"))
-            .build()
+        return BodyWeightEntry(
+            subject = line.trimmed("subject"),
+            valueQuantityValue = line.number("valueQuantity_value"),
+            valueQuantityUnit = line.string("valueQuantity_unit"),
+            effectiveDateTime = line.date("effectiveDateTime")
+        )
     }
 
     override fun isValid(line: FeedLine): Boolean {

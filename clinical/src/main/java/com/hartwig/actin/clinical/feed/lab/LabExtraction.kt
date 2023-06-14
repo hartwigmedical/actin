@@ -11,19 +11,19 @@ object LabExtraction {
 
     @JvmStatic
     fun extract(entry: LabEntry): LabValue {
-        val limits = extractLimits(entry.referenceRangeText())
-        val value = entry.valueQuantityValue()
+        val limits = extractLimits(entry.referenceRangeText)
+        val value = entry.valueQuantityValue
         var isOutsideRef: Boolean? = null
         if (limits.lower() != null || limits.upper() != null) {
             isOutsideRef = limits.lower() != null && value < limits.lower()!! || limits.upper() != null && value > limits.upper()!!
         }
         return ImmutableLabValue.builder()
-            .date(entry.effectiveDateTime())
-            .code(entry.codeCodeOriginal())
-            .name(entry.codeDisplayOriginal())
-            .comparator(entry.valueQuantityComparator())
+            .date(entry.effectiveDateTime)
+            .code(entry.codeCodeOriginal)
+            .name(entry.codeDisplayOriginal)
+            .comparator(entry.valueQuantityComparator)
             .value(value)
-            .unit(LabUnitResolver.resolve(entry.valueQuantityUnit()))
+            .unit(LabUnitResolver.resolve(entry.valueQuantityUnit))
             .refLimitLow(limits.lower())
             .refLimitUp(limits.upper())
             .isOutsideRef(isOutsideRef)
@@ -56,7 +56,7 @@ object LabExtraction {
     fun findSeparatingHyphenIndex(referenceRangeText: String): Int {
         assert(referenceRangeText.contains("-"))
         var isReadingDigit = false
-        for (i in 0 until referenceRangeText.length) {
+        for (i in referenceRangeText.indices) {
             if (isReadingDigit && referenceRangeText[i] == '-') {
                 return i
             } else if (isDigit(referenceRangeText[i])) {
@@ -67,7 +67,7 @@ object LabExtraction {
     }
 
     private fun isDigit(character: Char): Boolean {
-        return character >= '0' && character <= '9'
+        return character in '0'..'9'
     }
 
     class Limits(private val lower: Double?, private val upper: Double?) {

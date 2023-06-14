@@ -11,13 +11,13 @@ class PatientEntryCreator : FeedEntryCreator<PatientEntry> {
         if (subjectNormal != subjectTrimmed) {
             LOGGER.warn("Patient ID detected with trailing whitespace: '{}'", subjectNormal)
         }
-        return ImmutablePatientEntry.builder()
-            .subject(subjectTrimmed)
-            .birthYear(line.integer("birth_year"))
-            .gender(line.gender("gender"))
-            .periodStart(line.date("period_start"))
-            .periodEnd(line.optionalDate("period_end"))
-            .build()
+        return PatientEntry(
+            subject = subjectTrimmed,
+            birthYear = line.integer("birth_year"),
+            gender = line.gender("gender"),
+            periodStart = line.date("period_start"),
+            periodEnd = line.optionalDate("period_end")
+        )
     }
 
     override fun isValid(line: FeedLine): Boolean {

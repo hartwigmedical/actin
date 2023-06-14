@@ -6,14 +6,14 @@ import org.apache.logging.log4j.LogManager
 
 class VitalFunctionEntryCreator : FeedEntryCreator<VitalFunctionEntry> {
     override fun fromLine(line: FeedLine): VitalFunctionEntry {
-        return ImmutableVitalFunctionEntry.builder()
-            .subject(line.trimmed("subject"))
-            .effectiveDateTime(line.date("effectiveDateTime"))
-            .codeDisplayOriginal(line.string("code_display_original"))
-            .componentCodeDisplay(line.string("component_code_display"))
-            .quantityUnit(line.string("quantity_unit"))
-            .quantityValue(line.number("value_quantity"))
-            .build()
+        return VitalFunctionEntry(
+            subject = line.trimmed("subject"),
+            effectiveDateTime = line.date("effectiveDateTime"),
+            codeDisplayOriginal = line.string("code_display_original"),
+            componentCodeDisplay = line.string("component_code_display"),
+            quantityUnit = line.string("quantity_unit"),
+            quantityValue = line.number("value_quantity")
+        )
     }
 
     override fun isValid(line: FeedLine): Boolean {

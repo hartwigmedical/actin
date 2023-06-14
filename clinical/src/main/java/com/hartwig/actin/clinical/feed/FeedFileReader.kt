@@ -7,7 +7,7 @@ import java.io.File
 import java.io.IOException
 import java.nio.file.Files
 
-class FeedFileReader<T : FeedEntry?>(private val feedEntryCreator: FeedEntryCreator<T>, private val expectLineBreaks: Boolean) {
+class FeedFileReader<T : FeedEntry>(private val feedEntryCreator: FeedEntryCreator<T>, private val expectLineBreaks: Boolean) {
     @Throws(IOException::class)
     fun read(feedTsv: String): List<T> {
         val lines = Files.readAllLines(File(feedTsv).toPath())
@@ -46,7 +46,7 @@ class FeedFileReader<T : FeedEntry?>(private val feedEntryCreator: FeedEntryCrea
     private fun addToEntries(entries: MutableList<T>, fields: Map<String, Int>, line: String) {
         val reformatted = fixLineBreaks(line)
         val parts = splitFeedLine(reformatted)
-        if (!allEmpty(parts)) {
+        if (parts.any { it.isNotEmpty() }) {
             val feedLine = FeedLine(fields, parts)
             if (feedEntryCreator.isValid(feedLine)) {
                 entries.add(feedEntryCreator.fromLine(feedLine))
@@ -56,7 +56,7 @@ class FeedFileReader<T : FeedEntry?>(private val feedEntryCreator: FeedEntryCrea
 
     companion object {
         private const val DELIMITER = "\t"
-        fun <T : FeedEntry?> create(feedEntryCreator: FeedEntryCreator<T>): FeedFileReader<T> {
+        fun <T : FeedEntry> create(feedEntryCreator: FeedEntryCreator<T>): FeedFileReader<T> {
             return FeedFileReader(feedEntryCreator, false)
         }
 
@@ -64,28 +64,23 @@ class FeedFileReader<T : FeedEntry?>(private val feedEntryCreator: FeedEntryCrea
             return splitFeedLine(line).size == fields.size
         }
 
-        private fun splitFeedLine(line: String): Array<String?> {
+        private fun splitFeedLine(line: String): Array<String> {
             return cleanQuotes(line.split(DELIMITER.toRegex()).dropLastWhile { it.isEmpty() }
                 .toTypedArray())
         }
 
         @JvmStatic
         @VisibleForTesting
-        fun cleanQuotes(inputs: Array<String>): Array<String?> {
-            val cleaned = arrayOfNulls<String>(inputs.size)
-            for (i in inputs.indices) {
-                cleaned[i] = cleanQuotes(inputs[i])
-            }
-            return cleaned
+        fun cleanQuotes(inputs: Array<String>): Array<String> {
+            return inputs.indices.map { cleanQuotes(inputs[it]) }.toTypedArray()
         }
 
         private fun cleanQuotes(input: String): String {
             val firstQuote = input.indexOf("\"")
             val lastQuote = input.lastIndexOf("\"")
-            var cleaned = input
-            if (firstQuote >= 0 && lastQuote >= 0 && lastQuote > firstQuote) {
-                cleaned = input.substring(firstQuote + 1, lastQuote)
-            }
+            val cleaned = if (firstQuote >= 0 && lastQuote >= 0 && lastQuote > firstQuote) {
+                input.substring(firstQuote + 1, lastQuote)
+            } else input
 
             // Replace all double quotes with single quotes.
             return cleaned.replace("\"\"".toRegex(), "\"")
@@ -94,15 +89,6 @@ class FeedFileReader<T : FeedEntry?>(private val feedEntryCreator: FeedEntryCrea
         @VisibleForTesting
         fun fixLineBreaks(input: String): String {
             return input.replace("\\n", "\n")
-        }
-
-        private fun allEmpty(array: Array<String?>): Boolean {
-            for (entry in array) {
-                if (!entry!!.isEmpty()) {
-                    return false
-                }
-            }
-            return true
         }
     }
 }

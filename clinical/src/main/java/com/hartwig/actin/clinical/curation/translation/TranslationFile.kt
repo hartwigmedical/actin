@@ -10,7 +10,7 @@ object TranslationFile {
     private const val DELIMITER = "\t"
 
     @Throws(IOException::class)
-    fun <T : Translation?> read(tsv: String, factory: TranslationFactory<T>): List<T> {
+    fun <T : Translation> read(tsv: String, factory: TranslationFactory<T>): List<T> {
         val lines = Files.readAllLines(File(tsv).toPath())
         val translations: MutableList<T> = Lists.newArrayList()
         val fields = TabularFile.createFields(lines[0].split(DELIMITER.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())

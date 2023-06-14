@@ -7,11 +7,10 @@ import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus
 import com.hartwig.actin.clinical.datamodel.InfectionStatus
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import org.apache.logging.log4j.LogManager
-import java.util.function.BiFunction
 
 internal object QuestionnaireCuration {
     private val LOGGER = LogManager.getLogger(QuestionnaireCuration::class.java)
-    private val OPTION_MAPPING: MutableMap<String?, Boolean?> = Maps.newHashMap()
+    private val OPTION_MAPPING: MutableMap<String, Boolean?> = Maps.newHashMap()
     private val STAGE_MAPPING: MutableMap<String, TumorStage?> = Maps.newHashMap()
 
     init {
@@ -76,7 +75,7 @@ internal object QuestionnaireCuration {
 
     @JvmStatic
     fun toOption(option: String?): Boolean? {
-        if (option == null || option.isEmpty()) {
+        if (option.isNullOrEmpty()) {
             return null
         }
         if (!isConfiguredOption(option)) {
@@ -86,13 +85,13 @@ internal object QuestionnaireCuration {
         return OPTION_MAPPING[option]
     }
 
-    fun isConfiguredOption(option: String?): Boolean {
+    private fun isConfiguredOption(option: String?): Boolean {
         return OPTION_MAPPING.containsKey(option)
     }
 
     @JvmStatic
     fun toStage(stage: String?): TumorStage? {
-        if (stage == null || stage.isEmpty()) {
+        if (stage.isNullOrEmpty()) {
             return null
         }
         if (!STAGE_MAPPING.containsKey(stage)) {
@@ -104,11 +103,11 @@ internal object QuestionnaireCuration {
 
     @JvmStatic
     fun toWHO(integer: String?): Int? {
-        if (integer == null || integer.isEmpty()) {
+        if (integer.isNullOrEmpty()) {
             return null
         }
         val value = integer.toInt()
-        return if (value >= 0 && value <= 5) {
+        return if (value in 0..5) {
             value
         } else {
             LOGGER.warn("WHO status not between 0 and 5: '{}'", value)
@@ -123,20 +122,12 @@ internal object QuestionnaireCuration {
 
     @JvmStatic
     fun toInfectionStatus(significantCurrentInfection: String?): InfectionStatus? {
-        return buildFromDescription(significantCurrentInfection) { obj: Boolean?, hasActiveInfection: String? ->
-            buildInfectionStatus(
-                hasActiveInfection
-            )
-        }
+        return buildFromDescription(significantCurrentInfection, ::buildInfectionStatus)
     }
 
     @JvmStatic
     fun toECG(significantAberrationLatestECG: String?): ECG? {
-        return buildFromDescription(significantAberrationLatestECG) { obj: Boolean?, hasSignificantAberrationLatestECG: String? ->
-            buildECG(
-                hasSignificantAberrationLatestECG
-            )
-        }
+        return buildFromDescription(significantAberrationLatestECG, ::buildECG)
     }
 
     private fun buildInfectionStatus(hasActiveInfection: Boolean, description: String?): InfectionStatus {
@@ -150,17 +141,16 @@ internal object QuestionnaireCuration {
             .build()
     }
 
-    private fun <T> buildFromDescription(description: String?, buildFunction: BiFunction<Boolean, String?, T>): T? {
-        val present: Boolean?
-        present = if (isConfiguredOption(description)) {
+    private fun <T> buildFromDescription(description: String?, buildFunction: (Boolean, String?) -> T): T? {
+        val present: Boolean? = if (isConfiguredOption(description)) {
             toOption(description)
-        } else if (description != null && !description.isEmpty()) {
+        } else if (!description.isNullOrEmpty()) {
             true
         } else {
             null
         }
         return if (present == null) {
             null
-        } else buildFunction.apply(present, description)
+        } else buildFunction(present, description)
     }
 }

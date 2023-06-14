@@ -5,16 +5,16 @@ import com.hartwig.actin.clinical.feed.FeedLine
 
 class LabEntryCreator : FeedEntryCreator<LabEntry> {
     override fun fromLine(line: FeedLine): LabEntry {
-        return ImmutableLabEntry.builder()
-            .subject(line.trimmed("subject"))
-            .codeCodeOriginal(line.string("code_code_original"))
-            .codeDisplayOriginal(line.string("code_display_original"))
-            .valueQuantityComparator(line.string("valueQuantity_comparator"))
-            .valueQuantityValue(line.number("valueQuantity_value"))
-            .valueQuantityUnit(line.string("valueQuantity_unit"))
-            .referenceRangeText(line.string("referenceRange_text"))
-            .effectiveDateTime(line.date("effectiveDateTime"))
-            .build()
+        return LabEntry(
+            subject = line.trimmed("subject"),
+            codeCodeOriginal = line.string("code_code_original"),
+            codeDisplayOriginal = line.string("code_display_original"),
+            valueQuantityComparator = line.string("valueQuantity_comparator"),
+            valueQuantityValue = line.number("valueQuantity_value"),
+            valueQuantityUnit = line.string("valueQuantity_unit"),
+            referenceRangeText = line.string("referenceRange_text"),
+            effectiveDateTime = line.date("effectiveDateTime")
+        )
     }
 
     override fun isValid(line: FeedLine): Boolean {

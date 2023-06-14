@@ -21,7 +21,7 @@ internal enum class QuestionnaireVersion(private val specificSearchString: Strin
     );
 
     private fun isMatch(entry: QuestionnaireEntry): Boolean {
-        val lines = entry.text().split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val lines = entry.text.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         var match = false
         for (line in lines) {
             if (line.contains(specificSearchString)) {
@@ -45,8 +45,8 @@ internal enum class QuestionnaireVersion(private val specificSearchString: Strin
                     matches.add(version)
                 }
             }
-            check(matches.size <= 1) { "Questionnaire for " + entry.subject() + " matched to multiple versions: " + matches }
-            check(!matches.isEmpty()) { "Could not find a match for questionnaire version for " + entry.subject() }
+            check(matches.size <= 1) { "Questionnaire for " + entry.subject + " matched to multiple versions: " + matches }
+            check(matches.isNotEmpty()) { "Could not find a match for questionnaire version for " + entry.subject }
             return matches.iterator().next()
         }
     }

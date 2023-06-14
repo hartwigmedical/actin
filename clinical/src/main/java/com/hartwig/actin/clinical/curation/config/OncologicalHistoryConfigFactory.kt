@@ -1,19 +1,23 @@
 package com.hartwig.actin.clinical.curation.config
 
+import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
+import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
+import com.hartwig.actin.util.ResourceFile
 
 class OncologicalHistoryConfigFactory : CurationConfigFactory<OncologicalHistoryConfig> {
-    override fun create(fields: Map<String?, Int?>, parts: Array<String>): OncologicalHistoryConfig {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): OncologicalHistoryConfig {
         val ignore: Boolean = CurationUtil.isIgnoreString(parts[fields["name"]!!])
-        return ImmutableOncologicalHistoryConfig.builder()
-            .input(parts[fields["input"]!!])
-            .ignore(ignore)
-            .curated(if (!ignore) curateObject(fields, parts) else null)
-            .build()
+        return OncologicalHistoryConfig(
+            input = parts[fields["input"]!!],
+            ignore = ignore,
+            curated = if (!ignore) curateObject(fields, parts) else null
+        )
     }
 
     companion object {
-        private fun curateObject(fields: Map<String?, Int?>, parts: Array<String>): PriorTumorTreatment {
+        private fun curateObject(fields: Map<String, Int>, parts: Array<String>): PriorTumorTreatment {
             return ImmutablePriorTumorTreatment.builder()
                 .name(parts[fields["name"]!!])
                 .startYear(ResourceFile.optionalInteger(parts[fields["startYear"]!!]))
