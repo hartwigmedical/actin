@@ -25,9 +25,11 @@ import com.hartwig.actin.clinical.datamodel.treatment.SurgicalTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableSurgeryHistoryDetails;
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTherapyHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
 import org.apache.logging.log4j.util.Strings;
@@ -143,7 +145,12 @@ public final class TestClinicalFactory {
 
     @NotNull
     private static TreatmentHistoryEntry therapyHistoryEntry(Set<Therapy> therapies, int startYear, Intent intent) {
-        return ImmutableTreatmentHistoryEntry.builder().treatments(therapies).startYear(startYear).intent(intent).build();
+        return ImmutableTreatmentHistoryEntry.builder()
+                .treatments(therapies)
+                .startYear(startYear)
+                .intent(intent)
+                .therapyHistoryDetails(ImmutableTherapyHistoryDetails.builder().bestResponse(TreatmentResponse.PARTIAL_RESPONSE).build())
+                .build();
     }
 
     @NotNull
