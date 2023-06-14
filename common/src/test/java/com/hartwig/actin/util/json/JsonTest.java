@@ -184,7 +184,7 @@ public class JsonTest {
     }
 
     @NotNull
-    private static JsonArray jsonArrayFromCollection(Collection<Integer> collection) {
+    private static JsonArray jsonArrayFromCollection(@NotNull Collection<Integer> collection) {
         JsonArray jsonArray = new JsonArray();
         collection.stream().map(i -> {
             JsonObject jsonObject = new JsonObject();
@@ -195,7 +195,7 @@ public class JsonTest {
         return jsonArray;
     }
 
-    private static int getIndex(JsonObject jsonObject) {
+    private static int getIndex(@NotNull JsonObject jsonObject) {
         return jsonObject.get("index").getAsInt();
     }
 }

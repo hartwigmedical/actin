@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.datamodel.characteristics;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.immutables.value.Value;
@@ -13,14 +14,19 @@ public abstract class PredictedTumorOrigin {
     @NotNull
     @Value.Derived
     public String cancerType() {
-        return predictions().get(0).cancerType();
+        return bestPrediction().cancerType();
     }
 
     @Value.Derived
     public double likelihood() {
-        return predictions().get(0).likelihood();
+        return bestPrediction().likelihood();
     }
 
     @NotNull
     public abstract List<CuppaPrediction> predictions();
+
+    @NotNull
+    private CuppaPrediction bestPrediction() {
+        return predictions().stream().max(Comparator.comparing(CuppaPrediction::likelihood)).orElseThrow();
+    }
 }
