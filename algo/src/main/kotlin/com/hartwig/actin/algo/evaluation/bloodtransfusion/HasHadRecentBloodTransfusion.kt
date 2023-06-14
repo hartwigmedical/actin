@@ -4,13 +4,12 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.util.ApplicationConfig
 import java.time.LocalDate
 
 class HasHadRecentBloodTransfusion internal constructor(private val product: TransfusionProduct, private val minDate: LocalDate) :
     EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val productString = product.display().lowercase(ApplicationConfig.LOCALE)
+        val productString = product.display().lowercase()
         for (transfusion in record.clinical().bloodTransfusions()) {
             if (transfusion.product().equals(product.display(), ignoreCase = true) && minDate.isBefore(transfusion.date())) {
                 return EvaluationFactory.pass(

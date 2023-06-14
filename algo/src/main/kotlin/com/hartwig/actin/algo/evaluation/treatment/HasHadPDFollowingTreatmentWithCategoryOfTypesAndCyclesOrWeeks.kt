@@ -8,8 +8,8 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory.undetermined
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.DateComparison.minWeeksBetweenDates
 import com.hartwig.actin.algo.evaluation.util.Format.concat
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 
 class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks internal constructor(
     private val category: TreatmentCategory,

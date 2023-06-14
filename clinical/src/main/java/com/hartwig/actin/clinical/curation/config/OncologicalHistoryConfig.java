@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.curation.config;
 
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;

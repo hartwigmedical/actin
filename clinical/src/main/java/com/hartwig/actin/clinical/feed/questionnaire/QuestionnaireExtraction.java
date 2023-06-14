@@ -201,6 +201,6 @@ public final class QuestionnaireExtraction {
             return null;
         }
 
-        throw new IllegalStateException("Could not find key " + key + " in questionnaire " + String.join("\n", lines));
+        throw new IllegalStateException("Could not find key \"" + key + "\" in questionnaire " + String.join("\n", lines));
     }
 }

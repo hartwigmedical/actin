@@ -5,12 +5,11 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
-import com.hartwig.actin.util.ApplicationConfig
 
 class HasHadPriorConditionWithName internal constructor(private val nameToFind: String) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasHadPriorConditionWithName = OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())
-            .any { it.name().lowercase(ApplicationConfig.LOCALE).contains(nameToFind.lowercase(ApplicationConfig.LOCALE)) }
+            .any { it.name().lowercase().contains(nameToFind.lowercase()) }
 
         if (hasHadPriorConditionWithName) {
             return EvaluationFactory.pass("Patient has history of $nameToFind", "History of $nameToFind")

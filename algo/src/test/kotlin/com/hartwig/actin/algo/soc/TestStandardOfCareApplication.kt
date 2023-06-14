@@ -14,10 +14,10 @@ import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import org.apache.logging.log4j.LogManager
 import java.io.File

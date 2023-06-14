@@ -14,7 +14,6 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_TERM_X to hasPriorConditionWithConfiguredDOIDTermCreator(),
             EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME to hasPriorConditionWithConfiguredNameCreator(),
             EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE to hasPriorConditionWithDoidCreator(DoidConstants.AUTOIMMUNE_DISEASE_DOID),
-            EligibilityRule.HAS_HISTORY_OF_ANGINA to hasHistoryOfAnginaCreator(),
             EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE to hasHistoryOfCardiacDiseaseCreator(),
             EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE to hasPriorConditionWithDoidCreator(DoidConstants.CARDIOVASCULAR_DISEASE_DOID),
             EligibilityRule.HAS_HISTORY_OF_CONGESTIVE_HEART_FAILURE_WITH_AT_LEAST_NYHA_CLASS_X to hasHistoryOfCongestiveHeartFailureWithNYHACreator(),
@@ -45,7 +44,6 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_CT to hasContraindicationToCTCreator(),
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_MRI to hasContraindicationToMRICreator(),
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_PET_MRI to hasContraindicationToMRICreator(),
-            EligibilityRule.HAS_POST_OPERATIVE_BASELINE_CONTRAST_ENHANCED_MRI_SCAN to hasPostOperativeBaselineContrastEnhancedMRIScanCreator(),
             EligibilityRule.HAS_MRI_SCAN_DOCUMENTING_STABLE_DISEASE to hasMRIScanDocumentingStableDiseaseCreator(),
             EligibilityRule.IS_IN_DIALYSIS to isInDialysisCreator(),
             EligibilityRule.HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS to hasAdequateVeinAccessCreator(),
@@ -75,17 +73,6 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             val maxMonthsAgo = functionInputResolver().createOneIntegerInput(function)
             val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong())
             HasHadPriorConditionWithDoidRecently(doidModel(), doidToFind, minDate)
-        }
-    }
-
-    private fun hasHistoryOfAnginaCreator(): FunctionCreator {
-        return FunctionCreator {
-            Or(
-                listOf(
-                    HasHadPriorConditionWithDoid(doidModel(), DoidConstants.INTERMEDIATE_CORONARY_SYNDROME_DOID),
-                    HasHadPriorConditionWithDoid(doidModel(), DoidConstants.PRINZMETAL_ANGINA_DOID)
-                )
-            )
         }
     }
 
@@ -135,10 +122,6 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
 
     private fun hasContraindicationToMRICreator(): FunctionCreator {
         return FunctionCreator { HasContraindicationToMRI(doidModel()) }
-    }
-
-    private fun hasPostOperativeBaselineContrastEnhancedMRIScanCreator(): FunctionCreator {
-        return FunctionCreator { HasPostOperativeBaselineContrastEnhancedMRIScan() }
     }
 
     private fun hasMRIScanDocumentingStableDiseaseCreator(): FunctionCreator {

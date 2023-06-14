@@ -23,9 +23,12 @@ import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.clinical.datamodel.MedicationStatus;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.Surgery;
+import com.hartwig.actin.clinical.datamodel.treatment.history.SurgeryHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.SurgeryStatus;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
+import com.hartwig.actin.clinical.datamodel.ToxicityEvaluation;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
@@ -33,6 +36,7 @@ import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory;
 import com.hartwig.actin.clinical.feed.TestFeedFactory;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 public class ClinicalRecordsFactoryTest {
@@ -67,8 +71,10 @@ public class ClinicalRecordsFactoryTest {
         assertTumorDetails(record.tumor());
         assertClinicalStatus(record.clinicalStatus());
         assertToxicities(record.toxicities());
+        assertToxicityEvaluations(record.toxicityEvaluations());
         assertAllergies(record.intolerances());
         assertSurgeries(record.surgeries());
+        assertSurgicalTreatments(record.surgicalTreatments());
         assertBodyWeights(record.bodyWeights());
         assertVitalFunctions(record.vitalFunctions());
         assertBloodTransfusions(record.bloodTransfusions());
@@ -132,13 +138,32 @@ public class ClinicalRecordsFactoryTest {
 
     @NotNull
     private static Toxicity findByName(@NotNull List<Toxicity> toxicities, @NotNull String name) {
-        for (Toxicity toxicity : toxicities) {
-            if (toxicity.name().equals(name)) {
-                return toxicity;
-            }
-        }
+        return toxicities.stream()
+                .filter(toxicity -> toxicity.name().equals(name))
+                .findAny()
+                .orElseThrow(() -> new IllegalStateException("Could not find toxicity with name: " + name));
+    }
 
-        throw new IllegalStateException("Could not find toxicity with name: " + name);
+    private static void assertToxicityEvaluations(@Nullable List<ToxicityEvaluation> toxicityEvaluations) {
+        assertNotNull(toxicityEvaluations);
+        assertEquals(2, toxicityEvaluations.size());
+
+        ToxicityEvaluation toxicity1 = findToxicityEvaluationByName(toxicityEvaluations, "Nausea");
+        assertEquals(ToxicitySource.EHR, toxicity1.source());
+        assertEquals(2, (int) toxicity1.toxicities().iterator().next().grade());
+
+        ToxicityEvaluation toxicity2 = findToxicityEvaluationByName(toxicityEvaluations, "Pain");
+        assertEquals(ToxicitySource.EHR, toxicity2.source());
+        assertEquals(0, (int) toxicity2.toxicities().iterator().next().grade());
+    }
+
+    @NotNull
+    private static ToxicityEvaluation findToxicityEvaluationByName(@NotNull List<ToxicityEvaluation> toxicityEvaluations,
+            @NotNull String name) {
+        return toxicityEvaluations.stream()
+                .filter(toxicityEvaluation -> toxicityEvaluation.toxicities().iterator().next().name().equals(name))
+                .findAny()
+                .orElseThrow(() -> new IllegalStateException("Could not find toxicity with name: " + name));
     }
 
     private static void assertAllergies(@NotNull List<Intolerance> allergies) {
@@ -154,6 +179,16 @@ public class ClinicalRecordsFactoryTest {
         assertEquals(1, surgeries.size());
 
         Surgery surgery = surgeries.get(0);
+        assertEquals(LocalDate.of(2015, 10, 10), surgery.endDate());
+        assertEquals(SurgeryStatus.PLANNED, surgery.status());
+    }
+
+    private static void assertSurgicalTreatments(@Nullable List<TreatmentHistoryEntry> surgicalTreatments) {
+        assertNotNull(surgicalTreatments);
+        assertEquals(1, surgicalTreatments.size());
+
+        SurgeryHistoryDetails surgery = surgicalTreatments.get(0).surgeryHistoryDetails();
+        assertNotNull(surgery);
         assertEquals(LocalDate.of(2015, 10, 10), surgery.endDate());
         assertEquals(SurgeryStatus.PLANNED, surgery.status());
     }

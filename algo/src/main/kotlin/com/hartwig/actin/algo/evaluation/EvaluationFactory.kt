@@ -51,6 +51,35 @@ object EvaluationFactory {
             .addPassGeneralMessages(generalMessage).build()
     }
 
+    fun pass(message: String): Evaluation {
+        return buildPassEvaluation(unrecoverable(), message, message)
+    }
+
+    fun fail(message: String): Evaluation {
+        return buildFailEvaluation(unrecoverable(), message, message)
+    }
+
+    fun recoverableFail(message: String): Evaluation {
+        return buildFailEvaluation(recoverable(), message, message)
+    }
+
+    fun undetermined(message: String): Evaluation {
+        return buildUndeterminedEvaluation(unrecoverable(), message, message)
+    }
+
+    fun recoverableUndetermined(message: String): Evaluation {
+        return buildUndeterminedEvaluation(recoverable(), message, message)
+    }
+
+    fun warn(message: String): Evaluation {
+        return buildWarnEvaluation(unrecoverable(), message, message)
+    }
+
+    fun notEvaluated(message: String): Evaluation {
+        return unrecoverable().result(EvaluationResult.NOT_EVALUATED).addPassSpecificMessages(message)
+            .addPassGeneralMessages(message).build()
+    }
+
     private fun buildPassEvaluation(builder: ImmutableEvaluation.Builder, specificMessage: String, generalMessage: String): Evaluation {
         return builder.result(EvaluationResult.PASS).addPassSpecificMessages(specificMessage).addPassGeneralMessages(generalMessage).build()
     }

@@ -10,7 +10,9 @@
   "purple": {
     "fit": {
       "qc": {
-        "status": []
+        "status": [
+          "FAIL_NO_TUMOR"
+        ]
       },
       "hasSufficientQuality": false,
       "containsTumorCells": false,

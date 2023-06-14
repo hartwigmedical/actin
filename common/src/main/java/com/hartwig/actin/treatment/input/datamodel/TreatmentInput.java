@@ -3,7 +3,7 @@ package com.hartwig.actin.treatment.input.datamodel;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -5,7 +5,7 @@ import static com.hartwig.actin.treatment.input.FunctionInputMapping.RULE_INPUT_
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory;
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 import com.hartwig.actin.doid.DoidModel;

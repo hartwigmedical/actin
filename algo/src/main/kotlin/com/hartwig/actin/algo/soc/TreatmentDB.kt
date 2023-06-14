@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.soc
 
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.algo.soc.datamodel.Treatment
 import com.hartwig.actin.algo.soc.datamodel.TreatmentComponent
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction

@@ -1,8 +1,7 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory
-import com.hartwig.actin.util.ApplicationConfig
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 
 internal object TreatmentTypeResolver {
     fun isOfType(
@@ -10,7 +9,7 @@ internal object TreatmentTypeResolver {
         typeToFind: String
     ): Boolean {
         val type = resolveType(treatment, category)
-        return type != null && type.lowercase(ApplicationConfig.LOCALE).contains(typeToFind.lowercase(ApplicationConfig.LOCALE))
+        return type != null && type.lowercase().contains(typeToFind.lowercase())
     }
 
     fun hasTypeConfigured(treatment: PriorTumorTreatment, category: TreatmentCategory): Boolean {

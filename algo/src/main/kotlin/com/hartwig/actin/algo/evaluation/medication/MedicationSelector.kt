@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensit
 import com.hartwig.actin.algo.medication.MedicationStatusInterpretation
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreter
 import com.hartwig.actin.clinical.datamodel.Medication
-import com.hartwig.actin.util.ApplicationConfig
 import java.time.LocalDate
 
 internal class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
@@ -21,9 +20,9 @@ internal class MedicationSelector(private val interpreter: MedicationStatusInter
     }
 
     fun activeWithAnyExactCategory(medications: List<Medication>, categoriesToFind: Set<String>): List<Medication> {
-        val lowercaseCategoriesToFind = categoriesToFind.map { it.lowercase(ApplicationConfig.LOCALE) }.toSet()
+        val lowercaseCategoriesToFind = categoriesToFind.map { it.lowercase() }.toSet()
         return active(medications).filter { medication ->
-            medication.categories().any { lowercaseCategoriesToFind.contains(it.lowercase(ApplicationConfig.LOCALE)) }
+            medication.categories().any { lowercaseCategoriesToFind.contains(it.lowercase()) }
         }
     }
 

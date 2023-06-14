@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical.curation;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -31,16 +30,18 @@ import com.hartwig.actin.clinical.datamodel.MedicationStatus;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
 import com.hartwig.actin.clinical.datamodel.TestMedicationFactory;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
 import com.hartwig.actin.doid.TestDoidModelFactory;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 public class CurationModelTest {
@@ -79,7 +80,7 @@ public class CurationModelTest {
         TumorDetails base = TestClinicalFactory.createMinimalTestClinicalRecord().tumor();
         assertNull(base.hasLiverLesions());
         TumorDetails liverOther = model.overrideKnownLesionLocations(base, null, Lists.newArrayList("Lever"));
-        assertTrue(liverOther.hasLiverLesions());
+        assertEquals(true, liverOther.hasLiverLesions());
         model.evaluate();
     }
 
@@ -87,7 +88,7 @@ public class CurationModelTest {
     public void shouldOverrideHasLiverLesionsWhenListedAsBiopsy() {
         TumorDetails base = TestClinicalFactory.createMinimalTestClinicalRecord().tumor();
         TumorDetails liverBiopsy = model.overrideKnownLesionLocations(base, "lever", null);
-        assertTrue(liverBiopsy.hasLiverLesions());
+        assertEquals(true, liverBiopsy.hasLiverLesions());
         model.evaluate();
     }
 
@@ -96,7 +97,7 @@ public class CurationModelTest {
         TumorDetails base = TestClinicalFactory.createMinimalTestClinicalRecord().tumor();
         assertNull(base.hasCnsLesions());
         TumorDetails cns = model.overrideKnownLesionLocations(base, null, Lists.newArrayList("cns"));
-        assertTrue(cns.hasCnsLesions());
+        assertEquals(true, cns.hasCnsLesions());
         model.evaluate();
     }
 
@@ -105,7 +106,7 @@ public class CurationModelTest {
         TumorDetails base = TestClinicalFactory.createMinimalTestClinicalRecord().tumor();
         assertNull(base.hasBrainLesions());
         TumorDetails brain = model.overrideKnownLesionLocations(base, null, Lists.newArrayList("brain"));
-        assertTrue(brain.hasBrainLesions());
+        assertEquals(true, brain.hasBrainLesions());
         model.evaluate();
     }
 
@@ -114,7 +115,7 @@ public class CurationModelTest {
         TumorDetails base = TestClinicalFactory.createMinimalTestClinicalRecord().tumor();
         assertNull(base.hasLymphNodeLesions());
         TumorDetails lymphNode = model.overrideKnownLesionLocations(base, null, Lists.newArrayList("lymph node"));
-        assertTrue(lymphNode.hasLymphNodeLesions());
+        assertEquals(true, lymphNode.hasLymphNodeLesions());
         model.evaluate();
     }
 
@@ -123,7 +124,19 @@ public class CurationModelTest {
         TumorDetails base = TestClinicalFactory.createMinimalTestClinicalRecord().tumor();
         assertNull(base.hasBoneLesions());
         TumorDetails bone = model.overrideKnownLesionLocations(base, null, Lists.newArrayList("Bone"));
-        assertTrue(bone.hasBoneLesions());
+        assertEquals(true, bone.hasBoneLesions());
+        model.evaluate();
+    }
+
+    @Test
+    public void shouldCurateTreatmentHistory() {
+        List<TreatmentHistoryEntry> treatmentHistory =
+                model.curateTreatmentHistory(List.of("Cis 2020 2021", "no systemic treatment", "cannot curate"));
+        assertEquals(2, treatmentHistory.size());
+        assertTrue(treatmentHistory.stream().anyMatch(entry -> Integer.valueOf(2020).equals(entry.startYear())));
+        assertTrue(treatmentHistory.stream().anyMatch(entry -> Integer.valueOf(2021).equals(entry.startYear())));
+
+        assertTrue(model.curatePriorTumorTreatments(null).isEmpty());
         model.evaluate();
     }
 
@@ -133,22 +146,11 @@ public class CurationModelTest {
                 model.curatePriorTumorTreatments(Lists.newArrayList("Cis 2020 2021", "no systemic treatment", "cannot curate"));
 
         assertEquals(2, priorTreatments.size());
-        assertNotNull(findByYear(priorTreatments, 2020));
-        assertNotNull(findByYear(priorTreatments, 2021));
+        assertTrue(priorTreatments.stream().anyMatch(entry -> Integer.valueOf(2020).equals(entry.startYear())));
+        assertTrue(priorTreatments.stream().anyMatch(entry -> Integer.valueOf(2021).equals(entry.startYear())));
 
         assertTrue(model.curatePriorTumorTreatments(null).isEmpty());
         model.evaluate();
-    }
-
-    @NotNull
-    private static PriorTumorTreatment findByYear(@NotNull List<PriorTumorTreatment> priorTumorTreatments, int year) {
-        for (PriorTumorTreatment priorTumorTreatment : priorTumorTreatments) {
-            if (priorTumorTreatment.startYear() == year) {
-                return priorTumorTreatment;
-            }
-        }
-
-        throw new IllegalStateException("Could not find prior tumor treatment with year: " + year);
     }
 
     @Test
@@ -193,10 +195,12 @@ public class CurationModelTest {
         assertNull(model.curateComplications(Lists.newArrayList()));
 
         List<Complication> complications = model.curateComplications(Lists.newArrayList("term", "no curation"));
+        assertNotNull(complications);
         assertEquals(1, complications.size());
         assertNotNull(findComplicationByName(complications, "Curated"));
 
         List<Complication> ignore = model.curateComplications(Lists.newArrayList("none"));
+        assertNotNull(ignore);
         assertEquals(0, ignore.size());
 
         List<Complication> unknown = model.curateComplications(Lists.newArrayList("unknown"));
@@ -207,13 +211,10 @@ public class CurationModelTest {
 
     @NotNull
     private static Complication findComplicationByName(@NotNull List<Complication> complications, @NotNull String nameToFind) {
-        for (Complication complication : complications) {
-            if (complication.name().equals(nameToFind)) {
-                return complication;
-            }
-        }
-
-        throw new IllegalStateException("Could not find complication with name '" + nameToFind + "'");
+        return complications.stream()
+                .filter(complication -> complication.name().equals(nameToFind))
+                .findAny()
+                .orElseThrow(() -> new IllegalStateException("Could not find complication with name '" + nameToFind + "'"));
     }
 
     @Test
@@ -228,7 +229,7 @@ public class CurationModelTest {
         assertEquals(Sets.newHashSet("neuro"), toxicity.categories());
         assertEquals(date, toxicity.evaluatedDate());
         assertEquals(ToxicitySource.QUESTIONNAIRE, toxicity.source());
-        assertEquals(3, (int) toxicity.grade());
+        assertEquals(Integer.valueOf(3), toxicity.grade());
 
         assertTrue(model.curateQuestionnaireToxicities(null, date).isEmpty());
         model.evaluate();
@@ -236,9 +237,9 @@ public class CurationModelTest {
 
     @Test
     public void canCurateECGs() {
-        assertEquals("Cleaned aberration", model.curateECG(toECG("Weird aberration")).aberrationDescription());
-        assertEquals("No curation needed", model.curateECG(toECG("No curation needed")).aberrationDescription());
-        assertNull(model.curateECG(toECG("Yes but unknown what aberration")).aberrationDescription());
+        assertAberrationDescription("Cleaned aberration", model.curateECG(toECG("Weird aberration")));
+        assertAberrationDescription("No curation needed", model.curateECG(toECG("No curation needed")));
+        assertAberrationDescription(null, model.curateECG(toECG("Yes but unknown what aberration")));
         assertNull(model.curateECG(toECG("No aberration")));
         assertNull(model.curateECG(null));
 
@@ -252,9 +253,9 @@ public class CurationModelTest {
 
     @Test
     public void canCurateInfectionStatus() {
-        assertEquals("Cleaned infection", model.curateInfectionStatus(toInfection("Weird infection")).description());
-        assertEquals("No curation needed", model.curateInfectionStatus(toInfection("No curation needed")).description());
-        assertNull(model.curateInfectionStatus(toInfection("No Infection")).description());
+        assertInfectionDescription("Cleaned infection", model.curateInfectionStatus(toInfection("Weird infection")));
+        assertInfectionDescription("No curation needed", model.curateInfectionStatus(toInfection("No curation needed")));
+        assertInfectionDescription(null, model.curateInfectionStatus(toInfection("No Infection")));
         assertNull(model.curateInfectionStatus(null));
 
         model.evaluate();
@@ -271,7 +272,9 @@ public class CurationModelTest {
 
         assertNull(model.determineLVEF(Lists.newArrayList("not an LVEF")));
 
-        assertEquals(0.17, model.determineLVEF(Lists.newArrayList("LVEF 0.17")), EPSILON);
+        Double lvef = model.determineLVEF(Lists.newArrayList("LVEF 0.17"));
+        assertNotNull(lvef);
+        assertEquals(0.17, lvef, EPSILON);
 
         model.evaluate();
     }
@@ -280,14 +283,18 @@ public class CurationModelTest {
     public void canCurateOtherLesions() {
         assertNull(model.curateOtherLesions(null));
 
-        List<String> notALesion = Lists.newArrayList("not a lesion");
-        assertTrue(model.curateOtherLesions(notALesion).isEmpty());
+        List<String> notALesionCuration = model.curateOtherLesions(Lists.newArrayList("not a lesion"));
+        assertNotNull(notALesionCuration);
+        assertTrue(notALesionCuration.isEmpty());
 
-        List<String> noOtherLesions = Lists.newArrayList("No");
-        assertTrue(model.curateOtherLesions(noOtherLesions).isEmpty());
+        List<String> noOtherLesionsCuration = model.curateOtherLesions(Lists.newArrayList("No"));
+        assertNotNull(noOtherLesionsCuration);
+        assertTrue(noOtherLesionsCuration.isEmpty());
 
-        List<String> otherLesions = Lists.newArrayList("lymph node", "not a lesion", "no curation available");
-        assertEquals(1, model.curateOtherLesions(otherLesions).size());
+        List<String> otherLesionsCuration =
+                model.curateOtherLesions(Lists.newArrayList("lymph node", "not a lesion", "no curation available"));
+        assertNotNull(otherLesionsCuration);
+        assertEquals(1, otherLesionsCuration.size());
 
         model.evaluate();
     }
@@ -295,7 +302,7 @@ public class CurationModelTest {
     @Test
     public void canCurateBiopsyLocation() {
         assertEquals("Liver", model.curateBiopsyLocation("lever"));
-        assertTrue(model.curateBiopsyLocation("Not a lesion").isEmpty());
+        assertEquals(Strings.EMPTY, model.curateBiopsyLocation("Not a lesion"));
         assertNull(model.curateBiopsyLocation("No curation configured"));
         assertNull(model.curateBiopsyLocation(null));
 
@@ -306,12 +313,12 @@ public class CurationModelTest {
     public void canCurateMedicationDosage() {
         Medication medication = model.curateMedicationDosage("50-60 mg per day");
         assertNotNull(medication);
-        assertEquals(50, medication.dosageMin(), EPSILON);
-        assertEquals(60, medication.dosageMax(), EPSILON);
+        assertDoubleEquals(50, medication.dosageMin());
+        assertDoubleEquals(60, medication.dosageMax());
         assertEquals("mg", medication.dosageUnit());
-        assertEquals(1, medication.frequency(), EPSILON);
+        assertDoubleEquals(1, medication.frequency());
         assertEquals("day", medication.frequencyUnit());
-        assertFalse(medication.ifNeeded());
+        assertEquals(false, medication.ifNeeded());
 
         assertNull(model.curateMedicationDosage("does not exist"));
         model.evaluate();
@@ -444,5 +451,20 @@ public class CurationModelTest {
         assertEquals("does not exist", notExistingTranslated.product());
 
         model.evaluate();
+    }
+
+    private void assertDoubleEquals(double expected, @Nullable Double actual) {
+        assertNotNull(actual);
+        assertEquals(expected, actual, EPSILON);
+    }
+
+    private void assertAberrationDescription(@Nullable String expectedDescription, @Nullable ECG curatedECG) {
+        assertNotNull(curatedECG);
+        assertEquals(expectedDescription, curatedECG.aberrationDescription());
+    }
+
+    private void assertInfectionDescription(@Nullable String expected, @Nullable InfectionStatus infectionStatus) {
+        assertNotNull(infectionStatus);
+        assertEquals(expected, infectionStatus.description());
     }
 }

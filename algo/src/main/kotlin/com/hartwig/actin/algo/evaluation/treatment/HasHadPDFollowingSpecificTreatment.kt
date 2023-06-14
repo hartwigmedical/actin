@@ -2,12 +2,11 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.treatmentResultedInPDOption
 import com.hartwig.actin.algo.evaluation.util.Format
-import com.hartwig.actin.util.ApplicationConfig
 
 class HasHadPDFollowingSpecificTreatment internal constructor(private val names: Set<String>, warnCategory: TreatmentCategory?) :
     EvaluationFunction {
@@ -30,7 +29,7 @@ class HasHadPDFollowingSpecificTreatment internal constructor(private val names:
                 hasHadTreatmentWithWarnType = true
             }
             for (name in names) {
-                if (treatment.name().lowercase(ApplicationConfig.LOCALE).contains(name.lowercase(ApplicationConfig.LOCALE))) {
+                if (treatment.name().lowercase().contains(name.lowercase())) {
                     treatmentsWithExactType.add(treatment.name())
                     when (treatmentResultedInPDOption(treatment)) {
                         true -> treatmentsWithPD.add(treatment.name())

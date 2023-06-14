@@ -4,14 +4,13 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory
-import com.hartwig.actin.util.ApplicationConfig
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 
 class HasHadAdjuvantTreatmentWithCategory(private val category: TreatmentCategory) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val adjuvantTreatmentsMatchingCategory = record.clinical().priorTumorTreatments().filter { it.categories().contains(category) }
-            .filter { it.name().lowercase(ApplicationConfig.LOCALE).replace("neoadjuvant", "").contains("adjuvant") }
+            .filter { it.name().lowercase().replace("neoadjuvant", "").contains("adjuvant") }
 
         return if (adjuvantTreatmentsMatchingCategory.isNotEmpty()) {
             EvaluationFactory.pass(

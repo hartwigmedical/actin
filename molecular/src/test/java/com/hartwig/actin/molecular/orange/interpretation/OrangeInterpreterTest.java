@@ -31,13 +31,13 @@ import org.junit.Test;
 public class OrangeInterpreterTest {
 
     @Test
-    public void canHandleMinimalOrangeRecord() {
+    public void shouldNotCrashOnMinimalOrangeRecord() {
         OrangeInterpreter interpreter = createTestInterpreter();
         assertNotNull(interpreter.interpret(TestOrangeFactory.createMinimalTestOrangeRecord()));
     }
 
     @Test
-    public void canInterpretProperOrangeRecord() {
+    public void shouldInterpretProperOrangeRecord() {
         OrangeInterpreter interpreter = createTestInterpreter();
         MolecularRecord record = interpreter.interpret(TestOrangeFactory.createProperTestOrangeRecord());
 
@@ -70,18 +70,18 @@ public class OrangeInterpreterTest {
     }
 
     @Test
-    public void canConvertSampleIdToPatientId() {
+    public void shouldBeAbleToConvertSampleIdToPatientId() {
         assertEquals("ACTN01029999", OrangeInterpreter.toPatientId("ACTN01029999T"));
         assertEquals("ACTN01029999", OrangeInterpreter.toPatientId("ACTN01029999T2"));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void crashOnInvalidSampleId() {
+    public void shouldThrowExceptionOnInvalidSampleId() {
         OrangeInterpreter.toPatientId("no sample");
     }
 
     @Test
-    public void canDetermineAllRefGenomeVersions() {
+    public void shouldBeAbleToResolveAllRefGenomeVersions() {
         for (OrangeRefGenomeVersion refGenomeVersion : OrangeRefGenomeVersion.values()) {
             assertNotNull(OrangeInterpreter.determineRefGenomeVersion(refGenomeVersion));
         }
@@ -113,6 +113,12 @@ public class OrangeInterpreterTest {
         OrangeRecord record = orangeRecordWithQCStatuses(Set.of(PurpleQCStatus.WARN_LOW_PURITY, PurpleQCStatus.WARN_DELETED_GENES));
         assertFalse(OrangeInterpreter.hasSufficientQuality(record));
         assertFalse(OrangeInterpreter.hasSufficientQualityAndPurity(record));
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void shouldThrowExceptionOnEmptyQCStates() {
+        OrangeInterpreter interpreter = createTestInterpreter();
+        interpreter.interpret(orangeRecordWithQCStatuses(Set.of()));
     }
 
     @NotNull

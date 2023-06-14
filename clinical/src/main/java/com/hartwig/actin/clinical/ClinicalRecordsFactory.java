@@ -1,8 +1,10 @@
 package com.hartwig.actin.clinical;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,9 +26,14 @@ import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance;
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication;
+import com.hartwig.actin.clinical.datamodel.ImmutableObservedToxicity;
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutableSurgery;
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableSurgeryHistoryDetails;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableSurgicalTreatment;
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity;
+import com.hartwig.actin.clinical.datamodel.ImmutableToxicityEvaluation;
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
 import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction;
 import com.hartwig.actin.clinical.datamodel.Intolerance;
@@ -36,11 +43,13 @@ import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.Surgery;
 import com.hartwig.actin.clinical.datamodel.SurgeryStatus;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
+import com.hartwig.actin.clinical.datamodel.ToxicityEvaluation;
 import com.hartwig.actin.clinical.datamodel.ToxicitySource;
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
 import com.hartwig.actin.clinical.feed.FeedModel;
@@ -92,20 +101,36 @@ public class ClinicalRecordsFactory {
 
             Questionnaire questionnaire = extraction.extract(feed.latestQuestionnaireEntry(subject));
 
+            List<Toxicity> extractedToxicities = extractToxicities(subject, questionnaire);
+            List<ToxicityEvaluation> toxicityEvaluations = extractedToxicities.stream()
+                    .map(toxicity -> ImmutableToxicityEvaluation.builder()
+                            .toxicities(Collections.singleton(ImmutableObservedToxicity.builder()
+                                    .name(toxicity.name())
+                                    .addAllCategories(toxicity.categories())
+                                    .grade(toxicity.grade())
+                                    .build()))
+                            .evaluatedDate(toxicity.evaluatedDate())
+                            .source(toxicity.source())
+                            .build())
+                    .collect(Collectors.toList());
+
             records.add(ImmutableClinicalRecord.builder()
                     .patientId(patientId)
                     .patient(extractPatientDetails(subject, questionnaire))
                     .tumor(extractTumorDetails(questionnaire))
                     .clinicalStatus(extractClinicalStatus(questionnaire))
+                    .treatmentHistory(extractTreatmentHistory(questionnaire))
                     .priorTumorTreatments(extractPriorTumorTreatments(questionnaire))
                     .priorSecondPrimaries(extractPriorSecondPrimaries(questionnaire))
                     .priorOtherConditions(extractPriorOtherConditions(questionnaire))
                     .priorMolecularTests(extractPriorMolecularTests(questionnaire))
                     .complications(extractComplications(questionnaire))
                     .labValues(extractLabValues(subject))
-                    .toxicities(extractToxicities(subject, questionnaire))
+                    .toxicities(extractedToxicities)
+                    .toxicityEvaluations(toxicityEvaluations)
                     .intolerances(extractIntolerances(subject))
                     .surgeries(extractSurgeries(subject))
+                    .surgicalTreatments(extractSurgicalTreatments(subject))
                     .bodyWeights(extractBodyWeights(subject))
                     .vitalFunctions(extractVitalFunctions(subject))
                     .bloodTransfusions(extractBloodTransfusions(subject))
@@ -186,6 +211,19 @@ public class ClinicalRecordsFactory {
                                 .map(complications -> !complications.isEmpty())
                                 .orElse(null))
                         .build();
+    }
+
+    @NotNull
+    private List<TreatmentHistoryEntry> extractTreatmentHistory(@Nullable Questionnaire questionnaire) {
+        if (questionnaire == null) {
+            return Collections.emptyList();
+        }
+        List<String> fullHistoryInput = Stream.of(questionnaire.treatmentHistoryCurrentTumor(), questionnaire.otherOncologicalHistory())
+                .filter(Objects::nonNull)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+
+        return curation.curateTreatmentHistory(fullHistoryInput);
     }
 
     @NotNull
@@ -301,6 +339,20 @@ public class ClinicalRecordsFactory {
                 .map(entry -> ImmutableSurgery.builder()
                         .endDate(entry.periodEnd())
                         .status(resolveSurgeryStatus(entry.encounterStatus()))
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @NotNull
+    private List<TreatmentHistoryEntry> extractSurgicalTreatments(@NotNull String subject) {
+        return feed.uniqueSurgeryEntries(subject)
+                .stream()
+                .map(encounterEntry -> ImmutableTreatmentHistoryEntry.builder()
+                        .treatments(Collections.singleton(ImmutableSurgicalTreatment.builder().name("extracted surgery").build()))
+                        .surgeryHistoryDetails(ImmutableSurgeryHistoryDetails.builder()
+                                .endDate(encounterEntry.periodEnd())
+                                .status(resolveSurgeryStatus(encounterEntry.encounterStatus()))
+                                .build())
                         .build())
                 .collect(Collectors.toList());
     }
