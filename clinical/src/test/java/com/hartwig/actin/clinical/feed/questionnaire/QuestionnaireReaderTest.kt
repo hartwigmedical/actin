@@ -4,8 +4,6 @@ import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireReader.read
 import org.apache.logging.log4j.util.Strings
 import org.junit.Assert
 import org.junit.Test
-import java.lang.String
-import java.util.*
 
 class QuestionnaireReaderTest {
     @Test
@@ -13,14 +11,14 @@ class QuestionnaireReaderTest {
         val questionnaireText = "this: \n is: \n a: \n questionnaire:"
         Assert.assertEquals(
             4,
-            read(questionnaireText, Arrays.asList(*questionnaireText.split(": \n ".toRegex()).dropLastWhile { it.isEmpty() }
+            read(questionnaireText, listOf(*questionnaireText.split(": \n ".toRegex()).dropLastWhile { it.isEmpty() }
                 .toTypedArray())).size.toLong())
     }
 
     @Test
     fun shouldCleanTermsFromQuestionnaire() {
         val lines = read(
-            """${String.join("", QuestionnaireReader.TERMS_TO_CLEAN)}
+            """${QuestionnaireReader.TERMS_TO_CLEAN.joinToString("")}
  test:""", listOf("test")
         )
         Assert.assertEquals(2, lines.size.toLong())

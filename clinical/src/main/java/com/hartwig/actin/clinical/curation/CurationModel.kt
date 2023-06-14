@@ -57,7 +57,7 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.util.Strings
 import java.io.IOException
 import java.time.LocalDate
-import java.util.Optional
+import java.util.*
 
 class CurationModel @VisibleForTesting internal constructor(
     private val database: CurationDatabase,
@@ -352,10 +352,10 @@ class CurationModel @VisibleForTesting internal constructor(
 
     fun determineLVEF(inputs: List<String>?): Double? {
         return inputs?.flatMap { input: String -> find(database.nonOncologicalHistoryConfigs, input) }
-            ?.filter { config: NonOncologicalHistoryConfig -> !config.ignore }
-            ?.flatMap { config: NonOncologicalHistoryConfig -> if (config.lvef.isPresent) listOf(config.lvef) else emptyList() }
-            ?.first()
-            ?.orElse(null)
+            ?.filterNot { it.ignore }
+            ?.map { it.lvef }
+            ?.find { it.isPresent }
+            ?.get()
     }
 
     fun curateOtherLesions(otherLesions: List<String>?): List<String>? {

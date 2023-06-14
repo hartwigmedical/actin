@@ -5,9 +5,9 @@ data class ECGConfig(
     override val ignore: Boolean,
     val interpretation: String,
     val isQTCF: Boolean,
-    val qtcfValue: Int?,
-    val qtcfUnit: String?,
+    val qtcfValue: Int? = null,
+    val qtcfUnit: String? = null,
     val isJTC: Boolean,
-    val jtcValue: Int?,
-    val jtcUnit: String?
+    val jtcValue: Int? = null,
+    val jtcUnit: String? = null
 ) : CurationConfig

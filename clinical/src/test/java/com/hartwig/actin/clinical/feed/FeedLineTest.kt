@@ -2,8 +2,10 @@ package com.hartwig.actin.clinical.feed
 
 import com.google.common.collect.Maps
 import com.hartwig.actin.clinical.datamodel.Gender
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertFalse
+import junit.framework.TestCase.assertTrue
 import org.apache.logging.log4j.util.Strings
-import org.junit.Assert
 import org.junit.Test
 import java.time.LocalDate
 
@@ -18,20 +20,24 @@ class FeedLineTest {
         fields["date"] = 4
         fields["number"] = 5
         fields["integer"] = 6
+
         val parts = arrayOf("string ", "", FeedLine.NULL_STRING, "Male", "2019-01-01 00:00:00.000", "1", "2")
         val line = FeedLine(fields, parts)
-        Assert.assertEquals(Strings.EMPTY, line.string("stringEmpty"))
-        Assert.assertEquals(Strings.EMPTY, line.string("stringNull"))
-        Assert.assertEquals("string ", line.string("stringProper"))
-        Assert.assertEquals("string", line.trimmed("stringProper"))
-        Assert.assertTrue(line.hasColumn("stringProper"))
-        Assert.assertFalse(line.hasColumn("nonexistent"))
-        Assert.assertEquals(Gender.MALE, line.gender("gender"))
-        Assert.assertEquals(LocalDate.of(2019, 1, 1), line.date("date"))
-        Assert.assertEquals(LocalDate.of(2019, 1, 1), line.optionalDate("date"))
-        Assert.assertEquals(1.0, line.number("number"), EPSILON)
-        Assert.assertEquals(1.0, line.optionalNumber("number")!!, EPSILON)
-        Assert.assertEquals(2, line.integer("integer").toLong())
+
+        assertEquals(Strings.EMPTY, line.string("stringEmpty"))
+        assertEquals(Strings.EMPTY, line.string("stringNull"))
+        assertEquals("string ", line.string("stringProper"))
+        assertEquals("string", line.trimmed("stringProper"))
+        assertTrue(line.hasColumn("stringProper"))
+        assertFalse(line.hasColumn("nonexistent"))
+
+        assertEquals(Gender.MALE, line.gender("gender"))
+        assertEquals(LocalDate.of(2019, 1, 1), line.date("date"))
+        assertEquals(LocalDate.of(2019, 1, 1), line.optionalDate("date"))
+
+        assertEquals(1.0, line.number("number"), EPSILON)
+        assertEquals(1.0, line.optionalNumber("number")!!, EPSILON)
+        assertEquals(2, line.integer("integer").toLong())
     }
 
     companion object {

@@ -4,13 +4,17 @@ import java.time.LocalDate
 
 object TestQuestionnaireFactory {
     fun createTestQuestionnaireEntry(): QuestionnaireEntry {
-        return ImmutableQuestionnaireEntry.builder()
-            .subject("TEST-01-01-0001")
-            .authored(LocalDate.of(2020, 8, 28))
-            .description("Description")
-            .itemText("ItemText")
-            .text(createTestQuestionnaireValueV1_6())
-            .build()
+        return QuestionnaireEntry(
+            subject = "TEST-01-01-0001",
+            authored = LocalDate.of(2020, 8, 28),
+            description = "Description",
+            itemText = "ItemText",
+            text = createTestQuestionnaireValueV1_6()
+        )
+    }
+
+    fun entryWithText(text: String): QuestionnaireEntry {
+        return createTestQuestionnaireEntry().copy(text = text)
     }
 
     fun createTestQuestionnaireValueV1_6(): String {

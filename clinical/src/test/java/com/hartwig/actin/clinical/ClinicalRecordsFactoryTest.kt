@@ -23,30 +23,34 @@ import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.feed.TestFeedFactory
-import org.junit.Assert
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertFalse
+import junit.framework.TestCase.assertNotNull
+import junit.framework.TestCase.assertNull
+import junit.framework.TestCase.assertTrue
 import org.junit.Test
 import java.time.LocalDate
 
 class ClinicalRecordsFactoryTest {
     @Test
     fun canGeneratePatientIds() {
-        Assert.assertEquals("ACTN01029999", toPatientId("ACTN-01-02-9999"))
-        Assert.assertEquals("ACTN01029999", toPatientId("01-02-9999"))
+        assertEquals("ACTN01029999", toPatientId("ACTN-01-02-9999"))
+        assertEquals("ACTN01029999", toPatientId("01-02-9999"))
     }
 
     @Test
     fun canCreateClinicalRecordsFromMinimalTestData() {
         val records = createMinimalTestClinicalRecords()
-        Assert.assertEquals(1, records.size.toLong())
-        Assert.assertEquals(TEST_PATIENT, records[0].patientId())
+        assertEquals(1, records.size.toLong())
+        assertEquals(TEST_PATIENT, records[0].patientId())
     }
 
     @Test
     fun canCreateClinicalRecordsFromProperTestData() {
         val records = createProperTestClinicalRecords()
-        Assert.assertEquals(1, records.size.toLong())
+        assertEquals(1, records.size.toLong())
         val record = records[0]
-        Assert.assertEquals(TEST_PATIENT, record.patientId())
+        assertEquals(TEST_PATIENT, record.patientId())
         assertPatientDetails(record.patient())
         assertTumorDetails(record.tumor())
         assertClinicalStatus(record.clinicalStatus())
@@ -65,53 +69,53 @@ class ClinicalRecordsFactoryTest {
         private const val TEST_PATIENT = "ACTN01029999"
         private const val EPSILON = 1.0E-10
         private fun assertPatientDetails(patient: PatientDetails) {
-            Assert.assertEquals(1960, patient.birthYear().toLong())
-            Assert.assertEquals(Gender.MALE, patient.gender())
-            Assert.assertEquals(LocalDate.of(2021, 6, 1), patient.registrationDate())
-            Assert.assertEquals(LocalDate.of(2021, 8, 1), patient.questionnaireDate())
-            Assert.assertEquals("GAYA-01-02-9999", patient.otherMolecularPatientId())
+            assertEquals(1960, patient.birthYear().toLong())
+            assertEquals(Gender.MALE, patient.gender())
+            assertEquals(LocalDate.of(2021, 6, 1), patient.registrationDate())
+            assertEquals(LocalDate.of(2021, 8, 1), patient.questionnaireDate())
+            assertEquals("GAYA-01-02-9999", patient.otherMolecularPatientId())
         }
 
         private fun assertTumorDetails(tumor: TumorDetails) {
-            Assert.assertNull(tumor.primaryTumorLocation())
-            Assert.assertNull(tumor.primaryTumorSubLocation())
-            Assert.assertNull(tumor.primaryTumorType())
-            Assert.assertNull(tumor.primaryTumorSubType())
-            Assert.assertNull(tumor.primaryTumorExtraDetails())
-            Assert.assertNull(tumor.doids())
-            Assert.assertEquals(TumorStage.IV, tumor.stage())
-            Assert.assertTrue(tumor.hasMeasurableDisease()!!)
-            Assert.assertTrue(tumor.hasBrainLesions()!!)
-            Assert.assertTrue(tumor.hasActiveBrainLesions()!!)
-            Assert.assertNull(tumor.hasCnsLesions())
-            Assert.assertNull(tumor.hasActiveCnsLesions())
-            Assert.assertFalse(tumor.hasBoneLesions()!!)
-            Assert.assertFalse(tumor.hasLiverLesions()!!)
-            Assert.assertTrue(tumor.hasLungLesions()!!)
-            Assert.assertTrue(tumor.otherLesions()!!.contains("Abdominal"))
-            Assert.assertEquals("Lymph node", tumor.biopsyLocation())
+            assertNull(tumor.primaryTumorLocation())
+            assertNull(tumor.primaryTumorSubLocation())
+            assertNull(tumor.primaryTumorType())
+            assertNull(tumor.primaryTumorSubType())
+            assertNull(tumor.primaryTumorExtraDetails())
+            assertNull(tumor.doids())
+            assertEquals(TumorStage.IV, tumor.stage())
+            assertTrue(tumor.hasMeasurableDisease()!!)
+            assertTrue(tumor.hasBrainLesions()!!)
+            assertTrue(tumor.hasActiveBrainLesions()!!)
+            assertNull(tumor.hasCnsLesions())
+            assertNull(tumor.hasActiveCnsLesions())
+            assertFalse(tumor.hasBoneLesions()!!)
+            assertFalse(tumor.hasLiverLesions()!!)
+            assertTrue(tumor.hasLungLesions()!!)
+            assertTrue(tumor.otherLesions()!!.contains("Abdominal"))
+            assertEquals("Lymph node", tumor.biopsyLocation())
         }
 
         private fun assertClinicalStatus(clinicalStatus: ClinicalStatus) {
-            Assert.assertEquals(0, (clinicalStatus.who() as Int).toLong())
+            assertEquals(0, (clinicalStatus.who() as Int).toLong())
             val infectionStatus = clinicalStatus.infectionStatus()
-            Assert.assertNotNull(infectionStatus)
-            Assert.assertFalse(infectionStatus!!.hasActiveInfection())
+            assertNotNull(infectionStatus)
+            assertFalse(infectionStatus!!.hasActiveInfection())
             val ecg = clinicalStatus.ecg()
-            Assert.assertNotNull(ecg)
-            Assert.assertTrue(ecg!!.hasSigAberrationLatestECG())
-            Assert.assertEquals("Sinus", ecg.aberrationDescription())
-            Assert.assertEquals(clinicalStatus.hasComplications(), true)
+            assertNotNull(ecg)
+            assertTrue(ecg!!.hasSigAberrationLatestECG())
+            assertEquals("Sinus", ecg.aberrationDescription())
+            assertEquals(clinicalStatus.hasComplications(), true)
         }
 
         private fun assertToxicities(toxicities: List<Toxicity>) {
-            Assert.assertEquals(2, toxicities.size.toLong())
+            assertEquals(2, toxicities.size.toLong())
             val toxicity1 = findByName(toxicities, "Nausea")
-            Assert.assertEquals(ToxicitySource.EHR, toxicity1.source())
-            Assert.assertEquals(2, (toxicity1.grade() as Int).toLong())
+            assertEquals(ToxicitySource.EHR, toxicity1.source())
+            assertEquals(2, (toxicity1.grade() as Int).toLong())
             val toxicity2 = findByName(toxicities, "Pain")
-            Assert.assertEquals(ToxicitySource.EHR, toxicity2.source())
-            Assert.assertEquals(0, (toxicity2.grade() as Int).toLong())
+            assertEquals(ToxicitySource.EHR, toxicity2.source())
+            assertEquals(0, (toxicity2.grade() as Int).toLong())
         }
 
         private fun findByName(toxicities: List<Toxicity>, name: String): Toxicity {
@@ -122,14 +126,14 @@ class ClinicalRecordsFactoryTest {
         }
 
         private fun assertToxicityEvaluations(toxicityEvaluations: List<ToxicityEvaluation>?) {
-            Assert.assertNotNull(toxicityEvaluations)
-            Assert.assertEquals(2, toxicityEvaluations!!.size.toLong())
+            assertNotNull(toxicityEvaluations)
+            assertEquals(2, toxicityEvaluations!!.size.toLong())
             val toxicity1 = findToxicityEvaluationByName(toxicityEvaluations, "Nausea")
-            Assert.assertEquals(ToxicitySource.EHR, toxicity1.source())
-            Assert.assertEquals(2, (toxicity1.toxicities().iterator().next().grade() as Int).toLong())
+            assertEquals(ToxicitySource.EHR, toxicity1.source())
+            assertEquals(2, (toxicity1.toxicities().iterator().next().grade() as Int).toLong())
             val toxicity2 = findToxicityEvaluationByName(toxicityEvaluations, "Pain")
-            Assert.assertEquals(ToxicitySource.EHR, toxicity2.source())
-            Assert.assertEquals(0, (toxicity2.toxicities().iterator().next().grade() as Int).toLong())
+            assertEquals(ToxicitySource.EHR, toxicity2.source())
+            assertEquals(0, (toxicity2.toxicities().iterator().next().grade() as Int).toLong())
         }
 
         private fun findToxicityEvaluationByName(
@@ -143,37 +147,37 @@ class ClinicalRecordsFactoryTest {
         }
 
         private fun assertAllergies(allergies: List<Intolerance>) {
-            Assert.assertEquals(1, allergies.size.toLong())
+            assertEquals(1, allergies.size.toLong())
             val intolerance = allergies[0]
-            Assert.assertEquals("Pills", intolerance.name())
-            Assert.assertEquals("Medication", intolerance.category())
-            Assert.assertEquals("Unknown", intolerance.criticality())
+            assertEquals("Pills", intolerance.name())
+            assertEquals("Medication", intolerance.category())
+            assertEquals("Unknown", intolerance.criticality())
         }
 
         private fun assertSurgeries(surgeries: List<Surgery>) {
-            Assert.assertEquals(1, surgeries.size.toLong())
+            assertEquals(1, surgeries.size.toLong())
             val surgery = surgeries[0]
-            Assert.assertEquals(LocalDate.of(2015, 10, 10), surgery.endDate())
-            Assert.assertEquals(SurgeryStatus.PLANNED, surgery.status())
+            assertEquals(LocalDate.of(2015, 10, 10), surgery.endDate())
+            assertEquals(SurgeryStatus.PLANNED, surgery.status())
         }
 
         private fun assertSurgicalTreatments(surgicalTreatments: List<TreatmentHistoryEntry>?) {
-            Assert.assertNotNull(surgicalTreatments)
-            Assert.assertEquals(1, surgicalTreatments!!.size.toLong())
+            assertNotNull(surgicalTreatments)
+            assertEquals(1, surgicalTreatments!!.size.toLong())
             val surgery = surgicalTreatments[0].surgeryHistoryDetails()
-            Assert.assertNotNull(surgery)
-            Assert.assertEquals(LocalDate.of(2015, 10, 10), surgery!!.endDate())
-            Assert.assertEquals(SurgeryStatus.PLANNED, surgery.status())
+            assertNotNull(surgery)
+            assertEquals(LocalDate.of(2015, 10, 10), surgery!!.endDate())
+            assertEquals(SurgeryStatus.PLANNED, surgery.status())
         }
 
         private fun assertBodyWeights(bodyWeights: List<BodyWeight>) {
-            Assert.assertEquals(2, bodyWeights.size.toLong())
+            assertEquals(2, bodyWeights.size.toLong())
             val bodyWeight1 = findByDate(bodyWeights, LocalDate.of(2018, 4, 5))
-            Assert.assertEquals(58.1, bodyWeight1.value(), EPSILON)
-            Assert.assertEquals("kilogram", bodyWeight1.unit())
+            assertEquals(58.1, bodyWeight1.value(), EPSILON)
+            assertEquals("kilogram", bodyWeight1.unit())
             val bodyWeight2 = findByDate(bodyWeights, LocalDate.of(2018, 5, 5))
-            Assert.assertEquals(61.1, bodyWeight2.value(), EPSILON)
-            Assert.assertEquals("kilogram", bodyWeight2.unit())
+            assertEquals(61.1, bodyWeight2.value(), EPSILON)
+            assertEquals("kilogram", bodyWeight2.unit())
         }
 
         private fun findByDate(bodyWeights: List<BodyWeight>, dateToFind: LocalDate): BodyWeight {
@@ -186,35 +190,35 @@ class ClinicalRecordsFactoryTest {
         }
 
         private fun assertVitalFunctions(vitalFunctions: List<VitalFunction>) {
-            Assert.assertEquals(1, vitalFunctions.size.toLong())
+            assertEquals(1, vitalFunctions.size.toLong())
             val vitalFunction = vitalFunctions[0]
-            Assert.assertEquals(LocalDate.of(2021, 2, 27), vitalFunction.date())
-            Assert.assertEquals(VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE, vitalFunction.category())
-            Assert.assertEquals("systolic", vitalFunction.subcategory())
-            Assert.assertEquals(120.0, vitalFunction.value(), EPSILON)
-            Assert.assertEquals("mm[Hg]", vitalFunction.unit())
+            assertEquals(LocalDate.of(2021, 2, 27), vitalFunction.date())
+            assertEquals(VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE, vitalFunction.category())
+            assertEquals("systolic", vitalFunction.subcategory())
+            assertEquals(120.0, vitalFunction.value(), EPSILON)
+            assertEquals("mm[Hg]", vitalFunction.unit())
         }
 
         private fun assertBloodTransfusions(bloodTransfusions: List<BloodTransfusion>) {
-            Assert.assertEquals(1, bloodTransfusions.size.toLong())
+            assertEquals(1, bloodTransfusions.size.toLong())
             val bloodTransfusion = bloodTransfusions[0]
-            Assert.assertEquals(LocalDate.of(2020, 7, 7), bloodTransfusion.date())
-            Assert.assertEquals("Translated product", bloodTransfusion.product())
+            assertEquals(LocalDate.of(2020, 7, 7), bloodTransfusion.date())
+            assertEquals("Translated product", bloodTransfusion.product())
         }
 
         private fun assertMedications(medications: List<Medication>) {
-            Assert.assertEquals(1, medications.size.toLong())
+            assertEquals(1, medications.size.toLong())
             val medication = medications[0]
-            Assert.assertEquals("Paracetamol", medication.name())
-            Assert.assertEquals(Sets.newHashSet("Acetanilide derivatives"), medication.categories())
-            Assert.assertEquals(MedicationStatus.ACTIVE, medication.status())
-            Assert.assertEquals(50.0, medication.dosageMin()!!, EPSILON)
-            Assert.assertEquals(60.0, medication.dosageMax()!!, EPSILON)
-            Assert.assertEquals("mg", medication.dosageUnit())
-            Assert.assertEquals("day", medication.frequencyUnit())
-            Assert.assertFalse(medication.ifNeeded()!!)
-            Assert.assertEquals(LocalDate.of(2019, 2, 2), medication.startDate())
-            Assert.assertEquals(LocalDate.of(2019, 4, 4), medication.stopDate())
+            assertEquals("Paracetamol", medication.name())
+            assertEquals(Sets.newHashSet("Acetanilide derivatives"), medication.categories())
+            assertEquals(MedicationStatus.ACTIVE, medication.status())
+            assertEquals(50.0, medication.dosageMin()!!, EPSILON)
+            assertEquals(60.0, medication.dosageMax()!!, EPSILON)
+            assertEquals("mg", medication.dosageUnit())
+            assertEquals("day", medication.frequencyUnit())
+            assertFalse(medication.ifNeeded()!!)
+            assertEquals(LocalDate.of(2019, 2, 2), medication.startDate())
+            assertEquals(LocalDate.of(2019, 4, 4), medication.stopDate())
         }
 
         private fun createMinimalTestClinicalRecords(): List<ClinicalRecord> {

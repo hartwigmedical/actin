@@ -14,15 +14,19 @@ class TestClinicalIngestionApplication private constructor(private val config: C
     @Throws(IOException::class)
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
-        LOGGER.info("Loading DOID tree from {}", config.doidJson())
-        val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson())
+
+        LOGGER.info("Loading DOID tree from {}", config.doidJson)
+        val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size)
-        LOGGER.info("Creating clinical feed model from directory {}", config.feedDirectory())
-        val feedModel = fromFeedDirectory(config.feedDirectory())
-        LOGGER.info("Creating clinical curation model from directory {}", config.curationDirectory())
-        val curationModel = CurationModel.create(config.curationDirectory(), DoidModelFactory.createFromDoidEntry(doidEntry))
+
+        LOGGER.info("Creating clinical feed model from directory {}", config.feedDirectory)
+        val feedModel = fromFeedDirectory(config.feedDirectory)
+
+        LOGGER.info("Creating clinical curation model from directory {}", config.curationDirectory)
+        val curationModel = CurationModel.create(config.curationDirectory, DoidModelFactory.createFromDoidEntry(doidEntry))
         val records: List<ClinicalRecord> = ClinicalRecordsFactory(feedModel, curationModel).create()
-        val outputDirectory = config.outputDirectory()
+
+        val outputDirectory = config.outputDirectory
         LOGGER.info("Writing {} clinical records to {}", records.size, outputDirectory)
         ClinicalRecordJson.write(records, outputDirectory)
         LOGGER.info("Done!")
@@ -34,27 +38,30 @@ class TestClinicalIngestionApplication private constructor(private val config: C
         )
         private const val APPLICATION = "ACTIN Clinical Ingestion"
         private val VERSION = TestClinicalIngestionApplication::class.java.getPackage().implementationVersion
-        private val FEED_DIRECTORY_PATH =
-            java.lang.String.join(File.separator, java.util.List.of(System.getProperty("user.home"), "hmf", "tmp", "feed"))
-        private val CURATION_DIRECTORY_PATH = java.lang.String.join(
-            File.separator,
-            java.util.List.of(System.getProperty("user.home"), "hmf", "repos", "crunch-resources-private", "actin", "clinical_curation")
-        )
-        private val DOID_JSON_PATH = java.lang.String.join(
-            File.separator,
-            java.util.List.of(System.getProperty("user.home"), "hmf", "repos", "common-resources-public", "disease_ontology", "doid.json")
-        )
-        private val OUTPUT_DIRECTORY_PATH = java.lang.String.join(File.separator, java.util.List.of(FEED_DIRECTORY_PATH, "out"))
+        private val FEED_DIRECTORY_PATH = listOf(System.getProperty("user.home"), "hmf", "tmp", "feed").joinToString(File.separator)
+        private val CURATION_DIRECTORY_PATH =
+            listOf(System.getProperty("user.home"), "hmf", "repos", "crunch-resources-private", "actin", "clinical_curation").joinToString(
+                File.separator
+            )
+        private val DOID_JSON_PATH = listOf(
+            System.getProperty("user.home"),
+            "hmf",
+            "repos",
+            "common-resources-public",
+            "disease_ontology",
+            "doid.json"
+        ).joinToString(File.separator)
+        private val OUTPUT_DIRECTORY_PATH = listOf(FEED_DIRECTORY_PATH, "out").joinToString(File.separator)
 
         @Throws(IOException::class)
         @JvmStatic
         fun main(args: Array<String>) {
-            val config: ClinicalIngestionConfig = ImmutableClinicalIngestionConfig.builder()
-                .feedDirectory(FEED_DIRECTORY_PATH)
-                .curationDirectory(CURATION_DIRECTORY_PATH)
-                .doidJson(DOID_JSON_PATH)
-                .outputDirectory(OUTPUT_DIRECTORY_PATH)
-                .build()
+            val config = ClinicalIngestionConfig(
+                feedDirectory = FEED_DIRECTORY_PATH,
+                curationDirectory = CURATION_DIRECTORY_PATH,
+                doidJson = DOID_JSON_PATH,
+                outputDirectory = OUTPUT_DIRECTORY_PATH
+            )
             TestClinicalIngestionApplication(config).run()
         }
     }

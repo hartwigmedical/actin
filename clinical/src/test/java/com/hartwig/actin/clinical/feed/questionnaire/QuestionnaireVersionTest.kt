@@ -20,19 +20,12 @@ class QuestionnaireVersionTest {
 
     @Test(expected = IllegalStateException::class)
     fun crashOnUnresolvedVersion() {
-        version(entry("Not an entry"))
+        version(TestQuestionnaireFactory.entryWithText("Not an entry"))
     }
 
     companion object {
         private fun assertVersion(expected: QuestionnaireVersion, questionnaire: String) {
-            Assert.assertEquals(expected, version(entry(questionnaire)))
-        }
-
-        private fun entry(questionnaire: String): QuestionnaireEntry {
-            return ImmutableQuestionnaireEntry.builder()
-                .from(TestQuestionnaireFactory.createTestQuestionnaireEntry())
-                .text(questionnaire)
-                .build()
+            Assert.assertEquals(expected, version(TestQuestionnaireFactory.entryWithText(questionnaire)))
         }
     }
 }

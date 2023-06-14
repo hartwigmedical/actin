@@ -89,13 +89,9 @@ class LabExtractionTest {
 
     companion object {
         private const val EPSILON = 1.0E-10
+
         private fun findByCodeCodeOriginal(entries: List<LabEntry>, code: String): LabEntry {
-            for (entry in entries) {
-                if (entry.codeCodeOriginal() == code) {
-                    return entry
-                }
-            }
-            throw IllegalStateException("Could not find lab entry with code: $code")
+            return entries.find { it.codeCodeOriginal == code } ?: throw IllegalStateException("Could not find lab entry with code: $code")
         }
     }
 }

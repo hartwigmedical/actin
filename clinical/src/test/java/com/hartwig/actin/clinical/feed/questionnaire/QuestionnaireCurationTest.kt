@@ -94,40 +94,38 @@ class QuestionnaireCurationTest {
 
     @Test
     fun shouldReturnNullForEmptyECG() {
-        val ECGStatus = toECG("")
-        Assert.assertNull(ECGStatus)
+        Assert.assertNull(toECG(""))
     }
 
     @Test
     fun shouldReturnNullForUnknownECG() {
-        val ECGStatus = toECG("unknown")
-        Assert.assertNull(ECGStatus)
+        Assert.assertNull(toECG("unknown"))
     }
 
     @Test
     fun shouldExtractPositiveECG() {
-        val ECGDescription = "yes"
-        val ECGStatus = toECG(ECGDescription)
-        Assert.assertNotNull(ECGStatus)
-        Assert.assertTrue(ECGStatus!!.hasSigAberrationLatestECG())
-        Assert.assertEquals(ECGDescription, ECGStatus.aberrationDescription())
+        val description = "yes"
+        val status = toECG(description)
+        Assert.assertNotNull(status)
+        Assert.assertTrue(status!!.hasSigAberrationLatestECG())
+        Assert.assertEquals(description, status.aberrationDescription())
     }
 
     @Test
     fun shouldExtractNegativeECG() {
-        val ECGDescription = "no"
-        val ECGStatus = toECG(ECGDescription)
-        Assert.assertNotNull(ECGStatus)
-        Assert.assertFalse(ECGStatus!!.hasSigAberrationLatestECG())
-        Assert.assertEquals(ECGDescription, ECGStatus.aberrationDescription())
+        val description = "no"
+        val status = toECG(description)
+        Assert.assertNotNull(status)
+        Assert.assertFalse(status!!.hasSigAberrationLatestECG())
+        Assert.assertEquals(description, status.aberrationDescription())
     }
 
     @Test
     fun shouldExtractECGDescriptionAndIndicatePresence() {
-        val ECGDescription = "ECG"
-        val ECGStatus = toECG(ECGDescription)
-        Assert.assertNotNull(ECGStatus)
-        Assert.assertTrue(ECGStatus!!.hasSigAberrationLatestECG())
-        Assert.assertEquals(ECGDescription, ECGStatus.aberrationDescription())
+        val description = "ECG"
+        val status = toECG(description)
+        Assert.assertNotNull(status)
+        Assert.assertTrue(status!!.hasSigAberrationLatestECG())
+        Assert.assertEquals(description, status.aberrationDescription())
     }
 }

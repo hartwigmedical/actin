@@ -11,13 +11,13 @@ import com.hartwig.actin.clinical.feed.surgery.SurgeryEntry
 import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry
 
 data class ClinicalFeed(
-    val patientEntries: List<PatientEntry>,
-    val digitalFileEntries: List<DigitalFileEntry>,
-    val questionnaireEntries: List<QuestionnaireEntry>,
-    val surgeryEntries: List<SurgeryEntry>,
-    val medicationEntries: List<MedicationEntry>,
-    val labEntries: List<LabEntry>,
-    val vitalFunctionEntries: List<VitalFunctionEntry>,
-    val intoleranceEntries: List<IntoleranceEntry>,
-    val bodyWeightEntries: List<BodyWeightEntry>,
+    val patientEntries: List<PatientEntry> = emptyList(),
+    val digitalFileEntries: List<DigitalFileEntry> = emptyList(),
+    val questionnaireEntries: List<QuestionnaireEntry> = emptyList(),
+    val surgeryEntries: List<SurgeryEntry> = emptyList(),
+    val medicationEntries: List<MedicationEntry> = emptyList(),
+    val labEntries: List<LabEntry> = emptyList(),
+    val vitalFunctionEntries: List<VitalFunctionEntry> = emptyList(),
+    val intoleranceEntries: List<IntoleranceEntry> = emptyList(),
+    val bodyWeightEntries: List<BodyWeightEntry> = emptyList(),
 )

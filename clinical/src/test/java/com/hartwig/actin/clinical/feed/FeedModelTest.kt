@@ -23,7 +23,7 @@ class FeedModelTest {
     @Test
     fun canRetrieveSubjects() {
         val model = TestFeedFactory.createProperTestFeedModel()
-        val subjects: Set<String?> = model.subjects()
+        val subjects: Set<String> = model.subjects()
         Assert.assertEquals(1, subjects.size.toLong())
         Assert.assertTrue(subjects.contains(TestFeedFactory.TEST_SUBJECT))
     }
@@ -46,7 +46,7 @@ class FeedModelTest {
         val model = TestFeedFactory.createProperTestFeedModel()
         val latest = model.latestQuestionnaireEntry(TestFeedFactory.TEST_SUBJECT)
         Assert.assertNotNull(latest)
-        Assert.assertEquals(LocalDate.of(2021, 8, 1), latest!!.authored())
+        Assert.assertEquals(LocalDate.of(2021, 8, 1), latest!!.authored)
         Assert.assertNull(model.latestQuestionnaireEntry("Does not exist"))
     }
 
