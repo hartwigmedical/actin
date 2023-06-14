@@ -13,12 +13,9 @@ public abstract class CuppaPrediction {
 
     public abstract double likelihood();
 
-    @NotNull
-    public abstract Double snvPairwiseClassifier();
+    public abstract double snvPairwiseClassifier();
 
-    @NotNull
-    public abstract Double genomicPositionClassifier();
+    public abstract double genomicPositionClassifier();
 
-    @NotNull
-    public abstract Double featureClassifier();
+    public abstract double featureClassifier();
 }
