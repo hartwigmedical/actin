@@ -16,7 +16,7 @@ public final class TestQuestionnaireFactory {
                 .authored(LocalDate.of(2020, 8, 28))
                 .description("Description")
                 .itemText("ItemText")
-                .text(createTestQuestionnaireValueV1_6())
+                .text(createTestQuestionnaireValueV1_7())
                 .build();
     }
 

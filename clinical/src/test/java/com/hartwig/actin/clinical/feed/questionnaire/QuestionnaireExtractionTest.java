@@ -44,6 +44,75 @@ public class QuestionnaireExtractionTest {
     }
 
     @Test
+    public void shouldBeAbleToExtractDataFromQuestionnaireV1_7() {
+        Questionnaire questionnaire = extraction().extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_7()));
+
+        assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date());
+        assertEquals("ovary", questionnaire.tumorLocation());
+        assertEquals("serous", questionnaire.tumorType());
+        assertEquals("lymph node", questionnaire.biopsyLocation());
+
+        List<String> treatmentHistory = questionnaire.treatmentHistoryCurrentTumor();
+        assertEquals(2, treatmentHistory.size());
+        assertTrue(treatmentHistory.contains("cisplatin"));
+        assertTrue(treatmentHistory.contains("nivolumab"));
+
+        List<String> otherOncologicalHistory = questionnaire.otherOncologicalHistory();
+        assertEquals(1, otherOncologicalHistory.size());
+        assertTrue(otherOncologicalHistory.contains("surgery"));
+
+        List<String> secondaryPrimaries = questionnaire.secondaryPrimaries();
+        assertEquals(1, secondaryPrimaries.size());
+        assertTrue(secondaryPrimaries.contains("sarcoma | Feb 2020"));
+
+        List<String> nonOncologicalHistory = questionnaire.nonOncologicalHistory();
+        assertEquals(1, nonOncologicalHistory.size());
+        assertTrue(nonOncologicalHistory.contains("diabetes"));
+
+        assertEquals(TumorStage.IV, questionnaire.stage());
+        assertTrue(questionnaire.hasMeasurableDisease());
+        assertTrue(questionnaire.hasBrainLesions());
+        assertTrue(questionnaire.hasActiveBrainLesions());
+        assertNull(questionnaire.hasCnsLesions());
+        assertNull(questionnaire.hasActiveCnsLesions());
+        assertFalse(questionnaire.hasBoneLesions());
+        assertFalse(questionnaire.hasLiverLesions());
+
+        List<String> otherLesions = questionnaire.otherLesions();
+        assertEquals(2, otherLesions.size());
+        assertTrue(otherLesions.contains("pulmonal"));
+        assertTrue(otherLesions.contains("abdominal"));
+
+        List<String> ihcTestResults = questionnaire.ihcTestResults();
+        assertEquals(1, ihcTestResults.size());
+        assertTrue(ihcTestResults.contains("ERBB2 3+"));
+
+        List<String> pdl1TestResults = questionnaire.pdl1TestResults();
+        assertEquals(1, pdl1TestResults.size());
+        assertTrue(pdl1TestResults.contains("Positive"));
+
+        assertEquals(0, (int) questionnaire.whoStatus());
+        List<String> unresolvedToxicities = questionnaire.unresolvedToxicities();
+        assertEquals(1, unresolvedToxicities.size());
+        assertTrue(unresolvedToxicities.contains("toxic"));
+
+        InfectionStatus infectionStatus = questionnaire.infectionStatus();
+        assertNotNull(infectionStatus);
+        assertFalse(infectionStatus.hasActiveInfection());
+
+        ECG ecg = questionnaire.ecg();
+        assertNotNull(ecg);
+        assertTrue(ecg.hasSigAberrationLatestECG());
+        assertEquals("Sinus", ecg.aberrationDescription());
+
+        List<String> complications = questionnaire.complications();
+        assertEquals(1, complications.size());
+        assertTrue(complications.contains("vomit"));
+
+        assertEquals("GAYA-01-02-9999", questionnaire.genayaSubjectNumber());
+    }
+
+    @Test
     public void shouldBeAbleToExtractDataFromQuestionnaireV1_6() {
         Questionnaire questionnaire = extraction().extract(entry(TestQuestionnaireFactory.createTestQuestionnaireValueV1_6()));
 
