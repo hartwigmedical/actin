@@ -160,11 +160,11 @@ class QuestionnaireExtraction(private val questionnaireRawEntryMapper: Questionn
             if (isOptional) {
                 LOGGER.debug(
                     "Key '{}' not present but skipped since it is configured as optional in questionnaire '{}'", key,
-                    java.lang.String.join("\n", *lines)
+                    lines.joinToString("\n")
                 )
                 return null
             }
-            throw IllegalStateException("Could not find key " + key + " in questionnaire " + java.lang.String.join("\n", *lines))
+            throw IllegalStateException("Could not find key '$key' in questionnaire: " + lines.joinToString("\n"))
         }
     }
 }

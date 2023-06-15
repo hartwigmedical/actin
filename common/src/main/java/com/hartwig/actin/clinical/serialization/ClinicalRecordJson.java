@@ -94,8 +94,10 @@ import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableSurgeryHistoryDetails;
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTherapyHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
 import com.hartwig.actin.clinical.datamodel.treatment.history.SurgeryHistoryDetails;
+import com.hartwig.actin.clinical.datamodel.treatment.history.TherapyHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
 import com.hartwig.actin.clinical.sort.ClinicalRecordComparator;
 import com.hartwig.actin.util.Paths;
@@ -172,6 +174,8 @@ public final class ClinicalRecordJson {
                 .registerTypeAdapter(Therapy.class, new TreatmentAdapter())
                 .registerTypeAdapter(SurgeryHistoryDetails.class,
                         new AbstractClassAdapter<SurgeryHistoryDetails>(ImmutableSurgeryHistoryDetails.class))
+                .registerTypeAdapter(TherapyHistoryDetails.class,
+                        new AbstractClassAdapter<TherapyHistoryDetails>(ImmutableTherapyHistoryDetails.class))
                 .registerTypeAdapter(new TypeToken<ImmutableList<String>>() {
                 }.getType(), new ImmutableListAdapter<String>(String.class))
                 .registerTypeAdapter(new TypeToken<ImmutableList<TreatmentHistoryEntry>>() {

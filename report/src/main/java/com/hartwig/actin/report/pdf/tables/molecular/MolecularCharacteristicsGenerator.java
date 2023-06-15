@@ -7,10 +7,8 @@ import java.util.StringJoiner;
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
-import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
-import com.hartwig.actin.report.interpretation.TumorOriginInterpreter;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -42,31 +40,15 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
     @NotNull
     @Override
     public Table contents() {
-        float colWidth = width / 12;
-        Table table = Tables.createFixedWidthCols(colWidth,
-                colWidth,
-                colWidth * 2,
-                colWidth,
-                colWidth,
-                colWidth,
-                colWidth,
-                colWidth * 2,
-                colWidth * 2);
+        float colWidth = width / 10;
+        Table table = Tables.createFixedWidthCols(colWidth, colWidth, colWidth, colWidth, colWidth, colWidth, colWidth * 2, colWidth * 2);
 
-        List.of("Purity",
-                "Sufficient Quality",
-                "Predicted tumor origin",
-                "TML Status",
-                "TMB Status",
-                "MS Stability",
-                "HR Status",
-                "DPYD",
-                "UGT1A1").forEach(title -> table.addHeaderCell(Cells.createHeader(title)));
+        List.of("Purity", "Sufficient Quality", "TML Status", "TMB Status", "MS Stability", "HR Status", "DPYD", "UGT1A1")
+                .forEach(title -> table.addHeaderCell(Cells.createHeader(title)));
 
         MolecularCharacteristics characteristics = molecular.characteristics();
         List.of(createPurityCell(characteristics.purity()),
                 Cells.createContentYesNo(Formats.yesNoUnknown(molecular.hasSufficientQualityAndPurity())),
-                createPredictedTumorOriginCell(),
                 createTMLStatusCell(),
                 createTMBStatusCell(),
                 createMSStabilityCell(),
@@ -92,21 +74,6 @@ public class MolecularCharacteristicsGenerator implements TableGenerator {
             return Cells.createContentWarn(purityString);
         } else {
             return Cells.createContent(purityString);
-        }
-    }
-
-    @NotNull
-    Cell createPredictedTumorOriginCell() {
-        if (!molecular.containsTumorCells()) {
-            return Cells.createContentWarn(Formats.VALUE_NOT_AVAILABLE);
-        }
-
-        PredictedTumorOrigin predictedTumorOrigin = molecular.characteristics().predictedTumorOrigin();
-        String interpretation = TumorOriginInterpreter.interpret(predictedTumorOrigin);
-        if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin) && molecular.hasSufficientQualityAndPurity()) {
-            return Cells.createContent(interpretation);
-        } else {
-            return Cells.createContentWarn(interpretation);
         }
     }
 
