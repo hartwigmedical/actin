@@ -26,7 +26,7 @@ public class MedicationGenerator implements TableGenerator {
     @NotNull
     @Override
     public String title() {
-        return "Medication details";
+        return "Active medication details";
     }
 
     @NotNull
@@ -42,7 +42,7 @@ public class MedicationGenerator implements TableGenerator {
         table.addHeaderCell(Cells.createHeader("Frequency"));
 
         medications.stream().distinct().forEach(medication -> {
-            if (medication.status().display().equals("Active")) {
+            if (medication.status().display().equals("Active") || medication.status().display().equals("Planned")) {
                 table.addCell(Cells.createContent(medication.name()));
                 table.addCell(Cells.createContent(administrationRoute(medication)));
                 table.addCell(Cells.createContent(Formats.date(medication.startDate(), Strings.EMPTY)));
