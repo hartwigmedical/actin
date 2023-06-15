@@ -73,7 +73,6 @@ internal object QuestionnaireCuration {
         STAGE_MAPPING["onknown"] = null
     }
 
-    @JvmStatic
     fun toOption(option: String?): Boolean? {
         if (option.isNullOrEmpty()) {
             return null
@@ -89,7 +88,6 @@ internal object QuestionnaireCuration {
         return OPTION_MAPPING.containsKey(option)
     }
 
-    @JvmStatic
     fun toStage(stage: String?): TumorStage? {
         if (stage.isNullOrEmpty()) {
             return null
@@ -101,7 +99,6 @@ internal object QuestionnaireCuration {
         return STAGE_MAPPING[stage]
     }
 
-    @JvmStatic
     fun toWHO(integer: String?): Int? {
         if (integer.isNullOrEmpty()) {
             return null
@@ -115,17 +112,14 @@ internal object QuestionnaireCuration {
         }
     }
 
-    @JvmStatic
     fun toSecondaryPrimaries(secondaryPrimary: String, lastTreatmentInfo: String): List<String> {
         return listOf(secondaryPrimary + if (lastTreatmentInfo.isEmpty()) "" else " | $lastTreatmentInfo")
     }
 
-    @JvmStatic
     fun toInfectionStatus(significantCurrentInfection: String?): InfectionStatus? {
         return buildFromDescription(significantCurrentInfection, ::buildInfectionStatus)
     }
 
-    @JvmStatic
     fun toECG(significantAberrationLatestECG: String?): ECG? {
         return buildFromDescription(significantAberrationLatestECG, ::buildECG)
     }

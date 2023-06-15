@@ -231,7 +231,6 @@ internal object QuestionnaireMapping {
         KEYS_V0_1[QuestionnaireKey.GENAYA_SUBJECT_NUMBER] = null
     }
 
-    @JvmStatic
     fun mapping(entry: QuestionnaireEntry): Map<QuestionnaireKey, String?> {
         return when (QuestionnaireVersion.version(entry)) {
             QuestionnaireVersion.V1_6 -> KEYS_V1_6

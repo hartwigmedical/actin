@@ -37,7 +37,6 @@ internal enum class QuestionnaireVersion(private val specificSearchString: Strin
     }
 
     companion object {
-        @JvmStatic
         fun version(entry: QuestionnaireEntry): QuestionnaireVersion {
             val matches: MutableSet<QuestionnaireVersion> = Sets.newHashSet()
             for (version in values()) {

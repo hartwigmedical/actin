@@ -19,7 +19,6 @@ class QuestionnaireRawEntryMapper(private val correctionMap: Map<String, String>
     companion object {
         private const val QUESTIONNAIRE_MAPPING_TSV = "questionnaire_mapping.tsv"
 
-        @JvmStatic
         @Throws(IOException::class)
         fun createFromCurationDirectory(curationDirectory: String?): QuestionnaireRawEntryMapper {
             val filePath = Path.of(Paths.forceTrailingFileSeparator(curationDirectory!!) + QUESTIONNAIRE_MAPPING_TSV)

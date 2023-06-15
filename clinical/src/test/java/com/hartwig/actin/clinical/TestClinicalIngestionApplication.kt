@@ -54,7 +54,6 @@ class TestClinicalIngestionApplication private constructor(private val config: C
         private val OUTPUT_DIRECTORY_PATH = listOf(FEED_DIRECTORY_PATH, "out").joinToString(File.separator)
 
         @Throws(IOException::class)
-        @JvmStatic
         fun main(args: Array<String>) {
             val config = ClinicalIngestionConfig(
                 feedDirectory = FEED_DIRECTORY_PATH,

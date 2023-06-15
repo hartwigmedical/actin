@@ -26,7 +26,6 @@ class ReformatQuestionnaireApplication private constructor(private val questionn
         private const val APPLICATION = "ACTIN Questionnaire Reformat"
 
         @Throws(IOException::class)
-        @JvmStatic
         fun main(args: Array<String>) {
             val options = Options()
             options.addOption(QUESTIONNAIRE, true, "File containing the questionnaire txt")

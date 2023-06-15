@@ -10,14 +10,12 @@ object CurationUtil {
         return input == IGNORE
     }
 
-    @JvmStatic
     fun capitalizeFirstLetterOnly(string: String): String {
         return if (string.isEmpty()) {
             string
         } else string.substring(0, 1).uppercase() + string.substring(1).lowercase()
     }
 
-    @JvmStatic
     fun fullTrim(input: String): String {
         var reformatted = input.trim { it <= ' ' }
         while (reformatted.contains("  ")) {
@@ -26,12 +24,10 @@ object CurationUtil {
         return reformatted
     }
 
-    @JvmStatic
     fun toDOIDs(doidString: String): Set<String> {
         return toSet(doidString, DOID_DELIMITER)
     }
 
-    @JvmStatic
     fun toCategories(categoriesString: String): Set<String> {
         return toSet(categoriesString, CATEGORIES_DELIMITER)
     }

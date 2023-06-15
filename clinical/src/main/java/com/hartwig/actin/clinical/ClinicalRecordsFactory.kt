@@ -56,7 +56,6 @@ import com.hartwig.actin.clinical.sort.ClinicalRecordComparator
 import com.hartwig.actin.clinical.sort.LabValueDescendingDateComparator
 import com.hartwig.actin.clinical.sort.MedicationByNameComparator
 import org.apache.logging.log4j.LogManager
-import kotlin.collections.HashSet
 
 class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
     private val feed: FeedModel
@@ -329,7 +328,6 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
     companion object {
         private val LOGGER = LogManager.getLogger(ClinicalRecordsFactory::class.java)
 
-        @JvmStatic
         @VisibleForTesting
         fun toPatientId(subject: String): String {
             var adjusted = subject

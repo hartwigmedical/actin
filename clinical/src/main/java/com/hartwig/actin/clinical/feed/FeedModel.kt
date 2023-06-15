@@ -62,7 +62,6 @@ class FeedModel(private val feed: ClinicalFeed) {
     }
 
     companion object {
-        @JvmStatic
         @Throws(IOException::class)
         fun fromFeedDirectory(clinicalFeedDirectory: String): FeedModel {
             return FeedModel(ClinicalFeedReader.read(clinicalFeedDirectory))

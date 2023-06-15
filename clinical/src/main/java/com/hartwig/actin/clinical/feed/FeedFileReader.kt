@@ -69,7 +69,6 @@ class FeedFileReader<T : FeedEntry>(private val feedEntryCreator: FeedEntryCreat
                 .toTypedArray())
         }
 
-        @JvmStatic
         @VisibleForTesting
         fun cleanQuotes(inputs: Array<String>): Array<String> {
             return inputs.indices.map { cleanQuotes(inputs[it]) }.toTypedArray()

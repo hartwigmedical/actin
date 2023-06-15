@@ -10,7 +10,6 @@ internal class LesionData(private val present: Boolean?, private val active: Boo
     }
 
     companion object {
-        @JvmStatic
         fun fromString(presentInput: String, activeInput: String): LesionData {
             val present = QuestionnaireCuration.toOption(presentInput)
             var active: Boolean? = null

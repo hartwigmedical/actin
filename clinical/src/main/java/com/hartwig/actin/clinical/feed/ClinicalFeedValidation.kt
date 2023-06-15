@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical.feed
 
 internal object ClinicalFeedValidation {
-    @JvmStatic
     fun validate(feed: ClinicalFeed) {
         val duplicateSubjects = feed.patientEntries.groupBy { it.subject }.filter { it.value.size > 1 }
         check(duplicateSubjects.isEmpty()) {

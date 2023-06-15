@@ -14,7 +14,6 @@ object FeedParseFunctions {
         DATE_FORMATS.add(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSSS"))
     }
 
-    @JvmStatic
     fun parseGender(gender: String): Gender {
         return when {
             gender.equals("male", ignoreCase = true) -> Gender.MALE
@@ -25,12 +24,10 @@ object FeedParseFunctions {
         }
     }
 
-    @JvmStatic
     fun parseOptionalDate(date: String): LocalDate? {
         return if (date.isNotEmpty()) parseDate(date) else null
     }
 
-    @JvmStatic
     fun parseDate(date: String): LocalDate {
         for (format in DATE_FORMATS) {
             if (canBeInterpretedWithFormat(date, format)) {
@@ -49,7 +46,6 @@ object FeedParseFunctions {
         }
     }
 
-    @JvmStatic
     fun parseOptionalDouble(number: String): Double? {
         return if (number.isNotEmpty()) parseDouble(number) else null
     }

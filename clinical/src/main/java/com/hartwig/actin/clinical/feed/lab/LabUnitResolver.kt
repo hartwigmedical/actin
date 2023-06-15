@@ -29,7 +29,6 @@ internal object LabUnitResolver {
         CURATION_MAP["Ratio"] = LabUnit.NONE
     }
 
-    @JvmStatic
     fun resolve(unit: String): LabUnit {
         if (CURATION_MAP.containsKey(unit)) {
             return CURATION_MAP[unit]!!

@@ -39,7 +39,6 @@ class BuildClinicalFromDoidsOnly(private val command: CommandLine) {
         private val VERSION = BuildClinicalFromDoidsOnly::class.java.getPackage().implementationVersion
 
         @Throws(IOException::class, ParseException::class)
-        @JvmStatic
         fun main(args: Array<String>) {
             val options = createOptions()
             BuildClinicalFromDoidsOnly(DefaultParser().parse(options, args)).run()

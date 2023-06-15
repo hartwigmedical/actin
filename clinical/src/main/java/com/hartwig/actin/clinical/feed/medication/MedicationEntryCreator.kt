@@ -42,7 +42,6 @@ class MedicationEntryCreator : FeedEntryCreator<MedicationEntry> {
     }
 
     companion object {
-        @JvmStatic
         @VisibleForTesting
         fun isActive(activeField: String): Boolean? {
             if (activeField.equals("stopped", ignoreCase = true)) {

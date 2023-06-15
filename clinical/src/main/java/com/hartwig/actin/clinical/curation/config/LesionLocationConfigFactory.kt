@@ -14,7 +14,6 @@ class LesionLocationConfigFactory : CurationConfigFactory<LesionLocationConfig> 
     }
 
     companion object {
-        @JvmStatic
         @VisibleForTesting
         fun toCategory(category: String): LesionLocationCategory? {
             return if (category.isEmpty()) {

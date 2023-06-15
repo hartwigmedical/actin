@@ -61,7 +61,6 @@ class QuestionnaireExtraction(private val questionnaireRawEntryMapper: Questionn
         private const val ACTIN_QUESTIONNAIRE_KEYWORD = "ACTIN Questionnaire"
         private const val ACTIVE_LINE_OFFSET = 1
 
-        @JvmStatic
         fun isActualQuestionnaire(entry: QuestionnaireEntry): Boolean {
             return entry.text.contains(ACTIN_QUESTIONNAIRE_KEYWORD)
         }

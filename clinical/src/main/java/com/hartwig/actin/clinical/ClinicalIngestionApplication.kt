@@ -40,7 +40,6 @@ class ClinicalIngestionApplication private constructor(private val config: Clini
         private val VERSION = ClinicalIngestionApplication::class.java.getPackage().implementationVersion
 
         @Throws(IOException::class)
-        @JvmStatic
         fun main(args: Array<String>) {
             val options: Options = ClinicalIngestionConfig.createOptions()
             val config: ClinicalIngestionConfig

@@ -3,7 +3,6 @@ package com.hartwig.actin.clinical.feed.vitalfunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 
 object VitalFunctionExtraction {
-    @JvmStatic
     fun determineCategory(string: String): VitalFunctionCategory {
         return toCategory(string)
             ?: throw IllegalArgumentException("Could not determine category for vital function: $string")

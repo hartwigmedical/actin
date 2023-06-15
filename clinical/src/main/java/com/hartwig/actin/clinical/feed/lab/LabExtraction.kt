@@ -9,7 +9,6 @@ import org.apache.logging.log4j.LogManager
 object LabExtraction {
     private val LOGGER = LogManager.getLogger(LabExtraction::class.java)
 
-    @JvmStatic
     fun extract(entry: LabEntry): LabValue {
         val limits = extractLimits(entry.referenceRangeText)
         val value = entry.valueQuantityValue
@@ -30,7 +29,6 @@ object LabExtraction {
             .build()
     }
 
-    @JvmStatic
     @VisibleForTesting
     fun extractLimits(referenceRangeText: String): Limits {
         var lower: Double? = null
@@ -51,7 +49,6 @@ object LabExtraction {
         return Limits(lower, upper)
     }
 
-    @JvmStatic
     @VisibleForTesting
     fun findSeparatingHyphenIndex(referenceRangeText: String): Int {
         assert(referenceRangeText.contains("-"))

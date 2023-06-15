@@ -16,7 +16,6 @@ object ClinicalFeedReader {
     private const val INTOLERANCE_TSV = "intolerance.tsv"
     private const val BODY_WEIGHT_TSV = "bodyweight.tsv"
 
-    @JvmStatic
     @Throws(IOException::class)
     fun read(clinicalFeedDirectory: String): ClinicalFeed {
         LOGGER.info("Reading clinical feed data from {}", clinicalFeedDirectory)
