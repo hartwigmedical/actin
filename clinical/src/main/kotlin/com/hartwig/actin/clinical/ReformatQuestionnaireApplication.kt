@@ -14,7 +14,7 @@ import kotlin.system.exitProcess
 class ReformatQuestionnaireApplication private constructor(private val questionnaireFile: String) {
     @Throws(IOException::class)
     fun run() {
-        val questionnaire = java.lang.String.join("\\n", Files.readAllLines(File(questionnaireFile).toPath()))
+        val questionnaire = Files.readAllLines(File(questionnaireFile).toPath()).joinToString("\\n")
         println(questionnaire)
     }
 

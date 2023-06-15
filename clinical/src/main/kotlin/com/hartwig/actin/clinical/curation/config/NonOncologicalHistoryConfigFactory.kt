@@ -6,7 +6,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.util.ResourceFile
 import org.apache.logging.log4j.LogManager
-import java.util.Optional
+import java.util.*
 
 class NonOncologicalHistoryConfigFactory(private val curationValidator: CurationValidator) :
     CurationConfigFactory<NonOncologicalHistoryConfig> {
@@ -46,7 +46,7 @@ class NonOncologicalHistoryConfigFactory(private val curationValidator: Curation
         private val LOGGER = LogManager.getLogger(NonOncologicalHistoryConfigFactory::class.java)
 
         private fun toCuratedLVEF(fields: Map<String, Int>, parts: Array<String>): Optional<Double> {
-            return if (isLVEF(fields, parts)) Optional.of(java.lang.Double.valueOf(parts[fields["lvefValue"]!!])) else Optional.empty()
+            return if (isLVEF(fields, parts)) Optional.of(parts[fields["lvefValue"]!!].toDouble()) else Optional.empty()
         }
 
         private fun isLVEF(fields: Map<String, Int>, parts: Array<String>): Boolean {

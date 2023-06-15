@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
-import java.util.Optional
+import java.util.*
 
 data class NonOncologicalHistoryConfig(
     override val input: String,
