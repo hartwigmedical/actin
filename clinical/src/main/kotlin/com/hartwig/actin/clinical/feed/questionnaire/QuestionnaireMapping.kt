@@ -2,14 +2,14 @@ package com.hartwig.actin.clinical.feed.questionnaire
 
 internal object QuestionnaireMapping {
     private val NEW_KEYS: Map<QuestionnaireKey, String?> =
-        listOf(QuestionnaireKey.GENAYA_SUBJECT_NUMBER, QuestionnaireKey.FAMILY_HISTORY)
-            .associateWith { null }
-
-    private val KEYS_INTRODUCED_IN_V1_5: Map<QuestionnaireKey, String?> =
-        listOf(QuestionnaireKey.SECONDARY_PRIMARY, QuestionnaireKey.PDL1_TEST_RESULTS).associateWith { null }
+        listOf(QuestionnaireKey.GENAYA_SUBJECT_NUMBER, QuestionnaireKey.FAMILY_HISTORY).associateWith { null }
 
     private val KEYS_INTRODUCED_AFTER_V1_3: Map<QuestionnaireKey, String?> =
-        mapOf(QuestionnaireKey.IHC_TEST_RESULTS to null) + KEYS_INTRODUCED_IN_V1_5 + NEW_KEYS
+        listOf(
+            QuestionnaireKey.SECONDARY_PRIMARY,
+            QuestionnaireKey.PDL1_TEST_RESULTS,
+            QuestionnaireKey.IHC_TEST_RESULTS
+        ).associateWith { null } + NEW_KEYS
 
     val KEYS_V0_1: Map<QuestionnaireKey, String?> = mapOf(
         QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR to null,
@@ -76,113 +76,25 @@ internal object QuestionnaireMapping {
         QuestionnaireKey.COMPLICATIONS to "Cancer-related complications (e.g. pleural effusion)",
     ) + KEYS_INTRODUCED_AFTER_V1_3
 
-    val KEYS_V1_1: Map<QuestionnaireKey, String?> = mapOf(
-        QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR to "Treatment history current tumor",
-        QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY to "Other oncological history",
-        QuestionnaireKey.NON_ONCOLOGICAL_HISTORY to "Non-oncological history",
-        QuestionnaireKey.PRIMARY_TUMOR_LOCATION to "Primary tumor location",
-        QuestionnaireKey.PRIMARY_TUMOR_TYPE to "Primary tumor type",
-        QuestionnaireKey.BIOPSY_LOCATION to "Biopsy location",
-        QuestionnaireKey.STAGE to "Stage",
-        QuestionnaireKey.HAS_MEASURABLE_DISEASE to "Measurable disease (RECIST) yes/no",
-        QuestionnaireKey.HAS_CNS_LESIONS to "CNS lesions yes/no/unknown",
-        QuestionnaireKey.HAS_BRAIN_LESIONS to "Brain lesions yes/no/unknown",
-        QuestionnaireKey.HAS_BONE_LESIONS to "Bone lesions yes/no/unknown",
-        QuestionnaireKey.HAS_LIVER_LESIONS to "Liver lesions yes/no/unknown",
-        QuestionnaireKey.OTHER_LESIONS to "Other lesions (e.g. lymph node, pulmonal)",
-        QuestionnaireKey.WHO_STATUS to "WHO status",
-        QuestionnaireKey.UNRESOLVED_TOXICITIES to "Unresolved toxicities grade => 2",
-        QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION to "Significant current infection",
-        QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG to "Significant aberration on latest ECG",
-        QuestionnaireKey.COMPLICATIONS to "Cancer-related complications (e.g. pleural effusion)",
-    ) + KEYS_INTRODUCED_AFTER_V1_3
+    val KEYS_V1_1: Map<QuestionnaireKey, String?> = KEYS_V1_0
 
-    val KEYS_V1_2: Map<QuestionnaireKey, String?> = mapOf(
-        QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR to "Treatment history current tumor",
-        QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY to "Other oncological history",
-        QuestionnaireKey.NON_ONCOLOGICAL_HISTORY to "Non-oncological history",
-        QuestionnaireKey.PRIMARY_TUMOR_LOCATION to "Primary tumor location",
-        QuestionnaireKey.PRIMARY_TUMOR_TYPE to "Primary tumor type",
-        QuestionnaireKey.BIOPSY_LOCATION to "Biopsy location",
-        QuestionnaireKey.STAGE to "Stage",
+    val KEYS_V1_2: Map<QuestionnaireKey, String?> = KEYS_V1_1 + mapOf(
         QuestionnaireKey.HAS_MEASURABLE_DISEASE to "Measurable disease (RECIST)",
         QuestionnaireKey.HAS_CNS_LESIONS to "CNS lesions",
         QuestionnaireKey.HAS_BRAIN_LESIONS to "Brain lesions",
         QuestionnaireKey.HAS_BONE_LESIONS to "Bone lesions",
         QuestionnaireKey.HAS_LIVER_LESIONS to "Liver lesions",
-        QuestionnaireKey.OTHER_LESIONS to "Other lesions (e.g. lymph node, pulmonal)",
-        QuestionnaireKey.WHO_STATUS to "WHO status",
-        QuestionnaireKey.UNRESOLVED_TOXICITIES to "Unresolved toxicities grade => 2",
-        QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION to "Significant current infection",
-        QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG to "Significant aberration on latest ECG",
-        QuestionnaireKey.COMPLICATIONS to "Cancer-related complications (e.g. pleural effusion)",
-    ) + KEYS_INTRODUCED_AFTER_V1_3
+    )
 
-    val KEYS_V1_3: Map<QuestionnaireKey, String?> = mapOf(
-        QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR to "Treatment history current tumor",
-        QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY to "Other oncological history",
-        QuestionnaireKey.NON_ONCOLOGICAL_HISTORY to "Non-oncological history",
-        QuestionnaireKey.PRIMARY_TUMOR_LOCATION to "Primary tumor location",
-        QuestionnaireKey.PRIMARY_TUMOR_TYPE to "Primary tumor type",
-        QuestionnaireKey.BIOPSY_LOCATION to "Biopsy location",
-        QuestionnaireKey.STAGE to "Stage",
-        QuestionnaireKey.HAS_MEASURABLE_DISEASE to "Measurable disease (RECIST)",
-        QuestionnaireKey.HAS_CNS_LESIONS to "CNS lesions",
-        QuestionnaireKey.HAS_BRAIN_LESIONS to "Brain lesions",
-        QuestionnaireKey.HAS_BONE_LESIONS to "Bone lesions",
-        QuestionnaireKey.HAS_LIVER_LESIONS to "Liver lesions",
-        QuestionnaireKey.OTHER_LESIONS to "Other lesions (e.g. lymph node, pulmonal)",
-        QuestionnaireKey.WHO_STATUS to "WHO status",
-        QuestionnaireKey.UNRESOLVED_TOXICITIES to "Unresolved toxicities grade => 2",
-        QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION to "Significant current infection",
-        QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG to "Significant aberration on latest ECG",
-        QuestionnaireKey.COMPLICATIONS to "Cancer-related complications (e.g. pleural effusion)",
-    ) + KEYS_INTRODUCED_AFTER_V1_3
+    val KEYS_V1_3: Map<QuestionnaireKey, String?> = KEYS_V1_2
 
-    val KEYS_V1_4: Map<QuestionnaireKey, String?> = mapOf(
-        QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR to "Treatment history current tumor",
-        QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY to "Other oncological history",
-        QuestionnaireKey.NON_ONCOLOGICAL_HISTORY to "Non-oncological history",
-        QuestionnaireKey.PRIMARY_TUMOR_LOCATION to "Primary tumor location",
-        QuestionnaireKey.PRIMARY_TUMOR_TYPE to "Primary tumor type",
-        QuestionnaireKey.BIOPSY_LOCATION to "Biopsy location",
-        QuestionnaireKey.STAGE to "Stage",
-        QuestionnaireKey.HAS_MEASURABLE_DISEASE to "Measurable disease (RECIST)",
-        QuestionnaireKey.HAS_CNS_LESIONS to "CNS lesions",
-        QuestionnaireKey.HAS_BRAIN_LESIONS to "Brain lesions",
-        QuestionnaireKey.HAS_BONE_LESIONS to "Bone lesions",
-        QuestionnaireKey.HAS_LIVER_LESIONS to "Liver lesions",
-        QuestionnaireKey.OTHER_LESIONS to "Other lesions (e.g. lymph node, pulmonal)",
-        QuestionnaireKey.IHC_TEST_RESULTS to "Previous Molecular tests",
-        QuestionnaireKey.WHO_STATUS to "WHO status",
-        QuestionnaireKey.UNRESOLVED_TOXICITIES to "Unresolved toxicities grade => 2",
-        QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION to "Significant current infection",
-        QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG to "Significant aberration on latest ECG",
-        QuestionnaireKey.COMPLICATIONS to "Cancer-related complications (e.g. pleural effusion)",
-    ) + KEYS_INTRODUCED_IN_V1_5 + NEW_KEYS
+    val KEYS_V1_4: Map<QuestionnaireKey, String?> = KEYS_V1_2 + (QuestionnaireKey.IHC_TEST_RESULTS to "Previous Molecular tests")
 
-    val KEYS_V1_5: Map<QuestionnaireKey, String?> = mapOf(
-        QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR to "Treatment history current tumor",
-        QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY to "Other oncological history",
+    val KEYS_V1_5: Map<QuestionnaireKey, String?> = KEYS_V1_2 + mapOf(
         QuestionnaireKey.SECONDARY_PRIMARY to "Secondary primary",
-        QuestionnaireKey.NON_ONCOLOGICAL_HISTORY to "Non-oncological history",
-        QuestionnaireKey.PRIMARY_TUMOR_LOCATION to "Primary tumor location",
-        QuestionnaireKey.PRIMARY_TUMOR_TYPE to "Primary tumor type",
-        QuestionnaireKey.BIOPSY_LOCATION to "Biopsy location",
-        QuestionnaireKey.STAGE to "Stage",
         QuestionnaireKey.HAS_MEASURABLE_DISEASE to "Measurable disease",
-        QuestionnaireKey.HAS_CNS_LESIONS to "CNS lesions",
-        QuestionnaireKey.HAS_BRAIN_LESIONS to "Brain lesions",
-        QuestionnaireKey.HAS_BONE_LESIONS to "Bone lesions",
-        QuestionnaireKey.HAS_LIVER_LESIONS to "Liver lesions",
-        QuestionnaireKey.OTHER_LESIONS to "Other lesions (e.g. lymph node, pulmonal)",
         QuestionnaireKey.IHC_TEST_RESULTS to "IHC test results",
         QuestionnaireKey.PDL1_TEST_RESULTS to "PD L1 test results",
-        QuestionnaireKey.WHO_STATUS to "WHO status",
-        QuestionnaireKey.UNRESOLVED_TOXICITIES to "Unresolved toxicities grade => 2",
-        QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION to "Significant current infection",
-        QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG to "Significant aberration on latest ECG",
-        QuestionnaireKey.COMPLICATIONS to "Cancer-related complications (e.g. pleural effusion)"
     ) + NEW_KEYS
 
     val KEYS_V1_6: Map<QuestionnaireKey, String?> = KEYS_V1_5 + (QuestionnaireKey.GENAYA_SUBJECT_NUMBER to "GENAYA subjectno")
