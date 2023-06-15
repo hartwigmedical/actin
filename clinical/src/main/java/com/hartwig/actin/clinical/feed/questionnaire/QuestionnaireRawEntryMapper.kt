@@ -1,11 +1,8 @@
 package com.hartwig.actin.clinical.feed.questionnaire
 
 import com.hartwig.actin.util.Paths
+import java.io.File
 import java.io.IOException
-import java.nio.file.Files
-import java.nio.file.Path
-import java.util.*
-import java.util.stream.Collectors
 
 class QuestionnaireRawEntryMapper(private val correctionMap: Map<String, String>) {
     fun correctQuestionnaireEntry(rawQuestionnaireText: String): String {
@@ -18,28 +15,24 @@ class QuestionnaireRawEntryMapper(private val correctionMap: Map<String, String>
 
     companion object {
         private const val QUESTIONNAIRE_MAPPING_TSV = "questionnaire_mapping.tsv"
+        private const val DELIMITER = "\t"
+        private const val HEADER_ORIGINAL = "original"
+        private const val HEADER_CORRECTED = "corrected"
 
         @Throws(IOException::class)
-        fun createFromCurationDirectory(curationDirectory: String?): QuestionnaireRawEntryMapper {
-            val filePath = Path.of(Paths.forceTrailingFileSeparator(curationDirectory!!) + QUESTIONNAIRE_MAPPING_TSV)
-            Files.lines(filePath).use { fileStream ->
-                val correctionMap: Map<String, String> = fileStream.map { line: String -> splitAndParseLineBreaks(line) }
-                    .collect(
-                        { HashMap() },
-                        { m: HashMap<String, String>, cols: List<String> ->
-                            m[cols[0]] = cols[1]
-                        }) { obj: HashMap<String, String>, m: HashMap<String, String>? ->
-                        obj.putAll(
-                            m!!
-                        )
-                    }
-                return QuestionnaireRawEntryMapper(correctionMap)
+        fun createFromCurationDirectory(curationDirectory: String): QuestionnaireRawEntryMapper {
+            val filePath = Paths.forceTrailingFileSeparator(curationDirectory) + QUESTIONNAIRE_MAPPING_TSV
+            val lines = File(filePath).readLines()
+            if (lines.isEmpty() || lines[0].split(DELIMITER, limit = 2) != listOf(HEADER_ORIGINAL, HEADER_CORRECTED)) {
+                throw IllegalStateException("File must start with tab-separated headers '$HEADER_ORIGINAL' and '$HEADER_CORRECTED'")
             }
+
+            val correctionMap = lines.drop(1).map { splitAndParseLineBreaks(it) }.associate { it[0] to it[1] }
+            return QuestionnaireRawEntryMapper(correctionMap)
         }
 
         private fun splitAndParseLineBreaks(line: String): List<String> {
-            return Arrays.stream(line.split("\t".toRegex(), limit = 2).toTypedArray()).map { entry: String -> entry.replace("\\n", "\n") }
-                .collect(Collectors.toList())
+            return line.split(DELIMITER, limit = 2).map { it.replace("\\n", "\n") }
         }
     }
 }
