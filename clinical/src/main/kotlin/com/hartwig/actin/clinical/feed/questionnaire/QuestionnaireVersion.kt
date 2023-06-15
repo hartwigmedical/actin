@@ -5,7 +5,7 @@ internal enum class QuestionnaireVersion(private val specificSearchString: Strin
     V1_6("ACTIN Questionnaire V1.6", null),
     V1_5("ACTIN Questionnaire V1.5", null),
     V1_4("ACTIN Questionnaire V1.4", null),
-    V1_3("CNS lesions:", Regex("ACTIN Questionnaire V1.[^0]")),
+    V1_3("CNS lesions:", Regex("ACTIN Questionnaire V1.[^0123]")),
     V1_2("-Active:", Regex("CNS lesions:")),
     V1_1("- Active:", null),
     V1_0("\\li0\\ri0", null),

@@ -1,5 +1,9 @@
 package com.hartwig.actin.clinical
 
+import com.hartwig.actin.clinical.TestClinicalIngestionApplication.Companion.CURATION_DIRECTORY_PATH
+import com.hartwig.actin.clinical.TestClinicalIngestionApplication.Companion.DOID_JSON_PATH
+import com.hartwig.actin.clinical.TestClinicalIngestionApplication.Companion.FEED_DIRECTORY_PATH
+import com.hartwig.actin.clinical.TestClinicalIngestionApplication.Companion.OUTPUT_DIRECTORY_PATH
 import com.hartwig.actin.clinical.curation.CurationModel
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.feed.FeedModel.Companion.fromFeedDirectory
@@ -10,7 +14,7 @@ import org.apache.logging.log4j.LogManager
 import java.io.File
 import java.io.IOException
 
-class TestClinicalIngestionApplication private constructor(private val config: ClinicalIngestionConfig) {
+class TestClinicalIngestionApplication(private val config: ClinicalIngestionConfig) {
     @Throws(IOException::class)
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
@@ -33,17 +37,15 @@ class TestClinicalIngestionApplication private constructor(private val config: C
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(
-            TestClinicalIngestionApplication::class.java
-        )
+        private val LOGGER = LogManager.getLogger(TestClinicalIngestionApplication::class.java)
         private const val APPLICATION = "ACTIN Clinical Ingestion"
         private val VERSION = TestClinicalIngestionApplication::class.java.getPackage().implementationVersion
-        private val FEED_DIRECTORY_PATH = listOf(System.getProperty("user.home"), "hmf", "tmp", "feed").joinToString(File.separator)
-        private val CURATION_DIRECTORY_PATH =
+        val FEED_DIRECTORY_PATH = listOf(System.getProperty("user.home"), "hmf", "tmp", "feed").joinToString(File.separator)
+        val CURATION_DIRECTORY_PATH =
             listOf(System.getProperty("user.home"), "hmf", "repos", "crunch-resources-private", "actin", "clinical_curation").joinToString(
                 File.separator
             )
-        private val DOID_JSON_PATH = listOf(
+        val DOID_JSON_PATH = listOf(
             System.getProperty("user.home"),
             "hmf",
             "repos",
@@ -51,17 +53,16 @@ class TestClinicalIngestionApplication private constructor(private val config: C
             "disease_ontology",
             "doid.json"
         ).joinToString(File.separator)
-        private val OUTPUT_DIRECTORY_PATH = listOf(FEED_DIRECTORY_PATH, "out").joinToString(File.separator)
-
-        @Throws(IOException::class)
-        fun main(args: Array<String>) {
-            val config = ClinicalIngestionConfig(
-                feedDirectory = FEED_DIRECTORY_PATH,
-                curationDirectory = CURATION_DIRECTORY_PATH,
-                doidJson = DOID_JSON_PATH,
-                outputDirectory = OUTPUT_DIRECTORY_PATH
-            )
-            TestClinicalIngestionApplication(config).run()
-        }
+        val OUTPUT_DIRECTORY_PATH = listOf(FEED_DIRECTORY_PATH, "out").joinToString(File.separator)
     }
+}
+
+fun main() {
+    val config = ClinicalIngestionConfig(
+        feedDirectory = FEED_DIRECTORY_PATH,
+        curationDirectory = CURATION_DIRECTORY_PATH,
+        doidJson = DOID_JSON_PATH,
+        outputDirectory = OUTPUT_DIRECTORY_PATH
+    )
+    TestClinicalIngestionApplication(config).run()
 }
