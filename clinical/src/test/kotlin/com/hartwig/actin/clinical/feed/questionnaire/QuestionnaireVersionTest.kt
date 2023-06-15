@@ -7,6 +7,7 @@ import org.junit.Test
 class QuestionnaireVersionTest {
     @Test
     fun canResolveAllVersions() {
+        assertVersion(QuestionnaireVersion.V1_7, TestQuestionnaireFactory.createTestQuestionnaireValueV1_7())
         assertVersion(QuestionnaireVersion.V1_6, TestQuestionnaireFactory.createTestQuestionnaireValueV1_6())
         assertVersion(QuestionnaireVersion.V1_5, TestQuestionnaireFactory.createTestQuestionnaireValueV1_5())
         assertVersion(QuestionnaireVersion.V1_4, TestQuestionnaireFactory.createTestQuestionnaireValueV1_4())

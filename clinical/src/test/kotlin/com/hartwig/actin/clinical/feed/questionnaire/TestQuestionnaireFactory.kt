@@ -17,9 +17,13 @@ object TestQuestionnaireFactory {
         return createTestQuestionnaireEntry().copy(text = text)
     }
 
+    fun createTestQuestionnaireValueV1_7(): String {
+        return createTestQuestionnaireValueV1_6().replace("ACTIN Questionnaire V1.6", "ACTIN Questionnaire V1.7") + "family history:\n"
+    }
+
     fun createTestQuestionnaireValueV1_6(): String {
         // @formatter:off
-    return """
+        return """
                ACTIN Questionnaire V1.6
                Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. Please make sure that these fields never contain non-anonymized data!
                
@@ -62,47 +66,47 @@ object TestQuestionnaireFactory {
 
     fun createTestQuestionnaireValueV1_5(): String {
         // @formatter:off
-    return ("ACTIN Questionnaire V1.5\n"
-         + "Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. "
-         + "Please make sure that these fields never contain non-anonymized data!\n"
-         + "\n"
-         + "Relevant patient history\n"
-         + "Treatment history current tumor: cisplatin; nivolumab\n"
-         + "Other oncological history (e.g. radiotherapy, surgery): surgery\n"
-         + "Secondary primary: sarcoma\n"
-         + "- Last date of active treatment: Feb 2020 \n"
-         + "Non-oncological history: diabetes\n"
-         + "\n"
-         + "Tumor details\n"
-         + "Primary tumor location: ovary\n"
-         + "Primary tumor type: serous\n"
-         + "Biopsy location: lymph node\n"
-         + "Stage: 4\n"
-         + "CNS lesions:\n"
-         + "-Active:\n"
-         + "Brain lesions: YES\n"
-         + "-Active: yes\n"
-         + "Bone lesions: NO\n"
-         + "Liver lesions: NO\n"
-         + "Other lesions (e.g. lymph node, pulmonal): pulmonal, abdominal\n"
-         + "Measurable disease: YES\n"
-         + "\n"
-         + "Previous Molecular tests\n"
-         + "- IHC test results: ERBB2 3+\n"
-         + "- PD L1 test results: Positive\n"
-         + "\n"
-         + "Clinical details\n"
-         + "WHO status: 0\n"
-         + "Unresolved toxicities grade => 2: toxic\n"
-         + "Significant current infection: No\n"
-         + "Significant aberration on latest ECG: Sinus\n"
-         + "Cancer-related complications (e.g. pleural effusion): vomit\n")
+        return ("ACTIN Questionnaire V1.5\n"
+             + "Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. "
+             + "Please make sure that these fields never contain non-anonymized data!\n"
+             + "\n"
+             + "Relevant patient history\n"
+             + "Treatment history current tumor: cisplatin; nivolumab\n"
+             + "Other oncological history (e.g. radiotherapy, surgery): surgery\n"
+             + "Secondary primary: sarcoma\n"
+             + "- Last date of active treatment: Feb 2020 \n"
+             + "Non-oncological history: diabetes\n"
+             + "\n"
+             + "Tumor details\n"
+             + "Primary tumor location: ovary\n"
+             + "Primary tumor type: serous\n"
+             + "Biopsy location: lymph node\n"
+             + "Stage: 4\n"
+             + "CNS lesions:\n"
+             + "-Active:\n"
+             + "Brain lesions: YES\n"
+             + "-Active: yes\n"
+             + "Bone lesions: NO\n"
+             + "Liver lesions: NO\n"
+             + "Other lesions (e.g. lymph node, pulmonal): pulmonal, abdominal\n"
+             + "Measurable disease: YES\n"
+             + "\n"
+             + "Previous Molecular tests\n"
+             + "- IHC test results: ERBB2 3+\n"
+             + "- PD L1 test results: Positive\n"
+             + "\n"
+             + "Clinical details\n"
+             + "WHO status: 0\n"
+             + "Unresolved toxicities grade => 2: toxic\n"
+             + "Significant current infection: No\n"
+             + "Significant aberration on latest ECG: Sinus\n"
+             + "Cancer-related complications (e.g. pleural effusion): vomit\n")
             // @formatter:on
     }
 
     fun createTestQuestionnaireValueV1_4(): String {
         // @formatter:off
-    return """
+        return """
                ACTIN Questionnaire V1.4
                Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. Please make sure that these fields never contain non-anonymized data!
                
@@ -140,7 +144,7 @@ object TestQuestionnaireFactory {
 
     fun createTestQuestionnaireValueV1_3(): String {
         // @formatter:off
-    return """
+        return """
                ACTIN Questionnaire V1.0
                Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. Please make sure that these fields never contain non-anonymized data!
                
@@ -177,7 +181,7 @@ object TestQuestionnaireFactory {
 
     fun createTestQuestionnaireValueV1_2(): String {
         // @formatter:off
-    return """
+        return """
                ACTIN Questionnaire V1.0
                Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. Please make sure that these fields never contain non-anonymized data!
                
@@ -214,7 +218,7 @@ object TestQuestionnaireFactory {
 
     fun createTestQuestionnaireValueV1_1(): String {
         // @formatter:off
-    return """
+        return """
                ACTIN Questionnaire V1.0
                Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. Please make sure that these fields never contain non-anonymized data!
                
@@ -251,7 +255,7 @@ object TestQuestionnaireFactory {
 
     fun createTestQuestionnaireValueV1_0(): String {
         // @formatter:off
-    return """
+        return """
                ACTIN Questionnaire V1.0
                Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. Please make sure that these fields never contain non-anonymized data!
                
@@ -288,7 +292,7 @@ object TestQuestionnaireFactory {
 
     fun createTestQuestionnaireValueV0_2(): String {
         // @formatter:off
-    return """
+        return """
                ACTIN Questionnaire
                Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. Please make sure that these fields never contain non-anonimized data!
                
@@ -325,7 +329,7 @@ object TestQuestionnaireFactory {
 
     fun createTestQuestionnaireValueV0_1(): String {
         // @formatter:off
-    return """
+        return """
                ACTIN Questionnaire
                Important: The information in these fields will be automatically extracted from the EHR as part of the ACTIN project. Please make sure that these fields never contain non-anonimized data!
                

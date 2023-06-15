@@ -1,238 +1,197 @@
 package com.hartwig.actin.clinical.feed.questionnaire
 
-import com.google.common.collect.Maps
-
 internal object QuestionnaireMapping {
-    @JvmField
-    val KEYS_V1_6: MutableMap<QuestionnaireKey, String?> = Maps.newHashMap()
+    private val KEYS_AFTER_V1_5: Map<QuestionnaireKey, String?> =
+        listOf(QuestionnaireKey.GENAYA_SUBJECT_NUMBER, QuestionnaireKey.FAMILY_HISTORY)
+            .associateWith { null }
 
-    @JvmField
-    val KEYS_V1_5: MutableMap<QuestionnaireKey, String?> = Maps.newHashMap()
+    val KEYS_V1_5: Map<QuestionnaireKey, String?> = mapOf(
+        QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR to "Treatment history current tumor",
+        QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY to "Other oncological history",
+        QuestionnaireKey.SECONDARY_PRIMARY to "Secondary primary",
+        QuestionnaireKey.NON_ONCOLOGICAL_HISTORY to "Non-oncological history",
+        QuestionnaireKey.PRIMARY_TUMOR_LOCATION to "Primary tumor location",
+        QuestionnaireKey.PRIMARY_TUMOR_TYPE to "Primary tumor type",
+        QuestionnaireKey.BIOPSY_LOCATION to "Biopsy location",
+        QuestionnaireKey.STAGE to "Stage",
+        QuestionnaireKey.HAS_MEASURABLE_DISEASE to "Measurable disease",
+        QuestionnaireKey.HAS_CNS_LESIONS to "CNS lesions",
+        QuestionnaireKey.HAS_BRAIN_LESIONS to "Brain lesions",
+        QuestionnaireKey.HAS_BONE_LESIONS to "Bone lesions",
+        QuestionnaireKey.HAS_LIVER_LESIONS to "Liver lesions",
+        QuestionnaireKey.OTHER_LESIONS to "Other lesions (e.g. lymph node, pulmonal)",
+        QuestionnaireKey.IHC_TEST_RESULTS to "IHC test results",
+        QuestionnaireKey.PDL1_TEST_RESULTS to "PD L1 test results",
+        QuestionnaireKey.WHO_STATUS to "WHO status",
+        QuestionnaireKey.UNRESOLVED_TOXICITIES to "Unresolved toxicities grade => 2",
+        QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION to "Significant current infection",
+        QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG to "Significant aberration on latest ECG",
+        QuestionnaireKey.COMPLICATIONS to "Cancer-related complications (e.g. pleural effusion)"
+    ) + KEYS_AFTER_V1_5
 
-    @JvmField
-    val KEYS_V1_4: MutableMap<QuestionnaireKey, String?> = Maps.newHashMap()
+    val KEYS_V1_6: Map<QuestionnaireKey, String?> = KEYS_V1_5 + (QuestionnaireKey.GENAYA_SUBJECT_NUMBER to "GENAYA subjectno")
 
-    @JvmField
-    val KEYS_V1_3: MutableMap<QuestionnaireKey, String?> = Maps.newHashMap()
+    val KEYS_V1_7: Map<QuestionnaireKey, String?> = KEYS_V1_6 + (QuestionnaireKey.FAMILY_HISTORY to "family history")
 
-    @JvmField
-    val KEYS_V1_2: MutableMap<QuestionnaireKey, String?> = Maps.newHashMap()
+    private val KEYS_AFTER_V1_4: Map<QuestionnaireKey, String?> =
+        listOf(QuestionnaireKey.SECONDARY_PRIMARY, QuestionnaireKey.PDL1_TEST_RESULTS)
+            .associateWith { null } + KEYS_AFTER_V1_5
 
-    @JvmField
-    val KEYS_V1_1: MutableMap<QuestionnaireKey, String?> = Maps.newHashMap()
+    private val KEYS_AFTER_V1_3: Map<QuestionnaireKey, String?> = KEYS_AFTER_V1_4 + (QuestionnaireKey.IHC_TEST_RESULTS to null)
 
-    @JvmField
-    val KEYS_V1_0: MutableMap<QuestionnaireKey, String?> = Maps.newHashMap()
+    val KEYS_V1_4: Map<QuestionnaireKey, String?> = mapOf(
+        QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR to "Treatment history current tumor",
+        QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY to "Other oncological history",
+        QuestionnaireKey.NON_ONCOLOGICAL_HISTORY to "Non-oncological history",
+        QuestionnaireKey.PRIMARY_TUMOR_LOCATION to "Primary tumor location",
+        QuestionnaireKey.PRIMARY_TUMOR_TYPE to "Primary tumor type",
+        QuestionnaireKey.BIOPSY_LOCATION to "Biopsy location",
+        QuestionnaireKey.STAGE to "Stage",
+        QuestionnaireKey.HAS_MEASURABLE_DISEASE to "Measurable disease (RECIST)",
+        QuestionnaireKey.HAS_CNS_LESIONS to "CNS lesions",
+        QuestionnaireKey.HAS_BRAIN_LESIONS to "Brain lesions",
+        QuestionnaireKey.HAS_BONE_LESIONS to "Bone lesions",
+        QuestionnaireKey.HAS_LIVER_LESIONS to "Liver lesions",
+        QuestionnaireKey.OTHER_LESIONS to "Other lesions (e.g. lymph node, pulmonal)",
+        QuestionnaireKey.IHC_TEST_RESULTS to "Previous Molecular tests",
+        QuestionnaireKey.WHO_STATUS to "WHO status",
+        QuestionnaireKey.UNRESOLVED_TOXICITIES to "Unresolved toxicities grade => 2",
+        QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION to "Significant current infection",
+        QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG to "Significant aberration on latest ECG",
+        QuestionnaireKey.COMPLICATIONS to "Cancer-related complications (e.g. pleural effusion)",
+    ) + KEYS_AFTER_V1_4
 
-    @JvmField
-    val KEYS_V0_2: MutableMap<QuestionnaireKey, String?> = Maps.newHashMap()
+    val KEYS_V1_3: Map<QuestionnaireKey, String?> = mapOf(
+        QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR to "Treatment history current tumor",
+        QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY to "Other oncological history",
+        QuestionnaireKey.NON_ONCOLOGICAL_HISTORY to "Non-oncological history",
+        QuestionnaireKey.PRIMARY_TUMOR_LOCATION to "Primary tumor location",
+        QuestionnaireKey.PRIMARY_TUMOR_TYPE to "Primary tumor type",
+        QuestionnaireKey.BIOPSY_LOCATION to "Biopsy location",
+        QuestionnaireKey.STAGE to "Stage",
+        QuestionnaireKey.HAS_MEASURABLE_DISEASE to "Measurable disease (RECIST)",
+        QuestionnaireKey.HAS_CNS_LESIONS to "CNS lesions",
+        QuestionnaireKey.HAS_BRAIN_LESIONS to "Brain lesions",
+        QuestionnaireKey.HAS_BONE_LESIONS to "Bone lesions",
+        QuestionnaireKey.HAS_LIVER_LESIONS to "Liver lesions",
+        QuestionnaireKey.OTHER_LESIONS to "Other lesions (e.g. lymph node, pulmonal)",
+        QuestionnaireKey.WHO_STATUS to "WHO status",
+        QuestionnaireKey.UNRESOLVED_TOXICITIES to "Unresolved toxicities grade => 2",
+        QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION to "Significant current infection",
+        QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG to "Significant aberration on latest ECG",
+        QuestionnaireKey.COMPLICATIONS to "Cancer-related complications (e.g. pleural effusion)",
+    ) + KEYS_AFTER_V1_3
 
-    @JvmField
-    val KEYS_V0_1: MutableMap<QuestionnaireKey, String?> = Maps.newHashMap()
+    val KEYS_V1_2: Map<QuestionnaireKey, String?> = mapOf(
+        QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR to "Treatment history current tumor",
+        QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY to "Other oncological history",
+        QuestionnaireKey.NON_ONCOLOGICAL_HISTORY to "Non-oncological history",
+        QuestionnaireKey.PRIMARY_TUMOR_LOCATION to "Primary tumor location",
+        QuestionnaireKey.PRIMARY_TUMOR_TYPE to "Primary tumor type",
+        QuestionnaireKey.BIOPSY_LOCATION to "Biopsy location",
+        QuestionnaireKey.STAGE to "Stage",
+        QuestionnaireKey.HAS_MEASURABLE_DISEASE to "Measurable disease (RECIST)",
+        QuestionnaireKey.HAS_CNS_LESIONS to "CNS lesions",
+        QuestionnaireKey.HAS_BRAIN_LESIONS to "Brain lesions",
+        QuestionnaireKey.HAS_BONE_LESIONS to "Bone lesions",
+        QuestionnaireKey.HAS_LIVER_LESIONS to "Liver lesions",
+        QuestionnaireKey.OTHER_LESIONS to "Other lesions (e.g. lymph node, pulmonal)",
+        QuestionnaireKey.WHO_STATUS to "WHO status",
+        QuestionnaireKey.UNRESOLVED_TOXICITIES to "Unresolved toxicities grade => 2",
+        QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION to "Significant current infection",
+        QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG to "Significant aberration on latest ECG",
+        QuestionnaireKey.COMPLICATIONS to "Cancer-related complications (e.g. pleural effusion)",
+    ) + KEYS_AFTER_V1_3
 
-    init {
-        KEYS_V1_6[QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR] = "Treatment history current tumor"
-        KEYS_V1_6[QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY] = "Other oncological history"
-        KEYS_V1_6[QuestionnaireKey.SECONDARY_PRIMARY] = "Secondary primary"
-        KEYS_V1_6[QuestionnaireKey.NON_ONCOLOGICAL_HISTORY] = "Non-oncological history"
-        KEYS_V1_6[QuestionnaireKey.PRIMARY_TUMOR_LOCATION] = "Primary tumor location"
-        KEYS_V1_6[QuestionnaireKey.PRIMARY_TUMOR_TYPE] = "Primary tumor type"
-        KEYS_V1_6[QuestionnaireKey.BIOPSY_LOCATION] = "Biopsy location"
-        KEYS_V1_6[QuestionnaireKey.STAGE] = "Stage"
-        KEYS_V1_6[QuestionnaireKey.HAS_MEASURABLE_DISEASE] = "Measurable disease"
-        KEYS_V1_6[QuestionnaireKey.HAS_CNS_LESIONS] = "CNS lesions"
-        KEYS_V1_6[QuestionnaireKey.HAS_BRAIN_LESIONS] = "Brain lesions"
-        KEYS_V1_6[QuestionnaireKey.HAS_BONE_LESIONS] = "Bone lesions"
-        KEYS_V1_6[QuestionnaireKey.HAS_LIVER_LESIONS] = "Liver lesions"
-        KEYS_V1_6[QuestionnaireKey.OTHER_LESIONS] = "Other lesions (e.g. lymph node, pulmonal)"
-        KEYS_V1_6[QuestionnaireKey.IHC_TEST_RESULTS] = "IHC test results"
-        KEYS_V1_6[QuestionnaireKey.PDL1_TEST_RESULTS] = "PD L1 test results"
-        KEYS_V1_6[QuestionnaireKey.WHO_STATUS] = "WHO status"
-        KEYS_V1_6[QuestionnaireKey.UNRESOLVED_TOXICITIES] = "Unresolved toxicities grade => 2"
-        KEYS_V1_6[QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION] = "Significant current infection"
-        KEYS_V1_6[QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG] = "Significant aberration on latest ECG"
-        KEYS_V1_6[QuestionnaireKey.COMPLICATIONS] = "Cancer-related complications (e.g. pleural effusion)"
-        KEYS_V1_6[QuestionnaireKey.GENAYA_SUBJECT_NUMBER] = "GENAYA subjectno"
-        KEYS_V1_5[QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR] = "Treatment history current tumor"
-        KEYS_V1_5[QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY] = "Other oncological history"
-        KEYS_V1_5[QuestionnaireKey.SECONDARY_PRIMARY] = "Secondary primary"
-        KEYS_V1_5[QuestionnaireKey.NON_ONCOLOGICAL_HISTORY] = "Non-oncological history"
-        KEYS_V1_5[QuestionnaireKey.PRIMARY_TUMOR_LOCATION] = "Primary tumor location"
-        KEYS_V1_5[QuestionnaireKey.PRIMARY_TUMOR_TYPE] = "Primary tumor type"
-        KEYS_V1_5[QuestionnaireKey.BIOPSY_LOCATION] = "Biopsy location"
-        KEYS_V1_5[QuestionnaireKey.STAGE] = "Stage"
-        KEYS_V1_5[QuestionnaireKey.HAS_MEASURABLE_DISEASE] = "Measurable disease"
-        KEYS_V1_5[QuestionnaireKey.HAS_CNS_LESIONS] = "CNS lesions"
-        KEYS_V1_5[QuestionnaireKey.HAS_BRAIN_LESIONS] = "Brain lesions"
-        KEYS_V1_5[QuestionnaireKey.HAS_BONE_LESIONS] = "Bone lesions"
-        KEYS_V1_5[QuestionnaireKey.HAS_LIVER_LESIONS] = "Liver lesions"
-        KEYS_V1_5[QuestionnaireKey.OTHER_LESIONS] = "Other lesions (e.g. lymph node, pulmonal)"
-        KEYS_V1_5[QuestionnaireKey.IHC_TEST_RESULTS] = "IHC test results"
-        KEYS_V1_5[QuestionnaireKey.PDL1_TEST_RESULTS] = "PD L1 test results"
-        KEYS_V1_5[QuestionnaireKey.WHO_STATUS] = "WHO status"
-        KEYS_V1_5[QuestionnaireKey.UNRESOLVED_TOXICITIES] = "Unresolved toxicities grade => 2"
-        KEYS_V1_5[QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION] = "Significant current infection"
-        KEYS_V1_5[QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG] = "Significant aberration on latest ECG"
-        KEYS_V1_5[QuestionnaireKey.COMPLICATIONS] = "Cancer-related complications (e.g. pleural effusion)"
-        KEYS_V1_5[QuestionnaireKey.GENAYA_SUBJECT_NUMBER] = null
-        KEYS_V1_4[QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR] = "Treatment history current tumor"
-        KEYS_V1_4[QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY] = "Other oncological history"
-        KEYS_V1_4[QuestionnaireKey.SECONDARY_PRIMARY] = null
-        KEYS_V1_4[QuestionnaireKey.NON_ONCOLOGICAL_HISTORY] = "Non-oncological history"
-        KEYS_V1_4[QuestionnaireKey.PRIMARY_TUMOR_LOCATION] = "Primary tumor location"
-        KEYS_V1_4[QuestionnaireKey.PRIMARY_TUMOR_TYPE] = "Primary tumor type"
-        KEYS_V1_4[QuestionnaireKey.BIOPSY_LOCATION] = "Biopsy location"
-        KEYS_V1_4[QuestionnaireKey.STAGE] = "Stage"
-        KEYS_V1_4[QuestionnaireKey.HAS_MEASURABLE_DISEASE] = "Measurable disease (RECIST)"
-        KEYS_V1_4[QuestionnaireKey.HAS_CNS_LESIONS] = "CNS lesions"
-        KEYS_V1_4[QuestionnaireKey.HAS_BRAIN_LESIONS] = "Brain lesions"
-        KEYS_V1_4[QuestionnaireKey.HAS_BONE_LESIONS] = "Bone lesions"
-        KEYS_V1_4[QuestionnaireKey.HAS_LIVER_LESIONS] = "Liver lesions"
-        KEYS_V1_4[QuestionnaireKey.OTHER_LESIONS] = "Other lesions (e.g. lymph node, pulmonal)"
-        KEYS_V1_4[QuestionnaireKey.IHC_TEST_RESULTS] = "Previous Molecular tests"
-        KEYS_V1_4[QuestionnaireKey.PDL1_TEST_RESULTS] = null
-        KEYS_V1_4[QuestionnaireKey.WHO_STATUS] = "WHO status"
-        KEYS_V1_4[QuestionnaireKey.UNRESOLVED_TOXICITIES] = "Unresolved toxicities grade => 2"
-        KEYS_V1_4[QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION] = "Significant current infection"
-        KEYS_V1_4[QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG] = "Significant aberration on latest ECG"
-        KEYS_V1_4[QuestionnaireKey.COMPLICATIONS] = "Cancer-related complications (e.g. pleural effusion)"
-        KEYS_V1_4[QuestionnaireKey.GENAYA_SUBJECT_NUMBER] = null
-        KEYS_V1_3[QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR] = "Treatment history current tumor"
-        KEYS_V1_3[QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY] = "Other oncological history"
-        KEYS_V1_3[QuestionnaireKey.SECONDARY_PRIMARY] = null
-        KEYS_V1_3[QuestionnaireKey.NON_ONCOLOGICAL_HISTORY] = "Non-oncological history"
-        KEYS_V1_3[QuestionnaireKey.PRIMARY_TUMOR_LOCATION] = "Primary tumor location"
-        KEYS_V1_3[QuestionnaireKey.PRIMARY_TUMOR_TYPE] = "Primary tumor type"
-        KEYS_V1_3[QuestionnaireKey.BIOPSY_LOCATION] = "Biopsy location"
-        KEYS_V1_3[QuestionnaireKey.STAGE] = "Stage"
-        KEYS_V1_3[QuestionnaireKey.HAS_MEASURABLE_DISEASE] = "Measurable disease (RECIST)"
-        KEYS_V1_3[QuestionnaireKey.HAS_CNS_LESIONS] = "CNS lesions"
-        KEYS_V1_3[QuestionnaireKey.HAS_BRAIN_LESIONS] = "Brain lesions"
-        KEYS_V1_3[QuestionnaireKey.HAS_BONE_LESIONS] = "Bone lesions"
-        KEYS_V1_3[QuestionnaireKey.HAS_LIVER_LESIONS] = "Liver lesions"
-        KEYS_V1_3[QuestionnaireKey.OTHER_LESIONS] = "Other lesions (e.g. lymph node, pulmonal)"
-        KEYS_V1_3[QuestionnaireKey.IHC_TEST_RESULTS] = null
-        KEYS_V1_3[QuestionnaireKey.PDL1_TEST_RESULTS] = null
-        KEYS_V1_3[QuestionnaireKey.WHO_STATUS] = "WHO status"
-        KEYS_V1_3[QuestionnaireKey.UNRESOLVED_TOXICITIES] = "Unresolved toxicities grade => 2"
-        KEYS_V1_3[QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION] = "Significant current infection"
-        KEYS_V1_3[QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG] = "Significant aberration on latest ECG"
-        KEYS_V1_3[QuestionnaireKey.COMPLICATIONS] = "Cancer-related complications (e.g. pleural effusion)"
-        KEYS_V1_3[QuestionnaireKey.GENAYA_SUBJECT_NUMBER] = null
-        KEYS_V1_2[QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR] = "Treatment history current tumor"
-        KEYS_V1_2[QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY] = "Other oncological history"
-        KEYS_V1_2[QuestionnaireKey.SECONDARY_PRIMARY] = null
-        KEYS_V1_2[QuestionnaireKey.NON_ONCOLOGICAL_HISTORY] = "Non-oncological history"
-        KEYS_V1_2[QuestionnaireKey.PRIMARY_TUMOR_LOCATION] = "Primary tumor location"
-        KEYS_V1_2[QuestionnaireKey.PRIMARY_TUMOR_TYPE] = "Primary tumor type"
-        KEYS_V1_2[QuestionnaireKey.BIOPSY_LOCATION] = "Biopsy location"
-        KEYS_V1_2[QuestionnaireKey.STAGE] = "Stage"
-        KEYS_V1_2[QuestionnaireKey.HAS_MEASURABLE_DISEASE] = "Measurable disease (RECIST)"
-        KEYS_V1_2[QuestionnaireKey.HAS_CNS_LESIONS] = "CNS lesions"
-        KEYS_V1_2[QuestionnaireKey.HAS_BRAIN_LESIONS] = "Brain lesions"
-        KEYS_V1_2[QuestionnaireKey.HAS_BONE_LESIONS] = "Bone lesions"
-        KEYS_V1_2[QuestionnaireKey.HAS_LIVER_LESIONS] = "Liver lesions"
-        KEYS_V1_2[QuestionnaireKey.OTHER_LESIONS] = "Other lesions (e.g. lymph node, pulmonal)"
-        KEYS_V1_2[QuestionnaireKey.IHC_TEST_RESULTS] = null
-        KEYS_V1_2[QuestionnaireKey.PDL1_TEST_RESULTS] = null
-        KEYS_V1_2[QuestionnaireKey.WHO_STATUS] = "WHO status"
-        KEYS_V1_2[QuestionnaireKey.UNRESOLVED_TOXICITIES] = "Unresolved toxicities grade => 2"
-        KEYS_V1_2[QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION] = "Significant current infection"
-        KEYS_V1_2[QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG] = "Significant aberration on latest ECG"
-        KEYS_V1_2[QuestionnaireKey.COMPLICATIONS] = "Cancer-related complications (e.g. pleural effusion)"
-        KEYS_V1_2[QuestionnaireKey.GENAYA_SUBJECT_NUMBER] = null
-        KEYS_V1_1[QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR] = "Treatment history current tumor"
-        KEYS_V1_1[QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY] = "Other oncological history"
-        KEYS_V1_1[QuestionnaireKey.SECONDARY_PRIMARY] = null
-        KEYS_V1_1[QuestionnaireKey.NON_ONCOLOGICAL_HISTORY] = "Non-oncological history"
-        KEYS_V1_1[QuestionnaireKey.PRIMARY_TUMOR_LOCATION] = "Primary tumor location"
-        KEYS_V1_1[QuestionnaireKey.PRIMARY_TUMOR_TYPE] = "Primary tumor type"
-        KEYS_V1_1[QuestionnaireKey.BIOPSY_LOCATION] = "Biopsy location"
-        KEYS_V1_1[QuestionnaireKey.STAGE] = "Stage"
-        KEYS_V1_1[QuestionnaireKey.HAS_MEASURABLE_DISEASE] = "Measurable disease (RECIST) yes/no"
-        KEYS_V1_1[QuestionnaireKey.HAS_CNS_LESIONS] = "CNS lesions yes/no/unknown"
-        KEYS_V1_1[QuestionnaireKey.HAS_BRAIN_LESIONS] = "Brain lesions yes/no/unknown"
-        KEYS_V1_1[QuestionnaireKey.HAS_BONE_LESIONS] = "Bone lesions yes/no/unknown"
-        KEYS_V1_1[QuestionnaireKey.HAS_LIVER_LESIONS] = "Liver lesions yes/no/unknown"
-        KEYS_V1_1[QuestionnaireKey.OTHER_LESIONS] = "Other lesions (e.g. lymph node, pulmonal)"
-        KEYS_V1_1[QuestionnaireKey.IHC_TEST_RESULTS] = null
-        KEYS_V1_1[QuestionnaireKey.PDL1_TEST_RESULTS] = null
-        KEYS_V1_1[QuestionnaireKey.WHO_STATUS] = "WHO status"
-        KEYS_V1_1[QuestionnaireKey.UNRESOLVED_TOXICITIES] = "Unresolved toxicities grade => 2"
-        KEYS_V1_1[QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION] = "Significant current infection"
-        KEYS_V1_1[QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG] = "Significant aberration on latest ECG"
-        KEYS_V1_1[QuestionnaireKey.COMPLICATIONS] = "Cancer-related complications (e.g. pleural effusion)"
-        KEYS_V1_1[QuestionnaireKey.GENAYA_SUBJECT_NUMBER] = null
-        KEYS_V1_0[QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR] = "Treatment history current tumor"
-        KEYS_V1_0[QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY] = "Other oncological history"
-        KEYS_V1_0[QuestionnaireKey.SECONDARY_PRIMARY] = null
-        KEYS_V1_0[QuestionnaireKey.NON_ONCOLOGICAL_HISTORY] = "Non-oncological history"
-        KEYS_V1_0[QuestionnaireKey.PRIMARY_TUMOR_LOCATION] = "Primary tumor location"
-        KEYS_V1_0[QuestionnaireKey.PRIMARY_TUMOR_TYPE] = "Primary tumor type"
-        KEYS_V1_0[QuestionnaireKey.BIOPSY_LOCATION] = "Biopsy location"
-        KEYS_V1_0[QuestionnaireKey.STAGE] = "Stage"
-        KEYS_V1_0[QuestionnaireKey.HAS_MEASURABLE_DISEASE] = "Measurable disease (RECIST) yes/no"
-        KEYS_V1_0[QuestionnaireKey.HAS_CNS_LESIONS] = "CNS lesions yes/no/unknown"
-        KEYS_V1_0[QuestionnaireKey.HAS_BRAIN_LESIONS] = "Brain lesions yes/no/unknown"
-        KEYS_V1_0[QuestionnaireKey.HAS_BONE_LESIONS] = "Bone lesions yes/no/unknown"
-        KEYS_V1_0[QuestionnaireKey.HAS_LIVER_LESIONS] = "Liver lesions yes/no/unknown"
-        KEYS_V1_0[QuestionnaireKey.OTHER_LESIONS] = "Other lesions (e.g. lymph node, pulmonal)"
-        KEYS_V1_0[QuestionnaireKey.IHC_TEST_RESULTS] = null
-        KEYS_V1_0[QuestionnaireKey.PDL1_TEST_RESULTS] = null
-        KEYS_V1_0[QuestionnaireKey.WHO_STATUS] = "WHO status"
-        KEYS_V1_0[QuestionnaireKey.UNRESOLVED_TOXICITIES] = "Unresolved toxicities grade => 2"
-        KEYS_V1_0[QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION] = "Significant current infection"
-        KEYS_V1_0[QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG] = "Significant aberration on latest ECG"
-        KEYS_V1_0[QuestionnaireKey.COMPLICATIONS] = "Cancer-related complications (e.g. pleural effusion)"
-        KEYS_V1_0[QuestionnaireKey.GENAYA_SUBJECT_NUMBER] = null
-        KEYS_V0_2[QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR] = "Treatment history current tumor"
-        KEYS_V0_2[QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY] = "Other oncological history (e.g. second primary)"
-        KEYS_V0_2[QuestionnaireKey.SECONDARY_PRIMARY] = null
-        KEYS_V0_2[QuestionnaireKey.NON_ONCOLOGICAL_HISTORY] = "Non-oncological history"
-        KEYS_V0_2[QuestionnaireKey.PRIMARY_TUMOR_LOCATION] = "Tumor location"
-        KEYS_V0_2[QuestionnaireKey.PRIMARY_TUMOR_TYPE] = "Tumor type"
-        KEYS_V0_2[QuestionnaireKey.BIOPSY_LOCATION] = "Biopsy location"
-        KEYS_V0_2[QuestionnaireKey.STAGE] = "Stage (I/II/III/IV)"
-        KEYS_V0_2[QuestionnaireKey.HAS_MEASURABLE_DISEASE] = "Measurable disease (RECIST) yes/no/unknown"
-        KEYS_V0_2[QuestionnaireKey.HAS_CNS_LESIONS] = "CNS lesions yes/no/unknown"
-        KEYS_V0_2[QuestionnaireKey.HAS_BRAIN_LESIONS] = "Brain lesions yes/no/unknown"
-        KEYS_V0_2[QuestionnaireKey.HAS_BONE_LESIONS] = "Bone lesions yes/no/unknown"
-        KEYS_V0_2[QuestionnaireKey.HAS_LIVER_LESIONS] = "Liver lesions yes/no/unknown"
-        KEYS_V0_2[QuestionnaireKey.OTHER_LESIONS] = null
-        KEYS_V0_2[QuestionnaireKey.IHC_TEST_RESULTS] = null
-        KEYS_V0_2[QuestionnaireKey.PDL1_TEST_RESULTS] = null
-        KEYS_V0_2[QuestionnaireKey.WHO_STATUS] = "WHO status"
-        KEYS_V0_2[QuestionnaireKey.UNRESOLVED_TOXICITIES] = "Unresolved toxicities grade => 2"
-        KEYS_V0_2[QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION] = "Significant current infection"
-        KEYS_V0_2[QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG] = "Significant aberration on latest ECG"
-        KEYS_V0_2[QuestionnaireKey.COMPLICATIONS] = "Other (e.g. pleural effusion)"
-        KEYS_V0_2[QuestionnaireKey.GENAYA_SUBJECT_NUMBER] = null
-        KEYS_V0_1[QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR] = null
-        KEYS_V0_1[QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY] = null
-        KEYS_V0_1[QuestionnaireKey.SECONDARY_PRIMARY] = null
-        KEYS_V0_1[QuestionnaireKey.NON_ONCOLOGICAL_HISTORY] = "Other"
-        KEYS_V0_1[QuestionnaireKey.PRIMARY_TUMOR_LOCATION] = "Oncological"
-        KEYS_V0_1[QuestionnaireKey.PRIMARY_TUMOR_TYPE] = null
-        KEYS_V0_1[QuestionnaireKey.BIOPSY_LOCATION] = null
-        KEYS_V0_1[QuestionnaireKey.STAGE] = null
-        KEYS_V0_1[QuestionnaireKey.HAS_MEASURABLE_DISEASE] = "Has measurable lesion (RECIST) yes/no"
-        KEYS_V0_1[QuestionnaireKey.HAS_CNS_LESIONS] = "CNS lesions yes/no/unknown"
-        KEYS_V0_1[QuestionnaireKey.HAS_BRAIN_LESIONS] = "Brain lesions yes/no/unknown"
-        KEYS_V0_1[QuestionnaireKey.HAS_BONE_LESIONS] = "Bone lesions yes/no/unknown"
-        KEYS_V0_1[QuestionnaireKey.HAS_LIVER_LESIONS] = "Liver lesions yes/no/unknown"
-        KEYS_V0_1[QuestionnaireKey.OTHER_LESIONS] = null
-        KEYS_V0_1[QuestionnaireKey.IHC_TEST_RESULTS] = null
-        KEYS_V0_1[QuestionnaireKey.PDL1_TEST_RESULTS] = null
-        KEYS_V0_1[QuestionnaireKey.WHO_STATUS] = "WHO status"
-        KEYS_V0_1[QuestionnaireKey.UNRESOLVED_TOXICITIES] = "Unresolved toxicities from prior anti-tumor therapy grade => 2"
-        KEYS_V0_1[QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION] = "Significant current infection"
-        KEYS_V0_1[QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG] = "Significant aberration on latest ECG"
-        KEYS_V0_1[QuestionnaireKey.COMPLICATIONS] = "Other (e.g. Osteoporosis, Pleural effusion)"
-        KEYS_V0_1[QuestionnaireKey.GENAYA_SUBJECT_NUMBER] = null
-    }
+    val KEYS_V1_1: Map<QuestionnaireKey, String?> = mapOf(
+        QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR to "Treatment history current tumor",
+        QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY to "Other oncological history",
+        QuestionnaireKey.NON_ONCOLOGICAL_HISTORY to "Non-oncological history",
+        QuestionnaireKey.PRIMARY_TUMOR_LOCATION to "Primary tumor location",
+        QuestionnaireKey.PRIMARY_TUMOR_TYPE to "Primary tumor type",
+        QuestionnaireKey.BIOPSY_LOCATION to "Biopsy location",
+        QuestionnaireKey.STAGE to "Stage",
+        QuestionnaireKey.HAS_MEASURABLE_DISEASE to "Measurable disease (RECIST) yes/no",
+        QuestionnaireKey.HAS_CNS_LESIONS to "CNS lesions yes/no/unknown",
+        QuestionnaireKey.HAS_BRAIN_LESIONS to "Brain lesions yes/no/unknown",
+        QuestionnaireKey.HAS_BONE_LESIONS to "Bone lesions yes/no/unknown",
+        QuestionnaireKey.HAS_LIVER_LESIONS to "Liver lesions yes/no/unknown",
+        QuestionnaireKey.OTHER_LESIONS to "Other lesions (e.g. lymph node, pulmonal)",
+        QuestionnaireKey.WHO_STATUS to "WHO status",
+        QuestionnaireKey.UNRESOLVED_TOXICITIES to "Unresolved toxicities grade => 2",
+        QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION to "Significant current infection",
+        QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG to "Significant aberration on latest ECG",
+        QuestionnaireKey.COMPLICATIONS to "Cancer-related complications (e.g. pleural effusion)",
+    ) + KEYS_AFTER_V1_3
+
+    val KEYS_V1_0: Map<QuestionnaireKey, String?> = mapOf(
+        QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR to "Treatment history current tumor",
+        QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY to "Other oncological history",
+        QuestionnaireKey.NON_ONCOLOGICAL_HISTORY to "Non-oncological history",
+        QuestionnaireKey.PRIMARY_TUMOR_LOCATION to "Primary tumor location",
+        QuestionnaireKey.PRIMARY_TUMOR_TYPE to "Primary tumor type",
+        QuestionnaireKey.BIOPSY_LOCATION to "Biopsy location",
+        QuestionnaireKey.STAGE to "Stage",
+        QuestionnaireKey.HAS_MEASURABLE_DISEASE to "Measurable disease (RECIST) yes/no",
+        QuestionnaireKey.HAS_CNS_LESIONS to "CNS lesions yes/no/unknown",
+        QuestionnaireKey.HAS_BRAIN_LESIONS to "Brain lesions yes/no/unknown",
+        QuestionnaireKey.HAS_BONE_LESIONS to "Bone lesions yes/no/unknown",
+        QuestionnaireKey.HAS_LIVER_LESIONS to "Liver lesions yes/no/unknown",
+        QuestionnaireKey.OTHER_LESIONS to "Other lesions (e.g. lymph node, pulmonal)",
+        QuestionnaireKey.WHO_STATUS to "WHO status",
+        QuestionnaireKey.UNRESOLVED_TOXICITIES to "Unresolved toxicities grade => 2",
+        QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION to "Significant current infection",
+        QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG to "Significant aberration on latest ECG",
+        QuestionnaireKey.COMPLICATIONS to "Cancer-related complications (e.g. pleural effusion)",
+    ) + KEYS_AFTER_V1_3
+
+    val KEYS_V0_2: Map<QuestionnaireKey, String?> = mapOf(
+        QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR to "Treatment history current tumor",
+        QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY to "Other oncological history (e.g. second primary)",
+        QuestionnaireKey.NON_ONCOLOGICAL_HISTORY to "Non-oncological history",
+        QuestionnaireKey.PRIMARY_TUMOR_LOCATION to "Tumor location",
+        QuestionnaireKey.PRIMARY_TUMOR_TYPE to "Tumor type",
+        QuestionnaireKey.BIOPSY_LOCATION to "Biopsy location",
+        QuestionnaireKey.STAGE to "Stage (I/II/III/IV)",
+        QuestionnaireKey.HAS_MEASURABLE_DISEASE to "Measurable disease (RECIST) yes/no/unknown",
+        QuestionnaireKey.HAS_CNS_LESIONS to "CNS lesions yes/no/unknown",
+        QuestionnaireKey.HAS_BRAIN_LESIONS to "Brain lesions yes/no/unknown",
+        QuestionnaireKey.HAS_BONE_LESIONS to "Bone lesions yes/no/unknown",
+        QuestionnaireKey.HAS_LIVER_LESIONS to "Liver lesions yes/no/unknown",
+        QuestionnaireKey.OTHER_LESIONS to null,
+        QuestionnaireKey.WHO_STATUS to "WHO status",
+        QuestionnaireKey.UNRESOLVED_TOXICITIES to "Unresolved toxicities grade => 2",
+        QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION to "Significant current infection",
+        QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG to "Significant aberration on latest ECG",
+        QuestionnaireKey.COMPLICATIONS to "Other (e.g. pleural effusion)",
+    ) + KEYS_AFTER_V1_3
+
+    val KEYS_V0_1: Map<QuestionnaireKey, String?> = mapOf(
+        QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR to null,
+        QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY to null,
+        QuestionnaireKey.SECONDARY_PRIMARY to null,
+        QuestionnaireKey.NON_ONCOLOGICAL_HISTORY to "Other",
+        QuestionnaireKey.PRIMARY_TUMOR_LOCATION to "Oncological",
+        QuestionnaireKey.PRIMARY_TUMOR_TYPE to null,
+        QuestionnaireKey.BIOPSY_LOCATION to null,
+        QuestionnaireKey.STAGE to null,
+        QuestionnaireKey.HAS_MEASURABLE_DISEASE to "Has measurable lesion (RECIST) yes/no",
+        QuestionnaireKey.HAS_CNS_LESIONS to "CNS lesions yes/no/unknown",
+        QuestionnaireKey.HAS_BRAIN_LESIONS to "Brain lesions yes/no/unknown",
+        QuestionnaireKey.HAS_BONE_LESIONS to "Bone lesions yes/no/unknown",
+        QuestionnaireKey.HAS_LIVER_LESIONS to "Liver lesions yes/no/unknown",
+        QuestionnaireKey.OTHER_LESIONS to null,
+        QuestionnaireKey.PDL1_TEST_RESULTS to null,
+        QuestionnaireKey.WHO_STATUS to "WHO status",
+        QuestionnaireKey.UNRESOLVED_TOXICITIES to "Unresolved toxicities from prior anti-tumor therapy grade => 2",
+        QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION to "Significant current infection",
+        QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG to "Significant aberration on latest ECG",
+        QuestionnaireKey.COMPLICATIONS to "Other (e.g. Osteoporosis, Pleural effusion)",
+    ) + KEYS_AFTER_V1_3
 
     fun mapping(entry: QuestionnaireEntry): Map<QuestionnaireKey, String?> {
         return when (QuestionnaireVersion.version(entry)) {
+            QuestionnaireVersion.V1_7 -> KEYS_V1_7
             QuestionnaireVersion.V1_6 -> KEYS_V1_6
             QuestionnaireVersion.V1_5 -> KEYS_V1_5
             QuestionnaireVersion.V1_4 -> KEYS_V1_4

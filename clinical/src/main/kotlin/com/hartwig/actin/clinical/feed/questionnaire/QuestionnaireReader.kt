@@ -5,7 +5,6 @@ import org.apache.logging.log4j.util.Strings
 import java.util.*
 
 internal object QuestionnaireReader {
-    @JvmField
     val TERMS_TO_CLEAN = setOf("{", "}", "\\tab", "\\li0", "\\ri0", "\\sa0", "\\sb0", "\\u000ci0", "\\ql", "\\par", "\\u000c2", "\\ltrch")
     fun read(entryText: String, validKeys: List<String>): Array<String> {
         return merge(clean(entryText).split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray(), validKeys)

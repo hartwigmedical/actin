@@ -14,6 +14,8 @@ import java.time.LocalDate
 class QuestionnaireExtractionTest {
     @Test
     fun shouldBeAbleToDetermineThatQuestionnaireEntryIsAQuestionnaire() {
+        assertTrue(isActualQuestionnaire(entryWithText(TestQuestionnaireFactory.createTestQuestionnaireValueV1_7())))
+        assertTrue(isActualQuestionnaire(entryWithText(TestQuestionnaireFactory.createTestQuestionnaireValueV1_6())))
         assertTrue(isActualQuestionnaire(entryWithText(TestQuestionnaireFactory.createTestQuestionnaireValueV1_5())))
         assertTrue(isActualQuestionnaire(entryWithText(TestQuestionnaireFactory.createTestQuestionnaireValueV1_4())))
         assertTrue(isActualQuestionnaire(entryWithText(TestQuestionnaireFactory.createTestQuestionnaireValueV1_3())))
@@ -31,6 +33,61 @@ class QuestionnaireExtractionTest {
             entryWithText(TestQuestionnaireFactory.createTestQuestionnaireValueV1_6().replace("GENAYA subjectno: GAYA-01-02-9999", ""))
         val questionnaire = extraction().extract(entryWithMissingSubjectNumber)
         assertNull(questionnaire!!.genayaSubjectNumber)
+    }
+
+    @Test
+    fun shouldBeAbleToExtractDataFromQuestionnaireV1_7() {
+        val questionnaire = extraction().extract(entryWithText(TestQuestionnaireFactory.createTestQuestionnaireValueV1_7()))
+        assertEquals(LocalDate.of(2020, 8, 28), questionnaire!!.date)
+        assertEquals("ovary", questionnaire.tumorLocation)
+        assertEquals("serous", questionnaire.tumorType)
+        assertEquals("lymph node", questionnaire.biopsyLocation)
+        val treatmentHistory = questionnaire.treatmentHistoryCurrentTumor
+        assertEquals(2, treatmentHistory!!.size.toLong())
+        assertTrue(treatmentHistory.contains("cisplatin"))
+        assertTrue(treatmentHistory.contains("nivolumab"))
+        val otherOncologicalHistory = questionnaire.otherOncologicalHistory
+        assertEquals(1, otherOncologicalHistory!!.size.toLong())
+        assertTrue(otherOncologicalHistory.contains("surgery"))
+        val secondaryPrimaries = questionnaire.secondaryPrimaries
+        assertEquals(1, secondaryPrimaries!!.size.toLong())
+        assertTrue(secondaryPrimaries.contains("sarcoma | Feb 2020"))
+        val nonOncologicalHistory = questionnaire.nonOncologicalHistory
+        assertEquals(1, nonOncologicalHistory!!.size.toLong())
+        assertTrue(nonOncologicalHistory.contains("diabetes"))
+        assertEquals(TumorStage.IV, questionnaire.stage)
+        assertTrue(questionnaire.hasMeasurableDisease!!)
+        assertTrue(questionnaire.hasBrainLesions!!)
+        assertTrue(questionnaire.hasActiveBrainLesions!!)
+        assertNull(questionnaire.hasCnsLesions)
+        assertNull(questionnaire.hasActiveCnsLesions)
+        assertFalse(questionnaire.hasBoneLesions!!)
+        assertFalse(questionnaire.hasLiverLesions!!)
+        val otherLesions = questionnaire.otherLesions
+        assertEquals(2, otherLesions!!.size.toLong())
+        assertTrue(otherLesions.contains("pulmonal"))
+        assertTrue(otherLesions.contains("abdominal"))
+        val ihcTestResults = questionnaire.ihcTestResults
+        assertEquals(1, ihcTestResults!!.size.toLong())
+        assertTrue(ihcTestResults.contains("ERBB2 3+"))
+        val pdl1TestResults = questionnaire.pdl1TestResults
+        assertEquals(1, pdl1TestResults!!.size.toLong())
+        assertTrue(pdl1TestResults.contains("Positive"))
+        assertEquals(0, (questionnaire.whoStatus as Int).toLong())
+        val unresolvedToxicities = questionnaire.unresolvedToxicities
+        assertEquals(1, unresolvedToxicities!!.size.toLong())
+        assertTrue(unresolvedToxicities.contains("toxic"))
+        val infectionStatus = questionnaire.infectionStatus
+        assertNotNull(infectionStatus)
+        assertFalse(infectionStatus!!.hasActiveInfection())
+        val ecg = questionnaire.ecg
+        assertNotNull(ecg)
+        assertTrue(ecg!!.hasSigAberrationLatestECG())
+        assertEquals("Sinus", ecg.aberrationDescription())
+        val complications = questionnaire.complications
+        assertEquals(1, complications!!.size.toLong())
+        assertTrue(complications.contains("vomit"))
+        assertEquals("GAYA-01-02-9999", questionnaire.genayaSubjectNumber)
     }
 
     @Test

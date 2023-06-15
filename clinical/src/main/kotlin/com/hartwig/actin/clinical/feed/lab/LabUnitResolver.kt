@@ -5,7 +5,6 @@ import com.google.common.collect.Maps
 import com.hartwig.actin.clinical.datamodel.LabUnit
 
 internal object LabUnitResolver {
-    @JvmField
     @VisibleForTesting
     val CURATION_MAP: MutableMap<String, LabUnit> = Maps.newHashMap()
 
