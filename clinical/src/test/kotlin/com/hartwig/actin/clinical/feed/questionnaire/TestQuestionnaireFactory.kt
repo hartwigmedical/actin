@@ -18,7 +18,10 @@ object TestQuestionnaireFactory {
     }
 
     fun createTestQuestionnaireValueV1_7(): String {
-        return createTestQuestionnaireValueV1_6().replace("ACTIN Questionnaire V1.6", "ACTIN Questionnaire V1.7") + "family history:\n"
+        return createTestQuestionnaireValueV1_6().replace(
+            "ACTIN Questionnaire V1.6",
+            "ACTIN Questionnaire V1.7"
+        ) + "\nfamily history:\n"
     }
 
     fun createTestQuestionnaireValueV1_6(): String {
