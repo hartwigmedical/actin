@@ -120,8 +120,8 @@ class CurationModelTest {
         val priorTreatments: List<PriorTumorTreatment> =
             model.curatePriorTumorTreatments(Lists.newArrayList("Cis 2020 2021", "no systemic treatment", "cannot curate"))
         assertEquals(2, priorTreatments.size.toLong())
-        assertTrue(priorTreatments.stream().anyMatch { entry: PriorTumorTreatment -> Integer.valueOf(2020) == entry.startYear() })
-        assertTrue(priorTreatments.stream().anyMatch { entry: PriorTumorTreatment -> Integer.valueOf(2021) == entry.startYear() })
+        assertTrue(priorTreatments.any { 2020 == it.startYear() })
+        assertTrue(priorTreatments.any { 2021 == it.startYear() })
         assertTrue(model.curatePriorTumorTreatments(null).isEmpty())
         model.evaluate()
     }

@@ -10,7 +10,6 @@ import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry
 import com.hartwig.actin.clinical.feed.surgery.SurgeryEntry
 import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry
 import java.io.IOException
-import java.util.stream.Collectors
 
 class FeedModel(private val feed: ClinicalFeed) {
     fun subjects(): Set<String> {
@@ -18,9 +17,8 @@ class FeedModel(private val feed: ClinicalFeed) {
     }
 
     fun patientEntry(subject: String): PatientEntry {
-        return entriesForSubject(feed.patientEntries, subject).stream()
-            .findFirst()
-            .orElseThrow { IllegalStateException("Could not find patient for subject $subject") }
+        return entriesForSubject(feed.patientEntries, subject).firstOrNull()
+            ?: throw IllegalStateException("Could not find patient for subject $subject")
     }
 
     fun bloodTransfusionEntries(subject: String): List<DigitalFileEntry> {
@@ -58,7 +56,7 @@ class FeedModel(private val feed: ClinicalFeed) {
     }
 
     fun uniqueBodyWeightEntries(subject: String): List<BodyWeightEntry> {
-        return entriesForSubject(feed.bodyWeightEntries, subject).stream().distinct().collect(Collectors.toList())
+        return entriesForSubject(feed.bodyWeightEntries, subject).distinct()
     }
 
     companion object {

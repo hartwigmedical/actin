@@ -119,10 +119,7 @@ class ClinicalRecordsFactoryTest {
         }
 
         private fun findByName(toxicities: List<Toxicity>, name: String): Toxicity {
-            return toxicities.stream()
-                .filter { toxicity: Toxicity -> toxicity.name() == name }
-                .findAny()
-                .orElseThrow { IllegalStateException("Could not find toxicity with name: $name") }
+            return toxicities.find { it.name() == name }!!
         }
 
         private fun assertToxicityEvaluations(toxicityEvaluations: List<ToxicityEvaluation>?) {
@@ -136,14 +133,8 @@ class ClinicalRecordsFactoryTest {
             assertEquals(0, (toxicity2.toxicities().iterator().next().grade() as Int).toLong())
         }
 
-        private fun findToxicityEvaluationByName(
-            toxicityEvaluations: List<ToxicityEvaluation>,
-            name: String
-        ): ToxicityEvaluation {
-            return toxicityEvaluations.stream()
-                .filter { toxicityEvaluation: ToxicityEvaluation -> toxicityEvaluation.toxicities().iterator().next().name() == name }
-                .findAny()
-                .orElseThrow { IllegalStateException("Could not find toxicity with name: $name") }
+        private fun findToxicityEvaluationByName(toxicityEvaluations: List<ToxicityEvaluation>, name: String): ToxicityEvaluation {
+            return toxicityEvaluations.find { it.toxicities().iterator().next().name() == name }!!
         }
 
         private fun assertAllergies(allergies: List<Intolerance>) {
