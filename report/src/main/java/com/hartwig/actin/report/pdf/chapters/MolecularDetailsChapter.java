@@ -66,12 +66,16 @@ public class MolecularDetailsChapter implements ReportChapter {
         Table table = Tables.createSingleColWithWidth(contentWidth());
 
         table.addCell(Cells.createEmpty());
-        table.addCell(Cells.createTitle(String.format("%s (%s, %s)", report.molecular().type(), report.molecular().sampleId(),
+        table.addCell(Cells.createTitle(String.format("%s (%s, %s)",
+                report.molecular().type(),
+                report.molecular().sampleId(),
                 Formats.date(report.molecular().date()))));
         List<EvaluatedCohort> cohorts = EvaluatedCohortFactory.create(report.treatmentMatch());
-        List<TableGenerator> generators = Lists.newArrayList(new MolecularCharacteristicsGenerator(report.molecular(), contentWidth()),
-                new MolecularDriversGenerator(report.molecular(), cohorts, contentWidth()),
-                new PredictedTumorOriginGenerator(report.molecular(), contentWidth()));
+        List<TableGenerator> generators = Lists.newArrayList(new MolecularCharacteristicsGenerator(report.molecular(), contentWidth()));
+        if (report.molecular().containsTumorCells()) {
+            generators.add(new MolecularDriversGenerator(report.molecular(), cohorts, contentWidth()));
+            generators.add(new PredictedTumorOriginGenerator(report.molecular(), contentWidth()));
+        }
 
         for (int i = 0; i < generators.size(); i++) {
             TableGenerator generator = generators.get(i);
@@ -80,6 +84,10 @@ public class MolecularDetailsChapter implements ReportChapter {
             if (i < generators.size() - 1) {
                 table.addCell(Cells.createEmpty());
             }
+        }
+
+        if (!report.molecular().containsTumorCells()) {
+            table.addCell(Cells.createContent("No successful WGS could be performed on the submitted biopsy"));
         }
 
         document.add(table);
