@@ -11,17 +11,16 @@ import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import org.junit.Test
 
 class HasSufficientLVEFTest {
+
     @Test
     fun canEvaluate() {
-        val function = HasSufficientLVEF(0.71, false)
+        val function = HasSufficientLVEF(0.71)
 
         // No LVEF known
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withLVEF(null)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withLVEF(null)))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withLVEF(0.1)))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withLVEF(0.71)))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withLVEF(0.9)))
-        val functionWithPass = HasSufficientLVEF(0.71, true)
-        assertEvaluation(EvaluationResult.PASS, functionWithPass.evaluate(withLVEF(null)))
     }
 
     companion object {
