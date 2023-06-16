@@ -16,8 +16,12 @@ class HasSolidPrimaryTumor internal constructor(private val doidModel: DoidModel
                 .addUndeterminedSpecificMessages("No tumor location/type configured for patient, unknown if solid primary tumor")
                 .addUndeterminedGeneralMessages("Undetermined solid primary tumor").build()
         }
-        val result = DoidEvaluationFunctions.evaluateForExclusiveMatchWithFailAndWarns(
-            doidModel, tumorDoids, DoidConstants.CANCER_DOID, NON_SOLID_CANCER_DOIDS, WARN_SOLID_CANCER_DOIDS
+        val result = DoidEvaluationFunctions.evaluateAllDoidsMatchWithFailAndWarns(
+            doidModel,
+            tumorDoids,
+            setOf(DoidConstants.CANCER_DOID, DoidConstants.BENIGN_NEOPLASM_DOID),
+            NON_SOLID_CANCER_DOIDS,
+            WARN_SOLID_CANCER_DOIDS
         )
         val builder = unrecoverable().result(result)
         when (result) {

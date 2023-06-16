@@ -11,6 +11,7 @@ import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularCharacteristicsGenerator;
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularDriversGenerator;
+import com.hartwig.actin.report.pdf.tables.molecular.PredictedTumorOriginGenerator;
 import com.hartwig.actin.report.pdf.tables.molecular.PriorMolecularResultGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -69,7 +70,8 @@ public class MolecularDetailsChapter implements ReportChapter {
                 Formats.date(report.molecular().date()))));
         List<EvaluatedCohort> cohorts = EvaluatedCohortFactory.create(report.treatmentMatch());
         List<TableGenerator> generators = Lists.newArrayList(new MolecularCharacteristicsGenerator(report.molecular(), contentWidth()),
-                new MolecularDriversGenerator(report.molecular(), cohorts, contentWidth()));
+                new MolecularDriversGenerator(report.molecular(), cohorts, contentWidth()),
+                new PredictedTumorOriginGenerator(report.molecular(), contentWidth()));
 
         for (int i = 0; i < generators.size(); i++) {
             TableGenerator generator = generators.get(i);

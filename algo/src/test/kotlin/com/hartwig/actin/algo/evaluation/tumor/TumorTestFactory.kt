@@ -27,7 +27,7 @@ internal object TumorTestFactory {
         return withDoids(Sets.newHashSet(*doids))
     }
 
-    fun withDoidsAndAmplication(doids: Set<String>, amplifiedGene: String): PatientRecord {
+    fun withDoidsAndAmplification(doids: Set<String>, amplifiedGene: String): PatientRecord {
         val base = TestDataFactory.createMinimalTestPatientRecord()
         return ImmutablePatientRecord.builder()
             .from(base)

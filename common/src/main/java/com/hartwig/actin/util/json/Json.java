@@ -2,6 +2,10 @@ package com.hartwig.actin.util.json;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
@@ -105,6 +109,11 @@ public final class Json {
     }
 
     @Nullable
+    public static Double optionalNumber(@NotNull JsonObject object, @NotNull String field) {
+        return object.has(field) ? nullableNumber(object, field) : null;
+    }
+
+    @Nullable
     public static Double nullableNumber(@NotNull JsonObject object, @NotNull String field) {
         return !isNull(object, field) ? number(object, field) : null;
     }
@@ -146,6 +155,21 @@ public final class Json {
         JsonObject dateObject = object(object, field);
 
         return LocalDate.of(integer(dateObject, "year"), integer(dateObject, "month"), integer(dateObject, "day"));
+    }
+
+    @NotNull
+    public static <T> List<T> extractListFromJson(@NotNull JsonArray jsonArray, Function<JsonObject, T> extractor) {
+        return jsonArraytoObjectStream(jsonArray, extractor).collect(Collectors.toList());
+    }
+
+    @NotNull
+    public static <T> Set<T> extractSetFromJson(@NotNull JsonArray jsonArray, Function<JsonObject, T> extractor) {
+        return jsonArraytoObjectStream(jsonArray, extractor).collect(Collectors.toSet());
+    }
+
+    @NotNull
+    private static <T> Stream<T> jsonArraytoObjectStream(@NotNull JsonArray jsonArray, Function<JsonObject, T> extractor) {
+        return jsonArray.asList().stream().map(JsonElement::getAsJsonObject).map(extractor);
     }
 
     private static boolean isNull(@NotNull JsonObject object, @NotNull String field) {

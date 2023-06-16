@@ -15,7 +15,7 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 import com.hartwig.actin.clinical.sort.PriorTumorTreatmentDescendingDateComparator;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
@@ -44,7 +44,7 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
     @NotNull
     @Override
     public String title() {
-        return "Clinical Summary";
+        return "Clinical summary";
     }
 
     @NotNull

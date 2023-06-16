@@ -3,6 +3,8 @@ package com.hartwig.actin.molecular.orange.serialization;
 import static com.hartwig.actin.util.json.Json.array;
 import static com.hartwig.actin.util.json.Json.bool;
 import static com.hartwig.actin.util.json.Json.date;
+import static com.hartwig.actin.util.json.Json.extractListFromJson;
+import static com.hartwig.actin.util.json.Json.extractSetFromJson;
 import static com.hartwig.actin.util.json.Json.integer;
 import static com.hartwig.actin.util.json.Json.nullableArray;
 import static com.hartwig.actin.util.json.Json.nullableInteger;
@@ -20,7 +22,6 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Sets;
@@ -33,15 +34,15 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
+import com.hartwig.actin.molecular.datamodel.characteristics.CuppaPrediction;
+import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableCuppaPrediction;
 import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRefGenomeVersion;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordStatus;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ImmutableChordRecord;
-import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaPrediction;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
-import com.hartwig.actin.molecular.orange.datamodel.cuppa.ImmutableCuppaPrediction;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.ImmutableCuppaRecord;
 import com.hartwig.actin.molecular.orange.datamodel.lilac.ImmutableLilacHlaAllele;
 import com.hartwig.actin.molecular.orange.datamodel.lilac.ImmutableLilacRecord;
@@ -81,6 +82,7 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLossInterpretation;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleHotspotType;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleMicrosatelliteStatus;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleQCStatus;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTranscriptImpact;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTumorMutationalStatus;
@@ -173,7 +175,17 @@ public final class OrangeJson {
                     .containsTumorCells(bool(fit, "containsTumorCells"))
                     .purity(number(fit, "purity"))
                     .ploidy(number(fit, "ploidy"))
+                    .qcStatuses(toPurpleQCStatuses(object(fit, "qc")))
                     .build();
+        }
+
+        @NotNull
+        private static Set<PurpleQCStatus> toPurpleQCStatuses(@NotNull JsonObject qc) {
+            return array(qc, "status").asList()
+                    .stream()
+                    .map(JsonElement::getAsString)
+                    .map(PurpleQCStatus::valueOf)
+                    .collect(Collectors.toSet());
         }
 
         @NotNull
@@ -350,14 +362,25 @@ public final class OrangeJson {
         }
 
         private static Optional<CuppaRecord> toCuppaRecord(@Nullable JsonObject nullableCuppa) {
-            return Optional.ofNullable(nullableCuppa).map(cuppa -> {
-                Set<CuppaPrediction> predictions = extractSetFromJson(array(cuppa, "predictions"),
-                        prediction -> ImmutableCuppaPrediction.builder()
-                                .cancerType(string(prediction, "cancerType"))
-                                .likelihood(number(prediction, "likelihood"))
-                                .build());
-                return ImmutableCuppaRecord.builder().predictions(predictions).build();
-            });
+            return Optional.ofNullable(nullableCuppa)
+                    .map(cuppa -> ImmutableCuppaRecord.builder()
+                            .predictions(extractListFromJson(array(cuppa, "predictions"), OrangeRecordCreator::toCuppaPrediction))
+                            .build());
+        }
+
+        private static CuppaPrediction toCuppaPrediction(JsonObject prediction) {
+            for (String field : List.of("snvPairwiseClassifier", "genomicPositionClassifier", "featureClassifier")) {
+                if (!prediction.has(field)) {
+                    throw new IllegalStateException(String.format("Missing field %s: cuppa not run in expected configuration", field));
+                }
+            }
+            return ImmutableCuppaPrediction.builder()
+                    .cancerType(string(prediction, "cancerType"))
+                    .likelihood(number(prediction, "likelihood"))
+                    .snvPairwiseClassifier(number(prediction, "snvPairwiseClassifier"))
+                    .genomicPositionClassifier(number(prediction, "genomicPositionClassifier"))
+                    .featureClassifier(number(prediction, "featureClassifier"))
+                    .build();
         }
 
         private static Optional<VirusInterpreterRecord> toVirusInterpreterRecord(@Nullable JsonObject nullableVirusInterpreter) {
@@ -408,9 +431,5 @@ public final class OrangeJson {
                     .map(chord -> ImmutableChordRecord.builder().hrStatus(ChordStatus.valueOf(string(chord, "hrStatus"))).build());
         }
 
-        @NotNull
-        private static <T> Set<T> extractSetFromJson(@NotNull JsonArray jsonArray, Function<JsonObject, T> extractor) {
-            return jsonArray.asList().stream().map(JsonElement::getAsJsonObject).map(extractor).collect(Collectors.toSet());
-        }
     }
 }

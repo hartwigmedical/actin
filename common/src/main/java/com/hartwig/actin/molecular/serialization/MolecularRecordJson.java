@@ -2,6 +2,8 @@ package com.hartwig.actin.molecular.serialization;
 
 import static com.hartwig.actin.util.json.Json.array;
 import static com.hartwig.actin.util.json.Json.bool;
+import static com.hartwig.actin.util.json.Json.extractListFromJson;
+import static com.hartwig.actin.util.json.Json.extractSetFromJson;
 import static com.hartwig.actin.util.json.Json.integer;
 import static com.hartwig.actin.util.json.Json.nullableBool;
 import static com.hartwig.actin.util.json.Json.nullableDate;
@@ -38,6 +40,7 @@ import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion;
+import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableCuppaPrediction;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
@@ -148,6 +151,7 @@ public class MolecularRecordJson {
                     .evidenceSource(string(record, "evidenceSource"))
                     .externalTrialSource(string(record, "externalTrialSource"))
                     .containsTumorCells(bool(record, "containsTumorCells"))
+                    .hasSufficientQualityAndPurity(bool(record, "hasSufficientQualityAndPurity"))
                     .hasSufficientQuality(bool(record, "hasSufficientQuality"))
                     .characteristics(toMolecularCharacteristics(object(record, "characteristics")))
                     .drivers(toMolecularDrivers(object(record, "drivers")))
@@ -184,8 +188,14 @@ public class MolecularRecordJson {
             }
 
             return ImmutablePredictedTumorOrigin.builder()
-                    .tumorType(string(predictedTumorOrigin, "tumorType"))
-                    .likelihood(number(predictedTumorOrigin, "likelihood"))
+                    .predictions(extractListFromJson(array(predictedTumorOrigin, "predictions"),
+                            prediction -> ImmutableCuppaPrediction.builder()
+                                    .cancerType(string(prediction, "cancerType"))
+                                    .likelihood(number(prediction, "likelihood"))
+                                    .snvPairwiseClassifier(number(prediction, "snvPairwiseClassifier"))
+                                    .genomicPositionClassifier(number(prediction, "genomicPositionClassifier"))
+                                    .featureClassifier(number(prediction, "featureClassifier"))
+                                    .build()))
                     .build();
         }
 
@@ -228,19 +238,10 @@ public class MolecularRecordJson {
                         .clonalLikelihood(number(variant, "clonalLikelihood"))
                         .phaseGroups(nullableIntegerList(variant, "phaseGroups"))
                         .canonicalImpact(toTranscriptImpact(object(variant, "canonicalImpact")))
-                        .otherImpacts(toTranscriptImpacts(array(variant, "otherImpacts")))
+                        .otherImpacts(extractSetFromJson(array(variant, "otherImpacts"), MolecularRecordCreator::toTranscriptImpact))
                         .build());
             }
             return variants;
-        }
-
-        @NotNull
-        private static Set<TranscriptImpact> toTranscriptImpacts(@NotNull JsonArray impactArray) {
-            Set<TranscriptImpact> impacts = Sets.newHashSet();
-            for (JsonElement element : impactArray) {
-                impacts.add(toTranscriptImpact(element.getAsJsonObject()));
-            }
-            return impacts;
         }
 
         @NotNull
@@ -421,42 +422,30 @@ public class MolecularRecordJson {
 
         @NotNull
         private static Set<HlaAllele> toHlaAlleles(@NotNull JsonArray hlaAlleleArray) {
-            Set<HlaAllele> hlaAlleles = Sets.newHashSet();
-            for (JsonElement element : hlaAlleleArray) {
-                JsonObject hlaAllele = element.getAsJsonObject();
-                hlaAlleles.add(ImmutableHlaAllele.builder()
-                        .name(string(hlaAllele, "name"))
-                        .tumorCopyNumber(number(hlaAllele, "tumorCopyNumber"))
-                        .hasSomaticMutations(bool(hlaAllele, "hasSomaticMutations"))
-                        .build());
-            }
-            return hlaAlleles;
+            return extractSetFromJson(hlaAlleleArray,
+                    hlaAllele -> ImmutableHlaAllele.builder()
+                            .name(string(hlaAllele, "name"))
+                            .tumorCopyNumber(number(hlaAllele, "tumorCopyNumber"))
+                            .hasSomaticMutations(bool(hlaAllele, "hasSomaticMutations"))
+                            .build());
         }
 
         @NotNull
         private static Set<PharmacoEntry> toPharmacoEntries(@NotNull JsonArray pharmacoArray) {
-            Set<PharmacoEntry> pharmacoEntries = Sets.newHashSet();
-            for (JsonElement element : pharmacoArray) {
-                JsonObject pharmaco = element.getAsJsonObject();
-                pharmacoEntries.add(ImmutablePharmacoEntry.builder()
-                        .gene(string(pharmaco, "gene"))
-                        .haplotypes(toHaplotypes(array(pharmaco, "haplotypes")))
-                        .build());
-            }
-            return pharmacoEntries;
+            return extractSetFromJson(pharmacoArray,
+                    pharmaco -> ImmutablePharmacoEntry.builder()
+                            .gene(string(pharmaco, "gene"))
+                            .haplotypes(toHaplotypes(array(pharmaco, "haplotypes")))
+                            .build());
         }
 
         @NotNull
         private static Set<Haplotype> toHaplotypes(@NotNull JsonArray haplotypeArray) {
-            Set<Haplotype> haplotypes = Sets.newHashSet();
-            for (JsonElement element : haplotypeArray) {
-                JsonObject haplotype = element.getAsJsonObject();
-                haplotypes.add(ImmutableHaplotype.builder()
-                        .name(string(haplotype, "name"))
-                        .function(string(haplotype, "function"))
-                        .build());
-            }
-            return haplotypes;
+            return extractSetFromJson(haplotypeArray,
+                    haplotype -> ImmutableHaplotype.builder()
+                            .name(string(haplotype, "name"))
+                            .function(string(haplotype, "function"))
+                            .build());
         }
     }
 }

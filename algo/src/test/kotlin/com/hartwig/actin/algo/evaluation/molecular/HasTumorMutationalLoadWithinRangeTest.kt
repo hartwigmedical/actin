@@ -15,11 +15,27 @@ class HasTumorMutationalLoadWithinRangeTest {
         assertMolecularEvaluation(EvaluationResult.PASS, function2.evaluate(MolecularTestFactory.withTumorMutationalLoad(280)))
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function2.evaluate(MolecularTestFactory.withTumorMutationalLoadAndHasSufficientQuality(136, true))
+            function2.evaluate(MolecularTestFactory.withTumorMutationalLoadAndHasSufficientQualityAndPurity(136, true, true))
+        )
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function2.evaluate(
+                MolecularTestFactory.withTumorMutationalLoadAndHasSufficientQualityAndPurity(
+                    136,
+                    false,
+                    false
+                )
+            )
         )
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function2.evaluate(MolecularTestFactory.withTumorMutationalLoadAndHasSufficientQuality(136, false))
+            function2.evaluate(
+                MolecularTestFactory.withTumorMutationalLoadAndHasSufficientQualityAndPurity(
+                    136,
+                    false,
+                    true
+                )
+            )
         )
     }
 }

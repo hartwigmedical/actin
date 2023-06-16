@@ -1,5 +1,7 @@
 package com.hartwig.actin.molecular.orange.datamodel.cuppa;
 
+import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableCuppaPrediction;
+
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 

@@ -6,7 +6,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory.fail
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.pass
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.undetermined
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.util.ApplicationConfig
 
 class HasMinimumSitesWithLesions internal constructor(private val minimumSitesWithLesions: Int) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -21,7 +20,7 @@ class HasMinimumSitesWithLesions internal constructor(private val minimumSitesWi
         ).count { it == true }
 
         val otherLesionCount = ((tumorDetails.otherLesions() ?: emptyList<String>()) + listOfNotNull(tumorDetails.biopsyLocation()))
-            .filterNot { it.lowercase(ApplicationConfig.LOCALE).contains("lymph") && true == tumorDetails.hasLymphNodeLesions() }
+            .filterNot { it.lowercase().contains("lymph") && true == tumorDetails.hasLymphNodeLesions() }
             .count()
 
         val sitesWithLesionsLowerBound = distinctCategorizedLesionLocations + otherLesionCount.coerceAtMost(1)

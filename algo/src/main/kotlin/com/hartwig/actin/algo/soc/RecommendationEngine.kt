@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.soc
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider
 import com.hartwig.actin.algo.soc.datamodel.EvaluatedTreatment
@@ -53,7 +53,9 @@ internal class RecommendationEngine private constructor(doidModel: DoidModel, ev
     private fun determineTreatmentLineForPatient(patientRecord: PatientRecord): Int {
         val priorTumorTreatments: List<PriorTumorTreatment> = patientRecord.clinical().priorTumorTreatments()
         return if (priorTumorTreatments.none {
-                it.categories().contains(TreatmentCategory.CHEMOTHERAPY) || it.categories().contains(TreatmentCategory.IMMUNOTHERAPY)
+                it.categories().contains(TreatmentCategory.CHEMOTHERAPY) || it.categories().contains(
+                    TreatmentCategory.IMMUNOTHERAPY
+                )
             }) 1 else if (priorTumorTreatments.any { it.categories().contains(TreatmentCategory.TARGETED_THERAPY) }) 3 else 2
     }
 

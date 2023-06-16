@@ -38,7 +38,7 @@ public class MolecularPrinter {
         printer.print("Sample: " + record.sampleId());
         printer.print(" Experiment type '" + record.type() + "' on " + formatDate(record.date()));
         printer.print(" Contains tumor cells: " + toYesNoUnknown(record.containsTumorCells()));
-        printer.print(" Has sufficient quality: " + toYesNoUnknown(record.hasSufficientQuality()));
+        printer.print(" Has sufficient quality and purity: " + toYesNoUnknown(record.hasSufficientQualityAndPurity()));
         printer.print(" Purity: " + formatPercentage(record.characteristics().purity()));
         printer.print(" Predicted tumor origin: " + predictedTumorString(record.characteristics().predictedTumorOrigin()));
         printer.print(" Microsatellite unstable?: " + toYesNoUnknown(record.characteristics().isMicrosatelliteUnstable()));
@@ -84,7 +84,7 @@ public class MolecularPrinter {
             return "Not determined";
         }
 
-        return predictedTumorOrigin.tumorType() + " (" + formatPercentage(predictedTumorOrigin.likelihood()) + ")";
+        return predictedTumorOrigin.cancerType() + " (" + formatPercentage(predictedTumorOrigin.likelihood()) + ")";
     }
 
     @NotNull

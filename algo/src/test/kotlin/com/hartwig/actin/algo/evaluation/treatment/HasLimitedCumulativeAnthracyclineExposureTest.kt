@@ -8,8 +8,8 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
 
@@ -22,7 +22,9 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(create(null, emptyList(), emptyList())))
 
         // PASS with one generic chemo for non-suspicious cancer type
-        val genericChemo: PriorTumorTreatment = TreatmentTestFactory.builder().addCategories(TreatmentCategory.CHEMOTHERAPY).build()
+        val genericChemo: PriorTumorTreatment = TreatmentTestFactory.builder().addCategories(
+            TreatmentCategory.CHEMOTHERAPY
+        ).build()
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(create(setOf("other cancer type"), emptyList(), listOf(genericChemo)))

@@ -42,7 +42,6 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X to hasLimitedPDL1ByCPSByIHCCreator(),
             EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X to hasLimitedPDL1ByTPSByIHCCreator(),
             EligibilityRule.PD_L1_STATUS_MUST_BE_AVAILABLE to hasAvailablePDL1StatusCreator(),
-            EligibilityRule.POSITIVE_FOR_CD8_T_CELLS_BY_IHC to positiveForCD8TCellsByIHCCreator(),
             EligibilityRule.HAS_PSMA_POSITIVE_PET_SCAN to hasPSMAPositivePETScanCreator(),
             EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE to molecularResultsAreGenerallyAvailableCreator(),
             EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_GENE_X to molecularResultsAreAvailableForGeneCreator(),
@@ -255,10 +254,6 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasAvailablePDL1StatusCreator(): FunctionCreator {
         return FunctionCreator { HasAvailablePDL1Status() }
-    }
-
-    private fun positiveForCD8TCellsByIHCCreator(): FunctionCreator {
-        return FunctionCreator { PositiveForCD8TCellsByIHC() }
     }
 
     private fun hasPSMAPositivePETScanCreator(): FunctionCreator {

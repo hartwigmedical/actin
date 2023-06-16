@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 import com.google.common.collect.Maps;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.molecular.datamodel.characteristics.CuppaPrediction;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.report.interpretation.EvaluatedCohort;
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer;
@@ -101,7 +102,7 @@ public class WGSSummaryGenerator implements TableGenerator {
             if (purity != null) {
                 Text biopsyText = new Text(biopsyLocation).addStyle(Styles.tableHighlightStyle());
                 Text purityText = new Text(String.format(" (purity %s)", Formats.percentage(purity)));
-                purityText.addStyle(molecular.hasSufficientQuality() ? Styles.tableHighlightStyle() : Styles.tableNoticeStyle());
+                purityText.addStyle(molecular.hasSufficientQualityAndPurity() ? Styles.tableHighlightStyle() : Styles.tableNoticeStyle());
                 return Cells.create(new Paragraph().addAll(Arrays.asList(biopsyText, purityText)));
             } else {
                 return Cells.createValue(biopsyLocation);
@@ -125,12 +126,23 @@ public class WGSSummaryGenerator implements TableGenerator {
     @NotNull
     private String tumorOriginPrediction() {
         PredictedTumorOrigin predictedTumorOrigin = molecular.characteristics().predictedTumorOrigin();
-        if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin) && molecular.hasSufficientQuality()) {
+        if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin) && molecular.hasSufficientQualityAndPurity()) {
             return TumorOriginInterpreter.interpret(predictedTumorOrigin);
         } else if (molecular.hasSufficientQuality() && predictedTumorOrigin != null) {
-            return String.format("Inconclusive (%s %s)",
-                    predictedTumorOrigin.tumorType(),
-                    Formats.percentage(predictedTumorOrigin.likelihood()));
+            List<CuppaPrediction> predictionsMeetingThreshold = TumorOriginInterpreter.predictionsToDisplay(predictedTumorOrigin);
+
+            if (predictionsMeetingThreshold.isEmpty()) {
+                return String.format("Inconclusive (%s %s)",
+                        predictedTumorOrigin.cancerType(),
+                        Formats.percentage(predictedTumorOrigin.likelihood()));
+            } else {
+                return String.format("Inconclusive (%s)",
+                        predictionsMeetingThreshold.stream()
+                                .map(prediction -> String.format("%s %s",
+                                        prediction.cancerType(),
+                                        Formats.percentage(prediction.likelihood())))
+                                .collect(Collectors.joining(", ")));
+            }
         } else {
             return Formats.VALUE_UNKNOWN;
         }

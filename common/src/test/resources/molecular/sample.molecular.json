@@ -12,12 +12,20 @@
   "externalTrialSource": "trial kb",
   "containsTumorCells": true,
   "hasSufficientQuality": true,
+  "hasSufficientQualityAndPurity": true,
   "characteristics": {
     "purity": 0.98,
     "ploidy": 3.1,
     "predictedTumorOrigin": {
-      "tumorType": "Melanoma",
-      "likelihood": 0.99
+      "predictions": [
+        {
+          "cancerType": "Melanoma",
+          "likelihood": 0.996,
+          "snvPairwiseClassifier": 0.979,
+          "genomicPositionClassifier": 0.99,
+          "featureClassifier": 0.972
+        }
+      ]
     },
     "isMicrosatelliteUnstable": false,
     "microsatelliteEvidence": null,

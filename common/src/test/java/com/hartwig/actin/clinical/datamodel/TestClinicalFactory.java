@@ -1,10 +1,37 @@
 package com.hartwig.actin.clinical.datamodel;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+
 import com.google.common.collect.Lists;
 import com.hartwig.actin.TestDataFactory;
+import com.hartwig.actin.clinical.datamodel.treatment.Chemotherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.CombinedTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.Drug;
+import com.hartwig.actin.clinical.datamodel.treatment.DrugClass;
+import com.hartwig.actin.clinical.datamodel.treatment.Immunotherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableChemotherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableCombinedTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableImmunotherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRadiotherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableSurgicalTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.SurgicalTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableSurgeryHistoryDetails;
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTherapyHistoryDetails;
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
+import com.hartwig.actin.clinical.datamodel.treatment.history.Intent;
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
+
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,15 +76,18 @@ public final class TestClinicalFactory {
                 .from(createMinimalTestClinicalRecord())
                 .tumor(createTestTumorDetails())
                 .clinicalStatus(createTestClinicalStatus())
+                .treatmentHistory(createTreatmentHistory())
                 .priorTumorTreatments(createTestPriorTumorTreatments())
                 .priorSecondPrimaries(createTestPriorSecondPrimaries())
                 .priorOtherConditions(createTestPriorOtherConditions())
                 .priorMolecularTests(createTestPriorMolecularTests())
                 .complications(createTestComplications())
                 .labValues(createTestLabValues())
+                .toxicityEvaluations(createTestToxicityEvaluations())
                 .toxicities(createTestToxicities())
                 .intolerances(createTestIntolerances())
                 .surgeries(createTestSurgeries())
+                .surgicalTreatments(createTestSurgicalHistory())
                 .bodyWeights(createTestBodyWeights())
                 .vitalFunctions(createTestVitalFunctions())
                 .bloodTransfusions(createTestBloodTransfusions())
@@ -106,6 +136,74 @@ public final class TestClinicalFactory {
         InfectionStatus infectionStatus = ImmutableInfectionStatus.builder().hasActiveInfection(false).build();
 
         return ImmutableClinicalStatus.builder().who(1).infectionStatus(infectionStatus).ecg(ecg).build();
+    }
+
+    @NotNull
+    private static Drug drug(@NotNull String name, @NotNull DrugClass drugClass) {
+        return ImmutableDrug.builder().name(name).addDrugClasses(drugClass).build();
+    }
+
+    @NotNull
+    private static TreatmentHistoryEntry therapyHistoryEntry(Set<Therapy> therapies, int startYear, Intent intent) {
+        return ImmutableTreatmentHistoryEntry.builder()
+                .treatments(therapies)
+                .startYear(startYear)
+                .intent(intent)
+                .therapyHistoryDetails(ImmutableTherapyHistoryDetails.builder().bestResponse(TreatmentResponse.PARTIAL_RESPONSE).build())
+                .build();
+    }
+
+    @NotNull
+    private static List<TreatmentHistoryEntry> createTreatmentHistory() {
+        Drug oxaliplatin = drug("Oxaliplatin", DrugClass.PLATINUM_COMPOUND);
+        Drug fluorouracil = drug("5-FU", DrugClass.PYRIMIDINE_ANTAGONIST);
+        Drug irinotecan = drug("Irinotecan", DrugClass.TOPO1_INHIBITOR);
+
+        Chemotherapy folfirinox = ImmutableChemotherapy.builder()
+                .name("FOLFIRINOX")
+                .isSystemic(true)
+                .addCategories(TreatmentCategory.CHEMOTHERAPY)
+                .addDrugs(oxaliplatin, fluorouracil, irinotecan)
+                .maxCycles(8)
+                .build();
+
+        Radiotherapy brachytherapy = ImmutableRadiotherapy.builder()
+                .name("Brachytherapy")
+                .isSystemic(false)
+                .addCategories(TreatmentCategory.RADIOTHERAPY)
+                .build();
+
+        CombinedTherapy radioFolfirinox = ImmutableCombinedTherapy.builder()
+                .name("FOLFIRINOX + radiotherapy")
+                .addTherapies(folfirinox, brachytherapy)
+                .isSystemic(true)
+                .build();
+
+        Immunotherapy pembrolizumab = ImmutableImmunotherapy.builder()
+                .name("Pembrolizumab")
+                .isSystemic(true)
+                .addCategories(TreatmentCategory.IMMUNOTHERAPY)
+                .addDrugs(drug("Pembrolizumab", DrugClass.MONOCLONAL_ANTIBODY))
+                .build();
+
+        CombinedTherapy folfirinoxAndPembrolizumab = ImmutableCombinedTherapy.builder()
+                .name("FOLFIRINOX + pembrolizumab")
+                .addTherapies(folfirinox, pembrolizumab)
+                .isSystemic(true)
+                .build();
+
+        Chemotherapy folfirinoxLocoRegional =
+                ImmutableChemotherapy.copyOf(folfirinox).withName("FOLFIRINOX loco-regional").withIsSystemic(false);
+
+        SurgicalTreatment colectomy = ImmutableSurgicalTreatment.builder().name("Colectomy").build();
+
+        TreatmentHistoryEntry surgeryHistoryEntry =
+                ImmutableTreatmentHistoryEntry.builder().addTreatments(colectomy).startYear(2021).intent(Intent.MAINTENANCE).build();
+
+        return List.of(therapyHistoryEntry(Set.of(folfirinox), 2020, Intent.NEOADJUVANT),
+                surgeryHistoryEntry,
+                therapyHistoryEntry(Set.of(radioFolfirinox, folfirinoxLocoRegional), 2022, Intent.ADJUVANT),
+                therapyHistoryEntry(Set.of(folfirinoxAndPembrolizumab), 2023, Intent.PALLIATIVE));
     }
 
     @NotNull
@@ -302,25 +400,34 @@ public final class TestClinicalFactory {
 
     @NotNull
     private static List<Toxicity> createTestToxicities() {
-        List<Toxicity> toxicities = Lists.newArrayList();
+        return List.of(ImmutableToxicity.builder()
+                        .name("Nausea")
+                        .addCategories("Nausea")
+                        .evaluatedDate(TODAY.minusDays(DAYS_SINCE_TOXICITIES))
+                        .source(ToxicitySource.EHR)
+                        .grade(1)
+                        .build(),
+                ImmutableToxicity.builder()
+                        .name("Fatigue")
+                        .addCategories("Fatigue")
+                        .evaluatedDate(TODAY.minusDays(DAYS_SINCE_TOXICITIES))
+                        .source(ToxicitySource.QUESTIONNAIRE)
+                        .grade(2)
+                        .build());
+    }
 
-        toxicities.add(ImmutableToxicity.builder()
-                .name("Nausea")
-                .addCategories("Nausea")
-                .evaluatedDate(TODAY.minusDays(DAYS_SINCE_TOXICITIES))
-                .source(ToxicitySource.EHR)
-                .grade(1)
-                .build());
-
-        toxicities.add(ImmutableToxicity.builder()
-                .name("Fatigue")
-                .addCategories("Fatigue")
-                .evaluatedDate(TODAY.minusDays(DAYS_SINCE_TOXICITIES))
-                .source(ToxicitySource.QUESTIONNAIRE)
-                .grade(2)
-                .build());
-
-        return toxicities;
+    @NotNull
+    private static List<ToxicityEvaluation> createTestToxicityEvaluations() {
+        return List.of(ImmutableToxicityEvaluation.builder()
+                        .evaluatedDate(TODAY.minusDays(DAYS_SINCE_TOXICITIES))
+                        .source(ToxicitySource.EHR)
+                        .toxicities(Set.of(ImmutableObservedToxicity.builder().name("Nausea").addCategories("Nausea").grade(1).build()))
+                        .build(),
+                ImmutableToxicityEvaluation.builder()
+                        .evaluatedDate(TODAY.minusDays(DAYS_SINCE_TOXICITIES))
+                        .source(ToxicitySource.QUESTIONNAIRE)
+                        .toxicities(Set.of(ImmutableObservedToxicity.builder().name("Fatigue").addCategories("Fatigue").grade(2).build()))
+                        .build());
     }
 
     @NotNull
@@ -341,11 +448,21 @@ public final class TestClinicalFactory {
 
     @NotNull
     private static List<Surgery> createTestSurgeries() {
-        List<Surgery> surgeries = Lists.newArrayList();
+        return Collections.singletonList(ImmutableSurgery.builder()
+                .endDate(TODAY.minusDays(DAYS_SINCE_SURGERY))
+                .status(SurgeryStatus.FINISHED)
+                .build());
+    }
 
-        surgeries.add(ImmutableSurgery.builder().endDate(TODAY.minusDays(DAYS_SINCE_SURGERY)).status(SurgeryStatus.FINISHED).build());
-
-        return surgeries;
+    @NotNull
+    private static List<TreatmentHistoryEntry> createTestSurgicalHistory() {
+        return Collections.singletonList(ImmutableTreatmentHistoryEntry.builder()
+                .treatments(Set.of(ImmutableSurgicalTreatment.builder().name("test surgery").build()))
+                .surgeryHistoryDetails(ImmutableSurgeryHistoryDetails.builder()
+                        .endDate(TODAY.minusDays(DAYS_SINCE_SURGERY))
+                        .status(SurgeryStatus.FINISHED)
+                        .build())
+                .build());
     }
 
     @NotNull

@@ -6,10 +6,10 @@ import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorTumorTreatment
-import com.hartwig.actin.clinical.datamodel.PriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
-import com.hartwig.actin.clinical.datamodel.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import org.apache.logging.log4j.util.Strings
 import org.junit.Test
 
@@ -24,7 +24,9 @@ class HasRecentlyReceivedRadiotherapyTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withPriorTumorTreatments(emptyList())))
 
         // Wrong category
-        val wrongCategory: PriorTumorTreatment = builder().addCategories(TreatmentCategory.IMMUNOTHERAPY).build()
+        val wrongCategory: PriorTumorTreatment = builder().addCategories(
+            TreatmentCategory.IMMUNOTHERAPY
+        ).build()
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withPriorTumorTreatment(wrongCategory)))
 
         // Right category but no date
