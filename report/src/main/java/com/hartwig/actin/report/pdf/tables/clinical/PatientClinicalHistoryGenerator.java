@@ -123,9 +123,8 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
     @NotNull
     private static Optional<String> extractAnnotationForTreatment(@NotNull PriorTumorTreatment priorTumorTreatment) {
         return Stream.of(toDateRangeString(priorTumorTreatment),
-                        toStopReasonString(priorTumorTreatment.stopReason()),
-                        toNumberOfCyclesString(priorTumorTreatment.cycles())
-                ).flatMap(Optional::stream)
+                        toNumberOfCyclesString(priorTumorTreatment.cycles()),
+                        toStopReasonString(priorTumorTreatment.stopReason())).flatMap(Optional::stream)
                 .reduce((x, y) -> x + ", " + y);
     }
 
