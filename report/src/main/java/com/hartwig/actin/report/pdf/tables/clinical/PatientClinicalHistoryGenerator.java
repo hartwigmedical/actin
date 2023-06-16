@@ -102,20 +102,19 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
             String treatmentName = treatmentName(treatment);
             if (!evaluatedNames.contains(treatmentName)) {
                 evaluatedNames.add(treatmentName);
-                Optional<String> annotationOption = treatmentsByName.get(treatmentName).stream()
+                Optional<String> annotationOption = treatmentsByName.get(treatmentName)
+                        .stream()
                         .map(PatientClinicalHistoryGenerator::extractAnnotationForTreatment)
                         .flatMap(Optional::stream)
                         .reduce((x, y) -> x + "; " + y);
-                return Optional.of(treatmentName
-                        + annotationOption.map(annotation -> " (" + annotation + ")").orElse(""));
+                return Optional.of(treatmentName + annotationOption.map(annotation -> " (" + annotation + ")").orElse(""));
 
             } else {
                 return Optional.empty();
             }
 
         });
-        String annotationString = annotationStream.flatMap(Optional::stream)
-                .collect(joining(", "));
+        String annotationString = annotationStream.flatMap(Optional::stream).collect(joining(", "));
 
         return Formats.valueOrDefault(annotationString, "None");
     }
@@ -123,9 +122,8 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
     @NotNull
     private static Optional<String> extractAnnotationForTreatment(@NotNull PriorTumorTreatment priorTumorTreatment) {
         return Stream.of(toDateRangeString(priorTumorTreatment),
-                        toNumberOfCyclesString(priorTumorTreatment.cycles()),
-                        toStopReasonString(priorTumorTreatment.stopReason())).flatMap(Optional::stream)
-                .reduce((x, y) -> x + ", " + y);
+                toNumberOfCyclesString(priorTumorTreatment.cycles()),
+                toStopReasonString(priorTumorTreatment.stopReason())).flatMap(Optional::stream).reduce((x, y) -> x + ", " + y);
     }
 
     @NotNull
@@ -146,13 +144,13 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
                 tumorDetails = tumorDetails + " " + priorSecondPrimary.tumorType();
             }
 
-            String dateAdditionDiagnosis = toDateString(priorSecondPrimary.diagnosedYear(),
-                    priorSecondPrimary.diagnosedMonth())
-                .map(dateDiagnosis -> "diagnosed " + dateDiagnosis + ", ").orElse(Strings.EMPTY);
+            String dateAdditionDiagnosis =
+                    toDateString(priorSecondPrimary.diagnosedYear(), priorSecondPrimary.diagnosedMonth()).map(dateDiagnosis -> "diagnosed "
+                            + dateDiagnosis + ", ").orElse(Strings.EMPTY);
 
-            String dateAdditionLastTreatment = toDateString(priorSecondPrimary.lastTreatmentYear(),
-                    priorSecondPrimary.lastTreatmentMonth())
-                .map(dateLastTreatment -> "last treatment " + dateLastTreatment + ", ").orElse(Strings.EMPTY);
+            String dateAdditionLastTreatment =
+                    toDateString(priorSecondPrimary.lastTreatmentYear(), priorSecondPrimary.lastTreatmentMonth()).map(dateLastTreatment ->
+                            "last treatment " + dateLastTreatment + ", ").orElse(Strings.EMPTY);
 
             String active = priorSecondPrimary.isActive() ? "considered active" : "considered non-active";
 
@@ -172,8 +170,8 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
 
     @NotNull
     private static Optional<String> toDateString(@Nullable Integer maybeYear, @Nullable Integer maybeMonth) {
-        return Optional.ofNullable(maybeYear).map(year ->
-                Optional.ofNullable(maybeMonth).map(month -> month + "/" + year).orElse(String.valueOf(year)));
+        return Optional.ofNullable(maybeYear)
+                .map(year -> Optional.ofNullable(maybeMonth).map(month -> month + "/" + year).orElse(String.valueOf(year)));
     }
 
     @NotNull
