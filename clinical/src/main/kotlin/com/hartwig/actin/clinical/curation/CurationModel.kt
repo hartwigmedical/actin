@@ -23,6 +23,7 @@ import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation
+import com.hartwig.actin.clinical.curation.translation.DosageUnitTranslation
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation
 import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation
 import com.hartwig.actin.clinical.curation.translation.Translation
@@ -585,6 +586,29 @@ class CurationModel @VisibleForTesting internal constructor(
         return null
     }
 
+    fun translateDosageUnit(dosageUnit: String?): String? {
+        if (dosageUnit.isNullOrEmpty()) {
+            return null
+        }
+        val trimmedDosageUnit = dosageUnit.trim { it <= ' ' }
+        val translation: DosageUnitTranslation? = findDosageUnitTranslation(trimmedDosageUnit)
+        if (translation == null) {
+            LOGGER.warn("No translation found for medication dosage unit: '{}'", trimmedDosageUnit)
+            return null
+        }
+        evaluatedTranslations.put(DosageUnitTranslation::class.java, translation)
+        return translation.translatedDosageUnit.ifEmpty { null }
+    }
+
+    private fun findDosageUnitTranslation(dosageUnit: String): DosageUnitTranslation? {
+        for (entry in database.dosageUnitTranslations) {
+            if (entry.dosageUnit == dosageUnit) {
+                return entry
+            }
+        }
+        return null
+    }
+
     fun evaluate() {
         var warnCount = 0
         for ((key, evaluated) in evaluatedCurationInputs.asMap().entries) {
@@ -691,6 +715,10 @@ class CurationModel @VisibleForTesting internal constructor(
 
             BloodTransfusionTranslation::class.java -> {
                 return database.bloodTransfusionTranslations
+            }
+
+            DosageUnitTranslation::class.java -> {
+                return database.dosageUnitTranslations
             }
 
             else -> throw IllegalStateException("Class not found in curation database: $classToLookup")

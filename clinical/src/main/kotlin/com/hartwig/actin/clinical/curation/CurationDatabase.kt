@@ -14,10 +14,7 @@ import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
-import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation
-import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation
-import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation
-import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation
+import com.hartwig.actin.clinical.curation.translation.*
 
 data class CurationDatabase(
     val primaryTumorConfigs: List<PrimaryTumorConfig>,
@@ -37,5 +34,6 @@ data class CurationDatabase(
     val administrationRouteTranslations: List<AdministrationRouteTranslation>,
     val laboratoryTranslations: List<LaboratoryTranslation>,
     val toxicityTranslations: List<ToxicityTranslation>,
-    val bloodTransfusionTranslations: List<BloodTransfusionTranslation>
+    val bloodTransfusionTranslations: List<BloodTransfusionTranslation>,
+    val dosageUnitTranslations: List<DosageUnitTranslation>
 )

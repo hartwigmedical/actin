@@ -315,6 +315,7 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
                     .anatomicalMainGroupAtc(entry.anatomicalMainGroupDisplay)
                     .status(curation.curateMedicationStatus(entry.status))
                     .administrationRoute(curation.translateAdministrationRoute(entry.dosageInstructionRouteDisplay))
+                    .dosageUnit(curation.translateDosageUnit(entry.dosageInstructionDoseQuantityUnit))
                     .startDate(entry.periodOfUseValuePeriodStart)
                     .stopDate(entry.periodOfUseValuePeriodEnd)
                     .build()

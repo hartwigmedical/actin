@@ -364,6 +364,13 @@ class CurationModelTest {
         model.evaluate()
     }
 
+    @Test
+    fun canTranslateDosageUnit() {
+        assertNull(model.translateDosageUnit(null))
+        assertNull(model.translateDosageUnit(Strings.EMPTY))
+        assertEquals("piece", model.translateDosageUnit("stuk"))
+    }
+
     private fun assertDoubleEquals(expected: Double, actual: Double?) {
         assertNotNull(actual)
         assertEquals(expected, actual!!, EPSILON)

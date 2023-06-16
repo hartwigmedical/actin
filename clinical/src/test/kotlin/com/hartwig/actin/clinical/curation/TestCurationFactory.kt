@@ -17,6 +17,7 @@ import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation
+import com.hartwig.actin.clinical.curation.translation.DosageUnit
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation
 import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication
@@ -66,6 +67,7 @@ object TestCurationFactory {
             medicationCategoryConfigs = createTestMedicationCategoryConfigs(),
             intoleranceConfigs = createTestIntoleranceConfigs(),
             administrationRouteTranslations = createTestAdministrationRouteTranslations(),
+            dosageUnitTranslations = createDosageUnitTranslations(),
             laboratoryTranslations = createTestLaboratoryTranslations(),
             toxicityTranslations = createTestToxicityTranslations(),
             bloodTransfusionTranslations = createTestBloodTransfusionTranslations()
@@ -323,6 +325,12 @@ object TestCurationFactory {
         return listOf(
             BloodTransfusionTranslation(product = "Product", translatedProduct = "Translated product"),
             BloodTransfusionTranslation(product = "Not used", translatedProduct = "never used")
+        )
+    }
+
+    private fun createTestDosageUnitTranslations(): List<DosageUnitTranslation> {
+        return listOf(
+            AdministrationRouteTranslation(administrationRoute = "stuk", translatedAdministrationRoute = "piece")
         )
     }
 

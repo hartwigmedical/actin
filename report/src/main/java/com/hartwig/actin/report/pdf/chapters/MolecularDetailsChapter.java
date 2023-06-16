@@ -58,15 +58,17 @@ public class MolecularDetailsChapter implements ReportChapter {
 
     private void addMolecularDetails(@NotNull Document document) {
         float keyWidth = STANDARD_KEY_WIDTH;
-        PriorMolecularResultGenerator priorMolecularResultGenerator = new PriorMolecularResultGenerator(report.clinical(), keyWidth,
-                contentWidth() - keyWidth - 10);
+        PriorMolecularResultGenerator priorMolecularResultGenerator =
+                new PriorMolecularResultGenerator(report.clinical(), keyWidth, contentWidth() - keyWidth - 10);
         Table priorMolecularResults = priorMolecularResultGenerator.contents().setBorder(Border.NO_BORDER);
         document.add(priorMolecularResults);
 
         Table table = Tables.createSingleColWithWidth(contentWidth());
 
         table.addCell(Cells.createEmpty());
-        table.addCell(Cells.createTitle(String.format("%s (%s, %s)", report.molecular().type(), report.molecular().sampleId(),
+        table.addCell(Cells.createTitle(String.format("%s (%s, %s)",
+                report.molecular().type(),
+                report.molecular().sampleId(),
                 Formats.date(report.molecular().date()))));
         List<EvaluatedCohort> cohorts = EvaluatedCohortFactory.create(report.treatmentMatch());
         List<TableGenerator> generators = Lists.newArrayList(new MolecularCharacteristicsGenerator(report.molecular(), contentWidth()),

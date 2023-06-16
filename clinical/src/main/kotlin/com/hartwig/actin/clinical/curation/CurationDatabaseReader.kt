@@ -17,13 +17,7 @@ import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfigFactor
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfigFactory
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfigFactory
 import com.hartwig.actin.clinical.curation.config.ToxicityConfigFactory
-import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslationFactory
-import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslationFactory
-import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslationFactory
-import com.hartwig.actin.clinical.curation.translation.ToxicityTranslationFactory
-import com.hartwig.actin.clinical.curation.translation.Translation
-import com.hartwig.actin.clinical.curation.translation.TranslationFactory
-import com.hartwig.actin.clinical.curation.translation.TranslationFile
+import com.hartwig.actin.clinical.curation.translation.*
 import com.hartwig.actin.util.Paths
 import org.apache.logging.log4j.LogManager
 import java.io.IOException
@@ -63,7 +57,8 @@ class CurationDatabaseReader internal constructor(private val curationValidator:
                 basePath,
                 BLOOD_TRANSFUSION_TRANSLATION_TSV,
                 BloodTransfusionTranslationFactory()
-            )
+            ),
+            dosageUnitTranslations = readTranslations(basePath, DOSAGE_UNIT_TRANSLATION_TSV, DosageUnitTranslationFactory())
         )
     }
 
@@ -87,6 +82,7 @@ class CurationDatabaseReader internal constructor(private val curationValidator:
         private const val LABORATORY_TRANSLATION_TSV = "laboratory_translation.tsv"
         private const val TOXICITY_TRANSLATION_TSV = "toxicity_translation.tsv"
         private const val BLOOD_TRANSFUSION_TRANSLATION_TSV = "blood_transfusion_translation.tsv"
+        private const val DOSAGE_UNIT_TRANSLATION_TSV = "dosage_unit_translation.tsv"
 
         @Throws(IOException::class)
         private fun <T : CurationConfig> readConfigs(basePath: String, tsv: String, configFactory: CurationConfigFactory<T>): List<T> {

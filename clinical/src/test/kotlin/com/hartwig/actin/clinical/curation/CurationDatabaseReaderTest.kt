@@ -311,6 +311,15 @@ class CurationDatabaseReaderTest {
         assertEquals("Thrombocyte concentrate", translation.translatedProduct)
     }
 
+    @Test
+    fun shouldReadDosageUnitTranslations() {
+        val translations = database!!.dosageUnitTranslations
+        assertEquals(1, translations.size.toLong())
+        val translation = translations[0]
+        assertEquals("stuk", translation.dosageUnit)
+        assertEquals("piece", translation.translatedDosageUnit)
+    }
+
     private fun assertIntegerEquals(expected: Int, actual: Int?) {
         assertNotNull(actual)
         assertEquals(expected.toLong(), (actual as Int).toLong())
