@@ -531,6 +531,8 @@ public final class TestClinicalFactory {
                 .dosageUnit("mg")
                 .frequency(1D)
                 .frequencyUnit("day")
+                .periodBetweenUnit("months")
+                .periodBetweenValue(2D)
                 .ifNeeded(false)
                 .startDate(TODAY.minusDays(DAYS_SINCE_MEDICATION_START))
                 .stopDate(TODAY.plusDays(DAYS_UNTIL_MEDICATION_END))

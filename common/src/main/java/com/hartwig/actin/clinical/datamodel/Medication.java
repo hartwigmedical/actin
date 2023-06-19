@@ -54,6 +54,12 @@ public abstract class Medication {
     public abstract String frequencyUnit();
 
     @Nullable
+    public abstract Double periodBetweenValue();
+
+    @Nullable
+    public abstract String periodBetweenUnit();
+
+    @Nullable
     public abstract Boolean ifNeeded();
 
     @Nullable

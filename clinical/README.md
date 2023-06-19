@@ -225,6 +225,8 @@ N medications
 | dosageUnit                 | mg            | Dosage unit                                                                                            |
 | frequency                  | 1             | Assigned frequency of dosage                                                                           |
 | frequencyUnit              | day           | Frequency unit                                                                                         |
+| periodBetweenValue         | Months        | Period between dosages value                                                                           |
+| periodBetweenUnit          | 2             | Period between dosages unit                                                                            |
 | ifNeeded                   | 0             | Determines whether the medication should be taken according to dosage prescription or only "if needed" |
 | startDate                  | 2021-07-01    | Assigned start date of medication                                                                      |
 | stopDate                   | 2021-10-01    | Assigned stop date of medication (if applicable)                                                       |
