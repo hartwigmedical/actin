@@ -16,7 +16,7 @@ class CurationModelTest {
     private val model = TestCurationFactory.createProperTestCurationModel()
 
     @Test
-    fun canCreateFromCurationDirectory() {
+    fun shouldBeAbleToCreateFromCurationDirectory() {
         assertNotNull(CurationModel.create(CURATION_DIRECTORY, TestDoidModelFactory.createMinimalTestDoidModel()))
     }
 
@@ -109,7 +109,7 @@ class CurationModelTest {
     }
 
     @Test
-    fun canCuratePriorTreatments() {
+    fun shouldCuratePriorTreatments() {
         val priorTreatments: List<PriorTumorTreatment> =
             model.curatePriorTumorTreatments(Lists.newArrayList("Cis 2020 2021", "no systemic treatment", "cannot curate"))
         assertEquals(2, priorTreatments.size.toLong())
@@ -121,7 +121,7 @@ class CurationModelTest {
     }
 
     @Test
-    fun canCuratePriorSecondPrimaries() {
+    fun shouldCuratePriorSecondPrimaries() {
         val priorSecondPrimaries: List<PriorSecondPrimary> =
             model.curatePriorSecondPrimaries(Lists.newArrayList("Breast cancer Jan-2018", "cannot curate"))
         assertEquals(1, priorSecondPrimaries.size.toLong())
@@ -132,7 +132,7 @@ class CurationModelTest {
     }
 
     @Test
-    fun canCuratePriorOtherConditions() {
+    fun shouldCuratePriorOtherConditions() {
         val priorOtherConditions: List<PriorOtherCondition> =
             model.curatePriorOtherConditions(Lists.newArrayList("sickness", "not a condition", "cannot curate"))
         assertEquals(1, priorOtherConditions.size.toLong())
@@ -143,7 +143,7 @@ class CurationModelTest {
     }
 
     @Test
-    fun canCuratePriorMolecularTests() {
+    fun shouldCuratePriorMolecularTests() {
         val priorMolecularTests: List<PriorMolecularTest> =
             model.curatePriorMolecularTests("IHC", Lists.newArrayList("IHC ERBB2 3+", "not a molecular test"))
         assertEquals(1, priorMolecularTests.size.toLong())
@@ -154,7 +154,7 @@ class CurationModelTest {
     }
 
     @Test
-    fun canCurateComplications() {
+    fun shouldCurateComplications() {
         assertNull(model.curateComplications(null))
         assertNull(model.curateComplications(Lists.newArrayList()))
 
@@ -174,7 +174,7 @@ class CurationModelTest {
     }
 
     @Test
-    fun canCurateQuestionnaireToxicities() {
+    fun shouldCurateQuestionnaireToxicities() {
         val date = LocalDate.of(2018, 5, 21)
         val toxicities = model.curateQuestionnaireToxicities(Lists.newArrayList("neuropathy gr3", "cannot curate"), date)
         assertEquals(1, toxicities.size.toLong())
@@ -191,7 +191,7 @@ class CurationModelTest {
     }
 
     @Test
-    fun canCurateECGs() {
+    fun shouldCurateECGs() {
         assertAberrationDescription("Cleaned aberration", model.curateECG(toECG("Weird aberration")))
         assertAberrationDescription("No curation needed", model.curateECG(toECG("No curation needed")))
         assertAberrationDescription(null, model.curateECG(toECG("Yes but unknown what aberration")))
@@ -202,7 +202,7 @@ class CurationModelTest {
     }
 
     @Test
-    fun canCurateInfectionStatus() {
+    fun shouldCurateInfectionStatus() {
         assertInfectionDescription("Cleaned infection", model.curateInfectionStatus(toInfection("Weird infection")))
         assertInfectionDescription("No curation needed", model.curateInfectionStatus(toInfection("No curation needed")))
         assertInfectionDescription(null, model.curateInfectionStatus(toInfection("No Infection")))
@@ -212,7 +212,7 @@ class CurationModelTest {
     }
 
     @Test
-    fun canDetermineLVEF() {
+    fun shouldDetermineLVEF() {
         assertNull(model.determineLVEF(null))
         assertNull(model.determineLVEF(listOf("not an LVEF")))
 
@@ -224,7 +224,7 @@ class CurationModelTest {
     }
 
     @Test
-    fun canCurateOtherLesions() {
+    fun shouldCurateOtherLesions() {
         assertNull(model.curateOtherLesions(null))
 
         val notALesionCuration = model.curateOtherLesions(Lists.newArrayList("not a lesion"))
@@ -243,7 +243,7 @@ class CurationModelTest {
     }
 
     @Test
-    fun canCurateBiopsyLocation() {
+    fun shouldCurateBiopsyLocation() {
         assertEquals("Liver", model.curateBiopsyLocation("lever"))
         assertEquals(Strings.EMPTY, model.curateBiopsyLocation("Not a lesion"))
         assertNull(model.curateBiopsyLocation("No curation configured"))
@@ -253,7 +253,7 @@ class CurationModelTest {
     }
 
     @Test
-    fun canCurateMedicationDosage() {
+    fun shouldCurateMedicationDosage() {
         val medication = model.curateMedicationDosage("50-60 mg per day")
         assertNotNull(medication)
         assertDoubleEquals(50.0, medication!!.dosageMin())
@@ -269,7 +269,7 @@ class CurationModelTest {
     }
 
     @Test
-    fun canCurateMedicationName() {
+    fun shouldCurateMedicationName() {
         assertNull(model.curateMedicationName(Strings.EMPTY))
         assertNull(model.curateMedicationName("does not exist"))
         assertNull(model.curateMedicationName("No medication"))
@@ -279,14 +279,14 @@ class CurationModelTest {
     }
 
     @Test
-    fun canCurateMedicationCodeATC() {
+    fun shouldCurateMedicationCodeATC() {
         assertEquals(Strings.EMPTY, model.curateMedicationCodeATC(Strings.EMPTY))
         assertEquals("N12", model.curateMedicationCodeATC("N12"))
         assertEquals(Strings.EMPTY, model.curateMedicationCodeATC("12N"))
     }
 
     @Test
-    fun canCurateMedicationStatus() {
+    fun shouldCurateMedicationStatus() {
         assertNull(model.curateMedicationStatus(Strings.EMPTY))
         assertEquals(MedicationStatus.ACTIVE, model.curateMedicationStatus("active"))
         assertEquals(MedicationStatus.ON_HOLD, model.curateMedicationStatus("on-hold"))
@@ -295,7 +295,7 @@ class CurationModelTest {
     }
 
     @Test
-    fun canAnnotateWithMedicationCategory() {
+    fun shouldAnnotateWithMedicationCategory() {
         val proper: Medication = TestMedicationFactory.builder().name("Paracetamol").build()
         val annotatedProper = model.annotateWithMedicationCategory(proper)
         assertEquals(Sets.newHashSet("Acetanilide derivatives"), annotatedProper.categories())
@@ -308,7 +308,7 @@ class CurationModelTest {
     }
 
     @Test
-    fun canTranslateAdministrationRoute() {
+    fun shouldTranslateAdministrationRoute() {
         assertNull(model.translateAdministrationRoute(null))
         assertNull(model.translateAdministrationRoute(Strings.EMPTY))
         assertNull(model.translateAdministrationRoute("not a route"))
@@ -317,7 +317,7 @@ class CurationModelTest {
     }
 
     @Test
-    fun canCurateIntolerances() {
+    fun shouldCurateIntolerances() {
         val proper: Intolerance = ImmutableIntolerance.builder()
             .name("Latex type 1")
             .category(Strings.EMPTY)
@@ -340,7 +340,7 @@ class CurationModelTest {
     }
 
     @Test
-    fun canTranslateLaboratoryValues() {
+    fun shouldTranslateLaboratoryValues() {
         val test: LabValue = ImmutableLabValue.builder()
             .date(LocalDate.of(2020, 1, 1))
             .code("CO")
@@ -364,7 +364,7 @@ class CurationModelTest {
     }
 
     @Test
-    fun canTranslateToxicities() {
+    fun shouldTranslateToxicities() {
         val test: Toxicity =
             ImmutableToxicity.builder().name("Pijn").evaluatedDate(LocalDate.of(2020, 11, 11)).source(ToxicitySource.EHR).build()
         val translated = model.translateToxicity(test)
@@ -379,7 +379,7 @@ class CurationModelTest {
     }
 
     @Test
-    fun canTranslateBloodTransfusions() {
+    fun shouldTranslateBloodTransfusions() {
         val test: BloodTransfusion = ImmutableBloodTransfusion.builder().date(LocalDate.of(2019, 9, 9)).product("Product").build()
         val translated: BloodTransfusion = model.translateBloodTransfusion(test)
         assertEquals("Translated product", translated.product())
