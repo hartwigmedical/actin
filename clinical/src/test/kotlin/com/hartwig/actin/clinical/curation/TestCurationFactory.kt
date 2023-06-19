@@ -1,19 +1,6 @@
 package com.hartwig.actin.clinical.curation
 
-import com.hartwig.actin.clinical.curation.config.ComplicationConfig
-import com.hartwig.actin.clinical.curation.config.ECGConfig
-import com.hartwig.actin.clinical.curation.config.InfectionConfig
-import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
-import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
-import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig
-import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig
-import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
-import com.hartwig.actin.clinical.curation.config.MolecularTestConfig
-import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
-import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig
-import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
-import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
-import com.hartwig.actin.clinical.curation.config.ToxicityConfig
+import com.hartwig.actin.clinical.curation.config.*
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation
@@ -31,6 +18,7 @@ import org.apache.logging.log4j.util.Strings
 import java.util.*
 
 object TestCurationFactory {
+
     fun createProperTestCurationModel(): CurationModel {
         return CurationModel(createTestCurationDatabase(), questionnaireRawEntryMapper())
     }
@@ -49,7 +37,7 @@ object TestCurationFactory {
         return CurationValidator(TestDoidModelFactory.createMinimalTestDoidModel())
     }
 
-    fun createTestCurationDatabase(): CurationDatabase {
+    private fun createTestCurationDatabase(): CurationDatabase {
         return CurationDatabase(
             primaryTumorConfigs = createTestPrimaryTumorConfigs(),
             oncologicalHistoryConfigs = createTestOncologicalHistoryConfigs(),
@@ -82,6 +70,15 @@ object TestCurationFactory {
                 primaryTumorSubType = Strings.EMPTY,
                 primaryTumorExtraDetails = Strings.EMPTY,
                 doids = setOf("299")
+            ),
+            PrimaryTumorConfig(
+                input = "Stomach |",
+                primaryTumorLocation = "Stomach",
+                primaryTumorSubLocation = Strings.EMPTY,
+                primaryTumorType = Strings.EMPTY,
+                primaryTumorSubType = Strings.EMPTY,
+                primaryTumorExtraDetails = Strings.EMPTY,
+                doids = setOf("10534")
             )
         )
     }

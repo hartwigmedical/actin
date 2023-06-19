@@ -21,12 +21,18 @@ class CurationModelTest {
     }
 
     @Test
-    fun canCurateTumorDetails() {
-        val curated: TumorDetails = model.curateTumorDetails("Unknown", "Carcinoma")
-        assertEquals("Unknown", curated.primaryTumorLocation())
+    fun shouldCurateTumorDetails() {
+        val curatedWithType: TumorDetails = model.curateTumorDetails("Unknown", "Carcinoma")
+        assertEquals("Unknown", curatedWithType.primaryTumorLocation())
+        assertEquals("Carcinoma", curatedWithType.primaryTumorType())
+
+        val curatedWithoutType: TumorDetails = model.curateTumorDetails("Stomach", null)
+        assertEquals("Stomach", curatedWithoutType.primaryTumorLocation())
+        assertEquals(Strings.EMPTY, curatedWithoutType.primaryTumorType())
 
         val missing: TumorDetails = model.curateTumorDetails("Does not", "Exist")
         assertNull(missing.primaryTumorLocation())
+        assertNull(missing.primaryTumorType())
 
         model.evaluate()
     }
