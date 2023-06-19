@@ -17,7 +17,7 @@ DROP TABLE IF EXISTS tumor;
 CREATE TABLE tumor
 (   id int NOT NULL AUTO_INCREMENT,
     patientId varchar(50) UNIQUE,
-    primaryTumorLocation varchar(50),
+    primaryTumorLocation varchar(100),
     primaryTumorSubLocation varchar(50),
     primaryTumorType varchar(50),
     primaryTumorSubType varchar(50),
