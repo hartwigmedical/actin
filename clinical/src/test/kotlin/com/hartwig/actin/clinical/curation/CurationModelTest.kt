@@ -3,45 +3,19 @@ package com.hartwig.actin.clinical.curation
 import com.google.common.collect.Lists
 import com.google.common.collect.Sets
 import com.google.common.io.Resources
-import com.hartwig.actin.clinical.datamodel.BloodTransfusion
-import com.hartwig.actin.clinical.datamodel.Complication
-import com.hartwig.actin.clinical.datamodel.ECG
-import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion
-import com.hartwig.actin.clinical.datamodel.ImmutableECG
-import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus
-import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance
-import com.hartwig.actin.clinical.datamodel.ImmutableLabValue
-import com.hartwig.actin.clinical.datamodel.ImmutableToxicity
-import com.hartwig.actin.clinical.datamodel.InfectionStatus
-import com.hartwig.actin.clinical.datamodel.Intolerance
-import com.hartwig.actin.clinical.datamodel.LabUnit
-import com.hartwig.actin.clinical.datamodel.LabValue
-import com.hartwig.actin.clinical.datamodel.Medication
-import com.hartwig.actin.clinical.datamodel.MedicationStatus
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
-import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
-import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
-import com.hartwig.actin.clinical.datamodel.Toxicity
-import com.hartwig.actin.clinical.datamodel.ToxicitySource
-import com.hartwig.actin.clinical.datamodel.TumorDetails
+import com.hartwig.actin.clinical.datamodel.*
 import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.doid.TestDoidModelFactory
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertNotNull
-import junit.framework.TestCase.assertNull
-import junit.framework.TestCase.assertTrue
+import junit.framework.TestCase.*
 import org.apache.logging.log4j.util.Strings
 import org.junit.Test
-import java.io.IOException
 import java.time.LocalDate
 
 class CurationModelTest {
+
     private val model = TestCurationFactory.createProperTestCurationModel()
 
     @Test
-    @Throws(IOException::class)
     fun canCreateFromCurationDirectory() {
         assertNotNull(CurationModel.create(CURATION_DIRECTORY, TestDoidModelFactory.createMinimalTestDoidModel()))
     }
@@ -50,8 +24,10 @@ class CurationModelTest {
     fun canCurateTumorDetails() {
         val curated: TumorDetails = model.curateTumorDetails("Unknown", "Carcinoma")
         assertEquals("Unknown", curated.primaryTumorLocation())
+
         val missing: TumorDetails = model.curateTumorDetails("Does not", "Exist")
         assertNull(missing.primaryTumorLocation())
+
         model.evaluate()
     }
 
@@ -66,8 +42,10 @@ class CurationModelTest {
     fun shouldOverrideHasLiverLesionsWhenListedInOtherLesions() {
         val base = TestClinicalFactory.createMinimalTestClinicalRecord().tumor()
         assertNull(base.hasLiverLesions())
+
         val liverOther: TumorDetails = model.overrideKnownLesionLocations(base, null, Lists.newArrayList("Lever"))
         assertEquals(true, liverOther.hasLiverLesions())
+
         model.evaluate()
     }
 
@@ -76,6 +54,7 @@ class CurationModelTest {
         val base = TestClinicalFactory.createMinimalTestClinicalRecord().tumor()
         val liverBiopsy: TumorDetails = model.overrideKnownLesionLocations(base, "lever", null)
         assertEquals(true, liverBiopsy.hasLiverLesions())
+
         model.evaluate()
     }
 
@@ -83,8 +62,10 @@ class CurationModelTest {
     fun shouldOverrideHasCnsLesionsWhenListedInOtherLesions() {
         val base = TestClinicalFactory.createMinimalTestClinicalRecord().tumor()
         assertNull(base.hasCnsLesions())
+
         val cns: TumorDetails = model.overrideKnownLesionLocations(base, null, Lists.newArrayList("cns"))
         assertEquals(true, cns.hasCnsLesions())
+
         model.evaluate()
     }
 
@@ -92,8 +73,10 @@ class CurationModelTest {
     fun shouldOverrideHasBrainLesionsWhenListedInOtherLesions() {
         val base = TestClinicalFactory.createMinimalTestClinicalRecord().tumor()
         assertNull(base.hasBrainLesions())
+
         val brain: TumorDetails = model.overrideKnownLesionLocations(base, null, Lists.newArrayList("brain"))
         assertEquals(true, brain.hasBrainLesions())
+
         model.evaluate()
     }
 
@@ -101,8 +84,10 @@ class CurationModelTest {
     fun shouldOverrideHasLymphNodeLesionsWhenListedInOtherLesions() {
         val base = TestClinicalFactory.createMinimalTestClinicalRecord().tumor()
         assertNull(base.hasLymphNodeLesions())
+
         val lymphNode: TumorDetails = model.overrideKnownLesionLocations(base, null, Lists.newArrayList("lymph node"))
         assertEquals(true, lymphNode.hasLymphNodeLesions())
+
         model.evaluate()
     }
 
@@ -110,8 +95,10 @@ class CurationModelTest {
     fun shouldOverrideHasBoneLesionsWhenListedInOtherLesions() {
         val base = TestClinicalFactory.createMinimalTestClinicalRecord().tumor()
         assertNull(base.hasBoneLesions())
+
         val bone: TumorDetails = model.overrideKnownLesionLocations(base, null, Lists.newArrayList("Bone"))
         assertEquals(true, bone.hasBoneLesions())
+
         model.evaluate()
     }
 
@@ -123,6 +110,7 @@ class CurationModelTest {
         assertTrue(priorTreatments.any { 2020 == it.startYear() })
         assertTrue(priorTreatments.any { 2021 == it.startYear() })
         assertTrue(model.curatePriorTumorTreatments(null).isEmpty())
+
         model.evaluate()
     }
 
@@ -133,6 +121,7 @@ class CurationModelTest {
         assertEquals(1, priorSecondPrimaries.size.toLong())
         assertEquals("Breast", priorSecondPrimaries[0].tumorLocation())
         assertTrue(model.curatePriorSecondPrimaries(null).isEmpty())
+
         model.evaluate()
     }
 
@@ -143,6 +132,7 @@ class CurationModelTest {
         assertEquals(1, priorOtherConditions.size.toLong())
         assertEquals("sick", priorOtherConditions[0].name())
         assertTrue(model.curatePriorOtherConditions(null).isEmpty())
+
         model.evaluate()
     }
 
@@ -153,6 +143,7 @@ class CurationModelTest {
         assertEquals(1, priorMolecularTests.size.toLong())
         assertEquals("IHC", priorMolecularTests[0].test())
         assertTrue(model.curatePriorTumorTreatments(null).isEmpty())
+
         model.evaluate()
     }
 
@@ -160,15 +151,19 @@ class CurationModelTest {
     fun canCurateComplications() {
         assertNull(model.curateComplications(null))
         assertNull(model.curateComplications(Lists.newArrayList()))
+
         val complications = model.curateComplications(Lists.newArrayList("term", "no curation"))
         assertNotNull(complications)
         assertEquals(1, complications!!.size.toLong())
         assertNotNull(findComplicationByName(complications, "Curated"))
+
         val ignore = model.curateComplications(Lists.newArrayList("none"))
         assertNotNull(ignore)
         assertEquals(0, ignore!!.size.toLong())
+
         val unknown = model.curateComplications(Lists.newArrayList("unknown"))
         assertNull(unknown)
+
         model.evaluate()
     }
 
@@ -183,7 +178,9 @@ class CurationModelTest {
         assertEquals(date, toxicity.evaluatedDate())
         assertEquals(ToxicitySource.QUESTIONNAIRE, toxicity.source())
         assertEquals(Integer.valueOf(3), toxicity.grade())
+
         assertTrue(model.curateQuestionnaireToxicities(null, date).isEmpty())
+
         model.evaluate()
     }
 
@@ -194,6 +191,7 @@ class CurationModelTest {
         assertAberrationDescription(null, model.curateECG(toECG("Yes but unknown what aberration")))
         assertNull(model.curateECG(toECG("No aberration")))
         assertNull(model.curateECG(null))
+
         model.evaluate()
     }
 
@@ -203,6 +201,7 @@ class CurationModelTest {
         assertInfectionDescription("No curation needed", model.curateInfectionStatus(toInfection("No curation needed")))
         assertInfectionDescription(null, model.curateInfectionStatus(toInfection("No Infection")))
         assertNull(model.curateInfectionStatus(null))
+
         model.evaluate()
     }
 
@@ -210,24 +209,30 @@ class CurationModelTest {
     fun canDetermineLVEF() {
         assertNull(model.determineLVEF(null))
         assertNull(model.determineLVEF(listOf("not an LVEF")))
+
         val lvef = model.determineLVEF(listOf("LVEF 0.17"))
         assertNotNull(lvef)
         assertEquals(0.17, lvef!!, EPSILON)
+
         model.evaluate()
     }
 
     @Test
     fun canCurateOtherLesions() {
         assertNull(model.curateOtherLesions(null))
+
         val notALesionCuration = model.curateOtherLesions(Lists.newArrayList("not a lesion"))
         assertNotNull(notALesionCuration)
         assertTrue(notALesionCuration!!.isEmpty())
+
         val noOtherLesionsCuration = model.curateOtherLesions(Lists.newArrayList("No"))
         assertNotNull(noOtherLesionsCuration)
         assertTrue(noOtherLesionsCuration!!.isEmpty())
+
         val otherLesionsCuration = model.curateOtherLesions(Lists.newArrayList("lymph node", "not a lesion", "no curation available"))
         assertNotNull(otherLesionsCuration)
         assertEquals(1, otherLesionsCuration!!.size.toLong())
+
         model.evaluate()
     }
 
@@ -237,6 +242,7 @@ class CurationModelTest {
         assertEquals(Strings.EMPTY, model.curateBiopsyLocation("Not a lesion"))
         assertNull(model.curateBiopsyLocation("No curation configured"))
         assertNull(model.curateBiopsyLocation(null))
+
         model.evaluate()
     }
 
@@ -250,7 +256,9 @@ class CurationModelTest {
         assertDoubleEquals(1.0, medication.frequency())
         assertEquals("day", medication.frequencyUnit())
         assertEquals(false, medication.ifNeeded())
+
         assertNull(model.curateMedicationDosage("does not exist"))
+
         model.evaluate()
     }
 
@@ -260,6 +268,7 @@ class CurationModelTest {
         assertNull(model.curateMedicationName("does not exist"))
         assertNull(model.curateMedicationName("No medication"))
         assertEquals("A and B", model.curateMedicationName("A en B"))
+
         model.evaluate()
     }
 
@@ -272,7 +281,6 @@ class CurationModelTest {
 
     @Test
     fun canCurateMedicationStatus() {
-        val model = TestCurationFactory.createMinimalTestCurationModel()
         assertNull(model.curateMedicationStatus(Strings.EMPTY))
         assertEquals(MedicationStatus.ACTIVE, model.curateMedicationStatus("active"))
         assertEquals(MedicationStatus.ON_HOLD, model.curateMedicationStatus("on-hold"))
@@ -285,9 +293,11 @@ class CurationModelTest {
         val proper: Medication = TestMedicationFactory.builder().name("Paracetamol").build()
         val annotatedProper = model.annotateWithMedicationCategory(proper)
         assertEquals(Sets.newHashSet("Acetanilide derivatives"), annotatedProper.categories())
+
         val empty: Medication = TestMedicationFactory.builder().name(Strings.EMPTY).build()
         val annotatedEmpty = model.annotateWithMedicationCategory(empty)
         assertEquals(empty, annotatedEmpty)
+
         model.evaluate()
     }
 
@@ -313,10 +323,13 @@ class CurationModelTest {
         val curatedProper = model.curateIntolerance(proper)
         assertEquals("Latex (type 1)", curatedProper.name())
         assertTrue(curatedProper.doids().contains("0060532"))
+
         val passThrough: Intolerance = ImmutableIntolerance.builder().from(proper).name("don't curate me").build()
         assertEquals(passThrough, model.curateIntolerance(passThrough))
+
         val withSubCategory: Intolerance = ImmutableIntolerance.builder().from(proper).name("Paracetamol").category("Medication").build()
         assertTrue(model.curateIntolerance(withSubCategory).subcategories().contains("Acetanilide derivatives"))
+
         model.evaluate()
     }
 
@@ -334,10 +347,13 @@ class CurationModelTest {
         val translated: LabValue = model.translateLabValue(test)
         assertEquals("CODE", translated.code())
         assertEquals("Name", translated.name())
+
         val notExisting: LabValue = ImmutableLabValue.builder().from(test).code("no").name("does not exist").build()
+
         val notExistingTranslated: LabValue = model.translateLabValue(notExisting)
         assertEquals("no", notExistingTranslated.code())
         assertEquals("does not exist", notExistingTranslated.name())
+
         model.evaluate()
     }
 
@@ -347,9 +363,12 @@ class CurationModelTest {
             ImmutableToxicity.builder().name("Pijn").evaluatedDate(LocalDate.of(2020, 11, 11)).source(ToxicitySource.EHR).build()
         val translated = model.translateToxicity(test)
         assertEquals("Pain", translated.name())
+
         val notExisting: Toxicity = ImmutableToxicity.builder().from(test).name("something").build()
+
         val notExistingTranslated = model.translateToxicity(notExisting)
         assertEquals(notExisting.name(), notExistingTranslated.name())
+
         model.evaluate()
     }
 
@@ -358,9 +377,11 @@ class CurationModelTest {
         val test: BloodTransfusion = ImmutableBloodTransfusion.builder().date(LocalDate.of(2019, 9, 9)).product("Product").build()
         val translated: BloodTransfusion = model.translateBloodTransfusion(test)
         assertEquals("Translated product", translated.product())
+
         val notExisting: BloodTransfusion = ImmutableBloodTransfusion.builder().from(test).product("does not exist").build()
         val notExistingTranslated: BloodTransfusion = model.translateBloodTransfusion(notExisting)
         assertEquals("does not exist", notExistingTranslated.product())
+
         model.evaluate()
     }
 
@@ -382,6 +403,7 @@ class CurationModelTest {
     companion object {
         private const val EPSILON = 1.0E-10
         private val CURATION_DIRECTORY = Resources.getResource("curation").path
+
         private fun findComplicationByName(complications: List<Complication>, nameToFind: String): Complication {
             return complications.find { complication: Complication -> complication.name() == nameToFind }
                 ?: throw IllegalStateException("Could not find complication with name '$nameToFind'")
