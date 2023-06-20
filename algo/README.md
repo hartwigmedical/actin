@@ -5,7 +5,7 @@ ACTIN-Algo matches a patient record (clinical & molecular data) with available t
 This application requires Java 11+ and can be run as follows:
 
 ```
-java -cp actin.jar com.hartwig.actin.algo.TreatmentMatcherApplication \
+java -cp actin.jar com.hartwig.actin.algo.TreatmentMatcherApplicationKt \
    -clinical_json /path/to/clinical.json \
    -molecular_json /path/to/molecular.json \
    -treatment_database_directory /path/to/potential_treatment_options \
