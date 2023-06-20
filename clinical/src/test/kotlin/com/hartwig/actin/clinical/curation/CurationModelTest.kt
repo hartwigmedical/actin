@@ -28,7 +28,10 @@ import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.doid.TestDoidModelFactory
-import junit.framework.TestCase.*
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertNotNull
+import junit.framework.TestCase.assertNull
+import junit.framework.TestCase.assertTrue
 import org.apache.logging.log4j.util.Strings
 import org.junit.Test
 import java.time.LocalDate
@@ -43,15 +46,25 @@ class CurationModelTest {
     }
 
     @Test
-    fun shouldCurateTumorDetails() {
+    fun shouldCurateTumorWithLocationAndType() {
         val curatedWithType: TumorDetails = model.curateTumorDetails("Unknown", "Carcinoma")
         assertEquals("Unknown", curatedWithType.primaryTumorLocation())
         assertEquals("Carcinoma", curatedWithType.primaryTumorType())
 
+        model.evaluate()
+    }
+
+    @Test
+    fun shouldCurateTumorWithLocationOnly() {
         val curatedWithoutType: TumorDetails = model.curateTumorDetails("Stomach", null)
         assertEquals("Stomach", curatedWithoutType.primaryTumorLocation())
         assertEquals(Strings.EMPTY, curatedWithoutType.primaryTumorType())
 
+        model.evaluate()
+    }
+
+    @Test
+    fun shouldNullTumorThatDoesNotExist() {
         val missing: TumorDetails = model.curateTumorDetails("Does not", "Exist")
         assertNull(missing.primaryTumorLocation())
         assertNull(missing.primaryTumorType())
