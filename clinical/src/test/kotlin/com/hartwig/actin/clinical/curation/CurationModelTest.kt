@@ -247,10 +247,10 @@ class CurationModelTest {
     }
 
     @Test
-    fun shouldInterpretDosageUnit() {
+    fun shouldInterpretPeriodBetweenUnit() {
         assertNull(model.curatePeriodBetweenUnit(null))
         assertNull(model.curatePeriodBetweenUnit(Strings.EMPTY))
-        assertEquals("days", model.translateDosageUnit("d"))
+        assertEquals("months", model.curatePeriodBetweenUnit("mo"))
     }
 
     @Test
@@ -296,15 +296,15 @@ class CurationModelTest {
 
     @Test
     fun shouldCurateMedicationDosage() {
-        val medication = model.curateMedicationDosage("50-60 mg per day every month")
+        val medication = model.curateMedicationDosage("once per day 50-60 mg every month")
         assertNotNull(medication)
         assertDoubleEquals(50.0, medication!!.dosageMin())
         assertDoubleEquals(60.0, medication.dosageMax())
         assertEquals("mg", medication.dosageUnit())
         assertDoubleEquals(1.0, medication.frequency())
         assertEquals("day", medication.frequencyUnit())
-        assertEquals(0, medication.periodBetweenValue())
-        assertEquals("mo", medication.periodBetweenUnit())
+        assertEquals(0.0, medication.periodBetweenValue())
+        assertEquals("months", medication.periodBetweenUnit())
         assertEquals(false, medication.ifNeeded())
 
         assertNull(model.curateMedicationDosage("does not exist"))

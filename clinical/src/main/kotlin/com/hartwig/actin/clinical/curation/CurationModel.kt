@@ -461,8 +461,8 @@ class CurationModel @VisibleForTesting internal constructor(
             .dosageUnit(config.dosageUnit)
             .frequency(config.frequency)
             .frequencyUnit(config.frequencyUnit)
-            .periodBetweenValue(Double.NaN)
-            .periodBetweenUnit(Strings.EMPTY)
+            .periodBetweenValue(config.periodBetweenValue)
+            .periodBetweenUnit(config.periodBetweenUnit)
             .ifNeeded(config.ifNeeded)
             .build()
     }

@@ -225,7 +225,7 @@ object TestCurationFactory {
 
     private fun createTestPeriodBetweenUnitConfigs(): List<PeriodBetweenUnitConfig> {
         return listOf(
-            PeriodBetweenUnitConfig(input = "d", interpretation = "days"),
+            PeriodBetweenUnitConfig(input = "mo", interpretation = "months"),
             PeriodBetweenUnitConfig(input = "", interpretation = Strings.EMPTY)
         )
     }
@@ -300,14 +300,14 @@ object TestCurationFactory {
     private fun createTestMedicationDosageConfigs(): List<MedicationDosageConfig> {
         return listOf(
             MedicationDosageConfig(
-                input = "50-60 mg per day",
+                input = "once per day 50-60 mg every month",
                 dosageMin = 50.0,
                 dosageMax = 60.0,
                 dosageUnit = "mg",
                 frequency = 1.0,
                 frequencyUnit = "day",
-                periodBetweenValue = 2.0,
-                periodBetweenUnit = "days",
+                periodBetweenValue = 0.0,
+                periodBetweenUnit = "months",
                 ifNeeded = false
             )
         )
