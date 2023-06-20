@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.curation
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
 import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
+import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
 import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig
@@ -17,7 +18,7 @@ import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation
-import com.hartwig.actin.clinical.curation.translation.DosageUnit
+import com.hartwig.actin.clinical.curation.translation.DosageUnitTranslation
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation
 import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication
@@ -42,7 +43,7 @@ object TestCurationFactory {
             CurationDatabase(
                 emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
                 emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-                emptyList(), emptyList()
+                emptyList(), emptyList(), emptyList(), emptyList()
             ), questionnaireRawEntryMapper()
         )
     }
@@ -60,6 +61,7 @@ object TestCurationFactory {
             nonOncologicalHistoryConfigs = createTestNonOncologicalHistoryConfigs(),
             ecgConfigs = createTestECGConfigs(),
             infectionConfigs = createTestInfectionConfigs(),
+            periodBetweenUnitConfigs = createTestPeriodBetweenUnitConfigs(),
             complicationConfigs = createTestComplicationConfigs(),
             toxicityConfigs = createTestToxicityConfigs(),
             molecularTestConfigs = createTestMolecularTestConfigs(),
@@ -68,7 +70,7 @@ object TestCurationFactory {
             medicationCategoryConfigs = createTestMedicationCategoryConfigs(),
             intoleranceConfigs = createTestIntoleranceConfigs(),
             administrationRouteTranslations = createTestAdministrationRouteTranslations(),
-            dosageUnitTranslations = createDosageUnitTranslations(),
+            dosageUnitTranslations = createTestDosageUnitTranslations(),
             laboratoryTranslations = createTestLaboratoryTranslations(),
             toxicityTranslations = createTestToxicityTranslations(),
             bloodTransfusionTranslations = createTestBloodTransfusionTranslations()
@@ -221,6 +223,13 @@ object TestCurationFactory {
         )
     }
 
+    private fun createTestPeriodBetweenUnitConfigs(): List<PeriodBetweenUnitConfig> {
+        return listOf(
+            PeriodBetweenUnitConfig(input = "d", interpretation = "days"),
+            PeriodBetweenUnitConfig(input = "", interpretation = Strings.EMPTY)
+        )
+    }
+
     private fun createTestComplicationConfigs(): List<ComplicationConfig> {
         return listOf(
             ComplicationConfig(
@@ -297,6 +306,8 @@ object TestCurationFactory {
                 dosageUnit = "mg",
                 frequency = 1.0,
                 frequencyUnit = "day",
+                periodBetweenValue = 2.0,
+                periodBetweenUnit = "days",
                 ifNeeded = false
             )
         )
@@ -340,7 +351,7 @@ object TestCurationFactory {
 
     private fun createTestDosageUnitTranslations(): List<DosageUnitTranslation> {
         return listOf(
-            AdministrationRouteTranslation(administrationRoute = "stuk", translatedAdministrationRoute = "piece")
+            DosageUnitTranslation(dosageUnit = "stuk", translatedDosageUnit = "piece")
         )
     }
 

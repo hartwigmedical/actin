@@ -317,7 +317,7 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
                     .administrationRoute(curation.translateAdministrationRoute(entry.dosageInstructionRouteDisplay))
                     .dosageUnit(curation.translateDosageUnit(entry.dosageInstructionDoseQuantityUnit))
                     .periodBetweenValue(entry.dosageInstructionPeriodBetweenDosagesValue)
-                    .periodBetweenUnit(entry.dosageInstructionPeriodBetweenDosagesUnit)
+                    .periodBetweenUnit(curation.curatePeriodBetweenUnit(entry.dosageInstructionPeriodBetweenDosagesUnit))
                     .startDate(entry.periodOfUseValuePeriodStart)
                     .stopDate(entry.periodOfUseValuePeriodEnd)
                     .build()

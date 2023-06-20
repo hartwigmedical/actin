@@ -6,6 +6,7 @@ import com.hartwig.actin.clinical.curation.config.CurationConfigFactory
 import com.hartwig.actin.clinical.curation.config.CurationConfigFile
 import com.hartwig.actin.clinical.curation.config.ECGConfigFactory
 import com.hartwig.actin.clinical.curation.config.InfectionConfigFactory
+import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfigFactory
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfigFactory
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfigFactory
 import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfigFactory
@@ -39,6 +40,7 @@ class CurationDatabaseReader internal constructor(private val curationValidator:
             ),
             ecgConfigs = readConfigs(basePath, ECG_TSV, ECGConfigFactory()),
             infectionConfigs = readConfigs(basePath, INFECTION_TSV, InfectionConfigFactory()),
+            periodBetweenUnitConfigs = readConfigs(basePath, PERIOD_BETWEEN_UNIT_TSV, PeriodBetweenUnitConfigFactory()),
             complicationConfigs = readConfigs(basePath, COMPLICATION_TSV, ComplicationConfigFactory()),
             toxicityConfigs = readConfigs(basePath, TOXICITY_TSV, ToxicityConfigFactory()),
             molecularTestConfigs = readConfigs(basePath, MOLECULAR_TEST_TSV, MolecularTestConfigFactory()),
@@ -58,7 +60,7 @@ class CurationDatabaseReader internal constructor(private val curationValidator:
                 BLOOD_TRANSFUSION_TRANSLATION_TSV,
                 BloodTransfusionTranslationFactory()
             ),
-            dosageUnitTranslations = readTranslations(basePath, DOSAGE_UNIT_TRANSLATION_TSV, DosageUnitTranslationFactory())
+            dosageUnitTranslations = readTranslations(basePath, DOSAGE_UNIT_TRANSLATION_TSV, DosageUnitTranslationFactory()),
         )
     }
 
@@ -71,6 +73,7 @@ class CurationDatabaseReader internal constructor(private val curationValidator:
         private const val NON_ONCOLOGICAL_HISTORY_TSV = "non_oncological_history.tsv"
         private const val ECG_TSV = "ecg.tsv"
         private const val INFECTION_TSV = "infection.tsv"
+        private const val PERIOD_BETWEEN_UNIT_TSV = "period_between_unit_interpretation.tsv"
         private const val COMPLICATION_TSV = "complication.tsv"
         private const val TOXICITY_TSV = "toxicity.tsv"
         private const val MOLECULAR_TEST_TSV = "molecular_test.tsv"

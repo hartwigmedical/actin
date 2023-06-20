@@ -247,6 +247,13 @@ class CurationModelTest {
     }
 
     @Test
+    fun shouldInterpretDosageUnit() {
+        assertNull(model.curatePeriodBetweenUnit(null))
+        assertNull(model.curatePeriodBetweenUnit(Strings.EMPTY))
+        assertEquals("days", model.translateDosageUnit("d"))
+    }
+
+    @Test
     fun shouldDetermineLVEF() {
         assertNull(model.determineLVEF(null))
         assertNull(model.determineLVEF(listOf("not an LVEF")))
@@ -289,13 +296,15 @@ class CurationModelTest {
 
     @Test
     fun shouldCurateMedicationDosage() {
-        val medication = model.curateMedicationDosage("50-60 mg per day")
+        val medication = model.curateMedicationDosage("50-60 mg per day every month")
         assertNotNull(medication)
         assertDoubleEquals(50.0, medication!!.dosageMin())
         assertDoubleEquals(60.0, medication.dosageMax())
         assertEquals("mg", medication.dosageUnit())
         assertDoubleEquals(1.0, medication.frequency())
         assertEquals("day", medication.frequencyUnit())
+        assertEquals(0, medication.periodBetweenValue())
+        assertEquals("mo", medication.periodBetweenUnit())
         assertEquals(false, medication.ifNeeded())
 
         assertNull(model.curateMedicationDosage("does not exist"))

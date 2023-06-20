@@ -9,6 +9,7 @@ import com.hartwig.actin.clinical.curation.config.ComplicationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
+import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
 import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig
@@ -370,6 +371,25 @@ class CurationModel @VisibleForTesting internal constructor(
         return ImmutableInfectionStatus.builder().from(input).description(description).build()
     }
 
+    fun curatePeriodBetweenUnit(input: String?): String? {
+        if (input.isNullOrEmpty()) {
+            return null
+        }
+        val configs: Set<PeriodBetweenUnitConfig> = find(database.periodBetweenUnitConfigs, input!!)
+        if (configs.isEmpty()) {
+            LOGGER.warn(" Could not find period between unit config for input '{}'", input)
+            return input
+        } else if (configs.size > 1) {
+            LOGGER.warn(" Multiple period between unit configs matched to '{}'", input)
+            return null
+        }
+        val config: PeriodBetweenUnitConfig = configs.iterator().next()
+        if (config.ignore) {
+            return null
+        }
+        return config.interpretation
+    }
+
     fun determineLVEF(inputs: List<String>?): Double? {
         return inputs?.flatMap { input: String -> find(database.nonOncologicalHistoryConfigs, input) }
             ?.filterNot { it.ignore }
@@ -700,6 +720,10 @@ class CurationModel @VisibleForTesting internal constructor(
 
             InfectionConfig::class.java -> {
                 return database.infectionConfigs
+            }
+
+            PeriodBetweenUnitConfig::class.java -> {
+                return database.periodBetweenUnitConfigs
             }
 
             ToxicityConfig::class.java -> {

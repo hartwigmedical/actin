@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.curation
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
 import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
+import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
 import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig
@@ -24,6 +25,7 @@ data class CurationDatabase(
     val nonOncologicalHistoryConfigs: List<NonOncologicalHistoryConfig>,
     val ecgConfigs: List<ECGConfig>,
     val infectionConfigs: List<InfectionConfig>,
+    val periodBetweenUnitConfigs: List<PeriodBetweenUnitConfig>,
     val complicationConfigs: List<ComplicationConfig>,
     val toxicityConfigs: List<ToxicityConfig>,
     val molecularTestConfigs: List<MolecularTestConfig>,
