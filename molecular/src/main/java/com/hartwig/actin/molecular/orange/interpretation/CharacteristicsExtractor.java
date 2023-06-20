@@ -1,14 +1,11 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
-import java.util.Comparator;
-
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordStatus;
-import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaPrediction;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleMicrosatelliteStatus;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTumorMutationalStatus;
@@ -32,10 +29,9 @@ class CharacteristicsExtractor {
 
     @NotNull
     public MolecularCharacteristics extract(@NotNull OrangeRecord record) {
-        PredictedTumorOrigin predictedTumorOrigin = record.cuppa()
-                .flatMap(c -> c.predictions().stream().max(Comparator.comparing(CuppaPrediction::likelihood)))
-                .map(best -> ImmutablePredictedTumorOrigin.builder().tumorType(best.cancerType()).likelihood(best.likelihood()).build())
-                .orElse(null);
+        PredictedTumorOrigin predictedTumorOrigin = record.cuppa().isEmpty()
+                ? null
+                : ImmutablePredictedTumorOrigin.builder().predictions(record.cuppa().get().predictions()).build();
 
         PurpleRecord purple = record.purple();
 

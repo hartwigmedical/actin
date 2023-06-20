@@ -15,11 +15,11 @@ import java.time.LocalDate;
 import com.google.common.io.Resources;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.molecular.datamodel.ExperimentType;
+import com.hartwig.actin.molecular.datamodel.characteristics.CuppaPrediction;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.OrangeRefGenomeVersion;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordRecord;
 import com.hartwig.actin.molecular.orange.datamodel.chord.ChordStatus;
-import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaPrediction;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.CuppaRecord;
 import com.hartwig.actin.molecular.orange.datamodel.lilac.LilacHlaAllele;
 import com.hartwig.actin.molecular.orange.datamodel.lilac.LilacRecord;
@@ -53,6 +53,7 @@ import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterRecord
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusQCStatus;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 public class OrangeJsonTest {
@@ -62,7 +63,7 @@ public class OrangeJsonTest {
             Resources.getResource("serialization/minimally.populated.orange.json").getPath();
     private static final String MINIMALLY_POPULATED_ORANGE_JSON_WITH_GERMLINE =
             Resources.getResource("serialization/minimally.populated.orange.germline.json").getPath();
-    private static final String REAL_ORANGE_JSON = Resources.getResource("serialization/real.v2.4.0.orange.json").getPath();
+    private static final String REAL_ORANGE_JSON = Resources.getResource("serialization/real.v2.5.0.orange.json").getPath();
 
     private static final double EPSILON = 1.0E-2;
 
@@ -259,6 +260,14 @@ public class OrangeJsonTest {
         CuppaPrediction prediction = cuppa.predictions().iterator().next();
         assertEquals("Melanoma", prediction.cancerType());
         assertEquals(0.996, prediction.likelihood(), EPSILON);
+        assertDoubleEquals(0.979, prediction.snvPairwiseClassifier());
+        assertDoubleEquals(0.99, prediction.genomicPositionClassifier());
+        assertDoubleEquals(0.972, prediction.featureClassifier());
+    }
+
+    private static void assertDoubleEquals(double expected, @Nullable Double actual) {
+        assertNotNull(actual);
+        assertEquals(expected, actual, EPSILON);
     }
 
     private static void assertVirusInterpreter(@NotNull VirusInterpreterRecord virusInterpreter) {

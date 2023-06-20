@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
@@ -173,11 +174,7 @@ class VariantExtractor {
 
     @NotNull
     private static Set<VariantEffect> toEffects(@NotNull Set<PurpleVariantEffect> effects) {
-        Set<VariantEffect> variantEffects = Sets.newHashSet();
-        for (PurpleVariantEffect effect : effects) {
-            variantEffects.add(determineVariantEffect(effect));
-        }
-        return variantEffects;
+        return effects.stream().map(VariantExtractor::determineVariantEffect).collect(Collectors.toSet());
     }
 
     @NotNull
@@ -211,6 +208,9 @@ class VariantExtractor {
             case MISSENSE: {
                 return VariantEffect.MISSENSE;
             }
+            case PHASED_MISSENSE: {
+                return VariantEffect.PHASED_MISSENSE;
+            }
             case PHASED_INFRAME_INSERTION: {
                 return VariantEffect.PHASED_INFRAME_INSERTION;
             }
@@ -219,6 +219,9 @@ class VariantExtractor {
             }
             case SYNONYMOUS: {
                 return VariantEffect.SYNONYMOUS;
+            }
+            case PHASED_SYNONYMOUS: {
+                return VariantEffect.PHASED_SYNONYMOUS;
             }
             case INTRONIC: {
                 return VariantEffect.INTRONIC;
