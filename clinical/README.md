@@ -1,12 +1,13 @@
 ## ACTIN-Clinical
 
-ACTIN-Clinical ingests (external) clinical feed and uses an internal curation database to create data in terms of the datamodel described below.
-This clinical model is written to a per-patient json file. The clinical data can be loaded into a mysql database via [ACTIN-Database](../database/README.md).
+ACTIN-Clinical ingests (external) clinical feed and uses an internal curation database to create data in terms of the datamodel described
+below. This clinical model is written to a per-patient json file. The clinical data can be loaded into a mysql database
+via [ACTIN-Database](../database/README.md).
 
-This application requires Java 11+ and can be run as follows: 
+This application requires Java 11+ and can be run as follows:
 
 ```
-java -cp actin.jar com.hartwig.actin.clinical.ClinicalIngestionApplication \
+java -cp actin.jar com.hartwig.actin.clinical.ClinicalIngestionApplicationKt \
    -feed_directory /path/to/feed_file_dir \
    -curation_directory /path/to/curation_file_dir \
    -doid_json /path/to/full_doid_tree_json_file \
@@ -15,7 +16,7 @@ java -cp actin.jar com.hartwig.actin.clinical.ClinicalIngestionApplication \
 
 ### Disease Ontology ID
 
-For mapping of primary tumor location and type, second primaries and 'other conditions' in the ACTIN clinical datamodel, 
+For mapping of primary tumor location and type, second primaries and 'other conditions' in the ACTIN clinical datamodel,
 one or more Disease Ontology IDs (DOIDs) are assigned. For more information, see https://disease-ontology.org/.
 
 ## Clinical Datamodel
@@ -92,7 +93,7 @@ N prior tumor treatments
 | trialAcronym   |                   | Acronym of trial (if applicable)                  |
 | ablationType   |                   | Type of ablation (if applicable)                  |
 
-N prior second primaries   
+N prior second primaries
 
 | Field            | Example Value    | Details                                          |
 |------------------|------------------|--------------------------------------------------|
@@ -232,4 +233,5 @@ N medications
 | stopDate                   | 2021-10-01    | Assigned stop date of medication (if applicable)                                                       |
 
 ### Version History and Download Links
- - Upcoming (first release) 
+
+- Upcoming (first release) 

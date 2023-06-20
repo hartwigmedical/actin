@@ -32,6 +32,7 @@ import org.apache.logging.log4j.util.Strings
 import java.util.*
 
 object TestCurationFactory {
+
     fun createProperTestCurationModel(): CurationModel {
         return CurationModel(createTestCurationDatabase(), questionnaireRawEntryMapper())
     }
@@ -50,7 +51,7 @@ object TestCurationFactory {
         return CurationValidator(TestDoidModelFactory.createMinimalTestDoidModel())
     }
 
-    fun createTestCurationDatabase(): CurationDatabase {
+    private fun createTestCurationDatabase(): CurationDatabase {
         return CurationDatabase(
             primaryTumorConfigs = createTestPrimaryTumorConfigs(),
             oncologicalHistoryConfigs = createTestOncologicalHistoryConfigs(),
@@ -84,6 +85,15 @@ object TestCurationFactory {
                 primaryTumorSubType = Strings.EMPTY,
                 primaryTumorExtraDetails = Strings.EMPTY,
                 doids = setOf("299")
+            ),
+            PrimaryTumorConfig(
+                input = "Stomach |",
+                primaryTumorLocation = "Stomach",
+                primaryTumorSubLocation = Strings.EMPTY,
+                primaryTumorType = Strings.EMPTY,
+                primaryTumorSubType = Strings.EMPTY,
+                primaryTumorExtraDetails = Strings.EMPTY,
+                doids = setOf("10534")
             )
         )
     }

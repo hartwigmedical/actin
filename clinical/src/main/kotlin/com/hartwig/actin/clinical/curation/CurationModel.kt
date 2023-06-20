@@ -76,8 +76,9 @@ class CurationModel @VisibleForTesting internal constructor(
 
     fun curateTumorDetails(inputTumorLocation: String?, inputTumorType: String?): TumorDetails {
         var primaryTumorConfig: PrimaryTumorConfig? = null
-        if (inputTumorLocation != null && inputTumorType != null) {
-            val inputPrimaryTumor = CurationUtil.fullTrim("$inputTumorLocation | $inputTumorType")
+        if (inputTumorLocation != null) {
+            val inputTumorTypeString = inputTumorType ?: Strings.EMPTY
+            val inputPrimaryTumor = CurationUtil.fullTrim("$inputTumorLocation | $inputTumorTypeString")
             val configs: Set<PrimaryTumorConfig?> = find(database.primaryTumorConfigs, inputPrimaryTumor)
             if (configs.isEmpty()) {
                 LOGGER.warn(" Could not find primary tumor config for input '{}'", inputPrimaryTumor)
@@ -87,16 +88,19 @@ class CurationModel @VisibleForTesting internal constructor(
                 primaryTumorConfig = configs.iterator().next()
             }
         }
+
         return if (primaryTumorConfig == null) {
             ImmutableTumorDetails.builder().build()
-        } else ImmutableTumorDetails.builder()
-            .primaryTumorLocation(primaryTumorConfig.primaryTumorLocation)
-            .primaryTumorSubLocation(primaryTumorConfig.primaryTumorSubLocation)
-            .primaryTumorType(primaryTumorConfig.primaryTumorType)
-            .primaryTumorSubType(primaryTumorConfig.primaryTumorSubType)
-            .primaryTumorExtraDetails(primaryTumorConfig.primaryTumorExtraDetails)
-            .doids(primaryTumorConfig.doids)
-            .build()
+        } else {
+            ImmutableTumorDetails.builder()
+                .primaryTumorLocation(primaryTumorConfig.primaryTumorLocation)
+                .primaryTumorSubLocation(primaryTumorConfig.primaryTumorSubLocation)
+                .primaryTumorType(primaryTumorConfig.primaryTumorType)
+                .primaryTumorSubType(primaryTumorConfig.primaryTumorSubType)
+                .primaryTumorExtraDetails(primaryTumorConfig.primaryTumorExtraDetails)
+                .doids(primaryTumorConfig.doids)
+                .build()
+        }
     }
 
     fun overrideKnownLesionLocations(
@@ -108,9 +112,11 @@ class CurationModel @VisibleForTesting internal constructor(
         if (otherLesions != null) {
             lesionsToCheck.addAll(otherLesions)
         }
+
         if (biopsyLocation != null) {
             lesionsToCheck.add(biopsyLocation)
         }
+
         for (lesion in lesionsToCheck) {
             val configs: Set<LesionLocationConfig> = find(database.lesionLocationConfigs, lesion)
             for (config in configs) {
@@ -119,9 +125,11 @@ class CurationModel @VisibleForTesting internal constructor(
                 }
             }
         }
+
         if (matches.isEmpty()) {
             return tumorDetails
         }
+
         val builder: ImmutableTumorDetails.Builder = ImmutableTumorDetails.builder().from(tumorDetails)
         if (matches.contains(LesionLocationCategory.BRAIN)) {
             if (tumorDetails.hasBrainLesions() == false) {
@@ -166,6 +174,7 @@ class CurationModel @VisibleForTesting internal constructor(
         if (inputs == null) {
             return Lists.newArrayList<PriorTumorTreatment>()
         }
+
         val priorTumorTreatments: MutableList<PriorTumorTreatment> = Lists.newArrayList<PriorTumorTreatment>()
         for (input in inputs) {
             val trimmedInput = CurationUtil.fullTrim(input)
@@ -176,6 +185,7 @@ class CurationModel @VisibleForTesting internal constructor(
                     LOGGER.warn(" Could not find second primary or oncological history config for input '{}'", trimmedInput)
                 }
             }
+
             for (config in configs) {
                 if (!config.ignore) {
                     priorTumorTreatments.add(config.curated!!)
@@ -189,6 +199,7 @@ class CurationModel @VisibleForTesting internal constructor(
         if (inputs == null) {
             return Lists.newArrayList<PriorSecondPrimary>()
         }
+
         val priorSecondPrimaries: MutableList<PriorSecondPrimary> = Lists.newArrayList<PriorSecondPrimary>()
         for (input in inputs) {
             val trimmedInput = CurationUtil.fullTrim(input)
@@ -212,6 +223,7 @@ class CurationModel @VisibleForTesting internal constructor(
         if (inputs == null) {
             return Lists.newArrayList<PriorOtherCondition>()
         }
+
         val priorOtherConditions: MutableList<PriorOtherCondition> = Lists.newArrayList<PriorOtherCondition>()
         for (input in inputs) {
             val trimmedInput = CurationUtil.fullTrim(input)
@@ -232,6 +244,7 @@ class CurationModel @VisibleForTesting internal constructor(
         if (inputs == null) {
             return Lists.newArrayList<PriorMolecularTest>()
         }
+
         val priorMolecularTests: MutableList<PriorMolecularTest> = Lists.newArrayList<PriorMolecularTest>()
         for (input in inputs) {
             val trimmedInput = CurationUtil.fullTrim(input)
@@ -252,6 +265,7 @@ class CurationModel @VisibleForTesting internal constructor(
         if (inputs.isNullOrEmpty()) {
             return null
         }
+
         val complications: MutableList<Complication> = Lists.newArrayList()
         var unknownStateCount = 0
         var validInputCount = 0
@@ -282,6 +296,7 @@ class CurationModel @VisibleForTesting internal constructor(
         if (inputs == null) {
             return Lists.newArrayList()
         }
+
         val toxicities: MutableList<Toxicity> = Lists.newArrayList()
         for (input in inputs) {
             val trimmedInput = CurationUtil.fullTrim(input)
@@ -307,9 +322,10 @@ class CurationModel @VisibleForTesting internal constructor(
     }
 
     fun curateECG(input: ECG?): ECG? {
-        if (input == null || input.aberrationDescription() == null) {
+        if (input?.aberrationDescription() == null) {
             return null
         }
+
         val configs: Set<ECGConfig> = find(database.ecgConfigs, input.aberrationDescription()!!)
         if (configs.isEmpty()) {
             LOGGER.warn(" Could not find ECG config for input '{}'", input.aberrationDescription())
@@ -322,6 +338,7 @@ class CurationModel @VisibleForTesting internal constructor(
         if (config.ignore) {
             return null
         }
+
         val description: String? = config.interpretation.ifEmpty { null }
         return ImmutableECG.builder()
             .from(input)
@@ -332,9 +349,10 @@ class CurationModel @VisibleForTesting internal constructor(
     }
 
     fun curateInfectionStatus(input: InfectionStatus?): InfectionStatus? {
-        if (input == null || input.description() == null) {
+        if (input?.description() == null) {
             return null
         }
+
         val configs: Set<InfectionConfig> = find(database.infectionConfigs, input.description()!!)
         if (configs.isEmpty()) {
             LOGGER.warn(" Could not find infection config for input '{}'", input.description())
@@ -348,6 +366,7 @@ class CurationModel @VisibleForTesting internal constructor(
             return null
         }
         val description: String? = config.interpretation.ifEmpty { null }
+
         return ImmutableInfectionStatus.builder().from(input).description(description).build()
     }
 
@@ -363,6 +382,7 @@ class CurationModel @VisibleForTesting internal constructor(
         if (otherLesions == null) {
             return null
         }
+
         val curatedOtherLesions: MutableList<String> = Lists.newArrayList()
         for (lesion in otherLesions) {
             val configs: Set<LesionLocationConfig> = find(database.lesionLocationConfigs, lesion)
@@ -385,6 +405,7 @@ class CurationModel @VisibleForTesting internal constructor(
         if (input.isNullOrEmpty()) {
             return null
         }
+
         val configs: Set<LesionLocationConfig> = find(database.lesionLocationConfigs, input)
         if (configs.isEmpty()) {
             LOGGER.warn(" Could not find lesion config for biopsy location '{}'", input)
@@ -407,6 +428,7 @@ class CurationModel @VisibleForTesting internal constructor(
             return null
         }
         val config: MedicationDosageConfig = configs.iterator().next()
+
         return ImmutableMedication.builder()
             .name(Strings.EMPTY)
             .codeATC(Strings.EMPTY)
@@ -430,6 +452,7 @@ class CurationModel @VisibleForTesting internal constructor(
         if (trimmedInput.isEmpty()) {
             return null
         }
+
         val configs: Set<MedicationNameConfig> = find(database.medicationNameConfigs, trimmedInput)
         if (configs.isEmpty()) {
             LOGGER.warn(" Could not find medication name config for '{}'", trimmedInput)
@@ -439,6 +462,7 @@ class CurationModel @VisibleForTesting internal constructor(
             return null
         }
         val config: MedicationNameConfig = configs.iterator().next()
+
         return if (!config.ignore) config.name else null
     }
 
@@ -457,6 +481,7 @@ class CurationModel @VisibleForTesting internal constructor(
         if (status.isEmpty()) {
             return null
         }
+
         return if (status.equals("active", ignoreCase = true)) {
             MedicationStatus.ACTIVE
         } else if (status.equals("on-hold", ignoreCase = true)) {
@@ -493,6 +518,7 @@ class CurationModel @VisibleForTesting internal constructor(
         if (administrationRoute.isNullOrEmpty()) {
             return null
         }
+
         val trimmedAdministrationRoute = administrationRoute.trim { it <= ' ' }
         val translation: AdministrationRouteTranslation? = findAdministrationRouteTranslation(trimmedAdministrationRoute)
         if (translation == null) {
@@ -500,6 +526,7 @@ class CurationModel @VisibleForTesting internal constructor(
             return null
         }
         evaluatedTranslations.put(AdministrationRouteTranslation::class.java, translation)
+
         return translation.translatedAdministrationRoute.ifEmpty { null }
     }
 
@@ -526,9 +553,11 @@ class CurationModel @VisibleForTesting internal constructor(
             name = config.name
             builder.name(name).doids(config.doids)
         }
+
         if (intolerance.category().equals("medication", ignoreCase = true)) {
             builder.subcategories(lookupMedicationCategories("intolerance", name))
         }
+
         return builder.build()
     }
 
