@@ -14,7 +14,7 @@ class HasNormalCardiacFunctionByMUGAOrTTE internal constructor() : EvaluationFun
                 "LVEF < 50%, uncertain if cardiac function is considered normal"
             )
         } else
-            EvaluationFactory.undetermined(
+            EvaluationFactory.notEvaluated(
                 "Normal cardiac function by MUGA or TTE cannot be determined",
                 "Undetermined normal cardiac function by MUGA or TTE"
             )
