@@ -70,12 +70,14 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
         val records: MutableList<ClinicalRecord> = Lists.newArrayList<ClinicalRecord>()
         val processedPatientIds: MutableSet<String> = HashSet()
         val extraction = QuestionnaireExtraction(curation.questionnaireRawEntryMapper())
+
         LOGGER.info("Creating clinical model")
         for (subject in feed.subjects()) {
             val patientId = toPatientId(subject)
             check(!processedPatientIds.contains(patientId)) { "Cannot create clinical records. Duplicate patientId: $patientId" }
             processedPatientIds.add(patientId)
-            LOGGER.info(" Extracting data for patient {}", patientId)
+            LOGGER.info(" Extracting and curating data for patient {}", patientId)
+
             val questionnaire: Questionnaire? = extraction.extract(feed.latestQuestionnaireEntry(subject))
             val extractedToxicities = extractToxicities(subject, questionnaire)
             val toxicityEvaluations: List<ToxicityEvaluation> = extractedToxicities
@@ -94,6 +96,7 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
                         .source(toxicity.source())
                         .build()
                 }
+
             records.add(
                 ImmutableClinicalRecord.builder()
                     .patientId(patientId)
@@ -119,8 +122,10 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
             )
         }
         records.sortWith(ClinicalRecordComparator())
+
         LOGGER.info("Evaluating curation database")
         curation.evaluate()
+
         return records
     }
 
@@ -139,6 +144,7 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
         if (questionnaire == null) {
             return ImmutableTumorDetails.builder().build()
         }
+
         val biopsyLocation: String? = questionnaire.biopsyLocation
         val otherLesions: List<String>? = questionnaire.otherLesions
         val curatedOtherLesions: List<String>? = curation.curateOtherLesions(otherLesions)
@@ -155,6 +161,7 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
             .hasLiverLesions(questionnaire.hasLiverLesions)
             .otherLesions(curatedOtherLesions)
             .build()
+
         return curation.overrideKnownLesionLocations(tumorDetails, biopsyLocation, otherLesions)
     }
 
