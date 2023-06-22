@@ -2,6 +2,7 @@ package com.hartwig.actin.clinical.datamodel.treatment.history;
 
 import java.util.Set;
 
+import com.hartwig.actin.clinical.datamodel.BodyLocationCategory;
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 
 import org.immutables.value.Value;
@@ -10,29 +11,38 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class TreatmentHistoryEntry {
+public interface TreatmentHistoryEntry {
 
     @NotNull
-    public abstract Set<Treatment> treatments();
+    Set<Treatment> treatments();
+
+    @NotNull
+    String rawInput();
 
     @Nullable
-    public abstract Integer startYear();
+    Integer startYear();
 
     @Nullable
-    public abstract Integer startMonth();
+    Integer startMonth();
 
     @Nullable
-    public abstract Intent intent();
+    Set<Intent> intents();
 
     @Nullable
-    public abstract Boolean isTrial();
+    Boolean isTrial();
 
     @Nullable
-    public abstract String trialAcronym();
+    String trialAcronym();
 
     @Nullable
-    public abstract TherapyHistoryDetails therapyHistoryDetails();
+    TherapyHistoryDetails therapyHistoryDetails();
 
     @Nullable
-    public abstract SurgeryHistoryDetails surgeryHistoryDetails();
+    SurgeryHistoryDetails surgeryHistoryDetails();
+
+    @Nullable
+    Set<BodyLocationCategory> bodyLocationCategories();
+
+    @Nullable
+    Set<String> bodyLocations();
 }

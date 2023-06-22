@@ -3,7 +3,6 @@ package com.hartwig.actin.clinical.datamodel.treatment.history;
 import java.time.LocalDate;
 import java.util.Set;
 
-import com.hartwig.actin.clinical.datamodel.BodyLocationCategory;
 import com.hartwig.actin.clinical.datamodel.ObservedToxicity;
 
 import org.immutables.value.Value;
@@ -37,10 +36,4 @@ public abstract class TherapyHistoryDetails {
 
     @Nullable
     public abstract Set<ObservedToxicity> toxicities();
-
-    @Nullable
-    public abstract Set<BodyLocationCategory> locationCategories();
-
-    @Nullable
-    public abstract Set<String> locations();
 }

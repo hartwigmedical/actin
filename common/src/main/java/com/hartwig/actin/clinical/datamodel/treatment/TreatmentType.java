@@ -6,6 +6,7 @@ public enum TreatmentType {
 
     CHEMOTHERAPY(Chemotherapy.class),
     COMBINED_THERAPY(CombinedTherapy.class),
+    HORMONE_THERAPY(HormoneTherapy.class),
     IMMUNOTHERAPY(Immunotherapy.class),
     OTHER_THERAPY(OtherTherapy.class),
     RADIOTHERAPY(Radiotherapy.class),

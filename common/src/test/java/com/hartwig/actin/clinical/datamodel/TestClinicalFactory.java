@@ -145,10 +145,7 @@ public final class TestClinicalFactory {
 
     @NotNull
     private static TreatmentHistoryEntry therapyHistoryEntry(Set<Therapy> therapies, int startYear, Intent intent) {
-        return ImmutableTreatmentHistoryEntry.builder()
-                .treatments(therapies)
-                .startYear(startYear)
-                .intent(intent)
+        return ImmutableTreatmentHistoryEntry.builder().treatments(therapies).startYear(startYear).addIntents(intent)
                 .therapyHistoryDetails(ImmutableTherapyHistoryDetails.builder().bestResponse(TreatmentResponse.PARTIAL_RESPONSE).build())
                 .build();
     }
@@ -198,7 +195,7 @@ public final class TestClinicalFactory {
         SurgicalTreatment colectomy = ImmutableSurgicalTreatment.builder().name("Colectomy").build();
 
         TreatmentHistoryEntry surgeryHistoryEntry =
-                ImmutableTreatmentHistoryEntry.builder().addTreatments(colectomy).startYear(2021).intent(Intent.MAINTENANCE).build();
+                ImmutableTreatmentHistoryEntry.builder().addTreatments(colectomy).startYear(2021).addIntents(Intent.MAINTENANCE).build();
 
         return List.of(therapyHistoryEntry(Set.of(folfirinox), 2020, Intent.NEOADJUVANT),
                 surgeryHistoryEntry,

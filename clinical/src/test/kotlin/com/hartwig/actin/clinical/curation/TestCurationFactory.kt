@@ -14,6 +14,7 @@ import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
+import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation
@@ -23,12 +24,15 @@ import com.hartwig.actin.clinical.datamodel.ImmutableComplication
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableChemotherapy
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireRawEntryMapper
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.apache.logging.log4j.util.Strings
 import java.util.*
+
 
 object TestCurationFactory {
 
@@ -41,7 +45,7 @@ object TestCurationFactory {
             CurationDatabase(
                 emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
                 emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-                emptyList(), emptyList()
+                emptyList(), emptyList(), emptyList()
             ), questionnaireRawEntryMapper()
         )
     }
@@ -53,6 +57,7 @@ object TestCurationFactory {
     private fun createTestCurationDatabase(): CurationDatabase {
         return CurationDatabase(
             primaryTumorConfigs = createTestPrimaryTumorConfigs(),
+            treatmentHistoryEntryConfigs = createTestTreatmentHistoryEntryConfigs(),
             oncologicalHistoryConfigs = createTestOncologicalHistoryConfigs(),
             secondPrimaryConfigs = createTestSecondPrimaryConfigs(),
             lesionLocationConfigs = createTestLesionLocationConfigs(),
@@ -93,6 +98,24 @@ object TestCurationFactory {
                 primaryTumorExtraDetails = Strings.EMPTY,
                 doids = setOf("10534")
             )
+        )
+    }
+
+    private fun createTestTreatmentHistoryEntryConfigs(): List<TreatmentHistoryEntryConfig> {
+        val cisplatin =
+            ImmutableChemotherapy.builder().name("Cisplatin").addCategories(TreatmentCategory.CHEMOTHERAPY).isSystemic(true).build()
+        return listOf(
+            TreatmentHistoryEntryConfig(
+                input = "Cis 2020 2021",
+                ignore = false,
+                curated = ImmutableTreatmentHistoryEntry.builder().addTreatments(cisplatin).startYear(2020).build()
+            ),
+            TreatmentHistoryEntryConfig(
+                input = "Cis 2020 2021",
+                ignore = false,
+                curated = ImmutableTreatmentHistoryEntry.builder().addTreatments(cisplatin).startYear(2021).build()
+            ),
+            TreatmentHistoryEntryConfig(input = "no systemic treatment", ignore = true, curated = null)
         )
     }
 
