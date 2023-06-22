@@ -14,37 +14,13 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
 import com.hartwig.actin.util.ResourceFile
-import com.hartwig.actin.util.TabularFile
 import org.apache.logging.log4j.LogManager
-import java.io.File
-import java.io.IOException
-import java.nio.file.Files
 
 
 object TreatmentHistoryEntryConfigFactory {
     private val LOGGER = LogManager.getLogger(TreatmentHistoryEntryConfigFactory::class.java)
 
-    private const val DELIMITER = "\t"
-
-    @Throws(IOException::class)
-    fun read(tsv: String, treatmentsByName: Map<String, Treatment>): List<TreatmentHistoryEntryConfig> {
-        val lines = Files.readAllLines(File(tsv).toPath())
-        val fields = TabularFile.createFields(lines[0].split(DELIMITER).dropLastWhile { it.isEmpty() }.toTypedArray())
-        val (configs, searchedNames) = lines.drop(1)
-            .flatMap { line ->
-                val parts = line.split(DELIMITER)
-                entriesFromColumn(parts, fields, "treatmentName")?.map { Pair(it.lowercase(), parts) } ?: emptyList()
-            }
-            .map { (treatmentName, parts) ->
-                createConfig(treatmentName, treatmentsByName, parts, fields)
-            }
-            .reduce { acc, pair -> Pair(acc.first + pair.first, acc.second + pair.second) }
-
-        (treatmentsByName.keys - searchedNames).forEach { LOGGER.warn("Treatment with name '$it' not used in resolving prior treatments") }
-        return configs
-    }
-
-    private fun createConfig(
+    fun createConfig(
         treatmentName: String,
         treatmentsByName: Map<String, Treatment>,
         parts: List<String>,
@@ -65,9 +41,9 @@ object TreatmentHistoryEntryConfigFactory {
 
     private fun curateObject(fields: Map<String, Int>, parts: List<String>, treatment: Treatment?): TreatmentHistoryEntry {
         val therapyHistoryDetails = if (treatment is Therapy) {
-            val bestResponseString = ResourceFile.optionalString(parts[fields["bestResponse"]!!])
+            val bestResponseString = optionalStringFromColumn(parts, fields, "bestResponse")
             val bestResponse = if (bestResponseString != null) TreatmentResponse.createFromString(bestResponseString) else null
-            val stopReasonDetail = ResourceFile.optionalString(parts[fields["stopReason"]!!])
+            val stopReasonDetail = optionalStringFromColumn(parts, fields, "stopReason")
 
             val toxicities: Set<ObservedToxicity>? = stopReasonDetail?.let {
                 if (it.lowercase().contains("toxicity")) {
@@ -76,9 +52,9 @@ object TreatmentHistoryEntryConfigFactory {
             }
 
             ImmutableTherapyHistoryDetails.builder()
-                .stopYear(ResourceFile.optionalInteger(parts[fields["stopYear"]!!]))
-                .stopMonth(ResourceFile.optionalInteger(parts[fields["stopMonth"]!!]))
-                .cycles(ResourceFile.optionalInteger(parts[fields["cycles"]!!]))
+                .stopYear(optionalIntegerFromColumn(parts, fields, "stopYear"))
+                .stopMonth(optionalIntegerFromColumn(parts, fields, "stopMonth"))
+                .cycles(optionalIntegerFromColumn(parts, fields, "cycles"))
                 .bestResponse(bestResponse)
                 .stopReasonDetail(stopReasonDetail)
                 .stopReason(if (stopReasonDetail != null) StopReason.createFromString(stopReasonDetail) else null)
@@ -93,22 +69,27 @@ object TreatmentHistoryEntryConfigFactory {
         return ImmutableTreatmentHistoryEntry.builder()
             .treatments(treatment?.let { setOf(treatment) } ?: emptySet())
             .rawInput(parts[fields["input"]!!])
-            .startYear(ResourceFile.optionalInteger(parts[fields["startYear"]!!]))
-            .startMonth(ResourceFile.optionalInteger(parts[fields["startMonth"]!!]))
+            .startYear(optionalIntegerFromColumn(parts, fields, "startYear"))
+            .startMonth(optionalIntegerFromColumn(parts, fields, "startMonth"))
             .intents(intents)
             .isTrial(treatment?.categories()?.contains(TreatmentCategory.TRIAL))
-            .trialAcronym(ResourceFile.optionalString(parts[fields["trialAcronym"]!!]))
+            .trialAcronym(optionalStringFromColumn(parts, fields, "trialAcronym"))
             .therapyHistoryDetails(therapyHistoryDetails)
             .bodyLocationCategories(bodyLocationCategories)
             .bodyLocations(entriesFromColumn(parts, fields, "bodyLocations"))
             .build()
     }
 
-    private fun entriesFromColumn(parts: List<String>, fields: Map<String, Int>, colName: String): List<String>? {
-        return ResourceFile.optionalString(parts[fields[colName]!!])
-            ?.split(";")
-            ?.map { it.trim() }
-            ?.filterNot { it.isEmpty() }
+    private fun optionalIntegerFromColumn(parts: List<String>, fields: Map<String, Int>, colName: String): Int? {
+        return fields[colName]?.let { ResourceFile.optionalInteger(parts[it]) }
+    }
+
+    private fun optionalStringFromColumn(parts: List<String>, fields: Map<String, Int>, colName: String): String? {
+        return fields[colName]?.let { ResourceFile.optionalString(parts[it]) }
+    }
+
+    private fun entriesFromColumn(parts: List<String>, fields: Map<String, Int>, colName: String): Set<String>? {
+        return optionalStringFromColumn(parts, fields, colName)?.let(CurationUtil::toSet)
     }
 
     private fun <T> stringToEnum(input: String, enumCreator: (String) -> T): T {

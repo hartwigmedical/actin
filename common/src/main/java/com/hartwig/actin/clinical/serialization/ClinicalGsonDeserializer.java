@@ -88,6 +88,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableSurgeryHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTherapyHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
+import com.hartwig.actin.clinical.datamodel.treatment.history.Intent;
 import com.hartwig.actin.clinical.datamodel.treatment.history.SurgeryHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TherapyHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
@@ -174,6 +175,8 @@ public class ClinicalGsonDeserializer {
                 }.getType(), new ImmutableSetAdapter<Treatment>(Treatment.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<DrugClass>>() {
                 }.getType(), new ImmutableSetAdapter<DrugClass>(DrugClass.class))
+                .registerTypeAdapter(new TypeToken<ImmutableSet<Intent>>() {
+                }.getType(), new ImmutableSetAdapter<Intent>(Intent.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<Chemotherapy>>() {
                 }.getType(), new ImmutableSetAdapter<Chemotherapy>(ImmutableChemotherapy.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<CombinedTherapy>>() {

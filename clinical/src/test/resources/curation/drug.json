@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Capecitabine",
+    "drugClasses": [
+      "ANTIMETABOLITE"
+    ]
+  },
+  {
+    "name": "Oxaliplatin",
+    "drugClasses": [
+      "PLATINUM_COMPOUND"
+    ]
+  }
+]

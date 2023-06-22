@@ -144,6 +144,16 @@ class CurationModelTest {
     }
 
     @Test
+    fun shouldCurateTreatmentHistory() {
+        val treatmentHistory = listOf("Cis 2020 2021", "no systemic treatment", "cannot curate").flatMap(model::curateTreatmentHistoryEntry)
+        assertEquals(2, treatmentHistory.size.toLong())
+        assertTrue(treatmentHistory.any { 2020 == it.startYear() })
+        assertTrue(treatmentHistory.any { 2021 == it.startYear() })
+
+        model.evaluate()
+    }
+
+    @Test
     fun shouldCuratePriorTreatments() {
         val priorTreatments: List<PriorTumorTreatment> =
             model.curatePriorTumorTreatments(Lists.newArrayList("Cis 2020 2021", "no systemic treatment", "cannot curate"))

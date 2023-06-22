@@ -3,15 +3,13 @@ package com.hartwig.actin.clinical.curation
 import com.google.common.collect.Sets
 import com.hartwig.actin.clinical.curation.CurationUtil.capitalizeFirstLetterOnly
 import com.hartwig.actin.clinical.curation.CurationUtil.fullTrim
-import com.hartwig.actin.clinical.curation.CurationUtil.toCategories
-import com.hartwig.actin.clinical.curation.CurationUtil.toDOIDs
 import org.apache.logging.log4j.util.Strings
 import org.junit.Assert
 import org.junit.Test
 
 class CurationUtilTest {
     @Test
-    fun canCapitalizeFirstLetterOnly() {
+    fun shouldCapitalizeFirstLetterOnly() {
         Assert.assertEquals("Hi", capitalizeFirstLetterOnly("hi"))
         Assert.assertEquals("Hi", capitalizeFirstLetterOnly("Hi"))
         Assert.assertEquals("Hi", capitalizeFirstLetterOnly("hI"))
@@ -21,7 +19,7 @@ class CurationUtilTest {
     }
 
     @Test
-    fun canFullTrim() {
+    fun shouldTrimExtraSpacesBetweenWords() {
         Assert.assertEquals(Strings.EMPTY, fullTrim(Strings.EMPTY))
         Assert.assertEquals("hi", fullTrim("hi"))
         Assert.assertEquals("this is a normal sentence", fullTrim("this is a normal sentence"))
@@ -29,22 +27,26 @@ class CurationUtilTest {
     }
 
     @Test
-    fun canConvertToDOIDs() {
-        Assert.assertEquals(Sets.newHashSet("123"), toDOIDs("123"))
-        val multiple = toDOIDs("123;456")
-        Assert.assertEquals(2, multiple.size.toLong())
-        Assert.assertTrue(multiple.contains("123"))
-        Assert.assertTrue(multiple.contains("456"))
-        Assert.assertTrue(toDOIDs(Strings.EMPTY).isEmpty())
+    fun shouldConvertDOIDsToSet() {
+        assertConversionToSet("123", "456", CurationUtil::toDOIDs)
     }
 
     @Test
-    fun canConvertToCategories() {
-        Assert.assertEquals(Sets.newHashSet("category1"), toCategories("category1"))
-        val multiple = toCategories("category1;category2")
+    fun shouldConvertCategoriesToSet() {
+        assertConversionToSet("category1", "category2", CurationUtil::toCategories)
+    }
+
+    @Test
+    fun shouldConvertToSet() {
+        assertConversionToSet("treatment1", "treatment2", CurationUtil::toSet)
+    }
+
+    private fun assertConversionToSet(element1: String, element2: String, convert: (String) -> Set<String>) {
+        Assert.assertEquals(Sets.newHashSet(element1), convert(element1))
+        val multiple = convert("$element1;$element2")
         Assert.assertEquals(2, multiple.size.toLong())
-        Assert.assertTrue(multiple.contains("category1"))
-        Assert.assertTrue(multiple.contains("category2"))
-        Assert.assertTrue(toCategories(Strings.EMPTY).isEmpty())
+        Assert.assertTrue(multiple.contains(element1))
+        Assert.assertTrue(multiple.contains(element2))
+        Assert.assertTrue(convert(Strings.EMPTY).isEmpty())
     }
 }

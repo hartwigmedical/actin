@@ -4,7 +4,12 @@ import com.google.common.collect.Sets
 import com.google.common.io.Resources
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.treatment.Drug
+import com.hartwig.actin.clinical.datamodel.treatment.DrugClass
+import com.hartwig.actin.clinical.datamodel.treatment.Therapy
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertNotNull
@@ -67,6 +72,31 @@ class CurationDatabaseReaderTest {
         assertNull(curated.supportiveType())
         assertNull(curated.trialAcronym())
         assertNull(curated.ablationType())
+    }
+
+    @Test
+    fun shouldReadTreatmentHistoryConfigs() {
+        val configs = database!!.treatmentHistoryEntryConfigs
+        assertEquals(1, configs.size.toLong())
+        val config = find(configs, "Capecitabine/Oxaliplatin 2020-2021")
+        assertFalse(config.ignore)
+        val curated = config.curated
+        assertNotNull(curated)
+        assertEquals(1, curated!!.treatments().size)
+        val treatment = curated.treatments().iterator().next() as Therapy
+        assertEquals("Capecitabine+Oxaliplatin", treatment.name())
+        assertIntegerEquals(2020, curated.startYear())
+        assertNull(curated.startMonth())
+        assertIntegerEquals(2021, curated.therapyHistoryDetails()?.stopYear())
+        assertNull(curated.therapyHistoryDetails()?.stopMonth())
+        assertIntegerEquals(6, curated.therapyHistoryDetails()?.cycles())
+        assertEquals(TreatmentResponse.PARTIAL_RESPONSE, curated.therapyHistoryDetails()?.bestResponse())
+        assertEquals(StopReason.TOXICITY, curated.therapyHistoryDetails()?.stopReason())
+        assertEquals(setOf(TreatmentCategory.CHEMOTHERAPY), treatment.categories())
+        assertTrue(treatment.isSystemic)
+        assertEquals(setOf(DrugClass.ANTIMETABOLITE, DrugClass.PLATINUM_COMPOUND), treatment.drugs().flatMap(Drug::drugClasses).toSet())
+        assertEquals(setOf("Capecitabine", "Oxaliplatin"), treatment.drugs().map(Drug::name).toSet())
+        assertNull(curated.trialAcronym())
     }
 
     @Test

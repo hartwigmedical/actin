@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.TestDataFactory;
@@ -145,7 +146,13 @@ public final class TestClinicalFactory {
 
     @NotNull
     private static TreatmentHistoryEntry therapyHistoryEntry(Set<Therapy> therapies, int startYear, Intent intent) {
-        return ImmutableTreatmentHistoryEntry.builder().treatments(therapies).startYear(startYear).addIntents(intent)
+        String rawInput =
+                String.format("%s %s %s", startYear, intent, therapies.stream().map(Therapy::name).collect(Collectors.joining(" and ")));
+        return ImmutableTreatmentHistoryEntry.builder()
+                .rawInput(rawInput)
+                .treatments(therapies)
+                .startYear(startYear)
+                .addIntents(intent)
                 .therapyHistoryDetails(ImmutableTherapyHistoryDetails.builder().bestResponse(TreatmentResponse.PARTIAL_RESPONSE).build())
                 .build();
     }
@@ -194,8 +201,12 @@ public final class TestClinicalFactory {
 
         SurgicalTreatment colectomy = ImmutableSurgicalTreatment.builder().name("Colectomy").build();
 
-        TreatmentHistoryEntry surgeryHistoryEntry =
-                ImmutableTreatmentHistoryEntry.builder().addTreatments(colectomy).startYear(2021).addIntents(Intent.MAINTENANCE).build();
+        TreatmentHistoryEntry surgeryHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
+                .rawInput("Colectomy 2021")
+                .addTreatments(colectomy)
+                .startYear(2021)
+                .addIntents(Intent.MAINTENANCE)
+                .build();
 
         return List.of(therapyHistoryEntry(Set.of(folfirinox), 2020, Intent.NEOADJUVANT),
                 surgeryHistoryEntry,
@@ -453,12 +464,11 @@ public final class TestClinicalFactory {
 
     @NotNull
     private static List<TreatmentHistoryEntry> createTestSurgicalHistory() {
+        final LocalDate endDate = TODAY.minusDays(DAYS_SINCE_SURGERY);
         return Collections.singletonList(ImmutableTreatmentHistoryEntry.builder()
+                .rawInput("test surgery " + endDate)
                 .treatments(Set.of(ImmutableSurgicalTreatment.builder().name("test surgery").build()))
-                .surgeryHistoryDetails(ImmutableSurgeryHistoryDetails.builder()
-                        .endDate(TODAY.minusDays(DAYS_SINCE_SURGERY))
-                        .status(SurgeryStatus.FINISHED)
-                        .build())
+                .surgeryHistoryDetails(ImmutableSurgeryHistoryDetails.builder().endDate(endDate).status(SurgeryStatus.FINISHED).build())
                 .build());
     }
 

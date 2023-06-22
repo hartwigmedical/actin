@@ -15,7 +15,7 @@ import org.junit.Test;
 
 public class ClinicalRecordJsonTest {
 
-    private static final String CLINICAL_DIRECTORY = Resources.getResource("clinical").getPath();
+    private static final String CLINICAL_DIRECTORY = Resources.getResource("clinical" + File.separator + "records").getPath();
     private static final String CLINICAL_JSON = CLINICAL_DIRECTORY + File.separator + "patient.clinical.json";
 
     @Test

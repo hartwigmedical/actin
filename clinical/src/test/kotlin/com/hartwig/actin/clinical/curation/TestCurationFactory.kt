@@ -108,12 +108,14 @@ object TestCurationFactory {
             TreatmentHistoryEntryConfig(
                 input = "Cis 2020 2021",
                 ignore = false,
-                curated = ImmutableTreatmentHistoryEntry.builder().addTreatments(cisplatin).startYear(2020).build()
+                curated = ImmutableTreatmentHistoryEntry.builder().rawInput("Cis 2020 2021").addTreatments(cisplatin).startYear(2020)
+                    .build()
             ),
             TreatmentHistoryEntryConfig(
                 input = "Cis 2020 2021",
                 ignore = false,
-                curated = ImmutableTreatmentHistoryEntry.builder().addTreatments(cisplatin).startYear(2021).build()
+                curated = ImmutableTreatmentHistoryEntry.builder().rawInput("Cis 2020 2021").addTreatments(cisplatin).startYear(2021)
+                    .build()
             ),
             TreatmentHistoryEntryConfig(input = "no systemic treatment", ignore = true, curated = null)
         )

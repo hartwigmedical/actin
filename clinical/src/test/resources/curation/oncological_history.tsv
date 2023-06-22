@@ -1,2 +1,2 @@
-input	name	startYear	startMonth	stopYear	stopMonth	cycles	bestResponse	stopReason	category	isSystemic	chemoType	immunoType	targetedType	hormoneType	radioType	carTType	transplantType	supportiveType	trialAcronym	ablationType
-Capecitabine/Oxaliplatin 2020-2021	Capecitabine+Oxaliplatin	2020		2021		6	PR	toxicity	Chemotherapy	1	antimetabolite,platinum									
+input	name	treatmentName	bodyLocations	bodyLocationCategories	intents	startYear	startMonth	stopYear	stopMonth	cycles	bestResponse	stopReason	category	isSystemic	chemoType	immunoType	targetedType	hormoneType	radioType	carTType	transplantType	supportiveType	trialAcronym	ablationType
+Capecitabine/Oxaliplatin 2020-2021	Capecitabine+Oxaliplatin	Capecitabine+Oxaliplatin			PALLIATIVE	2020		2021		6	PR	toxicity	Chemotherapy	1	antimetabolite,platinum									

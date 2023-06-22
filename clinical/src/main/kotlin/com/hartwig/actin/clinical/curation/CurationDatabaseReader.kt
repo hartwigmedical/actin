@@ -17,7 +17,7 @@ import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfigFactor
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfigFactory
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfigFactory
 import com.hartwig.actin.clinical.curation.config.ToxicityConfigFactory
-import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfigFactory
+import com.hartwig.actin.clinical.curation.config.TreatmentHistoryCurationConfigFile
 import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslationFactory
@@ -41,7 +41,7 @@ class CurationDatabaseReader internal constructor(private val curationValidator:
 
         return CurationDatabase(
             primaryTumorConfigs = readConfigs(basePath, PRIMARY_TUMOR_TSV, PrimaryTumorConfigFactory(curationValidator)),
-            treatmentHistoryEntryConfigs = TreatmentHistoryEntryConfigFactory.read(
+            treatmentHistoryEntryConfigs = TreatmentHistoryCurationConfigFile.read(
                 basePath + ONCOLOGICAL_HISTORY_TSV,
                 treatmentsByName(basePath)
             ),
@@ -80,8 +80,8 @@ class CurationDatabaseReader internal constructor(private val curationValidator:
     companion object {
         private val LOGGER = LogManager.getLogger(CurationDatabaseReader::class.java)
 
-        private const val DRUG_JSON = "drugs.json"
-        private const val TREATMENT_JSON = "treatments.json"
+        private const val DRUG_JSON = "drug.json"
+        private const val TREATMENT_JSON = "treatment.json"
 
         private const val PRIMARY_TUMOR_TSV = "primary_tumor.tsv"
         private const val ONCOLOGICAL_HISTORY_TSV = "oncological_history.tsv"
