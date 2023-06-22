@@ -1,19 +1,34 @@
 package com.hartwig.actin.clinical.feed.questionnaire
 
 import com.hartwig.actin.util.Paths
+import org.apache.logging.log4j.LogManager
 import java.io.File
 import java.io.IOException
 
 class QuestionnaireRawEntryMapper(private val correctionMap: Map<String, String>) {
-    fun correctQuestionnaireEntry(rawQuestionnaireText: String): String {
-        var correctedQuestionnaireText = rawQuestionnaireText
-        for ((key, value) in correctionMap) {
-            correctedQuestionnaireText = correctedQuestionnaireText.replace(key, value)
+    tailrec fun correctQuestionnaireEntry(
+        questionnaireText: String,
+        keyIterator: Iterator<String> = correctionMap.keys.iterator(),
+        foundStrings: Set<String> = emptySet()
+    ): Pair<String, Set<String>> {
+        if (!keyIterator.hasNext()) {
+            return Pair(questionnaireText, foundStrings)
         }
-        return correctedQuestionnaireText
+        val key = keyIterator.next()
+        val found = questionnaireText.contains(key)
+        return correctQuestionnaireEntry(
+            if (found) questionnaireText.replace(key, correctionMap[key]!!) else questionnaireText,
+            keyIterator, if (found) foundStrings + key else foundStrings
+        )
+    }
+
+    fun evaluate(usedCorrections: Set<String>) {
+        (correctionMap.keys - usedCorrections).forEach { LOGGER.warn(" Questionnaire correction key '{}' not used", it) }
     }
 
     companion object {
+        private val LOGGER = LogManager.getLogger(QuestionnaireRawEntryMapper::class.java)
+
         private const val QUESTIONNAIRE_MAPPING_TSV = "questionnaire_mapping.tsv"
         private const val DELIMITER = "\t"
         private const val HEADER_ORIGINAL = "original"
