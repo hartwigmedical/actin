@@ -1,32 +1,18 @@
-package com.hartwig.actin.treatment.trial.config;
+package com.hartwig.actin.treatment.trial.config
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.List;
-import java.util.Map;
+import com.hartwig.actin.util.TabularFile
+import java.io.File
+import java.io.IOException
+import java.nio.file.Files
 
-import com.google.common.collect.Lists;
-import com.hartwig.actin.util.TabularFile;
+object TrialConfigFile {
+    private const val DELIMITER = "\t"
 
-import org.jetbrains.annotations.NotNull;
+    @Throws(IOException::class)
+    fun <T : TrialConfig> read(tsv: String, factory: TrialConfigFactory<T>): List<T> {
+        val lines = Files.readAllLines(File(tsv).toPath())
+        val fields = TabularFile.createFields(lines[0].split(DELIMITER).dropLastWhile { it.isEmpty() }.toTypedArray())
 
-public final class TrialConfigFile {
-
-    private static final String DELIMITER = "\t";
-
-    private TrialConfigFile() {
-    }
-
-    @NotNull
-    public static <T extends TrialConfig> List<T> read(@NotNull String tsv, @NotNull TrialConfigFactory<T> factory) throws IOException {
-        List<String> lines = Files.readAllLines(new File(tsv).toPath());
-
-        List<T> configs = Lists.newArrayList();
-        Map<String, Integer> fields = TabularFile.createFields(lines.get(0).split(DELIMITER));
-        for (String line : lines.subList(1, lines.size())) {
-            configs.add(factory.create(fields, line.split(DELIMITER, -1)));
-        }
-        return configs;
+        return lines.subList(1, lines.size).map { factory.create(fields, it.split(DELIMITER).toTypedArray()) }
     }
 }

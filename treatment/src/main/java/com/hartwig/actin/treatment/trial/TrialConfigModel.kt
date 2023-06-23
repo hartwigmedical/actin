@@ -1,83 +1,68 @@
-package com.hartwig.actin.treatment.trial;
+package com.hartwig.actin.treatment.trial
 
-import java.io.IOException;
-import java.util.List;
+import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig
+import com.hartwig.actin.treatment.trial.config.InclusionCriteriaConfig
+import com.hartwig.actin.treatment.trial.config.InclusionCriteriaReferenceConfig
+import com.hartwig.actin.treatment.trial.config.TrialConfig
+import com.hartwig.actin.treatment.trial.config.TrialDefinitionConfig
+import java.io.IOException
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
-import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig;
-import com.hartwig.actin.treatment.trial.config.InclusionCriteriaConfig;
-import com.hartwig.actin.treatment.trial.config.InclusionCriteriaReferenceConfig;
-import com.hartwig.actin.treatment.trial.config.TrialDefinitionConfig;
+class TrialConfigModel(
+    private val trialDefinitionConfigs: List<TrialDefinitionConfig>,
+    private val cohortsByTrialId: Map<String, List<CohortDefinitionConfig>>,
+    private val generalInclusionCriteriaByTrial: Map<String, List<InclusionCriteriaConfig>>,
+    private val specificInclusionCriteriaByTrialAndCohort: Map<String, Map<String, List<InclusionCriteriaConfig>>>,
+    private val referencesByTrialAndId: Map<String, Map<String, InclusionCriteriaReferenceConfig>>
+) {
+    fun trials(): List<TrialDefinitionConfig> {
+        return trialDefinitionConfigs
+    }
 
-import org.jetbrains.annotations.NotNull;
+    fun cohortsForTrial(trialId: String): List<CohortDefinitionConfig> {
+        return cohortsByTrialId[trialId] ?: emptyList()
+    }
 
-public class TrialConfigModel {
+    fun generalInclusionCriteriaForTrial(trialId: String): List<InclusionCriteriaConfig> {
+        return generalInclusionCriteriaByTrial[trialId] ?: emptyList()
+    }
 
-    @NotNull
-    private final TrialConfigDatabase database;
+    fun specificInclusionCriteriaForCohort(trialId: String, cohortId: String): List<InclusionCriteriaConfig> {
+        return specificInclusionCriteriaByTrialAndCohort[trialId]?.get(cohortId) ?: emptyList()
+    }
 
-    @NotNull
-    public static TrialConfigModel create(@NotNull String trialConfigDirectory, @NotNull EligibilityFactory eligibilityFactory)
-            throws IOException {
-        TrialConfigDatabase database = TrialConfigDatabaseReader.read(trialConfigDirectory);
-        if (!new TrialConfigDatabaseValidator(eligibilityFactory).isValid(database)) {
-            throw new IllegalStateException("Trial config database is not considered valid. Cannot create config model.");
+    fun referencesForTrial(trialId: String): Map<String, InclusionCriteriaReferenceConfig> {
+        return referencesByTrialAndId[trialId] ?: emptyMap()
+    }
+
+    companion object {
+        @Throws(IOException::class)
+        fun create(trialConfigDirectory: String, eligibilityFactory: EligibilityFactory): TrialConfigModel {
+            val database = TrialConfigDatabaseReader.read(trialConfigDirectory)
+            check(TrialConfigDatabaseValidator(eligibilityFactory).isValid(database)) { "Trial config database is not considered valid. Cannot create config model." }
+
+            val specificInclusionCriteriaByTrialAndCohort =
+                configsByTrial(database.inclusionCriteriaConfigs.filter { it.appliesToCohorts.isNotEmpty() }).mapValues { configsByTrial ->
+                    configsByTrial.value.flatMap { config: InclusionCriteriaConfig ->
+                        config.appliesToCohorts.map { cohortId -> Pair(cohortId, config) }
+                    }
+                        .groupBy({ it.first }, { it.second })
+                }
+
+            val referencesByTrialAndId = configsByTrial(database.inclusionCriteriaReferenceConfigs)
+                .mapValues { it.value.associateBy(InclusionCriteriaReferenceConfig::referenceId) }
+
+            return TrialConfigModel(
+                database.trialDefinitionConfigs,
+                configsByTrial(database.cohortDefinitionConfigs),
+                configsByTrial(database.inclusionCriteriaConfigs.filter { it.appliesToCohorts.isEmpty() }),
+                specificInclusionCriteriaByTrialAndCohort,
+                referencesByTrialAndId
+            )
         }
-        return new TrialConfigModel(database);
-    }
 
-    @VisibleForTesting
-    TrialConfigModel(@NotNull final TrialConfigDatabase database) {
-        this.database = database;
-    }
-
-    @NotNull
-    public List<TrialDefinitionConfig> trials() {
-        return database.trialDefinitionConfigs();
-    }
-
-    @NotNull
-    public List<CohortDefinitionConfig> cohortsForTrial(@NotNull String trialId) {
-        List<CohortDefinitionConfig> cohorts = Lists.newArrayList();
-        for (CohortDefinitionConfig cohort : database.cohortDefinitionConfigs()) {
-            if (cohort.trialId().equals(trialId)) {
-                cohorts.add(cohort);
-            }
+        private fun <T : TrialConfig> configsByTrial(configs: List<T>): Map<String, List<T>> {
+            return configs.groupBy(TrialConfig::trialId)
         }
-        return cohorts;
-    }
 
-    @NotNull
-    public List<InclusionCriteriaConfig> generalInclusionCriteriaForTrial(@NotNull String trialId) {
-        List<InclusionCriteriaConfig> configs = Lists.newArrayList();
-        for (InclusionCriteriaConfig config : database.inclusionCriteriaConfigs()) {
-            if (config.trialId().equals(trialId) && config.appliesToCohorts().isEmpty()) {
-                configs.add(config);
-            }
-        }
-        return configs;
-    }
-
-    @NotNull
-    public List<InclusionCriteriaConfig> specificInclusionCriteriaForCohort(@NotNull String trialId, @NotNull String cohortId) {
-        List<InclusionCriteriaConfig> configs = Lists.newArrayList();
-        for (InclusionCriteriaConfig config : database.inclusionCriteriaConfigs()) {
-            if (config.trialId().equals(trialId) && config.appliesToCohorts().contains(cohortId)) {
-                configs.add(config);
-            }
-        }
-        return configs;
-    }
-
-    @NotNull
-    public List<InclusionCriteriaReferenceConfig> referencesForTrial(@NotNull String trialId) {
-        List<InclusionCriteriaReferenceConfig> configs = Lists.newArrayList();
-        for (InclusionCriteriaReferenceConfig config : database.inclusionCriteriaReferenceConfigs()) {
-            if (config.trialId().equals(trialId)) {
-                configs.add(config);
-            }
-        }
-        return configs;
     }
 }

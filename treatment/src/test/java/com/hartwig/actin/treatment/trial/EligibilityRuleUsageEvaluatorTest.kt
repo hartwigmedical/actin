@@ -1,20 +1,16 @@
-package com.hartwig.actin.treatment.trial;
+package com.hartwig.actin.treatment.trial
 
-import java.util.List;
+import com.google.common.collect.Lists
+import com.hartwig.actin.treatment.datamodel.TestTreatmentFactory
+import com.hartwig.actin.treatment.datamodel.Trial
+import com.hartwig.actin.treatment.trial.EligibilityRuleUsageEvaluator.evaluate
+import org.junit.Test
 
-import com.google.common.collect.Lists;
-import com.hartwig.actin.treatment.datamodel.TestTreatmentFactory;
-import com.hartwig.actin.treatment.datamodel.Trial;
-
-import org.junit.Test;
-
-public class EligibilityRuleUsageEvaluatorTest {
-
+class EligibilityRuleUsageEvaluatorTest {
     @Test
-    public void canEvaluateEligibilityRuleUsage() {
-        List<Trial> trials =
-                Lists.newArrayList(TestTreatmentFactory.createMinimalTestTrial(), TestTreatmentFactory.createProperTestTrial());
-
-        EligibilityRuleUsageEvaluator.evaluate(trials);
+    fun canEvaluateEligibilityRuleUsage() {
+        val trials: List<Trial?> =
+            Lists.newArrayList(TestTreatmentFactory.createMinimalTestTrial(), TestTreatmentFactory.createProperTestTrial())
+        evaluate(trials)
     }
 }

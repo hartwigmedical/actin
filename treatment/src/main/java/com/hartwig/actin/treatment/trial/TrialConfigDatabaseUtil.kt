@@ -1,47 +1,31 @@
-package com.hartwig.actin.treatment.trial;
+package com.hartwig.actin.treatment.trial
 
-import java.util.Set;
+object TrialConfigDatabaseUtil {
+    private const val COHORT_SEPARATOR = ","
+    private const val REFERENCE_ID_SEPARATOR = ","
+    private const val ALL_COHORTS = "all"
 
-import com.google.common.collect.Sets;
-
-import org.jetbrains.annotations.NotNull;
-
-public final class TrialConfigDatabaseUtil {
-
-    private static final String COHORT_SEPARATOR = ",";
-    private static final String REFERENCE_ID_SEPARATOR = ",";
-
-    private static final String ALL_COHORTS = "all";
-
-    private TrialConfigDatabaseUtil() {
+    fun toReferenceIds(referenceIdsString: String): Set<String> {
+        return if (referenceIdsString.isEmpty()) emptySet() else toSet(referenceIdsString, REFERENCE_ID_SEPARATOR)
     }
 
-    @NotNull
-    public static Set<String> toReferenceIds(@NotNull String referenceIdsString) {
-        if (referenceIdsString.isEmpty()) {
-            return Sets.newHashSet();
-        } else {
-            return toSet(referenceIdsString, REFERENCE_ID_SEPARATOR);
+    fun toCohorts(appliesToCohortString: String): Set<String> {
+        return when {
+            appliesToCohortString.isEmpty() -> {
+                throw IllegalArgumentException("Empty argument appliesToCohortString!")
+            }
+
+            appliesToCohortString != ALL_COHORTS -> {
+                toSet(appliesToCohortString, COHORT_SEPARATOR)
+            }
+
+            else -> {
+                emptySet()
+            }
         }
     }
 
-    @NotNull
-    public static Set<String> toCohorts(@NotNull String appliesToCohortString) {
-        if (appliesToCohortString.isEmpty()) {
-            throw new IllegalArgumentException("Empty argument appliesToCohortString!");
-        } else if (!appliesToCohortString.equals(ALL_COHORTS)) {
-            return toSet(appliesToCohortString, COHORT_SEPARATOR);
-        } else {
-            return Sets.newHashSet();
-        }
-    }
-
-    @NotNull
-    private static Set<String> toSet(@NotNull String string, @NotNull String delimiter) {
-        Set<String> set = Sets.newHashSet();
-        for (String part : string.split(delimiter)) {
-            set.add(part.trim());
-        }
-        return set;
+    private fun toSet(string: String, delimiter: String): Set<String> {
+        return string.split(delimiter).map(String::trim).dropLastWhile { it.isEmpty() }.toSet()
     }
 }

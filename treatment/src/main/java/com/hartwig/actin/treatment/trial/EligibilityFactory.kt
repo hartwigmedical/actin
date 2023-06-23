@@ -1,145 +1,111 @@
-package com.hartwig.actin.treatment.trial;
+package com.hartwig.actin.treatment.trial
 
-import java.util.List;
+import com.google.common.collect.Lists
+import com.hartwig.actin.treatment.datamodel.EligibilityFunction
+import com.hartwig.actin.treatment.datamodel.EligibilityRule
+import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction
+import com.hartwig.actin.treatment.input.FunctionInputResolver
+import com.hartwig.actin.treatment.input.composite.CompositeRules
+import org.apache.logging.log4j.LogManager
 
-import com.google.common.collect.Lists;
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
-import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
-import com.hartwig.actin.treatment.input.FunctionInputResolver;
-import com.hartwig.actin.treatment.input.composite.CompositeRules;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-
-public class EligibilityFactory {
-
-    private static final Logger LOGGER = LogManager.getLogger(EligibilityFactory.class);
-
-    private static final char COMPOSITE_START = '(';
-    private static final char COMPOSITE_END = ')';
-    private static final char PARAM_START = '[';
-    private static final char PARAM_END = ']';
-
-    @NotNull
-    private final FunctionInputResolver functionInputResolver;
-
-    public EligibilityFactory(@NotNull final FunctionInputResolver functionInputResolver) {
-        this.functionInputResolver = functionInputResolver;
-    }
-
-    public boolean isValidInclusionCriterion(@NotNull String criterion) {
-        try {
-            generateEligibilityFunction(criterion);
-            return true;
-        } catch (Exception exc) {
-            LOGGER.debug(exc.getMessage());
-            return false;
+class EligibilityFactory(private val functionInputResolver: FunctionInputResolver) {
+    fun isValidInclusionCriterion(criterion: String): Boolean {
+        return try {
+            generateEligibilityFunction(criterion)
+            true
+        } catch (exc: Exception) {
+            LOGGER.debug(exc.message)
+            false
         }
     }
 
-    @NotNull
-    public EligibilityFunction generateEligibilityFunction(@NotNull String criterion) {
-        EligibilityRule rule;
-        List<Object> parameters = Lists.newArrayList();
-        String trimmed = criterion.trim();
-        if (isCompositeCriterion(trimmed)) {
-            rule = extractCompositeRule(trimmed);
-            for (String compositeInput : extractCompositeInputs(trimmed)) {
-                parameters.add(generateEligibilityFunction(compositeInput));
+    fun generateEligibilityFunction(criterion: String): EligibilityFunction {
+        val trimmed = criterion.trim { it <= ' ' }
+        val (rule: EligibilityRule, parameters) = when {
+            isCompositeCriterion(trimmed) -> {
+                Pair(extractCompositeRule(trimmed), extractCompositeInputs(trimmed).map { generateEligibilityFunction(it) })
             }
-        } else if (isParameterizedCriterion(trimmed)) {
-            rule = extractParameterizedRule(trimmed);
-            parameters.addAll(extractParameterizedInputs(trimmed));
-        } else {
-            rule = EligibilityRule.valueOf(trimmed);
-        }
 
-        EligibilityFunction function = ImmutableEligibilityFunction.builder().rule(rule).parameters(parameters).build();
-        Boolean hasValidInputs = functionInputResolver.hasValidInputs(function);
-        if (hasValidInputs == null || !hasValidInputs) {
-            throw new IllegalStateException("Function " + function.rule() + " has invalid inputs: '" + function.parameters() + "'");
-        }
-        return function;
-    }
+            isParameterizedCriterion(trimmed) -> {
+                Pair(extractParameterizedRule(trimmed), extractParameterizedInputs(trimmed))
+            }
 
-    @NotNull
-    private static EligibilityRule extractCompositeRule(@NotNull String criterion) {
-        EligibilityRule rule = EligibilityRule.valueOf(criterion.substring(0, criterion.indexOf(COMPOSITE_START)));
-        if (!CompositeRules.isComposite(rule)) {
-            throw new IllegalStateException("Not a valid composite rule: '" + rule + "'");
-        }
-        return rule;
-    }
-
-    @NotNull
-    private static EligibilityRule extractParameterizedRule(@NotNull String criterion) {
-        return EligibilityRule.valueOf(criterion.substring(0, criterion.indexOf(PARAM_START)).trim());
-    }
-
-    @NotNull
-    private static List<String> extractCompositeInputs(@NotNull String criterion) {
-        String params = criterion.substring(criterion.indexOf(COMPOSITE_START) + 1, criterion.lastIndexOf(COMPOSITE_END));
-
-        List<Integer> relevantCommaPositions = findSeparatingCommaPositions(params);
-        if (relevantCommaPositions.isEmpty()) {
-            return Lists.newArrayList(params.trim());
-        }
-
-        List<String> result = Lists.newArrayList();
-
-        int index = 0;
-        while (index < relevantCommaPositions.size()) {
-            int start = index == 0 ? -1 : relevantCommaPositions.get(index - 1);
-            result.add(params.substring(start + 1, relevantCommaPositions.get(index)).trim());
-            index++;
-        }
-        result.add(params.substring(relevantCommaPositions.get(relevantCommaPositions.size() - 1) + 1).trim());
-
-        return result;
-    }
-
-    @NotNull
-    private static List<Integer> findSeparatingCommaPositions(@NotNull String params) {
-        int nestedCompositeLevel = 0;
-        int nestedParameterSection = 0;
-
-        List<Integer> commaPositions = Lists.newArrayList();
-        for (int i = 0; i < params.length(); i++) {
-            char character = params.charAt(i);
-            if (character == COMPOSITE_START) {
-                nestedCompositeLevel++;
-            } else if (character == COMPOSITE_END) {
-                nestedCompositeLevel--;
-            } else if (character == PARAM_START) {
-                nestedParameterSection++;
-            } else if (character == PARAM_END) {
-                nestedParameterSection--;
-            } else if (character == ',' && nestedCompositeLevel == 0 && nestedParameterSection == 0) {
-                commaPositions.add(i);
+            else -> {
+                Pair(EligibilityRule.valueOf(trimmed), emptyList())
             }
         }
-
-        return commaPositions;
+        val function: EligibilityFunction = ImmutableEligibilityFunction.builder().rule(rule).parameters(parameters).build()
+        val hasValidInputs = functionInputResolver.hasValidInputs(function)
+        check(!(hasValidInputs == null || !hasValidInputs)) { "Function " + function.rule() + " has invalid inputs: '" + function.parameters() + "'" }
+        return function
     }
 
-    @NotNull
-    private static List<String> extractParameterizedInputs(@NotNull String criterion) {
-        List<String> parameters = Lists.newArrayList();
-        String parameterString = criterion.substring(criterion.indexOf(PARAM_START) + 1, criterion.lastIndexOf(PARAM_END));
-        for (String parameter : parameterString.split(",")) {
-            parameters.add(parameter.trim());
+    companion object {
+        private val LOGGER = LogManager.getLogger(EligibilityFactory::class.java)
+        private const val COMPOSITE_START = '('
+        private const val COMPOSITE_END = ')'
+        private const val PARAM_START = '['
+        private const val PARAM_END = ']'
+
+        private fun extractCompositeRule(criterion: String): EligibilityRule {
+            val rule = EligibilityRule.valueOf(criterion.substring(0, criterion.indexOf(COMPOSITE_START)))
+            check(CompositeRules.isComposite(rule)) { "Not a valid composite rule: '$rule'" }
+            return rule
         }
 
-        return parameters;
-    }
+        private fun extractParameterizedRule(criterion: String): EligibilityRule {
+            return EligibilityRule.valueOf(criterion.substring(0, criterion.indexOf(PARAM_START)).trim { it <= ' ' })
+        }
 
-    private static boolean isCompositeCriterion(@NotNull String criterion) {
-        return criterion.contains(String.valueOf(COMPOSITE_START)) && criterion.endsWith(String.valueOf(COMPOSITE_END));
-    }
+        private fun extractCompositeInputs(criterion: String): List<String> {
+            val params = criterion.substring(criterion.indexOf(COMPOSITE_START) + 1, criterion.lastIndexOf(COMPOSITE_END))
+            val relevantCommaPositions = findSeparatingCommaPositions(params)
+            if (relevantCommaPositions.isEmpty()) {
+                return listOf(params.trim { it <= ' ' })
+            }
+            val result: MutableList<String> = Lists.newArrayList()
+            var index = 0
+            while (index < relevantCommaPositions.size) {
+                val start = if (index == 0) -1 else relevantCommaPositions[index - 1]
+                result.add(params.substring(start + 1, relevantCommaPositions[index]).trim { it <= ' ' })
+                index++
+            }
+            result.add(params.substring(relevantCommaPositions[relevantCommaPositions.size - 1] + 1).trim { it <= ' ' })
+            return result
+        }
 
-    private static boolean isParameterizedCriterion(@NotNull String criterion) {
-        return criterion.contains(String.valueOf(PARAM_START)) && criterion.endsWith(String.valueOf(PARAM_END));
+        private fun findSeparatingCommaPositions(params: String): List<Int> {
+            var nestedCompositeLevel = 0
+            var nestedParameterSection = 0
+            val commaPositions: MutableList<Int> = Lists.newArrayList()
+            for (i in 0 until params.length) {
+                val character = params[i]
+                if (character == COMPOSITE_START) {
+                    nestedCompositeLevel++
+                } else if (character == COMPOSITE_END) {
+                    nestedCompositeLevel--
+                } else if (character == PARAM_START) {
+                    nestedParameterSection++
+                } else if (character == PARAM_END) {
+                    nestedParameterSection--
+                } else if (character == ',' && nestedCompositeLevel == 0 && nestedParameterSection == 0) {
+                    commaPositions.add(i)
+                }
+            }
+            return commaPositions
+        }
+
+        private fun extractParameterizedInputs(criterion: String): List<String> {
+            val parameterString = criterion.substring(criterion.indexOf(PARAM_START) + 1, criterion.lastIndexOf(PARAM_END))
+            return parameterString.split(",").map { it.trim() }.dropLastWhile { it.isEmpty() }
+        }
+
+        private fun isCompositeCriterion(criterion: String): Boolean {
+            return criterion.contains(COMPOSITE_START.toString()) && criterion.endsWith(COMPOSITE_END.toString())
+        }
+
+        private fun isParameterizedCriterion(criterion: String): Boolean {
+            return criterion.contains(PARAM_START.toString()) && criterion.endsWith(PARAM_END.toString())
+        }
     }
 }

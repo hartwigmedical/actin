@@ -1,28 +1,11 @@
-package com.hartwig.actin.treatment.trial.config;
+package com.hartwig.actin.treatment.trial.config
 
-import org.immutables.value.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-@Value.Immutable
-@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class CohortDefinitionConfig implements TrialConfig {
-
-    @NotNull
-    @Override
-    public abstract String trialId();
-
-    @NotNull
-    public abstract String cohortId();
-
-    public abstract boolean evaluable();
-
-    public abstract boolean open();
-
-    public abstract boolean slotsAvailable();
-
-    public abstract boolean blacklist();
-
-    @NotNull
-    public abstract String description();
-}
+data class CohortDefinitionConfig(
+    override val trialId: String,
+    val cohortId: String,
+    val evaluable: Boolean,
+    val open: Boolean,
+    val slotsAvailable: Boolean,
+    val blacklist: Boolean,
+    val description: String
+) : TrialConfig

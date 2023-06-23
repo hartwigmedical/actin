@@ -1,41 +1,35 @@
-package com.hartwig.actin.treatment.trial;
+package com.hartwig.actin.treatment.trial
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.hartwig.actin.treatment.trial.TrialConfigDatabaseUtil.toCohorts
+import com.hartwig.actin.treatment.trial.TrialConfigDatabaseUtil.toReferenceIds
+import org.apache.logging.log4j.util.Strings
+import org.junit.Assert
+import org.junit.Test
 
-import java.util.Set;
-
-import org.apache.logging.log4j.util.Strings;
-import org.junit.Test;
-
-public class TrialConfigDatabaseUtilTest {
-
+class TrialConfigDatabaseUtilTest {
     @Test
-    public void canConvertToReferenceIds() {
-        assertEquals(1, TrialConfigDatabaseUtil.toReferenceIds("all").size());
-        assertEquals(1, TrialConfigDatabaseUtil.toReferenceIds("I-01").size());
-        assertTrue(TrialConfigDatabaseUtil.toReferenceIds(Strings.EMPTY).isEmpty());
-
-        Set<String> referenceIds = TrialConfigDatabaseUtil.toReferenceIds("I-01, I-02");
-        assertEquals(2, referenceIds.size());
-        assertTrue(referenceIds.contains("I-01"));
-        assertTrue(referenceIds.contains("I-02"));
+    fun canConvertToReferenceIds() {
+        Assert.assertEquals(1, toReferenceIds("all").size.toLong())
+        Assert.assertEquals(1, toReferenceIds("I-01").size.toLong())
+        Assert.assertTrue(toReferenceIds(Strings.EMPTY).isEmpty())
+        val referenceIds = toReferenceIds("I-01, I-02")
+        Assert.assertEquals(2, referenceIds.size.toLong())
+        Assert.assertTrue(referenceIds.contains("I-01"))
+        Assert.assertTrue(referenceIds.contains("I-02"))
     }
 
     @Test
-    public void canConvertToCohorts() {
-        assertEquals(0, TrialConfigDatabaseUtil.toCohorts("all").size());
-        assertEquals(1, TrialConfigDatabaseUtil.toCohorts("A").size());
-
-        Set<String> cohorts = TrialConfigDatabaseUtil.toCohorts("A, B");
-        assertEquals(2, cohorts.size());
-        assertTrue(cohorts.contains("A"));
-        assertTrue(cohorts.contains("B"));
+    fun canConvertToCohorts() {
+        Assert.assertEquals(0, toCohorts("all").size.toLong())
+        Assert.assertEquals(1, toCohorts("A").size.toLong())
+        val cohorts = toCohorts("A, B")
+        Assert.assertEquals(2, cohorts.size.toLong())
+        Assert.assertTrue(cohorts.contains("A"))
+        Assert.assertTrue(cohorts.contains("B"))
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void crashOnMissingCohortParam() {
-        TrialConfigDatabaseUtil.toCohorts(Strings.EMPTY);
+    @Test(expected = IllegalArgumentException::class)
+    fun crashOnMissingCohortParam() {
+        toCohorts(Strings.EMPTY)
     }
-
 }

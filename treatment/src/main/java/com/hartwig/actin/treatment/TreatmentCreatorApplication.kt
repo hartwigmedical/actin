@@ -1,85 +1,68 @@
-package com.hartwig.actin.treatment;
+package com.hartwig.actin.treatment
 
-import java.io.IOException;
-import java.util.List;
+import com.hartwig.actin.doid.DoidModelFactory
+import com.hartwig.actin.doid.serialization.DoidJson
+import com.hartwig.actin.molecular.filter.GeneFilterFactory
+import com.hartwig.actin.treatment.serialization.TrialJson
+import com.hartwig.actin.treatment.trial.EligibilityRuleUsageEvaluator
+import com.hartwig.actin.treatment.trial.TrialFactory
+import com.hartwig.serve.datamodel.serialization.KnownGeneFile
+import org.apache.commons.cli.DefaultParser
+import org.apache.commons.cli.HelpFormatter
+import org.apache.commons.cli.Options
+import org.apache.commons.cli.ParseException
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
+import java.io.IOException
+import kotlin.system.exitProcess
 
-import com.hartwig.actin.doid.DoidModel;
-import com.hartwig.actin.doid.DoidModelFactory;
-import com.hartwig.actin.doid.datamodel.DoidEntry;
-import com.hartwig.actin.doid.serialization.DoidJson;
-import com.hartwig.actin.molecular.filter.GeneFilter;
-import com.hartwig.actin.molecular.filter.GeneFilterFactory;
-import com.hartwig.actin.treatment.datamodel.Trial;
-import com.hartwig.actin.treatment.serialization.TrialJson;
-import com.hartwig.actin.treatment.trial.EligibilityRuleUsageEvaluator;
-import com.hartwig.actin.treatment.trial.TrialFactory;
-import com.hartwig.serve.datamodel.gene.KnownGene;
-import com.hartwig.serve.datamodel.serialization.KnownGeneFile;
+class TreatmentCreatorApplication(private val config: TreatmentCreatorConfig) {
+    @Throws(IOException::class)
+    fun run() {
+        LOGGER.info("Loading DOID tree from {}", config.doidJson)
+        val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
+        LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size)
+        val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
+        LOGGER.info("Loading known genes from {}", config.knownGenesTsv)
+        val knownGenes = KnownGeneFile.read(config.knownGenesTsv)
+        LOGGER.info(" Loaded {} known genes", knownGenes.size)
+        val geneFilter = GeneFilterFactory.createFromKnownGenes(knownGenes)
 
-public class TreatmentCreatorApplication {
+        val trialFactory: TrialFactory = TrialFactory.create(config.trialConfigDirectory, doidModel, geneFilter)
+        LOGGER.info("Creating trial database")
+        val trials = trialFactory.create()
 
-    private static final Logger LOGGER = LogManager.getLogger(TreatmentCreatorApplication.class);
+        LOGGER.info("Evaluating usage of eligibility rules")
+        EligibilityRuleUsageEvaluator.evaluate(trials)
 
-    private static final String APPLICATION = "ACTIN Treatment Creator";
-    private static final String VERSION = TreatmentCreatorApplication.class.getPackage().getImplementationVersion();
-
-    public static void main(@NotNull String... args) throws IOException {
-        LOGGER.info("Running {} v{}", APPLICATION, VERSION);
-
-        Options options = TreatmentCreatorConfig.createOptions();
-
-        TreatmentCreatorConfig config = null;
-        try {
-            config = TreatmentCreatorConfig.createConfig(new DefaultParser().parse(options, args));
-        } catch (ParseException exception) {
-            LOGGER.warn(exception);
-            new HelpFormatter().printHelp(APPLICATION, options);
-            System.exit(1);
-        }
-
-        new TreatmentCreatorApplication(config).run();
+        val outputDirectory = config.outputDirectory
+        LOGGER.info("Writing {} trials to {}", trials.size, outputDirectory)
+        TrialJson.write(trials, outputDirectory)
+        LOGGER.info("Done!")
     }
 
-    @NotNull
-    private final TreatmentCreatorConfig config;
-
-    public TreatmentCreatorApplication(@NotNull final TreatmentCreatorConfig config) {
-        this.config = config;
+    companion object {
+        val LOGGER: Logger = LogManager.getLogger(TreatmentCreatorApplication::class.java)
+        const val APPLICATION = "ACTIN Treatment Creator"
+        val VERSION: String = TreatmentCreatorApplication::class.java.getPackage().implementationVersion
     }
+}
 
-    public void run() throws IOException {
-        LOGGER.info("Loading DOID tree from {}", config.doidJson());
-        DoidEntry doidEntry = DoidJson.readDoidOwlEntry(config.doidJson());
-        LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size());
-
-        DoidModel doidModel = DoidModelFactory.createFromDoidEntry(doidEntry);
-
-        LOGGER.info("Loading known genes from {}", config.knownGenesTsv());
-        List<KnownGene> knownGenes = KnownGeneFile.read(config.knownGenesTsv());
-        LOGGER.info(" Loaded {} known genes", knownGenes.size());
-
-        GeneFilter geneFilter = GeneFilterFactory.createFromKnownGenes(knownGenes);
-
-        TrialFactory trialFactory = TrialFactory.create(config.trialConfigDirectory(), doidModel, geneFilter);
-
-        LOGGER.info("Creating trial database");
-        List<Trial> trials = trialFactory.create();
-
-        LOGGER.info("Evaluating usage of eligibility rules");
-        EligibilityRuleUsageEvaluator.evaluate(trials);
-
-        String outputDirectory = config.outputDirectory();
-        LOGGER.info("Writing {} trials to {}", trials.size(), outputDirectory);
-        TrialJson.write(trials, outputDirectory);
-
-        LOGGER.info("Done!");
+fun main(args: Array<String>) {
+    TreatmentCreatorApplication.LOGGER.info(
+        "Running {} v{}",
+        TreatmentCreatorApplication.APPLICATION,
+        TreatmentCreatorApplication.VERSION
+    )
+    val options: Options = TreatmentCreatorConfig.createOptions()
+    val config: TreatmentCreatorConfig
+    try {
+        config = TreatmentCreatorConfig.createConfig(DefaultParser().parse(options, args))
+    } catch (exception: ParseException) {
+        TreatmentCreatorApplication.LOGGER.warn(exception)
+        HelpFormatter().printHelp(TreatmentCreatorApplication.APPLICATION, options)
+        exitProcess(1)
     }
+    TreatmentCreatorApplication(config).run()
 }
