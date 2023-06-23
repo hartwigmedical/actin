@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.datamodel.treatment.history;
 import java.time.LocalDate;
 import java.util.Set;
 
+import com.hartwig.actin.clinical.datamodel.BodyLocationCategory;
 import com.hartwig.actin.clinical.datamodel.ObservedToxicity;
 
 import org.immutables.value.Value;
@@ -11,29 +12,35 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class TherapyHistoryDetails {
+public interface TherapyHistoryDetails {
 
     @Nullable
-    public abstract Integer stopYear();
+    Integer stopYear();
 
     @Nullable
-    public abstract Integer stopMonth();
+    Integer stopMonth();
 
     @Nullable
-    public abstract LocalDate ongoingAsOf();
+    LocalDate ongoingAsOf();
 
     @Nullable
-    public abstract Integer cycles();
+    Integer cycles();
 
     @Nullable
-    public abstract TreatmentResponse bestResponse();
+    TreatmentResponse bestResponse();
 
     @Nullable
-    public abstract StopReason stopReason();
+    StopReason stopReason();
 
     @Nullable
-    public abstract String stopReasonDetail();
+    String stopReasonDetail();
 
     @Nullable
-    public abstract Set<ObservedToxicity> toxicities();
+    Set<ObservedToxicity> toxicities();
+
+    @Nullable
+    Set<BodyLocationCategory> bodyLocationCategories();
+
+    @Nullable
+    Set<String> bodyLocations();
 }

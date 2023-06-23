@@ -2,7 +2,6 @@ package com.hartwig.actin.clinical.datamodel.treatment.history;
 
 import java.util.Set;
 
-import com.hartwig.actin.clinical.datamodel.BodyLocationCategory;
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 
 import org.immutables.value.Value;
@@ -39,10 +38,4 @@ public interface TreatmentHistoryEntry {
 
     @Nullable
     SurgeryHistoryDetails surgeryHistoryDetails();
-
-    @Nullable
-    Set<BodyLocationCategory> bodyLocationCategories();
-
-    @Nullable
-    Set<String> bodyLocations();
 }

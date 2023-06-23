@@ -50,6 +50,9 @@ object TreatmentHistoryEntryConfigFactory {
                 } else emptySet()
             }
 
+            val bodyLocationCategories = entriesFromColumn(parts, fields, "bodyLocationCategories")
+                ?.map { stringToEnum(it, BodyLocationCategory::valueOf) }
+
             ImmutableTherapyHistoryDetails.builder()
                 .stopYear(optionalIntegerFromColumn(parts, fields, "stopYear"))
                 .stopMonth(optionalIntegerFromColumn(parts, fields, "stopMonth"))
@@ -58,12 +61,12 @@ object TreatmentHistoryEntryConfigFactory {
                 .stopReasonDetail(stopReasonDetail)
                 .stopReason(if (stopReasonDetail != null) StopReason.createFromString(stopReasonDetail) else null)
                 .toxicities(toxicities)
+                .bodyLocationCategories(bodyLocationCategories)
+                .bodyLocations(entriesFromColumn(parts, fields, "bodyLocations"))
                 .build()
         } else null
 
         val intents = entriesFromColumn(parts, fields, "intents")?.map { stringToEnum(it, Intent::valueOf) }
-        val bodyLocationCategories = entriesFromColumn(parts, fields, "bodyLocationCategories")
-            ?.map { stringToEnum(it, BodyLocationCategory::valueOf) }
 
         return ImmutableTreatmentHistoryEntry.builder()
             .treatments(treatment?.let { setOf(treatment) } ?: emptySet())
@@ -74,8 +77,6 @@ object TreatmentHistoryEntryConfigFactory {
             .isTrial(treatment?.categories()?.contains(TreatmentCategory.TRIAL))
             .trialAcronym(optionalStringFromColumn(parts, fields, "trialAcronym"))
             .therapyHistoryDetails(therapyHistoryDetails)
-            .bodyLocationCategories(bodyLocationCategories)
-            .bodyLocations(entriesFromColumn(parts, fields, "bodyLocations"))
             .build()
     }
 
