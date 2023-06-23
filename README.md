@@ -17,4 +17,10 @@ More details on the following modules are available from the links below:
 | [Algo](algo)           | Matching all data from a patient to available treatment options.                           |
 | [Database](database)   | Capture of all ACTIN data in a database.                                                   |
 | [Report](report)       | Create a patient-centric PDF report with available treatment options.                      |
+
+### Developing and Releasing ACTIN
+
+To make a chance in ACTIN and release the process is as follows:
+ - Create a ticket in JIRA and make a branch from that ticket with `git checkout -b ACTIN-#`
+ - When changes are complete create a PR
   

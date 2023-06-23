@@ -103,37 +103,6 @@
             </plugin>
 
             <plugin>
-                <groupId>org.jooq</groupId>
-                <artifactId>jooq-codegen-maven</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <jdbc>
-                        <driver>com.mysql.cj.jdbc.Driver</driver>
-                        <url>jdbc:mysql://localhost:3306/actin_test?useSSL=false&amp;serverTimezone=CET</url>
-                        <user>build</user>
-                        <password>build</password>
-                    </jdbc>
-                    <generator>
-                        <database>
-                            <name>org.jooq.meta.mysql.MySQLDatabase</name>
-                            <includes>.*</includes>
-                            <inputSchema>actin_test</inputSchema>
-                        </database>
-                        <target>
-                            <packageName>com.hartwig.actin.database</packageName>
-                            <directory>target/generated-sources/jooq</directory>
-                        </target>
-                    </generator>
-                </configuration>
-            </plugin>
-
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
