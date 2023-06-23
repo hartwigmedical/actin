@@ -10,7 +10,11 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class SurgicalTreatment implements Treatment {
 
-    public final TreatmentType treatmentType = TreatmentType.SURGERY;
+    @NotNull
+    @Value.Default
+    public TreatmentType treatmentType() {
+        return TreatmentType.SURGERY;
+    }
 
     @NotNull
     public Set<TreatmentCategory> categories() {

@@ -16,4 +16,7 @@ public interface Treatment {
     Set<String> synonyms();
 
     boolean isSystemic();
+
+    @NotNull
+    TreatmentType treatmentType();
 }

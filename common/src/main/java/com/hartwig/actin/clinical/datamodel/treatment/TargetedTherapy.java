@@ -8,5 +8,9 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class TargetedTherapy implements Therapy {
 
-    public final TreatmentType treatmentType = TreatmentType.TARGETED_THERAPY;
+    @NotNull
+    @Value.Default
+    public TreatmentType treatmentType() {
+        return TreatmentType.TARGETED_THERAPY;
+    }
 }

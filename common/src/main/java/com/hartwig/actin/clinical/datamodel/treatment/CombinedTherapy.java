@@ -13,7 +13,11 @@ import org.jetbrains.annotations.Nullable;
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class CombinedTherapy implements Therapy {
 
-    public final TreatmentType treatmentType = TreatmentType.COMBINED_THERAPY;
+    @NotNull
+    @Value.Default
+    public TreatmentType treatmentType() {
+        return TreatmentType.COMBINED_THERAPY;
+    }
 
     @NotNull
     public abstract Set<Therapy> therapies();
