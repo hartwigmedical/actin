@@ -56,6 +56,40 @@
         <mockk-jvm.version>1.13.5</mockk-jvm.version>
     </properties>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>artifact-registry</id>
+            <url>artifactregistry://europe-west4-maven.pkg.dev/actin-build/build-registry-maven</url>
+        </snapshotRepository>
+        <repository>
+            <id>artifact-registry</id>
+            <url>artifactregistry://europe-west4-maven.pkg.dev/actin-build/build-registry-maven</url>
+        </repository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>hmf-artifact-registry</id>
+            <url>artifactregistry://europe-west4-maven.pkg.dev/actin-build/build-registry-maven</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>actin-artifact-registry</id>
+            <url>artifactregistry://europe-west4-maven.pkg.dev/hmf-build/hmf-maven</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <build>
         <extensions>
             <extension>
@@ -95,19 +129,6 @@
             </plugins>
         </pluginManagement>
     </build>
-
-    <repositories>
-        <repository>
-            <id>artifact-registry</id>
-            <url>artifactregistry://europe-west4-maven.pkg.dev/hmf-build/hmf-maven</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 
     <dependencyManagement>
         <dependencies>
