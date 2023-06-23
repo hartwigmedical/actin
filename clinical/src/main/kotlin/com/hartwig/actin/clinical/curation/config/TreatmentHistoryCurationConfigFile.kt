@@ -18,20 +18,24 @@ object TreatmentHistoryCurationConfigFile {
     fun read(tsv: String, treatmentsByName: Map<String, Treatment>): List<TreatmentHistoryEntryConfig> {
         val lines = Files.readAllLines(File(tsv).toPath())
         val fields = TabularFile.createFields(lines[0].split(DELIMITER).dropLastWhile { it.isEmpty() }.toTypedArray())
-        val (configs, searchedNames) = lines.drop(1)
-            .flatMap { line ->
-                val parts = line.split(DELIMITER)
-                fields["treatmentName"]?.let { ResourceFile.optionalString(parts[it]) }
-                    ?.let(CurationUtil::toSet)
-                    ?.map { Pair(it.lowercase(), parts) }
-                    ?: emptyList()
-            }
+        val (configs, inputs) = lines.drop(1)
+            .flatMap { line -> repeatPartsForEachTreatmentName(line, fields) }
             .map { (treatmentName, parts) ->
                 TreatmentHistoryEntryConfigFactory.createConfig(treatmentName, treatmentsByName, parts, fields)
             }
-            .reduce { acc, pair -> Pair(acc.first + pair.first, acc.second + pair.second) }
+            .reduce { acc, result -> acc + result }
 
-        (treatmentsByName.keys - searchedNames).forEach { LOGGER.warn("Treatment with name '$it' not used in resolving prior treatments") }
+        (treatmentsByName.keys - inputs).forEach { LOGGER.warn("Treatment with name '$it' not used in resolving prior treatments") }
         return configs
     }
+
+    private fun repeatPartsForEachTreatmentName(line: String, fields: Map<String, Int>): List<NamedTsvParts> {
+        val parts = line.split(DELIMITER)
+        return fields["treatmentName"]?.let { ResourceFile.optionalString(parts[it]) }
+            ?.let(CurationUtil::toSet)
+            ?.map { NamedTsvParts(it.lowercase(), parts) }
+            ?: emptyList()
+    }
+
+    private data class NamedTsvParts(val name: String, val parts: List<String>)
 }

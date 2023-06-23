@@ -16,7 +16,6 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
 import com.hartwig.actin.util.ResourceFile
 import org.apache.logging.log4j.LogManager
 
-
 object TreatmentHistoryEntryConfigFactory {
     private val LOGGER = LogManager.getLogger(TreatmentHistoryEntryConfigFactory::class.java)
 
@@ -25,7 +24,7 @@ object TreatmentHistoryEntryConfigFactory {
         treatmentsByName: Map<String, Treatment>,
         parts: List<String>,
         fields: Map<String, Int>
-    ): Pair<List<TreatmentHistoryEntryConfig>, Set<String>> {
+    ): CurationConfigFactoryResult<TreatmentHistoryEntryConfig> {
         val ignore: Boolean = CurationUtil.isIgnoreString(treatmentName)
         val treatment = treatmentsByName[treatmentName]
         if (!ignore && treatment == null) {
@@ -36,7 +35,7 @@ object TreatmentHistoryEntryConfigFactory {
             ignore = ignore,
             curated = if (!ignore) curateObject(fields, parts, treatment) else null
         )
-        return Pair(listOf(config), setOf(treatmentName))
+        return CurationConfigFactoryResult(listOf(config), setOf(treatmentName))
     }
 
     private fun curateObject(fields: Map<String, Int>, parts: List<String>, treatment: Treatment?): TreatmentHistoryEntry {
