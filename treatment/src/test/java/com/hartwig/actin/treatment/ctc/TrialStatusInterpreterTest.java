@@ -25,12 +25,21 @@ public class TrialStatusInterpreterTest {
     }
 
     @Test
-    public void shouldResolveToOpenForTrialsWithAtLeastOneOpenEntry() {
+    public void shouldResolveToOpenForTrialsWithExclusivelyOpenEntries() {
+        CTCDatabaseEntry entry1 = createEntry(STUDY_METC_2, "Gesloten");
+        CTCDatabaseEntry entry2 = createEntry(STUDY_METC_1, "Open");
+        TrialDefinitionConfig config = createConfig(TrialStatusInterpreter.extractTrialId(entry2));
+
+        assertEquals(true, TrialStatusInterpreter.isOpen(List.of(entry1, entry2), config));
+    }
+
+    @Test
+    public void shouldResolveToClosedForTrialsWithInconsistentEntries() {
         CTCDatabaseEntry entry1 = createEntry(STUDY_METC_1, "Gesloten");
         CTCDatabaseEntry entry2 = createEntry(STUDY_METC_1, "Open");
         TrialDefinitionConfig config = createConfig(TrialStatusInterpreter.extractTrialId(entry1));
 
-        assertEquals(true, TrialStatusInterpreter.isOpen(List.of(entry1, entry2), config));
+        assertEquals(false, TrialStatusInterpreter.isOpen(List.of(entry1, entry2), config));
     }
 
     @Test
