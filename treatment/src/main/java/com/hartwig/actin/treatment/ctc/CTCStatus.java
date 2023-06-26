@@ -13,7 +13,8 @@ public enum CTCStatus {
     private static final Logger LOGGER = LogManager.getLogger(CTCStatus.class);
 
     private static final Set<String> OPEN_STATES = Set.of("Open");
-    private static final Set<String> CLOSED_STATES = Set.of("Gesloten", "Nog niet geopend", "Onbekend", "Tijdelijk gesloten");
+    private static final Set<String> CLOSED_STATES =
+            Set.of("Gesloten", "Nog niet geopend", "Gesloten voor inclusie", "Onbekend", "Tijdelijk gesloten");
 
     @NotNull
     public static CTCStatus fromStatusString(@NotNull String string) {
