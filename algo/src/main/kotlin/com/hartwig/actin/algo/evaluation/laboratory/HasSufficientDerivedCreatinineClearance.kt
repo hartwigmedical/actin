@@ -54,7 +54,7 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
             if (result == EvaluationResult.FAIL) {
                 result = EvaluationResult.UNDETERMINED
             } else if (result == EvaluationResult.PASS) {
-                result = EvaluationResult.WARN
+                result = EvaluationResult.PASS
             }
         }
         val builder = recoverable().result(result)
@@ -63,21 +63,23 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
             builder.addFailGeneralMessages("Cockcroft-Gault insufficient")
         } else if (result == EvaluationResult.UNDETERMINED) {
             if (weight == null) {
-                builder.addUndeterminedSpecificMessages("Cockcroft-Gault is likely insufficient, but weight of patient is not known")
+                builder.addUndeterminedSpecificMessages("Cockcroft-Gault is likely insufficient but weight of patient is not known")
                 builder.addUndeterminedGeneralMessages("Cockcroft-Gault evaluation weight unknown")
             } else {
                 builder.addUndeterminedSpecificMessages("Cockcroft-Gault evaluation led to ambiguous results")
                 builder.addUndeterminedGeneralMessages("Cockcroft-Gault evaluation ambiguous")
             }
-        } else if (result == EvaluationResult.PASS) {
+
+        } else if (result == EvaluationResult.PASS)
+            if (weight == null){
+            builder.addPassSpecificMessages("Body weight is unknown but Cockcroft-Gault is most likely sufficient based on minimal required body weight")
+            builder.addPassGeneralMessages("Cockcroft-Gault most likely sufficient")
+        } else {
             builder.addPassSpecificMessages("Cockcroft-Gault is sufficient")
             builder.addPassGeneralMessages("Cockcroft-Gault sufficient")
-        } else if (result == EvaluationResult.WARN) {
-            builder.addWarnSpecificMessages("Cockcroft-Gault is likely sufficient, but body weight of patient is not known")
-            builder.addWarnGeneralMessages("Cockcroft-Gault evaluation weight unknown")
         }
-        return builder.build()
-    }
+            return builder.build()
+        }
 
     private fun evaluateValues(code: String, values: List<Double>, comparator: String): Evaluation {
         val evaluations = values.map { evaluateVersusMinValue(it, comparator, minCreatinineClearance) }.toSet()
