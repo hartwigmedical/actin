@@ -12,7 +12,7 @@ import com.hartwig.actin.treatment.trial.TrialConfigDatabase;
 
 import org.jetbrains.annotations.NotNull;
 
-public final class TestTrialConfigFactory {
+public final class TestTrialConfigDatabaseFactory {
 
     @NotNull
     public static TrialConfigDatabase createMinimalTestTrialConfigDatabase() {
@@ -21,8 +21,7 @@ public final class TestTrialConfigFactory {
 
     @NotNull
     public static TrialConfigDatabase createProperTestTrialConfigDatabase() {
-        return ImmutableTrialConfigDatabase.builder()
-                .trialDefinitionConfigs(createTestTrialDefinitionConfigs())
+        return ImmutableTrialConfigDatabase.builder().trialDefinitionConfigs(createTestTrialDefinitionConfigs())
                 .cohortDefinitionConfigs(createTestCohortDefinitionConfigs())
                 .inclusionCriteriaConfigs(createTestInclusionCriteriaConfigs())
                 .inclusionCriteriaReferenceConfigs(createTestInclusionCriteriaReferenceConfigs())
@@ -33,14 +32,14 @@ public final class TestTrialConfigFactory {
     private static List<TrialDefinitionConfig> createTestTrialDefinitionConfigs() {
         List<TrialDefinitionConfig> configs = Lists.newArrayList();
 
-        configs.add(ImmutableTrialDefinitionConfig.builder()
+        configs.add(TestTrialDefinitionConfigFactory.builder()
                 .trialId(TestTrialData.TEST_TRIAL_ID_1)
                 .open(true)
                 .acronym("Acronym-" + TestTrialData.TEST_TRIAL_ID_1)
                 .title("Title for " + TestTrialData.TEST_TRIAL_ID_1)
                 .build());
 
-        configs.add(ImmutableTrialDefinitionConfig.builder()
+        configs.add(TestTrialDefinitionConfigFactory.builder()
                 .trialId(TestTrialData.TEST_TRIAL_ID_2)
                 .open(true)
                 .acronym("Acronym-" + TestTrialData.TEST_TRIAL_ID_2)
@@ -54,7 +53,8 @@ public final class TestTrialConfigFactory {
     private static List<CohortDefinitionConfig> createTestCohortDefinitionConfigs() {
         List<CohortDefinitionConfig> configs = Lists.newArrayList();
 
-        ImmutableCohortDefinitionConfig.Builder builder = ImmutableCohortDefinitionConfig.builder().trialId(TestTrialData.TEST_TRIAL_ID_1);
+        ImmutableCohortDefinitionConfig.Builder builder =
+                TestCohortDefinitionConfigFactory.builder().trialId(TestTrialData.TEST_TRIAL_ID_1);
 
         configs.add(builder.cohortId("A").ctcCohortIds(Set.of("1", "2")).evaluable(true).blacklist(false).description("Cohort A").build());
         configs.add(builder.cohortId("B")

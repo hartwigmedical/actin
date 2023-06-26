@@ -7,10 +7,9 @@ import java.util.List;
 
 import com.hartwig.actin.treatment.ctc.config.CTCDatabaseEntry;
 import com.hartwig.actin.treatment.ctc.config.TestCTCDatabaseEntryFactory;
-import com.hartwig.actin.treatment.trial.config.ImmutableTrialDefinitionConfig;
+import com.hartwig.actin.treatment.trial.config.TestTrialDefinitionConfigFactory;
 import com.hartwig.actin.treatment.trial.config.TrialDefinitionConfig;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
@@ -58,6 +57,6 @@ public class TrialStatusInterpreterTest {
 
     @NotNull
     private static TrialDefinitionConfig createConfig(@NotNull String trialId) {
-        return ImmutableTrialDefinitionConfig.builder().trialId(trialId).open(false).acronym(Strings.EMPTY).title(Strings.EMPTY).build();
+        return TestTrialDefinitionConfigFactory.builder().trialId(trialId).build();
     }
 }

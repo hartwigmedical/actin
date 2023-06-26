@@ -16,7 +16,7 @@ import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.Trial;
-import com.hartwig.actin.treatment.trial.config.TestTrialConfigFactory;
+import com.hartwig.actin.treatment.trial.config.TestTrialConfigDatabaseFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -28,15 +28,15 @@ public class TrialFactoryTest {
     @Test
     public void canCreateFromTrialConfigDirectory() throws IOException {
         assertNotNull(TrialFactory.create(TRIAL_CONFIG_DIRECTORY,
-                TestCTCModelFactory.createMinimalTestCTCDatabase(),
+                TestCTCModelFactory.createWithMinimalTestCTCDatabase(),
                 TestDoidModelFactory.createMinimalTestDoidModel(),
                 TestGeneFilterFactory.createNeverValid()));
     }
 
     @Test
     public void canCreateFromProperTestModel() {
-        TrialFactory factory = new TrialFactory(new TrialConfigModel(TestTrialConfigFactory.createProperTestTrialConfigDatabase()),
-                TestCTCModelFactory.createProperTestCTCDatabase(),
+        TrialFactory factory = new TrialFactory(new TrialConfigModel(TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase()),
+                TestCTCModelFactory.createWithProperTestCTCDatabase(),
                 TestEligibilityFactoryFactory.createTestEligibilityFactory());
         List<Trial> trials = factory.create();
 

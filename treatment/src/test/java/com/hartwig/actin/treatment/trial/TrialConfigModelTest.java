@@ -8,7 +8,7 @@ import java.io.IOException;
 
 import com.google.common.io.Resources;
 import com.hartwig.actin.treatment.TestTrialData;
-import com.hartwig.actin.treatment.trial.config.TestTrialConfigFactory;
+import com.hartwig.actin.treatment.trial.config.TestTrialConfigDatabaseFactory;
 
 import org.junit.Test;
 
@@ -23,7 +23,7 @@ public class TrialConfigModelTest {
 
     @Test
     public void canQueryMinimalModel() {
-        TrialConfigModel model = new TrialConfigModel(TestTrialConfigFactory.createMinimalTestTrialConfigDatabase());
+        TrialConfigModel model = new TrialConfigModel(TestTrialConfigDatabaseFactory.createMinimalTestTrialConfigDatabase());
 
         assertTrue(model.trials().isEmpty());
         assertTrue(model.cohortsForTrial("any trial").isEmpty());
@@ -34,7 +34,7 @@ public class TrialConfigModelTest {
 
     @Test
     public void canQueryProperModel() {
-        TrialConfigModel model = new TrialConfigModel(TestTrialConfigFactory.createProperTestTrialConfigDatabase());
+        TrialConfigModel model = new TrialConfigModel(TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase());
 
         assertEquals(2, model.trials().size());
 

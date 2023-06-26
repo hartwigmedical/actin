@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.hartwig.actin.treatment.ctc.config.CTCDatabaseEntry;
 import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig;
 
@@ -16,10 +17,10 @@ public final class CohortStatusInterpreter {
 
     private static final Logger LOGGER = LogManager.getLogger(CohortStatusInterpreter.class);
 
-    private static final String NOT_AVAILABLE = "NA";
-    private static final String NOT_IN_CTC_OVERVIEW_UNKNOWN_WHY = "not_in_ctc_overview_unknown_why";
-    private static final String WONT_BE_MAPPED_BECAUSE_CLOSED = "wont_be_mapped_because_closed";
-    private static final String WONT_BE_MAPPED_BECAUSE_NOT_AVAILABLE = "wont_be_mapped_because_not_available";
+    static final String NOT_AVAILABLE = "NA";
+    static final String NOT_IN_CTC_OVERVIEW_UNKNOWN_WHY = "not_in_ctc_overview_unknown_why";
+    static final String WONT_BE_MAPPED_BECAUSE_CLOSED = "wont_be_mapped_because_closed";
+    static final String WONT_BE_MAPPED_BECAUSE_NOT_AVAILABLE = "wont_be_mapped_because_not_available";
 
     @Nullable
     public static InterpretedCohortStatus interpret(@NotNull List<CTCDatabaseEntry> entries, @NotNull CohortDefinitionConfig cohortConfig) {
@@ -41,31 +42,15 @@ public final class CohortStatusInterpreter {
         }
 
         Set<Integer> configuredCohortIds = ctcCohortIds.stream().map(Integer::parseInt).collect(Collectors.toSet());
-        return consolidatedCohortStatus(entries, configuredCohortIds);
-    }
-
-    @NotNull
-    private static InterpretedCohortStatus consolidatedCohortStatus(@NotNull List<CTCDatabaseEntry> entries,
-            @NotNull Set<Integer> configuredCohortIds) {
-        boolean hasAtLeastOneOpen = false;
-        boolean hasAtLeastOneSlotsAvailable = false;
-        for (CTCDatabaseEntry entry : entries) {
-            if (configuredCohortIds.contains(entry.cohortId())) {
-                String cohortStatus = entry.cohortStatus();
-                if (cohortStatus == null) {
-                    LOGGER.warn("Cohort status missing for CTC entry with cohort ID: {}: {}", entry.cohortId(), entry);
-                } else if (CTCStatus.fromStatusString(entry.cohortStatus()) == CTCStatus.OPEN) {
-                    hasAtLeastOneOpen = true;
-                }
-
-                Integer cohortSlotsAvailable = entry.cohortSlotsNumberAvailable();
-                if (cohortSlotsAvailable != null && cohortSlotsAvailable > 0) {
-                    hasAtLeastOneSlotsAvailable = true;
-                }
-            }
+        if (!hasValidConfiguredCohorts(entries, configuredCohortIds)) {
+            LOGGER.warn("Invalid cohort IDs configured for cohort '{}' of trial '{}': '{}'. Assuming cohort is closed without slots",
+                    cohortConfig.cohortId(),
+                    cohortConfig.trialId(),
+                    configuredCohortIds);
+            return closedWithoutSlots();
         }
 
-        return ImmutableInterpretedCohortStatus.builder().open(hasAtLeastOneOpen).slotsAvailable(hasAtLeastOneSlotsAvailable).build();
+        return consolidatedCohortStatus(entries, configuredCohortIds);
     }
 
     private static boolean isNotAvailable(@NotNull Set<String> ctcCohortIds) {
@@ -85,8 +70,137 @@ public final class CohortStatusInterpreter {
         return ctcCohortIds.size() == 1 && ctcCohortIds.stream().allMatch(cohortId -> cohortId.equals(valueToFind));
     }
 
+    @VisibleForTesting
+    static boolean hasValidConfiguredCohorts(@NotNull List<CTCDatabaseEntry> entries, @NotNull Set<Integer> configuredCohortIds) {
+        return isSingleParent(entries, configuredCohortIds) || isSingleChild(entries, configuredCohortIds) || isMultipleChildren(entries,
+                configuredCohortIds);
+    }
+
+    @NotNull
+    private static InterpretedCohortStatus consolidatedCohortStatus(@NotNull List<CTCDatabaseEntry> entries,
+            @NotNull Set<Integer> configuredCohortIds) {
+        if (isSingleParent(entries, configuredCohortIds)) {
+            return fromEntry(findEntryByCohortId(entries, configuredCohortIds.iterator().next()));
+        } else if (isSingleChild(entries, configuredCohortIds)) {
+            CTCDatabaseEntry entry = findEntryByCohortId(entries, configuredCohortIds.iterator().next());
+            InterpretedCohortStatus childStatus = fromEntry(entry);
+            InterpretedCohortStatus parentStatus = fromEntry(findEntryByCohortId(entries, entry.cohortParentId()));
+            if (!childStatus.equals(parentStatus)) {
+                LOGGER.warn("Inconsistent status between child and parent cohort in CTC for cohort with ID '{}'", entry.cohortId());
+            }
+            return childStatus;
+        } else if (isMultipleChildren(entries, configuredCohortIds)) {
+            InterpretedCohortStatus best = null;
+            Integer parentId = null;
+            for (int configuredCohortId : configuredCohortIds) {
+                CTCDatabaseEntry entry = findEntryByCohortId(entries, configuredCohortId);
+                InterpretedCohortStatus status = fromEntry(entry);
+                best = best != null ? pickBest(best, status) : status;
+                if (parentId != null && !parentId.equals(entry.cohortParentId())) {
+                    LOGGER.warn("Different parent IDs discovered on multiple children: '{}'", configuredCohortId);
+                }
+                parentId = entry.cohortParentId();
+            }
+            InterpretedCohortStatus parentStatus = fromEntry(findEntryByCohortId(entries, parentId));
+            if (!best.equals(parentStatus)) {
+                LOGGER.warn("Inconsistent status between best child and parent cohort in CTC for cohort with IDs '{}'",
+                        configuredCohortIds);
+            }
+            return best;
+        }
+
+        throw new IllegalStateException("Unexpected set of configured cohort IDs: " + configuredCohortIds);
+    }
+
+    @NotNull
+    @VisibleForTesting
+    static InterpretedCohortStatus pickBest(@NotNull InterpretedCohortStatus status1, @NotNull InterpretedCohortStatus status2) {
+        if (status1.open()) {
+            if (status2.open()) {
+                return status1.slotsAvailable() || !status2.slotsAvailable() ? status1 : status2;
+            } else {
+                return status1;
+            }
+        } else if (status2.open()) {
+            return status2;
+        } else {
+            // Assuming that if both cohorts are closed, neither cohort has slots available.
+            return status1;
+        }
+    }
+
+    private static boolean isSingleParent(@NotNull List<CTCDatabaseEntry> entries, @NotNull Set<Integer> configuredCohortIds) {
+        if (configuredCohortIds.size() != 1) {
+            return false;
+        }
+
+        return isParent(entries, configuredCohortIds.iterator().next());
+    }
+
+    private static boolean isSingleChild(@NotNull List<CTCDatabaseEntry> entries, @NotNull Set<Integer> configuredCohortIds) {
+        if (configuredCohortIds.size() != 1) {
+            return false;
+        }
+
+        return isChild(entries, configuredCohortIds.iterator().next());
+    }
+
+    private static boolean isMultipleChildren(@NotNull List<CTCDatabaseEntry> entries, @NotNull Set<Integer> configuredCohortIds) {
+        if (configuredCohortIds.size() < 2) {
+            return false;
+        }
+
+        long childrenCount = configuredCohortIds.stream().filter(configuredCohortId -> isChild(entries, configuredCohortId)).count();
+        return childrenCount == configuredCohortIds.size();
+    }
+
+    private static boolean isParent(@NotNull List<CTCDatabaseEntry> entries, int configuredCohortId) {
+        CTCDatabaseEntry entry = findEntryByCohortId(entries, configuredCohortId);
+        return entry != null && entry.cohortParentId() == null;
+    }
+
+    private static boolean isChild(@NotNull List<CTCDatabaseEntry> entries, int configuredCohortId) {
+        CTCDatabaseEntry entry = findEntryByCohortId(entries, configuredCohortId);
+        return entry != null && entry.cohortParentId() != null;
+    }
+
+    @Nullable
+    private static CTCDatabaseEntry findEntryByCohortId(@NotNull List<CTCDatabaseEntry> entries, int cohortIdToFind) {
+        return entries.stream().filter(entry -> {
+            Integer cohortId = entry.cohortId();
+            return cohortId != null && cohortId == cohortIdToFind;
+        }).findFirst().orElse(null);
+    }
+
     @NotNull
     private static InterpretedCohortStatus closedWithoutSlots() {
-        return ImmutableInterpretedCohortStatus.builder().open(false).slotsAvailable(false).build();
+        return create(false, false);
     }
+
+    @NotNull
+    private static InterpretedCohortStatus fromEntry(@NotNull CTCDatabaseEntry entry) {
+        String cohortStatus = entry.cohortStatus();
+        if (cohortStatus == null) {
+            LOGGER.warn("No cohort status available in CTC for cohort with ID '{}'. Assuming cohort is closed without slots",
+                    entry.cohortId());
+            return closedWithoutSlots();
+        }
+        Integer numberSlotsAvailable = entry.cohortSlotsNumberAvailable();
+        CTCStatus status = CTCStatus.fromStatusString(cohortStatus);
+        boolean slotsAvailable;
+        if (numberSlotsAvailable == null && status == CTCStatus.OPEN) {
+            LOGGER.warn("No data available on number of slots for open cohort with ID '{}'. Assuming no slots available", entry.cohortId());
+            slotsAvailable = false;
+        } else {
+            slotsAvailable = numberSlotsAvailable != null && numberSlotsAvailable > 0;
+        }
+
+        return create(status == CTCStatus.OPEN, slotsAvailable);
+    }
+
+    @NotNull
+    private static InterpretedCohortStatus create(boolean open, boolean slotsAvailable) {
+        return ImmutableInterpretedCohortStatus.builder().open(open).slotsAvailable(slotsAvailable).build();
+    }
+
 }
