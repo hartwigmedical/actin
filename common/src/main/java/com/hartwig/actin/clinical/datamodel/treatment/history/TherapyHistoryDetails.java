@@ -12,35 +12,35 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public interface TherapyHistoryDetails {
+public abstract class TherapyHistoryDetails {
 
     @Nullable
-    Integer stopYear();
+    public abstract Integer stopYear();
 
     @Nullable
-    Integer stopMonth();
+    public abstract Integer stopMonth();
 
     @Nullable
-    LocalDate ongoingAsOf();
+    public abstract LocalDate ongoingAsOf();
 
     @Nullable
-    Integer cycles();
+    public abstract Integer cycles();
 
     @Nullable
-    TreatmentResponse bestResponse();
+    public abstract TreatmentResponse bestResponse();
 
     @Nullable
-    StopReason stopReason();
+    public abstract StopReason stopReason();
 
     @Nullable
-    String stopReasonDetail();
+    public abstract String stopReasonDetail();
 
     @Nullable
-    Set<ObservedToxicity> toxicities();
+    public abstract Set<ObservedToxicity> toxicities();
 
     @Nullable
-    Set<BodyLocationCategory> bodyLocationCategories();
+    public abstract Set<BodyLocationCategory> bodyLocationCategories();
 
     @Nullable
-    Set<String> bodyLocations();
+    public abstract Set<String> bodyLocations();
 }

@@ -24,18 +24,17 @@ object TreatmentHistoryEntryConfigFactory {
         treatmentsByName: Map<String, Treatment>,
         parts: List<String>,
         fields: Map<String, Int>
-    ): CurationConfigFactoryResult<TreatmentHistoryEntryConfig> {
+    ): TreatmentHistoryEntryConfig {
         val ignore: Boolean = CurationUtil.isIgnoreString(treatmentName)
         val treatment = treatmentsByName[treatmentName]
         if (!ignore && treatment == null) {
             LOGGER.warn("Could not find treatment with name $treatmentName")
         }
-        val config = TreatmentHistoryEntryConfig(
+        return TreatmentHistoryEntryConfig(
             input = parts[fields["input"]!!],
             ignore = ignore,
             curated = if (!ignore) curateObject(fields, parts, treatment) else null
         )
-        return CurationConfigFactoryResult(listOf(config), setOf(treatmentName))
     }
 
     private fun curateObject(fields: Map<String, Int>, parts: List<String>, treatment: Treatment?): TreatmentHistoryEntry {
@@ -70,7 +69,6 @@ object TreatmentHistoryEntryConfigFactory {
 
         return ImmutableTreatmentHistoryEntry.builder()
             .treatments(treatment?.let { setOf(treatment) } ?: emptySet())
-            .rawInput(parts[fields["input"]!!])
             .startYear(optionalIntegerFromColumn(parts, fields, "startYear"))
             .startMonth(optionalIntegerFromColumn(parts, fields, "startMonth"))
             .intents(intents)

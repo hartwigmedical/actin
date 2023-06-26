@@ -10,32 +10,29 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public interface TreatmentHistoryEntry {
+public abstract class TreatmentHistoryEntry {
 
     @NotNull
-    Set<Treatment> treatments();
-
-    @NotNull
-    String rawInput();
+    public abstract Set<Treatment> treatments();
 
     @Nullable
-    Integer startYear();
+    public abstract Integer startYear();
 
     @Nullable
-    Integer startMonth();
+    public abstract Integer startMonth();
 
     @Nullable
-    Set<Intent> intents();
+    public abstract Set<Intent> intents();
 
     @Nullable
-    Boolean isTrial();
+    public abstract Boolean isTrial();
 
     @Nullable
-    String trialAcronym();
+    public abstract String trialAcronym();
 
     @Nullable
-    TherapyHistoryDetails therapyHistoryDetails();
+    public abstract TherapyHistoryDetails therapyHistoryDetails();
 
     @Nullable
-    SurgeryHistoryDetails surgeryHistoryDetails();
+    public abstract SurgeryHistoryDetails surgeryHistoryDetails();
 }

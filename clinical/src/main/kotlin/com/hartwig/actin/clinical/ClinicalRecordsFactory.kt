@@ -267,7 +267,6 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
         return feed.uniqueSurgeryEntries(subject).map { surgeryEntry: SurgeryEntry ->
             ImmutableTreatmentHistoryEntry.builder()
                 .treatments(setOf(ImmutableSurgicalTreatment.builder().name("extracted surgery").build()))
-                .rawInput(surgeryEntry.codeCodingDisplayOriginal)
                 .surgeryHistoryDetails(
                     ImmutableSurgeryHistoryDetails.builder()
                         .endDate(surgeryEntry.periodEnd)
