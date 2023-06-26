@@ -24,7 +24,12 @@ To make a chance in ACTIN and release the process is as follows:
  - Create a ticket in JIRA and make a branch from that ticket with `git checkout -b ACTIN-#`
  - When changes are complete create a PR by committing pushing your branch and creating a PR via the GitHub UI.
  - This will trigger a [CI build in GCP Cloud Build](https://console.cloud.google.com/cloud-build/builds;region=europe-west4?project=actin-build). This build only runs the unit tests.
- - Figure out what your release version will be. This can be done by listing tags and finding the most recent. We follow semantic versioning where:
+ - Figure out what your release version will be. This can be done by listing tags and finding the most recent:
+  ```shell
+   git fetch --tags
+   git tag
+  ```
+   We follow semantic versioning where:
    - The major version is compatibility. As actin currently has no "clients", we'll reserve this for major technical or functional changes
    - The minor version is for features. This should be incremented for any new feature
    - The patch version is for bug fixes. 
