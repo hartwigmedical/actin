@@ -94,7 +94,7 @@
                                 </property>
                                 <property>
                                     <key>defaultNameCase</key>
-                                    <value>lower</value>
+                                    <value>as_is</value>
                                 </property>
                             </properties>
                         </database>
