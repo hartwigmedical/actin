@@ -22,7 +22,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <actin.version>1.0</actin.version>
         <serve.version>2.2.0</serve.version>
 
         <maven.compiler.source>11</maven.compiler.source>
@@ -135,37 +134,37 @@
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>common</artifactId>
-                <version>${actin.version}</version>
+                <version>local-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>clinical</artifactId>
-                <version>${actin.version}</version>
+                <version>local-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>molecular</artifactId>
-                <version>${actin.version}</version>
+                <version>local-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>treatment</artifactId>
-                <version>${actin.version}</version>
+                <version>local-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>database</artifactId>
-                <version>${actin.version}</version>
+                <version>local-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>algo</artifactId>
-                <version>${actin.version}</version>
+                <version>local-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>report</artifactId>
-                <version>${actin.version}</version>
+                <version>local-SNAPSHOT</version>
             </dependency>
 
             <dependency>
@@ -269,7 +268,7 @@
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>common</artifactId>
-                <version>${actin.version}</version>
+                <version>local-SNAPSHOT</version>
                 <scope>test</scope>
                 <type>test-jar</type>
             </dependency>
