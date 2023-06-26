@@ -92,6 +92,10 @@
                                     <key>scripts</key>
                                     <value>src/main/resources/generate_database.sql</value>
                                 </property>
+                                <property>
+                                    <key>defaultNameCase</key>
+                                    <value>lower</value>
+                                </property>
                             </properties>
                         </database>
                         <target>
