@@ -35,10 +35,15 @@ internal object QuestionnaireCuration {
         OPTION_MAPPING["JA"] = true
         OPTION_MAPPING["Ja"] = true
         OPTION_MAPPING["ja"] = true
+        OPTION_MAPPING["YES related to prostatecarcinoma"] = true
+        OPTION_MAPPING["yes bone lesion L1 L2 with epidural extension"] = true
+        OPTION_MAPPING["yes vertebra L2"] = true
+        OPTION_MAPPING["yes wherefore surgery jun 2023"] = true
         OPTION_MAPPING["unknown"] = null
         OPTION_MAPPING["Unknown"] = null
         OPTION_MAPPING["UNKNOWN"] = null
         OPTION_MAPPING["uknown"] = null
+        OPTION_MAPPING["unknonw"] = null
         OPTION_MAPPING["onknown"] = null
         OPTION_MAPPING["UNKOWN"] = null
         OPTION_MAPPING["suspect lesion"] = null
@@ -48,7 +53,7 @@ internal object QuestionnaireCuration {
         OPTION_MAPPING["yes/no/unknown"] = null
         OPTION_MAPPING["(yes/no)"] = null
         OPTION_MAPPING["botaantasting bij weke delen massa"] = false
-        OPTION_MAPPING["YES related to prostatecarcinoma"] = true
+
         STAGE_MAPPING["I"] = TumorStage.I
         STAGE_MAPPING["1"] = TumorStage.I
         STAGE_MAPPING["II"] = TumorStage.II
