@@ -6,7 +6,6 @@ import com.hartwig.actin.clinical.curation.config.CurationConfigFactory
 import com.hartwig.actin.clinical.curation.config.CurationConfigFile
 import com.hartwig.actin.clinical.curation.config.ECGConfigFactory
 import com.hartwig.actin.clinical.curation.config.InfectionConfigFactory
-import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfigFactory
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfigFactory
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfigFactory
 import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfigFactory
@@ -15,6 +14,7 @@ import com.hartwig.actin.clinical.curation.config.MedicationNameConfigFactory
 import com.hartwig.actin.clinical.curation.config.MolecularTestConfigFactory
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfigFactory
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfigFactory
+import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfigFactory
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfigFactory
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfigFactory
 import com.hartwig.actin.clinical.curation.config.ToxicityConfigFactory

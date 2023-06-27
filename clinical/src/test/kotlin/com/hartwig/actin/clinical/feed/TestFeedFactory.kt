@@ -102,7 +102,7 @@ object TestFeedFactory {
             medicationEntry(
                 code5ATCDisplay = "PARACETAMOL",
                 status = "active",
-                dosageInstruction = "50-60 mg per day",
+                dosageInstruction = "once per day 50-60 mg every month",
                 start = LocalDate.of(2019, 2, 2),
                 end = LocalDate.of(2019, 4, 4),
                 active = true
