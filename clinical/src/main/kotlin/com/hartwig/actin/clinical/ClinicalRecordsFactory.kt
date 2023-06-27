@@ -276,7 +276,8 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
         val medications: MutableList<Medication> = Lists.newArrayList()
         for (entry in feed.medicationEntries(subject)) {
             val dosage =
-                if (dosageRequiresCuration(entry)) curation.curateMedicationDosage(entry.dosageInstructionText) else ImmutableDosage.builder()
+                if (dosageRequiresCuration(entry)) curation.curateMedicationDosage(entry.dosageInstructionText) ?: ImmutableDosage.builder()
+                    .build() else ImmutableDosage.builder()
                     .dosageMax(entry.dosageInstructionMaxDosePerAdministration)
                     .dosageValue(entry.dosageInstructionDoseQuantityValue)
                     .dosageUnit(entry.dosageInstructionDoseQuantityUnit)
@@ -285,6 +286,7 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
                     .periodBetweenValue(entry.dosageInstructionPeriodBetweenDosagesValue)
                     .periodBetweenUnit(entry.dosageInstructionPeriodBetweenDosagesUnit)
                     .build()
+            curation.curatePeriodBetweenUnit(dosage.periodBetweenUnit())
             val builder = ImmutableMedication.builder().dosage(dosage)
             val name: String? = CurationUtil.capitalizeFirstLetterOnly(entry.code5ATCDisplay).ifEmpty {
                 curation.curateMedicationName(CurationUtil.capitalizeFirstLetterOnly(entry.codeText))

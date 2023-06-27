@@ -332,7 +332,7 @@ class CurationModel @VisibleForTesting internal constructor(
         if (input.isNullOrEmpty()) {
             return null
         }
-        val configs: Set<PeriodBetweenUnitConfig> = find(database.periodBetweenUnitConfigs, input!!)
+        val configs: Set<PeriodBetweenUnitConfig> = find(database.periodBetweenUnitConfigs, input)
         if (configs.isEmpty()) {
             LOGGER.warn(" Could not find period between unit config for input '{}'", input)
             return input
@@ -340,7 +340,7 @@ class CurationModel @VisibleForTesting internal constructor(
             LOGGER.warn(" Multiple period between unit configs matched to '{}'", input)
             return null
         }
-        val config: PeriodBetweenUnitConfig = configs.iterator().next()
+        val config: PeriodBetweenUnitConfig = configs.first()
         if (config.ignore) {
             return null
         }
@@ -394,15 +394,15 @@ class CurationModel @VisibleForTesting internal constructor(
         return configs.iterator().next().location
     }
 
-    fun curateMedicationDosage(input: String): Dosage {
+    fun curateMedicationDosage(input: String): Dosage? {
         val configs: Set<MedicationDosageConfig> = find(database.medicationDosageConfigs, input)
         if (configs.isEmpty()) {
             // TODO: Change to warn once the medications are more final.
             LOGGER.debug(" Could not find medication dosage config for '{}'", input)
-            throw IllegalArgumentException()
+            return null
         } else if (configs.size > 1) {
             LOGGER.warn(" Multiple medication dosage configs matched to '{}'", input)
-            throw IllegalArgumentException()
+            return null
         }
         val config: MedicationDosageConfig = configs.first()
 
@@ -413,7 +413,7 @@ class CurationModel @VisibleForTesting internal constructor(
             .frequency(config.frequency)
             .frequencyUnit(config.frequencyUnit)
             .periodBetweenValue(config.periodBetweenValue)
-            .periodBetweenUnit(curatePeriodBetweenUnit(config.periodBetweenUnit))
+            .periodBetweenUnit(config.periodBetweenUnit)
             .ifNeeded(config.ifNeeded)
             .build()
     }

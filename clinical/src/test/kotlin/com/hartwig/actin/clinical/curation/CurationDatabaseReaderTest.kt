@@ -171,11 +171,9 @@ class CurationDatabaseReaderTest {
     @Test
     fun shouldReadPeriodBetweenUnitConfigs() {
         val configs = database!!.periodBetweenUnitConfigs
-        assertEquals(2, configs.size.toLong())
+        assertEquals(1, configs.size.toLong())
         val config1 = find(configs, "mo")
         assertEquals("months", config1.interpretation)
-        val config2 = find(configs, "NA")
-        assertEquals("No", config2.interpretation)
     }
 
     @Test
@@ -247,7 +245,7 @@ class CurationDatabaseReaderTest {
     @Test
     fun shouldReadMedicationDosageConfigs() {
         val configs = database!!.medicationDosageConfigs
-        assertEquals(2, configs.size.toLong())
+        assertEquals(1, configs.size.toLong())
         val config1 = find(configs, "once per day 50-60 mg every month")
         assertDoubleEquals(50.0, config1.dosageMin)
         assertDoubleEquals(60.0, config1.dosageMax)
@@ -257,15 +255,6 @@ class CurationDatabaseReaderTest {
         assertEquals(0.0, config1.periodBetweenValue)
         assertEquals("mo", config1.periodBetweenUnit)
         assertEquals(false, config1.ifNeeded)
-        val config2 = find(configs, "empty")
-        assertNull(config2.dosageMin)
-        assertNull(config2.dosageMax)
-        assertNull(config2.dosageUnit)
-        assertNull(config2.frequency)
-        assertNull(config2.frequencyUnit)
-        assertNull(config2.periodBetweenValue)
-        assertNull(config2.periodBetweenUnit)
-        assertNull(config2.ifNeeded)
     }
 
     @Test
