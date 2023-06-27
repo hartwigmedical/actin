@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf.tables.clinical;
 
 import java.util.List;
 
+import com.hartwig.actin.clinical.datamodel.Dosage;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
@@ -11,6 +12,7 @@ import com.itextpdf.layout.element.Table;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class MedicationGenerator implements TableGenerator {
 
@@ -47,8 +49,8 @@ public class MedicationGenerator implements TableGenerator {
                 table.addCell(Cells.createContent(administrationRoute(medication)));
                 table.addCell(Cells.createContent(Formats.date(medication.startDate(), Strings.EMPTY)));
                 table.addCell(Cells.createContent(Formats.date(medication.stopDate(), Strings.EMPTY)));
-                table.addCell(Cells.createContent(dosage(medication)));
-                table.addCell(Cells.createContent(frequency(medication)));
+                table.addCell(Cells.createContent(dosage(medication.dosage())));
+                table.addCell(Cells.createContent(frequency(medication.dosage())));
             }
         });
 
@@ -61,30 +63,29 @@ public class MedicationGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static String dosage(@NotNull Medication medication) {
-        String dosageMin = medication.dosageMin() != null ? Formats.twoDigitNumber(medication.dosageMin()) : "?";
-        String dosageMax = medication.dosageMax() != null ? Formats.twoDigitNumber(medication.dosageMax()) : "?";
+    private static String dosage(@NotNull Dosage dosage) {
+        String dosageMin = dosage.dosageMin() != null ? Formats.twoDigitNumber(dosage.dosageMin()) : "?";
+        String dosageMax = dosage.dosageMax() != null ? Formats.twoDigitNumber(dosage.dosageMax()) : "?";
 
         String result = dosageMin.equals(dosageMax) ? dosageMin : dosageMin + " - " + dosageMax;
-        if (medication.ifNeeded()) {
+        if (dosage.ifNeeded()) {
             result = "if needed " + result;
         }
 
-        if (medication.dosageUnit() != null) {
-            result += (" " + medication.dosageUnit());
+        if (dosage.dosageUnit() != null) {
+            result += (" " + dosage.dosageUnit());
         }
         return result;
     }
 
     @NotNull
-    private static String frequency(@NotNull Medication medication) {
-        String result = medication.frequency() != null ? Formats.twoDigitNumber(medication.frequency()) : "?";
+    private static String frequency(@NotNull Dosage dosage) {
+        String result = dosage.frequency() != null ? Formats.twoDigitNumber(dosage.frequency()) : "?";
 
-        if (medication.periodBetweenUnit() != null) {
-            result +=
-                    (" / " + String.format("%.0f", Double.sum(medication.periodBetweenValue(), 1)) + " " + medication.periodBetweenUnit());
-        } else if (medication.frequencyUnit() != null) {
-            result += (" / " + medication.frequencyUnit());
+        if (dosage.periodBetweenUnit() != null) {
+            result += (" / " + String.format("%.0f", Double.sum(dosage.periodBetweenValue(), 1)) + " " + dosage.periodBetweenUnit());
+        } else if (dosage.frequencyUnit() != null) {
+            result += (" / " + dosage.frequencyUnit());
         }
 
         return result;

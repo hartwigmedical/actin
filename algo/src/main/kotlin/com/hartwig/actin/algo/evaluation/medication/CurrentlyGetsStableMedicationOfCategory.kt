@@ -19,7 +19,7 @@ class CurrentlyGetsStableMedicationOfCategory internal constructor(
             val filtered = selector.activeWithExactCategory(record.clinical().medications(), categoryToFind)
             for (medication in filtered) {
                 if (referenceDosing != null) {
-                    if (!MedicationDosage.hasMatchingDosing(medication, referenceDosing)) {
+                    if (!MedicationDosage.hasMatchingDosing(medication.dosage(), referenceDosing.dosage())) {
                         hasActiveAndStableMedication = false
                     }
                 } else {

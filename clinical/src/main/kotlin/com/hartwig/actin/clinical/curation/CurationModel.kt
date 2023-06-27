@@ -5,53 +5,10 @@ import com.google.common.collect.HashMultimap
 import com.google.common.collect.Lists
 import com.google.common.collect.Multimap
 import com.google.common.collect.Sets
-import com.hartwig.actin.clinical.curation.config.ComplicationConfig
-import com.hartwig.actin.clinical.curation.config.CurationConfig
-import com.hartwig.actin.clinical.curation.config.ECGConfig
-import com.hartwig.actin.clinical.curation.config.InfectionConfig
-import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
-import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
-import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
-import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig
-import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig
-import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
-import com.hartwig.actin.clinical.curation.config.MolecularTestConfig
-import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
-import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig
-import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
-import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
-import com.hartwig.actin.clinical.curation.config.ToxicityConfig
+import com.hartwig.actin.clinical.curation.config.*
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
-import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation
-import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation
-import com.hartwig.actin.clinical.curation.translation.DosageUnitTranslation
-import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation
-import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation
-import com.hartwig.actin.clinical.curation.translation.Translation
-import com.hartwig.actin.clinical.datamodel.BloodTransfusion
-import com.hartwig.actin.clinical.datamodel.Complication
-import com.hartwig.actin.clinical.datamodel.ECG
-import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion
-import com.hartwig.actin.clinical.datamodel.ImmutableComplication
-import com.hartwig.actin.clinical.datamodel.ImmutableECG
-import com.hartwig.actin.clinical.datamodel.ImmutableECGMeasure
-import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus
-import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance
-import com.hartwig.actin.clinical.datamodel.ImmutableLabValue
-import com.hartwig.actin.clinical.datamodel.ImmutableMedication
-import com.hartwig.actin.clinical.datamodel.ImmutableToxicity
-import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
-import com.hartwig.actin.clinical.datamodel.InfectionStatus
-import com.hartwig.actin.clinical.datamodel.Intolerance
-import com.hartwig.actin.clinical.datamodel.LabValue
-import com.hartwig.actin.clinical.datamodel.Medication
-import com.hartwig.actin.clinical.datamodel.MedicationStatus
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
-import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
-import com.hartwig.actin.clinical.datamodel.Toxicity
-import com.hartwig.actin.clinical.datamodel.ToxicitySource
-import com.hartwig.actin.clinical.datamodel.TumorDetails
+import com.hartwig.actin.clinical.curation.translation.*
+import com.hartwig.actin.clinical.datamodel.*
 import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireRawEntryMapper
 import com.hartwig.actin.doid.DoidModel
@@ -437,32 +394,26 @@ class CurationModel @VisibleForTesting internal constructor(
         return configs.iterator().next().location
     }
 
-    fun curateMedicationDosage(input: String): Medication? {
+    fun curateMedicationDosage(input: String): Dosage {
         val configs: Set<MedicationDosageConfig> = find(database.medicationDosageConfigs, input)
         if (configs.isEmpty()) {
             // TODO: Change to warn once the medications are more final.
             LOGGER.debug(" Could not find medication dosage config for '{}'", input)
-            return null
+            throw IllegalArgumentException()
         } else if (configs.size > 1) {
             LOGGER.warn(" Multiple medication dosage configs matched to '{}'", input)
-            return null
+            throw IllegalArgumentException()
         }
-        val config: MedicationDosageConfig = configs.iterator().next()
+        val config: MedicationDosageConfig = configs.first()
 
-        return ImmutableMedication.builder()
-            .name(Strings.EMPTY)
-            .codeATC(Strings.EMPTY)
-            .chemicalSubgroupAtc(Strings.EMPTY)
-            .pharmacologicalSubgroupAtc(Strings.EMPTY)
-            .therapeuticSubgroupAtc(Strings.EMPTY)
-            .anatomicalMainGroupAtc(Strings.EMPTY)
+        return ImmutableDosage.builder()
             .dosageMin(config.dosageMin)
             .dosageMax(config.dosageMax)
             .dosageUnit(config.dosageUnit)
             .frequency(config.frequency)
             .frequencyUnit(config.frequencyUnit)
             .periodBetweenValue(config.periodBetweenValue)
-            .periodBetweenUnit(config.periodBetweenUnit)
+            .periodBetweenUnit(curatePeriodBetweenUnit(config.periodBetweenUnit))
             .ifNeeded(config.ifNeeded)
             .build()
     }

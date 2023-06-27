@@ -4,38 +4,7 @@ import com.google.common.annotations.VisibleForTesting
 import com.google.common.collect.Lists
 import com.hartwig.actin.clinical.curation.CurationModel
 import com.hartwig.actin.clinical.curation.CurationUtil
-import com.hartwig.actin.clinical.datamodel.BloodTransfusion
-import com.hartwig.actin.clinical.datamodel.BodyWeight
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
-import com.hartwig.actin.clinical.datamodel.ClinicalStatus
-import com.hartwig.actin.clinical.datamodel.Complication
-import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion
-import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus
-import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance
-import com.hartwig.actin.clinical.datamodel.ImmutableMedication
-import com.hartwig.actin.clinical.datamodel.ImmutableObservedToxicity
-import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails
-import com.hartwig.actin.clinical.datamodel.ImmutableSurgery
-import com.hartwig.actin.clinical.datamodel.ImmutableToxicity
-import com.hartwig.actin.clinical.datamodel.ImmutableToxicityEvaluation
-import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
-import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction
-import com.hartwig.actin.clinical.datamodel.Intolerance
-import com.hartwig.actin.clinical.datamodel.LabValue
-import com.hartwig.actin.clinical.datamodel.Medication
-import com.hartwig.actin.clinical.datamodel.PatientDetails
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
-import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
-import com.hartwig.actin.clinical.datamodel.Surgery
-import com.hartwig.actin.clinical.datamodel.SurgeryStatus
-import com.hartwig.actin.clinical.datamodel.Toxicity
-import com.hartwig.actin.clinical.datamodel.ToxicityEvaluation
-import com.hartwig.actin.clinical.datamodel.ToxicitySource
-import com.hartwig.actin.clinical.datamodel.TumorDetails
-import com.hartwig.actin.clinical.datamodel.VitalFunction
+import com.hartwig.actin.clinical.datamodel.*
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableSurgicalTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableSurgeryHistoryDetails
@@ -46,6 +15,7 @@ import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry
 import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry
 import com.hartwig.actin.clinical.feed.lab.LabExtraction
+import com.hartwig.actin.clinical.feed.medication.MedicationEntry
 import com.hartwig.actin.clinical.feed.patient.PatientEntry
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction
@@ -305,11 +275,17 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
     private fun extractMedications(subject: String): List<Medication> {
         val medications: MutableList<Medication> = Lists.newArrayList()
         for (entry in feed.medicationEntries(subject)) {
-            val dosageCurated: Medication? = curation.curateMedicationDosage(entry.dosageInstructionText)
-            val builder: ImmutableMedication.Builder = ImmutableMedication.builder()
-            if (dosageCurated != null) {
-                builder.from(dosageCurated)
-            }
+            val dosage =
+                if (dosageRequiresCuration(entry)) curation.curateMedicationDosage(entry.dosageInstructionText) else ImmutableDosage.builder()
+                    .dosageMax(entry.dosageInstructionMaxDosePerAdministration)
+                    .dosageValue(entry.dosageInstructionDoseQuantityValue)
+                    .dosageUnit(entry.dosageInstructionDoseQuantityUnit)
+                    .frequency(entry.dosageInstructionFrequencyValue)
+                    .frequencyUnit(entry.dosageInstructionFrequencyUnit)
+                    .periodBetweenValue(entry.dosageInstructionPeriodBetweenDosagesValue)
+                    .periodBetweenUnit(entry.dosageInstructionPeriodBetweenDosagesUnit)
+                    .build()
+            val builder = ImmutableMedication.builder().dosage(dosage)
             val name: String? = CurationUtil.capitalizeFirstLetterOnly(entry.code5ATCDisplay).ifEmpty {
                 curation.curateMedicationName(CurationUtil.capitalizeFirstLetterOnly(entry.codeText))
             }
@@ -322,9 +298,6 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
                     .anatomicalMainGroupAtc(entry.anatomicalMainGroupDisplay)
                     .status(curation.curateMedicationStatus(entry.status))
                     .administrationRoute(curation.translateAdministrationRoute(entry.dosageInstructionRouteDisplay))
-                    .dosageUnit(curation.translateDosageUnit(entry.dosageInstructionDoseQuantityUnit))
-                    .periodBetweenValue(entry.dosageInstructionPeriodBetweenDosagesValue)
-                    .periodBetweenUnit(curation.curatePeriodBetweenUnit(entry.dosageInstructionPeriodBetweenDosagesUnit))
                     .startDate(entry.periodOfUseValuePeriodStart)
                     .stopDate(entry.periodOfUseValuePeriodEnd)
                     .build()
@@ -334,6 +307,9 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
         medications.sortWith(MedicationByNameComparator())
         return medications
     }
+
+    private fun dosageRequiresCuration(entry: MedicationEntry) =
+        entry.dosageInstructionDoseQuantityValue == 0.0 || entry.dosageInstructionDoseQuantityUnit.isEmpty() || entry.dosageInstructionFrequencyValue == 0.0 || entry.dosageInstructionFrequencyUnit.isEmpty()
 
     companion object {
         private val LOGGER = LogManager.getLogger(ClinicalRecordsFactory::class.java)
