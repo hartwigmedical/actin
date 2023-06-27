@@ -10,7 +10,7 @@
 
     <artifactId>algo</artifactId>
     <packaging>jar</packaging>
-    <version>${actin.version}</version>
+    <version>local-SNAPSHOT</version>
     <name>HMF ACTIN - Algo</name>
 
     <dependencies>

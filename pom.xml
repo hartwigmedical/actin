@@ -22,7 +22,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <actin.version>1.0</actin.version>
         <serve.version>2.2.0</serve.version>
 
         <maven.compiler.source>11</maven.compiler.source>
@@ -42,7 +41,7 @@
         <apache.log4j.version>2.18.0</apache.log4j.version>
         <apache.log4j-slf4j18.version>2.18.0</apache.log4j-slf4j18.version>
 
-        <jooq.version>3.15.2</jooq.version>
+        <jooq.version>3.15.5</jooq.version>
         <mysqlconnector.version>8.0.31</mysqlconnector.version>
         <itext.version>7.2.4</itext.version>
 
@@ -55,6 +54,40 @@
         <assertj-core.version>3.24.2</assertj-core.version>
         <mockk-jvm.version>1.13.5</mockk-jvm.version>
     </properties>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>artifact-registry</id>
+            <url>artifactregistry://europe-west4-maven.pkg.dev/actin-build/build-registry-maven</url>
+        </snapshotRepository>
+        <repository>
+            <id>artifact-registry</id>
+            <url>artifactregistry://europe-west4-maven.pkg.dev/actin-build/build-registry-maven</url>
+        </repository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>actin-artifact-registry</id>
+            <url>artifactregistry://europe-west4-maven.pkg.dev/actin-build/build-registry-maven</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>hmf-artifact-registry</id>
+            <url>artifactregistry://europe-west4-maven.pkg.dev/hmf-build/hmf-maven</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <build>
         <extensions>
@@ -96,55 +129,42 @@
         </pluginManagement>
     </build>
 
-    <repositories>
-        <repository>
-            <id>artifact-registry</id>
-            <url>artifactregistry://europe-west4-maven.pkg.dev/hmf-build/hmf-maven</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>common</artifactId>
-                <version>${actin.version}</version>
+                <version>local-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>clinical</artifactId>
-                <version>${actin.version}</version>
+                <version>local-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>molecular</artifactId>
-                <version>${actin.version}</version>
+                <version>local-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>treatment</artifactId>
-                <version>${actin.version}</version>
+                <version>local-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>database</artifactId>
-                <version>${actin.version}</version>
+                <version>local-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>algo</artifactId>
-                <version>${actin.version}</version>
+                <version>local-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>report</artifactId>
-                <version>${actin.version}</version>
+                <version>local-SNAPSHOT</version>
             </dependency>
 
             <dependency>
@@ -248,7 +268,7 @@
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>common</artifactId>
-                <version>${actin.version}</version>
+                <version>local-SNAPSHOT</version>
                 <scope>test</scope>
                 <type>test-jar</type>
             </dependency>

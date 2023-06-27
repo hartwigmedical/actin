@@ -35,12 +35,12 @@ import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.Surgery;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 
 import org.jetbrains.annotations.NotNull;
@@ -145,15 +145,15 @@ class ClinicalDAO {
                         tumor.primaryTumorExtraDetails(),
                         DataUtil.concat(tumor.doids()),
                         stage != null ? stage.display() : null,
-                        DataUtil.toByte(tumor.hasMeasurableDisease()),
-                        DataUtil.toByte(tumor.hasBrainLesions()),
-                        DataUtil.toByte(tumor.hasActiveBrainLesions()),
-                        DataUtil.toByte(tumor.hasCnsLesions()),
-                        DataUtil.toByte(tumor.hasActiveCnsLesions()),
-                        DataUtil.toByte(tumor.hasBoneLesions()),
-                        DataUtil.toByte(tumor.hasLiverLesions()),
-                        DataUtil.toByte(tumor.hasLungLesions()),
-                        DataUtil.toByte(tumor.hasLymphNodeLesions()),
+                        tumor.hasMeasurableDisease(),
+                        tumor.hasBrainLesions(),
+                        tumor.hasActiveBrainLesions(),
+                        tumor.hasCnsLesions(),
+                        tumor.hasActiveCnsLesions(),
+                        tumor.hasBoneLesions(),
+                        tumor.hasLiverLesions(),
+                        tumor.hasLungLesions(),
+                        tumor.hasLymphNodeLesions(),
                         DataUtil.concat(tumor.otherLesions()),
                         tumor.biopsyLocation())
                 .execute();
@@ -179,16 +179,16 @@ class ClinicalDAO {
                         CLINICALSTATUS.HASCOMPLICATIONS)
                 .values(patientId,
                         clinicalStatus.who(),
-                        DataUtil.toByte(infectionStatus != null ? infectionStatus.hasActiveInfection() : null),
+                        infectionStatus != null ? infectionStatus.hasActiveInfection() : null,
                         infectionStatus != null ? infectionStatus.description() : null,
-                        DataUtil.toByte(ecg.map(ECG::hasSigAberrationLatestECG).orElse(null)),
+                        ecg.map(ECG::hasSigAberrationLatestECG).orElse(null),
                         ecg.map(ECG::aberrationDescription).orElse(null),
                         qtcfMeasure.map(ECGMeasure::value).orElse(null),
                         qtcfMeasure.map(ECGMeasure::unit).orElse(null),
                         jtcMeasure.map(ECGMeasure::value).orElse(null),
                         jtcMeasure.map(ECGMeasure::unit).orElse(null),
                         clinicalStatus.lvef(),
-                        DataUtil.toByte(clinicalStatus.hasComplications()))
+                        clinicalStatus.hasComplications())
                 .execute();
     }
 
@@ -226,7 +226,7 @@ class ClinicalDAO {
                             priorTumorTreatment.bestResponse(),
                             priorTumorTreatment.stopReason(),
                             TreatmentCategoryResolver.toStringList(priorTumorTreatment.categories()),
-                            DataUtil.toByte(priorTumorTreatment.isSystemic()),
+                            priorTumorTreatment.isSystemic(),
                             priorTumorTreatment.chemoType(),
                             priorTumorTreatment.immunoType(),
                             priorTumorTreatment.targetedType(),
@@ -267,7 +267,7 @@ class ClinicalDAO {
                             priorSecondPrimary.treatmentHistory(),
                             priorSecondPrimary.lastTreatmentYear(),
                             priorSecondPrimary.lastTreatmentMonth(),
-                            DataUtil.toByte(priorSecondPrimary.isActive()))
+                            priorSecondPrimary.isActive())
                     .execute();
         }
     }
@@ -288,7 +288,7 @@ class ClinicalDAO {
                             priorOtherCondition.month(),
                             DataUtil.concat(priorOtherCondition.doids()),
                             priorOtherCondition.category(),
-                            DataUtil.toByte(priorOtherCondition.isContraindicationForTherapy()))
+                            priorOtherCondition.isContraindicationForTherapy())
                     .execute();
         }
     }
@@ -313,7 +313,7 @@ class ClinicalDAO {
                             priorMolecularTest.scoreValuePrefix(),
                             priorMolecularTest.scoreValue(),
                             priorMolecularTest.scoreValueUnit(),
-                            DataUtil.toByte(priorMolecularTest.impliesPotentialIndeterminateStatus()))
+                            priorMolecularTest.impliesPotentialIndeterminateStatus())
                     .execute();
         }
     }
@@ -361,7 +361,7 @@ class ClinicalDAO {
                             lab.unit().display(),
                             lab.refLimitLow(),
                             lab.refLimitUp(),
-                            DataUtil.toByte(lab.isOutsideRef()))
+                            lab.isOutsideRef())
                     .execute();
         }
     }
@@ -489,7 +489,7 @@ class ClinicalDAO {
                             medication.dosageUnit(),
                             medication.frequency(),
                             medication.frequencyUnit(),
-                            DataUtil.toByte(medication.ifNeeded()),
+                            medication.ifNeeded(),
                             medication.startDate(),
                             medication.stopDate())
                     .execute();
