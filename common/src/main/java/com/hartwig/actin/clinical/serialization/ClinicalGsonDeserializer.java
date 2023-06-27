@@ -1,11 +1,11 @@
 package com.hartwig.actin.clinical.serialization;
 
 import static com.hartwig.actin.util.json.Json.integer;
-import static com.hartwig.actin.util.json.Json.string;
 
 import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -84,7 +85,6 @@ import com.hartwig.actin.clinical.datamodel.treatment.TargetedTherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableSurgeryHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTherapyHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
@@ -305,12 +305,36 @@ public class ClinicalGsonDeserializer {
 
         @Override
         public Treatment deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
-
-            return jsonElement.isJsonNull()
-                    ? null
-                    : (Treatment) context.deserialize(jsonElement,
-                            TreatmentType.valueOf(string(jsonElement.getAsJsonObject(), "treatmentType")).treatmentClass());
+            if (jsonElement.isJsonNull()) {
+                return null;
+            }
+            JsonObject jsonObj = jsonElement.getAsJsonObject();
+            Type concreteType = jsonObj.has("therapies")
+                    ? CombinedTherapy.class
+                    : treatmentTypeFromCategoriesJson(jsonObj.getAsJsonArray("categories"));
+            return context.deserialize(jsonElement, concreteType);
         }
+    }
+
+    private static Type treatmentTypeFromCategoriesJson(JsonArray categories) {
+        return categories.asList().stream().map(jsonElement -> {
+            switch (TreatmentCategory.valueOf(jsonElement.getAsString())) {
+                case CHEMOTHERAPY:
+                    return Chemotherapy.class;
+                case HORMONE_THERAPY:
+                    return HormoneTherapy.class;
+                case IMMUNOTHERAPY:
+                    return Immunotherapy.class;
+                case RADIOTHERAPY:
+                    return Radiotherapy.class;
+                case SURGERY:
+                    return SurgicalTreatment.class;
+                case TARGETED_THERAPY:
+                    return TargetedTherapy.class;
+                default:
+                    return null;
+            }
+        }).filter(Objects::nonNull).findAny().orElse(OtherTherapy.class);
     }
 
     private static <T> Stream<T> deserializeJsonCollection(JsonElement jsonElement, JsonDeserializationContext context, Type type) {

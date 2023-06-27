@@ -14,12 +14,6 @@ import org.jetbrains.annotations.Nullable;
 public abstract class CombinedTherapy implements Therapy {
 
     @NotNull
-    @Value.Default
-    public TreatmentType treatmentType() {
-        return TreatmentType.COMBINED_THERAPY;
-    }
-
-    @NotNull
     public abstract Set<Therapy> therapies();
 
     @Override

@@ -162,7 +162,6 @@ public final class TestClinicalFactory {
         Chemotherapy folfirinox = ImmutableChemotherapy.builder()
                 .name("FOLFIRINOX")
                 .isSystemic(true)
-                .addCategories(TreatmentCategory.CHEMOTHERAPY)
                 .addDrugs(oxaliplatin, fluorouracil, irinotecan)
                 .maxCycles(8)
                 .build();
@@ -170,7 +169,6 @@ public final class TestClinicalFactory {
         Radiotherapy brachytherapy = ImmutableRadiotherapy.builder()
                 .name("Brachytherapy")
                 .isSystemic(false)
-                .addCategories(TreatmentCategory.RADIOTHERAPY)
                 .build();
 
         CombinedTherapy radioFolfirinox = ImmutableCombinedTherapy.builder()
@@ -182,7 +180,6 @@ public final class TestClinicalFactory {
         Immunotherapy pembrolizumab = ImmutableImmunotherapy.builder()
                 .name("Pembrolizumab")
                 .isSystemic(true)
-                .addCategories(TreatmentCategory.IMMUNOTHERAPY)
                 .addDrugs(drug("Pembrolizumab", DrugClass.MONOCLONAL_ANTIBODY))
                 .build();
 
