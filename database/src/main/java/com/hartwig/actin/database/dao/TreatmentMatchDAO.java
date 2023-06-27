@@ -59,7 +59,7 @@ public class TreatmentMatchDAO {
                 .values(treatmentMatch.patientId(),
                         treatmentMatch.sampleId(),
                         treatmentMatch.referenceDate(),
-                        DataUtil.toByte(treatmentMatch.referenceDateIsLive()))
+                        treatmentMatch.referenceDateIsLive())
                 .returning(TREATMENTMATCH.ID)
                 .fetchOne()
                 .getValue(TREATMENTMATCH.ID);
@@ -85,10 +85,10 @@ public class TreatmentMatchDAO {
                         TRIALMATCH.ISELIGIBLE)
                 .values(treatmentMatchId,
                         trialMatch.identification().trialId(),
-                        DataUtil.toByte(trialMatch.identification().open()),
+                        trialMatch.identification().open(),
                         trialMatch.identification().acronym(),
                         trialMatch.identification().title(),
-                        DataUtil.toByte(trialMatch.isPotentiallyEligible()))
+                        trialMatch.isPotentiallyEligible())
                 .returning(TRIALMATCH.ID)
                 .fetchOne()
                 .getValue(TRIALMATCH.ID);
@@ -106,12 +106,12 @@ public class TreatmentMatchDAO {
                         TRIALMATCH.ISELIGIBLE)
                 .values(trialMatchId,
                         cohortMatch.metadata().cohortId(),
-                        DataUtil.toByte(cohortMatch.metadata().evaluable()),
-                        DataUtil.toByte(cohortMatch.metadata().open()),
-                        DataUtil.toByte(cohortMatch.metadata().slotsAvailable()),
-                        DataUtil.toByte(cohortMatch.metadata().blacklist()),
+                        cohortMatch.metadata().evaluable(),
+                        cohortMatch.metadata().open(),
+                        cohortMatch.metadata().slotsAvailable(),
+                        cohortMatch.metadata().blacklist(),
                         cohortMatch.metadata().description(),
-                        DataUtil.toByte(cohortMatch.isPotentiallyEligible()))
+                        cohortMatch.isPotentiallyEligible())
                 .returning(COHORTMATCH.ID)
                 .fetchOne()
                 .getValue(COHORTMATCH.ID);
@@ -142,7 +142,7 @@ public class TreatmentMatchDAO {
                             cohortMatchId,
                             eligibility,
                             evaluation.result().toString(),
-                            DataUtil.toByte(evaluation.recoverable()),
+                            evaluation.recoverable(),
                             DataUtil.concat(evaluation.inclusionMolecularEvents()),
                             DataUtil.concat(evaluation.exclusionMolecularEvents()),
                             DataUtil.concat(evaluation.passSpecificMessages()),

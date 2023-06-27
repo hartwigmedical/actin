@@ -60,7 +60,7 @@ class TreatmentDAO {
 
     private int writeTrialIdentification(@NotNull TrialIdentification identification) {
         return context.insertInto(TRIAL, TRIAL.CODE, TRIAL.OPEN, TRIAL.ACRONYM, TRIAL.TITLE)
-                .values(identification.trialId(), DataUtil.toByte(identification.open()), identification.acronym(), identification.title())
+                .values(identification.trialId(), identification.open(), identification.acronym(), identification.title())
                 .returning(TRIAL.ID)
                 .fetchOne()
                 .getValue(TRIAL.ID);
@@ -104,10 +104,10 @@ class TreatmentDAO {
                         COHORT.DESCRIPTION)
                 .values(trialId,
                         metadata.cohortId(),
-                        DataUtil.toByte(metadata.evaluable()),
-                        DataUtil.toByte(metadata.open()),
-                        DataUtil.toByte(metadata.slotsAvailable()),
-                        DataUtil.toByte(metadata.blacklist()),
+                        metadata.evaluable(),
+                        metadata.open(),
+                        metadata.slotsAvailable(),
+                        metadata.blacklist(),
                         metadata.description())
                 .returning(COHORT.ID)
                 .fetchOne()
