@@ -285,8 +285,11 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
                     .frequencyUnit(entry.dosageInstructionFrequencyUnit)
                     .periodBetweenValue(entry.dosageInstructionPeriodBetweenDosagesValue)
                     .periodBetweenUnit(entry.dosageInstructionPeriodBetweenDosagesUnit)
-                    .build()
-            curation.curatePeriodBetweenUnit(dosage.periodBetweenUnit())
+                    .build().let {
+                        ImmutableDosage.copyOf(it).withPeriodBetweenUnit(curation.curatePeriodBetweenUnit(it.periodBetweenUnit()))
+                            .withDosageUnit(curation.translateDosageUnit(it.dosageUnit()))
+                    }
+
             val builder = ImmutableMedication.builder().dosage(dosage)
             val name: String? = CurationUtil.capitalizeFirstLetterOnly(entry.code5ATCDisplay).ifEmpty {
                 curation.curateMedicationName(CurationUtil.capitalizeFirstLetterOnly(entry.codeText))
