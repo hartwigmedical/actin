@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.feed.questionnaire
+package com.hartwig.actin.clinical.correction
 
 import com.hartwig.actin.util.Paths
 import org.apache.logging.log4j.LogManager
@@ -10,9 +10,9 @@ class QuestionnaireRawEntryMapper(private val correctionMap: Map<String, String>
         questionnaireText: String,
         keyIterator: Iterator<String> = correctionMap.keys.iterator(),
         foundStrings: Set<String> = emptySet()
-    ): Pair<String, Set<String>> {
+    ): QuestionnaireCorrectionResult {
         if (!keyIterator.hasNext()) {
-            return Pair(questionnaireText, foundStrings)
+            return QuestionnaireCorrectionResult(questionnaireText, foundStrings)
         }
         val key = keyIterator.next()
         val found = questionnaireText.contains(key)
