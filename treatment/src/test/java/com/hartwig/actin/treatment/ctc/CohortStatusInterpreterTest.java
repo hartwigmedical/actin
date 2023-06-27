@@ -1,6 +1,5 @@
 package com.hartwig.actin.treatment.ctc;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -141,25 +140,6 @@ public class CohortStatusInterpreterTest {
         for (CTCDatabaseEntry entry : entries) {
             assertTrue(CohortStatusInterpreter.hasValidCTCDatabaseMatches(List.of(entry)));
         }
-    }
-
-    @Test
-    public void shouldBeAbleToPickBestStatusInAllScenarios() {
-        InterpretedCohortStatus openWithSlots = ImmutableInterpretedCohortStatus.builder().open(true).slotsAvailable(true).build();
-        InterpretedCohortStatus openWithoutSlots = ImmutableInterpretedCohortStatus.builder().open(true).slotsAvailable(false).build();
-        InterpretedCohortStatus closedWithoutSlots = ImmutableInterpretedCohortStatus.builder().open(false).slotsAvailable(false).build();
-
-        assertEquals(openWithSlots, CohortStatusInterpreter.pickBest(openWithSlots, openWithSlots));
-        assertEquals(openWithSlots, CohortStatusInterpreter.pickBest(openWithSlots, openWithoutSlots));
-        assertEquals(openWithSlots, CohortStatusInterpreter.pickBest(openWithSlots, closedWithoutSlots));
-
-        assertEquals(openWithSlots, CohortStatusInterpreter.pickBest(openWithoutSlots, openWithSlots));
-        assertEquals(openWithoutSlots, CohortStatusInterpreter.pickBest(openWithoutSlots, openWithoutSlots));
-        assertEquals(openWithoutSlots, CohortStatusInterpreter.pickBest(openWithoutSlots, closedWithoutSlots));
-
-        assertEquals(openWithSlots, CohortStatusInterpreter.pickBest(closedWithoutSlots, openWithSlots));
-        assertEquals(openWithoutSlots, CohortStatusInterpreter.pickBest(closedWithoutSlots, openWithoutSlots));
-        assertEquals(closedWithoutSlots, CohortStatusInterpreter.pickBest(closedWithoutSlots, closedWithoutSlots));
     }
 
     @NotNull

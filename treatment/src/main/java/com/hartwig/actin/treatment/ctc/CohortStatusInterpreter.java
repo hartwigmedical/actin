@@ -1,5 +1,6 @@
 package com.hartwig.actin.treatment.ctc;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -88,43 +89,28 @@ final class CohortStatusInterpreter {
         if (isSingleParent(matches)) {
             return fromEntry(matches.get(0));
         } else if (isListOfChildren(matches)) {
-            InterpretedCohortStatus best = fromEntry(matches.get(0));
-            Integer parentId = matches.get(0).cohortParentId();
-            for (int i = 1; i < matches.size(); i++) {
-                CTCDatabaseEntry entry = matches.get(i);
-                InterpretedCohortStatus status = fromEntry(entry);
-                best = pickBest(best, status);
-                if (!parentId.equals(entry.cohortParentId())) {
-                    LOGGER.warn("Deviating parent IDs discovered on child with cohort ID '{}'", entry.cohortId());
+            Set<InterpretedCohortStatus> states = new HashSet<>();
+            Set<Integer> parentIds = new HashSet<>();
+            for (CTCDatabaseEntry entry : matches) {
+                states.add(fromEntry(entry));
+                parentIds.add(entry.cohortParentId());
+            }
+            InterpretedCohortStatus best = states.stream().max(new InterpretedCohortStatusComparator()).orElseThrow();
+
+            if (parentIds.size() > 1) {
+                LOGGER.warn("Multiple parents found for single set of children: {}", matches);
+            } else {
+                InterpretedCohortStatus parentStatus = fromEntry(findEntryByCohortId(allEntries, parentIds.iterator().next()));
+                if (!best.equals(parentStatus)) {
+                    LOGGER.warn("Inconsistent status between best child and parent cohort in CTC for cohort with parent ID '{}'",
+                            matches.get(0).cohortParentId());
                 }
-                parentId = entry.cohortParentId();
             }
-            InterpretedCohortStatus parentStatus = fromEntry(findEntryByCohortId(allEntries, parentId));
-            if (!best.equals(parentStatus)) {
-                LOGGER.warn("Inconsistent status between best child and parent cohort in CTC for cohort with parent ID '{}'",
-                        matches.get(0).cohortParentId());
-            }
+
             return best;
         }
 
         throw new IllegalStateException("Unexpected set of CTC database matches: " + matches);
-    }
-
-    @NotNull
-    @VisibleForTesting
-    static InterpretedCohortStatus pickBest(@NotNull InterpretedCohortStatus status1, @NotNull InterpretedCohortStatus status2) {
-        if (status1.open()) {
-            if (status2.open()) {
-                return status1.slotsAvailable() || !status2.slotsAvailable() ? status1 : status2;
-            } else {
-                return status1;
-            }
-        } else if (status2.open()) {
-            return status2;
-        } else {
-            // Assuming that if both cohorts are closed, neither cohort has slots available.
-            return status1;
-        }
     }
 
     private static boolean isSingleParent(@NotNull List<CTCDatabaseEntry> matches) {
