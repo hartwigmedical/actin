@@ -79,7 +79,7 @@ public final class CohortStatusInterpreter {
             return false;
         }
 
-        return isSingleParent(matches) || isSingleChild(matches) || isMultipleChildren(matches);
+        return isSingleParent(matches) || isListOfChildren(matches);
     }
 
     @NotNull
@@ -87,7 +87,7 @@ public final class CohortStatusInterpreter {
             @NotNull List<CTCDatabaseEntry> matches) {
         if (isSingleParent(matches)) {
             return fromEntry(matches.get(0));
-        } else if (isSingleChild(matches) || isMultipleChildren(matches)) {
+        } else if (isListOfChildren(matches)) {
             InterpretedCohortStatus best = fromEntry(matches.get(0));
             Integer parentId = matches.get(0).cohortParentId();
             for (int i = 1; i < matches.size(); i++) {
@@ -131,12 +131,8 @@ public final class CohortStatusInterpreter {
         return matches.size() == 1 && !isChild(matches.get(0));
     }
 
-    private static boolean isSingleChild(@NotNull List<CTCDatabaseEntry> matches) {
-        return matches.size() == 1 && isChild(matches.get(0));
-    }
-
-    private static boolean isMultipleChildren(@NotNull List<CTCDatabaseEntry> matches) {
-        if (matches.size() < 2) {
+    private static boolean isListOfChildren(@NotNull List<CTCDatabaseEntry> matches) {
+        if (matches.size() < 1) {
             return false;
         }
 
