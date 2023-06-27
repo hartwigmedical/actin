@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class TrialStatusInterpreter {
+final class TrialStatusInterpreter {
 
     private static final Logger LOGGER = LogManager.getLogger(TrialStatusInterpreter.class);
 
