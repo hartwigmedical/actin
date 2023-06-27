@@ -1,8 +1,8 @@
 package com.hartwig.actin.treatment.ctc;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.hartwig.actin.treatment.ctc.config.CTCDatabaseEntry;
@@ -19,13 +19,10 @@ public final class TrialStatusInterpreter {
 
     @Nullable
     public static Boolean isOpen(@NotNull List<CTCDatabaseEntry> entries, @NotNull TrialDefinitionConfig trialConfig) {
-        Set<CTCStatus> trialStates = new HashSet<>();
-        for (CTCDatabaseEntry entry : entries) {
-            String fullTrialId = extractTrialId(entry);
-            if (fullTrialId.equalsIgnoreCase(trialConfig.trialId())) {
-                trialStates.add(CTCStatus.fromStatusString(entry.studyStatus()));
-            }
-        }
+        Set<CTCStatus> trialStates = entries.stream()
+                .filter(entry -> trialConfig.trialId().equalsIgnoreCase(extractTrialId(entry)))
+                .map(entry -> CTCStatus.fromStatusString(entry.studyStatus()))
+                .collect(Collectors.toSet());
 
         if (trialStates.size() > 1) {
             LOGGER.warn("Inconsistent study status found for trial '{}' in CTC database. Assuming trial is closed", trialConfig.trialId());

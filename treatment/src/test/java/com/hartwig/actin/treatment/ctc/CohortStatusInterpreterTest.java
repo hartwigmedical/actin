@@ -5,6 +5,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -117,14 +119,28 @@ public class CohortStatusInterpreterTest {
     }
 
     @Test
-    public void noConfigIsConsideredInvalid() {
-        assertFalse(CohortStatusInterpreter.hasValidConfiguredCohorts(entries, Set.of()));
+    public void noMatchIsConsideredInvalid() {
+        assertFalse(CohortStatusInterpreter.hasValidCTCDatabaseMatches(Collections.emptyList()));
     }
 
     @Test
-    public void bothParentAndChildConfigIsConsideredInvalid() {
-        assertFalse(CohortStatusInterpreter.hasValidConfiguredCohorts(entries,
-                Set.of(PARENT_OPEN_WITH_SLOTS_COHORT_ID, CHILD_OPEN_WITH_SLOTS_COHORT_ID)));
+    public void nullMatchIsConsideredInvalid() {
+        List<CTCDatabaseEntry> nullEntry = new ArrayList<>();
+        nullEntry.add(null);
+
+        assertFalse(CohortStatusInterpreter.hasValidCTCDatabaseMatches(nullEntry));
+    }
+
+    @Test
+    public void entriesWithBothParentsAndChildAreConsideredInvalid() {
+        assertFalse(CohortStatusInterpreter.hasValidCTCDatabaseMatches(entries));
+    }
+
+    @Test
+    public void singleEntryIsAlwaysConsideredValid() {
+        for (CTCDatabaseEntry entry : entries) {
+            assertTrue(CohortStatusInterpreter.hasValidCTCDatabaseMatches(List.of(entry)));
+        }
     }
 
     @Test

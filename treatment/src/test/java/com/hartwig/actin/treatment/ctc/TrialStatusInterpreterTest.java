@@ -25,29 +25,29 @@ public class TrialStatusInterpreterTest {
 
     @Test
     public void shouldResolveToOpenForTrialsWithExclusivelyOpenEntries() {
-        CTCDatabaseEntry entry1 = createEntry(STUDY_METC_2, "Gesloten");
-        CTCDatabaseEntry entry2 = createEntry(STUDY_METC_1, "Open");
-        TrialDefinitionConfig config = createConfig(TrialStatusInterpreter.extractTrialId(entry2));
+        CTCDatabaseEntry openMETC1 = createEntry(STUDY_METC_1, "Open");
+        CTCDatabaseEntry closedMETC2 = createEntry(STUDY_METC_2, "Gesloten");
+        TrialDefinitionConfig config = createConfig(TrialStatusInterpreter.extractTrialId(openMETC1));
 
-        assertEquals(true, TrialStatusInterpreter.isOpen(List.of(entry1, entry2), config));
+        assertEquals(true, TrialStatusInterpreter.isOpen(List.of(openMETC1, closedMETC2), config));
     }
 
     @Test
     public void shouldResolveToClosedForTrialsWithInconsistentEntries() {
-        CTCDatabaseEntry entry1 = createEntry(STUDY_METC_1, "Gesloten");
-        CTCDatabaseEntry entry2 = createEntry(STUDY_METC_1, "Open");
-        TrialDefinitionConfig config = createConfig(TrialStatusInterpreter.extractTrialId(entry1));
+        CTCDatabaseEntry openMETC1 = createEntry(STUDY_METC_1, "Open");
+        CTCDatabaseEntry closedMETC1 = createEntry(STUDY_METC_1, "Gesloten");
+        TrialDefinitionConfig config = createConfig(TrialStatusInterpreter.extractTrialId(closedMETC1));
 
-        assertEquals(false, TrialStatusInterpreter.isOpen(List.of(entry1, entry2), config));
+        assertEquals(false, TrialStatusInterpreter.isOpen(List.of(openMETC1, closedMETC1), config));
     }
 
     @Test
     public void shouldResolveToClosedForTrialsWithClosedEntriesExclusively() {
-        CTCDatabaseEntry entry1 = createEntry(STUDY_METC_1, "Gesloten");
-        CTCDatabaseEntry entry2 = createEntry(STUDY_METC_2, "Open");
-        TrialDefinitionConfig config = createConfig(TrialStatusInterpreter.extractTrialId(entry1));
+        CTCDatabaseEntry closedMETC1 = createEntry(STUDY_METC_1, "Gesloten");
+        CTCDatabaseEntry openMETC2 = createEntry(STUDY_METC_2, "Open");
+        TrialDefinitionConfig config = createConfig(TrialStatusInterpreter.extractTrialId(closedMETC1));
 
-        assertEquals(false, TrialStatusInterpreter.isOpen(List.of(entry1, entry2), config));
+        assertEquals(false, TrialStatusInterpreter.isOpen(List.of(closedMETC1, openMETC2), config));
     }
 
     @NotNull
