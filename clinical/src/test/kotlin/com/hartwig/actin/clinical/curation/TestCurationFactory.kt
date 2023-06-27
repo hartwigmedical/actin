@@ -303,11 +303,11 @@ object TestCurationFactory {
                 input = "once per day 50-60 mg every month",
                 dosageMin = 50.0,
                 dosageMax = 60.0,
-                dosageUnit = "mg",
+                dosageUnit = "milligram",
                 frequency = 1.0,
                 frequencyUnit = "day",
-                periodBetweenValue = 0.0,
-                periodBetweenUnit = "months",
+                periodBetweenValue = 1.0,
+                periodBetweenUnit = "mo",
                 ifNeeded = false
             )
         )
@@ -351,7 +351,8 @@ object TestCurationFactory {
 
     private fun createTestDosageUnitTranslations(): List<DosageUnitTranslation> {
         return listOf(
-            DosageUnitTranslation(dosageUnit = "stuk", translatedDosageUnit = "piece")
+            DosageUnitTranslation(dosageUnit = "stuk", translatedDosageUnit = "piece"),
+            DosageUnitTranslation(dosageUnit = "milligram", translatedDosageUnit = "mg")
         )
     }
 

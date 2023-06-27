@@ -207,6 +207,8 @@ class ClinicalRecordsFactoryTest {
             assertEquals(60.0, medication.dosage().dosageMax()!!, EPSILON)
             assertEquals("mg", medication.dosage().dosageUnit())
             assertEquals("day", medication.dosage().frequencyUnit())
+            assertEquals(1.0, medication.dosage().periodBetweenValue())
+            assertEquals("months", medication.dosage().periodBetweenUnit())
             assertFalse(medication.dosage().ifNeeded()!!)
             assertEquals(LocalDate.of(2019, 2, 2), medication.startDate())
             assertEquals(LocalDate.of(2019, 4, 4), medication.stopDate())

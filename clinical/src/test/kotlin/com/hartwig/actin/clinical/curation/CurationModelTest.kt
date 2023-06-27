@@ -36,7 +36,7 @@ import org.apache.logging.log4j.util.Strings
 import org.junit.Test
 import java.time.LocalDate
 
-class CurationModelTest {
+class CurationMoedelTest {
 
     private val model = TestCurationFactory.createProperTestCurationModel()
 
@@ -300,11 +300,11 @@ class CurationModelTest {
         assertNotNull(medication)
         assertDoubleEquals(50.0, medication!!.dosageMin())
         assertDoubleEquals(60.0, medication.dosageMax())
-        assertEquals("mg", medication.dosageUnit())
+        assertEquals("milligram", medication.dosageUnit())
         assertDoubleEquals(1.0, medication.frequency())
         assertEquals("day", medication.frequencyUnit())
-        assertEquals(0.0, medication.periodBetweenValue())
-        assertEquals("months", medication.periodBetweenUnit())
+        assertEquals(1.0, medication.periodBetweenValue())
+        assertEquals("mo", medication.periodBetweenUnit())
         assertEquals(false, medication.ifNeeded())
 
         assertNull(model.curateMedicationDosage("does not exist"))
