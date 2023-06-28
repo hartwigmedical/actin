@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation
 
+import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
 import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
@@ -28,7 +29,6 @@ import com.hartwig.actin.clinical.datamodel.treatment.ImmutableChemotherapy
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
-import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireRawEntryMapper
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.apache.logging.log4j.util.Strings
 import java.util.*

@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.feed.questionnaire
 
 import com.hartwig.actin.clinical.datamodel.TumorStage
-import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction.Companion.isActualQuestionnaire
+import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction.isActualQuestionnaire
 import com.hartwig.actin.clinical.feed.questionnaire.TestQuestionnaireFactory.entryWithText
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
@@ -243,8 +243,8 @@ class QuestionnaireExtractionTest {
 
     @Test
     fun canExtractFromMissingOrInvalidEntry() {
-        assertNull(extraction().extract(null))
-        assertNull(extraction().extract(entryWithText("Does not exist")))
+        assertNull(QuestionnaireExtraction.extract(null))
+        assertNull(QuestionnaireExtraction.extract(entryWithText("Does not exist")))
     }
 
     companion object {
@@ -354,11 +354,7 @@ class QuestionnaireExtractionTest {
         }
 
         private fun questionnaire(text: String): Questionnaire {
-            return extraction().extract(entryWithText(text))!!
-        }
-
-        private fun extraction(): QuestionnaireExtraction {
-            return QuestionnaireExtraction(QuestionnaireRawEntryMapper(emptyMap()))
+            return QuestionnaireExtraction.extract(entryWithText(text))!!
         }
     }
 }

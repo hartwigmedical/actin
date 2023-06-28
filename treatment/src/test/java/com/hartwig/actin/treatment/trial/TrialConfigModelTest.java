@@ -7,7 +7,8 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 
 import com.google.common.io.Resources;
-import com.hartwig.actin.treatment.trial.config.TestTrialConfigFactory;
+import com.hartwig.actin.treatment.TestTrialData;
+import com.hartwig.actin.treatment.trial.config.TestTrialConfigDatabaseFactory;
 
 import org.junit.Test;
 
@@ -22,7 +23,7 @@ public class TrialConfigModelTest {
 
     @Test
     public void canQueryMinimalModel() {
-        TrialConfigModel model = new TrialConfigModel(TestTrialConfigFactory.createMinimalTestTrialConfigDatabase());
+        TrialConfigModel model = new TrialConfigModel(TestTrialConfigDatabaseFactory.createMinimalTestTrialConfigDatabase());
 
         assertTrue(model.trials().isEmpty());
         assertTrue(model.cohortsForTrial("any trial").isEmpty());
@@ -33,18 +34,18 @@ public class TrialConfigModelTest {
 
     @Test
     public void canQueryProperModel() {
-        TrialConfigModel model = new TrialConfigModel(TestTrialConfigFactory.createProperTestTrialConfigDatabase());
+        TrialConfigModel model = new TrialConfigModel(TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase());
 
         assertEquals(2, model.trials().size());
 
-        assertEquals(3, model.cohortsForTrial(TestTrialConfigFactory.TEST_TRIAL_ID_1).size());
-        assertEquals(1, model.generalInclusionCriteriaForTrial(TestTrialConfigFactory.TEST_TRIAL_ID_1).size());
-        assertEquals(2, model.specificInclusionCriteriaForCohort(TestTrialConfigFactory.TEST_TRIAL_ID_1, "A").size());
-        assertEquals(0, model.specificInclusionCriteriaForCohort(TestTrialConfigFactory.TEST_TRIAL_ID_1, "B").size());
-        assertEquals(3, model.referencesForTrial(TestTrialConfigFactory.TEST_TRIAL_ID_1).size());
+        assertEquals(3, model.cohortsForTrial(TestTrialData.TEST_TRIAL_ID_1).size());
+        assertEquals(1, model.generalInclusionCriteriaForTrial(TestTrialData.TEST_TRIAL_ID_1).size());
+        assertEquals(2, model.specificInclusionCriteriaForCohort(TestTrialData.TEST_TRIAL_ID_1, "A").size());
+        assertEquals(0, model.specificInclusionCriteriaForCohort(TestTrialData.TEST_TRIAL_ID_1, "B").size());
+        assertEquals(3, model.referencesForTrial(TestTrialData.TEST_TRIAL_ID_1).size());
 
-        assertEquals(0, model.cohortsForTrial(TestTrialConfigFactory.TEST_TRIAL_ID_2).size());
-        assertEquals(1, model.generalInclusionCriteriaForTrial(TestTrialConfigFactory.TEST_TRIAL_ID_2).size());
-        assertEquals(1, model.referencesForTrial(TestTrialConfigFactory.TEST_TRIAL_ID_2).size());
+        assertEquals(0, model.cohortsForTrial(TestTrialData.TEST_TRIAL_ID_2).size());
+        assertEquals(1, model.generalInclusionCriteriaForTrial(TestTrialData.TEST_TRIAL_ID_2).size());
+        assertEquals(1, model.referencesForTrial(TestTrialData.TEST_TRIAL_ID_2).size());
     }
 }

@@ -6,6 +6,7 @@ import com.google.common.collect.Lists
 import com.google.common.collect.Multimap
 import com.google.common.collect.Sets
 import com.hartwig.actin.clinical.curation.CurationUtil.fullTrim
+import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.ECGConfig
@@ -54,7 +55,6 @@ import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
-import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireRawEntryMapper
 import com.hartwig.actin.doid.DoidModel
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.util.Strings

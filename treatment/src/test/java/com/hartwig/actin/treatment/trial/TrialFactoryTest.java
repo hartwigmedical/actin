@@ -10,12 +10,13 @@ import java.util.List;
 import com.google.common.io.Resources;
 import com.hartwig.actin.doid.TestDoidModelFactory;
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory;
+import com.hartwig.actin.treatment.ctc.TestCTCModelFactory;
 import com.hartwig.actin.treatment.datamodel.Cohort;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.Trial;
-import com.hartwig.actin.treatment.trial.config.TestTrialConfigFactory;
+import com.hartwig.actin.treatment.trial.config.TestTrialConfigDatabaseFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -27,13 +28,15 @@ public class TrialFactoryTest {
     @Test
     public void canCreateFromTrialConfigDirectory() throws IOException {
         assertNotNull(TrialFactory.create(TRIAL_CONFIG_DIRECTORY,
+                TestCTCModelFactory.createWithMinimalTestCTCDatabase(),
                 TestDoidModelFactory.createMinimalTestDoidModel(),
                 TestGeneFilterFactory.createNeverValid()));
     }
 
     @Test
     public void canCreateFromProperTestModel() {
-        TrialFactory factory = new TrialFactory(new TrialConfigModel(TestTrialConfigFactory.createProperTestTrialConfigDatabase()),
+        TrialFactory factory = new TrialFactory(new TrialConfigModel(TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase()),
+                TestCTCModelFactory.createWithProperTestCTCDatabase(),
                 TestEligibilityFactoryFactory.createTestEligibilityFactory());
         List<Trial> trials = factory.create();
 
