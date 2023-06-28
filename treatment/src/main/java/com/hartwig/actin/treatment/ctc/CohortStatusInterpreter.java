@@ -1,6 +1,5 @@
 package com.hartwig.actin.treatment.ctc;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -89,22 +88,20 @@ final class CohortStatusInterpreter {
         if (isSingleParent(matches)) {
             return fromEntry(matches.get(0));
         } else if (isListOfChildren(matches)) {
-            Set<InterpretedCohortStatus> states = new HashSet<>();
-            Set<Integer> parentIds = new HashSet<>();
-            for (CTCDatabaseEntry entry : matches) {
-                states.add(fromEntry(entry));
-                parentIds.add(entry.cohortParentId());
-            }
-            InterpretedCohortStatus best = states.stream().max(new InterpretedCohortStatusComparator()).orElseThrow();
+            InterpretedCohortStatus best =
+                    matches.stream().map(CohortStatusInterpreter::fromEntry).max(new InterpretedCohortStatusComparator()).orElseThrow();
 
-            if (parentIds.size() > 1) {
-                LOGGER.warn("Multiple parents found for single set of children: {}", matches);
-            } else {
-                InterpretedCohortStatus parentStatus = fromEntry(findEntryByCohortId(allEntries, parentIds.iterator().next()));
-                if (!best.equals(parentStatus)) {
-                    LOGGER.warn("Inconsistent status between best child and parent cohort in CTC for cohort with parent ID '{}'",
-                            matches.get(0).cohortParentId());
+            Integer firstParentId = matches.get(0).cohortParentId();
+            if (matches.size() > 1) {
+                if (matches.stream().anyMatch(entry -> !Objects.equals(entry.cohortParentId(), firstParentId))) {
+                    LOGGER.warn("Multiple parents found for single set of children: {}", matches);
                 }
+            }
+
+            InterpretedCohortStatus firstParentStatus = fromEntry(findEntryByCohortId(allEntries, firstParentId));
+            if (!best.equals(firstParentStatus)) {
+                LOGGER.warn("Inconsistent status between best child and parent cohort in CTC for cohort with parent ID '{}'",
+                        matches.get(0).cohortParentId());
             }
 
             return best;
