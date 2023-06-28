@@ -22,6 +22,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
+import com.hartwig.actin.clinical.datamodel.BodyLocationCategory;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.Complication;
@@ -173,6 +174,8 @@ public class ClinicalGsonDeserializer {
                 }.getType(), new ImmutableSetAdapter<Therapy>(Therapy.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<Treatment>>() {
                 }.getType(), new ImmutableSetAdapter<Treatment>(Treatment.class))
+                .registerTypeAdapter(new TypeToken<ImmutableSet<BodyLocationCategory>>() {
+                }.getType(), new ImmutableSetAdapter<BodyLocationCategory>(BodyLocationCategory.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<DrugClass>>() {
                 }.getType(), new ImmutableSetAdapter<DrugClass>(DrugClass.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<Intent>>() {

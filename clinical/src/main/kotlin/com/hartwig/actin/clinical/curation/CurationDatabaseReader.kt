@@ -103,8 +103,10 @@ class CurationDatabaseReader internal constructor(private val curationValidator:
         private const val BLOOD_TRANSFUSION_TRANSLATION_TSV = "blood_transfusion_translation.tsv"
 
         private fun treatmentsByName(basePath: String): Map<String, Treatment> {
-            val drugsByName = DrugJson.read(basePath + File.separator + DRUG_JSON).associateBy { it.name().lowercase() }
-            return TreatmentJson.read(basePath + File.separator + TREATMENT_JSON, drugsByName)
+            // TODO: extract treatment DB from curation DB
+            val treatmentBasePath = listOf(basePath, "..", "treatment_db").joinToString(File.separator)
+            val drugsByName = DrugJson.read(treatmentBasePath + File.separator + DRUG_JSON).associateBy { it.name().lowercase() }
+            return TreatmentJson.read(treatmentBasePath + File.separator + TREATMENT_JSON, drugsByName)
                 .flatMap { treatment -> (treatment.synonyms() + treatment.name()).map { Pair(it.lowercase(), treatment) } }
                 .toMap()
         }
