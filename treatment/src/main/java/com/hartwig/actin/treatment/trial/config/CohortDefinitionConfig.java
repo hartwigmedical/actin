@@ -1,5 +1,7 @@
 package com.hartwig.actin.treatment.trial.config;
 
+import java.util.Set;
+
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,11 +17,16 @@ public abstract class CohortDefinitionConfig implements TrialConfig {
     @NotNull
     public abstract String cohortId();
 
+    @NotNull
+    public abstract Set<String> ctcCohortIds();
+
     public abstract boolean evaluable();
 
-    public abstract boolean open();
+    @Nullable
+    public abstract Boolean open();
 
-    public abstract boolean slotsAvailable();
+    @Nullable
+    public abstract Boolean slotsAvailable();
 
     public abstract boolean blacklist();
 
