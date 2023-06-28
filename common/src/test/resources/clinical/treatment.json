@@ -10,7 +10,6 @@
       "Capecitabine",
       "Oxaliplatin"
     ],
-    "maxCycles": null,
-    "treatmentType": "CHEMOTHERAPY"
+    "maxCycles": null
   }
 ]

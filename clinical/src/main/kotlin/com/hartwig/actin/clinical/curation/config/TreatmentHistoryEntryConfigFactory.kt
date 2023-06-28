@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation.config
 
+import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.datamodel.BodyLocationCategory
 import com.hartwig.actin.clinical.datamodel.ImmutableObservedToxicity
@@ -21,12 +22,12 @@ object TreatmentHistoryEntryConfigFactory {
 
     fun createConfig(
         treatmentName: String,
-        treatmentsByName: Map<String, Treatment>,
+        treatmentDatabase: TreatmentDatabase,
         parts: List<String>,
         fields: Map<String, Int>
     ): TreatmentHistoryEntryConfig {
         val ignore: Boolean = CurationUtil.isIgnoreString(treatmentName)
-        val treatment = treatmentsByName[treatmentName]
+        val treatment = treatmentDatabase.findTreatmentByName(treatmentName)
         if (!ignore && treatment == null) {
             LOGGER.warn("Could not find treatment with name $treatmentName")
         }

@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation
 
+import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.curation.config.ComplicationConfigFactory
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfigFactory
@@ -25,15 +26,11 @@ import com.hartwig.actin.clinical.curation.translation.ToxicityTranslationFactor
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.curation.translation.TranslationFactory
 import com.hartwig.actin.clinical.curation.translation.TranslationFile
-import com.hartwig.actin.clinical.datamodel.treatment.Treatment
-import com.hartwig.actin.clinical.serialization.DrugJson
-import com.hartwig.actin.clinical.serialization.TreatmentJson
 import com.hartwig.actin.util.Paths
 import org.apache.logging.log4j.LogManager
-import java.io.File
 import java.io.IOException
 
-class CurationDatabaseReader internal constructor(private val curationValidator: CurationValidator) {
+class CurationDatabaseReader(private val curationValidator: CurationValidator, private val treatmentDatabase: TreatmentDatabase) {
     @Throws(IOException::class)
     fun read(clinicalCurationDirectory: String): CurationDatabase {
         LOGGER.info("Reading clinical curation config from {}", clinicalCurationDirectory)
@@ -41,10 +38,7 @@ class CurationDatabaseReader internal constructor(private val curationValidator:
 
         return CurationDatabase(
             primaryTumorConfigs = readConfigs(basePath, PRIMARY_TUMOR_TSV, PrimaryTumorConfigFactory(curationValidator)),
-            treatmentHistoryEntryConfigs = TreatmentHistoryCurationConfigFile.read(
-                basePath + ONCOLOGICAL_HISTORY_TSV,
-                treatmentsByName(basePath)
-            ),
+            treatmentHistoryEntryConfigs = TreatmentHistoryCurationConfigFile.read(basePath + ONCOLOGICAL_HISTORY_TSV, treatmentDatabase),
             oncologicalHistoryConfigs = readConfigs(basePath, ONCOLOGICAL_HISTORY_TSV, OncologicalHistoryConfigFactory()),
             secondPrimaryConfigs = readConfigs(basePath, SECOND_PRIMARY_TSV, SecondPrimaryConfigFactory(curationValidator)),
             lesionLocationConfigs = readConfigs(basePath, LESION_LOCATION_TSV, LesionLocationConfigFactory()),
@@ -80,9 +74,6 @@ class CurationDatabaseReader internal constructor(private val curationValidator:
     companion object {
         private val LOGGER = LogManager.getLogger(CurationDatabaseReader::class.java)
 
-        private const val DRUG_JSON = "drug.json"
-        private const val TREATMENT_JSON = "treatment.json"
-
         private const val PRIMARY_TUMOR_TSV = "primary_tumor.tsv"
         private const val ONCOLOGICAL_HISTORY_TSV = "oncological_history.tsv"
         private const val SECOND_PRIMARY_TSV = "second_primary.tsv"
@@ -101,15 +92,6 @@ class CurationDatabaseReader internal constructor(private val curationValidator:
         private const val LABORATORY_TRANSLATION_TSV = "laboratory_translation.tsv"
         private const val TOXICITY_TRANSLATION_TSV = "toxicity_translation.tsv"
         private const val BLOOD_TRANSFUSION_TRANSLATION_TSV = "blood_transfusion_translation.tsv"
-
-        private fun treatmentsByName(basePath: String): Map<String, Treatment> {
-            // TODO: extract treatment DB from curation DB
-            val treatmentBasePath = listOf(basePath, "..", "treatment_db").joinToString(File.separator)
-            val drugsByName = DrugJson.read(treatmentBasePath + File.separator + DRUG_JSON).associateBy { it.name().lowercase() }
-            return TreatmentJson.read(treatmentBasePath + File.separator + TREATMENT_JSON, drugsByName)
-                .flatMap { treatment -> (treatment.synonyms() + treatment.name()).map { Pair(it.lowercase(), treatment) } }
-                .toMap()
-        }
 
         @Throws(IOException::class)
         private fun <T : CurationConfig> readConfigs(basePath: String, tsv: String, configFactory: CurationConfigFactory<T>): List<T> {

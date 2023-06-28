@@ -2,6 +2,7 @@ package com.hartwig.actin.clinical.curation
 
 import com.google.common.collect.Sets
 import com.google.common.io.Resources
+import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
@@ -21,7 +22,10 @@ import org.junit.Test
 import java.io.IOException
 
 class CurationDatabaseReaderTest {
-    private val reader = CurationDatabaseReader(TestCurationFactory.createMinimalTestCurationDatabaseValidator())
+    private val reader = CurationDatabaseReader(
+        TestCurationFactory.createMinimalTestCurationDatabaseValidator(),
+        TreatmentDatabaseFactory.createFromPath(TREATMENT_DIRECTORY)
+    )
     private var database: CurationDatabase? = null
 
     @Before
@@ -354,6 +358,7 @@ class CurationDatabaseReaderTest {
     companion object {
         private const val EPSILON = 1.0E-10
         private val CURATION_DIRECTORY = Resources.getResource("curation").path
+        private val TREATMENT_DIRECTORY = Resources.getResource("treatment_db").path
         private fun <T : CurationConfig> find(configs: List<T>, input: String): T {
             for (config in configs) {
                 if (config.input == input) {

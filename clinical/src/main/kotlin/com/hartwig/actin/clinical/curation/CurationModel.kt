@@ -5,8 +5,9 @@ import com.google.common.collect.HashMultimap
 import com.google.common.collect.Lists
 import com.google.common.collect.Multimap
 import com.google.common.collect.Sets
-import com.hartwig.actin.clinical.curation.CurationUtil.fullTrim
+import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
+import com.hartwig.actin.clinical.curation.CurationUtil.fullTrim
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.ECGConfig
@@ -748,8 +749,8 @@ class CurationModel @VisibleForTesting internal constructor(
         private val LOGGER = LogManager.getLogger(CurationModel::class.java)
 
         @Throws(IOException::class)
-        fun create(clinicalCurationDirectory: String, doidModel: DoidModel): CurationModel {
-            val reader = CurationDatabaseReader(CurationValidator(doidModel))
+        fun create(clinicalCurationDirectory: String, doidModel: DoidModel, treatmentDatabase: TreatmentDatabase): CurationModel {
+            val reader = CurationDatabaseReader(CurationValidator(doidModel), treatmentDatabase)
             val questionnaireRawEntryMapper: QuestionnaireRawEntryMapper =
                 QuestionnaireRawEntryMapper.createFromCurationDirectory(clinicalCurationDirectory)
             return CurationModel(reader.read(clinicalCurationDirectory), questionnaireRawEntryMapper)

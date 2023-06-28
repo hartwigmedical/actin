@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical
 
+import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
 import com.hartwig.actin.clinical.curation.CurationModel
 import com.hartwig.actin.clinical.feed.ClinicalFeedReader
@@ -26,7 +27,10 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
 
         LOGGER.info("Creating clinical curation model from directory {}", config.curationDirectory)
         val curationModel: CurationModel =
-            CurationModel.create(config.curationDirectory, DoidModelFactory.createFromDoidEntry(doidEntry))
+            CurationModel.create(
+                config.curationDirectory, DoidModelFactory.createFromDoidEntry(doidEntry),
+                TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
+            )
 
         LOGGER.info("Creating clinical feed model from directory {}", config.feedDirectory)
         val clinicalFeed = ClinicalFeedReader.read(config.feedDirectory)
