@@ -67,18 +67,17 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
     }
 
     fun create(): List<ClinicalRecord> {
-        val records: MutableList<ClinicalRecord> = Lists.newArrayList<ClinicalRecord>()
         val processedPatientIds: MutableSet<String> = HashSet()
-        val extraction = QuestionnaireExtraction(curation.questionnaireRawEntryMapper())
 
         LOGGER.info("Creating clinical model")
-        for (subject in feed.subjects()) {
+        val records = feed.subjects().map { subject ->
             val patientId = toPatientId(subject)
             check(!processedPatientIds.contains(patientId)) { "Cannot create clinical records. Duplicate patientId: $patientId" }
             processedPatientIds.add(patientId)
             LOGGER.info(" Extracting and curating data for patient {}", patientId)
 
-            val questionnaire: Questionnaire? = extraction.extract(feed.latestQuestionnaireEntry(subject))
+            val questionnaire = feed.latestQuestionnaireEntry(subject)?.let { QuestionnaireExtraction.extract(it) }
+
             val extractedToxicities = extractToxicities(subject, questionnaire)
             val toxicityEvaluations: List<ToxicityEvaluation> = extractedToxicities
                 .map { toxicity: Toxicity ->
@@ -97,31 +96,28 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
                         .build()
                 }
 
-            records.add(
-                ImmutableClinicalRecord.builder()
-                    .patientId(patientId)
-                    .patient(extractPatientDetails(subject, questionnaire))
-                    .tumor(extractTumorDetails(questionnaire))
-                    .clinicalStatus(extractClinicalStatus(questionnaire))
-                    .priorTumorTreatments(extractPriorTumorTreatments(questionnaire))
-                    .priorSecondPrimaries(extractPriorSecondPrimaries(questionnaire))
-                    .priorOtherConditions(extractPriorOtherConditions(questionnaire))
-                    .priorMolecularTests(extractPriorMolecularTests(questionnaire))
-                    .complications(extractComplications(questionnaire))
-                    .labValues(extractLabValues(subject))
-                    .toxicities(extractedToxicities)
-                    .toxicityEvaluations(toxicityEvaluations)
-                    .intolerances(extractIntolerances(subject))
-                    .surgeries(extractSurgeries(subject))
-                    .surgicalTreatments(extractSurgicalTreatments(subject))
-                    .bodyWeights(extractBodyWeights(subject))
-                    .vitalFunctions(extractVitalFunctions(subject))
-                    .bloodTransfusions(extractBloodTransfusions(subject))
-                    .medications(extractMedications(subject))
-                    .build()
-            )
-        }
-        records.sortWith(ClinicalRecordComparator())
+            ImmutableClinicalRecord.builder()
+                .patientId(patientId)
+                .patient(extractPatientDetails(subject, questionnaire))
+                .tumor(extractTumorDetails(questionnaire))
+                .clinicalStatus(extractClinicalStatus(questionnaire))
+                .priorTumorTreatments(extractPriorTumorTreatments(questionnaire))
+                .priorSecondPrimaries(extractPriorSecondPrimaries(questionnaire))
+                .priorOtherConditions(extractPriorOtherConditions(questionnaire))
+                .priorMolecularTests(extractPriorMolecularTests(questionnaire))
+                .complications(extractComplications(questionnaire))
+                .labValues(extractLabValues(subject))
+                .toxicities(extractedToxicities)
+                .toxicityEvaluations(toxicityEvaluations)
+                .intolerances(extractIntolerances(subject))
+                .surgeries(extractSurgeries(subject))
+                .surgicalTreatments(extractSurgicalTreatments(subject))
+                .bodyWeights(extractBodyWeights(subject))
+                .vitalFunctions(extractVitalFunctions(subject))
+                .bloodTransfusions(extractBloodTransfusions(subject))
+                .medications(extractMedications(subject))
+                .build()
+        }.sortedWith(ClinicalRecordComparator())
 
         LOGGER.info("Evaluating curation database")
         curation.evaluate()
