@@ -10,6 +10,7 @@ java -cp actin.jar com.hartwig.actin.treatment.TreatmentCreatorApplication \
    -trial_config_directory /path/to/trial_config_dir \
    -ctc_config_directory /path/to/ctc_config_dir \
    -doid_json /path/to/full_doid_tree_json_file \
+   -known_genes_tsv /path/to/known_genes.tsv \
    -output_directory /path/to/where/treatment_json_files/are/written
 ```
 
