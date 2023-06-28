@@ -10,7 +10,7 @@
 
     <artifactId>system</artifactId>
     <packaging>jar</packaging>
-    <version>${actin.version}</version>
+    <version>local-SNAPSHOT</version>
     <name>HMF ACTIN - System</name>
 
     <dependencies>
@@ -68,7 +68,7 @@
                             <Multi-Release>true</Multi-Release>
                         </manifestEntries>
                     </archive>
-
+                    <appendAssemblyId>false</appendAssemblyId>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>

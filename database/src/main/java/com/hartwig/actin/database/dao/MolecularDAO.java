@@ -190,18 +190,18 @@ class MolecularDAO {
                         record.date(),
                         record.evidenceSource(),
                         record.externalTrialSource(),
-                        DataUtil.toByte(record.containsTumorCells()),
-                        DataUtil.toByte(record.hasSufficientQualityAndPurity()),
+                        record.containsTumorCells(),
+                        record.hasSufficientQualityAndPurity(),
                         record.characteristics().purity(),
                         record.characteristics().ploidy(),
                         predictedTumorOrigin != null ? predictedTumorOrigin.cancerType() : null,
                         predictedTumorOrigin != null ? predictedTumorOrigin.likelihood() : null,
-                        DataUtil.toByte(record.characteristics().isMicrosatelliteUnstable()),
-                        DataUtil.toByte(record.characteristics().isHomologousRepairDeficient()),
+                        record.characteristics().isMicrosatelliteUnstable(),
+                        record.characteristics().isHomologousRepairDeficient(),
                         record.characteristics().tumorMutationalBurden(),
-                        DataUtil.toByte(record.characteristics().hasHighTumorMutationalBurden()),
+                        record.characteristics().hasHighTumorMutationalBurden(),
                         record.characteristics().tumorMutationalLoad(),
-                        DataUtil.toByte(record.characteristics().hasHighTumorMutationalLoad()))
+                        record.characteristics().hasHighTumorMutationalLoad())
                 .returning(MOLECULAR.ID)
                 .fetchOne()
                 .getValue(MOLECULAR.ID);
@@ -297,18 +297,18 @@ class MolecularDAO {
                             VARIANT.CANONICALEFFECTS,
                             VARIANT.CANONICALCODINGEFFECT)
                     .values(sampleId,
-                            DataUtil.toByte(variant.isReportable()),
+                            variant.isReportable(),
                             variant.event(),
                             driverLikelihood(variant),
                             variant.gene(),
                             variant.geneRole().toString(),
                             variant.proteinEffect().toString(),
-                            DataUtil.toByte(variant.isAssociatedWithDrugResistance()),
+                            variant.isAssociatedWithDrugResistance(),
                             variant.type().toString(),
                             variant.variantCopyNumber(),
                             variant.totalCopyNumber(),
-                            DataUtil.toByte(variant.isBiallelic()),
-                            DataUtil.toByte(variant.isHotspot()),
+                            variant.isBiallelic(),
+                            variant.isHotspot(),
                             variant.clonalLikelihood(),
                             DataUtil.concat(integersToStrings(variant.phaseGroups())),
                             variant.canonicalImpact().transcriptId(),
@@ -316,7 +316,7 @@ class MolecularDAO {
                             variant.canonicalImpact().hgvsProteinImpact(),
                             variant.canonicalImpact().affectedCodon(),
                             variant.canonicalImpact().affectedExon(),
-                            DataUtil.toByte(variant.canonicalImpact().isSpliceRegion()),
+                            variant.canonicalImpact().isSpliceRegion(),
                             DataUtil.concat(effectsToStrings(variant.canonicalImpact().effects())),
                             DataUtil.nullableToString(variant.canonicalImpact().codingEffect()))
                     .returning(VARIANT.ID)
@@ -360,13 +360,13 @@ class MolecularDAO {
                             COPYNUMBER.MINCOPIES,
                             COPYNUMBER.MAXCOPIES)
                     .values(sampleId,
-                            DataUtil.toByte(copyNumber.isReportable()),
+                            copyNumber.isReportable(),
                             copyNumber.event(),
                             driverLikelihood(copyNumber),
                             copyNumber.gene(),
                             copyNumber.geneRole().toString(),
                             copyNumber.proteinEffect().toString(),
-                            DataUtil.toByte(copyNumber.isAssociatedWithDrugResistance()),
+                            copyNumber.isAssociatedWithDrugResistance(),
                             copyNumber.type().toString(),
                             copyNumber.minCopies(),
                             copyNumber.maxCopies())
@@ -399,13 +399,13 @@ class MolecularDAO {
                             HOMOZYGOUSDISRUPTION.PROTEINEFFECT,
                             HOMOZYGOUSDISRUPTION.ISASSOCIATEDWITHDRUGRESISTANCE)
                     .values(sampleId,
-                            DataUtil.toByte(homozygousDisruption.isReportable()),
+                            homozygousDisruption.isReportable(),
                             homozygousDisruption.event(),
                             driverLikelihood(homozygousDisruption),
                             homozygousDisruption.gene(),
                             homozygousDisruption.geneRole().toString(),
                             homozygousDisruption.proteinEffect().toString(),
-                            DataUtil.toByte(homozygousDisruption.isAssociatedWithDrugResistance()))
+                            homozygousDisruption.isAssociatedWithDrugResistance())
                     .returning(HOMOZYGOUSDISRUPTION.ID)
                     .fetchOne()
                     .getValue(HOMOZYGOUSDISRUPTION.ID);
@@ -442,13 +442,13 @@ class MolecularDAO {
                             DISRUPTION.CODINGCONTEXT,
                             DISRUPTION.CLUSTERGROUP)
                     .values(sampleId,
-                            DataUtil.toByte(disruption.isReportable()),
+                            disruption.isReportable(),
                             disruption.event(),
                             driverLikelihood(disruption),
                             disruption.gene(),
                             disruption.geneRole().toString(),
                             disruption.proteinEffect().toString(),
-                            DataUtil.toByte(disruption.isAssociatedWithDrugResistance()),
+                            disruption.isAssociatedWithDrugResistance(),
                             disruption.type().toString(),
                             disruption.junctionCopyNumber(),
                             disruption.undisruptedCopyNumber(),
@@ -489,7 +489,7 @@ class MolecularDAO {
                             FUSION.PROTEINEFFECT,
                             FUSION.ISASSOCIATEDWITHDRUGRESISTANCE)
                     .values(sampleId,
-                            DataUtil.toByte(fusion.isReportable()),
+                            fusion.isReportable(),
                             fusion.event(),
                             driverLikelihood(fusion),
                             fusion.geneStart(),
@@ -500,7 +500,7 @@ class MolecularDAO {
                             fusion.fusedExonDown(),
                             fusion.driverType().toString(),
                             fusion.proteinEffect().toString(),
-                            DataUtil.toByte(fusion.isAssociatedWithDrugResistance()))
+                            fusion.isAssociatedWithDrugResistance())
                     .returning(FUSION.ID)
                     .fetchOne()
                     .getValue(FUSION.ID);
@@ -530,12 +530,12 @@ class MolecularDAO {
                             VIRUS.ISRELIABLE,
                             VIRUS.INTEGRATIONS)
                     .values(sampleId,
-                            DataUtil.toByte(virus.isReportable()),
+                            virus.isReportable(),
                             virus.event(),
                             driverLikelihood(virus),
                             virus.name(),
                             virus.type().toString(),
-                            DataUtil.toByte(virus.isReliable()),
+                            virus.isReliable(),
                             virus.integrations())
                     .returning(VIRUS.ID)
                     .fetchOne()
@@ -544,7 +544,7 @@ class MolecularDAO {
         }
     }
 
-    private void writeVirusEvidence(int virusId,@NotNull ActionableEvidence evidence) {
+    private void writeVirusEvidence(int virusId, @NotNull ActionableEvidence evidence) {
         EvidenceInserter<VirusevidenceRecord> inserter = new EvidenceInserter<>(context.insertInto(VIRUSEVIDENCE,
                 VIRUSEVIDENCE.VIRUSID,
                 VIRUSEVIDENCE.TREATMENT,
@@ -581,10 +581,10 @@ class MolecularDAO {
                             HLAALLELE.TUMORCOPYNUMBER,
                             HLAALLELE.HASSOMATICMUTATIONS)
                     .values(sampleId,
-                            DataUtil.toByte(immunology.isReliable()),
+                            immunology.isReliable(),
                             hlaAllele.name(),
                             hlaAllele.tumorCopyNumber(),
-                            DataUtil.toByte(hlaAllele.hasSomaticMutations()))
+                            hlaAllele.hasSomaticMutations())
                     .execute();
         }
     }
