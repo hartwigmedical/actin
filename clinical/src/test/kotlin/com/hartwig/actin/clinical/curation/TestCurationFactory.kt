@@ -303,7 +303,7 @@ object TestCurationFactory {
                 input = "once per day 50-60 mg every month",
                 dosageMin = 50.0,
                 dosageMax = 60.0,
-                dosageUnit = "milligram",
+                dosageUnit = "mg",
                 frequency = 1.0,
                 frequencyUnit = "day",
                 periodBetweenValue = 1.0,
