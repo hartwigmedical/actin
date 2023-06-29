@@ -341,7 +341,7 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
     }
 
     private fun dosageRequiresCuration(administrationRoute: String?, entry: MedicationEntry) =
-        administrationRoute?.lowercase() == "Oral" && (entry.dosageInstructionDoseQuantityValue == 0.0 ||
+        administrationRoute?.lowercase() == "oral" && (entry.dosageInstructionDoseQuantityValue == 0.0 ||
                 entry.dosageInstructionDoseQuantityUnit.isEmpty() ||
                 entry.dosageInstructionFrequencyValue == 0.0 ||
                 entry.dosageInstructionFrequencyUnit.isEmpty())
