@@ -12,12 +12,14 @@ import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
 import com.hartwig.actin.clinical.curation.config.MolecularTestConfig
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig
+import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation
+import com.hartwig.actin.clinical.curation.translation.DosageUnitTranslation
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation
 import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication
@@ -41,7 +43,7 @@ object TestCurationFactory {
             CurationDatabase(
                 emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
                 emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-                emptyList(), emptyList()
+                emptyList(), emptyList(), emptyList(), emptyList()
             ), questionnaireRawEntryMapper()
         )
     }
@@ -59,6 +61,7 @@ object TestCurationFactory {
             nonOncologicalHistoryConfigs = createTestNonOncologicalHistoryConfigs(),
             ecgConfigs = createTestECGConfigs(),
             infectionConfigs = createTestInfectionConfigs(),
+            periodBetweenUnitConfigs = createTestPeriodBetweenUnitConfigs(),
             complicationConfigs = createTestComplicationConfigs(),
             toxicityConfigs = createTestToxicityConfigs(),
             molecularTestConfigs = createTestMolecularTestConfigs(),
@@ -67,6 +70,7 @@ object TestCurationFactory {
             medicationCategoryConfigs = createTestMedicationCategoryConfigs(),
             intoleranceConfigs = createTestIntoleranceConfigs(),
             administrationRouteTranslations = createTestAdministrationRouteTranslations(),
+            dosageUnitTranslations = createTestDosageUnitTranslations(),
             laboratoryTranslations = createTestLaboratoryTranslations(),
             toxicityTranslations = createTestToxicityTranslations(),
             bloodTransfusionTranslations = createTestBloodTransfusionTranslations()
@@ -219,6 +223,13 @@ object TestCurationFactory {
         )
     }
 
+    private fun createTestPeriodBetweenUnitConfigs(): List<PeriodBetweenUnitConfig> {
+        return listOf(
+            PeriodBetweenUnitConfig(input = "mo", interpretation = "months"),
+            PeriodBetweenUnitConfig(input = "", interpretation = Strings.EMPTY)
+        )
+    }
+
     private fun createTestComplicationConfigs(): List<ComplicationConfig> {
         return listOf(
             ComplicationConfig(
@@ -289,12 +300,14 @@ object TestCurationFactory {
     private fun createTestMedicationDosageConfigs(): List<MedicationDosageConfig> {
         return listOf(
             MedicationDosageConfig(
-                input = "50-60 mg per day",
+                input = "once per day 50-60 mg every month",
                 dosageMin = 50.0,
                 dosageMax = 60.0,
                 dosageUnit = "mg",
                 frequency = 1.0,
                 frequencyUnit = "day",
+                periodBetweenValue = 1.0,
+                periodBetweenUnit = "mo",
                 ifNeeded = false
             )
         )
@@ -333,6 +346,13 @@ object TestCurationFactory {
         return listOf(
             BloodTransfusionTranslation(product = "Product", translatedProduct = "Translated product"),
             BloodTransfusionTranslation(product = "Not used", translatedProduct = "never used")
+        )
+    }
+
+    private fun createTestDosageUnitTranslations(): List<DosageUnitTranslation> {
+        return listOf(
+            DosageUnitTranslation(dosageUnit = "stuk", translatedDosageUnit = "piece"),
+            DosageUnitTranslation(dosageUnit = "milligram", translatedDosageUnit = "mg")
         )
     }
 

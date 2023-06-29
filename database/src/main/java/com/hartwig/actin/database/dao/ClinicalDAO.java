@@ -484,12 +484,12 @@ class ClinicalDAO {
                             medication.anatomicalMainGroupAtc(),
                             medication.status() != null ? medication.status().toString() : null,
                             medication.administrationRoute(),
-                            medication.dosageMin(),
-                            medication.dosageMax(),
-                            medication.dosageUnit(),
-                            medication.frequency(),
-                            medication.frequencyUnit(),
-                            medication.ifNeeded(),
+                            medication.dosage().dosageMin(),
+                            medication.dosage().dosageMax(),
+                            medication.dosage().dosageUnit(),
+                            medication.dosage().frequency(),
+                            medication.dosage().frequencyUnit(),
+                            medication.dosage().ifNeeded(),
                             medication.startDate(),
                             medication.stopDate())
                     .execute();

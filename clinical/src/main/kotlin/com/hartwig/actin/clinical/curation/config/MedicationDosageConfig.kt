@@ -8,5 +8,7 @@ data class MedicationDosageConfig(
     val dosageUnit: String?,
     val frequency: Double?,
     val frequencyUnit: String?,
+    val periodBetweenValue: Double?,
+    val periodBetweenUnit: String?,
     val ifNeeded: Boolean?
 ) : CurationConfig

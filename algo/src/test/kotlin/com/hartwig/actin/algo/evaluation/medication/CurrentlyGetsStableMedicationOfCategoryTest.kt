@@ -2,6 +2,8 @@ package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.clinical.datamodel.Dosage
+import com.hartwig.actin.clinical.datamodel.ImmutableDosage
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
 import org.junit.Test
@@ -17,15 +19,18 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
 
         // Passes with single medication with dosing.
-        medications.add(TestMedicationFactory.builder().from(fixedDosing()).addCategories(category1).build())
+        medications.add(TestMedicationFactory.builder().dosage(fixedDosing()).addCategories(category1).build())
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
 
         // Passes with another medication with no category and same dosing
-        medications.add(TestMedicationFactory.builder().from(fixedDosing()).categories(emptySet()).build())
+        medications.add(TestMedicationFactory.builder().dosage(fixedDosing()).categories(emptySet()).build())
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
 
         // Fails on same category and other dosing.
-        medications.add(TestMedicationFactory.builder().from(fixedDosing()).addCategories(category1).frequencyUnit("other").build())
+        medications.add(
+            TestMedicationFactory.builder().dosage(ImmutableDosage.builder().from(fixedDosing()).frequencyUnit("other").build())
+                .addCategories(category1).build()
+        )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
 
         // Also fail in case a dosing is combined with medication without dosing.
@@ -35,7 +40,7 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
                 MedicationTestFactory.withMedications(
                     listOf(
                         TestMedicationFactory.builder()
-                            .from(fixedDosing())
+                            .dosage(fixedDosing())
                             .addCategories(category1)
                             .build(), TestMedicationFactory.builder().addCategories(category1).build()
                     )
@@ -52,22 +57,28 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
 
         // Passes with single medication with dosing.
         val medications: MutableList<Medication> = mutableListOf()
-        medications.add(TestMedicationFactory.builder().from(fixedDosing()).addCategories(category1).build())
-        medications.add(TestMedicationFactory.builder().from(fixedDosing()).addCategories(category2).build())
+        medications.add(TestMedicationFactory.builder().dosage(fixedDosing()).addCategories(category1).build())
+        medications.add(TestMedicationFactory.builder().dosage(fixedDosing()).addCategories(category2).build())
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
 
         // Passes on same category and other dosing.
-        medications.add(TestMedicationFactory.builder().from(fixedDosing()).addCategories(category1).frequencyUnit("other").build())
+        medications.add(
+            TestMedicationFactory.builder().dosage(ImmutableDosage.builder().from(fixedDosing()).frequencyUnit("other").build())
+                .addCategories(category1).build()
+        )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
 
         // Start failing when both categories have wrong dosing.
-        medications.add(TestMedicationFactory.builder().from(fixedDosing()).addCategories(category2).frequencyUnit("other").build())
+        medications.add(
+            TestMedicationFactory.builder().dosage(ImmutableDosage.builder().from(fixedDosing()).frequencyUnit("other").build())
+                .addCategories(category2).build()
+        )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     companion object {
-        private fun fixedDosing(): Medication {
-            return TestMedicationFactory.builder()
+        private fun fixedDosing(): Dosage {
+            return ImmutableDosage.builder()
                 .dosageMin(1.0)
                 .dosageMax(2.0)
                 .dosageUnit("unit 1")

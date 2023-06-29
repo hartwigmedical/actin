@@ -11,6 +11,8 @@ class MedicationDosageConfigFactory : CurationConfigFactory<MedicationDosageConf
             dosageUnit = ResourceFile.optionalString(parts[fields["dosageUnit"]!!]),
             frequency = ResourceFile.optionalNumber(parts[fields["frequency"]!!]),
             frequencyUnit = ResourceFile.optionalString(parts[fields["frequencyUnit"]!!]),
+            periodBetweenValue = ResourceFile.optionalNumber(parts[fields["periodBetweenValue"]!!]),
+            periodBetweenUnit = ResourceFile.optionalString(parts[fields["periodBetweenUnit"]!!]),
             ifNeeded = ResourceFile.optionalBool(parts[fields["ifNeeded"]!!])
         )
     }
