@@ -648,7 +648,7 @@ class CurationModel @VisibleForTesting internal constructor(
     }
 
     private fun findDosageUnitTranslation(dosageUnit: String): DosageUnitTranslation? {
-        return database.dosageUnitTranslations.firstOrNull { it.dosageUnit == dosageUnit }
+        return database.dosageUnitTranslations.firstOrNull { it.dosageUnit.lowercase() == dosageUnit.lowercase() }
     }
 
     fun evaluate() {
