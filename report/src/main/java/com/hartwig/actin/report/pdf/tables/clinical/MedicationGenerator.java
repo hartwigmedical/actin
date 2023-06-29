@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.clinical;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.hartwig.actin.clinical.datamodel.Dosage;
 import com.hartwig.actin.clinical.datamodel.Medication;
@@ -12,7 +13,6 @@ import com.itextpdf.layout.element.Table;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class MedicationGenerator implements TableGenerator {
 
@@ -43,16 +43,19 @@ public class MedicationGenerator implements TableGenerator {
         table.addHeaderCell(Cells.createHeader("Dosage"));
         table.addHeaderCell(Cells.createHeader("Frequency"));
 
-        medications.stream().distinct().forEach(medication -> {
-            if (medication.status().display().equals("Active") || medication.status().display().equals("Planned")) {
-                table.addCell(Cells.createContent(medication.name()));
-                table.addCell(Cells.createContent(administrationRoute(medication)));
-                table.addCell(Cells.createContent(Formats.date(medication.startDate(), Strings.EMPTY)));
-                table.addCell(Cells.createContent(Formats.date(medication.stopDate(), Strings.EMPTY)));
-                table.addCell(Cells.createContent(dosage(medication.dosage())));
-                table.addCell(Cells.createContent(frequency(medication.dosage())));
-            }
-        });
+        medications.stream()
+                .distinct()
+                .filter(medication -> Optional.ofNullable(medication.status())
+                        .map(status -> status.display().equals("Active") || status.display().equals("Planned"))
+                        .orElse(false))
+                .forEach(medication -> {
+                    table.addCell(Cells.createContent(medication.name()));
+                    table.addCell(Cells.createContent(administrationRoute(medication)));
+                    table.addCell(Cells.createContent(Formats.date(medication.startDate(), Strings.EMPTY)));
+                    table.addCell(Cells.createContent(Formats.date(medication.stopDate(), Strings.EMPTY)));
+                    table.addCell(Cells.createContent(dosage(medication.dosage())));
+                    table.addCell(Cells.createContent(frequency(medication.dosage())));
+                });
 
         return Tables.makeWrapping(table);
     }
