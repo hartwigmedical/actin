@@ -308,22 +308,19 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
         val medications: MutableList<Medication> = Lists.newArrayList()
         for (entry in feed.medicationEntries(subject)) {
             val dosage =
-                (if (dosageRequiresCuration(entry)) curation.curateMedicationDosage(entry.dosageInstructionText)
-                    ?: ImmutableDosage.builder()
-                        .build() else ImmutableDosage.builder()
-                    .dosageMax(entry.dosageInstructionMaxDosePerAdministration)
-                    .dosageValue(entry.dosageInstructionDoseQuantityValue)
-                    .dosageUnit(entry.dosageInstructionDoseQuantityUnit)
-                    .frequency(entry.dosageInstructionFrequencyValue)
-                    .frequencyUnit(entry.dosageInstructionFrequencyUnit)
-                    .periodBetweenValue(entry.dosageInstructionPeriodBetweenDosagesValue)
-                    .periodBetweenUnit(entry.dosageInstructionPeriodBetweenDosagesUnit)
-                    .build()).let {
-                    ImmutableDosage.copyOf(it).withPeriodBetweenUnit(curation.curatePeriodBetweenUnit(it.periodBetweenUnit()))
-                        .withDosageUnit(curation.translateDosageUnit(it.dosageUnit()))
-                }
-
-            val builder = ImmutableMedication.builder().dosage(dosage)
+                if (dosageRequiresCuration(entry))
+                    curation.curateMedicationDosage(entry.dosageInstructionText)
+                else
+                    ImmutableDosage.builder()
+                        .dosageMax(entry.dosageInstructionMaxDosePerAdministration)
+                        .dosageValue(entry.dosageInstructionDoseQuantityValue)
+                        .dosageUnit(curation.translateDosageUnit(entry.dosageInstructionDoseQuantityUnit))
+                        .frequency(entry.dosageInstructionFrequencyValue)
+                        .frequencyUnit(entry.dosageInstructionFrequencyUnit)
+                        .periodBetweenValue(entry.dosageInstructionPeriodBetweenDosagesValue)
+                        .periodBetweenUnit(curation.curatePeriodBetweenUnit(entry.dosageInstructionPeriodBetweenDosagesUnit))
+                        .build()
+            val builder = ImmutableMedication.builder().dosage(dosage ?: ImmutableDosage.builder().build())
             val name: String? = CurationUtil.capitalizeFirstLetterOnly(entry.code5ATCDisplay).ifEmpty {
                 curation.curateMedicationName(CurationUtil.capitalizeFirstLetterOnly(entry.codeText))
             }
