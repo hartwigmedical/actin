@@ -12,7 +12,6 @@ import com.itextpdf.layout.element.Table;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class MedicationGenerator implements TableGenerator {
 
@@ -83,7 +82,7 @@ public class MedicationGenerator implements TableGenerator {
         String result = dosage.frequency() != null ? Formats.twoDigitNumber(dosage.frequency()) : "?";
 
         if (dosage.periodBetweenUnit() != null) {
-            result += (" / " + String.format("%.0f", Double.sum(dosage.periodBetweenValue(), 1)) + " " + dosage.periodBetweenUnit());
+            result += (" / " + Formats.noDigitNumber(dosage.periodBetweenValue() + 1) + " " + dosage.periodBetweenUnit());
         } else if (dosage.frequencyUnit() != null) {
             result += (" / " + dosage.frequencyUnit());
         }
