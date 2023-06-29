@@ -303,8 +303,9 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
     private fun extractMedications(subject: String): List<Medication> {
         val medications: MutableList<Medication> = Lists.newArrayList()
         for (entry in feed.medicationEntries(subject)) {
+            val administrationRoute = curation.translateAdministrationRoute(entry.dosageInstructionRouteDisplay)
             val dosage =
-                if (dosageRequiresCuration(entry))
+                if (dosageRequiresCuration(administrationRoute, entry))
                     curation.curateMedicationDosage(entry.dosageInstructionText)
                 else
                     ImmutableDosage.builder()
@@ -328,7 +329,7 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
                     .therapeuticSubgroupAtc(entry.therapeuticSubgroupDisplay)
                     .anatomicalMainGroupAtc(entry.anatomicalMainGroupDisplay)
                     .status(curation.curateMedicationStatus(entry.status))
-                    .administrationRoute(curation.translateAdministrationRoute(entry.dosageInstructionRouteDisplay))
+                    .administrationRoute(administrationRoute)
                     .startDate(entry.periodOfUseValuePeriodStart)
                     .stopDate(entry.periodOfUseValuePeriodEnd)
                     .build()
@@ -339,8 +340,11 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
         return medications
     }
 
-    private fun dosageRequiresCuration(entry: MedicationEntry) =
-        entry.dosageInstructionDoseQuantityValue == 0.0 || entry.dosageInstructionDoseQuantityUnit.isEmpty() || entry.dosageInstructionFrequencyValue == 0.0 || entry.dosageInstructionFrequencyUnit.isEmpty()
+    private fun dosageRequiresCuration(administrationRoute: String?, entry: MedicationEntry) =
+        administrationRoute?.lowercase() == "Oral" && (entry.dosageInstructionDoseQuantityValue == 0.0 ||
+                entry.dosageInstructionDoseQuantityUnit.isEmpty() ||
+                entry.dosageInstructionFrequencyValue == 0.0 ||
+                entry.dosageInstructionFrequencyUnit.isEmpty())
 
     companion object {
         private val LOGGER = LogManager.getLogger(ClinicalRecordsFactory::class.java)
