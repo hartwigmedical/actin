@@ -20,6 +20,7 @@ public interface TreatmentCreatorConfig {
     Logger LOGGER = LogManager.getLogger(TreatmentCreatorConfig.class);
 
     String TRIAL_CONFIG_DIRECTORY = "trial_config_directory";
+    String CTC_CONFIG_DIRECTORY = "ctc_config_directory";
     String DOID_JSON = "doid_json";
     String KNOWN_GENES_TSV = "known_genes_tsv";
 
@@ -32,6 +33,7 @@ public interface TreatmentCreatorConfig {
         Options options = new Options();
 
         options.addOption(TRIAL_CONFIG_DIRECTORY, true, "Directory containing the trial config files");
+        options.addOption(CTC_CONFIG_DIRECTORY, true, "Directory containing the CTC (clinical trial center) config files");
         options.addOption(DOID_JSON, true, "Path to JSON file containing the full DOID tree.");
         options.addOption(KNOWN_GENES_TSV, true, "A TSV containing genes which are allowed as valid genes in trial config");
 
@@ -44,6 +46,9 @@ public interface TreatmentCreatorConfig {
 
     @NotNull
     String trialConfigDirectory();
+
+    @NotNull
+    String ctcConfigDirectory();
 
     @NotNull
     String doidJson();
@@ -63,6 +68,7 @@ public interface TreatmentCreatorConfig {
 
         return ImmutableTreatmentCreatorConfig.builder()
                 .trialConfigDirectory(ApplicationConfig.nonOptionalDir(cmd, TRIAL_CONFIG_DIRECTORY))
+                .ctcConfigDirectory(ApplicationConfig.nonOptionalDir(cmd, CTC_CONFIG_DIRECTORY))
                 .doidJson(ApplicationConfig.nonOptionalFile(cmd, DOID_JSON))
                 .knownGenesTsv(ApplicationConfig.nonOptionalFile(cmd, KNOWN_GENES_TSV))
                 .outputDirectory(ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY))

@@ -4,13 +4,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.trial.config.ImmutableCohortDefinitionConfig;
 import com.hartwig.actin.treatment.trial.config.ImmutableInclusionCriteriaConfig;
 import com.hartwig.actin.treatment.trial.config.ImmutableInclusionCriteriaReferenceConfig;
-import com.hartwig.actin.treatment.trial.config.ImmutableTrialDefinitionConfig;
-import com.hartwig.actin.treatment.trial.config.TestTrialConfigFactory;
+import com.hartwig.actin.treatment.trial.config.TestCohortDefinitionConfigFactory;
+import com.hartwig.actin.treatment.trial.config.TestTrialConfigDatabaseFactory;
+import com.hartwig.actin.treatment.trial.config.TestTrialDefinitionConfigFactory;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
@@ -19,8 +18,8 @@ public class TrialConfigDatabaseValidatorTest {
     @Test
     public void confirmTrialConfigDatabasesAreValid() {
         TrialConfigDatabaseValidator validator = createTestValidator();
-        assertTrue(validator.isValid(TestTrialConfigFactory.createMinimalTestTrialConfigDatabase()));
-        assertTrue(validator.isValid(TestTrialConfigFactory.createProperTestTrialConfigDatabase()));
+        assertTrue(validator.isValid(TestTrialConfigDatabaseFactory.createMinimalTestTrialConfigDatabase()));
+        assertTrue(validator.isValid(TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase()));
     }
 
     @Test
@@ -35,45 +34,32 @@ public class TrialConfigDatabaseValidatorTest {
         String trial2 = "trial 2";
 
         return ImmutableTrialConfigDatabase.builder()
-                .addTrialDefinitionConfigs(ImmutableTrialDefinitionConfig.builder()
-                        .trialId(trial1)
-                        .open(true)
-                        .acronym(Strings.EMPTY)
-                        .title(Strings.EMPTY)
-                        .build())
-                .addTrialDefinitionConfigs(ImmutableTrialDefinitionConfig.builder()
-                        .trialId(trial1)
-                        .open(true)
-                        .acronym(Strings.EMPTY)
-                        .title(Strings.EMPTY)
-                        .build())
+                .addTrialDefinitionConfigs(TestTrialDefinitionConfigFactory.builder().trialId(trial1).open(true).build())
+                .addTrialDefinitionConfigs(TestTrialDefinitionConfigFactory.builder().trialId(trial1).open(true).build())
 
-                .addCohortDefinitionConfigs(ImmutableCohortDefinitionConfig.builder()
+                .addCohortDefinitionConfigs(TestCohortDefinitionConfigFactory.builder()
                         .trialId(trial1)
                         .evaluable(true)
                         .open(true)
                         .slotsAvailable(true)
                         .blacklist(false)
                         .cohortId("A")
-                        .description(Strings.EMPTY)
                         .build())
-                .addCohortDefinitionConfigs(ImmutableCohortDefinitionConfig.builder()
+                .addCohortDefinitionConfigs(TestCohortDefinitionConfigFactory.builder()
                         .trialId(trial1)
                         .evaluable(true)
                         .open(true)
                         .slotsAvailable(true)
                         .blacklist(false)
                         .cohortId("A")
-                        .description(Strings.EMPTY)
                         .build())
-                .addCohortDefinitionConfigs(ImmutableCohortDefinitionConfig.builder()
+                .addCohortDefinitionConfigs(TestCohortDefinitionConfigFactory.builder()
                         .trialId(trial2)
                         .evaluable(true)
                         .open(true)
                         .slotsAvailable(false)
                         .blacklist(false)
                         .cohortId("A")
-                        .description(Strings.EMPTY)
                         .build())
 
                 .addInclusionCriteriaConfigs(ImmutableInclusionCriteriaConfig.builder()

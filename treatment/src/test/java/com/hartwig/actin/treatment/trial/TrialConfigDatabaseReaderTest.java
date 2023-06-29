@@ -2,6 +2,7 @@ package com.hartwig.actin.treatment.trial;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -44,18 +45,23 @@ public class TrialConfigDatabaseReaderTest {
 
         CohortDefinitionConfig config1 = findCohort(configs, "A");
         assertEquals("ACTN 2021", config1.trialId());
+        assertEquals(2, config1.ctcCohortIds().size());
+        assertTrue(config1.ctcCohortIds().contains("1"));
+        assertTrue(config1.ctcCohortIds().contains("2"));
         assertTrue(config1.evaluable());
-        assertTrue(config1.open());
-        assertTrue(config1.slotsAvailable());
+        assertNull(config1.open());
+        assertNull(config1.slotsAvailable());
         assertFalse(config1.blacklist());
         assertEquals("Dose escalation phase (monotherapy)", config1.description());
 
         CohortDefinitionConfig config2 = findCohort(configs, "B");
         assertEquals("ACTN 2021", config2.trialId());
+        assertEquals(1, config2.ctcCohortIds().size());
+        assertTrue(config2.ctcCohortIds().contains("wont_be_mapped_because_closed"));
         assertFalse(config2.evaluable());
         assertFalse(config2.open());
-        assertTrue(config2.slotsAvailable());
-        assertFalse(config2.blacklist());
+        assertFalse(config2.slotsAvailable());
+        assertTrue(config2.blacklist());
         assertEquals("Dose escalation phase (combination therapy)", config2.description());
     }
 
