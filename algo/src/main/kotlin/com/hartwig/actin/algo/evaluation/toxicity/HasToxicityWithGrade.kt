@@ -44,20 +44,20 @@ class HasToxicityWithGrade internal constructor(
             val toxicityString = formatToxicities(toxicities)
             return if (hasAtLeastOneMatchingQuestionnaireToxicity) {
                 EvaluationFactory.recoverablePass(
-                    "Toxicities with grade >= $minGrade$toxicityString",
-                    "Toxicities grade >= $minGrade$toxicityString"
+                    "Patient has toxicities grade >= $minGrade$toxicityString",
+                    "Has toxicities grade >= $minGrade$toxicityString"
                 )
             } else {
                 EvaluationFactory.recoverableWarn(
-                    "Toxicities with grade >= $minGrade$toxicityString but source is not questionnaire",
-                    "Toxicities grade >= $minGrade$toxicityString but source is not questionnaire"
+                    "Patient has toxicities grade >= $minGrade$toxicityString but source is not questionnaire",
+                    "Has toxicities grade >= $minGrade$toxicityString but source is not questionnaire"
                 )
             }
         } else if (hasUnresolvableQuestionnaireToxicities) {
             val toxicityString = formatToxicities(unresolvableToxicities)
             return EvaluationFactory.undetermined(
-                "Unknown grade (2, 3 or 4) for toxicities$toxicityString",
-                "Toxicities with unknown grade$toxicityString"
+                "Patient has toxicities grade >= $DEFAULT_QUESTIONNAIRE_GRADE$toxicityString, unknown if grade >= $minGrade",
+                "Has toxicities grade >= $DEFAULT_QUESTIONNAIRE_GRADE$toxicityString, unknown if grade >= $minGrade"
             )
         }
         return EvaluationFactory.fail(
