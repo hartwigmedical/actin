@@ -1,8 +1,7 @@
 package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.evaluation.medication.MedicationDosage.hasMatchingDosing
-import com.hartwig.actin.clinical.datamodel.Medication
-import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
+import com.hartwig.actin.clinical.datamodel.ImmutableDosage
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -10,7 +9,7 @@ import org.junit.Test
 class MedicationDosageTest {
     @Test
     fun canAssessDosingStability() {
-        val dosing1: Medication = TestMedicationFactory.builder()
+        val dosing1 = ImmutableDosage.builder()
             .dosageMin(1.0)
             .dosageMax(2.0)
             .dosageUnit("unit 1")
@@ -18,7 +17,7 @@ class MedicationDosageTest {
             .frequencyUnit("unit 2")
             .ifNeeded(false)
             .build()
-        val dosing2: Medication = TestMedicationFactory.builder()
+        val dosing2 = ImmutableDosage.builder()
             .dosageMin(2.0)
             .dosageMax(3.0)
             .dosageUnit("unit 2")
@@ -29,6 +28,6 @@ class MedicationDosageTest {
         assertTrue(hasMatchingDosing(dosing1, dosing1))
         assertTrue(hasMatchingDosing(dosing2, dosing2))
         assertFalse(hasMatchingDosing(dosing1, dosing2))
-        assertFalse(hasMatchingDosing(dosing1, TestMedicationFactory.builder().build()))
+        assertFalse(hasMatchingDosing(dosing1, ImmutableDosage.builder().build()))
     }
 }

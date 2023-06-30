@@ -26,11 +26,13 @@ import com.hartwig.actin.clinical.datamodel.BodyLocationCategory;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.Complication;
+import com.hartwig.actin.clinical.datamodel.Dosage;
 import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
+import com.hartwig.actin.clinical.datamodel.ImmutableDosage;
 import com.hartwig.actin.clinical.datamodel.ImmutableECG;
 import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance;
@@ -119,6 +121,7 @@ public class ClinicalGsonDeserializer {
                 .registerTypeAdapter(ClinicalStatus.class, new AbstractClassAdapter<ClinicalStatus>(ImmutableClinicalStatus.class))
                 .registerTypeAdapter(InfectionStatus.class, new AbstractClassAdapter<InfectionStatus>(ImmutableInfectionStatus.class))
                 .registerTypeAdapter(ECG.class, new AbstractClassAdapter<ECG>(ImmutableECG.class))
+                .registerTypeAdapter(Dosage.class, new AbstractClassAdapter<Dosage>(ImmutableDosage.class))
                 .registerTypeAdapter(Drug.class, new AbstractClassAdapter<Drug>(ImmutableDrug.class))
                 .registerTypeAdapter(Chemotherapy.class, new AbstractClassAdapter<Chemotherapy>(ImmutableChemotherapy.class))
                 .registerTypeAdapter(CombinedTherapy.class, new AbstractClassAdapter<CombinedTherapy>(ImmutableCombinedTherapy.class))

@@ -1,9 +1,9 @@
 package com.hartwig.actin.report.pdf.tables.clinical;
 
 import java.util.List;
-import java.util.Set;
-import java.util.StringJoiner;
+import java.util.Optional;
 
+import com.hartwig.actin.clinical.datamodel.Dosage;
 import com.hartwig.actin.clinical.datamodel.Medication;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
@@ -28,33 +28,34 @@ public class MedicationGenerator implements TableGenerator {
     @NotNull
     @Override
     public String title() {
-        return "Medication details";
+        return "Active medication details";
     }
 
     @NotNull
     @Override
     public Table contents() {
-        Table table = Tables.createFixedWidthCols(1, 1, 1, 1, 1, 1, 1, 1).setWidth(totalWidth);
+        Table table = Tables.createFixedWidthCols(1, 1, 1, 1, 1, 1).setWidth(totalWidth);
 
         table.addHeaderCell(Cells.createHeader("Medication"));
-        table.addHeaderCell(Cells.createHeader("Categories"));
         table.addHeaderCell(Cells.createHeader("Administration route"));
         table.addHeaderCell(Cells.createHeader("Start date"));
         table.addHeaderCell(Cells.createHeader("Stop date"));
-        table.addHeaderCell(Cells.createHeader("Status"));
         table.addHeaderCell(Cells.createHeader("Dosage"));
         table.addHeaderCell(Cells.createHeader("Frequency"));
 
-        medications.stream().distinct().forEach(medication -> {
-            table.addCell(Cells.createContent(medication.name()));
-            table.addCell(Cells.createContent(concat(medication.categories())));
-            table.addCell(Cells.createContent(administrationRoute(medication)));
-            table.addCell(Cells.createContent(Formats.date(medication.startDate(), Strings.EMPTY)));
-            table.addCell(Cells.createContent(Formats.date(medication.stopDate(), Strings.EMPTY)));
-            table.addCell(Cells.createContent(medication.status() != null ? medication.status().display() : Strings.EMPTY));
-            table.addCell(Cells.createContent(dosage(medication)));
-            table.addCell(Cells.createContent(frequency(medication)));
-        });
+        medications.stream()
+                .distinct()
+                .filter(medication -> Optional.ofNullable(medication.status())
+                        .map(status -> status.display().equals("Active") || status.display().equals("Planned"))
+                        .orElse(false))
+                .forEach(medication -> {
+                    table.addCell(Cells.createContent(medication.name()));
+                    table.addCell(Cells.createContent(administrationRoute(medication)));
+                    table.addCell(Cells.createContent(Formats.date(medication.startDate(), Strings.EMPTY)));
+                    table.addCell(Cells.createContent(Formats.date(medication.stopDate(), Strings.EMPTY)));
+                    table.addCell(Cells.createContent(dosage(medication.dosage())));
+                    table.addCell(Cells.createContent(frequency(medication.dosage())));
+                });
 
         return Tables.makeWrapping(table);
     }
@@ -65,32 +66,31 @@ public class MedicationGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static String dosage(@NotNull Medication medication) {
-        String dosageMin = medication.dosageMin() != null ? Formats.twoDigitNumber(medication.dosageMin()) : "?";
-        String dosageMax = medication.dosageMax() != null ? Formats.twoDigitNumber(medication.dosageMax()) : "?";
+    private static String dosage(@NotNull Dosage dosage) {
+        String dosageMin = dosage.dosageMin() != null ? Formats.twoDigitNumber(dosage.dosageMin()) : "?";
+        String dosageMax = dosage.dosageMax() != null ? Formats.twoDigitNumber(dosage.dosageMax()) : "?";
 
         String result = dosageMin.equals(dosageMax) ? dosageMin : dosageMin + " - " + dosageMax;
-        if (medication.dosageUnit() != null) {
-            result += (" " + medication.dosageUnit());
+        if (dosage.ifNeeded()) {
+            result = "if needed " + result;
+        }
+
+        if (dosage.dosageUnit() != null) {
+            result += (" " + dosage.dosageUnit());
         }
         return result;
     }
 
     @NotNull
-    private static String frequency(@NotNull Medication medication) {
-        String result = medication.frequency() != null ? Formats.twoDigitNumber(medication.frequency()) : "?";
-        if (medication.frequencyUnit() != null) {
-            result += (" / " + medication.frequencyUnit());
-        }
-        return result;
-    }
+    private static String frequency(@NotNull Dosage dosage) {
+        String result = dosage.frequency() != null ? Formats.twoDigitNumber(dosage.frequency()) : "?";
 
-    @NotNull
-    private static String concat(@NotNull Set<String> categories) {
-        StringJoiner joiner = new StringJoiner(", ");
-        for (String category : categories) {
-            joiner.add(category);
+        if (dosage.periodBetweenUnit() != null) {
+            result += (" / " + Formats.noDigitNumber(dosage.periodBetweenValue() + 1) + " " + dosage.periodBetweenUnit());
+        } else if (dosage.frequencyUnit() != null) {
+            result += (" / " + dosage.frequencyUnit());
         }
-        return Formats.valueOrDefault(joiner.toString(), "None");
+
+        return result;
     }
 }

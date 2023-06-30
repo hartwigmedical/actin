@@ -11,12 +11,14 @@ import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
 import com.hartwig.actin.clinical.curation.config.MolecularTestConfig
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig
+import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation
+import com.hartwig.actin.clinical.curation.translation.DosageUnitTranslation
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation
 import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation
 
@@ -29,6 +31,7 @@ data class CurationDatabase(
     val nonOncologicalHistoryConfigs: List<NonOncologicalHistoryConfig>,
     val ecgConfigs: List<ECGConfig>,
     val infectionConfigs: List<InfectionConfig>,
+    val periodBetweenUnitConfigs: List<PeriodBetweenUnitConfig>,
     val complicationConfigs: List<ComplicationConfig>,
     val toxicityConfigs: List<ToxicityConfig>,
     val molecularTestConfigs: List<MolecularTestConfig>,
@@ -39,5 +42,6 @@ data class CurationDatabase(
     val administrationRouteTranslations: List<AdministrationRouteTranslation>,
     val laboratoryTranslations: List<LaboratoryTranslation>,
     val toxicityTranslations: List<ToxicityTranslation>,
-    val bloodTransfusionTranslations: List<BloodTransfusionTranslation>
+    val bloodTransfusionTranslations: List<BloodTransfusionTranslation>,
+    val dosageUnitTranslations: List<DosageUnitTranslation>
 )

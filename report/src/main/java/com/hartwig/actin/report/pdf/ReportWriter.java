@@ -51,19 +51,22 @@ public class ReportWriter {
     public synchronized void write(@NotNull Report report, boolean enableExtendedMode) throws IOException {
         LOGGER.debug("Initializing output styles");
         Styles.initialize();
-        List<ReportChapter> chapters = new LinkedList<>(Arrays.asList(new SummaryChapter(report), new MolecularDetailsChapter(report),
-                new ClinicalDetailsChapter(report), new TrialMatchingChapter(report, enableExtendedMode)));
+        List<ReportChapter> chapters = new LinkedList<>(Arrays.asList(new SummaryChapter(report),
+                new MolecularDetailsChapter(report),
+                new ClinicalDetailsChapter(report),
+                new TrialMatchingChapter(report, enableExtendedMode)));
 
         if (enableExtendedMode) {
             LOGGER.info("Including trial matching details");
             chapters.add(new TrialMatchingDetailsChapter(report));
         }
 
-        writePdfChapters(report.patientId(), chapters);
+        writePdfChapters(report.patientId(), chapters, enableExtendedMode);
     }
 
-    private void writePdfChapters(@NotNull String patientId, @NotNull List<ReportChapter> chapters) throws IOException {
-        Document doc = initializeReport(patientId);
+    private void writePdfChapters(@NotNull String patientId, @NotNull List<ReportChapter> chapters, boolean enableExtendedMode)
+            throws IOException {
+        Document doc = initializeReport(patientId, enableExtendedMode);
         PdfDocument pdfDocument = doc.getPdfDocument();
 
         PageEventHandler pageEventHandler = PageEventHandler.create(patientId);
@@ -88,13 +91,13 @@ public class ReportWriter {
     }
 
     @NotNull
-    private Document initializeReport(@NotNull String patientId) throws IOException {
+    private Document initializeReport(@NotNull String patientId, boolean enableExtendedMode) throws IOException {
         PdfWriter writer;
         if (writeToDisk && outputDirectory != null) {
-            String outputFilePath = Paths.forceTrailingFileSeparator(outputDirectory) + patientId + ".actin.pdf";
+            String outputFilePath =
+                    Paths.forceTrailingFileSeparator(outputDirectory) + patientId + (enableExtendedMode ? ".extended" : "") + ".actin.pdf";
             LOGGER.info("Writing PDF report to {}", outputFilePath);
-            WriterProperties properties = new WriterProperties()
-                    .setFullCompressionMode(true)
+            WriterProperties properties = new WriterProperties().setFullCompressionMode(true)
                     .setCompressionLevel(CompressionConstants.BEST_COMPRESSION)
                     .useSmartMode();
             writer = new PdfWriter(outputFilePath, properties);

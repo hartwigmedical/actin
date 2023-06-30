@@ -213,6 +213,14 @@ class CurationDatabaseReaderTest {
     }
 
     @Test
+    fun shouldReadPeriodBetweenUnitConfigs() {
+        val configs = database!!.periodBetweenUnitConfigs
+        assertThat(configs.size.toLong()).isEqualTo(1)
+        val config1 = find(configs, "mo")
+        assertThat(config1.interpretation).isEqualTo("months")
+    }
+
+    @Test
     fun shouldReadComplicationConfigs() {
         val configs = database!!.complicationConfigs
         assertThat(configs).hasSize(2)
@@ -285,21 +293,16 @@ class CurationDatabaseReaderTest {
     @Test
     fun shouldReadMedicationDosageConfigs() {
         val configs = database!!.medicationDosageConfigs
-        assertThat(configs).hasSize(2)
-        val config1 = find(configs, "once per day 50-60 mg")
+        assertThat(configs).hasSize(1)
+        val config1 = find(configs, "once per day 50-60 mg every month")
         assertDoubleEquals(50.0, config1.dosageMin)
         assertDoubleEquals(60.0, config1.dosageMax)
         assertThat(config1.dosageUnit).isEqualTo("mg")
         assertDoubleEquals(1.0, config1.frequency)
         assertThat(config1.frequencyUnit).isEqualTo("day")
+        assertThat(config1.periodBetweenValue).isEqualTo(0.0)
+        assertThat(config1.periodBetweenUnit).isEqualTo("mo")
         assertThat(config1.ifNeeded).isEqualTo(false)
-        val config2 = find(configs, "empty")
-        assertThat(config2.dosageMin).isNull()
-        assertThat(config2.dosageMax).isNull()
-        assertThat(config2.dosageUnit).isNull()
-        assertThat(config2.frequency).isNull()
-        assertThat(config2.frequencyUnit).isNull()
-        assertThat(config2.ifNeeded).isNull()
     }
 
     @Test
@@ -357,6 +360,15 @@ class CurationDatabaseReaderTest {
         val translation = translations[0]
         assertThat(translation.product).isEqualTo("Thrombocytenconcentraat")
         assertThat(translation.translatedProduct).isEqualTo("Thrombocyte concentrate")
+    }
+
+    @Test
+    fun shouldReadDosageUnitTranslations() {
+        val translations = database!!.dosageUnitTranslations
+        assertThat(translations.size.toLong()).isEqualTo(1)
+        val translation = translations[0]
+        assertThat(translation.dosageUnit).isEqualTo("stuk")
+        assertThat(translation.translatedDosageUnit).isEqualTo("piece")
     }
 
     private fun assertDoubleEquals(expected: Double, actual: Double?) {
