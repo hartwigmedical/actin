@@ -27,7 +27,6 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.CURRENTLY_GETS_COUMARIN_DERIVATIVE_MEDICATION to getsCoumarinDerivativeMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_GONADORELIN_MEDICATION to getsGonadorelinMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION to getsImmunosuppressantMedicationCreator(),
-            EligibilityRule.CURRENTLY_GETS_PROHIBITED_MEDICATION to getsProhibitedMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION to getsQTProlongatingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_ANY_CYP to getsAnyCYPInducingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_CYP_X to getsCYPXInducingMedicationCreator(),
@@ -87,10 +86,6 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun getsImmunosuppressantMedicationCreator(): FunctionCreator {
         return getsActiveMedicationWithExactCategoryCreator(SELECTIVE_IMMUNOSUPPRESSANTS, OTHER_IMMUNOSUPPRESSANTS)
-    }
-
-    private fun getsProhibitedMedicationCreator(): FunctionCreator {
-        return FunctionCreator { CurrentlyGetsProhibitedMedicationCreator() }
     }
 
     private fun getsQTProlongatingMedicationCreator(): FunctionCreator {
