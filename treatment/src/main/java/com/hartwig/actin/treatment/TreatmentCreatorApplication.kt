@@ -3,6 +3,7 @@ package com.hartwig.actin.treatment
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
+import com.hartwig.actin.treatment.ctc.CTCModel
 import com.hartwig.actin.treatment.serialization.TrialJson
 import com.hartwig.actin.treatment.trial.EligibilityRuleUsageEvaluator
 import com.hartwig.actin.treatment.trial.TrialFactory
@@ -15,6 +16,7 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.io.IOException
 import kotlin.system.exitProcess
+
 
 class TreatmentCreatorApplication(private val config: TreatmentCreatorConfig) {
     @Throws(IOException::class)
@@ -29,9 +31,11 @@ class TreatmentCreatorApplication(private val config: TreatmentCreatorConfig) {
         LOGGER.info(" Loaded {} known genes", knownGenes.size)
         val geneFilter = GeneFilterFactory.createFromKnownGenes(knownGenes)
 
-        val trialFactory: TrialFactory = TrialFactory.create(config.trialConfigDirectory, doidModel, geneFilter)
+        val ctcModel: CTCModel = CTCModel.createFromCTCConfigDirectory(config.ctcConfigDirectory)
+
+        val trialFactory = TrialFactory.create(config.trialConfigDirectory, ctcModel, doidModel, geneFilter)
         LOGGER.info("Creating trial database")
-        val trials = trialFactory.create()
+        val trials = trialFactory.createTrials()
 
         LOGGER.info("Evaluating usage of eligibility rules")
         EligibilityRuleUsageEvaluator.evaluate(trials)

@@ -27,6 +27,9 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
         trialIds: Set<String>, cohortIdsPerTrial: Map<String, Set<String>>,
         inclusionCriteria: List<InclusionCriteriaConfig>
     ): Boolean {
+        if (inclusionCriteria.isEmpty()) {
+            return true
+        }
         val (allCriteriaWithNonExistentTrial, allNonExistentCohorts, allInvalidInclusionCriteria) = inclusionCriteria.map { criterion ->
             val trialExists = trialIds.contains(criterion.trialId)
             val criterionWithNonExistentTrial = if (!trialExists) setOf(criterion) else emptySet()

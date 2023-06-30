@@ -39,7 +39,10 @@ class TrialConfigModel(
         fun create(trialConfigDirectory: String, eligibilityFactory: EligibilityFactory): TrialConfigModel {
             val database = TrialConfigDatabaseReader.read(trialConfigDirectory)
             check(TrialConfigDatabaseValidator(eligibilityFactory).isValid(database)) { "Trial config database is not considered valid. Cannot create config model." }
+            return createFromDatabase(database)
+        }
 
+        fun createFromDatabase(database: TrialConfigDatabase): TrialConfigModel {
             val specificInclusionCriteriaByTrialAndCohort =
                 configsByTrial(database.inclusionCriteriaConfigs.filter { it.appliesToCohorts.isNotEmpty() }).mapValues { configsByTrial ->
                     configsByTrial.value.flatMap { config: InclusionCriteriaConfig ->

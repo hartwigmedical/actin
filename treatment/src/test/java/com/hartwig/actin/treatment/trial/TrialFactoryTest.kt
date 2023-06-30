@@ -3,14 +3,14 @@ package com.hartwig.actin.treatment.trial
 import com.google.common.io.Resources
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
+import com.hartwig.actin.treatment.ctc.TestCTCModelFactory
 import com.hartwig.actin.treatment.datamodel.Cohort
 import com.hartwig.actin.treatment.datamodel.Eligibility
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction
 import com.hartwig.actin.treatment.datamodel.EligibilityRule
 import com.hartwig.actin.treatment.datamodel.Trial
-import com.hartwig.actin.treatment.trial.TrialFactory.Companion.create
-import com.hartwig.actin.treatment.trial.config.TestTrialConfigFactory
-import org.junit.Assert
+import com.hartwig.actin.treatment.trial.config.TestTrialConfigDatabaseFactory
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.io.IOException
 
@@ -18,77 +18,75 @@ class TrialFactoryTest {
     @Test
     @Throws(IOException::class)
     fun canCreateFromTrialConfigDirectory() {
-        Assert.assertNotNull(
-            create(
+        assertThat(
+            TrialFactory.create(
                 TRIAL_CONFIG_DIRECTORY,
+                TestCTCModelFactory.createWithMinimalTestCTCDatabase(),
                 TestDoidModelFactory.createMinimalTestDoidModel(),
                 TestGeneFilterFactory.createNeverValid()
             )
-        )
+        ).isNotNull
     }
 
     @Test
     fun canCreateFromProperTestModel() {
         val factory = TrialFactory(
-            TrialConfigModel(TestTrialConfigFactory.createProperTestTrialConfigDatabase()),
+            TrialConfigModel.createFromDatabase(TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase()),
+            TestCTCModelFactory.createWithProperTestCTCDatabase(),
             TestEligibilityFactoryFactory.createTestEligibilityFactory()
         )
-        val trials = factory.create()
-        Assert.assertEquals(2, trials.size.toLong())
+        val trials = factory.createTrials()
+        assertThat(trials).hasSize(2)
+
         val trial = findTrial(trials, "TEST-1")
-        Assert.assertTrue(trial.identification().open())
-        Assert.assertEquals("Acronym-TEST-1", trial.identification().acronym())
-        Assert.assertEquals("Title for TEST-1", trial.identification().title())
-        Assert.assertEquals(1, trial.generalEligibility().size.toLong())
+        assertThat(trial.identification().open()).isTrue
+        assertThat(trial.identification().acronym()).isEqualTo("Acronym-TEST-1")
+        assertThat(trial.identification().title()).isEqualTo("Title for TEST-1")
+        assertThat(trial.generalEligibility()).hasSize(1)
+
         val generalFunction = findFunction(trial.generalEligibility(), EligibilityRule.IS_AT_LEAST_X_YEARS_OLD)
-        Assert.assertEquals(1, generalFunction.parameters().size.toLong())
-        Assert.assertEquals(3, trial.cohorts().size.toLong())
+        assertThat(generalFunction.parameters()).hasSize(1)
+        assertThat(trial.cohorts()).hasSize(3)
+
         val cohortA = findCohort(trial.cohorts(), "A")
-        Assert.assertEquals("Cohort A", cohortA.metadata().description())
-        Assert.assertEquals(2, cohortA.eligibility().size.toLong())
+        assertThat(cohortA.metadata().description()).isEqualTo("Cohort A")
+        assertThat(cohortA.eligibility()).hasSize(2)
+
         val cohortFunction1 = findFunction(cohortA.eligibility(), EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X)
-        Assert.assertEquals(1, cohortFunction1.parameters().size.toLong())
-        Assert.assertTrue(cohortFunction1.parameters().contains("1"))
+        assertThat(cohortFunction1.parameters()).containsExactly("1")
+
         val cohortFunction2 = findFunction(cohortA.eligibility(), EligibilityRule.NOT)
-        Assert.assertEquals(1, cohortFunction1.parameters().size.toLong())
+        assertThat(cohortFunction2.parameters()).hasSize(1)
+
         val subFunction = cohortFunction2.parameters()[0] as EligibilityFunction
-        Assert.assertEquals(EligibilityRule.OR, subFunction.rule())
-        Assert.assertEquals(2, subFunction.parameters().size.toLong())
+        assertThat(subFunction.rule()).isEqualTo(EligibilityRule.OR)
+        assertThat(subFunction.parameters()).hasSize(2)
+
         val cohortB = findCohort(trial.cohorts(), "B")
-        Assert.assertEquals("Cohort B", cohortB.metadata().description())
-        Assert.assertTrue(cohortB.eligibility().isEmpty())
+        assertThat(cohortB.metadata().description()).isEqualTo("Cohort B")
+        assertThat(cohortB.eligibility()).isEmpty()
+
         val cohortC = findCohort(trial.cohorts(), "C")
-        Assert.assertEquals("Cohort C", cohortC.metadata().description())
-        Assert.assertTrue(cohortC.eligibility().isEmpty())
+        assertThat(cohortC.metadata().description()).isEqualTo("Cohort C")
+        assertThat(cohortC.eligibility()).isEmpty()
     }
 
     companion object {
         private val TRIAL_CONFIG_DIRECTORY = Resources.getResource("trial_config").path
+
         private fun findTrial(trials: List<Trial>, trialId: String): Trial {
-            for (trial in trials) {
-                if (trial.identification().trialId() == trialId) {
-                    return trial
-                }
-            }
-            throw IllegalStateException("Could not find trial with ID: $trialId")
+            return trials.firstOrNull { it.identification().trialId() == trialId }
+                ?: throw IllegalStateException("Could not find trial with ID: $trialId")
         }
 
         private fun findCohort(cohorts: List<Cohort>, cohortId: String): Cohort {
-            for (cohort in cohorts) {
-                if (cohort.metadata().cohortId() == cohortId) {
-                    return cohort
-                }
-            }
-            throw IllegalStateException("Could not find cohort with ID: $cohortId")
+            return cohorts.firstOrNull { it.metadata().cohortId() == cohortId }
+                ?: throw IllegalStateException("Could not find cohort with ID: $cohortId")
         }
 
         private fun findFunction(eligibility: List<Eligibility>, rule: EligibilityRule): EligibilityFunction {
-            for (entry in eligibility) {
-                if (entry.function().rule() == rule) {
-                    return entry.function()
-                }
-            }
-            throw IllegalStateException("Could not find eligibility function with rule: $rule")
+            return eligibility.firstOrNull { it.function().rule() == rule }?.function()
+                ?: throw IllegalStateException("Could not find eligibility function with rule: $rule")
         }
     }
 }
