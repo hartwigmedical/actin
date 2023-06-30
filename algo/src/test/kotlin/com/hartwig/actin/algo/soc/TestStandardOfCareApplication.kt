@@ -2,6 +2,15 @@ package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.PatientRecordFactory
+import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory
+import com.hartwig.actin.algo.doid.DoidConstants
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
+import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
+import com.hartwig.actin.clinical.datamodel.TumorDetails
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.util.ClinicalPrinter
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.DoidModelFactory
@@ -10,15 +19,6 @@ import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.util.MolecularPrinter
-import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory
-import com.hartwig.actin.algo.doid.DoidConstants
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment
-import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
-import com.hartwig.actin.clinical.datamodel.TumorDetails
 import org.apache.logging.log4j.LogManager
 import java.io.File
 import java.time.LocalDate
@@ -40,7 +40,8 @@ class TestStandardOfCareApplication {
         val doidModel: DoidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
         val recommendationEngine = RecommendationEngine.create(doidModel, ReferenceDateProviderTestFactory.createCurrentDateProvider())
-        val recommendationInterpreter = recommendationEngine.provideRecommendations(patient, TreatmentDB.loadTreatments())
+        val recommendationInterpreter =
+            recommendationEngine.provideRecommendations(patient, RecommendationDatabase.treatmentCandidatesForDoidSet())
         LOGGER.info(recommendationInterpreter.summarize())
         LOGGER.info(recommendationInterpreter.csv())
 

@@ -76,13 +76,11 @@ import com.hartwig.actin.clinical.datamodel.treatment.ImmutableImmunotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRadiotherapy;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRecommendationCriteria;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableSurgicalTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableTargetedTherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.OtherTherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy;
-import com.hartwig.actin.clinical.datamodel.treatment.RecommendationCriteria;
 import com.hartwig.actin.clinical.datamodel.treatment.SurgicalTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TargetedTherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
@@ -198,9 +196,7 @@ public class ClinicalGsonDeserializer {
                 .registerTypeAdapter(new TypeToken<ImmutableSet<TargetedTherapy>>() {
                 }.getType(), new ImmutableSetAdapter<TargetedTherapy>(ImmutableTargetedTherapy.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<ObservedToxicity>>() {
-                }.getType(), new ImmutableSetAdapter<ObservedToxicity>(ImmutableObservedToxicity.class))
-                .registerTypeAdapter(new TypeToken<ImmutableMap<String, RecommendationCriteria>>() {
-                }.getType(), new ImmutableMapAdapter<String, RecommendationCriteria>(ImmutableRecommendationCriteria.class));
+                }.getType(), new ImmutableSetAdapter<ObservedToxicity>(ImmutableObservedToxicity.class));
     }
 
     private static class LocalDateAdapter implements JsonDeserializer<LocalDate> {

@@ -1,16 +1,16 @@
 package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.calendar.ReferenceDateProvider
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.doid.DoidConstants
+import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory
+import com.hartwig.actin.algo.soc.datamodel.EvaluatedTreatment
+import com.hartwig.actin.algo.soc.datamodel.TreatmentCandidate
 import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.doid.DoidModel
-import com.hartwig.actin.algo.calendar.ReferenceDateProvider
-import com.hartwig.actin.algo.soc.datamodel.EvaluatedTreatment
-import com.hartwig.actin.algo.soc.datamodel.Treatment
-import com.hartwig.actin.algo.doid.DoidConstants
-import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory
 
 internal class RecommendationEngine private constructor(doidModel: DoidModel, evaluationFunctionFactory: EvaluationFunctionFactory) {
     private val doidModel: DoidModel
@@ -21,33 +21,35 @@ internal class RecommendationEngine private constructor(doidModel: DoidModel, ev
         this.evaluationFunctionFactory = evaluationFunctionFactory
     }
 
-    fun determineAvailableTreatments(patientRecord: PatientRecord, treatments: List<Treatment>): List<EvaluatedTreatment> {
+    fun determineAvailableTreatments(
+        patientRecord: PatientRecord,
+        treatmentCandidates: List<TreatmentCandidate>
+    ): List<EvaluatedTreatment> {
         val expandedTumorDoids = patientRecord.clinical().tumor().doids()?.flatMap { doidModel.doidWithParents(it) } ?: emptySet<String>()
         require(DoidConstants.COLORECTAL_CANCER_DOID in expandedTumorDoids) { "No colorectal cancer reported in patient clinical record. SOC recommendation not supported." }
         require((EXCLUDED_TUMOR_DOIDS intersect expandedTumorDoids.toSet()).isEmpty()) { "SOC recommendation only supported for colorectal carcinoma" }
 
-        return treatments.asSequence().filter { determineTreatmentLineForPatient(patientRecord) in it.lines }
-            .map { evaluateTreatmentForPatient(it, patientRecord) }
+        return treatmentCandidates.asSequence().map { evaluateTreatmentForPatient(it, patientRecord) }
             .filter { treatmentHasNoFailedEvaluations(it) }
             .filter { it.score >= 0 }
             .sortedByDescending { it.score }.toList()
     }
 
-    fun provideRecommendations(patientRecord: PatientRecord, treatments: List<Treatment>): EvaluatedTreatmentInterpreter {
-        return EvaluatedTreatmentInterpreter(determineAvailableTreatments(patientRecord, treatments))
+    fun provideRecommendations(patientRecord: PatientRecord, treatmentCandidates: List<TreatmentCandidate>): EvaluatedTreatmentInterpreter {
+        return EvaluatedTreatmentInterpreter(determineAvailableTreatments(patientRecord, treatmentCandidates))
     }
 
-    fun patientHasExhaustedStandardOfCare(patientRecord: PatientRecord, treatments: List<Treatment>): Boolean {
-        return determineAvailableTreatments(patientRecord, treatments).all { evaluatedTreatment: EvaluatedTreatment ->
-            evaluatedTreatment.treatment.isOptional
+    fun patientHasExhaustedStandardOfCare(patientRecord: PatientRecord, treatmentCandidates: List<TreatmentCandidate>): Boolean {
+        return determineAvailableTreatments(patientRecord, treatmentCandidates).all { evaluatedTreatment: EvaluatedTreatment ->
+            evaluatedTreatment.treatmentCandidate.isOptional
         }
     }
 
-    private fun evaluateTreatmentForPatient(treatment: Treatment, patientRecord: PatientRecord): EvaluatedTreatment {
-        val evaluations: List<Evaluation> = treatment.eligibilityFunctions.map { eligibilityFunction ->
+    private fun evaluateTreatmentForPatient(treatmentCandidate: TreatmentCandidate, patientRecord: PatientRecord): EvaluatedTreatment {
+        val evaluations: List<Evaluation> = treatmentCandidate.eligibilityFunctions.map { eligibilityFunction ->
             evaluationFunctionFactory.create(eligibilityFunction).evaluate(patientRecord)
         }
-        return EvaluatedTreatment(treatment, evaluations, treatment.score)
+        return EvaluatedTreatment(treatmentCandidate, evaluations, treatmentCandidate.expectedBenefitScore)
     }
 
     private fun determineTreatmentLineForPatient(patientRecord: PatientRecord): Int {

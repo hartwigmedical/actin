@@ -9,7 +9,10 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.config.Configurator
 
-data class StandardOfCareConfig(val clinicalJson: String, val molecularJson: String, val doidJson: String, val runHistorically: Boolean) {
+data class StandardOfCareConfig(
+    val clinicalJson: String, val molecularJson: String, val doidJson: String, val treatmentDirectory: String,
+    val runHistorically: Boolean
+) {
 
     companion object {
         fun createOptions(): Options {
@@ -40,6 +43,7 @@ data class StandardOfCareConfig(val clinicalJson: String, val molecularJson: Str
                 clinicalJson = ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON),
                 molecularJson = ApplicationConfig.nonOptionalFile(cmd, MOLECULAR_JSON),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
+                treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
                 runHistorically = runHistorically
             )
         }
@@ -48,6 +52,7 @@ data class StandardOfCareConfig(val clinicalJson: String, val molecularJson: Str
         private const val CLINICAL_JSON = "clinical_json"
         private const val MOLECULAR_JSON = "molecular_json"
         private const val DOID_JSON = "doid_json"
+        private const val TREATMENT_DIRECTORY = "treatment_directory"
         private const val RUN_HISTORICALLY = "run_historically"
         private const val LOG_DEBUG = "log_debug"
     }
