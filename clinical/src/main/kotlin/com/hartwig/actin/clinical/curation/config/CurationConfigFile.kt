@@ -11,7 +11,7 @@ object CurationConfigFile {
     @Throws(IOException::class)
     fun <T : CurationConfig> read(tsv: String, factory: CurationConfigFactory<T>): List<T> {
         val lines = Files.readAllLines(File(tsv).toPath())
-        val fields = TabularFile.createFields(lines[0].split(DELIMITER.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
-        return lines.subList(1, lines.size).map { factory.create(fields, it.split(DELIMITER.toRegex()).toTypedArray()) }
+        val fields = TabularFile.createFields(lines[0].split(DELIMITER).dropLastWhile { it.isEmpty() }.toTypedArray())
+        return lines.subList(1, lines.size).map { factory.create(fields, it.split(DELIMITER).toTypedArray()) }
     }
 }

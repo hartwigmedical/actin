@@ -57,6 +57,37 @@ CREATE TABLE `clinicalStatus`
     PRIMARY KEY (`id`)
 );
 
+DROP TABLE IF EXISTS `treatmentHistoryEntry`;
+CREATE TABLE `treatmentHistoryEntry`
+(   `id` int NOT NULL AUTO_INCREMENT,
+    `patientId` varchar(50) NOT NULL,
+    `name` varchar(100) NOT NULL,
+    `startYear` int,
+    `startMonth` int,
+    `intents` varchar(100),
+    `isTrial` BOOLEAN,
+    `trialAcronym` varchar(100),
+    `categories` varchar(100) NOT NULL,
+    `synonyms` varchar(100) NOT NULL,
+    `isSystemic` BOOLEAN NOT NULL,
+    `drugs` varchar(500),
+    `maxCycles` int,
+    `therapies` varchar(500),
+    `isInternal` BOOLEAN,
+    `radioType` varchar(100),
+    `stopYear` int,
+    `stopMonth` int,
+    `ongoingAsOf` date,
+    `cycles` int,
+    `bestResponse` varchar(50),
+    `stopReason` varchar(50),
+    `stopReasonDetail` varchar(200),
+    `toxicities` varchar(200),
+    `endDate` date,
+    `status` varchar(50),
+    PRIMARY KEY (`id`)
+);
+
 DROP TABLE IF EXISTS `priorTumorTreatment`;
 CREATE TABLE `priorTumorTreatment`
 (   `id` int NOT NULL AUTO_INCREMENT,

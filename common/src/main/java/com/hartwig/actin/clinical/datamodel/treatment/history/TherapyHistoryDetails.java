@@ -39,8 +39,8 @@ public abstract class TherapyHistoryDetails {
     public abstract Set<ObservedToxicity> toxicities();
 
     @Nullable
-    public abstract Set<BodyLocationCategory> locationCategories();
+    public abstract Set<BodyLocationCategory> bodyLocationCategories();
 
     @Nullable
-    public abstract Set<String> locations();
+    public abstract Set<String> bodyLocations();
 }

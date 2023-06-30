@@ -22,7 +22,7 @@ public abstract class TreatmentHistoryEntry {
     public abstract Integer startMonth();
 
     @Nullable
-    public abstract Intent intent();
+    public abstract Set<Intent> intents();
 
     @Nullable
     public abstract Boolean isTrial();

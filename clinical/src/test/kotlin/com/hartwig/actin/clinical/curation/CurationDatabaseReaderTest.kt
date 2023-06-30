@@ -1,22 +1,28 @@
 package com.hartwig.actin.clinical.curation
 
-import com.google.common.collect.Sets
 import com.google.common.io.Resources
+import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.treatment.Drug
+import com.hartwig.actin.clinical.datamodel.treatment.DrugClass
+import com.hartwig.actin.clinical.datamodel.treatment.Therapy
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertFalse
-import junit.framework.TestCase.assertNotNull
-import junit.framework.TestCase.assertNull
-import junit.framework.TestCase.assertTrue
+import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
 import org.apache.logging.log4j.util.Strings
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.tuple
+import org.assertj.core.api.Assertions.within
 import org.junit.Before
 import org.junit.Test
 import java.io.IOException
 
 class CurationDatabaseReaderTest {
-    private val reader = CurationDatabaseReader(TestCurationFactory.createMinimalTestCurationDatabaseValidator())
+    private val reader = CurationDatabaseReader(
+        TestCurationFactory.createMinimalTestCurationDatabaseValidator(),
+        TreatmentDatabaseFactory.createFromPath(TREATMENT_DIRECTORY)
+    )
     private var database: CurationDatabase? = null
 
     @Before
@@ -28,196 +34,238 @@ class CurationDatabaseReaderTest {
     @Test
     fun shouldReadPrimaryTumorConfigs() {
         val configs = database!!.primaryTumorConfigs
-        assertEquals(1, configs.size.toLong())
+        assertThat(configs).hasSize(1)
         val config = configs[0]
-        assertEquals("Unknown | Carcinoma", config.input)
-        assertEquals("Unknown", config.primaryTumorLocation)
-        assertEquals("CUP", config.primaryTumorSubLocation)
-        assertEquals("Carcinoma", config.primaryTumorType)
-        assertEquals(Strings.EMPTY, config.primaryTumorSubType)
-        assertEquals(Strings.EMPTY, config.primaryTumorExtraDetails)
-        assertEquals(1, config.doids.size.toLong())
-        assertTrue(config.doids.contains("299"))
+        assertThat(config.input).isEqualTo("Unknown | Carcinoma")
+        assertThat(config.primaryTumorLocation).isEqualTo("Unknown")
+        assertThat(config.primaryTumorSubLocation).isEqualTo("CUP")
+        assertThat(config.primaryTumorType).isEqualTo("Carcinoma")
+        assertThat(config.primaryTumorSubType).isEqualTo(Strings.EMPTY)
+        assertThat(config.primaryTumorExtraDetails).isEqualTo(Strings.EMPTY)
+        assertThat(config.doids).hasSize(1)
+        assertThat(config.doids).contains("299")
     }
 
     @Test
     fun shouldReadOncologicalHistoryConfigs() {
         val configs = database!!.oncologicalHistoryConfigs
-        assertEquals(1, configs.size.toLong())
+        assertThat(configs).hasSize(1)
         val config = find(configs, "Capecitabine/Oxaliplatin 2020-2021")
-        assertFalse(config.ignore)
+        assertThat(config.ignore).isFalse
         val curated = config.curated
-        assertNotNull(curated)
-        assertEquals("Capecitabine+Oxaliplatin", curated!!.name())
-        assertIntegerEquals(2020, curated.startYear())
-        assertNull(curated.startMonth())
-        assertIntegerEquals(2021, curated.stopYear())
-        assertNull(curated.stopMonth())
-        assertIntegerEquals(6, curated.cycles())
-        assertEquals("PR", curated.bestResponse())
-        assertEquals("toxicity", curated.stopReason())
-        assertEquals(Sets.newHashSet(TreatmentCategory.CHEMOTHERAPY), curated.categories())
-        assertTrue(curated.isSystemic)
-        assertEquals("antimetabolite,platinum", curated.chemoType())
-        assertNull(curated.immunoType())
-        assertNull(curated.targetedType())
-        assertNull(curated.hormoneType())
-        assertNull(curated.radioType())
-        assertNull(curated.transplantType())
-        assertNull(curated.supportiveType())
-        assertNull(curated.trialAcronym())
-        assertNull(curated.ablationType())
+        assertThat(curated).isNotNull
+        assertThat(curated!!.name()).isEqualTo("Capecitabine+Oxaliplatin")
+        assertThat(curated.startYear()).isEqualTo(2020)
+        assertThat(curated.startMonth()).isNull()
+        assertThat(curated.stopYear()).isEqualTo(2021)
+        assertThat(curated.stopMonth()).isNull()
+        assertThat(curated.cycles()).isEqualTo(6)
+        assertThat(curated.bestResponse()).isEqualTo("PR")
+        assertThat(curated.stopReason()).isEqualTo("toxicity")
+        assertThat(curated.categories()).containsExactly(TreatmentCategory.CHEMOTHERAPY)
+        assertThat(curated.isSystemic).isTrue
+        assertThat(curated.chemoType()).isEqualTo("antimetabolite,platinum")
+        assertThat(curated.immunoType()).isNull()
+        assertThat(curated.targetedType()).isNull()
+        assertThat(curated.hormoneType()).isNull()
+        assertThat(curated.radioType()).isNull()
+        assertThat(curated.transplantType()).isNull()
+        assertThat(curated.supportiveType()).isNull()
+        assertThat(curated.trialAcronym()).isNull()
+        assertThat(curated.ablationType()).isNull()
+    }
+
+    @Test
+    fun shouldReadTreatmentHistoryConfigs() {
+        val configs = database!!.treatmentHistoryEntryConfigs
+        assertThat(configs).hasSize(1)
+
+        val config = find(configs, "Capecitabine/Oxaliplatin 2020-2021")
+        assertThat(config.ignore).isFalse
+
+        val curated = config.curated
+        assertThat(curated).isNotNull
+        assertThat(curated!!.treatments()).hasSize(1)
+
+        val treatment = curated.treatments().iterator().next() as Therapy
+        assertThat(treatment.name()).isEqualTo("Capecitabine+Oxaliplatin")
+        assertThat(curated.startYear()).isEqualTo(2020)
+        assertThat(curated.startMonth()).isNull()
+
+        val therapyHistoryDetails = curated.therapyHistoryDetails()
+        assertThat(therapyHistoryDetails!!.stopYear()).isEqualTo(2021)
+        assertThat(therapyHistoryDetails.stopMonth()).isNull()
+        assertThat(therapyHistoryDetails.cycles()).isEqualTo(6)
+        assertThat(therapyHistoryDetails.bestResponse()).isEqualTo(TreatmentResponse.PARTIAL_RESPONSE)
+        assertThat(therapyHistoryDetails.stopReason()).isEqualTo(StopReason.TOXICITY)
+
+        assertThat(treatment.categories()).containsExactly(TreatmentCategory.CHEMOTHERAPY)
+        assertThat(treatment.isSystemic).isTrue
+        assertThat(treatment.drugs()).extracting(Drug::name, Drug::drugClasses).containsExactlyInAnyOrder(
+            tuple("Capecitabine", setOf(DrugClass.ANTIMETABOLITE)),
+            tuple("Oxaliplatin", setOf(DrugClass.PLATINUM_COMPOUND))
+        )
+        assertThat(curated.trialAcronym()).isNull()
     }
 
     @Test
     fun shouldReadSecondPrimaryConfigs() {
         val configs = database!!.secondPrimaryConfigs
-        assertEquals(1, configs.size.toLong())
+        assertThat(configs).hasSize(1)
+
         val config = find(configs, "basaalcelcarcinoom (2014) | 2014")
-        assertFalse(config.ignore)
+        assertThat(config.ignore).isFalse
+
         val curated = config.curated
-        assertNotNull(curated)
-        assertEquals(Strings.EMPTY, curated!!.tumorLocation())
-        assertEquals(Strings.EMPTY, curated.tumorSubLocation())
-        assertEquals("Carcinoma", curated.tumorType())
-        assertEquals("Basal cell carcinoma", curated.tumorSubType())
-        assertEquals(Sets.newHashSet("2513"), curated.doids())
-        assertIntegerEquals(2014, curated.diagnosedYear())
-        assertIntegerEquals(1, curated.diagnosedMonth())
-        assertEquals("None", curated.treatmentHistory())
-        assertIntegerEquals(2014, curated.lastTreatmentYear())
-        assertIntegerEquals(2, curated.lastTreatmentMonth())
-        assertFalse(curated.isActive)
+        assertThat(curated).isNotNull
+        assertThat(curated!!.tumorLocation()).isEqualTo("")
+        assertThat(curated.tumorSubLocation()).isEqualTo("")
+        assertThat(curated.tumorType()).isEqualTo("Carcinoma")
+        assertThat(curated.tumorSubType()).isEqualTo("Basal cell carcinoma")
+        assertThat(curated.doids()).containsExactly("2513")
+        assertThat(curated.diagnosedYear()).isEqualTo(2014)
+        assertThat(curated.diagnosedMonth()).isEqualTo(1)
+        assertThat(curated.treatmentHistory()).isEqualTo("None")
+        assertThat(curated.lastTreatmentYear()).isEqualTo(2014)
+        assertThat(curated.lastTreatmentMonth()).isEqualTo(2)
+        assertThat(curated.isActive).isFalse
     }
 
     @Test
     fun shouldReadLesionLocationConfigs() {
         val configs = database!!.lesionLocationConfigs
-        assertEquals(1, configs.size.toLong())
+        assertThat(configs).hasSize(1)
         val config = configs[0]
-        assertEquals("Lever", config.input)
-        assertEquals("Liver", config.location)
+        assertThat(config.input).isEqualTo("Lever")
+        assertThat(config.location).isEqualTo("Liver")
     }
 
     @Test
     fun shouldReadNonOncologicalHistoryConfigs() {
         val configs = database!!.nonOncologicalHistoryConfigs
-        assertEquals(4, configs.size.toLong())
+        assertThat(configs).hasSize(4)
+
         val config1 = find(configs, "Levercirrose/ sarcoidose")
-        assertFalse(config1.ignore)
-        assertTrue(config1.priorOtherCondition.isPresent)
-        assertFalse(config1.lvef.isPresent)
+        assertThat(config1.ignore).isFalse
+        assertThat(config1.priorOtherCondition.isPresent).isTrue
+        assertThat(config1.lvef.isPresent).isFalse
+
         val curated1 = config1.priorOtherCondition.get()
-        assertEquals("Liver cirrhosis and sarcoidosis", curated1.name())
-        assertIntegerEquals(2019, curated1.year())
-        assertIntegerEquals(7, curated1.month())
-        assertEquals("Liver disease", curated1.category())
-        assertEquals(2, curated1.doids().size.toLong())
-        assertTrue(curated1.doids().contains("5082"))
-        assertTrue(curated1.doids().contains("11335"))
-        assertFalse(curated1.isContraindicationForTherapy)
+        assertThat(curated1.name()).isEqualTo("Liver cirrhosis and sarcoidosis")
+        assertThat(curated1.year()).isEqualTo(2019)
+        assertThat(curated1.month()).isEqualTo(7)
+        assertThat(curated1.category()).isEqualTo("Liver disease")
+        assertThat(curated1.doids()).containsExactlyInAnyOrder("5082", "11335")
+        assertThat(curated1.isContraindicationForTherapy).isFalse
+
         val config2 = find(configs, "NA")
-        assertTrue(config2.ignore)
-        assertFalse(config2.lvef.isPresent)
-        assertFalse(config2.priorOtherCondition.isPresent)
+        assertThat(config2.ignore).isTrue
+        assertThat(config2.lvef.isPresent).isFalse
+        assertThat(config2.priorOtherCondition.isPresent).isFalse
+
         val config3 = find(configs, "LVEF 0.17")
-        assertFalse(config3.ignore)
-        assertTrue(config3.lvef.isPresent)
-        assertFalse(config3.priorOtherCondition.isPresent)
-        assertEquals(0.17, config3.lvef.get(), EPSILON)
+        assertThat(config3.ignore).isFalse
+        assertThat(config3.lvef.isPresent).isTrue
+        assertThat(config3.priorOtherCondition.isPresent).isFalse
+        assertDoubleEquals(0.17, config3.lvef.get())
+
         val config4 = find(configs, "No contraindication")
-        assertTrue(config4.priorOtherCondition.isPresent)
+        assertThat(config4.priorOtherCondition.isPresent).isTrue
         val curated4 = config4.priorOtherCondition.get()
-        assertTrue(curated4.isContraindicationForTherapy)
+        assertThat(curated4.isContraindicationForTherapy).isTrue
     }
 
     @Test
     fun shouldReadECGConfigs() {
         val configs = database!!.ecgConfigs
-        assertEquals(4, configs.size.toLong())
+        assertThat(configs).hasSize(4)
         val sinus = find(configs, "Sinus Tachycardia")
-        assertEquals("Sinus tachycardia", sinus.interpretation)
-        assertFalse(sinus.ignore)
-        assertFalse(sinus.isQTCF)
-        assertNull(sinus.qtcfValue)
-        assertNull(sinus.qtcfUnit)
-        assertFalse(sinus.isJTC)
-        assertNull(sinus.jtcValue)
-        assertNull(sinus.jtcUnit)
+        assertThat(sinus.interpretation).isEqualTo("Sinus tachycardia")
+        assertThat(sinus.ignore).isFalse
+        assertThat(sinus.isQTCF).isFalse
+        assertThat(sinus.qtcfValue).isNull()
+        assertThat(sinus.qtcfUnit).isNull()
+        assertThat(sinus.isJTC).isFalse
+        assertThat(sinus.jtcValue).isNull()
+        assertThat(sinus.jtcUnit).isNull()
         val qtcf = find(configs, "qtcf")
-        assertTrue(qtcf.isQTCF)
-        assertFalse(qtcf.ignore)
-        assertIntegerEquals(470, qtcf.qtcfValue)
-        assertEquals("ms", qtcf.qtcfUnit)
+        assertThat(qtcf.isQTCF).isTrue
+        assertThat(qtcf.ignore).isFalse
+        assertThat(qtcf.qtcfValue).isEqualTo(470)
+        assertThat(qtcf.qtcfUnit).isEqualTo("ms")
         val jtc = find(configs, "jtc")
-        assertTrue(jtc.isJTC)
-        assertFalse(jtc.ignore)
-        assertIntegerEquals(570, jtc.jtcValue)
-        assertEquals("ms", jtc.jtcUnit)
+        assertThat(jtc.isJTC).isTrue
+        assertThat(jtc.ignore).isFalse
+        assertThat(jtc.jtcValue).isEqualTo(570)
+        assertThat(jtc.jtcUnit).isEqualTo("ms")
         val weird = find(configs, "weird")
-        assertTrue(weird.ignore)
+        assertThat(weird.ignore).isTrue
     }
 
     @Test
     fun shouldReadInfectionConfigs() {
         val configs = database!!.infectionConfigs
-        assertEquals(2, configs.size.toLong())
+        assertThat(configs).hasSize(2)
         val config1 = find(configs, "YES lung abces")
-        assertEquals("Lung abscess", config1.interpretation)
+        assertThat(config1.interpretation).isEqualTo("Lung abscess")
         val config2 = find(configs, "NA")
-        assertEquals("No", config2.interpretation)
+        assertThat(config2.interpretation).isEqualTo("No")
     }
 
     @Test
     fun shouldReadPeriodBetweenUnitConfigs() {
         val configs = database!!.periodBetweenUnitConfigs
-        assertEquals(1, configs.size.toLong())
+        assertThat(configs.size.toLong()).isEqualTo(1)
         val config1 = find(configs, "mo")
-        assertEquals("months", config1.interpretation)
+        assertThat(config1.interpretation).isEqualTo("months")
     }
 
     @Test
     fun shouldReadComplicationConfigs() {
         val configs = database!!.complicationConfigs
-        assertEquals(2, configs.size.toLong())
+        assertThat(configs).hasSize(2)
+
         val config1 = find(configs, "something")
-        assertFalse(config1.ignore)
-        assertFalse(config1.impliesUnknownComplicationState)
+        assertThat(config1.ignore).isFalse
+        assertThat(config1.impliesUnknownComplicationState).isFalse
+
         val curated1 = config1.curated
-        assertNotNull(curated1)
-        assertEquals("curated something", curated1!!.name())
-        assertEquals(2, curated1.categories().size.toLong())
-        assertIntegerEquals(2000, curated1.year())
-        assertIntegerEquals(1, curated1.month())
+        assertThat(curated1).isNotNull
+        assertThat(curated1!!.name()).isEqualTo("curated something")
+        assertThat(curated1.categories().size.toLong()).isEqualTo(2)
+        assertThat(curated1.year()).isEqualTo(2000)
+        assertThat(curated1.month()).isEqualTo(1)
+
         val config2 = find(configs, "unknown")
-        assertFalse(config2.ignore)
-        assertTrue(config2.impliesUnknownComplicationState)
+        assertThat(config2.ignore).isFalse
+        assertThat(config2.impliesUnknownComplicationState).isTrue
+
         val curated2 = config2.curated
-        assertNotNull(curated2)
-        assertEquals(Strings.EMPTY, curated2!!.name())
-        assertEquals(0, curated2.categories().size.toLong())
-        assertNull(curated2.year())
-        assertNull(curated2.month())
+        assertThat(curated2).isNotNull
+        assertThat(curated2!!.name()).isEqualTo(Strings.EMPTY)
+        assertThat(curated2.categories().size.toLong()).isEqualTo(0)
+        assertThat(curated2.year()).isNull()
+        assertThat(curated2.month()).isNull()
     }
 
     @Test
     fun shouldReadToxicityConfigs() {
         val configs = database!!.toxicityConfigs
-        assertEquals(1, configs.size.toLong())
+        assertThat(configs).hasSize(1)
         val config = configs[0]
-        assertEquals("Neuropathy GR3", config.input)
-        assertEquals("Neuropathy", config.name)
-        assertEquals(Sets.newHashSet("Neuro"), config.categories)
-        assertIntegerEquals(3, config.grade)
+        assertThat(config.input).isEqualTo("Neuropathy GR3")
+        assertThat(config.name).isEqualTo("Neuropathy")
+        assertThat(config.categories).containsExactly("Neuro")
+        assertThat(config.grade).isEqualTo(3)
     }
 
     @Test
     fun shouldReadMolecularTestConfigs() {
         val configs = database!!.molecularTestConfigs
-        assertEquals(1, configs.size.toLong())
+        assertThat(configs).hasSize(1)
         val config = configs[0]
-        assertEquals("IHC ERBB2 3+", config.input)
-        assertEquals(
+        assertThat(config.input).isEqualTo("IHC ERBB2 3+")
+        assertThat(config.curated).isEqualTo(
             ImmutablePriorMolecularTest.builder()
                 .test("IHC")
                 .item("ERBB2")
@@ -227,115 +275,110 @@ class CurationDatabaseReaderTest {
                 .scoreValue(3.0)
                 .scoreValueUnit("+")
                 .impliesPotentialIndeterminateStatus(false)
-                .build(), config.curated
+                .build()
         )
     }
 
     @Test
     fun shouldReadMedicationNameConfigs() {
         val configs = database!!.medicationNameConfigs
-        assertEquals(2, configs.size.toLong())
+        assertThat(configs).hasSize(2)
         val config1 = find(configs, "A en B")
-        assertEquals("A and B", config1.name)
-        assertFalse(config1.ignore)
+        assertThat(config1.name).isEqualTo("A and B")
+        assertThat(config1.ignore).isFalse
         val config2 = find(configs, "No medication")
-        assertTrue(config2.ignore)
+        assertThat(config2.ignore).isTrue
     }
 
     @Test
     fun shouldReadMedicationDosageConfigs() {
         val configs = database!!.medicationDosageConfigs
-        assertEquals(1, configs.size.toLong())
+        assertThat(configs).hasSize(1)
         val config1 = find(configs, "once per day 50-60 mg every month")
         assertDoubleEquals(50.0, config1.dosageMin)
         assertDoubleEquals(60.0, config1.dosageMax)
-        assertEquals("mg", config1.dosageUnit)
+        assertThat(config1.dosageUnit).isEqualTo("mg")
         assertDoubleEquals(1.0, config1.frequency)
-        assertEquals("day", config1.frequencyUnit)
-        assertEquals(0.0, config1.periodBetweenValue)
-        assertEquals("mo", config1.periodBetweenUnit)
-        assertEquals(false, config1.ifNeeded)
+        assertThat(config1.frequencyUnit).isEqualTo("day")
+        assertThat(config1.periodBetweenValue).isEqualTo(0.0)
+        assertThat(config1.periodBetweenUnit).isEqualTo("mo")
+        assertThat(config1.ifNeeded).isEqualTo(false)
     }
 
     @Test
     fun shouldReadMedicationCategoryConfigs() {
         val configs = database!!.medicationCategoryConfigs
-        assertEquals(2, configs.size.toLong())
+        assertThat(configs).hasSize(2)
         val paracetamol = find(configs, "Paracetamol")
-        assertEquals(Sets.newHashSet("Acetanilide derivatives"), paracetamol.categories)
+        assertThat(paracetamol.categories).containsExactly("Acetanilide derivatives")
         val formoterol = find(configs, "Formoterol and budesonide")
-        assertEquals(Sets.newHashSet("Beta2 sympathomimetics", "Corticosteroids"), formoterol.categories)
+        assertThat(formoterol.categories).containsExactlyInAnyOrder("Beta2 sympathomimetics", "Corticosteroids")
     }
 
     @Test
     fun shouldReadAllergyConfigs() {
         val configs = database!!.intoleranceConfigs
-        assertEquals(1, configs.size.toLong())
+        assertThat(configs).hasSize(1)
         val config = find(configs, "Clindamycine")
-        assertEquals("Clindamycin", config.name)
-        assertEquals(Sets.newHashSet("0060500"), config.doids)
+        assertThat(config.name).isEqualTo("Clindamycin")
+        assertThat(config.doids).containsExactly("0060500")
     }
 
     @Test
     fun shouldReadAdministrationRouteTranslations() {
         val translations = database!!.administrationRouteTranslations
-        assertEquals(1, translations.size.toLong())
+        assertThat(translations).hasSize(1)
         val translation = translations[0]
-        assertEquals("ORAAL", translation.administrationRoute)
-        assertEquals("Oral", translation.translatedAdministrationRoute)
+        assertThat(translation.administrationRoute).isEqualTo("ORAAL")
+        assertThat(translation.translatedAdministrationRoute).isEqualTo("Oral")
     }
 
     @Test
     fun shouldReadLaboratoryTranslations() {
         val translations = database!!.laboratoryTranslations
-        assertEquals(1, translations.size.toLong())
+        assertThat(translations).hasSize(1)
         val translation = translations[0]
-        assertEquals("AC", translation.code)
-        assertEquals("AC2", translation.translatedCode)
-        assertEquals("ACTH", translation.name)
-        assertEquals("Adrenocorticotropic hormone", translation.translatedName)
+        assertThat(translation.code).isEqualTo("AC")
+        assertThat(translation.translatedCode).isEqualTo("AC2")
+        assertThat(translation.name).isEqualTo("ACTH")
+        assertThat(translation.translatedName).isEqualTo("Adrenocorticotropic hormone")
     }
 
     @Test
     fun shouldReadToxicityTranslations() {
         val translations = database!!.toxicityTranslations
-        assertEquals(1, translations.size.toLong())
+        assertThat(translations).hasSize(1)
         val translation = translations[0]
-        assertEquals("Pijn", translation.toxicity)
-        assertEquals("Pain", translation.translatedToxicity)
+        assertThat(translation.toxicity).isEqualTo("Pijn")
+        assertThat(translation.translatedToxicity).isEqualTo("Pain")
     }
 
     @Test
     fun shouldReadBloodTransfusionTranslations() {
         val translations = database!!.bloodTransfusionTranslations
-        assertEquals(1, translations.size.toLong())
+        assertThat(translations).hasSize(1)
         val translation = translations[0]
-        assertEquals("Thrombocytenconcentraat", translation.product)
-        assertEquals("Thrombocyte concentrate", translation.translatedProduct)
+        assertThat(translation.product).isEqualTo("Thrombocytenconcentraat")
+        assertThat(translation.translatedProduct).isEqualTo("Thrombocyte concentrate")
     }
 
     @Test
     fun shouldReadDosageUnitTranslations() {
         val translations = database!!.dosageUnitTranslations
-        assertEquals(1, translations.size.toLong())
+        assertThat(translations.size.toLong()).isEqualTo(1)
         val translation = translations[0]
-        assertEquals("stuk", translation.dosageUnit)
-        assertEquals("piece", translation.translatedDosageUnit)
-    }
-
-    private fun assertIntegerEquals(expected: Int, actual: Int?) {
-        assertNotNull(actual)
-        assertEquals(expected.toLong(), (actual as Int).toLong())
+        assertThat(translation.dosageUnit).isEqualTo("stuk")
+        assertThat(translation.translatedDosageUnit).isEqualTo("piece")
     }
 
     private fun assertDoubleEquals(expected: Double, actual: Double?) {
-        assertNotNull(actual)
-        assertEquals(expected, actual!!, EPSILON)
+        assertThat(actual).isNotNull.isEqualTo(expected, within(EPSILON))
     }
 
     companion object {
         private const val EPSILON = 1.0E-10
         private val CURATION_DIRECTORY = Resources.getResource("curation").path
+        private val TREATMENT_DIRECTORY = Resources.getResource("treatment_db").path
         private fun <T : CurationConfig> find(configs: List<T>, input: String): T {
             for (config in configs) {
                 if (config.input == input) {

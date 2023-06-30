@@ -1,11 +1,9 @@
 package com.hartwig.actin.clinical.curation
 
-import com.google.common.collect.Sets
-
 object CurationUtil {
     private const val IGNORE = "<ignore>"
-    private const val DOID_DELIMITER = ";"
-    private const val CATEGORIES_DELIMITER = ";"
+    private const val DELIMITER = ";"
+
     fun isIgnoreString(input: String): Boolean {
         return input == IGNORE
     }
@@ -25,21 +23,14 @@ object CurationUtil {
     }
 
     fun toDOIDs(doidString: String): Set<String> {
-        return toSet(doidString, DOID_DELIMITER)
+        return toSet(doidString)
     }
 
     fun toCategories(categoriesString: String): Set<String> {
-        return toSet(categoriesString, CATEGORIES_DELIMITER)
+        return toSet(categoriesString)
     }
 
-    private fun toSet(setString: String, delimiter: String): Set<String> {
-        if (setString.isEmpty()) {
-            return Sets.newHashSet()
-        }
-        val strings: MutableSet<String> = Sets.newHashSet()
-        for (string in setString.split(delimiter.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
-            strings.add(string.trim { it <= ' ' })
-        }
-        return strings
+    fun toSet(setString: String): Set<String> {
+        return setString.split(DELIMITER).map { it.trim() }.filterNot { it.isEmpty() }.toSet()
     }
 }

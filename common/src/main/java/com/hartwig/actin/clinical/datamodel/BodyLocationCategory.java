@@ -2,9 +2,10 @@ package com.hartwig.actin.clinical.datamodel;
 
 public enum BodyLocationCategory {
     BONE,
-    LIVER,
-    CNS,
     BRAIN,
+    CNS,
+    LIVER,
     LUNG,
-    LYMPH_NODE
+    LYMPH_NODE,
+    NECK
 }

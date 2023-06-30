@@ -148,7 +148,7 @@ public final class TestClinicalFactory {
         return ImmutableTreatmentHistoryEntry.builder()
                 .treatments(therapies)
                 .startYear(startYear)
-                .intent(intent)
+                .addIntents(intent)
                 .therapyHistoryDetails(ImmutableTherapyHistoryDetails.builder().bestResponse(TreatmentResponse.PARTIAL_RESPONSE).build())
                 .build();
     }
@@ -162,7 +162,6 @@ public final class TestClinicalFactory {
         Chemotherapy folfirinox = ImmutableChemotherapy.builder()
                 .name("FOLFIRINOX")
                 .isSystemic(true)
-                .addCategories(TreatmentCategory.CHEMOTHERAPY)
                 .addDrugs(oxaliplatin, fluorouracil, irinotecan)
                 .maxCycles(8)
                 .build();
@@ -170,7 +169,6 @@ public final class TestClinicalFactory {
         Radiotherapy brachytherapy = ImmutableRadiotherapy.builder()
                 .name("Brachytherapy")
                 .isSystemic(false)
-                .addCategories(TreatmentCategory.RADIOTHERAPY)
                 .build();
 
         CombinedTherapy radioFolfirinox = ImmutableCombinedTherapy.builder()
@@ -182,7 +180,6 @@ public final class TestClinicalFactory {
         Immunotherapy pembrolizumab = ImmutableImmunotherapy.builder()
                 .name("Pembrolizumab")
                 .isSystemic(true)
-                .addCategories(TreatmentCategory.IMMUNOTHERAPY)
                 .addDrugs(drug("Pembrolizumab", DrugClass.MONOCLONAL_ANTIBODY))
                 .build();
 
@@ -197,8 +194,11 @@ public final class TestClinicalFactory {
 
         SurgicalTreatment colectomy = ImmutableSurgicalTreatment.builder().name("Colectomy").build();
 
-        TreatmentHistoryEntry surgeryHistoryEntry =
-                ImmutableTreatmentHistoryEntry.builder().addTreatments(colectomy).startYear(2021).intent(Intent.MAINTENANCE).build();
+        TreatmentHistoryEntry surgeryHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
+                .addTreatments(colectomy)
+                .startYear(2021)
+                .addIntents(Intent.MAINTENANCE)
+                .build();
 
         return List.of(therapyHistoryEntry(Set.of(folfirinox), 2020, Intent.NEOADJUVANT),
                 surgeryHistoryEntry,
@@ -456,12 +456,10 @@ public final class TestClinicalFactory {
 
     @NotNull
     private static List<TreatmentHistoryEntry> createTestSurgicalHistory() {
+        final LocalDate endDate = TODAY.minusDays(DAYS_SINCE_SURGERY);
         return Collections.singletonList(ImmutableTreatmentHistoryEntry.builder()
                 .treatments(Set.of(ImmutableSurgicalTreatment.builder().name("test surgery").build()))
-                .surgeryHistoryDetails(ImmutableSurgeryHistoryDetails.builder()
-                        .endDate(TODAY.minusDays(DAYS_SINCE_SURGERY))
-                        .status(SurgeryStatus.FINISHED)
-                        .build())
+                .surgeryHistoryDetails(ImmutableSurgeryHistoryDetails.builder().endDate(endDate).status(SurgeryStatus.FINISHED).build())
                 .build());
     }
 

@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.curation
 import com.google.common.collect.Lists
 import com.google.common.collect.Sets
 import com.google.common.io.Resources
+import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
 import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.datamodel.ECG
@@ -42,7 +43,12 @@ class CurationModelTest {
 
     @Test
     fun shouldBeAbleToCreateFromCurationDirectory() {
-        assertNotNull(CurationModel.create(CURATION_DIRECTORY, TestDoidModelFactory.createMinimalTestDoidModel()))
+        assertNotNull(
+            CurationModel.create(
+                CURATION_DIRECTORY, TestDoidModelFactory.createMinimalTestDoidModel(),
+                TreatmentDatabase(emptyMap(), emptyMap())
+            )
+        )
     }
 
     @Test
@@ -139,6 +145,16 @@ class CurationModelTest {
 
         val bone: TumorDetails = model.overrideKnownLesionLocations(base, null, Lists.newArrayList("Bone"))
         assertEquals(true, bone.hasBoneLesions())
+
+        model.evaluate()
+    }
+
+    @Test
+    fun shouldCurateTreatmentHistory() {
+        val treatmentHistory = listOf("Cis 2020 2021", "no systemic treatment", "cannot curate").flatMap(model::curateTreatmentHistoryEntry)
+        assertEquals(2, treatmentHistory.size.toLong())
+        assertTrue(treatmentHistory.any { 2020 == it.startYear() })
+        assertTrue(treatmentHistory.any { 2021 == it.startYear() })
 
         model.evaluate()
     }

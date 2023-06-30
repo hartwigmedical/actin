@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation
 
+import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.curation.config.ComplicationConfigFactory
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfigFactory
@@ -18,18 +19,28 @@ import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfigFactory
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfigFactory
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfigFactory
 import com.hartwig.actin.clinical.curation.config.ToxicityConfigFactory
-import com.hartwig.actin.clinical.curation.translation.*
+import com.hartwig.actin.clinical.curation.config.TreatmentHistoryCurationConfigFile
+import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslationFactory
+import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslationFactory
+import com.hartwig.actin.clinical.curation.translation.DosageUnitTranslationFactory
+import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslationFactory
+import com.hartwig.actin.clinical.curation.translation.ToxicityTranslationFactory
+import com.hartwig.actin.clinical.curation.translation.Translation
+import com.hartwig.actin.clinical.curation.translation.TranslationFactory
+import com.hartwig.actin.clinical.curation.translation.TranslationFile
 import com.hartwig.actin.util.Paths
 import org.apache.logging.log4j.LogManager
 import java.io.IOException
 
-class CurationDatabaseReader internal constructor(private val curationValidator: CurationValidator) {
+class CurationDatabaseReader(private val curationValidator: CurationValidator, private val treatmentDatabase: TreatmentDatabase) {
     @Throws(IOException::class)
     fun read(clinicalCurationDirectory: String): CurationDatabase {
         LOGGER.info("Reading clinical curation config from {}", clinicalCurationDirectory)
         val basePath = Paths.forceTrailingFileSeparator(clinicalCurationDirectory)
+
         return CurationDatabase(
             primaryTumorConfigs = readConfigs(basePath, PRIMARY_TUMOR_TSV, PrimaryTumorConfigFactory(curationValidator)),
+            treatmentHistoryEntryConfigs = TreatmentHistoryCurationConfigFile.read(basePath + ONCOLOGICAL_HISTORY_TSV, treatmentDatabase),
             oncologicalHistoryConfigs = readConfigs(basePath, ONCOLOGICAL_HISTORY_TSV, OncologicalHistoryConfigFactory()),
             secondPrimaryConfigs = readConfigs(basePath, SECOND_PRIMARY_TSV, SecondPrimaryConfigFactory(curationValidator)),
             lesionLocationConfigs = readConfigs(basePath, LESION_LOCATION_TSV, LesionLocationConfigFactory()),
@@ -66,6 +77,7 @@ class CurationDatabaseReader internal constructor(private val curationValidator:
 
     companion object {
         private val LOGGER = LogManager.getLogger(CurationDatabaseReader::class.java)
+
         private const val PRIMARY_TUMOR_TSV = "primary_tumor.tsv"
         private const val ONCOLOGICAL_HISTORY_TSV = "oncological_history.tsv"
         private const val SECOND_PRIMARY_TSV = "second_primary.tsv"

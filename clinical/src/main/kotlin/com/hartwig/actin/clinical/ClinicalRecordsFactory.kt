@@ -59,6 +59,7 @@ import com.hartwig.actin.clinical.sort.LabValueDescendingDateComparator
 import com.hartwig.actin.clinical.sort.MedicationByNameComparator
 import org.apache.logging.log4j.LogManager
 
+
 class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
     private val feed: FeedModel
     private val curation: CurationModel
@@ -103,6 +104,7 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
                 .patient(extractPatientDetails(subject, questionnaire))
                 .tumor(extractTumorDetails(questionnaire))
                 .clinicalStatus(extractClinicalStatus(questionnaire))
+                .treatmentHistory(extractTreatmentHistory(questionnaire))
                 .priorTumorTreatments(extractPriorTumorTreatments(questionnaire))
                 .priorSecondPrimaries(extractPriorSecondPrimaries(questionnaire))
                 .priorOtherConditions(extractPriorOtherConditions(questionnaire))
@@ -171,6 +173,18 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
             .lvef(curation.determineLVEF(questionnaire.nonOncologicalHistory))
             .hasComplications(extractComplications(questionnaire)?.isNotEmpty())
             .build()
+    }
+
+    private fun extractTreatmentHistory(questionnaire: Questionnaire?): List<TreatmentHistoryEntry> {
+        if (questionnaire == null) {
+            return emptyList()
+        }
+        return listOfNotNull(
+            questionnaire.treatmentHistoryCurrentTumor,
+            questionnaire.otherOncologicalHistory
+        )
+            .flatten()
+            .flatMap { curation.curateTreatmentHistoryEntry(it) }
     }
 
     private fun extractPriorTumorTreatments(questionnaire: Questionnaire?): List<PriorTumorTreatment> {

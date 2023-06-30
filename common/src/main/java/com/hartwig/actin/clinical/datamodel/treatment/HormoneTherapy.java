@@ -8,15 +8,12 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class Chemotherapy implements Therapy {
+public abstract class HormoneTherapy implements Therapy {
 
     @Override
     @NotNull
     @Value.Default
     public Set<TreatmentCategory> categories() {
-        return Set.of(TreatmentCategory.CHEMOTHERAPY);
+        return Set.of(TreatmentCategory.HORMONE_THERAPY);
     }
-
-    @Nullable
-    public abstract Integer maxCycles();
 }
