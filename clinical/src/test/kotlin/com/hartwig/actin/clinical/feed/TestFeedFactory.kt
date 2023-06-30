@@ -100,26 +100,28 @@ object TestFeedFactory {
     private fun createTestMedicationEntries(): List<MedicationEntry> {
         return listOf(
             medicationEntry(
-                code5ATCDisplay = "PARACETAMOL",
                 status = "active",
-                dosageInstruction = "50-60 mg per day",
+                dosageInstruction = "once per day 50-60 mg every month",
                 start = LocalDate.of(2019, 2, 2),
                 end = LocalDate.of(2019, 4, 4),
-                active = true
+                active = true,
+                code5ATCDisplay = "PARACETAMOL",
+                administrationRoute = "oraal"
             ), medicationEntry(
-                code5ATCDisplay = Strings.EMPTY,
                 status = Strings.EMPTY,
                 dosageInstruction = "Irrelevant",
                 start = LocalDate.of(2019, 2, 2),
                 end = LocalDate.of(2019, 4, 4),
-                active = false
+                active = false,
+                code5ATCDisplay = Strings.EMPTY
             )
         )
     }
 
     private fun medicationEntry(
         status: String, dosageInstruction: String, start: LocalDate, end: LocalDate, active: Boolean,
-        code5ATCDisplay: String = ""
+        code5ATCDisplay: String = "",
+        administrationRoute: String = ""
     ): MedicationEntry {
         return MedicationEntry(
             status = status,
@@ -135,7 +137,7 @@ object TestFeedFactory {
             pharmacologicalSubgroupDisplay = Strings.EMPTY,
             therapeuticSubgroupDisplay = Strings.EMPTY,
             anatomicalMainGroupDisplay = Strings.EMPTY,
-            dosageInstructionRouteDisplay = Strings.EMPTY,
+            dosageInstructionRouteDisplay = administrationRoute,
             dosageInstructionDoseQuantityUnit = Strings.EMPTY,
             dosageInstructionDoseQuantityValue = 0.0,
             dosageInstructionFrequencyUnit = Strings.EMPTY,

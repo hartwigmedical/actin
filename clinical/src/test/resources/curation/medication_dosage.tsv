@@ -1,3 +1,2 @@
-input	dosageMin	dosageMax	dosageUnit	frequency	frequencyUnit	ifNeeded
-once per day 50-60 mg	50	60	mg	1	day	0
-empty						
+input	dosageMin	dosageMax	dosageUnit	frequency	frequencyUnit	periodBetweenValue	periodBetweenUnit	ifNeeded
+once per day 50-60 mg every month	50	60	mg	1	day	0.0	mo	0

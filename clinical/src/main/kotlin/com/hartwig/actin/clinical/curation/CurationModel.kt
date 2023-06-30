@@ -5,6 +5,7 @@ import com.google.common.collect.HashMultimap
 import com.google.common.collect.Lists
 import com.google.common.collect.Multimap
 import com.google.common.collect.Sets
+import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.ECGConfig
@@ -17,20 +18,24 @@ import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
 import com.hartwig.actin.clinical.curation.config.MolecularTestConfig
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig
+import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation
+import com.hartwig.actin.clinical.curation.translation.DosageUnitTranslation
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation
 import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
 import com.hartwig.actin.clinical.datamodel.Complication
+import com.hartwig.actin.clinical.datamodel.Dosage
 import com.hartwig.actin.clinical.datamodel.ECG
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication
+import com.hartwig.actin.clinical.datamodel.ImmutableDosage
 import com.hartwig.actin.clinical.datamodel.ImmutableECG
 import com.hartwig.actin.clinical.datamodel.ImmutableECGMeasure
 import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus
@@ -51,7 +56,6 @@ import com.hartwig.actin.clinical.datamodel.Toxicity
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
-import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireRawEntryMapper
 import com.hartwig.actin.doid.DoidModel
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.util.Strings
@@ -369,6 +373,25 @@ class CurationModel @VisibleForTesting internal constructor(
         return ImmutableInfectionStatus.builder().from(input).description(description).build()
     }
 
+    fun curatePeriodBetweenUnit(input: String?): String? {
+        if (input.isNullOrEmpty()) {
+            return null
+        }
+        val configs: Set<PeriodBetweenUnitConfig> = find(database.periodBetweenUnitConfigs, input)
+        if (configs.isEmpty()) {
+            LOGGER.warn(" Could not find period between unit config for input '{}'", input)
+            return input
+        } else if (configs.size > 1) {
+            LOGGER.warn(" Multiple period between unit configs matched to '{}'", input)
+            return null
+        }
+        val config: PeriodBetweenUnitConfig = configs.first()
+        if (config.ignore) {
+            return null
+        }
+        return config.interpretation
+    }
+
     fun determineLVEF(inputs: List<String>?): Double? {
         return inputs?.flatMap { input: String -> find(database.nonOncologicalHistoryConfigs, input) }
             ?.filterNot { it.ignore }
@@ -416,7 +439,7 @@ class CurationModel @VisibleForTesting internal constructor(
         return configs.iterator().next().location
     }
 
-    fun curateMedicationDosage(input: String): Medication? {
+    fun curateMedicationDosage(input: String): Dosage? {
         val configs: Set<MedicationDosageConfig> = find(database.medicationDosageConfigs, input)
         if (configs.isEmpty()) {
             // TODO: Change to warn once the medications are more final.
@@ -426,20 +449,16 @@ class CurationModel @VisibleForTesting internal constructor(
             LOGGER.warn(" Multiple medication dosage configs matched to '{}'", input)
             return null
         }
-        val config: MedicationDosageConfig = configs.iterator().next()
+        val config: MedicationDosageConfig = configs.first()
 
-        return ImmutableMedication.builder()
-            .name(Strings.EMPTY)
-            .codeATC(Strings.EMPTY)
-            .chemicalSubgroupAtc(Strings.EMPTY)
-            .pharmacologicalSubgroupAtc(Strings.EMPTY)
-            .therapeuticSubgroupAtc(Strings.EMPTY)
-            .anatomicalMainGroupAtc(Strings.EMPTY)
+        return ImmutableDosage.builder()
             .dosageMin(config.dosageMin)
             .dosageMax(config.dosageMax)
             .dosageUnit(config.dosageUnit)
             .frequency(config.frequency)
             .frequencyUnit(config.frequencyUnit)
+            .periodBetweenValue(config.periodBetweenValue)
+            .periodBetweenUnit(config.periodBetweenUnit)
             .ifNeeded(config.ifNeeded)
             .build()
     }
@@ -614,6 +633,24 @@ class CurationModel @VisibleForTesting internal constructor(
         return null
     }
 
+    fun translateDosageUnit(dosageUnit: String?): String? {
+        if (dosageUnit.isNullOrEmpty()) {
+            return null
+        }
+        val trimmedDosageUnit = dosageUnit.trim { it <= ' ' }
+        val translation: DosageUnitTranslation? = findDosageUnitTranslation(trimmedDosageUnit)
+        if (translation == null) {
+            LOGGER.warn("No translation found for medication dosage unit: '{}'", trimmedDosageUnit)
+            return null
+        }
+        evaluatedTranslations.put(DosageUnitTranslation::class.java, translation)
+        return translation.translatedDosageUnit.ifEmpty { null }
+    }
+
+    private fun findDosageUnitTranslation(dosageUnit: String): DosageUnitTranslation? {
+        return database.dosageUnitTranslations.firstOrNull { it.dosageUnit.lowercase() == dosageUnit.lowercase() }
+    }
+
     fun evaluate() {
         var warnCount = 0
         for ((key, evaluated) in evaluatedCurationInputs.asMap().entries) {
@@ -676,6 +713,10 @@ class CurationModel @VisibleForTesting internal constructor(
                 return database.infectionConfigs
             }
 
+            PeriodBetweenUnitConfig::class.java -> {
+                return database.periodBetweenUnitConfigs
+            }
+
             ToxicityConfig::class.java -> {
                 return database.toxicityConfigs
             }
@@ -720,6 +761,10 @@ class CurationModel @VisibleForTesting internal constructor(
 
             BloodTransfusionTranslation::class.java -> {
                 return database.bloodTransfusionTranslations
+            }
+
+            DosageUnitTranslation::class.java -> {
+                return database.dosageUnitTranslations
             }
 
             else -> throw IllegalStateException("Class not found in curation database: $classToLookup")

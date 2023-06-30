@@ -13,6 +13,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus
+import com.hartwig.actin.clinical.datamodel.ImmutableDosage
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication
 import com.hartwig.actin.clinical.datamodel.ImmutableObservedToxicity
@@ -46,6 +47,7 @@ import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry
 import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry
 import com.hartwig.actin.clinical.feed.lab.LabExtraction
+import com.hartwig.actin.clinical.feed.medication.MedicationEntry
 import com.hartwig.actin.clinical.feed.patient.PatientEntry
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction
@@ -67,18 +69,17 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
     }
 
     fun create(): List<ClinicalRecord> {
-        val records: MutableList<ClinicalRecord> = Lists.newArrayList<ClinicalRecord>()
         val processedPatientIds: MutableSet<String> = HashSet()
-        val extraction = QuestionnaireExtraction(curation.questionnaireRawEntryMapper())
 
         LOGGER.info("Creating clinical model")
-        for (subject in feed.subjects()) {
+        val records = feed.subjects().map { subject ->
             val patientId = toPatientId(subject)
             check(!processedPatientIds.contains(patientId)) { "Cannot create clinical records. Duplicate patientId: $patientId" }
             processedPatientIds.add(patientId)
             LOGGER.info(" Extracting and curating data for patient {}", patientId)
 
-            val questionnaire: Questionnaire? = extraction.extract(feed.latestQuestionnaireEntry(subject))
+            val questionnaire = feed.latestQuestionnaireEntry(subject)?.let { QuestionnaireExtraction.extract(it) }
+
             val extractedToxicities = extractToxicities(subject, questionnaire)
             val toxicityEvaluations: List<ToxicityEvaluation> = extractedToxicities
                 .map { toxicity: Toxicity ->
@@ -97,31 +98,28 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
                         .build()
                 }
 
-            records.add(
-                ImmutableClinicalRecord.builder()
-                    .patientId(patientId)
-                    .patient(extractPatientDetails(subject, questionnaire))
-                    .tumor(extractTumorDetails(questionnaire))
-                    .clinicalStatus(extractClinicalStatus(questionnaire))
-                    .priorTumorTreatments(extractPriorTumorTreatments(questionnaire))
-                    .priorSecondPrimaries(extractPriorSecondPrimaries(questionnaire))
-                    .priorOtherConditions(extractPriorOtherConditions(questionnaire))
-                    .priorMolecularTests(extractPriorMolecularTests(questionnaire))
-                    .complications(extractComplications(questionnaire))
-                    .labValues(extractLabValues(subject))
-                    .toxicities(extractedToxicities)
-                    .toxicityEvaluations(toxicityEvaluations)
-                    .intolerances(extractIntolerances(subject))
-                    .surgeries(extractSurgeries(subject))
-                    .surgicalTreatments(extractSurgicalTreatments(subject))
-                    .bodyWeights(extractBodyWeights(subject))
-                    .vitalFunctions(extractVitalFunctions(subject))
-                    .bloodTransfusions(extractBloodTransfusions(subject))
-                    .medications(extractMedications(subject))
-                    .build()
-            )
-        }
-        records.sortWith(ClinicalRecordComparator())
+            ImmutableClinicalRecord.builder()
+                .patientId(patientId)
+                .patient(extractPatientDetails(subject, questionnaire))
+                .tumor(extractTumorDetails(questionnaire))
+                .clinicalStatus(extractClinicalStatus(questionnaire))
+                .priorTumorTreatments(extractPriorTumorTreatments(questionnaire))
+                .priorSecondPrimaries(extractPriorSecondPrimaries(questionnaire))
+                .priorOtherConditions(extractPriorOtherConditions(questionnaire))
+                .priorMolecularTests(extractPriorMolecularTests(questionnaire))
+                .complications(extractComplications(questionnaire))
+                .labValues(extractLabValues(subject))
+                .toxicities(extractedToxicities)
+                .toxicityEvaluations(toxicityEvaluations)
+                .intolerances(extractIntolerances(subject))
+                .surgeries(extractSurgeries(subject))
+                .surgicalTreatments(extractSurgicalTreatments(subject))
+                .bodyWeights(extractBodyWeights(subject))
+                .vitalFunctions(extractVitalFunctions(subject))
+                .bloodTransfusions(extractBloodTransfusions(subject))
+                .medications(extractMedications(subject))
+                .build()
+        }.sortedWith(ClinicalRecordComparator())
 
         LOGGER.info("Evaluating curation database")
         curation.evaluate()
@@ -305,11 +303,21 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
     private fun extractMedications(subject: String): List<Medication> {
         val medications: MutableList<Medication> = Lists.newArrayList()
         for (entry in feed.medicationEntries(subject)) {
-            val dosageCurated: Medication? = curation.curateMedicationDosage(entry.dosageInstructionText)
-            val builder: ImmutableMedication.Builder = ImmutableMedication.builder()
-            if (dosageCurated != null) {
-                builder.from(dosageCurated)
-            }
+            val administrationRoute = curation.translateAdministrationRoute(entry.dosageInstructionRouteDisplay)
+            val dosage =
+                if (dosageRequiresCuration(administrationRoute, entry))
+                    curation.curateMedicationDosage(entry.dosageInstructionText)
+                else
+                    ImmutableDosage.builder()
+                        .dosageMax(entry.dosageInstructionMaxDosePerAdministration)
+                        .dosageValue(entry.dosageInstructionDoseQuantityValue)
+                        .dosageUnit(curation.translateDosageUnit(entry.dosageInstructionDoseQuantityUnit))
+                        .frequency(entry.dosageInstructionFrequencyValue)
+                        .frequencyUnit(entry.dosageInstructionFrequencyUnit)
+                        .periodBetweenValue(entry.dosageInstructionPeriodBetweenDosagesValue)
+                        .periodBetweenUnit(curation.curatePeriodBetweenUnit(entry.dosageInstructionPeriodBetweenDosagesUnit))
+                        .build()
+            val builder = ImmutableMedication.builder().dosage(dosage ?: ImmutableDosage.builder().build())
             val name: String? = CurationUtil.capitalizeFirstLetterOnly(entry.code5ATCDisplay).ifEmpty {
                 curation.curateMedicationName(CurationUtil.capitalizeFirstLetterOnly(entry.codeText))
             }
@@ -321,7 +329,7 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
                     .therapeuticSubgroupAtc(entry.therapeuticSubgroupDisplay)
                     .anatomicalMainGroupAtc(entry.anatomicalMainGroupDisplay)
                     .status(curation.curateMedicationStatus(entry.status))
-                    .administrationRoute(curation.translateAdministrationRoute(entry.dosageInstructionRouteDisplay))
+                    .administrationRoute(administrationRoute)
                     .startDate(entry.periodOfUseValuePeriodStart)
                     .stopDate(entry.periodOfUseValuePeriodEnd)
                     .build()
@@ -331,6 +339,12 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
         medications.sortWith(MedicationByNameComparator())
         return medications
     }
+
+    private fun dosageRequiresCuration(administrationRoute: String?, entry: MedicationEntry) =
+        administrationRoute?.lowercase() == "oral" && (entry.dosageInstructionDoseQuantityValue == 0.0 ||
+                entry.dosageInstructionDoseQuantityUnit.isEmpty() ||
+                entry.dosageInstructionFrequencyValue == 0.0 ||
+                entry.dosageInstructionFrequencyUnit.isEmpty())
 
     companion object {
         private val LOGGER = LogManager.getLogger(ClinicalRecordsFactory::class.java)

@@ -38,23 +38,8 @@ public abstract class Medication {
     @Nullable
     public abstract String administrationRoute();
 
-    @Nullable
-    public abstract Double dosageMin();
-
-    @Nullable
-    public abstract Double dosageMax();
-
-    @Nullable
-    public abstract String dosageUnit();
-
-    @Nullable
-    public abstract Double frequency();
-
-    @Nullable
-    public abstract String frequencyUnit();
-
-    @Nullable
-    public abstract Boolean ifNeeded();
+    @NotNull
+    public abstract Dosage dosage();
 
     @Nullable
     public abstract LocalDate startDate();
