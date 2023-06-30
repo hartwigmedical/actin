@@ -5,7 +5,7 @@ import com.hartwig.actin.treatment.ctc.config.CTCDatabaseEntry
 import com.hartwig.actin.treatment.ctc.config.TestCTCDatabaseEntryFactory.createEntry
 import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig
 import com.hartwig.actin.treatment.trial.config.TestCohortDefinitionConfigFactory
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class CohortStatusInterpreterTest {
@@ -14,79 +14,79 @@ class CohortStatusInterpreterTest {
     @Test
     fun shouldIgnoreCohortsThatAreConfiguredAsNotAvailable() {
         val notAvailable = createWithCTCCohortIDs(CohortStatusInterpreter.NOT_AVAILABLE)
-        Assert.assertNull(interpret(entries, notAvailable))
+        assertThat(interpret(entries, notAvailable)).isNull()
     }
 
     @Test
     fun shouldAssumeUnexplainedMissingCohortsAreClosed() {
         val unexplainedMissing = createWithCTCCohortIDs(CohortStatusInterpreter.NOT_IN_CTC_OVERVIEW_UNKNOWN_WHY)
         val status = interpret(entries, unexplainedMissing)
-        Assert.assertFalse(status!!.open)
-        Assert.assertFalse(status.slotsAvailable)
+        assertThat(status!!.open).isFalse
+        assertThat(status.slotsAvailable).isFalse
     }
 
     @Test
     fun shouldAssumeUnmappedClosedCohortsAreClosed() {
         val notMappedClosed = createWithCTCCohortIDs(CohortStatusInterpreter.WONT_BE_MAPPED_BECAUSE_CLOSED)
         val status = interpret(entries, notMappedClosed)
-        Assert.assertFalse(status!!.open)
-        Assert.assertFalse(status.slotsAvailable)
+        assertThat(status!!.open).isFalse
+        assertThat(status.slotsAvailable).isFalse
     }
 
     @Test
     fun shouldAssumeUnmappedUnavailableCohortsAreClosed() {
         val notMappedNotAvailable = createWithCTCCohortIDs(CohortStatusInterpreter.WONT_BE_MAPPED_BECAUSE_NOT_AVAILABLE)
         val status = interpret(entries, notMappedNotAvailable)
-        Assert.assertFalse(status!!.open)
-        Assert.assertFalse(status.slotsAvailable)
+        assertThat(status!!.open).isFalse
+        assertThat(status.slotsAvailable).isFalse
     }
 
     @Test
     fun shouldAssumeCohortIsClosedForInvalidCohortConfig() {
         val idDoesNotExist = createWithCTCCohortIDs("12")
         val status = interpret(entries, idDoesNotExist)
-        Assert.assertFalse(status!!.open)
-        Assert.assertFalse(status.slotsAvailable)
+        assertThat(status!!.open).isFalse
+        assertThat(status.slotsAvailable).isFalse
     }
 
     @Test
     fun shouldBeAbleToDetermineStatusForSingleParent() {
         val config = createWithCTCCohortIDs(PARENT_OPEN_WITH_SLOTS_COHORT_ID.toString())
         val status = interpret(entries, config)
-        Assert.assertTrue(status!!.open)
-        Assert.assertTrue(status.slotsAvailable)
+        assertThat(status!!.open).isTrue
+        assertThat(status.slotsAvailable).isTrue
     }
 
     @Test
     fun shouldBeAbleToDetermineStatusForSingleChildConsistentWithParent() {
         val config = createWithCTCCohortIDs(CHILD_OPEN_WITH_SLOTS_COHORT_ID.toString())
         val status = interpret(entries, config)
-        Assert.assertTrue(status!!.open)
-        Assert.assertTrue(status.slotsAvailable)
+        assertThat(status!!.open).isTrue
+        assertThat(status.slotsAvailable).isTrue
     }
 
     @Test
     fun shouldStickToChildWhenInconsistentWithParent() {
         val config = createWithCTCCohortIDs(CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID.toString())
         val status = interpret(entries, config)
-        Assert.assertTrue(status!!.open)
-        Assert.assertFalse(status.slotsAvailable)
+        assertThat(status!!.open).isTrue
+        assertThat(status.slotsAvailable).isFalse
     }
 
     @Test
     fun shouldBeAbleToDetermineStatusForMultipleChildrenConsistentWithParent() {
         val config = createWithCTCCohortIDs(CHILD_OPEN_WITH_SLOTS_COHORT_ID.toString(), ANOTHER_CHILD_OPEN_WITH_SLOTS_COHORT_ID.toString())
         val status = interpret(entries, config)
-        Assert.assertTrue(status!!.open)
-        Assert.assertTrue(status.slotsAvailable)
+        assertThat(status!!.open).isTrue
+        assertThat(status.slotsAvailable).isTrue
     }
 
     @Test
     fun shouldPickBestChildWhenBestChildIsInconsistentWithParent() {
         val config = createWithCTCCohortIDs(CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID.toString(), CHILD_CLOSED_WITHOUT_SLOTS_COHORT_ID.toString())
         val status = interpret(entries, config)
-        Assert.assertTrue(status!!.open)
-        Assert.assertFalse(status.slotsAvailable)
+        assertThat(status!!.open).isTrue
+        assertThat(status.slotsAvailable).isFalse
     }
 
     companion object {
