@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.datamodel;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 import org.immutables.value.Value;
@@ -47,4 +48,6 @@ public abstract class Medication {
     @Nullable
     public abstract LocalDate stopDate();
 
+    @Nullable
+    public abstract List<CypInteraction> cypInteractions();
 }

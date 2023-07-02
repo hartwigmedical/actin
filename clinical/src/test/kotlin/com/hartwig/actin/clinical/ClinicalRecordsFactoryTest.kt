@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical
 import com.google.common.collect.Sets
 import com.hartwig.actin.clinical.ClinicalRecordsFactory.Companion.toPatientId
 import com.hartwig.actin.clinical.curation.TestCurationFactory
+import com.hartwig.actin.clinical.cyp.CypInteractionDatabase
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
 import com.hartwig.actin.clinical.datamodel.BodyWeight
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
@@ -217,14 +218,16 @@ class ClinicalRecordsFactoryTest {
         private fun createMinimalTestClinicalRecords(): List<ClinicalRecord> {
             return ClinicalRecordsFactory(
                 TestFeedFactory.createMinimalTestFeedModel(),
-                TestCurationFactory.createMinimalTestCurationModel()
+                TestCurationFactory.createMinimalTestCurationModel(),
+                CypInteractionDatabase.readFromFile("")
             ).create()
         }
 
         private fun createProperTestClinicalRecords(): List<ClinicalRecord> {
             return ClinicalRecordsFactory(
                 TestFeedFactory.createProperTestFeedModel(),
-                TestCurationFactory.createProperTestCurationModel()
+                TestCurationFactory.createProperTestCurationModel(),
+                CypInteractionDatabase.readFromFile("")
             ).create()
         }
     }
