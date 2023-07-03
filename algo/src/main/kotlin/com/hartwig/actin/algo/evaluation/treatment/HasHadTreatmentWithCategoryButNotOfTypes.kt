@@ -48,12 +48,13 @@ class HasHadTreatmentWithCategoryButNotOfTypes internal constructor(
             unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages(
-                    "Patient may have received " + category.display() + " in a trial, ignoring " + concat(
+                    "Patient may have received " + category.display() + " in a trial ignoring " + concat(
                         ignoreTypes
                     )
                 )
                 .addUndeterminedGeneralMessages(
-                    "Undetermined if received " + category.display() + ", ignoring " + concat(
+                    "Undetermined if received " + category.display() + "," +
+                            " ignoring " + concat(
                         ignoreTypes
                     )
                 )
@@ -62,12 +63,12 @@ class HasHadTreatmentWithCategoryButNotOfTypes internal constructor(
             unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages(
-                    "Patient has not received " + category.display() + ", ignoring " + concat(
+                    "Patient has not received " + category.display() + " ignoring " + concat(
                         ignoreTypes
                     )
                 )
                 .addFailGeneralMessages(
-                    "Has not received " + category.display() + ", ignoring " + concat(
+                    "Has not received " + category.display() + " ignoring " + concat(
                         ignoreTypes
                     )
                 )

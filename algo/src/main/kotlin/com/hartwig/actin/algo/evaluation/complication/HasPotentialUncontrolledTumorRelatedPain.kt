@@ -28,7 +28,7 @@ class HasPotentialUncontrolledTumorRelatedPain internal constructor(private val 
         return if (activePainMedications.isNotEmpty()) {
             EvaluationFactory.pass(
                 "Patient receives pain medication: " + concat(activePainMedications) +
-                        ", potentially indicating uncontrolled tumor related pain", "Present " + concat(activePainMedications)
+                        ", potentially indicating uncontrolled tumor related pain", "Receives " + concat(activePainMedications) + "indicating pain "
             )
         } else
             EvaluationFactory.fail(
