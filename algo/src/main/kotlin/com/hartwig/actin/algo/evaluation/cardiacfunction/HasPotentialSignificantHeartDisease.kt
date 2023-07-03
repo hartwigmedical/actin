@@ -16,7 +16,7 @@ class HasPotentialSignificantHeartDisease internal constructor(private val doidM
         if (ecg != null && ecg.hasSigAberrationLatestECG()) {
             return EvaluationFactory.pass(
                 "Patient has significant aberration on latest ECG and therefore potentially significant cardiac disease",
-                "Present ECG aberrations - potentially significant cardiac disease"
+                "Potentially significant cardiac disease: present ECG aberrations"
             )
         }
         val heartConditions = OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())
@@ -26,7 +26,7 @@ class HasPotentialSignificantHeartDisease internal constructor(private val doidM
         return if (heartConditions.isNotEmpty()) {
             EvaluationFactory.pass(
                 "Patient has " + concat(heartConditions) + " and therefore potentially significant cardiac disease",
-                "Present " + concat(heartConditions) + " - potentially significant cardiac disease"
+                "Potentially significant cardiac disease: history of " + concat(heartConditions)
             )
         } else EvaluationFactory.fail(
             "Patient has no potential significant cardiac disease", "No potential significant cardiac disease"
