@@ -56,8 +56,8 @@ class HasToxicityWithGrade internal constructor(
         } else if (hasUnresolvableQuestionnaireToxicities) {
             val toxicityString = formatToxicities(unresolvableToxicities)
             return EvaluationFactory.undetermined(
-                "Patient has toxicities grade >= $DEFAULT_QUESTIONNAIRE_GRADE$toxicityString, unknown if grade >= $minGrade",
-                "Has toxicities grade >= $DEFAULT_QUESTIONNAIRE_GRADE$toxicityString, unknown if grade >= $minGrade"
+                "Patient has toxicities grade >= $DEFAULT_QUESTIONNAIRE_GRADE$toxicityString but unknown if grade >= $minGrade",
+                "Has toxicities grade >= $DEFAULT_QUESTIONNAIRE_GRADE$toxicityString but unknown if grade >= $minGrade"
             )
         }
         return EvaluationFactory.fail(
