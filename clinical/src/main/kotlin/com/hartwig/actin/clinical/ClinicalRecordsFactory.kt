@@ -324,6 +324,7 @@ class ClinicalRecordsFactory(val feed: FeedModel, val curation: CurationModel, v
                         .frequencyUnit(entry.dosageInstructionFrequencyUnit)
                         .periodBetweenValue(entry.dosageInstructionPeriodBetweenDosagesValue)
                         .periodBetweenUnit(curation.curatePeriodBetweenUnit(entry.dosageInstructionPeriodBetweenDosagesUnit))
+                        .ifNeeded(extractIfNeeded(entry))
                         .build()
             val builder = ImmutableMedication.builder().dosage(dosage ?: ImmutableDosage.builder().build())
             val name: String? = CurationUtil.capitalizeFirstLetterOnly(entry.code5ATCDisplay).ifEmpty {
@@ -348,6 +349,8 @@ class ClinicalRecordsFactory(val feed: FeedModel, val curation: CurationModel, v
         medications.sortWith(MedicationByNameComparator())
         return medications
     }
+
+    private fun extractIfNeeded(entry: MedicationEntry) = entry.dosageInstructionAsNeededDisplay.trim().lowercase() == "zo nodig"
 
     private fun dosageRequiresCuration(administrationRoute: String?, entry: MedicationEntry) =
         administrationRoute?.lowercase() == "oral" && (entry.dosageInstructionDoseQuantityValue == 0.0 ||

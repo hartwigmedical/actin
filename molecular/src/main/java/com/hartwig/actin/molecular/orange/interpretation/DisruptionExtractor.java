@@ -20,13 +20,9 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.LinxStructuralVariant;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.sort.driver.DisruptionComparator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 class DisruptionExtractor {
-
-    private static final Logger LOGGER = LogManager.getLogger(DisruptionExtractor.class);
 
     @NotNull
     private final GeneFilter geneFilter;
@@ -80,9 +76,7 @@ class DisruptionExtractor {
             }
         }
 
-        // TODO Switch to exception once linx assures all SVs are present. This will be implemented in v1.23
-        LOGGER.warn("Could not resolve structural variant with id: {}", breakend.svId());
-        return -1;
+        throw new IllegalStateException("Could not find structural variant with ID: " + breakend.svId());
     }
 
     @NotNull

@@ -71,7 +71,8 @@ public class MedicationGenerator implements TableGenerator {
         String dosageMax = dosage.dosageMax() != null ? Formats.twoDigitNumber(dosage.dosageMax()) : "?";
 
         String result = dosageMin.equals(dosageMax) ? dosageMin : dosageMin + " - " + dosageMax;
-        if (dosage.ifNeeded()) {
+        Boolean ifNeeded = dosage.ifNeeded();
+        if (ifNeeded != null && ifNeeded) {
             result = "if needed " + result;
         }
 
