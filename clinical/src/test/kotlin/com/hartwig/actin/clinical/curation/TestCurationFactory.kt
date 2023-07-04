@@ -15,6 +15,7 @@ import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
+import com.hartwig.actin.clinical.curation.config.QTProlongingConfig
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
@@ -39,6 +40,8 @@ import org.apache.logging.log4j.util.Strings
 import java.util.*
 
 
+private const val PARACETAMOL = "PARACETAMOL"
+
 object TestCurationFactory {
 
     fun createProperTestCurationModel(): CurationModel {
@@ -50,7 +53,7 @@ object TestCurationFactory {
             CurationDatabase(
                 emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
                 emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-                emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList()
+                emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList()
             ), questionnaireRawEntryMapper()
         )
     }
@@ -78,6 +81,7 @@ object TestCurationFactory {
             medicationCategoryConfigs = createTestMedicationCategoryConfigs(),
             intoleranceConfigs = createTestIntoleranceConfigs(),
             cypInteractionConfigs = createTestCypInteractionConfig(),
+            qtProlongingConfigs = createTestQTProlongingConfigs(),
             administrationRouteTranslations = createTestAdministrationRouteTranslations(),
             dosageUnitTranslations = createTestDosageUnitTranslations(),
             laboratoryTranslations = createTestLaboratoryTranslations(),
@@ -86,8 +90,12 @@ object TestCurationFactory {
         )
     }
 
+    private fun createTestQTProlongingConfigs(): List<QTProlongingConfig> {
+        return listOf(QTProlongingConfig(PARACETAMOL, false))
+    }
+
     private fun createTestCypInteractionConfig(): List<CypInteractionConfig> {
-        return listOf(CypInteractionConfig("PARACETAMOL", false, listOf(createTestCypInteration())))
+        return listOf(CypInteractionConfig(PARACETAMOL, false, listOf(createTestCypInteration())))
     }
 
     fun createTestCypInteration(): ImmutableCypInteraction =

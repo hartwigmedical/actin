@@ -23,6 +23,7 @@ import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
+import com.hartwig.actin.clinical.curation.config.QTProlongingConfig
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
@@ -530,6 +531,11 @@ class CurationModel @VisibleForTesting internal constructor(
         return find(database.cypInteractionConfigs, medicationName).flatMap { it.interactions }
     }
 
+    fun annotateWithQTProlonging(medicationName: String): Boolean {
+        return find(database.qtProlongingConfigs, medicationName).isNotEmpty()
+    }
+
+
     private fun lookupMedicationCategories(source: String, medication: String): Set<String> {
         val trimmedMedication = fullTrim(medication)
         val configs: Set<MedicationCategoryConfig> = find(database.medicationCategoryConfigs, trimmedMedication)
@@ -760,6 +766,10 @@ class CurationModel @VisibleForTesting internal constructor(
 
             CypInteractionConfig::class.java -> {
                 return database.cypInteractionConfigs
+            }
+
+            QTProlongingConfig::class.java -> {
+                return database.qtProlongingConfigs
             }
 
             else -> throw IllegalStateException("Class not found in curation database: $classToLookUp")

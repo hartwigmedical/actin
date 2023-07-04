@@ -50,4 +50,6 @@ public abstract class Medication {
 
     @NotNull
     public abstract List<CypInteraction> cypInteractions();
+
+    public abstract boolean isKnownQTProlonging();
 }

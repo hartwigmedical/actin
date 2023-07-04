@@ -283,7 +283,9 @@
         "year": 2018,
         "month": 2,
         "day": 1
-      }
+      },
+      "cypInteractions": [],
+      "isKnownQTProlonging": false
     },
     {
       "name": "Medication 2",
@@ -311,7 +313,9 @@
         "year": 2019,
         "month": 6,
         "day": 25
-      }
+      },
+      "cypInteractions": [],
+      "isKnownQTProlonging": false
     }
   ]
 }
