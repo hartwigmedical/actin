@@ -4,7 +4,6 @@ import com.google.common.annotations.VisibleForTesting
 import com.google.common.collect.Lists
 import com.hartwig.actin.clinical.curation.CurationModel
 import com.hartwig.actin.clinical.curation.CurationUtil
-import com.hartwig.actin.clinical.cyp.CypInteractionDatabase
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
 import com.hartwig.actin.clinical.datamodel.BodyWeight
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
@@ -61,7 +60,7 @@ import com.hartwig.actin.clinical.sort.MedicationByNameComparator
 import org.apache.logging.log4j.LogManager
 
 
-class ClinicalRecordsFactory(val feed: FeedModel, val curation: CurationModel, val cypInteractionDatabase: CypInteractionDatabase) {
+class ClinicalRecordsFactory(val feed: FeedModel, val curation: CurationModel) {
 
     fun create(): List<ClinicalRecord> {
         val processedPatientIds: MutableSet<String> = HashSet()
@@ -341,7 +340,7 @@ class ClinicalRecordsFactory(val feed: FeedModel, val curation: CurationModel, v
                     .administrationRoute(administrationRoute)
                     .startDate(entry.periodOfUseValuePeriodStart)
                     .stopDate(entry.periodOfUseValuePeriodEnd)
-                    .addAllCypInteractions(cypInteractionDatabase.findByName(name))
+                    .addAllCypInteractions(curation.curateMedicationCypInterations(name))
                     .build()
                 medications.add(curation.annotateWithMedicationCategory(medication))
             }

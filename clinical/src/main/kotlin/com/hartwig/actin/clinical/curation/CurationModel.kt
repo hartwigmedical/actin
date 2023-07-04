@@ -10,6 +10,7 @@ import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.CurationUtil.fullTrim
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfig
+import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
 import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
@@ -34,6 +35,7 @@ import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
 import com.hartwig.actin.clinical.datamodel.Complication
+import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.Dosage
 import com.hartwig.actin.clinical.datamodel.ECG
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion
@@ -524,6 +526,10 @@ class CurationModel @VisibleForTesting internal constructor(
             .build()
     }
 
+    fun curateMedicationCypInterations(medicationName: String): List<CypInteraction> {
+        return find(database.cypInteractionConfigs, medicationName).flatMap { it.interactions }
+    }
+
     private fun lookupMedicationCategories(source: String, medication: String): Set<String> {
         val trimmedMedication = fullTrim(medication)
         val configs: Set<MedicationCategoryConfig> = find(database.medicationCategoryConfigs, trimmedMedication)
@@ -750,6 +756,10 @@ class CurationModel @VisibleForTesting internal constructor(
 
             IntoleranceConfig::class.java -> {
                 return database.intoleranceConfigs
+            }
+
+            CypInteractionConfig::class.java -> {
+                return database.cypInteractionConfigs
             }
 
             else -> throw IllegalStateException("Class not found in curation database: $classToLookUp")

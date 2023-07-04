@@ -3,7 +3,6 @@ package com.hartwig.actin.clinical
 import com.google.common.collect.Sets
 import com.hartwig.actin.clinical.ClinicalRecordsFactory.Companion.toPatientId
 import com.hartwig.actin.clinical.curation.TestCurationFactory
-import com.hartwig.actin.clinical.cyp.CypInteractionDatabase
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
 import com.hartwig.actin.clinical.datamodel.BodyWeight
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
@@ -29,6 +28,7 @@ import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
@@ -213,13 +213,13 @@ class ClinicalRecordsFactoryTest {
             assertFalse(medication.dosage().ifNeeded()!!)
             assertEquals(LocalDate.of(2019, 2, 2), medication.startDate())
             assertEquals(LocalDate.of(2019, 4, 4), medication.stopDate())
+            assertThat(medication.cypInteractions()).containsExactly(TestCurationFactory.createTestCypInteration())
         }
 
         private fun createMinimalTestClinicalRecords(): List<ClinicalRecord> {
             return ClinicalRecordsFactory(
                 TestFeedFactory.createMinimalTestFeedModel(),
-                TestCurationFactory.createMinimalTestCurationModel(),
-                CypInteractionDatabase.readFromFile("")
+                TestCurationFactory.createMinimalTestCurationModel()
             ).create()
         }
 
@@ -227,7 +227,6 @@ class ClinicalRecordsFactoryTest {
             return ClinicalRecordsFactory(
                 TestFeedFactory.createProperTestFeedModel(),
                 TestCurationFactory.createProperTestCurationModel(),
-                CypInteractionDatabase.readFromFile("")
             ).create()
         }
     }

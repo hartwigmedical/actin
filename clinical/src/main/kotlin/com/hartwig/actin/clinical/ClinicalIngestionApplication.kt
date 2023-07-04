@@ -3,7 +3,6 @@ package com.hartwig.actin.clinical
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
 import com.hartwig.actin.clinical.curation.CurationModel
-import com.hartwig.actin.clinical.cyp.CypInteractionDatabase
 import com.hartwig.actin.clinical.feed.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.FeedModel
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
@@ -43,7 +42,7 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
             )
         )
 
-        val records = ClinicalRecordsFactory(feedModel, curationModel, CypInteractionDatabase.readFromFile(config.cypInteractionsTsv)).create()
+        val records = ClinicalRecordsFactory(feedModel, curationModel).create()
         val outputDirectory = config.outputDirectory
         LOGGER.info("Writing {} clinical records to {}", records.size, outputDirectory)
         ClinicalRecordJson.write(records, outputDirectory)
