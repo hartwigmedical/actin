@@ -29,6 +29,8 @@ class TrialFactory(
     private val eligibilityFactory: EligibilityFactory
 ) {
     fun createTrials(): List<Trial> {
+        ctcModel.checkDatabaseForNewTrials(trialConfigModel.trials())
+
         return trialConfigModel.trials().map { trialConfig ->
             val trialId = trialConfig.trialId
             val referencesById = trialConfigModel.referencesForTrial(trialId)

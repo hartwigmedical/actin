@@ -2,6 +2,7 @@ package com.hartwig.actin.treatment.ctc
 
 import com.google.common.annotations.VisibleForTesting
 import com.hartwig.actin.treatment.ctc.config.CTCDatabase
+import com.hartwig.actin.treatment.ctc.config.CTCDatabaseEntry
 import com.hartwig.actin.treatment.ctc.config.CTCDatabaseReader
 import com.hartwig.actin.treatment.datamodel.CohortMetadata
 import com.hartwig.actin.treatment.datamodel.ImmutableCohortMetadata
@@ -9,8 +10,33 @@ import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig
 import com.hartwig.actin.treatment.trial.config.TrialDefinitionConfig
 import org.apache.logging.log4j.LogManager
 import java.io.IOException
+import kotlin.streams.toList
 
 class CTCModel @VisibleForTesting internal constructor(private val ctcDatabase: CTCDatabase) {
+
+    fun checkDatabaseForNewTrials(trialConfigs: List<TrialDefinitionConfig>) {
+        val configuredTrials = trialConfigs.stream().map { it.trialId }.distinct().toList()
+
+        val newTrialsInCTC =
+            ctcDatabase.entries.stream().filter { !ctcDatabase.studyMETCsToIgnore.contains(it.studyMETC) }
+                .filter { configuredTrials.contains(extractTrialId(it)) }
+                .distinct()
+
+        if (newTrialsInCTC.count().toInt() == 0) {
+            LOGGER.info("No new studies found in CTC database that are not explicitly ignored.")
+        } else {
+            for (newTrialInCTC in newTrialsInCTC) {
+                LOGGER.warn("New trial detected in CTC that is not configured to be ignored: '{}'", newTrialInCTC)
+            }
+        }
+
+        val ctcStudyMETCs = ctcDatabase.entries.stream().map { it.studyMETC }.distinct().toList()
+        val unusedStudyMETCsToIgnore = ctcDatabase.studyMETCsToIgnore.stream().filter { ctcStudyMETCs.contains(it) }.distinct().toList()
+
+        for (unusedStudyMETCToIgnore in unusedStudyMETCsToIgnore) {
+            LOGGER.warn("Study that is configured to be ignored is not actually referenced in CTC database: '{}'", unusedStudyMETCToIgnore)
+        }
+    }
 
     fun isTrialOpen(trialConfig: TrialDefinitionConfig): Boolean {
         if (!trialConfig.trialId.startsWith(CTC_TRIAL_PREFIX)) {
@@ -60,6 +86,10 @@ class CTCModel @VisibleForTesting internal constructor(private val ctcDatabase: 
         @Throws(IOException::class)
         fun createFromCTCConfigDirectory(ctcConfigDirectory: String): CTCModel {
             return CTCModel(CTCDatabaseReader.read(ctcConfigDirectory))
+        }
+
+        fun extractTrialId(entry: CTCDatabaseEntry): String {
+            return CTC_TRIAL_PREFIX + " " + entry.studyMETC
         }
 
         private fun fromCohortConfig(cohortConfig: CohortDefinitionConfig): InterpretedCohortStatus {
