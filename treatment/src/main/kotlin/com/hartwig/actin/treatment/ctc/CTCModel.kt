@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager
 import java.io.IOException
 
 class CTCModel @VisibleForTesting internal constructor(private val ctcDatabase: CTCDatabase) {
+
     fun isTrialOpen(trialConfig: TrialDefinitionConfig): Boolean {
         if (!trialConfig.trialId.startsWith(CTC_TRIAL_PREFIX)) {
             LOGGER.debug(
@@ -20,6 +21,7 @@ class CTCModel @VisibleForTesting internal constructor(private val ctcDatabase: 
             )
             return trialConfig.open
         }
+
         val openInCTC = TrialStatusInterpreter.isOpen(ctcDatabase.entries, trialConfig)
         if (openInCTC != null) {
             if (openInCTC != trialConfig.open) {
@@ -30,6 +32,7 @@ class CTCModel @VisibleForTesting internal constructor(private val ctcDatabase: 
             }
             return openInCTC
         }
+
         LOGGER.warn(
             "No study status found in CTC for trial {} ({}). Reverting to internal trial config",
             trialConfig.trialId,

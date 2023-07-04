@@ -10,6 +10,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class TrialStatusInterpreterTest {
+
     @Test
     fun shouldReturnNullForEmptyCTCDatabase() {
         assertThat(isOpen(listOf(), createConfig("trial 1"))).isNull()

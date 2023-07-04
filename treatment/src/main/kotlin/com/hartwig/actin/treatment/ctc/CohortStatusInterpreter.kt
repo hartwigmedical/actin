@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager
 
 internal object CohortStatusInterpreter {
     private val LOGGER = LogManager.getLogger(CohortStatusInterpreter::class.java)
+
     const val NOT_AVAILABLE = "NA"
     const val NOT_IN_CTC_OVERVIEW_UNKNOWN_WHY = "not_in_ctc_overview_unknown_why"
     const val WONT_BE_MAPPED_BECAUSE_CLOSED = "wont_be_mapped_because_closed"

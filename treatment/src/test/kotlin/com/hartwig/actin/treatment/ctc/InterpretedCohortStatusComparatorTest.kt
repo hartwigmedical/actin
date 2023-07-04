@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class InterpretedCohortStatusComparatorTest {
+
     @Test
     fun shouldRankCohortStatesCorrectly() {
         val openWithSlots = InterpretedCohortStatus(open = true, slotsAvailable = true)

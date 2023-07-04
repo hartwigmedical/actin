@@ -5,6 +5,7 @@ import com.hartwig.actin.util.ResourceFile
 import java.io.IOException
 
 object UnmappedCohortFile {
+
     @Throws(IOException::class)
     fun read(tsv: String): Set<Int> {
         return FileUtil.createObjectsFromTsv(tsv, ::create).toSet()

@@ -6,10 +6,12 @@ import org.junit.Test
 import java.io.IOException
 
 class CTCDatabaseReaderTest {
+
     @Test
     @Throws(IOException::class)
     fun shouldLoadExpectedDatabaseFromTestDirectory() {
         val database = CTCDatabaseReader.read(CTC_CONFIG_DIRECTORY)
+
         assertEntries(database.entries)
         assertStudyMETCsToIgnore(database.studyMETCsToIgnore)
         assertUnmappedCohortIds(database.unmappedCohortIds)

@@ -6,6 +6,7 @@ import java.io.IOException
 
 object CTCDatabaseReader {
     private val LOGGER = LogManager.getLogger(CTCDatabaseReader::class.java)
+
     private const val CTC_DATABASE_TSV = "ctc_database.tsv"
     private const val IGNORE_STUDIES_TSV = "ignore_studies.tsv"
     private const val UNMAPPED_COHORTS_TSV = "unmapped_cohorts.tsv"

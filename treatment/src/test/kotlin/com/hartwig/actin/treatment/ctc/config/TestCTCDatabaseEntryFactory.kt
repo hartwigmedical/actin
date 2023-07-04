@@ -1,6 +1,7 @@
 package com.hartwig.actin.treatment.ctc.config
 
 object TestCTCDatabaseEntryFactory {
+
     val MINIMAL = CTCDatabaseEntry(
         studyId = 0,
         studyMETC = "",
@@ -20,5 +21,4 @@ object TestCTCDatabaseEntryFactory {
             cohortSlotsNumberAvailable = cohortSlotsNumberAvailable,
         )
     }
-
 }

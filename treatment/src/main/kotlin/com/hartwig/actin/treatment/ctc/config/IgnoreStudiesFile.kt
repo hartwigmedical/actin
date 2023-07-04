@@ -4,6 +4,7 @@ import com.hartwig.actin.treatment.FileUtil
 import java.io.IOException
 
 object IgnoreStudiesFile {
+
     @Throws(IOException::class)
     fun read(tsv: String): Set<String> {
         return FileUtil.createObjectsFromTsv(tsv, ::create).toSet()
