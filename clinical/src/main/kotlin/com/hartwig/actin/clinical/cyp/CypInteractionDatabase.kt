@@ -16,9 +16,11 @@ fun fieldName(strength: String, type: String): String {
 private const val STRONG = "Strg"
 private const val MODERATE = "Mod"
 private const val WEAK = "WK"
+private const val SENSITIVE = "SENS"
+private const val MODERATE_SENSITIVE = "$MODERATE $SENSITIVE"
 private const val INHIBITOR = "INH"
 private const val INDUCER = "IND"
-private const val SENSITIVE_SUBSTRATE = "SENS SUB"
+private const val SUBSTRATE = "SUB"
 
 class CypInteractionDatabase(private val interactionsByName: Map<String, List<CypInteraction>>) {
 
@@ -38,14 +40,14 @@ class CypInteractionDatabase(private val interactionsByName: Map<String, List<Cy
                 val strongInducers = extractInterations(tabSplit, fields, fieldName(STRONG, INDUCER), CypInteraction.Strength.STRONG, CypInteraction.Type.INDUCER)
                 val moderateInducers = extractInterations(tabSplit, fields, fieldName(WEAK, INDUCER), CypInteraction.Strength.WEAK, CypInteraction.Type.INDUCER)
                 val weakInducers = extractInterations(tabSplit, fields, fieldName(MODERATE, INDUCER), CypInteraction.Strength.MODERATE, CypInteraction.Type.INDUCER)
-                val sensitiveSubstrates = extractInterations(tabSplit, fields, fieldName(STRONG, SENSITIVE_SUBSTRATE), CypInteraction.Strength.NONE, CypInteraction.Type.SENSITIVE_SUBSTRATE)
-                val moderateSensitiveSubstrates = extractInterations(tabSplit, fields, fieldName(WEAK, SENSITIVE_SUBSTRATE), CypInteraction.Strength.WEAK, CypInteraction.Type.SENSITIVE_SUBSTRATE)
-                tabSplit[fields["name"]!!] to strongInhibitors + moderateInhibitors + weakInhibitors + strongInducers + moderateInducers + weakInducers + sensitiveSubstrates + moderateSensitiveSubstrates
+                val sensitiveSubstrates = extractInterations(tabSplit, fields, fieldName(SENSITIVE, SUBSTRATE), CypInteraction.Strength.SENSITIVE, CypInteraction.Type.SUBSTRATE)
+                val moderateSensitiveSubstrates = extractInterations(tabSplit, fields, fieldName(MODERATE_SENSITIVE, SUBSTRATE), CypInteraction.Strength.MODERATE_SENSITIVE, CypInteraction.Type.SUBSTRATE)
+                tabSplit[fields["Drug or Other Substance"]!!] to strongInhibitors + moderateInhibitors + weakInhibitors + strongInducers + moderateInducers + weakInducers + sensitiveSubstrates + moderateSensitiveSubstrates
             }
             return CypInteractionDatabase(interactions.toMap())
         }
 
         private fun extractInterations(tabSplit: List<String>, fields: Map<String, Int>, fieldName: String, strength: CypInteraction.Strength, type: CypInteraction.Type) =
-            tabSplit[fields[fieldName]!!].split(";").map { cyp -> ImmutableCypInteraction.builder().cyp(cyp).strength(strength).type(type).build() }
+            tabSplit[fields[fieldName]!!].split(";").map { it.trim() }.filter { it.isNotEmpty() }.map { cyp -> ImmutableCypInteraction.builder().cyp(cyp).strength(strength).type(type).build() }
     }
 }

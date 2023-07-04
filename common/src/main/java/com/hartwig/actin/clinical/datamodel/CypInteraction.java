@@ -8,25 +8,21 @@ public interface CypInteraction {
     enum Type {
         INDUCER,
         INHIBITOR,
-        SENSITIVE_SUBSTRATE
+        SUBSTRATE
     }
 
     enum Strength {
         NONE,
         STRONG,
         MODERATE,
-        WEAK
-    }
-
-    enum Enzyme {
-        CYP
+        WEAK,
+        SENSITIVE,
+        MODERATE_SENSITIVE
     }
 
     Type type();
 
     Strength strength();
-
-    Enzyme enzyme();
 
     String cyp();
 }
