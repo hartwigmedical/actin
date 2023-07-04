@@ -28,7 +28,7 @@ import com.hartwig.actin.clinical.curation.translation.ToxicityTranslationFactor
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.curation.translation.TranslationFactory
 import com.hartwig.actin.clinical.curation.translation.TranslationFile
-import com.hartwig.actin.clinical.cyp.CypInteractionConfigFactory
+import com.hartwig.actin.clinical.curation.config.CypInteractionConfigFactory
 import com.hartwig.actin.util.Paths
 import org.apache.logging.log4j.LogManager
 import java.io.IOException

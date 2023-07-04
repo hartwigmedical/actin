@@ -48,6 +48,6 @@ public abstract class Medication {
     @Nullable
     public abstract LocalDate stopDate();
 
-    @Nullable
+    @NotNull
     public abstract List<CypInteraction> cypInteractions();
 }

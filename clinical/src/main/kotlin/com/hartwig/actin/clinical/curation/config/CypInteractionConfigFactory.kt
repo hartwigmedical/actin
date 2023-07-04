@@ -1,14 +1,7 @@
-package com.hartwig.actin.clinical.cyp
+package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.clinical.curation.config.CurationConfigFactory
-import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
 import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
-
-
-fun fieldName(strength: String, type: String): String {
-    return "CYP $strength $type"
-}
 
 private const val STRONG = "Strg"
 private const val MODERATE = "Mod"
@@ -32,6 +25,10 @@ class CypInteractionConfigFactory : CurationConfigFactory<CypInteractionConfig> 
         val moderateSensitiveSubstrates = extractInterations(parts, fields, fieldName(MODERATE_SENSITIVE, SUBSTRATE), CypInteraction.Strength.MODERATE_SENSITIVE, CypInteraction.Type.SUBSTRATE)
         val interactions = strongInhibitors + moderateInhibitors + weakInhibitors + strongInducers + moderateInducers + weakInducers + sensitiveSubstrates + moderateSensitiveSubstrates
         return CypInteractionConfig(input = parts[fields["Drug or Other Substance"]!!], ignore = false, interactions = interactions)
+    }
+
+    private fun fieldName(strength: String, type: String): String {
+        return "CYP $strength $type"
     }
 
     private fun extractInterations(parts: Array<String>, fields: Map<String, Int>, fieldName: String, strength: CypInteraction.Strength, type: CypInteraction.Type) =
