@@ -96,7 +96,8 @@ class CTCModel internal constructor(private val ctcDatabase: CTCDatabase) {
             cohortConfigs.filter { isExclusivelyNumeric(it.ctcCohortIds) }.map { it -> it.ctcCohortIds.map { it.toInt() } }.flatten()
 
         val childrenPerParent =
-            ctcDatabase.entries.map { it.cohortParentId to it.cohortId }.groupBy { it.first }
+            ctcDatabase.entries.filter { it.cohortParentId != null }
+                .map { it.cohortParentId to it.cohortId }.groupBy { it.first }
                 .mapValues { it.value.map { pair -> pair.second } }
 
         return ctcDatabase.entries.asSequence().filter { configuredTrialIds.contains(extractTrialId(it)) }
