@@ -18,6 +18,10 @@ class TrialConfigModel(
         return trialDefinitionConfigs
     }
 
+    fun cohorts(): List<CohortDefinitionConfig> {
+        return cohortsByTrialId.values.flatten()
+    }
+
     fun cohortsForTrial(trialId: String): List<CohortDefinitionConfig> {
         return cohortsByTrialId[trialId] ?: emptyList()
     }

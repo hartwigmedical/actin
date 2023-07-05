@@ -20,54 +20,6 @@ class CTCModelTest {
     }
 
     @Test
-    fun shouldClassifyAllStudyMETCsAsNewWhenTrialConfigIsEmpty() {
-        // The proper CTC database has 3 trials, TEST_TRIAL_1, TEST_TRIAL_2 and IGNORE_TRIAL
-        val trialConfigs: List<TrialDefinitionConfig> = emptyList()
-
-        val newStudyMETCs = model.extractNewCTCStudyMETCs(trialConfigs)
-        assertThat(newStudyMETCs.size).isEqualTo(2)
-        assertThat(newStudyMETCs.contains(TestTrialData.TEST_TRIAL_METC_1)).isTrue
-        assertThat(newStudyMETCs.contains(TestTrialData.TEST_TRIAL_METC_2)).isTrue
-        assertThat(newStudyMETCs.contains(TestTrialData.TEST_TRIAL_METC_IGNORE)).isFalse
-
-        model.checkDatabaseForNewTrials(trialConfigs)
-    }
-
-    @Test
-    fun shouldFindNoNewStudyMETCsWhenAllTrialsAreConfigured() {
-        // The proper CTC database has 3 trials, TEST_TRIAL_1, TEST_TRIAL_2 and IGNORE_TRIAL
-        val trialConfigs: MutableList<TrialDefinitionConfig> = mutableListOf()
-        trialConfigs.add(
-            TestTrialDefinitionConfigFactory.MINIMAL.copy(
-                trialId = CTCModel.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1
-            )
-        )
-
-        trialConfigs.add(
-            TestTrialDefinitionConfigFactory.MINIMAL.copy(
-                trialId = CTCModel.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_2
-            )
-        )
-
-        assertThat(model.extractNewCTCStudyMETCs(trialConfigs)).isEmpty()
-
-        model.checkDatabaseForNewTrials(trialConfigs)
-    }
-
-    @Test
-    fun shouldPickUpUnusedStudyMETCsToIgnore() {
-        // The proper CTC database has no unused METCs to ignore
-        assertThat(model.extractUnusedStudyMETCsToIgnore()).isEmpty()
-        model.evaluateModelConfiguration()
-
-        val modelWithUnused = CTCModel(TestCTCDatabaseFactory.createMinimalTestCTCDatabase().copy(studyMETCsToIgnore = setOf("unused")))
-        val unusedStudyMETCs = modelWithUnused.extractUnusedStudyMETCsToIgnore()
-        assertThat(unusedStudyMETCs.size).isEqualTo(1)
-        assertThat(unusedStudyMETCs.contains("unused")).isTrue
-        modelWithUnused.evaluateModelConfiguration()
-    }
-
-    @Test
     fun shouldStickToTrialConfigWhenStudyIsNotCTCStudy() {
         val openRandomStudy: TrialDefinitionConfig = TestTrialDefinitionConfigFactory.MINIMAL.copy(trialId = "random 1", open = true)
         assertThat(model.isTrialOpen(openRandomStudy)).isTrue
@@ -134,6 +86,106 @@ class CTCModelTest {
         val metadata = model.resolveCohortMetadata(missing)
         assertThat(metadata.open()).isFalse
         assertThat(metadata.slotsAvailable()).isFalse
+    }
+
+    @Test
+    fun shouldClassifyAllStudyMETCsAsNewWhenTrialConfigIsEmpty() {
+        // The proper CTC database has 3 trials: TEST_TRIAL_1, TEST_TRIAL_2 and IGNORE_TRIAL
+        val trialConfigs: List<TrialDefinitionConfig> = emptyList()
+
+        val newStudyMETCs = model.extractNewCTCStudyMETCs(trialConfigs)
+        assertThat(newStudyMETCs.size).isEqualTo(2)
+        assertThat(newStudyMETCs.contains(TestTrialData.TEST_TRIAL_METC_1)).isTrue
+        assertThat(newStudyMETCs.contains(TestTrialData.TEST_TRIAL_METC_2)).isTrue
+        assertThat(newStudyMETCs.contains(TestTrialData.TEST_TRIAL_METC_IGNORE)).isFalse
+
+        model.checkModelForNewTrials(trialConfigs)
+    }
+
+    @Test
+    fun shouldFindNoNewStudyMETCsWhenAllTrialsAreConfigured() {
+        // The proper CTC database has 3 trials: TEST_TRIAL_1, TEST_TRIAL_2 and IGNORE_TRIAL
+        val trialConfigs: MutableList<TrialDefinitionConfig> = mutableListOf()
+        trialConfigs.add(
+            TestTrialDefinitionConfigFactory.MINIMAL.copy(
+                trialId = CTCModel.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1
+            )
+        )
+
+        trialConfigs.add(
+            TestTrialDefinitionConfigFactory.MINIMAL.copy(
+                trialId = CTCModel.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_2
+            )
+        )
+
+        assertThat(model.extractNewCTCStudyMETCs(trialConfigs)).isEmpty()
+
+        model.checkModelForNewTrials(trialConfigs)
+    }
+
+    @Test
+    fun shouldFindNoNewCohortIdsWhenAllCohortsAreConfigured() {
+        // The proper CTC database has 3 cohorts: 1, 2 and (unmapped) 3
+        val cohortConfigs: MutableList<CohortDefinitionConfig> = mutableListOf()
+        cohortConfigs.add(
+            TestCohortDefinitionConfigFactory.MINIMAL.copy(
+                trialId = CTCModel.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
+                ctcCohortIds = setOf("1")
+            )
+        )
+
+        cohortConfigs.add(
+            TestCohortDefinitionConfigFactory.MINIMAL.copy(
+                trialId = CTCModel.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
+                ctcCohortIds = setOf("2")
+            )
+        )
+
+        assertThat(model.extractNewCTCCohorts(cohortConfigs)).isEmpty()
+
+        model.checkModelForNewCohorts(cohortConfigs)
+    }
+
+    @Test
+    fun shouldClassifyAllCohortsAsNewWhenCohortConfigIsEmpty() {
+        // The proper CTC database has 3 cohorts: 1, 2 and (unmapped) 3
+        val cohortConfigs: List<CohortDefinitionConfig> = emptyList()
+
+        val newCohorts = model.extractNewCTCCohorts(cohortConfigs)
+        assertThat(newCohorts.size).isEqualTo(2)
+
+        val newCohortIds = newCohorts.map { it.cohortId }
+        assertThat(newCohortIds.contains(1)).isTrue
+        assertThat(newCohortIds.contains(2)).isTrue
+        assertThat(newCohortIds.contains(TestTrialData.TEST_UNMAPPED_COHORT_ID)).isFalse
+
+        model.checkModelForNewCohorts(cohortConfigs)
+    }
+
+    @Test
+    fun shouldPickUpUnusedStudyMETCsToIgnore() {
+        // The proper CTC database has no unused METCs to ignore
+        assertThat(model.extractUnusedStudyMETCsToIgnore()).isEmpty()
+        model.evaluateModelConfiguration()
+
+        val modelWithUnused = CTCModel(TestCTCDatabaseFactory.createMinimalTestCTCDatabase().copy(studyMETCsToIgnore = setOf("unused")))
+        val unusedStudyMETCs = modelWithUnused.extractUnusedStudyMETCsToIgnore()
+        assertThat(unusedStudyMETCs.size).isEqualTo(1)
+        assertThat(unusedStudyMETCs.contains("unused")).isTrue
+        modelWithUnused.evaluateModelConfiguration()
+    }
+
+    @Test
+    fun shouldPickUpUnusedUnmappedCohortIds() {
+        // The proper CTC database has no unused unmapped cohort IDs to ignore
+        assertThat(model.extractUnusedUnmappedCohorts()).isEmpty()
+        model.evaluateModelConfiguration()
+
+        val modelWithUnused = CTCModel(TestCTCDatabaseFactory.createMinimalTestCTCDatabase().copy(unmappedCohortIds = setOf(1)))
+        val unusedUnmappedCohortIds = modelWithUnused.extractUnusedUnmappedCohorts()
+        assertThat(unusedUnmappedCohortIds.size).isEqualTo(1)
+        assertThat(unusedUnmappedCohortIds.contains(1)).isTrue
+        modelWithUnused.evaluateModelConfiguration()
     }
 
     companion object {

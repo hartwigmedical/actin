@@ -1,6 +1,5 @@
 package com.hartwig.actin.treatment.ctc
 
-import com.google.common.annotations.VisibleForTesting
 import com.hartwig.actin.treatment.ctc.config.CTCDatabase
 import com.hartwig.actin.treatment.ctc.config.CTCDatabaseEntry
 import com.hartwig.actin.treatment.ctc.config.CTCDatabaseReader
@@ -11,49 +10,7 @@ import com.hartwig.actin.treatment.trial.config.TrialDefinitionConfig
 import org.apache.logging.log4j.LogManager
 import java.io.IOException
 
-class CTCModel @VisibleForTesting internal constructor(private val ctcDatabase: CTCDatabase) {
-
-    fun checkDatabaseForNewTrials(trialConfigs: List<TrialDefinitionConfig>) {
-        val newTrialsInCTC = extractNewCTCStudyMETCs(trialConfigs)
-
-        if (newTrialsInCTC.isEmpty()) {
-            LOGGER.info(" No new studies found in CTC database that are not explicitly ignored.")
-        } else {
-            for (newTrialInCTC in newTrialsInCTC) {
-                LOGGER.warn(" New trial detected in CTC that is not configured to be ignored: '{}'", newTrialInCTC)
-            }
-        }
-    }
-
-    internal fun extractNewCTCStudyMETCs(trialConfigs: List<TrialDefinitionConfig>): List<String> {
-        val configuredTrialIds = trialConfigs.map { it.trialId }
-
-        return ctcDatabase.entries.filter { !ctcDatabase.studyMETCsToIgnore.contains(it.studyMETC) }
-            .filter { !configuredTrialIds.contains(extractTrialId(it)) }
-            .map { it.studyMETC }
-            .distinct()
-    }
-
-    fun evaluateModelConfiguration() {
-        val unusedStudyMETCsToIgnore = extractUnusedStudyMETCsToIgnore()
-
-        if (unusedStudyMETCsToIgnore.isEmpty()) {
-            LOGGER.info(" No unused study METCs to ignore found")
-        } else {
-            for (unusedStudyMETCToIgnore in unusedStudyMETCsToIgnore) {
-                LOGGER.warn(
-                    " Study that is configured to be ignored is not actually referenced in CTC database: '{}'",
-                    unusedStudyMETCToIgnore
-                )
-            }
-        }
-    }
-
-    internal fun extractUnusedStudyMETCsToIgnore(): List<String> {
-        val ctcStudyMETCs = ctcDatabase.entries.map { it.studyMETC }.distinct()
-
-        return ctcDatabase.studyMETCsToIgnore.filter { !ctcStudyMETCs.contains(it) }
-    }
+class CTCModel internal constructor(private val ctcDatabase: CTCDatabase) {
 
     fun isTrialOpen(trialConfig: TrialDefinitionConfig): Boolean {
         if (!trialConfig.trialId.startsWith(CTC_TRIAL_PREFIX)) {
@@ -65,7 +22,7 @@ class CTCModel @VisibleForTesting internal constructor(private val ctcDatabase: 
             return trialConfig.open
         }
 
-        val openInCTC = TrialStatusInterpreter.isOpen(ctcDatabase.entries, trialConfig)
+        val openInCTC: Boolean? = TrialStatusInterpreter.isOpen(ctcDatabase.entries, trialConfig)
         if (openInCTC != null) {
             if (openInCTC != trialConfig.open) {
                 LOGGER.warn(
@@ -94,6 +51,96 @@ class CTCModel @VisibleForTesting internal constructor(private val ctcDatabase: 
             .blacklist(cohortConfig.blacklist)
             .description(cohortConfig.description)
             .build()
+    }
+
+    fun checkModelForNewTrials(trialConfigs: List<TrialDefinitionConfig>) {
+        val newTrialsInCTC = extractNewCTCStudyMETCs(trialConfigs)
+
+        if (newTrialsInCTC.isEmpty()) {
+            LOGGER.info(" No new studies found in CTC database that are not explicitly ignored.")
+        } else {
+            for (newTrialInCTC in newTrialsInCTC) {
+                LOGGER.warn(" New trial detected in CTC that is not configured to be ignored: '{}'", newTrialInCTC)
+            }
+        }
+    }
+
+    internal fun extractNewCTCStudyMETCs(trialConfigs: List<TrialDefinitionConfig>): List<String> {
+        val configuredTrialIds = trialConfigs.map { it.trialId }
+
+        return ctcDatabase.entries.filter { !ctcDatabase.studyMETCsToIgnore.contains(it.studyMETC) }
+            .filter { !configuredTrialIds.contains(extractTrialId(it)) }
+            .map { it.studyMETC }
+            .distinct()
+    }
+
+    fun checkModelForNewCohorts(cohortConfigs: List<CohortDefinitionConfig>) {
+        val newCohortEntriesInCTC = extractNewCTCCohorts(cohortConfigs)
+
+        if (newCohortEntriesInCTC.isEmpty()) {
+            LOGGER.info(" No new cohorts found in CTC database that are not explicitly unmapped.")
+        } else {
+            for (newCohortInCTC in newCohortEntriesInCTC) {
+                val newCohortString =
+                    String.format("{}: {} (ID={})", newCohortInCTC.studyMETC, newCohortInCTC.cohortName, newCohortInCTC.cohortId)
+                LOGGER.warn(" New cohort detected in CTC that is not configured as unmapped: '{}'", newCohortString)
+            }
+        }
+    }
+
+    internal fun extractNewCTCCohorts(cohortConfigs: List<CohortDefinitionConfig>): List<CTCDatabaseEntry> {
+        val configuredCohortIds: List<Int> = cohortConfigs.filter {
+            isExclusivelyNumeric(it.ctcCohortIds)
+        }.map { it -> it.ctcCohortIds.map { it.toInt() } }.flatten()
+
+        return ctcDatabase.entries.filter { !ctcDatabase.studyMETCsToIgnore.contains(it.studyMETC) }
+            .filter { it.cohortId != null }
+            .filter { !ctcDatabase.unmappedCohortIds.contains(it.cohortId) }
+            .filter { !(configuredCohortIds.contains(it.cohortId) || configuredCohortIds.contains(it.cohortParentId)) }
+    }
+
+    private fun isExclusivelyNumeric(ctcCohortIds: Set<String>): Boolean {
+        return ctcCohortIds.isNotEmpty() && ctcCohortIds.all { it.toIntOrNull() != null }
+    }
+
+    fun evaluateModelConfiguration() {
+        val unusedStudyMETCsToIgnore = extractUnusedStudyMETCsToIgnore()
+
+        if (unusedStudyMETCsToIgnore.isEmpty()) {
+            LOGGER.info(" No unused study METCs to ignore found")
+        } else {
+            for (unusedStudyMETCToIgnore in unusedStudyMETCsToIgnore) {
+                LOGGER.warn(
+                    " Study that is configured to be ignored is not actually referenced in CTC database: '{}'",
+                    unusedStudyMETCToIgnore
+                )
+            }
+        }
+
+        val unusedUnmappedCohortIds = extractUnusedUnmappedCohorts()
+
+        if (unusedUnmappedCohortIds.isEmpty()) {
+            LOGGER.info(" No unused unmapped cohort IDs found")
+        } else {
+            for (unusedUnmappedCohortId in unusedUnmappedCohortIds) {
+                LOGGER.warn(
+                    " Cohort ID that is configured to be unmapped is not actually referenced in CTC database: '{}'",
+                    unusedUnmappedCohortId
+                )
+            }
+        }
+    }
+
+    internal fun extractUnusedStudyMETCsToIgnore(): List<String> {
+        val ctcStudyMETCs = ctcDatabase.entries.map { it.studyMETC }.distinct()
+
+        return ctcDatabase.studyMETCsToIgnore.filter { !ctcStudyMETCs.contains(it) }
+    }
+
+    internal fun extractUnusedUnmappedCohorts(): List<Int> {
+        val ctcCohortIds = ctcDatabase.entries.mapNotNull { it.cohortId }.distinct()
+
+        return ctcDatabase.unmappedCohortIds.filter { !ctcCohortIds.contains(it) }
     }
 
     companion object {
