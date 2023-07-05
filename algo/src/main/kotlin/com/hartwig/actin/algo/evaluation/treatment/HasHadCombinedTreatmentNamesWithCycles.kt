@@ -4,19 +4,20 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.clinical.datamodel.treatment.Treatment
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 
 internal class HasHadCombinedTreatmentNamesWithCycles(
-    private val treatmentNames: List<String>,
+    private val treatments: List<Treatment>,
     private val minCycles: Int,
     private val maxCycles: Int
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val evaluationsByResult: Map<EvaluationResult, List<Evaluation>> = treatmentNames
-            .map { treatmentName: String -> evaluatePriorTreatmentsMatchingName(record.clinical().priorTumorTreatments(), treatmentName) }
+        val evaluationsByResult: Map<EvaluationResult, List<Evaluation>> = treatments
+            .map { treatment -> evaluatePriorTreatmentsMatchingName(record.clinical().treatmentHistory(), treatment.name()) }
             .groupBy { it.result() }
         val builder: ImmutableEvaluation.Builder = EvaluationFactory.unrecoverable()
         return if (evaluationsByResult.containsKey(EvaluationResult.FAIL)) {
@@ -42,28 +43,29 @@ internal class HasHadCombinedTreatmentNamesWithCycles(
         }
     }
 
-    private fun evaluatePriorTreatmentsMatchingName(priorTumorTreatments: List<PriorTumorTreatment>, treatmentName: String): Evaluation {
+    private fun evaluatePriorTreatmentsMatchingName(treatmentHistory: List<TreatmentHistoryEntry>, treatmentName: String): Evaluation {
         val query = treatmentName.lowercase()
-        val matchingPriorTreatments: Map<EvaluationResult, List<PriorTumorTreatment>> = priorTumorTreatments
-            .filter { it.name().lowercase().contains(query) }
-            .groupBy { prior: PriorTumorTreatment ->
-                when (prior.cycles()) {
+        val matchingHistoryEntries: Map<EvaluationResult, List<TreatmentHistoryEntry>> = treatmentHistory.filter { entry ->
+            entry.treatments().flatMap { it.synonyms() + setOf(it.name()) }.any { it.lowercase() == query }
+        }
+            .groupBy {
+                when (it.therapyHistoryDetails()?.cycles()) {
                     null -> EvaluationResult.UNDETERMINED
                     in minCycles..maxCycles -> EvaluationResult.PASS
                     else -> EvaluationResult.FAIL
                 }
             }
-        return if (matchingPriorTreatments.isEmpty()) {
+        return if (matchingHistoryEntries.isEmpty()) {
             EvaluationFactory.fail("No prior treatments found matching $treatmentName", GENERAL_FAIL_MESSAGE)
-        } else if (matchingPriorTreatments.containsKey(EvaluationResult.PASS)) {
+        } else if (matchingHistoryEntries.containsKey(EvaluationResult.PASS)) {
             EvaluationFactory.pass(
-                "Found matching treatments: " + formatTreatmentList(matchingPriorTreatments[EvaluationResult.PASS]!!, true),
+                "Found matching treatments: " + formatTreatmentList(matchingHistoryEntries[EvaluationResult.PASS]!!, true),
                 "Found matching treatments"
             )
-        } else if (matchingPriorTreatments.containsKey(EvaluationResult.UNDETERMINED)) {
+        } else if (matchingHistoryEntries.containsKey(EvaluationResult.UNDETERMINED)) {
             EvaluationFactory.undetermined(
                 "Unknown cycles for matching prior treatments: " + formatTreatmentList(
-                    matchingPriorTreatments[EvaluationResult.UNDETERMINED]!!,
+                    matchingHistoryEntries[EvaluationResult.UNDETERMINED]!!,
                     false
                 ), "Unknown treatment cycles"
             )
@@ -73,7 +75,7 @@ internal class HasHadCombinedTreatmentNamesWithCycles(
                     "Matching prior treatments did not have between %d and %d cycles: %s",
                     minCycles,
                     maxCycles,
-                    formatTreatmentList(matchingPriorTreatments[EvaluationResult.FAIL]!!, true)
+                    formatTreatmentList(matchingHistoryEntries[EvaluationResult.FAIL]!!, true)
                 ), GENERAL_FAIL_MESSAGE
             )
         }
@@ -81,12 +83,11 @@ internal class HasHadCombinedTreatmentNamesWithCycles(
 
     companion object {
         private const val GENERAL_FAIL_MESSAGE = "No treatments with cycles"
-        private fun formatTreatmentList(treatments: List<PriorTumorTreatment>, includeCycles: Boolean): String {
-            return treatments.joinToString(", ") { prior: PriorTumorTreatment ->
-                prior.name() + if (includeCycles) String.format(
-                    " (%d cycles)",
-                    prior.cycles()
-                ) else ""
+        private fun formatTreatmentList(treatmentHistoryEntries: List<TreatmentHistoryEntry>, includeCycles: Boolean): String {
+            return treatmentHistoryEntries.joinToString(", ") { entry ->
+                val cycleString = if (includeCycles) " (${entry.therapyHistoryDetails()?.cycles()} cycles)" else ""
+                entry.treatments().joinToString("+") { it.name() } + cycleString
+
             }
         }
 

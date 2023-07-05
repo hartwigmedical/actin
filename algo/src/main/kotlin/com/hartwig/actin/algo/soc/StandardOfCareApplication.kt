@@ -43,26 +43,21 @@ class StandardOfCareApplication(config: StandardOfCareConfig) {
         MolecularPrinter.printRecord(molecular)
 
         val patient: PatientRecord = PatientRecordFactory.fromInputs(clinical, molecular)
-        LOGGER.info("Loading DOID tree from {}", config.doidJson)
 
+        LOGGER.info("Loading DOID tree from {}", config.doidJson)
         val doidEntry: DoidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size)
         val doidModel: DoidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
+        LOGGER.info("Loading treatment data from {}", config.treatmentDirectory)
+        val recommendationDatabase = RecommendationDatabase(TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory))
+
         val referenceDateProvider: ReferenceDateProvider = ReferenceDateProviderFactory.create(clinical, config.runHistorically)
-        val recommendationEngine: RecommendationEngine = RecommendationEngine.create(doidModel, referenceDateProvider)
+        val recommendationEngine: RecommendationEngine =
+            RecommendationEngine.create(doidModel, recommendationDatabase, referenceDateProvider)
 
         LOGGER.info("Recommended treatments descending order of preference:")
-        val expandedTumorDoids =
-            patient.clinical().tumor().doids()?.flatMap { doidModel.doidWithParents(it) }?.toSet() ?: emptySet<String>()
-        LOGGER.info(
-            recommendationEngine.provideRecommendations(
-                patient,
-                RecommendationDatabase(TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)).treatmentCandidatesForDoidSet(
-                    expandedTumorDoids
-                )
-            ).listAvailableTreatmentsByScore()
-        )
+        LOGGER.info(recommendationEngine.provideRecommendations(patient).listAvailableTreatmentsByScore())
         LOGGER.info("Done!")
     }
 

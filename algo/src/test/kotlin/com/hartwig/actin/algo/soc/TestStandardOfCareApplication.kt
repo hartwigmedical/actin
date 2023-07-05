@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.PatientRecordFactory
+import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
@@ -39,9 +40,10 @@ class TestStandardOfCareApplication {
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size)
         val doidModel: DoidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
-        val recommendationEngine = RecommendationEngine.create(doidModel, ReferenceDateProviderTestFactory.createCurrentDateProvider())
-        val recommendationInterpreter =
-            recommendationEngine.provideRecommendations(patient, RecommendationDatabase.treatmentCandidatesForDoidSet())
+        val database = RecommendationDatabase(TreatmentDatabaseFactory.createFromPath(TREATMENT_JSON_PATH))
+        val recommendationEngine =
+            RecommendationEngine.create(doidModel, database, ReferenceDateProviderTestFactory.createCurrentDateProvider())
+        val recommendationInterpreter = recommendationEngine.provideRecommendations(patient)
         LOGGER.info(recommendationInterpreter.summarize())
         LOGGER.info(recommendationInterpreter.csv())
 
@@ -50,6 +52,7 @@ class TestStandardOfCareApplication {
 
     companion object {
         private val LOGGER = LogManager.getLogger(TestStandardOfCareApplication::class.java)
+
         private val DOID_JSON_PATH = listOf(
             System.getProperty("user.home"),
             "hmf",
@@ -57,6 +60,15 @@ class TestStandardOfCareApplication {
             "common-resources-public",
             "disease_ontology",
             "doid.json"
+        ).joinToString(File.separator)
+
+        private val TREATMENT_JSON_PATH = listOf(
+            System.getProperty("user.home"),
+            "hmf",
+            "repos",
+            "private_crunch_repo",
+            "actin",
+            "treatment_db"
         ).joinToString(File.separator)
 
         private fun patient(): PatientRecord {

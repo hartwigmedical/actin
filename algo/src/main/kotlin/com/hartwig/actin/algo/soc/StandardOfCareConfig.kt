@@ -19,7 +19,8 @@ data class StandardOfCareConfig(
             val options = Options()
             options.addOption(CLINICAL_JSON, true, "File containing the clinical record of the patient")
             options.addOption(MOLECULAR_JSON, true, "File containing the most recent molecular record of the patient")
-            options.addOption(DOID_JSON, true, "Path to JSON file containing the full DOID tree.")
+            options.addOption(DOID_JSON, true, "Path to JSON file containing the full DOID tree")
+            options.addOption(TREATMENT_DIRECTORY, true, "Path to treatment data directory")
             options.addOption(
                 RUN_HISTORICALLY,
                 false,

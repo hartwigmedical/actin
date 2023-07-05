@@ -14,6 +14,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_TREATMENT_X to isEligibleForOnLabelTreatmentCreator(),
             EligibilityRule.IS_ELIGIBLE_FOR_PALLIATIVE_RADIOTHERAPY to isEligibleForPalliativeRadiotherapyCreator(),
             EligibilityRule.IS_ELIGIBLE_FOR_LOCO_REGIONAL_THERAPY to isEligibleForLocoRegionalTherapyCreator(),
+            EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_LINES_X to isEligibleForTreatmentLinesCreator(),
             EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS to hasExhaustedSOCTreatmentsCreator(),
             EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES to hasHadSomeApprovedTreatmentCreator(),
             EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES to hasHadSomeSystemicTreatmentCreator(),
@@ -69,6 +70,13 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return FunctionCreator { IsEligibleForLocoRegionalTherapy() }
     }
 
+    private fun isEligibleForTreatmentLinesCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val lines = functionInputResolver().createManyIntegersInput(function)
+            IsEligibleForTreatmentLines(doidModel(), lines)
+        }
+    }
+
     private fun hasExhaustedSOCTreatmentsCreator(): FunctionCreator {
         return FunctionCreator { HasExhaustedSOCTreatments() }
     }
@@ -107,9 +115,9 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadSpecificTreatmentWithinWeeksCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneStringOneIntegerInput(function)
+            val input = functionInputResolver().createOneSpecificTreatmentOneIntegerInput(function)
             val minDate = referenceDateProvider().date().minusWeeks(input.integer().toLong())
-            HasHadSpecificTreatmentSinceDate(input.string(), minDate)
+            HasHadSpecificTreatmentSinceDate(input.treatment(), minDate)
         }
     }
 
@@ -119,8 +127,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadCombinedTreatmentNamesWithCyclesCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val input = functionInputResolver().createManyStringsTwoIntegersInput(function)
-            HasHadCombinedTreatmentNamesWithCycles(input.strings(), input.integer1(), input.integer2())
+            val input = functionInputResolver().createManySpecificTreatmentsTwoIntegerInput(function)
+            HasHadCombinedTreatmentNamesWithCycles(input.treatments(), input.integer1(), input.integer2())
         }
     }
 
@@ -233,8 +241,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasProgressiveDiseaseFollowingTreatmentNameCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val nameToFind = functionInputResolver().createOneStringInput(function)
-            HasHadPDFollowingSpecificTreatment(Sets.newHashSet(nameToFind), null)
+            val treatment = functionInputResolver().createOneSpecificTreatmentInput(function)
+            HasHadPDFollowingSpecificTreatment(listOf(treatment), null, null)
         }
     }
 
@@ -245,7 +253,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             if (mappedNames == null) {
                 HasHadPDFollowingTreatmentWithCategory(treatment.mappedCategory())
             } else {
-                HasHadPDFollowingSpecificTreatment(mappedNames, treatment.mappedCategory())
+                HasHadPDFollowingSpecificTreatment(null, mappedNames, treatment.mappedCategory())
             }
         }
     }

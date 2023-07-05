@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation
 
-import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider
 import com.hartwig.actin.algo.evaluation.bloodtransfusion.BloodTransfusionRuleMapper
 import com.hartwig.actin.algo.evaluation.cardiacfunction.CardiacFunctionRuleMapper
@@ -20,10 +19,11 @@ import com.hartwig.actin.algo.evaluation.treatment.TreatmentRuleMapper
 import com.hartwig.actin.algo.evaluation.tumor.TumorRuleMapper
 import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionRuleMapper
 import com.hartwig.actin.algo.evaluation.washout.WashoutRuleMapper
+import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.treatment.datamodel.EligibilityRule
 import com.hartwig.actin.treatment.input.FunctionInputResolver
 
-internal object FunctionCreatorFactory {
+object FunctionCreatorFactory {
 
     fun create(
         referenceDateProvider: ReferenceDateProvider,

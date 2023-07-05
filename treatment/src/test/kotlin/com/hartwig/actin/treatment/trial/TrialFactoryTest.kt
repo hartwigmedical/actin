@@ -1,6 +1,7 @@
 package com.hartwig.actin.treatment.trial
 
 import com.google.common.io.Resources
+import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
 import com.hartwig.actin.treatment.ctc.TestCTCModelFactory
@@ -23,7 +24,8 @@ class TrialFactoryTest {
                 TRIAL_CONFIG_DIRECTORY,
                 TestCTCModelFactory.createWithMinimalTestCTCDatabase(),
                 TestDoidModelFactory.createMinimalTestDoidModel(),
-                TestGeneFilterFactory.createNeverValid()
+                TestGeneFilterFactory.createNeverValid(),
+                TreatmentDatabase(emptyMap(), emptyMap())
             )
         ).isNotNull
     }

@@ -1,17 +1,17 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.PD_LABEL
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import org.junit.Test
 
 class HasHadPDFollowingSpecificTreatmentTest {
 
     @Test
     fun canEvaluate() {
-        val function = HasHadPDFollowingSpecificTreatment(setOf("treatment 1", "treatment 2"), TreatmentCategory.CHEMOTHERAPY)
+        val function = HasHadPDFollowingSpecificTreatment(null, setOf("treatment 1", "treatment 2"), TreatmentCategory.CHEMOTHERAPY)
         val treatments: MutableList<PriorTumorTreatment> = mutableListOf()
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
 
@@ -40,7 +40,7 @@ class HasHadPDFollowingSpecificTreatmentTest {
 
     @Test
     fun shouldPassForMatchingTreatmentWhenPDIsIndicatedInBestResponse() {
-        val function = HasHadPDFollowingSpecificTreatment(setOf("treatment 1", "treatment 2"), TreatmentCategory.CHEMOTHERAPY)
+        val function = HasHadPDFollowingSpecificTreatment(null, setOf("treatment 1", "treatment 2"), TreatmentCategory.CHEMOTHERAPY)
         val treatments: List<PriorTumorTreatment> = listOf(
             TreatmentTestFactory.builder()
                 .addCategories(TreatmentCategory.CHEMOTHERAPY)
@@ -54,7 +54,7 @@ class HasHadPDFollowingSpecificTreatmentTest {
     @Test
     fun canEvaluateStopReasons() {
         val treatment = "right treatment"
-        val function = HasHadPDFollowingSpecificTreatment(setOf(treatment), null)
+        val function = HasHadPDFollowingSpecificTreatment(null, setOf(treatment), null)
         val treatments: MutableList<PriorTumorTreatment> = mutableListOf()
 
         // Right category but different stop reason
@@ -72,7 +72,7 @@ class HasHadPDFollowingSpecificTreatmentTest {
 
     @Test
     fun canEvaluateWithTrials() {
-        val function = HasHadPDFollowingSpecificTreatment(setOf("right treatment"), null)
+        val function = HasHadPDFollowingSpecificTreatment(null, setOf("right treatment"), null)
 
         // Add trial
         assertEvaluation(

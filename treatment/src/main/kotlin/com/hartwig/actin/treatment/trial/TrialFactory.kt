@@ -1,5 +1,6 @@
 package com.hartwig.actin.treatment.trial
 
+import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
@@ -75,9 +76,15 @@ class TrialFactory(
 
     companion object {
         @Throws(IOException::class)
-        fun create(trialConfigDirectory: String, ctcModel: CTCModel, doidModel: DoidModel, geneFilter: GeneFilter): TrialFactory {
+        fun create(
+            trialConfigDirectory: String,
+            ctcModel: CTCModel,
+            doidModel: DoidModel,
+            geneFilter: GeneFilter,
+            treatmentDatabase: TreatmentDatabase
+        ): TrialFactory {
             val molecularInputChecker = MolecularInputChecker(geneFilter)
-            val functionInputResolver = FunctionInputResolver(doidModel, molecularInputChecker)
+            val functionInputResolver = FunctionInputResolver(doidModel, molecularInputChecker, treatmentDatabase)
             val eligibilityFactory = EligibilityFactory(functionInputResolver)
             val trialConfigModel: TrialConfigModel = TrialConfigModel.create(trialConfigDirectory, eligibilityFactory)
             return TrialFactory(trialConfigModel, ctcModel, eligibilityFactory)

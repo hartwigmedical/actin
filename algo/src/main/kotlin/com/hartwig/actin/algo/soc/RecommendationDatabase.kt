@@ -7,7 +7,7 @@ import com.hartwig.actin.treatment.datamodel.EligibilityFunction
 import com.hartwig.actin.treatment.datamodel.EligibilityRule
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction
 
-class RecommendationDatabase(private val treatmentDatabase: TreatmentDatabase) {
+class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
     fun treatmentCandidatesForDoidSet(doids: Set<String>): List<TreatmentCandidate> {
         return if (!doids.contains(DoidConstants.COLORECTAL_CANCER_DOID)) emptyList() else listOf(
             combinableChemotherapies(),

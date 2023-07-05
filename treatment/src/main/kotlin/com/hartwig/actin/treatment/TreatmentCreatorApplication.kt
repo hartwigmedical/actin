@@ -1,5 +1,6 @@
 package com.hartwig.actin.treatment
 
+import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
@@ -32,8 +33,9 @@ class TreatmentCreatorApplication(private val config: TreatmentCreatorConfig) {
         val geneFilter = GeneFilterFactory.createFromKnownGenes(knownGenes)
 
         val ctcModel: CTCModel = CTCModel.createFromCTCConfigDirectory(config.ctcConfigDirectory)
+        val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
 
-        val trialFactory = TrialFactory.create(config.trialConfigDirectory, ctcModel, doidModel, geneFilter)
+        val trialFactory = TrialFactory.create(config.trialConfigDirectory, ctcModel, doidModel, geneFilter, treatmentDatabase)
         LOGGER.info("Creating trial database")
         val trials = trialFactory.createTrials()
 

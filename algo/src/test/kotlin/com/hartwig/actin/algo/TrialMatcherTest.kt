@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo
 
 import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory.createCurrentDateProvider
 import com.hartwig.actin.algo.datamodel.CohortMatch
 import com.hartwig.actin.algo.datamodel.Evaluation
@@ -52,7 +53,8 @@ class TrialMatcherTest {
         private fun createTestEvaluationFunctionFactory(): EvaluationFunctionFactory {
             return EvaluationFunctionFactory.create(
                 TestDoidModelFactory.createMinimalTestDoidModel(),
-                createCurrentDateProvider()
+                createCurrentDateProvider(),
+                TreatmentDatabase(emptyMap(), emptyMap())
             )
         }
 

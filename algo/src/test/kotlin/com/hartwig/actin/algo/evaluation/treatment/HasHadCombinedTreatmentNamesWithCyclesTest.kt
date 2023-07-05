@@ -4,22 +4,26 @@ import com.hartwig.actin.ImmutablePatientRecord
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
-import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableChemotherapy
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTherapyHistoryDetails
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import org.junit.Test
 
 class HasHadCombinedTreatmentNamesWithCyclesTest {
 
-    private val function = HasHadCombinedTreatmentNamesWithCycles(listOf("Matching", "Test"), 8, 12)
+    private val function = HasHadCombinedTreatmentNamesWithCycles(
+        listOf(chemotherapyWithName(TREATMENT_NAME_MATCHING), chemotherapyWithName(TREATMENT_NAME_TEST)), 8, 12
+    )
 
     @Test
     fun shouldPassWhenAllQueryTreatmentNamesHaveAtLeastOneMatchWithRequiredCycles() {
         val treatmentHistory = listOf(
             MATCHING_PRIOR_TREATMENT,
-            treatment("TEST TREATMENT", 8),
+            treatmentHistoryEntry(TREATMENT_NAME_TEST, 8),
             TEST_TREATMENT_WITH_WRONG_CYCLES,
             TEST_TREATMENT_WITH_NULL_CYCLES,
             NON_MATCHING_TREATMENT
@@ -70,20 +74,29 @@ class HasHadCombinedTreatmentNamesWithCyclesTest {
     }
 
     companion object {
-        private val MATCHING_PRIOR_TREATMENT: PriorTumorTreatment = treatment("always MATCHing treatment", 11)
-        private val TEST_TREATMENT_WITH_WRONG_CYCLES: PriorTumorTreatment = treatment("also test", 3)
-        private val TEST_TREATMENT_WITH_NULL_CYCLES: PriorTumorTreatment = treatment("another TEST", null)
-        val NON_MATCHING_TREATMENT: PriorTumorTreatment = treatment("unknown", 10)
+        private const val TREATMENT_NAME_MATCHING = "Matching"
+        private const val TREATMENT_NAME_TEST = "Test"
 
-        private fun patientRecordWithTreatmentHistory(priorTumorTreatments: List<PriorTumorTreatment>): PatientRecord {
+        private val MATCHING_PRIOR_TREATMENT = treatmentHistoryEntry(TREATMENT_NAME_MATCHING, 11)
+        private val TEST_TREATMENT_WITH_WRONG_CYCLES = treatmentHistoryEntry(TREATMENT_NAME_TEST, 3)
+        private val TEST_TREATMENT_WITH_NULL_CYCLES = treatmentHistoryEntry(TREATMENT_NAME_TEST, null)
+        val NON_MATCHING_TREATMENT = treatmentHistoryEntry("unknown", 10)
+
+        private fun patientRecordWithTreatmentHistory(treatmentHistory: List<TreatmentHistoryEntry>): PatientRecord {
             val minimal: PatientRecord = TestDataFactory.createMinimalTestPatientRecord()
             val clinicalRecord: ClinicalRecord =
-                ImmutableClinicalRecord.copyOf(minimal.clinical()).withPriorTumorTreatments(priorTumorTreatments)
+                ImmutableClinicalRecord.copyOf(minimal.clinical()).withTreatmentHistory(treatmentHistory)
             return ImmutablePatientRecord.copyOf(minimal).withClinical(clinicalRecord)
         }
 
-        private fun treatment(name: String, numCycles: Int?): PriorTumorTreatment {
-            return ImmutablePriorTumorTreatment.builder().name(name).isSystemic(true).cycles(numCycles).build()
+        private fun treatmentHistoryEntry(name: String, numCycles: Int?): TreatmentHistoryEntry {
+            return ImmutableTreatmentHistoryEntry.builder()
+                .addTreatments(chemotherapyWithName(name))
+                .therapyHistoryDetails(ImmutableTherapyHistoryDetails.builder().cycles(numCycles).build())
+                .build()
         }
+
+        private fun chemotherapyWithName(name: String): ImmutableChemotherapy =
+            ImmutableChemotherapy.builder().name(name).build()
     }
 }

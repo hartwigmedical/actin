@@ -2,58 +2,50 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.DateComparison.isAfterDate
 import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.clinical.datamodel.treatment.Treatment
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
 
-class HasHadSpecificTreatmentSinceDate internal constructor(treatmentName: String, minDate: LocalDate) : EvaluationFunction {
-
-    private val query: String
-    private val minDate: LocalDate
-
-    init {
-        query = treatmentName.lowercase()
-        this.minDate = minDate
-    }
+class HasHadSpecificTreatmentSinceDate(private val treatment: Treatment, private val minDate: LocalDate) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val matchingTreatments: List<PriorTumorTreatment> = record.clinical().priorTumorTreatments()
-            .filter { it.name().lowercase().contains(query) }
+        val matchingTreatments: List<TreatmentHistoryEntry> = record.clinical().treatmentHistory()
+            .filter { entry -> entry.treatments().any { it.name() == treatment.name() } }
 
         return when {
             matchingTreatments.any { treatmentSinceMinDate(it, false) } ->
                 EvaluationFactory.pass(
-                    "Treatment matching '$query' administered since ${Format.date(minDate)}",
+                    "Treatment matching '$treatment' administered since ${Format.date(minDate)}",
                     "Matching treatment since date"
                 )
 
             matchingTreatments.any { treatmentSinceMinDate(it, true) } ->
                 EvaluationFactory.undetermined(
-                    "Treatment matching '$query' administered with unknown date",
+                    "Treatment matching '$treatment' administered with unknown date",
                     "Matching treatment with unknown date"
                 )
 
             matchingTreatments.isNotEmpty() ->
                 EvaluationFactory.fail(
-                    "All treatments matching '$query' administered before ${Format.date(minDate)}",
+                    "All treatments matching '$treatment' administered before ${Format.date(minDate)}",
                     "Matching treatment with earlier date"
                 )
 
             else ->
                 EvaluationFactory.fail(
-                    "No treatments matching '$query' in prior tumor history",
+                    "No treatments matching '$treatment' in prior tumor history",
                     "No matching treatments found"
                 )
         }
     }
 
-    private fun treatmentSinceMinDate(treatment: PriorTumorTreatment, includeUnknown: Boolean): Boolean {
-        return isAfterDate(minDate, treatment.stopYear(), treatment.stopMonth()) ?: isAfterDate(
-            minDate, treatment.startYear(),
-            treatment.startMonth()
-        ) ?: includeUnknown
+    private fun treatmentSinceMinDate(treatment: TreatmentHistoryEntry, includeUnknown: Boolean): Boolean {
+        return isAfterDate(minDate, treatment.therapyHistoryDetails()?.stopYear(), treatment.therapyHistoryDetails()?.stopMonth())
+            ?: isAfterDate(minDate, treatment.startYear(), treatment.startMonth())
+            ?: includeUnknown
     }
 }

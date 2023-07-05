@@ -14,7 +14,8 @@ internal class EvaluatedTreatmentInterpreter(recommendedTreatments: List<Evaluat
             "No treatments available"
         } else {
             val bestScore: Int = recommendedTreatments[0].score
-            "Recommended treatments: " + recommendedTreatments.filter { it.score == bestScore }.joinToString { it.treatmentCandidate.name }
+            "Recommended treatments: " + recommendedTreatments.filter { it.score == bestScore }
+                .joinToString { it.treatmentCandidate.treatment.name() }
         }
     }
 
@@ -23,14 +24,14 @@ internal class EvaluatedTreatmentInterpreter(recommendedTreatments: List<Evaluat
             val warningSummary: String = evaluatedTreatment.evaluations.toSet().flatMap { eval ->
                 setOf(eval.failSpecificMessages(), eval.warnSpecificMessages(), eval.undeterminedSpecificMessages()).flatten()
             }.joinToString()
-            listOf(evaluatedTreatment.treatmentCandidate.name, evaluatedTreatment.score, warningSummary).joinToString()
+            listOf(evaluatedTreatment.treatmentCandidate.treatment.name(), evaluatedTreatment.score, warningSummary).joinToString()
         }
     }
 
     fun listAvailableTreatmentsByScore(): String {
         return availableTreatmentsByScore().entries.sortedByDescending { it.key }
             .joinToString("\n") { (key: Int, value: List<EvaluatedTreatment>) ->
-                "Score=$key: " + value.joinToString { it.treatmentCandidate.name }
+                "Score=$key: " + value.joinToString { it.treatmentCandidate.treatment.name() }
             }
     }
 

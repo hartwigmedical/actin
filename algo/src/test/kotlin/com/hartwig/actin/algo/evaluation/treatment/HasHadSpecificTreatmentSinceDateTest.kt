@@ -1,9 +1,10 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableChemotherapy
 import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
-import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import org.junit.Test
 import java.time.LocalDate
 
@@ -80,7 +81,7 @@ class HasHadSpecificTreatmentSinceDateTest {
     }
 
     companion object {
-        private const val TREATMENT_QUERY = "treatment"
+        private val TREATMENT_QUERY = ImmutableChemotherapy.builder().name("treatment").build()
         private const val YEARS_TO_SUBTRACT = 3
         private val targetDate: LocalDate = LocalDate.now().minusYears(1)
         private val recentDate: LocalDate = LocalDate.now().minusMonths(4)
