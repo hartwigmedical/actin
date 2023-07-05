@@ -37,6 +37,9 @@ class TreatmentCreatorApplication(private val config: TreatmentCreatorConfig) {
         LOGGER.info("Creating trial database")
         val trials = trialFactory.createTrials()
 
+        LOGGER.info("Evaluating usage of CTC model configuration")
+        ctcModel.evaluateModelConfiguration()
+
         LOGGER.info("Evaluating usage of eligibility rules")
         EligibilityRuleUsageEvaluator.evaluate(trials)
 
