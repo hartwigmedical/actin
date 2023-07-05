@@ -34,7 +34,7 @@ class CTCModel internal constructor(private val ctcDatabase: CTCDatabase) {
         }
 
         LOGGER.warn(
-            " No study status found in CTC for trial {} ({}). Reverting to internal trial config",
+            " No study status found in CTC for trial '{} ({}'). Reverting to internal trial config",
             trialConfig.trialId,
             trialConfig.acronym
         )
@@ -81,9 +81,10 @@ class CTCModel internal constructor(private val ctcDatabase: CTCDatabase) {
             LOGGER.info(" No new cohorts found in CTC database that are not explicitly unmapped.")
         } else {
             for (newCohortInCTC in newCohortEntriesInCTC) {
-                val newCohortString =
-                    String.format("{}: {} (ID={})", newCohortInCTC.studyMETC, newCohortInCTC.cohortName, newCohortInCTC.cohortId)
-                LOGGER.warn(" New cohort detected in CTC that is not configured as unmapped: '{}'", newCohortString)
+                LOGGER.warn(
+                    " New cohort detected in CTC that is not configured as unmapped: '{}: {} (ID={})'", newCohortInCTC.studyMETC,
+                    newCohortInCTC.cohortName, newCohortInCTC.cohortId
+                )
             }
         }
     }
