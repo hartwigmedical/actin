@@ -12,7 +12,7 @@ internal object TrialStatusInterpreter {
             .map { CTCStatus.fromStatusString(it.studyStatus) }
             .distinct()
         if (trialStates.size > 1) {
-            LOGGER.warn("Inconsistent study status found for trial '{}' in CTC database. Assuming trial is closed", trialConfig.trialId)
+            LOGGER.warn(" Inconsistent study status found for trial '{}' in CTC database. Assuming trial is closed", trialConfig.trialId)
             return false
         } else if (trialStates.size == 1) {
             return trialStates.first() == CTCStatus.OPEN

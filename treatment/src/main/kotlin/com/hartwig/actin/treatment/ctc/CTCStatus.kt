@@ -17,7 +17,7 @@ internal enum class CTCStatus {
                 CLOSED_STATES.any { it.equals(string, ignoreCase = true) } -> CLOSED
 
                 else -> {
-                    LOGGER.warn("Could not interpret CTC status string: '{}'. Assuming status implies {}}", string, CLOSED.toString())
+                    LOGGER.warn(" Could not interpret CTC status string: '{}'. Assuming status implies {}}", string, CLOSED.toString())
                     CLOSED
                 }
             }

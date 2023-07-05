@@ -16,21 +16,22 @@ internal object CohortStatusInterpreter {
         val ctcCohortIds: Set<String> = cohortConfig.ctcCohortIds
         if (isNotAvailable(ctcCohortIds)) {
             LOGGER.debug(
-                "CTC entry for cohort '{}' of trial '{}' explicitly configured to be unavailable",
+                " CTC entry for cohort '{}' of trial '{}' explicitly configured to be unavailable",
                 cohortConfig.cohortId,
                 cohortConfig.trialId
             )
             return null
         } else if (isMissingEntry(ctcCohortIds)) {
             LOGGER.info(
-                "CTC entry missing for unknown reason for cohort '{}' of trial '{}'! Setting cohort to closed without slots",
+                " CTC entry configured to be missing for unknown reason for cohort '{}' of trial '{}'! "
+                        + "Assuming cohort is closed without slots",
                 cohortConfig.cohortId,
                 cohortConfig.trialId
             )
             return closedWithoutSlots()
         } else if (isMissingBecauseClosedOrUnavailable(ctcCohortIds)) {
             LOGGER.debug(
-                "CTC entry missing for cohort '{}' of trial '{}' because it's assumed closed or not available. "
+                " CTC entry missing for cohort '{}' of trial '{}' because it's assumed closed or not available. "
                         + "Setting cohort to closed without slots", cohortConfig.cohortId, cohortConfig.trialId
             )
             return closedWithoutSlots()

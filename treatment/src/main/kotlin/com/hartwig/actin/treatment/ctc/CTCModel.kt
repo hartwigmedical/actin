@@ -15,18 +15,18 @@ import kotlin.streams.toList
 class CTCModel @VisibleForTesting internal constructor(private val ctcDatabase: CTCDatabase) {
 
     fun checkDatabaseForNewTrials(trialConfigs: List<TrialDefinitionConfig>) {
-        val configuredTrials = trialConfigs.stream().map { it.trialId }.distinct().toList()
+        val configuredTrialIds = trialConfigs.map { it.trialId }
 
         val newTrialsInCTC =
-            ctcDatabase.entries.stream().filter { !ctcDatabase.studyMETCsToIgnore.contains(it.studyMETC) }
-                .filter { configuredTrials.contains(extractTrialId(it)) }
+            ctcDatabase.entries.filter { !ctcDatabase.studyMETCsToIgnore.contains(it.studyMETC) }
+                .filter { configuredTrialIds.contains(extractTrialId(it)) }
                 .distinct()
 
-        if (newTrialsInCTC.count().toInt() == 0) {
-            LOGGER.info("No new studies found in CTC database that are not explicitly ignored.")
+        if (newTrialsInCTC.isEmpty()) {
+            LOGGER.info(" No new studies found in CTC database that are not explicitly ignored.")
         } else {
             for (newTrialInCTC in newTrialsInCTC) {
-                LOGGER.warn("New trial detected in CTC that is not configured to be ignored: '{}'", newTrialInCTC)
+                LOGGER.warn(" New trial detected in CTC that is not configured to be ignored: '{}'", newTrialInCTC)
             }
         }
 
@@ -34,14 +34,14 @@ class CTCModel @VisibleForTesting internal constructor(private val ctcDatabase: 
         val unusedStudyMETCsToIgnore = ctcDatabase.studyMETCsToIgnore.stream().filter { ctcStudyMETCs.contains(it) }.distinct().toList()
 
         for (unusedStudyMETCToIgnore in unusedStudyMETCsToIgnore) {
-            LOGGER.warn("Study that is configured to be ignored is not actually referenced in CTC database: '{}'", unusedStudyMETCToIgnore)
+            LOGGER.warn(" Study that is configured to be ignored is not actually referenced in CTC database: '{}'", unusedStudyMETCToIgnore)
         }
     }
 
     fun isTrialOpen(trialConfig: TrialDefinitionConfig): Boolean {
         if (!trialConfig.trialId.startsWith(CTC_TRIAL_PREFIX)) {
             LOGGER.debug(
-                "Skipping study status retrieval for {} ({}) since study is not deemed a CTC trial",
+                " Skipping study status retrieval for {} ({}) since study is not deemed a CTC trial",
                 trialConfig.trialId,
                 trialConfig.acronym
             )
@@ -52,7 +52,7 @@ class CTCModel @VisibleForTesting internal constructor(private val ctcDatabase: 
         if (openInCTC != null) {
             if (openInCTC != trialConfig.open) {
                 LOGGER.warn(
-                    "CTC and internal trial config are inconsistent in terms of study status for {} ({})."
+                    " CTC and internal trial config are inconsistent in terms of study status for {} ({})."
                             + " Taking CTC study status where open = {}", trialConfig.trialId, trialConfig.acronym, openInCTC
                 )
             }
@@ -60,7 +60,7 @@ class CTCModel @VisibleForTesting internal constructor(private val ctcDatabase: 
         }
 
         LOGGER.warn(
-            "No study status found in CTC for trial {} ({}). Reverting to internal trial config",
+            " No study status found in CTC for trial {} ({}). Reverting to internal trial config",
             trialConfig.trialId,
             trialConfig.acronym
         )
@@ -95,7 +95,7 @@ class CTCModel @VisibleForTesting internal constructor(private val ctcDatabase: 
         private fun fromCohortConfig(cohortConfig: CohortDefinitionConfig): InterpretedCohortStatus {
             return if (cohortConfig.open == null || cohortConfig.slotsAvailable == null) {
                 LOGGER.warn(
-                    "Missing open and/or slots available data for cohort '{}' of trial '{}'. "
+                    " Missing open and/or slots available data for cohort '{}' of trial '{}'. "
                             + "Assuming cohort is closed with no slots available", cohortConfig.cohortId, cohortConfig.trialId
                 )
                 InterpretedCohortStatus(open = false, slotsAvailable = false)

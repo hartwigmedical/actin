@@ -21,7 +21,7 @@ object CTCDatabaseEntryInterpreter {
 
         if (!hasValidCTCDatabaseMatches(matches)) {
             LOGGER.warn(
-                "Invalid cohort IDs configured for cohort '{}' of trial '{}': '{}'. Assuming cohort is closed without slots",
+                " Invalid cohort IDs configured for cohort '{}' of trial '{}': '{}'. Assuming cohort is closed without slots",
                 cohortConfig.cohortId,
                 cohortConfig.trialId,
                 configuredCohortIds
@@ -42,12 +42,12 @@ object CTCDatabaseEntryInterpreter {
             val firstParentId = matches[0].cohortParentId
             if (matches.size > 1) {
                 if (matches.any { it.cohortParentId != firstParentId }) {
-                    LOGGER.warn("Multiple parents found for single set of children: {}", matches)
+                    LOGGER.warn(" Multiple parents found for single set of children: {}", matches)
                 }
             }
             if (best != fromEntry(entriesByCohortId[firstParentId]!!)) {
                 LOGGER.warn(
-                    "Inconsistent status between best child and parent cohort in CTC for cohort with parent ID '{}'",
+                    " Inconsistent status between best child and parent cohort in CTC for cohort with parent ID '{}'",
                     matches[0].cohortParentId
                 )
             }
@@ -74,7 +74,7 @@ object CTCDatabaseEntryInterpreter {
     ): List<CTCDatabaseEntry?> {
         return configuredCohortIds.map { cohortId ->
             if (!entriesByCohortId.contains(cohortId)) {
-                LOGGER.warn("Could not find CTC database entry with cohort ID '{}'", cohortId)
+                LOGGER.warn(" Could not find CTC database entry with cohort ID '{}'", cohortId)
             }
             entriesByCohortId[cohortId]
         }
@@ -84,7 +84,7 @@ object CTCDatabaseEntryInterpreter {
         val cohortStatus = entry.cohortStatus
         if (cohortStatus == null) {
             LOGGER.warn(
-                "No cohort status available in CTC for cohort with ID '{}'. Assuming cohort is closed without slots",
+                " No cohort status available in CTC for cohort with ID '{}'. Assuming cohort is closed without slots",
                 entry.cohortId
             )
             return closedWithoutSlots()
@@ -93,7 +93,7 @@ object CTCDatabaseEntryInterpreter {
         val status: CTCStatus = CTCStatus.fromStatusString(cohortStatus)
         val slotsAvailable: Boolean = if (numberSlotsAvailable == null && status == CTCStatus.OPEN) {
             LOGGER.warn(
-                "No data available on number of slots for open cohort with ID '{}'. Assuming no slots available",
+                " No data available on number of slots for open cohort with ID '{}'. Assuming no slots available",
                 entry.cohortId
             )
             false
