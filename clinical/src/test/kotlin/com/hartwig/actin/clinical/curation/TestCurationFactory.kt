@@ -87,10 +87,10 @@ object TestCurationFactory {
     }
 
     private fun createTestCypInteractionConfig(): List<CypInteractionConfig> {
-        return listOf(CypInteractionConfig("PARACETAMOL", false, listOf(createTestCypInteration())))
+        return listOf(CypInteractionConfig("PARACETAMOL", false, listOf(createTestCypInteraction())))
     }
 
-    fun createTestCypInteration(): ImmutableCypInteraction =
+    fun createTestCypInteraction(): ImmutableCypInteraction =
         ImmutableCypInteraction.builder().cyp("2D6").strength(CypInteraction.Strength.WEAK).type(CypInteraction.Type.INHIBITOR).build()
 
     private fun createTestPrimaryTumorConfigs(): List<PrimaryTumorConfig> {
