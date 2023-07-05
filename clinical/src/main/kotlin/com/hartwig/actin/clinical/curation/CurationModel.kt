@@ -670,7 +670,7 @@ class CurationModel @VisibleForTesting internal constructor(
             val configs: List<CurationConfig> = configsForClass(key)
             for (config in configs) {
                 // TODO: Raise warnings for unused medication dosage once more final
-                if (!evaluated.contains(config.input.lowercase()) && config !is MedicationDosageConfig) {
+                if (!evaluated.contains(config.input.lowercase()) && isNotIgnored(config)) {
                     warnCount++
                     LOGGER.warn(" Curation key '{}' not used for class {}", config.input, key.simpleName)
                 }
@@ -687,6 +687,9 @@ class CurationModel @VisibleForTesting internal constructor(
         }
         LOGGER.info(" {} warnings raised during curation model evaluation", warnCount)
     }
+
+    private fun isNotIgnored(config: CurationConfig) =
+        (config !is MedicationDosageConfig && config !is CypInteractionConfig)
 
     fun questionnaireRawEntryMapper(): QuestionnaireRawEntryMapper {
         return questionnaireRawEntryMapper
