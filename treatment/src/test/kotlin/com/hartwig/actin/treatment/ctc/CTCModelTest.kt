@@ -95,10 +95,7 @@ class CTCModelTest {
         val trialConfigs: List<TrialDefinitionConfig> = emptyList()
 
         val newStudyMETCs = model.extractNewCTCStudyMETCs(trialConfigs)
-        assertThat(newStudyMETCs.size).isEqualTo(2)
-        assertThat(newStudyMETCs.contains(TestTrialData.TEST_TRIAL_METC_1)).isTrue
-        assertThat(newStudyMETCs.contains(TestTrialData.TEST_TRIAL_METC_2)).isTrue
-        assertThat(newStudyMETCs.contains(TestTrialData.TEST_TRIAL_METC_IGNORE)).isFalse
+        assertThat(newStudyMETCs).containsExactly(TestTrialData.TEST_TRIAL_METC_1, TestTrialData.TEST_TRIAL_METC_2)
 
         model.checkModelForNewTrials(trialConfigs)
     }
@@ -169,12 +166,7 @@ class CTCModelTest {
         )
 
         val newCohorts = model.extractNewCTCCohorts(cohortConfigs)
-        assertThat(newCohorts.size).isEqualTo(2)
-
-        val newCohortIds = newCohorts.map { it.cohortId }
-        assertThat(newCohortIds.contains(1)).isTrue
-        assertThat(newCohortIds.contains(2)).isTrue
-        assertThat(newCohortIds.contains(TestTrialData.TEST_UNMAPPED_COHORT_ID)).isFalse
+        assertThat(newCohorts.map { it.cohortId }).containsExactly(1, 2)
 
         model.checkModelForNewCohorts(cohortConfigs)
     }
@@ -232,8 +224,8 @@ class CTCModelTest {
 
         val modelWithUnused = CTCModel(TestCTCDatabaseFactory.createMinimalTestCTCDatabase().copy(studyMETCsToIgnore = setOf("unused")))
         val unusedStudyMETCs = modelWithUnused.extractUnusedStudyMETCsToIgnore()
-        assertThat(unusedStudyMETCs.size).isEqualTo(1)
-        assertThat(unusedStudyMETCs.contains("unused")).isTrue
+        assertThat(unusedStudyMETCs).containsExactly("unused")
+
         modelWithUnused.evaluateModelConfiguration()
     }
 
@@ -245,8 +237,8 @@ class CTCModelTest {
 
         val modelWithUnused = CTCModel(TestCTCDatabaseFactory.createMinimalTestCTCDatabase().copy(unmappedCohortIds = setOf(1)))
         val unusedUnmappedCohortIds = modelWithUnused.extractUnusedUnmappedCohorts()
-        assertThat(unusedUnmappedCohortIds.size).isEqualTo(1)
-        assertThat(unusedUnmappedCohortIds.contains(1)).isTrue
+        assertThat(unusedUnmappedCohortIds).containsExactly(1)
+
         modelWithUnused.evaluateModelConfiguration()
     }
 
