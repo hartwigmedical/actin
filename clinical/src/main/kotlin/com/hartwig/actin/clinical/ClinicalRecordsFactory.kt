@@ -60,14 +60,7 @@ import com.hartwig.actin.clinical.sort.MedicationByNameComparator
 import org.apache.logging.log4j.LogManager
 
 
-class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
-    private val feed: FeedModel
-    private val curation: CurationModel
-
-    init {
-        this.feed = feed
-        this.curation = curation
-    }
+class ClinicalRecordsFactory(private val feed: FeedModel, private val curation: CurationModel) {
 
     fun create(): List<ClinicalRecord> {
         val processedPatientIds: MutableSet<String> = HashSet()
@@ -347,6 +340,7 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
                     .administrationRoute(administrationRoute)
                     .startDate(entry.periodOfUseValuePeriodStart)
                     .stopDate(entry.periodOfUseValuePeriodEnd)
+                    .addAllCypInteractions(curation.curateMedicationCypInterations(name))
                     .build()
                 medications.add(curation.annotateWithMedicationCategory(medication))
             }

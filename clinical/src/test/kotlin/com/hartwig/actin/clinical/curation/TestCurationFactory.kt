@@ -2,6 +2,7 @@ package com.hartwig.actin.clinical.curation
 
 import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
+import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
 import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
@@ -23,7 +24,9 @@ import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslati
 import com.hartwig.actin.clinical.curation.translation.DosageUnitTranslation
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation
 import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation
+import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication
+import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary
@@ -47,7 +50,7 @@ object TestCurationFactory {
             CurationDatabase(
                 emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
                 emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-                emptyList(), emptyList(), emptyList(), emptyList(), emptyList()
+                emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList()
             ), questionnaireRawEntryMapper()
         )
     }
@@ -74,6 +77,7 @@ object TestCurationFactory {
             medicationDosageConfigs = createTestMedicationDosageConfigs(),
             medicationCategoryConfigs = createTestMedicationCategoryConfigs(),
             intoleranceConfigs = createTestIntoleranceConfigs(),
+            cypInteractionConfigs = createTestCypInteractionConfig(),
             administrationRouteTranslations = createTestAdministrationRouteTranslations(),
             dosageUnitTranslations = createTestDosageUnitTranslations(),
             laboratoryTranslations = createTestLaboratoryTranslations(),
@@ -81,6 +85,13 @@ object TestCurationFactory {
             bloodTransfusionTranslations = createTestBloodTransfusionTranslations()
         )
     }
+
+    private fun createTestCypInteractionConfig(): List<CypInteractionConfig> {
+        return listOf(CypInteractionConfig("PARACETAMOL", false, listOf(createTestCypInteraction())))
+    }
+
+    fun createTestCypInteraction(): ImmutableCypInteraction =
+        ImmutableCypInteraction.builder().cyp("2D6").strength(CypInteraction.Strength.WEAK).type(CypInteraction.Type.INHIBITOR).build()
 
     private fun createTestPrimaryTumorConfigs(): List<PrimaryTumorConfig> {
         return listOf(

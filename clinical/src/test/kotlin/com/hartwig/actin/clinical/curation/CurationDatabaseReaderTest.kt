@@ -3,6 +3,9 @@ package com.hartwig.actin.clinical.curation
 import com.google.common.io.Resources
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.clinical.curation.config.CurationConfig
+import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
+import com.hartwig.actin.clinical.datamodel.CypInteraction
+import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.datamodel.treatment.DrugClass
@@ -325,6 +328,13 @@ class CurationDatabaseReaderTest {
     }
 
     @Test
+    fun shouldReadDatabaseFromTsvFile() {
+        assertThat(database!!.cypInteractionConfigs).containsExactly(CypInteractionConfig("abiraterone", false,
+            listOf(createInteraction(CypInteraction.Type.INHIBITOR, CypInteraction.Strength.MODERATE, "2D6"),
+                createInteraction(CypInteraction.Type.SUBSTRATE, CypInteraction.Strength.MODERATE_SENSITIVE, "3A4"))))
+    }
+
+    @Test
     fun shouldReadAdministrationRouteTranslations() {
         val translations = database!!.administrationRouteTranslations
         assertThat(translations).hasSize(1)
@@ -374,6 +384,9 @@ class CurationDatabaseReaderTest {
     private fun assertDoubleEquals(expected: Double, actual: Double?) {
         assertThat(actual).isNotNull.isEqualTo(expected, within(EPSILON))
     }
+
+    private fun createInteraction(type: CypInteraction.Type, strength: CypInteraction.Strength, cyp: String): ImmutableCypInteraction =
+        ImmutableCypInteraction.builder().type(type).strength(strength).cyp(cyp).build()
 
     companion object {
         private const val EPSILON = 1.0E-10

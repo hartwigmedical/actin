@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.curation
 
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
+import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
 import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
@@ -39,6 +40,7 @@ data class CurationDatabase(
     val medicationDosageConfigs: List<MedicationDosageConfig>,
     val medicationCategoryConfigs: List<MedicationCategoryConfig>,
     val intoleranceConfigs: List<IntoleranceConfig>,
+    val cypInteractionConfigs: List<CypInteractionConfig>,
     val administrationRouteTranslations: List<AdministrationRouteTranslation>,
     val laboratoryTranslations: List<LaboratoryTranslation>,
     val toxicityTranslations: List<ToxicityTranslation>,

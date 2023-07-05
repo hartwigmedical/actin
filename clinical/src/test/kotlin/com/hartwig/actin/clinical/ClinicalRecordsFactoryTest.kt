@@ -28,6 +28,7 @@ import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
@@ -212,6 +213,7 @@ class ClinicalRecordsFactoryTest {
             assertFalse(medication.dosage().ifNeeded()!!)
             assertEquals(LocalDate.of(2019, 2, 2), medication.startDate())
             assertEquals(LocalDate.of(2019, 4, 4), medication.stopDate())
+            assertThat(medication.cypInteractions()).containsExactly(TestCurationFactory.createTestCypInteraction())
         }
 
         private fun createMinimalTestClinicalRecords(): List<ClinicalRecord> {
@@ -224,7 +226,7 @@ class ClinicalRecordsFactoryTest {
         private fun createProperTestClinicalRecords(): List<ClinicalRecord> {
             return ClinicalRecordsFactory(
                 TestFeedFactory.createProperTestFeedModel(),
-                TestCurationFactory.createProperTestCurationModel()
+                TestCurationFactory.createProperTestCurationModel(),
             ).create()
         }
     }
