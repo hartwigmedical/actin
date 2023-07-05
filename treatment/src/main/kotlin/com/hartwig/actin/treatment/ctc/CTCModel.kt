@@ -95,14 +95,9 @@ class CTCModel internal constructor(private val ctcDatabase: CTCDatabase) {
         val configuredCohortIds: List<Int> =
             cohortConfigs.filter { isExclusivelyNumeric(it.ctcCohortIds) }.map { it -> it.ctcCohortIds.map { it.toInt() } }.flatten()
 
-        val childrenPerParent = mutableMapOf<Int, MutableList<Int>>()
-        for (entry in ctcDatabase.entries) {
-            if (entry.cohortParentId != null && entry.cohortId != null) {
-                val existing: MutableList<Int> = childrenPerParent[entry.cohortParentId] ?: mutableListOf()
-                existing.add(entry.cohortId)
-                childrenPerParent[entry.cohortParentId] = existing
-            }
-        }
+        val childrenPerParent =
+            ctcDatabase.entries.map { it.cohortParentId to it.cohortId }.groupBy { it.first }
+                .mapValues { it.value.map { pair -> pair.second } }
 
         return ctcDatabase.entries.asSequence().filter { configuredTrialIds.contains(extractTrialId(it)) }
             .filter { !ctcDatabase.studyMETCsToIgnore.contains(it.studyMETC) }
