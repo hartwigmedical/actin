@@ -90,14 +90,28 @@ class CTCModel internal constructor(private val ctcDatabase: CTCDatabase) {
     }
 
     internal fun extractNewCTCCohorts(cohortConfigs: List<CohortDefinitionConfig>): List<CTCDatabaseEntry> {
+        val configuredTrialIds = cohortConfigs.map { it.trialId }.distinct()
+
         val configuredCohortIds: List<Int> = cohortConfigs.filter {
             isExclusivelyNumeric(it.ctcCohortIds)
         }.map { it -> it.ctcCohortIds.map { it.toInt() } }.flatten()
 
-        return ctcDatabase.entries.filter { !ctcDatabase.studyMETCsToIgnore.contains(it.studyMETC) }
+        val childrenPerParent = mutableMapOf<Int, MutableList<Int>>()
+        for (entry in ctcDatabase.entries) {
+            if (entry.cohortParentId != null && entry.cohortId != null) {
+                val existing: MutableList<Int> = childrenPerParent[entry.cohortParentId] ?: mutableListOf()
+                existing.add(entry.cohortId)
+                childrenPerParent[entry.cohortParentId] = existing
+            }
+        }
+
+        return ctcDatabase.entries.asSequence().filter { configuredTrialIds.contains(extractTrialId(it)) }
+            .filter { !ctcDatabase.studyMETCsToIgnore.contains(it.studyMETC) }
             .filter { it.cohortId != null }
             .filter { !ctcDatabase.unmappedCohortIds.contains(it.cohortId) }
-            .filter { !(configuredCohortIds.contains(it.cohortId) || configuredCohortIds.contains(it.cohortParentId)) }
+            .filter { !configuredCohortIds.contains(it.cohortId) }
+            .filter { childrenPerParent[it.cohortId] == null || !childrenPerParent[it.cohortId]!!.containsAll(configuredCohortIds) }
+            .toList()
     }
 
     private fun isExclusivelyNumeric(ctcCohortIds: Set<String>): Boolean {

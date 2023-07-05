@@ -2,6 +2,7 @@ package com.hartwig.actin.treatment.ctc
 
 import com.google.common.io.Resources
 import com.hartwig.actin.treatment.TestTrialData
+import com.hartwig.actin.treatment.ctc.config.TestCTCDatabaseEntryFactory
 import com.hartwig.actin.treatment.ctc.config.TestCTCDatabaseFactory
 import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig
 import com.hartwig.actin.treatment.trial.config.TestCohortDefinitionConfigFactory
@@ -147,9 +148,25 @@ class CTCModelTest {
     }
 
     @Test
-    fun shouldClassifyAllCohortsAsNewWhenCohortConfigIsEmpty() {
+    fun shouldFindNoNewCohortsWhenCohortConfigIsEmpty() {
         // The proper CTC database has 3 cohorts: 1, 2 and (unmapped) 3
         val cohortConfigs: List<CohortDefinitionConfig> = emptyList()
+
+        val newCohorts = model.extractNewCTCCohorts(cohortConfigs)
+        assertThat(newCohorts).isEmpty()
+
+        model.checkModelForNewCohorts(cohortConfigs)
+    }
+
+    @Test
+    fun shouldClassifyAllCohortsAsNewWhenCohortsAreNotUsedWhileTrialExists() {
+        // The proper CTC database has 3 cohorts: 1, 2 and (unmapped) 3
+        val cohortConfigs: List<CohortDefinitionConfig> = listOf(
+            TestCohortDefinitionConfigFactory.MINIMAL.copy(
+                trialId = CTCModel.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
+                ctcCohortIds = setOf("9999")
+            )
+        )
 
         val newCohorts = model.extractNewCTCCohorts(cohortConfigs)
         assertThat(newCohorts.size).isEqualTo(2)
@@ -160,6 +177,51 @@ class CTCModelTest {
         assertThat(newCohortIds.contains(TestTrialData.TEST_UNMAPPED_COHORT_ID)).isFalse
 
         model.checkModelForNewCohorts(cohortConfigs)
+    }
+
+    @Test
+    fun shouldAssumeParentCohortWithAllChildrenReferencedIsNotNew() {
+        val cohortConfigs: MutableList<CohortDefinitionConfig> = mutableListOf()
+        cohortConfigs.add(
+            TestCohortDefinitionConfigFactory.MINIMAL.copy(
+                trialId = CTCModel.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
+                ctcCohortIds = setOf("2")
+            )
+        )
+        cohortConfigs.add(
+            TestCohortDefinitionConfigFactory.MINIMAL.copy(
+                trialId = CTCModel.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
+                ctcCohortIds = setOf("3")
+            )
+        )
+
+
+        val modelWithOneParentTwoChildren =
+            CTCModel(
+                TestCTCDatabaseFactory.createMinimalTestCTCDatabase()
+                    .copy(
+                        entries = listOf(
+                            TestCTCDatabaseEntryFactory.MINIMAL.copy(
+                                studyMETC = TestTrialData.TEST_TRIAL_METC_1,
+                                cohortId = 1,
+                                cohortParentId = null
+                            ),
+                            TestCTCDatabaseEntryFactory.MINIMAL.copy(
+                                studyMETC = TestTrialData.TEST_TRIAL_METC_1,
+                                cohortId = 2,
+                                cohortParentId = 1
+                            ),
+                            TestCTCDatabaseEntryFactory.MINIMAL.copy(
+                                studyMETC = TestTrialData.TEST_TRIAL_METC_1,
+                                cohortId = 3,
+                                cohortParentId = 1
+                            )
+                        )
+                    )
+            )
+
+        val newCohorts = modelWithOneParentTwoChildren.extractNewCTCCohorts(cohortConfigs)
+        assertThat(newCohorts).isEmpty()
     }
 
     @Test
