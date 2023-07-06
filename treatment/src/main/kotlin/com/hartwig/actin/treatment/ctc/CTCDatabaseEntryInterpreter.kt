@@ -1,18 +1,12 @@
 package com.hartwig.actin.treatment.ctc
 
-import com.google.common.annotations.VisibleForTesting
 import com.hartwig.actin.treatment.ctc.config.CTCDatabaseEntry
 import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig
 import org.apache.logging.log4j.LogManager
 
 object CTCDatabaseEntryInterpreter {
-    private val LOGGER = LogManager.getLogger(CohortStatusInterpreter::class.java)
 
-    @VisibleForTesting
-    fun hasValidCTCDatabaseMatches(matches: List<CTCDatabaseEntry?>): Boolean {
-        val nonNullMatches = matches.filterNotNull()
-        return matches.size == nonNullMatches.size && (isSingleParent(nonNullMatches) || isListOfChildren(nonNullMatches))
-    }
+    private val LOGGER = LogManager.getLogger(CohortStatusInterpreter::class.java)
 
     fun consolidatedCohortStatus(entries: List<CTCDatabaseEntry>, cohortConfig: CohortDefinitionConfig): InterpretedCohortStatus {
         val entriesByCohortId = entries.filter { it.cohortId != null }.associateBy { it.cohortId!!.toInt() }
@@ -29,6 +23,11 @@ object CTCDatabaseEntryInterpreter {
             return closedWithoutSlots()
         }
         return interpretValidMatches(matches.filterNotNull(), entriesByCohortId)
+    }
+
+    internal fun hasValidCTCDatabaseMatches(matches: List<CTCDatabaseEntry?>): Boolean {
+        val nonNullMatches = matches.filterNotNull()
+        return matches.size == nonNullMatches.size && (isSingleParent(nonNullMatches) || isListOfChildren(nonNullMatches))
     }
 
     private fun interpretValidMatches(

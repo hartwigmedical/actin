@@ -5,6 +5,7 @@ import com.hartwig.actin.util.Paths
 import org.apache.logging.log4j.LogManager
 
 object CTCDatabaseReader {
+
     private val LOGGER = LogManager.getLogger(CTCDatabaseReader::class.java)
 
     private const val CTC_DATABASE_TSV = "ctc_database.tsv"

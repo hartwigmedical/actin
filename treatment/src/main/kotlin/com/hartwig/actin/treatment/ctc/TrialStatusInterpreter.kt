@@ -5,6 +5,7 @@ import com.hartwig.actin.treatment.trial.config.TrialDefinitionConfig
 import org.apache.logging.log4j.LogManager
 
 internal object TrialStatusInterpreter {
+
     private val LOGGER = LogManager.getLogger(TrialStatusInterpreter::class.java)
 
     fun isOpen(entries: List<CTCDatabaseEntry>, trialConfig: TrialDefinitionConfig): Boolean? {

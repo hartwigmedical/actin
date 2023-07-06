@@ -5,6 +5,7 @@ import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig
 import org.apache.logging.log4j.LogManager
 
 internal object CohortStatusInterpreter {
+
     private val LOGGER = LogManager.getLogger(CohortStatusInterpreter::class.java)
 
     const val NOT_AVAILABLE = "NA"

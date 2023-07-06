@@ -3,12 +3,10 @@ package com.hartwig.actin.treatment.ctc.config
 import com.google.common.io.Resources
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.io.IOException
 
 class CTCDatabaseReaderTest {
 
     @Test
-    @Throws(IOException::class)
     fun shouldLoadExpectedDatabaseFromTestDirectory() {
         val database = CTCDatabaseReader.read(CTC_CONFIG_DIRECTORY)
 
@@ -19,6 +17,7 @@ class CTCDatabaseReaderTest {
 
     companion object {
         private val CTC_CONFIG_DIRECTORY = Resources.getResource("ctc_config").path
+
         private fun assertEntries(entries: List<CTCDatabaseEntry>) {
             assertThat(entries).hasSize(2)
             val entry1 = findEntryByStudyId(entries, 1)

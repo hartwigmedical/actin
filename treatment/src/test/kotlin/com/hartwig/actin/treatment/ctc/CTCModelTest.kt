@@ -11,6 +11,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class CTCModelTest {
+
     private val model = TestCTCModelFactory.createWithProperTestCTCDatabase()
 
     @Test
