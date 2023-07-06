@@ -2,15 +2,11 @@
   {
     "name": "Capecitabine+Oxaliplatin",
     "synonyms": [],
-    "categories": [
-      "CHEMOTHERAPY"
-    ],
     "isSystemic": true,
     "drugs": [
       "Capecitabine",
       "Oxaliplatin"
     ],
-    "maxCycles": null,
-    "treatmentType": "CHEMOTHERAPY"
+    "maxCycles": null
   }
 ]

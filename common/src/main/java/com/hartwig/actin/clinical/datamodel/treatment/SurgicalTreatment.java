@@ -12,7 +12,6 @@ public abstract class SurgicalTreatment implements Treatment {
 
     @Override
     @NotNull
-    @Value.Default
     public Set<TreatmentCategory> categories() {
         return Set.of(TreatmentCategory.SURGERY);
     }

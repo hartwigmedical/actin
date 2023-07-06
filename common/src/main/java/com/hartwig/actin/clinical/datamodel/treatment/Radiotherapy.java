@@ -2,6 +2,8 @@ package com.hartwig.actin.clinical.datamodel.treatment;
 
 import java.util.Collections;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -14,13 +16,14 @@ public abstract class Radiotherapy implements Therapy {
     @Override
     @NotNull
     @Value.Default
-    public Set<TreatmentCategory> categories() {
-        return Set.of(TreatmentCategory.RADIOTHERAPY);
-    }
-
-    @NotNull
     public Set<Drug> drugs() {
         return Collections.emptySet();
+    }
+
+    @Override
+    @NotNull
+    public Set<TreatmentCategory> categories() {
+        return Stream.concat(Stream.of(TreatmentCategory.RADIOTHERAPY), drugs().stream().map(Drug::category)).collect(Collectors.toSet());
     }
 
     @Nullable

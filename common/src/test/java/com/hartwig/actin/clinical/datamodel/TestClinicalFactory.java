@@ -7,15 +7,11 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.clinical.datamodel.treatment.Chemotherapy;
-import com.hartwig.actin.clinical.datamodel.treatment.CombinedTherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Drug;
 import com.hartwig.actin.clinical.datamodel.treatment.DrugClass;
-import com.hartwig.actin.clinical.datamodel.treatment.Immunotherapy;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableChemotherapy;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableCombinedTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.DrugTherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableImmunotherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRadiotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableSurgicalTreatment;
@@ -139,8 +135,8 @@ public final class TestClinicalFactory {
     }
 
     @NotNull
-    private static Drug drug(@NotNull String name, @NotNull DrugClass drugClass) {
-        return ImmutableDrug.builder().name(name).addDrugClasses(drugClass).build();
+    private static Drug drug(@NotNull String name, @NotNull DrugClass drugClass, @NotNull TreatmentCategory category) {
+        return ImmutableDrug.builder().name(name).addDrugClasses(drugClass).category(category).build();
     }
 
     @NotNull
@@ -155,50 +151,36 @@ public final class TestClinicalFactory {
 
     @NotNull
     private static List<TreatmentHistoryEntry> createTreatmentHistory() {
-        Drug oxaliplatin = drug("Oxaliplatin", DrugClass.PLATINUM_COMPOUND);
-        Drug fluorouracil = drug("5-FU", DrugClass.PYRIMIDINE_ANTAGONIST);
-        Drug irinotecan = drug("Irinotecan", DrugClass.TOPO1_INHIBITOR);
+        Drug oxaliplatin = drug("Oxaliplatin", DrugClass.PLATINUM_COMPOUND, TreatmentCategory.CHEMOTHERAPY);
+        Drug fluorouracil = drug("5-FU", DrugClass.PYRIMIDINE_ANTAGONIST, TreatmentCategory.CHEMOTHERAPY);
+        Drug irinotecan = drug("Irinotecan", DrugClass.TOPO1_INHIBITOR, TreatmentCategory.CHEMOTHERAPY);
 
-        Chemotherapy folfirinox = ImmutableChemotherapy.builder()
+        DrugTherapy folfirinox = ImmutableDrugTherapy.builder()
                 .name("FOLFIRINOX")
                 .isSystemic(true)
                 .addDrugs(oxaliplatin, fluorouracil, irinotecan)
                 .maxCycles(8)
                 .build();
 
-        Radiotherapy brachytherapy = ImmutableRadiotherapy.builder()
-                .name("Brachytherapy")
-                .isSystemic(false)
-                .build();
+        Radiotherapy radioFolfirinox =
+                ImmutableRadiotherapy.builder().name("FOLFIRINOX+radiotherapy").addAllDrugs(folfirinox.drugs()).isSystemic(true).build();
 
-        CombinedTherapy radioFolfirinox = ImmutableCombinedTherapy.builder()
-                .name("FOLFIRINOX + radiotherapy")
-                .addTherapies(folfirinox, brachytherapy)
-                .isSystemic(true)
-                .build();
+        Drug pembrolizumab = drug("Pembrolizumab", DrugClass.MONOCLONAL_ANTIBODY, TreatmentCategory.IMMUNOTHERAPY);
 
-        Immunotherapy pembrolizumab = ImmutableImmunotherapy.builder()
-                .name("Pembrolizumab")
-                .isSystemic(true)
-                .addDrugs(drug("Pembrolizumab", DrugClass.MONOCLONAL_ANTIBODY))
-                .build();
-
-        CombinedTherapy folfirinoxAndPembrolizumab = ImmutableCombinedTherapy.builder()
+        DrugTherapy folfirinoxAndPembrolizumab = ImmutableDrugTherapy.builder()
                 .name("FOLFIRINOX + pembrolizumab")
-                .addTherapies(folfirinox, pembrolizumab)
+                .addAllDrugs(folfirinox.drugs())
+                .addDrugs(pembrolizumab)
                 .isSystemic(true)
                 .build();
 
-        Chemotherapy folfirinoxLocoRegional =
-                ImmutableChemotherapy.copyOf(folfirinox).withName("FOLFIRINOX loco-regional").withIsSystemic(false);
+        DrugTherapy folfirinoxLocoRegional =
+                ImmutableDrugTherapy.copyOf(folfirinox).withName("FOLFIRINOX loco-regional").withIsSystemic(false);
 
         SurgicalTreatment colectomy = ImmutableSurgicalTreatment.builder().name("Colectomy").build();
 
-        TreatmentHistoryEntry surgeryHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
-                .addTreatments(colectomy)
-                .startYear(2021)
-                .addIntents(Intent.MAINTENANCE)
-                .build();
+        TreatmentHistoryEntry surgeryHistoryEntry =
+                ImmutableTreatmentHistoryEntry.builder().addTreatments(colectomy).startYear(2021).addIntents(Intent.MAINTENANCE).build();
 
         return List.of(therapyHistoryEntry(Set.of(folfirinox), 2020, Intent.NEOADJUVANT),
                 surgeryHistoryEntry,
