@@ -215,7 +215,7 @@ class ClinicalRecordsFactoryTest {
             assertEquals(LocalDate.of(2019, 2, 2), medication.startDate())
             assertEquals(LocalDate.of(2019, 4, 4), medication.stopDate())
             assertThat(medication.cypInteractions()).containsExactly(TestCurationFactory.createTestCypInteration())
-            assertThat(medication.qtProlongatingRisk()).isEqualTo(QTProlongatingRisk.NONE)
+            assertThat(medication.qtProlongatingRisk()).isEqualTo(QTProlongatingRisk.POSSIBLE)
         }
 
         private fun createMinimalTestClinicalRecords(): List<ClinicalRecord> {

@@ -290,7 +290,8 @@
           "strength": "WEAK",
           "type": "INDUCER"
         }
-      ]
+      ],
+      "qtProlongatingRisk": "NONE"
     },
     {
       "name": "Medication 2",
@@ -320,7 +321,7 @@
         "day": 25
       },
       "cypInteractions": [],
-      "isKnownQTProlonging": false
+      "qtProlongatingRisk": "KNOWN"
     }
   ]
 }
