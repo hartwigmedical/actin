@@ -284,8 +284,13 @@
         "month": 2,
         "day": 1
       },
-      "cypInteractions": [],
-      "isKnownQTProlonging": false
+      "cypInteractions": [
+        {
+          "cyp": "2A6",
+          "strength": "WEAK",
+          "type": "INDUCER"
+        }
+      ]
     },
     {
       "name": "Medication 2",

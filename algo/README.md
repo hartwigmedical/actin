@@ -603,7 +603,7 @@ Note that for all configured nr of weeks, 2 weeks are subtracted from the latest
 | HAS_EXPERIENCED_IMMUNE_RELATED_ADVERSE_EVENTS | Resolves to `WARN` in case of previous treatment with categories like immunotherapy and TODO (ACTIN-35): (stopReason like %toxicity% or present toxicities => grade 2) |                                                                                     |
 | HAS_TOXICITY_OF_AT_LEAST_GRADE_X              | Toxicities > grade => X                                                                                                                                                |                                                                                     |
 | HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_Y         | Toxicities > grade => X and name like %Y%                                                                                                                              |                                                                                     |
-| HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y   | Toxicities > grade => X and ignoring name like %Y%.                                                                                                                    | Multiple names can be specified within 1 rule, separated by ";"                     |
+| HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y   | Toxicities > grade => X and ignoring name like %Y%                                                                                                                     | Multiple names can be specified within 1 rule, separated by ";"                     |
 
 Note for all TOXICITY rules:
 

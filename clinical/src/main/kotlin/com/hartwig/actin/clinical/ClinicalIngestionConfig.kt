@@ -14,7 +14,6 @@ data class ClinicalIngestionConfig(
     val curationDirectory: String,
     val doidJson: String,
     val treatmentDirectory: String,
-    val cypInteractionsTsv: String,
     val outputDirectory: String
 ) {
 
@@ -49,8 +48,7 @@ data class ClinicalIngestionConfig(
                 curationDirectory = ApplicationConfig.nonOptionalDir(cmd, CURATION_DIRECTORY),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
-                outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
-                cypInteractionsTsv = ApplicationConfig.nonOptionalDir(cmd, "cyp_interactions_tsv")
+                outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY)
             )
         }
     }
