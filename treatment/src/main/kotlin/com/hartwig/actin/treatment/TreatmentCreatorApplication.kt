@@ -4,6 +4,7 @@ import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.treatment.ctc.CTCModel
+import com.hartwig.actin.treatment.ctc.config.CTCDatabaseReader
 import com.hartwig.actin.treatment.serialization.TrialJson
 import com.hartwig.actin.treatment.trial.EligibilityRuleUsageEvaluator
 import com.hartwig.actin.treatment.trial.TrialFactory
@@ -14,12 +15,11 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.io.IOException
 import kotlin.system.exitProcess
 
 
 class TreatmentCreatorApplication(private val config: TreatmentCreatorConfig) {
-    @Throws(IOException::class)
+
     fun run() {
         LOGGER.info("Loading DOID tree from {}", config.doidJson)
         val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
@@ -31,14 +31,10 @@ class TreatmentCreatorApplication(private val config: TreatmentCreatorConfig) {
         LOGGER.info(" Loaded {} known genes", knownGenes.size)
         val geneFilter = GeneFilterFactory.createFromKnownGenes(knownGenes)
 
-        val ctcModel: CTCModel = CTCModel.createFromCTCConfigDirectory(config.ctcConfigDirectory)
-
+        val ctcModel = CTCModel(CTCDatabaseReader.read(config.ctcConfigDirectory))
         val trialFactory = TrialFactory.create(config.trialConfigDirectory, ctcModel, doidModel, geneFilter)
         LOGGER.info("Creating trial database")
         val trials = trialFactory.createTrials()
-
-        LOGGER.info("Evaluating usage of CTC model configuration")
-        ctcModel.evaluateModelConfiguration()
 
         LOGGER.info("Evaluating usage of eligibility rules")
         EligibilityRuleUsageEvaluator.evaluate(trials)
@@ -51,7 +47,9 @@ class TreatmentCreatorApplication(private val config: TreatmentCreatorConfig) {
 
     companion object {
         val LOGGER: Logger = LogManager.getLogger(TreatmentCreatorApplication::class.java)
+
         const val APPLICATION = "ACTIN Treatment Creator"
+
         val VERSION: String = TreatmentCreatorApplication::class.java.getPackage().implementationVersion
     }
 }

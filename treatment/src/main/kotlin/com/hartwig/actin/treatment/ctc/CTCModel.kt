@@ -2,15 +2,13 @@ package com.hartwig.actin.treatment.ctc
 
 import com.hartwig.actin.treatment.ctc.config.CTCDatabase
 import com.hartwig.actin.treatment.ctc.config.CTCDatabaseEntry
-import com.hartwig.actin.treatment.ctc.config.CTCDatabaseReader
 import com.hartwig.actin.treatment.datamodel.CohortMetadata
 import com.hartwig.actin.treatment.datamodel.ImmutableCohortMetadata
 import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig
 import com.hartwig.actin.treatment.trial.config.TrialDefinitionConfig
 import org.apache.logging.log4j.LogManager
-import java.io.IOException
 
-class CTCModel internal constructor(private val ctcDatabase: CTCDatabase) {
+class CTCModel constructor(private val ctcDatabase: CTCDatabase) {
 
     fun isTrialOpen(trialConfig: TrialDefinitionConfig): Boolean {
         if (!trialConfig.trialId.startsWith(CTC_TRIAL_PREFIX)) {
@@ -92,8 +90,8 @@ class CTCModel internal constructor(private val ctcDatabase: CTCDatabase) {
     internal fun extractNewCTCCohorts(cohortConfigs: List<CohortDefinitionConfig>): Set<CTCDatabaseEntry> {
         val configuredTrialIds = cohortConfigs.map { it.trialId }.toSet()
 
-        val configuredCohortIds: List<Int> =
-            cohortConfigs.filter { isExclusivelyNumeric(it.ctcCohortIds) }.map { it -> it.ctcCohortIds.map { it.toInt() } }.flatten()
+        val configuredCohortIds =
+            cohortConfigs.flatMap(CohortDefinitionConfig::ctcCohortIds).mapNotNull(String::toIntOrNull)
 
         val childrenPerParent =
             ctcDatabase.entries.filter { it.cohortParentId != null }
@@ -108,58 +106,9 @@ class CTCModel internal constructor(private val ctcDatabase: CTCDatabase) {
             .toSet()
     }
 
-    private fun isExclusivelyNumeric(ctcCohortIds: Set<String>): Boolean {
-        return ctcCohortIds.isNotEmpty() && ctcCohortIds.all { it.toIntOrNull() != null }
-    }
-
-    fun evaluateModelConfiguration() {
-        val unusedStudyMETCsToIgnore = extractUnusedStudyMETCsToIgnore()
-
-        if (unusedStudyMETCsToIgnore.isEmpty()) {
-            LOGGER.info(" No unused study METCs to ignore found")
-        } else {
-            for (unusedStudyMETCToIgnore in unusedStudyMETCsToIgnore) {
-                LOGGER.warn(
-                    " Study that is configured to be ignored is not actually referenced in CTC database: '{}'",
-                    unusedStudyMETCToIgnore
-                )
-            }
-        }
-
-        val unusedUnmappedCohortIds = extractUnusedUnmappedCohorts()
-
-        if (unusedUnmappedCohortIds.isEmpty()) {
-            LOGGER.info(" No unused unmapped cohort IDs found")
-        } else {
-            for (unusedUnmappedCohortId in unusedUnmappedCohortIds) {
-                LOGGER.warn(
-                    " Cohort ID that is configured to be unmapped is not actually referenced in CTC database: '{}'",
-                    unusedUnmappedCohortId
-                )
-            }
-        }
-    }
-
-    internal fun extractUnusedStudyMETCsToIgnore(): List<String> {
-        val ctcStudyMETCs = ctcDatabase.entries.map { it.studyMETC }.distinct()
-
-        return ctcDatabase.studyMETCsToIgnore.filter { !ctcStudyMETCs.contains(it) }
-    }
-
-    fun extractUnusedUnmappedCohorts(): List<Int> {
-        val ctcCohortIds = ctcDatabase.entries.mapNotNull { it.cohortId }.distinct()
-
-        return ctcDatabase.unmappedCohortIds.filter { !ctcCohortIds.contains(it) }
-    }
-
     companion object {
         private val LOGGER = LogManager.getLogger(CTCModel::class.java)
         const val CTC_TRIAL_PREFIX = "MEC"
-
-        @Throws(IOException::class)
-        fun createFromCTCConfigDirectory(ctcConfigDirectory: String): CTCModel {
-            return CTCModel(CTCDatabaseReader.read(ctcConfigDirectory))
-        }
 
         fun extractTrialId(entry: CTCDatabaseEntry): String {
             return CTC_TRIAL_PREFIX + " " + entry.studyMETC

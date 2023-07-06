@@ -1,6 +1,5 @@
 package com.hartwig.actin.treatment.ctc
 
-import com.google.common.io.Resources
 import com.hartwig.actin.treatment.TestTrialData
 import com.hartwig.actin.treatment.ctc.config.TestCTCDatabaseEntryFactory
 import com.hartwig.actin.treatment.ctc.config.TestCTCDatabaseFactory
@@ -9,16 +8,10 @@ import com.hartwig.actin.treatment.trial.config.TestCohortDefinitionConfigFactor
 import com.hartwig.actin.treatment.trial.config.TestTrialDefinitionConfigFactory
 import com.hartwig.actin.treatment.trial.config.TrialDefinitionConfig
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Assert.assertNotNull
 import org.junit.Test
 
 class CTCModelTest {
     private val model = TestCTCModelFactory.createWithProperTestCTCDatabase()
-
-    @Test
-    fun shouldNotCrashWhenCreatedFromTestResources() {
-        assertNotNull(CTCModel.createFromCTCConfigDirectory(CTC_CONFIG_DIRECTORY))
-    }
 
     @Test
     fun shouldStickToTrialConfigWhenStudyIsNotCTCStudy() {
@@ -214,35 +207,5 @@ class CTCModelTest {
 
         val newCohorts = modelWithOneParentTwoChildren.extractNewCTCCohorts(cohortConfigs)
         assertThat(newCohorts).isEmpty()
-    }
-
-    @Test
-    fun shouldPickUpUnusedStudyMETCsToIgnore() {
-        // The proper CTC database has no unused METCs to ignore
-        assertThat(model.extractUnusedStudyMETCsToIgnore()).isEmpty()
-        model.evaluateModelConfiguration()
-
-        val modelWithUnused = CTCModel(TestCTCDatabaseFactory.createMinimalTestCTCDatabase().copy(studyMETCsToIgnore = setOf("unused")))
-        val unusedStudyMETCs = modelWithUnused.extractUnusedStudyMETCsToIgnore()
-        assertThat(unusedStudyMETCs).containsExactly("unused")
-
-        modelWithUnused.evaluateModelConfiguration()
-    }
-
-    @Test
-    fun shouldPickUpUnusedUnmappedCohortIds() {
-        // The proper CTC database has no unused unmapped cohort IDs to ignore
-        assertThat(model.extractUnusedUnmappedCohorts()).isEmpty()
-        model.evaluateModelConfiguration()
-
-        val modelWithUnused = CTCModel(TestCTCDatabaseFactory.createMinimalTestCTCDatabase().copy(unmappedCohortIds = setOf(1)))
-        val unusedUnmappedCohortIds = modelWithUnused.extractUnusedUnmappedCohorts()
-        assertThat(unusedUnmappedCohortIds).containsExactly(1)
-
-        modelWithUnused.evaluateModelConfiguration()
-    }
-
-    companion object {
-        private val CTC_CONFIG_DIRECTORY = Resources.getResource("ctc_config").path
     }
 }
