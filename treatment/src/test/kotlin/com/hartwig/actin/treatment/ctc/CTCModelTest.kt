@@ -96,14 +96,10 @@ class CTCModelTest {
     @Test
     fun shouldFindNoNewStudyMETCsWhenAllTrialsAreConfigured() {
         // The proper CTC database has 3 trials: TEST_TRIAL_1, TEST_TRIAL_2 and IGNORE_TRIAL
-        val trialConfigs: MutableList<TrialDefinitionConfig> = mutableListOf()
-        trialConfigs.add(
+        val trialConfigs: List<TrialDefinitionConfig> = listOf(
             TestTrialDefinitionConfigFactory.MINIMAL.copy(
                 trialId = CTCModel.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1
-            )
-        )
-
-        trialConfigs.add(
+            ),
             TestTrialDefinitionConfigFactory.MINIMAL.copy(
                 trialId = CTCModel.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_2
             )
@@ -117,15 +113,11 @@ class CTCModelTest {
     @Test
     fun shouldFindNoNewCohortIdsWhenAllCohortsAreConfigured() {
         // The proper CTC database has 3 cohorts: 1, 2 and (unmapped) 3
-        val cohortConfigs: MutableList<CohortDefinitionConfig> = mutableListOf()
-        cohortConfigs.add(
+        val cohortConfigs: List<CohortDefinitionConfig> = listOf(
             TestCohortDefinitionConfigFactory.MINIMAL.copy(
                 trialId = CTCModel.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
                 ctcCohortIds = setOf("1")
-            )
-        )
-
-        cohortConfigs.add(
+            ),
             TestCohortDefinitionConfigFactory.MINIMAL.copy(
                 trialId = CTCModel.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
                 ctcCohortIds = setOf("2")
@@ -166,20 +158,16 @@ class CTCModelTest {
 
     @Test
     fun shouldAssumeParentCohortWithAllChildrenReferencedIsNotNew() {
-        val cohortConfigs: MutableList<CohortDefinitionConfig> = mutableListOf()
-        cohortConfigs.add(
+        val cohortConfigs: List<CohortDefinitionConfig> = listOf(
             TestCohortDefinitionConfigFactory.MINIMAL.copy(
                 trialId = CTCModel.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
                 ctcCohortIds = setOf("2")
-            )
-        )
-        cohortConfigs.add(
+            ),
             TestCohortDefinitionConfigFactory.MINIMAL.copy(
                 trialId = CTCModel.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
                 ctcCohortIds = setOf("3")
             )
         )
-
 
         val modelWithOneParentTwoChildren =
             CTCModel(
