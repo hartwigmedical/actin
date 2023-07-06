@@ -23,7 +23,7 @@ import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
-import com.hartwig.actin.clinical.curation.config.QTProlongingConfig
+import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
@@ -58,6 +58,7 @@ import com.hartwig.actin.clinical.datamodel.MedicationStatus
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
+import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
 import com.hartwig.actin.clinical.datamodel.Toxicity
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.clinical.datamodel.TumorDetails
@@ -531,8 +532,16 @@ class CurationModel @VisibleForTesting internal constructor(
         return find(database.cypInteractionConfigs, medicationName).flatMap { it.interactions }
     }
 
-    fun annotateWithQTProlonging(medicationName: String): Boolean {
-        return find(database.qtProlongingConfigs, medicationName).isNotEmpty()
+    fun annotateWithQTProlongating(medicationName: String): QTProlongatingRisk {
+        val riskConfigs = find(database.qtProlongingConfigs, medicationName)
+        return if (riskConfigs.isEmpty()) {
+            QTProlongatingRisk.NONE
+        } else if (riskConfigs.size > 1) {
+            throw IllegalStateException("Multiple risk configurations found for one medication name [$medicationName]. " +
+                    "Check the qt_prolongating.tsv for a duplicate")
+        } else {
+            return riskConfigs.first().status
+        }
     }
 
 
@@ -771,7 +780,7 @@ class CurationModel @VisibleForTesting internal constructor(
                 return database.cypInteractionConfigs
             }
 
-            QTProlongingConfig::class.java -> {
+            QTProlongatingConfig::class.java -> {
                 return database.qtProlongingConfigs
             }
 

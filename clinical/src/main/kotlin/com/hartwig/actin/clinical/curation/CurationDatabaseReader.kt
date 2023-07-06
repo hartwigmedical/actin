@@ -18,7 +18,7 @@ import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfigFac
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfigFactory
 import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfigFactory
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfigFactory
-import com.hartwig.actin.clinical.curation.config.QTProlongingConfigFactory
+import com.hartwig.actin.clinical.curation.config.QTProlongatingConfigFactory
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfigFactory
 import com.hartwig.actin.clinical.curation.config.ToxicityConfigFactory
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryCurationConfigFile
@@ -30,7 +30,6 @@ import com.hartwig.actin.clinical.curation.translation.ToxicityTranslationFactor
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.curation.translation.TranslationFactory
 import com.hartwig.actin.clinical.curation.translation.TranslationFile
-import com.hartwig.actin.clinical.curation.config.CypInteractionConfigFactory
 import com.hartwig.actin.util.Paths
 import org.apache.logging.log4j.LogManager
 import java.io.IOException
@@ -63,7 +62,7 @@ class CurationDatabaseReader(private val curationValidator: CurationValidator, p
             medicationCategoryConfigs = readConfigs(basePath, MEDICATION_CATEGORY_TSV, MedicationCategoryConfigFactory()),
             intoleranceConfigs = readConfigs(basePath, INTOLERANCE_TSV, IntoleranceConfigFactory(curationValidator)),
             cypInteractionConfigs = readConfigs(basePath, CYP_INTERACTIONS_TSV, CypInteractionConfigFactory()),
-            qtProlongingConfigs = readConfigs(basePath, QT_PROLONGING_TSV, QTProlongingConfigFactory()),
+            qtProlongingConfigs = readConfigs(basePath, QT_PROLONGING_TSV, QTProlongatingConfigFactory()),
             administrationRouteTranslations = readTranslations(
                 basePath,
                 ADMINISTRATION_ROUTE_TRANSLATION_TSV,

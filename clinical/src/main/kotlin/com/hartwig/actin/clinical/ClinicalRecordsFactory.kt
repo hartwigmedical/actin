@@ -341,7 +341,7 @@ class ClinicalRecordsFactory(private val feed: FeedModel, private val curation: 
                     .startDate(entry.periodOfUseValuePeriodStart)
                     .stopDate(entry.periodOfUseValuePeriodEnd)
                     .addAllCypInteractions(curation.curateMedicationCypInteractions(name))
-                    .(curation.annotateWithQTProlonging(name))
+                    .qtProlongatingRisk(curation.annotateWithQTProlongating(name))
                     .build()
                 medications.add(curation.annotateWithMedicationCategory(medication))
             }

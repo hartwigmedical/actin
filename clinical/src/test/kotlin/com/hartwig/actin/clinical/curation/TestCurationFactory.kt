@@ -15,7 +15,7 @@ import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
-import com.hartwig.actin.clinical.curation.config.QTProlongingConfig
+import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
@@ -31,6 +31,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary
+import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableChemotherapy
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
@@ -90,8 +91,8 @@ object TestCurationFactory {
         )
     }
 
-    private fun createTestQTProlongingConfigs(): List<QTProlongingConfig> {
-        return listOf(QTProlongingConfig(PARACETAMOL, false))
+    private fun createTestQTProlongingConfigs(): List<QTProlongatingConfig> {
+        return listOf(QTProlongatingConfig(PARACETAMOL, false, QTProlongatingRisk.POSSIBLE))
     }
 
     private fun createTestCypInteractionConfig(): List<CypInteractionConfig> {

@@ -12,6 +12,7 @@ import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.MedicationStatus
 import com.hartwig.actin.clinical.datamodel.PatientDetails
+import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
 import com.hartwig.actin.clinical.datamodel.Surgery
 import com.hartwig.actin.clinical.datamodel.SurgeryStatus
 import com.hartwig.actin.clinical.datamodel.Toxicity
@@ -214,7 +215,7 @@ class ClinicalRecordsFactoryTest {
             assertEquals(LocalDate.of(2019, 2, 2), medication.startDate())
             assertEquals(LocalDate.of(2019, 4, 4), medication.stopDate())
             assertThat(medication.cypInteractions()).containsExactly(TestCurationFactory.createTestCypInteration())
-            assertThat(medication.isKnownQTProlonging).isTrue()
+            assertThat(medication.qtProlongatingRisk()).isEqualTo(QTProlongatingRisk.NONE)
         }
 
         private fun createMinimalTestClinicalRecords(): List<ClinicalRecord> {
