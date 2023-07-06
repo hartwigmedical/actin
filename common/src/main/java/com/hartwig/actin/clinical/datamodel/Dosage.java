@@ -13,9 +13,6 @@ public interface Dosage {
     Double dosageMax();
 
     @Nullable
-    Double dosageValue();
-
-    @Nullable
     String dosageUnit();
 
     @Nullable
