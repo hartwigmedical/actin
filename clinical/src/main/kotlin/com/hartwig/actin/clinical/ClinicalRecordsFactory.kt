@@ -353,10 +353,10 @@ class ClinicalRecordsFactory(private val feed: FeedModel, private val curation: 
         entry.dosageInstructionAsNeededDisplay.trim().lowercase() == "zo nodig"
 
     private fun correctDosageMax(entry: MedicationEntry): Double? {
-        if (entry.dosageInstructionMaxDosePerAdministration == 0.0) {
-            return entry.dosageInstructionDoseQuantityValue
+        return if (entry.dosageInstructionMaxDosePerAdministration == 0.0) {
+            entry.dosageInstructionDoseQuantityValue
         } else {
-            return entry.dosageInstructionMaxDosePerAdministration
+            entry.dosageInstructionMaxDosePerAdministration
         }
     }
 
