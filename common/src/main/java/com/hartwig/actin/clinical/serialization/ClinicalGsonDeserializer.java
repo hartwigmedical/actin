@@ -302,7 +302,11 @@ public class ClinicalGsonDeserializer {
             } else {
                 concreteType = DrugTherapy.class;
             }
-            return context.deserialize(jsonElement, concreteType);
+            try {
+                return context.deserialize(jsonElement, concreteType);
+            } catch (Exception e) {
+                throw new JsonParseException("Failed to deserialize: " + jsonElement, e);
+            }
         }
     }
 
