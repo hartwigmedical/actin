@@ -8,11 +8,10 @@ import com.hartwig.actin.treatment.trial.config.InclusionCriteriaReferenceConfig
 import com.hartwig.actin.treatment.trial.config.TrialDefinitionConfig
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.io.IOException
 
 class TrialConfigDatabaseReaderTest {
+
     @Test
-    @Throws(IOException::class)
     fun canReadFromTestDirectory() {
         val database = read(TRIAL_CONFIG_DIRECTORY)
         assertTrialDefinitionConfigs(database.trialDefinitionConfigs)

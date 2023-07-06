@@ -6,6 +6,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class EligibilityFactoryTest {
+
     @Test
     fun canDetermineWhetherRuleIsValid() {
         val factory = TestEligibilityFactoryFactory.createTestEligibilityFactory()

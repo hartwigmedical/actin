@@ -7,6 +7,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class TrialConfigDatabaseUtilTest {
+
     @Test
     fun canConvertToReferenceIds() {
         assertThat(toReferenceIds("all")).hasSize(1)

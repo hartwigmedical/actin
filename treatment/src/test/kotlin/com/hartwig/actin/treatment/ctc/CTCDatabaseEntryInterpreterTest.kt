@@ -5,6 +5,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class CTCDatabaseEntryInterpreterTest {
+
     private val entries = listOf(
         createEntry(PARENT_ID, null, "Open", 1),
         createEntry(2, PARENT_ID, "Open", 1),
