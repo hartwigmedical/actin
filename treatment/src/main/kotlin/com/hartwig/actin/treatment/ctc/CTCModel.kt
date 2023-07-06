@@ -67,7 +67,7 @@ class CTCModel constructor(private val ctcDatabase: CTCDatabase) {
         val configuredTrialIds = trialConfigs.map { it.trialId }
 
         return ctcDatabase.entries.filter { !ctcDatabase.studyMETCsToIgnore.contains(it.studyMETC) }
-            .filter { !configuredTrialIds.contains(extractTrialId(it)) }
+            .filter { !configuredTrialIds.contains(constructTrialId(it)) }
             .map { it.studyMETC }
             .toSet()
     }
@@ -97,7 +97,7 @@ class CTCModel constructor(private val ctcDatabase: CTCDatabase) {
             ctcDatabase.entries.filter { it.cohortParentId != null }
                 .groupBy({ it.cohortParentId }, { it.cohortId })
 
-        return ctcDatabase.entries.asSequence().filter { configuredTrialIds.contains(extractTrialId(it)) }
+        return ctcDatabase.entries.asSequence().filter { configuredTrialIds.contains(constructTrialId(it)) }
             .filter { !ctcDatabase.studyMETCsToIgnore.contains(it.studyMETC) }
             .filter { it.cohortId != null }
             .filter { !ctcDatabase.unmappedCohortIds.contains(it.cohortId) }
@@ -110,7 +110,7 @@ class CTCModel constructor(private val ctcDatabase: CTCDatabase) {
         private val LOGGER = LogManager.getLogger(CTCModel::class.java)
         const val CTC_TRIAL_PREFIX = "MEC"
 
-        fun extractTrialId(entry: CTCDatabaseEntry): String {
+        fun constructTrialId(entry: CTCDatabaseEntry): String {
             return CTC_TRIAL_PREFIX + " " + entry.studyMETC
         }
 

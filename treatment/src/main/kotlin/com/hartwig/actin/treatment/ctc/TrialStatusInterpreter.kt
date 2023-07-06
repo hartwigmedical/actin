@@ -8,7 +8,7 @@ internal object TrialStatusInterpreter {
     private val LOGGER = LogManager.getLogger(TrialStatusInterpreter::class.java)
 
     fun isOpen(entries: List<CTCDatabaseEntry>, trialConfig: TrialDefinitionConfig): Boolean? {
-        val trialStates = entries.filter { trialConfig.trialId.equals(CTCModel.extractTrialId(it), ignoreCase = true) }
+        val trialStates = entries.filter { trialConfig.trialId.equals(CTCModel.constructTrialId(it), ignoreCase = true) }
             .map { CTCStatus.fromStatusString(it.studyStatus) }
             .distinct()
         if (trialStates.size > 1) {

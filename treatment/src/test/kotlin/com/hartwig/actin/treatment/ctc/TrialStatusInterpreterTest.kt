@@ -19,7 +19,7 @@ class TrialStatusInterpreterTest {
     fun shouldResolveToOpenForTrialsWithExclusivelyOpenEntries() {
         val openMETC1 = createEntry(STUDY_METC_1, "Open")
         val closedMETC2 = createEntry(STUDY_METC_2, "Gesloten")
-        val config = createConfig(CTCModel.extractTrialId(openMETC1))
+        val config = createConfig(CTCModel.constructTrialId(openMETC1))
         assertThat(isOpen(listOf(openMETC1, closedMETC2), config)).isTrue
     }
 
@@ -27,7 +27,7 @@ class TrialStatusInterpreterTest {
     fun shouldResolveToClosedForTrialsWithInconsistentEntries() {
         val openMETC1 = createEntry(STUDY_METC_1, "Open")
         val closedMETC1 = createEntry(STUDY_METC_1, "Gesloten")
-        val config = createConfig(CTCModel.extractTrialId(closedMETC1))
+        val config = createConfig(CTCModel.constructTrialId(closedMETC1))
         assertThat(isOpen(listOf(openMETC1, closedMETC1), config)).isFalse
     }
 
@@ -35,7 +35,7 @@ class TrialStatusInterpreterTest {
     fun shouldResolveToClosedForTrialsWithClosedEntriesExclusively() {
         val closedMETC1 = createEntry(STUDY_METC_1, "Gesloten")
         val openMETC2 = createEntry(STUDY_METC_2, "Open")
-        val config = createConfig(CTCModel.extractTrialId(closedMETC1))
+        val config = createConfig(CTCModel.constructTrialId(closedMETC1))
         assertThat(isOpen(listOf(closedMETC1, openMETC2), config)).isFalse
     }
 
