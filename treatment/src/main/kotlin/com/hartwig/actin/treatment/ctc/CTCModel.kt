@@ -65,13 +65,13 @@ class CTCModel internal constructor(private val ctcDatabase: CTCDatabase) {
         }
     }
 
-    internal fun extractNewCTCStudyMETCs(trialConfigs: List<TrialDefinitionConfig>): List<String> {
+    internal fun extractNewCTCStudyMETCs(trialConfigs: List<TrialDefinitionConfig>): Set<String> {
         val configuredTrialIds = trialConfigs.map { it.trialId }
 
         return ctcDatabase.entries.filter { !ctcDatabase.studyMETCsToIgnore.contains(it.studyMETC) }
             .filter { !configuredTrialIds.contains(extractTrialId(it)) }
             .map { it.studyMETC }
-            .distinct()
+            .toSet()
     }
 
     fun checkModelForNewCohorts(cohortConfigs: List<CohortDefinitionConfig>) {
@@ -89,8 +89,8 @@ class CTCModel internal constructor(private val ctcDatabase: CTCDatabase) {
         }
     }
 
-    internal fun extractNewCTCCohorts(cohortConfigs: List<CohortDefinitionConfig>): List<CTCDatabaseEntry> {
-        val configuredTrialIds = cohortConfigs.map { it.trialId }.distinct()
+    internal fun extractNewCTCCohorts(cohortConfigs: List<CohortDefinitionConfig>): Set<CTCDatabaseEntry> {
+        val configuredTrialIds = cohortConfigs.map { it.trialId }.toSet()
 
         val configuredCohortIds: List<Int> =
             cohortConfigs.filter { isExclusivelyNumeric(it.ctcCohortIds) }.map { it -> it.ctcCohortIds.map { it.toInt() } }.flatten()
@@ -105,7 +105,7 @@ class CTCModel internal constructor(private val ctcDatabase: CTCDatabase) {
             .filter { !ctcDatabase.unmappedCohortIds.contains(it.cohortId) }
             .filter { !configuredCohortIds.contains(it.cohortId) }
             .filter { childrenPerParent[it.cohortId] == null || !childrenPerParent[it.cohortId]!!.containsAll(configuredCohortIds) }
-            .toList()
+            .toSet()
     }
 
     private fun isExclusivelyNumeric(ctcCohortIds: Set<String>): Boolean {
@@ -146,7 +146,7 @@ class CTCModel internal constructor(private val ctcDatabase: CTCDatabase) {
         return ctcDatabase.studyMETCsToIgnore.filter { !ctcStudyMETCs.contains(it) }
     }
 
-    internal fun extractUnusedUnmappedCohorts(): List<Int> {
+    fun extractUnusedUnmappedCohorts(): List<Int> {
         val ctcCohortIds = ctcDatabase.entries.mapNotNull { it.cohortId }.distinct()
 
         return ctcDatabase.unmappedCohortIds.filter { !ctcCohortIds.contains(it) }
@@ -168,8 +168,9 @@ class CTCModel internal constructor(private val ctcDatabase: CTCDatabase) {
         private fun fromCohortConfig(cohortConfig: CohortDefinitionConfig): InterpretedCohortStatus {
             return if (cohortConfig.open == null || cohortConfig.slotsAvailable == null) {
                 LOGGER.warn(
-                    " Missing open and/or slots available data for cohort '{}' of trial '{}'. "
+                    " Missing open and/or slots available data for cohort '{}' of trial '{}}'. "
                             + "Assuming cohort is closed with no slots available", cohortConfig.cohortId, cohortConfig.trialId
+
                 )
                 InterpretedCohortStatus(open = false, slotsAvailable = false)
             } else {
