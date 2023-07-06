@@ -41,10 +41,15 @@ class HasHadAnySurgeryAfterSpecificDate(private val minDate: LocalDate, private 
                 }
             }
         }
-        if (hasFinishedSurgeryBetweenMinAndEval || hasPlannedSurgeryAfterEval) {
+        if (hasFinishedSurgeryBetweenMinAndEval) {
             return EvaluationFactory.pass(
-                "Patient has had or will get surgery after " + date(minDate),
+                "Patient has had surgery after " + date(minDate),
                 "Surgery after " + date(minDate)
+            )
+        } else if (hasPlannedSurgeryAfterEval) {
+            return EvaluationFactory.warn(
+                "Patient has surgery planned after " + date(minDate),
+                "Patient has surgery planned"
             )
         } else if (hasUnexpectedSurgeryAfterEval || hasUnexpectedSurgeryBetweenMinAndEval) {
             return EvaluationFactory.warn(
