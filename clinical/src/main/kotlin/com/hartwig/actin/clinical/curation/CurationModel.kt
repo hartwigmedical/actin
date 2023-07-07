@@ -704,7 +704,7 @@ class CurationModel @VisibleForTesting internal constructor(
     }
 
     private fun isNotIgnored(config: CurationConfig) =
-        (config !is MedicationDosageConfig && config !is CypInteractionConfig)
+        (config !is MedicationDosageConfig && config !is CypInteractionConfig && config !is QTProlongatingConfig)
 
     fun questionnaireRawEntryMapper(): QuestionnaireRawEntryMapper {
         return questionnaireRawEntryMapper
