@@ -34,12 +34,12 @@ class HasHadTreatmentWithCategoryButNotOfTypes internal constructor(
             unrecoverable()
                 .result(EvaluationResult.PASS)
                 .addPassSpecificMessages(
-                    "Patient received " + category.display() + ", ignoring " + concat(
+                    "Patient received " + category.display() + " ignoring " + concat(
                         ignoreTypes
                     )
                 )
                 .addPassGeneralMessages(
-                    "Has received " + category.display() + ", ignoring " + concat(
+                    "Has received " + category.display() + " ignoring " + concat(
                         ignoreTypes
                     )
                 )
@@ -48,26 +48,27 @@ class HasHadTreatmentWithCategoryButNotOfTypes internal constructor(
             unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages(
-                    "Patient may have received " + category.display() + " in a trial, ignoring " + concat(
-                        ignoreTypes
+                    "Patient may have received " + category.display() + " ignoring " + concat(
+                        ignoreTypes + " due to trial participation"
                     )
                 )
                 .addUndeterminedGeneralMessages(
-                    "Undetermined if received " + category.display() + ", ignoring " + concat(
+                    "Undetermined if received " + category.display() + "," +
+                            " ignoring " + concat(
                         ignoreTypes
-                    )
+                    ) + " due to trial participation"
                 )
                 .build()
         } else {
             unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages(
-                    "Patient has not received " + category.display() + ", ignoring " + concat(
+                    "Patient has not received " + category.display() + " ignoring " + concat(
                         ignoreTypes
                     )
                 )
                 .addFailGeneralMessages(
-                    "Has not received " + category.display() + ", ignoring " + concat(
+                    "Has not received " + category.display() + " ignoring " + concat(
                         ignoreTypes
                     )
                 )
