@@ -316,8 +316,8 @@ class ClinicalRecordsFactory(private val feed: FeedModel, private val curation: 
                     curation.curateMedicationDosage(entry.dosageInstructionText)
                 else
                     ImmutableDosage.builder()
-                        .dosageMax(entry.dosageInstructionMaxDosePerAdministration)
-                        .dosageValue(entry.dosageInstructionDoseQuantityValue)
+                        .dosageMin(entry.dosageInstructionDoseQuantityValue)
+                        .dosageMax(correctDosageMax(entry))
                         .dosageUnit(curation.translateDosageUnit(entry.dosageInstructionDoseQuantityUnit))
                         .frequency(entry.dosageInstructionFrequencyValue)
                         .frequencyUnit(entry.dosageInstructionFrequencyUnit)
@@ -349,7 +349,16 @@ class ClinicalRecordsFactory(private val feed: FeedModel, private val curation: 
         return medications
     }
 
-    private fun extractIfNeeded(entry: MedicationEntry) = entry.dosageInstructionAsNeededDisplay.trim().lowercase() == "zo nodig"
+    private fun extractIfNeeded(entry: MedicationEntry) =
+        entry.dosageInstructionAsNeededDisplay.trim().lowercase() == "zo nodig"
+
+    private fun correctDosageMax(entry: MedicationEntry): Double? {
+        return if (entry.dosageInstructionMaxDosePerAdministration == 0.0) {
+            entry.dosageInstructionDoseQuantityValue
+        } else {
+            entry.dosageInstructionMaxDosePerAdministration
+        }
+    }
 
     private fun dosageRequiresCuration(administrationRoute: String?, entry: MedicationEntry) =
         administrationRoute?.lowercase() == "oral" && (entry.dosageInstructionDoseQuantityValue == 0.0 ||
