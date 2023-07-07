@@ -12,12 +12,12 @@ import com.hartwig.actin.clinical.datamodel.treatment.DrugClass;
 import com.hartwig.actin.clinical.datamodel.treatment.DrugTherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRadiotherapy;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableSurgicalTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy;
-import com.hartwig.actin.clinical.datamodel.treatment.SurgicalTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTherapyHistoryDetails;
@@ -175,7 +175,8 @@ public final class TestClinicalFactory {
         DrugTherapy folfirinoxLocoRegional =
                 ImmutableDrugTherapy.copyOf(folfirinox).withName("FOLFIRINOX loco-regional").withIsSystemic(false);
 
-        SurgicalTreatment colectomy = ImmutableSurgicalTreatment.builder().name("Colectomy").build();
+        OtherTreatment colectomy =
+                ImmutableOtherTreatment.builder().name("Colectomy").addCategories(TreatmentCategory.SURGERY).isSystemic(true).build();
 
         TreatmentHistoryEntry surgeryHistoryEntry =
                 ImmutableTreatmentHistoryEntry.builder().addTreatments(colectomy).startYear(2021).addIntents(Intent.MAINTENANCE).build();

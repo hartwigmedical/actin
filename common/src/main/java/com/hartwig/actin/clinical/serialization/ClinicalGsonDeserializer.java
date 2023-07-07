@@ -67,14 +67,14 @@ import com.hartwig.actin.clinical.datamodel.treatment.DrugClass;
 import com.hartwig.actin.clinical.datamodel.treatment.DrugTherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRadiotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRecommendationCriteria;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableSurgicalTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.RecommendationCriteria;
-import com.hartwig.actin.clinical.datamodel.treatment.SurgicalTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
@@ -113,7 +113,7 @@ public class ClinicalGsonDeserializer {
                 .registerTypeAdapter(Drug.class, new AbstractClassAdapter<Drug>(ImmutableDrug.class))
                 .registerTypeAdapter(DrugTherapy.class, new AbstractClassAdapter<DrugTherapy>(ImmutableDrugTherapy.class))
                 .registerTypeAdapter(Radiotherapy.class, new AbstractClassAdapter<Radiotherapy>(ImmutableRadiotherapy.class))
-                .registerTypeAdapter(SurgicalTreatment.class, new AbstractClassAdapter<SurgicalTreatment>(ImmutableSurgicalTreatment.class))
+                .registerTypeAdapter(OtherTreatment.class, new AbstractClassAdapter<OtherTreatment>(ImmutableOtherTreatment.class))
                 .registerTypeAdapter(Treatment.class, new TreatmentAdapter())
                 .registerTypeAdapter(Therapy.class, new TreatmentAdapter())
                 .registerTypeAdapter(TherapyHistoryDetails.class,
@@ -154,8 +154,6 @@ public class ClinicalGsonDeserializer {
                 }.getType(), new ImmutableSetAdapter<String>(String.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<TreatmentCategory>>() {
                 }.getType(), new ImmutableSetAdapter<TreatmentCategory>(TreatmentCategory.class))
-                .registerTypeAdapter(new TypeToken<ImmutableSet<Therapy>>() {
-                }.getType(), new ImmutableSetAdapter<Therapy>(Therapy.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<Treatment>>() {
                 }.getType(), new ImmutableSetAdapter<Treatment>(Treatment.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<BodyLocationCategory>>() {
@@ -164,12 +162,6 @@ public class ClinicalGsonDeserializer {
                 }.getType(), new ImmutableSetAdapter<DrugClass>(DrugClass.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<Intent>>() {
                 }.getType(), new ImmutableSetAdapter<Intent>(Intent.class))
-                .registerTypeAdapter(new TypeToken<ImmutableSet<DrugTherapy>>() {
-                }.getType(), new ImmutableSetAdapter<DrugTherapy>(ImmutableDrugTherapy.class))
-                .registerTypeAdapter(new TypeToken<ImmutableSet<Radiotherapy>>() {
-                }.getType(), new ImmutableSetAdapter<Radiotherapy>(ImmutableRadiotherapy.class))
-                .registerTypeAdapter(new TypeToken<ImmutableSet<SurgicalTreatment>>() {
-                }.getType(), new ImmutableSetAdapter<SurgicalTreatment>(ImmutableSurgicalTreatment.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<ObservedToxicity>>() {
                 }.getType(), new ImmutableSetAdapter<ObservedToxicity>(ImmutableObservedToxicity.class))
                 .registerTypeAdapter(new TypeToken<ImmutableMap<String, RecommendationCriteria>>() {
@@ -292,7 +284,7 @@ public class ClinicalGsonDeserializer {
             JsonObject jsonObj = jsonElement.getAsJsonObject();
             Type concreteType;
             if (!jsonObj.has("drugs")) {
-                concreteType = SurgicalTreatment.class;
+                concreteType = OtherTreatment.class;
             } else if (jsonObj.has("radioType")) {
                 concreteType = Radiotherapy.class;
             } else {
