@@ -78,11 +78,9 @@ import com.hartwig.actin.clinical.datamodel.treatment.SurgicalTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableSurgeryHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTherapyHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent;
-import com.hartwig.actin.clinical.datamodel.treatment.history.SurgeryHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TherapyHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
 
@@ -118,8 +116,6 @@ public class ClinicalGsonDeserializer {
                 .registerTypeAdapter(SurgicalTreatment.class, new AbstractClassAdapter<SurgicalTreatment>(ImmutableSurgicalTreatment.class))
                 .registerTypeAdapter(Treatment.class, new TreatmentAdapter())
                 .registerTypeAdapter(Therapy.class, new TreatmentAdapter())
-                .registerTypeAdapter(SurgeryHistoryDetails.class,
-                        new AbstractClassAdapter<SurgeryHistoryDetails>(ImmutableSurgeryHistoryDetails.class))
                 .registerTypeAdapter(TherapyHistoryDetails.class,
                         new AbstractClassAdapter<TherapyHistoryDetails>(ImmutableTherapyHistoryDetails.class))
                 .registerTypeAdapter(new TypeToken<ImmutableList<String>>() {

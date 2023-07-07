@@ -20,7 +20,6 @@ import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.SurgicalTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableSurgeryHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTherapyHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent;
@@ -83,7 +82,6 @@ public final class TestClinicalFactory {
                 .toxicities(createTestToxicities())
                 .intolerances(createTestIntolerances())
                 .surgeries(createTestSurgeries())
-                .surgicalTreatments(createTestSurgicalHistory())
                 .bodyWeights(createTestBodyWeights())
                 .vitalFunctions(createTestVitalFunctions())
                 .bloodTransfusions(createTestBloodTransfusions())
@@ -433,15 +431,6 @@ public final class TestClinicalFactory {
         return Collections.singletonList(ImmutableSurgery.builder()
                 .endDate(TODAY.minusDays(DAYS_SINCE_SURGERY))
                 .status(SurgeryStatus.FINISHED)
-                .build());
-    }
-
-    @NotNull
-    private static List<TreatmentHistoryEntry> createTestSurgicalHistory() {
-        final LocalDate endDate = TODAY.minusDays(DAYS_SINCE_SURGERY);
-        return Collections.singletonList(ImmutableTreatmentHistoryEntry.builder()
-                .treatments(Set.of(ImmutableSurgicalTreatment.builder().name("test surgery").build()))
-                .surgeryHistoryDetails(ImmutableSurgeryHistoryDetails.builder().endDate(endDate).status(SurgeryStatus.FINISHED).build())
                 .build());
     }
 

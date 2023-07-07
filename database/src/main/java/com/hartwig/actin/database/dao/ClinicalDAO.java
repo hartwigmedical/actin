@@ -53,7 +53,6 @@ import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
-import com.hartwig.actin.clinical.datamodel.treatment.history.SurgeryHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TherapyHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
@@ -262,11 +261,6 @@ class ClinicalDAO {
                                                         tox.name(),
                                                         tox.grade(),
                                                         DataUtil.concat(tox.categories())))));
-                    }
-                    SurgeryHistoryDetails surgeryHistoryDetails = entry.surgeryHistoryDetails();
-                    if (surgeryHistoryDetails != null) {
-                        valueMap.put("endDate", surgeryHistoryDetails.endDate());
-                        valueMap.put("status", surgeryHistoryDetails.status());
                     }
                     TreatmenthistoryentryRecord record = context.newRecord(TREATMENTHISTORYENTRY);
                     record.fromMap(valueMap);
