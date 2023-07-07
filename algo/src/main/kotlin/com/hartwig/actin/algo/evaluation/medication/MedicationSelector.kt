@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.medication
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.algo.medication.MedicationStatusInterpretation
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreter
+import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.Medication
 import java.time.LocalDate
 
@@ -29,8 +30,20 @@ internal class MedicationSelector(private val interpreter: MedicationStatusInter
     fun activeOrRecentlyStoppedWithCategory(
         medications: List<Medication>, categoryToFind: String, minStopDate: LocalDate
     ): List<Medication> {
-        return medications.filter { medication -> medication.categories().any { it.equals(categoryToFind, ignoreCase = true) } }
+        return medications.filter { medication ->
+            medication.categories().any { it.equals(categoryToFind, ignoreCase = true) }
+        }
             .filter { isActive(it) || isRecentlyStopped(it, minStopDate) }
+    }
+
+    fun activeWithCYPInteraction(
+        medications: List<Medication>,
+        interactionToFind: String,
+        typeOfCYP: CypInteraction.Type
+    ): List<Medication> {
+        return active(medications).filter { medication ->
+            medication.cypInteractions().any { interactionToFind == it.cyp() && typeOfCYP == it.type() }
+        }
     }
 
     private fun isRecentlyStopped(medication: Medication, minStopDate: LocalDate): Boolean {

@@ -99,7 +99,7 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     private fun getsCYPXInducingMedicationCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneStringInput(function)
-            CurrentlyGetsCYPXInducingMedication(termToFind)
+            CurrentlyGetsCYPXInducingMedication(selector, termToFind)
         }
     }
 
