@@ -93,13 +93,13 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     }
 
     private fun getsAnyCYPInducingMedicationCreator(): FunctionCreator {
-        return FunctionCreator { GetsAnyCYPInducingMedication() }
+        return FunctionCreator { CurrentlyGetsAnyCYPInducingMedication(selector) }
     }
 
     private fun getsCYPXInducingMedicationCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneStringInput(function)
-            CurrentlyGetsCYPXInducingMedication(termToFind)
+            CurrentlyGetsCYPXInducingMedication(selector, termToFind)
         }
     }
 
@@ -113,21 +113,21 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     private fun getsCYPXInhibitingMedicationCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneStringInput(function)
-            CurrentlyGetsCYPXInhibitingMedication(termToFind)
+            CurrentlyGetsCYPXInhibitingMedication(selector, termToFind)
         }
     }
 
     private fun getsCYPXInhibitingOrInducingMedicationCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneStringInput(function)
-            CurrentlyGetsCYPXInhibitingOrInducingMedication(termToFind)
+            CurrentlyGetsCYPXInhibitingOrInducingMedication(selector, termToFind)
         }
     }
 
     private fun getsCYPSubstrateMedicationCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneStringInput(function)
-            CurrentlyGetsCYPXSubstrateMedication(termToFind)
+            CurrentlyGetsCYPXSubstrateMedication(selector, termToFind)
         }
     }
 
