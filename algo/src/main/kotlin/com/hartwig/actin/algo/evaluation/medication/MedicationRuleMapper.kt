@@ -106,7 +106,8 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     private fun hasRecentlyReceivedCYPXInducingMedicationCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneStringOneIntegerInput(function)
-            HasRecentlyReceivedCYPXInducingMedication(input.string())
+            val maxStopDate = referenceDateProvider().date().minusWeeks(input.integer().toLong())
+            HasRecentlyReceivedCYPXInducingMedication(selector, input.string(), maxStopDate)
         }
     }
 
