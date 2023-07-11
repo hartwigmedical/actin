@@ -65,4 +65,11 @@ class HasHadPDFollowingTreatmentWithCategoryTest {
             )
         )
     }
+
+    @Test
+    fun shouldNotCountTrialMatchesWhenLookingForUnlikelyTrialCategories() {
+        val function = HasHadPDFollowingTreatmentWithCategory(TreatmentCategory.SURGERY)
+        val trial = TreatmentTestFactory.builder().addCategories(TreatmentCategory.TRIAL).build()
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(listOf(trial, trial))))
+    }
 }

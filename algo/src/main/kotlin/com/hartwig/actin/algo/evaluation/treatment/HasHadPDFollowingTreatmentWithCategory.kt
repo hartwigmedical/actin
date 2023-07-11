@@ -8,40 +8,25 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory.undetermined
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 
-class HasHadPDFollowingTreatmentWithCategory internal constructor(private val category: TreatmentCategory) : EvaluationFunction {
+class HasHadPDFollowingTreatmentWithCategory(private val category: TreatmentCategory) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
-        var hasHadPDFollowingTreatmentWithCategory = false
-        var hasHadTreatmentWithUnclearPDStatus = false
-        var hasHadTrial = false
-        for (treatment in record.clinical().priorTumorTreatments()) {
-            if (treatment.categories().contains(category)) {
-                when (ProgressiveDiseaseFunctions.treatmentResultedInPDOption(treatment)) {
-                    true -> {
-                        hasHadPDFollowingTreatmentWithCategory = true
-                    }
+        val treatmentSummary = TreatmentSummaryForCategory.createForTreatments(
+            record.clinical().priorTumorTreatments(), category,
+            ProgressiveDiseaseFunctions::treatmentResultedInPDOption
+        )
 
-                    null -> {
-                        hasHadTreatmentWithUnclearPDStatus = true
-                    }
-
-                    else -> {}
-                }
-            }
-            if (treatment.categories().contains(TreatmentCategory.TRIAL)) {
-                hasHadTrial = true
-            }
-        }
-        return if (hasHadPDFollowingTreatmentWithCategory) {
+        return if (treatmentSummary.hasSpecificMatch()) {
             pass(
                 "Patient has had progressive disease following treatment with category " + category.display(),
                 "Has had " + category.display() + " treatment with PD"
             )
-        } else if (hasHadTreatmentWithUnclearPDStatus) {
+        } else if (treatmentSummary.hasApproximateMatch()) {
             undetermined(
                 "Patient has had treatment with category " + category.display() + " but unclear PD status",
                 "Has had " + category.display() + " treatment but undetermined PD status"
             )
-        } else if (hasHadTrial) {
+        } else if (treatmentSummary.hasPossibleTrialMatch()) {
             undetermined(
                 "Patient has had trial with unclear treatment category",
                 "Trial treatment of unclear treatment category"
