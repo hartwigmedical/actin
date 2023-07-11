@@ -22,7 +22,6 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.feed.TestFeedFactory
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
@@ -60,7 +59,6 @@ class ClinicalRecordsFactoryTest {
         assertToxicityEvaluations(record.toxicityEvaluations())
         assertAllergies(record.intolerances())
         assertSurgeries(record.surgeries())
-        assertSurgicalTreatments(record.surgicalTreatments())
         assertBodyWeights(record.bodyWeights())
         assertVitalFunctions(record.vitalFunctions())
         assertBloodTransfusions(record.bloodTransfusions())
@@ -151,15 +149,6 @@ class ClinicalRecordsFactoryTest {
             assertEquals(1, surgeries.size.toLong())
             val surgery = surgeries[0]
             assertEquals(LocalDate.of(2015, 10, 10), surgery.endDate())
-            assertEquals(SurgeryStatus.PLANNED, surgery.status())
-        }
-
-        private fun assertSurgicalTreatments(surgicalTreatments: List<TreatmentHistoryEntry>?) {
-            assertNotNull(surgicalTreatments)
-            assertEquals(1, surgicalTreatments!!.size.toLong())
-            val surgery = surgicalTreatments[0].surgeryHistoryDetails()
-            assertNotNull(surgery)
-            assertEquals(LocalDate.of(2015, 10, 10), surgery!!.endDate())
             assertEquals(SurgeryStatus.PLANNED, surgery.status())
         }
 

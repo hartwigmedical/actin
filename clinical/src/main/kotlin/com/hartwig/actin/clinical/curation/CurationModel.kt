@@ -537,8 +537,10 @@ class CurationModel @VisibleForTesting internal constructor(
         return if (riskConfigs.isEmpty()) {
             QTProlongatingRisk.NONE
         } else if (riskConfigs.size > 1) {
-            throw IllegalStateException("Multiple risk configurations found for one medication name [$medicationName]. " +
-                    "Check the qt_prolongating.tsv for a duplicate")
+            throw IllegalStateException(
+                "Multiple risk configurations found for one medication name [$medicationName]. " +
+                        "Check the qt_prolongating.tsv for a duplicate"
+            )
         } else {
             return riskConfigs.first().status
         }

@@ -95,7 +95,8 @@ public class ReportWriter {
         PdfWriter writer;
         if (writeToDisk && outputDirectory != null) {
             String outputFilePath =
-                    Paths.forceTrailingFileSeparator(outputDirectory) + patientId + ".actin" + (enableExtendedMode ? ".extended" : "") + ".pdf";
+                    Paths.forceTrailingFileSeparator(outputDirectory) + patientId + ".actin" + (enableExtendedMode ? ".extended" : "")
+                            + ".pdf";
             LOGGER.info("Writing PDF report to {}", outputFilePath);
             WriterProperties properties = new WriterProperties().setFullCompressionMode(true)
                     .setCompressionLevel(CompressionConstants.BEST_COMPRESSION)
