@@ -5,6 +5,7 @@ import com.hartwig.actin.clinical.curation.config.ComplicationConfigFactory
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfigFactory
 import com.hartwig.actin.clinical.curation.config.CurationConfigFile
+import com.hartwig.actin.clinical.curation.config.CypInteractionConfigFactory
 import com.hartwig.actin.clinical.curation.config.ECGConfigFactory
 import com.hartwig.actin.clinical.curation.config.InfectionConfigFactory
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfigFactory
@@ -17,6 +18,7 @@ import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfigFac
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfigFactory
 import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfigFactory
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfigFactory
+import com.hartwig.actin.clinical.curation.config.QTProlongatingConfigFactory
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfigFactory
 import com.hartwig.actin.clinical.curation.config.ToxicityConfigFactory
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryCurationConfigFile
@@ -28,7 +30,6 @@ import com.hartwig.actin.clinical.curation.translation.ToxicityTranslationFactor
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.curation.translation.TranslationFactory
 import com.hartwig.actin.clinical.curation.translation.TranslationFile
-import com.hartwig.actin.clinical.curation.config.CypInteractionConfigFactory
 import com.hartwig.actin.util.Paths
 import org.apache.logging.log4j.LogManager
 import java.io.IOException
@@ -61,6 +62,7 @@ class CurationDatabaseReader(private val curationValidator: CurationValidator, p
             medicationCategoryConfigs = readConfigs(basePath, MEDICATION_CATEGORY_TSV, MedicationCategoryConfigFactory()),
             intoleranceConfigs = readConfigs(basePath, INTOLERANCE_TSV, IntoleranceConfigFactory(curationValidator)),
             cypInteractionConfigs = readConfigs(basePath, CYP_INTERACTIONS_TSV, CypInteractionConfigFactory()),
+            qtProlongingConfigs = readConfigs(basePath, QT_PROLONGATING_TSV, QTProlongatingConfigFactory()),
             administrationRouteTranslations = readTranslations(
                 basePath,
                 ADMINISTRATION_ROUTE_TRANSLATION_TSV,
@@ -96,6 +98,7 @@ class CurationDatabaseReader(private val curationValidator: CurationValidator, p
         private const val MEDICATION_CATEGORY_TSV = "medication_category.tsv"
         private const val INTOLERANCE_TSV = "intolerance.tsv"
         private const val CYP_INTERACTIONS_TSV = "cyp_interactions.tsv"
+        private const val QT_PROLONGATING_TSV = "qt_prolongating.tsv"
         private const val ADMINISTRATION_ROUTE_TRANSLATION_TSV = "administration_route_translation.tsv"
         private const val LABORATORY_TRANSLATION_TSV = "laboratory_translation.tsv"
         private const val TOXICITY_TRANSLATION_TSV = "toxicity_translation.tsv"

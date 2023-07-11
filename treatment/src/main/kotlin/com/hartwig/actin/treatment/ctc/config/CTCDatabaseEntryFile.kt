@@ -2,11 +2,9 @@ package com.hartwig.actin.treatment.ctc.config
 
 import com.hartwig.actin.treatment.FileUtil
 import com.hartwig.actin.util.ResourceFile
-import java.io.IOException
 
 object CTCDatabaseEntryFile {
 
-    @Throws(IOException::class)
     fun read(tsv: String): List<CTCDatabaseEntry> {
         return FileUtil.createObjectsFromTsv(tsv, ::create)
     }

@@ -15,6 +15,7 @@ import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
+import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
@@ -30,6 +31,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary
+import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
 import com.hartwig.actin.clinical.datamodel.treatment.DrugClass
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy
@@ -40,6 +42,8 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import org.apache.logging.log4j.util.Strings
 import java.util.*
 
+
+private const val PARACETAMOL = "PARACETAMOL"
 
 object TestCurationFactory {
 
@@ -52,7 +56,7 @@ object TestCurationFactory {
             CurationDatabase(
                 emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
                 emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-                emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList()
+                emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList()
             ), questionnaireRawEntryMapper()
         )
     }
@@ -80,6 +84,7 @@ object TestCurationFactory {
             medicationCategoryConfigs = createTestMedicationCategoryConfigs(),
             intoleranceConfigs = createTestIntoleranceConfigs(),
             cypInteractionConfigs = createTestCypInteractionConfig(),
+            qtProlongingConfigs = createTestQTProlongingConfigs(),
             administrationRouteTranslations = createTestAdministrationRouteTranslations(),
             dosageUnitTranslations = createTestDosageUnitTranslations(),
             laboratoryTranslations = createTestLaboratoryTranslations(),
@@ -88,11 +93,15 @@ object TestCurationFactory {
         )
     }
 
-    private fun createTestCypInteractionConfig(): List<CypInteractionConfig> {
-        return listOf(CypInteractionConfig("PARACETAMOL", false, listOf(createTestCypInteraction())))
+    private fun createTestQTProlongingConfigs(): List<QTProlongatingConfig> {
+        return listOf(QTProlongatingConfig(PARACETAMOL, false, QTProlongatingRisk.POSSIBLE))
     }
 
-    fun createTestCypInteraction(): ImmutableCypInteraction =
+    private fun createTestCypInteractionConfig(): List<CypInteractionConfig> {
+        return listOf(CypInteractionConfig(PARACETAMOL, false, listOf(createTestCypInteration())))
+    }
+
+    fun createTestCypInteration(): ImmutableCypInteraction =
         ImmutableCypInteraction.builder().cyp("2D6").strength(CypInteraction.Strength.WEAK).type(CypInteraction.Type.INHIBITOR).build()
 
     private fun createTestPrimaryTumorConfigs(): List<PrimaryTumorConfig> {

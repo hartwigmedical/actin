@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class CTCStatusTest {
+
     @Test
     fun shouldBeAbleToDetectOpenStatus() {
         assertThat(CTCStatus.fromStatusString("Open")).isEqualTo(CTCStatus.OPEN)

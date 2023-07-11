@@ -12,11 +12,10 @@ import com.hartwig.actin.treatment.datamodel.Trial
 import com.hartwig.actin.treatment.trial.config.TestTrialConfigDatabaseFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.io.IOException
 
 class TrialFactoryTest {
+
     @Test
-    @Throws(IOException::class)
     fun canCreateFromTrialConfigDirectory() {
         assertThat(
             TrialFactory.create(
