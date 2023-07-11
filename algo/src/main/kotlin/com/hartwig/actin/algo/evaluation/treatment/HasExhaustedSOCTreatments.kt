@@ -10,8 +10,13 @@ class HasExhaustedSOCTreatments internal constructor() : EvaluationFunction {
         return if (record.clinical().priorTumorTreatments().isEmpty()) {
             EvaluationFactory.undetermined(
                 "Patient has not had any prior cancer treatments and therefore undetermined exhaustion of SOC",
-                "Undetermined exhaustion of SOC")
-        } else
-            EvaluationFactory.notEvaluated("Assumed exhaustion of SOC since patient has had prior cancer treatment", "Assumed exhaustion of SOC")
+                "Undetermined exhaustion of SOC"
+            )
+        } else {
+            EvaluationFactory.notEvaluated(
+                "Assumed exhaustion of SOC since patient has had prior cancer treatment",
+                "Assumed exhaustion of SOC"
+            )
+        }
     }
 }
