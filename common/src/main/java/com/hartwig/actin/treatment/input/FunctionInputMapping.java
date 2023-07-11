@@ -52,6 +52,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_INCURABLE_CANCER, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_ANY_LESION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_LIVER_METASTASES, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.MEETS_SPECIFIC_CRITERIA_REGARDING_LIVER_METASTASES, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_CNS_METASTASES, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_KNOWN_BRAIN_METASTASES, FunctionInput.NONE);

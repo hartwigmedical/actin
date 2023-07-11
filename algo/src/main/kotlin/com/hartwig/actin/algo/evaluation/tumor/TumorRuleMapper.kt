@@ -62,6 +62,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_CHILD_PUGH_CLASS_X_LIVER_SCORE to hasChildPughClassCreator(),
             EligibilityRule.HAS_BCLC_STAGE_X to hasBCLCStageCreator(),
             EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR to hasLeftSidedColorectalTumorCreator(),
+            EligibilityRule.MEETS_SPECIFIC_CRITERIA_REGARDING_LIVER_METASTASES to meetsSpecificCriteriaRegardingLiverMetastasesCreator(),
         )
     }
 
@@ -309,5 +310,9 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasLeftSidedColorectalTumorCreator(): FunctionCreator {
         return FunctionCreator { HasLeftSidedColorectalTumor(doidModel()) }
+    }
+
+    private fun meetsSpecificCriteriaRegardingLiverMetastasesCreator(): FunctionCreator{
+        return FunctionCreator { MeetsSpecificCriteriaRegardingLiverMetastases() }
     }
 }
