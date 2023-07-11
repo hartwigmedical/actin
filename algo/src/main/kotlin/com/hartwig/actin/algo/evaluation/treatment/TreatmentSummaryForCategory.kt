@@ -39,12 +39,12 @@ data class TreatmentSummaryForCategory(
         fun createForTreatments(
             treatments: List<PriorTumorTreatment>,
             category: TreatmentCategory,
-            customClassifier: (PriorTumorTreatment) -> Boolean? = { true }
+            classifier: (PriorTumorTreatment) -> Boolean? = { true }
         ): TreatmentSummaryForCategory {
             val trialMatchesAllowed = categoryAllowsTrialMatches(category)
             return treatments.map { treatment ->
                 val matchesCategory = treatment.categories().contains(category)
-                val classification = customClassifier(treatment)
+                val classification = classifier(treatment)
                 TreatmentSummaryForCategory(
                     if (matchesCategory && classification == true) 1 else 0,
                     if (matchesCategory && classification == null) 1 else 0,
