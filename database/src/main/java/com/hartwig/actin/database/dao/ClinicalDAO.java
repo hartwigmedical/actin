@@ -549,7 +549,6 @@ class ClinicalDAO {
             context.insertInto(MEDICATION,
                             MEDICATION.PATIENTID,
                             MEDICATION.NAME,
-                            MEDICATION.CODEATC,
                             MEDICATION.CATEGORIES,
                             MEDICATION.CHEMICALSUBGROUPATC,
                             MEDICATION.PHARMACOLOGICALSUBGROUPATC,
@@ -567,7 +566,6 @@ class ClinicalDAO {
                             MEDICATION.STOPDATE)
                     .values(patientId,
                             medication.name(),
-                            medication.codeATC(),
                             DataUtil.concat(medication.categories()),
                             medication.chemicalSubgroupAtc(),
                             medication.pharmacologicalSubgroupAtc(),

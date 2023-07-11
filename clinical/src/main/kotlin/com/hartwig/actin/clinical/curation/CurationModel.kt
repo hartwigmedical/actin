@@ -493,17 +493,6 @@ class CurationModel @VisibleForTesting internal constructor(
         return if (!config.ignore) config.name else null
     }
 
-    fun curateMedicationCodeATC(input: String): String {
-        val trimmedInput = fullTrim(input)
-        if (trimmedInput.isEmpty()) {
-            return Strings.EMPTY
-        }
-
-        // ATC codes should start with letters, otherwise the medication may be a trial.
-        val lower = input[0].lowercaseChar()
-        return if (lower in 'a'..'z') trimmedInput else Strings.EMPTY
-    }
-
     fun curateMedicationStatus(status: String): MedicationStatus? {
         if (status.isEmpty()) {
             return null
