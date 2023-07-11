@@ -19,13 +19,13 @@ class HasHadTreatmentWithCategoryButNotOfTypes(
             }
 
         return when {
-            treatmentSummary.hasSpecificMatch() -> EvaluationFactory.pass("Has received ${category.display()}, ignoring ${concat(ignoreTypes)}")
+            treatmentSummary.hasSpecificMatch() -> EvaluationFactory.pass("Has received ${category.display()} ignoring ${concat(ignoreTypes)}")
             treatmentSummary.hasPossibleTrialMatch() -> EvaluationFactory.undetermined(
-                "Patient may have received ${category.display()} in a trial, ignoring ${concat(ignoreTypes)}",
-                "Undetermined if received ${category.display()}, ignoring ${concat(ignoreTypes)}"
+                "Patient may have received ${category.display()} ignoring ${concat(ignoreTypes)} due to trial participation",
+                "Undetermined if received ${category.display()}, ignoring ${concat(ignoreTypes)} due to trial participation"
             )
 
-            else -> EvaluationFactory.fail("Has not received ${category.display()}, ignoring ${concat(ignoreTypes)}")
+            else -> EvaluationFactory.fail("Has not received ${category.display()} ignoring ${concat(ignoreTypes)}")
         }
     }
 }
