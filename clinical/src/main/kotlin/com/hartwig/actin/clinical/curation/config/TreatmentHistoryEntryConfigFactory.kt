@@ -53,11 +53,11 @@ object TreatmentHistoryEntryConfigFactory {
             ?: if (categories.contains(TreatmentCategory.SURGERY)) false else null
         if (therapyCategories.isNotEmpty()) {
             LOGGER.warn(
-                "Treatment with name $treatmentName does not exist in database and has therapy categories ({})",
+                "  Treatment with name $treatmentName does not exist in database and has therapy categories ({})",
                 therapyCategories.joinToString(", ")
             )
         } else if (isSystemic == null) {
-            LOGGER.warn("Treatment with name $treatmentName does not exist in database and it is unknown whether it is systemic")
+            LOGGER.warn("  Treatment with name $treatmentName does not exist in database and it is unknown whether it is systemic")
         } else {
             val treatment = ImmutableOtherTreatment.builder()
                 .name(treatmentName)
@@ -65,7 +65,7 @@ object TreatmentHistoryEntryConfigFactory {
                 .synonyms(emptySet())
                 .isSystemic(isSystemic)
                 .build()
-            LOGGER.info("Automatically generated treatment from curation data: $treatment")
+            LOGGER.info("  Automatically generated treatment from curation data: $treatment")
             return treatment
         }
         return null

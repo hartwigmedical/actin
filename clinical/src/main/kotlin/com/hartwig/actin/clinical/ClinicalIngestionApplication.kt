@@ -25,11 +25,13 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size)
 
+        val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
+
         LOGGER.info("Creating clinical curation model from directory {}", config.curationDirectory)
         val curationModel: CurationModel =
             CurationModel.create(
                 config.curationDirectory, DoidModelFactory.createFromDoidEntry(doidEntry),
-                TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
+                treatmentDatabase
             )
 
         LOGGER.info("Creating clinical feed model from directory {}", config.feedDirectory)
