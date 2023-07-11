@@ -15,7 +15,8 @@ class HasFusionInGene internal constructor(private val gene: String) : Evaluatio
     override fun evaluate(record: PatientRecord): Evaluation {
         val matchingFusions: MutableSet<String> = Sets.newHashSet()
         val fusionsWithNoEffect: MutableSet<String> = Sets.newHashSet()
-        val fusionsWithNoHighDriverLikelihood: MutableSet<String> = Sets.newHashSet()
+        val fusionsWithNoHighDriverLikelihoodWithGainOfFunction: MutableSet<String> = Sets.newHashSet()
+        val fusionsWithNoHighDriverLikelihoodOther: MutableSet<String> = Sets.newHashSet()
         val unreportableFusionsWithGainOfFunction: MutableSet<String> = Sets.newHashSet()
         for (fusion in record.molecular().drivers().fusions()) {
             val isAllowedDriverType =
@@ -23,19 +24,23 @@ class HasFusionInGene internal constructor(private val gene: String) : Evaluatio
                     fusion.driverType()
                 )
             if (isAllowedDriverType) {
+                val isGainOfFunction =
+                    (fusion.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION || fusion.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
+                val isHighDriverLikelihood = (fusion.driverLikelihood() == DriverLikelihood.HIGH)
                 if (fusion.isReportable) {
-                    val hasNoEffect = (fusion.proteinEffect() == ProteinEffect.NO_EFFECT
-                            || fusion.proteinEffect() == ProteinEffect.NO_EFFECT_PREDICTED)
-                    if (fusion.driverLikelihood() != DriverLikelihood.HIGH) {
-                        fusionsWithNoHighDriverLikelihood.add(fusion.event())
+                    val hasNoEffect =
+                        (fusion.proteinEffect() == ProteinEffect.NO_EFFECT
+                                || fusion.proteinEffect() == ProteinEffect.NO_EFFECT_PREDICTED)
+                    if (!isHighDriverLikelihood && isGainOfFunction) {
+                        fusionsWithNoHighDriverLikelihoodWithGainOfFunction.add(fusion.event())
+                    } else if (!isHighDriverLikelihood) {
+                        fusionsWithNoHighDriverLikelihoodOther.add(fusion.event())
                     } else if (hasNoEffect) {
                         fusionsWithNoEffect.add(fusion.event())
                     } else {
                         matchingFusions.add(fusion.event())
                     }
                 } else {
-                    val isGainOfFunction = (fusion.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
-                            || fusion.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
                     if (isGainOfFunction) {
                         unreportableFusionsWithGainOfFunction.add(fusion.event())
                     }
@@ -43,26 +48,25 @@ class HasFusionInGene internal constructor(private val gene: String) : Evaluatio
             }
         }
         if (matchingFusions.isNotEmpty()) {
-            return unrecoverable()
-                .result(EvaluationResult.PASS)
-                .addAllInclusionMolecularEvents(matchingFusions)
+            return unrecoverable().result(EvaluationResult.PASS).addAllInclusionMolecularEvents(matchingFusions)
                 .addPassSpecificMessages("Fusion(s) " + concat(matchingFusions) + " detected in gene " + gene)
-                .addPassGeneralMessages("Fusion(s) detected in gene $gene")
-                .build()
+                .addPassGeneralMessages("Fusion(s) detected in gene $gene").build()
         }
-        val potentialWarnEvaluation =
-            evaluatePotentialWarns(fusionsWithNoEffect, fusionsWithNoHighDriverLikelihood, unreportableFusionsWithGainOfFunction)
-        return potentialWarnEvaluation
-            ?: unrecoverable()
-                .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("No fusion detected with gene $gene")
-                .addFailGeneralMessages("No fusion in gene $gene")
-                .build()
+        val potentialWarnEvaluation = evaluatePotentialWarns(
+            fusionsWithNoEffect,
+            fusionsWithNoHighDriverLikelihoodWithGainOfFunction,
+            fusionsWithNoHighDriverLikelihoodOther,
+            unreportableFusionsWithGainOfFunction
+        )
+        return potentialWarnEvaluation ?: unrecoverable().result(EvaluationResult.FAIL)
+            .addFailSpecificMessages("No fusion detected with gene $gene").addFailGeneralMessages("No fusion in gene $gene").build()
     }
 
     private fun evaluatePotentialWarns(
         fusionsWithNoEffect: Set<String>,
-        fusionsWithNoHighDriverLikelihood: Set<String>, unreportableFusionsWithGainOfFunction: Set<String>
+        fusionsWithNoHighDriverLikelihoodWithGainOfFunction: Set<String>,
+        fusionsWithNoHighDriverLikelihoodOther: Set<String>,
+        unreportableFusionsWithGainOfFunction: Set<String>
     ): Evaluation? {
         val warnEvents: MutableSet<String> = Sets.newHashSet()
         val warnSpecificMessages: MutableSet<String> = Sets.newHashSet()
@@ -70,34 +74,34 @@ class HasFusionInGene internal constructor(private val gene: String) : Evaluatio
         if (fusionsWithNoEffect.isNotEmpty()) {
             warnEvents.addAll(fusionsWithNoEffect)
             warnSpecificMessages.add(
-                "Fusion(s) " + concat(fusionsWithNoEffect) + " detected in gene " + gene
-                        + " but annotated as having no protein effect"
+                "Fusion(s) " + concat(fusionsWithNoEffect) + " detected in gene " + gene + " but annotated with having no protein effect evidence"
             )
-            warnGeneralMessages.add("Fusion(s) detected in $gene but annotated as having no protein effect")
+            warnGeneralMessages.add("Fusion(s) detected in $gene but annotated with having no protein effect evidence")
         }
-        if (fusionsWithNoHighDriverLikelihood.isNotEmpty()) {
-            warnEvents.addAll(fusionsWithNoHighDriverLikelihood)
+        if (fusionsWithNoHighDriverLikelihoodWithGainOfFunction.isNotEmpty()) {
+            warnEvents.addAll(fusionsWithNoHighDriverLikelihoodWithGainOfFunction)
             warnSpecificMessages.add(
-                "Fusion(s) " + concat(fusionsWithNoHighDriverLikelihood) + " detected in gene " + gene
-                        + " but not with high driver likelihood"
+                "Fusion(s) " + concat(fusionsWithNoHighDriverLikelihoodWithGainOfFunction) + " detected in gene " + gene + " without high driver likelihood but annotated with having gain-of-function evidence"
+            )
+            warnGeneralMessages.add("Fusion(s) detected in gene $gene without high driver likelihood but annotated with having gain-of-function evidence")
+        }
+        if (fusionsWithNoHighDriverLikelihoodOther.isNotEmpty()) {
+            warnEvents.addAll(fusionsWithNoHighDriverLikelihoodOther)
+            warnSpecificMessages.add(
+                "Fusion(s) " + concat(fusionsWithNoHighDriverLikelihoodOther) + " detected in gene " + gene + " but not with high driver likelihood"
             )
             warnGeneralMessages.add("Fusion(s) detected in gene $gene but no high driver likelihood")
         }
         if (unreportableFusionsWithGainOfFunction.isNotEmpty()) {
             warnEvents.addAll(unreportableFusionsWithGainOfFunction)
             warnSpecificMessages.add(
-                "Fusion(s) " + concat(unreportableFusionsWithGainOfFunction) + " detected in gene " + gene
-                        + " but not considered reportable; however fusion is annotated as having gain-of-function"
+                "Fusion(s) " + concat(unreportableFusionsWithGainOfFunction) + " detected in gene " + gene + " but not considered reportable; however fusion is annotated with having gain-of-function evidence"
             )
-            warnGeneralMessages.add("Fusion(s) detected in gene $gene but unreportable but with gain-of-function")
+            warnGeneralMessages.add("Fusion(s) detected in gene $gene but unreportable but annotated with having gain-of-function evidence")
         }
         return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {
-            unrecoverable()
-                .result(EvaluationResult.WARN)
-                .addAllInclusionMolecularEvents(warnEvents)
-                .addAllWarnSpecificMessages(warnSpecificMessages)
-                .addAllWarnGeneralMessages(warnGeneralMessages)
-                .build()
+            unrecoverable().result(EvaluationResult.WARN).addAllInclusionMolecularEvents(warnEvents)
+                .addAllWarnSpecificMessages(warnSpecificMessages).addAllWarnGeneralMessages(warnGeneralMessages).build()
         } else null
     }
 
