@@ -12,6 +12,10 @@ internal object TreatmentTypeResolver {
         return type != null && type.lowercase().contains(typeToFind.lowercase())
     }
 
+    fun matchesTypeFromCollection(treatment: PriorTumorTreatment, category: TreatmentCategory, types: Collection<String>): Boolean? {
+        return if (!hasTypeConfigured(treatment, category)) null else types.any { isOfType(treatment, category, it) }
+    }
+
     fun hasTypeConfigured(treatment: PriorTumorTreatment, category: TreatmentCategory): Boolean {
         val type = resolveType(treatment, category)
         return !type.isNullOrEmpty()

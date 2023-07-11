@@ -11,7 +11,7 @@ import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 
-class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks internal constructor(
+class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
     private val category: TreatmentCategory,
     private val types: List<String>, private val minCycles: Int?, private val minWeeks: Int?
 ) : EvaluationFunction {
@@ -63,7 +63,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks internal con
                     hasPotentiallyHadTreatment = true
                 }
             }
-            if (treatment.categories().contains(TreatmentCategory.TRIAL)) {
+            if (TreatmentSummaryForCategory.treatmentMayMatchCategoryAsTrial(treatment, category)) {
                 hasHadTrial = true
             }
         }
@@ -116,12 +116,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks internal con
     }
 
     private fun hasValidType(treatment: PriorTumorTreatment): Boolean {
-        for (type in types) {
-            if (TreatmentTypeResolver.isOfType(treatment, category, type)) {
-                return true
-            }
-        }
-        return false
+        return types.any { TreatmentTypeResolver.isOfType(treatment, category, it) }
     }
 
     private fun treatment(): String {
