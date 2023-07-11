@@ -9,6 +9,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.datamodel.treatment.DrugClass
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
@@ -56,27 +57,19 @@ class CurationDatabaseReaderTest {
 
         val capoxConfig = find(configs, "Capecitabine/Oxaliplatin 2020-2021")
         assertThat(capoxConfig.ignore).isFalse
-        val curatedCapox = capoxConfig.curated
-        assertThat(curatedCapox).isNotNull
-        assertThat(curatedCapox!!.name()).isEqualTo("Capecitabine+Oxaliplatin")
-        assertThat(curatedCapox.startYear()).isEqualTo(2020)
-        assertThat(curatedCapox.startMonth()).isNull()
-        assertThat(curatedCapox.stopYear()).isEqualTo(2021)
-        assertThat(curatedCapox.stopMonth()).isNull()
-        assertThat(curatedCapox.cycles()).isEqualTo(6)
-        assertThat(curatedCapox.bestResponse()).isEqualTo("PR")
-        assertThat(curatedCapox.stopReason()).isEqualTo("toxicity")
-        assertThat(curatedCapox.categories()).containsExactly(TreatmentCategory.CHEMOTHERAPY)
-        assertThat(curatedCapox.isSystemic).isTrue
-        assertThat(curatedCapox.chemoType()).isEqualTo("antimetabolite,platinum")
-        assertThat(curatedCapox.immunoType()).isNull()
-        assertThat(curatedCapox.targetedType()).isNull()
-        assertThat(curatedCapox.hormoneType()).isNull()
-        assertThat(curatedCapox.radioType()).isNull()
-        assertThat(curatedCapox.transplantType()).isNull()
-        assertThat(curatedCapox.supportiveType()).isNull()
-        assertThat(curatedCapox.trialAcronym()).isNull()
-        assertThat(curatedCapox.ablationType()).isNull()
+        assertThat(capoxConfig.curated).isEqualTo(
+            ImmutablePriorTumorTreatment.builder()
+                .name("Capecitabine+Oxaliplatin")
+                .startYear(2020)
+                .stopYear(2021)
+                .cycles(6)
+                .bestResponse("PR")
+                .stopReason("toxicity")
+                .addCategories(TreatmentCategory.CHEMOTHERAPY)
+                .isSystemic(true)
+                .chemoType("antimetabolite,platinum")
+                .build()
+        )
 
         val appendectomyConfig = find(configs, "2022 appendectomy")
         assertThat(appendectomyConfig.ignore).isFalse

@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.serialization;
 
 import static com.hartwig.actin.util.json.Json.integer;
+import static com.hartwig.actin.util.json.Json.string;
 
 import java.lang.reflect.Type;
 import java.time.LocalDate;
@@ -78,6 +79,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.RecommendationCriteria;
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTherapyHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent;
@@ -278,20 +280,11 @@ public class ClinicalGsonDeserializer {
 
         @Override
         public Treatment deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
-            if (jsonElement.isJsonNull()) {
-                return null;
-            }
-            JsonObject jsonObj = jsonElement.getAsJsonObject();
-            Type concreteType;
-            if (!jsonObj.has("drugs")) {
-                concreteType = OtherTreatment.class;
-            } else if (jsonObj.has("radioType")) {
-                concreteType = Radiotherapy.class;
-            } else {
-                concreteType = DrugTherapy.class;
-            }
             try {
-                return context.deserialize(jsonElement, concreteType);
+                return jsonElement.isJsonNull()
+                        ? null
+                        : (Treatment) context.deserialize(jsonElement,
+                                TreatmentType.valueOf(string(jsonElement.getAsJsonObject(), "treatmentType")).treatmentClass());
             } catch (Exception e) {
                 throw new JsonParseException("Failed to deserialize: " + jsonElement, e);
             }

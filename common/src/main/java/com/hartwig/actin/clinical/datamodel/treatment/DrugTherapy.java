@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class DrugTherapy implements Therapy {
+    public final TreatmentType treatmentType = TreatmentType.DRUG_THERAPY;
 
     @Override
     @NotNull
