@@ -5,7 +5,9 @@ import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig
 import org.apache.logging.log4j.LogManager
 
 internal object CohortStatusInterpreter {
+
     private val LOGGER = LogManager.getLogger(CohortStatusInterpreter::class.java)
+
     const val NOT_AVAILABLE = "NA"
     const val NOT_IN_CTC_OVERVIEW_UNKNOWN_WHY = "not_in_ctc_overview_unknown_why"
     const val WONT_BE_MAPPED_BECAUSE_CLOSED = "wont_be_mapped_because_closed"
@@ -15,21 +17,22 @@ internal object CohortStatusInterpreter {
         val ctcCohortIds: Set<String> = cohortConfig.ctcCohortIds
         if (isNotAvailable(ctcCohortIds)) {
             LOGGER.debug(
-                "CTC entry for cohort '{}' of trial '{}' explicitly configured to be unavailable",
+                " CTC entry for cohort '{}' of trial '{}' explicitly configured to be unavailable",
                 cohortConfig.cohortId,
                 cohortConfig.trialId
             )
             return null
         } else if (isMissingEntry(ctcCohortIds)) {
             LOGGER.info(
-                "CTC entry missing for unknown reason for cohort '{}' of trial '{}'! Setting cohort to closed without slots",
+                " CTC entry configured to be missing for unknown reason for cohort '{}' of trial '{}'! "
+                        + "Assuming cohort is closed without slots",
                 cohortConfig.cohortId,
                 cohortConfig.trialId
             )
             return closedWithoutSlots()
         } else if (isMissingBecauseClosedOrUnavailable(ctcCohortIds)) {
             LOGGER.debug(
-                "CTC entry missing for cohort '{}' of trial '{}' because it's assumed closed or not available. "
+                " CTC entry missing for cohort '{}' of trial '{}' because it's assumed closed or not available. "
                         + "Setting cohort to closed without slots", cohortConfig.cohortId, cohortConfig.trialId
             )
             return closedWithoutSlots()

@@ -55,4 +55,11 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
         treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.TRIAL).build())
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
     }
+
+    @Test
+    fun shouldNotCountTrialMatchesWhenLookingForUnlikelyTrialCategories() {
+        val function = HasHadLimitedTreatmentsWithCategoryOfTypes(TreatmentCategory.SURGERY, emptyList(), 1)
+        val trial = TreatmentTestFactory.builder().addCategories(TreatmentCategory.TRIAL).build()
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(listOf(trial, trial))))
+    }
 }

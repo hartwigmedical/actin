@@ -5,6 +5,7 @@ import com.hartwig.actin.treatment.trial.EligibilityRuleUsageEvaluator.evaluate
 import org.junit.Test
 
 class EligibilityRuleUsageEvaluatorTest {
+
     @Test
     fun canEvaluateEligibilityRuleUsage() {
         val trials = listOf(TestTreatmentFactory.createMinimalTestTrial(), TestTreatmentFactory.createProperTestTrial())

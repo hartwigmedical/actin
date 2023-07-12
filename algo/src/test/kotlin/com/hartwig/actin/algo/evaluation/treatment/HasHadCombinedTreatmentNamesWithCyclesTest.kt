@@ -7,7 +7,10 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableChemotherapy
+import com.hartwig.actin.clinical.datamodel.treatment.DrugTherapy
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTherapyHistoryDetails
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
@@ -96,7 +99,10 @@ class HasHadCombinedTreatmentNamesWithCyclesTest {
                 .build()
         }
 
-        private fun chemotherapyWithName(name: String): ImmutableChemotherapy =
-            ImmutableChemotherapy.builder().name(name).build()
+        private fun chemotherapyWithName(name: String): DrugTherapy =
+            ImmutableDrugTherapy.builder()
+                .name(name)
+                .addDrugs(ImmutableDrug.builder().name("Chemo drug").category(TreatmentCategory.CHEMOTHERAPY).build())
+                .build()
     }
 }

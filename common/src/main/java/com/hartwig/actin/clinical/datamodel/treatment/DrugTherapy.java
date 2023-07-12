@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.datamodel.treatment;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -8,12 +9,18 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class Immunotherapy implements Therapy {
+public abstract class DrugTherapy implements Therapy {
+    public final TreatmentType treatmentType = TreatmentType.DRUG_THERAPY;
+
+    @Override
+    @Value.Default
+    public boolean isSystemic() {
+        return true;
+    }
 
     @Override
     @NotNull
-    @Value.Default
     public Set<TreatmentCategory> categories() {
-        return Set.of(TreatmentCategory.IMMUNOTHERAPY);
+        return drugs().stream().map(Drug::category).collect(Collectors.toSet());
     }
 }

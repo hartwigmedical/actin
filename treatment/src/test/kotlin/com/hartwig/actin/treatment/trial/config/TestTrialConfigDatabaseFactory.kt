@@ -22,16 +22,16 @@ object TestTrialConfigDatabaseFactory {
     private fun createTestTrialDefinitionConfigs(): List<TrialDefinitionConfig> {
         return listOf(
             TrialDefinitionConfig(
-                trialId = TestTrialData.TEST_TRIAL_ID_1,
+                trialId = TestTrialData.TEST_TRIAL_METC_1,
                 open = true,
-                acronym = "Acronym-" + TestTrialData.TEST_TRIAL_ID_1,
-                title = "Title for " + TestTrialData.TEST_TRIAL_ID_1,
+                acronym = "Acronym-" + TestTrialData.TEST_TRIAL_METC_1,
+                title = "Title for " + TestTrialData.TEST_TRIAL_METC_1,
             ),
             TrialDefinitionConfig(
-                trialId = TestTrialData.TEST_TRIAL_ID_2,
+                trialId = TestTrialData.TEST_TRIAL_METC_2,
                 open = true,
-                acronym = "Acronym-" + TestTrialData.TEST_TRIAL_ID_2,
-                title = "Title for " + TestTrialData.TEST_TRIAL_ID_2,
+                acronym = "Acronym-" + TestTrialData.TEST_TRIAL_METC_2,
+                title = "Title for " + TestTrialData.TEST_TRIAL_METC_2,
             )
         )
     }
@@ -39,7 +39,7 @@ object TestTrialConfigDatabaseFactory {
     private fun createTestCohortDefinitionConfigs(): List<CohortDefinitionConfig> {
         return listOf(
             CohortDefinitionConfig(
-                trialId = TestTrialData.TEST_TRIAL_ID_1,
+                trialId = TestTrialData.TEST_TRIAL_METC_1,
                 cohortId = "A",
                 ctcCohortIds = setOf("1", "2"),
                 evaluable = true,
@@ -49,7 +49,7 @@ object TestTrialConfigDatabaseFactory {
                 description = "Cohort A"
             ),
             CohortDefinitionConfig(
-                trialId = TestTrialData.TEST_TRIAL_ID_1,
+                trialId = TestTrialData.TEST_TRIAL_METC_1,
                 cohortId = "B",
                 ctcCohortIds = setOf("NA"),
                 evaluable = true,
@@ -59,7 +59,7 @@ object TestTrialConfigDatabaseFactory {
                 description = "Cohort B"
             ),
             CohortDefinitionConfig(
-                trialId = TestTrialData.TEST_TRIAL_ID_1,
+                trialId = TestTrialData.TEST_TRIAL_METC_1,
                 cohortId = "C",
                 ctcCohortIds = setOf("wont_be_mapped_because_closed"),
                 evaluable = false,
@@ -80,17 +80,17 @@ object TestTrialConfigDatabaseFactory {
         val rule2 = EligibilityRule.HAS_SEVERE_CONCOMITANT_CONDITION.toString()
         return listOf(
             InclusionCriteriaConfig(
-                trialId = TestTrialData.TEST_TRIAL_ID_1,
+                trialId = TestTrialData.TEST_TRIAL_METC_1,
                 referenceIds = setOf("I-01"),
                 appliesToCohorts = emptySet(),
                 inclusionRule = EligibilityRule.IS_AT_LEAST_X_YEARS_OLD.toString() + "[18]",
             ), InclusionCriteriaConfig(
-                trialId = TestTrialData.TEST_TRIAL_ID_1,
+                trialId = TestTrialData.TEST_TRIAL_METC_1,
                 referenceIds = setOf("I-02"),
                 inclusionRule = EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X.toString() + "[1]",
                 appliesToCohorts = setOf("A")
             ), InclusionCriteriaConfig(
-                trialId = TestTrialData.TEST_TRIAL_ID_1,
+                trialId = TestTrialData.TEST_TRIAL_METC_1,
                 referenceIds = Sets.newHashSet("I-03"),
                 inclusionRule = "NOT(OR($rule1, $rule2))",
                 appliesToCohorts = setOf("A")
@@ -101,7 +101,7 @@ object TestTrialConfigDatabaseFactory {
     private fun createTestInclusionCriteriaForTestTrial2(): List<InclusionCriteriaConfig> {
         return listOf(
             InclusionCriteriaConfig(
-                trialId = TestTrialData.TEST_TRIAL_ID_2,
+                trialId = TestTrialData.TEST_TRIAL_METC_2,
                 referenceIds = setOf("I-01"),
                 appliesToCohorts = emptySet(),
                 inclusionRule = EligibilityRule.IS_AT_LEAST_X_YEARS_OLD.toString() + "[18]"
@@ -118,17 +118,17 @@ object TestTrialConfigDatabaseFactory {
     private fun createTestInclusionCriteriaReferenceConfigsForTestTrial1(): List<InclusionCriteriaReferenceConfig> {
         return listOf(
             InclusionCriteriaReferenceConfig(
-                trialId = TestTrialData.TEST_TRIAL_ID_1,
+                trialId = TestTrialData.TEST_TRIAL_METC_1,
                 referenceId = "I-01",
                 referenceText = "Should be an adult"
             ),
             InclusionCriteriaReferenceConfig(
-                trialId = TestTrialData.TEST_TRIAL_ID_1,
+                trialId = TestTrialData.TEST_TRIAL_METC_1,
                 referenceId = "I-02",
                 referenceText = "Should be tested in the lab"
             ),
             InclusionCriteriaReferenceConfig(
-                trialId = TestTrialData.TEST_TRIAL_ID_1,
+                trialId = TestTrialData.TEST_TRIAL_METC_1,
                 referenceId = "I-03",
                 referenceText = "Should not have any serious other conditions"
             )
@@ -138,7 +138,7 @@ object TestTrialConfigDatabaseFactory {
     private fun createTestInclusionCriteriaReferenceConfigsForTestTrial2(): List<InclusionCriteriaReferenceConfig> {
         return listOf(
             InclusionCriteriaReferenceConfig(
-                trialId = TestTrialData.TEST_TRIAL_ID_2,
+                trialId = TestTrialData.TEST_TRIAL_METC_2,
                 referenceId = "I-01",
                 referenceText = "Should be an adult"
             )

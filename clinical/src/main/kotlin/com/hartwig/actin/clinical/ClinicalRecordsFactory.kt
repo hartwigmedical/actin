@@ -37,10 +37,7 @@ import com.hartwig.actin.clinical.datamodel.ToxicityEvaluation
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.VitalFunction
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableSurgicalTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableSurgeryHistoryDetails
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.feed.FeedModel
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry
@@ -51,7 +48,6 @@ import com.hartwig.actin.clinical.feed.medication.MedicationEntry
 import com.hartwig.actin.clinical.feed.patient.PatientEntry
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction
-import com.hartwig.actin.clinical.feed.surgery.SurgeryEntry
 import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry
 import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionExtraction
 import com.hartwig.actin.clinical.sort.ClinicalRecordComparator
@@ -60,14 +56,7 @@ import com.hartwig.actin.clinical.sort.MedicationByNameComparator
 import org.apache.logging.log4j.LogManager
 
 
-class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
-    private val feed: FeedModel
-    private val curation: CurationModel
-
-    init {
-        this.feed = feed
-        this.curation = curation
-    }
+class ClinicalRecordsFactory(private val feed: FeedModel, private val curation: CurationModel) {
 
     fun create(): List<ClinicalRecord> {
         val processedPatientIds: MutableSet<String> = HashSet()
@@ -115,7 +104,6 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
                 .toxicityEvaluations(toxicityEvaluations)
                 .intolerances(extractIntolerances(subject))
                 .surgeries(extractSurgeries(subject))
-                .surgicalTreatments(extractSurgicalTreatments(subject))
                 .bodyWeights(extractBodyWeights(subject))
                 .vitalFunctions(extractVitalFunctions(subject))
                 .bloodTransfusions(extractBloodTransfusions(subject))
@@ -268,20 +256,6 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
             .map { ImmutableSurgery.builder().endDate(it.periodEnd).status(resolveSurgeryStatus(it.encounterStatus)).build() }
     }
 
-    private fun extractSurgicalTreatments(subject: String): List<TreatmentHistoryEntry> {
-        return feed.uniqueSurgeryEntries(subject).map { surgeryEntry: SurgeryEntry ->
-            ImmutableTreatmentHistoryEntry.builder()
-                .treatments(setOf(ImmutableSurgicalTreatment.builder().name("extracted surgery").build()))
-                .surgeryHistoryDetails(
-                    ImmutableSurgeryHistoryDetails.builder()
-                        .endDate(surgeryEntry.periodEnd)
-                        .status(resolveSurgeryStatus(surgeryEntry.encounterStatus))
-                        .build()
-                )
-                .build()
-        }
-    }
-
     private fun extractBodyWeights(subject: String): List<BodyWeight> {
         return feed.uniqueBodyWeightEntries(subject).map { entry: BodyWeightEntry ->
             ImmutableBodyWeight.builder()
@@ -323,13 +297,14 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
                     curation.curateMedicationDosage(entry.dosageInstructionText)
                 else
                     ImmutableDosage.builder()
-                        .dosageMax(entry.dosageInstructionMaxDosePerAdministration)
-                        .dosageValue(entry.dosageInstructionDoseQuantityValue)
+                        .dosageMin(entry.dosageInstructionDoseQuantityValue)
+                        .dosageMax(correctDosageMax(entry))
                         .dosageUnit(curation.translateDosageUnit(entry.dosageInstructionDoseQuantityUnit))
                         .frequency(entry.dosageInstructionFrequencyValue)
                         .frequencyUnit(entry.dosageInstructionFrequencyUnit)
                         .periodBetweenValue(entry.dosageInstructionPeriodBetweenDosagesValue)
                         .periodBetweenUnit(curation.curatePeriodBetweenUnit(entry.dosageInstructionPeriodBetweenDosagesUnit))
+                        .ifNeeded(extractIfNeeded(entry))
                         .build()
             val builder = ImmutableMedication.builder().dosage(dosage ?: ImmutableDosage.builder().build())
             val name: String? = CurationUtil.capitalizeFirstLetterOnly(entry.code5ATCDisplay).ifEmpty {
@@ -346,12 +321,25 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
                     .administrationRoute(administrationRoute)
                     .startDate(entry.periodOfUseValuePeriodStart)
                     .stopDate(entry.periodOfUseValuePeriodEnd)
+                    .addAllCypInteractions(curation.curateMedicationCypInteractions(name))
+                    .qtProlongatingRisk(curation.annotateWithQTProlongating(name))
                     .build()
                 medications.add(curation.annotateWithMedicationCategory(medication))
             }
         }
         medications.sortWith(MedicationByNameComparator())
         return medications
+    }
+
+    private fun extractIfNeeded(entry: MedicationEntry) =
+        entry.dosageInstructionAsNeededDisplay.trim().lowercase() == "zo nodig"
+
+    private fun correctDosageMax(entry: MedicationEntry): Double? {
+        return if (entry.dosageInstructionMaxDosePerAdministration == 0.0) {
+            entry.dosageInstructionDoseQuantityValue
+        } else {
+            entry.dosageInstructionMaxDosePerAdministration
+        }
     }
 
     private fun dosageRequiresCuration(administrationRoute: String?, entry: MedicationEntry) =

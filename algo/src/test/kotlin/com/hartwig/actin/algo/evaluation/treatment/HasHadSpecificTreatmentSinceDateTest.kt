@@ -2,7 +2,8 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableChemotherapy
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy
 import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import org.junit.Test
@@ -81,7 +82,10 @@ class HasHadSpecificTreatmentSinceDateTest {
     }
 
     companion object {
-        private val TREATMENT_QUERY = ImmutableChemotherapy.builder().name("treatment").build()
+        private val TREATMENT_QUERY = ImmutableDrugTherapy.builder()
+            .name("treatment")
+            .addDrugs(ImmutableDrug.builder().name("Chemo drug").category(TreatmentCategory.CHEMOTHERAPY).build())
+            .build()
         private const val YEARS_TO_SUBTRACT = 3
         private val targetDate: LocalDate = LocalDate.now().minusYears(1)
         private val recentDate: LocalDate = LocalDate.now().minusMonths(4)
@@ -101,7 +105,7 @@ class HasHadSpecificTreatmentSinceDateTest {
             startMonth: Int? = null
         ): PriorTumorTreatment {
             return TreatmentTestFactory.builder()
-                .name("specific $TREATMENT_QUERY")
+                .name("specific ${TREATMENT_QUERY.name()}")
                 .addCategories(TreatmentCategory.CHEMOTHERAPY)
                 .stopYear(stopYear)
                 .stopMonth(stopMonth)

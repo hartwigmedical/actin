@@ -69,7 +69,7 @@ public interface ReporterConfig {
 
         boolean enableExtendedMode = cmd.hasOption(ENABLE_EXTENDED_MODE);
         if (enableExtendedMode) {
-            LOGGER.info("Including trial matching details");
+            LOGGER.info("Extended reporting mode has been enabled");
         }
 
         return ImmutableReporterConfig.builder()

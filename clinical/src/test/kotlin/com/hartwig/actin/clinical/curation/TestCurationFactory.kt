@@ -2,6 +2,7 @@ package com.hartwig.actin.clinical.curation
 
 import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
+import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
 import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
@@ -14,6 +15,7 @@ import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
+import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
@@ -23,11 +25,16 @@ import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslati
 import com.hartwig.actin.clinical.curation.translation.DosageUnitTranslation
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation
 import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation
+import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication
+import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableChemotherapy
+import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
+import com.hartwig.actin.clinical.datamodel.treatment.DrugClass
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
@@ -35,6 +42,8 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import org.apache.logging.log4j.util.Strings
 import java.util.*
 
+
+private const val PARACETAMOL = "PARACETAMOL"
 
 object TestCurationFactory {
 
@@ -47,7 +56,7 @@ object TestCurationFactory {
             CurationDatabase(
                 emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
                 emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-                emptyList(), emptyList(), emptyList(), emptyList(), emptyList()
+                emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList()
             ), questionnaireRawEntryMapper()
         )
     }
@@ -74,6 +83,8 @@ object TestCurationFactory {
             medicationDosageConfigs = createTestMedicationDosageConfigs(),
             medicationCategoryConfigs = createTestMedicationCategoryConfigs(),
             intoleranceConfigs = createTestIntoleranceConfigs(),
+            cypInteractionConfigs = createTestCypInteractionConfig(),
+            qtProlongingConfigs = createTestQTProlongingConfigs(),
             administrationRouteTranslations = createTestAdministrationRouteTranslations(),
             dosageUnitTranslations = createTestDosageUnitTranslations(),
             laboratoryTranslations = createTestLaboratoryTranslations(),
@@ -81,6 +92,17 @@ object TestCurationFactory {
             bloodTransfusionTranslations = createTestBloodTransfusionTranslations()
         )
     }
+
+    private fun createTestQTProlongingConfigs(): List<QTProlongatingConfig> {
+        return listOf(QTProlongatingConfig(PARACETAMOL, false, QTProlongatingRisk.POSSIBLE))
+    }
+
+    private fun createTestCypInteractionConfig(): List<CypInteractionConfig> {
+        return listOf(CypInteractionConfig(PARACETAMOL, false, listOf(createTestCypInteration())))
+    }
+
+    fun createTestCypInteration(): ImmutableCypInteraction =
+        ImmutableCypInteraction.builder().cyp("2D6").strength(CypInteraction.Strength.WEAK).type(CypInteraction.Type.INHIBITOR).build()
 
     private fun createTestPrimaryTumorConfigs(): List<PrimaryTumorConfig> {
         return listOf(
@@ -106,19 +128,25 @@ object TestCurationFactory {
     }
 
     private fun createTestTreatmentHistoryEntryConfigs(): List<TreatmentHistoryEntryConfig> {
-        val cisplatin =
-            ImmutableChemotherapy.builder().name("Cisplatin").addCategories(TreatmentCategory.CHEMOTHERAPY).isSystemic(true).build()
+        val cisplatin = ImmutableDrug.builder()
+            .name("Cisplatin")
+            .addDrugClasses(DrugClass.PLATINUM_COMPOUND)
+            .category(TreatmentCategory.CHEMOTHERAPY)
+            .build()
+
+        val therapy =
+            ImmutableDrugTherapy.builder().name("Cisplatin").addDrugs(cisplatin).isSystemic(true).build()
         return listOf(
             TreatmentHistoryEntryConfig(
                 input = "Cis 2020 2021",
                 ignore = false,
-                curated = ImmutableTreatmentHistoryEntry.builder().addTreatments(cisplatin).startYear(2020)
+                curated = ImmutableTreatmentHistoryEntry.builder().addTreatments(therapy).startYear(2020)
                     .build()
             ),
             TreatmentHistoryEntryConfig(
                 input = "Cis 2020 2021",
                 ignore = false,
-                curated = ImmutableTreatmentHistoryEntry.builder().addTreatments(cisplatin).startYear(2021)
+                curated = ImmutableTreatmentHistoryEntry.builder().addTreatments(therapy).startYear(2021)
                     .build()
             ),
             TreatmentHistoryEntryConfig(input = "no systemic treatment", ignore = true, curated = null)

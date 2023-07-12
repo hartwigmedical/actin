@@ -6,11 +6,10 @@ import com.hartwig.actin.treatment.trial.config.TestTrialConfigDatabaseFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert
 import org.junit.Test
-import java.io.IOException
 
 class TrialConfigModelTest {
+
     @Test
-    @Throws(IOException::class)
     fun canCreateFromTrialConfigDirectory() {
         Assert.assertNotNull(TrialConfigModel.create(TRIAL_CONFIG_DIRECTORY, TestEligibilityFactoryFactory.createTestEligibilityFactory()))
     }
@@ -29,14 +28,14 @@ class TrialConfigModelTest {
     fun canQueryProperModel() {
         val model = TrialConfigModel.createFromDatabase(TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase())
         assertThat(model.trials()).hasSize(2)
-        assertThat(model.cohortsForTrial(TestTrialData.TEST_TRIAL_ID_1)).hasSize(3)
-        assertThat(model.generalInclusionCriteriaForTrial(TestTrialData.TEST_TRIAL_ID_1)).hasSize(1)
-        assertThat(model.specificInclusionCriteriaForCohort(TestTrialData.TEST_TRIAL_ID_1, "A")).hasSize(2)
-        assertThat(model.specificInclusionCriteriaForCohort(TestTrialData.TEST_TRIAL_ID_1, "B")).hasSize(0)
-        assertThat(model.referencesForTrial(TestTrialData.TEST_TRIAL_ID_1)).hasSize(3)
-        assertThat(model.cohortsForTrial(TestTrialData.TEST_TRIAL_ID_2)).hasSize(0)
-        assertThat(model.generalInclusionCriteriaForTrial(TestTrialData.TEST_TRIAL_ID_2)).hasSize(1)
-        assertThat(model.referencesForTrial(TestTrialData.TEST_TRIAL_ID_2)).hasSize(1)
+        assertThat(model.cohortsForTrial(TestTrialData.TEST_TRIAL_METC_1)).hasSize(3)
+        assertThat(model.generalInclusionCriteriaForTrial(TestTrialData.TEST_TRIAL_METC_1)).hasSize(1)
+        assertThat(model.specificInclusionCriteriaForCohort(TestTrialData.TEST_TRIAL_METC_1, "A")).hasSize(2)
+        assertThat(model.specificInclusionCriteriaForCohort(TestTrialData.TEST_TRIAL_METC_1, "B")).hasSize(0)
+        assertThat(model.referencesForTrial(TestTrialData.TEST_TRIAL_METC_1)).hasSize(3)
+        assertThat(model.cohortsForTrial(TestTrialData.TEST_TRIAL_METC_2)).hasSize(0)
+        assertThat(model.generalInclusionCriteriaForTrial(TestTrialData.TEST_TRIAL_METC_2)).hasSize(1)
+        assertThat(model.referencesForTrial(TestTrialData.TEST_TRIAL_METC_2)).hasSize(1)
     }
 
     companion object {

@@ -1,20 +1,18 @@
 package com.hartwig.actin.clinical.serialization;
 
 import static com.hartwig.actin.util.json.Json.integer;
+import static com.hartwig.actin.util.json.Json.string;
 
 import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -26,12 +24,14 @@ import com.hartwig.actin.clinical.datamodel.BodyLocationCategory;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.Complication;
+import com.hartwig.actin.clinical.datamodel.CypInteraction;
 import com.hartwig.actin.clinical.datamodel.Dosage;
 import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication;
+import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction;
 import com.hartwig.actin.clinical.datamodel.ImmutableDosage;
 import com.hartwig.actin.clinical.datamodel.ImmutableECG;
 import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus;
@@ -62,35 +62,24 @@ import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.ToxicityEvaluation;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
-import com.hartwig.actin.clinical.datamodel.treatment.Chemotherapy;
-import com.hartwig.actin.clinical.datamodel.treatment.CombinedTherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Drug;
 import com.hartwig.actin.clinical.datamodel.treatment.DrugClass;
-import com.hartwig.actin.clinical.datamodel.treatment.HormoneTherapy;
-import com.hartwig.actin.clinical.datamodel.treatment.Immunotherapy;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableChemotherapy;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableCombinedTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.DrugTherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableHormoneTherapy;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableImmunotherapy;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRadiotherapy;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableSurgicalTreatment;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableTargetedTherapy;
-import com.hartwig.actin.clinical.datamodel.treatment.OtherTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy;
-import com.hartwig.actin.clinical.datamodel.treatment.SurgicalTreatment;
-import com.hartwig.actin.clinical.datamodel.treatment.TargetedTherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableSurgeryHistoryDetails;
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTherapyHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent;
-import com.hartwig.actin.clinical.datamodel.treatment.history.SurgeryHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TherapyHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
 
@@ -121,18 +110,11 @@ public class ClinicalGsonDeserializer {
                 .registerTypeAdapter(ECG.class, new AbstractClassAdapter<ECG>(ImmutableECG.class))
                 .registerTypeAdapter(Dosage.class, new AbstractClassAdapter<Dosage>(ImmutableDosage.class))
                 .registerTypeAdapter(Drug.class, new AbstractClassAdapter<Drug>(ImmutableDrug.class))
-                .registerTypeAdapter(Chemotherapy.class, new AbstractClassAdapter<Chemotherapy>(ImmutableChemotherapy.class))
-                .registerTypeAdapter(CombinedTherapy.class, new AbstractClassAdapter<CombinedTherapy>(ImmutableCombinedTherapy.class))
-                .registerTypeAdapter(HormoneTherapy.class, new AbstractClassAdapter<HormoneTherapy>(ImmutableHormoneTherapy.class))
-                .registerTypeAdapter(Immunotherapy.class, new AbstractClassAdapter<Immunotherapy>(ImmutableImmunotherapy.class))
-                .registerTypeAdapter(OtherTherapy.class, new AbstractClassAdapter<OtherTherapy>(ImmutableOtherTherapy.class))
+                .registerTypeAdapter(DrugTherapy.class, new AbstractClassAdapter<DrugTherapy>(ImmutableDrugTherapy.class))
                 .registerTypeAdapter(Radiotherapy.class, new AbstractClassAdapter<Radiotherapy>(ImmutableRadiotherapy.class))
-                .registerTypeAdapter(SurgicalTreatment.class, new AbstractClassAdapter<SurgicalTreatment>(ImmutableSurgicalTreatment.class))
-                .registerTypeAdapter(TargetedTherapy.class, new AbstractClassAdapter<TargetedTherapy>(ImmutableTargetedTherapy.class))
+                .registerTypeAdapter(OtherTreatment.class, new AbstractClassAdapter<OtherTreatment>(ImmutableOtherTreatment.class))
                 .registerTypeAdapter(Treatment.class, new TreatmentAdapter())
                 .registerTypeAdapter(Therapy.class, new TreatmentAdapter())
-                .registerTypeAdapter(SurgeryHistoryDetails.class,
-                        new AbstractClassAdapter<SurgeryHistoryDetails>(ImmutableSurgeryHistoryDetails.class))
                 .registerTypeAdapter(TherapyHistoryDetails.class,
                         new AbstractClassAdapter<TherapyHistoryDetails>(ImmutableTherapyHistoryDetails.class))
                 .registerTypeAdapter(new TypeToken<ImmutableList<String>>() {
@@ -171,8 +153,6 @@ public class ClinicalGsonDeserializer {
                 }.getType(), new ImmutableSetAdapter<String>(String.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<TreatmentCategory>>() {
                 }.getType(), new ImmutableSetAdapter<TreatmentCategory>(TreatmentCategory.class))
-                .registerTypeAdapter(new TypeToken<ImmutableSet<Therapy>>() {
-                }.getType(), new ImmutableSetAdapter<Therapy>(Therapy.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<Treatment>>() {
                 }.getType(), new ImmutableSetAdapter<Treatment>(Treatment.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<BodyLocationCategory>>() {
@@ -181,22 +161,10 @@ public class ClinicalGsonDeserializer {
                 }.getType(), new ImmutableSetAdapter<DrugClass>(DrugClass.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<Intent>>() {
                 }.getType(), new ImmutableSetAdapter<Intent>(Intent.class))
-                .registerTypeAdapter(new TypeToken<ImmutableSet<Chemotherapy>>() {
-                }.getType(), new ImmutableSetAdapter<Chemotherapy>(ImmutableChemotherapy.class))
-                .registerTypeAdapter(new TypeToken<ImmutableSet<CombinedTherapy>>() {
-                }.getType(), new ImmutableSetAdapter<CombinedTherapy>(ImmutableCombinedTherapy.class))
-                .registerTypeAdapter(new TypeToken<ImmutableSet<Immunotherapy>>() {
-                }.getType(), new ImmutableSetAdapter<Immunotherapy>(ImmutableImmunotherapy.class))
-                .registerTypeAdapter(new TypeToken<ImmutableSet<OtherTherapy>>() {
-                }.getType(), new ImmutableSetAdapter<OtherTherapy>(ImmutableOtherTherapy.class))
-                .registerTypeAdapter(new TypeToken<ImmutableSet<Radiotherapy>>() {
-                }.getType(), new ImmutableSetAdapter<Radiotherapy>(ImmutableRadiotherapy.class))
-                .registerTypeAdapter(new TypeToken<ImmutableSet<SurgicalTreatment>>() {
-                }.getType(), new ImmutableSetAdapter<SurgicalTreatment>(ImmutableSurgicalTreatment.class))
-                .registerTypeAdapter(new TypeToken<ImmutableSet<TargetedTherapy>>() {
-                }.getType(), new ImmutableSetAdapter<TargetedTherapy>(ImmutableTargetedTherapy.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<ObservedToxicity>>() {
-                }.getType(), new ImmutableSetAdapter<ObservedToxicity>(ImmutableObservedToxicity.class));
+                }.getType(), new ImmutableSetAdapter<ObservedToxicity>(ImmutableObservedToxicity.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<CypInteraction>>() {
+                }.getType(), new ImmutableListAdapter<CypInteraction>(ImmutableCypInteraction.class));
     }
 
     private static class LocalDateAdapter implements JsonDeserializer<LocalDate> {
@@ -264,25 +232,6 @@ public class ClinicalGsonDeserializer {
         }
     }
 
-    private static class ImmutableMapAdapter<K, V> implements JsonDeserializer<ImmutableMap<K, V>> {
-
-        private final Type concreteType;
-
-        public ImmutableMapAdapter(Type concreteType) {
-            this.concreteType = concreteType;
-        }
-
-        @Override
-        public ImmutableMap<K, V> deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
-            return (ImmutableMap<K, V>) ImmutableMap.copyOf(json.getAsJsonObject()
-                    .asMap()
-                    .entrySet()
-                    .stream()
-                    .map(entry -> Map.entry(entry.getKey(), context.deserialize(entry.getValue(), concreteType)))
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
-        }
-    }
-
     private static class DrugNameSetAdapter implements JsonDeserializer<ImmutableSet<Drug>> {
 
         private final Map<String, Drug> drugsByName;
@@ -307,36 +256,15 @@ public class ClinicalGsonDeserializer {
 
         @Override
         public Treatment deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
-            if (jsonElement.isJsonNull()) {
-                return null;
+            try {
+                return jsonElement.isJsonNull()
+                        ? null
+                        : (Treatment) context.deserialize(jsonElement,
+                                TreatmentType.valueOf(string(jsonElement.getAsJsonObject(), "treatmentType")).treatmentClass());
+            } catch (Exception e) {
+                throw new JsonParseException("Failed to deserialize: " + jsonElement, e);
             }
-            JsonObject jsonObj = jsonElement.getAsJsonObject();
-            Type concreteType = jsonObj.has("therapies")
-                    ? CombinedTherapy.class
-                    : treatmentTypeFromCategoriesJson(jsonObj.getAsJsonArray("categories"));
-            return context.deserialize(jsonElement, concreteType);
         }
-    }
-
-    private static Type treatmentTypeFromCategoriesJson(JsonArray categories) {
-        return categories.asList().stream().map(jsonElement -> {
-            switch (TreatmentCategory.valueOf(jsonElement.getAsString())) {
-                case CHEMOTHERAPY:
-                    return Chemotherapy.class;
-                case HORMONE_THERAPY:
-                    return HormoneTherapy.class;
-                case IMMUNOTHERAPY:
-                    return Immunotherapy.class;
-                case RADIOTHERAPY:
-                    return Radiotherapy.class;
-                case SURGERY:
-                    return SurgicalTreatment.class;
-                case TARGETED_THERAPY:
-                    return TargetedTherapy.class;
-                default:
-                    return null;
-            }
-        }).filter(Objects::nonNull).findAny().orElse(OtherTherapy.class);
     }
 
     private static <T> Stream<T> deserializeJsonCollection(JsonElement jsonElement, JsonDeserializationContext context, Type type) {

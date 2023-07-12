@@ -10,6 +10,7 @@ import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.CurationUtil.fullTrim
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfig
+import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
 import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
@@ -22,6 +23,7 @@ import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
+import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
@@ -34,6 +36,7 @@ import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
 import com.hartwig.actin.clinical.datamodel.Complication
+import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.Dosage
 import com.hartwig.actin.clinical.datamodel.ECG
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion
@@ -55,6 +58,7 @@ import com.hartwig.actin.clinical.datamodel.MedicationStatus
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
+import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
 import com.hartwig.actin.clinical.datamodel.Toxicity
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.clinical.datamodel.TumorDetails
@@ -524,6 +528,25 @@ class CurationModel @VisibleForTesting internal constructor(
             .build()
     }
 
+    fun curateMedicationCypInteractions(medicationName: String): List<CypInteraction> {
+        return find(database.cypInteractionConfigs, medicationName).flatMap { it.interactions }
+    }
+
+    fun annotateWithQTProlongating(medicationName: String): QTProlongatingRisk {
+        val riskConfigs = find(database.qtProlongingConfigs, medicationName)
+        return if (riskConfigs.isEmpty()) {
+            QTProlongatingRisk.NONE
+        } else if (riskConfigs.size > 1) {
+            throw IllegalStateException(
+                "Multiple risk configurations found for one medication name [$medicationName]. " +
+                        "Check the qt_prolongating.tsv for a duplicate"
+            )
+        } else {
+            return riskConfigs.first().status
+        }
+    }
+
+
     private fun lookupMedicationCategories(source: String, medication: String): Set<String> {
         val trimmedMedication = fullTrim(medication)
         val configs: Set<MedicationCategoryConfig> = find(database.medicationCategoryConfigs, trimmedMedication)
@@ -664,7 +687,7 @@ class CurationModel @VisibleForTesting internal constructor(
             val configs: List<CurationConfig> = configsForClass(key)
             for (config in configs) {
                 // TODO: Raise warnings for unused medication dosage once more final
-                if (!evaluated.contains(config.input.lowercase()) && config !is MedicationDosageConfig) {
+                if (!evaluated.contains(config.input.lowercase()) && isNotIgnored(config)) {
                     warnCount++
                     LOGGER.warn(" Curation key '{}' not used for class {}", config.input, key.simpleName)
                 }
@@ -681,6 +704,9 @@ class CurationModel @VisibleForTesting internal constructor(
         }
         LOGGER.info(" {} warnings raised during curation model evaluation", warnCount)
     }
+
+    private fun isNotIgnored(config: CurationConfig) =
+        (config !is MedicationDosageConfig && config !is CypInteractionConfig && config !is QTProlongatingConfig)
 
     fun questionnaireRawEntryMapper(): QuestionnaireRawEntryMapper {
         return questionnaireRawEntryMapper
@@ -750,6 +776,14 @@ class CurationModel @VisibleForTesting internal constructor(
 
             IntoleranceConfig::class.java -> {
                 return database.intoleranceConfigs
+            }
+
+            CypInteractionConfig::class.java -> {
+                return database.cypInteractionConfigs
+            }
+
+            QTProlongatingConfig::class.java -> {
+                return database.qtProlongingConfigs
             }
 
             else -> throw IllegalStateException("Class not found in curation database: $classToLookUp")

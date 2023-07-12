@@ -12,6 +12,7 @@ import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.MedicationStatus
 import com.hartwig.actin.clinical.datamodel.PatientDetails
+import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
 import com.hartwig.actin.clinical.datamodel.Surgery
 import com.hartwig.actin.clinical.datamodel.SurgeryStatus
 import com.hartwig.actin.clinical.datamodel.Toxicity
@@ -21,13 +22,13 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.feed.TestFeedFactory
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
@@ -58,7 +59,6 @@ class ClinicalRecordsFactoryTest {
         assertToxicityEvaluations(record.toxicityEvaluations())
         assertAllergies(record.intolerances())
         assertSurgeries(record.surgeries())
-        assertSurgicalTreatments(record.surgicalTreatments())
         assertBodyWeights(record.bodyWeights())
         assertVitalFunctions(record.vitalFunctions())
         assertBloodTransfusions(record.bloodTransfusions())
@@ -152,15 +152,6 @@ class ClinicalRecordsFactoryTest {
             assertEquals(SurgeryStatus.PLANNED, surgery.status())
         }
 
-        private fun assertSurgicalTreatments(surgicalTreatments: List<TreatmentHistoryEntry>?) {
-            assertNotNull(surgicalTreatments)
-            assertEquals(1, surgicalTreatments!!.size.toLong())
-            val surgery = surgicalTreatments[0].surgeryHistoryDetails()
-            assertNotNull(surgery)
-            assertEquals(LocalDate.of(2015, 10, 10), surgery!!.endDate())
-            assertEquals(SurgeryStatus.PLANNED, surgery.status())
-        }
-
         private fun assertBodyWeights(bodyWeights: List<BodyWeight>) {
             assertEquals(2, bodyWeights.size.toLong())
             val bodyWeight1 = findByDate(bodyWeights, LocalDate.of(2018, 4, 5))
@@ -212,6 +203,8 @@ class ClinicalRecordsFactoryTest {
             assertFalse(medication.dosage().ifNeeded()!!)
             assertEquals(LocalDate.of(2019, 2, 2), medication.startDate())
             assertEquals(LocalDate.of(2019, 4, 4), medication.stopDate())
+            assertThat(medication.cypInteractions()).containsExactly(TestCurationFactory.createTestCypInteration())
+            assertThat(medication.qtProlongatingRisk()).isEqualTo(QTProlongatingRisk.POSSIBLE)
         }
 
         private fun createMinimalTestClinicalRecords(): List<ClinicalRecord> {
@@ -224,7 +217,7 @@ class ClinicalRecordsFactoryTest {
         private fun createProperTestClinicalRecords(): List<ClinicalRecord> {
             return ClinicalRecordsFactory(
                 TestFeedFactory.createProperTestFeedModel(),
-                TestCurationFactory.createProperTestCurationModel()
+                TestCurationFactory.createProperTestCurationModel(),
             ).create()
         }
     }

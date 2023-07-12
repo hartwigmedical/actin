@@ -22,6 +22,7 @@ internal object QuestionnaireCuration {
         OPTION_MAPPING["no indien ja welke"] = false
         OPTION_MAPPING["nee"] = false
         OPTION_MAPPING["neee"] = false
+        OPTION_MAPPING["o"] = false
         OPTION_MAPPING["n.v.t."] = null
         OPTION_MAPPING["n.v.t"] = null
         OPTION_MAPPING["nvt"] = null

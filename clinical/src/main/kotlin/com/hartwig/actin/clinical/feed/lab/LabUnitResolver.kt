@@ -17,6 +17,7 @@ internal object LabUnitResolver {
         CURATION_MAP["% van de leukocyten"] = LabUnit.PERCENTAGE_OF_LEUKOCYTES
         CURATION_MAP["% van de T-cellen"] = LabUnit.PERCENTAGE_OF_T_CELLS
         CURATION_MAP["mmol/mol Kreatinine"] = LabUnit.MILLIMOLES_PER_MOLE
+        CURATION_MAP["g/mol Kreatinine"] = LabUnit.GRAMS_PER_MOLE
         CURATION_MAP["µg/L"] = LabUnit.MICROGRAMS_PER_LITER
         CURATION_MAP["µmol/L"] = LabUnit.MICROMOLES_PER_LITER
         CURATION_MAP["micromol/l"] = LabUnit.MICROMOLES_PER_LITER

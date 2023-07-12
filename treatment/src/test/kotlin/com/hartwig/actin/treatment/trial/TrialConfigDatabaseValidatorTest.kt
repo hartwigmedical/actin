@@ -10,6 +10,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class TrialConfigDatabaseValidatorTest {
+
     @Test
     fun confirmTrialConfigDatabasesAreValid() {
         val validator: TrialConfigDatabaseValidator = createTestValidator()
