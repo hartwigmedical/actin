@@ -52,7 +52,7 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
             creatinine
         )
 
-        var result = evaluateVersusMinValue(cockcroftGault, creatinine.comparator(), minCreatinineClearance)
+        val result = evaluateVersusMinValue(cockcroftGault, creatinine.comparator(), minCreatinineClearance)
         return when {
             result == EvaluationResult.FAIL && weight != null -> EvaluationFactory.recoverableFail(
                 "Cockcroft-Gault is insufficient",
