@@ -1,10 +1,8 @@
 [
   {
     "name": "Capecitabine+Oxaliplatin",
+    "treatmentType": "DRUG_THERAPY",
     "synonyms": [],
-    "categories": [
-      "CHEMOTHERAPY"
-    ],
     "isSystemic": true,
     "drugs": [
       "Capecitabine",

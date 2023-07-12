@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentTypeResolver.isOfType
 import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -109,5 +110,25 @@ class TreatmentTypeResolverTest {
         val geneTherapy: PriorTumorTreatment =
             TreatmentTestFactory.builder().categories(listOf(TreatmentCategory.GENE_THERAPY)).build()
         assertFalse(isOfType(geneTherapy, TreatmentCategory.GENE_THERAPY, "gene therapy"))
+    }
+
+    @Test
+    fun shouldReturnNullForTypeNotConfiguredWhenMatchingAgainstTypeCollection() {
+        val treatment = TreatmentTestFactory.builder().addCategories(TreatmentCategory.CHEMOTHERAPY).build()
+        assertThat(TreatmentTypeResolver.matchesTypeFromCollection(treatment, TreatmentCategory.CHEMOTHERAPY, emptyList())).isNull()
+    }
+
+    @Test
+    fun shouldReturnTrueForTypeThatMatchesTypeCollection() {
+        val treatment = TreatmentTestFactory.builder().addCategories(TreatmentCategory.CHEMOTHERAPY).chemoType("platinum").build()
+        assertThat(TreatmentTypeResolver.matchesTypeFromCollection(treatment, TreatmentCategory.CHEMOTHERAPY, listOf("test", "platinum")))
+            .isTrue
+    }
+
+    @Test
+    fun shouldReturnFalseForTypeThatDoesNotMatchTypeCollection() {
+        val treatment = TreatmentTestFactory.builder().addCategories(TreatmentCategory.CHEMOTHERAPY).chemoType("platinum").build()
+        assertThat(TreatmentTypeResolver.matchesTypeFromCollection(treatment, TreatmentCategory.CHEMOTHERAPY, listOf("test", "another")))
+            .isFalse
     }
 }

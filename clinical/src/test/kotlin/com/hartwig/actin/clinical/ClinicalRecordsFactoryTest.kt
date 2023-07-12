@@ -2,14 +2,44 @@ package com.hartwig.actin.clinical
 
 import com.google.common.collect.*
 import com.hartwig.actin.clinical.ClinicalRecordsFactory.Companion.toPatientId
-import com.hartwig.actin.clinical.curation.*
-import com.hartwig.actin.clinical.datamodel.*
-import com.hartwig.actin.clinical.datamodel.treatment.history.*
-import com.hartwig.actin.clinical.feed.*
-import junit.framework.TestCase.*
-import org.assertj.core.api.Assertions.*
-import org.junit.*
-import java.time.*
+import com.hartwig.actin.clinical.curation.ANATOMICAL
+import com.hartwig.actin.clinical.curation.ATC_CODE
+import com.hartwig.actin.clinical.curation.CHEMICAL
+import com.hartwig.actin.clinical.curation.CHEMICAL_SUBSTANCE
+import com.hartwig.actin.clinical.curation.PHARMACOLOGICAL
+import com.hartwig.actin.clinical.curation.THERAPEUTIC
+import com.hartwig.actin.clinical.curation.TestAtcFactory
+import com.hartwig.actin.clinical.curation.TestCurationFactory
+import com.hartwig.actin.clinical.datamodel.BloodTransfusion
+import com.hartwig.actin.clinical.datamodel.BodyWeight
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.clinical.datamodel.ClinicalStatus
+import com.hartwig.actin.clinical.datamodel.Gender
+import com.hartwig.actin.clinical.datamodel.ImmutableAtcClassification
+import com.hartwig.actin.clinical.datamodel.ImmutableAtcLevel
+import com.hartwig.actin.clinical.datamodel.Intolerance
+import com.hartwig.actin.clinical.datamodel.Medication
+import com.hartwig.actin.clinical.datamodel.MedicationStatus
+import com.hartwig.actin.clinical.datamodel.PatientDetails
+import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
+import com.hartwig.actin.clinical.datamodel.Surgery
+import com.hartwig.actin.clinical.datamodel.SurgeryStatus
+import com.hartwig.actin.clinical.datamodel.Toxicity
+import com.hartwig.actin.clinical.datamodel.ToxicityEvaluation
+import com.hartwig.actin.clinical.datamodel.ToxicitySource
+import com.hartwig.actin.clinical.datamodel.TumorDetails
+import com.hartwig.actin.clinical.datamodel.TumorStage
+import com.hartwig.actin.clinical.datamodel.VitalFunction
+import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
+import com.hartwig.actin.clinical.feed.TestFeedFactory
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertFalse
+import junit.framework.TestCase.assertNotNull
+import junit.framework.TestCase.assertNull
+import junit.framework.TestCase.assertTrue
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Test
+import java.time.LocalDate
 
 class ClinicalRecordsFactoryTest {
     @Test
@@ -38,7 +68,6 @@ class ClinicalRecordsFactoryTest {
         assertToxicityEvaluations(record.toxicityEvaluations())
         assertAllergies(record.intolerances())
         assertSurgeries(record.surgeries())
-        assertSurgicalTreatments(record.surgicalTreatments())
         assertBodyWeights(record.bodyWeights())
         assertVitalFunctions(record.vitalFunctions())
         assertBloodTransfusions(record.bloodTransfusions())
@@ -129,15 +158,6 @@ class ClinicalRecordsFactoryTest {
             assertEquals(1, surgeries.size.toLong())
             val surgery = surgeries[0]
             assertEquals(LocalDate.of(2015, 10, 10), surgery.endDate())
-            assertEquals(SurgeryStatus.PLANNED, surgery.status())
-        }
-
-        private fun assertSurgicalTreatments(surgicalTreatments: List<TreatmentHistoryEntry>?) {
-            assertNotNull(surgicalTreatments)
-            assertEquals(1, surgicalTreatments!!.size.toLong())
-            val surgery = surgicalTreatments[0].surgeryHistoryDetails()
-            assertNotNull(surgery)
-            assertEquals(LocalDate.of(2015, 10, 10), surgery!!.endDate())
             assertEquals(SurgeryStatus.PLANNED, surgery.status())
         }
 

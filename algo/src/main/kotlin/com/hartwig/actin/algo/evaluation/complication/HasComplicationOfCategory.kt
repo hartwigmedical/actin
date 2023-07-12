@@ -4,7 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
 
 class HasComplicationOfCategory internal constructor(private val categoryToFind: String) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -15,13 +15,13 @@ class HasComplicationOfCategory internal constructor(private val categoryToFind:
         if (complicationMatches.isNotEmpty()) {
             return if (complicationMatches.size == 1 && complicationMatches.iterator().next().equals(categoryToFind, ignoreCase = true)) {
                 EvaluationFactory.pass(
-                    "Patient has complication " + concat(complicationMatches),
-                    "Present complication(s): " + concat(complicationMatches)
+                    "Patient has complication " + concatLowercaseWithAnd(complicationMatches),
+                    "Present complication(s): " + concatLowercaseWithAnd(complicationMatches)
                 )
             } else {
                 EvaluationFactory.pass(
-                    "Patient has complication " + concat(complicationMatches) + " of category " + categoryToFind,
-                    "Present complication(s): " + concat(complicationMatches)
+                    "Patient has complication " + concatLowercaseWithAnd(complicationMatches) + " of category " + categoryToFind,
+                    "Present complication(s): " + concatLowercaseWithAnd(complicationMatches)
                 )
             }
         }
@@ -38,7 +38,7 @@ class HasComplicationOfCategory internal constructor(private val categoryToFind:
         private fun undetermined(): Evaluation {
             return EvaluationFactory.recoverableUndetermined(
                 "Patient has complications but undetermined which category of complications",
-                "Complications present, but unknown type"
+                "Complications of unknown type present"
             )
         }
 

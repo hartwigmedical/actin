@@ -47,7 +47,7 @@ class HasHadAnySurgeryAfterSpecificDate(private val minDate: LocalDate, private 
                 "Surgery after " + date(minDate)
             )
         } else if (hasPlannedSurgeryAfterEval) {
-            return EvaluationFactory.warn(
+            return EvaluationFactory.pass(
                 "Patient has surgery planned after " + date(minDate),
                 "Patient has surgery planned"
             )

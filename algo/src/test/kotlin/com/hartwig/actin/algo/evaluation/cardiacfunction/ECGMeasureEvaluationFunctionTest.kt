@@ -8,10 +8,11 @@ import com.hartwig.actin.clinical.datamodel.ImmutableECGMeasure
 import org.junit.Test
 
 class ECGMeasureEvaluationFunctionTest {
+
     @Test
-    fun evaluatesToUndeterminedWhenNoECGPresent() {
+    fun performNoEvaluationWhenNoECGPresent() {
         assertEvaluation(
-            EvaluationResult.UNDETERMINED,
+            EvaluationResult.NOT_EVALUATED,
             withThresholdCriteria(ThresholdCriteria.MAXIMUM).evaluate(
                 CardiacFunctionTestFactory.withECG(
                     null

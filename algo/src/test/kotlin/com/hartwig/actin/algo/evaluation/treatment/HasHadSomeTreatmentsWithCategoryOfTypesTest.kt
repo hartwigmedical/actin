@@ -51,4 +51,11 @@ class HasHadSomeTreatmentsWithCategoryOfTypesTest {
             )
         )
     }
+
+    @Test
+    fun shouldNotCountTrialMatchesWhenLookingForUnlikelyTrialCategories() {
+        val function = HasHadSomeTreatmentsWithCategoryOfTypes(TreatmentCategory.SURGERY, emptyList(), 1)
+        val trial = TreatmentTestFactory.builder().addCategories(TreatmentCategory.TRIAL).build()
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(listOf(trial, trial))))
+    }
 }
