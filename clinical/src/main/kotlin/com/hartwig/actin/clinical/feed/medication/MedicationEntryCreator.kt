@@ -1,10 +1,12 @@
 package com.hartwig.actin.clinical.feed.medication
 
-import com.google.common.annotations.*
-import com.hartwig.actin.clinical.*
-import com.hartwig.actin.clinical.datamodel.*
-import com.hartwig.actin.clinical.feed.*
-import org.apache.logging.log4j.*
+import com.google.common.annotations.VisibleForTesting
+import com.hartwig.actin.clinical.AtcModel
+import com.hartwig.actin.clinical.datamodel.AtcLevel
+import com.hartwig.actin.clinical.feed.FeedEntryCreator
+import com.hartwig.actin.clinical.feed.FeedLine
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 class MedicationEntryCreator(private val atcModel: AtcModel) : FeedEntryCreator<MedicationEntry> {
 
