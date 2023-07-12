@@ -13,6 +13,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus
+import com.hartwig.actin.clinical.datamodel.ImmutableDosage
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication
 import com.hartwig.actin.clinical.datamodel.ImmutableObservedToxicity
@@ -36,20 +37,17 @@ import com.hartwig.actin.clinical.datamodel.ToxicityEvaluation
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.VitalFunction
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableSurgicalTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableSurgeryHistoryDetails
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.feed.FeedModel
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry
 import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry
 import com.hartwig.actin.clinical.feed.lab.LabExtraction
+import com.hartwig.actin.clinical.feed.medication.MedicationEntry
 import com.hartwig.actin.clinical.feed.patient.PatientEntry
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction
-import com.hartwig.actin.clinical.feed.surgery.SurgeryEntry
 import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry
 import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionExtraction
 import com.hartwig.actin.clinical.sort.ClinicalRecordComparator
@@ -57,26 +55,21 @@ import com.hartwig.actin.clinical.sort.LabValueDescendingDateComparator
 import com.hartwig.actin.clinical.sort.MedicationByNameComparator
 import org.apache.logging.log4j.LogManager
 
-class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
-    private val feed: FeedModel
-    private val curation: CurationModel
 
-    init {
-        this.feed = feed
-        this.curation = curation
-    }
+class ClinicalRecordsFactory(private val feed: FeedModel, private val curation: CurationModel) {
 
     fun create(): List<ClinicalRecord> {
-        val records: MutableList<ClinicalRecord> = Lists.newArrayList<ClinicalRecord>()
         val processedPatientIds: MutableSet<String> = HashSet()
-        val extraction = QuestionnaireExtraction(curation.questionnaireRawEntryMapper())
+
         LOGGER.info("Creating clinical model")
-        for (subject in feed.subjects()) {
+        val records = feed.subjects().map { subject ->
             val patientId = toPatientId(subject)
             check(!processedPatientIds.contains(patientId)) { "Cannot create clinical records. Duplicate patientId: $patientId" }
             processedPatientIds.add(patientId)
-            LOGGER.info(" Extracting data for patient {}", patientId)
-            val questionnaire: Questionnaire? = extraction.extract(feed.latestQuestionnaireEntry(subject))
+            LOGGER.info(" Extracting and curating data for patient {}", patientId)
+
+            val questionnaire = feed.latestQuestionnaireEntry(subject)?.let { QuestionnaireExtraction.extract(it) }
+
             val extractedToxicities = extractToxicities(subject, questionnaire)
             val toxicityEvaluations: List<ToxicityEvaluation> = extractedToxicities
                 .map { toxicity: Toxicity ->
@@ -94,33 +87,33 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
                         .source(toxicity.source())
                         .build()
                 }
-            records.add(
-                ImmutableClinicalRecord.builder()
-                    .patientId(patientId)
-                    .patient(extractPatientDetails(subject, questionnaire))
-                    .tumor(extractTumorDetails(questionnaire))
-                    .clinicalStatus(extractClinicalStatus(questionnaire))
-                    .priorTumorTreatments(extractPriorTumorTreatments(questionnaire))
-                    .priorSecondPrimaries(extractPriorSecondPrimaries(questionnaire))
-                    .priorOtherConditions(extractPriorOtherConditions(questionnaire))
-                    .priorMolecularTests(extractPriorMolecularTests(questionnaire))
-                    .complications(extractComplications(questionnaire))
-                    .labValues(extractLabValues(subject))
-                    .toxicities(extractedToxicities)
-                    .toxicityEvaluations(toxicityEvaluations)
-                    .intolerances(extractIntolerances(subject))
-                    .surgeries(extractSurgeries(subject))
-                    .surgicalTreatments(extractSurgicalTreatments(subject))
-                    .bodyWeights(extractBodyWeights(subject))
-                    .vitalFunctions(extractVitalFunctions(subject))
-                    .bloodTransfusions(extractBloodTransfusions(subject))
-                    .medications(extractMedications(subject))
-                    .build()
-            )
-        }
-        records.sortWith(ClinicalRecordComparator())
+
+            ImmutableClinicalRecord.builder()
+                .patientId(patientId)
+                .patient(extractPatientDetails(subject, questionnaire))
+                .tumor(extractTumorDetails(questionnaire))
+                .clinicalStatus(extractClinicalStatus(questionnaire))
+                .treatmentHistory(extractTreatmentHistory(questionnaire))
+                .priorTumorTreatments(extractPriorTumorTreatments(questionnaire))
+                .priorSecondPrimaries(extractPriorSecondPrimaries(questionnaire))
+                .priorOtherConditions(extractPriorOtherConditions(questionnaire))
+                .priorMolecularTests(extractPriorMolecularTests(questionnaire))
+                .complications(extractComplications(questionnaire))
+                .labValues(extractLabValues(subject))
+                .toxicities(extractedToxicities)
+                .toxicityEvaluations(toxicityEvaluations)
+                .intolerances(extractIntolerances(subject))
+                .surgeries(extractSurgeries(subject))
+                .bodyWeights(extractBodyWeights(subject))
+                .vitalFunctions(extractVitalFunctions(subject))
+                .bloodTransfusions(extractBloodTransfusions(subject))
+                .medications(extractMedications(subject))
+                .build()
+        }.sortedWith(ClinicalRecordComparator())
+
         LOGGER.info("Evaluating curation database")
         curation.evaluate()
+
         return records
     }
 
@@ -139,6 +132,7 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
         if (questionnaire == null) {
             return ImmutableTumorDetails.builder().build()
         }
+
         val biopsyLocation: String? = questionnaire.biopsyLocation
         val otherLesions: List<String>? = questionnaire.otherLesions
         val curatedOtherLesions: List<String>? = curation.curateOtherLesions(otherLesions)
@@ -155,6 +149,7 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
             .hasLiverLesions(questionnaire.hasLiverLesions)
             .otherLesions(curatedOtherLesions)
             .build()
+
         return curation.overrideKnownLesionLocations(tumorDetails, biopsyLocation, otherLesions)
     }
 
@@ -166,6 +161,18 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
             .lvef(curation.determineLVEF(questionnaire.nonOncologicalHistory))
             .hasComplications(extractComplications(questionnaire)?.isNotEmpty())
             .build()
+    }
+
+    private fun extractTreatmentHistory(questionnaire: Questionnaire?): List<TreatmentHistoryEntry> {
+        if (questionnaire == null) {
+            return emptyList()
+        }
+        return listOfNotNull(
+            questionnaire.treatmentHistoryCurrentTumor,
+            questionnaire.otherOncologicalHistory
+        )
+            .flatten()
+            .flatMap { curation.curateTreatmentHistoryEntry(it) }
     }
 
     private fun extractPriorTumorTreatments(questionnaire: Questionnaire?): List<PriorTumorTreatment> {
@@ -249,20 +256,6 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
             .map { ImmutableSurgery.builder().endDate(it.periodEnd).status(resolveSurgeryStatus(it.encounterStatus)).build() }
     }
 
-    private fun extractSurgicalTreatments(subject: String): List<TreatmentHistoryEntry> {
-        return feed.uniqueSurgeryEntries(subject).map { surgeryEntry: SurgeryEntry ->
-            ImmutableTreatmentHistoryEntry.builder()
-                .treatments(setOf(ImmutableSurgicalTreatment.builder().name("extracted surgery").build()))
-                .surgeryHistoryDetails(
-                    ImmutableSurgeryHistoryDetails.builder()
-                        .endDate(surgeryEntry.periodEnd)
-                        .status(resolveSurgeryStatus(surgeryEntry.encounterStatus))
-                        .build()
-                )
-                .build()
-        }
-    }
-
     private fun extractBodyWeights(subject: String): List<BodyWeight> {
         return feed.uniqueBodyWeightEntries(subject).map { entry: BodyWeightEntry ->
             ImmutableBodyWeight.builder()
@@ -298,11 +291,22 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
     private fun extractMedications(subject: String): List<Medication> {
         val medications: MutableList<Medication> = Lists.newArrayList()
         for (entry in feed.medicationEntries(subject)) {
-            val dosageCurated: Medication? = curation.curateMedicationDosage(entry.dosageInstructionText)
-            val builder: ImmutableMedication.Builder = ImmutableMedication.builder()
-            if (dosageCurated != null) {
-                builder.from(dosageCurated)
-            }
+            val administrationRoute = curation.translateAdministrationRoute(entry.dosageInstructionRouteDisplay)
+            val dosage =
+                if (dosageRequiresCuration(administrationRoute, entry))
+                    curation.curateMedicationDosage(entry.dosageInstructionText)
+                else
+                    ImmutableDosage.builder()
+                        .dosageMin(entry.dosageInstructionDoseQuantityValue)
+                        .dosageMax(correctDosageMax(entry))
+                        .dosageUnit(curation.translateDosageUnit(entry.dosageInstructionDoseQuantityUnit))
+                        .frequency(entry.dosageInstructionFrequencyValue)
+                        .frequencyUnit(entry.dosageInstructionFrequencyUnit)
+                        .periodBetweenValue(entry.dosageInstructionPeriodBetweenDosagesValue)
+                        .periodBetweenUnit(curation.curatePeriodBetweenUnit(entry.dosageInstructionPeriodBetweenDosagesUnit))
+                        .ifNeeded(extractIfNeeded(entry))
+                        .build()
+            val builder = ImmutableMedication.builder().dosage(dosage ?: ImmutableDosage.builder().build())
             val name: String? = CurationUtil.capitalizeFirstLetterOnly(entry.code5ATCDisplay).ifEmpty {
                 curation.curateMedicationName(CurationUtil.capitalizeFirstLetterOnly(entry.codeText))
             }
@@ -314,9 +318,11 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
                     .therapeuticSubgroupAtc(entry.therapeuticSubgroupDisplay)
                     .anatomicalMainGroupAtc(entry.anatomicalMainGroupDisplay)
                     .status(curation.curateMedicationStatus(entry.status))
-                    .administrationRoute(curation.translateAdministrationRoute(entry.dosageInstructionRouteDisplay))
+                    .administrationRoute(administrationRoute)
                     .startDate(entry.periodOfUseValuePeriodStart)
                     .stopDate(entry.periodOfUseValuePeriodEnd)
+                    .addAllCypInteractions(curation.curateMedicationCypInteractions(name))
+                    .qtProlongatingRisk(curation.annotateWithQTProlongating(name))
                     .build()
                 medications.add(curation.annotateWithMedicationCategory(medication))
             }
@@ -324,6 +330,23 @@ class ClinicalRecordsFactory(feed: FeedModel, curation: CurationModel) {
         medications.sortWith(MedicationByNameComparator())
         return medications
     }
+
+    private fun extractIfNeeded(entry: MedicationEntry) =
+        entry.dosageInstructionAsNeededDisplay.trim().lowercase() == "zo nodig"
+
+    private fun correctDosageMax(entry: MedicationEntry): Double? {
+        return if (entry.dosageInstructionMaxDosePerAdministration == 0.0) {
+            entry.dosageInstructionDoseQuantityValue
+        } else {
+            entry.dosageInstructionMaxDosePerAdministration
+        }
+    }
+
+    private fun dosageRequiresCuration(administrationRoute: String?, entry: MedicationEntry) =
+        administrationRoute?.lowercase() == "oral" && (entry.dosageInstructionDoseQuantityValue == 0.0 ||
+                entry.dosageInstructionDoseQuantityUnit.isEmpty() ||
+                entry.dosageInstructionFrequencyValue == 0.0 ||
+                entry.dosageInstructionFrequencyUnit.isEmpty())
 
     companion object {
         private val LOGGER = LogManager.getLogger(ClinicalRecordsFactory::class.java)

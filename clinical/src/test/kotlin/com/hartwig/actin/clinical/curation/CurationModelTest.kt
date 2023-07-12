@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.curation
 import com.google.common.collect.Lists
 import com.google.common.collect.Sets
 import com.google.common.io.Resources
+import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
 import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.datamodel.ECG
@@ -42,7 +43,12 @@ class CurationModelTest {
 
     @Test
     fun shouldBeAbleToCreateFromCurationDirectory() {
-        assertNotNull(CurationModel.create(CURATION_DIRECTORY, TestDoidModelFactory.createMinimalTestDoidModel()))
+        assertNotNull(
+            CurationModel.create(
+                CURATION_DIRECTORY, TestDoidModelFactory.createMinimalTestDoidModel(),
+                TreatmentDatabase(emptyMap(), emptyMap())
+            )
+        )
     }
 
     @Test
@@ -139,6 +145,16 @@ class CurationModelTest {
 
         val bone: TumorDetails = model.overrideKnownLesionLocations(base, null, Lists.newArrayList("Bone"))
         assertEquals(true, bone.hasBoneLesions())
+
+        model.evaluate()
+    }
+
+    @Test
+    fun shouldCurateTreatmentHistory() {
+        val treatmentHistory = listOf("Cis 2020 2021", "no systemic treatment", "cannot curate").flatMap(model::curateTreatmentHistoryEntry)
+        assertEquals(2, treatmentHistory.size.toLong())
+        assertTrue(treatmentHistory.any { 2020 == it.startYear() })
+        assertTrue(treatmentHistory.any { 2021 == it.startYear() })
 
         model.evaluate()
     }
@@ -247,6 +263,13 @@ class CurationModelTest {
     }
 
     @Test
+    fun shouldInterpretPeriodBetweenUnit() {
+        assertNull(model.curatePeriodBetweenUnit(null))
+        assertNull(model.curatePeriodBetweenUnit(Strings.EMPTY))
+        assertEquals("months", model.curatePeriodBetweenUnit("mo"))
+    }
+
+    @Test
     fun shouldDetermineLVEF() {
         assertNull(model.determineLVEF(null))
         assertNull(model.determineLVEF(listOf("not an LVEF")))
@@ -289,13 +312,15 @@ class CurationModelTest {
 
     @Test
     fun shouldCurateMedicationDosage() {
-        val medication = model.curateMedicationDosage("50-60 mg per day")
+        val medication = model.curateMedicationDosage("once per day 50-60 mg every month")
         assertNotNull(medication)
         assertDoubleEquals(50.0, medication!!.dosageMin())
         assertDoubleEquals(60.0, medication.dosageMax())
         assertEquals("mg", medication.dosageUnit())
         assertDoubleEquals(1.0, medication.frequency())
         assertEquals("day", medication.frequencyUnit())
+        assertEquals(1.0, medication.periodBetweenValue())
+        assertEquals("mo", medication.periodBetweenUnit())
         assertEquals(false, medication.ifNeeded())
 
         assertNull(model.curateMedicationDosage("does not exist"))
@@ -424,6 +449,13 @@ class CurationModelTest {
         assertEquals("does not exist", notExistingTranslated.product())
 
         model.evaluate()
+    }
+
+    @Test
+    fun canTranslateDosageUnit() {
+        assertNull(model.translateDosageUnit(null))
+        assertNull(model.translateDosageUnit(Strings.EMPTY))
+        assertEquals("piece", model.translateDosageUnit("stuk"))
     }
 
     private fun assertDoubleEquals(expected: Double, actual: Double?) {

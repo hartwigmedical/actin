@@ -6,7 +6,8 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
 //TODO: Implement according to README
-class HasHadFirstLineTreatmentCategoryOfTypes internal constructor() : EvaluationFunction {
+class HasHadFirstLineTreatmentCategoryOfTypes() : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         return EvaluationFactory.undetermined(
             "Currently undetermined if certain treatment was given as first-line treatment",

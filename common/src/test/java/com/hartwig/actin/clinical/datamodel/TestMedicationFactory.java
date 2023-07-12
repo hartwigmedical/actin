@@ -16,6 +16,8 @@ public final class TestMedicationFactory {
                 .chemicalSubgroupAtc(Strings.EMPTY)
                 .pharmacologicalSubgroupAtc(Strings.EMPTY)
                 .therapeuticSubgroupAtc(Strings.EMPTY)
-                .anatomicalMainGroupAtc(Strings.EMPTY);
+                .anatomicalMainGroupAtc(Strings.EMPTY)
+                .qtProlongatingRisk(QTProlongatingRisk.NONE)
+                .dosage(ImmutableDosage.builder().build());
     }
 }

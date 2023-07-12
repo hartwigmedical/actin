@@ -13,6 +13,7 @@ data class ClinicalIngestionConfig(
     val feedDirectory: String,
     val curationDirectory: String,
     val doidJson: String,
+    val treatmentDirectory: String,
     val outputDirectory: String
 ) {
 
@@ -21,6 +22,7 @@ data class ClinicalIngestionConfig(
         private const val FEED_DIRECTORY = "feed_directory"
         private const val CURATION_DIRECTORY = "curation_directory"
         private const val DOID_JSON = "doid_json"
+        private const val TREATMENT_DIRECTORY = "treatment_directory"
         private const val OUTPUT_DIRECTORY = "output_directory"
         private const val LOG_DEBUG = "log_debug"
 
@@ -29,6 +31,7 @@ data class ClinicalIngestionConfig(
             options.addOption(FEED_DIRECTORY, true, "Directory containing the clinical feed data")
             options.addOption(CURATION_DIRECTORY, true, "Directory containing the clinical curation config data")
             options.addOption(DOID_JSON, true, "Path to JSON file containing the full DOID tree.")
+            options.addOption(TREATMENT_DIRECTORY, true, "Directory containing the treatment data")
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where clinical data output will be written to")
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
             return options
@@ -44,6 +47,7 @@ data class ClinicalIngestionConfig(
                 feedDirectory = ApplicationConfig.nonOptionalDir(cmd, FEED_DIRECTORY),
                 curationDirectory = ApplicationConfig.nonOptionalDir(cmd, CURATION_DIRECTORY),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
+                treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY)
             )
         }

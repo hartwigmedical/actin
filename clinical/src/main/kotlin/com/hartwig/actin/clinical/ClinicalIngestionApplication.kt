@@ -1,6 +1,9 @@
 package com.hartwig.actin.clinical
 
+import com.hartwig.actin.TreatmentDatabaseFactory
+import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
 import com.hartwig.actin.clinical.curation.CurationModel
+import com.hartwig.actin.clinical.feed.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.FeedModel
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.DoidModelFactory
@@ -22,12 +25,25 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size)
 
-        LOGGER.info("Creating clinical feed model from directory {}", config.feedDirectory)
-        val feedModel: FeedModel = FeedModel.fromFeedDirectory(config.feedDirectory)
+        val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
 
         LOGGER.info("Creating clinical curation model from directory {}", config.curationDirectory)
         val curationModel: CurationModel =
-            CurationModel.create(config.curationDirectory, DoidModelFactory.createFromDoidEntry(doidEntry))
+            CurationModel.create(
+                config.curationDirectory, DoidModelFactory.createFromDoidEntry(doidEntry),
+                treatmentDatabase
+            )
+
+        LOGGER.info("Creating clinical feed model from directory {}", config.feedDirectory)
+        val clinicalFeed = ClinicalFeedReader.read(config.feedDirectory)
+        val feedModel = FeedModel(
+            clinicalFeed.copy(
+                questionnaireEntries = QuestionnaireCorrection.correctQuestionnaires(
+                    clinicalFeed.questionnaireEntries, curationModel.questionnaireRawEntryMapper()
+                )
+            )
+        )
+
         val records = ClinicalRecordsFactory(feedModel, curationModel).create()
         val outputDirectory = config.outputDirectory
         LOGGER.info("Writing {} clinical records to {}", records.size, outputDirectory)

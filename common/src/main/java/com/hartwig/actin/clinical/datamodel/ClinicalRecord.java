@@ -25,7 +25,7 @@ public abstract class ClinicalRecord {
     @NotNull
     public abstract ClinicalStatus clinicalStatus();
 
-    @Nullable
+    @NotNull
     public abstract List<TreatmentHistoryEntry> treatmentHistory();
 
     @NotNull
@@ -54,9 +54,6 @@ public abstract class ClinicalRecord {
 
     @NotNull
     public abstract List<Intolerance> intolerances();
-
-    @Nullable
-    public abstract List<TreatmentHistoryEntry> surgicalTreatments();
 
     @NotNull
     public abstract List<Surgery> surgeries();

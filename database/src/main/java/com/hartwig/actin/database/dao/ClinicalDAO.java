@@ -14,11 +14,16 @@ import static com.hartwig.actin.database.Tables.PRIORSECONDPRIMARY;
 import static com.hartwig.actin.database.Tables.PRIORTUMORTREATMENT;
 import static com.hartwig.actin.database.Tables.SURGERY;
 import static com.hartwig.actin.database.Tables.TOXICITY;
+import static com.hartwig.actin.database.Tables.TREATMENTHISTORYENTRY;
 import static com.hartwig.actin.database.Tables.TUMOR;
 import static com.hartwig.actin.database.Tables.VITALFUNCTION;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
@@ -31,17 +36,27 @@ import com.hartwig.actin.clinical.datamodel.InfectionStatus;
 import com.hartwig.actin.clinical.datamodel.Intolerance;
 import com.hartwig.actin.clinical.datamodel.LabValue;
 import com.hartwig.actin.clinical.datamodel.Medication;
+import com.hartwig.actin.clinical.datamodel.ObservedToxicity;
 import com.hartwig.actin.clinical.datamodel.PatientDetails;
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.Surgery;
 import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
+import com.hartwig.actin.clinical.datamodel.treatment.DrugClass;
+import com.hartwig.actin.clinical.datamodel.treatment.DrugTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
+import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
+import com.hartwig.actin.clinical.datamodel.treatment.history.TherapyHistoryDetails;
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
+import com.hartwig.actin.database.tables.records.TreatmenthistoryentryRecord;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -61,6 +76,7 @@ class ClinicalDAO {
         context.truncate(PATIENT).execute();
         context.truncate(TUMOR).execute();
         context.truncate(CLINICALSTATUS).execute();
+        context.truncate(TREATMENTHISTORYENTRY).execute();
         context.truncate(PRIORTUMORTREATMENT).execute();
         context.truncate(PRIORSECONDPRIMARY).execute();
         context.truncate(PRIOROTHERCONDITION).execute();
@@ -83,6 +99,7 @@ class ClinicalDAO {
         writePatientDetails(patientId, record.patient());
         writeTumorDetails(patientId, record.tumor());
         writeClinicalStatus(patientId, record.clinicalStatus());
+        writeTreatmentHistoryEntries(patientId, record.treatmentHistory());
         writePriorTumorTreatments(patientId, record.priorTumorTreatments());
         writePriorSecondPrimaries(patientId, record.priorSecondPrimaries());
         writePriorOtherConditions(patientId, record.priorOtherConditions());
@@ -145,15 +162,15 @@ class ClinicalDAO {
                         tumor.primaryTumorExtraDetails(),
                         DataUtil.concat(tumor.doids()),
                         stage != null ? stage.display() : null,
-                        DataUtil.toByte(tumor.hasMeasurableDisease()),
-                        DataUtil.toByte(tumor.hasBrainLesions()),
-                        DataUtil.toByte(tumor.hasActiveBrainLesions()),
-                        DataUtil.toByte(tumor.hasCnsLesions()),
-                        DataUtil.toByte(tumor.hasActiveCnsLesions()),
-                        DataUtil.toByte(tumor.hasBoneLesions()),
-                        DataUtil.toByte(tumor.hasLiverLesions()),
-                        DataUtil.toByte(tumor.hasLungLesions()),
-                        DataUtil.toByte(tumor.hasLymphNodeLesions()),
+                        tumor.hasMeasurableDisease(),
+                        tumor.hasBrainLesions(),
+                        tumor.hasActiveBrainLesions(),
+                        tumor.hasCnsLesions(),
+                        tumor.hasActiveCnsLesions(),
+                        tumor.hasBoneLesions(),
+                        tumor.hasLiverLesions(),
+                        tumor.hasLungLesions(),
+                        tumor.hasLymphNodeLesions(),
                         DataUtil.concat(tumor.otherLesions()),
                         tumor.biopsyLocation())
                 .execute();
@@ -179,17 +196,79 @@ class ClinicalDAO {
                         CLINICALSTATUS.HASCOMPLICATIONS)
                 .values(patientId,
                         clinicalStatus.who(),
-                        DataUtil.toByte(infectionStatus != null ? infectionStatus.hasActiveInfection() : null),
+                        infectionStatus != null ? infectionStatus.hasActiveInfection() : null,
                         infectionStatus != null ? infectionStatus.description() : null,
-                        DataUtil.toByte(ecg.map(ECG::hasSigAberrationLatestECG).orElse(null)),
+                        ecg.map(ECG::hasSigAberrationLatestECG).orElse(null),
                         ecg.map(ECG::aberrationDescription).orElse(null),
                         qtcfMeasure.map(ECGMeasure::value).orElse(null),
                         qtcfMeasure.map(ECGMeasure::unit).orElse(null),
                         jtcMeasure.map(ECGMeasure::value).orElse(null),
                         jtcMeasure.map(ECGMeasure::unit).orElse(null),
                         clinicalStatus.lvef(),
-                        DataUtil.toByte(clinicalStatus.hasComplications()))
-                .execute();
+                        clinicalStatus.hasComplications()).execute();
+    }
+
+    private void writeTreatmentHistoryEntries(@NotNull String patientId, @NotNull List<TreatmentHistoryEntry> treatmentHistoryEntries) {
+        List<TreatmenthistoryentryRecord> records = treatmentHistoryEntries.stream()
+                .flatMap(multiEntry -> multiEntry.treatments()
+                        .stream()
+                        .map(treatment -> ImmutableTreatmentHistoryEntry.copyOf(multiEntry).withTreatments(treatment)))
+                .map(entry -> {
+                    Treatment treatment = entry.treatments().iterator().next();
+                    String intentString = (entry.intents() == null) ? "" : DataUtil.concatObjects(entry.intents());
+
+                    Map<String, Object> valueMap = new HashMap<>();
+                    valueMap.put("patientId", patientId);
+                    valueMap.put("name", treatment.name());
+                    valueMap.put("startYear", entry.startYear());
+                    valueMap.put("startMonth", entry.startMonth());
+                    valueMap.put("intents", intentString);
+                    valueMap.put("isTrial", entry.isTrial());
+                    valueMap.put("trialAcronym", entry.trialAcronym());
+                    valueMap.put("categories", TreatmentCategoryResolver.toStringList(treatment.categories()));
+                    valueMap.put("synonyms", DataUtil.concat(treatment.synonyms()));
+                    valueMap.put("isSystemic", treatment.isSystemic());
+
+                    if (treatment instanceof Therapy) {
+                        valueMap.put("drugs",
+                                DataUtil.concatStream(((Therapy) treatment).drugs()
+                                        .stream()
+                                        .map(drug -> String.format("%s (%s)",
+                                                drug.name(),
+                                                drug.drugClasses().stream().map(DrugClass::toString).collect(Collectors.joining(", "))))));
+                        valueMap.put("maxCycles", ((DrugTherapy) treatment).maxCycles());
+
+                        if (treatment instanceof Radiotherapy) {
+                            valueMap.put("isInternal", ((Radiotherapy) treatment).isInternal());
+                            valueMap.put("radioType", ((Radiotherapy) treatment).radioType());
+                        }
+                    }
+                    TherapyHistoryDetails therapyHistoryDetails = entry.therapyHistoryDetails();
+                    if (therapyHistoryDetails != null) {
+                        valueMap.put("stopYear", therapyHistoryDetails.stopYear());
+                        valueMap.put("stopMonth", therapyHistoryDetails.stopMonth());
+                        valueMap.put("ongoingAsOf", therapyHistoryDetails.ongoingAsOf());
+                        valueMap.put("cycles", therapyHistoryDetails.cycles());
+                        valueMap.put("bestResponse", therapyHistoryDetails.bestResponse());
+                        valueMap.put("stopReason", therapyHistoryDetails.stopReason());
+                        valueMap.put("stopReasonDetail", therapyHistoryDetails.stopReasonDetail());
+                        Set<ObservedToxicity> toxicities = therapyHistoryDetails.toxicities();
+                        valueMap.put("toxicities",
+                                (toxicities == null)
+                                        ? null
+                                        : DataUtil.concatStream(toxicities.stream()
+                                                .map(tox -> String.format("%s grade %d (%s)",
+                                                        tox.name(),
+                                                        tox.grade(),
+                                                        DataUtil.concat(tox.categories())))));
+                    }
+                    TreatmenthistoryentryRecord record = context.newRecord(TREATMENTHISTORYENTRY);
+                    record.fromMap(valueMap);
+                    return record;
+                })
+                .collect(Collectors.toList());
+
+        context.batchInsert(records).execute();
     }
 
     private void writePriorTumorTreatments(@NotNull String patientId, @NotNull List<PriorTumorTreatment> priorTumorTreatments) {
@@ -226,7 +305,7 @@ class ClinicalDAO {
                             priorTumorTreatment.bestResponse(),
                             priorTumorTreatment.stopReason(),
                             TreatmentCategoryResolver.toStringList(priorTumorTreatment.categories()),
-                            DataUtil.toByte(priorTumorTreatment.isSystemic()),
+                            priorTumorTreatment.isSystemic(),
                             priorTumorTreatment.chemoType(),
                             priorTumorTreatment.immunoType(),
                             priorTumorTreatment.targetedType(),
@@ -267,7 +346,7 @@ class ClinicalDAO {
                             priorSecondPrimary.treatmentHistory(),
                             priorSecondPrimary.lastTreatmentYear(),
                             priorSecondPrimary.lastTreatmentMonth(),
-                            DataUtil.toByte(priorSecondPrimary.isActive()))
+                            priorSecondPrimary.isActive())
                     .execute();
         }
     }
@@ -288,7 +367,7 @@ class ClinicalDAO {
                             priorOtherCondition.month(),
                             DataUtil.concat(priorOtherCondition.doids()),
                             priorOtherCondition.category(),
-                            DataUtil.toByte(priorOtherCondition.isContraindicationForTherapy()))
+                            priorOtherCondition.isContraindicationForTherapy())
                     .execute();
         }
     }
@@ -313,7 +392,7 @@ class ClinicalDAO {
                             priorMolecularTest.scoreValuePrefix(),
                             priorMolecularTest.scoreValue(),
                             priorMolecularTest.scoreValueUnit(),
-                            DataUtil.toByte(priorMolecularTest.impliesPotentialIndeterminateStatus()))
+                            priorMolecularTest.impliesPotentialIndeterminateStatus())
                     .execute();
         }
     }
@@ -361,7 +440,7 @@ class ClinicalDAO {
                             lab.unit().display(),
                             lab.refLimitLow(),
                             lab.refLimitUp(),
-                            DataUtil.toByte(lab.isOutsideRef()))
+                            lab.isOutsideRef())
                     .execute();
         }
     }
@@ -484,12 +563,12 @@ class ClinicalDAO {
                             medication.anatomicalMainGroupAtc(),
                             medication.status() != null ? medication.status().toString() : null,
                             medication.administrationRoute(),
-                            medication.dosageMin(),
-                            medication.dosageMax(),
-                            medication.dosageUnit(),
-                            medication.frequency(),
-                            medication.frequencyUnit(),
-                            DataUtil.toByte(medication.ifNeeded()),
+                            medication.dosage().dosageMin(),
+                            medication.dosage().dosageMax(),
+                            medication.dosage().dosageUnit(),
+                            medication.dosage().frequency(),
+                            medication.dosage().frequencyUnit(),
+                            medication.dosage().ifNeeded(),
                             medication.startDate(),
                             medication.stopDate())
                     .execute();

@@ -4,17 +4,13 @@ import java.lang.reflect.Type;
 
 public enum TreatmentType {
 
-    CHEMOTHERAPY(Chemotherapy.class),
-    COMBINED_THERAPY(CombinedTherapy.class),
-    IMMUNOTHERAPY(Immunotherapy.class),
-    OTHER_THERAPY(OtherTherapy.class),
-    RADIOTHERAPY(Radiotherapy.class),
-    SURGERY(SurgicalTreatment.class),
-    TARGETED_THERAPY(TargetedTherapy.class);
+    DRUG_THERAPY(DrugTherapy.class),
+    OTHER_TREATMENT(OtherTreatment.class),
+    RADIOTHERAPY(Radiotherapy.class);
 
     private final Type treatmentClass;
 
-    TreatmentType(final Type treatmentClass) {
+    TreatmentType(Type treatmentClass) {
         this.treatmentClass = treatmentClass;
     }
 

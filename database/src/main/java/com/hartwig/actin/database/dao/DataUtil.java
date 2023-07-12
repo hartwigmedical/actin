@@ -1,6 +1,8 @@
 package com.hartwig.actin.database.dao;
 
-import java.util.StringJoiner;
+import java.util.Collection;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,25 +20,18 @@ final class DataUtil {
     }
 
     @Nullable
-    public static String concat(@Nullable Iterable<String> strings) {
-        if (strings == null) {
-            return null;
-        }
-
-        StringJoiner joiner = new StringJoiner(SEPARATOR);
-        for (String entry : strings) {
-            joiner.add(entry);
-        }
-        return joiner.toString();
+    public static String concat(@Nullable Collection<String> strings) {
+        return (strings == null) ? null : concatStream(strings.stream());
     }
 
     @NotNull
-    public static String concatObjects(@NotNull Iterable<Object> objects) {
-        StringJoiner joiner = new StringJoiner(SEPARATOR);
-        for (Object entry : objects) {
-            joiner.add((String) entry);
-        }
-        return joiner.toString();
+    public static <T> String concatObjects(@NotNull Collection<T> objects) {
+        return concatStream(objects.stream().map(Object::toString));
+    }
+
+    @NotNull
+    public static String concatStream(@NotNull Stream<String> stream) {
+        return stream.collect(Collectors.joining(SEPARATOR));
     }
 
     @Nullable

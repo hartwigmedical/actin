@@ -58,8 +58,8 @@ public class MolecularDetailsChapter implements ReportChapter {
 
     private void addMolecularDetails(@NotNull Document document) {
         float keyWidth = STANDARD_KEY_WIDTH;
-        PriorMolecularResultGenerator priorMolecularResultGenerator = new PriorMolecularResultGenerator(report.clinical(), keyWidth,
-                contentWidth() - keyWidth - 10);
+        PriorMolecularResultGenerator priorMolecularResultGenerator =
+                new PriorMolecularResultGenerator(report.clinical(), keyWidth, contentWidth() - keyWidth - 10);
         Table priorMolecularResults = priorMolecularResultGenerator.contents().setBorder(Border.NO_BORDER);
         document.add(priorMolecularResults);
 
