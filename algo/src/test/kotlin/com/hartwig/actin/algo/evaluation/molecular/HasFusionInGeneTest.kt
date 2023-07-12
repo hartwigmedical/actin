@@ -11,10 +11,12 @@ import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
 import org.junit.Test
 
 class HasFusionInGeneTest {
+
     @Test
     fun canEvaluate() {
         val function = HasFusionInGene("gene A")
         assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
+
         val matchingFusion: Fusion = TestFusionFactory.builder()
             .geneStart("gene A")
             .isReportable(true)
@@ -23,6 +25,7 @@ class HasFusionInGeneTest {
             .driverType(FusionDriverType.PROMISCUOUS_5)
             .build()
         assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withFusion(matchingFusion)))
+
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
@@ -35,6 +38,7 @@ class HasFusionInGeneTest {
                 )
             )
         )
+
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
@@ -46,6 +50,7 @@ class HasFusionInGeneTest {
                 )
             )
         )
+
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -57,6 +62,7 @@ class HasFusionInGeneTest {
                 )
             )
         )
+
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
@@ -69,6 +75,7 @@ class HasFusionInGeneTest {
                 )
             )
         )
+
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -80,6 +87,7 @@ class HasFusionInGeneTest {
                 )
             )
         )
+
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
