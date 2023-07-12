@@ -1,11 +1,18 @@
 package com.hartwig.actin.clinical.feed.medication
 
-import com.hartwig.actin.clinical.curation.*
-import com.hartwig.actin.clinical.feed.*
+import com.hartwig.actin.clinical.curation.ANATOMICAL
+import com.hartwig.actin.clinical.curation.ATC_CODE
+import com.hartwig.actin.clinical.curation.CHEMICAL
+import com.hartwig.actin.clinical.curation.CHEMICAL_SUBSTANCE
+import com.hartwig.actin.clinical.curation.PHARMACOLOGICAL
+import com.hartwig.actin.clinical.curation.THERAPEUTIC
+import com.hartwig.actin.clinical.curation.TestAtcFactory
+import com.hartwig.actin.clinical.feed.FeedLine
 import com.hartwig.actin.clinical.feed.medication.MedicationEntryCreator.Companion.isActive
-import org.apache.logging.log4j.util.*
-import org.assertj.core.api.Assertions.*
-import org.junit.*
+import org.apache.logging.log4j.util.Strings
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Test
+
 
 private const val INCORRECT_VALUE = "incorrect"
 
