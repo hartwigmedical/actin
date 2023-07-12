@@ -33,6 +33,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_INCURABLE_CANCER to hasIncurableCancerCreator(),
             EligibilityRule.HAS_ANY_LESION to hasAnyLesionCreator(),
             EligibilityRule.HAS_LIVER_METASTASES to hasLivesMetastasesCreator(),
+            EligibilityRule.MEETS_SPECIFIC_CRITERIA_REGARDING_LIVER_METASTASES to meetsSpecificCriteriaRegardingLiverMetastasesCreator(),
             EligibilityRule.HAS_KNOWN_CNS_METASTASES to hasKnownCnsMetastasesCreator(),
             EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES to hasKnownActiveCnsMetastasesCreator(),
             EligibilityRule.HAS_KNOWN_BRAIN_METASTASES to hasKnownBrainMetastasesCreator(),
@@ -309,5 +310,9 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasLeftSidedColorectalTumorCreator(): FunctionCreator {
         return FunctionCreator { HasLeftSidedColorectalTumor(doidModel()) }
+    }
+
+    private fun meetsSpecificCriteriaRegardingLiverMetastasesCreator(): FunctionCreator{
+        return FunctionCreator { MeetsSpecificCriteriaRegardingLiverMetastases() }
     }
 }
