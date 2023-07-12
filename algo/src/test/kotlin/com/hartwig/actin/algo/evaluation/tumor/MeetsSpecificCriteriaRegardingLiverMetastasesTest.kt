@@ -6,8 +6,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import org.junit.Test
 
 class MeetsSpecificCriteriaRegardingLiverMetastasesTest {
+
     @Test
-    fun canEvaluate() {
+    fun shouldReturnUndeterminedForAnyPatient() {
         val function = MeetsSpecificCriteriaRegardingLiverMetastases()
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
     }
