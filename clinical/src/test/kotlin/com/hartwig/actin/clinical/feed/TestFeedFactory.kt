@@ -1,18 +1,19 @@
 package com.hartwig.actin.clinical.feed
 
-import com.hartwig.actin.clinical.curation.*
-import com.hartwig.actin.clinical.datamodel.*
-import com.hartwig.actin.clinical.feed.bodyweight.*
-import com.hartwig.actin.clinical.feed.digitalfile.*
-import com.hartwig.actin.clinical.feed.intolerance.*
-import com.hartwig.actin.clinical.feed.lab.*
-import com.hartwig.actin.clinical.feed.medication.*
-import com.hartwig.actin.clinical.feed.patient.*
-import com.hartwig.actin.clinical.feed.questionnaire.*
-import com.hartwig.actin.clinical.feed.surgery.*
-import com.hartwig.actin.clinical.feed.vitalfunction.*
-import org.apache.logging.log4j.util.*
-import java.time.*
+import com.hartwig.actin.clinical.curation.ATC_CODE
+import com.hartwig.actin.clinical.datamodel.Gender
+import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry
+import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry
+import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry
+import com.hartwig.actin.clinical.feed.lab.LabEntry
+import com.hartwig.actin.clinical.feed.medication.MedicationEntry
+import com.hartwig.actin.clinical.feed.patient.PatientEntry
+import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry
+import com.hartwig.actin.clinical.feed.questionnaire.TestQuestionnaireFactory
+import com.hartwig.actin.clinical.feed.surgery.SurgeryEntry
+import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry
+import org.apache.logging.log4j.util.Strings
+import java.time.LocalDate
 
 object TestFeedFactory {
     const val TEST_SUBJECT = "ACTN-01-02-9999"
