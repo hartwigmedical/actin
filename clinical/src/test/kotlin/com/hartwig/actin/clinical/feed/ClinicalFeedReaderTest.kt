@@ -25,7 +25,7 @@ class ClinicalFeedReaderTest {
     @Test
     @Throws(IOException::class)
     fun canReadFromTestDirectory() {
-        val feed = read(CLINICAL_FEED_DIRECTORY, TestAtcFactory.createEmptyModel())
+        val feed = read(CLINICAL_FEED_DIRECTORY, TestAtcFactory.createMinimalAtcModel())
         assertPatients(feed.patientEntries)
         assertQuestionnaires(feed.questionnaireEntries)
         assertSurgeries(feed.surgeryEntries)

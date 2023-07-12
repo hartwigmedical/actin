@@ -18,16 +18,21 @@ class MedicationEntryCreatorTest {
     }
 
     @Test
+    fun shouldPassValidityCheckForTrialAtcCodes() {
+        assertThat(MedicationEntryCreator(TestAtcFactory.createMinimalAtcModel()).isValid(FeedLine(fields(), arrayOf("123")))).isTrue()
+    }
+
+    @Test
     fun shouldPassValidityCheckIfAtcClassificationMatches() {
         assertThat(
             isValid(
                 arrayOf(
-                    METAFORMIN_ATC_CODE,
-                    METFORMIN,
-                    BIGUANIDES,
-                    BLOOD_GLUCOSE_LOWERING_DRUGS_EXCL_INSULINS,
-                    DRUGS_USED_IN_DIABETES,
-                    ALIMENTARY_TRACT_AND_METABOLISM,
+                    ATC_CODE,
+                    CHEMICAL_SUBSTANCE,
+                    CHEMICAL,
+                    PHARMACOLOGICAL,
+                    THERAPEUTIC,
+                    ANATOMICAL,
                 )
             )
         ).isTrue()
@@ -38,51 +43,51 @@ class MedicationEntryCreatorTest {
 
         val permutations = listOf(
             arrayOf(
-                METAFORMIN_ATC_CODE,
-                METFORMIN,
-                BIGUANIDES,
-                BLOOD_GLUCOSE_LOWERING_DRUGS_EXCL_INSULINS,
-                DRUGS_USED_IN_DIABETES,
+                ATC_CODE,
+                CHEMICAL_SUBSTANCE,
+                CHEMICAL,
+                PHARMACOLOGICAL,
+                THERAPEUTIC,
                 INCORRECT_VALUE,
             ),
             arrayOf(
-                METAFORMIN_ATC_CODE,
-                METFORMIN,
-                BIGUANIDES,
-                BLOOD_GLUCOSE_LOWERING_DRUGS_EXCL_INSULINS,
+                ATC_CODE,
+                CHEMICAL_SUBSTANCE,
+                CHEMICAL,
+                PHARMACOLOGICAL,
                 INCORRECT_VALUE,
-                ALIMENTARY_TRACT_AND_METABOLISM,
+                ANATOMICAL,
             ),
             arrayOf(
-                METAFORMIN_ATC_CODE,
-                METFORMIN,
-                BIGUANIDES,
+                ATC_CODE,
+                CHEMICAL_SUBSTANCE,
+                CHEMICAL,
                 INCORRECT_VALUE,
-                DRUGS_USED_IN_DIABETES,
-                ALIMENTARY_TRACT_AND_METABOLISM,
+                THERAPEUTIC,
+                ANATOMICAL,
             ),
             arrayOf(
-                METAFORMIN_ATC_CODE,
-                METFORMIN,
+                ATC_CODE,
+                CHEMICAL_SUBSTANCE,
                 INCORRECT_VALUE,
-                BLOOD_GLUCOSE_LOWERING_DRUGS_EXCL_INSULINS,
-                DRUGS_USED_IN_DIABETES,
-                ALIMENTARY_TRACT_AND_METABOLISM,
+                PHARMACOLOGICAL,
+                THERAPEUTIC,
+                ANATOMICAL,
             ),
             arrayOf(
-                METAFORMIN_ATC_CODE,
+                ATC_CODE,
                 INCORRECT_VALUE,
-                BIGUANIDES,
-                BLOOD_GLUCOSE_LOWERING_DRUGS_EXCL_INSULINS,
-                DRUGS_USED_IN_DIABETES,
-                ALIMENTARY_TRACT_AND_METABOLISM,
+                CHEMICAL,
+                PHARMACOLOGICAL,
+                THERAPEUTIC,
+                ANATOMICAL,
             ),
         )
         permutations.forEach { assertThat(isValid(it)).isFalse() }
     }
 
     private fun isValid(values: Array<String>): Boolean {
-        return MedicationEntryCreator(TestAtcFactory.createMinimalModel()).isValid(FeedLine(fields(), values))
+        return MedicationEntryCreator(TestAtcFactory.createProperAtcModel()).isValid(FeedLine(fields(), values))
     }
 
     private fun fields() = mapOf(

@@ -50,6 +50,6 @@ public abstract class Medication {
 
     public abstract QTProlongatingRisk qtProlongatingRisk();
 
-    @NotNull
+    @Nullable
     public abstract AtcClassification atc();
 }

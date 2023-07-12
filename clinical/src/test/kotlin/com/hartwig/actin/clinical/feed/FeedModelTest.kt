@@ -12,7 +12,7 @@ class FeedModelTest {
     @Test
     @Throws(IOException::class)
     fun canCreateFromFeedDirectory() {
-        Assert.assertNotNull(fromFeedDirectory(CLINICAL_FEED_DIRECTORY, TestAtcFactory.createEmptyModel()))
+        Assert.assertNotNull(fromFeedDirectory(CLINICAL_FEED_DIRECTORY, TestAtcFactory.createMinimalAtcModel()))
     }
 
     @Test(expected = IllegalStateException::class)

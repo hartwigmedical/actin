@@ -1,38 +1,15 @@
 package com.hartwig.actin.clinical
 
-import com.google.common.collect.Sets
+import com.google.common.collect.*
 import com.hartwig.actin.clinical.ClinicalRecordsFactory.Companion.toPatientId
-import com.hartwig.actin.clinical.curation.TestAtcFactory
-import com.hartwig.actin.clinical.curation.TestCurationFactory
-import com.hartwig.actin.clinical.datamodel.BloodTransfusion
-import com.hartwig.actin.clinical.datamodel.BodyWeight
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
-import com.hartwig.actin.clinical.datamodel.ClinicalStatus
-import com.hartwig.actin.clinical.datamodel.Gender
-import com.hartwig.actin.clinical.datamodel.Intolerance
-import com.hartwig.actin.clinical.datamodel.Medication
-import com.hartwig.actin.clinical.datamodel.MedicationStatus
-import com.hartwig.actin.clinical.datamodel.PatientDetails
-import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
-import com.hartwig.actin.clinical.datamodel.Surgery
-import com.hartwig.actin.clinical.datamodel.SurgeryStatus
-import com.hartwig.actin.clinical.datamodel.Toxicity
-import com.hartwig.actin.clinical.datamodel.ToxicityEvaluation
-import com.hartwig.actin.clinical.datamodel.ToxicitySource
-import com.hartwig.actin.clinical.datamodel.TumorDetails
-import com.hartwig.actin.clinical.datamodel.TumorStage
-import com.hartwig.actin.clinical.datamodel.VitalFunction
-import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
-import com.hartwig.actin.clinical.feed.TestFeedFactory
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertFalse
-import junit.framework.TestCase.assertNotNull
-import junit.framework.TestCase.assertNull
-import junit.framework.TestCase.assertTrue
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
-import java.time.LocalDate
+import com.hartwig.actin.clinical.curation.*
+import com.hartwig.actin.clinical.datamodel.*
+import com.hartwig.actin.clinical.datamodel.treatment.history.*
+import com.hartwig.actin.clinical.feed.*
+import junit.framework.TestCase.*
+import org.assertj.core.api.Assertions.*
+import org.junit.*
+import java.time.*
 
 class ClinicalRecordsFactoryTest {
     @Test
@@ -217,13 +194,20 @@ class ClinicalRecordsFactoryTest {
             assertEquals(LocalDate.of(2019, 4, 4), medication.stopDate())
             assertThat(medication.cypInteractions()).containsExactly(TestCurationFactory.createTestCypInteration())
             assertThat(medication.qtProlongatingRisk()).isEqualTo(QTProlongatingRisk.POSSIBLE)
+            assertThat(medication.atc()).isEqualTo(
+                ImmutableAtcClassification.builder().anatomicalMainGroup(ImmutableAtcLevel.builder().code("N").name(ANATOMICAL).build())
+                    .therapeuticSubGroup(ImmutableAtcLevel.builder().code("N02").name(THERAPEUTIC).build())
+                    .pharmacologicalSubGroup(ImmutableAtcLevel.builder().code("N02B").name(PHARMACOLOGICAL).build())
+                    .chemicalSubGroup(ImmutableAtcLevel.builder().code("N02BE").name(CHEMICAL).build())
+                    .chemicalSubstance(ImmutableAtcLevel.builder().code(ATC_CODE).name(CHEMICAL_SUBSTANCE).build()).build()
+            )
         }
 
         private fun createMinimalTestClinicalRecords(): List<ClinicalRecord> {
             return ClinicalRecordsFactory(
                 TestFeedFactory.createMinimalTestFeedModel(),
                 TestCurationFactory.createMinimalTestCurationModel(),
-                TestAtcFactory.createMinimalModel()
+                TestAtcFactory.createMinimalAtcModel()
             ).create()
         }
 
@@ -231,7 +215,7 @@ class ClinicalRecordsFactoryTest {
             return ClinicalRecordsFactory(
                 TestFeedFactory.createProperTestFeedModel(),
                 TestCurationFactory.createProperTestCurationModel(),
-                TestAtcFactory.createEmptyModel()
+                TestAtcFactory.createProperAtcModel()
             ).create()
         }
     }

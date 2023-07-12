@@ -2,26 +2,26 @@ package com.hartwig.actin.clinical.curation
 
 import com.hartwig.actin.clinical.AtcModel
 
-const val ALIMENTARY_TRACT_AND_METABOLISM = "Alimentary tract and metabolism"
-const val DRUGS_USED_IN_DIABETES = "Drugs used in diabetes"
-const val BLOOD_GLUCOSE_LOWERING_DRUGS_EXCL_INSULINS = "Blood glucose lowering drugs, excl. insulins"
-const val BIGUANIDES = "Biguanides"
-const val METFORMIN = "metformin"
-const val METAFORMIN_ATC_CODE = "A10BA02"
+const val ANATOMICAL = "NERVOUS SYSTEM"
+const val THERAPEUTIC = "ANALGESICS"
+const val PHARMACOLOGICAL = "OTHER ANALGESICS AND ANTIPYRETICS"
+const val CHEMICAL = "Anilides"
+const val CHEMICAL_SUBSTANCE = "PARACETAMOL"
+const val ATC_CODE = "N02BE01"
 
 object TestAtcFactory {
 
-    fun createEmptyModel(): AtcModel {
+    fun createMinimalAtcModel(): AtcModel {
         return AtcModel(emptyMap())
     }
 
-    fun createMinimalModel(): AtcModel {
+    fun createProperAtcModel(): AtcModel {
         return AtcModel(mapOf(
-            "A" to ALIMENTARY_TRACT_AND_METABOLISM,
-            "A10" to DRUGS_USED_IN_DIABETES,
-            "A10B" to BLOOD_GLUCOSE_LOWERING_DRUGS_EXCL_INSULINS,
-            "A10BA" to BIGUANIDES,
-            METAFORMIN_ATC_CODE to METFORMIN
+            "N" to ANATOMICAL,
+            "N02" to THERAPEUTIC,
+            "N02B" to PHARMACOLOGICAL,
+            "N02BE" to CHEMICAL,
+            ATC_CODE to CHEMICAL_SUBSTANCE
         ))
     }
 }

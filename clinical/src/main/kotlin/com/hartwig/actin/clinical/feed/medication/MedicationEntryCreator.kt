@@ -42,21 +42,22 @@ class MedicationEntryCreator(private val atcModel: AtcModel) : FeedEntryCreator<
 
     override fun isValid(line: FeedLine): Boolean {
         val code5ATCCode = line.string("code5_ATC_code")
-        val code5ATCDisplay = line.string("code5_ATC_display")
-        val chemicalSubgroupDisplay = line.string("chemical_subgroup_display")
-        val pharmacologicalSubgroupDisplay = line.string("pharmacological_subgroup_display")
-        val therapeuticSubgroupDisplay = line.string("therapeutic_subgroup_display")
-        val anatomicalMainGroupDisplay = line.string("anatomical_main_group_display")
-
         val atcClassification = atcModel.resolve(code5ATCCode)
-        val errors = checkLevel(anatomicalMainGroupDisplay, atcClassification.anatomicalMainGroup(), "anatomical display") +
-                checkLevel(therapeuticSubgroupDisplay, atcClassification.therapeuticSubGroup(), "therapeutic subgroup") +
-                checkLevel(pharmacologicalSubgroupDisplay, atcClassification.pharmacologicalSubGroup(), "pharmacological subgroup") +
-                checkLevel(chemicalSubgroupDisplay, atcClassification.chemicalSubGroup(), "chemical subgroup") +
-                checkLevel(code5ATCDisplay, atcClassification.chemicalSubstance(), "chemical substance")
-        if (errors.isNotEmpty()) {
-            errors.forEach { LOGGER.error(it) }
-            return false
+        if (atcClassification != null) {
+            val code5ATCDisplay = line.string("code5_ATC_display")
+            val chemicalSubgroupDisplay = line.string("chemical_subgroup_display")
+            val pharmacologicalSubgroupDisplay = line.string("pharmacological_subgroup_display")
+            val therapeuticSubgroupDisplay = line.string("therapeutic_subgroup_display")
+            val anatomicalMainGroupDisplay = line.string("anatomical_main_group_display")
+            val errors = checkLevel(anatomicalMainGroupDisplay, atcClassification.anatomicalMainGroup(), "anatomical display") +
+                    checkLevel(therapeuticSubgroupDisplay, atcClassification.therapeuticSubGroup(), "therapeutic subgroup") +
+                    checkLevel(pharmacologicalSubgroupDisplay, atcClassification.pharmacologicalSubGroup(), "pharmacological subgroup") +
+                    checkLevel(chemicalSubgroupDisplay, atcClassification.chemicalSubGroup(), "chemical subgroup") +
+                    checkLevel(code5ATCDisplay, atcClassification.chemicalSubstance(), "chemical substance")
+            if (errors.isNotEmpty()) {
+                errors.forEach { LOGGER.error(it) }
+                return false
+            }
         }
         return true
     }
