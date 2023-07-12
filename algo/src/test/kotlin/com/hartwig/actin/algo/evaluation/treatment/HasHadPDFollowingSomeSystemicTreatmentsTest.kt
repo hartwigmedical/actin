@@ -49,9 +49,12 @@ class HasHadPDFollowingSomeSystemicTreatmentsTest {
                 .stopReason(PD_LABEL)
                 .build()
         )
-        FUNCTIONS.forEach {
-            assertEvaluation(EvaluationResult.PASS, it.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-        }
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
+
+        val radiologicalEvaluation = RADIOLOGICAL_FUNCTION.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments))
+        assertEvaluation(EvaluationResult.PASS, radiologicalEvaluation)
+        assertThat(radiologicalEvaluation.passGeneralMessages()).hasSize(1)
+        assertThat(radiologicalEvaluation.passGeneralMessages().iterator().next()).contains("(assumed PD is radiological)")
     }
 
     @Test
@@ -118,9 +121,8 @@ class HasHadPDFollowingSomeSystemicTreatmentsTest {
     }
 
     companion object {
-        private val FUNCTIONS = listOf(
-            HasHadPDFollowingSomeSystemicTreatments(1, false),
-            HasHadPDFollowingSomeSystemicTreatments(1, true)
-        )
+        private val FUNCTION = HasHadPDFollowingSomeSystemicTreatments(1, false)
+        private val RADIOLOGICAL_FUNCTION = HasHadPDFollowingSomeSystemicTreatments(1, true)
+        private val FUNCTIONS = listOf(FUNCTION, RADIOLOGICAL_FUNCTION)
     }
 }
