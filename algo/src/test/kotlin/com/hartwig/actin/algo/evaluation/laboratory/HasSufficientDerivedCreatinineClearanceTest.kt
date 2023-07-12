@@ -19,6 +19,7 @@ import org.junit.Test
 import java.time.LocalDate
 
 class HasSufficientDerivedCreatinineClearanceTest {
+
     @Test
     fun canEvaluateMDRD() {
         val function = HasSufficientDerivedCreatinineClearance(2021, CreatinineClearanceMethod.EGFR_MDRD, 100.0)
@@ -90,6 +91,7 @@ class HasSufficientDerivedCreatinineClearanceTest {
     companion object {
         private fun create(birthYear: Int, gender: Gender, labValues: List<LabValue>, bodyWeights: List<BodyWeight>): PatientRecord {
             val base = TestClinicalFactory.createMinimalTestClinicalRecord()
+
             return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(
