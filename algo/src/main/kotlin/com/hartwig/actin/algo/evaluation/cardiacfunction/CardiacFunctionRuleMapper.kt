@@ -11,8 +11,7 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
         return mapOf(
             EligibilityRule.HAS_POTENTIAL_SIGNIFICANT_HEART_DISEASE to hasPotentialSignificantHeartDiseaseCreator(),
             EligibilityRule.HAS_CARDIAC_ARRHYTHMIA to hasAnyTypeOfCardiacArrhythmiaCreator(),
-            EligibilityRule.HAS_LVEF_OF_AT_LEAST_X to hasSufficientLVEFCreator(false),
-            EligibilityRule.HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN to hasSufficientLVEFCreator(true),
+            EligibilityRule.HAS_LVEF_OF_AT_LEAST_X to hasSufficientLVEFCreator(),
             EligibilityRule.HAS_QTC_OF_AT_MOST_X to hasLimitedQTCFCreator(),
             EligibilityRule.HAS_QTCF_OF_AT_MOST_X to hasLimitedQTCFCreator(),
             EligibilityRule.HAS_QTCF_OF_AT_LEAST_X to hasSufficientQTCFCreator(),
@@ -32,10 +31,10 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
         return FunctionCreator { HasCardiacArrhythmia() }
     }
 
-    private fun hasSufficientLVEFCreator(passIfUnknown: Boolean): FunctionCreator {
+    private fun hasSufficientLVEFCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val minLVEF = functionInputResolver().createOneDoubleInput(function)
-            HasSufficientLVEF(minLVEF, passIfUnknown)
+            HasSufficientLVEF(minLVEF)
         }
     }
 

@@ -11,6 +11,7 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
     private val referenceYear: Int, private val method: CreatinineClearanceMethod,
     private val minCreatinineClearance: Double
 ) : LabEvaluationFunction {
+
     //TODO: Implement logics for method = "measured"
     override fun evaluate(record: PatientRecord, labValue: LabValue): Evaluation {
         return when (method) {
@@ -49,32 +50,35 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
             weight,
             creatinine
         )
+
         var result = evaluateVersusMinValue(cockcroftGault, creatinine.comparator(), minCreatinineClearance)
-        if (weight == null) {
-            if (result == EvaluationResult.FAIL) {
-                result = EvaluationResult.UNDETERMINED
-            } else if (result == EvaluationResult.PASS) {
-                result = EvaluationResult.WARN
-            }
+        if (weight == null && result == EvaluationResult.FAIL) {
+            result = EvaluationResult.UNDETERMINED
         }
+
         val builder = recoverable().result(result)
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages("Cockcroft-Gault is insufficient")
             builder.addFailGeneralMessages("Cockcroft-Gault insufficient")
         } else if (result == EvaluationResult.UNDETERMINED) {
             if (weight == null) {
-                builder.addUndeterminedSpecificMessages("Cockcroft-Gault is likely insufficient, but weight of patient is not known")
+                builder.addUndeterminedSpecificMessages("Cockcroft-Gault is likely insufficient but weight of patient is not known")
                 builder.addUndeterminedGeneralMessages("Cockcroft-Gault evaluation weight unknown")
             } else {
                 builder.addUndeterminedSpecificMessages("Cockcroft-Gault evaluation led to ambiguous results")
                 builder.addUndeterminedGeneralMessages("Cockcroft-Gault evaluation ambiguous")
             }
         } else if (result == EvaluationResult.PASS) {
-            builder.addPassSpecificMessages("Cockcroft-Gault is sufficient")
-            builder.addPassGeneralMessages("Cockcroft-Gault sufficient")
-        } else if (result == EvaluationResult.WARN) {
-            builder.addWarnSpecificMessages("Cockcroft-Gault is likely sufficient, but body weight of patient is not known")
-            builder.addWarnGeneralMessages("Cockcroft-Gault evaluation weight unknown")
+            if (weight == null) {
+                builder.addPassSpecificMessages(
+                    "Body weight is unknown but Cockcroft-Gault is most likely sufficient" +
+                            " based on minimal required body weight"
+                )
+                builder.addPassGeneralMessages("Cockcroft-Gault most likely sufficient")
+            } else {
+                builder.addPassSpecificMessages("Cockcroft-Gault is sufficient")
+                builder.addPassGeneralMessages("Cockcroft-Gault sufficient")
+            }
         }
         return builder.build()
     }

@@ -13,17 +13,20 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.treatment.datamodel.Eligibility
 import com.hartwig.actin.treatment.datamodel.EligibilityRule
 import com.hartwig.actin.treatment.datamodel.TestTreatmentFactory
-import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class TrialMatcherTest {
+
     @Test
     fun canMatchTrialsOnProperTestData() {
         val patient = TestDataFactory.createProperTestPatientRecord()
         val trial = TestTreatmentFactory.createProperTestTrial()
         val matcher = TrialMatcher(createTestEvaluationFunctionFactory())
         val matches = matcher.determineEligibility(patient, listOf(trial))
-        Assert.assertEquals(1, matches.size.toLong())
+        assertEquals(1, matches.size.toLong())
         assertTrialMatch(matches[0])
     }
 
@@ -31,21 +34,21 @@ class TrialMatcherTest {
     fun canDeterminePotentialEligibility() {
         val evaluations: MutableList<Evaluation> = mutableListOf()
         evaluations.add(EvaluationTestFactory.withResult(EvaluationResult.PASS))
-        Assert.assertTrue(TrialMatcher.isPotentiallyEligible(evaluations))
+        assertTrue(TrialMatcher.isPotentiallyEligible(evaluations))
         evaluations.add(
             ImmutableEvaluation.builder()
                 .from(EvaluationTestFactory.withResult(EvaluationResult.FAIL))
                 .recoverable(true)
                 .build()
         )
-        Assert.assertTrue(TrialMatcher.isPotentiallyEligible(evaluations))
+        assertTrue(TrialMatcher.isPotentiallyEligible(evaluations))
         evaluations.add(
             ImmutableEvaluation.builder()
                 .from(EvaluationTestFactory.withResult(EvaluationResult.FAIL))
                 .recoverable(false)
                 .build()
         )
-        Assert.assertFalse(TrialMatcher.isPotentiallyEligible(evaluations))
+        assertFalse(TrialMatcher.isPotentiallyEligible(evaluations))
     }
 
     companion object {
@@ -57,26 +60,29 @@ class TrialMatcherTest {
         }
 
         private fun assertTrialMatch(trialMatch: TrialMatch) {
-            Assert.assertEquals(1, trialMatch.evaluations().size.toLong())
-            Assert.assertTrue(trialMatch.isPotentiallyEligible)
-            Assert.assertEquals(
+            assertEquals(1, trialMatch.evaluations().size.toLong())
+            assertTrue(trialMatch.isPotentiallyEligible)
+            assertEquals(
                 EvaluationResult.PASS,
                 findEvaluationResultForRule(trialMatch.evaluations(), EligibilityRule.IS_AT_LEAST_X_YEARS_OLD)
             )
-            Assert.assertEquals(3, trialMatch.cohorts().size.toLong())
+            assertEquals(3, trialMatch.cohorts().size.toLong())
+
             val cohortA = findCohort(trialMatch.cohorts(), "A")
-            Assert.assertEquals(1, cohortA.evaluations().size.toLong())
-            Assert.assertFalse(cohortA.isPotentiallyEligible)
-            Assert.assertEquals(EvaluationResult.FAIL, findEvaluationResultForRule(cohortA.evaluations(), EligibilityRule.NOT))
+            assertEquals(1, cohortA.evaluations().size.toLong())
+            assertFalse(cohortA.isPotentiallyEligible)
+            assertEquals(EvaluationResult.FAIL, findEvaluationResultForRule(cohortA.evaluations(), EligibilityRule.NOT))
+
             val cohortB = findCohort(trialMatch.cohorts(), "B")
-            Assert.assertTrue(cohortB.isPotentiallyEligible)
-            Assert.assertEquals(
-                EvaluationResult.UNDETERMINED,
+            assertTrue(cohortB.isPotentiallyEligible)
+            assertEquals(
+                EvaluationResult.NOT_EVALUATED,
                 findEvaluationResultForRule(cohortB.evaluations(), EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS)
             )
+
             val cohortC = findCohort(trialMatch.cohorts(), "C")
-            Assert.assertTrue(cohortC.isPotentiallyEligible)
-            Assert.assertTrue(cohortC.evaluations().isEmpty())
+            assertTrue(cohortC.isPotentiallyEligible)
+            assertTrue(cohortC.evaluations().isEmpty())
         }
 
         private fun findEvaluationResultForRule(

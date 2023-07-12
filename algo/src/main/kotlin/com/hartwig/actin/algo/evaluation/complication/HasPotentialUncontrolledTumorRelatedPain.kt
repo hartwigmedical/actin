@@ -4,7 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
 import com.hartwig.actin.algo.medication.MedicationStatusInterpretation
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreter
 
@@ -14,8 +14,8 @@ class HasPotentialUncontrolledTumorRelatedPain internal constructor(private val 
         val painComplications = ComplicationFunctions.findComplicationNamesMatchingAnyCategory(record, listOf(SEVERE_PAIN_COMPLICATION))
         if (painComplications.isNotEmpty()) {
             return EvaluationFactory.pass(
-                "Patient has complication related to pain: " + concat(painComplications) +
-                        ", potentially indicating uncontrolled tumor related pain", "Present " + concat(painComplications)
+                "Patient has complication related to pain: " + concatLowercaseWithAnd(painComplications) +
+                        ", potentially indicating uncontrolled tumor related pain", "Present " + concatLowercaseWithAnd(painComplications)
             )
         }
         val activePainMedications = record.clinical().medications()
@@ -27,8 +27,8 @@ class HasPotentialUncontrolledTumorRelatedPain internal constructor(private val 
 
         return if (activePainMedications.isNotEmpty()) {
             EvaluationFactory.pass(
-                "Patient receives pain medication: " + concat(activePainMedications) +
-                        ", potentially indicating uncontrolled tumor related pain", "Present " + concat(activePainMedications)
+                "Patient receives pain medication: " + concatLowercaseWithAnd(activePainMedications) +
+                        ", potentially indicating uncontrolled tumor related pain", "Receives " + concatLowercaseWithAnd(activePainMedications) + " indicating pain "
             )
         } else
             EvaluationFactory.fail(
