@@ -52,8 +52,12 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
         )
 
         var result = evaluateVersusMinValue(cockcroftGault, creatinine.comparator(), minCreatinineClearance)
-        if (weight == null && result == EvaluationResult.FAIL) {
-            result = EvaluationResult.UNDETERMINED
+        if (weight == null) {
+            if (result == EvaluationResult.FAIL) {
+                result = EvaluationResult.UNDETERMINED
+            } else if (result == EvaluationResult.PASS) {
+                result = EvaluationResult.NOT_EVALUATED
+            }
         }
 
         val builder = recoverable().result(result)
@@ -68,7 +72,7 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
                 builder.addUndeterminedSpecificMessages("Cockcroft-Gault evaluation led to ambiguous results")
                 builder.addUndeterminedGeneralMessages("Cockcroft-Gault evaluation ambiguous")
             }
-        } else if (result == EvaluationResult.PASS) {
+        } else if (result == EvaluationResult.PASS || result == EvaluationResult.NOT_EVALUATED) {
             if (weight == null) {
                 builder.addPassSpecificMessages(
                     "Body weight is unknown but Cockcroft-Gault is most likely sufficient" +
