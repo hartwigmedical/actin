@@ -32,8 +32,11 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
                 TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
             )
 
+        LOGGER.info("Creating atc tree model from {}", config.actTsv)
+        val atcModel = AtcModel.createFromFile(config.actTsv)
+
         LOGGER.info("Creating clinical feed model from directory {}", config.feedDirectory)
-        val clinicalFeed = ClinicalFeedReader.read(config.feedDirectory)
+        val clinicalFeed = ClinicalFeedReader.read(config.feedDirectory, atcModel)
         val feedModel = FeedModel(
             clinicalFeed.copy(
                 questionnaireEntries = QuestionnaireCorrection.correctQuestionnaires(
@@ -42,7 +45,7 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
             )
         )
 
-        val records = ClinicalRecordsFactory(feedModel, curationModel).create()
+        val records = ClinicalRecordsFactory(feedModel, curationModel, atcModel).create()
         val outputDirectory = config.outputDirectory
         LOGGER.info("Writing {} clinical records to {}", records.size, outputDirectory)
         ClinicalRecordJson.write(records, outputDirectory)

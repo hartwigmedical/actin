@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.feed
 
+import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntryCreator
 import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry
@@ -36,8 +37,8 @@ object FeedFileReaderFactory {
         return FeedFileReader.create(SurgeryEntryCreator())
     }
 
-    fun createMedicationReader(): FeedFileReader<MedicationEntry> {
-        return FeedFileReader.create(MedicationEntryCreator())
+    fun createMedicationReader(atcModel: AtcModel): FeedFileReader<MedicationEntry> {
+        return FeedFileReader.create(MedicationEntryCreator(atcModel))
     }
 
     fun createLabReader(): FeedFileReader<LabEntry> {

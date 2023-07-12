@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.feed
 
 import com.google.common.io.Resources
+import com.hartwig.actin.clinical.curation.TestAtcFactory
 import com.hartwig.actin.clinical.feed.FeedModel.Companion.fromFeedDirectory
 import org.junit.Assert
 import org.junit.Test
@@ -11,7 +12,7 @@ class FeedModelTest {
     @Test
     @Throws(IOException::class)
     fun canCreateFromFeedDirectory() {
-        Assert.assertNotNull(fromFeedDirectory(CLINICAL_FEED_DIRECTORY))
+        Assert.assertNotNull(fromFeedDirectory(CLINICAL_FEED_DIRECTORY, TestAtcFactory.createEmptyModel()))
     }
 
     @Test(expected = IllegalStateException::class)

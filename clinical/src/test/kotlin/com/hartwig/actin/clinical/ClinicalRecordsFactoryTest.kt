@@ -2,6 +2,7 @@ package com.hartwig.actin.clinical
 
 import com.google.common.collect.Sets
 import com.hartwig.actin.clinical.ClinicalRecordsFactory.Companion.toPatientId
+import com.hartwig.actin.clinical.curation.TestAtcFactory
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
 import com.hartwig.actin.clinical.datamodel.BodyWeight
@@ -221,7 +222,8 @@ class ClinicalRecordsFactoryTest {
         private fun createMinimalTestClinicalRecords(): List<ClinicalRecord> {
             return ClinicalRecordsFactory(
                 TestFeedFactory.createMinimalTestFeedModel(),
-                TestCurationFactory.createMinimalTestCurationModel()
+                TestCurationFactory.createMinimalTestCurationModel(),
+                TestAtcFactory.createMinimalModel()
             ).create()
         }
 
@@ -229,6 +231,7 @@ class ClinicalRecordsFactoryTest {
             return ClinicalRecordsFactory(
                 TestFeedFactory.createProperTestFeedModel(),
                 TestCurationFactory.createProperTestCurationModel(),
+                TestAtcFactory.createEmptyModel()
             ).create()
         }
     }
