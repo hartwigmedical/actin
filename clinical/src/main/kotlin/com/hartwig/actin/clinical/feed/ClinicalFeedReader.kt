@@ -26,13 +26,13 @@ object ClinicalFeedReader {
             questionnaireEntries = readEntriesFromFile(basePath, QUESTIONNAIRE_TSV, FeedFileReaderFactory.createQuestionnaireReader()),
             digitalFileEntries = readEntriesFromFile(basePath, DIGITAL_FILE_TSV, FeedFileReaderFactory.createDigitalFileReader()),
             surgeryEntries = readEntriesFromFile(basePath, SURGERY_TSV, FeedFileReaderFactory.createSurgeryReader()),
-            medicationEntries = readEntriesFromFile(basePath, MEDICATION_TSV, FeedFileReaderFactory.createMedicationReader(atcModel)),
+            medicationEntries = readEntriesFromFile(basePath, MEDICATION_TSV, FeedFileReaderFactory.createMedicationReader()),
             labEntries = readEntriesFromFile(basePath, LAB_TSV, FeedFileReaderFactory.createLabReader()),
             vitalFunctionEntries = readEntriesFromFile(basePath, VITAL_FUNCTION_TSV, FeedFileReaderFactory.createVitalFunctionReader()),
             intoleranceEntries = readEntriesFromFile(basePath, INTOLERANCE_TSV, FeedFileReaderFactory.createIntoleranceReader()),
             bodyWeightEntries = readEntriesFromFile(basePath, BODY_WEIGHT_TSV, FeedFileReaderFactory.createBodyWeightReader()),
         )
-        ClinicalFeedValidation.validate(feed)
+        ClinicalFeedValidation.validate(feed, atcModel)
         return feed
     }
 

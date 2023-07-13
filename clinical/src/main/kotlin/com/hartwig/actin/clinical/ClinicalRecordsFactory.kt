@@ -312,10 +312,6 @@ class ClinicalRecordsFactory(private val feed: FeedModel, private val curation: 
             }
             if (!name.isNullOrEmpty()) {
                 val medication: Medication = builder.name(name)
-                    .chemicalSubgroupAtc(entry.chemicalSubgroupDisplay)
-                    .pharmacologicalSubgroupAtc(entry.pharmacologicalSubgroupDisplay)
-                    .therapeuticSubgroupAtc(entry.therapeuticSubgroupDisplay)
-                    .anatomicalMainGroupAtc(entry.anatomicalMainGroupDisplay)
                     .status(curation.curateMedicationStatus(entry.status))
                     .administrationRoute(administrationRoute)
                     .startDate(entry.periodOfUseValuePeriodStart)

@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.hartwig.actin.clinical.datamodel.AtcClassification;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
@@ -205,7 +206,8 @@ class ClinicalDAO {
                         jtcMeasure.map(ECGMeasure::value).orElse(null),
                         jtcMeasure.map(ECGMeasure::unit).orElse(null),
                         clinicalStatus.lvef(),
-                        clinicalStatus.hasComplications()).execute();
+                        clinicalStatus.hasComplications())
+                .execute();
     }
 
     private void writeTreatmentHistoryEntries(@NotNull String patientId, @NotNull List<TreatmentHistoryEntry> treatmentHistoryEntries) {
@@ -534,14 +536,16 @@ class ClinicalDAO {
 
     private void writeMedications(@NotNull String patientId, @NotNull List<Medication> medications) {
         for (Medication medication : medications) {
+            AtcClassification atc = medication.atc();
             context.insertInto(MEDICATION,
                             MEDICATION.PATIENTID,
                             MEDICATION.NAME,
                             MEDICATION.CATEGORIES,
-                            MEDICATION.CHEMICALSUBGROUPATC,
-                            MEDICATION.PHARMACOLOGICALSUBGROUPATC,
-                            MEDICATION.THERAPEUTICSUBGROUPATC,
+                            MEDICATION.CODEATC,
                             MEDICATION.ANATOMICALMAINGROUPATC,
+                            MEDICATION.THERAPEUTICSUBGROUPATC,
+                            MEDICATION.PHARMACOLOGICALSUBGROUPATC,
+                            MEDICATION.CHEMICALSUBGROUPATC,
                             MEDICATION.STATUS,
                             MEDICATION.ADMINISTRATIONROUTE,
                             MEDICATION.DOSAGEMIN,
@@ -555,10 +559,11 @@ class ClinicalDAO {
                     .values(patientId,
                             medication.name(),
                             DataUtil.concat(medication.categories()),
-                            medication.chemicalSubgroupAtc(),
-                            medication.pharmacologicalSubgroupAtc(),
-                            medication.therapeuticSubgroupAtc(),
-                            medication.anatomicalMainGroupAtc(),
+                            atc != null ? atc.chemicalSubstance().code() : null,
+                            atc != null ? atc.anatomicalMainGroup().name() : null,
+                            atc != null ? atc.therapeuticSubGroup().name() : null,
+                            atc != null ? atc.pharmacologicalSubGroup().name() : null,
+                            atc != null ? atc.chemicalSubGroup().name() : null,
                             medication.status() != null ? medication.status().toString() : null,
                             medication.administrationRoute(),
                             medication.dosage().dosageMin(),

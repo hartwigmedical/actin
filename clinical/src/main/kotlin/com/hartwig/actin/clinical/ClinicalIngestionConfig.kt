@@ -13,7 +13,7 @@ data class ClinicalIngestionConfig(
     val feedDirectory: String,
     val curationDirectory: String,
     val doidJson: String,
-    val actTsv: String,
+    val atcTsv: String,
     val treatmentDirectory: String,
     val outputDirectory: String
 ) {
@@ -50,7 +50,7 @@ data class ClinicalIngestionConfig(
                 feedDirectory = ApplicationConfig.nonOptionalDir(cmd, FEED_DIRECTORY),
                 curationDirectory = ApplicationConfig.nonOptionalDir(cmd, CURATION_DIRECTORY),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
-                actTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),
+                atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY)
             )
