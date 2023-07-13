@@ -5,10 +5,10 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import org.junit.Test
 
-class IsEligibleForCurativeTreatmentTest {
+class IsNotParticipatingInAnotherTrialTest {
     @Test
     fun canEvaluate() {
-        val function = IsEligibleForCurativeTreatment()
+        val function = IsNotParticipatingInAnotherTrial()
         assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
     }
 }
