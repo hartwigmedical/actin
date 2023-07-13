@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.laboratory
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverable
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMinValue
 import com.hartwig.actin.clinical.datamodel.LabValue
@@ -51,36 +52,35 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
             creatinine
         )
 
-        var result = evaluateVersusMinValue(cockcroftGault, creatinine.comparator(), minCreatinineClearance)
-        if (weight == null && result == EvaluationResult.FAIL) {
-            result = EvaluationResult.UNDETERMINED
-        }
+        val result = evaluateVersusMinValue(cockcroftGault, creatinine.comparator(), minCreatinineClearance)
+        return when {
+            result == EvaluationResult.FAIL && weight == null -> EvaluationFactory.undetermined(
+                "Cockcroft-Gault may be insufficient but weight of patient is not known",
+                "Cockcroft-Gault may be insufficient but patient weight unknown"
+            )
 
-        val builder = recoverable().result(result)
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages("Cockcroft-Gault is insufficient")
-            builder.addFailGeneralMessages("Cockcroft-Gault insufficient")
-        } else if (result == EvaluationResult.UNDETERMINED) {
-            if (weight == null) {
-                builder.addUndeterminedSpecificMessages("Cockcroft-Gault is likely insufficient but weight of patient is not known")
-                builder.addUndeterminedGeneralMessages("Cockcroft-Gault evaluation weight unknown")
-            } else {
-                builder.addUndeterminedSpecificMessages("Cockcroft-Gault evaluation led to ambiguous results")
-                builder.addUndeterminedGeneralMessages("Cockcroft-Gault evaluation ambiguous")
-            }
-        } else if (result == EvaluationResult.PASS) {
-            if (weight == null) {
-                builder.addPassSpecificMessages(
-                    "Body weight is unknown but Cockcroft-Gault is most likely sufficient" +
-                            " based on minimal required body weight"
-                )
-                builder.addPassGeneralMessages("Cockcroft-Gault most likely sufficient")
-            } else {
-                builder.addPassSpecificMessages("Cockcroft-Gault is sufficient")
-                builder.addPassGeneralMessages("Cockcroft-Gault sufficient")
-            }
+            result == EvaluationResult.FAIL -> EvaluationFactory.recoverableFail(
+                "Cockcroft-Gault is insufficient",
+                "Cockcroft-Gault insufficient"
+            )
+
+            result == EvaluationResult.UNDETERMINED -> EvaluationFactory.undetermined(
+                "Cockcroft-Gault evaluation led to ambiguous results",
+                "Cockcroft-Gault evaluation ambiguous"
+            )
+
+            result == EvaluationResult.PASS && weight == null -> EvaluationFactory.notEvaluated(
+                "Body weight is unknown but Cockcroft-Gault is most likely sufficient",
+                "Cockcroft-Gault most likely sufficient"
+            )
+
+            result == EvaluationResult.PASS -> EvaluationFactory.recoverablePass(
+                "Cockcroft-Gault is sufficient",
+                "Cockcroft-Gault sufficient"
+            )
+
+            else -> recoverable().result(result).build()
         }
-        return builder.build()
     }
 
     private fun evaluateValues(code: String, values: List<Double>, comparator: String): Evaluation {
