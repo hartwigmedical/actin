@@ -6,8 +6,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import org.junit.Test
 
 class IsNotEligibleForCurativeTreatmentTest {
+
     @Test
-    fun canEvaluate() {
+    fun shouldAlwaysReturnNotEvaluated() {
         val function = IsNotEligibleForCurativeTreatment()
         assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
     }

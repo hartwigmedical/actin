@@ -6,8 +6,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import org.junit.Test
 
 class IsNotParticipatingInAnotherTrialTest {
+
     @Test
-    fun canEvaluate() {
+    fun shouldAlwaysReturnNotEvaluated() {
         val function = IsNotParticipatingInAnotherTrial()
         assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
     }
