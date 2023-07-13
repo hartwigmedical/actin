@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 
-class HasHadCompleteResection internal constructor() : EvaluationFunction {
+class HasHadCompleteResection : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         var hasHadCompleteResection = false
         var hasHadPotentialCompleteResection = false

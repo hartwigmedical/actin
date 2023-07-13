@@ -9,7 +9,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 
-internal class HasHadCombinedTreatmentNamesWithCycles(
+class HasHadCombinedTreatmentNamesWithCycles(
     private val treatments: List<Treatment>,
     private val minCycles: Int,
     private val maxCycles: Int

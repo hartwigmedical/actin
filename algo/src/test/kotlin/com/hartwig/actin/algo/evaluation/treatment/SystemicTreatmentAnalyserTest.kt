@@ -3,80 +3,129 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.lastSystemicTreatment
 import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.maxSystemicTreatments
 import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.minSystemicTreatments
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
-import org.junit.Assert.assertEquals
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatment
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert.assertNull
 import org.junit.Test
 
 class SystemicTreatmentAnalyserTest {
     @Test
-    fun canCountSystemicTreatments() {
-        val treatments: MutableList<PriorTumorTreatment> = mutableListOf()
-        assertEquals(0, minSystemicTreatments(treatments).toLong())
-        assertEquals(0, maxSystemicTreatments(treatments).toLong())
+    fun shouldReturnZeroWhenTreatmentListEmpty() {
+        val treatmentHistory = emptyList<TreatmentHistoryEntry>()
+        assertThat(minSystemicTreatments(treatmentHistory).toLong()).isEqualTo(0)
+        assertThat(maxSystemicTreatments(treatmentHistory).toLong()).isEqualTo(0)
+    }
 
-        // Add one systemic treatment.
-        treatments.add(TreatmentTestFactory.builder().name("treatment A").startYear(2022).startMonth(5).isSystemic(true).build())
-        assertEquals(1, minSystemicTreatments(treatments).toLong())
-        assertEquals(1, maxSystemicTreatments(treatments).toLong())
+    @Test
+    fun shouldReturnOneWhenOneSystemicTreatmentProvided() {
+        val treatmentHistory = listOf(SYSTEMIC_TREATMENT_HISTORY_ENTRY)
+        assertThat(minSystemicTreatments(treatmentHistory).toLong()).isEqualTo(1)
+        assertThat(maxSystemicTreatments(treatmentHistory).toLong()).isEqualTo(1)
+    }
 
-        // Add one non-systemic treatment prior
-        treatments.add(TreatmentTestFactory.builder().name("treatment B").startYear(2022).startMonth(2).isSystemic(false).build())
-        assertEquals(1, minSystemicTreatments(treatments).toLong())
-        assertEquals(1, maxSystemicTreatments(treatments).toLong())
+    @Test
+    fun shouldNotCountNonSystemicTreatments() {
+        val treatmentHistory = listOf(NON_SYSTEMIC_TREATMENT_HISTORY_ENTRY)
+        assertThat(minSystemicTreatments(treatmentHistory).toLong()).isEqualTo(0)
+        assertThat(maxSystemicTreatments(treatmentHistory).toLong()).isEqualTo(0)
+    }
 
-        // Add another systemic treatment prior
-        treatments.add(TreatmentTestFactory.builder().name("treatment A").startYear(2021).startMonth(10).isSystemic(true).build())
-        assertEquals(2, minSystemicTreatments(treatments).toLong())
-        assertEquals(2, maxSystemicTreatments(treatments).toLong())
+    @Test
+    fun shouldCountBlocksOfConsecutiveSystemicTreatmentsForMinAndEachSystemicTreatmentForMax() {
+        val treatmentHistory = mutableListOf(
+            SYSTEMIC_TREATMENT_HISTORY_ENTRY,
+            NON_SYSTEMIC_TREATMENT_HISTORY_ENTRY,
+            EARLIER_SYSTEMIC_TREATMENT_HISTORY_ENTRY
+        )
+        assertThat(minSystemicTreatments(treatmentHistory).toLong()).isEqualTo(2)
+        assertThat(maxSystemicTreatments(treatmentHistory).toLong()).isEqualTo(2)
 
-        // Add another systemic treatment prior
-        treatments.add(TreatmentTestFactory.builder().name("treatment A").startYear(2021).startMonth(5).isSystemic(true).build())
-        assertEquals(2, minSystemicTreatments(treatments).toLong())
-        assertEquals(3, maxSystemicTreatments(treatments).toLong())
+        treatmentHistory.add(treatmentHistoryEntry(setOf(SYSTEMIC_TREATMENT), 2021, 10))
+        assertThat(minSystemicTreatments(treatmentHistory).toLong()).isEqualTo(2)
+        assertThat(maxSystemicTreatments(treatmentHistory).toLong()).isEqualTo(3)
+    }
 
-        // Add another systemic treatment without date
-        treatments.add(TreatmentTestFactory.builder().name("treatment A").isSystemic(true).build())
-        assertEquals(2, minSystemicTreatments(treatments).toLong())
-        assertEquals(4, maxSystemicTreatments(treatments).toLong())
+    @Test
+    fun shouldNotCountInterruptionsBetweenTreatmentsWithSameNameAndUnknownDates() {
+        val treatmentHistory = mutableListOf(
+            SYSTEMIC_TREATMENT_HISTORY_ENTRY,
+            NON_SYSTEMIC_TREATMENT_HISTORY_ENTRY,
+            EARLIER_SYSTEMIC_TREATMENT_HISTORY_ENTRY
+        )
+        assertThat(minSystemicTreatments(treatmentHistory).toLong()).isEqualTo(2)
+        assertThat(maxSystemicTreatments(treatmentHistory).toLong()).isEqualTo(2)
 
-        // Add another systemic treatment with just year
-        treatments.add(TreatmentTestFactory.builder().name("treatment A").startYear(2021).isSystemic(true).build())
-        assertEquals(2, minSystemicTreatments(treatments).toLong())
-        assertEquals(5, maxSystemicTreatments(treatments).toLong())
+        treatmentHistory.add(treatmentHistoryEntry(setOf(SYSTEMIC_TREATMENT), null, null))
+        assertThat(minSystemicTreatments(treatmentHistory).toLong()).isEqualTo(2)
+        assertThat(maxSystemicTreatments(treatmentHistory).toLong()).isEqualTo(3)
 
-        // Add different systemic treatment with just year
-        treatments.add(TreatmentTestFactory.builder().name("treatment C").startYear(2021).isSystemic(true).build())
-        assertEquals(3, minSystemicTreatments(treatments).toLong())
-        assertEquals(6, maxSystemicTreatments(treatments).toLong())
+        treatmentHistory.add(treatmentHistoryEntry(setOf(SYSTEMIC_TREATMENT), 2021, null))
+        assertThat(minSystemicTreatments(treatmentHistory).toLong()).isEqualTo(2)
+        assertThat(maxSystemicTreatments(treatmentHistory).toLong()).isEqualTo(4)
+    }
 
-        // Make sure one older non-systemic doesn't screw up.
-        treatments.add(TreatmentTestFactory.builder().name("treatment D").startYear(2019).startMonth(5).isSystemic(false).build())
-        assertEquals(3, minSystemicTreatments(treatments).toLong())
-        assertEquals(6, maxSystemicTreatments(treatments).toLong())
+    @Test
+    fun shouldCountInterruptionsBetweenDifferentTreatmentsAndUnknownDates() {
+        val treatmentHistory = mutableListOf(
+            SYSTEMIC_TREATMENT_HISTORY_ENTRY,
+            NON_SYSTEMIC_TREATMENT_HISTORY_ENTRY,
+            EARLIER_SYSTEMIC_TREATMENT_HISTORY_ENTRY
+        )
+        assertThat(minSystemicTreatments(treatmentHistory).toLong()).isEqualTo(2)
+        assertThat(maxSystemicTreatments(treatmentHistory).toLong()).isEqualTo(2)
+
+        treatmentHistory.add(
+            treatmentHistoryEntry(
+                setOf(treatment("treatment C", true)), null, null
+            )
+        )
+        assertThat(minSystemicTreatments(treatmentHistory).toLong()).isEqualTo(3)
+        assertThat(maxSystemicTreatments(treatmentHistory).toLong()).isEqualTo(3)
+    }
+
+    @Test
+    fun shouldReturnNullForLastSystemicTreatmentWhenNoTreatmentsProvided() {
+        assertThat(lastSystemicTreatment(emptyList())).isNull()
+    }
+
+    @Test
+    fun shouldReturnNullForLastSystemicTreatmentWhenOnlyNonSystemicTreatments() {
+        assertNull(lastSystemicTreatment(listOf(NON_SYSTEMIC_TREATMENT_HISTORY_ENTRY)))
     }
 
     @Test
     fun canDetermineLastSystemicTreatment() {
-        val treatments: MutableList<PriorTumorTreatment> = mutableListOf()
-        assertNull(lastSystemicTreatment(treatments))
+        val treatmentHistory = mutableListOf(treatmentHistoryEntry(setOf(treatment("1", true)), 2020, 5))
+        assertNameForLastSystemicTreatmentHistoryEntry(treatmentHistory, "1")
 
-        treatments.add(TreatmentTestFactory.builder().isSystemic(false).build())
-        assertNull(lastSystemicTreatment(treatments))
+        treatmentHistory.add(treatmentHistoryEntry(setOf(treatment("2", true)), 2021))
+        assertNameForLastSystemicTreatmentHistoryEntry(treatmentHistory, "2")
 
-        treatments.add(TreatmentTestFactory.builder().isSystemic(true).startYear(2020).stopReason("reason 1").build())
-        assertEquals("reason 1", lastSystemicTreatment(treatments)!!.stopReason())
+        treatmentHistory.add(treatmentHistoryEntry(setOf(treatment("3", true)), 2021, 1))
+        assertNameForLastSystemicTreatmentHistoryEntry(treatmentHistory, "3")
 
-        treatments.add(TreatmentTestFactory.builder().isSystemic(true).startYear(2021).stopReason("reason 2").build())
-        assertEquals("reason 2", lastSystemicTreatment(treatments)!!.stopReason())
+        treatmentHistory.add(treatmentHistoryEntry(setOf(treatment("4", true)), 2021, 10))
+        assertNameForLastSystemicTreatmentHistoryEntry(treatmentHistory, "4")
 
-        treatments.add(TreatmentTestFactory.builder().isSystemic(true).startYear(2021).startMonth(1).stopReason("reason 3").build())
-        assertEquals("reason 3", lastSystemicTreatment(treatments)!!.stopReason())
+        treatmentHistory.add(treatmentHistoryEntry(setOf(treatment("5", true)), 2021, 8))
+        assertNameForLastSystemicTreatmentHistoryEntry(treatmentHistory, "4")
+    }
 
-        treatments.add(TreatmentTestFactory.builder().isSystemic(true).startYear(2021).startMonth(10).stopReason("reason 4").build())
-        assertEquals("reason 4", lastSystemicTreatment(treatments)!!.stopReason())
+    companion object {
+        private val SYSTEMIC_TREATMENT = treatment("treatment A", true)
+        private val SYSTEMIC_TREATMENT_HISTORY_ENTRY = treatmentHistoryEntry(setOf(SYSTEMIC_TREATMENT), 2022, 5)
+        private val EARLIER_SYSTEMIC_TREATMENT_HISTORY_ENTRY: ImmutableTreatmentHistoryEntry =
+            ImmutableTreatmentHistoryEntry.copyOf(SYSTEMIC_TREATMENT_HISTORY_ENTRY)
+                .withStartYear(2021)
+                .withStartMonth(5)
+        private val NON_SYSTEMIC_TREATMENT = treatment("treatment B", false)
+        private val NON_SYSTEMIC_TREATMENT_HISTORY_ENTRY = treatmentHistoryEntry(setOf(NON_SYSTEMIC_TREATMENT), 2022, 2)
 
-        treatments.add(TreatmentTestFactory.builder().isSystemic(true).startYear(2021).startMonth(8).stopReason("reason 5").build())
-        assertEquals("reason 4", lastSystemicTreatment(treatments)!!.stopReason())
+        private fun assertNameForLastSystemicTreatmentHistoryEntry(treatmentHistory: List<TreatmentHistoryEntry>, name: String) {
+            assertThat(lastSystemicTreatment(treatmentHistory)!!.treatments().iterator().next().name()).isEqualTo(name)
+        }
     }
 }

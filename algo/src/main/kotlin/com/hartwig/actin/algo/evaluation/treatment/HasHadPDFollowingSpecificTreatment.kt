@@ -58,31 +58,27 @@ class HasHadPDFollowingSpecificTreatment(
     ): TreatmentHistoryEvaluation {
         val treatmentHistory = record.clinical().treatmentHistory()
 
-        return if (treatmentHistory.isEmpty()) {
-            TreatmentHistoryEvaluation(emptySet(), emptySet(), matchesWithUnclearPD = false, hasWarnType = false)
-        } else {
-            treatmentHistory.map { entry ->
-                val categories = entry.treatments().flatMap(Treatment::categories)
-                val isWarnType = (warnCategory != null && categories.contains(warnCategory)) || categories.contains(TreatmentCategory.TRIAL)
-                val isPD = treatmentResultedInPDOption(entry)
-                if (matchCondition(entry.treatments(), treatmentNamesToMatch)) {
-                    TreatmentHistoryEvaluation(
-                        matchesWithPD = if (isPD == true) entry.treatments() else emptySet(),
-                        typeMatches = entry.treatments(),
-                        matchesWithUnclearPD = isPD == null,
-                        hasWarnType = isWarnType
-                    )
-                } else {
-                    TreatmentHistoryEvaluation(emptySet(), emptySet(), false, isWarnType)
-                }
-            }.reduce { acc, result ->
+        return treatmentHistory.map { entry ->
+            val categories = entry.treatments().flatMap(Treatment::categories)
+            val isWarnType = (warnCategory != null && categories.contains(warnCategory)) || categories.contains(TreatmentCategory.TRIAL)
+            val isPD = treatmentResultedInPDOption(entry)
+            if (matchCondition(entry.treatments(), treatmentNamesToMatch)) {
                 TreatmentHistoryEvaluation(
-                    matchesWithPD = acc.matchesWithPD + result.matchesWithPD,
-                    typeMatches = acc.typeMatches + result.typeMatches,
-                    matchesWithUnclearPD = acc.matchesWithUnclearPD || result.matchesWithUnclearPD,
-                    hasWarnType = acc.hasWarnType || result.hasWarnType
+                    matchesWithPD = if (isPD == true) entry.treatments() else emptySet(),
+                    typeMatches = entry.treatments(),
+                    matchesWithUnclearPD = isPD == null,
+                    hasWarnType = isWarnType
                 )
+            } else {
+                TreatmentHistoryEvaluation(emptySet(), emptySet(), false, isWarnType)
             }
+        }.fold(TreatmentHistoryEvaluation(emptySet(), emptySet(), matchesWithUnclearPD = false, hasWarnType = false)) { acc, result ->
+            TreatmentHistoryEvaluation(
+                matchesWithPD = acc.matchesWithPD + result.matchesWithPD,
+                typeMatches = acc.typeMatches + result.typeMatches,
+                matchesWithUnclearPD = acc.matchesWithUnclearPD || result.matchesWithUnclearPD,
+                hasWarnType = acc.hasWarnType || result.hasWarnType
+            )
         }
     }
 

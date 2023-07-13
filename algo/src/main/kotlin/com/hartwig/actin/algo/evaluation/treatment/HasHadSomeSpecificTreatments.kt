@@ -9,7 +9,7 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensit
 import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 
-class HasHadSomeSpecificTreatments internal constructor(
+class HasHadSomeSpecificTreatments(
     private val names: Set<String>, private val warnCategory: TreatmentCategory?,
     private val minTreatmentLines: Int
 ) : EvaluationFunction {

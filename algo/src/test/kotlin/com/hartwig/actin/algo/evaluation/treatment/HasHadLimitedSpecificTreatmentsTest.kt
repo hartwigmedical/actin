@@ -34,7 +34,7 @@ class HasHadLimitedSpecificTreatmentsTest {
 
     @Test
     fun canEvaluateWithTrials() {
-        val function = HasHadLimitedSpecificTreatments(setOf("right treatment"), null, 1)
+        val function = HasHadLimitedSpecificTreatments(setOf("right treatment"), TreatmentCategory.CHEMOTHERAPY, 1)
         val treatments: MutableList<PriorTumorTreatment> = mutableListOf()
 
         // Add correct treatment within trial
@@ -48,7 +48,7 @@ class HasHadLimitedSpecificTreatmentsTest {
 
     @Test
     fun canHandleNoWarnCategory() {
-        val function = HasHadLimitedSpecificTreatments(setOf("treatment"), null, 1)
+        val function = HasHadLimitedSpecificTreatments(setOf("treatment"), TreatmentCategory.CHEMOTHERAPY, 1)
         val treatments = listOf(
             TreatmentTestFactory.builder().name("treatment").build(), TreatmentTestFactory.builder().name("treatment").build()
         )

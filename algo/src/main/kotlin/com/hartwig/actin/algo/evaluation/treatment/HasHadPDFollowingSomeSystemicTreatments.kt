@@ -5,16 +5,16 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-class HasHadPDFollowingSomeSystemicTreatments internal constructor(
+class HasHadPDFollowingSomeSystemicTreatments(
     private val minSystemicTreatments: Int,
     private val mustBeRadiological: Boolean
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val priorTumorTreatments = record.clinical().priorTumorTreatments()
-        val minSystemicCount = SystemicTreatmentAnalyser.minSystemicTreatments(priorTumorTreatments)
-        val maxSystemicCount = SystemicTreatmentAnalyser.maxSystemicTreatments(priorTumorTreatments)
+        val treatmentHistory = record.clinical().treatmentHistory()
+        val minSystemicCount = SystemicTreatmentAnalyser.minSystemicTreatments(treatmentHistory)
+        val maxSystemicCount = SystemicTreatmentAnalyser.maxSystemicTreatments(record.clinical().treatmentHistory())
         if (minSystemicCount >= minSystemicTreatments) {
-            return SystemicTreatmentAnalyser.lastSystemicTreatment(priorTumorTreatments)
+            return SystemicTreatmentAnalyser.lastSystemicTreatment(treatmentHistory)
                 ?.let { ProgressiveDiseaseFunctions.treatmentResultedInPDOption(it) }
                 ?.let { treatmentResultedInPD: Boolean? ->
                     when (treatmentResultedInPD) {

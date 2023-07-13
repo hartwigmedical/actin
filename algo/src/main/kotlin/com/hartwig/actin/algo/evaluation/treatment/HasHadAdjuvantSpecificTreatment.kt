@@ -7,19 +7,19 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
-import java.util.Locale
+import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
+import java.util.*
 
-class HasHadAdjuvantSpecificTreatment internal constructor(private val names: Set<String>, private val warnCategory: TreatmentCategory) :
+class HasHadAdjuvantSpecificTreatment(private val names: Set<String>, private val warnCategory: TreatmentCategory) :
     EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val adjuvantTreatments = record.clinical().priorTumorTreatments()
-            .filter { it.name().lowercase().replace("neoadjuvant", "").contains("adjuvant") }
+        val adjuvantTreatmentHistory = record.clinical().treatmentHistory().filter { it.intents()?.contains(Intent.ADJUVANT) == true }
 
         val matchTreatments: MutableList<String> = Lists.newArrayList()
         val warnTreatments: MutableList<String> = Lists.newArrayList()
 
-        for (treatment in adjuvantTreatments) {
+        adjuvantTreatmentHistory.flatMap { it.treatments() }.forEach { treatment ->
             val isTrial = treatment.categories().contains(TreatmentCategory.TRIAL)
             if (treatment.categories().contains(warnCategory) || isTrial) {
                 warnTreatments.add(treatment.name())

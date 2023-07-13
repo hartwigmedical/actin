@@ -9,7 +9,8 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensit
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.doid.DoidModel
 
-class HasLimitedCumulativeAnthracyclineExposure internal constructor(private val doidModel: DoidModel) : EvaluationFunction {
+class HasLimitedCumulativeAnthracyclineExposure(private val doidModel: DoidModel) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         var hasSuspectPriorTumorWithSuspectTreatmentHistory = false
         for (priorSecondPrimary in record.clinical().priorSecondPrimaries()) {

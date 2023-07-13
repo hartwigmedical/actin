@@ -5,7 +5,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
 
-internal object ProgressiveDiseaseFunctions {
+object ProgressiveDiseaseFunctions {
     const val PD_LABEL = "PD"
 
     fun treatmentResultedInPDOption(treatment: TreatmentHistoryEntry): Boolean? {
