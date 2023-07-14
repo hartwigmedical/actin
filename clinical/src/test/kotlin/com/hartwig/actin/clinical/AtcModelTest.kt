@@ -1,9 +1,16 @@
 package com.hartwig.actin.clinical
 
-import com.hartwig.actin.clinical.curation.*
-import com.hartwig.actin.clinical.datamodel.*
-import org.assertj.core.api.Assertions.*
-import org.junit.*
+import com.hartwig.actin.clinical.curation.ANATOMICAL
+import com.hartwig.actin.clinical.curation.ATC_CODE
+import com.hartwig.actin.clinical.curation.CHEMICAL
+import com.hartwig.actin.clinical.curation.CHEMICAL_SUBSTANCE
+import com.hartwig.actin.clinical.curation.PHARMACOLOGICAL
+import com.hartwig.actin.clinical.curation.THERAPEUTIC
+import com.hartwig.actin.clinical.curation.TestAtcFactory
+import com.hartwig.actin.clinical.datamodel.ImmutableAtcLevel
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.Test
 
 class AtcModelTest {
 

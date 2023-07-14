@@ -45,7 +45,6 @@ class MedicationEntryCreator : FeedEntryCreator<MedicationEntry> {
     }
 
     companion object {
-        val LOGGER: Logger = LogManager.getLogger(MedicationEntryCreator::class.java)
 
         @VisibleForTesting
         fun isActive(activeField: String): Boolean? {

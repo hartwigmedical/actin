@@ -8,7 +8,6 @@ import com.hartwig.actin.clinical.curation.PHARMACOLOGICAL
 import com.hartwig.actin.clinical.curation.THERAPEUTIC
 import com.hartwig.actin.clinical.curation.TestAtcFactory
 import com.hartwig.actin.clinical.feed.medication.MedicationEntry
-import org.apache.logging.log4j.util.Strings
 import org.assertj.core.api.Assertions
 import org.junit.Test
 import java.time.LocalDate
@@ -38,7 +37,7 @@ class MedicationFeedValidationTest {
     }
 
     @Test
-    fun shouldFailValidityCheckIfAtcClassificationMatches() {
+    fun shouldFailValidityCheckIfAtcClassificationDoesNotMatch() {
 
         val permutations = listOf(
             medicationEntry(
@@ -98,33 +97,33 @@ class MedicationFeedValidationTest {
         anatomicalMainGroupDisplay: String = ""
     ): MedicationEntry {
         return MedicationEntry(
-            status = Strings.EMPTY,
-            dosageInstructionText = Strings.EMPTY,
+            status = "",
+            dosageInstructionText = "",
             periodOfUseValuePeriodStart = LocalDate.of(2023, 7, 13),
             periodOfUseValuePeriodEnd = LocalDate.of(2023, 7, 13),
             active = true,
-            subject = Strings.EMPTY,
-            codeText = Strings.EMPTY,
+            subject = "",
+            codeText = "",
             code5ATCCode = code5ATCCode,
             code5ATCDisplay = code5ATCDisplay,
             chemicalSubgroupDisplay = chemicalSubgroupDisplay,
             pharmacologicalSubgroupDisplay = pharmacologicalSubgroupDisplay,
             therapeuticSubgroupDisplay = therapeuticSubgroupDisplay,
             anatomicalMainGroupDisplay = anatomicalMainGroupDisplay,
-            dosageInstructionRouteDisplay = Strings.EMPTY,
-            dosageInstructionDoseQuantityUnit = Strings.EMPTY,
+            dosageInstructionRouteDisplay = "",
+            dosageInstructionDoseQuantityUnit = "",
             dosageInstructionDoseQuantityValue = 0.0,
-            dosageInstructionFrequencyUnit = Strings.EMPTY,
+            dosageInstructionFrequencyUnit = "",
             dosageInstructionFrequencyValue = 0.0,
             dosageInstructionMaxDosePerAdministration = 0.0,
-            dosageInstructionPatientInstruction = Strings.EMPTY,
-            dosageInstructionAsNeededDisplay = Strings.EMPTY,
-            dosageInstructionPeriodBetweenDosagesUnit = Strings.EMPTY,
+            dosageInstructionPatientInstruction = "",
+            dosageInstructionAsNeededDisplay = "",
+            dosageInstructionPeriodBetweenDosagesUnit = "",
             dosageInstructionPeriodBetweenDosagesValue = 0.0,
-            dosageDoseValue = Strings.EMPTY,
-            dosageRateQuantityUnit = Strings.EMPTY,
-            dosageDoseUnitDisplayOriginal = Strings.EMPTY,
-            stopTypeDisplay = Strings.EMPTY
+            dosageDoseValue = "",
+            dosageRateQuantityUnit = "",
+            dosageDoseUnitDisplayOriginal = "",
+            stopTypeDisplay = ""
         )
     }
 }

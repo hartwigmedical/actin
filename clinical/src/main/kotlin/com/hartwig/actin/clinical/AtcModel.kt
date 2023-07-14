@@ -1,9 +1,11 @@
 package com.hartwig.actin.clinical
 
-import com.hartwig.actin.clinical.datamodel.*
-import com.hartwig.actin.util.*
-import java.io.*
-import java.nio.file.*
+import com.hartwig.actin.clinical.datamodel.AtcClassification
+import com.hartwig.actin.clinical.datamodel.ImmutableAtcClassification
+import com.hartwig.actin.clinical.datamodel.ImmutableAtcLevel
+import com.hartwig.actin.util.TabularFile
+import java.io.File
+import java.nio.file.Files
 
 class AtcModel(private val atcMap: Map<String, String>) {
 
