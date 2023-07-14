@@ -1,8 +1,10 @@
 package com.hartwig.actin.clinical.datamodel.treatment.history;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -33,4 +35,13 @@ public abstract class TreatmentHistoryEntry {
     @Nullable
     public abstract TherapyHistoryDetails therapyHistoryDetails();
 
+    @NotNull
+    public String treatmentName() {
+        String nameString = treatments().stream().map(Treatment::name).collect(Collectors.joining(";"));
+        return !nameString.isEmpty()
+                ? nameString
+                : treatments().stream()
+                        .flatMap(t -> t.categories().stream().map(TreatmentCategory::display))
+                        .collect(Collectors.joining(";"));
+    }
 }

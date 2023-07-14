@@ -14,7 +14,7 @@ class HasHadTreatmentWithCategoryButNotOfTypes(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentSummary =
-            TreatmentSummaryForCategory.createForTreatments(record.clinical().priorTumorTreatments(), category) { treatment ->
+            TreatmentSummaryForCategory.createForTreatmentHistory(record.clinical().treatmentHistory(), category) { treatment ->
                 ignoreTypes.none { TreatmentTypeResolver.isOfType(treatment, category, it) }
             }
 

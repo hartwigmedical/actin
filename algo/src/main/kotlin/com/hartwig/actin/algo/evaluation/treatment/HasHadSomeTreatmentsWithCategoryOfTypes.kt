@@ -13,15 +13,15 @@ class HasHadSomeTreatmentsWithCategoryOfTypes(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentSummary =
-            TreatmentSummaryForCategory.createForTreatments(record.clinical().priorTumorTreatments(), category) { treatment ->
+            TreatmentSummaryForCategory.createForTreatmentHistory(record.clinical().treatmentHistory(), category) { treatment ->
                 TreatmentTypeResolver.matchesTypeFromCollection(treatment, category, types)
             }
         return when {
-            treatmentSummary.numSpecificMatches >= minTreatmentLines -> {
+            treatmentSummary.numSpecificMatches() >= minTreatmentLines -> {
                 EvaluationFactory.pass("Has received at least $minTreatmentLines line(s) of ${concat(types)} ${category.display()}")
             }
 
-            treatmentSummary.numSpecificMatches + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches >= minTreatmentLines -> {
+            treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches >= minTreatmentLines -> {
                 EvaluationFactory.undetermined(
                     "Can't determine whether patient has received at least $minTreatmentLines line(s) of ${concat(types)} ${category.display()}",
                     "Undetermined if received at least $minTreatmentLines line(s) of ${concat(types)} ${category.display()}"

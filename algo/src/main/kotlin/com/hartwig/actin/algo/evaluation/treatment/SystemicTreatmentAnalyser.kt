@@ -9,18 +9,18 @@ object SystemicTreatmentAnalyser {
     }
 
     fun minSystemicTreatments(treatments: List<TreatmentHistoryEntry>): Int {
-        val systemicByName = treatments.filter(::treatmentHistoryEntryIsSystemic).groupBy(::treatmentHistoryEntryToName)
+        val systemicByName = treatments.filter(::treatmentHistoryEntryIsSystemic).groupBy(TreatmentHistoryEntry::treatmentName)
 
         return systemicByName.map { entry ->
             if (entry.value.size == 1) 1 else {
-                val otherTreatments = treatments.filterNot { treatmentHistoryEntryToName(it) == entry.key }
+                val otherTreatments = treatments.filterNot { it.treatmentName() == entry.key }
                 val sortedWithName = entry.value.sortedWith(
                     compareBy(
                         TreatmentHistoryEntry::startYear,
                         TreatmentHistoryEntry::startMonth,
                         { it.therapyHistoryDetails()?.stopYear() },
                         { it.therapyHistoryDetails()?.stopMonth() },
-                        ::treatmentHistoryEntryToName
+                        TreatmentHistoryEntry::treatmentName
                     )
                 )
                 (1 until sortedWithName.size).map {
@@ -37,12 +37,6 @@ object SystemicTreatmentAnalyser {
 
     private fun treatmentHistoryEntryIsSystemic(treatmentHistoryEntry: TreatmentHistoryEntry): Boolean {
         return treatmentHistoryEntry.treatments().any(Treatment::isSystemic)
-    }
-
-    private fun treatmentHistoryEntryToName(treatmentHistoryEntry: TreatmentHistoryEntry): String {
-        return treatmentHistoryEntry.treatments().joinToString(";", transform = Treatment::name).ifEmpty {
-            treatmentHistoryEntry.treatments().flatMap(Treatment::categories).joinToString(";")
-        }
     }
 
     private class TreatmentHistoryEntryStartDateComparator : Comparator<TreatmentHistoryEntry> {

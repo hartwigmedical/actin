@@ -14,15 +14,15 @@ class HasHadLimitedTreatmentsWithCategoryOfTypes(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentSummary =
-            TreatmentSummaryForCategory.createForTreatments(record.clinical().priorTumorTreatments(), category) { treatment ->
+            TreatmentSummaryForCategory.createForTreatmentHistory(record.clinical().treatmentHistory(), category) { treatment ->
                 TreatmentTypeResolver.matchesTypeFromCollection(treatment, category, types)
             }
 
         return when {
-            treatmentSummary.numSpecificMatches + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches <= maxTreatmentLines ->
+            treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches <= maxTreatmentLines ->
                 EvaluationFactory.pass("Has received at most $maxTreatmentLines lines of ${concat(types)} ${category.display()}")
 
-            treatmentSummary.numSpecificMatches <= maxTreatmentLines ->
+            treatmentSummary.numSpecificMatches() <= maxTreatmentLines ->
                 EvaluationFactory.undetermined("Unclear if has received at most $maxTreatmentLines lines of ${concat(types)} ${category.display()}")
 
             else ->

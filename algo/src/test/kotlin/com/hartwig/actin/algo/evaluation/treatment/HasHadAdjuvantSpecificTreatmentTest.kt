@@ -7,13 +7,11 @@ import org.junit.Test
 
 class HasHadAdjuvantSpecificTreatmentTest {
 
-    private val function = HasHadAdjuvantSpecificTreatment(MATCH_NAMES, WARN_CATEGORY)
-
     @Test
     fun shouldFailForEmptyTreatmentList() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(emptyList()))
+            FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
         )
     }
 
@@ -49,7 +47,7 @@ class HasHadAdjuvantSpecificTreatmentTest {
 
     private fun assertResultForCategoryAndName(expectedResult: EvaluationResult, category: TreatmentCategory, name: String) {
         EvaluationAssert.assertEvaluation(
-            expectedResult, function.evaluate(
+            expectedResult, FUNCTION.evaluate(
                 TreatmentTestFactory.withPriorTumorTreatments(
                     listOf(
                         TreatmentTestFactory.builder().addCategories(category).name(name).build()
@@ -64,6 +62,8 @@ class HasHadAdjuvantSpecificTreatmentTest {
 
         private val WARN_CATEGORY = TreatmentCategory.TARGETED_THERAPY
         private val OTHER_CATEGORY = TreatmentCategory.IMMUNOTHERAPY
+        private val FUNCTION = HasHadAdjuvantSpecificTreatment(MATCH_NAMES, WARN_CATEGORY)
+
     }
 }
 
