@@ -5,45 +5,31 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-class HasHadPDFollowingSomeSystemicTreatments internal constructor(
+class HasHadPDFollowingSomeSystemicTreatments(
     private val minSystemicTreatments: Int,
     private val mustBeRadiological: Boolean
 ) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val priorTumorTreatments = record.clinical().priorTumorTreatments()
         val minSystemicCount = SystemicTreatmentAnalyser.minSystemicTreatments(priorTumorTreatments)
         val maxSystemicCount = SystemicTreatmentAnalyser.maxSystemicTreatments(priorTumorTreatments)
+        val lastTreatment = SystemicTreatmentAnalyser.lastSystemicTreatment(priorTumorTreatments)
         if (minSystemicCount >= minSystemicTreatments) {
-            return SystemicTreatmentAnalyser.lastSystemicTreatment(priorTumorTreatments)
-                ?.let { ProgressiveDiseaseFunctions.treatmentResultedInPDOption(it) }
-                ?.let { treatmentResultedInPD: Boolean? ->
-                    when (treatmentResultedInPD) {
-                        true -> {
-                            if (!mustBeRadiological) {
-                                EvaluationFactory.pass(
-                                    "Patient received at least $minSystemicTreatments systemic treatments ending with PD",
-                                    "Has received $minSystemicTreatments systemic treatments with PD"
-                                )
-                            } else {
-                                EvaluationFactory.undetermined(
-                                    "Patient received at least " + minSystemicTreatments
-                                            + " systemic treatments ending with PD, undetermined if there is currently radiological progression",
-                                    "Undetermined if currently there is radiological progression"
-                                )
-                            }
-                        }
+            return when {
+                lastTreatment?.let { ProgressiveDiseaseFunctions.treatmentResultedInPDOption(it) } == true -> {
+                    val radiologicalNote = if (mustBeRadiological) " (assumed PD is radiological)" else ""
+                    EvaluationFactory.pass(
+                        "Has received $minSystemicTreatments systemic treatments with PD$radiologicalNote"
+                    )
+                }
 
-                        else -> {
-                            EvaluationFactory.fail(
-                                "Patient received at least $minSystemicTreatments systemic treatments with no PD",
-                                "At least $minSystemicTreatments systemic treatments but not with PD"
-                            )
-                        }
-                    }
-                } ?: EvaluationFactory.undetermined(
-                "Patient received at least $minSystemicTreatments systemic treatments but unclear PD status",
-                "Has had at least $minSystemicTreatments systemic treatments but undetermined if PD"
-            )
+                lastTreatment?.stopYear() == null || lastTreatment.stopReason()?.contains("toxicity", ignoreCase = true) == true ->
+                    EvaluationFactory.undetermined("Has had at least $minSystemicTreatments systemic treatments but undetermined if PD")
+
+                else ->
+                    EvaluationFactory.pass("Has received at least $minSystemicTreatments systemic treatments and PD is assumed")
+            }
         } else if (maxSystemicCount >= minSystemicTreatments) {
             return EvaluationFactory.undetermined(
                 "Undetermined if patient received at least $minSystemicTreatments systemic treatments",
