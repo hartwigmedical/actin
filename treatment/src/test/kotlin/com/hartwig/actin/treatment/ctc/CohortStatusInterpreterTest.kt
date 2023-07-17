@@ -19,11 +19,15 @@ class CohortStatusInterpreterTest {
     }
 
     @Test
-    fun shouldAssumeUnexplainedMissingCohortsAreClosed() {
-        val unexplainedMissing = createWithCTCCohortIDs(CohortStatusInterpreter.NOT_IN_CTC_OVERVIEW_UNKNOWN_WHY)
-        val status = interpret(entries, unexplainedMissing)
-        assertThat(status!!.open).isFalse
-        assertThat(status.slotsAvailable).isFalse
+    fun shouldIgnoreCohortsThatAreConfiguredAsNotInCTCOverviewUnknownWhy() {
+        val notInCTCOverviewUnknownWhy = createWithCTCCohortIDs(CohortStatusInterpreter.NOT_IN_CTC_OVERVIEW_UNKNOWN_WHY)
+        assertThat(interpret(entries, notInCTCOverviewUnknownWhy)).isNull()
+    }
+
+    @Test
+    fun shouldIgnoreCohortsThatAreConfiguredAsOverruledBecauseIncorrectInCTC() {
+        val overruledBecauseIncorrectInCTC = createWithCTCCohortIDs(CohortStatusInterpreter.OVERRULED_BECAUSE_INCORRECT_IN_CTC)
+        assertThat(interpret(entries, overruledBecauseIncorrectInCTC)).isNull()
     }
 
     @Test
