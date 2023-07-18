@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 
@@ -46,21 +45,18 @@ data class TreatmentSummaryForCategory(
         ): TreatmentSummaryForCategory {
             val trialMatchesAllowed = categoryAllowsTrialMatches(category)
             return treatmentHistory.map { treatmentHistoryEntry ->
-                val categories = treatmentHistoryEntry.treatments().flatMap(Treatment::categories)
-                val matchesCategory = categories.contains(category)
+                val matchesCategory = treatmentHistoryEntry.categories().contains(category)
                 val classification = classifier(treatmentHistoryEntry)
                 TreatmentSummaryForCategory(
                     if (matchesCategory && classification == true) setOf(treatmentHistoryEntry) else emptySet(),
                     if (matchesCategory && classification == null) 1 else 0,
-                    if (trialMatchesAllowed && categories.contains(TreatmentCategory.TRIAL)) 1 else 0
+                    if (trialMatchesAllowed && treatmentHistoryEntry.isTrial == true && (!matchesCategory || classification == false)) 1 else 0
                 )
             }.fold(TreatmentSummaryForCategory()) { acc, element -> acc + element }
         }
 
         fun treatmentMayMatchCategoryAsTrial(treatmentHistoryEntry: TreatmentHistoryEntry, category: TreatmentCategory): Boolean {
-            return categoryAllowsTrialMatches(category) && treatmentHistoryEntry.treatments()
-                .flatMap(Treatment::categories)
-                .contains(TreatmentCategory.TRIAL)
+            return categoryAllowsTrialMatches(category) && treatmentHistoryEntry.isTrial == true
         }
 
         private fun categoryAllowsTrialMatches(category: TreatmentCategory): Boolean {

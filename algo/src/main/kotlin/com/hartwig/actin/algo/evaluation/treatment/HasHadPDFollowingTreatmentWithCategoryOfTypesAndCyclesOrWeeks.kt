@@ -8,13 +8,14 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory.undetermined
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.DateComparison.minWeeksBetweenDates
 import com.hartwig.actin.algo.evaluation.util.Format.concat
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
 
 class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
     private val category: TreatmentCategory,
-    private val types: List<String>, private val minCycles: Int?, private val minWeeks: Int?
+    private val types: Set<TreatmentType>, private val minCycles: Int?, private val minWeeks: Int?
 ) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         var hasHadTreatment = false
         var hasPotentiallyHadTreatment = false
@@ -25,17 +26,17 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
         var hasHadTreatmentWithUnclearPDStatusAndUnclearCycles = false
         var hasHadTreatmentWithUnclearPDStatusAndUnclearWeeks = false
         var hasHadTrial = false
-        for (treatment in record.clinical().priorTumorTreatments()) {
-            if (treatment.categories().contains(category)) {
-                if (hasValidType(treatment)) {
+        for (treatmentHistoryEntry in record.clinical().treatmentHistory()) {
+            if (treatmentHistoryEntry.categories().contains(category)) {
+                if (treatmentHistoryEntry.matchesTypeFromSet(types) == true) {
                     hasHadTreatment = true
-                    val cycles = treatment.cycles()
-                    val treatmentResultedInPDOption = ProgressiveDiseaseFunctions.treatmentResultedInPDOption(treatment)
+                    val cycles = treatmentHistoryEntry.therapyHistoryDetails()?.cycles()
+                    val treatmentResultedInPDOption = ProgressiveDiseaseFunctions.treatmentResultedInPDOption(treatmentHistoryEntry)
                     val durationWeeks: Long? = minWeeksBetweenDates(
-                        treatment.startYear(),
-                        treatment.startMonth(),
-                        treatment.stopYear(),
-                        treatment.stopMonth()
+                        treatmentHistoryEntry.startYear(),
+                        treatmentHistoryEntry.startMonth(),
+                        treatmentHistoryEntry.therapyHistoryDetails()?.stopYear(),
+                        treatmentHistoryEntry.therapyHistoryDetails()?.stopMonth()
                     )
                     if (treatmentResultedInPDOption != null) {
                         val meetsMinCycles = minCycles == null || cycles != null && cycles >= minCycles
@@ -59,47 +60,65 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
                     } else if (minWeeks != null && durationWeeks == null) {
                         hasHadTreatmentWithUnclearPDStatusAndUnclearWeeks = true
                     }
-                } else if (!TreatmentTypeResolver.hasTypeConfigured(treatment, category)) {
+                } else if (!treatmentHistoryEntry.hasTypeConfigured()) {
                     hasPotentiallyHadTreatment = true
                 }
             }
-            if (TreatmentSummaryForCategory.treatmentMayMatchCategoryAsTrial(treatment, category)) {
+            if (TreatmentSummaryForCategory.treatmentMayMatchCategoryAsTrial(treatmentHistoryEntry, category)) {
                 hasHadTrial = true
             }
         }
-        return if (hasHadTreatmentWithPDAndCyclesOrWeeks) {
-            if (minCycles == null && minWeeks == null) {
-                pass(hasTreatmentSpecificMessage(" with PD"), hasTreatmentGeneralMessage(" with PD"))
-            } else if (minCycles != null) {
-                pass(
-                    hasTreatmentSpecificMessage(" with PD and at least $minCycles cycles"),
-                    hasTreatmentGeneralMessage(" with PD and sufficient cycles")
-                )
-            } else {
-                pass(
-                    hasTreatmentSpecificMessage(" with PD for at least $minWeeks weeks"),
-                    hasTreatmentGeneralMessage(" with PD for sufficient weeks")
+        return when {
+            hasHadTreatmentWithPDAndCyclesOrWeeks -> {
+                if (minCycles == null && minWeeks == null) {
+                    pass(hasTreatmentSpecificMessage(" with PD"), hasTreatmentGeneralMessage(" with PD"))
+                } else if (minCycles != null) {
+                    pass(
+                        hasTreatmentSpecificMessage(" with PD and at least $minCycles cycles"),
+                        hasTreatmentGeneralMessage(" with PD and sufficient cycles")
+                    )
+                } else {
+                    pass(
+                        hasTreatmentSpecificMessage(" with PD for at least $minWeeks weeks"),
+                        hasTreatmentGeneralMessage(" with PD for sufficient weeks")
+                    )
+                }
+            }
+
+            hasHadTreatmentWithPDAndUnclearCycles -> {
+                undetermined(" with PD but unknown nr of cycles")
+            }
+
+            hasHadTreatmentWithPDAndUnclearWeeks -> {
+                undetermined(" with PD but unknown nr of weeks")
+            }
+
+            hasHadTreatmentWithUnclearPDStatus -> {
+                undetermined(" with unclear PD status")
+            }
+
+            hasHadTreatmentWithUnclearPDStatusAndUnclearCycles -> {
+                undetermined(" with unclear PD status & nr of cycles")
+            }
+
+            hasHadTreatmentWithUnclearPDStatusAndUnclearWeeks -> {
+                undetermined(" with unclear PD status & nr of weeks")
+            }
+
+            hasPotentiallyHadTreatment || hasHadTrial -> {
+                undetermined(
+                    "Unclear whether patient has received " + treatment(),
+                    "Unclear if received " + category.display()
                 )
             }
-        } else if (hasHadTreatmentWithPDAndUnclearCycles) {
-            undetermined(" with PD but unknown nr of cycles")
-        } else if (hasHadTreatmentWithPDAndUnclearWeeks) {
-            undetermined(" with PD but unknown nr of weeks")
-        } else if (hasHadTreatmentWithUnclearPDStatus) {
-            undetermined(" with unclear PD status")
-        } else if (hasHadTreatmentWithUnclearPDStatusAndUnclearCycles) {
-            undetermined(" with unclear PD status & nr of cycles")
-        } else if (hasHadTreatmentWithUnclearPDStatusAndUnclearWeeks) {
-            undetermined(" with unclear PD status & nr of weeks")
-        } else if (hasPotentiallyHadTreatment || hasHadTrial) {
-            undetermined(
-                "Unclear whether patient has received " + treatment(),
-                "Unclear if received " + category.display()
-            )
-        } else if (hasHadTreatment) {
-            fail("Patient has received " + treatment() + " but not with PD", "No PD after " + category.display())
-        } else {
-            fail("No " + treatment() + " treatment with PD", "No " + category.display())
+
+            hasHadTreatment -> {
+                fail("Patient has received " + treatment() + " but not with PD", "No PD after " + category.display())
+            }
+
+            else -> {
+                fail("No " + treatment() + " treatment with PD", "No " + category.display())
+            }
         }
     }
 
@@ -115,11 +134,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
         return undetermined(hasTreatmentSpecificMessage(suffix), hasTreatmentGeneralMessage(suffix))
     }
 
-    private fun hasValidType(treatment: PriorTumorTreatment): Boolean {
-        return types.any { TreatmentTypeResolver.isOfType(treatment, category, it) }
-    }
-
     private fun treatment(): String {
-        return concat(types) + " " + category.display() + " treatment"
+        return "${concat(types.map(TreatmentType::display))} ${category.display()} treatment"
     }
 }

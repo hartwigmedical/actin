@@ -1,6 +1,8 @@
 package com.hartwig.actin.clinical.datamodel.treatment;
 
-public enum DrugClass {
+import org.jetbrains.annotations.NotNull;
+
+public enum DrugType implements TreatmentType {
     ABL_INHIBITOR,
     ALK_INHIBITOR,
     ALKYLATING_AGENT,
@@ -54,5 +56,18 @@ public enum DrugClass {
     VEGFR2_ANTIBODY,
     VEGFR2_INHIBITOR,
     VACCINE,
-    MTORC1_INHIBITOR
+    MTORC1_INHIBITOR;
+
+    @NotNull
+    @Override
+    public String display() {
+        return toString().replace("_", " ");
+    }
+
+    @NotNull
+    @Override
+    public TreatmentCategory category() {
+        // TODO: Assign specific category for each type
+        return TreatmentCategory.CHEMOTHERAPY;
+    }
 }

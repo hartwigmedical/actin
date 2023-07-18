@@ -6,6 +6,7 @@ import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
+import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment
@@ -26,11 +27,12 @@ object TreatmentTestFactory {
         return ImmutableOtherTreatment.builder().name(name).isSystemic(isSystemic).build()
     }
 
-    fun drugTherapyWithCategory(name: String, category: TreatmentCategory): Treatment {
+    fun drugTherapy(name: String, category: TreatmentCategory, types: Set<DrugType> = emptySet()): Treatment {
         return ImmutableDrugTherapy.builder().name(name).isSystemic(true).addDrugs(
             ImmutableDrug.builder()
                 .name(name)
                 .category(category)
+                .drugTypes(types)
                 .build()
         ).build()
     }

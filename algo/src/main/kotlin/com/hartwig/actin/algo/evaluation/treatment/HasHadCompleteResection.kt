@@ -7,26 +7,19 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 
 class HasHadCompleteResection : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
-        var hasHadCompleteResection = false
-        var hasHadPotentialCompleteResection = false
-        for (treatment in record.clinical().priorTumorTreatments()) {
-            if (treatment.name().equals(COMPLETE_RESECTION, ignoreCase = true)) {
-                hasHadCompleteResection = true
-            }
-            if (treatment.name().lowercase().contains(RESECTION_KEYWORD.lowercase())) {
-                hasHadPotentialCompleteResection = true
-            }
-            if (treatment.categories().contains(TreatmentCategory.SURGERY) && treatment.name().isEmpty()) {
-                hasHadPotentialCompleteResection = true
-            }
-        }
+        val lowercaseTreatmentNames = record.clinical().treatmentHistory()
+            .flatMap { entry -> entry.treatments().flatMap { it.synonyms() + it.name() }.map(String::lowercase) }
+
         return when {
-            hasHadCompleteResection -> {
+            lowercaseTreatmentNames.contains(COMPLETE_RESECTION) -> {
                 EvaluationFactory.pass("Patient has had a complete resection", "Had had complete resection")
             }
 
-            hasHadPotentialCompleteResection -> {
+            lowercaseTreatmentNames.any { it.contains(RESECTION_KEYWORD) } || record.clinical().treatmentHistory().any { entry ->
+                entry.treatments().any { it.categories().contains(TreatmentCategory.SURGERY) && it.name().isEmpty() }
+            } -> {
                 EvaluationFactory.undetermined(
                     "Could not be determined whether patient has had a complete resection",
                     "Complete resection undetermined"

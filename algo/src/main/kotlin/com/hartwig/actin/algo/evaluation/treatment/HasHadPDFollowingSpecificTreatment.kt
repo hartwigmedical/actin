@@ -9,31 +9,14 @@ import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 
-class HasHadPDFollowingSpecificTreatment(
-    private val treatments: List<Treatment>?, private val names: Set<String>?,
-    private val warnCategory: TreatmentCategory?
-) : EvaluationFunction {
-
-    init {
-        if ((treatments == null && names == null) || (treatments != null && names != null)) {
-            throw IllegalStateException("Treatments or names must be provided, but not both")
-        }
-    }
+class HasHadPDFollowingSpecificTreatment(private val treatments: List<Treatment>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
 
-        val treatmentNamesToMatch = when {
-            treatments != null -> treatments.map { it.name() }.toSet()
-
-            names != null -> names.map(String::lowercase).toSet()
-
-            else -> emptySet()
-        }
-
-        val matchCondition = if (treatments != null) ::treatmentsMatchNameListExactly else ::anyTreatmentOrSynonymContainsANameFromList
+        val treatmentNamesToMatch = treatments.map { it.name() }.toSet()
 
         val (treatmentsWithPD, treatmentsWithExactType, hasHadTreatmentWithUnclearPDStatus, hasHadTreatmentWithWarnType) =
-            evaluateTreatmentHistory(record, treatmentNamesToMatch, matchCondition)
+            evaluateTreatmentHistory(record, treatmentNamesToMatch)
 
         return if (treatmentsWithPD.isNotEmpty()) {
             EvaluationFactory.pass(
@@ -52,17 +35,14 @@ class HasHadPDFollowingSpecificTreatment(
         }
     }
 
-    private fun evaluateTreatmentHistory(
-        record: PatientRecord, treatmentNamesToMatch: Set<String>,
-        matchCondition: (Set<Treatment>, Set<String>) -> Boolean
-    ): TreatmentHistoryEvaluation {
+    private fun evaluateTreatmentHistory(record: PatientRecord, treatmentNamesToMatch: Set<String>): TreatmentHistoryEvaluation {
         val treatmentHistory = record.clinical().treatmentHistory()
 
         return treatmentHistory.map { entry ->
             val categories = entry.treatments().flatMap(Treatment::categories)
-            val isWarnType = (warnCategory != null && categories.contains(warnCategory)) || categories.contains(TreatmentCategory.TRIAL)
+            val isWarnType = categories.contains(TreatmentCategory.TRIAL)
             val isPD = treatmentResultedInPDOption(entry)
-            if (matchCondition(entry.treatments(), treatmentNamesToMatch)) {
+            if (treatmentsMatchNameListExactly(entry.treatments(), treatmentNamesToMatch)) {
                 TreatmentHistoryEvaluation(
                     matchesWithPD = if (isPD == true) entry.treatments() else emptySet(),
                     typeMatches = entry.treatments(),
@@ -70,9 +50,9 @@ class HasHadPDFollowingSpecificTreatment(
                     hasWarnType = isWarnType
                 )
             } else {
-                TreatmentHistoryEvaluation(emptySet(), emptySet(), false, isWarnType)
+                TreatmentHistoryEvaluation(hasWarnType = isWarnType)
             }
-        }.fold(TreatmentHistoryEvaluation(emptySet(), emptySet(), matchesWithUnclearPD = false, hasWarnType = false)) { acc, result ->
+        }.fold(TreatmentHistoryEvaluation()) { acc, result ->
             TreatmentHistoryEvaluation(
                 matchesWithPD = acc.matchesWithPD + result.matchesWithPD,
                 typeMatches = acc.typeMatches + result.typeMatches,
@@ -86,18 +66,12 @@ class HasHadPDFollowingSpecificTreatment(
         private fun treatmentsMatchNameListExactly(treatments: Set<Treatment>, treatmentNamesToMatch: Set<String>): Boolean {
             return treatments.map(Treatment::name).intersect(treatmentNamesToMatch).isNotEmpty()
         }
-
-        private fun anyTreatmentOrSynonymContainsANameFromList(treatments: Set<Treatment>, treatmentNamesToMatch: Set<String>): Boolean {
-            return treatments.flatMap { it.synonyms() + it.name() }.any { treatmentEntryName ->
-                treatmentNamesToMatch.any { treatmentEntryName.lowercase().contains(it) }
-            }
-        }
     }
 
     private data class TreatmentHistoryEvaluation(
-        val matchesWithPD: Set<Treatment>,
-        val typeMatches: Set<Treatment>,
-        val matchesWithUnclearPD: Boolean,
-        val hasWarnType: Boolean
+        val matchesWithPD: Set<Treatment> = emptySet(),
+        val typeMatches: Set<Treatment> = emptySet(),
+        val matchesWithUnclearPD: Boolean = false,
+        val hasWarnType: Boolean = false
     )
 }

@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class DrugTherapy implements Therapy {
-    public final TreatmentType treatmentType = TreatmentType.DRUG_THERAPY;
+    public final TreatmentClass treatmentClass = TreatmentClass.DRUG_THERAPY;
 
     @Override
     @Value.Default
@@ -22,5 +22,11 @@ public abstract class DrugTherapy implements Therapy {
     @NotNull
     public Set<TreatmentCategory> categories() {
         return drugs().stream().map(Drug::category).collect(Collectors.toSet());
+    }
+
+    @Override
+    @NotNull
+    public Set<TreatmentType> types() {
+        return drugs().stream().flatMap(drug -> drug.drugTypes().stream()).collect(Collectors.toSet());
     }
 }

@@ -8,8 +8,8 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.clinical.datamodel.treatment.Drug;
-import com.hartwig.actin.clinical.datamodel.treatment.DrugClass;
 import com.hartwig.actin.clinical.datamodel.treatment.DrugTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.DrugType;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment;
@@ -133,8 +133,8 @@ public final class TestClinicalFactory {
     }
 
     @NotNull
-    private static Drug drug(@NotNull String name, @NotNull DrugClass drugClass, @NotNull TreatmentCategory category) {
-        return ImmutableDrug.builder().name(name).addDrugClasses(drugClass).category(category).build();
+    private static Drug drug(@NotNull String name, @NotNull DrugType drugClass, @NotNull TreatmentCategory category) {
+        return ImmutableDrug.builder().name(name).addDrugTypes(drugClass).category(category).build();
     }
 
     @NotNull
@@ -149,9 +149,9 @@ public final class TestClinicalFactory {
 
     @NotNull
     private static List<TreatmentHistoryEntry> createTreatmentHistory() {
-        Drug oxaliplatin = drug("Oxaliplatin", DrugClass.PLATINUM_COMPOUND, TreatmentCategory.CHEMOTHERAPY);
-        Drug fluorouracil = drug("5-FU", DrugClass.PYRIMIDINE_ANTAGONIST, TreatmentCategory.CHEMOTHERAPY);
-        Drug irinotecan = drug("Irinotecan", DrugClass.TOPO1_INHIBITOR, TreatmentCategory.CHEMOTHERAPY);
+        Drug oxaliplatin = drug("Oxaliplatin", DrugType.PLATINUM_COMPOUND, TreatmentCategory.CHEMOTHERAPY);
+        Drug fluorouracil = drug("5-FU", DrugType.PYRIMIDINE_ANTAGONIST, TreatmentCategory.CHEMOTHERAPY);
+        Drug irinotecan = drug("Irinotecan", DrugType.TOPO1_INHIBITOR, TreatmentCategory.CHEMOTHERAPY);
 
         DrugTherapy folfirinox = ImmutableDrugTherapy.builder()
                 .name("FOLFIRINOX")
@@ -163,7 +163,7 @@ public final class TestClinicalFactory {
         Radiotherapy radioFolfirinox =
                 ImmutableRadiotherapy.builder().name("FOLFIRINOX+radiotherapy").addAllDrugs(folfirinox.drugs()).isSystemic(true).build();
 
-        Drug pembrolizumab = drug("Pembrolizumab", DrugClass.MONOCLONAL_ANTIBODY, TreatmentCategory.IMMUNOTHERAPY);
+        Drug pembrolizumab = drug("Pembrolizumab", DrugType.MONOCLONAL_ANTIBODY, TreatmentCategory.IMMUNOTHERAPY);
 
         DrugTherapy folfirinoxAndPembrolizumab = ImmutableDrugTherapy.builder()
                 .name("FOLFIRINOX + pembrolizumab")

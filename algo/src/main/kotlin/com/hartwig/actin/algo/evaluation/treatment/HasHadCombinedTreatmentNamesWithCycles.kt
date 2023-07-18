@@ -19,6 +19,7 @@ class HasHadCombinedTreatmentNamesWithCycles(
         val evaluationsByResult: Map<EvaluationResult, List<Evaluation>> = treatments
             .map { treatment -> evaluatePriorTreatmentsMatchingName(record.clinical().treatmentHistory(), treatment.name()) }
             .groupBy { it.result() }
+
         val builder: ImmutableEvaluation.Builder = EvaluationFactory.unrecoverable()
         return if (evaluationsByResult.containsKey(EvaluationResult.FAIL)) {
             val failEvaluations = evaluationsByResult[EvaluationResult.FAIL]!!
@@ -46,7 +47,7 @@ class HasHadCombinedTreatmentNamesWithCycles(
     private fun evaluatePriorTreatmentsMatchingName(treatmentHistory: List<TreatmentHistoryEntry>, treatmentName: String): Evaluation {
         val query = treatmentName.lowercase()
         val matchingHistoryEntries: Map<EvaluationResult, List<TreatmentHistoryEntry>> = treatmentHistory.filter { entry ->
-            entry.treatments().flatMap { it.synonyms() + setOf(it.name()) }.any { it.lowercase() == query }
+            entry.treatments().flatMap { it.synonyms() + it.name() }.any { it.lowercase() == query }
         }
             .groupBy {
                 when (it.therapyHistoryDetails()?.cycles()) {
@@ -83,6 +84,7 @@ class HasHadCombinedTreatmentNamesWithCycles(
 
     companion object {
         private const val GENERAL_FAIL_MESSAGE = "No treatments with cycles"
+
         private fun formatTreatmentList(treatmentHistoryEntries: List<TreatmentHistoryEntry>, includeCycles: Boolean): String {
             return treatmentHistoryEntries.joinToString(", ") { entry ->
                 val cycleString = if (includeCycles) " (${entry.therapyHistoryDetails()?.cycles()} cycles)" else ""

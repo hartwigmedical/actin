@@ -63,8 +63,8 @@ import com.hartwig.actin.clinical.datamodel.ToxicityEvaluation;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
 import com.hartwig.actin.clinical.datamodel.treatment.Drug;
-import com.hartwig.actin.clinical.datamodel.treatment.DrugClass;
 import com.hartwig.actin.clinical.datamodel.treatment.DrugTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.DrugType;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment;
@@ -76,7 +76,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType;
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentClass;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTherapyHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent;
@@ -157,8 +157,8 @@ public class ClinicalGsonDeserializer {
                 }.getType(), new ImmutableSetAdapter<Treatment>(Treatment.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<BodyLocationCategory>>() {
                 }.getType(), new ImmutableSetAdapter<BodyLocationCategory>(BodyLocationCategory.class))
-                .registerTypeAdapter(new TypeToken<ImmutableSet<DrugClass>>() {
-                }.getType(), new ImmutableSetAdapter<DrugClass>(DrugClass.class))
+                .registerTypeAdapter(new TypeToken<ImmutableSet<DrugType>>() {
+                }.getType(), new ImmutableSetAdapter<DrugType>(DrugType.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<Intent>>() {
                 }.getType(), new ImmutableSetAdapter<Intent>(Intent.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<ObservedToxicity>>() {
@@ -260,7 +260,7 @@ public class ClinicalGsonDeserializer {
                 return jsonElement.isJsonNull()
                         ? null
                         : (Treatment) context.deserialize(jsonElement,
-                                TreatmentType.valueOf(string(jsonElement.getAsJsonObject(), "treatmentType")).treatmentClass());
+                                TreatmentClass.valueOf(string(jsonElement.getAsJsonObject(), "treatmentType")).treatmentClass());
             } catch (Exception e) {
                 throw new JsonParseException("Failed to deserialize: " + jsonElement, e);
             }

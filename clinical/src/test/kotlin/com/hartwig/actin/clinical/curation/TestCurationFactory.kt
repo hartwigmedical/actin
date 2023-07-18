@@ -32,7 +32,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
-import com.hartwig.actin.clinical.datamodel.treatment.DrugClass
+import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment
@@ -130,7 +130,7 @@ object TestCurationFactory {
     private fun createTestTreatmentHistoryEntryConfigs(): List<TreatmentHistoryEntryConfig> {
         val cisplatin = ImmutableDrug.builder()
             .name("Cisplatin")
-            .addDrugClasses(DrugClass.PLATINUM_COMPOUND)
+            .addDrugTypes(DrugType.PLATINUM_COMPOUND)
             .category(TreatmentCategory.CHEMOTHERAPY)
             .build()
 

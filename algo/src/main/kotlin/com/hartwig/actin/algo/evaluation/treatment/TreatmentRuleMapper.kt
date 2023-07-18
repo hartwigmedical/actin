@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
@@ -108,8 +107,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadSpecificTreatmentCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val treatment = functionInputResolver().createOneStringInput(function)
-            HasHadSomeSpecificTreatments(Sets.newHashSet(treatment), null, 1)
+            val treatment = functionInputResolver().createOneSpecificTreatmentInput(function)
+            HasHadSomeSpecificTreatments(listOf(treatment), 1)
         }
     }
 
@@ -134,21 +133,21 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadTreatmentWithCategoryCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val treatment = functionInputResolver().createOneTreatmentInput(function)
-            if (treatment.mappedNames() == null) {
-                return@FunctionCreator HasHadSomeTreatmentsWithCategory(treatment.mappedCategory(), 1)
+            val treatment = functionInputResolver().createOneTreatmentCategoryOrTypeInput(function)
+            if (treatment.mappedTypes() == null) {
+                HasHadSomeTreatmentsWithCategory(treatment.mappedCategory(), 1)
             } else {
-                return@FunctionCreator HasHadSomeSpecificTreatments(treatment.mappedNames()!!, treatment.mappedCategory(), 1)
+                HasHadSomeTreatmentsWithCategoryOfTypes(treatment.mappedCategory(), treatment.mappedTypes()!!, 1)
             }
         }
     }
 
     private fun hasHadTreatmentCategoryOfTypesCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTypedTreatmentManyStringsInput(
+            val input = functionInputResolver().createOneTreatmentCategoryManyTypesInput(
                 function
             )
-            HasHadSomeTreatmentsWithCategoryOfTypes(input.category(), input.strings(), 1)
+            HasHadSomeTreatmentsWithCategoryOfTypes(input.category(), input.types(), 1)
         }
     }
 
@@ -158,45 +157,45 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadTreatmentCategoryOfTypesWithinWeeksCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTypedTreatmentManyStringsOneIntegerInput(
+            val input = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(
                 function
             )
             val minDate = referenceDateProvider().date().minusWeeks(input.integer().toLong())
-            HasHadTreatmentWithCategoryOfTypesRecently(input.category(), input.strings(), minDate)
+            HasHadTreatmentWithCategoryOfTypesRecently(input.category(), input.types(), minDate)
         }
     }
 
     private fun hasHadTreatmentCategoryIgnoringTypesCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTypedTreatmentManyStringsInput(
+            val input = functionInputResolver().createOneTreatmentCategoryManyTypesInput(
                 function
             )
-            HasHadTreatmentWithCategoryButNotOfTypes(input.category(), input.strings())
+            HasHadTreatmentWithCategoryButNotOfTypes(input.category(), input.types())
         }
     }
 
     private fun hasHadSomeTreatmentsOfCategoryCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentOneIntegerInput(function)
+            val input = functionInputResolver().createOneTreatmentCategoryOrTypeOneIntegerInput(function)
             val treatment = input.treatment()
-            if (treatment.mappedNames() == null) {
-                return@FunctionCreator HasHadSomeTreatmentsWithCategory(treatment.mappedCategory(), input.integer())
+            if (treatment.mappedTypes() == null) {
+                HasHadSomeTreatmentsWithCategory(treatment.mappedCategory(), input.integer())
             } else {
-                return@FunctionCreator HasHadSomeSpecificTreatments(treatment.mappedNames()!!, treatment.mappedCategory(), input.integer())
+                HasHadSomeTreatmentsWithCategoryOfTypes(treatment.mappedCategory(), treatment.mappedTypes()!!, input.integer())
             }
         }
     }
 
     private fun hasHadLimitedTreatmentsOfCategoryCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentOneIntegerInput(function)
+            val input = functionInputResolver().createOneTreatmentCategoryOrTypeOneIntegerInput(function)
             val treatment = input.treatment()
-            if (treatment.mappedNames() == null) {
+            if (treatment.mappedTypes() == null) {
                 return@FunctionCreator HasHadLimitedTreatmentsWithCategory(treatment.mappedCategory(), input.integer())
             } else {
-                return@FunctionCreator HasHadLimitedSpecificTreatments(
-                    treatment.mappedNames()!!,
+                return@FunctionCreator HasHadLimitedTreatmentsWithCategoryOfTypes(
                     treatment.mappedCategory(),
+                    treatment.mappedTypes()!!,
                     input.integer()
                 )
             }
@@ -205,30 +204,30 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadSomeTreatmentsOfCategoryWithTypesCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTypedTreatmentManyStringsOneIntegerInput(
+            val input = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(
                 function
             )
-            HasHadSomeTreatmentsWithCategoryOfTypes(input.category(), input.strings(), input.integer())
+            HasHadSomeTreatmentsWithCategoryOfTypes(input.category(), input.types(), input.integer())
         }
     }
 
     private fun hasHadLimitedTreatmentsOfCategoryWithTypesCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTypedTreatmentManyStringsOneIntegerInput(
+            val input = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(
                 function
             )
-            HasHadLimitedTreatmentsWithCategoryOfTypes(input.category(), input.strings(), input.integer())
+            HasHadLimitedTreatmentsWithCategoryOfTypes(input.category(), input.types(), input.integer())
         }
     }
 
     private fun hasHadAdjuvantTreatmentWithCategoryCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val treatment = functionInputResolver().createOneTreatmentInput(function)
-            if (treatment.mappedNames() == null) {
+            val treatment = functionInputResolver().createOneTreatmentCategoryOrTypeInput(function)
+            if (treatment.mappedTypes() == null) {
                 return@FunctionCreator HasHadAdjuvantTreatmentWithCategory(treatment.mappedCategory())
             } else {
                 return@FunctionCreator HasHadAdjuvantSpecificTreatment(
-                    treatment.mappedNames()!!,
+                    treatment.mappedTypes()!!,
                     treatment.mappedCategory()
                 )
             }
@@ -242,39 +241,39 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasProgressiveDiseaseFollowingTreatmentNameCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val treatment = functionInputResolver().createOneSpecificTreatmentInput(function)
-            HasHadPDFollowingSpecificTreatment(listOf(treatment), null, null)
+            HasHadPDFollowingSpecificTreatment(listOf(treatment))
         }
     }
 
     private fun hasProgressiveDiseaseFollowingTreatmentCategoryCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val treatment = functionInputResolver().createOneTreatmentInput(function)
-            val mappedNames = treatment.mappedNames()
-            if (mappedNames == null) {
+            val treatment = functionInputResolver().createOneTreatmentCategoryOrTypeInput(function)
+            val mappedTypes = treatment.mappedTypes()
+            if (mappedTypes == null) {
                 HasHadPDFollowingTreatmentWithCategory(treatment.mappedCategory())
             } else {
-                HasHadPDFollowingSpecificTreatment(null, mappedNames, treatment.mappedCategory())
+                HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(treatment.mappedCategory(), mappedTypes, null, null)
             }
         }
     }
 
     private fun hasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTypedTreatmentManyStringsInput(
+            val input = functionInputResolver().createOneTreatmentCategoryManyTypesInput(
                 function
             )
-            HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(input.category(), input.strings(), null, null)
+            HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(input.category(), input.types(), null, null)
         }
     }
 
     private fun hasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryAndMinimumCyclesCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTypedTreatmentManyStringsOneIntegerInput(
+            val input = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(
                 function
             )
             HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
                 input.category(),
-                input.strings(),
+                input.types(),
                 input.integer(),
                 null
             )
@@ -284,12 +283,12 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     //TODO: Check implementation
     private fun hasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryAndMinimumWeeksCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTypedTreatmentManyStringsOneIntegerInput(
+            val input = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(
                 function
             )
             HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
                 input.category(),
-                input.strings(),
+                input.types(),
                 null,
                 input.integer()
             )

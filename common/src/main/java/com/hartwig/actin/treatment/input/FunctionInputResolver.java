@@ -4,20 +4,21 @@ import static com.hartwig.actin.treatment.input.FunctionInputMapping.RULE_INPUT_
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.hartwig.actin.TreatmentDatabase;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.input.composite.CompositeInput;
 import com.hartwig.actin.treatment.input.composite.CompositeRules;
-import com.hartwig.actin.treatment.input.datamodel.TreatmentInput;
+import com.hartwig.actin.treatment.input.datamodel.TreatmentCategoryInput;
 import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput;
 import com.hartwig.actin.treatment.input.datamodel.VariantTypeInput;
 import com.hartwig.actin.treatment.input.single.FunctionInput;
@@ -33,9 +34,9 @@ import com.hartwig.actin.treatment.input.single.ImmutableOneHlaAllele;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerOneString;
 import com.hartwig.actin.treatment.input.single.ImmutableOneSpecificTreatmentOneInteger;
-import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentOneInteger;
-import com.hartwig.actin.treatment.input.single.ImmutableOneTypedTreatmentManyStrings;
-import com.hartwig.actin.treatment.input.single.ImmutableOneTypedTreatmentManyStringsOneInteger;
+import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentCategoryManyTypes;
+import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentCategoryManyTypesOneInteger;
+import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentCategoryOrTypeOneInteger;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoDoubles;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegers;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegersManyStrings;
@@ -51,9 +52,9 @@ import com.hartwig.actin.treatment.input.single.OneHlaAllele;
 import com.hartwig.actin.treatment.input.single.OneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
 import com.hartwig.actin.treatment.input.single.OneSpecificTreatmentOneInteger;
-import com.hartwig.actin.treatment.input.single.OneTreatmentOneInteger;
-import com.hartwig.actin.treatment.input.single.OneTypedTreatmentManyStrings;
-import com.hartwig.actin.treatment.input.single.OneTypedTreatmentManyStringsOneInteger;
+import com.hartwig.actin.treatment.input.single.OneTreatmentCategoryManyTypes;
+import com.hartwig.actin.treatment.input.single.OneTreatmentCategoryManyTypesOneInteger;
+import com.hartwig.actin.treatment.input.single.OneTreatmentCategoryOrTypeOneInteger;
 import com.hartwig.actin.treatment.input.single.TwoDoubles;
 import com.hartwig.actin.treatment.input.single.TwoIntegers;
 import com.hartwig.actin.treatment.input.single.TwoIntegersManyStrings;
@@ -136,20 +137,20 @@ public class FunctionInputResolver {
                     createTwoDoublesInput(function);
                     return true;
                 }
-                case ONE_TREATMENT: {
-                    createOneTreatmentInput(function);
+                case ONE_TREATMENT_CATEGORY_OR_TYPE: {
+                    createOneTreatmentCategoryOrTypeInput(function);
                     return true;
                 }
-                case ONE_TREATMENT_ONE_INTEGER: {
-                    createOneTreatmentOneIntegerInput(function);
+                case ONE_TREATMENT_CATEGORY_OR_TYPE_ONE_INTEGER: {
+                    createOneTreatmentCategoryOrTypeOneIntegerInput(function);
                     return true;
                 }
-                case ONE_TYPED_TREATMENT_MANY_STRINGS: {
-                    createOneTypedTreatmentManyStringsInput(function);
+                case ONE_TREATMENT_CATEGORY_MANY_TYPES: {
+                    createOneTreatmentCategoryManyTypesInput(function);
                     return true;
                 }
-                case ONE_TYPED_TREATMENT_MANY_STRINGS_ONE_INTEGER: {
-                    createOneTypedTreatmentManyStringsOneIntegerInput(function);
+                case ONE_TREATMENT_CATEGORY_MANY_TYPES_ONE_INTEGER: {
+                    createOneTreatmentCategoryManyTypesOneIntegerInput(function);
                     return true;
                 }
                 case ONE_SPECIFIC_TREATMENT: {
@@ -283,50 +284,42 @@ public class FunctionInputResolver {
     }
 
     @NotNull
-    public TreatmentInput createOneTreatmentInput(@NotNull EligibilityFunction function) {
-        assertParamConfig(function, FunctionInput.ONE_TREATMENT, 1);
+    public TreatmentCategoryInput createOneTreatmentCategoryOrTypeInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE, 1);
 
-        return TreatmentInput.fromString((String) function.parameters().get(0));
+        return TreatmentCategoryInput.fromString((String) function.parameters().get(0));
     }
 
     @NotNull
-    public OneTreatmentOneInteger createOneTreatmentOneIntegerInput(@NotNull EligibilityFunction function) {
-        assertParamConfig(function, FunctionInput.ONE_TREATMENT_ONE_INTEGER, 2);
+    public OneTreatmentCategoryOrTypeOneInteger createOneTreatmentCategoryOrTypeOneIntegerInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE_ONE_INTEGER, 2);
 
-        return ImmutableOneTreatmentOneInteger.builder()
-                .treatment(TreatmentInput.fromString((String) function.parameters().get(0)))
+        return ImmutableOneTreatmentCategoryOrTypeOneInteger.builder()
+                .treatment(TreatmentCategoryInput.fromString((String) function.parameters().get(0)))
                 .integer(Integer.parseInt((String) function.parameters().get(1)))
                 .build();
     }
 
     @NotNull
-    public OneTypedTreatmentManyStrings createOneTypedTreatmentManyStringsInput(@NotNull EligibilityFunction function) {
-        assertParamConfig(function, FunctionInput.ONE_TYPED_TREATMENT_MANY_STRINGS, 2);
+    public OneTreatmentCategoryManyTypes createOneTreatmentCategoryManyTypesInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES, 2);
 
-        return ImmutableOneTypedTreatmentManyStrings.builder()
-                .category(toTypedCategory((String) function.parameters().get(0)))
-                .strings(toStringList(function.parameters().get(1)))
+        return ImmutableOneTreatmentCategoryManyTypes.builder()
+                .category(TreatmentCategoryResolver.fromString((String) function.parameters().get(0)))
+                .types(toTreatmentTypeSet(function.parameters().get(1)))
                 .build();
     }
 
     @NotNull
-    public OneTypedTreatmentManyStringsOneInteger createOneTypedTreatmentManyStringsOneIntegerInput(@NotNull EligibilityFunction function) {
-        assertParamConfig(function, FunctionInput.ONE_TYPED_TREATMENT_MANY_STRINGS_ONE_INTEGER, 3);
+    public OneTreatmentCategoryManyTypesOneInteger createOneTreatmentCategoryManyTypesOneIntegerInput(
+            @NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES_ONE_INTEGER, 3);
 
-        return ImmutableOneTypedTreatmentManyStringsOneInteger.builder()
-                .category(toTypedCategory((String) function.parameters().get(0)))
-                .strings(toStringList(function.parameters().get(1)))
+        return ImmutableOneTreatmentCategoryManyTypesOneInteger.builder()
+                .category(TreatmentCategoryResolver.fromString((String) function.parameters().get(0)))
+                .types(toTreatmentTypeSet(function.parameters().get(1)))
                 .integer(Integer.parseInt((String) function.parameters().get(2)))
                 .build();
-    }
-
-    @NotNull
-    private TreatmentCategory toTypedCategory(@NotNull String string) {
-        TreatmentCategory category = TreatmentCategoryResolver.fromString(string);
-        if (!category.hasType()) {
-            throw new IllegalStateException("Not a typed category: " + category.display());
-        }
-        return category;
     }
 
     @NotNull
@@ -350,15 +343,15 @@ public class FunctionInputResolver {
         assertParamConfig(function, FunctionInput.MANY_SPECIFIC_TREATMENTS_TWO_INTEGERS, 3);
 
         return ImmutableManySpecificTreatmentsTwoIntegers.builder()
-                .treatments(stringToTreatments(function.parameters().get(0)))
+                .treatments(toTreatments(function.parameters().get(0)))
                 .integer1(Integer.parseInt((String) function.parameters().get(1)))
                 .integer2(Integer.parseInt((String) function.parameters().get(2)))
                 .build();
     }
 
     @NotNull
-    private List<Treatment> stringToTreatments(@NotNull Object input) {
-        return Arrays.stream(((String) input).split(MANY_STRING_SEPARATOR)).map(this::toTreatment).collect(Collectors.toList());
+    private List<Treatment> toTreatments(@NotNull Object input) {
+        return toStringStream(input).map(this::toTreatment).collect(Collectors.toList());
     }
 
     @NotNull
@@ -368,6 +361,11 @@ public class FunctionInputResolver {
             throw new IllegalStateException("Treatment not found in DB: " + treatmentName);
         }
         return treatment;
+    }
+
+    @NotNull
+    private Set<TreatmentType> toTreatmentTypeSet(@NotNull Object input) {
+        return toStringStream(input).map(TreatmentCategoryInput::treatmentTypeFromString).collect(Collectors.toSet());
     }
 
     @NotNull

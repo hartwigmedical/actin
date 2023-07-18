@@ -1,20 +1,12 @@
 package com.hartwig.actin.clinical.datamodel.treatment;
 
-import java.lang.reflect.Type;
+import org.jetbrains.annotations.NotNull;
 
-public enum TreatmentType {
+public interface TreatmentType {
 
-    DRUG_THERAPY(DrugTherapy.class),
-    OTHER_TREATMENT(OtherTreatment.class),
-    RADIOTHERAPY(Radiotherapy.class);
+    @NotNull
+    String display();
 
-    private final Type treatmentClass;
-
-    TreatmentType(Type treatmentClass) {
-        this.treatmentClass = treatmentClass;
-    }
-
-    public Type treatmentClass() {
-        return treatmentClass;
-    }
+    @NotNull
+    TreatmentCategory category();
 }

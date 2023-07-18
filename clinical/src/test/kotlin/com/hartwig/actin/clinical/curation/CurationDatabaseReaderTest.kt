@@ -8,7 +8,7 @@ import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
-import com.hartwig.actin.clinical.datamodel.treatment.DrugClass
+import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
@@ -117,9 +117,9 @@ class CurationDatabaseReaderTest {
 
         assertThat(capoxTreatment.categories()).containsExactly(TreatmentCategory.CHEMOTHERAPY)
         assertThat(capoxTreatment.isSystemic).isTrue
-        assertThat(capoxTreatment.drugs()).extracting(Drug::name, Drug::drugClasses).containsExactlyInAnyOrder(
-            tuple("Capecitabine", setOf(DrugClass.ANTIMETABOLITE)),
-            tuple("Oxaliplatin", setOf(DrugClass.PLATINUM_COMPOUND))
+        assertThat(capoxTreatment.drugs()).extracting(Drug::name, Drug::drugTypes).containsExactlyInAnyOrder(
+            tuple("Capecitabine", setOf(DrugType.ANTIMETABOLITE)),
+            tuple("Oxaliplatin", setOf(DrugType.PLATINUM_COMPOUND))
         )
         assertThat(curatedCapox.trialAcronym()).isNull()
 

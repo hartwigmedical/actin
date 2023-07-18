@@ -2,9 +2,11 @@ package com.hartwig.actin.clinical.datamodel.treatment.history;
 
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -43,5 +45,29 @@ public abstract class TreatmentHistoryEntry {
                 : treatments().stream()
                         .flatMap(t -> t.categories().stream().map(TreatmentCategory::display))
                         .collect(Collectors.joining(";"));
+    }
+
+    public Set<TreatmentCategory> categories() {
+        return treatments().stream().flatMap(treatment -> treatment.categories().stream()).collect(Collectors.toSet());
+    }
+
+    @Nullable
+    public Boolean isOfType(TreatmentType typeToFind) {
+        return matchesTypeFromSet(Set.of(typeToFind));
+    }
+
+    @Nullable
+    public Boolean matchesTypeFromSet(Set<TreatmentType> types) {
+        return hasTypeConfigured() ? isTypeFromCollection(types) : null;
+    }
+
+    public boolean hasTypeConfigured() {
+        return treatments().stream().noneMatch(treatment -> treatment.types() == null);
+    }
+
+    private boolean isTypeFromCollection(Set<TreatmentType> types) {
+        return treatments().stream()
+                .flatMap(treatment -> treatment.types() != null ? treatment.types().stream() : Stream.empty())
+                .anyMatch(types::contains);
     }
 }

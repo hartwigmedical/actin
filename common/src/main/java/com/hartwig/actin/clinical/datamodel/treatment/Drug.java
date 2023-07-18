@@ -14,7 +14,7 @@ public abstract class Drug {
     public abstract String name();
 
     @NotNull
-    public abstract Set<DrugClass> drugClasses();
+    public abstract Set<DrugType> drugTypes();
 
     @NotNull
     public abstract TreatmentCategory category();

@@ -8,22 +8,26 @@ import com.hartwig.actin.algo.evaluation.util.DateComparison.isAfterDate
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import java.time.LocalDate
 
-class HasHadRecentResection internal constructor(private val minDate: LocalDate) : EvaluationFunction {
+class HasHadRecentResection(private val minDate: LocalDate) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         var hasHadResectionAfterMinDate = false
         var hasHadResectionAfterMoreLenientMinDate = false
         var mayHaveHadResectionAfterMinDate = false
-        for (treatment in record.clinical().priorTumorTreatments()) {
-            val isPastMinDate = isAfterDate(minDate, treatment.startYear(), treatment.startMonth())
-            val isPastMoreLenientMinDate = isAfterDate(minDate.minusWeeks(2), treatment.startYear(), treatment.startMonth())
+
+        for (treatmentHistoryEntry in record.clinical().treatmentHistory()) {
+            val isPastMinDate = isAfterDate(minDate, treatmentHistoryEntry.startYear(), treatmentHistoryEntry.startMonth())
+            val isPastMoreLenientMinDate =
+                isAfterDate(minDate.minusWeeks(2), treatmentHistoryEntry.startYear(), treatmentHistoryEntry.startMonth())
             val isResection =
-                treatment.name().lowercase().contains(RESECTION_KEYWORD.lowercase())
-            val isPotentialResection = treatment.categories().contains(TreatmentCategory.SURGERY) && treatment.name().isEmpty()
+                treatmentHistoryEntry.treatments().any { it.name().lowercase().contains(RESECTION_KEYWORD) }
+            val isPotentialResection = treatmentHistoryEntry.treatments().any {
+                it.categories().contains(TreatmentCategory.SURGERY) && it.name().isEmpty()
+            }
             if (isResection) {
                 if (isPastMinDate == null) {
                     mayHaveHadResectionAfterMinDate = true
-                }
-                if (isPastMinDate != null && isPastMinDate) {
+                } else if (isPastMinDate) {
                     hasHadResectionAfterMinDate = true
                 }
                 if (isPastMoreLenientMinDate != null && isPastMoreLenientMinDate) {
@@ -34,6 +38,7 @@ class HasHadRecentResection internal constructor(private val minDate: LocalDate)
                 mayHaveHadResectionAfterMinDate = true
             }
         }
+
         return when {
             hasHadResectionAfterMinDate -> {
                 EvaluationFactory.pass("Patient has had a recent resection", "Has had recent resection")

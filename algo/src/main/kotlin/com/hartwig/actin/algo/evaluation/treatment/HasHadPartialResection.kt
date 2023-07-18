@@ -6,27 +6,20 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 
-class HasHadPartialResection internal constructor() : EvaluationFunction {
+class HasHadPartialResection : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
-        var hasHadPartialResection = false
-        var hasHadPotentialPartialResection = false
-        for (treatment in record.clinical().priorTumorTreatments()) {
-            if (treatment.name().equals(PARTIAL_RESECTION, ignoreCase = true)) {
-                hasHadPartialResection = true
-            }
-            if (treatment.name().lowercase().contains(RESECTION_KEYWORD.lowercase())) {
-                hasHadPotentialPartialResection = true
-            }
-            if (treatment.categories().contains(TreatmentCategory.SURGERY) && treatment.name().isEmpty()) {
-                hasHadPotentialPartialResection = true
-            }
-        }
+        val lowercaseTreatmentNames = record.clinical().treatmentHistory()
+            .flatMap { entry -> entry.treatments().flatMap { it.synonyms() + it.name() }.map(String::lowercase) }
+
         return when {
-            hasHadPartialResection -> {
+            lowercaseTreatmentNames.contains(PARTIAL_RESECTION) -> {
                 EvaluationFactory.pass("Patient has had a partial resection", "Has had partial resection")
             }
 
-            hasHadPotentialPartialResection -> {
+            lowercaseTreatmentNames.any { it.contains(RESECTION_KEYWORD) } || record.clinical().treatmentHistory().any { entry ->
+                entry.treatments().any { it.categories().contains(TreatmentCategory.SURGERY) && it.name().isEmpty() }
+            } -> {
                 EvaluationFactory.undetermined(
                     "Could not be determined whether patient has had a partial resection",
                     "Partial resection undetermined"

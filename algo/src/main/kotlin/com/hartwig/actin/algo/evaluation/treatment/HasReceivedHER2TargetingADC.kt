@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
 //TODO: Implement
-class HasReceivedHER2TargetingADC() : EvaluationFunction {
+class HasReceivedHER2TargetingADC : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return EvaluationFactory.undetermined(
