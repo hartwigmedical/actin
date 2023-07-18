@@ -3,8 +3,6 @@ package com.hartwig.actin.clinical.feed.medication
 import com.google.common.annotations.VisibleForTesting
 import com.hartwig.actin.clinical.feed.FeedEntryCreator
 import com.hartwig.actin.clinical.feed.FeedLine
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 
 class MedicationEntryCreator : FeedEntryCreator<MedicationEntry> {
 

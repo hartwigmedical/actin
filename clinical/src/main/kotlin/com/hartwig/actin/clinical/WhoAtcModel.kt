@@ -7,9 +7,19 @@ import com.hartwig.actin.util.TabularFile
 import java.io.File
 import java.nio.file.Files
 
-class AtcModel(private val atcMap: Map<String, String>) {
+interface AtcModel {
+    fun resolve(rawAtcCode: String): AtcClassification?
+}
 
-    fun resolve(rawAtcCode: String): AtcClassification? {
+class DisabledAtcModel : AtcModel {
+    override fun resolve(rawAtcCode: String): AtcClassification? {
+        return null
+    }
+}
+
+class WhoAtcModel(private val atcMap: Map<String, String>) : AtcModel {
+
+    override fun resolve(rawAtcCode: String): AtcClassification? {
         return if (rawAtcCode.trim().isNotEmpty() && rawAtcCode[0].lowercaseChar() in 'a'..'z') {
             return ImmutableAtcClassification.builder()
                 .anatomicalMainGroup(atcLevel(rawAtcCode.substring(0, 1)))
@@ -27,10 +37,10 @@ class AtcModel(private val atcMap: Map<String, String>) {
     private fun lookup(level: String) = atcMap[level] ?: throw IllegalArgumentException("ATC code [$level] not found in tree")
 
     companion object {
-        fun createFromFile(tsvPath: String): AtcModel {
+        fun createFromFile(tsvPath: String): WhoAtcModel {
             val lines = Files.readAllLines(File(tsvPath).toPath())
             val fields = TabularFile.createFields(lines[0].split(TabularFile.DELIMITER).dropLastWhile { it.isEmpty() }.toTypedArray())
-            return AtcModel(lines.map { it.split(TabularFile.DELIMITER).toTypedArray() }
+            return WhoAtcModel(lines.map { it.split(TabularFile.DELIMITER).toTypedArray() }
                 .associate { line -> line[fields["Name"]!!] to line[fields["ATCCode"]!!] })
         }
     }

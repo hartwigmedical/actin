@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical
 
-import com.google.common.collect.*
+import com.google.common.collect.Sets
 import com.hartwig.actin.clinical.ClinicalRecordsFactory.Companion.toPatientId
 import com.hartwig.actin.clinical.curation.ANATOMICAL
 import com.hartwig.actin.clinical.curation.ATC_CODE

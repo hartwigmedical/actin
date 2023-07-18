@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.feed
 
-import com.hartwig.actin.clinical.AtcModel
+import com.hartwig.actin.clinical.WhoAtcModel
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry
 import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry
@@ -62,7 +62,7 @@ class FeedModel(private val feed: ClinicalFeed) {
 
     companion object {
         @Throws(IOException::class)
-        fun fromFeedDirectory(clinicalFeedDirectory: String, atcModel: AtcModel): FeedModel {
+        fun fromFeedDirectory(clinicalFeedDirectory: String, atcModel: WhoAtcModel): FeedModel {
             return FeedModel(ClinicalFeedReader.read(clinicalFeedDirectory, atcModel))
         }
 

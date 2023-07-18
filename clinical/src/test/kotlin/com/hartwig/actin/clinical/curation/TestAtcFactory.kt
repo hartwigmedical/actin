@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.curation
 
-import com.hartwig.actin.clinical.AtcModel
+import com.hartwig.actin.clinical.WhoAtcModel
 
 const val ANATOMICAL = "NERVOUS SYSTEM"
 const val THERAPEUTIC = "ANALGESICS"
@@ -11,12 +11,12 @@ const val ATC_CODE = "N02BE01"
 
 object TestAtcFactory {
 
-    fun createMinimalAtcModel(): AtcModel {
-        return AtcModel(emptyMap())
+    fun createMinimalAtcModel(): WhoAtcModel {
+        return WhoAtcModel(emptyMap())
     }
 
-    fun createProperAtcModel(): AtcModel {
-        return AtcModel(mapOf(
+    fun createProperAtcModel(): WhoAtcModel {
+        return WhoAtcModel(mapOf(
             "N" to ANATOMICAL,
             "N02" to THERAPEUTIC,
             "N02B" to PHARMACOLOGICAL,

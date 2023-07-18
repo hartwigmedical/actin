@@ -16,13 +16,13 @@ class AtcModelTest {
 
     @Test
     fun shouldReturnNullForTrialMedication() {
-        assertThat(AtcModel(emptyMap()).resolve("123")).isNull()
+        assertThat(WhoAtcModel(emptyMap()).resolve("123")).isNull()
     }
 
     @Test
     fun shouldThrowWhenAtcCodeNotFound() {
         assertThatThrownBy {
-            val victim = AtcModel(mapOf("A" to ANATOMICAL))
+            val victim = WhoAtcModel(mapOf("A" to ANATOMICAL))
             victim.resolve("not_a_code")
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
