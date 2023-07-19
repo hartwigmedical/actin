@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverable
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.unrecoverable
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.ECG
@@ -48,7 +49,7 @@ class ECGMeasureEvaluationFunction internal constructor(
 
         val result =
             if (thresholdCriteria.comparator.compare(measure.value(), threshold) >= 0) EvaluationResult.PASS else EvaluationResult.FAIL
-        val builder = unrecoverable().result(result)
+        val builder = recoverable().result(result)
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages(
                 String.format(thresholdCriteria.failMessageTemplate, measureName, measure.value(), measure.unit(), threshold)
