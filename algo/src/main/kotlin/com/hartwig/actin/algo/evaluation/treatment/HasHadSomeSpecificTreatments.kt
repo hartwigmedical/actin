@@ -31,11 +31,11 @@ class HasHadSomeSpecificTreatments internal constructor(
         } else if (warnTreatments.size >= minTreatmentLines) {
             val undeterminedSpecificMessage =
                 if (warnCategory != null) ("Patient has received " + warnCategory.display() + " or trial treatment " + warnTreatments.size
-                        + " times") else "Patient has received " + concat(warnTreatments) + " treatments including trials"
+                        + " times") else "Patient has received " + concat(warnTreatments) + " treatments with unknown drug components"
             val undeterminedGeneralMessage =
                 if (warnCategory != null) "Received " + warnCategory.display() + " or trials " + warnTreatments.size + " times" else "Received " + concat(
                     warnTreatments
-                ) + " treatments including trials"
+                ) + " treatments with unknown drug components"
             EvaluationFactory.undetermined(undeterminedSpecificMessage, undeterminedGeneralMessage)
         } else {
             EvaluationFactory.fail(
