@@ -2,96 +2,104 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.drugTherapy
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatmentHistoryEntry
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.withTreatmentHistory
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.withTreatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.treatment.DrugType
+import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatmentType
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import org.junit.Test
 import java.time.LocalDate
 
 class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
     @Test
-    fun canEvaluate() {
-        val minDate = LocalDate.of(2020, 4, 1)
-        val function = HasHadTreatmentWithCategoryOfTypesRecently(
-            TreatmentCategory.TARGETED_THERAPY,
-            listOf("Anti-EGFR"),
-            minDate
-        )
-
-        // No treatments yet
-        val treatments: MutableList<PriorTumorTreatment> = mutableListOf()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-
-        // Add one wrong category
-        treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.IMMUNOTHERAPY).build())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-
-        // Add one correct category but no type
-        treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.TARGETED_THERAPY).build())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-
-        // Add one correct category with matching type but long time ago.
-        treatments.add(
-            TreatmentTestFactory.builder()
-                .addCategories(TreatmentCategory.TARGETED_THERAPY)
-                .targetedType("Some anti-EGFR Type")
-                .startYear(minDate.year - 1)
-                .build()
-        )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-
-        // Add one correct category with matching type
-        treatments.add(
-            TreatmentTestFactory.builder()
-                .addCategories(TreatmentCategory.TARGETED_THERAPY)
-                .targetedType("Some anti-EGFR Type")
-                .build()
-        )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-
-        // Add one correct category with matching type and recent date
-        treatments.add(
-            TreatmentTestFactory.builder()
-                .addCategories(TreatmentCategory.TARGETED_THERAPY)
-                .targetedType("Some anti-EGFR Type")
-                .startYear(minDate.year + 1)
-                .build()
-        )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
+    fun shouldFailForNoTreatments() {
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(emptyList())))
     }
 
     @Test
-    fun canEvaluateWithTrials() {
-        val minDate = LocalDate.of(2020, 4, 1)
-        val function = HasHadTreatmentWithCategoryOfTypesRecently(
-            TreatmentCategory.TARGETED_THERAPY,
-            listOf("Anti-EGFR"),
-            minDate
+    fun shouldFailForRecentWrongTreatmentCategory() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(
+            setOf(drugTherapy("test", TreatmentCategory.IMMUNOTHERAPY)), startYear = MIN_DATE.year + 1
         )
-        val treatments: MutableList<PriorTumorTreatment> = mutableListOf()
-        treatments.add(
-            TreatmentTestFactory.builder()
-                .addCategories(TreatmentCategory.TRIAL)
-                .startYear(minDate.minusYears(1).year)
-                .build()
-        )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-        treatments.add(
-            TreatmentTestFactory.builder()
-                .addCategories(TreatmentCategory.TRIAL)
-                .startYear(minDate.plusYears(1).year)
-                .build()
-        )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
-    fun shouldNotCountTrialMatchesWhenLookingForUnlikelyTrialCategories() {
-        val minDate = LocalDate.of(2020, 4, 1)
-        val function = HasHadTreatmentWithCategoryOfTypesRecently(TreatmentCategory.SURGERY, listOf("type 1"), minDate)
-        val trial = TreatmentTestFactory.builder()
-            .addCategories(TreatmentCategory.TRIAL)
-            .startYear(minDate.plusYears(1).year)
-            .build()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(listOf(trial, trial))))
+    fun shouldFailForRecentCorrectTreatmentCategoryWithOtherType() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(
+            setOf(drugTherapy("test", MATCHING_CATEGORY, setOf(DrugType.ANTI_TISSUE_FACTOR))), startYear = MIN_DATE.year + 1
+        )
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+    }
+
+    @Test
+    fun shouldFailForRecentCorrectTreatmentCategoryWithUnknownType() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(
+            setOf(drugTherapy("test", MATCHING_CATEGORY)), startYear = MIN_DATE.year + 1
+        )
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+    }
+
+    @Test
+    fun shouldFailForTrialTreatmentWithUnknownDate() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTherapy("test", TreatmentCategory.IMMUNOTHERAPY)), isTrial = true)
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+    }
+
+    @Test
+    fun shouldFailForOldTrialTreatment() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(
+            setOf(drugTherapy("test", TreatmentCategory.IMMUNOTHERAPY)), isTrial = true, startYear = MIN_DATE.year - 1
+        )
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+    }
+
+    @Test
+    fun shouldReturnUndeterminedForRecentTrialTreatment() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(
+            setOf(drugTherapy("test", TreatmentCategory.IMMUNOTHERAPY)), isTrial = true, startYear = MIN_DATE.year + 1
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+    }
+
+    @Test
+    fun shouldIgnoreTrialMatchesAndFailWhenLookingForUnlikelyTrialCategories() {
+        val function =
+            HasHadTreatmentWithCategoryOfTypesRecently(TreatmentCategory.TRANSPLANTATION, setOf(OtherTreatmentType.ALLOGENIC), MIN_DATE)
+        val treatmentHistoryEntry = treatmentHistoryEntry(
+            setOf(drugTherapy("test", TreatmentCategory.IMMUNOTHERAPY)), isTrial = true, startYear = MIN_DATE.year + 1
+        )
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+    }
+
+    @Test
+    fun shouldFailForOldTreatmentWithCorrectCategoryAndMatchingType() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(
+            setOf(drugTherapy("test", MATCHING_CATEGORY, MATCHING_TYPE_SET)), startYear = MIN_DATE.year - 1
+        )
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+    }
+
+    @Test
+    fun shouldReturnUndeterminedForTreatmentWithCorrectCategoryAndMatchingTypeAndUnknownDate() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTherapy("test", MATCHING_CATEGORY, MATCHING_TYPE_SET)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+    }
+
+    @Test
+    fun shouldPassForRecentTreatmentWithCorrectCategoryAndMatchingType() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(
+            setOf(drugTherapy("test", MATCHING_CATEGORY, MATCHING_TYPE_SET)), startYear = MIN_DATE.year + 1
+        )
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+    }
+
+    companion object {
+        private val MATCHING_CATEGORY = TreatmentCategory.TARGETED_THERAPY
+        private val MATCHING_TYPE_SET = setOf(DrugType.HER2_ANTIBODY)
+        private val MIN_DATE = LocalDate.of(2022, 4, 1)
+        private val FUNCTION = HasHadTreatmentWithCategoryOfTypesRecently(TreatmentCategory.TARGETED_THERAPY, MATCHING_TYPE_SET, MIN_DATE)
     }
 }

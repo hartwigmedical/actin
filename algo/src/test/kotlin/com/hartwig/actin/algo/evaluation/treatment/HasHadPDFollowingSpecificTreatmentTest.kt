@@ -2,88 +2,71 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.PD_LABEL
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
 import org.junit.Test
 
 class HasHadPDFollowingSpecificTreatmentTest {
 
     @Test
-    fun canEvaluate() {
-        val treatments: MutableList<PriorTumorTreatment> = mutableListOf()
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
+    fun shouldFailForEmptyTreatments() {
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
+    }
 
-        // Wrong category
-        treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.RADIOTHERAPY).build())
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-
-        // Right category but no correct name
-        treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.CHEMOTHERAPY).name("other").build())
-        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-
-        // Right category and name but missing stop reason
-        treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.CHEMOTHERAPY).name("treatment 1").build())
-        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-
-        // Right category, name and stop reason PD
-        treatments.add(
-            TreatmentTestFactory.builder()
-                .addCategories(TreatmentCategory.CHEMOTHERAPY)
-                .name("treatment 1")
-                .stopReason(PD_LABEL)
-                .build()
+    @Test
+    fun shouldFailForOtherTreatmentWithPD() {
+        val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
+            setOf(TreatmentTestFactory.drugTherapy("test", TreatmentCategory.IMMUNOTHERAPY)), stopReason = StopReason.PROGRESSIVE_DISEASE
         )
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)))
+    }
+
+    @Test
+    fun shouldFailForMatchingTreatmentButNoPD() {
+        val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
+            MATCHING_TREATMENTS,
+            stopReason = StopReason.TOXICITY,
+            bestResponse = TreatmentResponse.MIXED
+        )
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)))
+    }
+
+    @Test
+    fun shouldReturnUndeterminedForMatchingTreatmentMissingStopReason() {
+        val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(MATCHING_TREATMENTS)
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED, FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+        )
+    }
+
+    @Test
+    fun shouldPassForMatchingTreatmentAndStopReasonPD() {
+        val treatmentHistoryEntry =
+            TreatmentTestFactory.treatmentHistoryEntry(MATCHING_TREATMENTS, stopReason = StopReason.PROGRESSIVE_DISEASE)
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
     fun shouldPassForMatchingTreatmentWhenPDIsIndicatedInBestResponse() {
-        val treatments: List<PriorTumorTreatment> = listOf(
-            TreatmentTestFactory.builder()
-                .addCategories(TreatmentCategory.CHEMOTHERAPY)
-                .name("treatment 1")
-                .bestResponse(PD_LABEL)
-                .build()
+        val treatmentHistoryEntry =
+            TreatmentTestFactory.treatmentHistoryEntry(MATCHING_TREATMENTS, bestResponse = TreatmentResponse.PROGRESSIVE_DISEASE)
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)))
+    }
+
+    @Test
+    fun shouldReturnUndeterminedWithTrialTreatmentEntryInHistory() {
+        val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
+            setOf(TreatmentTestFactory.drugTherapy("test", TreatmentCategory.IMMUNOTHERAPY)),
+            isTrial = true
         )
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-    }
-
-    @Test
-    fun canEvaluateStopReasons() {
-        val treatment = "right treatment"
-        val treatments: MutableList<PriorTumorTreatment> = mutableListOf()
-
-        // Right category but different stop reason
-        treatments.add(TreatmentTestFactory.builder().name(treatment).stopReason("toxicity").bestResponse("improved").build())
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-
-        // Right category but no stop reason
-        treatments.add(TreatmentTestFactory.builder().name(treatment).stopReason(null).build())
-        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-
-        // Right category and right stop reason
-        treatments.add(TreatmentTestFactory.builder().name(treatment).stopReason(PD_LABEL).build())
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-    }
-
-    @Test
-    fun canEvaluateWithTrials() {
-        // Add trial
         assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            FUNCTION.evaluate(
-                TreatmentTestFactory.withPriorTumorTreatment(
-                    TreatmentTestFactory.builder()
-                        .addCategories(TreatmentCategory.TRIAL)
-                        .build()
-                )
-            )
+            EvaluationResult.UNDETERMINED, FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
         )
     }
 
     companion object {
-        val FUNCTION =
-            HasHadPDFollowingSpecificTreatment(listOf(TreatmentTestFactory.drugTherapy("treatment 1", TreatmentCategory.CHEMOTHERAPY)))
+        private val MATCHING_TREATMENTS = listOf(TreatmentTestFactory.treatment("treatment", true))
+        private val FUNCTION = HasHadPDFollowingSpecificTreatment(MATCHING_TREATMENTS)
     }
 }

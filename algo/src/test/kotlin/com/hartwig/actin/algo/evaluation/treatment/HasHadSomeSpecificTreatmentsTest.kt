@@ -2,53 +2,38 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatment
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatmentHistoryEntry
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.withTreatmentHistory
 import org.junit.Test
 
 class HasHadSomeSpecificTreatmentsTest {
     @Test
-    fun canEvaluate() {
-        val function = HasHadSomeSpecificTreatments(setOf("treatment 1", "treatment 2"), TreatmentCategory.CHEMOTHERAPY, 1)
-
-        // No treatments yet
-        val treatments: MutableList<PriorTumorTreatment> = mutableListOf()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-
-        // Add wrong treatment
-        treatments.add(TreatmentTestFactory.builder().name("wrong treatment").build())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-
-        // Add right type
-        treatments.add(TreatmentTestFactory.builder().name("right type").addCategories(TreatmentCategory.CHEMOTHERAPY).build())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-
-        // Add correct treatment
-        treatments.add(TreatmentTestFactory.builder().name("treatment 1").build())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-
-        // Different correct treatment
-        val different: List<PriorTumorTreatment> = listOf(TreatmentTestFactory.builder().name("treatment 2").build())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(different)))
+    fun shouldFailForEmptyTreatments() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
     }
 
     @Test
-    fun canEvaluateWithTrials() {
-        val function = HasHadSomeSpecificTreatments(setOf("treatment"), null, 2)
-        val treatments: MutableList<PriorTumorTreatment> = mutableListOf()
-        treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.TRIAL).build())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-        treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.TRIAL).build())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-    }
-
-    @Test
-    fun canHandleNoWarnCategory() {
-        val function = HasHadSomeSpecificTreatments(setOf("treatment"), null, 2)
-        val treatments = listOf(
-            TreatmentTestFactory.builder().name("treatment").build(),
-            TreatmentTestFactory.builder().name("treatment").build()
+    fun shouldFailForWrongTreatment() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("wrong", true)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
+    }
+
+    @Test
+    fun shouldPassForSufficientCorrectTreatments() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment(MATCHING_TREATMENT_NAME, true)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
+        )
+    }
+
+    companion object {
+        private const val MATCHING_TREATMENT_NAME = "treatment 1"
+        private val function = HasHadSomeSpecificTreatments(listOf(treatment(MATCHING_TREATMENT_NAME, true)), 2)
     }
 }

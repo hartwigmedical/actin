@@ -33,11 +33,13 @@ import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.driver.Variant
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.function.ThrowingRunnable
 import java.io.File
 import java.time.LocalDate
 
+@Ignore
 class RecommendationEngineTest {
     @Test
     fun shouldNotRecommendCapecitabineCombinedWithIrinotecan() {

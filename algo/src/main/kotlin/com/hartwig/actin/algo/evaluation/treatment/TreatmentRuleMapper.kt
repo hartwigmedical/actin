@@ -226,7 +226,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             if (treatment.mappedTypes() == null) {
                 return@FunctionCreator HasHadAdjuvantTreatmentWithCategory(treatment.mappedCategory())
             } else {
-                return@FunctionCreator HasHadAdjuvantSpecificTreatment(
+                return@FunctionCreator HasHadAdjuvantTreatmentWithCategoryOfTypes(
                     treatment.mappedTypes()!!,
                     treatment.mappedCategory()
                 )

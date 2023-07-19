@@ -4,7 +4,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 
 data class TreatmentSummaryForCategory(
-    val specificMatches: Set<TreatmentHistoryEntry> = emptySet(),
+    val specificMatches: List<TreatmentHistoryEntry> = emptyList(),
     val numApproximateMatches: Int = 0,
     val numPossibleTrialMatches: Int = 0
 ) {
@@ -48,7 +48,7 @@ data class TreatmentSummaryForCategory(
                 val matchesCategory = treatmentHistoryEntry.categories().contains(category)
                 val classification = classifier(treatmentHistoryEntry)
                 TreatmentSummaryForCategory(
-                    if (matchesCategory && classification == true) setOf(treatmentHistoryEntry) else emptySet(),
+                    if (matchesCategory && classification == true) listOf(treatmentHistoryEntry) else emptyList(),
                     if (matchesCategory && classification == null) 1 else 0,
                     if (trialMatchesAllowed && treatmentHistoryEntry.isTrial == true && (!matchesCategory || classification == false)) 1 else 0
                 )

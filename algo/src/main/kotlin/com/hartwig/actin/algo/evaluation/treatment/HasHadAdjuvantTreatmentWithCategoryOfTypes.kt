@@ -9,7 +9,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 
-class HasHadAdjuvantSpecificTreatment(private val types: Set<TreatmentType>, private val warnCategory: TreatmentCategory) :
+class HasHadAdjuvantTreatmentWithCategoryOfTypes(private val types: Set<TreatmentType>, private val warnCategory: TreatmentCategory) :
     EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {

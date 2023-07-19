@@ -58,6 +58,8 @@ public class ParameterizedFunctionTestFactory {
             case ONE_DOUBLE: {
                 return List.of("1");
             }
+            case MANY_INTEGERS:
+                return List.of("1;2");
             case TWO_INTEGERS:
             case TWO_DOUBLES: {
                 return List.of("1", "2");

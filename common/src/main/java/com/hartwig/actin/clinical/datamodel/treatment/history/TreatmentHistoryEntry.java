@@ -62,7 +62,7 @@ public abstract class TreatmentHistoryEntry {
     }
 
     public boolean hasTypeConfigured() {
-        return treatments().stream().noneMatch(treatment -> treatment.types() == null);
+        return treatments().stream().noneMatch(treatment -> treatment.types() == null || treatment.types().isEmpty());
     }
 
     private boolean isTypeFromCollection(Set<TreatmentType> types) {

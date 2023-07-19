@@ -7,29 +7,25 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.treatmentResultedInPDOption
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 
 class HasHadPDFollowingSpecificTreatment(private val treatments: List<Treatment>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
+        val treatmentNamesToMatch = treatments.map { it.name().lowercase() }.toSet()
+        val treatmentEvaluation = evaluateTreatmentHistory(record, treatmentNamesToMatch)
 
-        val treatmentNamesToMatch = treatments.map { it.name() }.toSet()
-
-        val (treatmentsWithPD, treatmentsWithExactType, hasHadTreatmentWithUnclearPDStatus, hasHadTreatmentWithWarnType) =
-            evaluateTreatmentHistory(record, treatmentNamesToMatch)
-
-        return if (treatmentsWithPD.isNotEmpty()) {
+        return if (treatmentEvaluation.matchingTreatmentsWithPD.isNotEmpty()) {
             EvaluationFactory.pass(
-                "Has received " + Format.concat(treatmentsWithPD.map(Treatment::name)) + " treatment with PD"
+                "Has received " + Format.concat(treatmentEvaluation.matchingTreatmentsWithPD.map(Treatment::name)) + " treatment with PD"
             )
-        } else if (hasHadTreatmentWithWarnType) {
+        } else if (treatmentEvaluation.includesTrial) {
             EvaluationFactory.undetermined("Undetermined if received specific " + Format.concat(treatmentNamesToMatch) + " treatment")
-        } else if (hasHadTreatmentWithUnclearPDStatus) {
+        } else if (treatmentEvaluation.matchesWithUnclearPD) {
             EvaluationFactory.undetermined(
-                "Has received " + Format.concat(treatmentsWithExactType.map(Treatment::name)) + " treatment but undetermined if PD"
+                "Has received ${Format.concat(treatmentEvaluation.matchingTreatments.map(Treatment::name))} treatment but undetermined if PD"
             )
-        } else if (treatmentsWithExactType.isNotEmpty()) {
-            EvaluationFactory.fail("Has received " + Format.concat(treatmentsWithExactType.map(Treatment::name)) + " treatment, but no PD")
+        } else if (treatmentEvaluation.matchingTreatments.isNotEmpty()) {
+            EvaluationFactory.fail("Has received ${Format.concat(treatmentEvaluation.matchingTreatments.map(Treatment::name))} treatment, but no PD")
         } else {
             EvaluationFactory.fail("Has not received specific " + Format.concat(treatmentNamesToMatch) + " treatment")
         }
@@ -39,39 +35,39 @@ class HasHadPDFollowingSpecificTreatment(private val treatments: List<Treatment>
         val treatmentHistory = record.clinical().treatmentHistory()
 
         return treatmentHistory.map { entry ->
-            val categories = entry.treatments().flatMap(Treatment::categories)
-            val isWarnType = categories.contains(TreatmentCategory.TRIAL)
+            entry.treatments().flatMap(Treatment::categories)
+            val isTrial = entry.isTrial == true
             val isPD = treatmentResultedInPDOption(entry)
             if (treatmentsMatchNameListExactly(entry.treatments(), treatmentNamesToMatch)) {
                 TreatmentHistoryEvaluation(
-                    matchesWithPD = if (isPD == true) entry.treatments() else emptySet(),
-                    typeMatches = entry.treatments(),
+                    matchingTreatmentsWithPD = if (isPD == true) entry.treatments() else emptySet(),
+                    matchingTreatments = entry.treatments(),
                     matchesWithUnclearPD = isPD == null,
-                    hasWarnType = isWarnType
+                    includesTrial = isTrial
                 )
             } else {
-                TreatmentHistoryEvaluation(hasWarnType = isWarnType)
+                TreatmentHistoryEvaluation(includesTrial = isTrial)
             }
         }.fold(TreatmentHistoryEvaluation()) { acc, result ->
             TreatmentHistoryEvaluation(
-                matchesWithPD = acc.matchesWithPD + result.matchesWithPD,
-                typeMatches = acc.typeMatches + result.typeMatches,
+                matchingTreatmentsWithPD = acc.matchingTreatmentsWithPD + result.matchingTreatmentsWithPD,
+                matchingTreatments = acc.matchingTreatments + result.matchingTreatments,
                 matchesWithUnclearPD = acc.matchesWithUnclearPD || result.matchesWithUnclearPD,
-                hasWarnType = acc.hasWarnType || result.hasWarnType
+                includesTrial = acc.includesTrial || result.includesTrial
             )
         }
     }
 
     companion object {
         private fun treatmentsMatchNameListExactly(treatments: Set<Treatment>, treatmentNamesToMatch: Set<String>): Boolean {
-            return treatments.map(Treatment::name).intersect(treatmentNamesToMatch).isNotEmpty()
+            return treatments.map { it.name().lowercase() }.intersect(treatmentNamesToMatch).isNotEmpty()
         }
     }
 
     private data class TreatmentHistoryEvaluation(
-        val matchesWithPD: Set<Treatment> = emptySet(),
-        val typeMatches: Set<Treatment> = emptySet(),
+        val matchingTreatmentsWithPD: Set<Treatment> = emptySet(),
+        val matchingTreatments: Set<Treatment> = emptySet(),
         val matchesWithUnclearPD: Boolean = false,
-        val hasWarnType: Boolean = false
+        val includesTrial: Boolean = false
     )
 }

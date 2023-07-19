@@ -23,7 +23,7 @@ class TreatmentSummaryForCategoryTest {
 
     @Test
     fun shouldReportSpecificMatches() {
-        assertThat(TreatmentSummaryForCategory(specificMatches = setOf(treatmentHistoryEntry())).hasSpecificMatch()).isTrue
+        assertThat(TreatmentSummaryForCategory(specificMatches = listOf(treatmentHistoryEntry())).hasSpecificMatch()).isTrue
     }
 
     @Test
@@ -40,9 +40,9 @@ class TreatmentSummaryForCategoryTest {
     fun shouldAddSummariesTogether() {
         val treatmentHistoryEntry1 = treatmentHistoryEntry(setOf(treatment("1", true)))
         val treatmentHistoryEntry2 = treatmentHistoryEntry(setOf(treatment("2", false)))
-        val summary1 = TreatmentSummaryForCategory(setOf(treatmentHistoryEntry1), 2, 3)
-        val summary2 = TreatmentSummaryForCategory(setOf(treatmentHistoryEntry2), 5, 6)
-        assertThat(summary1 + summary2).isEqualTo(TreatmentSummaryForCategory(setOf(treatmentHistoryEntry1, treatmentHistoryEntry2), 7, 9))
+        val summary1 = TreatmentSummaryForCategory(listOf(treatmentHistoryEntry1), 2, 3)
+        val summary2 = TreatmentSummaryForCategory(listOf(treatmentHistoryEntry2), 5, 6)
+        assertThat(summary1 + summary2).isEqualTo(TreatmentSummaryForCategory(listOf(treatmentHistoryEntry1, treatmentHistoryEntry2), 7, 9))
     }
 
     @Test
@@ -55,7 +55,7 @@ class TreatmentSummaryForCategoryTest {
     fun shouldCountTreatmentsMatchingCategory() {
         val treatments = listOf(TREATMENT_HISTORY_ENTRY_MATCHING_CATEGORY, treatmentWithCategory(TreatmentCategory.SURGERY))
         assertThat(TreatmentSummaryForCategory.createForTreatmentHistory(treatments, CATEGORY_TO_MATCH))
-            .isEqualTo(TreatmentSummaryForCategory(setOf(TREATMENT_HISTORY_ENTRY_MATCHING_CATEGORY), 0, 0))
+            .isEqualTo(TreatmentSummaryForCategory(listOf(TREATMENT_HISTORY_ENTRY_MATCHING_CATEGORY), 0, 0))
     }
 
     @Test
@@ -68,7 +68,7 @@ class TreatmentSummaryForCategoryTest {
         assertThat(TreatmentSummaryForCategory.createForTreatmentHistory(treatments, CATEGORY_TO_MATCH) {
             it.treatmentName() == "CUSTOM"
         })
-            .isEqualTo(TreatmentSummaryForCategory(setOf(TREATMENT_HISTORY_ENTRY_MATCHING_CATEGORY_AND_NAME), 0, 0))
+            .isEqualTo(TreatmentSummaryForCategory(listOf(TREATMENT_HISTORY_ENTRY_MATCHING_CATEGORY_AND_NAME), 0, 0))
     }
 
     @Test
@@ -80,18 +80,18 @@ class TreatmentSummaryForCategoryTest {
         )
         assertThat(TreatmentSummaryForCategory.createForTreatmentHistory(treatments, CATEGORY_TO_MATCH) {
             if (it.treatmentName() == "CUSTOM") null else false
-        }).isEqualTo(TreatmentSummaryForCategory(emptySet(), 1, 0))
+        }).isEqualTo(TreatmentSummaryForCategory(emptyList(), 1, 0))
     }
 
     @Test
-    fun shouldCountTreatmentsWithTrialCategoryIgnoringCustomClassification() {
+    fun shouldCountTrialTreatmentsIgnoringCustomClassification() {
         val treatments = listOf(
-            treatmentWithCategory(TreatmentCategory.TRIAL),
+            treatmentWithCategory(TreatmentCategory.TARGETED_THERAPY, isTrial = true),
             treatmentWithCategory(TreatmentCategory.SURGERY)
         )
         assertThat(TreatmentSummaryForCategory.createForTreatmentHistory(treatments, CATEGORY_TO_MATCH) {
             it.treatmentName() == "CUSTOM"
-        }).isEqualTo(TreatmentSummaryForCategory(emptySet(), 0, 1))
+        }).isEqualTo(TreatmentSummaryForCategory(emptyList(), 0, 1))
     }
 
     @Test
@@ -99,13 +99,13 @@ class TreatmentSummaryForCategoryTest {
         val treatments = listOf(
             TREATMENT_HISTORY_ENTRY_MATCHING_CATEGORY,
             TREATMENT_HISTORY_ENTRY_MATCHING_CATEGORY_AND_NAME,
-            treatmentWithCategory(TreatmentCategory.TRIAL),
+            treatmentWithCategory(TreatmentCategory.TARGETED_THERAPY, isTrial = true),
             treatmentWithCategory(TreatmentCategory.SURGERY)
         )
         assertThat(TreatmentSummaryForCategory.createForTreatmentHistory(treatments, CATEGORY_TO_MATCH))
             .isEqualTo(
                 TreatmentSummaryForCategory(
-                    setOf(TREATMENT_HISTORY_ENTRY_MATCHING_CATEGORY, TREATMENT_HISTORY_ENTRY_MATCHING_CATEGORY_AND_NAME),
+                    listOf(TREATMENT_HISTORY_ENTRY_MATCHING_CATEGORY, TREATMENT_HISTORY_ENTRY_MATCHING_CATEGORY_AND_NAME),
                     0,
                     1
                 )
@@ -115,19 +115,18 @@ class TreatmentSummaryForCategoryTest {
     @Test
     fun shouldNotCountTrialMatchesWhenLookingForUnlikelyTrialCategories() {
         val treatments = listOf(
-            treatmentWithCategory(TreatmentCategory.TRIAL),
+            treatmentWithCategory(TreatmentCategory.TARGETED_THERAPY, isTrial = true),
             treatmentWithCategory(TreatmentCategory.SURGERY)
         )
         assertThat(TreatmentSummaryForCategory.createForTreatmentHistory(treatments, TreatmentCategory.TRANSPLANTATION))
-            .isEqualTo(TreatmentSummaryForCategory(emptySet(), 0, 0))
+            .isEqualTo(TreatmentSummaryForCategory(emptyList(), 0, 0))
     }
 
     @Test
     fun shouldIndicatePossibleTrialMatchForTrialTreatmentAndAllowedCategory() {
-        // TODO: flag trial on history entry instead of with category
         assertThat(
             TreatmentSummaryForCategory.treatmentMayMatchCategoryAsTrial(
-                treatmentWithCategory(TreatmentCategory.TRIAL),
+                treatmentWithCategory(TreatmentCategory.TARGETED_THERAPY, isTrial = true),
                 TreatmentCategory.CHEMOTHERAPY
             )
         ).isTrue
@@ -147,7 +146,7 @@ class TreatmentSummaryForCategoryTest {
     fun shouldNotIndicatePossibleTrialMatchForTrialTreatmentAndUnlikelyTrialCategory() {
         assertThat(
             TreatmentSummaryForCategory.treatmentMayMatchCategoryAsTrial(
-                treatmentWithCategory(TreatmentCategory.TRIAL),
+                treatmentWithCategory(TreatmentCategory.TARGETED_THERAPY, isTrial = true),
                 TreatmentCategory.SURGERY
             )
         ).isFalse
@@ -158,7 +157,7 @@ class TreatmentSummaryForCategoryTest {
         private val TREATMENT_HISTORY_ENTRY_MATCHING_CATEGORY = treatmentWithCategory(CATEGORY_TO_MATCH)
         private val TREATMENT_HISTORY_ENTRY_MATCHING_CATEGORY_AND_NAME = treatmentWithCategory(CATEGORY_TO_MATCH, "CUSTOM")
 
-        private fun treatmentWithCategory(category: TreatmentCategory, name: String = ""): TreatmentHistoryEntry =
-            treatmentHistoryEntry(setOf(drugTherapy(name, category)))
+        private fun treatmentWithCategory(category: TreatmentCategory, name: String = "", isTrial: Boolean? = null): TreatmentHistoryEntry =
+            treatmentHistoryEntry(setOf(drugTherapy(name, category)), isTrial = isTrial)
     }
 }
