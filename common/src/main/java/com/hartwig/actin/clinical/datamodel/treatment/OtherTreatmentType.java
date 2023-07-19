@@ -17,6 +17,7 @@ public enum OtherTreatmentType implements TreatmentType {
     }
 
     @NotNull
+    @Override
     public TreatmentCategory category() {
         return category;
     }

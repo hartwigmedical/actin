@@ -4,13 +4,14 @@ import java.util.Collections;
 import java.util.List;
 
 import com.hartwig.actin.clinical.datamodel.TumorStage;
+import com.hartwig.actin.clinical.datamodel.treatment.DrugType;
+import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatmentType;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
 import com.hartwig.actin.treatment.input.composite.CompositeInput;
 import com.hartwig.actin.treatment.input.composite.CompositeRules;
-import com.hartwig.actin.treatment.input.datamodel.TreatmentCategoryInput;
 import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput;
 import com.hartwig.actin.treatment.input.single.FunctionInput;
 
@@ -65,16 +66,28 @@ public class ParameterizedFunctionTestFactory {
                 return List.of("1", "2");
             }
             case ONE_TREATMENT_CATEGORY_OR_TYPE: {
-                return List.of(TreatmentCategoryInput.fromString(TreatmentCategory.IMMUNOTHERAPY.display()));
+                return List.of(TreatmentCategory.IMMUNOTHERAPY.display());
             }
             case ONE_TREATMENT_CATEGORY_MANY_TYPES: {
-                return List.of(TreatmentCategoryInput.fromString(TreatmentCategory.IMMUNOTHERAPY.display()), "string1;string2");
+                return List.of(TreatmentCategory.IMMUNOTHERAPY.display(),
+                        DrugType.ANTI_PD_L1.display() + ";" + DrugType.ANTI_PD_1.display());
             }
             case ONE_TREATMENT_CATEGORY_OR_TYPE_ONE_INTEGER: {
-                return List.of(TreatmentCategoryInput.fromString(TreatmentCategory.IMMUNOTHERAPY.display()), "1");
+                return List.of(OtherTreatmentType.ALLOGENIC.display(), "1");
             }
             case ONE_TREATMENT_CATEGORY_MANY_TYPES_ONE_INTEGER: {
-                return List.of(TreatmentCategoryInput.fromString(TreatmentCategory.IMMUNOTHERAPY.display()), "string1;string2", "1");
+                return List.of(TreatmentCategory.IMMUNOTHERAPY.display(),
+                        DrugType.ANTI_PD_L1.display() + ";" + DrugType.ANTI_PD_1.display(),
+                        "1");
+            }
+            case ONE_SPECIFIC_TREATMENT: {
+                return List.of("CAPECITABINE+OXALIPLATIN");
+            }
+            case ONE_SPECIFIC_TREATMENT_ONE_INTEGER: {
+                return List.of("CAPECITABINE+OXALIPLATIN", "1");
+            }
+            case MANY_SPECIFIC_TREATMENTS_TWO_INTEGERS: {
+                return List.of("CAPECITABINE+OXALIPLATIN;CAPECITABINE+OXALIPLATIN", "1", "2");
             }
             case ONE_TUMOR_TYPE: {
                 return List.of(TumorTypeInput.SQUAMOUS_CELL_CARCINOMA.display());

@@ -9,6 +9,7 @@ public enum RadiotherapyType implements TreatmentType {
     STEREOTACTIC;
 
     @NotNull
+    @Override
     public TreatmentCategory category() {
         return TreatmentCategory.RADIOTHERAPY;
     }

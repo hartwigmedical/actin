@@ -170,8 +170,8 @@ public class ClinicalGsonDeserializer {
     private static class LocalDateAdapter implements JsonDeserializer<LocalDate> {
 
         @Override
-        public LocalDate deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext)
-                throws JsonParseException {
+        public LocalDate deserialize(@NotNull JsonElement jsonElement, @NotNull Type type,
+                @NotNull JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
             if (jsonElement.isJsonNull()) {
                 return null;
             } else {
@@ -205,8 +205,8 @@ public class ClinicalGsonDeserializer {
         }
 
         @Override
-        public ImmutableList<T> deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context)
-                throws JsonParseException {
+        public ImmutableList<T> deserialize(@NotNull JsonElement jsonElement, @NotNull Type type,
+                @NotNull JsonDeserializationContext context) throws JsonParseException {
 
             return (ImmutableList<T>) ImmutableList.copyOf(deserializeJsonCollection(jsonElement,
                     context,
@@ -223,8 +223,8 @@ public class ClinicalGsonDeserializer {
         }
 
         @Override
-        public ImmutableSet<T> deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context)
-                throws JsonParseException {
+        public ImmutableSet<T> deserialize(@NotNull JsonElement jsonElement, @NotNull Type type,
+                @NotNull JsonDeserializationContext context) throws JsonParseException {
 
             return (ImmutableSet<T>) ImmutableSet.copyOf(deserializeJsonCollection(jsonElement,
                     context,
@@ -241,14 +241,19 @@ public class ClinicalGsonDeserializer {
         }
 
         @Override
-        public ImmutableSet<Drug> deserialize(JsonElement json, Type type, JsonDeserializationContext context) {
+        public ImmutableSet<Drug> deserialize(@NotNull JsonElement json, @NotNull Type type, @NotNull JsonDeserializationContext context) {
             return json.isJsonNull()
                     ? null
-                    : ImmutableSet.copyOf(json.getAsJsonArray()
-                            .asList()
-                            .stream()
-                            .map(listElement -> drugsByName.get(listElement.getAsString().toLowerCase()))
-                            .collect(Collectors.toSet()));
+                    : ImmutableSet.copyOf(json.getAsJsonArray().asList().stream().map(this::getDrug).collect(Collectors.toSet()));
+        }
+
+        @NotNull
+        private Drug getDrug(@NotNull JsonElement listElement) {
+            Drug drug = drugsByName.get(listElement.getAsString().toLowerCase());
+            if (drug == null) {
+                throw new JsonParseException("Failed to resolve: " + listElement);
+            }
+            return drug;
         }
     }
 
@@ -260,7 +265,7 @@ public class ClinicalGsonDeserializer {
                 return jsonElement.isJsonNull()
                         ? null
                         : (Treatment) context.deserialize(jsonElement,
-                                TreatmentClass.valueOf(string(jsonElement.getAsJsonObject(), "treatmentType")).treatmentClass());
+                                TreatmentClass.valueOf(string(jsonElement.getAsJsonObject(), "treatmentClass")).treatmentClass());
             } catch (Exception e) {
                 throw new JsonParseException("Failed to deserialize: " + jsonElement, e);
             }
