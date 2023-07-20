@@ -1,91 +1,125 @@
 package com.hartwig.actin.algo.evaluation.surgery
 
-import com.google.common.collect.Lists
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
+import com.hartwig.actin.algo.evaluation.surgery.SurgeryTestFactory.builder
+import com.hartwig.actin.algo.evaluation.surgery.SurgeryTestFactory.withSurgeries
+import com.hartwig.actin.algo.evaluation.surgery.SurgeryTestFactory.withSurgery
 import com.hartwig.actin.clinical.datamodel.Surgery
 import com.hartwig.actin.clinical.datamodel.SurgeryStatus
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
-import org.apache.logging.log4j.util.Strings
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import org.junit.Test
 import java.time.LocalDate
 
+
 class HasHadAnySurgeryAfterSpecificDateTest {
+
     @Test
-    fun canEvaluateBasedOnSurgeries() {
-        val evaluationDate = LocalDate.of(2020, 4, 20)
-        val minDate = evaluationDate.minusMonths(2)
-        val function = HasHadAnySurgeryAfterSpecificDate(minDate, evaluationDate)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withSurgeries(Lists.newArrayList())))
-        val tooLongAgo: Surgery = SurgeryTestFactory.builder().endDate(minDate.minusWeeks(4)).build()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withSurgery(tooLongAgo)))
-        val recentFinished: Surgery = SurgeryTestFactory.builder().status(SurgeryStatus.FINISHED).endDate(minDate.plusWeeks(2)).build()
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(SurgeryTestFactory.withSurgery(recentFinished)))
-        val recentPlanned: Surgery = SurgeryTestFactory.builder().status(SurgeryStatus.PLANNED).endDate(minDate.plusWeeks(2)).build()
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(SurgeryTestFactory.withSurgery(recentPlanned)))
-        val recentCancelled: Surgery = SurgeryTestFactory.builder().status(SurgeryStatus.CANCELLED).endDate(minDate.plusWeeks(2)).build()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withSurgery(recentCancelled)))
-        val futureFinished: Surgery =
-            SurgeryTestFactory.builder().status(SurgeryStatus.FINISHED).endDate(evaluationDate.plusWeeks(2)).build()
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(SurgeryTestFactory.withSurgery(futureFinished)))
-        val futurePlanned: Surgery =
-            SurgeryTestFactory.builder().status(SurgeryStatus.PLANNED).endDate(evaluationDate.plusWeeks(2)).build()
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(SurgeryTestFactory.withSurgery(futurePlanned)))
-        val futureCancelled: Surgery =
-            SurgeryTestFactory.builder().status(SurgeryStatus.CANCELLED).endDate(evaluationDate.plusWeeks(2)).build()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withSurgery(futureCancelled)))
+    fun shouldFailWithNoSurgeries() {
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withSurgeries(emptyList())))
     }
 
     @Test
-    fun canEvaluateBasedOnPriorTumorTreatments() {
-        val evaluationDate = LocalDate.of(2020, 4, 20)
-        val minDate = evaluationDate.minusMonths(2)
-        val function = HasHadAnySurgeryAfterSpecificDate(minDate, evaluationDate)
+    fun shouldFailWithOldSurgery() {
+        val tooLongAgo: Surgery = builder().endDate(MIN_DATE.minusWeeks(4)).build()
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withSurgery(tooLongAgo)))
+    }
 
-        // No prior tumor treatments
-        val treatments: MutableList<PriorTumorTreatment> = mutableListOf()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withPriorTumorTreatments(treatments)))
+    @Test
+    fun shouldPassWithRecentSurgery() {
+        val recentFinished: Surgery = builder().status(SurgeryStatus.FINISHED).endDate(MIN_DATE.plusWeeks(2)).build()
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withSurgery(recentFinished)))
+    }
 
-        // A non-surgery prior treatment
-        treatments.add(builder().build())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withPriorTumorTreatments(treatments)))
+    @Test
+    fun shouldWarnWithRecentPlannedSurgery() {
+        val recentPlanned: Surgery = builder().status(SurgeryStatus.PLANNED).endDate(MIN_DATE.plusWeeks(2)).build()
+        assertEvaluation(EvaluationResult.WARN, FUNCTION.evaluate(withSurgery(recentPlanned)))
+    }
 
-        // A surgery that is too long ago.
-        treatments.add(builder().addCategories(TreatmentCategory.SURGERY).startYear(minDate.minusYears(1).year).build())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withPriorTumorTreatments(treatments)))
+    @Test
+    fun shouldFailWithRecentCancelledSurgery() {
+        val recentCancelled: Surgery = builder().status(SurgeryStatus.CANCELLED).endDate(MIN_DATE.plusWeeks(2)).build()
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withSurgery(recentCancelled)))
+    }
 
-        // A surgery with just the same year (and no month).
-        treatments.add(builder().addCategories(TreatmentCategory.SURGERY).startYear(minDate.year).build())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(SurgeryTestFactory.withPriorTumorTreatments(treatments)))
+    @Test
+    fun shouldWarnWithFutureFinishedSurgery() {
+        val futureFinished: Surgery = builder().status(SurgeryStatus.FINISHED).endDate(EVALUATION_DATE.plusWeeks(2)).build()
+        assertEvaluation(EvaluationResult.WARN, FUNCTION.evaluate(withSurgery(futureFinished)))
+    }
 
-        // A surgery prior treatment with no date
-        treatments.add(builder().addCategories(TreatmentCategory.SURGERY).build())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(SurgeryTestFactory.withPriorTumorTreatments(treatments)))
+    @Test
+    fun shouldPassWithFuturePlannedSurgery() {
+        val futurePlanned: Surgery = builder().status(SurgeryStatus.PLANNED).endDate(EVALUATION_DATE.plusWeeks(2)).build()
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withSurgery(futurePlanned)))
+    }
 
-        // A surgery with a month just before min date.
-        treatments.add(
-            builder().addCategories(TreatmentCategory.SURGERY)
-                .startYear(minDate.year)
-                .startMonth(minDate.monthValue - 1)
-                .build()
-        )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(SurgeryTestFactory.withPriorTumorTreatments(treatments)))
+    @Test
+    fun shouldFailWithFutureCancelledSurgery() {
+        val futureCancelled: Surgery = builder().status(SurgeryStatus.CANCELLED).endDate(EVALUATION_DATE.plusWeeks(2)).build()
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withSurgery(futureCancelled)))
+    }
 
-        // A surgery with a month just after min date.
-        treatments.add(
-            builder().addCategories(TreatmentCategory.SURGERY)
-                .startYear(minDate.year)
-                .startMonth(minDate.monthValue + 1)
-                .build()
-        )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(SurgeryTestFactory.withPriorTumorTreatments(treatments)))
+    @Test
+    fun shouldFailWithNoPriorTreatments() {
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(SurgeryTestFactory.withTreatmentHistory(emptyList())))
+    }
+
+    @Test
+    fun shouldFailWithRecentNonSurgicalTreatment() {
+        val treatments = listOf(treatmentHistoryEntry(emptySet(), MIN_DATE.year))
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(SurgeryTestFactory.withTreatmentHistory(treatments)))
+    }
+
+    @Test
+    fun shouldFailEvaluationWithTooLongAgoSurgicalTreatment() {
+        val treatments = listOf(treatmentHistoryEntry(setOf(TreatmentCategory.SURGERY), MIN_DATE.minusYears(1).year))
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(SurgeryTestFactory.withTreatmentHistory(treatments)))
+    }
+
+    @Test
+    fun shouldReturnUndeterminedWithSurgicalTreatmentInSameYear() {
+        val treatments = listOf(treatmentHistoryEntry(setOf(TreatmentCategory.SURGERY), MIN_DATE.year))
+        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(SurgeryTestFactory.withTreatmentHistory(treatments)))
+    }
+
+    @Test
+    fun shouldReturnUndeterminedWithSurgicalTreatmentWithoutDate() {
+        val treatments = listOf(treatmentHistoryEntry(setOf(TreatmentCategory.SURGERY)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(SurgeryTestFactory.withTreatmentHistory(treatments)))
+    }
+
+    @Test
+    fun shouldFailWithSurgicalTreatmentInMonthJustBeforeMinDate() {
+        val treatments = listOf(treatmentHistoryEntry(setOf(TreatmentCategory.SURGERY), MIN_DATE.year, MIN_DATE.monthValue - 1))
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(SurgeryTestFactory.withTreatmentHistory(treatments)))
+    }
+
+    @Test
+    fun shouldPassWithSurgicalTreatmentInMonthJustAfterMinDate() {
+        val treatments = listOf(treatmentHistoryEntry(setOf(TreatmentCategory.SURGERY), MIN_DATE.year, MIN_DATE.monthValue + 1))
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(SurgeryTestFactory.withTreatmentHistory(treatments)))
     }
 
     companion object {
-        private fun builder(): ImmutablePriorTumorTreatment.Builder {
-            return ImmutablePriorTumorTreatment.builder().name(Strings.EMPTY).isSystemic(true)
+        private val EVALUATION_DATE = LocalDate.of(2020, 4, 20)
+        private val MIN_DATE = EVALUATION_DATE.minusMonths(2)
+        private val FUNCTION = HasHadAnySurgeryAfterSpecificDate(MIN_DATE, EVALUATION_DATE)
+
+        private fun treatmentHistoryEntry(
+            categories: Set<TreatmentCategory>,
+            startYear: Int? = null,
+            startMonth: Int? = null
+        ): TreatmentHistoryEntry {
+            return ImmutableTreatmentHistoryEntry.builder()
+                .addTreatments(ImmutableOtherTreatment.builder().name("").isSystemic(false).categories(categories).build())
+                .startYear(startYear)
+                .startMonth(startMonth)
+                .build()
         }
     }
 }

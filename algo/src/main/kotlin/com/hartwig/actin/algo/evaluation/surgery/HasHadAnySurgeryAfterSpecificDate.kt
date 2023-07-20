@@ -57,29 +57,33 @@ class HasHadAnySurgeryAfterSpecificDate(private val minDate: LocalDate, private 
                 "Potential recent surgery"
             )
         }
-        var hasSurgeryWithUndeterminedDate = false
-        for (priorTumorTreatment in record.clinical().priorTumorTreatments()) {
-            if (priorTumorTreatment.categories().contains(TreatmentCategory.SURGERY)) {
-                val isAfterMinDate = isAfterDate(minDate, priorTumorTreatment.startYear(), priorTumorTreatment.startMonth())
-                if (isAfterMinDate == null) {
-                    hasSurgeryWithUndeterminedDate = true
-                } else if (isAfterMinDate) {
-                    return EvaluationFactory.pass(
-                        "Patient has had surgery after " + date(minDate),
-                        "Has had surgery after " + date(minDate)
-                    )
-                }
+
+        val surgicalTreatmentsOccurredAfterMinDate = record.clinical().treatmentHistory()
+            .filter { it.categories().contains(TreatmentCategory.SURGERY) }
+            .map { isAfterDate(minDate, it.startYear(), it.startMonth()) }
+
+        return when {
+            surgicalTreatmentsOccurredAfterMinDate.any { it == true } -> {
+                EvaluationFactory.pass(
+                    "Patient has had surgery after " + date(minDate),
+                    "Has had surgery after " + date(minDate)
+                )
+            }
+
+            surgicalTreatmentsOccurredAfterMinDate.any { it == null } -> {
+                EvaluationFactory.undetermined(
+                    "Patient has had surgery but undetermined how long ago",
+                    "Undetermined if previous surgery is recent"
+                )
+            }
+
+            hasCancelledSurgeryAfterEval || hasCancelledSurgeryBetweenMinAndEval -> {
+                EvaluationFactory.fail("Recent surgery got cancelled", "No recent surgery")
+            }
+
+            else -> {
+                EvaluationFactory.fail("Patient has not received surgery in past nr of months", "No recent surgery")
             }
         }
-        if (hasSurgeryWithUndeterminedDate) {
-            return EvaluationFactory.undetermined(
-                "Patient has had surgery but undetermined how long ago",
-                "Undetermined if previous surgery is recent"
-            )
-        }
-        return if (hasCancelledSurgeryAfterEval || hasCancelledSurgeryBetweenMinAndEval) {
-            EvaluationFactory.fail("Recent surgery got cancelled", "No recent surgery")
-        } else
-            EvaluationFactory.fail("Patient has not received surgery in past nr of months", "No recent surgery")
     }
 }

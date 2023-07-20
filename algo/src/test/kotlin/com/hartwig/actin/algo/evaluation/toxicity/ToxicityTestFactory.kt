@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
-import com.google.common.collect.Lists
 import com.hartwig.actin.ImmutablePatientRecord
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestDataFactory
@@ -8,10 +7,8 @@ import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity
 import com.hartwig.actin.clinical.datamodel.Intolerance
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.clinical.datamodel.Toxicity
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
@@ -38,8 +35,8 @@ internal object ToxicityTestFactory {
             .clinical(
                 ImmutableClinicalRecord.builder()
                     .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                    .toxicities(Lists.newArrayList(toxicity))
-                    .complications(Lists.newArrayList(complication))
+                    .toxicities(listOf(toxicity))
+                    .complications(listOf(complication))
                     .build()
             )
             .build()
@@ -49,24 +46,8 @@ internal object ToxicityTestFactory {
         return ImmutableToxicity.builder().name(Strings.EMPTY).evaluatedDate(LocalDate.of(2020, 1, 1)).source(ToxicitySource.EHR)
     }
 
-    fun withPriorTumorTreatments(treatments: List<PriorTumorTreatment>): PatientRecord {
-        return ImmutablePatientRecord.builder()
-            .from(TestDataFactory.createMinimalTestPatientRecord())
-            .clinical(
-                ImmutableClinicalRecord.builder()
-                    .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                    .priorTumorTreatments(treatments)
-                    .build()
-            )
-            .build()
-    }
-
-    fun treatment(): ImmutablePriorTumorTreatment.Builder {
-        return ImmutablePriorTumorTreatment.builder().name(Strings.EMPTY).isSystemic(false)
-    }
-
     fun withIntolerance(intolerance: Intolerance): PatientRecord {
-        return withIntolerances(Lists.newArrayList(intolerance))
+        return withIntolerances(listOf(intolerance))
     }
 
     fun withIntolerances(intolerances: List<Intolerance>): PatientRecord {
@@ -83,11 +64,11 @@ internal object ToxicityTestFactory {
 
     fun intolerance(): ImmutableIntolerance.Builder {
         return ImmutableIntolerance.builder()
-            .name(Strings.EMPTY)
-            .category(Strings.EMPTY)
-            .type(Strings.EMPTY)
-            .clinicalStatus(Strings.EMPTY)
-            .verificationStatus(Strings.EMPTY)
-            .criticality(Strings.EMPTY)
+            .name("")
+            .category("")
+            .type("")
+            .clinicalStatus("")
+            .verificationStatus("")
+            .criticality("")
     }
 }
