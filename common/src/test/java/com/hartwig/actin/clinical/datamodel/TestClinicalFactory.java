@@ -150,7 +150,7 @@ public final class TestClinicalFactory {
     @NotNull
     private static List<TreatmentHistoryEntry> createTreatmentHistory() {
         Drug oxaliplatin = drug("Oxaliplatin", DrugType.PLATINUM_COMPOUND, TreatmentCategory.CHEMOTHERAPY);
-        Drug fluorouracil = drug("5-FU", DrugType.PYRIMIDINE_ANTAGONIST, TreatmentCategory.CHEMOTHERAPY);
+        Drug fluorouracil = drug("5-FU", DrugType.ANTIMETABOLITE, TreatmentCategory.CHEMOTHERAPY);
         Drug irinotecan = drug("Irinotecan", DrugType.TOPO1_INHIBITOR, TreatmentCategory.CHEMOTHERAPY);
 
         DrugTherapy folfirinox = ImmutableDrugTherapy.builder()
@@ -163,7 +163,7 @@ public final class TestClinicalFactory {
         Radiotherapy radioFolfirinox =
                 ImmutableRadiotherapy.builder().name("FOLFIRINOX+radiotherapy").addAllDrugs(folfirinox.drugs()).isSystemic(true).build();
 
-        Drug pembrolizumab = drug("Pembrolizumab", DrugType.MONOCLONAL_ANTIBODY, TreatmentCategory.IMMUNOTHERAPY);
+        Drug pembrolizumab = drug("Pembrolizumab", DrugType.ANTI_PD_1, TreatmentCategory.IMMUNOTHERAPY);
 
         DrugTherapy folfirinoxAndPembrolizumab = ImmutableDrugTherapy.builder()
                 .name("FOLFIRINOX + pembrolizumab")

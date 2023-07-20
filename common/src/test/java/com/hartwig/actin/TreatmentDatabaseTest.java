@@ -26,8 +26,8 @@ public class TreatmentDatabaseTest {
         assertThat(treatment.categories()).containsExactly(TreatmentCategory.CHEMOTHERAPY);
         assertThat(treatment.isSystemic()).isTrue();
         assertThat(((Therapy) treatment).drugs()).extracting(Drug::name, Drug::drugTypes)
-                .containsExactlyInAnyOrder(tuple("Capecitabine", Set.of(DrugType.ANTIMETABOLITE)),
-                        tuple("Oxaliplatin", Set.of(DrugType.PLATINUM_COMPOUND)));
+                .containsExactlyInAnyOrder(tuple("CAPECITABINE", Set.of(DrugType.ANTIMETABOLITE)),
+                        tuple("OXALIPLATIN", Set.of(DrugType.PLATINUM_COMPOUND)));
     }
 
     @Test
@@ -35,7 +35,7 @@ public class TreatmentDatabaseTest {
         assertThat(treatmentDatabase().findDrugByName("nonexistent")).isNull();
         Drug drug = treatmentDatabase().findDrugByName("Capecitabine");
         assertThat(drug).isNotNull();
-        assertThat(drug.name()).isEqualTo("Capecitabine");
+        assertThat(drug.name()).isEqualTo("CAPECITABINE");
         assertThat(drug.drugTypes()).containsExactly(DrugType.ANTIMETABOLITE);
     }
 

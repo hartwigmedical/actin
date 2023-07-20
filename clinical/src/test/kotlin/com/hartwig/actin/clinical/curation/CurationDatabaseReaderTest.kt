@@ -104,7 +104,7 @@ class CurationDatabaseReaderTest {
         assertThat(curatedCapox!!.treatments()).hasSize(1)
 
         val capoxTreatment = curatedCapox.treatments().iterator().next() as Therapy
-        assertThat(capoxTreatment.name()).isEqualTo("Capecitabine+Oxaliplatin")
+        assertThat(capoxTreatment.name()).isEqualTo("CAPECITABINE+OXALIPLATIN")
         assertThat(curatedCapox.startYear()).isEqualTo(2020)
         assertThat(curatedCapox.startMonth()).isNull()
 
@@ -118,8 +118,8 @@ class CurationDatabaseReaderTest {
         assertThat(capoxTreatment.categories()).containsExactly(TreatmentCategory.CHEMOTHERAPY)
         assertThat(capoxTreatment.isSystemic).isTrue
         assertThat(capoxTreatment.drugs()).extracting(Drug::name, Drug::drugTypes).containsExactlyInAnyOrder(
-            tuple("Capecitabine", setOf(DrugType.ANTIMETABOLITE)),
-            tuple("Oxaliplatin", setOf(DrugType.PLATINUM_COMPOUND))
+            tuple("CAPECITABINE", setOf(DrugType.ANTIMETABOLITE)),
+            tuple("OXALIPLATIN", setOf(DrugType.PLATINUM_COMPOUND))
         )
         assertThat(curatedCapox.trialAcronym()).isNull()
 

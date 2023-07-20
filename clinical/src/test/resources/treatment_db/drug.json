@@ -1,14 +1,14 @@
 [
   {
     "name": "CAPECITABINE",
-    "drugClasses": [
+    "drugTypes": [
       "ANTIMETABOLITE"
     ],
     "category": "CHEMOTHERAPY"
   },
   {
     "name": "OXALIPLATIN",
-    "drugClasses": [
+    "drugTypes": [
       "PLATINUM_COMPOUND"
     ],
     "category": "CHEMOTHERAPY"
