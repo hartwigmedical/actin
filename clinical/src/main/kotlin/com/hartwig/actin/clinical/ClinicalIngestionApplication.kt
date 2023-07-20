@@ -14,11 +14,10 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.io.IOException
 import kotlin.system.exitProcess
 
 class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) {
-    @Throws(IOException::class)
+
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
         LOGGER.info("Loading DOID tree from {}", config.doidJson)
@@ -61,10 +60,10 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
     }
 }
 
-@Throws(IOException::class)
 fun main(args: Array<String>) {
     val options: Options = ClinicalIngestionConfig.createOptions()
     val config: ClinicalIngestionConfig
+
     try {
         config = ClinicalIngestionConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {
@@ -72,5 +71,6 @@ fun main(args: Array<String>) {
         HelpFormatter().printHelp(ClinicalIngestionApplication.APPLICATION, options)
         exitProcess(1)
     }
+
     ClinicalIngestionApplication(config).run()
 }

@@ -24,10 +24,10 @@ object ECGMeasureEvaluationFunctions {
         )
     }
 
-    fun hasSufficientJTc(maxQTCF: Double): ECGMeasureEvaluationFunction {
+    fun hasSufficientJTc(minJTC: Double): ECGMeasureEvaluationFunction {
         return ECGMeasureEvaluationFunction(
             ECGMeasureName.JTC,
-            maxQTCF,
+            minJTC,
             ECGUnit.MILLISECONDS,
             { ecg: ECG -> ecg.jtcMeasure() },
             ThresholdCriteria.MINIMUM
