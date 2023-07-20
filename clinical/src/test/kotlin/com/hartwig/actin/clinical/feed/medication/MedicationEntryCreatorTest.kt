@@ -2,14 +2,14 @@ package com.hartwig.actin.clinical.feed.medication
 
 import com.hartwig.actin.clinical.feed.medication.MedicationEntryCreator.Companion.isActive
 import org.apache.logging.log4j.util.Strings
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class MedicationEntryCreatorTest {
     @Test
-    fun canInterpretActiveField() {
-        Assert.assertFalse(isActive("stopped")!!)
-        Assert.assertTrue(isActive("active")!!)
-        Assert.assertNull(isActive(Strings.EMPTY))
+    fun shouldInterpretIfMedicationIsActive() {
+        assertThat(isActive("stopped")!!).isFalse()
+        assertThat(isActive("active")!!).isTrue()
+        assertThat(isActive(Strings.EMPTY)).isNull()
     }
 }
