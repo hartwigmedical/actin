@@ -11,7 +11,7 @@ internal object ClinicalFeedValidation {
             "Duplicate subject(s) found in clinical feed patient entries: " + duplicateSubjects.keys.joinToString(", ")
         }
         val medicationFeedValidation = MedicationFeedValidation(atcModel)
-        feed.medicationEntries.map { medicationFeedValidation.validate(it) }.forEach { LOGGER.warn(it) }
+        feed.medicationEntries.flatMap { medicationFeedValidation.validate(it) }.forEach { LOGGER.warn(it) }
     }
 
     val LOGGER: Logger = LogManager.getLogger(ClinicalFeedValidation::class.java)
