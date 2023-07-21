@@ -33,6 +33,4 @@ public abstract class TreatmentHistoryEntry {
     @Nullable
     public abstract TherapyHistoryDetails therapyHistoryDetails();
 
-    @Nullable
-    public abstract SurgeryHistoryDetails surgeryHistoryDetails();
 }

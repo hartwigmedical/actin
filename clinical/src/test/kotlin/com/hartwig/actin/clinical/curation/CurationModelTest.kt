@@ -339,13 +339,6 @@ class CurationModelTest {
     }
 
     @Test
-    fun shouldCurateMedicationCodeATC() {
-        assertEquals(Strings.EMPTY, model.curateMedicationCodeATC(Strings.EMPTY))
-        assertEquals("N12", model.curateMedicationCodeATC("N12"))
-        assertEquals(Strings.EMPTY, model.curateMedicationCodeATC("12N"))
-    }
-
-    @Test
     fun shouldCurateMedicationStatus() {
         assertNull(model.curateMedicationStatus(Strings.EMPTY))
         assertEquals(MedicationStatus.ACTIVE, model.curateMedicationStatus("active"))

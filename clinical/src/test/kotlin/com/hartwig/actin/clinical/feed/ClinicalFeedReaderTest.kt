@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.feed
 
 import com.google.common.io.Resources
+import com.hartwig.actin.clinical.curation.TestAtcFactory
 import com.hartwig.actin.clinical.datamodel.Gender
 import com.hartwig.actin.clinical.feed.ClinicalFeedReader.read
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry
@@ -24,7 +25,7 @@ class ClinicalFeedReaderTest {
     @Test
     @Throws(IOException::class)
     fun canReadFromTestDirectory() {
-        val feed = read(CLINICAL_FEED_DIRECTORY)
+        val feed = read(CLINICAL_FEED_DIRECTORY, TestAtcFactory.createMinimalAtcModel())
         assertPatients(feed.patientEntries)
         assertQuestionnaires(feed.questionnaireEntries)
         assertSurgeries(feed.surgeryEntries)

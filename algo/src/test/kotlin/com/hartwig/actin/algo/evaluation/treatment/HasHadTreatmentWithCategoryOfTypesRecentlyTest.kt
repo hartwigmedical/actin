@@ -83,4 +83,15 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
     }
+
+    @Test
+    fun shouldNotCountTrialMatchesWhenLookingForUnlikelyTrialCategories() {
+        val minDate = LocalDate.of(2020, 4, 1)
+        val function = HasHadTreatmentWithCategoryOfTypesRecently(TreatmentCategory.SURGERY, listOf("type 1"), minDate)
+        val trial = TreatmentTestFactory.builder()
+            .addCategories(TreatmentCategory.TRIAL)
+            .startYear(minDate.plusYears(1).year)
+            .build()
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(listOf(trial, trial))))
+    }
 }

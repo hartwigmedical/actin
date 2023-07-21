@@ -60,6 +60,16 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
     }
 
     @Test
+    fun shouldNotCountTrialMatchesWhenLookingForUnlikelyTrialCategories() {
+        val function = HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
+            TreatmentCategory.SURGERY, listOf("type 1"),
+            null, null
+        )
+        val trial = TreatmentTestFactory.builder().addCategories(TreatmentCategory.TRIAL).build()
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(listOf(trial, trial))))
+    }
+
+    @Test
     fun canEvaluateWithCycles() {
         val function = function(5, null)
 

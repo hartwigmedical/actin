@@ -2,12 +2,21 @@ package com.hartwig.actin.clinical
 
 import com.google.common.collect.Sets
 import com.hartwig.actin.clinical.ClinicalRecordsFactory.Companion.toPatientId
+import com.hartwig.actin.clinical.curation.ANATOMICAL
+import com.hartwig.actin.clinical.curation.ATC_CODE
+import com.hartwig.actin.clinical.curation.CHEMICAL
+import com.hartwig.actin.clinical.curation.CHEMICAL_SUBSTANCE
+import com.hartwig.actin.clinical.curation.PHARMACOLOGICAL
+import com.hartwig.actin.clinical.curation.THERAPEUTIC
+import com.hartwig.actin.clinical.curation.TestAtcFactory
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
 import com.hartwig.actin.clinical.datamodel.BodyWeight
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 import com.hartwig.actin.clinical.datamodel.Gender
+import com.hartwig.actin.clinical.datamodel.ImmutableAtcClassification
+import com.hartwig.actin.clinical.datamodel.ImmutableAtcLevel
 import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.MedicationStatus
@@ -22,7 +31,6 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.feed.TestFeedFactory
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
@@ -60,7 +68,6 @@ class ClinicalRecordsFactoryTest {
         assertToxicityEvaluations(record.toxicityEvaluations())
         assertAllergies(record.intolerances())
         assertSurgeries(record.surgeries())
-        assertSurgicalTreatments(record.surgicalTreatments())
         assertBodyWeights(record.bodyWeights())
         assertVitalFunctions(record.vitalFunctions())
         assertBloodTransfusions(record.bloodTransfusions())
@@ -154,15 +161,6 @@ class ClinicalRecordsFactoryTest {
             assertEquals(SurgeryStatus.PLANNED, surgery.status())
         }
 
-        private fun assertSurgicalTreatments(surgicalTreatments: List<TreatmentHistoryEntry>?) {
-            assertNotNull(surgicalTreatments)
-            assertEquals(1, surgicalTreatments!!.size.toLong())
-            val surgery = surgicalTreatments[0].surgeryHistoryDetails()
-            assertNotNull(surgery)
-            assertEquals(LocalDate.of(2015, 10, 10), surgery!!.endDate())
-            assertEquals(SurgeryStatus.PLANNED, surgery.status())
-        }
-
         private fun assertBodyWeights(bodyWeights: List<BodyWeight>) {
             assertEquals(2, bodyWeights.size.toLong())
             val bodyWeight1 = findByDate(bodyWeights, LocalDate.of(2018, 4, 5))
@@ -216,12 +214,20 @@ class ClinicalRecordsFactoryTest {
             assertEquals(LocalDate.of(2019, 4, 4), medication.stopDate())
             assertThat(medication.cypInteractions()).containsExactly(TestCurationFactory.createTestCypInteration())
             assertThat(medication.qtProlongatingRisk()).isEqualTo(QTProlongatingRisk.POSSIBLE)
+            assertThat(medication.atc()).isEqualTo(
+                ImmutableAtcClassification.builder().anatomicalMainGroup(ImmutableAtcLevel.builder().code("N").name(ANATOMICAL).build())
+                    .therapeuticSubGroup(ImmutableAtcLevel.builder().code("N02").name(THERAPEUTIC).build())
+                    .pharmacologicalSubGroup(ImmutableAtcLevel.builder().code("N02B").name(PHARMACOLOGICAL).build())
+                    .chemicalSubGroup(ImmutableAtcLevel.builder().code("N02BE").name(CHEMICAL).build())
+                    .chemicalSubstance(ImmutableAtcLevel.builder().code(ATC_CODE).name(CHEMICAL_SUBSTANCE).build()).build()
+            )
         }
 
         private fun createMinimalTestClinicalRecords(): List<ClinicalRecord> {
             return ClinicalRecordsFactory(
                 TestFeedFactory.createMinimalTestFeedModel(),
-                TestCurationFactory.createMinimalTestCurationModel()
+                TestCurationFactory.createMinimalTestCurationModel(),
+                TestAtcFactory.createMinimalAtcModel()
             ).create()
         }
 
@@ -229,6 +235,7 @@ class ClinicalRecordsFactoryTest {
             return ClinicalRecordsFactory(
                 TestFeedFactory.createProperTestFeedModel(),
                 TestCurationFactory.createProperTestCurationModel(),
+                TestAtcFactory.createProperAtcModel()
             ).create()
         }
     }

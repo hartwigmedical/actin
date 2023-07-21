@@ -5,10 +5,11 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import org.junit.Test
 
-class ParticipatesInAnotherTrialTest {
+class IsNotParticipatingInAnotherTrialTest {
+
     @Test
-    fun canEvaluate() {
-        val function = ParticipatesInAnotherTrial()
+    fun shouldAlwaysReturnNotEvaluated() {
+        val function = IsNotParticipatingInAnotherTrial()
         assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
     }
 }

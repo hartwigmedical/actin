@@ -16,4 +16,6 @@ public abstract class Drug {
     @NotNull
     public abstract Set<DrugClass> drugClasses();
 
+    @NotNull
+    public abstract TreatmentCategory category();
 }

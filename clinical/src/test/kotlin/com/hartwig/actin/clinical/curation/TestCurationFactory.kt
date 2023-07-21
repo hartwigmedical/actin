@@ -32,7 +32,9 @@ import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableChemotherapy
+import com.hartwig.actin.clinical.datamodel.treatment.DrugClass
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
@@ -126,19 +128,25 @@ object TestCurationFactory {
     }
 
     private fun createTestTreatmentHistoryEntryConfigs(): List<TreatmentHistoryEntryConfig> {
-        val cisplatin =
-            ImmutableChemotherapy.builder().name("Cisplatin").addCategories(TreatmentCategory.CHEMOTHERAPY).isSystemic(true).build()
+        val cisplatin = ImmutableDrug.builder()
+            .name("Cisplatin")
+            .addDrugClasses(DrugClass.PLATINUM_COMPOUND)
+            .category(TreatmentCategory.CHEMOTHERAPY)
+            .build()
+
+        val therapy =
+            ImmutableDrugTherapy.builder().name("Cisplatin").addDrugs(cisplatin).isSystemic(true).build()
         return listOf(
             TreatmentHistoryEntryConfig(
                 input = "Cis 2020 2021",
                 ignore = false,
-                curated = ImmutableTreatmentHistoryEntry.builder().addTreatments(cisplatin).startYear(2020)
+                curated = ImmutableTreatmentHistoryEntry.builder().addTreatments(therapy).startYear(2020)
                     .build()
             ),
             TreatmentHistoryEntryConfig(
                 input = "Cis 2020 2021",
                 ignore = false,
-                curated = ImmutableTreatmentHistoryEntry.builder().addTreatments(cisplatin).startYear(2021)
+                curated = ImmutableTreatmentHistoryEntry.builder().addTreatments(therapy).startYear(2021)
                     .build()
             ),
             TreatmentHistoryEntryConfig(input = "no systemic treatment", ignore = true, curated = null)
