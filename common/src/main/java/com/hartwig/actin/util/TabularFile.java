@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 
 public final class TabularFile {
 
+    public static final String DELIMITER = "\t";
+
     private TabularFile() {
     }
 

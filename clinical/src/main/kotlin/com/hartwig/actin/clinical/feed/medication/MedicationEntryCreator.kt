@@ -5,6 +5,7 @@ import com.hartwig.actin.clinical.feed.FeedEntryCreator
 import com.hartwig.actin.clinical.feed.FeedLine
 
 class MedicationEntryCreator : FeedEntryCreator<MedicationEntry> {
+
     override fun fromLine(line: FeedLine): MedicationEntry {
         return MedicationEntry(
             subject = line.trimmed("subject"),
@@ -42,6 +43,7 @@ class MedicationEntryCreator : FeedEntryCreator<MedicationEntry> {
     }
 
     companion object {
+
         @VisibleForTesting
         fun isActive(activeField: String): Boolean? {
             if (activeField.equals("stopped", ignoreCase = true)) {

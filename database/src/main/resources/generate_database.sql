@@ -502,7 +502,7 @@ CREATE TABLE `virus`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `sampleId` varchar(50) NOT NULL,
     `isReportable` BOOLEAN NOT NULL,
-    `event` varchar(50) NOT NULL,
+    `event` varchar(100) NOT NULL,
     `driverLikelihood` varchar(50),
     `name` varchar(50) NOT NULL,
     `type` varchar(50) NOT NULL,
