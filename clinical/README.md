@@ -236,6 +236,7 @@ N medications
 | atc.chemicalSubGroup.name        | Opioids in combination with non-opioid analgesics | ATC anatomical main group display value                                                                |
 | atc.chemicalSubstance.code       | N02AJ08                                           | ATC anatomical main group code value                                                                   |
 | atc.chemicalSubstance.name       | codeine and ibuprofen 	                           | ATC anatomical main group display value                                                                |
+| qtProlongatingRisk               | NONE 	                                            | QT prolongating risk type                                                                              |
 
 ### Version History and Download Links
 
