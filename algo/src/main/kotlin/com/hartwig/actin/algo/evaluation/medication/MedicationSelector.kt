@@ -36,9 +36,9 @@ internal class MedicationSelector(private val interpreter: MedicationStatusInter
             .filter { isActive(it) || isRecentlyStopped(it, minStopDate) }
     }
 
-    fun activeWithQTProlongatingMedication(medications: List<Medication>): List<Medication> {
+    fun activeWithQTProlongatingMedication(medications: List<Medication>, type: QTProlongatingRisk): List<Medication> {
         return active(medications).filter { medication ->
-            medication.qtProlongatingRisk().equals(QTProlongatingRisk.KNOWN)
+            medication.qtProlongatingRisk().equals(type)
         }
     }
 
