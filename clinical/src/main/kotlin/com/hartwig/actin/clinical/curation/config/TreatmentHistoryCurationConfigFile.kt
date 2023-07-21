@@ -32,7 +32,7 @@ object TreatmentHistoryCurationConfigFile {
         val parts = line.split(DELIMITER)
         return fields["treatmentName"]?.let { ResourceFile.optionalString(parts[it]) }
             ?.let(CurationUtil::toSet)
-            ?.map { NamedListOfTsvParts(it.lowercase(), parts) }
+            ?.map { NamedListOfTsvParts(it, parts) }
             ?: emptyList()
     }
 

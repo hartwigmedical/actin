@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.hartwig.actin.clinical.datamodel.AtcClassification;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
@@ -46,15 +47,13 @@ import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
-import com.hartwig.actin.clinical.datamodel.treatment.Chemotherapy;
-import com.hartwig.actin.clinical.datamodel.treatment.CombinedTherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.DrugClass;
+import com.hartwig.actin.clinical.datamodel.treatment.DrugTherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
-import com.hartwig.actin.clinical.datamodel.treatment.history.SurgeryHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TherapyHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
@@ -207,7 +206,8 @@ class ClinicalDAO {
                         jtcMeasure.map(ECGMeasure::value).orElse(null),
                         jtcMeasure.map(ECGMeasure::unit).orElse(null),
                         clinicalStatus.lvef(),
-                        clinicalStatus.hasComplications()).execute();
+                        clinicalStatus.hasComplications())
+                .execute();
     }
 
     private void writeTreatmentHistoryEntries(@NotNull String patientId, @NotNull List<TreatmentHistoryEntry> treatmentHistoryEntries) {
@@ -238,13 +238,8 @@ class ClinicalDAO {
                                         .map(drug -> String.format("%s (%s)",
                                                 drug.name(),
                                                 drug.drugClasses().stream().map(DrugClass::toString).collect(Collectors.joining(", "))))));
-                        if (treatment instanceof Chemotherapy) {
-                            valueMap.put("maxCycles", ((Chemotherapy) treatment).maxCycles());
-                        }
-                        if (treatment instanceof CombinedTherapy) {
-                            valueMap.put("therapies",
-                                    DataUtil.concatStream(((CombinedTherapy) treatment).therapies().stream().map(Treatment::name)));
-                        }
+                        valueMap.put("maxCycles", ((DrugTherapy) treatment).maxCycles());
+
                         if (treatment instanceof Radiotherapy) {
                             valueMap.put("isInternal", ((Radiotherapy) treatment).isInternal());
                             valueMap.put("radioType", ((Radiotherapy) treatment).radioType());
@@ -268,11 +263,6 @@ class ClinicalDAO {
                                                         tox.name(),
                                                         tox.grade(),
                                                         DataUtil.concat(tox.categories())))));
-                    }
-                    SurgeryHistoryDetails surgeryHistoryDetails = entry.surgeryHistoryDetails();
-                    if (surgeryHistoryDetails != null) {
-                        valueMap.put("endDate", surgeryHistoryDetails.endDate());
-                        valueMap.put("status", surgeryHistoryDetails.status());
                     }
                     TreatmenthistoryentryRecord record = context.newRecord(TREATMENTHISTORYENTRY);
                     record.fromMap(valueMap);
@@ -546,15 +536,16 @@ class ClinicalDAO {
 
     private void writeMedications(@NotNull String patientId, @NotNull List<Medication> medications) {
         for (Medication medication : medications) {
+            AtcClassification atc = medication.atc();
             context.insertInto(MEDICATION,
                             MEDICATION.PATIENTID,
                             MEDICATION.NAME,
-                            MEDICATION.CODEATC,
                             MEDICATION.CATEGORIES,
-                            MEDICATION.CHEMICALSUBGROUPATC,
-                            MEDICATION.PHARMACOLOGICALSUBGROUPATC,
-                            MEDICATION.THERAPEUTICSUBGROUPATC,
+                            MEDICATION.CODEATC,
                             MEDICATION.ANATOMICALMAINGROUPATC,
+                            MEDICATION.THERAPEUTICSUBGROUPATC,
+                            MEDICATION.PHARMACOLOGICALSUBGROUPATC,
+                            MEDICATION.CHEMICALSUBGROUPATC,
                             MEDICATION.STATUS,
                             MEDICATION.ADMINISTRATIONROUTE,
                             MEDICATION.DOSAGEMIN,
@@ -567,12 +558,12 @@ class ClinicalDAO {
                             MEDICATION.STOPDATE)
                     .values(patientId,
                             medication.name(),
-                            medication.codeATC(),
                             DataUtil.concat(medication.categories()),
-                            medication.chemicalSubgroupAtc(),
-                            medication.pharmacologicalSubgroupAtc(),
-                            medication.therapeuticSubgroupAtc(),
-                            medication.anatomicalMainGroupAtc(),
+                            atc != null ? atc.chemicalSubstance().code() : null,
+                            atc != null ? atc.anatomicalMainGroup().name() : null,
+                            atc != null ? atc.therapeuticSubGroup().name() : null,
+                            atc != null ? atc.pharmacologicalSubGroup().name() : null,
+                            atc != null ? atc.chemicalSubGroup().name() : null,
                             medication.status() != null ? medication.status().toString() : null,
                             medication.administrationRoute(),
                             medication.dosage().dosageMin(),

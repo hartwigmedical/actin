@@ -10,7 +10,7 @@ import com.hartwig.actin.treatment.datamodel.EligibilityRule
 class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
-            EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT to isEligibleForCurativeTreatmentCreator(),
+            EligibilityRule.IS_NOT_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT to isNotEligibleForCurativeTreatmentCreator(),
             EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_TREATMENT_X to isEligibleForOnLabelTreatmentCreator(),
             EligibilityRule.IS_ELIGIBLE_FOR_PALLIATIVE_RADIOTHERAPY to isEligibleForPalliativeRadiotherapyCreator(),
             EligibilityRule.IS_ELIGIBLE_FOR_LOCO_REGIONAL_THERAPY to isEligibleForLocoRegionalTherapyCreator(),
@@ -49,12 +49,12 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT to hasHadIntratumoralInjectionTreatmentCreator(),
             EligibilityRule.HAS_CUMULATIVE_ANTHRACYCLINE_EXPOSURE_OF_AT_MOST_X_MG_PER_M2_DOXORUBICIN_OR_EQUIVALENT to hasLimitedCumulativeAnthracyclineExposureCreator(),
             EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_CURRENT_TRIAL to hasPreviouslyParticipatedInCurrentTrialCreator(),
-            EligibilityRule.IS_PARTICIPATING_IN_ANOTHER_TRIAL to participatesInAnotherTrialCreator()
+            EligibilityRule.IS_NOT_PARTICIPATING_IN_ANOTHER_TRIAL to isNotParticipatingInAnotherTrialCreator()
         )
     }
 
-    private fun isEligibleForCurativeTreatmentCreator(): FunctionCreator {
-        return FunctionCreator { IsEligibleForCurativeTreatment() }
+    private fun isNotEligibleForCurativeTreatmentCreator(): FunctionCreator {
+        return FunctionCreator { IsNotEligibleForCurativeTreatment() }
     }
 
     private fun isEligibleForOnLabelTreatmentCreator(): FunctionCreator {
@@ -339,7 +339,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return FunctionCreator { HasPreviouslyParticipatedInCurrentTrial() }
     }
 
-    private fun participatesInAnotherTrialCreator(): FunctionCreator {
-        return FunctionCreator { ParticipatesInAnotherTrial() }
+    private fun isNotParticipatingInAnotherTrialCreator(): FunctionCreator {
+        return FunctionCreator { IsNotParticipatingInAnotherTrial() }
     }
 }

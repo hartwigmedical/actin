@@ -14,22 +14,47 @@ class HasHadSomeTreatmentsWithCategoryTest {
 
         // No treatments yet
         val treatments: MutableList<PriorTumorTreatment> = mutableListOf()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments))
+        )
 
         // Add wrong treatment category
         treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.IMMUNOTHERAPY).build())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments))
+        )
 
         // Add correct treatment category
         treatments.add(TreatmentTestFactory.builder().addCategories(category).build())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments))
+        )
 
         // Add a trial as well
         treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.TRIAL).build())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments))
+        )
 
         // Add another correct treatment category
         treatments.add(TreatmentTestFactory.builder().addCategories(category).build())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments))
+        )
+    }
+
+    @Test
+    fun shouldNotCountTrialMatchesWhenLookingForUnlikelyTrialCategories() {
+        val function = HasHadSomeTreatmentsWithCategory(TreatmentCategory.SURGERY, 1)
+        val trial = TreatmentTestFactory.builder().addCategories(TreatmentCategory.TRIAL).build()
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(listOf(trial, trial)))
+        )
     }
 }

@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.feed
 
+import com.hartwig.actin.clinical.curation.ATC_CODE
 import com.hartwig.actin.clinical.datamodel.Gender
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry
 import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry
@@ -105,6 +106,7 @@ object TestFeedFactory {
                 start = LocalDate.of(2019, 2, 2),
                 end = LocalDate.of(2019, 4, 4),
                 active = true,
+                code5ATCCode = ATC_CODE,
                 code5ATCDisplay = "PARACETAMOL",
                 administrationRoute = "oraal"
             ), medicationEntry(
@@ -121,7 +123,8 @@ object TestFeedFactory {
     private fun medicationEntry(
         status: String, dosageInstruction: String, start: LocalDate, end: LocalDate, active: Boolean,
         code5ATCDisplay: String = "",
-        administrationRoute: String = ""
+        administrationRoute: String = "",
+        code5ATCCode: String = "",
     ): MedicationEntry {
         return MedicationEntry(
             status = status,
@@ -132,7 +135,7 @@ object TestFeedFactory {
             code5ATCDisplay = code5ATCDisplay,
             subject = TEST_SUBJECT,
             codeText = Strings.EMPTY,
-            code5ATCCode = Strings.EMPTY,
+            code5ATCCode = code5ATCCode,
             chemicalSubgroupDisplay = Strings.EMPTY,
             pharmacologicalSubgroupDisplay = Strings.EMPTY,
             therapeuticSubgroupDisplay = Strings.EMPTY,

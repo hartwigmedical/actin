@@ -210,28 +210,32 @@ N blood transfusions
 
 N medications
 
-| Field                      | Example Value | Details                                                                                                |
-|----------------------------|---------------|--------------------------------------------------------------------------------------------------------|
-| name                       | Ibuprofen     | Medication name                                                                                        |
-| codeATC                    |               | Medication ATC code                                                                                    |
-| categories                 | NSAIDs        | Type of medication                                                                                     |
-| chemicalSubgroupATC        |               | Chemical subgroup belonging to ATC code                                                                |
-| pharmacologicalSubgroupATC |               | Pharmacological subgroup belonging to ATC code                                                         |
-| therapeuticSubgroupATC     |               | Therapeutic subgroup belonging to ATC code                                                             |
-| anatomicalMainGroupATC     |               | Anatomical main group belonging to ATC code                                                            |
-| administrationRoute        | Oral          | Type of administration route of medication                                                             |
-| status                     | ON_HOLD       | Status of medication                                                                                   |
-| dosageMin                  | 750           | Assigned minimal dosage                                                                                |
-| dosageMax                  | 1000          | Assigned maximal dosage (dosageMin and dosageMax can be equal)                                         |
-| dosageUnit                 | mg            | Dosage unit                                                                                            |
-| frequency                  | 1             | Assigned frequency of dosage                                                                           |
-| frequencyUnit              | day           | Frequency unit                                                                                         |
-| periodBetweenValue         | Months        | Period between dosages value                                                                           |
-| periodBetweenUnit          | 2             | Period between dosages unit                                                                            |
-| ifNeeded                   | 0             | Determines whether the medication should be taken according to dosage prescription or only "if needed" |
-| startDate                  | 2021-07-01    | Assigned start date of medication                                                                      |
-| stopDate                   | 2021-10-01    | Assigned stop date of medication (if applicable)                                                       |
-| qtProlongatingRisk         | NONE          | QT prolongating risk type                                                                              |
+| Field                            | Example Value                                     | Details                                                                                                |
+|----------------------------------|---------------------------------------------------|--------------------------------------------------------------------------------------------------------|
+| name                             | Ibuprofen                                         | Medication name                                                                                        | 
+| categories                       | NSAIDs                                            | Type of medication                                                                                     | |
+| administrationRoute              | Oral                                              | Type of administration route of medication                                                             |
+| status                           | ON_HOLD                                           | Status of medication                                                                                   |
+| dosageMin                        | 750                                               | Assigned minimal dosage                                                                                |
+| dosageMax                        | 1000                                              | Assigned maximal dosage (dosageMin and dosageMax can be equal)                                         |
+| dosageUnit                       | mg                                                | Dosage unit                                                                                            |
+| frequency                        | 1                                                 | Assigned frequency of dosage                                                                           |
+| frequencyUnit                    | day                                               | Frequency unit                                                                                         |
+| periodBetweenValue               | Months                                            | Period between dosages value                                                                           |
+| periodBetweenUnit                | 2                                                 | Period between dosages unit                                                                            |
+| ifNeeded                         | 0                                                 | Determines whether the medication should be taken according to dosage prescription or only "if needed" |
+| startDate                        | 2021-07-01                                        | Assigned start date of medication                                                                      |
+| stopDate                         | 2021-10-01                                        | Assigned stop date of medication (if applicable)                                                       |
+| atc.anatomicalMainGroup.code     | N                                                 | ATC anatomical main group code value                                                                   |
+| atc.anatomicalMainGroup.name     | NERVOUS SYSTEM                                    | ATC anatomical main group display value                                                                |
+| atc.therapeuticSubGroup.code     | N02                                               | ATC anatomical main group code value                                                                   |
+| atc.therapeuticSubGroup.name     | ANALGESICS                                        | ATC anatomical main group display value                                                                |
+| atc.pharmacologicalSubGroup.code | N02A                                              | ATC anatomical main group code value                                                                   |
+| atc.pharmacologicalSubGroup.name | OPIOIDS                                           | ATC anatomical main group display value                                                                |
+| atc.chemicalSubGroup.code        | N02AJ                                             | ATC anatomical main group code value                                                                   |
+| atc.chemicalSubGroup.name        | Opioids in combination with non-opioid analgesics | ATC anatomical main group display value                                                                |
+| atc.chemicalSubstance.code       | N02AJ08                                           | ATC anatomical main group code value                                                                   |
+| atc.chemicalSubstance.name       | codeine and ibuprofen 	                           | ATC anatomical main group display value                                                                |
 
 ### Version History and Download Links
 

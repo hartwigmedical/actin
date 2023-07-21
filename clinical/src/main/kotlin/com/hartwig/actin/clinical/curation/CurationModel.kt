@@ -493,17 +493,6 @@ class CurationModel @VisibleForTesting internal constructor(
         return if (!config.ignore) config.name else null
     }
 
-    fun curateMedicationCodeATC(input: String): String {
-        val trimmedInput = fullTrim(input)
-        if (trimmedInput.isEmpty()) {
-            return Strings.EMPTY
-        }
-
-        // ATC codes should start with letters, otherwise the medication may be a trial.
-        val lower = input[0].lowercaseChar()
-        return if (lower in 'a'..'z') trimmedInput else Strings.EMPTY
-    }
-
     fun curateMedicationStatus(status: String): MedicationStatus? {
         if (status.isEmpty()) {
             return null
@@ -537,8 +526,10 @@ class CurationModel @VisibleForTesting internal constructor(
         return if (riskConfigs.isEmpty()) {
             QTProlongatingRisk.NONE
         } else if (riskConfigs.size > 1) {
-            throw IllegalStateException("Multiple risk configurations found for one medication name [$medicationName]. " +
-                    "Check the qt_prolongating.tsv for a duplicate")
+            throw IllegalStateException(
+                "Multiple risk configurations found for one medication name [$medicationName]. " +
+                        "Check the qt_prolongating.tsv for a duplicate"
+            )
         } else {
             return riskConfigs.first().status
         }

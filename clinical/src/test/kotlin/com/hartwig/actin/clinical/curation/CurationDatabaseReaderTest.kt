@@ -9,6 +9,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.datamodel.treatment.DrugClass
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
@@ -52,63 +53,100 @@ class CurationDatabaseReaderTest {
     @Test
     fun shouldReadOncologicalHistoryConfigs() {
         val configs = database!!.oncologicalHistoryConfigs
-        assertThat(configs).hasSize(1)
-        val config = find(configs, "Capecitabine/Oxaliplatin 2020-2021")
-        assertThat(config.ignore).isFalse
-        val curated = config.curated
-        assertThat(curated).isNotNull
-        assertThat(curated!!.name()).isEqualTo("Capecitabine+Oxaliplatin")
-        assertThat(curated.startYear()).isEqualTo(2020)
-        assertThat(curated.startMonth()).isNull()
-        assertThat(curated.stopYear()).isEqualTo(2021)
-        assertThat(curated.stopMonth()).isNull()
-        assertThat(curated.cycles()).isEqualTo(6)
-        assertThat(curated.bestResponse()).isEqualTo("PR")
-        assertThat(curated.stopReason()).isEqualTo("toxicity")
-        assertThat(curated.categories()).containsExactly(TreatmentCategory.CHEMOTHERAPY)
-        assertThat(curated.isSystemic).isTrue
-        assertThat(curated.chemoType()).isEqualTo("antimetabolite,platinum")
-        assertThat(curated.immunoType()).isNull()
-        assertThat(curated.targetedType()).isNull()
-        assertThat(curated.hormoneType()).isNull()
-        assertThat(curated.radioType()).isNull()
-        assertThat(curated.transplantType()).isNull()
-        assertThat(curated.supportiveType()).isNull()
-        assertThat(curated.trialAcronym()).isNull()
-        assertThat(curated.ablationType()).isNull()
+        assertThat(configs).hasSize(3)
+
+        val capoxConfig = find(configs, "Capecitabine/Oxaliplatin 2020-2021")
+        assertThat(capoxConfig.ignore).isFalse
+        assertThat(capoxConfig.curated).isEqualTo(
+            ImmutablePriorTumorTreatment.builder()
+                .name("Capecitabine+Oxaliplatin")
+                .startYear(2020)
+                .stopYear(2021)
+                .cycles(6)
+                .bestResponse("PR")
+                .stopReason("toxicity")
+                .addCategories(TreatmentCategory.CHEMOTHERAPY)
+                .isSystemic(true)
+                .chemoType("antimetabolite,platinum")
+                .build()
+        )
+
+        val appendectomyConfig = find(configs, "2022 appendectomy")
+        assertThat(appendectomyConfig.ignore).isFalse
+        val curatedAppendectomy = appendectomyConfig.curated
+        assertThat(curatedAppendectomy).isNotNull
+        assertThat(curatedAppendectomy!!.name()).isEqualTo("Appendectomy")
+        assertThat(curatedAppendectomy.startYear()).isEqualTo(2022)
+        assertThat(curatedAppendectomy.categories()).containsExactly(TreatmentCategory.SURGERY)
+        assertThat(curatedAppendectomy.isSystemic).isFalse
+
+        val ablationConfig = find(configs, "Ablation trial 2023 May")
+        assertThat(ablationConfig.ignore).isFalse
+        val curatedAblation = ablationConfig.curated
+        assertThat(curatedAblation).isNotNull
+        assertThat(curatedAblation!!.name()).isEqualTo("Ablation trial")
+        assertThat(curatedAblation.startYear()).isEqualTo(2023)
+        assertThat(curatedAblation.startMonth()).isEqualTo(5)
+        assertThat(curatedAblation.categories()).containsExactlyInAnyOrder(
+            TreatmentCategory.ABLATION,
+            TreatmentCategory.TRIAL
+        )
+        assertThat(curatedAblation.isSystemic).isFalse
     }
 
     @Test
     fun shouldReadTreatmentHistoryConfigs() {
         val configs = database!!.treatmentHistoryEntryConfigs
-        assertThat(configs).hasSize(1)
+        assertThat(configs).hasSize(3)
 
-        val config = find(configs, "Capecitabine/Oxaliplatin 2020-2021")
-        assertThat(config.ignore).isFalse
+        val capoxConfig = find(configs, "Capecitabine/Oxaliplatin 2020-2021")
+        assertThat(capoxConfig.ignore).isFalse
 
-        val curated = config.curated
-        assertThat(curated).isNotNull
-        assertThat(curated!!.treatments()).hasSize(1)
+        val curatedCapox = capoxConfig.curated
+        assertThat(curatedCapox).isNotNull
+        assertThat(curatedCapox!!.treatments()).hasSize(1)
 
-        val treatment = curated.treatments().iterator().next() as Therapy
-        assertThat(treatment.name()).isEqualTo("Capecitabine+Oxaliplatin")
-        assertThat(curated.startYear()).isEqualTo(2020)
-        assertThat(curated.startMonth()).isNull()
+        val capoxTreatment = curatedCapox.treatments().iterator().next() as Therapy
+        assertThat(capoxTreatment.name()).isEqualTo("Capecitabine+Oxaliplatin")
+        assertThat(curatedCapox.startYear()).isEqualTo(2020)
+        assertThat(curatedCapox.startMonth()).isNull()
 
-        val therapyHistoryDetails = curated.therapyHistoryDetails()
+        val therapyHistoryDetails = curatedCapox.therapyHistoryDetails()
         assertThat(therapyHistoryDetails!!.stopYear()).isEqualTo(2021)
         assertThat(therapyHistoryDetails.stopMonth()).isNull()
         assertThat(therapyHistoryDetails.cycles()).isEqualTo(6)
         assertThat(therapyHistoryDetails.bestResponse()).isEqualTo(TreatmentResponse.PARTIAL_RESPONSE)
         assertThat(therapyHistoryDetails.stopReason()).isEqualTo(StopReason.TOXICITY)
 
-        assertThat(treatment.categories()).containsExactly(TreatmentCategory.CHEMOTHERAPY)
-        assertThat(treatment.isSystemic).isTrue
-        assertThat(treatment.drugs()).extracting(Drug::name, Drug::drugClasses).containsExactlyInAnyOrder(
+        assertThat(capoxTreatment.categories()).containsExactly(TreatmentCategory.CHEMOTHERAPY)
+        assertThat(capoxTreatment.isSystemic).isTrue
+        assertThat(capoxTreatment.drugs()).extracting(Drug::name, Drug::drugClasses).containsExactlyInAnyOrder(
             tuple("Capecitabine", setOf(DrugClass.ANTIMETABOLITE)),
             tuple("Oxaliplatin", setOf(DrugClass.PLATINUM_COMPOUND))
         )
-        assertThat(curated.trialAcronym()).isNull()
+        assertThat(curatedCapox.trialAcronym()).isNull()
+
+        val appendectomyConfig = find(configs, "2022 appendectomy")
+        assertThat(appendectomyConfig.ignore).isFalse
+        val curatedAppendectomy = appendectomyConfig.curated
+        assertThat(curatedAppendectomy).isNotNull
+        assertThat(curatedAppendectomy!!.startYear()).isEqualTo(2022)
+        val appendectomyTreatment = curatedAppendectomy.treatments().iterator().next()
+        assertThat(appendectomyTreatment!!.name()).isEqualTo("Appendectomy")
+        assertThat(appendectomyTreatment.categories()).containsExactly(TreatmentCategory.SURGERY)
+        assertThat(appendectomyTreatment.isSystemic).isFalse
+
+        val ablationConfig = find(configs, "Ablation trial 2023 May")
+        assertThat(ablationConfig.ignore).isFalse
+        val curatedAblation = ablationConfig.curated
+        assertThat(curatedAblation).isNotNull
+        assertThat(curatedAblation!!.startYear()).isEqualTo(2023)
+        assertThat(curatedAblation.startMonth()).isEqualTo(5)
+        assertThat(curatedAblation.isTrial).isTrue
+        val ablationTreatment = curatedAblation.treatments().iterator().next()
+        assertThat(ablationTreatment.name()).isEqualTo("Ablation")
+        assertThat(ablationTreatment.categories()).containsExactly(TreatmentCategory.ABLATION)
+        assertThat(ablationTreatment.isSystemic).isFalse
     }
 
     @Test

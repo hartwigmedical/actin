@@ -10,26 +10,20 @@ internal object CohortStatusInterpreter {
 
     const val NOT_AVAILABLE = "NA"
     const val NOT_IN_CTC_OVERVIEW_UNKNOWN_WHY = "not_in_ctc_overview_unknown_why"
+    const val OVERRULED_BECAUSE_INCORRECT_IN_CTC = "overruled_because_incorrect_in_ctc"
     const val WONT_BE_MAPPED_BECAUSE_CLOSED = "wont_be_mapped_because_closed"
     const val WONT_BE_MAPPED_BECAUSE_NOT_AVAILABLE = "wont_be_mapped_because_not_available"
 
     fun interpret(entries: List<CTCDatabaseEntry>, cohortConfig: CohortDefinitionConfig): InterpretedCohortStatus? {
         val ctcCohortIds: Set<String> = cohortConfig.ctcCohortIds
-        if (isNotAvailable(ctcCohortIds)) {
+        if (isNotAvailableOrIncorrect(ctcCohortIds)) {
             LOGGER.debug(
-                " CTC entry for cohort '{}' of trial '{}' explicitly configured to be unavailable",
+                " CTC entry for cohort '{}' of trial '{}' explicitly configured to be unavailable or incorrect in CTC. "
+                        + "Ingesting cohort status as configured",
                 cohortConfig.cohortId,
                 cohortConfig.trialId
             )
             return null
-        } else if (isMissingEntry(ctcCohortIds)) {
-            LOGGER.info(
-                " CTC entry configured to be missing for unknown reason for cohort '{}' of trial '{}'! "
-                        + "Assuming cohort is closed without slots",
-                cohortConfig.cohortId,
-                cohortConfig.trialId
-            )
-            return closedWithoutSlots()
         } else if (isMissingBecauseClosedOrUnavailable(ctcCohortIds)) {
             LOGGER.debug(
                 " CTC entry missing for cohort '{}' of trial '{}' because it's assumed closed or not available. "
@@ -40,12 +34,13 @@ internal object CohortStatusInterpreter {
         return CTCDatabaseEntryInterpreter.consolidatedCohortStatus(entries, cohortConfig)
     }
 
-    private fun isNotAvailable(ctcCohortIds: Set<String>): Boolean {
-        return isSingleEntryWithValue(ctcCohortIds, NOT_AVAILABLE)
-    }
-
-    private fun isMissingEntry(ctcCohortIds: Set<String>): Boolean {
-        return isSingleEntryWithValue(ctcCohortIds, NOT_IN_CTC_OVERVIEW_UNKNOWN_WHY)
+    private fun isNotAvailableOrIncorrect(ctcCohortIds: Set<String>): Boolean {
+        return isSingleEntryWithValue(
+            ctcCohortIds,
+            NOT_AVAILABLE,
+            NOT_IN_CTC_OVERVIEW_UNKNOWN_WHY,
+            OVERRULED_BECAUSE_INCORRECT_IN_CTC
+        )
     }
 
     private fun isMissingBecauseClosedOrUnavailable(ctcCohortIds: Set<String>): Boolean {

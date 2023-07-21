@@ -9,19 +9,15 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 class HasHadAdjuvantTreatmentWithCategory(private val category: TreatmentCategory) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val adjuvantTreatmentsMatchingCategory = record.clinical().priorTumorTreatments().filter { it.categories().contains(category) }
-            .filter { it.name().lowercase().replace("neoadjuvant", "").contains("adjuvant") }
+        val treatmentSummary =
+            TreatmentSummaryForCategory.createForTreatments(record.clinical().priorTumorTreatments(), category) {
+                it.name().lowercase().replace("neoadjuvant", "").contains("adjuvant")
+            }
 
-        return if (adjuvantTreatmentsMatchingCategory.isNotEmpty()) {
-            EvaluationFactory.pass(
-                "Patient has received adjuvant treatment(s) of category ${category.display()}",
-                "Has received adjuvant treatment(s) of ${category.display()}"
-            )
+        return if (treatmentSummary.hasSpecificMatch()) {
+            EvaluationFactory.pass("Has received adjuvant treatment(s) of ${category.display()}")
         } else {
-            EvaluationFactory.fail(
-                "Patient has not received adjuvant treatment(s) of ${category.display()}",
-                "Has not received adjuvant treatment(s) of ${category.display()}"
-            )
+            EvaluationFactory.fail("Has not received adjuvant treatment(s) of ${category.display()}")
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.feed
 
+import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.util.Paths
 import org.apache.logging.log4j.LogManager
 import java.io.IOException
@@ -17,21 +18,45 @@ object ClinicalFeedReader {
     private const val BODY_WEIGHT_TSV = "bodyweight.tsv"
 
     @Throws(IOException::class)
-    fun read(clinicalFeedDirectory: String): ClinicalFeed {
+    fun read(clinicalFeedDirectory: String, atcModel: AtcModel): ClinicalFeed {
         LOGGER.info("Reading clinical feed data from {}", clinicalFeedDirectory)
         val basePath = Paths.forceTrailingFileSeparator(clinicalFeedDirectory)
         val feed = ClinicalFeed(
             patientEntries = readEntriesFromFile(basePath, PATIENT_TSV, FeedFileReaderFactory.createPatientReader()),
-            questionnaireEntries = readEntriesFromFile(basePath, QUESTIONNAIRE_TSV, FeedFileReaderFactory.createQuestionnaireReader()),
-            digitalFileEntries = readEntriesFromFile(basePath, DIGITAL_FILE_TSV, FeedFileReaderFactory.createDigitalFileReader()),
+            questionnaireEntries = readEntriesFromFile(
+                basePath,
+                QUESTIONNAIRE_TSV,
+                FeedFileReaderFactory.createQuestionnaireReader()
+            ),
+            digitalFileEntries = readEntriesFromFile(
+                basePath,
+                DIGITAL_FILE_TSV,
+                FeedFileReaderFactory.createDigitalFileReader()
+            ),
             surgeryEntries = readEntriesFromFile(basePath, SURGERY_TSV, FeedFileReaderFactory.createSurgeryReader()),
-            medicationEntries = readEntriesFromFile(basePath, MEDICATION_TSV, FeedFileReaderFactory.createMedicationReader()),
+            medicationEntries = readEntriesFromFile(
+                basePath,
+                MEDICATION_TSV,
+                FeedFileReaderFactory.createMedicationReader()
+            ),
             labEntries = readEntriesFromFile(basePath, LAB_TSV, FeedFileReaderFactory.createLabReader()),
-            vitalFunctionEntries = readEntriesFromFile(basePath, VITAL_FUNCTION_TSV, FeedFileReaderFactory.createVitalFunctionReader()),
-            intoleranceEntries = readEntriesFromFile(basePath, INTOLERANCE_TSV, FeedFileReaderFactory.createIntoleranceReader()),
-            bodyWeightEntries = readEntriesFromFile(basePath, BODY_WEIGHT_TSV, FeedFileReaderFactory.createBodyWeightReader()),
+            vitalFunctionEntries = readEntriesFromFile(
+                basePath,
+                VITAL_FUNCTION_TSV,
+                FeedFileReaderFactory.createVitalFunctionReader()
+            ),
+            intoleranceEntries = readEntriesFromFile(
+                basePath,
+                INTOLERANCE_TSV,
+                FeedFileReaderFactory.createIntoleranceReader()
+            ),
+            bodyWeightEntries = readEntriesFromFile(
+                basePath,
+                BODY_WEIGHT_TSV,
+                FeedFileReaderFactory.createBodyWeightReader()
+            ),
         )
-        ClinicalFeedValidation.validate(feed)
+        ClinicalFeedValidation.validate(feed, atcModel)
         return feed
     }
 

@@ -6,29 +6,24 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 
-class HasHadLimitedTreatmentsWithCategory internal constructor(
+class HasHadLimitedTreatmentsWithCategory(
     private val category: TreatmentCategory,
     private val maxTreatmentLines: Int
 ) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
-        var numTreatmentLines = 0
-        var numOtherTrials = 0
-        for (treatment in record.clinical().priorTumorTreatments()) {
-            if (treatment.categories().contains(category)) {
-                numTreatmentLines++
-            } else if (treatment.categories().contains(TreatmentCategory.TRIAL)) {
-                numOtherTrials++
-            }
-        }
+        val treatmentSummary =
+            TreatmentSummaryForCategory.createForTreatments(record.clinical().priorTumorTreatments(), category)
+
         return when {
-            numTreatmentLines + numOtherTrials <= maxTreatmentLines -> {
+            treatmentSummary.numSpecificMatches + treatmentSummary.numPossibleTrialMatches <= maxTreatmentLines -> {
                 EvaluationFactory.pass(
                     "Patient has received at most " + maxTreatmentLines + " lines of " + category.display() + " treatment",
                     "Has received at most " + maxTreatmentLines + " lines of " + category.display()
                 )
             }
 
-            numTreatmentLines <= maxTreatmentLines -> {
+            treatmentSummary.numSpecificMatches <= maxTreatmentLines -> {
                 EvaluationFactory.undetermined(
                     "Patient may have received more than " + maxTreatmentLines + " lines of " + category.display() + " treatment",
                     "Undetermined if received at most " + maxTreatmentLines + " lines of " + category.display()

@@ -37,10 +37,7 @@ import com.hartwig.actin.clinical.datamodel.ToxicityEvaluation
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.VitalFunction
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableSurgicalTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableSurgeryHistoryDetails
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.feed.FeedModel
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry
@@ -51,7 +48,6 @@ import com.hartwig.actin.clinical.feed.medication.MedicationEntry
 import com.hartwig.actin.clinical.feed.patient.PatientEntry
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction
-import com.hartwig.actin.clinical.feed.surgery.SurgeryEntry
 import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry
 import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionExtraction
 import com.hartwig.actin.clinical.sort.ClinicalRecordComparator
@@ -60,7 +56,11 @@ import com.hartwig.actin.clinical.sort.MedicationByNameComparator
 import org.apache.logging.log4j.LogManager
 
 
-class ClinicalRecordsFactory(private val feed: FeedModel, private val curation: CurationModel) {
+class ClinicalRecordsFactory(
+    private val feed: FeedModel,
+    private val curation: CurationModel,
+    private val atc: AtcModel
+) {
 
     fun create(): List<ClinicalRecord> {
         val processedPatientIds: MutableSet<String> = HashSet()
@@ -108,7 +108,6 @@ class ClinicalRecordsFactory(private val feed: FeedModel, private val curation: 
                 .toxicityEvaluations(toxicityEvaluations)
                 .intolerances(extractIntolerances(subject))
                 .surgeries(extractSurgeries(subject))
-                .surgicalTreatments(extractSurgicalTreatments(subject))
                 .bodyWeights(extractBodyWeights(subject))
                 .vitalFunctions(extractVitalFunctions(subject))
                 .bloodTransfusions(extractBloodTransfusions(subject))
@@ -261,20 +260,6 @@ class ClinicalRecordsFactory(private val feed: FeedModel, private val curation: 
             .map { ImmutableSurgery.builder().endDate(it.periodEnd).status(resolveSurgeryStatus(it.encounterStatus)).build() }
     }
 
-    private fun extractSurgicalTreatments(subject: String): List<TreatmentHistoryEntry> {
-        return feed.uniqueSurgeryEntries(subject).map { surgeryEntry: SurgeryEntry ->
-            ImmutableTreatmentHistoryEntry.builder()
-                .treatments(setOf(ImmutableSurgicalTreatment.builder().name("extracted surgery").build()))
-                .surgeryHistoryDetails(
-                    ImmutableSurgeryHistoryDetails.builder()
-                        .endDate(surgeryEntry.periodEnd)
-                        .status(resolveSurgeryStatus(surgeryEntry.encounterStatus))
-                        .build()
-                )
-                .build()
-        }
-    }
-
     private fun extractBodyWeights(subject: String): List<BodyWeight> {
         return feed.uniqueBodyWeightEntries(subject).map { entry: BodyWeightEntry ->
             ImmutableBodyWeight.builder()
@@ -331,17 +316,13 @@ class ClinicalRecordsFactory(private val feed: FeedModel, private val curation: 
             }
             if (!name.isNullOrEmpty()) {
                 val medication: Medication = builder.name(name)
-                    .codeATC(curation.curateMedicationCodeATC(entry.code5ATCCode))
-                    .chemicalSubgroupAtc(entry.chemicalSubgroupDisplay)
-                    .pharmacologicalSubgroupAtc(entry.pharmacologicalSubgroupDisplay)
-                    .therapeuticSubgroupAtc(entry.therapeuticSubgroupDisplay)
-                    .anatomicalMainGroupAtc(entry.anatomicalMainGroupDisplay)
                     .status(curation.curateMedicationStatus(entry.status))
                     .administrationRoute(administrationRoute)
                     .startDate(entry.periodOfUseValuePeriodStart)
                     .stopDate(entry.periodOfUseValuePeriodEnd)
                     .addAllCypInteractions(curation.curateMedicationCypInteractions(name))
                     .qtProlongatingRisk(curation.annotateWithQTProlongating(name))
+                    .atc(atc.resolve(entry.code5ATCCode))
                     .build()
                 medications.add(curation.annotateWithMedicationCategory(medication))
             }

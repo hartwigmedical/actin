@@ -57,7 +57,7 @@ class HasHadPDFollowingSpecificTreatment internal constructor(private val names:
         } else if (treatmentsWithExactType.isNotEmpty()) {
             EvaluationFactory.fail(
                 "Patient has received " + Format.concat(treatmentsWithExactType) + " treatment, but no PD",
-                "Has received " + Format.concat(treatmentsWithExactType) + " treatment, but no PD"
+                "Has received " + Format.concat(treatmentsWithExactType) + " treatment but no PD"
             )
         } else {
             EvaluationFactory.fail(

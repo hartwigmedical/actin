@@ -114,12 +114,14 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
         if (activatingVariantsNoHotspotAndNoGainOfFunction.isNotEmpty()) {
             warnEvents.addAll(activatingVariantsNoHotspotAndNoGainOfFunction)
             warnSpecificMessages.add(
-                "Gene $gene has potentially activating mutation(s) " + Format.concat(activatingVariantsNoHotspotAndNoGainOfFunction)
-                        + " that have high driver likelihood, but is not a hotspot and not associated with gain of function protein effect"
+                "Gene $gene has potentially activating mutation(s) " + Format.concat(
+                    activatingVariantsNoHotspotAndNoGainOfFunction
+                )
+                        + " that have high driver likelihood, but is not a hotspot and not associated with gain-of-function protein effect evidence"
             )
             warnGeneralMessages.add(
                 "$gene potentially activating mutation(s) detected but is not a hotspot and not associated with " +
-                        "having gain-of-function protein effect"
+                        "having gain-of-function protein effect evidence"
             )
         }
 
@@ -139,10 +141,10 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
             warnEvents.addAll(nonHighDriverGainOfFunctionVariants)
             warnSpecificMessages.add(
                 "Gene " + gene + " has potentially activating mutation(s) " + Format.concat(nonHighDriverGainOfFunctionVariants) +
-                        " that do not have high driver likelihood, but are associated with gain-of-function protein effect"
+                        " that do not have high driver likelihood, but annotated with having gain-of-function protein effect evidence"
             )
             warnGeneralMessages.add(
-                "$gene potentially activating mutation(s) detected based on protein effect but no high driver likelihood"
+                "$gene potentially activating mutation(s) without high driver likelihood but having gain-of-function protein effect evidence"
             )
         }
 
