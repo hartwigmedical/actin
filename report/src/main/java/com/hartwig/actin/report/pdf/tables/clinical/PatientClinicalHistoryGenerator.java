@@ -15,9 +15,8 @@ import com.google.common.collect.Sets;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
-import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
-import com.hartwig.actin.clinical.sort.PriorTumorTreatmentDescendingDateComparator;
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
+import com.hartwig.actin.clinical.sort.TreatmentHistoryDescendingDateComparatorFactory;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -79,27 +78,27 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
 
     @NotNull
     private static String relevantSystemicPreTreatmentHistory(@NotNull ClinicalRecord record) {
-        return priorTumorTreatmentString(record.priorTumorTreatments(), true);
+        return treatmentHistoryString(record.treatmentHistory(), true);
     }
 
     @NotNull
     private static String relevantNonSystemicPreTreatmentHistory(@NotNull ClinicalRecord record) {
-        return priorTumorTreatmentString(record.priorTumorTreatments(), false);
+        return treatmentHistoryString(record.treatmentHistory(), false);
     }
 
     @NotNull
-    private static String priorTumorTreatmentString(@NotNull List<PriorTumorTreatment> priorTumorTreatments, boolean requireSystemic) {
-        List<PriorTumorTreatment> sortedFilteredTreatments = priorTumorTreatments.stream()
-                .filter(treatment -> treatment.isSystemic() == requireSystemic)
-                .sorted(new PriorTumorTreatmentDescendingDateComparator())
+    private static String treatmentHistoryString(@NotNull List<TreatmentHistoryEntry> treatmentHistory, boolean requireSystemic) {
+        List<TreatmentHistoryEntry> sortedFilteredTreatments = treatmentHistory.stream()
+                .filter(entry -> entry.treatments().stream().anyMatch(treatment -> treatment.isSystemic() == requireSystemic))
+                .sorted(TreatmentHistoryDescendingDateComparatorFactory.treatmentHistoryEntryComparator())
                 .collect(Collectors.toList());
 
-        Map<String, List<PriorTumorTreatment>> treatmentsByName =
-                sortedFilteredTreatments.stream().collect(groupingBy(PatientClinicalHistoryGenerator::treatmentName));
+        Map<String, List<TreatmentHistoryEntry>> treatmentsByName =
+                sortedFilteredTreatments.stream().collect(groupingBy(TreatmentHistoryEntry::treatmentName));
 
         Set<String> evaluatedNames = Sets.newHashSet();
         Stream<Optional<String>> annotationStream = sortedFilteredTreatments.stream().map(treatment -> {
-            String treatmentName = treatmentName(treatment);
+            String treatmentName = treatment.treatmentName();
             if (!evaluatedNames.contains(treatmentName)) {
                 evaluatedNames.add(treatmentName);
                 Optional<String> annotationOption = treatmentsByName.get(treatmentName)
@@ -120,17 +119,10 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static Optional<String> extractAnnotationForTreatment(@NotNull PriorTumorTreatment priorTumorTreatment) {
-        return Stream.of(toDateRangeString(priorTumorTreatment),
-                toNumberOfCyclesString(priorTumorTreatment.cycles()),
-                toStopReasonString(priorTumorTreatment.stopReason())).flatMap(Optional::stream).reduce((x, y) -> x + ", " + y);
-    }
-
-    @NotNull
-    private static String treatmentName(@NotNull PriorTumorTreatment priorTumorTreatment) {
-        return !priorTumorTreatment.name().isEmpty()
-                ? priorTumorTreatment.name()
-                : TreatmentCategoryResolver.toStringList(priorTumorTreatment.categories());
+    private static Optional<String> extractAnnotationForTreatment(@NotNull TreatmentHistoryEntry treatmentHistoryEntry) {
+        return Stream.of(toDateRangeString(treatmentHistoryEntry),
+                toNumberOfCyclesString(treatmentHistoryEntry),
+                toStopReasonString(treatmentHistoryEntry)).flatMap(Optional::stream).reduce((x, y) -> x + ", " + y);
     }
 
     @NotNull
@@ -161,9 +153,10 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static Optional<String> toDateRangeString(@NotNull PriorTumorTreatment priorTumorTreatment) {
-        Optional<String> startOption = toDateString(priorTumorTreatment.startYear(), priorTumorTreatment.startMonth());
-        Optional<String> stopOption = toDateString(priorTumorTreatment.stopYear(), priorTumorTreatment.stopMonth());
+    private static Optional<String> toDateRangeString(@NotNull TreatmentHistoryEntry treatmentHistoryEntry) {
+        Optional<String> startOption = toDateString(treatmentHistoryEntry.startYear(), treatmentHistoryEntry.startMonth());
+        Optional<String> stopOption = Optional.ofNullable(treatmentHistoryEntry.therapyHistoryDetails())
+                .flatMap(details -> toDateString(details.stopYear(), details.stopMonth()));
         return startOption.map(startString -> startString + stopOption.map(stopString -> "-" + stopString).orElse(""))
                 .or(() -> stopOption.map(stopString -> "end: " + stopString));
     }
@@ -175,13 +168,17 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static Optional<String> toNumberOfCyclesString(@Nullable Integer cycles) {
-        return Optional.ofNullable(cycles).map(num -> num + " cycles");
+    private static Optional<String> toNumberOfCyclesString(@NotNull TreatmentHistoryEntry treatmentHistoryEntry) {
+        return Optional.ofNullable(treatmentHistoryEntry.therapyHistoryDetails())
+                .flatMap(details -> Optional.ofNullable(details.cycles()))
+                .map(num -> num + " cycles");
     }
 
     @NotNull
-    private static Optional<String> toStopReasonString(@Nullable String stopReason) {
-        return Optional.ofNullable(stopReason).map(reason -> "stop reason: " + reason);
+    private static Optional<String> toStopReasonString(@NotNull TreatmentHistoryEntry treatmentHistoryEntry) {
+        return Optional.ofNullable(treatmentHistoryEntry.therapyHistoryDetails())
+                .flatMap(details -> Optional.ofNullable(details.stopReasonDetail()))
+                .map(reason -> "stop reason: " + reason);
     }
 
     @NotNull
