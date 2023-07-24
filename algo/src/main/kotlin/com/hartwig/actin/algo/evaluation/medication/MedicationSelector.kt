@@ -55,10 +55,17 @@ internal class MedicationSelector(private val interpreter: MedicationStatusInter
     fun activeOrRecentlyStoppedWithCYPInteraction(
         medications: List<Medication>, interactionToFind: String, typeOfCYP: CypInteraction.Type, minStopDate: LocalDate
     ): List<Medication> {
-        return medications.filter { medication ->
-            medication.cypInteractions().any { interactionToFind == it.cyp() && typeOfCYP == it.type() }
+        return if (interactionToFind == "Any") {
+            medications.filter { medication ->
+                medication.cypInteractions().any { typeOfCYP == it.type() }
+            }
+                .filter { isActive(it) || isRecentlyStopped(it, minStopDate) }
+        } else {
+            medications.filter { medication ->
+                medication.cypInteractions().any { interactionToFind == it.cyp() && typeOfCYP == it.type() }
+            }
+                .filter { isActive(it) || isRecentlyStopped(it, minStopDate) }
         }
-            .filter { isActive(it) || isRecentlyStopped(it, minStopDate) }
     }
 
     private fun isRecentlyStopped(medication: Medication, minStopDate: LocalDate): Boolean {

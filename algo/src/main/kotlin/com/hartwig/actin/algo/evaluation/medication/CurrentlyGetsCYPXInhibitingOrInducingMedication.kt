@@ -12,17 +12,13 @@ class CurrentlyGetsCYPXInhibitingOrInducingMedication internal constructor(
     private val termToFind: String
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val receivedCYPXInhibitor = selector.activeWithCYPInteraction(
-            record.clinical().medications(),
-            termToFind,
-            CypInteraction.Type.INHIBITOR
-        ).map { it.name() }
-        val receivedCYPXInducer =
-            selector.activeWithCYPInteraction(record.clinical().medications(), termToFind, CypInteraction.Type.INDUCER).map { it.name() }
-        return if (receivedCYPXInhibitor.isNotEmpty() || receivedCYPXInducer.isNotEmpty()) {
+        val activeMedications = selector.active(record.clinical().medications())
+        val cypMedications = activeMedications.filter { medication -> medication.cypInteractions().any { it.cyp() == termToFind && (it.type() == CypInteraction.Type.INDUCER || it.type() == CypInteraction.Type.INHIBITOR) } }.map { it.name() }
+
+        return if (cypMedications.isNotEmpty()) {
             EvaluationFactory.pass(
-                "Patient currently gets CYP$termToFind inhibiting/inducing medication: " + Format.concatLowercaseWithAnd(receivedCYPXInducer + receivedCYPXInhibitor),
-                "CYP$termToFind inhibiting/inducing medication use: " + Format.concatLowercaseWithAnd(receivedCYPXInducer + receivedCYPXInhibitor)
+                "Patient currently gets CYP$termToFind inhibiting/inducing medication: " + Format.concatLowercaseWithAnd(cypMedications),
+                "CYP$termToFind inhibiting/inducing medication use: " + Format.concatLowercaseWithAnd(cypMedications)
             )
         } else {
             EvaluationFactory.recoverableFail(
