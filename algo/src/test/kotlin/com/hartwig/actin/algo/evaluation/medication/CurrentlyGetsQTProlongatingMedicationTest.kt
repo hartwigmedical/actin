@@ -18,7 +18,7 @@ class CurrentlyGetsQTProlongatingMedicationTest {
     }
 
     @Test
-    fun shouldFailWhenPatientUsesNoQTProlongatingMedication() {
+    fun shouldFailWhenPatientDoesNotUseQTProlongatingMedication() {
         medications.add(TestMedicationFactory.builder().qtProlongatingRisk(QTProlongatingRisk.NONE).build())
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
 
