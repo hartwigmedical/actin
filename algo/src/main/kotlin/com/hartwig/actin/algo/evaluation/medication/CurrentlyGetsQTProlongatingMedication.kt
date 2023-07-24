@@ -10,31 +10,27 @@ import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
 class CurrentlyGetsQTProlongatingMedication internal constructor(private val selector: MedicationSelector) :
     EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val knownQTMedication =
-            selector.activeWithQTProlongatingMedication(record.clinical().medications(), QTProlongatingRisk.KNOWN)
-                .map { it.name() }
-        val potentialQTMedication =
-            selector.activeWithQTProlongatingMedication(record.clinical().medications(), QTProlongatingRisk.POSSIBLE)
-                .map { it.name() }
-        val conditionalQTMedication =
-            selector.activeWithQTProlongatingMedication(record.clinical().medications(), QTProlongatingRisk.CONDITIONAL)
-                .map { it.name() }
+        val activeMedications = selector.active(record.clinical().medications())
+        val QTMedication = activeMedications.groupBy({ it.qtProlongatingRisk() }, { it.name() })
+        val knownQTMedication = QTMedication.getValue(QTProlongatingRisk.KNOWN)
+        val possibleQTMedication = QTMedication.getValue(QTProlongatingRisk.POSSIBLE)
+        val conditionalQTMedication = QTMedication.getValue(QTProlongatingRisk.CONDITIONAL)
         return if (knownQTMedication.isNotEmpty()) {
             EvaluationFactory.pass(
-                "Patient currently gets known QT prolongating medication: " + Format.concat(knownQTMedication),
-                "Known QT prolongating medication use: " + Format.concat(knownQTMedication)
+                "Patient currently gets known QT prolongating medication: " + Format.concatLowercaseWithAnd(knownQTMedication),
+                "Known QT prolongating medication use: " + Format.concatLowercaseWithAnd(knownQTMedication)
             )
-        } else if (potentialQTMedication.isNotEmpty()) {
+        } else if (possibleQTMedication.isNotEmpty()) {
             EvaluationFactory.pass(
-                "Patient currently gets potential QT prolongating medication: " + Format.concat(potentialQTMedication),
-                "Potential QT prolongating medication use: " + Format.concat(potentialQTMedication)
+                "Patient currently gets possible QT prolongating medication: " + Format.concatLowercaseWithAnd(possibleQTMedication),
+                "Potential QT prolongating medication use: " + Format.concatLowercaseWithAnd(possibleQTMedication)
             )
         } else if (conditionalQTMedication.isNotEmpty()) {
             EvaluationFactory.pass(
-                "Patient currently gets conditional QT prolongating medication: " + Format.concat(
+                "Patient currently gets conditional QT prolongating medication: " + Format.concatLowercaseWithAnd(
                     conditionalQTMedication
                 ),
-                "Conditional QT prolongating medication use: " + Format.concat(conditionalQTMedication)
+                "Conditional QT prolongating medication use: " + Format.concatLowercaseWithAnd(conditionalQTMedication)
             )
         } else {
             EvaluationFactory.recoverableFail(
