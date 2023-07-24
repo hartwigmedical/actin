@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.clinical.datamodel.CypInteraction
 
 class CurrentlyGetsCYPXInhibitingMedication internal constructor(
@@ -11,20 +12,16 @@ class CurrentlyGetsCYPXInhibitingMedication internal constructor(
     private val termToFind: String
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasReceivedCYPXInhibitor = selector.activeWithCYPInteraction(
-            record.clinical().medications(),
-            termToFind,
-            CypInteraction.Type.INHIBITOR
-        ).isNotEmpty()
-        return if (hasReceivedCYPXInhibitor) {
+        val receivedCYPXInhibitor = selector.activeWithCYPInteraction(record.clinical().medications(), termToFind, CypInteraction.Type.INHIBITOR).map { it.name() }
+        return if (receivedCYPXInhibitor.isNotEmpty()) {
             EvaluationFactory.pass(
-                "Patient currently gets $termToFind inhibiting medication",
-                "$termToFind inhibiting medication use "
+                "Patient currently gets CYP$termToFind inhibiting medication: " + Format.concatLowercaseWithAnd(receivedCYPXInhibitor),
+                "CYP$termToFind inhibiting medication use: " + Format.concatLowercaseWithAnd(receivedCYPXInhibitor)
             )
         } else {
             EvaluationFactory.recoverableFail(
-                "Patient currently does not get $termToFind inhibiting medication ",
-                "No $termToFind inhibiting medication use "
+                "Patient currently does not get CYP$termToFind inhibiting medication ",
+                "No CYP$termToFind inhibiting medication use "
             )
         }
     }

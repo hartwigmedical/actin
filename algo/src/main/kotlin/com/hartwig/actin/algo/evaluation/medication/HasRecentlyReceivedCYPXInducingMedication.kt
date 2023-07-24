@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.clinical.datamodel.CypInteraction
 import java.time.LocalDate
 
@@ -14,21 +15,21 @@ class HasRecentlyReceivedCYPXInducingMedication internal constructor(
 ) :
     EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasReceivedCYPXInducer = selector.activeOrRecentlyStoppedWithCYPInteraction(
+        val receivedCYPXInducer = selector.activeOrRecentlyStoppedWithCYPInteraction(
             record.clinical().medications(),
             "Any",
             CypInteraction.Type.INDUCER,
             minStopDate
-        ).isNotEmpty()
-        return if (hasReceivedCYPXInducer) {
+        ).map { it.name() }
+        return if (receivedCYPXInducer.isNotEmpty()) {
             EvaluationFactory.pass(
-                "Patient has recently received $termToFind inducing medication",
-                "Recent $termToFind inducing medication use "
+                "Patient has recently received CYP$termToFind inducing medication: " + Format.concatLowercaseWithAnd(receivedCYPXInducer),
+                "Recent CYP$termToFind inducing medication use: " + Format.concatLowercaseWithAnd(receivedCYPXInducer)
             )
         } else {
             EvaluationFactory.recoverableFail(
-                "Patient has not recently received $termToFind inducing medication ",
-                "No recent $termToFind inducing medication use "
+                "Patient has not recently received CYP$termToFind inducing medication ",
+                "No recent CYP$termToFind inducing medication use "
             )
         }
     }
