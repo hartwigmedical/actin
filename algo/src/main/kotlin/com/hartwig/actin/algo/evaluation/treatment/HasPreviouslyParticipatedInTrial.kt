@@ -5,13 +5,13 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-//TODO: Update according to README
-class HasPreviouslyParticipatedInCurrentTrial : EvaluationFunction {
+class HasPreviouslyParticipatedInTrial : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined(
-            "Trial participation in current trial currently cannot be evaluated",
-            "Undetermined if participated previously in current trial"
-        )
+        return if (record.clinical().treatmentHistory().any { it.isTrial }) {
+            EvaluationFactory.pass("Has participated in trial")
+        } else {
+            EvaluationFactory.fail("Has not participated in trial")
+        }
     }
 }

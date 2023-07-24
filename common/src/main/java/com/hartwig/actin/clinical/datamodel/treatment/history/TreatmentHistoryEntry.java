@@ -28,8 +28,11 @@ public abstract class TreatmentHistoryEntry {
     @Nullable
     public abstract Set<Intent> intents();
 
-    @Nullable
-    public abstract Boolean isTrial();
+    @NotNull
+    @Value.Default
+    public Boolean isTrial() {
+        return false;
+    }
 
     @Nullable
     public abstract String trialAcronym();

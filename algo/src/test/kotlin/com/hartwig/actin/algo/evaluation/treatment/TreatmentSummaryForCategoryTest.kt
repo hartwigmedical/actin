@@ -157,7 +157,7 @@ class TreatmentSummaryForCategoryTest {
         private val TREATMENT_HISTORY_ENTRY_MATCHING_CATEGORY = treatmentWithCategory(CATEGORY_TO_MATCH)
         private val TREATMENT_HISTORY_ENTRY_MATCHING_CATEGORY_AND_NAME = treatmentWithCategory(CATEGORY_TO_MATCH, "CUSTOM")
 
-        private fun treatmentWithCategory(category: TreatmentCategory, name: String = "", isTrial: Boolean? = null): TreatmentHistoryEntry =
+        private fun treatmentWithCategory(category: TreatmentCategory, name: String = "", isTrial: Boolean = false): TreatmentHistoryEntry =
             treatmentHistoryEntry(setOf(drugTherapy(name, category)), isTrial = isTrial)
     }
 }

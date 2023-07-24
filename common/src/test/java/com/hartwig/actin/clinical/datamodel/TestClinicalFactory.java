@@ -167,10 +167,7 @@ public final class TestClinicalFactory {
 
         DrugTherapy folfirinoxAndPembrolizumab = ImmutableDrugTherapy.builder()
                 .name("FOLFIRINOX + pembrolizumab")
-                .addAllDrugs(folfirinox.drugs())
-                .addDrugs(pembrolizumab)
-                .isSystemic(true)
-                .build();
+                .addAllDrugs(folfirinox.drugs()).addDrugs(pembrolizumab).isSystemic(true).build();
 
         DrugTherapy folfirinoxLocoRegional =
                 ImmutableDrugTherapy.copyOf(folfirinox).withName("FOLFIRINOX loco-regional").withIsSystemic(false);
@@ -178,8 +175,12 @@ public final class TestClinicalFactory {
         OtherTreatment colectomy =
                 ImmutableOtherTreatment.builder().name("Colectomy").addCategories(TreatmentCategory.SURGERY).isSystemic(true).build();
 
-        TreatmentHistoryEntry surgeryHistoryEntry =
-                ImmutableTreatmentHistoryEntry.builder().addTreatments(colectomy).startYear(2021).addIntents(Intent.MAINTENANCE).build();
+        TreatmentHistoryEntry surgeryHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
+                .addTreatments(colectomy)
+                .startYear(2021)
+                .addIntents(Intent.MAINTENANCE)
+                .isTrial(false)
+                .build();
 
         return List.of(therapyHistoryEntry(Set.of(folfirinox), 2020, Intent.NEOADJUVANT),
                 surgeryHistoryEntry,

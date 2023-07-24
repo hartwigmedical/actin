@@ -43,7 +43,7 @@ object TreatmentTestFactory {
         stopYear: Int? = null,
         stopMonth: Int? = null,
         intents: Set<Intent> = emptySet(),
-        isTrial: Boolean? = null,
+        isTrial: Boolean = false,
         numCycles: Int? = null
     ): TreatmentHistoryEntry {
         val therapyHistoryDetails = if (stopReason != null || stopYear != null || bestResponse != null) {
