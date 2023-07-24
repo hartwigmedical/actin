@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensit
 import com.hartwig.actin.algo.medication.MedicationStatusInterpretation
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreter
 import com.hartwig.actin.clinical.datamodel.Medication
-import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
 import java.time.LocalDate
 
 internal class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
@@ -34,12 +33,6 @@ internal class MedicationSelector(private val interpreter: MedicationStatusInter
             medication.categories().any { it.equals(categoryToFind, ignoreCase = true) }
         }
             .filter { isActive(it) || isRecentlyStopped(it, minStopDate) }
-    }
-
-    fun activeWithQTProlongatingMedication(medications: List<Medication>, type: QTProlongatingRisk): List<Medication> {
-        return active(medications).filter { medication ->
-            medication.qtProlongatingRisk().equals(type)
-        }
     }
 
     private fun isRecentlyStopped(medication: Medication, minStopDate: LocalDate): Boolean {
