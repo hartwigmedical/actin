@@ -4,17 +4,18 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
 
-class CurrentlyGetsQTProlongatingMedication internal constructor(private val selector: MedicationSelector) :
+class CurrentlyGetsQTProlongatingMedication(private val selector: MedicationSelector) :
     EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val activeMedications = selector.active(record.clinical().medications())
-        val qtMedication = activeMedications.groupBy({ it.qtProlongatingRisk() }, { it.name() }).filterKeys { it != QTProlongatingRisk.NONE }
+        val qtMedication = activeMedications.filter { it.qtProlongatingRisk() != QTProlongatingRisk.NONE }
         return if (qtMedication.isNotEmpty()) {
             EvaluationFactory.pass(
-                "Patient currently gets potential QT prolongating medication: " + concatWithType(qtMedication),
-                "QT prolongating medication use: " + concatWithType(qtMedication)
+                "Patient currently gets QT prolongating medication (risk type): " + concatWithType(qtMedication),
+                "QT prolongating medication use (risk type): " + concatWithType(qtMedication)
             )
         } else {
             EvaluationFactory.recoverableFail(
@@ -24,11 +25,7 @@ class CurrentlyGetsQTProlongatingMedication internal constructor(private val sel
         }
     }
 
-    private fun concatWithType(medications: Map<QTProlongatingRisk, List<String>>): String {
-        val joinedValues = ArrayList<String>()
-        for (key in medications.keys) {
-            joinedValues.add(medications[key]!!.joinToString { " ($key) and " })
-        }
-        return joinedValues.joinToString { " and " }
+    private fun concatWithType(medications: List<Medication>): String {
+        return medications.joinToString(" and ") { it -> "${it.name()} (${it.qtProlongatingRisk()})".lowercase() }
     }
 }
