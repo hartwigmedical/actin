@@ -16,7 +16,7 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
-import com.hartwig.actin.clinical.sort.TreatmentHistoryDescendingDateComparatorFactory;
+import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparatorFactory;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
@@ -34,7 +34,7 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
     private final float keyWidth;
     private final float valueWidth;
 
-    public PatientClinicalHistoryGenerator(@NotNull final ClinicalRecord record, final float keyWidth, final float valueWidth) {
+    public PatientClinicalHistoryGenerator(@NotNull ClinicalRecord record, float keyWidth, float valueWidth) {
         this.record = record;
         this.keyWidth = keyWidth;
         this.valueWidth = valueWidth;
@@ -87,10 +87,10 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static String treatmentHistoryString(@NotNull List<TreatmentHistoryEntry> treatmentHistory, boolean requireSystemic) {
+    private static String treatmentHistoryString(@NotNull List<TreatmentHistoryEntry> treatmentHistory, boolean isSystemic) {
         List<TreatmentHistoryEntry> sortedFilteredTreatments = treatmentHistory.stream()
-                .filter(entry -> entry.treatments().stream().anyMatch(treatment -> treatment.isSystemic() == requireSystemic))
-                .sorted(TreatmentHistoryDescendingDateComparatorFactory.treatmentHistoryEntryComparator())
+                .filter(entry -> entry.treatments().stream().anyMatch(treatment -> treatment.isSystemic() == isSystemic))
+                .sorted(TreatmentHistoryAscendingDateComparatorFactory.treatmentHistoryEntryComparator())
                 .collect(Collectors.toList());
 
         Map<String, List<TreatmentHistoryEntry>> treatmentsByName =

@@ -9,14 +9,14 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEn
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class TreatmentHistoryDescendingDateComparatorFactory {
+public class TreatmentHistoryAscendingDateComparatorFactory {
 
     public static Comparator<TreatmentHistoryEntry> treatmentHistoryEntryComparator() {
         Comparator<Integer> nullSafeComparator = Comparator.nullsFirst(Comparator.naturalOrder());
         return Comparator.comparing(TreatmentHistoryEntry::startYear, nullSafeComparator)
                 .thenComparing(TreatmentHistoryEntry::startMonth, nullSafeComparator)
-                .thenComparing(TreatmentHistoryDescendingDateComparatorFactory::stopYearForHistoryEntry, nullSafeComparator)
-                .thenComparing(TreatmentHistoryDescendingDateComparatorFactory::stopMonthForHistoryEntry, nullSafeComparator)
+                .thenComparing(TreatmentHistoryAscendingDateComparatorFactory::stopYearForHistoryEntry, nullSafeComparator)
+                .thenComparing(TreatmentHistoryAscendingDateComparatorFactory::stopMonthForHistoryEntry, nullSafeComparator)
                 .thenComparing(TreatmentHistoryEntry::treatmentName);
     }
 

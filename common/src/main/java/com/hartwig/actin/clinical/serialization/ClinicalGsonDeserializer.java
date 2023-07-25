@@ -71,12 +71,14 @@ import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRadiotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatmentType;
 import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentClass;
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTherapyHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent;
@@ -155,6 +157,8 @@ public class ClinicalGsonDeserializer {
                 }.getType(), new ImmutableSetAdapter<TreatmentCategory>(TreatmentCategory.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<Treatment>>() {
                 }.getType(), new ImmutableSetAdapter<Treatment>(Treatment.class))
+                .registerTypeAdapter(new TypeToken<ImmutableSet<TreatmentType>>() {
+                }.getType(), new ImmutableSetAdapter<TreatmentType>(OtherTreatmentType.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<BodyLocationCategory>>() {
                 }.getType(), new ImmutableSetAdapter<BodyLocationCategory>(BodyLocationCategory.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<DrugType>>() {
@@ -208,9 +212,10 @@ public class ClinicalGsonDeserializer {
         public ImmutableList<T> deserialize(@NotNull JsonElement jsonElement, @NotNull Type type,
                 @NotNull JsonDeserializationContext context) throws JsonParseException {
 
-            return (ImmutableList<T>) ImmutableList.copyOf(deserializeJsonCollection(jsonElement,
-                    context,
-                    concreteType).collect(Collectors.toList()));
+            return jsonElement.isJsonNull()
+                    ? null
+                    : (ImmutableList<T>) ImmutableList.copyOf(deserializeJsonCollection(jsonElement, context, concreteType).collect(
+                            Collectors.toList()));
         }
     }
 
@@ -226,9 +231,11 @@ public class ClinicalGsonDeserializer {
         public ImmutableSet<T> deserialize(@NotNull JsonElement jsonElement, @NotNull Type type,
                 @NotNull JsonDeserializationContext context) throws JsonParseException {
 
-            return (ImmutableSet<T>) ImmutableSet.copyOf(deserializeJsonCollection(jsonElement,
-                    context,
-                    concreteType).collect(Collectors.toSet()));
+            return jsonElement.isJsonNull()
+                    ? null
+                    : (ImmutableSet<T>) ImmutableSet.copyOf(deserializeJsonCollection(jsonElement,
+                            context,
+                            concreteType).collect(Collectors.toSet()));
         }
     }
 
@@ -272,8 +279,10 @@ public class ClinicalGsonDeserializer {
         }
     }
 
-    private static <T> Stream<T> deserializeJsonCollection(JsonElement jsonElement, JsonDeserializationContext context, Type type) {
-        return jsonElement.isJsonNull() ? null : jsonElement.getAsJsonArray().asList().stream().map(listElement -> {
+    @NotNull
+    private static <T> Stream<T> deserializeJsonCollection(@NotNull JsonElement jsonElement, @NotNull JsonDeserializationContext context,
+            @NotNull Type type) {
+        return jsonElement.getAsJsonArray().asList().stream().map(listElement -> {
             T deserialized = context.deserialize(listElement, type);
             if (deserialized == null) {
                 throw new RuntimeException("Unable to deserialize " + listElement);

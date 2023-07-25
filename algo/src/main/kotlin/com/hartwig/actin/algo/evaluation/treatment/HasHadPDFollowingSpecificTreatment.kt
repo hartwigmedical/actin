@@ -16,10 +16,10 @@ class HasHadPDFollowingSpecificTreatment(private val treatments: List<Treatment>
 
         return if (treatmentEvaluation.matchingTreatmentsWithPD.isNotEmpty()) {
             EvaluationFactory.pass(
-                "Has received " + Format.concat(treatmentEvaluation.matchingTreatmentsWithPD.map(Treatment::name)) + " treatment with PD"
+                "Has received ${Format.concat(treatmentEvaluation.matchingTreatmentsWithPD.map(Treatment::name))} treatment with PD"
             )
         } else if (treatmentEvaluation.includesTrial) {
-            EvaluationFactory.undetermined("Undetermined if received specific " + Format.concat(treatmentNamesToMatch) + " treatment")
+            EvaluationFactory.undetermined("Undetermined if received specific ${Format.concat(treatmentNamesToMatch)} treatment")
         } else if (treatmentEvaluation.matchesWithUnclearPD) {
             EvaluationFactory.undetermined(
                 "Has received ${Format.concat(treatmentEvaluation.matchingTreatments.map(Treatment::name))} treatment but undetermined if PD"
@@ -27,7 +27,7 @@ class HasHadPDFollowingSpecificTreatment(private val treatments: List<Treatment>
         } else if (treatmentEvaluation.matchingTreatments.isNotEmpty()) {
             EvaluationFactory.fail("Has received ${Format.concat(treatmentEvaluation.matchingTreatments.map(Treatment::name))} treatment, but no PD")
         } else {
-            EvaluationFactory.fail("Has not received specific " + Format.concat(treatmentNamesToMatch) + " treatment")
+            EvaluationFactory.fail("Has not received specific ${Format.concat(treatmentNamesToMatch)} treatment")
         }
     }
 
@@ -35,18 +35,16 @@ class HasHadPDFollowingSpecificTreatment(private val treatments: List<Treatment>
         val treatmentHistory = record.clinical().treatmentHistory()
 
         return treatmentHistory.map { entry ->
-            entry.treatments().flatMap(Treatment::categories)
-            val isTrial = entry.isTrial == true
             val isPD = treatmentResultedInPDOption(entry)
             if (treatmentsMatchNameListExactly(entry.treatments(), treatmentNamesToMatch)) {
                 TreatmentHistoryEvaluation(
                     matchingTreatmentsWithPD = if (isPD == true) entry.treatments() else emptySet(),
                     matchingTreatments = entry.treatments(),
                     matchesWithUnclearPD = isPD == null,
-                    includesTrial = isTrial
+                    includesTrial = entry.isTrial
                 )
             } else {
-                TreatmentHistoryEvaluation(includesTrial = isTrial)
+                TreatmentHistoryEvaluation(includesTrial = entry.isTrial)
             }
         }.fold(TreatmentHistoryEvaluation()) { acc, result ->
             TreatmentHistoryEvaluation(

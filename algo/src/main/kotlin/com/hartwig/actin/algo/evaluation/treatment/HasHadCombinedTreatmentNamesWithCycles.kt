@@ -21,26 +21,34 @@ class HasHadCombinedTreatmentNamesWithCycles(
             .groupBy { it.result() }
 
         val builder: ImmutableEvaluation.Builder = EvaluationFactory.unrecoverable()
-        return if (evaluationsByResult.containsKey(EvaluationResult.FAIL)) {
-            val failEvaluations = evaluationsByResult[EvaluationResult.FAIL]!!
-            builder.result(EvaluationResult.FAIL)
-                .addAllFailSpecificMessages(getMessagesForEvaluations(failEvaluations) { obj: Evaluation -> obj.failSpecificMessages() })
-                .addAllFailGeneralMessages(getMessagesForEvaluations(failEvaluations) { obj: Evaluation -> obj.failGeneralMessages() })
-                .build()
-        } else if (evaluationsByResult.containsKey(EvaluationResult.UNDETERMINED)) {
-            val undeterminedEvaluations = evaluationsByResult[EvaluationResult.UNDETERMINED]!!
-            builder.result(EvaluationResult.UNDETERMINED)
-                .addAllUndeterminedSpecificMessages(getMessagesForEvaluations(undeterminedEvaluations) { obj: Evaluation -> obj.undeterminedSpecificMessages() })
-                .addAllUndeterminedGeneralMessages(getMessagesForEvaluations(undeterminedEvaluations) { obj: Evaluation -> obj.undeterminedGeneralMessages() })
-                .build()
-        } else if (evaluationsByResult.containsKey(EvaluationResult.PASS) && evaluationsByResult.size == 1) {
-            val passEvaluations = evaluationsByResult[EvaluationResult.PASS]!!
-            builder.result(EvaluationResult.PASS)
-                .addAllPassSpecificMessages(getMessagesForEvaluations(passEvaluations) { obj: Evaluation -> obj.passSpecificMessages() })
-                .addPassGeneralMessages("Found matching treatments")
-                .build()
-        } else {
-            throw IllegalStateException("At least one treatment name should be provided, and all results should be PASS, FAIL, or UNDETERMINED")
+        return when {
+            evaluationsByResult.containsKey(EvaluationResult.FAIL) -> {
+                val failEvaluations = evaluationsByResult[EvaluationResult.FAIL]!!
+                builder.result(EvaluationResult.FAIL)
+                    .addAllFailSpecificMessages(getMessagesForEvaluations(failEvaluations) { obj: Evaluation -> obj.failSpecificMessages() })
+                    .addAllFailGeneralMessages(getMessagesForEvaluations(failEvaluations) { obj: Evaluation -> obj.failGeneralMessages() })
+                    .build()
+            }
+
+            evaluationsByResult.containsKey(EvaluationResult.UNDETERMINED) -> {
+                val undeterminedEvaluations = evaluationsByResult[EvaluationResult.UNDETERMINED]!!
+                builder.result(EvaluationResult.UNDETERMINED)
+                    .addAllUndeterminedSpecificMessages(getMessagesForEvaluations(undeterminedEvaluations) { obj: Evaluation -> obj.undeterminedSpecificMessages() })
+                    .addAllUndeterminedGeneralMessages(getMessagesForEvaluations(undeterminedEvaluations) { obj: Evaluation -> obj.undeterminedGeneralMessages() })
+                    .build()
+            }
+
+            evaluationsByResult.containsKey(EvaluationResult.PASS) && evaluationsByResult.size == 1 -> {
+                val passEvaluations = evaluationsByResult[EvaluationResult.PASS]!!
+                builder.result(EvaluationResult.PASS)
+                    .addAllPassSpecificMessages(getMessagesForEvaluations(passEvaluations) { obj: Evaluation -> obj.passSpecificMessages() })
+                    .addPassGeneralMessages("Found matching treatments")
+                    .build()
+            }
+
+            else -> {
+                throw IllegalStateException("At least one treatment name should be provided, and all results should be PASS, FAIL, or UNDETERMINED")
+            }
         }
     }
 

@@ -50,13 +50,13 @@ data class TreatmentSummaryForCategory(
                 TreatmentSummaryForCategory(
                     if (matchesCategory && classification == true) listOf(treatmentHistoryEntry) else emptyList(),
                     if (matchesCategory && classification == null) 1 else 0,
-                    if (trialMatchesAllowed && treatmentHistoryEntry.isTrial == true && (!matchesCategory || classification == false)) 1 else 0
+                    if (trialMatchesAllowed && treatmentHistoryEntry.isTrial && (!matchesCategory || classification == false)) 1 else 0
                 )
             }.fold(TreatmentSummaryForCategory()) { acc, element -> acc + element }
         }
 
         fun treatmentMayMatchCategoryAsTrial(treatmentHistoryEntry: TreatmentHistoryEntry, category: TreatmentCategory): Boolean {
-            return categoryAllowsTrialMatches(category) && treatmentHistoryEntry.isTrial == true
+            return categoryAllowsTrialMatches(category) && treatmentHistoryEntry.isTrial
         }
 
         private fun categoryAllowsTrialMatches(category: TreatmentCategory): Boolean {

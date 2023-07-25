@@ -14,10 +14,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
-public class TreatmentHistoryDescendingDateComparatorFactoryTest {
+public class TreatmentHistoryAscendingDateComparatorFactoryTest {
 
     @Test
-    public void canSortOnDescendingDate() {
+    public void shouldSortByAscendingStartDateThenByAscendingEndDateThenByName() {
         TreatmentHistoryEntry treatment1 = create("treatment A", null, null, null, null);
         TreatmentHistoryEntry treatment2 = create("treatment A", 2018, null, null, null);
         TreatmentHistoryEntry treatment3 = create("treatment A", 2020, 2, null, null);
@@ -29,7 +29,7 @@ public class TreatmentHistoryDescendingDateComparatorFactoryTest {
 
         List<TreatmentHistoryEntry> treatments =
                 Lists.newArrayList(treatment8, treatment6, treatment3, treatment7, treatment4, treatment1, treatment5, treatment2);
-        treatments.sort(TreatmentHistoryDescendingDateComparatorFactory.treatmentHistoryEntryComparator());
+        treatments.sort(TreatmentHistoryAscendingDateComparatorFactory.treatmentHistoryEntryComparator());
 
         assertEquals(treatment1, treatments.get(0));
         assertEquals(treatment2, treatments.get(1));
