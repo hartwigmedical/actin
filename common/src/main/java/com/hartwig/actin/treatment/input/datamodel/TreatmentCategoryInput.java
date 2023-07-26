@@ -1,7 +1,6 @@
 package com.hartwig.actin.treatment.input.datamodel;
 
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
 
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType;
@@ -21,15 +20,15 @@ public class TreatmentCategoryInput {
     @NotNull
     private final TreatmentCategory mappedCategory;
     @Nullable
-    private final Set<TreatmentType> mappedTypes;
+    private final TreatmentType mappedType;
 
     private TreatmentCategoryInput(@NotNull TreatmentCategory mappedCategory) {
         this(mappedCategory, null);
     }
 
-    private TreatmentCategoryInput(@NotNull TreatmentCategory mappedCategory, @Nullable Set<TreatmentType> mappedTypes) {
+    private TreatmentCategoryInput(@NotNull TreatmentCategory mappedCategory, @Nullable TreatmentType mappedType) {
         this.mappedCategory = mappedCategory;
-        this.mappedTypes = mappedTypes;
+        this.mappedType = mappedType;
     }
 
     @NotNull
@@ -38,8 +37,8 @@ public class TreatmentCategoryInput {
     }
 
     @Nullable
-    public Set<TreatmentType> mappedTypes() {
-        return mappedTypes;
+    public TreatmentType mappedType() {
+        return mappedType;
     }
 
     @NotNull
@@ -57,7 +56,7 @@ public class TreatmentCategoryInput {
         }
 
         TreatmentType treatmentType = resolveTreatmentType(query);
-        return new TreatmentCategoryInput(treatmentType.category(), Set.of(treatmentType));
+        return new TreatmentCategoryInput(treatmentType.category(), treatmentType);
     }
 
     @NotNull

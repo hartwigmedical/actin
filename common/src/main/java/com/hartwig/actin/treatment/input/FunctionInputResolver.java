@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 
 import com.hartwig.actin.TreatmentDatabase;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
+import com.hartwig.actin.clinical.datamodel.treatment.Drug;
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
@@ -163,6 +164,10 @@ public class FunctionInputResolver {
                 }
                 case MANY_SPECIFIC_TREATMENTS_TWO_INTEGERS: {
                     createManySpecificTreatmentsTwoIntegerInput(function);
+                    return true;
+                }
+                case MANY_DRUGS: {
+                    createManyDrugsInput(function);
                     return true;
                 }
                 case ONE_TUMOR_TYPE: {
@@ -366,6 +371,21 @@ public class FunctionInputResolver {
     @NotNull
     private Set<TreatmentType> toTreatmentTypeSet(@NotNull Object input) {
         return toStringStream(input).map(TreatmentCategoryInput::treatmentTypeFromString).collect(Collectors.toSet());
+    }
+
+    @NotNull
+    public Set<Drug> createManyDrugsInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.MANY_DRUGS, 1);
+        return toStringStream(function.parameters().get(0)).map(this::toDrug).collect(Collectors.toSet());
+    }
+
+    @NotNull
+    private Drug toDrug(@NotNull String drugName) {
+        Drug drug = treatmentDatabase.findDrugByName(drugName);
+        if (drug == null) {
+            throw new IllegalStateException("Drug not found in DB: " + drugName);
+        }
+        return drug;
     }
 
     @NotNull

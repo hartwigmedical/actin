@@ -89,6 +89,9 @@ public class ParameterizedFunctionTestFactory {
             case MANY_SPECIFIC_TREATMENTS_TWO_INTEGERS: {
                 return List.of("CAPECITABINE+OXALIPLATIN;CAPECITABINE+OXALIPLATIN", "1", "2");
             }
+            case MANY_DRUGS: {
+                return List.of("CAPECITABINE;OXALIPLATIN");
+            }
             case ONE_TUMOR_TYPE: {
                 return List.of(TumorTypeInput.SQUAMOUS_CELL_CARCINOMA.display());
             }

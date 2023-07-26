@@ -183,7 +183,7 @@ public class FunctionInputResolverTest {
 
         TreatmentCategoryInput input = resolver.createOneTreatmentCategoryOrTypeInput(valid);
         assertEquals(TreatmentCategory.IMMUNOTHERAPY, input.mappedCategory());
-        assertNull(input.mappedTypes());
+        assertNull(input.mappedType());
 
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("not a treatment input"))));
@@ -201,7 +201,7 @@ public class FunctionInputResolverTest {
 
         OneTreatmentCategoryOrTypeOneInteger inputs = resolver.createOneTreatmentCategoryOrTypeOneIntegerInput(valid);
         assertEquals(TreatmentCategory.IMMUNOTHERAPY, inputs.treatment().mappedCategory());
-        assertNull(inputs.treatment().mappedTypes());
+        assertNull(inputs.treatment().mappedType());
         assertEquals(1, inputs.integer());
 
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));

@@ -2,8 +2,6 @@ package com.hartwig.actin.treatment.input.datamodel;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-import java.util.Set;
-
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType;
 import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatmentType;
 import com.hartwig.actin.clinical.datamodel.treatment.RadiotherapyType;
@@ -40,7 +38,7 @@ public class TreatmentCategoryInputTest {
     private static void assertCreationFromEnumStrings(@NotNull TreatmentType[] values) {
         for (TreatmentType treatmentType : values) {
             TreatmentCategoryInput treatmentCategoryInput = TreatmentCategoryInput.fromString(treatmentType.display());
-            assertThat(treatmentCategoryInput.mappedTypes()).isEqualTo(Set.of(treatmentType));
+            assertThat(treatmentCategoryInput.mappedType()).isEqualTo(treatmentType);
             assertThat(treatmentCategoryInput.mappedCategory()).isEqualTo(treatmentType.category());
             assertThat(TreatmentCategoryInput.treatmentTypeFromString(treatmentType.display())).isEqualTo(treatmentType);
         }
