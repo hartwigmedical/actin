@@ -16,6 +16,12 @@ public abstract class Radiotherapy implements Therapy {
     public final TreatmentClass treatmentClass = TreatmentClass.RADIOTHERAPY;
 
     @Override
+    @Value.Default
+    public boolean isSystemic() {
+        return false;
+    }
+
+    @Override
     @NotNull
     @Value.Default
     public Set<Drug> drugs() {
