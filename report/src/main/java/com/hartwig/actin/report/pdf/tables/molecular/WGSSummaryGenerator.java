@@ -96,24 +96,15 @@ public class WGSSummaryGenerator implements TableGenerator {
 
     @NotNull
     private Cell biopsySummary() {
-        String biopsyLocation = clinical.tumor().biopsyLocation();
+        String biopsyLocation = (clinical.tumor().biopsyLocation() != null) ? clinical.tumor().biopsyLocation() : Formats.VALUE_UNKNOWN;
         Double purity = molecular.characteristics().purity();
-        if (biopsyLocation != null) {
-            if (purity != null) {
-                Text biopsyText = new Text(biopsyLocation).addStyle(Styles.tableHighlightStyle());
-                Text purityText = new Text(String.format(" (purity %s)", Formats.percentage(purity)));
-                purityText.addStyle(molecular.hasSufficientQualityAndPurity() ? Styles.tableHighlightStyle() : Styles.tableNoticeStyle());
-                return Cells.create(new Paragraph().addAll(Arrays.asList(biopsyText, purityText)));
-            } else {
-                return Cells.createValue(biopsyLocation);
-            }
-        } else if (purity != null) {
-            Text biopsyText = new Text("Unknown").addStyle(Styles.tableHighlightStyle());
+        if (purity != null) {
+            Text biopsyText = new Text(biopsyLocation).addStyle(Styles.tableHighlightStyle());
             Text purityText = new Text(String.format(" (purity %s)", Formats.percentage(purity)));
             purityText.addStyle(molecular.hasSufficientQualityAndPurity() ? Styles.tableHighlightStyle() : Styles.tableNoticeStyle());
             return Cells.create(new Paragraph().addAll(Arrays.asList(biopsyText, purityText)));
         } else {
-            return Cells.createValue(Formats.VALUE_UNKNOWN);
+            return Cells.createValue(biopsyLocation);
         }
     }
 
