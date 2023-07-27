@@ -35,6 +35,7 @@ import com.hartwig.actin.treatment.input.single.ImmutableOneHlaAllele;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerOneString;
 import com.hartwig.actin.treatment.input.single.ImmutableOneSpecificTreatmentOneInteger;
+import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentCategoryManyDrugs;
 import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentCategoryManyTypes;
 import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentCategoryManyTypesOneInteger;
 import com.hartwig.actin.treatment.input.single.ImmutableOneTreatmentCategoryOrTypeOneInteger;
@@ -53,6 +54,7 @@ import com.hartwig.actin.treatment.input.single.OneHlaAllele;
 import com.hartwig.actin.treatment.input.single.OneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
 import com.hartwig.actin.treatment.input.single.OneSpecificTreatmentOneInteger;
+import com.hartwig.actin.treatment.input.single.OneTreatmentCategoryManyDrugs;
 import com.hartwig.actin.treatment.input.single.OneTreatmentCategoryManyTypes;
 import com.hartwig.actin.treatment.input.single.OneTreatmentCategoryManyTypesOneInteger;
 import com.hartwig.actin.treatment.input.single.OneTreatmentCategoryOrTypeOneInteger;
@@ -164,6 +166,10 @@ public class FunctionInputResolver {
                 }
                 case MANY_SPECIFIC_TREATMENTS_TWO_INTEGERS: {
                     createManySpecificTreatmentsTwoIntegerInput(function);
+                    return true;
+                }
+                case ONE_TREATMENT_CATEGORY_MANY_DRUGS: {
+                    createOneTreatmentCategoryManyDrugsInput(function);
                     return true;
                 }
                 case MANY_DRUGS: {
@@ -374,9 +380,24 @@ public class FunctionInputResolver {
     }
 
     @NotNull
+    public OneTreatmentCategoryManyDrugs createOneTreatmentCategoryManyDrugsInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.ONE_TREATMENT_CATEGORY_MANY_DRUGS, 2);
+
+        return ImmutableOneTreatmentCategoryManyDrugs.builder()
+                .category(TreatmentCategoryResolver.fromString((String) function.parameters().get(0)))
+                .drugs(toDrugSet(function.parameters().get(1)))
+                .build();
+    }
+
+    @NotNull
     public Set<Drug> createManyDrugsInput(@NotNull EligibilityFunction function) {
         assertParamConfig(function, FunctionInput.MANY_DRUGS, 1);
-        return toStringStream(function.parameters().get(0)).map(this::toDrug).collect(Collectors.toSet());
+        return toDrugSet(function.parameters().get(0));
+    }
+
+    @NotNull
+    private Set<Drug> toDrugSet(@NotNull Object input) {
+        return toStringStream(input).map(this::toDrug).collect(Collectors.toSet());
     }
 
     @NotNull
