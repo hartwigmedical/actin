@@ -310,6 +310,7 @@ class ClinicalRecordsFactory(private val feed: FeedModel, private val curation: 
             val name: String? = CurationUtil.capitalizeFirstLetterOnly(entry.code5ATCDisplay).ifEmpty {
                 curation.curateMedicationName(CurationUtil.capitalizeFirstLetterOnly(entry.codeText))
             }
+
             if (!name.isNullOrEmpty()) {
                 val medication: Medication = builder.name(name)
                     .status(curation.curateMedicationStatus(entry.status))
@@ -321,6 +322,11 @@ class ClinicalRecordsFactory(private val feed: FeedModel, private val curation: 
                     .atc(atc.resolve(entry.code5ATCCode))
                     .build()
                 medications.add(curation.annotateWithMedicationCategory(medication))
+
+                if (CurationUtil.capitalizeFirstLetterOnly(entry.code5ATCDisplay).isEmpty()) {
+                    builder.isSelfCare(entry.code5ATCCode.isEmpty())
+                        .isTrialMedication(entry.code5ATCCode.isNotEmpty() && entry.code5ATCCode[0].lowercaseChar() !in 'a'..'z')
+                }
             }
         }
         medications.sortWith(MedicationByNameComparator())
