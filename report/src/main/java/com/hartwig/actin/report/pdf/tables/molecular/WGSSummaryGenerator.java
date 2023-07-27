@@ -122,7 +122,7 @@ public class WGSSummaryGenerator implements TableGenerator {
         Paragraph paragraph = new Paragraph(new Text(tumorOriginPrediction()).addStyle(Styles.tableHighlightStyle()));
         Double purity = molecular.characteristics().purity();
         if (purity != null && purity < 0.2) {
-            Text purityText = new Text(String.format(" (tumor purity %s)", Formats.percentage(purity))).addStyle(Styles.tableNoticeStyle());
+            Text purityText = new Text(String.format(" (purity %s)", Formats.percentage(purity))).addStyle(Styles.tableNoticeStyle());
             paragraph.add(purityText);
         }
         return Cells.create(paragraph);
