@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.clinical;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import com.hartwig.actin.clinical.datamodel.Dosage;
@@ -53,7 +54,7 @@ public class MedicationGenerator implements TableGenerator {
                     table.addCell(Cells.createContent(administrationRoute(medication)));
                     table.addCell(Cells.createContent(Formats.date(medication.startDate(), Strings.EMPTY)));
                     table.addCell(Cells.createContent(Formats.date(medication.stopDate(), Strings.EMPTY)));
-                    table.addCell(Cells.createContent(dosage(medication.dosage())));
+                    table.addCell(Cells.createContent(dosage(medication)));
                     table.addCell(Cells.createContent(frequency(medication.dosage())));
                 });
 
@@ -66,9 +67,10 @@ public class MedicationGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static String dosage(@NotNull Dosage dosage) {
-        String dosageMin = dosage.dosageMin() != null ? Formats.twoDigitNumber(dosage.dosageMin()) : "?";
-        String dosageMax = dosage.dosageMax() != null ? Formats.twoDigitNumber(dosage.dosageMax()) : "?";
+    private static String dosage(@NotNull Medication medication) {
+        Dosage dosage = medication.dosage();
+        String dosageMin = dosage.dosageMin() != null || dosage.dosageMin() == 0.0 ? Formats.twoDigitNumber(dosage.dosageMin()) : "?";
+        String dosageMax = dosage.dosageMax() != null || dosage.dosageMax() == 0.0 ? Formats.twoDigitNumber(dosage.dosageMax()) : "?";
 
         String result = dosageMin.equals(dosageMax) ? dosageMin : dosageMin + " - " + dosageMax;
         Boolean ifNeeded = dosage.ifNeeded();
@@ -79,6 +81,12 @@ public class MedicationGenerator implements TableGenerator {
         if (dosage.dosageUnit() != null) {
             result += (" " + dosage.dosageUnit());
         }
+
+        if ((Objects.equals(medication.administrationRoute(), "cutaneous") || Objects.equals(medication.administrationRoute(),
+                "intravenous")) && dosage.dosageMin() == 0.0) {
+            result = Strings.EMPTY;
+        }
+
         return result;
     }
 

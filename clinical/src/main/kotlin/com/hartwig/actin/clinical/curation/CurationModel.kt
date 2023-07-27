@@ -453,8 +453,7 @@ class CurationModel @VisibleForTesting internal constructor(
     fun curateMedicationDosage(input: String): Dosage? {
         val configs: Set<MedicationDosageConfig> = find(database.medicationDosageConfigs, input)
         if (configs.isEmpty()) {
-            // TODO: Change to warn once the medications are more final.
-            LOGGER.debug(" Could not find medication dosage config for '{}'", input)
+            LOGGER.warn(" Could not find medication dosage config for '{}'", input)
             return null
         } else if (configs.size > 1) {
             LOGGER.warn(" Multiple medication dosage configs matched to '{}'", input)
