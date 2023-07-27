@@ -20,7 +20,7 @@ More details on the following modules are available from the links below:
 
 ### Developing and Releasing ACTIN
 
-To make a chance in ACTIN and release the process is as follows:
+To make a change in ACTIN and release the process is as follows:
 
 1. Create a ticket in JIRA and make a branch from that ticket with `git checkout -b ACTIN-#`
 2. When changes are complete create a PR by committing pushing your branch and creating a PR via the GitHub UI.
