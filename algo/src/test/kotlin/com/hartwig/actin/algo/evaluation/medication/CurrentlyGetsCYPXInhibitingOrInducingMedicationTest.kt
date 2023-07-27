@@ -4,23 +4,39 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
-import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
 import org.junit.Test
 
 class CurrentlyGetsCYPXInhibitingOrInducingMedicationTest {
-    val function = CurrentlyGetsCYPXInhibitingOrInducingMedication(MedicationTestFactory.alwaysActive(), "9A9")
-    val medications: MutableList<Medication> = mutableListOf()
-
     @Test
     fun shouldPassWhenCYPInhibitingOrInducingMedication() {
-        medications.add(TestMedicationFactory.builder().addCypInteractions(ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG).build()).build())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
+        val medications = listOf(
+            TestMedicationFactory.builder().addCypInteractions(
+                ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
+                    .build()
+            ).build()
+        )
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     @Test
     fun shouldFailWhenNoCYPInhibitingOrInducingMedication() {
-        medications.add(TestMedicationFactory.builder().addCypInteractions(ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.SUBSTRATE).strength(CypInteraction.Strength.STRONG).build()).build())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
+        val medications = listOf(
+            TestMedicationFactory.builder().addCypInteractions(
+                ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.SUBSTRATE).strength(CypInteraction.Strength.STRONG)
+                    .build()
+            ).build()
+        )
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
+    }
+
+    @Test
+    fun shouldFailWhenPatientUsesNoMedication() {
+        val medications = listOf(TestMedicationFactory.builder().build())
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
+    }
+
+    companion object {
+        private val FUNCTION = CurrentlyGetsCYPXInhibitingOrInducingMedication(MedicationTestFactory.alwaysActive(), "9A9")
     }
 }

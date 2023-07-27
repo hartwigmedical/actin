@@ -7,7 +7,7 @@ import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.CypInteraction
 import java.time.LocalDate
 
-internal class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
+class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
     fun active(medications: List<Medication>): List<Medication> {
         return medications.filter(::isActive)
     }
@@ -38,34 +38,21 @@ internal class MedicationSelector(private val interpreter: MedicationStatusInter
 
     fun activeWithCYPInteraction(
         medications: List<Medication>,
-        interactionToFind: String,
+        interactionToFind: String?,
         typeOfCYP: CypInteraction.Type
     ): List<Medication> {
-        return if (interactionToFind == "Any") {
-            active(medications).filter { medication ->
-                medication.cypInteractions().any { typeOfCYP == it.type() }
-            }
-        } else {
-            active(medications).filter { medication ->
-                medication.cypInteractions().any { interactionToFind == it.cyp() && typeOfCYP == it.type() }
-            }
+        return active(medications).filter { medication ->
+            medication.cypInteractions().any { (interactionToFind == null || interactionToFind == it.cyp()) && typeOfCYP == it.type() }
         }
     }
 
     fun activeOrRecentlyStoppedWithCYPInteraction(
-        medications: List<Medication>, interactionToFind: String, typeOfCYP: CypInteraction.Type, minStopDate: LocalDate
+        medications: List<Medication>, interactionToFind: String?, typeOfCYP: CypInteraction.Type, minStopDate: LocalDate
     ): List<Medication> {
-        return if (interactionToFind == "Any") {
-            medications.filter { medication ->
-                medication.cypInteractions().any { typeOfCYP == it.type() }
-            }
-                .filter { isActive(it) || isRecentlyStopped(it, minStopDate) }
-        } else {
-            medications.filter { medication ->
-                medication.cypInteractions().any { interactionToFind == it.cyp() && typeOfCYP == it.type() }
-            }
-                .filter { isActive(it) || isRecentlyStopped(it, minStopDate) }
+        return medications.filter { medication ->
+            medication.cypInteractions().any { (interactionToFind == null || interactionToFind == it.cyp()) && typeOfCYP == it.type() }
         }
+            .filter { isActive(it) || isRecentlyStopped(it, minStopDate) }
     }
 
     private fun isRecentlyStopped(medication: Medication, minStopDate: LocalDate): Boolean {

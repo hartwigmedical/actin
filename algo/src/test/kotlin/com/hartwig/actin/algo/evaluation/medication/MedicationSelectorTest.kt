@@ -1,5 +1,7 @@
 package com.hartwig.actin.algo.evaluation.medication
 
+import com.hartwig.actin.clinical.datamodel.CypInteraction
+import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
 import org.junit.Assert
@@ -76,6 +78,77 @@ class MedicationSelectorTest {
         val filtered = MedicationTestFactory.alwaysInactive().activeOrRecentlyStoppedWithCategory(medications, "Category 1", minStopDate)
         Assert.assertEquals(1, filtered.size.toLong())
         Assert.assertNotNull(findByName(medications, "right category 1 recently stopped"))
+    }
+
+    @Test
+    fun canFilterOnActiveWithCYPInteraction() {
+        val medications = listOf(
+            TestMedicationFactory.builder().name("no cyp interactions").build(),
+            TestMedicationFactory.builder().name("uses CYP9A9 inducer").addCypInteractions(
+                ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
+                    .build()
+            ).build(),
+            TestMedicationFactory.builder().name("uses CYP9A9 inhibitor").addCypInteractions(
+                ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INHIBITOR).strength(CypInteraction.Strength.STRONG)
+                    .build()
+            ).build(),
+        )
+        val filtered = MedicationTestFactory.alwaysActive().activeWithCYPInteraction(medications, "9A9", CypInteraction.Type.INHIBITOR)
+        Assert.assertEquals(1, filtered.size.toLong())
+        Assert.assertNotNull(findByName(medications, "uses CYP9A9 inhibitor"))
+    }
+
+    @Test
+    fun canFilterOnActiveWithAnyCYPInducer() {
+        val medications = listOf(
+            TestMedicationFactory.builder().name("uses any CYP inducer").addCypInteractions(
+                ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
+                    .build()
+            ).build(),
+            TestMedicationFactory.builder().name("uses any CYP inducer").addCypInteractions(
+                ImmutableCypInteraction.builder().cyp("3A4").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
+                    .build()
+            ).build(),
+            TestMedicationFactory.builder().name("uses CYP inhibitor").addCypInteractions(
+                ImmutableCypInteraction.builder().cyp("3A4").type(CypInteraction.Type.INHIBITOR).strength(CypInteraction.Strength.STRONG)
+                    .build()
+            ).build(),
+        )
+        val filtered = MedicationTestFactory.alwaysActive().activeWithCYPInteraction(medications, null, CypInteraction.Type.INDUCER)
+        Assert.assertEquals(2, filtered.size.toLong())
+        Assert.assertNotNull(findByName(medications, "uses any CYP inducer"))
+    }
+
+    @Test
+    fun canFilterOnActiveOrRecentlyStoppedWithCYPInteraction() {
+        val minStopDate = LocalDate.of(2019, 11, 20)
+        val medications = listOf(
+            TestMedicationFactory.builder().name("no cyp interactions").build(),
+            TestMedicationFactory.builder().name("uses CYP9A9 inducer").addCypInteractions(
+                ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
+                    .build()
+            ).build(),
+            TestMedicationFactory.builder()
+                .name("CYP9A9 inhibitor recently stopped")
+                .addCypInteractions(
+                    ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INHIBITOR)
+                        .strength(CypInteraction.Strength.STRONG).build()
+                )
+                .stopDate(minStopDate.plusDays(1))
+                .build(),
+            TestMedicationFactory.builder()
+                .name("CYP9A9 inhibitor stopped long ago")
+                .addCypInteractions(
+                    ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
+                        .build()
+                )
+                .stopDate(minStopDate.minusDays(1))
+                .build()
+        )
+        val filtered = MedicationTestFactory.alwaysInactive()
+            .activeOrRecentlyStoppedWithCYPInteraction(medications, "9A9", CypInteraction.Type.INHIBITOR, minStopDate)
+        Assert.assertEquals(1, filtered.size.toLong())
+        Assert.assertNotNull(findByName(medications, "CYP9A9 inhibitor recently stopped"))
     }
 
     companion object {
