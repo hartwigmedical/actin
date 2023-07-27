@@ -654,10 +654,21 @@ to 5 most recent values would be sufficient to `PASS`.
 |-----------------------------------------------|--------------------------------------|
 | IS_ABLE_AND_WILLING_TO_NOT_USE_CONTACT_LENSES | Resolves to `WARN`                   |
 
-### Disease Ontology ID (DOID)
+### References
+
+#### Disease Ontology ID (DOID)
 
 For rules about e.g. primary tumor location and type, second primaries and 'other conditions', one or more DOIDs may be implemented. For
 more information, see https://disease-ontology.org/.
+
+#### CYP interactions
+
+To evaluates rules about CYP interactions, we made use of the list of interactions on the following
+website: https://www.fda.gov/drugs/drug-interactions-labeling/healthcare-professionals-fdas-examples-drugs-interact-cyp-enzymes-and-transporter-systems.
+
+#### QT prolongating drugs
+
+To evaluate rules about QT prolongation, we made use of the list of drugs on the following website: https://crediblemeds.org/.
 
 ### Version History and Download Links
 
