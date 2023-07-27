@@ -107,6 +107,11 @@ public class WGSSummaryGenerator implements TableGenerator {
             } else {
                 return Cells.createValue(biopsyLocation);
             }
+        } else if (purity != null) {
+            Text biopsyText = new Text("Unknown").addStyle(Styles.tableHighlightStyle());
+            Text purityText = new Text(String.format(" (purity %s)", Formats.percentage(purity)));
+            purityText.addStyle(molecular.hasSufficientQualityAndPurity() ? Styles.tableHighlightStyle() : Styles.tableNoticeStyle());
+            return Cells.create(new Paragraph().addAll(Arrays.asList(biopsyText, purityText)));
         } else {
             return Cells.createValue(Formats.VALUE_UNKNOWN);
         }
