@@ -17,7 +17,7 @@ class HasRecentlyReceivedCYPXInducingMedication(
     override fun evaluate(record: PatientRecord): Evaluation {
         val receivedCYPXInducer = selector.activeOrRecentlyStoppedWithCYPInteraction(
             record.clinical().medications(),
-            "Any",
+            termToFind,
             CypInteraction.Type.INDUCER,
             minStopDate
         ).map { it.name() }
