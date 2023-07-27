@@ -7,7 +7,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.algo.evaluation.util.Format
 
-class CurrentlyGetsCYPXSubstrateMedication internal constructor(
+class CurrentlyGetsCYPXSubstrateMedication(
     private val selector: MedicationSelector,
     private val termToFind: String
 ) : EvaluationFunction {

@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.clinical.datamodel.CypInteraction
 import java.time.LocalDate
 
-class HasRecentlyReceivedCYPXInducingMedication internal constructor(
+class HasRecentlyReceivedCYPXInducingMedication(
     private val selector: MedicationSelector,
     private val termToFind: String,
     private val minStopDate: LocalDate

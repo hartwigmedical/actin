@@ -7,12 +7,13 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.clinical.datamodel.CypInteraction
 
-class CurrentlyGetsCYPXInhibitingMedication internal constructor(
+class CurrentlyGetsCYPXInhibitingMedication(
     private val selector: MedicationSelector,
     private val termToFind: String
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val receivedCYPXInhibitor = selector.activeWithCYPInteraction(record.clinical().medications(), termToFind, CypInteraction.Type.INHIBITOR).map { it.name() }
+        val receivedCYPXInhibitor =
+            selector.activeWithCYPInteraction(record.clinical().medications(), termToFind, CypInteraction.Type.INHIBITOR).map { it.name() }
         return if (receivedCYPXInhibitor.isNotEmpty()) {
             EvaluationFactory.pass(
                 "Patient currently gets CYP$termToFind inhibiting medication: " + Format.concatLowercaseWithAnd(receivedCYPXInhibitor),
