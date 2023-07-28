@@ -12,11 +12,6 @@ public final class TestMedicationFactory {
     public static ImmutableMedication.Builder builder() {
         return ImmutableMedication.builder()
                 .name(Strings.EMPTY)
-                .codeATC(Strings.EMPTY)
-                .chemicalSubgroupAtc(Strings.EMPTY)
-                .pharmacologicalSubgroupAtc(Strings.EMPTY)
-                .therapeuticSubgroupAtc(Strings.EMPTY)
-                .anatomicalMainGroupAtc(Strings.EMPTY)
                 .qtProlongatingRisk(QTProlongatingRisk.NONE)
                 .dosage(ImmutableDosage.builder().build());
     }

@@ -16,22 +16,7 @@ public abstract class Medication {
     public abstract String name();
 
     @NotNull
-    public abstract String codeATC();
-
-    @NotNull
     public abstract Set<String> categories();
-
-    @NotNull
-    public abstract String chemicalSubgroupAtc();
-
-    @NotNull
-    public abstract String pharmacologicalSubgroupAtc();
-
-    @NotNull
-    public abstract String therapeuticSubgroupAtc();
-
-    @NotNull
-    public abstract String anatomicalMainGroupAtc();
 
     @Nullable
     public abstract MedicationStatus status();
@@ -52,4 +37,7 @@ public abstract class Medication {
     public abstract List<CypInteraction> cypInteractions();
 
     public abstract QTProlongatingRisk qtProlongatingRisk();
+
+    @Nullable
+    public abstract AtcClassification atc();
 }

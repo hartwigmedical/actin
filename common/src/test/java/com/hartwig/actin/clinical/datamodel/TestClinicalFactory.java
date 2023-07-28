@@ -479,7 +479,6 @@ public final class TestClinicalFactory {
 
         medications.add(TestMedicationFactory.builder()
                 .name("Ibuprofen")
-                .codeATC("N12")
                 .addCategories("NSAIDs")
                 .status(MedicationStatus.ACTIVE)
                 .dosage(ImmutableDosage.builder()
@@ -496,7 +495,6 @@ public final class TestClinicalFactory {
 
         medications.add(TestMedicationFactory.builder()
                 .name("Prednison")
-                .codeATC("N13")
                 .addCategories("NSAIDs")
                 .status(MedicationStatus.ACTIVE)
                 .dosage(ImmutableDosage.builder()

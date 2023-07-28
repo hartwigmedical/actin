@@ -186,7 +186,8 @@ AS a
 
 CREATE OR REPLACE VIEW eligibleCohorts
 AS (
-SELECT DISTINCT patientId, trialId, trialAcronym, cohortDescription
+SELECT DISTINCT patientId, trialId, trialAcronym, cohortDescription, group_concat(DISTINCT(IF(inclusionMolecularEvents<>"", inclusionMolecularEvents, null))) AS event
     FROM trialEvaluation
     WHERE ((isEligibleTrial AND NOT trialHasCohorts AND trialOpen) OR (isEligibleTrial AND isEligibleCohort AND cohortOpen AND NOT cohortBlacklist))
+    GROUP BY patientId, trialId, trialAcronym, cohortDescription
 );

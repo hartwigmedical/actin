@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class MolecularInputChecker {
 
     private static final String TERMINATION_CODON = "Ter";
-    private static final Set<String> VALID_PROTEIN_ENDINGS = Sets.newHashSet("del", "dup", "ins", "=", "*", "fs", "Cext*?");
+    private static final Set<String> VALID_PROTEIN_ENDINGS = Sets.newHashSet("del", "dup", "ins", "=", "*", "fs", "ext*?");
 
     @NotNull
     private final GeneFilter geneFilter;

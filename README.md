@@ -20,7 +20,7 @@ More details on the following modules are available from the links below:
 
 ### Developing and Releasing ACTIN
 
-To make a chance in ACTIN and release the process is as follows:
+To make a change in ACTIN and release the process is as follows:
 
 1. Create a ticket in JIRA and make a branch from that ticket with `git checkout -b ACTIN-#`
 2. When changes are complete create a PR by committing pushing your branch and creating a PR via the GitHub UI.
@@ -41,5 +41,12 @@ To make a chance in ACTIN and release the process is as follows:
     git tag 1.2.3
     git push origin 1.2.3
     ```
-   This also creates a build which you can deploy to `prod-operations-vm` with `deploy_actin 1.2.3`
+7. To deploy and test a version you can use the `deploy_actin_data_vm` script provided in the `scripts` repository. Run it from your laptop, it will do the deployment remotely.  
+   ```shell
+   deploy_actin_data_vm 1.2.3
+   ```
+8. When ready for production use the `deploy_actin_operations_vm` to do the same deployment to the operations vm. 
+   ```shell
+   deploy_actin_operations_vm 1.2.3
+   ```
   
