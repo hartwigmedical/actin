@@ -323,9 +323,12 @@ class ClinicalRecordsFactory(private val feed: FeedModel, private val curation: 
                     .build()
                 medications.add(curation.annotateWithMedicationCategory(medication))
 
-                if (CurationUtil.capitalizeFirstLetterOnly(entry.code5ATCDisplay).isEmpty()) {
+                if (entry.code5ATCDisplay.isEmpty()) {
                     builder.isSelfCare(entry.code5ATCCode.isEmpty())
                         .isTrialMedication(entry.code5ATCCode.isNotEmpty() && entry.code5ATCCode[0].lowercaseChar() !in 'a'..'z')
+                } else {
+                    builder.isSelfCare(false)
+                        .isTrialMedication(false)
                 }
             }
         }

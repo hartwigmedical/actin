@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.clinical;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import com.hartwig.actin.clinical.datamodel.Dosage;
@@ -63,14 +62,14 @@ public class MedicationGenerator implements TableGenerator {
 
     @NotNull
     private static String administrationRoute(@NotNull Medication medication) {
-        return medication.administrationRoute() != null ? medication.administrationRoute() : Strings.EMPTY;
+        return medication.administrationRoute() != null ? medication.administrationRoute() : "";
     }
 
     @NotNull
     private static String dosage(@NotNull Medication medication) {
         Dosage dosage = medication.dosage();
-        String dosageMin = dosage.dosageMin() != null || dosage.dosageMin() == 0.0 ? Formats.twoDigitNumber(dosage.dosageMin()) : "?";
-        String dosageMax = dosage.dosageMax() != null || dosage.dosageMax() == 0.0 ? Formats.twoDigitNumber(dosage.dosageMax()) : "?";
+        String dosageMin = (dosage.dosageMin() != null && dosage.dosageMin() != 0.0) ? Formats.twoDigitNumber(dosage.dosageMin()) : "?";
+        String dosageMax = (dosage.dosageMax() != null && dosage.dosageMax() != 0.0) ? Formats.twoDigitNumber(dosage.dosageMax()) : "?";
 
         String result = dosageMin.equals(dosageMax) ? dosageMin : dosageMin + " - " + dosageMax;
         Boolean ifNeeded = dosage.ifNeeded();
@@ -82,9 +81,9 @@ public class MedicationGenerator implements TableGenerator {
             result += (" " + dosage.dosageUnit());
         }
 
-        if ((Objects.equals(medication.administrationRoute(), "cutaneous") || Objects.equals(medication.administrationRoute(),
-                "intravenous")) && dosage.dosageMin() == 0.0) {
-            result = Strings.EMPTY;
+        if (("cutaneous".equals(medication.administrationRoute()) || "intravenous".equals(medication.administrationRoute()))
+                && dosage.dosageMin() == 0.0) {
+            result = "";
         }
 
         return result;
