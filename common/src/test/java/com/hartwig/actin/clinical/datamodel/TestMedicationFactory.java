@@ -13,6 +13,8 @@ public final class TestMedicationFactory {
         return ImmutableMedication.builder()
                 .name(Strings.EMPTY)
                 .qtProlongatingRisk(QTProlongatingRisk.NONE)
-                .dosage(ImmutableDosage.builder().build());
+                .dosage(ImmutableDosage.builder().build())
+                .isSelfCare(false)
+                .isTrialMedication(false);
     }
 }

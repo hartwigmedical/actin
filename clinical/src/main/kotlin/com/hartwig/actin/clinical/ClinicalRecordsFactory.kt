@@ -320,15 +320,15 @@ class ClinicalRecordsFactory(private val feed: FeedModel, private val curation: 
                     .addAllCypInteractions(curation.curateMedicationCypInteractions(name))
                     .qtProlongatingRisk(curation.annotateWithQTProlongating(name))
                     .atc(atc.resolve(entry.code5ATCCode))
+                    .isSelfCare(false)
+                    .isTrialMedication(false)
                     .build()
+
                 medications.add(curation.annotateWithMedicationCategory(medication))
 
                 if (entry.code5ATCDisplay.isEmpty()) {
                     builder.isSelfCare(entry.code5ATCCode.isEmpty())
                         .isTrialMedication(entry.code5ATCCode.isNotEmpty() && entry.code5ATCCode[0].lowercaseChar() !in 'a'..'z')
-                } else {
-                    builder.isSelfCare(false)
-                        .isTrialMedication(false)
                 }
             }
         }
