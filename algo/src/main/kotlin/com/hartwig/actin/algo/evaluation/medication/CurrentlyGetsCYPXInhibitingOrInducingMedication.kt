@@ -13,15 +13,15 @@ class CurrentlyGetsCYPXInhibitingOrInducingMedication(
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val activeMedications = selector.active(record.clinical().medications())
-        val cypMedications = activeMedications.filter { medication ->
+        val cypMedications = Format.medicationsToNames(activeMedications.filter { medication ->
             medication.cypInteractions()
                 .any { it.cyp() == termToFind && (it.type() == CypInteraction.Type.INDUCER || it.type() == CypInteraction.Type.INHIBITOR) }
-        }.map { it.name() }
+        })
 
         return if (cypMedications.isNotEmpty()) {
             EvaluationFactory.pass(
-                "Patient currently gets CYP$termToFind inhibiting/inducing medication: " + Format.concatLowercaseWithAnd(cypMedications),
-                "CYP$termToFind inhibiting/inducing medication use: " + Format.concatLowercaseWithAnd(cypMedications)
+                "Patient currently gets CYP$termToFind inhibiting/inducing medication: ${Format.concatLowercaseWithAnd(cypMedications)}",
+                "CYP$termToFind inhibiting/inducing medication use: ${Format.concatLowercaseWithAnd(cypMedications)}"
             )
         } else {
             EvaluationFactory.recoverableFail(

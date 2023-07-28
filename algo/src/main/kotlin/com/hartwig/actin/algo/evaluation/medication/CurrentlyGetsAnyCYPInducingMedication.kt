@@ -10,12 +10,12 @@ import com.hartwig.actin.clinical.datamodel.CypInteraction
 class CurrentlyGetsAnyCYPInducingMedication(private val selector: MedicationSelector) :
     EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val receivedAnyCYPInducer =
-            selector.activeWithCYPInteraction(record.clinical().medications(), null, CypInteraction.Type.INDUCER).map { it.name() }
-        return if (receivedAnyCYPInducer.isNotEmpty()) {
+        val cypInducersReceived =
+            Format.medicationsToNames(selector.activeWithCYPInteraction(record.clinical().medications(), null, CypInteraction.Type.INDUCER))
+        return if (cypInducersReceived.isNotEmpty()) {
             EvaluationFactory.pass(
-                "Patient currently gets CYP inducing medication: " + Format.concatLowercaseWithAnd(receivedAnyCYPInducer),
-                "CYP inducing medication use: " + Format.concatLowercaseWithAnd(receivedAnyCYPInducer)
+                "Patient currently gets CYP inducing medication: ${Format.concatLowercaseWithAnd(cypInducersReceived)}",
+                "CYP inducing medication use: ${Format.concatLowercaseWithAnd(cypInducersReceived)}"
             )
         } else {
             EvaluationFactory.recoverableFail(

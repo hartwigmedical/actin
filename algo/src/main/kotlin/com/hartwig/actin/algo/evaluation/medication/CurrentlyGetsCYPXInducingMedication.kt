@@ -12,12 +12,18 @@ class CurrentlyGetsCYPXInducingMedication(
     private val termToFind: String
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val receivedCYPXInducer =
-            selector.activeWithCYPInteraction(record.clinical().medications(), termToFind, CypInteraction.Type.INDUCER).map { it.name() }
-        return if (receivedCYPXInducer.isNotEmpty()) {
+        val cypInducersReceived =
+            Format.medicationsToNames(
+                selector.activeWithCYPInteraction(
+                    record.clinical().medications(),
+                    termToFind,
+                    CypInteraction.Type.INDUCER
+                )
+            )
+        return if (cypInducersReceived.isNotEmpty()) {
             EvaluationFactory.pass(
-                "Patient currently gets CYP$termToFind inducing medication: " + Format.concatLowercaseWithAnd(receivedCYPXInducer),
-                "CYP$termToFind inducing medication use: " + Format.concatLowercaseWithAnd(receivedCYPXInducer)
+                "Patient currently gets CYP$termToFind inducing medication: ${Format.concatLowercaseWithAnd(cypInducersReceived)}",
+                "CYP$termToFind inducing medication use: ${Format.concatLowercaseWithAnd(cypInducersReceived)}"
             )
         } else {
             EvaluationFactory.recoverableFail(

@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.util
 
+import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.util.ApplicationConfig
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -19,6 +20,10 @@ object Format {
 
     fun date(date: LocalDate): String {
         return DATE_FORMAT.format(date)
+    }
+
+    fun medicationsToNames(medication: List<Medication>): List<String> {
+        return medication.map { it.name() }
     }
 
     fun percentage(fraction: Double): String {
