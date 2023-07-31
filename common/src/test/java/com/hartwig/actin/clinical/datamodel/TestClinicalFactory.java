@@ -150,7 +150,7 @@ public final class TestClinicalFactory {
     @NotNull
     private static List<TreatmentHistoryEntry> createTreatmentHistory() {
         Drug oxaliplatin = drug("Oxaliplatin", DrugClass.PLATINUM_COMPOUND, TreatmentCategory.CHEMOTHERAPY);
-        Drug fluorouracil = drug("5-FU", DrugClass.PYRIMIDINE_ANTAGONIST, TreatmentCategory.CHEMOTHERAPY);
+        Drug fluorouracil = drug("5-FU", DrugClass.ANTIMETABOLITE, TreatmentCategory.CHEMOTHERAPY);
         Drug irinotecan = drug("Irinotecan", DrugClass.TOPO1_INHIBITOR, TreatmentCategory.CHEMOTHERAPY);
 
         DrugTherapy folfirinox = ImmutableDrugTherapy.builder()
