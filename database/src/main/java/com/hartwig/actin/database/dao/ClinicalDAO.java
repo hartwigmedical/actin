@@ -48,7 +48,6 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
 import com.hartwig.actin.clinical.datamodel.treatment.DrugClass;
-import com.hartwig.actin.clinical.datamodel.treatment.DrugTherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
@@ -238,7 +237,7 @@ class ClinicalDAO {
                                         .map(drug -> String.format("%s (%s)",
                                                 drug.name(),
                                                 drug.drugClasses().stream().map(DrugClass::toString).collect(Collectors.joining(", "))))));
-                        valueMap.put("maxCycles", ((DrugTherapy) treatment).maxCycles());
+                        valueMap.put("maxCycles", ((Therapy) treatment).maxCycles());
 
                         if (treatment instanceof Radiotherapy) {
                             valueMap.put("isInternal", ((Radiotherapy) treatment).isInternal());
