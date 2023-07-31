@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
-import com.hartwig.actin.algo.evaluation.composite.Or
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction
 import com.hartwig.actin.treatment.datamodel.EligibilityRule
 
@@ -46,7 +45,6 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_PET_MRI to hasContraindicationToMRICreator(),
             EligibilityRule.HAS_MRI_SCAN_DOCUMENTING_STABLE_DISEASE to hasMRIScanDocumentingStableDiseaseCreator(),
             EligibilityRule.IS_IN_DIALYSIS to isInDialysisCreator(),
-            EligibilityRule.HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS to hasAdequateVeinAccessCreator(),
         )
     }
 
@@ -130,10 +128,6 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
 
     private fun isInDialysisCreator(): FunctionCreator {
         return FunctionCreator { IsInDialysis() }
-    }
-
-    private fun hasAdequateVeinAccessCreator(): FunctionCreator {
-        return FunctionCreator { HasAdequateVeinAccess() }
     }
 
     private fun hasHistoryOfEyeDiseaseCreator(): FunctionCreator {
