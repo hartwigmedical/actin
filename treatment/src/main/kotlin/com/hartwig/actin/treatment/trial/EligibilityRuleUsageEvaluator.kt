@@ -11,7 +11,6 @@ object EligibilityRuleUsageEvaluator {
     private val LOGGER = LogManager.getLogger(EligibilityRuleUsageEvaluator::class.java)
     private val UNUSED_RULES_TO_KEEP = setOf(
         EligibilityRule.HAS_LYMPHOCYTES_CELLS_PER_MM3_OF_AT_LEAST_X,
-        EligibilityRule.CURRENTLY_GETS_NAME_X_MEDICATION,
         EligibilityRule.HAS_QTC_OF_AT_MOST_X,
         EligibilityRule.HAS_HLA_TYPE_X,
         EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X,
@@ -42,7 +41,23 @@ object EligibilityRuleUsageEvaluator {
         EligibilityRule.HAS_HAD_COMPLETE_RESECTION,
         EligibilityRule.MEETS_SPECIFIC_REQUIREMENTS_REGARDING_BIOPSY,
         EligibilityRule.PD_L1_STATUS_MUST_BE_AVAILABLE,
-        EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR
+        EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR,
+        EligibilityRule.HAS_LUNG_METASTASES,
+        EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS,
+        EligibilityRule.HAS_HAD_COMBINED_TREATMENT_NAMES_X_AND_BETWEEN_Y_AND_Z_CYCLES,
+        EligibilityRule.HAS_HAD_FIRST_LINE_CATEGORY_X_TREATMENT_OF_TYPES_Y,
+        EligibilityRule.HAS_HAD_ADJUVANT_CATEGORY_X_TREATMENT,
+        EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_LEAST_Z_WEEKS,
+        EligibilityRule.HAS_RADIOLOGICAL_PROGRESSIVE_DISEASE_FOLLOWING_AT_LEAST_X_TREATMENT_LINES,
+        EligibilityRule.PROTEIN_X_IS_WILD_TYPE_BY_IHC,
+        EligibilityRule.HAS_URINE_PROTEIN_TO_CREATININE_RATIO_MG_PER_MG_OF_AT_MOST_X,
+        EligibilityRule.HAS_THYROXINE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS,
+        EligibilityRule.HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION,
+        EligibilityRule.HAS_KNOWN_TUBERCULOSIS_INFECTION,
+        EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_BCRP,
+        EligibilityRule.HAS_ANY_COMPLICATION,
+        EligibilityRule.HAS_INTOLERANCE_FOR_PD_1_OR_PD_L1_INHIBITORS,
+        EligibilityRule.HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X
     )
 
     fun evaluate(trials: List<Trial>) {

@@ -46,7 +46,6 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_PET_MRI to hasContraindicationToMRICreator(),
             EligibilityRule.HAS_MRI_SCAN_DOCUMENTING_STABLE_DISEASE to hasMRIScanDocumentingStableDiseaseCreator(),
             EligibilityRule.IS_IN_DIALYSIS to isInDialysisCreator(),
-            EligibilityRule.HAS_ADEQUATE_VEIN_ACCESS_FOR_LEUKAPHERESIS to hasAdequateVeinAccessCreator(),
         )
     }
 
@@ -130,10 +129,6 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
 
     private fun isInDialysisCreator(): FunctionCreator {
         return FunctionCreator { IsInDialysis() }
-    }
-
-    private fun hasAdequateVeinAccessCreator(): FunctionCreator {
-        return FunctionCreator { HasAdequateVeinAccess() }
     }
 
     private fun hasHistoryOfEyeDiseaseCreator(): FunctionCreator {
