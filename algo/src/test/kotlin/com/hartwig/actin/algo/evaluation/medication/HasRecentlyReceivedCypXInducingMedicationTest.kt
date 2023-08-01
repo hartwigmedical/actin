@@ -21,7 +21,7 @@ class HasRecentlyReceivedCypXInducingMedicationTest {
     }
 
     @Test
-    fun shouldFailWhenPatientRecentlyReceivedCypInducingMedication() {
+    fun shouldFailWhenPatientRecentlyReceivedCypInducingMedicationThatDoesNotMatchCyp() {
         val medications = listOf(
             TestMedicationFactory.builder().stopDate(EVALUATION_DATE).addCypInteractions(
                 ImmutableCypInteraction.builder().cyp("3A4").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)

@@ -20,7 +20,7 @@ class CurrentlyGetsCypXInducingMedicationTest {
     }
 
     @Test
-    fun shouldFailWhenDifferentCypInducingMedication() {
+    fun shouldFailWhenCypInducingMedicationThatDoesNotMatchCyp() {
         val medications = listOf(
             TestMedicationFactory.builder().addCypInteractions(
                 ImmutableCypInteraction.builder().cyp("3A4").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)

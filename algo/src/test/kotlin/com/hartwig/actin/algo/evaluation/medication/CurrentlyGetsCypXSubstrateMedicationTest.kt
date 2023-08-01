@@ -20,7 +20,7 @@ class CurrentlyGetsCypXSubstrateMedicationTest {
     }
 
     @Test
-    fun shouldFailWhenDifferentCypSubstrateMedication() {
+    fun shouldFailWhenCypSubstrateMedicationThatDoesNotMatchCyp() {
         val medications = listOf(
             TestMedicationFactory.builder().addCypInteractions(
                 ImmutableCypInteraction.builder().cyp("3A4").type(CypInteraction.Type.SUBSTRATE).strength(CypInteraction.Strength.STRONG)
