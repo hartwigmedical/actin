@@ -36,6 +36,14 @@ class HasFusionInGeneTest {
     }
 
     @Test
+    fun shouldFailIfExonDelDupOnDifferentGene() {
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(MolecularTestFactory.withFusion(matchingFusionBuilder().geneStart("gene B").geneEnd("gene B").build()))
+        )
+    }
+
+    @Test
     fun shouldFailOnFiveGeneMatchWhenTypeIsThreePromiscuous() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
@@ -78,6 +86,7 @@ class HasFusionInGeneTest {
             function.evaluate(MolecularTestFactory.withFusion(matchingFusionBuilder().proteinEffect(ProteinEffect.NO_EFFECT).build()))
         )
     }
+
 
     companion object {
         private const val MATCHING_GENE = "gene A"
