@@ -8,9 +8,9 @@ import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
 import org.junit.Test
 
-class HasRecentlyReceivedCYPXInducingMedicationTest {
+class HasRecentlyReceivedCypXInducingMedicationTest {
     @Test
-    fun shouldPassWhenPatientRecentlyReceivedCYPInducingMedication() {
+    fun shouldPassWhenPatientRecentlyReceivedCypInducingMedication() {
         val medications = listOf(
             TestMedicationFactory.builder().stopDate(EVALUATION_DATE).addCypInteractions(
                 ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
@@ -21,7 +21,18 @@ class HasRecentlyReceivedCYPXInducingMedicationTest {
     }
 
     @Test
-    fun shouldFailWhenPatientReceivedCYPInducingMedicationBeforeMinStopDate() {
+    fun shouldFailWhenPatientRecentlyReceivedCypInducingMedication() {
+        val medications = listOf(
+            TestMedicationFactory.builder().stopDate(EVALUATION_DATE).addCypInteractions(
+                ImmutableCypInteraction.builder().cyp("3A4").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
+                    .build()
+            ).build()
+        )
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
+    }
+
+    @Test
+    fun shouldFailWhenPatientReceivedCypInducingMedicationBeforeMinStopDate() {
         val medications = listOf(
             TestMedicationFactory.builder().stopDate(EVALUATION_DATE.minusWeeks(3)).addCypInteractions(
                 ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
@@ -32,7 +43,7 @@ class HasRecentlyReceivedCYPXInducingMedicationTest {
     }
 
     @Test
-    fun shouldFailWhenPatientDoesNotRecentlyReceivedCYPInducingMedication() {
+    fun shouldFailWhenPatientDoesNotRecentlyReceivedCypInducingMedication() {
         val medications = listOf(
             TestMedicationFactory.builder().stopDate(EVALUATION_DATE).addCypInteractions(
                 ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.SUBSTRATE).strength(CypInteraction.Strength.STRONG)
@@ -51,6 +62,6 @@ class HasRecentlyReceivedCYPXInducingMedicationTest {
     companion object {
         private val EVALUATION_DATE = TestClinicalFactory.createMinimalTestClinicalRecord().patient().registrationDate().plusWeeks(1)
         private val FUNCTION =
-            HasRecentlyReceivedCYPXInducingMedication(MedicationTestFactory.alwaysStopped(), "9A9", EVALUATION_DATE.minusDays(1))
+            HasRecentlyReceivedCypXInducingMedication(MedicationTestFactory.alwaysStopped(), "9A9", EVALUATION_DATE.minusDays(1))
     }
 }

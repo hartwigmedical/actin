@@ -8,21 +8,20 @@ import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.clinical.datamodel.CypInteraction
 import java.time.LocalDate
 
-class HasRecentlyReceivedCYPXInducingMedication(
+class HasRecentlyReceivedCypXInducingMedication(
     private val selector: MedicationSelector,
     private val termToFind: String,
     private val minStopDate: LocalDate
 ) :
     EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val cypInducersReceived = Format.medicationsToNames(
-            selector.activeOrRecentlyStoppedWithCYPInteraction(
-                record.clinical().medications(),
-                termToFind,
-                CypInteraction.Type.INDUCER,
-                minStopDate
-            )
-        )
+        val cypInducersReceived = selector.activeOrRecentlyStoppedWithCypInteraction(
+            record.clinical().medications(),
+            termToFind,
+            CypInteraction.Type.INDUCER,
+            minStopDate
+        ).map { it.name() }
+
         return if (cypInducersReceived.isNotEmpty()) {
             EvaluationFactory.pass(
                 "Patient has recently received CYP$termToFind inducing medication: ${Format.concatLowercaseWithAnd(cypInducersReceived)}",

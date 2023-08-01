@@ -7,18 +7,16 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.algo.evaluation.util.Format
 
-class CurrentlyGetsCYPXSubstrateMedication(
+class CurrentlyGetsCypXSubstrateMedication(
     private val selector: MedicationSelector,
     private val termToFind: String
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val cypSubstratesReceived = Format.medicationsToNames(
-            selector.activeWithCYPInteraction(
-                record.clinical().medications(),
-                termToFind,
-                CypInteraction.Type.SUBSTRATE
-            )
-        )
+        val cypSubstratesReceived = selector.activeWithCypInteraction(
+            record.clinical().medications(),
+            termToFind,
+            CypInteraction.Type.SUBSTRATE
+        ).map { it.name() }
         return if (cypSubstratesReceived.isNotEmpty()) {
             EvaluationFactory.pass(
                 "Patient currently gets CYP$termToFind substrate medication: ${Format.concatLowercaseWithAnd(cypSubstratesReceived)}",

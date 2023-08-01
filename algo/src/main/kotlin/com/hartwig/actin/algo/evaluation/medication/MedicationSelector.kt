@@ -36,21 +36,21 @@ class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
             .filter { isActive(it) || isRecentlyStopped(it, minStopDate) }
     }
 
-    fun activeWithCYPInteraction(
+    fun activeWithCypInteraction(
         medications: List<Medication>,
         interactionToFind: String?,
-        typeOfCYP: CypInteraction.Type
+        typeOfCyp: CypInteraction.Type
     ): List<Medication> {
         return active(medications).filter { medication ->
-            medication.cypInteractions().any { (interactionToFind == null || interactionToFind == it.cyp()) && typeOfCYP == it.type() }
+            medication.cypInteractions().any { (interactionToFind == null || interactionToFind == it.cyp()) && typeOfCyp == it.type() }
         }
     }
 
-    fun activeOrRecentlyStoppedWithCYPInteraction(
-        medications: List<Medication>, interactionToFind: String?, typeOfCYP: CypInteraction.Type, minStopDate: LocalDate
+    fun activeOrRecentlyStoppedWithCypInteraction(
+        medications: List<Medication>, interactionToFind: String?, typeOfCyp: CypInteraction.Type, minStopDate: LocalDate
     ): List<Medication> {
         return medications.filter { medication ->
-            medication.cypInteractions().any { (interactionToFind == null || interactionToFind == it.cyp()) && typeOfCYP == it.type() }
+            medication.cypInteractions().any { (interactionToFind == null || interactionToFind == it.cyp()) && typeOfCyp == it.type() }
         }
             .filter { isActive(it) || isRecentlyStopped(it, minStopDate) }
     }

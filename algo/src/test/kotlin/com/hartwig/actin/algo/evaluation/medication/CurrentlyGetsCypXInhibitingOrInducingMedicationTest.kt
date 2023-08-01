@@ -7,9 +7,9 @@ import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
 import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
 import org.junit.Test
 
-class CurrentlyGetsCYPXInducingMedicationTest {
+class CurrentlyGetsCypXInhibitingOrInducingMedicationTest {
     @Test
-    fun shouldPassWhenCYPInducingMedication() {
+    fun shouldPassWhenCypInhibitingOrInducingMedication() {
         val medications = listOf(
             TestMedicationFactory.builder().addCypInteractions(
                 ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
@@ -20,7 +20,18 @@ class CurrentlyGetsCYPXInducingMedicationTest {
     }
 
     @Test
-    fun shouldFailWhenNoCYPInducingMedication() {
+    fun shouldFailWhenDifferentCypInhibitingOrInducingMedication() {
+        val medications = listOf(
+            TestMedicationFactory.builder().addCypInteractions(
+                ImmutableCypInteraction.builder().cyp("3A4").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
+                    .build()
+            ).build()
+        )
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
+    }
+
+    @Test
+    fun shouldFailWhenNoCypInhibitingOrInducingMedication() {
         val medications = listOf(
             TestMedicationFactory.builder().addCypInteractions(
                 ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.SUBSTRATE).strength(CypInteraction.Strength.STRONG)
@@ -37,6 +48,6 @@ class CurrentlyGetsCYPXInducingMedicationTest {
     }
 
     companion object {
-        private val FUNCTION = CurrentlyGetsCYPXInducingMedication(MedicationTestFactory.alwaysActive(), "9A9")
+        private val FUNCTION = CurrentlyGetsCypXInhibitingOrInducingMedication(MedicationTestFactory.alwaysActive(), "9A9")
     }
 }
