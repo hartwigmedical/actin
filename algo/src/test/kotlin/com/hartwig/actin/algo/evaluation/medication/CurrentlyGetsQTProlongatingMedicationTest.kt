@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
 import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
 import org.junit.Test
@@ -22,7 +23,7 @@ class CurrentlyGetsQTProlongatingMedicationTest {
 
     @Test
     fun shouldFailWhenPatientUsesNoMedication() {
-        val medications = listOf(TestMedicationFactory.builder().build())
+        val medications = emptyList<Medication>()
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
