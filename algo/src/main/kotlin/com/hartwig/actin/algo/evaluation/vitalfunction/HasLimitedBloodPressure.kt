@@ -25,17 +25,13 @@ class HasLimitedBloodPressure internal constructor(
         return if (median.compareTo(maxMedianBloodPressure) <= 0) {
             EvaluationFactory.recoverablePass(
                 "Patient has median $categoryDisplay below $maxMedianBloodPressure",
-                "$categoryDisplay below limit"
+                "Median $categoryDisplay ($median) below limit of $maxMedianBloodPressure"
             )
-        } else if (relevant.any { it.value().compareTo(maxMedianBloodPressure) <= 0 }) {
-            EvaluationFactory.recoverableUndetermined(
-                "Patient has median $categoryDisplay blood pressure above $maxMedianBloodPressure "
-                        + "but also at least one measure below $maxMedianBloodPressure", "$categoryDisplay requirements"
-            )
+
         } else {
             EvaluationFactory.recoverableFail(
                 "Patient has median $categoryDisplay exceeding $maxMedianBloodPressure",
-                "$categoryDisplay above limit"
+                "Median $categoryDisplay ($median) above limit of $maxMedianBloodPressure"
             )
         }
     }

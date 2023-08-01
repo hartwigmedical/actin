@@ -19,10 +19,6 @@ class HasLimitedBloodPressureTest {
         bloodPressures.add(systolic().date(referenceDate).value(90.0).build())
         assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(bloodPressures)))
 
-        // Undetermined when the median raises above 100 but one measure below 100
-        bloodPressures.add(systolic().date(referenceDate.minusDays(1)).value(120.0).build())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(bloodPressures)))
-
         // Succeed again when the median drops below 100
         bloodPressures.add(systolic().date(referenceDate.minusDays(2)).value(90.0).build())
         bloodPressures.add(systolic().date(referenceDate.minusDays(3)).value(90.0).build())

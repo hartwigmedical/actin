@@ -24,22 +24,15 @@ class HasSufficientBloodPressure internal constructor(
         return when {
             median.compareTo(minMedianBloodPressure) >= 0 -> {
                 EvaluationFactory.recoverablePass(
-                    "Patient has median $categoryDisplay exceeding $minMedianBloodPressure",
-                    "$categoryDisplay above limit"
-                )
-            }
-
-            relevant.any { it.value().compareTo(minMedianBloodPressure) >= 0 } -> {
-                EvaluationFactory.recoverableUndetermined(
-                    "Patient has median $categoryDisplay blood pressure below $minMedianBloodPressure "
-                            + "but also at least one measure above $minMedianBloodPressure", "$categoryDisplay requirements"
+                    "Patient has median $categoryDisplay ($median) exceeding $minMedianBloodPressure",
+                    "Median $categoryDisplay ($median) above limit of $minMedianBloodPressure"
                 )
             }
 
             else -> {
                 EvaluationFactory.recoverableFail(
-                    "Patient has median $categoryDisplay below $minMedianBloodPressure",
-                    "$categoryDisplay below limit"
+                    "Patient has median $categoryDisplay ($median) below $minMedianBloodPressure",
+                    "Median $categoryDisplay ($median) below limit of $minMedianBloodPressure"
                 )
             }
         }
