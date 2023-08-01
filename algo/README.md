@@ -626,7 +626,7 @@ Note for all TOXICITY rules:
 | HAS_BODY_WEIGHT_OF_AT_LEAST_X          | bodyWeight > Latest body weight measurement (in kg) => X                                                                                        |
 | HAS_BMI_OF_AT_MOST_X                   | Patient BMI estimate from body weight <= X for patients between 1.5 and 2.0 m                                                                   |
 
-For SBP, DBP and Pulse oximetry, evaluation should resolve to `UNDETERMINED` rather than `FAIL` in case of no PASS, but at least 1 of the up
+For Pulse oximetry, evaluation should resolve to `UNDETERMINED` rather than `FAIL` in case of no PASS, but at least 1 of the up
 to 5 most recent values would be sufficient to `PASS`.
 
 ##### Rules related to blood transfusions
