@@ -24,13 +24,13 @@ class HasLimitedBloodPressure internal constructor(
         val median = VitalFunctionFunctions.determineMedianValue(relevant)
         return if (median.compareTo(maxMedianBloodPressure) <= 0) {
             EvaluationFactory.recoverablePass(
-                "Patient has median $categoryDisplay below $maxMedianBloodPressure",
+                "Patient has median $categoryDisplay ($median) below $maxMedianBloodPressure",
                 "Median $categoryDisplay ($median) below limit of $maxMedianBloodPressure"
             )
 
         } else {
             EvaluationFactory.recoverableFail(
-                "Patient has median $categoryDisplay exceeding $maxMedianBloodPressure",
+                "Patient has median $categoryDisplay ($median) exceeding $maxMedianBloodPressure",
                 "Median $categoryDisplay ($median) above limit of $maxMedianBloodPressure"
             )
         }
