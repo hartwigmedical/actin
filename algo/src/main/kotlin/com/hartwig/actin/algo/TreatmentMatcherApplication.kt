@@ -62,7 +62,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
     companion object {
         val LOGGER: Logger = LogManager.getLogger(TreatmentMatcherApplication::class.java)
         const val APPLICATION = "ACTIN Treatment Matcher"
-        val VERSION: String = TreatmentMatcherApplication::class.java.getPackage().implementationVersion
+        val VERSION: String = TreatmentMatcherApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
 }
 
