@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 public enum DrugType implements TreatmentType {
     ABL_INHIBITOR(TreatmentCategory.TARGETED_THERAPY),
+    ADENOSINE_TARGETING(TreatmentCategory.IMMUNOTHERAPY),
     ALK_INHIBITOR(TreatmentCategory.TARGETED_THERAPY),
     ALKYLATING_AGENT(TreatmentCategory.CHEMOTHERAPY),
     ANTHRACYCLINE(TreatmentCategory.CHEMOTHERAPY),
@@ -11,6 +12,7 @@ public enum DrugType implements TreatmentType {
     ANTI_CD3(TreatmentCategory.TARGETED_THERAPY),
     ANTI_CD9(TreatmentCategory.TARGETED_THERAPY),
     ANTI_CD40(TreatmentCategory.TARGETED_THERAPY),
+    ANTI_CD73(TreatmentCategory.IMMUNOTHERAPY),
     ANTI_CD137(TreatmentCategory.IMMUNOTHERAPY),
     ANTI_CEACAM5(TreatmentCategory.TARGETED_THERAPY),
     ANTI_CLDN6_CAR_T(TreatmentCategory.CAR_T),
@@ -55,7 +57,7 @@ public enum DrugType implements TreatmentType {
     FLT3L_INHIBITOR(TreatmentCategory.TARGETED_THERAPY),
     FLUOROPYRIMIDINE(TreatmentCategory.CHEMOTHERAPY),
     GAMMA_SECRETASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY),
-    GONADORELIN_AGONISTS(TreatmentCategory.HORMONE_THERAPY),
+    GONADORELIN_AGONIST(TreatmentCategory.HORMONE_THERAPY),
     HEDGEHOG_PATHWAY_INHIBITOR(TreatmentCategory.TARGETED_THERAPY),
     HER2_ANTIBODY(TreatmentCategory.TARGETED_THERAPY),
     HER2_CAR_T(TreatmentCategory.CAR_T),
