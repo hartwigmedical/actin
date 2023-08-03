@@ -22,9 +22,9 @@ class HasFusionInGene internal constructor(private val gene: String) : Evaluatio
 
         for (fusion in record.molecular().drivers().fusions()) {
             val isAllowedDriverType =
-                fusion.geneStart() == fusion.geneEnd() ||
-                        fusion.geneStart() == gene && ALLOWED_DRIVER_TYPES_FOR_GENE_5.contains(fusion.driverType()) ||
-                        fusion.geneEnd() == gene && ALLOWED_DRIVER_TYPES_FOR_GENE_3.contains(fusion.driverType())
+                (fusion.geneStart() == gene && fusion.geneStart() == fusion.geneEnd()) ||
+                        (fusion.geneStart() == gene && ALLOWED_DRIVER_TYPES_FOR_GENE_5.contains(fusion.driverType())) ||
+                        (fusion.geneEnd() == gene && ALLOWED_DRIVER_TYPES_FOR_GENE_3.contains(fusion.driverType()))
             if (isAllowedDriverType) {
                 val isGainOfFunction =
                     (fusion.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION ||
