@@ -17,7 +17,13 @@ const val INCORRECT_VALUE = "incorrect"
 class MedicationFeedValidationTest {
     @Test
     fun shouldPassValidityCheckForTrialAtcCodes() {
-        Assertions.assertThat(MedicationFeedValidation(TestAtcFactory.createMinimalAtcModel()).validate(medicationEntry("123"))).isEmpty()
+        Assertions.assertThat(
+            MedicationFeedValidation(TestAtcFactory.createMinimalAtcModel()).validate(
+                medicationEntry(
+                    "123"
+                )
+            )
+        ).isEmpty()
     }
 
     @Test

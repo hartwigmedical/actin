@@ -66,7 +66,10 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
             null, null
         )
         val trial = TreatmentTestFactory.builder().addCategories(TreatmentCategory.TRIAL).build()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(listOf(trial, trial))))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(listOf(trial, trial)))
+        )
     }
 
     @Test
@@ -77,7 +80,8 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(
                 TreatmentTestFactory.withPriorTumorTreatment(
-                    TreatmentTestFactory.builder().addCategories(TreatmentCategory.CHEMOTHERAPY).stopReason(PD_LABEL).chemoType("type 1")
+                    TreatmentTestFactory.builder().addCategories(TreatmentCategory.CHEMOTHERAPY).stopReason(PD_LABEL)
+                        .chemoType("type 1")
                         .build()
                 )
             )

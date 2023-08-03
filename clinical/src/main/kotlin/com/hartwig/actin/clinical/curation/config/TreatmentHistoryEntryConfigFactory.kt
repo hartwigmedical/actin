@@ -30,7 +30,11 @@ object TreatmentHistoryEntryConfigFactory {
     ): TreatmentHistoryEntryConfig {
         val ignore: Boolean = CurationUtil.isIgnoreString(treatmentName)
         val treatment = if (ignore) null else {
-            treatmentDatabase.findTreatmentByName(treatmentName) ?: generateTreatmentForCuration(treatmentName, parts, fields)
+            treatmentDatabase.findTreatmentByName(treatmentName) ?: generateTreatmentForCuration(
+                treatmentName,
+                parts,
+                fields
+            )
         }
         return TreatmentHistoryEntryConfig(
             input = parts[fields["input"]!!],
@@ -39,8 +43,13 @@ object TreatmentHistoryEntryConfigFactory {
         )
     }
 
-    private fun generateTreatmentForCuration(treatmentName: String, parts: List<String>, fields: Map<String, Int>): Treatment? {
-        val categories = TreatmentCategoryResolver.fromStringList(parts[fields["category"]!!]).filterNot { it == TreatmentCategory.TRIAL }
+    private fun generateTreatmentForCuration(
+        treatmentName: String,
+        parts: List<String>,
+        fields: Map<String, Int>
+    ): Treatment? {
+        val categories = TreatmentCategoryResolver.fromStringList(parts[fields["category"]!!])
+            .filterNot { it == TreatmentCategory.TRIAL }
         val therapyCategories = categories.filter {
             it in setOf(
                 TreatmentCategory.CHEMOTHERAPY,
@@ -71,10 +80,15 @@ object TreatmentHistoryEntryConfigFactory {
         return null
     }
 
-    private fun curateObject(fields: Map<String, Int>, parts: List<String>, treatment: Treatment?): TreatmentHistoryEntry {
+    private fun curateObject(
+        fields: Map<String, Int>,
+        parts: List<String>,
+        treatment: Treatment?
+    ): TreatmentHistoryEntry {
         val therapyHistoryDetails = if (treatment is Therapy) {
             val bestResponseString = optionalStringFromColumn(parts, fields, "bestResponse")
-            val bestResponse = if (bestResponseString != null) TreatmentResponse.createFromString(bestResponseString) else null
+            val bestResponse =
+                if (bestResponseString != null) TreatmentResponse.createFromString(bestResponseString) else null
             val stopReasonDetail = optionalStringFromColumn(parts, fields, "stopReason")
 
             val toxicities: Set<ObservedToxicity>? = stopReasonDetail?.let {
@@ -106,7 +120,9 @@ object TreatmentHistoryEntryConfigFactory {
             .startYear(optionalIntegerFromColumn(parts, fields, "startYear"))
             .startMonth(optionalIntegerFromColumn(parts, fields, "startMonth"))
             .intents(intents)
-            .isTrial(TreatmentCategoryResolver.fromStringList(parts[fields["category"]!!]).contains(TreatmentCategory.TRIAL))
+            .isTrial(
+                TreatmentCategoryResolver.fromStringList(parts[fields["category"]!!]).contains(TreatmentCategory.TRIAL)
+            )
             .trialAcronym(optionalStringFromColumn(parts, fields, "trialAcronym"))
             .therapyHistoryDetails(therapyHistoryDetails)
             .build()

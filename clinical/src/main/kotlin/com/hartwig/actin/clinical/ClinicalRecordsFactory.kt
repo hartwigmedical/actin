@@ -56,7 +56,11 @@ import com.hartwig.actin.clinical.sort.MedicationByNameComparator
 import org.apache.logging.log4j.LogManager
 
 
-class ClinicalRecordsFactory(private val feed: FeedModel, private val curation: CurationModel, private val atc: AtcModel) {
+class ClinicalRecordsFactory(
+    private val feed: FeedModel,
+    private val curation: CurationModel,
+    private val atc: AtcModel
+) {
 
     fun create(): List<ClinicalRecord> {
         val processedPatientIds: MutableSet<String> = HashSet()

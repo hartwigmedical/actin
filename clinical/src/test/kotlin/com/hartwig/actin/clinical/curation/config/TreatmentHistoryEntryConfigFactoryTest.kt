@@ -78,7 +78,12 @@ class TreatmentHistoryEntryConfigFactoryTest {
         assertThat(config.curated!!.treatments()).isEmpty()
     }
 
-    private fun assertGeneratedTreatment(treatmentName: String, parts: List<String>, input: String, treatmentCategory: TreatmentCategory) {
+    private fun assertGeneratedTreatment(
+        treatmentName: String,
+        parts: List<String>,
+        input: String,
+        treatmentCategory: TreatmentCategory
+    ) {
         val config = TreatmentHistoryEntryConfigFactory.createConfig(treatmentName, treatmentDatabase, parts, fields)
         assertThat(config.input).isEqualTo(input)
         assertThat(config.ignore).isFalse

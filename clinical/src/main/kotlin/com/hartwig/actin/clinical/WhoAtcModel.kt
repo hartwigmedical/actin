@@ -32,14 +32,17 @@ class WhoAtcModel(private val atcMap: Map<String, String>) : AtcModel {
         }
     }
 
-    private fun atcLevel(levelCode: String): ImmutableAtcLevel = ImmutableAtcLevel.builder().code(levelCode).name(lookup(levelCode)).build()
+    private fun atcLevel(levelCode: String): ImmutableAtcLevel =
+        ImmutableAtcLevel.builder().code(levelCode).name(lookup(levelCode)).build()
 
-    private fun lookup(level: String) = atcMap[level] ?: throw IllegalArgumentException("ATC code [$level] not found in tree")
+    private fun lookup(level: String) =
+        atcMap[level] ?: throw IllegalArgumentException("ATC code [$level] not found in tree")
 
     companion object {
         fun createFromFile(tsvPath: String): WhoAtcModel {
             val lines = Files.readAllLines(File(tsvPath).toPath())
-            val fields = TabularFile.createFields(lines[0].split(TabularFile.DELIMITER).dropLastWhile { it.isEmpty() }.toTypedArray())
+            val fields = TabularFile.createFields(lines[0].split(TabularFile.DELIMITER).dropLastWhile { it.isEmpty() }
+                .toTypedArray())
             return WhoAtcModel(lines.map { it.split(TabularFile.DELIMITER).toTypedArray() }
                 .associate { line -> line[fields["Name"]!!] to line[fields["ATCCode"]!!] })
         }

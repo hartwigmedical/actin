@@ -17,7 +17,9 @@ class HasMaximumWHOStatus internal constructor(private val maximumWHO: Int) : Ev
                 "Patient WHO status $who equals maximum but patient has complication categories of concern: " + Format.concatLowercaseWithAnd(
                     warningComplicationCategories
                 ) + ", potentially indicating deterioration",
-                "WHO currently adequate but potential deterioration due to " + Format.concatLowercaseWithAnd(warningComplicationCategories)
+                "WHO currently adequate but potential deterioration due to " + Format.concatLowercaseWithAnd(
+                    warningComplicationCategories
+                )
             )
 
             who <= maximumWHO -> EvaluationFactory.pass(
@@ -25,7 +27,8 @@ class HasMaximumWHOStatus internal constructor(private val maximumWHO: Int) : Ev
             )
 
             who - maximumWHO == 1 -> EvaluationFactory.recoverableFail(
-                "Patient WHO status $who is 1 higher than requested max (WHO $maximumWHO)", "WHO $who exceeds max WHO $maximumWHO"
+                "Patient WHO status $who is 1 higher than requested max (WHO $maximumWHO)",
+                "WHO $who exceeds max WHO $maximumWHO"
             )
 
             else -> EvaluationFactory.fail(

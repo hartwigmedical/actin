@@ -74,14 +74,20 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
                 .startYear(minDate.minusYears(1).year)
                 .build()
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments))
+        )
         treatments.add(
             TreatmentTestFactory.builder()
                 .addCategories(TreatmentCategory.TRIAL)
                 .startYear(minDate.plusYears(1).year)
                 .build()
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments))
+        )
     }
 
     @Test
@@ -92,6 +98,9 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
             .addCategories(TreatmentCategory.TRIAL)
             .startYear(minDate.plusYears(1).year)
             .build()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(listOf(trial, trial))))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(listOf(trial, trial)))
+        )
     }
 }

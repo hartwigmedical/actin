@@ -307,7 +307,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return FunctionCreator { HasLeftSidedColorectalTumor(doidModel()) }
     }
 
-    private fun meetsSpecificCriteriaRegardingLiverMetastasesCreator(): FunctionCreator{
+    private fun meetsSpecificCriteriaRegardingLiverMetastasesCreator(): FunctionCreator {
         return FunctionCreator { MeetsSpecificCriteriaRegardingLiverMetastases() }
     }
 }

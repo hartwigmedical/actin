@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.medication.MedicationStatusInterpreter
 import com.hartwig.actin.clinical.datamodel.Medication
 import java.time.LocalDate
 
-internal class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
+class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
     fun active(medications: List<Medication>): List<Medication> {
         return medications.filter(::isActive)
     }
@@ -29,7 +29,9 @@ internal class MedicationSelector(private val interpreter: MedicationStatusInter
     fun activeOrRecentlyStoppedWithCategory(
         medications: List<Medication>, categoryToFind: String, minStopDate: LocalDate
     ): List<Medication> {
-        return medications.filter { medication -> medication.categories().any { it.equals(categoryToFind, ignoreCase = true) } }
+        return medications.filter { medication ->
+            medication.categories().any { it.equals(categoryToFind, ignoreCase = true) }
+        }
             .filter { isActive(it) || isRecentlyStopped(it, minStopDate) }
     }
 

@@ -51,7 +51,8 @@ class BuildClinicalFromDoidsOnly(private val command: CommandLine) {
         }
 
         private fun toStringSet(paramValue: String, separator: String): Set<String> {
-            return if (paramValue.isNotEmpty()) paramValue.split(separator.toRegex()).dropLastWhile { it.isEmpty() }.toSet() else emptySet()
+            return if (paramValue.isNotEmpty()) paramValue.split(separator.toRegex()).dropLastWhile { it.isEmpty() }
+                .toSet() else emptySet()
         }
     }
 }
@@ -70,6 +71,10 @@ private fun createOptions(): Options {
     val options = Options()
     options.addOption(OUTPUT_DIRECTORY, true, "Directory where clinical data output will be written to")
     options.addOption(PATIENT, true, "The patient for which clinical data is generated")
-    options.addOption(PRIMARY_TUMOR_DOIDS, true, "A semicolon-separated list of DOIDs representing the primary tumor of patient.")
+    options.addOption(
+        PRIMARY_TUMOR_DOIDS,
+        true,
+        "A semicolon-separated list of DOIDs representing the primary tumor of patient."
+    )
     return options
 }

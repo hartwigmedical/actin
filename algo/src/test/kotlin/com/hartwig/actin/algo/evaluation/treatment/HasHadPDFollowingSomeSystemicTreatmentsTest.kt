@@ -11,7 +11,10 @@ class HasHadPDFollowingSomeSystemicTreatmentsTest {
     @Test
     fun shouldFailWhenNoTreatments() {
         FUNCTIONS.forEach {
-            assertEvaluation(EvaluationResult.FAIL, it.evaluate(TreatmentTestFactory.withPriorTumorTreatments(emptyList())))
+            assertEvaluation(
+                EvaluationResult.FAIL,
+                it.evaluate(TreatmentTestFactory.withPriorTumorTreatments(emptyList()))
+            )
         }
     }
 
@@ -20,7 +23,10 @@ class HasHadPDFollowingSomeSystemicTreatmentsTest {
         val treatments = listOf(TreatmentTestFactory.builder().isSystemic(false).build())
 
         FUNCTIONS.forEach {
-            assertEvaluation(EvaluationResult.FAIL, it.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
+            assertEvaluation(
+                EvaluationResult.FAIL,
+                it.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments))
+            )
         }
     }
 
@@ -35,7 +41,10 @@ class HasHadPDFollowingSomeSystemicTreatmentsTest {
         )
 
         FUNCTIONS.forEach {
-            assertEvaluation(EvaluationResult.UNDETERMINED, it.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
+            assertEvaluation(
+                EvaluationResult.UNDETERMINED,
+                it.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments))
+            )
         }
     }
 
@@ -49,12 +58,18 @@ class HasHadPDFollowingSomeSystemicTreatmentsTest {
                 .stopReason(PD_LABEL)
                 .build()
         )
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            FUNCTION.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments))
+        )
 
-        val radiologicalEvaluation = RADIOLOGICAL_FUNCTION.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments))
+        val radiologicalEvaluation =
+            RADIOLOGICAL_FUNCTION.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments))
         assertEvaluation(EvaluationResult.PASS, radiologicalEvaluation)
         assertThat(radiologicalEvaluation.passGeneralMessages()).hasSize(1)
-        assertThat(radiologicalEvaluation.passGeneralMessages().iterator().next()).contains("(assumed PD is radiological)")
+        assertThat(
+            radiologicalEvaluation.passGeneralMessages().iterator().next()
+        ).contains("(assumed PD is radiological)")
     }
 
     @Test
@@ -76,7 +91,10 @@ class HasHadPDFollowingSomeSystemicTreatmentsTest {
         )
 
         FUNCTIONS.forEach {
-            assertEvaluation(EvaluationResult.UNDETERMINED, it.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
+            assertEvaluation(
+                EvaluationResult.UNDETERMINED,
+                it.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments))
+            )
         }
     }
 
@@ -102,10 +120,14 @@ class HasHadPDFollowingSomeSystemicTreatmentsTest {
     @Test
     fun shouldPassIfLastSystemicTreatmentIndicatesPDInBestResponse() {
         val treatments = listOf(
-            TreatmentTestFactory.builder().name("treatment 1").isSystemic(true).startYear(2021).bestResponse(PD_LABEL).build()
+            TreatmentTestFactory.builder().name("treatment 1").isSystemic(true).startYear(2021).bestResponse(PD_LABEL)
+                .build()
         )
         FUNCTIONS.forEach {
-            assertEvaluation(EvaluationResult.PASS, it.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
+            assertEvaluation(
+                EvaluationResult.PASS,
+                it.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments))
+            )
         }
     }
 
@@ -117,7 +139,10 @@ class HasHadPDFollowingSomeSystemicTreatmentsTest {
             TreatmentTestFactory.builder().isSystemic(true).name("treatment").startYear(2020).build(),
             TreatmentTestFactory.builder().isSystemic(true).name("treatment").startYear(2021).build()
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments))
+        )
     }
 
     companion object {

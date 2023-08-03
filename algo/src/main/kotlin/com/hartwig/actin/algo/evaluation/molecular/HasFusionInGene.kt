@@ -66,7 +66,8 @@ class HasFusionInGene internal constructor(private val gene: String) : Evaluatio
         )
 
         return potentialWarnEvaluation ?: unrecoverable().result(EvaluationResult.FAIL)
-            .addFailSpecificMessages("No fusion detected with gene $gene").addFailGeneralMessages("No fusion in gene $gene").build()
+            .addFailSpecificMessages("No fusion detected with gene $gene")
+            .addFailGeneralMessages("No fusion in gene $gene").build()
     }
 
     private fun evaluatePotentialWarns(

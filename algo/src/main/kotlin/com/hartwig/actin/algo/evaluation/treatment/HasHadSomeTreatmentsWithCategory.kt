@@ -10,7 +10,8 @@ class HasHadSomeTreatmentsWithCategory(private val category: TreatmentCategory, 
     EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentSummary = TreatmentSummaryForCategory.createForTreatments(record.clinical().priorTumorTreatments(), category)
+        val treatmentSummary =
+            TreatmentSummaryForCategory.createForTreatments(record.clinical().priorTumorTreatments(), category)
 
         return if (treatmentSummary.numSpecificMatches >= minTreatmentLines) {
             EvaluationFactory.pass(
