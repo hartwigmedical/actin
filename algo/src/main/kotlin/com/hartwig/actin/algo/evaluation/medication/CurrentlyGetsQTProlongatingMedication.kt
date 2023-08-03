@@ -13,7 +13,7 @@ class CurrentlyGetsQTProlongatingMedication(private val selector: MedicationSele
         val activeMedications = selector.active(record.clinical().medications())
         val qtMedication = activeMedications.filter { it.qtProlongatingRisk() != QTProlongatingRisk.NONE }
         return if (qtMedication.isNotEmpty()) {
-            EvaluationFactory.pass(
+            EvaluationFactory.recoverablePass(
                 "Patient currently gets QT prolongating medication (risk type): " + concatWithType(qtMedication),
                 "QT prolongating medication use (risk type): " + concatWithType(qtMedication)
             )
