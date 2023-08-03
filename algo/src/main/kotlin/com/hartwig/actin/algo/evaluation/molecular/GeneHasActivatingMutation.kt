@@ -118,7 +118,9 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
         if (activatingVariantsNoHotspotAndNoGainOfFunction.isNotEmpty()) {
             warnEvents.addAll(activatingVariantsNoHotspotAndNoGainOfFunction)
             warnSpecificMessages.add(
-                "Gene $gene has potentially activating mutation(s) " + Format.concat(activatingVariantsNoHotspotAndNoGainOfFunction)
+                "Gene $gene has potentially activating mutation(s) " + Format.concat(
+                    activatingVariantsNoHotspotAndNoGainOfFunction
+                )
                         + " that have high driver likelihood, but is not a hotspot and not associated with gain-of-function protein effect evidence"
             )
             warnGeneralMessages.add(

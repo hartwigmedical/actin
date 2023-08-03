@@ -491,6 +491,8 @@ public final class TestClinicalFactory {
                         .build())
                 .startDate(TODAY.minusDays(DAYS_SINCE_MEDICATION_START))
                 .stopDate(TODAY.plusDays(DAYS_UNTIL_MEDICATION_END))
+                .isSelfCare(false)
+                .isTrialMedication(false)
                 .build());
 
         medications.add(TestMedicationFactory.builder()
@@ -509,6 +511,8 @@ public final class TestClinicalFactory {
                         .build())
                 .startDate(TODAY.minusDays(DAYS_SINCE_MEDICATION_START))
                 .stopDate(TODAY.plusDays(DAYS_UNTIL_MEDICATION_END))
+                .isSelfCare(false)
+                .isTrialMedication(false)
                 .build());
 
         return medications;

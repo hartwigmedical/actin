@@ -34,7 +34,8 @@ class ECGMeasureEvaluationFunction internal constructor(
     }
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return record.clinical().clinicalStatus().ecg()?.let(extractingECGMeasure)?.let { measure: ECGMeasure -> this.evaluate(measure) }
+        return record.clinical().clinicalStatus().ecg()?.let(extractingECGMeasure)
+            ?.let { measure: ECGMeasure -> this.evaluate(measure) }
             ?: EvaluationFactory.notEvaluated(
                 String.format("No %s known", measureName), String.format("Undetermined %s", measureName)
             )
@@ -48,15 +49,31 @@ class ECGMeasureEvaluationFunction internal constructor(
         }
 
         val result =
-            if (thresholdCriteria.comparator.compare(measure.value(), threshold) >= 0) EvaluationResult.PASS else EvaluationResult.FAIL
+            if (thresholdCriteria.comparator.compare(
+                    measure.value(),
+                    threshold
+                ) >= 0
+            ) EvaluationResult.PASS else EvaluationResult.FAIL
         val builder = recoverable().result(result)
         if (result == EvaluationResult.FAIL) {
             builder.addFailSpecificMessages(
-                String.format(thresholdCriteria.failMessageTemplate, measureName, measure.value(), measure.unit(), threshold)
+                String.format(
+                    thresholdCriteria.failMessageTemplate,
+                    measureName,
+                    measure.value(),
+                    measure.unit(),
+                    threshold
+                )
             ).addFailGeneralMessages(generalMessage(measureName.name))
         } else {
             builder.addPassSpecificMessages(
-                String.format(thresholdCriteria.passMessageTemplate, measureName, measure.value(), measure.unit(), threshold)
+                String.format(
+                    thresholdCriteria.passMessageTemplate,
+                    measureName,
+                    measure.value(),
+                    measure.unit(),
+                    threshold
+                )
             ).addPassGeneralMessages(generalMessage(measureName.name))
         }
         return builder.build()

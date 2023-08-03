@@ -20,7 +20,9 @@ class HasWHOStatus internal constructor(private val requiredWHO: Int) : Evaluati
                 EvaluationFactory.warn(
                     "Patient WHO status $who matches requested but patient has complication categories of concern: "
                             + concatLowercaseWithAnd(warningComplicationCategories) + ", potentially indicating deterioration",
-                    "WHO currently adequate but potential deterioration due to" + concatLowercaseWithAnd(warningComplicationCategories)
+                    "WHO currently adequate but potential deterioration due to" + concatLowercaseWithAnd(
+                        warningComplicationCategories
+                    )
                 )
             }
 

@@ -16,12 +16,14 @@ object TestAtcFactory {
     }
 
     fun createProperAtcModel(): WhoAtcModel {
-        return WhoAtcModel(mapOf(
-            "N" to ANATOMICAL,
-            "N02" to THERAPEUTIC,
-            "N02B" to PHARMACOLOGICAL,
-            "N02BE" to CHEMICAL,
-            ATC_CODE to CHEMICAL_SUBSTANCE
-        ))
+        return WhoAtcModel(
+            mapOf(
+                "N" to ANATOMICAL,
+                "N02" to THERAPEUTIC,
+                "N02B" to PHARMACOLOGICAL,
+                "N02BE" to CHEMICAL,
+                ATC_CODE to CHEMICAL_SUBSTANCE
+            )
+        )
     }
 }

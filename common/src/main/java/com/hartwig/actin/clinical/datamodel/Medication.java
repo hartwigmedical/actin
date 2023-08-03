@@ -40,4 +40,10 @@ public abstract class Medication {
 
     @Nullable
     public abstract AtcClassification atc();
+
+    @NotNull
+    public abstract Boolean isSelfCare();
+
+    @NotNull
+    public abstract Boolean isTrialMedication();
 }

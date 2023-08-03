@@ -503,7 +503,7 @@ isContraindicationForTherapy=0), the condition is ignored for evaluation.
 | CURRENTLY_GETS_COUMARIN_DERIVATIVE_MEDICATION                               | Medication > categories contains type of "Vitamin K Antagonists" and status is active                                       |                                                                                           |
 | CURRENTLY_GETS_GONADORELIN_MEDICATION                                       | Medication > categories contains type of "Gonadorelin antagonists" or "Gonadorelin agonists" and status is active           |                                                                                           |
 | CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION                                 | Medication > categories contains type of "Immunosuppressants, selective" or "Immunosuppresants, other" and status is active |                                                                                           |
-| CURRENTLY_GETS_POTENTIALLY_QT_ PROLONGATING_MEDICATION                      | T.B.D., currently resolves to `UNDETERMINED`                                                                                |                                                                                           |
+| CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION                       | Medication > qtProlongatingRisk contains type of "Known", "Potential" or "Conditional" and status is active                 |                                                                                           |
 | CURRENTLY_GETS_MEDICATION_INDUCING_ANY_CYP                                  | T.B.D., currently resolves to `UNDETERMINED`                                                                                |                                                                                           |                                                                                           
 | CURRENTLY_GETS_MEDICATION_INHIBITING_CYP_X                                  | T.B.D., currently resolves to `UNDETERMINED`                                                                                | Cytochrome P450 enzymes                                                                   |
 | CURRENTLY_GETS_MEDICATION_INDUCING_CYP_X                                    | T.B.D., currently resolves to `UNDETERMINED`                                                                                |                                                                                           |
@@ -613,7 +613,7 @@ Note for all TOXICITY rules:
 | HAS_BODY_WEIGHT_OF_AT_LEAST_X          | bodyWeight > Latest body weight measurement (in kg) => X                                                                                        |
 | HAS_BMI_OF_AT_MOST_X                   | Patient BMI estimate from body weight <= X for patients between 1.5 and 2.0 m                                                                   |
 
-For SBP, DBP and Pulse oximetry, evaluation should resolve to `UNDETERMINED` rather than `FAIL` in case of no PASS, but at least 1 of the up
+For Pulse oximetry, evaluation should resolve to `UNDETERMINED` rather than `FAIL` in case of no PASS, but at least 1 of the up
 to 5 most recent values would be sufficient to `PASS`.
 
 ##### Rules related to blood transfusions

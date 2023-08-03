@@ -87,7 +87,10 @@ class CurationDatabaseReaderTest {
         assertThat(curatedAblation!!.name()).isEqualTo("Ablation trial")
         assertThat(curatedAblation.startYear()).isEqualTo(2023)
         assertThat(curatedAblation.startMonth()).isEqualTo(5)
-        assertThat(curatedAblation.categories()).containsExactlyInAnyOrder(TreatmentCategory.ABLATION, TreatmentCategory.TRIAL)
+        assertThat(curatedAblation.categories()).containsExactlyInAnyOrder(
+            TreatmentCategory.ABLATION,
+            TreatmentCategory.TRIAL
+        )
         assertThat(curatedAblation.isSystemic).isFalse
     }
 

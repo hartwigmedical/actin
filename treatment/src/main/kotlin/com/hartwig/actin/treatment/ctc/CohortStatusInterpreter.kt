@@ -35,7 +35,12 @@ internal object CohortStatusInterpreter {
     }
 
     private fun isNotAvailableOrIncorrect(ctcCohortIds: Set<String>): Boolean {
-        return isSingleEntryWithValue(ctcCohortIds, NOT_AVAILABLE, NOT_IN_CTC_OVERVIEW_UNKNOWN_WHY, OVERRULED_BECAUSE_INCORRECT_IN_CTC)
+        return isSingleEntryWithValue(
+            ctcCohortIds,
+            NOT_AVAILABLE,
+            NOT_IN_CTC_OVERVIEW_UNKNOWN_WHY,
+            OVERRULED_BECAUSE_INCORRECT_IN_CTC
+        )
     }
 
     private fun isMissingBecauseClosedOrUnavailable(ctcCohortIds: Set<String>): Boolean {
