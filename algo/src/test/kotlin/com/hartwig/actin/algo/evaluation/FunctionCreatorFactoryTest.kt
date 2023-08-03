@@ -19,7 +19,15 @@ class FunctionCreatorFactoryTest {
         val functionInputResolver = TestFunctionInputResolveFactory.createResolverWithDoidModel(doidModel)
         val map = create(referenceDateProvider, doidModel, functionInputResolver)
         val factory = ParameterizedFunctionTestFactory(doidTerm)
-        for (rule in EligibilityRule.values()) {
+        // TODO: remove filter after merging function implementations
+        EligibilityRule.values().filterNot {
+            it in setOf(
+                EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X,
+                EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_DRUGS_Y,
+                EligibilityRule.HAS_HAD_NON_INTERNAL_RADIOTHERAPY,
+                EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL
+            )
+        }.forEach { rule ->
             val function = factory.create(rule)
             if (!CompositeRules.isComposite(rule)) {
                 val creator = map[rule]

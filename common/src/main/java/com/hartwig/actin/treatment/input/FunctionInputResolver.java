@@ -5,8 +5,8 @@ import static com.hartwig.actin.treatment.input.FunctionInputMapping.RULE_INPUT_
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker;
@@ -134,6 +134,10 @@ public class FunctionInputResolver {
                 }
                 case ONE_TYPED_TREATMENT_MANY_STRINGS_ONE_INTEGER: {
                     createOneTypedTreatmentManyStringsOneIntegerInput(function);
+                    return true;
+                }
+                case MANY_DRUGS:
+                case ONE_TREATMENT_CATEGORY_MANY_DRUGS: {
                     return true;
                 }
                 case ONE_TUMOR_TYPE: {
