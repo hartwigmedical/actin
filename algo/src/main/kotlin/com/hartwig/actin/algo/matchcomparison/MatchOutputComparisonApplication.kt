@@ -25,7 +25,8 @@ class MatchOutputComparisonApplication {
                 "referenceDate" to TreatmentMatch::referenceDate
             )).forEach(LOGGER::info)
 
-            LOGGER.info(TreatmentMatchComparison.determineTreatmentMatchDifferences(oldMatches, newMatches).summary())
+            val matchDifferences = TreatmentMatchComparison.determineTreatmentMatchDifferences(oldMatches, newMatches)
+            matchDifferences.uniqueDifferences().forEach(LOGGER::info)
 
             return 0
         }

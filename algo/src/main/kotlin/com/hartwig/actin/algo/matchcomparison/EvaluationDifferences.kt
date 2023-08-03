@@ -25,18 +25,28 @@ data class EvaluationDifferences(
     }
 
     fun summary(): String {
-        return mapOf(
-            "result" to resultDifferences,
-            "recoverable" to recoverableDifferences,
-            "message" to messageDifferences,
-            "eligibility" to eligibilityDifferences,
-            "name-to-drug" to nameToDrugDifferences,
-            "parameter" to parameterDifferences,
-            "other" to otherDifferences,
-            "map key" to mapKeyDifferences
-        ).map { (name, differences) -> "${differences.distinct().size} unique $name differences (${differences.size} total)" }
+        return namedProperties()
+            .map { (name, differences) -> "${differences.distinct().size} unique $name differences (${differences.size} total)" }
             .joinToString("\n")
     }
+
+    fun uniqueDifferences(): List<String> {
+        return namedProperties().flatMap { (name, differences) ->
+            val distinct = differences.distinct()
+            listOf("${distinct.size} unique $name differences (${differences.size} total):") + distinct.map { "  $it" }
+        }
+    }
+
+    private fun namedProperties() = mapOf(
+        "result" to resultDifferences,
+        "recoverable" to recoverableDifferences,
+        "message" to messageDifferences,
+        "eligibility" to eligibilityDifferences,
+        "name-to-drug" to nameToDrugDifferences,
+        "parameter" to parameterDifferences,
+        "other" to otherDifferences,
+        "map key" to mapKeyDifferences
+    )
 
     companion object {
 

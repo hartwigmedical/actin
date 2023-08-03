@@ -35,7 +35,7 @@ object EligibilityFunctionComparison {
 
             newFunction.rule() == EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X ->
                 Triple(emptyList(), emptyList(), FunctionDifferences(nameToDrugDifferences = listOf(
-                    "${oldFunction.rule()}[${paramString(oldFunction)}] -> DRUGS[${newFunction.parameters()[0]}]"
+                    "${oldFunction.rule()}[${paramString(oldFunction)}] -> HAS_HAD_TREATMENT_WITH_ANY_DRUG_X[${newFunction.parameters()[0]}]"
                 )))
 
             oldFunction.rule() == EligibilityRule.OR && newFunction.rule() == EligibilityRule.OR && newFunction.parameters()

@@ -2,6 +2,8 @@ package com.hartwig.actin.algo.matchcomparison
 
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.matchcomparison.DifferenceExtractionUtil.extractDifferences
+import com.hartwig.actin.algo.matchcomparison.DifferenceExtractionUtil.mapKeyDifferences
 import com.hartwig.actin.treatment.datamodel.CriterionReference
 import com.hartwig.actin.treatment.datamodel.Eligibility
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction
@@ -17,19 +19,29 @@ object EvaluationComparison {
         val oldEvaluationsByCriteria = evaluationsByCriteria(oldEvaluations)
         val newEvaluationsByCriteria = evaluationsByCriteria(newEvaluations)
         val detailIndent = indent + INDENT_WIDTH
-        val modifiedKeys = DifferenceExtractionUtil.mapKeyDifferences(oldEvaluationsByCriteria, newEvaluationsByCriteria, "evaluations") { it.toString() }
+        val modifiedKeys = mapKeyDifferences(oldEvaluationsByCriteria, newEvaluationsByCriteria, "evaluations") { it.toString() }
 
         return oldEvaluationsByCriteria.map { (references, oldFunctionAndEvaluation) ->
             val (oldFunction, oldEvaluation) = oldFunctionAndEvaluation
             val (newFunction, newEvaluation) = newEvaluationsByCriteria[references]!!
-            val resultDifferences = DifferenceExtractionUtil.extractDifferences(oldEvaluation, newEvaluation, mapOf("result" to Evaluation::result))
-            val recoverableDifferences = DifferenceExtractionUtil.extractDifferences(oldEvaluation, newEvaluation, mapOf("recoverable" to Evaluation::recoverable))
+            val criteriaId = "ID $id, Criteria ${references.joinToString(", ") { it.id() }}"
+
+            val resultDifferences = extractDifferences(
+                oldEvaluation, newEvaluation, mapOf("result for $criteriaId" to Evaluation::result)
+            )
+            if (resultDifferences.isNotEmpty()) {
+                resultDifferences.forEach(LOGGER::warn)
+                LOGGER.warn("  Old function: $oldFunction")
+                LOGGER.warn("  New function: $newFunction")
+            }
+            val recoverableDifferences = extractDifferences(oldEvaluation, newEvaluation, mapOf("recoverable" to Evaluation::recoverable))
             val messageDifferences = extractMessageDifferences(oldEvaluation, newEvaluation)
             val functionDifferences = EligibilityFunctionComparison.determineEligibilityFunctionDifferences(oldFunction, newFunction)
+
             if (resultDifferences.isNotEmpty() || recoverableDifferences.isNotEmpty() || messageDifferences.isNotEmpty()
                 || functionDifferences.isNotEmpty()
             ) {
-                logDebug("Differences found for ID $id, Criteria ${references.joinToString(", ") { it.id() }}:", indent)
+                logDebug("Differences found for $criteriaId:", indent)
                 listOf(resultDifferences, recoverableDifferences, messageDifferences, functionDifferences.asList()).flatten()
                     .forEach { logDebug(it, detailIndent) }
             }
