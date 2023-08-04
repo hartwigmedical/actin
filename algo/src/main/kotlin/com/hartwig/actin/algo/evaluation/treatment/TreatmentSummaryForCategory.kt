@@ -59,7 +59,7 @@ data class TreatmentSummaryForCategory(
             return categoryAllowsTrialMatches(category) && treatmentHistoryEntry.isTrial
         }
 
-        private fun categoryAllowsTrialMatches(category: TreatmentCategory): Boolean {
+        fun categoryAllowsTrialMatches(category: TreatmentCategory): Boolean {
             return !CATEGORIES_NOT_MATCHING_TRIALS.contains(category)
         }
     }

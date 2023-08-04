@@ -19,10 +19,19 @@ class HasHadTreatmentWithDrug(private val drugs: Set<Drug>) : EvaluationFunction
             .filter { it.name().lowercase() in namesToMatch }
             .map(Drug::name)
 
-        return if (matchingDrugs.isNotEmpty()) {
-            EvaluationFactory.pass("Has received treatments with ${concatLowercaseWithAnd(matchingDrugs)}")
-        } else {
-            EvaluationFactory.fail("Has not received any treatments containing ${drugs.joinToString(" or ") { it.name().lowercase() }}")
+        val drugList = drugs.joinToString(" or ") { it.name().lowercase() }
+        return when {
+            matchingDrugs.isNotEmpty() -> {
+                EvaluationFactory.pass("Has received treatments with ${concatLowercaseWithAnd(matchingDrugs)}")
+            }
+
+            record.clinical().treatmentHistory().any(TreatmentHistoryEntry::isTrial) -> {
+                EvaluationFactory.undetermined("Undetermined if received any treatments containing $drugList")
+            }
+
+            else -> {
+                EvaluationFactory.fail("Has not received any treatments containing $drugList")
+            }
         }
     }
 }

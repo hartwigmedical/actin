@@ -36,6 +36,12 @@ class HasHadTreatmentWithDrugTest {
         assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistory(treatmentHistory)))
     }
 
+    @Test
+    fun `should return undetermined for trial treatment`() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTherapy("test", TreatmentCategory.IMMUNOTHERAPY)), isTrial = true)
+        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
+    }
+
     companion object {
         private const val MATCHING_DRUG_NAME = "match"
         private val TREATMENT_CATEGORY = TreatmentCategory.TARGETED_THERAPY
