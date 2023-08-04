@@ -328,9 +328,10 @@ class ClinicalRecordsFactory(
                     .isTrialMedication(entry.code5ATCDisplay.isEmpty() && entry.code5ATCCode.isNotEmpty() && entry.code5ATCCode[0].lowercaseChar() !in 'a'..'z')
                     .build()
 
-                check(medication.atc() != null || medication.isSelfCare() || medication.isTrialMedication()) {
-                    "Medication ${medication.name()} has no ATC code and is not self-care or a trial"
-                }
+                // TODO Uncomment this check when we receive the ATC tree
+                // check(medication.atc() != null || medication.isSelfCare() || medication.isTrialMedication()) {
+                //     "Medication ${medication.name()} has no ATC code and is not self-care or a trial"
+                // }
 
                 medications.add(curation.annotateWithMedicationCategory(medication))
             }
