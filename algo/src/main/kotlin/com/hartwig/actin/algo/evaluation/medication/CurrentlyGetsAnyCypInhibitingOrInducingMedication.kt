@@ -16,7 +16,7 @@ class CurrentlyGetsAnyCypInhibitingOrInducingMedication(private val selector: Me
         }.map { it.name() }
 
         return if (cypMedications.isNotEmpty()) {
-            EvaluationFactory.pass(
+            EvaluationFactory.recoverablePass(
                 "Patient currently gets CYP inhibiting/inducing medication: ${Format.concatLowercaseWithAnd(cypMedications)}",
                 "CYP inhibiting/inducing medication use: ${Format.concatLowercaseWithAnd(cypMedications)}"
             )

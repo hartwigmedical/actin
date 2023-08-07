@@ -18,7 +18,7 @@ class CurrentlyGetsCypXSubstrateMedication(
             CypInteraction.Type.SUBSTRATE
         ).map { it.name() }
         return if (cypSubstratesReceived.isNotEmpty()) {
-            EvaluationFactory.pass(
+            EvaluationFactory.recoverablePass(
                 "Patient currently gets CYP$termToFind substrate medication: ${Format.concatLowercaseWithAnd(cypSubstratesReceived)}",
                 "CYP$termToFind substrate medication use: ${Format.concatLowercaseWithAnd(cypSubstratesReceived)}"
             )

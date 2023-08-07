@@ -19,7 +19,7 @@ class CurrentlyGetsCypXInducingMedication(
                 CypInteraction.Type.INDUCER
             ).map { it.name() }
         return if (cypInducersReceived.isNotEmpty()) {
-            EvaluationFactory.pass(
+            EvaluationFactory.recoverablePass(
                 "Patient currently gets CYP$termToFind inducing medication: ${Format.concatLowercaseWithAnd(cypInducersReceived)}",
                 "CYP$termToFind inducing medication use: ${Format.concatLowercaseWithAnd(cypInducersReceived)}"
             )
