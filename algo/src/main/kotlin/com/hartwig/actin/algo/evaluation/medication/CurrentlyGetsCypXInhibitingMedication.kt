@@ -23,6 +23,11 @@ class CurrentlyGetsCypXInhibitingMedication(
                 "Patient currently gets CYP$termToFind inhibiting medication: ${Format.concatLowercaseWithAnd(cypInhibitorsReceived)}",
                 "CYP$termToFind inhibiting medication use: ${Format.concatLowercaseWithAnd(cypInhibitorsReceived)}"
             )
+        } else if (termToFind in MedicationRuleMapper.UNDETERMINED_CYP) {
+            EvaluationFactory.undetermined(
+                "Undetermined if patient currently gets CYP$termToFind inhibiting medication",
+                "Undetermined CYP$termToFind inhibiting medication use"
+            )
         } else {
             EvaluationFactory.recoverableFail(
                 "Patient currently does not get CYP$termToFind inhibiting medication ",

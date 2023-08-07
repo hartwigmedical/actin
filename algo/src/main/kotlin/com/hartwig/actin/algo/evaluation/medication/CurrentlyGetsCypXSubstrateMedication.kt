@@ -22,6 +22,11 @@ class CurrentlyGetsCypXSubstrateMedication(
                 "Patient currently gets CYP$termToFind substrate medication: ${Format.concatLowercaseWithAnd(cypSubstratesReceived)}",
                 "CYP$termToFind substrate medication use: ${Format.concatLowercaseWithAnd(cypSubstratesReceived)}"
             )
+        } else if (termToFind in MedicationRuleMapper.UNDETERMINED_CYP) {
+            EvaluationFactory.undetermined(
+                "Undetermined if patient currently gets CYP$termToFind substrate medication",
+                "Undetermined CYP$termToFind substrate medication use"
+            )
         } else {
             EvaluationFactory.recoverableFail(
                 "Patient currently does not get CYP$termToFind substrate medication ",

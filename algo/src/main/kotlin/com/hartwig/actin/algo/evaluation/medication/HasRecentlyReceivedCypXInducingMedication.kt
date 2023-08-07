@@ -27,6 +27,11 @@ class HasRecentlyReceivedCypXInducingMedication(
                 "Patient has recently received CYP$termToFind inducing medication: ${Format.concatLowercaseWithAnd(cypInducersReceived)}",
                 "Recent CYP$termToFind inducing medication use: ${Format.concatLowercaseWithAnd(cypInducersReceived)}"
             )
+        } else if (termToFind in MedicationRuleMapper.UNDETERMINED_CYP) {
+            EvaluationFactory.undetermined(
+                "Undetermined if patient has recently received CYP$termToFind inducing medication",
+                "Undetermined CYP$termToFind inducing medication use"
+            )
         } else {
             EvaluationFactory.recoverableFail(
                 "Patient has not recently received CYP$termToFind inducing medication ",

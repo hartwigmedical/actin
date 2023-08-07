@@ -178,5 +178,8 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         private const val GONADORELIN_AGONISTS = "Gonadorelin agonists"
         private const val SELECTIVE_IMMUNOSUPPRESSANTS = "Immunosuppressants, selective"
         private const val OTHER_IMMUNOSUPPRESSANTS = "Immunosuppressants, other"
+
+        // Undetermined Cyp
+        val UNDETERMINED_CYP = setOf("2J2")
     }
 }
