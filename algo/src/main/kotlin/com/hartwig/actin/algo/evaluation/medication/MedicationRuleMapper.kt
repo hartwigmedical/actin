@@ -90,7 +90,7 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     }
 
     private fun getsQTProlongatingMedicationCreator(): FunctionCreator {
-        return FunctionCreator { CurrentlyGetsQTProlongatingMedication() }
+        return FunctionCreator { CurrentlyGetsQTProlongatingMedication(selector) }
     }
 
     private fun getsAnyCYPInducingMedicationCreator(): FunctionCreator {

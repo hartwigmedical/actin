@@ -10,7 +10,11 @@ class MedicationFeedValidation(private val atcModel: AtcModel) {
         val code5ATCCode = medicationEntry.code5ATCCode
         val atcClassification = atcModel.resolve(code5ATCCode)
         if (atcClassification != null) {
-            return checkLevel(medicationEntry.anatomicalMainGroupDisplay, atcClassification.anatomicalMainGroup(), "anatomical display") +
+            return checkLevel(
+                medicationEntry.anatomicalMainGroupDisplay,
+                atcClassification.anatomicalMainGroup(),
+                "anatomical display"
+            ) +
                     checkLevel(
                         medicationEntry.therapeuticSubgroupDisplay,
                         atcClassification.therapeuticSubGroup(),
@@ -21,8 +25,16 @@ class MedicationFeedValidation(private val atcModel: AtcModel) {
                         atcClassification.pharmacologicalSubGroup(),
                         "pharmacological subgroup"
                     ) +
-                    checkLevel(medicationEntry.chemicalSubgroupDisplay, atcClassification.chemicalSubGroup(), "chemical subgroup") +
-                    checkLevel(medicationEntry.code5ATCDisplay, atcClassification.chemicalSubstance(), "chemical substance")
+                    checkLevel(
+                        medicationEntry.chemicalSubgroupDisplay,
+                        atcClassification.chemicalSubGroup(),
+                        "chemical subgroup"
+                    ) +
+                    checkLevel(
+                        medicationEntry.code5ATCDisplay,
+                        atcClassification.chemicalSubstance(),
+                        "chemical substance"
+                    )
         }
         return emptyList()
     }
@@ -34,7 +46,8 @@ class MedicationFeedValidation(private val atcModel: AtcModel) {
         return emptyList()
     }
 
-    private fun levelsEqual(feedValue: String, atcValue: AtcLevel) = atcValue.name().equals(feedValue, ignoreCase = true)
+    private fun levelsEqual(feedValue: String, atcValue: AtcLevel) =
+        atcValue.name().equals(feedValue, ignoreCase = true)
 
     private fun errorMessage(feedValue: String, levelName: String, atcValue: String?) =
         "ATC $levelName not equal between feed value of '$feedValue' and ATC tree value of '$atcValue'"

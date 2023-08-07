@@ -284,7 +284,7 @@ public class ClinicalGsonDeserializer {
                 return jsonElement.isJsonNull()
                         ? null
                         : (Treatment) context.deserialize(jsonElement,
-                                TreatmentType.valueOf(string(jsonElement.getAsJsonObject(), "treatmentType")).treatmentClass());
+                        TreatmentType.valueOf(string(jsonElement.getAsJsonObject(), "treatmentType")).treatmentClass());
             } catch (Exception e) {
                 throw new JsonParseException("Failed to deserialize: " + jsonElement, e);
             }

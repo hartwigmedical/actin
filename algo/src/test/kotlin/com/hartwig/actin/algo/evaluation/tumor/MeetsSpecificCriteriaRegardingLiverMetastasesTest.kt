@@ -10,6 +10,9 @@ class MeetsSpecificCriteriaRegardingLiverMetastasesTest {
     @Test
     fun shouldReturnUndeterminedForAnyPatient() {
         val function = MeetsSpecificCriteriaRegardingLiverMetastases()
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TestDataFactory.createMinimalTestPatientRecord())
+        )
     }
 }

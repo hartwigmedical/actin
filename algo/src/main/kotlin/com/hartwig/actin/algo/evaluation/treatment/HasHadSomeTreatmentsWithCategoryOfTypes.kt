@@ -13,7 +13,10 @@ class HasHadSomeTreatmentsWithCategoryOfTypes(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentSummary =
-            TreatmentSummaryForCategory.createForTreatments(record.clinical().priorTumorTreatments(), category) { treatment ->
+            TreatmentSummaryForCategory.createForTreatments(
+                record.clinical().priorTumorTreatments(),
+                category
+            ) { treatment ->
                 TreatmentTypeResolver.matchesTypeFromCollection(treatment, category, types)
             }
         return when {

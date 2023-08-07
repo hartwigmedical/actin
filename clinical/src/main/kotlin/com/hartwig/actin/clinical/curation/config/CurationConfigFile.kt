@@ -10,7 +10,9 @@ object CurationConfigFile {
     @Throws(IOException::class)
     fun <T : CurationConfig> read(tsv: String, factory: CurationConfigFactory<T>): List<T> {
         val lines = Files.readAllLines(File(tsv).toPath())
-        val fields = TabularFile.createFields(lines[0].split(TabularFile.DELIMITER).dropLastWhile { it.isEmpty() }.toTypedArray())
-        return lines.subList(1, lines.size).map { factory.create(fields, it.split(TabularFile.DELIMITER).toTypedArray()) }
+        val fields = TabularFile.createFields(lines[0].split(TabularFile.DELIMITER).dropLastWhile { it.isEmpty() }
+            .toTypedArray())
+        return lines.subList(1, lines.size)
+            .map { factory.create(fields, it.split(TabularFile.DELIMITER).toTypedArray()) }
     }
 }

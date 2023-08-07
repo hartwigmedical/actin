@@ -150,7 +150,7 @@ public final class TestClinicalFactory {
     @NotNull
     private static List<TreatmentHistoryEntry> createTreatmentHistory() {
         Drug oxaliplatin = drug("Oxaliplatin", DrugClass.PLATINUM_COMPOUND, TreatmentCategory.CHEMOTHERAPY);
-        Drug fluorouracil = drug("5-FU", DrugClass.PYRIMIDINE_ANTAGONIST, TreatmentCategory.CHEMOTHERAPY);
+        Drug fluorouracil = drug("5-FU", DrugClass.ANTIMETABOLITE, TreatmentCategory.CHEMOTHERAPY);
         Drug irinotecan = drug("Irinotecan", DrugClass.TOPO1_INHIBITOR, TreatmentCategory.CHEMOTHERAPY);
 
         DrugTherapy folfirinox = ImmutableDrugTherapy.builder()
@@ -490,6 +490,8 @@ public final class TestClinicalFactory {
                         .build())
                 .startDate(TODAY.minusDays(DAYS_SINCE_MEDICATION_START))
                 .stopDate(TODAY.plusDays(DAYS_UNTIL_MEDICATION_END))
+                .isSelfCare(false)
+                .isTrialMedication(false)
                 .build());
 
         medications.add(TestMedicationFactory.builder()
@@ -508,6 +510,8 @@ public final class TestClinicalFactory {
                         .build())
                 .startDate(TODAY.minusDays(DAYS_SINCE_MEDICATION_START))
                 .stopDate(TODAY.plusDays(DAYS_UNTIL_MEDICATION_END))
+                .isSelfCare(false)
+                .isTrialMedication(false)
                 .build());
 
         return medications;

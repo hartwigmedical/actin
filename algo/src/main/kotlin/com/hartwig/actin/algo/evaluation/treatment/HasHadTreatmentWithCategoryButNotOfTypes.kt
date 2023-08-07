@@ -14,12 +14,21 @@ class HasHadTreatmentWithCategoryButNotOfTypes(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentSummary =
-            TreatmentSummaryForCategory.createForTreatments(record.clinical().priorTumorTreatments(), category) { treatment ->
+            TreatmentSummaryForCategory.createForTreatments(
+                record.clinical().priorTumorTreatments(),
+                category
+            ) { treatment ->
                 ignoreTypes.none { TreatmentTypeResolver.isOfType(treatment, category, it) }
             }
 
         return when {
-            treatmentSummary.hasSpecificMatch() -> EvaluationFactory.pass("Has received ${category.display()} ignoring ${concat(ignoreTypes)}")
+            treatmentSummary.hasSpecificMatch() -> EvaluationFactory.pass(
+                "Has received ${category.display()} ignoring ${
+                    concat(
+                        ignoreTypes
+                    )
+                }"
+            )
 
             treatmentSummary.hasPossibleTrialMatch() -> EvaluationFactory.undetermined(
                 "Patient may have received ${category.display()} ignoring ${concat(ignoreTypes)} due to trial participation",

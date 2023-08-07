@@ -22,7 +22,10 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
             TreatmentAssessment(
                 hasHadValidTreatment = categoryAndTypeMatch && startedPastMinDate == true,
                 hasInconclusiveDate = categoryAndTypeMatch && startedPastMinDate == null,
-                hasHadTrialAfterMinDate = TreatmentSummaryForCategory.treatmentMayMatchCategoryAsTrial(treatment, category)
+                hasHadTrialAfterMinDate = TreatmentSummaryForCategory.treatmentMayMatchCategoryAsTrial(
+                    treatment,
+                    category
+                )
                         && startedPastMinDate == true
             )
         }.fold(TreatmentAssessment()) { acc, element -> acc.combineWith(element) }
@@ -52,7 +55,13 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
     }
 
     private fun hasValidCategoryAndType(treatment: PriorTumorTreatment): Boolean {
-        return treatment.categories().contains(category) && types.any { TreatmentTypeResolver.isOfType(treatment, category, it) }
+        return treatment.categories().contains(category) && types.any {
+            TreatmentTypeResolver.isOfType(
+                treatment,
+                category,
+                it
+            )
+        }
     }
 
     private data class TreatmentAssessment(

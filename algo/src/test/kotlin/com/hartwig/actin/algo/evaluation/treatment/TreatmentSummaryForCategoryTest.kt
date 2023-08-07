@@ -63,7 +63,11 @@ class TreatmentSummaryForCategoryTest {
             TreatmentTestFactory.builder().addCategories(CATEGORY_TO_MATCH).name("CUSTOM").build(),
             treatmentWithCategory(TreatmentCategory.SURGERY)
         )
-        assertThat(TreatmentSummaryForCategory.createForTreatments(treatments, CATEGORY_TO_MATCH) { it.name() == "CUSTOM" })
+        assertThat(
+            TreatmentSummaryForCategory.createForTreatments(
+                treatments,
+                CATEGORY_TO_MATCH
+            ) { it.name() == "CUSTOM" })
             .isEqualTo(TreatmentSummaryForCategory(1, 0, 0))
     }
 
@@ -86,7 +90,11 @@ class TreatmentSummaryForCategoryTest {
             treatmentWithCategory(TreatmentCategory.TRIAL),
             treatmentWithCategory(TreatmentCategory.SURGERY)
         )
-        assertThat(TreatmentSummaryForCategory.createForTreatments(treatments, CATEGORY_TO_MATCH) { it.name() == "CUSTOM" })
+        assertThat(
+            TreatmentSummaryForCategory.createForTreatments(
+                treatments,
+                CATEGORY_TO_MATCH
+            ) { it.name() == "CUSTOM" })
             .isEqualTo(TreatmentSummaryForCategory(0, 0, 1))
     }
 

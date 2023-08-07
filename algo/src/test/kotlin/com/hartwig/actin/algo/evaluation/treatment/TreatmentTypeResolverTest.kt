@@ -115,20 +115,40 @@ class TreatmentTypeResolverTest {
     @Test
     fun shouldReturnNullForTypeNotConfiguredWhenMatchingAgainstTypeCollection() {
         val treatment = TreatmentTestFactory.builder().addCategories(TreatmentCategory.CHEMOTHERAPY).build()
-        assertThat(TreatmentTypeResolver.matchesTypeFromCollection(treatment, TreatmentCategory.CHEMOTHERAPY, emptyList())).isNull()
+        assertThat(
+            TreatmentTypeResolver.matchesTypeFromCollection(
+                treatment,
+                TreatmentCategory.CHEMOTHERAPY,
+                emptyList()
+            )
+        ).isNull()
     }
 
     @Test
     fun shouldReturnTrueForTypeThatMatchesTypeCollection() {
-        val treatment = TreatmentTestFactory.builder().addCategories(TreatmentCategory.CHEMOTHERAPY).chemoType("platinum").build()
-        assertThat(TreatmentTypeResolver.matchesTypeFromCollection(treatment, TreatmentCategory.CHEMOTHERAPY, listOf("test", "platinum")))
+        val treatment =
+            TreatmentTestFactory.builder().addCategories(TreatmentCategory.CHEMOTHERAPY).chemoType("platinum").build()
+        assertThat(
+            TreatmentTypeResolver.matchesTypeFromCollection(
+                treatment,
+                TreatmentCategory.CHEMOTHERAPY,
+                listOf("test", "platinum")
+            )
+        )
             .isTrue
     }
 
     @Test
     fun shouldReturnFalseForTypeThatDoesNotMatchTypeCollection() {
-        val treatment = TreatmentTestFactory.builder().addCategories(TreatmentCategory.CHEMOTHERAPY).chemoType("platinum").build()
-        assertThat(TreatmentTypeResolver.matchesTypeFromCollection(treatment, TreatmentCategory.CHEMOTHERAPY, listOf("test", "another")))
+        val treatment =
+            TreatmentTestFactory.builder().addCategories(TreatmentCategory.CHEMOTHERAPY).chemoType("platinum").build()
+        assertThat(
+            TreatmentTypeResolver.matchesTypeFromCollection(
+                treatment,
+                TreatmentCategory.CHEMOTHERAPY,
+                listOf("test", "another")
+            )
+        )
             .isFalse
     }
 }

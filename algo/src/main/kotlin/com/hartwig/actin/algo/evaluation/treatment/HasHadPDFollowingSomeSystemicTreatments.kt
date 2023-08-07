@@ -24,7 +24,8 @@ class HasHadPDFollowingSomeSystemicTreatments(
                     )
                 }
 
-                lastTreatment?.stopYear() == null || lastTreatment.stopReason()?.contains("toxicity", ignoreCase = true) == true ->
+                lastTreatment?.stopYear() == null || lastTreatment.stopReason()
+                    ?.contains("toxicity", ignoreCase = true) == true ->
                     EvaluationFactory.undetermined("Has had at least $minSystemicTreatments systemic treatments but undetermined if PD")
 
                 else ->

@@ -96,19 +96,15 @@ public class WGSSummaryGenerator implements TableGenerator {
 
     @NotNull
     private Cell biopsySummary() {
-        String biopsyLocation = clinical.tumor().biopsyLocation();
+        String biopsyLocation = (clinical.tumor().biopsyLocation() != null) ? clinical.tumor().biopsyLocation() : Formats.VALUE_UNKNOWN;
         Double purity = molecular.characteristics().purity();
-        if (biopsyLocation != null) {
-            if (purity != null) {
-                Text biopsyText = new Text(biopsyLocation).addStyle(Styles.tableHighlightStyle());
-                Text purityText = new Text(String.format(" (purity %s)", Formats.percentage(purity)));
-                purityText.addStyle(molecular.hasSufficientQualityAndPurity() ? Styles.tableHighlightStyle() : Styles.tableNoticeStyle());
-                return Cells.create(new Paragraph().addAll(Arrays.asList(biopsyText, purityText)));
-            } else {
-                return Cells.createValue(biopsyLocation);
-            }
+        if (purity != null) {
+            Text biopsyText = new Text(biopsyLocation).addStyle(Styles.tableHighlightStyle());
+            Text purityText = new Text(String.format(" (purity %s)", Formats.percentage(purity)));
+            purityText.addStyle(molecular.hasSufficientQualityAndPurity() ? Styles.tableHighlightStyle() : Styles.tableNoticeStyle());
+            return Cells.create(new Paragraph().addAll(Arrays.asList(biopsyText, purityText)));
         } else {
-            return Cells.createValue(Formats.VALUE_UNKNOWN);
+            return Cells.createValue(biopsyLocation);
         }
     }
 
@@ -117,7 +113,7 @@ public class WGSSummaryGenerator implements TableGenerator {
         Paragraph paragraph = new Paragraph(new Text(tumorOriginPrediction()).addStyle(Styles.tableHighlightStyle()));
         Double purity = molecular.characteristics().purity();
         if (purity != null && purity < 0.2) {
-            Text purityText = new Text(String.format(" (tumor purity %s)", Formats.percentage(purity))).addStyle(Styles.tableNoticeStyle());
+            Text purityText = new Text(String.format(" (purity %s)", Formats.percentage(purity))).addStyle(Styles.tableNoticeStyle());
             paragraph.add(purityText);
         }
         return Cells.create(paragraph);
