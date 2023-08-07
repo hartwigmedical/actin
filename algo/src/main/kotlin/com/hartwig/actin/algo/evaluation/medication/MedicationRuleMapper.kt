@@ -32,6 +32,7 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_CYP_X to getsCYPXInducingMedicationCreator(),
             EligibilityRule.HAS_RECEIVED_MEDICATION_INDUCING_CYP_X_WITHIN_Y_WEEKS to hasRecentlyReceivedCYPXInducingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_CYP_X to getsCYPXInhibitingMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_ANY_CYP to getsAnyCypInhibitingOrInducingMedication(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X to getsCYPXInhibitingOrInducingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_CYP_X to getsCYPSubstrateMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_PGP to getsPGPInhibitingMedicationCreator(),
@@ -116,6 +117,10 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             val termToFind = functionInputResolver().createOneStringInput(function)
             CurrentlyGetsCypXInhibitingMedication(selector, termToFind)
         }
+    }
+
+    private fun getsAnyCypInhibitingOrInducingMedication(): FunctionCreator {
+        return FunctionCreator { CurrentlyGetsAnyCypInhibitingOrInducingMedication(selector) }
     }
 
     private fun getsCYPXInhibitingOrInducingMedicationCreator(): FunctionCreator {
