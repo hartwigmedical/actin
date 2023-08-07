@@ -65,15 +65,18 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     }
 
     private fun getsAnticoagulantMedicationCreator(): FunctionCreator {
-        return getsActiveMedicationWithExactCategoryCreator(ANTICOAGULANTS, VITAMIN_K_ANTAGONISTS)
+        return getsActiveMedicationWithExactCategoryCreator(ANTITHROMBOTIC, ANTIHEMORRHAGICS)
     }
 
     private fun getsAzoleMedicationCreator(): FunctionCreator {
-        return getsActiveMedicationWithExactCategoryCreator(TRIAZOLES, CUTANEOUS_IMIDAZOLES, OTHER_IMIDAZOLES)
+        return getsActiveMedicationWithExactCategoryCreator(
+            IMIDAZOLE_DERIVATIVES, IMIDAZOLE_TRIAZOLE_DERIVATIVES,
+            TRIAZOLE_TETRAZOLE_DERIVATIVES
+        )
     }
 
     private fun getsBoneResorptiveMedicationCreator(): FunctionCreator {
-        return getsActiveMedicationWithExactCategoryCreator(BISPHOSPHONATES, CALCIUM_REGULATORY_MEDICATION)
+        return getsActiveMedicationWithExactCategoryCreator(CALCIUM_HOMEOSTASIS, AFFECTING_BONE_STRUCTURE)
     }
 
     private fun getsCoumarinDerivativeMedicationCreator(): FunctionCreator {
@@ -81,11 +84,14 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     }
 
     private fun getsGonadorelinMedicationCreator(): FunctionCreator {
-        return getsActiveMedicationWithExactCategoryCreator(GONADORELIN_ANTAGONISTS, GONADORELIN_AGONISTS)
+        return getsActiveMedicationWithExactCategoryCreator(
+            ANTI_GONADOTROPIN, ANTI_GONADOTROPIN_SIMILAR, GONADOTROPIN_ANALOGUES,
+            GONADOTROPIN_RELEASING
+        )
     }
 
     private fun getsImmunosuppressantMedicationCreator(): FunctionCreator {
-        return getsActiveMedicationWithExactCategoryCreator(SELECTIVE_IMMUNOSUPPRESSANTS, OTHER_IMMUNOSUPPRESSANTS)
+        return getsActiveMedicationWithExactCategoryCreator(IMMUNOSUPPRESSANTS)
     }
 
     private fun getsQTProlongatingMedicationCreator(): FunctionCreator {
@@ -148,7 +154,7 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     }
 
     private fun getsStableDosingAnticoagulantMedicationCreator(): FunctionCreator {
-        return getsStableMedicationOfCategoryCreator(ANTICOAGULANTS)
+        return getsStableMedicationOfCategoryCreator(ANTIHEMORRHAGICS, ANTIHEMORRHAGICS)
     }
 
     private fun getsStableMedicationOfCategoryCreator(vararg categoriesToFind: String): FunctionCreator {
@@ -161,16 +167,19 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     companion object {
         // Medication categories
-        private const val ANTICOAGULANTS = "Anticoagulants"
-        private const val VITAMIN_K_ANTAGONISTS = "Vitamin K Antagonists"
-        private const val TRIAZOLES = "Triazoles"
-        private const val CUTANEOUS_IMIDAZOLES = "Imidazoles, cutaneous"
-        private const val OTHER_IMIDAZOLES = "Imidazoles, other"
-        private const val BISPHOSPHONATES = "Bisphosphonates"
-        private const val CALCIUM_REGULATORY_MEDICATION = "Calcium regulatory medication"
-        private const val GONADORELIN_ANTAGONISTS = "Gonadorelin antagonists"
-        private const val GONADORELIN_AGONISTS = "Gonadorelin agonists"
-        private const val SELECTIVE_IMMUNOSUPPRESSANTS = "Immunosuppressants, selective"
-        private const val OTHER_IMMUNOSUPPRESSANTS = "Immunosuppressants, other"
+        private const val ANTITHROMBOTIC = "Antithrombotic agents"
+        private const val ANTIHEMORRHAGICS = "Antihemorrhagics"
+        private const val IMIDAZOLE_TRIAZOLE_DERIVATIVES = "Imidazole and triazole derivatives"
+        private const val TRIAZOLE_TETRAZOLE_DERIVATIVES = "Triazole and tetrazole derivatives"
+        private const val IMIDAZOLE_DERIVATIVES = "Imidazole derivatives"
+        private const val CALCIUM_HOMEOSTASIS = "Calcium homeostasis"
+        private const val AFFECTING_BONE_STRUCTURE = "Drugs affecting bone structure and mineralization"
+        private const val VITAMIN_K_ANTAGONISTS = "Vitamin K antagonists"
+        private const val IMMUNOSUPPRESSANTS = "Immunosuppressants"
+        private const val ANTI_GONADOTROPIN = "Anti-gonadotropin-releasing hormones"
+        private const val GONADOTROPIN_RELEASING = "Gonadotropin-releasing hormones"
+        private const val ANTI_GONADOTROPIN_SIMILAR = "Antigonadotropins and similar agents"
+        private const val GONADOTROPIN_ANALOGUES = "Gonadotropin releasing hormone analogues"
+
     }
 }

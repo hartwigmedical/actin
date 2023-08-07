@@ -22,14 +22,23 @@ internal class MedicationSelector(private val interpreter: MedicationStatusInter
     fun activeWithAnyExactCategory(medications: List<Medication>, categoriesToFind: Set<String>): List<Medication> {
         val lowercaseCategoriesToFind = categoriesToFind.map { it.lowercase() }.toSet()
         return active(medications).filter { medication ->
-            medication.categories().any { lowercaseCategoriesToFind.contains(it.lowercase()) }
+            (
+                    lowercaseCategoriesToFind.contains(medication.atc()!!.anatomicalMainGroup().name().lowercase()) ||
+                            lowercaseCategoriesToFind.contains(medication.atc()!!.chemicalSubGroup().name().lowercase()) ||
+                            lowercaseCategoriesToFind.contains(medication.atc()!!.pharmacologicalSubGroup().name().lowercase()) ||
+                            lowercaseCategoriesToFind.contains(medication.atc()!!.therapeuticSubGroup().name().lowercase()))
         }
     }
 
     fun activeOrRecentlyStoppedWithCategory(
         medications: List<Medication>, categoryToFind: String, minStopDate: LocalDate
     ): List<Medication> {
-        return medications.filter { medication -> medication.categories().any { it.equals(categoryToFind, ignoreCase = true) } }
+        return medications.filter { medication ->
+            (medication.atc()!!.anatomicalMainGroup().name().lowercase().equals(categoryToFind, ignoreCase = true) ||
+                    medication.atc()!!.chemicalSubGroup().name().lowercase().equals(categoryToFind, ignoreCase = true) ||
+                    medication.atc()!!.pharmacologicalSubGroup().name().lowercase().equals(categoryToFind, ignoreCase = true) ||
+                    medication.atc()!!.therapeuticSubGroup().name().lowercase().equals(categoryToFind, ignoreCase = true))
+        }
             .filter { isActive(it) || isRecentlyStopped(it, minStopDate) }
     }
 

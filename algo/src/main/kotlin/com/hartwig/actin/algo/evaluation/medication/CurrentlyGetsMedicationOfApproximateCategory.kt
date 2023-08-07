@@ -14,7 +14,12 @@ class CurrentlyGetsMedicationOfApproximateCategory internal constructor(
     override fun evaluate(record: PatientRecord): Evaluation {
         val lowercaseTermToFind = categoryTermToFind.lowercase()
         val medications = selector.active(record.clinical().medications())
-            .filter { medication -> medication.categories().any { it.lowercase().contains(lowercaseTermToFind) } }
+            .filter { medication ->
+                (medication.atc()!!.anatomicalMainGroup().name().lowercase().contains(lowercaseTermToFind) || medication.atc()!!
+                    .chemicalSubGroup().name().lowercase().contains(lowercaseTermToFind) || medication.atc()!!.therapeuticSubGroup().name()
+                    .lowercase().contains(lowercaseTermToFind) || medication.atc()!!.pharmacologicalSubGroup().name().lowercase()
+                    .contains(lowercaseTermToFind))
+            }
             .map { it.name() }
 
         return if (medications.isNotEmpty()) {
