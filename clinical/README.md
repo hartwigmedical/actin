@@ -227,7 +227,7 @@ N medications
 | startDate                        | 2021-07-01                                        | Assigned start date of medication                                                                      |
 | stopDate                         | 2021-10-01                                        | Assigned stop date of medication (if applicable)                                                       |
 | cypInteractions.type             |                                                   | 'Inducer', 'Inhibitor' or 'Substrate'                                                                  |
-| cypInteractions.strength         |                                                   | 'None', 'Strong', 'Moderate', 'Weak', 'Sensitive' or 'Moderate sensitive'                              |
+| cypInteractions.strength         |                                                   | 'Strong', 'Moderate', 'Weak', 'Sensitive' or 'Moderate sensitive'                                      |
 | cypInteractions.cyp              |                                                   | Type of CYP                                                                                            |
 | atc.anatomicalMainGroup.code     | N                                                 | ATC anatomical main group code value                                                                   |
 | atc.anatomicalMainGroup.name     | NERVOUS SYSTEM                                    | ATC anatomical main group display value                                                                |
