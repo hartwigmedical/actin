@@ -21,12 +21,6 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.CURRENTLY_GETS_NAME_X_MEDICATION to getsActiveMedicationWithConfiguredNameCreator(),
             EligibilityRule.CURRENTLY_GETS_CATEGORY_X_MEDICATION to getsActiveMedicationWithApproximateCategoryCreator(),
             EligibilityRule.HAS_RECEIVED_CATEGORY_X_MEDICATION_WITHIN_Y_WEEKS to hasRecentlyReceivedMedicationOfApproximateCategoryCreator(),
-            EligibilityRule.CURRENTLY_GETS_ANTICOAGULANT_MEDICATION to getsAnticoagulantMedicationCreator(),
-            EligibilityRule.CURRENTLY_GETS_AZOLE_MEDICATION to getsAzoleMedicationCreator(),
-            EligibilityRule.CURRENTLY_GETS_BONE_RESORPTIVE_MEDICATION to getsBoneResorptiveMedicationCreator(),
-            EligibilityRule.CURRENTLY_GETS_COUMARIN_DERIVATIVE_MEDICATION to getsCoumarinDerivativeMedicationCreator(),
-            EligibilityRule.CURRENTLY_GETS_GONADORELIN_MEDICATION to getsGonadorelinMedicationCreator(),
-            EligibilityRule.CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION to getsImmunosuppressantMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION to getsQTProlongatingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_ANY_CYP to getsAnyCYPInducingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_CYP_X to getsCYPXInducingMedicationCreator(),
@@ -38,7 +32,6 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_PGP to getsPGPSubstrateMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_BCRP to getsBCRPInhibitingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_BCRP to getsBCRPSubstrateMedicationCreator(),
-            EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING to getsStableDosingAnticoagulantMedicationCreator(),
         )
     }
 
@@ -62,36 +55,6 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             val maxStopDate = referenceDateProvider().date().minusWeeks(input.integer().toLong())
             HasRecentlyReceivedMedicationOfApproximateCategory(selector, input.string(), maxStopDate)
         }
-    }
-
-    private fun getsAnticoagulantMedicationCreator(): FunctionCreator {
-        return getsActiveMedicationWithExactCategoryCreator(ANTITHROMBOTIC, ANTIHEMORRHAGICS)
-    }
-
-    private fun getsAzoleMedicationCreator(): FunctionCreator {
-        return getsActiveMedicationWithExactCategoryCreator(
-            IMIDAZOLE_DERIVATIVES, IMIDAZOLE_TRIAZOLE_DERIVATIVES,
-            TRIAZOLE_TETRAZOLE_DERIVATIVES
-        )
-    }
-
-    private fun getsBoneResorptiveMedicationCreator(): FunctionCreator {
-        return getsActiveMedicationWithExactCategoryCreator(CALCIUM_HOMEOSTASIS, AFFECTING_BONE_STRUCTURE)
-    }
-
-    private fun getsCoumarinDerivativeMedicationCreator(): FunctionCreator {
-        return getsActiveMedicationWithExactCategoryCreator(VITAMIN_K_ANTAGONISTS)
-    }
-
-    private fun getsGonadorelinMedicationCreator(): FunctionCreator {
-        return getsActiveMedicationWithExactCategoryCreator(
-            ANTI_GONADOTROPIN, ANTI_GONADOTROPIN_SIMILAR, GONADOTROPIN_ANALOGUES,
-            GONADOTROPIN_RELEASING
-        )
-    }
-
-    private fun getsImmunosuppressantMedicationCreator(): FunctionCreator {
-        return getsActiveMedicationWithExactCategoryCreator(IMMUNOSUPPRESSANTS)
     }
 
     private fun getsQTProlongatingMedicationCreator(): FunctionCreator {
@@ -151,18 +114,6 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun getsBCRPSubstrateMedicationCreator(): FunctionCreator {
         return FunctionCreator { CurrentlyGetsBCRPSubstrateMedication() }
-    }
-
-    private fun getsStableDosingAnticoagulantMedicationCreator(): FunctionCreator {
-        return getsStableMedicationOfCategoryCreator(ANTIHEMORRHAGICS, ANTIHEMORRHAGICS)
-    }
-
-    private fun getsStableMedicationOfCategoryCreator(vararg categoriesToFind: String): FunctionCreator {
-        return FunctionCreator { CurrentlyGetsStableMedicationOfCategory(selector, setOf(*categoriesToFind)) }
-    }
-
-    private fun getsActiveMedicationWithExactCategoryCreator(vararg categoriesToFind: String): FunctionCreator {
-        return FunctionCreator { CurrentlyGetsMedicationOfExactCategory(selector, setOf(*categoriesToFind)) }
     }
 
     companion object {

@@ -22,7 +22,7 @@ class EligibilityFactoryTest {
         assertThat(
             factory.isValidInclusionCriterion(
                 "OR(AND(OR(HAS_INR_ULN_OF_AT_MOST_X[1], HAS_PT_ULN_OF_AT_MOST_X[2]), "
-                        + "HAS_APTT_ULN_OF_AT_MOST_X[3]), HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING)"
+                        + "HAS_APTT_ULN_OF_AT_MOST_X[3]))"
             )
         ).isTrue
 
