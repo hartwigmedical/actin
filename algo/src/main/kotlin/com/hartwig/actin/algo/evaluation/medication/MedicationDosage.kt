@@ -18,6 +18,6 @@ internal object MedicationDosage {
     }
 
     private fun hasDosing(dosage: Dosage): Boolean {
-        return dosage.dosageMin() != 0.0 && dosage.dosageMax() != 0.0 && dosage.dosageUnit() != null && dosage.frequency() != null && dosage.frequencyUnit() != null && dosage.ifNeeded() != null
+        return dosage.dosageMin() != null && dosage.dosageMax() != null && dosage.dosageUnit() != null && dosage.frequency() != null && dosage.frequencyUnit() != null && dosage.ifNeeded() != null
     }
 }
