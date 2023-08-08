@@ -12,7 +12,6 @@ public interface CypInteraction {
     }
 
     enum Strength {
-        NONE,
         STRONG,
         MODERATE,
         WEAK,
