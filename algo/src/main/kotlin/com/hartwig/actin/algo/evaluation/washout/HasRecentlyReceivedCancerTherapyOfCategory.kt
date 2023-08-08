@@ -16,9 +16,23 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
     override fun evaluate(record: PatientRecord): Evaluation {
         val activeMedicationsMatchingCategories = record.clinical().medications()
             .filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
-            .filter { medication -> medication.categories().any { stringCaseInsensitivelyMatchesQueryCollection(it, categoriesToFind) } }
+            .filter { medication ->
+                (stringCaseInsensitivelyMatchesQueryCollection(
+                    medication.atc()!!.therapeuticSubGroup().name().lowercase(),
+                    categoriesToFind
+                ) || stringCaseInsensitivelyMatchesQueryCollection(
+                    medication.atc()!!.chemicalSubGroup().name().lowercase(),
+                    categoriesToFind
+                ) || stringCaseInsensitivelyMatchesQueryCollection(
+                    medication.atc()!!.anatomicalMainGroup().name().lowercase(),
+                    categoriesToFind
+                ) || stringCaseInsensitivelyMatchesQueryCollection(
+                    medication.atc()!!.pharmacologicalSubGroup().name().lowercase(),
+                    categoriesToFind
+                ))
+            }
 
-        val foundCategories = activeMedicationsMatchingCategories.flatMap { it.categories() }.distinct()
+        val foundCategories = activeMedicationsMatchingCategories.map { it.atc()!!.therapeuticSubGroup().name() }.distinct()
         val foundMedicationNames = activeMedicationsMatchingCategories.map { it.name() }.filter { it.isNotEmpty() }.distinct()
 
         return if (activeMedicationsMatchingCategories.isNotEmpty()) {

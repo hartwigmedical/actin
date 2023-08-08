@@ -133,24 +133,29 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
         private val LOGGER = LogManager.getLogger(WashoutRuleMapper::class.java)
         private val MEDICATIONS_FOR_MAIN_CATEGORY: Map<String, Set<String>> = mapOf(
             "Immunotherapy" to setOf("Pembrolizumab", "Nivolumab", "Ipilimumab", "Cemiplimab", "Avelumab"),
-            "PARP inhibitors" to setOf("Olaparib", "Rucaparib"),
             "Hypomethylating agents" to setOf("Azacitidine", "Decitabine")
         )
-        private val chemotherapyCategories = setOf("Platinum compound", "Pyrimidine antagonist", "Taxane", "Alkylating agent")
-        private val endocrineTherapyCategories = setOf("Anti-androgen", "Anti-estrogen")
-        private val gonadorelinCategories = setOf("Gonadorelin agonist", "Gonadorelin antagonist")
+        private val chemotherapyCategories = setOf("Platinum compounds", "Pyrimidine analogues", "Taxanes", "Alkylating agents")
+        private val endocrineTherapyCategories = setOf("Endocrine therapy")
+        private val gonadorelinCategories = setOf(
+            "Anti-gonadotropin-releasing hormones",
+            "Gonadotropin-releasing hormones",
+            "Antigonadotropins and similar agents",
+            "Gonadotropin releasing hormone analogues"
+        )
+        private val immunosuppressantCategories = setOf("Immunosuppressants")
+        private val parpInhibitorsCategories = setOf("Poly (ADP-ribose) polymerase (PARP) inhibitors")
 
         private val CATEGORIES_PER_MAIN_CATEGORY: Map<String, Set<String>> = mapOf(
             "Chemotherapy" to chemotherapyCategories,
             "Endocrine therapy" to endocrineTherapyCategories,
             "Gonadorelin" to gonadorelinCategories,
-            "Immunosuppressants" to setOf("Immunosuppressants, selective", "Immunosuppressants, other")
+            "Immunosuppressants" to immunosuppressantCategories,
+            "PARP inhibitors" to parpInhibitorsCategories
         )
 
-        private val ALL_ANTI_CANCER_CATEGORIES: Set<String> = setOf(
-            chemotherapyCategories, gonadorelinCategories, endocrineTherapyCategories,
-            setOf("Cytotoxic antibiotics", "Monoclonal antibody for malignancies", "Protein kinase inhibitor", "Oncolytics, other")
-        ).flatten().toSet()
+        private val ALL_ANTI_CANCER_CATEGORIES =
+            setOf("Antineoplastic agents", "Endocrine therapy", "Immunosuppressants") + gonadorelinCategories
 
         private fun determineCategories(inputs: List<String>): Set<String> {
             return inputs.flatMap { CATEGORIES_PER_MAIN_CATEGORY[it] ?: setOf(it) }.toSet()
