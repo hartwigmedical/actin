@@ -54,6 +54,7 @@ internal object QuestionnaireCuration {
         OPTION_MAPPING["yes/no/unknown"] = null
         OPTION_MAPPING["(yes/no)"] = null
         OPTION_MAPPING["botaantasting bij weke delen massa"] = false
+        OPTION_MAPPING["no total resection"] = false
 
         STAGE_MAPPING["I"] = TumorStage.I
         STAGE_MAPPING["1"] = TumorStage.I
@@ -77,6 +78,7 @@ internal object QuestionnaireCuration {
         STAGE_MAPPING["cT3N2M1"] = TumorStage.IV
         STAGE_MAPPING["unknown"] = null
         STAGE_MAPPING["onknown"] = null
+        STAGE_MAPPING["na"] = null
     }
 
     fun toOption(option: String?): Boolean? {
