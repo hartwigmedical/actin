@@ -47,10 +47,13 @@ class RequiresRegularHematopoieticSupport internal constructor(private val minDa
     }
 
     private fun hasMatchingCategory(medication: Medication): Boolean {
-        return medication.categories().any { stringCaseInsensitivelyMatchesQueryCollection(it, HEMATOPOIETIC_MEDICATION_CATEGORIES) }
+        return stringCaseInsensitivelyMatchesQueryCollection(
+            medication.atc()!!.chemicalSubGroup().name().lowercase(),
+            HEMATOPOIETIC_MEDICATION_CATEGORIES
+        )
     }
 
     companion object {
-        val HEMATOPOIETIC_MEDICATION_CATEGORIES = setOf("erythropoietic growth factor", "colony stimulating factor")
+        val HEMATOPOIETIC_MEDICATION_CATEGORIES = setOf("Other antianemic preparations", "Colony stimulating factors")
     }
 }
