@@ -68,8 +68,16 @@ public class MedicationGenerator implements TableGenerator {
     @NotNull
     private static String dosage(@NotNull Medication medication) {
         Dosage dosage = medication.dosage();
-        String dosageMin = (dosage.dosageMin() != null && dosage.dosageMin() != 0.0) ? Formats.twoDigitNumber(dosage.dosageMin()) : "?";
-        String dosageMax = (dosage.dosageMax() != null && dosage.dosageMax() != 0.0) ? Formats.twoDigitNumber(dosage.dosageMax()) : "?";
+
+        String dosageMin = "";
+        String dosageMax = "";
+        if (medication.dosage().dosageMin() == 0.0) {
+            dosageMin = "?";
+            dosageMax = "?";
+        } else if (dosage.dosageMin() != 0.0 || dosage.dosageMin() != null) {
+            dosageMin = Formats.twoDigitNumber(dosage.dosageMin());
+            dosageMax = Formats.twoDigitNumber(dosage.dosageMax());
+        }
 
         String result = dosageMin.equals(dosageMax) ? dosageMin : dosageMin + " - " + dosageMax;
         Boolean ifNeeded = dosage.ifNeeded();
@@ -91,7 +99,12 @@ public class MedicationGenerator implements TableGenerator {
 
     @NotNull
     private static String frequency(@NotNull Dosage dosage) {
-        String result = dosage.frequency() != null ? Formats.twoDigitNumber(dosage.frequency()) : "?";
+        String result = "";
+        if (dosage.frequency() == 0.0) {
+            result = "?";
+        } else if (dosage.frequency() != 0.0 || dosage.frequency() != null) {
+            result = Formats.twoDigitNumber(dosage.frequency());
+        }
 
         if (dosage.periodBetweenUnit() != null) {
             result += (" / " + Formats.noDigitNumber(dosage.periodBetweenValue() + 1) + " " + dosage.periodBetweenUnit());
