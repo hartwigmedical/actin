@@ -531,13 +531,6 @@ isContraindicationForTherapy=0), the condition is ignored for evaluation.
 | HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING                                  | Medication > categories contains "Anticoagulants" AND only 1 distinct dosage (T.B.D)                                        |                                                                                           |
 | IS_WILLING_TO_TAKE_PREMEDICATION                                            | Currently won't be evaluated                                                                                                |                                                                                           |
 
-BELOW IS IN-PROGRESS
-In case category is one of below, use the following logics:
-
-| Category | Logics                                                                                                 |
-|----------|--------------------------------------------------------------------------------------------------------|
-| Azole    | Medication > categories contains type of "Triazoles" or "Imidazoles, cutaneous" or "Imidazoles, other" |
-
 ##### Rules related to washout period
 
 | Rule                                                                                | When does a patient pass evaluation?                                                                                                                                                                           | Note                                                                                                 |
@@ -552,7 +545,6 @@ In case category is one of below, use the following logics:
 | HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ WITHIN_X_WEEKS_Y_HALF_LIVES                   | Any medication corresponding to categories in anti-cancer medication list* active X weeks prior to evaluation                                                                                                  | Half-lives is currently ignored. Does not include radiotherapy or surgery, these are separate rules. |
 | HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ EXCL_CATEGORIES_X_WITHIN_Y_WEEKS_Z_HALF_LIVES | Any medication corresponding to categories in anti-cancer medication list*, excluding categories like %X% OR if category name is present in category list **, use category config                              | Half-lives currently ignored. Does not include radiotherapy or surgery, these are separate rules.    |
 | WILL_REQUIRE_ANY_ANTICANCER_THERAPY_DURING_TRIAL                                    | won't be evaluated.                                                                                                                                                                                            |                                                                                                      |
-| HAS_RECEIVED_HERBAL_MEDICATION_OR_DIETARY_ SUPPLEMENTS_WITHIN_X_WEEKS               | medication > categories like %supplements% or %herbal remedy% active X weeks prior to evaluation date                                                                                                          |                                                                                                      |
 
 *Anti-cancer medication list includes the following categories: categories like %Platinum compound%, %Pyrimidine antagonist%, %Taxane%,
 %Alkylating agent%, %Cytotoxic antibiotics%, %Gonadorelin agonist%, %Gonadorelin antagonist%, %Monoclonal antibody for malignancies%,
