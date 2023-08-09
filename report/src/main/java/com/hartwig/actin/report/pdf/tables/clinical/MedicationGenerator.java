@@ -15,10 +15,11 @@ import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 public class MedicationGenerator implements TableGenerator {
-
     @NotNull
     private final List<Medication> medications;
     private final float totalWidth;
+
+    private static final String SPECIFIC_OR_UNKNOWN = "specific prescription|unknown prescription";
 
     public MedicationGenerator(@NotNull final List<Medication> medications, final float totalWidth) {
         this.medications = medications;
@@ -77,7 +78,7 @@ public class MedicationGenerator implements TableGenerator {
             result = "if needed " + result;
         }
 
-        if (dosage.dosageUnit().matches("specific prescription|unknown prescription")) {
+        if (dosage.dosageUnit().matches(SPECIFIC_OR_UNKNOWN)) {
             result = dosage.dosageUnit();
         } else if (dosage.dosageUnit() != null) {
             result += (" " + dosage.dosageUnit());
@@ -95,7 +96,7 @@ public class MedicationGenerator implements TableGenerator {
     private static String frequency(@NotNull Dosage dosage) {
         String result = dosage.frequency() != null ? Formats.twoDigitNumber(dosage.frequency()) : "?";
 
-        if (dosage.frequencyUnit().matches("specific prescription|unknown prescription|once")) {
+        if (dosage.frequencyUnit().matches("$SPECIFIC_OR_UNKNOWN|once")) {
             result = dosage.frequencyUnit();
         } else if (dosage.periodBetweenUnit() != null) {
             result += (" / " + Formats.noDigitNumber(dosage.periodBetweenValue() + 1) + " " + dosage.periodBetweenUnit());
@@ -106,3 +107,5 @@ public class MedicationGenerator implements TableGenerator {
         return result;
     }
 }
+
+
