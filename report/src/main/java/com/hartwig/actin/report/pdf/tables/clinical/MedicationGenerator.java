@@ -78,7 +78,9 @@ public class MedicationGenerator implements TableGenerator {
             result = "if needed " + result;
         }
 
-        if (dosage.dosageUnit().matches(SPECIFIC_OR_UNKNOWN)) {
+        if (dosage.dosageUnit() == null) {
+            result = "unknown prescription";
+        } else if (dosage.dosageUnit().matches(SPECIFIC_OR_UNKNOWN)) {
             result = dosage.dosageUnit();
         } else if (dosage.dosageUnit() != null) {
             result += (" " + dosage.dosageUnit());
@@ -96,7 +98,9 @@ public class MedicationGenerator implements TableGenerator {
     private static String frequency(@NotNull Dosage dosage) {
         String result = dosage.frequency() != null ? Formats.twoDigitNumber(dosage.frequency()) : "?";
 
-        if (dosage.frequencyUnit().matches("$SPECIFIC_OR_UNKNOWN|once")) {
+        if (dosage.frequencyUnit() == null) {
+            result = "unknown prescription";
+        } else if (dosage.frequencyUnit().matches("$SPECIFIC_OR_UNKNOWN|once")) {
             result = dosage.frequencyUnit();
         } else if (dosage.periodBetweenUnit() != null) {
             result += (" / " + Formats.noDigitNumber(dosage.periodBetweenValue() + 1) + " " + dosage.periodBetweenUnit());
