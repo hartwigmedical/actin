@@ -344,16 +344,6 @@ class CurationDatabaseReaderTest {
     }
 
     @Test
-    fun shouldReadMedicationCategoryConfigs() {
-        val configs = database!!.medicationCategoryConfigs
-        assertThat(configs).hasSize(2)
-        val paracetamol = find(configs, "Paracetamol")
-        assertThat(paracetamol.categories).containsExactly("Acetanilide derivatives")
-        val formoterol = find(configs, "Formoterol and budesonide")
-        assertThat(formoterol.categories).containsExactlyInAnyOrder("Beta2 sympathomimetics", "Corticosteroids")
-    }
-
-    @Test
     fun shouldReadAllergyConfigs() {
         val configs = database!!.intoleranceConfigs
         assertThat(configs).hasSize(1)

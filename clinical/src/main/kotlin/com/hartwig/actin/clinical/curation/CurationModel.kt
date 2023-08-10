@@ -15,7 +15,6 @@ import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
-import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig
 import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
 import com.hartwig.actin.clinical.curation.config.MolecularTestConfig
@@ -47,13 +46,11 @@ import com.hartwig.actin.clinical.datamodel.ImmutableECGMeasure
 import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue
-import com.hartwig.actin.clinical.datamodel.ImmutableMedication
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
 import com.hartwig.actin.clinical.datamodel.InfectionStatus
 import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.datamodel.LabValue
-import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.MedicationStatus
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
@@ -510,13 +507,6 @@ class CurationModel @VisibleForTesting internal constructor(
         }
     }
 
-    fun annotateWithMedicationCategory(medication: Medication): Medication {
-        return ImmutableMedication.builder()
-            .from(medication)
-            .categories(lookupMedicationCategories("medication", medication.name()))
-            .build()
-    }
-
     fun curateMedicationCypInteractions(medicationName: String): List<CypInteraction> {
         return find(database.cypInteractionConfigs, medicationName).flatMap { it.interactions }
     }
@@ -533,20 +523,6 @@ class CurationModel @VisibleForTesting internal constructor(
         } else {
             return riskConfigs.first().status
         }
-    }
-
-
-    private fun lookupMedicationCategories(source: String, medication: String): Set<String> {
-        val trimmedMedication = fullTrim(medication)
-        val configs: Set<MedicationCategoryConfig> = find(database.medicationCategoryConfigs, trimmedMedication)
-        if (configs.isEmpty()) {
-            LOGGER.warn(" Could not find medication category config for {} with name '{}'", source, trimmedMedication)
-            return Sets.newHashSet()
-        } else if (configs.size > 1) {
-            LOGGER.warn(" Multiple category configs found for {} with name '{}'", source, trimmedMedication)
-            return Sets.newHashSet()
-        }
-        return configs.iterator().next().categories
     }
 
     fun translateAdministrationRoute(administrationRoute: String?): String? {
@@ -589,9 +565,9 @@ class CurationModel @VisibleForTesting internal constructor(
             builder.name(name).doids(config.doids)
         }
 
-        if (intolerance.category().equals("medication", ignoreCase = true)) {
-            builder.subcategories(lookupMedicationCategories("intolerance", name))
-        }
+        //if (intolerance.category().equals("medication", ignoreCase = true)) {
+        //    builder.subcategories(lookupMedicationCategories("intolerance", name))
+        //}
 
         return builder.build()
     }
@@ -757,10 +733,6 @@ class CurationModel @VisibleForTesting internal constructor(
 
             MedicationDosageConfig::class.java -> {
                 return database.medicationDosageConfigs
-            }
-
-            MedicationCategoryConfig::class.java -> {
-                return database.medicationCategoryConfigs
             }
 
             IntoleranceConfig::class.java -> {

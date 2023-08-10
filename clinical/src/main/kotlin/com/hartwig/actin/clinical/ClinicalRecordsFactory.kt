@@ -311,7 +311,7 @@ class ClinicalRecordsFactory(private val feed: FeedModel, private val curation: 
                 curation.curateMedicationName(CurationUtil.capitalizeFirstLetterOnly(entry.codeText))
             }
             if (!name.isNullOrEmpty()) {
-                val medication: Medication = builder.name(name)
+                builder.name(name)
                     .status(curation.curateMedicationStatus(entry.status))
                     .administrationRoute(administrationRoute)
                     .startDate(entry.periodOfUseValuePeriodStart)
@@ -320,7 +320,6 @@ class ClinicalRecordsFactory(private val feed: FeedModel, private val curation: 
                     .qtProlongatingRisk(curation.annotateWithQTProlongating(name))
                     .atc(atc.resolve(entry.code5ATCCode))
                     .build()
-                medications.add(curation.annotateWithMedicationCategory(medication))
             }
         }
         medications.sortWith(MedicationByNameComparator())

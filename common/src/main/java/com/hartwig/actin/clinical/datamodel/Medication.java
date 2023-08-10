@@ -2,7 +2,6 @@ package com.hartwig.actin.clinical.datamodel;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -14,9 +13,6 @@ public abstract class Medication {
 
     @NotNull
     public abstract String name();
-
-    @NotNull
-    public abstract Set<String> categories();
 
     @Nullable
     public abstract MedicationStatus status();
