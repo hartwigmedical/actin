@@ -133,8 +133,8 @@ public final class TestClinicalFactory {
     }
 
     @NotNull
-    private static Drug drug(@NotNull String name, @NotNull DrugType drugClass, @NotNull TreatmentCategory category) {
-        return ImmutableDrug.builder().name(name).addDrugTypes(drugClass).category(category).build();
+    private static Drug drug(@NotNull String name, @NotNull DrugType drugType, @NotNull TreatmentCategory category) {
+        return ImmutableDrug.builder().name(name).addDrugTypes(drugType).category(category).build();
     }
 
     @NotNull
