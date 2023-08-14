@@ -37,10 +37,12 @@ public class TreatmentCategoryInputTest {
 
     private static void assertCreationFromEnumStrings(@NotNull TreatmentType[] values) {
         for (TreatmentType treatmentType : values) {
-            TreatmentCategoryInput treatmentCategoryInput = TreatmentCategoryInput.fromString(treatmentType.display());
+            String input = treatmentType.toString().replace("_", " ").toLowerCase();
+            TreatmentCategoryInput treatmentCategoryInput = TreatmentCategoryInput.fromString(input);
+           
             assertThat(treatmentCategoryInput.mappedType()).isEqualTo(treatmentType);
             assertThat(treatmentCategoryInput.mappedCategory()).isEqualTo(treatmentType.category());
-            assertThat(TreatmentCategoryInput.treatmentTypeFromString(treatmentType.display())).isEqualTo(treatmentType);
+            assertThat(TreatmentCategoryInput.treatmentTypeFromString(input)).isEqualTo(treatmentType);
         }
     }
 }
