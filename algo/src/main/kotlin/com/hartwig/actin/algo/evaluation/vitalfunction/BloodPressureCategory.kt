@@ -1,9 +1,11 @@
 package com.hartwig.actin.algo.evaluation.vitalfunction
 
-enum class BloodPressureCategory(private val display: String) {
+import com.hartwig.actin.Displayable
+
+enum class BloodPressureCategory(private val display: String) : Displayable {
     SYSTOLIC("Systolic blood pressure"), DIASTOLIC("Diastolic blood pressure");
 
-    fun display(): String {
+    override fun display(): String {
         return display
     }
 }

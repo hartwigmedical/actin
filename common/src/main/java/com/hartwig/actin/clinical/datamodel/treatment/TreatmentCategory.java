@@ -1,10 +1,11 @@
 package com.hartwig.actin.clinical.datamodel.treatment;
 
+import com.hartwig.actin.Displayable;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 
 import org.jetbrains.annotations.NotNull;
 
-public enum TreatmentCategory {
+public enum TreatmentCategory implements Displayable {
     CHEMOTHERAPY,
     RADIOTHERAPY,
     CHEMORADIOTHERAPY,
@@ -22,6 +23,7 @@ public enum TreatmentCategory {
     PROPHYLACTIC_TREATMENT,
     ABLATION;
 
+    @Override
     @NotNull
     public String display() {
         return TreatmentCategoryResolver.toString(this).toLowerCase();

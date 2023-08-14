@@ -1,9 +1,11 @@
 package com.hartwig.actin.algo.evaluation.bloodtransfusion
 
-enum class TransfusionProduct(private val display: String) {
+import com.hartwig.actin.Displayable
+
+enum class TransfusionProduct(private val display: String) : Displayable {
     ERYTHROCYTE("Erythrocyte"), THROMBOCYTE("Thrombocyte");
 
-    fun display(): String {
+    override fun display(): String {
         return display
     }
 }
