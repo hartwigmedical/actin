@@ -51,6 +51,22 @@ internal class MedicationSelector(private val interpreter: MedicationStatusInter
             .filter { isActive(it) || isRecentlyStopped(it, minStopDate) }
     }
 
+    fun hasATCLevelName(medication: Medication, categoriesToFind: Set<String>): Boolean {
+        return stringCaseInsensitivelyMatchesQueryCollection(
+            medication.atc()!!.therapeuticSubGroup().name().lowercase(),
+            categoriesToFind
+        ) || stringCaseInsensitivelyMatchesQueryCollection(
+            medication.atc()!!.chemicalSubGroup().name().lowercase(),
+            categoriesToFind
+        ) || stringCaseInsensitivelyMatchesQueryCollection(
+            medication.atc()!!.anatomicalMainGroup().name().lowercase(),
+            categoriesToFind
+        ) || stringCaseInsensitivelyMatchesQueryCollection(
+            medication.atc()!!.pharmacologicalSubGroup().name().lowercase(),
+            categoriesToFind
+        )
+    }
+
     private fun isRecentlyStopped(medication: Medication, minStopDate: LocalDate): Boolean {
         return medication.stopDate()?.isAfter(minStopDate) ?: false
     }
