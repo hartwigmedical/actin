@@ -565,9 +565,10 @@ class CurationModel @VisibleForTesting internal constructor(
             builder.name(name).doids(config.doids)
         }
 
-        //if (intolerance.category().equals("medication", ignoreCase = true)) {
-        //    builder.subcategories(lookupMedicationCategories("intolerance", name))
-        //}
+        // TODO: add ATC code of medication to subcategories
+        if (intolerance.category().equals("medication", ignoreCase = true)) {
+            builder.subcategories(emptySet())
+        }
 
         return builder.build()
     }
