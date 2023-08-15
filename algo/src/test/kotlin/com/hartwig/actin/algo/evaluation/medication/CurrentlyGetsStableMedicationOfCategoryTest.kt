@@ -19,17 +19,20 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
 
         // Passes with single medication with dosing.
-        medications.add(TestMedicationFactory.builder().dosage(fixedDosing()).addCategories(category1).build())
+        val atc =
+            AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name(category1).build()).build()
+        medications.add(TestMedicationFactory.builder().dosage(fixedDosing()).atc(atc).build())
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
 
         // Passes with another medication with no category and same dosing
-        medications.add(TestMedicationFactory.builder().dosage(fixedDosing()).categories(emptySet()).build())
+        val noAtc = AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("").build()).build()
+        medications.add(TestMedicationFactory.builder().dosage(fixedDosing()).atc(noAtc).build())
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
 
         // Fails on same category and other dosing.
         medications.add(
             TestMedicationFactory.builder().dosage(ImmutableDosage.builder().from(fixedDosing()).frequencyUnit("other").build())
-                .addCategories(category1).build()
+                .atc(atc).build()
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
 
@@ -41,8 +44,8 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
                     listOf(
                         TestMedicationFactory.builder()
                             .dosage(fixedDosing())
-                            .addCategories(category1)
-                            .build(), TestMedicationFactory.builder().addCategories(category1).build()
+                            .atc(atc)
+                            .build(), TestMedicationFactory.builder().atc(atc).build()
                     )
                 )
             )
@@ -57,21 +60,25 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
 
         // Passes with single medication with dosing.
         val medications: MutableList<Medication> = mutableListOf()
-        medications.add(TestMedicationFactory.builder().dosage(fixedDosing()).addCategories(category1).build())
-        medications.add(TestMedicationFactory.builder().dosage(fixedDosing()).addCategories(category2).build())
+        val atc1 =
+            AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name(category1).build()).build()
+        val atc2 =
+            AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name(category2).build()).build()
+        medications.add(TestMedicationFactory.builder().dosage(fixedDosing()).atc(atc1).build())
+        medications.add(TestMedicationFactory.builder().dosage(fixedDosing()).atc(atc2).build())
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
 
         // Passes on same category and other dosing.
         medications.add(
             TestMedicationFactory.builder().dosage(ImmutableDosage.builder().from(fixedDosing()).frequencyUnit("other").build())
-                .addCategories(category1).build()
+                .atc(atc1).build()
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
 
         // Start failing when both categories have wrong dosing.
         medications.add(
             TestMedicationFactory.builder().dosage(ImmutableDosage.builder().from(fixedDosing()).frequencyUnit("other").build())
-                .addCategories(category2).build()
+                .atc(atc2).build()
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
     }

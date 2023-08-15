@@ -34,8 +34,14 @@ class MedicationSelectorTest {
     fun canFilterOnOneExactCategory() {
         val medications = listOf(
             TestMedicationFactory.builder().name("no categories").build(),
-            TestMedicationFactory.builder().name("wrong categories").addCategories("wrong category 1").build(),
-            TestMedicationFactory.builder().name("right categories").addCategories("category 1", "category 2").build(),
+            TestMedicationFactory.builder().name("wrong categories").atc(
+                AtcTestFactory.atcClassificationBuilder()
+                    .anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("wrong category 1").build()).build()
+            ).build(),
+            TestMedicationFactory.builder().name("right categories").atc(
+                AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category 1").build())
+                    .build()
+            ).build(),
         )
         val filtered = MedicationTestFactory.alwaysActive().activeWithExactCategory(medications, "Category 1")
         Assert.assertEquals(1, filtered.size.toLong())
@@ -46,9 +52,18 @@ class MedicationSelectorTest {
     fun canFilterOnAnyExactCategory() {
         val medications = listOf(
             TestMedicationFactory.builder().name("no categories").build(),
-            TestMedicationFactory.builder().name("wrong categories").addCategories("wrong category 1").build(),
-            TestMedicationFactory.builder().name("right category 1").addCategories("category 1", "category 2").build(),
-            TestMedicationFactory.builder().name("right category 2").addCategories("category 3").build()
+            TestMedicationFactory.builder().name("wrong categories").atc(
+                AtcTestFactory.atcClassificationBuilder()
+                    .anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("wrong category 1").build()).build()
+            ).build(),
+            TestMedicationFactory.builder().name("right category 1").atc(
+                AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category 1").build())
+                    .build()
+            ).build(),
+            TestMedicationFactory.builder().name("right category 2").atc(
+                AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category 3").build())
+                    .build()
+            ).build()
         )
         val filtered = MedicationTestFactory.alwaysActive().activeWithAnyExactCategory(medications, setOf("Category 1", "Category 3"))
         Assert.assertEquals(2, filtered.size.toLong())
@@ -61,19 +76,29 @@ class MedicationSelectorTest {
         val minStopDate = LocalDate.of(2019, 11, 20)
         val medications = listOf(
             TestMedicationFactory.builder().name("no categories").build(),
-            TestMedicationFactory.builder().name("wrong categories").addCategories("wrong category 1").build(),
+            TestMedicationFactory.builder().name("wrong categories").atc(
+                AtcTestFactory.atcClassificationBuilder()
+                    .anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("wrong category 1").build()).build()
+            ).build(),
             TestMedicationFactory.builder()
                 .name("right category 1 recently stopped")
-                .addCategories("category 1")
+                .atc(
+                    AtcTestFactory.atcClassificationBuilder()
+                        .anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category 1").build()).build()
+                )
                 .stopDate(minStopDate.plusDays(1))
                 .build(),
             TestMedicationFactory.builder()
                 .name("right category 1 stopped long ago")
-                .addCategories("category 1")
+                .atc(
+                    AtcTestFactory.atcClassificationBuilder()
+                        .anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category 1").build()).build()
+                )
                 .stopDate(minStopDate.minusDays(1))
                 .build()
         )
-        val filtered = MedicationTestFactory.alwaysInactive().activeOrRecentlyStoppedWithCategory(medications, "Category 1", minStopDate)
+        val filtered =
+            MedicationTestFactory.alwaysInactive().activeOrRecentlyStoppedWithCategory(medications, setOf("Category 1"), minStopDate)
         Assert.assertEquals(1, filtered.size.toLong())
         Assert.assertNotNull(findByName(medications, "right category 1 recently stopped"))
     }

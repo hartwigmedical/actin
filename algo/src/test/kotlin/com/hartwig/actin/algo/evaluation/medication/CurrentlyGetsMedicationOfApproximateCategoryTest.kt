@@ -9,26 +9,34 @@ import org.junit.Test
 class CurrentlyGetsMedicationOfApproximateCategoryTest {
     @Test
     fun canEvaluate() {
-        val function = CurrentlyGetsMedicationOfApproximateCategory(MedicationTestFactory.alwaysActive(), "category 1")
+        val function = CurrentlyGetsMedicationOfApproximateCategory(MedicationTestFactory.alwaysActive(), setOf("category 1"))
 
         // No medications yet
         val medications: MutableList<Medication> = mutableListOf()
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
 
         // Medication with wrong category
-        medications.add(TestMedicationFactory.builder().addCategories("category 2", "category 3").build())
+        val wrongAtc =
+            AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category 3").build())
+                .build()
+        medications.add(TestMedicationFactory.builder().atc(wrongAtc).build())
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
 
         // Medication with non-exact category
-        medications.add(TestMedicationFactory.builder().addCategories("this is category 1").build())
+        val nonExactAtc = AtcTestFactory.atcClassificationBuilder()
+            .anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("this is category 1").build()).build()
+        medications.add(TestMedicationFactory.builder().atc(nonExactAtc).build())
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
 
         // Medication with right category
+        val rightAtc =
+            AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category 1").build())
+                .build()
         assertEvaluation(
             EvaluationResult.PASS, function.evaluate(
                 MedicationTestFactory.withMedications(
                     listOf(
-                        TestMedicationFactory.builder().addCategories("category 4", "category 1").build()
+                        TestMedicationFactory.builder().atc(rightAtc).build()
                     )
                 )
             )

@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.bloodtransfusion
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication
@@ -52,8 +53,11 @@ class RequiresRegularHematopoieticSupportTest {
 
     companion object {
         private fun support(): ImmutableMedication.Builder {
-            return TestMedicationFactory.builder()
-                .addCategories(RequiresRegularHematopoieticSupport.HEMATOPOIETIC_MEDICATION_CATEGORIES.iterator().next())
+            val atc = AtcTestFactory.atcClassificationBuilder().chemicalSubGroup(
+                AtcTestFactory.atcLevelBuilder()
+                    .name(RequiresRegularHematopoieticSupport.HEMATOPOIETIC_MEDICATION_CATEGORIES.iterator().next()).build()
+            ).build()
+            return TestMedicationFactory.builder().atc(atc)
         }
 
         private fun create(date: LocalDate): BloodTransfusion {
