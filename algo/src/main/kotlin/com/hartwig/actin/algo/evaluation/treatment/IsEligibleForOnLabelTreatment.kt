@@ -7,9 +7,16 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
 class IsEligibleForOnLabelTreatment internal constructor() : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined(
-            "Potential eligibility for on-label treatment undetermined",
-            "Adequate exhaustion of SOC currently undetermined"
-        )
+        return if (record.clinical().priorTumorTreatments().isEmpty()) {
+            EvaluationFactory.undetermined(
+                "Patient has not had any prior cancer treatments and therefore undetermined eligibility for on-label treatment",
+                "Undetermined eligibility for on-label treatment"
+            )
+        } else {
+            EvaluationFactory.notEvaluated(
+                "Assumed no eligibility for on-label treatment since patient has had prior cancer treatment",
+                "Assumed no eligibility for on-label treatment"
+            )
+        }
     }
 }
