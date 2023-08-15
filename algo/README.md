@@ -649,6 +649,11 @@ to 5 most recent values would be sufficient to `PASS`.
 For rules about e.g. primary tumor location and type, second primaries and 'other conditions', one or more DOIDs may be implemented. For
 more information, see https://disease-ontology.org/.
 
+### Anatomical Therapeutical Chemical codes (ATC codes)
+
+To classify medication we made use of the ATC classification system: https://www.whocc.no/atc_ddd_index/. All active substances are
+classified in a hierarchy with five different levels.
+
 ### Version History and Download Links
 
 - Upcoming (first release) 
