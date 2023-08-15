@@ -478,7 +478,6 @@ public final class TestClinicalFactory {
 
         medications.add(TestMedicationFactory.builder()
                 .name("Ibuprofen")
-                .addCategories("NSAIDs")
                 .status(MedicationStatus.ACTIVE)
                 .dosage(ImmutableDosage.builder()
                         .dosageMin(750D)
@@ -494,7 +493,6 @@ public final class TestClinicalFactory {
 
         medications.add(TestMedicationFactory.builder()
                 .name("Prednison")
-                .addCategories("NSAIDs")
                 .status(MedicationStatus.ACTIVE)
                 .dosage(ImmutableDosage.builder()
                         .dosageMin(750D)

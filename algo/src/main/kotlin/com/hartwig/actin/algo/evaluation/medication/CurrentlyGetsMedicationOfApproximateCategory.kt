@@ -5,32 +5,46 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 
 //TODO: Update according to README
 class CurrentlyGetsMedicationOfApproximateCategory internal constructor(
     private val selector: MedicationSelector,
-    private val categoryTermToFind: String
+    private val categoriesToFind: Set<String>
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val lowercaseTermToFind = categoryTermToFind.lowercase()
+        val lowercaseCategoriesToFind = categoriesToFind.map { it.lowercase() }.toSet()
         val medications = selector.active(record.clinical().medications())
             .filter { medication ->
-                (medication.atc()!!.anatomicalMainGroup().name().lowercase().contains(lowercaseTermToFind) || medication.atc()!!
-                    .chemicalSubGroup().name().lowercase().contains(lowercaseTermToFind) || medication.atc()!!.therapeuticSubGroup().name()
-                    .lowercase().contains(lowercaseTermToFind) || medication.atc()!!.pharmacologicalSubGroup().name().lowercase()
-                    .contains(lowercaseTermToFind))
+                (stringCaseInsensitivelyMatchesQueryCollection(
+                    medication.atc()!!.therapeuticSubGroup().name().lowercase(),
+                    lowercaseCategoriesToFind
+                ) || stringCaseInsensitivelyMatchesQueryCollection(
+                    medication.atc()!!.chemicalSubGroup().name().lowercase(),
+                    lowercaseCategoriesToFind
+                ) || stringCaseInsensitivelyMatchesQueryCollection(
+                    medication.atc()!!.anatomicalMainGroup().name().lowercase(),
+                    lowercaseCategoriesToFind
+                ) || stringCaseInsensitivelyMatchesQueryCollection(
+                    medication.atc()!!.pharmacologicalSubGroup().name().lowercase(),
+                    lowercaseCategoriesToFind
+                ))
             }
-            .map { it.name() }
+
+        val foundCategories = medications.map { it.atc()!!.therapeuticSubGroup().name() }.distinct()
+        val foundMedicationNames = medications.map { it.name() }.filter { it.isNotEmpty() }.distinct()
 
         return if (medications.isNotEmpty()) {
+            val foundMedicationString = if (foundMedicationNames.isNotEmpty()) ": ${concat(foundMedicationNames)}" else ""
             EvaluationFactory.pass(
-                "Patient currently gets medication " + concat(medications) + ", which belong(s) to category "
-                        + categoryTermToFind, "$categoryTermToFind medication use"
+                "Patient currently gets medication " + foundMedicationString + ", which belong(s) to category "
+                        + concat(foundCategories),
+                concat(foundCategories) + "medication use"
             )
         } else
             EvaluationFactory.fail(
-                "Patient currently does not get medication of category $categoryTermToFind",
-                "No $categoryTermToFind medication use"
+                "Patient currently does not get medication of category ${concat(foundCategories)}",
+                "No ${concat(foundCategories)} medication use"
             )
     }
 }

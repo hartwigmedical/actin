@@ -44,8 +44,9 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun getsActiveMedicationWithApproximateCategoryCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val categoryTermToFind = functionInputResolver().createOneStringInput(function)
-            CurrentlyGetsMedicationOfApproximateCategory(selector, categoryTermToFind)
+            val categoryInputs = functionInputResolver().createOneStringInput(function)
+            val categories = determineCategories(categoryInputs)
+            CurrentlyGetsMedicationOfApproximateCategory(selector, categories)
         }
     }
 
@@ -53,7 +54,8 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneStringOneIntegerInput(function)
             val maxStopDate = referenceDateProvider().date().minusWeeks(input.integer().toLong())
-            HasRecentlyReceivedMedicationOfApproximateCategory(selector, input.string(), maxStopDate)
+            val categories = determineCategories(input.string())
+            HasRecentlyReceivedMedicationOfApproximateCategory(selector, categories, maxStopDate)
         }
     }
 
@@ -117,20 +119,22 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     }
 
     companion object {
-        // Medication categories
-        private const val ANTITHROMBOTIC = "Antithrombotic agents"
-        private const val ANTIHEMORRHAGICS = "Antihemorrhagics"
-        private const val IMIDAZOLE_TRIAZOLE_DERIVATIVES = "Imidazole and triazole derivatives"
-        private const val TRIAZOLE_TETRAZOLE_DERIVATIVES = "Triazole and tetrazole derivatives"
-        private const val IMIDAZOLE_DERIVATIVES = "Imidazole derivatives"
-        private const val CALCIUM_HOMEOSTASIS = "Calcium homeostasis"
-        private const val AFFECTING_BONE_STRUCTURE = "Drugs affecting bone structure and mineralization"
-        private const val VITAMIN_K_ANTAGONISTS = "Vitamin K antagonists"
-        private const val IMMUNOSUPPRESSANTS = "Immunosuppressants"
-        private const val ANTI_GONADOTROPIN = "Anti-gonadotropin-releasing hormones"
-        private const val GONADOTROPIN_RELEASING = "Gonadotropin-releasing hormones"
-        private const val ANTI_GONADOTROPIN_SIMILAR = "Antigonadotropins and similar agents"
-        private const val GONADOTROPIN_ANALOGUES = "Gonadotropin releasing hormone analogues"
+        private val CATEGORIES_PER_MAIN_CATEGORY: Map<String, Set<String>> = mapOf(
+            "Anticoagulant" to setOf("Antithrombotic agents", "Antihemorrhagics"),
+            "Azole" to setOf("Imidazole and triazole derivatives", "Triazole and tetrazole derivatives", "Imidazole derivatives"),
+            "Bone resorptive" to setOf("Calcium homeostasis", "Drugs affecting bone structure and mineralization"),
+            "Coumarin derivative" to setOf("Vitamin K antagonists"),
+            "Gonadorelin" to setOf(
+                "Anti-gonadotropin-releasing hormones",
+                "Gonadotropin-releasing hormones",
+                "Antigonadotropins and similar agents",
+                "Gonadotropin releasing hormone analogues"
+            ),
+            "Immunosuppressant" to setOf("Immunosuppressants"),
+        )
 
+        private fun determineCategories(inputs: String): Set<String> {
+            return CATEGORIES_PER_MAIN_CATEGORY[inputs] ?: setOf(inputs)
+        }
     }
 }

@@ -31,13 +31,22 @@ internal class MedicationSelector(private val interpreter: MedicationStatusInter
     }
 
     fun activeOrRecentlyStoppedWithCategory(
-        medications: List<Medication>, categoryToFind: String, minStopDate: LocalDate
+        medications: List<Medication>, categoriesToFind: Set<String>, minStopDate: LocalDate
     ): List<Medication> {
         return medications.filter { medication ->
-            (medication.atc()!!.anatomicalMainGroup().name().lowercase().equals(categoryToFind, ignoreCase = true) ||
-                    medication.atc()!!.chemicalSubGroup().name().lowercase().equals(categoryToFind, ignoreCase = true) ||
-                    medication.atc()!!.pharmacologicalSubGroup().name().lowercase().equals(categoryToFind, ignoreCase = true) ||
-                    medication.atc()!!.therapeuticSubGroup().name().lowercase().equals(categoryToFind, ignoreCase = true))
+            (stringCaseInsensitivelyMatchesQueryCollection(
+                medication.atc()!!.therapeuticSubGroup().name().lowercase(),
+                categoriesToFind
+            ) || stringCaseInsensitivelyMatchesQueryCollection(
+                medication.atc()!!.chemicalSubGroup().name().lowercase(),
+                categoriesToFind
+            ) || stringCaseInsensitivelyMatchesQueryCollection(
+                medication.atc()!!.anatomicalMainGroup().name().lowercase(),
+                categoriesToFind
+            ) || stringCaseInsensitivelyMatchesQueryCollection(
+                medication.atc()!!.pharmacologicalSubGroup().name().lowercase(),
+                categoriesToFind
+            ))
         }
             .filter { isActive(it) || isRecentlyStopped(it, minStopDate) }
     }
