@@ -86,7 +86,7 @@ public class MedicationGenerator implements TableGenerator {
             result += (" " + dosage.dosageUnit());
         }
 
-        if (("cutaneous".equals(medication.administrationRoute()) || "intravenous".equals(medication.administrationRoute()))
+        if (("Cutaneous".equals(medication.administrationRoute()) || "Intravenous".equals(medication.administrationRoute()))
                 && dosage.dosageMin() == 0.0) {
             result = "";
         }
@@ -100,7 +100,7 @@ public class MedicationGenerator implements TableGenerator {
 
         if (dosage.frequencyUnit() == null) {
             result = "unknown prescription";
-        } else if (dosage.frequencyUnit().matches("$SPECIFIC_OR_UNKNOWN|once")) {
+        } else if (dosage.frequencyUnit().matches(SPECIFIC_OR_UNKNOWN + "|once")) {
             result = dosage.frequencyUnit();
         } else if (dosage.periodBetweenUnit() != null) {
             result += (" / " + Formats.noDigitNumber(dosage.periodBetweenValue() + 1) + " " + dosage.periodBetweenUnit());
