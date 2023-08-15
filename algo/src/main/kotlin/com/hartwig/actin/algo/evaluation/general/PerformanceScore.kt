@@ -1,12 +1,11 @@
 package com.hartwig.actin.algo.evaluation.general
 
-import com.hartwig.actin.util.ApplicationConfig
+import com.hartwig.actin.Displayable
 
-internal enum class PerformanceScore {
+internal enum class PerformanceScore : Displayable {
     LANSKY, KARNOFSKY;
 
-    fun display(): String {
-        val locale = ApplicationConfig.LOCALE
-        return name.substring(0, 1).uppercase(locale) + name.substring(1).lowercase(locale)
+    override fun display(): String {
+        return name.substring(0, 1).uppercase() + name.substring(1).lowercase()
     }
 }

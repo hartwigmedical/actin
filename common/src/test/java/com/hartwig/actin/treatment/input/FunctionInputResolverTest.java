@@ -58,7 +58,7 @@ public class FunctionInputResolverTest {
     private static final double EPSILON = 1.0E-10;
 
     @Test
-    public void canDetermineInputValidityForEveryRule() {
+    public void shouldDetermineInputValidityForEveryRule() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
         for (EligibilityRule rule : EligibilityRule.values()) {
             assertNotNull(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
@@ -66,7 +66,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveCompositeInputs() {
+    public void shouldResolveCompositeInputs() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
 
         // No inputs
@@ -101,7 +101,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithoutInputs() {
+    public void shouldResolveFunctionsWithoutInputs() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
 
         EligibilityRule rule = firstOfType(FunctionInput.NONE);
@@ -112,7 +112,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneIntegerInput() {
+    public void shouldResolveFunctionsWithOneIntegerInput() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
 
         EligibilityRule rule = firstOfType(FunctionInput.ONE_INTEGER);
@@ -127,7 +127,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithTwoIntegerInputs() {
+    public void shouldResolveFunctionsWithTwoIntegerInputs() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
 
         EligibilityRule rule = firstOfType(FunctionInput.TWO_INTEGERS);
@@ -142,7 +142,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneDoubleInput() {
+    public void shouldResolveFunctionsWithOneDoubleInput() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
 
         EligibilityRule rule = firstOfType(FunctionInput.ONE_DOUBLE);
@@ -157,7 +157,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithTwoDoubleInputs() {
+    public void shouldResolveFunctionsWithTwoDoubleInputs() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
 
         EligibilityRule rule = firstOfType(FunctionInput.TWO_DOUBLES);
@@ -172,7 +172,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneTreatmentInput() {
+    public void shouldResolveFunctionsWithOneTreatmentCategoryOrTypeInput() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
 
         EligibilityRule rule = firstOfType(FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE);
@@ -190,7 +190,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneTreatmentOneIntegerInput() {
+    public void shouldResolveFunctionsWithOneTreatmentCategoryOrTypeOneIntegerInput() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
 
         EligibilityRule rule = firstOfType(FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE_ONE_INTEGER);
@@ -209,14 +209,13 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneTypedTreatmentManyTypesInput() {
+    public void shouldResolveFunctionsWithOneTreatmentCategoryManyTypesInput() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
 
         EligibilityRule rule = firstOfType(FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES);
 
         String category = TreatmentCategory.IMMUNOTHERAPY.display();
-        EligibilityFunction valid =
-                create(rule, Lists.newArrayList(category, DrugType.ANTI_PD_L1.display() + ";" + DrugType.ANTI_PD_1.display()));
+        EligibilityFunction valid = create(rule, Lists.newArrayList(category, DrugType.ANTI_PD_L1 + ";" + DrugType.ANTI_PD_1));
         assertTrue(resolver.hasValidInputs(valid));
 
         OneTreatmentCategoryManyTypes inputs = resolver.createOneTreatmentCategoryManyTypesInput(valid);
@@ -230,14 +229,13 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneTreatmentManyTypesOneIntegerInput() {
+    public void shouldResolveFunctionsWithOneTreatmentCategoryManyTypesOneIntegerInput() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
 
         EligibilityRule rule = firstOfType(FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES_ONE_INTEGER);
 
         String category = TreatmentCategory.IMMUNOTHERAPY.display();
-        EligibilityFunction valid =
-                create(rule, Lists.newArrayList(category, DrugType.ANTI_PD_L1.display() + ";" + DrugType.ANTI_PD_1.display(), "1"));
+        EligibilityFunction valid = create(rule, Lists.newArrayList(category, DrugType.ANTI_PD_L1 + ";" + DrugType.ANTI_PD_1, "1"));
         assertTrue(resolver.hasValidInputs(valid));
 
         OneTreatmentCategoryManyTypesOneInteger inputs = resolver.createOneTreatmentCategoryManyTypesOneIntegerInput(valid);
@@ -251,7 +249,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneTumorTypeInput() {
+    public void shouldResolveFunctionsWithOneTumorTypeInput() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
 
         EligibilityRule rule = firstOfType(FunctionInput.ONE_TUMOR_TYPE);
@@ -266,7 +264,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneStringInput() {
+    public void shouldResolveFunctionsWithOneStringInput() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
 
         EligibilityRule rule = firstOfType(FunctionInput.ONE_STRING);
@@ -280,7 +278,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneStringOneIntegerInput() {
+    public void shouldResolveFunctionsWithOneStringOneIntegerInput() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
 
         EligibilityRule rule = firstOfType(FunctionInput.ONE_STRING_ONE_INTEGER);
@@ -296,7 +294,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithManyStringsOneIntegerInput() {
+    public void shouldResolveFunctionsWithManyStringsOneIntegerInput() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
 
         EligibilityRule rule = firstOfType(FunctionInput.MANY_STRINGS_ONE_INTEGER);
@@ -312,7 +310,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithManyStringsTwoIntegersInput() {
+    public void shouldResolveFunctionsWithManyStringsTwoIntegersInput() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
 
         EligibilityRule rule = firstOfType(FunctionInput.MANY_STRINGS_TWO_INTEGERS);
@@ -330,7 +328,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneIntegerOneStringInput() {
+    public void shouldResolveFunctionsWithOneIntegerOneStringInput() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
 
         EligibilityRule rule = firstOfType(FunctionInput.ONE_INTEGER_ONE_STRING);
@@ -346,7 +344,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneIntegerManyStringsInput() {
+    public void shouldResolveFunctionsWithOneIntegerManyStringsInput() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
 
         EligibilityRule rule = firstOfType(FunctionInput.ONE_INTEGER_MANY_STRINGS);
@@ -364,7 +362,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneTumorStageInput() {
+    public void shouldResolveFunctionsWithOneTumorStageInput() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
 
         EligibilityRule rule = firstOfType(FunctionInput.ONE_TUMOR_STAGE);
@@ -380,7 +378,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneHlaAlleleInput() {
+    public void shouldResolveFunctionsWithOneHlaAlleleInput() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
 
         EligibilityRule rule = firstOfType(FunctionInput.ONE_HLA_ALLELE);
@@ -398,7 +396,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneGeneInput() {
+    public void shouldResolveFunctionsWithOneGeneInput() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene");
 
         EligibilityRule rule = firstOfType(FunctionInput.ONE_GENE);
@@ -415,7 +413,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneGeneOneIntegerInput() {
+    public void shouldResolveFunctionsWithOneGeneOneIntegerInput() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene");
 
         EligibilityRule rule = firstOfType(FunctionInput.ONE_GENE_ONE_INTEGER);
@@ -434,7 +432,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneGeneOneIntegerOneVariantTypeInput() {
+    public void shouldResolveFunctionsWithOneGeneOneIntegerOneVariantTypeInput() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene");
 
         EligibilityRule rule = firstOfType(FunctionInput.ONE_GENE_ONE_INTEGER_ONE_VARIANT_TYPE);
@@ -454,7 +452,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneGeneTwoIntegers() {
+    public void shouldResolveFunctionsWithOneGeneTwoIntegersInput() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene");
 
         EligibilityRule rule = firstOfType(FunctionInput.ONE_GENE_TWO_INTEGERS);
@@ -472,7 +470,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneGeneManyCodonsInput() {
+    public void shouldResolveFunctionsWithOneGeneManyCodonsInput() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene");
 
         EligibilityRule rule = firstOfType(FunctionInput.ONE_GENE_MANY_CODONS);
@@ -491,7 +489,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneGeneManyProteinImpactsInput() {
+    public void shouldResolveFunctionsWithOneGeneManyProteinImpactsInput() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene");
 
         EligibilityRule rule = firstOfType(FunctionInput.ONE_GENE_MANY_PROTEIN_IMPACTS);
@@ -510,7 +508,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithManyGenesInput() {
+    public void shouldResolveFunctionsWithManyGenesInput() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene");
 
         EligibilityRule rule = firstOfType(FunctionInput.MANY_GENES);
@@ -527,7 +525,7 @@ public class FunctionInputResolverTest {
     }
 
     @Test
-    public void canResolveFunctionsWithOneDoidTermInput() {
+    public void shouldResolveFunctionsWithOneDoidTermInput() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createResolverWithDoidAndTerm("doid 1", "term 1");
 
         EligibilityRule rule = firstOfType(FunctionInput.ONE_DOID_TERM);

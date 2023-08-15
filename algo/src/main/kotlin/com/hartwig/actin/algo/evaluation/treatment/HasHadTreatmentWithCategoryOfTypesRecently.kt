@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.DateComparison.isAfterDate
-import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.Format.concatItems
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
 import java.time.LocalDate
@@ -28,7 +28,7 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
             )
         }.fold(TreatmentAssessment()) { acc, element -> acc.combineWith(element) }
 
-        val typesList = concat(types.map(TreatmentType::display))
+        val typesList = concatItems(types)
         return when {
             treatmentAssessment.hasHadValidTreatment -> {
                 EvaluationFactory.pass("Has received $typesList ${category.display()} treatment")

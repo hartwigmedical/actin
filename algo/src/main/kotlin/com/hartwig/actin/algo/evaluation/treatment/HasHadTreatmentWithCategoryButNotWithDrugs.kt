@@ -4,7 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
+import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
@@ -20,7 +20,7 @@ class HasHadTreatmentWithCategoryButNotWithDrugs(
                 entry.treatments().none { (it as? Therapy)?.drugs()?.intersect(ignoreDrugs)?.isNotEmpty() == true }
             }
 
-        val ignoreDrugsList = concatLowercaseWithAnd(ignoreDrugs.map(Drug::name))
+        val ignoreDrugsList = concatItemsWithAnd(ignoreDrugs)
         return when {
             treatmentSummary.hasSpecificMatch() -> EvaluationFactory.pass("Has received ${category.display()} ignoring $ignoreDrugsList")
 

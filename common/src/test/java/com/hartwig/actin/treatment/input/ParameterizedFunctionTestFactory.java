@@ -69,16 +69,13 @@ public class ParameterizedFunctionTestFactory {
                 return List.of(TreatmentCategory.IMMUNOTHERAPY.display());
             }
             case ONE_TREATMENT_CATEGORY_MANY_TYPES: {
-                return List.of(TreatmentCategory.IMMUNOTHERAPY.display(),
-                        DrugType.ANTI_PD_L1.display() + ";" + DrugType.ANTI_PD_1.display());
+                return List.of(TreatmentCategory.IMMUNOTHERAPY.display(), DrugType.ANTI_PD_L1 + ";" + DrugType.ANTI_PD_1);
             }
             case ONE_TREATMENT_CATEGORY_OR_TYPE_ONE_INTEGER: {
                 return List.of(OtherTreatmentType.ALLOGENIC.display(), "1");
             }
             case ONE_TREATMENT_CATEGORY_MANY_TYPES_ONE_INTEGER: {
-                return List.of(TreatmentCategory.IMMUNOTHERAPY.display(),
-                        DrugType.ANTI_PD_L1.display() + ";" + DrugType.ANTI_PD_1.display(),
-                        "1");
+                return List.of(TreatmentCategory.IMMUNOTHERAPY.display(), DrugType.ANTI_PD_L1 + ";" + DrugType.ANTI_PD_1, "1");
             }
             case ONE_SPECIFIC_TREATMENT: {
                 return List.of("CAPECITABINE+OXALIPLATIN");
