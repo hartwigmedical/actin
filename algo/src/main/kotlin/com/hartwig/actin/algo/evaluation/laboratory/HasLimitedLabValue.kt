@@ -21,9 +21,9 @@ class HasLimitedLabValue(private val maxValue: Double, private val measurement: 
         val builder = recoverable().result(result)
         when (result) {
             EvaluationResult.FAIL -> {
-                builder.addFailSpecificMessages("${labValue.code()} exceeds limit")
-                builder.addFailGeneralMessages("${labValue.code()} exceeds limit")
-            }
+                    builder.addFailSpecificMessages("${labValue.code()} $convertedValue $targetUnit is above limit (above maximum of $maxValue $targetUnit)")
+                    builder.addFailGeneralMessages("${labValue.code()} $convertedValue $targetUnit above maximum of $maxValue $targetUnit")
+                }
 
             EvaluationResult.UNDETERMINED -> {
                 builder.addUndeterminedSpecificMessages("${labValue.code()} sufficiency could not be evaluated")
