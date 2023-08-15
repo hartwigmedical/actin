@@ -59,6 +59,7 @@ public class MolecularDriversSummarizer {
     }
 
     public Stream<String> actionableEventsThatAreNotKeyDrivers() {
+
         Stream<? extends Driver> nonDisruptionDrivers = Stream.of(molecularDrivers.variants(),
                 molecularDrivers.copyNumbers(),
                 molecularDrivers.fusions(),
