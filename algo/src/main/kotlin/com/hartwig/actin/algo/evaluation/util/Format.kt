@@ -29,12 +29,6 @@ object Format {
         return concatDisplayables(items, SEPARATOR_AND)
     }
 
-    private fun concatDisplayables(items: Iterable<Displayable>, separator: String) =
-        concatStrings(items.map(Displayable::display), separator)
-
-    private fun concatStrings(strings: Iterable<String>, separator: String) =
-        strings.distinct().sorted().joinToString(separator)
-
     fun date(date: LocalDate): String {
         return DATE_FORMAT.format(date)
     }
@@ -43,4 +37,10 @@ object Format {
         require(!(fraction < 0 || fraction > 1)) { "Fraction provided that is not within 0 and 1: $fraction" }
         return PERCENTAGE_FORMAT.format(fraction * 100)
     }
+
+    private fun concatDisplayables(items: Iterable<Displayable>, separator: String) =
+        concatStrings(items.map(Displayable::display), separator)
+
+    private fun concatStrings(strings: Iterable<String>, separator: String) =
+        strings.distinct().sorted().joinToString(separator)
 }
