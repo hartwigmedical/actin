@@ -24,7 +24,7 @@ class AtcModelTest {
     fun shouldThrowWhenAtcCodeNotFound() {
         assertThatThrownBy {
             val victim = WhoAtcModel(mapOf("A" to ANATOMICAL))
-            victim.resolve("not_a_code")
+            victim.resolve("notacod")
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
 

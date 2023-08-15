@@ -17,7 +17,7 @@ class WhoAtcModel(private val atcMap: Map<String, String>) : AtcModel {
 
     override fun resolve(rawAtcCode: String): AtcClassification? {
         return if (rawAtcCode.trim().isNotEmpty() && rawAtcCode[0].lowercaseChar() in 'a'..'z') {
-            if (rawAtcCode.length == 8) {
+            if (rawAtcCode.length == 7) {
                 ImmutableAtcClassification.builder()
                     .anatomicalMainGroup(atcLevel(rawAtcCode.substring(0, 1)))
                     .therapeuticSubGroup(atcLevel(rawAtcCode.substring(0, 3)))
