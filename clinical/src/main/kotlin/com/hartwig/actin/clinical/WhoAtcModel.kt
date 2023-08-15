@@ -11,6 +11,12 @@ interface AtcModel {
     fun resolve(rawAtcCode: String): AtcClassification?
 }
 
+class DisabledAtcModel : AtcModel {
+    override fun resolve(rawAtcCode: String): AtcClassification? {
+        return null
+    }
+}
+
 class WhoAtcModel(private val atcMap: Map<String, String>) : AtcModel {
 
     override fun resolve(rawAtcCode: String): AtcClassification? {
@@ -38,7 +44,7 @@ class WhoAtcModel(private val atcMap: Map<String, String>) : AtcModel {
             val fields = TabularFile.createFields(lines[0].split(TabularFile.DELIMITER).dropLastWhile { it.isEmpty() }
                 .toTypedArray())
             return WhoAtcModel(lines.map { it.split(TabularFile.DELIMITER).toTypedArray() }
-                .associate { line -> line[fields["ATC code"]!!] to line[fields["ATC level name"]!!] })
+                .associate { line -> line[fields["Name"]!!] to line[fields["ATCCode"]!!] })
         }
     }
 }

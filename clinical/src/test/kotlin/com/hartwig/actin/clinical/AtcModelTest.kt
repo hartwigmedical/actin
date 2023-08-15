@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical
 
-import com.google.common.io.Resources
 import com.hartwig.actin.clinical.curation.ANATOMICAL
 import com.hartwig.actin.clinical.curation.ATC_CODE
 import com.hartwig.actin.clinical.curation.CHEMICAL
@@ -30,7 +29,7 @@ class AtcModelTest {
 
     @Test
     fun shouldResolveFiveLevelsOfAtcClassification() {
-        val victim = WhoAtcModel.createFromFile( Resources.getResource("atc_config/atc_tree.tsv").path)
+        val victim = TestAtcFactory.createProperAtcModel()
         val result = victim.resolve(ATC_CODE)!!
         assertThat(result.anatomicalMainGroup()).isEqualTo(
             ImmutableAtcLevel.builder().code("N").name(ANATOMICAL).build()
@@ -48,4 +47,5 @@ class AtcModelTest {
             ImmutableAtcLevel.builder().code(ATC_CODE).name(CHEMICAL_SUBSTANCE).build()
         )
     }
+
 }
