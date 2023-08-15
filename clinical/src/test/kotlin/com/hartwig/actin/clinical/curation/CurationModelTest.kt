@@ -17,13 +17,11 @@ import com.hartwig.actin.clinical.datamodel.InfectionStatus
 import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.datamodel.LabValue
-import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.MedicationStatus
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
-import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
 import com.hartwig.actin.clinical.datamodel.Toxicity
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.clinical.datamodel.TumorDetails
@@ -348,14 +346,10 @@ class CurationModelTest {
     }
 
     @Test
-    fun shouldAnnotateWithMedicationCategory() {
-        val proper: Medication = TestMedicationFactory.builder().name("Paracetamol").build()
-        val annotatedProper = model.annotateWithMedicationCategory(proper)
-        assertEquals(Sets.newHashSet("Acetanilide derivatives"), annotatedProper.categories())
+    fun shouldLookUpMedicationCategory() {
+        assertEquals(setOf("Acetanilide derivatives"), model.lookUpMedicationCategories("Paracetamol"))
 
-        val empty: Medication = TestMedicationFactory.builder().name(Strings.EMPTY).build()
-        val annotatedEmpty = model.annotateWithMedicationCategory(empty)
-        assertEquals(empty, annotatedEmpty)
+        assertEquals(emptySet<String>(), model.lookUpMedicationCategories(""))
 
         model.evaluate()
     }
