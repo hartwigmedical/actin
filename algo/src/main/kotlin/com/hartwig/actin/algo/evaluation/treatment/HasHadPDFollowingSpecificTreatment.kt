@@ -16,18 +16,18 @@ class HasHadPDFollowingSpecificTreatment(private val treatments: List<Treatment>
 
         return if (treatmentEvaluation.matchingTreatmentsWithPD.isNotEmpty()) {
             EvaluationFactory.pass(
-                "Has received ${Format.concat(treatmentEvaluation.matchingTreatmentsWithPD.map(Treatment::name))} treatment with PD"
+                "Has received ${Format.concatItems(treatmentEvaluation.matchingTreatmentsWithPD)} treatment with PD"
             )
         } else if (treatmentEvaluation.includesTrial) {
-            EvaluationFactory.undetermined("Undetermined if received specific ${Format.concat(treatmentNamesToMatch)} treatment")
+            EvaluationFactory.undetermined("Undetermined if received specific ${Format.concatItems(treatments)} treatment")
         } else if (treatmentEvaluation.matchesWithUnclearPD) {
             EvaluationFactory.undetermined(
-                "Has received ${Format.concat(treatmentEvaluation.matchingTreatments.map(Treatment::name))} treatment but undetermined if PD"
+                "Has received ${Format.concatItems(treatmentEvaluation.matchingTreatments)} treatment but undetermined if PD"
             )
         } else if (treatmentEvaluation.matchingTreatments.isNotEmpty()) {
-            EvaluationFactory.fail("Has received ${Format.concat(treatmentEvaluation.matchingTreatments.map(Treatment::name))} treatment, but no PD")
+            EvaluationFactory.fail("Has received ${Format.concatItems(treatmentEvaluation.matchingTreatments)} treatment, but no PD")
         } else {
-            EvaluationFactory.fail("Has not received specific ${Format.concat(treatmentNamesToMatch)} treatment")
+            EvaluationFactory.fail("Has not received specific ${Format.concatItems(treatments)} treatment")
         }
     }
 

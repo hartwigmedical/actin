@@ -96,7 +96,7 @@ class HasHadCombinedTreatmentNamesWithCycles(
         private fun formatTreatmentList(treatmentHistoryEntries: List<TreatmentHistoryEntry>, includeCycles: Boolean): String {
             return treatmentHistoryEntries.joinToString(", ") { entry ->
                 val cycleString = if (includeCycles) " (${entry.therapyHistoryDetails()?.cycles()} cycles)" else ""
-                entry.treatments().joinToString("+") { it.name() } + cycleString
+                entry.treatments().joinToString("+") { it.display() } + cycleString
 
             }
         }

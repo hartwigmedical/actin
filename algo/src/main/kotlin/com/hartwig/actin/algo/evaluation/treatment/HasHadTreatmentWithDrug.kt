@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
+import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithOr
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
@@ -18,7 +19,7 @@ class HasHadTreatmentWithDrug(private val drugs: Set<Drug>) : EvaluationFunction
             .flatMap { (it as? Therapy)?.drugs() ?: emptyList() }
             .filter { it.name().lowercase() in namesToMatch }
 
-        val drugList = drugs.joinToString(" or ") { it.display().lowercase() }
+        val drugList = concatItemsWithOr(drugs)
         return when {
             matchingDrugs.isNotEmpty() -> {
                 EvaluationFactory.pass("Has received treatments with ${concatItemsWithAnd(matchingDrugs)}")

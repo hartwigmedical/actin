@@ -4,7 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.Format.concatItems
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 
@@ -20,17 +20,18 @@ class HasHadSomeSpecificTreatments(private val treatments: List<Treatment>, priv
             record.clinical().treatmentHistory().count(TreatmentHistoryEntry::isTrial)
         } else 0
 
+        val treatmentListing = concatItems(treatments)
         return when {
             matchTreatments.size >= minTreatmentLines -> {
-                EvaluationFactory.pass("Has received ${concat(namesToMatch)} ${matchTreatments.size} times")
+                EvaluationFactory.pass("Has received $treatmentListing ${matchTreatments.size} times")
             }
 
             matchTreatments.size + trialMatchCount >= minTreatmentLines -> {
-                EvaluationFactory.undetermined("Undetermined if received ${concat(namesToMatch)} at least $minTreatmentLines times")
+                EvaluationFactory.undetermined("Undetermined if received $treatmentListing at least $minTreatmentLines times")
             }
 
             else -> {
-                EvaluationFactory.fail("Has not received ${concat(namesToMatch)} at least $minTreatmentLines times")
+                EvaluationFactory.fail("Has not received $treatmentListing at least $minTreatmentLines times")
             }
         }
     }

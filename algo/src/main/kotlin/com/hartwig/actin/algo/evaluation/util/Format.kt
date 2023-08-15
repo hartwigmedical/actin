@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter
 object Format {
     private const val SEPARATOR_SEMICOLON = "; "
     private const val SEPARATOR_AND = " and "
+    private const val SEPARATOR_OR = " or "
     private val DATE_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy")
     private val PERCENTAGE_FORMAT: DecimalFormat = DecimalFormat("#'%'", DecimalFormatSymbols.getInstance(ApplicationConfig.LOCALE))
 
@@ -29,6 +30,10 @@ object Format {
         return concatDisplayables(items, SEPARATOR_AND)
     }
 
+    fun concatItemsWithOr(items: Iterable<Displayable>): String {
+        return concatDisplayables(items, SEPARATOR_OR)
+    }
+
     fun date(date: LocalDate): String {
         return DATE_FORMAT.format(date)
     }
@@ -42,5 +47,5 @@ object Format {
         concatStrings(items.map(Displayable::display), separator)
 
     private fun concatStrings(strings: Iterable<String>, separator: String) =
-        strings.distinct().sorted().joinToString(separator)
+        strings.distinct().sortedWith(String.CASE_INSENSITIVE_ORDER).joinToString(separator)
 }

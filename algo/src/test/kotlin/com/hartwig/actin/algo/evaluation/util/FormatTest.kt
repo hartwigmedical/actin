@@ -23,7 +23,7 @@ class FormatTest {
 
     @Test
     fun shouldConcatDisplayableItemsWithCustomDisplaySeparatedBySemicolon() {
-        assertEquals("HPV-16 vaccine; anti-PD-1", Format.concatItems(listOf(DrugType.ANTI_PD_1, DrugType.HPV16_VACCINE)))
+        assertEquals("anti-PD-1; HPV-16 vaccine", Format.concatItems(listOf(DrugType.HPV16_VACCINE, DrugType.ANTI_PD_1)))
     }
 
     @Test
@@ -35,7 +35,12 @@ class FormatTest {
 
     @Test
     fun shouldConcatDisplayableItemsWithCustomDisplaySeparatedByAnd() {
-        assertEquals("HPV-16 vaccine and anti-PD-1", Format.concatItemsWithAnd(listOf(DrugType.ANTI_PD_1, DrugType.HPV16_VACCINE)))
+        assertEquals("anti-PD-1 and HPV-16 vaccine", Format.concatItemsWithAnd(listOf(DrugType.HPV16_VACCINE, DrugType.ANTI_PD_1)))
+    }
+
+    @Test
+    fun shouldConcatDisplayableItemsWithCustomDisplaySeparatedByOr() {
+        assertEquals("anti-PD-1 or HPV-16 vaccine", Format.concatItemsWithOr(listOf(DrugType.HPV16_VACCINE, DrugType.ANTI_PD_1)))
     }
 
     @Test
