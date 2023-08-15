@@ -33,7 +33,7 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
                 treatmentDatabase
             )
 
-        LOGGER.info("ATC model is currently disabled")
+        LOGGER.info("Creating ATC model from file {}", config.atcTsv)
         val atcModel = WhoAtcModel.createFromFile(config.atcTsv)
 
         LOGGER.info("Creating clinical feed model from directory {}", config.feedDirectory)
