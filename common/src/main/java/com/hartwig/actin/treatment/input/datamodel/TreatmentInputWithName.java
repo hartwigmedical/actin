@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class TreatmentInputWithName {
 
     @NotNull
-    public abstract TreatmentInput treatment();
+    public abstract TreatmentCategoryInput treatment();
 
     @Nullable
     public abstract String name();

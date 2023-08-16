@@ -10,18 +10,12 @@ class HasExhaustedSOCTreatmentsTest {
 
     @Test
     fun shouldReturnUndeterminedForEmptyTreatmentList() {
-        assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(emptyList()))
-        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
     }
 
     @Test
     fun shouldReturnNotEvaluatedForNonEmptyTreatmentList() {
-        val treatments = listOf(TreatmentTestFactory.builder().build())
-        assertEvaluation(
-            EvaluationResult.NOT_EVALUATED,
-            function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments))
-        )
+        val treatments = listOf(TreatmentTestFactory.treatmentHistoryEntry())
+        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
     }
 }

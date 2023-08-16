@@ -1,15 +1,17 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 
 data class TreatmentSummaryForCategory(
-    val numSpecificMatches: Int = 0,
+    val specificMatches: List<TreatmentHistoryEntry> = emptyList(),
     val numApproximateMatches: Int = 0,
     val numPossibleTrialMatches: Int = 0
 ) {
 
-    fun hasSpecificMatch() = numSpecificMatches > 0
+    fun numSpecificMatches() = specificMatches.size
+
+    fun hasSpecificMatch() = specificMatches.isNotEmpty()
 
     fun hasApproximateMatch() = numApproximateMatches > 0
 
@@ -17,7 +19,7 @@ data class TreatmentSummaryForCategory(
 
     operator fun plus(other: TreatmentSummaryForCategory): TreatmentSummaryForCategory {
         return TreatmentSummaryForCategory(
-            numSpecificMatches + other.numSpecificMatches,
+            specificMatches + other.specificMatches,
             numApproximateMatches + other.numApproximateMatches,
             numPossibleTrialMatches + other.numPossibleTrialMatches
         )
@@ -36,28 +38,28 @@ data class TreatmentSummaryForCategory(
             TreatmentCategory.SURGERY
         )
 
-        fun createForTreatments(
-            treatments: List<PriorTumorTreatment>,
+        fun createForTreatmentHistory(
+            treatmentHistory: List<TreatmentHistoryEntry>,
             category: TreatmentCategory,
-            classifier: (PriorTumorTreatment) -> Boolean? = { true }
+            classifier: (TreatmentHistoryEntry) -> Boolean? = { true }
         ): TreatmentSummaryForCategory {
             val trialMatchesAllowed = categoryAllowsTrialMatches(category)
-            return treatments.map { treatment ->
-                val matchesCategory = treatment.categories().contains(category)
-                val classification = classifier(treatment)
+            return treatmentHistory.map { treatmentHistoryEntry ->
+                val matchesCategory = treatmentHistoryEntry.categories().contains(category)
+                val classification = classifier(treatmentHistoryEntry)
                 TreatmentSummaryForCategory(
-                    if (matchesCategory && classification == true) 1 else 0,
+                    if (matchesCategory && classification == true) listOf(treatmentHistoryEntry) else emptyList(),
                     if (matchesCategory && classification == null) 1 else 0,
-                    if (trialMatchesAllowed && treatment.categories().contains(TreatmentCategory.TRIAL)) 1 else 0
+                    if (trialMatchesAllowed && treatmentHistoryEntry.isTrial && (!matchesCategory || classification == false)) 1 else 0
                 )
             }.fold(TreatmentSummaryForCategory()) { acc, element -> acc + element }
         }
 
-        fun treatmentMayMatchCategoryAsTrial(treatment: PriorTumorTreatment, category: TreatmentCategory): Boolean {
-            return categoryAllowsTrialMatches(category) && treatment.categories().contains(TreatmentCategory.TRIAL)
+        fun treatmentMayMatchCategoryAsTrial(treatmentHistoryEntry: TreatmentHistoryEntry, category: TreatmentCategory): Boolean {
+            return categoryAllowsTrialMatches(category) && treatmentHistoryEntry.isTrial
         }
 
-        private fun categoryAllowsTrialMatches(category: TreatmentCategory): Boolean {
+        fun categoryAllowsTrialMatches(category: TreatmentCategory): Boolean {
             return !CATEGORIES_NOT_MATCHING_TRIALS.contains(category)
         }
     }

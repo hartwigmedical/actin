@@ -11,8 +11,8 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 class HasHadPDFollowingTreatmentWithCategory(private val category: TreatmentCategory) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentSummary = TreatmentSummaryForCategory.createForTreatments(
-            record.clinical().priorTumorTreatments(), category,
+        val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
+            record.clinical().treatmentHistory(), category,
             ProgressiveDiseaseFunctions::treatmentResultedInPDOption
         )
 

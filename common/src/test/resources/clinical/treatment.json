@@ -1,12 +1,12 @@
 [
   {
-    "name": "Capecitabine+Oxaliplatin",
-    "treatmentType": "DRUG_THERAPY",
+    "name": "CAPECITABINE+OXALIPLATIN",
+    "treatmentClass": "DRUG_THERAPY",
     "synonyms": [],
     "isSystemic": true,
     "drugs": [
-      "Capecitabine",
-      "Oxaliplatin"
+      "CAPECITABINE",
+      "OXALIPLATIN"
     ],
     "maxCycles": null
   }

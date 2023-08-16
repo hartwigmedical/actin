@@ -1,79 +1,62 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
-import com.hartwig.actin.clinical.sort.PriorTumorTreatmentDescendingDateComparator
+import com.hartwig.actin.clinical.datamodel.treatment.Treatment
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 
-internal object SystemicTreatmentAnalyser {
-    fun maxSystemicTreatments(treatments: List<PriorTumorTreatment>): Int {
-        var systemicCount = 0
-        for (treatment in treatments) {
-            if (treatment.isSystemic) {
-                systemicCount++
+object SystemicTreatmentAnalyser {
+    fun maxSystemicTreatments(treatmentHistory: List<TreatmentHistoryEntry>): Int {
+        return treatmentHistory.count(::treatmentHistoryEntryIsSystemic)
+    }
+
+    fun minSystemicTreatments(treatments: List<TreatmentHistoryEntry>): Int {
+        val systemicByName = treatments.filter(::treatmentHistoryEntryIsSystemic).groupBy(TreatmentHistoryEntry::treatmentName)
+
+        return systemicByName.map { entry ->
+            if (entry.value.size == 1) 1 else {
+                val otherTreatments = treatments.filterNot { it.treatmentName() == entry.key }
+                val sortedWithName = entry.value.sortedWith(
+                    compareBy(
+                        TreatmentHistoryEntry::startYear,
+                        TreatmentHistoryEntry::startMonth,
+                        { it.therapyHistoryDetails()?.stopYear() },
+                        { it.therapyHistoryDetails()?.stopMonth() },
+                        TreatmentHistoryEntry::treatmentName
+                    )
+                )
+                (1 until sortedWithName.size).map {
+                    if (isInterrupted(sortedWithName[it], sortedWithName[it - 1], otherTreatments)) 1 else 0
+                }.sum() + 1
             }
-        }
-        return systemicCount
+        }.sum()
     }
 
-    fun minSystemicTreatments(treatments: List<PriorTumorTreatment>): Int {
-        val systemicByName = treatments.filter { it.isSystemic }.groupBy { it.name() }
-
-        var systemicCount = 0
-        for (systemicWithName in systemicByName.values) {
-            systemicCount++
-            if (systemicWithName.size > 1) {
-                val sortedWithName = systemicWithName.sortedWith(PriorTumorTreatmentDescendingDateComparator())
-                for (i in 1 until sortedWithName.size) {
-                    if (isInterrupted(sortedWithName[i], sortedWithName[i - 1], treatments)) {
-                        systemicCount++
-                    }
-                }
-            }
-        }
-        return systemicCount
+    fun lastSystemicTreatment(treatmentHistory: List<TreatmentHistoryEntry>): TreatmentHistoryEntry? {
+        return treatmentHistory.filter(::treatmentHistoryEntryIsSystemic)
+            .maxWithOrNull(TreatmentHistoryEntryStartDateComparator())
     }
 
-    fun lastSystemicTreatment(priorTumorTreatments: List<PriorTumorTreatment>): PriorTumorTreatment? {
-        return priorTumorTreatments.filter { it.isSystemic }
-            .maxWithOrNull { treatment1, treatment2 -> compareTreatmentsByStartDate(treatment1, treatment2) }
+    private fun treatmentHistoryEntryIsSystemic(treatmentHistoryEntry: TreatmentHistoryEntry): Boolean {
+        return treatmentHistoryEntry.treatments().any(Treatment::isSystemic)
     }
 
-    private fun compareTreatmentsByStartDate(treatment1: PriorTumorTreatment, treatment2: PriorTumorTreatment): Int {
-        val yearComparison = compareNullableIntegers(treatment1.startYear(), treatment2.startYear())
-        return if (yearComparison != 0) yearComparison else compareNullableIntegers(treatment1.startMonth(), treatment2.startMonth())
-    }
-
-    private fun compareNullableIntegers(first: Int?, second: Int?): Int {
-        // Nulls are considered less than non-nulls
-        return if (first != null) {
-            if (second != null) {
-                Integer.compare(first, second)
-            } else {
-                1
-            }
-        } else if (second != null) {
-            -1
-        } else {
-            0
+    private class TreatmentHistoryEntryStartDateComparator : Comparator<TreatmentHistoryEntry> {
+        override fun compare(treatment1: TreatmentHistoryEntry, treatment2: TreatmentHistoryEntry): Int {
+            val yearComparison = compareValues(treatment1.startYear(), treatment2.startYear())
+            return if (yearComparison != 0) yearComparison else compareValues(treatment1.startMonth(), treatment2.startMonth())
         }
     }
 
     private fun isInterrupted(
-        mostRecent: PriorTumorTreatment, leastRecent: PriorTumorTreatment,
-        treatments: List<PriorTumorTreatment>
+        current: TreatmentHistoryEntry, previous: TreatmentHistoryEntry,
+        otherTreatments: List<TreatmentHistoryEntry>
     ): Boolean {
         // Treatments with ambiguous timeline are never considered interrupted.
-        if (!isAfter(mostRecent, leastRecent)) {
-            return false
+        return isAfter(current, previous) && otherTreatments.any { treatment ->
+            isAfter(treatment, previous) && isBefore(treatment, current)
         }
-        for (treatment in treatments) {
-            if (treatment.name() != mostRecent.name() && isAfter(treatment, leastRecent) && isBefore(treatment, mostRecent)) {
-                return true
-            }
-        }
-        return false
     }
 
-    private fun isBefore(first: PriorTumorTreatment, second: PriorTumorTreatment): Boolean {
+    private fun isBefore(first: TreatmentHistoryEntry, second: TreatmentHistoryEntry): Boolean {
         return if (isLower(first.startYear(), second.startYear())) {
             true
         } else {
@@ -84,7 +67,7 @@ internal object SystemicTreatmentAnalyser {
         }
     }
 
-    private fun isAfter(first: PriorTumorTreatment, second: PriorTumorTreatment): Boolean {
+    private fun isAfter(first: TreatmentHistoryEntry, second: TreatmentHistoryEntry): Boolean {
         return if (isHigher(first.startYear(), second.startYear())) {
             true
         } else {
@@ -96,20 +79,14 @@ internal object SystemicTreatmentAnalyser {
     }
 
     private fun isHigher(int1: Int?, int2: Int?): Boolean {
-        return if (int1 == null || int2 == null) {
-            false
-        } else int1 > int2
+        return int1 != null && int2 != null && int1 > int2
     }
 
     private fun isLower(int1: Int?, int2: Int?): Boolean {
-        return if (int1 == null || int2 == null) {
-            false
-        } else int1 < int2
+        return int1 != null && int2 != null && int1 < int2
     }
 
     private fun isEqual(int1: Int?, int2: Int?): Boolean {
-        return if (int1 == null || int2 == null) {
-            false
-        } else int1 == int2
+        return int1 != null && int2 != null && int1 == int2
     }
 }
