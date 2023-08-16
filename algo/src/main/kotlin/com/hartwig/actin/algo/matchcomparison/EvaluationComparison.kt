@@ -23,34 +23,39 @@ object EvaluationComparison {
 
         return oldEvaluationsByCriteria.map { (references, oldFunctionAndEvaluation) ->
             val (oldFunction, oldEvaluation) = oldFunctionAndEvaluation
-            val (newFunction, newEvaluation) = newEvaluationsByCriteria[references]!!
-            val criteriaId = "ID $id, Criteria ${references.joinToString(", ") { it.id() }}"
+            val newFunctionAndEvaluation = newEvaluationsByCriteria[references]
+            if (newFunctionAndEvaluation == null) {
+                EvaluationDifferences.create()
+            } else {
+                val (newFunction, newEvaluation) = newFunctionAndEvaluation
+                val criteriaId = "ID $id, Criteria ${references.joinToString(", ") { it.id() }}"
 
-            val resultDifferences = extractDifferences(
-                oldEvaluation, newEvaluation, mapOf("result for $criteriaId" to Evaluation::result)
-            )
-            if (resultDifferences.isNotEmpty()) {
-                resultDifferences.forEach(LOGGER::warn)
-                LOGGER.warn("  Old function: $oldFunction")
-                LOGGER.warn("  New function: $newFunction")
-            }
-            val recoverableDifferences = extractDifferences(oldEvaluation, newEvaluation, mapOf("recoverable" to Evaluation::recoverable))
-            val messageDifferences = extractMessageDifferences(oldEvaluation, newEvaluation)
-            val functionDifferences = EligibilityFunctionComparison.determineEligibilityFunctionDifferences(oldFunction, newFunction)
+                val resultDifferences = extractDifferences(
+                    oldEvaluation, newEvaluation, mapOf("result for $criteriaId" to Evaluation::result)
+                )
+                if (resultDifferences.isNotEmpty()) {
+                    resultDifferences.forEach(LOGGER::warn)
+                    LOGGER.warn("  Old function: $oldFunction")
+                    LOGGER.warn("  New function: $newFunction")
+                }
+                val recoverableDifferences = extractDifferences(oldEvaluation, newEvaluation, mapOf("recoverable" to Evaluation::recoverable))
+                val messageDifferences = extractMessageDifferences(oldEvaluation, newEvaluation)
+                val functionDifferences = EligibilityFunctionComparison.determineEligibilityFunctionDifferences(oldFunction, newFunction)
 
-            if (resultDifferences.isNotEmpty() || recoverableDifferences.isNotEmpty() || messageDifferences.isNotEmpty()
-                || functionDifferences.isNotEmpty()
-            ) {
-                logDebug("Differences found for $criteriaId:", indent)
-                listOf(resultDifferences, recoverableDifferences, messageDifferences, functionDifferences.asList()).flatten()
-                    .forEach { logDebug(it, detailIndent) }
+                if (resultDifferences.isNotEmpty() || recoverableDifferences.isNotEmpty() || messageDifferences.isNotEmpty()
+                    || functionDifferences.isNotEmpty()
+                ) {
+                    logDebug("Differences found for $criteriaId:", indent)
+                    listOf(resultDifferences, recoverableDifferences, messageDifferences, functionDifferences.asList()).flatten()
+                        .forEach { logDebug(it, detailIndent) }
+                }
+                EvaluationDifferences.create(
+                    resultDifferences = resultDifferences,
+                    recoverableDifferences = recoverableDifferences,
+                    messageDifferences = messageDifferences,
+                    functionDifferences = functionDifferences
+                )
             }
-            EvaluationDifferences.create(
-                resultDifferences = resultDifferences,
-                recoverableDifferences = recoverableDifferences,
-                messageDifferences = messageDifferences,
-                functionDifferences = functionDifferences
-            )
         }.fold(EvaluationDifferences.create(mapKeyDifferences = modifiedKeys)) { acc, other -> acc + other }
     }
 

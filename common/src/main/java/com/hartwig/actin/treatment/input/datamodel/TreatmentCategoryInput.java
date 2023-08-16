@@ -3,6 +3,7 @@ package com.hartwig.actin.treatment.input.datamodel;
 import java.util.List;
 import java.util.function.Function;
 
+import com.hartwig.actin.Displayable;
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType;
 import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatmentType;
 import com.hartwig.actin.clinical.datamodel.treatment.RadiotherapyType;
@@ -14,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class TreatmentCategoryInput {
+public class TreatmentCategoryInput implements Displayable {
     private static final Logger LOGGER = LogManager.getLogger(TreatmentCategoryInput.class);
 
     @NotNull
@@ -41,6 +42,7 @@ public class TreatmentCategoryInput {
         return mappedType;
     }
 
+    @Override
     @NotNull
     public String display() {
         return this.toString().replaceAll("_", " ").toLowerCase();

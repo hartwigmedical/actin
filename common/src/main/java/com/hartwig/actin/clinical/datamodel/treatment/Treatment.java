@@ -2,9 +2,11 @@ package com.hartwig.actin.clinical.datamodel.treatment;
 
 import java.util.Set;
 
+import com.hartwig.actin.Displayable;
+
 import org.jetbrains.annotations.NotNull;
 
-public interface Treatment {
+public interface Treatment extends Displayable {
 
     @NotNull
     String name();
@@ -19,4 +21,10 @@ public interface Treatment {
     Set<String> synonyms();
 
     boolean isSystemic();
+
+    @NotNull
+    @Override
+    default String display() {
+        return name().replace("_", " ").toLowerCase();
+    }
 }

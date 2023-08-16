@@ -1,9 +1,11 @@
 package com.hartwig.actin.clinical.datamodel;
 
+import com.hartwig.actin.Displayable;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public enum TumorStage {
+public enum TumorStage implements Displayable {
     I(null),
     II(null),
     IIA(TumorStage.II),
@@ -26,6 +28,7 @@ public enum TumorStage {
         return category;
     }
 
+    @Override
     @NotNull
     public String display() {
         return this.toString();
