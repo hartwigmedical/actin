@@ -12,7 +12,6 @@ import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry
 import com.hartwig.actin.clinical.feed.questionnaire.TestQuestionnaireFactory
 import com.hartwig.actin.clinical.feed.surgery.SurgeryEntry
 import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry
-import org.apache.logging.log4j.util.Strings
 import java.time.LocalDate
 
 object TestFeedFactory {
@@ -63,7 +62,7 @@ object TestFeedFactory {
         val minimalToxicity = minimalDigitalFileEntry(LocalDate.of(2020, 6, 6), "ONC Kuuroverzicht")
         return listOf(
             minimalToxicity.copy(itemText = "Nausea", itemAnswerValueValueString = "2"),
-            minimalToxicity.copy(itemText = "Vomiting", itemAnswerValueValueString = Strings.EMPTY),
+            minimalToxicity.copy(itemText = "Vomiting", itemAnswerValueValueString = ""),
             minimalToxicity.copy(itemText = "Pain", itemAnswerValueValueString = "0. Not applicable"),
             minimalDigitalFileEntry(LocalDate.of(2020, 7, 7), "Aanvraag bloedproducten_test").copy(itemAnswerValueValueString = "Product")
         )
@@ -110,21 +109,22 @@ object TestFeedFactory {
                 code5ATCDisplay = "PARACETAMOL",
                 administrationRoute = "oraal"
             ), medicationEntry(
-                status = Strings.EMPTY,
+                status = "",
                 dosageInstruction = "Irrelevant",
                 start = LocalDate.of(2019, 2, 2),
                 end = LocalDate.of(2019, 4, 4),
                 active = false,
-                code5ATCDisplay = Strings.EMPTY
+                code5ATCDisplay = ""
             )
         )
     }
 
-    private fun medicationEntry(
+    fun medicationEntry(
         status: String, dosageInstruction: String, start: LocalDate, end: LocalDate, active: Boolean,
         code5ATCDisplay: String = "",
         administrationRoute: String = "",
         code5ATCCode: String = "",
+        codeText: String = ""
     ): MedicationEntry {
         return MedicationEntry(
             status = status,
@@ -134,26 +134,26 @@ object TestFeedFactory {
             active = active,
             code5ATCDisplay = code5ATCDisplay,
             subject = TEST_SUBJECT,
-            codeText = Strings.EMPTY,
+            codeText = codeText,
             code5ATCCode = code5ATCCode,
-            chemicalSubgroupDisplay = Strings.EMPTY,
-            pharmacologicalSubgroupDisplay = Strings.EMPTY,
-            therapeuticSubgroupDisplay = Strings.EMPTY,
-            anatomicalMainGroupDisplay = Strings.EMPTY,
+            chemicalSubgroupDisplay = "",
+            pharmacologicalSubgroupDisplay = "",
+            therapeuticSubgroupDisplay = "",
+            anatomicalMainGroupDisplay = "",
             dosageInstructionRouteDisplay = administrationRoute,
-            dosageInstructionDoseQuantityUnit = Strings.EMPTY,
+            dosageInstructionDoseQuantityUnit = "",
             dosageInstructionDoseQuantityValue = 0.0,
-            dosageInstructionFrequencyUnit = Strings.EMPTY,
+            dosageInstructionFrequencyUnit = "",
             dosageInstructionFrequencyValue = 0.0,
             dosageInstructionMaxDosePerAdministration = 0.0,
-            dosageInstructionPatientInstruction = Strings.EMPTY,
-            dosageInstructionAsNeededDisplay = Strings.EMPTY,
-            dosageInstructionPeriodBetweenDosagesUnit = Strings.EMPTY,
+            dosageInstructionPatientInstruction = "",
+            dosageInstructionAsNeededDisplay = "",
+            dosageInstructionPeriodBetweenDosagesUnit = "",
             dosageInstructionPeriodBetweenDosagesValue = 0.0,
-            dosageDoseValue = Strings.EMPTY,
-            dosageRateQuantityUnit = Strings.EMPTY,
-            dosageDoseUnitDisplayOriginal = Strings.EMPTY,
-            stopTypeDisplay = Strings.EMPTY
+            dosageDoseValue = "",
+            dosageRateQuantityUnit = "",
+            dosageDoseUnitDisplayOriginal = "",
+            stopTypeDisplay = ""
         )
     }
 
@@ -161,7 +161,7 @@ object TestFeedFactory {
         return listOf(
             LabEntry(
                 subject = TEST_SUBJECT,
-                valueQuantityComparator = Strings.EMPTY,
+                valueQuantityComparator = "",
                 codeCodeOriginal = "LAB1",
                 codeDisplayOriginal = "Lab Value 1",
                 valueQuantityValue = 30.0,
@@ -170,7 +170,7 @@ object TestFeedFactory {
                 effectiveDateTime = LocalDate.of(2018, 5, 29),
             ), LabEntry(
                 subject = TEST_SUBJECT,
-                valueQuantityComparator = Strings.EMPTY,
+                valueQuantityComparator = "",
                 codeCodeOriginal = "LAB2",
                 codeDisplayOriginal = "Lab Value 2",
                 valueQuantityValue = 22.0,
@@ -188,12 +188,12 @@ object TestFeedFactory {
                 effectiveDateTime = LocalDate.of(2018, 5, 29),
             ), LabEntry(
                 subject = TEST_SUBJECT,
-                valueQuantityComparator = Strings.EMPTY,
+                valueQuantityComparator = "",
                 codeCodeOriginal = "LAB4",
                 codeDisplayOriginal = "Lab Value 4",
                 valueQuantityValue = 20.0,
                 valueQuantityUnit = "mL/min",
-                referenceRangeText = Strings.EMPTY,
+                referenceRangeText = "",
                 effectiveDateTime = LocalDate.of(2018, 5, 29),
             )
         )
@@ -218,9 +218,9 @@ object TestFeedFactory {
                 subject = TEST_SUBJECT,
                 assertedDate = LocalDate.of(2018, 1, 1),
                 category = "medication",
-                categoryAllergyCategoryDisplay = Strings.EMPTY,
-                clinicalStatus = Strings.EMPTY,
-                verificationStatus = Strings.EMPTY,
+                categoryAllergyCategoryDisplay = "",
+                clinicalStatus = "",
+                verificationStatus = "",
                 codeText = "pills",
                 criticality = "unknown",
                 isSideEffect = "allergy"

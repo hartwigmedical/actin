@@ -47,13 +47,11 @@ import com.hartwig.actin.clinical.datamodel.ImmutableECGMeasure
 import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue
-import com.hartwig.actin.clinical.datamodel.ImmutableMedication
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
 import com.hartwig.actin.clinical.datamodel.InfectionStatus
 import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.datamodel.LabValue
-import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.MedicationStatus
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
@@ -509,11 +507,8 @@ class CurationModel @VisibleForTesting internal constructor(
         }
     }
 
-    fun annotateWithMedicationCategory(medication: Medication): Medication {
-        return ImmutableMedication.builder()
-            .from(medication)
-            .categories(lookupMedicationCategories("medication", medication.name()))
-            .build()
+    fun lookUpMedicationCategories(medicationName: String): Set<String> {
+        return lookupMedicationCategories("medication", medicationName)
     }
 
     fun curateMedicationCypInteractions(medicationName: String): List<CypInteraction> {
