@@ -45,7 +45,6 @@ class MedicationExtractor(private val curation: CurationModel, private val atc: 
             .atc(atc.resolve(entry.code5ATCCode))
             .isSelfCare(entry.code5ATCDisplay.isEmpty() && entry.code5ATCCode.isEmpty())
             .isTrialMedication(entry.code5ATCDisplay.isEmpty() && entry.code5ATCCode.isNotEmpty() && entry.code5ATCCode[0].lowercaseChar() !in 'a'..'z')
-            .categories(curation.lookUpMedicationCategories(name))
             .build()
 
         // TODO Uncomment this check when we receive the ATC tree
