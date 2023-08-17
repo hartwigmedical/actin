@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.feed
 
-import com.hartwig.actin.clinical.curation.ATC_CODE
+import com.hartwig.actin.clinical.curation.FULL_ATC_CODE
 import com.hartwig.actin.clinical.datamodel.Gender
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry
 import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry
@@ -106,7 +106,7 @@ object TestFeedFactory {
                 start = LocalDate.of(2019, 2, 2),
                 end = LocalDate.of(2019, 4, 4),
                 active = true,
-                code5ATCCode = ATC_CODE,
+                code5ATCCode = FULL_ATC_CODE,
                 code5ATCDisplay = "PARACETAMOL",
                 administrationRoute = "oraal"
             ), medicationEntry(

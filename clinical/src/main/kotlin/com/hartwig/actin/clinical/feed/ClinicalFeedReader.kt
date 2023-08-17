@@ -56,7 +56,7 @@ object ClinicalFeedReader {
                 FeedFileReaderFactory.createBodyWeightReader()
             ),
         )
-        ClinicalFeedValidation.validate(feed, atcModel)
+        ClinicalFeedValidation.validate(feed)
         return feed
     }
 
