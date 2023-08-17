@@ -7,7 +7,7 @@ import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
 import org.junit.Test
 
-class HasRecentlyReceivedMedicationOfApproximateCategoryTest {
+class HasRecentlyReceivedMedicationOfCategoryTest {
     @Test
     fun shouldFailWhenNoMedication() {
         val medications: MutableList<Medication> = mutableListOf()
@@ -55,7 +55,7 @@ class HasRecentlyReceivedMedicationOfApproximateCategoryTest {
 
     companion object {
         private val EVALUATION_DATE = TestClinicalFactory.createMinimalTestClinicalRecord().patient().registrationDate().plusWeeks(1)
-        private val FUNCTION = HasRecentlyReceivedMedicationOfApproximateCategory(
+        private val FUNCTION = HasRecentlyReceivedMedicationOfCategory(
             MedicationTestFactory.alwaysStopped(), setOf("category to find"),
             EVALUATION_DATE
         )

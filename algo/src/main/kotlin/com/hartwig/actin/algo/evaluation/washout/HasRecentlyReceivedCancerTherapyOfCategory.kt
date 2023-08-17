@@ -4,8 +4,8 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
 import com.hartwig.actin.algo.evaluation.util.Format.concat
-import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.algo.medication.MedicationStatusInterpretation
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreter
 
@@ -17,19 +17,7 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
         val activeMedicationsMatchingCategories = record.clinical().medications()
             .filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
             .filter { medication ->
-                (stringCaseInsensitivelyMatchesQueryCollection(
-                    medication.atc()!!.therapeuticSubGroup().name().lowercase(),
-                    categoriesToFind
-                ) || stringCaseInsensitivelyMatchesQueryCollection(
-                    medication.atc()!!.chemicalSubGroup().name().lowercase(),
-                    categoriesToFind
-                ) || stringCaseInsensitivelyMatchesQueryCollection(
-                    medication.atc()!!.anatomicalMainGroup().name().lowercase(),
-                    categoriesToFind
-                ) || stringCaseInsensitivelyMatchesQueryCollection(
-                    medication.atc()!!.pharmacologicalSubGroup().name().lowercase(),
-                    categoriesToFind
-                ))
+                MedicationSelector(interpreter).hasATCLevelName(medication, categoriesToFind)
             }
 
         val foundCategories = activeMedicationsMatchingCategories.map { it.atc()!!.therapeuticSubGroup().name() }.distinct()

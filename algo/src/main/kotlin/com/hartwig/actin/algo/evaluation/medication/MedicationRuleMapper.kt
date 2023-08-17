@@ -19,8 +19,8 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.CURRENTLY_GETS_NAME_X_MEDICATION to getsActiveMedicationWithConfiguredNameCreator(),
-            EligibilityRule.CURRENTLY_GETS_CATEGORY_X_MEDICATION to getsActiveMedicationWithApproximateCategoryCreator(),
-            EligibilityRule.HAS_RECEIVED_CATEGORY_X_MEDICATION_WITHIN_Y_WEEKS to hasRecentlyReceivedMedicationOfApproximateCategoryCreator(),
+            EligibilityRule.CURRENTLY_GETS_CATEGORY_X_MEDICATION to getsActiveMedicationWithCategoryCreator(),
+            EligibilityRule.HAS_RECEIVED_CATEGORY_X_MEDICATION_WITHIN_Y_WEEKS to hasRecentlyReceivedMedicationOfCategoryCreator(),
             EligibilityRule.CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION to getsQTProlongatingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_ANY_CYP to getsAnyCYPInducingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_CYP_X to getsCYPXInducingMedicationCreator(),
@@ -43,20 +43,20 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         }
     }
 
-    private fun getsActiveMedicationWithApproximateCategoryCreator(): FunctionCreator {
+    private fun getsActiveMedicationWithCategoryCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val categoryInputs = functionInputResolver().createOneStringInput(function)
             val categories = determineCategories(categoryInputs)
-            CurrentlyGetsMedicationOfApproximateCategory(selector, categories)
+            CurrentlyGetsMedicationOfCategory(selector, categories)
         }
     }
 
-    private fun hasRecentlyReceivedMedicationOfApproximateCategoryCreator(): FunctionCreator {
+    private fun hasRecentlyReceivedMedicationOfCategoryCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneStringOneIntegerInput(function)
             val maxStopDate = referenceDateProvider().date().minusWeeks(input.integer().toLong())
             val categories = determineCategories(input.string())
-            HasRecentlyReceivedMedicationOfApproximateCategory(selector, categories, maxStopDate)
+            HasRecentlyReceivedMedicationOfCategory(selector, categories, maxStopDate)
         }
     }
 

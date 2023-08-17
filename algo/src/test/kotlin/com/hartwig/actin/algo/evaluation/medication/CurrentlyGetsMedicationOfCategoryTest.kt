@@ -6,7 +6,7 @@ import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
 import org.junit.Test
 
-class CurrentlyGetsMedicationOfApproximateCategoryTest {
+class CurrentlyGetsMedicationOfCategoryTest {
     @Test
     fun shouldFailWhenNoMedication() {
         val medications: MutableList<Medication> = mutableListOf()
@@ -46,6 +46,6 @@ class CurrentlyGetsMedicationOfApproximateCategoryTest {
     }
 
     companion object {
-        private val FUNCTION = CurrentlyGetsMedicationOfApproximateCategory(MedicationTestFactory.alwaysActive(), setOf("category 1"))
+        private val FUNCTION = CurrentlyGetsMedicationOfCategory(MedicationTestFactory.alwaysActive(), setOf("category 1"))
     }
 }

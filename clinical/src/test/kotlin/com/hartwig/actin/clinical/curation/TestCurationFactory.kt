@@ -364,10 +364,6 @@ object TestCurationFactory {
         )
     }
 
-    //private fun createTestMedicationCategoryConfigs(): List<MedicationCategoryConfig> {
-    //return listOf(MedicationCategoryConfig(input = "Paracetamol", categories = setOf("Acetanilide derivatives")))
-    //}
-
     private fun createTestIntoleranceConfigs(): List<IntoleranceConfig> {
         return listOf(IntoleranceConfig(input = "Latex type 1", name = "Latex (type 1)", doids = setOf("0060532")))
     }

@@ -7,7 +7,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import java.time.LocalDate
 
-class HasRecentlyReceivedMedicationOfApproximateCategory internal constructor(
+class HasRecentlyReceivedMedicationOfCategory internal constructor(
     private val selector: MedicationSelector, private val categoriesToFind: Set<String>, private val minStopDate: LocalDate
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {

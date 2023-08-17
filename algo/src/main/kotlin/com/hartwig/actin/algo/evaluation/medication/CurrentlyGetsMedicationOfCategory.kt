@@ -5,31 +5,14 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
-import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 
 //TODO: Update according to README
-class CurrentlyGetsMedicationOfApproximateCategory internal constructor(
+class CurrentlyGetsMedicationOfCategory internal constructor(
     private val selector: MedicationSelector,
     private val categoriesToFind: Set<String>
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val lowercaseCategoriesToFind = categoriesToFind.map { it.lowercase() }.toSet()
-        val medications = selector.active(record.clinical().medications())
-            .filter { medication ->
-                (stringCaseInsensitivelyMatchesQueryCollection(
-                    medication.atc()!!.therapeuticSubGroup().name().lowercase(),
-                    lowercaseCategoriesToFind
-                ) || stringCaseInsensitivelyMatchesQueryCollection(
-                    medication.atc()!!.chemicalSubGroup().name().lowercase(),
-                    lowercaseCategoriesToFind
-                ) || stringCaseInsensitivelyMatchesQueryCollection(
-                    medication.atc()!!.anatomicalMainGroup().name().lowercase(),
-                    lowercaseCategoriesToFind
-                ) || stringCaseInsensitivelyMatchesQueryCollection(
-                    medication.atc()!!.pharmacologicalSubGroup().name().lowercase(),
-                    lowercaseCategoriesToFind
-                ))
-            }
+        val medications = selector.activeWithAnyExactCategory(record.clinical().medications(), categoriesToFind)
 
         val foundCategories = medications.map { it.atc()!!.therapeuticSubGroup().name() }.distinct()
         val foundMedicationNames = medications.map { it.name() }.filter { it.isNotEmpty() }.distinct()

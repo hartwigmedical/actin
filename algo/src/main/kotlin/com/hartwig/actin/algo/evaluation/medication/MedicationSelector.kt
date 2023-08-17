@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.medication
 
+import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyExactlyMatchesQueryCollection
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.algo.medication.MedicationStatusInterpretation
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreter
@@ -22,11 +23,7 @@ internal class MedicationSelector(private val interpreter: MedicationStatusInter
     fun activeWithAnyExactCategory(medications: List<Medication>, categoriesToFind: Set<String>): List<Medication> {
         val lowercaseCategoriesToFind = categoriesToFind.map { it.lowercase() }.toSet()
         return active(medications).filter { medication ->
-            (
-                    lowercaseCategoriesToFind.contains(medication.atc()!!.anatomicalMainGroup().name().lowercase()) ||
-                            lowercaseCategoriesToFind.contains(medication.atc()!!.chemicalSubGroup().name().lowercase()) ||
-                            lowercaseCategoriesToFind.contains(medication.atc()!!.pharmacologicalSubGroup().name().lowercase()) ||
-                            lowercaseCategoriesToFind.contains(medication.atc()!!.therapeuticSubGroup().name().lowercase()))
+            hasATCLevelName(medication, lowercaseCategoriesToFind)
         }
     }
 
@@ -34,34 +31,22 @@ internal class MedicationSelector(private val interpreter: MedicationStatusInter
         medications: List<Medication>, categoriesToFind: Set<String>, minStopDate: LocalDate
     ): List<Medication> {
         return medications.filter { medication ->
-            (stringCaseInsensitivelyMatchesQueryCollection(
-                medication.atc()!!.therapeuticSubGroup().name().lowercase(),
-                categoriesToFind
-            ) || stringCaseInsensitivelyMatchesQueryCollection(
-                medication.atc()!!.chemicalSubGroup().name().lowercase(),
-                categoriesToFind
-            ) || stringCaseInsensitivelyMatchesQueryCollection(
-                medication.atc()!!.anatomicalMainGroup().name().lowercase(),
-                categoriesToFind
-            ) || stringCaseInsensitivelyMatchesQueryCollection(
-                medication.atc()!!.pharmacologicalSubGroup().name().lowercase(),
-                categoriesToFind
-            ))
+            hasATCLevelName(medication, categoriesToFind)
         }
             .filter { isActive(it) || isRecentlyStopped(it, minStopDate) }
     }
 
     fun hasATCLevelName(medication: Medication, categoriesToFind: Set<String>): Boolean {
-        return stringCaseInsensitivelyMatchesQueryCollection(
+        return stringCaseInsensitivelyExactlyMatchesQueryCollection(
             medication.atc()!!.therapeuticSubGroup().name().lowercase(),
             categoriesToFind
-        ) || stringCaseInsensitivelyMatchesQueryCollection(
+        ) || stringCaseInsensitivelyExactlyMatchesQueryCollection(
             medication.atc()!!.chemicalSubGroup().name().lowercase(),
             categoriesToFind
-        ) || stringCaseInsensitivelyMatchesQueryCollection(
+        ) || stringCaseInsensitivelyExactlyMatchesQueryCollection(
             medication.atc()!!.anatomicalMainGroup().name().lowercase(),
             categoriesToFind
-        ) || stringCaseInsensitivelyMatchesQueryCollection(
+        ) || stringCaseInsensitivelyExactlyMatchesQueryCollection(
             medication.atc()!!.pharmacologicalSubGroup().name().lowercase(),
             categoriesToFind
         )
