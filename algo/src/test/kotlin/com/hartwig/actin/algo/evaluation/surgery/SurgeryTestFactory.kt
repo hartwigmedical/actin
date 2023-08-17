@@ -5,10 +5,10 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ImmutableSurgery
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.Surgery
 import com.hartwig.actin.clinical.datamodel.SurgeryStatus
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
 
 internal object SurgeryTestFactory {
@@ -32,13 +32,13 @@ internal object SurgeryTestFactory {
             .build()
     }
 
-    fun withPriorTumorTreatments(treatments: List<PriorTumorTreatment>): PatientRecord {
+    fun withTreatmentHistory(treatments: List<TreatmentHistoryEntry>): PatientRecord {
         return ImmutablePatientRecord.builder()
             .from(TestDataFactory.createMinimalTestPatientRecord())
             .clinical(
                 ImmutableClinicalRecord.builder()
                     .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                    .priorTumorTreatments(treatments)
+                    .treatmentHistory(treatments)
                     .build()
             )
             .build()

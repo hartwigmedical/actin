@@ -27,6 +27,6 @@ public class TreatmentDatabase {
 
     @Nullable
     public Drug findDrugByName(@NotNull String drugName) {
-        return drugsByName.get(drugName.toLowerCase());
+        return drugsByName.get(drugName.replace(" ", "_").toLowerCase());
     }
 }

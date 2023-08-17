@@ -1,8 +1,10 @@
 package com.hartwig.actin.clinical.datamodel;
 
+import com.hartwig.actin.Displayable;
+
 import org.jetbrains.annotations.NotNull;
 
-public enum ToxicitySource {
+public enum ToxicitySource implements Displayable {
     QUESTIONNAIRE("Questionnaire"),
     EHR("EHR");
 
@@ -13,6 +15,7 @@ public enum ToxicitySource {
         this.display = display;
     }
 
+    @Override
     @NotNull
     public String display() {
         return display;

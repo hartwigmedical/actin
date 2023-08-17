@@ -5,14 +5,14 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 
 class HasHadAdjuvantTreatmentWithCategory(private val category: TreatmentCategory) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentSummary =
-            TreatmentSummaryForCategory.createForTreatments(record.clinical().priorTumorTreatments(), category) {
-                it.name().lowercase().replace("neoadjuvant", "").contains("adjuvant")
-            }
+        val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(record.clinical().treatmentHistory(), category) {
+            it.intents()?.contains(Intent.ADJUVANT) == true
+        }
 
         return if (treatmentSummary.hasSpecificMatch()) {
             EvaluationFactory.pass("Has received adjuvant treatment(s) of ${category.display()}")

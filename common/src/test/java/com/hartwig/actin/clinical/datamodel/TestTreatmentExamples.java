@@ -23,7 +23,7 @@ public class TestTreatmentExamples {
                     System.out.printf(", with drugs %s",
                             ((Therapy) treatment).drugs()
                                     .stream()
-                                    .map(drug -> String.format("%s (%s)", drug.name(), setToString(drug.drugClasses())))
+                                    .map(drug -> String.format("%s (%s)", drug.name(), setToString(drug.drugTypes())))
                                     .collect(Collectors.joining(", ")));
                 }
                 System.out.println();

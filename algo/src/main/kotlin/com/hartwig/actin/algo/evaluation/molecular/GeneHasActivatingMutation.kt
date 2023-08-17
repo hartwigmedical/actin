@@ -6,7 +6,11 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
-import com.hartwig.actin.molecular.datamodel.driver.*
+import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
+import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.driver.GeneRole
+import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.driver.Variant
 
 class GeneHasActivatingMutation internal constructor(private val gene: String) : EvaluationFunction {
 

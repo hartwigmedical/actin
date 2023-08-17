@@ -38,7 +38,7 @@ public class PriorMolecularResultGenerator {
     public Table contents() {
         Table table = Tables.createFixedWidthCols(keyWidth, valueWidth);
 
-        table.addCell(Cells.createSubTitle("IHC results" ));
+        table.addCell(Cells.createSubTitle("IHC results"));
         if (clinical.priorMolecularTests().isEmpty()) {
             table.addCell(Cells.createValue("None"));
         } else {

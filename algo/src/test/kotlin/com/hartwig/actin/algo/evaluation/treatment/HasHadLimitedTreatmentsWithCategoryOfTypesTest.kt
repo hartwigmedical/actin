@@ -2,76 +2,82 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.drugTherapy
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatmentHistoryEntry
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.withTreatmentHistory
+import com.hartwig.actin.clinical.datamodel.treatment.DrugType
+import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatmentType
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import org.junit.Test
 
 class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
+
     @Test
-    fun canEvaluate() {
-        val category = TreatmentCategory.TARGETED_THERAPY
-        val types: List<String> = listOf("anti-BRAF", "anti-KRAS")
-        val function = HasHadLimitedTreatmentsWithCategoryOfTypes(category, types, 1)
-
-        // No treatments yet
-        val treatments: MutableList<PriorTumorTreatment> = mutableListOf()
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-
-        // Add wrong treatment category
-        treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.IMMUNOTHERAPY).build())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-
-        // Add correct treatment category with wrong type
-        treatments.add(TreatmentTestFactory.builder().addCategories(category).targetedType("some anti-EGFR").build())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-
-        // Add correct treatment category with correct type
-        treatments.add(TreatmentTestFactory.builder().addCategories(category).targetedType("some anti-BRAF").build())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-
-        // Add correct treatment category without a type
-        treatments.add(TreatmentTestFactory.builder().addCategories(category).build())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-
-        // Add correct treatment category with another correct type
-        treatments.add(TreatmentTestFactory.builder().addCategories(category).targetedType("some anti-KRAS").build())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
+    fun shouldPassForNoTreatments() {
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistory(emptyList())))
     }
 
     @Test
-    fun canEvaluateWithTrials() {
-        val category = TreatmentCategory.TARGETED_THERAPY
-        val function = HasHadLimitedTreatmentsWithCategoryOfTypes(category, emptyList(), 1)
-
-        // No treatments yet
-        val treatments: MutableList<PriorTumorTreatment> = mutableListOf()
+    fun shouldPassForWrongTreatmentCategory() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTherapy("test", TreatmentCategory.IMMUNOTHERAPY)))
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments))
+            FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
         )
+    }
 
-        // Add one trial
-        treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.TRIAL).build())
+    @Test
+    fun shouldPassForCorrectTreatmentCategoryWithWrongType() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTherapy("test", MATCHING_CATEGORY, setOf(DrugType.ANTI_TISSUE_FACTOR))))
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments))
+            FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
         )
+    }
 
-        // Add another trial
-        treatments.add(TreatmentTestFactory.builder().addCategories(TreatmentCategory.TRIAL).build())
+    @Test
+    fun shouldFailWhenTreatmentsWithCorrectCategoryAndTypeExceedLimit() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTherapy("test", MATCHING_CATEGORY, MATCHING_TYPE_SET)))
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
+        )
+    }
+
+    @Test
+    fun shouldReturnUndeterminedWhenTreatmentsWithCorrectCategoryAndNoTypeExceedLimit() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTherapy("test", MATCHING_CATEGORY)))
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments))
+            FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
         )
     }
 
     @Test
-    fun shouldNotCountTrialMatchesWhenLookingForUnlikelyTrialCategories() {
-        val function = HasHadLimitedTreatmentsWithCategoryOfTypes(TreatmentCategory.SURGERY, emptyList(), 1)
-        val trial = TreatmentTestFactory.builder().addCategories(TreatmentCategory.TRIAL).build()
+    fun shouldReturnUndeterminedWhenTrialTreatmentsExceedLimit() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTherapy("test", MATCHING_CATEGORY)), isTrial = true)
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
+        )
+    }
+
+    @Test
+    fun shouldIgnoreTrialMatchesAndPassWhenLookingForUnlikelyTrialCategories() {
+        val function = HasHadLimitedTreatmentsWithCategoryOfTypes(TreatmentCategory.TRANSPLANTATION, setOf(OtherTreatmentType.ALLOGENIC), 1)
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTherapy("test", MATCHING_CATEGORY)), isTrial = true)
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(listOf(trial, trial)))
+            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
         )
+    }
+
+    companion object {
+        private val MATCHING_CATEGORY = TreatmentCategory.TARGETED_THERAPY
+        private val MATCHING_TYPE_SET = setOf(DrugType.HER2_ANTIBODY)
+        private val FUNCTION = HasHadLimitedTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, MATCHING_TYPE_SET, 1)
     }
 }
