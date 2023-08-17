@@ -9,56 +9,55 @@ import org.junit.Test
 
 class HasRecentlyReceivedMedicationOfApproximateCategoryTest {
     @Test
-    fun canEvaluateForActiveMedications() {
-        val function = HasRecentlyReceivedMedicationOfApproximateCategory(
-            MedicationTestFactory.alwaysActive(),
-            "category to find",
-            EVALUATION_DATE.plusDays(1)
-        )
-
-        // No medications
+    fun shouldFailWhenNoMedication() {
         val medications: MutableList<Medication> = mutableListOf()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
-
-        // Wrong category
-        medications.add(TestMedicationFactory.builder().addCategories("wrong category").build())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
-
-        // Right category
-        medications.add(TestMedicationFactory.builder().addCategories("category to find").build())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     @Test
-    fun canEvaluateForStoppedMedication() {
-        val function = HasRecentlyReceivedMedicationOfApproximateCategory(
-            MedicationTestFactory.alwaysStopped(),
-            "category to find",
-            EVALUATION_DATE.minusDays(1)
-        )
-
-        // Medication stopped after min stop date
-        val medication: Medication = TestMedicationFactory.builder().addCategories("category to find").stopDate(EVALUATION_DATE).build()
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(listOf(medication))))
+    fun shouldFailWhenMedicationHasWrongCategory() {
+        val atc =
+            AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("wrong category").build())
+                .build()
+        val medications = listOf(TestMedicationFactory.builder().atc(atc).build())
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     @Test
-    fun cantDetermineWithOldEvaluationDate() {
-        val function = HasRecentlyReceivedMedicationOfApproximateCategory(
-            MedicationTestFactory.alwaysStopped(),
-            "category to find",
-            EVALUATION_DATE.minusWeeks(2)
-        )
+    fun shouldPassWhenMedicationHasRightCategory() {
+        val atc =
+            AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category to find").build())
+                .build()
+        val medications = listOf(TestMedicationFactory.builder().atc(atc).build())
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
+    }
 
-        // Medication stopped after min stop date
-        val medication: Medication = TestMedicationFactory.builder().addCategories("category to find").stopDate(EVALUATION_DATE).build()
+    @Test
+    fun shouldPassWhenMedicationHasCorrectDate() {
+        val atc =
+            AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category to find").build())
+                .build()
+        val medications = listOf(TestMedicationFactory.builder().atc(atc).stopDate(EVALUATION_DATE.plusDays(1)).build())
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
+    }
+
+    @Test
+    fun shouldBeUndeterminedWhenMedicationStoppedAfterMinStopDate() {
+        val atc =
+            AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category to find").build())
+                .build()
+        val medications = listOf(TestMedicationFactory.builder().atc(atc).stopDate(EVALUATION_DATE.plusWeeks(2)).build())
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(MedicationTestFactory.withMedications(listOf(medication)))
+            FUNCTION.evaluate(MedicationTestFactory.withMedications(medications))
         )
     }
 
     companion object {
         private val EVALUATION_DATE = TestClinicalFactory.createMinimalTestClinicalRecord().patient().registrationDate().plusWeeks(1)
+        private val FUNCTION = HasRecentlyReceivedMedicationOfApproximateCategory(
+            MedicationTestFactory.alwaysStopped(), setOf("category to find"),
+            EVALUATION_DATE
+        )
     }
 }

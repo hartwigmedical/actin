@@ -9,34 +9,39 @@ import java.time.LocalDate
 
 class HasRecentlyReceivedCancerTherapyOfCategoryTest {
     @Test
-    fun canEvaluate() {
-        val referenceDate = LocalDate.of(2020, 6, 6)
-        val interpreter = WashoutTestFactory.activeFromDate(referenceDate)
-        val function = HasRecentlyReceivedCancerTherapyOfCategory(setOf("category 1"), interpreter)
-
-        // Fail on no medications
+    fun shouldFailWhenNoMedication() {
         val medications: MutableList<Medication> = mutableListOf()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(WashoutTestFactory.withMedications(medications)))
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(WashoutTestFactory.withMedications(medications)))
+    }
 
-        // Fail on medication with wrong category
-        val wrongAtc =
-            AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category 2").build())
-                .build()
-        medications.add(WashoutTestFactory.builder().atc(wrongAtc).stopDate(referenceDate.plusDays(1)).build())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(WashoutTestFactory.withMedications(medications)))
+    @Test
+    fun shouldFailWhenMedicationHasWrongCategory() {
+        val atc = AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category 2").build())
+            .build()
+        val medications = listOf(WashoutTestFactory.builder().atc(atc).stopDate(REFERENCE_DATE.plusDays(1)).build())
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(WashoutTestFactory.withMedications(medications)))
+    }
 
-        // Fail on medication with old date
-        val oldDateAtc =
-            AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category 1").build())
-                .build()
-        medications.add(WashoutTestFactory.builder().atc(oldDateAtc).stopDate(referenceDate.minusDays(1)).build())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(WashoutTestFactory.withMedications(medications)))
+    @Test
+    fun shouldFailWhenMedicationHasRightCategoryAndOldDate() {
+        val atc = AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category 1").build())
+            .build()
+        val medications = listOf(WashoutTestFactory.builder().atc(atc).stopDate(REFERENCE_DATE.minusDays(1)).build())
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(WashoutTestFactory.withMedications(medications)))
 
-        // Pass on medication with recent date
-        val recentDateAtc =
-            AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category 1").build())
-                .build()
-        medications.add(WashoutTestFactory.builder().atc(recentDateAtc).stopDate(referenceDate.plusDays(1)).build())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(WashoutTestFactory.withMedications(medications)))
+    }
+
+    @Test
+    fun shouldPassWhenMedicationHasRightCategoryAndRecentDate() {
+        val atc = AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category 1").build())
+            .build()
+        val medications = listOf(WashoutTestFactory.builder().atc(atc).stopDate(REFERENCE_DATE.plusDays(1)).build())
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(WashoutTestFactory.withMedications(medications)))
+    }
+
+    companion object {
+        private val REFERENCE_DATE = LocalDate.of(2020, 6, 6)
+        private val INTERPRETER = WashoutTestFactory.activeFromDate(REFERENCE_DATE)
+        private val FUNCTION = HasRecentlyReceivedCancerTherapyOfCategory(setOf("category 1"), INTERPRETER)
     }
 }

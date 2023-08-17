@@ -8,38 +8,44 @@ import org.junit.Test
 
 class CurrentlyGetsMedicationOfApproximateCategoryTest {
     @Test
-    fun canEvaluate() {
-        val function = CurrentlyGetsMedicationOfApproximateCategory(MedicationTestFactory.alwaysActive(), setOf("category 1"))
-
-        // No medications yet
+    fun shouldFailWhenNoMedication() {
         val medications: MutableList<Medication> = mutableListOf()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
+    }
 
-        // Medication with wrong category
-        val wrongAtc =
-            AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category 3").build())
-                .build()
-        medications.add(TestMedicationFactory.builder().atc(wrongAtc).build())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
+    @Test
+    fun shouldFailWhenMedicationHasWrongCategory() {
+        val atc = AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category 3").build())
+            .build()
+        val medications = listOf(TestMedicationFactory.builder().atc(atc).build())
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
+    }
 
-        // Medication with non-exact category
-        val nonExactAtc = AtcTestFactory.atcClassificationBuilder()
+    @Test
+    fun shouldPassWhenMedicationHasNonExactCategory() {
+        val atc = AtcTestFactory.atcClassificationBuilder()
             .anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("this is category 1").build()).build()
-        medications.add(TestMedicationFactory.builder().atc(nonExactAtc).build())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
+        val medications = listOf(TestMedicationFactory.builder().atc(atc).build())
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
+    }
 
-        // Medication with right category
-        val rightAtc =
+    @Test
+    fun shouldPassWhenMedicationHasRightCategory() {
+        val atc =
             AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category 1").build())
                 .build()
         assertEvaluation(
-            EvaluationResult.PASS, function.evaluate(
+            EvaluationResult.PASS, FUNCTION.evaluate(
                 MedicationTestFactory.withMedications(
                     listOf(
-                        TestMedicationFactory.builder().atc(rightAtc).build()
+                        TestMedicationFactory.builder().atc(atc).build()
                     )
                 )
             )
         )
+    }
+
+    companion object {
+        private val FUNCTION = CurrentlyGetsMedicationOfApproximateCategory(MedicationTestFactory.alwaysActive(), setOf("category 1"))
     }
 }
