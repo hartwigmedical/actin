@@ -1,29 +1,22 @@
 package com.hartwig.actin.algo.evaluation
 
-import com.hartwig.actin.doid.DoidModel
-import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
+import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider
 import com.hartwig.actin.algo.evaluation.composite.And
 import com.hartwig.actin.algo.evaluation.composite.Not
 import com.hartwig.actin.algo.evaluation.composite.Or
 import com.hartwig.actin.algo.evaluation.composite.WarnIf
+import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction
 import com.hartwig.actin.treatment.datamodel.EligibilityRule
 import com.hartwig.actin.treatment.input.FunctionInputResolver
 import com.hartwig.actin.treatment.input.composite.CompositeRules
 
 class EvaluationFunctionFactory(
-    functionCreatorMap: Map<EligibilityRule, FunctionCreator>,
-    functionInputResolver: FunctionInputResolver
-) {
-
-    private val functionCreatorMap: Map<EligibilityRule, FunctionCreator>
+    private val functionCreatorMap: Map<EligibilityRule, FunctionCreator>,
     private val functionInputResolver: FunctionInputResolver
-
-    init {
-        this.functionCreatorMap = functionCreatorMap
-        this.functionInputResolver = functionInputResolver
-    }
+) {
 
     fun create(function: EligibilityFunction): EvaluationFunction {
         val hasValidInputs: Boolean? = functionInputResolver.hasValidInputs(function)
@@ -63,10 +56,14 @@ class EvaluationFunctionFactory(
     }
 
     companion object {
-        fun create(doidModel: DoidModel, referenceDateProvider: ReferenceDateProvider): EvaluationFunctionFactory {
+        fun create(
+            doidModel: DoidModel,
+            referenceDateProvider: ReferenceDateProvider,
+            treatmentDatabase: TreatmentDatabase
+        ): EvaluationFunctionFactory {
             // We assume we never check validity of a gene inside algo.
             val molecularInputChecker: MolecularInputChecker = MolecularInputChecker.createAnyGeneValid()
-            val functionInputResolver = FunctionInputResolver(doidModel, molecularInputChecker)
+            val functionInputResolver = FunctionInputResolver(doidModel, molecularInputChecker, treatmentDatabase)
             return EvaluationFunctionFactory(
                 FunctionCreatorFactory.create(referenceDateProvider, doidModel, functionInputResolver),
                 functionInputResolver

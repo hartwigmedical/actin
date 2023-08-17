@@ -16,7 +16,6 @@ import com.hartwig.actin.report.interpretation.PriorMolecularTestKeyComparator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Formats;
 import com.hartwig.actin.report.pdf.util.Tables;
-import com.hartwig.actin.util.ApplicationConfig;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 
@@ -39,9 +38,7 @@ public class PriorMolecularResultGenerator {
     public Table contents() {
         Table table = Tables.createFixedWidthCols(keyWidth, valueWidth);
 
-        table.addCell(Cells.createSubTitle(String.format(ApplicationConfig.LOCALE,
-                "IHC results (%s)",
-                Formats.date(clinical.patient().questionnaireDate()))));
+        table.addCell(Cells.createSubTitle("IHC results"));
         if (clinical.priorMolecularTests().isEmpty()) {
             table.addCell(Cells.createValue("None"));
         } else {

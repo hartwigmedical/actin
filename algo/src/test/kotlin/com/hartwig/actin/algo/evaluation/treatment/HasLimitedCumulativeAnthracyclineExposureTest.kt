@@ -5,87 +5,85 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.drugTherapy
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
+import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
 
 class HasLimitedCumulativeAnthracyclineExposureTest {
     @Test
-    fun canEvaluate() {
-        val function = HasLimitedCumulativeAnthracyclineExposure(TestDoidModelFactory.createMinimalTestDoidModel())
+    fun shouldPassWhenNoAnthracyclineInformationProvided() {
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(patientRecord(null, emptyList(), emptyList())))
+    }
 
-        // PASS when no information relevant to anthracycline is provided.
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(create(null, emptyList(), emptyList())))
-
-        // PASS with one generic chemo for non-suspicious cancer type
-        val genericChemo: PriorTumorTreatment = TreatmentTestFactory.builder().addCategories(
-            TreatmentCategory.CHEMOTHERAPY
-        ).build()
+    @Test
+    fun shouldPassWithGenericChemoForNonSuspiciousCancerType() {
+        val genericChemo = drugTherapy("chemo", TreatmentCategory.CHEMOTHERAPY)
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(create(setOf("other cancer type"), emptyList(), listOf(genericChemo)))
+            FUNCTION.evaluate(patientRecord(setOf("other cancer type"), emptyList(), listOf(treatmentHistoryEntry(setOf(genericChemo)))))
         )
-        val firstSuspiciousCancerType = HasLimitedCumulativeAnthracyclineExposure.CANCER_DOIDS_FOR_ANTHRACYCLINE.iterator().next()
-        // PASS when pt has prior second primary with different treatment history
-        val suspectTumorTypeWithOther: PriorSecondPrimary =
-            TreatmentTestFactory.priorSecondPrimaryBuilder().addDoids(firstSuspiciousCancerType).treatmentHistory("other").build()
+    }
+
+    @Test
+    fun shouldPassWhenPriorSecondPrimaryHasDifferentTreatmentHistory() {
+        val suspectTumorTypeWithOther = priorSecondPrimary("other")
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(create(null, listOf(suspectTumorTypeWithOther), emptyList()))
+            FUNCTION.evaluate(patientRecord(null, listOf(suspectTumorTypeWithOther), emptyList()))
         )
+    }
 
-        // UNDETERMINED in case the patient had prior second primary with suspicious prior treatment
+    @Test
+    fun shouldReturnUndeterminedWhenPriorSecondPrimaryHasSuspiciousPriorTreatment() {
         val firstSuspiciousTreatment = HasLimitedCumulativeAnthracyclineExposure.PRIOR_PRIMARY_SUSPICIOUS_TREATMENTS.iterator().next()
-        val suspectTumorTypeWithSuspectTreatment: PriorSecondPrimary = TreatmentTestFactory.priorSecondPrimaryBuilder()
-            .addDoids(firstSuspiciousCancerType)
-            .treatmentHistory(firstSuspiciousTreatment)
-            .build()
-        assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            function.evaluate(create(null, listOf(suspectTumorTypeWithSuspectTreatment), emptyList()))
-        )
+        val suspectTumorTypeWithSuspectTreatment = priorSecondPrimary(firstSuspiciousTreatment)
 
-        // UNDETERMINED in case the patient had prior second primary with no prior treatment recorded
-        val suspectTumorTypeWithoutKnownTreatment: PriorSecondPrimary =
-            TreatmentTestFactory.priorSecondPrimaryBuilder().addDoids(firstSuspiciousCancerType).build()
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(create(null, listOf(suspectTumorTypeWithoutKnownTreatment), emptyList()))
+            FUNCTION.evaluate(patientRecord(null, listOf(suspectTumorTypeWithSuspectTreatment), emptyList()))
         )
+    }
 
-        // UNDETERMINED when chemo with no type is provided and tumor type is suspicious.
-        val priorChemoWithoutType: PriorTumorTreatment =
-            TreatmentTestFactory.builder().addCategories(TreatmentCategory.CHEMOTHERAPY).build()
+    @Test
+    fun shouldReturnUndeterminedWhenPriorSecondPrimaryHasNoPriorTreatmentRecorded() {
         assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            function.evaluate(
-                create(
-                    setOf(firstSuspiciousCancerType),
-                    emptyList(),
-                    listOf(priorChemoWithoutType)
-                )
-            )
+            EvaluationResult.UNDETERMINED, FUNCTION.evaluate(patientRecord(null, listOf(priorSecondPrimary()), emptyList()))
         )
+    }
 
-        // UNDETERMINED when actual anthracycline is provided regardless of tumor type
-        val priorAnthracycline: PriorTumorTreatment = TreatmentTestFactory.builder()
-            .addCategories(TreatmentCategory.CHEMOTHERAPY)
-            .chemoType(HasLimitedCumulativeAnthracyclineExposure.ANTHRACYCLINE_CHEMO_TYPE)
-            .build()
+    @Test
+    fun shouldReturnUndeterminedWhenChemoWithoutTypeIsProvidedAndTumorTypeIsSuspicious() {
+        val genericChemo = drugTherapy("chemo", TreatmentCategory.CHEMOTHERAPY)
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(create(null, emptyList(), listOf(priorAnthracycline)))
+            FUNCTION.evaluate(patientRecord(setOf(SUSPICIOUS_CANCER_TYPE), emptyList(), listOf(treatmentHistoryEntry(setOf(genericChemo)))))
+        )
+    }
+
+    @Test
+    fun shouldReturnUndeterminedWhenActualAnthracyclineIsProvidedRegardlessOfTumorType() {
+        val priorAnthracycline = drugTherapy("chemo", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ANTHRACYCLINE))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            FUNCTION.evaluate(patientRecord(null, emptyList(), listOf(treatmentHistoryEntry(setOf(priorAnthracycline)))))
         )
     }
 
     companion object {
-        private fun create(
+        private val FUNCTION = HasLimitedCumulativeAnthracyclineExposure(TestDoidModelFactory.createMinimalTestDoidModel())
+        private val SUSPICIOUS_CANCER_TYPE = HasLimitedCumulativeAnthracyclineExposure.CANCER_DOIDS_FOR_ANTHRACYCLINE.iterator().next()
+
+        private fun patientRecord(
             tumorDoids: Set<String>?, priorSecondPrimaries: List<PriorSecondPrimary>,
-            priorTumorTreatments: List<PriorTumorTreatment>
+            treatmentHistory: List<TreatmentHistoryEntry>
         ): PatientRecord {
             val base = TestDataFactory.createMinimalTestPatientRecord()
             return ImmutablePatientRecord.builder()
@@ -94,10 +92,22 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
                     ImmutableClinicalRecord.builder()
                         .from(base.clinical())
                         .tumor(ImmutableTumorDetails.builder().from(base.clinical().tumor()).doids(tumorDoids).build())
-                        .priorTumorTreatments(priorTumorTreatments)
+                        .treatmentHistory(treatmentHistory)
                         .priorSecondPrimaries(priorSecondPrimaries)
                         .build()
                 )
+                .build()
+        }
+
+        private fun priorSecondPrimary(treatmentHistory: String = ""): PriorSecondPrimary {
+            return ImmutablePriorSecondPrimary.builder()
+                .addDoids(SUSPICIOUS_CANCER_TYPE)
+                .tumorLocation("")
+                .tumorSubLocation("")
+                .tumorType("")
+                .tumorSubType("")
+                .treatmentHistory(treatmentHistory)
+                .isActive(false)
                 .build()
         }
     }

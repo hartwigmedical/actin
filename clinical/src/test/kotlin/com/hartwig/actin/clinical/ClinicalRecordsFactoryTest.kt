@@ -210,14 +210,16 @@ class ClinicalRecordsFactoryTest {
             assertFalse(medication.dosage().ifNeeded()!!)
             assertEquals(LocalDate.of(2019, 2, 2), medication.startDate())
             assertEquals(LocalDate.of(2019, 4, 4), medication.stopDate())
-            assertThat(medication.cypInteractions()).containsExactly(TestCurationFactory.createTestCypInteration())
+            assertThat(medication.cypInteractions()).containsExactly(TestCurationFactory.createTestCypInteraction())
             assertThat(medication.qtProlongatingRisk()).isEqualTo(QTProlongatingRisk.POSSIBLE)
             assertThat(medication.atc()).isEqualTo(
-                ImmutableAtcClassification.builder().anatomicalMainGroup(ImmutableAtcLevel.builder().code("N").name(ANATOMICAL).build())
+                ImmutableAtcClassification.builder()
+                    .anatomicalMainGroup(ImmutableAtcLevel.builder().code("N").name(ANATOMICAL).build())
                     .therapeuticSubGroup(ImmutableAtcLevel.builder().code("N02").name(THERAPEUTIC).build())
                     .pharmacologicalSubGroup(ImmutableAtcLevel.builder().code("N02B").name(PHARMACOLOGICAL).build())
                     .chemicalSubGroup(ImmutableAtcLevel.builder().code("N02BE").name(CHEMICAL).build())
-                    .chemicalSubstance(ImmutableAtcLevel.builder().code(ATC_CODE).name(CHEMICAL_SUBSTANCE).build()).build()
+                    .chemicalSubstance(ImmutableAtcLevel.builder().code(ATC_CODE).name(CHEMICAL_SUBSTANCE).build())
+                    .build()
             )
         }
 

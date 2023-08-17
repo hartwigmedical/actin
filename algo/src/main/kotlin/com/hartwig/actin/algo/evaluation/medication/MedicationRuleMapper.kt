@@ -26,6 +26,7 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_CYP_X to getsCYPXInducingMedicationCreator(),
             EligibilityRule.HAS_RECEIVED_MEDICATION_INDUCING_CYP_X_WITHIN_Y_WEEKS to hasRecentlyReceivedCYPXInducingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_CYP_X to getsCYPXInhibitingMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_ANY_CYP to getsAnyCypInhibitingOrInducingMedication(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X to getsCYPXInhibitingOrInducingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_CYP_X to getsCYPSubstrateMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_PGP to getsPGPInhibitingMedicationCreator(),
@@ -61,45 +62,50 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     }
 
     private fun getsQTProlongatingMedicationCreator(): FunctionCreator {
-        return FunctionCreator { CurrentlyGetsQTProlongatingMedication() }
+        return FunctionCreator { CurrentlyGetsQTProlongatingMedication(selector) }
     }
 
     private fun getsAnyCYPInducingMedicationCreator(): FunctionCreator {
-        return FunctionCreator { GetsAnyCYPInducingMedication() }
+        return FunctionCreator { CurrentlyGetsAnyCypInducingMedication(selector) }
     }
 
     private fun getsCYPXInducingMedicationCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneStringInput(function)
-            CurrentlyGetsCYPXInducingMedication(termToFind)
+            CurrentlyGetsCypXInducingMedication(selector, termToFind)
         }
     }
 
     private fun hasRecentlyReceivedCYPXInducingMedicationCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneStringOneIntegerInput(function)
-            HasRecentlyReceivedCYPXInducingMedication(input.string())
+            val maxStopDate = referenceDateProvider().date().minusWeeks(input.integer().toLong())
+            HasRecentlyReceivedCypXInducingMedication(selector, input.string(), maxStopDate)
         }
     }
 
     private fun getsCYPXInhibitingMedicationCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneStringInput(function)
-            CurrentlyGetsCYPXInhibitingMedication(termToFind)
+            CurrentlyGetsCypXInhibitingMedication(selector, termToFind)
         }
+    }
+
+    private fun getsAnyCypInhibitingOrInducingMedication(): FunctionCreator {
+        return FunctionCreator { CurrentlyGetsAnyCypInhibitingOrInducingMedication(selector) }
     }
 
     private fun getsCYPXInhibitingOrInducingMedicationCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneStringInput(function)
-            CurrentlyGetsCYPXInhibitingOrInducingMedication(termToFind)
+            CurrentlyGetsCypXInhibitingOrInducingMedication(selector, termToFind)
         }
     }
 
     private fun getsCYPSubstrateMedicationCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneStringInput(function)
-            CurrentlyGetsCYPXSubstrateMedication(termToFind)
+            CurrentlyGetsCypXSubstrateMedication(selector, termToFind)
         }
     }
 
@@ -141,5 +147,8 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         private fun determineCategories(inputs: String): Set<String> {
             return CATEGORIES_PER_MAIN_CATEGORY[inputs] ?: setOf(inputs)
         }
+
+        // Undetermined Cyp
+        val UNDETERMINED_CYP = setOf("2J2")
     }
 }

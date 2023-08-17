@@ -10,6 +10,9 @@ class IsNotParticipatingInAnotherTrialTest {
     @Test
     fun shouldAlwaysReturnNotEvaluated() {
         val function = IsNotParticipatingInAnotherTrial()
-        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
+        assertEvaluation(
+            EvaluationResult.NOT_EVALUATED,
+            function.evaluate(TestDataFactory.createMinimalTestPatientRecord())
+        )
     }
 }

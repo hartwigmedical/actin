@@ -6,7 +6,11 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
-import com.hartwig.actin.molecular.datamodel.driver.*
+import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
+import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.driver.GeneRole
+import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.driver.Variant
 
 class GeneHasActivatingMutation internal constructor(private val gene: String) : EvaluationFunction {
 
@@ -114,7 +118,9 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
         if (activatingVariantsNoHotspotAndNoGainOfFunction.isNotEmpty()) {
             warnEvents.addAll(activatingVariantsNoHotspotAndNoGainOfFunction)
             warnSpecificMessages.add(
-                "Gene $gene has potentially activating mutation(s) " + Format.concat(activatingVariantsNoHotspotAndNoGainOfFunction)
+                "Gene $gene has potentially activating mutation(s) " + Format.concat(
+                    activatingVariantsNoHotspotAndNoGainOfFunction
+                )
                         + " that have high driver likelihood, but is not a hotspot and not associated with gain-of-function protein effect evidence"
             )
             warnGeneralMessages.add(

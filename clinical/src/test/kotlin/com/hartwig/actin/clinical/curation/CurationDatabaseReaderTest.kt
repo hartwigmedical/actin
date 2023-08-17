@@ -8,7 +8,7 @@ import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
-import com.hartwig.actin.clinical.datamodel.treatment.DrugClass
+import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
@@ -87,7 +87,10 @@ class CurationDatabaseReaderTest {
         assertThat(curatedAblation!!.name()).isEqualTo("Ablation trial")
         assertThat(curatedAblation.startYear()).isEqualTo(2023)
         assertThat(curatedAblation.startMonth()).isEqualTo(5)
-        assertThat(curatedAblation.categories()).containsExactlyInAnyOrder(TreatmentCategory.ABLATION, TreatmentCategory.TRIAL)
+        assertThat(curatedAblation.categories()).containsExactlyInAnyOrder(
+            TreatmentCategory.ABLATION,
+            TreatmentCategory.TRIAL
+        )
         assertThat(curatedAblation.isSystemic).isFalse
     }
 
@@ -104,7 +107,7 @@ class CurationDatabaseReaderTest {
         assertThat(curatedCapox!!.treatments()).hasSize(1)
 
         val capoxTreatment = curatedCapox.treatments().iterator().next() as Therapy
-        assertThat(capoxTreatment.name()).isEqualTo("Capecitabine+Oxaliplatin")
+        assertThat(capoxTreatment.name()).isEqualTo("CAPECITABINE+OXALIPLATIN")
         assertThat(curatedCapox.startYear()).isEqualTo(2020)
         assertThat(curatedCapox.startMonth()).isNull()
 
@@ -117,9 +120,9 @@ class CurationDatabaseReaderTest {
 
         assertThat(capoxTreatment.categories()).containsExactly(TreatmentCategory.CHEMOTHERAPY)
         assertThat(capoxTreatment.isSystemic).isTrue
-        assertThat(capoxTreatment.drugs()).extracting(Drug::name, Drug::drugClasses).containsExactlyInAnyOrder(
-            tuple("Capecitabine", setOf(DrugClass.ANTIMETABOLITE)),
-            tuple("Oxaliplatin", setOf(DrugClass.PLATINUM_COMPOUND))
+        assertThat(capoxTreatment.drugs()).extracting(Drug::name, Drug::drugTypes).containsExactlyInAnyOrder(
+            tuple("CAPECITABINE", setOf(DrugType.ANTIMETABOLITE)),
+            tuple("OXALIPLATIN", setOf(DrugType.PLATINUM_COMPOUND))
         )
         assertThat(curatedCapox.trialAcronym()).isNull()
 
@@ -354,9 +357,15 @@ class CurationDatabaseReaderTest {
 
     @Test
     fun shouldReadDatabaseFromTsvFile() {
-        assertThat(database!!.cypInteractionConfigs).containsExactly(CypInteractionConfig("abiraterone", false,
-            listOf(createInteraction(CypInteraction.Type.INHIBITOR, CypInteraction.Strength.MODERATE, "2D6"),
-                createInteraction(CypInteraction.Type.SUBSTRATE, CypInteraction.Strength.MODERATE_SENSITIVE, "3A4"))))
+        assertThat(database!!.cypInteractionConfigs).containsExactly(
+            CypInteractionConfig(
+                "abiraterone", false,
+                listOf(
+                    createInteraction(CypInteraction.Type.INHIBITOR, CypInteraction.Strength.MODERATE, "2D6"),
+                    createInteraction(CypInteraction.Type.SUBSTRATE, CypInteraction.Strength.MODERATE_SENSITIVE, "3A4")
+                )
+            )
+        )
     }
 
     @Test

@@ -2,6 +2,9 @@ package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.PatientRecordFactory
+import com.hartwig.actin.TreatmentDatabaseFactory
+import com.hartwig.actin.algo.calendar.ReferenceDateProvider
+import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.clinical.util.ClinicalPrinter
@@ -12,15 +15,13 @@ import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson
 import com.hartwig.actin.molecular.util.MolecularPrinter
-import com.hartwig.actin.algo.calendar.ReferenceDateProvider
-import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
-import java.io.IOException
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.io.IOException
 import kotlin.system.exitProcess
 
 class StandardOfCareApplication(config: StandardOfCareConfig) {
@@ -42,17 +43,21 @@ class StandardOfCareApplication(config: StandardOfCareConfig) {
         MolecularPrinter.printRecord(molecular)
 
         val patient: PatientRecord = PatientRecordFactory.fromInputs(clinical, molecular)
-        LOGGER.info("Loading DOID tree from {}", config.doidJson)
 
+        LOGGER.info("Loading DOID tree from {}", config.doidJson)
         val doidEntry: DoidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size)
         val doidModel: DoidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
+        LOGGER.info("Loading treatment data from {}", config.treatmentDirectory)
+        val recommendationDatabase = RecommendationDatabase(TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory))
+
         val referenceDateProvider: ReferenceDateProvider = ReferenceDateProviderFactory.create(clinical, config.runHistorically)
-        val recommendationEngine: RecommendationEngine = RecommendationEngine.create(doidModel, referenceDateProvider)
+        val recommendationEngine: RecommendationEngine =
+            RecommendationEngine.create(doidModel, recommendationDatabase, referenceDateProvider)
 
         LOGGER.info("Recommended treatments descending order of preference:")
-        LOGGER.info(recommendationEngine.provideRecommendations(patient, TreatmentDB.loadTreatments()).listAvailableTreatmentsByScore())
+        LOGGER.info(recommendationEngine.provideRecommendations(patient).listAvailableTreatmentsByScore())
         LOGGER.info("Done!")
     }
 

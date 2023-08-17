@@ -1,39 +1,31 @@
 package com.hartwig.actin.clinical.datamodel.treatment;
 
+import com.hartwig.actin.Displayable;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 
 import org.jetbrains.annotations.NotNull;
 
-public enum TreatmentCategory {
-    CHEMOTHERAPY(true),
-    RADIOTHERAPY(true),
-    CHEMORADIOTHERAPY(false),
-    TARGETED_THERAPY(true),
-    IMMUNOTHERAPY(true),
-    HORMONE_THERAPY(true),
-    ANTIVIRAL_THERAPY(false),
-    SUPPORTIVE_TREATMENT(true),
-    SURGERY(false),
-    TRANSPLANTATION(true),
-    TRIAL(true),
-    CAR_T(true),
-    TCR_T(false),
-    GENE_THERAPY(false),
-    PROPHYLACTIC_TREATMENT(false),
-    ABLATION(true);
+public enum TreatmentCategory implements Displayable {
+    CHEMOTHERAPY,
+    RADIOTHERAPY,
+    CHEMORADIOTHERAPY,
+    TARGETED_THERAPY,
+    IMMUNOTHERAPY,
+    HORMONE_THERAPY,
+    ANTIVIRAL_THERAPY,
+    SUPPORTIVE_TREATMENT,
+    SURGERY,
+    TRANSPLANTATION,
+    TRIAL,
+    CAR_T,
+    TCR_T,
+    GENE_THERAPY,
+    PROPHYLACTIC_TREATMENT,
+    ABLATION;
 
-    private final boolean hasType;
-
-    TreatmentCategory(final boolean hasType) {
-        this.hasType = hasType;
-    }
-
+    @Override
     @NotNull
     public String display() {
         return TreatmentCategoryResolver.toString(this).toLowerCase();
-    }
-
-    public boolean hasType() {
-        return hasType;
     }
 }

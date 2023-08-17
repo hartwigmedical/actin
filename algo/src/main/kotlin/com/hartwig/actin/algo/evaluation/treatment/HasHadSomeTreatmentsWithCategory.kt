@@ -10,14 +10,14 @@ class HasHadSomeTreatmentsWithCategory(private val category: TreatmentCategory, 
     EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentSummary = TreatmentSummaryForCategory.createForTreatments(record.clinical().priorTumorTreatments(), category)
+        val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(record.clinical().treatmentHistory(), category)
 
-        return if (treatmentSummary.numSpecificMatches >= minTreatmentLines) {
+        return if (treatmentSummary.numSpecificMatches() >= minTreatmentLines) {
             EvaluationFactory.pass(
                 "Patient has received at least $minTreatmentLines line(s) of ${category.display()}",
                 "Has received at least $minTreatmentLines line(s) of ${category.display()}"
             )
-        } else if (treatmentSummary.numSpecificMatches + treatmentSummary.numPossibleTrialMatches >= minTreatmentLines) {
+        } else if (treatmentSummary.numSpecificMatches() + treatmentSummary.numPossibleTrialMatches >= minTreatmentLines) {
             EvaluationFactory.undetermined(
                 "Patient may have received at least $minTreatmentLines line(s) of  ${category.display()} due to trial participation",
                 "Undetermined if received at least $minTreatmentLines line(s) of ${category.display()} due to trial participation"

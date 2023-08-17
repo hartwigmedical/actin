@@ -73,8 +73,8 @@ public class MolecularDetailsChapter implements ReportChapter {
         List<EvaluatedCohort> cohorts = EvaluatedCohortFactory.create(report.treatmentMatch());
         List<TableGenerator> generators = Lists.newArrayList(new MolecularCharacteristicsGenerator(report.molecular(), contentWidth()));
         if (report.molecular().containsTumorCells()) {
-            generators.add(new MolecularDriversGenerator(report.molecular(), cohorts, contentWidth()));
             generators.add(new PredictedTumorOriginGenerator(report.molecular(), contentWidth()));
+            generators.add(new MolecularDriversGenerator(report.molecular(), cohorts, contentWidth()));
         }
 
         for (int i = 0; i < generators.size(); i++) {

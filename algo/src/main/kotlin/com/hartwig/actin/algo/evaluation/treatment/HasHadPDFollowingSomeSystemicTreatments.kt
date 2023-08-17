@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
 
 class HasHadPDFollowingSomeSystemicTreatments(
     private val minSystemicTreatments: Int,
@@ -11,10 +12,10 @@ class HasHadPDFollowingSomeSystemicTreatments(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val priorTumorTreatments = record.clinical().priorTumorTreatments()
-        val minSystemicCount = SystemicTreatmentAnalyser.minSystemicTreatments(priorTumorTreatments)
-        val maxSystemicCount = SystemicTreatmentAnalyser.maxSystemicTreatments(priorTumorTreatments)
-        val lastTreatment = SystemicTreatmentAnalyser.lastSystemicTreatment(priorTumorTreatments)
+        val treatmentHistory = record.clinical().treatmentHistory()
+        val minSystemicCount = SystemicTreatmentAnalyser.minSystemicTreatments(treatmentHistory)
+        val maxSystemicCount = SystemicTreatmentAnalyser.maxSystemicTreatments(record.clinical().treatmentHistory())
+        val lastTreatment = SystemicTreatmentAnalyser.lastSystemicTreatment(treatmentHistory)
         if (minSystemicCount >= minSystemicTreatments) {
             return when {
                 lastTreatment?.let { ProgressiveDiseaseFunctions.treatmentResultedInPDOption(it) } == true -> {
@@ -24,7 +25,8 @@ class HasHadPDFollowingSomeSystemicTreatments(
                     )
                 }
 
-                lastTreatment?.stopYear() == null || lastTreatment.stopReason()?.contains("toxicity", ignoreCase = true) == true ->
+                lastTreatment?.therapyHistoryDetails()?.stopYear() == null
+                        || lastTreatment.therapyHistoryDetails()?.stopReason() == StopReason.TOXICITY ->
                     EvaluationFactory.undetermined("Has had at least $minSystemicTreatments systemic treatments but undetermined if PD")
 
                 else ->

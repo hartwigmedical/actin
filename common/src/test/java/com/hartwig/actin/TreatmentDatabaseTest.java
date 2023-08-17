@@ -8,7 +8,7 @@ import java.util.Set;
 
 import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.datamodel.treatment.Drug;
-import com.hartwig.actin.clinical.datamodel.treatment.DrugClass;
+import com.hartwig.actin.clinical.datamodel.treatment.DrugType;
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
@@ -25,9 +25,9 @@ public class TreatmentDatabaseTest {
         assertThat(treatment).isNotNull();
         assertThat(treatment.categories()).containsExactly(TreatmentCategory.CHEMOTHERAPY);
         assertThat(treatment.isSystemic()).isTrue();
-        assertThat(((Therapy) treatment).drugs()).extracting(Drug::name, Drug::drugClasses)
-                .containsExactlyInAnyOrder(tuple("Capecitabine", Set.of(DrugClass.ANTIMETABOLITE)),
-                        tuple("Oxaliplatin", Set.of(DrugClass.PLATINUM_COMPOUND)));
+        assertThat(((Therapy) treatment).drugs()).extracting(Drug::name, Drug::drugTypes)
+                .containsExactlyInAnyOrder(tuple("CAPECITABINE", Set.of(DrugType.ANTIMETABOLITE)),
+                        tuple("OXALIPLATIN", Set.of(DrugType.PLATINUM_COMPOUND)));
     }
 
     @Test
@@ -35,8 +35,8 @@ public class TreatmentDatabaseTest {
         assertThat(treatmentDatabase().findDrugByName("nonexistent")).isNull();
         Drug drug = treatmentDatabase().findDrugByName("Capecitabine");
         assertThat(drug).isNotNull();
-        assertThat(drug.name()).isEqualTo("Capecitabine");
-        assertThat(drug.drugClasses()).containsExactly(DrugClass.ANTIMETABOLITE);
+        assertThat(drug.name()).isEqualTo("CAPECITABINE");
+        assertThat(drug.drugTypes()).containsExactly(DrugType.ANTIMETABOLITE);
     }
 
     @NotNull

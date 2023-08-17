@@ -26,7 +26,8 @@ class CohortStatusInterpreterTest {
 
     @Test
     fun shouldIgnoreCohortsThatAreConfiguredAsOverruledBecauseIncorrectInCTC() {
-        val overruledBecauseIncorrectInCTC = createWithCTCCohortIDs(CohortStatusInterpreter.OVERRULED_BECAUSE_INCORRECT_IN_CTC)
+        val overruledBecauseIncorrectInCTC =
+            createWithCTCCohortIDs(CohortStatusInterpreter.OVERRULED_BECAUSE_INCORRECT_IN_CTC)
         assertThat(interpret(entries, overruledBecauseIncorrectInCTC)).isNull()
     }
 

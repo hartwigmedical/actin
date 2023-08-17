@@ -15,7 +15,8 @@ class HasPotentialUncontrolledTumorRelatedPain internal constructor(private val 
         if (painComplications.isNotEmpty()) {
             return EvaluationFactory.pass(
                 "Patient has complication related to pain: " + concatLowercaseWithAnd(painComplications) +
-                        ", potentially indicating uncontrolled tumor related pain", "Present " + concatLowercaseWithAnd(painComplications)
+                        ", potentially indicating uncontrolled tumor related pain",
+                "Present " + concatLowercaseWithAnd(painComplications)
             )
         }
         val activePainMedications = record.clinical().medications()
@@ -28,7 +29,8 @@ class HasPotentialUncontrolledTumorRelatedPain internal constructor(private val 
         return if (activePainMedications.isNotEmpty()) {
             EvaluationFactory.pass(
                 "Patient receives pain medication: " + concatLowercaseWithAnd(activePainMedications) +
-                        ", potentially indicating uncontrolled tumor related pain", "Receives " + concatLowercaseWithAnd(activePainMedications) + " indicating pain "
+                        ", potentially indicating uncontrolled tumor related pain",
+                "Receives " + concatLowercaseWithAnd(activePainMedications) + " indicating pain "
             )
         } else
             EvaluationFactory.fail(

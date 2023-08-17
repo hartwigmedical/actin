@@ -6,10 +6,10 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 
-class HasRecentlyReceivedRadiotherapy internal constructor(private val referenceYear: Int, private val referenceMonth: Int) :
-    EvaluationFunction {
+class HasRecentlyReceivedRadiotherapy(private val referenceYear: Int, private val referenceMonth: Int) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasReceivedRadiotherapy = record.clinical().priorTumorTreatments()
+        val hasReceivedRadiotherapy = record.clinical().treatmentHistory()
             .filter { it.categories().contains(TreatmentCategory.RADIOTHERAPY) }
             .any {
                 val year = it.startYear()

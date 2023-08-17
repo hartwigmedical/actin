@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo
 
 import com.hartwig.actin.PatientRecordFactory
+import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory.create
 import com.hartwig.actin.algo.datamodel.ImmutableTreatmentMatch
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
@@ -35,8 +36,8 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         MolecularPrinter.printRecord(molecular)
         val patient = PatientRecordFactory.fromInputs(clinical, molecular)
 
-        LOGGER.info("Loading trials from {}", config.treatmentDatabaseDirectory)
-        val trials = TrialJson.readFromDir(config.treatmentDatabaseDirectory)
+        LOGGER.info("Loading trials from {}", config.trialDatabaseDirectory)
+        val trials = TrialJson.readFromDir(config.trialDatabaseDirectory)
         LOGGER.info(" Loaded {} trials", trials.size)
 
         LOGGER.info("Loading DOID tree from {}", config.doidJson)
@@ -46,7 +47,10 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
 
         val referenceDateProvider = create(clinical, config.runHistorically)
         LOGGER.info("Matching patient to available trials")
-        val matcher: TrialMatcher = TrialMatcher.create(doidModel, referenceDateProvider)
+        val matcher: TrialMatcher = TrialMatcher.create(
+            doidModel, referenceDateProvider,
+            TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
+        )
         val trialMatches = matcher.determineEligibility(patient, trials)
 
         val match: TreatmentMatch =
@@ -62,7 +66,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
     companion object {
         val LOGGER: Logger = LogManager.getLogger(TreatmentMatcherApplication::class.java)
         const val APPLICATION = "ACTIN Treatment Matcher"
-        val VERSION: String = TreatmentMatcherApplication::class.java.getPackage().implementationVersion
+        val VERSION: String = TreatmentMatcherApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
 }
 

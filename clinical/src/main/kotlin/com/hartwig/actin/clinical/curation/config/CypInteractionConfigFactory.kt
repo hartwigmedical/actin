@@ -15,15 +15,39 @@ private const val SUBSTRATE = "SUB"
 class CypInteractionConfigFactory : CurationConfigFactory<CypInteractionConfig> {
 
     override fun create(fields: Map<String, Int>, parts: Array<String>): CypInteractionConfig {
-        val strongInhibitors = extractInteractions(parts, fields, fieldName(STRONG, INHIBITOR), CypInteraction.Strength.STRONG, CypInteraction.Type.INHIBITOR)
-        val moderateInhibitors = extractInteractions(parts, fields, fieldName(WEAK, INHIBITOR), CypInteraction.Strength.WEAK, CypInteraction.Type.INHIBITOR)
-        val weakInhibitors = extractInteractions(parts, fields, fieldName(MODERATE, INHIBITOR), CypInteraction.Strength.MODERATE, CypInteraction.Type.INHIBITOR)
-        val strongInducers = extractInteractions(parts, fields, fieldName(STRONG, INDUCER), CypInteraction.Strength.STRONG, CypInteraction.Type.INDUCER)
-        val moderateInducers = extractInteractions(parts, fields, fieldName(WEAK, INDUCER), CypInteraction.Strength.WEAK, CypInteraction.Type.INDUCER)
-        val weakInducers = extractInteractions(parts, fields, fieldName(MODERATE, INDUCER), CypInteraction.Strength.MODERATE, CypInteraction.Type.INDUCER)
-        val sensitiveSubstrates = extractInteractions(parts, fields, fieldName(SENSITIVE, SUBSTRATE), CypInteraction.Strength.SENSITIVE, CypInteraction.Type.SUBSTRATE)
-        val moderateSensitiveSubstrates = extractInteractions(parts, fields, fieldName(MODERATE_SENSITIVE, SUBSTRATE), CypInteraction.Strength.MODERATE_SENSITIVE, CypInteraction.Type.SUBSTRATE)
-        val interactions = strongInhibitors + moderateInhibitors + weakInhibitors + strongInducers + moderateInducers + weakInducers + sensitiveSubstrates + moderateSensitiveSubstrates
+        val strongInhibitors =
+            extractInteractions(parts, fields, fieldName(STRONG, INHIBITOR), CypInteraction.Strength.STRONG, CypInteraction.Type.INHIBITOR)
+        val moderateInhibitors =
+            extractInteractions(parts, fields, fieldName(WEAK, INHIBITOR), CypInteraction.Strength.WEAK, CypInteraction.Type.INHIBITOR)
+        val weakInhibitors = extractInteractions(
+            parts,
+            fields,
+            fieldName(MODERATE, INHIBITOR),
+            CypInteraction.Strength.MODERATE,
+            CypInteraction.Type.INHIBITOR
+        )
+        val strongInducers =
+            extractInteractions(parts, fields, fieldName(STRONG, INDUCER), CypInteraction.Strength.STRONG, CypInteraction.Type.INDUCER)
+        val moderateInducers =
+            extractInteractions(parts, fields, fieldName(WEAK, INDUCER), CypInteraction.Strength.WEAK, CypInteraction.Type.INDUCER)
+        val weakInducers =
+            extractInteractions(parts, fields, fieldName(MODERATE, INDUCER), CypInteraction.Strength.MODERATE, CypInteraction.Type.INDUCER)
+        val sensitiveSubstrates = extractInteractions(
+            parts,
+            fields,
+            fieldName(SENSITIVE, SUBSTRATE),
+            CypInteraction.Strength.SENSITIVE,
+            CypInteraction.Type.SUBSTRATE
+        )
+        val moderateSensitiveSubstrates = extractInteractions(
+            parts,
+            fields,
+            fieldName(MODERATE_SENSITIVE, SUBSTRATE),
+            CypInteraction.Strength.MODERATE_SENSITIVE,
+            CypInteraction.Type.SUBSTRATE
+        )
+        val interactions =
+            strongInhibitors + moderateInhibitors + weakInhibitors + strongInducers + moderateInducers + weakInducers + sensitiveSubstrates + moderateSensitiveSubstrates
         return CypInteractionConfig(input = parts[fields["Drug or Other Substance"]!!], ignore = false, interactions = interactions)
     }
 
@@ -31,7 +55,14 @@ class CypInteractionConfigFactory : CurationConfigFactory<CypInteractionConfig> 
         return "CYP $strength $type"
     }
 
-    private fun extractInteractions(parts: Array<String>, fields: Map<String, Int>, fieldName: String, strength: CypInteraction.Strength, type: CypInteraction.Type) =
-        parts[fields[fieldName]!!].split(";").map { it.trim() }.filter { it.isNotEmpty() }.map { cyp -> ImmutableCypInteraction.builder().cyp(cyp).strength(strength).type(type).build() }
+    private fun extractInteractions(
+        parts: Array<String>,
+        fields: Map<String, Int>,
+        fieldName: String,
+        strength: CypInteraction.Strength,
+        type: CypInteraction.Type
+    ) =
+        parts[fields[fieldName]!!].split(";").map { it.trim() }.filter { it.isNotEmpty() }
+            .map { cyp -> ImmutableCypInteraction.builder().cyp(cyp).strength(strength).type(type).build() }
 
 }

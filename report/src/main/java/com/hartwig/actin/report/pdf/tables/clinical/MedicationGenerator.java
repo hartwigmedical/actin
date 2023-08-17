@@ -15,10 +15,11 @@ import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 public class MedicationGenerator implements TableGenerator {
-
     @NotNull
     private final List<Medication> medications;
     private final float totalWidth;
+
+    private static final String SPECIFIC_OR_UNKNOWN = "specific prescription|unknown prescription";
 
     public MedicationGenerator(@NotNull final List<Medication> medications, final float totalWidth) {
         this.medications = medications;
@@ -53,7 +54,7 @@ public class MedicationGenerator implements TableGenerator {
                     table.addCell(Cells.createContent(administrationRoute(medication)));
                     table.addCell(Cells.createContent(Formats.date(medication.startDate(), Strings.EMPTY)));
                     table.addCell(Cells.createContent(Formats.date(medication.stopDate(), Strings.EMPTY)));
-                    table.addCell(Cells.createContent(dosage(medication.dosage())));
+                    table.addCell(Cells.createContent(dosage(medication)));
                     table.addCell(Cells.createContent(frequency(medication.dosage())));
                 });
 
@@ -62,13 +63,14 @@ public class MedicationGenerator implements TableGenerator {
 
     @NotNull
     private static String administrationRoute(@NotNull Medication medication) {
-        return medication.administrationRoute() != null ? medication.administrationRoute() : Strings.EMPTY;
+        return medication.administrationRoute() != null ? medication.administrationRoute() : "";
     }
 
     @NotNull
-    private static String dosage(@NotNull Dosage dosage) {
-        String dosageMin = dosage.dosageMin() != null ? Formats.twoDigitNumber(dosage.dosageMin()) : "?";
-        String dosageMax = dosage.dosageMax() != null ? Formats.twoDigitNumber(dosage.dosageMax()) : "?";
+    private static String dosage(@NotNull Medication medication) {
+        Dosage dosage = medication.dosage();
+        String dosageMin = (dosage.dosageMin() != null && dosage.dosageMin() != 0.0) ? Formats.twoDigitNumber(dosage.dosageMin()) : "?";
+        String dosageMax = (dosage.dosageMax() != null && dosage.dosageMax() != 0.0) ? Formats.twoDigitNumber(dosage.dosageMax()) : "?";
 
         String result = dosageMin.equals(dosageMax) ? dosageMin : dosageMin + " - " + dosageMax;
         Boolean ifNeeded = dosage.ifNeeded();
@@ -76,9 +78,19 @@ public class MedicationGenerator implements TableGenerator {
             result = "if needed " + result;
         }
 
-        if (dosage.dosageUnit() != null) {
+        if (dosage.dosageUnit() == null) {
+            result = "unknown prescription";
+        } else if (dosage.dosageUnit().matches(SPECIFIC_OR_UNKNOWN)) {
+            result = dosage.dosageUnit();
+        } else if (dosage.dosageUnit() != null) {
             result += (" " + dosage.dosageUnit());
         }
+
+        if (("Cutaneous".equals(medication.administrationRoute()) || "Intravenous".equals(medication.administrationRoute()))
+                && dosage.dosageMin() == 0.0) {
+            result = "";
+        }
+
         return result;
     }
 
@@ -86,7 +98,11 @@ public class MedicationGenerator implements TableGenerator {
     private static String frequency(@NotNull Dosage dosage) {
         String result = dosage.frequency() != null ? Formats.twoDigitNumber(dosage.frequency()) : "?";
 
-        if (dosage.periodBetweenUnit() != null) {
+        if (dosage.frequencyUnit() == null) {
+            result = "unknown prescription";
+        } else if (dosage.frequencyUnit().matches(SPECIFIC_OR_UNKNOWN + "|once")) {
+            result = dosage.frequencyUnit();
+        } else if (dosage.periodBetweenUnit() != null) {
             result += (" / " + Formats.noDigitNumber(dosage.periodBetweenValue() + 1) + " " + dosage.periodBetweenUnit());
         } else if (dosage.frequencyUnit() != null) {
             result += (" / " + dosage.frequencyUnit());
@@ -95,3 +111,5 @@ public class MedicationGenerator implements TableGenerator {
         return result;
     }
 }
+
+

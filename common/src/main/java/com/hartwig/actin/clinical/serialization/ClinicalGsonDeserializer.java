@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -64,21 +63,21 @@ import com.hartwig.actin.clinical.datamodel.ToxicityEvaluation;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
 import com.hartwig.actin.clinical.datamodel.treatment.Drug;
-import com.hartwig.actin.clinical.datamodel.treatment.DrugClass;
 import com.hartwig.actin.clinical.datamodel.treatment.DrugTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.DrugType;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRadiotherapy;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRecommendationCriteria;
 import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatmentType;
 import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy;
-import com.hartwig.actin.clinical.datamodel.treatment.RecommendationCriteria;
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentClass;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTherapyHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
@@ -158,16 +157,16 @@ public class ClinicalGsonDeserializer {
                 }.getType(), new ImmutableSetAdapter<TreatmentCategory>(TreatmentCategory.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<Treatment>>() {
                 }.getType(), new ImmutableSetAdapter<Treatment>(Treatment.class))
+                .registerTypeAdapter(new TypeToken<ImmutableSet<TreatmentType>>() {
+                }.getType(), new ImmutableSetAdapter<TreatmentType>(OtherTreatmentType.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<BodyLocationCategory>>() {
                 }.getType(), new ImmutableSetAdapter<BodyLocationCategory>(BodyLocationCategory.class))
-                .registerTypeAdapter(new TypeToken<ImmutableSet<DrugClass>>() {
-                }.getType(), new ImmutableSetAdapter<DrugClass>(DrugClass.class))
+                .registerTypeAdapter(new TypeToken<ImmutableSet<DrugType>>() {
+                }.getType(), new ImmutableSetAdapter<DrugType>(DrugType.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<Intent>>() {
                 }.getType(), new ImmutableSetAdapter<Intent>(Intent.class))
                 .registerTypeAdapter(new TypeToken<ImmutableSet<ObservedToxicity>>() {
                 }.getType(), new ImmutableSetAdapter<ObservedToxicity>(ImmutableObservedToxicity.class))
-                .registerTypeAdapter(new TypeToken<ImmutableMap<String, RecommendationCriteria>>() {
-                }.getType(), new ImmutableMapAdapter<String, RecommendationCriteria>(ImmutableRecommendationCriteria.class))
                 .registerTypeAdapter(new TypeToken<ImmutableList<CypInteraction>>() {
                 }.getType(), new ImmutableListAdapter<CypInteraction>(ImmutableCypInteraction.class));
     }
@@ -175,8 +174,8 @@ public class ClinicalGsonDeserializer {
     private static class LocalDateAdapter implements JsonDeserializer<LocalDate> {
 
         @Override
-        public LocalDate deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext)
-                throws JsonParseException {
+        public LocalDate deserialize(@NotNull JsonElement jsonElement, @NotNull Type type,
+                @NotNull JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
             if (jsonElement.isJsonNull()) {
                 return null;
             } else {
@@ -210,12 +209,13 @@ public class ClinicalGsonDeserializer {
         }
 
         @Override
-        public ImmutableList<T> deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context)
-                throws JsonParseException {
+        public ImmutableList<T> deserialize(@NotNull JsonElement jsonElement, @NotNull Type type,
+                @NotNull JsonDeserializationContext context) throws JsonParseException {
 
-            return (ImmutableList<T>) ImmutableList.copyOf(deserializeJsonCollection(jsonElement,
-                    context,
-                    concreteType).collect(Collectors.toList()));
+            return jsonElement.isJsonNull()
+                    ? null
+                    : (ImmutableList<T>) ImmutableList.copyOf(deserializeJsonCollection(jsonElement, context, concreteType).collect(
+                            Collectors.toList()));
         }
     }
 
@@ -228,31 +228,14 @@ public class ClinicalGsonDeserializer {
         }
 
         @Override
-        public ImmutableSet<T> deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context)
-                throws JsonParseException {
+        public ImmutableSet<T> deserialize(@NotNull JsonElement jsonElement, @NotNull Type type,
+                @NotNull JsonDeserializationContext context) throws JsonParseException {
 
-            return (ImmutableSet<T>) ImmutableSet.copyOf(deserializeJsonCollection(jsonElement,
-                    context,
-                    concreteType).collect(Collectors.toSet()));
-        }
-    }
-
-    private static class ImmutableMapAdapter<K, V> implements JsonDeserializer<ImmutableMap<K, V>> {
-
-        private final Type concreteType;
-
-        public ImmutableMapAdapter(Type concreteType) {
-            this.concreteType = concreteType;
-        }
-
-        @Override
-        public ImmutableMap<K, V> deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
-            return (ImmutableMap<K, V>) ImmutableMap.copyOf(json.getAsJsonObject()
-                    .asMap()
-                    .entrySet()
-                    .stream()
-                    .map(entry -> Map.entry(entry.getKey(), context.deserialize(entry.getValue(), concreteType)))
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+            return jsonElement.isJsonNull()
+                    ? null
+                    : (ImmutableSet<T>) ImmutableSet.copyOf(deserializeJsonCollection(jsonElement,
+                            context,
+                            concreteType).collect(Collectors.toSet()));
         }
     }
 
@@ -265,14 +248,19 @@ public class ClinicalGsonDeserializer {
         }
 
         @Override
-        public ImmutableSet<Drug> deserialize(JsonElement json, Type type, JsonDeserializationContext context) {
+        public ImmutableSet<Drug> deserialize(@NotNull JsonElement json, @NotNull Type type, @NotNull JsonDeserializationContext context) {
             return json.isJsonNull()
                     ? null
-                    : ImmutableSet.copyOf(json.getAsJsonArray()
-                            .asList()
-                            .stream()
-                            .map(listElement -> drugsByName.get(listElement.getAsString().toLowerCase()))
-                            .collect(Collectors.toSet()));
+                    : ImmutableSet.copyOf(json.getAsJsonArray().asList().stream().map(this::getDrug).collect(Collectors.toSet()));
+        }
+
+        @NotNull
+        private Drug getDrug(@NotNull JsonElement listElement) {
+            Drug drug = drugsByName.get(listElement.getAsString().toLowerCase());
+            if (drug == null) {
+                throw new JsonParseException("Failed to resolve: " + listElement);
+            }
+            return drug;
         }
     }
 
@@ -284,15 +272,17 @@ public class ClinicalGsonDeserializer {
                 return jsonElement.isJsonNull()
                         ? null
                         : (Treatment) context.deserialize(jsonElement,
-                                TreatmentType.valueOf(string(jsonElement.getAsJsonObject(), "treatmentType")).treatmentClass());
+                                TreatmentClass.valueOf(string(jsonElement.getAsJsonObject(), "treatmentClass")).treatmentClass());
             } catch (Exception e) {
                 throw new JsonParseException("Failed to deserialize: " + jsonElement, e);
             }
         }
     }
 
-    private static <T> Stream<T> deserializeJsonCollection(JsonElement jsonElement, JsonDeserializationContext context, Type type) {
-        return jsonElement.isJsonNull() ? null : jsonElement.getAsJsonArray().asList().stream().map(listElement -> {
+    @NotNull
+    private static <T> Stream<T> deserializeJsonCollection(@NotNull JsonElement jsonElement, @NotNull JsonDeserializationContext context,
+            @NotNull Type type) {
+        return jsonElement.getAsJsonArray().asList().stream().map(listElement -> {
             T deserialized = context.deserialize(listElement, type);
             if (deserialized == null) {
                 throw new RuntimeException("Unable to deserialize " + listElement);
