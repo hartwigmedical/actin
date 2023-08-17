@@ -1,9 +1,9 @@
 package com.hartwig.actin.clinical
 
 import com.hartwig.actin.clinical.curation.ANATOMICAL
-import com.hartwig.actin.clinical.curation.ATC_CODE
 import com.hartwig.actin.clinical.curation.CHEMICAL
 import com.hartwig.actin.clinical.curation.CHEMICAL_SUBSTANCE
+import com.hartwig.actin.clinical.curation.FULL_ATC_CODE
 import com.hartwig.actin.clinical.curation.PHARMACOLOGICAL
 import com.hartwig.actin.clinical.curation.THERAPEUTIC
 import com.hartwig.actin.clinical.curation.TestAtcFactory
@@ -30,7 +30,7 @@ class MedicationExtractorTest {
             start = LocalDate.of(2019, 2, 2),
             end = LocalDate.of(2019, 4, 4),
             active = true,
-            code5ATCCode = ATC_CODE,
+            code5ATCCode = FULL_ATC_CODE,
             code5ATCDisplay = "PARACETAMOL",
             administrationRoute = "oraal"
         )
@@ -59,7 +59,7 @@ class MedicationExtractorTest {
                 .therapeuticSubGroup(atcLevel("N02", THERAPEUTIC))
                 .pharmacologicalSubGroup(atcLevel("N02B", PHARMACOLOGICAL))
                 .chemicalSubGroup(atcLevel("N02BE", CHEMICAL))
-                .chemicalSubstance(atcLevel(ATC_CODE, CHEMICAL_SUBSTANCE))
+                .chemicalSubstance(atcLevel(FULL_ATC_CODE, CHEMICAL_SUBSTANCE))
                 .build())
             .isSelfCare(false)
             .isTrialMedication(false)
