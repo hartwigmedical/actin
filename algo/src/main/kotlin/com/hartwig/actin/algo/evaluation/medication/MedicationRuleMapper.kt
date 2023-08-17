@@ -32,6 +32,7 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_PGP to getsPGPSubstrateMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_BCRP to getsBCRPInhibitingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_BCRP to getsBCRPSubstrateMedicationCreator(),
+            EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING to getsStableDosingAnticoagulantMedicationCreator(),
         )
     }
 
@@ -118,9 +119,13 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         return FunctionCreator { CurrentlyGetsBCRPSubstrateMedication() }
     }
 
+    private fun getsStableDosingAnticoagulantMedicationCreator(): FunctionCreator {
+        return FunctionCreator { CurrentlyGetsStableMedicationOfCategory(selector, setOf("Antithrombotic agents", "Antihemorrhagics")) }
+    }
+
     companion object {
         private val CATEGORIES_PER_MAIN_CATEGORY: Map<String, Set<String>> = mapOf(
-            "Anticoagulant" to setOf("Antithrombotic agents", "Antihemorrhagics"),
+            "Anticoagulants" to setOf("Antithrombotic agents", "Antihemorrhagics"),
             "Azole" to setOf("Imidazole and triazole derivatives", "Triazole and tetrazole derivatives", "Imidazole derivatives"),
             "Bone resorptive" to setOf("Calcium homeostasis", "Drugs affecting bone structure and mineralization"),
             "Coumarin derivative" to setOf("Vitamin K antagonists"),
@@ -130,7 +135,7 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
                 "Antigonadotropins and similar agents",
                 "Gonadotropin releasing hormone analogues"
             ),
-            "Immunosuppressant" to setOf("Immunosuppressants"),
+            "Immunosuppressants" to setOf("Immunosuppressants"),
         )
 
         private fun determineCategories(inputs: String): Set<String> {
