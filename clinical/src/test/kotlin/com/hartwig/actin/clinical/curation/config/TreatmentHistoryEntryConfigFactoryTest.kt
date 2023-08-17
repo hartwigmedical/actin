@@ -2,6 +2,7 @@ package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
 import org.junit.Test
@@ -21,7 +22,7 @@ class TreatmentHistoryEntryConfigFactoryTest {
                 "isSystemic" to "1"
             )
         )
-        assertNoGeneratedTreatment(treatmentName, parts, input)
+        assertNoGeneratedTreatment(treatmentName, parts)
     }
 
     @Test
@@ -36,7 +37,7 @@ class TreatmentHistoryEntryConfigFactoryTest {
                 "category" to "Ablation"
             )
         )
-        assertNoGeneratedTreatment(treatmentName, parts, input)
+        assertNoGeneratedTreatment(treatmentName, parts)
     }
 
     @Test
@@ -70,12 +71,8 @@ class TreatmentHistoryEntryConfigFactoryTest {
         assertGeneratedTreatment(treatmentName, parts, input, TreatmentCategory.SURGERY)
     }
 
-    private fun assertNoGeneratedTreatment(treatmentName: String, parts: List<String>, input: String) {
-        val config = TreatmentHistoryEntryConfigFactory.createConfig(treatmentName, treatmentDatabase, parts, fields)
-        assertThat(config.input).isEqualTo(input)
-        assertThat(config.ignore).isFalse
-        assertThat(config.curated).isNotNull
-        assertThat(config.curated!!.treatments()).isEmpty()
+    private fun assertNoGeneratedTreatment(treatmentName: String, parts: List<String>) {
+        assertThat(TreatmentHistoryEntryConfigFactory.createConfig(treatmentName, treatmentDatabase, parts, fields)).isNull()
     }
 
     private fun assertGeneratedTreatment(
@@ -85,12 +82,13 @@ class TreatmentHistoryEntryConfigFactoryTest {
         treatmentCategory: TreatmentCategory
     ) {
         val config = TreatmentHistoryEntryConfigFactory.createConfig(treatmentName, treatmentDatabase, parts, fields)
-        assertThat(config.input).isEqualTo(input)
+        assertThat(config).isNotNull
+        assertThat(config!!.input).isEqualTo(input)
         assertThat(config.ignore).isFalse
         assertThat(config.curated).isNotNull
         val treatments = config.curated!!.treatments()
-        assertThat(treatments).extracting("name", "categories", "isSystemic")
-            .containsExactly(tuple(treatmentName, setOf(treatmentCategory), false))
+        assertThat(treatments).extracting("name", "categories", "isSystemic", "types")
+            .containsExactly(tuple(treatmentName, setOf(treatmentCategory), false, emptySet<TreatmentType>()))
     }
 
     private fun partsWithMappedValues(overrides: Map<String, String>): List<String> {
