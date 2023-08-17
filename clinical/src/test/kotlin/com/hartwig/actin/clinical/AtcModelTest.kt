@@ -43,7 +43,7 @@ class AtcModelTest {
         assertThat(result.chemicalSubGroup()).isEqualTo(
             ImmutableAtcLevel.builder().code("N02BE").name(CHEMICAL).build()
         )
-        assertThat(result.chemicalSubstance()).hasValue(
+        assertThat(result.chemicalSubstance()).isEqualTo(
             ImmutableAtcLevel.builder().code(FULL_ATC_CODE).name(CHEMICAL_SUBSTANCE).build()
         )
     }
@@ -52,7 +52,7 @@ class AtcModelTest {
     fun shouldReturnClassificationForFourLevelsAtcClassification() {
         val victim = createAtcModel()
         val result = victim.resolve("N02BE")!!
-        assertThat(result.chemicalSubstance()).isEmpty
+        assertThat(result.chemicalSubstance()).isNull()
     }
 
     @Test

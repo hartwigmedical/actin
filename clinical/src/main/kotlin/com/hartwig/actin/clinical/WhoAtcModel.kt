@@ -9,7 +9,6 @@ import com.hartwig.actin.util.TabularFile
 import org.apache.logging.log4j.LogManager
 import java.io.File
 import java.nio.file.Files
-import java.util.*
 
 interface AtcModel {
     fun resolve(rawAtcCode: String): AtcClassification?
@@ -38,9 +37,8 @@ class WhoAtcModel(private val atcMap: Map<String, String>) : AtcModel {
         }
     }
 
-    private fun maybeAtcLevel(levelCode: String?): Optional<AtcLevel> =
-        levelCode?.let { Optional.of(atcLevel(it)) } ?: Optional.empty()
-
+    private fun maybeAtcLevel(levelCode: String?): AtcLevel? =
+        levelCode?.let { atcLevel(it) }
     private fun atcLevel(levelCode: String): ImmutableAtcLevel =
         ImmutableAtcLevel.builder().code(levelCode).name(lookup(levelCode)).build()
 
