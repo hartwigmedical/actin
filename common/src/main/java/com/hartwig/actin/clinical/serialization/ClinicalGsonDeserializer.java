@@ -19,6 +19,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
+import com.hartwig.actin.clinical.datamodel.AtcClassification;
+import com.hartwig.actin.clinical.datamodel.AtcLevel;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.BodyLocationCategory;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
@@ -27,6 +29,8 @@ import com.hartwig.actin.clinical.datamodel.Complication;
 import com.hartwig.actin.clinical.datamodel.CypInteraction;
 import com.hartwig.actin.clinical.datamodel.Dosage;
 import com.hartwig.actin.clinical.datamodel.ECG;
+import com.hartwig.actin.clinical.datamodel.ImmutableAtcClassification;
+import com.hartwig.actin.clinical.datamodel.ImmutableAtcLevel;
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight;
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus;
@@ -110,11 +114,13 @@ public class ClinicalGsonDeserializer {
                 .registerTypeAdapter(ClinicalStatus.class, new AbstractClassAdapter<ClinicalStatus>(ImmutableClinicalStatus.class))
                 .registerTypeAdapter(InfectionStatus.class, new AbstractClassAdapter<InfectionStatus>(ImmutableInfectionStatus.class))
                 .registerTypeAdapter(ECG.class, new AbstractClassAdapter<ECG>(ImmutableECG.class))
+                .registerTypeAdapter(AtcClassification.class, new AbstractClassAdapter<AtcClassification>(ImmutableAtcClassification.class))
+                .registerTypeAdapter(AtcLevel.class, new AbstractClassAdapter<AtcLevel>(ImmutableAtcLevel.class))
                 .registerTypeAdapter(Dosage.class, new AbstractClassAdapter<Dosage>(ImmutableDosage.class))
                 .registerTypeAdapter(Drug.class, new AbstractClassAdapter<Drug>(ImmutableDrug.class))
                 .registerTypeAdapter(DrugTherapy.class, new AbstractClassAdapter<DrugTherapy>(ImmutableDrugTherapy.class))
-                .registerTypeAdapter(Radiotherapy.class, new AbstractClassAdapter<Radiotherapy>(ImmutableRadiotherapy.class))
                 .registerTypeAdapter(OtherTreatment.class, new AbstractClassAdapter<OtherTreatment>(ImmutableOtherTreatment.class))
+                .registerTypeAdapter(Radiotherapy.class, new AbstractClassAdapter<Radiotherapy>(ImmutableRadiotherapy.class))
                 .registerTypeAdapter(Treatment.class, new TreatmentAdapter())
                 .registerTypeAdapter(Therapy.class, new TreatmentAdapter())
                 .registerTypeAdapter(TherapyHistoryDetails.class,

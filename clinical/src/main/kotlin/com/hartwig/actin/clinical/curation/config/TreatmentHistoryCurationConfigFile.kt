@@ -21,7 +21,7 @@ object TreatmentHistoryCurationConfigFile {
         val fields = TabularFile.createFields(lines[0].split(DELIMITER).dropLastWhile { it.isEmpty() }.toTypedArray())
         val configs = lines.drop(1)
             .flatMap { line -> repeatPartsForEachTreatmentName(line, fields) }
-            .map { (treatmentName, parts) ->
+            .mapNotNull { (treatmentName, parts) ->
                 TreatmentHistoryEntryConfigFactory.createConfig(treatmentName, treatmentDatabase, parts, fields)
             }
         LOGGER.info(" Read ${configs.size} treatment configs from $tsv")

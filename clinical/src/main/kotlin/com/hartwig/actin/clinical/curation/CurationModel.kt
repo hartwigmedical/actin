@@ -180,7 +180,15 @@ class CurationModel @VisibleForTesting internal constructor(
     }
 
     fun curateTreatmentHistoryEntry(entry: String): List<TreatmentHistoryEntry> {
-        return find(database.treatmentHistoryEntryConfigs, fullTrim(entry)).filter { !it.ignore }.mapNotNull { it.curated }
+        val trimmedInput = fullTrim(entry)
+        val treatmentHistoryEntryConfigs = find(database.treatmentHistoryEntryConfigs, trimmedInput)
+        if (treatmentHistoryEntryConfigs.isEmpty()) {
+            // Same input is curated twice, so need to check if used at other place.
+            if (trimmedInput.isNotEmpty() && find(database.secondPrimaryConfigs, trimmedInput).isEmpty()) {
+                LOGGER.warn(" Could not find treatment history config for input '$trimmedInput'")
+            }
+        }
+        return treatmentHistoryEntryConfigs.filter { !it.ignore }.mapNotNull { it.curated }
     }
 
     fun curatePriorTumorTreatments(inputs: List<String>?): List<PriorTumorTreatment> {
@@ -192,12 +200,6 @@ class CurationModel @VisibleForTesting internal constructor(
         for (input in inputs) {
             val trimmedInput = fullTrim(input)
             val configs: Set<OncologicalHistoryConfig> = find(database.oncologicalHistoryConfigs, trimmedInput)
-            if (configs.isEmpty()) {
-                // Same input is curated twice, so need to check if used at other place.
-                if (trimmedInput.isNotEmpty() && find(database.secondPrimaryConfigs, trimmedInput).isEmpty()) {
-                    LOGGER.warn(" Could not find second primary or oncological history config for input '{}'", trimmedInput)
-                }
-            }
 
             for (config in configs) {
                 if (!config.ignore) {

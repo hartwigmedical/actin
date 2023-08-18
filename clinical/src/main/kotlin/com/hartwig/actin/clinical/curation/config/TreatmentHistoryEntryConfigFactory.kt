@@ -27,7 +27,7 @@ object TreatmentHistoryEntryConfigFactory {
         treatmentDatabase: TreatmentDatabase,
         parts: List<String>,
         fields: Map<String, Int>
-    ): TreatmentHistoryEntryConfig {
+    ): TreatmentHistoryEntryConfig? {
         val ignore: Boolean = CurationUtil.isIgnoreString(treatmentName)
         val treatment = if (ignore) null else {
             treatmentDatabase.findTreatmentByName(treatmentName) ?: generateTreatmentForCuration(
@@ -36,11 +36,15 @@ object TreatmentHistoryEntryConfigFactory {
                 fields
             )
         }
-        return TreatmentHistoryEntryConfig(
-            input = parts[fields["input"]!!],
-            ignore = ignore,
-            curated = if (!ignore) curateObject(fields, parts, treatment) else null
-        )
+        return if (treatment == null && !ignore) {
+            null
+        } else {
+            TreatmentHistoryEntryConfig(
+                input = parts[fields["input"]!!],
+                ignore = ignore,
+                curated = if (!ignore) curateObject(fields, parts, treatment) else null
+            )
+        }
     }
 
     private fun generateTreatmentForCuration(
