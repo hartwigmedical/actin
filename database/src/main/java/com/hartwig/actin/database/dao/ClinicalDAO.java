@@ -540,7 +540,6 @@ class ClinicalDAO {
             context.insertInto(MEDICATION,
                             MEDICATION.PATIENTID,
                             MEDICATION.NAME,
-                            MEDICATION.CATEGORIES,
                             MEDICATION.CODEATC,
                             MEDICATION.ANATOMICALMAINGROUPATC,
                             MEDICATION.THERAPEUTICSUBGROUPATC,
