@@ -8,12 +8,12 @@ import com.hartwig.actin.algo.evaluation.util.Format.concat
 
 class CurrentlyGetsMedicationOfCategory(
     private val selector: MedicationSelector,
-    private val categories: Map<String, Set<String>?>
+    private val categories: Map<String, Set<String>>
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val categoriesToFind = categories.values.first()
-        val categoryName = categories.keys.first()
-        val medications = selector.activeWithAnyExactCategory(record.clinical().medications(), categoriesToFind!!)
+        val categoryName = categories.keys.first().lowercase()
+        val medications = selector.activeWithAnyExactCategory(record.clinical().medications(), categoriesToFind)
 
         val foundMedicationNames = medications.map { it.name() }.filter { it.isNotEmpty() }.distinct()
 

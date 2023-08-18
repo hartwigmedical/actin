@@ -143,8 +143,8 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             ),
         )
 
-        private fun determineCategories(input: String): Map<String, Set<String>?> {
-            return if (CATEGORIES_PER_MAIN_CATEGORY[input] != null) mapOf(input to CATEGORIES_PER_MAIN_CATEGORY[input]) else mapOf(
+        private fun determineCategories(input: String): Map<String, Set<String>> {
+            return if (CATEGORIES_PER_MAIN_CATEGORY[input] != null) mapOf(input to CATEGORIES_PER_MAIN_CATEGORY[input]!!) else mapOf(
                 input to setOf(
                     input
                 )
