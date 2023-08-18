@@ -73,7 +73,7 @@ class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
                 medication.atc()!!.pharmacologicalSubGroup().name()!!.lowercase(),
                 categoriesToFind
             ) || stringCaseInsensitivelyExactlyMatchesQueryCollection(
-                medication.atc()!!.chemicalSubstance().name()!!.lowercase(),
+                medication.atc()!!.chemicalSubstance()!!.name()!!.lowercase(),
                 categoriesToFind
             )
         }
