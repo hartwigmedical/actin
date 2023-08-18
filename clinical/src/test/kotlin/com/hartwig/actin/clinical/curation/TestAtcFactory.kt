@@ -6,8 +6,8 @@ const val ANATOMICAL = "NERVOUS SYSTEM"
 const val THERAPEUTIC = "ANALGESICS"
 const val PHARMACOLOGICAL = "OTHER ANALGESICS AND ANTIPYRETICS"
 const val CHEMICAL = "Anilides"
-const val CHEMICAL_SUBSTANCE = "PARACETAMOL"
-const val ATC_CODE = "N02BE01"
+const val CHEMICAL_SUBSTANCE = "paracetamol"
+const val FULL_ATC_CODE = "N02BE01"
 
 object TestAtcFactory {
 
@@ -22,7 +22,7 @@ object TestAtcFactory {
                 "N02" to THERAPEUTIC,
                 "N02B" to PHARMACOLOGICAL,
                 "N02BE" to CHEMICAL,
-                ATC_CODE to CHEMICAL_SUBSTANCE
+                FULL_ATC_CODE to CHEMICAL_SUBSTANCE
             )
         )
     }
