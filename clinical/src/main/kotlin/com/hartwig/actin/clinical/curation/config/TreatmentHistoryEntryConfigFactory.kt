@@ -37,7 +37,6 @@ object TreatmentHistoryEntryConfigFactory {
             )
         }
         return if (treatment == null && !ignore) {
-            // Do not create a config if treatment cannot be resolved
             null
         } else {
             TreatmentHistoryEntryConfig(
