@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.hartwig.actin.clinical.datamodel.AtcClassification;
+import com.hartwig.actin.clinical.datamodel.AtcLevel;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
@@ -539,6 +540,7 @@ class ClinicalDAO {
             context.insertInto(MEDICATION,
                             MEDICATION.PATIENTID,
                             MEDICATION.NAME,
+                            MEDICATION.CATEGORIES,
                             MEDICATION.CODEATC,
                             MEDICATION.ANATOMICALMAINGROUPATC,
                             MEDICATION.THERAPEUTICSUBGROUPATC,
@@ -556,7 +558,10 @@ class ClinicalDAO {
                             MEDICATION.STOPDATE)
                     .values(patientId,
                             medication.name(),
-                            atc != null ? atc.chemicalSubstance().code() : null,
+                            Optional.ofNullable(atc)
+                                    .flatMap(a -> Optional.ofNullable(a.chemicalSubstance()))
+                                    .map(AtcLevel::name)
+                                    .orElse(null),
                             atc != null ? atc.anatomicalMainGroup().name() : null,
                             atc != null ? atc.therapeuticSubGroup().name() : null,
                             atc != null ? atc.pharmacologicalSubGroup().name() : null,

@@ -2,7 +2,7 @@ package com.hartwig.actin.clinical
 
 import com.hartwig.actin.clinical.ClinicalRecordsFactory.Companion.toPatientId
 import com.hartwig.actin.clinical.curation.ANATOMICAL
-import com.hartwig.actin.clinical.curation.ATC_CODE
+import com.hartwig.actin.clinical.curation.FULL_ATC_CODE
 import com.hartwig.actin.clinical.curation.CHEMICAL
 import com.hartwig.actin.clinical.curation.CHEMICAL_SUBSTANCE
 import com.hartwig.actin.clinical.curation.PHARMACOLOGICAL
@@ -218,7 +218,7 @@ class ClinicalRecordsFactoryTest {
                     .therapeuticSubGroup(ImmutableAtcLevel.builder().code("N02").name(THERAPEUTIC).build())
                     .pharmacologicalSubGroup(ImmutableAtcLevel.builder().code("N02B").name(PHARMACOLOGICAL).build())
                     .chemicalSubGroup(ImmutableAtcLevel.builder().code("N02BE").name(CHEMICAL).build())
-                    .chemicalSubstance(ImmutableAtcLevel.builder().code(ATC_CODE).name(CHEMICAL_SUBSTANCE).build())
+                    .chemicalSubstance(ImmutableAtcLevel.builder().code(FULL_ATC_CODE).name(CHEMICAL_SUBSTANCE).build())
                     .build()
             )
         }
