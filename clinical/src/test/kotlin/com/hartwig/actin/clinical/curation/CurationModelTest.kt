@@ -371,9 +371,6 @@ class CurationModelTest {
         val passThrough: Intolerance = ImmutableIntolerance.builder().from(proper).name("don't curate me").build()
         assertEquals(passThrough, model.curateIntolerance(passThrough))
 
-        val withSubCategory: Intolerance = ImmutableIntolerance.builder().from(proper).name("Paracetamol").category("Medication").build()
-        assertTrue(model.curateIntolerance(withSubCategory).subcategories().contains("Acetanilide derivatives"))
-
         model.evaluate()
     }
 

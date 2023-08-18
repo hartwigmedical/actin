@@ -16,16 +16,18 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
 
     @Test
     fun shouldFailWhenMedicationHasWrongCategory() {
-        val atc = AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category 2").build())
-            .build()
+        val atc =
+            AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("wrong category").build())
+                .build()
         val medications = listOf(WashoutTestFactory.builder().atc(atc).stopDate(REFERENCE_DATE.plusDays(1)).build())
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(WashoutTestFactory.withMedications(medications)))
     }
 
     @Test
     fun shouldFailWhenMedicationHasRightCategoryAndOldDate() {
-        val atc = AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category 1").build())
-            .build()
+        val atc =
+            AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category to find").build())
+                .build()
         val medications = listOf(WashoutTestFactory.builder().atc(atc).stopDate(REFERENCE_DATE.minusDays(1)).build())
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(WashoutTestFactory.withMedications(medications)))
 
@@ -33,15 +35,23 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
 
     @Test
     fun shouldPassWhenMedicationHasRightCategoryAndRecentDate() {
-        val atc = AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category 1").build())
-            .build()
+        val atc =
+            AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category to find").build())
+                .build()
         val medications = listOf(WashoutTestFactory.builder().atc(atc).stopDate(REFERENCE_DATE.plusDays(1)).build())
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(WashoutTestFactory.withMedications(medications)))
+    }
+
+    @Test
+    fun shouldPassWhenMedicationIsTrialMedication() {
+        val medications = listOf(WashoutTestFactory.builder().isTrialMedication(true).stopDate(REFERENCE_DATE.plusDays(1)).build())
         assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(WashoutTestFactory.withMedications(medications)))
     }
 
     companion object {
         private val REFERENCE_DATE = LocalDate.of(2020, 6, 6)
         private val INTERPRETER = WashoutTestFactory.activeFromDate(REFERENCE_DATE)
-        private val FUNCTION = HasRecentlyReceivedCancerTherapyOfCategory(setOf("category 1"), INTERPRETER)
+        private val FUNCTION =
+            HasRecentlyReceivedCancerTherapyOfCategory(mapOf("category to find" to setOf("category to find")), INTERPRETER)
     }
 }

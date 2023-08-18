@@ -57,19 +57,26 @@ class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
     }
 
     fun hasATCLevelName(medication: Medication, categoriesToFind: Set<String>): Boolean {
-        return stringCaseInsensitivelyExactlyMatchesQueryCollection(
-            medication.atc()!!.therapeuticSubGroup().name().lowercase(),
-            categoriesToFind
-        ) || stringCaseInsensitivelyExactlyMatchesQueryCollection(
-            medication.atc()!!.chemicalSubGroup().name().lowercase(),
-            categoriesToFind
-        ) || stringCaseInsensitivelyExactlyMatchesQueryCollection(
-            medication.atc()!!.anatomicalMainGroup().name().lowercase(),
-            categoriesToFind
-        ) || stringCaseInsensitivelyExactlyMatchesQueryCollection(
-            medication.atc()!!.pharmacologicalSubGroup().name().lowercase(),
-            categoriesToFind
-        )
+        return if (medication.atc() == null) {
+            false
+        } else {
+            stringCaseInsensitivelyExactlyMatchesQueryCollection(
+                medication.atc()!!.therapeuticSubGroup().name()!!.lowercase(),
+                categoriesToFind
+            ) || stringCaseInsensitivelyExactlyMatchesQueryCollection(
+                medication.atc()!!.chemicalSubGroup().name()!!.lowercase(),
+                categoriesToFind
+            ) || stringCaseInsensitivelyExactlyMatchesQueryCollection(
+                medication.atc()!!.anatomicalMainGroup().name()!!.lowercase(),
+                categoriesToFind
+            ) || stringCaseInsensitivelyExactlyMatchesQueryCollection(
+                medication.atc()!!.pharmacologicalSubGroup().name()!!.lowercase(),
+                categoriesToFind
+            ) || stringCaseInsensitivelyExactlyMatchesQueryCollection(
+                medication.atc()!!.chemicalSubstance().name()!!.lowercase(),
+                categoriesToFind
+            )
+        }
     }
 
     private fun isRecentlyStopped(medication: Medication, minStopDate: LocalDate): Boolean {

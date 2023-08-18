@@ -15,24 +15,17 @@ class CurrentlyGetsMedicationOfCategoryTest {
 
     @Test
     fun shouldFailWhenMedicationHasWrongCategory() {
-        val atc = AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category 3").build())
-            .build()
+        val atc =
+            AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("wrong category").build())
+                .build()
         val medications = listOf(TestMedicationFactory.builder().atc(atc).build())
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     @Test
-    fun shouldPassWhenMedicationHasNonExactCategory() {
-        val atc = AtcTestFactory.atcClassificationBuilder()
-            .anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("this is category 1").build()).build()
-        val medications = listOf(TestMedicationFactory.builder().atc(atc).build())
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
-    }
-
-    @Test
     fun shouldPassWhenMedicationHasRightCategory() {
         val atc =
-            AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category 1").build())
+            AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category to find").build())
                 .build()
         assertEvaluation(
             EvaluationResult.PASS, FUNCTION.evaluate(
@@ -46,6 +39,7 @@ class CurrentlyGetsMedicationOfCategoryTest {
     }
 
     companion object {
-        private val FUNCTION = CurrentlyGetsMedicationOfCategory(MedicationTestFactory.alwaysActive(), setOf("category 1"))
+        private val FUNCTION =
+            CurrentlyGetsMedicationOfCategory(MedicationTestFactory.alwaysActive(), mapOf("category to find" to setOf("category to find")))
     }
 }

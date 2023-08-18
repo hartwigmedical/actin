@@ -8,7 +8,6 @@ import com.hartwig.actin.algo.medication.MedicationStatusInterpreter
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreterOnEvaluationDate
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction
 import com.hartwig.actin.treatment.datamodel.EligibilityRule
-import org.apache.logging.log4j.LogManager
 
 class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
@@ -61,15 +60,8 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
 
     private fun createReceivedCancerTherapyOfCategoryFunction(categoryInputs: List<String>, minWeeks: Int): EvaluationFunction {
         val interpreter = createInterpreterForWashout(minWeeks)
-
-        // TODO: Dynamically resolve inputs to names and/or categories
-        val names = determineNames(categoryInputs)
-        return if (names != null) {
-            HasRecentlyReceivedCancerTherapyOfName(names, interpreter)
-        } else {
-            val categories = determineCategories(categoryInputs)
-            HasRecentlyReceivedCancerTherapyOfCategory(categories, interpreter)
-        }
+        val categories = determineCategories(categoryInputs)
+        return HasRecentlyReceivedCancerTherapyOfCategory(categories, interpreter)
     }
 
     private fun hasRecentlyReceivedRadiotherapyCreator(): FunctionCreator {
@@ -116,7 +108,7 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
 
     private fun createReceivedAnyCancerTherapyButSomeFunction(categoriesToIgnore: List<String>, minWeeks: Int): EvaluationFunction {
         val interpreter = createInterpreterForWashout(minWeeks)
-        val categoriesToConsider = ALL_ANTI_CANCER_CATEGORIES - determineCategories(categoriesToIgnore)
+        val categoriesToConsider: Map<String, Set<String>> = ALL_ANTI_CANCER_CATEGORIES - determineCategories(categoriesToIgnore).keys
         return HasRecentlyReceivedCancerTherapyOfCategory(categoriesToConsider, interpreter)
     }
 
@@ -130,46 +122,38 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(WashoutRuleMapper::class.java)
-        private val MEDICATIONS_FOR_MAIN_CATEGORY: Map<String, Set<String>> = mapOf(
-            "Immunotherapy" to setOf("Pembrolizumab", "Nivolumab", "Ipilimumab", "Cemiplimab", "Avelumab"),
-            "Hypomethylating agents" to setOf("Azacitidine", "Decitabine")
-        )
-        private val chemotherapyCategories = setOf("Platinum compounds", "Pyrimidine analogues", "Taxanes", "Alkylating agents")
-        private val endocrineTherapyCategories = setOf("Endocrine therapy")
-        private val gonadorelinCategories = setOf(
-            "Anti-gonadotropin-releasing hormones",
-            "Gonadotropin-releasing hormones",
-            "Antigonadotropins and similar agents",
-            "Gonadotropin releasing hormone analogues"
-        )
-        private val immunosuppressantCategories = setOf("Immunosuppressants")
-        private val parpInhibitorsCategories = setOf("Poly (ADP-ribose) polymerase (PARP) inhibitors")
-
         private val CATEGORIES_PER_MAIN_CATEGORY: Map<String, Set<String>> = mapOf(
-            "Chemotherapy" to chemotherapyCategories,
-            "Endocrine therapy" to endocrineTherapyCategories,
-            "Gonadorelin" to gonadorelinCategories,
-            "Immunosuppressants" to immunosuppressantCategories,
-            "PARP inhibitors" to parpInhibitorsCategories
+            "Immunotherapy" to setOf("Pembrolizumab", "Nivolumab", "Ipilimumab", "Cemiplimab", "Avelumab"),
+            "Hypomethylating agents" to setOf("Azacitidine", "Decitabine"),
+            "Chemotherapy" to setOf("Platinum compounds", "Pyrimidine analogues", "Taxanes", "Alkylating agents"),
+            "Gonadorelin" to setOf(
+                "Anti-gonadotropin-releasing hormones",
+                "Gonadotropin-releasing hormones",
+                "Antigonadotropins and similar agents",
+                "Gonadotropin releasing hormone analogues"
+            ),
+            "PARP inhibitors" to setOf("Poly (ADP-ribose) polymerase (PARP) inhibitors")
         )
 
-        private val ALL_ANTI_CANCER_CATEGORIES =
-            setOf("Antineoplastic agents", "Endocrine therapy", "Immunosuppressants") + gonadorelinCategories
+        private val ALL_ANTI_CANCER_CATEGORIES: Map<String, Set<String>> = mapOf(
+            "Anti-cancer" to setOf(
+                "Antineoplastic agents",
+                "Endocrine therapy",
+                "Immunosuppressants",
+                "Anti-gonadotropin-releasing hormones",
+                "Gonadotropin-releasing hormones",
+                "Antigonadotropins and similar agents",
+                "Gonadotropin releasing hormone analogues"
+            )
+        )
 
-        private fun determineCategories(inputs: List<String>): Set<String> {
-            return inputs.flatMap { CATEGORIES_PER_MAIN_CATEGORY[it] ?: setOf(it) }.toSet()
-        }
-
-        private fun determineNames(inputs: List<String>): Set<String>? {
-            val result = MEDICATIONS_FOR_MAIN_CATEGORY[inputs[0]]
-            if (result != null && inputs.size > 1) {
-                LOGGER.warn(
-                    "Multiple inputs configured in washout while first input resolves to explicit set of medication names: {}",
-                    inputs
-                )
+        private fun determineCategories(inputs: List<String>): Map<String, Set<String>> {
+            val map = mutableMapOf<String, Set<String>>()
+            for (input in inputs) {
+                if (CATEGORIES_PER_MAIN_CATEGORY[input] != null) map[input] = CATEGORIES_PER_MAIN_CATEGORY[input]!! else map[input] =
+                    setOf(input)
             }
-            return result
+            return map
         }
     }
 }

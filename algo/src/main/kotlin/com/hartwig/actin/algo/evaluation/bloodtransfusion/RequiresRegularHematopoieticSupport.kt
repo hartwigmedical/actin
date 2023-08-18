@@ -6,11 +6,11 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.date
-import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
+import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyExactlyMatchesQueryCollection
 import com.hartwig.actin.clinical.datamodel.Medication
 import java.time.LocalDate
 
-class RequiresRegularHematopoieticSupport internal constructor(private val minDate: LocalDate, private val maxDate: LocalDate) :
+class RequiresRegularHematopoieticSupport(private val minDate: LocalDate, private val maxDate: LocalDate) :
     EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val inBetweenRange = "between " + date(minDate) + " and " + date(maxDate)
@@ -47,7 +47,7 @@ class RequiresRegularHematopoieticSupport internal constructor(private val minDa
     }
 
     private fun hasMatchingCategory(medication: Medication): Boolean {
-        return stringCaseInsensitivelyMatchesQueryCollection(
+        return stringCaseInsensitivelyExactlyMatchesQueryCollection(
             medication.atc()!!.chemicalSubGroup().name().lowercase(),
             HEMATOPOIETIC_MEDICATION_CATEGORIES
         )

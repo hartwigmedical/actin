@@ -54,9 +54,9 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun hasRecentlyReceivedMedicationOfCategoryCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneStringOneIntegerInput(function)
-            val maxStopDate = referenceDateProvider().date().minusWeeks(input.integer().toLong())
-            val categories = determineCategories(input.string())
+            val categoryInputs = functionInputResolver().createOneStringOneIntegerInput(function)
+            val maxStopDate = referenceDateProvider().date().minusWeeks(categoryInputs.integer().toLong())
+            val categories = determineCategories(categoryInputs.string())
             HasRecentlyReceivedMedicationOfCategory(selector, categories, maxStopDate)
         }
     }
@@ -141,11 +141,14 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
                 "Antigonadotropins and similar agents",
                 "Gonadotropin releasing hormone analogues"
             ),
-            "Immunosuppressants" to setOf("Immunosuppressants"),
         )
 
-        private fun determineCategories(inputs: String): Set<String> {
-            return CATEGORIES_PER_MAIN_CATEGORY[inputs] ?: setOf(inputs)
+        private fun determineCategories(input: String): Map<String, Set<String>?> {
+            return if (CATEGORIES_PER_MAIN_CATEGORY[input] != null) mapOf(input to CATEGORIES_PER_MAIN_CATEGORY[input]) else mapOf(
+                input to setOf(
+                    input
+                )
+            )
         }
 
         // Undetermined Cyp
