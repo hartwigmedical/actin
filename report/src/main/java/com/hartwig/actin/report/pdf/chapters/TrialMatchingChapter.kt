@@ -1,75 +1,51 @@
-package com.hartwig.actin.report.pdf.chapters;
+package com.hartwig.actin.report.pdf.chapters
 
-import java.util.List;
+import com.google.common.collect.Lists
+import com.hartwig.actin.report.datamodel.Report
+import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
+import com.hartwig.actin.report.pdf.tables.TableGenerator
+import com.hartwig.actin.report.pdf.tables.treatment.EligibleActinTrialsGenerator
+import com.hartwig.actin.report.pdf.tables.treatment.IneligibleActinTrialsGenerator
+import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.Styles
+import com.hartwig.actin.report.pdf.util.Tables
+import com.itextpdf.kernel.geom.PageSize
+import com.itextpdf.layout.Document
+import com.itextpdf.layout.element.Paragraph
 
-import com.google.common.collect.Lists;
-import com.hartwig.actin.report.datamodel.Report;
-import com.hartwig.actin.report.interpretation.EvaluatedCohort;
-import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory;
-import com.hartwig.actin.report.pdf.tables.TableGenerator;
-import com.hartwig.actin.report.pdf.tables.treatment.EligibleActinTrialsGenerator;
-import com.hartwig.actin.report.pdf.tables.treatment.IneligibleActinTrialsGenerator;
-import com.hartwig.actin.report.pdf.util.Cells;
-import com.hartwig.actin.report.pdf.util.Styles;
-import com.hartwig.actin.report.pdf.util.Tables;
-import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Table;
-
-import org.jetbrains.annotations.NotNull;
-
-public class TrialMatchingChapter implements ReportChapter {
-
-    @NotNull
-    private final Report report;
-    private final boolean enableExtendedMode;
-
-    public TrialMatchingChapter(@NotNull final Report report, final boolean enableExtendedMode) {
-        this.report = report;
-        this.enableExtendedMode = enableExtendedMode;
+class TrialMatchingChapter(private val report: Report, private val enableExtendedMode: Boolean) : ReportChapter {
+    override fun name(): String {
+        return "Trial Matching Summary"
     }
 
-    @NotNull
-    @Override
-    public String name() {
-        return "Trial Matching Summary";
+    override fun pageSize(): PageSize {
+        return PageSize.A4
     }
 
-    @NotNull
-    @Override
-    public PageSize pageSize() {
-        return PageSize.A4;
+    override fun render(document: Document) {
+        addChapterTitle(document)
+        addTrialMatchingOverview(document)
     }
 
-    @Override
-    public void render(@NotNull Document document) {
-        addChapterTitle(document);
-        addTrialMatchingOverview(document);
+    private fun addChapterTitle(document: Document) {
+        document.add(Paragraph(name()).addStyle(Styles.chapterTitleStyle()))
     }
 
-    private void addChapterTitle(@NotNull Document document) {
-        document.add(new Paragraph(name()).addStyle(Styles.chapterTitleStyle()));
-    }
-
-    private void addTrialMatchingOverview(@NotNull Document document) {
-        Table table = Tables.createSingleColWithWidth(contentWidth());
-
-        List<EvaluatedCohort> cohorts = EvaluatedCohortFactory.create(report.treatmentMatch());
-        List<TableGenerator> generators = Lists.newArrayList(
-                EligibleActinTrialsGenerator.forClosedCohorts(cohorts, contentWidth(), enableExtendedMode),
-                IneligibleActinTrialsGenerator.fromEvaluatedCohorts(cohorts, contentWidth(), enableExtendedMode)
-        );
-
-        for (int i = 0; i < generators.size(); i++) {
-            TableGenerator generator = generators.get(i);
-            table.addCell(Cells.createTitle(generator.title()));
-            table.addCell(Cells.create(generator.contents()));
-            if (i < generators.size() - 1) {
-                table.addCell(Cells.createEmpty());
+    private fun addTrialMatchingOverview(document: Document) {
+        val table = Tables.createSingleColWithWidth(contentWidth())
+        val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch())
+        val generators: List<TableGenerator> = Lists.newArrayList(
+            EligibleActinTrialsGenerator.Companion.forClosedCohorts(cohorts, contentWidth(), enableExtendedMode),
+            IneligibleActinTrialsGenerator.Companion.fromEvaluatedCohorts(cohorts, contentWidth(), enableExtendedMode)
+        )
+        for (i in generators.indices) {
+            val generator = generators[i]
+            table.addCell(Cells.createTitle(generator.title()))
+            table.addCell(Cells.create(generator.contents()))
+            if (i < generators.size - 1) {
+                table.addCell(Cells.createEmpty())
             }
         }
-
-        document.add(table);
+        document.add(table)
     }
 }

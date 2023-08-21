@@ -1,93 +1,85 @@
-package com.hartwig.actin.report.interpretation;
+package com.hartwig.actin.report.interpretation
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.hartwig.actin.molecular.datamodel.driver.Driver
+import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
+import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
+import org.junit.Assert
+import org.junit.Test
+import java.util.List
 
-import java.util.List;
-
-import com.hartwig.actin.molecular.datamodel.driver.Driver;
-import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory;
-import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory;
-
-import org.junit.Test;
-
-public class EvaluatedCohortsInterpreterTest {
-
-    private static final String INELIGIBLE_COHORT = "INELIGIBLE";
-    private static final String CLOSED_COHORT = "CLOSED";
-    private static final String ELIGIBLE_COHORT = "ELIGIBLE";
-    private static final String ELIGIBLE_COHORT_2 = "ELIGIBLE2";
-    private static final String ELIGIBLE_EVENT = "event";
-
+class EvaluatedCohortsInterpreterTest {
     @Test
-    public void shouldReturnAllEligibleAndOpenCohortsForDriver() {
-        List<String> matchingTrials = createInterpreter().trialsForDriver(driverForEvent(ELIGIBLE_EVENT));
-
-        assertEquals(2, matchingTrials.size());
-        assertTrue(matchingTrials.contains(ELIGIBLE_COHORT));
-        assertTrue(matchingTrials.contains(ELIGIBLE_COHORT_2));
+    fun shouldReturnAllEligibleAndOpenCohortsForDriver() {
+        val matchingTrials = createInterpreter().trialsForDriver(driverForEvent(ELIGIBLE_EVENT))
+        Assert.assertEquals(2, matchingTrials.size.toLong())
+        Assert.assertTrue(matchingTrials.contains(ELIGIBLE_COHORT))
+        Assert.assertTrue(matchingTrials.contains(ELIGIBLE_COHORT_2))
     }
 
     @Test
-    public void shouldNotReturnMatchesForIneligibleCohorts() {
-        assertTrue(createInterpreter().trialsForDriver(driverForEvent(INELIGIBLE_COHORT)).isEmpty());
+    fun shouldNotReturnMatchesForIneligibleCohorts() {
+        Assert.assertTrue(createInterpreter().trialsForDriver(driverForEvent(INELIGIBLE_COHORT)).isEmpty())
     }
 
     @Test
-    public void shouldNotReturnMatchesForClosedCohorts() {
-        assertTrue(createInterpreter().trialsForDriver(driverForEvent(CLOSED_COHORT)).isEmpty());
+    fun shouldNotReturnMatchesForClosedCohorts() {
+        Assert.assertTrue(createInterpreter().trialsForDriver(driverForEvent(CLOSED_COHORT)).isEmpty())
     }
 
     @Test
-    public void shouldIndicateDriverIsActionableIfEventMatchesEligibleTrial() {
-        assertFalse(createInterpreter().driverIsActionable(driverForEvent(INELIGIBLE_COHORT)));
-        assertTrue(createInterpreter().driverIsActionable(driverForEvent(ELIGIBLE_EVENT)));
+    fun shouldIndicateDriverIsActionableIfEventMatchesEligibleTrial() {
+        Assert.assertFalse(createInterpreter().driverIsActionable(driverForEvent(INELIGIBLE_COHORT)))
+        Assert.assertTrue(createInterpreter().driverIsActionable(driverForEvent(ELIGIBLE_EVENT)))
     }
 
     @Test
-    public void shouldIndicateDriverIsActionableIfExternalTrialsEligible() {
-        assertFalse(createInterpreter().driverIsActionable(driverForEvent(INELIGIBLE_COHORT)));
-
-        Driver driver = TestVariantFactory.builder()
-                .event(INELIGIBLE_COHORT)
-                .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial("external"))
-                .build();
-        assertTrue(createInterpreter().driverIsActionable(driver));
+    fun shouldIndicateDriverIsActionableIfExternalTrialsEligible() {
+        Assert.assertFalse(createInterpreter().driverIsActionable(driverForEvent(INELIGIBLE_COHORT)))
+        val driver: Driver = TestVariantFactory.builder()
+            .event(INELIGIBLE_COHORT)
+            .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial("external"))
+            .build()
+        Assert.assertTrue(createInterpreter().driverIsActionable(driver))
     }
 
     @Test
-    public void shouldIndicateDriverIsActionableIfApprovedTreatmentsExist() {
-        assertFalse(createInterpreter().driverIsActionable(driverForEvent(INELIGIBLE_COHORT)));
-
-        Driver driver = TestVariantFactory.builder()
-                .event(INELIGIBLE_COHORT)
-                .evidence(TestActionableEvidenceFactory.withApprovedTreatment("treatment"))
-                .build();
-        assertTrue(createInterpreter().driverIsActionable(driver));
+    fun shouldIndicateDriverIsActionableIfApprovedTreatmentsExist() {
+        Assert.assertFalse(createInterpreter().driverIsActionable(driverForEvent(INELIGIBLE_COHORT)))
+        val driver: Driver = TestVariantFactory.builder()
+            .event(INELIGIBLE_COHORT)
+            .evidence(TestActionableEvidenceFactory.withApprovedTreatment("treatment"))
+            .build()
+        Assert.assertTrue(createInterpreter().driverIsActionable(driver))
     }
 
-    private static Driver driverForEvent(String event) {
-        return TestVariantFactory.builder().event(event).build();
-    }
+    companion object {
+        private const val INELIGIBLE_COHORT = "INELIGIBLE"
+        private const val CLOSED_COHORT = "CLOSED"
+        private const val ELIGIBLE_COHORT = "ELIGIBLE"
+        private const val ELIGIBLE_COHORT_2 = "ELIGIBLE2"
+        private const val ELIGIBLE_EVENT = "event"
+        private fun driverForEvent(event: String): Driver {
+            return TestVariantFactory.builder().event(event).build()
+        }
 
-    private static EvaluatedCohort evaluatedCohort(String name, boolean isEligible, boolean isOpen) {
-        return evaluatedCohort(name, isEligible, isOpen, name);
-    }
-
-    private static EvaluatedCohort evaluatedCohort(String name, boolean isEligible, boolean isOpen, String event) {
-        return EvaluatedCohortTestFactory.builder()
+        private fun evaluatedCohort(name: String, isEligible: Boolean, isOpen: Boolean, event: String = name): EvaluatedCohort {
+            return EvaluatedCohortTestFactory.builder()
                 .acronym(name)
                 .isPotentiallyEligible(isEligible)
                 .isOpen(isOpen)
                 .addMolecularEvents(event)
-                .build();
-    }
+                .build()
+        }
 
-    private static EvaluatedCohortsInterpreter createInterpreter() {
-        return new EvaluatedCohortsInterpreter(List.of(evaluatedCohort(INELIGIBLE_COHORT, false, true),
-                evaluatedCohort(CLOSED_COHORT, true, false),
-                evaluatedCohort(ELIGIBLE_COHORT, true, true, ELIGIBLE_EVENT),
-                evaluatedCohort(ELIGIBLE_COHORT_2, true, true, ELIGIBLE_EVENT)));
+        private fun createInterpreter(): EvaluatedCohortsInterpreter {
+            return EvaluatedCohortsInterpreter(
+                List.of(
+                    evaluatedCohort(INELIGIBLE_COHORT, false, true),
+                    evaluatedCohort(CLOSED_COHORT, true, false),
+                    evaluatedCohort(ELIGIBLE_COHORT, true, true, ELIGIBLE_EVENT),
+                    evaluatedCohort(ELIGIBLE_COHORT_2, true, true, ELIGIBLE_EVENT)
+                )
+            )
+        }
     }
 }

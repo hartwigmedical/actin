@@ -1,148 +1,135 @@
-package com.hartwig.actin.report.interpretation;
+package com.hartwig.actin.report.interpretation
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers
+import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers
+import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
+import org.junit.Assert
+import org.junit.Test
+import java.util.function.Predicate
 
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Stream;
-
-import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
-import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory;
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers;
-import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
-import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory;
-import com.hartwig.actin.molecular.datamodel.driver.Variant;
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory;
-
-import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
-
-public class MolecularDriverEntryFactoryTest {
-
+class MolecularDriverEntryFactoryTest {
     @Test
-    public void canCreateMolecularDriverEntries() {
-        MolecularRecord record = TestMolecularFactory.createExhaustiveTestMolecularRecord();
-
-        MolecularDriverEntryFactory factory = createFactoryForMolecularRecord(record);
-        Stream<MolecularDriverEntry> entries = factory.create();
-
-        assertEquals(7, entries.count());
+    fun canCreateMolecularDriverEntries() {
+        val record = TestMolecularFactory.createExhaustiveTestMolecularRecord()
+        val factory = createFactoryForMolecularRecord(record)
+        val entries = factory.create()
+        Assert.assertEquals(7, entries.count())
     }
 
     @Test
-    public void shouldIncludeNonActionableReportableDrivers() {
-        MolecularRecord record = createTestMolecularRecordWithDriverEvidence(TestActionableEvidenceFactory.createEmpty(), true);
-
-        MolecularDriverEntryFactory factory = createFactoryForMolecularRecord(record);
-
-        assertEquals(1, factory.create().count());
+    fun shouldIncludeNonActionableReportableDrivers() {
+        val record = createTestMolecularRecordWithDriverEvidence(TestActionableEvidenceFactory.createEmpty(), true)
+        val factory = createFactoryForMolecularRecord(record)
+        Assert.assertEquals(1, factory.create().count())
     }
 
     @Test
-    public void shouldSkipNonActionableNotReportableDrivers() {
-        MolecularRecord record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestActionableEvidenceFactory.createEmpty());
-
-        MolecularDriverEntryFactory factory = createFactoryForMolecularRecord(record);
-
-        assertEquals(0, factory.create().count());
+    fun shouldSkipNonActionableNotReportableDrivers() {
+        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestActionableEvidenceFactory.createEmpty())
+        val factory = createFactoryForMolecularRecord(record)
+        Assert.assertEquals(0, factory.create().count())
     }
 
     @Test
-    public void shouldIncludeNonReportableDriversWithActinTrialMatches() {
-        MolecularRecord record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestActionableEvidenceFactory.createEmpty());
-        String driverToFind = record.drivers().viruses().iterator().next().event();
-
-        assertEquals(1, createFactoryWithCohortsForEvent(record, driverToFind).create().count());
+    fun shouldIncludeNonReportableDriversWithActinTrialMatches() {
+        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestActionableEvidenceFactory.createEmpty())
+        val driverToFind = record.drivers().viruses().iterator().next().event()
+        Assert.assertEquals(1, createFactoryWithCohortsForEvent(record, driverToFind).create().count())
     }
 
     @Test
-    public void shouldIncludeNonReportableDriversWithApprovedTreatmentMatches() {
-        MolecularRecord record =
-                createTestMolecularRecordWithNonReportableDriverWithEvidence(TestActionableEvidenceFactory.withApprovedTreatment("treatment"));
-
-        MolecularDriverEntryFactory factory = createFactoryForMolecularRecord(record);
-
-        assertEquals(1, factory.create().count());
+    fun shouldIncludeNonReportableDriversWithApprovedTreatmentMatches() {
+        val record =
+            createTestMolecularRecordWithNonReportableDriverWithEvidence(TestActionableEvidenceFactory.withApprovedTreatment("treatment"))
+        val factory = createFactoryForMolecularRecord(record)
+        Assert.assertEquals(1, factory.create().count())
     }
 
     @Test
-    public void shouldIncludeNonReportableDriversWithExternalTrialMatches() {
-        MolecularRecord record =
-                createTestMolecularRecordWithNonReportableDriverWithEvidence(TestActionableEvidenceFactory.withExternalEligibleTrial(
-                        "trial 1"));
-
-        MolecularDriverEntryFactory factory = createFactoryForMolecularRecord(record);
-
-        assertEquals(1, factory.create().count());
+    fun shouldIncludeNonReportableDriversWithExternalTrialMatches() {
+        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(
+            TestActionableEvidenceFactory.withExternalEligibleTrial(
+                "trial 1"
+            )
+        )
+        val factory = createFactoryForMolecularRecord(record)
+        Assert.assertEquals(1, factory.create().count())
     }
 
     @Test
-    public void canMatchActinTrialToMolecularDrivers() {
-        MolecularRecord record = TestMolecularFactory.createProperTestMolecularRecord();
-        assertFalse(record.drivers().variants().isEmpty());
-
-        Variant firstVariant = record.drivers().variants().iterator().next();
-
-        String driverToFind = firstVariant.event();
-
-        MolecularDriverEntry entry = createFactoryWithCohortsForEvent(record, driverToFind).create()
-                .filter(molecularDriverEntry -> molecularDriverEntry.driver().startsWith(driverToFind))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException(
-                        "Could not find molecular driver entry starting with driver: " + driverToFind));
-        assertEquals(1, entry.actinTrials().size());
-        assertTrue(entry.actinTrials().contains("trial 1"));
+    fun canMatchActinTrialToMolecularDrivers() {
+        val record = TestMolecularFactory.createProperTestMolecularRecord()
+        Assert.assertFalse(record.drivers().variants().isEmpty())
+        val firstVariant = record.drivers().variants().iterator().next()
+        val driverToFind = firstVariant.event()
+        val entry = createFactoryWithCohortsForEvent(record, driverToFind).create()
+            .filter(Predicate { molecularDriverEntry: MolecularDriverEntry -> molecularDriverEntry.driver().startsWith(driverToFind) })
+            .findFirst()
+            .orElseThrow {
+                IllegalStateException(
+                    "Could not find molecular driver entry starting with driver: $driverToFind"
+                )
+            }!!
+        Assert.assertEquals(1, entry.actinTrials().size.toLong())
+        Assert.assertTrue(entry.actinTrials().contains("trial 1"))
     }
 
-    @NotNull
-    private static MolecularRecord createTestMolecularRecordWithNonReportableDriverWithEvidence(ActionableEvidence evidence) {
-        return createTestMolecularRecordWithDriverEvidence(evidence, false);
-    }
+    companion object {
+        private fun createTestMolecularRecordWithNonReportableDriverWithEvidence(evidence: ActionableEvidence): MolecularRecord {
+            return createTestMolecularRecordWithDriverEvidence(evidence, false)
+        }
 
-    @NotNull
-    private static MolecularRecord createTestMolecularRecordWithDriverEvidence(ActionableEvidence evidence, boolean isReportable) {
-        return ImmutableMolecularRecord.builder()
+        private fun createTestMolecularRecordWithDriverEvidence(evidence: ActionableEvidence, isReportable: Boolean): MolecularRecord {
+            return ImmutableMolecularRecord.builder()
                 .from(TestMolecularFactory.createMinimalTestMolecularRecord())
                 .drivers(createDriversWithEvidence(evidence, isReportable))
-                .build();
-    }
+                .build()
+        }
 
-    @NotNull
-    private static MolecularDrivers createDriversWithEvidence(ActionableEvidence evidence, boolean isReportable) {
-        return ImmutableMolecularDrivers.builder()
+        private fun createDriversWithEvidence(evidence: ActionableEvidence, isReportable: Boolean): MolecularDrivers {
+            return ImmutableMolecularDrivers.builder()
                 .addViruses(TestVirusFactory.builder().isReportable(isReportable).evidence(evidence).build())
-                .build();
-    }
+                .build()
+        }
 
-    private static MolecularDriverEntryFactory createFactoryForMolecularRecord(MolecularRecord molecular) {
-        return createFactoryForMolecularRecordAndCohorts(molecular, Collections.emptyList());
-    }
+        private fun createFactoryForMolecularRecord(molecular: MolecularRecord): MolecularDriverEntryFactory {
+            return createFactoryForMolecularRecordAndCohorts(molecular, emptyList<EvaluatedCohort>())
+        }
 
-    private static MolecularDriverEntryFactory createFactoryForMolecularRecordAndCohorts(MolecularRecord molecular,
-            List<EvaluatedCohort> cohorts) {
-        return new MolecularDriverEntryFactory(new MolecularDriversInterpreter(molecular.drivers(),
-                new EvaluatedCohortsInterpreter(cohorts)));
-    }
+        private fun createFactoryForMolecularRecordAndCohorts(
+            molecular: MolecularRecord,
+            cohorts: List<EvaluatedCohort?>
+        ): MolecularDriverEntryFactory {
+            return MolecularDriverEntryFactory(
+                MolecularDriversInterpreter(
+                    molecular.drivers(),
+                    EvaluatedCohortsInterpreter(cohorts)
+                )
+            )
+        }
 
-    private static MolecularDriverEntryFactory createFactoryWithCohortsForEvent(MolecularRecord molecularRecord, String event) {
-        EvaluatedCohort openCohortForVariant = EvaluatedCohortTestFactory.builder()
+        private fun createFactoryWithCohortsForEvent(molecularRecord: MolecularRecord, event: String): MolecularDriverEntryFactory {
+            val openCohortForVariant: EvaluatedCohort = EvaluatedCohortTestFactory.builder()
                 .acronym("trial 1")
                 .addMolecularEvents(event)
                 .isPotentiallyEligible(true)
                 .isOpen(true)
-                .build();
-
-        EvaluatedCohort closedCohortForVariant = EvaluatedCohortTestFactory.builder()
+                .build()
+            val closedCohortForVariant: EvaluatedCohort = EvaluatedCohortTestFactory.builder()
                 .acronym("trial 2")
                 .addMolecularEvents(event)
                 .isPotentiallyEligible(true)
                 .isOpen(false)
-                .build();
-
-        return createFactoryForMolecularRecordAndCohorts(molecularRecord, List.of(openCohortForVariant, closedCohortForVariant));
+                .build()
+            return createFactoryForMolecularRecordAndCohorts(
+                molecularRecord,
+                java.util.List.of(openCohortForVariant, closedCohortForVariant)
+            )
+        }
     }
 }

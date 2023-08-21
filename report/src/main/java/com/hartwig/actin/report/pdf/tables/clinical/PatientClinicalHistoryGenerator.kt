@@ -1,200 +1,168 @@
-package com.hartwig.actin.report.pdf.tables.clinical;
+package com.hartwig.actin.report.pdf.tables.clinical
 
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.joining;
+import com.google.common.collect.Sets
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.clinical.datamodel.treatment.Treatment
+import com.hartwig.actin.clinical.datamodel.treatment.history.TherapyHistoryDetails
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
+import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparatorFactory
+import com.hartwig.actin.report.pdf.tables.TableGenerator
+import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.Formats
+import com.hartwig.actin.report.pdf.util.Tables
+import com.itextpdf.layout.element.Table
+import org.apache.logging.log4j.util.Strings
+import java.util.*
+import java.util.function.Function
+import java.util.stream.Collectors
+import java.util.stream.Stream
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import com.google.common.collect.Sets;
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
-import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
-import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparatorFactory;
-import com.hartwig.actin.report.pdf.tables.TableGenerator;
-import com.hartwig.actin.report.pdf.util.Cells;
-import com.hartwig.actin.report.pdf.util.Formats;
-import com.hartwig.actin.report.pdf.util.Tables;
-import com.itextpdf.layout.element.Table;
-
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-public class PatientClinicalHistoryGenerator implements TableGenerator {
-
-    @NotNull
-    private final ClinicalRecord record;
-    private final float keyWidth;
-    private final float valueWidth;
-
-    public PatientClinicalHistoryGenerator(@NotNull ClinicalRecord record, float keyWidth, float valueWidth) {
-        this.record = record;
-        this.keyWidth = keyWidth;
-        this.valueWidth = valueWidth;
+class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, private val keyWidth: Float, private val valueWidth: Float) :
+    TableGenerator {
+    override fun title(): String {
+        return "Clinical summary"
     }
 
-    @NotNull
-    @Override
-    public String title() {
-        return "Clinical summary";
-    }
-
-    @NotNull
-    @Override
-    public Table contents() {
-        Table table = Tables.createFixedWidthCols(keyWidth, valueWidth);
-
-        table.addCell(Cells.createKey("Relevant systemic treatment history"));
-        table.addCell(Cells.createValue(relevantSystemicPreTreatmentHistory(record)));
-
-        table.addCell(Cells.createKey("Relevant other oncological history"));
-        String nonSystemicHistory = relevantNonSystemicPreTreatmentHistory(record);
+    override fun contents(): Table {
+        val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
+        table.addCell(Cells.createKey("Relevant systemic treatment history"))
+        table.addCell(Cells.createValue(relevantSystemicPreTreatmentHistory(record)))
+        table.addCell(Cells.createKey("Relevant other oncological history"))
+        val nonSystemicHistory = relevantNonSystemicPreTreatmentHistory(record)
         if (!nonSystemicHistory.isEmpty()) {
-            table.addCell(Cells.createValue(nonSystemicHistory));
+            table.addCell(Cells.createValue(nonSystemicHistory))
         } else {
-            table.addCell(Cells.createValue("None"));
+            table.addCell(Cells.createValue("None"))
         }
-
-        table.addCell(Cells.createKey("Previous primary tumor"));
-        String secondPrimaryHistory = secondPrimaryHistory(record);
+        table.addCell(Cells.createKey("Previous primary tumor"))
+        val secondPrimaryHistory = secondPrimaryHistory(record)
         if (!secondPrimaryHistory.isEmpty()) {
-            table.addCell(Cells.createValue(secondPrimaryHistory));
+            table.addCell(Cells.createValue(secondPrimaryHistory))
         } else {
-            table.addCell(Cells.createValue("None"));
+            table.addCell(Cells.createValue("None"))
+        }
+        table.addCell(Cells.createKey("Relevant non-oncological history"))
+        table.addCell(Cells.createValue(relevantNonOncologicalHistory(record)))
+        return table
+    }
+
+    companion object {
+        private fun relevantSystemicPreTreatmentHistory(record: ClinicalRecord): String {
+            return treatmentHistoryString(record.treatmentHistory(), true)
         }
 
-        table.addCell(Cells.createKey("Relevant non-oncological history"));
-        table.addCell(Cells.createValue(relevantNonOncologicalHistory(record)));
+        private fun relevantNonSystemicPreTreatmentHistory(record: ClinicalRecord): String {
+            return treatmentHistoryString(record.treatmentHistory(), false)
+        }
 
-        return table;
-    }
-
-    @NotNull
-    private static String relevantSystemicPreTreatmentHistory(@NotNull ClinicalRecord record) {
-        return treatmentHistoryString(record.treatmentHistory(), true);
-    }
-
-    @NotNull
-    private static String relevantNonSystemicPreTreatmentHistory(@NotNull ClinicalRecord record) {
-        return treatmentHistoryString(record.treatmentHistory(), false);
-    }
-
-    @NotNull
-    private static String treatmentHistoryString(@NotNull List<TreatmentHistoryEntry> treatmentHistory, boolean isSystemic) {
-        List<TreatmentHistoryEntry> sortedFilteredTreatments = treatmentHistory.stream()
-                .filter(entry -> entry.treatments().stream().anyMatch(treatment -> treatment.isSystemic() == isSystemic))
+        private fun treatmentHistoryString(treatmentHistory: List<TreatmentHistoryEntry>, isSystemic: Boolean): String {
+            val sortedFilteredTreatments = treatmentHistory.stream()
+                .filter { entry: TreatmentHistoryEntry ->
+                    entry.treatments().stream().anyMatch { treatment: Treatment -> treatment.isSystemic == isSystemic }
+                }
                 .sorted(TreatmentHistoryAscendingDateComparatorFactory.treatmentHistoryEntryComparator())
-                .collect(Collectors.toList());
-
-        Map<String, List<TreatmentHistoryEntry>> treatmentsByName =
-                sortedFilteredTreatments.stream().collect(groupingBy(TreatmentHistoryEntry::treatmentName));
-
-        Set<String> evaluatedNames = Sets.newHashSet();
-        Stream<Optional<String>> annotationStream = sortedFilteredTreatments.stream().map(treatment -> {
-            String treatmentName = treatment.treatmentName();
-            if (!evaluatedNames.contains(treatmentName)) {
-                evaluatedNames.add(treatmentName);
-                Optional<String> annotationOption = treatmentsByName.get(treatmentName)
+                .collect(Collectors.toList())
+            val treatmentsByName = sortedFilteredTreatments.stream().collect(
+                Collectors.groupingBy(
+                    Function { obj: TreatmentHistoryEntry -> obj.treatmentName() })
+            )
+            val evaluatedNames: MutableSet<String> = Sets.newHashSet()
+            val annotationStream = sortedFilteredTreatments.stream().map { treatment: TreatmentHistoryEntry ->
+                val treatmentName = treatment.treatmentName()
+                if (!evaluatedNames.contains(treatmentName)) {
+                    evaluatedNames.add(treatmentName)
+                    val annotationOption = treatmentsByName[treatmentName]
                         .stream()
-                        .map(PatientClinicalHistoryGenerator::extractAnnotationForTreatment)
-                        .flatMap(Optional::stream)
-                        .reduce((x, y) -> x + "; " + y);
-                return Optional.of(treatmentName + annotationOption.map(annotation -> " (" + annotation + ")").orElse(""));
-
-            } else {
-                return Optional.empty();
+                        .map { treatmentHistoryEntry: TreatmentHistoryEntry -> extractAnnotationForTreatment(treatmentHistoryEntry) }
+                        .flatMap { obj: Optional<String> -> obj.stream() }
+                        .reduce { x: String, y: String -> "$x; $y" }
+                    return@map Optional.of(treatmentName + annotationOption.map { annotation: String -> " ($annotation)" }
+                        .orElse(""))
+                } else {
+                    return@map Optional.empty<String>()
+                }
             }
+            val annotationString = annotationStream.flatMap { obj: Optional<String> -> obj.stream() }.collect(Collectors.joining(", "))
+            return Formats.valueOrDefault(annotationString, "None")
+        }
 
-        });
-        String annotationString = annotationStream.flatMap(Optional::stream).collect(joining(", "));
-
-        return Formats.valueOrDefault(annotationString, "None");
-    }
-
-    @NotNull
-    private static Optional<String> extractAnnotationForTreatment(@NotNull TreatmentHistoryEntry treatmentHistoryEntry) {
-        return Stream.of(toDateRangeString(treatmentHistoryEntry),
+        private fun extractAnnotationForTreatment(treatmentHistoryEntry: TreatmentHistoryEntry): Optional<String> {
+            return Stream.of(
+                toDateRangeString(treatmentHistoryEntry),
                 toNumberOfCyclesString(treatmentHistoryEntry),
-                toStopReasonString(treatmentHistoryEntry)).flatMap(Optional::stream).reduce((x, y) -> x + ", " + y);
-    }
-
-    @NotNull
-    private static String secondPrimaryHistory(@NotNull ClinicalRecord record) {
-        StringJoiner joiner = Formats.commaJoiner();
-        for (PriorSecondPrimary priorSecondPrimary : record.priorSecondPrimaries()) {
-            String tumorDetails = priorSecondPrimary.tumorLocation();
-            if (!priorSecondPrimary.tumorSubType().isEmpty()) {
-                tumorDetails = tumorDetails + " " + priorSecondPrimary.tumorSubType();
-            } else if (priorSecondPrimary.tumorSubType().isEmpty() && !priorSecondPrimary.tumorType().isEmpty()) {
-                tumorDetails = tumorDetails + " " + priorSecondPrimary.tumorType();
-            }
-
-            String dateAdditionDiagnosis =
-                    toDateString(priorSecondPrimary.diagnosedYear(), priorSecondPrimary.diagnosedMonth()).map(dateDiagnosis -> "diagnosed "
-                            + dateDiagnosis + ", ").orElse(Strings.EMPTY);
-
-            String dateAdditionLastTreatment =
-                    toDateString(priorSecondPrimary.lastTreatmentYear(), priorSecondPrimary.lastTreatmentMonth()).map(dateLastTreatment ->
-                            "last treatment " + dateLastTreatment + ", ").orElse(Strings.EMPTY);
-
-            String active = priorSecondPrimary.isActive() ? "considered active" : "considered non-active";
-
-            joiner.add(tumorDetails + " (" + dateAdditionDiagnosis + dateAdditionLastTreatment + active + ")");
+                toStopReasonString(treatmentHistoryEntry)
+            ).flatMap { obj: Optional<String> -> obj.stream() }
+                .reduce { x: String, y: String -> "$x, $y" }
         }
 
-        return joiner.toString();
-    }
-
-    @NotNull
-    private static Optional<String> toDateRangeString(@NotNull TreatmentHistoryEntry treatmentHistoryEntry) {
-        Optional<String> startOption = toDateString(treatmentHistoryEntry.startYear(), treatmentHistoryEntry.startMonth());
-        Optional<String> stopOption = Optional.ofNullable(treatmentHistoryEntry.therapyHistoryDetails())
-                .flatMap(details -> toDateString(details.stopYear(), details.stopMonth()));
-        return startOption.map(startString -> startString + stopOption.map(stopString -> "-" + stopString).orElse(""))
-                .or(() -> stopOption.map(stopString -> "end: " + stopString));
-    }
-
-    @NotNull
-    private static Optional<String> toDateString(@Nullable Integer maybeYear, @Nullable Integer maybeMonth) {
-        return Optional.ofNullable(maybeYear)
-                .map(year -> Optional.ofNullable(maybeMonth).map(month -> month + "/" + year).orElse(String.valueOf(year)));
-    }
-
-    @NotNull
-    private static Optional<String> toNumberOfCyclesString(@NotNull TreatmentHistoryEntry treatmentHistoryEntry) {
-        return Optional.ofNullable(treatmentHistoryEntry.therapyHistoryDetails())
-                .flatMap(details -> Optional.ofNullable(details.cycles()))
-                .map(num -> num + " cycles");
-    }
-
-    @NotNull
-    private static Optional<String> toStopReasonString(@NotNull TreatmentHistoryEntry treatmentHistoryEntry) {
-        return Optional.ofNullable(treatmentHistoryEntry.therapyHistoryDetails())
-                .flatMap(details -> Optional.ofNullable(details.stopReasonDetail()))
-                .map(reason -> "stop reason: " + reason);
-    }
-
-    @NotNull
-    private static String relevantNonOncologicalHistory(@NotNull ClinicalRecord record) {
-        StringJoiner joiner = Formats.commaJoiner();
-        for (PriorOtherCondition priorOtherCondition : record.priorOtherConditions()) {
-            String addon = Strings.EMPTY;
-            if (!priorOtherCondition.isContraindicationForTherapy()) {
-                addon = " (no contraindication for therapy)";
+        private fun secondPrimaryHistory(record: ClinicalRecord): String {
+            val joiner = Formats.commaJoiner()
+            for (priorSecondPrimary in record.priorSecondPrimaries()) {
+                var tumorDetails = priorSecondPrimary.tumorLocation()
+                if (!priorSecondPrimary.tumorSubType().isEmpty()) {
+                    tumorDetails = tumorDetails + " " + priorSecondPrimary.tumorSubType()
+                } else if (priorSecondPrimary.tumorSubType().isEmpty() && !priorSecondPrimary.tumorType().isEmpty()) {
+                    tumorDetails = tumorDetails + " " + priorSecondPrimary.tumorType()
+                }
+                val dateAdditionDiagnosis =
+                    toDateString(priorSecondPrimary.diagnosedYear(), priorSecondPrimary.diagnosedMonth()).map { dateDiagnosis: String ->
+                        ("diagnosed "
+                                + dateDiagnosis + ", ")
+                    }.orElse(Strings.EMPTY)
+                val dateAdditionLastTreatment = toDateString(
+                    priorSecondPrimary.lastTreatmentYear(),
+                    priorSecondPrimary.lastTreatmentMonth()
+                ).map { dateLastTreatment: String -> "last treatment $dateLastTreatment, " }
+                    .orElse(Strings.EMPTY)
+                val active = if (priorSecondPrimary.isActive) "considered active" else "considered non-active"
+                joiner.add("$tumorDetails ($dateAdditionDiagnosis$dateAdditionLastTreatment$active)")
             }
-
-            Optional<String> dateOption = toDateString(priorOtherCondition.year(), priorOtherCondition.month());
-            String dateAddition = dateOption.map(date -> " (" + date + ")").orElse(Strings.EMPTY);
-
-            joiner.add(priorOtherCondition.name() + dateAddition + addon);
+            return joiner.toString()
         }
-        return Formats.valueOrDefault(joiner.toString(), "None");
+
+        private fun toDateRangeString(treatmentHistoryEntry: TreatmentHistoryEntry): Optional<String> {
+            val startOption = toDateString(treatmentHistoryEntry.startYear(), treatmentHistoryEntry.startMonth())
+            val stopOption = Optional.ofNullable(treatmentHistoryEntry.therapyHistoryDetails())
+                .flatMap { details: TherapyHistoryDetails -> toDateString(details.stopYear(), details.stopMonth()) }
+            return startOption.map { startString: String ->
+                startString + stopOption.map { stopString: String -> "-$stopString" }
+                    .orElse("")
+            }
+                .or { stopOption.map { stopString: String -> "end: $stopString" } }
+        }
+
+        private fun toDateString(maybeYear: Int?, maybeMonth: Int?): Optional<String> {
+            return Optional.ofNullable(maybeYear)
+                .map { year: Int ->
+                    Optional.ofNullable(maybeMonth).map { month: Int -> "$month/$year" }
+                        .orElse(year.toString())
+                }
+        }
+
+        private fun toNumberOfCyclesString(treatmentHistoryEntry: TreatmentHistoryEntry): Optional<String> {
+            return Optional.ofNullable(treatmentHistoryEntry.therapyHistoryDetails())
+                .flatMap { details: TherapyHistoryDetails -> Optional.ofNullable(details.cycles()) }
+                .map { num: Int -> "$num cycles" }
+        }
+
+        private fun toStopReasonString(treatmentHistoryEntry: TreatmentHistoryEntry): Optional<String> {
+            return Optional.ofNullable(treatmentHistoryEntry.therapyHistoryDetails())
+                .flatMap { details: TherapyHistoryDetails -> Optional.ofNullable(details.stopReasonDetail()) }
+                .map { reason: String -> "stop reason: $reason" }
+        }
+
+        private fun relevantNonOncologicalHistory(record: ClinicalRecord): String {
+            val joiner = Formats.commaJoiner()
+            for (priorOtherCondition in record.priorOtherConditions()) {
+                var addon = Strings.EMPTY
+                if (!priorOtherCondition.isContraindicationForTherapy) {
+                    addon = " (no contraindication for therapy)"
+                }
+                val dateOption = toDateString(priorOtherCondition.year(), priorOtherCondition.month())
+                val dateAddition = dateOption.map { date: String -> " ($date)" }.orElse(Strings.EMPTY)
+                joiner.add(priorOtherCondition.name() + dateAddition + addon)
+            }
+            return Formats.valueOrDefault(joiner.toString(), "None")
+        }
     }
 }

@@ -1,61 +1,52 @@
-package com.hartwig.actin.report.interpretation;
+package com.hartwig.actin.report.interpretation
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Stream;
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.driver.Driver
+import com.hartwig.actin.molecular.datamodel.driver.Fusion
+import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers
+import com.hartwig.actin.molecular.datamodel.driver.Variant
+import com.hartwig.actin.molecular.datamodel.driver.Virus
+import java.util.stream.Stream
 
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumber;
-import com.hartwig.actin.molecular.datamodel.driver.Disruption;
-import com.hartwig.actin.molecular.datamodel.driver.Driver;
-import com.hartwig.actin.molecular.datamodel.driver.Fusion;
-import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
-import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
-import com.hartwig.actin.molecular.datamodel.driver.Variant;
-import com.hartwig.actin.molecular.datamodel.driver.Virus;
-
-public class MolecularDriversInterpreter {
-
-    private final MolecularDrivers molecularDrivers;
-    private final EvaluatedCohortsInterpreter evaluatedCohortsInterpreter;
-
-    public MolecularDriversInterpreter(MolecularDrivers molecularDrivers, EvaluatedCohortsInterpreter evaluatedCohortsInterpreter) {
-        this.molecularDrivers = molecularDrivers;
-        this.evaluatedCohortsInterpreter = evaluatedCohortsInterpreter;
+class MolecularDriversInterpreter(
+    private val molecularDrivers: MolecularDrivers,
+    private val evaluatedCohortsInterpreter: EvaluatedCohortsInterpreter
+) {
+    fun filteredVariants(): Stream<Variant> {
+        return streamAndFilterDrivers(molecularDrivers.variants())
     }
 
-    public Stream<Variant> filteredVariants() {
-        return streamAndFilterDrivers(molecularDrivers.variants());
+    fun filteredCopyNumbers(): Stream<CopyNumber> {
+        return streamAndFilterDrivers(molecularDrivers.copyNumbers())
     }
 
-    public Stream<CopyNumber> filteredCopyNumbers() {
-        return streamAndFilterDrivers(molecularDrivers.copyNumbers());
+    fun filteredHomozygousDisruptions(): Stream<HomozygousDisruption> {
+        return streamAndFilterDrivers(molecularDrivers.homozygousDisruptions())
     }
 
-    public Stream<HomozygousDisruption> filteredHomozygousDisruptions() {
-        return streamAndFilterDrivers(molecularDrivers.homozygousDisruptions());
+    fun filteredDisruptions(): Stream<Disruption> {
+        return streamAndFilterDrivers(molecularDrivers.disruptions())
     }
 
-    public Stream<Disruption> filteredDisruptions() {
-        return streamAndFilterDrivers(molecularDrivers.disruptions());
+    fun filteredFusions(): Stream<Fusion> {
+        return streamAndFilterDrivers(molecularDrivers.fusions())
     }
 
-    public Stream<Fusion> filteredFusions() {
-        return streamAndFilterDrivers(molecularDrivers.fusions());
+    fun filteredViruses(): Stream<Virus> {
+        return streamAndFilterDrivers(molecularDrivers.viruses())
     }
 
-    public Stream<Virus> filteredViruses() {
-        return streamAndFilterDrivers(molecularDrivers.viruses());
+    fun hasPotentiallySubClonalVariants(): Boolean {
+        return filteredVariants().anyMatch { obj: Variant? -> ClonalityInterpreter.isPotentiallySubclonal() }
     }
 
-    public boolean hasPotentiallySubClonalVariants() {
-        return filteredVariants().anyMatch(ClonalityInterpreter::isPotentiallySubclonal);
+    fun trialsForDriver(driver: Driver): List<String?>? {
+        return evaluatedCohortsInterpreter.trialsForDriver(driver)
     }
 
-    public List<String> trialsForDriver(Driver driver) {
-        return evaluatedCohortsInterpreter.trialsForDriver(driver);
-    }
-
-    private <T extends Driver> Stream<T> streamAndFilterDrivers(Set<T> drivers) {
-        return drivers.stream().filter(driver -> driver.isReportable() || evaluatedCohortsInterpreter.driverIsActionable(driver));
+    private fun <T : Driver?> streamAndFilterDrivers(drivers: Set<T>): Stream<T> {
+        return drivers.stream().filter { driver: T -> driver!!.isReportable || evaluatedCohortsInterpreter.driverIsActionable(driver) }
     }
 }

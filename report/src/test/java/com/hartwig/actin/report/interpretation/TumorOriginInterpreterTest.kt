@@ -1,100 +1,97 @@
-package com.hartwig.actin.report.interpretation;
+package com.hartwig.actin.report.interpretation
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.hartwig.actin.molecular.datamodel.characteristics.CuppaPrediction
+import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableCuppaPrediction
+import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin
+import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin
+import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.greatestOmittedLikelihood
+import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.hasConfidentPrediction
+import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.interpret
+import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.likelihoodMeetsConfidenceThreshold
+import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.predictionsToDisplay
+import com.hartwig.actin.report.pdf.util.Formats
+import org.junit.Assert
+import org.junit.Test
+import java.util.stream.Collectors
+import java.util.stream.IntStream
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import com.hartwig.actin.molecular.datamodel.characteristics.CuppaPrediction;
-import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableCuppaPrediction;
-import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
-import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
-import com.hartwig.actin.report.pdf.util.Formats;
-
-import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
-
-public class TumorOriginInterpreterTest {
-
-    public static final double EPSILON = 0.0001;
-
+class TumorOriginInterpreterTest {
     @Test
-    public void canDetermineConfidenceOfPredictedTumorOrigin() {
-        assertFalse(TumorOriginInterpreter.hasConfidentPrediction(null));
-        assertFalse(TumorOriginInterpreter.hasConfidentPrediction(withPredictions(0.4)));
-        assertTrue(TumorOriginInterpreter.hasConfidentPrediction(withPredictions(0.8)));
-        assertTrue(TumorOriginInterpreter.hasConfidentPrediction(withPredictions(0.99)));
+    fun canDetermineConfidenceOfPredictedTumorOrigin() {
+        Assert.assertFalse(hasConfidentPrediction(null))
+        Assert.assertFalse(hasConfidentPrediction(withPredictions(0.4)))
+        Assert.assertTrue(hasConfidentPrediction(withPredictions(0.8)))
+        Assert.assertTrue(hasConfidentPrediction(withPredictions(0.99)))
     }
 
     @Test
-    public void shouldReturnFalseForLikelihoodBelowConfidenceThreshold() {
-        assertFalse(TumorOriginInterpreter.likelihoodMeetsConfidenceThreshold(0.5));
+    fun shouldReturnFalseForLikelihoodBelowConfidenceThreshold() {
+        Assert.assertFalse(likelihoodMeetsConfidenceThreshold(0.5))
     }
 
     @Test
-    public void shouldReturnTrueForLikelihoodThatMeetsConfidenceThreshold() {
-        assertTrue(TumorOriginInterpreter.likelihoodMeetsConfidenceThreshold(0.8));
-        assertTrue(TumorOriginInterpreter.likelihoodMeetsConfidenceThreshold(1.0));
+    fun shouldReturnTrueForLikelihoodThatMeetsConfidenceThreshold() {
+        Assert.assertTrue(likelihoodMeetsConfidenceThreshold(0.8))
+        Assert.assertTrue(likelihoodMeetsConfidenceThreshold(1.0))
     }
 
     @Test
-    public void canInterpretPredictedTumorOrigins() {
-        assertEquals(Formats.VALUE_UNKNOWN, TumorOriginInterpreter.interpret(null));
-
-        assertEquals("type 1 (90%)", TumorOriginInterpreter.interpret(withPredictions(0.9)));
+    fun canInterpretPredictedTumorOrigins() {
+        Assert.assertEquals(Formats.VALUE_UNKNOWN, interpret(null))
+        Assert.assertEquals("type 1 (90%)", interpret(withPredictions(0.9)))
     }
 
     @Test
-    public void shouldReturnEmptyListForDisplayWhenPredictedTumorOriginIsNull() {
-        assertEquals(Collections.emptyList(), TumorOriginInterpreter.predictionsToDisplay(null));
+    fun shouldReturnEmptyListForDisplayWhenPredictedTumorOriginIsNull() {
+        Assert.assertEquals(emptyList<Any>(), predictionsToDisplay(null))
     }
 
     @Test
-    public void shouldReturnEmptyListForDisplayWhenAllPredictionsAreBelowThreshold() {
-        assertEquals(Collections.emptyList(), TumorOriginInterpreter.predictionsToDisplay(withPredictions(0.09, 0.02, 0.05, 0.08)));
+    fun shouldReturnEmptyListForDisplayWhenAllPredictionsAreBelowThreshold() {
+        Assert.assertEquals(emptyList<Any>(), predictionsToDisplay(withPredictions(0.09, 0.02, 0.05, 0.08)))
     }
 
     @Test
-    public void shouldOmitPredictionsBelowThresholdForDisplay() {
-        List<CuppaPrediction> predictions = TumorOriginInterpreter.predictionsToDisplay(withPredictions(0.4, 0.02, 0.05, 0.08));
-        assertEquals(1, predictions.size());
-        assertEquals(0.4, predictions.iterator().next().likelihood(), EPSILON);
+    fun shouldOmitPredictionsBelowThresholdForDisplay() {
+        val predictions = predictionsToDisplay(withPredictions(0.4, 0.02, 0.05, 0.08))
+        Assert.assertEquals(1, predictions.size.toLong())
+        Assert.assertEquals(0.4, predictions.iterator().next().likelihood(), EPSILON)
     }
 
     @Test
-    public void shouldDisplayAtMostThreePredictions() {
-        List<CuppaPrediction> predictions = TumorOriginInterpreter.predictionsToDisplay(withPredictions(0.4, 0.12, 0.15, 0.25));
-        assertEquals(3, predictions.size());
-        assertEquals(Set.of(0.4, 0.25, 0.15), predictions.stream().map(CuppaPrediction::likelihood).collect(Collectors.toSet()));
+    fun shouldDisplayAtMostThreePredictions() {
+        val predictions = predictionsToDisplay(withPredictions(0.4, 0.12, 0.15, 0.25))
+        Assert.assertEquals(3, predictions.size.toLong())
+        Assert.assertEquals(setOf(0.4, 0.25, 0.15), predictions.stream().map { obj: CuppaPrediction -> obj.likelihood() }
+            .collect(Collectors.toSet()))
     }
 
     @Test
-    public void shouldReturnGreatestLikelihoodLimitedByThreshold() {
-        assertEquals(0.08, TumorOriginInterpreter.greatestOmittedLikelihood(withPredictions(0.4, 0.02, 0.05, 0.08)), EPSILON);
+    fun shouldReturnGreatestLikelihoodLimitedByThreshold() {
+        Assert.assertEquals(0.08, greatestOmittedLikelihood(withPredictions(0.4, 0.02, 0.05, 0.08)), EPSILON)
     }
 
     @Test
-    public void shouldReturnGreatestLikelihoodLimitedByCount() {
-        assertEquals(0.12, TumorOriginInterpreter.greatestOmittedLikelihood(withPredictions(0.4, 0.12, 0.15, 0.25)), EPSILON);
+    fun shouldReturnGreatestLikelihoodLimitedByCount() {
+        Assert.assertEquals(0.12, greatestOmittedLikelihood(withPredictions(0.4, 0.12, 0.15, 0.25)), EPSILON)
     }
 
-    @NotNull
-    private static PredictedTumorOrigin withPredictions(double... likelihoods) {
-        return ImmutablePredictedTumorOrigin.builder()
-                .predictions(IntStream.range(0, likelihoods.length)
-                        .mapToObj(i -> ImmutableCuppaPrediction.builder()
-                                .cancerType(String.format("type %s", i + 1))
-                                .likelihood(likelihoods[i])
-                                .snvPairwiseClassifier(likelihoods[i])
-                                .genomicPositionClassifier(likelihoods[i])
-                                .featureClassifier(likelihoods[i])
-                                .build())
-                        .collect(Collectors.toList()))
-                .build();
+    companion object {
+        const val EPSILON = 0.0001
+        private fun withPredictions(vararg likelihoods: Double): PredictedTumorOrigin {
+            return ImmutablePredictedTumorOrigin.builder()
+                .predictions(IntStream.range(0, likelihoods.size)
+                    .mapToObj { i: Int ->
+                        ImmutableCuppaPrediction.builder()
+                            .cancerType(String.format("type %s", i + 1))
+                            .likelihood(likelihoods[i])
+                            .snvPairwiseClassifier(likelihoods[i])
+                            .genomicPositionClassifier(likelihoods[i])
+                            .featureClassifier(likelihoods[i])
+                            .build()
+                    }
+                    .collect(Collectors.toList()))
+                .build()
+        }
     }
 }

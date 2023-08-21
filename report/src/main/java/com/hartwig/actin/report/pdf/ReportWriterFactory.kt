@@ -1,19 +1,11 @@
-package com.hartwig.actin.report.pdf;
+package com.hartwig.actin.report.pdf
 
-import org.jetbrains.annotations.NotNull;
-
-public final class ReportWriterFactory {
-
-    private ReportWriterFactory() {
+object ReportWriterFactory {
+    fun createProductionReportWriter(outputDirectory: String): ReportWriter {
+        return ReportWriter(true, outputDirectory)
     }
 
-    @NotNull
-    public static ReportWriter createProductionReportWriter(@NotNull String outputDirectory) {
-        return new ReportWriter(true, outputDirectory);
-    }
-
-    @NotNull
-    public static ReportWriter createInMemoryReportWriter() {
-        return new ReportWriter(false, null);
+    fun createInMemoryReportWriter(): ReportWriter {
+        return ReportWriter(false, null)
     }
 }

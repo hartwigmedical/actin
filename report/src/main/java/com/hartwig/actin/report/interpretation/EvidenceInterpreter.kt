@@ -1,75 +1,55 @@
-package com.hartwig.actin.report.interpretation;
+package com.hartwig.actin.report.interpretation
 
-import java.util.List;
-import java.util.Set;
+import com.google.common.collect.Sets
+import com.hartwig.actin.molecular.interpretation.AggregatedEvidence
 
-import com.google.common.collect.Sets;
-import com.hartwig.actin.molecular.interpretation.AggregatedEvidence;
-
-import org.jetbrains.annotations.NotNull;
-
-public class EvidenceInterpreter {
-
-    @NotNull
-    private final Set<String> actinInclusionEvents;
-
-    @NotNull
-    public static EvidenceInterpreter fromEvaluatedCohorts(@NotNull List<EvaluatedCohort> cohorts) {
-        Set<String> actinInclusionEvents = Sets.newHashSet();
-        for (EvaluatedCohort cohort : cohorts) {
-            actinInclusionEvents.addAll(cohort.molecularEvents());
-        }
-        return new EvidenceInterpreter(actinInclusionEvents);
+class EvidenceInterpreter private constructor(private val actinInclusionEvents: Set<String?>) {
+    fun eventsWithApprovedEvidence(evidence: AggregatedEvidence): Set<String?> {
+        return evidence.approvedTreatmentsPerEvent().keySet()
     }
 
-    private EvidenceInterpreter(@NotNull final Set<String> actinInclusionEvents) {
-        this.actinInclusionEvents = actinInclusionEvents;
+    fun additionalEventsWithExternalTrialEvidence(evidence: AggregatedEvidence): Set<String?> {
+        val eventsToFilter: MutableSet<String?> = Sets.newHashSet()
+        eventsToFilter.addAll(eventsWithApprovedEvidence(evidence))
+        eventsToFilter.addAll(actinInclusionEvents)
+        val events = evidence.externalEligibleTrialsPerEvent().keySet()
+        return filter(events, eventsToFilter)
     }
 
-    @NotNull
-    public Set<String> eventsWithApprovedEvidence(@NotNull AggregatedEvidence evidence) {
-        return evidence.approvedTreatmentsPerEvent().keySet();
+    fun additionalEventsWithOnLabelExperimentalEvidence(evidence: AggregatedEvidence): Set<String?> {
+        val eventsToFilter: MutableSet<String?> = Sets.newHashSet()
+        eventsToFilter.addAll(eventsWithApprovedEvidence(evidence))
+        eventsToFilter.addAll(actinInclusionEvents)
+        val events = evidence.onLabelExperimentalTreatmentsPerEvent().keySet()
+        return filter(events, eventsToFilter)
     }
 
-    @NotNull
-    public Set<String> additionalEventsWithExternalTrialEvidence(@NotNull AggregatedEvidence evidence) {
-        Set<String> eventsToFilter = Sets.newHashSet();
-        eventsToFilter.addAll(eventsWithApprovedEvidence(evidence));
-        eventsToFilter.addAll(actinInclusionEvents);
-
-        Set<String> events = evidence.externalEligibleTrialsPerEvent().keySet();
-        return filter(events, eventsToFilter);
+    fun additionalEventsWithOffLabelExperimentalEvidence(evidence: AggregatedEvidence): Set<String?> {
+        val eventsToFilter: MutableSet<String?> = Sets.newHashSet()
+        eventsToFilter.addAll(eventsWithApprovedEvidence(evidence))
+        eventsToFilter.addAll(actinInclusionEvents)
+        eventsToFilter.addAll(additionalEventsWithOnLabelExperimentalEvidence(evidence))
+        val events = evidence.offLabelExperimentalTreatmentsPerEvent().keySet()
+        return filter(events, eventsToFilter)
     }
 
-    @NotNull
-    public Set<String> additionalEventsWithOnLabelExperimentalEvidence(@NotNull AggregatedEvidence evidence) {
-        Set<String> eventsToFilter = Sets.newHashSet();
-        eventsToFilter.addAll(eventsWithApprovedEvidence(evidence));
-        eventsToFilter.addAll(actinInclusionEvents);
-
-        Set<String> events = evidence.onLabelExperimentalTreatmentsPerEvent().keySet();
-        return filter(events, eventsToFilter);
-    }
-
-    @NotNull
-    public Set<String> additionalEventsWithOffLabelExperimentalEvidence(@NotNull AggregatedEvidence evidence) {
-        Set<String> eventsToFilter = Sets.newHashSet();
-        eventsToFilter.addAll(eventsWithApprovedEvidence(evidence));
-        eventsToFilter.addAll(actinInclusionEvents);
-        eventsToFilter.addAll(additionalEventsWithOnLabelExperimentalEvidence(evidence));
-
-        Set<String> events = evidence.offLabelExperimentalTreatmentsPerEvent().keySet();
-        return filter(events, eventsToFilter);
-    }
-
-    @NotNull
-    private static Set<String> filter(@NotNull Set<String> events, @NotNull Set<String> eventsToFilter) {
-        Set<String> filtered = Sets.newHashSet();
-        for (String event : events) {
-            if (!eventsToFilter.contains(event)) {
-                filtered.add(event);
+    companion object {
+        fun fromEvaluatedCohorts(cohorts: List<EvaluatedCohort>): EvidenceInterpreter {
+            val actinInclusionEvents: MutableSet<String?> = Sets.newHashSet()
+            for (cohort in cohorts) {
+                actinInclusionEvents.addAll(cohort.molecularEvents())
             }
+            return EvidenceInterpreter(actinInclusionEvents)
         }
-        return filtered;
+
+        private fun filter(events: Set<String>, eventsToFilter: Set<String?>): Set<String?> {
+            val filtered: MutableSet<String?> = Sets.newHashSet()
+            for (event in events) {
+                if (!eventsToFilter.contains(event)) {
+                    filtered.add(event)
+                }
+            }
+            return filtered
+        }
     }
 }

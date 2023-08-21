@@ -1,160 +1,130 @@
-package com.hartwig.actin.report.pdf.util;
+package com.hartwig.actin.report.pdf.util
 
-import java.io.IOException;
+import com.itextpdf.io.font.FontProgram
+import com.itextpdf.io.font.FontProgramFactory
+import com.itextpdf.io.font.PdfEncodings
+import com.itextpdf.kernel.colors.DeviceRgb
+import com.itextpdf.kernel.font.PdfFont
+import com.itextpdf.kernel.font.PdfFontFactory
+import com.itextpdf.layout.Style
+import java.io.IOException
 
-import com.itextpdf.io.font.FontProgram;
-import com.itextpdf.io.font.FontProgramFactory;
-import com.itextpdf.io.font.PdfEncodings;
-import com.itextpdf.kernel.colors.DeviceRgb;
-import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.layout.Style;
-
-import org.jetbrains.annotations.NotNull;
-
-public final class Styles {
-
-    public static final DeviceRgb PALETTE_WHITE = new DeviceRgb(255, 255, 255);
-    public static final DeviceRgb PALETTE_BLACK = new DeviceRgb(0, 0, 0);
-    public static final DeviceRgb PALETTE_MID_GREY = new DeviceRgb(101, 106, 108);
-    public static final DeviceRgb PALETTE_BLUE = new DeviceRgb(74, 134, 232);
-    public static final DeviceRgb PALETTE_RED = new DeviceRgb(231, 85, 85);
-
-    public static final DeviceRgb PALETTE_EVALUATION_PASS = new DeviceRgb(0, 150, 0);
-    public static final DeviceRgb PALETTE_EVALUATION_WARN = new DeviceRgb(255, 130, 0);
-    public static final DeviceRgb PALETTE_EVALUATION_FAILED = new DeviceRgb(231, 85, 85);
-    public static final DeviceRgb PALETTE_EVALUATION_UNCLEAR = new DeviceRgb(85, 85, 85);
-
-    public static final DeviceRgb PALETTE_YES_OR_NO_YES = new DeviceRgb(0, 150, 0);
-    public static final DeviceRgb PALETTE_YES_OR_NO_NO = new DeviceRgb(231, 85, 85);
-    public static final DeviceRgb PALETTE_YES_OR_NO_UNCLEAR = new DeviceRgb(85, 85, 85);
-
-    public static final DeviceRgb PALETTE_WARN = PALETTE_EVALUATION_WARN;
-
-    private static final String FONT_REGULAR_PATH = "fonts/nimbus-sans/NimbusSansL-Regular.ttf";
-    private static final String FONT_BOLD_PATH = "fonts/nimbus-sans/NimbusSansL-Bold.ttf";
-
-    private static PdfFont fontRegular = createFont(FONT_REGULAR_PATH);
-    private static PdfFont fontBold = createFont(FONT_BOLD_PATH);
-
-    public static void initialize() {
+object Styles {
+    val PALETTE_WHITE = DeviceRgb(255, 255, 255)
+    val PALETTE_BLACK = DeviceRgb(0, 0, 0)
+    val PALETTE_MID_GREY = DeviceRgb(101, 106, 108)
+    val PALETTE_BLUE = DeviceRgb(74, 134, 232)
+    val PALETTE_RED = DeviceRgb(231, 85, 85)
+    val PALETTE_EVALUATION_PASS = DeviceRgb(0, 150, 0)
+    val PALETTE_EVALUATION_WARN = DeviceRgb(255, 130, 0)
+    val PALETTE_EVALUATION_FAILED = DeviceRgb(231, 85, 85)
+    val PALETTE_EVALUATION_UNCLEAR = DeviceRgb(85, 85, 85)
+    val PALETTE_YES_OR_NO_YES = DeviceRgb(0, 150, 0)
+    val PALETTE_YES_OR_NO_NO = DeviceRgb(231, 85, 85)
+    val PALETTE_YES_OR_NO_UNCLEAR = DeviceRgb(85, 85, 85)
+    val PALETTE_WARN = PALETTE_EVALUATION_WARN
+    private const val FONT_REGULAR_PATH = "fonts/nimbus-sans/NimbusSansL-Regular.ttf"
+    private const val FONT_BOLD_PATH = "fonts/nimbus-sans/NimbusSansL-Bold.ttf"
+    private var fontRegular = createFont(FONT_REGULAR_PATH)
+    private var fontBold = createFont(FONT_BOLD_PATH)
+    fun initialize() {
         // Fonts must be re-initialized for each report
-        fontRegular = createFont(FONT_REGULAR_PATH);
-        fontBold = createFont(FONT_BOLD_PATH);
+        fontRegular = createFont(FONT_REGULAR_PATH)
+        fontBold = createFont(FONT_BOLD_PATH)
     }
 
-    @NotNull
-    public static Style reportTitleStyle() {
-        return new Style().setFont(fontBold()).setFontSize(11).setFontColor(Styles.PALETTE_BLACK);
+    fun reportTitleStyle(): Style {
+        return Style().setFont(fontBold()).setFontSize(11f).setFontColor(PALETTE_BLACK)
     }
 
-    @NotNull
-    public static Style chapterTitleStyle() {
-        return new Style().setFont(fontBold()).setFontSize(10).setFontColor(Styles.PALETTE_BLACK);
+    fun chapterTitleStyle(): Style {
+        return Style().setFont(fontBold()).setFontSize(10f).setFontColor(PALETTE_BLACK)
     }
 
-    @NotNull
-    public static Style tableTitleStyle() {
-        return new Style().setFont(fontBold()).setFontSize(8).setFontColor(Styles.PALETTE_BLUE);
+    fun tableTitleStyle(): Style {
+        return Style().setFont(fontBold()).setFontSize(8f).setFontColor(PALETTE_BLUE)
     }
 
-    @NotNull
-    public static Style tableSubTitleStyle() {
-        return new Style().setFont(fontBold()).setFontSize(7).setFontColor(Styles.PALETTE_BLUE);
+    fun tableSubTitleStyle(): Style {
+        return Style().setFont(fontBold()).setFontSize(7f).setFontColor(PALETTE_BLUE)
     }
 
-    @NotNull
-    public static Style tableSubStyle() {
-        return new Style().setFont(fontRegular()).setFontSize(6).setFontColor(Styles.PALETTE_BLACK);
+    fun tableSubStyle(): Style {
+        return Style().setFont(fontRegular()).setFontSize(6f).setFontColor(PALETTE_BLACK)
     }
 
-    @NotNull
-    public static Style tableHeaderStyle() {
-        return new Style().setFont(fontBold()).setFontSize(7).setFontColor(Styles.PALETTE_MID_GREY);
+    fun tableHeaderStyle(): Style {
+        return Style().setFont(fontBold()).setFontSize(7f).setFontColor(PALETTE_MID_GREY)
     }
 
-    @NotNull
-    public static Style tableContentStyle() {
-        return new Style().setFont(fontRegular()).setFontSize(7).setFontColor(Styles.PALETTE_BLACK);
+    fun tableContentStyle(): Style {
+        return Style().setFont(fontRegular()).setFontSize(7f).setFontColor(PALETTE_BLACK)
     }
 
-    @NotNull
-    public static Style tableNoticeStyle() {
-        return new Style().setFont(fontBold()).setFontSize(7).setFontColor(Styles.PALETTE_WARN);
-    }
-    @NotNull
-    public static Style tableKeyStyle() {
-        return new Style().setFont(fontRegular()).setFontSize(7).setFontColor(Styles.PALETTE_BLACK);
+    fun tableNoticeStyle(): Style {
+        return Style().setFont(fontBold()).setFontSize(7f).setFontColor(PALETTE_WARN)
     }
 
-    @NotNull
-    public static Style tableUnknownStyle() {
-        return new Style().setFont(fontRegular()).setFontSize(7).setFontColor(Styles.PALETTE_BLACK);
+    fun tableKeyStyle(): Style {
+        return Style().setFont(fontRegular()).setFontSize(7f).setFontColor(PALETTE_BLACK)
     }
 
-    @NotNull
-    public static Style tableHighlightStyle() {
-        return new Style().setFont(fontBold()).setFontSize(7).setFontColor(Styles.PALETTE_BLACK);
+    fun tableUnknownStyle(): Style {
+        return Style().setFont(fontRegular()).setFontSize(7f).setFontColor(PALETTE_BLACK)
     }
 
-    @NotNull
-    public static Style tableWarnStyle() {
-        return new Style().setFont(fontBold()).setFontSize(7).setFontColor(Styles.PALETTE_RED);
+    fun tableHighlightStyle(): Style {
+        return Style().setFont(fontBold()).setFontSize(7f).setFontColor(PALETTE_BLACK)
     }
 
-    @NotNull
-    public static Style reportHeaderLabelStyle() {
-        return new Style().setFont(fontRegular()).setFontSize(7).setFontColor(Styles.PALETTE_BLACK);
+    fun tableWarnStyle(): Style {
+        return Style().setFont(fontBold()).setFontSize(7f).setFontColor(PALETTE_RED)
     }
 
-    @NotNull
-    public static Style reportHeaderValueStyle() {
-        return new Style().setFont(fontBold()).setFontSize(8).setFontColor(Styles.PALETTE_BLUE);
+    fun reportHeaderLabelStyle(): Style {
+        return Style().setFont(fontRegular()).setFontSize(7f).setFontColor(PALETTE_BLACK)
     }
 
-    @NotNull
-    public static Style pageNumberStyle() {
-        return new Style().setFont(fontBold()).setFontSize(7).setFontColor(Styles.PALETTE_BLUE);
+    fun reportHeaderValueStyle(): Style {
+        return Style().setFont(fontBold()).setFontSize(8f).setFontColor(PALETTE_BLUE)
     }
 
-    @NotNull
-    public static Style sidePanelLabelStyle() {
-        return new Style().setFont(fontBold()).setFontSize(7).setFontColor(Styles.PALETTE_WHITE);
+    fun pageNumberStyle(): Style {
+        return Style().setFont(fontBold()).setFontSize(7f).setFontColor(PALETTE_BLUE)
     }
 
-    @NotNull
-    public static Style sidePanelValueStyle() {
-        return new Style().setFont(fontBold()).setFontSize(10).setFontColor(Styles.PALETTE_WHITE);
+    fun sidePanelLabelStyle(): Style {
+        return Style().setFont(fontBold()).setFontSize(7f).setFontColor(PALETTE_WHITE)
     }
 
-    @NotNull
-    public static Style deemphasizedStyle() {
-        return new Style().setFont(fontRegular()).setFontSize(5).setFontColor(Styles.PALETTE_MID_GREY);
+    fun sidePanelValueStyle(): Style {
+        return Style().setFont(fontBold()).setFontSize(10f).setFontColor(PALETTE_WHITE)
     }
 
-    @NotNull
-    public static PdfFont fontRegular() {
+    fun deemphasizedStyle(): Style {
+        return Style().setFont(fontRegular()).setFontSize(5f).setFontColor(PALETTE_MID_GREY)
+    }
+
+    fun fontRegular(): PdfFont {
         // Each PDF needs its own private font objects, but they can be static as long as they are re-initialized for each report.
-        return fontRegular;
+        return fontRegular
     }
 
-    @NotNull
-    public static PdfFont fontBold() {
+    fun fontBold(): PdfFont {
         // Each PDF needs its own private font objects, but they can be static as long as they are re-initialized for each report.
-        return fontBold;
+        return fontBold
     }
 
-    private static PdfFont createFont(String fontPath) {
-        return PdfFontFactory.createFont(loadFontProgram(fontPath), PdfEncodings.IDENTITY_H);
+    private fun createFont(fontPath: String): PdfFont {
+        return PdfFontFactory.createFont(loadFontProgram(fontPath), PdfEncodings.IDENTITY_H)
     }
 
-    @NotNull
-    private static FontProgram loadFontProgram(@NotNull String resourcePath) {
-        try {
-            return FontProgramFactory.createFont(resourcePath);
-        } catch (IOException exception) {
+    private fun loadFontProgram(resourcePath: String): FontProgram {
+        return try {
+            FontProgramFactory.createFont(resourcePath)
+        } catch (exception: IOException) {
             // Should never happen, fonts are loaded from code
-            throw new IllegalStateException(exception);
+            throw IllegalStateException(exception)
         }
     }
 }

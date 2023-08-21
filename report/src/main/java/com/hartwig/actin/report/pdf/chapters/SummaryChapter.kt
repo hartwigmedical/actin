@@ -1,215 +1,172 @@
-package com.hartwig.actin.report.pdf.chapters;
+package com.hartwig.actin.report.pdf.chapters
 
-import static com.hartwig.actin.report.pdf.util.Formats.STANDARD_KEY_WIDTH;
+import com.google.common.collect.Lists
+import com.google.common.collect.Sets
+import com.hartwig.actin.clinical.datamodel.TumorDetails
+import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
+import com.hartwig.actin.report.datamodel.Report
+import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
+import com.hartwig.actin.report.pdf.tables.TableGenerator
+import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenerator
+import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
+import com.hartwig.actin.report.pdf.tables.treatment.EligibleActinTrialsGenerator
+import com.hartwig.actin.report.pdf.tables.treatment.EligibleApprovedTreatmentGenerator
+import com.hartwig.actin.report.pdf.tables.treatment.EligibleExternalTrialsGenerator
+import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.Formats
+import com.hartwig.actin.report.pdf.util.Styles
+import com.hartwig.actin.report.pdf.util.Tables
+import com.itextpdf.kernel.geom.PageSize
+import com.itextpdf.layout.Document
+import com.itextpdf.layout.element.Paragraph
+import com.itextpdf.layout.element.Text
+import com.itextpdf.layout.properties.TextAlignment
+import org.apache.logging.log4j.util.Strings
 
-import java.util.List;
-import java.util.Set;
-import java.util.StringJoiner;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.hartwig.actin.clinical.datamodel.TumorDetails;
-import com.hartwig.actin.clinical.datamodel.TumorStage;
-import com.hartwig.actin.molecular.interpretation.AggregatedEvidence;
-import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory;
-import com.hartwig.actin.report.datamodel.Report;
-import com.hartwig.actin.report.interpretation.EvaluatedCohort;
-import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory;
-import com.hartwig.actin.report.pdf.tables.TableGenerator;
-import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenerator;
-import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator;
-import com.hartwig.actin.report.pdf.tables.treatment.EligibleActinTrialsGenerator;
-import com.hartwig.actin.report.pdf.tables.treatment.EligibleApprovedTreatmentGenerator;
-import com.hartwig.actin.report.pdf.tables.treatment.EligibleExternalTrialsGenerator;
-import com.hartwig.actin.report.pdf.util.Cells;
-import com.hartwig.actin.report.pdf.util.Formats;
-import com.hartwig.actin.report.pdf.util.Styles;
-import com.hartwig.actin.report.pdf.util.Tables;
-import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.element.Text;
-import com.itextpdf.layout.properties.TextAlignment;
-
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-public class SummaryChapter implements ReportChapter {
-
-    @NotNull
-    private final Report report;
-
-    public SummaryChapter(@NotNull final Report report) {
-        this.report = report;
+class SummaryChapter(private val report: Report) : ReportChapter {
+    override fun name(): String {
+        return "Summary"
     }
 
-    @NotNull
-    @Override
-    public String name() {
-        return "Summary";
+    override fun pageSize(): PageSize {
+        return PageSize.A4
     }
 
-    @NotNull
-    @Override
-    public PageSize pageSize() {
-        return PageSize.A4;
+    override fun render(document: Document) {
+        addPatientDetails(document)
+        addChapterTitle(document)
+        addSummaryTable(document)
     }
 
-    @Override
-    public void render(@NotNull Document document) {
-        addPatientDetails(document);
-        addChapterTitle(document);
-        addSummaryTable(document);
+    private fun addPatientDetails(document: Document) {
+        val patientDetailsLine = Paragraph()
+        patientDetailsLine.add(Text("Gender: ").addStyle(Styles.reportHeaderLabelStyle()))
+        patientDetailsLine.add(Text(report.clinical().patient().gender().display()).addStyle(Styles.reportHeaderValueStyle()))
+        patientDetailsLine.add(Text(" | Birth year: ").addStyle(Styles.reportHeaderLabelStyle()))
+        patientDetailsLine.add(Text(report.clinical().patient().birthYear().toString()).addStyle(Styles.reportHeaderValueStyle()))
+        patientDetailsLine.add(Text(" | WHO: ").addStyle(Styles.reportHeaderLabelStyle()))
+        patientDetailsLine.add(Text(whoStatus(report.clinical().clinicalStatus().who())).addStyle(Styles.reportHeaderValueStyle()))
+        document.add(patientDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT))
+        val tumorDetailsLine = Paragraph()
+        tumorDetailsLine.add(Text("Tumor: ").addStyle(Styles.reportHeaderLabelStyle()))
+        tumorDetailsLine.add(Text(tumor(report.clinical().tumor())).addStyle(Styles.reportHeaderValueStyle()))
+        tumorDetailsLine.add(Text(" | Lesions: ").addStyle(Styles.reportHeaderLabelStyle()))
+        tumorDetailsLine.add(Text(lesions(report.clinical().tumor())).addStyle(Styles.reportHeaderValueStyle()))
+        tumorDetailsLine.add(Text(" | Stage: ").addStyle(Styles.reportHeaderLabelStyle()))
+        tumorDetailsLine.add(Text(stage(report.clinical().tumor())).addStyle(Styles.reportHeaderValueStyle()))
+        document.add(tumorDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT))
     }
 
-    private void addPatientDetails(@NotNull Document document) {
-        Paragraph patientDetailsLine = new Paragraph();
-        patientDetailsLine.add(new Text("Gender: ").addStyle(Styles.reportHeaderLabelStyle()));
-        patientDetailsLine.add(new Text(report.clinical().patient().gender().display()).addStyle(Styles.reportHeaderValueStyle()));
-        patientDetailsLine.add(new Text(" | Birth year: ").addStyle(Styles.reportHeaderLabelStyle()));
-        patientDetailsLine.add(new Text(String.valueOf(report.clinical().patient().birthYear())).addStyle(Styles.reportHeaderValueStyle()));
-        patientDetailsLine.add(new Text(" | WHO: ").addStyle(Styles.reportHeaderLabelStyle()));
-        patientDetailsLine.add(new Text(whoStatus(report.clinical().clinicalStatus().who())).addStyle(Styles.reportHeaderValueStyle()));
-        document.add(patientDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
-
-        Paragraph tumorDetailsLine = new Paragraph();
-        tumorDetailsLine.add(new Text("Tumor: ").addStyle(Styles.reportHeaderLabelStyle()));
-        tumorDetailsLine.add(new Text(tumor(report.clinical().tumor())).addStyle(Styles.reportHeaderValueStyle()));
-        tumorDetailsLine.add(new Text(" | Lesions: ").addStyle(Styles.reportHeaderLabelStyle()));
-        tumorDetailsLine.add(new Text(lesions(report.clinical().tumor())).addStyle(Styles.reportHeaderValueStyle()));
-        tumorDetailsLine.add(new Text(" | Stage: ").addStyle(Styles.reportHeaderLabelStyle()));
-        tumorDetailsLine.add(new Text(stage(report.clinical().tumor())).addStyle(Styles.reportHeaderValueStyle()));
-        document.add(tumorDetailsLine.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT));
+    private fun addChapterTitle(document: Document) {
+        document.add(Paragraph(name()).addStyle(Styles.chapterTitleStyle()))
     }
 
-    @NotNull
-    private static String whoStatus(@Nullable Integer who) {
-        return who != null ? String.valueOf(who) : Formats.VALUE_UNKNOWN;
-    }
-
-    @NotNull
-    private static String tumor(@NotNull TumorDetails tumor) {
-        String location = tumorLocation(tumor);
-        String type = tumorType(tumor);
-
-        if (location == null || type == null) {
-            return Formats.VALUE_UNKNOWN;
-        } else {
-            return location + (!type.isEmpty() ? " - " + type : Strings.EMPTY);
-        }
-    }
-
-    @Nullable
-    private static String tumorLocation(@NotNull TumorDetails tumor) {
-        String tumorLocation = tumor.primaryTumorLocation();
-
-        if (tumorLocation != null) {
-            String tumorSubLocation = tumor.primaryTumorSubLocation();
-            return (tumorSubLocation != null && !tumorSubLocation.isEmpty())
-                    ? tumorLocation + " (" + tumorSubLocation + ")"
-                    : tumorLocation;
-        }
-
-        return null;
-    }
-
-    @Nullable
-    private static String tumorType(@NotNull TumorDetails tumor) {
-        String tumorType = tumor.primaryTumorType();
-
-        if (tumorType != null) {
-            String tumorSubType = tumor.primaryTumorSubType();
-            return (tumorSubType != null && !tumorSubType.isEmpty()) ? tumorSubType : tumorType;
-        }
-
-        return null;
-    }
-
-    @NotNull
-    private static String stage(@NotNull TumorDetails tumor) {
-        TumorStage stage = tumor.stage();
-        return stage != null ? stage.display() : Formats.VALUE_UNKNOWN;
-    }
-
-    @NotNull
-    private static String lesions(@NotNull TumorDetails tumor) {
-        Set<String> lesions = Sets.newTreeSet();
-        if (tumor.hasCnsLesions() != null && tumor.hasCnsLesions()) {
-            lesions.add("CNS");
-        }
-
-        if (tumor.hasBrainLesions() != null && tumor.hasBrainLesions()) {
-            lesions.add("Brain");
-        }
-
-        if (tumor.hasLiverLesions() != null && tumor.hasLiverLesions()) {
-            lesions.add("Liver");
-        }
-
-        if (tumor.hasBoneLesions() != null && tumor.hasBoneLesions()) {
-            lesions.add("Bone");
-        }
-
-        if (tumor.hasLungLesions() != null && tumor.hasLungLesions()) {
-            lesions.add("Lung");
-        }
-
-        if (tumor.otherLesions() != null) {
-            lesions.addAll(tumor.otherLesions());
-        }
-
-        if (tumor.biopsyLocation() != null) {
-            lesions.add(tumor.biopsyLocation());
-        }
-
-        if (lesions.isEmpty()) {
-            return Formats.VALUE_UNKNOWN;
-        } else {
-            StringJoiner joiner = Formats.commaJoiner();
-            for (String lesion : lesions) {
-                joiner.add(lesion);
-            }
-            return joiner.toString();
-        }
-    }
-
-    private void addChapterTitle(@NotNull Document document) {
-        document.add(new Paragraph(name()).addStyle(Styles.chapterTitleStyle()));
-    }
-
-    private void addSummaryTable(@NotNull Document document) {
-        Table table = Tables.createSingleColWithWidth(contentWidth());
-
-        float keyWidth = STANDARD_KEY_WIDTH;
-        float valueWidth = contentWidth() - keyWidth;
-
-        List<EvaluatedCohort> cohorts = EvaluatedCohortFactory.create(report.treatmentMatch());
-        AggregatedEvidence aggregatedEvidence = AggregatedEvidenceFactory.create(report.molecular());
-
-        List<TableGenerator> generators = Lists.newArrayList(new PatientClinicalHistoryGenerator(report.clinical(), keyWidth, valueWidth),
-                new MolecularSummaryGenerator(report.clinical(), report.molecular(), cohorts, keyWidth, valueWidth),
-                new EligibleApprovedTreatmentGenerator(report.clinical(), report.molecular(), contentWidth()),
-                EligibleActinTrialsGenerator.forOpenCohortsWithSlots(cohorts, contentWidth()),
-                EligibleActinTrialsGenerator.forOpenCohortsWithNoSlots(cohorts, contentWidth()));
-
-        if (!aggregatedEvidence.externalEligibleTrialsPerEvent().isEmpty()) {
-            generators.add(new EligibleExternalTrialsGenerator(report.molecular().externalTrialSource(),
+    private fun addSummaryTable(document: Document) {
+        val table = Tables.createSingleColWithWidth(contentWidth())
+        val keyWidth = Formats.STANDARD_KEY_WIDTH
+        val valueWidth = contentWidth() - keyWidth
+        val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch())
+        val aggregatedEvidence = AggregatedEvidenceFactory.create(report.molecular())
+        val generators: MutableList<TableGenerator> = Lists.newArrayList(
+            PatientClinicalHistoryGenerator(
+                report.clinical(), keyWidth, valueWidth
+            ),
+            MolecularSummaryGenerator(report.clinical(), report.molecular(), cohorts, keyWidth, valueWidth),
+            EligibleApprovedTreatmentGenerator(report.clinical(), report.molecular(), contentWidth()),
+            EligibleActinTrialsGenerator.Companion.forOpenCohortsWithSlots(cohorts, contentWidth()),
+            EligibleActinTrialsGenerator.Companion.forOpenCohortsWithNoSlots(cohorts, contentWidth())
+        )
+        if (!aggregatedEvidence.externalEligibleTrialsPerEvent().isEmpty) {
+            generators.add(
+                EligibleExternalTrialsGenerator(
+                    report.molecular().externalTrialSource(),
                     aggregatedEvidence.externalEligibleTrialsPerEvent(),
                     keyWidth,
-                    valueWidth));
+                    valueWidth
+                )
+            )
+        }
+        for (i in generators.indices) {
+            val generator = generators[i]
+            table.addCell(Cells.createTitle(generator.title()))
+            table.addCell(Cells.create(generator.contents()))
+            if (i < generators.size - 1) {
+                table.addCell(Cells.createEmpty())
+            }
+        }
+        document.add(table)
+    }
+
+    companion object {
+        private fun whoStatus(who: Int?): String {
+            return who?.toString() ?: Formats.VALUE_UNKNOWN
         }
 
-        for (int i = 0; i < generators.size(); i++) {
-            TableGenerator generator = generators.get(i);
-            table.addCell(Cells.createTitle(generator.title()));
-            table.addCell(Cells.create(generator.contents()));
-            if (i < generators.size() - 1) {
-                table.addCell(Cells.createEmpty());
+        private fun tumor(tumor: TumorDetails): String {
+            val location = tumorLocation(tumor)
+            val type = tumorType(tumor)
+            return if (location == null || type == null) {
+                Formats.VALUE_UNKNOWN
+            } else {
+                location + if (!type.isEmpty()) " - $type" else Strings.EMPTY
             }
         }
 
-        document.add(table);
+        private fun tumorLocation(tumor: TumorDetails): String? {
+            val tumorLocation = tumor.primaryTumorLocation()
+            if (tumorLocation != null) {
+                val tumorSubLocation = tumor.primaryTumorSubLocation()
+                return if (tumorSubLocation != null && !tumorSubLocation.isEmpty()) "$tumorLocation ($tumorSubLocation)" else tumorLocation
+            }
+            return null
+        }
+
+        private fun tumorType(tumor: TumorDetails): String? {
+            val tumorType = tumor.primaryTumorType()
+            if (tumorType != null) {
+                val tumorSubType = tumor.primaryTumorSubType()
+                return if (tumorSubType != null && !tumorSubType.isEmpty()) tumorSubType else tumorType
+            }
+            return null
+        }
+
+        private fun stage(tumor: TumorDetails): String {
+            val stage = tumor.stage()
+            return stage?.display() ?: Formats.VALUE_UNKNOWN
+        }
+
+        private fun lesions(tumor: TumorDetails): String {
+            val lesions: MutableSet<String?> = Sets.newTreeSet()
+            if (tumor.hasCnsLesions() != null && tumor.hasCnsLesions()!!) {
+                lesions.add("CNS")
+            }
+            if (tumor.hasBrainLesions() != null && tumor.hasBrainLesions()!!) {
+                lesions.add("Brain")
+            }
+            if (tumor.hasLiverLesions() != null && tumor.hasLiverLesions()!!) {
+                lesions.add("Liver")
+            }
+            if (tumor.hasBoneLesions() != null && tumor.hasBoneLesions()!!) {
+                lesions.add("Bone")
+            }
+            if (tumor.hasLungLesions() != null && tumor.hasLungLesions()!!) {
+                lesions.add("Lung")
+            }
+            if (tumor.otherLesions() != null) {
+                lesions.addAll(tumor.otherLesions()!!)
+            }
+            if (tumor.biopsyLocation() != null) {
+                lesions.add(tumor.biopsyLocation())
+            }
+            return if (lesions.isEmpty()) {
+                Formats.VALUE_UNKNOWN
+            } else {
+                val joiner = Formats.commaJoiner()
+                for (lesion in lesions) {
+                    joiner.add(lesion)
+                }
+                joiner.toString()
+            }
+        }
     }
 }

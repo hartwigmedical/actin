@@ -1,78 +1,57 @@
-package com.hartwig.actin.report.pdf;
+package com.hartwig.actin.report.pdf
 
-import com.hartwig.actin.report.pdf.components.Footer;
-import com.hartwig.actin.report.pdf.components.Header;
-import com.hartwig.actin.report.pdf.components.SidePanel;
-import com.itextpdf.kernel.events.Event;
-import com.itextpdf.kernel.events.IEventHandler;
-import com.itextpdf.kernel.events.PdfDocumentEvent;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfOutline;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.navigation.PdfExplicitRemoteGoToDestination;
+import com.hartwig.actin.report.pdf.components.Footer
+import com.hartwig.actin.report.pdf.components.Header
+import com.hartwig.actin.report.pdf.components.SidePanel
+import com.itextpdf.kernel.events.Event
+import com.itextpdf.kernel.events.IEventHandler
+import com.itextpdf.kernel.events.PdfDocumentEvent
+import com.itextpdf.kernel.pdf.PdfDocument
+import com.itextpdf.kernel.pdf.PdfOutline
+import com.itextpdf.kernel.pdf.navigation.PdfExplicitRemoteGoToDestination
 
-import org.jetbrains.annotations.NotNull;
-
-public class PageEventHandler implements IEventHandler {
-
-    @NotNull
-    private final Header header;
-    @NotNull
-    private final Footer footer;
-    @NotNull
-    private final SidePanel sidePanel;
-
-    private String chapterTitle = "Undefined";
-    private boolean firstPageOfChapter = true;
-    private PdfOutline outline = null;
-
-    @NotNull
-    static PageEventHandler create(@NotNull String patientId) {
-        return new PageEventHandler(new Header(), new Footer(), new SidePanel(patientId));
-    }
-
-    private PageEventHandler(@NotNull final Header header, @NotNull final Footer footer, @NotNull final SidePanel sidePanel) {
-        this.header = header;
-        this.footer = footer;
-        this.sidePanel = sidePanel;
-    }
-
-    @Override
-    public void handleEvent(@NotNull Event event) {
-        PdfDocumentEvent documentEvent = (PdfDocumentEvent) event;
-        if (documentEvent.getType().equals(PdfDocumentEvent.START_PAGE)) {
-            PdfPage page = documentEvent.getPage();
-
-            header.render(page);
+class PageEventHandler private constructor(private val header: Header, private val footer: Footer, private val sidePanel: SidePanel) :
+    IEventHandler {
+    private var chapterTitle = "Undefined"
+    private var firstPageOfChapter = true
+    private var outline: PdfOutline? = null
+    override fun handleEvent(event: Event) {
+        val documentEvent = event as PdfDocumentEvent
+        if (documentEvent.type == PdfDocumentEvent.START_PAGE) {
+            val page = documentEvent.page
+            header.render(page)
             if (firstPageOfChapter) {
-                firstPageOfChapter = false;
-
-                createChapterBookmark(documentEvent.getDocument(), chapterTitle);
+                firstPageOfChapter = false
+                createChapterBookmark(documentEvent.document, chapterTitle)
             }
-
-            sidePanel.render(page);
-            footer.render(page);
+            sidePanel.render(page)
+            footer.render(page)
         }
     }
 
-    void chapterTitle(@NotNull String chapterTitle) {
-        this.chapterTitle = chapterTitle;
+    fun chapterTitle(chapterTitle: String) {
+        this.chapterTitle = chapterTitle
     }
 
-    void resetChapterPageCounter() {
-        firstPageOfChapter = true;
+    fun resetChapterPageCounter() {
+        firstPageOfChapter = true
     }
 
-    void writePageCounts(@NotNull PdfDocument document) {
-        footer.writePageCounts(document);
+    fun writePageCounts(document: PdfDocument) {
+        footer.writePageCounts(document)
     }
 
-    private void createChapterBookmark(@NotNull PdfDocument pdf, @NotNull String title) {
+    private fun createChapterBookmark(pdf: PdfDocument, title: String) {
         if (outline == null) {
-            outline = pdf.getOutlines(false);
+            outline = pdf.getOutlines(false)
         }
+        val chapterItem = outline!!.addOutline(title)
+        chapterItem.addDestination(PdfExplicitRemoteGoToDestination.createFitH(pdf.numberOfPages, 0f))
+    }
 
-        PdfOutline chapterItem = outline.addOutline(title);
-        chapterItem.addDestination(PdfExplicitRemoteGoToDestination.createFitH(pdf.getNumberOfPages(), 0));
+    companion object {
+        fun create(patientId: String): PageEventHandler {
+            return PageEventHandler(Header(), Footer(), SidePanel(patientId))
+        }
     }
 }

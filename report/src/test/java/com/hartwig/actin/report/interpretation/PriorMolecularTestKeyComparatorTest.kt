@@ -1,32 +1,23 @@
-package com.hartwig.actin.report.interpretation;
+package com.hartwig.actin.report.interpretation
 
-import static org.junit.Assert.assertEquals;
+import com.google.common.collect.Lists
+import org.junit.Assert
+import org.junit.Test
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
-
-import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
-
-public class PriorMolecularTestKeyComparatorTest {
-
+class PriorMolecularTestKeyComparatorTest {
     @Test
-    public void canSortPriorMolecularTestKeys() {
-        PriorMolecularTestKey key1 = create("text 1", "test 1");
-        PriorMolecularTestKey key2 = create("text 1", "test 2");
-        PriorMolecularTestKey key3 = create("text 2", "test 1");
-
-        List<PriorMolecularTestKey> keys = Lists.newArrayList(key2, key3, key1);
-        keys.sort(new PriorMolecularTestKeyComparator());
-
-        assertEquals(key1, keys.get(0));
-        assertEquals(key2, keys.get(1));
-        assertEquals(key3, keys.get(2));
+    fun canSortPriorMolecularTestKeys() {
+        val key1 = create("text 1", "test 1")
+        val key2 = create("text 1", "test 2")
+        val key3 = create("text 2", "test 1")
+        val keys: List<PriorMolecularTestKey> = Lists.newArrayList(key2, key3, key1)
+        keys.sort(PriorMolecularTestKeyComparator())
+        Assert.assertEquals(key1, keys[0])
+        Assert.assertEquals(key2, keys[1])
+        Assert.assertEquals(key3, keys[2])
     }
 
-    @NotNull
-    private PriorMolecularTestKey create(@NotNull String scoreText, @NotNull String test) {
-        return ImmutablePriorMolecularTestKey.builder().scoreText(scoreText).test(test).build();
+    private fun create(scoreText: String, test: String): PriorMolecularTestKey {
+        return ImmutablePriorMolecularTestKey.builder().scoreText(scoreText).test(test).build()
     }
 }

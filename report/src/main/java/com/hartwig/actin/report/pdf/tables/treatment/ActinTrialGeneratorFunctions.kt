@@ -1,55 +1,70 @@
-package com.hartwig.actin.report.pdf.tables.treatment;
+package com.hartwig.actin.report.pdf.tables.treatment
 
-import static java.util.stream.Collectors.groupingBy;
+import com.hartwig.actin.report.interpretation.EvaluatedCohort
+import com.hartwig.actin.report.interpretation.EvaluatedCohortComparator
+import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.Styles
+import com.hartwig.actin.report.pdf.util.Tables
+import com.itextpdf.layout.element.Cell
+import com.itextpdf.layout.element.Paragraph
+import com.itextpdf.layout.element.Table
+import com.itextpdf.layout.element.Text
+import java.util.function.Function
+import java.util.stream.Collectors
+import java.util.stream.Stream
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
-
-import com.hartwig.actin.report.interpretation.EvaluatedCohort;
-import com.hartwig.actin.report.interpretation.EvaluatedCohortComparator;
-import com.hartwig.actin.report.pdf.util.Cells;
-import com.hartwig.actin.report.pdf.util.Styles;
-import com.hartwig.actin.report.pdf.util.Tables;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.element.Text;
-
-final class ActinTrialGeneratorFunctions {
-
-    public static Stream<List<EvaluatedCohort>> streamSortedCohorts(List<EvaluatedCohort> cohorts) {
-        cohorts.sort(new EvaluatedCohortComparator());
-        Map<String, List<EvaluatedCohort>> cohortsByTrialId = cohorts.stream().collect(groupingBy(EvaluatedCohort::trialId));
-
-        return cohorts.stream().map(EvaluatedCohort::trialId).distinct().map(cohortsByTrialId::get);
+internal object ActinTrialGeneratorFunctions {
+    fun streamSortedCohorts(cohorts: List<EvaluatedCohort?>): Stream<List<EvaluatedCohort?>> {
+        cohorts.sort(EvaluatedCohortComparator())
+        val cohortsByTrialId = cohorts.stream().collect(
+            Collectors.groupingBy(
+                Function { obj: EvaluatedCohort? -> obj!!.trialId() })
+        )
+        return cohorts.stream().map { obj: EvaluatedCohort? -> obj!!.trialId() }
+            .distinct().map { key: String -> cohortsByTrialId[key] }
     }
 
-    public static String createCohortString(EvaluatedCohort cohort) {
-        return cohort.cohort() == null ? "" : cohort.cohort();
+    fun createCohortString(cohort: EvaluatedCohort?): String {
+        return if (cohort!!.cohort() == null) "" else cohort.cohort()!!
     }
 
-    public static void addContentStreamToTable(Stream<String> cellContent, boolean deemphasizeContent, Table table) {
-        cellContent.map(text -> {
+    fun addContentStreamToTable(cellContent: Stream<String?>, deemphasizeContent: Boolean, table: Table) {
+        cellContent.map<Cell>(Function<String, Cell> { text: String ->
             if (deemphasizeContent) {
-                return Cells.createContentNoBorderDeemphasize(text);
+                return@map Cells.createContentNoBorderDeemphasize(text)
             } else {
-                return Cells.createContentNoBorder(text);
+                return@map Cells.createContentNoBorder(text)
             }
-        }).forEach(table::addCell);
+        }).forEach { cell: Cell? -> table.addCell(cell) }
     }
 
-    public static void insertTrialRow(List<EvaluatedCohort> cohortList, Table table, Table trialSubTable) {
-        if (!cohortList.isEmpty()) {
-            EvaluatedCohort cohort = cohortList.get(0);
-            table.addCell(Cells.createContent(Cells.createContentNoBorder(new Paragraph().addAll(List.of(new Text(
-                            cohort.trialId() + "\n").addStyle(Styles.tableHighlightStyle()),
-                    new Text(cohort.acronym()).addStyle(Styles.tableContentStyle()))))));
-            if (trialSubTable.getNumberOfRows() > 2) {
-                trialSubTable = Tables.makeWrapping(trialSubTable, false);
+    fun insertTrialRow(cohortList: List<EvaluatedCohort?>?, table: Table, trialSubTable: Table) {
+        var trialSubTable = trialSubTable
+        if (!cohortList!!.isEmpty()) {
+            val cohort = cohortList[0]
+            table.addCell(
+                createContent(
+                    Cells.createContentNoBorder(
+                        Paragraph().addAll(
+                            java.util.List.of(
+                                Text(
+                                    """
+                    ${cohort!!.trialId()}
+                    
+                    """.trimIndent()
+                                ).addStyle(Styles.tableHighlightStyle()),
+                                Text(cohort.acronym()).addStyle(Styles.tableContentStyle())
+                            )
+                        )
+                    )
+                )
+            )
+            if (trialSubTable.numberOfRows > 2) {
+                trialSubTable = Tables.makeWrapping(trialSubTable, false)
             } else {
-                trialSubTable.setKeepTogether(true);
+                trialSubTable.setKeepTogether(true)
             }
-            table.addCell(Cells.createContent(trialSubTable));
+            table.addCell(createContent(trialSubTable))
         }
     }
 }

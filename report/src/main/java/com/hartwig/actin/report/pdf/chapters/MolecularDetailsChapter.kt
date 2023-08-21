@@ -1,95 +1,78 @@
-package com.hartwig.actin.report.pdf.chapters;
+package com.hartwig.actin.report.pdf.chapters
 
-import static com.hartwig.actin.report.pdf.util.Formats.STANDARD_KEY_WIDTH;
+import com.google.common.collect.Lists
+import com.hartwig.actin.report.datamodel.Report
+import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
+import com.hartwig.actin.report.pdf.tables.TableGenerator
+import com.hartwig.actin.report.pdf.tables.molecular.MolecularCharacteristicsGenerator
+import com.hartwig.actin.report.pdf.tables.molecular.MolecularDriversGenerator
+import com.hartwig.actin.report.pdf.tables.molecular.PredictedTumorOriginGenerator
+import com.hartwig.actin.report.pdf.tables.molecular.PriorMolecularResultGenerator
+import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.Formats
+import com.hartwig.actin.report.pdf.util.Styles
+import com.hartwig.actin.report.pdf.util.Tables
+import com.itextpdf.kernel.geom.PageSize
+import com.itextpdf.layout.Document
+import com.itextpdf.layout.borders.Border
+import com.itextpdf.layout.element.Paragraph
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
-import com.hartwig.actin.report.datamodel.Report;
-import com.hartwig.actin.report.interpretation.EvaluatedCohort;
-import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory;
-import com.hartwig.actin.report.pdf.tables.TableGenerator;
-import com.hartwig.actin.report.pdf.tables.molecular.MolecularCharacteristicsGenerator;
-import com.hartwig.actin.report.pdf.tables.molecular.MolecularDriversGenerator;
-import com.hartwig.actin.report.pdf.tables.molecular.PredictedTumorOriginGenerator;
-import com.hartwig.actin.report.pdf.tables.molecular.PriorMolecularResultGenerator;
-import com.hartwig.actin.report.pdf.util.Cells;
-import com.hartwig.actin.report.pdf.util.Formats;
-import com.hartwig.actin.report.pdf.util.Styles;
-import com.hartwig.actin.report.pdf.util.Tables;
-import com.itextpdf.kernel.geom.PageSize;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.borders.Border;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Table;
-
-import org.jetbrains.annotations.NotNull;
-
-public class MolecularDetailsChapter implements ReportChapter {
-
-    @NotNull
-    private final Report report;
-
-    public MolecularDetailsChapter(@NotNull final Report report) {
-        this.report = report;
+class MolecularDetailsChapter(private val report: Report) : ReportChapter {
+    override fun name(): String {
+        return "Molecular Details"
     }
 
-    @NotNull
-    @Override
-    public String name() {
-        return "Molecular Details";
+    override fun pageSize(): PageSize {
+        return PageSize.A4.rotate()
     }
 
-    @NotNull
-    @Override
-    public PageSize pageSize() {
-        return PageSize.A4.rotate();
+    override fun render(document: Document) {
+        addChapterTitle(document)
+        addMolecularDetails(document)
     }
 
-    @Override
-    public void render(@NotNull final Document document) {
-        addChapterTitle(document);
-        addMolecularDetails(document);
+    private fun addChapterTitle(document: Document) {
+        document.add(Paragraph(name()).addStyle(Styles.chapterTitleStyle()))
     }
 
-    private void addChapterTitle(@NotNull Document document) {
-        document.add(new Paragraph(name()).addStyle(Styles.chapterTitleStyle()));
-    }
-
-    private void addMolecularDetails(@NotNull Document document) {
-        float keyWidth = STANDARD_KEY_WIDTH;
-        PriorMolecularResultGenerator priorMolecularResultGenerator =
-                new PriorMolecularResultGenerator(report.clinical(), keyWidth, contentWidth() - keyWidth - 10);
-        Table priorMolecularResults = priorMolecularResultGenerator.contents().setBorder(Border.NO_BORDER);
-        document.add(priorMolecularResults);
-
-        Table table = Tables.createSingleColWithWidth(contentWidth());
-
-        table.addCell(Cells.createEmpty());
-        table.addCell(Cells.createTitle(String.format("%s (%s, %s)",
-                report.molecular().type(),
-                report.molecular().sampleId(),
-                Formats.date(report.molecular().date()))));
-        List<EvaluatedCohort> cohorts = EvaluatedCohortFactory.create(report.treatmentMatch());
-        List<TableGenerator> generators = Lists.newArrayList(new MolecularCharacteristicsGenerator(report.molecular(), contentWidth()));
+    private fun addMolecularDetails(document: Document) {
+        val keyWidth = Formats.STANDARD_KEY_WIDTH
+        val priorMolecularResultGenerator = PriorMolecularResultGenerator(report.clinical(), keyWidth, contentWidth() - keyWidth - 10)
+        val priorMolecularResults = priorMolecularResultGenerator.contents().setBorder(Border.NO_BORDER)
+        document.add(priorMolecularResults)
+        val table = Tables.createSingleColWithWidth(contentWidth())
+        table.addCell(Cells.createEmpty())
+        table.addCell(
+            Cells.createTitle(
+                String.format(
+                    "%s (%s, %s)",
+                    report.molecular().type(),
+                    report.molecular().sampleId(),
+                    date(report.molecular().date())
+                )
+            )
+        )
+        val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch())
+        val generators: MutableList<TableGenerator> = Lists.newArrayList(
+            MolecularCharacteristicsGenerator(
+                report.molecular(), contentWidth()
+            )
+        )
         if (report.molecular().containsTumorCells()) {
-            generators.add(new PredictedTumorOriginGenerator(report.molecular(), contentWidth()));
-            generators.add(new MolecularDriversGenerator(report.molecular(), cohorts, contentWidth()));
+            generators.add(PredictedTumorOriginGenerator(report.molecular(), contentWidth()))
+            generators.add(MolecularDriversGenerator(report.molecular(), cohorts, contentWidth()))
         }
-
-        for (int i = 0; i < generators.size(); i++) {
-            TableGenerator generator = generators.get(i);
-            table.addCell(Cells.createSubTitle(generator.title()));
-            table.addCell(Cells.create(generator.contents()));
-            if (i < generators.size() - 1) {
-                table.addCell(Cells.createEmpty());
+        for (i in generators.indices) {
+            val generator = generators[i]
+            table.addCell(Cells.createSubTitle(generator.title()))
+            table.addCell(Cells.create(generator.contents()))
+            if (i < generators.size - 1) {
+                table.addCell(Cells.createEmpty())
             }
         }
-
         if (!report.molecular().containsTumorCells()) {
-            table.addCell(Cells.createContent("No successful WGS could be performed on the submitted biopsy"));
+            table.addCell(Cells.createContent("No successful WGS could be performed on the submitted biopsy"))
         }
-
-        document.add(table);
+        document.add(table)
     }
 }

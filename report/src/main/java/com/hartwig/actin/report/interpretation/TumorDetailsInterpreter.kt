@@ -1,21 +1,13 @@
-package com.hartwig.actin.report.interpretation;
+package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.clinical.datamodel.TumorDetails;
+import com.hartwig.actin.clinical.datamodel.TumorDetails
 
-import org.jetbrains.annotations.NotNull;
-
-public final class TumorDetailsInterpreter {
-
-    static final String CUP_LOCATION = "Unknown";
-    static final String CUP_SUB_LOCATION = "CUP";
-
-    private TumorDetailsInterpreter() {
-    }
-
-    public static boolean isCUP(@NotNull TumorDetails tumor) {
-        String location = tumor.primaryTumorLocation();
-        String subLocation = tumor.primaryTumorSubLocation();
-
-        return location != null && subLocation != null && location.equals(CUP_LOCATION) && subLocation.equals(CUP_SUB_LOCATION);
+object TumorDetailsInterpreter {
+    const val CUP_LOCATION = "Unknown"
+    const val CUP_SUB_LOCATION = "CUP"
+    fun isCUP(tumor: TumorDetails): Boolean {
+        val location = tumor.primaryTumorLocation()
+        val subLocation = tumor.primaryTumorSubLocation()
+        return location != null && subLocation != null && location == CUP_LOCATION && subLocation == CUP_SUB_LOCATION
     }
 }

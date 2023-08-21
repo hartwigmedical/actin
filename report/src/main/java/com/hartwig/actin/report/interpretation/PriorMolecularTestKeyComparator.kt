@@ -1,18 +1,10 @@
-package com.hartwig.actin.report.interpretation;
+package com.hartwig.actin.report.interpretation
 
-import java.util.Comparator;
-
-import org.jetbrains.annotations.NotNull;
-
-public class PriorMolecularTestKeyComparator implements Comparator<PriorMolecularTestKey> {
-
-    @Override
-    public int compare(@NotNull PriorMolecularTestKey key1, @NotNull PriorMolecularTestKey key2) {
-        int scoreTextCompare = key1.scoreText().compareTo(key2.scoreText());
-        if (scoreTextCompare != 0) {
-            return scoreTextCompare;
-        }
-
-        return key1.test().compareTo(key2.test());
+class PriorMolecularTestKeyComparator : Comparator<PriorMolecularTestKey> {
+    override fun compare(key1: PriorMolecularTestKey, key2: PriorMolecularTestKey): Int {
+        val scoreTextCompare = key1.scoreText().compareTo(key2.scoreText())
+        return if (scoreTextCompare != 0) {
+            scoreTextCompare
+        } else key1.test().compareTo(key2.test())
     }
 }

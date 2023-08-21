@@ -1,17 +1,14 @@
-package com.hartwig.actin.report.interpretation;
+package com.hartwig.actin.report.interpretation
 
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
+import org.apache.logging.log4j.util.Strings
 
-public final class EvaluatedCohortTestFactory {
-
-    @NotNull
-    public static ImmutableEvaluatedCohort.Builder builder() {
+object EvaluatedCohortTestFactory {
+    fun builder(): ImmutableEvaluatedCohort.Builder {
         return ImmutableEvaluatedCohort.builder()
-                .trialId(Strings.EMPTY)
-                .acronym(Strings.EMPTY)
-                .isPotentiallyEligible(false)
-                .isOpen(false)
-                .hasSlotsAvailable(false);
+            .trialId(Strings.EMPTY)
+            .acronym(Strings.EMPTY)
+            .isPotentiallyEligible(false)
+            .isOpen(false)
+            .hasSlotsAvailable(false)
     }
 }

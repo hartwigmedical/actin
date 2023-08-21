@@ -1,229 +1,185 @@
-package com.hartwig.actin.report.pdf.util;
+package com.hartwig.actin.report.pdf.util
 
-import java.util.List;
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.itextpdf.kernel.geom.Rectangle
+import com.itextpdf.kernel.pdf.PdfArray
+import com.itextpdf.kernel.pdf.action.PdfAction
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation
+import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation
+import com.itextpdf.layout.Style
+import com.itextpdf.layout.borders.Border
+import com.itextpdf.layout.borders.SolidBorder
+import com.itextpdf.layout.element.Cell
+import com.itextpdf.layout.element.IBlockElement
+import com.itextpdf.layout.element.Link
+import com.itextpdf.layout.element.Paragraph
+import com.itextpdf.layout.element.Table
+import org.apache.logging.log4j.util.Strings
 
-import com.hartwig.actin.algo.datamodel.Evaluation;
-import com.hartwig.actin.algo.datamodel.EvaluationResult;
-import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.action.PdfAction;
-import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
-import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
-import com.itextpdf.layout.Style;
-import com.itextpdf.layout.borders.Border;
-import com.itextpdf.layout.borders.SolidBorder;
-import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.element.IBlockElement;
-import com.itextpdf.layout.element.Link;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Table;
-
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-public final class Cells {
-
-    @NotNull
-    public static Cell create(@Nullable IBlockElement element) {
-        return create(element, 1, 1);
+object Cells {
+    fun create(element: IBlockElement?): Cell {
+        return create(element, 1, 1)
     }
 
-    @NotNull
-    public static Cell createEmpty() {
-        return create(new Paragraph(Strings.EMPTY));
+    fun createEmpty(): Cell {
+        return create(Paragraph(Strings.EMPTY))
     }
 
-    @NotNull
-    public static Cell createSpanningNoneEntry(@NotNull Table table) {
-        return createSpanningEntry("None", table);
+    fun createSpanningNoneEntry(table: Table): Cell {
+        return createSpanningEntry("None", table)
     }
 
-    @NotNull
-    public static Cell createSpanningEntry(@NotNull String text, @NotNull Table table) {
-        Cell cell = create(new Paragraph(text), 1, table.getNumberOfColumns());
-        cell.addStyle(Styles.tableContentStyle());
-        return cell;
+    fun createSpanningEntry(text: String, table: Table): Cell {
+        val cell = create(Paragraph(text), 1, table.numberOfColumns)
+        cell.addStyle(Styles.tableContentStyle())
+        return cell
     }
 
-    @NotNull
-    public static Cell createSpanningTitle(@NotNull String text, @NotNull Table table) {
-        Cell cell = create(new Paragraph(text), 1, table.getNumberOfColumns());
-        cell.addStyle(Styles.tableTitleStyle());
-        return cell;
+    fun createSpanningTitle(text: String, table: Table): Cell {
+        val cell = create(Paragraph(text), 1, table.numberOfColumns)
+        cell.addStyle(Styles.tableTitleStyle())
+        return cell
     }
 
-    @NotNull
-    public static Cell createTitle(@NotNull String text) {
-        Cell cell = create(new Paragraph(text));
-        cell.addStyle(Styles.tableTitleStyle());
-        return cell;
+    fun createTitle(text: String): Cell {
+        val cell = create(Paragraph(text))
+        cell.addStyle(Styles.tableTitleStyle())
+        return cell
     }
 
-    @NotNull
-    public static Cell createSubTitle(@NotNull String text) {
-        Cell cell = create(new Paragraph(text));
-        cell.addStyle(Styles.tableSubTitleStyle());
-        return cell;
+    fun createSubTitle(text: String): Cell {
+        val cell = create(Paragraph(text))
+        cell.addStyle(Styles.tableSubTitleStyle())
+        return cell
     }
 
-    @SuppressWarnings("unused")
-    @NotNull
-    public static Cell createHeaderTest(@NotNull String text) {
+    @Suppress("unused")
+    fun createHeaderTest(text: String): Cell {
         // TODO (ACTIN-33) Clean up or actually use.
-        PdfLinkAnnotation la1 =
-                (PdfLinkAnnotation) new PdfLinkAnnotation(new Rectangle(0, 0, 0, 0)).setHighlightMode(PdfAnnotation.HIGHLIGHT_NONE)
-                        .setAction(PdfAction.createJavaScript("app.alert('These are all trials!!')"))
-                        .setBorder(new PdfArray(new int[] { 0, 0, 0 }));
-
-        Link link = new Link(text, la1);
-
-        Cell cell = create(new Paragraph(Strings.EMPTY).add(link));
-        cell.addStyle(Styles.tableHeaderStyle());
-        return cell;
+        val la1 = PdfLinkAnnotation(Rectangle(0f, 0f, 0f, 0f)).setHighlightMode(PdfAnnotation.HIGHLIGHT_NONE)
+            .setAction(PdfAction.createJavaScript("app.alert('These are all trials!!')"))
+            .setBorder(PdfArray(intArrayOf(0, 0, 0))) as PdfLinkAnnotation
+        val link = Link(text, la1)
+        val cell = create(Paragraph(Strings.EMPTY).add(link))
+        cell.addStyle(Styles.tableHeaderStyle())
+        return cell
     }
 
-    @NotNull
-    public static Cell createHeader(@NotNull String text) {
-        Cell cell = create(new Paragraph(text));
-        cell.addStyle(Styles.tableHeaderStyle());
-        return cell;
+    fun createHeader(text: String): Cell {
+        val cell = create(Paragraph(text))
+        cell.addStyle(Styles.tableHeaderStyle())
+        return cell
     }
 
-    @NotNull
-    public static Cell createSpanningSubNote(@NotNull String text, @NotNull Table table) {
-        Cell cell = create(new Paragraph(text), 1, table.getNumberOfColumns());
-        cell.addStyle(Styles.tableSubStyle());
-        return cell;
+    fun createSpanningSubNote(text: String, table: Table): Cell {
+        val cell = create(Paragraph(text), 1, table.numberOfColumns)
+        cell.addStyle(Styles.tableSubStyle())
+        return cell
     }
 
-    @NotNull
-    public static Cell createSubNote(@NotNull String text) {
-        Cell cell = create(new Paragraph(text));
-        cell.addStyle(Styles.tableSubStyle());
-        return cell;
+    fun createSubNote(text: String): Cell {
+        val cell = create(Paragraph(text))
+        cell.addStyle(Styles.tableSubStyle())
+        return cell
     }
 
-    @NotNull
-    public static Cell createContent(@NotNull IBlockElement element) {
-        return createContent(element, Styles.tableContentStyle());
+    @JvmOverloads
+    fun createContent(element: IBlockElement, style: Style? = Styles.tableContentStyle()): Cell {
+        val cell = create(element)
+        cell.addStyle(style)
+        cell.setBorderTop(SolidBorder(Styles.PALETTE_MID_GREY, 0.25f))
+        return cell
     }
 
-    @NotNull
-    public static Cell createContent(@NotNull IBlockElement element, Style style) {
-        Cell cell = create(element);
-        cell.addStyle(style);
-        cell.setBorderTop(new SolidBorder(Styles.PALETTE_MID_GREY, 0.25F));
-        return cell;
+    fun createContent(text: String): Cell {
+        return createContent(Paragraph(text))
     }
 
-    @NotNull
-    public static Cell createContent(@NotNull String text) {
-        return createContent(new Paragraph(text));
+    fun createContentBold(text: String): Cell {
+        return createContent(Paragraph(text), Styles.tableHighlightStyle())
     }
 
-    @NotNull
-    public static Cell createContentBold(@NotNull String text) {
-        return createContent(new Paragraph(text), Styles.tableHighlightStyle());
+    fun createContentNoBorder(text: String): Cell {
+        return createContentNoBorder(Paragraph(text))
     }
 
-    @NotNull
-    public static Cell createContentNoBorder(@NotNull String text) {
-        return createContentNoBorder(new Paragraph(text));
+    fun createContentNoBorder(element: IBlockElement): Cell {
+        val cell = create(element)
+        cell.addStyle(Styles.tableContentStyle())
+        return cell
     }
 
-    @NotNull
-    public static Cell createContentNoBorder(@NotNull IBlockElement element) {
-        Cell cell = create(element);
-        cell.addStyle(Styles.tableContentStyle());
-        return cell;
+    fun createContentNoBorderDeemphasize(text: String): Cell {
+        return createContentNoBorderDeemphasize(Paragraph(text))
     }
 
-    @NotNull
-    public static Cell createContentNoBorderDeemphasize(@NotNull String text) {
-        return createContentNoBorderDeemphasize(new Paragraph(text));
+    fun createContentNoBorderDeemphasize(element: IBlockElement): Cell {
+        val cell = createContentNoBorder(element)
+        cell.setFontColor(Styles.PALETTE_MID_GREY)
+        return cell
     }
 
-    @NotNull
-    public static Cell createContentNoBorderDeemphasize(@NotNull IBlockElement element) {
-        Cell cell = createContentNoBorder(element);
-        cell.setFontColor(Styles.PALETTE_MID_GREY);
-        return cell;
+    fun createContentWarn(text: String): Cell {
+        val cell = createContent(text)
+        cell.setFontColor(Styles.PALETTE_WARN)
+        return cell
     }
 
-    @NotNull
-    public static Cell createContentWarn(@NotNull String text) {
-        Cell cell = createContent(text);
-        cell.setFontColor(Styles.PALETTE_WARN);
-        return cell;
+    fun createContentYesNo(yesNo: String): Cell {
+        val cell = createContent(yesNo)
+        cell.setFontColor(Formats.fontColorForYesNo(yesNo))
+        return cell
     }
 
-    @NotNull
-    public static Cell createContentYesNo(@NotNull String yesNo) {
-        Cell cell = createContent(yesNo);
-        cell.setFontColor(Formats.fontColorForYesNo(yesNo));
-        return cell;
+    fun createKey(text: String): Cell {
+        val cell = create(Paragraph(text))
+        cell.addStyle(Styles.tableKeyStyle())
+        return cell
     }
 
-    @NotNull
-    public static Cell createKey(@NotNull String text) {
-        Cell cell = create(new Paragraph(text));
-        cell.addStyle(Styles.tableKeyStyle());
-        return cell;
+    fun createValue(text: String): Cell {
+        val cell = create(Paragraph(text))
+        cell.addStyle(Formats.styleForTableValue(text))
+        return cell
     }
 
-    @NotNull
-    public static Cell createValue(@NotNull String text) {
-        Cell cell = create(new Paragraph(text));
-        cell.addStyle(Formats.styleForTableValue(text));
-        return cell;
-    }
-
-    @NotNull
-    public static Cell createValue(@NotNull List<Paragraph> paragraphs) {
-        Cell cell = create(null);
-        for (Paragraph paragraph : paragraphs) {
-            cell.add(paragraph);
+    fun createValue(paragraphs: List<Paragraph?>): Cell {
+        val cell = create(null)
+        for (paragraph in paragraphs) {
+            cell.add(paragraph)
         }
-        cell.addStyle(Styles.tableHighlightStyle());
-        return cell;
+        cell.addStyle(Styles.tableHighlightStyle())
+        return cell
     }
 
-    @NotNull
-    public static Cell createValueYesNo(@NotNull String yesNo) {
-        Cell cell = createValue(yesNo);
-        cell.setFontColor(Formats.fontColorForYesNo(yesNo));
-        return cell;
+    fun createValueYesNo(yesNo: String): Cell {
+        val cell = createValue(yesNo)
+        cell.setFontColor(Formats.fontColorForYesNo(yesNo))
+        return cell
     }
 
-    @NotNull
-    public static Cell createEvaluation(@NotNull Evaluation evaluation) {
-        return createEvaluationResult(evaluation.result(), evaluation.recoverable());
+    fun createEvaluation(evaluation: Evaluation): Cell {
+        return createEvaluationResult(evaluation.result(), evaluation.recoverable())
     }
 
-    @NotNull
-    public static Cell createEvaluationResult(@NotNull EvaluationResult result) {
-        return createEvaluationResult(result, false);
-    }
-
-    @NotNull
-    public static Cell createEvaluationResult(@NotNull EvaluationResult result, boolean recoverable) {
-        String addon = Strings.EMPTY;
+    @JvmOverloads
+    fun createEvaluationResult(result: EvaluationResult, recoverable: Boolean = false): Cell {
+        var addon = Strings.EMPTY
         if (result == EvaluationResult.FAIL && recoverable) {
-            addon = " (potentially recoverable)";
+            addon = " (potentially recoverable)"
         }
-        Cell cell = create(new Paragraph(result + addon));
-        cell.setFontColor(Formats.fontColorForEvaluation(result));
-        return cell;
+        val cell = create(Paragraph(result.toString() + addon))
+        cell.setFontColor(Formats.fontColorForEvaluation(result))
+        return cell
     }
 
-    @NotNull
-    private static Cell create(@Nullable IBlockElement element, int rows, int cols) {
-        Cell cell = new Cell(rows, cols);
-        cell.setBorder(Border.NO_BORDER);
+    private fun create(element: IBlockElement?, rows: Int, cols: Int): Cell {
+        val cell = Cell(rows, cols)
+        cell.setBorder(Border.NO_BORDER)
         if (element != null) {
-            cell.add(element);
+            cell.add(element)
         }
-        return cell;
+        return cell
     }
 }

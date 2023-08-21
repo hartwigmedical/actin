@@ -1,16 +1,15 @@
-package com.hartwig.actin.report.pdf.util;
+package com.hartwig.actin.report.pdf.util
 
-import static org.junit.Assert.assertEquals;
+import com.hartwig.actin.report.pdf.util.Formats.twoDigitNumber
+import org.junit.Assert
+import org.junit.Test
 
-import org.junit.Test;
-
-public class FormatsTest {
-
+class FormatsTest {
     @Test
-    public void canFormatNumbers() {
-        assertEquals("2.12", Formats.twoDigitNumber(2.123));
-        assertEquals("2.12", Formats.twoDigitNumber(2.12));
-        assertEquals("2.1", Formats.twoDigitNumber(2.1));
-        assertEquals("2", Formats.twoDigitNumber(2.0));
+    fun canFormatNumbers() {
+        Assert.assertEquals("2.12", twoDigitNumber(2.123))
+        Assert.assertEquals("2.12", twoDigitNumber(2.12))
+        Assert.assertEquals("2.1", twoDigitNumber(2.1))
+        Assert.assertEquals("2", twoDigitNumber(2.0))
     }
 }

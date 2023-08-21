@@ -1,81 +1,68 @@
-package com.hartwig.actin.report.pdf.components;
+package com.hartwig.actin.report.pdf.components
 
-import com.hartwig.actin.report.pdf.util.Constants;
-import com.hartwig.actin.report.pdf.util.Formats;
-import com.hartwig.actin.report.pdf.util.Styles;
-import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.layout.Canvas;
-import com.itextpdf.layout.element.Div;
-import com.itextpdf.layout.element.Paragraph;
+import com.hartwig.actin.report.pdf.util.Constants
+import com.hartwig.actin.report.pdf.util.Styles
+import com.itextpdf.kernel.font.PdfFont
+import com.itextpdf.kernel.geom.Rectangle
+import com.itextpdf.kernel.pdf.PdfPage
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas
+import com.itextpdf.layout.Canvas
+import com.itextpdf.layout.element.Div
+import com.itextpdf.layout.element.Paragraph
+import java.util.*
 
-import org.jetbrains.annotations.NotNull;
-
-public class SidePanel {
-
-    private static final float ROW_SPACING = 35;
-    private static final float VALUE_TEXT_Y_OFFSET = 18;
-    private static final float MAX_WIDTH = 120;
-
-    private static final float RECTANGLE_WIDTH = 170;
-    private static final float RECTANGLE_HEIGHT = 84;
-
-    @NotNull
-    private final String patientId;
-
-    public SidePanel(@NotNull final String patientId) {
-        this.patientId = patientId;
+class SidePanel(private val patientId: String) {
+    fun render(page: PdfPage) {
+        val canvas = PdfCanvas(page.lastContentStream, page.resources, page.document)
+        val pageSize = page.pageSize
+        canvas.rectangle(pageSize.width.toDouble(), pageSize.height.toDouble(), -RECTANGLE_WIDTH.toDouble(), -RECTANGLE_HEIGHT.toDouble())
+        canvas.setFillColor(Styles.PALETTE_BLUE)
+        canvas.fill()
+        var sideTextIndex = 0
+        val cv = Canvas(canvas, page.pageSize)
+        cv.add(createDiv(pageSize, ++sideTextIndex, "Patient", patientId))
+        cv.add(createDiv(pageSize, ++sideTextIndex, "Report Date", date(Constants.REPORT_DATE)))
+        canvas.release()
     }
 
-    public void render(@NotNull PdfPage page) {
-        PdfCanvas canvas = new PdfCanvas(page.getLastContentStream(), page.getResources(), page.getDocument());
-        Rectangle pageSize = page.getPageSize();
-        canvas.rectangle(pageSize.getWidth(), pageSize.getHeight(), -RECTANGLE_WIDTH, -RECTANGLE_HEIGHT);
-        canvas.setFillColor(Styles.PALETTE_BLUE);
-        canvas.fill();
-
-        int sideTextIndex = 0;
-        Canvas cv = new Canvas(canvas, page.getPageSize());
-
-        cv.add(createDiv(pageSize, ++sideTextIndex, "Patient", patientId));
-        cv.add(createDiv(pageSize, ++sideTextIndex, "Report Date", Formats.date(Constants.REPORT_DATE)));
-
-        canvas.release();
-    }
-
-    @NotNull
-    private static Div createDiv(@NotNull Rectangle pageSize, int index, @NotNull String label, @NotNull String value) {
-        Div div = new Div();
-        div.setKeepTogether(true);
-
-        float yPos = (pageSize.getHeight() + 15) - index * ROW_SPACING;
-        float xPos = pageSize.getWidth() - RECTANGLE_WIDTH + 15;
-
-        div.add(new Paragraph(label.toUpperCase()).addStyle(Styles.sidePanelLabelStyle()).setFixedPosition(xPos, yPos, MAX_WIDTH));
-
-        float valueFontSize = maxPointSizeForWidth(Styles.fontBold(), 10, 6, value, MAX_WIDTH);
-        yPos -= VALUE_TEXT_Y_OFFSET;
-        div.add(new Paragraph(value).addStyle(Styles.sidePanelValueStyle().setFontSize(valueFontSize))
-                .setHeight(15)
-                .setFixedPosition(xPos, yPos, MAX_WIDTH)
-                .setFixedLeading(valueFontSize));
-
-        return div;
-    }
-
-    private static float maxPointSizeForWidth(@NotNull PdfFont font, float initialFontSize, float minFontSize, @NotNull String text,
-            float maxWidth) {
-        float fontIncrement = 0.1F;
-
-        float fontSize = initialFontSize;
-        float width = font.getWidth(text, initialFontSize);
-        while (width > maxWidth && fontSize > minFontSize) {
-            fontSize -= fontIncrement;
-            width = font.getWidth(text, fontSize);
+    companion object {
+        private const val ROW_SPACING = 35f
+        private const val VALUE_TEXT_Y_OFFSET = 18f
+        private const val MAX_WIDTH = 120f
+        private const val RECTANGLE_WIDTH = 170f
+        private const val RECTANGLE_HEIGHT = 84f
+        private fun createDiv(pageSize: Rectangle, index: Int, label: String, value: String): Div {
+            val div = Div()
+            div.isKeepTogether = true
+            var yPos = pageSize.height + 15 - index * ROW_SPACING
+            val xPos = pageSize.width - RECTANGLE_WIDTH + 15
+            div.add(
+                Paragraph(label.uppercase(Locale.getDefault())).addStyle(Styles.sidePanelLabelStyle())
+                    .setFixedPosition(xPos, yPos, MAX_WIDTH)
+            )
+            val valueFontSize = maxPointSizeForWidth(Styles.fontBold(), 10f, 6f, value, MAX_WIDTH)
+            yPos -= VALUE_TEXT_Y_OFFSET
+            div.add(
+                Paragraph(value).addStyle(Styles.sidePanelValueStyle().setFontSize(valueFontSize))
+                    .setHeight(15f)
+                    .setFixedPosition(xPos, yPos, MAX_WIDTH)
+                    .setFixedLeading(valueFontSize)
+            )
+            return div
         }
 
-        return fontSize;
+        private fun maxPointSizeForWidth(
+            font: PdfFont, initialFontSize: Float, minFontSize: Float, text: String,
+            maxWidth: Float
+        ): Float {
+            val fontIncrement = 0.1f
+            var fontSize = initialFontSize
+            var width = font.getWidth(text, initialFontSize)
+            while (width > maxWidth && fontSize > minFontSize) {
+                fontSize -= fontIncrement
+                width = font.getWidth(text, fontSize)
+            }
+            return fontSize
+        }
     }
 }

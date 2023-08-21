@@ -1,81 +1,85 @@
-package com.hartwig.actin.report.interpretation;
+package com.hartwig.actin.report.interpretation
 
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Stream;
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.driver.Driver
+import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.driver.Fusion
+import com.hartwig.actin.molecular.datamodel.driver.GeneAlteration
+import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers
+import com.hartwig.actin.molecular.datamodel.driver.Virus
+import java.util.stream.Stream
 
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType;
-import com.hartwig.actin.molecular.datamodel.driver.Driver;
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
-import com.hartwig.actin.molecular.datamodel.driver.GeneAlteration;
-import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
-
-public class MolecularDriversSummarizer {
-
-    private final MolecularDrivers molecularDrivers;
-    private final EvaluatedCohortsInterpreter evaluatedCohortsInterpreter;
-
-    private MolecularDriversSummarizer(MolecularDrivers molecularDrivers, EvaluatedCohortsInterpreter evaluatedCohortsInterpreter) {
-        this.molecularDrivers = molecularDrivers;
-        this.evaluatedCohortsInterpreter = evaluatedCohortsInterpreter;
+class MolecularDriversSummarizer private constructor(
+    private val molecularDrivers: MolecularDrivers,
+    private val evaluatedCohortsInterpreter: EvaluatedCohortsInterpreter
+) {
+    fun keyGenesWithVariants(): Stream<String> {
+        return keyGenesForAlterations(
+            molecularDrivers.variants().stream()
+        )
     }
 
-    public static MolecularDriversSummarizer fromMolecularDriversAndEvaluatedCohorts(MolecularDrivers molecularDrivers,
-            List<EvaluatedCohort> cohorts) {
-        return new MolecularDriversSummarizer(molecularDrivers, new EvaluatedCohortsInterpreter(cohorts));
-    }
-
-    public Stream<String> keyGenesWithVariants() {
-        return keyGenesForAlterations(molecularDrivers.variants().stream());
-    }
-
-    public Stream<String> keyAmplifiedGenes() {
+    fun keyAmplifiedGenes(): Stream<String> {
         return molecularDrivers.copyNumbers()
-                .stream()
-                .filter(copyNumber -> copyNumber.type().isGain())
-                .filter(MolecularDriversSummarizer::isKeyDriver)
-                .map(amp -> amp.gene() + (amp.type().equals(CopyNumberType.PARTIAL_GAIN) ? " (partial)" : ""))
-                .distinct();
+            .stream()
+            .filter { copyNumber: CopyNumber -> copyNumber.type().isGain }
+            .filter { driver: CopyNumber -> isKeyDriver(driver) }
+            .map { amp: CopyNumber -> amp.gene() + if (amp.type() == CopyNumberType.PARTIAL_GAIN) " (partial)" else "" }
+            .distinct()
     }
 
-    public Stream<String> keyDeletedGenes() {
-        return keyGenesForAlterations(molecularDrivers.copyNumbers().stream().filter(copyNumber -> copyNumber.type().isLoss()));
+    fun keyDeletedGenes(): Stream<String> {
+        return keyGenesForAlterations(molecularDrivers.copyNumbers().stream().filter { copyNumber: CopyNumber -> copyNumber.type().isLoss })
     }
 
-    public Stream<String> keyHomozygouslyDisruptedGenes() {
-        return keyGenesForAlterations(molecularDrivers.homozygousDisruptions().stream());
+    fun keyHomozygouslyDisruptedGenes(): Stream<String> {
+        return keyGenesForAlterations(molecularDrivers.homozygousDisruptions().stream())
     }
 
-    public Stream<String> keyFusionEvents() {
-        return molecularDrivers.fusions().stream().filter(MolecularDriversSummarizer::isKeyDriver).map(Driver::event).distinct();
+    fun keyFusionEvents(): Stream<String> {
+        return molecularDrivers.fusions().stream().filter { driver: Fusion -> isKeyDriver(driver) }
+            .map { obj: Fusion -> obj.event() }.distinct()
     }
 
-    public Stream<String> keyVirusEvents() {
+    fun keyVirusEvents(): Stream<String> {
         return molecularDrivers.viruses()
-                .stream()
-                .filter(MolecularDriversSummarizer::isKeyDriver)
-                .map(virus -> String.format("%s (%s integrations detected)", virus.type(), virus.integrations()))
-                .distinct();
+            .stream()
+            .filter { driver: Virus -> isKeyDriver(driver) }
+            .map { virus: Virus -> String.format("%s (%s integrations detected)", virus.type(), virus.integrations()) }
+            .distinct()
     }
 
-    public Stream<String> actionableEventsThatAreNotKeyDrivers() {
-        Stream<? extends Driver> nonDisruptionDrivers = Stream.of(molecularDrivers.variants(),
-                molecularDrivers.copyNumbers(),
-                molecularDrivers.fusions(),
-                molecularDrivers.homozygousDisruptions(),
-                molecularDrivers.viruses()).flatMap(Collection::stream).filter(driver -> !isKeyDriver(driver));
-
+    fun actionableEventsThatAreNotKeyDrivers(): Stream<String> {
+        val nonDisruptionDrivers: Stream<out Driver> = Stream.of(
+            molecularDrivers.variants(),
+            molecularDrivers.copyNumbers(),
+            molecularDrivers.fusions(),
+            molecularDrivers.homozygousDisruptions(),
+            molecularDrivers.viruses()
+        ).flatMap { obj: Set<Driver?> -> obj.stream() }
+            .filter { driver: Driver -> !isKeyDriver(driver) }
         return Stream.concat(nonDisruptionDrivers, molecularDrivers.disruptions().stream())
-                .filter(evaluatedCohortsInterpreter::driverIsActionable)
-                .map(Driver::event)
-                .distinct();
+            .filter { driver: Driver -> evaluatedCohortsInterpreter.driverIsActionable(driver) }
+            .map { obj: Driver -> obj.event() }
+            .distinct()
     }
 
-    private static boolean isKeyDriver(Driver driver) {
-        return driver.driverLikelihood() == DriverLikelihood.HIGH && driver.isReportable();
-    }
+    companion object {
+        fun fromMolecularDriversAndEvaluatedCohorts(
+            molecularDrivers: MolecularDrivers,
+            cohorts: List<EvaluatedCohort?>
+        ): MolecularDriversSummarizer {
+            return MolecularDriversSummarizer(molecularDrivers, EvaluatedCohortsInterpreter(cohorts))
+        }
 
-    private static <T extends GeneAlteration & Driver> Stream<String> keyGenesForAlterations(Stream<T> geneAlterationStream) {
-        return geneAlterationStream.filter(MolecularDriversSummarizer::isKeyDriver).map(GeneAlteration::gene).distinct();
+        private fun isKeyDriver(driver: Driver): Boolean {
+            return driver.driverLikelihood() == DriverLikelihood.HIGH && driver.isReportable
+        }
+
+        private fun <T> keyGenesForAlterations(geneAlterationStream: Stream<T>): Stream<String> where T : GeneAlteration?, T : Driver? {
+            return geneAlterationStream.filter { driver: T -> isKeyDriver(driver) }
+                .map { obj: T -> obj!!.gene() }.distinct()
+        }
     }
 }

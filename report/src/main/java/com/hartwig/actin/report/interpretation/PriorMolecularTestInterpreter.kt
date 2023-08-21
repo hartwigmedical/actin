@@ -1,35 +1,25 @@
-package com.hartwig.actin.report.interpretation;
+package com.hartwig.actin.report.interpretation
 
-import java.util.List;
+import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import org.apache.logging.log4j.LogManager
 
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-
-public final class PriorMolecularTestInterpreter {
-
-    private static final Logger LOGGER = LogManager.getLogger(PriorMolecularTestInterpreter.class);
-
-    private PriorMolecularTestInterpreter() {
-    }
-
-    @NotNull
-    public static PriorMolecularTestInterpretation interpret(@NotNull List<PriorMolecularTest> priorTests) {
-        ImmutablePriorMolecularTestInterpretation.Builder builder = ImmutablePriorMolecularTestInterpretation.builder();
-        for (PriorMolecularTest priorTest : priorTests) {
-            String scoreText = priorTest.scoreText();
-            Double scoreValue = priorTest.scoreValue();
+object PriorMolecularTestInterpreter {
+    private val LOGGER = LogManager.getLogger(PriorMolecularTestInterpreter::class.java)
+    fun interpret(priorTests: List<PriorMolecularTest>): PriorMolecularTestInterpretation {
+        val builder = ImmutablePriorMolecularTestInterpretation.builder()
+        for (priorTest in priorTests) {
+            val scoreText = priorTest.scoreText()
+            val scoreValue = priorTest.scoreValue()
             if (scoreText != null) {
-                PriorMolecularTestKey key = ImmutablePriorMolecularTestKey.builder().test(priorTest.test()).scoreText(scoreText).build();
-                builder.putTextBasedPriorTests(key, priorTest);
+                val key: PriorMolecularTestKey =
+                    ImmutablePriorMolecularTestKey.builder().test(priorTest.test()).scoreText(scoreText).build()
+                builder.putTextBasedPriorTests(key, priorTest)
             } else if (scoreValue != null) {
-                builder.addValueBasedPriorTests(priorTest);
+                builder.addValueBasedPriorTests(priorTest)
             } else {
-                LOGGER.warn("Prior test is neither text-based nor value-based: {}", priorTest);
+                LOGGER.warn("Prior test is neither text-based nor value-based: {}", priorTest)
             }
         }
-        return builder.build();
+        return builder.build()
     }
 }

@@ -1,37 +1,19 @@
-package com.hartwig.actin.report.interpretation;
+package com.hartwig.actin.report.interpretation
 
-import java.util.Set;
-
-import org.immutables.value.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.immutables.value.Value
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 
 @Value.Immutable
-@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class EvaluatedCohort {
-
-    @NotNull
-    public abstract String trialId();
-
-    @NotNull
-    public abstract String acronym();
-
-    @Nullable
-    public abstract String cohort();
-
-    @NotNull
-    public abstract Set<String> molecularEvents();
-
-    public abstract boolean isPotentiallyEligible();
-
-    public abstract boolean isOpen();
-
-    public abstract boolean hasSlotsAvailable();
-
-    @NotNull
-    public abstract Set<String> warnings();
-
-    @NotNull
-    public abstract Set<String> fails();
-
+@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
+abstract class EvaluatedCohort {
+    abstract fun trialId(): String
+    abstract fun acronym(): String
+    abstract fun cohort(): String?
+    abstract fun molecularEvents(): Set<String?>
+    abstract val isPotentiallyEligible: Boolean
+    abstract val isOpen: Boolean
+    abstract fun hasSlotsAvailable(): Boolean
+    abstract fun warnings(): Set<String?>
+    abstract fun fails(): Set<String?>
 }

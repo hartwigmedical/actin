@@ -1,46 +1,26 @@
-package com.hartwig.actin.report.pdf.tables.clinical;
+package com.hartwig.actin.report.pdf.tables.clinical
 
-import java.util.List;
+import com.hartwig.actin.clinical.datamodel.BloodTransfusion
+import com.hartwig.actin.report.pdf.tables.TableGenerator
+import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.Tables
+import com.itextpdf.layout.element.Table
 
-import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
-import com.hartwig.actin.report.pdf.tables.TableGenerator;
-import com.hartwig.actin.report.pdf.util.Cells;
-import com.hartwig.actin.report.pdf.util.Formats;
-import com.hartwig.actin.report.pdf.util.Tables;
-import com.itextpdf.layout.element.Table;
-
-import org.jetbrains.annotations.NotNull;
-
-public class BloodTransfusionGenerator implements TableGenerator {
-
-    @NotNull
-    private final List<BloodTransfusion> bloodTransfusions;
-    private final float totalWidth;
-
-    public BloodTransfusionGenerator(@NotNull final List<BloodTransfusion> bloodTransfusions, final float totalWidth) {
-        this.bloodTransfusions = bloodTransfusions;
-        this.totalWidth = totalWidth;
+class BloodTransfusionGenerator(private val bloodTransfusions: List<BloodTransfusion>, private val totalWidth: Float) : TableGenerator {
+    override fun title(): String {
+        return "Blood transfusions"
     }
 
-    @NotNull
-    @Override
-    public String title() {
-        return "Blood transfusions";
-    }
-
-    @NotNull
-    @Override
-    public Table contents() {
-        Table table = Tables.createFixedWidthCols(1, 1).setWidth(totalWidth);
-
-        table.addHeaderCell(Cells.createHeader("Product"));
-        table.addHeaderCell(Cells.createHeader("Date"));
-
-        for (BloodTransfusion bloodTransfusion : bloodTransfusions) {
-            table.addCell(Cells.createContent(bloodTransfusion.product()));
-            table.addCell(Cells.createContent(Formats.date(bloodTransfusion.date())));
+    override fun contents(): Table {
+        val table = Tables.createFixedWidthCols(1f, 1f).setWidth(
+            totalWidth
+        )
+        table.addHeaderCell(Cells.createHeader("Product"))
+        table.addHeaderCell(Cells.createHeader("Date"))
+        for (bloodTransfusion in bloodTransfusions) {
+            table.addCell(Cells.createContent(bloodTransfusion.product()))
+            table.addCell(Cells.createContent(date(bloodTransfusion.date())))
         }
-
-        return Tables.makeWrapping(table);
+        return makeWrapping(table)
     }
 }

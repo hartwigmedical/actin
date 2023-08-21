@@ -1,24 +1,21 @@
-package com.hartwig.actin.report.interpretation;
+package com.hartwig.actin.report.interpretation
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
+import com.hartwig.actin.molecular.datamodel.driver.Variant
+import com.hartwig.actin.report.interpretation.ClonalityInterpreter.isPotentiallySubclonal
+import org.junit.Assert
+import org.junit.Test
 
-import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory;
-import com.hartwig.actin.molecular.datamodel.driver.Variant;
-
-import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
-
-public class ClonalityInterpreterTest {
-
+class ClonalityInterpreterTest {
     @Test
-    public void canDetermineClonality() {
-        assertFalse(ClonalityInterpreter.isPotentiallySubclonal(create(ClonalityInterpreter.CLONAL_CUTOFF + 0.01)));
-        assertTrue(ClonalityInterpreter.isPotentiallySubclonal(create(ClonalityInterpreter.CLONAL_CUTOFF - 0.01)));
+    fun canDetermineClonality() {
+        Assert.assertFalse(isPotentiallySubclonal(create(ClonalityInterpreter.CLONAL_CUTOFF + 0.01)))
+        Assert.assertTrue(isPotentiallySubclonal(create(ClonalityInterpreter.CLONAL_CUTOFF - 0.01)))
     }
 
-    @NotNull
-    private static Variant create(double clonalLikelihood) {
-        return TestVariantFactory.builder().clonalLikelihood(clonalLikelihood).build();
+    companion object {
+        private fun create(clonalLikelihood: Double): Variant {
+            return TestVariantFactory.builder().clonalLikelihood(clonalLikelihood).build()
+        }
     }
 }

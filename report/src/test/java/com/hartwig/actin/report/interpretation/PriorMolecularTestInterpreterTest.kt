@@ -1,47 +1,40 @@
-package com.hartwig.actin.report.interpretation;
+package com.hartwig.actin.report.interpretation
 
-import static org.junit.Assert.assertEquals;
+import com.google.common.collect.Lists
+import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.report.interpretation.PriorMolecularTestInterpreter.interpret
+import org.junit.Assert
+import org.junit.Test
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest;
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.junit.Test;
-
-public class PriorMolecularTestInterpreterTest {
-
+class PriorMolecularTestInterpreterTest {
     @Test
-    public void canInterpretPriorMolecularTests() {
-        PriorMolecularTest textBased1 = create("text 1", null, "test 1", "item 1");
-        PriorMolecularTest textBased2 = create("text 1", null, "test 1", "item 2");
-        PriorMolecularTest textBased3 = create("text 1", null, "test 2", "item 3");
-        PriorMolecularTest valueBased1 = create(null, 1D, "test 1", "item 4");
-        PriorMolecularTest valueBased2 = create(null, 2D, "test 2", "item 5");
-        PriorMolecularTest invalid = create(null, null, "invalid", "invalid");
-
-        List<PriorMolecularTest> tests = Lists.newArrayList(textBased1, textBased2, textBased3, valueBased1, valueBased2, invalid);
-
-        PriorMolecularTestInterpretation interpretation = PriorMolecularTestInterpreter.interpret(tests);
-
-        assertEquals(2, interpretation.textBasedPriorTests().keySet().size());
-        assertEquals(3, interpretation.textBasedPriorTests().values().size());
-        assertEquals(2, interpretation.valueBasedPriorTests().size());
+    fun canInterpretPriorMolecularTests() {
+        val textBased1 = create("text 1", null, "test 1", "item 1")
+        val textBased2 = create("text 1", null, "test 1", "item 2")
+        val textBased3 = create("text 1", null, "test 2", "item 3")
+        val valueBased1 = create(null, 1.0, "test 1", "item 4")
+        val valueBased2 = create(null, 2.0, "test 2", "item 5")
+        val invalid = create(null, null, "invalid", "invalid")
+        val tests: List<PriorMolecularTest> = Lists.newArrayList(textBased1, textBased2, textBased3, valueBased1, valueBased2, invalid)
+        val interpretation = interpret(tests)
+        Assert.assertEquals(2, interpretation.textBasedPriorTests().keySet().size.toLong())
+        Assert.assertEquals(3, interpretation.textBasedPriorTests().values().size.toLong())
+        Assert.assertEquals(2, interpretation.valueBasedPriorTests().size.toLong())
     }
 
-    @NotNull
-    private static PriorMolecularTest create(@Nullable String scoreText, @Nullable Double scoreValue, @NotNull String test,
-            @NotNull String item) {
-        return ImmutablePriorMolecularTest.builder()
+    companion object {
+        private fun create(
+            scoreText: String?, scoreValue: Double?, test: String,
+            item: String
+        ): PriorMolecularTest {
+            return ImmutablePriorMolecularTest.builder()
                 .test(test)
                 .item(item)
                 .scoreText(scoreText)
                 .scoreValue(scoreValue)
                 .impliesPotentialIndeterminateStatus(false)
-                .build();
+                .build()
+        }
     }
-
 }
