@@ -19,29 +19,27 @@ import com.hartwig.actin.molecular.datamodel.driver.Virus
 import com.hartwig.actin.molecular.datamodel.driver.VirusType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
+import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
 import org.junit.Assert
 import org.junit.Test
-import java.util.Set
-import java.util.stream.Collectors
-import java.util.stream.Stream
 
 class MolecularDriversSummarizerTest {
     @Test
     fun shouldReturnKeyVariants() {
-        val variants = Set.of(
+        val variants = setOf(
             variant(EXPECTED_GENE, DriverLikelihood.HIGH, true),
             variant("non-reportable", DriverLikelihood.HIGH, false),
             variant("medium likelihood", DriverLikelihood.MEDIUM, true)
         )
         val molecularDrivers: MolecularDrivers = ImmutableMolecularDrivers.builder().addAllVariants(variants).build()
-        assertExpectedStreamResult(summarizer(molecularDrivers).keyGenesWithVariants())
+        assertExpectedListResult(summarizer(molecularDrivers).keyGenesWithVariants())
     }
 
     @Test
     fun shouldReturnKeyAmplifiedGenesAndIndicatePartialAmplifications() {
         val partialAmpGene = "partial amp"
         val fullAmpGene = "full amp"
-        val copyNumbers = Set.of(
+        val copyNumbers = setOf(
             copyNumber(CopyNumberType.FULL_GAIN, fullAmpGene, DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.PARTIAL_GAIN, partialAmpGene, DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.LOSS, "loss", DriverLikelihood.HIGH, true),
@@ -49,7 +47,7 @@ class MolecularDriversSummarizerTest {
             copyNumber(CopyNumberType.FULL_GAIN, "non-reportable", DriverLikelihood.HIGH, false)
         )
         val molecularDrivers: MolecularDrivers = ImmutableMolecularDrivers.builder().addAllCopyNumbers(copyNumbers).build()
-        val amplifiedGenes = summarizer(molecularDrivers).keyAmplifiedGenes().collect(Collectors.toSet())
+        val amplifiedGenes = summarizer(molecularDrivers).keyAmplifiedGenes().toSet()
         Assert.assertEquals(2, amplifiedGenes.size.toLong())
         Assert.assertTrue(amplifiedGenes.contains("$partialAmpGene (partial)"))
         Assert.assertTrue(amplifiedGenes.contains(fullAmpGene))
@@ -57,7 +55,7 @@ class MolecularDriversSummarizerTest {
 
     @Test
     fun shouldReturnKeyDeletedGenes() {
-        val copyNumbers = Set.of(
+        val copyNumbers = setOf(
             copyNumber(CopyNumberType.FULL_GAIN, "full amp", DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.PARTIAL_GAIN, "partial amp", DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.LOSS, EXPECTED_GENE, DriverLikelihood.HIGH, true),
@@ -65,41 +63,41 @@ class MolecularDriversSummarizerTest {
             copyNumber(CopyNumberType.LOSS, "non-reportable", DriverLikelihood.HIGH, false)
         )
         val molecularDrivers: MolecularDrivers = ImmutableMolecularDrivers.builder().addAllCopyNumbers(copyNumbers).build()
-        assertExpectedStreamResult(summarizer(molecularDrivers).keyDeletedGenes())
+        assertExpectedListResult(summarizer(molecularDrivers).keyDeletedGenes())
     }
 
     @Test
     fun shouldReturnKeyHomozygouslyDisruptedGenes() {
-        val homozygousDisruptions = Set.of(
+        val homozygousDisruptions = setOf(
             homozygousDisruption(EXPECTED_GENE, DriverLikelihood.HIGH, true),
             homozygousDisruption("non-reportable", DriverLikelihood.HIGH, false),
             homozygousDisruption("medium likelihood", DriverLikelihood.MEDIUM, true)
         )
         val molecularDrivers: MolecularDrivers =
             ImmutableMolecularDrivers.builder().addAllHomozygousDisruptions(homozygousDisruptions).build()
-        assertExpectedStreamResult(summarizer(molecularDrivers).keyHomozygouslyDisruptedGenes())
+        assertExpectedListResult(summarizer(molecularDrivers).keyHomozygouslyDisruptedGenes())
     }
 
     @Test
     fun shouldReturnKeyFusions() {
-        val fusions = Set.of(
+        val fusions = setOf(
             fusion(EXPECTED_GENE, DriverLikelihood.HIGH, true),
             fusion("non-reportable", DriverLikelihood.HIGH, false),
             fusion("medium likelihood", DriverLikelihood.MEDIUM, true)
         )
         val molecularDrivers: MolecularDrivers = ImmutableMolecularDrivers.builder().addAllFusions(fusions).build()
-        assertExpectedStreamResult(summarizer(molecularDrivers).keyFusionEvents())
+        assertExpectedListResult(summarizer(molecularDrivers).keyFusionEvents())
     }
 
     @Test
     fun shouldReturnKeyViruses() {
-        val viruses = Set.of(
+        val viruses = setOf(
             virus("virus", DriverLikelihood.HIGH, true),
             virus("non-reportable", DriverLikelihood.HIGH, false),
             virus("medium likelihood", DriverLikelihood.MEDIUM, true)
         )
         val molecularDrivers: MolecularDrivers = ImmutableMolecularDrivers.builder().addAllViruses(viruses).build()
-        val keyViruses = summarizer(molecularDrivers).keyVirusEvents().collect(Collectors.toSet())
+        val keyViruses = summarizer(molecularDrivers).keyVirusEvents().toSet()
         Assert.assertEquals(1, keyViruses.size.toLong())
         Assert.assertTrue(keyViruses.contains(VirusType.MERKEL_CELL_VIRUS.toString() + " (" + VIRUS_INTEGRATIONS + " integrations detected)"))
     }
@@ -108,11 +106,11 @@ class MolecularDriversSummarizerTest {
     fun shouldReturnActionableEventsThatAreNotKeyDrivers() {
         val externalEvidence = TestActionableEvidenceFactory.withExternalEligibleTrial("external")
         val approvedTreatment = TestActionableEvidenceFactory.withApprovedTreatment("approved")
-        val cohorts: List<EvaluatedCohort?> = listOf<EvaluatedCohort>(
-            EvaluatedCohortTestFactory.builder()
-                .isPotentiallyEligible(true)
-                .isOpen(true)
-                .addMolecularEvents(
+        val cohorts = listOf(
+            evaluatedCohort(
+                isPotentiallyEligible = true,
+                isOpen = true,
+                molecularEvents = setOf(
                     "expected medium likelihood variant",
                     "expected low likelihood virus",
                     "expected non-reportable virus",
@@ -123,36 +121,36 @@ class MolecularDriversSummarizerTest {
                     "expected key disruption",
                     "expected non-reportable fusion"
                 )
-                .build()
+            )
         )
-        val variants = Set.of(
+        val variants = setOf(
             variant("key variant", DriverLikelihood.HIGH, true, externalEvidence),
             variant("expected non-reportable variant", DriverLikelihood.HIGH, false, approvedTreatment),
             variant("expected medium likelihood variant", DriverLikelihood.MEDIUM, true),
             variant("no evidence", DriverLikelihood.MEDIUM, true)
         )
-        val copyNumbers = Set.of(
+        val copyNumbers = setOf(
             copyNumber(CopyNumberType.FULL_GAIN, "key gain", DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.PARTIAL_GAIN, "expected amplification", null, false),
             copyNumber(CopyNumberType.LOSS, "expected loss", DriverLikelihood.HIGH, false),
             copyNumber(CopyNumberType.FULL_GAIN, "no evidence", DriverLikelihood.LOW, true)
         )
-        val homozygousDisruptions = Set.of(
+        val homozygousDisruptions = setOf(
             homozygousDisruption("key HD", DriverLikelihood.HIGH, true, approvedTreatment),
             homozygousDisruption("expected non-reportable HD", DriverLikelihood.HIGH, false, approvedTreatment),
             homozygousDisruption("expected null likelihood HD", null, true, externalEvidence)
         )
-        val disruptions = Set.of(
+        val disruptions = setOf(
             disruption("expected key disruption", DriverLikelihood.HIGH, true),
             disruption("expected non-reportable disruption", DriverLikelihood.LOW, false, approvedTreatment),
             disruption("no evidence disruption", DriverLikelihood.MEDIUM, false)
         )
-        val fusions = Set.of(
+        val fusions = setOf(
             fusion("key fusion", DriverLikelihood.HIGH, true, externalEvidence),
             fusion("expected non-reportable fusion", DriverLikelihood.HIGH, false),
             fusion("expected medium likelihood fusion", DriverLikelihood.MEDIUM, true, approvedTreatment)
         )
-        val viruses = Set.of(
+        val viruses = setOf(
             virus("expected low likelihood virus", DriverLikelihood.LOW, true),
             virus("expected non-reportable virus", DriverLikelihood.LOW, false),
             virus("key virus", DriverLikelihood.HIGH, true)
@@ -166,9 +164,9 @@ class MolecularDriversSummarizerTest {
             .addAllViruses(viruses)
             .build()
         val summarizer = MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(molecularDrivers, cohorts)
-        val otherActionableEvents = summarizer.actionableEventsThatAreNotKeyDrivers().collect(Collectors.toSet())
+        val otherActionableEvents = summarizer.actionableEventsThatAreNotKeyDrivers().toSet()
         Assert.assertEquals(12, otherActionableEvents.size.toLong())
-        Assert.assertTrue(otherActionableEvents.stream().allMatch { event: String -> event.startsWith("expected") })
+        Assert.assertTrue(otherActionableEvents.all { it.startsWith("expected") })
     }
 
     companion object {
@@ -253,8 +251,8 @@ class MolecularDriversSummarizerTest {
             return MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(molecularDrivers, emptyList())
         }
 
-        private fun assertExpectedStreamResult(keyEntryStream: Stream<String>) {
-            val keyEntries = keyEntryStream.collect(Collectors.toSet())
+        private fun assertExpectedListResult(keyEntryList: List<String>) {
+            val keyEntries = keyEntryList.distinct()
             Assert.assertEquals(1, keyEntries.size.toLong())
             Assert.assertTrue(keyEntries.contains(EXPECTED_GENE))
         }

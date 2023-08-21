@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.pdf.chapters
 
-import com.google.common.collect.Lists
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
 import com.hartwig.actin.report.pdf.tables.TableGenerator
@@ -10,6 +9,7 @@ import com.hartwig.actin.report.pdf.tables.molecular.PredictedTumorOriginGenerat
 import com.hartwig.actin.report.pdf.tables.molecular.PriorMolecularResultGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
+import com.hartwig.actin.report.pdf.util.Formats.date
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.geom.PageSize
@@ -37,30 +37,23 @@ class MolecularDetailsChapter(private val report: Report) : ReportChapter {
 
     private fun addMolecularDetails(document: Document) {
         val keyWidth = Formats.STANDARD_KEY_WIDTH
-        val priorMolecularResultGenerator = PriorMolecularResultGenerator(report.clinical(), keyWidth, contentWidth() - keyWidth - 10)
+        val priorMolecularResultGenerator = PriorMolecularResultGenerator(report.clinical, keyWidth, contentWidth() - keyWidth - 10)
         val priorMolecularResults = priorMolecularResultGenerator.contents().setBorder(Border.NO_BORDER)
         document.add(priorMolecularResults)
         val table = Tables.createSingleColWithWidth(contentWidth())
         table.addCell(Cells.createEmpty())
         table.addCell(
-            Cells.createTitle(
-                String.format(
-                    "%s (%s, %s)",
-                    report.molecular().type(),
-                    report.molecular().sampleId(),
-                    date(report.molecular().date())
-                )
-            )
+            Cells.createTitle("${report.molecular.type()} (${report.molecular.sampleId()}, ${date(report.molecular.date())})")
         )
-        val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch())
-        val generators: MutableList<TableGenerator> = Lists.newArrayList(
+        val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
+        val generators: MutableList<TableGenerator> = mutableListOf(
             MolecularCharacteristicsGenerator(
-                report.molecular(), contentWidth()
+                report.molecular, contentWidth()
             )
         )
-        if (report.molecular().containsTumorCells()) {
-            generators.add(PredictedTumorOriginGenerator(report.molecular(), contentWidth()))
-            generators.add(MolecularDriversGenerator(report.molecular(), cohorts, contentWidth()))
+        if (report.molecular.containsTumorCells()) {
+            generators.add(PredictedTumorOriginGenerator(report.molecular, contentWidth()))
+            generators.add(MolecularDriversGenerator(report.molecular, cohorts, contentWidth()))
         }
         for (i in generators.indices) {
             val generator = generators[i]
@@ -70,7 +63,7 @@ class MolecularDetailsChapter(private val report: Report) : ReportChapter {
                 table.addCell(Cells.createEmpty())
             }
         }
-        if (!report.molecular().containsTumorCells()) {
+        if (!report.molecular.containsTumorCells()) {
             table.addCell(Cells.createContent("No successful WGS could be performed on the submitted biopsy"))
         }
         document.add(table)

@@ -1,18 +1,13 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import org.immutables.value.Value
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
 
-@Value.Immutable
-@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
-abstract class MolecularDriverEntry {
-    abstract fun driverType(): String
-    abstract fun driver(): String
-    abstract fun driverLikelihood(): DriverLikelihood?
-    abstract fun actinTrials(): Set<String?>
-    abstract fun externalTrials(): Set<String?>
-    abstract fun bestResponsiveEvidence(): String?
-    abstract fun bestResistanceEvidence(): String?
-}
+data class MolecularDriverEntry(
+    val driverType: String,
+    val driver: String,
+    val driverLikelihood: DriverLikelihood?,
+    val actinTrials: Set<String>,
+    val externalTrials: Set<String>,
+    val bestResponsiveEvidence: String?,
+    val bestResistanceEvidence: String?
+)

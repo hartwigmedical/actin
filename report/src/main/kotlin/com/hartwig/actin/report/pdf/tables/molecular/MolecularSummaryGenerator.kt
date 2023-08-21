@@ -12,7 +12,7 @@ import org.apache.logging.log4j.LogManager
 
 class MolecularSummaryGenerator(
     private val clinical: ClinicalRecord, private val molecular: MolecularRecord,
-    private val cohorts: List<EvaluatedCohort?>, private val keyWidth: Float, private val valueWidth: Float
+    private val cohorts: List<EvaluatedCohort>, private val keyWidth: Float, private val valueWidth: Float
 ) : TableGenerator {
     override fun title(): String {
         return "Recent molecular results"

@@ -8,45 +8,44 @@ import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers
 import com.hartwig.actin.molecular.datamodel.driver.Variant
 import com.hartwig.actin.molecular.datamodel.driver.Virus
-import java.util.stream.Stream
 
 class MolecularDriversInterpreter(
     private val molecularDrivers: MolecularDrivers,
     private val evaluatedCohortsInterpreter: EvaluatedCohortsInterpreter
 ) {
-    fun filteredVariants(): Stream<Variant> {
-        return streamAndFilterDrivers(molecularDrivers.variants())
+    fun filteredVariants(): List<Variant> {
+        return filterDrivers(molecularDrivers.variants())
     }
 
-    fun filteredCopyNumbers(): Stream<CopyNumber> {
-        return streamAndFilterDrivers(molecularDrivers.copyNumbers())
+    fun filteredCopyNumbers(): List<CopyNumber> {
+        return filterDrivers(molecularDrivers.copyNumbers())
     }
 
-    fun filteredHomozygousDisruptions(): Stream<HomozygousDisruption> {
-        return streamAndFilterDrivers(molecularDrivers.homozygousDisruptions())
+    fun filteredHomozygousDisruptions(): List<HomozygousDisruption> {
+        return filterDrivers(molecularDrivers.homozygousDisruptions())
     }
 
-    fun filteredDisruptions(): Stream<Disruption> {
-        return streamAndFilterDrivers(molecularDrivers.disruptions())
+    fun filteredDisruptions(): List<Disruption> {
+        return filterDrivers(molecularDrivers.disruptions())
     }
 
-    fun filteredFusions(): Stream<Fusion> {
-        return streamAndFilterDrivers(molecularDrivers.fusions())
+    fun filteredFusions(): List<Fusion> {
+        return filterDrivers(molecularDrivers.fusions())
     }
 
-    fun filteredViruses(): Stream<Virus> {
-        return streamAndFilterDrivers(molecularDrivers.viruses())
+    fun filteredViruses(): List<Virus> {
+        return filterDrivers(molecularDrivers.viruses())
     }
 
     fun hasPotentiallySubClonalVariants(): Boolean {
-        return filteredVariants().anyMatch { obj: Variant? -> ClonalityInterpreter.isPotentiallySubclonal() }
+        return filteredVariants().any(ClonalityInterpreter::isPotentiallySubclonal)
     }
 
-    fun trialsForDriver(driver: Driver): List<String?>? {
+    fun trialsForDriver(driver: Driver): List<String> {
         return evaluatedCohortsInterpreter.trialsForDriver(driver)
     }
 
-    private fun <T : Driver?> streamAndFilterDrivers(drivers: Set<T>): Stream<T> {
-        return drivers.stream().filter { driver: T -> driver!!.isReportable || evaluatedCohortsInterpreter.driverIsActionable(driver) }
+    private fun <T : Driver> filterDrivers(drivers: Set<T>): List<T> {
+        return drivers.filter { it.isReportable || evaluatedCohortsInterpreter.driverIsActionable(it) }
     }
 }

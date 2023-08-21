@@ -12,15 +12,14 @@ import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Tables
+import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.hartwig.actin.treatment.TreatmentConstants
 import com.itextpdf.layout.element.Table
-import org.apache.logging.log4j.util.Strings
-import java.util.*
 
 class MolecularDriversGenerator(
-    private val molecular: MolecularRecord, private val cohorts: List<EvaluatedCohort?>,
-    private val width: Float
+    private val molecular: MolecularRecord, private val cohorts: List<EvaluatedCohort>, private val width: Float
 ) : TableGenerator {
+
     override fun title(): String {
         return "Drivers"
     }
@@ -35,20 +34,17 @@ class MolecularDriversGenerator(
         table.addHeaderCell(Cells.createHeader("Trials in " + molecular.externalTrialSource()))
         table.addHeaderCell(Cells.createHeader("Best evidence in " + molecular.evidenceSource()))
         table.addHeaderCell(Cells.createHeader("Resistance in " + molecular.evidenceSource()))
-        val molecularDriversInterpreter = MolecularDriversInterpreter(
-            molecular.drivers(), EvaluatedCohortsInterpreter(
-                cohorts
-            )
-        )
+
+        val molecularDriversInterpreter = MolecularDriversInterpreter(molecular.drivers(), EvaluatedCohortsInterpreter(cohorts))
         val factory = MolecularDriverEntryFactory(molecularDriversInterpreter)
-        factory.create().forEach { entry: MolecularDriverEntry? ->
-            table.addCell(Cells.createContent(entry!!.driverType()))
-            table.addCell(Cells.createContent(entry.driver()))
-            table.addCell(Cells.createContent(formatDriverLikelihood(entry.driverLikelihood())))
-            table.addCell(Cells.createContent(concat(entry.actinTrials())))
-            table.addCell(Cells.createContent(concat(entry.externalTrials())))
-            table.addCell(Cells.createContent(nullToEmpty(entry.bestResponsiveEvidence())))
-            table.addCell(Cells.createContent(nullToEmpty(entry.bestResistanceEvidence())))
+        factory.create().forEach { entry: MolecularDriverEntry ->
+            table.addCell(Cells.createContent(entry.driverType))
+            table.addCell(Cells.createContent(entry.driver))
+            table.addCell(Cells.createContent(formatDriverLikelihood(entry.driverLikelihood)))
+            table.addCell(Cells.createContent(concat(entry.actinTrials)))
+            table.addCell(Cells.createContent(concat(entry.externalTrials)))
+            table.addCell(Cells.createContent(entry.bestResponsiveEvidence ?: ""))
+            table.addCell(Cells.createContent(entry.bestResistanceEvidence ?: ""))
         }
         if (molecularDriversInterpreter.hasPotentiallySubClonalVariants()) {
             val note = "* Variant has > " + Formats.percentage(ClonalityInterpreter.CLONAL_CUTOFF) + " likelihood of being sub-clonal"
@@ -59,23 +55,12 @@ class MolecularDriversGenerator(
 
     companion object {
         private fun formatDriverLikelihood(driverLikelihood: DriverLikelihood?): String {
-            return Optional.ofNullable(driverLikelihood).map { obj: DriverLikelihood -> obj.toString() }
-                .orElse(Formats.VALUE_UNKNOWN)
+            return driverLikelihood?.let(DriverLikelihood::toString) ?: Formats.VALUE_UNKNOWN
         }
 
-        private fun concat(treatments: Set<String?>): String {
-            if (treatments.isEmpty()) {
-                return Strings.EMPTY
-            }
-            val joiner = Formats.commaJoiner()
-            for (treatment in treatments) {
-                joiner.add(treatment)
-            }
-            return joiner.toString()
+        private fun concat(treatments: Set<String>): String {
+            return treatments.joinToString(", ")
         }
 
-        private fun nullToEmpty(string: String?): String {
-            return string ?: Strings.EMPTY
-        }
     }
 }

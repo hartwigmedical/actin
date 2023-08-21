@@ -24,6 +24,7 @@ object Formats {
     private val SINGLE_DIGIT_FORMAT = DecimalFormat("#.#", DecimalFormatSymbols.getInstance(Locale.ENGLISH))
     private val NO_DIGIT_FORMAT = DecimalFormat("#", DecimalFormatSymbols.getInstance(Locale.ENGLISH))
     private val PERCENTAGE_FORMAT = DecimalFormat("#'%'", DecimalFormatSymbols.getInstance(Locale.ENGLISH))
+
     fun twoDigitNumber(number: Double): String {
         return TWO_DIGIT_FORMAT.format(number)
     }
@@ -57,7 +58,7 @@ object Formats {
     }
 
     fun valueOrDefault(value: String, defaultValue: String): String {
-        return if (!value.isEmpty()) value else defaultValue
+        return value.ifEmpty { defaultValue }
     }
 
     fun styleForTableValue(value: String): Style {

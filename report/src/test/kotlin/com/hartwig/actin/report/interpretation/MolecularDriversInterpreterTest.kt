@@ -13,6 +13,7 @@ import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
+import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
 import org.junit.Assert
 import org.junit.Test
 
@@ -35,7 +36,7 @@ class MolecularDriversInterpreterTest {
         assertCountForRecordAndCohorts(
             1,
             record,
-            createCohortsForEvents(java.util.List.of(EVENT_VARIANT, EVENT_CN, EVENT_HD, EVENT_DISRUPTION, EVENT_FUSION, EVENT_VIRUS))
+            createCohortsForEvents(listOf(EVENT_VARIANT, EVENT_CN, EVENT_HD, EVENT_DISRUPTION, EVENT_FUSION, EVENT_VIRUS))
         )
     }
 
@@ -64,10 +65,10 @@ class MolecularDriversInterpreterTest {
         const val EVENT_FUSION = "fusion"
         const val EVENT_VIRUS = "virus"
         private fun assertCountForRecord(expectedCount: Int, molecularRecord: MolecularRecord) {
-            assertCountForRecordAndCohorts(expectedCount, molecularRecord, emptyList<EvaluatedCohort>())
+            assertCountForRecordAndCohorts(expectedCount, molecularRecord, emptyList())
         }
 
-        private fun assertCountForRecordAndCohorts(expectedCount: Int, molecularRecord: MolecularRecord, cohorts: List<EvaluatedCohort?>) {
+        private fun assertCountForRecordAndCohorts(expectedCount: Int, molecularRecord: MolecularRecord, cohorts: List<EvaluatedCohort>) {
             val interpreter = MolecularDriversInterpreter(molecularRecord.drivers(), EvaluatedCohortsInterpreter(cohorts))
             Assert.assertEquals(expectedCount.toLong(), interpreter.filteredVariants().count())
             Assert.assertEquals(expectedCount.toLong(), interpreter.filteredCopyNumbers().count())
@@ -111,20 +112,11 @@ class MolecularDriversInterpreterTest {
                 .build()
         }
 
-        private fun createCohortsForEvents(events: List<String>): List<EvaluatedCohort?> {
-            val openCohortForVariant: EvaluatedCohort = EvaluatedCohortTestFactory.builder()
-                .acronym("trial 1")
-                .addAllMolecularEvents(events)
-                .isPotentiallyEligible(true)
-                .isOpen(true)
-                .build()
-            val closedCohortForVariant: EvaluatedCohort = EvaluatedCohortTestFactory.builder()
-                .acronym("trial 2")
-                .addAllMolecularEvents(events)
-                .isPotentiallyEligible(true)
-                .isOpen(false)
-                .build()
-            return java.util.List.of(openCohortForVariant, closedCohortForVariant)
+        private fun createCohortsForEvents(events: List<String>): List<EvaluatedCohort> {
+            return listOf(
+                evaluatedCohort(acronym = "trial 1", molecularEvents = events, isPotentiallyEligible = true, isOpen = true),
+                evaluatedCohort(acronym = "trial 2", molecularEvents = events, isPotentiallyEligible = true, isOpen = false)
+            )
         }
     }
 }

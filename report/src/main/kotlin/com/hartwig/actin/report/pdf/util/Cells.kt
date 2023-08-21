@@ -15,7 +15,6 @@ import com.itextpdf.layout.element.IBlockElement
 import com.itextpdf.layout.element.Link
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
-import org.apache.logging.log4j.util.Strings
 
 object Cells {
     fun create(element: IBlockElement?): Cell {
@@ -23,7 +22,7 @@ object Cells {
     }
 
     fun createEmpty(): Cell {
-        return create(Paragraph(Strings.EMPTY))
+        return create(Paragraph(""))
     }
 
     fun createSpanningNoneEntry(table: Table): Cell {
@@ -61,7 +60,7 @@ object Cells {
             .setAction(PdfAction.createJavaScript("app.alert('These are all trials!!')"))
             .setBorder(PdfArray(intArrayOf(0, 0, 0))) as PdfLinkAnnotation
         val link = Link(text, la1)
-        val cell = create(Paragraph(Strings.EMPTY).add(link))
+        val cell = create(Paragraph("").add(link))
         cell.addStyle(Styles.tableHeaderStyle())
         return cell
     }
@@ -85,7 +84,7 @@ object Cells {
     }
 
     @JvmOverloads
-    fun createContent(element: IBlockElement, style: Style? = Styles.tableContentStyle()): Cell {
+    fun createContent(element: IBlockElement, style: Style = Styles.tableContentStyle()): Cell {
         val cell = create(element)
         cell.addStyle(style)
         cell.setBorderTop(SolidBorder(Styles.PALETTE_MID_GREY, 0.25f))
@@ -144,7 +143,7 @@ object Cells {
         return cell
     }
 
-    fun createValue(paragraphs: List<Paragraph?>): Cell {
+    fun createValue(paragraphs: List<Paragraph>): Cell {
         val cell = create(null)
         for (paragraph in paragraphs) {
             cell.add(paragraph)
@@ -165,10 +164,7 @@ object Cells {
 
     @JvmOverloads
     fun createEvaluationResult(result: EvaluationResult, recoverable: Boolean = false): Cell {
-        var addon = Strings.EMPTY
-        if (result == EvaluationResult.FAIL && recoverable) {
-            addon = " (potentially recoverable)"
-        }
+        val addon = if (result == EvaluationResult.FAIL && recoverable) " (potentially recoverable)" else ""
         val cell = create(Paragraph(result.toString() + addon))
         cell.setFontColor(Formats.fontColorForEvaluation(result))
         return cell

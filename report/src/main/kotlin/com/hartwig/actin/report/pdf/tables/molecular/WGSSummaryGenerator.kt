@@ -1,15 +1,14 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.google.common.collect.Maps
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.characteristics.CuppaPrediction
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
+import com.hartwig.actin.report.pdf.util.Formats.date
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.util.ApplicationConfig
@@ -17,19 +16,15 @@ import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.element.Text
-import java.util.*
-import java.util.function.Function
-import java.util.stream.Collectors
-import java.util.stream.Stream
 
 class WGSSummaryGenerator(
     private val clinical: ClinicalRecord, private val molecular: MolecularRecord,
-    cohorts: List<EvaluatedCohort?>, private val keyWidth: Float, private val valueWidth: Float
+    cohorts: List<EvaluatedCohort>, private val keyWidth: Float, private val valueWidth: Float
 ) : TableGenerator {
     private val summarizer: MolecularDriversSummarizer
 
     init {
-        summarizer = MolecularDriversSummarizer.Companion.fromMolecularDriversAndEvaluatedCohorts(molecular.drivers(), cohorts)
+        summarizer = MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(molecular.drivers(), cohorts)
     }
 
     override fun title(): String {
@@ -50,34 +45,22 @@ class WGSSummaryGenerator(
         if (molecular.containsTumorCells()) {
             table.addCell(Cells.createKey("Molecular tissue of origin prediction"))
             table.addCell(tumorOriginPredictionCell())
-            Stream.of(
-                Maps.immutableEntry("Tumor mutational load / burden", characteristicsGenerator.createTMLAndTMBStatusString()),
-                Maps.immutableEntry(
-                    "Microsatellite (in)stability",
-                    characteristicsGenerator.createMSStabilityStringOption().orElse(Formats.VALUE_UNKNOWN)
-                ),
-                Maps.immutableEntry("HR status", characteristicsGenerator.createHRStatusStringOption().orElse(Formats.VALUE_UNKNOWN)),
-                Maps.immutableEntry("", ""),
-                Maps.immutableEntry("Genes with high driver mutation", formatStream(summarizer.keyGenesWithVariants())),
-                Maps.immutableEntry("Amplified genes", formatStream(summarizer.keyAmplifiedGenes())),
-                Maps.immutableEntry("Deleted genes", formatStream(summarizer.keyDeletedGenes())),
-                Maps.immutableEntry("Homozygously disrupted genes", formatStream(summarizer.keyHomozygouslyDisruptedGenes())),
-                Maps.immutableEntry("Gene fusions", formatStream(summarizer.keyFusionEvents())),
-                Maps.immutableEntry("Virus detection", formatStream(summarizer.keyVirusEvents())),
-                Maps.immutableEntry("", ""),
-                Maps.immutableEntry(
-                    "Potentially actionable events with medium/low driver:",
-                    formatStream(summarizer.actionableEventsThatAreNotKeyDrivers())
-                )
+            listOf(
+                "Tumor mutational load / burden" to characteristicsGenerator.createTMLAndTMBStatusString(),
+                "Microsatellite (in)stability" to (characteristicsGenerator.createMSStabilityString() ?: Formats.VALUE_UNKNOWN),
+                "HR status" to (characteristicsGenerator.createHRStatusString() ?: Formats.VALUE_UNKNOWN),
+                "" to "",
+                "Genes with high driver mutation" to formatList(summarizer.keyGenesWithVariants()),
+                "Amplified genes" to formatList(summarizer.keyAmplifiedGenes()),
+                "Deleted genes" to formatList(summarizer.keyDeletedGenes()),
+                "Homozygously disrupted genes" to formatList(summarizer.keyHomozygouslyDisruptedGenes()),
+                "Gene fusions" to formatList(summarizer.keyFusionEvents()),
+                "Virus detection" to formatList(summarizer.keyVirusEvents()),
+                "" to "",
+                "Potentially actionable events with medium/low driver:" to formatList(summarizer.actionableEventsThatAreNotKeyDrivers())
             )
-                .flatMap<Cell>(Function<Map.Entry<String, String>, Stream<out Cell>> { (key, value): Map.Entry<String, String> ->
-                    Stream.of(
-                        Cells.createKey(
-                            key
-                        ), Cells.createValue(value)
-                    )
-                })
-                .forEach { cell: Cell? -> table.addCell(cell) }
+                .flatMap { (key, value) -> listOf(Cells.createKey(key), Cells.createValue(value)) }
+                .forEach(table::addCell)
         } else {
             table.addCell(
                 Cells.createSpanningEntry(
@@ -96,14 +79,7 @@ class WGSSummaryGenerator(
             val biopsyText = Text(biopsyLocation).addStyle(Styles.tableHighlightStyle())
             val purityText = Text(String.format(" (purity %s)", Formats.percentage(purity)))
             purityText.addStyle(if (molecular.hasSufficientQualityAndPurity()) Styles.tableHighlightStyle() else Styles.tableNoticeStyle())
-            Cells.create(
-                Paragraph().addAll(
-                    Arrays.asList(
-                        biopsyText,
-                        purityText
-                    )
-                )
-            )
+            Cells.create(Paragraph().addAll(listOf(biopsyText, purityText)))
         } else {
             Cells.createValue(biopsyLocation!!)
         }
@@ -132,24 +108,16 @@ class WGSSummaryGenerator(
                     Formats.percentage(predictedTumorOrigin.likelihood())
                 )
             } else {
-                String.format("Inconclusive (%s)",
-                    predictionsMeetingThreshold.stream()
-                        .map { prediction: CuppaPrediction? ->
-                            String.format(
-                                "%s %s",
-                                prediction!!.cancerType(),
-                                Formats.percentage(prediction.likelihood())
-                            )
-                        }
-                        .collect(Collectors.joining(", ")))
+                String.format("Inconclusive (%s)", predictionsMeetingThreshold.joinToString(", ") {
+                    "${it.cancerType()} ${Formats.percentage(it.likelihood())}"
+                })
             }
         } else {
             Formats.VALUE_UNKNOWN
         }
     }
 
-    private fun formatStream(stream: Stream<String?>?): String {
-        val collected = stream!!.collect(Collectors.joining(Formats.COMMA_SEPARATOR))
-        return if (collected.isEmpty()) Formats.VALUE_NONE else collected
+    private fun formatList(list: List<String>): String {
+        return if (list.isEmpty()) Formats.VALUE_NONE else list.joinToString(Formats.COMMA_SEPARATOR)
     }
 }

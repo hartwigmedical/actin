@@ -3,28 +3,29 @@ package com.hartwig.actin.report.interpretation
 class EvaluatedCohortComparator : Comparator<EvaluatedCohort> {
     override fun compare(evaluatedCohort1: EvaluatedCohort, evaluatedCohort2: EvaluatedCohort): Int {
         val hasSlotsAvailableCompare =
-            java.lang.Boolean.compare(!evaluatedCohort1.hasSlotsAvailable(), !evaluatedCohort2.hasSlotsAvailable())
+            java.lang.Boolean.compare(!evaluatedCohort1.hasSlotsAvailable, !evaluatedCohort2.hasSlotsAvailable)
         if (hasSlotsAvailableCompare != 0) {
             return hasSlotsAvailableCompare
         }
         val hasMolecularCompare =
-            java.lang.Boolean.compare(evaluatedCohort1.molecularEvents().isEmpty(), evaluatedCohort2.molecularEvents().isEmpty())
+            java.lang.Boolean.compare(evaluatedCohort1.molecularEvents.isEmpty(), evaluatedCohort2.molecularEvents.isEmpty())
         if (hasMolecularCompare != 0) {
             return hasMolecularCompare
         }
-        val trialCompare = evaluatedCohort1.trialId().compareTo(evaluatedCohort2.trialId())
+        val trialCompare = evaluatedCohort1.trialId.compareTo(evaluatedCohort2.trialId)
         if (trialCompare != 0) {
             return trialCompare
         }
         val cohortCompare =
-            compareCohorts(!evaluatedCohort1.molecularEvents().isEmpty(), evaluatedCohort1.cohort(), evaluatedCohort2.cohort())
+            compareCohorts(!evaluatedCohort1.molecularEvents.isEmpty(), evaluatedCohort1.cohort, evaluatedCohort2.cohort)
         return if (cohortCompare != 0) {
             cohortCompare
-        } else compareSets(evaluatedCohort1.molecularEvents(), evaluatedCohort2.molecularEvents())
+        } else compareSets(evaluatedCohort1.molecularEvents, evaluatedCohort2.molecularEvents)
     }
 
     companion object {
         private const val COMBINATION_COHORT_IDENTIFIER = "+"
+       
         private fun compareCohorts(hasMolecular: Boolean, cohort1: String?, cohort2: String?): Int {
             if (cohort1 == null) {
                 return if (cohort2 != null) -1 else 0

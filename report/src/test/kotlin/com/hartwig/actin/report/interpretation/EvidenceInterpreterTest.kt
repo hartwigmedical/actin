@@ -3,13 +3,14 @@ package com.hartwig.actin.report.interpretation
 import com.google.common.collect.Lists
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidence
 import com.hartwig.actin.molecular.interpretation.ImmutableAggregatedEvidence
+import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
 import org.junit.Assert
 import org.junit.Test
 
 class EvidenceInterpreterTest {
     @Test
     fun canInterpretEvidence() {
-        val cohortWithInclusion: EvaluatedCohort = EvaluatedCohortTestFactory.builder().addMolecularEvents("inclusion").build()
+        val cohortWithInclusion: EvaluatedCohort = evaluatedCohort(molecularEvents = setOf("inclusion"))
         val interpreter = EvidenceInterpreter.fromEvaluatedCohorts(Lists.newArrayList(cohortWithInclusion))
         val evidence: AggregatedEvidence = ImmutableAggregatedEvidence.builder()
             .putApprovedTreatmentsPerEvent("approved", "treatment")

@@ -8,12 +8,10 @@ import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
-import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Table
-import java.util.function.Function
-import java.util.stream.IntStream
 
 class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, private val width: Float) : TableGenerator {
+
     override fun title(): String {
         return "Predicted tumor origin"
     }
@@ -32,34 +30,29 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, priv
             val numColumns = predictions.size + 1
             val table = Table(numColumns)
             table.addHeaderCell(Cells.createEmpty())
-            IntStream.range(0, predictions.size)
-                .mapToObj { i: Int -> String.format("%d. %s", i + 1, predictions[i]!!.cancerType()) }
-                .map { text: String -> Cells.createHeader(text).setPaddingLeft(PADDING_LEFT.toFloat()) }
-                .forEach { headerCell: Cell? -> table.addHeaderCell(headerCell) }
+            (0..predictions.size)
+                .asSequence()
+                .map { i: Int -> "${i + 1}. ${predictions[i].cancerType()}" }
+                .map { Cells.createHeader(it).setPaddingLeft(PADDING_LEFT.toFloat()) }
+                .forEach(table::addHeaderCell)
+
             table.addCell(Cells.createContentBold("Combined prediction score"))
-            predictions.stream().map { p: CuppaPrediction? ->
-                val likelihoodCell = Cells.createContentBold(Formats.percentage(p!!.likelihood())).setPaddingLeft(
-                    PADDING_LEFT.toFloat()
-                )
-                if (!TumorOriginInterpreter.likelihoodMeetsConfidenceThreshold(p.likelihood())) {
+            predictions.map {
+                val likelihoodCell = Cells.createContentBold(Formats.percentage(it.likelihood())).setPaddingLeft(PADDING_LEFT.toFloat())
+                if (!TumorOriginInterpreter.likelihoodMeetsConfidenceThreshold(it.likelihood())) {
                     likelihoodCell.addStyle(Styles.tableNoticeStyle())
                 }
                 likelihoodCell
-            }.forEach { cell: Cell? -> table.addCell(cell) }
+            }.forEach(table::addCell)
+
             table.addCell(Cells.createContent("This score is calculated by combining information on:"))
-            predictions.stream().map { p: CuppaPrediction? -> Cells.createContent("") }.forEach { cell: Cell? -> table.addCell(cell) }
-            addClassifierRow("(1) SNV types", predictions, { obj: CuppaPrediction? -> obj!!.snvPairwiseClassifier() }, table)
+            predictions.forEach { table.addCell(Cells.createContent("")) }
+            addClassifierRow("(1) SNV types", predictions, CuppaPrediction::snvPairwiseClassifier, table)
             addClassifierRow(
-                "(2) SNV genomic localisation distribution",
-                predictions,
-                { obj: CuppaPrediction? -> obj!!.genomicPositionClassifier() },
-                table
+                "(2) SNV genomic localisation distribution", predictions, CuppaPrediction::genomicPositionClassifier, table
             )
             addClassifierRow(
-                "(3) Driver genes and passenger characteristics",
-                predictions,
-                { obj: CuppaPrediction? -> obj!!.featureClassifier() },
-                table
+                "(3) Driver genes and passenger characteristics", predictions, CuppaPrediction::featureClassifier, table
             )
             table.addCell(
                 Cells.createSpanningSubNote(
@@ -77,17 +70,18 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, priv
         private const val PADDING_LEFT = 20
         private const val PADDING_RIGHT = 25
         private fun addClassifierRow(
-            classifierText: String, predictions: List<CuppaPrediction?>,
-            classifierFunction: Function<CuppaPrediction?, Double>, table: Table
+            classifierText: String, predictions: List<CuppaPrediction>,
+            classifierFunction: (CuppaPrediction) -> Double, table: Table
         ) {
             table.addCell(Cells.createContent(classifierText).setPaddingLeft(PADDING_LEFT.toFloat()))
-            predictions.stream()
+            predictions
+                .asSequence()
                 .map(classifierFunction)
                 .map { v: Double? -> if (v == null) Formats.VALUE_UNKNOWN else Formats.percentage(v) }
                 .map { text: String ->
                     Cells.createContent(text).setPaddingLeft(PADDING_LEFT.toFloat()).setPaddingRight(PADDING_RIGHT.toFloat())
                 }
-                .forEach { cell: Cell? -> table.addCell(cell) }
+                .forEach(table::addCell)
         }
     }
 }

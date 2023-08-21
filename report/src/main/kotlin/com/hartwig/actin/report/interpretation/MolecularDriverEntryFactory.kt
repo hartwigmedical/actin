@@ -1,7 +1,5 @@
 package com.hartwig.actin.report.interpretation
 
-import com.google.common.collect.Ordering
-import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.driver.Driver
@@ -10,127 +8,117 @@ import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.datamodel.driver.Variant
 import com.hartwig.actin.molecular.datamodel.driver.Virus
 import com.hartwig.actin.report.pdf.util.Formats
-import java.util.function.Function
-import java.util.stream.Stream
+import kotlin.math.min
 
 class MolecularDriverEntryFactory(private val molecularDriversInterpreter: MolecularDriversInterpreter) {
-    fun create(): Stream<MolecularDriverEntry?> {
-        return Stream.of(
+    fun create(): List<MolecularDriverEntry> {
+        return listOf(
             molecularDriversInterpreter.filteredVariants().map { variant: Variant -> fromVariant(variant) },
             molecularDriversInterpreter.filteredCopyNumbers().map { copyNumber: CopyNumber -> fromCopyNumber(copyNumber) },
             molecularDriversInterpreter.filteredHomozygousDisruptions()
                 .map { homozygousDisruption: HomozygousDisruption -> fromHomozygousDisruption(homozygousDisruption) },
             molecularDriversInterpreter.filteredDisruptions().map { disruption: Disruption -> fromDisruption(disruption) },
             molecularDriversInterpreter.filteredFusions().map { fusion: Fusion -> fromFusion(fusion) },
-            molecularDriversInterpreter.filteredViruses().map { virus: Virus -> fromVirus(virus) })
-            .flatMap(Function.identity())
-            .sorted(MolecularDriverEntryComparator())
+            molecularDriversInterpreter.filteredViruses().map { virus: Virus -> fromVirus(virus) }
+        )
+            .flatten()
+            .sortedWith(MolecularDriverEntryComparator())
     }
 
     private fun fromVariant(variant: Variant): MolecularDriverEntry {
-        val entryBuilder = ImmutableMolecularDriverEntry.builder()
-        var mutationTypeString = if (variant.isHotspot) "Hotspot" else "VUS"
-        mutationTypeString = if (variant.isBiallelic) "Biallelic $mutationTypeString" else mutationTypeString
-        entryBuilder.driverType("Mutation ($mutationTypeString)")
-        val boundedVariantCopies = Math.max(0.0, Math.min(variant.variantCopyNumber(), variant.totalCopyNumber()))
+        val biallelicIndicator = if (variant.isBiallelic) "Biallelic " else ""
+        val mutationTypeString = if (variant.isHotspot) "Hotspot" else "VUS"
+        val driverType = "Mutation ($biallelicIndicator$mutationTypeString)"
+
+        val boundedVariantCopies = min(variant.variantCopyNumber(), variant.totalCopyNumber()).coerceAtLeast(0.0)
         val variantCopyString =
             if (boundedVariantCopies < 1) Formats.singleDigitNumber(boundedVariantCopies) else Formats.noDigitNumber(boundedVariantCopies)
-        val boundedTotalCopies = Math.max(0.0, variant.totalCopyNumber())
+        val boundedTotalCopies = variant.totalCopyNumber().coerceAtLeast(0.0)
         val totalCopyString =
             if (boundedTotalCopies < 1) Formats.singleDigitNumber(boundedTotalCopies) else Formats.noDigitNumber(boundedTotalCopies)
-        var driver = variant.event() + " (" + variantCopyString + "/" + totalCopyString + " copies)"
-        if (ClonalityInterpreter.isPotentiallySubclonal(variant)) {
-            driver = "$driver*"
-        }
-        entryBuilder.driver(driver)
-        entryBuilder.driverLikelihood(variant.driverLikelihood())
-        addActionability(entryBuilder, variant)
-        return entryBuilder.build()
+        val subClonalIndicator = if (ClonalityInterpreter.isPotentiallySubclonal(variant)) "*" else ""
+        val name = "${variant.event()} ($variantCopyString/$totalCopyString copies)$subClonalIndicator"
+
+        return driverEntry(driverType, name, variant)
     }
 
     private fun fromCopyNumber(copyNumber: CopyNumber): MolecularDriverEntry {
-        val entryBuilder = ImmutableMolecularDriverEntry.builder()
-        entryBuilder.driverType(if (copyNumber.type().isGain) "Amplification" else "Loss")
-        entryBuilder.driver(copyNumber.event() + ", " + copyNumber.minCopies() + " copies")
-        entryBuilder.driverLikelihood(copyNumber.driverLikelihood())
-        addActionability(entryBuilder, copyNumber)
-        return entryBuilder.build()
+        val driverType = if (copyNumber.type().isGain) "Amplification" else "Loss"
+        val name = copyNumber.event() + ", " + copyNumber.minCopies() + " copies"
+        return driverEntry(driverType, name, copyNumber)
     }
 
     private fun fromHomozygousDisruption(homozygousDisruption: HomozygousDisruption): MolecularDriverEntry {
-        val entryBuilder = ImmutableMolecularDriverEntry.builder()
-        entryBuilder.driverType("Disruption (homozygous)")
-        entryBuilder.driver(homozygousDisruption.gene())
-        entryBuilder.driverLikelihood(homozygousDisruption.driverLikelihood())
-        addActionability(entryBuilder, homozygousDisruption)
-        return entryBuilder.build()
+        return driverEntry("Disruption (homozygous)", homozygousDisruption.gene(), homozygousDisruption)
     }
 
     private fun fromDisruption(disruption: Disruption): MolecularDriverEntry {
-        val entryBuilder = ImmutableMolecularDriverEntry.builder()
-        entryBuilder.driverType("Disruption")
-        val addon = (Formats.singleDigitNumber(disruption.junctionCopyNumber()) + " disr. / "
-                + Formats.singleDigitNumber(disruption.undisruptedCopyNumber()) + " undisr. copies")
-        entryBuilder.driver(disruption.gene() + ", " + disruption.type() + " (" + addon + ")")
-        entryBuilder.driverLikelihood(disruption.driverLikelihood())
-        addActionability(entryBuilder, disruption)
-        return entryBuilder.build()
+        val disruptionCopyNumber = Formats.singleDigitNumber(disruption.junctionCopyNumber())
+        val undisruptedCopyNumber = Formats.singleDigitNumber(disruption.undisruptedCopyNumber())
+        val name = "${disruption.gene()}, ${disruption.type()} ($disruptionCopyNumber disr. / $undisruptedCopyNumber undisr. copies)"
+
+        return driverEntry("Disruption", name, disruption)
     }
 
     private fun fromFusion(fusion: Fusion): MolecularDriverEntry {
-        val entryBuilder = ImmutableMolecularDriverEntry.builder()
-        entryBuilder.driverType(fusion.driverType().display())
-        entryBuilder.driver(fusion.event() + ", exon " + fusion.fusedExonUp() + " - exon " + fusion.fusedExonDown())
-        entryBuilder.driverLikelihood(fusion.driverLikelihood())
-        addActionability(entryBuilder, fusion)
-        return entryBuilder.build()
+        val name = fusion.event() + ", exon " + fusion.fusedExonUp() + " - exon " + fusion.fusedExonDown()
+        return driverEntry(fusion.driverType().display(), name, fusion)
     }
 
     private fun fromVirus(virus: Virus): MolecularDriverEntry {
-        val entryBuilder = ImmutableMolecularDriverEntry.builder()
-        entryBuilder.driverType("Virus")
-        entryBuilder.driver(virus.event() + ", " + virus.integrations() + " integrations detected")
-        entryBuilder.driverLikelihood(virus.driverLikelihood())
-        addActionability(entryBuilder, virus)
-        return entryBuilder.build()
+        val name = virus.event() + ", " + virus.integrations() + " integrations detected"
+        return driverEntry("Virus", name, virus)
     }
 
-    private fun addActionability(entryBuilder: ImmutableMolecularDriverEntry.Builder, driver: Driver) {
-        entryBuilder.actinTrials(molecularDriversInterpreter.trialsForDriver(driver))
-        entryBuilder.externalTrials(externalTrials(driver))
-        entryBuilder.bestResponsiveEvidence(bestResponsiveEvidence(driver))
-        entryBuilder.bestResistanceEvidence(bestResistanceEvidence(driver))
+    private fun driverEntry(driverType: String, name: String, driver: Driver): MolecularDriverEntry {
+        return MolecularDriverEntry(
+            driverType = driverType,
+            driver = name,
+            driverLikelihood = driver.driverLikelihood(),
+            actinTrials = molecularDriversInterpreter.trialsForDriver(driver).toSet(),
+            externalTrials = driver.evidence().externalEligibleTrials(),
+            bestResponsiveEvidence = bestResponsiveEvidence(driver),
+            bestResistanceEvidence = bestResistanceEvidence(driver)
+        )
     }
 
     companion object {
-        private fun externalTrials(driver: Driver): Set<String> {
-            val trials: MutableSet<String> = Sets.newTreeSet(Ordering.natural())
-            trials.addAll(driver.evidence().externalEligibleTrials())
-            return trials
-        }
-
         private fun bestResponsiveEvidence(driver: Driver): String? {
             val evidence = driver.evidence()
-            if (!evidence.approvedTreatments().isEmpty()) {
-                return "Approved"
-            } else if (!evidence.onLabelExperimentalTreatments().isEmpty()) {
-                return "On-label experimental"
-            } else if (!evidence.offLabelExperimentalTreatments().isEmpty()) {
-                return "Off-label experimental"
-            } else if (!evidence.preClinicalTreatments().isEmpty()) {
-                return "Pre-clinical"
+            return when {
+                evidence.approvedTreatments().isNotEmpty() -> {
+                    "Approved"
+                }
+
+                evidence.onLabelExperimentalTreatments().isNotEmpty() -> {
+                    "On-label experimental"
+                }
+
+                evidence.offLabelExperimentalTreatments().isNotEmpty() -> {
+                    "Off-label experimental"
+                }
+
+                evidence.preClinicalTreatments().isNotEmpty() -> {
+                    "Pre-clinical"
+                }
+
+                else -> null
             }
-            return null
         }
 
         private fun bestResistanceEvidence(driver: Driver): String? {
             val evidence = driver.evidence()
-            if (!evidence.knownResistantTreatments().isEmpty()) {
-                return "Known resistance"
-            } else if (!evidence.suspectResistantTreatments().isEmpty()) {
-                return "Suspect resistance"
+            return when {
+                evidence.knownResistantTreatments().isNotEmpty() -> {
+                    "Known resistance"
+                }
+
+                evidence.suspectResistantTreatments().isNotEmpty() -> {
+                    "Suspect resistance"
+                }
+
+                else -> null
             }
-            return null
         }
     }
 }
