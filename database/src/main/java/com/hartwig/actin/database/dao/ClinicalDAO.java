@@ -49,7 +49,6 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType;
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
@@ -101,7 +100,6 @@ class ClinicalDAO {
         writeTumorDetails(patientId, record.tumor());
         writeClinicalStatus(patientId, record.clinicalStatus());
         writeTreatmentHistoryEntries(patientId, record.treatmentHistory());
-        writePriorTumorTreatments(patientId, record.priorTumorTreatments());
         writePriorSecondPrimaries(patientId, record.priorSecondPrimaries());
         writePriorOtherConditions(patientId, record.priorOtherConditions());
         writePriorMolecularTests(patientId, record.priorMolecularTests());
@@ -271,55 +269,6 @@ class ClinicalDAO {
                 .collect(Collectors.toList());
 
         context.batchInsert(records).execute();
-    }
-
-    private void writePriorTumorTreatments(@NotNull String patientId, @NotNull List<PriorTumorTreatment> priorTumorTreatments) {
-        for (PriorTumorTreatment priorTumorTreatment : priorTumorTreatments) {
-            context.insertInto(PRIORTUMORTREATMENT,
-                            PRIORTUMORTREATMENT.PATIENTID,
-                            PRIORTUMORTREATMENT.NAME,
-                            PRIORTUMORTREATMENT.STARTYEAR,
-                            PRIORTUMORTREATMENT.STARTMONTH,
-                            PRIORTUMORTREATMENT.STOPYEAR,
-                            PRIORTUMORTREATMENT.STOPMONTH,
-                            PRIORTUMORTREATMENT.CYCLES,
-                            PRIORTUMORTREATMENT.BESTRESPONSE,
-                            PRIORTUMORTREATMENT.STOPREASON,
-                            PRIORTUMORTREATMENT.CATEGORIES,
-                            PRIORTUMORTREATMENT.ISSYSTEMIC,
-                            PRIORTUMORTREATMENT.CHEMOTYPE,
-                            PRIORTUMORTREATMENT.IMMUNOTYPE,
-                            PRIORTUMORTREATMENT.TARGETEDTYPE,
-                            PRIORTUMORTREATMENT.HORMONETYPE,
-                            PRIORTUMORTREATMENT.RADIOTYPE,
-                            PRIORTUMORTREATMENT.CARTTYPE,
-                            PRIORTUMORTREATMENT.TRANSPLANTTYPE,
-                            PRIORTUMORTREATMENT.SUPPORTIVETYPE,
-                            PRIORTUMORTREATMENT.TRIALACRONYM,
-                            PRIORTUMORTREATMENT.ABLATIONTYPE)
-                    .values(patientId,
-                            priorTumorTreatment.name(),
-                            priorTumorTreatment.startYear(),
-                            priorTumorTreatment.startMonth(),
-                            priorTumorTreatment.stopYear(),
-                            priorTumorTreatment.stopMonth(),
-                            priorTumorTreatment.cycles(),
-                            priorTumorTreatment.bestResponse(),
-                            priorTumorTreatment.stopReason(),
-                            TreatmentCategoryResolver.toStringList(priorTumorTreatment.categories()),
-                            priorTumorTreatment.isSystemic(),
-                            priorTumorTreatment.chemoType(),
-                            priorTumorTreatment.immunoType(),
-                            priorTumorTreatment.targetedType(),
-                            priorTumorTreatment.hormoneType(),
-                            priorTumorTreatment.radioType(),
-                            priorTumorTreatment.carTType(),
-                            priorTumorTreatment.transplantType(),
-                            priorTumorTreatment.supportiveType(),
-                            priorTumorTreatment.trialAcronym(),
-                            priorTumorTreatment.ablationType())
-                    .execute();
-        }
     }
 
     private void writePriorSecondPrimaries(@NotNull String patientId, @NotNull List<PriorSecondPrimary> priorSecondPrimaries) {

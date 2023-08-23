@@ -9,7 +9,6 @@ import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
@@ -48,50 +47,6 @@ class CurationDatabaseReaderTest {
         assertThat(config.primaryTumorExtraDetails).isEqualTo(Strings.EMPTY)
         assertThat(config.doids).hasSize(1)
         assertThat(config.doids).contains("299")
-    }
-
-    @Test
-    fun shouldReadOncologicalHistoryConfigs() {
-        val configs = database!!.oncologicalHistoryConfigs
-        assertThat(configs).hasSize(3)
-
-        val capoxConfig = find(configs, "Capecitabine/Oxaliplatin 2020-2021")
-        assertThat(capoxConfig.ignore).isFalse
-        assertThat(capoxConfig.curated).isEqualTo(
-            ImmutablePriorTumorTreatment.builder()
-                .name("Capecitabine+Oxaliplatin")
-                .startYear(2020)
-                .stopYear(2021)
-                .cycles(6)
-                .bestResponse("PR")
-                .stopReason("toxicity")
-                .addCategories(TreatmentCategory.CHEMOTHERAPY)
-                .isSystemic(true)
-                .chemoType("antimetabolite,platinum")
-                .build()
-        )
-
-        val appendectomyConfig = find(configs, "2022 appendectomy")
-        assertThat(appendectomyConfig.ignore).isFalse
-        val curatedAppendectomy = appendectomyConfig.curated
-        assertThat(curatedAppendectomy).isNotNull
-        assertThat(curatedAppendectomy!!.name()).isEqualTo("Appendectomy")
-        assertThat(curatedAppendectomy.startYear()).isEqualTo(2022)
-        assertThat(curatedAppendectomy.categories()).containsExactly(TreatmentCategory.SURGERY)
-        assertThat(curatedAppendectomy.isSystemic).isFalse
-
-        val ablationConfig = find(configs, "Ablation trial 2023 May")
-        assertThat(ablationConfig.ignore).isFalse
-        val curatedAblation = ablationConfig.curated
-        assertThat(curatedAblation).isNotNull
-        assertThat(curatedAblation!!.name()).isEqualTo("Ablation trial")
-        assertThat(curatedAblation.startYear()).isEqualTo(2023)
-        assertThat(curatedAblation.startMonth()).isEqualTo(5)
-        assertThat(curatedAblation.categories()).containsExactlyInAnyOrder(
-            TreatmentCategory.ABLATION,
-            TreatmentCategory.TRIAL
-        )
-        assertThat(curatedAblation.isSystemic).isFalse
     }
 
     @Test

@@ -72,11 +72,9 @@ import com.hartwig.actin.clinical.datamodel.treatment.DrugType;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRadiotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatmentType;
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
@@ -129,8 +127,6 @@ public class ClinicalGsonDeserializer {
                 }.getType(), new ImmutableListAdapter<String>(String.class))
                 .registerTypeAdapter(new TypeToken<ImmutableList<TreatmentHistoryEntry>>() {
                 }.getType(), new ImmutableListAdapter<TreatmentHistoryEntry>(ImmutableTreatmentHistoryEntry.class))
-                .registerTypeAdapter(new TypeToken<ImmutableList<PriorTumorTreatment>>() {
-                }.getType(), new ImmutableListAdapter<PriorTumorTreatment>(ImmutablePriorTumorTreatment.class))
                 .registerTypeAdapter(new TypeToken<ImmutableList<PriorSecondPrimary>>() {
                 }.getType(), new ImmutableListAdapter<PriorSecondPrimary>(ImmutablePriorSecondPrimary.class))
                 .registerTypeAdapter(new TypeToken<ImmutableList<PriorOtherCondition>>() {

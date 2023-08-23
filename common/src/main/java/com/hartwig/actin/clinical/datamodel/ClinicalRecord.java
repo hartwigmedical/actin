@@ -2,7 +2,6 @@ package com.hartwig.actin.clinical.datamodel;
 
 import java.util.List;
 
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
 
 import org.immutables.value.Value;
@@ -27,9 +26,6 @@ public abstract class ClinicalRecord {
 
     @NotNull
     public abstract List<TreatmentHistoryEntry> treatmentHistory();
-
-    @NotNull
-    public abstract List<PriorTumorTreatment> priorTumorTreatments();
 
     @NotNull
     public abstract List<PriorSecondPrimary> priorSecondPrimaries();

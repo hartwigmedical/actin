@@ -17,6 +17,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEn
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
 import com.hartwig.actin.util.ResourceFile
+import com.hartwig.actin.util.json.GsonSerializer
 import org.apache.logging.log4j.LogManager
 
 object TreatmentHistoryEntryConfigFactory {
@@ -78,7 +79,7 @@ object TreatmentHistoryEntryConfigFactory {
                 .synonyms(emptySet())
                 .isSystemic(isSystemic)
                 .build()
-            LOGGER.info("  Automatically generated treatment from curation data: $treatment")
+            LOGGER.info("  Automatically generated treatment from curation data: ${GsonSerializer.create().toJson(treatment)}")
             return treatment
         }
         return null
