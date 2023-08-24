@@ -106,7 +106,7 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
                         .map(PatientClinicalHistoryGenerator::extractAnnotationForTreatment)
                         .flatMap(Optional::stream)
                         .reduce((x, y) -> x + "; " + y);
-                return Optional.of(treatmentName + annotationOption.map(annotation -> " (" + annotation + ")").orElse(""));
+                return Optional.of(treatment.treatmentDisplay() + annotationOption.map(note -> " (" + note + ")").orElse(""));
 
             } else {
                 return Optional.empty();

@@ -15,8 +15,10 @@ class HasHadNonInternalRadiotherapy : EvaluationFunction {
             .filter { entry -> entry.treatments().any { it is Radiotherapy && it.isInternal != true } }
 
         return if (matchingTreatments.isNotEmpty()) {
-            EvaluationFactory.pass("Has received non-internal radiotherapy in treatment(s) "
-                    + concatLowercaseWithAnd(matchingTreatments.map(TreatmentHistoryEntry::treatmentName)))
+            EvaluationFactory.pass(
+                "Has received non-internal radiotherapy in treatment(s) "
+                        + concatLowercaseWithAnd(matchingTreatments.map(TreatmentHistoryEntry::treatmentDisplay))
+            )
         } else {
             EvaluationFactory.fail("Has not received any non-internal radiotherapy")
         }

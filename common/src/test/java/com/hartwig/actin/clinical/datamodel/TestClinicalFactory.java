@@ -149,9 +149,9 @@ public final class TestClinicalFactory {
 
     @NotNull
     private static List<TreatmentHistoryEntry> createTreatmentHistory() {
-        Drug oxaliplatin = drug("Oxaliplatin", DrugType.PLATINUM_COMPOUND, TreatmentCategory.CHEMOTHERAPY);
+        Drug oxaliplatin = drug("OXALIPLATIN", DrugType.PLATINUM_COMPOUND, TreatmentCategory.CHEMOTHERAPY);
         Drug fluorouracil = drug("5-FU", DrugType.ANTIMETABOLITE, TreatmentCategory.CHEMOTHERAPY);
-        Drug irinotecan = drug("Irinotecan", DrugType.TOPO1_INHIBITOR, TreatmentCategory.CHEMOTHERAPY);
+        Drug irinotecan = drug("IRINOTECAN", DrugType.TOPO1_INHIBITOR, TreatmentCategory.CHEMOTHERAPY);
 
         DrugTherapy folfirinox = ImmutableDrugTherapy.builder()
                 .name("FOLFIRINOX")
@@ -161,19 +161,18 @@ public final class TestClinicalFactory {
                 .build();
 
         Radiotherapy radioFolfirinox =
-                ImmutableRadiotherapy.builder().name("FOLFIRINOX+radiotherapy").addAllDrugs(folfirinox.drugs()).isSystemic(true).build();
+                ImmutableRadiotherapy.builder().name("FOLFIRINOX+RADIOTHERAPY").addAllDrugs(folfirinox.drugs()).isSystemic(true).build();
 
-        Drug pembrolizumab = drug("Pembrolizumab", DrugType.ANTI_PD_1, TreatmentCategory.IMMUNOTHERAPY);
+        Drug pembrolizumab = drug("PEMBROLIZUMAB", DrugType.ANTI_PD_1, TreatmentCategory.IMMUNOTHERAPY);
 
-        DrugTherapy folfirinoxAndPembrolizumab = ImmutableDrugTherapy.builder()
-                .name("FOLFIRINOX + pembrolizumab")
+        DrugTherapy folfirinoxAndPembrolizumab = ImmutableDrugTherapy.builder().name("FOLFIRINOX+PEMBROLIZUMAB")
                 .addAllDrugs(folfirinox.drugs()).addDrugs(pembrolizumab).isSystemic(true).build();
 
         DrugTherapy folfirinoxLocoRegional =
-                ImmutableDrugTherapy.copyOf(folfirinox).withName("FOLFIRINOX loco-regional").withIsSystemic(false);
+                ImmutableDrugTherapy.copyOf(folfirinox).withName("FOLFIRINOX_LOCO-REGIONAL").withIsSystemic(false);
 
         OtherTreatment colectomy =
-                ImmutableOtherTreatment.builder().name("Colectomy").addCategories(TreatmentCategory.SURGERY).isSystemic(true).build();
+                ImmutableOtherTreatment.builder().name("COLECTOMY").addCategories(TreatmentCategory.SURGERY).isSystemic(true).build();
 
         TreatmentHistoryEntry surgeryHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
                 .addTreatments(colectomy)
