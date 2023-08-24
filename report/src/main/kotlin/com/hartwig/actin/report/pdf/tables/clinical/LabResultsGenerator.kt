@@ -8,44 +8,37 @@ import com.hartwig.actin.clinical.interpretation.LabMeasurement
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
+import com.hartwig.actin.report.pdf.util.Formats.date
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
-import org.apache.logging.log4j.util.Strings
-import java.lang.Boolean
 import java.time.LocalDate
-import java.util.stream.Collectors
-import kotlin.Comparator
-import kotlin.Float
-import kotlin.FloatArray
 import kotlin.String
 
 class LabResultsGenerator private constructor(
     private val labInterpretation: LabInterpretation, private val key1Width: Float, private val key2Width: Float,
     private val key3Width: Float, private val valueWidth: Float
 ) : TableGenerator {
+
     override fun title(): String {
         return "Laboratory results"
     }
 
     override fun contents(): Table {
         val dates = labInterpretation.allDates()
-            .stream()
-            .sorted(Comparator.reverseOrder())
+            .sortedWith(Comparator.reverseOrder())
             .distinct()
-            .limit(MAX_LAB_DATES.toLong())
+            .take(MAX_LAB_DATES)
             .sorted()
-            .collect(Collectors.toList())
+
         val table = Tables.createFixedWidthCols(*defineWidths())
-        table.addHeaderCell(Cells.createHeader(Strings.EMPTY))
-        table.addHeaderCell(Cells.createHeader(Strings.EMPTY))
-        table.addHeaderCell(Cells.createHeader(Strings.EMPTY))
+        repeat(3) { addHeader(table) }
         for (date in dates) {
-            table.addHeaderCell(Cells.createHeader(date(date)))
+            addHeader(table, date(date))
         }
         for (i in dates.size until MAX_LAB_DATES) {
-            table.addHeaderCell(Cells.createHeader(Strings.EMPTY))
+            addHeader(table)
         }
         table.addCell(Cells.createKey("Liver function"))
         table.addCell(Cells.createKey("Total bilirubin"))
@@ -93,10 +86,14 @@ class LabResultsGenerator private constructor(
         table.addCell(Cells.createKey("PSA"))
         addLabMeasurements(table, dates, LabMeasurement.PSA)
         if (labInterpretation.allDates().size > MAX_LAB_DATES) {
-            val note = "Note: Only the most recent " + MAX_LAB_DATES + " lab results have been displayed"
+            val note = "Note: Only the most recent $MAX_LAB_DATES lab results have been displayed"
             table.addCell(Cells.createSpanningSubNote(note, table))
         }
         return table
+    }
+
+    private fun addHeader(table: Table, text: String = "") {
+        table.addHeaderCell(Cells.createHeader(text))
     }
 
     private fun defineWidths(): FloatArray {
@@ -112,21 +109,20 @@ class LabResultsGenerator private constructor(
 
     private fun addLabMeasurements(table: Table, dates: List<LocalDate>, measurement: LabMeasurement) {
         table.addCell(Cells.createKey(buildLimitString(labInterpretation.mostRecentValue(measurement))))
-        for (date in dates) {
-            val joiner = Formats.commaJoiner()
-            var style = Styles.tableHighlightStyle()
-            for (lab in labInterpretation.valuesOnDate(measurement, date)!!) {
-                var value = Formats.twoDigitNumber(lab.value()) + " " + lab.unit().display()
-                if (!lab.comparator().isEmpty()) {
-                    value = lab.comparator() + " " + value
-                }
-                joiner.add(value)
-                if (lab.isOutsideRef != null && Boolean.TRUE == lab.isOutsideRef) {
-                    style = Styles.tableWarnStyle()
-                }
+        dates.map { date ->
+            val labValue = labInterpretation.valuesOnDate(measurement, date)!!.joinToString(Formats.COMMA_SEPARATOR) { lab ->
+                listOf(lab.comparator(), Formats.twoDigitNumber(lab.value()), lab.unit().display())
+                    .filter(String::isNotEmpty)
+                    .joinToString(" ")
             }
-            table.addCell(Cells.create(Paragraph(joiner.toString()).addStyle(style)))
-        }
+            val style = if (labInterpretation.valuesOnDate(measurement, date)!!.any { it.isOutsideRef == true }) {
+                Styles.tableWarnStyle()
+            } else {
+                Styles.tableHighlightStyle()
+            }
+            Cells.create(Paragraph(labValue).addStyle(style))
+        }.forEach(table::addCell)
+
         for (i in dates.size until MAX_LAB_DATES) {
             table.addCell(Cells.createEmpty())
         }
@@ -134,6 +130,7 @@ class LabResultsGenerator private constructor(
 
     companion object {
         private const val MAX_LAB_DATES = 5
+
         fun fromRecord(record: ClinicalRecord, keyWidth: Float, valueWidth: Float): LabResultsGenerator {
             val key1Width = keyWidth / 3
             val key2Width = keyWidth / 3
@@ -143,22 +140,27 @@ class LabResultsGenerator private constructor(
 
         private fun buildLimitString(lab: LabValue?): String {
             if (lab == null) {
-                return Strings.EMPTY
+                return ""
             }
             val refLimitLow = lab.refLimitLow()
             val refLimitUp = lab.refLimitUp()
             if (refLimitLow == null && refLimitUp == null) {
-                return Strings.EMPTY
+                return ""
             }
-            val limit: String
-            limit = if (refLimitLow == null) {
-                "< " + Formats.twoDigitNumber(refLimitUp!!)
-            } else if (refLimitUp == null) {
-                "> " + Formats.twoDigitNumber(refLimitLow)
-            } else {
-                Formats.twoDigitNumber(refLimitLow) + " - " + Formats.twoDigitNumber(refLimitUp)
+            val limit: String = when {
+                refLimitLow == null -> {
+                    "< " + Formats.twoDigitNumber(refLimitUp!!)
+                }
+
+                refLimitUp == null -> {
+                    "> " + Formats.twoDigitNumber(refLimitLow)
+                }
+
+                else -> {
+                    Formats.twoDigitNumber(refLimitLow) + " - " + Formats.twoDigitNumber(refLimitUp)
+                }
             }
-            return "(" + limit + " " + lab.unit().display() + ")"
+            return "($limit ${lab.unit().display()})"
         }
     }
 }

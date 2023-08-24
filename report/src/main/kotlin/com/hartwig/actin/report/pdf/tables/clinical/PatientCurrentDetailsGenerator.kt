@@ -8,13 +8,9 @@ import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
+import com.hartwig.actin.report.pdf.util.Formats.date
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
-import org.apache.logging.log4j.util.Strings
-import java.lang.Boolean
-import kotlin.Float
-import kotlin.Int
-import kotlin.String
 
 class PatientCurrentDetailsGenerator(private val record: ClinicalRecord, private val keyWidth: Float, private val valueWidth: Float) :
     TableGenerator {
@@ -57,7 +53,7 @@ class PatientCurrentDetailsGenerator(private val record: ClinicalRecord, private
         table.addCell(Cells.createValue(complications(record)))
         table.addCell(Cells.createKey("Known allergies"))
         table.addCell(Cells.createValue(allergies(record.intolerances())))
-        if (!record.surgeries().isEmpty()) {
+        if (record.surgeries().isNotEmpty()) {
             table.addCell(Cells.createKey("Recent surgeries"))
             table.addCell(Cells.createValue(surgeries(record.surgeries())))
         }
@@ -72,60 +68,43 @@ class PatientCurrentDetailsGenerator(private val record: ClinicalRecord, private
 
         //TODO: For source EHR, only consider the most recent value of each toxicity and write these with "From EHR: " for clarity
         private fun unresolvedToxicities(record: ClinicalRecord): String {
-            val joiner = Formats.commaJoiner()
-            for (toxicity in record.toxicities()) {
+            val toxicitySummary = record.toxicities().filter { toxicity ->
                 val grade = toxicity.grade()
-                if (grade != null && grade >= 2 || toxicity.source() == ToxicitySource.QUESTIONNAIRE) {
-                    val gradeString = if (grade != null) " ($grade)" else Strings.EMPTY
-                    joiner.add(toxicity.name() + gradeString)
-                }
+                grade != null && grade >= 2 || toxicity.source() == ToxicitySource.QUESTIONNAIRE
+            }.joinToString(Formats.COMMA_SEPARATOR) { toxicity ->
+                toxicity.name() + toxicity.grade()?.let { " ($it)" }
             }
-            return Formats.valueOrDefault(joiner.toString(), "None")
+            return Formats.valueOrDefault(toxicitySummary, "None")
         }
 
         private fun complications(record: ClinicalRecord): String {
             val complications = record.complications()
-            val hasComplications = Boolean.TRUE == record.clinicalStatus().hasComplications()
+            val hasComplications = record.clinicalStatus().hasComplications() == true
             if (complications == null) {
                 return if (hasComplications) "Yes (complication details unknown)" else "Unknown"
             }
-            val joiner = Formats.commaJoiner()
-            for (complication in complications) {
-                val date = toDateString(complication.year(), complication.month())
-                var dateAddition = Strings.EMPTY
-                if (date != null) {
-                    dateAddition = " ($date)"
-                }
-                joiner.add(complication.name() + dateAddition)
+            val complicationSummary = complications.joinToString(Formats.COMMA_SEPARATOR) { complication ->
+                complication.name() + toDateString(complication.year(), complication.month())?.let { " ($it)" }
             }
-            return Formats.valueOrDefault(joiner.toString(), if (hasComplications) "Yes (complication details unknown)" else "None")
+            return Formats.valueOrDefault(complicationSummary, if (hasComplications) "Yes (complication details unknown)" else "None")
         }
 
-        private fun toDateString(year: Int?, month: Int?): String? {
-            return if (year != null) {
-                if (month != null) "$month/$year" else year.toString()
-            } else {
-                null
+        private fun toDateString(maybeYear: Int?, maybeMonth: Int?): String? {
+            return maybeYear?.let { year ->
+                maybeMonth?.let { month -> "$month/$year" } ?: year.toString()
             }
         }
 
         private fun allergies(intolerances: List<Intolerance>): String {
-            val joiner = Formats.commaJoiner()
-            for (intolerance in intolerances) {
-                if (!intolerance.name().equals("none", ignoreCase = true)) {
-                    val addition = if (!intolerance.category().isEmpty()) " (" + intolerance.category() + ")" else Strings.EMPTY
-                    joiner.add(intolerance.name() + addition)
+            val intoleranceSummary = intolerances.filter { !it.name().equals("none", ignoreCase = true) }
+                .joinToString(Formats.COMMA_SEPARATOR) {
+                    it.name() + if (it.category().isNotEmpty()) " (${it.category()})" else ""
                 }
-            }
-            return Formats.valueOrDefault(joiner.toString(), "None")
+            return Formats.valueOrDefault(intoleranceSummary, "None")
         }
 
         private fun surgeries(surgeries: List<Surgery>): String {
-            val joiner = Formats.commaJoiner()
-            for (surgery in surgeries) {
-                joiner.add(date(surgery.endDate()))
-            }
-            return Formats.valueOrDefault(joiner.toString(), "None")
+            return Formats.valueOrDefault(surgeries.joinToString(Formats.COMMA_SEPARATOR) { date(it.endDate()) }, "None")
         }
     }
 }

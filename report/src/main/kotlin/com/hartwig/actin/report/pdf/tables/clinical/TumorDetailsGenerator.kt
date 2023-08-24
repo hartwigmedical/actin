@@ -5,9 +5,9 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
+import com.hartwig.actin.report.pdf.util.Formats.date
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
-import org.apache.logging.log4j.util.Strings
 
 class TumorDetailsGenerator(private val record: ClinicalRecord, private val keyWidth: Float, private val valueWidth: Float) :
     TableGenerator {
@@ -28,33 +28,39 @@ class TumorDetailsGenerator(private val record: ClinicalRecord, private val keyW
 
     companion object {
         private fun cnsLesions(tumor: TumorDetails): String {
-            if (tumor.hasCnsLesions() == null) {
-                return Formats.VALUE_UNKNOWN
-            }
-            return if (tumor.hasCnsLesions()!!) {
-                activeLesionString("Present CNS lesions", tumor.hasActiveCnsLesions())
-            } else {
-                "No known CNS lesions"
+            return when (tumor.hasCnsLesions()) {
+                true -> {
+                    activeLesionString("Present CNS lesions", tumor.hasActiveCnsLesions())
+                }
+
+                false -> {
+                    "No known CNS lesions"
+                }
+
+                null -> {
+                    Formats.VALUE_UNKNOWN
+                }
             }
         }
 
         private fun brainLesions(tumor: TumorDetails): String {
-            if (tumor.hasBrainLesions() == null) {
-                return Formats.VALUE_UNKNOWN
-            }
-            return if (tumor.hasBrainLesions()!!) {
-                activeLesionString("Present brain lesions", tumor.hasActiveBrainLesions())
-            } else {
-                "No known brain lesions"
+            return when (tumor.hasBrainLesions()) {
+                true -> {
+                    activeLesionString("Present brain lesions", tumor.hasActiveBrainLesions())
+                }
+
+                false -> {
+                    "No known brain lesions"
+                }
+
+                null -> {
+                    Formats.VALUE_UNKNOWN
+                }
             }
         }
 
         private fun activeLesionString(type: String, active: Boolean?): String {
-            var activeString = Strings.EMPTY
-            if (active != null) {
-                activeString = if (active) " (active)" else " (not active)"
-            }
-            return type + activeString
+            return type + active?.let { if (it) " (active)" else " (not active)" }
         }
     }
 }
