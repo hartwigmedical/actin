@@ -21,7 +21,7 @@ CREATE TABLE `tumor`
     `primaryTumorSubLocation` varchar(50),
     `primaryTumorType` varchar(50),
     `primaryTumorSubType` varchar(50),
-    `primaryTumorExtraDetails` varchar(50),
+    `primaryTumorExtraDetails` varchar(100),
     `doids` varchar(50),
     `stage` varchar(50),
     `hasMeasurableDisease` BOOLEAN,
