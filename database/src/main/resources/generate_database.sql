@@ -138,7 +138,7 @@ CREATE TABLE `priorOtherCondition`
     `year` int,
     `month` int,
     `doids` varchar(50) NOT NULL,
-    `category` varchar(50) NOT NULL,
+    `category` varchar(100) NOT NULL,
     `isContraindicationForTherapy` BOOLEAN NOT NULL,
     PRIMARY KEY (`id`)
 );
