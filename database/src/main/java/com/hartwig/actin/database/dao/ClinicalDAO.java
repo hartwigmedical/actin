@@ -11,7 +11,6 @@ import static com.hartwig.actin.database.Tables.PATIENT;
 import static com.hartwig.actin.database.Tables.PRIORMOLECULARTEST;
 import static com.hartwig.actin.database.Tables.PRIOROTHERCONDITION;
 import static com.hartwig.actin.database.Tables.PRIORSECONDPRIMARY;
-import static com.hartwig.actin.database.Tables.PRIORTUMORTREATMENT;
 import static com.hartwig.actin.database.Tables.SURGERY;
 import static com.hartwig.actin.database.Tables.TOXICITY;
 import static com.hartwig.actin.database.Tables.TREATMENTHISTORYENTRY;
@@ -77,7 +76,6 @@ class ClinicalDAO {
         context.truncate(TUMOR).execute();
         context.truncate(CLINICALSTATUS).execute();
         context.truncate(TREATMENTHISTORYENTRY).execute();
-        context.truncate(PRIORTUMORTREATMENT).execute();
         context.truncate(PRIORSECONDPRIMARY).execute();
         context.truncate(PRIOROTHERCONDITION).execute();
         context.truncate(PRIORMOLECULARTEST).execute();
