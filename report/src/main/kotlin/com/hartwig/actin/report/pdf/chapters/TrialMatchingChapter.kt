@@ -1,9 +1,7 @@
 package com.hartwig.actin.report.pdf.chapters
 
-import com.google.common.collect.Lists
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
-import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.treatment.EligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.treatment.IneligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.util.Cells
@@ -33,11 +31,12 @@ class TrialMatchingChapter(private val report: Report, private val enableExtende
 
     private fun addTrialMatchingOverview(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch())
-        val generators: List<TableGenerator> = Lists.newArrayList(
-            EligibleActinTrialsGenerator.Companion.forClosedCohorts(cohorts, contentWidth(), enableExtendedMode),
-            IneligibleActinTrialsGenerator.Companion.fromEvaluatedCohorts(cohorts, contentWidth(), enableExtendedMode)
+        val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
+        val generators = listOf(
+            EligibleActinTrialsGenerator.forClosedCohorts(cohorts, contentWidth(), enableExtendedMode),
+            IneligibleActinTrialsGenerator.fromEvaluatedCohorts(cohorts, contentWidth(), enableExtendedMode)
         )
+
         for (i in generators.indices) {
             val generator = generators[i]
             table.addCell(Cells.createTitle(generator.title()))

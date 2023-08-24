@@ -5,6 +5,7 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails
 object TumorDetailsInterpreter {
     const val CUP_LOCATION = "Unknown"
     const val CUP_SUB_LOCATION = "CUP"
+
     fun isCUP(tumor: TumorDetails): Boolean {
         val location = tumor.primaryTumorLocation()
         val subLocation = tumor.primaryTumorSubLocation()

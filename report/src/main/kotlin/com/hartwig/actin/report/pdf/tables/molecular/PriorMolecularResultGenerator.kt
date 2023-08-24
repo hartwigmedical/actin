@@ -29,9 +29,9 @@ class PriorMolecularResultGenerator(private val clinical: ClinicalRecord, privat
 
     companion object {
         private fun generatePriorTestParagraphs(interpretation: PriorMolecularTestInterpretation): List<Paragraph> {
-            val sortedTextBasedPriorTests = interpretation.textBasedPriorTests.keySet()
-                .sortedWith(PriorMolecularTestKeyComparator())
-                .map { formatTextBasedPriorTests(it, interpretation.textBasedPriorTests[it]) }
+            val sortedTextBasedPriorTests = interpretation.textBasedPriorTests.entries
+                .sortedWith(compareBy(PriorMolecularTestKeyComparator()) { it.key })
+                .map { (key, value) -> formatTextBasedPriorTests(key, value) }
 
             val sortedValueBasedTests = interpretation.valueBasedPriorTests
                 .sortedWith(PriorMolecularTestComparator())
@@ -43,13 +43,13 @@ class PriorMolecularResultGenerator(private val clinical: ClinicalRecord, privat
         private fun formatTextBasedPriorTests(key: PriorMolecularTestKey, values: Collection<PriorMolecularTest>): String {
             val sorted = values.sortedWith(PriorMolecularTestComparator())
             val builder = StringBuilder()
-            val scoreText = key.scoreText()
+            val scoreText = key.scoreText
             builder.append(scoreText.substring(0, 1).uppercase())
             if (scoreText.length > 1) {
                 builder.append(scoreText.substring(1).lowercase())
             }
             builder.append(" (")
-            builder.append(key.test())
+            builder.append(key.test)
             builder.append("): ")
             builder.append(sorted[0].item())
             for (i in 1 until sorted.size) {
@@ -64,27 +64,14 @@ class PriorMolecularResultGenerator(private val clinical: ClinicalRecord, privat
         }
 
         private fun formatValueBasedPriorTest(valueTest: PriorMolecularTest): String {
-            val builder = StringBuilder()
-            builder.append("Score ")
-            builder.append(valueTest.item())
-            builder.append(" ")
-            val measure = valueTest.measure()
-            if (measure != null) {
-                builder.append(measure)
-                builder.append(" ")
-            }
-            val scoreValuePrefix = valueTest.scoreValuePrefix()
-            if (scoreValuePrefix != null) {
-                builder.append(scoreValuePrefix)
-                builder.append(" ")
-            }
-            builder.append(Formats.twoDigitNumber(valueTest.scoreValue()!!))
-            val scoreValueUnit = valueTest.scoreValueUnit()
-            if (scoreValueUnit != null) {
-                builder.append(" ")
-                builder.append(scoreValueUnit)
-            }
-            return builder.toString()
+            return listOfNotNull(
+                "Score",
+                valueTest.item(),
+                valueTest.measure(),
+                valueTest.scoreValuePrefix(),
+                Formats.twoDigitNumber(valueTest.scoreValue()!!),
+                valueTest.scoreValueUnit()
+            ).joinToString(" ")
         }
     }
 }

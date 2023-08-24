@@ -40,11 +40,13 @@ class MolecularDetailsChapter(private val report: Report) : ReportChapter {
         val priorMolecularResultGenerator = PriorMolecularResultGenerator(report.clinical, keyWidth, contentWidth() - keyWidth - 10)
         val priorMolecularResults = priorMolecularResultGenerator.contents().setBorder(Border.NO_BORDER)
         document.add(priorMolecularResults)
+
         val table = Tables.createSingleColWithWidth(contentWidth())
         table.addCell(Cells.createEmpty())
         table.addCell(
             Cells.createTitle("${report.molecular.type()} (${report.molecular.sampleId()}, ${date(report.molecular.date())})")
         )
+
         val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
         val generators: MutableList<TableGenerator> = mutableListOf(
             MolecularCharacteristicsGenerator(

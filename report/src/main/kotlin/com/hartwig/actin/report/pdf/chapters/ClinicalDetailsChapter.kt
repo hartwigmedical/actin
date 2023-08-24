@@ -1,8 +1,6 @@
 package com.hartwig.actin.report.pdf.chapters
 
-import com.google.common.collect.Lists
 import com.hartwig.actin.report.datamodel.Report
-import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.BloodTransfusionGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.LabResultsGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.MedicationGenerator
@@ -39,18 +37,16 @@ class ClinicalDetailsChapter(private val report: Report) : ReportChapter {
         val table = Tables.createSingleColWithWidth(contentWidth())
         val keyWidth = Formats.STANDARD_KEY_WIDTH
         val valueWidth = contentWidth() - keyWidth - 10
-        val generators: MutableList<TableGenerator> = Lists.newArrayList(
-            PatientClinicalHistoryGenerator(
-                report.clinical(), keyWidth, valueWidth
-            ),
-            PatientCurrentDetailsGenerator(report.clinical(), keyWidth, valueWidth),
-            TumorDetailsGenerator(report.clinical(), keyWidth, valueWidth),
-            LabResultsGenerator.Companion.fromRecord(report.clinical(), keyWidth, valueWidth),
-            MedicationGenerator(report.clinical().medications(), contentWidth())
+        val bloodTransfusions = report.clinical.bloodTransfusions()
+
+        val generators = listOfNotNull(
+            PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth),
+            PatientCurrentDetailsGenerator(report.clinical, keyWidth, valueWidth),
+            TumorDetailsGenerator(report.clinical, keyWidth, valueWidth),
+            LabResultsGenerator.fromRecord(report.clinical, keyWidth, valueWidth),
+            MedicationGenerator(report.clinical.medications(), contentWidth()),
+            if (bloodTransfusions.isEmpty()) null else BloodTransfusionGenerator(bloodTransfusions, contentWidth())
         )
-        if (!report.clinical().bloodTransfusions().isEmpty()) {
-            generators.add(BloodTransfusionGenerator(report.clinical().bloodTransfusions(), contentWidth()))
-        }
         for (i in generators.indices) {
             val generator = generators[i]
             table.addCell(Cells.createTitle(generator.title()))

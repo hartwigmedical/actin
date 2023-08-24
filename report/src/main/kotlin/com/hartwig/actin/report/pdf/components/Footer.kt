@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.pdf.components
 
-import com.google.common.collect.Lists
 import com.hartwig.actin.report.pdf.util.Styles
 import com.itextpdf.kernel.geom.Rectangle
 import com.itextpdf.kernel.pdf.PdfDocument
@@ -12,7 +11,8 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.properties.TextAlignment
 
 class Footer {
-    private val footerTemplates: MutableList<FooterTemplate> = Lists.newArrayList()
+    private val footerTemplates: MutableList<FooterTemplate> = mutableListOf()
+
     fun render(page: PdfPage) {
         val canvas = PdfCanvas(page.lastContentStream, page.resources, page.document)
         val pageNumber = page.document.getPageNumber(page)
@@ -29,7 +29,7 @@ class Footer {
         }
     }
 
-    private class FooterTemplate internal constructor(private val pageNumber: Int, private val template: PdfFormXObject) {
+    private class FooterTemplate(private val pageNumber: Int, private val template: PdfFormXObject) {
         fun renderFooter(document: PdfDocument, totalPageCount: Int) {
             val displayString = "$pageNumber/$totalPageCount"
             val canvas = Canvas(template, document)

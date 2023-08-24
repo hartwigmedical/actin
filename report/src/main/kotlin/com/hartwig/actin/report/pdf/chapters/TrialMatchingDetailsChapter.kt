@@ -1,17 +1,17 @@
 package com.hartwig.actin.report.pdf.chapters
 
-import com.google.common.collect.Lists
-import com.google.common.collect.Maps
-import com.google.common.collect.Sets
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation
 import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.Cells.createContent
+import com.hartwig.actin.report.pdf.util.Cells.createEvaluationResult
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
+import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.hartwig.actin.treatment.datamodel.CohortMetadata
 import com.hartwig.actin.treatment.datamodel.CriterionReference
 import com.hartwig.actin.treatment.datamodel.Eligibility
@@ -35,20 +35,15 @@ class TrialMatchingDetailsChapter(private val report: Report) : ReportChapter {
 
     override fun render(document: Document) {
         addChapterTitle(document)
-        val eligible: MutableList<TrialMatch> = Lists.newArrayList()
-        val nonEligible: MutableList<TrialMatch> = Lists.newArrayList()
-        for (trial in report.treatmentMatch().trialMatches()) {
-            if (isOpenAndPotentiallyEligible(trial)) {
-                eligible.add(trial)
-            } else {
-                nonEligible.add(trial)
-            }
-        }
-        if (!eligible.isEmpty()) {
+        val (eligible: List<TrialMatch>, nonEligible: List<TrialMatch>) = report.treatmentMatch.trialMatches()
+            .map(TrialClassification::createForTrialMatch)
+            .fold(TrialClassification(), TrialClassification::combine)
+
+        if (eligible.isNotEmpty()) {
             addTrialMatches(document, eligible, "Potentially eligible open trials & cohorts", true)
         }
-        if (!nonEligible.isEmpty()) {
-            if (!eligible.isEmpty()) {
+        if (nonEligible.isNotEmpty()) {
+            if (eligible.isNotEmpty()) {
                 document.add(pageBreak())
             }
             addTrialMatches(document, nonEligible, "Other trials & cohorts", false)
@@ -156,8 +151,7 @@ class TrialMatchingDetailsChapter(private val report: Report) : ReportChapter {
         table.addHeaderCell(Cells.createHeader("Rule"))
         table.addHeaderCell(Cells.createHeader("Reference"))
         table.addHeaderCell(Cells.createHeader("Evaluation"))
-        val references: MutableSet<CriterionReference> = Sets.newTreeSet(CriterionReferenceComparator())
-        references.addAll(evaluations.keys)
+        val references = evaluations.keys.sortedWith(CriterionReferenceComparator()).distinct()
         addEvaluationsOfType(table, references, evaluations, EvaluationResult.NOT_IMPLEMENTED)
         addEvaluationsOfType(table, references, evaluations, EvaluationResult.FAIL)
         if (!displayFailOnly) {
@@ -172,27 +166,13 @@ class TrialMatchingDetailsChapter(private val report: Report) : ReportChapter {
     companion object {
         private const val RULE_COL_WIDTH = 30f
         private const val EVALUATION_COL_WIDTH = 150f
-        private fun isOpenAndPotentiallyEligible(trial: TrialMatch): Boolean {
-            if (!trial.isPotentiallyEligible || !trial.identification().open()) {
-                return false
-            }
-            if (trial.cohorts().isEmpty()) {
-                return true
-            }
-            for (cohort in trial.cohorts()) {
-                if (cohort.isPotentiallyEligible && !cohort.metadata().blacklist() && cohort.metadata().open()) {
-                    return true
-                }
-            }
-            return false
-        }
 
         private fun hasDisplayableEvaluations(
             evaluationsPerCriterion: Map<CriterionReference, Evaluation>,
             displayFailOnly: Boolean
         ): Boolean {
             if (!displayFailOnly) {
-                return !evaluationsPerCriterion.isEmpty()
+                return evaluationsPerCriterion.isNotEmpty()
             }
             for (evaluation in evaluationsPerCriterion.values) {
                 if (evaluation.result() == EvaluationResult.FAIL) {
@@ -203,7 +183,7 @@ class TrialMatchingDetailsChapter(private val report: Report) : ReportChapter {
         }
 
         private fun toWorstEvaluationPerReference(evaluations: Map<Eligibility, Evaluation>): Map<CriterionReference, Evaluation> {
-            val worstResultPerCriterion: MutableMap<CriterionReference, EvaluationResult> = Maps.newHashMap()
+            val worstResultPerCriterion: MutableMap<CriterionReference, EvaluationResult> = mutableMapOf()
             for ((key, value) in evaluations) {
                 for (reference in key.references()) {
                     val currentWorst = worstResultPerCriterion[reference]
@@ -216,10 +196,10 @@ class TrialMatchingDetailsChapter(private val report: Report) : ReportChapter {
                     }
                 }
             }
-            val worstEvaluationPerCriterion: MutableMap<CriterionReference, Evaluation> = Maps.newHashMap()
+            val worstEvaluationPerCriterion: MutableMap<CriterionReference, Evaluation> = mutableMapOf()
             for ((key, evaluation) in evaluations) {
                 for (reference in key.references()) {
-                    val worst = worstResultPerCriterion[reference]
+                    val worst = worstResultPerCriterion[reference]!!
                     val current = worstEvaluationPerCriterion[reference]
                     if (current == null) {
                         worstEvaluationPerCriterion[reference] = ImmutableEvaluation.builder().from(evaluation).result(worst).build()
@@ -245,14 +225,14 @@ class TrialMatchingDetailsChapter(private val report: Report) : ReportChapter {
         }
 
         private fun addEvaluationsOfType(
-            table: Table, references: Set<CriterionReference>,
+            table: Table, references: Iterable<CriterionReference>,
             evaluations: Map<CriterionReference, Evaluation>, resultToRender: EvaluationResult
         ) {
             for (reference in references) {
                 val evaluation = evaluations[reference]
                 if (evaluation!!.result() == resultToRender) {
-                    table.addCell(Cells.createContent(reference.id()))
-                    table.addCell(Cells.createContent(reference.text()))
+                    table.addCell(createContent(reference.id()))
+                    table.addCell(createContent(reference.text()))
                     val evalTable = Tables.createSingleColWithWidth(EVALUATION_COL_WIDTH).setKeepTogether(true)
                     evalTable.addCell(Cells.createEvaluation(evaluation))
                     if (evaluation.result() == EvaluationResult.PASS || evaluation.result() == EvaluationResult.NOT_EVALUATED) {
@@ -263,7 +243,7 @@ class TrialMatchingDetailsChapter(private val report: Report) : ReportChapter {
                         for (warnMessage in evaluation.warnSpecificMessages()) {
                             evalTable.addCell(Cells.create(Paragraph(warnMessage)))
                         }
-                        if (!evaluation.undeterminedSpecificMessages().isEmpty()) {
+                        if (evaluation.undeterminedSpecificMessages().isNotEmpty()) {
                             evalTable.addCell(createEvaluationResult(EvaluationResult.UNDETERMINED))
                             for (undeterminedMessage in evaluation.undeterminedSpecificMessages()) {
                                 evalTable.addCell(Cells.create(Paragraph(undeterminedMessage)))
@@ -278,13 +258,13 @@ class TrialMatchingDetailsChapter(private val report: Report) : ReportChapter {
                             evalTable.addCell(Cells.create(Paragraph(failMessage)))
                         }
                         if (evaluation.recoverable()) {
-                            if (!evaluation.warnSpecificMessages().isEmpty()) {
+                            if (evaluation.warnSpecificMessages().isNotEmpty()) {
                                 evalTable.addCell(createEvaluationResult(EvaluationResult.WARN))
                                 for (warnMessage in evaluation.warnSpecificMessages()) {
                                     evalTable.addCell(Cells.create(Paragraph(warnMessage)))
                                 }
                             }
-                            if (!evaluation.undeterminedSpecificMessages().isEmpty()) {
+                            if (evaluation.undeterminedSpecificMessages().isNotEmpty()) {
                                 evalTable.addCell(createEvaluationResult(EvaluationResult.UNDETERMINED))
                                 for (undeterminedMessage in evaluation.undeterminedSpecificMessages()) {
                                     evalTable.addCell(Cells.create(Paragraph(undeterminedMessage)))
@@ -303,6 +283,38 @@ class TrialMatchingDetailsChapter(private val report: Report) : ReportChapter {
 
         private fun pageBreak(): AreaBreak {
             return AreaBreak(AreaBreakType.NEXT_PAGE)
+        }
+    }
+
+    private data class TrialClassification(val eligible: List<TrialMatch> = emptyList(), val nonEligible: List<TrialMatch> = emptyList()) {
+
+        fun combine(other: TrialClassification): TrialClassification {
+            return TrialClassification(eligible + other.eligible, nonEligible + other.nonEligible)
+        }
+
+        companion object {
+            fun createForTrialMatch(trialMatch: TrialMatch): TrialClassification {
+                return if (isOpenAndPotentiallyEligible(trialMatch)) {
+                    TrialClassification(eligible = listOf(trialMatch))
+                } else {
+                    TrialClassification(nonEligible = listOf(trialMatch))
+                }
+            }
+
+            private fun isOpenAndPotentiallyEligible(trial: TrialMatch): Boolean {
+                if (!trial.isPotentiallyEligible || !trial.identification().open()) {
+                    return false
+                }
+                if (trial.cohorts().isEmpty()) {
+                    return true
+                }
+                for (cohort in trial.cohorts()) {
+                    if (cohort.isPotentiallyEligible && !cohort.metadata().blacklist() && cohort.metadata().open()) {
+                        return true
+                    }
+                }
+                return false
+            }
         }
     }
 }

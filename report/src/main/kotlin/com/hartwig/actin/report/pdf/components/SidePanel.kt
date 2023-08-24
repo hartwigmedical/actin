@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf.components
 
 import com.hartwig.actin.report.pdf.util.Constants
+import com.hartwig.actin.report.pdf.util.Formats.date
 import com.hartwig.actin.report.pdf.util.Styles
 import com.itextpdf.kernel.font.PdfFont
 import com.itextpdf.kernel.geom.Rectangle

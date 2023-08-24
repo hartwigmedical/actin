@@ -5,21 +5,35 @@ import org.apache.logging.log4j.LogManager
 
 object PriorMolecularTestInterpreter {
     private val LOGGER = LogManager.getLogger(PriorMolecularTestInterpreter::class.java)
+
     fun interpret(priorTests: List<PriorMolecularTest>): PriorMolecularTestInterpretation {
-        val builder = ImmutablePriorMolecularTestInterpretation.builder()
-        for (priorTest in priorTests) {
+        val (textBasedPriorTests, valueBasedPriorTests) = priorTests.map { priorTest ->
             val scoreText = priorTest.scoreText()
-            val scoreValue = priorTest.scoreValue()
             if (scoreText != null) {
-                val key: PriorMolecularTestKey =
-                    ImmutablePriorMolecularTestKey.builder().test(priorTest.test()).scoreText(scoreText).build()
-                builder.putTextBasedPriorTests(key, priorTest)
-            } else if (scoreValue != null) {
-                builder.addValueBasedPriorTests(priorTest)
+                PriorMolecularTestCollection(
+                    listOf(PriorMolecularTestKey(test = priorTest.test(), scoreText = scoreText) to priorTest),
+                    emptySet()
+                )
+            } else if (priorTest.scoreValue() != null) {
+                PriorMolecularTestCollection(emptyList(), setOf(priorTest))
             } else {
                 LOGGER.warn("Prior test is neither text-based nor value-based: {}", priorTest)
+                PriorMolecularTestCollection()
             }
+        }.fold(PriorMolecularTestCollection(), PriorMolecularTestCollection::combine)
+        return PriorMolecularTestInterpretation(textBasedPriorTests.groupBy({ it.first }, { it.second }), valueBasedPriorTests)
+    }
+
+    private data class PriorMolecularTestCollection(
+        val textBasedPriorMolecularTests: List<Pair<PriorMolecularTestKey, PriorMolecularTest>> = emptyList(),
+        val valueBasedPriorTests: Set<PriorMolecularTest> = emptySet()
+    ) {
+
+        fun combine(other: PriorMolecularTestCollection): PriorMolecularTestCollection {
+            return PriorMolecularTestCollection(
+                textBasedPriorMolecularTests + other.textBasedPriorMolecularTests,
+                valueBasedPriorTests + other.valueBasedPriorTests
+            )
         }
-        return builder.build()
     }
 }
