@@ -21,7 +21,7 @@ CREATE TABLE `tumor`
     `primaryTumorSubLocation` varchar(50),
     `primaryTumorType` varchar(50),
     `primaryTumorSubType` varchar(50),
-    `primaryTumorExtraDetails` varchar(50),
+    `primaryTumorExtraDetails` varchar(100),
     `doids` varchar(50),
     `stage` varchar(50),
     `hasMeasurableDisease` BOOLEAN,
@@ -111,7 +111,7 @@ CREATE TABLE `priorOtherCondition`
     `year` int,
     `month` int,
     `doids` varchar(50) NOT NULL,
-    `category` varchar(50) NOT NULL,
+    `category` varchar(100) NOT NULL,
     `isContraindicationForTherapy` BOOLEAN NOT NULL,
     PRIMARY KEY (`id`)
 );
