@@ -28,7 +28,7 @@ public interface Treatment extends Displayable {
     @Override
     default String display() {
         return Arrays.stream(name().replace("_", " ").split("\\+"))
-                .map(name -> (name.length() < 2) ? name : name.charAt(0) + name.substring(1).toLowerCase())
+                .map(name -> (name.length() < 2) ? name : name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase())
                 .collect(Collectors.joining("+"));
     }
 }

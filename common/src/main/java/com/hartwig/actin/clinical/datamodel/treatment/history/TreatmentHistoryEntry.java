@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class TreatmentHistoryEntry {
+    private static final String DELIMITER = ";";
 
     @NotNull
     public abstract Set<Treatment> treatments();
@@ -75,12 +76,14 @@ public abstract class TreatmentHistoryEntry {
 
     @NotNull
     private String treatmentStringUsingFunction(Function<Treatment, String> treatmentField) {
-        String nameString = treatments().stream().map(treatmentField).collect(Collectors.joining(";"));
+        String nameString = treatments().stream().map(treatmentField).collect(Collectors.joining(DELIMITER));
         return !nameString.isEmpty() ? nameString : treatmentCategoryDisplay();
     }
 
     @NotNull
     private String treatmentCategoryDisplay() {
-        return treatments().stream().flatMap(t -> t.categories().stream().map(TreatmentCategory::display)).collect(Collectors.joining(";"));
+        return treatments().stream()
+                .flatMap(t -> t.categories().stream().map(TreatmentCategory::display))
+                .collect(Collectors.joining(DELIMITER));
     }
 }
