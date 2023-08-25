@@ -22,7 +22,7 @@ class HasHadAdjuvantTreatmentWithCategoryOfTypes(private val types: Set<Treatmen
 
         return when {
             treatmentSummary.hasSpecificMatch() -> {
-                val treatmentsString = Format.concatLowercaseWithAnd(treatmentSummary.specificMatches.map { it.treatmentName() })
+                val treatmentsString = Format.concatLowercaseWithAnd(treatmentSummary.specificMatches.map { it.treatmentDisplay() })
                 EvaluationFactory.pass("Patient has received adjuvant $treatmentsString", "Received adjuvant $treatmentsString")
             }
 

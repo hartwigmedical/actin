@@ -1,8 +1,8 @@
 package com.hartwig.actin.clinical.datamodel.treatment.history;
 
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
 public abstract class TreatmentHistoryEntry {
+    private static final String DELIMITER = ";";
 
     @NotNull
     public abstract Set<Treatment> treatments();
@@ -42,14 +43,15 @@ public abstract class TreatmentHistoryEntry {
 
     @NotNull
     public String treatmentName() {
-        String nameString = treatments().stream().map(Treatment::name).collect(Collectors.joining(";"));
-        return !nameString.isEmpty()
-                ? nameString
-                : treatments().stream()
-                        .flatMap(t -> t.categories().stream().map(TreatmentCategory::display))
-                        .collect(Collectors.joining(";"));
+        return treatmentStringUsingFunction(Treatment::name);
     }
 
+    @NotNull
+    public String treatmentDisplay() {
+        return treatmentStringUsingFunction(Treatment::display);
+    }
+
+    @NotNull
     public Set<TreatmentCategory> categories() {
         return treatments().stream().flatMap(treatment -> treatment.categories().stream()).collect(Collectors.toSet());
     }
@@ -65,12 +67,23 @@ public abstract class TreatmentHistoryEntry {
     }
 
     public boolean hasTypeConfigured() {
-        return treatments().stream().noneMatch(treatment -> treatment.types() == null || treatment.types().isEmpty());
+        return treatments().stream().noneMatch(treatment -> treatment.types().isEmpty());
     }
 
     private boolean isTypeFromCollection(Set<TreatmentType> types) {
+        return treatments().stream().flatMap(treatment -> treatment.types().stream()).anyMatch(types::contains);
+    }
+
+    @NotNull
+    private String treatmentStringUsingFunction(Function<Treatment, String> treatmentField) {
+        String nameString = treatments().stream().map(treatmentField).collect(Collectors.joining(DELIMITER));
+        return !nameString.isEmpty() ? nameString : treatmentCategoryDisplay();
+    }
+
+    @NotNull
+    private String treatmentCategoryDisplay() {
         return treatments().stream()
-                .flatMap(treatment -> treatment.types() != null ? treatment.types().stream() : Stream.empty())
-                .anyMatch(types::contains);
+                .flatMap(t -> t.categories().stream().map(TreatmentCategory::display))
+                .collect(Collectors.joining(DELIMITER));
     }
 }
