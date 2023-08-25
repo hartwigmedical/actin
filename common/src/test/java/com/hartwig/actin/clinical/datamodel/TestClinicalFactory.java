@@ -13,10 +13,8 @@ import com.hartwig.actin.clinical.datamodel.treatment.DrugType;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRadiotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatment;
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
@@ -27,7 +25,6 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEn
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
-import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
 public final class TestClinicalFactory {
@@ -47,9 +44,6 @@ public final class TestClinicalFactory {
     private static final int DAYS_SINCE_BLOOD_TRANSFUSION = 15;
     private static final int DAYS_SINCE_MEDICATION_START = 30;
     private static final int DAYS_UNTIL_MEDICATION_END = 15;
-    private static final int YEARS_SINCE_TREATMENT_LINE_1 = 2;
-    private static final int YEARS_SINCE_TREATMENT_LINE_2 = 1;
-    private static final int YEARS_SINCE_TREATMENT_LINE_3 = 0;
     private static final int YEARS_SINCE_SECOND_PRIMARY_DIAGNOSIS = 3;
 
     private TestClinicalFactory() {
@@ -72,7 +66,6 @@ public final class TestClinicalFactory {
                 .tumor(createTestTumorDetails())
                 .clinicalStatus(createTestClinicalStatus())
                 .treatmentHistory(createTreatmentHistory())
-                .priorTumorTreatments(createTestPriorTumorTreatments())
                 .priorSecondPrimaries(createTestPriorSecondPrimaries())
                 .priorOtherConditions(createTestPriorOtherConditions())
                 .priorMolecularTests(createTestPriorMolecularTests())
@@ -103,10 +96,10 @@ public final class TestClinicalFactory {
     private static TumorDetails createTestTumorDetails() {
         return ImmutableTumorDetails.builder()
                 .primaryTumorLocation("Skin")
-                .primaryTumorSubLocation(Strings.EMPTY)
+                .primaryTumorSubLocation("")
                 .primaryTumorType("Melanoma")
-                .primaryTumorSubType(Strings.EMPTY)
-                .primaryTumorExtraDetails(Strings.EMPTY)
+                .primaryTumorSubType("")
+                .primaryTumorExtraDetails("")
                 .addDoids("8923")
                 .stage(TumorStage.IV)
                 .hasMeasurableDisease(true)
@@ -189,46 +182,14 @@ public final class TestClinicalFactory {
     }
 
     @NotNull
-    private static List<PriorTumorTreatment> createTestPriorTumorTreatments() {
-        List<PriorTumorTreatment> priorTumorTreatments = Lists.newArrayList();
-
-        priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder()
-                .name("Resection")
-                .startYear(TODAY.getYear() - YEARS_SINCE_TREATMENT_LINE_1)
-                .addCategories(TreatmentCategory.SURGERY)
-                .isSystemic(false)
-                .build());
-
-        priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder()
-                .name("Vemurafenib")
-                .startYear(TODAY.getYear() - YEARS_SINCE_TREATMENT_LINE_2)
-                .startMonth(TODAY.getMonthValue())
-                .stopYear(TODAY.getYear() - YEARS_SINCE_TREATMENT_LINE_2 + 1)
-                .addCategories(TreatmentCategory.TARGETED_THERAPY)
-                .isSystemic(true)
-                .targetedType("BRAF inhibitor")
-                .build());
-
-        priorTumorTreatments.add(ImmutablePriorTumorTreatment.builder()
-                .name("Ipilimumab")
-                .startYear(TODAY.getYear() - YEARS_SINCE_TREATMENT_LINE_3)
-                .addCategories(TreatmentCategory.IMMUNOTHERAPY)
-                .isSystemic(true)
-                .immunoType("Anti-CTLA-4")
-                .build());
-
-        return priorTumorTreatments;
-    }
-
-    @NotNull
     private static List<PriorSecondPrimary> createTestPriorSecondPrimaries() {
         List<PriorSecondPrimary> priorSecondPrimaries = Lists.newArrayList();
 
         priorSecondPrimaries.add(ImmutablePriorSecondPrimary.builder()
                 .tumorLocation("Lung")
-                .tumorSubLocation(Strings.EMPTY)
+                .tumorSubLocation("")
                 .tumorType("carcinoma")
-                .tumorSubType(Strings.EMPTY)
+                .tumorSubType("")
                 .addDoids("3905")
                 .diagnosedYear(TODAY.getYear() - YEARS_SINCE_SECOND_PRIMARY_DIAGNOSIS)
                 .diagnosedMonth(TODAY.getMonthValue())
@@ -288,7 +249,7 @@ public final class TestClinicalFactory {
                 .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3))
                 .code(LabMeasurement.ASPARTATE_AMINOTRANSFERASE.code())
                 .name("Aspartate aminotransferase")
-                .comparator(Strings.EMPTY)
+                .comparator("")
                 .value(36)
                 .unit(LabMeasurement.ASPARTATE_AMINOTRANSFERASE.defaultUnit())
                 .refLimitUp(33D)
@@ -299,7 +260,7 @@ public final class TestClinicalFactory {
                 .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3))
                 .code(LabMeasurement.HEMOGLOBIN.code())
                 .name("Hemoglobin")
-                .comparator(Strings.EMPTY)
+                .comparator("")
                 .value(5.5)
                 .unit(LabMeasurement.HEMOGLOBIN.defaultUnit())
                 .refLimitLow(6.5D)
@@ -311,7 +272,7 @@ public final class TestClinicalFactory {
                 .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_1))
                 .code(LabMeasurement.THROMBOCYTES_ABS.code())
                 .name("Thrombocytes")
-                .comparator(Strings.EMPTY)
+                .comparator("")
                 .value(155)
                 .unit(LabMeasurement.THROMBOCYTES_ABS.defaultUnit())
                 .refLimitLow(155D)
@@ -323,7 +284,7 @@ public final class TestClinicalFactory {
                 .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_2))
                 .code(LabMeasurement.THROMBOCYTES_ABS.code())
                 .name("Thrombocytes")
-                .comparator(Strings.EMPTY)
+                .comparator("")
                 .value(151)
                 .unit(LabMeasurement.THROMBOCYTES_ABS.defaultUnit())
                 .refLimitLow(155D)
@@ -335,7 +296,7 @@ public final class TestClinicalFactory {
                 .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3))
                 .code(LabMeasurement.THROMBOCYTES_ABS.code())
                 .name("Thrombocytes")
-                .comparator(Strings.EMPTY)
+                .comparator("")
                 .value(150)
                 .unit(LabMeasurement.THROMBOCYTES_ABS.defaultUnit())
                 .refLimitLow(155D)
@@ -347,7 +308,7 @@ public final class TestClinicalFactory {
                 .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_1))
                 .code(LabMeasurement.LEUKOCYTES_ABS.code())
                 .name("Leukocytes")
-                .comparator(Strings.EMPTY)
+                .comparator("")
                 .value(6.5)
                 .unit(LabMeasurement.LEUKOCYTES_ABS.defaultUnit())
                 .refLimitLow(3D)
@@ -370,7 +331,7 @@ public final class TestClinicalFactory {
                 .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_2))
                 .code(LabMeasurement.LACTATE_DEHYDROGENASE.code())
                 .name("Lactate dehydrogenase")
-                .comparator(Strings.EMPTY)
+                .comparator("")
                 .value(240)
                 .unit(LabMeasurement.LACTATE_DEHYDROGENASE.defaultUnit())
                 .refLimitUp(245D)

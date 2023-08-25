@@ -12,7 +12,6 @@ import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig
 import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
 import com.hartwig.actin.clinical.curation.config.MolecularTestConfig
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
-import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
@@ -35,7 +34,6 @@ import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import com.hartwig.actin.doid.TestDoidModelFactory
@@ -56,7 +54,7 @@ object TestCurationFactory {
             CurationDatabase(
                 emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
                 emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-                emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList()
+                emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList()
             ), questionnaireRawEntryMapper()
         )
     }
@@ -69,7 +67,6 @@ object TestCurationFactory {
         return CurationDatabase(
             primaryTumorConfigs = createTestPrimaryTumorConfigs(),
             treatmentHistoryEntryConfigs = createTestTreatmentHistoryEntryConfigs(),
-            oncologicalHistoryConfigs = createTestOncologicalHistoryConfigs(),
             secondPrimaryConfigs = createTestSecondPrimaryConfigs(),
             lesionLocationConfigs = createTestLesionLocationConfigs(),
             nonOncologicalHistoryConfigs = createTestNonOncologicalHistoryConfigs(),
@@ -150,34 +147,6 @@ object TestCurationFactory {
                     .build()
             ),
             TreatmentHistoryEntryConfig(input = "no systemic treatment", ignore = true, curated = null)
-        )
-    }
-
-    private fun createTestOncologicalHistoryConfigs(): List<OncologicalHistoryConfig> {
-        return listOf(
-            OncologicalHistoryConfig(
-                input = "Cis 2020 2021",
-                ignore = false,
-                curated = ImmutablePriorTumorTreatment.builder()
-                    .name("Cisplatin")
-                    .startYear(2020)
-                    .addCategories(TreatmentCategory.CHEMOTHERAPY)
-                    .isSystemic(true)
-                    .chemoType("platinum")
-                    .build()
-            ),
-            OncologicalHistoryConfig(
-                input = "Cis 2020 2021",
-                ignore = false,
-                curated = ImmutablePriorTumorTreatment.builder()
-                    .name("Cisplatin")
-                    .startYear(2021)
-                    .addCategories(TreatmentCategory.CHEMOTHERAPY)
-                    .isSystemic(true)
-                    .chemoType("platinum")
-                    .build()
-            ),
-            OncologicalHistoryConfig(input = "no systemic treatment", ignore = true, curated = null)
         )
     }
 

@@ -34,7 +34,6 @@ import com.hartwig.actin.clinical.datamodel.ToxicityEvaluation
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.VitalFunction
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.feed.FeedModel
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry
@@ -95,7 +94,6 @@ class ClinicalRecordsFactory(
                 .tumor(extractTumorDetails(questionnaire))
                 .clinicalStatus(extractClinicalStatus(questionnaire))
                 .treatmentHistory(extractTreatmentHistory(questionnaire))
-                .priorTumorTreatments(extractPriorTumorTreatments(questionnaire))
                 .priorSecondPrimaries(extractPriorSecondPrimaries(questionnaire))
                 .priorOtherConditions(extractPriorOtherConditions(questionnaire))
                 .priorMolecularTests(extractPriorMolecularTests(questionnaire))
@@ -174,14 +172,6 @@ class ClinicalRecordsFactory(
         )
             .flatten()
             .flatMap { curation.curateTreatmentHistoryEntry(it) }
-    }
-
-    private fun extractPriorTumorTreatments(questionnaire: Questionnaire?): List<PriorTumorTreatment> {
-        return if (questionnaire == null) emptyList() else listOf(
-            questionnaire.treatmentHistoryCurrentTumor,
-            questionnaire.otherOncologicalHistory
-        )
-            .flatMap { curation.curatePriorTumorTreatments(it) }
     }
 
     private fun extractPriorSecondPrimaries(questionnaire: Questionnaire?): List<PriorSecondPrimary> {
