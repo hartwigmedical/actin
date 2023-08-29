@@ -11,13 +11,13 @@ import com.hartwig.actin.clinical.datamodel.Medication
 class CurrentlyGetsMedicationOfCategory(
     private val selector: MedicationSelector,
     private val categoryName: String,
-    private val atcLevels: Set<AtcLevel>
+    private val categoryAtcLevels: Set<AtcLevel>
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
 
         val medications =
             selector.active(record.clinical().medications())
-                .filter { (allLevels(it) intersect atcLevels).isNotEmpty() }
+                .filter { (allLevels(it) intersect categoryAtcLevels).isNotEmpty() }
 
         val foundMedicationNames = medications.map { it.name() }.filter { it.isNotEmpty() }.distinct()
 
