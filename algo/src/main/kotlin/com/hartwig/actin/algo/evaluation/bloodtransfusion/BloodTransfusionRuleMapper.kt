@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.bloodtransfusion
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction
 import com.hartwig.actin.treatment.datamodel.EligibilityRule
 
@@ -19,7 +20,7 @@ class BloodTransfusionRuleMapper(resources: RuleMappingResources) : RuleMapper(r
         return FunctionCreator {
             val minDate = referenceDateProvider().date().minusMonths(2)
             val maxDate = referenceDateProvider().date().plusMonths(2)
-            RequiresRegularHematopoieticSupport(minDate, maxDate)
+            RequiresRegularHematopoieticSupport(AtcTree.create(), minDate, maxDate)
         }
     }
 

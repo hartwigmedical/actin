@@ -5,15 +5,19 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.clinical.datamodel.AtcLevel
+import com.hartwig.actin.clinical.datamodel.Medication
 
 class CurrentlyGetsMedicationOfCategory(
     private val selector: MedicationSelector,
-    private val categories: Map<String, Set<String>>
+    private val categoryName: String,
+    private val atcLevels: Set<AtcLevel>
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val categoriesToFind = categories.values.first()
-        val categoryName = categories.keys.first().lowercase()
-        val medications = selector.activeWithAnyExactCategory(record.clinical().medications(), categoriesToFind)
+
+        val medications =
+            selector.active(record.clinical().medications())
+                .filter { (allLevels(it) intersect atcLevels).isNotEmpty() }
 
         val foundMedicationNames = medications.map { it.name() }.filter { it.isNotEmpty() }.distinct()
 
@@ -29,4 +33,6 @@ class CurrentlyGetsMedicationOfCategory(
                 "No $categoryName medication use"
             )
     }
+
+    private fun allLevels(it: Medication) = it.atc()?.allLevels() ?: emptySet<AtcLevel>()
 }

@@ -4,13 +4,13 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.date
-import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyExactlyMatchesQueryCollection
 import com.hartwig.actin.clinical.datamodel.Medication
 import java.time.LocalDate
 
-class RequiresRegularHematopoieticSupport(private val minDate: LocalDate, private val maxDate: LocalDate) :
+class RequiresRegularHematopoieticSupport(private val atcTree: AtcTree, private val minDate: LocalDate, private val maxDate: LocalDate) :
     EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val inBetweenRange = "between " + date(minDate) + " and " + date(maxDate)
@@ -23,7 +23,8 @@ class RequiresRegularHematopoieticSupport(private val minDate: LocalDate, privat
             }
         }
         val medications = record.clinical().medications()
-            .filter { hasMatchingCategory(it) && activeBetweenDates(it) }
+            .filter { activeBetweenDates(it) }
+            .filter { it.atc()?.chemicalSubGroup() in hematopoieticMedicationCategories(atcTree) }
             .map { it.name() }
         return if (medications.isNotEmpty()) {
             EvaluationFactory.pass(
@@ -46,14 +47,7 @@ class RequiresRegularHematopoieticSupport(private val minDate: LocalDate, privat
         return startedBetweenDates || stoppedBetweenDates || runningBetweenDates
     }
 
-    private fun hasMatchingCategory(medication: Medication): Boolean {
-        return stringCaseInsensitivelyExactlyMatchesQueryCollection(
-            medication.atc()!!.chemicalSubGroup().name().lowercase(),
-            HEMATOPOIETIC_MEDICATION_CATEGORIES
-        )
-    }
-
     companion object {
-        val HEMATOPOIETIC_MEDICATION_CATEGORIES = setOf("Other antianemic preparations", "Colony stimulating factors")
+        fun hematopoieticMedicationCategories(atcTree: AtcTree) = setOf("B03XA", "L03AA").map { atcTree.resolve(it) }.toSet()
     }
 }

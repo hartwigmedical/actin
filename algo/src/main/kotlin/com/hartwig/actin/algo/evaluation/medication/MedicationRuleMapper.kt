@@ -10,10 +10,12 @@ import com.hartwig.actin.treatment.datamodel.EligibilityRule
 
 class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     private val selector: MedicationSelector
+    private val categories: MedicationCategories
 
     init {
         val interpreter: MedicationStatusInterpreter = MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date())
         selector = MedicationSelector(interpreter)
+        categories = MedicationCategories.create(AtcTree.create())
     }
 
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
@@ -46,9 +48,8 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun getsActiveMedicationWithCategoryCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val categoryInputs = functionInputResolver().createOneStringInput(function)
-            val categories = determineCategories(categoryInputs)
-            CurrentlyGetsMedicationOfCategory(selector, categories)
+            val categoryNameInput = functionInputResolver().createOneStringInput(function)
+            CurrentlyGetsMedicationOfCategory(selector, categoryNameInput, categories.resolve(categoryNameInput))
         }
     }
 
