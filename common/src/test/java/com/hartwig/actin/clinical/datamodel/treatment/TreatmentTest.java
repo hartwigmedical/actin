@@ -16,6 +16,17 @@ public class TreatmentTest {
         assertThat(treatment.display()).isEqualTo("Test drug+Other drug");
     }
 
+    @Test
+    public void shouldDisplayAlternateTreatmentNameWhenProvided() {
+        String altName = "a+TOTALLY _different_ name";
+        Treatment treatment = ImmutableDrugTherapy.builder()
+                .addDrugs(drug("TEST_DRUG"), drug("OTHER_DRUG"))
+                .name("TEST_DRUG+OTHER_DRUG")
+                .displayOverride(altName)
+                .build();
+        assertThat(treatment.display()).isEqualTo(altName);
+    }
+
     @NotNull
     private static ImmutableDrug drug(String drugName) {
         return ImmutableDrug.builder().name(drugName).category(TreatmentCategory.CHEMOTHERAPY).drugTypes(Collections.emptySet()).build();
