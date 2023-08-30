@@ -8,9 +8,9 @@ object TestCohortDefinitionConfigFactory {
         cohortId = Strings.EMPTY,
         ctcCohortIds = setOf(),
         evaluable = true,
-        blacklist = false,
-        description = Strings.EMPTY,
         open = null,
-        slotsAvailable = null
+        slotsAvailable = null,
+        blacklist = false,
+        description = Strings.EMPTY
     )
 }

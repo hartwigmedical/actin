@@ -15,12 +15,9 @@ class CTCModelTest {
     private val model = TestCTCModelFactory.createWithProperTestCTCDatabase()
 
     @Test
-    fun shouldStickToTrialConfigWhenStudyIsNotCTCStudy() {
-        val openRandomStudy: TrialDefinitionConfig = TestTrialDefinitionConfigFactory.MINIMAL.copy(trialId = "random 1", open = true)
-        assertThat(model.isTrialOpen(openRandomStudy)).isTrue
-
-        val closedRandomStudy: TrialDefinitionConfig = TestTrialDefinitionConfigFactory.MINIMAL.copy(trialId = "random 2", open = false)
-        assertThat(model.isTrialOpen(closedRandomStudy)).isFalse
+    fun shouldNotDetermineStatusWhenStudyIsNotCTCStudy() {
+        val nonCTCStudy: TrialDefinitionConfig = TestTrialDefinitionConfigFactory.MINIMAL.copy(trialId = "not a CTC study")
+        assertThat(model.isTrialOpen(nonCTCStudy)).isNull()
     }
 
     @Test
@@ -35,14 +32,10 @@ class CTCModelTest {
     }
 
     @Test
-    fun shouldFallBackToTrialConfigIfStudyMissingInCTC() {
-        val openCTCStudy: TrialDefinitionConfig =
-            TestTrialDefinitionConfigFactory.MINIMAL.copy(trialId = CTCModel.CTC_TRIAL_PREFIX + " random 1", open = true)
-        assertThat(model.isTrialOpen(openCTCStudy)).isTrue
-
-        val closedCTCStudy: TrialDefinitionConfig =
-            TestTrialDefinitionConfigFactory.MINIMAL.copy(trialId = CTCModel.CTC_TRIAL_PREFIX + " random 2", open = false)
-        assertThat(model.isTrialOpen(closedCTCStudy)).isFalse
+    fun shouldNotDetermineStatusIfStudyMissingInCTC() {
+        val nonExistingCTCStudy: TrialDefinitionConfig =
+            TestTrialDefinitionConfigFactory.MINIMAL.copy(trialId = CTCModel.CTC_TRIAL_PREFIX + " non-existing")
+        assertThat(model.isTrialOpen(nonExistingCTCStudy)).isNull()
     }
 
     @Test
