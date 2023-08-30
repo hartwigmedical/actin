@@ -5,34 +5,34 @@ import com.hartwig.actin.treatment.ctc.config.TestCTCDatabaseEntryFactory.create
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class CohortStatusConsolidatorTest {
+class CohortStatusResolverTest {
 
     private val entries = createTestEntries()
 
     @Test
     fun shouldAssumeCohortIsClosedForInvalidCohortConfig() {
-        val status = CohortStatusConsolidator.consolidate(entries, setOf(DOES_NOT_EXIST_COHORT_ID))
+        val status = CohortStatusResolver.resolve(entries, setOf(DOES_NOT_EXIST_COHORT_ID))
         assertThat(status.open).isFalse
         assertThat(status.slotsAvailable).isFalse
     }
 
     @Test
     fun shouldBeAbleToDetermineStatusForSingleParent() {
-        val status = CohortStatusConsolidator.consolidate(entries, setOf(PARENT_OPEN_WITH_SLOTS_COHORT_ID))
+        val status = CohortStatusResolver.resolve(entries, setOf(PARENT_OPEN_WITH_SLOTS_COHORT_ID))
         assertThat(status.open).isTrue
         assertThat(status.slotsAvailable).isTrue
     }
 
     @Test
     fun shouldBeAbleToDetermineStatusForSingleChildConsistentWithParent() {
-        val status = CohortStatusConsolidator.consolidate(entries, setOf(CHILD_OPEN_WITH_SLOTS_COHORT_ID))
+        val status = CohortStatusResolver.resolve(entries, setOf(CHILD_OPEN_WITH_SLOTS_COHORT_ID))
         assertThat(status.open).isTrue
         assertThat(status.slotsAvailable).isTrue
     }
 
     @Test
     fun shouldStickToChildWhenInconsistentWithParent() {
-        val status = CohortStatusConsolidator.consolidate(entries, setOf(CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID))
+        val status = CohortStatusResolver.resolve(entries, setOf(CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID))
         assertThat(status.open).isTrue
         assertThat(status.slotsAvailable).isFalse
     }
@@ -40,7 +40,7 @@ class CohortStatusConsolidatorTest {
     @Test
     fun shouldBeAbleToDetermineStatusForMultipleChildrenConsistentWithParent() {
         val configuredCohortIds = setOf(CHILD_OPEN_WITH_SLOTS_COHORT_ID, ANOTHER_CHILD_OPEN_WITH_SLOTS_COHORT_ID)
-        val status = CohortStatusConsolidator.consolidate(entries, configuredCohortIds)
+        val status = CohortStatusResolver.resolve(entries, configuredCohortIds)
         assertThat(status.open).isTrue
         assertThat(status.slotsAvailable).isTrue
     }
@@ -48,30 +48,30 @@ class CohortStatusConsolidatorTest {
     @Test
     fun shouldPickBestChildWhenBestChildIsInconsistentWithParent() {
         val configuredCohortIds = setOf(CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID, CHILD_CLOSED_WITHOUT_SLOTS_COHORT_ID)
-        val status = CohortStatusConsolidator.consolidate(entries, configuredCohortIds)
+        val status = CohortStatusResolver.resolve(entries, configuredCohortIds)
         assertThat(status.open).isTrue
         assertThat(status.slotsAvailable).isFalse
     }
 
     @Test
     fun noMatchIsConsideredInvalid() {
-        assertThat(CohortStatusConsolidator.hasValidCTCDatabaseMatches(emptyList())).isFalse
+        assertThat(CohortStatusResolver.hasValidCTCDatabaseMatches(emptyList())).isFalse
     }
 
     @Test
     fun nullMatchIsConsideredInvalid() {
-        assertThat(CohortStatusConsolidator.hasValidCTCDatabaseMatches(listOf(null))).isFalse
+        assertThat(CohortStatusResolver.hasValidCTCDatabaseMatches(listOf(null))).isFalse
     }
 
     @Test
     fun entriesWithBothParentsAndChildAreConsideredInvalid() {
-        assertThat(CohortStatusConsolidator.hasValidCTCDatabaseMatches(entries)).isFalse
+        assertThat(CohortStatusResolver.hasValidCTCDatabaseMatches(entries)).isFalse
     }
 
     @Test
     fun singleEntryIsAlwaysConsideredValid() {
         for (entry in entries) {
-            assertThat(CohortStatusConsolidator.hasValidCTCDatabaseMatches(listOf(entry))).isTrue
+            assertThat(CohortStatusResolver.hasValidCTCDatabaseMatches(listOf(entry))).isTrue
         }
     }
 

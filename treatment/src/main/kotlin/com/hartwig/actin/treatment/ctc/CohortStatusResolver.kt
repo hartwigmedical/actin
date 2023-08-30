@@ -3,11 +3,11 @@ package com.hartwig.actin.treatment.ctc
 import com.hartwig.actin.treatment.ctc.config.CTCDatabaseEntry
 import org.apache.logging.log4j.LogManager
 
-object CohortStatusConsolidator {
+object CohortStatusResolver {
 
-    private val LOGGER = LogManager.getLogger(CohortStatusConsolidator::class.java)
+    private val LOGGER = LogManager.getLogger(CohortStatusResolver::class.java)
 
-    fun consolidate(entries: List<CTCDatabaseEntry>, configuredCohortIds: Set<Int>): InterpretedCohortStatus {
+    fun resolve(entries: List<CTCDatabaseEntry>, configuredCohortIds: Set<Int>): InterpretedCohortStatus {
         val entriesByCohortId = entries.filter { it.cohortId != null }.associateBy { it.cohortId!!.toInt() }
         val matches: List<CTCDatabaseEntry?> = findEntriesByCohortIds(entriesByCohortId, configuredCohortIds)
 

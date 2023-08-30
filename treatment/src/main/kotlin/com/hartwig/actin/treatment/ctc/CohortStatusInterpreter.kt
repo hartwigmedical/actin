@@ -33,7 +33,7 @@ internal object CohortStatusInterpreter {
         }
 
         val configuredCohortIds: Set<Int> = cohortConfig.ctcCohortIds.map { it.toInt() }.toSet()
-        return CohortStatusConsolidator.consolidate(entries, configuredCohortIds)
+        return CohortStatusResolver.resolve(entries, configuredCohortIds)
     }
 
     private fun isNotAvailableOrIncorrect(ctcCohortIds: Set<String>): Boolean {
