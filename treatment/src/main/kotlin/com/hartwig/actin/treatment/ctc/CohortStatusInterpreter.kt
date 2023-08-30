@@ -31,7 +31,9 @@ internal object CohortStatusInterpreter {
             )
             return closedWithoutSlots()
         }
-        return CTCDatabaseEntryInterpreter.consolidatedCohortStatus(entries, cohortConfig)
+
+        val configuredCohortIds: Set<Int> = cohortConfig.ctcCohortIds.map { it.toInt() }.toSet()
+        return CohortStatusConsolidator.consolidate(entries, configuredCohortIds)
     }
 
     private fun isNotAvailableOrIncorrect(ctcCohortIds: Set<String>): Boolean {

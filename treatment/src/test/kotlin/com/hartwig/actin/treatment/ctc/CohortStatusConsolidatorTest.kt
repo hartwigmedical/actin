@@ -2,88 +2,76 @@ package com.hartwig.actin.treatment.ctc
 
 import com.hartwig.actin.treatment.ctc.config.CTCDatabaseEntry
 import com.hartwig.actin.treatment.ctc.config.TestCTCDatabaseEntryFactory.createEntry
-import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig
-import com.hartwig.actin.treatment.trial.config.TestCohortDefinitionConfigFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class CTCDatabaseEntryInterpreterTest {
+class CohortStatusConsolidatorTest {
 
     private val entries = createTestEntries()
 
     @Test
     fun shouldAssumeCohortIsClosedForInvalidCohortConfig() {
-        val idDoesNotExist = createWithCTCCohortIDs("12")
-        val status = CTCDatabaseEntryInterpreter.consolidatedCohortStatus(entries, idDoesNotExist)
+        val status = CohortStatusConsolidator.consolidate(entries, setOf(DOES_NOT_EXIST_COHORT_ID))
         assertThat(status.open).isFalse
         assertThat(status.slotsAvailable).isFalse
     }
 
     @Test
     fun shouldBeAbleToDetermineStatusForSingleParent() {
-        val config = createWithCTCCohortIDs(PARENT_OPEN_WITH_SLOTS_COHORT_ID.toString())
-        val status = CTCDatabaseEntryInterpreter.consolidatedCohortStatus(entries, config)
+        val status = CohortStatusConsolidator.consolidate(entries, setOf(PARENT_OPEN_WITH_SLOTS_COHORT_ID))
         assertThat(status.open).isTrue
         assertThat(status.slotsAvailable).isTrue
     }
 
     @Test
     fun shouldBeAbleToDetermineStatusForSingleChildConsistentWithParent() {
-        val config = createWithCTCCohortIDs(CHILD_OPEN_WITH_SLOTS_COHORT_ID.toString())
-        val status = CTCDatabaseEntryInterpreter.consolidatedCohortStatus(entries, config)
+        val status = CohortStatusConsolidator.consolidate(entries, setOf(CHILD_OPEN_WITH_SLOTS_COHORT_ID))
         assertThat(status.open).isTrue
         assertThat(status.slotsAvailable).isTrue
     }
 
     @Test
     fun shouldStickToChildWhenInconsistentWithParent() {
-        val config = createWithCTCCohortIDs(CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID.toString())
-        val status = CTCDatabaseEntryInterpreter.consolidatedCohortStatus(entries, config)
+        val status = CohortStatusConsolidator.consolidate(entries, setOf(CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID))
         assertThat(status.open).isTrue
         assertThat(status.slotsAvailable).isFalse
     }
 
     @Test
     fun shouldBeAbleToDetermineStatusForMultipleChildrenConsistentWithParent() {
-        val config = createWithCTCCohortIDs(
-            CHILD_OPEN_WITH_SLOTS_COHORT_ID.toString(),
-            ANOTHER_CHILD_OPEN_WITH_SLOTS_COHORT_ID.toString()
-        )
-        val status = CTCDatabaseEntryInterpreter.consolidatedCohortStatus(entries, config)
+        val configuredCohortIds = setOf(CHILD_OPEN_WITH_SLOTS_COHORT_ID, ANOTHER_CHILD_OPEN_WITH_SLOTS_COHORT_ID)
+        val status = CohortStatusConsolidator.consolidate(entries, configuredCohortIds)
         assertThat(status.open).isTrue
         assertThat(status.slotsAvailable).isTrue
     }
 
     @Test
     fun shouldPickBestChildWhenBestChildIsInconsistentWithParent() {
-        val config = createWithCTCCohortIDs(
-            CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID.toString(),
-            CHILD_CLOSED_WITHOUT_SLOTS_COHORT_ID.toString()
-        )
-        val status = CTCDatabaseEntryInterpreter.consolidatedCohortStatus(entries, config)
+        val configuredCohortIds = setOf(CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID, CHILD_CLOSED_WITHOUT_SLOTS_COHORT_ID)
+        val status = CohortStatusConsolidator.consolidate(entries, configuredCohortIds)
         assertThat(status.open).isTrue
         assertThat(status.slotsAvailable).isFalse
     }
 
     @Test
     fun noMatchIsConsideredInvalid() {
-        assertThat(CTCDatabaseEntryInterpreter.hasValidCTCDatabaseMatches(emptyList())).isFalse
+        assertThat(CohortStatusConsolidator.hasValidCTCDatabaseMatches(emptyList())).isFalse
     }
 
     @Test
     fun nullMatchIsConsideredInvalid() {
-        assertThat(CTCDatabaseEntryInterpreter.hasValidCTCDatabaseMatches(listOf(null))).isFalse
+        assertThat(CohortStatusConsolidator.hasValidCTCDatabaseMatches(listOf(null))).isFalse
     }
 
     @Test
     fun entriesWithBothParentsAndChildAreConsideredInvalid() {
-        assertThat(CTCDatabaseEntryInterpreter.hasValidCTCDatabaseMatches(entries)).isFalse
+        assertThat(CohortStatusConsolidator.hasValidCTCDatabaseMatches(entries)).isFalse
     }
 
     @Test
     fun singleEntryIsAlwaysConsideredValid() {
         for (entry in entries) {
-            assertThat(CTCDatabaseEntryInterpreter.hasValidCTCDatabaseMatches(listOf(entry))).isTrue
+            assertThat(CohortStatusConsolidator.hasValidCTCDatabaseMatches(listOf(entry))).isTrue
         }
     }
 
@@ -93,6 +81,7 @@ class CTCDatabaseEntryInterpreterTest {
         private const val CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID = 3
         private const val CHILD_CLOSED_WITHOUT_SLOTS_COHORT_ID = 4
         private const val ANOTHER_CHILD_OPEN_WITH_SLOTS_COHORT_ID = 5
+        private const val DOES_NOT_EXIST_COHORT_ID = 6
 
         private fun createTestEntries(): List<CTCDatabaseEntry> {
             val parentOpenWithSlots = createEntry(PARENT_OPEN_WITH_SLOTS_COHORT_ID, null, "Open", 1)
@@ -109,10 +98,6 @@ class CTCDatabaseEntryInterpreterTest {
                 childClosedWithoutSlots,
                 anotherChildOpenWithSlots
             )
-        }
-
-        private fun createWithCTCCohortIDs(vararg ctcCohortIDs: String): CohortDefinitionConfig {
-            return TestCohortDefinitionConfigFactory.MINIMAL.copy(ctcCohortIds = setOf(*ctcCohortIDs))
         }
     }
 }

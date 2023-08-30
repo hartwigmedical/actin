@@ -1,25 +1,18 @@
 package com.hartwig.actin.treatment.ctc
 
 import com.hartwig.actin.treatment.ctc.config.CTCDatabaseEntry
-import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig
 import org.apache.logging.log4j.LogManager
 
-object CTCDatabaseEntryInterpreter {
+object CohortStatusConsolidator {
 
-    private val LOGGER = LogManager.getLogger(CohortStatusInterpreter::class.java)
+    private val LOGGER = LogManager.getLogger(CohortStatusConsolidator::class.java)
 
-    fun consolidatedCohortStatus(entries: List<CTCDatabaseEntry>, cohortConfig: CohortDefinitionConfig): InterpretedCohortStatus {
+    fun consolidate(entries: List<CTCDatabaseEntry>, configuredCohortIds: Set<Int>): InterpretedCohortStatus {
         val entriesByCohortId = entries.filter { it.cohortId != null }.associateBy { it.cohortId!!.toInt() }
-        val configuredCohortIds = cohortConfig.ctcCohortIds.map { it.toInt() }.toSet()
         val matches: List<CTCDatabaseEntry?> = findEntriesByCohortIds(entriesByCohortId, configuredCohortIds)
 
         if (!hasValidCTCDatabaseMatches(matches)) {
-            LOGGER.warn(
-                " Invalid cohort IDs configured for cohort '{}' of trial '{}': '{}'. Assuming cohort is closed without slots",
-                cohortConfig.cohortId,
-                cohortConfig.trialId,
-                configuredCohortIds
-            )
+            LOGGER.warn(" Invalid cohort IDs configured for cohort: '{}'. Assuming cohort is closed without slots", configuredCohortIds)
             return closedWithoutSlots()
         }
         return interpretValidMatches(matches.filterNotNull(), entriesByCohortId)
