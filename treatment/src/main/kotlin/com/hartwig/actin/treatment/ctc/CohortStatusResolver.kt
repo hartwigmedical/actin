@@ -30,7 +30,7 @@ object CohortStatusResolver {
         if (isSingleParent(matches)) {
             return fromEntry(matches[0])
         } else if (isListOfChildren(matches)) {
-            val bestCohortStatus = matches.map(::fromEntry).maxWith(InterpretedCohortStatusComparator())
+            val bestChildEntry = matches.map(::fromEntry).maxWith(InterpretedCohortStatusComparator())
             val firstParentId = matches[0].cohortParentId
             if (matches.size > 1) {
                 if (matches.any { it.cohortParentId != firstParentId }) {
@@ -38,14 +38,22 @@ object CohortStatusResolver {
                 }
             }
             val parentEntry = fromEntry(entriesByCohortId[firstParentId]!!)
-            if (bestCohortStatus.slotsAvailable && !parentEntry.slotsAvailable) {
+            if (bestChildEntry.open && !parentEntry.open) {
+                LOGGER.warn(
+                    " Best child from IDs '{}' is open while parent with ID '{}' is closed",
+                    matches.map { it.cohortId },
+                    firstParentId
+                )
+            }
+
+            if (bestChildEntry.slotsAvailable && !parentEntry.slotsAvailable) {
                 LOGGER.warn(
                     " Best child from IDs '{}' has slots available while parent with ID '{}' has no slots available",
                     matches.map { it.cohortId },
                     firstParentId
                 )
             }
-            return bestCohortStatus
+            return bestChildEntry
         }
         throw IllegalStateException("Unexpected set of CTC database matches: $matches")
     }
