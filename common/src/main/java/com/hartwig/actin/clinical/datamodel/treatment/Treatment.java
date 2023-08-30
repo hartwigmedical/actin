@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import com.hartwig.actin.Displayable;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface Treatment extends Displayable {
 
@@ -24,11 +25,17 @@ public interface Treatment extends Displayable {
 
     boolean isSystemic();
 
+    @Nullable
+    String displayOverride();
+
     @NotNull
     @Override
     default String display() {
-        return Arrays.stream(name().replace("_", " ").split("\\+"))
-                .map(name -> (name.length() < 2) ? name : name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase())
-                .collect(Collectors.joining("+"));
+        String alternateDisplay = displayOverride();
+        return (alternateDisplay != null)
+                ? alternateDisplay
+                : Arrays.stream(name().replace("_", " ").split("\\+"))
+                        .map(name -> (name.length() < 2) ? name : name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase())
+                        .collect(Collectors.joining("+"));
     }
 }
