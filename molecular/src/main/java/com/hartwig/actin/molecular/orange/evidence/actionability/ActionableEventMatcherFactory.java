@@ -2,10 +2,10 @@ package com.hartwig.actin.molecular.orange.evidence.actionability;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.molecular.orange.evidence.curation.ApplicabilityFiltering;
 import com.hartwig.actin.molecular.orange.evidence.curation.ExternalTrialMapper;
@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 public class ActionableEventMatcherFactory {
 
     static final Set<Knowledgebase> ACTIONABLE_EVENT_SOURCES =
-            Sets.newHashSet(ActionabilityConstants.EVIDENCE_SOURCE, ActionabilityConstants.EXTERNAL_TRIAL_SOURCE);
+            Set.of(ActionabilityConstants.EVIDENCE_SOURCE, ActionabilityConstants.EXTERNAL_TRIAL_SOURCE);
 
     @NotNull
     private final ExternalTrialMapper externalTrialMapper;
@@ -86,7 +86,8 @@ public class ActionableEventMatcherFactory {
     ActionableEvents curateExternalTrials(@NotNull ActionableEvents actionableEvents) {
         return ImmutableActionableEvents.builder()
                 .hotspots(curateHotspots(actionableEvents.hotspots()))
-                .ranges(curateRanges(actionableEvents.ranges()))
+                .codons(curateRanges(actionableEvents.codons()))
+                .exons(curateRanges(actionableEvents.exons()))
                 .genes(curateGenes(actionableEvents.genes()))
                 .fusions(curateFusions(actionableEvents.fusions()))
                 .characteristics(curateCharacteristics(actionableEvents.characteristics()))
@@ -150,16 +151,10 @@ public class ActionableEventMatcherFactory {
 
     @NotNull
     private <T extends ActionableEvent> List<T> curateTreatments(@NotNull List<T> events, @NotNull ActionableFactory<T> factory) {
-        List<T> curated = Lists.newArrayList();
-        for (T event : events) {
+        return events.stream().map(event -> {
             String curatedTreatmentName = determineCuratedTreatmentName(event);
-            if (!curatedTreatmentName.equals(event.treatment().name())) {
-                curated.add(factory.create(event, curatedTreatmentName));
-            } else {
-                curated.add(event);
-            }
-        }
-        return curated;
+            return !curatedTreatmentName.equals(event.treatment().name()) ? factory.create(event, curatedTreatmentName) : event;
+        }).collect(Collectors.toList());
     }
 
     @NotNull
@@ -176,7 +171,8 @@ public class ActionableEventMatcherFactory {
     static ActionableEvents filterForSources(@NotNull ActionableEvents actionableEvents, @NotNull Set<Knowledgebase> sourcesToInclude) {
         return ImmutableActionableEvents.builder()
                 .hotspots(filterActionableForSources(actionableEvents.hotspots(), sourcesToInclude))
-                .ranges(filterActionableForSources(actionableEvents.ranges(), sourcesToInclude))
+                .codons(filterActionableForSources(actionableEvents.codons(), sourcesToInclude))
+                .exons(filterActionableForSources(actionableEvents.exons(), sourcesToInclude))
                 .genes(filterActionableForSources(actionableEvents.genes(), sourcesToInclude))
                 .fusions(filterActionableForSources(actionableEvents.fusions(), sourcesToInclude))
                 .characteristics(filterActionableForSources(actionableEvents.characteristics(), sourcesToInclude))
@@ -187,13 +183,7 @@ public class ActionableEventMatcherFactory {
     @NotNull
     private static <T extends ActionableEvent> Set<T> filterActionableForSources(@NotNull List<T> actionables,
             @NotNull Set<Knowledgebase> sourcesToInclude) {
-        Set<T> filtered = Sets.newHashSet();
-        for (T actionable : actionables) {
-            if (sourcesToInclude.contains(actionable.source())) {
-                filtered.add(actionable);
-            }
-        }
-        return filtered;
+        return actionables.stream().filter(actionable -> sourcesToInclude.contains(actionable.source())).collect(Collectors.toSet());
     }
 
     @NotNull
@@ -202,46 +192,34 @@ public class ActionableEventMatcherFactory {
         return ImmutableActionableEvents.builder()
                 .from(actionableEvents)
                 .hotspots(filterHotspotsForApplicability(actionableEvents.hotspots()))
-                .ranges(filterRangesForApplicability(actionableEvents.ranges()))
+                .codons(filterRangesForApplicability(actionableEvents.codons()))
+                .exons(filterRangesForApplicability(actionableEvents.exons()))
                 .genes(filterGenesForApplicability(actionableEvents.genes()))
                 .build();
     }
 
     @NotNull
+    private static <T extends ActionableEvent> List<T> filterEventsForApplicability(@NotNull List<T> list,
+            @NotNull Predicate<T> predicate) {
+        return list.stream().filter(predicate).collect(Collectors.toList());
+    }
+
+    @NotNull
     private static List<ActionableHotspot> filterHotspotsForApplicability(@NotNull List<ActionableHotspot> hotspots) {
-        List<ActionableHotspot> filtered = Lists.newArrayList();
-        for (ActionableHotspot actionableHotspot : hotspots) {
-            if (ApplicabilityFiltering.isApplicable(actionableHotspot)) {
-                filtered.add(actionableHotspot);
-            }
-        }
-        return filtered;
+        return filterEventsForApplicability(hotspots, ApplicabilityFiltering::isApplicable);
     }
 
     @NotNull
     private static List<ActionableRange> filterRangesForApplicability(@NotNull List<ActionableRange> ranges) {
-        List<ActionableRange> filtered = Lists.newArrayList();
-        for (ActionableRange actionableRange : ranges) {
-            if (ApplicabilityFiltering.isApplicable(actionableRange)) {
-                filtered.add(actionableRange);
-            }
-        }
-        return filtered;
+        return filterEventsForApplicability(ranges, ApplicabilityFiltering::isApplicable);
     }
 
     @NotNull
     private static List<ActionableGene> filterGenesForApplicability(@NotNull List<ActionableGene> genes) {
-        List<ActionableGene> filtered = Lists.newArrayList();
-        for (ActionableGene actionableGene : genes) {
-            if (ApplicabilityFiltering.isApplicable(actionableGene)) {
-                filtered.add(actionableGene);
-            }
-        }
-        return filtered;
+        return filterEventsForApplicability(genes, ApplicabilityFiltering::isApplicable);
     }
 
     private interface ActionableFactory<T extends ActionableEvent> {
-
         @NotNull
         T create(@NotNull T event, @NotNull String curatedTreatmentName);
     }
