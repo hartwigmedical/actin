@@ -79,7 +79,7 @@ class EligibilityFactory(private val functionInputResolver: FunctionInputResolve
             var nestedCompositeLevel = 0
             var nestedParameterSection = 0
             val commaPositions: MutableList<Int> = Lists.newArrayList()
-            for (i in 0 until params.length) {
+            for (i in params.indices) {
                 val character = params[i]
                 if (character == COMPOSITE_START) {
                     nestedCompositeLevel++
