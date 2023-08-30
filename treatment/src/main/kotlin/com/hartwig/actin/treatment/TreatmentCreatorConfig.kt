@@ -20,6 +20,7 @@ data class TreatmentCreatorConfig(
 
     companion object {
         private val LOGGER: Logger = LogManager.getLogger(TreatmentCreatorConfig::class.java)
+
         private const val TRIAL_CONFIG_DIRECTORY = "trial_config_directory"
         private const val CTC_CONFIG_DIRECTORY = "ctc_config_directory"
         private const val TREATMENT_DIRECTORY = "treatment_directory"

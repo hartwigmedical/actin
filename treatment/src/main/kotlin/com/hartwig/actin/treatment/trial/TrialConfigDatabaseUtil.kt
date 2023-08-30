@@ -1,6 +1,7 @@
 package com.hartwig.actin.treatment.trial
 
 object TrialConfigDatabaseUtil {
+
     private const val COHORT_SEPARATOR = ","
     private const val REFERENCE_ID_SEPARATOR = ","
     private const val ALL_COHORTS = "all"

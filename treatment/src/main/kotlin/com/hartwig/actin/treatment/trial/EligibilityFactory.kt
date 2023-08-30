@@ -9,6 +9,7 @@ import com.hartwig.actin.treatment.input.composite.CompositeRules
 import org.apache.logging.log4j.LogManager
 
 class EligibilityFactory(private val functionInputResolver: FunctionInputResolver) {
+
     fun isValidInclusionCriterion(criterion: String): Boolean {
         return try {
             generateEligibilityFunction(criterion)
