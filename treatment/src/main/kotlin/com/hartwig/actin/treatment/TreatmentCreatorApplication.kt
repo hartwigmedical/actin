@@ -18,7 +18,6 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import kotlin.system.exitProcess
 
-
 class TreatmentCreatorApplication(private val config: TreatmentCreatorConfig) {
 
     fun run() {
