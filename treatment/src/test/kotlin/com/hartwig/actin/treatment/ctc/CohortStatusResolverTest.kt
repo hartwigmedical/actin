@@ -18,11 +18,11 @@ class CohortStatusResolverTest {
 
     @Test
     fun shouldBeAbleToDetermineStatusForSingleParent() {
-        val statusOpen = CohortStatusResolver.resolve(entries, setOf(PARENT_OPEN_WITH_SLOTS_COHORT_ID))
+        val statusOpen = CohortStatusResolver.resolve(entries, setOf(PARENT_1_OPEN_WITH_SLOTS_COHORT_ID))
         assertThat(statusOpen.open).isTrue
         assertThat(statusOpen.slotsAvailable).isTrue
 
-        val statusClosed = CohortStatusResolver.resolve(entries, setOf(PARENT_CLOSED_WITHOUT_SLOTS_COHORT_ID))
+        val statusClosed = CohortStatusResolver.resolve(entries, setOf(PARENT_2_CLOSED_WITHOUT_SLOTS_COHORT_ID))
         assertThat(statusClosed.open).isFalse
         assertThat(statusClosed.slotsAvailable).isFalse
     }
@@ -51,10 +51,15 @@ class CohortStatusResolverTest {
 
     @Test
     fun shouldPickBestChildWhenBestChildIsInconsistentWithParent() {
-        val configuredCohortIds = setOf(CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID, CHILD_CLOSED_WITHOUT_SLOTS_COHORT_ID)
-        val status = CohortStatusResolver.resolve(entries, configuredCohortIds)
-        assertThat(status.open).isTrue
-        assertThat(status.slotsAvailable).isFalse
+        val childrenNoSlotsWithParentWithSlots = setOf(CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID, CHILD_CLOSED_WITHOUT_SLOTS_COHORT_ID)
+        val noSlotsStatus = CohortStatusResolver.resolve(entries, childrenNoSlotsWithParentWithSlots)
+        assertThat(noSlotsStatus.open).isTrue
+        assertThat(noSlotsStatus.slotsAvailable).isFalse
+
+        val childOpenWithParentClosed = setOf(CHILD_FOR_PARENT_2_OPEN_WITH_SLOTS_COHORT_ID)
+        val openStatus = CohortStatusResolver.resolve(entries, childOpenWithParentClosed)
+        assertThat(openStatus.open).isTrue
+        assertThat(openStatus.slotsAvailable).isTrue
     }
 
     @Test
@@ -80,22 +85,26 @@ class CohortStatusResolverTest {
     }
 
     companion object {
-        private const val PARENT_OPEN_WITH_SLOTS_COHORT_ID = 1
-        private const val PARENT_CLOSED_WITHOUT_SLOTS_COHORT_ID = 2
+        private const val PARENT_1_OPEN_WITH_SLOTS_COHORT_ID = 1
+        private const val PARENT_2_CLOSED_WITHOUT_SLOTS_COHORT_ID = 2
         private const val CHILD_OPEN_WITH_SLOTS_COHORT_ID = 3
         private const val CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID = 4
         private const val CHILD_CLOSED_WITHOUT_SLOTS_COHORT_ID = 5
         private const val ANOTHER_CHILD_OPEN_WITH_SLOTS_COHORT_ID = 6
+        private const val CHILD_FOR_PARENT_2_OPEN_WITH_SLOTS_COHORT_ID = 6
         private const val DOES_NOT_EXIST_COHORT_ID = 7
 
         private fun createTestEntries(): List<CTCDatabaseEntry> {
-            val parentOpenWithSlots = createEntry(PARENT_OPEN_WITH_SLOTS_COHORT_ID, null, "Open", 1)
-            val parentClosedWithoutSlots = createEntry(PARENT_CLOSED_WITHOUT_SLOTS_COHORT_ID, null, "Gesloten", 0)
-            val childOpenWithSlots = createEntry(CHILD_OPEN_WITH_SLOTS_COHORT_ID, PARENT_OPEN_WITH_SLOTS_COHORT_ID, "Open", 1)
-            val childOpenWithoutSlots = createEntry(CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID, PARENT_OPEN_WITH_SLOTS_COHORT_ID, "Open", 0)
-            val childClosedWithoutSlots = createEntry(CHILD_CLOSED_WITHOUT_SLOTS_COHORT_ID, PARENT_OPEN_WITH_SLOTS_COHORT_ID, "Gesloten", 0)
+            val parentOpenWithSlots = createEntry(PARENT_1_OPEN_WITH_SLOTS_COHORT_ID, null, "Open", 1)
+            val parentClosedWithoutSlots = createEntry(PARENT_2_CLOSED_WITHOUT_SLOTS_COHORT_ID, null, "Gesloten", 0)
+            val childOpenWithSlots = createEntry(CHILD_OPEN_WITH_SLOTS_COHORT_ID, PARENT_1_OPEN_WITH_SLOTS_COHORT_ID, "Open", 1)
+            val childOpenWithoutSlots = createEntry(CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID, PARENT_1_OPEN_WITH_SLOTS_COHORT_ID, "Open", 0)
+            val childClosedWithoutSlots =
+                createEntry(CHILD_CLOSED_WITHOUT_SLOTS_COHORT_ID, PARENT_1_OPEN_WITH_SLOTS_COHORT_ID, "Gesloten", 0)
             val anotherChildOpenWithSlots =
-                createEntry(ANOTHER_CHILD_OPEN_WITH_SLOTS_COHORT_ID, PARENT_OPEN_WITH_SLOTS_COHORT_ID, "Open", 1)
+                createEntry(ANOTHER_CHILD_OPEN_WITH_SLOTS_COHORT_ID, PARENT_1_OPEN_WITH_SLOTS_COHORT_ID, "Open", 1)
+            val childForParent2OpenWithSlots =
+                createEntry(CHILD_FOR_PARENT_2_OPEN_WITH_SLOTS_COHORT_ID, PARENT_2_CLOSED_WITHOUT_SLOTS_COHORT_ID, "Open", 1)
 
             return listOf(
                 parentOpenWithSlots,
@@ -103,7 +112,8 @@ class CohortStatusResolverTest {
                 childOpenWithSlots,
                 childOpenWithoutSlots,
                 childClosedWithoutSlots,
-                anotherChildOpenWithSlots
+                anotherChildOpenWithSlots,
+                childForParent2OpenWithSlots
             )
         }
     }
