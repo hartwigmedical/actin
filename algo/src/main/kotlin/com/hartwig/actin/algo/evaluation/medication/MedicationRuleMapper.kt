@@ -15,7 +15,7 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     init {
         val interpreter: MedicationStatusInterpreter = MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date())
         selector = MedicationSelector(interpreter)
-        categories = MedicationCategories.create(AtcTree.create())
+        categories = MedicationCategories.create(atcTree())
     }
 
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {

@@ -40,6 +40,6 @@ class CurrentlyGetsMedicationOfCategoryTest {
 
     companion object {
         private val FUNCTION =
-            CurrentlyGetsMedicationOfCategory(MedicationTestFactory.alwaysActive(), mapOf("category to find" to setOf("category to find")))
+            CurrentlyGetsMedicationOfCategory(MedicationTestFactory.alwaysActive(), "category to find", emptySet())
     }
 }
