@@ -42,9 +42,9 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             ),
             EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO),
             EligibilityRule.HAS_PT_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.PROTHROMBIN_TIME),
-            EligibilityRule.HAS_PT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinRefCreator(LabMeasurement.PROTHROMBIN_TIME),
+            EligibilityRule.HAS_PT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(LabMeasurement.PROTHROMBIN_TIME),
             EligibilityRule.HAS_APTT_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME),
-            EligibilityRule.HAS_APTT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinRefCreator(LabMeasurement.ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME),
+            EligibilityRule.HAS_APTT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(LabMeasurement.ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME),
             EligibilityRule.HAS_PTT_ULN_OF_AT_MOST_X to hasLimitedPTTCreator(),
             EligibilityRule.HAS_D_DIMER_OUTSIDE_REF_UPPER_LIMIT to hasLabValueOutsideRefLimitUpCreator(LabMeasurement.DDIMER),
             EligibilityRule.HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X to hasSufficientLabValueCreator(
@@ -81,16 +81,16 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             ),
             EligibilityRule.HAS_IONIZED_CALCIUM_MMOL_PER_L_OF_AT_MOST_X to hasLimitedLabValueCreator(LabMeasurement.IONIZED_CALCIUM),
             EligibilityRule.HAS_CORRECTED_CALCIUM_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.CORRECTED_CALCIUM),
-            EligibilityRule.HAS_CALCIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinRefCreator(LabMeasurement.CALCIUM),
-            EligibilityRule.HAS_CORRECTED_CALCIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinRefCreator(LabMeasurement.CORRECTED_CALCIUM),
-            EligibilityRule.HAS_MAGNESIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinRefCreator(LabMeasurement.MAGNESIUM),
+            EligibilityRule.HAS_CALCIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(LabMeasurement.CALCIUM),
+            EligibilityRule.HAS_CORRECTED_CALCIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(LabMeasurement.CORRECTED_CALCIUM),
+            EligibilityRule.HAS_MAGNESIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(LabMeasurement.MAGNESIUM),
             EligibilityRule.HAS_CORRECTED_MAGNESIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to undeterminedLabValueCreator("corrected magnesium"),
             EligibilityRule.HAS_PHOSPHORUS_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.PHOSPHORUS),
             EligibilityRule.HAS_PHOSPHORUS_MMOL_PER_L_OF_AT_MOST_X to hasLimitedLabValueCreator(LabMeasurement.PHOSPHORUS),
-            EligibilityRule.HAS_PHOSPHORUS_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinRefCreator(LabMeasurement.PHOSPHORUS),
+            EligibilityRule.HAS_PHOSPHORUS_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(LabMeasurement.PHOSPHORUS),
             EligibilityRule.HAS_CORRECTED_PHOSPHORUS_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to undeterminedLabValueCreator("corrected phosphorus"),
             EligibilityRule.HAS_POTASSIUM_MMOL_PER_L_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.POTASSIUM),
-            EligibilityRule.HAS_POTASSIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinRefCreator(LabMeasurement.POTASSIUM),
+            EligibilityRule.HAS_POTASSIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(LabMeasurement.POTASSIUM),
             EligibilityRule.HAS_CORRECTED_POTASSIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to undeterminedLabValueCreator("corrected potassium"),
             EligibilityRule.HAS_POTENTIAL_HYPOKALEMIA to hasPotentialHypokalemiaCreator(),
             EligibilityRule.HAS_POTENTIAL_HYPOMAGNESEMIA to hasPotentialHypomagnesemiaCreator(),
@@ -106,7 +106,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_TOTAL_PROTEIN_IN_24H_URINE_OF_AT_LEAST_X to undeterminedLabValueCreator("protein in 24h urine"),
             EligibilityRule.HAS_URINE_PROTEIN_TO_CREATININE_RATIO_MG_PER_MG_OF_AT_MOST_X to undeterminedLabValueCreator("Urine protein to creatinine ratio"),
             EligibilityRule.HAS_GLUCOSE_PL_MMOL_PER_L_OF_AT_MOST_X to undeterminedLabValueCreator("Glucose"),
-            EligibilityRule.HAS_THYROXINE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinRefCreator(LabMeasurement.FT4),
+            EligibilityRule.HAS_THYROXINE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(LabMeasurement.FT4),
         )
     }
 
@@ -148,8 +148,8 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         }
     }
 
-    private fun hasLabValueWithinRefCreator(measurement: LabMeasurement): FunctionCreator {
-        return FunctionCreator { createLabEvaluator(measurement, HasLabValueWithinRef()) }
+    private fun hasLabValueWithinInstitutionalNormalLimitCreator(measurement: LabMeasurement): FunctionCreator {
+        return FunctionCreator { createLabEvaluator(measurement, HasLabValueWithinInstitutionalNormalLimit()) }
     }
 
     private fun hasLimitedPTTCreator(): FunctionCreator {

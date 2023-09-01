@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.clinical.datamodel.LabValue
 
-class HasLabValueWithinRef internal constructor() : LabEvaluationFunction {
+class HasLabValueWithinInstitutionalNormalLimit internal constructor() : LabEvaluationFunction {
     override fun evaluate(record: PatientRecord, labValue: LabValue): Evaluation {
         val isOutsideRef = labValue.isOutsideRef
             ?: return EvaluationFactory.recoverableUndetermined(

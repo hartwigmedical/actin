@@ -6,10 +6,10 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class HasLabValueWithinRefTest {
+class HasLabValueWithinInstitutionalNormalLimitTest {
     @Test
     fun canEvaluate() {
-        val function = HasLabValueWithinRef()
+        val function = HasLabValueWithinInstitutionalNormalLimit()
         val record = TestDataFactory.createMinimalTestPatientRecord()
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record, LabTestFactory.builder().isOutsideRef(null).build()))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(record, LabTestFactory.builder().isOutsideRef(false).build()))
