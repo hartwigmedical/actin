@@ -46,7 +46,6 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_APTT_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME),
             EligibilityRule.HAS_APTT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(LabMeasurement.ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME),
             EligibilityRule.HAS_PTT_ULN_OF_AT_MOST_X to hasLimitedPTTCreator(),
-            EligibilityRule.HAS_D_DIMER_OUTSIDE_REF_UPPER_LIMIT to hasLabValueOutsideRefLimitUpCreator(LabMeasurement.DDIMER),
             EligibilityRule.HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X to hasSufficientLabValueCreator(
                 LabMeasurement.ALBUMIN,
                 LabUnit.GRAMS_PER_DECILITER
@@ -154,10 +153,6 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun hasLimitedPTTCreator(): FunctionCreator {
         return FunctionCreator { HasLimitedPTT() }
-    }
-
-    private fun hasLabValueOutsideRefLimitUpCreator(measurement: LabMeasurement): FunctionCreator {
-        return FunctionCreator { createLabEvaluator(measurement, HasLabValueOutsideRefLimitUp()) }
     }
 
     private fun hasLimitedBilirubinPercentageCreator(): FunctionCreator {
