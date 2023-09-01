@@ -6,70 +6,91 @@ import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRadiotherapy
+import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
-import org.apache.logging.log4j.util.Strings
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import org.junit.Test
 
 class HasRecentlyReceivedRadiotherapyTest {
+
     @Test
-    fun canEvaluate() {
-        val year = 2020
-        val month = 5
-        val function = HasRecentlyReceivedRadiotherapy(year, month)
+    fun shouldFailWithNoTreatmentHistory() {
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(emptyList())))
+    }
 
-        // No prior tumor treatments
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withPriorTumorTreatments(emptyList())))
+    @Test
+    fun shouldFailWithRecentTreatmentWithWrongCategory() {
+        val wrongCategory = treatmentHistoryEntry(
+            ImmutableOtherTreatment.builder().name("").isSystemic(false).addCategories(TreatmentCategory.TRANSPLANTATION).build(),
+            YEAR,
+            MONTH
+        )
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistoryEntry(wrongCategory)))
+    }
 
-        // Wrong category
-        val wrongCategory: PriorTumorTreatment = builder().addCategories(
-            TreatmentCategory.IMMUNOTHERAPY
-        ).build()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withPriorTumorTreatment(wrongCategory)))
+    @Test
+    fun shouldPassWithRightCategoryButNoDate() {
+        val rightCategoryNoDate = radiotherapy()
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistoryEntry(rightCategoryNoDate)))
+    }
 
-        // Right category but no date
-        val rightCategoryNoDate: PriorTumorTreatment = radiotherapy().build()
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withPriorTumorTreatment(rightCategoryNoDate)))
+    @Test
+    fun shouldFailWithRightCategoryButOldDate() {
+        val rightCategoryOldDate = radiotherapy(YEAR - 1)
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistoryEntry(rightCategoryOldDate)))
+    }
 
-        // Right category but old date
-        val rightCategoryOldDate: PriorTumorTreatment = radiotherapy().startYear(year - 1).build()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withPriorTumorTreatment(rightCategoryOldDate)))
+    @Test
+    fun shouldFailWithRightCategoryButOldMonth() {
+        val rightCategoryOldMonth = radiotherapy(YEAR, MONTH - 1)
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistoryEntry(rightCategoryOldMonth)))
+    }
 
-        // Right category but old month
-        val rightCategoryOldMonth: PriorTumorTreatment = radiotherapy().startYear(year).startMonth(month - 1).build()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withPriorTumorTreatment(rightCategoryOldMonth)))
+    @Test
+    fun shouldPassWithRightCategoryAndRecentYear() {
+        val rightCategoryRecentYear = radiotherapy(YEAR)
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistoryEntry(rightCategoryRecentYear)))
+    }
 
-        // Right category and recent year
-        val rightCategoryRecentYear: PriorTumorTreatment = radiotherapy().startYear(year).build()
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withPriorTumorTreatment(rightCategoryRecentYear)))
-
-        // Right category and recent year and month
-        val rightCategoryRecentYearAndMonth: PriorTumorTreatment = radiotherapy().startYear(year).startMonth(month).build()
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withPriorTumorTreatment(rightCategoryRecentYearAndMonth)))
+    @Test
+    fun shouldPassWithRightCategoryAndRecentYearAndMonth() {
+        val rightCategoryRecentYearAndMonth = radiotherapy(YEAR, MONTH)
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistoryEntry(rightCategoryRecentYearAndMonth)))
     }
 
     companion object {
-        private fun radiotherapy(): ImmutablePriorTumorTreatment.Builder {
-            return builder().addCategories(TreatmentCategory.RADIOTHERAPY)
+        private const val YEAR = 2020
+        private const val MONTH = 5
+        private val FUNCTION = HasRecentlyReceivedRadiotherapy(YEAR, MONTH)
+        private val RADIOTHERAPY = ImmutableRadiotherapy.builder().name("").isSystemic(false).build()
+
+        private fun radiotherapy(startYear: Int? = null, startMonth: Int? = null): TreatmentHistoryEntry {
+            return treatmentHistoryEntry(RADIOTHERAPY, startYear, startMonth)
         }
 
-        private fun builder(): ImmutablePriorTumorTreatment.Builder {
-            return ImmutablePriorTumorTreatment.builder().name(Strings.EMPTY).isSystemic(true)
+        private fun treatmentHistoryEntry(treatment: Treatment, startYear: Int? = null, startMonth: Int? = null): TreatmentHistoryEntry {
+            return ImmutableTreatmentHistoryEntry.builder()
+                .addTreatments(treatment)
+                .startYear(startYear)
+                .startMonth(startMonth)
+                .build()
         }
 
-        private fun withPriorTumorTreatment(treatment: PriorTumorTreatment): PatientRecord {
-            return withPriorTumorTreatments(listOf(treatment))
+        private fun withTreatmentHistoryEntry(treatment: TreatmentHistoryEntry): PatientRecord {
+            return withTreatmentHistory(listOf(treatment))
         }
 
-        private fun withPriorTumorTreatments(treatments: List<PriorTumorTreatment>): PatientRecord {
+        private fun withTreatmentHistory(treatmentHistory: List<TreatmentHistoryEntry>): PatientRecord {
             return ImmutablePatientRecord.builder()
                 .from(TestDataFactory.createMinimalTestPatientRecord())
                 .clinical(
                     ImmutableClinicalRecord.builder()
                         .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                        .priorTumorTreatments(treatments)
+                        .treatmentHistory(treatmentHistory)
                         .build()
                 )
                 .build()

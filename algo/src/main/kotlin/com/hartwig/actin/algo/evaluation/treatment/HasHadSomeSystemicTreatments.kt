@@ -5,10 +5,10 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-class HasHadSomeSystemicTreatments internal constructor(private val minSystemicTreatments: Int) : EvaluationFunction {
+class HasHadSomeSystemicTreatments(private val minSystemicTreatments: Int) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val minSystemicCount = SystemicTreatmentAnalyser.minSystemicTreatments(record.clinical().priorTumorTreatments())
-        val maxSystemicCount = SystemicTreatmentAnalyser.maxSystemicTreatments(record.clinical().priorTumorTreatments())
+        val minSystemicCount = SystemicTreatmentAnalyser.minSystemicTreatments(record.clinical().treatmentHistory())
+        val maxSystemicCount = SystemicTreatmentAnalyser.maxSystemicTreatments(record.clinical().treatmentHistory())
         return when {
             minSystemicCount >= minSystemicTreatments -> {
                 EvaluationFactory.pass(

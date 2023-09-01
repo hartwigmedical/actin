@@ -1,5 +1,6 @@
 package com.hartwig.actin.treatment.trial
 
+import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
@@ -70,17 +71,36 @@ class TrialFactory(
     private fun toIdentification(trialConfig: TrialDefinitionConfig): TrialIdentification {
         return ImmutableTrialIdentification.builder()
             .trialId(trialConfig.trialId)
-            .open(ctcModel.isTrialOpen(trialConfig))
+            .open(determineOpenStatus(trialConfig))
             .acronym(trialConfig.acronym)
             .title(trialConfig.title)
             .build()
     }
 
+    private fun determineOpenStatus(trialConfig: TrialDefinitionConfig): Boolean {
+        val openInCTC: Boolean? = ctcModel.isTrialOpen(trialConfig)
+        if (openInCTC != null) {
+            return openInCTC
+        }
+
+        return trialConfig.open
+            ?: throw java.lang.IllegalStateException(
+                "Could not determine open status for trial, "
+                        + "either from CTC or from manual config for '" + trialConfig.trialId + "'"
+            )
+    }
+
     companion object {
         @Throws(IOException::class)
-        fun create(trialConfigDirectory: String, ctcModel: CTCModel, doidModel: DoidModel, geneFilter: GeneFilter): TrialFactory {
+        fun create(
+            trialConfigDirectory: String,
+            ctcModel: CTCModel,
+            doidModel: DoidModel,
+            geneFilter: GeneFilter,
+            treatmentDatabase: TreatmentDatabase
+        ): TrialFactory {
             val molecularInputChecker = MolecularInputChecker(geneFilter)
-            val functionInputResolver = FunctionInputResolver(doidModel, molecularInputChecker)
+            val functionInputResolver = FunctionInputResolver(doidModel, molecularInputChecker, treatmentDatabase)
             val eligibilityFactory = EligibilityFactory(functionInputResolver)
             val trialConfigModel: TrialConfigModel = TrialConfigModel.create(trialConfigDirectory, eligibilityFactory)
             return TrialFactory(trialConfigModel, ctcModel, eligibilityFactory)

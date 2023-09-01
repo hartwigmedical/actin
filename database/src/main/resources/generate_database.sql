@@ -21,7 +21,7 @@ CREATE TABLE `tumor`
     `primaryTumorSubLocation` varchar(50),
     `primaryTumorType` varchar(50),
     `primaryTumorSubType` varchar(50),
-    `primaryTumorExtraDetails` varchar(50),
+    `primaryTumorExtraDetails` varchar(100),
     `doids` varchar(50),
     `stage` varchar(50),
     `hasMeasurableDisease` BOOLEAN,
@@ -85,32 +85,8 @@ CREATE TABLE `treatmentHistoryEntry`
     PRIMARY KEY (`id`)
 );
 
+-- TODO: remove after table is cleaned up:
 DROP TABLE IF EXISTS `priorTumorTreatment`;
-CREATE TABLE `priorTumorTreatment`
-(   `id` int NOT NULL AUTO_INCREMENT,
-    `patientId` varchar(50) NOT NULL,
-    `name` varchar(100) NOT NULL,
-    `startYear` int,
-    `startMonth` int,
-    `stopYear` int,
-    `stopMonth` int,
-    `cycles` int,
-    `bestResponse` varchar(50),
-    `stopReason` varchar(50),
-    `categories` varchar(100) NOT NULL,
-    `isSystemic` BOOLEAN NOT NULL,
-    `chemoType` varchar(100),
-    `immunoType` varchar(100),
-    `targetedType` varchar(200),
-    `hormoneType` varchar(100),
-    `radioType` varchar(100),
-    `carTType` varchar(100),
-    `transplantType` varchar(100),
-    `supportiveType` varchar(100),
-    `trialAcronym` varchar(100),
-    `ablationType` varchar(100),
-    PRIMARY KEY (`id`)
-);
 
 DROP TABLE IF EXISTS `priorSecondPrimary`;
 CREATE TABLE `priorSecondPrimary`
@@ -138,7 +114,7 @@ CREATE TABLE `priorOtherCondition`
     `year` int,
     `month` int,
     `doids` varchar(50) NOT NULL,
-    `category` varchar(50) NOT NULL,
+    `category` varchar(100) NOT NULL,
     `isContraindicationForTherapy` BOOLEAN NOT NULL,
     PRIMARY KEY (`id`)
 );

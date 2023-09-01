@@ -1,6 +1,7 @@
 package com.hartwig.actin.treatment.trial
 
 import com.google.common.io.Resources
+import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
 import com.hartwig.actin.treatment.ctc.TestCTCModelFactory
@@ -10,25 +11,27 @@ import com.hartwig.actin.treatment.datamodel.EligibilityFunction
 import com.hartwig.actin.treatment.datamodel.EligibilityRule
 import com.hartwig.actin.treatment.datamodel.Trial
 import com.hartwig.actin.treatment.trial.config.TestTrialConfigDatabaseFactory
+import com.hartwig.actin.treatment.trial.config.TestTrialDefinitionConfigFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class TrialFactoryTest {
 
     @Test
-    fun canCreateFromTrialConfigDirectory() {
+    fun shouldNotCrashWhenCreatingFromTrialConfigDirectory() {
         assertThat(
             TrialFactory.create(
                 TRIAL_CONFIG_DIRECTORY,
                 TestCTCModelFactory.createWithMinimalTestCTCDatabase(),
                 TestDoidModelFactory.createMinimalTestDoidModel(),
-                TestGeneFilterFactory.createNeverValid()
+                TestGeneFilterFactory.createNeverValid(),
+                TreatmentDatabase(emptyMap(), emptyMap())
             )
         ).isNotNull
     }
 
     @Test
-    fun canCreateFromProperTestModel() {
+    fun shouldCreateExpectedTrialsFromProperTestModel() {
         val factory = TrialFactory(
             TrialConfigModel.createFromDatabase(TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase()),
             TestCTCModelFactory.createWithProperTestCTCDatabase(),
@@ -68,6 +71,21 @@ class TrialFactoryTest {
         val cohortC = findCohort(trial.cohorts(), "C")
         assertThat(cohortC.metadata().description()).isEqualTo("Cohort C")
         assertThat(cohortC.eligibility()).isEmpty()
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun shouldCrashInCaseTrialStatusCannotBeResolved() {
+        val factory = TrialFactory(
+            TrialConfigModel.createFromDatabase(
+                TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase().copy(
+                    trialDefinitionConfigs = listOf(TestTrialDefinitionConfigFactory.MINIMAL.copy(open = null))
+                )
+            ),
+            TestCTCModelFactory.createWithMinimalTestCTCDatabase(),
+            TestEligibilityFactoryFactory.createTestEligibilityFactory()
+        )
+
+        factory.createTrials()
     }
 
     companion object {

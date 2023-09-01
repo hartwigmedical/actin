@@ -26,10 +26,16 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.sort.driver.VariantComparator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 class VariantExtractor {
+
+    private static final Logger LOGGER = LogManager.getLogger(VariantExtractor.class);
+
+    private static final String ENSEMBL_TRANSCRIPT_IDENTIFIER = "ENST";
 
     private static final Set<PurpleCodingEffect> RELEVANT_CODING_EFFECTS = Sets.newHashSet(PurpleCodingEffect.MISSENSE,
             PurpleCodingEffect.SPLICE,
@@ -146,16 +152,25 @@ class VariantExtractor {
 
     @NotNull
     private static TranscriptImpact extractCanonicalImpact(@NotNull PurpleVariant variant) {
+        if (!isEnsemblTranscript(variant.canonicalImpact())) {
+            LOGGER.warn("Canonical impact defined on non-ensembl transcript for variant '{}'", variant);
+        }
+
         return toTranscriptImpact(variant.canonicalImpact());
     }
 
     @NotNull
     private static Set<TranscriptImpact> extractOtherImpacts(@NotNull PurpleVariant variant) {
-        Set<TranscriptImpact> impacts = Sets.newHashSet();
-        for (PurpleTranscriptImpact otherImpact : variant.otherImpacts()) {
-            impacts.add(toTranscriptImpact(otherImpact));
-        }
-        return impacts;
+        return variant.otherImpacts()
+                .stream()
+                .filter(VariantExtractor::isEnsemblTranscript)
+                .map(VariantExtractor::toTranscriptImpact)
+                .collect(Collectors.toSet());
+    }
+
+    @VisibleForTesting
+    static boolean isEnsemblTranscript(@NotNull PurpleTranscriptImpact purpleTranscriptImpact) {
+        return purpleTranscriptImpact.transcript().startsWith(ENSEMBL_TRANSCRIPT_IDENTIFIER);
     }
 
     @NotNull

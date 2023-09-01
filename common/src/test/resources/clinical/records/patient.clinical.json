@@ -50,30 +50,45 @@
     },
     "lvef": null
   },
-  "priorTumorTreatments": [
+  "treatmentHistory": [
     {
-      "name": "Capecitabine",
+      "treatments": [
+        {
+          "name": "CAPECITABINE",
+          "synonyms": [],
+          "drugs": [
+            {
+              "name": "CAPECITABINE",
+              "drugTypes": [
+                "ANTIMETABOLITE",
+                "FLUOROPYRIMIDINE"
+              ],
+              "category": "CHEMOTHERAPY",
+              "displayOverride": null
+            }
+          ],
+          "maxCycles": null,
+          "isSystemic": true,
+          "treatmentClass": "DRUG_THERAPY"
+        }
+      ],
       "startYear": 2019,
       "startMonth": 3,
-      "stopYear": 2020,
-      "stopMonth": null,
-      "cycles": null,
-      "bestResponse": "PR",
-      "stopReason": "toxicity",
-      "categories": [
-        "CHEMOTHERAPY"
-      ],
-      "isSystemic": true,
-      "chemoType": "antimetabolite",
-      "immunoType": null,
-      "targetedType": null,
-      "hormoneType": null,
-      "radioType": null,
-      "carTType": null,
-      "transplantType": null,
-      "supportiveType": null,
+      "intents": null,
+      "isTrial": false,
       "trialAcronym": null,
-      "ablationType": null
+      "therapyHistoryDetails": {
+        "stopYear": 2020,
+        "stopMonth": null,
+        "ongoingAsOf": null,
+        "cycles": null,
+        "bestResponse": "PROGRESSIVE_DISEASE",
+        "stopReason": "TOXICITY",
+        "stopReasonDetail": null,
+        "toxicities": null,
+        "bodyLocationCategories": null,
+        "bodyLocations": null
+      }
     }
   ],
   "priorSecondPrimaries": [

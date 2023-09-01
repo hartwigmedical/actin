@@ -5,6 +5,7 @@ import java.io.File
 import java.nio.file.Files
 
 object FileUtil {
+
     private const val TSV_DELIMITER = "\t"
 
     fun <T> createObjectsFromTsv(tsv: String, create: (Map<String, Int>, List<String>) -> T): List<T> {

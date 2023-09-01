@@ -1,8 +1,10 @@
 package com.hartwig.actin.clinical.datamodel;
 
+import com.hartwig.actin.Displayable;
+
 import org.jetbrains.annotations.NotNull;
 
-public enum MedicationStatus {
+public enum MedicationStatus implements Displayable {
     ACTIVE("Active"),
     ON_HOLD("On hold"),
     CANCELLED("Cancelled"),
@@ -15,6 +17,7 @@ public enum MedicationStatus {
         this.display = display;
     }
 
+    @Override
     @NotNull
     public String display() {
         return display;

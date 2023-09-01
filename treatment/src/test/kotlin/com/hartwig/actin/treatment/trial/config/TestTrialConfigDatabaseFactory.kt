@@ -6,6 +6,7 @@ import com.hartwig.actin.treatment.datamodel.EligibilityRule
 import com.hartwig.actin.treatment.trial.TrialConfigDatabase
 
 object TestTrialConfigDatabaseFactory {
+
     fun createMinimalTestTrialConfigDatabase(): TrialConfigDatabase {
         return TrialConfigDatabase(emptyList(), emptyList(), emptyList(), emptyList())
     }

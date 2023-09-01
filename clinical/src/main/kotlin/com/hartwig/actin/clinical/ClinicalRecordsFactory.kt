@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical
 
 import com.google.common.annotations.VisibleForTesting
-import com.google.common.collect.Lists
 import com.hartwig.actin.clinical.curation.CurationModel
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
@@ -13,9 +12,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus
-import com.hartwig.actin.clinical.datamodel.ImmutableDosage
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance
-import com.hartwig.actin.clinical.datamodel.ImmutableMedication
 import com.hartwig.actin.clinical.datamodel.ImmutableObservedToxicity
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails
 import com.hartwig.actin.clinical.datamodel.ImmutableSurgery
@@ -37,14 +34,12 @@ import com.hartwig.actin.clinical.datamodel.ToxicityEvaluation
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.VitalFunction
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.feed.FeedModel
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry
 import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry
 import com.hartwig.actin.clinical.feed.lab.LabExtraction
-import com.hartwig.actin.clinical.feed.medication.MedicationEntry
 import com.hartwig.actin.clinical.feed.patient.PatientEntry
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction
@@ -59,8 +54,9 @@ import org.apache.logging.log4j.LogManager
 class ClinicalRecordsFactory(
     private val feed: FeedModel,
     private val curation: CurationModel,
-    private val atc: AtcModel
+    atc: AtcModel
 ) {
+    private val medicationExtractor = MedicationExtractor(curation, atc)
 
     fun create(): List<ClinicalRecord> {
         val processedPatientIds: MutableSet<String> = HashSet()
@@ -98,7 +94,6 @@ class ClinicalRecordsFactory(
                 .tumor(extractTumorDetails(questionnaire))
                 .clinicalStatus(extractClinicalStatus(questionnaire))
                 .treatmentHistory(extractTreatmentHistory(questionnaire))
-                .priorTumorTreatments(extractPriorTumorTreatments(questionnaire))
                 .priorSecondPrimaries(extractPriorSecondPrimaries(questionnaire))
                 .priorOtherConditions(extractPriorOtherConditions(questionnaire))
                 .priorMolecularTests(extractPriorMolecularTests(questionnaire))
@@ -177,14 +172,6 @@ class ClinicalRecordsFactory(
         )
             .flatten()
             .flatMap { curation.curateTreatmentHistoryEntry(it) }
-    }
-
-    private fun extractPriorTumorTreatments(questionnaire: Questionnaire?): List<PriorTumorTreatment> {
-        return if (questionnaire == null) emptyList() else listOf(
-            questionnaire.treatmentHistoryCurrentTumor,
-            questionnaire.otherOncologicalHistory
-        )
-            .flatMap { curation.curatePriorTumorTreatments(it) }
     }
 
     private fun extractPriorSecondPrimaries(questionnaire: Questionnaire?): List<PriorSecondPrimary> {
@@ -293,69 +280,10 @@ class ClinicalRecordsFactory(
     }
 
     private fun extractMedications(subject: String): List<Medication> {
-        val medications: MutableList<Medication> = Lists.newArrayList()
-        for (entry in feed.medicationEntries(subject)) {
-            val administrationRoute = curation.translateAdministrationRoute(entry.dosageInstructionRouteDisplay)
-            val dosage =
-                if (dosageRequiresCuration(administrationRoute, entry))
-                    curation.curateMedicationDosage(entry.dosageInstructionText)
-                else
-                    ImmutableDosage.builder()
-                        .dosageMin(entry.dosageInstructionDoseQuantityValue)
-                        .dosageMax(correctDosageMax(entry))
-                        .dosageUnit(curation.translateDosageUnit(entry.dosageInstructionDoseQuantityUnit))
-                        .frequency(entry.dosageInstructionFrequencyValue)
-                        .frequencyUnit(entry.dosageInstructionFrequencyUnit)
-                        .periodBetweenValue(entry.dosageInstructionPeriodBetweenDosagesValue)
-                        .periodBetweenUnit(curation.curatePeriodBetweenUnit(entry.dosageInstructionPeriodBetweenDosagesUnit))
-                        .ifNeeded(extractIfNeeded(entry))
-                        .build()
-            val builder = ImmutableMedication.builder().dosage(dosage ?: ImmutableDosage.builder().build())
-            val name: String? = CurationUtil.capitalizeFirstLetterOnly(entry.code5ATCDisplay).ifEmpty {
-                curation.curateMedicationName(CurationUtil.capitalizeFirstLetterOnly(entry.codeText))
-            }
-
-            if (!name.isNullOrEmpty()) {
-                val medication: Medication = builder.name(name)
-                    .status(curation.curateMedicationStatus(entry.status))
-                    .administrationRoute(administrationRoute)
-                    .startDate(entry.periodOfUseValuePeriodStart)
-                    .stopDate(entry.periodOfUseValuePeriodEnd)
-                    .addAllCypInteractions(curation.curateMedicationCypInteractions(name))
-                    .qtProlongatingRisk(curation.annotateWithQTProlongating(name))
-                    .atc(atc.resolve(entry.code5ATCCode))
-                    .isSelfCare(entry.code5ATCDisplay.isEmpty() && entry.code5ATCCode.isEmpty())
-                    .isTrialMedication(entry.code5ATCDisplay.isEmpty() && entry.code5ATCCode.isNotEmpty() && entry.code5ATCCode[0].lowercaseChar() !in 'a'..'z')
-                    .build()
-
-                // TODO Uncomment this check when we receive the ATC tree
-                // check(medication.atc() != null || medication.isSelfCare() || medication.isTrialMedication()) {
-                //     "Medication ${medication.name()} has no ATC code and is not self-care or a trial"
-                // }
-
-                medications.add(curation.annotateWithMedicationCategory(medication))
-            }
-        }
-        medications.sortWith(MedicationByNameComparator())
-        return medications
+        return feed.medicationEntries(subject)
+            .mapNotNull(medicationExtractor::extractMedication)
+            .sortedWith(MedicationByNameComparator())
     }
-
-    private fun extractIfNeeded(entry: MedicationEntry) =
-        entry.dosageInstructionAsNeededDisplay.trim().lowercase() == "zo nodig"
-
-    private fun correctDosageMax(entry: MedicationEntry): Double? {
-        return if (entry.dosageInstructionMaxDosePerAdministration == 0.0) {
-            entry.dosageInstructionDoseQuantityValue
-        } else {
-            entry.dosageInstructionMaxDosePerAdministration
-        }
-    }
-
-    private fun dosageRequiresCuration(administrationRoute: String?, entry: MedicationEntry) =
-        administrationRoute?.lowercase() == "oral" && (entry.dosageInstructionDoseQuantityValue == 0.0 ||
-                entry.dosageInstructionDoseQuantityUnit.isEmpty() ||
-                entry.dosageInstructionFrequencyValue == 0.0 ||
-                entry.dosageInstructionFrequencyUnit.isEmpty())
 
     companion object {
         private val LOGGER = LogManager.getLogger(ClinicalRecordsFactory::class.java)

@@ -22,11 +22,11 @@ public class TreatmentDatabase {
 
     @Nullable
     public Treatment findTreatmentByName(@NotNull String treatmentName) {
-        return treatmentsByName.get(treatmentName.toLowerCase());
+        return treatmentsByName.get(treatmentName.replace(" ", "_").toLowerCase());
     }
 
     @Nullable
     public Drug findDrugByName(@NotNull String drugName) {
-        return drugsByName.get(drugName.toLowerCase());
+        return drugsByName.get(drugName.replace(" ", "_").toLowerCase());
     }
 }

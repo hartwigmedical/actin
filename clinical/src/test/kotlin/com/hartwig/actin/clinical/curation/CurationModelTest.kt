@@ -17,17 +17,14 @@ import com.hartwig.actin.clinical.datamodel.InfectionStatus
 import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.datamodel.LabValue
-import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.MedicationStatus
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
-import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
 import com.hartwig.actin.clinical.datamodel.Toxicity
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.clinical.datamodel.TumorDetails
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.doid.TestDoidModelFactory
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
@@ -160,18 +157,6 @@ class CurationModelTest {
     }
 
     @Test
-    fun shouldCuratePriorTreatments() {
-        val priorTreatments: List<PriorTumorTreatment> =
-            model.curatePriorTumorTreatments(Lists.newArrayList("Cis 2020 2021", "no systemic treatment", "cannot curate"))
-        assertEquals(2, priorTreatments.size.toLong())
-        assertTrue(priorTreatments.any { 2020 == it.startYear() })
-        assertTrue(priorTreatments.any { 2021 == it.startYear() })
-        assertTrue(model.curatePriorTumorTreatments(null).isEmpty())
-
-        model.evaluate()
-    }
-
-    @Test
     fun shouldCuratePriorSecondPrimaries() {
         val priorSecondPrimaries: List<PriorSecondPrimary> =
             model.curatePriorSecondPrimaries(Lists.newArrayList("Breast cancer Jan-2018", "cannot curate"))
@@ -199,7 +184,6 @@ class CurationModelTest {
             model.curatePriorMolecularTests("IHC", Lists.newArrayList("IHC ERBB2 3+", "not a molecular test"))
         assertEquals(1, priorMolecularTests.size.toLong())
         assertEquals("IHC", priorMolecularTests[0].test())
-        assertTrue(model.curatePriorTumorTreatments(null).isEmpty())
 
         model.evaluate()
     }
@@ -348,14 +332,10 @@ class CurationModelTest {
     }
 
     @Test
-    fun shouldAnnotateWithMedicationCategory() {
-        val proper: Medication = TestMedicationFactory.builder().name("Paracetamol").build()
-        val annotatedProper = model.annotateWithMedicationCategory(proper)
-        assertEquals(Sets.newHashSet("Acetanilide derivatives"), annotatedProper.categories())
+    fun shouldLookUpMedicationCategory() {
+        assertEquals(setOf("Acetanilide derivatives"), model.lookUpMedicationCategories("Paracetamol"))
 
-        val empty: Medication = TestMedicationFactory.builder().name(Strings.EMPTY).build()
-        val annotatedEmpty = model.annotateWithMedicationCategory(empty)
-        assertEquals(empty, annotatedEmpty)
+        assertEquals(emptySet<String>(), model.lookUpMedicationCategories(""))
 
         model.evaluate()
     }

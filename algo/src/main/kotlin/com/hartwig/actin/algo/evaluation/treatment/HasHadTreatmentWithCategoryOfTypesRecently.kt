@@ -5,38 +5,37 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.DateComparison.isAfterDate
-import com.hartwig.actin.algo.evaluation.util.Format.concat
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
+import com.hartwig.actin.algo.evaluation.util.Format.concatItems
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
 import java.time.LocalDate
 
 class HasHadTreatmentWithCategoryOfTypesRecently(
-    private val category: TreatmentCategory, private val types: List<String>,
+    private val category: TreatmentCategory, private val types: Set<TreatmentType>,
     private val minDate: LocalDate
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentAssessment = record.clinical().priorTumorTreatments().map { treatment ->
-            val startedPastMinDate = isAfterDate(minDate, treatment.startYear(), treatment.startMonth())
-            val categoryAndTypeMatch = hasValidCategoryAndType(treatment)
+        val treatmentAssessment = record.clinical().treatmentHistory().map { treatmentHistoryEntry ->
+            val startedPastMinDate = isAfterDate(minDate, treatmentHistoryEntry.startYear(), treatmentHistoryEntry.startMonth())
+            val categoryAndTypeMatch = treatmentHistoryEntry.categories().contains(category)
+                    && treatmentHistoryEntry.matchesTypeFromSet(types) == true
             TreatmentAssessment(
                 hasHadValidTreatment = categoryAndTypeMatch && startedPastMinDate == true,
                 hasInconclusiveDate = categoryAndTypeMatch && startedPastMinDate == null,
-                hasHadTrialAfterMinDate = TreatmentSummaryForCategory.treatmentMayMatchCategoryAsTrial(
-                    treatment,
-                    category
-                )
+                hasHadTrialAfterMinDate = TreatmentSummaryForCategory.treatmentMayMatchCategoryAsTrial(treatmentHistoryEntry, category)
                         && startedPastMinDate == true
             )
         }.fold(TreatmentAssessment()) { acc, element -> acc.combineWith(element) }
 
+        val typesList = concatItems(types)
         return when {
             treatmentAssessment.hasHadValidTreatment -> {
-                EvaluationFactory.pass("Has received ${concat(types)} ${category.display()} treatment")
+                EvaluationFactory.pass("Has received $typesList ${category.display()} treatment")
             }
 
             treatmentAssessment.hasInconclusiveDate -> {
-                EvaluationFactory.undetermined("Has received ${concat(types)} ${category.display()} treatment but inconclusive date")
+                EvaluationFactory.undetermined("Has received $typesList ${category.display()} treatment but inconclusive date")
             }
 
             treatmentAssessment.hasHadTrialAfterMinDate -> {
@@ -48,19 +47,9 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
 
             else -> {
                 EvaluationFactory.fail(
-                    "Has not received ${concat(types)} ${category.display()} treatment"
+                    "Has not received $typesList ${category.display()} treatment"
                 )
             }
-        }
-    }
-
-    private fun hasValidCategoryAndType(treatment: PriorTumorTreatment): Boolean {
-        return treatment.categories().contains(category) && types.any {
-            TreatmentTypeResolver.isOfType(
-                treatment,
-                category,
-                it
-            )
         }
     }
 

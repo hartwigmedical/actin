@@ -25,6 +25,7 @@ import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriver;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriverType;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleHotspotType;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
+import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTranscriptImpact;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantType;
@@ -39,22 +40,18 @@ public class VariantExtractorTest {
     private static final double EPSILON = 1.0E-10;
 
     @Test
-    public void canExtractVariants() {
+    public void shouldExtractSetOfVariantsSuccessfully() {
         PurpleDriver driver1 = TestPurpleFactory.driverBuilder()
                 .gene("gene 1")
-                .transcript("canonical trans")
+                .transcript("ENST-canonical")
                 .type(PurpleDriverType.MUTATION)
                 .driverLikelihood(0.1)
                 .build();
-        PurpleDriver driver2 = TestPurpleFactory.driverBuilder()
-                .gene("gene 1")
-                .transcript("canonical trans")
-                .type(PurpleDriverType.GERMLINE_MUTATION)
+        PurpleDriver driver2 =
+                TestPurpleFactory.driverBuilder().gene("gene 1").transcript("ENST-canonical").type(PurpleDriverType.GERMLINE_MUTATION)
                 .driverLikelihood(0.6)
                 .build();
-        PurpleDriver driver3 = TestPurpleFactory.driverBuilder()
-                .gene("gene 1")
-                .transcript("weird trans")
+        PurpleDriver driver3 = TestPurpleFactory.driverBuilder().gene("gene 1").transcript("ENST-weird")
                 .type(PurpleDriverType.GERMLINE_MUTATION)
                 .driverLikelihood(0.9)
                 .build();
@@ -69,8 +66,7 @@ public class VariantExtractorTest {
                 .hotspot(PurpleHotspotType.NON_HOTSPOT)
                 .subclonalLikelihood(0.3)
                 .localPhaseSets(Lists.newArrayList(1))
-                .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder()
-                        .transcript("canonical trans")
+                .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder().transcript("ENST-canonical")
                         .hgvsCodingImpact("canonical hgvs coding")
                         .hgvsProteinImpact("canonical hgvs protein")
                         .affectedCodon(2)
@@ -79,8 +75,7 @@ public class VariantExtractorTest {
                         .addEffects(PurpleVariantEffect.MISSENSE)
                         .codingEffect(PurpleCodingEffect.MISSENSE)
                         .build())
-                .addOtherImpacts(TestPurpleFactory.transcriptImpactBuilder()
-                        .transcript("other trans")
+                .addOtherImpacts(TestPurpleFactory.transcriptImpactBuilder().transcript("ENST-other")
                         .hgvsCodingImpact("other hgvs coding")
                         .hgvsProteinImpact("other hgvs protein")
                         .affectedCodon(null)
@@ -121,7 +116,7 @@ public class VariantExtractorTest {
         assertEquals(Sets.newHashSet(1), variant.phaseGroups());
 
         TranscriptImpact canonical = variant.canonicalImpact();
-        assertEquals("canonical trans", canonical.transcriptId());
+        assertEquals("ENST-canonical", canonical.transcriptId());
         assertEquals("canonical hgvs coding", canonical.hgvsCodingImpact());
         assertEquals("canonical hgvs protein", canonical.hgvsProteinImpact());
         assertEquals(2, (int) canonical.affectedCodon());
@@ -132,7 +127,7 @@ public class VariantExtractorTest {
 
         assertEquals(1, variant.otherImpacts().size());
         TranscriptImpact other = variant.otherImpacts().iterator().next();
-        assertEquals("other trans", other.transcriptId());
+        assertEquals("ENST-other", other.transcriptId());
         assertEquals("other hgvs coding", other.hgvsCodingImpact());
         assertEquals("other hgvs protein", other.hgvsProteinImpact());
         assertNull(other.affectedCodon());
@@ -143,7 +138,32 @@ public class VariantExtractorTest {
         assertEquals(CodingEffect.SPLICE, other.codingEffect());
     }
 
-    @Test (expected = IllegalStateException.class)
+    @Test
+    public void shouldRetainEnsemblTranscriptsOnly() {
+        PurpleVariant purpleVariant = TestPurpleFactory.variantBuilder()
+                .reported(true)
+                .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder().build())
+                .addOtherImpacts(TestPurpleFactory.transcriptImpactBuilder().transcript("ENST-correct").build())
+                .addOtherImpacts(TestPurpleFactory.transcriptImpactBuilder().transcript("weird one").build())
+                .build();
+
+        PurpleRecord purple = ImmutablePurpleRecord.builder()
+                .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
+                .addVariants(purpleVariant)
+                .build();
+
+        GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes(purpleVariant.gene());
+        VariantExtractor variantExtractor = new VariantExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase());
+
+        Set<Variant> variants = variantExtractor.extract(purple);
+        assertEquals(1, variants.size());
+
+        Variant variant = variants.iterator().next();
+        assertEquals(1, variant.otherImpacts().size());
+        assertEquals("ENST-correct", variant.otherImpacts().iterator().next().transcriptId());
+    }
+
+    @Test(expected = IllegalStateException.class)
     public void shouldThrowExceptionWhenFilteringReportedVariant() {
         PurpleVariant purpleVariant = TestPurpleFactory.variantBuilder()
                 .reported(true)
@@ -162,7 +182,7 @@ public class VariantExtractorTest {
     }
 
     @Test
-    public void canDetermineAllVariantTypes() {
+    public void shouldDetermineCorrectTypeForAllVariantTypes() {
         PurpleVariant mnp = TestPurpleFactory.variantBuilder().type(PurpleVariantType.MNP).build();
         assertEquals(VariantType.MNV, VariantExtractor.determineVariantType(mnp));
 
@@ -177,7 +197,7 @@ public class VariantExtractorTest {
     }
 
     @Test
-    public void canDetermineDriverLikelihood() {
+    public void shouldDetermineDriverLikelihoodForAllPurpleDriverLikelihoods() {
         assertNull(VariantExtractor.determineDriverLikelihood(null));
 
         assertEquals(DriverLikelihood.HIGH, VariantExtractor.determineDriverLikelihood(withDriverLikelihood(1D)));
@@ -193,14 +213,23 @@ public class VariantExtractorTest {
     }
 
     @Test
-    public void canDetermineAllVariantEffects() {
+    public void shouldCorrectlyAssessWhetherTranscriptIsEnsembl() {
+        PurpleTranscriptImpact ensembl = TestPurpleFactory.transcriptImpactBuilder().transcript("ENST01").build();
+        assertTrue(VariantExtractor.isEnsemblTranscript(ensembl));
+
+        PurpleTranscriptImpact nonEnsembl = TestPurpleFactory.transcriptImpactBuilder().transcript("something else").build();
+        assertFalse(VariantExtractor.isEnsemblTranscript(nonEnsembl));
+    }
+
+    @Test
+    public void shouldDetermineAnEffectForAllVariantEffects() {
         for (PurpleVariantEffect variantEffect : PurpleVariantEffect.values()) {
             assertNotNull(VariantExtractor.determineVariantEffect(variantEffect));
         }
     }
 
     @Test
-    public void canDetermineAllCodingEffects() {
+    public void shouldDetermineAnEffectForAllDefinedCodingEffects() {
         assertNull(VariantExtractor.determineCodingEffect(PurpleCodingEffect.UNDEFINED));
 
         for (PurpleCodingEffect codingEffect : PurpleCodingEffect.values()) {

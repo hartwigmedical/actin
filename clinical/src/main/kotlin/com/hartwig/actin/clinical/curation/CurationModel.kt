@@ -20,7 +20,6 @@ import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig
 import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
 import com.hartwig.actin.clinical.curation.config.MolecularTestConfig
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
-import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
@@ -47,13 +46,11 @@ import com.hartwig.actin.clinical.datamodel.ImmutableECGMeasure
 import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue
-import com.hartwig.actin.clinical.datamodel.ImmutableMedication
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
 import com.hartwig.actin.clinical.datamodel.InfectionStatus
 import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.datamodel.LabValue
-import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.MedicationStatus
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
@@ -62,7 +59,6 @@ import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
 import com.hartwig.actin.clinical.datamodel.Toxicity
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.clinical.datamodel.TumorDetails
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.doid.DoidModel
 import org.apache.logging.log4j.LogManager
@@ -182,32 +178,15 @@ class CurationModel @VisibleForTesting internal constructor(
     }
 
     fun curateTreatmentHistoryEntry(entry: String): List<TreatmentHistoryEntry> {
-        return find(database.treatmentHistoryEntryConfigs, fullTrim(entry)).filter { !it.ignore }.mapNotNull { it.curated }
-    }
-
-    fun curatePriorTumorTreatments(inputs: List<String>?): List<PriorTumorTreatment> {
-        if (inputs == null) {
-            return Lists.newArrayList<PriorTumorTreatment>()
-        }
-
-        val priorTumorTreatments: MutableList<PriorTumorTreatment> = Lists.newArrayList<PriorTumorTreatment>()
-        for (input in inputs) {
-            val trimmedInput = fullTrim(input)
-            val configs: Set<OncologicalHistoryConfig> = find(database.oncologicalHistoryConfigs, trimmedInput)
-            if (configs.isEmpty()) {
-                // Same input is curated twice, so need to check if used at other place.
-                if (trimmedInput.isNotEmpty() && find(database.secondPrimaryConfigs, trimmedInput).isEmpty()) {
-                    LOGGER.warn(" Could not find second primary or oncological history config for input '{}'", trimmedInput)
-                }
-            }
-
-            for (config in configs) {
-                if (!config.ignore) {
-                    priorTumorTreatments.add(config.curated!!)
-                }
+        val trimmedInput = fullTrim(entry)
+        val treatmentHistoryEntryConfigs = find(database.treatmentHistoryEntryConfigs, trimmedInput)
+        if (treatmentHistoryEntryConfigs.isEmpty()) {
+            // Same input is curated twice, so need to check if used at other place.
+            if (trimmedInput.isNotEmpty() && find(database.secondPrimaryConfigs, trimmedInput).isEmpty()) {
+                LOGGER.warn(" Could not find treatment history or second primary config for input '$trimmedInput'")
             }
         }
-        return priorTumorTreatments
+        return treatmentHistoryEntryConfigs.filter { !it.ignore }.mapNotNull { it.curated }
     }
 
     fun curatePriorSecondPrimaries(inputs: List<String>?): List<PriorSecondPrimary> {
@@ -221,8 +200,8 @@ class CurationModel @VisibleForTesting internal constructor(
             val configs: Set<SecondPrimaryConfig> = find(database.secondPrimaryConfigs, trimmedInput)
             if (configs.isEmpty()) {
                 // Same input is curated twice, so need to check if used at other place.
-                if (trimmedInput.isNotEmpty() && find(database.oncologicalHistoryConfigs, trimmedInput).isEmpty()) {
-                    LOGGER.warn(" Could not find second primary or oncological history config for input '{}'", trimmedInput)
+                if (trimmedInput.isNotEmpty() && find(database.treatmentHistoryEntryConfigs, trimmedInput).isEmpty()) {
+                    LOGGER.warn(" Could not find second primary or treatment history config for input '{}'", trimmedInput)
                 }
             }
             for (config in configs) {
@@ -509,11 +488,8 @@ class CurationModel @VisibleForTesting internal constructor(
         }
     }
 
-    fun annotateWithMedicationCategory(medication: Medication): Medication {
-        return ImmutableMedication.builder()
-            .from(medication)
-            .categories(lookupMedicationCategories("medication", medication.name()))
-            .build()
+    fun lookUpMedicationCategories(medicationName: String): Set<String> {
+        return lookupMedicationCategories("medication", medicationName)
     }
 
     fun curateMedicationCypInteractions(medicationName: String): List<CypInteraction> {
@@ -708,10 +684,6 @@ class CurationModel @VisibleForTesting internal constructor(
 
             TreatmentHistoryEntryConfig::class.java -> {
                 return database.treatmentHistoryEntryConfigs
-            }
-
-            OncologicalHistoryConfig::class.java -> {
-                return database.oncologicalHistoryConfigs
             }
 
             SecondPrimaryConfig::class.java -> {

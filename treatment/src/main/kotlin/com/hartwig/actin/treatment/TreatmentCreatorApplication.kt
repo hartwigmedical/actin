@@ -1,5 +1,6 @@
 package com.hartwig.actin.treatment
 
+import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
@@ -17,10 +18,11 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import kotlin.system.exitProcess
 
-
 class TreatmentCreatorApplication(private val config: TreatmentCreatorConfig) {
 
     fun run() {
+        LOGGER.info("Running {} v{}", APPLICATION, VERSION)
+
         LOGGER.info("Loading DOID tree from {}", config.doidJson)
         val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size)
@@ -32,7 +34,10 @@ class TreatmentCreatorApplication(private val config: TreatmentCreatorConfig) {
         val geneFilter = GeneFilterFactory.createFromKnownGenes(knownGenes)
 
         val ctcModel = CTCModel(CTCDatabaseReader.read(config.ctcConfigDirectory))
-        val trialFactory = TrialFactory.create(config.trialConfigDirectory, ctcModel, doidModel, geneFilter)
+        val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
+
+        val trialFactory = TrialFactory.create(config.trialConfigDirectory, ctcModel, doidModel, geneFilter, treatmentDatabase)
+       
         LOGGER.info("Creating trial database")
         val trials = trialFactory.createTrials()
 
@@ -47,19 +52,12 @@ class TreatmentCreatorApplication(private val config: TreatmentCreatorConfig) {
 
     companion object {
         val LOGGER: Logger = LogManager.getLogger(TreatmentCreatorApplication::class.java)
-
         const val APPLICATION = "ACTIN Treatment Creator"
-
-        val VERSION: String = TreatmentCreatorApplication::class.java.getPackage().implementationVersion
+        private val VERSION: String = TreatmentCreatorApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
 }
 
 fun main(args: Array<String>) {
-    TreatmentCreatorApplication.LOGGER.info(
-        "Running {} v{}",
-        TreatmentCreatorApplication.APPLICATION,
-        TreatmentCreatorApplication.VERSION
-    )
     val options: Options = TreatmentCreatorConfig.createOptions()
     val config: TreatmentCreatorConfig
     try {

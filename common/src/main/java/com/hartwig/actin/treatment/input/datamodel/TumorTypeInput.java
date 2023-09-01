@@ -1,8 +1,10 @@
 package com.hartwig.actin.treatment.input.datamodel;
 
+import com.hartwig.actin.Displayable;
+
 import org.jetbrains.annotations.NotNull;
 
-public enum TumorTypeInput {
+public enum TumorTypeInput implements Displayable {
     CARCINOMA("305"),
     ADENOCARCINOMA("299"),
     SQUAMOUS_CELL_CARCINOMA("1749"),
@@ -20,6 +22,7 @@ public enum TumorTypeInput {
         return doid;
     }
 
+    @Override
     @NotNull
     public String display() {
         return this.toString().replaceAll("_", " ").toLowerCase();

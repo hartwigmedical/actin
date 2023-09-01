@@ -11,7 +11,6 @@ import static com.hartwig.actin.database.Tables.PATIENT;
 import static com.hartwig.actin.database.Tables.PRIORMOLECULARTEST;
 import static com.hartwig.actin.database.Tables.PRIOROTHERCONDITION;
 import static com.hartwig.actin.database.Tables.PRIORSECONDPRIMARY;
-import static com.hartwig.actin.database.Tables.PRIORTUMORTREATMENT;
 import static com.hartwig.actin.database.Tables.SURGERY;
 import static com.hartwig.actin.database.Tables.TOXICITY;
 import static com.hartwig.actin.database.Tables.TREATMENTHISTORYENTRY;
@@ -26,6 +25,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.hartwig.actin.clinical.datamodel.AtcClassification;
+import com.hartwig.actin.clinical.datamodel.AtcLevel;
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion;
 import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
@@ -47,8 +47,7 @@ import com.hartwig.actin.clinical.datamodel.Toxicity;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
-import com.hartwig.actin.clinical.datamodel.treatment.DrugClass;
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.DrugType;
 import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
@@ -77,7 +76,6 @@ class ClinicalDAO {
         context.truncate(TUMOR).execute();
         context.truncate(CLINICALSTATUS).execute();
         context.truncate(TREATMENTHISTORYENTRY).execute();
-        context.truncate(PRIORTUMORTREATMENT).execute();
         context.truncate(PRIORSECONDPRIMARY).execute();
         context.truncate(PRIOROTHERCONDITION).execute();
         context.truncate(PRIORMOLECULARTEST).execute();
@@ -100,7 +98,6 @@ class ClinicalDAO {
         writeTumorDetails(patientId, record.tumor());
         writeClinicalStatus(patientId, record.clinicalStatus());
         writeTreatmentHistoryEntries(patientId, record.treatmentHistory());
-        writePriorTumorTreatments(patientId, record.priorTumorTreatments());
         writePriorSecondPrimaries(patientId, record.priorSecondPrimaries());
         writePriorOtherConditions(patientId, record.priorOtherConditions());
         writePriorMolecularTests(patientId, record.priorMolecularTests());
@@ -236,7 +233,7 @@ class ClinicalDAO {
                                         .stream()
                                         .map(drug -> String.format("%s (%s)",
                                                 drug.name(),
-                                                drug.drugClasses().stream().map(DrugClass::toString).collect(Collectors.joining(", "))))));
+                                                drug.drugTypes().stream().map(DrugType::toString).collect(Collectors.joining(", "))))));
                         valueMap.put("maxCycles", ((Therapy) treatment).maxCycles());
 
                         if (treatment instanceof Radiotherapy) {
@@ -270,55 +267,6 @@ class ClinicalDAO {
                 .collect(Collectors.toList());
 
         context.batchInsert(records).execute();
-    }
-
-    private void writePriorTumorTreatments(@NotNull String patientId, @NotNull List<PriorTumorTreatment> priorTumorTreatments) {
-        for (PriorTumorTreatment priorTumorTreatment : priorTumorTreatments) {
-            context.insertInto(PRIORTUMORTREATMENT,
-                            PRIORTUMORTREATMENT.PATIENTID,
-                            PRIORTUMORTREATMENT.NAME,
-                            PRIORTUMORTREATMENT.STARTYEAR,
-                            PRIORTUMORTREATMENT.STARTMONTH,
-                            PRIORTUMORTREATMENT.STOPYEAR,
-                            PRIORTUMORTREATMENT.STOPMONTH,
-                            PRIORTUMORTREATMENT.CYCLES,
-                            PRIORTUMORTREATMENT.BESTRESPONSE,
-                            PRIORTUMORTREATMENT.STOPREASON,
-                            PRIORTUMORTREATMENT.CATEGORIES,
-                            PRIORTUMORTREATMENT.ISSYSTEMIC,
-                            PRIORTUMORTREATMENT.CHEMOTYPE,
-                            PRIORTUMORTREATMENT.IMMUNOTYPE,
-                            PRIORTUMORTREATMENT.TARGETEDTYPE,
-                            PRIORTUMORTREATMENT.HORMONETYPE,
-                            PRIORTUMORTREATMENT.RADIOTYPE,
-                            PRIORTUMORTREATMENT.CARTTYPE,
-                            PRIORTUMORTREATMENT.TRANSPLANTTYPE,
-                            PRIORTUMORTREATMENT.SUPPORTIVETYPE,
-                            PRIORTUMORTREATMENT.TRIALACRONYM,
-                            PRIORTUMORTREATMENT.ABLATIONTYPE)
-                    .values(patientId,
-                            priorTumorTreatment.name(),
-                            priorTumorTreatment.startYear(),
-                            priorTumorTreatment.startMonth(),
-                            priorTumorTreatment.stopYear(),
-                            priorTumorTreatment.stopMonth(),
-                            priorTumorTreatment.cycles(),
-                            priorTumorTreatment.bestResponse(),
-                            priorTumorTreatment.stopReason(),
-                            TreatmentCategoryResolver.toStringList(priorTumorTreatment.categories()),
-                            priorTumorTreatment.isSystemic(),
-                            priorTumorTreatment.chemoType(),
-                            priorTumorTreatment.immunoType(),
-                            priorTumorTreatment.targetedType(),
-                            priorTumorTreatment.hormoneType(),
-                            priorTumorTreatment.radioType(),
-                            priorTumorTreatment.carTType(),
-                            priorTumorTreatment.transplantType(),
-                            priorTumorTreatment.supportiveType(),
-                            priorTumorTreatment.trialAcronym(),
-                            priorTumorTreatment.ablationType())
-                    .execute();
-        }
     }
 
     private void writePriorSecondPrimaries(@NotNull String patientId, @NotNull List<PriorSecondPrimary> priorSecondPrimaries) {
@@ -558,7 +506,10 @@ class ClinicalDAO {
                     .values(patientId,
                             medication.name(),
                             DataUtil.concat(medication.categories()),
-                            atc != null ? atc.chemicalSubstance().code() : null,
+                            Optional.ofNullable(atc)
+                                    .flatMap(a -> Optional.ofNullable(a.chemicalSubstance()))
+                                    .map(AtcLevel::code)
+                                    .orElse(null),
                             atc != null ? atc.anatomicalMainGroup().name() : null,
                             atc != null ? atc.therapeuticSubGroup().name() : null,
                             atc != null ? atc.pharmacologicalSubGroup().name() : null,

@@ -2,38 +2,46 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatment
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatmentHistoryEntry
 import org.junit.Test
 
 class HasHadLimitedSystemicTreatmentsTest {
+
     @Test
-    fun canEvaluate() {
-        val function = HasHadLimitedSystemicTreatments(1)
-
-        // No treatments yet
-        val treatments: MutableList<PriorTumorTreatment> = mutableListOf()
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-
-        // Add one non-systemic
-        treatments.add(TreatmentTestFactory.builder().isSystemic(false).build())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-
-        // Add one systemic
-        treatments.add(TreatmentTestFactory.builder().name("treatment 1").isSystemic(true).build())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
-
-        // Add one more systemic
-        treatments.add(TreatmentTestFactory.builder().name("treatment 2").isSystemic(true).build())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
+    fun shouldPassWhenTreatmentHistoryEmpty() {
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
     }
 
     @Test
-    fun cantDetermineInCaseOfAmbiguousTimeline() {
-        val function = HasHadLimitedSystemicTreatments(1)
-        val treatments: List<PriorTumorTreatment> = listOf(
-            TreatmentTestFactory.builder().name("treatment").isSystemic(true).build(),
-            TreatmentTestFactory.builder().name("treatment").isSystemic(true).build()
+    fun shouldPassWhenOnlyNonSystemicTreatments() {
+        val treatments = listOf(treatmentHistoryEntry(setOf(treatment("1", false))))
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+    }
+
+    @Test
+    fun shouldPassWhenSystemicTreatmentsBelowThreshold() {
+        val treatments = listOf(treatmentHistoryEntry(setOf(treatment("1", true))))
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+    }
+
+    @Test
+    fun shouldFailWhenSystemicTreatmentsEqualThreshold() {
+        val treatments = listOf(
+            treatmentHistoryEntry(setOf(treatment("1", true))),
+            treatmentHistoryEntry(setOf(treatment("2", true)))
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withPriorTumorTreatments(treatments)))
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+    }
+
+    @Test
+    fun shouldBeUndeterminedInCaseOfAmbiguousTimeline() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("treatment", true)))
+        val treatments = listOf(treatmentHistoryEntry, treatmentHistoryEntry)
+        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+    }
+
+    companion object {
+        private val FUNCTION = HasHadLimitedSystemicTreatments(1)
     }
 }

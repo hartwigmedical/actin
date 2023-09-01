@@ -2,6 +2,7 @@ package com.hartwig.actin.clinical.datamodel;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 public interface AtcClassification {
@@ -18,6 +19,6 @@ public interface AtcClassification {
     @NotNull
     AtcLevel chemicalSubGroup();
 
-    @NotNull
+    @Nullable
     AtcLevel chemicalSubstance();
 }

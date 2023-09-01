@@ -1,8 +1,10 @@
 package com.hartwig.actin.molecular.datamodel.driver;
 
+import com.hartwig.actin.Displayable;
+
 import org.jetbrains.annotations.NotNull;
 
-public enum FusionDriverType {
+public enum FusionDriverType implements Displayable {
     NONE("None"),
     KNOWN_PAIR("Known fusion"),
     KNOWN_PAIR_IG("IG known fusion"),
@@ -20,6 +22,7 @@ public enum FusionDriverType {
         this.display = display;
     }
 
+    @Override
     @NotNull
     public String display() {
         return display;

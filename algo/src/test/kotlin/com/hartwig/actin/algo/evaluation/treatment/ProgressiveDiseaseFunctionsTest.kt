@@ -1,57 +1,56 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
-import com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.PD_LABEL
 import com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.treatmentResultedInPDOption
+import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
 
 class ProgressiveDiseaseFunctionsTest {
     @Test
-    fun shouldReturnTrueWhenPDAndStopReasonIsNull() {
-        assertEquals(true, treatmentResultedInPDOption(treatment(null, PD_LABEL)))
+    fun shouldReturnTrueWhenStopReasonIsNullAndBestResponseIsPD() {
+        assertEquals(true, treatmentResultedInPDOption(treatmentHistoryEntry(null, TreatmentResponse.PROGRESSIVE_DISEASE)))
     }
 
     @Test
-    fun shouldReturnTrueWhenPDAndBestResponseIsNull() {
-        assertEquals(true, treatmentResultedInPDOption(treatment(PD_LABEL, null)))
+    fun shouldReturnTrueWhenStopReasonIsPDAndBestResponseIsNull() {
+        assertEquals(true, treatmentResultedInPDOption(treatmentHistoryEntry(StopReason.PROGRESSIVE_DISEASE, null)))
     }
 
     @Test
-    fun shouldBeEmptyWhenNotPDAndStopReasonIsNull() {
-        assertNull(treatmentResultedInPDOption(treatment(null, "other")))
+    fun shouldBeNullWhenStopReasonIsNullAndBestResponseIsNotPD() {
+        assertNull(treatmentResultedInPDOption(treatmentHistoryEntry(null, TreatmentResponse.MIXED)))
     }
 
     @Test
-    fun shouldBeEmptyWhenNotPDAndBestResponseIsNull() {
-        assertNull(treatmentResultedInPDOption(treatment("other", null)))
+    fun shouldBeNullWhenStopReasonIsNotPDAndBestResponseIsNull() {
+        assertNull(treatmentResultedInPDOption(treatmentHistoryEntry(StopReason.TOXICITY, null)))
     }
 
     @Test
-    fun shouldReturnTrueWhenStopReasonIsPD() {
-        assertEquals(true, treatmentResultedInPDOption(treatment(PD_LABEL, "other")))
+    fun shouldReturnTrueWhenStopReasonIsPDAndBestResponseIsNotPD() {
+        assertEquals(true, treatmentResultedInPDOption(treatmentHistoryEntry(StopReason.PROGRESSIVE_DISEASE, TreatmentResponse.MIXED)))
     }
 
     @Test
-    fun shouldReturnTrueWhenBestResponseIsPD() {
-        assertEquals(true, treatmentResultedInPDOption(treatment("other", PD_LABEL)))
+    fun shouldReturnTrueWhenStopReasonIsNotPDAndBestResponseIsPD() {
+        assertEquals(true, treatmentResultedInPDOption(treatmentHistoryEntry(StopReason.TOXICITY, TreatmentResponse.PROGRESSIVE_DISEASE)))
     }
 
     @Test
     fun shouldReturnFalseWhenStopReasonAndBestResponseAreKnownAndNotPD() {
-        assertEquals(false, treatmentResultedInPDOption(treatment("other", "something else")))
+        assertEquals(false, treatmentResultedInPDOption(treatmentHistoryEntry(StopReason.TOXICITY, TreatmentResponse.MIXED)))
     }
 
     companion object {
-        private fun treatment(stopReason: String?, bestResponse: String?): PriorTumorTreatment {
-            return ImmutablePriorTumorTreatment.builder()
-                .name("test treatment")
-                .isSystemic(true)
-                .stopReason(stopReason)
-                .bestResponse(bestResponse)
-                .build()
+        private fun treatmentHistoryEntry(stopReason: StopReason?, bestResponse: TreatmentResponse?): TreatmentHistoryEntry {
+            return TreatmentTestFactory.treatmentHistoryEntry(
+                setOf(TreatmentTestFactory.treatment("test treatment", true)),
+                stopReason = stopReason,
+                bestResponse = bestResponse
+            )
         }
     }
 }
