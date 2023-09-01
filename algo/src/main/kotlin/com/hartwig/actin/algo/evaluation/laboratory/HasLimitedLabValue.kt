@@ -21,7 +21,7 @@ class HasLimitedLabValue(private val maxValue: Double, private val measurement: 
         val builder = recoverable().result(result)
         when (result) {
             EvaluationResult.FAIL -> {
-                    builder.addFailSpecificMessages("${labValue.code()} ${String.format("%.1f", convertedValue)} ${targetUnit.display()} exceeds maximum of $maxValue ${targetUnit.display()})")
+                    builder.addFailSpecificMessages("${labValue.code()} ${String.format("%.1f", convertedValue)} ${targetUnit.display()} exceeds maximum of $maxValue ${targetUnit.display()}")
                     builder.addFailGeneralMessages("${labValue.code()} ${String.format("%.1f", convertedValue)} ${targetUnit.display()} exceeds max of $maxValue ${targetUnit.display()}")
                 }
 
@@ -31,8 +31,8 @@ class HasLimitedLabValue(private val maxValue: Double, private val measurement: 
             }
 
             EvaluationResult.PASS -> {
-                builder.addPassSpecificMessages("${labValue.code()} ${String.format("%.1f", convertedValue)} below maximum of $maxValue ${targetUnit.display()})")
-                builder.addPassGeneralMessages("${labValue.code()} ${String.format("%.1f", convertedValue)} below max of $maxValue ${targetUnit.display()})")
+                builder.addPassSpecificMessages("${labValue.code()} ${String.format("%.1f", convertedValue)} below maximum of $maxValue ${targetUnit.display()}")
+                builder.addPassGeneralMessages("${labValue.code()} ${String.format("%.1f", convertedValue)} below max of $maxValue ${targetUnit.display()}")
             }
 
             else -> {}
