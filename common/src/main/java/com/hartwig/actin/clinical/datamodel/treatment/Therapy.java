@@ -13,3 +13,4 @@ public interface Therapy extends Treatment {
     @Nullable
     Integer maxCycles();
 }
+

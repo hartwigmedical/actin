@@ -5,23 +5,24 @@ import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.datamodel.BodyLocationCategory
 import com.hartwig.actin.clinical.datamodel.ImmutableObservedToxicity
 import com.hartwig.actin.clinical.datamodel.ObservedToxicity
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRadiotherapy
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTherapyHistoryDetails
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
-import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
 import com.hartwig.actin.util.ResourceFile
 import com.hartwig.actin.util.json.GsonSerializer
 import org.apache.logging.log4j.LogManager
 
 object TreatmentHistoryEntryConfigFactory {
     private val LOGGER = LogManager.getLogger(TreatmentHistoryEntryConfigFactory::class.java)
+    private val gson = GsonSerializer.create()
 
     fun createConfig(
         treatmentName: String,
@@ -30,65 +31,40 @@ object TreatmentHistoryEntryConfigFactory {
         fields: Map<String, Int>
     ): TreatmentHistoryEntryConfig? {
         val ignore: Boolean = CurationUtil.isIgnoreString(treatmentName)
-        val treatment = if (ignore) null else {
-            treatmentDatabase.findTreatmentByName(treatmentName) ?: generateTreatmentForCuration(
-                treatmentName,
-                parts,
-                fields
-            )
+        val treatmentHistoryEntry = if (ignore) null else {
+            val treatment = treatmentDatabase.findTreatmentByName(treatmentName)
+            if (treatment == null) {
+                logMissingTreatmentMessage(treatmentName.replace(" ", "_").uppercase())
+                return null
+            }
+            curateObject(fields, parts, treatment)
         }
-        return if (treatment == null && !ignore) {
-            null
-        } else {
-            TreatmentHistoryEntryConfig(
-                input = parts[fields["input"]!!],
-                ignore = ignore,
-                curated = if (!ignore) curateObject(fields, parts, treatment) else null
-            )
-        }
+        return TreatmentHistoryEntryConfig(
+            input = parts[fields["input"]!!],
+            ignore = ignore,
+            curated = treatmentHistoryEntry
+        )
     }
 
-    private fun generateTreatmentForCuration(
-        treatmentName: String,
-        parts: List<String>,
-        fields: Map<String, Int>
-    ): Treatment? {
-        val categories = TreatmentCategoryResolver.fromStringList(parts[fields["category"]!!])
-            .filterNot { it == TreatmentCategory.TRIAL }
-        val therapyCategories = categories.filter {
-            it in setOf(
-                TreatmentCategory.CHEMOTHERAPY,
-                TreatmentCategory.HORMONE_THERAPY,
-                TreatmentCategory.IMMUNOTHERAPY,
-                TreatmentCategory.TARGETED_THERAPY
-            )
+    private fun logMissingTreatmentMessage(treatmentName: String) {
+        LOGGER.warn("  Treatment with name $treatmentName does not exist in database. Please add with one of the following templates:")
+
+        listOf(
+            ImmutableDrugTherapy.builder().name(treatmentName).synonyms(emptySet()).isSystemic(false).drugs(emptySet()).build(),
+            ImmutableRadiotherapy.builder().name(treatmentName).synonyms(emptySet()).isSystemic(false).build(),
+            ImmutableOtherTreatment.builder().name(treatmentName).synonyms(emptySet()).isSystemic(false).categories(emptySet()).build()
+        ).forEach {
+            val treatmentProposal = gson.toJson(it).replace("isSystemic\":false", "isSystemic\":?")
+                .replace("\"displayOverride\":null,", "")
+                .replace("\"maxCycles\":null,", "")
+            LOGGER.warn("    $treatmentProposal,")
         }
-        val isSystemic = ResourceFile.optionalBool(parts[fields["isSystemic"]!!])
-            ?: if (categories.contains(TreatmentCategory.SURGERY)) false else null
-        if (therapyCategories.isNotEmpty()) {
-            LOGGER.warn(
-                "  Treatment with name $treatmentName does not exist in database and has therapy categories ({})",
-                therapyCategories.joinToString(", ")
-            )
-        } else if (isSystemic == null) {
-            LOGGER.warn("  Treatment with name $treatmentName does not exist in database and it is unknown whether it is systemic")
-        } else {
-            val treatment = ImmutableOtherTreatment.builder()
-                .name(treatmentName)
-                .addAllCategories(categories)
-                .synonyms(emptySet())
-                .isSystemic(isSystemic)
-                .build()
-            LOGGER.info("  Automatically generated treatment from curation data: ${GsonSerializer.create().toJson(treatment)}")
-            return treatment
-        }
-        return null
     }
 
     private fun curateObject(
         fields: Map<String, Int>,
         parts: List<String>,
-        treatment: Treatment?
+        treatment: Treatment
     ): TreatmentHistoryEntry {
         val therapyHistoryDetails = if (treatment is Therapy) {
             val bestResponseString = optionalStringFromColumn(parts, fields, "bestResponse")
@@ -121,24 +97,31 @@ object TreatmentHistoryEntryConfigFactory {
         val intents = entriesFromColumn(parts, fields, "intents")?.map { stringToEnum(it, Intent::valueOf) }
 
         return ImmutableTreatmentHistoryEntry.builder()
-            .treatments(treatment?.let { setOf(treatment) } ?: emptySet())
+            .treatments(setOf(treatment))
             .startYear(optionalIntegerFromColumn(parts, fields, "startYear"))
             .startMonth(optionalIntegerFromColumn(parts, fields, "startMonth"))
             .intents(intents)
-            .isTrial(
-                TreatmentCategoryResolver.fromStringList(parts[fields["category"]!!]).contains(TreatmentCategory.TRIAL)
-            )
+            .isTrial(optionalObjectFromColumn(parts, fields, "isTrial", ResourceFile::optionalBool) ?: false)
             .trialAcronym(optionalStringFromColumn(parts, fields, "trialAcronym"))
             .therapyHistoryDetails(therapyHistoryDetails)
             .build()
     }
 
     private fun optionalIntegerFromColumn(parts: List<String>, fields: Map<String, Int>, colName: String): Int? {
-        return fields[colName]?.let { ResourceFile.optionalInteger(parts[it]) }
+        return optionalObjectFromColumn(parts, fields, colName, ResourceFile::optionalInteger)
     }
 
     private fun optionalStringFromColumn(parts: List<String>, fields: Map<String, Int>, colName: String): String? {
-        return fields[colName]?.let { ResourceFile.optionalString(parts[it]) }
+        return optionalObjectFromColumn(parts, fields, colName, ResourceFile::optionalString)
+    }
+
+    private fun <T> optionalObjectFromColumn(
+        parts: List<String>,
+        fields: Map<String, Int>,
+        colName: String,
+        extractObject: (String) -> T?
+    ): T? {
+        return fields[colName]?.let { extractObject(parts[it]) }
     }
 
     private fun entriesFromColumn(parts: List<String>, fields: Map<String, Int>, colName: String): Set<String>? {

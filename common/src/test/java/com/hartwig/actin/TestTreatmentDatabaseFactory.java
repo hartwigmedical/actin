@@ -16,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class TestTreatmentDatabaseFactory {
 
+    public static final String CAPECITABINE_OXALIPLATIN = "CAPECITABINE+OXALIPLATIN";
+
     @NotNull
     public static TreatmentDatabase create() {
         Map<String, Drug> drugMap = Stream.of(drug("CAPECITABINE", DrugType.ANTIMETABOLITE, TreatmentCategory.CHEMOTHERAPY),
@@ -23,7 +25,7 @@ public class TestTreatmentDatabaseFactory {
                 .collect(Collectors.toMap(drug -> drug.name().toLowerCase(), Function.identity()));
 
         Treatment capox =
-                ImmutableDrugTherapy.builder().name("CAPECITABINE+OXALIPLATIN").addAllDrugs(drugMap.values()).isSystemic(true).build();
+                ImmutableDrugTherapy.builder().name(CAPECITABINE_OXALIPLATIN).addAllDrugs(drugMap.values()).isSystemic(true).build();
 
         return new TreatmentDatabase(drugMap, Map.of(capox.name().toLowerCase(), capox));
     }

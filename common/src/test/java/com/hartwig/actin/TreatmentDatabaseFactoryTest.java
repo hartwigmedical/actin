@@ -14,7 +14,11 @@ public class TreatmentDatabaseFactoryTest {
 
     @Test
     public void shouldCreateDatabaseFromDirectory() throws IOException {
-        assertThat(TreatmentDatabaseFactory.createFromPath(Resources.getResource("clinical").getPath())).isNotNull();
+        TreatmentDatabase treatmentDatabase = TreatmentDatabaseFactory.createFromPath(Resources.getResource("clinical").getPath());
+        assertThat(treatmentDatabase).isNotNull();
+        assertThat(treatmentDatabase.findTreatmentByName("Capecitabine+Oxaliplatin")).isNotNull();
+        assertThat(treatmentDatabase.findTreatmentByName("CAPECITABINE AND OXALIPLATIN")).isNotNull();
+
     }
 
     @Test
