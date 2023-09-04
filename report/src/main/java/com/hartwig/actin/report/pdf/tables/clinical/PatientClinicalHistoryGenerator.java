@@ -3,7 +3,7 @@ package com.hartwig.actin.report.pdf.tables.clinical;
 import java.util.List;
 import java.util.Optional;
 import java.util.StringJoiner;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
@@ -78,19 +78,18 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
 
     @NotNull
     private Table treatmentHistoryTable(@NotNull List<TreatmentHistoryEntry> treatmentHistory, boolean requireSystemic) {
-        List<TreatmentHistoryEntry> sortedFilteredTreatments = treatmentHistory.stream()
+        Stream<TreatmentHistoryEntry> sortedFilteredTreatments = treatmentHistory.stream()
                 .filter(entry -> entry.treatments().stream().anyMatch(treatment -> treatment.isSystemic() == requireSystemic))
-                .sorted(TreatmentHistoryAscendingDateComparatorFactory.treatmentHistoryEntryComparator())
-                .collect(Collectors.toList());
+                .sorted(TreatmentHistoryAscendingDateComparatorFactory.treatmentHistoryEntryComparator());
 
         float dateWidth = valueWidth / 4;
         float treatmentWidth = valueWidth - dateWidth;
         Table table = Tables.createFixedWidthCols(dateWidth, treatmentWidth);
 
-        for (TreatmentHistoryEntry entry : sortedFilteredTreatments) {
+        sortedFilteredTreatments.forEach(entry -> {
             table.addCell(Cells.createContentNoBorder(extractDateRangeString(entry)));
             table.addCell(Cells.createContentNoBorder(extractTreatmentString(entry)));
-        }
+        });
 
         return Tables.makeWrapping(table);
     }
