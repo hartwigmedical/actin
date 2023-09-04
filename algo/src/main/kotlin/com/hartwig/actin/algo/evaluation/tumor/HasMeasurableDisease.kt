@@ -8,14 +8,14 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasMeasurableDisease internal constructor() : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasMeasurableDisease = record.clinical().tumor().hasMeasurableDisease()
-            ?: return EvaluationFactory.undetermined(
+            ?: return EvaluationFactory.recoverableUndetermined(
                 "Data regarding measurable disease is missing, unknown if measurable",
                 "Undetermined measurable disease"
             )
         return if (hasMeasurableDisease) {
-            EvaluationFactory.pass("Patient has measurable disease", "Has measurable disease")
+            EvaluationFactory.recoverablePass("Patient has measurable disease", "Has measurable disease")
         } else {
-            EvaluationFactory.fail("Patient has no measurable disease", "No measurable disease")
+            EvaluationFactory.recoverableFail("Patient has no measurable disease", "No measurable disease")
         }
     }
 }
