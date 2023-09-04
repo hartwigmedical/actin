@@ -21,7 +21,7 @@ object CTCDatabaseEntryFile {
             cohortName = ResourceFile.optionalString(parts[fields["CohortName"]!!]),
             cohortStatus = ResourceFile.optionalString(parts[fields["CohortStatus"]!!]),
             cohortSlotsNumberAvailable = ResourceFile.optionalInteger(parts[fields["CohortSlotsNumberAvailable"]!!]),
-            cohortSlotsDateAvailable = ResourceFile.optionalString(parts[fields["CohortSlotsDateAvailable"]!!])
+            cohortSlotsDateUpdate = ResourceFile.optionalString(parts[fields["CohortSlotsDateUpdate"]!!])
         )
     }
 }
