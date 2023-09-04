@@ -53,6 +53,7 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
         )
 
         val result = evaluateVersusMinValue(cockcroftGault, creatinine.comparator(), minCreatinineClearance)
+
         return when {
             result == EvaluationResult.FAIL && weight == null -> EvaluationFactory.undetermined(
                 "Cockcroft-Gault may be insufficient but weight of patient is not known",

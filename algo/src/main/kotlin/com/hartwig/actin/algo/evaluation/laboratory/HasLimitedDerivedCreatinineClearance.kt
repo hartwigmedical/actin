@@ -50,7 +50,7 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
             creatinine
         )
 
-        var result = evaluateVersusMaxValue(cockcroftGault, creatinine.comparator(), maxCreatinineClearance)
+        val result = evaluateVersusMaxValue(cockcroftGault, creatinine.comparator(), maxCreatinineClearance)
 
         return when {
             result == EvaluationResult.FAIL && weight == null -> EvaluationFactory.undetermined(

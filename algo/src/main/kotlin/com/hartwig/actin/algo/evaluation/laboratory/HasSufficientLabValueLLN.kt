@@ -12,8 +12,22 @@ class HasSufficientLabValueLLN internal constructor(private val minLLNFactor: Do
         val builder = recoverable().result(result)
         when (result) {
             EvaluationResult.FAIL -> {
-                builder.addFailSpecificMessages("${labValue.code()} ${String.format("%.1f", labValue.value())} is below minimum of $minLLNFactor*LLN ($minLLNFactor*${labValue.refLimitLow()})")
-                builder.addFailGeneralMessages("${labValue.code()} ${String.format("%.1f", labValue.value())} below min of $minLLNFactor*LLN ($minLLNFactor*${labValue.refLimitLow()})")
+                builder.addFailSpecificMessages(
+                    "${labValue.code()} ${
+                        String.format(
+                            "%.1f",
+                            labValue.value()
+                        )
+                    } is below minimum of $minLLNFactor*LLN ($minLLNFactor*${labValue.refLimitLow()})"
+                )
+                builder.addFailGeneralMessages(
+                    "${labValue.code()} ${
+                        String.format(
+                            "%.1f",
+                            labValue.value()
+                        )
+                    } below min of $minLLNFactor*LLN ($minLLNFactor*${labValue.refLimitLow()})"
+                )
             }
 
             EvaluationResult.UNDETERMINED -> {
@@ -22,8 +36,22 @@ class HasSufficientLabValueLLN internal constructor(private val minLLNFactor: Do
             }
 
             EvaluationResult.PASS -> {
-                builder.addPassSpecificMessages("${labValue.code()} ${String.format("%.1f", labValue.value())} above minimum of $minLLNFactor*LLN ($minLLNFactor*${labValue.refLimitLow()})")
-                builder.addPassGeneralMessages("${labValue.code()} ${String.format("%.1f", labValue.value())} above min of $minLLNFactor*LLN ($minLLNFactor*${labValue.refLimitLow()})")
+                builder.addPassSpecificMessages(
+                    "${labValue.code()} ${
+                        String.format(
+                            "%.1f",
+                            labValue.value()
+                        )
+                    } above minimum of $minLLNFactor*LLN ($minLLNFactor*${labValue.refLimitLow()})"
+                )
+                builder.addPassGeneralMessages(
+                    "${labValue.code()} ${
+                        String.format(
+                            "%.1f",
+                            labValue.value()
+                        )
+                    } above min of $minLLNFactor*LLN ($minLLNFactor*${labValue.refLimitLow()})"
+                )
             }
 
             else -> {}

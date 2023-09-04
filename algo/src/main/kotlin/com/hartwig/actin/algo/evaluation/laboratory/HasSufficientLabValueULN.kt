@@ -12,8 +12,22 @@ class HasSufficientLabValueULN internal constructor(private val minULNFactor: Do
         val builder = recoverable().result(result)
         when (result) {
             EvaluationResult.FAIL -> {
-                builder.addFailSpecificMessages("${labValue.code()} ${String.format("%.1f", labValue.value())} is below minimum of $minULNFactor*ULN ($minULNFactor*${labValue.refLimitUp()})")
-                builder.addFailGeneralMessages("${labValue.code()} ${String.format("%.1f", labValue.value())} below min of $minULNFactor*ULN ($minULNFactor*${labValue.refLimitUp()})")
+                builder.addFailSpecificMessages(
+                    "${labValue.code()} ${
+                        String.format(
+                            "%.1f",
+                            labValue.value()
+                        )
+                    } is below minimum of $minULNFactor*ULN ($minULNFactor*${labValue.refLimitUp()})"
+                )
+                builder.addFailGeneralMessages(
+                    "${labValue.code()} ${
+                        String.format(
+                            "%.1f",
+                            labValue.value()
+                        )
+                    } below min of $minULNFactor*ULN ($minULNFactor*${labValue.refLimitUp()})"
+                )
             }
 
             EvaluationResult.UNDETERMINED -> {
@@ -22,8 +36,22 @@ class HasSufficientLabValueULN internal constructor(private val minULNFactor: Do
             }
 
             EvaluationResult.PASS -> {
-                builder.addPassSpecificMessages("${labValue.code()} ${String.format("%.1f", labValue.value())} above minimum of $minULNFactor*ULN ($minULNFactor*${labValue.refLimitUp()})")
-                builder.addPassGeneralMessages("${labValue.code()} ${String.format("%.1f", labValue.value())} above min of $minULNFactor*ULN ($minULNFactor*${labValue.refLimitUp()})")
+                builder.addPassSpecificMessages(
+                    "${labValue.code()} ${
+                        String.format(
+                            "%.1f",
+                            labValue.value()
+                        )
+                    } above minimum of $minULNFactor*ULN ($minULNFactor*${labValue.refLimitUp()})"
+                )
+                builder.addPassGeneralMessages(
+                    "${labValue.code()} ${
+                        String.format(
+                            "%.1f",
+                            labValue.value()
+                        )
+                    } above min of $minULNFactor*ULN ($minULNFactor*${labValue.refLimitUp()})"
+                )
             }
 
             else -> {}
