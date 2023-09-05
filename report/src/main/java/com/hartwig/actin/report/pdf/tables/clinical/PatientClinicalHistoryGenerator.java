@@ -9,7 +9,7 @@ import com.hartwig.actin.clinical.datamodel.PriorOtherCondition;
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
 import com.hartwig.actin.clinical.sort.PriorSecondPrimaryDiagnosedDateComparator;
-import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparatorFactory;
+import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparator;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Tables;
@@ -70,7 +70,7 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
     @NotNull
     private Table createNoneTable() {
         Table table = createSingleColumnTable(valueWidth);
-        table.addCell(Cells.createSpanningNoneEntry(table));
+        table.addCell(createSpanningTableEntry("None", table));
         return table;
     }
 
@@ -88,9 +88,9 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
     private Table treatmentHistoryTable(@NotNull List<TreatmentHistoryEntry> treatmentHistory, boolean requireSystemic) {
         Stream<TreatmentHistoryEntry> sortedFilteredTreatments = treatmentHistory.stream()
                 .filter(entry -> entry.treatments().stream().anyMatch(treatment -> treatment.isSystemic() == requireSystemic))
-                .sorted(TreatmentHistoryAscendingDateComparatorFactory.treatmentHistoryEntryComparator());
+                .sorted(new TreatmentHistoryAscendingDateComparator());
 
-        float dateWidth = valueWidth / 4;
+        float dateWidth = valueWidth / 5;
         float treatmentWidth = valueWidth - dateWidth;
         Table table = createDoubleColumnTable(dateWidth, treatmentWidth);
 
