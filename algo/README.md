@@ -304,7 +304,6 @@ _Blood clotting factors_
 | HAS_APTT_ULN_OF_AT_MOST_X                   | Activated partial thromboplastin time (APTT) <= X*ULN  |      |
 | HAS_APTT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS | Activated partial thromboplastin time (APTT) LLN<X<ULN |      |
 | HAS_PTT_ULN_OF_AT_MOST_X                    | T.B.D.                                                 |      |
-| HAS_D_DIMER_OUTSIDE_REF_UPPER_LIMIT         | D-dimer (DDIM) > refLimitUp                            |      |
 
 _Liver function_
 

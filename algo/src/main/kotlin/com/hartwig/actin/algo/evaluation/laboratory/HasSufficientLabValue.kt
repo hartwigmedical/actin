@@ -24,8 +24,22 @@ class HasSufficientLabValue internal constructor(
         val builder = recoverable().result(result)
         when (result) {
             EvaluationResult.FAIL -> {
-                builder.addFailSpecificMessages("${labValue.code()} is insufficient")
-                builder.addFailGeneralMessages("${labValue.code()} insufficient")
+                builder.addFailSpecificMessages(
+                    "${labValue.code()} ${
+                        String.format(
+                            "%.1f",
+                            convertedValue
+                        )
+                    } ${targetUnit.display()} is below minimum of $minValue ${targetUnit.display()}"
+                )
+                builder.addFailGeneralMessages(
+                    "${labValue.code()} ${
+                        String.format(
+                            "%.1f",
+                            convertedValue
+                        )
+                    } ${targetUnit.display()} below min of $minValue ${targetUnit.display()}"
+                )
             }
 
             EvaluationResult.UNDETERMINED -> {
@@ -34,8 +48,15 @@ class HasSufficientLabValue internal constructor(
             }
 
             EvaluationResult.PASS -> {
-                builder.addPassSpecificMessages("${labValue.code()} is sufficient")
-                builder.addPassGeneralMessages("${labValue.code()} sufficient")
+                builder.addPassSpecificMessages(
+                    "${labValue.code()} ${
+                        String.format(
+                            "%.1f",
+                            convertedValue
+                        )
+                    } ${targetUnit.display()} exceeds minimum of $minValue ${targetUnit.display()}"
+                )
+                builder.addPassGeneralMessages("${labValue.code()} ${targetUnit.display()} exceeds min of $minValue ${targetUnit.display()}")
             }
 
             else -> {}

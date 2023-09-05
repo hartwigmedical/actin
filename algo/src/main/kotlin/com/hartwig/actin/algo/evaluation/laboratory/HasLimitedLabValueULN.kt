@@ -12,8 +12,22 @@ class HasLimitedLabValueULN internal constructor(private val maxULNFactor: Doubl
         val builder = recoverable().result(result)
         when (result) {
             EvaluationResult.FAIL -> {
-                builder.addFailSpecificMessages("${labValue.code()} exceeds maximum ULN")
-                builder.addFailGeneralMessages("${labValue.code()} exceeds maximum ULN")
+                builder.addFailSpecificMessages(
+                    "${labValue.code()} ${
+                        String.format(
+                            "%.1f",
+                            labValue.value()
+                        )
+                    } exceeds maximum of $maxULNFactor*ULN ($maxULNFactor*${labValue.refLimitUp()})"
+                )
+                builder.addFailGeneralMessages(
+                    "${labValue.code()} ${
+                        String.format(
+                            "%.1f",
+                            labValue.value()
+                        )
+                    } exceeds max of $maxULNFactor*ULN ($maxULNFactor*${labValue.refLimitUp()})"
+                )
             }
 
             EvaluationResult.UNDETERMINED -> {
@@ -22,8 +36,22 @@ class HasLimitedLabValueULN internal constructor(private val maxULNFactor: Doubl
             }
 
             EvaluationResult.PASS -> {
-                builder.addPassSpecificMessages("${labValue.code()} does not exceed maximum ULN")
-                builder.addPassGeneralMessages("${labValue.code()} within maximum ULN")
+                builder.addPassSpecificMessages(
+                    "${labValue.code()} ${
+                        String.format(
+                            "%.1f",
+                            labValue.value()
+                        )
+                    } below maximum of $maxULNFactor*ULN ($maxULNFactor*${labValue.refLimitUp()})"
+                )
+                builder.addPassGeneralMessages(
+                    "${labValue.code()} ${
+                        String.format(
+                            "%.1f",
+                            labValue.value()
+                        )
+                    } below max of $maxULNFactor*ULN ($maxULNFactor*${labValue.refLimitUp()})"
+                )
             }
 
             else -> {}
