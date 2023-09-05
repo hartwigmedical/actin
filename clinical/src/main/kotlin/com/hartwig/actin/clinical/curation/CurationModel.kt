@@ -83,9 +83,10 @@ class CurationModel @VisibleForTesting internal constructor(
 
     fun curateTumorDetails(inputTumorLocation: String?, inputTumorType: String?): TumorDetails {
         var primaryTumorConfig: PrimaryTumorConfig? = null
-        if (inputTumorLocation != null) {
+        if (inputTumorLocation != null || inputTumorType != null) {
+            val inputTumorLocationString = inputTumorLocation ?: Strings.EMPTY
             val inputTumorTypeString = inputTumorType ?: Strings.EMPTY
-            val inputPrimaryTumor = fullTrim("$inputTumorLocation | $inputTumorTypeString")
+            val inputPrimaryTumor = fullTrim("$inputTumorLocationString | $inputTumorTypeString")
             val configs: Set<PrimaryTumorConfig?> = find(database.primaryTumorConfigs, inputPrimaryTumor)
             if (configs.isEmpty()) {
                 LOGGER.warn(" Could not find primary tumor config for input '{}'", inputPrimaryTumor)

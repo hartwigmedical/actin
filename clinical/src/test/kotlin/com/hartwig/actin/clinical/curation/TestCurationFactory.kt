@@ -40,7 +40,6 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import org.apache.logging.log4j.util.Strings
 import java.util.*
 
-
 private const val PARACETAMOL = "PARACETAMOL"
 
 object TestCurationFactory {
@@ -120,6 +119,15 @@ object TestCurationFactory {
                 primaryTumorSubType = Strings.EMPTY,
                 primaryTumorExtraDetails = Strings.EMPTY,
                 doids = setOf("10534")
+            ),
+            PrimaryTumorConfig(
+                input = "| Carcinoma",
+                primaryTumorLocation = Strings.EMPTY,
+                primaryTumorSubLocation = Strings.EMPTY,
+                primaryTumorType = "Carcinoma",
+                primaryTumorSubType = Strings.EMPTY,
+                primaryTumorExtraDetails = Strings.EMPTY,
+                doids = setOf("299")
             )
         )
     }
