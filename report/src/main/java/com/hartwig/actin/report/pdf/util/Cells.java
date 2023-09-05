@@ -20,12 +20,11 @@ import com.itextpdf.layout.element.Table;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public final class Cells {
 
     @NotNull
-    public static Cell create(@Nullable IBlockElement element) {
+    public static Cell create(@NotNull IBlockElement element) {
         return create(element, 1, 1);
     }
 
@@ -181,7 +180,7 @@ public final class Cells {
 
     @NotNull
     public static Cell createValue(@NotNull List<Paragraph> paragraphs) {
-        Cell cell = create(null);
+        Cell cell = createBorderless();
         for (Paragraph paragraph : paragraphs) {
             cell.add(paragraph);
         }
@@ -218,12 +217,21 @@ public final class Cells {
     }
 
     @NotNull
-    private static Cell create(@Nullable IBlockElement element, int rows, int cols) {
+    private static Cell create(@NotNull IBlockElement element, int rows, int cols) {
+        Cell cell = createBorderless(rows, cols);
+        cell.add(element);
+        return cell;
+    }
+
+    @NotNull
+    private static Cell createBorderless() {
+        return createBorderless(1, 1);
+    }
+
+    @NotNull
+    private static Cell createBorderless(int rows, int cols) {
         Cell cell = new Cell(rows, cols);
         cell.setBorder(Border.NO_BORDER);
-        if (element != null) {
-            cell.add(element);
-        }
         return cell;
     }
 }
