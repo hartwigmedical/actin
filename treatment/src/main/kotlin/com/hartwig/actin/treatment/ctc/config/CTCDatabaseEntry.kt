@@ -11,5 +11,5 @@ data class CTCDatabaseEntry(
     val cohortName: String? = null,
     val cohortStatus: String? = null,
     val cohortSlotsNumberAvailable: Int? = null,
-    val cohortSlotsDateAvailable: String? = null
+    val cohortSlotsDateUpdate: String? = null
 )

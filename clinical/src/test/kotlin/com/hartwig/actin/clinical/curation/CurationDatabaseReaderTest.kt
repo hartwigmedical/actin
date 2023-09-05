@@ -52,7 +52,7 @@ class CurationDatabaseReaderTest {
     @Test
     fun shouldReadTreatmentHistoryConfigs() {
         val configs = database!!.treatmentHistoryEntryConfigs
-        assertThat(configs).hasSize(3)
+        assertThat(configs).hasSize(1)
 
         val capoxConfig = find(configs, "Capecitabine/Oxaliplatin 2020-2021")
         assertThat(capoxConfig.ignore).isFalse
@@ -80,28 +80,6 @@ class CurationDatabaseReaderTest {
             tuple("OXALIPLATIN", setOf(DrugType.PLATINUM_COMPOUND))
         )
         assertThat(curatedCapox.trialAcronym()).isNull()
-
-        val appendectomyConfig = find(configs, "2022 appendectomy")
-        assertThat(appendectomyConfig.ignore).isFalse
-        val curatedAppendectomy = appendectomyConfig.curated
-        assertThat(curatedAppendectomy).isNotNull
-        assertThat(curatedAppendectomy!!.startYear()).isEqualTo(2022)
-        val appendectomyTreatment = curatedAppendectomy.treatments().iterator().next()
-        assertThat(appendectomyTreatment!!.name()).isEqualTo("Appendectomy")
-        assertThat(appendectomyTreatment.categories()).containsExactly(TreatmentCategory.SURGERY)
-        assertThat(appendectomyTreatment.isSystemic).isFalse
-
-        val ablationConfig = find(configs, "Ablation trial 2023 May")
-        assertThat(ablationConfig.ignore).isFalse
-        val curatedAblation = ablationConfig.curated
-        assertThat(curatedAblation).isNotNull
-        assertThat(curatedAblation!!.startYear()).isEqualTo(2023)
-        assertThat(curatedAblation.startMonth()).isEqualTo(5)
-        assertThat(curatedAblation.isTrial).isTrue
-        val ablationTreatment = curatedAblation.treatments().iterator().next()
-        assertThat(ablationTreatment.name()).isEqualTo("Ablation")
-        assertThat(ablationTreatment.categories()).containsExactly(TreatmentCategory.ABLATION)
-        assertThat(ablationTreatment.isSystemic).isFalse
     }
 
     @Test

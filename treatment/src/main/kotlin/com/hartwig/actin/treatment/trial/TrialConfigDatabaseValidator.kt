@@ -9,6 +9,7 @@ import com.hartwig.actin.treatment.trial.config.TrialDefinitionConfig
 import org.apache.logging.log4j.LogManager
 
 class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFactory) {
+
     fun isValid(database: TrialConfigDatabase): Boolean {
         val trialIds = extractTrialIds(database.trialDefinitionConfigs)
         val validTrials = validateTrials(database.trialDefinitionConfigs)

@@ -274,21 +274,17 @@
   "medications": [
     {
       "name": "Medication 1",
-      "codeATC": "code ATC",
-      "categories": [
-      ],
-      "chemicalSubgroupAtc": "chemical",
-      "pharmacologicalSubgroupAtc": "pharmacological",
-      "therapeuticSubgroupAtc": "therapeutic",
-      "anatomicalMainGroupAtc": "anatomical",
+      "categories": [],
       "status": "ON_HOLD",
       "administrationRoute": "oral",
-      "dosageMin": 10,
-      "dosageMax": 20,
-      "dosageUnit": "mg",
-      "frequency": 1,
-      "frequencyUnit": "day",
-      "ifNeeded": false,
+      "dosage": {
+        "dosageMin": 10,
+        "dosageMax": 20,
+        "dosageUnit": "mg",
+        "frequency": 1,
+        "frequencyUnit": "day",
+        "ifNeeded": false
+      },
       "startDate": {
         "year": 2018,
         "month": 1,
@@ -306,25 +302,23 @@
           "type": "INDUCER"
         }
       ],
-      "qtProlongatingRisk": "NONE"
+      "qtProlongatingRisk": "NONE",
+      "isSelfCare": false,
+      "isTrialMedication": false
     },
     {
       "name": "Medication 2",
-      "codeATC": "M2",
-      "categories": [
-      ],
-      "chemicalSubgroupAtc": "chemical",
-      "pharmacologicalSubgroupAtc": "pharmacological",
-      "therapeuticSubgroupAtc": "therapeutic",
-      "anatomicalMainGroupAtc": "anatomical",
+      "categories": [],
       "status": "UNKNOWN",
       "administrationRoute": null,
-      "dosageMin": null,
-      "dosageMax": null,
-      "dosageUnit": null,
-      "frequency": null,
-      "frequencyUnit": null,
-      "ifNeeded": null,
+      "dosage": {
+        "dosageMin": null,
+        "dosageMax": null,
+        "dosageUnit": null,
+        "frequency": null,
+        "frequencyUnit": null,
+        "ifNeeded": null
+      },
       "startDate": {
         "year": 2019,
         "month": 5,
@@ -336,7 +330,9 @@
         "day": 25
       },
       "cypInteractions": [],
-      "qtProlongatingRisk": "KNOWN"
+      "qtProlongatingRisk": "KNOWN",
+      "isSelfCare": false,
+      "isTrialMedication": false
     }
   ]
 }

@@ -53,6 +53,7 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
         )
 
         val result = evaluateVersusMinValue(cockcroftGault, creatinine.comparator(), minCreatinineClearance)
+
         return when {
             result == EvaluationResult.FAIL && weight == null -> EvaluationFactory.undetermined(
                 "Cockcroft-Gault may be insufficient but weight of patient is not known",
@@ -60,8 +61,8 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
             )
 
             result == EvaluationResult.FAIL -> EvaluationFactory.recoverableFail(
-                "Cockcroft-Gault is insufficient",
-                "Cockcroft-Gault insufficient"
+                "Cockcroft-Gault below minimum of $minCreatinineClearance",
+                "Cockcroft-Gault below min of $minCreatinineClearance",
             )
 
             result == EvaluationResult.UNDETERMINED -> EvaluationFactory.undetermined(
@@ -70,13 +71,13 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
             )
 
             result == EvaluationResult.PASS && weight == null -> EvaluationFactory.notEvaluated(
-                "Body weight is unknown but Cockcroft-Gault is most likely sufficient",
-                "Cockcroft-Gault most likely sufficient"
+                "Body weight is unknown but Cockcroft-Gault most likely above minimum of $minCreatinineClearance",
+                "Cockcroft-Gault most likely below min of $minCreatinineClearance but weight unknown",
             )
 
             result == EvaluationResult.PASS -> EvaluationFactory.recoverablePass(
-                "Cockcroft-Gault is sufficient",
-                "Cockcroft-Gault sufficient"
+                "Cockcroft-Gault above minimum of $minCreatinineClearance",
+                "Cockcroft-Gault above min of $minCreatinineClearance",
             )
 
             else -> recoverable().result(result).build()
@@ -90,18 +91,18 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
         val builder = recoverable().result(result)
         when (result) {
             EvaluationResult.FAIL -> {
-                builder.addFailSpecificMessages("$code is insufficient")
-                builder.addFailGeneralMessages("$code insufficient")
+                builder.addFailSpecificMessages("$code below minimum of $minCreatinineClearance")
+                builder.addFailGeneralMessages("$code below min of $minCreatinineClearance")
             }
 
             EvaluationResult.UNDETERMINED -> {
                 builder.addUndeterminedSpecificMessages("$code evaluation led to ambiguous results")
-                builder.addUndeterminedGeneralMessages("$code undetermined")
+                builder.addUndeterminedGeneralMessages("$code could not be determined")
             }
 
             EvaluationResult.PASS -> {
-                builder.addPassSpecificMessages("$code is sufficient")
-                builder.addPassGeneralMessages("$code sufficient")
+                builder.addPassSpecificMessages("$code exceeds minimum of $minCreatinineClearance")
+                builder.addPassGeneralMessages("$code exceeds min of $minCreatinineClearance")
             }
 
             else -> {}

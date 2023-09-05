@@ -38,6 +38,7 @@ internal object QuestionnaireCuration {
         OPTION_MAPPING["ja"] = true
         OPTION_MAPPING["YES related to prostatecarcinoma"] = true
         OPTION_MAPPING["yes bone lesion L1 L2 with epidural extension"] = true
+        OPTION_MAPPING["yes manubrium sterni"] = true
         OPTION_MAPPING["yes vertebra L2"] = true
         OPTION_MAPPING["yes wherefore surgery jun 2023"] = true
         OPTION_MAPPING["unknown"] = null

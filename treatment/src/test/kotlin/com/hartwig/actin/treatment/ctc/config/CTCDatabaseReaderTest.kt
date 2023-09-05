@@ -30,7 +30,7 @@ class CTCDatabaseReaderTest {
             assertThat(entry1.cohortName).isEqualTo("Cohort A")
             assertThat(entry1.cohortStatus).isEqualTo("Closed")
             assertThat((entry1.cohortSlotsNumberAvailable as Int).toLong()).isEqualTo(5)
-            assertThat(entry1.cohortSlotsDateAvailable).isEqualTo("23-04-04")
+            assertThat(entry1.cohortSlotsDateUpdate).isEqualTo("23-04-04")
 
             val entry2 = findEntryByStudyId(entries, 2)
             assertThat(entry2.studyMETC).isEqualTo("METC 2")
@@ -42,7 +42,7 @@ class CTCDatabaseReaderTest {
             assertThat(entry2.cohortName).isNull()
             assertThat(entry2.cohortStatus).isNull()
             assertThat(entry2.cohortSlotsNumberAvailable).isNull()
-            assertThat(entry2.cohortSlotsDateAvailable).isNull()
+            assertThat(entry2.cohortSlotsDateUpdate).isNull()
         }
 
         private fun findEntryByStudyId(entries: List<CTCDatabaseEntry>, studyIdToFind: Int): CTCDatabaseEntry {

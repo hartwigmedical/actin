@@ -1,10 +1,9 @@
 ## ACTIN-Database
 
-ACTIN-Database allows loading the outputs of other ACTIN modules into a mysql database. 
+ACTIN-Database allows loading the outputs of other ACTIN modules into a mysql database.
 
-Before this application can be used, a schema has to be set up on a mysql server (v5.7.21 to v8.0.18 are supported) from the database
-schema defined in [generate_database.sql](src/main/resources/generate_database.sql). See [readme](src/main/resources/readme) for help on 
-additional steps and what is required to be able to compile this module.
+A database is expected to be present on a mysql server (v5.7.21 to v8.0.18 are supported) generated from the database
+schema defined in [generate_database.sql](src/main/resources/generate_database.sql).
 
 ### Clinical Data Loader
 The clinical data loader loads up clinical data from [ACTIN-Clinical](../clinical/README.md) as follows:

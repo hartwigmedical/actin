@@ -10,21 +10,22 @@ import org.apache.logging.log4j.LogManager
 
 class CTCModel constructor(private val ctcDatabase: CTCDatabase) {
 
-    fun isTrialOpen(trialConfig: TrialDefinitionConfig): Boolean {
+    fun isTrialOpen(trialConfig: TrialDefinitionConfig): Boolean? {
         if (!trialConfig.trialId.startsWith(CTC_TRIAL_PREFIX)) {
             LOGGER.debug(
                 " Skipping study status retrieval for {} ({}) since study is not deemed a CTC trial",
                 trialConfig.trialId,
                 trialConfig.acronym
             )
-            return trialConfig.open
+
+            return null
         }
 
-        val openInCTC: Boolean? = TrialStatusInterpreter.isOpen(ctcDatabase.entries, trialConfig)
+        val openInCTC: Boolean? = TrialStatusInterpreter.isOpen(ctcDatabase.entries, trialConfig.trialId)
         if (openInCTC != null) {
-            if (openInCTC != trialConfig.open) {
+            if (trialConfig.open != null) {
                 LOGGER.warn(
-                    " CTC and internal trial config are inconsistent in terms of study status for {} ({})."
+                    " Trial has a manually configured open status while status could be derived from CTC for {} ({})."
                             + " Taking CTC study status where open = {}", trialConfig.trialId, trialConfig.acronym, openInCTC
                 )
             }
@@ -32,11 +33,11 @@ class CTCModel constructor(private val ctcDatabase: CTCDatabase) {
         }
 
         LOGGER.warn(
-            " No study status found in CTC for trial '{} ({}'). Reverting to internal trial config",
+            " No study status found in CTC for trial '{} ({}').",
             trialConfig.trialId,
             trialConfig.acronym
         )
-        return trialConfig.open
+        return null
     }
 
     fun resolveCohortMetadata(cohortConfig: CohortDefinitionConfig): CohortMetadata {

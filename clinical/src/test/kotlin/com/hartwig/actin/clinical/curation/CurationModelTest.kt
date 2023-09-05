@@ -67,6 +67,15 @@ class CurationModelTest {
     }
 
     @Test
+    fun shouldCurateTumorWithTypeOnly() {
+        val curatedWithoutLocation: TumorDetails = model.curateTumorDetails(null, "Carcinoma")
+        assertEquals(Strings.EMPTY, curatedWithoutLocation.primaryTumorLocation())
+        assertEquals("Carcinoma", curatedWithoutLocation.primaryTumorType())
+
+        model.evaluate()
+    }
+
+    @Test
     fun shouldNullTumorThatDoesNotExist() {
         val missing: TumorDetails = model.curateTumorDetails("Does not", "Exist")
         assertNull(missing.primaryTumorLocation())

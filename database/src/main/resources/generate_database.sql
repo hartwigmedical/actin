@@ -621,7 +621,7 @@ CREATE TABLE `evaluation`
     `exclusionMolecularEvents` varchar(300) NOT NULL,
     `passSpecificMessages` varchar(1000) NOT NULL,
     `passGeneralMessages` varchar(1000) NOT NULL,
-    `warnSpecificMessages` varchar(1000) NOT NULL,
+    `warnSpecificMessages` varchar(2000) NOT NULL,
     `warnGeneralMessages` varchar(1000) NOT NULL,
     `undeterminedSpecificMessages` varchar(1000) NOT NULL,
     `undeterminedGeneralMessages` varchar(1000) NOT NULL,
