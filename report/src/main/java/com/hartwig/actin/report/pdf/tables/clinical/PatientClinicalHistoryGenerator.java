@@ -164,7 +164,7 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
 
     @NotNull
     private Table relevantNonOncologicalHistoryTable(@NotNull ClinicalRecord record) {
-        float dateWidth = valueWidth / 4;
+        float dateWidth = valueWidth / 5;
         float treatmentWidth = valueWidth - dateWidth;
         Table table = createDoubleColumnTable(dateWidth, treatmentWidth);
 
