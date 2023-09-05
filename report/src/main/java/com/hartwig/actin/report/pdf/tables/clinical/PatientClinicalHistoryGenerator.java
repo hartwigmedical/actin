@@ -13,6 +13,8 @@ import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparatorFa
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.util.Cells;
 import com.hartwig.actin.report.pdf.util.Tables;
+import com.itextpdf.layout.element.BlockElement;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
 
 import org.apache.logging.log4j.util.Strings;
@@ -46,16 +48,16 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
         Table table = Tables.createFixedWidthCols(keyWidth, valueWidth);
 
         table.addCell(Cells.createKey("Relevant systemic treatment history"));
-        table.addCell(Cells.createContentNoBorder(tableOrNone(relevantSystemicPreTreatmentHistoryTable(record))));
+        table.addCell(Cells.create(tableOrNone(relevantSystemicPreTreatmentHistoryTable(record))));
 
         table.addCell(Cells.createKey("Relevant other oncological history"));
-        table.addCell(Cells.createContentNoBorder(tableOrNone(relevantNonSystemicPreTreatmentHistoryTable(record))));
+        table.addCell(Cells.create(tableOrNone(relevantNonSystemicPreTreatmentHistoryTable(record))));
 
         table.addCell(Cells.createKey("Previous primary tumor"));
-        table.addCell(Cells.createContentNoBorder(tableOrNone(secondPrimaryHistoryTable(record))));
+        table.addCell(Cells.create(tableOrNone(secondPrimaryHistoryTable(record))));
 
         table.addCell(Cells.createKey("Relevant non-oncological history"));
-        table.addCell(Cells.createContentNoBorder(tableOrNone(relevantNonOncologicalHistoryTable(record))));
+        table.addCell(Cells.create(tableOrNone(relevantNonOncologicalHistoryTable(record))));
 
         return table;
     }
@@ -67,7 +69,7 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
 
     @NotNull
     private Table createNoneTable() {
-        Table table = Tables.createSingleColWithWidth(valueWidth);
+        Table table = createSingleColumnTable(valueWidth);
         table.addCell(Cells.createSpanningNoneEntry(table));
         return table;
     }
@@ -90,60 +92,56 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
 
         float dateWidth = valueWidth / 4;
         float treatmentWidth = valueWidth - dateWidth;
-        Table table = Tables.createFixedWidthCols(dateWidth, treatmentWidth);
+        Table table = createDoubleColumnTable(dateWidth, treatmentWidth);
 
         sortedFilteredTreatments.forEach(entry -> {
-            table.addCell(Cells.createContentNoBorder(extractDateRangeString(entry)));
-            table.addCell(Cells.createContentNoBorder(extractTreatmentString(entry)));
+            table.addCell(createSingleTableEntry(extractDateRangeString(entry)));
+            table.addCell(createSingleTableEntry(extractTreatmentString(entry)));
         });
 
         return table;
+    }
+
+    @NotNull
+    private static String extractDateRangeString(@NotNull TreatmentHistoryEntry treatmentHistoryEntry) {
+        Optional<String> startOption = toDateString(treatmentHistoryEntry.startYear(), treatmentHistoryEntry.startMonth());
+        Optional<String> stopOption = Optional.ofNullable(treatmentHistoryEntry.therapyHistoryDetails())
+                .flatMap(details -> toDateString(details.stopYear(), details.stopMonth()));
+
+        return startOption.orElse("?") + stopOption.map(stopString -> "-" + stopString).orElse("");
+    }
+
+    @NotNull
+    private static String extractTreatmentString(@NotNull TreatmentHistoryEntry treatmentHistoryEntry) {
+        Optional<String> stopReasonOption = Optional.ofNullable(treatmentHistoryEntry.therapyHistoryDetails())
+                .flatMap(details -> Optional.ofNullable(details.stopReasonDetail()))
+                .map(reason -> !reason.equalsIgnoreCase(STOP_REASON_PROGRESSIVE_DISEASE) ? "stop reason: " + reason : null);
+
+        Optional<String> cyclesOption = Optional.ofNullable(treatmentHistoryEntry.therapyHistoryDetails())
+                .flatMap(details -> Optional.ofNullable(details.cycles()))
+                .map(num -> num + " cycles");
+
+        Optional<String> combinedAnnotation = cyclesOption.isPresent()
+                ? stopReasonOption.map(stopReason -> cyclesOption.get() + ", " + stopReason).or(() -> cyclesOption)
+                : stopReasonOption;
+
+        return treatmentHistoryEntry.treatmentDisplay() + combinedAnnotation.map(annotation -> " (" + annotation + ")")
+                .orElse(Strings.EMPTY);
     }
 
     @NotNull
     private Table secondPrimaryHistoryTable(@NotNull ClinicalRecord record) {
         Stream<PriorSecondPrimary> priorSecondPrimaryStream =
                 record.priorSecondPrimaries().stream().sorted(new PriorSecondPrimaryDiagnosedDateComparator());
-        Table table = Tables.createSingleColWithWidth(valueWidth);
+        Table table = createSingleColumnTable(valueWidth);
 
-        priorSecondPrimaryStream.forEach(secondPrimary -> {
-            table.addCell(Cells.createContentNoBorder(toPriorSecondPrimaryString(secondPrimary)));
-        });
+        priorSecondPrimaryStream.forEach(secondPrimary -> table.addCell(createSingleTableEntry(toSecondPrimaryString(secondPrimary))));
 
         return table;
     }
 
     @NotNull
-    private Table relevantNonOncologicalHistoryTable(@NotNull ClinicalRecord record) {
-        float dateWidth = valueWidth / 4;
-        float treatmentWidth = valueWidth - dateWidth;
-        Table table = Tables.createFixedWidthCols(dateWidth, treatmentWidth);
-
-        record.priorOtherConditions().forEach(priorOtherCondition -> {
-            Optional<String> dateOption = toDateString(priorOtherCondition.year(), priorOtherCondition.month());
-            if (dateOption.isPresent()) {
-                table.addCell(Cells.createContentNoBorder(dateOption.get()));
-                table.addCell(Cells.createContentNoBorder(toPriorOtherConditionString(priorOtherCondition)));
-            } else {
-                Cells.createSpanningEntry(toPriorOtherConditionString(priorOtherCondition), table);
-            }
-        });
-
-        return table;
-    }
-
-    @NotNull
-    private static String toPriorOtherConditionString(@NotNull PriorOtherCondition priorOtherCondition) {
-        String addon = Strings.EMPTY;
-        if (!priorOtherCondition.isContraindicationForTherapy()) {
-            addon = " (no contraindication for therapy)";
-        }
-
-        return priorOtherCondition.name() + addon;
-    }
-
-    @NotNull
-    private static String toPriorSecondPrimaryString(@NotNull PriorSecondPrimary priorSecondPrimary) {
+    private static String toSecondPrimaryString(@NotNull PriorSecondPrimary priorSecondPrimary) {
         String tumorDetails = priorSecondPrimary.tumorLocation();
         if (!priorSecondPrimary.tumorSubType().isEmpty()) {
             tumorDetails = tumorDetails + " " + priorSecondPrimary.tumorSubType();
@@ -165,12 +163,32 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static String extractDateRangeString(@NotNull TreatmentHistoryEntry treatmentHistoryEntry) {
-        Optional<String> startOption = toDateString(treatmentHistoryEntry.startYear(), treatmentHistoryEntry.startMonth());
-        Optional<String> stopOption = Optional.ofNullable(treatmentHistoryEntry.therapyHistoryDetails())
-                .flatMap(details -> toDateString(details.stopYear(), details.stopMonth()));
+    private Table relevantNonOncologicalHistoryTable(@NotNull ClinicalRecord record) {
+        float dateWidth = valueWidth / 4;
+        float treatmentWidth = valueWidth - dateWidth;
+        Table table = createDoubleColumnTable(dateWidth, treatmentWidth);
 
-        return startOption.orElse("?") + stopOption.map(stopString -> "-" + stopString).orElse("");
+        record.priorOtherConditions().forEach(priorOtherCondition -> {
+            Optional<String> dateOption = toDateString(priorOtherCondition.year(), priorOtherCondition.month());
+            if (dateOption.isPresent()) {
+                table.addCell(createSingleTableEntry(dateOption.get()));
+                table.addCell(createSingleTableEntry(toPriorOtherConditionString(priorOtherCondition)));
+            } else {
+                table.addCell(createSpanningTableEntry(toPriorOtherConditionString(priorOtherCondition), table));
+            }
+        });
+
+        return table;
+    }
+
+    @NotNull
+    private static String toPriorOtherConditionString(@NotNull PriorOtherCondition priorOtherCondition) {
+        String addon = Strings.EMPTY;
+        if (!priorOtherCondition.isContraindicationForTherapy()) {
+            addon = " (no contraindication for therapy)";
+        }
+
+        return priorOtherCondition.name() + addon;
     }
 
     @NotNull
@@ -180,20 +198,29 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
     }
 
     @NotNull
-    private static String extractTreatmentString(@NotNull TreatmentHistoryEntry treatmentHistoryEntry) {
-        Optional<String> stopReasonOption = Optional.ofNullable(treatmentHistoryEntry.therapyHistoryDetails())
-                .flatMap(details -> Optional.ofNullable(details.stopReasonDetail()))
-                .map(reason -> !reason.equalsIgnoreCase(STOP_REASON_PROGRESSIVE_DISEASE) ? "stop reason: " + reason : null);
+    private static Table createDoubleColumnTable(float column1Width, float column2Width) {
+        return removePaddingAndMargin(Tables.createFixedWidthCols(column1Width, column2Width));
+    }
 
-        Optional<String> cyclesOption = Optional.ofNullable(treatmentHistoryEntry.therapyHistoryDetails())
-                .flatMap(details -> Optional.ofNullable(details.cycles()))
-                .map(num -> num + " cycles");
+    @NotNull
+    private static Table createSingleColumnTable(float width) {
+        return removePaddingAndMargin(Tables.createSingleColWithWidth(width));
+    }
 
-        Optional<String> combinedAnnotation = cyclesOption.isPresent()
-                ? stopReasonOption.map(stopReason -> cyclesOption.get() + ", " + stopReason).or(() -> cyclesOption)
-                : stopReasonOption;
+    @NotNull
+    private static Cell createSingleTableEntry(@NotNull String value) {
+        return removePaddingAndMargin(Cells.createValue(value));
+    }
 
-        return treatmentHistoryEntry.treatmentDisplay() + combinedAnnotation.map(annotation -> " (" + annotation + ")")
-                .orElse(Strings.EMPTY);
+    @NotNull
+    private static Cell createSpanningTableEntry(@NotNull String value, @NotNull Table table) {
+        return removePaddingAndMargin(Cells.createSpanningValue(value, table));
+    }
+
+    @NotNull
+    private static <T extends BlockElement<T>> T removePaddingAndMargin(@NotNull T table) {
+        table.setMargin(0);
+        table.setPadding(0);
+        return table;
     }
 }

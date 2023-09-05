@@ -35,11 +35,11 @@ public final class Cells {
 
     @NotNull
     public static Cell createSpanningNoneEntry(@NotNull Table table) {
-        return createSpanningEntry("None", table);
+        return createSpanningContent("None", table);
     }
 
     @NotNull
-    public static Cell createSpanningEntry(@NotNull String text, @NotNull Table table) {
+    public static Cell createSpanningContent(@NotNull String text, @NotNull Table table) {
         Cell cell = create(new Paragraph(text), 1, table.getNumberOfColumns());
         cell.addStyle(Styles.tableContentStyle());
         return cell;
@@ -168,6 +168,13 @@ public final class Cells {
     public static Cell createKey(@NotNull String text) {
         Cell cell = create(new Paragraph(text));
         cell.addStyle(Styles.tableKeyStyle());
+        return cell;
+    }
+
+    @NotNull
+    public static Cell createSpanningValue(@NotNull String text, @NotNull Table table) {
+        Cell cell = create(new Paragraph(text), 1, table.getNumberOfColumns());
+        cell.addStyle(Formats.styleForTableValue(text));
         return cell;
     }
 
