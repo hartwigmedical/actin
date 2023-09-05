@@ -44,4 +44,4 @@ steps:
         name: 'm2_cache'
 
 options:
-  machineType: 'E2_HIGHCPU_8'
+  machineType: 'E2_HIGHCPU_32'
