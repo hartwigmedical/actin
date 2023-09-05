@@ -53,7 +53,7 @@ public class TreatmentDatabaseFactory {
 
         return treatments.stream()
                 .flatMap(treatment -> Stream.concat(treatment.synonyms().stream(), Stream.of(treatment.name()))
-                        .map(name -> Map.entry(name.toLowerCase(), treatment)))
+                        .map(name -> Map.entry(name.replace(" ", "_").toLowerCase(), treatment)))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
