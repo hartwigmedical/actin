@@ -199,27 +199,26 @@ public class PatientClinicalHistoryGenerator implements TableGenerator {
 
     @NotNull
     private static Table createDoubleColumnTable(float column1Width, float column2Width) {
-        return removePaddingAndMargin(Tables.createFixedWidthCols(column1Width, column2Width));
+        return removePadding(Tables.createFixedWidthCols(column1Width, column2Width));
     }
 
     @NotNull
     private static Table createSingleColumnTable(float width) {
-        return removePaddingAndMargin(Tables.createSingleColWithWidth(width));
+        return removePadding(Tables.createSingleColWithWidth(width));
     }
 
     @NotNull
     private static Cell createSingleTableEntry(@NotNull String value) {
-        return removePaddingAndMargin(Cells.createValue(value));
+        return removePadding(Cells.createValue(value));
     }
 
     @NotNull
     private static Cell createSpanningTableEntry(@NotNull String value, @NotNull Table table) {
-        return removePaddingAndMargin(Cells.createSpanningValue(value, table));
+        return removePadding(Cells.createSpanningValue(value, table));
     }
 
     @NotNull
-    private static <T extends BlockElement<T>> T removePaddingAndMargin(@NotNull T table) {
-        table.setMargin(0);
+    private static <T extends BlockElement<T>> T removePadding(@NotNull T table) {
         table.setPadding(0);
         return table;
     }
