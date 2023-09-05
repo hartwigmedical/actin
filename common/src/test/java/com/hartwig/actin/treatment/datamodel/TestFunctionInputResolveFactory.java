@@ -36,6 +36,8 @@ public final class TestFunctionInputResolveFactory {
 
     @NotNull
     public static FunctionInputResolver createResolverWithDoidModel(@NotNull DoidModel doidModel) {
-        return new FunctionInputResolver(doidModel, MolecularInputChecker.createAnyGeneValid(), TestTreatmentDatabaseFactory.create());
+        return new FunctionInputResolver(doidModel,
+                MolecularInputChecker.createAnyGeneValid(),
+                TestTreatmentDatabaseFactory.createProper());
     }
 }

@@ -50,7 +50,7 @@ class TreatmentHistoryEntryConfigFactoryTest {
     }
 
     companion object {
-        private val treatmentDatabase = TestTreatmentDatabaseFactory.create()
+        private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
         private val fields = mapOf(
             "input" to 0,
             "name" to 1,

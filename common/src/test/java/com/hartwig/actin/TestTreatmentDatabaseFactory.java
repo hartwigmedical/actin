@@ -14,12 +14,12 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
 
 import org.jetbrains.annotations.NotNull;
 
-public class TestTreatmentDatabaseFactory {
+public final class TestTreatmentDatabaseFactory {
 
     public static final String CAPECITABINE_OXALIPLATIN = "CAPECITABINE+OXALIPLATIN";
 
     @NotNull
-    public static TreatmentDatabase create() {
+    public static TreatmentDatabase createProper() {
         Map<String, Drug> drugMap = Stream.of(drug("CAPECITABINE", DrugType.ANTIMETABOLITE, TreatmentCategory.CHEMOTHERAPY),
                         drug("OXALIPLATIN", DrugType.PLATINUM_COMPOUND, TreatmentCategory.CHEMOTHERAPY))
                 .collect(Collectors.toMap(drug -> drug.name().toLowerCase(), Function.identity()));

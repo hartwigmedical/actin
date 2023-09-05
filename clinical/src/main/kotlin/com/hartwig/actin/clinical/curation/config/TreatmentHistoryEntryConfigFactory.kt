@@ -34,7 +34,7 @@ object TreatmentHistoryEntryConfigFactory {
         val treatmentHistoryEntry = if (ignore) null else {
             val treatment = treatmentDatabase.findTreatmentByName(treatmentName)
             if (treatment == null) {
-                logMissingTreatmentMessage(treatmentName.replace(" ", "_").uppercase())
+                logMissingTreatmentMessage(treatmentName)
                 return null
             }
             curateObject(fields, parts, treatment)
@@ -47,12 +47,14 @@ object TreatmentHistoryEntryConfigFactory {
     }
 
     private fun logMissingTreatmentMessage(treatmentName: String) {
-        LOGGER.warn("  Treatment with name $treatmentName does not exist in database. Please add with one of the following templates:")
+        val formattedTreatmentName = treatmentName.replace(" ", "_").uppercase()
+        LOGGER.warn("  Treatment with name $formattedTreatmentName does not exist in database. Please add with one of the following templates:")
 
         listOf(
-            ImmutableDrugTherapy.builder().name(treatmentName).synonyms(emptySet()).isSystemic(false).drugs(emptySet()).build(),
-            ImmutableRadiotherapy.builder().name(treatmentName).synonyms(emptySet()).isSystemic(false).build(),
-            ImmutableOtherTreatment.builder().name(treatmentName).synonyms(emptySet()).isSystemic(false).categories(emptySet()).build()
+            ImmutableDrugTherapy.builder().name(formattedTreatmentName).synonyms(emptySet()).isSystemic(false).drugs(emptySet()).build(),
+            ImmutableRadiotherapy.builder().name(formattedTreatmentName).synonyms(emptySet()).isSystemic(false).build(),
+            ImmutableOtherTreatment.builder().name(formattedTreatmentName).synonyms(emptySet()).isSystemic(false).categories(emptySet())
+                .build()
         ).forEach {
             val treatmentProposal = gson.toJson(it).replace("isSystemic\":false", "isSystemic\":?")
                 .replace("\"displayOverride\":null,", "")
