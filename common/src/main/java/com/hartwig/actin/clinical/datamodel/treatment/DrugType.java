@@ -26,6 +26,7 @@ public enum DrugType implements TreatmentType {
     ANTI_PD_L2(TreatmentCategory.IMMUNOTHERAPY, "anti-PD-L2"),
     ANTI_TIGIT(TreatmentCategory.IMMUNOTHERAPY, "anti-TIGIT"),
     ANTI_TISSUE_FACTOR(TreatmentCategory.TARGETED_THERAPY, "anti tissue-factor (TF)"),
+    ANTIBIOTIC(TreatmentCategory.SUPPORTIVE_TREATMENT, "antibiotic"),
     ANTIBODY_DRUG_CONJUGATE_IMMUNOTHERAPY(TreatmentCategory.IMMUNOTHERAPY, "antibody-drug conjugate"),
     ANTIBODY_DRUG_CONJUGATE_TARGETED_THERAPY(TreatmentCategory.TARGETED_THERAPY, "antibody-drug conjugate"),
     ANTIMETABOLITE(TreatmentCategory.CHEMOTHERAPY),

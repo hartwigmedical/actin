@@ -52,7 +52,6 @@ public class ClinicalRecordJsonTest {
 
     private static void assertClinicalRecord(@NotNull ClinicalRecord record) {
         assertEquals("ACTN01029999", record.patientId());
-        assertEquals(1, record.priorTumorTreatments().size());
         assertEquals(1, record.priorSecondPrimaries().size());
         assertEquals(1, record.priorOtherConditions().size());
         assertEquals(1, record.complications().size());

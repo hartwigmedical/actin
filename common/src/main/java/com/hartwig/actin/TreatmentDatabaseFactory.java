@@ -29,7 +29,7 @@ public class TreatmentDatabaseFactory {
         LOGGER.info("Creating treatment database from path {}", treatmentDbPath);
         Map<String, Drug> drugsByName = drugJsonToMapByName(readFile(treatmentDbPath, DRUG_JSON));
         Map<String, Treatment> treatmentsByName = treatmentJsonToMapByName(readFile(treatmentDbPath, TREATMENT_JSON), drugsByName);
-        LOGGER.info("Loaded {} drugs from {} and {} treatments from {}",
+        LOGGER.info(" Loaded {} drugs from {} and {} treatments from {}",
                 drugsByName.size(),
                 DRUG_JSON,
                 treatmentsByName.size(),
@@ -53,7 +53,7 @@ public class TreatmentDatabaseFactory {
 
         return treatments.stream()
                 .flatMap(treatment -> Stream.concat(treatment.synonyms().stream(), Stream.of(treatment.name()))
-                        .map(name -> Map.entry(name.toLowerCase(), treatment)))
+                        .map(name -> Map.entry(name.replace(" ", "_").toLowerCase(), treatment)))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 

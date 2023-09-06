@@ -2,14 +2,32 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class HasMeasurableDiseaseTest {
     @Test
-    fun canEvaluate() {
-        val function = HasMeasurableDisease()
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withMeasurableDisease(null)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withMeasurableDisease(true)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withMeasurableDisease(false)))
+    fun shouldPassWhenHasMeasurableDiseaseIsTrue() {
+        val evaluation = FUNCTION.evaluate(TumorTestFactory.withMeasurableDisease(true))
+        assertEvaluation(EvaluationResult.PASS, evaluation)
+        assertTrue(evaluation.recoverable())
+    }
+
+    @Test
+    fun shouldFailWhenHasMeasurableDiseaseIsFalse() {
+        val evaluation = FUNCTION.evaluate(TumorTestFactory.withMeasurableDisease(false))
+        assertEvaluation(EvaluationResult.FAIL, evaluation)
+        assertTrue(evaluation.recoverable())
+    }
+
+    @Test
+    fun shouldBeUndeterminedWhenHasMeasurableDiseaseIsUndetermined() {
+        val evaluation = FUNCTION.evaluate(TumorTestFactory.withMeasurableDisease(null))
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertTrue(evaluation.recoverable())
+    }
+
+    companion object {
+        private val FUNCTION = HasMeasurableDisease()
     }
 }

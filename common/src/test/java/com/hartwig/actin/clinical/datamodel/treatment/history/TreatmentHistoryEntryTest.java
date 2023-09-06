@@ -14,17 +14,25 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 public class TreatmentHistoryEntryTest {
-
-    public static final ImmutableTreatmentHistoryEntry TREATMENT_HISTORY_ENTRY_WITHOUT_TYPE =
+    private static final ImmutableTreatmentHistoryEntry TREATMENT_HISTORY_ENTRY_WITHOUT_TYPE =
             treatmentHistoryEntryWithDrugTypes(Collections.emptySet());
-    public static final ImmutableTreatmentHistoryEntry TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE =
+    private static final ImmutableTreatmentHistoryEntry TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE =
             treatmentHistoryEntryWithDrugTypes(Set.of(DrugType.PLATINUM_COMPOUND));
+    private static final String TREATMENT_1 = "TREATMENT_1";
+    private static final String TREATMENT_2 = "TREATMENT_2";
 
     @Test
-    public void shouldExtractNamesFromTreatments() {
+    public void shouldExtractNamesFromTreatmentHistory() {
         TreatmentHistoryEntry treatmentHistoryEntry = ImmutableTreatmentHistoryEntry.copyOf(TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE)
-                .withTreatments(drugTherapy(Collections.emptySet(), "t1"), drugTherapy(Collections.emptySet(), "t2"));
-        assertThat(treatmentHistoryEntry.treatmentName()).isEqualTo("t1;t2");
+                .withTreatments(drugTherapy(Collections.emptySet(), TREATMENT_1), drugTherapy(Collections.emptySet(), TREATMENT_2));
+        assertThat(treatmentHistoryEntry.treatmentName()).isEqualTo(TREATMENT_1 + ";" + TREATMENT_2);
+    }
+
+    @Test
+    public void shouldExtractTreatmentDisplayStringsFromTreatmentHistory() {
+        TreatmentHistoryEntry treatmentHistoryEntry = ImmutableTreatmentHistoryEntry.copyOf(TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE)
+                .withTreatments(drugTherapy(Collections.emptySet(), TREATMENT_1), drugTherapy(Collections.emptySet(), TREATMENT_2));
+        assertThat(treatmentHistoryEntry.treatmentDisplay()).isEqualTo("Treatment 1;Treatment 2");
     }
 
     @Test

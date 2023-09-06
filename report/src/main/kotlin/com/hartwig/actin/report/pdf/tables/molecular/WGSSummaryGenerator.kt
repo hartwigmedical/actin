@@ -63,7 +63,7 @@ class WGSSummaryGenerator(
                 .forEach(table::addCell)
         } else {
             table.addCell(
-                Cells.createSpanningEntry(
+                Cells.createSpanningContent(
                     "The received biomaterial(s) did not meet the requirements that are needed for "
                             + "high quality whole genome sequencing", table
                 )

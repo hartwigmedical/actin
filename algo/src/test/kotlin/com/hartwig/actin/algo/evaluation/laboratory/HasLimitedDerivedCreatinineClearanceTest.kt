@@ -84,7 +84,7 @@ class HasLimitedDerivedCreatinineClearanceTest {
 
         // CG 67
         val fallBack2 = create(1971, Gender.FEMALE, listOf(creatinine), emptyList())
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(fallBack2, creatinine))
+        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(fallBack2, creatinine))
     }
 
     companion object {

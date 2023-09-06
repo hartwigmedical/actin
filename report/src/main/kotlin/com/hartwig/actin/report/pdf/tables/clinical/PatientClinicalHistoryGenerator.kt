@@ -1,12 +1,20 @@
 package com.hartwig.actin.report.pdf.tables.clinical
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
+import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
-import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparatorFactory
+import com.hartwig.actin.clinical.sort.PriorSecondPrimaryDiagnosedDateComparator
+import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparator
 import com.hartwig.actin.report.pdf.tables.TableGenerator
-import com.hartwig.actin.report.pdf.util.Cells
-import com.hartwig.actin.report.pdf.util.Formats
-import com.hartwig.actin.report.pdf.util.Tables
+import com.hartwig.actin.report.pdf.util.Cells.create
+import com.hartwig.actin.report.pdf.util.Cells.createKey
+import com.hartwig.actin.report.pdf.util.Cells.createSpanningValue
+import com.hartwig.actin.report.pdf.util.Cells.createValue
+import com.hartwig.actin.report.pdf.util.Tables.createFixedWidthCols
+import com.hartwig.actin.report.pdf.util.Tables.createSingleColWithWidth
+import com.itextpdf.layout.element.BlockElement
+import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Table
 
 class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, private val keyWidth: Float, private val valueWidth: Float) :
@@ -16,96 +24,126 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
     }
 
     override fun contents(): Table {
-        val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
-        table.addCell(Cells.createKey("Relevant systemic treatment history"))
-        table.addCell(Cells.createValue(relevantSystemicPreTreatmentHistory(record)))
-        table.addCell(Cells.createKey("Relevant other oncological history"))
-        table.addCell(Cells.createValue(relevantNonSystemicPreTreatmentHistory(record).ifEmpty { Formats.VALUE_NONE }))
-        table.addCell(Cells.createKey("Previous primary tumor"))
-        table.addCell(Cells.createValue(secondPrimaryHistory(record).ifEmpty { Formats.VALUE_NONE }))
-        table.addCell(Cells.createKey("Relevant non-oncological history"))
-        table.addCell(Cells.createValue(relevantNonOncologicalHistory(record)))
+        val table = createFixedWidthCols(keyWidth, valueWidth)
+        table.addCell(createKey("Relevant systemic treatment history"))
+        table.addCell(create(tableOrNone(relevantSystemicPreTreatmentHistoryTable(record))))
+        table.addCell(createKey("Relevant other oncological history"))
+        table.addCell(create(tableOrNone(relevantNonSystemicPreTreatmentHistoryTable(record))))
+        table.addCell(createKey("Previous primary tumor"))
+        table.addCell(create(tableOrNone(secondPrimaryHistoryTable(record))))
+        table.addCell(createKey("Relevant non-oncological history"))
+        table.addCell(create(tableOrNone(relevantNonOncologicalHistoryTable(record))))
+        return table
+    }
+
+    private fun tableOrNone(table: Table): Table {
+        return if (table.numberOfRows > 0) table else createNoneTable()
+    }
+
+    private fun createNoneTable(): Table {
+        val table: Table = createSingleColumnTable(
+            valueWidth
+        )
+        table.addCell(createSpanningTableEntry("None", table))
+        return table
+    }
+
+    private fun relevantSystemicPreTreatmentHistoryTable(record: ClinicalRecord): Table {
+        return treatmentHistoryTable(record.treatmentHistory(), true)
+    }
+
+    private fun relevantNonSystemicPreTreatmentHistoryTable(record: ClinicalRecord): Table {
+        return treatmentHistoryTable(record.treatmentHistory(), false)
+    }
+
+    private fun treatmentHistoryTable(treatmentHistory: List<TreatmentHistoryEntry>, requireSystemic: Boolean): Table {
+        val dateWidth = valueWidth / 5
+        val treatmentWidth = valueWidth - dateWidth
+        val table: Table = createDoubleColumnTable(dateWidth, treatmentWidth)
+
+        treatmentHistory.filter { treatmentHistoryEntryIsSystemic(it) == requireSystemic }
+            .sortedWith(TreatmentHistoryAscendingDateComparator())
+            .flatMap { listOf(extractDateRangeString(it), extractTreatmentString(it)) }
+            .forEach { table.addCell(createSingleTableEntry(it)) }
+        return table
+    }
+
+    private fun treatmentHistoryEntryIsSystemic(treatmentHistoryEntry: TreatmentHistoryEntry): Boolean {
+        return treatmentHistoryEntry.treatments().any { it.isSystemic }
+    }
+
+    private fun secondPrimaryHistoryTable(record: ClinicalRecord): Table {
+        val table: Table = createSingleColumnTable(valueWidth)
+
+        record.priorSecondPrimaries().sortedWith(PriorSecondPrimaryDiagnosedDateComparator())
+            .forEach { table.addCell(createSingleTableEntry(toSecondPrimaryString(it))) }
+
+        return table
+    }
+
+    private fun relevantNonOncologicalHistoryTable(record: ClinicalRecord): Table {
+        val dateWidth = valueWidth / 5
+        val treatmentWidth = valueWidth - dateWidth
+        val table: Table = createDoubleColumnTable(dateWidth, treatmentWidth)
+
+        record.priorOtherConditions().forEach { priorOtherCondition: PriorOtherCondition ->
+            val dateString = toDateString(priorOtherCondition.year(), priorOtherCondition.month())
+            if (dateString != null) {
+                table.addCell(createSingleTableEntry(dateString))
+                table.addCell(createSingleTableEntry(toPriorOtherConditionString(priorOtherCondition)))
+            } else {
+                table.addCell(createSpanningTableEntry(toPriorOtherConditionString(priorOtherCondition), table))
+            }
+        }
         return table
     }
 
     companion object {
-        private fun relevantSystemicPreTreatmentHistory(record: ClinicalRecord): String {
-            return treatmentHistoryString(record.treatmentHistory(), true)
+        private const val STOP_REASON_PROGRESSIVE_DISEASE = "PD"
+
+        private fun extractDateRangeString(treatmentHistoryEntry: TreatmentHistoryEntry): String {
+            val startString = toDateString(treatmentHistoryEntry.startYear(), treatmentHistoryEntry.startMonth()) ?: "?"
+            return treatmentHistoryEntry.therapyHistoryDetails()?.let { toDateString(it.stopYear(), it.stopMonth()) }
+                ?.let { stopString: String -> "$startString-$stopString" } ?: startString
         }
 
-        private fun relevantNonSystemicPreTreatmentHistory(record: ClinicalRecord): String {
-            return treatmentHistoryString(record.treatmentHistory(), false)
+        private fun extractTreatmentString(treatmentHistoryEntry: TreatmentHistoryEntry): String {
+            val cyclesString = treatmentHistoryEntry.therapyHistoryDetails()?.cycles()?.let { "$it cycles" }
+
+            val stopReasonString = treatmentHistoryEntry.therapyHistoryDetails()?.stopReasonDetail()
+                ?.let { if (!it.equals(STOP_REASON_PROGRESSIVE_DISEASE, ignoreCase = true)) "stop reason: $it" else null }
+
+            val combinedAnnotation = listOfNotNull(cyclesString, stopReasonString).joinToString(", ")
+
+            return treatmentHistoryEntry.treatmentDisplay() + if (combinedAnnotation.isEmpty()) "" else " ($combinedAnnotation)"
         }
 
-        private fun treatmentHistoryString(treatmentHistory: List<TreatmentHistoryEntry>, isSystemic: Boolean): String {
-            val sortedFilteredTreatments = treatmentHistory.filter { treatmentHistoryEntryIsSystemic(it) == isSystemic }
-                .sortedWith(TreatmentHistoryAscendingDateComparatorFactory.treatmentHistoryEntryComparator())
-
-            val treatmentsByName = sortedFilteredTreatments.groupBy(TreatmentHistoryEntry::treatmentName)
-
-            val evaluatedNames: MutableSet<String> = mutableSetOf()
-            val annotationString = sortedFilteredTreatments.mapNotNull { treatment: TreatmentHistoryEntry ->
-                val treatmentName = treatment.treatmentName()
-                if (!evaluatedNames.contains(treatmentName)) {
-                    evaluatedNames.add(treatmentName)
-                    val annotationOption = treatmentsByName[treatmentName]!!
-                        .mapNotNull(::extractAnnotationForTreatment)
-                        .joinToString("; ").ifEmpty { null }
-                    // TODO: use treatmentHistoryEntry.treatmentDisplay() here
-                    treatmentName + annotationOption?.let { " ($it)" }
-                } else {
-                    null
-                }
-            }.joinToString(Formats.COMMA_SEPARATOR)
-            return Formats.valueOrDefault(annotationString, Formats.VALUE_NONE)
-        }
-
-        private fun treatmentHistoryEntryIsSystemic(treatmentHistoryEntry: TreatmentHistoryEntry): Boolean {
-            return treatmentHistoryEntry.treatments().any { it.isSystemic }
-        }
-
-        private fun extractAnnotationForTreatment(treatmentHistoryEntry: TreatmentHistoryEntry): String? {
-            return listOfNotNull(
-                toDateRangeString(treatmentHistoryEntry),
-                toNumberOfCyclesString(treatmentHistoryEntry),
-                toStopReasonString(treatmentHistoryEntry)
-            ).joinToString(Formats.COMMA_SEPARATOR).ifEmpty { null }
-        }
-
-        private fun secondPrimaryHistory(record: ClinicalRecord): String {
-            return record.priorSecondPrimaries().joinToString(Formats.COMMA_SEPARATOR) { priorSecondPrimary ->
-                val tumorLocation = priorSecondPrimary.tumorLocation()
-                val tumorDetails = when {
-                    priorSecondPrimary.tumorSubType().isNotEmpty() -> {
-                        tumorLocation + " " + priorSecondPrimary.tumorSubType()
-                    }
-
-                    priorSecondPrimary.tumorType().isNotEmpty() -> {
-                        tumorLocation + " " + priorSecondPrimary.tumorType()
-                    }
-
-                    else -> tumorLocation
+        private fun toSecondPrimaryString(priorSecondPrimary: PriorSecondPrimary): String {
+            val tumorLocation = priorSecondPrimary.tumorLocation()
+            val tumorDetails = when {
+                priorSecondPrimary.tumorSubType().isNotEmpty() -> {
+                    tumorLocation + " " + priorSecondPrimary.tumorSubType()
                 }
 
-                val dateAdditionDiagnosis = toDateString(priorSecondPrimary.diagnosedYear(), priorSecondPrimary.diagnosedMonth())
-                    ?.let { ("diagnosed $it, ") } ?: ""
+                priorSecondPrimary.tumorType().isNotEmpty() -> {
+                    tumorLocation + " " + priorSecondPrimary.tumorType()
+                }
 
-                val dateAdditionLastTreatment = toDateString(
-                    priorSecondPrimary.lastTreatmentYear(),
-                    priorSecondPrimary.lastTreatmentMonth()
-                )?.let { "last treatment $it, " } ?: ""
-
-                val active = if (priorSecondPrimary.isActive) "considered active" else "considered non-active"
-                "$tumorDetails ($dateAdditionDiagnosis$dateAdditionLastTreatment$active)"
+                else -> tumorLocation
             }
+            val dateAdditionDiagnosis: String = toDateString(priorSecondPrimary.diagnosedYear(), priorSecondPrimary.diagnosedMonth())
+                ?.let { "diagnosed $it, " } ?: ""
+
+            val dateAdditionLastTreatment = toDateString(priorSecondPrimary.lastTreatmentYear(), priorSecondPrimary.lastTreatmentMonth())
+                ?.let { "last treatment $it, " } ?: ""
+
+            val active = if (priorSecondPrimary.isActive) "considered active" else "considered non-active"
+            return "$tumorDetails ($dateAdditionDiagnosis$dateAdditionLastTreatment$active)"
         }
 
-        private fun toDateRangeString(treatmentHistoryEntry: TreatmentHistoryEntry): String? {
-            val startOption = toDateString(treatmentHistoryEntry.startYear(), treatmentHistoryEntry.startMonth())
-            val stopOption = treatmentHistoryEntry.therapyHistoryDetails()?.let { toDateString(it.stopYear(), it.stopMonth()) }
-            return startOption?.let { startString ->
-                startString + stopOption?.let { stopString -> "-$stopString" }
-            } ?: stopOption?.let { "end: $it" }
+        private fun toPriorOtherConditionString(priorOtherCondition: PriorOtherCondition): String {
+            val note = if (!priorOtherCondition.isContraindicationForTherapy) " (no contraindication for therapy)" else ""
+            return priorOtherCondition.name() + note
         }
 
         private fun toDateString(maybeYear: Int?, maybeMonth: Int?): String? {
@@ -114,21 +152,25 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
             }
         }
 
-        private fun toNumberOfCyclesString(treatmentHistoryEntry: TreatmentHistoryEntry): String? {
-            return treatmentHistoryEntry.therapyHistoryDetails()?.let { "${it.cycles()} cycles" }
+        private fun createDoubleColumnTable(column1Width: Float, column2Width: Float): Table {
+            return removePadding<Table>(createFixedWidthCols(column1Width, column2Width))
         }
 
-        private fun toStopReasonString(treatmentHistoryEntry: TreatmentHistoryEntry): String? {
-            return treatmentHistoryEntry.therapyHistoryDetails()?.let { "stop reason: ${it.stopReasonDetail()}" }
+        private fun createSingleColumnTable(width: Float): Table {
+            return removePadding<Table>(createSingleColWithWidth(width))
         }
 
-        private fun relevantNonOncologicalHistory(record: ClinicalRecord): String {
-            val relevantHistory = record.priorOtherConditions().joinToString(", ") { priorOtherCondition ->
-                val addon = if (!priorOtherCondition.isContraindicationForTherapy) " (no contraindication for therapy)" else ""
-                val dateAddition = toDateString(priorOtherCondition.year(), priorOtherCondition.month())?.let { " ($it)" } ?: ""
-                priorOtherCondition.name() + dateAddition + addon
-            }
-            return Formats.valueOrDefault(relevantHistory, Formats.VALUE_NONE)
+        private fun createSingleTableEntry(value: String): Cell {
+            return removePadding<Cell>(createValue(value))
+        }
+
+        private fun createSpanningTableEntry(value: String, table: Table): Cell {
+            return removePadding<Cell>(createSpanningValue(value, table))
+        }
+
+        private fun <T : BlockElement<T>?> removePadding(table: T): T {
+            table!!.setPadding(0f)
+            return table
         }
     }
 }

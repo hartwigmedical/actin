@@ -21,18 +21,46 @@ class HasLimitedLabValue(private val maxValue: Double, private val measurement: 
         val builder = recoverable().result(result)
         when (result) {
             EvaluationResult.FAIL -> {
-                builder.addFailSpecificMessages("${labValue.code()} exceeds limit")
-                builder.addFailGeneralMessages("${labValue.code()} exceeds limit")
+                builder.addFailSpecificMessages(
+                    "${labValue.code()} ${
+                        String.format(
+                            "%.1f",
+                            convertedValue
+                        )
+                    } ${targetUnit.display()} exceeds maximum of $maxValue ${targetUnit.display()}"
+                )
+                builder.addFailGeneralMessages(
+                    "${labValue.code()} ${
+                        String.format(
+                            "%.1f",
+                            convertedValue
+                        )
+                    } ${targetUnit.display()} exceeds max of $maxValue ${targetUnit.display()}"
+                )
             }
 
             EvaluationResult.UNDETERMINED -> {
-                builder.addUndeterminedSpecificMessages("${labValue.code()} sufficiency could not be evaluated")
-                builder.addUndeterminedGeneralMessages("${labValue.code()} undetermined")
+                builder.addUndeterminedSpecificMessages("${labValue.code()} requirements could not be determined")
+                builder.addUndeterminedGeneralMessages("${labValue.code()} requirements undetermined")
             }
 
             EvaluationResult.PASS -> {
-                builder.addPassSpecificMessages("${labValue.code()} is within limit")
-                builder.addPassGeneralMessages("${labValue.code()} within limit")
+                builder.addPassSpecificMessages(
+                    "${labValue.code()} ${
+                        String.format(
+                            "%.1f",
+                            convertedValue
+                        )
+                    } below maximum of $maxValue ${targetUnit.display()}"
+                )
+                builder.addPassGeneralMessages(
+                    "${labValue.code()} ${
+                        String.format(
+                            "%.1f",
+                            convertedValue
+                        )
+                    } below max of $maxValue ${targetUnit.display()}"
+                )
             }
 
             else -> {}

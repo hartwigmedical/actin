@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf.util
 
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.report.pdf.util.Formats.styleForTableValue
 import com.itextpdf.kernel.geom.Rectangle
 import com.itextpdf.kernel.pdf.PdfArray
 import com.itextpdf.kernel.pdf.action.PdfAction
@@ -17,7 +18,7 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 
 object Cells {
-    fun create(element: IBlockElement?): Cell {
+    fun create(element: IBlockElement): Cell {
         return create(element, 1, 1)
     }
 
@@ -26,10 +27,10 @@ object Cells {
     }
 
     fun createSpanningNoneEntry(table: Table): Cell {
-        return createSpanningEntry("None", table)
+        return createSpanningContent("None", table)
     }
 
-    fun createSpanningEntry(text: String, table: Table): Cell {
+    fun createSpanningContent(text: String, table: Table): Cell {
         val cell = create(Paragraph(text), 1, table.numberOfColumns)
         cell.addStyle(Styles.tableContentStyle())
         return cell
@@ -137,14 +138,20 @@ object Cells {
         return cell
     }
 
+    fun createSpanningValue(text: String, table: Table): Cell {
+        val cell = create(Paragraph(text), 1, table.numberOfColumns)
+        cell.addStyle(styleForTableValue(text))
+        return cell
+    }
+
     fun createValue(text: String): Cell {
         val cell = create(Paragraph(text))
-        cell.addStyle(Formats.styleForTableValue(text))
+        cell.addStyle(styleForTableValue(text))
         return cell
     }
 
     fun createValue(paragraphs: List<Paragraph>): Cell {
-        val cell = create(null)
+        val cell = createBorderless()
         for (paragraph in paragraphs) {
             cell.add(paragraph)
         }
@@ -170,12 +177,19 @@ object Cells {
         return cell
     }
 
-    private fun create(element: IBlockElement?, rows: Int, cols: Int): Cell {
+    private fun create(element: IBlockElement, rows: Int, cols: Int): Cell {
+        val cell = createBorderless(rows, cols)
+        cell.add(element)
+        return cell
+    }
+
+    private fun createBorderless(): Cell {
+        return createBorderless(1, 1)
+    }
+
+    private fun createBorderless(rows: Int, cols: Int): Cell {
         val cell = Cell(rows, cols)
         cell.setBorder(Border.NO_BORDER)
-        if (element != null) {
-            cell.add(element)
-        }
         return cell
     }
 }
