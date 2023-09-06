@@ -1,9 +1,9 @@
 FROM eclipse-temurin:11-jre
 
 COPY --from=eu.gcr.io/hmf-build/common-resources-public:0.1 /data/resources/public/disease_ontology /data/resources/public/disease_ontology
-COPY --from=europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-resources:0.1 /data/resources/actin/clinical_curation /data/resources/actin/clinical_curation
-COPY --from=europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-resources:0.1 /data/resources/actin/atc_config /data/resources/actin/atc_config
-COPY --from=europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-resources:0.1 /data/resources/actin/treatment_db /data/resources/actin/treatment_db
+COPY --from=europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-resources:0.2 /data/resources/actin/clinical_curation /data/resources/actin/clinical_curation
+COPY --from=europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-resources:0.2 /data/resources/actin/atc_config /data/resources/actin/atc_config
+COPY --from=europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-resources:0.2 /data/resources/actin/treatment_db /data/resources/actin/treatment_db
 
 COPY target/clinical-local-SNAPSHOT-jar-with-dependencies.jar /usr/local/actin.jar
 
