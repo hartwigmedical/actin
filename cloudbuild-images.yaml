@@ -9,10 +9,10 @@ steps:
     dir: 'molecular'
     args: [ 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-molecular', '$TAG_NAME' ]
 
-  - id: 'Build and push the treatment image with tag'
+  - id: 'Build and push the trial image with tag'
     name: 'eu.gcr.io/hmf-build/docker-tag'
     dir: 'treatment'
-    args: [ 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-treatment', '$TAG_NAME' ]
+    args: [ 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-trial', '$TAG_NAME' ]
 
   - id: 'Build and push the algo image with tag'
     name: 'eu.gcr.io/hmf-build/docker-tag'
