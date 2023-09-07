@@ -14,7 +14,7 @@ class EvaluatedCohortFactoryTest {
     @Test
     fun shouldCreateEvaluatedCohortsFromMinimalMatch() {
         val cohorts = create(TestTreatmentMatchFactory.createMinimalTreatmentMatch())
-        assertThat(cohorts.isEmpty()).isTrue
+        assertThat(cohorts).isEmpty()
     }
 
     @Test
@@ -23,46 +23,46 @@ class EvaluatedCohortFactoryTest {
         assertThat(cohorts).hasSize(5)
 
         val trial1cohortA = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort A")
-        assertThat(trial1cohortA.molecularEvents.isEmpty()).isFalse
-        assertThat(trial1cohortA.molecularEvents.contains("BRAF V600E")).isTrue
+        assertThat(trial1cohortA.molecularEvents).isNotEmpty
+        assertThat(trial1cohortA.molecularEvents).containsExactly("BRAF V600E")
         assertThat(trial1cohortA.isPotentiallyEligible).isTrue
         assertThat(trial1cohortA.isOpen).isTrue
         assertThat(trial1cohortA.hasSlotsAvailable).isFalse
-        assertThat(trial1cohortA.warnings.isEmpty()).isFalse
-        assertThat(trial1cohortA.fails.isEmpty()).isTrue
+        assertThat(trial1cohortA.warnings).isNotEmpty
+        assertThat(trial1cohortA.fails).isEmpty()
 
         val trial1cohortB = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort B")
-        assertThat(trial1cohortB.molecularEvents.isEmpty()).isTrue
+        assertThat(trial1cohortB.molecularEvents).isEmpty()
         assertThat(trial1cohortB.isPotentiallyEligible).isTrue
         assertThat(trial1cohortB.isOpen).isTrue
         assertThat(trial1cohortB.hasSlotsAvailable).isTrue
-        assertThat(trial1cohortB.warnings.isEmpty()).isFalse
-        assertThat(trial1cohortB.fails.isEmpty()).isTrue
+        assertThat(trial1cohortB.warnings).isNotEmpty
+        assertThat(trial1cohortB.fails).isEmpty()
 
         val trial1cohortC = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort C")
-        assertThat(trial1cohortC.molecularEvents.isEmpty()).isTrue
+        assertThat(trial1cohortC.molecularEvents).isEmpty()
         assertThat(trial1cohortC.isPotentiallyEligible).isFalse
         assertThat(trial1cohortC.isOpen).isFalse
         assertThat(trial1cohortC.hasSlotsAvailable).isFalse
-        assertThat(trial1cohortC.warnings.isEmpty()).isFalse
-        assertThat(trial1cohortC.fails.isEmpty()).isFalse
+        assertThat(trial1cohortC.warnings).isNotEmpty
+        assertThat(trial1cohortC.fails).isNotEmpty
 
         val trial2cohortA = findByAcronymAndCohort(cohorts, "TEST-2", "Cohort A")
-        assertThat(trial2cohortA.molecularEvents.isEmpty()).isFalse
-        assertThat(trial2cohortA.molecularEvents.contains("BRAF V600E")).isTrue
+        assertThat(trial2cohortA.molecularEvents).isNotEmpty
+        assertThat(trial2cohortA.molecularEvents).containsExactly("BRAF V600E")
         assertThat(trial2cohortA.isPotentiallyEligible).isTrue
         assertThat(trial2cohortA.isOpen).isTrue
         assertThat(trial2cohortA.hasSlotsAvailable).isFalse
-        assertThat(trial2cohortA.warnings.isEmpty()).isTrue
-        assertThat(trial2cohortA.fails.isEmpty()).isTrue
+        assertThat(trial2cohortA.warnings).isEmpty()
+        assertThat(trial2cohortA.fails).isEmpty()
 
         val trial2cohortB = findByAcronymAndCohort(cohorts, "TEST-2", "Cohort B")
-        assertThat(trial2cohortB.molecularEvents.isEmpty()).isTrue
+        assertThat(trial2cohortB.molecularEvents).isEmpty()
         assertThat(trial2cohortB.isPotentiallyEligible).isFalse
         assertThat(trial2cohortB.isOpen).isTrue
         assertThat(trial2cohortB.hasSlotsAvailable).isTrue
-        assertThat(trial2cohortB.warnings.isEmpty()).isTrue
-        assertThat(trial2cohortB.fails.isEmpty()).isFalse
+        assertThat(trial2cohortB.warnings).isEmpty()
+        assertThat(trial2cohortB.fails).isNotEmpty
     }
 
     @Test

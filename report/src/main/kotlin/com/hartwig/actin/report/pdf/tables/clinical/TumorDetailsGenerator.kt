@@ -60,7 +60,8 @@ class TumorDetailsGenerator(private val record: ClinicalRecord, private val keyW
         }
 
         private fun activeLesionString(type: String, active: Boolean?): String {
-            return type + active?.let { if (it) " (active)" else " (not active)" }
+            val activeString = active?.let { if (it) " (active)" else " (not active)" } ?: ""
+            return type + activeString
         }
     }
 }

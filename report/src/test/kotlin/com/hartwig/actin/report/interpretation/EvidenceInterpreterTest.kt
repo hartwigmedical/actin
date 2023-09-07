@@ -26,19 +26,15 @@ class EvidenceInterpreterTest {
             .build()
 
         val approved = interpreter.eventsWithApprovedEvidence(evidence)
-        assertThat(approved).hasSize(1)
-        assertThat(approved.contains("approved")).isTrue
+        assertThat(approved).containsExactly("approved")
 
         val external = interpreter.additionalEventsWithExternalTrialEvidence(evidence)
-        assertThat(external).hasSize(1)
-        assertThat(external.contains("external")).isTrue
+        assertThat(external).containsExactly("external")
 
         val onLabel = interpreter.additionalEventsWithOnLabelExperimentalEvidence(evidence)
-        assertThat(onLabel).hasSize(1)
-        assertThat(onLabel.contains("on-label")).isTrue
+        assertThat(onLabel).containsExactly("on-label")
 
         val offLabel = interpreter.additionalEventsWithOffLabelExperimentalEvidence(evidence)
-        assertThat(offLabel).hasSize(1)
-        assertThat(offLabel.contains("off-label")).isTrue
+        assertThat(offLabel).containsExactly("off-label")
     }
 }

@@ -308,12 +308,7 @@ class TrialMatchingDetailsChapter(private val report: Report) : ReportChapter {
                 if (trial.cohorts().isEmpty()) {
                     return true
                 }
-                for (cohort in trial.cohorts()) {
-                    if (cohort.isPotentiallyEligible && !cohort.metadata().blacklist() && cohort.metadata().open()) {
-                        return true
-                    }
-                }
-                return false
+                return trial.cohorts().any { it.isPotentiallyEligible && !it.metadata().blacklist() && it.metadata().open() }
             }
         }
     }

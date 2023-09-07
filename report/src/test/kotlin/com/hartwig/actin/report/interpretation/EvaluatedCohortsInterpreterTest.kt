@@ -10,19 +10,17 @@ class EvaluatedCohortsInterpreterTest {
     @Test
     fun shouldReturnAllEligibleAndOpenCohortsForDriver() {
         val matchingTrials = createInterpreter().trialsForDriver(driverForEvent(ELIGIBLE_EVENT))
-        assertThat(matchingTrials).hasSize(2)
-        assertThat(matchingTrials.contains(ELIGIBLE_COHORT)).isTrue
-        assertThat(matchingTrials.contains(ELIGIBLE_COHORT_2)).isTrue
+        assertThat(matchingTrials).containsExactlyInAnyOrder(ELIGIBLE_COHORT, ELIGIBLE_COHORT_2)
     }
 
     @Test
     fun shouldNotReturnMatchesForIneligibleCohorts() {
-        assertThat(createInterpreter().trialsForDriver(driverForEvent(INELIGIBLE_COHORT)).isEmpty()).isTrue
+        assertThat(createInterpreter().trialsForDriver(driverForEvent(INELIGIBLE_COHORT))).isEmpty()
     }
 
     @Test
     fun shouldNotReturnMatchesForClosedCohorts() {
-        assertThat(createInterpreter().trialsForDriver(driverForEvent(CLOSED_COHORT)).isEmpty()).isTrue
+        assertThat(createInterpreter().trialsForDriver(driverForEvent(CLOSED_COHORT))).isEmpty()
     }
 
     @Test

@@ -54,48 +54,44 @@ class MedicationGenerator(private val medications: List<Medication>, private val
             val dosageString = if (dosageMin == dosageMax) dosageMin else "$dosageMin - $dosageMax"
             val result = if (dosage.ifNeeded() == true) "if needed $dosageString" else dosageString
 
+            val dosageUnit = dosage.dosageUnit()
             return when {
-                dosage.dosageUnit() == null -> {
+                dosageUnit == null -> {
                     "unknown prescription"
                 }
 
-                dosage.dosageUnit()!!.matches(SPECIFIC_OR_UNKNOWN.toRegex()) -> {
-                    dosage.dosageUnit()!!
+                dosageUnit.matches(SPECIFIC_OR_UNKNOWN.toRegex()) -> {
+                    dosageUnit
                 }
 
-                dosage.dosageUnit() != null -> {
-                    "$result ${dosage.dosageUnit()}"
+                else -> {
+                    "$result $dosageUnit"
                 }
-
-                else ->
-                    result
             }
         }
 
         private fun formatDosageLimit(dosageLimit: Double?) =
-            if (dosageLimit != null && dosageLimit != 0.0) Formats.twoDigitNumber(dosageLimit!!) else "?"
+            if (dosageLimit != null && dosageLimit != 0.0) Formats.twoDigitNumber(dosageLimit) else "?"
 
         private fun frequency(dosage: Dosage): String {
             val frequency = if (dosage.frequency() != null) Formats.twoDigitNumber(dosage.frequency()!!) else "?"
+            val frequencyUnit = dosage.frequencyUnit()
             return when {
-                dosage.frequencyUnit() == null -> {
+                frequencyUnit == null -> {
                     "unknown prescription"
                 }
 
-                dosage.frequencyUnit()!!.matches(("$SPECIFIC_OR_UNKNOWN|once").toRegex()) -> {
-                    dosage.frequencyUnit()!!
+                frequencyUnit.matches(("$SPECIFIC_OR_UNKNOWN|once").toRegex()) -> {
+                    frequencyUnit
                 }
 
                 dosage.periodBetweenUnit() != null -> {
-                    frequency + " / " + Formats.noDigitNumber(dosage.periodBetweenValue()!! + 1) + " " + dosage.periodBetweenUnit()
+                    "$frequency / ${Formats.noDigitNumber(dosage.periodBetweenValue()!! + 1)} ${dosage.periodBetweenUnit()}"
                 }
 
-                dosage.frequencyUnit() != null -> {
-                    frequency + " / " + dosage.frequencyUnit()
+                else -> {
+                    "$frequency / $frequencyUnit"
                 }
-
-                else ->
-                    frequency
             }
         }
     }
