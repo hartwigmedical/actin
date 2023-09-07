@@ -9,6 +9,7 @@ This application requires Java 11+ and can be run as follows:
 java -cp actin.jar com.hartwig.actin.treatment.TreatmentCreatorApplication \
    -ctc_config_directory /path/to/ctc_config_dir \
    -trial_config_directory /path/to/trial_config_dir \
+   -treatment_directory /path/to/treatment_dir \
    -doid_json /path/to/full_doid_tree_json_file \
    -known_genes_tsv /path/to/known_genes.tsv \
    -output_directory /path/to/where/treatment_json_files/are/written
@@ -144,8 +145,12 @@ An inclusion rule has to be either a specific rule or a composite rule combining
   example `HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y[2, NEUROPATHY;THYROID]`).
 
 An inclusion rule is configured validly only if the expected number of inputs is provided in the config and the inputs can be resolved to
-the
-type of input expected by the function.
+the type of input expected by the function. This is where the additional inputs to ACTIN-treatment come into play:
+
+- `treatment_directory` is used as a reference to check that any configured treatment is actually a treatment
+- `doid_json` holds the DOID tree and is used to verify that any configured DOID actually exists
+- `known_genes_tsv` defines the set of genes known to play a role in cancer, and any gene configured in the trial config should be present
+  in this set.
 
 Some examples:
 
