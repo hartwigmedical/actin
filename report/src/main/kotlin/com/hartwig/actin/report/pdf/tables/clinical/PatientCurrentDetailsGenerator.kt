@@ -72,7 +72,7 @@ class PatientCurrentDetailsGenerator(private val record: ClinicalRecord, private
                 val grade = toxicity.grade()
                 grade != null && grade >= 2 || toxicity.source() == ToxicitySource.QUESTIONNAIRE
             }.joinToString(Formats.COMMA_SEPARATOR) { toxicity ->
-                toxicity.name() + toxicity.grade()?.let { " ($it)" }
+                toxicity.name() + (toxicity.grade()?.let { " ($it)" } ?: "")
             }
             return Formats.valueOrDefault(toxicitySummary, "None")
         }
@@ -84,7 +84,7 @@ class PatientCurrentDetailsGenerator(private val record: ClinicalRecord, private
                 return if (hasComplications) "Yes (complication details unknown)" else "Unknown"
             }
             val complicationSummary = complications.joinToString(Formats.COMMA_SEPARATOR) { complication ->
-                complication.name() + toDateString(complication.year(), complication.month())?.let { " ($it)" }
+                complication.name() + (toDateString(complication.year(), complication.month())?.let { " ($it)" } ?: "")
             }
             return Formats.valueOrDefault(complicationSummary, if (hasComplications) "Yes (complication details unknown)" else "None")
         }
