@@ -6,18 +6,20 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.config.Configurator
-import org.immutables.value.Value
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
 
-@Value.Immutable
-@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
-interface TabularTreatmentMatchWriterConfig {
-    fun treatmentMatchJson(): String
-    fun outputDirectory(): String
+data class TabularTreatmentMatchWriterConfig(
+    val treatmentMatchJson: String,
+    val outputDirectory: String
+) {
 
     companion object {
+        val LOGGER: Logger = LogManager.getLogger(TabularTreatmentMatchWriterConfig::class.java)
+        private const val TREATMENT_MATCH_JSON = "treatment_match_json"
+        private const val OUTPUT_DIRECTORY = "output_directory"
+        private const val LOG_DEBUG = "log_debug"
+
         fun createOptions(): Options {
             val options = Options()
             options.addOption(TREATMENT_MATCH_JSON, true, "File containing all available treatments, matched to the patient")
@@ -32,15 +34,10 @@ interface TabularTreatmentMatchWriterConfig {
                 Configurator.setRootLevel(Level.DEBUG)
                 LOGGER.debug("Switched root level logging to DEBUG")
             }
-            return ImmutableTabularTreatmentMatchWriterConfig.builder()
-                .treatmentMatchJson(ApplicationConfig.nonOptionalFile(cmd, TREATMENT_MATCH_JSON))
-                .outputDirectory(ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY))
-                .build()
+            return TabularTreatmentMatchWriterConfig(
+                treatmentMatchJson = ApplicationConfig.nonOptionalFile(cmd, TREATMENT_MATCH_JSON),
+                outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY)
+            )
         }
-
-        val LOGGER = LogManager.getLogger(TabularTreatmentMatchWriterConfig::class.java)
-        const val TREATMENT_MATCH_JSON = "treatment_match_json"
-        const val OUTPUT_DIRECTORY = "output_directory"
-        const val LOG_DEBUG = "log_debug"
     }
 }

@@ -15,6 +15,7 @@ class PageEventHandler private constructor(private val header: Header, private v
     private var chapterTitle = "Undefined"
     private var firstPageOfChapter = true
     private var outline: PdfOutline? = null
+
     override fun handleEvent(event: Event) {
         val documentEvent = event as PdfDocumentEvent
         if (documentEvent.type == PdfDocumentEvent.START_PAGE) {

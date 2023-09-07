@@ -6,6 +6,7 @@ import org.junit.Test
 import java.io.IOException
 
 class ReportWriterTest {
+
     @Test
     @Throws(IOException::class)
     fun canGenerateInMemoryReports() {

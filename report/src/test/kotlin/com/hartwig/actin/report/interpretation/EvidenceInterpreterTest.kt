@@ -1,17 +1,16 @@
 package com.hartwig.actin.report.interpretation
 
-import com.google.common.collect.Lists
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidence
 import com.hartwig.actin.molecular.interpretation.ImmutableAggregatedEvidence
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class EvidenceInterpreterTest {
     @Test
-    fun canInterpretEvidence() {
+    fun shouldInterpretEvidence() {
         val cohortWithInclusion: EvaluatedCohort = evaluatedCohort(molecularEvents = setOf("inclusion"))
-        val interpreter = EvidenceInterpreter.fromEvaluatedCohorts(Lists.newArrayList(cohortWithInclusion))
+        val interpreter = EvidenceInterpreter.fromEvaluatedCohorts(listOf(cohortWithInclusion))
         val evidence: AggregatedEvidence = ImmutableAggregatedEvidence.builder()
             .putApprovedTreatmentsPerEvent("approved", "treatment")
             .putExternalEligibleTrialsPerEvent("external", "treatment")
@@ -25,17 +24,21 @@ class EvidenceInterpreterTest {
             .putKnownResistantTreatmentsPerEvent("known", "treatment")
             .putSuspectResistanceTreatmentsPerEvent("suspect", "treatment")
             .build()
+
         val approved = interpreter.eventsWithApprovedEvidence(evidence)
-        Assert.assertEquals(1, approved.size.toLong())
-        Assert.assertTrue(approved.contains("approved"))
+        assertThat(approved).hasSize(1)
+        assertThat(approved.contains("approved")).isTrue
+
         val external = interpreter.additionalEventsWithExternalTrialEvidence(evidence)
-        Assert.assertEquals(1, external.size.toLong())
-        Assert.assertTrue(external.contains("external"))
+        assertThat(external).hasSize(1)
+        assertThat(external.contains("external")).isTrue
+
         val onLabel = interpreter.additionalEventsWithOnLabelExperimentalEvidence(evidence)
-        Assert.assertEquals(1, onLabel.size.toLong())
-        Assert.assertTrue(onLabel.contains("on-label"))
+        assertThat(onLabel).hasSize(1)
+        assertThat(onLabel.contains("on-label")).isTrue
+
         val offLabel = interpreter.additionalEventsWithOffLabelExperimentalEvidence(evidence)
-        Assert.assertEquals(1, offLabel.size.toLong())
-        Assert.assertTrue(offLabel.contains("off-label"))
+        assertThat(offLabel).hasSize(1)
+        assertThat(offLabel.contains("off-label")).isTrue
     }
 }

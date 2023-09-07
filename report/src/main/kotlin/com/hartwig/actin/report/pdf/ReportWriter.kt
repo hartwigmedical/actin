@@ -22,9 +22,8 @@ import com.itextpdf.layout.properties.AreaBreakType
 import org.apache.logging.log4j.LogManager
 import java.io.ByteArrayOutputStream
 import java.io.IOException
-import java.util.*
 
-class ReportWriter internal constructor(private val writeToDisk: Boolean, private val outputDirectory: String?) {
+class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory: String?) {
     @Throws(IOException::class)
     fun write(report: Report) {
         write(report, false)
@@ -35,26 +34,27 @@ class ReportWriter internal constructor(private val writeToDisk: Boolean, privat
     fun write(report: Report, enableExtendedMode: Boolean) {
         LOGGER.debug("Initializing output styles")
         Styles.initialize()
-        val chapters: MutableList<ReportChapter> = LinkedList(
-            Arrays.asList(
-                SummaryChapter(report),
-                MolecularDetailsChapter(report),
-                ClinicalDetailsChapter(report),
-                TrialMatchingChapter(report, enableExtendedMode)
-            )
-        )
-        if (enableExtendedMode) {
+
+        val detailsChapter = if (enableExtendedMode) {
             LOGGER.info("Including trial matching details")
-            chapters.add(TrialMatchingDetailsChapter(report))
-        }
-        writePdfChapters(report.patientId(), chapters, enableExtendedMode)
+            TrialMatchingDetailsChapter(report)
+        } else null
+
+        val chapters = listOfNotNull(
+            SummaryChapter(report),
+            MolecularDetailsChapter(report),
+            ClinicalDetailsChapter(report),
+            TrialMatchingChapter(report, enableExtendedMode),
+            detailsChapter
+        )
+        writePdfChapters(report.patientId, chapters, enableExtendedMode)
     }
 
     @Throws(IOException::class)
     private fun writePdfChapters(patientId: String, chapters: List<ReportChapter>, enableExtendedMode: Boolean) {
         val doc = initializeReport(patientId, enableExtendedMode)
         val pdfDocument = doc.pdfDocument
-        val pageEventHandler: PageEventHandler = PageEventHandler.Companion.create(patientId)
+        val pageEventHandler: PageEventHandler = PageEventHandler.create(patientId)
         pdfDocument.addEventHandler(PdfDocumentEvent.START_PAGE, pageEventHandler)
         for (i in chapters.indices) {
             val chapter = chapters[i]

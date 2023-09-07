@@ -17,7 +17,7 @@ class MolecularDriverEntryComparator : Comparator<MolecularDriverEntry> {
     private class DriverTypeComparator : Comparator<String> {
         override fun compare(string1: String, string2: String): Int {
             return compareValuesBy(
-                string1.lowercase(), string2.lowercase(),
+                string2.lowercase(), string1.lowercase(),
                 { it.startsWith("mutation") },
                 { it.startsWith("amplification") },
                 { it.startsWith("loss") },

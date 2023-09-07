@@ -1,8 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
-import com.google.common.collect.Lists
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class MolecularDriverEntryComparatorTest {
@@ -17,25 +16,23 @@ class MolecularDriverEntryComparatorTest {
         val entry7 = create(DriverLikelihood.HIGH, "virus", "driver 6")
         val entry8 = create(DriverLikelihood.MEDIUM, "fusion", "driver 1")
         val entry9 = create(DriverLikelihood.LOW, "disruption", "driver 2")
-        val entries: List<MolecularDriverEntry> = Lists.newArrayList(entry8, entry6, entry3, entry1, entry9, entry2, entry7, entry4, entry5)
-        entries.sort(MolecularDriverEntryComparator())
-        Assert.assertEquals(entry1, entries[0])
-        Assert.assertEquals(entry2, entries[1])
-        Assert.assertEquals(entry3, entries[2])
-        Assert.assertEquals(entry4, entries[3])
-        Assert.assertEquals(entry5, entries[4])
-        Assert.assertEquals(entry6, entries[5])
-        Assert.assertEquals(entry7, entries[6])
-        Assert.assertEquals(entry8, entries[7])
-        Assert.assertEquals(entry9, entries[8])
+        val entries = listOf(entry8, entry6, entry3, entry1, entry9, entry2, entry7, entry4, entry5)
+            .sortedWith(MolecularDriverEntryComparator())
+       
+        assertThat(entries[0]).isEqualTo(entry1)
+        assertThat(entries[1]).isEqualTo(entry2)
+        assertThat(entries[2]).isEqualTo(entry3)
+        assertThat(entries[3]).isEqualTo(entry4)
+        assertThat(entries[4]).isEqualTo(entry5)
+        assertThat(entries[5]).isEqualTo(entry6)
+        assertThat(entries[6]).isEqualTo(entry7)
+        assertThat(entries[7]).isEqualTo(entry8)
+        assertThat(entries[8]).isEqualTo(entry9)
     }
 
     companion object {
-        private fun create(
-            driverLikelihood: DriverLikelihood, driverType: String,
-            driver: String
-        ): MolecularDriverEntry {
-            return ImmutableMolecularDriverEntry.builder().driverType(driverType).driver(driver).driverLikelihood(driverLikelihood).build()
+        private fun create(driverLikelihood: DriverLikelihood, driverType: String, driver: String): MolecularDriverEntry {
+            return MolecularDriverEntry(driverType = driverType, driver = driver, driverLikelihood = driverLikelihood)
         }
     }
 }

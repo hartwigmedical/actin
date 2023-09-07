@@ -7,18 +7,14 @@ import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.core.config.Configurator
-import org.immutables.value.Value
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
 
-@Value.Immutable
-@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
-interface ReporterConfig {
-    fun clinicalJson(): String
-    fun molecularJson(): String
-    fun treatmentMatchJson(): String
-    fun outputDirectory(): String
-    fun enableExtendedMode(): Boolean
+data class ReporterConfig(
+    val clinicalJson: String,
+    val molecularJson: String,
+    val treatmentMatchJson: String,
+    val outputDirectory: String,
+    val enableExtendedMode: Boolean
+) {
 
     companion object {
         fun createOptions(): Options {
@@ -42,13 +38,13 @@ interface ReporterConfig {
             if (enableExtendedMode) {
                 LOGGER.info("Extended reporting mode has been enabled")
             }
-            return ImmutableReporterConfig.builder()
-                .clinicalJson(ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON))
-                .molecularJson(ApplicationConfig.nonOptionalFile(cmd, MOLECULAR_JSON))
-                .treatmentMatchJson(ApplicationConfig.nonOptionalFile(cmd, TREATMENT_MATCH_JSON))
-                .outputDirectory(ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY))
-                .enableExtendedMode(enableExtendedMode)
-                .build()
+            return ReporterConfig(
+                clinicalJson = ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON),
+                molecularJson = ApplicationConfig.nonOptionalFile(cmd, MOLECULAR_JSON),
+                treatmentMatchJson = ApplicationConfig.nonOptionalFile(cmd, TREATMENT_MATCH_JSON),
+                outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
+                enableExtendedMode = enableExtendedMode
+            )
         }
 
         val LOGGER = LogManager.getLogger(ReporterConfig::class.java)

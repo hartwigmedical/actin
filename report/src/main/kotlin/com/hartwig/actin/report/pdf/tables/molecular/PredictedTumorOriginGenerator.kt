@@ -30,8 +30,7 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, priv
             val numColumns = predictions.size + 1
             val table = Table(numColumns)
             table.addHeaderCell(Cells.createEmpty())
-            (0..predictions.size)
-                .asSequence()
+            predictions.indices.asSequence()
                 .map { i: Int -> "${i + 1}. ${predictions[i].cancerType()}" }
                 .map { Cells.createHeader(it).setPaddingLeft(PADDING_LEFT.toFloat()) }
                 .forEach(table::addHeaderCell)
@@ -69,6 +68,7 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, priv
     companion object {
         private const val PADDING_LEFT = 20
         private const val PADDING_RIGHT = 25
+
         private fun addClassifierRow(
             classifierText: String, predictions: List<CuppaPrediction>,
             classifierFunction: (CuppaPrediction) -> Double, table: Table
@@ -77,10 +77,8 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, priv
             predictions
                 .asSequence()
                 .map(classifierFunction)
-                .map { v: Double? -> if (v == null) Formats.VALUE_UNKNOWN else Formats.percentage(v) }
-                .map { text: String ->
-                    Cells.createContent(text).setPaddingLeft(PADDING_LEFT.toFloat()).setPaddingRight(PADDING_RIGHT.toFloat())
-                }
+                .map { Formats.percentage(it) }
+                .map { Cells.createContent(it).setPaddingLeft(PADDING_LEFT.toFloat()).setPaddingRight(PADDING_RIGHT.toFloat()) }
                 .forEach(table::addCell)
         }
     }

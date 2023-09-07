@@ -7,12 +7,14 @@ import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
+import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
 class EligibleApprovedTreatmentGenerator(
     private val clinical: ClinicalRecord, private val molecular: MolecularRecord,
     private val width: Float
 ) : TableGenerator {
+
     override fun title(): String {
         return "Approved treatments considered eligible"
     }

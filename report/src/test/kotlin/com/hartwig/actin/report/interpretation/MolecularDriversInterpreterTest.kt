@@ -14,10 +14,11 @@ import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class MolecularDriversInterpreterTest {
+
     @Test
     fun shouldIncludeNonActionableReportableDrivers() {
         val record = createTestMolecularRecordWithDriverEvidence(TestActionableEvidenceFactory.createEmpty(), true)
@@ -64,18 +65,19 @@ class MolecularDriversInterpreterTest {
         const val EVENT_DISRUPTION = "disruption"
         const val EVENT_FUSION = "fusion"
         const val EVENT_VIRUS = "virus"
+
         private fun assertCountForRecord(expectedCount: Int, molecularRecord: MolecularRecord) {
             assertCountForRecordAndCohorts(expectedCount, molecularRecord, emptyList())
         }
 
         private fun assertCountForRecordAndCohorts(expectedCount: Int, molecularRecord: MolecularRecord, cohorts: List<EvaluatedCohort>) {
             val interpreter = MolecularDriversInterpreter(molecularRecord.drivers(), EvaluatedCohortsInterpreter(cohorts))
-            Assert.assertEquals(expectedCount.toLong(), interpreter.filteredVariants().count())
-            Assert.assertEquals(expectedCount.toLong(), interpreter.filteredCopyNumbers().count())
-            Assert.assertEquals(expectedCount.toLong(), interpreter.filteredHomozygousDisruptions().count())
-            Assert.assertEquals(expectedCount.toLong(), interpreter.filteredDisruptions().count())
-            Assert.assertEquals(expectedCount.toLong(), interpreter.filteredFusions().count())
-            Assert.assertEquals(expectedCount.toLong(), interpreter.filteredViruses().count())
+            assertThat(interpreter.filteredVariants()).hasSize(expectedCount)
+            assertThat(interpreter.filteredCopyNumbers()).hasSize(expectedCount)
+            assertThat(interpreter.filteredHomozygousDisruptions()).hasSize(expectedCount)
+            assertThat(interpreter.filteredDisruptions()).hasSize(expectedCount)
+            assertThat(interpreter.filteredFusions()).hasSize(expectedCount)
+            assertThat(interpreter.filteredViruses()).hasSize(expectedCount)
         }
 
         private fun createTestMolecularRecordWithNonReportableDriverWithEvidence(evidence: ActionableEvidence): MolecularRecord {

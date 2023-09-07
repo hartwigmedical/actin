@@ -8,26 +8,26 @@ import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.report.datamodel.ReportFactory.fromInputs
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class ReportFactoryTest {
     @Test
     fun canCreateReportFromTestData() {
-        Assert.assertNotNull(
+        assertThat(
             fromInputs(
                 TestClinicalFactory.createMinimalTestClinicalRecord(),
                 TestMolecularFactory.createMinimalTestMolecularRecord(),
                 TestTreatmentMatchFactory.createMinimalTreatmentMatch()
             )
-        )
-        Assert.assertNotNull(
+        ).isNotNull
+        assertThat(
             fromInputs(
                 TestClinicalFactory.createProperTestClinicalRecord(),
                 TestMolecularFactory.createProperTestMolecularRecord(),
                 TestTreatmentMatchFactory.createProperTreatmentMatch()
             )
-        )
+        ).isNotNull
     }
 
     @Test
@@ -41,6 +41,6 @@ class ReportFactoryTest {
             .from(TestTreatmentMatchFactory.createMinimalTreatmentMatch())
             .patientId("treatment-match")
             .build()
-        Assert.assertEquals("clinical", fromInputs(clinical, molecular, treatmentMatch).patientId())
+        assertThat(fromInputs(clinical, molecular, treatmentMatch).patientId).isEqualTo("clinical")
     }
 }

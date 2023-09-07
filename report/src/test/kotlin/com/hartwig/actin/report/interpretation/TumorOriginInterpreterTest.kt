@@ -10,7 +10,8 @@ import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.interpret
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.likelihoodMeetsConfidenceThreshold
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.predictionsToDisplay
 import com.hartwig.actin.report.pdf.util.Formats
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.within
 import org.junit.Test
 import java.util.stream.Collectors
 import java.util.stream.IntStream
@@ -18,62 +19,60 @@ import java.util.stream.IntStream
 class TumorOriginInterpreterTest {
     @Test
     fun canDetermineConfidenceOfPredictedTumorOrigin() {
-        Assert.assertFalse(hasConfidentPrediction(null))
-        Assert.assertFalse(hasConfidentPrediction(withPredictions(0.4)))
-        Assert.assertTrue(hasConfidentPrediction(withPredictions(0.8)))
-        Assert.assertTrue(hasConfidentPrediction(withPredictions(0.99)))
+        assertThat(hasConfidentPrediction(null)).isFalse
+        assertThat(hasConfidentPrediction(withPredictions(0.4))).isFalse
+        assertThat(hasConfidentPrediction(withPredictions(0.8))).isTrue
+        assertThat(hasConfidentPrediction(withPredictions(0.99))).isTrue
     }
 
     @Test
     fun shouldReturnFalseForLikelihoodBelowConfidenceThreshold() {
-        Assert.assertFalse(likelihoodMeetsConfidenceThreshold(0.5))
+        assertThat(likelihoodMeetsConfidenceThreshold(0.5)).isFalse
     }
 
     @Test
     fun shouldReturnTrueForLikelihoodThatMeetsConfidenceThreshold() {
-        Assert.assertTrue(likelihoodMeetsConfidenceThreshold(0.8))
-        Assert.assertTrue(likelihoodMeetsConfidenceThreshold(1.0))
+        assertThat(likelihoodMeetsConfidenceThreshold(0.8)).isTrue
+        assertThat(likelihoodMeetsConfidenceThreshold(1.0)).isTrue
     }
 
     @Test
     fun canInterpretPredictedTumorOrigins() {
-        Assert.assertEquals(Formats.VALUE_UNKNOWN, interpret(null))
-        Assert.assertEquals("type 1 (90%)", interpret(withPredictions(0.9)))
+        assertThat(interpret(null)).isEqualTo(Formats.VALUE_UNKNOWN)
+        assertThat(interpret(withPredictions(0.9))).isEqualTo("type 1 (90%)")
     }
 
     @Test
     fun shouldReturnEmptyListForDisplayWhenPredictedTumorOriginIsNull() {
-        Assert.assertEquals(emptyList<Any>(), predictionsToDisplay(null))
+        assertThat(predictionsToDisplay(null)).isEmpty()
     }
 
     @Test
     fun shouldReturnEmptyListForDisplayWhenAllPredictionsAreBelowThreshold() {
-        Assert.assertEquals(emptyList<Any>(), predictionsToDisplay(withPredictions(0.09, 0.02, 0.05, 0.08)))
+        assertThat(predictionsToDisplay(withPredictions(0.09, 0.02, 0.05, 0.08))).isEmpty()
     }
 
     @Test
     fun shouldOmitPredictionsBelowThresholdForDisplay() {
         val predictions = predictionsToDisplay(withPredictions(0.4, 0.02, 0.05, 0.08))
-        Assert.assertEquals(1, predictions.size.toLong())
-        Assert.assertEquals(0.4, predictions.iterator().next().likelihood(), EPSILON)
+        assertThat(predictions).hasSize(1)
+        assertThat(predictions.iterator().next().likelihood()).isCloseTo(0.4, within(EPSILON))
     }
 
     @Test
     fun shouldDisplayAtMostThreePredictions() {
         val predictions = predictionsToDisplay(withPredictions(0.4, 0.12, 0.15, 0.25))
-        Assert.assertEquals(3, predictions.size.toLong())
-        Assert.assertEquals(setOf(0.4, 0.25, 0.15), predictions.stream().map { obj: CuppaPrediction -> obj.likelihood() }
-            .collect(Collectors.toSet()))
+        assertThat(predictions.map(CuppaPrediction::likelihood)).containsExactlyInAnyOrder(0.4, 0.25, 0.15)
     }
 
     @Test
     fun shouldReturnGreatestLikelihoodLimitedByThreshold() {
-        Assert.assertEquals(0.08, greatestOmittedLikelihood(withPredictions(0.4, 0.02, 0.05, 0.08)), EPSILON)
+        assertThat(greatestOmittedLikelihood(withPredictions(0.4, 0.02, 0.05, 0.08))).isCloseTo(0.08, within(EPSILON))
     }
 
     @Test
     fun shouldReturnGreatestLikelihoodLimitedByCount() {
-        Assert.assertEquals(0.12, greatestOmittedLikelihood(withPredictions(0.4, 0.12, 0.15, 0.25)), EPSILON)
+        assertThat(greatestOmittedLikelihood(withPredictions(0.4, 0.12, 0.15, 0.25))).isCloseTo(0.12, within(EPSILON))
     }
 
     companion object {

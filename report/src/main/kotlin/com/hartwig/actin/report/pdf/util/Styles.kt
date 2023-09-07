@@ -23,10 +23,12 @@ object Styles {
     val PALETTE_YES_OR_NO_NO = DeviceRgb(231, 85, 85)
     val PALETTE_YES_OR_NO_UNCLEAR = DeviceRgb(85, 85, 85)
     val PALETTE_WARN = PALETTE_EVALUATION_WARN
+
     private const val FONT_REGULAR_PATH = "fonts/nimbus-sans/NimbusSansL-Regular.ttf"
     private const val FONT_BOLD_PATH = "fonts/nimbus-sans/NimbusSansL-Bold.ttf"
     private var fontRegular = createFont(FONT_REGULAR_PATH)
     private var fontBold = createFont(FONT_BOLD_PATH)
+
     fun initialize() {
         // Fonts must be re-initialized for each report
         fontRegular = createFont(FONT_REGULAR_PATH)

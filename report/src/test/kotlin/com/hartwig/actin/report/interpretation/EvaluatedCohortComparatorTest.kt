@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class EvaluatedCohortComparatorTest {
@@ -17,7 +17,7 @@ class EvaluatedCohortComparatorTest {
             create("trial 1", "cohort 2", false),
             create("trial 2", "cohort 1", false)
         )
-        val cohortList: List<EvaluatedCohort> = listOf(
+        val cohortList = listOf(
             cohorts[7],
             cohorts[4],
             cohorts[2],
@@ -27,10 +27,10 @@ class EvaluatedCohortComparatorTest {
             cohorts[0],
             cohorts[3],
             cohorts[5]
-        )
-        cohortList.sortedWith(EvaluatedCohortComparator())
+        ).sortedWith(EvaluatedCohortComparator())
+
         val cohortIterator = cohortList.iterator()
-        cohorts.forEach { Assert.assertEquals(it, cohortIterator.next()) }
+        cohorts.forEach { assertThat(cohortIterator.next()).isEqualTo(it) }
     }
 
     companion object {

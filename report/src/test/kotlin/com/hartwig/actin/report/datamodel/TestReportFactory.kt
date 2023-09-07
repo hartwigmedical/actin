@@ -7,29 +7,27 @@ import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 
 object TestReportFactory {
     fun createMinimalTestReport(): Report {
-        return ImmutableReport.builder()
-            .patientId(TestDataFactory.TEST_PATIENT)
-            .clinical(TestClinicalFactory.createMinimalTestClinicalRecord())
-            .molecular(TestMolecularFactory.createMinimalTestMolecularRecord())
-            .treatmentMatch(TestTreatmentMatchFactory.createMinimalTreatmentMatch())
-            .build()
+        return Report(
+            patientId = TestDataFactory.TEST_PATIENT,
+            clinical = TestClinicalFactory.createMinimalTestClinicalRecord(),
+            molecular = TestMolecularFactory.createMinimalTestMolecularRecord(),
+            treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch()
+        )
     }
 
     fun createProperTestReport(): Report {
-        return ImmutableReport.builder()
-            .from(createMinimalTestReport())
-            .clinical(TestClinicalFactory.createProperTestClinicalRecord())
-            .molecular(TestMolecularFactory.createProperTestMolecularRecord())
-            .treatmentMatch(TestTreatmentMatchFactory.createProperTreatmentMatch())
-            .build()
+        return createMinimalTestReport().copy(
+            clinical = TestClinicalFactory.createProperTestClinicalRecord(),
+            molecular = TestMolecularFactory.createProperTestMolecularRecord(),
+            treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch()
+        )
     }
 
     fun createExhaustiveTestReport(): Report {
-        return ImmutableReport.builder()
-            .from(createMinimalTestReport())
-            .clinical(TestClinicalFactory.createProperTestClinicalRecord())
-            .molecular(TestMolecularFactory.createExhaustiveTestMolecularRecord())
-            .treatmentMatch(TestTreatmentMatchFactory.createProperTreatmentMatch())
-            .build()
+        return createMinimalTestReport().copy(
+            clinical = TestClinicalFactory.createProperTestClinicalRecord(),
+            molecular = TestMolecularFactory.createExhaustiveTestMolecularRecord(),
+            treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch()
+        )
     }
 }

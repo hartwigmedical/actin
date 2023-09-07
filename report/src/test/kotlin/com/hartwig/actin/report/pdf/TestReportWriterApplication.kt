@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
 import com.hartwig.actin.clinical.util.ClinicalPrinter
 import com.hartwig.actin.molecular.util.MolecularPrinter
-import com.hartwig.actin.report.datamodel.ImmutableReport
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory.createProductionReportWriter
@@ -29,22 +28,23 @@ object TestReportWriterApplication {
     private fun createTestReport(): Report {
         val report = TestReportFactory.createProperTestReport()
         LOGGER.info("Printing clinical record")
-        ClinicalPrinter.printRecord(report.clinical())
+        ClinicalPrinter.printRecord(report.clinical)
         LOGGER.info("Printing molecular record")
-        MolecularPrinter.printRecord(report.molecular())
-        val updated: Report
-        updated = if (File(OPTIONAL_TREATMENT_MATCH_JSON).exists()) {
+        MolecularPrinter.printRecord(report.molecular)
+
+        val updated = if (File(OPTIONAL_TREATMENT_MATCH_JSON).exists()) {
             LOGGER.info(
                 "Loading treatment matches from {}",
                 OPTIONAL_TREATMENT_MATCH_JSON
             )
             val match = TreatmentMatchJson.read(OPTIONAL_TREATMENT_MATCH_JSON)
-            ImmutableReport.builder().from(report).treatmentMatch(match).build()
+            report.copy(treatmentMatch = match)
         } else {
             report
         }
+
         LOGGER.info("Printing treatment match results")
-        TreatmentMatchPrinter.printMatch(updated.treatmentMatch())
+        TreatmentMatchPrinter.printMatch(updated.treatmentMatch)
         return updated
     }
 }

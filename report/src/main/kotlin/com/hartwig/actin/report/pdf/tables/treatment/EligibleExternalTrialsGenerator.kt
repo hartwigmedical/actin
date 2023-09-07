@@ -4,8 +4,9 @@ import com.google.common.collect.Multimap
 import com.google.common.collect.Sets
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
-import com.hartwig.actin.report.pdf.util.Formats
+import com.hartwig.actin.report.pdf.util.Formats.COMMA_SEPARATOR
 import com.hartwig.actin.report.pdf.util.Tables
+import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
 class EligibleExternalTrialsGenerator(
@@ -25,11 +26,8 @@ class EligibleExternalTrialsGenerator(
         )
         for (event in events) {
             table.addCell(Cells.createContent(event))
-            val joiner = Formats.commaJoiner()
-            for (trial in externalTrialsPerEvent[event]) {
-                joiner.add(trial)
-            }
-            table.addCell(Cells.createContent(joiner.toString()))
+            val trialList = externalTrialsPerEvent[event].joinToString(COMMA_SEPARATOR)
+            table.addCell(Cells.createContent(trialList))
         }
         return makeWrapping(table)
     }

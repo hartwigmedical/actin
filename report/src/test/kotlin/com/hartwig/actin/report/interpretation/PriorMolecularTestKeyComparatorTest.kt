@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
-import com.google.common.collect.Lists
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class PriorMolecularTestKeyComparatorTest {
@@ -10,14 +9,14 @@ class PriorMolecularTestKeyComparatorTest {
         val key1 = create("text 1", "test 1")
         val key2 = create("text 1", "test 2")
         val key3 = create("text 2", "test 1")
-        val keys: List<PriorMolecularTestKey> = Lists.newArrayList(key2, key3, key1)
-        keys.sort(PriorMolecularTestKeyComparator())
-        Assert.assertEquals(key1, keys[0])
-        Assert.assertEquals(key2, keys[1])
-        Assert.assertEquals(key3, keys[2])
+        val keys = listOf(key2, key3, key1).sortedWith(PriorMolecularTestKeyComparator())
+
+        assertThat(keys[0]).isEqualTo(key1)
+        assertThat(keys[1]).isEqualTo(key2)
+        assertThat(keys[2]).isEqualTo(key3)
     }
 
     private fun create(scoreText: String, test: String): PriorMolecularTestKey {
-        return ImmutablePriorMolecularTestKey.builder().scoreText(scoreText).test(test).build()
+        return PriorMolecularTestKey(scoreText = scoreText, test = test)
     }
 }

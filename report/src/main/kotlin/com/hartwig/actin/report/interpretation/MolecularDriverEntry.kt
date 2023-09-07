@@ -6,8 +6,8 @@ data class MolecularDriverEntry(
     val driverType: String,
     val driver: String,
     val driverLikelihood: DriverLikelihood?,
-    val actinTrials: Set<String>,
-    val externalTrials: Set<String>,
-    val bestResponsiveEvidence: String?,
-    val bestResistanceEvidence: String?
+    val actinTrials: Set<String> = emptySet(),
+    val externalTrials: Set<String> = emptySet(),
+    val bestResponsiveEvidence: String? = null,
+    val bestResistanceEvidence: String? = null
 )

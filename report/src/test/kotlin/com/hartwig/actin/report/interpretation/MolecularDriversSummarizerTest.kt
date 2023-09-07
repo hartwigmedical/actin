@@ -20,7 +20,7 @@ import com.hartwig.actin.molecular.datamodel.driver.VirusType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class MolecularDriversSummarizerTest {
@@ -48,9 +48,7 @@ class MolecularDriversSummarizerTest {
         )
         val molecularDrivers: MolecularDrivers = ImmutableMolecularDrivers.builder().addAllCopyNumbers(copyNumbers).build()
         val amplifiedGenes = summarizer(molecularDrivers).keyAmplifiedGenes().toSet()
-        Assert.assertEquals(2, amplifiedGenes.size.toLong())
-        Assert.assertTrue(amplifiedGenes.contains("$partialAmpGene (partial)"))
-        Assert.assertTrue(amplifiedGenes.contains(fullAmpGene))
+        assertThat(amplifiedGenes).containsExactlyInAnyOrder("$partialAmpGene (partial)", fullAmpGene)
     }
 
     @Test
@@ -98,8 +96,7 @@ class MolecularDriversSummarizerTest {
         )
         val molecularDrivers: MolecularDrivers = ImmutableMolecularDrivers.builder().addAllViruses(viruses).build()
         val keyViruses = summarizer(molecularDrivers).keyVirusEvents().toSet()
-        Assert.assertEquals(1, keyViruses.size.toLong())
-        Assert.assertTrue(keyViruses.contains(VirusType.MERKEL_CELL_VIRUS.toString() + " (" + VIRUS_INTEGRATIONS + " integrations detected)"))
+        assertThat(keyViruses).containsExactly(VirusType.MERKEL_CELL_VIRUS.toString() + " (" + VIRUS_INTEGRATIONS + " integrations detected)")
     }
 
     @Test
@@ -155,6 +152,7 @@ class MolecularDriversSummarizerTest {
             virus("expected non-reportable virus", DriverLikelihood.LOW, false),
             virus("key virus", DriverLikelihood.HIGH, true)
         )
+
         val molecularDrivers: MolecularDrivers = ImmutableMolecularDrivers.builder()
             .addAllVariants(variants)
             .addAllCopyNumbers(copyNumbers)
@@ -163,15 +161,17 @@ class MolecularDriversSummarizerTest {
             .addAllFusions(fusions)
             .addAllViruses(viruses)
             .build()
+
         val summarizer = MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(molecularDrivers, cohorts)
         val otherActionableEvents = summarizer.actionableEventsThatAreNotKeyDrivers().toSet()
-        Assert.assertEquals(12, otherActionableEvents.size.toLong())
-        Assert.assertTrue(otherActionableEvents.all { it.startsWith("expected") })
+        assertThat(otherActionableEvents).hasSize(12)
+        assertThat(otherActionableEvents).allSatisfy { it.startsWith("expected") }
     }
 
     companion object {
         private const val EXPECTED_GENE = "found"
         private const val VIRUS_INTEGRATIONS = 3
+
         private fun variant(
             name: String,
             driverLikelihood: DriverLikelihood,
@@ -253,8 +253,7 @@ class MolecularDriversSummarizerTest {
 
         private fun assertExpectedListResult(keyEntryList: List<String>) {
             val keyEntries = keyEntryList.distinct()
-            Assert.assertEquals(1, keyEntries.size.toLong())
-            Assert.assertTrue(keyEntries.contains(EXPECTED_GENE))
+            assertThat(keyEntries).containsExactly(EXPECTED_GENE)
         }
     }
 }

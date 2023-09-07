@@ -9,37 +9,38 @@ import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class MolecularDriverEntryFactoryTest {
+
     @Test
     fun canCreateMolecularDriverEntries() {
         val record = TestMolecularFactory.createExhaustiveTestMolecularRecord()
         val factory = createFactoryForMolecularRecord(record)
         val entries = factory.create()
-        Assert.assertEquals(7, entries.count())
+        assertThat(entries).hasSize(7)
     }
 
     @Test
     fun shouldIncludeNonActionableReportableDrivers() {
         val record = createTestMolecularRecordWithDriverEvidence(TestActionableEvidenceFactory.createEmpty(), true)
         val factory = createFactoryForMolecularRecord(record)
-        Assert.assertEquals(1, factory.create().count())
+        assertThat(factory.create()).hasSize(1)
     }
 
     @Test
     fun shouldSkipNonActionableNotReportableDrivers() {
         val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestActionableEvidenceFactory.createEmpty())
         val factory = createFactoryForMolecularRecord(record)
-        Assert.assertEquals(0, factory.create().count())
+        assertThat(factory.create()).hasSize(0)
     }
 
     @Test
     fun shouldIncludeNonReportableDriversWithActinTrialMatches() {
         val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestActionableEvidenceFactory.createEmpty())
         val driverToFind = record.drivers().viruses().iterator().next().event()
-        Assert.assertEquals(1, createFactoryWithCohortsForEvent(record, driverToFind).create().count())
+        assertThat(createFactoryWithCohortsForEvent(record, driverToFind).create()).hasSize(1)
     }
 
     @Test
@@ -47,7 +48,7 @@ class MolecularDriverEntryFactoryTest {
         val record =
             createTestMolecularRecordWithNonReportableDriverWithEvidence(TestActionableEvidenceFactory.withApprovedTreatment("treatment"))
         val factory = createFactoryForMolecularRecord(record)
-        Assert.assertEquals(1, factory.create().count())
+        assertThat(factory.create()).hasSize(1)
     }
 
     @Test
@@ -58,13 +59,13 @@ class MolecularDriverEntryFactoryTest {
             )
         )
         val factory = createFactoryForMolecularRecord(record)
-        Assert.assertEquals(1, factory.create().count())
+        assertThat(factory.create()).hasSize(1)
     }
 
     @Test
-    fun canMatchActinTrialToMolecularDrivers() {
+    fun shouldMatchActinTrialToMolecularDrivers() {
         val record = TestMolecularFactory.createProperTestMolecularRecord()
-        Assert.assertFalse(record.drivers().variants().isEmpty())
+        assertThat(record.drivers().variants()).isNotEmpty
         val firstVariant = record.drivers().variants().iterator().next()
         val driverToFind = firstVariant.event()
         val entry = createFactoryWithCohortsForEvent(record, driverToFind).create()
@@ -72,8 +73,7 @@ class MolecularDriverEntryFactoryTest {
             ?: throw IllegalStateException(
                 "Could not find molecular driver entry starting with driver: $driverToFind"
             )
-        Assert.assertEquals(1, entry.actinTrials.size.toLong())
-        Assert.assertTrue(entry.actinTrials.contains("trial 1"))
+        assertThat(entry.actinTrials).containsExactly("trial 1")
     }
 
     companion object {
@@ -99,8 +99,7 @@ class MolecularDriverEntryFactoryTest {
         }
 
         private fun createFactoryForMolecularRecordAndCohorts(
-            molecular: MolecularRecord,
-            cohorts: List<EvaluatedCohort>
+            molecular: MolecularRecord, cohorts: List<EvaluatedCohort>
         ): MolecularDriverEntryFactory {
             return MolecularDriverEntryFactory(MolecularDriversInterpreter(molecular.drivers(), EvaluatedCohortsInterpreter(cohorts)))
         }

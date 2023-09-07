@@ -7,57 +7,62 @@ import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory.create
 import com.hartwig.actin.treatment.datamodel.ImmutableTrialIdentification
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class EvaluatedCohortFactoryTest {
     @Test
-    fun canCreateEvaluatedCohortsFromMinimalMatch() {
+    fun shouldCreateEvaluatedCohortsFromMinimalMatch() {
         val cohorts = create(TestTreatmentMatchFactory.createMinimalTreatmentMatch())
-        Assert.assertTrue(cohorts.isEmpty())
+        assertThat(cohorts.isEmpty()).isTrue
     }
 
     @Test
-    fun canCreateEvaluatedCohortsFromProperMatch() {
+    fun shouldCreateEvaluatedCohortsFromProperMatch() {
         val cohorts = create(TestTreatmentMatchFactory.createProperTreatmentMatch())
-        Assert.assertEquals(5, cohorts.size.toLong())
+        assertThat(cohorts).hasSize(5)
+
         val trial1cohortA = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort A")
-        Assert.assertFalse(trial1cohortA.molecularEvents().isEmpty())
-        Assert.assertTrue(trial1cohortA.molecularEvents().contains("BRAF V600E"))
-        Assert.assertTrue(trial1cohortA.isPotentiallyEligible)
-        Assert.assertTrue(trial1cohortA.isOpen)
-        Assert.assertFalse(trial1cohortA.hasSlotsAvailable())
-        Assert.assertFalse(trial1cohortA.warnings().isEmpty())
-        Assert.assertTrue(trial1cohortA.fails().isEmpty())
+        assertThat(trial1cohortA.molecularEvents.isEmpty()).isFalse
+        assertThat(trial1cohortA.molecularEvents.contains("BRAF V600E")).isTrue
+        assertThat(trial1cohortA.isPotentiallyEligible).isTrue
+        assertThat(trial1cohortA.isOpen).isTrue
+        assertThat(trial1cohortA.hasSlotsAvailable).isFalse
+        assertThat(trial1cohortA.warnings.isEmpty()).isFalse
+        assertThat(trial1cohortA.fails.isEmpty()).isTrue
+
         val trial1cohortB = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort B")
-        Assert.assertTrue(trial1cohortB.molecularEvents().isEmpty())
-        Assert.assertTrue(trial1cohortB.isPotentiallyEligible)
-        Assert.assertTrue(trial1cohortB.isOpen)
-        Assert.assertTrue(trial1cohortB.hasSlotsAvailable())
-        Assert.assertFalse(trial1cohortB.warnings().isEmpty())
-        Assert.assertTrue(trial1cohortB.fails().isEmpty())
+        assertThat(trial1cohortB.molecularEvents.isEmpty()).isTrue
+        assertThat(trial1cohortB.isPotentiallyEligible).isTrue
+        assertThat(trial1cohortB.isOpen).isTrue
+        assertThat(trial1cohortB.hasSlotsAvailable).isTrue
+        assertThat(trial1cohortB.warnings.isEmpty()).isFalse
+        assertThat(trial1cohortB.fails.isEmpty()).isTrue
+
         val trial1cohortC = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort C")
-        Assert.assertTrue(trial1cohortC.molecularEvents().isEmpty())
-        Assert.assertFalse(trial1cohortC.isPotentiallyEligible)
-        Assert.assertFalse(trial1cohortC.isOpen)
-        Assert.assertFalse(trial1cohortC.hasSlotsAvailable())
-        Assert.assertFalse(trial1cohortC.warnings().isEmpty())
-        Assert.assertFalse(trial1cohortC.fails().isEmpty())
+        assertThat(trial1cohortC.molecularEvents.isEmpty()).isTrue
+        assertThat(trial1cohortC.isPotentiallyEligible).isFalse
+        assertThat(trial1cohortC.isOpen).isFalse
+        assertThat(trial1cohortC.hasSlotsAvailable).isFalse
+        assertThat(trial1cohortC.warnings.isEmpty()).isFalse
+        assertThat(trial1cohortC.fails.isEmpty()).isFalse
+
         val trial2cohortA = findByAcronymAndCohort(cohorts, "TEST-2", "Cohort A")
-        Assert.assertFalse(trial2cohortA.molecularEvents().isEmpty())
-        Assert.assertTrue(trial2cohortA.molecularEvents().contains("BRAF V600E"))
-        Assert.assertTrue(trial2cohortA.isPotentiallyEligible)
-        Assert.assertTrue(trial2cohortA.isOpen)
-        Assert.assertFalse(trial2cohortA.hasSlotsAvailable())
-        Assert.assertTrue(trial2cohortA.warnings().isEmpty())
-        Assert.assertTrue(trial2cohortA.fails().isEmpty())
+        assertThat(trial2cohortA.molecularEvents.isEmpty()).isFalse
+        assertThat(trial2cohortA.molecularEvents.contains("BRAF V600E")).isTrue
+        assertThat(trial2cohortA.isPotentiallyEligible).isTrue
+        assertThat(trial2cohortA.isOpen).isTrue
+        assertThat(trial2cohortA.hasSlotsAvailable).isFalse
+        assertThat(trial2cohortA.warnings.isEmpty()).isTrue
+        assertThat(trial2cohortA.fails.isEmpty()).isTrue
+
         val trial2cohortB = findByAcronymAndCohort(cohorts, "TEST-2", "Cohort B")
-        Assert.assertTrue(trial2cohortB.molecularEvents().isEmpty())
-        Assert.assertFalse(trial2cohortB.isPotentiallyEligible)
-        Assert.assertTrue(trial2cohortB.isOpen)
-        Assert.assertTrue(trial2cohortB.hasSlotsAvailable())
-        Assert.assertTrue(trial2cohortB.warnings().isEmpty())
-        Assert.assertFalse(trial2cohortB.fails().isEmpty())
+        assertThat(trial2cohortB.molecularEvents.isEmpty()).isTrue
+        assertThat(trial2cohortB.isPotentiallyEligible).isFalse
+        assertThat(trial2cohortB.isOpen).isTrue
+        assertThat(trial2cohortB.hasSlotsAvailable).isTrue
+        assertThat(trial2cohortB.warnings.isEmpty()).isTrue
+        assertThat(trial2cohortB.fails.isEmpty()).isFalse
     }
 
     @Test
@@ -73,25 +78,20 @@ class EvaluatedCohortFactoryTest {
             )
             .isPotentiallyEligible(true)
             .build()
+
         val treatmentMatch: TreatmentMatch = ImmutableTreatmentMatch.builder()
             .from(TestTreatmentMatchFactory.createMinimalTreatmentMatch())
             .addTrialMatches(trialMatchWithoutCohort)
             .build()
         val cohorts = create(treatmentMatch)
-        Assert.assertEquals(1, cohorts.size.toLong())
+        assertThat(cohorts).hasSize(1)
     }
 
     companion object {
         private fun findByAcronymAndCohort(
-            evaluatedCohorts: List<EvaluatedCohort>, acronymToFind: String,
-            cohortToFind: String?
+            evaluatedCohorts: List<EvaluatedCohort>, acronymToFind: String, cohortToFind: String?
         ): EvaluatedCohort {
-            for (evaluatedCohort in evaluatedCohorts) {
-                if (evaluatedCohort.acronym() == acronymToFind && evaluatedCohort.cohort() == cohortToFind) {
-                    return evaluatedCohort
-                }
-            }
-            throw IllegalStateException("Could not find trial acronym $acronymToFind and cohort: $cohortToFind")
+            return evaluatedCohorts.first { it.acronym == acronymToFind && it.cohort == cohortToFind }
         }
     }
 }

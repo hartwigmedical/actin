@@ -3,54 +3,52 @@ package com.hartwig.actin.report.interpretation
 import com.hartwig.actin.molecular.datamodel.driver.Driver
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class EvaluatedCohortsInterpreterTest {
     @Test
     fun shouldReturnAllEligibleAndOpenCohortsForDriver() {
         val matchingTrials = createInterpreter().trialsForDriver(driverForEvent(ELIGIBLE_EVENT))
-        assertEquals(2, matchingTrials.size.toLong())
-        assertTrue(matchingTrials.contains(ELIGIBLE_COHORT))
-        assertTrue(matchingTrials.contains(ELIGIBLE_COHORT_2))
+        assertThat(matchingTrials).hasSize(2)
+        assertThat(matchingTrials.contains(ELIGIBLE_COHORT)).isTrue
+        assertThat(matchingTrials.contains(ELIGIBLE_COHORT_2)).isTrue
     }
 
     @Test
     fun shouldNotReturnMatchesForIneligibleCohorts() {
-        assertTrue(createInterpreter().trialsForDriver(driverForEvent(INELIGIBLE_COHORT)).isEmpty())
+        assertThat(createInterpreter().trialsForDriver(driverForEvent(INELIGIBLE_COHORT)).isEmpty()).isTrue
     }
 
     @Test
     fun shouldNotReturnMatchesForClosedCohorts() {
-        assertTrue(createInterpreter().trialsForDriver(driverForEvent(CLOSED_COHORT)).isEmpty())
+        assertThat(createInterpreter().trialsForDriver(driverForEvent(CLOSED_COHORT)).isEmpty()).isTrue
     }
 
     @Test
     fun shouldIndicateDriverIsActionableIfEventMatchesEligibleTrial() {
-        assertFalse(createInterpreter().driverIsActionable(driverForEvent(INELIGIBLE_COHORT)))
-        assertTrue(createInterpreter().driverIsActionable(driverForEvent(ELIGIBLE_EVENT)))
+        assertThat(createInterpreter().driverIsActionable(driverForEvent(INELIGIBLE_COHORT))).isFalse
+        assertThat(createInterpreter().driverIsActionable(driverForEvent(ELIGIBLE_EVENT))).isTrue
     }
 
     @Test
     fun shouldIndicateDriverIsActionableIfExternalTrialsEligible() {
-        assertFalse(createInterpreter().driverIsActionable(driverForEvent(INELIGIBLE_COHORT)))
+        assertThat(createInterpreter().driverIsActionable(driverForEvent(INELIGIBLE_COHORT))).isFalse
         val driver: Driver = TestVariantFactory.builder()
             .event(INELIGIBLE_COHORT)
             .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial("external"))
             .build()
-        assertTrue(createInterpreter().driverIsActionable(driver))
+        assertThat(createInterpreter().driverIsActionable(driver)).isTrue
     }
 
     @Test
     fun shouldIndicateDriverIsActionableIfApprovedTreatmentsExist() {
-        assertFalse(createInterpreter().driverIsActionable(driverForEvent(INELIGIBLE_COHORT)))
+        assertThat(createInterpreter().driverIsActionable(driverForEvent(INELIGIBLE_COHORT))).isFalse
         val driver: Driver = TestVariantFactory.builder()
             .event(INELIGIBLE_COHORT)
             .evidence(TestActionableEvidenceFactory.withApprovedTreatment("treatment"))
             .build()
-        assertTrue(createInterpreter().driverIsActionable(driver))
+        assertThat(createInterpreter().driverIsActionable(driver)).isTrue
     }
 
     companion object {
