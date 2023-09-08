@@ -609,11 +609,11 @@ to 5 most recent values would be sufficient to `PASS`.
 
 ##### Rules related to blood transfusions
 
-| Rule                                                | When does a patient pass evaluation?                                                                                                                                                                                                        |
-|-----------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| REQUIRES_REGULAR_HEMATOPOIETIC_SUPPORT              | Blood transfusions > Presence of entries within 2 months of evaluation date or Medication > presence of entries within 2 months of evaluation date with ATC level name like "Colony stimulating factors" OR "Other antianemic preparations" |
-| HAS_HAD_ERYTHROCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS | Blood transfusions > product = Erythrocyte concentrate AND current date minus transfusion date <= X weeks                                                                                                                                   |
-| HAS_HAD_THROMBOCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS | Blood transfusions > product = Thrombocyte concentrate AND current date minus transfusion date <= X weeks                                                                                                                                   |
+| Rule                                                | When does a patient pass evaluation?                                                                                                                                                                          |
+|-----------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| REQUIRES_REGULAR_HEMATOPOIETIC_SUPPORT              | Blood transfusions > Presence of entries within 2 months of evaluation date or Medication > presence of entries within 2 months of evaluation date with atc.chemicalSubGroup.code equal to "B03XA" OR "L03AA" |
+| HAS_HAD_ERYTHROCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS | Blood transfusions > product = Erythrocyte concentrate AND current date minus transfusion date <= X weeks                                                                                                     |
+| HAS_HAD_THROMBOCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS | Blood transfusions > product = Thrombocyte concentrate AND current date minus transfusion date <= X weeks                                                                                                     |
 
 ##### Rules related to surgery
 
