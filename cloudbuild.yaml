@@ -2,7 +2,7 @@ steps:
 
   - id: 'Set release version'
     name: 'eu.gcr.io/hmf-build/maven-cache'
-    args: [ 'versions:set', '-DnewVersion=${TAG_NAME}' ]
+    args: [ 'versions:set -DnewVersion=${TAG_NAME}' ]
 
   - id: 'Maven build using cache'
     name: 'eu.gcr.io/hmf-build/maven-cache'
