@@ -3,8 +3,6 @@ package com.hartwig.actin.algo.evaluation.bloodtransfusion
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
-import com.hartwig.actin.algo.evaluation.medication.AtcTree
-import io.mockk.mockk
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication
@@ -84,11 +82,12 @@ class RequiresRegularHematopoieticSupportTest {
     companion object {
         private val MIN_DATE: LocalDate = LocalDate.of(2020, 2, 1)
         private val MAX_DATE = MIN_DATE.plusMonths(2)
-        private val FUNCTION = RequiresRegularHematopoieticSupport(mockk<AtcTree>(), MIN_DATE, MAX_DATE)
+        private val FUNCTION = RequiresRegularHematopoieticSupport(AtcTestFactory.createProperAtcTree(), MIN_DATE, MAX_DATE)
 
         private fun support(): ImmutableMedication.Builder {
             val atc = AtcTestFactory.atcClassificationBuilder().chemicalSubGroup(
-                RequiresRegularHematopoieticSupport.hematopoieticMedicationCategories(mockk<AtcTree>()).iterator().next()
+                RequiresRegularHematopoieticSupport.hematopoieticMedicationCategories(AtcTestFactory.createProperAtcTree()).iterator()
+                    .next()
             ).build()
             return TestMedicationFactory.builder().atc(atc)
         }

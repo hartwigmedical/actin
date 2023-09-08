@@ -91,13 +91,13 @@ class MedicationSelectorTest {
             TestMedicationFactory.builder().name("no categories").build(),
             TestMedicationFactory.builder().name("wrong categories").atc(
                 AtcTestFactory.atcClassificationBuilder()
-                    .anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("wrong category 1").build()).build()
+                    .anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().code("wrong category 1").build()).build()
             ).build(),
             TestMedicationFactory.builder()
                 .name("right category 1 recently stopped")
                 .atc(
                     AtcTestFactory.atcClassificationBuilder()
-                        .anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category 1").build()).build()
+                        .anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().code("category 1").build()).build()
                 )
                 .stopDate(minStopDate.plusDays(1))
                 .build(),
@@ -105,7 +105,7 @@ class MedicationSelectorTest {
                 .name("right category 1 stopped long ago")
                 .atc(
                     AtcTestFactory.atcClassificationBuilder()
-                        .anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category 1").build()).build()
+                        .anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().code("category 1").build()).build()
                 )
                 .stopDate(minStopDate.minusDays(1))
                 .build()

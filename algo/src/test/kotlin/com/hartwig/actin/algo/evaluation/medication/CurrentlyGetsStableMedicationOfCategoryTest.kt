@@ -71,7 +71,7 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
     }
 
     @Test
-    fun shouldPassOnSameCategoryAndOtherDosing() {
+    fun shouldPassOnSameCategoryAndOneWithStableDosing() {
         val medications = listOf(
             TestMedicationFactory.builder().dosage(fixedDosing()).atc(ATC_CATEGORY_1).build(),
             TestMedicationFactory.builder().dosage(fixedDosing()).atc(ATC_CATEGORY_2).build(),

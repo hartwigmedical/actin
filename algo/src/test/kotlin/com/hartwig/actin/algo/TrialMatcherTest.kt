@@ -10,7 +10,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationTestFactory
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation
 import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory
-import com.hartwig.actin.algo.evaluation.medication.AtcTree
+import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.treatment.datamodel.Eligibility
 import com.hartwig.actin.treatment.datamodel.EligibilityRule
@@ -59,7 +59,7 @@ class TrialMatcherTest {
                 TestDoidModelFactory.createMinimalTestDoidModel(),
                 createCurrentDateProvider(),
                 TreatmentDatabase(emptyMap(), emptyMap()),
-                AtcTree(emptyMap())
+                AtcTestFactory.createProperAtcTree()
             )
         }
 

@@ -18,7 +18,7 @@ class MedicationCategoriesTest {
         val secondLevel = ImmutableAtcLevel.builder().code(DRUGS_AFFECTING_BONE_STRUCTURE_AND_MINERALIZATION).name("").build()
         every { atcTree.resolve(CALCIUM_HOMEOSTASIS) } returns firstLevel
         every { atcTree.resolve(DRUGS_AFFECTING_BONE_STRUCTURE_AND_MINERALIZATION) } returns secondLevel
-        val victim = MedicationCategories.create(atcTree)
+        val victim = MedicationCategories(mapOf("Bone resorptive" to setOf("H05", "M05B").map { atcTree.resolve(it) }.toSet()), atcTree)
         assertThat(victim.resolve("Bone resorptive")).containsExactly(firstLevel, secondLevel)
     }
 

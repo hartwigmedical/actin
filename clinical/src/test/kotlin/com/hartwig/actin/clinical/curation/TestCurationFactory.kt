@@ -52,7 +52,7 @@ object TestCurationFactory {
             CurationDatabase(
                 emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
                 emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-                emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList()
+                emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
             ), questionnaireRawEntryMapper()
         )
     }
