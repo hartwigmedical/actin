@@ -7,6 +7,7 @@ import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import java.io.IOException
 import kotlin.system.exitProcess
 
@@ -31,24 +32,20 @@ class TabularTreatmentMatchWriterApplication(private val config: TabularTreatmen
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(
-            TabularTreatmentMatchWriterApplication::class.java
-        )
-        private const val APPLICATION = "ACTIN Tabular Treatment Match Writer"
-        val VERSION: String = TabularTreatmentMatchWriterApplication::class.java.getPackage().implementationVersion
+        val LOGGER: Logger = LogManager.getLogger(TabularTreatmentMatchWriterApplication::class.java)
+        const val APPLICATION = "ACTIN Tabular Treatment Match Writer"
+        val VERSION: String? = TabularTreatmentMatchWriterApplication::class.java.getPackage().implementationVersion
+    }
+}
 
-        @Throws(IOException::class)
-        @JvmStatic
-        fun main(args: Array<String>) {
-            val options: Options = TabularTreatmentMatchWriterConfig.createOptions()
-            try {
-                val config = TabularTreatmentMatchWriterConfig.createConfig(DefaultParser().parse(options, args))
-                TabularTreatmentMatchWriterApplication(config).run()
-            } catch (exception: ParseException) {
-                LOGGER.warn(exception)
-                HelpFormatter().printHelp(APPLICATION, options)
-                exitProcess(1)
-            }
-        }
+fun main(args: Array<String>) {
+    val options: Options = TabularTreatmentMatchWriterConfig.createOptions()
+    try {
+        val config = TabularTreatmentMatchWriterConfig.createConfig(DefaultParser().parse(options, args))
+        TabularTreatmentMatchWriterApplication(config).run()
+    } catch (exception: ParseException) {
+        TabularTreatmentMatchWriterApplication.LOGGER.warn(exception)
+        HelpFormatter().printHelp(TabularTreatmentMatchWriterApplication.APPLICATION, options)
+        exitProcess(1)
     }
 }
