@@ -88,7 +88,7 @@ public class WGSSummaryGenerator implements TableGenerator {
                     .flatMap(entry -> Stream.of(Cells.createKey(entry.getKey()), Cells.createValue(entry.getValue())))
                     .forEach(table::addCell);
         } else {
-            table.addCell(Cells.createSpanningEntry("The received biomaterial(s) did not meet the requirements that are needed for "
+            table.addCell(Cells.createSpanningContent("The received biomaterial(s) did not meet the requirements that are needed for "
                     + "high quality whole genome sequencing", table));
         }
         return table;

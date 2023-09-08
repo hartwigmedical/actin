@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.laboratory
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverable
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMaxValue
 import com.hartwig.actin.clinical.datamodel.LabValue
@@ -48,49 +49,62 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
             weight,
             creatinine
         )
-        var result = evaluateVersusMaxValue(cockcroftGault, creatinine.comparator(), maxCreatinineClearance)
-        if (weight == null) {
-            if (result == EvaluationResult.FAIL) {
-                result = EvaluationResult.UNDETERMINED
-            } else if (result == EvaluationResult.PASS) {
-                result = EvaluationResult.WARN
-            }
+
+        val result = evaluateVersusMaxValue(cockcroftGault, creatinine.comparator(), maxCreatinineClearance)
+
+        return when {
+            result == EvaluationResult.FAIL && weight == null -> EvaluationFactory.undetermined(
+                "Cockcroft-Gault may be above maximum but weight of patient is not known",
+                "Cockcroft-Gault may be above max but patient weight unknown"
+            )
+
+            result == EvaluationResult.FAIL -> EvaluationFactory.recoverableFail(
+                "Cockcroft-Gault above maximum of $maxCreatinineClearance",
+                "Cockcroft-Gault above max of $maxCreatinineClearance",
+            )
+
+            result == EvaluationResult.UNDETERMINED -> EvaluationFactory.undetermined(
+                "Cockcroft-Gault evaluation led to ambiguous results",
+                "Cockcroft-Gault evaluation ambiguous"
+            )
+
+            result == EvaluationResult.PASS && weight == null -> EvaluationFactory.notEvaluated(
+                "Body weight is unknown but Cockcroft-Gault is most likely below maximum of $maxCreatinineClearance",
+                "Cockcroft-Gault most likely below max of $maxCreatinineClearance but weight unknown",
+            )
+
+            result == EvaluationResult.PASS -> EvaluationFactory.recoverablePass(
+                "Cockcroft-Gault is below maximum of $maxCreatinineClearance",
+                "Cockcroft-Gault below max of $maxCreatinineClearance",
+            )
+
+            else -> recoverable().result(result).build()
         }
-        return toEvaluation(result, "Cockcroft-Gault")
     }
 
     private fun evaluateValues(code: String, values: List<Double>, comparator: String): Evaluation {
         val evaluations = values.map { evaluateVersusMaxValue(it, comparator, maxCreatinineClearance) }.toSet()
-        return toEvaluation(CreatinineFunctions.interpretEGFREvaluations(evaluations), code)
-    }
 
-    companion object {
-        private fun toEvaluation(result: EvaluationResult, code: String): Evaluation {
-            val builder = recoverable().result(result)
-            when (result) {
-                EvaluationResult.FAIL -> {
-                    builder.addFailSpecificMessages("$code is too high")
-                    builder.addFailGeneralMessages("$code too high")
-                }
-
-                EvaluationResult.UNDETERMINED -> {
-                    builder.addUndeterminedSpecificMessages("$code evaluation led to ambiguous results")
-                    builder.addUndeterminedGeneralMessages("$code undetermined")
-                }
-
-                EvaluationResult.PASS -> {
-                    builder.addPassSpecificMessages("limited $code")
-                    builder.addPassGeneralMessages("limited $code")
-                }
-
-                EvaluationResult.WARN -> {
-                    builder.addWarnSpecificMessages("limited $code")
-                    builder.addWarnGeneralMessages("limited $code")
-                }
-
-                else -> {}
+        val result = CreatinineFunctions.interpretEGFREvaluations(evaluations)
+        val builder = recoverable().result(result)
+        when (result) {
+            EvaluationResult.FAIL -> {
+                builder.addFailSpecificMessages("$code exceeds maximum of $maxCreatinineClearance")
+                builder.addFailGeneralMessages("$code exceeds max of $maxCreatinineClearance")
             }
-            return builder.build()
+
+            EvaluationResult.UNDETERMINED -> {
+                builder.addUndeterminedSpecificMessages("$code evaluation led to ambiguous results")
+                builder.addUndeterminedGeneralMessages("$code could not be determined")
+            }
+
+            EvaluationResult.PASS -> {
+                builder.addPassSpecificMessages("$code below maximum of $maxCreatinineClearance")
+                builder.addPassGeneralMessages("$code below max of $maxCreatinineClearance")
+            }
+
+            else -> {}
         }
+        return builder.build()
     }
 }

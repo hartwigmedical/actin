@@ -71,10 +71,23 @@ class TrialFactory(
     private fun toIdentification(trialConfig: TrialDefinitionConfig): TrialIdentification {
         return ImmutableTrialIdentification.builder()
             .trialId(trialConfig.trialId)
-            .open(ctcModel.isTrialOpen(trialConfig))
+            .open(determineOpenStatus(trialConfig))
             .acronym(trialConfig.acronym)
             .title(trialConfig.title)
             .build()
+    }
+
+    private fun determineOpenStatus(trialConfig: TrialDefinitionConfig): Boolean {
+        val openInCTC: Boolean? = ctcModel.isTrialOpen(trialConfig)
+        if (openInCTC != null) {
+            return openInCTC
+        }
+
+        return trialConfig.open
+            ?: throw java.lang.IllegalStateException(
+                "Could not determine open status for trial, "
+                        + "either from CTC or from manual config for '" + trialConfig.trialId + "'"
+            )
     }
 
     companion object {

@@ -24,12 +24,22 @@ class TrialConfigDatabaseReaderTest {
         private val TRIAL_CONFIG_DIRECTORY = Resources.getResource("trial_config").path
 
         private fun assertTrialDefinitionConfigs(configs: List<TrialDefinitionConfig>) {
-            assertThat(configs).hasSize(1)
+            assertThat(configs).hasSize(2)
 
-            val config = configs[0]
-            assertThat(config.trialId).isEqualTo("ACTN 2021")
-            assertThat(config.acronym).isEqualTo("ACTIN")
-            assertThat(config.title).isEqualTo("ACTIN is a study to evaluate a new treatment decision system.")
+            val config1 = findTrial(configs, "ACTN 2021")
+            assertThat(config1.open).isTrue
+            assertThat(config1.acronym).isEqualTo("ACTIN-1")
+            assertThat(config1.title).isEqualTo("ACTIN is a study to evaluate a new treatment decision system in 2021")
+
+            val config2 = findTrial(configs, "ACTN 2022")
+            assertThat(config2.open).isNull()
+            assertThat(config2.acronym).isEqualTo("ACTIN-2")
+            assertThat(config2.title).isEqualTo("ACTIN is a study to evaluate a new treatment decision system in 2022")
+        }
+
+        private fun findTrial(configs: List<TrialDefinitionConfig>, trialId: String): TrialDefinitionConfig {
+            return configs.firstOrNull { it.trialId == trialId }
+                ?: throw IllegalStateException("Could not find trial definition config for ID: $trialId")
         }
 
         private fun assertCohortConfigs(configs: List<CohortDefinitionConfig>) {

@@ -35,7 +35,9 @@ To make a change in ACTIN and release the process is as follows:
    git tag 1.2.3-beta.1
    git push origin 1.2.3-beta.1
     ```
-   This will launch a build (also can be monitored [here](https://console.cloud.google.com/cloud-build/builds;region=europe-west4?project=actin-build)) which will run all tests and create a jar with the same version. You can then sync the jar to `data-vm` with `deploy_actin 1.2.3-beta.1`.
+   This will launch a build (also can be
+   monitored [here](https://console.cloud.google.com/cloud-build/builds;region=europe-west4?project=actin-build)) which will run all tests
+   and create a jar with the same version.
 6. Once your code has been reviewed, and testing is done, you can make the real release. The process is that same as beta, just without the beta:
     ```shell
     git tag 1.2.3

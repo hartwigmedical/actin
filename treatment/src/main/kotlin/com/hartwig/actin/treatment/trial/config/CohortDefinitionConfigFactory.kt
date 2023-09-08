@@ -2,7 +2,6 @@ package com.hartwig.actin.treatment.trial.config
 
 import com.hartwig.actin.util.ResourceFile
 
-
 class CohortDefinitionConfigFactory : TrialConfigFactory<CohortDefinitionConfig> {
 
     override fun create(fields: Map<String, Int>, parts: List<String>): CohortDefinitionConfig {

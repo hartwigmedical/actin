@@ -1,0 +1,39 @@
+steps:
+
+  - id: 'Maven build using cache'
+    name: 'eu.gcr.io/hmf-build/maven-cache'
+    args: [ '-T 1C deploy --batch-mode' ]
+
+  - id: 'Build and push the molecular image with tag'
+    name: 'eu.gcr.io/hmf-build/docker-tag'
+    dir: 'molecular'
+    args: [ 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-molecular', '$TAG_NAME' ]
+
+  - id: 'Build and push the trial image with tag'
+    name: 'eu.gcr.io/hmf-build/docker-tag'
+    dir: 'treatment'
+    args: [ 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-trial', '$TAG_NAME' ]
+
+  - id: 'Build and push the algo image with tag'
+    name: 'eu.gcr.io/hmf-build/docker-tag'
+    dir: 'algo'
+    args: [ 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-algo', '$TAG_NAME' ]
+
+  - id: 'Build and push the report image with tag'
+    name: 'eu.gcr.io/hmf-build/docker-tag'
+    dir: 'report'
+    args: [ 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-report', '$TAG_NAME', 'report.Dockerfile' ]
+
+  - id: 'Build and push the evaluation image with tag'
+    name: 'eu.gcr.io/hmf-build/docker-tag'
+    dir: 'report'
+    args: [ 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-evaluation', '$TAG_NAME', 'evaluation.Dockerfile' ]
+
+options:
+  machineType: 'E2_HIGHCPU_8'
+images:
+  - europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-molecular
+  - europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-treatment
+  - europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-algo
+  - europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-report
+  - europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-evaluation

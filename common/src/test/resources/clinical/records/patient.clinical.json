@@ -50,30 +50,45 @@
     },
     "lvef": null
   },
-  "priorTumorTreatments": [
+  "treatmentHistory": [
     {
-      "name": "Capecitabine",
+      "treatments": [
+        {
+          "name": "CAPECITABINE",
+          "synonyms": [],
+          "drugs": [
+            {
+              "name": "CAPECITABINE",
+              "drugTypes": [
+                "ANTIMETABOLITE",
+                "FLUOROPYRIMIDINE"
+              ],
+              "category": "CHEMOTHERAPY",
+              "displayOverride": null
+            }
+          ],
+          "maxCycles": null,
+          "isSystemic": true,
+          "treatmentClass": "DRUG_THERAPY"
+        }
+      ],
       "startYear": 2019,
       "startMonth": 3,
-      "stopYear": 2020,
-      "stopMonth": null,
-      "cycles": null,
-      "bestResponse": "PR",
-      "stopReason": "toxicity",
-      "categories": [
-        "CHEMOTHERAPY"
-      ],
-      "isSystemic": true,
-      "chemoType": "antimetabolite",
-      "immunoType": null,
-      "targetedType": null,
-      "hormoneType": null,
-      "radioType": null,
-      "carTType": null,
-      "transplantType": null,
-      "supportiveType": null,
+      "intents": null,
+      "isTrial": false,
       "trialAcronym": null,
-      "ablationType": null
+      "therapyHistoryDetails": {
+        "stopYear": 2020,
+        "stopMonth": null,
+        "ongoingAsOf": null,
+        "cycles": null,
+        "bestResponse": "PROGRESSIVE_DISEASE",
+        "stopReason": "TOXICITY",
+        "stopReasonDetail": null,
+        "toxicities": null,
+        "bodyLocationCategories": null,
+        "bodyLocations": null
+      }
     }
   ],
   "priorSecondPrimaries": [
@@ -259,21 +274,17 @@
   "medications": [
     {
       "name": "Medication 1",
-      "codeATC": "code ATC",
-      "categories": [
-      ],
-      "chemicalSubgroupAtc": "chemical",
-      "pharmacologicalSubgroupAtc": "pharmacological",
-      "therapeuticSubgroupAtc": "therapeutic",
-      "anatomicalMainGroupAtc": "anatomical",
+      "categories": [],
       "status": "ON_HOLD",
       "administrationRoute": "oral",
-      "dosageMin": 10,
-      "dosageMax": 20,
-      "dosageUnit": "mg",
-      "frequency": 1,
-      "frequencyUnit": "day",
-      "ifNeeded": false,
+      "dosage": {
+        "dosageMin": 10,
+        "dosageMax": 20,
+        "dosageUnit": "mg",
+        "frequency": 1,
+        "frequencyUnit": "day",
+        "ifNeeded": false
+      },
       "startDate": {
         "year": 2018,
         "month": 1,
@@ -291,25 +302,23 @@
           "type": "INDUCER"
         }
       ],
-      "qtProlongatingRisk": "NONE"
+      "qtProlongatingRisk": "NONE",
+      "isSelfCare": false,
+      "isTrialMedication": false
     },
     {
       "name": "Medication 2",
-      "codeATC": "M2",
-      "categories": [
-      ],
-      "chemicalSubgroupAtc": "chemical",
-      "pharmacologicalSubgroupAtc": "pharmacological",
-      "therapeuticSubgroupAtc": "therapeutic",
-      "anatomicalMainGroupAtc": "anatomical",
+      "categories": [],
       "status": "UNKNOWN",
       "administrationRoute": null,
-      "dosageMin": null,
-      "dosageMax": null,
-      "dosageUnit": null,
-      "frequency": null,
-      "frequencyUnit": null,
-      "ifNeeded": null,
+      "dosage": {
+        "dosageMin": null,
+        "dosageMax": null,
+        "dosageUnit": null,
+        "frequency": null,
+        "frequencyUnit": null,
+        "ifNeeded": null
+      },
       "startDate": {
         "year": 2019,
         "month": 5,
@@ -321,7 +330,9 @@
         "day": 25
       },
       "cypInteractions": [],
-      "qtProlongatingRisk": "KNOWN"
+      "qtProlongatingRisk": "KNOWN",
+      "isSelfCare": false,
+      "isTrialMedication": false
     }
   ]
 }

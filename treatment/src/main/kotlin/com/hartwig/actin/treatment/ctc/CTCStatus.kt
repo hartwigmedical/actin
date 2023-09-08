@@ -7,6 +7,7 @@ internal enum class CTCStatus {
 
     companion object {
         private val LOGGER = LogManager.getLogger(CTCStatus::class.java)
+
         private val OPEN_STATES = setOf("Open")
         private val CLOSED_STATES = setOf("Gesloten", "Nog niet geopend", "Gesloten voor inclusie", "Onbekend", "Tijdelijk gesloten")
 

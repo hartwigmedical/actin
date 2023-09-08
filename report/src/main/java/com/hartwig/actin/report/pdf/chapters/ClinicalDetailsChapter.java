@@ -8,7 +8,6 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.report.datamodel.Report;
 import com.hartwig.actin.report.pdf.tables.TableGenerator;
 import com.hartwig.actin.report.pdf.tables.clinical.BloodTransfusionGenerator;
-import com.hartwig.actin.report.pdf.tables.clinical.LabResultsGenerator;
 import com.hartwig.actin.report.pdf.tables.clinical.MedicationGenerator;
 import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenerator;
 import com.hartwig.actin.report.pdf.tables.clinical.PatientCurrentDetailsGenerator;
@@ -62,7 +61,6 @@ public class ClinicalDetailsChapter implements ReportChapter {
         List<TableGenerator> generators = Lists.newArrayList(new PatientClinicalHistoryGenerator(report.clinical(), keyWidth, valueWidth),
                 new PatientCurrentDetailsGenerator(report.clinical(), keyWidth, valueWidth),
                 new TumorDetailsGenerator(report.clinical(), keyWidth, valueWidth),
-                LabResultsGenerator.fromRecord(report.clinical(), keyWidth, valueWidth),
                 new MedicationGenerator(report.clinical().medications(), contentWidth()));
 
         if (!report.clinical().bloodTransfusions().isEmpty()) {

@@ -14,7 +14,6 @@ import com.hartwig.actin.clinical.curation.config.MedicationDosageConfigFactory
 import com.hartwig.actin.clinical.curation.config.MedicationNameConfigFactory
 import com.hartwig.actin.clinical.curation.config.MolecularTestConfigFactory
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfigFactory
-import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfigFactory
 import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfigFactory
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfigFactory
 import com.hartwig.actin.clinical.curation.config.QTProlongatingConfigFactory
@@ -42,7 +41,6 @@ class CurationDatabaseReader(private val curationValidator: CurationValidator, p
         return CurationDatabase(
             primaryTumorConfigs = readConfigs(basePath, PRIMARY_TUMOR_TSV, PrimaryTumorConfigFactory(curationValidator)),
             treatmentHistoryEntryConfigs = TreatmentHistoryCurationConfigFile.read(basePath + ONCOLOGICAL_HISTORY_TSV, treatmentDatabase),
-            oncologicalHistoryConfigs = readConfigs(basePath, ONCOLOGICAL_HISTORY_TSV, OncologicalHistoryConfigFactory()),
             secondPrimaryConfigs = readConfigs(basePath, SECOND_PRIMARY_TSV, SecondPrimaryConfigFactory(curationValidator)),
             lesionLocationConfigs = readConfigs(basePath, LESION_LOCATION_TSV, LesionLocationConfigFactory()),
             nonOncologicalHistoryConfigs = readConfigs(

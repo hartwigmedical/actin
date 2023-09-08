@@ -25,7 +25,6 @@ import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.clinical.datamodel.Toxicity
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.clinical.datamodel.TumorDetails
-import com.hartwig.actin.clinical.datamodel.treatment.PriorTumorTreatment
 import com.hartwig.actin.doid.TestDoidModelFactory
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
@@ -63,6 +62,15 @@ class CurationModelTest {
         val curatedWithoutType: TumorDetails = model.curateTumorDetails("Stomach", null)
         assertEquals("Stomach", curatedWithoutType.primaryTumorLocation())
         assertEquals(Strings.EMPTY, curatedWithoutType.primaryTumorType())
+
+        model.evaluate()
+    }
+
+    @Test
+    fun shouldCurateTumorWithTypeOnly() {
+        val curatedWithoutLocation: TumorDetails = model.curateTumorDetails(null, "Carcinoma")
+        assertEquals(Strings.EMPTY, curatedWithoutLocation.primaryTumorLocation())
+        assertEquals("Carcinoma", curatedWithoutLocation.primaryTumorType())
 
         model.evaluate()
     }
@@ -158,18 +166,6 @@ class CurationModelTest {
     }
 
     @Test
-    fun shouldCuratePriorTreatments() {
-        val priorTreatments: List<PriorTumorTreatment> =
-            model.curatePriorTumorTreatments(Lists.newArrayList("Cis 2020 2021", "no systemic treatment", "cannot curate"))
-        assertEquals(2, priorTreatments.size.toLong())
-        assertTrue(priorTreatments.any { 2020 == it.startYear() })
-        assertTrue(priorTreatments.any { 2021 == it.startYear() })
-        assertTrue(model.curatePriorTumorTreatments(null).isEmpty())
-
-        model.evaluate()
-    }
-
-    @Test
     fun shouldCuratePriorSecondPrimaries() {
         val priorSecondPrimaries: List<PriorSecondPrimary> =
             model.curatePriorSecondPrimaries(Lists.newArrayList("Breast cancer Jan-2018", "cannot curate"))
@@ -197,7 +193,6 @@ class CurationModelTest {
             model.curatePriorMolecularTests("IHC", Lists.newArrayList("IHC ERBB2 3+", "not a molecular test"))
         assertEquals(1, priorMolecularTests.size.toLong())
         assertEquals("IHC", priorMolecularTests[0].test())
-        assertTrue(model.curatePriorTumorTreatments(null).isEmpty())
 
         model.evaluate()
     }

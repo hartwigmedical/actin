@@ -11,8 +11,6 @@ import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.clinical.datamodel.TumorDetails
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutablePriorTumorTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.util.ClinicalPrinter
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.DoidModelFactory
@@ -23,7 +21,6 @@ import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.util.MolecularPrinter
 import org.apache.logging.log4j.LogManager
 import java.io.File
-import java.time.LocalDate
 import kotlin.system.exitProcess
 
 class TestStandardOfCareApplication {
@@ -82,22 +79,11 @@ class TestStandardOfCareApplication {
             val clinicalRecord: ClinicalRecord = ImmutableClinicalRecord.builder()
                 .from(TestClinicalFactory.createMinimalTestClinicalRecord())
                 .tumor(tumorDetails)
-                .priorTumorTreatments(priorTreatmentStreamFromNames(listOf("CAPOX"), TreatmentCategory.CHEMOTHERAPY))
                 .build()
             val molecularRecord: MolecularRecord = TestMolecularFactory.createProperTestMolecularRecord()
             return PatientRecordFactory.fromInputs(clinicalRecord, molecularRecord)
         }
 
-        private fun priorTreatmentStreamFromNames(names: List<String>, category: TreatmentCategory): Set<ImmutablePriorTumorTreatment> {
-            return names.map { treatmentName: String ->
-                ImmutablePriorTumorTreatment.builder()
-                    .name(treatmentName)
-                    .isSystemic(true)
-                    .startYear(LocalDate.now().year)
-                    .addCategories(category)
-                    .build()
-            }.toSet()
-        }
     }
 }
 

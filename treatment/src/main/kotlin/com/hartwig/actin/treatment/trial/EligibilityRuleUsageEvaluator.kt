@@ -32,7 +32,6 @@ object EligibilityRuleUsageEvaluator {
         EligibilityRule.HAS_HAD_RESECTION_WITHIN_X_WEEKS,
         EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_LEAST_Z_CYCLES,
         EligibilityRule.HAS_JTC_OF_AT_LEAST_X,
-        EligibilityRule.HAS_D_DIMER_OUTSIDE_REF_UPPER_LIMIT,
         EligibilityRule.HAS_SECONDARY_GLIOBLASTOMA,
         EligibilityRule.HAS_MRI_SCAN_DOCUMENTING_STABLE_DISEASE,
         EligibilityRule.HAS_EXTRACRANIAL_METASTASES,

@@ -1,25 +1,18 @@
 package com.hartwig.actin.treatment.ctc
 
 import com.hartwig.actin.treatment.ctc.config.CTCDatabaseEntry
-import com.hartwig.actin.treatment.trial.config.CohortDefinitionConfig
 import org.apache.logging.log4j.LogManager
 
-object CTCDatabaseEntryInterpreter {
+object CohortStatusResolver {
 
-    private val LOGGER = LogManager.getLogger(CohortStatusInterpreter::class.java)
+    private val LOGGER = LogManager.getLogger(CohortStatusResolver::class.java)
 
-    fun consolidatedCohortStatus(entries: List<CTCDatabaseEntry>, cohortConfig: CohortDefinitionConfig): InterpretedCohortStatus {
+    fun resolve(entries: List<CTCDatabaseEntry>, configuredCohortIds: Set<Int>): InterpretedCohortStatus {
         val entriesByCohortId = entries.filter { it.cohortId != null }.associateBy { it.cohortId!!.toInt() }
-        val configuredCohortIds = cohortConfig.ctcCohortIds.map { it.toInt() }.toSet()
         val matches: List<CTCDatabaseEntry?> = findEntriesByCohortIds(entriesByCohortId, configuredCohortIds)
 
         if (!hasValidCTCDatabaseMatches(matches)) {
-            LOGGER.warn(
-                " Invalid cohort IDs configured for cohort '{}' of trial '{}': '{}'. Assuming cohort is closed without slots",
-                cohortConfig.cohortId,
-                cohortConfig.trialId,
-                configuredCohortIds
-            )
+            LOGGER.warn(" Invalid cohort IDs configured for cohort: '{}'. Assuming cohort is closed without slots", configuredCohortIds)
             return closedWithoutSlots()
         }
         return interpretValidMatches(matches.filterNotNull(), entriesByCohortId)
@@ -37,20 +30,30 @@ object CTCDatabaseEntryInterpreter {
         if (isSingleParent(matches)) {
             return fromEntry(matches[0])
         } else if (isListOfChildren(matches)) {
-            val best = matches.map(::fromEntry).maxWith(InterpretedCohortStatusComparator())
+            val bestChildEntry = matches.map(::fromEntry).maxWith(InterpretedCohortStatusComparator())
             val firstParentId = matches[0].cohortParentId
             if (matches.size > 1) {
                 if (matches.any { it.cohortParentId != firstParentId }) {
                     LOGGER.warn(" Multiple parents found for single set of children: {}", matches)
                 }
             }
-            if (best != fromEntry(entriesByCohortId[firstParentId]!!)) {
+            val parentEntry = fromEntry(entriesByCohortId[firstParentId]!!)
+            if (bestChildEntry.open && !parentEntry.open) {
                 LOGGER.warn(
-                    " Inconsistent status between best child and parent cohort in CTC for cohort with parent ID '{}'",
-                    matches[0].cohortParentId
+                    " Best child from IDs '{}' is open while parent with ID '{}' is closed",
+                    matches.map { it.cohortId },
+                    firstParentId
                 )
             }
-            return best
+
+            if (bestChildEntry.slotsAvailable && !parentEntry.slotsAvailable) {
+                LOGGER.warn(
+                    " Best child from IDs '{}' has slots available while parent with ID '{}' has no slots available",
+                    matches.map { it.cohortId },
+                    firstParentId
+                )
+            }
+            return bestChildEntry
         }
         throw IllegalStateException("Unexpected set of CTC database matches: $matches")
     }
@@ -88,17 +91,10 @@ object CTCDatabaseEntryInterpreter {
             )
             return closedWithoutSlots()
         }
-        val numberSlotsAvailable = entry.cohortSlotsNumberAvailable
+
         val status: CTCStatus = CTCStatus.fromStatusString(cohortStatus)
-        val slotsAvailable: Boolean = if (numberSlotsAvailable == null && status == CTCStatus.OPEN) {
-            LOGGER.warn(
-                " No data available on number of slots for open cohort with ID '{}'. Assuming no slots available",
-                entry.cohortId
-            )
-            false
-        } else {
-            numberSlotsAvailable != null && numberSlotsAvailable > 0
-        }
+        val slotsAvailable: Boolean = entry.cohortSlotsNumberAvailable != null && entry.cohortSlotsNumberAvailable > 0
+
         return InterpretedCohortStatus(open = status == CTCStatus.OPEN, slotsAvailable = slotsAvailable)
     }
 

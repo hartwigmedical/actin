@@ -10,7 +10,6 @@ import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig
 import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
 import com.hartwig.actin.clinical.curation.config.MolecularTestConfig
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
-import com.hartwig.actin.clinical.curation.config.OncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
@@ -26,7 +25,6 @@ import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation
 data class CurationDatabase(
     val primaryTumorConfigs: List<PrimaryTumorConfig>,
     val treatmentHistoryEntryConfigs: List<TreatmentHistoryEntryConfig>,
-    val oncologicalHistoryConfigs: List<OncologicalHistoryConfig>,
     val secondPrimaryConfigs: List<SecondPrimaryConfig>,
     val lesionLocationConfigs: List<LesionLocationConfig>,
     val nonOncologicalHistoryConfigs: List<NonOncologicalHistoryConfig>,

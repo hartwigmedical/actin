@@ -22,7 +22,7 @@ public class TreatmentDatabase {
 
     @Nullable
     public Treatment findTreatmentByName(@NotNull String treatmentName) {
-        return treatmentsByName.get(treatmentName.toLowerCase());
+        return treatmentsByName.get(treatmentName.replace(" ", "_").toLowerCase());
     }
 
     @Nullable
