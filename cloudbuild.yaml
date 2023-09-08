@@ -1,5 +1,10 @@
 steps:
 
+  - id: 'Set release version'
+    name: 'maven:3.9.2-eclipse-temurin-11'
+    entrypoint: mvn
+    args: [ 'versions:set', '-DnewVersion=${TAG_NAME}' ]
+
   - id: 'Maven build using cache'
     name: 'eu.gcr.io/hmf-build/maven-cache'
     args: [ '-T 1C deploy --batch-mode' ]
