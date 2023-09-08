@@ -10,6 +10,7 @@ import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import java.io.IOException
 import kotlin.system.exitProcess
 
@@ -32,22 +33,21 @@ class ReporterApplication(private val config: ReporterConfig) {
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(ReporterApplication::class.java)
-        private const val APPLICATION = "ACTIN Reporter"
-        val VERSION = ReporterApplication::class.java.getPackage().implementationVersion
+        val LOGGER: Logger = LogManager.getLogger(ReporterApplication::class.java)
+        const val APPLICATION = "ACTIN Reporter"
+        val VERSION: String? = ReporterApplication::class.java.getPackage().implementationVersion
+    }
+}
 
-        @Throws(IOException::class)
-        fun main(args: Array<String>) {
-            LOGGER.info("Running {} v{}", APPLICATION, VERSION)
-            val options: Options = ReporterConfig.createOptions()
-            try {
-                val config = ReporterConfig.createConfig(DefaultParser().parse(options, args))
-                ReporterApplication(config).run()
-            } catch (exception: ParseException) {
-                LOGGER.warn(exception)
-                HelpFormatter().printHelp(APPLICATION, options)
-                exitProcess(1)
-            }
-        }
+fun main(args: Array<String>) {
+    ReporterApplication.LOGGER.info("Running {} v{}", ReporterApplication.APPLICATION, ReporterApplication.VERSION)
+    val options: Options = ReporterConfig.createOptions()
+    try {
+        val config = ReporterConfig.createConfig(DefaultParser().parse(options, args))
+        ReporterApplication(config).run()
+    } catch (exception: ParseException) {
+        ReporterApplication.LOGGER.warn(exception)
+        HelpFormatter().printHelp(ReporterApplication.APPLICATION, options)
+        exitProcess(1)
     }
 }

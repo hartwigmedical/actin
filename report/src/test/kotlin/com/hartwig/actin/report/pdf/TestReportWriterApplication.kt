@@ -26,7 +26,7 @@ object TestReportWriterApplication {
 
     @Throws(IOException::class)
     private fun createTestReport(): Report {
-        val report = TestReportFactory.createProperTestReport()
+        val report = TestReportFactory.createExhaustiveTestReport()
         LOGGER.info("Printing clinical record")
         ClinicalPrinter.printRecord(report.clinical)
         LOGGER.info("Printing molecular record")

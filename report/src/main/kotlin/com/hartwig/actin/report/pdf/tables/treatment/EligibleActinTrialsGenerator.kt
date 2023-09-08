@@ -98,8 +98,7 @@ class EligibleActinTrialsGenerator private constructor(
         }
 
         private fun concat(strings: Set<String?>): String {
-            val concatenatedString = java.lang.String.join(Formats.COMMA_SEPARATOR, strings)
-            return concatenatedString.ifEmpty { Formats.VALUE_NONE }
+            return strings.joinToString(Formats.COMMA_SEPARATOR).ifEmpty { Formats.VALUE_NONE }
         }
     }
 }

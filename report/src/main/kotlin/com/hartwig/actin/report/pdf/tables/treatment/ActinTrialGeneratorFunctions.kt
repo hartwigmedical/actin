@@ -37,12 +37,10 @@ internal object ActinTrialGeneratorFunctions {
             val cohort = cohortList[0]
             table.addCell(
                 createContent(
-                    Cells.createContentNoBorder(
-                        Paragraph().addAll(
-                            listOf(
-                                Text(cohort.trialId.trimIndent()).addStyle(Styles.tableHighlightStyle()),
-                                Text(cohort.acronym).addStyle(Styles.tableContentStyle())
-                            )
+                    Paragraph().addAll(
+                        listOf(
+                            Text(cohort.trialId.trimIndent()).addStyle(Styles.tableHighlightStyle()),
+                            Text(cohort.acronym).addStyle(Styles.tableContentStyle())
                         )
                     )
                 )
