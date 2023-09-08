@@ -37,10 +37,4 @@ object ValueComparison {
             value.lowercase().contains(termToFind.lowercase())
         }
     }
-
-    fun stringCaseInsensitivelyExactlyMatchesQueryCollection(value: String, collection: Collection<String>): Boolean {
-        return collection.any { termToFind: String ->
-            value.lowercase() == termToFind.lowercase()
-        }
-    }
 }

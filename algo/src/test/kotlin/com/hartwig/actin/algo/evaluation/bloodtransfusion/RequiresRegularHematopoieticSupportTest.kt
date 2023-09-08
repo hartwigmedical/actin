@@ -4,12 +4,12 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
 import com.hartwig.actin.algo.evaluation.medication.AtcTree
+import io.mockk.mockk
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
-import org.apache.logging.log4j.util.Strings
 import org.junit.Test
 import java.time.LocalDate
 
@@ -74,26 +74,27 @@ class RequiresRegularHematopoieticSupportTest {
 
     @Test
     fun shouldFailWhenMedicationIsStillRunningButHasWrongCategory() {
-        val stillRunning: Medication = support().startDate(MIN_DATE.minusWeeks(1)).stopDate(null).build()
-        val atc = AtcTestFactory.atcClassificationBuilder().chemicalSubGroup(AtcTestFactory.atcLevelBuilder().name("wrong").build()).build()
-        val wrongCategory: Medication = TestMedicationFactory.builder().from(stillRunning).atc(atc).build()
+        val atc =
+            AtcTestFactory.atcClassificationBuilder().chemicalSubGroup(AtcTestFactory.atcLevelBuilder().code("wrong category").build())
+                .build()
+        val wrongCategory: Medication = TestMedicationFactory.builder().startDate(MIN_DATE.minusWeeks(1)).stopDate(null).atc(atc).build()
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(BloodTransfusionTestFactory.withMedication(wrongCategory)))
     }
 
     companion object {
         private val MIN_DATE: LocalDate = LocalDate.of(2020, 2, 1)
         private val MAX_DATE = MIN_DATE.plusMonths(2)
-        private val FUNCTION = RequiresRegularHematopoieticSupport(AtcTree(emptyMap()), MIN_DATE, MAX_DATE)
+        private val FUNCTION = RequiresRegularHematopoieticSupport(mockk<AtcTree>(), MIN_DATE, MAX_DATE)
 
         private fun support(): ImmutableMedication.Builder {
             val atc = AtcTestFactory.atcClassificationBuilder().chemicalSubGroup(
-                RequiresRegularHematopoieticSupport.hematopoieticMedicationCategories(AtcTree(emptyMap())).iterator().next()
+                RequiresRegularHematopoieticSupport.hematopoieticMedicationCategories(mockk<AtcTree>()).iterator().next()
             ).build()
             return TestMedicationFactory.builder().atc(atc)
         }
 
         private fun create(date: LocalDate): BloodTransfusion {
-            return ImmutableBloodTransfusion.builder().product(Strings.EMPTY).date(date).build()
+            return ImmutableBloodTransfusion.builder().product("").date(date).build()
         }
     }
 }

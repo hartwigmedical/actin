@@ -5,26 +5,34 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
+import com.hartwig.actin.clinical.datamodel.AtcLevel
+import com.hartwig.actin.clinical.datamodel.Medication
 import java.time.LocalDate
 
-class HasRecentlyReceivedMedicationOfCategory(
-    private val selector: MedicationSelector, private val categories: Map<String, Set<String>>, private val minStopDate: LocalDate
+class HasRecentlyReceivedMedicationOfAtcLevel(
+    private val selector: MedicationSelector,
+    private val categoryName: String,
+    private val categoryAtcLevels: Set<AtcLevel>,
+    private val minStopDate: LocalDate
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val categoriesToFind = categories.values.first()
-        val categoryName = categories.keys.first().lowercase()
-
         if (minStopDate.isBefore(record.clinical().patient().registrationDate())) {
             return EvaluationFactory.undetermined(
                 "Required stop date prior to registration date for recent medication usage evaluation of $categoryName",
                 "Recent $categoryName medication"
             )
         }
-        val medications = selector.activeOrRecentlyStoppedWithCategory(record.clinical().medications(), categoriesToFind, minStopDate)
+
+        val medications =
+            selector.activeOrRecentlyStopped(record.clinical().medications(), minStopDate)
+                .filter { (allLevels(it) intersect categoryAtcLevels).isNotEmpty() }
+
+        val foundMedicationNames = medications.map { it.name() }.filter { it.isNotEmpty() }
+
         return if (medications.isNotEmpty()) {
-            val names = medications.map { it.name() }
+            val foundMedicationString = if (foundMedicationNames.isNotEmpty()) ": ${concatLowercaseWithAnd(foundMedicationNames)}" else ""
             EvaluationFactory.pass(
-                "Patient recently received medication " + concatLowercaseWithAnd(names) + ", which belong(s) to category $categoryName",
+                "Patient recently received medication $foundMedicationString which belong(s) to category $categoryName",
                 "Recent $categoryName medication"
             )
         } else {
@@ -33,5 +41,8 @@ class HasRecentlyReceivedMedicationOfCategory(
                 "No recent $categoryName medication"
             )
         }
+
     }
+
+    private fun allLevels(it: Medication) = it.atc()?.allLevels() ?: emptySet<AtcLevel>()
 }

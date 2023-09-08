@@ -4,12 +4,24 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.algo.evaluation.medication.MedicationCategories
+import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreter
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreterOnEvaluationDate
+import com.hartwig.actin.clinical.datamodel.AtcLevel
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction
 import com.hartwig.actin.treatment.datamodel.EligibilityRule
 
 class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
+    private val selector: MedicationSelector
+    private val categories: MedicationCategories
+
+    init {
+        val interpreter: MedicationStatusInterpreter = MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date())
+        selector = MedicationSelector(interpreter)
+        categories = MedicationCategories.create(atcTree())
+    }
+
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.HAS_RECEIVED_DRUGS_X_CANCER_THERAPY_WITHIN_Y_WEEKS to hasRecentlyReceivedCancerTherapyOfNamesCreator(),
@@ -60,8 +72,11 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
 
     private fun createReceivedCancerTherapyOfCategoryFunction(categoryInputs: List<String>, minWeeks: Int): EvaluationFunction {
         val interpreter = createInterpreterForWashout(minWeeks)
-        val categories = determineCategories(categoryInputs)
-        return HasRecentlyReceivedCancerTherapyOfCategory(categories, interpreter)
+        val mappedCategories = mutableMapOf<String, Set<AtcLevel>>()
+        for (category in categoryInputs) {
+            mappedCategories[category] = categories.resolve(category)
+        }
+        return HasRecentlyReceivedCancerTherapyOfCategory(mappedCategories, emptyMap(), interpreter)
     }
 
     private fun hasRecentlyReceivedRadiotherapyCreator(): FunctionCreator {
@@ -89,7 +104,8 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
 
     private fun createReceivedAnyCancerTherapyFunction(minWeeks: Int): EvaluationFunction {
         val interpreter = createInterpreterForWashout(minWeeks)
-        return HasRecentlyReceivedCancerTherapyOfCategory(ALL_ANTI_CANCER_CATEGORIES, interpreter)
+        val antiCancerCategories = mapOf("Anticancer" to categories.resolve("Anticancer"))
+        return HasRecentlyReceivedCancerTherapyOfCategory(antiCancerCategories, emptyMap(), interpreter)
     }
 
     private fun hasRecentlyReceivedAnyCancerTherapyButSomeCreator(): FunctionCreator {
@@ -108,8 +124,12 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
 
     private fun createReceivedAnyCancerTherapyButSomeFunction(categoriesToIgnore: List<String>, minWeeks: Int): EvaluationFunction {
         val interpreter = createInterpreterForWashout(minWeeks)
-        val categoriesToConsider: Map<String, Set<String>> = ALL_ANTI_CANCER_CATEGORIES - determineCategories(categoriesToIgnore).keys
-        return HasRecentlyReceivedCancerTherapyOfCategory(categoriesToConsider, interpreter)
+        val antiCancerCategories = mapOf("Anticancer" to categories.resolve("Anticancer"))
+        val mappedIgnoredCategories = mutableMapOf<String, Set<AtcLevel>>()
+        for (category in categoriesToIgnore) {
+            mappedIgnoredCategories[category] = categories.resolve(category)
+        }
+        return HasRecentlyReceivedCancerTherapyOfCategory(antiCancerCategories, mappedIgnoredCategories, interpreter)
     }
 
     private fun willRequireAnticancerTherapyCreator(): FunctionCreator {
@@ -119,41 +139,5 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
     private fun createInterpreterForWashout(inputWeeks: Int): MedicationStatusInterpreter {
         val minDate = referenceDateProvider().date().minusWeeks(inputWeeks.toLong()).plusWeeks(2)
         return MedicationStatusInterpreterOnEvaluationDate(minDate)
-    }
-
-    companion object {
-        private val CATEGORIES_PER_MAIN_CATEGORY: Map<String, Set<String>> = mapOf(
-            "Immunotherapy" to setOf("Pembrolizumab", "Nivolumab", "Ipilimumab", "Cemiplimab", "Avelumab"),
-            "Hypomethylating agents" to setOf("Azacitidine", "Decitabine"),
-            "Chemotherapy" to setOf("Platinum compounds", "Pyrimidine analogues", "Taxanes", "Alkylating agents"),
-            "Gonadorelin" to setOf(
-                "Anti-gonadotropin-releasing hormones",
-                "Gonadotropin-releasing hormones",
-                "Antigonadotropins and similar agents",
-                "Gonadotropin releasing hormone analogues"
-            ),
-            "PARP inhibitors" to setOf("Poly (ADP-ribose) polymerase (PARP) inhibitors")
-        )
-
-        private val ALL_ANTI_CANCER_CATEGORIES: Map<String, Set<String>> = mapOf(
-            "Anti-cancer" to setOf(
-                "Antineoplastic agents",
-                "Endocrine therapy",
-                "Immunosuppressants",
-                "Anti-gonadotropin-releasing hormones",
-                "Gonadotropin-releasing hormones",
-                "Antigonadotropins and similar agents",
-                "Gonadotropin releasing hormone analogues"
-            )
-        )
-
-        private fun determineCategories(inputs: List<String>): Map<String, Set<String>> {
-            val map = mutableMapOf<String, Set<String>>()
-            for (input in inputs) {
-                if (CATEGORIES_PER_MAIN_CATEGORY[input] != null) map[input] = CATEGORIES_PER_MAIN_CATEGORY[input]!! else map[input] =
-                    setOf(input)
-            }
-            return map
-        }
     }
 }

@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.medication
 
+import com.hartwig.actin.clinical.datamodel.AtcLevel
 import com.hartwig.actin.clinical.datamodel.CypInteraction
+import com.hartwig.actin.clinical.datamodel.ImmutableAtcLevel
 import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
@@ -38,14 +40,17 @@ class MedicationSelectorTest {
             TestMedicationFactory.builder().name("no categories").build(),
             TestMedicationFactory.builder().name("wrong categories").atc(
                 AtcTestFactory.atcClassificationBuilder()
-                    .anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("wrong category 1").build()).build()
+                    .anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().code("wrong category 1").build()).build()
             ).build(),
             TestMedicationFactory.builder().name("right categories").atc(
-                AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category 1").build())
+                AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().code("category 1").build())
                     .build()
             ).build(),
         )
-        val filtered = MedicationTestFactory.alwaysActive().activeWithExactCategory(medications, "Category 1")
+
+        val filtered = MedicationTestFactory.alwaysActive().active(medications)
+            .filter { (allLevels(it) intersect setOf(ImmutableAtcLevel.builder().code("category 1").name("").build())).isNotEmpty() }
+
         Assert.assertEquals(1, filtered.size.toLong())
         Assert.assertEquals("right categories", filtered[0].name())
     }
@@ -56,18 +61,24 @@ class MedicationSelectorTest {
             TestMedicationFactory.builder().name("no categories").build(),
             TestMedicationFactory.builder().name("wrong categories").atc(
                 AtcTestFactory.atcClassificationBuilder()
-                    .anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("wrong category 1").build()).build()
+                    .anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().code("wrong category 1").build()).build()
             ).build(),
             TestMedicationFactory.builder().name("right category 1").atc(
-                AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category 1").build())
+                AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().code("category 1").build())
                     .build()
             ).build(),
             TestMedicationFactory.builder().name("right category 2").atc(
-                AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().name("category 3").build())
+                AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().code("category 3").build())
                     .build()
             ).build()
         )
-        val filtered = MedicationTestFactory.alwaysActive().activeWithAnyExactCategory(medications, setOf("Category 1", "Category 3"))
+        val filtered = MedicationTestFactory.alwaysActive().active(medications).filter {
+            (allLevels(it) intersect setOf(
+                ImmutableAtcLevel.builder().code("category 1").name("").build(),
+                ImmutableAtcLevel.builder().code("category 3").name("").build()
+            )).isNotEmpty()
+        }
+
         Assert.assertEquals(2, filtered.size.toLong())
         Assert.assertNotNull(findByName(medications, "right category 1"))
         Assert.assertNotNull(findByName(medications, "right category 2"))
@@ -100,7 +111,8 @@ class MedicationSelectorTest {
                 .build()
         )
         val filtered =
-            MedicationTestFactory.alwaysInactive().activeOrRecentlyStoppedWithCategory(medications, setOf("Category 1"), minStopDate)
+            MedicationTestFactory.alwaysInactive().activeOrRecentlyStopped(medications, minStopDate)
+                .filter { (allLevels(it) intersect setOf(ImmutableAtcLevel.builder().code("category 1").name("").build())).isNotEmpty() }
         Assert.assertEquals(1, filtered.size.toLong())
         Assert.assertNotNull(findByName(medications, "right category 1 recently stopped"))
     }
@@ -193,5 +205,7 @@ class MedicationSelectorTest {
             }
             throw IllegalStateException("Could not find medication with name: $nameToFind")
         }
+
+        private fun allLevels(it: Medication) = it.atc()?.allLevels() ?: emptySet<AtcLevel>()
     }
 }

@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.medication
 
-import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyExactlyMatchesQueryCollection
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.algo.medication.MedicationStatusInterpretation
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreter
@@ -13,28 +12,12 @@ class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
         return medications.filter(::isActive)
     }
 
+    fun activeOrRecentlyStopped(medications: List<Medication>, minStopDate: LocalDate): List<Medication> {
+        return medications.filter { isActive(it) || isRecentlyStopped(it, minStopDate) }
+    }
+
     fun activeWithAnyTermInName(medications: List<Medication>, termsToFind: Set<String>): List<Medication> {
         return active(medications).filter { stringCaseInsensitivelyMatchesQueryCollection(it.name(), termsToFind) }
-    }
-
-    fun activeWithExactCategory(medications: List<Medication>, categoryToFind: String): List<Medication> {
-        return activeWithAnyExactCategory(medications, setOf(categoryToFind))
-    }
-
-    fun activeWithAnyExactCategory(medications: List<Medication>, categoriesToFind: Set<String>): List<Medication> {
-        val lowercaseCategoriesToFind = categoriesToFind.map { it.lowercase() }.toSet()
-        return active(medications).filter { medication ->
-            hasATCLevelName(medication, lowercaseCategoriesToFind)
-        }
-    }
-
-    fun activeOrRecentlyStoppedWithCategory(
-        medications: List<Medication>, categoriesToFind: Set<String>, minStopDate: LocalDate
-    ): List<Medication> {
-        return medications.filter { medication ->
-            hasATCLevelName(medication, categoriesToFind)
-        }
-            .filter { isActive(it) || isRecentlyStopped(it, minStopDate) }
     }
 
     fun activeWithCypInteraction(
@@ -54,29 +37,6 @@ class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
             medication.cypInteractions().any { (interactionToFind == null || interactionToFind == it.cyp()) && typeOfCyp == it.type() }
         }
             .filter { isActive(it) || isRecentlyStopped(it, minStopDate) }
-    }
-
-    fun hasATCLevelName(medication: Medication, categoriesToFind: Set<String>): Boolean {
-        return if (medication.atc() == null) {
-            false
-        } else {
-            stringCaseInsensitivelyExactlyMatchesQueryCollection(
-                medication.atc()!!.therapeuticSubGroup().name()!!.lowercase(),
-                categoriesToFind
-            ) || stringCaseInsensitivelyExactlyMatchesQueryCollection(
-                medication.atc()!!.chemicalSubGroup().name()!!.lowercase(),
-                categoriesToFind
-            ) || stringCaseInsensitivelyExactlyMatchesQueryCollection(
-                medication.atc()!!.anatomicalMainGroup().name()!!.lowercase(),
-                categoriesToFind
-            ) || stringCaseInsensitivelyExactlyMatchesQueryCollection(
-                medication.atc()!!.pharmacologicalSubGroup().name()!!.lowercase(),
-                categoriesToFind
-            ) || stringCaseInsensitivelyExactlyMatchesQueryCollection(
-                medication.atc()!!.chemicalSubstance()!!.name()!!.lowercase(),
-                categoriesToFind
-            )
-        }
     }
 
     private fun isRecentlyStopped(medication: Medication, minStopDate: LocalDate): Boolean {

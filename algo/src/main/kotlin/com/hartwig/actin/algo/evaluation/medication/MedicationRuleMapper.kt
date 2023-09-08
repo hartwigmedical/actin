@@ -49,16 +49,16 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     private fun getsActiveMedicationWithCategoryCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val categoryNameInput = functionInputResolver().createOneStringInput(function)
-            CurrentlyGetsMedicationOfCategory(selector, categoryNameInput, categories.resolve(categoryNameInput))
+            CurrentlyGetsMedicationOfAtcLevel(selector, categoryNameInput, categories.resolve(categoryNameInput))
         }
     }
 
     private fun hasRecentlyReceivedMedicationOfCategoryCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val categoryInputs = functionInputResolver().createOneStringOneIntegerInput(function)
-            val maxStopDate = referenceDateProvider().date().minusWeeks(categoryInputs.integer().toLong())
-            val categories = determineCategories(categoryInputs.string())
-            HasRecentlyReceivedMedicationOfCategory(selector, categories, maxStopDate)
+            val categoryInput = functionInputResolver().createOneStringOneIntegerInput(function)
+            val categoryNameInput = categoryInput.string()
+            val maxStopDate = referenceDateProvider().date().minusWeeks(categoryInput.integer().toLong())
+            HasRecentlyReceivedMedicationOfAtcLevel(selector, categoryNameInput, categories.resolve(categoryNameInput), maxStopDate)
         }
     }
 
@@ -127,31 +127,16 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     }
 
     private fun getsStableDosingAnticoagulantMedicationCreator(): FunctionCreator {
-        return FunctionCreator { CurrentlyGetsStableMedicationOfCategory(selector, setOf("Antithrombotic agents", "Antihemorrhagics")) }
+        val categoryNameInput = "Anticoagulants"
+        return FunctionCreator {
+            CurrentlyGetsStableMedicationOfCategory(
+                selector,
+                mapOf(categoryNameInput to categories.resolve(categoryNameInput))
+            )
+        }
     }
 
     companion object {
-        private val CATEGORIES_PER_MAIN_CATEGORY: Map<String, Set<String>> = mapOf(
-            "Anticoagulants" to setOf("Antithrombotic agents", "Antihemorrhagics"),
-            "Azole" to setOf("Imidazole and triazole derivatives", "Triazole and tetrazole derivatives", "Imidazole derivatives"),
-            "Bone resorptive" to setOf("Calcium homeostasis", "Drugs affecting bone structure and mineralization"),
-            "Coumarin derivative" to setOf("Vitamin K antagonists"),
-            "Gonadorelin" to setOf(
-                "Anti-gonadotropin-releasing hormones",
-                "Gonadotropin-releasing hormones",
-                "Antigonadotropins and similar agents",
-                "Gonadotropin releasing hormone analogues"
-            ),
-        )
-
-        private fun determineCategories(input: String): Map<String, Set<String>> {
-            return if (CATEGORIES_PER_MAIN_CATEGORY[input] != null) mapOf(input to CATEGORIES_PER_MAIN_CATEGORY[input]!!) else mapOf(
-                input to setOf(
-                    input
-                )
-            )
-        }
-
         // Undetermined Cyp
         val UNDETERMINED_CYP = setOf("2J2")
     }
