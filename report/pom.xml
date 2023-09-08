@@ -34,6 +34,10 @@
             <groupId>com.itextpdf</groupId>
             <artifactId>io</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>junit</groupId>
@@ -50,10 +54,6 @@
             <artifactId>common</artifactId>
             <scope>test</scope>
             <type>test-jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib-jdk8</artifactId>
         </dependency>
     </dependencies>
 
