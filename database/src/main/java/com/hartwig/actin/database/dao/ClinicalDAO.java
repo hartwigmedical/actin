@@ -506,9 +506,7 @@ class ClinicalDAO {
                     .values(patientId,
                             medication.name(),
                             DataUtil.concat(medication.categories()),
-                            Optional.ofNullable(atc)
-                                    .flatMap(a -> Optional.ofNullable(a.chemicalSubstance()))
-                                    .map(AtcLevel::code)
+                            Optional.ofNullable(atc).flatMap(a -> Optional.ofNullable(a.chemicalSubstance())).map(AtcLevel::code)
                                     .orElse(null),
                             atc != null ? atc.anatomicalMainGroup().name() : null,
                             atc != null ? atc.therapeuticSubGroup().name() : null,

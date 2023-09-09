@@ -111,7 +111,6 @@ public final class TestClinicalFactory {
                 .hasLiverLesions(true)
                 .hasLungLesions(false)
                 .hasLymphNodeLesions(true)
-                .addOtherLesions("Lymph nodes")
                 .biopsyLocation("Liver")
                 .build();
     }
@@ -158,8 +157,12 @@ public final class TestClinicalFactory {
 
         Drug pembrolizumab = drug("PEMBROLIZUMAB", DrugType.ANTI_PD_1, TreatmentCategory.IMMUNOTHERAPY);
 
-        DrugTherapy folfirinoxAndPembrolizumab = ImmutableDrugTherapy.builder().name("FOLFIRINOX+PEMBROLIZUMAB")
-                .addAllDrugs(folfirinox.drugs()).addDrugs(pembrolizumab).isSystemic(true).build();
+        DrugTherapy folfirinoxAndPembrolizumab = ImmutableDrugTherapy.builder()
+                .name("FOLFIRINOX+PEMBROLIZUMAB")
+                .addAllDrugs(folfirinox.drugs())
+                .addDrugs(pembrolizumab)
+                .isSystemic(true)
+                .build();
 
         DrugTherapy folfirinoxLocoRegional =
                 ImmutableDrugTherapy.copyOf(folfirinox).withName("FOLFIRINOX_LOCO-REGIONAL").withIsSystemic(false);
