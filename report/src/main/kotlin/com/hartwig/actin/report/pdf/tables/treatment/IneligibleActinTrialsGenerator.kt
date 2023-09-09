@@ -40,7 +40,7 @@ class IneligibleActinTrialsGenerator private constructor(
             )
             cohortList.forEach { cohort: EvaluatedCohort ->
                 val cohortText = ActinTrialGeneratorFunctions.createCohortString(cohort)
-                val ineligibilityText = if (cohort.fails.isEmpty()) "?" else cohort.fails.joinToString(", ")
+                val ineligibilityText = if (cohort.fails.isEmpty()) "?" else cohort.fails.sorted().joinToString(", ")
                 ActinTrialGeneratorFunctions.addContentListToTable(
                     listOf(cohortText, ineligibilityText),
                     !cohort.isOpen || !cohort.hasSlotsAvailable,

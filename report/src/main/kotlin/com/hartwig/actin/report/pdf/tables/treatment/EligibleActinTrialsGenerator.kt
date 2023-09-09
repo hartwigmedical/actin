@@ -97,8 +97,8 @@ class EligibleActinTrialsGenerator private constructor(
             return EligibleActinTrialsGenerator(cohorts, title, trialColWidth, cohortColWidth, molecularColWidth, checksColWidth)
         }
 
-        private fun concat(strings: Set<String?>): String {
-            return strings.joinToString(Formats.COMMA_SEPARATOR).ifEmpty { Formats.VALUE_NONE }
+        private fun concat(strings: Set<String>): String {
+            return strings.sorted().joinToString(Formats.COMMA_SEPARATOR).ifEmpty { Formats.VALUE_NONE }
         }
     }
 }

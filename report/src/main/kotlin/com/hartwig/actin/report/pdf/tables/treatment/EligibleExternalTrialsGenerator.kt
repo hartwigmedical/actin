@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.treatment
 
 import com.google.common.collect.Multimap
-import com.google.common.collect.Sets
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats.COMMA_SEPARATOR
@@ -21,10 +20,8 @@ class EligibleExternalTrialsGenerator(
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
         table.addHeaderCell(Cells.createHeader("Event"))
         table.addHeaderCell(Cells.createHeader("Trials"))
-        val events: Set<String> = Sets.newTreeSet(
-            externalTrialsPerEvent.keySet()
-        )
-        for (event in events) {
+
+        externalTrialsPerEvent.keySet().sorted().distinct().forEach { event ->
             table.addCell(Cells.createContent(event))
             val trialList = externalTrialsPerEvent[event].joinToString(COMMA_SEPARATOR)
             table.addCell(Cells.createContent(trialList))

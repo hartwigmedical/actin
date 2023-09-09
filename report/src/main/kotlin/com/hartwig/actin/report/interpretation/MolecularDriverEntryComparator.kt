@@ -16,16 +16,14 @@ class MolecularDriverEntryComparator : Comparator<MolecularDriverEntry> {
 
     private class DriverTypeComparator : Comparator<String> {
         override fun compare(string1: String, string2: String): Int {
-            return compareValuesBy(
-                string2.lowercase(), string1.lowercase(),
-                { it.startsWith("mutation") },
-                { it.startsWith("amplification") },
-                { it.startsWith("loss") },
-                { it.contains("fusion") },
-                { it.contains("disruption") },
-                { it.startsWith("virus") },
-                { it }
-            )
+            return compareBy<String> { it.startsWith("mutation") }
+                .thenBy { it.startsWith("amplification") }
+                .thenBy { it.startsWith("loss") }
+                .thenBy { it.contains("fusion") }
+                .thenBy { it.contains("disruption") }
+                .thenBy { it.startsWith("virus") }
+                .thenByDescending { it }
+                .compare(string2.lowercase(), string1.lowercase())
         }
     }
 
