@@ -1,7 +1,7 @@
 ## ACTIN-Clinical
 
 ACTIN-Clinical ingests (external) clinical feed and uses an internal curation database to create data in terms of the datamodel described
-below. This clinical model is written to a per-patient json file. The clinical data can be loaded into a mysql database
+below. This ACTIN clinical model is written to a per-patient json file. The clinical data can be loaded into a mysql database
 via [ACTIN-Database](../database/README.md).
 
 This application requires Java 11+ and can be run as follows:
@@ -14,19 +14,13 @@ java -cp actin.jar com.hartwig.actin.clinical.ClinicalIngestionApplicationKt \
    -output_directory /path/to/where/clinical_json_files/are/written
 ```
 
-### Disease Ontology ID
-
-For mapping of primary tumor location and type, second primaries and 'other conditions' in the ACTIN clinical datamodel,
-one or more Disease Ontology IDs (DOIDs) are assigned. For more information, see https://disease-ontology.org/.
-
-## External Clinical Data Feed
+## External clinical feed
 
 ### Required set
 
-The external clinical data feed should contain relevant clinical data per patient.
-Below is an overview of required data (if available) that should be provided per patient. 
+For the best results, the (external) clinical feed should contain all clinical data described below ('required set'). Below is an overview of data that, if available, should be provided per patient. 
 
-Note that 'with date' indicates whether a date should be assigned to the variable.
+Note that the column 'with date?' indicates whether the variable should be provided with date.
 
 Patient details
 
@@ -35,72 +29,68 @@ Patient details
 | Birth year              | 1940           |            |
 | Sex                     | Male           |            |    
 | ACTIN registration date | 2023-01-01     | N/A        |
-
-Patient fitness
-
-| Variable                                              | Example values  | With date? |
-|-------------------------------------------------------|-----------------|------------|
-| WHO                                                   | 0/1/2/3/4/5     | Yes        |
+| WHO                     | 0/1/2/3/4/5    | Yes        |
 
 Current primary tumor details
 
-| Variable                                       | Example values               | With date? |
-|------------------------------------------------|------------------------------|------------|
-| Diagnosis date                                 | 2023-01-01                   | N/A        |
-| Tumor localization                             | Lung                         |            |
-| Tumor type                                     | Adenocarcinoma               |            |    
-| Grade/differentiation details                  | Poorly differentiated        |            |
-| Stage                                          | 4                            | Yes        |
-| Lesion sites                                   | Liver, Supraclavicular, Bone | Yes        |
-| Lesions active? (in case of CNS/Brain lesions) | Yes/No                       |            |
-| Measurable disease?                            | Yes/No                       | Yes        |
+| Variable                            | Example values            | With date? |
+|-------------------------------------|---------------------------|------------|
+| Diagnosis date                      | 2023-01-01                | N/A        |
+| Tumor localization details          | Lung                      |            |
+| Tumor type details                  | Adenocarcinoma            |            |    
+| Tumor grade/differentiation details | Poorly differentiated     |            |
+| Tumor stage                         | 4 / T4N1M0                | Yes        |
+| Lesion site + active*?              | Liver, Bone, Brain-Active | Yes        |
+| Measurable disease?                 | Yes/No                    | Yes        |
+
+*: Only applicable in case of CNS/Brain lesions
 
 Treatment history current tumor
 
-| Variable                             | Example values      | With date? |
-|--------------------------------------|---------------------|------------|
-| Name                                 | Osimertinib         |            |
-| Intention                            | Palliative          |            |
-| Start date                           | 2023-02-01          | N/A        |    
-| End date                             | 2023-10-01          | N/A        |
-| Stop reason                          | Progressive disease | Yes        |
-| Treatment response                   | Partial response    | Yes        |
-| Intended number of cycles*           |                     |            |
-| Administered number of cycles*       |                     |            |
-| Occurrences of grade => 2 toxicities | Neuropathy          | Yes        |
-| Clinical study?                      | Yes/No              |            |
+| Variable                                  | Example values      | With date? |
+|-------------------------------------------|---------------------|------------|
+| Name                                      | Osimertinib         |            |
+| Intention                                 | Palliative          |            |
+| Start date                                | 2023-02-01          | N/A        |    
+| End date                                  | 2023-10-01          | N/A        |
+| Stop reason                               | Progressive disease | Yes        |
+| Response                                  | Partial response    | Yes        |
+| Intended number of cycles*                |                     |            |
+| Administered number of cycles*            |                     |            |
+| Occurrences of grade => 2 toxicities      | Neuropathy          | Yes        |
+| Treatment administered in clinical study? | Yes/No              |            |
 
-*: Only applicable in case of chemotherapy
+*: Only if applicable (chemotherapy)
 
 Note that only fields relevant for that type of treatment need to be provided. E.g. for surgeries, only name, intention and date need to be provided.
 In addition, treatment name should be as detailed as possible (e.g. Osimertinib is preferred over Anti-EGFR treatment or Targeted therapy)
 
 Molecular test history current tumor
 
-| Variable                        | Example values      | With date? |
-|---------------------------------|---------------------|------------|
-| Test type                       | IHC                 |            |
-| Name                            | HER2                |            |
-| Result                          | Negative            | Yes        |
-| Biopsy location (if applicable) |                     | Yes        |
+| Variable                                                     | Example values | With date? |
+|--------------------------------------------------------------|----------------|------------|
+| Type                                                         | IHC            |            |
+| Measure (i.e. gene or protein)                               | HER2           |            |
+| Result                                                       | Negative / 3+  | Yes        |
+| Biopsy location (of biopsy analyzed in test) (if applicable) | Liver          | Yes        |
 
-Note: For WGS/NGS data, the BAM (raw data) should be provided.
+Note: For WGS/NGS data, the BAM (raw data) should be provided rather than above format.
 
-Other relevant patient history: previous primary tumors
+Other relevant patient history: previous primary tumor(s)
 
-| Variable            | Example values | With date? |
-|---------------------|----------------|------------|
-| Diagnosis date      | 1999-01-01     | N/A        |
-| Tumor location      | Colon          |            |
-| Tumor type          | Carcinoma      |            |
-| Treatment history   | Laparoscopy    | Yes        |
+| Variable                   | Example values | With date? |
+|----------------------------|----------------|------------|
+| Diagnosis date             | 1999-01-01     | N/A        |
+| Tumor localization details | Colon          |            |
+| Tumor type details         | Carcinoma      |            |
+| Treatment history: name(s) | Laparoscopy    | Yes        |
 
 Other relevant patient history: other
 
 | Variable                 | Example values | With date? |
 |--------------------------|----------------|------------|
 | Name                     | Pancreatitis   |            |
-| Start date               |                | N/A        |
+| Start date               | 1999-01-01     | N/A        |
 | End date (if applicable) |                | N/A        |
 
 Cancer related complications
@@ -108,7 +98,7 @@ Cancer related complications
 | Variable                 | Example values | With date? |
 |--------------------------|----------------|------------|
 | Name                     | Ascites        |            |
-| Start date               |                | N/A        |
+| Start date               | 1999-01-01     | N/A        |
 | End date (if applicable) |                | N/A        |
 
 Toxicities
@@ -133,11 +123,11 @@ Medication details
 | Frequency unit               | day            |            |
 | Period between dosages value | 1              |            |
 | Period between dosages unit  | day            |            |
-| ifNeeded                     | Yes            |            |
+| ifNeeded*                    | Yes/No         |            |
 
-Information about ATC codes can be found at the website of WHOCC: https://www.whocc.no/atc_ddd_index/
+*: ifNeeded indicates whether the medication should be taken according to dosage prescription or only "if needed".
 
-Note that ifNeeded indicates whether the medication should be taken according to dosage prescription or only "if needed".
+Note: Information about ATC codes can be found at the website of WHOCC: https://www.whocc.no/atc_ddd_index/
 
 Lab details
 
@@ -147,8 +137,8 @@ Lab details
 | Comparator (if applicable)          | >                        |            |
 | Value                               | 3.5                      | Yes        |
 | Unit                                | ug/L                     |            |
-| Lower institutional reference limit |                          |            |
-| Upper institutional reference limit |                          |            |
+| Institutional lower reference limit |                          |            |
+| Institutional upper reference limit |                          |            |
 
 Blood transfusion details
 
@@ -164,7 +154,7 @@ Vital function details
 | Value    | 2              | Yes        |
 | Unit     |                |            |
 
-Measures of interest include: Blood pressure (systolic, diastolic), pulse oximetry, heart rate, BMI, body weight
+Vital function measures of interest include: blood pressure (systolic, diastolic), pulse oximetry, heart rate, BMI, body weight
 
 ECG details
 
@@ -178,21 +168,22 @@ ECG details
 
 Allergy details
 
-| Variable | Example values                       | With date? |
-|----------|--------------------------------------|------------|
-| Name     | Pembrolizumab                        |            |
+| Variable | Example values                        | With date? |
+|----------|---------------------------------------|------------|
+| Name     | Pembrolizumab                         | Yes        |
 | Type     | Allergy, Side effect or Not specified |            |
 
 Infection details
 
-| Variable                                  | Example values | With date? |
-|-------------------------------------------|----------------|------------|
-| Description (if applicable)               |                |            |
-| Active infection start date               | 2023-06-01     | N/A        |
-| Active infection end date (if applicable) |                | N/A        |
+| Variable                    | Example values | With date? |
+|-----------------------------|----------------|------------|
+| Start date                  | 2023-06-01     | N/A        |
+| End date  (if applicable)   |                | N/A        |
+| Description (if applicable) |                |            |
 
 ### Optional set
-The following variables are no requirements to run ACTIN, but if it is present, the information can be transferred to the ACTIN clinical data model:
+
+The optional set is not required to run ACTIN, but if the variables are available, the variables in this set can be mapped to the ACTIN clinical model as well:
 
 | Category   | Variable              | Example values       | With date? |
 |------------|-----------------------|----------------------|------------|
@@ -205,20 +196,29 @@ The following variables are no requirements to run ACTIN, but if it is present, 
 | Surgeries  | Status                | Finished             |            |
 
 
-## ACTIN Clinical Datamodel
+## ACTIN clinical datamodel
 
-In ACTIN, the clinical data as described above, is mapped onto the ACTIN clinical data model.
+In ACTIN, the clinical feed as described above, is mapped onto the ACTIN clinical data model.
 
-Note that "if applicable" indicates that the field is optional (also see: Optional set above)
+### Disease Ontology ID
+
+For mapping of primary tumor location and type, second primaries and other conditions in the ACTIN clinical datamodel,
+one or more Disease Ontology IDs (DOIDs) are assigned. For more information, see https://disease-ontology.org/.
+
+### Datamodel
+
+The fields of the ACTIN clinical datamodel are described below. "Origin" indicates where the data of this field originates from.
+
+Note that "if applicable" in 'origin' indicates that the field is derived from a variable of the 'optional' set.
 
 1 patient details
 
-| Field             | Origin                  |
-|-------------------|-------------------------|
-| birthYear         | Birth year              |
-| gender            | Sex                     |
-| registrationDate  | ACTIN registration date |
-| questionnaireDate | If applicable           |
+| Field             | Origin                           |
+|-------------------|----------------------------------|
+| birthYear         | Patient: Birth year              |
+| gender            | Patient: Sex                     |
+| registrationDate  | Patient: ACTIN registration date |
+| questionnaireDate | If applicable                    |
 
 1 tumor details
 
@@ -233,9 +233,9 @@ Note that "if applicable" indicates that the field is optional (also see: Option
 | stage                    | Primary tumor details: Stage                         |
 | hasMeasurableDisease     | Primary tumor details: Measurable disease?           |
 | hasBrainLesions          | Primary tumor details: Lesion sites                  |
-| hasActiveBrainLesions    | Primary tumor details: Lesions active?               |
+| hasActiveBrainLesions    | Primary tumor details: Lesions sites                 |
 | hasCnsLesions            | Primary tumor details: Lesion sites                  |
-| hasActiveCnsLesions      | Primary tumor details: Lesions active?               |
+| hasActiveCnsLesions      | Primary tumor details: Lesions sites                 |
 | hasBoneLesions           | Primary tumor details: Lesion sites                  |
 | hasLiverLesions          | Primary tumor details: Lesion sites                  |
 | hasLungLesions           | Primary tumor details: Lesion sites                  |
@@ -246,7 +246,7 @@ Note that "if applicable" indicates that the field is optional (also see: Option
 
 | Field                      | Origin               |
 |----------------------------|----------------------|
-| who                        | WHO                  |
+| who                        | Patient: WHO         |
 | hasActiveInfection         | Infection details    |
 | activeInfectionDescription | Infection details    |
 | hasToxicitiesGrade2        | Toxicity details     |
@@ -257,7 +257,7 @@ Note that "if applicable" indicates that the field is optional (also see: Option
 | lvef                       | ECG details          |
 | hasComplications           | Complication details |
 
-N prior tumor treatments
+N prior tumor treatments (TO BE UPDATED)
 
 | Field          | Origin                                          |
 |----------------|-------------------------------------------------|
