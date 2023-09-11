@@ -40,6 +40,6 @@ public abstract class PriorSecondPrimary {
     @Nullable
     public abstract Integer lastTreatmentMonth();
 
-    public abstract boolean isActive();
-
+    @NotNull
+    public abstract TumorStatus status();
 }

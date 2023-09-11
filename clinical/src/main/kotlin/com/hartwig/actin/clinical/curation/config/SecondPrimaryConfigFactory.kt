@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.CurationValidator
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
+import com.hartwig.actin.clinical.datamodel.TumorStatus
 import com.hartwig.actin.util.ResourceFile
 import org.apache.logging.log4j.LogManager
 
@@ -34,7 +35,7 @@ class SecondPrimaryConfigFactory(private val curationValidator: CurationValidato
             .treatmentHistory(parts[fields["treatmentHistory"]!!])
             .lastTreatmentYear(ResourceFile.optionalInteger(parts[fields["lastTreatmentYear"]!!]))
             .lastTreatmentMonth(ResourceFile.optionalInteger(parts[fields["lastTreatmentMonth"]!!]))
-            .isActive(ResourceFile.bool(parts[fields["isActive"]!!]))
+            .status(TumorStatus.valueOf(parts[fields["status"]!!]))
             .build()
     }
 

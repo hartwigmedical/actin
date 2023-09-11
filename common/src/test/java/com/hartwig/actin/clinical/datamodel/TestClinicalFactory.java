@@ -196,7 +196,7 @@ public final class TestClinicalFactory {
                 .diagnosedYear(TODAY.getYear() - YEARS_SINCE_SECOND_PRIMARY_DIAGNOSIS)
                 .diagnosedMonth(TODAY.getMonthValue())
                 .treatmentHistory("Surgery")
-                .isActive(false)
+                .status(TumorStatus.INACTIVE)
                 .build());
 
         return priorSecondPrimaries;
