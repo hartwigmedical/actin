@@ -8,9 +8,9 @@ import com.hartwig.actin.clinical.datamodel.TumorStatus
 
 class HasActiveSecondMalignancy internal constructor() : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        return if (record.clinical().priorSecondPrimaries().any { it.tumorStatus() == TumorStatus.ACTIVE }) {
+        return if (record.clinical().priorSecondPrimaries().any { it.status() == TumorStatus.ACTIVE }) {
             EvaluationFactory.pass("Patient has second malignancy considered active", "Presence of second malignancy considered active")
-        } else if (record.clinical().priorSecondPrimaries().any { it.tumorStatus() == TumorStatus.EXPECTATIVE }) {
+        } else if (record.clinical().priorSecondPrimaries().any { it.status() == TumorStatus.EXPECTATIVE }) {
             EvaluationFactory.warn(
                 "Patient has second malignancy considered expectative",
                 "Presence of second malignancy considered expectative"
