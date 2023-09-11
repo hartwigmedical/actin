@@ -19,9 +19,161 @@ java -cp actin.jar com.hartwig.actin.clinical.ClinicalIngestionApplicationKt \
 For mapping of primary tumor location and type, second primaries and 'other conditions' in the ACTIN clinical datamodel,
 one or more Disease Ontology IDs (DOIDs) are assigned. For more information, see https://disease-ontology.org/.
 
-## Clinical Datamodel
+## External Clinical Data Feed
 
-Every patient, uniquely defined by their patient ID, has a clinical record with the following data:
+To run ACTIN, the external clinical data feed should contain relevant clinical data. 
+The following data should be provided per patient (note that 'with date' indicates whether a date should be assigned to the variable):
+
+Patient details
+
+| Variable                | Example values | With date? |
+|-------------------------|----------------|------------|
+| Birth year              | 1940           |            |
+| Sex                     | Male           |            |    
+| ACTIN registration date | 2023-01-01     | N/A        |
+
+Patient fitness
+
+| Variable                                              | Example values  | With date? |
+|-------------------------------------------------------|-----------------|------------|
+| WHO                                                   | 0/1/2/3/4/5     | Yes        |
+
+Current primary tumor details
+
+| Variable                      | Example values               | With date? |
+|-------------------------------|------------------------------|------------|
+| Diagnosis date                | 2023-01-01                   | N/A        |
+| Tumor localization            | Lung                         |            |
+| Tumor type                    | Adenocarcinoma               |            |    
+| Grade/differentiation details | Poorly differentiated        |            |
+| Stage                         | 4                            | Yes        |
+| Lesion sites                  | Liver, Supraclavicular, Bone | Yes        |
+
+Treatment history current tumor
+
+| Variable                             | Example values      | With date? |
+|--------------------------------------|---------------------|------------|
+| Name                                 | Osimertinib         |            |
+| Intention                            | Palliative          |            |
+| Start date                           | 2023-02-01          | N/A        |    
+| End date                             | 2023-10-01          | N/A        |
+| Stop reason                          | Progressive disease | Yes        |
+| Treatment response                   | Partial response    | Yes        |
+| Intended number of cycles*           |                     |            |
+| Administered number of cycles*       |                     |            |
+| Occurrences of grade => 2 toxicities | Neuropathy          | Yes        |
+| Clinical study?                      | Yes/No              |            |
+
+*: Only applicable in case of chemotherapy
+
+Note that only fields relevant for that type of treatment need to be provided. E.g. for surgeries, only name, intention and date need to be provided.
+In addition, treatment name should be as detailed as possible (e.g. Osimertinib is preferred over Anti-EGFR treatment or Targeted therapy)
+
+Molecular test history current tumor
+
+| Variable                                                | Example values      | With date? |
+|---------------------------------------------------------|---------------------|------------|
+| Test type                                               | IHC                 |            |
+| Name                                                    | HER2                |            |
+| Result                                                  | Negative            | Yes        |
+
+Note: For WGS/NGS data, the BAM (raw data) should be provided.
+
+Other relevant patient history: previous primary tumors
+
+| Variable            | Example values | With date? |
+|---------------------|----------------|------------|
+| Diagnosis date      | 1999-01-01     | N/A        |
+| Tumor location      | Colon          |            |
+| Tumor type          | Carcinoma      |            |
+| Treatment history   | Laparoscopy    | Yes        |
+
+Other relevant patient history: other
+
+| Variable                 | Example values | With date? |
+|--------------------------|----------------|------------|
+| Name                     | Pancreatitis   |            |
+| Start date               |                | N/A        |
+| End date (if applicable) |                | N/A        |
+
+Cancer related complications
+
+| Variable                 | Example values | With date? |
+|--------------------------|----------------|------------|
+| Name                     | Ascites        |            |
+| Start date               |                | N/A        |
+| End date (if applicable) |                | N/A        |
+
+Toxicities
+
+| Variable               | Example values | With date? |
+|------------------------|----------------|------------|
+| Name                   | Neuropathy     | Yes        |
+| Grade                  | 2              | Yes        |
+
+Medication details
+
+| Variable                     | Example values | With date? |
+|------------------------------|----------------|------------|
+| Drug name                    | Paracetamol    |            |
+| ATC code                     | N02BE01        |            |
+| Start date                   | 2023-03-01     | N/A        |
+| End date                     | 2023-07-01     | N/A        |
+| Administration route         | Oral           |            |
+| Dosage                       | 500            |            |
+| Dosage unit                  | mg             |            |
+| Frequency                    | 2              |            |
+| Frequency unit               | day            |            |
+| Period between dosages value | 1              |            |
+| Period between dosages unit  | day            |            |
+| ifNeeded                     | Yes            |            |
+
+Information about ATC codes can be found at the website of WHOCC: https://www.whocc.no/atc_ddd_index/
+
+Note that ifNeeded indicates whether the medication should be taken according to dosage prescription or only "if needed".
+
+Lab details
+
+| Variable | Example values           | With date? |
+|----------|--------------------------|------------|
+| Measure  | Carcinoembryonic antigen |            |
+| Value    | 3.5                      | Yes        |
+| Unit     | ug/L                     |            |
+
+Blood transfusion details
+
+| Variable | Example values          | With date? |
+|----------|-------------------------|------------|
+| Product  | Thrombocyte concentrate | Yes        |
+
+Vital function details
+
+| Variable | Example values | With date? |
+|----------|----------------|------------|
+| Measure  | NIBP           |            |
+| Value    | 2              | Yes        |
+| Unit     |                |            |
+
+Measures of interest include: Blood pressure (systolic, diastolic), pulse oximetry, heart rate, BMI, body weight
+
+ECG details
+
+| Variable                   | Example values    | With date? |
+|----------------------------|-------------------|------------|
+| Aberration (if applicable) | Atrial arrhythmia | Yes        |
+| qtcf value (if measured)   |                   | Yes        |
+| qtcf unit (if measured)    |                   |            |
+
+Allergy details
+
+| Variable | Example values | With date? |
+|----------|----------------|------------|
+| Name     | Pembrolizumab  |            |
+
+
+## ACTIN Clinical Datamodel
+
+In ACTIN, the clinical data as described above, is mapped onto the ACTIN clinical data model.
 
 1 patient details
 
