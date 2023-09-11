@@ -3,6 +3,7 @@ package com.hartwig.actin.report.pdf.tables.clinical
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
+import com.hartwig.actin.clinical.datamodel.TumorStatus
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.sort.PriorSecondPrimaryDiagnosedDateComparator
 import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparator
@@ -137,8 +138,12 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
             val dateAdditionLastTreatment = toDateString(priorSecondPrimary.lastTreatmentYear(), priorSecondPrimary.lastTreatmentMonth())
                 ?.let { "last treatment $it, " } ?: ""
 
-            val active = if (priorSecondPrimary.isActive) "considered active" else "considered non-active"
-            return "$tumorDetails ($dateAdditionDiagnosis$dateAdditionLastTreatment$active)"
+            val status = when (priorSecondPrimary.status()) {
+                TumorStatus.ACTIVE -> "considered active"
+                TumorStatus.INACTIVE -> "considered non-active"
+                TumorStatus.EXPECTATIVE -> "considered expectative"
+            }
+            return "$tumorDetails ($dateAdditionDiagnosis$dateAdditionLastTreatment$status)"
         }
 
         private fun toPriorOtherConditionString(priorOtherCondition: PriorOtherCondition): String {

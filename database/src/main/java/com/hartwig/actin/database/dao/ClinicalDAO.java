@@ -283,7 +283,7 @@ class ClinicalDAO {
                             PRIORSECONDPRIMARY.TREATMENTHISTORY,
                             PRIORSECONDPRIMARY.LASTTREATMENTYEAR,
                             PRIORSECONDPRIMARY.LASTTREATMENTMONTH,
-                            PRIORSECONDPRIMARY.ISACTIVE)
+                            PRIORSECONDPRIMARY.STATUS)
                     .values(patientId,
                             priorSecondPrimary.tumorLocation(),
                             priorSecondPrimary.tumorSubLocation(),
@@ -295,7 +295,7 @@ class ClinicalDAO {
                             priorSecondPrimary.treatmentHistory(),
                             priorSecondPrimary.lastTreatmentYear(),
                             priorSecondPrimary.lastTreatmentMonth(),
-                            priorSecondPrimary.isActive())
+                            priorSecondPrimary.status().toString())
                     .execute();
         }
     }
