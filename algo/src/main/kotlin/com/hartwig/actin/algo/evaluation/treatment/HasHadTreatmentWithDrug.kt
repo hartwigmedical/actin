@@ -27,7 +27,12 @@ class HasHadTreatmentWithDrug(private val drugs: Set<Drug>) : EvaluationFunction
 
             record.clinical().treatmentHistory().any {
                 (it.isTrial && it.treatments().any { treatment ->
-                    (treatment as? Therapy)?.drugs()?.isEmpty() ?: treatment.categories().isEmpty()
+                    val therapy = treatment as? Therapy
+                    if (therapy != null) {
+                        therapy.drugs().isEmpty()
+                    } else {
+                        treatment.categories().isEmpty()
+                    }
                 })
             } -> {
                 EvaluationFactory.undetermined("Undetermined if received any treatments containing $drugList")

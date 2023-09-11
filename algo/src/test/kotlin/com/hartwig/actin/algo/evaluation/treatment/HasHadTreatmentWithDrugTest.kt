@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.drugTherapy
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.drugTherapyNoDrugs
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.otherTreatment
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatment
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.withTreatmentHistory
@@ -52,13 +51,13 @@ class HasHadTreatmentWithDrugTest {
 
     @Test
     fun `should fail for non-therapy treatments of known category`() {
-        val treatmentHistoryEntry = treatmentHistoryEntry(setOf( otherTreatment("non-drug treatment", TreatmentCategory.SURGERY)), isTrial = true)
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("test", true, setOf(TreatmentCategory.SURGERY))))
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
     }
 
     @Test
     fun `should return undetermined for non-therapy treatments of unknown category`() {
-        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(otherTreatment("unknown category")), isTrial = true)
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("unknown category", true)), isTrial = true)
         assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
     }
 

@@ -38,14 +38,6 @@ object TreatmentTestFactory {
         return ImmutableDrugTherapy.builder().name(name).isSystemic(true).build()
     }
 
-    fun otherTreatment(name: String, category: TreatmentCategory? = null): Treatment {
-        val builder = ImmutableOtherTreatment.builder().name(name).isSystemic(true)
-        if (null != category) {
-            builder.addCategories(category)
-        }
-        return builder.build()
-    }
-
     fun treatmentHistoryEntry(
         treatments: Collection<Treatment> = emptySet(),
         startYear: Int? = null,
