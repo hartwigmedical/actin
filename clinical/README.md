@@ -21,8 +21,12 @@ one or more Disease Ontology IDs (DOIDs) are assigned. For more information, see
 
 ## External Clinical Data Feed
 
-To run ACTIN, the external clinical data feed should contain relevant clinical data. 
-The following data should be provided per patient (note that 'with date' indicates whether a date should be assigned to the variable):
+### Required set
+
+The external clinical data feed should contain relevant clinical data per patient.
+Below is an overview of required data (if available) that should be provided per patient. 
+
+Note that 'with date' indicates whether a date should be assigned to the variable.
 
 Patient details
 
@@ -187,41 +191,56 @@ Infection details
 | Active infection start date               | 2023-06-01     | N/A        |
 | Active infection end date (if applicable) |                | N/A        |
 
+### Optional set
+The following variables are no requirements to run ACTIN, but if it is present, the information can be transferred to the ACTIN clinical data model:
+
+| Category   | Variable              | Example values       | With date? |
+|------------|-----------------------|----------------------|------------|
+| N/A        | Date of questionnaire | 2023-01-01           | N/A        |
+| Toxicities | Source of data        | EHR or questionnaire |            |
+| Allergies  | clinical status       | Active               |            |
+| Allergies  | verificationStatus    | Confirmed            |            |
+| Allergies  | criticality           | High                 |            |
+| Surgeries  | Date                  | 2023-01-01           |            |
+| Surgeries  | Status                | Finished             |            |
+
 
 ## ACTIN Clinical Datamodel
 
 In ACTIN, the clinical data as described above, is mapped onto the ACTIN clinical data model.
 
+Note that "if applicable" indicates that the field is optional (also see: Optional set above)
+
 1 patient details
 
-| Field             | Origin                                                                                                           |
-|-------------------|------------------------------------------------------------------------------------------------------------------|
-| birthYear         | Birth year                                                                                                       |
-| gender            | Sex                                                                                                              |
-| registrationDate  | ACTIN registration date                                                                                          |
-| questionnaireDate | If applicable: Date on which the data without EHR timestamp has been collected (eg lesion locations, WHO status) |
+| Field             | Origin                  |
+|-------------------|-------------------------|
+| birthYear         | Birth year              |
+| gender            | Sex                     |
+| registrationDate  | ACTIN registration date |
+| questionnaireDate | If applicable           |
 
 1 tumor details
 
-| Field                    | Origin                        |
-|--------------------------|-------------------------------|
-| primaryTumorLocation     | Tumor localization            |
-| primaryTumorSubLocation  | Tumor localization            |
-| primaryTumorType         | Tumor type                    |
-| primaryTumorSubType      | Tumor type                    |
-| primaryTumorExtraDetails | Grade/differentiation details |
-| doids                    | Added in curation             |
-| stage                    | Stage                         |
-| hasMeasurableDisease     | Measurable disease?           |
-| hasBrainLesions          | Lesion sites                  |
-| hasActiveBrainLesions    | Lesions active?               |
-| hasCnsLesions            | Lesion sites                  |
-| hasActiveCnsLesions      | Lesions active?               |
-| hasBoneLesions           | Lesion sites                  |
-| hasLiverLesions          | Lesion sites                  |
-| hasLungLesions           | Lesion sites                  |
-| otherLesions             | Lesion sites                  |
-| biopsyLocation           | Biopsy location               |
+| Field                    | Origin                                               |
+|--------------------------|------------------------------------------------------|
+| primaryTumorLocation     | Primary tumor details: Tumor localization            |
+| primaryTumorSubLocation  | Primary tumor details: Tumor localization            |
+| primaryTumorType         | Primary tumor details: Tumor type                    |
+| primaryTumorSubType      | Primary tumor details: Tumor type                    |
+| primaryTumorExtraDetails | Primary tumor details: Grade/differentiation details |
+| doids                    | Added in curation                                    |
+| stage                    | Primary tumor details: Stage                         |
+| hasMeasurableDisease     | Primary tumor details: Measurable disease?           |
+| hasBrainLesions          | Primary tumor details: Lesion sites                  |
+| hasActiveBrainLesions    | Primary tumor details: Lesions active?               |
+| hasCnsLesions            | Primary tumor details: Lesion sites                  |
+| hasActiveCnsLesions      | Primary tumor details: Lesions active?               |
+| hasBoneLesions           | Primary tumor details: Lesion sites                  |
+| hasLiverLesions          | Primary tumor details: Lesion sites                  |
+| hasLungLesions           | Primary tumor details: Lesion sites                  |
+| otherLesions             | Primary tumor details: Lesion sites                  |
+| biopsyLocation           | Molecular test details: Biopsy location              |
 
 1 clinical status
 
@@ -348,14 +367,14 @@ N intolerances
 
 N surgeries
 
-| Field   | Origin |
-|---------|--------|
-| endDate |        |
-| status  |        |
+| Field   | Origin        |
+|---------|---------------|
+| endDate | If applicable |
+| status  | If applicable |
 
 N vital function measurements
 
-| Field       | Origin               |
+| Field       | Origin                |
 |-------------|-----------------------|
 | date        | Vital function: Date  |
 | category    | Vital function: Name  |
