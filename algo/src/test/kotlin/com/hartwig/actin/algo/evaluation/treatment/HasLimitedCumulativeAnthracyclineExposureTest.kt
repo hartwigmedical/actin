@@ -11,6 +11,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
+import com.hartwig.actin.clinical.datamodel.TumorStatus
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
@@ -107,7 +108,7 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
                 .tumorType("")
                 .tumorSubType("")
                 .treatmentHistory(treatmentHistory)
-                .isActive(false)
+                .status(TumorStatus.INACTIVE)
                 .build()
         }
     }

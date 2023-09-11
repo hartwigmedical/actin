@@ -1,2 +1,2 @@
-input	name	tumorLocation	tumorSubLocation	tumorType	tumorSubType	doids	diagnosedYear	diagnosedMonth	treatmentHistory	lastTreatmentYear	lastTreatmentMonth	isActive
-basaalcelcarcinoom (2014) | 2014	Basal cell carcinoma			Carcinoma	Basal cell carcinoma	2513	2014	1	None	2014	2	0
+input	name	tumorLocation	tumorSubLocation	tumorType	tumorSubType	doids	diagnosedYear	diagnosedMonth	treatmentHistory	lastTreatmentYear	lastTreatmentMonth	status
+basaalcelcarcinoom (2014) | 2014	Basal cell carcinoma			Carcinoma	Basal cell carcinoma	2513	2014	1	None	2014	2	INACTIVE
