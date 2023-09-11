@@ -25,7 +25,9 @@ class HasHadTreatmentWithDrug(private val drugs: Set<Drug>) : EvaluationFunction
                 EvaluationFactory.pass("Has received treatments with ${concatItemsWithAnd(matchingDrugs)}")
             }
 
-            record.clinical().treatmentHistory().any(TreatmentHistoryEntry::isTrial) -> {
+            record.clinical().treatmentHistory().any {
+                (it.isTrial() && it.treatments().flatMap { (it as? Therapy)?.drugs() ?: emptyList() }.isEmpty())
+            } -> {
                 EvaluationFactory.undetermined("Undetermined if received any treatments containing $drugList")
             }
 
