@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTranscriptImpact;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
@@ -17,15 +16,23 @@ import com.hartwig.serve.datamodel.MutationType;
 import com.hartwig.serve.datamodel.gene.ActionableGene;
 import com.hartwig.serve.datamodel.gene.GeneEvent;
 import com.hartwig.serve.datamodel.hotspot.ActionableHotspot;
-import com.hartwig.serve.datamodel.range.ActionableRange;
+import com.hartwig.serve.datamodel.range.ImmutableActionableRange;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 public class VariantEvidenceTest {
 
+    public static final ImmutableActionableRange ACTIONABLE_RANGE = TestServeActionabilityFactory.rangeBuilder()
+            .gene("gene 1")
+            .chromosome("X")
+            .start(4)
+            .end(8)
+            .applicableMutationType(MutationType.ANY)
+            .build();
+
     @Test
-    public void canDetermineEvidenceForHotspots() {
+    public void shouldDetermineEvidenceForHotspots() {
         ActionableHotspot hotspot1 =
                 TestServeActionabilityFactory.hotspotBuilder().gene("gene 1").chromosome("X").position(2).ref("A").alt("G").build();
         ActionableHotspot hotspot2 =
@@ -33,8 +40,7 @@ public class VariantEvidenceTest {
         ActionableHotspot hotspot3 =
                 TestServeActionabilityFactory.hotspotBuilder().gene("gene 1").chromosome("X").position(2).ref("A").alt("C").build();
 
-        ActionableEvents actionable =
-                ImmutableActionableEvents.builder().addAllHotspots(Lists.newArrayList(hotspot1, hotspot2, hotspot3)).build();
+        ActionableEvents actionable = ImmutableActionableEvents.builder().addAllHotspots(List.of(hotspot1, hotspot2, hotspot3)).build();
 
         VariantEvidence variantEvidence = VariantEvidence.create(actionable);
 
@@ -56,17 +62,16 @@ public class VariantEvidenceTest {
     }
 
     @Test
-    public void canDetermineEvidenceForRanges() {
-        ActionableRange actionableRange = TestServeActionabilityFactory.rangeBuilder()
-                .gene("gene 1")
-                .chromosome("X")
-                .start(4)
-                .end(8)
-                .applicableMutationType(MutationType.ANY)
-                .build();
+    public void shouldDetermineEvidenceForCodons() {
+        assertEvidenceDeterminedForRange(ImmutableActionableEvents.builder().addCodons(ACTIONABLE_RANGE).build());
+    }
 
-        ActionableEvents actionable = ImmutableActionableEvents.builder().addRanges(actionableRange).build();
+    @Test
+    public void shouldDetermineEvidenceForExons() {
+        assertEvidenceDeterminedForRange(ImmutableActionableEvents.builder().addExons(ACTIONABLE_RANGE).build());
+    }
 
+    private void assertEvidenceDeterminedForRange(@NotNull ActionableEvents actionable) {
         VariantEvidence variantEvidence = VariantEvidence.create(actionable);
 
         PurpleVariant variantGene1 = TestPurpleFactory.variantBuilder()
@@ -78,7 +83,7 @@ public class VariantEvidenceTest {
                 .build();
         List<ActionableEvent> matchesVariant1 = variantEvidence.findMatches(variantGene1);
         assertEquals(1, matchesVariant1.size());
-        assertTrue(matchesVariant1.contains(actionableRange));
+        assertTrue(matchesVariant1.contains(ACTIONABLE_RANGE));
 
         PurpleVariant otherVariantGene1 = TestPurpleFactory.variantBuilder()
                 .gene("gene 1")
@@ -91,7 +96,7 @@ public class VariantEvidenceTest {
     }
 
     @Test
-    public void canDetermineEvidenceForGenes() {
+    public void shouldDetermineEvidenceForGenes() {
         ActionableGene gene1 = TestServeActionabilityFactory.geneBuilder().gene("gene 1").event(GeneEvent.ANY_MUTATION).build();
         ActionableGene gene2 = TestServeActionabilityFactory.geneBuilder().gene("gene 2").event(GeneEvent.ACTIVATION).build();
         ActionableGene gene3 = TestServeActionabilityFactory.geneBuilder().gene("gene 2").event(GeneEvent.AMPLIFICATION).build();
