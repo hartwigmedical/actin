@@ -7,6 +7,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
+import com.hartwig.actin.clinical.datamodel.TumorStatus
 import org.apache.logging.log4j.util.Strings
 
 internal object PriorTumorTestFactory {
@@ -17,7 +18,7 @@ internal object PriorTumorTestFactory {
             .tumorType(Strings.EMPTY)
             .tumorSubType(Strings.EMPTY)
             .treatmentHistory(Strings.EMPTY)
-            .isActive(false)
+            .status(TumorStatus.INACTIVE)
     }
 
     fun withPriorSecondPrimary(priorSecondPrimary: PriorSecondPrimary): PatientRecord {

@@ -20,7 +20,7 @@ class HasActiveSecondMalignancyTest {
             EvaluationResult.FAIL, function.evaluate(
                 PriorTumorTestFactory.withPriorSecondPrimaries(
                     listOf(
-                        PriorTumorTestFactory.builder().tumorStatus(TumorStatus.INACTIVE).build()
+                        PriorTumorTestFactory.builder().status(TumorStatus.INACTIVE).build()
                     )
                 )
             )
@@ -33,7 +33,7 @@ class HasActiveSecondMalignancyTest {
             EvaluationResult.WARN, function.evaluate(
                 PriorTumorTestFactory.withPriorSecondPrimaries(
                     listOf(
-                        PriorTumorTestFactory.builder().tumorStatus(TumorStatus.EXPECTATIVE).build()
+                        PriorTumorTestFactory.builder().status(TumorStatus.EXPECTATIVE).build()
                     )
                 )
             )
@@ -46,7 +46,7 @@ class HasActiveSecondMalignancyTest {
             EvaluationResult.PASS, function.evaluate(
                 PriorTumorTestFactory.withPriorSecondPrimaries(
                     listOf(
-                        PriorTumorTestFactory.builder().tumorStatus(TumorStatus.ACTIVE).build()
+                        PriorTumorTestFactory.builder().status(TumorStatus.ACTIVE).build()
                     )
                 )
             )
