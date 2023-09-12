@@ -50,13 +50,13 @@ class HasHadTreatmentWithDrugTest {
     }
 
     @Test
-    fun `should fail for non-therapy treatments of known category`() {
-        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("test", true, setOf(TreatmentCategory.SURGERY))))
+    fun `should fail for non-therapy trial treatments of known category`() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("test", true, setOf(TreatmentCategory.SURGERY))), isTrial = true)
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
     }
 
     @Test
-    fun `should return undetermined for non-therapy treatments of unknown category`() {
+    fun `should return undetermined for non-therapy trial treatments of unknown category`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("unknown category", true)), isTrial = true)
         assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
     }
