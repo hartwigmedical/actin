@@ -84,6 +84,7 @@ Other relevant patient history: previous primary tumor(s)
 | Tumor localization details | Colon          |            |
 | Tumor type details         | Carcinoma      |            |
 | Treatment history: name(s) | Laparoscopy    | Yes        |
+| Status details             | Inactive       | Yes        |
 
 Other relevant patient history: other
 
@@ -293,7 +294,7 @@ N prior second primaries
 | diagnosedYear    | Previous primary tumors: Diagnosis date    |
 | diagnosedMonth   | Previous primary tumors: Diagnosis date    |
 | treatmentHistory | Previous primary tumors: Treatment history |
-| isActive         | Added in curation                          |
+| isActive         | Previous primary tumors: Status            |
 
 N prior other conditions
 
