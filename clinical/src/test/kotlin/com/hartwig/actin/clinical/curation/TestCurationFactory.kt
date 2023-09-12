@@ -31,6 +31,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
+import com.hartwig.actin.clinical.datamodel.TumorStatus
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy
@@ -171,7 +172,7 @@ object TestCurationFactory {
                     .diagnosedYear(2018)
                     .diagnosedMonth(1)
                     .treatmentHistory("Surgery")
-                    .isActive(false)
+                    .status(TumorStatus.INACTIVE)
                     .build()
             )
         )

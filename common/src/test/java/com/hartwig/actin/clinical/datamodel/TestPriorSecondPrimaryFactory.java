@@ -16,6 +16,6 @@ public final class TestPriorSecondPrimaryFactory {
                 .tumorType(Strings.EMPTY)
                 .tumorSubType(Strings.EMPTY)
                 .treatmentHistory(Strings.EMPTY)
-                .isActive(false);
+                .status(TumorStatus.INACTIVE);
     }
 }

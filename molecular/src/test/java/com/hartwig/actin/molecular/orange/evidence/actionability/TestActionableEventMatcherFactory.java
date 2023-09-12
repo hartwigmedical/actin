@@ -44,7 +44,8 @@ public final class TestActionableEventMatcherFactory {
 
         ActionableEvents actionableEvents = ImmutableActionableEvents.builder()
                 .addHotspots(TestServeActionabilityFactory.hotspotBuilder().build())
-                .addRanges(TestServeActionabilityFactory.rangeBuilder().build())
+                .addCodons(TestServeActionabilityFactory.rangeBuilder().build())
+                .addExons(TestServeActionabilityFactory.rangeBuilder().build())
                 .addGenes(TestServeActionabilityFactory.geneBuilder().event(GeneEvent.DELETION).build())
                 .addGenes(TestServeActionabilityFactory.geneBuilder().event(GeneEvent.AMPLIFICATION).build())
                 .addGenes(TestServeActionabilityFactory.geneBuilder().event(GeneEvent.ANY_MUTATION).build())

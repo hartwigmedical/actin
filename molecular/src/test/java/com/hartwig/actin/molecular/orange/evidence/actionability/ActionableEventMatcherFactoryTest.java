@@ -47,7 +47,8 @@ public class ActionableEventMatcherFactoryTest {
                 .addHotspots(hotspot("gene 1", "external", Knowledgebase.ICLUSION))
                 .addHotspots(hotspot("gene 2", "internal", Knowledgebase.ICLUSION))
                 .addHotspots(hotspot("gene 3", "external", Knowledgebase.CKB))
-                .addRanges(TestServeActionabilityFactory.rangeBuilder().from(base).build())
+                .addCodons(TestServeActionabilityFactory.rangeBuilder().from(base).build())
+                .addExons(TestServeActionabilityFactory.rangeBuilder().from(base).build())
                 .addGenes(TestServeActionabilityFactory.geneBuilder().from(base).build())
                 .addCharacteristics(TestServeActionabilityFactory.characteristicBuilder().from(base).build())
                 .addFusions(TestServeActionabilityFactory.fusionBuilder().from(base).build())
@@ -68,7 +69,8 @@ public class ActionableEventMatcherFactoryTest {
         assertEquals("internal", findByGene(curated.hotspots(), "gene 2"));
         assertEquals("external", findByGene(curated.hotspots(), "gene 3"));
 
-        assertEquals("actin", curated.ranges().iterator().next().treatment().name());
+        assertEquals("actin", curated.codons().iterator().next().treatment().name());
+        assertEquals("actin", curated.exons().iterator().next().treatment().name());
         assertEquals("actin", curated.genes().iterator().next().treatment().name());
         assertEquals("actin", curated.fusions().iterator().next().treatment().name());
         assertEquals("actin", curated.characteristics().iterator().next().treatment().name());

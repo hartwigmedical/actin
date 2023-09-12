@@ -283,7 +283,7 @@ class ClinicalDAO {
                             PRIORSECONDPRIMARY.TREATMENTHISTORY,
                             PRIORSECONDPRIMARY.LASTTREATMENTYEAR,
                             PRIORSECONDPRIMARY.LASTTREATMENTMONTH,
-                            PRIORSECONDPRIMARY.ISACTIVE)
+                            PRIORSECONDPRIMARY.STATUS)
                     .values(patientId,
                             priorSecondPrimary.tumorLocation(),
                             priorSecondPrimary.tumorSubLocation(),
@@ -295,7 +295,7 @@ class ClinicalDAO {
                             priorSecondPrimary.treatmentHistory(),
                             priorSecondPrimary.lastTreatmentYear(),
                             priorSecondPrimary.lastTreatmentMonth(),
-                            priorSecondPrimary.isActive())
+                            priorSecondPrimary.status().toString())
                     .execute();
         }
     }
@@ -506,9 +506,7 @@ class ClinicalDAO {
                     .values(patientId,
                             medication.name(),
                             DataUtil.concat(medication.categories()),
-                            Optional.ofNullable(atc)
-                                    .flatMap(a -> Optional.ofNullable(a.chemicalSubstance()))
-                                    .map(AtcLevel::code)
+                            Optional.ofNullable(atc).flatMap(a -> Optional.ofNullable(a.chemicalSubstance())).map(AtcLevel::code)
                                     .orElse(null),
                             atc != null ? atc.anatomicalMainGroup().name() : null,
                             atc != null ? atc.therapeuticSubGroup().name() : null,
