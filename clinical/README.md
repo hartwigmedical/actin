@@ -272,15 +272,6 @@ N prior tumor treatments (TO BE UPDATED)
 | stopReason     | Treatment history stop reason                   |
 | categories     | Added in curation                               |
 | isSystemic     | Added in curation                               |
-| chemoType      | Added in curation                               |
-| immunoType     | Added in curation                               |
-| targetedType   | Added in curation                               |
-| hormoneType    | Added in curation                               |
-| carTType       | Added in curation                               |
-| transplantType | Added in curation                               |
-| supportiveType | Added in curation                               |
-| trialAcronym   | Added in curation                               |
-| ablationType   | Added in curation                               |
 
 N prior second primaries
 
