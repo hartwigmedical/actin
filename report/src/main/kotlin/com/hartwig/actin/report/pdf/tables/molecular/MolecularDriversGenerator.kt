@@ -35,7 +35,8 @@ class MolecularDriversGenerator(
         table.addHeaderCell(Cells.createHeader("Best evidence in " + molecular.evidenceSource()))
         table.addHeaderCell(Cells.createHeader("Resistance in " + molecular.evidenceSource()))
 
-        val molecularDriversInterpreter = MolecularDriversInterpreter(molecular.drivers(), EvaluatedCohortsInterpreter(cohorts))
+        val molecularDriversInterpreter =
+            MolecularDriversInterpreter(molecular.drivers(), EvaluatedCohortsInterpreter.fromEvaluatedCohorts(cohorts))
         val factory = MolecularDriverEntryFactory(molecularDriversInterpreter)
         factory.create().forEach { entry: MolecularDriverEntry ->
             table.addCell(Cells.createContent(entry.driverType))
