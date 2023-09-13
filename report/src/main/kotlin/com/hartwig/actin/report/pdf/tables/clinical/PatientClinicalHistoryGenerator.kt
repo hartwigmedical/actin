@@ -123,11 +123,11 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
             val tumorLocation = priorSecondPrimary.tumorLocation()
             val tumorDetails = when {
                 priorSecondPrimary.tumorSubType().isNotEmpty() -> {
-                    tumorLocation + " " + priorSecondPrimary.tumorSubType()
+                    tumorLocation + " " + priorSecondPrimary.tumorSubType().lowercase()
                 }
 
                 priorSecondPrimary.tumorType().isNotEmpty() -> {
-                    tumorLocation + " " + priorSecondPrimary.tumorType()
+                    tumorLocation + " " + priorSecondPrimary.tumorType().lowercase()
                 }
 
                 else -> tumorLocation
