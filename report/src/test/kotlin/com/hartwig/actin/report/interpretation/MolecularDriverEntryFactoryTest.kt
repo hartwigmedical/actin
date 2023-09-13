@@ -101,7 +101,9 @@ class MolecularDriverEntryFactoryTest {
         private fun createFactoryForMolecularRecordAndCohorts(
             molecular: MolecularRecord, cohorts: List<EvaluatedCohort>
         ): MolecularDriverEntryFactory {
-            return MolecularDriverEntryFactory(MolecularDriversInterpreter(molecular.drivers(), EvaluatedCohortsInterpreter(cohorts)))
+            return MolecularDriverEntryFactory(
+                MolecularDriversInterpreter(molecular.drivers(), EvaluatedCohortsInterpreter.fromEvaluatedCohorts(cohorts))
+            )
         }
 
         private fun createFactoryWithCohortsForEvent(molecularRecord: MolecularRecord, event: String): MolecularDriverEntryFactory {

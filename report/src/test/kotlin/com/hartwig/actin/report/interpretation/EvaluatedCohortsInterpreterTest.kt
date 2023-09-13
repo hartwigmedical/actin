@@ -77,7 +77,7 @@ class EvaluatedCohortsInterpreterTest {
         }
 
         private fun createInterpreter(): EvaluatedCohortsInterpreter {
-            return EvaluatedCohortsInterpreter(
+            return EvaluatedCohortsInterpreter.fromEvaluatedCohorts(
                 listOf(
                     evaluatedCohort(BLACKLISTED_COHORT, false, true, true),
                     evaluatedCohort(INELIGIBLE_COHORT, false, false, true),

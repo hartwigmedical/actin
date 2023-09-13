@@ -63,7 +63,7 @@ class MolecularDriversSummarizer private constructor(
             molecularDrivers: MolecularDrivers,
             cohorts: List<EvaluatedCohort>
         ): MolecularDriversSummarizer {
-            return MolecularDriversSummarizer(molecularDrivers, EvaluatedCohortsInterpreter(cohorts))
+            return MolecularDriversSummarizer(molecularDrivers, EvaluatedCohortsInterpreter.fromEvaluatedCohorts(cohorts))
         }
 
         private fun isKeyDriver(driver: Driver): Boolean {
