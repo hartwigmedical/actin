@@ -9,8 +9,12 @@ import com.hartwig.actin.treatment.TreatmentConstants
 import com.itextpdf.layout.element.Table
 
 class IneligibleActinTrialsGenerator private constructor(
-    private val cohorts: List<EvaluatedCohort>, private val source: String,
-    private val trialColWidth: Float, private val cohortColWidth: Float, private val ineligibilityReasonColWith: Float,
+    private val cohorts: List<EvaluatedCohort>,
+    private val source: String,
+    private val trialColWidth: Float,
+    private val cohortColWidth: Float,
+    private val molecularEventColWidth: Float,
+    private val ineligibilityReasonColWith: Float,
     private val enableExtendedMode: Boolean
 ) : TableGenerator {
 
@@ -24,25 +28,27 @@ class IneligibleActinTrialsGenerator private constructor(
     }
 
     override fun contents(): Table {
-        val table = Tables.createFixedWidthCols(trialColWidth, cohortColWidth + ineligibilityReasonColWith)
+        val table = Tables.createFixedWidthCols(trialColWidth, cohortColWidth + molecularEventColWidth + ineligibilityReasonColWith)
         if (cohorts.isNotEmpty()) {
             table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Trial")))
             val headerSubTable = Tables.createFixedWidthCols(
-                cohortColWidth, ineligibilityReasonColWith
+                cohortColWidth, molecularEventColWidth, ineligibilityReasonColWith
             )
             headerSubTable.addHeaderCell(Cells.createHeader("Cohort"))
+            headerSubTable.addHeaderCell(Cells.createHeader("Molecular"))
             headerSubTable.addHeaderCell(Cells.createHeader("Ineligibility reasons"))
             table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
         }
         ActinTrialGeneratorFunctions.sortedCohortGroups(cohorts).forEach { cohortList: List<EvaluatedCohort> ->
             val trialSubTable = Tables.createFixedWidthCols(
-                cohortColWidth, ineligibilityReasonColWith
+                cohortColWidth, molecularEventColWidth, ineligibilityReasonColWith
             )
             cohortList.forEach { cohort: EvaluatedCohort ->
                 val cohortText = ActinTrialGeneratorFunctions.createCohortString(cohort)
+                val molecularText = if (cohort.molecularEvents.isEmpty()) "" else cohort.molecularEvents.distinct().sorted().joinToString(", ")
                 val ineligibilityText = if (cohort.fails.isEmpty()) "?" else cohort.fails.sorted().joinToString(", ")
                 ActinTrialGeneratorFunctions.addContentListToTable(
-                    listOf(cohortText, ineligibilityText),
+                    listOf(cohortText, molecularText, ineligibilityText),
                     !cohort.isOpen || !cohort.hasSlotsAvailable,
                     trialSubTable
                 )
@@ -68,12 +74,14 @@ class IneligibleActinTrialsGenerator private constructor(
         ): IneligibleActinTrialsGenerator {
             val ineligibleCohorts = cohorts.filter { !it.isPotentiallyEligible && (it.isOpen || enableExtendedMode) }
             val trialColWidth = contentWidth / 9
+            val molecularColWidth = contentWidth / 7
             val cohortColWidth = contentWidth / 4
-            val ineligibilityReasonColWidth = contentWidth - (trialColWidth + cohortColWidth)
+            val ineligibilityReasonColWidth = contentWidth - (trialColWidth + cohortColWidth + molecularColWidth)
             return IneligibleActinTrialsGenerator(
                 ineligibleCohorts,
                 TreatmentConstants.ACTIN_SOURCE,
                 trialColWidth,
+                molecularColWidth,
                 cohortColWidth,
                 ineligibilityReasonColWidth,
                 enableExtendedMode
