@@ -13,9 +13,7 @@ class EvaluatedCohortsInterpreter(evaluatedCohorts: List<EvaluatedCohort>) {
             .flatMap { cohort -> cohort.molecularEvents.map { it to cohort.acronym } }
             .groupBy({ it.first }, { it.second })
             .mapValues { (_, acronym) -> acronym.sorted() }
-    }
 
-    init {
         inclusionEventsOfNonBlacklistedOpenTrials = evaluatedCohorts
             .filterNot(EvaluatedCohort::isBlacklisted)
             .filter(EvaluatedCohort::isOpen)
