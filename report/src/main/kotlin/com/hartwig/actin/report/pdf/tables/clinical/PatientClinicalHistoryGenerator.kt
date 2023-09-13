@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.TumorStatus
+import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.sort.PriorSecondPrimaryDiagnosedDateComparator
 import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparator
@@ -109,12 +110,17 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
         }
 
         private fun extractTreatmentString(treatmentHistoryEntry: TreatmentHistoryEntry): String {
+            val intentString = treatmentHistoryEntry.intents()
+                ?.filterNotNull()
+                ?.filter{it != Intent.PALLIATIVE}
+                ?.joinToString(" ") { it.name.lowercase() }
+
             val cyclesString = treatmentHistoryEntry.therapyHistoryDetails()?.cycles()?.let { "$it cycles" }
 
             val stopReasonString = treatmentHistoryEntry.therapyHistoryDetails()?.stopReasonDetail()
                 ?.let { if (!it.equals(STOP_REASON_PROGRESSIVE_DISEASE, ignoreCase = true)) "stop reason: $it" else null }
 
-            val combinedAnnotation = listOfNotNull(cyclesString, stopReasonString).joinToString(", ")
+            val combinedAnnotation = listOfNotNull(intentString, cyclesString, stopReasonString).joinToString(", ")
 
             return treatmentHistoryEntry.treatmentDisplay() + if (combinedAnnotation.isEmpty()) "" else " ($combinedAnnotation)"
         }
