@@ -3,11 +3,11 @@ package com.hartwig.actin.report.interpretation
 import com.hartwig.actin.molecular.datamodel.driver.Driver
 
 class EvaluatedCohortsInterpreter(evaluatedCohorts: List<EvaluatedCohort>) {
-    private val eligibleTrialsByInclusionEvent: Map<String, List<String>>
-    private val nonBlacklistedOpenTrialsByInclusionEvent: Map<String, List<String>>
+    private val eligibleOpenTrialsByInclusionEvent: Map<String, List<String>>
+    private val inclusionEventsOfNonBlacklistedOpenTrials: Set<String>
 
     init {
-        eligibleTrialsByInclusionEvent = evaluatedCohorts
+        eligibleOpenTrialsByInclusionEvent = evaluatedCohorts
             .filter(EvaluatedCohort::isPotentiallyEligible)
             .filter(EvaluatedCohort::isOpen)
             .flatMap { cohort -> cohort.molecularEvents.map { it to cohort.acronym } }
@@ -16,20 +16,20 @@ class EvaluatedCohortsInterpreter(evaluatedCohorts: List<EvaluatedCohort>) {
     }
 
     init {
-        nonBlacklistedOpenTrialsByInclusionEvent = evaluatedCohorts
+        inclusionEventsOfNonBlacklistedOpenTrials = evaluatedCohorts
             .filterNot(EvaluatedCohort::isBlacklisted)
             .filter(EvaluatedCohort::isOpen)
-            .flatMap { cohort -> cohort.molecularEvents.map { it to cohort.acronym } }
-            .groupBy({ it.first }, { it.second })
-            .mapValues { (_, acronym) -> acronym.sorted() }
+            .flatMap(EvaluatedCohort::molecularEvents)
+            .toSet()
     }
 
     fun trialsForDriver(driver: Driver): List<String> {
-        return eligibleTrialsByInclusionEvent[driver.event()] ?: emptyList()
+        return eligibleOpenTrialsByInclusionEvent[driver.event()] ?: emptyList()
     }
 
     fun driverIsActionable(driver: Driver): Boolean {
-        return (driver.evidence().externalEligibleTrials().isNotEmpty() || nonBlacklistedOpenTrialsByInclusionEvent.containsKey(driver.event())
+        return (driver.evidence().externalEligibleTrials()
+            .isNotEmpty() || inclusionEventsOfNonBlacklistedOpenTrials.contains(driver.event())
                 || driver.evidence().approvedTreatments().isNotEmpty())
     }
 }
