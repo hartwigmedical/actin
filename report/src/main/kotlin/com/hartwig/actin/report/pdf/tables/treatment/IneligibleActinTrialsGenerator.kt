@@ -45,7 +45,8 @@ class IneligibleActinTrialsGenerator private constructor(
             )
             cohortList.forEach { cohort: EvaluatedCohort ->
                 val cohortText = ActinTrialGeneratorFunctions.createCohortString(cohort)
-                val molecularText = if (cohort.molecularEvents.isEmpty()) "" else cohort.molecularEvents.distinct().sorted().joinToString(", ")
+                val molecularText =
+                    if (cohort.molecularEvents.isEmpty()) "" else cohort.molecularEvents.distinct().sorted().joinToString(", ")
                 val ineligibilityText = if (cohort.fails.isEmpty()) "?" else cohort.fails.sorted().joinToString(", ")
                 ActinTrialGeneratorFunctions.addContentListToTable(
                     listOf(cohortText, molecularText, ineligibilityText),
@@ -74,15 +75,15 @@ class IneligibleActinTrialsGenerator private constructor(
         ): IneligibleActinTrialsGenerator {
             val ineligibleCohorts = cohorts.filter { !it.isPotentiallyEligible && (it.isOpen || enableExtendedMode) }
             val trialColWidth = contentWidth / 9
-            val molecularColWidth = contentWidth / 7
             val cohortColWidth = contentWidth / 4
+            val molecularColWidth = contentWidth / 7
             val ineligibilityReasonColWidth = contentWidth - (trialColWidth + cohortColWidth + molecularColWidth)
             return IneligibleActinTrialsGenerator(
                 ineligibleCohorts,
                 TreatmentConstants.ACTIN_SOURCE,
                 trialColWidth,
-                molecularColWidth,
                 cohortColWidth,
+                molecularColWidth,
                 ineligibilityReasonColWidth,
                 enableExtendedMode
             )
