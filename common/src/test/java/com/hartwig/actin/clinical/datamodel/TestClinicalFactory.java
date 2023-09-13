@@ -21,6 +21,8 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTherapyHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent;
+import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason;
+import com.hartwig.actin.clinical.datamodel.treatment.history.TherapyHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
@@ -140,6 +142,18 @@ public final class TestClinicalFactory {
     }
 
     @NotNull
+    private static TreatmentHistoryEntry therapyHistoryEntryWithDetails(Set<Therapy> therapies, int startYear, int startMonth,
+            Set<Intent> intents, TherapyHistoryDetails details) {
+        return ImmutableTreatmentHistoryEntry.builder()
+                .treatments(therapies)
+                .startYear(startYear)
+                .startMonth(startMonth)
+                .addAllIntents(intents)
+                .therapyHistoryDetails(details)
+                .build();
+    }
+
+    @NotNull
     private static List<TreatmentHistoryEntry> createTreatmentHistory() {
         Drug oxaliplatin = drug("OXALIPLATIN", DrugType.PLATINUM_COMPOUND, TreatmentCategory.CHEMOTHERAPY);
         Drug fluorouracil = drug("5-FU", DrugType.ANTIMETABOLITE, TreatmentCategory.CHEMOTHERAPY);
@@ -150,6 +164,14 @@ public final class TestClinicalFactory {
                 .isSystemic(true)
                 .addDrugs(oxaliplatin, fluorouracil, irinotecan)
                 .maxCycles(8)
+                .build();
+
+        TherapyHistoryDetails folfirinoxDetails = ImmutableTherapyHistoryDetails.builder()
+                .cycles(3)
+                .stopYear(2020)
+                .stopMonth(9)
+                .stopReason(StopReason.TOXICITY)
+                .stopReasonDetail("toxicity")
                 .build();
 
         Radiotherapy radioFolfirinox =
@@ -177,7 +199,7 @@ public final class TestClinicalFactory {
                 .isTrial(false)
                 .build();
 
-        return List.of(therapyHistoryEntry(Set.of(folfirinox), 2020, Intent.NEOADJUVANT),
+        return List.of(therapyHistoryEntryWithDetails(Set.of(folfirinox), 2020, 6, Set.of(Intent.ADJUVANT, Intent.INDUCTION), folfirinoxDetails),
                 surgeryHistoryEntry,
                 therapyHistoryEntry(Set.of(radioFolfirinox, folfirinoxLocoRegional), 2022, Intent.ADJUVANT),
                 therapyHistoryEntry(Set.of(folfirinoxAndPembrolizumab), 2023, Intent.PALLIATIVE));
