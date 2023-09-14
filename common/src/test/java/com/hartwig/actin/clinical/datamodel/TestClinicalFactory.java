@@ -1,7 +1,9 @@
 package com.hartwig.actin.clinical.datamodel;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -21,7 +23,6 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTherapyHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent;
-import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TherapyHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse;
@@ -68,6 +69,29 @@ public final class TestClinicalFactory {
                 .tumor(createTestTumorDetails())
                 .clinicalStatus(createTestClinicalStatus())
                 .treatmentHistory(createTreatmentHistory())
+                .priorSecondPrimaries(createTestPriorSecondPrimaries())
+                .priorOtherConditions(createTestPriorOtherConditions())
+                .priorMolecularTests(createTestPriorMolecularTests())
+                .complications(createTestComplications())
+                .labValues(createTestLabValues())
+                .toxicityEvaluations(createTestToxicityEvaluations())
+                .toxicities(createTestToxicities())
+                .intolerances(createTestIntolerances())
+                .surgeries(createTestSurgeries())
+                .bodyWeights(createTestBodyWeights())
+                .vitalFunctions(createTestVitalFunctions())
+                .bloodTransfusions(createTestBloodTransfusions())
+                .medications(createTestMedications())
+                .build();
+    }
+
+    @NotNull
+    public static ClinicalRecord createExhaustiveTestClinicalRecord() {
+        return ImmutableClinicalRecord.builder()
+                .from(createMinimalTestClinicalRecord())
+                .tumor(createTestTumorDetails())
+                .clinicalStatus(createTestClinicalStatus())
+                .treatmentHistory(createExhaustiveTreatmentHistory())
                 .priorSecondPrimaries(createTestPriorSecondPrimaries())
                 .priorOtherConditions(createTestPriorOtherConditions())
                 .priorMolecularTests(createTestPriorMolecularTests())
@@ -142,18 +166,6 @@ public final class TestClinicalFactory {
     }
 
     @NotNull
-    private static TreatmentHistoryEntry therapyHistoryEntryWithDetails(Set<Therapy> therapies, int startYear, int startMonth,
-            Set<Intent> intents, TherapyHistoryDetails details) {
-        return ImmutableTreatmentHistoryEntry.builder()
-                .treatments(therapies)
-                .startYear(startYear)
-                .startMonth(startMonth)
-                .addAllIntents(intents)
-                .therapyHistoryDetails(details)
-                .build();
-    }
-
-    @NotNull
     private static List<TreatmentHistoryEntry> createTreatmentHistory() {
         Drug oxaliplatin = drug("OXALIPLATIN", DrugType.PLATINUM_COMPOUND, TreatmentCategory.CHEMOTHERAPY);
         Drug fluorouracil = drug("5-FU", DrugType.ANTIMETABOLITE, TreatmentCategory.CHEMOTHERAPY);
@@ -164,14 +176,6 @@ public final class TestClinicalFactory {
                 .isSystemic(true)
                 .addDrugs(oxaliplatin, fluorouracil, irinotecan)
                 .maxCycles(8)
-                .build();
-
-        TherapyHistoryDetails folfirinoxDetails = ImmutableTherapyHistoryDetails.builder()
-                .cycles(3)
-                .stopYear(2020)
-                .stopMonth(9)
-                .stopReason(StopReason.TOXICITY)
-                .stopReasonDetail("toxicity")
                 .build();
 
         Radiotherapy radioFolfirinox =
@@ -199,10 +203,88 @@ public final class TestClinicalFactory {
                 .isTrial(false)
                 .build();
 
-        return List.of(therapyHistoryEntryWithDetails(Set.of(folfirinox), 2020, 6, Set.of(Intent.ADJUVANT, Intent.INDUCTION), folfirinoxDetails),
+        return List.of(therapyHistoryEntry(Set.of(folfirinox), 2020, Intent.NEOADJUVANT),
                 surgeryHistoryEntry,
                 therapyHistoryEntry(Set.of(radioFolfirinox, folfirinoxLocoRegional), 2022, Intent.ADJUVANT),
                 therapyHistoryEntry(Set.of(folfirinoxAndPembrolizumab), 2023, Intent.PALLIATIVE));
+    }
+
+    @NotNull
+    private static List<TreatmentHistoryEntry> createExhaustiveTreatmentHistory() {
+
+        // systemic treatments
+        TreatmentHistoryEntry noDateHistoryEntry = treatmentHistoryEntryWithDates("Treatment1", null, null, null, null, true);
+        TreatmentHistoryEntry startYearHistoryEntry = treatmentHistoryEntryWithDates("Treatment2", 2020, null, null, null, true);
+        TreatmentHistoryEntry startYearMonthHistoryEntry = treatmentHistoryEntryWithDates("Treatment3", 2020, 4, null, null, true);
+        TreatmentHistoryEntry startYearEndYearHistoryEntry = treatmentHistoryEntryWithDates("Treatment4", 2020, null, 2020, null, true);
+        TreatmentHistoryEntry startYearMonthEndYearMonthHistoryEntry = treatmentHistoryEntryWithDates("Treatment5",2020, 8, 2021, 2, true);
+
+        // trial treatments
+        final Set<Intent> noIntents = new HashSet<>();
+        final Set<Intent> singleIntent = Set.of(Intent.ADJUVANT);
+        final Set<Intent> multiIntent = Set.of(Intent.ADJUVANT, Intent.CONSOLIDATION);
+        TreatmentHistoryEntry trialHistoryEntry = trialTreatmentHistory(Set.of("Trial1"), null, noIntents,2021, null, null);
+        TreatmentHistoryEntry trialHistoryEntryCycles = trialTreatmentHistory(Set.of("Trial2"), "tr2", noIntents,2021, 3, null);
+        TreatmentHistoryEntry trialHistoryEntryStopReason = trialTreatmentHistory(Set.of("Trial3"), null, singleIntent, 2022, 3, "toxicity");
+        TreatmentHistoryEntry trialHistoryEntryUnknown = trialTreatmentHistory(Set.of(), null, noIntents, 2022, null, null);
+        TreatmentHistoryEntry trialHistoryEntryMultipleTherapies = trialTreatmentHistory(Set.of("trial4-therapy1", "trial4-therapy2"),
+                null, multiIntent, 2023, 4, "toxicity");
+
+        // non-systemic treatments
+        TreatmentHistoryEntry nonSystemicHistoryEntry = treatmentHistoryEntryWithDates("Other1", 2022, null, null, null, false);
+
+        return List.of(noDateHistoryEntry, startYearHistoryEntry, startYearMonthHistoryEntry, startYearEndYearHistoryEntry,
+                startYearMonthEndYearMonthHistoryEntry, trialHistoryEntry, trialHistoryEntryCycles, trialHistoryEntryStopReason,
+                trialHistoryEntryUnknown, trialHistoryEntryMultipleTherapies,
+                nonSystemicHistoryEntry);
+
+    }
+
+    @NotNull
+    private static TreatmentHistoryEntry treatmentHistoryEntryWithDates(String name, Integer startYear, Integer startMonth, Integer stopYear, Integer stopMonth, boolean isSystemic) {
+        DrugTherapy therapy = ImmutableDrugTherapy.builder()
+                .name(name)
+                .isSystemic(isSystemic)
+                .maxCycles(8)
+                .build();
+
+        TherapyHistoryDetails therapyDetails = ImmutableTherapyHistoryDetails.builder()
+                        .stopYear(stopYear)
+                        .stopMonth(stopMonth)
+                        .build();
+
+        return ImmutableTreatmentHistoryEntry.builder()
+                .treatments(Set.of(therapy))
+                .startYear(startYear)
+                .startMonth(startMonth)
+                .therapyHistoryDetails(therapyDetails)
+                .build();
+    }
+
+    private static TreatmentHistoryEntry trialTreatmentHistory(Set<String> therapyNames, String acronym, Set<Intent> intents, Integer startYear, Integer cycles, String stopReasonDetail) {
+        List<Therapy> therapies = new ArrayList<>();
+        for (String name: therapyNames) {
+            DrugTherapy therapy = ImmutableDrugTherapy.builder()
+                    .name(name)
+                    .isSystemic(true)
+                    .maxCycles(8)
+                    .build();
+
+            therapies.add(therapy);
+        }
+
+        TherapyHistoryDetails therapyDetails = ImmutableTherapyHistoryDetails.builder()
+                .cycles(cycles)
+                .stopReasonDetail(stopReasonDetail)
+                .build();
+
+        return ImmutableTreatmentHistoryEntry.builder()
+                .addAllTreatments(therapies)
+                .isTrial(true)
+                .trialAcronym(acronym)
+                .startYear(startYear)
+                .addAllIntents(intents)
+                .therapyHistoryDetails(therapyDetails).build();
     }
 
     @NotNull
