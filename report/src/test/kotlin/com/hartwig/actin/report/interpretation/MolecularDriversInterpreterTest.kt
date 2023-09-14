@@ -71,7 +71,8 @@ class MolecularDriversInterpreterTest {
         }
 
         private fun assertCountForRecordAndCohorts(expectedCount: Int, molecularRecord: MolecularRecord, cohorts: List<EvaluatedCohort>) {
-            val interpreter = MolecularDriversInterpreter(molecularRecord.drivers(), EvaluatedCohortsInterpreter(cohorts))
+            val interpreter =
+                MolecularDriversInterpreter(molecularRecord.drivers(), EvaluatedCohortsInterpreter.fromEvaluatedCohorts(cohorts))
             assertThat(interpreter.filteredVariants()).hasSize(expectedCount)
             assertThat(interpreter.filteredCopyNumbers()).hasSize(expectedCount)
             assertThat(interpreter.filteredHomozygousDisruptions()).hasSize(expectedCount)
