@@ -1,7 +1,7 @@
 ## ACTIN-Clinical
 
-ACTIN-Clinical ingests (external) clinical feed and uses an internal curation database to create data in terms of the datamodel described
-below. This ACTIN clinical model is written to a per-patient json file. The clinical data can be loaded into a mysql database
+ACTIN-Clinical ingests (external) clinical feed and uses an internal curation database to create data in terms of the ACTIN datamodel.
+Clinical data in the ACTIN datamodel is written to a per-patient json file. The clinical data can be loaded into a mysql database
 via [ACTIN-Database](../database/README.md).
 
 This application requires Java 11+ and can be run as follows:
@@ -18,9 +18,9 @@ java -cp actin.jar com.hartwig.actin.clinical.ClinicalIngestionApplicationKt \
 
 ### Required set
 
-For the best results, the (external) clinical feed should contain all clinical data described below ('required set'). Below is an overview of data that, if available, should be provided per patient. 
+For every patient, the (external) clinical feed should contain all clinical data described below.
 
-Note that the column 'with date?' indicates whether the variable should be provided with date.
+The column 'with date?' indicates whether the variable should be provided with corresponding date.
 
 Patient details
 
@@ -33,17 +33,17 @@ Patient details
 
 Current primary tumor details
 
-| Variable                            | Example values            | With date? |
-|-------------------------------------|---------------------------|------------|
-| Diagnosis date                      | 2023-01-01                | N/A        |
-| Tumor localization details          | Lung                      |            |
-| Tumor type details                  | Adenocarcinoma            |            |    
-| Tumor grade/differentiation details | Poorly differentiated     |            |
-| Tumor stage                         | 4 / T4N1M0                | Yes        |
-| Lesion site + active*?              | Liver, Bone, Brain-Active | Yes        |
-| Measurable disease?                 | Yes/No                    | Yes        |
+| Variable                            | Example values               | With date? |
+|-------------------------------------|------------------------------|------------|
+| Diagnosis date                      | 2023-01-01                   | N/A        |
+| Tumor localization details          | Lung                         |            |
+| Tumor type details                  | Adenocarcinoma               |            |    
+| Tumor grade/differentiation details | Poorly differentiated        |            |
+| Tumor stage                         | 4 / T4N1M0                   | Yes        |
+| Lesion site + active*?              | Liver / Bone / Brain, active | Yes        |
+| Measurable disease?                 | Yes                          | Yes        |
 
-*: Only applicable in case of CNS/Brain lesions
+*: Only applicable in case of CNS or brain lesions
 
 Treatment history current tumor
 
@@ -58,21 +58,22 @@ Treatment history current tumor
 | Intended number of cycles*                |                     |            |
 | Administered number of cycles*            |                     |            |
 | Occurrences of grade => 2 toxicities      | Neuropathy          | Yes        |
-| Treatment administered in clinical study? | Yes/No              |            |
+| Treatment administered in clinical study? | Yes / No            |            |
 
 *: Only if applicable (chemotherapy)
 
-Note that only fields relevant for that type of treatment need to be provided. E.g. for surgeries, only name, intention and date need to be provided.
-In addition, treatment name should be as detailed as possible (e.g. Osimertinib is preferred over Anti-EGFR treatment or Targeted therapy)
+Note that only fields relevant for that type of treatment need to be provided. E.g. for surgeries, only name, intention and date need to be
+provided.
+Finally, treatment name should be as detailed as possible (e.g. 'Osimertinib' is preferred over 'Anti-EGFR treatment' or 'Targeted therapy')
 
 Molecular test history current tumor
 
-| Variable                                                     | Example values | With date? |
-|--------------------------------------------------------------|----------------|------------|
-| Type                                                         | IHC            |            |
-| Measure (i.e. gene or protein)                               | HER2           |            |
-| Result                                                       | Negative / 3+  | Yes        |
-| Biopsy location (of biopsy analyzed in test) (if applicable) | Liver          | Yes        |
+| Variable                                                    | Example values | With date? |
+|-------------------------------------------------------------|----------------|------------|
+| Type                                                        | IHC            |            |
+| Measure (i.e. gene or protein)                              | HER2           |            |
+| Result                                                      | Negative / 3+  | Yes        |
+| Biopsy location (of biopsy analyzed in test), if applicable | Liver          | Yes        |
 
 Note: For WGS/NGS data, the BAM (raw data) should be provided rather than above format.
 
@@ -182,9 +183,10 @@ Infection details
 | End date  (if applicable)   |                | N/A        |
 | Description (if applicable) |                |            |
 
-### Optional set
+### Additional (optional) set
 
-The optional set is not required to run ACTIN, but if the variables are available, the variables in this set can be mapped to the ACTIN clinical model as well:
+Below is a set of variables that is not necessarily required to run ACTIN, but if the variables are available, the variables in this set can
+be mapped to the ACTIN clinical model as well:
 
 | Category   | Variable              | Example values       | With date? |
 |------------|-----------------------|----------------------|------------|
@@ -195,7 +197,6 @@ The optional set is not required to run ACTIN, but if the variables are availabl
 | Allergies  | criticality           | High                 |            |
 | Surgeries  | Date                  | 2023-01-01           |            |
 | Surgeries  | Status                | Finished             |            |
-
 
 ## ACTIN clinical datamodel
 
@@ -285,7 +286,7 @@ N prior second primaries
 | diagnosedYear    | Previous primary tumors: Diagnosis date    |
 | diagnosedMonth   | Previous primary tumors: Diagnosis date    |
 | treatmentHistory | Previous primary tumors: Treatment history |
-| isActive         | Previous primary tumors: Status            |
+| status           | Previous primary tumors: Status            |
 
 N prior other conditions
 
@@ -355,7 +356,6 @@ N intolerances
 | clinicalStatus     | If applicable     |
 | verificationStatus | If applicable     |
 | criticality        | If applicable     |
-
 
 N surgeries
 
