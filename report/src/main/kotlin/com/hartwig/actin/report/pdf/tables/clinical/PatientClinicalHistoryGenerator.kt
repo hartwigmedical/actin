@@ -122,7 +122,13 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
 
             val combinedAnnotation = listOfNotNull(intentString, cyclesString, stopReasonString).joinToString(", ")
 
-            return treatmentHistoryEntry.treatmentDisplay() + if (combinedAnnotation.isEmpty()) "" else " ($combinedAnnotation)"
+            val trialDisplay = if (treatmentHistoryEntry.isTrial) {
+                "Clinical trial" + if (treatmentHistoryEntry.trialAcronym().isNullOrEmpty()) ": " else " (${treatmentHistoryEntry.trialAcronym()}): "
+            } else {
+                ""
+            }
+
+            return trialDisplay + treatmentHistoryEntry.treatmentDisplay() + if (combinedAnnotation.isEmpty()) "" else " ($combinedAnnotation)"
         }
 
         private fun toSecondPrimaryString(priorSecondPrimary: PriorSecondPrimary): String {
