@@ -135,7 +135,8 @@ class SummaryChapter(private val report: Report) : ReportChapter {
                 "Lymph Node" to tumor.hasLymphNodeLesions()
             ).filter { it.second == true }.map { it.first }
 
-            val lesions = listOfNotNull(categorizedLesions, tumor.otherLesions(), listOfNotNull(tumor.biopsyLocation())).flatten().sorted().distinct()
+            val lesions =
+                listOfNotNull(categorizedLesions, tumor.otherLesions(), listOfNotNull(tumor.biopsyLocation())).flatten().sorted().distinct()
 
             return if (lesions.isEmpty()) {
                 Formats.VALUE_UNKNOWN
