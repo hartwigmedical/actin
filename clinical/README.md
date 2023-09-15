@@ -49,24 +49,24 @@ Current primary tumor details
 
 Treatment history current tumor (N records per patient)
 
-| Variable                                  | Example values      | With date? |
-|-------------------------------------------|---------------------|------------|
-| Name                                      | Osimertinib         |            |
-| Intention                                 | Palliative          |            |
-| Start date                                | 2023-02-01          | N/A        |    
-| End date                                  | 2023-10-01          | N/A        |
-| Stop reason                               | Progressive disease | Yes        |
-| Response                                  | Partial response    | Yes        |
-| Intended number of cycles*                |                     |            |
-| Administered number of cycles*            |                     |            |
-| Occurrences of grade => 2 toxicities      | Neuropathy          | Yes        |
-| Treatment administered in clinical study? | Yes / No            |            |
-
-*: Only if applicable (chemotherapy)
+| Variable                                       | Example values          | With date? |
+|------------------------------------------------|-------------------------|------------|
+| Name                                           | Gemcitabine+Cisplatin   |            |
+| Intention                                      | Palliative              |            |
+| Start date                                     | 2023-02-01              | N/A        |    
+| End date                                       | 2023-10-01              | N/A        |
+| Stop reason                                    | Progressive disease     | Yes        |
+| Response                                       | Partial response        | Yes        |
+| Intended number of cycles                      | 6                       |            |
+| Administered number of cycles                  | 6                       |            |
+| Modifications to treatment composition         | Gemcitabine+Carboplatin | Yes        |
+| Nr of cycles after which modification occurred | 3                       |            |
+| Occurrences of grade => 2 toxicities           | Neuropathy              | Yes        |
+| Treatment administered in clinical study?      | Yes / No                |            |
 
 Note that only fields relevant for that type of treatment need to be provided. E.g. for surgeries, only name, intention and date need to be
 provided.
-Finally, treatment name should be as detailed as possible (e.g. 'Osimertinib' is preferred over 'Anti-EGFR treatment' or 'Targeted therapy')
+Finally, treatment name should be as detailed as possible (e.g. 'Gemcitabine+Cisplatin' is preferred over 'Chemotherapy')
 
 Molecular test history current tumor (N records per patient)
 
@@ -117,22 +117,20 @@ of 'grade' (and grade can be null).
 
 Medication details (N records per patient)
 
-| Variable                     | Example values | With date? |
-|------------------------------|----------------|------------|
-| Drug name                    | Paracetamol    |            |
-| ATC code                     | N02BE01        |            |
-| Start date                   | 2023-03-01     | N/A        |
-| End date                     | 2023-07-01     | N/A        |
-| Administration route         | Oral           |            |
-| Dosage                       | 500            |            |
-| Dosage unit                  | mg             |            |
-| Frequency                    | 2              |            |
-| Frequency unit               | day            |            |
-| Period between dosages value | 1              |            |
-| Period between dosages unit  | day            |            |
-| ifNeeded*                    | Yes/No         |            |
-
-*: ifNeeded indicates whether the medication should be taken according to dosage prescription or only "if needed".
+| Variable                                | Example values | With date? |
+|-----------------------------------------|----------------|------------|
+| Drug name                               | Paracetamol    |            |
+| ATC code                                | N02BE01        |            |
+| Start date                              | 2023-03-01     | N/A        |
+| End date                                | 2023-07-01     | N/A        |
+| Administration route                    | Oral           |            |
+| Dosage                                  | 500            |            |
+| Dosage unit                             | mg             |            |
+| Frequency                               | 2              |            |
+| Frequency unit                          | day            |            |
+| Period between dosages value            | 1              |            |
+| Period between dosages unit             | day            |            |
+| Administration only if needed? (Yes/No) | Yes            |            |
 
 Note: Information about ATC codes can be found at the website of WHOCC: https://www.whocc.no/atc_ddd_index/
 
@@ -223,7 +221,7 @@ Note that "if applicable" in 'origin' indicates that the field is derived from a
 | Field             | Origin                           |
 |-------------------|----------------------------------|
 | birthYear         | Patient: Birth year              |
-| gender            | Patient: Sex                     |
+| gender            | Patient: Gender                  |
 | registrationDate  | Patient: ACTIN registration date |
 | questionnaireDate | If applicable                    |
 
