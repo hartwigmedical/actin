@@ -31,19 +31,22 @@ object TreatmentHistoryEntryConfigFactory {
         fields: Map<String, Int>
     ): TreatmentHistoryEntryConfig? {
         val ignore: Boolean = CurationUtil.isIgnoreString(treatmentName)
-        val treatmentHistoryEntry = if (ignore) null else {
+        val treatmentHistoryEntry = if (ignore) {
+            null
+        } else {
             val treatment = treatmentDatabase.findTreatmentByName(treatmentName)
-            if (treatment == null) {
-                logMissingTreatmentMessage(treatmentName)
-                return null
-            }
-            curateObject(fields, parts, treatment)
+            curateObject(fields, parts, treatment, treatmentName)
         }
-        return TreatmentHistoryEntryConfig(
-            input = parts[fields["input"]!!],
-            ignore = ignore,
-            curated = treatmentHistoryEntry
-        )
+
+        return if (treatmentHistoryEntry == null) {
+            null
+        } else {
+            TreatmentHistoryEntryConfig(
+                input = parts[fields["input"]!!],
+                ignore = ignore,
+                curated = treatmentHistoryEntry
+            )
+        }
     }
 
     private fun logMissingTreatmentMessage(treatmentName: String) {
@@ -66,8 +69,21 @@ object TreatmentHistoryEntryConfigFactory {
     private fun curateObject(
         fields: Map<String, Int>,
         parts: List<String>,
-        treatment: Treatment
-    ): TreatmentHistoryEntry {
+        treatment: Treatment?,
+        treatmentName: String,
+    ): TreatmentHistoryEntry? {
+
+        val isTrial = optionalObjectFromColumn(parts, fields, "isTrial", ResourceFile::optionalBool) ?: false
+
+        if (treatment == null) {
+            if (isTrial && treatmentName.isEmpty()) {
+                LOGGER.info("   Treatment for trial $treatmentName does not exist is database, leaving empty")
+            } else {
+                logMissingTreatmentMessage(treatmentName)
+                return null
+            }
+        }
+
         val therapyHistoryDetails = if (treatment is Therapy) {
             val bestResponseString = optionalStringFromColumn(parts, fields, "bestResponse")
             val bestResponse =
@@ -99,11 +115,11 @@ object TreatmentHistoryEntryConfigFactory {
         val intents = entriesFromColumn(parts, fields, "intents")?.map { stringToEnum(it, Intent::valueOf) }
 
         return ImmutableTreatmentHistoryEntry.builder()
-            .treatments(setOf(treatment))
+            .treatments(treatment?.let{ setOf(it) } ?: emptySet())
             .startYear(optionalIntegerFromColumn(parts, fields, "startYear"))
             .startMonth(optionalIntegerFromColumn(parts, fields, "startMonth"))
             .intents(intents)
-            .isTrial(optionalObjectFromColumn(parts, fields, "isTrial", ResourceFile::optionalBool) ?: false)
+            .isTrial(isTrial)
             .trialAcronym(optionalStringFromColumn(parts, fields, "trialAcronym"))
             .therapyHistoryDetails(therapyHistoryDetails)
             .build()

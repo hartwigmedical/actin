@@ -43,6 +43,21 @@ class TreatmentHistoryEntryConfigFactoryTest {
             .containsExactly(treatmentDatabase.findTreatmentByName(treatmentName))
     }
 
+    @Test
+    fun `Should generate history entry for trial with no treatment`() {
+        val input = "Unknown trial"
+        val treatmentName = ""
+        val parts = partsWithMappedValues(
+            mapOf(
+                "input" to input,
+                "treatmentName" to treatmentName,
+                "startYear" to "2022",
+                "isTrial" to "1"
+            )
+        )
+        assertThat(TreatmentHistoryEntryConfigFactory.createConfig(treatmentName, treatmentDatabase, parts, fields)).isNotNull()
+    }
+
     private fun partsWithMappedValues(overrides: Map<String, String>): List<String> {
         val emptyMap = (0..24).associateWith { "" }
         val overridesWithIntKeys = overrides.mapKeys { fields[it.key] }
