@@ -212,25 +212,22 @@ public final class TestClinicalFactory {
     @NotNull
     private static List<TreatmentHistoryEntry> createExhaustiveTreatmentHistory() {
 
-        // systemic treatments
         TreatmentHistoryEntry noDateHistoryEntry = treatmentHistoryEntryWithDates("Treatment1", null, null, null, null, true);
         TreatmentHistoryEntry startYearHistoryEntry = treatmentHistoryEntryWithDates("Treatment2", 2020, null, null, null, true);
         TreatmentHistoryEntry startYearMonthHistoryEntry = treatmentHistoryEntryWithDates("Treatment3", 2020, 4, null, null, true);
         TreatmentHistoryEntry startYearEndYearHistoryEntry = treatmentHistoryEntryWithDates("Treatment4", 2020, null, 2020, null, true);
         TreatmentHistoryEntry startYearMonthEndYearMonthHistoryEntry = treatmentHistoryEntryWithDates("Treatment5",2020, 8, 2021, 2, true);
 
-        // trial treatments
         final Set<Intent> noIntents = new HashSet<>();
         final Set<Intent> singleIntent = Set.of(Intent.ADJUVANT);
         final Set<Intent> multiIntent = Set.of(Intent.ADJUVANT, Intent.CONSOLIDATION);
-        TreatmentHistoryEntry trialHistoryEntry = trialTreatmentHistory(Set.of("Trial1"), null, noIntents,2021, null, null);
-        TreatmentHistoryEntry trialHistoryEntryCycles = trialTreatmentHistory(Set.of("Trial2"), "tr2", noIntents,2021, 3, null);
-        TreatmentHistoryEntry trialHistoryEntryStopReason = trialTreatmentHistory(Set.of("Trial3"), null, singleIntent, 2022, 3, "toxicity");
-        TreatmentHistoryEntry trialHistoryEntryUnknown = trialTreatmentHistory(Set.of(), null, noIntents, 2022, null, null);
-        TreatmentHistoryEntry trialHistoryEntryMultipleTherapies = trialTreatmentHistory(Set.of("trial4-therapy1", "trial4-therapy2"),
+        TreatmentHistoryEntry trialHistoryEntry = trialTreatmentHistoryEntry(Set.of("Trial1"), null, noIntents,2021, null, null);
+        TreatmentHistoryEntry trialHistoryEntryCycles = trialTreatmentHistoryEntry(Set.of("Trial2"), "tr2", noIntents,2021, 3, null);
+        TreatmentHistoryEntry trialHistoryEntryStopReason = trialTreatmentHistoryEntry(Set.of("Trial3"), null, singleIntent, 2022, 3, "toxicity");
+        TreatmentHistoryEntry trialHistoryEntryUnknown = trialTreatmentHistoryEntry(Set.of(), null, noIntents, 2022, null, null);
+        TreatmentHistoryEntry trialHistoryEntryMultipleTherapies = trialTreatmentHistoryEntry(Set.of("trial4-therapy1", "trial4-therapy2"),
                 "tr4", multiIntent, 2023, 4, "toxicity");
 
-        // non-systemic treatments
         TreatmentHistoryEntry nonSystemicHistoryEntry = treatmentHistoryEntryWithDates("Other1", 2022, null, null, null, false);
 
         return List.of(noDateHistoryEntry, startYearHistoryEntry, startYearMonthHistoryEntry, startYearEndYearHistoryEntry,
@@ -261,7 +258,7 @@ public final class TestClinicalFactory {
                 .build();
     }
 
-    private static TreatmentHistoryEntry trialTreatmentHistory(Set<String> therapyNames, String acronym, Set<Intent> intents, Integer startYear, Integer cycles, String stopReasonDetail) {
+    private static TreatmentHistoryEntry trialTreatmentHistoryEntry(Set<String> therapyNames, String acronym, Set<Intent> intents, Integer startYear, Integer cycles, String stopReasonDetail) {
         List<Therapy> therapies = new ArrayList<>();
         for (String name: therapyNames) {
             DrugTherapy therapy = ImmutableDrugTherapy.builder()
