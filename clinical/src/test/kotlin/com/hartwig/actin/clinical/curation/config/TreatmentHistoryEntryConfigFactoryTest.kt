@@ -44,7 +44,7 @@ class TreatmentHistoryEntryConfigFactoryTest {
     }
 
     @Test
-    fun `Should generate history entry for trial with no treatment`() {
+    fun `Should generate history entry for unnamed trial with no treatment`() {
         val input = "Unknown trial"
         val treatmentName = ""
         val parts = partsWithMappedValues(
@@ -56,6 +56,21 @@ class TreatmentHistoryEntryConfigFactoryTest {
             )
         )
         assertThat(TreatmentHistoryEntryConfigFactory.createConfig(treatmentName, treatmentDatabase, parts, fields)).isNotNull()
+    }
+
+    @Test
+    fun `Should not generate entry for named trial with no treatment`() {
+        val input = "known trial"
+        val treatmentName = "trial name"
+        val parts = partsWithMappedValues(
+            mapOf(
+                "input" to input,
+                "treatmentName" to treatmentName,
+                "startYear" to "2022",
+                "isTrial" to "1"
+            )
+        )
+        assertThat(TreatmentHistoryEntryConfigFactory.createConfig(treatmentName, treatmentDatabase, parts, fields)).isNull()
     }
 
     private fun partsWithMappedValues(overrides: Map<String, String>): List<String> {
