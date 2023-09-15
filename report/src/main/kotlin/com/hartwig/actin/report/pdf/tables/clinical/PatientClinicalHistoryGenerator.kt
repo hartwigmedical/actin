@@ -114,21 +114,34 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
                 ?.filterNotNull()
                 ?.filter{it != Intent.PALLIATIVE}
                 ?.joinToString(" ") { it.name.lowercase() }
+                ?.ifEmpty { null }
 
             val cyclesString = treatmentHistoryEntry.therapyHistoryDetails()?.cycles()?.let { "$it cycles" }
 
             val stopReasonString = treatmentHistoryEntry.therapyHistoryDetails()?.stopReasonDetail()
                 ?.let { if (!it.equals(STOP_REASON_PROGRESSIVE_DISEASE, ignoreCase = true)) "stop reason: $it" else null }
 
-            val combinedAnnotation = listOfNotNull(intentString, cyclesString, stopReasonString).joinToString(", ")
+            val annotation = listOfNotNull(intentString, cyclesString, stopReasonString).joinToString(", ")
 
-            val trialDisplay = if (treatmentHistoryEntry.isTrial) {
-                "Clinical trial" + if (treatmentHistoryEntry.trialAcronym().isNullOrEmpty()) ": " else " (${treatmentHistoryEntry.trialAcronym()}): "
+            val treatmentWithAnnotation = treatmentHistoryEntry.treatmentDisplay() + if (annotation.isEmpty()) "" else " ($annotation)"
+
+            val fullTreatmentString = if (treatmentHistoryEntry.isTrial) {
+                val acronym =  if (treatmentHistoryEntry.trialAcronym().isNullOrEmpty()) "" else "(${treatmentHistoryEntry.trialAcronym()})"
+                val trial = "Clinical trial"
+                if (acronym.isEmpty() && treatmentWithAnnotation.isEmpty()) {
+                    "$trial (details unknown)"
+                } else if (acronym.isNotEmpty() && treatmentWithAnnotation.isEmpty()) {
+                    "$trial $acronym"
+                } else if (acronym.isEmpty() && treatmentWithAnnotation.isNotEmpty()) {
+                    "$trial: $treatmentWithAnnotation"
+                } else {
+                    "$trial $acronym: $treatmentWithAnnotation"
+                }
             } else {
-                ""
+                treatmentWithAnnotation
             }
 
-            return trialDisplay + treatmentHistoryEntry.treatmentDisplay() + if (combinedAnnotation.isEmpty()) "" else " ($combinedAnnotation)"
+            return fullTreatmentString
         }
 
         private fun toSecondPrimaryString(priorSecondPrimary: PriorSecondPrimary): String {

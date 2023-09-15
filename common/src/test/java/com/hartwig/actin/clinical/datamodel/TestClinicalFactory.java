@@ -228,7 +228,7 @@ public final class TestClinicalFactory {
         TreatmentHistoryEntry trialHistoryEntryStopReason = trialTreatmentHistory(Set.of("Trial3"), null, singleIntent, 2022, 3, "toxicity");
         TreatmentHistoryEntry trialHistoryEntryUnknown = trialTreatmentHistory(Set.of(), null, noIntents, 2022, null, null);
         TreatmentHistoryEntry trialHistoryEntryMultipleTherapies = trialTreatmentHistory(Set.of("trial4-therapy1", "trial4-therapy2"),
-                null, multiIntent, 2023, 4, "toxicity");
+                "tr4", multiIntent, 2023, 4, "toxicity");
 
         // non-systemic treatments
         TreatmentHistoryEntry nonSystemicHistoryEntry = treatmentHistoryEntryWithDates("Other1", 2022, null, null, null, false);
@@ -283,7 +283,7 @@ public final class TestClinicalFactory {
                 .isTrial(true)
                 .trialAcronym(acronym)
                 .startYear(startYear)
-                .addAllIntents(intents)
+                .intents(intents)
                 .therapyHistoryDetails(therapyDetails).build();
     }
 
