@@ -18,9 +18,10 @@ java -cp actin.jar com.hartwig.actin.clinical.ClinicalIngestionApplicationKt \
 
 ### Required set
 
-For every patient, the (external) clinical feed should contain all clinical data described below.
+The (external) clinical feed is submitted to ACTIN using below datamodel, for every patient.
 
-The column 'with date?' indicates whether the variable should be provided with corresponding date.
+The column 'with date?' indicates whether the variable should be provided with corresponding date. Note that all variables with 'with date?
+= Yes' can be provided N times.
 
 Patient details
 
@@ -28,6 +29,7 @@ Patient details
 |-------------------------|----------------|------------|
 | Birth year              | 1940           |            |
 | Sex                     | Male           |            |    
+| Gender                  | Male           |            |
 | ACTIN registration date | 2023-01-01     | N/A        |
 | WHO                     | 0/1/2/3/4/5    | Yes        |
 
@@ -45,7 +47,7 @@ Current primary tumor details
 
 *: Only applicable in case of CNS or brain lesions
 
-Treatment history current tumor
+Treatment history current tumor (N records per patient)
 
 | Variable                                  | Example values      | With date? |
 |-------------------------------------------|---------------------|------------|
@@ -66,7 +68,7 @@ Note that only fields relevant for that type of treatment need to be provided. E
 provided.
 Finally, treatment name should be as detailed as possible (e.g. 'Osimertinib' is preferred over 'Anti-EGFR treatment' or 'Targeted therapy')
 
-Molecular test history current tumor
+Molecular test history current tumor (N records per patient)
 
 | Variable                                                    | Example values | With date? |
 |-------------------------------------------------------------|----------------|------------|
@@ -77,7 +79,7 @@ Molecular test history current tumor
 
 Note: For WGS/NGS data, the BAM (raw data) should be provided rather than above format.
 
-Other relevant patient history: previous primary tumor(s)
+Other relevant patient history: previous primary tumor(s) (N records per patient)
 
 | Variable                   | Example values | With date? |
 |----------------------------|----------------|------------|
@@ -87,7 +89,7 @@ Other relevant patient history: previous primary tumor(s)
 | Treatment history: name(s) | Laparoscopy    | Yes        |
 | Status details             | Inactive       | Yes        |
 
-Other relevant patient history: other
+Other relevant patient history: other (N records per patient)
 
 | Variable                 | Example values | With date? |
 |--------------------------|----------------|------------|
@@ -95,7 +97,7 @@ Other relevant patient history: other
 | Start date               | 1999-01-01     | N/A        |
 | End date (if applicable) |                | N/A        |
 
-Cancer related complications
+Cancer related complications (N records per patient)
 
 | Variable                 | Example values | With date? |
 |--------------------------|----------------|------------|
@@ -103,14 +105,17 @@ Cancer related complications
 | Start date               | 1999-01-01     | N/A        |
 | End date (if applicable) |                | N/A        |
 
-Toxicities
+Toxicities (N records per patient)
 
-| Variable               | Example values | With date? |
-|------------------------|----------------|------------|
-| Name                   | Neuropathy     | Yes        |
-| Grade                  | 2              | Yes        |
+| Variable | Example values | With date? |
+|----------|----------------|------------|
+| Name     | Neuropathy     |            |
+| Grade    | 2              | Yes        |
 
-Medication details
+Note that in case a toxicity is established without a grade assigned, the date on which the toxicity is assigned should be the date
+of 'grade' (and grade can be null).
+
+Medication details (N records per patient)
 
 | Variable                     | Example values | With date? |
 |------------------------------|----------------|------------|
@@ -131,7 +136,7 @@ Medication details
 
 Note: Information about ATC codes can be found at the website of WHOCC: https://www.whocc.no/atc_ddd_index/
 
-Lab details
+Lab details (N records per patient)
 
 | Variable                            | Example values           | With date? |
 |-------------------------------------|--------------------------|------------|
@@ -142,23 +147,23 @@ Lab details
 | Institutional lower reference limit |                          |            |
 | Institutional upper reference limit |                          |            |
 
-Blood transfusion details
+Blood transfusion details (N records per patient)
 
 | Variable | Example values          | With date? |
 |----------|-------------------------|------------|
 | Product  | Thrombocyte concentrate | Yes        |
 
-Vital function details
+Vital function details (N records per patient)
 
-| Variable | Example values | With date? |
-|----------|----------------|------------|
-| Measure  | NIBP           |            |
-| Value    | 2              | Yes        |
-| Unit     |                |            |
+| Variable | Example values          | With date? |
+|----------|-------------------------|------------|
+| Measure  | Systolic blood pressure |            |
+| Value    | 2                       | Yes        |
+| Unit     |                         |            |
 
 Vital function measures of interest include: blood pressure (systolic, diastolic), pulse oximetry, heart rate, BMI, body weight
 
-ECG details
+ECG details (N records per patient)
 
 | Variable                   | Example values    | With date? |
 |----------------------------|-------------------|------------|
@@ -168,14 +173,14 @@ ECG details
 | lvef value (if measured)   |                   |            |
 | lvef unit (if measured)    |                   |            |
 
-Allergy details
+Allergy details (N records per patient)
 
 | Variable | Example values                        | With date? |
 |----------|---------------------------------------|------------|
 | Name     | Pembrolizumab                         | Yes        |
 | Type     | Allergy, Side effect or Not specified |            |
 
-Infection details
+Infection details (N records per patient)
 
 | Variable                    | Example values | With date? |
 |-----------------------------|----------------|------------|
@@ -235,9 +240,9 @@ Note that "if applicable" in 'origin' indicates that the field is derived from a
 | stage                    | Primary tumor details: Stage                         |
 | hasMeasurableDisease     | Primary tumor details: Measurable disease?           |
 | hasBrainLesions          | Primary tumor details: Lesion sites                  |
-| hasActiveBrainLesions    | Primary tumor details: Lesions sites                 |
+| hasActiveBrainLesions    | Primary tumor details: Lesion sites                  |
 | hasCnsLesions            | Primary tumor details: Lesion sites                  |
-| hasActiveCnsLesions      | Primary tumor details: Lesions sites                 |
+| hasActiveCnsLesions      | Primary tumor details: Lesion sites                  |
 | hasBoneLesions           | Primary tumor details: Lesion sites                  |
 | hasLiverLesions          | Primary tumor details: Lesion sites                  |
 | hasLungLesions           | Primary tumor details: Lesion sites                  |
@@ -246,18 +251,18 @@ Note that "if applicable" in 'origin' indicates that the field is derived from a
 
 1 clinical status
 
-| Field                      | Origin               |
-|----------------------------|----------------------|
-| who                        | Patient: WHO         |
-| hasActiveInfection         | Infection details    |
-| activeInfectionDescription | Infection details    |
-| hasToxicitiesGrade2        | Toxicity details     |
-| hasSigAberrationLatestECG  | ECG details          |
-| ecgAberrationDescription   | ECG details          |
-| qtcfValue                  | ECG details          |
-| qtcfUnit                   | ECG details          |
-| lvef                       | ECG details          |
-| hasComplications           | Complication details |
+| Field                      | Origin                         |
+|----------------------------|--------------------------------|
+| who                        | Patient: WHO                   |
+| hasActiveInfection         | Infection details: Date        |
+| activeInfectionDescription | Infection details: Description |
+| hasToxicitiesGrade2        | Toxicity details               |
+| hasSigAberrationLatestECG  | ECG details                    |
+| ecgAberrationDescription   | ECG details                    |
+| qtcfValue                  | ECG details                    |
+| qtcfUnit                   | ECG details                    |
+| lvef                       | ECG details                    |
+| hasComplications           | Complication details           |
 
 N prior tumor treatments (TO BE UPDATED)
 
