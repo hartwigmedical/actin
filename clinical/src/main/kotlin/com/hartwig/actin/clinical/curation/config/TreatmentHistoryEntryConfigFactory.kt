@@ -38,14 +38,14 @@ object TreatmentHistoryEntryConfigFactory {
             curateObject(fields, parts, treatment, treatmentName)
         }
 
-        return if (treatmentHistoryEntry == null) {
-            null
-        } else {
+        return if (ignore || treatmentHistoryEntry != null) {
             TreatmentHistoryEntryConfig(
                 input = parts[fields["input"]!!],
                 ignore = ignore,
                 curated = treatmentHistoryEntry
             )
+        } else {
+            null
         }
     }
 
@@ -77,7 +77,7 @@ object TreatmentHistoryEntryConfigFactory {
 
         if (treatment == null) {
             if (isTrial && treatmentName.isEmpty()) {
-                LOGGER.info("   Treatment for trial $treatmentName does not exist is database, leaving empty")
+                LOGGER.info("   Treatment for trial $treatmentName does not exist in database, leaving empty")
             } else {
                 logMissingTreatmentMessage(treatmentName)
                 return null
@@ -115,7 +115,7 @@ object TreatmentHistoryEntryConfigFactory {
         val intents = entriesFromColumn(parts, fields, "intents")?.map { stringToEnum(it, Intent::valueOf) }
 
         return ImmutableTreatmentHistoryEntry.builder()
-            .treatments(treatment?.let{ setOf(it) } ?: emptySet())
+            .treatments(setOfNotNull(treatment))
             .startYear(optionalIntegerFromColumn(parts, fields, "startYear"))
             .startMonth(optionalIntegerFromColumn(parts, fields, "startMonth"))
             .intents(intents)

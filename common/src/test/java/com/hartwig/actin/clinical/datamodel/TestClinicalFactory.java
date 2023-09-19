@@ -1,11 +1,10 @@
 package com.hartwig.actin.clinical.datamodel;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.TestDataFactory;
@@ -218,13 +217,13 @@ public final class TestClinicalFactory {
         TreatmentHistoryEntry startYearEndYearHistoryEntry = treatmentHistoryEntryWithDates("Treatment4", 2020, null, 2020, null, true);
         TreatmentHistoryEntry startYearMonthEndYearMonthHistoryEntry = treatmentHistoryEntryWithDates("Treatment5",2020, 8, 2021, 2, true);
 
-        final Set<Intent> noIntents = new HashSet<>();
+        final Set<Intent> noIntents = Collections.emptySet();
         final Set<Intent> singleIntent = Set.of(Intent.ADJUVANT);
         final Set<Intent> multiIntent = Set.of(Intent.ADJUVANT, Intent.CONSOLIDATION);
         TreatmentHistoryEntry trialHistoryEntry = trialTreatmentHistoryEntry(Set.of("Trial1"), null, noIntents,2021, null, null);
         TreatmentHistoryEntry trialHistoryEntryCycles = trialTreatmentHistoryEntry(Set.of("Trial2"), "tr2", noIntents,2021, 3, null);
         TreatmentHistoryEntry trialHistoryEntryStopReason = trialTreatmentHistoryEntry(Set.of("Trial3"), null, singleIntent, 2022, 3, "toxicity");
-        TreatmentHistoryEntry trialHistoryEntryUnknown = trialTreatmentHistoryEntry(Set.of(), null, noIntents, 2022, null, null);
+        TreatmentHistoryEntry trialHistoryEntryUnknown = trialTreatmentHistoryEntry(Collections.emptySet(), null, noIntents, 2022, null, null);
         TreatmentHistoryEntry trialHistoryEntryMultipleTherapies = trialTreatmentHistoryEntry(Set.of("trial4-therapy1", "trial4-therapy2"),
                 "tr4", multiIntent, 2023, 4, "toxicity");
 
@@ -239,8 +238,10 @@ public final class TestClinicalFactory {
 
     @NotNull
     private static TreatmentHistoryEntry treatmentHistoryEntryWithDates(String name, Integer startYear, Integer startMonth, Integer stopYear, Integer stopMonth, boolean isSystemic) {
+        Drug irinotecan = drug("IRINOTECAN", DrugType.TOPO1_INHIBITOR, TreatmentCategory.CHEMOTHERAPY);
         DrugTherapy therapy = ImmutableDrugTherapy.builder()
                 .name(name)
+                .addDrugs(irinotecan)
                 .isSystemic(isSystemic)
                 .maxCycles(8)
                 .build();
@@ -259,16 +260,12 @@ public final class TestClinicalFactory {
     }
 
     private static TreatmentHistoryEntry trialTreatmentHistoryEntry(Set<String> therapyNames, String acronym, Set<Intent> intents, Integer startYear, Integer cycles, String stopReasonDetail) {
-        List<Therapy> therapies = new ArrayList<>();
-        for (String name: therapyNames) {
-            DrugTherapy therapy = ImmutableDrugTherapy.builder()
-                    .name(name)
-                    .isSystemic(true)
-                    .maxCycles(8)
-                    .build();
-
-            therapies.add(therapy);
-        }
+        List<Therapy> therapies = therapyNames.stream().map(name -> ImmutableDrugTherapy.builder()
+                .name(name)
+                .isSystemic(true)
+                .maxCycles(8)
+                .build()
+                ).collect(Collectors.toList());
 
         TherapyHistoryDetails therapyDetails = ImmutableTherapyHistoryDetails.builder()
                 .cycles(cycles)

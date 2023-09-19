@@ -55,11 +55,23 @@ class TreatmentHistoryEntryConfigFactoryTest {
                 "isTrial" to "1"
             )
         )
-        assertThat(TreatmentHistoryEntryConfigFactory.createConfig(treatmentName, treatmentDatabase, parts, fields)).isNotNull()
+        val config = TreatmentHistoryEntryConfigFactory.createConfig(treatmentName, treatmentDatabase, parts, fields)
+        assertThat(config).isNotNull()
+        assertThat(config?.input).isEqualTo(input)
+        assertThat(config?.ignore).isFalse()
+        assertThat(config?.curated).isNotNull()
+        assertThat(config?.curated?.treatments()).isNotNull()
+        assertThat(config?.curated?.treatments()?.size).isEqualTo(0)
+        assertThat(config?.curated?.startYear()).isEqualTo(2022)
+        assertThat(config?.curated?.startMonth()).isNull()
+        assertThat(config?.curated?.intents()).isNull()
+        assertThat(config?.curated?.isTrial).isTrue()
+        assertThat(config?.curated?.trialAcronym()).isNull()
+        assertThat(config?.curated?.therapyHistoryDetails()).isNull()
     }
 
     @Test
-    fun `Should not generate entry for named trial with no treatment`() {
+    fun `Should not generate entry for trial with named treatment that does not exist`() {
         val input = "known trial"
         val treatmentName = "trial name"
         val parts = partsWithMappedValues(
@@ -71,6 +83,23 @@ class TreatmentHistoryEntryConfigFactoryTest {
             )
         )
         assertThat(TreatmentHistoryEntryConfigFactory.createConfig(treatmentName, treatmentDatabase, parts, fields)).isNull()
+    }
+
+    @Test
+    fun `Should generate an entry with no curated treatment when treatment name is ignore`() {
+        val input = "NA"
+        val treatmentName = "<ignore>"
+        val parts = partsWithMappedValues(
+            mapOf(
+                "input" to input,
+                "treatmentName" to treatmentName
+            )
+        )
+        val config = TreatmentHistoryEntryConfigFactory.createConfig(treatmentName, treatmentDatabase, parts, fields)
+        assertThat(config).isNotNull()
+        assertThat(config?.input).isEqualTo("NA")
+        assertThat(config?.ignore).isTrue()
+        assertThat(config?.curated).isNull()
     }
 
     private fun partsWithMappedValues(overrides: Map<String, String>): List<String> {

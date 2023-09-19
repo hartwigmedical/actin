@@ -110,11 +110,19 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
         }
 
         private fun extractTreatmentString(treatmentHistoryEntry: TreatmentHistoryEntry): String {
-            val intentString = treatmentHistoryEntry.intents()
-                ?.filterNotNull()
+            val intentNames = treatmentHistoryEntry.intents()
                 ?.filter{it != Intent.PALLIATIVE}
-                ?.joinToString(" ") { it.name.lowercase() }
-                ?.ifEmpty { null }
+                ?.map{it.name.lowercase() }
+                ?.toList()
+
+            val intentString = when {
+                intentNames == null -> null
+                intentNames.size == 1 -> intentNames[0]
+                intentNames.size >= 2 -> {
+                    intentNames.dropLast(1).joinToString(", ") + " and " + intentNames.last()
+                }
+                else -> null
+            }
 
             val cyclesString = treatmentHistoryEntry.therapyHistoryDetails()?.cycles()?.let { "$it cycles" }
 
@@ -125,23 +133,18 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
 
             val treatmentWithAnnotation = treatmentHistoryEntry.treatmentDisplay() + if (annotation.isEmpty()) "" else " ($annotation)"
 
-            val fullTreatmentString = if (treatmentHistoryEntry.isTrial) {
+            return if (treatmentHistoryEntry.isTrial) {
                 val acronym =  if (treatmentHistoryEntry.trialAcronym().isNullOrEmpty()) "" else "(${treatmentHistoryEntry.trialAcronym()})"
                 val trial = "Clinical trial"
-                if (acronym.isEmpty() && treatmentWithAnnotation.isEmpty()) {
-                    "$trial (details unknown)"
-                } else if (acronym.isNotEmpty() && treatmentWithAnnotation.isEmpty()) {
-                    "$trial $acronym"
-                } else if (acronym.isEmpty() && treatmentWithAnnotation.isNotEmpty()) {
-                    "$trial: $treatmentWithAnnotation"
-                } else {
-                    "$trial $acronym: $treatmentWithAnnotation"
+                when {
+                    acronym.isEmpty() && treatmentWithAnnotation.isEmpty() -> "$trial (details unknown)"
+                    acronym.isNotEmpty() && treatmentWithAnnotation.isEmpty() -> "$trial $acronym"
+                    acronym.isEmpty() && treatmentWithAnnotation.isNotEmpty() -> "$trial: $treatmentWithAnnotation"
+                    else -> "$trial $acronym: $treatmentWithAnnotation"
                 }
             } else {
                 treatmentWithAnnotation
             }
-
-            return fullTreatmentString
         }
 
         private fun toSecondPrimaryString(priorSecondPrimary: PriorSecondPrimary): String {
