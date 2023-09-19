@@ -260,8 +260,10 @@ public final class TestClinicalFactory {
     }
 
     private static TreatmentHistoryEntry trialTreatmentHistoryEntry(Set<String> therapyNames, String acronym, Set<Intent> intents, Integer startYear, Integer cycles, String stopReasonDetail) {
+        Drug irinotecan = drug("IRINOTECAN", DrugType.TOPO1_INHIBITOR, TreatmentCategory.CHEMOTHERAPY);
         List<Therapy> therapies = therapyNames.stream().map(name -> ImmutableDrugTherapy.builder()
                 .name(name)
+                .addDrugs(irinotecan)
                 .isSystemic(true)
                 .maxCycles(8)
                 .build()
