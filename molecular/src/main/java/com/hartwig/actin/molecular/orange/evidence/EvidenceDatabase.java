@@ -3,14 +3,14 @@ package com.hartwig.actin.molecular.orange.evidence;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakend;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityMatch;
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionableEventMatcher;
 import com.hartwig.actin.molecular.orange.evidence.known.KnownEventResolver;
 import com.hartwig.serve.datamodel.common.GeneAlteration;
 import com.hartwig.serve.datamodel.fusion.KnownFusion;
+import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss;
+import com.hartwig.hmftools.datamodel.purple.PurpleVariant;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

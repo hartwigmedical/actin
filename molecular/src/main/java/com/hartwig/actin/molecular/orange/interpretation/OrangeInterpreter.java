@@ -7,11 +7,11 @@ import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion;
 import com.hartwig.actin.molecular.filter.GeneFilter;
-import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
-import com.hartwig.actin.molecular.orange.datamodel.OrangeRefGenomeVersion;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleQCStatus;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants;
+import com.hartwig.hmftools.datamodel.orange.OrangeRecord;
+import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion;
+import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +32,7 @@ public class OrangeInterpreter {
         DriverExtractor driverExtractor = DriverExtractor.create(geneFilter, evidenceDatabase);
         CharacteristicsExtractor characteristicsExtractor = new CharacteristicsExtractor(evidenceDatabase);
 
-        if (record.purple().fit().qcStatuses().isEmpty()) {
+        if (record.purple().fit().qc().status().isEmpty()) {
             throw new IllegalStateException("Cannot interpret purple record with empty QC states");
         }
 
@@ -77,7 +77,7 @@ public class OrangeInterpreter {
     }
 
     private static boolean recordQCStatusesInSet(OrangeRecord record, Set<PurpleQCStatus> allowableQCStatuses) {
-        return allowableQCStatuses.containsAll(record.purple().fit().qcStatuses());
+        return allowableQCStatuses.containsAll(record.purple().fit().qc().status());
     }
 
     @VisibleForTesting

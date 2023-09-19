@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
+import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -7,9 +8,9 @@ import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele;
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableHlaAllele;
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableMolecularImmunology;
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
-import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
-import com.hartwig.actin.molecular.orange.datamodel.lilac.LilacHlaAllele;
-import com.hartwig.actin.molecular.orange.datamodel.lilac.LilacRecord;
+import com.hartwig.hmftools.datamodel.orange.OrangeRecord;
+import com.hartwig.hmftools.datamodel.hla.LilacRecord;
+import com.hartwig.hmftools.datamodel.hla.LilacAllele;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -31,9 +32,9 @@ final class ImmunologyExtraction {
     }
 
     @NotNull
-    private static Set<HlaAllele> toHlaAlleles(@NotNull Set<LilacHlaAllele> alleles) {
+    private static Set<HlaAllele> toHlaAlleles(@NotNull List<LilacAllele> alleles) {
         Set<HlaAllele> hlaAlleles = Sets.newHashSet();
-        for (LilacHlaAllele allele : alleles) {
+        for (LilacAllele allele : alleles) {
             boolean hasSomaticVariants =
                     allele.somaticMissense() > 0 || allele.somaticNonsenseOrFrameshift() > 0 || allele.somaticSplice() > 0
                             || allele.somaticInframeIndel() > 0;

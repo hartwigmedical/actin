@@ -15,16 +15,16 @@ import com.hartwig.actin.molecular.datamodel.driver.VariantEffect;
 import com.hartwig.actin.molecular.datamodel.driver.VariantType;
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
 import com.hartwig.actin.molecular.filter.GeneFilter;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriver;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriverType;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleHotspotType;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTranscriptImpact;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.sort.driver.VariantComparator;
+import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect;
+import com.hartwig.hmftools.datamodel.purple.PurpleDriver;
+import com.hartwig.hmftools.datamodel.purple.PurpleDriverType;
+import com.hartwig.hmftools.datamodel.purple.Hotspot;
+import com.hartwig.hmftools.datamodel.purple.PurpleRecord;
+import com.hartwig.hmftools.datamodel.purple.PurpleTranscriptImpact;
+import com.hartwig.hmftools.datamodel.purple.PurpleVariant;
+import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -58,11 +58,28 @@ class VariantExtractor {
     @NotNull
     public Set<Variant> extract(@NotNull PurpleRecord purple) {
         Set<Variant> variants = Sets.newTreeSet(new VariantComparator());
-        for (PurpleVariant variant : VariantDedup.apply(purple.variants())) {
+
+        // TODO helper for variant aggregation?
+        Set<PurpleVariant> purpleVariants = Sets.newHashSet();
+        if (purple.allSomaticVariants() != null) {
+            purpleVariants.addAll(purple.allGermlineVariants());
+        }
+        if (purple.reportableGermlineVariants() != null) {
+            purpleVariants.addAll(purple.reportableGermlineVariants());
+        }
+
+        // TODO helper?
+        Set<PurpleDriver> drivers = Sets.newHashSet();
+        drivers.addAll(purple.somaticDrivers());
+        if (purple.germlineDrivers() != null) {
+            drivers.addAll(purple.germlineDrivers());
+        }
+
+        for (PurpleVariant variant : VariantDedup.apply( purpleVariants )) {
             boolean reportedOrCoding = variant.reported() || RELEVANT_CODING_EFFECTS.contains(variant.canonicalImpact().codingEffect());
             String event = DriverEventFactory.variantEvent(variant);
             if (geneFilter.include(variant.gene()) && reportedOrCoding) {
-                PurpleDriver driver = findBestMutationDriver(purple.drivers(), variant.gene(), variant.canonicalImpact().transcript());
+                PurpleDriver driver = findBestMutationDriver(drivers, variant.gene(), variant.canonicalImpact().transcript());
                 DriverLikelihood driverLikelihood = determineDriverLikelihood(driver);
 
                 ActionableEvidence evidence;
@@ -81,7 +98,7 @@ class VariantExtractor {
                         .variantCopyNumber(ExtractionUtil.keep3Digits(variant.variantCopyNumber()))
                         .totalCopyNumber(ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()))
                         .isBiallelic(variant.biallelic())
-                        .isHotspot(variant.hotspot() == PurpleHotspotType.HOTSPOT)
+                        .isHotspot(variant.hotspot() == Hotspot.HOTSPOT)
                         .clonalLikelihood(ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()))
                         .phaseGroups(variant.localPhaseSets())
                         .canonicalImpact(extractCanonicalImpact(variant))
@@ -140,7 +157,7 @@ class VariantExtractor {
             @NotNull String transcriptToFind) {
         PurpleDriver best = null;
         for (PurpleDriver driver : drivers) {
-            boolean hasMutationType = MUTATION_DRIVER_TYPES.contains(driver.type());
+            boolean hasMutationType = MUTATION_DRIVER_TYPES.contains(driver.driver());
             boolean hasMatchingGeneTranscript = driver.gene().equals(geneToFind) && driver.transcript().equals(transcriptToFind);
             boolean isBetter = best == null || driver.driverLikelihood() > best.driverLikelihood();
             if (hasMutationType && hasMatchingGeneTranscript && isBetter) {

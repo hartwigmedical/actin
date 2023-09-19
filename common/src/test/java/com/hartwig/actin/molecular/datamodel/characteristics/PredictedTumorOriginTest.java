@@ -1,5 +1,7 @@
 package com.hartwig.actin.molecular.datamodel.characteristics;
 
+import com.hartwig.hmftools.datamodel.cuppa.ImmutableCuppaPrediction;
+
 import static org.junit.Assert.assertEquals;
 
 import java.util.stream.Collectors;

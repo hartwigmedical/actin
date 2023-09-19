@@ -8,10 +8,10 @@ import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.evidence.matching.GeneMatching;
 import com.hartwig.actin.molecular.orange.evidence.matching.HotspotMatching;
 import com.hartwig.actin.molecular.orange.evidence.matching.RangeMatching;
+import com.hartwig.hmftools.datamodel.purple.PurpleVariant;
 import com.hartwig.serve.datamodel.ActionableEvent;
 import com.hartwig.serve.datamodel.ActionableEvents;
 import com.hartwig.serve.datamodel.gene.ActionableGene;

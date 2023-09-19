@@ -1,8 +1,8 @@
 package com.hartwig.actin.molecular.orange.evidence.known;
 
 import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLossInterpretation;
+import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation;
+import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss;
 import com.hartwig.serve.datamodel.gene.GeneEvent;
 import com.hartwig.serve.datamodel.gene.KnownCopyNumber;
 
@@ -26,7 +26,7 @@ final class CopyNumberLookup {
         return null;
     }
 
-    private static boolean interpretationMatchesEvent(@NotNull PurpleGainLossInterpretation interpretation, @NotNull GeneEvent event) {
+    private static boolean interpretationMatchesEvent(@NotNull CopyNumberInterpretation interpretation, @NotNull GeneEvent event) {
         switch (interpretation) {
             case FULL_GAIN:
             case PARTIAL_GAIN: {

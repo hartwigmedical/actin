@@ -69,6 +69,7 @@ public class OrangeJsonTest {
 
     @Test
     public void canReadMinimallyEmptyOrangeRecordJson() throws IOException {
+        OrangeRecord x = OrangeJson.read(MINIMALLY_EMPTY_ORANGE_JSON);
         assertNotNull(OrangeJson.read(MINIMALLY_EMPTY_ORANGE_JSON));
     }
 

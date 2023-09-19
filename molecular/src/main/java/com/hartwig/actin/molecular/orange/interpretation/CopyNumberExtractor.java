@@ -9,13 +9,13 @@ import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableCopyNumber;
 import com.hartwig.actin.molecular.filter.GeneFilter;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriver;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriverType;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLossInterpretation;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.sort.driver.CopyNumberComparator;
+import com.hartwig.hmftools.datamodel.purple.PurpleDriver;
+import com.hartwig.hmftools.datamodel.purple.PurpleDriverType;
+import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss;
+import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation;
+import com.hartwig.hmftools.datamodel.purple.PurpleRecord;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,9 +37,14 @@ class CopyNumberExtractor {
 
     @NotNull
     public Set<CopyNumber> extract(@NotNull PurpleRecord purple) {
-        Set<CopyNumber> copyNumbers = Sets.newTreeSet(new CopyNumberComparator());
-        for (PurpleGainLoss gainLoss : purple.gainsLosses()) {
-            PurpleDriver driver = findCopyNumberDriver(purple.drivers(), gainLoss.gene());
+        Set<PurpleDriver> drivers = Sets.newHashSet();
+        drivers.addAll(purple.somaticDrivers());
+        if (purple.germlineDrivers() != null) {
+            drivers.addAll(purple.germlineDrivers());
+        }
+
+        for (PurpleGainLoss gainLoss : purple.allSomaticGainsLosses()) {
+            PurpleDriver driver = findCopyNumberDriver(drivers, gainLoss.gene());
             String event = DriverEventFactory.gainLossEvent(gainLoss);
 
             if (geneFilter.include(gainLoss.gene())) {
@@ -65,7 +70,7 @@ class CopyNumberExtractor {
 
     @NotNull
     @VisibleForTesting
-    static CopyNumberType determineType(@NotNull PurpleGainLossInterpretation interpretation) {
+    static CopyNumberType determineType(@NotNull CopyNumberInterpretation interpretation) {
         switch (interpretation) {
             case FULL_GAIN: {
                 return CopyNumberType.FULL_GAIN;
@@ -86,7 +91,7 @@ class CopyNumberExtractor {
     @Nullable
     private static PurpleDriver findCopyNumberDriver(@NotNull Set<PurpleDriver> drivers, @NotNull String geneToFind) {
         for (PurpleDriver driver : drivers) {
-            if ((DEL_DRIVERS.contains(driver.type()) || AMP_DRIVERS.contains(driver.type())) && driver.gene().equals(geneToFind)) {
+            if ((DEL_DRIVERS.contains(driver.driver()) || AMP_DRIVERS.contains(driver.driver())) && driver.gene().equals(geneToFind)) {
                 return driver;
             }
         }

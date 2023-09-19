@@ -135,6 +135,7 @@ public final class OrangeJson {
                     .virusInterpreter(toVirusInterpreterRecord(nullableObject(record, "virusInterpreter")))
                     .lilac(toLilacRecord(object(record, "lilac")))
                     .chord(toChordRecord(nullableObject(record, "chord")))
+//                    .chord(object(record, "chord"))
                     .build();
         }
 

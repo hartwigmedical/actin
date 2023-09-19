@@ -1,15 +1,22 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
+import com.hartwig.actin.molecular.datamodel.characteristics.CuppaPrediction;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
-import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
-import com.hartwig.actin.molecular.orange.datamodel.chord.ChordStatus;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleMicrosatelliteStatus;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTumorMutationalStatus;
+//import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
+//import com.hartwig.actin.molecular.orange.datamodel.chord.ChordStatus;
+//import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleMicrosatelliteStatus;
+//import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
+//import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTumorMutationalStatus;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
+import com.hartwig.hmftools.datamodel.chord.ChordRecord;
+import com.hartwig.hmftools.datamodel.orange.OrangeRecord;
+import com.hartwig.hmftools.datamodel.chord.ChordStatus;
+import com.hartwig.hmftools.datamodel.purple.PurpleRecord;
+import com.hartwig.hmftools.datamodel.purple.PurpleMicrosatelliteStatus;
+import com.hartwig.hmftools.datamodel.purple.PurpleTumorMutationalStatus;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,14 +36,18 @@ class CharacteristicsExtractor {
 
     @NotNull
     public MolecularCharacteristics extract(@NotNull OrangeRecord record) {
-        PredictedTumorOrigin predictedTumorOrigin = record.cuppa().isEmpty()
-                ? null
-                : ImmutablePredictedTumorOrigin.builder().predictions(record.cuppa().get().predictions()).build();
+        PredictedTumorOrigin predictedTumorOrigin = record.cuppa() != null
+                ? ImmutablePredictedTumorOrigin.builder().predictions(record.cuppa().predictions()).build()
+                : null;
 
         PurpleRecord purple = record.purple();
 
         Boolean isMicrosatelliteUnstable = isMSI(purple.characteristics().microsatelliteStatus());
-        Boolean isHomologousRepairDeficient = record.chord().map(c -> isHRD(c.hrStatus())).orElse(null);
+
+        Boolean isHomologousRepairDeficient =  record.chord() != null
+                ? isHRD(record.chord().hrStatus())
+                : null;
+
         Boolean hasHighTumorMutationalBurden = hasHighStatus(purple.characteristics().tumorMutationalBurdenStatus());
         Boolean hasHighTumorMutationalLoad = hasHighStatus(purple.characteristics().tumorMutationalLoadStatus());
 

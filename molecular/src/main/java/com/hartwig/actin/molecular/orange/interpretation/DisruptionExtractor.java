@@ -11,14 +11,14 @@ import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.RegionType;
 import com.hartwig.actin.molecular.filter.GeneFilter;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakend;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakendType;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxCodingType;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRegionType;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxStructuralVariant;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.sort.driver.DisruptionComparator;
+import com.hartwig.hmftools.datamodel.linx.LinxBreakend;
+import com.hartwig.hmftools.datamodel.linx.LinxBreakendType;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxCodingType;
+import com.hartwig.hmftools.datamodel.linx.LinxRecord;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRegionType;
+import com.hartwig.actin.molecular.orange.datamodel.linx.LinxStructuralVariant;
 
 import org.jetbrains.annotations.NotNull;
 

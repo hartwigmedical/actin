@@ -3,9 +3,9 @@ package com.hartwig.actin.molecular.orange.interpretation;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTranscriptImpact;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
+import com.hartwig.hmftools.datamodel.purple.PurpleTranscriptImpact;
+import com.hartwig.hmftools.datamodel.purple.PurpleVariant;
+import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

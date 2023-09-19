@@ -3,10 +3,10 @@ package com.hartwig.actin.molecular.orange.evidence.actionability;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
 import com.hartwig.serve.datamodel.ActionableEvent;
 import com.hartwig.serve.datamodel.ActionableEvents;
 import com.hartwig.serve.datamodel.gene.ActionableGene;
+import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss;
 import com.hartwig.serve.datamodel.gene.GeneEvent;
 
 import org.jetbrains.annotations.NotNull;
