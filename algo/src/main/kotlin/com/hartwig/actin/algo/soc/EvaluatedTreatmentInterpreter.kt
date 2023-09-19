@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.algo.soc.datamodel.EvaluatedTreatment
 
-internal class EvaluatedTreatmentInterpreter(recommendedTreatments: List<EvaluatedTreatment>) {
+class EvaluatedTreatmentInterpreter(recommendedTreatments: List<EvaluatedTreatment>) {
     private val recommendedTreatments: List<EvaluatedTreatment>
 
     init {

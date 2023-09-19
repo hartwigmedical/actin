@@ -10,19 +10,19 @@ import com.hartwig.actin.algo.soc.datamodel.EvaluatedTreatment
 import com.hartwig.actin.algo.soc.datamodel.TreatmentCandidate
 import com.hartwig.actin.doid.DoidModel
 
-internal class RecommendationEngine private constructor(
+class RecommendationEngine private constructor(
     private val doidModel: DoidModel,
     private val recommendationDatabase: RecommendationDatabase,
     private val evaluationFunctionFactory: EvaluationFunctionFactory
 ) {
 
     fun determineAvailableTreatments(patientRecord: PatientRecord): List<EvaluatedTreatment> {
-        val expandedTumorDoids =
-            patientRecord.clinical().tumor().doids()?.flatMap { doidModel.doidWithParents(it) }?.toSet() ?: emptySet<String>()
-        require(DoidConstants.COLORECTAL_CANCER_DOID in expandedTumorDoids) { "No colorectal cancer reported in patient clinical record. SOC recommendation not supported." }
-        require((EXCLUDED_TUMOR_DOIDS intersect expandedTumorDoids.toSet()).isEmpty()) { "SOC recommendation only supported for colorectal carcinoma" }
+        val tumorDoids = expandedTumorDoids(patientRecord, doidModel)
+        require(standardOfCareCanBeEvaluatedForPatient(patientRecord, doidModel)) {
+            "SOC recommendation only supported for colorectal carcinoma"
+        }
 
-        return recommendationDatabase.treatmentCandidatesForDoidSet(expandedTumorDoids).asSequence()
+        return recommendationDatabase.treatmentCandidatesForDoidSet(tumorDoids).asSequence()
             .map { evaluateTreatmentForPatient(it, patientRecord) }
             .filter { treatmentHasNoFailedEvaluations(it) }
             .filter { it.score >= 0 }
@@ -61,6 +61,15 @@ internal class RecommendationEngine private constructor(
                     recommendationDatabase.treatmentDatabase
                 )
             )
+        }
+
+        fun standardOfCareCanBeEvaluatedForPatient(patientRecord: PatientRecord, doidModel: DoidModel): Boolean {
+            val tumorDoids = expandedTumorDoids(patientRecord, doidModel)
+            return DoidConstants.COLORECTAL_CANCER_DOID in tumorDoids && (EXCLUDED_TUMOR_DOIDS intersect tumorDoids).isEmpty()
+        }
+
+        private fun expandedTumorDoids(patientRecord: PatientRecord, doidModel: DoidModel): Set<String> {
+            return patientRecord.clinical().tumor().doids()?.flatMap { doidModel.doidWithParents(it) }?.toSet() ?: emptySet()
         }
 
         private fun treatmentHasNoFailedEvaluations(evaluatedTreatment: EvaluatedTreatment): Boolean {

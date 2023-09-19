@@ -23,6 +23,7 @@ import java.io.File
 import kotlin.system.exitProcess
 
 class TestStandardOfCareApplication {
+
     fun run(): Int {
         val patient = patient()
 
@@ -63,7 +64,7 @@ class TestStandardOfCareApplication {
             System.getProperty("user.home"),
             "hmf",
             "repos",
-            "private_crunch_repo",
+            "crunch-resources-private",
             "actin",
             "treatment_db"
         ).joinToString(File.separator)
@@ -71,7 +72,7 @@ class TestStandardOfCareApplication {
         private fun patient(): PatientRecord {
             val tumorDetails: TumorDetails = ImmutableTumorDetails.builder().addDoids(DoidConstants.COLORECTAL_CANCER_DOID).build()
             val clinicalRecord: ClinicalRecord = ImmutableClinicalRecord.builder()
-                .from(TestClinicalFactory.createMinimalTestClinicalRecord())
+                .from(TestClinicalFactory.createProperTestClinicalRecord())
                 .tumor(tumorDetails)
                 .build()
             val molecularRecord: MolecularRecord = TestMolecularFactory.createProperTestMolecularRecord()

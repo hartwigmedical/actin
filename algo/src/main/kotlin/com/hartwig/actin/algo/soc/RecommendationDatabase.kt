@@ -27,10 +27,10 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
 
     private fun combinableChemotherapies(): List<TreatmentCandidate> {
         return listOf(
-            createChemotherapy("Fluorouracil", SCORE_MONOTHERAPY),
-            createChemotherapy("Capecitabine", SCORE_MONOTHERAPY),
-            createChemotherapy("Irinotecan", SCORE_MONOTHERAPY),
-            createChemotherapy("Oxaliplatin", -1),
+            createChemotherapy("FLUOROURACIL", SCORE_MONOTHERAPY),
+            createChemotherapy("CAPECITABINE", SCORE_MONOTHERAPY),
+            createChemotherapy("IRINOTECAN", SCORE_MONOTHERAPY),
+            createChemotherapy("OXALIPLATIN", -1),
             createMultiChemotherapy(TREATMENT_CAPOX),
             createChemotherapy(
                 TREATMENT_FOLFIRI,
@@ -127,13 +127,13 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
 
     companion object {
         const val TREATMENT_CAPOX = "CAPOX"
-        const val TREATMENT_CETUXIMAB = "Cetuximab"
+        const val TREATMENT_CETUXIMAB = "CETUXIMAB"
         const val TREATMENT_FOLFIRI = "FOLFIRI"
         const val TREATMENT_FOLFIRINOX = "FOLFIRINOX"
         const val TREATMENT_FOLFOX = "FOLFOX"
-        const val TREATMENT_LONSURF = "Lonsurf"
-        const val TREATMENT_PANITUMUMAB = "Panitumumab"
-        const val TREATMENT_PEMBROLIZUMAB = "Pembrolizumab"
+        const val TREATMENT_LONSURF = "LONSURF"
+        const val TREATMENT_PANITUMUMAB = "PANITUMUMAB"
+        const val TREATMENT_PEMBROLIZUMAB = "PEMBROLIZUMAB"
         private const val SCORE_CETUXIMAB_PLUS_ENCORAFENIB = 4
         private const val SCORE_LONSURF = 2
         private const val SCORE_MONOTHERAPY = 3
