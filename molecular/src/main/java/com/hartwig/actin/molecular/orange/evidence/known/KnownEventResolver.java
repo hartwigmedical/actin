@@ -2,11 +2,11 @@ package com.hartwig.actin.molecular.orange.evidence.known;
 
 import java.util.Set;
 
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakend;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.evidence.matching.HotspotMatching;
 import com.hartwig.actin.molecular.orange.evidence.matching.RangeMatching;
+import com.hartwig.hmftools.datamodel.linx.LinxBreakend;
+import com.hartwig.hmftools.datamodel.linx.LinxFusion;
+import com.hartwig.hmftools.datamodel.linx.HomozygousDisruption;
 import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss;
 import com.hartwig.hmftools.datamodel.purple.PurpleVariant;
 import com.hartwig.serve.datamodel.KnownEvents;
@@ -95,7 +95,7 @@ public class KnownEventResolver {
     }
 
     @Nullable
-    public GeneAlteration resolveForHomozygousDisruption(@NotNull LinxHomozygousDisruption homozygousDisruption) {
+    public GeneAlteration resolveForHomozygousDisruption(@NotNull HomozygousDisruption homozygousDisruption) {
         // Assume a homozygous disruption always has the same annotation as a loss.
         KnownCopyNumber knownCopyNumber = CopyNumberLookup.findForHomozygousDisruption(knownEvents.copyNumbers(), homozygousDisruption);
         if (knownCopyNumber != null) {

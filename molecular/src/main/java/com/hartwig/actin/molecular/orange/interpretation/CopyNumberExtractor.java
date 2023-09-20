@@ -37,6 +37,7 @@ class CopyNumberExtractor {
 
     @NotNull
     public Set<CopyNumber> extract(@NotNull PurpleRecord purple) {
+        Set<CopyNumber> copyNumbers = Sets.newTreeSet(new CopyNumberComparator());
         Set<PurpleDriver> drivers = Sets.newHashSet();
         drivers.addAll(purple.somaticDrivers());
         if (purple.germlineDrivers() != null) {
@@ -56,8 +57,8 @@ class CopyNumberExtractor {
                         .driverLikelihood(driver != null ? DriverLikelihood.HIGH : null)
                         .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(gainLoss)))
                         .type(determineType(gainLoss.interpretation()))
-                        .minCopies(gainLoss.minCopies())
-                        .maxCopies(gainLoss.maxCopies())
+                        .minCopies((int) gainLoss.minCopies())
+                        .maxCopies((int) gainLoss.maxCopies())
                         .build());
             } else if (driver != null) {
                 throw new IllegalStateException(

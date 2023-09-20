@@ -10,10 +10,10 @@ import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableFusion;
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
 import com.hartwig.actin.molecular.filter.GeneFilter;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.sort.driver.FusionComparator;
+import com.hartwig.hmftools.datamodel.linx.LinxFusion;
+import com.hartwig.hmftools.datamodel.linx.LinxRecord;
 import com.hartwig.serve.datamodel.fusion.KnownFusion;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +34,7 @@ class FusionExtractor {
     @NotNull
     public Set<Fusion> extract(@NotNull LinxRecord linx) {
         Set<Fusion> fusions = Sets.newTreeSet(new FusionComparator());
-        for (LinxFusion fusion : linx.fusions()) {
+        for (LinxFusion fusion : linx.allSomaticFusions()) {
             String fusionEvent = DriverEventFactory.fusionEvent(fusion);
             if (geneFilter.include(fusion.geneStart()) || geneFilter.include(fusion.geneEnd())) {
                 KnownFusion knownFusion = evidenceDatabase.lookupKnownFusion(fusion);
@@ -67,7 +67,7 @@ class FusionExtractor {
     @NotNull
     @VisibleForTesting
     static FusionDriverType determineDriverType(@NotNull LinxFusion fusion) {
-        switch (fusion.type()) {
+        switch (fusion.reportedType()) {
             case PROMISCUOUS_3: {
                 return FusionDriverType.PROMISCUOUS_3;
             }
@@ -96,7 +96,7 @@ class FusionExtractor {
                 return FusionDriverType.NONE;
             }
             default: {
-                throw new IllegalStateException("Cannot determine driver type for fusion of type: " + fusion.type());
+                throw new IllegalStateException("Cannot determine driver type for fusion of type: " + fusion.reportedType());
             }
         }
     }
@@ -104,7 +104,7 @@ class FusionExtractor {
     @Nullable
     @VisibleForTesting
     static DriverLikelihood determineDriverLikelihood(@NotNull LinxFusion fusion) {
-        switch (fusion.driverLikelihood()) {
+        switch (fusion.likelihood()) {
             case HIGH: {
                 return DriverLikelihood.HIGH;
             }
@@ -116,7 +116,7 @@ class FusionExtractor {
             }
             default: {
                 throw new IllegalStateException(
-                        "Cannot determine driver likelihood for fusion driver likelihood: " + fusion.driverLikelihood());
+                        "Cannot determine driver likelihood for fusion driver likelihood: " + fusion.likelihood());
             }
         }
     }

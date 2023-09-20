@@ -12,16 +12,16 @@ import com.hartwig.actin.doid.serialization.DoidJson;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.filter.GeneFilterFactory;
-import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
-import com.hartwig.actin.molecular.orange.datamodel.OrangeRefGenomeVersion;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabaseFactory;
 import com.hartwig.actin.molecular.orange.evidence.curation.ExternalTrialMapping;
 import com.hartwig.actin.molecular.orange.evidence.curation.ExternalTrialMappingFile;
 import com.hartwig.actin.molecular.orange.interpretation.OrangeInterpreter;
-import com.hartwig.actin.molecular.orange.serialization.OrangeJson;
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson;
 import com.hartwig.actin.molecular.util.MolecularPrinter;
+import com.hartwig.hmftools.datamodel.orange.OrangeRecord;
+import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion;
+import com.hartwig.hmftools.datamodel.OrangeJson;
 import com.hartwig.serve.datamodel.ActionableEvents;
 import com.hartwig.serve.datamodel.ActionableEventsLoader;
 import com.hartwig.serve.datamodel.KnownEvents;
@@ -69,7 +69,7 @@ public class OrangeInterpreterApplication {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION);
 
         LOGGER.info("Reading ORANGE json from {}", config.orangeJson());
-        OrangeRecord orange = OrangeJson.read(config.orangeJson());
+        OrangeRecord orange = OrangeJson.getInstance().read(config.orangeJson());
 
         LOGGER.info("Loading evidence database");
         RefGenome serveRefGenomeVersion = toServeRefGenomeVersion(orange.refGenomeVersion());

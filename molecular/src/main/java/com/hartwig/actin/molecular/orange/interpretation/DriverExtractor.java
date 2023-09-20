@@ -80,7 +80,9 @@ class DriverExtractor {
         Set<Fusion> fusions = fusionExtractor.extract(record.linx());
         LOGGER.info(" Extracted {} fusions of which {} reportable", fusions.size(), reportableCount(fusions));
 
-        Set<Virus> viruses = record.virusInterpreter().map(virusExtractor::extract).orElse(Collections.emptySet());
+        Set<Virus> viruses = record.virusInterpreter() != null
+                ? virusExtractor.extract(record.virusInterpreter())
+                : Collections.emptySet();
         LOGGER.info(" Extracted {} viruses of which {} reportable", viruses.size(), reportableCount(viruses));
 
         return ImmutableMolecularDrivers.builder()

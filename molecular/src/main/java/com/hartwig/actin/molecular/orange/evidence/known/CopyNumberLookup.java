@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange.evidence.known;
 
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
+import com.hartwig.hmftools.datamodel.linx.HomozygousDisruption;
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation;
 import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss;
 import com.hartwig.serve.datamodel.gene.GeneEvent;
@@ -44,7 +44,7 @@ final class CopyNumberLookup {
 
     @Nullable
     public static KnownCopyNumber findForHomozygousDisruption(@NotNull Iterable<KnownCopyNumber> knownCopyNumbers,
-            @NotNull LinxHomozygousDisruption homozygousDisruption) {
+            @NotNull HomozygousDisruption homozygousDisruption) {
         for (KnownCopyNumber knownCopyNumber : knownCopyNumbers) {
             if (knownCopyNumber.event() == GeneEvent.DELETION && knownCopyNumber.gene().equals(homozygousDisruption.gene())) {
                 return knownCopyNumber;
