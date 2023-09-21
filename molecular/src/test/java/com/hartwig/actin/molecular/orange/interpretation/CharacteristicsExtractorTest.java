@@ -23,6 +23,7 @@ import com.hartwig.hmftools.datamodel.purple.PurpleTumorMutationalStatus;
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
@@ -83,7 +84,12 @@ public class CharacteristicsExtractorTest {
     private static OrangeRecord withHomologousRepairStatus(@NotNull ChordStatus hrStatus) {
         return ImmutableOrangeRecord.builder()
                 .from(TestOrangeFactory.createMinimalTestOrangeRecord())
-                .chord(ImmutableChordRecord.builder().hrStatus(hrStatus).build())
+                .chord(ImmutableChordRecord.builder()
+                        .hrStatus(hrStatus)
+                        .brca1Value(0D)
+                        .brca2Value(0D)
+                        .hrdValue(0D)
+                        .hrdType(Strings.EMPTY).build())
                 .build();
     }
 

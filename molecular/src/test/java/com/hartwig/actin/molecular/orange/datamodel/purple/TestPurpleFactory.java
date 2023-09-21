@@ -1,10 +1,14 @@
 package com.hartwig.actin.molecular.orange.datamodel.purple;
 
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation;
+import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleAllelicDepth;
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleFit;
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleCharacteristics;
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleDriver;
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleQC;
+import com.hartwig.hmftools.datamodel.purple.PurpleFittedPurityMethod;
+import com.hartwig.hmftools.datamodel.purple.PurpleGenotypeStatus;
+import com.hartwig.hmftools.datamodel.purple.PurpleLikelihoodMethod;
 import com.hartwig.hmftools.datamodel.purple.PurpleMicrosatelliteStatus;
 import com.hartwig.hmftools.datamodel.purple.PurpleTumorMutationalStatus;
 import com.hartwig.hmftools.datamodel.purple.PurpleDriverType;
@@ -31,10 +35,12 @@ public final class TestPurpleFactory {
                 .containsTumorCells(false)
                 .purity(0)
                 .ploidy(0)
-                .qc(ImmutablePurpleQC.builder()
-                        .status(Collections.emptySet())
-                        .build()
-                );
+                .minPloidy(0D)
+                .maxPloidy(0D)
+                .minPurity(0D)
+                .maxPurity(0D)
+                .fittedPurityMethod(PurpleFittedPurityMethod.NORMAL)
+                .qc(purpleQCBuilder().build());
     }
 
     @NotNull
@@ -44,7 +50,10 @@ public final class TestPurpleFactory {
                 .tumorMutationalBurdenPerMb(0D)
                 .tumorMutationalBurdenStatus(PurpleTumorMutationalStatus.UNKNOWN)
                 .tumorMutationalLoad(0)
-                .tumorMutationalLoadStatus(PurpleTumorMutationalStatus.UNKNOWN);
+                .tumorMutationalLoadStatus(PurpleTumorMutationalStatus.UNKNOWN)
+                .wholeGenomeDuplication(false)
+                .microsatelliteIndelsPerMb(0D)
+                .svTumorMutationalBurden(0);
     }
 
     @NotNull
@@ -53,7 +62,9 @@ public final class TestPurpleFactory {
                 .gene(Strings.EMPTY)
                 .transcript(Strings.EMPTY)
                 .driver(PurpleDriverType.MUTATION)
-                .driverLikelihood(0D);
+                .driverLikelihood(0D)
+                .likelihoodMethod(PurpleLikelihoodMethod.NONE)
+                .isCanonical(false);
     }
 
     @NotNull
@@ -71,7 +82,16 @@ public final class TestPurpleFactory {
                 .hotspot(Hotspot.NON_HOTSPOT)
                 .subclonalLikelihood(0D)
                 .biallelic(false)
-                .canonicalImpact(transcriptImpactBuilder().build());
+                .canonicalImpact(transcriptImpactBuilder().build())
+                .worstCodingEffect(PurpleCodingEffect.NONE)
+                .tumorDepth(ImmutablePurpleAllelicDepth.builder()
+                        .totalReadCount(0)
+                        .alleleReadCount(0)
+                        .build())
+                .adjustedVAF(0D)
+                .minorAlleleCopyNumber(0D)
+                .genotypeStatus(PurpleGenotypeStatus.UNKNOWN)
+                .repeatCount(0);
     }
 
     @NotNull
@@ -90,6 +110,20 @@ public final class TestPurpleFactory {
                 .gene(Strings.EMPTY)
                 .interpretation(CopyNumberInterpretation.FULL_LOSS)
                 .minCopies(0)
-                .maxCopies(0);
+                .maxCopies(0)
+                .chromosome(Strings.EMPTY)
+                .chromosomeBand(Strings.EMPTY)
+                .transcript(Strings.EMPTY)
+                .isCanonical(true);
+    }
+
+    @NotNull
+    public static ImmutablePurpleQC.Builder purpleQCBuilder() {
+        return ImmutablePurpleQC.builder()
+                .status(Collections.emptySet())
+                .amberMeanDepth(0)
+                .contamination(0D)
+                .unsupportedCopyNumberSegments(0)
+                .deletedGenes(0);
     }
 }

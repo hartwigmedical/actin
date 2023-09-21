@@ -1,9 +1,17 @@
 package com.hartwig.actin.molecular.orange.datamodel;
 
+import static com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory.purpleQCBuilder;
+
 import java.time.LocalDate;
 import java.util.Collections;
 
 import com.hartwig.actin.TestDataFactory;
+import com.hartwig.hmftools.datamodel.flagstat.Flagstat;
+import com.hartwig.hmftools.datamodel.flagstat.ImmutableFlagstat;
+import com.hartwig.hmftools.datamodel.metrics.ImmutableWGSMetrics;
+import com.hartwig.hmftools.datamodel.orange.ImmutableOrangePlots;
+import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeSample;
+import com.hartwig.hmftools.datamodel.orange.OrangePlots;
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion;
 import com.hartwig.hmftools.datamodel.orange.ExperimentType;
 import com.hartwig.hmftools.datamodel.chord.ChordRecord;
@@ -21,6 +29,7 @@ import com.hartwig.hmftools.datamodel.linx.FusionLikelihoodType;
 import com.hartwig.hmftools.datamodel.linx.LinxFusionType;
 import com.hartwig.hmftools.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
+import com.hartwig.hmftools.datamodel.orange.OrangeSample;
 import com.hartwig.hmftools.datamodel.peach.ImmutablePeachGenotype;
 import com.hartwig.hmftools.datamodel.peach.PeachGenotype;
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleQC;
@@ -31,6 +40,7 @@ import com.hartwig.hmftools.datamodel.purple.PurpleDriverType;
 import com.hartwig.hmftools.datamodel.purple.PurpleFit;
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation;
 import com.hartwig.hmftools.datamodel.purple.Hotspot;
+import com.hartwig.hmftools.datamodel.purple.PurpleLikelihoodMethod;
 import com.hartwig.hmftools.datamodel.purple.PurpleMicrosatelliteStatus;
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus;
 import com.hartwig.hmftools.datamodel.purple.PurpleRecord;
@@ -65,14 +75,19 @@ public final class TestOrangeFactory {
                 .purple(createMinimalTestPurpleRecord())
                 .linx(ImmutableLinxRecord.builder().build())
                 .lilac(createMinimalTestLilacRecord())
+                .tumorSample(createOrangeTumorSample())
+                .plots(createOrangePlots())
                 .build();
     }
 
     @NotNull
     private static PurpleRecord createMinimalTestPurpleRecord() {
-        return ImmutablePurpleRecord.builder().fit(TestPurpleFactory.fitBuilder().qc(
-                    ImmutablePurpleQC.builder().status(Collections.singleton(PurpleQCStatus.FAIL_NO_TUMOR)).build()
-                ).build())
+        return ImmutablePurpleRecord.builder()
+                .fit(TestPurpleFactory.fitBuilder()
+                        .qc(purpleQCBuilder()
+                                .status(Collections.singleton(PurpleQCStatus.FAIL_NO_TUMOR))
+                                .build())
+                        .build())
                 .characteristics(TestPurpleFactory.characteristicsBuilder().build())
                 .build();
     }
@@ -102,9 +117,12 @@ public final class TestOrangeFactory {
                 .from(createMinimalTestPurpleRecord())
                 .fit(createTestPurpleFit())
                 .characteristics(createTestPurpleCharacteristics())
-                .addSomaticDrivers(TestPurpleFactory.driverBuilder().gene("BRAF").driver(PurpleDriverType.MUTATION).driverLikelihood(1D).build())
-                .addSomaticDrivers(TestPurpleFactory.driverBuilder().gene("MYC").driver(PurpleDriverType.AMP).driverLikelihood(1D).build())
-                .addSomaticDrivers(TestPurpleFactory.driverBuilder().gene("PTEN").driver(PurpleDriverType.DEL).driverLikelihood(1D).build())
+                .addSomaticDrivers(TestPurpleFactory.driverBuilder().gene("BRAF").driver(PurpleDriverType.MUTATION)
+                        .driverLikelihood(1D).likelihoodMethod(PurpleLikelihoodMethod.NONE).isCanonical(false).build())
+                .addSomaticDrivers(TestPurpleFactory.driverBuilder().gene("MYC").driver(PurpleDriverType.AMP)
+                        .driverLikelihood(1D).likelihoodMethod(PurpleLikelihoodMethod.NONE).isCanonical(false).build())
+                .addSomaticDrivers(TestPurpleFactory.driverBuilder().gene("PTEN").driver(PurpleDriverType.DEL)
+                        .driverLikelihood(1D).likelihoodMethod(PurpleLikelihoodMethod.NONE).isCanonical(false).build())
                 .addAllSomaticVariants(TestPurpleFactory.variantBuilder()
                         .reported(true)
                         .gene("BRAF")
@@ -143,7 +161,7 @@ public final class TestOrangeFactory {
                 .containsTumorCells(true)
                 .purity(0.98)
                 .ploidy(3.1)
-                .qc(ImmutablePurpleQC.builder().addStatus(PurpleQCStatus.PASS).build())
+                .qc(purpleQCBuilder().addStatus(PurpleQCStatus.PASS).build())
                 .build();
     }
 
@@ -194,7 +212,14 @@ public final class TestOrangeFactory {
     @NotNull
     private static PeachGenotype createTestPeachGenotype() {
         return ImmutablePeachGenotype.builder()
-                .gene("DPYD").haplotype("1* HOM").function("Normal function").build();
+                .gene("DPYD")
+                .haplotype("1* HOM")
+                .function("Normal function")
+                .linkedDrugs(Strings.EMPTY)
+                .urlPrescriptionInfo(Strings.EMPTY)
+                .panelVersion(Strings.EMPTY)
+                .repoVersion(Strings.EMPTY)
+                .build();
     }
 
     @NotNull
@@ -207,6 +232,10 @@ public final class TestOrangeFactory {
                         .genomicPositionClassifier(0.99)
                         .featureClassifier(0.972)
                         .build())
+                .simpleDups32To200B(0)
+                .maxComplexSize(0)
+                .telomericSGLs(0)
+                .lineCount(0)
                 .build();
     }
 
@@ -228,12 +257,63 @@ public final class TestOrangeFactory {
     private static LilacRecord createTestLilacRecord() {
         return ImmutableLilacRecord.builder()
                 .qc("PASS")
-                .addAlleles(TestLilacFactory.builder().allele("A*01:01").tumorCopyNumber(1.2).build())
+                .addAlleles(TestLilacFactory.builder()
+                        .allele("A*01:01")
+                        .tumorCopyNumber(1.2)
+                        .somaticSynonymous(0D)
+                        .refFragments(0)
+                        .tumorFragments(0)
+                        .rnaFragments(0)
+                        .build())
                 .build();
     }
 
     @NotNull
     private static ChordRecord createTestChordRecord() {
-        return ImmutableChordRecord.builder().hrStatus(ChordStatus.HR_PROFICIENT).build();
+        return ImmutableChordRecord.builder()
+                .hrStatus(ChordStatus.HR_PROFICIENT)
+                .brca1Value(0D)
+                .brca2Value(0D)
+                .hrdValue(0D)
+                .hrdType(Strings.EMPTY)
+                .build();
+    }
+
+    @NotNull
+    private static OrangePlots createOrangePlots() {
+        return ImmutableOrangePlots.builder()
+                .sageTumorBQRPlot(Strings.EMPTY)
+                .purpleInputPlot(Strings.EMPTY)
+                .purpleFinalCircosPlot(Strings.EMPTY)
+                .purpleClonalityPlot(Strings.EMPTY)
+                .purpleCopyNumberPlot(Strings.EMPTY)
+                .purpleVariantCopyNumberPlot(Strings.EMPTY)
+                .purplePurityRangePlot(Strings.EMPTY)
+                .build();
+    }
+
+    @NotNull
+    private static OrangeSample createOrangeTumorSample() {
+        return ImmutableOrangeSample.builder()
+                .flagstat(ImmutableFlagstat.builder()
+                        .uniqueReadCount(0L)
+                        .secondaryCount(0L)
+                        .supplementaryCount(0L)
+                        .mappedProportion(0L)
+                        .build())
+                .metrics(ImmutableWGSMetrics.builder()
+                        .meanCoverage(0D)
+                        .sdCoverage(0D)
+                        .medianCoverage(0)
+                        .madCoverage(0)
+                        .pctExcMapQ(0D)
+                        .pctExcDupe(0D)
+                        .pctExcUnpaired(0D)
+                        .pctExcBaseQ(0D)
+                        .pctExcOverlap(0D)
+                        .pctExcCapped(0D)
+                        .pctExcTotal(0D)
+                        .build())
+                .build();
     }
 }

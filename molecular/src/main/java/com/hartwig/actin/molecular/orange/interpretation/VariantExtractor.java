@@ -62,7 +62,7 @@ class VariantExtractor {
         // TODO helper for variant aggregation?
         Set<PurpleVariant> purpleVariants = Sets.newHashSet();
         if (purple.allSomaticVariants() != null) {
-            purpleVariants.addAll(purple.allGermlineVariants());
+            purpleVariants.addAll(purple.allSomaticVariants());
         }
         if (purple.reportableGermlineVariants() != null) {
             purpleVariants.addAll(purple.reportableGermlineVariants());

@@ -19,6 +19,8 @@ public final class TestVirusInterpreterFactory {
                 .name(Strings.EMPTY)
                 .qcStatus(VirusBreakendQCStatus.NO_ABNORMALITIES)
                 .integrations(0)
-                .virusDriverLikelihoodType(VirusLikelihoodType.LOW);
+                .virusDriverLikelihoodType(VirusLikelihoodType.LOW)
+                .percentageCovered(0D)
+                .meanCoverage(0D);
     }
 }

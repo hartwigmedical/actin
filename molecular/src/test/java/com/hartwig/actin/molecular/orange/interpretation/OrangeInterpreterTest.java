@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.Set;
 
 import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.molecular.datamodel.ExperimentType;
+import com.hartwig.hmftools.datamodel.orange.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
@@ -44,7 +44,7 @@ public class OrangeInterpreterTest {
 
         assertEquals(TestDataFactory.TEST_PATIENT, record.patientId());
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
-        assertEquals(ExperimentType.WGS, record.type());
+        assertEquals(ExperimentType.WHOLE_GENOME, record.type());
         assertEquals(RefGenomeVersion.V37, record.refGenomeVersion());
         assertEquals(LocalDate.of(2021, 5, 6), record.date());
         assertEquals(ActionabilityConstants.EVIDENCE_SOURCE.display(), record.evidenceSource());
@@ -133,7 +133,13 @@ public class OrangeInterpreterTest {
         return ImmutableOrangeRecord.copyOf(minimal)
                 .withPurple(ImmutablePurpleRecord.copyOf(minimal.purple())
                         .withFit(ImmutablePurpleFit.copyOf(minimal.purple().fit())
-                                .withQc(ImmutablePurpleQC.builder().addAllStatus(statuses).build())));
+                                .withQc(ImmutablePurpleQC.builder()  // TODO check for existing helper
+                                        .addAllStatus(statuses)
+                                        .amberMeanDepth(0)
+                                        .contamination(0D)
+                                        .unsupportedCopyNumberSegments(0)
+                                        .deletedGenes(0)
+                                        .build())));
     }
 
     @NotNull

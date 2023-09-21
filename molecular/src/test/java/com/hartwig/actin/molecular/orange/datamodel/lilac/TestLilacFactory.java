@@ -17,6 +17,10 @@ public final class TestLilacFactory {
                 .somaticMissense(0)
                 .somaticNonsenseOrFrameshift(0)
                 .somaticSplice(0)
-                .somaticInframeIndel(0);
+                .somaticInframeIndel(0)
+                .somaticSynonymous(0D)
+                .refFragments(0)
+                .tumorFragments(0)
+                .rnaFragments(0);
     }
 }
