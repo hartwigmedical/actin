@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.characteristics.CuppaPrediction
+import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
@@ -9,6 +9,7 @@ import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
+import kotlin.reflect.KFunction1
 
 class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, private val width: Float) : TableGenerator {
 
@@ -71,13 +72,13 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, priv
 
         private fun addClassifierRow(
             classifierText: String, predictions: List<CuppaPrediction>,
-            classifierFunction: (CuppaPrediction) -> Double, table: Table
+            classifierFunction: KFunction1<CuppaPrediction, Double?>, table: Table
         ) {
             table.addCell(Cells.createContent(classifierText).setPaddingLeft(PADDING_LEFT.toFloat()))
             predictions
                 .asSequence()
                 .map(classifierFunction)
-                .map { Formats.percentage(it) }
+                .map { Formats.percentage(it?: 0.0) }
                 .map { Cells.createContent(it).setPaddingLeft(PADDING_LEFT.toFloat()).setPaddingRight(PADDING_RIGHT.toFloat()) }
                 .forEach(table::addCell)
         }

@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.molecular.datamodel.characteristics.CuppaPrediction
+import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin
 import com.hartwig.actin.report.pdf.util.Formats
 

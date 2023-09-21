@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.molecular.datamodel.characteristics.CuppaPrediction
-import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableCuppaPrediction
+import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
+import com.hartwig.hmftools.datamodel.cuppa.ImmutableCuppaPrediction
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.greatestOmittedLikelihood
