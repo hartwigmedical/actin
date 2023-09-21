@@ -5,11 +5,11 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.unrecoverable
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.molecular.datamodel.ExperimentType
+import com.hartwig.hmftools.datamodel.orange.ExperimentType
 
 class MolecularResultsAreAvailableForGene internal constructor(private val gene: String) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        if (record.molecular().type() == ExperimentType.WGS && record.molecular().containsTumorCells()) {
+        if (record.molecular().type() == ExperimentType.WHOLE_GENOME && record.molecular().containsTumorCells()) {
             return unrecoverable()
                 .result(EvaluationResult.PASS)
                 .addPassSpecificMessages("WGS has successfully been performed so molecular results are available for gene $gene")
@@ -33,7 +33,7 @@ class MolecularResultsAreAvailableForGene internal constructor(private val gene:
                 .addPassSpecificMessages("$gene has been tested in a prior molecular test")
                 .addPassGeneralMessages("$gene tested before")
                 .build()
-        } else if (record.molecular().type() == ExperimentType.WGS && !record.molecular().containsTumorCells()) {
+        } else if (record.molecular().type() == ExperimentType.WHOLE_GENOME && !record.molecular().containsTumorCells()) {
             return unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Patient has had WGS but biopsy contained no tumor cells")

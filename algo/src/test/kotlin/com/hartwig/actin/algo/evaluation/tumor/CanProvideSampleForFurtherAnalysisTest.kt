@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.molecular.datamodel.ExperimentType
+import com.hartwig.hmftools.datamodel.orange.ExperimentType;
 import org.junit.Test
 
 class CanProvideSampleForFurtherAnalysisTest {
@@ -11,8 +11,8 @@ class CanProvideSampleForFurtherAnalysisTest {
         val function = CanProvideSampleForFurtherAnalysis()
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withMolecularExperimentType(ExperimentType.PANEL))
+            function.evaluate(TumorTestFactory.withMolecularExperimentType(ExperimentType.TARGETED))
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withMolecularExperimentType(ExperimentType.WGS)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withMolecularExperimentType(ExperimentType.WHOLE_GENOME)))
     }
 }
