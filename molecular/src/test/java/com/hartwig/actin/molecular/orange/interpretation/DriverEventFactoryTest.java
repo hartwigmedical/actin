@@ -3,15 +3,15 @@ package com.hartwig.actin.molecular.orange.interpretation;
 import static org.junit.Assert.assertEquals;
 
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLossInterpretation;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
+import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect;
+import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss;
+import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation;
+import com.hartwig.hmftools.datamodel.purple.PurpleVariant;
+import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
 import com.hartwig.actin.molecular.orange.datamodel.virus.TestVirusInterpreterFactory;
-import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpretation;
-import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
+import com.hartwig.hmftools.datamodel.virus.VirusInterpretation;
+import com.hartwig.hmftools.datamodel.virus.AnnotatedVirus;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -57,11 +57,11 @@ public class DriverEventFactoryTest {
 
     @Test
     public void canGenerateEventsForCopyNumbers() {
-        assertEquals("MYC amp", DriverEventFactory.gainLossEvent(gainLoss("MYC", PurpleGainLossInterpretation.FULL_GAIN)));
-        assertEquals("MYC amp", DriverEventFactory.gainLossEvent(gainLoss("MYC", PurpleGainLossInterpretation.PARTIAL_GAIN)));
+        assertEquals("MYC amp", DriverEventFactory.gainLossEvent(gainLoss("MYC", CopyNumberInterpretation.FULL_GAIN)));
+        assertEquals("MYC amp", DriverEventFactory.gainLossEvent(gainLoss("MYC", CopyNumberInterpretation.PARTIAL_GAIN)));
 
-        assertEquals("PTEN del", DriverEventFactory.gainLossEvent(gainLoss("PTEN", PurpleGainLossInterpretation.FULL_LOSS)));
-        assertEquals("PTEN del", DriverEventFactory.gainLossEvent(gainLoss("PTEN", PurpleGainLossInterpretation.PARTIAL_LOSS)));
+        assertEquals("PTEN del", DriverEventFactory.gainLossEvent(gainLoss("PTEN", CopyNumberInterpretation.FULL_LOSS)));
+        assertEquals("PTEN del", DriverEventFactory.gainLossEvent(gainLoss("PTEN", CopyNumberInterpretation.PARTIAL_LOSS)));
     }
 
     @Test
@@ -106,12 +106,12 @@ public class DriverEventFactoryTest {
     }
 
     @NotNull
-    private static PurpleGainLoss gainLoss(@NotNull String gene, @NotNull PurpleGainLossInterpretation interpretation) {
+    private static PurpleGainLoss gainLoss(@NotNull String gene, @NotNull CopyNumberInterpretation interpretation) {
         return TestPurpleFactory.gainLossBuilder().gene(gene).interpretation(interpretation).build();
     }
 
     @NotNull
-    private static VirusInterpreterEntry virus(@NotNull String name, @Nullable VirusInterpretation interpretation) {
+    private static AnnotatedVirus virus(@NotNull String name, @Nullable VirusInterpretation interpretation) {
         return TestVirusInterpreterFactory.builder().name(name).interpretation(interpretation).build();
     }
 }

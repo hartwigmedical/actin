@@ -1,5 +1,19 @@
 package com.hartwig.actin.molecular.orange.datamodel.purple;
 
+import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation;
+import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleFit;
+import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleCharacteristics;
+import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleDriver;
+import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleQC;
+import com.hartwig.hmftools.datamodel.purple.PurpleMicrosatelliteStatus;
+import com.hartwig.hmftools.datamodel.purple.PurpleTumorMutationalStatus;
+import com.hartwig.hmftools.datamodel.purple.PurpleDriverType;
+import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleTranscriptImpact;
+import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect;
+import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleVariant;
+import com.hartwig.hmftools.datamodel.purple.PurpleVariantType;
+import com.hartwig.hmftools.datamodel.purple.Hotspot;
+import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleGainLoss;
 import java.util.Collections;
 
 import org.apache.logging.log4j.util.Strings;
@@ -17,7 +31,10 @@ public final class TestPurpleFactory {
                 .containsTumorCells(false)
                 .purity(0)
                 .ploidy(0)
-                .qcStatuses(Collections.emptySet());
+                .qc(ImmutablePurpleQC.builder()
+                        .status(Collections.emptySet())
+                        .build()
+                );
     }
 
     @NotNull
@@ -35,7 +52,7 @@ public final class TestPurpleFactory {
         return ImmutablePurpleDriver.builder()
                 .gene(Strings.EMPTY)
                 .transcript(Strings.EMPTY)
-                .type(PurpleDriverType.MUTATION)
+                .driver(PurpleDriverType.MUTATION)
                 .driverLikelihood(0D);
     }
 
@@ -51,7 +68,7 @@ public final class TestPurpleFactory {
                 .alt(Strings.EMPTY)
                 .adjustedCopyNumber(0D)
                 .variantCopyNumber(0D)
-                .hotspot(PurpleHotspotType.NON_HOTSPOT)
+                .hotspot(Hotspot.NON_HOTSPOT)
                 .subclonalLikelihood(0D)
                 .biallelic(false)
                 .canonicalImpact(transcriptImpactBuilder().build());
@@ -71,7 +88,7 @@ public final class TestPurpleFactory {
     public static ImmutablePurpleGainLoss.Builder gainLossBuilder() {
         return ImmutablePurpleGainLoss.builder()
                 .gene(Strings.EMPTY)
-                .interpretation(PurpleGainLossInterpretation.FULL_LOSS)
+                .interpretation(CopyNumberInterpretation.FULL_LOSS)
                 .minCopies(0)
                 .maxCopies(0);
     }

@@ -14,12 +14,12 @@ import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
-import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriver;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriverType;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLossInterpretation;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
+import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord;
+import com.hartwig.hmftools.datamodel.purple.PurpleDriver;
+import com.hartwig.hmftools.datamodel.purple.PurpleDriverType;
+import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss;
+import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation;
+import com.hartwig.hmftools.datamodel.purple.PurpleRecord;
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory;
 
@@ -30,32 +30,32 @@ public class CopyNumberExtractorTest {
 
     @Test
     public void canExtractCopyNumbers() {
-        PurpleDriver driver1 = TestPurpleFactory.driverBuilder().gene("gene 1").type(PurpleDriverType.DEL).build();
+        PurpleDriver driver1 = TestPurpleFactory.driverBuilder().gene("gene 1").driver(PurpleDriverType.DEL).build();
         PurpleGainLoss gainLoss1 = TestPurpleFactory.gainLossBuilder()
                 .gene("gene 1")
                 .minCopies(0)
                 .maxCopies(1)
-                .interpretation(PurpleGainLossInterpretation.PARTIAL_LOSS)
+                .interpretation(CopyNumberInterpretation.PARTIAL_LOSS)
                 .build();
 
         PurpleGainLoss gainLoss2 = TestPurpleFactory.gainLossBuilder()
                 .gene("gene 2")
                 .minCopies(20)
                 .maxCopies(21)
-                .interpretation(PurpleGainLossInterpretation.FULL_GAIN)
+                .interpretation(CopyNumberInterpretation.FULL_GAIN)
                 .build();
 
         PurpleGainLoss gainLoss3 = TestPurpleFactory.gainLossBuilder()
                 .gene("gene 3")
                 .minCopies(20)
                 .maxCopies(20)
-                .interpretation(PurpleGainLossInterpretation.FULL_GAIN)
+                .interpretation(CopyNumberInterpretation.FULL_GAIN)
                 .build();
 
         PurpleRecord purple = ImmutablePurpleRecord.builder()
                 .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
-                .addDrivers(driver1)
-                .addGainsLosses(gainLoss1, gainLoss2, gainLoss3)
+                .addSomaticDrivers(driver1)
+                .addAllSomaticGainsLosses(gainLoss1, gainLoss2, gainLoss3)
                 .build();
 
         GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes(gainLoss1.gene(), gainLoss2.gene());
@@ -81,14 +81,14 @@ public class CopyNumberExtractorTest {
 
     @Test(expected = IllegalStateException.class)
     public void shouldThrowExceptionWhenFilteringReportedCopyNumber() {
-        PurpleDriver driver = TestPurpleFactory.driverBuilder().gene("gene 1").type(PurpleDriverType.DEL).build();
+        PurpleDriver driver = TestPurpleFactory.driverBuilder().gene("gene 1").driver(PurpleDriverType.DEL).build();
         PurpleGainLoss gainLoss =
-                TestPurpleFactory.gainLossBuilder().gene("gene 1").interpretation(PurpleGainLossInterpretation.PARTIAL_LOSS).build();
+                TestPurpleFactory.gainLossBuilder().gene("gene 1").interpretation(CopyNumberInterpretation.PARTIAL_LOSS).build();
 
         PurpleRecord purple = ImmutablePurpleRecord.builder()
                 .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
-                .addDrivers(driver)
-                .addGainsLosses(gainLoss)
+                .addSomaticDrivers(driver)
+                .addAllSomaticGainsLosses(gainLoss)
                 .build();
 
         GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes("weird gene");
@@ -98,7 +98,7 @@ public class CopyNumberExtractorTest {
 
     @Test
     public void canDetermineTypeForAllInterpretations() {
-        for (PurpleGainLossInterpretation interpretation : PurpleGainLossInterpretation.values()) {
+        for (CopyNumberInterpretation interpretation : CopyNumberInterpretation.values()) {
             assertNotNull(CopyNumberExtractor.determineType(interpretation));
         }
     }

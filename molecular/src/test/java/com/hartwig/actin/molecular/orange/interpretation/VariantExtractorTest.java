@@ -19,16 +19,16 @@ import com.hartwig.actin.molecular.datamodel.driver.VariantType;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
-import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriver;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleDriverType;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleHotspotType;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleRecord;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTranscriptImpact;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantType;
+import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord;
+import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect;
+import com.hartwig.hmftools.datamodel.purple.PurpleDriver;
+import com.hartwig.hmftools.datamodel.purple.PurpleDriverType;
+import com.hartwig.hmftools.datamodel.purple.Hotspot;
+import com.hartwig.hmftools.datamodel.purple.PurpleRecord;
+import com.hartwig.hmftools.datamodel.purple.PurpleTranscriptImpact;
+import com.hartwig.hmftools.datamodel.purple.PurpleVariant;
+import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect;
+import com.hartwig.hmftools.datamodel.purple.PurpleVariantType;
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory;
 
@@ -44,15 +44,15 @@ public class VariantExtractorTest {
         PurpleDriver driver1 = TestPurpleFactory.driverBuilder()
                 .gene("gene 1")
                 .transcript("ENST-canonical")
-                .type(PurpleDriverType.MUTATION)
+                .driver(PurpleDriverType.MUTATION)
                 .driverLikelihood(0.1)
                 .build();
         PurpleDriver driver2 =
-                TestPurpleFactory.driverBuilder().gene("gene 1").transcript("ENST-canonical").type(PurpleDriverType.GERMLINE_MUTATION)
+                TestPurpleFactory.driverBuilder().gene("gene 1").transcript("ENST-canonical").driver(PurpleDriverType.GERMLINE_MUTATION)
                 .driverLikelihood(0.6)
                 .build();
         PurpleDriver driver3 = TestPurpleFactory.driverBuilder().gene("gene 1").transcript("ENST-weird")
-                .type(PurpleDriverType.GERMLINE_MUTATION)
+                .driver(PurpleDriverType.GERMLINE_MUTATION)
                 .driverLikelihood(0.9)
                 .build();
 
@@ -63,7 +63,7 @@ public class VariantExtractorTest {
                 .variantCopyNumber(0.4)
                 .adjustedCopyNumber(0.8)
                 .biallelic(false)
-                .hotspot(PurpleHotspotType.NON_HOTSPOT)
+                .hotspot(Hotspot.NON_HOTSPOT)
                 .subclonalLikelihood(0.3)
                 .localPhaseSets(Lists.newArrayList(1))
                 .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder().transcript("ENST-canonical")
@@ -94,8 +94,8 @@ public class VariantExtractorTest {
 
         PurpleRecord purple = ImmutablePurpleRecord.builder()
                 .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
-                .addDrivers(driver1, driver2, driver3)
-                .addVariants(purpleVariant1, purpleVariant2)
+                .addSomaticDrivers(driver1, driver2, driver3)
+                .addAllSomaticVariants(purpleVariant1, purpleVariant2)
                 .build();
 
         GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes(purpleVariant1.gene(), purpleVariant2.gene());
@@ -149,7 +149,7 @@ public class VariantExtractorTest {
 
         PurpleRecord purple = ImmutablePurpleRecord.builder()
                 .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
-                .addVariants(purpleVariant)
+                .addAllSomaticVariants(purpleVariant)
                 .build();
 
         GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes(purpleVariant.gene());
@@ -173,7 +173,7 @@ public class VariantExtractorTest {
 
         PurpleRecord purple = ImmutablePurpleRecord.builder()
                 .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
-                .addVariants(purpleVariant)
+                .addAllSomaticVariants(purpleVariant)
                 .build();
 
         GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes("weird gene");

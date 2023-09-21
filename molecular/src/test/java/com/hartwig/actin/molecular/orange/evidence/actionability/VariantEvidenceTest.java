@@ -5,9 +5,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTranscriptImpact;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
+import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect;
+import com.hartwig.hmftools.datamodel.purple.PurpleTranscriptImpact;
+import com.hartwig.hmftools.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
 import com.hartwig.serve.datamodel.ActionableEvent;
 import com.hartwig.serve.datamodel.ActionableEvents;

@@ -10,9 +10,8 @@ import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
-import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxRecord;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
+import com.hartwig.hmftools.datamodel.linx.ImmutableLinxRecord;
+import com.hartwig.hmftools.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory;
 
@@ -22,11 +21,11 @@ public class HomozygousDisruptionExtractorTest {
 
     @Test
     public void canExtractHomozygousDisruptions() {
-        LinxHomozygousDisruption linxHomDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build();
+        com.hartwig.hmftools.datamodel.linx.HomozygousDisruption linxHomDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build();
 
         LinxRecord linx = ImmutableLinxRecord.builder()
                 .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
-                .addHomozygousDisruptions(linxHomDisruption)
+                .addSomaticHomozygousDisruptions(linxHomDisruption)
                 .build();
 
         GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes(linxHomDisruption.gene());
@@ -44,11 +43,11 @@ public class HomozygousDisruptionExtractorTest {
 
     @Test(expected = IllegalStateException.class)
     public void shouldThrowExceptionWhenFilteringReportedHomozygousDisruption() {
-        LinxHomozygousDisruption linxHomDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build();
+        com.hartwig.hmftools.datamodel.linx.HomozygousDisruption linxHomDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build();
 
         LinxRecord linx = ImmutableLinxRecord.builder()
                 .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
-                .addHomozygousDisruptions(linxHomDisruption)
+                .addSomaticHomozygousDisruptions(linxHomDisruption)
                 .build();
 
         GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes("other gene");

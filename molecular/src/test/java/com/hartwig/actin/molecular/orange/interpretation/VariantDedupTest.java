@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Collections;
 import java.util.Set;
 
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantEffect;
+import com.hartwig.hmftools.datamodel.purple.PurpleVariant;
+import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect;
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
 
 import org.junit.Test;

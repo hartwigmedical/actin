@@ -15,13 +15,14 @@ import com.hartwig.actin.molecular.datamodel.RefGenomeVersion;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory;
-import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
-import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
-import com.hartwig.actin.molecular.orange.datamodel.OrangeRefGenomeVersion;
+import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeRecord;
+import com.hartwig.hmftools.datamodel.orange.OrangeRecord;
+import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
-import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleFit;
-import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleQCStatus;
+import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleFit;
+import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleQC;
+import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord;
+import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus;
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory;
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants;
 
@@ -131,7 +132,8 @@ public class OrangeInterpreterTest {
         OrangeRecord minimal = TestOrangeFactory.createMinimalTestOrangeRecord();
         return ImmutableOrangeRecord.copyOf(minimal)
                 .withPurple(ImmutablePurpleRecord.copyOf(minimal.purple())
-                        .withFit(ImmutablePurpleFit.copyOf(minimal.purple().fit()).withQcStatuses(statuses)));
+                        .withFit(ImmutablePurpleFit.copyOf(minimal.purple().fit())
+                                .withQc(ImmutablePurpleQC.builder().addAllStatus(statuses).build())));
     }
 
     @NotNull

@@ -28,14 +28,14 @@ public class BreakendEvidenceTest {
         BreakendEvidence breakendEvidence = BreakendEvidence.create(actionable);
 
         List<ActionableEvent> evidencesMatch =
-                breakendEvidence.findMatches(TestLinxFactory.breakendBuilder().gene("gene 1").reported(true).build());
+                breakendEvidence.findMatches(TestLinxFactory.breakendBuilder().gene("gene 1").reportedDisruption(true).build());
         assertEquals(1, evidencesMatch.size());
         assertTrue(evidencesMatch.contains(gene1));
 
         // Not reported
-        assertTrue(breakendEvidence.findMatches(TestLinxFactory.breakendBuilder().gene("gene 1").reported(false).build()).isEmpty());
+        assertTrue(breakendEvidence.findMatches(TestLinxFactory.breakendBuilder().gene("gene 1").reportedDisruption(false).build()).isEmpty());
 
         // Wrong event
-        assertTrue(breakendEvidence.findMatches(TestLinxFactory.breakendBuilder().gene("gene 2").reported(true).build()).isEmpty());
+        assertTrue(breakendEvidence.findMatches(TestLinxFactory.breakendBuilder().gene("gene 2").reportedDisruption(true).build()).isEmpty());
     }
 }

@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNull;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
+import com.hartwig.hmftools.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
 import com.hartwig.serve.datamodel.fusion.KnownFusion;
 

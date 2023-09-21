@@ -8,11 +8,11 @@ import java.util.Set;
 
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele;
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
-import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
-import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
+import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeRecord;
+import com.hartwig.hmftools.datamodel.orange.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
-import com.hartwig.actin.molecular.orange.datamodel.lilac.ImmutableLilacRecord;
-import com.hartwig.actin.molecular.orange.datamodel.lilac.LilacHlaAllele;
+import com.hartwig.hmftools.datamodel.hla.ImmutableLilacRecord;
+import com.hartwig.hmftools.datamodel.hla.LilacAllele;
 import com.hartwig.actin.molecular.orange.datamodel.lilac.TestLilacFactory;
 
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +24,7 @@ public class ImmunologyExtractionTest {
 
     @Test
     public void canExtractImmunology() {
-        LilacHlaAllele allele1 = TestLilacFactory.builder()
+        LilacAllele allele1 = TestLilacFactory.builder()
                 .allele("allele 1")
                 .tumorCopyNumber(1.2)
                 .somaticMissense(1)
@@ -33,7 +33,7 @@ public class ImmunologyExtractionTest {
                 .somaticNonsenseOrFrameshift(0)
                 .build();
 
-        LilacHlaAllele allele2 = TestLilacFactory.builder()
+        LilacAllele allele2 = TestLilacFactory.builder()
                 .allele("allele 2")
                 .tumorCopyNumber(1.3)
                 .somaticMissense(0)
@@ -71,7 +71,7 @@ public class ImmunologyExtractionTest {
     }
 
     @NotNull
-    private static OrangeRecord withLilacData(@NotNull String lilacQc, @NotNull LilacHlaAllele... alleles) {
+    private static OrangeRecord withLilacData(@NotNull String lilacQc, @NotNull LilacAllele... alleles) {
         OrangeRecord base = TestOrangeFactory.createMinimalTestOrangeRecord();
         return ImmutableOrangeRecord.builder()
                 .from(base)
