@@ -111,12 +111,11 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
 
         private fun extractTreatmentString(treatmentHistoryEntry: TreatmentHistoryEntry): String {
             val intentNames = treatmentHistoryEntry.intents()
-                ?.filter{it != Intent.PALLIATIVE}
-                ?.map{it.name.lowercase() }
-                ?.toList()
+                ?.filter { it != Intent.PALLIATIVE }
+                ?.map { it.name.lowercase() }
 
             val intentString = when {
-                intentNames == null -> null
+                intentNames.isNullOrEmpty() -> null
                 intentNames.size == 1 -> intentNames[0]
                 intentNames.size >= 2 -> {
                     intentNames.dropLast(1).joinToString(", ") + " and " + intentNames.last()

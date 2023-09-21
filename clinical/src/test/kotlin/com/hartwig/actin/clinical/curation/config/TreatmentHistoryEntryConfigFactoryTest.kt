@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.TestTreatmentDatabaseFactory
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -56,18 +57,15 @@ class TreatmentHistoryEntryConfigFactoryTest {
             )
         )
         val config = TreatmentHistoryEntryConfigFactory.createConfig(treatmentName, treatmentDatabase, parts, fields)
-        assertThat(config).isNotNull()
-        assertThat(config?.input).isEqualTo(input)
-        assertThat(config?.ignore).isFalse()
-        assertThat(config?.curated).isNotNull()
-        assertThat(config?.curated?.treatments()).isNotNull()
-        assertThat(config?.curated?.treatments()?.size).isEqualTo(0)
-        assertThat(config?.curated?.startYear()).isEqualTo(2022)
-        assertThat(config?.curated?.startMonth()).isNull()
-        assertThat(config?.curated?.intents()).isNull()
-        assertThat(config?.curated?.isTrial).isTrue()
-        assertThat(config?.curated?.trialAcronym()).isNull()
-        assertThat(config?.curated?.therapyHistoryDetails()).isNull()
+
+        val expected = TreatmentHistoryEntryConfig(input=input, ignore=false,
+            curated=ImmutableTreatmentHistoryEntry.builder()
+                .startYear(2022)
+                .isTrial(true)
+                .build()
+        )
+
+        assertThat(config).isEqualTo(expected)
     }
 
     @Test
