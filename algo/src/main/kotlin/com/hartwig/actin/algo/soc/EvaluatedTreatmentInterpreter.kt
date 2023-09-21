@@ -13,9 +13,9 @@ class EvaluatedTreatmentInterpreter(recommendedTreatments: List<EvaluatedTreatme
         return if (recommendedTreatments.isEmpty()) {
             "No treatments available"
         } else {
-            val bestScore: Int = recommendedTreatments[0].score
-            "Recommended treatments: " + recommendedTreatments.filter { it.score == bestScore }
-                .joinToString { it.treatmentCandidate.treatment.name() }
+            val recommendedTreatmentString = recommendedTreatments.joinToString(", ") { it.treatmentCandidate.treatment.display() }
+            val exhaustionString = if (hasExhaustedStandardOfCare()) "" else " not"
+            "Recommended treatment(s): $recommendedTreatmentString\nStandard of care has$exhaustionString been exhausted"
         }
     }
 
@@ -34,6 +34,8 @@ class EvaluatedTreatmentInterpreter(recommendedTreatments: List<EvaluatedTreatme
                 "Score=$key: " + value.joinToString { it.treatmentCandidate.treatment.name() }
             }
     }
+
+    private fun hasExhaustedStandardOfCare() = recommendedTreatments.all { it.treatmentCandidate.isOptional }
 
     private fun availableTreatmentsByScore(): Map<Int, List<EvaluatedTreatment>> {
         return recommendedTreatments.groupBy { it.score }

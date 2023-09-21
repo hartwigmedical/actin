@@ -39,6 +39,8 @@ class TestStandardOfCareApplication {
         val doidModel: DoidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
         val database = RecommendationDatabase(TreatmentDatabaseFactory.createFromPath(TREATMENT_JSON_PATH))
+        StandardOfCareApplication.LOGGER.info("Loaded recommendation database for colorectal cancer with treatment candidates:")
+        database.logRulesForDoidSet(setOf(DoidConstants.COLORECTAL_CANCER_DOID))
         val recommendationEngine =
             RecommendationEngine.create(doidModel, database, ReferenceDateProviderTestFactory.createCurrentDateProvider())
         val recommendationInterpreter = recommendationEngine.provideRecommendations(patient)

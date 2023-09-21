@@ -33,12 +33,6 @@ class RecommendationEngine private constructor(
         return EvaluatedTreatmentInterpreter(determineAvailableTreatments(patientRecord))
     }
 
-    fun patientHasExhaustedStandardOfCare(patientRecord: PatientRecord): Boolean {
-        return determineAvailableTreatments(patientRecord).all { evaluatedTreatment: EvaluatedTreatment ->
-            evaluatedTreatment.treatmentCandidate.isOptional
-        }
-    }
-
     private fun evaluateTreatmentForPatient(treatmentCandidate: TreatmentCandidate, patientRecord: PatientRecord): EvaluatedTreatment {
         val evaluations: List<Evaluation> = treatmentCandidate.eligibilityFunctions.map { eligibilityFunction ->
             evaluationFunctionFactory.create(eligibilityFunction).evaluate(patientRecord)

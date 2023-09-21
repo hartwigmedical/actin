@@ -8,4 +8,9 @@ data class TreatmentCandidate(
     val isOptional: Boolean,
     val expectedBenefitScore: Int,
     val eligibilityFunctions: Set<EligibilityFunction>
-)
+) {
+    override fun toString(): String {
+        val eligibilityFunctionsString = eligibilityFunctions.joinToString("\n") { "    $it" }
+        return "${treatment.display()} (${if (isOptional) "optional" else "required"}):\n" + eligibilityFunctionsString
+    }
+}

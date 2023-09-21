@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.soc
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.TreatmentDatabaseFactory
-import com.hartwig.actin.algo.calendar.ReferenceDateProvider
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
+import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.clinical.util.ClinicalPrinter
@@ -51,14 +51,14 @@ class StandardOfCareApplication(config: StandardOfCareConfig) {
 
         LOGGER.info("Loading treatment data from {}", config.treatmentDirectory)
         val recommendationDatabase = RecommendationDatabase(TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory))
+        LOGGER.info("Loaded recommendation database for colorectal cancer with treatment candidates:")
+        recommendationDatabase.logRulesForDoidSet(setOf(DoidConstants.COLORECTAL_CANCER_DOID))
 
-        val referenceDateProvider: ReferenceDateProvider = ReferenceDateProviderFactory.create(clinical, config.runHistorically)
-        val recommendationEngine: RecommendationEngine =
-            RecommendationEngine.create(doidModel, recommendationDatabase, referenceDateProvider)
+        val referenceDateProvider = ReferenceDateProviderFactory.create(clinical, config.runHistorically)
+        val recommendationEngine = RecommendationEngine.create(doidModel, recommendationDatabase, referenceDateProvider)
 
-        LOGGER.info("Recommended treatments descending order of preference:")
-        LOGGER.info(recommendationEngine.provideRecommendations(patient).listAvailableTreatmentsByScore())
-        LOGGER.info("Done!")
+        val recommendations = recommendationEngine.provideRecommendations(patient)
+        LOGGER.info(recommendations.summarize())
     }
 
     companion object {
