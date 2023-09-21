@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
 class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
+
     fun treatmentCandidatesForDoidSet(doids: Set<String>): List<TreatmentCandidate> {
         return if (!doids.contains(DoidConstants.COLORECTAL_CANCER_DOID)) emptyList() else listOf(
             combinableChemotherapies(),

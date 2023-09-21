@@ -24,12 +24,7 @@ import org.apache.logging.log4j.Logger
 import java.io.IOException
 import kotlin.system.exitProcess
 
-class StandardOfCareApplication(config: StandardOfCareConfig) {
-    private val config: StandardOfCareConfig
-
-    init {
-        this.config = config
-    }
+class StandardOfCareApplication(private val config: StandardOfCareConfig) {
 
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)

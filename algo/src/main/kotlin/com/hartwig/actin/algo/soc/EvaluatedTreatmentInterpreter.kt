@@ -2,12 +2,7 @@ package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.algo.soc.datamodel.EvaluatedTreatment
 
-class EvaluatedTreatmentInterpreter(recommendedTreatments: List<EvaluatedTreatment>) {
-    private val recommendedTreatments: List<EvaluatedTreatment>
-
-    init {
-        this.recommendedTreatments = recommendedTreatments
-    }
+class EvaluatedTreatmentInterpreter(private val recommendedTreatments: List<EvaluatedTreatment>) {
 
     fun summarize(): String {
         return if (recommendedTreatments.isEmpty()) {
