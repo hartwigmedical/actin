@@ -131,19 +131,19 @@ public class OrangeInterpreterApplication {
     }
 
     private static void throwIfGermlineFieldNonEmpty(OrangeRecord orange) {
+        final String message = "must be null or empty because ACTIN only accepts ORANGE output that has been "
+                + "scrubbed of germline data. Please use the JSON output from the 'orange_no_germline' directory.";
+
         if (!orange.linx().allGermlineStructuralVariants().isEmpty()) {
-            throw new RuntimeException("allGermlineStructuralVariants" + " must be null or empty because ACTIN only accepts ORANGE output that has been "
-                    + "scrubbed of germline data. Please use the JSON output from the 'orange_no_germline' directory.");
+            throw new RuntimeException("allGermlineStructuralVariants " + message);
         }
 
         if (!orange.linx().allGermlineBreakends().isEmpty()) {
-            throw new RuntimeException("allGermlineStructuralVariants" + " must be null or empty because ACTIN only accepts ORANGE output that has been "
-                    + "scrubbed of germline data. Please use the JSON output from the 'orange_no_germline' directory.");
+            throw new RuntimeException("allGermlineStructuralVariants " + message);
         }
 
         if (!orange.linx().germlineHomozygousDisruptions().isEmpty()) {
-            throw new RuntimeException("germlineHomozygousDisruptions" + " must be null or empty because ACTIN only accepts ORANGE output that has been "
-                    + "scrubbed of germline data. Please use the JSON output from the 'orange_no_germline' directory.");
+            throw new RuntimeException("germlineHomozygousDisruptions " + message);
         }
     }
 
