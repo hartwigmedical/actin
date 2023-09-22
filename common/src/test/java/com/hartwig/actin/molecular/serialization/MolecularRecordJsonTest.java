@@ -13,7 +13,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
-import com.hartwig.actin.molecular.datamodel.ExperimentType;
+import com.hartwig.hmftools.datamodel.orange.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion;
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory;
@@ -85,7 +85,7 @@ public class MolecularRecordJsonTest {
 
         assertEquals("ACTN01029999", molecular.patientId());
         assertEquals("ACTN01029999T", molecular.sampleId());
-        assertEquals(ExperimentType.WGS, molecular.type());
+        assertEquals(ExperimentType.WHOLE_GENOME, molecular.type());
         assertEquals(RefGenomeVersion.V37, molecular.refGenomeVersion());
         assertEquals(LocalDate.of(2021, 2, 23), molecular.date());
         assertEquals("kb", molecular.evidenceSource());

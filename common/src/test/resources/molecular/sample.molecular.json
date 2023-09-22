@@ -1,7 +1,7 @@
 {
   "patientId": "ACTN01029999",
   "sampleId": "ACTN01029999T",
-  "type": "WGS",
+  "type": "WHOLE_GENOME",
   "refGenomeVersion": "V37",
   "date": {
     "year": 2021,

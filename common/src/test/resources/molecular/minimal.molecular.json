@@ -1,7 +1,7 @@
 {
   "patientId": "irrelevant",
   "sampleId": "irrelevant",
-  "type": "WGS",
+  "type": "WHOLE_GENOME",
   "refGenomeVersion": "V37",
   "date": null,
   "evidenceSource": "CKB",
