@@ -70,6 +70,7 @@ public class OrangeInterpreterApplication {
 
         LOGGER.info("Reading ORANGE json from {}", config.orangeJson());
         OrangeRecord orange = OrangeJson.getInstance().read(config.orangeJson());
+        validateOrangeRecord(orange);
 
         LOGGER.info("Loading evidence database");
         RefGenome serveRefGenomeVersion = toServeRefGenomeVersion(orange.refGenomeVersion());
@@ -123,6 +124,27 @@ public class OrangeInterpreterApplication {
         }
 
         throw new IllegalStateException("Could not convert ORANGE ref genome version to SERVE ref genome version: " + refGenomeVersion);
+    }
+
+    private static void validateOrangeRecord(OrangeRecord orange) {
+        throwIfGermlineFieldNonEmpty(orange);
+    }
+
+    private static void throwIfGermlineFieldNonEmpty(OrangeRecord orange) {
+        if (!orange.linx().allGermlineStructuralVariants().isEmpty()) {
+            throw new RuntimeException("allGermlineStructuralVariants" + " must be null or empty because ACTIN only accepts ORANGE output that has been "
+                    + "scrubbed of germline data. Please use the JSON output from the 'orange_no_germline' directory.");
+        }
+
+        if (!orange.linx().allGermlineBreakends().isEmpty()) {
+            throw new RuntimeException("allGermlineStructuralVariants" + " must be null or empty because ACTIN only accepts ORANGE output that has been "
+                    + "scrubbed of germline data. Please use the JSON output from the 'orange_no_germline' directory.");
+        }
+
+        if (!orange.linx().germlineHomozygousDisruptions().isEmpty()) {
+            throw new RuntimeException("germlineHomozygousDisruptions" + " must be null or empty because ACTIN only accepts ORANGE output that has been "
+                    + "scrubbed of germline data. Please use the JSON output from the 'orange_no_germline' directory.");
+        }
     }
 
     @NotNull
