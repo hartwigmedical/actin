@@ -2,13 +2,13 @@ package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider
-import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory
 import com.hartwig.actin.algo.soc.datamodel.EvaluatedTreatment
 import com.hartwig.actin.algo.soc.datamodel.TreatmentCandidate
 import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.treatment.datamodel.EligibilityFunction
 
 class RecommendationEngine private constructor(
     private val doidModel: DoidModel,
@@ -17,26 +17,48 @@ class RecommendationEngine private constructor(
 ) {
 
     fun determineAvailableTreatments(patientRecord: PatientRecord): List<EvaluatedTreatment> {
-        val tumorDoids = expandedTumorDoids(patientRecord, doidModel)
         require(standardOfCareCanBeEvaluatedForPatient(patientRecord, doidModel)) {
             "SOC recommendation only supported for colorectal carcinoma"
         }
 
-        return recommendationDatabase.treatmentCandidatesForDoidSet(tumorDoids).asSequence()
-            .map { evaluateTreatmentForPatient(it, patientRecord) }
+        return recommendationDatabase.treatmentCandidatesForDoidSet(expandedTumorDoids(patientRecord, doidModel)).asSequence()
+            .map { evaluateTreatmentEligibilityForPatient(it, patientRecord) }
             .filter { treatmentHasNoFailedEvaluations(it) }
             .filter { it.score >= 0 }
             .sortedByDescending { it.score }.toList()
     }
 
-    fun provideRecommendations(patientRecord: PatientRecord): EvaluatedTreatmentInterpreter {
-        return EvaluatedTreatmentInterpreter(determineAvailableTreatments(patientRecord))
+    fun provideRecommendations(patientRecord: PatientRecord): String {
+        return EvaluatedTreatmentInterpreter(determineAvailableTreatments(patientRecord)).summarize()
     }
 
-    private fun evaluateTreatmentForPatient(treatmentCandidate: TreatmentCandidate, patientRecord: PatientRecord): EvaluatedTreatment {
-        val evaluations: List<Evaluation> = treatmentCandidate.eligibilityFunctions.map { eligibilityFunction ->
-            evaluationFunctionFactory.create(eligibilityFunction).evaluate(patientRecord)
-        }
+    fun patientHasExhaustedStandardOfCare(patientRecord: PatientRecord): Boolean {
+        return recommendationDatabase.treatmentCandidatesForDoidSet(expandedTumorDoids(patientRecord, doidModel)).asSequence()
+            .filterNot(TreatmentCandidate::isOptional)
+            .map { evaluateTreatmentRequirementForPatient(it, patientRecord) }
+            .any { it.score >= 0 && treatmentHasNoFailedEvaluations(it) }
+    }
+
+    private fun evaluateTreatmentEligibilityForPatient(
+        treatmentCandidate: TreatmentCandidate,
+        patientRecord: PatientRecord
+    ): EvaluatedTreatment {
+        return evaluateTreatmentCandidate(treatmentCandidate.eligibilityFunctions, patientRecord, treatmentCandidate)
+    }
+
+    private fun evaluateTreatmentRequirementForPatient(
+        treatmentCandidate: TreatmentCandidate,
+        patientRecord: PatientRecord
+    ): EvaluatedTreatment {
+        return evaluateTreatmentCandidate(treatmentCandidate.eligibilityFunctionsForRequirement(), patientRecord, treatmentCandidate)
+    }
+
+    private fun evaluateTreatmentCandidate(
+        eligibilityFunctions: Set<EligibilityFunction>,
+        patientRecord: PatientRecord,
+        treatmentCandidate: TreatmentCandidate
+    ): EvaluatedTreatment {
+        val evaluations = eligibilityFunctions.map { evaluationFunctionFactory.create(it).evaluate(patientRecord) }
         return EvaluatedTreatment(treatmentCandidate, evaluations, treatmentCandidate.expectedBenefitScore)
     }
 

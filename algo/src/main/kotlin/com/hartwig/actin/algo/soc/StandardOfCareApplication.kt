@@ -52,8 +52,9 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
         val referenceDateProvider = ReferenceDateProviderFactory.create(clinical, config.runHistorically)
         val recommendationEngine = RecommendationEngine.create(doidModel, recommendationDatabase, referenceDateProvider)
 
-        val recommendations = recommendationEngine.provideRecommendations(patient)
-        LOGGER.info(recommendations.summarize())
+        LOGGER.info(recommendationEngine.provideRecommendations(patient))
+        val patientHasExhaustedStandardOfCare = recommendationEngine.patientHasExhaustedStandardOfCare(patient)
+        LOGGER.info("Standard of care has${if (patientHasExhaustedStandardOfCare) "" else " not"} been exhausted")
     }
 
     companion object {

@@ -43,9 +43,9 @@ class TestStandardOfCareApplication {
         database.logRulesForDoidSet(setOf(DoidConstants.COLORECTAL_CANCER_DOID))
         val recommendationEngine =
             RecommendationEngine.create(doidModel, database, ReferenceDateProviderTestFactory.createCurrentDateProvider())
-        val recommendationInterpreter = recommendationEngine.provideRecommendations(patient)
-        LOGGER.info(recommendationInterpreter.summarize())
-        LOGGER.info(recommendationInterpreter.csv())
+        StandardOfCareApplication.LOGGER.info(recommendationEngine.provideRecommendations(patient))
+        val patientHasExhaustedStandardOfCare = recommendationEngine.patientHasExhaustedStandardOfCare(patient)
+        StandardOfCareApplication.LOGGER.info("Standard of care has${if (patientHasExhaustedStandardOfCare) "" else " not"} been exhausted")
 
         return 0
     }

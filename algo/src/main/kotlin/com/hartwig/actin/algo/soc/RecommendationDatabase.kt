@@ -43,7 +43,7 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
                 TREATMENT_FOLFIRI,
                 SCORE_MULTITHERAPY,
                 false,
-                setOf(
+                extraFunctions = setOf(
                     eligibleIfTreatmentNotInHistory(TREATMENT_CAPOX), eligibleIfTreatmentNotInHistory(TREATMENT_FOLFOX),
                     IS_YOUNG_AND_FIT
                 )
@@ -56,18 +56,20 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
     }
 
     private fun createMultiChemotherapy(name: String): TreatmentCandidate {
-        return createChemotherapy(name, SCORE_MULTITHERAPY, false, setOf(IS_YOUNG_AND_FIT))
+        return createChemotherapy(name, SCORE_MULTITHERAPY, false, extraFunctions = setOf(IS_YOUNG_AND_FIT))
     }
 
     private fun createChemotherapy(
-        name: String, score: Int, isOptional: Boolean = false, extraFunctions: Set<EligibilityFunction> = emptySet()
+        name: String, score: Int, isOptional: Boolean = false, lines: Set<Int> = setOf(1, 2),
+        extraFunctions: Set<EligibilityFunction> = emptySet()
     ): TreatmentCandidate {
         return TreatmentCandidate(
             treatment = treatmentDatabase.findTreatmentByName(name)!!,
             expectedBenefitScore = score,
             isOptional = isOptional,
-            eligibilityFunctions = setOf(IS_COLORECTAL_CANCER, eligibleIfTreatmentNotInHistory(name))
-                    union extraFunctions
+            eligibilityFunctions = setOf(IS_COLORECTAL_CANCER, eligibleIfTreatmentNotInHistory(name)) union extraFunctions,
+            additionalCriteriaForRequirement = setOf(eligibleForTreatmentLines(lines))
+            // TODO: all patients should have (Oxaliplatin OR Irinotecan) and (5-FU OR CAPECITABINE) before exhaustion
         )
     }
 
@@ -97,7 +99,7 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
                 eligibleIfGenesAreWildType(listOf("KRAS", "NRAS", "BRAF")),
                 eligibilityFunction(EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR),
                 eligibleForTreatmentLines(setOf(2, 3)),
-                // TODO: ineligible if this drug has previously been given in any therapy
+                eligibleIfDrugNotInHistory(name)
             )
         )
     }
@@ -105,9 +107,7 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
     private fun otherTreatments(): List<TreatmentCandidate> {
         return listOf(
             createChemotherapy(
-                TREATMENT_LONSURF,
-                SCORE_LONSURF,
-                true, setOf(eligibleIfTreatmentNotInHistory("trifluridine"), eligibleForTreatmentLines(setOf(3)))
+                TREATMENT_LONSURF, SCORE_LONSURF, true, setOf(3), setOf(eligibleIfTreatmentNotInHistory("trifluridine"))
             ),
             TreatmentCandidate(
                 treatment = treatmentDatabase.findTreatmentByName(TREATMENT_PEMBROLIZUMAB)!!,
@@ -189,6 +189,13 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
 
         private fun eligibleForTreatmentLines(lines: Set<Int>): EligibilityFunction {
             return eligibilityFunction(EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_LINES_X, lines.joinToString(";"))
+        }
+
+        private fun eligibleIfDrugNotInHistory(drugName: String): EligibilityFunction {
+            return eligibilityFunction(
+                EligibilityRule.NOT,
+                eligibilityFunction(EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X, drugName)
+            )
         }
 
         private fun eligibilityFunction(rule: EligibilityRule, vararg parameters: Any): EligibilityFunction {
