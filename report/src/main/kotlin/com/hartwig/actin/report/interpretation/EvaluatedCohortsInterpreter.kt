@@ -4,7 +4,7 @@ import com.hartwig.actin.molecular.datamodel.driver.Driver
 
 class EvaluatedCohortsInterpreter(
     private val eligibleOpenTrialsByInclusionEvent: Map<String, List<String>>,
-    private val inclusionEventsOfNonBlacklistedOpenTrials: Set<String>
+    private val inclusionEventsOfOpenTrials: Set<String>
 ) {
 
     fun trialsForDriver(driver: Driver): List<String> {
@@ -13,7 +13,7 @@ class EvaluatedCohortsInterpreter(
 
     fun driverIsActionable(driver: Driver): Boolean {
         return (driver.evidence().externalEligibleTrials()
-            .isNotEmpty() || inclusionEventsOfNonBlacklistedOpenTrials.contains(driver.event())
+            .isNotEmpty() || inclusionEventsOfOpenTrials.contains(driver.event())
                 || driver.evidence().approvedTreatments().isNotEmpty())
     }
 
@@ -29,7 +29,6 @@ class EvaluatedCohortsInterpreter(
                 .mapValues { (_, acronyms) -> acronyms.sorted().distinct() }
 
             val inclusionEventsOfNonBlacklistedOpenTrials = openCohorts
-                .filterNot(EvaluatedCohort::isBlacklisted)
                 .flatMap(EvaluatedCohort::molecularEvents)
                 .toSet()
 
