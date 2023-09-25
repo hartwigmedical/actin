@@ -96,7 +96,7 @@ public class MedicationGenerator implements TableGenerator {
 
     @NotNull
     private static String frequency(@NotNull Dosage dosage) {
-        String result = dosage.frequency() != null ? Formats.twoDigitNumber(dosage.frequency()) : "?";
+        String result = (dosage.frequency() != null && dosage.frequency() != 0.0) ? Formats.twoDigitNumber(dosage.frequency()) : "?";
 
         if (dosage.frequencyUnit() == null) {
             result = "unknown prescription";

@@ -6,7 +6,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
 import com.hartwig.actin.clinical.datamodel.AtcLevel
-import com.hartwig.actin.clinical.datamodel.Medication
 import java.time.LocalDate
 
 class HasRecentlyReceivedMedicationOfAtcLevel(
@@ -25,14 +24,14 @@ class HasRecentlyReceivedMedicationOfAtcLevel(
 
         val medications =
             selector.activeOrRecentlyStopped(record.clinical().medications(), minStopDate)
-                .filter { (allLevels(it) intersect categoryAtcLevels).isNotEmpty() }
+                .filter { (it.allLevels() intersect categoryAtcLevels).isNotEmpty() }
 
         val foundMedicationNames = medications.map { it.name() }.filter { it.isNotEmpty() }
 
         return if (medications.isNotEmpty()) {
             val foundMedicationString = if (foundMedicationNames.isNotEmpty()) ": ${concatLowercaseWithAnd(foundMedicationNames)}" else ""
             EvaluationFactory.pass(
-                "Patient recently received medication $foundMedicationString which belong(s) to category $categoryName",
+                "Patient recently received medication$foundMedicationString which belong(s) to category $categoryName",
                 "Recent $categoryName medication"
             )
         } else {
@@ -43,6 +42,4 @@ class HasRecentlyReceivedMedicationOfAtcLevel(
         }
 
     }
-
-    private fun allLevels(it: Medication) = it.atc()?.allLevels() ?: emptySet<AtcLevel>()
 }

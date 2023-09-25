@@ -1,8 +1,6 @@
 package com.hartwig.actin.algo.evaluation.medication
 
-import com.hartwig.actin.clinical.datamodel.AtcLevel
 import com.hartwig.actin.clinical.datamodel.CypInteraction
-import com.hartwig.actin.clinical.datamodel.ImmutableAtcLevel
 import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
@@ -49,7 +47,6 @@ class MedicationSelectorTest {
         )
 
         val filtered = MedicationTestFactory.alwaysActive().active(medications)
-            .filter { (allLevels(it) intersect setOf(ImmutableAtcLevel.builder().code("category 1").name("").build())).isNotEmpty() }
 
         Assert.assertEquals(1, filtered.size.toLong())
         Assert.assertEquals("right categories", filtered[0].name())
@@ -72,16 +69,11 @@ class MedicationSelectorTest {
                     .build()
             ).build()
         )
-        val filtered = MedicationTestFactory.alwaysActive().active(medications).filter {
-            (allLevels(it) intersect setOf(
-                ImmutableAtcLevel.builder().code("category 1").name("").build(),
-                ImmutableAtcLevel.builder().code("category 3").name("").build()
-            )).isNotEmpty()
-        }
+        val filtered = MedicationTestFactory.alwaysActive().active(medications)
 
         Assert.assertEquals(2, filtered.size.toLong())
-        Assert.assertNotNull(findByName(medications, "right category 1"))
-        Assert.assertNotNull(findByName(medications, "right category 2"))
+        Assert.assertNotNull(findByName(filtered, "right category 1"))
+        Assert.assertNotNull(findByName(filtered, "right category 2"))
     }
 
     @Test
@@ -112,9 +104,8 @@ class MedicationSelectorTest {
         )
         val filtered =
             MedicationTestFactory.alwaysInactive().activeOrRecentlyStopped(medications, minStopDate)
-                .filter { (allLevels(it) intersect setOf(ImmutableAtcLevel.builder().code("category 1").name("").build())).isNotEmpty() }
         Assert.assertEquals(1, filtered.size.toLong())
-        Assert.assertNotNull(findByName(medications, "right category 1 recently stopped"))
+        Assert.assertNotNull(findByName(filtered, "right category 1 recently stopped"))
     }
 
     @Test
@@ -205,7 +196,5 @@ class MedicationSelectorTest {
             }
             throw IllegalStateException("Could not find medication with name: $nameToFind")
         }
-
-        private fun allLevels(it: Medication) = it.atc()?.allLevels() ?: emptySet<AtcLevel>()
     }
 }

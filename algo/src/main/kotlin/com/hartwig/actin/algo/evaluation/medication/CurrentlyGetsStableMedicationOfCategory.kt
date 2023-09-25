@@ -21,7 +21,7 @@ class CurrentlyGetsStableMedicationOfCategory(
             var referenceDosing: Medication? = null
             val filtered =
                 selector.active(record.clinical().medications())
-                    .filter { (allLevels(it) intersect categoryToFind.value).isNotEmpty() }
+                    .filter { (it.allLevels() intersect categoryToFind.value).isNotEmpty() }
             for (medication in filtered) {
                 if (referenceDosing != null) {
                     if (!MedicationDosage.hasMatchingDosing(medication.dosage(), referenceDosing.dosage())) {
@@ -49,6 +49,4 @@ class CurrentlyGetsStableMedicationOfCategory(
             )
         }
     }
-
-    private fun allLevels(it: Medication) = it.atc()?.allLevels() ?: emptySet<AtcLevel>()
 }

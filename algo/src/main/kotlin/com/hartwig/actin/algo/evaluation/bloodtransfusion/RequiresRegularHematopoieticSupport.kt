@@ -22,9 +22,10 @@ class RequiresRegularHematopoieticSupport(private val atcTree: AtcTree, private 
                 )
             }
         }
+        val resolvedCategories = hematopoieticMedicationCategories(atcTree)
         val medications = record.clinical().medications()
             .filter { activeBetweenDates(it) }
-            .filter { it.atc()?.chemicalSubGroup() in hematopoieticMedicationCategories(atcTree) }
+            .filter { it.atc()?.chemicalSubGroup() in resolvedCategories }
             .map { it.name() }
         return if (medications.isNotEmpty()) {
             EvaluationFactory.pass(

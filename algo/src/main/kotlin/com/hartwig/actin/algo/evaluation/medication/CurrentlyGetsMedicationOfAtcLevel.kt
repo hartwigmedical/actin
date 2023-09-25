@@ -6,7 +6,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
 import com.hartwig.actin.clinical.datamodel.AtcLevel
-import com.hartwig.actin.clinical.datamodel.Medication
 
 class CurrentlyGetsMedicationOfAtcLevel(
     private val selector: MedicationSelector,
@@ -17,7 +16,7 @@ class CurrentlyGetsMedicationOfAtcLevel(
 
         val medications =
             selector.active(record.clinical().medications())
-                .filter { (allLevels(it) intersect categoryAtcLevels).isNotEmpty() }
+                .filter { (it.allLevels() intersect categoryAtcLevels).isNotEmpty() }
 
         val foundMedicationNames = medications.map { it.name() }.filter { it.isNotEmpty() }
 
@@ -33,6 +32,4 @@ class CurrentlyGetsMedicationOfAtcLevel(
                 "No $categoryName medication use"
             )
     }
-
-    private fun allLevels(it: Medication) = it.atc()?.allLevels() ?: emptySet<AtcLevel>()
 }

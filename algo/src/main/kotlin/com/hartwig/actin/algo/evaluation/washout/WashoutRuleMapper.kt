@@ -4,11 +4,10 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
-import com.hartwig.actin.algo.evaluation.medication.MedicationCategories
+import com.hartwig.actin.algo.medication.MedicationCategories
 import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreter
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreterOnEvaluationDate
-import com.hartwig.actin.clinical.datamodel.AtcLevel
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction
 import com.hartwig.actin.treatment.datamodel.EligibilityRule
 
@@ -72,10 +71,7 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
 
     private fun createReceivedCancerTherapyOfCategoryFunction(categoryInputs: List<String>, minWeeks: Int): EvaluationFunction {
         val interpreter = createInterpreterForWashout(minWeeks)
-        val mappedCategories = mutableMapOf<String, Set<AtcLevel>>()
-        for (category in categoryInputs) {
-            mappedCategories[category] = categories.resolve(category)
-        }
+        val mappedCategories = categoryInputs.associateWith(categories::resolve)
         return HasRecentlyReceivedCancerTherapyOfCategory(mappedCategories, emptyMap(), interpreter)
     }
 
@@ -125,10 +121,7 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
     private fun createReceivedAnyCancerTherapyButSomeFunction(categoriesToIgnore: List<String>, minWeeks: Int): EvaluationFunction {
         val interpreter = createInterpreterForWashout(minWeeks)
         val antiCancerCategories = mapOf("Anticancer" to categories.resolve("Anticancer"))
-        val mappedIgnoredCategories = mutableMapOf<String, Set<AtcLevel>>()
-        for (category in categoriesToIgnore) {
-            mappedIgnoredCategories[category] = categories.resolve(category)
-        }
+        val mappedIgnoredCategories = categoriesToIgnore.associateWith(categories::resolve)
         return HasRecentlyReceivedCancerTherapyOfCategory(antiCancerCategories, mappedIgnoredCategories, interpreter)
     }
 

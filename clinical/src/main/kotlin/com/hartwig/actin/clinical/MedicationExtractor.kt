@@ -33,7 +33,7 @@ class MedicationExtractor(private val curation: CurationModel, private val atc: 
                 .build()
         }
 
-        return ImmutableMedication.builder()
+        val medication: Medication = ImmutableMedication.builder()
             .dosage(dosage)
             .name(name)
             .status(curation.curateMedicationStatus(entry.status))
@@ -47,10 +47,11 @@ class MedicationExtractor(private val curation: CurationModel, private val atc: 
             .isTrialMedication(entry.code5ATCDisplay.isEmpty() && entry.code5ATCCode.isNotEmpty() && entry.code5ATCCode[0].lowercaseChar() !in 'a'..'z')
             .build()
 
-        // TODO Uncomment this check when we receive the ATC tree
-        // check(medication.atc() != null || medication.isSelfCare() || medication.isTrialMedication()) {
-        //     "Medication ${medication.name()} has no ATC code and is not self-care or a trial"
-        // }
+        check(medication.atc() != null || medication.isSelfCare() || medication.isTrialMedication()) {
+            "Medication ${medication.name()} has no ATC code and is not self-care or a trial"
+        }
+
+        return medication
     }
 
     private fun extractIfNeeded(entry: MedicationEntry) =
