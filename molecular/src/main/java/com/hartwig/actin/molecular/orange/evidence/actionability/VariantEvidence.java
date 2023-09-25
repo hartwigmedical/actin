@@ -1,10 +1,13 @@
 package com.hartwig.actin.molecular.orange.evidence.actionability;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.evidence.matching.GeneMatching;
 import com.hartwig.actin.molecular.orange.evidence.matching.HotspotMatching;
@@ -21,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 class VariantEvidence implements EvidenceMatcher<PurpleVariant> {
 
     private static final Set<GeneEvent> APPLICABLE_GENE_EVENTS =
-            Sets.newHashSet(GeneEvent.ACTIVATION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION);
+            Set.of(GeneEvent.ACTIVATION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION);
 
     @NotNull
     private final List<ActionableHotspot> actionableHotspots;
@@ -32,14 +35,15 @@ class VariantEvidence implements EvidenceMatcher<PurpleVariant> {
 
     @NotNull
     public static VariantEvidence create(@NotNull ActionableEvents actionableEvents) {
-        List<ActionableGene> applicableActionableGenes = Lists.newArrayList();
-        for (ActionableGene actionableGene : actionableEvents.genes()) {
-            if (APPLICABLE_GENE_EVENTS.contains(actionableGene.event())) {
-                applicableActionableGenes.add(actionableGene);
-            }
-        }
+        List<ActionableGene> applicableActionableGenes = actionableEvents.genes()
+                .stream()
+                .filter(actionableGene -> APPLICABLE_GENE_EVENTS.contains(actionableGene.event()))
+                .collect(Collectors.toList());
 
-        return new VariantEvidence(actionableEvents.hotspots(), actionableEvents.ranges(), applicableActionableGenes);
+        List<ActionableRange> ranges =
+                Stream.of(actionableEvents.codons(), actionableEvents.exons()).flatMap(Collection::stream).collect(Collectors.toList());
+
+        return new VariantEvidence(actionableEvents.hotspots(), ranges, applicableActionableGenes);
     }
 
     private VariantEvidence(@NotNull final List<ActionableHotspot> actionableHotspots,
@@ -52,45 +56,31 @@ class VariantEvidence implements EvidenceMatcher<PurpleVariant> {
     @NotNull
     @Override
     public List<ActionableEvent> findMatches(@NotNull PurpleVariant variant) {
-        List<ActionableEvent> matches = Lists.newArrayList();
-
-        matches.addAll(hotspotMatches(variant));
-        matches.addAll(rangeMatches(variant));
-        matches.addAll(geneMatches(variant));
-
-        return matches;
+        return Stream.of(hotspotMatches(variant), rangeMatches(variant), geneMatches(variant))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
     }
 
     @NotNull
     private List<ActionableEvent> hotspotMatches(@NotNull PurpleVariant variant) {
-        List<ActionableEvent> matches = Lists.newArrayList();
-        for (ActionableHotspot actionableHotspot : actionableHotspots) {
-            if (variant.reported() && HotspotMatching.isMatch(actionableHotspot, variant)) {
-                matches.add(actionableHotspot);
-            }
-        }
-        return matches;
+        return filterMatchingEvents(actionableHotspots, variant, HotspotMatching::isMatch);
     }
 
     @NotNull
     private List<ActionableEvent> rangeMatches(@NotNull PurpleVariant variant) {
-        List<ActionableEvent> matches = Lists.newArrayList();
-        for (ActionableRange actionableRange : actionableRanges) {
-            if (variant.reported() && RangeMatching.isMatch(actionableRange, variant)) {
-                matches.add(actionableRange);
-            }
-        }
-        return matches;
+        return filterMatchingEvents(actionableRanges, variant, RangeMatching::isMatch);
     }
 
     @NotNull
     private List<ActionableEvent> geneMatches(@NotNull PurpleVariant variant) {
-        List<ActionableEvent> matches = Lists.newArrayList();
-        for (ActionableGene actionableGene : applicableActionableGenes) {
-            if (variant.reported() && GeneMatching.isMatch(actionableGene, variant)) {
-                matches.add(actionableGene);
-            }
-        }
-        return matches;
+        return filterMatchingEvents(applicableActionableGenes, variant, GeneMatching::isMatch);
+    }
+
+    @NotNull
+    private <T extends ActionableEvent> List<ActionableEvent> filterMatchingEvents(@NotNull List<T> events, @NotNull PurpleVariant variant,
+            @NotNull BiPredicate<T, PurpleVariant> predicate) {
+        return !variant.reported()
+                ? Collections.emptyList()
+                : events.stream().filter(event -> predicate.test(event, variant)).collect(Collectors.toList());
     }
 }

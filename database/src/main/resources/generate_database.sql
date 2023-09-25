@@ -102,7 +102,7 @@ CREATE TABLE `priorSecondPrimary`
     `treatmentHistory` varchar(150) NOT NULL,
     `lastTreatmentYear` int,
     `lastTreatmentMonth` int,
-    `isActive` BOOLEAN NOT NULL,
+    `status` varchar(50) NOT NULL,
     PRIMARY KEY (`id`)
 );
 

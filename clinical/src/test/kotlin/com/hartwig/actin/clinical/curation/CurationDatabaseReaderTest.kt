@@ -7,6 +7,7 @@ import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
 import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.TumorStatus
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.Therapy
@@ -102,7 +103,7 @@ class CurationDatabaseReaderTest {
         assertThat(curated.treatmentHistory()).isEqualTo("None")
         assertThat(curated.lastTreatmentYear()).isEqualTo(2014)
         assertThat(curated.lastTreatmentMonth()).isEqualTo(2)
-        assertThat(curated.isActive).isFalse
+        assertThat(curated.status()).isEqualTo(TumorStatus.INACTIVE)
     }
 
     @Test

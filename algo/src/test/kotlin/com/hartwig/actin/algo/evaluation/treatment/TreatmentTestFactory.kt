@@ -34,6 +34,10 @@ object TreatmentTestFactory {
         ).build()
     }
 
+    fun drugTherapyNoDrugs(name: String): Treatment {
+        return ImmutableDrugTherapy.builder().name(name).isSystemic(true).build()
+    }
+
     fun treatmentHistoryEntry(
         treatments: Collection<Treatment> = emptySet(),
         startYear: Int? = null,

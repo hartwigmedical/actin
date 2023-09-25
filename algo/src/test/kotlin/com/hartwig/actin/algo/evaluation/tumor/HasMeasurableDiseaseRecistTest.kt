@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.doid.TestDoidModelFactory
-import org.junit.Test
 import org.junit.Assert.assertTrue
+import org.junit.Test
 
 class HasMeasurableDiseaseRecistTest {
     @Test
