@@ -74,7 +74,8 @@ class MedicationGenerator(private val medications: List<Medication>, private val
             if (dosageLimit != null && dosageLimit != 0.0) Formats.twoDigitNumber(dosageLimit) else "?"
 
         private fun frequency(dosage: Dosage): String {
-            val frequency = if (dosage.frequency() != null) Formats.twoDigitNumber(dosage.frequency()!!) else "?"
+            val frequency =
+                if (dosage.frequency() != null && dosage.frequency() != 0.0) Formats.twoDigitNumber(dosage.frequency()!!) else "?"
             val frequencyUnit = dosage.frequencyUnit()
             return when {
                 frequencyUnit == null -> {
