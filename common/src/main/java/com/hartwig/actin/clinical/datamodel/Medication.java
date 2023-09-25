@@ -46,7 +46,7 @@ public abstract class Medication {
     public abstract Boolean isTrialMedication();
 
     public Set<AtcLevel> allLevels() {
-        return atc().allLevels().isEmpty() ? Collections.emptySet() : atc().allLevels();
+        return atc() == null ? Collections.emptySet() : atc().allLevels();
     }
 
 }
