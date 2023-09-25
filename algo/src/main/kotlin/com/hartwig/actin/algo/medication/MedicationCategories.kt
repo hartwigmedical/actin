@@ -23,7 +23,6 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
                     "Immunotherapy" to convertToAtcLevel(setOf("L01FF02", "L01FF01", "L01FX04", "L01FF06", "L01FF04"), atcTree),
                     "Hypomethylating agents" to convertToAtcLevel(setOf("L01BC07", "L01BC08"), atcTree),
                     "Chemotherapy" to convertToAtcLevel(setOf("L01XA", "L01BC", "L01CD", "L01A"), atcTree),
-                    "Gonadorelin" to convertToAtcLevel(setOf("H01CC", "H01CA", "G03XA", "L02AE"), atcTree),
                     "PARP inhibitors" to convertToAtcLevel(setOf("L01XK"), atcTree)
                 ),
                 atcTree
