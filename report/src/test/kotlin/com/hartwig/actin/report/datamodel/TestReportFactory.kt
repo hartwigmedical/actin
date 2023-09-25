@@ -25,7 +25,7 @@ object TestReportFactory {
 
     fun createExhaustiveTestReport(): Report {
         return createMinimalTestReport().copy(
-            clinical = TestClinicalFactory.createProperTestClinicalRecord(),
+            clinical = TestClinicalFactory.createExhaustiveTestClinicalRecord(),
             molecular = TestMolecularFactory.createExhaustiveTestMolecularRecord(),
             treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch()
         )
