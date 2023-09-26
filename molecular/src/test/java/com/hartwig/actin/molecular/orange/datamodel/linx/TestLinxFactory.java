@@ -39,8 +39,7 @@ public final class TestLinxFactory {
                 .localTopologyIdStart(0)
                 .localTopologyIdEnd(0)
                 .localTICountStart(0)
-                .localTICountEnd(0)
-                ;
+                .localTICountEnd(0);
     }
 
     @NotNull
