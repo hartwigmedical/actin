@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.TestTreatmentDatabaseFactory
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -41,6 +42,62 @@ class TreatmentHistoryEntryConfigFactoryTest {
         val treatments = config.curated!!.treatments()
         assertThat(treatments).isNotNull
             .containsExactly(treatmentDatabase.findTreatmentByName(treatmentName))
+    }
+
+    @Test
+    fun `Should generate history entry for unnamed trial with no treatment`() {
+        val input = "Unknown trial"
+        val treatmentName = ""
+        val parts = partsWithMappedValues(
+            mapOf(
+                "input" to input,
+                "treatmentName" to treatmentName,
+                "startYear" to "2022",
+                "isTrial" to "1"
+            )
+        )
+        val config = TreatmentHistoryEntryConfigFactory.createConfig(treatmentName, treatmentDatabase, parts, fields)
+
+        val expected = TreatmentHistoryEntryConfig(input=input, ignore=false,
+            curated=ImmutableTreatmentHistoryEntry.builder()
+                .startYear(2022)
+                .isTrial(true)
+                .build()
+        )
+
+        assertThat(config).isEqualTo(expected)
+    }
+
+    @Test
+    fun `Should not generate entry for trial with named treatment that does not exist`() {
+        val input = "known trial"
+        val treatmentName = "trial name"
+        val parts = partsWithMappedValues(
+            mapOf(
+                "input" to input,
+                "treatmentName" to treatmentName,
+                "startYear" to "2022",
+                "isTrial" to "1"
+            )
+        )
+        assertThat(TreatmentHistoryEntryConfigFactory.createConfig(treatmentName, treatmentDatabase, parts, fields)).isNull()
+    }
+
+    @Test
+    fun `Should generate an entry with no curated treatment when treatment name is ignore`() {
+        val input = "NA"
+        val treatmentName = "<ignore>"
+        val parts = partsWithMappedValues(
+            mapOf(
+                "input" to input,
+                "treatmentName" to treatmentName
+            )
+        )
+        val config = TreatmentHistoryEntryConfigFactory.createConfig(treatmentName, treatmentDatabase, parts, fields)
+        assertThat(config).isNotNull()
+        assertThat(config?.input).isEqualTo("NA")
+        assertThat(config?.ignore).isTrue()
+        assertThat(config?.curated).isNull()
     }
 
     private fun partsWithMappedValues(overrides: Map<String, String>): List<String> {

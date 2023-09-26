@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.TumorStatus
+import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.sort.PriorSecondPrimaryDiagnosedDateComparator
 import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparator
@@ -109,14 +110,40 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
         }
 
         private fun extractTreatmentString(treatmentHistoryEntry: TreatmentHistoryEntry): String {
+            val intentNames = treatmentHistoryEntry.intents()
+                ?.filter { it != Intent.PALLIATIVE }
+                ?.map { it.name.lowercase() }
+
+            val intentString = when {
+                intentNames.isNullOrEmpty() -> null
+                intentNames.size == 1 -> intentNames[0]
+                intentNames.size >= 2 -> {
+                    intentNames.dropLast(1).joinToString(", ") + " and " + intentNames.last()
+                }
+                else -> null
+            }
+
             val cyclesString = treatmentHistoryEntry.therapyHistoryDetails()?.cycles()?.let { "$it cycles" }
 
             val stopReasonString = treatmentHistoryEntry.therapyHistoryDetails()?.stopReasonDetail()
                 ?.let { if (!it.equals(STOP_REASON_PROGRESSIVE_DISEASE, ignoreCase = true)) "stop reason: $it" else null }
 
-            val combinedAnnotation = listOfNotNull(cyclesString, stopReasonString).joinToString(", ")
+            val annotation = listOfNotNull(intentString, cyclesString, stopReasonString).joinToString(", ")
 
-            return treatmentHistoryEntry.treatmentDisplay() + if (combinedAnnotation.isEmpty()) "" else " ($combinedAnnotation)"
+            val treatmentWithAnnotation = treatmentHistoryEntry.treatmentDisplay() + if (annotation.isEmpty()) "" else " ($annotation)"
+
+            return if (treatmentHistoryEntry.isTrial) {
+                val acronym =  if (treatmentHistoryEntry.trialAcronym().isNullOrEmpty()) "" else "(${treatmentHistoryEntry.trialAcronym()})"
+                val trial = "Clinical trial"
+                when {
+                    acronym.isEmpty() && treatmentWithAnnotation.isEmpty() -> "$trial (details unknown)"
+                    acronym.isNotEmpty() && treatmentWithAnnotation.isEmpty() -> "$trial $acronym"
+                    acronym.isEmpty() && treatmentWithAnnotation.isNotEmpty() -> "$trial: $treatmentWithAnnotation"
+                    else -> "$trial $acronym: $treatmentWithAnnotation"
+                }
+            } else {
+                treatmentWithAnnotation
+            }
         }
 
         private fun toSecondPrimaryString(priorSecondPrimary: PriorSecondPrimary): String {
