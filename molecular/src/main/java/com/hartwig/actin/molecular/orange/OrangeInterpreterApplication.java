@@ -19,6 +19,8 @@ import com.hartwig.actin.molecular.orange.evidence.curation.ExternalTrialMapping
 import com.hartwig.actin.molecular.orange.interpretation.OrangeInterpreter;
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson;
 import com.hartwig.actin.molecular.util.MolecularPrinter;
+import com.hartwig.hmftools.datamodel.cuppa.CuppaData;
+import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction;
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord;
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion;
 import com.hartwig.hmftools.datamodel.OrangeJson;
@@ -128,6 +130,7 @@ public class OrangeInterpreterApplication {
 
     private static void validateOrangeRecord(OrangeRecord orange) {
         throwIfGermlineFieldNonEmpty(orange);
+        throwIfCuppaPredictionClassifierMissing(orange);
     }
 
     private static void throwIfGermlineFieldNonEmpty(OrangeRecord orange) {
@@ -144,6 +147,27 @@ public class OrangeInterpreterApplication {
 
         if (!orange.linx().germlineHomozygousDisruptions().isEmpty()) {
             throw new RuntimeException("germlineHomozygousDisruptions " + message);
+        }
+    }
+
+    private static void throwIfCuppaPredictionClassifierMissing(OrangeRecord orange) {
+        final String message = "Missing field %s: cuppa not run in expected configuration";
+        CuppaData cuppaData = orange.cuppa();
+        // TODO is it okay for no CuppaData at all?
+        if (cuppaData != null) {
+            for (CuppaPrediction pred: cuppaData.predictions()) {
+                if (pred.snvPairwiseClassifier() == null) {
+                    throw new IllegalStateException(String.format(message, "snvPairwiseClassifer"));
+                }
+
+                if (pred.genomicPositionClassifier() == null) {
+                    throw new IllegalStateException(String.format(message, "genomicPositionClassifier"));
+                }
+
+                if (pred.featureClassifier() == null) {
+                    throw new IllegalStateException(String.format(message, "featureClassifier"));
+                }
+            }
         }
     }
 

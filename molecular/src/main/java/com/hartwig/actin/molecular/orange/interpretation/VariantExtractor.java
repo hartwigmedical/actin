@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -58,22 +59,8 @@ class VariantExtractor {
     @NotNull
     public Set<Variant> extract(@NotNull PurpleRecord purple) {
         Set<Variant> variants = Sets.newTreeSet(new VariantComparator());
-
-        // TODO helper for variant aggregation?
-        Set<PurpleVariant> purpleVariants = Sets.newHashSet();
-        if (purple.allSomaticVariants() != null) {
-            purpleVariants.addAll(purple.allSomaticVariants());
-        }
-        if (purple.reportableGermlineVariants() != null) {
-            purpleVariants.addAll(purple.reportableGermlineVariants());
-        }
-
-        // TODO helper?
-        Set<PurpleDriver> drivers = Sets.newHashSet();
-        drivers.addAll(purple.somaticDrivers());
-        if (purple.germlineDrivers() != null) {
-            drivers.addAll(purple.germlineDrivers());
-        }
+        Set<PurpleVariant> purpleVariants = relevantPurpleVariants(purple);
+        Set<PurpleDriver> drivers = relevantPurpleDrivers(purple);
 
         for (PurpleVariant variant : VariantDedup.apply( purpleVariants )) {
             boolean reportedOrCoding = variant.reported() || RELEVANT_CODING_EFFECTS.contains(variant.canonicalImpact().codingEffect());
@@ -305,5 +292,27 @@ class VariantExtractor {
                 throw new IllegalStateException("Could not convert purple coding effect: " + codingEffect);
             }
         }
+    }
+
+    @NotNull
+    static Set<PurpleVariant> relevantPurpleVariants(PurpleRecord purple) {
+        Set<PurpleVariant> purpleVariants = Sets.newHashSet();
+        purpleVariants.addAll(purple.allSomaticVariants());
+        List<PurpleVariant> reportableGermlineVariants = purple.reportableGermlineVariants();
+        if (reportableGermlineVariants != null) {
+            purpleVariants.addAll(reportableGermlineVariants);
+        }
+        return purpleVariants;
+    }
+
+    @NotNull
+    static Set<PurpleDriver> relevantPurpleDrivers(PurpleRecord purple) {
+        Set<PurpleDriver> purpleDrivers = Sets.newHashSet();
+        purpleDrivers.addAll(purple.somaticDrivers());
+        List<PurpleDriver> germlineDrivers = purple.germlineDrivers();
+        if (germlineDrivers != null) {
+            purpleDrivers.addAll(germlineDrivers);
+        }
+        return purpleDrivers;
     }
 }

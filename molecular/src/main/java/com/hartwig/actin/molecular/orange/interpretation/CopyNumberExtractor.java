@@ -38,11 +38,7 @@ class CopyNumberExtractor {
     @NotNull
     public Set<CopyNumber> extract(@NotNull PurpleRecord purple) {
         Set<CopyNumber> copyNumbers = Sets.newTreeSet(new CopyNumberComparator());
-        Set<PurpleDriver> drivers = Sets.newHashSet();
-        drivers.addAll(purple.somaticDrivers());
-        if (purple.germlineDrivers() != null) {
-            drivers.addAll(purple.germlineDrivers());
-        }
+        Set<PurpleDriver> drivers = VariantExtractor.relevantPurpleDrivers(purple);
 
         for (PurpleGainLoss gainLoss : purple.allSomaticGainsLosses()) {
             PurpleDriver driver = findCopyNumberDriver(drivers, gainLoss.gene());
