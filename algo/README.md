@@ -516,7 +516,7 @@ isContraindicationForTherapy=0), the condition is ignored for evaluation.
 1] anatomicalMainGroup, therapeuticSubGroup, pharmacologicalSubGroup OR chemicalSubGroup
 
 2] Medication category list:<br>
-Antibiotics: ATC level code equal to "A07AA","C05AB","D01AA","G01AA","J02AA","J04AB","R02AB","S01AA" or "L01D" <br>
+Antibiotics: ATC level code equal to "A07A", "G01AA", "R02AB", "L01D", "J01", "J02" or "J04" <br>
 Anticoagulant medication: ATC level code equal "B01" or "B02" <br>
 Antiepileptics: ATC level code equal to "N02" <br>
 Azole medication: ATC level code equal to "D01AC", "J02AC" or "J02AB" <br>

@@ -25,17 +25,15 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
                     "Chemotherapy" to convertToAtcLevel(setOf("L01XA", "L01BC", "L01CD", "L01A"), atcTree),
                     "PARP inhibitors" to convertToAtcLevel(setOf("L01XK"), atcTree),
                     "Immunosuppressants" to convertToAtcLevel(setOf("L04"), atcTree),
-                    "Antibiotics" to convertToAtcLevel(
+                    "Systemic antibiotics" to convertToAtcLevel(
                         setOf(
-                            "A07AA",
-                            "C05AB",
-                            "D01AA",
+                            "A07A",
                             "G01AA",
-                            "J02AA",
-                            "J04AB",
                             "R02AB",
-                            "S01AA",
-                            "L01D"
+                            "L01D",
+                            "J01",
+                            "J02",
+                            "J04",
                         ), atcTree
                     ),
                     "Corticosteroids for systemic use" to convertToAtcLevel(setOf("H02"), atcTree),
