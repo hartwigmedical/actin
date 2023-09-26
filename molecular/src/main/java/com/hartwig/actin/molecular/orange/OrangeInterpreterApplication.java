@@ -22,6 +22,9 @@ import com.hartwig.actin.molecular.util.MolecularPrinter;
 import com.hartwig.hmftools.datamodel.OrangeJson;
 import com.hartwig.hmftools.datamodel.cuppa.CuppaData;
 import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction;
+import com.hartwig.hmftools.datamodel.linx.HomozygousDisruption;
+import com.hartwig.hmftools.datamodel.linx.LinxBreakend;
+import com.hartwig.hmftools.datamodel.linx.LinxSvAnnotation;
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord;
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion;
 import com.hartwig.serve.datamodel.ActionableEvents;
@@ -137,15 +140,18 @@ public class OrangeInterpreterApplication {
         final String message = "must be null or empty because ACTIN only accepts ORANGE output that has been "
                 + "scrubbed of germline data. Please use the JSON output from the 'orange_no_germline' directory.";
 
-        if (!orange.linx().allGermlineStructuralVariants().isEmpty()) {
+        List<LinxSvAnnotation> allGermlineStructuralVariants = orange.linx().allGermlineStructuralVariants();
+        if (allGermlineStructuralVariants != null && !allGermlineStructuralVariants.isEmpty()) {
             throw new RuntimeException("allGermlineStructuralVariants " + message);
         }
 
-        if (!orange.linx().allGermlineBreakends().isEmpty()) {
-            throw new RuntimeException("allGermlineStructuralVariants " + message);
+        List<LinxBreakend> allGermlineBreakends = orange.linx().allGermlineBreakends();
+        if (allGermlineBreakends != null && !allGermlineBreakends.isEmpty()) {
+            throw new RuntimeException("allGermlineBreakends " + message);
         }
 
-        if (!orange.linx().germlineHomozygousDisruptions().isEmpty()) {
+        List<HomozygousDisruption> germlineHomozygousDisruptions = orange.linx().germlineHomozygousDisruptions();
+        if (germlineHomozygousDisruptions != null && !germlineHomozygousDisruptions.isEmpty()) {
             throw new RuntimeException("germlineHomozygousDisruptions " + message);
         }
     }
@@ -155,16 +161,16 @@ public class OrangeInterpreterApplication {
         CuppaData cuppaData = orange.cuppa();
         // TODO is it okay for no CuppaData at all?
         if (cuppaData != null) {
-            for (CuppaPrediction pred: cuppaData.predictions()) {
-                if (pred.snvPairwiseClassifier() == null) {
+            for (CuppaPrediction prediction: cuppaData.predictions()) {
+                if (prediction.snvPairwiseClassifier() == null) {
                     throw new IllegalStateException(String.format(message, "snvPairwiseClassifer"));
                 }
 
-                if (pred.genomicPositionClassifier() == null) {
+                if (prediction.genomicPositionClassifier() == null) {
                     throw new IllegalStateException(String.format(message, "genomicPositionClassifier"));
                 }
 
-                if (pred.featureClassifier() == null) {
+                if (prediction.featureClassifier() == null) {
                     throw new IllegalStateException(String.format(message, "featureClassifier"));
                 }
             }
