@@ -57,10 +57,25 @@ internal object AtcTestFactory {
                 "L01XK" to NAME_NOT_APPLICABLE,
                 "B03XA" to NAME_NOT_APPLICABLE,
                 "L03AA" to NAME_NOT_APPLICABLE,
+                "A07A" to NAME_NOT_APPLICABLE,
+                "G01AA" to NAME_NOT_APPLICABLE,
+                "R02AB" to NAME_NOT_APPLICABLE,
+                "L01D" to NAME_NOT_APPLICABLE,
+                "J01" to NAME_NOT_APPLICABLE,
+                "J02" to NAME_NOT_APPLICABLE,
+                "J04" to NAME_NOT_APPLICABLE,
+                "H02" to NAME_NOT_APPLICABLE,
+                "N02" to NAME_NOT_APPLICABLE,
+                "L01F" to NAME_NOT_APPLICABLE,
+                "L02" to NAME_NOT_APPLICABLE,
+                "B03X" to NAME_NOT_APPLICABLE,
+                "L03AA" to NAME_NOT_APPLICABLE,
+                "M05BA" to NAME_NOT_APPLICABLE,
+                "M05BB" to NAME_NOT_APPLICABLE,
                 "string" to NAME_NOT_APPLICABLE,
                 "string1" to NAME_NOT_APPLICABLE,
                 "string2" to NAME_NOT_APPLICABLE,
-                "string3" to NAME_NOT_APPLICABLE
+                "string3" to NAME_NOT_APPLICABLE,
             )
         )
     }
