@@ -23,7 +23,28 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
                     "Immunotherapy" to convertToAtcLevel(setOf("L01FF02", "L01FF01", "L01FX04", "L01FF06", "L01FF04"), atcTree),
                     "Hypomethylating agents" to convertToAtcLevel(setOf("L01BC07", "L01BC08"), atcTree),
                     "Chemotherapy" to convertToAtcLevel(setOf("L01XA", "L01BC", "L01CD", "L01A"), atcTree),
-                    "PARP inhibitors" to convertToAtcLevel(setOf("L01XK"), atcTree)
+                    "PARP inhibitors" to convertToAtcLevel(setOf("L01XK"), atcTree),
+                    "Immunosuppressants" to convertToAtcLevel(setOf("L04"), atcTree),
+                    "Antibiotics" to convertToAtcLevel(
+                        setOf(
+                            "A07AA",
+                            "C05AB",
+                            "D01AA",
+                            "G01AA",
+                            "J02AA",
+                            "J04AB",
+                            "R02AB",
+                            "S01AA",
+                            "L01D"
+                        ), atcTree
+                    ),
+                    "Corticosteroids for systemic use" to convertToAtcLevel(setOf("H02"), atcTree),
+                    "Antiepileptics" to convertToAtcLevel(setOf("N02"), atcTree),
+                    "Monoclonal antibodies and antibody drug conjugates" to convertToAtcLevel(setOf("L01F"), atcTree),
+                    "Endocrine therapy" to convertToAtcLevel(setOf("L02"), atcTree),
+                    "Other antianemic preparations" to convertToAtcLevel(setOf("B03X"), atcTree),
+                    "Colony stimulating factors" to convertToAtcLevel(setOf("L03AA"), atcTree),
+                    "Bisphosphonates" to convertToAtcLevel(setOf("M05BA", "M05BB"), atcTree)
                 ),
                 atcTree
             )
