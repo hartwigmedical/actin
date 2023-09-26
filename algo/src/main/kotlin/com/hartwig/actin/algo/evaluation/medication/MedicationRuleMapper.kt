@@ -24,7 +24,6 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.CURRENTLY_GETS_NAME_X_MEDICATION to getsActiveMedicationWithConfiguredNameCreator(),
             EligibilityRule.CURRENTLY_GETS_CATEGORY_X_MEDICATION to getsActiveMedicationWithCategoryCreator(),
             EligibilityRule.HAS_RECEIVED_CATEGORY_X_MEDICATION_WITHIN_Y_WEEKS to hasRecentlyReceivedMedicationOfAtcLevelCreator(),
-            EligibilityRule.HAS_RECEIVED_TRIAL_MEDICATION_WITHIN_X_WEEKS to hasRecentlyReceivedTrialMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION to getsQTProlongatingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_ANY_CYP to getsAnyCYPInducingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_CYP_X to getsCYPXInducingMedicationCreator(),
@@ -61,14 +60,6 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             val categoryNameInput = categoryInput.string()
             val maxStopDate = referenceDateProvider().date().minusWeeks(categoryInput.integer().toLong())
             HasRecentlyReceivedMedicationOfAtcLevel(selector, categoryNameInput, categories.resolve(categoryNameInput), maxStopDate)
-        }
-    }
-
-    private fun hasRecentlyReceivedTrialMedicationCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneIntegerInput(function)
-            val maxStopDate = referenceDateProvider().date().minusWeeks(input.toLong())
-            HasRecentlyReceivedTrialMedication(selector, maxStopDate)
         }
     }
 

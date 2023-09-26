@@ -27,6 +27,8 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
             EligibilityRule.HAS_RECEIVED_DRUGS_X_CANCER_THERAPY_WITHIN_Y_WEEKS_Z_HALF_LIVES to hasRecentlyReceivedCancerTherapyOfNamesHalfLifeCreator(),
             EligibilityRule.HAS_RECEIVED_CATEGORIES_X_CANCER_THERAPY_WITHIN_Y_WEEKS to hasRecentlyReceivedCancerTherapyOfCategoriesCreator(),
             EligibilityRule.HAS_RECEIVED_CATEGORIES_X_CANCER_THERAPY_WITHIN_Y_WEEKS_Z_HALF_LIVES to hasRecentlyReceivedCancerTherapyOfCategoriesHalfLifeCreator(),
+            EligibilityRule.HAS_RECEIVED_TRIAL_MEDICATION_WITHIN_X_WEEKS to hasRecentlyReceivedTrialMedicationCreator(),
+            EligibilityRule.HAS_RECEIVED_TRIAL_MEDICATION_WITHIN_X_WEEKS_Y_HALF_LIVES to hasRecentlyReceivedTrialMedicationHalfLifeCreator(),
             EligibilityRule.HAS_RECEIVED_RADIOTHERAPY_WITHIN_X_WEEKS to hasRecentlyReceivedRadiotherapyCreator(),
             EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_WITHIN_X_WEEKS to hasRecentlyReceivedAnyCancerTherapyCreator(),
             EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_EXCL_CATEGORIES_X_WITHIN_Y_WEEKS to hasRecentlyReceivedAnyCancerTherapyButSomeCreator(),
@@ -73,6 +75,22 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
         val interpreter = createInterpreterForWashout(minWeeks)
         val mappedCategories = categoryInputs.associateWith(categories::resolve)
         return HasRecentlyReceivedCancerTherapyOfCategory(mappedCategories, emptyMap(), interpreter)
+    }
+
+    private fun hasRecentlyReceivedTrialMedicationCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneIntegerInput(function)
+            val maxStopDate = referenceDateProvider().date().minusWeeks(input.toLong())
+            HasRecentlyReceivedTrialMedication(selector, maxStopDate)
+        }
+    }
+
+    private fun hasRecentlyReceivedTrialMedicationHalfLifeCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val input = functionInputResolver().createTwoIntegersInput(function)
+            val maxStopDate = referenceDateProvider().date().minusWeeks(input.integer1().toLong())
+            HasRecentlyReceivedTrialMedication(selector, maxStopDate)
+        }
     }
 
     private fun hasRecentlyReceivedRadiotherapyCreator(): FunctionCreator {
