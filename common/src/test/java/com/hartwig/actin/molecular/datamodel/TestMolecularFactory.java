@@ -37,8 +37,8 @@ import com.hartwig.actin.molecular.datamodel.immunology.TestHlaAlleleFactory;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutablePharmacoEntry;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
 import com.hartwig.actin.molecular.datamodel.pharmaco.TestPharmacoFactory;
-import com.hartwig.hmftools.datamodel.orange.ExperimentType;
 import com.hartwig.hmftools.datamodel.cuppa.ImmutableCuppaPrediction;
+import com.hartwig.hmftools.datamodel.orange.ExperimentType;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;

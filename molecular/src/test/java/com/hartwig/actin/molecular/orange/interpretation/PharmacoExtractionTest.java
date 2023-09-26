@@ -6,11 +6,11 @@ import java.util.Set;
 
 import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
+import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
+import com.hartwig.actin.molecular.orange.datamodel.peach.TestPeachFactory;
 import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeRecord;
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord;
-import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
 import com.hartwig.hmftools.datamodel.peach.PeachGenotype;
-import com.hartwig.actin.molecular.orange.datamodel.peach.TestPeachFactory;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;

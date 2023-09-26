@@ -6,8 +6,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import com.hartwig.actin.molecular.orange.datamodel.virus.TestVirusInterpreterFactory;
-import com.hartwig.hmftools.datamodel.virus.VirusInterpretation;
 import com.hartwig.hmftools.datamodel.virus.AnnotatedVirus;
+import com.hartwig.hmftools.datamodel.virus.VirusInterpretation;
 import com.hartwig.serve.datamodel.ActionableEvent;
 import com.hartwig.serve.datamodel.ActionableEvents;
 import com.hartwig.serve.datamodel.ImmutableActionableEvents;

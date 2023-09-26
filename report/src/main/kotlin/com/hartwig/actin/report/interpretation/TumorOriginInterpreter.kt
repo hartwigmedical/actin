@@ -1,8 +1,8 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin
 import com.hartwig.actin.report.pdf.util.Formats
+import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
 
 object TumorOriginInterpreter {
     private const val LIKELIHOOD_CONFIDENCE_THRESHOLD = 0.8

@@ -13,7 +13,6 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
-import com.hartwig.hmftools.datamodel.orange.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion;
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory;
@@ -43,6 +42,7 @@ import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele;
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
 import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
+import com.hartwig.hmftools.datamodel.orange.ExperimentType;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;

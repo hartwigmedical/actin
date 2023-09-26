@@ -3,10 +3,10 @@ package com.hartwig.actin.molecular.orange.evidence.matching;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect;
-import com.hartwig.hmftools.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
 import com.hartwig.actin.molecular.orange.evidence.known.TestServeKnownFactory;
+import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect;
+import com.hartwig.hmftools.datamodel.purple.PurpleVariant;
 import com.hartwig.serve.datamodel.MutationType;
 import com.hartwig.serve.datamodel.range.RangeAnnotation;
 

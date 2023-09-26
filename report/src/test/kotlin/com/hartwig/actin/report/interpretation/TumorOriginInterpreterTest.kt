@@ -1,7 +1,5 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
-import com.hartwig.hmftools.datamodel.cuppa.ImmutableCuppaPrediction
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.greatestOmittedLikelihood
@@ -10,6 +8,8 @@ import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.interpret
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.likelihoodMeetsConfidenceThreshold
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.predictionsToDisplay
 import com.hartwig.actin.report.pdf.util.Formats
+import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
+import com.hartwig.hmftools.datamodel.cuppa.ImmutableCuppaPrediction
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.within
 import org.junit.Test

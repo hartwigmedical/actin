@@ -1,12 +1,12 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
-import com.hartwig.hmftools.datamodel.orange.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
+import com.hartwig.hmftools.datamodel.orange.ExperimentType
 import com.itextpdf.layout.element.Table
 import org.apache.logging.log4j.LogManager
 

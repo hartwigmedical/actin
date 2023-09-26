@@ -9,7 +9,6 @@ import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorStage
-import com.hartwig.hmftools.datamodel.orange.ExperimentType
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
@@ -17,6 +16,7 @@ import com.hartwig.actin.molecular.datamodel.driver.GeneRole
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
+import com.hartwig.hmftools.datamodel.orange.ExperimentType
 
 internal object TumorTestFactory {
     fun builder(): ImmutableTumorDetails.Builder {

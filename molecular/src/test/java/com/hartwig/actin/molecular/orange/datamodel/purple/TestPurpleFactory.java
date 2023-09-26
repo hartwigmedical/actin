@@ -1,24 +1,25 @@
 package com.hartwig.actin.molecular.orange.datamodel.purple;
 
+import java.util.Collections;
+
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation;
+import com.hartwig.hmftools.datamodel.purple.Hotspot;
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleAllelicDepth;
-import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleFit;
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleCharacteristics;
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleDriver;
+import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleFit;
+import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleGainLoss;
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleQC;
+import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleTranscriptImpact;
+import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleVariant;
+import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect;
+import com.hartwig.hmftools.datamodel.purple.PurpleDriverType;
 import com.hartwig.hmftools.datamodel.purple.PurpleFittedPurityMethod;
 import com.hartwig.hmftools.datamodel.purple.PurpleGenotypeStatus;
 import com.hartwig.hmftools.datamodel.purple.PurpleLikelihoodMethod;
 import com.hartwig.hmftools.datamodel.purple.PurpleMicrosatelliteStatus;
 import com.hartwig.hmftools.datamodel.purple.PurpleTumorMutationalStatus;
-import com.hartwig.hmftools.datamodel.purple.PurpleDriverType;
-import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleTranscriptImpact;
-import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect;
-import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleVariant;
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantType;
-import com.hartwig.hmftools.datamodel.purple.Hotspot;
-import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleGainLoss;
-import java.util.Collections;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;

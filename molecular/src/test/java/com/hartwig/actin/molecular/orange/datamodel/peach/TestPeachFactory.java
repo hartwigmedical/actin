@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.orange.datamodel.peach;
 
 import com.hartwig.hmftools.datamodel.peach.ImmutablePeachGenotype;
+
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 

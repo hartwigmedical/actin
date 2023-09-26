@@ -1,8 +1,9 @@
 package com.hartwig.actin.molecular.datamodel.characteristics;
 
-import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction;
 import java.util.Comparator;
 import java.util.List;
+
+import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;

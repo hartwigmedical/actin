@@ -90,8 +90,8 @@ import com.hartwig.actin.molecular.sort.driver.VariantComparator;
 import com.hartwig.actin.molecular.sort.driver.VirusComparator;
 import com.hartwig.actin.util.Paths;
 import com.hartwig.actin.util.json.GsonSerializer;
-import com.hartwig.hmftools.datamodel.orange.ExperimentType;
 import com.hartwig.hmftools.datamodel.cuppa.ImmutableCuppaPrediction;
+import com.hartwig.hmftools.datamodel.orange.ExperimentType;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

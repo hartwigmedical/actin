@@ -8,12 +8,12 @@ import java.util.Set;
 
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele;
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
-import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeRecord;
-import com.hartwig.hmftools.datamodel.orange.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
+import com.hartwig.actin.molecular.orange.datamodel.lilac.TestLilacFactory;
 import com.hartwig.hmftools.datamodel.hla.ImmutableLilacRecord;
 import com.hartwig.hmftools.datamodel.hla.LilacAllele;
-import com.hartwig.actin.molecular.orange.datamodel.lilac.TestLilacFactory;
+import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeRecord;
+import com.hartwig.hmftools.datamodel.orange.OrangeRecord;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
