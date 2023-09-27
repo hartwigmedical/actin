@@ -7,7 +7,6 @@ import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteri
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
-import com.hartwig.hmftools.datamodel.orange.ExperimentType;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;

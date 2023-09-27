@@ -1,5 +1,11 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import com.hartwig.actin.molecular.datamodel.characteristics.CuppaPrediction;
+import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableCuppaPrediction;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
@@ -30,7 +36,7 @@ class CharacteristicsExtractor {
     @NotNull
     public MolecularCharacteristics extract(@NotNull OrangeRecord record) {
         PredictedTumorOrigin predictedTumorOrigin = record.cuppa() != null
-                ? ImmutablePredictedTumorOrigin.builder().predictions(record.cuppa().predictions()).build()
+                ? ImmutablePredictedTumorOrigin.builder().predictions(determineCuppaPredictions(record.cuppa().predictions())).build()
                 : null;
 
         PurpleRecord purple = record.purple();
@@ -115,5 +121,25 @@ class CharacteristicsExtractor {
 
         LOGGER.warn("Cannot interpret tumor mutational status: {}", tumorMutationalStatus);
         return null;
+    }
+
+    @NotNull
+    private static List<CuppaPrediction> determineCuppaPredictions(List<com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction> cuppaPredictions) {
+        if (cuppaPredictions != null) {
+            return cuppaPredictions.stream().map(CharacteristicsExtractor::determineCuppaPrediction).collect(Collectors.toList());
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    @NotNull
+    private static CuppaPrediction determineCuppaPrediction(com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction cuppaPrediction) {
+        return ImmutableCuppaPrediction.builder()
+                .cancerType(cuppaPrediction.cancerType())
+                .likelihood(cuppaPrediction.likelihood())
+                .snvPairwiseClassifier(cuppaPrediction.snvPairwiseClassifier() != null ? cuppaPrediction.snvPairwiseClassifier() : 0D)
+                .genomicPositionClassifier(cuppaPrediction.genomicPositionClassifier() != null ? cuppaPrediction.genomicPositionClassifier() : 0D)
+                .featureClassifier(cuppaPrediction.featureClassifier() != null ? cuppaPrediction.featureClassifier() : 0D)
+                .build();
     }
 }

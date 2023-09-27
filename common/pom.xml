@@ -19,10 +19,6 @@
             <groupId>com.hartwig.serve</groupId>
             <artifactId>datamodel</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.hartwig</groupId>
-            <artifactId>orange-datamodel</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>com.intellij</groupId>

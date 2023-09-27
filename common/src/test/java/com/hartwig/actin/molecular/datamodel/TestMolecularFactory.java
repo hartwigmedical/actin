@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 import com.hartwig.actin.TestDataFactory;
+import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableCuppaPrediction;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
@@ -37,8 +38,6 @@ import com.hartwig.actin.molecular.datamodel.immunology.TestHlaAlleleFactory;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutablePharmacoEntry;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
 import com.hartwig.actin.molecular.datamodel.pharmaco.TestPharmacoFactory;
-import com.hartwig.hmftools.datamodel.cuppa.ImmutableCuppaPrediction;
-import com.hartwig.hmftools.datamodel.orange.ExperimentType;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;

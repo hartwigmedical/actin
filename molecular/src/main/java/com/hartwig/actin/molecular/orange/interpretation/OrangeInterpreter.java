@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.orange.interpretation;
 import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion;
@@ -39,7 +40,7 @@ public class OrangeInterpreter {
         return ImmutableMolecularRecord.builder()
                 .patientId(toPatientId(record.sampleId()))
                 .sampleId(record.sampleId())
-                .type(record.experimentType())
+                .type(determineExperimentType(record.experimentType()))
                 .refGenomeVersion(determineRefGenomeVersion(record.refGenomeVersion()))
                 .date(record.experimentDate())
                 .evidenceSource(ActionabilityConstants.EVIDENCE_SOURCE.display())
@@ -87,5 +88,19 @@ public class OrangeInterpreter {
             throw new IllegalArgumentException("Cannot convert sampleId to patientId: " + sampleId);
         }
         return sampleId.substring(0, 12);
+    }
+
+    @NotNull
+    static ExperimentType determineExperimentType(com.hartwig.hmftools.datamodel.orange.ExperimentType experimentType) {
+        switch (experimentType) {
+            case TARGETED: {
+                return ExperimentType.TARGETED;
+            }
+            case WHOLE_GENOME: {
+                return ExperimentType.WHOLE_GENOME;
+            }
+        }
+
+        throw new IllegalStateException("Could not determine experiment type from: " + experimentType);
     }
 }

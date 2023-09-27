@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.unrecoverable
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.hmftools.datamodel.orange.ExperimentType
+import com.hartwig.actin.molecular.datamodel.ExperimentType
 
 class MolecularResultsAreAvailableForGene internal constructor(private val gene: String) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {

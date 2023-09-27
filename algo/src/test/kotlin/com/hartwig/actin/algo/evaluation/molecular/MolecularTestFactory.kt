@@ -6,6 +6,7 @@ import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
@@ -20,7 +21,6 @@ import com.hartwig.actin.molecular.datamodel.driver.Variant
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableMolecularImmunology
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology
-import com.hartwig.hmftools.datamodel.orange.ExperimentType
 import org.apache.logging.log4j.util.Strings
 
 internal object MolecularTestFactory {
