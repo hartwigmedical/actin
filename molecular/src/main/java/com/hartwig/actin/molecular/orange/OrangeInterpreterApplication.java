@@ -131,13 +131,13 @@ public class OrangeInterpreterApplication {
         throw new IllegalStateException("Could not convert ORANGE ref genome version to SERVE ref genome version: " + refGenomeVersion);
     }
 
-    private static void validateOrangeRecord(OrangeRecord orange) {
+    private static void validateOrangeRecord(@NotNull  OrangeRecord orange) {
         throwIfGermlineFieldNonEmpty(orange);
         throwIfCuppaPredictionClassifierMissing(orange);
     }
 
-    private static void throwIfGermlineFieldNonEmpty(OrangeRecord orange) {
-        final String message = "must be null or empty because ACTIN only accepts ORANGE output that has been "
+    private static void throwIfGermlineFieldNonEmpty(@NotNull  OrangeRecord orange) {
+        String message = "must be null or empty because ACTIN only accepts ORANGE output that has been "
                 + "scrubbed of germline data. Please use the JSON output from the 'orange_no_germline' directory.";
 
         List<LinxSvAnnotation> allGermlineStructuralVariants = orange.linx().allGermlineStructuralVariants();
@@ -156,10 +156,9 @@ public class OrangeInterpreterApplication {
         }
     }
 
-    private static void throwIfCuppaPredictionClassifierMissing(OrangeRecord orange) {
-        final String message = "Missing field %s: cuppa not run in expected configuration";
+    private static void throwIfCuppaPredictionClassifierMissing(@NotNull  OrangeRecord orange) {
+        String message = "Missing field %s: cuppa not run in expected configuration";
         CuppaData cuppaData = orange.cuppa();
-        // TODO is it okay for no CuppaData at all?
         if (cuppaData != null) {
             for (CuppaPrediction prediction: cuppaData.predictions()) {
                 if (prediction.snvPairwiseClassifier() == null) {
