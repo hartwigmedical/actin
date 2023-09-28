@@ -487,7 +487,6 @@ class ClinicalDAO {
             context.insertInto(MEDICATION,
                             MEDICATION.PATIENTID,
                             MEDICATION.NAME,
-                            MEDICATION.CATEGORIES,
                             MEDICATION.CODEATC,
                             MEDICATION.ANATOMICALMAINGROUPATC,
                             MEDICATION.THERAPEUTICSUBGROUPATC,
@@ -505,7 +504,6 @@ class ClinicalDAO {
                             MEDICATION.STOPDATE)
                     .values(patientId,
                             medication.name(),
-                            DataUtil.concat(medication.categories()),
                             Optional.ofNullable(atc).flatMap(a -> Optional.ofNullable(a.chemicalSubstance())).map(AtcLevel::code)
                                     .orElse(null),
                             atc != null ? atc.anatomicalMainGroup().name() : null,

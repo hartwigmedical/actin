@@ -5,6 +5,7 @@ import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory
 import com.hartwig.actin.algo.doid.DoidConstants
+import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
@@ -39,7 +40,12 @@ class TestStandardOfCareApplication {
 
         val database = RecommendationDatabase(TreatmentDatabaseFactory.createFromPath(TREATMENT_JSON_PATH))
         val recommendationEngine =
-            RecommendationEngine.create(doidModel, database, ReferenceDateProviderTestFactory.createCurrentDateProvider())
+            RecommendationEngine.create(
+                doidModel,
+                AtcTree(emptyMap()),
+                database,
+                ReferenceDateProviderTestFactory.createCurrentDateProvider()
+            )
         val recommendationInterpreter = recommendationEngine.provideRecommendations(patient)
         LOGGER.info(recommendationInterpreter.summarize())
         LOGGER.info(recommendationInterpreter.csv())

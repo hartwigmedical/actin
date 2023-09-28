@@ -15,7 +15,6 @@ import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
-import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig
 import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
 import com.hartwig.actin.clinical.curation.config.MolecularTestConfig
@@ -489,10 +488,6 @@ class CurationModel @VisibleForTesting internal constructor(
         }
     }
 
-    fun lookUpMedicationCategories(medicationName: String): Set<String> {
-        return lookupMedicationCategories("medication", medicationName)
-    }
-
     fun curateMedicationCypInteractions(medicationName: String): List<CypInteraction> {
         return find(database.cypInteractionConfigs, medicationName).flatMap { it.interactions }
     }
@@ -509,20 +504,6 @@ class CurationModel @VisibleForTesting internal constructor(
         } else {
             return riskConfigs.first().status
         }
-    }
-
-
-    private fun lookupMedicationCategories(source: String, medication: String): Set<String> {
-        val trimmedMedication = fullTrim(medication)
-        val configs: Set<MedicationCategoryConfig> = find(database.medicationCategoryConfigs, trimmedMedication)
-        if (configs.isEmpty()) {
-            LOGGER.warn(" Could not find medication category config for {} with name '{}'", source, trimmedMedication)
-            return Sets.newHashSet()
-        } else if (configs.size > 1) {
-            LOGGER.warn(" Multiple category configs found for {} with name '{}'", source, trimmedMedication)
-            return Sets.newHashSet()
-        }
-        return configs.iterator().next().categories
     }
 
     fun translateAdministrationRoute(administrationRoute: String?): String? {
@@ -565,8 +546,9 @@ class CurationModel @VisibleForTesting internal constructor(
             builder.name(name).doids(config.doids)
         }
 
+        // TODO: add ATC code of medication to subcategories
         if (intolerance.category().equals("medication", ignoreCase = true)) {
-            builder.subcategories(lookupMedicationCategories("intolerance", name))
+            builder.subcategories(emptySet())
         }
 
         return builder.build()
@@ -729,10 +711,6 @@ class CurationModel @VisibleForTesting internal constructor(
 
             MedicationDosageConfig::class.java -> {
                 return database.medicationDosageConfigs
-            }
-
-            MedicationCategoryConfig::class.java -> {
-                return database.medicationCategoryConfigs
             }
 
             IntoleranceConfig::class.java -> {

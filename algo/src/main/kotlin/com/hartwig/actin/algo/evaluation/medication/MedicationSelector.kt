@@ -12,28 +12,12 @@ class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
         return medications.filter(::isActive)
     }
 
+    fun activeOrRecentlyStopped(medications: List<Medication>, minStopDate: LocalDate): List<Medication> {
+        return medications.filter { isActive(it) || isRecentlyStopped(it, minStopDate) }
+    }
+
     fun activeWithAnyTermInName(medications: List<Medication>, termsToFind: Set<String>): List<Medication> {
         return active(medications).filter { stringCaseInsensitivelyMatchesQueryCollection(it.name(), termsToFind) }
-    }
-
-    fun activeWithExactCategory(medications: List<Medication>, categoryToFind: String): List<Medication> {
-        return activeWithAnyExactCategory(medications, setOf(categoryToFind))
-    }
-
-    fun activeWithAnyExactCategory(medications: List<Medication>, categoriesToFind: Set<String>): List<Medication> {
-        val lowercaseCategoriesToFind = categoriesToFind.map { it.lowercase() }.toSet()
-        return active(medications).filter { medication ->
-            medication.categories().any { lowercaseCategoriesToFind.contains(it.lowercase()) }
-        }
-    }
-
-    fun activeOrRecentlyStoppedWithCategory(
-        medications: List<Medication>, categoryToFind: String, minStopDate: LocalDate
-    ): List<Medication> {
-        return medications.filter { medication ->
-            medication.categories().any { it.equals(categoryToFind, ignoreCase = true) }
-        }
-            .filter { isActive(it) || isRecentlyStopped(it, minStopDate) }
     }
 
     fun activeWithCypInteraction(

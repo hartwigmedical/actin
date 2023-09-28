@@ -4,19 +4,31 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.algo.medication.MedicationCategories
+import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreter
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreterOnEvaluationDate
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction
 import com.hartwig.actin.treatment.datamodel.EligibilityRule
-import org.apache.logging.log4j.LogManager
 
 class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
+    private val selector: MedicationSelector
+    private val categories: MedicationCategories
+
+    init {
+        val interpreter: MedicationStatusInterpreter = MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date())
+        selector = MedicationSelector(interpreter)
+        categories = MedicationCategories.create(atcTree())
+    }
+
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.HAS_RECEIVED_DRUGS_X_CANCER_THERAPY_WITHIN_Y_WEEKS to hasRecentlyReceivedCancerTherapyOfNamesCreator(),
             EligibilityRule.HAS_RECEIVED_DRUGS_X_CANCER_THERAPY_WITHIN_Y_WEEKS_Z_HALF_LIVES to hasRecentlyReceivedCancerTherapyOfNamesHalfLifeCreator(),
             EligibilityRule.HAS_RECEIVED_CATEGORIES_X_CANCER_THERAPY_WITHIN_Y_WEEKS to hasRecentlyReceivedCancerTherapyOfCategoriesCreator(),
             EligibilityRule.HAS_RECEIVED_CATEGORIES_X_CANCER_THERAPY_WITHIN_Y_WEEKS_Z_HALF_LIVES to hasRecentlyReceivedCancerTherapyOfCategoriesHalfLifeCreator(),
+            EligibilityRule.HAS_RECEIVED_TRIAL_MEDICATION_WITHIN_X_WEEKS to hasRecentlyReceivedTrialMedicationCreator(),
+            EligibilityRule.HAS_RECEIVED_TRIAL_MEDICATION_WITHIN_X_WEEKS_Y_HALF_LIVES to hasRecentlyReceivedTrialMedicationHalfLifeCreator(),
             EligibilityRule.HAS_RECEIVED_RADIOTHERAPY_WITHIN_X_WEEKS to hasRecentlyReceivedRadiotherapyCreator(),
             EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_WITHIN_X_WEEKS to hasRecentlyReceivedAnyCancerTherapyCreator(),
             EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_EXCL_CATEGORIES_X_WITHIN_Y_WEEKS to hasRecentlyReceivedAnyCancerTherapyButSomeCreator(),
@@ -61,14 +73,23 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
 
     private fun createReceivedCancerTherapyOfCategoryFunction(categoryInputs: List<String>, minWeeks: Int): EvaluationFunction {
         val interpreter = createInterpreterForWashout(minWeeks)
+        val mappedCategories = categoryInputs.associateWith(categories::resolve)
+        return HasRecentlyReceivedCancerTherapyOfCategory(mappedCategories, emptyMap(), interpreter)
+    }
 
-        // TODO: Dynamically resolve inputs to names and/or categories
-        val names = determineNames(categoryInputs)
-        return if (names != null) {
-            HasRecentlyReceivedCancerTherapyOfName(names, interpreter)
-        } else {
-            val categories = determineCategories(categoryInputs)
-            HasRecentlyReceivedCancerTherapyOfCategory(categories, interpreter)
+    private fun hasRecentlyReceivedTrialMedicationCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneIntegerInput(function)
+            val maxStopDate = referenceDateProvider().date().minusWeeks(input.toLong())
+            HasRecentlyReceivedTrialMedication(selector, maxStopDate)
+        }
+    }
+
+    private fun hasRecentlyReceivedTrialMedicationHalfLifeCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val input = functionInputResolver().createTwoIntegersInput(function)
+            val maxStopDate = referenceDateProvider().date().minusWeeks(input.integer1().toLong())
+            HasRecentlyReceivedTrialMedication(selector, maxStopDate)
         }
     }
 
@@ -97,7 +118,8 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
 
     private fun createReceivedAnyCancerTherapyFunction(minWeeks: Int): EvaluationFunction {
         val interpreter = createInterpreterForWashout(minWeeks)
-        return HasRecentlyReceivedCancerTherapyOfCategory(ALL_ANTI_CANCER_CATEGORIES, interpreter)
+        val antiCancerCategories = mapOf("Anticancer" to categories.resolve("Anticancer"))
+        return HasRecentlyReceivedCancerTherapyOfCategory(antiCancerCategories, emptyMap(), interpreter)
     }
 
     private fun hasRecentlyReceivedAnyCancerTherapyButSomeCreator(): FunctionCreator {
@@ -116,8 +138,9 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
 
     private fun createReceivedAnyCancerTherapyButSomeFunction(categoriesToIgnore: List<String>, minWeeks: Int): EvaluationFunction {
         val interpreter = createInterpreterForWashout(minWeeks)
-        val categoriesToConsider = ALL_ANTI_CANCER_CATEGORIES - determineCategories(categoriesToIgnore)
-        return HasRecentlyReceivedCancerTherapyOfCategory(categoriesToConsider, interpreter)
+        val antiCancerCategories = mapOf("Anticancer" to categories.resolve("Anticancer"))
+        val mappedIgnoredCategories = categoriesToIgnore.associateWith(categories::resolve)
+        return HasRecentlyReceivedCancerTherapyOfCategory(antiCancerCategories, mappedIgnoredCategories, interpreter)
     }
 
     private fun willRequireAnticancerTherapyCreator(): FunctionCreator {
@@ -127,44 +150,5 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
     private fun createInterpreterForWashout(inputWeeks: Int): MedicationStatusInterpreter {
         val minDate = referenceDateProvider().date().minusWeeks(inputWeeks.toLong()).plusWeeks(2)
         return MedicationStatusInterpreterOnEvaluationDate(minDate)
-    }
-
-    companion object {
-        private val LOGGER = LogManager.getLogger(WashoutRuleMapper::class.java)
-        private val MEDICATIONS_FOR_MAIN_CATEGORY: Map<String, Set<String>> = mapOf(
-            "Immunotherapy" to setOf("Pembrolizumab", "Nivolumab", "Ipilimumab", "Cemiplimab", "Avelumab"),
-            "PARP inhibitors" to setOf("Olaparib", "Rucaparib"),
-            "Hypomethylating agents" to setOf("Azacitidine", "Decitabine")
-        )
-        private val chemotherapyCategories = setOf("Platinum compound", "Pyrimidine antagonist", "Taxane", "Alkylating agent")
-        private val endocrineTherapyCategories = setOf("Anti-androgen", "Anti-estrogen")
-        private val gonadorelinCategories = setOf("Gonadorelin agonist", "Gonadorelin antagonist")
-
-        private val CATEGORIES_PER_MAIN_CATEGORY: Map<String, Set<String>> = mapOf(
-            "Chemotherapy" to chemotherapyCategories,
-            "Endocrine therapy" to endocrineTherapyCategories,
-            "Gonadorelin" to gonadorelinCategories,
-            "Immunosuppressants" to setOf("Immunosuppressants, selective", "Immunosuppressants, other")
-        )
-
-        private val ALL_ANTI_CANCER_CATEGORIES: Set<String> = setOf(
-            chemotherapyCategories, gonadorelinCategories, endocrineTherapyCategories,
-            setOf("Cytotoxic antibiotics", "Monoclonal antibody for malignancies", "Protein kinase inhibitor", "Oncolytics, other")
-        ).flatten().toSet()
-
-        private fun determineCategories(inputs: List<String>): Set<String> {
-            return inputs.flatMap { CATEGORIES_PER_MAIN_CATEGORY[it] ?: setOf(it) }.toSet()
-        }
-
-        private fun determineNames(inputs: List<String>): Set<String>? {
-            val result = MEDICATIONS_FOR_MAIN_CATEGORY[inputs[0]]
-            if (result != null && inputs.size > 1) {
-                LOGGER.warn(
-                    "Multiple inputs configured in washout while first input resolves to explicit set of medication names: {}",
-                    inputs
-                )
-            }
-            return result
-        }
     }
 }

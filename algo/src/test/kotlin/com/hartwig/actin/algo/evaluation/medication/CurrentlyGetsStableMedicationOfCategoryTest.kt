@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.medication
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.Dosage
+import com.hartwig.actin.clinical.datamodel.ImmutableAtcLevel
 import com.hartwig.actin.clinical.datamodel.ImmutableDosage
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
@@ -10,70 +11,87 @@ import org.junit.Test
 
 class CurrentlyGetsStableMedicationOfCategoryTest {
     @Test
-    fun canEvaluateOnOneTerm() {
-        val category1 = "category 1"
-        val function = CurrentlyGetsStableMedicationOfCategory(MedicationTestFactory.alwaysActive(), setOf(category1))
+    fun shouldFailWhenNoMedication() {
+        val medications = emptyList<Medication>()
+        assertEvaluation(EvaluationResult.FAIL, ONE_CATEGORY_FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
+    }
 
-        // Fails on no medication
-        val medications: MutableList<Medication> = mutableListOf()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
+    @Test
+    fun shouldPassWhenSingleMedicationWithDosing() {
+        val medications = listOf(TestMedicationFactory.builder().dosage(fixedDosing()).atc(ATC_CATEGORY_1).build())
+        assertEvaluation(EvaluationResult.PASS, ONE_CATEGORY_FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
+    }
 
-        // Passes with single medication with dosing.
-        medications.add(TestMedicationFactory.builder().dosage(fixedDosing()).addCategories(category1).build())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
-
-        // Passes with another medication with no category and same dosing
-        medications.add(TestMedicationFactory.builder().dosage(fixedDosing()).categories(emptySet()).build())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
-
-        // Fails on same category and other dosing.
-        medications.add(
-            TestMedicationFactory.builder().dosage(ImmutableDosage.builder().from(fixedDosing()).frequencyUnit("other").build())
-                .addCategories(category1).build()
+    @Test
+    fun shouldPassWhenAnotherMedicationWithNoCategoryAndSameDosing() {
+        val medications = listOf(
+            TestMedicationFactory.builder().dosage(fixedDosing()).atc(ATC_CATEGORY_1).build(),
+            TestMedicationFactory.builder().dosage(fixedDosing()).build()
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(EvaluationResult.PASS, ONE_CATEGORY_FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
+    }
 
-        // Also fail in case a dosing is combined with medication without dosing.
+    @Test
+    fun shouldFailWhenSameCategoryAndOtherDosing() {
+        val medications = listOf(
+            TestMedicationFactory.builder().dosage(fixedDosing()).atc(ATC_CATEGORY_1).build(),
+            TestMedicationFactory.builder().dosage(fixedDosing()).build(),
+            TestMedicationFactory.builder().dosage(ImmutableDosage.builder().from(fixedDosing()).frequencyUnit("other").build())
+                .atc(
+                    ATC_CATEGORY_1
+                ).build()
+        )
+        assertEvaluation(EvaluationResult.FAIL, ONE_CATEGORY_FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
+    }
+
+    @Test
+    fun shouldFailWhenDosingIsCombinedWithMedicationWithoutDosing() {
+        val medications = listOf(
+            TestMedicationFactory.builder()
+                .dosage(fixedDosing())
+                .build(), TestMedicationFactory.builder().build()
+        )
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(
+            ONE_CATEGORY_FUNCTION.evaluate(
                 MedicationTestFactory.withMedications(
-                    listOf(
-                        TestMedicationFactory.builder()
-                            .dosage(fixedDosing())
-                            .addCategories(category1)
-                            .build(), TestMedicationFactory.builder().addCategories(category1).build()
-                    )
+                    medications
                 )
             )
         )
     }
 
     @Test
-    fun canEvaluateForMultipleTerms() {
-        val category1 = "category 1"
-        val category2 = "category 2"
-        val function = CurrentlyGetsStableMedicationOfCategory(MedicationTestFactory.alwaysActive(), setOf(category1, category2))
-
-        // Passes with single medication with dosing.
-        val medications: MutableList<Medication> = mutableListOf()
-        medications.add(TestMedicationFactory.builder().dosage(fixedDosing()).addCategories(category1).build())
-        medications.add(TestMedicationFactory.builder().dosage(fixedDosing()).addCategories(category2).build())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
-
-        // Passes on same category and other dosing.
-        medications.add(
-            TestMedicationFactory.builder().dosage(ImmutableDosage.builder().from(fixedDosing()).frequencyUnit("other").build())
-                .addCategories(category1).build()
+    fun shouldPassWithMultipleMedicationsWithDosing() {
+        val medications = listOf(
+            TestMedicationFactory.builder().dosage(fixedDosing()).atc(ATC_CATEGORY_1).build(),
+            TestMedicationFactory.builder().dosage(fixedDosing()).atc(ATC_CATEGORY_2).build()
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(EvaluationResult.PASS, MULTIPLE_CATEGORIES_FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
+    }
 
-        // Start failing when both categories have wrong dosing.
-        medications.add(
+    @Test
+    fun shouldPassOnSameCategoryAndOneWithStableDosing() {
+        val medications = listOf(
+            TestMedicationFactory.builder().dosage(fixedDosing()).atc(ATC_CATEGORY_1).build(),
+            TestMedicationFactory.builder().dosage(fixedDosing()).atc(ATC_CATEGORY_2).build(),
             TestMedicationFactory.builder().dosage(ImmutableDosage.builder().from(fixedDosing()).frequencyUnit("other").build())
-                .addCategories(category2).build()
+                .atc(ATC_CATEGORY_1).build()
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(EvaluationResult.PASS, MULTIPLE_CATEGORIES_FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
+    }
+
+    @Test
+    fun shouldFailWhenBothCategoriesHaveWrongDosing() {
+        val medications = listOf(
+            TestMedicationFactory.builder().dosage(fixedDosing()).atc(ATC_CATEGORY_1).build(),
+            TestMedicationFactory.builder().dosage(fixedDosing()).atc(ATC_CATEGORY_2).build(),
+            TestMedicationFactory.builder().dosage(ImmutableDosage.builder().from(fixedDosing()).frequencyUnit("other").build())
+                .atc(ATC_CATEGORY_1).build(),
+            TestMedicationFactory.builder().dosage(ImmutableDosage.builder().from(fixedDosing()).frequencyUnit("other").build())
+                .atc(ATC_CATEGORY_2).build(),
+        )
+        assertEvaluation(EvaluationResult.FAIL, MULTIPLE_CATEGORIES_FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     companion object {
@@ -87,5 +105,29 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
                 .ifNeeded(false)
                 .build()
         }
+
+        private const val CATEGORY_1 = "category 1"
+        private const val CATEGORY_2 = "category 2"
+
+        private val ATC_CATEGORY_1 =
+            AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().code(CATEGORY_1).build()).build()
+        private val ATC_CATEGORY_2 =
+            AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().code(CATEGORY_2).build()).build()
+
+        private val ONE_CATEGORY_FUNCTION = CurrentlyGetsStableMedicationOfCategory(
+            MedicationTestFactory.alwaysActive(), mapOf(
+                CATEGORY_1 to setOf(
+                    ImmutableAtcLevel.builder().code(CATEGORY_1).name("").build()
+                )
+            )
+        )
+        private val MULTIPLE_CATEGORIES_FUNCTION =
+            CurrentlyGetsStableMedicationOfCategory(
+                MedicationTestFactory.alwaysActive(),
+                mapOf(
+                    CATEGORY_1 to setOf(ImmutableAtcLevel.builder().code(CATEGORY_1).name("").build()),
+                    CATEGORY_2 to setOf(ImmutableAtcLevel.builder().code(CATEGORY_2).name("").build())
+                )
+            )
     }
 }

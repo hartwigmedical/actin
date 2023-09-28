@@ -3,8 +3,10 @@ package com.hartwig.actin.algo.soc
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.TreatmentDatabaseFactory
+import com.hartwig.actin.algo.TreatmentMatcherApplication
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
+import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.clinical.util.ClinicalPrinter
@@ -49,12 +51,15 @@ class StandardOfCareApplication(config: StandardOfCareConfig) {
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size)
         val doidModel: DoidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
+        TreatmentMatcherApplication.LOGGER.info("Creating ATC tree from file {}", config.atcTsv)
+        val atcTree = AtcTree.createFromFile(config.atcTsv)
+
         LOGGER.info("Loading treatment data from {}", config.treatmentDirectory)
         val recommendationDatabase = RecommendationDatabase(TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory))
 
         val referenceDateProvider: ReferenceDateProvider = ReferenceDateProviderFactory.create(clinical, config.runHistorically)
         val recommendationEngine: RecommendationEngine =
-            RecommendationEngine.create(doidModel, recommendationDatabase, referenceDateProvider)
+            RecommendationEngine.create(doidModel, atcTree, recommendationDatabase, referenceDateProvider)
 
         LOGGER.info("Recommended treatments descending order of preference:")
         LOGGER.info(recommendationEngine.provideRecommendations(patient).listAvailableTreatmentsByScore())
@@ -71,7 +76,7 @@ class StandardOfCareApplication(config: StandardOfCareConfig) {
 @Throws(IOException::class)
 fun main(args: Array<String>) {
     val options: Options = StandardOfCareConfig.createOptions()
-    
+
     try {
         val config = StandardOfCareConfig.createConfig(DefaultParser().parse(options, args))
         StandardOfCareApplication(config).run()

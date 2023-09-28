@@ -37,7 +37,6 @@ class MedicationExtractorTest {
 
         assertThat(EXTRACTOR.extractMedication(entry)).isEqualTo(ImmutableMedication.builder()
             .name("Paracetamol")
-            .addCategories("Acetanilide derivatives")
             .status(MedicationStatus.ACTIVE)
             .administrationRoute("oral")
             .dosage(ImmutableDosage.builder()

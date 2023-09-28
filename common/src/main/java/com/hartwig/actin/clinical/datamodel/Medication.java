@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.datamodel;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -14,9 +15,6 @@ public abstract class Medication {
 
     @NotNull
     public abstract String name();
-
-    @NotNull
-    public abstract Set<String> categories();
 
     @Nullable
     public abstract MedicationStatus status();
@@ -46,4 +44,9 @@ public abstract class Medication {
 
     @NotNull
     public abstract Boolean isTrialMedication();
+
+    public Set<AtcLevel> allLevels() {
+        return atc() == null ? Collections.emptySet() : atc().allLevels();
+    }
+
 }
