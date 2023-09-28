@@ -517,13 +517,13 @@ isContraindicationForTherapy=0), the condition is ignored for evaluation.
 
 2] Medication category list:<br>
 Antibiotics: ATC level code equal to "A07A", "G01AA", "R02AB", "L01D", "J01", "J02" or "J04" <br>
-Anticoagulant medication: ATC level code equal "B01" or "B02" <br>
-Antiepileptics: ATC level code equal to "N02" <br>
-Azole medication: ATC level code equal to "D01AC", "J02AC" or "J02AB" <br>
+Anticoagulant medication: ATC level code equal "B01AA", "B01AB", "B01AE", "B01AF" or "B01AX" <br>
+Antiepileptics: ATC level code equal to "N03" <br>
+Azole medication: ATC level code equal to "A07AC", "D01AC", "G01AF", "G01BF", "G01AG", "J02AC" or "J02AB" <br>
 Bisphosphonates: ATC level code equal to "M05BA" or "M05BB" <br>
 Bone resorptive medication: ATC level code equal to "M05B" or "H05" <br>
 Colony stimulating factors: ATC level code equal to "L03AA" <br>
-Corticosteroids for systemic use: ATC level code equal to "H02" <br>
+Corticosteroids for systemic use: ATC level code equal to "H02" or "M01BA" <br>
 Coumarin derivative medication: ATC level code equal to "B01AA" <br>
 Gonadorelin medication: ATC level code equal to "H01CC", "H01CA", "G03XA" or "L02AE" <br>
 Immunosuppressants: ATC level code equal to "L04" <br>
@@ -548,8 +548,7 @@ Other antianemic preparations: ATC level code equal to "B03X" <br>
 
 3] Cancer therapy list:<br>
 Chemotherapy: ATC level code equal to "L01XA", "L01BC", "L01CD" or "L01A" <br>
-Immunotherapy: ATC level code equal to "L01FF02" (Pembrolizumab), "L01FF01" (Nivolumab), "L01FX04" (Ipilimumab), "L01FF06" (Cemiplimab) or "
-L01FF04" (Avelumab) <br>
+Immunotherapy: ATC level code equal to "L01FF" or "L01FX04" (Ipilimumab) <br>
 PARP inhibitors: ATC level code equal to "L01XK" <br>
 Gonadorelin: ATC level code equal to "H01CC", "H01CA", "G03XA" or "L02AE" <br>
 Hypomethylating agents: ATC level code equal to "L01BC07" (Azacitidine) or "L01BC08" (Decitabine) <br>

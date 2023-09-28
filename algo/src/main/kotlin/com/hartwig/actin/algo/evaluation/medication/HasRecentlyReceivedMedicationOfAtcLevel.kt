@@ -31,13 +31,13 @@ class HasRecentlyReceivedMedicationOfAtcLevel(
         return if (medications.isNotEmpty()) {
             val foundMedicationString = if (foundMedicationNames.isNotEmpty()) ": ${concatLowercaseWithAnd(foundMedicationNames)}" else ""
             EvaluationFactory.pass(
-                "Patient recently received medication$foundMedicationString which belong(s) to category $categoryName",
-                "Recent $categoryName medication"
+                "Patient recently received medication$foundMedicationString which belong(s) to category '$categoryName'",
+                "Recent '$categoryName' medication use$foundMedicationString"
             )
         } else {
             EvaluationFactory.fail(
-                "Patient has not recently received medication of category $categoryName",
-                "No recent $categoryName medication"
+                "Patient has not recently received medication of category '$categoryName'",
+                "No recent '$categoryName' medication use"
             )
         }
 

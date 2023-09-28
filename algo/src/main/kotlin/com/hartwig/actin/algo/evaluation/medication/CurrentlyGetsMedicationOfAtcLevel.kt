@@ -23,13 +23,13 @@ class CurrentlyGetsMedicationOfAtcLevel(
         return if (medications.isNotEmpty()) {
             val foundMedicationString = if (foundMedicationNames.isNotEmpty()) ": ${concatLowercaseWithAnd(foundMedicationNames)}" else ""
             EvaluationFactory.pass(
-                "Patient currently gets medication$foundMedicationString which belong(s) to category $categoryName",
-                "$categoryName medication use"
+                "Patient currently gets medication$foundMedicationString which belong(s) to category '$categoryName'",
+                "'$categoryName' medication use$foundMedicationString"
             )
         } else
             EvaluationFactory.fail(
-                "Patient currently does not get medication of category $categoryName",
-                "No $categoryName medication use"
+                "Patient currently does not get medication of category '$categoryName'",
+                "No '$categoryName' medication use"
             )
     }
 }

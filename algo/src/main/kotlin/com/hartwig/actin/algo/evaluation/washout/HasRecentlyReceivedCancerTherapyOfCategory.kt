@@ -31,13 +31,13 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
         return if (activeMedicationsMatchingCategories.isNotEmpty()) {
             val foundMedicationString = if (foundMedicationNames.isNotEmpty()) ": ${concatLowercaseWithAnd(foundMedicationNames)}" else ""
             EvaluationFactory.pass(
-                "Patient has recently received medication of category ${concatLowercaseWithAnd(foundCategories)}$foundMedicationString",
-                "Has recently received medication of category ${concatLowercaseWithAnd(foundCategories)}$foundMedicationString"
+                "Patient has recently received medication of category '${concatLowercaseWithAnd(foundCategories)}'$foundMedicationString",
+                "Recent'${concatLowercaseWithAnd(foundCategories)}' medication use$foundMedicationString"
             )
         } else {
             EvaluationFactory.fail(
-                "Patient has not received recent treatments of category " + concatLowercaseWithAnd(categoryNames),
-                "Has not received recent treatments of category " + concatLowercaseWithAnd(categoryNames)
+                "Patient has not received recent treatments of category '${concatLowercaseWithAnd(categoryNames)}'",
+                "No recent '${concatLowercaseWithAnd(categoryNames)}' medication use"
             )
         }
     }
