@@ -487,11 +487,6 @@ class ClinicalDAO {
             context.insertInto(MEDICATION,
                             MEDICATION.PATIENTID,
                             MEDICATION.NAME,
-                            MEDICATION.CODEATC,
-                            MEDICATION.ANATOMICALMAINGROUPATC,
-                            MEDICATION.THERAPEUTICSUBGROUPATC,
-                            MEDICATION.PHARMACOLOGICALSUBGROUPATC,
-                            MEDICATION.CHEMICALSUBGROUPATC,
                             MEDICATION.STATUS,
                             MEDICATION.ADMINISTRATIONROUTE,
                             MEDICATION.DOSAGEMIN,
@@ -499,17 +494,22 @@ class ClinicalDAO {
                             MEDICATION.DOSAGEUNIT,
                             MEDICATION.FREQUENCY,
                             MEDICATION.FREQUENCYUNIT,
+                            MEDICATION.PERIODBETWEENVALUE,
+                            MEDICATION.PERIODBETWEENUNIT,
                             MEDICATION.IFNEEDED,
                             MEDICATION.STARTDATE,
-                            MEDICATION.STOPDATE)
+                            MEDICATION.STOPDATE,
+                            MEDICATION.CYPINTERACTIONS,
+                            MEDICATION.QTPROLONGATINGRISK,
+                            MEDICATION.ANATOMICALMAINGROUPATCNAME,
+                            MEDICATION.THERAPEUTICSUBGROUPATCNAME,
+                            MEDICATION.PHARMACOLOGICALSUBGROUPATCNAME,
+                            MEDICATION.CHEMICALSUBGROUPATCNAME,
+                            MEDICATION.CHEMICALSUBSTANCEATCCODE,
+                            MEDICATION.ISSELFCARE,
+                            MEDICATION.ISTRIALMEDICATION)
                     .values(patientId,
                             medication.name(),
-                            Optional.ofNullable(atc).flatMap(a -> Optional.ofNullable(a.chemicalSubstance())).map(AtcLevel::code)
-                                    .orElse(null),
-                            atc != null ? atc.anatomicalMainGroup().name() : null,
-                            atc != null ? atc.therapeuticSubGroup().name() : null,
-                            atc != null ? atc.pharmacologicalSubGroup().name() : null,
-                            atc != null ? atc.chemicalSubGroup().name() : null,
                             medication.status() != null ? medication.status().toString() : null,
                             medication.administrationRoute(),
                             medication.dosage().dosageMin(),
@@ -517,9 +517,23 @@ class ClinicalDAO {
                             medication.dosage().dosageUnit(),
                             medication.dosage().frequency(),
                             medication.dosage().frequencyUnit(),
+                            medication.dosage().periodBetweenValue(),
+                            medication.dosage().periodBetweenUnit(),
                             medication.dosage().ifNeeded(),
                             medication.startDate(),
-                            medication.stopDate())
+                            medication.stopDate(),
+                            DataUtil.concatObjects(medication.cypInteractions()),
+                            medication.qtProlongatingRisk().toString(),
+                            atc != null ? atc.anatomicalMainGroup().name() : null,
+                            atc != null ? atc.therapeuticSubGroup().name() : null,
+                            atc != null ? atc.pharmacologicalSubGroup().name() : null,
+                            atc != null ? atc.chemicalSubGroup().name() : null,
+                            Optional.ofNullable(atc)
+                                    .flatMap(a -> Optional.ofNullable(a.chemicalSubstance()))
+                                    .map(AtcLevel::code)
+                                    .orElse(null),
+                            medication.isSelfCare(),
+                            medication.isTrialMedication())
                     .execute();
         }
     }

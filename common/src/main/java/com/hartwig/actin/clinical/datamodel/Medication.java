@@ -34,6 +34,7 @@ public abstract class Medication {
     @NotNull
     public abstract List<CypInteraction> cypInteractions();
 
+    @NotNull
     public abstract QTProlongatingRisk qtProlongatingRisk();
 
     @Nullable
@@ -45,8 +46,8 @@ public abstract class Medication {
     @NotNull
     public abstract Boolean isTrialMedication();
 
+    @NotNull
     public Set<AtcLevel> allLevels() {
         return atc() == null ? Collections.emptySet() : atc().allLevels();
     }
-
 }

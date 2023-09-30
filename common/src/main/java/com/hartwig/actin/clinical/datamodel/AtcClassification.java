@@ -10,24 +10,26 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
-public interface AtcClassification {
+@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
+public abstract class AtcClassification {
 
     @NotNull
-    AtcLevel anatomicalMainGroup();
+    public abstract AtcLevel anatomicalMainGroup();
 
     @NotNull
-    AtcLevel therapeuticSubGroup();
+    public abstract AtcLevel therapeuticSubGroup();
 
     @NotNull
-    AtcLevel pharmacologicalSubGroup();
+    public abstract AtcLevel pharmacologicalSubGroup();
 
     @NotNull
-    AtcLevel chemicalSubGroup();
+    public abstract AtcLevel chemicalSubGroup();
 
     @Nullable
-    AtcLevel chemicalSubstance();
+    public abstract AtcLevel chemicalSubstance();
 
-    default Set<AtcLevel> allLevels() {
+    @NotNull
+    public Set<AtcLevel> allLevels() {
         return Stream.concat(Optional.ofNullable(chemicalSubstance()).stream(),
                         Stream.of(anatomicalMainGroup(), therapeuticSubGroup(), pharmacologicalSubGroup(), chemicalSubGroup()))
                 .collect(Collectors.toSet());
