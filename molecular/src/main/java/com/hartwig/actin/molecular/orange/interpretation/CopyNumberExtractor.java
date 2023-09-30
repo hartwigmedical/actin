@@ -53,8 +53,8 @@ class CopyNumberExtractor {
                         .driverLikelihood(driver != null ? DriverLikelihood.HIGH : null)
                         .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(gainLoss)))
                         .type(determineType(gainLoss.interpretation()))
-                        .minCopies((int) gainLoss.minCopies())
-                        .maxCopies((int) gainLoss.maxCopies())
+                        .minCopies((int) Math.round(gainLoss.minCopies()))
+                        .maxCopies((int) Math.round(gainLoss.maxCopies()))
                         .build());
             } else if (driver != null) {
                 throw new IllegalStateException(

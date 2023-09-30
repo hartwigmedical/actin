@@ -52,17 +52,24 @@ public class CopyNumberExtractorTest {
                 .interpretation(CopyNumberInterpretation.FULL_GAIN)
                 .build();
 
+        PurpleGainLoss gainLoss4 = TestPurpleFactory.gainLossBuilder()
+                .gene("gene 4")
+                .minCopies(19.6)
+                .maxCopies(20.4)
+                .interpretation(CopyNumberInterpretation.FULL_GAIN)
+                .build();
+
         PurpleRecord purple = ImmutablePurpleRecord.builder()
                 .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
                 .addSomaticDrivers(driver1)
-                .addAllSomaticGainsLosses(gainLoss1, gainLoss2, gainLoss3)
+                .addAllSomaticGainsLosses(gainLoss1, gainLoss2, gainLoss3, gainLoss4)
                 .build();
 
-        GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes(gainLoss1.gene(), gainLoss2.gene());
+        GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes(gainLoss1.gene(), gainLoss2.gene(), gainLoss4.gene());
         CopyNumberExtractor copyNumberExtractor = new CopyNumberExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase());
 
         Set<CopyNumber> copyNumbers = copyNumberExtractor.extract(purple);
-        assertEquals(2, copyNumbers.size());
+        assertEquals(3, copyNumbers.size());
 
         CopyNumber gene1 = findByGene(copyNumbers, "gene 1");
         assertTrue(gene1.isReportable());
@@ -77,6 +84,10 @@ public class CopyNumberExtractorTest {
         assertEquals(CopyNumberType.FULL_GAIN, gene2.type());
         assertEquals(20, gene2.minCopies());
         assertEquals(21, gene2.maxCopies());
+
+        CopyNumber gene4 = findByGene(copyNumbers, "gene 4");
+        assertEquals(20, gene4.minCopies());
+        assertEquals(20, gene4.maxCopies());
     }
 
     @Test(expected = IllegalStateException.class)
