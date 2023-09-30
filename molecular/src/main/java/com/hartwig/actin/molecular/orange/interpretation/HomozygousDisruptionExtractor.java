@@ -28,7 +28,7 @@ class HomozygousDisruptionExtractor {
     @NotNull
     public Set<HomozygousDisruption> extractHomozygousDisruptions(@NotNull LinxRecord linx) {
         Set<HomozygousDisruption> homozygousDisruptions = Sets.newTreeSet(new HomozygousDisruptionComparator());
-        for (com.hartwig.hmftools.datamodel.linx.HomozygousDisruption homozygousDisruption : linx.somaticHomozygousDisruptions()) {
+        for (com.hartwig.hmftools.datamodel.linx.HomozygousDisruption homozygousDisruption : relevantHomozygousDisruptions(linx)) {
             if (geneFilter.include(homozygousDisruption.gene())) {
                 homozygousDisruptions.add(ImmutableHomozygousDisruption.builder()
                         .from(GeneAlterationFactory.convertAlteration(homozygousDisruption.gene(),
@@ -45,5 +45,15 @@ class HomozygousDisruptionExtractor {
             }
         }
         return homozygousDisruptions;
+    }
+
+    @NotNull
+    static Set<com.hartwig.hmftools.datamodel.linx.HomozygousDisruption> relevantHomozygousDisruptions(@NotNull LinxRecord linx) {
+        Set<com.hartwig.hmftools.datamodel.linx.HomozygousDisruption> disruptions = Sets.newHashSet();
+        disruptions.addAll(linx.somaticHomozygousDisruptions());
+        if (linx.germlineHomozygousDisruptions() != null) {
+            disruptions.addAll(linx.germlineHomozygousDisruptions());
+        }
+        return disruptions;
     }
 }
