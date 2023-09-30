@@ -245,7 +245,7 @@ CREATE TABLE `medication`
     `ifNeeded` BOOLEAN,
     `startDate` DATE,
     `stopDate` DATE,
-    `cypInteractions` varchar(50) NOT NULL,
+    `cypInteractions` varchar(100) NOT NULL,
     `qtProlongatingRisk` varchar(50) NOT NULL,
     `anatomicalMainGroupAtcName` varchar(100),
     `therapeuticSubgroupAtcName` varchar(100),

@@ -17,6 +17,7 @@ import static com.hartwig.actin.database.Tables.TREATMENTHISTORYENTRY;
 import static com.hartwig.actin.database.Tables.TUMOR;
 import static com.hartwig.actin.database.Tables.VITALFUNCTION;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.Complication;
+import com.hartwig.actin.clinical.datamodel.CypInteraction;
 import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.ECGMeasure;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
@@ -522,7 +524,7 @@ class ClinicalDAO {
                             medication.dosage().ifNeeded(),
                             medication.startDate(),
                             medication.stopDate(),
-                            DataUtil.concatObjects(medication.cypInteractions()),
+                            DataUtil.concat(cypInteractionsToStrings(medication.cypInteractions())),
                             medication.qtProlongatingRisk().toString(),
                             atc != null ? atc.anatomicalMainGroup().name() : null,
                             atc != null ? atc.therapeuticSubGroup().name() : null,
@@ -533,8 +535,14 @@ class ClinicalDAO {
                                     .map(AtcLevel::code)
                                     .orElse(null),
                             medication.isSelfCare(),
-                            medication.isTrialMedication())
-                    .execute();
+                            medication.isTrialMedication()).execute();
         }
+    }
+
+    @NotNull
+    private static Collection<String> cypInteractionsToStrings(@NotNull List<CypInteraction> cypInteractions) {
+        return cypInteractions.stream()
+                .map(interaction -> interaction.strength() + " " + interaction.type() + " (" + interaction.cyp() + ")")
+                .collect(Collectors.toSet());
     }
 }
