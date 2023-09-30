@@ -18,6 +18,11 @@ import com.hartwig.actin.molecular.filter.TestGeneFilterFactory;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory;
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants;
+import com.hartwig.hmftools.datamodel.cuppa.ImmutableCuppaData;
+import com.hartwig.hmftools.datamodel.linx.ImmutableHomozygousDisruption;
+import com.hartwig.hmftools.datamodel.linx.ImmutableLinxBreakend;
+import com.hartwig.hmftools.datamodel.linx.ImmutableLinxRecord;
+import com.hartwig.hmftools.datamodel.linx.ImmutableLinxSvAnnotation;
 import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeRecord;
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord;
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion;
@@ -120,6 +125,43 @@ public class OrangeInterpreterTest {
     public void shouldThrowExceptionOnEmptyQCStates() {
         OrangeInterpreter interpreter = createTestInterpreter();
         interpreter.interpret(orangeRecordWithQCStatuses(Set.of()));
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void shouldThrowExceptionOnMissingCuppaPredictionClassifiers() {
+        OrangeRecord minimal = orangeRecordWithQCStatus(PurpleQCStatus.PASS);
+        OrangeRecord record = ImmutableOrangeRecord.copyOf(minimal).withCuppa(ImmutableCuppaData.builder().build());
+        OrangeInterpreter.validateOrangeRecord(record);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void shouldThrowExceptionOnGermlineDisruptionPresent() {
+        OrangeRecord minimal = TestOrangeFactory.createMinimalTestOrangeRecord();
+        OrangeRecord record = ImmutableOrangeRecord.copyOf(minimal)
+                .withLinx(ImmutableLinxRecord.builder()
+                        .addGermlineHomozygousDisruptions(ImmutableHomozygousDisruption.builder().gene("gene 1").build())
+                        .build());
+        OrangeInterpreter.validateOrangeRecord(record);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void shouldThrowExceptionOnGermlineBreakendPresent() {
+        OrangeRecord minimal = TestOrangeFactory.createMinimalTestOrangeRecord();
+        OrangeRecord record = ImmutableOrangeRecord.copyOf(minimal)
+                .withLinx(ImmutableLinxRecord.builder()
+                        .addAllGermlineBreakends(ImmutableLinxBreakend.builder().gene("gene1").build())
+                        .build());
+        OrangeInterpreter.validateOrangeRecord(record);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void shouldThrowExceptionOnGermlineSVPresentPresent() {
+        OrangeRecord minimal = TestOrangeFactory.createMinimalTestOrangeRecord();
+        OrangeRecord record = ImmutableOrangeRecord.copyOf(minimal)
+                .withLinx(ImmutableLinxRecord.builder()
+                        .addAllGermlineStructuralVariants(ImmutableLinxSvAnnotation.builder().svId(1).build())
+                        .build());
+        OrangeInterpreter.validateOrangeRecord(record);
     }
 
     @NotNull
