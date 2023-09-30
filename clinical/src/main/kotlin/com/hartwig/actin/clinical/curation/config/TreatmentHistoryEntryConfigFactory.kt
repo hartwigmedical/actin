@@ -75,7 +75,7 @@ object TreatmentHistoryEntryConfigFactory {
 
         val isTrial = optionalObjectFromColumn(parts, fields, "isTrial", ResourceFile::optionalBool) ?: false
 
-        if (treatment == null && treatmentName.isNotEmpty() && !isTrial) {
+        if (treatment == null && !(treatmentName.isEmpty() && isTrial)) {
             logMissingTreatmentMessage(treatmentName)
             return null
         }

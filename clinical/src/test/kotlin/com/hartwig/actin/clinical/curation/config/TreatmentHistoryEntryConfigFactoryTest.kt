@@ -8,7 +8,7 @@ import org.junit.Test
 class TreatmentHistoryEntryConfigFactoryTest {
 
     @Test
-    fun shouldNotGenerateTreatmentHistoryEntryConfigForUnknownTreatment() {
+    fun `Should not generate treatment history entry config for unknown treatment`() {
         val input = "Unknown therapy 2022"
         val treatmentName = "Unknown therapy"
         val parts = partsWithMappedValues(
@@ -22,7 +22,7 @@ class TreatmentHistoryEntryConfigFactoryTest {
     }
 
     @Test
-    fun shouldGenerateTreatmentForKnownTreatment() {
+    fun `Should generate treatment for known treatment`() {
         val input = "CAPOX 2023"
         val treatmentName = TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN
         val parts = partsWithMappedValues(
