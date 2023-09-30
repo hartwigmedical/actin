@@ -234,7 +234,6 @@ CREATE TABLE `medication`
     `patientId` varchar(50) NOT NULL,
     `name` varchar(100) NOT NULL,
     `codeATC` varchar(50),
-    `categories` varchar(100),
     `chemicalSubgroupATC` varchar(100),
     `pharmacologicalSubgroupATC` varchar(100),
     `therapeuticSubgroupATC` varchar(100),
