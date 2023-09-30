@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
+import java.util.List;
 import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -10,6 +11,11 @@ import com.hartwig.actin.molecular.datamodel.RefGenomeVersion;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants;
+import com.hartwig.hmftools.datamodel.cuppa.CuppaData;
+import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction;
+import com.hartwig.hmftools.datamodel.linx.HomozygousDisruption;
+import com.hartwig.hmftools.datamodel.linx.LinxBreakend;
+import com.hartwig.hmftools.datamodel.linx.LinxSvAnnotation;
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord;
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion;
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus;
@@ -102,5 +108,54 @@ public class OrangeInterpreter {
         }
 
         throw new IllegalStateException("Could not determine experiment type from: " + experimentType);
+    }
+
+    public static void validateOrangeRecord(@NotNull OrangeRecord orange) {
+        throwIfGermlineFieldNonEmpty(orange);
+        throwIfAnyCuppaPredictionClassifierMissing(orange);
+    }
+    public static void throwIfGermlineFieldNonEmpty(@NotNull OrangeRecord orange) {
+        String message = "must be null or empty because ACTIN only accepts ORANGE output that has been "
+                + "scrubbed of germline data. Please use the JSON output from the 'orange_no_germline' directory.";
+
+        List<LinxSvAnnotation> allGermlineStructuralVariants = orange.linx().allGermlineStructuralVariants();
+        if (allGermlineStructuralVariants != null && !allGermlineStructuralVariants.isEmpty()) {
+            throw new RuntimeException("allGermlineStructuralVariants " + message);
+        }
+
+        List<LinxBreakend> allGermlineBreakends = orange.linx().allGermlineBreakends();
+        if (allGermlineBreakends != null && !allGermlineBreakends.isEmpty()) {
+            throw new RuntimeException("allGermlineBreakends " + message);
+        }
+
+        List<HomozygousDisruption> germlineHomozygousDisruptions = orange.linx().germlineHomozygousDisruptions();
+        if (germlineHomozygousDisruptions != null && !germlineHomozygousDisruptions.isEmpty()) {
+            throw new RuntimeException("germlineHomozygousDisruptions " + message);
+        }
+    }
+
+    public static void throwIfAnyCuppaPredictionClassifierMissing(@NotNull OrangeRecord orange) {
+        CuppaData cuppaData = orange.cuppa();
+        if (cuppaData != null) {
+            for (CuppaPrediction prediction: cuppaData.predictions()) {
+                throwIfCuppaPredictionClassifierMissing(prediction);
+            }
+        }
+    }
+
+    public static void throwIfCuppaPredictionClassifierMissing(@NotNull CuppaPrediction prediction) {
+        String message = "Missing field %s: cuppa not run in expected configuration";
+
+        if (prediction.snvPairwiseClassifier() == null) {
+            throw new IllegalStateException(String.format(message, "snvPairwiseClassifer"));
+        }
+
+        if (prediction.genomicPositionClassifier() == null) {
+            throw new IllegalStateException(String.format(message, "genomicPositionClassifier"));
+        }
+
+        if (prediction.featureClassifier() == null) {
+            throw new IllegalStateException(String.format(message, "featureClassifier"));
+        }
     }
 }

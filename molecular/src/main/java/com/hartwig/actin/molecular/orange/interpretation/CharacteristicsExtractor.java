@@ -134,12 +134,14 @@ class CharacteristicsExtractor {
 
     @NotNull
     private static CuppaPrediction determineCuppaPrediction(com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction cuppaPrediction) {
+        OrangeInterpreter.throwIfCuppaPredictionClassifierMissing(cuppaPrediction);
+
         return ImmutableCuppaPrediction.builder()
                 .cancerType(cuppaPrediction.cancerType())
                 .likelihood(cuppaPrediction.likelihood())
-                .snvPairwiseClassifier(cuppaPrediction.snvPairwiseClassifier() != null ? cuppaPrediction.snvPairwiseClassifier() : 0D)
-                .genomicPositionClassifier(cuppaPrediction.genomicPositionClassifier() != null ? cuppaPrediction.genomicPositionClassifier() : 0D)
-                .featureClassifier(cuppaPrediction.featureClassifier() != null ? cuppaPrediction.featureClassifier() : 0D)
+                .snvPairwiseClassifier(cuppaPrediction.snvPairwiseClassifier())
+                .genomicPositionClassifier(cuppaPrediction.genomicPositionClassifier())
+                .featureClassifier(cuppaPrediction.featureClassifier())
                 .build();
     }
 }
