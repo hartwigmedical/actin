@@ -1,32 +1,34 @@
 package com.hartwig.actin.clinical.datamodel;
 
 import org.immutables.value.Value;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
-public interface Dosage {
+@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
+public abstract class Dosage {
 
     @Nullable
-    Double dosageMin();
+    public abstract Double dosageMin();
 
     @Nullable
-    Double dosageMax();
+    public abstract Double dosageMax();
 
     @Nullable
-    String dosageUnit();
+    public abstract String dosageUnit();
 
     @Nullable
-    Double frequency();
+    public abstract Double frequency();
 
     @Nullable
-    String frequencyUnit();
+    public abstract String frequencyUnit();
 
     @Nullable
-    Double periodBetweenValue();
+    public abstract Double periodBetweenValue();
 
     @Nullable
-    String periodBetweenUnit();
+    public abstract String periodBetweenUnit();
 
     @Nullable
-    Boolean ifNeeded();
+    public abstract Boolean ifNeeded();
 }
