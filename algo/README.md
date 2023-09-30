@@ -11,6 +11,7 @@ java -cp actin.jar com.hartwig.actin.algo.TreatmentMatcherApplicationKt \
    -molecular_json /path/to/molecular.json \
    -treatment_database_directory /path/to/potential_treatment_options \
    -doid_json /path/to/full_doid_tree_json_file \
+   -atc_tsv /path/to/full_atc_tree_tsv_file \
    -output_directory /path/where/output/is/written \
 ```
 
