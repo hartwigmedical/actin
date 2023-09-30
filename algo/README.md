@@ -1,4 +1,3 @@
-
 ## ACTIN-Algo
 
 ACTIN-Algo matches a patient record (clinical & molecular data) with available treatments.
@@ -54,8 +53,8 @@ result that becomes a `FAIL` after negation with `NOT`.
 #### Evaluation feedback
 
 Every criterion algorithm provides human-readable feedback ('messages') about its evaluation, so that a human can easily and quickly
-understand which
-evaluation has been done and why the outcome of the evaluation (`PASS`,`WARN`, `FAIL`, `UNDETERMINED` or `NOT_EVALUATED`) is as it is.
+understand which evaluation has been done and why the outcome of the evaluation (`PASS`,`WARN`, `FAIL`, `UNDETERMINED` or `NOT_EVALUATED`)
+is as it is.
 
 #### Treatment eligibility
 
@@ -651,7 +650,8 @@ more information, see https://disease-ontology.org/.
 #### CYP interactions
 
 To evaluates rules about CYP interactions, we made use of the list of interactions on the following
-website: https://www.fda.gov/drugs/drug-interactions-labeling/healthcare-professionals-fdas-examples-drugs-interact-cyp-enzymes-and-transporter-systems.
+website: https://www.fda.gov/drugs/drug-interactions-labeling/healthcare-professionals-fdas-examples-drugs-interact-cyp-enzymes-and-transporter-systems
+.
 
 #### QT prolongating drugs
 
@@ -661,7 +661,6 @@ To evaluate rules about QT prolongation, we made use of the list of drugs on the
 
 To classify medication we made use of the ATC classification system: https://www.whocc.no/atc_ddd_index/. All active substances are
 classified in a hierarchy with five different levels.
-
 
 ### Version History and Download Links
 
