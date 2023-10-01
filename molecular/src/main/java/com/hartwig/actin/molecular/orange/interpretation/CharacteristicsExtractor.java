@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.hartwig.actin.molecular.datamodel.characteristics.CuppaPrediction;
-import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableCuppaPrediction;
+import com.hartwig.actin.molecular.datamodel.characteristics.CupPrediction;
+import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableCupPrediction;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
@@ -36,7 +36,7 @@ class CharacteristicsExtractor {
     @NotNull
     public MolecularCharacteristics extract(@NotNull OrangeRecord record) {
         PredictedTumorOrigin predictedTumorOrigin = record.cuppa() != null
-                ? ImmutablePredictedTumorOrigin.builder().predictions(determineCuppaPredictions(record.cuppa().predictions())).build()
+                ? ImmutablePredictedTumorOrigin.builder().predictions(determineCupPredictions(record.cuppa().predictions())).build()
                 : null;
 
         PurpleRecord purple = record.purple();
@@ -124,19 +124,19 @@ class CharacteristicsExtractor {
     }
 
     @NotNull
-    private static List<CuppaPrediction> determineCuppaPredictions(List<com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction> cuppaPredictions) {
+    private static List<CupPrediction> determineCupPredictions(List<com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction> cuppaPredictions) {
         if (cuppaPredictions != null) {
-            return cuppaPredictions.stream().map(CharacteristicsExtractor::determineCuppaPrediction).collect(Collectors.toList());
+            return cuppaPredictions.stream().map(CharacteristicsExtractor::determineCupPrediction).collect(Collectors.toList());
         } else {
             return Collections.emptyList();
         }
     }
 
     @NotNull
-    private static CuppaPrediction determineCuppaPrediction(com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction cuppaPrediction) {
+    private static CupPrediction determineCupPrediction(com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction cuppaPrediction) {
         OrangeInterpreter.throwIfCuppaPredictionClassifierMissing(cuppaPrediction);
 
-        return ImmutableCuppaPrediction.builder()
+        return ImmutableCupPrediction.builder()
                 .cancerType(cuppaPrediction.cancerType())
                 .likelihood(cuppaPrediction.likelihood())
                 .snvPairwiseClassifier(cuppaPrediction.snvPairwiseClassifier())

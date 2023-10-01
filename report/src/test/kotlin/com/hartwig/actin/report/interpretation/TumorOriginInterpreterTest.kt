@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.molecular.datamodel.characteristics.CuppaPrediction
-import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableCuppaPrediction
+import com.hartwig.actin.molecular.datamodel.characteristics.CupPrediction
+import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableCupPrediction
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.greatestOmittedLikelihood
@@ -62,7 +62,7 @@ class TumorOriginInterpreterTest {
     @Test
     fun shouldDisplayAtMostThreePredictions() {
         val predictions = predictionsToDisplay(withPredictions(0.4, 0.12, 0.15, 0.25))
-        assertThat(predictions.map(CuppaPrediction::likelihood)).containsExactlyInAnyOrder(0.4, 0.25, 0.15)
+        assertThat(predictions.map(CupPrediction::likelihood)).containsExactlyInAnyOrder(0.4, 0.25, 0.15)
     }
 
     @Test
@@ -81,7 +81,7 @@ class TumorOriginInterpreterTest {
             return ImmutablePredictedTumorOrigin.builder()
                 .predictions(IntStream.range(0, likelihoods.size)
                     .mapToObj { i: Int ->
-                        ImmutableCuppaPrediction.builder()
+                        ImmutableCupPrediction.builder()
                             .cancerType(String.format("type %s", i + 1))
                             .likelihood(likelihoods[i])
                             .snvPairwiseClassifier(likelihoods[i])

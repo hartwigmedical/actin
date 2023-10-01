@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import com.hartwig.actin.molecular.datamodel.characteristics.CuppaPrediction;
+import com.hartwig.actin.molecular.datamodel.characteristics.CupPrediction;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
@@ -43,12 +43,12 @@ public class CharacteristicsExtractorTest {
         assertEquals("Melanoma", predictedOrigin.cancerType());
         assertEquals(0.996, predictedOrigin.likelihood(), EPSILON);
         assertEquals(1, predictedOrigin.predictions().size());
-        CuppaPrediction cuppaPrediction = predictedOrigin.predictions().iterator().next();
-        assertEquals("Melanoma", cuppaPrediction.cancerType());
-        assertEquals(0.996, cuppaPrediction.likelihood(), EPSILON);
-        assertDoubleEquals(0.979, cuppaPrediction.snvPairwiseClassifier());
-        assertDoubleEquals(0.99, cuppaPrediction.genomicPositionClassifier());
-        assertDoubleEquals(0.972, cuppaPrediction.featureClassifier());
+        CupPrediction cupPrediction = predictedOrigin.predictions().iterator().next();
+        assertEquals("Melanoma", cupPrediction.cancerType());
+        assertEquals(0.996, cupPrediction.likelihood(), EPSILON);
+        assertDoubleEquals(0.979, cupPrediction.snvPairwiseClassifier());
+        assertDoubleEquals(0.99, cupPrediction.genomicPositionClassifier());
+        assertDoubleEquals(0.972, cupPrediction.featureClassifier());
 
         assertEquals(false, characteristics.isMicrosatelliteUnstable());
         assertNotNull(characteristics.microsatelliteEvidence());
