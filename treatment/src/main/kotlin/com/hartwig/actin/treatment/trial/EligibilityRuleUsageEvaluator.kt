@@ -64,7 +64,8 @@ object EligibilityRuleUsageEvaluator {
         EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_LINES_X,
         EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT,
         EligibilityRule.HAS_PT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS,
-        EligibilityRule.HAS_APTT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS
+        EligibilityRule.HAS_APTT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS,
+        EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL
     )
 
     fun evaluate(trials: List<Trial>) {
