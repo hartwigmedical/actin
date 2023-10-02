@@ -18,18 +18,15 @@ import com.hartwig.actin.molecular.filter.TestGeneFilterFactory;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.TestCuppaFactory;
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
+import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory;
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants;
 import com.hartwig.hmftools.datamodel.cuppa.ImmutableCuppaData;
-import com.hartwig.hmftools.datamodel.linx.ImmutableHomozygousDisruption;
-import com.hartwig.hmftools.datamodel.linx.ImmutableLinxBreakend;
 import com.hartwig.hmftools.datamodel.linx.ImmutableLinxRecord;
-import com.hartwig.hmftools.datamodel.linx.ImmutableLinxSvAnnotation;
 import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeRecord;
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord;
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion;
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleFit;
-import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleQC;
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord;
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus;
 
@@ -175,13 +172,7 @@ public class OrangeInterpreterTest {
         return ImmutableOrangeRecord.copyOf(minimal)
                 .withPurple(ImmutablePurpleRecord.copyOf(minimal.purple())
                         .withFit(ImmutablePurpleFit.copyOf(minimal.purple().fit())
-                                .withQc(ImmutablePurpleQC.builder()  // TODO check for existing helper
-                                        .addAllStatus(statuses)
-                                        .amberMeanDepth(0)
-                                        .contamination(0D)
-                                        .unsupportedCopyNumberSegments(0)
-                                        .deletedGenes(0)
-                                        .build())));
+                                .withQc(TestPurpleFactory.purpleQCBuilder().addAllStatus(statuses).build())));
     }
 
     @NotNull
