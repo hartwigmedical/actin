@@ -8,12 +8,15 @@ import com.hartwig.actin.clinical.feed.FeedModel
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
+import com.hartwig.actin.util.json.GsonSerializer
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.nio.file.Files
+import java.nio.file.Paths
 import kotlin.system.exitProcess
 
 class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) {
@@ -51,11 +54,26 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         LOGGER.info("Writing {} clinical records to {}", records.size, outputDirectory)
         ClinicalRecordJson.write(records, outputDirectory)
         LOGGER.info("Done!")
+
+        val curationResult = curationModel.evaluate();
+        if (curationResult.warnings.isNotEmpty()) {
+            val warningJsonPath = Paths.get(outputDirectory).resolve(WARNINGS_JSON)
+            LOGGER.info("Writing {} curation warnings to {}", curationResult, warningJsonPath)
+            Files.write(
+                warningJsonPath,
+                GsonSerializer.create().toJson(curationResult).toByteArray()
+            )
+            LOGGER.warn("Summary of warnings:")
+            curationResult.warnings.forEach { LOGGER.warn(it) }
+            LOGGER.warn("Summary complete.")
+        }
+
     }
 
     companion object {
         val LOGGER: Logger = LogManager.getLogger(ClinicalIngestionApplication::class.java)
         const val APPLICATION = "ACTIN Clinical Ingestion"
+        private const val WARNINGS_JSON = "clinical.warnings.json"
         private val VERSION = ClinicalIngestionApplication::class.java.getPackage().implementationVersion
     }
 }
