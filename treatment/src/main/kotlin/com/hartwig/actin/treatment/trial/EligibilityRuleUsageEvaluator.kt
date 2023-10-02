@@ -56,7 +56,15 @@ object EligibilityRuleUsageEvaluator {
         EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_BCRP,
         EligibilityRule.HAS_ANY_COMPLICATION,
         EligibilityRule.HAS_INTOLERANCE_FOR_PD_1_OR_PD_L1_INHIBITORS,
-        EligibilityRule.HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X
+        EligibilityRule.HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X,
+        EligibilityRule.HAS_SOLID_PRIMARY_TUMOR_INCLUDING_LYMPHOMA,
+        EligibilityRule.MEETS_SPECIFIC_CRITERIA_REGARDING_LIVER_METASTASES,
+        EligibilityRule.HAS_PRESENCE_OF_LESIONS_IN_AT_LEAST_X_SITES,
+        EligibilityRule.HAS_INJECTION_AMENABLE_LESION,
+        EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_LINES_X,
+        EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT,
+        EligibilityRule.HAS_PT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS,
+        EligibilityRule.HAS_APTT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS
     )
 
     fun evaluate(trials: List<Trial>) {
