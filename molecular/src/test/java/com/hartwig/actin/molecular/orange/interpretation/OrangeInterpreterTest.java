@@ -16,6 +16,8 @@ import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
+import com.hartwig.actin.molecular.orange.datamodel.cuppa.TestCuppaFactory;
+import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory;
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants;
 import com.hartwig.hmftools.datamodel.cuppa.ImmutableCuppaData;
@@ -129,38 +131,36 @@ public class OrangeInterpreterTest {
 
     @Test(expected = IllegalStateException.class)
     public void shouldThrowExceptionOnMissingCuppaPredictionClassifiers() {
-        OrangeRecord minimal = orangeRecordWithQCStatus(PurpleQCStatus.PASS);
-        OrangeRecord record = ImmutableOrangeRecord.copyOf(minimal).withCuppa(ImmutableCuppaData.builder().build());
+        OrangeRecord proper = TestOrangeFactory.createProperTestOrangeRecord();
+        OrangeRecord record = ImmutableOrangeRecord.copyOf(proper).withCuppa(
+                ImmutableCuppaData.copyOf(proper.cuppa()).withPredictions(TestCuppaFactory.builder().build()));
         OrangeInterpreter.validateOrangeRecord(record);
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = IllegalStateException.class)
     public void shouldThrowExceptionOnGermlineDisruptionPresent() {
-        OrangeRecord minimal = TestOrangeFactory.createMinimalTestOrangeRecord();
-        OrangeRecord record = ImmutableOrangeRecord.copyOf(minimal)
-                .withLinx(ImmutableLinxRecord.builder()
-                        .addGermlineHomozygousDisruptions(ImmutableHomozygousDisruption.builder().gene("gene 1").build())
-                        .build());
+        OrangeRecord proper = TestOrangeFactory.createProperTestOrangeRecord();
+        OrangeRecord record = ImmutableOrangeRecord.copyOf(proper)
+                .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
+                        .withGermlineHomozygousDisruptions(TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build()));
         OrangeInterpreter.validateOrangeRecord(record);
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = IllegalStateException.class)
     public void shouldThrowExceptionOnGermlineBreakendPresent() {
-        OrangeRecord minimal = TestOrangeFactory.createMinimalTestOrangeRecord();
-        OrangeRecord record = ImmutableOrangeRecord.copyOf(minimal)
-                .withLinx(ImmutableLinxRecord.builder()
-                        .addAllGermlineBreakends(ImmutableLinxBreakend.builder().gene("gene1").build())
-                        .build());
+        OrangeRecord proper = TestOrangeFactory.createProperTestOrangeRecord();
+        OrangeRecord record = ImmutableOrangeRecord.copyOf(proper)
+                .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
+                        .withAllGermlineBreakends(TestLinxFactory.breakendBuilder().gene("gene 1").build()));
         OrangeInterpreter.validateOrangeRecord(record);
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = IllegalStateException.class)
     public void shouldThrowExceptionOnGermlineSVPresentPresent() {
-        OrangeRecord minimal = TestOrangeFactory.createMinimalTestOrangeRecord();
-        OrangeRecord record = ImmutableOrangeRecord.copyOf(minimal)
-                .withLinx(ImmutableLinxRecord.builder()
-                        .addAllGermlineStructuralVariants(ImmutableLinxSvAnnotation.builder().svId(1).build())
-                        .build());
+        OrangeRecord proper = TestOrangeFactory.createProperTestOrangeRecord();
+        OrangeRecord record = ImmutableOrangeRecord.copyOf(proper)
+                .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
+                        .withAllGermlineStructuralVariants(TestLinxFactory.structuralVariantBuilder().svId(1).build()));
         OrangeInterpreter.validateOrangeRecord(record);
     }
 

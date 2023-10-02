@@ -36,6 +36,7 @@ public class OrangeInterpreter {
 
     @NotNull
     public MolecularRecord interpret(@NotNull OrangeRecord record) {
+        validateOrangeRecord(record);
         DriverExtractor driverExtractor = DriverExtractor.create(geneFilter, evidenceDatabase);
         CharacteristicsExtractor characteristicsExtractor = new CharacteristicsExtractor(evidenceDatabase);
 
@@ -110,31 +111,32 @@ public class OrangeInterpreter {
         throw new IllegalStateException("Could not determine experiment type from: " + experimentType);
     }
 
-    public static void validateOrangeRecord(@NotNull OrangeRecord orange) {
+    static void validateOrangeRecord(@NotNull OrangeRecord orange) {
         throwIfGermlineFieldNonEmpty(orange);
         throwIfAnyCuppaPredictionClassifierMissing(orange);
     }
-    public static void throwIfGermlineFieldNonEmpty(@NotNull OrangeRecord orange) {
+
+    private static void throwIfGermlineFieldNonEmpty(@NotNull OrangeRecord orange) {
         String message = "must be null or empty because ACTIN only accepts ORANGE output that has been "
                 + "scrubbed of germline data. Please use the JSON output from the 'orange_no_germline' directory.";
 
         List<LinxSvAnnotation> allGermlineStructuralVariants = orange.linx().allGermlineStructuralVariants();
-        if (allGermlineStructuralVariants != null && !allGermlineStructuralVariants.isEmpty()) {
-            throw new RuntimeException("allGermlineStructuralVariants " + message);
+        if (allGermlineStructuralVariants != null) {
+            throw new IllegalStateException("allGermlineStructuralVariants " + message);
         }
 
         List<LinxBreakend> allGermlineBreakends = orange.linx().allGermlineBreakends();
-        if (allGermlineBreakends != null && !allGermlineBreakends.isEmpty()) {
-            throw new RuntimeException("allGermlineBreakends " + message);
+        if (allGermlineBreakends != null) {
+            throw new IllegalStateException("allGermlineBreakends " + message);
         }
 
         List<HomozygousDisruption> germlineHomozygousDisruptions = orange.linx().germlineHomozygousDisruptions();
-        if (germlineHomozygousDisruptions != null && !germlineHomozygousDisruptions.isEmpty()) {
-            throw new RuntimeException("germlineHomozygousDisruptions " + message);
+        if (germlineHomozygousDisruptions != null) {
+            throw new IllegalStateException("germlineHomozygousDisruptions " + message);
         }
     }
 
-    public static void throwIfAnyCuppaPredictionClassifierMissing(@NotNull OrangeRecord orange) {
+    private static void throwIfAnyCuppaPredictionClassifierMissing(@NotNull OrangeRecord orange) {
         CuppaData cuppaData = orange.cuppa();
         if (cuppaData != null) {
             for (CuppaPrediction prediction: cuppaData.predictions()) {
@@ -143,7 +145,7 @@ public class OrangeInterpreter {
         }
     }
 
-    public static void throwIfCuppaPredictionClassifierMissing(@NotNull CuppaPrediction prediction) {
+    private static void throwIfCuppaPredictionClassifierMissing(@NotNull CuppaPrediction prediction) {
         String message = "Missing field %s: cuppa not run in expected configuration";
 
         if (prediction.snvPairwiseClassifier() == null) {

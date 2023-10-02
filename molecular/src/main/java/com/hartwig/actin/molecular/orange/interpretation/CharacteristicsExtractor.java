@@ -12,6 +12,7 @@ import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteri
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.hmftools.datamodel.chord.ChordStatus;
+import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction;
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord;
 import com.hartwig.hmftools.datamodel.purple.PurpleMicrosatelliteStatus;
 import com.hartwig.hmftools.datamodel.purple.PurpleRecord;
@@ -124,7 +125,7 @@ class CharacteristicsExtractor {
     }
 
     @NotNull
-    private static List<CupPrediction> determineCupPredictions(List<com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction> cuppaPredictions) {
+    private static List<CupPrediction> determineCupPredictions(List<CuppaPrediction> cuppaPredictions) {
         if (cuppaPredictions != null) {
             return cuppaPredictions.stream().map(CharacteristicsExtractor::determineCupPrediction).collect(Collectors.toList());
         } else {
@@ -133,9 +134,7 @@ class CharacteristicsExtractor {
     }
 
     @NotNull
-    private static CupPrediction determineCupPrediction(com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction cuppaPrediction) {
-        OrangeInterpreter.throwIfCuppaPredictionClassifierMissing(cuppaPrediction);
-
+    private static CupPrediction determineCupPrediction(CuppaPrediction cuppaPrediction) {
         return ImmutableCupPrediction.builder()
                 .cancerType(cuppaPrediction.cancerType())
                 .likelihood(cuppaPrediction.likelihood())

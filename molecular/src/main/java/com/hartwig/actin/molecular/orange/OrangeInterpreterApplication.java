@@ -70,7 +70,6 @@ public class OrangeInterpreterApplication {
 
         LOGGER.info("Reading ORANGE json from {}", config.orangeJson());
         OrangeRecord orange = OrangeJson.getInstance().read(config.orangeJson());
-        OrangeInterpreter.validateOrangeRecord(orange);
 
         LOGGER.info("Loading evidence database");
         RefGenome serveRefGenomeVersion = toServeRefGenomeVersion(orange.refGenomeVersion());

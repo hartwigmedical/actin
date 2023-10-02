@@ -48,7 +48,7 @@ class HomozygousDisruptionExtractor {
     }
 
     @NotNull
-    static Set<com.hartwig.hmftools.datamodel.linx.HomozygousDisruption> relevantHomozygousDisruptions(@NotNull LinxRecord linx) {
+    private static Set<com.hartwig.hmftools.datamodel.linx.HomozygousDisruption> relevantHomozygousDisruptions(@NotNull LinxRecord linx) {
         Set<com.hartwig.hmftools.datamodel.linx.HomozygousDisruption> disruptions = Sets.newHashSet();
         disruptions.addAll(linx.somaticHomozygousDisruptions());
         if (linx.germlineHomozygousDisruptions() != null) {
