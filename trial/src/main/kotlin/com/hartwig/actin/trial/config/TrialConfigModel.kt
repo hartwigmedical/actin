@@ -1,7 +1,6 @@
 package com.hartwig.actin.trial.config
 
 import com.hartwig.actin.trial.interpretation.EligibilityFactory
-import java.io.IOException
 
 class TrialConfigModel(
     private val trialDefinitionConfigs: List<TrialDefinitionConfig>,
@@ -36,7 +35,7 @@ class TrialConfigModel(
     }
 
     companion object {
-        @Throws(IOException::class)
+
         fun create(trialConfigDirectory: String, eligibilityFactory: EligibilityFactory): TrialConfigModel {
             val database = TrialConfigDatabaseReader.read(trialConfigDirectory)
             check(TrialConfigDatabaseValidator(eligibilityFactory).isValid(database)) { "Trial config database is not considered valid. Cannot create config model." }

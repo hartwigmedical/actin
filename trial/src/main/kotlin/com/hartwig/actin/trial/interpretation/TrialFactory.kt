@@ -23,7 +23,6 @@ import com.hartwig.actin.trial.config.InclusionCriteriaReferenceConfig
 import com.hartwig.actin.trial.config.TrialConfigModel
 import com.hartwig.actin.trial.config.TrialDefinitionConfig
 import com.hartwig.actin.trial.ctc.CTCModel
-import java.io.IOException
 
 class TrialFactory(
     private val trialConfigModel: TrialConfigModel,
@@ -93,7 +92,7 @@ class TrialFactory(
     }
 
     companion object {
-        @Throws(IOException::class)
+
         fun create(
             trialConfigDirectory: String,
             ctcModel: CTCModel,

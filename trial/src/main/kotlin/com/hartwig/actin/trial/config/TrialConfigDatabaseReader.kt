@@ -3,7 +3,6 @@ package com.hartwig.actin.trial.config
 import com.hartwig.actin.trial.FileUtil
 import com.hartwig.actin.util.Paths
 import org.apache.logging.log4j.LogManager
-import java.io.IOException
 
 object TrialConfigDatabaseReader {
 
@@ -14,8 +13,6 @@ object TrialConfigDatabaseReader {
     private const val INCLUSION_CRITERIA_TSV = "inclusion_criteria.tsv"
     private const val INCLUSION_CRITERIA_REFERENCE_TSV = "inclusion_criteria_reference.tsv"
 
-    @JvmStatic
-    @Throws(IOException::class)
     fun read(trialConfigDirectory: String): TrialConfigDatabase {
         LOGGER.info("Reading trial config from {}", trialConfigDirectory)
         val basePath = Paths.forceTrailingFileSeparator(trialConfigDirectory)
