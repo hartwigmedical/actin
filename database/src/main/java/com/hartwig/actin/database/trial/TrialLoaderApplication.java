@@ -20,7 +20,7 @@ public class TrialLoaderApplication {
 
     private static final Logger LOGGER = LogManager.getLogger(TrialLoaderApplication.class);
 
-    private static final String APPLICATION = "ACTIN Treatment Loader";
+    private static final String APPLICATION = "ACTIN Trial Loader";
     private static final String VERSION = TrialLoaderApplication.class.getPackage().getImplementationVersion();
 
     public static void main(@NotNull String... args) throws IOException, SQLException {
