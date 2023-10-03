@@ -37,7 +37,7 @@ class TreatmentCreatorApplication(private val config: TreatmentCreatorConfig) {
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
 
         val trialFactory = TrialFactory.create(config.trialConfigDirectory, ctcModel, doidModel, geneFilter, treatmentDatabase)
-       
+
         LOGGER.info("Creating trial database")
         val trials = trialFactory.createTrials()
 

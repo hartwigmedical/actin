@@ -8,15 +8,19 @@
         <version>local-SNAPSHOT</version>
     </parent>
 
-    <artifactId>treatment</artifactId>
+    <artifactId>trial</artifactId>
     <packaging>jar</packaging>
     <version>local-SNAPSHOT</version>
-    <name>HMF ACTIN - Treatment</name>
+    <name>HMF ACTIN - Trial</name>
 
     <dependencies>
         <dependency>
             <groupId>com.hartwig.actin</groupId>
             <artifactId>common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
         </dependency>
 
         <dependency>
@@ -34,10 +38,6 @@
             <artifactId>common</artifactId>
             <scope>test</scope>
             <type>test-jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib-jdk8</artifactId>
         </dependency>
     </dependencies>
 
