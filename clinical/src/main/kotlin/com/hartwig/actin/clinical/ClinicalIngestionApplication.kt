@@ -65,8 +65,9 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
                 GsonSerializer.create().toJson(curationResult).toByteArray()
             )
             LOGGER.warn("Summary of warnings:")
-            curationResult.groupBy { it.patientId }.forEach {grouped ->
-                LOGGER.warn("Curation warnings for patient $grouped.")
+            curationResult.groupBy { it.patientId }.forEach { grouped ->
+                LOGGER.warn("Curation warnings for patient [${grouped.key}]")
+                grouped.value.forEach { LOGGER.warn(it.message) }
             }
             LOGGER.warn("Summary complete.")
         }
