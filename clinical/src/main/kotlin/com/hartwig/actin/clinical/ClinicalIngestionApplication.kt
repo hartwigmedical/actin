@@ -32,6 +32,7 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         LOGGER.info("Creating clinical curation model from directory {}", config.curationDirectory)
         val curationModel: CurationModel =
             CurationModel.create(
+
                 config.curationDirectory, DoidModelFactory.createFromDoidEntry(doidEntry),
                 treatmentDatabase
             )
@@ -55,16 +56,18 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         ClinicalRecordJson.write(records, outputDirectory)
         LOGGER.info("Done!")
 
-        val curationResult = curationModel.evaluate();
-        if (curationResult.warnings.isNotEmpty()) {
+        val curationResult = curationModel.evaluate()
+        if (curationResult.isNotEmpty()) {
             val warningJsonPath = Paths.get(outputDirectory).resolve(WARNINGS_JSON)
-            LOGGER.info("Writing {} curation warnings to {}", curationResult, warningJsonPath)
+            LOGGER.info("Writing {} curation warnings to {}", curationResult.size, warningJsonPath)
             Files.write(
                 warningJsonPath,
                 GsonSerializer.create().toJson(curationResult).toByteArray()
             )
             LOGGER.warn("Summary of warnings:")
-            curationResult.warnings.forEach { LOGGER.warn(it) }
+            curationResult.groupBy { it.patientId }.forEach {grouped ->
+                LOGGER.warn("Curation warnings for patient $grouped.")
+            }
             LOGGER.warn("Summary complete.")
         }
 
