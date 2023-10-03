@@ -59,7 +59,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.hartwig.actin.treatment.TreatmentCreatorApplication</mainClass>
+                            <mainClass>com.hartwig.actin.trial.TreatmentCreatorApplication</mainClass>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                     </archive>
