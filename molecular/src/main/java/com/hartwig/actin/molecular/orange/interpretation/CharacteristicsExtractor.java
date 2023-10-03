@@ -36,17 +36,15 @@ class CharacteristicsExtractor {
 
     @NotNull
     public MolecularCharacteristics extract(@NotNull OrangeRecord record) {
-        PredictedTumorOrigin predictedTumorOrigin = record.cuppa() != null
-                ? ImmutablePredictedTumorOrigin.builder().predictions(determineCupPredictions(record.cuppa().predictions())).build()
-                : null;
+        PredictedTumorOrigin predictedTumorOrigin = record.cuppa() != null ? ImmutablePredictedTumorOrigin.builder()
+                .predictions(determineCupPredictions(record.cuppa().predictions()))
+                .build() : null;
 
         PurpleRecord purple = record.purple();
 
         Boolean isMicrosatelliteUnstable = isMSI(purple.characteristics().microsatelliteStatus());
 
-        Boolean isHomologousRepairDeficient =  record.chord() != null
-                ? isHRD(record.chord().hrStatus())
-                : null;
+        Boolean isHomologousRepairDeficient = record.chord() != null ? isHRD(record.chord().hrStatus()) : null;
 
         Boolean hasHighTumorMutationalBurden = hasHighStatus(purple.characteristics().tumorMutationalBurdenStatus());
         Boolean hasHighTumorMutationalLoad = hasHighStatus(purple.characteristics().tumorMutationalLoadStatus());
@@ -125,16 +123,12 @@ class CharacteristicsExtractor {
     }
 
     @NotNull
-    private static List<CupPrediction> determineCupPredictions(List<CuppaPrediction> cuppaPredictions) {
-        if (cuppaPredictions != null) {
-            return cuppaPredictions.stream().map(CharacteristicsExtractor::determineCupPrediction).collect(Collectors.toList());
-        } else {
-            return Collections.emptyList();
-        }
+    private static List<CupPrediction> determineCupPredictions(@NotNull List<CuppaPrediction> cuppaPredictions) {
+        return cuppaPredictions.stream().map(CharacteristicsExtractor::determineCupPrediction).collect(Collectors.toList());
     }
 
     @NotNull
-    private static CupPrediction determineCupPrediction(CuppaPrediction cuppaPrediction) {
+    private static CupPrediction determineCupPrediction(@NotNull  CuppaPrediction cuppaPrediction) {
         return ImmutableCupPrediction.builder()
                 .cancerType(cuppaPrediction.cancerType())
                 .likelihood(cuppaPrediction.likelihood())
