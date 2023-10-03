@@ -11,7 +11,7 @@ steps:
 
   - id: 'Build and push the trial image with tag'
     name: 'eu.gcr.io/hmf-build/docker-tag'
-    dir: 'treatment'
+    dir: 'trial'
     args: [ 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-trial', '$TAG_NAME' ]
 
   - id: 'Build and push the algo image with tag'
