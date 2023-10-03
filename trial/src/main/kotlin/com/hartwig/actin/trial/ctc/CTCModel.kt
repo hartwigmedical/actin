@@ -2,10 +2,10 @@ package com.hartwig.actin.trial.ctc
 
 import com.hartwig.actin.treatment.datamodel.CohortMetadata
 import com.hartwig.actin.treatment.datamodel.ImmutableCohortMetadata
+import com.hartwig.actin.trial.config.CohortDefinitionConfig
+import com.hartwig.actin.trial.config.TrialDefinitionConfig
 import com.hartwig.actin.trial.ctc.config.CTCDatabase
 import com.hartwig.actin.trial.ctc.config.CTCDatabaseEntry
-import com.hartwig.actin.trial.trial.config.CohortDefinitionConfig
-import com.hartwig.actin.trial.trial.config.TrialDefinitionConfig
 import org.apache.logging.log4j.LogManager
 
 class CTCModel constructor(private val ctcDatabase: CTCDatabase) {

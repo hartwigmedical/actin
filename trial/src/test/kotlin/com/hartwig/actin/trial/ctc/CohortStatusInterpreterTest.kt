@@ -1,7 +1,7 @@
 package com.hartwig.actin.trial.ctc
 
-import com.hartwig.actin.trial.trial.config.CohortDefinitionConfig
-import com.hartwig.actin.trial.trial.config.TestCohortDefinitionConfigFactory
+import com.hartwig.actin.trial.config.CohortDefinitionConfig
+import com.hartwig.actin.trial.config.TestCohortDefinitionConfigFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

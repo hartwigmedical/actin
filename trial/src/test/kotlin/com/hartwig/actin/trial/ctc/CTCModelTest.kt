@@ -1,12 +1,12 @@
 package com.hartwig.actin.trial.ctc
 
 import com.hartwig.actin.trial.TestTrialData
+import com.hartwig.actin.trial.config.CohortDefinitionConfig
+import com.hartwig.actin.trial.config.TestCohortDefinitionConfigFactory
+import com.hartwig.actin.trial.config.TestTrialDefinitionConfigFactory
+import com.hartwig.actin.trial.config.TrialDefinitionConfig
 import com.hartwig.actin.trial.ctc.config.TestCTCDatabaseEntryFactory
 import com.hartwig.actin.trial.ctc.config.TestCTCDatabaseFactory
-import com.hartwig.actin.trial.trial.config.CohortDefinitionConfig
-import com.hartwig.actin.trial.trial.config.TestCohortDefinitionConfigFactory
-import com.hartwig.actin.trial.trial.config.TestTrialDefinitionConfigFactory
-import com.hartwig.actin.trial.trial.config.TrialDefinitionConfig
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

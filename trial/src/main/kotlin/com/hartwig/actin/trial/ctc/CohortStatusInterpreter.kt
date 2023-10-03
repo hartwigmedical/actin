@@ -1,7 +1,7 @@
 package com.hartwig.actin.trial.ctc
 
+import com.hartwig.actin.trial.config.CohortDefinitionConfig
 import com.hartwig.actin.trial.ctc.config.CTCDatabaseEntry
-import com.hartwig.actin.trial.trial.config.CohortDefinitionConfig
 import org.apache.logging.log4j.LogManager
 
 internal object CohortStatusInterpreter {

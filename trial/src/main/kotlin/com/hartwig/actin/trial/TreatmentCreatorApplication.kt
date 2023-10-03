@@ -7,8 +7,8 @@ import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.treatment.serialization.TrialJson
 import com.hartwig.actin.trial.ctc.CTCModel
 import com.hartwig.actin.trial.ctc.config.CTCDatabaseReader
-import com.hartwig.actin.trial.trial.EligibilityRuleUsageEvaluator
-import com.hartwig.actin.trial.trial.TrialFactory
+import com.hartwig.actin.trial.interpretation.EligibilityRuleUsageEvaluator
+import com.hartwig.actin.trial.interpretation.TrialFactory
 import com.hartwig.serve.datamodel.serialization.KnownGeneFile
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
