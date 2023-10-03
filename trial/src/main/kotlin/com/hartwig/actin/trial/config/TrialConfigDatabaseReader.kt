@@ -1,5 +1,6 @@
 package com.hartwig.actin.trial.config
 
+import com.hartwig.actin.trial.FileUtil
 import com.hartwig.actin.util.Paths
 import org.apache.logging.log4j.LogManager
 import java.io.IOException
@@ -30,7 +31,7 @@ object TrialConfigDatabaseReader {
     }
 
     private fun <T : TrialConfig> readConfigs(tsv: String, factory: TrialConfigFactory<T>): List<T> {
-        val configs = com.hartwig.actin.trial.FileUtil.createObjectsFromTsv(tsv, factory::create)
+        val configs = FileUtil.createObjectsFromTsv(tsv, factory::create)
         LOGGER.info(" Read {} configs from {}", configs.size, tsv)
         return configs
     }
