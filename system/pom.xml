@@ -28,7 +28,7 @@
         </dependency>
         <dependency>
             <groupId>com.hartwig.actin</groupId>
-            <artifactId>treatment</artifactId>
+            <artifactId>trial</artifactId>
         </dependency>
         <dependency>
             <groupId>com.hartwig.actin</groupId>

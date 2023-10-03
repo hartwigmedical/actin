@@ -5,10 +5,10 @@ import com.hartwig.actin.clinical.ClinicalIngestionApplication;
 import com.hartwig.actin.database.algo.TreatmentMatchLoaderApplication;
 import com.hartwig.actin.database.clinical.ClinicalLoaderApplication;
 import com.hartwig.actin.database.molecular.MolecularLoaderApplication;
-import com.hartwig.actin.database.treatment.TreatmentLoaderApplication;
+import com.hartwig.actin.database.trial.TrialLoaderApplication;
 import com.hartwig.actin.molecular.orange.OrangeInterpreterApplication;
 import com.hartwig.actin.report.ReporterApplication;
-import com.hartwig.actin.treatment.TreatmentCreatorApplication;
+import com.hartwig.actin.trial.TrialCreatorApplication;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,11 +24,11 @@ public class SystemApplication {
         LOGGER.info("The following applications are available through ACTIN v{}", VERSION);
         LOGGER.info(" {}", ClinicalIngestionApplication.class);
         LOGGER.info(" {}", OrangeInterpreterApplication.class);
-        LOGGER.info(" {}", TreatmentCreatorApplication.class);
+        LOGGER.info(" {}", TrialCreatorApplication.class);
         LOGGER.info(" {}", TreatmentMatcherApplication.class);
         LOGGER.info(" {}", ClinicalLoaderApplication.class);
         LOGGER.info(" {}", MolecularLoaderApplication.class);
-        LOGGER.info(" {}", TreatmentLoaderApplication.class);
+        LOGGER.info(" {}", TrialLoaderApplication.class);
         LOGGER.info(" {}", TreatmentMatchLoaderApplication.class);
         LOGGER.info(" {}", ReporterApplication.class);
     }
