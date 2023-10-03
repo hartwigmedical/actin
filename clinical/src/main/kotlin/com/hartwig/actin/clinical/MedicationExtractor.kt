@@ -11,26 +11,26 @@ import org.apache.logging.log4j.LogManager
 
 class MedicationExtractor(private val curation: CurationModel, private val atc: AtcModel) {
 
-    fun extractMedication(entry: MedicationEntry): Medication? {
+    fun extractMedication(patientId: String, entry: MedicationEntry): Medication? {
         val name: String? = CurationUtil.capitalizeFirstLetterOnly(entry.code5ATCDisplay).ifEmpty {
-            curation.curateMedicationName(CurationUtil.capitalizeFirstLetterOnly(entry.codeText))
+            curation.curateMedicationName(patientId, CurationUtil.capitalizeFirstLetterOnly(entry.codeText))
         }
         if (name.isNullOrEmpty()) {
             return null
         }
 
-        val administrationRoute = curation.translateAdministrationRoute(entry.dosageInstructionRouteDisplay)
+        val administrationRoute = curation.translateAdministrationRoute(patientId, entry.dosageInstructionRouteDisplay)
         val dosage = if (dosageRequiresCuration(administrationRoute, entry)) {
-            curation.curateMedicationDosage(entry.dosageInstructionText) ?: ImmutableDosage.builder().build()
+            curation.curateMedicationDosage(patientId, entry.dosageInstructionText) ?: ImmutableDosage.builder().build()
         } else {
             ImmutableDosage.builder()
                 .dosageMin(entry.dosageInstructionDoseQuantityValue)
                 .dosageMax(correctDosageMax(entry))
-                .dosageUnit(curation.translateDosageUnit(entry.dosageInstructionDoseQuantityUnit))
+                .dosageUnit(curation.translateDosageUnit(patientId, entry.dosageInstructionDoseQuantityUnit))
                 .frequency(entry.dosageInstructionFrequencyValue)
                 .frequencyUnit(entry.dosageInstructionFrequencyUnit)
                 .periodBetweenValue(entry.dosageInstructionPeriodBetweenDosagesValue)
-                .periodBetweenUnit(curation.curatePeriodBetweenUnit(entry.dosageInstructionPeriodBetweenDosagesUnit))
+                .periodBetweenUnit(curation.curatePeriodBetweenUnit(patientId, entry.dosageInstructionPeriodBetweenDosagesUnit))
                 .ifNeeded(extractIfNeeded(entry))
                 .build()
         }
@@ -38,7 +38,7 @@ class MedicationExtractor(private val curation: CurationModel, private val atc: 
         val medication: Medication = ImmutableMedication.builder()
             .dosage(dosage)
             .name(name)
-            .status(curation.curateMedicationStatus(entry.status))
+            .status(curation.curateMedicationStatus(patientId, entry.status))
             .administrationRoute(administrationRoute)
             .startDate(entry.periodOfUseValuePeriodStart)
             .stopDate(entry.periodOfUseValuePeriodEnd)
@@ -49,7 +49,7 @@ class MedicationExtractor(private val curation: CurationModel, private val atc: 
             .isTrialMedication(entry.code5ATCDisplay.isEmpty() && entry.code5ATCCode.isNotEmpty() && entry.code5ATCCode[0].lowercaseChar() !in 'a'..'z')
             .build()
 
-        if (medication.atc() == null && !medication.isSelfCare() && !medication.isTrialMedication()) {
+        if (medication.atc() == null && !medication.isSelfCare && !medication.isTrialMedication) {
             LOGGER.warn("Medication ${medication.name()} has no ATC code and is not self-care or a trial")
         }
 
