@@ -245,7 +245,7 @@ CREATE TABLE `medication`
     `ifNeeded` BOOLEAN,
     `startDate` DATE,
     `stopDate` DATE,
-    `cypInteractions` varchar(100) NOT NULL,
+    `cypInteractions` varchar(200) NOT NULL,
     `qtProlongatingRisk` varchar(50) NOT NULL,
     `anatomicalMainGroupAtcName` varchar(100),
     `therapeuticSubgroupAtcName` varchar(100),
@@ -556,7 +556,7 @@ CREATE TABLE `eligibility`
     `cohortId` int,
     `parentId` int,
     `rule` varchar(100)  NOT NULL,
-    `parameters` varchar(100) NOT NULL,
+    `parameters` varchar(200) NOT NULL,
     `display` varchar(5000) NOT NULL,
     PRIMARY KEY (`id`)
 );
