@@ -66,7 +66,7 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
             )
             LOGGER.warn("Summary of warnings:")
             curationResult.groupBy { it.patientId }.forEach { grouped ->
-                LOGGER.warn("Curation warnings for patient [${grouped.key}]")
+                LOGGER.warn("Curation warnings for patient ${grouped.key}")
                 grouped.value.forEach { LOGGER.warn(it.message) }
             }
             LOGGER.warn("Summary complete.")
