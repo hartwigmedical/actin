@@ -18,7 +18,7 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import kotlin.system.exitProcess
 
-class TreatmentCreatorApplication(private val config: TreatmentCreatorConfig) {
+class TrialCreatorApplication(private val config: TrialCreatorConfig) {
 
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
@@ -51,21 +51,21 @@ class TreatmentCreatorApplication(private val config: TreatmentCreatorConfig) {
     }
 
     companion object {
-        val LOGGER: Logger = LogManager.getLogger(TreatmentCreatorApplication::class.java)
-        const val APPLICATION = "ACTIN Treatment Creator"
-        private val VERSION: String = TreatmentCreatorApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
+        val LOGGER: Logger = LogManager.getLogger(TrialCreatorApplication::class.java)
+        const val APPLICATION = "ACTIN Trial Creator"
+        private val VERSION: String = TrialCreatorApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
 }
 
 fun main(args: Array<String>) {
-    val options: Options = TreatmentCreatorConfig.createOptions()
-    val config: TreatmentCreatorConfig
+    val options: Options = TrialCreatorConfig.createOptions()
+    val config: TrialCreatorConfig
     try {
-        config = TreatmentCreatorConfig.createConfig(DefaultParser().parse(options, args))
+        config = TrialCreatorConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {
-        TreatmentCreatorApplication.LOGGER.warn(exception)
-        HelpFormatter().printHelp(TreatmentCreatorApplication.APPLICATION, options)
+        TrialCreatorApplication.LOGGER.warn(exception)
+        HelpFormatter().printHelp(TrialCreatorApplication.APPLICATION, options)
         exitProcess(1)
     }
-    TreatmentCreatorApplication(config).run()
+    TrialCreatorApplication(config).run()
 }

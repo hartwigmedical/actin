@@ -10,6 +10,7 @@ class TrialConfigModel(
     private val specificInclusionCriteriaByTrialAndCohort: Map<String, Map<String, List<InclusionCriteriaConfig>>>,
     private val referencesByTrialAndId: Map<String, Map<String, InclusionCriteriaReferenceConfig>>
 ) {
+
     fun trials(): List<TrialDefinitionConfig> {
         return trialDefinitionConfigs
     }

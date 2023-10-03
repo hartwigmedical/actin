@@ -8,7 +8,7 @@ This application requires Java 11+ and can be run as follows:
 java -cp actin.jar com.hartwig.actin.algo.TreatmentMatcherApplicationKt \
    -clinical_json /path/to/clinical.json \
    -molecular_json /path/to/molecular.json \
-   -treatment_database_directory /path/to/potential_treatment_options \
+   -trial_database_directory /path/to/potential_trials \
    -doid_json /path/to/full_doid_tree_json_file \
    -atc_tsv /path/to/full_atc_tree_tsv_file \
    -output_directory /path/where/output/is/written \
@@ -18,17 +18,17 @@ The following assumptions are made about the inputs:
 
 - The clinical JSON adheres to the datamodel defined by [ACTIN-Clinical](../clinical/README.md)
 - The molecular JSON adheres to the datamodel defined by [ACTIN-Molecular](../molecular/README.md)
-- The treatment database directory is the output directory of [ACTIN-Treatment](../treatment/README.md)
+- The trial database directory is the output directory of [ACTIN-Trial](../trial/README.md)
 
 An optional flag `run_historically` can be added in which case the treatment matcher sets the date to 3 weeks after the
 patient's registration date. If this flag is not set, the treatment matcher uses the current date as reference date.
 
 ### Treatment matching
 
-Every treatment defined in the treatment database is evaluated independently.
+Every trial defined in the trial database is evaluated independently.
 
-In case a treatment is a trial, all relevant inclusion and exclusion criteria are evaluated for this trial as well as every criterion
-for any specific cohort within this trial.
+All relevant inclusion and exclusion criteria are evaluated for this trial as well as every criterion for any specific cohort within this
+trial.
 
 Every criterion evaluates to one of the following options:
 

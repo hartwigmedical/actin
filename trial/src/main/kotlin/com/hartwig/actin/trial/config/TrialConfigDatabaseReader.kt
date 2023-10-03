@@ -5,7 +5,9 @@ import org.apache.logging.log4j.LogManager
 import java.io.IOException
 
 object TrialConfigDatabaseReader {
+
     private val LOGGER = LogManager.getLogger(TrialConfigDatabaseReader::class.java)
+
     private const val TRIAL_DEFINITION_TSV = "trial_definition.tsv"
     private const val COHORT_DEFINITION_TSV = "cohort_definition.tsv"
     private const val INCLUSION_CRITERIA_TSV = "inclusion_criteria.tsv"

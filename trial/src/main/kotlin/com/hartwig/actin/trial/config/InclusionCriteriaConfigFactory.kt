@@ -1,6 +1,7 @@
 package com.hartwig.actin.trial.config
 
 class InclusionCriteriaConfigFactory : TrialConfigFactory<InclusionCriteriaConfig> {
+
     override fun create(fields: Map<String, Int>, parts: List<String>): InclusionCriteriaConfig {
         return InclusionCriteriaConfig(
             trialId = parts[fields["trialId"]!!],

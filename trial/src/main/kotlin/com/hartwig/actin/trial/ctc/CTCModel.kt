@@ -120,7 +120,6 @@ class CTCModel constructor(private val ctcDatabase: CTCDatabase) {
                 LOGGER.warn(
                     " Missing open and/or slots available data for cohort '{}' of trial '{}}'. "
                             + "Assuming cohort is closed with no slots available", cohortConfig.cohortId, cohortConfig.trialId
-
                 )
                 InterpretedCohortStatus(open = false, slotsAvailable = false)
             } else {
