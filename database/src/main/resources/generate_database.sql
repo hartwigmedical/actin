@@ -85,9 +85,6 @@ CREATE TABLE `treatmentHistoryEntry`
     PRIMARY KEY (`id`)
 );
 
--- TODO: remove after table is cleaned up:
-DROP TABLE IF EXISTS `priorTumorTreatment`;
-
 DROP TABLE IF EXISTS `priorSecondPrimary`;
 CREATE TABLE `priorSecondPrimary`
 (   `id` int NOT NULL AUTO_INCREMENT,
