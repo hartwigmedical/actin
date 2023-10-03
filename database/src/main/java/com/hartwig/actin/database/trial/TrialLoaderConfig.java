@@ -1,4 +1,4 @@
-package com.hartwig.actin.database.treatment;
+package com.hartwig.actin.database.trial;
 
 import com.hartwig.actin.database.DatabaseLoaderConfig;
 import com.hartwig.actin.util.ApplicationConfig;
@@ -16,11 +16,11 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public interface TreatmentLoaderConfig extends DatabaseLoaderConfig {
+public interface TrialLoaderConfig extends DatabaseLoaderConfig {
 
-    Logger LOGGER = LogManager.getLogger(TreatmentLoaderConfig.class);
+    Logger LOGGER = LogManager.getLogger(TrialLoaderConfig.class);
 
-    String TREATMENT_DATABASE_DIRECTORY = "treatment_database_directory";
+    String TRIAL_DATABASE_DIRECTORY = "trial_database_directory";
 
     String DB_USER = "db_user";
     String DB_PASS = "db_pass";
@@ -32,7 +32,7 @@ public interface TreatmentLoaderConfig extends DatabaseLoaderConfig {
     static Options createOptions() {
         Options options = new Options();
 
-        options.addOption(TREATMENT_DATABASE_DIRECTORY, true, "Directory containing all available treatments");
+        options.addOption(TRIAL_DATABASE_DIRECTORY, true, "Directory containing all the trials that are expected to be loaded");
 
         options.addOption(DB_USER, true, "Database username");
         options.addOption(DB_PASS, true, "Database password");
@@ -44,7 +44,7 @@ public interface TreatmentLoaderConfig extends DatabaseLoaderConfig {
     }
 
     @NotNull
-    String treatmentDatabaseDirectory();
+    String trialDatabaseDirectory();
 
     @NotNull
     @Override
@@ -59,14 +59,14 @@ public interface TreatmentLoaderConfig extends DatabaseLoaderConfig {
     String dbUrl();
 
     @NotNull
-    static TreatmentLoaderConfig createConfig(@NotNull CommandLine cmd) throws ParseException {
+    static TrialLoaderConfig createConfig(@NotNull CommandLine cmd) throws ParseException {
         if (cmd.hasOption(LOG_DEBUG)) {
             Configurator.setRootLevel(Level.DEBUG);
             LOGGER.debug("Switched root level logging to DEBUG");
         }
 
-        return ImmutableTreatmentLoaderConfig.builder()
-                .treatmentDatabaseDirectory(ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DATABASE_DIRECTORY))
+        return ImmutableTrialLoaderConfig.builder()
+                .trialDatabaseDirectory(ApplicationConfig.nonOptionalDir(cmd, TRIAL_DATABASE_DIRECTORY))
                 .dbUser(ApplicationConfig.nonOptionalValue(cmd, DB_USER))
                 .dbPass(ApplicationConfig.nonOptionalValue(cmd, DB_PASS))
                 .dbUrl(ApplicationConfig.nonOptionalValue(cmd, DB_URL))

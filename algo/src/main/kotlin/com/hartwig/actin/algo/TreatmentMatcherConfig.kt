@@ -21,6 +21,7 @@ data class TreatmentMatcherConfig(
 ) {
 
     companion object {
+
         fun createOptions(): Options {
             val options = Options()
             options.addOption(CLINICAL_JSON, true, "File containing the clinical record of the patient")
@@ -45,10 +46,12 @@ data class TreatmentMatcherConfig(
                 Configurator.setRootLevel(Level.DEBUG)
                 LOGGER.debug("Switched root level logging to DEBUG")
             }
+
             val runHistorically = cmd.hasOption(RUN_HISTORICALLY)
             if (runHistorically) {
                 LOGGER.info("Configured to run in historic mode")
             }
+
             return TreatmentMatcherConfig(
                 clinicalJson = ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON),
                 molecularJson = ApplicationConfig.nonOptionalFile(cmd, MOLECULAR_JSON),
