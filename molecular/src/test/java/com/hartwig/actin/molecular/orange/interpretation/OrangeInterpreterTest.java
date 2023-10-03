@@ -131,7 +131,8 @@ public class OrangeInterpreterTest {
         OrangeRecord proper = TestOrangeFactory.createProperTestOrangeRecord();
         OrangeRecord record = ImmutableOrangeRecord.copyOf(proper).withCuppa(
                 ImmutableCuppaData.copyOf(proper.cuppa()).withPredictions(TestCuppaFactory.builder().build()));
-        OrangeInterpreter.validateOrangeRecord(record);
+        OrangeInterpreter interpreter = createTestInterpreter();
+        interpreter.interpret(record);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -140,7 +141,8 @@ public class OrangeInterpreterTest {
         OrangeRecord record = ImmutableOrangeRecord.copyOf(proper)
                 .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
                         .withGermlineHomozygousDisruptions(TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build()));
-        OrangeInterpreter.validateOrangeRecord(record);
+        OrangeInterpreter interpreter = createTestInterpreter();
+        interpreter.interpret(record);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -149,7 +151,8 @@ public class OrangeInterpreterTest {
         OrangeRecord record = ImmutableOrangeRecord.copyOf(proper)
                 .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
                         .withAllGermlineBreakends(TestLinxFactory.breakendBuilder().gene("gene 1").build()));
-        OrangeInterpreter.validateOrangeRecord(record);
+        OrangeInterpreter interpreter = createTestInterpreter();
+        interpreter.interpret(record);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -158,7 +161,8 @@ public class OrangeInterpreterTest {
         OrangeRecord record = ImmutableOrangeRecord.copyOf(proper)
                 .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
                         .withAllGermlineStructuralVariants(TestLinxFactory.structuralVariantBuilder().svId(1).build()));
-        OrangeInterpreter.validateOrangeRecord(record);
+        OrangeInterpreter interpreter = createTestInterpreter();
+        interpreter.interpret(record);
     }
 
     @NotNull

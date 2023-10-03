@@ -40,10 +40,6 @@ public class OrangeInterpreter {
         DriverExtractor driverExtractor = DriverExtractor.create(geneFilter, evidenceDatabase);
         CharacteristicsExtractor characteristicsExtractor = new CharacteristicsExtractor(evidenceDatabase);
 
-        if (record.purple().fit().qc().status().isEmpty()) {
-            throw new IllegalStateException("Cannot interpret purple record with empty QC states");
-        }
-
         return ImmutableMolecularRecord.builder()
                 .patientId(toPatientId(record.sampleId()))
                 .sampleId(record.sampleId())
@@ -111,9 +107,10 @@ public class OrangeInterpreter {
         throw new IllegalStateException("Could not determine experiment type from: " + experimentType);
     }
 
-    static void validateOrangeRecord(@NotNull OrangeRecord orange) {
+    private static void validateOrangeRecord(@NotNull OrangeRecord orange) {
         throwIfGermlineFieldNonEmpty(orange);
         throwIfAnyCuppaPredictionClassifierMissing(orange);
+        throwIfPurpleQCMissing(orange);
     }
 
     private static void throwIfGermlineFieldNonEmpty(@NotNull OrangeRecord orange) {
@@ -158,6 +155,12 @@ public class OrangeInterpreter {
 
         if (prediction.featureClassifier() == null) {
             throw new IllegalStateException(String.format(message, "featureClassifier"));
+        }
+    }
+
+    private static void throwIfPurpleQCMissing(@NotNull OrangeRecord orange) {
+        if (orange.purple().fit().qc().status().isEmpty()) {
+            throw new IllegalStateException("Cannot interpret purple record with empty QC states");
         }
     }
 }
