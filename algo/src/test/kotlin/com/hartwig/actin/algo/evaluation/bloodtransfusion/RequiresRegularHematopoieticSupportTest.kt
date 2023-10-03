@@ -2,62 +2,98 @@ package com.hartwig.actin.algo.evaluation.bloodtransfusion
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
-import org.apache.logging.log4j.util.Strings
 import org.junit.Test
 import java.time.LocalDate
 
 class RequiresRegularHematopoieticSupportTest {
     @Test
-    fun canEvaluateOnTransfusions() {
-        val minDate = LocalDate.of(2020, 2, 1)
-        val maxDate = minDate.plusMonths(2)
-        val function = RequiresRegularHematopoieticSupport(minDate, maxDate)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(BloodTransfusionTestFactory.withBloodTransfusions(emptyList())))
+    fun shouldFailWhenNoBloodTransfusions() {
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(BloodTransfusionTestFactory.withBloodTransfusions(emptyList())))
+    }
+
+    @Test
+    fun shouldFailWhenBloodTransfusionDateIsTooOld() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(create(minDate.minusWeeks(1))))
-        )
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(create(maxDate.plusWeeks(1))))
-        )
-        assertEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(create(minDate.plusMonths(1))))
+            FUNCTION.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(create(MIN_DATE.minusWeeks(1))))
         )
     }
 
     @Test
-    fun canEvaluateOnMedication() {
-        val minDate = LocalDate.of(2020, 2, 1)
-        val maxDate = minDate.plusMonths(2)
-        val function = RequiresRegularHematopoieticSupport(minDate, maxDate)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(BloodTransfusionTestFactory.withMedications(emptyList())))
-        val tooOld: Medication = support().startDate(minDate.minusWeeks(2)).stopDate(minDate.minusWeeks(1)).build()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(BloodTransfusionTestFactory.withMedication(tooOld)))
-        val tooRecent: Medication = support().startDate(maxDate.plusWeeks(1)).stopDate(maxDate.plusWeeks(2)).build()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(BloodTransfusionTestFactory.withMedication(tooRecent)))
-        val within: Medication = support().startDate(minDate.plusWeeks(1)).stopDate(maxDate.minusWeeks(1)).build()
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(BloodTransfusionTestFactory.withMedication(within)))
-        val stillRunning: Medication = support().startDate(minDate.minusWeeks(1)).stopDate(null).build()
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(BloodTransfusionTestFactory.withMedication(stillRunning)))
-        val wrongCategory: Medication = TestMedicationFactory.builder().from(stillRunning).categories(setOf("wrong")).build()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(BloodTransfusionTestFactory.withMedication(wrongCategory)))
+    fun shouldFailWhenBloodTransfusionDateIsTooRecent() {
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            FUNCTION.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(create(MAX_DATE.plusWeeks(1))))
+        )
+    }
+
+    @Test
+    fun shouldPassWhenBloodTransfusionHasCorrectDate() {
+        assertEvaluation(
+            EvaluationResult.PASS,
+            FUNCTION.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(create(MIN_DATE.plusMonths(1))))
+        )
+    }
+
+    @Test
+    fun shouldFailWhenNoMedication() {
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(BloodTransfusionTestFactory.withMedications(emptyList())))
+    }
+
+    @Test
+    fun shouldFailWhenMedicationDateIsTooOld() {
+        val tooOld: Medication = support().startDate(MIN_DATE.minusWeeks(2)).stopDate(MIN_DATE.minusWeeks(1)).build()
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(BloodTransfusionTestFactory.withMedication(tooOld)))
+    }
+
+    @Test
+    fun shouldFailWhenMedicationDateIsTooRecent() {
+        val tooRecent: Medication = support().startDate(MAX_DATE.plusWeeks(1)).stopDate(MAX_DATE.plusWeeks(2)).build()
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(BloodTransfusionTestFactory.withMedication(tooRecent)))
+    }
+
+    @Test
+    fun shouldPassWhenMedicationHasCorrectDate() {
+        val within: Medication = support().startDate(MIN_DATE.plusWeeks(1)).stopDate(MAX_DATE.minusWeeks(1)).build()
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(BloodTransfusionTestFactory.withMedication(within)))
+    }
+
+    @Test
+    fun shouldPassWhenMedicationIsStillRunning() {
+        val stillRunning: Medication = support().startDate(MIN_DATE.minusWeeks(1)).stopDate(null).build()
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(BloodTransfusionTestFactory.withMedication(stillRunning)))
+    }
+
+    @Test
+    fun shouldFailWhenMedicationIsStillRunningButHasWrongCategory() {
+        val atc =
+            AtcTestFactory.atcClassificationBuilder().chemicalSubGroup(AtcTestFactory.atcLevelBuilder().code("wrong category").build())
+                .build()
+        val wrongCategory: Medication = TestMedicationFactory.builder().startDate(MIN_DATE.minusWeeks(1)).stopDate(null).atc(atc).build()
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(BloodTransfusionTestFactory.withMedication(wrongCategory)))
     }
 
     companion object {
+        private val MIN_DATE: LocalDate = LocalDate.of(2020, 2, 1)
+        private val MAX_DATE = MIN_DATE.plusMonths(2)
+        private val FUNCTION = RequiresRegularHematopoieticSupport(AtcTestFactory.createProperAtcTree(), MIN_DATE, MAX_DATE)
+
         private fun support(): ImmutableMedication.Builder {
-            return TestMedicationFactory.builder()
-                .addCategories(RequiresRegularHematopoieticSupport.HEMATOPOIETIC_MEDICATION_CATEGORIES.iterator().next())
+            val atc = AtcTestFactory.atcClassificationBuilder().chemicalSubGroup(
+                RequiresRegularHematopoieticSupport.hematopoieticMedicationCategories(AtcTestFactory.createProperAtcTree()).iterator()
+                    .next()
+            ).build()
+            return TestMedicationFactory.builder().atc(atc)
         }
 
         private fun create(date: LocalDate): BloodTransfusion {
-            return ImmutableBloodTransfusion.builder().product(Strings.EMPTY).date(date).build()
+            return ImmutableBloodTransfusion.builder().product("").date(date).build()
         }
     }
 }

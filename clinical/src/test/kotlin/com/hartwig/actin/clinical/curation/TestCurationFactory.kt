@@ -7,7 +7,6 @@ import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
-import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfig
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig
 import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
 import com.hartwig.actin.clinical.curation.config.MolecularTestConfig
@@ -54,7 +53,7 @@ object TestCurationFactory {
             CurationDatabase(
                 emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
                 emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-                emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList()
+                emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
             ), questionnaireRawEntryMapper()
         )
     }
@@ -78,7 +77,6 @@ object TestCurationFactory {
             molecularTestConfigs = createTestMolecularTestConfigs(),
             medicationNameConfigs = createTestMedicationNameConfigs(),
             medicationDosageConfigs = createTestMedicationDosageConfigs(),
-            medicationCategoryConfigs = createTestMedicationCategoryConfigs(),
             intoleranceConfigs = createTestIntoleranceConfigs(),
             cypInteractionConfigs = createTestCypInteractionConfig(),
             qtProlongingConfigs = createTestQTProlongingConfigs(),
@@ -342,10 +340,6 @@ object TestCurationFactory {
                 ifNeeded = false
             )
         )
-    }
-
-    private fun createTestMedicationCategoryConfigs(): List<MedicationCategoryConfig> {
-        return listOf(MedicationCategoryConfig(input = "Paracetamol", categories = setOf("Acetanilide derivatives")))
     }
 
     private fun createTestIntoleranceConfigs(): List<IntoleranceConfig> {

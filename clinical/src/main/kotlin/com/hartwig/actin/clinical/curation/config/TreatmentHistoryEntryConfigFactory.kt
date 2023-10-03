@@ -75,13 +75,9 @@ object TreatmentHistoryEntryConfigFactory {
 
         val isTrial = optionalObjectFromColumn(parts, fields, "isTrial", ResourceFile::optionalBool) ?: false
 
-        if (treatment == null) {
-            if (isTrial && treatmentName.isEmpty()) {
-                LOGGER.info("   Treatment for trial $treatmentName does not exist in database, leaving empty")
-            } else {
-                logMissingTreatmentMessage(treatmentName)
-                return null
-            }
+        if (treatment == null && !(treatmentName.isEmpty() && isTrial)) {
+            logMissingTreatmentMessage(treatmentName)
+            return null
         }
 
         val therapyHistoryDetails = if (treatment is Therapy) {

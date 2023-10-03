@@ -10,6 +10,7 @@ import com.hartwig.actin.algo.datamodel.ImmutableCohortMatch
 import com.hartwig.actin.algo.datamodel.ImmutableTrialMatch
 import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory
+import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.algo.sort.CohortMatchComparator
 import com.hartwig.actin.algo.sort.TrialMatchComparator
 import com.hartwig.actin.doid.DoidModel
@@ -58,8 +59,13 @@ class TrialMatcher(private val evaluationFunctionFactory: EvaluationFunctionFact
     }
 
     companion object {
-        fun create(doidModel: DoidModel, referenceDateProvider: ReferenceDateProvider, treatmentDatabase: TreatmentDatabase): TrialMatcher {
-            return TrialMatcher(EvaluationFunctionFactory.create(doidModel, referenceDateProvider, treatmentDatabase))
+        fun create(
+            doidModel: DoidModel,
+            referenceDateProvider: ReferenceDateProvider,
+            treatmentDatabase: TreatmentDatabase,
+            atcTree: AtcTree
+        ): TrialMatcher {
+            return TrialMatcher(EvaluationFunctionFactory.create(doidModel, referenceDateProvider, treatmentDatabase, atcTree))
         }
 
         fun isPotentiallyEligible(evaluations: Iterable<Evaluation>): Boolean {

@@ -1,17 +1,20 @@
 package com.hartwig.actin.clinical.datamodel;
 
 import org.immutables.value.Value;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
-public interface CypInteraction {
+@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
+public abstract class CypInteraction {
 
-    enum Type {
+    public enum Type {
         INDUCER,
         INHIBITOR,
         SUBSTRATE
     }
 
-    enum Strength {
+    public enum Strength {
         STRONG,
         MODERATE,
         WEAK,
@@ -19,9 +22,12 @@ public interface CypInteraction {
         MODERATE_SENSITIVE
     }
 
-    Type type();
+    @NotNull
+    public abstract Type type();
 
-    Strength strength();
+    @NotNull
+    public abstract Strength strength();
 
-    String cyp();
+    @NotNull
+    public abstract String cyp();
 }

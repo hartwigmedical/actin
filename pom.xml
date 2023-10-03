@@ -12,7 +12,7 @@
         <module>common</module>
         <module>clinical</module>
         <module>molecular</module>
-        <module>treatment</module>
+        <module>trial</module>
         <module>algo</module>
         <module>report</module>
         <module>database</module>
@@ -150,7 +150,7 @@
             </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
-                <artifactId>treatment</artifactId>
+                <artifactId>trial</artifactId>
                 <version>local-SNAPSHOT</version>
             </dependency>
             <dependency>

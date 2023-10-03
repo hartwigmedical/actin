@@ -15,6 +15,7 @@ java -cp actin.jar com.hartwig.actin.database.clinical.ClinicalLoaderApplication
 ```
 
 ### Molecular Data Loader
+
 The molecular data loader loads up molecular data from [ACTIN-Molecular](../molecular/README.md) as follows:
 
 ```
@@ -23,16 +24,18 @@ java -cp actin.jar com.hartwig.actin.database.molecular.MolecularLoaderApplicati
     -db_user user -db_pass pass -db_url url
 ```
 
-### Treatment Data Loader
-The treatment data loader loads up treatment data from [ACTIN-Treatment](../treatment/README.md) as follows:
+### Trial Data Loader
+
+The trial data loader loads up trial data from [ACTIN-Trial](../trial/README.md) as follows:
 
 ```
-java -cp actin.jar com.hartwig.actin.database.treatment.TreatmentLoaderApplication \
-    -treatment_database_directory /path/to/treatment_database_dir \
+java -cp actin.jar com.hartwig.actin.database.trial.TrialLoaderApplication \
+    -trial_database_directory /path/to/trial_database_dir \
     -db_user user -db_pass pass -db_url url
 ```
 
 ### Treatment Match Data Loader
+
 The treatment match data loader loads up treatment match results from [ACTIN-Algo](../algo/README.md) as follows:
 
 ```

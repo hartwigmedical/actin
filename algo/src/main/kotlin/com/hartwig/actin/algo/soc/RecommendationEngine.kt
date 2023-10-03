@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory
+import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.algo.soc.datamodel.EvaluatedTreatment
 import com.hartwig.actin.algo.soc.datamodel.TreatmentCandidate
 import com.hartwig.actin.doid.DoidModel
@@ -51,6 +52,7 @@ internal class RecommendationEngine private constructor(
 
         fun create(
             doidModel: DoidModel,
+            atcTree: AtcTree,
             recommendationDatabase: RecommendationDatabase,
             referenceDateProvider: ReferenceDateProvider
         ): RecommendationEngine {
@@ -58,7 +60,8 @@ internal class RecommendationEngine private constructor(
                 doidModel, recommendationDatabase, EvaluationFunctionFactory.create(
                     doidModel,
                     referenceDateProvider,
-                    recommendationDatabase.treatmentDatabase
+                    recommendationDatabase.treatmentDatabase,
+                    atcTree
                 )
             )
         }

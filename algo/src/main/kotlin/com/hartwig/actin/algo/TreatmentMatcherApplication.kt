@@ -5,6 +5,7 @@ import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory.create
 import com.hartwig.actin.algo.datamodel.ImmutableTreatmentMatch
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
+import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
@@ -45,11 +46,15 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size)
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
+        LOGGER.info("Creating ATC tree from file {}", config.atcTsv)
+        val atcTree = AtcTree.createFromFile(config.atcTsv)
+
         val referenceDateProvider = create(clinical, config.runHistorically)
         LOGGER.info("Matching patient to available trials")
         val matcher: TrialMatcher = TrialMatcher.create(
             doidModel, referenceDateProvider,
-            TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
+            TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory),
+            atcTree
         )
         val trialMatches = matcher.determineEligibility(patient, trials)
 
