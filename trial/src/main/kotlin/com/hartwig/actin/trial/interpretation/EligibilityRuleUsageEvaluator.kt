@@ -8,7 +8,9 @@ import com.hartwig.actin.treatment.input.composite.CompositeRules
 import org.apache.logging.log4j.LogManager
 
 object EligibilityRuleUsageEvaluator {
+
     private val LOGGER = LogManager.getLogger(EligibilityRuleUsageEvaluator::class.java)
+
     private val UNUSED_RULES_TO_KEEP = setOf(
         EligibilityRule.HAS_LYMPHOCYTES_CELLS_PER_MM3_OF_AT_LEAST_X,
         EligibilityRule.HAS_QTC_OF_AT_MOST_X,

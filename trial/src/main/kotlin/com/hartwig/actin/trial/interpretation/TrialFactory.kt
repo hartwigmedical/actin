@@ -30,6 +30,7 @@ class TrialFactory(
     private val ctcModel: CTCModel,
     private val eligibilityFactory: EligibilityFactory
 ) {
+
     fun createTrials(): List<Trial> {
         ctcModel.checkModelForNewTrials(trialConfigModel.trials())
         ctcModel.checkModelForNewCohorts(trialConfigModel.cohorts())
