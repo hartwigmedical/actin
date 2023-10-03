@@ -70,7 +70,7 @@ class ClinicalRecordsFactory(
 
             val questionnaire = feed.latestQuestionnaireEntry(subject)?.let { QuestionnaireExtraction.extract(it) }
 
-            val extractedToxicities = extractToxicities(subject, questionnaire)
+            val extractedToxicities = extractToxicities(patientId, subject, questionnaire)
             val toxicityEvaluations: List<ToxicityEvaluation> = extractedToxicities
                 .map { toxicity: Toxicity ->
                     ImmutableToxicityEvaluation.builder()
@@ -91,22 +91,22 @@ class ClinicalRecordsFactory(
             ImmutableClinicalRecord.builder()
                 .patientId(patientId)
                 .patient(extractPatientDetails(subject, questionnaire))
-                .tumor(extractTumorDetails(questionnaire))
-                .clinicalStatus(extractClinicalStatus(questionnaire))
-                .treatmentHistory(extractTreatmentHistory(questionnaire))
-                .priorSecondPrimaries(extractPriorSecondPrimaries(questionnaire))
-                .priorOtherConditions(extractPriorOtherConditions(questionnaire))
-                .priorMolecularTests(extractPriorMolecularTests(questionnaire))
-                .complications(extractComplications(questionnaire))
-                .labValues(extractLabValues(subject))
+                .tumor(extractTumorDetails(patientId, questionnaire))
+                .clinicalStatus(extractClinicalStatus(patientId, questionnaire))
+                .treatmentHistory(extractTreatmentHistory(patientId, questionnaire))
+                .priorSecondPrimaries(extractPriorSecondPrimaries(patientId, questionnaire))
+                .priorOtherConditions(extractPriorOtherConditions(patientId, questionnaire))
+                .priorMolecularTests(extractPriorMolecularTests(patientId, questionnaire))
+                .complications(extractComplications(patientId, questionnaire))
+                .labValues(extractLabValues(patientId, subject))
                 .toxicities(extractedToxicities)
                 .toxicityEvaluations(toxicityEvaluations)
-                .intolerances(extractIntolerances(subject))
+                .intolerances(extractIntolerances(patientId, subject))
                 .surgeries(extractSurgeries(subject))
                 .bodyWeights(extractBodyWeights(subject))
                 .vitalFunctions(extractVitalFunctions(subject))
-                .bloodTransfusions(extractBloodTransfusions(subject))
-                .medications(extractMedications(subject))
+                .bloodTransfusions(extractBloodTransfusions(patientId, subject))
+                .medications(extractMedications(patientId, subject))
                 .build()
         }.sortedWith(ClinicalRecordComparator())
 
@@ -127,17 +127,17 @@ class ClinicalRecordsFactory(
             .build()
     }
 
-    private fun extractTumorDetails(questionnaire: Questionnaire?): TumorDetails {
+    private fun extractTumorDetails(patientId: String, questionnaire: Questionnaire?): TumorDetails {
         if (questionnaire == null) {
             return ImmutableTumorDetails.builder().build()
         }
 
         val biopsyLocation: String? = questionnaire.biopsyLocation
         val otherLesions: List<String>? = questionnaire.otherLesions
-        val curatedOtherLesions: List<String>? = curation.curateOtherLesions(otherLesions)
+        val curatedOtherLesions: List<String>? = curation.curateOtherLesions(patientId, otherLesions)
         val tumorDetails: TumorDetails = ImmutableTumorDetails.builder()
-            .from(curation.curateTumorDetails(questionnaire.tumorLocation, questionnaire.tumorType))
-            .biopsyLocation(curation.curateBiopsyLocation(biopsyLocation))
+            .from(curation.curateTumorDetails(patientId, questionnaire.tumorLocation, questionnaire.tumorType))
+            .biopsyLocation(curation.curateBiopsyLocation(patientId, biopsyLocation))
             .stage(questionnaire.stage)
             .hasMeasurableDisease(questionnaire.hasMeasurableDisease)
             .hasBrainLesions(questionnaire.hasBrainLesions)
@@ -152,17 +152,17 @@ class ClinicalRecordsFactory(
         return curation.overrideKnownLesionLocations(tumorDetails, biopsyLocation, otherLesions)
     }
 
-    private fun extractClinicalStatus(questionnaire: Questionnaire?): ClinicalStatus {
+    private fun extractClinicalStatus(patientId: String, questionnaire: Questionnaire?): ClinicalStatus {
         return if (questionnaire == null) ImmutableClinicalStatus.builder().build() else ImmutableClinicalStatus.builder()
             .who(questionnaire.whoStatus)
-            .infectionStatus(curation.curateInfectionStatus(questionnaire.infectionStatus))
-            .ecg(curation.curateECG(questionnaire.ecg))
+            .infectionStatus(curation.curateInfectionStatus(patientId, questionnaire.infectionStatus))
+            .ecg(curation.curateECG(patientId, questionnaire.ecg))
             .lvef(curation.determineLVEF(questionnaire.nonOncologicalHistory))
-            .hasComplications(extractComplications(questionnaire)?.isNotEmpty())
+            .hasComplications(extractComplications(patientId, questionnaire)?.isNotEmpty())
             .build()
     }
 
-    private fun extractTreatmentHistory(questionnaire: Questionnaire?): List<TreatmentHistoryEntry> {
+    private fun extractTreatmentHistory(patientId: String, questionnaire: Questionnaire?): List<TreatmentHistoryEntry> {
         if (questionnaire == null) {
             return emptyList()
         }
@@ -171,41 +171,44 @@ class ClinicalRecordsFactory(
             questionnaire.otherOncologicalHistory
         )
             .flatten()
-            .flatMap { curation.curateTreatmentHistoryEntry(it) }
+            .flatMap { curation.curateTreatmentHistoryEntry(patientId, it) }
     }
 
-    private fun extractPriorSecondPrimaries(questionnaire: Questionnaire?): List<PriorSecondPrimary> {
+    private fun extractPriorSecondPrimaries(patientId: String, questionnaire: Questionnaire?): List<PriorSecondPrimary> {
         return if (questionnaire == null) emptyList() else listOf(
             questionnaire.otherOncologicalHistory,
             questionnaire.secondaryPrimaries
         )
-            .flatMap { curation.curatePriorSecondPrimaries(it) }
+            .flatMap { curation.curatePriorSecondPrimaries(patientId, it) }
     }
 
-    private fun extractPriorOtherConditions(questionnaire: Questionnaire?): List<PriorOtherCondition> {
-        return if (questionnaire == null) emptyList() else curation.curatePriorOtherConditions(questionnaire.nonOncologicalHistory)
+    private fun extractPriorOtherConditions(patientId: String, questionnaire: Questionnaire?): List<PriorOtherCondition> {
+        return if (questionnaire == null) emptyList() else curation.curatePriorOtherConditions(
+            patientId,
+            questionnaire.nonOncologicalHistory
+        )
     }
 
-    private fun extractPriorMolecularTests(questionnaire: Questionnaire?): List<PriorMolecularTest> {
+    private fun extractPriorMolecularTests(patientId: String, questionnaire: Questionnaire?): List<PriorMolecularTest> {
         return if (questionnaire == null) emptyList() else listOf(
             Pair("IHC", questionnaire.ihcTestResults),
             Pair("PD-L1", questionnaire.pdl1TestResults)
         )
-            .flatMap { (key, value) -> curation.curatePriorMolecularTests(key, value) }
+            .flatMap { (key, value) -> curation.curatePriorMolecularTests(patientId, key, value) }
     }
 
-    private fun extractComplications(questionnaire: Questionnaire?): List<Complication>? {
-        return if (questionnaire != null) curation.curateComplications(questionnaire.complications) else null
+    private fun extractComplications(patientId: String, questionnaire: Questionnaire?): List<Complication>? {
+        return if (questionnaire != null) curation.curateComplications(patientId, questionnaire.complications) else null
     }
 
-    private fun extractLabValues(subject: String): List<LabValue> {
+    private fun extractLabValues(patientId: String, subject: String): List<LabValue> {
         return feed.labEntries(subject)
             .map { LabExtraction.extract(it) }
-            .map { curation.translateLabValue(it) }
+            .map { curation.translateLabValue(patientId, it) }
             .sortedWith(LabValueDescendingDateComparator())
     }
 
-    private fun extractToxicities(subject: String, questionnaire: Questionnaire?): List<Toxicity> {
+    private fun extractToxicities(patientId: String, subject: String, questionnaire: Questionnaire?): List<Toxicity> {
         val feedToxicities: List<Toxicity> = feed.toxicityEntries(subject).mapNotNull { toxicityEntry: DigitalFileEntry ->
             val grade = extractGrade(toxicityEntry)
             if (grade != null) {
@@ -219,15 +222,19 @@ class ClinicalRecordsFactory(
                 null
             }
         }
-            .map { curation.translateToxicity(it) }
+            .map { curation.translateToxicity(patientId, it) }
 
         if (questionnaire != null) {
-            return feedToxicities + curation.curateQuestionnaireToxicities(questionnaire.unresolvedToxicities, questionnaire.date)
+            return feedToxicities + curation.curateQuestionnaireToxicities(
+                patientId,
+                questionnaire.unresolvedToxicities,
+                questionnaire.date
+            )
         }
         return feedToxicities
     }
 
-    private fun extractIntolerances(subject: String): List<Intolerance> {
+    private fun extractIntolerances(patientId: String, subject: String): List<Intolerance> {
         return feed.intoleranceEntries(subject)
             .map { entry: IntoleranceEntry ->
                 ImmutableIntolerance.builder()
@@ -239,7 +246,7 @@ class ClinicalRecordsFactory(
                     .criticality(CurationUtil.capitalizeFirstLetterOnly(entry.criticality))
                     .build()
             }
-            .map { curation.curateIntolerance(it) }
+            .map { curation.curateIntolerance(patientId, it) }
     }
 
     private fun extractSurgeries(subject: String): List<Surgery> {
@@ -269,19 +276,19 @@ class ClinicalRecordsFactory(
         }
     }
 
-    private fun extractBloodTransfusions(subject: String): List<BloodTransfusion> {
+    private fun extractBloodTransfusions(patientId: String, subject: String): List<BloodTransfusion> {
         return feed.bloodTransfusionEntries(subject).map { entry: DigitalFileEntry ->
             ImmutableBloodTransfusion.builder()
                 .date(entry.authored)
                 .product(entry.itemAnswerValueValueString)
                 .build()
         }
-            .map { curation.translateBloodTransfusion(it) }
+            .map { curation.translateBloodTransfusion(patientId, it) }
     }
 
-    private fun extractMedications(subject: String): List<Medication> {
+    private fun extractMedications(patientId: String, subject: String): List<Medication> {
         return feed.medicationEntries(subject)
-            .mapNotNull(medicationExtractor::extractMedication)
+            .mapNotNull { medicationExtractor.extractMedication(patientId, it) }
             .sortedWith(MedicationByNameComparator())
     }
 

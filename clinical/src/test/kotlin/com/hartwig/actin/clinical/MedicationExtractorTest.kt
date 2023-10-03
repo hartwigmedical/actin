@@ -20,6 +20,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
+private const val PATIENT_ID = "patientId"
+
 class MedicationExtractorTest {
 
     @Test
@@ -35,7 +37,7 @@ class MedicationExtractorTest {
             administrationRoute = "oraal"
         )
 
-        assertThat(EXTRACTOR.extractMedication(entry)).isEqualTo(ImmutableMedication.builder()
+        assertThat(EXTRACTOR.extractMedication(PATIENT_ID, entry)).isEqualTo(ImmutableMedication.builder()
             .name("Paracetamol")
             .status(MedicationStatus.ACTIVE)
             .administrationRoute("oral")
@@ -75,7 +77,7 @@ class MedicationExtractorTest {
             end = LocalDate.of(2019, 4, 4),
             active = false,
         )
-        assertThat(EXTRACTOR.extractMedication(entry)).isNull()
+        assertThat(EXTRACTOR.extractMedication(PATIENT_ID, entry)).isNull()
     }
 
     @Test
@@ -89,7 +91,7 @@ class MedicationExtractorTest {
             codeText = "A en B"
         )
 
-        assertThat(EXTRACTOR.extractMedication(entry)!!.isSelfCare).isTrue
+        assertThat(EXTRACTOR.extractMedication(PATIENT_ID, entry)!!.isSelfCare).isTrue
     }
 
     @Test
@@ -104,7 +106,7 @@ class MedicationExtractorTest {
             codeText = "A en B"
         )
 
-        assertThat(EXTRACTOR.extractMedication(entry)!!.isTrialMedication).isTrue
+        assertThat(EXTRACTOR.extractMedication(PATIENT_ID, entry)!!.isTrialMedication).isTrue
     }
 
     companion object {
