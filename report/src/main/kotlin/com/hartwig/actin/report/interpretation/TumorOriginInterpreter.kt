@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.molecular.datamodel.characteristics.CuppaPrediction
+import com.hartwig.actin.molecular.datamodel.characteristics.CupPrediction
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin
 import com.hartwig.actin.report.pdf.util.Formats
 
@@ -23,17 +23,17 @@ object TumorOriginInterpreter {
         } else predictedTumorOrigin.cancerType() + " (" + Formats.percentage(predictedTumorOrigin.likelihood()) + ")"
     }
 
-    fun predictionsToDisplay(predictedTumorOrigin: PredictedTumorOrigin?): List<CuppaPrediction> {
+    fun predictionsToDisplay(predictedTumorOrigin: PredictedTumorOrigin?): List<CupPrediction> {
         return if (predictedTumorOrigin == null) emptyList() else bestNPredictions(predictedTumorOrigin, MAX_PREDICTIONS_TO_DISPLAY)
             .filter { it.likelihood() > LIKELIHOOD_DISPLAY_THRESHOLD }
     }
 
     fun greatestOmittedLikelihood(predictedTumorOrigin: PredictedTumorOrigin): Double {
-        val topLikelihoods = bestNPredictions(predictedTumorOrigin, MAX_PREDICTIONS_TO_DISPLAY + 1).map(CuppaPrediction::likelihood)
+        val topLikelihoods = bestNPredictions(predictedTumorOrigin, MAX_PREDICTIONS_TO_DISPLAY + 1).map(CupPrediction::likelihood)
         return topLikelihoods.find { it < LIKELIHOOD_DISPLAY_THRESHOLD } ?: topLikelihoods.last()
     }
 
-    private fun bestNPredictions(predictedTumorOrigin: PredictedTumorOrigin, limit: Int): List<CuppaPrediction> {
-        return predictedTumorOrigin.predictions().sortedWith(compareByDescending(CuppaPrediction::likelihood)).take(limit)
+    private fun bestNPredictions(predictedTumorOrigin: PredictedTumorOrigin, limit: Int): List<CupPrediction> {
+        return predictedTumorOrigin.predictions().sortedWith(compareByDescending(CupPrediction::likelihood)).take(limit)
     }
 }

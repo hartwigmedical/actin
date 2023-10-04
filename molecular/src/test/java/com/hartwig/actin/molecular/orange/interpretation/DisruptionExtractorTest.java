@@ -16,15 +16,15 @@ import com.hartwig.actin.molecular.datamodel.driver.RegionType;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
-import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxRecord;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakend;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakendType;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxCodingType;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRegionType;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxStructuralVariant;
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory;
+import com.hartwig.hmftools.datamodel.gene.TranscriptCodingType;
+import com.hartwig.hmftools.datamodel.gene.TranscriptRegionType;
+import com.hartwig.hmftools.datamodel.linx.ImmutableLinxRecord;
+import com.hartwig.hmftools.datamodel.linx.LinxBreakend;
+import com.hartwig.hmftools.datamodel.linx.LinxBreakendType;
+import com.hartwig.hmftools.datamodel.linx.LinxRecord;
+import com.hartwig.hmftools.datamodel.linx.LinxSvAnnotation;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -35,22 +35,22 @@ public class DisruptionExtractorTest {
 
     @Test
     public void canExtractBreakends() {
-        LinxStructuralVariant structuralVariant1 = TestLinxFactory.structuralVariantBuilder().svId(1).clusterId(5).build();
+        LinxSvAnnotation structuralVariant1 = TestLinxFactory.structuralVariantBuilder().svId(1).clusterId(5).build();
         LinxBreakend linxBreakend = TestLinxFactory.breakendBuilder()
                 .gene("gene 1")
-                .reported(true)
+                .reportedDisruption(true)
                 .type(LinxBreakendType.DUP)
                 .junctionCopyNumber(0.2)
                 .undisruptedCopyNumber(1.6)
-                .regionType(LinxRegionType.EXONIC)
-                .codingType(LinxCodingType.CODING)
+                .regionType(TranscriptRegionType.EXONIC)
+                .codingType(TranscriptCodingType.CODING)
                 .svId(1)
                 .build();
 
         LinxRecord linx = ImmutableLinxRecord.builder()
                 .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
-                .addStructuralVariants(structuralVariant1)
-                .addBreakends(linxBreakend)
+                .addAllSomaticStructuralVariants(structuralVariant1)
+                .addAllSomaticBreakends(linxBreakend)
                 .build();
 
         GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes(linxBreakend.gene());
@@ -72,10 +72,10 @@ public class DisruptionExtractorTest {
 
     @Test (expected = IllegalStateException.class)
     public void shouldThrowExceptionWhenFilteringReportedDisruption() {
-        LinxBreakend linxBreakend = TestLinxFactory.breakendBuilder().gene("gene 1").reported(true).build();
+        LinxBreakend linxBreakend = TestLinxFactory.breakendBuilder().gene("gene 1").reportedDisruption(true).build();
         LinxRecord linx = ImmutableLinxRecord.builder()
                 .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
-                .addBreakends(linxBreakend)
+                .addAllSomaticBreakends(linxBreakend)
                 .build();
 
         GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes("weird gene");
@@ -108,8 +108,8 @@ public class DisruptionExtractorTest {
 
     @Test
     public void canDetermineAllRegionTypes() {
-        for (LinxRegionType regionType : LinxRegionType.values()) {
-            if (regionType != LinxRegionType.UNKNOWN) {
+        for (TranscriptRegionType regionType : TranscriptRegionType.values()) {
+            if (regionType != TranscriptRegionType.UNKNOWN) {
                 assertNotNull(DisruptionExtractor.determineRegionType(regionType));
             }
         }
@@ -117,8 +117,8 @@ public class DisruptionExtractorTest {
 
     @Test
     public void canDetermineAllCodingTypes() {
-        for (LinxCodingType codingType : LinxCodingType.values()) {
-            if (codingType != LinxCodingType.UNKNOWN) {
+        for (TranscriptCodingType codingType : TranscriptCodingType.values()) {
+            if (codingType != TranscriptCodingType.UNKNOWN) {
                 assertNotNull(DisruptionExtractor.determineCodingContext(codingType));
             }
         }
@@ -128,8 +128,8 @@ public class DisruptionExtractorTest {
     private static LinxRecord withBreakend(@NotNull LinxBreakend breakend) {
         return ImmutableLinxRecord.builder()
                 .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
-                .addStructuralVariants(TestLinxFactory.structuralVariantBuilder().svId(breakend.svId()).build())
-                .addBreakends(breakend)
+                .addAllSomaticStructuralVariants(TestLinxFactory.structuralVariantBuilder().svId(breakend.svId()).build())
+                .addAllSomaticBreakends(breakend)
                 .build();
     }
 }

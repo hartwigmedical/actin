@@ -12,14 +12,14 @@ import java.util.Set;
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.datamodel.driver.VirusType;
-import com.hartwig.actin.molecular.orange.datamodel.virus.ImmutableVirusInterpreterRecord;
 import com.hartwig.actin.molecular.orange.datamodel.virus.TestVirusInterpreterFactory;
-import com.hartwig.actin.molecular.orange.datamodel.virus.VirusDriverLikelihood;
-import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpretation;
-import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
-import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterRecord;
-import com.hartwig.actin.molecular.orange.datamodel.virus.VirusQCStatus;
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory;
+import com.hartwig.hmftools.datamodel.virus.AnnotatedVirus;
+import com.hartwig.hmftools.datamodel.virus.ImmutableVirusInterpreterData;
+import com.hartwig.hmftools.datamodel.virus.VirusBreakendQCStatus;
+import com.hartwig.hmftools.datamodel.virus.VirusInterpretation;
+import com.hartwig.hmftools.datamodel.virus.VirusInterpreterData;
+import com.hartwig.hmftools.datamodel.virus.VirusLikelihoodType;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -28,26 +28,26 @@ public class VirusExtractorTest {
 
     @Test
     public void canExtractViruses() {
-        VirusInterpreterEntry virusEntry1 = TestVirusInterpreterFactory.builder()
+        AnnotatedVirus virusEntry1 = TestVirusInterpreterFactory.builder()
                 .reported(true)
                 .name("virus 1")
                 .qcStatus(VirusExtractor.QC_PASS_STATUS)
                 .interpretation(VirusInterpretation.HPV)
                 .integrations(2)
-                .driverLikelihood(VirusDriverLikelihood.HIGH)
+                .virusDriverLikelihoodType(VirusLikelihoodType.HIGH)
                 .build();
 
-        VirusInterpreterEntry virusEntry2 = TestVirusInterpreterFactory.builder()
+        AnnotatedVirus virusEntry2 = TestVirusInterpreterFactory.builder()
                 .reported(false)
                 .name("virus 2")
-                .qcStatus(VirusQCStatus.LOW_VIRAL_COVERAGE)
+                .qcStatus(VirusBreakendQCStatus.LOW_VIRAL_COVERAGE)
                 .interpretation(null)
                 .integrations(0)
-                .driverLikelihood(VirusDriverLikelihood.LOW)
+                .virusDriverLikelihoodType(VirusLikelihoodType.LOW)
                 .build();
 
-        VirusInterpreterRecord virusInterpreter = ImmutableVirusInterpreterRecord.builder()
-                .addEntries(virusEntry1, virusEntry2)
+        VirusInterpreterData virusInterpreter = ImmutableVirusInterpreterData.builder()
+                .addAllViruses(virusEntry1, virusEntry2)
                 .build();
 
         VirusExtractor virusExtractor = new VirusExtractor(TestEvidenceDatabaseFactory.createEmptyDatabase());
@@ -72,12 +72,12 @@ public class VirusExtractorTest {
 
     @Test
     public void canDetermineDriverLikelihoodForAllVirusDriverLikelihoods() {
-        Map<VirusDriverLikelihood, DriverLikelihood> expectedDriverLikelihoodLookup = new HashMap<>();
-        expectedDriverLikelihoodLookup.put(VirusDriverLikelihood.LOW, DriverLikelihood.LOW);
-        expectedDriverLikelihoodLookup.put(VirusDriverLikelihood.HIGH, DriverLikelihood.HIGH);
-        expectedDriverLikelihoodLookup.put(VirusDriverLikelihood.UNKNOWN, null);
+        Map<VirusLikelihoodType, DriverLikelihood> expectedDriverLikelihoodLookup = new HashMap<>();
+        expectedDriverLikelihoodLookup.put(VirusLikelihoodType.LOW, DriverLikelihood.LOW);
+        expectedDriverLikelihoodLookup.put(VirusLikelihoodType.HIGH, DriverLikelihood.HIGH);
+        expectedDriverLikelihoodLookup.put(VirusLikelihoodType.UNKNOWN, null);
 
-        for (VirusDriverLikelihood virusDriverLikelihood : VirusDriverLikelihood.values()) {
+        for (VirusLikelihoodType virusDriverLikelihood : VirusLikelihoodType.values()) {
             assertEquals(expectedDriverLikelihoodLookup.get(virusDriverLikelihood),
                     VirusExtractor.determineDriverLikelihood(virusDriverLikelihood));
         }

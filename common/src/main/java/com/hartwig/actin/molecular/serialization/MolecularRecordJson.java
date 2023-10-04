@@ -40,7 +40,7 @@ import com.hartwig.actin.molecular.datamodel.ExperimentType;
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion;
-import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableCuppaPrediction;
+import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableCupPrediction;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
@@ -189,7 +189,7 @@ public class MolecularRecordJson {
 
             return ImmutablePredictedTumorOrigin.builder()
                     .predictions(extractListFromJson(array(predictedTumorOrigin, "predictions"),
-                            prediction -> ImmutableCuppaPrediction.builder()
+                            prediction -> ImmutableCupPrediction.builder()
                                     .cancerType(string(prediction, "cancerType"))
                                     .likelihood(number(prediction, "likelihood"))
                                     .snvPairwiseClassifier(number(prediction, "snvPairwiseClassifier"))

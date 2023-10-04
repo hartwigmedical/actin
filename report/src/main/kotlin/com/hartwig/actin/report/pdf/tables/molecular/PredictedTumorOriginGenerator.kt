@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.characteristics.CuppaPrediction
+import com.hartwig.actin.molecular.datamodel.characteristics.CupPrediction
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
@@ -9,6 +9,7 @@ import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
+import kotlin.reflect.KFunction1
 
 class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, private val width: Float) : TableGenerator {
 
@@ -46,12 +47,12 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, priv
 
             table.addCell(Cells.createContent("This score is calculated by combining information on:"))
             predictions.forEach { table.addCell(Cells.createContent("")) }
-            addClassifierRow("(1) SNV types", predictions, CuppaPrediction::snvPairwiseClassifier, table)
+            addClassifierRow("(1) SNV types", predictions, CupPrediction::snvPairwiseClassifier, table)
             addClassifierRow(
-                "(2) SNV genomic localisation distribution", predictions, CuppaPrediction::genomicPositionClassifier, table
+                "(2) SNV genomic localisation distribution", predictions, CupPrediction::genomicPositionClassifier, table
             )
             addClassifierRow(
-                "(3) Driver genes and passenger characteristics", predictions, CuppaPrediction::featureClassifier, table
+                "(3) Driver genes and passenger characteristics", predictions, CupPrediction::featureClassifier, table
             )
             table.addCell(
                 Cells.createSpanningSubNote(
@@ -70,14 +71,14 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, priv
         private const val PADDING_RIGHT = 25
 
         private fun addClassifierRow(
-            classifierText: String, predictions: List<CuppaPrediction>,
-            classifierFunction: (CuppaPrediction) -> Double, table: Table
+            classifierText: String, predictions: List<CupPrediction>,
+            classifierFunction: KFunction1<CupPrediction, Double?>, table: Table
         ) {
             table.addCell(Cells.createContent(classifierText).setPaddingLeft(PADDING_LEFT.toFloat()))
             predictions
                 .asSequence()
                 .map(classifierFunction)
-                .map { Formats.percentage(it) }
+                .map { Formats.percentage(it?: 0.0) }
                 .map { Cells.createContent(it).setPaddingLeft(PADDING_LEFT.toFloat()).setPaddingRight(PADDING_RIGHT.toFloat()) }
                 .forEach(table::addCell)
         }

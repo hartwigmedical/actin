@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
+import java.util.List;
 import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -11,14 +12,14 @@ import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.RegionType;
 import com.hartwig.actin.molecular.filter.GeneFilter;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakend;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakendType;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxCodingType;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRegionType;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxStructuralVariant;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.sort.driver.DisruptionComparator;
+import com.hartwig.hmftools.datamodel.gene.TranscriptCodingType;
+import com.hartwig.hmftools.datamodel.gene.TranscriptRegionType;
+import com.hartwig.hmftools.datamodel.linx.LinxBreakend;
+import com.hartwig.hmftools.datamodel.linx.LinxBreakendType;
+import com.hartwig.hmftools.datamodel.linx.LinxRecord;
+import com.hartwig.hmftools.datamodel.linx.LinxSvAnnotation;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -37,14 +38,14 @@ class DisruptionExtractor {
     @NotNull
     public Set<Disruption> extractDisruptions(@NotNull LinxRecord linx, @NotNull Set<String> lostGenes) {
         Set<Disruption> disruptions = Sets.newTreeSet(new DisruptionComparator());
-        for (LinxBreakend breakend : linx.breakends()) {
+        for (LinxBreakend breakend : linx.allSomaticBreakends()) {
             String event = DriverEventFactory.disruptionEvent(breakend);
             if (geneFilter.include(breakend.gene())) {
                 if (include(breakend, lostGenes)) {
                     disruptions.add(ImmutableDisruption.builder()
                             .from(GeneAlterationFactory.convertAlteration(breakend.gene(),
                                     evidenceDatabase.geneAlterationForBreakend(breakend)))
-                            .isReportable(breakend.reported())
+                            .isReportable(breakend.reportedDisruption())
                             .event(event)
                             .driverLikelihood(DriverLikelihood.LOW)
                             .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForBreakend(breakend)))
@@ -53,10 +54,10 @@ class DisruptionExtractor {
                             .undisruptedCopyNumber(ExtractionUtil.keep3Digits(breakend.undisruptedCopyNumber()))
                             .regionType(determineRegionType(breakend.regionType()))
                             .codingContext(determineCodingContext(breakend.codingType()))
-                            .clusterGroup(lookupClusterId(breakend, linx.structuralVariants()))
+                            .clusterGroup(lookupClusterId(breakend, linx.allSomaticStructuralVariants()))
                             .build());
                 }
-            } else if (breakend.reported()) {
+            } else if (breakend.reportedDisruption()) {
                 throw new IllegalStateException(
                         "Filtered a reported breakend through gene filtering: '" + event + "'. Please make sure '" + breakend.gene()
                                 + "' is configured as a known gene.");
@@ -69,8 +70,8 @@ class DisruptionExtractor {
         return breakend.type() != LinxBreakendType.DEL || !lostGenes.contains(breakend.gene());
     }
 
-    private static int lookupClusterId(@NotNull LinxBreakend breakend, @NotNull Set<LinxStructuralVariant> structuralVariants) {
-        for (LinxStructuralVariant structuralVariant : structuralVariants) {
+    private static int lookupClusterId(@NotNull LinxBreakend breakend, @NotNull List<LinxSvAnnotation> structuralVariants) {
+        for (LinxSvAnnotation structuralVariant : structuralVariants) {
             if (structuralVariant.svId() == breakend.svId()) {
                 return structuralVariant.clusterId();
             }
@@ -112,7 +113,7 @@ class DisruptionExtractor {
 
     @NotNull
     @VisibleForTesting
-    static RegionType determineRegionType(@NotNull LinxRegionType regionType) {
+    static RegionType determineRegionType(@NotNull TranscriptRegionType regionType) {
         switch (regionType) {
             case UPSTREAM: {
                 return RegionType.UPSTREAM;
@@ -137,7 +138,7 @@ class DisruptionExtractor {
 
     @NotNull
     @VisibleForTesting
-    static CodingContext determineCodingContext(@NotNull LinxCodingType codingType) {
+    static CodingContext determineCodingContext(@NotNull TranscriptCodingType codingType) {
         switch (codingType) {
             case CODING: {
                 return CodingContext.CODING;

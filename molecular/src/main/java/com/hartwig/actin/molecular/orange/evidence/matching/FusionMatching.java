@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange.evidence.matching;
 
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
+import com.hartwig.hmftools.datamodel.linx.LinxFusion;
 import com.hartwig.serve.datamodel.fusion.FusionPair;
 
 import org.jetbrains.annotations.NotNull;

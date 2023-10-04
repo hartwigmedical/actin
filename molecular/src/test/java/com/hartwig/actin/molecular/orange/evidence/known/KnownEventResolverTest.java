@@ -4,15 +4,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakend;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLossInterpretation;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
+import com.hartwig.hmftools.datamodel.linx.HomozygousDisruption;
+import com.hartwig.hmftools.datamodel.linx.LinxBreakend;
+import com.hartwig.hmftools.datamodel.linx.LinxFusion;
+import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation;
+import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect;
+import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss;
+import com.hartwig.hmftools.datamodel.purple.PurpleVariant;
 import com.hartwig.serve.datamodel.ImmutableKnownEvents;
 import com.hartwig.serve.datamodel.KnownEvents;
 import com.hartwig.serve.datamodel.MutationType;
@@ -98,13 +98,13 @@ public class KnownEventResolverTest {
         PurpleGainLoss ampGene3 = amp("gene 3");
         assertNull(resolver.resolveForCopyNumber(ampGene3));
 
-        LinxHomozygousDisruption homDisruptionGene1 = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build();
+        HomozygousDisruption homDisruptionGene1 = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build();
         assertEquals(knownDel, resolver.resolveForHomozygousDisruption(homDisruptionGene1));
 
-        LinxHomozygousDisruption homDisruptionGene2 = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 2").build();
+        HomozygousDisruption homDisruptionGene2 = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 2").build();
         assertNotNull(resolver.resolveForHomozygousDisruption(homDisruptionGene2));
 
-        LinxHomozygousDisruption homDisruptionGene3 = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 3").build();
+        HomozygousDisruption homDisruptionGene3 = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 3").build();
         assertNull(resolver.resolveForHomozygousDisruption(homDisruptionGene3));
 
         LinxBreakend breakendGene1 = TestLinxFactory.breakendBuilder().gene("gene 1").build();
@@ -133,7 +133,7 @@ public class KnownEventResolverTest {
 
     @NotNull
     private static PurpleGainLoss amp(@NotNull String gene) {
-        return TestPurpleFactory.gainLossBuilder().gene(gene).interpretation(PurpleGainLossInterpretation.FULL_GAIN).build();
+        return TestPurpleFactory.gainLossBuilder().gene(gene).interpretation(CopyNumberInterpretation.FULL_GAIN).build();
     }
 
     @NotNull

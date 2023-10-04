@@ -23,10 +23,10 @@ public abstract class PredictedTumorOrigin {
     }
 
     @NotNull
-    public abstract List<CuppaPrediction> predictions();
+    public abstract List<CupPrediction> predictions();
 
     @NotNull
-    private CuppaPrediction bestPrediction() {
-        return predictions().stream().max(Comparator.comparing(CuppaPrediction::likelihood)).orElseThrow();
+    private CupPrediction bestPrediction() {
+        return predictions().stream().max(Comparator.comparing(CupPrediction::likelihood)).orElseThrow();
     }
 }

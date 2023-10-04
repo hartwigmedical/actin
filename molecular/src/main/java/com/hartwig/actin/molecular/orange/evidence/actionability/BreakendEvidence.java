@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.orange.evidence.actionability;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakend;
+import com.hartwig.hmftools.datamodel.linx.LinxBreakend;
 import com.hartwig.serve.datamodel.ActionableEvent;
 import com.hartwig.serve.datamodel.ActionableEvents;
 import com.hartwig.serve.datamodel.gene.ActionableGene;
@@ -36,7 +36,7 @@ class BreakendEvidence implements EvidenceMatcher<LinxBreakend> {
     public List<ActionableEvent> findMatches(@NotNull LinxBreakend breakend) {
         List<ActionableEvent> matches = Lists.newArrayList();
         for (ActionableGene actionableGene : applicableActionableGenes) {
-            if (breakend.reported() && actionableGene.gene().equals(breakend.gene())) {
+            if (breakend.reportedDisruption() && actionableGene.gene().equals(breakend.gene())) {
                 matches.add(actionableGene);
             }
         }

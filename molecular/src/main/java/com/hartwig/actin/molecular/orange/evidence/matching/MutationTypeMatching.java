@@ -1,8 +1,8 @@
 package com.hartwig.actin.molecular.orange.evidence.matching;
 
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCodingEffect;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariantType;
+import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect;
+import com.hartwig.hmftools.datamodel.purple.PurpleVariant;
+import com.hartwig.hmftools.datamodel.purple.PurpleVariantType;
 import com.hartwig.serve.datamodel.MutationType;
 
 import org.apache.logging.log4j.LogManager;

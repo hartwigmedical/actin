@@ -11,8 +11,8 @@ class CanProvideFreshSampleForFurtherAnalysisTest {
         val function = CanProvideFreshSampleForFurtherAnalysis()
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withMolecularExperimentType(ExperimentType.PANEL))
+            function.evaluate(TumorTestFactory.withMolecularExperimentType(ExperimentType.TARGETED))
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withMolecularExperimentType(ExperimentType.WGS)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withMolecularExperimentType(ExperimentType.WHOLE_GENOME)))
     }
 }

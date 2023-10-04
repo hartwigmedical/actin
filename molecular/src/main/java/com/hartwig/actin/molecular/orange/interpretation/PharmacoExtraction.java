@@ -11,8 +11,8 @@ import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutableHaplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutablePharmacoEntry;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
-import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
-import com.hartwig.actin.molecular.orange.datamodel.peach.PeachEntry;
+import com.hartwig.hmftools.datamodel.orange.OrangeRecord;
+import com.hartwig.hmftools.datamodel.peach.PeachGenotype;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -23,22 +23,25 @@ final class PharmacoExtraction {
 
     @NotNull
     public static Set<PharmacoEntry> extract(@NotNull OrangeRecord record) {
-        return record.peach()
-                .map(peachRecord -> peachRecord.entries()
-                        .stream()
-                        .collect(groupingBy(PeachEntry::gene))
-                        .entrySet()
-                        .stream()
-                        .map(geneWithPeachEntries -> createPharmacoEntryForGeneAndPeachEntries(geneWithPeachEntries.getKey(),
-                                geneWithPeachEntries.getValue()))
-                        .collect(Collectors.toSet()))
-                .orElse(Collections.emptySet());
+        Set<PeachGenotype> peach = record.peach();
+        if (peach != null) {
+            return peach.stream().collect(groupingBy(PeachGenotype::gene))
+                    .entrySet()
+                    .stream()
+                    .map(x -> createPharmacoEntryForGeneAndPeachGenotypes(x.getKey(), x.getValue()))
+                    .collect(Collectors.toSet());
+        } else {
+            return Collections.emptySet();
+        }
     }
 
     @NotNull
-    private static PharmacoEntry createPharmacoEntryForGeneAndPeachEntries(String gene, List<PeachEntry> peachEntries) {
-        Set<Haplotype> haplotypes = peachEntries.stream()
-                .map(peachEntry -> ImmutableHaplotype.builder().name(peachEntry.haplotype()).function(peachEntry.function()).build())
+    private static PharmacoEntry createPharmacoEntryForGeneAndPeachGenotypes(String gene, List<PeachGenotype> peachGenotypes) {
+        Set<Haplotype> haplotypes = peachGenotypes.stream()
+                .map(peachGenotype -> ImmutableHaplotype.builder()
+                        .name(peachGenotype.haplotype())
+                        .function(peachGenotype.function())
+                        .build())
                 .collect(Collectors.toSet());
         return ImmutablePharmacoEntry.builder().gene(gene).haplotypes(haplotypes).build();
     }

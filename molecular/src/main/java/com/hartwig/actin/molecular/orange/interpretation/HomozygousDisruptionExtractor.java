@@ -7,8 +7,7 @@ import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableHomozygousDisruption;
 import com.hartwig.actin.molecular.filter.GeneFilter;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
+import com.hartwig.hmftools.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.sort.driver.HomozygousDisruptionComparator;
 
@@ -29,7 +28,7 @@ class HomozygousDisruptionExtractor {
     @NotNull
     public Set<HomozygousDisruption> extractHomozygousDisruptions(@NotNull LinxRecord linx) {
         Set<HomozygousDisruption> homozygousDisruptions = Sets.newTreeSet(new HomozygousDisruptionComparator());
-        for (LinxHomozygousDisruption homozygousDisruption : linx.homozygousDisruptions()) {
+        for (com.hartwig.hmftools.datamodel.linx.HomozygousDisruption homozygousDisruption : relevantHomozygousDisruptions(linx)) {
             if (geneFilter.include(homozygousDisruption.gene())) {
                 homozygousDisruptions.add(ImmutableHomozygousDisruption.builder()
                         .from(GeneAlterationFactory.convertAlteration(homozygousDisruption.gene(),
@@ -46,5 +45,15 @@ class HomozygousDisruptionExtractor {
             }
         }
         return homozygousDisruptions;
+    }
+
+    @NotNull
+    private static Set<com.hartwig.hmftools.datamodel.linx.HomozygousDisruption> relevantHomozygousDisruptions(@NotNull LinxRecord linx) {
+        Set<com.hartwig.hmftools.datamodel.linx.HomozygousDisruption> disruptions = Sets.newHashSet();
+        disruptions.addAll(linx.somaticHomozygousDisruptions());
+        if (linx.germlineHomozygousDisruptions() != null) {
+            disruptions.addAll(linx.germlineHomozygousDisruptions());
+        }
+        return disruptions;
     }
 }

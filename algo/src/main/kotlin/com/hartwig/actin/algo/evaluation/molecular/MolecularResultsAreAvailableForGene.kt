@@ -9,7 +9,7 @@ import com.hartwig.actin.molecular.datamodel.ExperimentType
 
 class MolecularResultsAreAvailableForGene internal constructor(private val gene: String) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        if (record.molecular().type() == ExperimentType.WGS && record.molecular().containsTumorCells()) {
+        if (record.molecular().type() == ExperimentType.WHOLE_GENOME && record.molecular().containsTumorCells()) {
             return unrecoverable()
                 .result(EvaluationResult.PASS)
                 .addPassSpecificMessages("WGS has successfully been performed so molecular results are available for gene $gene")
@@ -33,7 +33,7 @@ class MolecularResultsAreAvailableForGene internal constructor(private val gene:
                 .addPassSpecificMessages("$gene has been tested in a prior molecular test")
                 .addPassGeneralMessages("$gene tested before")
                 .build()
-        } else if (record.molecular().type() == ExperimentType.WGS && !record.molecular().containsTumorCells()) {
+        } else if (record.molecular().type() == ExperimentType.WHOLE_GENOME && !record.molecular().containsTumorCells()) {
             return unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Patient has had WGS but biopsy contained no tumor cells")

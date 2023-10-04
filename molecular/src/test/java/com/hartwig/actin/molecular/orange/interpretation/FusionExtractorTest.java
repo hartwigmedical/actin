@@ -13,13 +13,13 @@ import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType;
 import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
-import com.hartwig.actin.molecular.orange.datamodel.linx.ImmutableLinxRecord;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionDriverLikelihood;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionType;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory;
+import com.hartwig.hmftools.datamodel.linx.FusionLikelihoodType;
+import com.hartwig.hmftools.datamodel.linx.ImmutableLinxRecord;
+import com.hartwig.hmftools.datamodel.linx.LinxFusion;
+import com.hartwig.hmftools.datamodel.linx.LinxFusionType;
+import com.hartwig.hmftools.datamodel.linx.LinxRecord;
 
 import org.junit.Test;
 
@@ -29,19 +29,19 @@ public class FusionExtractorTest {
     public void canExtractFusions() {
         LinxFusion linxFusion = TestLinxFactory.fusionBuilder()
                 .reported(true)
-                .type(LinxFusionType.PROMISCUOUS_5)
+                .reportedType(LinxFusionType.PROMISCUOUS_5)
                 .geneStart("gene start")
                 .geneTranscriptStart("trans start")
                 .fusedExonUp(1)
                 .geneEnd("gene end")
                 .geneTranscriptEnd("trans end")
                 .fusedExonDown(4)
-                .driverLikelihood(LinxFusionDriverLikelihood.HIGH)
+                .likelihood(FusionLikelihoodType.HIGH)
                 .build();
 
         LinxRecord linx = ImmutableLinxRecord.builder()
                 .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
-                .addFusions(linxFusion)
+                .addAllSomaticFusions(linxFusion)
                 .build();
 
         GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes("gene end");
@@ -68,7 +68,7 @@ public class FusionExtractorTest {
 
         LinxRecord linx = ImmutableLinxRecord.builder()
                 .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
-                .addFusions(linxFusion)
+                .addAllSomaticFusions(linxFusion)
                 .build();
 
         GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes("weird gene");
@@ -79,20 +79,20 @@ public class FusionExtractorTest {
     @Test
     public void canDetermineDriverTypeForAllFusions() {
         for (LinxFusionType type : LinxFusionType.values()) {
-            LinxFusion fusion = TestLinxFactory.fusionBuilder().type(type).build();
+            LinxFusion fusion = TestLinxFactory.fusionBuilder().reportedType(type).build();
             assertNotNull(FusionExtractor.determineDriverType(fusion));
         }
     }
 
     @Test
     public void canDetermineDriverLikelihoodForAllFusions() {
-        LinxFusion high = TestLinxFactory.fusionBuilder().driverLikelihood(LinxFusionDriverLikelihood.HIGH).build();
+        LinxFusion high = TestLinxFactory.fusionBuilder().likelihood(FusionLikelihoodType.HIGH).build();
         assertEquals(DriverLikelihood.HIGH, FusionExtractor.determineDriverLikelihood(high));
 
-        LinxFusion low = TestLinxFactory.fusionBuilder().driverLikelihood(LinxFusionDriverLikelihood.LOW).build();
+        LinxFusion low = TestLinxFactory.fusionBuilder().likelihood(FusionLikelihoodType.LOW).build();
         assertEquals(DriverLikelihood.LOW, FusionExtractor.determineDriverLikelihood(low));
 
-        LinxFusion na = TestLinxFactory.fusionBuilder().driverLikelihood(LinxFusionDriverLikelihood.NA).build();
+        LinxFusion na = TestLinxFactory.fusionBuilder().likelihood(FusionLikelihoodType.NA).build();
         assertNull(FusionExtractor.determineDriverLikelihood(na));
     }
 }
