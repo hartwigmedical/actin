@@ -14,7 +14,7 @@ class Header {
         val canvas = Canvas(pdfCanvas, page.pageSize)
         canvas.add(
             Paragraph().add(Text("ACTIN Report (research-use only)").addStyle(Styles.reportTitleStyle()))
-                .setFixedPosition(200f, page.pageSize.height - 40, 300f)
+                .setFixedPosition(140f, page.pageSize.height - 40, 300f)
         )
 
         pdfCanvas.release()
