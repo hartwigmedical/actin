@@ -13,6 +13,7 @@ import com.itextpdf.layout.element.Paragraph
 import java.util.*
 
 class SidePanel(private val patientId: String) {
+
     fun render(page: PdfPage) {
         val canvas = PdfCanvas(page.lastContentStream, page.resources, page.document)
         val pageSize = page.pageSize
@@ -32,6 +33,7 @@ class SidePanel(private val patientId: String) {
         private const val MAX_WIDTH = 120f
         private const val RECTANGLE_WIDTH = 170f
         private const val RECTANGLE_HEIGHT = 84f
+
         private fun createDiv(pageSize: Rectangle, index: Int, label: String, value: String): Div {
             val div = Div()
             div.isKeepTogether = true
