@@ -11,6 +11,7 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.properties.TextAlignment
 
 class Footer {
+
     private val footerTemplates: MutableList<FooterTemplate> = mutableListOf()
 
     fun render(page: PdfPage) {
@@ -30,6 +31,7 @@ class Footer {
     }
 
     private class FooterTemplate(private val pageNumber: Int, private val template: PdfFormXObject) {
+
         fun renderFooter(document: PdfDocument, totalPageCount: Int) {
             val displayString = "$pageNumber/$totalPageCount"
             val canvas = Canvas(template, document)
@@ -37,8 +39,8 @@ class Footer {
             canvas.showTextAligned(pageNumberParagraph, 0f, 0f, TextAlignment.LEFT)
             val disclaimer = ("All results and data described in this report are for research use only and have not been generated using a "
                     + "clinically validated and controlled procedure.")
-            val disclaimerParagraph = Paragraph(disclaimer).setMaxWidth(400f).addStyle(Styles.deemphasizedStyle())
-            canvas.showTextAligned(disclaimerParagraph, 50f, 0f, TextAlignment.LEFT)
+            val disclaimerParagraph = Paragraph(disclaimer).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
+            canvas.showTextAligned(disclaimerParagraph, 30f, 0f, TextAlignment.LEFT)
         }
     }
 }
