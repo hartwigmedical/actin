@@ -79,7 +79,8 @@ public class DriverEventFactoryTest {
 
     @Test
     public void canGenerateEventsForViruses() {
-        assertEquals("HPV positive", DriverEventFactory.virusEvent(virus("Papilloma", VirusInterpretation.HPV)));
+        assertEquals("HPV (Papilloma) positive", DriverEventFactory.virusEvent(virus("Papilloma", VirusInterpretation.HPV)));
+        assertEquals("EBV positive", DriverEventFactory.virusEvent(virus("Papilloma", VirusInterpretation.EBV)));
         assertEquals("Papilloma positive", DriverEventFactory.virusEvent(virus("Papilloma", null)));
     }
 
