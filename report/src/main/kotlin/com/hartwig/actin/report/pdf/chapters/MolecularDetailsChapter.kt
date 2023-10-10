@@ -44,7 +44,7 @@ class MolecularDetailsChapter(private val report: Report) : ReportChapter {
         val table = Tables.createSingleColWithWidth(contentWidth())
         table.addCell(Cells.createEmpty())
         table.addCell(
-            Cells.createTitle("${report.molecular.type()} (${report.molecular.sampleId()}, ${date(report.molecular.date())})")
+            Cells.createTitle("${report.molecular.type().display()} (${report.molecular.sampleId()}, ${date(report.molecular.date())})")
         )
 
         val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
