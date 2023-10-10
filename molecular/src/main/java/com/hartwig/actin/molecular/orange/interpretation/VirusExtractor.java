@@ -8,20 +8,20 @@ import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableVirus;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.datamodel.driver.VirusType;
-import com.hartwig.actin.molecular.orange.datamodel.virus.VirusDriverLikelihood;
-import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpretation;
-import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
-import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterRecord;
-import com.hartwig.actin.molecular.orange.datamodel.virus.VirusQCStatus;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.sort.driver.VirusComparator;
+import com.hartwig.hmftools.datamodel.virus.AnnotatedVirus;
+import com.hartwig.hmftools.datamodel.virus.VirusBreakendQCStatus;
+import com.hartwig.hmftools.datamodel.virus.VirusInterpretation;
+import com.hartwig.hmftools.datamodel.virus.VirusInterpreterData;
+import com.hartwig.hmftools.datamodel.virus.VirusLikelihoodType;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 class VirusExtractor {
 
-    static final VirusQCStatus QC_PASS_STATUS = VirusQCStatus.NO_ABNORMALITIES;
+    static final VirusBreakendQCStatus QC_PASS_STATUS = VirusBreakendQCStatus.NO_ABNORMALITIES;
 
     @NotNull
     private final EvidenceDatabase evidenceDatabase;
@@ -31,13 +31,13 @@ class VirusExtractor {
     }
 
     @NotNull
-    public Set<Virus> extract(@NotNull VirusInterpreterRecord virusInterpreter) {
+    public Set<Virus> extract(@NotNull VirusInterpreterData virusInterpreter) {
         Set<Virus> viruses = Sets.newTreeSet(new VirusComparator());
-        for (VirusInterpreterEntry virus : virusInterpreter.entries()) {
+        for (AnnotatedVirus virus : virusInterpreter.allViruses()) {
             viruses.add(ImmutableVirus.builder()
                     .isReportable(virus.reported())
                     .event(DriverEventFactory.virusEvent(virus))
-                    .driverLikelihood(determineDriverLikelihood(virus.driverLikelihood()))
+                    .driverLikelihood(determineDriverLikelihood(virus.virusDriverLikelihoodType()))
                     .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVirus(virus)))
                     .name(virus.name())
                     .isReliable(virus.qcStatus() == QC_PASS_STATUS)
@@ -50,7 +50,7 @@ class VirusExtractor {
 
     @Nullable
     @VisibleForTesting
-    static DriverLikelihood determineDriverLikelihood(@NotNull VirusDriverLikelihood driverLikelihood) {
+    static DriverLikelihood determineDriverLikelihood(@NotNull VirusLikelihoodType driverLikelihood) {
         switch (driverLikelihood) {
             case HIGH: {
                 return DriverLikelihood.HIGH;

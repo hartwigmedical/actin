@@ -8,6 +8,7 @@ import com.hartwig.actin.algo.evaluation.general.GeneralRuleMapper
 import com.hartwig.actin.algo.evaluation.infection.InfectionRuleMapper
 import com.hartwig.actin.algo.evaluation.laboratory.LaboratoryRuleMapper
 import com.hartwig.actin.algo.evaluation.lifestyle.LifestyleRuleMapper
+import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.algo.evaluation.medication.MedicationRuleMapper
 import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleMapper
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionRuleMapper
@@ -27,11 +28,11 @@ object FunctionCreatorFactory {
 
     fun create(
         referenceDateProvider: ReferenceDateProvider,
-        doidModel: DoidModel, functionInputResolver: FunctionInputResolver
+        doidModel: DoidModel, functionInputResolver: FunctionInputResolver, atcTree: AtcTree
     ): Map<EligibilityRule, FunctionCreator> {
         val resources = RuleMappingResources(
             referenceDateProvider = referenceDateProvider, doidModel = doidModel,
-            functionInputResolver = functionInputResolver
+            functionInputResolver = functionInputResolver, atcTree = atcTree
         )
 
         return listOf(

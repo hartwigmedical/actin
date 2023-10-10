@@ -11,11 +11,10 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.io.IOException
 import kotlin.system.exitProcess
 
 class ReporterApplication(private val config: ReporterConfig) {
-    @Throws(IOException::class)
+
     fun run() {
         LOGGER.info("Loading clinical record from {}", config.clinicalJson)
         val clinical = ClinicalRecordJson.read(config.clinicalJson)

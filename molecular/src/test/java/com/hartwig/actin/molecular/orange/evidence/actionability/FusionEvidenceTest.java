@@ -6,9 +6,9 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusionType;
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
+import com.hartwig.hmftools.datamodel.linx.LinxFusion;
+import com.hartwig.hmftools.datamodel.linx.LinxFusionType;
 import com.hartwig.serve.datamodel.ActionableEvent;
 import com.hartwig.serve.datamodel.ActionableEvents;
 import com.hartwig.serve.datamodel.ImmutableActionableEvents;
@@ -31,22 +31,22 @@ public class FusionEvidenceTest {
         FusionEvidence fusionEvidence = FusionEvidence.create(actionable);
 
         LinxFusion reportedFusionGene1 =
-                TestLinxFactory.fusionBuilder().geneStart("gene 1").type(LinxFusionType.PROMISCUOUS_5).reported(true).build();
+                TestLinxFactory.fusionBuilder().geneStart("gene 1").reportedType(LinxFusionType.PROMISCUOUS_5).reported(true).build();
         List<ActionableEvent> evidenceMatchGene1 = fusionEvidence.findMatches(reportedFusionGene1);
 
         assertEquals(1, evidenceMatchGene1.size());
         assertTrue(evidenceMatchGene1.contains(gene1));
 
         LinxFusion unreportedFusionGene1 =
-                TestLinxFactory.fusionBuilder().geneStart("gene 1").type(LinxFusionType.PROMISCUOUS_5).reported(false).build();
+                TestLinxFactory.fusionBuilder().geneStart("gene 1").reportedType(LinxFusionType.PROMISCUOUS_5).reported(false).build();
         assertTrue(fusionEvidence.findMatches(unreportedFusionGene1).isEmpty());
 
         LinxFusion wrongTypeFusionGene1 =
-                TestLinxFactory.fusionBuilder().geneStart("gene 1").type(LinxFusionType.PROMISCUOUS_3).reported(true).build();
+                TestLinxFactory.fusionBuilder().geneStart("gene 1").reportedType(LinxFusionType.PROMISCUOUS_3).reported(true).build();
         assertTrue(fusionEvidence.findMatches(wrongTypeFusionGene1).isEmpty());
 
         LinxFusion reportedFusionGene2 =
-                TestLinxFactory.fusionBuilder().geneEnd("gene 2").type(LinxFusionType.PROMISCUOUS_3).reported(true).build();
+                TestLinxFactory.fusionBuilder().geneEnd("gene 2").reportedType(LinxFusionType.PROMISCUOUS_3).reported(true).build();
         List<ActionableEvent> evidenceMatchGene2 = fusionEvidence.findMatches(reportedFusionGene2);
 
         assertEquals(1, evidenceMatchGene2.size());

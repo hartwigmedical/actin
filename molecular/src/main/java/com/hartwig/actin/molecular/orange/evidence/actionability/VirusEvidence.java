@@ -3,8 +3,8 @@ package com.hartwig.actin.molecular.orange.evidence.actionability;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpretation;
-import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
+import com.hartwig.hmftools.datamodel.virus.AnnotatedVirus;
+import com.hartwig.hmftools.datamodel.virus.VirusInterpretation;
 import com.hartwig.serve.datamodel.ActionableEvent;
 import com.hartwig.serve.datamodel.ActionableEvents;
 import com.hartwig.serve.datamodel.characteristic.ActionableCharacteristic;
@@ -12,7 +12,7 @@ import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType;
 
 import org.jetbrains.annotations.NotNull;
 
-class VirusEvidence implements EvidenceMatcher<VirusInterpreterEntry> {
+class VirusEvidence implements EvidenceMatcher<AnnotatedVirus> {
 
     @NotNull
     private final List<ActionableEvent> hpvCharacteristics;
@@ -42,7 +42,7 @@ class VirusEvidence implements EvidenceMatcher<VirusInterpreterEntry> {
 
     @NotNull
     @Override
-    public List<ActionableEvent> findMatches(@NotNull VirusInterpreterEntry virus) {
+    public List<ActionableEvent> findMatches(@NotNull AnnotatedVirus virus) {
         VirusInterpretation interpretation = virus.interpretation();
         if (interpretation == null || !virus.reported()) {
             return Lists.newArrayList();

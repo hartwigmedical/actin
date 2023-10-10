@@ -4,33 +4,40 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format.concat
-import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
+import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
 import com.hartwig.actin.algo.medication.MedicationStatusInterpretation
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreter
+import com.hartwig.actin.clinical.datamodel.AtcLevel
 
 class HasRecentlyReceivedCancerTherapyOfCategory(
-    private val categoriesToFind: Set<String>,
+    private val categories: Map<String, Set<AtcLevel>>,
+    private val categoriesToIgnore: Map<String, Set<AtcLevel>>,
     private val interpreter: MedicationStatusInterpreter
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
+        val atcLevelsToFind: Set<AtcLevel> = categories.values.flatten().toSet() - categoriesToIgnore.values.flatten().toSet()
+        val categoryNames: Set<String> = categories.keys
+
         val activeMedicationsMatchingCategories = record.clinical().medications()
             .filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
-            .filter { medication -> medication.categories().any { stringCaseInsensitivelyMatchesQueryCollection(it, categoriesToFind) } }
+            .filter { (it.allLevels() intersect atcLevelsToFind).isNotEmpty() || it.isTrialMedication }
 
-        val foundCategories = activeMedicationsMatchingCategories.flatMap { it.categories() }.distinct()
-        val foundMedicationNames = activeMedicationsMatchingCategories.map { it.name() }.filter { it.isNotEmpty() }.distinct()
+        val foundCategories = activeMedicationsMatchingCategories.map { medication ->
+            if (medication.isTrialMedication) "Trial medication" else medication.atc()!!.pharmacologicalSubGroup().name()!!.lowercase()
+        }
+
+        val foundMedicationNames = activeMedicationsMatchingCategories.map { it.name() }.filter { it.isNotEmpty() }
 
         return if (activeMedicationsMatchingCategories.isNotEmpty()) {
-            val foundMedicationString = if (foundMedicationNames.isNotEmpty()) ": ${concat(foundMedicationNames)}" else ""
+            val foundMedicationString = if (foundMedicationNames.isNotEmpty()) ": ${concatLowercaseWithAnd(foundMedicationNames)}" else ""
             EvaluationFactory.pass(
-                "Patient has recently received medication of category ${concat(foundCategories)}$foundMedicationString",
-                "Has recently received medication of category ${concat(foundCategories)}$foundMedicationString"
+                "Patient has recently received medication of category '${concatLowercaseWithAnd(foundCategories)}'$foundMedicationString",
+                "Recent '${concatLowercaseWithAnd(foundCategories)}' medication use$foundMedicationString"
             )
         } else {
             EvaluationFactory.fail(
-                "Patient has not received recent treatments of category " + concat(categoriesToFind),
-                "Has not received recent treatments of category " + concat(categoriesToFind)
+                "Patient has not received recent treatments of category '${concatLowercaseWithAnd(categoryNames)}'",
+                "No recent '${concatLowercaseWithAnd(categoryNames)}' medication use"
             )
         }
     }

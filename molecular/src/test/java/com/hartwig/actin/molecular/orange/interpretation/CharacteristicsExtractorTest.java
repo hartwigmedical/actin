@@ -6,21 +6,22 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import com.hartwig.actin.molecular.datamodel.characteristics.CuppaPrediction;
+import com.hartwig.actin.molecular.datamodel.characteristics.CupPrediction;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
-import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
-import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
-import com.hartwig.actin.molecular.orange.datamodel.chord.ChordStatus;
-import com.hartwig.actin.molecular.orange.datamodel.chord.ImmutableChordRecord;
-import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleCharacteristics;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleMicrosatelliteStatus;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleTumorMutationalStatus;
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory;
+import com.hartwig.hmftools.datamodel.chord.ChordStatus;
+import com.hartwig.hmftools.datamodel.chord.ImmutableChordRecord;
+import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeRecord;
+import com.hartwig.hmftools.datamodel.orange.OrangeRecord;
+import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord;
+import com.hartwig.hmftools.datamodel.purple.PurpleCharacteristics;
+import com.hartwig.hmftools.datamodel.purple.PurpleMicrosatelliteStatus;
+import com.hartwig.hmftools.datamodel.purple.PurpleTumorMutationalStatus;
 
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
@@ -42,12 +43,12 @@ public class CharacteristicsExtractorTest {
         assertEquals("Melanoma", predictedOrigin.cancerType());
         assertEquals(0.996, predictedOrigin.likelihood(), EPSILON);
         assertEquals(1, predictedOrigin.predictions().size());
-        CuppaPrediction cuppaPrediction = predictedOrigin.predictions().iterator().next();
-        assertEquals("Melanoma", cuppaPrediction.cancerType());
-        assertEquals(0.996, cuppaPrediction.likelihood(), EPSILON);
-        assertDoubleEquals(0.979, cuppaPrediction.snvPairwiseClassifier());
-        assertDoubleEquals(0.99, cuppaPrediction.genomicPositionClassifier());
-        assertDoubleEquals(0.972, cuppaPrediction.featureClassifier());
+        CupPrediction cupPrediction = predictedOrigin.predictions().iterator().next();
+        assertEquals("Melanoma", cupPrediction.cancerType());
+        assertEquals(0.996, cupPrediction.likelihood(), EPSILON);
+        assertDoubleEquals(0.979, cupPrediction.snvPairwiseClassifier());
+        assertDoubleEquals(0.99, cupPrediction.genomicPositionClassifier());
+        assertDoubleEquals(0.972, cupPrediction.featureClassifier());
 
         assertEquals(false, characteristics.isMicrosatelliteUnstable());
         assertNotNull(characteristics.microsatelliteEvidence());
@@ -81,7 +82,13 @@ public class CharacteristicsExtractorTest {
     private static OrangeRecord withHomologousRepairStatus(@NotNull ChordStatus hrStatus) {
         return ImmutableOrangeRecord.builder()
                 .from(TestOrangeFactory.createMinimalTestOrangeRecord())
-                .chord(ImmutableChordRecord.builder().hrStatus(hrStatus).build())
+                .chord(ImmutableChordRecord.builder()
+                        .hrStatus(hrStatus)
+                        .brca1Value(0D)
+                        .brca2Value(0D)
+                        .hrdValue(0D)
+                        .hrdType(Strings.EMPTY)
+                        .build())
                 .build();
     }
 

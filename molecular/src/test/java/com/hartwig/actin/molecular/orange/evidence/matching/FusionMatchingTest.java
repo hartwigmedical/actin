@@ -3,9 +3,9 @@ package com.hartwig.actin.molecular.orange.evidence.matching;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
 import com.hartwig.actin.molecular.orange.evidence.known.TestServeKnownFactory;
+import com.hartwig.hmftools.datamodel.linx.LinxFusion;
 import com.hartwig.serve.datamodel.fusion.KnownFusion;
 
 import org.junit.Test;

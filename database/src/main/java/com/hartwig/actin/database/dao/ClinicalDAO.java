@@ -17,6 +17,7 @@ import static com.hartwig.actin.database.Tables.TREATMENTHISTORYENTRY;
 import static com.hartwig.actin.database.Tables.TUMOR;
 import static com.hartwig.actin.database.Tables.VITALFUNCTION;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import com.hartwig.actin.clinical.datamodel.BodyWeight;
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus;
 import com.hartwig.actin.clinical.datamodel.Complication;
+import com.hartwig.actin.clinical.datamodel.CypInteraction;
 import com.hartwig.actin.clinical.datamodel.ECG;
 import com.hartwig.actin.clinical.datamodel.ECGMeasure;
 import com.hartwig.actin.clinical.datamodel.InfectionStatus;
@@ -487,12 +489,6 @@ class ClinicalDAO {
             context.insertInto(MEDICATION,
                             MEDICATION.PATIENTID,
                             MEDICATION.NAME,
-                            MEDICATION.CATEGORIES,
-                            MEDICATION.CODEATC,
-                            MEDICATION.ANATOMICALMAINGROUPATC,
-                            MEDICATION.THERAPEUTICSUBGROUPATC,
-                            MEDICATION.PHARMACOLOGICALSUBGROUPATC,
-                            MEDICATION.CHEMICALSUBGROUPATC,
                             MEDICATION.STATUS,
                             MEDICATION.ADMINISTRATIONROUTE,
                             MEDICATION.DOSAGEMIN,
@@ -500,18 +496,22 @@ class ClinicalDAO {
                             MEDICATION.DOSAGEUNIT,
                             MEDICATION.FREQUENCY,
                             MEDICATION.FREQUENCYUNIT,
+                            MEDICATION.PERIODBETWEENVALUE,
+                            MEDICATION.PERIODBETWEENUNIT,
                             MEDICATION.IFNEEDED,
                             MEDICATION.STARTDATE,
-                            MEDICATION.STOPDATE)
+                            MEDICATION.STOPDATE,
+                            MEDICATION.CYPINTERACTIONS,
+                            MEDICATION.QTPROLONGATINGRISK,
+                            MEDICATION.ANATOMICALMAINGROUPATCNAME,
+                            MEDICATION.THERAPEUTICSUBGROUPATCNAME,
+                            MEDICATION.PHARMACOLOGICALSUBGROUPATCNAME,
+                            MEDICATION.CHEMICALSUBGROUPATCNAME,
+                            MEDICATION.CHEMICALSUBSTANCEATCCODE,
+                            MEDICATION.ISSELFCARE,
+                            MEDICATION.ISTRIALMEDICATION)
                     .values(patientId,
                             medication.name(),
-                            DataUtil.concat(medication.categories()),
-                            Optional.ofNullable(atc).flatMap(a -> Optional.ofNullable(a.chemicalSubstance())).map(AtcLevel::code)
-                                    .orElse(null),
-                            atc != null ? atc.anatomicalMainGroup().name() : null,
-                            atc != null ? atc.therapeuticSubGroup().name() : null,
-                            atc != null ? atc.pharmacologicalSubGroup().name() : null,
-                            atc != null ? atc.chemicalSubGroup().name() : null,
                             medication.status() != null ? medication.status().toString() : null,
                             medication.administrationRoute(),
                             medication.dosage().dosageMin(),
@@ -519,10 +519,30 @@ class ClinicalDAO {
                             medication.dosage().dosageUnit(),
                             medication.dosage().frequency(),
                             medication.dosage().frequencyUnit(),
+                            medication.dosage().periodBetweenValue(),
+                            medication.dosage().periodBetweenUnit(),
                             medication.dosage().ifNeeded(),
                             medication.startDate(),
-                            medication.stopDate())
-                    .execute();
+                            medication.stopDate(),
+                            DataUtil.concat(cypInteractionsToStrings(medication.cypInteractions())),
+                            medication.qtProlongatingRisk().toString(),
+                            atc != null ? atc.anatomicalMainGroup().name() : null,
+                            atc != null ? atc.therapeuticSubGroup().name() : null,
+                            atc != null ? atc.pharmacologicalSubGroup().name() : null,
+                            atc != null ? atc.chemicalSubGroup().name() : null,
+                            Optional.ofNullable(atc)
+                                    .flatMap(a -> Optional.ofNullable(a.chemicalSubstance()))
+                                    .map(AtcLevel::code)
+                                    .orElse(null),
+                            medication.isSelfCare(),
+                            medication.isTrialMedication()).execute();
         }
+    }
+
+    @NotNull
+    private static Collection<String> cypInteractionsToStrings(@NotNull List<CypInteraction> cypInteractions) {
+        return cypInteractions.stream()
+                .map(interaction -> interaction.strength() + " " + interaction.type() + " (" + interaction.cyp() + ")")
+                .collect(Collectors.toSet());
     }
 }

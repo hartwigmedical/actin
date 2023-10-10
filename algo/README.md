@@ -8,8 +8,9 @@ This application requires Java 11+ and can be run as follows:
 java -cp actin.jar com.hartwig.actin.algo.TreatmentMatcherApplicationKt \
    -clinical_json /path/to/clinical.json \
    -molecular_json /path/to/molecular.json \
-   -treatment_database_directory /path/to/potential_treatment_options \
+   -trial_database_directory /path/to/potential_trials \
    -doid_json /path/to/full_doid_tree_json_file \
+   -atc_tsv /path/to/full_atc_tree_tsv_file \
    -output_directory /path/where/output/is/written \
 ```
 
@@ -17,17 +18,17 @@ The following assumptions are made about the inputs:
 
 - The clinical JSON adheres to the datamodel defined by [ACTIN-Clinical](../clinical/README.md)
 - The molecular JSON adheres to the datamodel defined by [ACTIN-Molecular](../molecular/README.md)
-- The treatment database directory is the output directory of [ACTIN-Treatment](../treatment/README.md)
+- The trial database directory is the output directory of [ACTIN-Trial](../trial/README.md)
 
 An optional flag `run_historically` can be added in which case the treatment matcher sets the date to 3 weeks after the
 patient's registration date. If this flag is not set, the treatment matcher uses the current date as reference date.
 
 ### Treatment matching
 
-Every treatment defined in the treatment database is evaluated independently.
+Every trial defined in the trial database is evaluated independently.
 
-In case a treatment is a trial, all relevant inclusion and exclusion criteria are evaluated for this trial as well as every criterion
-for any specific cohort within this trial.
+All relevant inclusion and exclusion criteria are evaluated for this trial as well as every criterion for any specific cohort within this
+trial.
 
 Every criterion evaluates to one of the following options:
 
@@ -52,8 +53,8 @@ result that becomes a `FAIL` after negation with `NOT`.
 #### Evaluation feedback
 
 Every criterion algorithm provides human-readable feedback ('messages') about its evaluation, so that a human can easily and quickly
-understand which
-evaluation has been done and why the outcome of the evaluation (`PASS`,`WARN`, `FAIL`, `UNDETERMINED` or `NOT_EVALUATED`) is as it is.
+understand which evaluation has been done and why the outcome of the evaluation (`PASS`,`WARN`, `FAIL`, `UNDETERMINED` or `NOT_EVALUATED`)
+is as it is.
 
 #### Treatment eligibility
 
@@ -491,79 +492,79 @@ isContraindicationForTherapy=0), the condition is ignored for evaluation.
 
 ##### Rules related to current medication
 
-| Rule                                                                        | When does a patient pass evaluation?                                                                                            | Note                                                                                      |
-|-----------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
-| CURRENTLY_GETS_NAME_X_MEDICATION                                            | Medication > name like %X% and status is active                                                                                 |                                                                                           |
-| CURRENTLY_GETS_CATEGORY_X_MEDICATION                                        | Medication > categories like %X% and status is active or <TODO (ACTIN-15): any startDate is > evaluationDate >                  |                                                                                           |
-| HAS_RECEIVED_CATEGORY_X_MEDICATION_ WITHIN_Y_WEEKS                          | Medication > categories like %X% and active OR stopDate within Y weeks                                                          | `UNDETERMINED` in case Y would require stop dates to be prior to ACTIN registration date. |
-| CURRENTLY_GETS_ANTICOAGULANT_MEDICATION                                     | Medication > categories contains type of "Anticoagulants" or "Vitamin K antagonists" and status is active                       |                                                                                           |
-| CURRENTLY_GETS_AZOLE_MEDICATION                                             | Medication > categories contains type of "Triazoles" or "Imidazoles, cutaneous" or "Imidazoles, other" and status is active     |                                                                                           |
-| CURRENTLY_GETS_BONE_RESORPTIVE_MEDICATION                                   | Medication > categories contains type of "Bisphosphonates" or "Calcium regulatory medication" and status is active              |                                                                                           |
-| CURRENTLY_GETS_COUMARIN_DERIVATIVE_MEDICATION                               | Medication > categories contains type of "Vitamin K Antagonists" and status is active                                           |                                                                                           |
-| CURRENTLY_GETS_GONADORELIN_MEDICATION                                       | Medication > categories contains type of "Gonadorelin antagonists" or "Gonadorelin agonists" and status is active               |                                                                                           |
-| CURRENTLY_GETS_IMMUNOSUPPRESSANT_MEDICATION                                 | Medication > categories contains type of "Immunosuppressants, selective" or "Immunosuppresants, other" and status is active     |                                                                                           |
-| CURRENTLY_GETS_POTENTIALLY_QT_ PROLONGATING_MEDICATION                      | Medication > qtProlongatingRisk contains type of "Known", "Potential" or "Conditional" and status is active                     |                                                                                           |
-| CURRENTLY_GETS_MEDICATION_INDUCING_ANY_CYP                                  | Medication > cypInteractions.type is "Inducer" and status is active                                                             | Cytochrome P450 enzymes.                                                                  |                                                                                           
-| CURRENTLY_GETS_MEDICATION_INHIBITING_CYP_X                                  | Medication > cypInteractions.cyp like %X% and cypInteractions.type is "Inhibitor" and status is active                          | `UNDETERMINED` in case X = CYP2J2                                                         |
-| CURRENTLY_GETS_MEDICATION_INDUCING_CYP_X                                    | Medication > cypInteractions.cyp like %X% and cypInteractions.type is "Inducer" and status is active                            | `UNDETERMINED` in case X = CYP2J2                                                         |
-| HAS_RECEIVED_MEDICATION_INDUCING_CYP_X_WITHIN_Y_WEEKS                       | Medication > cypInteractions.cyp like %X% and cypInteractions.type is "Inducer" and status is active or stopDate within Y weeks | `UNDETERMINED` in case X = CYP2J2                                                         |
-| CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_ANY_CYP                    | Medication > cypInteractions.type is "Inhibitor" or "Inducer" and status is active                                              |                                                                                           |
-| CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X                      | Medication > cypInteractions.cyp like %X% and cypInteractions.type is "Inhibitor" or "Inducer" and status is active             | `UNDETERMINED` in case X = CYP2J2                                                         |
-| CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_CYP_X                                | Medication > cypInteractions.cyp like %X% and cypInteractions.type is "Substrate" and status is active                          | `UNDETERMINED` in case X = CYP2J2                                                         |
-| CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_PGP                        | T.B.D., currently resolves to `UNDETERMINED`                                                                                    | P-glycoprotein                                                                            |
-| CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_PGP                                  | T.B.D., currently resolves to `UNDETERMINED`                                                                                    |                                                                                           |
-| CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_BCRP                       | T.B.D., currently resolves to `UNDETERMINED`                                                                                    | Breast cancer resistance protein                                                          |
-| CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_BCRP                                 | T.B.D., currently resolves to `UNDETERMINED`                                                                                    |                                                                                           |
-| CURRENTLY_GETS_MEDICATION_INHIBITING_OR_ INDUCING_DRUG_METABOLIZING_ENZYMES | Currently resolves to `WARN` in case patient receives any medication                                                            |                                                                                           |
-| HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING                                  | Medication > categories contains "Anticoagulants" AND only 1 distinct dosage (T.B.D)                                            |                                                                                           |
-| IS_WILLING_TO_TAKE_PREMEDICATION                                            | Currently won't be evaluated                                                                                                    |                                                                                           |
+| Rule                                                                       | When does a patient pass evaluation?                                                                                                                                                                                                                                                   | Note                                                                                      |
+|----------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
+| CURRENTLY_GETS_NAME_X_MEDICATION                                           | Medication > name like %X% and status is active                                                                                                                                                                                                                                        |                                                                                           |
+| CURRENTLY_GETS_CATEGORY_X_MEDICATION                                       | Medication > atc.<atcLevel>.code equal to <category> where <atcLevel> is a level defined below in 1] and <category> is X OR a member of the set of ATC codes derived from X using the table below in 2]; and status is active or <TODO (ACTIN-15): any startDate is > evaluationDate > |                                                                                           |
+| HAS_RECEIVED_CATEGORY_X_MEDICATION_ WITHIN_Y_WEEKS                         | Medication > atc.<atcLevel>.code equal to <category> where <atcLevel> is a level defined below in 1] and <category> is X OR a member of the set of ATC codes derived from X using the table below in 2]; and active OR stopDate within Y weeks                                         | `UNDETERMINED` in case Y would require stop dates to be prior to ACTIN registration date. |
+| CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION                      | Medication > qtProlongatingRisk contains type of "Known", "Potential" or "Conditional" and status is active                                                                                                                                                                            |                                                                                           |
+| CURRENTLY_GETS_MEDICATION_INDUCING_ANY_CYP                                 | Medication > cypInteractions.type is "Inducer" and status is active                                                                                                                                                                                                                    | Cytochrome P450 enzymes.                                                                  |                                                                                           
+| CURRENTLY_GETS_MEDICATION_INHIBITING_CYP_X                                 | Medication > cypInteractions.cyp like %X% and cypInteractions.type is "Inhibitor" and status is active                                                                                                                                                                                 | `UNDETERMINED` in case X = CYP2J2                                                         |
+| CURRENTLY_GETS_MEDICATION_INDUCING_CYP_X                                   | Medication > cypInteractions.cyp like %X% and cypInteractions.type is "Inducer" and status is active                                                                                                                                                                                   | `UNDETERMINED` in case X = CYP2J2                                                         |
+| HAS_RECEIVED_MEDICATION_INDUCING_CYP_X_WITHIN_Y_WEEKS                      | Medication > cypInteractions.cyp like %X% and cypInteractions.type is "Inducer" and status is active or stopDate within Y weeks                                                                                                                                                        | `UNDETERMINED` in case X = CYP2J2                                                         |
+| CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_ANY_CYP                   | Medication > cypInteractions.type is "Inhibitor" or "Inducer" and status is active                                                                                                                                                                                                     |                                                                                           |
+| CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X                     | Medication > cypInteractions.cyp like %X% and cypInteractions.type is "Inhibitor" or "Inducer" and status is active                                                                                                                                                                    | `UNDETERMINED` in case X = CYP2J2                                                         |
+| CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_CYP_X                               | Medication > cypInteractions.cyp like %X% and cypInteractions.type is "Substrate" and status is active                                                                                                                                                                                 | `UNDETERMINED` in case X = CYP2J2                                                         |
+| CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_PGP                       | T.B.D., currently resolves to `UNDETERMINED`                                                                                                                                                                                                                                           | P-glycoprotein                                                                            |
+| CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_PGP                                 | T.B.D., currently resolves to `UNDETERMINED`                                                                                                                                                                                                                                           |                                                                                           |
+| CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_BCRP                      | T.B.D., currently resolves to `UNDETERMINED`                                                                                                                                                                                                                                           | Breast cancer resistance protein                                                          |
+| CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_BCRP                                | T.B.D., currently resolves to `UNDETERMINED`                                                                                                                                                                                                                                           |                                                                                           |
+| CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_DRUG_METABOLIZING_ENZYMES | Currently resolves to `WARN` in case patient receives any medication                                                                                                                                                                                                                   |                                                                                           |
+| HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING                                 | Medication > atc.<atcLevel>.code like "Anticoagulant medication" in 2] AND only 1 distinct dosage (T.B.D)                                                                                                                                                                              |                                                                                           |
+| IS_WILLING_TO_TAKE_PREMEDICATION                                           | Currently won't be evaluated                                                                                                                                                                                                                                                           |                                                                                           |
 
-BELOW IS IN-PROGRESS
-In case category is one of below, use the following logics:
+1] anatomicalMainGroup, therapeuticSubGroup, pharmacologicalSubGroup OR chemicalSubGroup
 
-| Category | Logics                                                                                                 |
-|----------|--------------------------------------------------------------------------------------------------------|
-| Azole    | Medication > categories contains type of "Triazoles" or "Imidazoles, cutaneous" or "Imidazoles, other" |
+2] Medication category list:<br>
+Antibiotics: ATC level code equal to "A07A", "G01AA", "R02AB", "L01D", "J01", "J02" or "J04" <br>
+Anticoagulant medication: ATC level code equal "B01AA", "B01AB", "B01AE", "B01AF" or "B01AX" <br>
+Antiepileptics: ATC level code equal to "N03" <br>
+Azole medication: ATC level code equal to "A07AC", "D01AC", "G01AF", "G01BF", "G01AG", "J02AC" or "J02AB" <br>
+Bisphosphonates: ATC level code equal to "M05BA" or "M05BB" <br>
+Bone resorptive medication: ATC level code equal to "M05B" or "H05" <br>
+Colony stimulating factors: ATC level code equal to "L03AA" <br>
+Corticosteroids for systemic use: ATC level code equal to "H02" or "M01BA" <br>
+Coumarin derivative medication: ATC level code equal to "B01AA" <br>
+Gonadorelin medication: ATC level code equal to "H01CC", "H01CA", "G03XA" or "L02AE" <br>
+Immunosuppressants: ATC level code equal to "L04" <br>
+Other antianemic preparations: ATC level code equal to "B03X" <br>
 
 ##### Rules related to washout period
 
-| Rule                                                                                | When does a patient pass evaluation?                                                                                                                                                                           | Note                                                                                                 |
-|-------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|
-| HAS_RECEIVED_DRUGS_X_CANCER_THERAPY_ WITHIN_Y_WEEKS                                 | medication > any names like %X% and active Y weeks prior to evaluation date                                                                                                                                    |                                                                                                      |
-| HAS_RECEIVED_DRUGS_X_CANCER_THERAPY_ WITHIN_Y_WEEKS_Z_HALF_LIVES                    | medication > any names like %X% and active Y weeks prior to evaluation date and Z half lives                                                                                                                   | Half-lives is currently ignored.                                                                     |
-| HAS_RECEIVED_CATEGORIES_X_CANCER_THERAPY_ WITHIN_Y_WEEKS                            | medication > any categories like %X% OR if category name is present in category list **, use category config ; active Y weeks prior to evaluation                                                              |                                                                                                      |
-| HAS_RECEIVED_CATEGORIES_X_CANCER_THERAPY_ WITHIN_Y_WEEKS_Z_HALF_LIVES               | medication > any categories like %X% OR if category name is present in category list **, use category config ; active Y weeks prior to evaluation and Z half lives                                             | Half-lives is currently ignored.                                                                     |
-| HAS_RECEIVED_RADIOTHERAPY_WITHIN_X_WEEKS                                            | Radiotherapy in treatment history when: 1] no date provided; 2] in case only a year is provided then in case of current year; 3] in case year+month is provided then in case of current year and current month |                                                                                                      |
-| HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_WITHIN_X_WEEKS                                 | Any medication corresponding to categories in anti-cancer medication list* active X weeks prior to evaluation date                                                                                             | Does not include radiotherapy or surgery, these are separate rules.                                  |
-| HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ EXCL_CATEGORIES_X_WITHIN_Y_WEEKS              | Any medication corresponding to categories in anti-cancer medication list*, excluding categories like %X% OR if category name is present in category list **, use category config                              | Does not include radiotherapy or surgery, these are separate rules.                                  |
-| HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ WITHIN_X_WEEKS_Y_HALF_LIVES                   | Any medication corresponding to categories in anti-cancer medication list* active X weeks prior to evaluation                                                                                                  | Half-lives is currently ignored. Does not include radiotherapy or surgery, these are separate rules. |
-| HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_ EXCL_CATEGORIES_X_WITHIN_Y_WEEKS_Z_HALF_LIVES | Any medication corresponding to categories in anti-cancer medication list*, excluding categories like %X% OR if category name is present in category list **, use category config                              | Half-lives currently ignored. Does not include radiotherapy or surgery, these are separate rules.    |
-| WILL_REQUIRE_ANY_ANTICANCER_THERAPY_DURING_TRIAL                                    | won't be evaluated.                                                                                                                                                                                            |                                                                                                      |
-| HAS_RECEIVED_HERBAL_MEDICATION_OR_DIETARY_ SUPPLEMENTS_WITHIN_X_WEEKS               | medication > categories like %supplements% or %herbal remedy% active X weeks prior to evaluation date                                                                                                          |                                                                                                      |
+| Rule                                                                               | When does a patient pass evaluation?                                                                                                                                                                                                                                                                                       | Note                                                                                                 |
+|------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|
+| HAS_RECEIVED_DRUGS_X_CANCER_THERAPY_WITHIN_Y_WEEKS                                 | Medication > any names like %X% and active Y weeks prior to evaluation date                                                                                                                                                                                                                                                |                                                                                                      |
+| HAS_RECEIVED_DRUGS_X_CANCER_THERAPY_WITHIN_Y_WEEKS_Z_HALF_LIVES                    | Medication > any names like %X% and active Y weeks prior to evaluation date and Z half lives                                                                                                                                                                                                                               | Half-lives is currently ignored.                                                                     |
+| HAS_RECEIVED_CATEGORIES_X_CANCER_THERAPY_WITHIN_Y_WEEKS                            | Medication > atc.<atcLevel>.code equal to <category> where <atcLevel> is a level defined above in 1] and <category> is X OR a member of the set of ATC codes derived from X using the table below in 3]; active Y weeks prior to evaluation                                                                                |                                                                                                      |
+| HAS_RECEIVED_CATEGORIES_X_CANCER_THERAPY_WITHIN_Y_WEEKS_Z_HALF_LIVES               | Medication > atc.<atcLevel>.code equal to <category> where <atcLevel> is a level defined above in 1] and <category> is X OR a member of the set of ATC codes derived from X using the table below in 3]; active Y weeks prior to evaluation and Z half lives                                                               | Half-lives is currently ignored.                                                                     |
+| HAS_RECEIVED_TRIAL_MEDICATION_WITHIN_X_WEEKS                                       | Medication > isTrialMedication is true; and active OR stopDate within X weeks                                                                                                                                                                                                                                              |
+| HAS_RECEIVED_TRIAL_MEDICATION_WITHIN_X_WEEKS_Y_HALF_LIVES                          | Medication > isTrialMedication is true; active X weeks prior to evaluation and Y half lives                                                                                                                                                                                                                                |
+| HAS_RECEIVED_RADIOTHERAPY_WITHIN_X_WEEKS                                           | Radiotherapy in treatment history when: 1] no date provided; 2] in case only a year is provided then in case of current year; 3] in case year+month is provided then in case of current year and current month                                                                                                             |                                                                                                      |
+| HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_WITHIN_X_WEEKS                                | Medication > atc.<atcLevel>.code equal to <category> where <atcLevel> is a level defined above in 1] and <category> is equal to "L01", "L02", "L04" OR a member of the set of ATC codes derived from "Gonadorelin" using the table below in 3] and active X weeks prior to evaluation date                                 | Does not include radiotherapy or surgery, these are separate rules.                                  |
+| HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_EXCL_CATEGORIES_X_WITHIN_Y_WEEKS              | Medication > atc.<atcLevel>.code equal to <category> where <atcLevel> is a level defined above in 1] and <category> is equal to "L01", "L02", "L04" OR a member of the set of ATC codes derived from "Gonadorelin" using the table below in 3], excluding ATC codes equal to X OR if X present in 3] use derived ATC codes | Does not include radiotherapy or surgery, these are separate rules.                                  |
+| HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_WITHIN_X_WEEKS_Y_HALF_LIVES                   | Medication > atc.<atcLevel>.code equal to <category> where <atcLevel> is a level defined above in 1] and <category> is equal to "L01", "L02", "L04" OR a member of the set of ATC codes derived from "Gonadorelin" using the table below in 3] and active X weeks prior to evaluation date                                 | Half-lives is currently ignored. Does not include radiotherapy or surgery, these are separate rules. |
+| HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_EXCL_CATEGORIES_X_WITHIN_Y_WEEKS_Z_HALF_LIVES | Medication > atc.<atcLevel>.code equal to <category> where <atcLevel> is a level defined above in 1] and <category> is equal to "L01", "L02", "L04" OR a member of the set of ATC codes derived from "Gonadorelin" using the table below in 3], excluding ATC codes equal to X OR if X present in 3] use derived ATC codes | Half-lives currently ignored. Does not include radiotherapy or surgery, these are separate rules.    |
+| WILL_REQUIRE_ANY_ANTICANCER_THERAPY_DURING_TRIAL                                   | Won't be evaluated.                                                                                                                                                                                                                                                                                                        |                                                                                                      |
 
-*Anti-cancer medication list includes the following categories: categories like %Platinum compound%, %Pyrimidine antagonist%, %Taxane%,
-%Alkylating agent%, %Cytotoxic antibiotics%, %Gonadorelin agonist%, %Gonadorelin antagonist%, %Monoclonal antibody for malignancies%,
-%Protein kinase inhibitor%, %Anti-androgen%, %Anti-estrogen%, '%Oncolytics, other%'.
-
-**Category list refers to 'categories' in the medication data model, OR one of the additionally defined categories:<br>
-1] Chemotherapy: includes all medication categories like %Platinum compound%, %Pyrimidine antagonist%, %Taxane% and %Alkylating agent%  
-2] Immunotherapy: medication drug names Pembrolizumab, Nivolumab, Ipilimumab, Cemiplimab, Avelumab
-3] Endocrine therapy: includes all medication categories like %Anti-androgen%, %Anti-estrogen%  
-4] PARP inhibitors: medication drug names Olaparib, Rucaparib  
-5] Gonadorelin: includes medication categories like %Gonadorelin agonist%, %Gonadorelin antagonist%   
-6] Immunosuppressants: includes medication categories like %Immunosuppressants, selective%, %Immunosuppressants, other%   
-7] Hypomethylating agents: medication drug names Azacitidine and Decitabine
+3] Cancer therapy list:<br>
+Chemotherapy: ATC level code equal to "L01XA", "L01BC", "L01CD" or "L01A" <br>
+Immunotherapy: ATC level code equal to "L01FF" or "L01FX04" (Ipilimumab) <br>
+PARP inhibitors: ATC level code equal to "L01XK" <br>
+Gonadorelin: ATC level code equal to "H01CC", "H01CA", "G03XA" or "L02AE" <br>
+Hypomethylating agents: ATC level code equal to "L01BC07" (Azacitidine) or "L01BC08" (Decitabine) <br>
+Monoclonal antibodies and antibody drug conjugates: ATC level code equal to "L01F" <br>
+Endocrine therapy: ATC level code equal to "L02" <br>
 
 Note that for all configured nr of weeks, 2 weeks are subtracted from the latest medication date, since these weeks will pass by anyway.
 
 ##### Rules related to reproduction
 
-| Rule                                           | When does a patient pass evaluation?                |
-|------------------------------------------------|-----------------------------------------------------|
-| IS_BREASTFEEDING                               | Applicable only for women. Won't be evaluated       |
-| IS_PREGNANT                                    | Applicable only for women. Won't be evaluated       |
-| USES_ADEQUATE_ANTICONCEPTION                   | Won't be evaluated                                  |
-| ADHERES_TO_SPERM_OR_EGG_DONATION_PRESCRIPTIONS | Won't be evaluated                                  |
+| Rule                                           | When does a patient pass evaluation?          |
+|------------------------------------------------|-----------------------------------------------|
+| IS_BREASTFEEDING                               | Applicable only for women. Won't be evaluated |
+| IS_PREGNANT                                    | Applicable only for women. Won't be evaluated |
+| USES_ADEQUATE_ANTICONCEPTION                   | Won't be evaluated                            |
+| ADHERES_TO_SPERM_OR_EGG_DONATION_PRESCRIPTIONS | Won't be evaluated                            |
 
 ##### Rules related to complications
 
@@ -618,11 +619,11 @@ to 5 most recent values would be sufficient to `PASS`.
 
 ##### Rules related to blood transfusions
 
-| Rule                                                | When does a patient pass evaluation?                                                                                                                                                                                                    |
-|-----------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| REQUIRES_REGULAR_HEMATOPOIETIC_SUPPORT              | Blood transfusions > Presence of entries within 2 months of evaluation date or Medication > presence of entries within 2 months of evaluation date of categories like "%Erythropoietic growth factor%" or "%Colony stimulating factor%" |
-| HAS_HAD_ERYTHROCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS | Blood transfusions > product = Erythrocyte concentrate AND current date minus transfusion date <= X weeks                                                                                                                               |
-| HAS_HAD_THROMBOCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS | Blood transfusions > product = Thrombocyte concentrate AND current date minus transfusion date <= X weeks                                                                                                                               |
+| Rule                                                | When does a patient pass evaluation?                                                                                                                                                                          |
+|-----------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| REQUIRES_REGULAR_HEMATOPOIETIC_SUPPORT              | Blood transfusions > Presence of entries within 2 months of evaluation date or Medication > presence of entries within 2 months of evaluation date with atc.chemicalSubGroup.code equal to "B03XA" OR "L03AA" |
+| HAS_HAD_ERYTHROCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS | Blood transfusions > product = Erythrocyte concentrate AND current date minus transfusion date <= X weeks                                                                                                     |
+| HAS_HAD_THROMBOCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS | Blood transfusions > product = Thrombocyte concentrate AND current date minus transfusion date <= X weeks                                                                                                     |
 
 ##### Rules related to surgery
 
@@ -649,11 +650,17 @@ more information, see https://disease-ontology.org/.
 #### CYP interactions
 
 To evaluates rules about CYP interactions, we made use of the list of interactions on the following
-website: https://www.fda.gov/drugs/drug-interactions-labeling/healthcare-professionals-fdas-examples-drugs-interact-cyp-enzymes-and-transporter-systems.
+website: https://www.fda.gov/drugs/drug-interactions-labeling/healthcare-professionals-fdas-examples-drugs-interact-cyp-enzymes-and-transporter-systems
+.
 
 #### QT prolongating drugs
 
 To evaluate rules about QT prolongation, we made use of the list of drugs on the following website: https://crediblemeds.org/.
+
+#### Anatomical Therapeutical Chemical codes (ATC codes)
+
+To classify medication we made use of the ATC classification system: https://www.whocc.no/atc_ddd_index/. All active substances are
+classified in a hierarchy with five different levels.
 
 ### Version History and Download Links
 

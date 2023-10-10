@@ -83,6 +83,29 @@ public final class TestClinicalFactory {
     }
 
     @NotNull
+    public static ClinicalRecord createExhaustiveTestClinicalRecord() {
+        return ImmutableClinicalRecord.builder()
+                .from(createMinimalTestClinicalRecord())
+                .tumor(createTestTumorDetails())
+                .clinicalStatus(createTestClinicalStatus())
+                .treatmentHistory(createExhaustiveTreatmentHistory())
+                .priorSecondPrimaries(createTestPriorSecondPrimaries())
+                .priorOtherConditions(createTestPriorOtherConditions())
+                .priorMolecularTests(createTestPriorMolecularTests())
+                .complications(createTestComplications())
+                .labValues(createTestLabValues())
+                .toxicityEvaluations(createTestToxicityEvaluations())
+                .toxicities(createTestToxicities())
+                .intolerances(createTestIntolerances())
+                .surgeries(createTestSurgeries())
+                .bodyWeights(createTestBodyWeights())
+                .vitalFunctions(createTestVitalFunctions())
+                .bloodTransfusions(createTestBloodTransfusions())
+                .medications(createTestMedications())
+                .build();
+    }
+
+    @NotNull
     private static PatientDetails createTestPatientDetails() {
         return ImmutablePatientDetails.builder()
                 .gender(Gender.MALE)
@@ -181,6 +204,73 @@ public final class TestClinicalFactory {
                 surgeryHistoryEntry,
                 therapyHistoryEntry(Set.of(radioFolfirinox, folfirinoxLocoRegional), 2022, Intent.ADJUVANT),
                 therapyHistoryEntry(Set.of(folfirinoxAndPembrolizumab), 2023, Intent.PALLIATIVE));
+    }
+
+    private static List<TreatmentHistoryEntry> createExhaustiveTreatmentHistory() {
+
+        Drug irinotecan = drug("IRINOTECAN", DrugType.TOPO1_INHIBITOR, TreatmentCategory.CHEMOTHERAPY);
+        TreatmentHistoryEntry emptyHistoryEntry = ImmutableTreatmentHistoryEntry.builder().build();
+
+        TreatmentHistoryEntry hasStartYearHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
+                .startYear(2020)
+                .addTreatments(ImmutableDrugTherapy.builder().name("Therapy1").addDrugs(irinotecan).build())
+                .build();
+
+        TreatmentHistoryEntry hasStartYearMonthEndYearMonthHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
+                .startYear(2020)
+                .startMonth(8)
+                .therapyHistoryDetails(ImmutableTherapyHistoryDetails.builder().stopYear(2021).stopMonth(3).build())
+                .addTreatments(ImmutableDrugTherapy.builder().name("Therapy2").addDrugs(irinotecan).build())
+                .build();
+
+        TreatmentHistoryEntry namedTrialHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
+                .isTrial(true)
+                .startYear(2022)
+                .addTreatments(ImmutableDrugTherapy.builder().name("Trial1").addDrugs(irinotecan).build())
+                .build();
+
+        TreatmentHistoryEntry unknownDetailsHistoryEntry = ImmutableTreatmentHistoryEntry.builder().isTrial(true).startYear(2022).build();
+
+        TreatmentHistoryEntry hasCyclesStopReasonHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
+                .isTrial(true)
+                .startYear(2022)
+                .therapyHistoryDetails(ImmutableTherapyHistoryDetails.builder().cycles(3).stopReasonDetail("toxicity").build())
+                .addTreatments(ImmutableDrugTherapy.builder().name("Trial1").addDrugs(irinotecan).build())
+                .build();
+
+        TreatmentHistoryEntry hasAcronymHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
+                .isTrial(true)
+                .trialAcronym("tr2")
+                .startYear(2022)
+                .therapyHistoryDetails(ImmutableTherapyHistoryDetails.builder().cycles(3).stopReasonDetail("toxicity").build())
+                .addTreatments(ImmutableDrugTherapy.builder().name("Trial2").addDrugs(irinotecan).build())
+                .build();
+
+        TreatmentHistoryEntry hasSingleIntentHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
+                .isTrial(true)
+                .startYear(2022)
+                .therapyHistoryDetails(ImmutableTherapyHistoryDetails.builder().cycles(3).stopReasonDetail("toxicity").build())
+                .addTreatments(ImmutableDrugTherapy.builder().name("Trial4").addDrugs(irinotecan).build())
+                .intents(Set.of(Intent.ADJUVANT))
+                .build();
+
+        TreatmentHistoryEntry hasMultipleIntentsHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
+                .isTrial(true)
+                .startYear(2022)
+                .therapyHistoryDetails(ImmutableTherapyHistoryDetails.builder().cycles(3).stopReasonDetail("toxicity").build())
+                .addTreatments(ImmutableDrugTherapy.builder().name("Trial5").addDrugs(irinotecan).build())
+                .intents(Set.of(Intent.ADJUVANT, Intent.CONSOLIDATION))
+                .build();
+
+        return List.of(emptyHistoryEntry,
+                hasStartYearHistoryEntry,
+                hasStartYearMonthEndYearMonthHistoryEntry,
+                namedTrialHistoryEntry,
+                unknownDetailsHistoryEntry,
+                hasCyclesStopReasonHistoryEntry,
+                hasAcronymHistoryEntry,
+                hasSingleIntentHistoryEntry,
+                hasMultipleIntentsHistoryEntry);
     }
 
     @NotNull
@@ -442,7 +532,6 @@ public final class TestClinicalFactory {
 
         medications.add(TestMedicationFactory.builder()
                 .name("Ibuprofen")
-                .addCategories("NSAIDs")
                 .status(MedicationStatus.ACTIVE)
                 .dosage(ImmutableDosage.builder()
                         .dosageMin(750D)
@@ -460,7 +549,6 @@ public final class TestClinicalFactory {
 
         medications.add(TestMedicationFactory.builder()
                 .name("Prednison")
-                .addCategories("NSAIDs")
                 .status(MedicationStatus.ACTIVE)
                 .dosage(ImmutableDosage.builder()
                         .dosageMin(750D)

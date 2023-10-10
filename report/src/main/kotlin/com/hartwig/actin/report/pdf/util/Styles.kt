@@ -14,7 +14,6 @@ object Styles {
     val PALETTE_BLACK = DeviceRgb(0, 0, 0)
     val PALETTE_MID_GREY = DeviceRgb(101, 106, 108)
     val PALETTE_BLUE = DeviceRgb(74, 134, 232)
-    val PALETTE_RED = DeviceRgb(231, 85, 85)
     val PALETTE_EVALUATION_PASS = DeviceRgb(0, 150, 0)
     val PALETTE_EVALUATION_WARN = DeviceRgb(255, 130, 0)
     val PALETTE_EVALUATION_FAILED = DeviceRgb(231, 85, 85)
@@ -79,10 +78,6 @@ object Styles {
         return Style().setFont(fontBold()).setFontSize(7f).setFontColor(PALETTE_BLACK)
     }
 
-    fun tableWarnStyle(): Style {
-        return Style().setFont(fontBold()).setFontSize(7f).setFontColor(PALETTE_RED)
-    }
-
     fun reportHeaderLabelStyle(): Style {
         return Style().setFont(fontRegular()).setFontSize(7f).setFontColor(PALETTE_BLACK)
     }
@@ -103,8 +98,8 @@ object Styles {
         return Style().setFont(fontBold()).setFontSize(10f).setFontColor(PALETTE_WHITE)
     }
 
-    fun deemphasizedStyle(): Style {
-        return Style().setFont(fontRegular()).setFontSize(5f).setFontColor(PALETTE_MID_GREY)
+    fun disclaimerStyle(): Style {
+        return Style().setFont(fontRegular()).setFontSize(6f).setFontColor(PALETTE_MID_GREY)
     }
 
     fun fontRegular(): PdfFont {

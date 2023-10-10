@@ -10,7 +10,6 @@ import com.hartwig.actin.clinical.curation.config.ECGConfigFactory
 import com.hartwig.actin.clinical.curation.config.InfectionConfigFactory
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfigFactory
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfigFactory
-import com.hartwig.actin.clinical.curation.config.MedicationCategoryConfigFactory
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfigFactory
 import com.hartwig.actin.clinical.curation.config.MedicationNameConfigFactory
 import com.hartwig.actin.clinical.curation.config.MolecularTestConfigFactory
@@ -57,7 +56,6 @@ class CurationDatabaseReader(private val curationValidator: CurationValidator, p
             molecularTestConfigs = readConfigs(basePath, MOLECULAR_TEST_TSV, MolecularTestConfigFactory()),
             medicationNameConfigs = readConfigs(basePath, MEDICATION_NAME_TSV, MedicationNameConfigFactory()),
             medicationDosageConfigs = readConfigs(basePath, MEDICATION_DOSAGE_TSV, MedicationDosageConfigFactory()),
-            medicationCategoryConfigs = readConfigs(basePath, MEDICATION_CATEGORY_TSV, MedicationCategoryConfigFactory()),
             intoleranceConfigs = readConfigs(basePath, INTOLERANCE_TSV, IntoleranceConfigFactory(curationValidator)),
             cypInteractionConfigs = readConfigs(basePath, CYP_INTERACTIONS_TSV, CypInteractionConfigFactory()),
             qtProlongingConfigs = readConfigs(basePath, QT_PROLONGATING_TSV, QTProlongatingConfigFactory()),
@@ -93,7 +91,6 @@ class CurationDatabaseReader(private val curationValidator: CurationValidator, p
         private const val MOLECULAR_TEST_TSV = "molecular_test.tsv"
         private const val MEDICATION_NAME_TSV = "medication_name.tsv"
         private const val MEDICATION_DOSAGE_TSV = "medication_dosage.tsv"
-        private const val MEDICATION_CATEGORY_TSV = "medication_category.tsv"
         private const val INTOLERANCE_TSV = "intolerance.tsv"
         private const val CYP_INTERACTIONS_TSV = "cyp_interactions.tsv"
         private const val QT_PROLONGATING_TSV = "qt_prolongating.tsv"

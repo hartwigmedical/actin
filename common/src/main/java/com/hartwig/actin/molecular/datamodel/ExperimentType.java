@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.datamodel;
 
 public enum ExperimentType {
-    WGS,
-    PANEL
+    TARGETED,
+    WHOLE_GENOME
 }

@@ -5,6 +5,7 @@ import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory
 import com.hartwig.actin.algo.doid.DoidConstants
+import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
@@ -39,14 +40,20 @@ class TestStandardOfCareApplication {
         val doidModel: DoidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
         val database = RecommendationDatabase(TreatmentDatabaseFactory.createFromPath(TREATMENT_JSON_PATH))
-        StandardOfCareApplication.LOGGER.info("Loaded recommendation database for colorectal cancer with treatment candidates:")
+        LOGGER.info("Loaded recommendation database for colorectal cancer with treatment candidates:")
         database.logRulesForDoidSet(setOf(DoidConstants.COLORECTAL_CANCER_DOID))
-        val recommendationEngine =
-            RecommendationEngine.create(doidModel, database, ReferenceDateProviderTestFactory.createCurrentDateProvider())
-        StandardOfCareApplication.LOGGER.info(recommendationEngine.provideRecommendations(patient))
-        val patientHasExhaustedStandardOfCare = recommendationEngine.patientHasExhaustedStandardOfCare(patient)
-        StandardOfCareApplication.LOGGER.info("Standard of care has${if (patientHasExhaustedStandardOfCare) "" else " not"} been exhausted")
 
+        val recommendationEngine =
+            RecommendationEngine.create(
+                doidModel,
+                AtcTree(emptyMap()),
+                database,
+                ReferenceDateProviderTestFactory.createCurrentDateProvider()
+            )
+
+        LOGGER.info(recommendationEngine.provideRecommendations(patient))
+        val patientHasExhaustedStandardOfCare = recommendationEngine.patientHasExhaustedStandardOfCare(patient)
+        LOGGER.info("Standard of care has${if (patientHasExhaustedStandardOfCare) "" else " not"} been exhausted")
         return 0
     }
 

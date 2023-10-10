@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation
 
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory.createCurrentDateProvider
 import com.hartwig.actin.algo.evaluation.FunctionCreatorFactory.create
+import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.treatment.datamodel.EligibilityRule
 import com.hartwig.actin.treatment.datamodel.TestFunctionInputResolveFactory
@@ -15,9 +16,10 @@ class FunctionCreatorFactoryTest {
     fun everyFunctionCanBeCreated() {
         val doidTerm = "term 1"
         val doidModel = TestDoidModelFactory.createWithOneDoidAndTerm("doid 1", doidTerm)
+        val atcTree = AtcTestFactory.createProperAtcTree()
         val referenceDateProvider = createCurrentDateProvider()
         val functionInputResolver = TestFunctionInputResolveFactory.createResolverWithDoidModel(doidModel)
-        val map = create(referenceDateProvider, doidModel, functionInputResolver)
+        val map = create(referenceDateProvider, doidModel, functionInputResolver, atcTree)
         val factory = ParameterizedFunctionTestFactory(doidTerm)
         EligibilityRule.values().forEach { rule ->
             val function = factory.create(rule)

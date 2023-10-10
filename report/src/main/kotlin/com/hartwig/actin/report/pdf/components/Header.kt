@@ -8,13 +8,15 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 
 class Header {
+
     fun render(page: PdfPage) {
         val pdfCanvas = PdfCanvas(page.lastContentStream, page.resources, page.document)
-        val cv = Canvas(pdfCanvas, page.pageSize)
-        cv.add(
-            Paragraph().add(Text("ACTIN Report").addStyle(Styles.reportTitleStyle()))
-                .setFixedPosition(200f, page.pageSize.height - 40, 300f)
+        val canvas = Canvas(pdfCanvas, page.pageSize)
+        canvas.add(
+            Paragraph().add(Text("ACTIN Report (research use only)").addStyle(Styles.reportTitleStyle()))
+                .setFixedPosition(140f, page.pageSize.height - 40, 300f)
         )
+
         pdfCanvas.release()
     }
 }

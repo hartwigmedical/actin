@@ -1,11 +1,10 @@
 package com.hartwig.actin.clinical
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.clinical.ClinicalRecordsFactory.Companion.toPatientId
 import com.hartwig.actin.clinical.curation.ANATOMICAL
-import com.hartwig.actin.clinical.curation.FULL_ATC_CODE
 import com.hartwig.actin.clinical.curation.CHEMICAL
 import com.hartwig.actin.clinical.curation.CHEMICAL_SUBSTANCE
+import com.hartwig.actin.clinical.curation.FULL_ATC_CODE
 import com.hartwig.actin.clinical.curation.PHARMACOLOGICAL
 import com.hartwig.actin.clinical.curation.THERAPEUTIC
 import com.hartwig.actin.clinical.curation.TestAtcFactory
@@ -201,7 +200,6 @@ class ClinicalRecordsFactoryTest {
             assertEquals(1, medications.size.toLong())
             val medication = medications[0]
             assertEquals("Paracetamol", medication.name())
-            assertEquals(Sets.newHashSet("Acetanilide derivatives"), medication.categories())
             assertEquals(MedicationStatus.ACTIVE, medication.status())
             assertEquals(50.0, medication.dosage().dosageMin()!!, EPSILON)
             assertEquals(60.0, medication.dosage().dosageMax()!!, EPSILON)

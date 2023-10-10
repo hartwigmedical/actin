@@ -21,7 +21,7 @@ public class PredictedTumorOriginTest {
     private static PredictedTumorOrigin withPredictions(double... likelihoods) {
         return ImmutablePredictedTumorOrigin.builder()
                 .predictions(IntStream.range(0, likelihoods.length)
-                        .mapToObj(i -> ImmutableCuppaPrediction.builder()
+                        .mapToObj(i -> ImmutableCupPrediction.builder()
                                 .cancerType(String.format("type %s", i + 1))
                                 .likelihood(likelihoods[i])
                                 .snvPairwiseClassifier(likelihoods[i])

@@ -2,18 +2,15 @@ package com.hartwig.actin.molecular.orange.interpretation;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Optional;
 import java.util.Set;
 
-import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype;
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry;
-import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
-import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
-import com.hartwig.actin.molecular.orange.datamodel.peach.ImmutablePeachRecord;
-import com.hartwig.actin.molecular.orange.datamodel.peach.PeachEntry;
 import com.hartwig.actin.molecular.orange.datamodel.peach.TestPeachFactory;
+import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeRecord;
+import com.hartwig.hmftools.datamodel.orange.OrangeRecord;
+import com.hartwig.hmftools.datamodel.peach.PeachGenotype;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -22,8 +19,8 @@ public class PharmacoExtractionTest {
 
     @Test
     public void canExtractPharmaco() {
-        PeachEntry peachEntry1 = TestPeachFactory.builder().gene("gene 1").haplotype("haplotype 1").function("function 1").build();
-        PeachEntry peachEntry2 = TestPeachFactory.builder().gene("gene 1").haplotype("haplotype 2").function("function 2").build();
+        PeachGenotype peachEntry1 = TestPeachFactory.builder().gene("gene 1").haplotype("haplotype 1").function("function 1").build();
+        PeachGenotype peachEntry2 = TestPeachFactory.builder().gene("gene 1").haplotype("haplotype 2").function("function 2").build();
 
         OrangeRecord orange = withPeachEntries(peachEntry1, peachEntry2);
         Set<PharmacoEntry> entries = PharmacoExtraction.extract(orange);
@@ -42,12 +39,9 @@ public class PharmacoExtractionTest {
     }
 
     @NotNull
-    private static OrangeRecord withPeachEntries(@NotNull PeachEntry... peachEntries) {
+    private static OrangeRecord withPeachEntries(@NotNull PeachGenotype... peachEntries) {
         OrangeRecord base = TestOrangeFactory.createMinimalTestOrangeRecord();
-        return ImmutableOrangeRecord.builder()
-                .from(base)
-                .peach(Optional.of(ImmutablePeachRecord.builder().entries(Sets.newHashSet(peachEntries)).build()))
-                .build();
+        return ImmutableOrangeRecord.builder().from(base).addPeach(peachEntries).build();
     }
 
     @NotNull

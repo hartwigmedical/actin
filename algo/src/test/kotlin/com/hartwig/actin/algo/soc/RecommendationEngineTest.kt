@@ -7,6 +7,7 @@ import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory
 import com.hartwig.actin.algo.doid.DoidConstants
+import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.algo.soc.datamodel.EvaluatedTreatment
 import com.hartwig.actin.algo.soc.datamodel.TreatmentCandidate
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
@@ -288,7 +289,7 @@ class RecommendationEngineTest {
             val doidModel: DoidModel =
                 TestDoidModelFactory.createWithOneDoidAndTerm(DoidConstants.COLORECTAL_CANCER_DOID, "colorectal cancer")
             val engine = RecommendationEngine.create(
-                doidModel, RecommendationDatabase(TREATMENT_DATABASE),
+                doidModel, AtcTree(emptyMap()), RecommendationDatabase(TREATMENT_DATABASE),
                 ReferenceDateProviderTestFactory.createCurrentDateProvider()
             )
             return engine.determineAvailableTreatments(patientRecord).map(EvaluatedTreatment::treatmentCandidate)

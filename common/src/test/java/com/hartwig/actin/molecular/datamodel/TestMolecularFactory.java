@@ -6,7 +6,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 import com.hartwig.actin.TestDataFactory;
-import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableCuppaPrediction;
+import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableCupPrediction;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics;
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin;
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics;
@@ -56,7 +56,7 @@ public final class TestMolecularFactory {
         return ImmutableMolecularRecord.builder()
                 .patientId(TestDataFactory.TEST_PATIENT)
                 .sampleId(TestDataFactory.TEST_SAMPLE)
-                .type(ExperimentType.WGS)
+                .type(ExperimentType.WHOLE_GENOME)
                 .refGenomeVersion(RefGenomeVersion.V37)
                 .evidenceSource(Strings.EMPTY)
                 .externalTrialSource(Strings.EMPTY)
@@ -111,21 +111,21 @@ public final class TestMolecularFactory {
     @NotNull
     private static ImmutablePredictedTumorOrigin createProperPredictedTumorOrigin() {
         return ImmutablePredictedTumorOrigin.builder()
-                .predictions(List.of(ImmutableCuppaPrediction.builder()
+                .predictions(List.of(ImmutableCupPrediction.builder()
                                 .cancerType("Melanoma")
                                 .likelihood(0.996)
                                 .snvPairwiseClassifier(0.979)
                                 .genomicPositionClassifier(0.99)
                                 .featureClassifier(0.972)
                                 .build(),
-                        ImmutableCuppaPrediction.builder()
+                        ImmutableCupPrediction.builder()
                                 .cancerType("Lung")
                                 .likelihood(0.001)
                                 .snvPairwiseClassifier(0.0009)
                                 .genomicPositionClassifier(0.011)
                                 .featureClassifier(0.0102)
                                 .build(),
-                        ImmutableCuppaPrediction.builder()
+                        ImmutableCupPrediction.builder()
                                 .cancerType("Esophagus/Stomach")
                                 .likelihood(0.0016)
                                 .snvPairwiseClassifier(0.0004)

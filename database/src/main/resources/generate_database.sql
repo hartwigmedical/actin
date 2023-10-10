@@ -85,9 +85,6 @@ CREATE TABLE `treatmentHistoryEntry`
     PRIMARY KEY (`id`)
 );
 
--- TODO: remove after table is cleaned up:
-DROP TABLE IF EXISTS `priorTumorTreatment`;
-
 DROP TABLE IF EXISTS `priorSecondPrimary`;
 CREATE TABLE `priorSecondPrimary`
 (   `id` int NOT NULL AUTO_INCREMENT,
@@ -233,12 +230,6 @@ CREATE TABLE `medication`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `patientId` varchar(50) NOT NULL,
     `name` varchar(100) NOT NULL,
-    `codeATC` varchar(50),
-    `categories` varchar(100),
-    `chemicalSubgroupATC` varchar(100),
-    `pharmacologicalSubgroupATC` varchar(100),
-    `therapeuticSubgroupATC` varchar(100),
-    `anatomicalMainGroupATC` varchar(100),
     `status` varchar(50),
     `administrationRoute` varchar(50),
     `dosageMin` double precision,
@@ -246,9 +237,20 @@ CREATE TABLE `medication`
     `dosageUnit` varchar(50),
     `frequency` double precision,
     `frequencyUnit` varchar(50),
+    `periodBetweenValue` double precision,
+    `periodBetweenUnit` varchar(50),
     `ifNeeded` BOOLEAN,
     `startDate` DATE,
     `stopDate` DATE,
+    `cypInteractions` varchar(200) NOT NULL,
+    `qtProlongatingRisk` varchar(50) NOT NULL,
+    `anatomicalMainGroupAtcName` varchar(100),
+    `therapeuticSubgroupAtcName` varchar(100),
+    `pharmacologicalSubgroupAtcName` varchar(100),
+    `chemicalSubgroupAtcName` varchar(100),
+    `chemicalSubstanceAtcCode` varchar(50),
+    `isSelfCare` BOOLEAN,
+    `isTrialMedication` BOOLEAN NOT NULL,
     PRIMARY KEY (`id`)
 );
 
@@ -551,7 +553,7 @@ CREATE TABLE `eligibility`
     `cohortId` int,
     `parentId` int,
     `rule` varchar(100)  NOT NULL,
-    `parameters` varchar(100) NOT NULL,
+    `parameters` varchar(200) NOT NULL,
     `display` varchar(5000) NOT NULL,
     PRIMARY KEY (`id`)
 );

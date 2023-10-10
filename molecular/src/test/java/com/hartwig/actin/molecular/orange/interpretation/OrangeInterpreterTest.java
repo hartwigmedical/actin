@@ -15,15 +15,20 @@ import com.hartwig.actin.molecular.datamodel.RefGenomeVersion;
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers;
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory;
-import com.hartwig.actin.molecular.orange.datamodel.ImmutableOrangeRecord;
-import com.hartwig.actin.molecular.orange.datamodel.OrangeRecord;
-import com.hartwig.actin.molecular.orange.datamodel.OrangeRefGenomeVersion;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
-import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleFit;
-import com.hartwig.actin.molecular.orange.datamodel.purple.ImmutablePurpleRecord;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleQCStatus;
+import com.hartwig.actin.molecular.orange.datamodel.cuppa.TestCuppaFactory;
+import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
+import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory;
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants;
+import com.hartwig.hmftools.datamodel.cuppa.ImmutableCuppaData;
+import com.hartwig.hmftools.datamodel.linx.ImmutableLinxRecord;
+import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeRecord;
+import com.hartwig.hmftools.datamodel.orange.OrangeRecord;
+import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion;
+import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleFit;
+import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord;
+import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -43,7 +48,7 @@ public class OrangeInterpreterTest {
 
         assertEquals(TestDataFactory.TEST_PATIENT, record.patientId());
         assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId());
-        assertEquals(ExperimentType.WGS, record.type());
+        assertEquals(ExperimentType.WHOLE_GENOME, record.type());
         assertEquals(RefGenomeVersion.V37, record.refGenomeVersion());
         assertEquals(LocalDate.of(2021, 5, 6), record.date());
         assertEquals(ActionabilityConstants.EVIDENCE_SOURCE.display(), record.evidenceSource());
@@ -121,6 +126,45 @@ public class OrangeInterpreterTest {
         interpreter.interpret(orangeRecordWithQCStatuses(Set.of()));
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void shouldThrowExceptionOnMissingCuppaPredictionClassifiers() {
+        OrangeRecord proper = TestOrangeFactory.createProperTestOrangeRecord();
+        OrangeRecord record = ImmutableOrangeRecord.copyOf(proper)
+                .withCuppa(ImmutableCuppaData.copyOf(proper.cuppa()).withPredictions(TestCuppaFactory.builder().build()));
+        OrangeInterpreter interpreter = createTestInterpreter();
+        interpreter.interpret(record);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void shouldThrowExceptionOnGermlineDisruptionPresent() {
+        OrangeRecord proper = TestOrangeFactory.createProperTestOrangeRecord();
+        OrangeRecord record = ImmutableOrangeRecord.copyOf(proper)
+                .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
+                        .withGermlineHomozygousDisruptions(TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build()));
+        OrangeInterpreter interpreter = createTestInterpreter();
+        interpreter.interpret(record);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void shouldThrowExceptionOnGermlineBreakendPresent() {
+        OrangeRecord proper = TestOrangeFactory.createProperTestOrangeRecord();
+        OrangeRecord record = ImmutableOrangeRecord.copyOf(proper)
+                .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
+                        .withAllGermlineBreakends(TestLinxFactory.breakendBuilder().gene("gene 1").build()));
+        OrangeInterpreter interpreter = createTestInterpreter();
+        interpreter.interpret(record);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void shouldThrowExceptionOnGermlineSVPresentPresent() {
+        OrangeRecord proper = TestOrangeFactory.createProperTestOrangeRecord();
+        OrangeRecord record = ImmutableOrangeRecord.copyOf(proper)
+                .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
+                        .withAllGermlineStructuralVariants(TestLinxFactory.structuralVariantBuilder().svId(1).build()));
+        OrangeInterpreter interpreter = createTestInterpreter();
+        interpreter.interpret(record);
+    }
+
     @NotNull
     private static OrangeRecord orangeRecordWithQCStatus(PurpleQCStatus status) {
         return orangeRecordWithQCStatuses(Set.of(status));
@@ -131,7 +175,8 @@ public class OrangeInterpreterTest {
         OrangeRecord minimal = TestOrangeFactory.createMinimalTestOrangeRecord();
         return ImmutableOrangeRecord.copyOf(minimal)
                 .withPurple(ImmutablePurpleRecord.copyOf(minimal.purple())
-                        .withFit(ImmutablePurpleFit.copyOf(minimal.purple().fit()).withQcStatuses(statuses)));
+                        .withFit(ImmutablePurpleFit.copyOf(minimal.purple().fit())
+                                .withQc(TestPurpleFactory.purpleQCBuilder().addAllStatus(statuses).build())));
     }
 
     @NotNull

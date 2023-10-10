@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation
 
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider
+import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.treatment.datamodel.EligibilityRule
 import com.hartwig.actin.treatment.input.FunctionInputResolver
@@ -17,6 +18,10 @@ abstract class RuleMapper(private val resources: RuleMappingResources) {
 
     protected fun functionInputResolver(): FunctionInputResolver {
         return resources.functionInputResolver
+    }
+
+    protected fun atcTree(): AtcTree {
+        return resources.atcTree
     }
 
     abstract fun createMappings(): Map<EligibilityRule, FunctionCreator>

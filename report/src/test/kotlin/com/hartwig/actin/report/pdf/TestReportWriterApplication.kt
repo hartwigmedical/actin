@@ -9,14 +9,14 @@ import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory.createProductionReportWriter
 import org.apache.logging.log4j.LogManager
 import java.io.File
-import java.io.IOException
 
 object TestReportWriterApplication {
+
     private val LOGGER = LogManager.getLogger(TestReportWriterApplication::class.java)
+
     private val WORK_DIRECTORY = System.getProperty("user.home") + File.separator + "hmf" + File.separator + "tmp"
     private val OPTIONAL_TREATMENT_MATCH_JSON = WORK_DIRECTORY + File.separator + "patient.treatment_match.json"
 
-    @Throws(IOException::class)
     @JvmStatic
     fun main(args: Array<String>) {
         val writer = createProductionReportWriter(WORK_DIRECTORY)
@@ -24,7 +24,6 @@ object TestReportWriterApplication {
         writer.write(report)
     }
 
-    @Throws(IOException::class)
     private fun createTestReport(): Report {
         val report = TestReportFactory.createExhaustiveTestReport()
         LOGGER.info("Printing clinical record")

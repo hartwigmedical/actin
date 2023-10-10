@@ -1,5 +1,9 @@
 package com.hartwig.actin.molecular.orange.datamodel.virus;
 
+import com.hartwig.hmftools.datamodel.virus.ImmutableAnnotatedVirus;
+import com.hartwig.hmftools.datamodel.virus.VirusBreakendQCStatus;
+import com.hartwig.hmftools.datamodel.virus.VirusLikelihoodType;
+
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,12 +13,14 @@ public final class TestVirusInterpreterFactory {
     }
 
     @NotNull
-    public static ImmutableVirusInterpreterEntry.Builder builder() {
-        return ImmutableVirusInterpreterEntry.builder()
+    public static ImmutableAnnotatedVirus.Builder builder() {
+        return ImmutableAnnotatedVirus.builder()
                 .reported(true)
                 .name(Strings.EMPTY)
-                .qcStatus(VirusQCStatus.NO_ABNORMALITIES)
+                .qcStatus(VirusBreakendQCStatus.NO_ABNORMALITIES)
                 .integrations(0)
-                .driverLikelihood(VirusDriverLikelihood.LOW);
+                .virusDriverLikelihoodType(VirusLikelihoodType.LOW)
+                .percentageCovered(0D)
+                .meanCoverage(0D);
     }
 }

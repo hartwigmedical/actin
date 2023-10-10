@@ -20,6 +20,7 @@ import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.TextAlignment
 
 class SummaryChapter(private val report: Report) : ReportChapter {
+
     override fun name(): String {
         return "Summary"
     }

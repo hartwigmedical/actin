@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange.evidence.matching;
 
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
+import com.hartwig.hmftools.datamodel.purple.PurpleVariant;
 import com.hartwig.serve.datamodel.MutationType;
 import com.hartwig.serve.datamodel.gene.GeneAnnotation;
 

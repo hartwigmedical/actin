@@ -20,6 +20,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
+private const val PATIENT_ID = "patientId"
+
 class MedicationExtractorTest {
 
     @Test
@@ -35,28 +37,31 @@ class MedicationExtractorTest {
             administrationRoute = "oraal"
         )
 
-        assertThat(EXTRACTOR.extractMedication(entry)).isEqualTo(ImmutableMedication.builder()
-            .name("Paracetamol")
-            .addCategories("Acetanilide derivatives")
-            .status(MedicationStatus.ACTIVE)
-            .administrationRoute("oral")
-            .dosage(ImmutableDosage.builder()
-                .dosageMin(50.0)
-                .dosageMax(60.0)
-                .dosageUnit("mg")
-                .frequency(1.0)
-                .frequencyUnit("day")
-                .periodBetweenValue(1.0)
-                .periodBetweenUnit("mo")
-                .ifNeeded(false)
-                .build())
-            .startDate(LocalDate.of(2019, 2, 2))
-            .stopDate(LocalDate.of(2019, 4, 4))
-            .addCypInteractions(TestCurationFactory.createTestCypInteraction())
-            .qtProlongatingRisk(QTProlongatingRisk.POSSIBLE)
-            .atc(ImmutableAtcClassification.builder()
-                .anatomicalMainGroup(atcLevel("N", ANATOMICAL))
-                .therapeuticSubGroup(atcLevel("N02", THERAPEUTIC))
+        assertThat(EXTRACTOR.extractMedication(PATIENT_ID, entry)).isEqualTo(
+            ImmutableMedication.builder()
+                .name("Paracetamol")
+                .status(MedicationStatus.ACTIVE)
+                .administrationRoute("oral")
+                .dosage(
+                    ImmutableDosage.builder()
+                        .dosageMin(50.0)
+                        .dosageMax(60.0)
+                        .dosageUnit("mg")
+                        .frequency(1.0)
+                        .frequencyUnit("day")
+                        .periodBetweenValue(1.0)
+                        .periodBetweenUnit("mo")
+                        .ifNeeded(false)
+                        .build()
+                )
+                .startDate(LocalDate.of(2019, 2, 2))
+                .stopDate(LocalDate.of(2019, 4, 4))
+                .addCypInteractions(TestCurationFactory.createTestCypInteraction())
+                .qtProlongatingRisk(QTProlongatingRisk.POSSIBLE)
+                .atc(
+                    ImmutableAtcClassification.builder()
+                        .anatomicalMainGroup(atcLevel("N", ANATOMICAL))
+                        .therapeuticSubGroup(atcLevel("N02", THERAPEUTIC))
                 .pharmacologicalSubGroup(atcLevel("N02B", PHARMACOLOGICAL))
                 .chemicalSubGroup(atcLevel("N02BE", CHEMICAL))
                 .chemicalSubstance(atcLevel(FULL_ATC_CODE, CHEMICAL_SUBSTANCE))
@@ -76,7 +81,7 @@ class MedicationExtractorTest {
             end = LocalDate.of(2019, 4, 4),
             active = false,
         )
-        assertThat(EXTRACTOR.extractMedication(entry)).isNull()
+        assertThat(EXTRACTOR.extractMedication(PATIENT_ID, entry)).isNull()
     }
 
     @Test
@@ -90,7 +95,7 @@ class MedicationExtractorTest {
             codeText = "A en B"
         )
 
-        assertThat(EXTRACTOR.extractMedication(entry)!!.isSelfCare).isTrue
+        assertThat(EXTRACTOR.extractMedication(PATIENT_ID, entry)!!.isSelfCare).isTrue
     }
 
     @Test
@@ -105,7 +110,7 @@ class MedicationExtractorTest {
             codeText = "A en B"
         )
 
-        assertThat(EXTRACTOR.extractMedication(entry)!!.isTrialMedication).isTrue
+        assertThat(EXTRACTOR.extractMedication(PATIENT_ID, entry)!!.isTrialMedication).isTrue
     }
 
     companion object {

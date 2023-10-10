@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.evaluation.composite.And
 import com.hartwig.actin.algo.evaluation.composite.Not
 import com.hartwig.actin.algo.evaluation.composite.Or
 import com.hartwig.actin.algo.evaluation.composite.WarnIf
+import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction
@@ -59,13 +60,14 @@ class EvaluationFunctionFactory(
         fun create(
             doidModel: DoidModel,
             referenceDateProvider: ReferenceDateProvider,
-            treatmentDatabase: TreatmentDatabase
+            treatmentDatabase: TreatmentDatabase,
+            atcTree: AtcTree
         ): EvaluationFunctionFactory {
             // We assume we never check validity of a gene inside algo.
             val molecularInputChecker: MolecularInputChecker = MolecularInputChecker.createAnyGeneValid()
             val functionInputResolver = FunctionInputResolver(doidModel, molecularInputChecker, treatmentDatabase)
             return EvaluationFunctionFactory(
-                FunctionCreatorFactory.create(referenceDateProvider, doidModel, functionInputResolver),
+                FunctionCreatorFactory.create(referenceDateProvider, doidModel, functionInputResolver, atcTree),
                 functionInputResolver
             )
         }

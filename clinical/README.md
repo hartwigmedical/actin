@@ -28,10 +28,12 @@ Patient details
 | Variable                | Example values | With date? |
 |-------------------------|----------------|------------|
 | Birth year              | 1940           |            |
-| Sex                     | Male           |            |    
-| Gender                  | Male           |            |
+| Sex*                    | Male           |            |    
+| Gender*                 | Male           |            |
 | ACTIN registration date | 2023-01-01     | N/A        |
 | WHO                     | 0/1/2/3/4/5    | Yes        |
+
+*If both are not available, either suffices.
 
 Current primary tumor details
 
@@ -178,14 +180,6 @@ Allergy details (N records per patient)
 | Name     | Pembrolizumab                         | Yes        |
 | Type     | Allergy, Side effect or Not specified |            |
 
-Infection details (N records per patient)
-
-| Variable                    | Example values | With date? |
-|-----------------------------|----------------|------------|
-| Start date                  | 2023-06-01     | N/A        |
-| End date  (if applicable)   |                | N/A        |
-| Description (if applicable) |                |            |
-
 ### Additional (optional) set
 
 Below is a set of variables that is not necessarily required to run ACTIN, but if the variables are available, the variables in this set can
@@ -252,8 +246,8 @@ Note that "if applicable" in 'origin' indicates that the field is derived from a
 | Field                      | Origin                         |
 |----------------------------|--------------------------------|
 | who                        | Patient: WHO                   |
-| hasActiveInfection         | Infection details: Date        |
-| activeInfectionDescription | Infection details: Description |
+| hasActiveInfection         | Other relevant patient history |
+| activeInfectionDescription | Other relevant patient history |
 | hasToxicitiesGrade2        | Toxicity details               |
 | hasSigAberrationLatestECG  | ECG details                    |
 | ecgAberrationDescription   | ECG details                    |

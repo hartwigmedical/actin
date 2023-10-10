@@ -1,11 +1,11 @@
 package com.hartwig.actin.molecular.orange.evidence.actionability;
 
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakend;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
-import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
+import com.hartwig.hmftools.datamodel.linx.HomozygousDisruption;
+import com.hartwig.hmftools.datamodel.linx.LinxBreakend;
+import com.hartwig.hmftools.datamodel.linx.LinxFusion;
+import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss;
+import com.hartwig.hmftools.datamodel.purple.PurpleVariant;
+import com.hartwig.hmftools.datamodel.virus.AnnotatedVirus;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -74,7 +74,7 @@ public class ActionableEventMatcher {
     }
 
     @NotNull
-    public ActionabilityMatch matchForHomozygousDisruption(@NotNull LinxHomozygousDisruption homozygousDisruption) {
+    public ActionabilityMatch matchForHomozygousDisruption(@NotNull HomozygousDisruption homozygousDisruption) {
         return personalizedActionabilityFactory.create(homozygousDisruptionEvidence.findMatches(homozygousDisruption));
     }
 
@@ -89,7 +89,7 @@ public class ActionableEventMatcher {
     }
 
     @NotNull
-    public ActionabilityMatch matchForVirus(@NotNull VirusInterpreterEntry virus) {
+    public ActionabilityMatch matchForVirus(@NotNull AnnotatedVirus virus) {
         return personalizedActionabilityFactory.create(virusEvidence.findMatches(virus));
     }
 }

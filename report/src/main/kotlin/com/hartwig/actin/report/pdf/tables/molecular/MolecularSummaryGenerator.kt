@@ -21,7 +21,7 @@ class MolecularSummaryGenerator(
     override fun contents(): Table {
         val table = Tables.createSingleColWithWidth(keyWidth + valueWidth)
         if (molecular.containsTumorCells()) {
-            if (molecular.type() != ExperimentType.WGS) {
+            if (molecular.type() != ExperimentType.WHOLE_GENOME) {
                 LOGGER.warn("Generating WGS results for non-WGS sample")
             }
             val wgsGenerator: TableGenerator = WGSSummaryGenerator(clinical, molecular, cohorts, keyWidth, valueWidth)

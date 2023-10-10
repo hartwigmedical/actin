@@ -1,14 +1,14 @@
 package com.hartwig.actin.molecular.orange.evidence;
 
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxBreakend;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxFusion;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleGainLoss;
-import com.hartwig.actin.molecular.orange.datamodel.purple.PurpleVariant;
-import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityMatch;
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionableEventMatcher;
 import com.hartwig.actin.molecular.orange.evidence.known.KnownEventResolver;
+import com.hartwig.hmftools.datamodel.linx.HomozygousDisruption;
+import com.hartwig.hmftools.datamodel.linx.LinxBreakend;
+import com.hartwig.hmftools.datamodel.linx.LinxFusion;
+import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss;
+import com.hartwig.hmftools.datamodel.purple.PurpleVariant;
+import com.hartwig.hmftools.datamodel.virus.AnnotatedVirus;
 import com.hartwig.serve.datamodel.common.GeneAlteration;
 import com.hartwig.serve.datamodel.fusion.KnownFusion;
 
@@ -85,12 +85,12 @@ public class EvidenceDatabase {
     }
 
     @Nullable
-    public GeneAlteration geneAlterationForHomozygousDisruption(@NotNull LinxHomozygousDisruption homozygousDisruption) {
+    public GeneAlteration geneAlterationForHomozygousDisruption(@NotNull HomozygousDisruption homozygousDisruption) {
         return knownEventResolver.resolveForHomozygousDisruption(homozygousDisruption);
     }
 
     @NotNull
-    public ActionabilityMatch evidenceForHomozygousDisruption(@NotNull LinxHomozygousDisruption homozygousDisruption) {
+    public ActionabilityMatch evidenceForHomozygousDisruption(@NotNull HomozygousDisruption homozygousDisruption) {
         return actionableEventMatcher.matchForHomozygousDisruption(homozygousDisruption);
     }
 
@@ -115,7 +115,7 @@ public class EvidenceDatabase {
     }
 
     @NotNull
-    public ActionabilityMatch evidenceForVirus(@NotNull VirusInterpreterEntry virus) {
+    public ActionabilityMatch evidenceForVirus(@NotNull AnnotatedVirus virus) {
         return actionableEventMatcher.matchForVirus(virus);
     }
 }

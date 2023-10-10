@@ -5,7 +5,7 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.hartwig.actin.molecular.orange.datamodel.linx.LinxHomozygousDisruption;
+import com.hartwig.hmftools.datamodel.linx.HomozygousDisruption;
 import com.hartwig.serve.datamodel.ActionableEvent;
 import com.hartwig.serve.datamodel.ActionableEvents;
 import com.hartwig.serve.datamodel.gene.ActionableGene;
@@ -13,7 +13,7 @@ import com.hartwig.serve.datamodel.gene.GeneEvent;
 
 import org.jetbrains.annotations.NotNull;
 
-class HomozygousDisruptionEvidence implements EvidenceMatcher<LinxHomozygousDisruption> {
+class HomozygousDisruptionEvidence implements EvidenceMatcher<HomozygousDisruption> {
 
     private static final Set<GeneEvent> APPLICABLE_GENE_EVENTS =
             Sets.newHashSet(GeneEvent.DELETION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION);
@@ -39,7 +39,7 @@ class HomozygousDisruptionEvidence implements EvidenceMatcher<LinxHomozygousDisr
 
     @NotNull
     @Override
-    public List<ActionableEvent> findMatches(@NotNull LinxHomozygousDisruption homozygousDisruption) {
+    public List<ActionableEvent> findMatches(@NotNull HomozygousDisruption homozygousDisruption) {
         List<ActionableEvent> matches = Lists.newArrayList();
 
         for (ActionableGene actionableGene : actionableGenes) {

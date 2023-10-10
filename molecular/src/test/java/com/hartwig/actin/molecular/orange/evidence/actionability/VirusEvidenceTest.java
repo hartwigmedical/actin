@@ -6,8 +6,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import com.hartwig.actin.molecular.orange.datamodel.virus.TestVirusInterpreterFactory;
-import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpretation;
-import com.hartwig.actin.molecular.orange.datamodel.virus.VirusInterpreterEntry;
+import com.hartwig.hmftools.datamodel.virus.AnnotatedVirus;
+import com.hartwig.hmftools.datamodel.virus.VirusInterpretation;
 import com.hartwig.serve.datamodel.ActionableEvent;
 import com.hartwig.serve.datamodel.ActionableEvents;
 import com.hartwig.serve.datamodel.ImmutableActionableEvents;
@@ -27,22 +27,20 @@ public class VirusEvidenceTest {
 
         VirusEvidence virusEvidence = VirusEvidence.create(actionable);
 
-        VirusInterpreterEntry virusMatch =
-                TestVirusInterpreterFactory.builder().interpretation(VirusInterpretation.HPV).reported(true).build();
+        AnnotatedVirus virusMatch = TestVirusInterpreterFactory.builder().interpretation(VirusInterpretation.HPV).reported(true).build();
 
         List<ActionableEvent> matches = virusEvidence.findMatches(virusMatch);
         assertEquals(1, matches.size());
         assertTrue(matches.contains(hpv));
 
-        VirusInterpreterEntry noInterpretation = TestVirusInterpreterFactory.builder().interpretation(null).reported(true).build();
+        AnnotatedVirus noInterpretation = TestVirusInterpreterFactory.builder().interpretation(null).reported(true).build();
         assertTrue(virusEvidence.findMatches(noInterpretation).isEmpty());
 
-        VirusInterpreterEntry otherInterpretation =
+        AnnotatedVirus otherInterpretation =
                 TestVirusInterpreterFactory.builder().interpretation(VirusInterpretation.MCV).reported(true).build();
         assertTrue(virusEvidence.findMatches(otherInterpretation).isEmpty());
 
-        VirusInterpreterEntry notReported =
-                TestVirusInterpreterFactory.builder().interpretation(VirusInterpretation.HPV).reported(false).build();
+        AnnotatedVirus notReported = TestVirusInterpreterFactory.builder().interpretation(VirusInterpretation.HPV).reported(false).build();
         assertTrue(virusEvidence.findMatches(notReported).isEmpty());
     }
 
@@ -55,22 +53,20 @@ public class VirusEvidenceTest {
 
         VirusEvidence virusEvidence = VirusEvidence.create(actionable);
 
-        VirusInterpreterEntry virusMatch =
-                TestVirusInterpreterFactory.builder().interpretation(VirusInterpretation.EBV).reported(true).build();
+        AnnotatedVirus virusMatch = TestVirusInterpreterFactory.builder().interpretation(VirusInterpretation.EBV).reported(true).build();
 
         List<ActionableEvent> matches = virusEvidence.findMatches(virusMatch);
         assertEquals(1, matches.size());
         assertTrue(matches.contains(ebv));
 
-        VirusInterpreterEntry noInterpretation = TestVirusInterpreterFactory.builder().interpretation(null).reported(true).build();
+        AnnotatedVirus noInterpretation = TestVirusInterpreterFactory.builder().interpretation(null).reported(true).build();
         assertTrue(virusEvidence.findMatches(noInterpretation).isEmpty());
 
-        VirusInterpreterEntry otherInterpretation =
+        AnnotatedVirus otherInterpretation =
                 TestVirusInterpreterFactory.builder().interpretation(VirusInterpretation.MCV).reported(true).build();
         assertTrue(virusEvidence.findMatches(otherInterpretation).isEmpty());
 
-        VirusInterpreterEntry notReported =
-                TestVirusInterpreterFactory.builder().interpretation(VirusInterpretation.EBV).reported(false).build();
+        AnnotatedVirus notReported = TestVirusInterpreterFactory.builder().interpretation(VirusInterpretation.EBV).reported(false).build();
         assertTrue(virusEvidence.findMatches(notReported).isEmpty());
     }
 }
