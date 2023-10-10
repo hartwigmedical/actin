@@ -90,13 +90,13 @@ class MolecularDriversSummarizerTest {
     @Test
     fun shouldReturnKeyViruses() {
         val viruses = setOf(
-            virus("virus", DriverLikelihood.HIGH, true),
+            virus("virus event", DriverLikelihood.HIGH, true),
             virus("non-reportable", DriverLikelihood.HIGH, false),
             virus("medium likelihood", DriverLikelihood.MEDIUM, true)
         )
         val molecularDrivers: MolecularDrivers = ImmutableMolecularDrivers.builder().addAllViruses(viruses).build()
         val keyViruses = summarizer(molecularDrivers).keyVirusEvents().toSet()
-        assertThat(keyViruses).containsExactly(VirusType.MERKEL_CELL_VIRUS.toString() + " (" + VIRUS_INTEGRATIONS + " integrations detected)")
+        assertThat(keyViruses).containsExactly("virus event (" + VIRUS_INTEGRATIONS + " int. detected)")
     }
 
     @Test
