@@ -640,6 +640,27 @@ to 5 most recent values would be sufficient to `PASS`.
 |-----------------------------------------------|--------------------------------------|
 | IS_ABLE_AND_WILLING_TO_NOT_USE_CONTACT_LENSES | Resolves to `WARN`                   |
 
+#### Standard of Care (SOC)
+
+As we broaden the scope of treatment matching to support patients who may not have exhausted standard of care (SOC), we need a SOC model
+to determine if standard treatments are still available or required for a given patient. Eventually, we could make recommendations based
+on efficacy data from the latest research. Standard treatment eligibility can be represented in the same way as trial eligibility, using
+the functions described above.
+
+The SOC recommendation application can be run as follows:
+
+```
+java -cp actin.jar com.hartwig.actin.algo.soc.StandardOfCareApplicationKt \
+    -clinical_json /path/to/clinical.json \
+    -molecular_json /path/to/molecular.json \
+    -doid_json /path/to/doid.json \
+    -atc_tsv /path/to/atc_tree.tsv \
+    -treatment_directory /path/to/treatment_db
+```
+
+This will output a summary of the treatment candidates with their eligibility criteria, a list of recommended treatments, and whether SOC
+has been exhausted. In the future, SOC recommendations will be incorporated into ACTIN reports.
+
 ### References
 
 #### Disease Ontology ID (DOID)
