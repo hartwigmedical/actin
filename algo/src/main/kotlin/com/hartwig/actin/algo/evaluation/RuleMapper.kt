@@ -20,7 +20,7 @@ abstract class RuleMapper(private val resources: RuleMappingResources) {
         return resources.functionInputResolver
     }
 
-    protected fun atcTree(): AtcTree{
+    protected fun atcTree(): AtcTree {
         return resources.atcTree
     }
 

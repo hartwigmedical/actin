@@ -24,6 +24,7 @@ import java.io.File
 import kotlin.system.exitProcess
 
 class TestStandardOfCareApplication {
+
     fun run(): Int {
         val patient = patient()
 
@@ -39,17 +40,20 @@ class TestStandardOfCareApplication {
         val doidModel: DoidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
         val database = RecommendationDatabase(TreatmentDatabaseFactory.createFromPath(TREATMENT_JSON_PATH))
+        LOGGER.info("Loaded recommendation database for colorectal cancer with treatment candidates:")
+        database.logRulesForDoidSet(setOf(DoidConstants.COLORECTAL_CANCER_DOID))
+
         val recommendationEngine =
             RecommendationEngine.create(
                 doidModel,
-                AtcTree(emptyMap()),
+                AtcTree.createFromFile(ATC_TREE_PATH),
                 database,
                 ReferenceDateProviderTestFactory.createCurrentDateProvider()
             )
-        val recommendationInterpreter = recommendationEngine.provideRecommendations(patient)
-        LOGGER.info(recommendationInterpreter.summarize())
-        LOGGER.info(recommendationInterpreter.csv())
 
+        LOGGER.info(recommendationEngine.provideRecommendations(patient))
+        val patientHasExhaustedStandardOfCare = recommendationEngine.patientHasExhaustedStandardOfCare(patient)
+        LOGGER.info("Standard of care has${if (patientHasExhaustedStandardOfCare) "" else " not"} been exhausted")
         return 0
     }
 
@@ -65,19 +69,22 @@ class TestStandardOfCareApplication {
             "doid.json"
         ).joinToString(File.separator)
 
-        private val TREATMENT_JSON_PATH = listOf(
+        private val ACTIN_RESOURCE_PATH = listOf(
             System.getProperty("user.home"),
             "hmf",
             "repos",
-            "private_crunch_repo",
-            "actin",
-            "treatment_db"
+            "crunch-resources-private",
+            "actin"
         ).joinToString(File.separator)
+
+        private val TREATMENT_JSON_PATH = ACTIN_RESOURCE_PATH + File.separator + "treatment_db"
+
+        private val ATC_TREE_PATH = listOf(ACTIN_RESOURCE_PATH, "atc_config", "atc_tree.tsv").joinToString(File.separator)
 
         private fun patient(): PatientRecord {
             val tumorDetails: TumorDetails = ImmutableTumorDetails.builder().addDoids(DoidConstants.COLORECTAL_CANCER_DOID).build()
             val clinicalRecord: ClinicalRecord = ImmutableClinicalRecord.builder()
-                .from(TestClinicalFactory.createMinimalTestClinicalRecord())
+                .from(TestClinicalFactory.createProperTestClinicalRecord())
                 .tumor(tumorDetails)
                 .build()
             val molecularRecord: MolecularRecord = TestMolecularFactory.createProperTestMolecularRecord()

@@ -120,6 +120,7 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
                 intentNames.size >= 2 -> {
                     intentNames.dropLast(1).joinToString(", ") + " and " + intentNames.last()
                 }
+
                 else -> null
             }
 
@@ -133,7 +134,7 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
             val treatmentWithAnnotation = treatmentHistoryEntry.treatmentDisplay() + if (annotation.isEmpty()) "" else " ($annotation)"
 
             return if (treatmentHistoryEntry.isTrial) {
-                val acronym =  if (treatmentHistoryEntry.trialAcronym().isNullOrEmpty()) "" else "(${treatmentHistoryEntry.trialAcronym()})"
+                val acronym = if (treatmentHistoryEntry.trialAcronym().isNullOrEmpty()) "" else "(${treatmentHistoryEntry.trialAcronym()})"
                 val trial = "Clinical trial"
                 when {
                     acronym.isEmpty() && treatmentWithAnnotation.isEmpty() -> "$trial (details unknown)"

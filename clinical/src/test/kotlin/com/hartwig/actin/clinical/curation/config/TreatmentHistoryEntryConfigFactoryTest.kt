@@ -58,8 +58,9 @@ class TreatmentHistoryEntryConfigFactoryTest {
         )
         val config = TreatmentHistoryEntryConfigFactory.createConfig(treatmentName, treatmentDatabase, parts, fields)
 
-        val expected = TreatmentHistoryEntryConfig(input=input, ignore=false,
-            curated=ImmutableTreatmentHistoryEntry.builder()
+        val expected = TreatmentHistoryEntryConfig(
+            input = input, ignore = false,
+            curated = ImmutableTreatmentHistoryEntry.builder()
                 .startYear(2022)
                 .isTrial(true)
                 .build()

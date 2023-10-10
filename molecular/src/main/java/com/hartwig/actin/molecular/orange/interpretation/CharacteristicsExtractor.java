@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.orange.interpretation;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -128,7 +127,7 @@ class CharacteristicsExtractor {
     }
 
     @NotNull
-    private static CupPrediction determineCupPrediction(@NotNull  CuppaPrediction cuppaPrediction) {
+    private static CupPrediction determineCupPrediction(@NotNull CuppaPrediction cuppaPrediction) {
         return ImmutableCupPrediction.builder()
                 .cancerType(cuppaPrediction.cancerType())
                 .likelihood(cuppaPrediction.likelihood())

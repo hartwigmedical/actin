@@ -129,8 +129,8 @@ public class OrangeInterpreterTest {
     @Test(expected = IllegalStateException.class)
     public void shouldThrowExceptionOnMissingCuppaPredictionClassifiers() {
         OrangeRecord proper = TestOrangeFactory.createProperTestOrangeRecord();
-        OrangeRecord record = ImmutableOrangeRecord.copyOf(proper).withCuppa(
-                ImmutableCuppaData.copyOf(proper.cuppa()).withPredictions(TestCuppaFactory.builder().build()));
+        OrangeRecord record = ImmutableOrangeRecord.copyOf(proper)
+                .withCuppa(ImmutableCuppaData.copyOf(proper.cuppa()).withPredictions(TestCuppaFactory.builder().build()));
         OrangeInterpreter interpreter = createTestInterpreter();
         interpreter.interpret(record);
     }

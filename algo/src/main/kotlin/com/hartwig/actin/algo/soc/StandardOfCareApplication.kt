@@ -4,8 +4,8 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.TreatmentMatcherApplication
-import com.hartwig.actin.algo.calendar.ReferenceDateProvider
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
+import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
@@ -26,12 +26,7 @@ import org.apache.logging.log4j.Logger
 import java.io.IOException
 import kotlin.system.exitProcess
 
-class StandardOfCareApplication(config: StandardOfCareConfig) {
-    private val config: StandardOfCareConfig
-
-    init {
-        this.config = config
-    }
+class StandardOfCareApplication(private val config: StandardOfCareConfig) {
 
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
@@ -56,14 +51,16 @@ class StandardOfCareApplication(config: StandardOfCareConfig) {
 
         LOGGER.info("Loading treatment data from {}", config.treatmentDirectory)
         val recommendationDatabase = RecommendationDatabase(TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory))
+        LOGGER.info("Loaded recommendation database for colorectal cancer with treatment candidates:")
+        recommendationDatabase.logRulesForDoidSet(setOf(DoidConstants.COLORECTAL_CANCER_DOID))
 
-        val referenceDateProvider: ReferenceDateProvider = ReferenceDateProviderFactory.create(clinical, config.runHistorically)
-        val recommendationEngine: RecommendationEngine =
+        val referenceDateProvider = ReferenceDateProviderFactory.create(clinical, config.runHistorically)
+        val recommendationEngine =
             RecommendationEngine.create(doidModel, atcTree, recommendationDatabase, referenceDateProvider)
 
-        LOGGER.info("Recommended treatments descending order of preference:")
-        LOGGER.info(recommendationEngine.provideRecommendations(patient).listAvailableTreatmentsByScore())
-        LOGGER.info("Done!")
+        LOGGER.info(recommendationEngine.provideRecommendations(patient))
+        val patientHasExhaustedStandardOfCare = recommendationEngine.patientHasExhaustedStandardOfCare(patient)
+        LOGGER.info("Standard of care has${if (patientHasExhaustedStandardOfCare) "" else " not"} been exhausted")
     }
 
     companion object {

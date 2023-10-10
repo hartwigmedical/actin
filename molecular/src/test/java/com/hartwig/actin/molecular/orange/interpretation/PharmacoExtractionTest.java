@@ -41,10 +41,7 @@ public class PharmacoExtractionTest {
     @NotNull
     private static OrangeRecord withPeachEntries(@NotNull PeachGenotype... peachEntries) {
         OrangeRecord base = TestOrangeFactory.createMinimalTestOrangeRecord();
-        return ImmutableOrangeRecord.builder()
-                .from(base)
-                .addPeach(peachEntries)
-                .build();
+        return ImmutableOrangeRecord.builder().from(base).addPeach(peachEntries).build();
     }
 
     @NotNull

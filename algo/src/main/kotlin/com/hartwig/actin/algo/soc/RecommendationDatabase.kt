@@ -6,8 +6,11 @@ import com.hartwig.actin.algo.soc.datamodel.TreatmentCandidate
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction
 import com.hartwig.actin.treatment.datamodel.EligibilityRule
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
+
     fun treatmentCandidatesForDoidSet(doids: Set<String>): List<TreatmentCandidate> {
         return if (!doids.contains(DoidConstants.COLORECTAL_CANCER_DOID)) emptyList() else listOf(
             combinableChemotherapies(),
@@ -17,7 +20,7 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
                 combinableChemotherapies().map { chemo: TreatmentCandidate ->
                     therapy.copy(
                         treatment = treatmentDatabase.findTreatmentByName("${chemo.treatment.name()}+${therapy.treatment.name()}")!!,
-                        expectedBenefitScore = SCORE_MONOTHERAPY_PLUS_TARGETED,
+                        expectedBenefitScore = SCORE_MONOTHERAPY_PLUS_TARGETED
                     )
                 }
             },
@@ -25,18 +28,22 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
         ).flatten()
     }
 
+    fun logRulesForDoidSet(doids: Set<String>) {
+        LOGGER.info(treatmentCandidatesForDoidSet(doids).joinToString("\n") { "  $it" })
+    }
+
     private fun combinableChemotherapies(): List<TreatmentCandidate> {
         return listOf(
-            createChemotherapy("Fluorouracil", SCORE_MONOTHERAPY),
-            createChemotherapy("Capecitabine", SCORE_MONOTHERAPY),
-            createChemotherapy("Irinotecan", SCORE_MONOTHERAPY),
-            createChemotherapy("Oxaliplatin", -1),
+            createChemotherapy("FLUOROURACIL", SCORE_MONOTHERAPY),
+            createChemotherapy("CAPECITABINE", SCORE_MONOTHERAPY),
+            createChemotherapy("IRINOTECAN", SCORE_MONOTHERAPY),
+            createChemotherapy("OXALIPLATIN", -1),
             createMultiChemotherapy(TREATMENT_CAPOX),
             createChemotherapy(
                 TREATMENT_FOLFIRI,
                 SCORE_MULTITHERAPY,
                 false,
-                setOf(1, 2), setOf(
+                extraFunctions = setOf(
                     eligibleIfTreatmentNotInHistory(TREATMENT_CAPOX), eligibleIfTreatmentNotInHistory(TREATMENT_FOLFOX),
                     IS_YOUNG_AND_FIT
                 )
@@ -49,7 +56,7 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
     }
 
     private fun createMultiChemotherapy(name: String): TreatmentCandidate {
-        return createChemotherapy(name, SCORE_MULTITHERAPY, false, setOf(1, 2), setOf(IS_YOUNG_AND_FIT))
+        return createChemotherapy(name, SCORE_MULTITHERAPY, false, extraFunctions = setOf(IS_YOUNG_AND_FIT))
     }
 
     private fun createChemotherapy(
@@ -60,15 +67,16 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
             treatment = treatmentDatabase.findTreatmentByName(name)!!,
             expectedBenefitScore = score,
             isOptional = isOptional,
-            eligibilityFunctions = setOf(IS_COLORECTAL_CANCER, eligibleIfTreatmentNotInHistory(name), eligibleForTreatmentLines(lines))
-                    union extraFunctions
+            eligibilityFunctions = setOf(IS_COLORECTAL_CANCER, eligibleIfTreatmentNotInHistory(name)) union extraFunctions,
+            additionalCriteriaForRequirement = setOf(eligibleForTreatmentLines(lines))
+            // TODO: all patients should have (Oxaliplatin OR Irinotecan) and (5-FU OR CAPECITABINE) before exhaustion
         )
     }
 
     private fun addBevacizumabToTreatment(treatmentCandidate: TreatmentCandidate): TreatmentCandidate {
         return TreatmentCandidate(
             treatmentDatabase.findTreatmentByName(treatmentCandidate.treatment.name() + "+Bevacizumab")!!,
-            isOptional = treatmentCandidate.isOptional,
+            isOptional = true,
             treatmentCandidate.expectedBenefitScore.coerceAtLeast(SCORE_MONOTHERAPY_PLUS_TARGETED),
             treatmentCandidate.eligibilityFunctions
         )
@@ -90,7 +98,8 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
                 IS_COLORECTAL_CANCER,
                 eligibleIfGenesAreWildType(listOf("KRAS", "NRAS", "BRAF")),
                 eligibilityFunction(EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR),
-                eligibleForTreatmentLines(setOf(2, 3))
+                eligibleForTreatmentLines(setOf(2, 3)),
+                eligibleIfDrugNotInHistory(name)
             )
         )
     }
@@ -98,10 +107,7 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
     private fun otherTreatments(): List<TreatmentCandidate> {
         return listOf(
             createChemotherapy(
-                TREATMENT_LONSURF,
-                SCORE_LONSURF,
-                true, setOf(3),
-                setOf(eligibleIfTreatmentNotInHistory("trifluridine"))
+                TREATMENT_LONSURF, SCORE_LONSURF, true, setOf(3), setOf(eligibleIfTreatmentNotInHistory("trifluridine"))
             ),
             TreatmentCandidate(
                 treatment = treatmentDatabase.findTreatmentByName(TREATMENT_PEMBROLIZUMAB)!!,
@@ -127,13 +133,13 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
 
     companion object {
         const val TREATMENT_CAPOX = "CAPOX"
-        const val TREATMENT_CETUXIMAB = "Cetuximab"
+        const val TREATMENT_CETUXIMAB = "CETUXIMAB"
         const val TREATMENT_FOLFIRI = "FOLFIRI"
         const val TREATMENT_FOLFIRINOX = "FOLFIRINOX"
         const val TREATMENT_FOLFOX = "FOLFOX"
-        const val TREATMENT_LONSURF = "Lonsurf"
-        const val TREATMENT_PANITUMUMAB = "Panitumumab"
-        const val TREATMENT_PEMBROLIZUMAB = "Pembrolizumab"
+        const val TREATMENT_LONSURF = "LONSURF"
+        const val TREATMENT_PANITUMUMAB = "PANITUMUMAB"
+        const val TREATMENT_PEMBROLIZUMAB = "PEMBROLIZUMAB"
         private const val SCORE_CETUXIMAB_PLUS_ENCORAFENIB = 4
         private const val SCORE_LONSURF = 2
         private const val SCORE_MONOTHERAPY = 3
@@ -143,8 +149,12 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
         private const val SCORE_TARGETED_THERAPY = 5
         private const val CHEMO_MAX_CYCLES = "12"
         private const val RECENT_TREATMENT_THRESHOLD_WEEKS = "104"
+
+        private val LOGGER: Logger = LogManager.getLogger(RecommendationDatabase::class.java)
+
         private val IS_COLORECTAL_CANCER: EligibilityFunction =
             eligibilityFunction(EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X, "colorectal cancer")
+
         private val IS_YOUNG_AND_FIT: EligibilityFunction = eligibilityFunction(
             EligibilityRule.AND,
             eligibilityFunction(EligibilityRule.NOT, eligibilityFunction(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, "75")),
@@ -179,6 +189,13 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
 
         private fun eligibleForTreatmentLines(lines: Set<Int>): EligibilityFunction {
             return eligibilityFunction(EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_LINES_X, lines.joinToString(";"))
+        }
+
+        private fun eligibleIfDrugNotInHistory(drugName: String): EligibilityFunction {
+            return eligibilityFunction(
+                EligibilityRule.NOT,
+                eligibilityFunction(EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X, drugName)
+            )
         }
 
         private fun eligibilityFunction(rule: EligibilityRule, vararg parameters: Any): EligibilityFunction {

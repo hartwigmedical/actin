@@ -1,9 +1,12 @@
 package com.hartwig.actin.molecular.orange.serialization;
 
 import static org.junit.Assert.assertNotNull;
+
 import java.io.IOException;
-import com.hartwig.hmftools.datamodel.OrangeJson;
+
 import com.google.common.io.Resources;
+import com.hartwig.hmftools.datamodel.OrangeJson;
+
 import org.junit.Test;
 
 public class OrangeJsonTest {

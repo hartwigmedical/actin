@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.clinical.datamodel.TumorStage
 
 internal object DerivedTumorStageEvaluation {
+   
     fun create(derived: Map<TumorStage, Evaluation>, createEvaluation: (String, String) -> Evaluation): Evaluation {
         val worstEvaluation = worstEvaluation(derived)
         return createEvaluation(allSpecificMessagesFrom(derived, worstEvaluation), allGeneralMessagesFrom(worstEvaluation))

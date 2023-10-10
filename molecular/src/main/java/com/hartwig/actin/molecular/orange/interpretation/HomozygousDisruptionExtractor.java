@@ -7,9 +7,9 @@ import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption;
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableHomozygousDisruption;
 import com.hartwig.actin.molecular.filter.GeneFilter;
-import com.hartwig.hmftools.datamodel.linx.LinxRecord;
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
 import com.hartwig.actin.molecular.sort.driver.HomozygousDisruptionComparator;
+import com.hartwig.hmftools.datamodel.linx.LinxRecord;
 
 import org.jetbrains.annotations.NotNull;
 

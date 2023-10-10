@@ -32,7 +32,7 @@ Patient details
 | Gender*                 | Male           |            |
 | ACTIN registration date | 2023-01-01     | N/A        |
 | WHO                     | 0/1/2/3/4/5    | Yes        |
- 
+
 *If both are not available, either suffices.
 
 Current primary tumor details

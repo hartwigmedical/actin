@@ -2,37 +2,30 @@ package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.algo.soc.datamodel.EvaluatedTreatment
 
-internal class EvaluatedTreatmentInterpreter(recommendedTreatments: List<EvaluatedTreatment>) {
-    private val recommendedTreatments: List<EvaluatedTreatment>
-
-    init {
-        this.recommendedTreatments = recommendedTreatments
-    }
+class EvaluatedTreatmentInterpreter(private val recommendedTreatments: List<EvaluatedTreatment>) {
 
     fun summarize(): String {
         return if (recommendedTreatments.isEmpty()) {
             "No treatments available"
         } else {
-            val bestScore: Int = recommendedTreatments[0].score
-            "Recommended treatments: " + recommendedTreatments.filter { it.score == bestScore }
-                .joinToString { it.treatmentCandidate.treatment.name() }
+            "Recommended treatment(s): " + recommendedTreatments.map { it.treatmentCandidate.treatment.display() }
+                .distinct()
+                .joinToString(", ")
         }
     }
 
     fun csv(): String {
-        return "Treatment,Score,Warnings\n" + recommendedTreatments.joinToString("\n") { evaluatedTreatment: EvaluatedTreatment ->
+        return "Treatment,Optional,Score,Warnings\n" + recommendedTreatments.joinToString("\n") { evaluatedTreatment: EvaluatedTreatment ->
             val warningSummary: String = evaluatedTreatment.evaluations.toSet().flatMap { eval ->
                 setOf(eval.failSpecificMessages(), eval.warnSpecificMessages(), eval.undeterminedSpecificMessages()).flatten()
             }.joinToString()
-            listOf(evaluatedTreatment.treatmentCandidate.treatment.name(), evaluatedTreatment.score, warningSummary).joinToString()
+            listOf(
+                evaluatedTreatment.treatmentCandidate.treatment.name(),
+                evaluatedTreatment.treatmentCandidate.isOptional,
+                evaluatedTreatment.score,
+                warningSummary
+            ).joinToString(",")
         }
-    }
-
-    fun listAvailableTreatmentsByScore(): String {
-        return availableTreatmentsByScore().entries.sortedByDescending { it.key }
-            .joinToString("\n") { (key: Int, value: List<EvaluatedTreatment>) ->
-                "Score=$key: " + value.joinToString { it.treatmentCandidate.treatment.name() }
-            }
     }
 
     private fun availableTreatmentsByScore(): Map<Int, List<EvaluatedTreatment>> {

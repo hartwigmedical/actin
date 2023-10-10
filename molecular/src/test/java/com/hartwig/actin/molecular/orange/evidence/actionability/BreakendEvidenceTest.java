@@ -33,9 +33,11 @@ public class BreakendEvidenceTest {
         assertTrue(evidencesMatch.contains(gene1));
 
         // Not reported
-        assertTrue(breakendEvidence.findMatches(TestLinxFactory.breakendBuilder().gene("gene 1").reportedDisruption(false).build()).isEmpty());
+        assertTrue(breakendEvidence.findMatches(TestLinxFactory.breakendBuilder().gene("gene 1").reportedDisruption(false).build())
+                .isEmpty());
 
         // Wrong event
-        assertTrue(breakendEvidence.findMatches(TestLinxFactory.breakendBuilder().gene("gene 2").reportedDisruption(true).build()).isEmpty());
+        assertTrue(breakendEvidence.findMatches(TestLinxFactory.breakendBuilder().gene("gene 2").reportedDisruption(true).build())
+                .isEmpty());
     }
 }

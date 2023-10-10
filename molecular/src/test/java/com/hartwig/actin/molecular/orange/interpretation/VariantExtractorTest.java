@@ -47,11 +47,15 @@ public class VariantExtractorTest {
                 .driver(PurpleDriverType.MUTATION)
                 .driverLikelihood(0.1)
                 .build();
-        PurpleDriver driver2 =
-                TestPurpleFactory.driverBuilder().gene("gene 1").transcript("ENST-canonical").driver(PurpleDriverType.GERMLINE_MUTATION)
+        PurpleDriver driver2 = TestPurpleFactory.driverBuilder()
+                .gene("gene 1")
+                .transcript("ENST-canonical")
+                .driver(PurpleDriverType.GERMLINE_MUTATION)
                 .driverLikelihood(0.6)
                 .build();
-        PurpleDriver driver3 = TestPurpleFactory.driverBuilder().gene("gene 1").transcript("ENST-weird")
+        PurpleDriver driver3 = TestPurpleFactory.driverBuilder()
+                .gene("gene 1")
+                .transcript("ENST-weird")
                 .driver(PurpleDriverType.GERMLINE_MUTATION)
                 .driverLikelihood(0.9)
                 .build();

@@ -2,9 +2,9 @@ package com.hartwig.actin.clinical
 
 import com.hartwig.actin.clinical.ClinicalRecordsFactory.Companion.toPatientId
 import com.hartwig.actin.clinical.curation.ANATOMICAL
-import com.hartwig.actin.clinical.curation.FULL_ATC_CODE
 import com.hartwig.actin.clinical.curation.CHEMICAL
 import com.hartwig.actin.clinical.curation.CHEMICAL_SUBSTANCE
+import com.hartwig.actin.clinical.curation.FULL_ATC_CODE
 import com.hartwig.actin.clinical.curation.PHARMACOLOGICAL
 import com.hartwig.actin.clinical.curation.THERAPEUTIC
 import com.hartwig.actin.clinical.curation.TestAtcFactory

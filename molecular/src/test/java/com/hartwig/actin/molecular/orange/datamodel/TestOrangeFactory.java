@@ -6,56 +6,53 @@ import java.time.LocalDate;
 import java.util.Collections;
 
 import com.hartwig.actin.TestDataFactory;
-import com.hartwig.hmftools.datamodel.flagstat.Flagstat;
-import com.hartwig.hmftools.datamodel.flagstat.ImmutableFlagstat;
-import com.hartwig.hmftools.datamodel.metrics.ImmutableWGSMetrics;
-import com.hartwig.hmftools.datamodel.orange.ImmutableOrangePlots;
-import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeSample;
-import com.hartwig.hmftools.datamodel.orange.OrangePlots;
-import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion;
-import com.hartwig.hmftools.datamodel.orange.ExperimentType;
+import com.hartwig.actin.molecular.orange.datamodel.cuppa.TestCuppaFactory;
+import com.hartwig.actin.molecular.orange.datamodel.lilac.TestLilacFactory;
+import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
+import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
+import com.hartwig.actin.molecular.orange.datamodel.virus.TestVirusInterpreterFactory;
 import com.hartwig.hmftools.datamodel.chord.ChordRecord;
 import com.hartwig.hmftools.datamodel.chord.ChordStatus;
 import com.hartwig.hmftools.datamodel.chord.ImmutableChordRecord;
 import com.hartwig.hmftools.datamodel.cuppa.CuppaData;
 import com.hartwig.hmftools.datamodel.cuppa.ImmutableCuppaData;
-import com.hartwig.actin.molecular.orange.datamodel.cuppa.TestCuppaFactory;
+import com.hartwig.hmftools.datamodel.flagstat.ImmutableFlagstat;
 import com.hartwig.hmftools.datamodel.hla.ImmutableLilacRecord;
 import com.hartwig.hmftools.datamodel.hla.LilacRecord;
-import com.hartwig.actin.molecular.orange.datamodel.lilac.TestLilacFactory;
+import com.hartwig.hmftools.datamodel.linx.FusionLikelihoodType;
 import com.hartwig.hmftools.datamodel.linx.ImmutableLinxRecord;
 import com.hartwig.hmftools.datamodel.linx.LinxBreakendType;
-import com.hartwig.hmftools.datamodel.linx.FusionLikelihoodType;
 import com.hartwig.hmftools.datamodel.linx.LinxFusionType;
 import com.hartwig.hmftools.datamodel.linx.LinxRecord;
-import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
+import com.hartwig.hmftools.datamodel.metrics.ImmutableWGSMetrics;
+import com.hartwig.hmftools.datamodel.orange.ExperimentType;
+import com.hartwig.hmftools.datamodel.orange.ImmutableOrangePlots;
+import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeRecord;
+import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeSample;
+import com.hartwig.hmftools.datamodel.orange.OrangePlots;
+import com.hartwig.hmftools.datamodel.orange.OrangeRecord;
+import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion;
 import com.hartwig.hmftools.datamodel.orange.OrangeSample;
 import com.hartwig.hmftools.datamodel.peach.ImmutablePeachGenotype;
 import com.hartwig.hmftools.datamodel.peach.PeachGenotype;
-import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleQC;
+import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation;
+import com.hartwig.hmftools.datamodel.purple.Hotspot;
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord;
 import com.hartwig.hmftools.datamodel.purple.PurpleCharacteristics;
 import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect;
 import com.hartwig.hmftools.datamodel.purple.PurpleDriverType;
 import com.hartwig.hmftools.datamodel.purple.PurpleFit;
-import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation;
-import com.hartwig.hmftools.datamodel.purple.Hotspot;
 import com.hartwig.hmftools.datamodel.purple.PurpleLikelihoodMethod;
 import com.hartwig.hmftools.datamodel.purple.PurpleMicrosatelliteStatus;
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus;
 import com.hartwig.hmftools.datamodel.purple.PurpleRecord;
 import com.hartwig.hmftools.datamodel.purple.PurpleTumorMutationalStatus;
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect;
-import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
 import com.hartwig.hmftools.datamodel.virus.ImmutableVirusInterpreterData;
-import com.hartwig.actin.molecular.orange.datamodel.virus.TestVirusInterpreterFactory;
-import com.hartwig.hmftools.datamodel.virus.VirusLikelihoodType;
+import com.hartwig.hmftools.datamodel.virus.VirusBreakendQCStatus;
 import com.hartwig.hmftools.datamodel.virus.VirusInterpretation;
 import com.hartwig.hmftools.datamodel.virus.VirusInterpreterData;
-import com.hartwig.hmftools.datamodel.virus.VirusBreakendQCStatus;
-import com.hartwig.hmftools.datamodel.orange.OrangeRecord;
-import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeRecord;
-
+import com.hartwig.hmftools.datamodel.virus.VirusLikelihoodType;
 
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
@@ -84,9 +81,7 @@ public final class TestOrangeFactory {
     private static PurpleRecord createMinimalTestPurpleRecord() {
         return ImmutablePurpleRecord.builder()
                 .fit(TestPurpleFactory.fitBuilder()
-                        .qc(purpleQCBuilder()
-                                .status(Collections.singleton(PurpleQCStatus.FAIL_NO_TUMOR))
-                                .build())
+                        .qc(purpleQCBuilder().status(Collections.singleton(PurpleQCStatus.FAIL_NO_TUMOR)).build())
                         .build())
                 .characteristics(TestPurpleFactory.characteristicsBuilder().build())
                 .build();
@@ -117,12 +112,27 @@ public final class TestOrangeFactory {
                 .from(createMinimalTestPurpleRecord())
                 .fit(createTestPurpleFit())
                 .characteristics(createTestPurpleCharacteristics())
-                .addSomaticDrivers(TestPurpleFactory.driverBuilder().gene("BRAF").driver(PurpleDriverType.MUTATION)
-                        .driverLikelihood(1D).likelihoodMethod(PurpleLikelihoodMethod.NONE).isCanonical(false).build())
-                .addSomaticDrivers(TestPurpleFactory.driverBuilder().gene("MYC").driver(PurpleDriverType.AMP)
-                        .driverLikelihood(1D).likelihoodMethod(PurpleLikelihoodMethod.NONE).isCanonical(false).build())
-                .addSomaticDrivers(TestPurpleFactory.driverBuilder().gene("PTEN").driver(PurpleDriverType.DEL)
-                        .driverLikelihood(1D).likelihoodMethod(PurpleLikelihoodMethod.NONE).isCanonical(false).build())
+                .addSomaticDrivers(TestPurpleFactory.driverBuilder()
+                        .gene("BRAF")
+                        .driver(PurpleDriverType.MUTATION)
+                        .driverLikelihood(1D)
+                        .likelihoodMethod(PurpleLikelihoodMethod.NONE)
+                        .isCanonical(false)
+                        .build())
+                .addSomaticDrivers(TestPurpleFactory.driverBuilder()
+                        .gene("MYC")
+                        .driver(PurpleDriverType.AMP)
+                        .driverLikelihood(1D)
+                        .likelihoodMethod(PurpleLikelihoodMethod.NONE)
+                        .isCanonical(false)
+                        .build())
+                .addSomaticDrivers(TestPurpleFactory.driverBuilder()
+                        .gene("PTEN")
+                        .driver(PurpleDriverType.DEL)
+                        .driverLikelihood(1D)
+                        .likelihoodMethod(PurpleLikelihoodMethod.NONE)
+                        .isCanonical(false)
+                        .build())
                 .addAllSomaticVariants(TestPurpleFactory.variantBuilder()
                         .reported(true)
                         .gene("BRAF")

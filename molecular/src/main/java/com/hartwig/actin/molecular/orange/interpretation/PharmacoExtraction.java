@@ -25,7 +25,8 @@ final class PharmacoExtraction {
     public static Set<PharmacoEntry> extract(@NotNull OrangeRecord record) {
         Set<PeachGenotype> peach = record.peach();
         if (peach != null) {
-            return peach.stream().collect(groupingBy(PeachGenotype::gene))
+            return peach.stream()
+                    .collect(groupingBy(PeachGenotype::gene))
                     .entrySet()
                     .stream()
                     .map(x -> createPharmacoEntryForGeneAndPeachGenotypes(x.getKey(), x.getValue()))

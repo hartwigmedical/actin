@@ -78,7 +78,7 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, priv
             predictions
                 .asSequence()
                 .map(classifierFunction)
-                .map { Formats.percentage(it?: 0.0) }
+                .map { Formats.percentage(it ?: 0.0) }
                 .map { Cells.createContent(it).setPaddingLeft(PADDING_LEFT.toFloat()).setPaddingRight(PADDING_RIGHT.toFloat()) }
                 .forEach(table::addCell)
         }

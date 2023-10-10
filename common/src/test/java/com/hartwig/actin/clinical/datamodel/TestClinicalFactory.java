@@ -209,8 +209,7 @@ public final class TestClinicalFactory {
     private static List<TreatmentHistoryEntry> createExhaustiveTreatmentHistory() {
 
         Drug irinotecan = drug("IRINOTECAN", DrugType.TOPO1_INHIBITOR, TreatmentCategory.CHEMOTHERAPY);
-        TreatmentHistoryEntry emptyHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
-                .build();
+        TreatmentHistoryEntry emptyHistoryEntry = ImmutableTreatmentHistoryEntry.builder().build();
 
         TreatmentHistoryEntry hasStartYearHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
                 .startYear(2020)
@@ -230,10 +229,7 @@ public final class TestClinicalFactory {
                 .addTreatments(ImmutableDrugTherapy.builder().name("Trial1").addDrugs(irinotecan).build())
                 .build();
 
-        TreatmentHistoryEntry unknownDetailsHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
-                .isTrial(true)
-                .startYear(2022)
-                .build();
+        TreatmentHistoryEntry unknownDetailsHistoryEntry = ImmutableTreatmentHistoryEntry.builder().isTrial(true).startYear(2022).build();
 
         TreatmentHistoryEntry hasCyclesStopReasonHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
                 .isTrial(true)
@@ -266,9 +262,15 @@ public final class TestClinicalFactory {
                 .intents(Set.of(Intent.ADJUVANT, Intent.CONSOLIDATION))
                 .build();
 
-        return List.of(emptyHistoryEntry, hasStartYearHistoryEntry, hasStartYearMonthEndYearMonthHistoryEntry,
-                namedTrialHistoryEntry, unknownDetailsHistoryEntry, hasCyclesStopReasonHistoryEntry,
-                hasAcronymHistoryEntry, hasSingleIntentHistoryEntry, hasMultipleIntentsHistoryEntry);
+        return List.of(emptyHistoryEntry,
+                hasStartYearHistoryEntry,
+                hasStartYearMonthEndYearMonthHistoryEntry,
+                namedTrialHistoryEntry,
+                unknownDetailsHistoryEntry,
+                hasCyclesStopReasonHistoryEntry,
+                hasAcronymHistoryEntry,
+                hasSingleIntentHistoryEntry,
+                hasMultipleIntentsHistoryEntry);
     }
 
     @NotNull

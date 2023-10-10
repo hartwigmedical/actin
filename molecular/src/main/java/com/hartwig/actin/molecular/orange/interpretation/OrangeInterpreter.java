@@ -136,7 +136,7 @@ public class OrangeInterpreter {
     private static void throwIfAnyCuppaPredictionClassifierMissing(@NotNull OrangeRecord orange) {
         CuppaData cuppaData = orange.cuppa();
         if (cuppaData != null) {
-            for (CuppaPrediction prediction: cuppaData.predictions()) {
+            for (CuppaPrediction prediction : cuppaData.predictions()) {
                 throwIfCuppaPredictionClassifierMissing(prediction);
             }
         }

@@ -30,7 +30,7 @@ object TreatmentHistoryCurationConfigFile {
 
     private fun repeatPartsForEachTreatmentName(line: String, fields: Map<String, Int>): List<NamedListOfTsvParts> {
         val parts = line.split(DELIMITER)
-        val treatmentName = fields["treatmentName"]?.let { ResourceFile.optionalString(parts[it])}
+        val treatmentName = fields["treatmentName"]?.let { ResourceFile.optionalString(parts[it]) }
         return if (treatmentName == null) {
             listOf(NamedListOfTsvParts("", parts))
         } else {

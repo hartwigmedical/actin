@@ -62,7 +62,7 @@ class VariantExtractor {
         Set<PurpleVariant> purpleVariants = relevantPurpleVariants(purple);
         Set<PurpleDriver> drivers = relevantPurpleDrivers(purple);
 
-        for (PurpleVariant variant : VariantDedup.apply( purpleVariants )) {
+        for (PurpleVariant variant : VariantDedup.apply(purpleVariants)) {
             boolean reportedOrCoding = variant.reported() || RELEVANT_CODING_EFFECTS.contains(variant.canonicalImpact().codingEffect());
             String event = DriverEventFactory.variantEvent(variant);
             if (geneFilter.include(variant.gene()) && reportedOrCoding) {

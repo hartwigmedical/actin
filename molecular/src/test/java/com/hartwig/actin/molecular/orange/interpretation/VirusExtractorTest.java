@@ -46,9 +46,7 @@ public class VirusExtractorTest {
                 .virusDriverLikelihoodType(VirusLikelihoodType.LOW)
                 .build();
 
-        VirusInterpreterData virusInterpreter = ImmutableVirusInterpreterData.builder()
-                .addAllViruses(virusEntry1, virusEntry2)
-                .build();
+        VirusInterpreterData virusInterpreter = ImmutableVirusInterpreterData.builder().addAllViruses(virusEntry1, virusEntry2).build();
 
         VirusExtractor virusExtractor = new VirusExtractor(TestEvidenceDatabaseFactory.createEmptyDatabase());
 

@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.orange.datamodel.lilac;
 
 import com.hartwig.hmftools.datamodel.hla.ImmutableLilacAllele;
+
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 

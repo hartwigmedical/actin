@@ -21,7 +21,8 @@ public class HomozygousDisruptionExtractorTest {
 
     @Test
     public void canExtractHomozygousDisruptions() {
-        com.hartwig.hmftools.datamodel.linx.HomozygousDisruption linxHomDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build();
+        com.hartwig.hmftools.datamodel.linx.HomozygousDisruption linxHomDisruption =
+                TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build();
 
         LinxRecord linx = ImmutableLinxRecord.builder()
                 .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
@@ -43,7 +44,8 @@ public class HomozygousDisruptionExtractorTest {
 
     @Test(expected = IllegalStateException.class)
     public void shouldThrowExceptionWhenFilteringReportedHomozygousDisruption() {
-        com.hartwig.hmftools.datamodel.linx.HomozygousDisruption linxHomDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build();
+        com.hartwig.hmftools.datamodel.linx.HomozygousDisruption linxHomDisruption =
+                TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build();
 
         LinxRecord linx = ImmutableLinxRecord.builder()
                 .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())

@@ -3,8 +3,8 @@ package com.hartwig.actin.molecular.orange.evidence.actionability;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.hartwig.hmftools.datamodel.virus.VirusInterpretation;
 import com.hartwig.hmftools.datamodel.virus.AnnotatedVirus;
+import com.hartwig.hmftools.datamodel.virus.VirusInterpretation;
 import com.hartwig.serve.datamodel.ActionableEvent;
 import com.hartwig.serve.datamodel.ActionableEvents;
 import com.hartwig.serve.datamodel.characteristic.ActionableCharacteristic;

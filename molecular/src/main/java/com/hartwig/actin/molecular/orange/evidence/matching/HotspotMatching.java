@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.orange.evidence.matching;
 
-import com.hartwig.serve.datamodel.hotspot.VariantHotspot;
 import com.hartwig.hmftools.datamodel.purple.PurpleVariant;
+import com.hartwig.serve.datamodel.hotspot.VariantHotspot;
 
 import org.jetbrains.annotations.NotNull;
 

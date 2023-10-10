@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.medication
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.algo.medication.MedicationStatusInterpretation
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreter
-import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.CypInteraction
+import com.hartwig.actin.clinical.datamodel.Medication
 import java.time.LocalDate
 
 class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {

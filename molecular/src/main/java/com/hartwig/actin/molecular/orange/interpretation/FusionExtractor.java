@@ -115,8 +115,7 @@ class FusionExtractor {
                 return null;
             }
             default: {
-                throw new IllegalStateException(
-                        "Cannot determine driver likelihood for fusion driver likelihood: " + fusion.likelihood());
+                throw new IllegalStateException("Cannot determine driver likelihood for fusion driver likelihood: " + fusion.likelihood());
             }
         }
     }

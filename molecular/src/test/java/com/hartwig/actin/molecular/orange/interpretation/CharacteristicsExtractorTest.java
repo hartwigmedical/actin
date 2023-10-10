@@ -87,7 +87,8 @@ public class CharacteristicsExtractorTest {
                         .brca1Value(0D)
                         .brca2Value(0D)
                         .hrdValue(0D)
-                        .hrdType(Strings.EMPTY).build())
+                        .hrdType(Strings.EMPTY)
+                        .build())
                 .build();
     }
 
