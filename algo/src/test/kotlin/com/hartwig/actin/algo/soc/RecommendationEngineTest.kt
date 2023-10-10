@@ -41,6 +41,7 @@ import java.time.LocalDate
 
 @Ignore
 class RecommendationEngineTest {
+
     @Test
     fun shouldNotRecommendCapecitabineCombinedWithIrinotecan() {
         assertThat(typicalTreatmentResults).noneMatch {
@@ -260,16 +261,20 @@ class RecommendationEngineTest {
     }
 
     companion object {
-        private val TREATMENT_JSON_PATH = listOf(
+        private val ACTIN_RESOURCE_PATH = listOf(
             System.getProperty("user.home"),
             "hmf",
             "repos",
             "crunch-resources-private",
-            "actin",
-            "treatment_db"
+            "actin"
         ).joinToString(File.separator)
 
+        private val TREATMENT_JSON_PATH = ACTIN_RESOURCE_PATH + File.separator + "treatment_db"
+
         private val TREATMENT_DATABASE = TreatmentDatabaseFactory.createFromPath(TREATMENT_JSON_PATH)
+
+        private val ATC_TREE =
+            AtcTree.createFromFile(listOf(ACTIN_RESOURCE_PATH, "atc_config", "atc_tree.tsv").joinToString(File.separator))
 
         private val CHEMO_TREATMENT_NAME_STREAM = listOf(
             "5-FU",
@@ -289,7 +294,7 @@ class RecommendationEngineTest {
             val doidModel: DoidModel =
                 TestDoidModelFactory.createWithOneDoidAndTerm(DoidConstants.COLORECTAL_CANCER_DOID, "colorectal cancer")
             val engine = RecommendationEngine.create(
-                doidModel, AtcTree(emptyMap()), RecommendationDatabase(TREATMENT_DATABASE),
+                doidModel, ATC_TREE, RecommendationDatabase(TREATMENT_DATABASE),
                 ReferenceDateProviderTestFactory.createCurrentDateProvider()
             )
             return engine.determineAvailableTreatments(patientRecord).map(EvaluatedTreatment::treatmentCandidate)
