@@ -76,7 +76,7 @@ class RecommendationEngineTest {
 
     @Test
     fun shouldNotRecommendTheSameChemotherapyAfterRecentTreatment() {
-        CHEMO_TREATMENT_NAME_STREAM.forEach { treatmentName: String ->
+        CHEMO_TREATMENT_NAMES.forEach { treatmentName: String ->
             assertThat(getTreatmentResultsForPatient(patientRecordWithChemoHistory(listOf(treatmentName)))).noneMatch {
                 it.treatment.name().equals(treatmentName, ignoreCase = true)
             }
@@ -85,7 +85,7 @@ class RecommendationEngineTest {
 
     @Test
     fun shouldNotRecommendTheSameChemotherapyAfterStopReasonPD() {
-        CHEMO_TREATMENT_NAME_STREAM.forEach { treatmentName: String ->
+        CHEMO_TREATMENT_NAMES.forEach { treatmentName: String ->
             val patientRecord: PatientRecord = patientWithTherapyNameAndDetails(
                 treatmentName,
                 ImmutableTherapyHistoryDetails.builder().stopReason(StopReason.PROGRESSIVE_DISEASE).build()
@@ -98,7 +98,7 @@ class RecommendationEngineTest {
 
     @Test
     fun shouldNotRecommendTheSameChemotherapyAfterBestResponsePD() {
-        CHEMO_TREATMENT_NAME_STREAM.forEach { treatmentName: String ->
+        CHEMO_TREATMENT_NAMES.forEach { treatmentName: String ->
             val patientRecord: PatientRecord = patientWithTherapyNameAndDetails(
                 treatmentName,
                 ImmutableTherapyHistoryDetails.builder().bestResponse(TreatmentResponse.PROGRESSIVE_DISEASE).build()
@@ -111,7 +111,7 @@ class RecommendationEngineTest {
 
     @Test
     fun shouldNotRecommendTheSameChemotherapyAfter12Cycles() {
-        CHEMO_TREATMENT_NAME_STREAM.forEach { treatmentName: String ->
+        CHEMO_TREATMENT_NAMES.forEach { treatmentName: String ->
             val patientRecord: PatientRecord = patientWithTherapyNameAndDetails(
                 treatmentName,
                 ImmutableTherapyHistoryDetails.builder().cycles(12).build()
@@ -276,7 +276,7 @@ class RecommendationEngineTest {
         private val ATC_TREE =
             AtcTree.createFromFile(listOf(ACTIN_RESOURCE_PATH, "atc_config", "atc_tree.tsv").joinToString(File.separator))
 
-        private val CHEMO_TREATMENT_NAME_STREAM = listOf(
+        private val CHEMO_TREATMENT_NAMES = listOf(
             "5-FU",
             "CAPECITABINE",
             "IRINOTECAN",

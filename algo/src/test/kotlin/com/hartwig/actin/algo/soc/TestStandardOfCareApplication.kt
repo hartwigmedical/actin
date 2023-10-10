@@ -46,7 +46,7 @@ class TestStandardOfCareApplication {
         val recommendationEngine =
             RecommendationEngine.create(
                 doidModel,
-                AtcTree(emptyMap()),
+                AtcTree.createFromFile(ATC_TREE_PATH),
                 database,
                 ReferenceDateProviderTestFactory.createCurrentDateProvider()
             )
@@ -69,14 +69,17 @@ class TestStandardOfCareApplication {
             "doid.json"
         ).joinToString(File.separator)
 
-        private val TREATMENT_JSON_PATH = listOf(
+        private val ACTIN_RESOURCE_PATH = listOf(
             System.getProperty("user.home"),
             "hmf",
             "repos",
             "crunch-resources-private",
-            "actin",
-            "treatment_db"
+            "actin"
         ).joinToString(File.separator)
+
+        private val TREATMENT_JSON_PATH = ACTIN_RESOURCE_PATH + File.separator + "treatment_db"
+
+        private val ATC_TREE_PATH = listOf(ACTIN_RESOURCE_PATH, "atc_config", "atc_tree.tsv").joinToString(File.separator)
 
         private fun patient(): PatientRecord {
             val tumorDetails: TumorDetails = ImmutableTumorDetails.builder().addDoids(DoidConstants.COLORECTAL_CANCER_DOID).build()
