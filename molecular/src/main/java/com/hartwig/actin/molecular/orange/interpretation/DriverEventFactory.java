@@ -94,6 +94,12 @@ public final class DriverEventFactory {
     @NotNull
     public static String virusEvent(@NotNull AnnotatedVirus virus) {
         VirusInterpretation interpretation = virus.interpretation();
-        return interpretation != null ? interpretation + " positive" : virus.name() + " positive";
+        if ( interpretation != null && virus.interpretation().toString().equals("HPV")) {
+            return interpretation + "( " + virus.name() + ") " + " positive";
+        } else if (interpretation != null) {
+            return interpretation + " positive";
+        } else {
+            return virus.name() + " positive";
+        }
     }
 }
