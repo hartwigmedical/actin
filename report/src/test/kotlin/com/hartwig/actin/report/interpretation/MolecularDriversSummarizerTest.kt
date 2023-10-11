@@ -96,7 +96,7 @@ class MolecularDriversSummarizerTest {
         )
         val molecularDrivers: MolecularDrivers = ImmutableMolecularDrivers.builder().addAllViruses(viruses).build()
         val keyViruses = summarizer(molecularDrivers).keyVirusEvents().toSet()
-        assertThat(keyViruses).containsExactly(VirusType.MERKEL_CELL_VIRUS.toString() + " (" + VIRUS_INTEGRATIONS + " integrations detected)")
+        assertThat(keyViruses).containsExactly("virus ($VIRUS_INTEGRATIONS int. detected)")
     }
 
     @Test

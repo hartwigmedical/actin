@@ -40,7 +40,7 @@ class MolecularDriversSummarizer private constructor(
     fun keyVirusEvents(): List<String> {
         return molecularDrivers.viruses()
             .filter(::isKeyDriver)
-            .map { String.format("%s (%s integrations detected)", it.type(), it.integrations()) }
+            .map { String.format("%s (%s int. detected)", it.event(), it.integrations()) }
             .distinct()
     }
 
