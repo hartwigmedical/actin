@@ -29,7 +29,7 @@ class MolecularSummaryGenerator(
             table.addCell(Cells.create(wgsGenerator.contents()))
         } else {
             val noRecent = Tables.createFixedWidthCols(keyWidth, valueWidth)
-            noRecent.addCell(Cells.createKey(molecular.type().toString() + " results"))
+            noRecent.addCell(Cells.createKey(molecular.type().display() + " results"))
             noRecent.addCell(Cells.createValue("No successful WGS could be performed on the submitted biopsy"))
             table.addCell(Cells.create(noRecent))
         }
