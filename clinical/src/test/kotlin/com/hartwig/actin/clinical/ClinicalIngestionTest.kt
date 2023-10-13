@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical
 
-import com.hartwig.actin.clinical.ClinicalRecordsFactory.Companion.toPatientId
+import com.hartwig.actin.clinical.ClinicalIngestion.Companion.toPatientId
 import com.hartwig.actin.clinical.curation.ANATOMICAL
 import com.hartwig.actin.clinical.curation.CHEMICAL
 import com.hartwig.actin.clinical.curation.CHEMICAL_SUBSTANCE
@@ -11,7 +11,6 @@ import com.hartwig.actin.clinical.curation.TestAtcFactory
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
 import com.hartwig.actin.clinical.datamodel.BodyWeight
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 import com.hartwig.actin.clinical.datamodel.Gender
 import com.hartwig.actin.clinical.datamodel.ImmutableAtcClassification
@@ -40,25 +39,35 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
-class ClinicalRecordsFactoryTest {
+class ClinicalIngestionTest {
     @Test
-    fun canGeneratePatientIds() {
+    fun `Should generate patient ids`() {
         assertEquals("ACTN01029999", toPatientId("ACTN-01-02-9999"))
         assertEquals("ACTN01029999", toPatientId("01-02-9999"))
     }
 
     @Test
-    fun canCreateClinicalRecordsFromMinimalTestData() {
-        val records = createMinimalTestClinicalRecords()
-        assertEquals(1, records.size.toLong())
-        assertEquals(TEST_PATIENT, records[0].patientId())
+    fun `Should ingest minimal test data with no warnings and WARN_NO_QUESTIONNAIRE status`() {
+        val results = createMinimalTestIngestionResults()
+        assertEquals(1, results.size.toLong())
+        assertThat(results[0].patientId).isEqualTo(TEST_PATIENT)
+        assertThat(results[0].curationQCStatus).isEqualTo(IngestionStatus.WARN_NO_QUESTIONNAIRE)
+        assertThat(results[0].warnings).isEmpty()
+        assertThat(results[0].clinicalRecord).isNotNull()
     }
 
     @Test
-    fun canCreateClinicalRecordsFromProperTestData() {
-        val records = createProperTestClinicalRecords()
-        assertEquals(1, records.size.toLong())
-        val record = records[0]
+    fun `Should ingest proper test data with no warnings and WARN_CURATION_REQUIRED status`() {
+        val results = createProperTestIngestionResults()
+        assertThat(results).hasSize(1)
+        assertThat(results[0].patientId).isEqualTo(TEST_PATIENT)
+        assertThat(results[0].curationQCStatus).isEqualTo(IngestionStatus.WARN_CURATION_REQUIRED)
+        assertThat(results[0].warnings).containsOnly(
+            "Could not find translation for toxicity with input 'Nausea'",
+            "Could not find translation for toxicity with input 'Pain'",
+            "Could not find toxicity config for input 'toxic'"
+        )
+        val record = results[0].clinicalRecord
         assertEquals(TEST_PATIENT, record.patientId())
         assertPatientDetails(record.patient())
         assertTumorDetails(record.tumor())
@@ -223,20 +232,20 @@ class ClinicalRecordsFactoryTest {
             )
         }
 
-        private fun createMinimalTestClinicalRecords(): List<ClinicalRecord> {
-            return ClinicalRecordsFactory(
+        private fun createMinimalTestIngestionResults(): List<IngestionResult> {
+            return ClinicalIngestion(
                 TestFeedFactory.createMinimalTestFeedModel(),
                 TestCurationFactory.createMinimalTestCurationModel(),
                 TestAtcFactory.createMinimalAtcModel()
-            ).create()
+            ).run()
         }
 
-        private fun createProperTestClinicalRecords(): List<ClinicalRecord> {
-            return ClinicalRecordsFactory(
+        private fun createProperTestIngestionResults(): List<IngestionResult> {
+            return ClinicalIngestion(
                 TestFeedFactory.createProperTestFeedModel(),
                 TestCurationFactory.createProperTestCurationModel(),
                 TestAtcFactory.createProperAtcModel()
-            ).create()
+            ).run()
         }
     }
 }

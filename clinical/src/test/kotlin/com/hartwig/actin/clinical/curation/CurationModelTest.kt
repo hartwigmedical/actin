@@ -57,7 +57,7 @@ class CurationModelTest {
         assertEquals("Unknown", curatedWithType.primaryTumorLocation())
         assertEquals("Carcinoma", curatedWithType.primaryTumorType())
 
-        assertThat(model.evaluate()).isEmpty()
+        assertThat(model.getWarnings(PATIENT_ID)).isEmpty()
     }
 
     @Test
@@ -66,7 +66,7 @@ class CurationModelTest {
         assertEquals("Stomach", curatedWithoutType.primaryTumorLocation())
         assertEquals(Strings.EMPTY, curatedWithoutType.primaryTumorType())
 
-        assertThat(model.evaluate()).isEmpty()
+        assertThat(model.getWarnings(PATIENT_ID)).isEmpty()
     }
 
     @Test
@@ -75,7 +75,7 @@ class CurationModelTest {
         assertEquals(Strings.EMPTY, curatedWithoutLocation.primaryTumorLocation())
         assertEquals("Carcinoma", curatedWithoutLocation.primaryTumorType())
 
-        assertThat(model.evaluate()).isEmpty()
+        assertThat(model.getWarnings(PATIENT_ID)).isEmpty()
     }
 
     @Test
@@ -84,11 +84,8 @@ class CurationModelTest {
         assertNull(missing.primaryTumorLocation())
         assertNull(missing.primaryTumorType())
 
-        assertThat(model.evaluate()).containsOnly(
-            CurationWarning(
-                patientId = PATIENT_ID,
-                message = "Could not find primary tumor config for input 'Does not | Exist'"
-            )
+        assertThat(model.getWarnings(PATIENT_ID)).containsOnly(
+            "Could not find primary tumor config for input 'Does not | Exist'"
         )
     }
 
@@ -107,7 +104,7 @@ class CurationModelTest {
         val liverOther: TumorDetails = model.overrideKnownLesionLocations(base, null, Lists.newArrayList("Lever"))
         assertEquals(true, liverOther.hasLiverLesions())
 
-        assertThat(model.evaluate()).isEmpty()
+        assertThat(model.getWarnings(PATIENT_ID)).isEmpty()
     }
 
     @Test
@@ -116,7 +113,7 @@ class CurationModelTest {
         val liverBiopsy: TumorDetails = model.overrideKnownLesionLocations(base, "lever", null)
         assertEquals(true, liverBiopsy.hasLiverLesions())
 
-        assertThat(model.evaluate()).isEmpty()
+        assertThat(model.getWarnings(PATIENT_ID)).isEmpty()
     }
 
     @Test
@@ -127,7 +124,7 @@ class CurationModelTest {
         val cns: TumorDetails = model.overrideKnownLesionLocations(base, null, Lists.newArrayList("cns"))
         assertEquals(true, cns.hasCnsLesions())
 
-        assertThat(model.evaluate()).isEmpty()
+        assertThat(model.getWarnings(PATIENT_ID)).isEmpty()
     }
 
     @Test
@@ -138,7 +135,7 @@ class CurationModelTest {
         val brain: TumorDetails = model.overrideKnownLesionLocations(base, null, Lists.newArrayList("brain"))
         assertEquals(true, brain.hasBrainLesions())
 
-        assertThat(model.evaluate()).isEmpty()
+        assertThat(model.getWarnings(PATIENT_ID)).isEmpty()
     }
 
     @Test
@@ -149,7 +146,7 @@ class CurationModelTest {
         val lymphNode: TumorDetails = model.overrideKnownLesionLocations(base, null, Lists.newArrayList("lymph node"))
         assertEquals(true, lymphNode.hasLymphNodeLesions())
 
-        assertThat(model.evaluate()).isEmpty()
+        assertThat(model.getWarnings(PATIENT_ID)).isEmpty()
     }
 
     @Test
@@ -160,7 +157,7 @@ class CurationModelTest {
         val bone: TumorDetails = model.overrideKnownLesionLocations(base, null, Lists.newArrayList("Bone"))
         assertEquals(true, bone.hasBoneLesions())
 
-        assertThat(model.evaluate()).isEmpty()
+        assertThat(model.getWarnings(PATIENT_ID)).isEmpty()
     }
 
     @Test
@@ -174,11 +171,8 @@ class CurationModelTest {
         assertTrue(treatmentHistory.any { 2020 == it.startYear() })
         assertTrue(treatmentHistory.any { 2021 == it.startYear() })
 
-        assertThat(model.evaluate()).containsOnly(
-            CurationWarning(
-                patientId = PATIENT_ID,
-                message = "Could not find treatment history or second primary config for input 'cannot curate'"
-            )
+        assertThat(model.getWarnings(PATIENT_ID)).containsOnly(
+            "Could not find treatment history or second primary config for input 'cannot curate'"
         )
     }
 
@@ -190,11 +184,8 @@ class CurationModelTest {
         assertEquals("Breast", priorSecondPrimaries[0].tumorLocation())
         assertTrue(model.curatePriorSecondPrimaries(PATIENT_ID, null).isEmpty())
 
-        assertThat(model.evaluate()).containsOnly(
-            CurationWarning(
-                patientId = PATIENT_ID,
-                message = "Could not find second primary or treatment history config for input 'cannot curate'"
-            )
+        assertThat(model.getWarnings(PATIENT_ID)).containsOnly(
+            "Could not find second primary or treatment history config for input 'cannot curate'"
         )
     }
 
@@ -206,11 +197,8 @@ class CurationModelTest {
         assertEquals("sick", priorOtherConditions[0].name())
         assertTrue(model.curatePriorOtherConditions(PATIENT_ID, null).isEmpty())
 
-        assertThat(model.evaluate()).containsOnly(
-            CurationWarning(
-                PATIENT_ID,
-                "Could not find non-oncological history config for input 'cannot curate'"
-            )
+        assertThat(model.getWarnings(PATIENT_ID)).containsOnly(
+            "Could not find non-oncological history config for input 'cannot curate'"
         )
     }
 
@@ -221,11 +209,8 @@ class CurationModelTest {
         assertEquals(1, priorMolecularTests.size.toLong())
         assertEquals("IHC", priorMolecularTests[0].test())
 
-        assertThat(model.evaluate()).containsOnly(
-            CurationWarning(
-                patientId = PATIENT_ID,
-                message = "Could not find molecular test config for type 'IHC' with input: 'not a molecular test'"
-            )
+        assertThat(model.getWarnings(PATIENT_ID)).containsOnly(
+            "Could not find molecular test config for type 'IHC' with input: 'not a molecular test'"
         )
     }
 
@@ -246,11 +231,8 @@ class CurationModelTest {
         val unknown = model.curateComplications(PATIENT_ID, Lists.newArrayList("unknown"))
         assertNull(unknown)
 
-        assertThat(model.evaluate()).containsOnly(
-            CurationWarning(
-                patientId = PATIENT_ID,
-                message = "Could not find complication config for input 'no curation'"
-            )
+        assertThat(model.getWarnings(PATIENT_ID)).containsOnly(
+            "Could not find complication config for input 'no curation'"
         )
     }
 
@@ -268,11 +250,8 @@ class CurationModelTest {
 
         assertTrue(model.curateQuestionnaireToxicities(PATIENT_ID, null, date).isEmpty())
 
-        assertThat(model.evaluate()).containsOnly(
-            CurationWarning(
-                patientId = PATIENT_ID,
-                message = "Could not find toxicity config for input 'cannot curate'"
-            )
+        assertThat(model.getWarnings(PATIENT_ID)).containsOnly(
+            "Could not find toxicity config for input 'cannot curate'"
         )
     }
 
@@ -284,11 +263,8 @@ class CurationModelTest {
         assertNull(model.curateECG(PATIENT_ID, toECG("No aberration")))
         assertNull(model.curateECG(PATIENT_ID, null))
 
-        assertThat(model.evaluate()).containsOnly(
-            CurationWarning(
-                patientId = PATIENT_ID,
-                message = "Could not find ECG config for input 'No curation needed'"
-            )
+        assertThat(model.getWarnings(PATIENT_ID)).containsOnly(
+            "Could not find ECG config for input 'No curation needed'"
         )
     }
 
@@ -299,12 +275,7 @@ class CurationModelTest {
         assertInfectionDescription(null, model.curateInfectionStatus(PATIENT_ID, toInfection("No Infection")))
         assertNull(model.curateInfectionStatus(PATIENT_ID, null))
 
-        assertThat(model.evaluate()).containsOnly(
-            CurationWarning(
-                PATIENT_ID,
-                message = "Could not find infection config for input 'No curation needed'"
-            )
-        )
+        assertThat(model.getWarnings(PATIENT_ID)).containsOnly("Could not find infection config for input 'No curation needed'")
     }
 
     @Test
@@ -323,7 +294,7 @@ class CurationModelTest {
         assertNotNull(lvef)
         assertEquals(0.17, lvef!!, EPSILON)
 
-        assertThat(model.evaluate()).isEmpty()
+        assertThat(model.getWarnings(PATIENT_ID)).isEmpty()
     }
 
     @Test
@@ -343,12 +314,7 @@ class CurationModelTest {
         assertNotNull(otherLesionsCuration)
         assertEquals(1, otherLesionsCuration!!.size.toLong())
 
-        assertThat(model.evaluate()).containsOnly(
-            CurationWarning(
-                patientId = PATIENT_ID,
-                message = "Could not find lesion config for input 'no curation available'"
-            )
-        )
+        assertThat(model.getWarnings(PATIENT_ID)).containsOnly("Could not find lesion config for input 'no curation available'")
     }
 
     @Test
@@ -358,11 +324,8 @@ class CurationModelTest {
         assertNull(model.curateBiopsyLocation(PATIENT_ID, "No curation configured"))
         assertNull(model.curateBiopsyLocation(PATIENT_ID, null))
 
-        assertThat(model.evaluate()).containsOnly(
-            CurationWarning(
-                patientId = PATIENT_ID,
-                message = "Could not find lesion config for biopsy location 'No curation configured'"
-            )
+        assertThat(model.getWarnings(PATIENT_ID)).containsOnly(
+            "Could not find lesion config for biopsy location 'No curation configured'"
         )
     }
 
@@ -381,12 +344,7 @@ class CurationModelTest {
 
         assertNull(model.curateMedicationDosage(PATIENT_ID, "does not exist"))
 
-        assertThat(model.evaluate()).containsOnly(
-            CurationWarning(
-                patientId = PATIENT_ID,
-                message = "Could not find medication dosage config for 'does not exist'"
-            )
-        )
+        assertThat(model.getWarnings(PATIENT_ID)).containsOnly("Could not find medication dosage config for 'does not exist'")
     }
 
     @Test
@@ -396,12 +354,7 @@ class CurationModelTest {
         assertNull(model.curateMedicationName(PATIENT_ID, "No medication"))
         assertEquals("A and B", model.curateMedicationName(PATIENT_ID, "A en B"))
 
-        assertThat(model.evaluate()).containsOnly(
-            CurationWarning(
-                patientId = PATIENT_ID,
-                message = "Could not find medication name config for 'does not exist'"
-            )
-        )
+        assertThat(model.getWarnings(PATIENT_ID)).containsOnly("Could not find medication name config for 'does not exist'")
     }
 
     @Test
@@ -439,12 +392,7 @@ class CurationModelTest {
         val passThrough: Intolerance = ImmutableIntolerance.builder().from(proper).name("don't curate me").build()
         assertEquals(passThrough, model.curateIntolerance(PATIENT_ID, passThrough))
 
-        assertThat(model.evaluate()).containsOnly(
-            CurationWarning(
-                patientId = PATIENT_ID,
-                message = "Could not find intolerance config for 'Don't curate me'"
-            )
-        )
+        assertThat(model.getWarnings(PATIENT_ID)).containsOnly("Could not find intolerance config for 'Don't curate me'")
     }
 
     @Test
@@ -468,12 +416,7 @@ class CurationModelTest {
         assertEquals("no", notExistingTranslated.code())
         assertEquals("does not exist", notExistingTranslated.name())
 
-        assertThat(model.evaluate()).containsOnly(
-            CurationWarning(
-                patientId = PATIENT_ID,
-                message = "Could not find laboratory translation for lab value with code 'no' and name 'does not exist'"
-            )
-        )
+        assertThat(model.getWarnings(PATIENT_ID)).containsOnly("Could not find laboratory translation for lab value with code 'no' and name 'does not exist'")
     }
 
     @Test
@@ -488,12 +431,7 @@ class CurationModelTest {
         val notExistingTranslated = model.translateToxicity(PATIENT_ID, notExisting)
         assertEquals(notExisting.name(), notExistingTranslated.name())
 
-        assertThat(model.evaluate()).containsOnly(
-            CurationWarning(
-                patientId = PATIENT_ID,
-                message = "Could not find translation for toxicity with input 'something'"
-            )
-        )
+        assertThat(model.getWarnings(PATIENT_ID)).containsOnly("Could not find translation for toxicity with input 'something'")
     }
 
     @Test
@@ -506,12 +444,7 @@ class CurationModelTest {
         val notExistingTranslated: BloodTransfusion = model.translateBloodTransfusion(PATIENT_ID, notExisting)
         assertEquals("does not exist", notExistingTranslated.product())
 
-        assertThat(model.evaluate()).containsOnly(
-            CurationWarning(
-                patientId = PATIENT_ID,
-                message = "Could not find blood transfusion translation for blood transfusion with product 'does not exist'"
-            )
-        )
+        assertThat(model.getWarnings(PATIENT_ID)).containsOnly("Could not find blood transfusion translation for blood transfusion with product 'does not exist'")
     }
 
     @Test

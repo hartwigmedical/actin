@@ -665,7 +665,9 @@ class CurationModel @VisibleForTesting internal constructor(
         return database.dosageUnitTranslations.firstOrNull { it.dosageUnit.lowercase() == dosageUnit.lowercase() }
     }
 
-    fun evaluate(): List<CurationWarning> {
+    fun getWarnings(patientId: String): List<String> = warnings.filter { it.patientId == patientId }.map { it.message }
+
+    fun evaluate() {
         var warnCount = 0
         for ((key, evaluated) in evaluatedCurationInputs.asMap().entries) {
             val configs: List<CurationConfig> = configsForClass(key)
@@ -686,8 +688,6 @@ class CurationModel @VisibleForTesting internal constructor(
                 }
             }
         }
-        LOGGER.info(" {} warnings raised during curation model evaluation", warnCount)
-        return warnings
     }
 
     private fun isNotIgnored(config: CurationConfig) =
