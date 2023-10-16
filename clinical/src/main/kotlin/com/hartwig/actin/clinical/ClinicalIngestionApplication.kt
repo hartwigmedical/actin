@@ -50,34 +50,34 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
             )
         )
 
-        val records = ClinicalRecordsFactory(feedModel, curationModel, atcModel).create()
+        val results = ClinicalIngestion(feedModel, curationModel, atcModel).run()
         val outputDirectory = config.outputDirectory
-        LOGGER.info("Writing {} clinical records to {}", records.size, outputDirectory)
-        ClinicalRecordJson.write(records, outputDirectory)
+        LOGGER.info("Writing {} clinical records to {}", results.size, outputDirectory)
+        ClinicalRecordJson.write(results.map { it.clinicalRecord }, outputDirectory)
         LOGGER.info("Done!")
 
-        val curationResult = curationModel.evaluate()
-        if (curationResult.isNotEmpty()) {
-            val warningJsonPath = Paths.get(outputDirectory).resolve(WARNINGS_JSON)
-            LOGGER.info("Writing {} curation warnings to {}", curationResult.size, warningJsonPath)
-            Files.write(
-                warningJsonPath,
-                GsonSerializer.create().toJson(curationResult).toByteArray()
-            )
+        val resultsJson = Paths.get(outputDirectory).resolve("results.json")
+        LOGGER.info("Writing {} ingestion results to {}", results.size, resultsJson)
+        Files.write(
+            resultsJson,
+            GsonSerializer.create().toJson(results).toByteArray()
+        )
+
+        if (results.any { it.warnings.isNotEmpty() }) {
             LOGGER.warn("Summary of warnings:")
-            curationResult.groupBy { it.patientId }.forEach { grouped ->
-                LOGGER.warn("Curation warnings for patient ${grouped.key}")
-                grouped.value.forEach { LOGGER.warn(it.message) }
+            results.forEach {
+                if (it.warnings.isNotEmpty()) {
+                    LOGGER.warn("Curation warnings for patient ${it.patientId}")
+                    it.warnings.forEach { warning -> LOGGER.warn(warning) }
+                }
             }
             LOGGER.warn("Summary complete.")
         }
-
     }
 
     companion object {
         val LOGGER: Logger = LogManager.getLogger(ClinicalIngestionApplication::class.java)
         const val APPLICATION = "ACTIN Clinical Ingestion"
-        private const val WARNINGS_JSON = "clinical.warnings.json"
         private val VERSION = ClinicalIngestionApplication::class.java.getPackage().implementationVersion
     }
 }

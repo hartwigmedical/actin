@@ -5,7 +5,6 @@ import com.hartwig.actin.clinical.curation.CurationModel
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
 import com.hartwig.actin.clinical.datamodel.BodyWeight
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion
@@ -51,14 +50,14 @@ import com.hartwig.actin.clinical.sort.MedicationByNameComparator
 import org.apache.logging.log4j.LogManager
 
 
-class ClinicalRecordsFactory(
+class ClinicalIngestion(
     private val feed: FeedModel,
     private val curation: CurationModel,
     atc: AtcModel
 ) {
     private val medicationExtractor = MedicationExtractor(curation, atc)
 
-    fun create(): List<ClinicalRecord> {
+    fun run(): List<IngestionResult> {
         val processedPatientIds: MutableSet<String> = HashSet()
 
         LOGGER.info("Creating clinical model")
@@ -88,7 +87,7 @@ class ClinicalRecordsFactory(
                         .build()
                 }
 
-            ImmutableClinicalRecord.builder()
+            val record = ImmutableClinicalRecord.builder()
                 .patientId(patientId)
                 .patient(extractPatientDetails(subject, questionnaire))
                 .tumor(extractTumorDetails(patientId, questionnaire))
@@ -108,12 +107,31 @@ class ClinicalRecordsFactory(
                 .bloodTransfusions(extractBloodTransfusions(patientId, subject))
                 .medications(extractMedications(patientId, subject))
                 .build()
-        }.sortedWith(ClinicalRecordComparator())
+            val warnings = curation.getWarnings(patientId)
+            IngestionResult(
+                patientId, status(questionnaire, warnings), record, warnings
+            )
+        }.sortedWith { o1: IngestionResult, o2: IngestionResult ->
+            ClinicalRecordComparator().compare(
+                o1.clinicalRecord,
+                o2.clinicalRecord
+            )
+        }
 
         LOGGER.info("Evaluating curation database")
         curation.evaluate()
 
         return records
+    }
+
+    private fun status(questionnaire: Questionnaire?, warnings: List<String>): IngestionStatus {
+        return if (questionnaire == null) {
+            IngestionStatus.WARN_NO_QUESTIONNAIRE
+        } else if (warnings.isNotEmpty()) {
+            IngestionStatus.WARN_CURATION_REQUIRED
+        } else {
+            IngestionStatus.PASS
+        }
     }
 
     private fun extractPatientDetails(subject: String, questionnaire: Questionnaire?): PatientDetails {
@@ -293,7 +311,7 @@ class ClinicalRecordsFactory(
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(ClinicalRecordsFactory::class.java)
+        private val LOGGER = LogManager.getLogger(ClinicalIngestion::class.java)
 
         @VisibleForTesting
         fun toPatientId(subject: String): String {
