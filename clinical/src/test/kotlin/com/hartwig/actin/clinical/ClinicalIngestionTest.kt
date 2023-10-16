@@ -57,7 +57,7 @@ class ClinicalIngestionTest {
     }
 
     @Test
-    fun `Should ingest proper test data with no warnings and WARN_CURATION_REQUIRED status`() {
+    fun `Should ingest proper test data with warnings and WARN_CURATION_REQUIRED status`() {
         val results = createProperTestIngestionResults()
         assertThat(results).hasSize(1)
         assertThat(results[0].patientId).isEqualTo(TEST_PATIENT)
