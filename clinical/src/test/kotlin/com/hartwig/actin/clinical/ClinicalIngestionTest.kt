@@ -65,7 +65,23 @@ class ClinicalIngestionTest {
         assertThat(results[0].warnings).containsOnly(
             "Could not find translation for toxicity with input 'Nausea'",
             "Could not find translation for toxicity with input 'Pain'",
-            "Could not find toxicity config for input 'toxic'"
+            "Could not find toxicity config for input 'toxic'",
+            "Could not find primary tumor config for input 'ovary | serous'",
+            "Could not find infection config for input 'No'",
+            "Could not find ECG config for input 'Sinus'",
+            "Could not find treatment history or second primary config for input 'cisplatin'",
+            "Could not find treatment history or second primary config for input 'nivolumab'",
+            "Could not find treatment history or second primary config for input 'surgery'",
+            "Could not find second primary or treatment history config for input 'surgery'",
+            "Could not find second primary or treatment history config for input 'sarcoma | Feb 2020'",
+            "Could not find non-oncological history config for input 'diabetes'",
+            "Could not find molecular test config for type 'IHC' with input: 'ERBB2 3+'",
+            "Could not find molecular test config for type 'PD-L1' with input: 'Positive'",
+            "Could not find laboratory translation for lab value with code 'LAB1' and name 'Lab Value 1'",
+            "Could not find laboratory translation for lab value with code 'LAB2' and name 'Lab Value 2'",
+            "Could not find laboratory translation for lab value with code 'LAB3' and name 'Lab Value 3'",
+            "Could not find laboratory translation for lab value with code 'LAB4' and name 'Lab Value 4'",
+            "Could not find intolerance config for 'Pills'"
         )
         val record = results[0].clinicalRecord
         assertEquals(TEST_PATIENT, record.patientId())

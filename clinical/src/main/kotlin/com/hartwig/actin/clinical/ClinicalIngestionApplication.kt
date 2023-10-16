@@ -62,16 +62,17 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
             resultsJson,
             GsonSerializer.create().toJson(results).toByteArray()
         )
-        LOGGER.warn("Summary of warnings:")
-        results.forEach {
-            if (it.warnings.isNotEmpty()) {
-                LOGGER.warn("Curation warnings for patient ${it.patientId}")
-                it.warnings.forEach { warning -> LOGGER.warn(warning) }
+
+        if (results.any { it.warnings.isNotEmpty() }) {
+            LOGGER.warn("Summary of warnings:")
+            results.forEach {
+                if (it.warnings.isNotEmpty()) {
+                    LOGGER.warn("Curation warnings for patient ${it.patientId}")
+                    it.warnings.forEach { warning -> LOGGER.warn(warning) }
+                }
             }
+            LOGGER.warn("Summary complete.")
         }
-        LOGGER.warn("Summary complete.")
-
-
     }
 
     companion object {
