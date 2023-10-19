@@ -22,11 +22,19 @@ class RecommendationEngine private constructor(
             "SOC recommendation only supported for colorectal carcinoma"
         }
 
-        return recommendationDatabase.treatmentCandidatesForDoidSet(expandedTumorDoids(patientRecord, doidModel)).asSequence()
+        return treatmentCandidateSequence(patientRecord)
             .map { evaluateTreatmentEligibilityForPatient(it, patientRecord) }
             .filter { treatmentHasNoFailedEvaluations(it) }
             .filter { it.score >= 0 }
             .sortedByDescending { it.score }.toList()
+    }
+
+    fun determineRequiredTreatments(patientRecord: PatientRecord): List<EvaluatedTreatment> {
+        return treatmentCandidateSequence(patientRecord)
+            .filterNot(TreatmentCandidate::isOptional)
+            .map { evaluateTreatmentRequirementForPatient(it, patientRecord) }
+            .filter { it.score >= 0 && treatmentHasNoFailedEvaluations(it) }
+            .toList()
     }
 
     fun provideRecommendations(patientRecord: PatientRecord): String {
@@ -34,11 +42,11 @@ class RecommendationEngine private constructor(
     }
 
     fun patientHasExhaustedStandardOfCare(patientRecord: PatientRecord): Boolean {
-        return recommendationDatabase.treatmentCandidatesForDoidSet(expandedTumorDoids(patientRecord, doidModel)).asSequence()
-            .filterNot(TreatmentCandidate::isOptional)
-            .map { evaluateTreatmentRequirementForPatient(it, patientRecord) }
-            .any { it.score >= 0 && treatmentHasNoFailedEvaluations(it) }
+        return determineRequiredTreatments(patientRecord).isEmpty()
     }
+
+    private fun treatmentCandidateSequence(patientRecord: PatientRecord) =
+        recommendationDatabase.treatmentCandidatesForDoidSet(expandedTumorDoids(patientRecord, doidModel)).asSequence()
 
     private fun evaluateTreatmentEligibilityForPatient(
         treatmentCandidate: TreatmentCandidate,
