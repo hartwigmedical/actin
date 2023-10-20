@@ -80,7 +80,7 @@ class RecommendationEngineTest {
 
     @Test
     fun `Should recommend FOLFOXIRI+Bevacizumab first for fit patients that are not eligible for anti-EGFR or Pembrolizumab`() {
-        val results = resultsForPatientWithHistoryAndMolecular(emptyList(), TestMolecularFactory.createProperTestMolecularRecord())
+        val results = resultsForPatientWithHistoryAndMolecular(emptyList(), MOLECULAR_RECORD_WITH_BRAF_V600E)
         assertThat(results.first().treatment.name()).isEqualTo("${RecommendationDatabase.TREATMENT_FOLFOXIRI}+BEVACIZUMAB")
     }
 
@@ -183,9 +183,7 @@ class RecommendationEngineTest {
 
     @Test
     fun `Should recommend first-line anti-EGFR+chemotherapy first for patients matching molecular criteria`() {
-        assertAntiEGFRTreatmentCount(
-            resultsForPatientWithHistoryAndMolecular(emptyList(), TestMolecularFactory.createProperTestMolecularRecord()), 0
-        )
+        assertAntiEGFRTreatmentCount(resultsForPatientWithHistoryAndMolecular(emptyList(), MOLECULAR_RECORD_WITH_BRAF_V600E), 0)
         assertAntiEGFRTreatmentCount(TYPICAL_TREATMENT_RESULTS, 10)
 
         assertThat(TYPICAL_TREATMENT_RESULTS.take(MULTICHEMOTHERAPIES_WITH_EGFR.size).map { it.treatment.name() })
@@ -196,7 +194,7 @@ class RecommendationEngineTest {
     fun `Should recommend second-line anti-EGFR therapy first for patients matching molecular criteria`() {
         val firstLineChemotherapies = listOf(RecommendationDatabase.TREATMENT_CAPOX)
         assertAntiEGFRTreatmentCount(
-            resultsForPatientWithHistoryAndMolecular(firstLineChemotherapies, TestMolecularFactory.createProperTestMolecularRecord()), 0
+            resultsForPatientWithHistoryAndMolecular(firstLineChemotherapies, MOLECULAR_RECORD_WITH_BRAF_V600E), 0
         )
 
         val results = resultsForPatientWithHistory(firstLineChemotherapies)
@@ -296,11 +294,10 @@ class RecommendationEngineTest {
         assertThat(resultsForPatientWithHistory(firstLineChemotherapies))
             .noneMatch { it.treatment.name().uppercase() == cetuximabAndEncorafenib }
 
-        val molecularRecordWithBRAFV600E = TestMolecularFactory.createProperTestMolecularRecord()
-        assertThat(resultsForPatientWithHistoryAndMolecular(emptyList(), molecularRecordWithBRAFV600E))
+        assertThat(resultsForPatientWithHistoryAndMolecular(emptyList(), MOLECULAR_RECORD_WITH_BRAF_V600E))
             .noneMatch { it.treatment.name().uppercase() == cetuximabAndEncorafenib }
 
-        assertThat(resultsForPatientWithHistoryAndMolecular(firstLineChemotherapies, molecularRecordWithBRAFV600E))
+        assertThat(resultsForPatientWithHistoryAndMolecular(firstLineChemotherapies, MOLECULAR_RECORD_WITH_BRAF_V600E))
             .anyMatch { it.treatment.name() == cetuximabAndEncorafenib }
     }
 
@@ -406,6 +403,8 @@ class RecommendationEngineTest {
             ImmutableClinicalRecord.copyOf(MINIMAL_CRC_PATIENT_RECORD.clinical())
                 .withClinicalStatus(ImmutableClinicalStatus.copyOf(MINIMAL_CRC_PATIENT_RECORD.clinical().clinicalStatus()).withWho(3))
         )
+
+        private val MOLECULAR_RECORD_WITH_BRAF_V600E = TestMolecularFactory.createProperTestMolecularRecord()
 
         private val TYPICAL_TREATMENT_RESULTS: List<TreatmentCandidate> =
             resultsForPatientWithHistory(emptyList())
