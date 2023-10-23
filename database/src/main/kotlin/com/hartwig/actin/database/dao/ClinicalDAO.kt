@@ -194,7 +194,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
                 valueMap["isSystemic"] = treatment.isSystemic
                 if (treatment is Therapy) {
                     valueMap["drugs"] = DataUtil.concat(
-                        treatment.drugs().map { "${it.name()} (${it.drugTypes().joinToString(", ")})" }
+                        treatment.drugs().map { "${it.name()} (${it.drugTypes().sorted().joinToString(", ")})" }
                     )
                     valueMap["maxCycles"] = treatment.maxCycles()
                     if (treatment is Radiotherapy) {
