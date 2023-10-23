@@ -44,7 +44,9 @@ public final class ClinicalRecordJson {
         }
 
         for (File file : files) {
-            records.add(fromJson(Files.readString(file.toPath())));
+            if (file.getName().endsWith(CLINICAL_JSON_EXTENSION)) {
+                records.add(fromJson(Files.readString(file.toPath())));
+            }
         }
 
         records.sort(new ClinicalRecordComparator());
