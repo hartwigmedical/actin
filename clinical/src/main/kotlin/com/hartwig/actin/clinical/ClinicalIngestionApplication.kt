@@ -68,7 +68,9 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
             results.forEach {
                 if (it.curationResults.isNotEmpty()) {
                     LOGGER.warn("Curation warnings for patient ${it.patientId}")
-                    it.curationResults.forEach { warning -> LOGGER.warn(warning) }
+                    it.curationResults.flatMap { result -> result.requirements }.forEach { requirement ->
+                        LOGGER.warn(requirement.message)
+                    }
                 }
             }
             LOGGER.warn("Summary complete.")
