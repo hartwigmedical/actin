@@ -35,23 +35,16 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
                 extraFunctions = setOf(eligibleForTreatmentLines(setOf(2, 3)))
             ),
             createChemotherapy("OXALIPLATIN", -1),
-            createMultiChemotherapy(TREATMENT_CAPOX),
-            createChemotherapy(
-                TREATMENT_FOLFIRI,
-                SCORE_MULTITHERAPY,
-                false,
-                extraFunctions = setOf(
-                    eligibleIfTreatmentNotInHistory(TREATMENT_CAPOX), eligibleIfTreatmentNotInHistory(TREATMENT_FOLFOX),
-                    IS_YOUNG_AND_FIT
-                )
-            ),
-            createMultiChemotherapy(TREATMENT_FOLFOX),
+            createMultiChemotherapy(TREATMENT_CAPOX, setOf(TREATMENT_FOLFOX)),
+            createMultiChemotherapy(TREATMENT_FOLFOX, setOf(TREATMENT_CAPOX)),
+            createMultiChemotherapy(TREATMENT_FOLFIRI),
             createMultiChemotherapy(TREATMENT_FOLFOXIRI)
         )
     }
 
-    private fun createMultiChemotherapy(name: String): TreatmentCandidate {
-        return createChemotherapy(name, SCORE_MULTITHERAPY, false, extraFunctions = setOf(IS_YOUNG_AND_FIT))
+    private fun createMultiChemotherapy(name: String, historicalTreatmentsToAvoid: Iterable<String> = emptyList()): TreatmentCandidate {
+        val extraFunctions = historicalTreatmentsToAvoid.map { eligibleIfTreatmentNotInHistory(it) }.toSet() + IS_YOUNG_AND_FIT
+        return createChemotherapy(name, SCORE_MULTITHERAPY, false, extraFunctions = extraFunctions)
     }
 
     private fun createChemotherapy(

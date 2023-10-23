@@ -65,16 +65,16 @@ class RecommendationEngineTest {
     }
 
     @Test
-    fun `Should not recommend FOLFIRI after CAPOX`() {
+    fun `Should not recommend FOLFOX after CAPOX`() {
         assertThat(resultsForPatientWithHistory(listOf(RecommendationDatabase.TREATMENT_CAPOX))).noneMatch {
-            it.treatment.name().equals(RecommendationDatabase.TREATMENT_FOLFIRI, ignoreCase = true)
+            it.treatment.name().equals(RecommendationDatabase.TREATMENT_FOLFOX, ignoreCase = true)
         }
     }
 
     @Test
-    fun `Should not recommend FOLFIRI after FOLFOX`() {
+    fun `Should not recommend CAPOX after FOLFOX`() {
         assertThat(resultsForPatientWithHistory(listOf(RecommendationDatabase.TREATMENT_FOLFOX))).noneMatch {
-            it.treatment.name().equals(RecommendationDatabase.TREATMENT_FOLFIRI, ignoreCase = true)
+            it.treatment.name().equals(RecommendationDatabase.TREATMENT_CAPOX, ignoreCase = true)
         }
     }
 
