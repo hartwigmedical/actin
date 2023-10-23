@@ -10,9 +10,7 @@ enum class IngestionStatus {
     WARN_NO_QUESTIONNAIRE
 }
 
-data class CurationRequired(val input: String, val warning: String)
-
-data class CurationResult(val categoryName: String, val input: List<CurationRequired>)
+data class CurationResult(val categoryName: String, val input: List<CurationWarning>)
 
 data class IngestionResult(
     val patientId: String,
@@ -27,9 +25,8 @@ data class IngestionResult(
                 status(questionnaire, warnings),
                 record,
                 warnings.groupBy { it.category.categoryName }.map {
-                    CurationResult(it.key, it.value.map { w -> CurationRequired(w.input, w.message) })
-                }
-            )
+                    CurationResult(it.key, it.value)
+                })
         }
 
         private fun status(questionnaire: Questionnaire?, warnings: List<CurationWarning>): IngestionStatus {
