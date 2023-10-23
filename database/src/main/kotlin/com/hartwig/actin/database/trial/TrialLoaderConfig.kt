@@ -8,17 +8,13 @@ import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.core.config.Configurator
-import org.immutables.value.Value
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
 
-@Value.Immutable
-@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
-interface TrialLoaderConfig : DatabaseLoaderConfig {
-    fun trialDatabaseDirectory(): String
-    override fun dbUser(): String
-    override fun dbPass(): String
-    override fun dbUrl(): String
+data class TrialLoaderConfig(
+    val trialDatabaseDirectory: String,
+    override val dbUser: String,
+    override val dbPass: String,
+    override val dbUrl: String
+) : DatabaseLoaderConfig {
 
     companion object {
         fun createOptions(): Options {
@@ -37,19 +33,19 @@ interface TrialLoaderConfig : DatabaseLoaderConfig {
                 Configurator.setRootLevel(Level.DEBUG)
                 LOGGER.debug("Switched root level logging to DEBUG")
             }
-            return ImmutableTrialLoaderConfig.builder()
-                .trialDatabaseDirectory(ApplicationConfig.nonOptionalDir(cmd, TRIAL_DATABASE_DIRECTORY))
-                .dbUser(ApplicationConfig.nonOptionalValue(cmd, DB_USER))
-                .dbPass(ApplicationConfig.nonOptionalValue(cmd, DB_PASS))
-                .dbUrl(ApplicationConfig.nonOptionalValue(cmd, DB_URL))
-                .build()
+            return TrialLoaderConfig(
+                trialDatabaseDirectory = ApplicationConfig.nonOptionalDir(cmd, TRIAL_DATABASE_DIRECTORY),
+                dbUser = ApplicationConfig.nonOptionalValue(cmd, DB_USER),
+                dbPass = ApplicationConfig.nonOptionalValue(cmd, DB_PASS),
+                dbUrl = ApplicationConfig.nonOptionalValue(cmd, DB_URL)
+            )
         }
 
-        val LOGGER = LogManager.getLogger(TrialLoaderConfig::class.java)
-        const val TRIAL_DATABASE_DIRECTORY = "trial_database_directory"
-        const val DB_USER = "db_user"
-        const val DB_PASS = "db_pass"
-        const val DB_URL = "db_url"
-        const val LOG_DEBUG = "log_debug"
+        private val LOGGER = LogManager.getLogger(TrialLoaderConfig::class.java)
+        private const val TRIAL_DATABASE_DIRECTORY = "trial_database_directory"
+        private const val DB_USER = "db_user"
+        private const val DB_PASS = "db_pass"
+        private const val DB_URL = "db_url"
+        private const val LOG_DEBUG = "log_debug"
     }
 }

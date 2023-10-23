@@ -1,13 +1,10 @@
 package com.hartwig.actin.database.dao
 
-import com.hartwig.actin.clinical.datamodel.AtcClassification
-import com.hartwig.actin.clinical.datamodel.AtcLevel
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
 import com.hartwig.actin.clinical.datamodel.BodyWeight
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 import com.hartwig.actin.clinical.datamodel.Complication
-import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.ECG
 import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.datamodel.LabValue
@@ -28,7 +25,6 @@ import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
 import com.hartwig.actin.database.Tables
 import org.jooq.DSLContext
 import java.util.*
-import java.util.stream.Collectors
 
 internal class ClinicalDAO(private val context: DSLContext) {
     fun clear() {
@@ -319,7 +315,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
     private fun writeComplications(patientId: String, complications: List<Complication>?) {
         if (complications != null) {
             for (complication in complications) {
-                if (!complication.name().isEmpty()) {
+                if (complication.name().isNotEmpty()) {
                     context.insertInto(
                         Tables.COMPLICATION,
                         Tables.COMPLICATION.PATIENTID,
@@ -511,9 +507,10 @@ internal class ClinicalDAO(private val context: DSLContext) {
                 Tables.MEDICATION.ISSELFCARE,
                 Tables.MEDICATION.ISTRIALMEDICATION
             )
-                .values(patientId,
+                .values(
+                    patientId,
                     medication.name(),
-                    if (medication.status() != null) medication.status().toString() else null,
+                    medication.status()?.toString(),
                     medication.administrationRoute(),
                     medication.dosage().dosageMin(),
                     medication.dosage().dosageMax(),
@@ -525,28 +522,16 @@ internal class ClinicalDAO(private val context: DSLContext) {
                     medication.dosage().ifNeeded(),
                     medication.startDate(),
                     medication.stopDate(),
-                    DataUtil.concat(cypInteractionsToStrings(medication.cypInteractions())),
+                    DataUtil.concat(medication.cypInteractions().map { "${it.strength()} ${it.type()} (${it.cyp()})" }.toSet()),
                     medication.qtProlongatingRisk().toString(),
                     atc?.anatomicalMainGroup()?.name(),
                     atc?.therapeuticSubGroup()?.name(),
                     atc?.pharmacologicalSubGroup()?.name(),
                     atc?.chemicalSubGroup()?.name(),
-                    Optional.ofNullable(atc)
-                        .flatMap { a: AtcClassification -> Optional.ofNullable(a.chemicalSubstance()) }
-                        .map { obj: AtcLevel -> obj.code() }
-                        .orElse(null),
+                    atc?.chemicalSubstance()?.code(),
                     medication.isSelfCare,
-                    medication.isTrialMedication).execute()
-        }
-    }
-
-    companion object {
-        private fun cypInteractionsToStrings(cypInteractions: List<CypInteraction>): Collection<String?> {
-            return cypInteractions.stream()
-                .map { interaction: CypInteraction ->
-                    interaction.strength().toString() + " " + interaction.type() + " (" + interaction.cyp() + ")"
-                }
-                .collect(Collectors.toSet())
+                    medication.isTrialMedication
+                ).execute()
         }
     }
 }

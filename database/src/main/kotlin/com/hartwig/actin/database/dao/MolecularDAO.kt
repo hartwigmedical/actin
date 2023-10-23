@@ -1,6 +1,5 @@
 package com.hartwig.actin.database.dao
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.database.Tables
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
@@ -18,10 +17,12 @@ import org.jooq.DSLContext
 import org.jooq.Record
 
 internal class MolecularDAO(private val context: DSLContext) {
+
     fun clear(record: MolecularRecord) {
         val sampleId = record.sampleId()
         val molecularResults =
             context.select(Tables.MOLECULAR.ID).from(Tables.MOLECULAR).where(Tables.MOLECULAR.SAMPLEID.eq(sampleId)).fetch()
+
         for (molecularResult in molecularResults) {
             val molecularId = molecularResult.getValue(Tables.MOLECULAR.ID)
             context.delete(Tables.MICROSATELLITEEVIDENCE).where(Tables.MICROSATELLITEEVIDENCE.MOLECULARID.eq(molecularId)).execute()
@@ -45,10 +46,12 @@ internal class MolecularDAO(private val context: DSLContext) {
             context.delete(Tables.COPYNUMBEREVIDENCE).where(Tables.COPYNUMBEREVIDENCE.COPYNUMBERID.eq(copyNumberId)).execute()
         }
         context.delete(Tables.COPYNUMBER).where(Tables.COPYNUMBER.SAMPLEID.eq(sampleId)).execute()
+
         val homozygousDisruptionResults = context.select(Tables.HOMOZYGOUSDISRUPTION.ID)
             .from(Tables.HOMOZYGOUSDISRUPTION)
             .where(Tables.HOMOZYGOUSDISRUPTION.SAMPLEID.eq(sampleId))
             .fetch()
+
         for (homozygousDisruptionResult in homozygousDisruptionResults) {
             val homozygousDisruptionId = homozygousDisruptionResult.getValue(Tables.HOMOZYGOUSDISRUPTION.ID)
             context.delete(Tables.HOMOZYGOUSDISRUPTIONEVIDENCE)
@@ -56,6 +59,7 @@ internal class MolecularDAO(private val context: DSLContext) {
                 .execute()
         }
         context.delete(Tables.HOMOZYGOUSDISRUPTION).where(Tables.HOMOZYGOUSDISRUPTION.SAMPLEID.eq(sampleId)).execute()
+
         val disruptionResults =
             context.select(Tables.DISRUPTION.ID).from(Tables.DISRUPTION).where(Tables.DISRUPTION.SAMPLEID.eq(sampleId)).fetch()
         for (disruptionResult in disruptionResults) {
@@ -63,18 +67,21 @@ internal class MolecularDAO(private val context: DSLContext) {
             context.delete(Tables.DISRUPTIONEVIDENCE).where(Tables.DISRUPTIONEVIDENCE.DISRUPTIONID.eq(disruptionId)).execute()
         }
         context.delete(Tables.DISRUPTION).where(Tables.DISRUPTION.SAMPLEID.eq(sampleId)).execute()
+
         val fusionResults = context.select(Tables.FUSION.ID).from(Tables.FUSION).where(Tables.FUSION.SAMPLEID.eq(sampleId)).fetch()
         for (fusionResult in fusionResults) {
             val fusionId = fusionResult.getValue(Tables.FUSION.ID)
             context.delete(Tables.FUSIONEVIDENCE).where(Tables.FUSIONEVIDENCE.FUSIONID.eq(fusionId)).execute()
         }
         context.delete(Tables.FUSION).where(Tables.FUSION.SAMPLEID.eq(sampleId)).execute()
+
         val virusResults = context.select(Tables.VIRUS.ID).from(Tables.VIRUS).where(Tables.VIRUS.SAMPLEID.eq(sampleId)).fetch()
         for (virusResult in virusResults) {
             val virusId = virusResult.getValue(Tables.VIRUS.ID)
             context.delete(Tables.VIRUSEVIDENCE).where(Tables.VIRUSEVIDENCE.VIRUSID.eq(virusId)).execute()
         }
         context.delete(Tables.VIRUS).where(Tables.VIRUS.SAMPLEID.eq(sampleId)).execute()
+
         context.delete(Tables.HLAALLELE).where(Tables.HLAALLELE.SAMPLEID.eq(sampleId)).execute()
         context.delete(Tables.PHARMACO).where(Tables.PHARMACO.SAMPLEID.eq(sampleId)).execute()
         context.delete(Tables.MOLECULAR).where(Tables.MOLECULAR.SAMPLEID.eq(sampleId)).execute()
@@ -141,7 +148,7 @@ internal class MolecularDAO(private val context: DSLContext) {
                 record.characteristics().hasHighTumorMutationalLoad()
             )
             .returning(Tables.MOLECULAR.ID)
-            .fetchOne()
+            .fetchOne()!!
             .getValue(Tables.MOLECULAR.ID)
         writeMicrosatelliteEvidence(molecularId, record.characteristics().microsatelliteEvidence())
         writeHomologousRepairEvidence(molecularId, record.characteristics().homologousRepairEvidence())
@@ -267,7 +274,7 @@ internal class MolecularDAO(private val context: DSLContext) {
                     DataUtil.nullableToString(variant.canonicalImpact().codingEffect())
                 )
                 .returning(Tables.VARIANT.ID)
-                .fetchOne()
+                .fetchOne()!!
                 .getValue(Tables.VARIANT.ID)
             writeVariantEvidence(variantId, variant.evidence())
         }
@@ -316,7 +323,7 @@ internal class MolecularDAO(private val context: DSLContext) {
                     copyNumber.maxCopies()
                 )
                 .returning(Tables.COPYNUMBER.ID)
-                .fetchOne()
+                .fetchOne()!!
                 .getValue(Tables.COPYNUMBER.ID)
             writeCopyNumberEvidence(copyNumberId, copyNumber.evidence())
         }
@@ -359,7 +366,7 @@ internal class MolecularDAO(private val context: DSLContext) {
                     homozygousDisruption.isAssociatedWithDrugResistance
                 )
                 .returning(Tables.HOMOZYGOUSDISRUPTION.ID)
-                .fetchOne()
+                .fetchOne()!!
                 .getValue(Tables.HOMOZYGOUSDISRUPTION.ID)
             writeHomozygousDisruptionEvidence(homozygousDisruptionId, homozygousDisruption.evidence())
         }
@@ -414,7 +421,7 @@ internal class MolecularDAO(private val context: DSLContext) {
                     disruption.clusterGroup()
                 )
                 .returning(Tables.DISRUPTION.ID)
-                .fetchOne()
+                .fetchOne()!!
                 .getValue(Tables.DISRUPTION.ID)
             writeDisruptionEvidence(disruptionId, disruption.evidence())
         }
@@ -467,7 +474,7 @@ internal class MolecularDAO(private val context: DSLContext) {
                     fusion.isAssociatedWithDrugResistance
                 )
                 .returning(Tables.FUSION.ID)
-                .fetchOne()
+                .fetchOne()!!
                 .getValue(Tables.FUSION.ID)
             writeFusionEvidence(fusionId, fusion.evidence())
         }
@@ -510,7 +517,7 @@ internal class MolecularDAO(private val context: DSLContext) {
                     virus.integrations()
                 )
                 .returning(Tables.VIRUS.ID)
-                .fetchOne()
+                .fetchOne()!!
                 .getValue(Tables.VIRUS.ID)
             writeVirusEvidence(virusId, virus.evidence())
         }
@@ -566,50 +573,34 @@ internal class MolecularDAO(private val context: DSLContext) {
         }
     }
 
-    companion object {
-        private fun effectsToStrings(effects: Set<VariantEffect>): Set<String?> {
-            val strings: MutableSet<String?> = Sets.newHashSet()
-            for (effect in effects) {
-                strings.add(effect.toString())
-            }
-            return strings
-        }
+    private fun effectsToStrings(effects: Set<VariantEffect>): Set<String> {
+        return effects.map(VariantEffect::toString).toSet()
+    }
 
-        private fun driverLikelihood(driver: Driver): String? {
-            return if (driver.driverLikelihood() != null) driver.driverLikelihood().toString() else null
-        }
+    private fun driverLikelihood(driver: Driver): String? {
+        return driver.driverLikelihood()?.toString()
+    }
 
-        private fun integersToStrings(integers: Set<Int>?): Set<String?>? {
-            if (integers == null) {
-                return null
-            }
-            val strings: MutableSet<String?> = Sets.newHashSet()
-            for (integer in integers) {
-                strings.add(integer.toString())
-            }
-            return strings
-        }
+    private fun integersToStrings(integers: Set<Int>?): Set<String>? {
+        return integers?.map(Int::toString)?.toSet()
+    }
 
-        private fun <T : Record?> writeEvidence(
-            inserter: EvidenceInserter<T>, topicId: Int,
-            evidence: ActionableEvidence
-        ) {
-            writeTreatments(inserter, topicId, evidence.approvedTreatments(), "Approved")
-            writeTreatments(inserter, topicId, evidence.externalEligibleTrials(), "Trial")
-            writeTreatments(inserter, topicId, evidence.onLabelExperimentalTreatments(), "On-label experimental")
-            writeTreatments(inserter, topicId, evidence.offLabelExperimentalTreatments(), "Off-label experimental")
-            writeTreatments(inserter, topicId, evidence.preClinicalTreatments(), "Pre-clinical")
-            writeTreatments(inserter, topicId, evidence.knownResistantTreatments(), "Known resistant")
-            writeTreatments(inserter, topicId, evidence.suspectResistantTreatments(), "Suspect resistant")
-        }
+    private fun <T : Record?> writeEvidence(
+        inserter: EvidenceInserter<T>, topicId: Int,
+        evidence: ActionableEvidence
+    ) {
+        writeTreatments(inserter, topicId, evidence.approvedTreatments(), "Approved")
+        writeTreatments(inserter, topicId, evidence.externalEligibleTrials(), "Trial")
+        writeTreatments(inserter, topicId, evidence.onLabelExperimentalTreatments(), "On-label experimental")
+        writeTreatments(inserter, topicId, evidence.offLabelExperimentalTreatments(), "Off-label experimental")
+        writeTreatments(inserter, topicId, evidence.preClinicalTreatments(), "Pre-clinical")
+        writeTreatments(inserter, topicId, evidence.knownResistantTreatments(), "Known resistant")
+        writeTreatments(inserter, topicId, evidence.suspectResistantTreatments(), "Suspect resistant")
+    }
 
-        private fun <T : Record?> writeTreatments(
-            inserter: EvidenceInserter<T>, topicId: Int,
-            treatments: Set<String>, type: String
-        ) {
-            for (treatment in treatments) {
-                inserter.write(topicId, treatment, type)
-            }
+    private fun <T : Record?> writeTreatments(inserter: EvidenceInserter<T>, topicId: Int, treatments: Set<String>, type: String) {
+        for (treatment in treatments) {
+            inserter.write(topicId, treatment, type)
         }
     }
 }

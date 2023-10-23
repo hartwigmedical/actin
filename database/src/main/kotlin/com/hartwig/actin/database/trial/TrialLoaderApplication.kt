@@ -7,40 +7,37 @@ import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
-import java.io.IOException
-import java.sql.SQLException
+import org.apache.logging.log4j.Logger
+import kotlin.system.exitProcess
 
-class TrialLoaderApplication private constructor(private val config: TrialLoaderConfig) {
-    @Throws(IOException::class, SQLException::class)
+class TrialLoaderApplication constructor(private val config: TrialLoaderConfig) {
+
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
-        LOGGER.info("Loading trials from {}", config.trialDatabaseDirectory())
-        val trials = TrialJson.readFromDir(config.trialDatabaseDirectory())
+        LOGGER.info("Loading trials from {}", config.trialDatabaseDirectory)
+        val trials = TrialJson.readFromDir(config.trialDatabaseDirectory)
         LOGGER.info(" Loaded {} trials", trials.size)
-        val access: DatabaseAccess = DatabaseAccess.Companion.fromCredentials(config.dbUser(), config.dbPass(), config.dbUrl())
+        val access: DatabaseAccess = DatabaseAccess.fromCredentials(config.dbUser, config.dbPass, config.dbUrl)
         LOGGER.info("Writing {} trials to database", trials.size)
         access.writeTrials(trials)
         LOGGER.info("Done!")
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(TrialLoaderApplication::class.java)
-        private const val APPLICATION = "ACTIN Trial Loader"
+        val LOGGER: Logger = LogManager.getLogger(TrialLoaderApplication::class.java)
+        const val APPLICATION = "ACTIN Trial Loader"
         private val VERSION = TrialLoaderApplication::class.java.getPackage().implementationVersion
+    }
+}
 
-        @Throws(IOException::class, SQLException::class)
-        @JvmStatic
-        fun main(args: Array<String>) {
-            val options: Options = TrialLoaderConfig.Companion.createOptions()
-            var config: TrialLoaderConfig? = null
-            try {
-                config = TrialLoaderConfig.Companion.createConfig(DefaultParser().parse(options, args))
-            } catch (exception: ParseException) {
-                LOGGER.warn(exception)
-                HelpFormatter().printHelp(APPLICATION, options)
-                System.exit(1)
-            }
-            TrialLoaderApplication(config!!).run()
-        }
+fun main(args: Array<String>) {
+    val options: Options = TrialLoaderConfig.createOptions()
+    try {
+        val config = TrialLoaderConfig.createConfig(DefaultParser().parse(options, args))
+        TrialLoaderApplication(config).run()
+    } catch (exception: ParseException) {
+        TrialLoaderApplication.LOGGER.warn(exception)
+        HelpFormatter().printHelp(TrialLoaderApplication.APPLICATION, options)
+        exitProcess(1)
     }
 }

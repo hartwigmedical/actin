@@ -1,8 +1,7 @@
 package com.hartwig.actin.database.dao
 
-import com.google.common.collect.Maps
-import com.google.common.collect.Sets
 import com.hartwig.actin.database.Tables
+import com.hartwig.actin.treatment.datamodel.Cohort
 import com.hartwig.actin.treatment.datamodel.CohortMetadata
 import com.hartwig.actin.treatment.datamodel.CriterionReference
 import com.hartwig.actin.treatment.datamodel.Eligibility
@@ -13,7 +12,7 @@ import com.hartwig.actin.treatment.input.composite.CompositeRules
 import com.hartwig.actin.treatment.util.EligibilityFunctionDisplay
 import org.jooq.DSLContext
 
-internal class TreatmentDAO(private val context: DSLContext) {
+internal class TrialDAO(private val context: DSLContext) {
     fun clear() {
         context.execute("SET FOREIGN_KEY_CHECKS = 0;")
         context.truncate(Tables.TRIAL).execute()
@@ -38,30 +37,21 @@ internal class TreatmentDAO(private val context: DSLContext) {
         return context.insertInto(Tables.TRIAL, Tables.TRIAL.CODE, Tables.TRIAL.OPEN, Tables.TRIAL.ACRONYM, Tables.TRIAL.TITLE)
             .values(identification.trialId(), identification.open(), identification.acronym(), identification.title())
             .returning(Tables.TRIAL.ID)
-            .fetchOne()
+            .fetchOne()!!
             .getValue(Tables.TRIAL.ID)
     }
 
     private fun writeReferences(trial: Trial): Map<CriterionReference, Int> {
-        val references: MutableSet<CriterionReference> = Sets.newHashSet()
-        for (eligibility in trial.generalEligibility()) {
-            references.addAll(eligibility.references())
-        }
-        for (cohort in trial.cohorts()) {
-            for (eligibility in cohort.eligibility()) {
-                references.addAll(eligibility.references())
+        return listOf(trial.generalEligibility(), trial.cohorts().flatMap(Cohort::eligibility))
+            .flatMap { it.flatMap(Eligibility::references) }
+            .distinct()
+            .associateWith { reference ->
+                context.insertInto(Tables.REFERENCE, Tables.REFERENCE.CODE, Tables.REFERENCE.TEXT)
+                    .values(reference.id(), reference.text())
+                    .returning(Tables.REFERENCE.ID)
+                    .fetchOne()!!
+                    .getValue(Tables.REFERENCE.ID)
             }
-        }
-        val referenceIdMap: MutableMap<CriterionReference, Int> = Maps.newHashMap()
-        for (reference in references) {
-            val id = context.insertInto(Tables.REFERENCE, Tables.REFERENCE.CODE, Tables.REFERENCE.TEXT)
-                .values(reference.id(), reference.text())
-                .returning(Tables.REFERENCE.ID)
-                .fetchOne()
-                .getValue(Tables.REFERENCE.ID)
-            referenceIdMap[reference] = id
-        }
-        return referenceIdMap
     }
 
     private fun writeCohortMetadata(trialId: Int, metadata: CohortMetadata): Int {
@@ -85,7 +75,7 @@ internal class TreatmentDAO(private val context: DSLContext) {
                 metadata.description()
             )
             .returning(Tables.COHORT.ID)
-            .fetchOne()
+            .fetchOne()!!
             .getValue(Tables.COHORT.ID)
     }
 

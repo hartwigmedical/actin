@@ -8,17 +8,10 @@ import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.core.config.Configurator
-import org.immutables.value.Value
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
 
-@Value.Immutable
-@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
-interface TreatmentMatchLoaderConfig : DatabaseLoaderConfig {
-    fun treatmentMatchJson(): String
-    override fun dbUser(): String
-    override fun dbPass(): String
-    override fun dbUrl(): String
+data class TreatmentMatchLoaderConfig(
+    val treatmentMatchJson: String, override val dbUser: String, override val dbPass: String, override val dbUrl: String
+) : DatabaseLoaderConfig {
 
     companion object {
         fun createOptions(): Options {
@@ -37,19 +30,19 @@ interface TreatmentMatchLoaderConfig : DatabaseLoaderConfig {
                 Configurator.setRootLevel(Level.DEBUG)
                 LOGGER.debug("Switched root level logging to DEBUG")
             }
-            return ImmutableTreatmentMatchLoaderConfig.builder()
-                .treatmentMatchJson(ApplicationConfig.nonOptionalFile(cmd, TREATMENT_MATCH_JSON))
-                .dbUser(ApplicationConfig.nonOptionalValue(cmd, DB_USER))
-                .dbPass(ApplicationConfig.nonOptionalValue(cmd, DB_PASS))
-                .dbUrl(ApplicationConfig.nonOptionalValue(cmd, DB_URL))
-                .build()
+            return TreatmentMatchLoaderConfig(
+                treatmentMatchJson = ApplicationConfig.nonOptionalFile(cmd, TREATMENT_MATCH_JSON),
+                dbUser = ApplicationConfig.nonOptionalValue(cmd, DB_USER),
+                dbPass = ApplicationConfig.nonOptionalValue(cmd, DB_PASS),
+                dbUrl = ApplicationConfig.nonOptionalValue(cmd, DB_URL)
+            )
         }
 
-        val LOGGER = LogManager.getLogger(TreatmentMatchLoaderConfig::class.java)
-        const val TREATMENT_MATCH_JSON = "treatment_match_json"
-        const val DB_USER = "db_user"
-        const val DB_PASS = "db_pass"
-        const val DB_URL = "db_url"
-        const val LOG_DEBUG = "log_debug"
+        private val LOGGER = LogManager.getLogger(TreatmentMatchLoaderConfig::class.java)
+        private const val TREATMENT_MATCH_JSON = "treatment_match_json"
+        private const val DB_USER = "db_user"
+        private const val DB_PASS = "db_pass"
+        private const val DB_URL = "db_url"
+        private const val LOG_DEBUG = "log_debug"
     }
 }

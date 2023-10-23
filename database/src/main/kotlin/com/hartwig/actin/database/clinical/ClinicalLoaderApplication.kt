@@ -7,40 +7,37 @@ import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
-import java.io.IOException
-import java.sql.SQLException
+import org.apache.logging.log4j.Logger
+import kotlin.system.exitProcess
 
-class ClinicalLoaderApplication private constructor(private val config: ClinicalLoaderConfig) {
-    @Throws(IOException::class, SQLException::class)
+class ClinicalLoaderApplication constructor(private val config: ClinicalLoaderConfig) {
+
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
-        LOGGER.info("Loading clinical model from {}", config.clinicalDirectory())
-        val records = ClinicalRecordJson.readFromDir(config.clinicalDirectory())
+        LOGGER.info("Loading clinical model from {}", config.clinicalDirectory)
+        val records = ClinicalRecordJson.readFromDir(config.clinicalDirectory)
         LOGGER.info(" Loaded {} clinical records", records.size)
-        val access: DatabaseAccess = DatabaseAccess.Companion.fromCredentials(config.dbUser(), config.dbPass(), config.dbUrl())
+        val access: DatabaseAccess = DatabaseAccess.fromCredentials(config.dbUser, config.dbPass, config.dbUrl)
         LOGGER.info("Writing {} clinical records to database", records.size)
         access.writeClinicalRecords(records)
         LOGGER.info("Done!")
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(ClinicalLoaderApplication::class.java)
-        private const val APPLICATION = "ACTIN Clinical Loader"
+        val LOGGER: Logger = LogManager.getLogger(ClinicalLoaderApplication::class.java)
+        const val APPLICATION = "ACTIN Clinical Loader"
         private val VERSION = ClinicalLoaderApplication::class.java.getPackage().implementationVersion
+    }
+}
 
-        @Throws(IOException::class, SQLException::class)
-        @JvmStatic
-        fun main(args: Array<String>) {
-            val options: Options = ClinicalLoaderConfig.Companion.createOptions()
-            var config: ClinicalLoaderConfig? = null
-            try {
-                config = ClinicalLoaderConfig.Companion.createConfig(DefaultParser().parse(options, args))
-            } catch (exception: ParseException) {
-                LOGGER.warn(exception)
-                HelpFormatter().printHelp(APPLICATION, options)
-                System.exit(1)
-            }
-            ClinicalLoaderApplication(config!!).run()
-        }
+fun main(args: Array<String>) {
+    val options: Options = ClinicalLoaderConfig.createOptions()
+    try {
+        val config = ClinicalLoaderConfig.createConfig(DefaultParser().parse(options, args))
+        ClinicalLoaderApplication(config).run()
+    } catch (exception: ParseException) {
+        ClinicalLoaderApplication.LOGGER.warn(exception)
+        HelpFormatter().printHelp(ClinicalLoaderApplication.APPLICATION, options)
+        exitProcess(1)
     }
 }

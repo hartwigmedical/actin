@@ -1,7 +1,7 @@
 package com.hartwig.actin.database
 
 interface DatabaseLoaderConfig {
-    fun dbUser(): String
-    fun dbPass(): String
-    fun dbUrl(): String
+    val dbUser: String
+    val dbPass: String
+    val dbUrl: String
 }

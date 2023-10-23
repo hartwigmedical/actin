@@ -45,7 +45,7 @@ class TreatmentMatchDAO(private val context: DSLContext) {
                 treatmentMatch.referenceDateIsLive()
             )
             .returning(Tables.TREATMENTMATCH.ID)
-            .fetchOne()
+            .fetchOne()!!
             .getValue(Tables.TREATMENTMATCH.ID)
         for (trialMatch in treatmentMatch.trialMatches()) {
             val trialMatchId = writeTrialMatch(treatmentMatchId, trialMatch)
@@ -76,7 +76,7 @@ class TreatmentMatchDAO(private val context: DSLContext) {
                 trialMatch.isPotentiallyEligible
             )
             .returning(Tables.TRIALMATCH.ID)
-            .fetchOne()
+            .fetchOne()!!
             .getValue(Tables.TRIALMATCH.ID)
     }
 
@@ -103,7 +103,7 @@ class TreatmentMatchDAO(private val context: DSLContext) {
                 cohortMatch.isPotentiallyEligible
             )
             .returning(Tables.COHORTMATCH.ID)
-            .fetchOne()
+            .fetchOne()!!
             .getValue(Tables.COHORTMATCH.ID)
     }
 

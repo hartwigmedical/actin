@@ -15,7 +15,7 @@ import java.sql.SQLException
 
 class DatabaseAccess private constructor(
     private val clinicalDAO: ClinicalDAO, private val molecularDAO: MolecularDAO,
-    private val treatmentDAO: TreatmentDAO, private val treatmentMatchDAO: TreatmentMatchDAO
+    private val trialDAO: TrialDAO, private val treatmentMatchDAO: TreatmentMatchDAO
 ) {
     fun writeClinicalRecords(records: List<ClinicalRecord>) {
         LOGGER.info(" Clearing all clinical data")
@@ -35,10 +35,10 @@ class DatabaseAccess private constructor(
 
     fun writeTrials(trials: List<Trial>) {
         LOGGER.info(" Clearing all trial data")
-        treatmentDAO.clear()
+        trialDAO.clear()
         for (trial in trials) {
             LOGGER.info(" Writing trial data for {}", trial.identification().acronym())
-            treatmentDAO.writeTrial(trial)
+            trialDAO.writeTrial(trial)
         }
     }
 
@@ -66,20 +66,15 @@ class DatabaseAccess private constructor(
             return DatabaseAccess(
                 ClinicalDAO(context),
                 MolecularDAO(context),
-                TreatmentDAO(context),
+                TrialDAO(context),
                 TreatmentMatchDAO(context)
             )
         }
 
         private fun settings(catalog: String): Settings? {
-            return if (catalog != DEV_CATALOG) Settings().withRenderMapping(
-                RenderMapping().withSchemata(
-                    MappedSchema().withInput(
-                        DEV_CATALOG
-                    )
-                        .withOutput(catalog)
-                )
-            ) else null
+            return if (catalog != DEV_CATALOG) {
+                Settings().withRenderMapping(RenderMapping().withSchemata(MappedSchema().withInput(DEV_CATALOG).withOutput(catalog)))
+            } else null
         }
     }
 }
