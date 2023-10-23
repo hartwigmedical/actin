@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.soc
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.soc.datamodel.TreatmentCandidate
+import com.hartwig.actin.clinical.datamodel.treatment.Therapy
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction
 import com.hartwig.actin.treatment.datamodel.EligibilityRule
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction
@@ -16,14 +17,7 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
             combinableChemotherapies(),
             combinableChemotherapies().map(::addBevacizumabToTreatment),
             antiEGFRTherapies(),
-            antiEGFRTherapies().flatMap { therapy: TreatmentCandidate ->
-                combinableChemotherapies().map { chemo: TreatmentCandidate ->
-                    therapy.copy(
-                        treatment = treatmentDatabase.findTreatmentByName("${chemo.treatment.name()}+${therapy.treatment.name()}")!!,
-                        expectedBenefitScore = SCORE_MONOTHERAPY_PLUS_TARGETED
-                    )
-                }
-            },
+            combinedAntiEGFRTherapies(),
             otherTreatments()
         ).flatten()
     }
@@ -36,48 +30,64 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
         return listOf(
             createChemotherapy("FLUOROURACIL", SCORE_MONOTHERAPY),
             createChemotherapy("CAPECITABINE", SCORE_MONOTHERAPY),
-            createChemotherapy("IRINOTECAN", SCORE_MONOTHERAPY),
-            createChemotherapy("OXALIPLATIN", -1),
-            createMultiChemotherapy(TREATMENT_CAPOX),
             createChemotherapy(
-                TREATMENT_FOLFIRI,
-                SCORE_MULTITHERAPY,
-                false,
-                extraFunctions = setOf(
-                    eligibleIfTreatmentNotInHistory(TREATMENT_CAPOX), eligibleIfTreatmentNotInHistory(TREATMENT_FOLFOX),
-                    IS_YOUNG_AND_FIT
-                )
+                TREATMENT_IRINOTECAN, SCORE_MONOTHERAPY, requiredLines = setOf(2),
+                extraFunctions = setOf(eligibleForTreatmentLines(setOf(2, 3)))
             ),
-            createMultiChemotherapy(TREATMENT_FOLFOX),
-            createMultiChemotherapy(
-                TREATMENT_FOLFIRINOX
+            createChemotherapy("OXALIPLATIN", -1),
+            createMultiChemotherapy(TREATMENT_CAPOX, setOf(TREATMENT_FOLFOX)),
+            createMultiChemotherapy(TREATMENT_FOLFOX, setOf(TREATMENT_CAPOX)),
+            createMultiChemotherapy(TREATMENT_FOLFIRI),
+            createMultiChemotherapy(TREATMENT_FOLFOXIRI)
+        )
+    }
+
+    private fun createMultiChemotherapy(name: String, historicalTreatmentsToAvoid: Iterable<String> = emptyList()): TreatmentCandidate {
+        val extraFunctions = historicalTreatmentsToAvoid.map { eligibleIfTreatmentNotInHistory(it) }.toSet() + IS_YOUNG_AND_FIT
+        return createChemotherapy(name, SCORE_MULTITHERAPY, false, extraFunctions = extraFunctions)
+    }
+
+    private fun createChemotherapy(
+        name: String, score: Int, isOptional: Boolean = false, requiredLines: Set<Int> = setOf(1, 2),
+        extraFunctions: Set<EligibilityFunction> = emptySet()
+    ): TreatmentCandidate {
+        val treatment = treatmentDatabase.findTreatmentByName(name)!!
+        val drugRequirements = (treatment as Therapy).drugs().flatMap { drug ->
+            val drugName = drug.name()
+            listOf(setOf("OXALIPLATIN", TREATMENT_IRINOTECAN), setOf("FLUOROURACIL", "CAPECITABINE"))
+                .filter { drugName in it }
+                .map {
+                    eligibilityFunction(
+                        EligibilityRule.NOT, eligibilityFunction(EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X, it.joinToString(";"))
+                    )
+                }
+        }.toSet()
+
+        return TreatmentCandidate(
+            treatment = treatment,
+            expectedBenefitScore = score,
+            isOptional = isOptional,
+            eligibilityFunctions = setOf(IS_COLORECTAL_CANCER, eligibleIfTreatmentNotInHistory(name)) union extraFunctions,
+            additionalCriteriaForRequirement = setOf(
+                eligibilityFunction(
+                    EligibilityRule.OR,
+                    eligibleForTreatmentLines(requiredLines), *drugRequirements.toTypedArray()
+                )
             )
         )
     }
 
-    private fun createMultiChemotherapy(name: String): TreatmentCandidate {
-        return createChemotherapy(name, SCORE_MULTITHERAPY, false, extraFunctions = setOf(IS_YOUNG_AND_FIT))
-    }
-
-    private fun createChemotherapy(
-        name: String, score: Int, isOptional: Boolean = false, lines: Set<Int> = setOf(1, 2),
-        extraFunctions: Set<EligibilityFunction> = emptySet()
-    ): TreatmentCandidate {
-        return TreatmentCandidate(
-            treatment = treatmentDatabase.findTreatmentByName(name)!!,
-            expectedBenefitScore = score,
-            isOptional = isOptional,
-            eligibilityFunctions = setOf(IS_COLORECTAL_CANCER, eligibleIfTreatmentNotInHistory(name)) union extraFunctions,
-            additionalCriteriaForRequirement = setOf(eligibleForTreatmentLines(lines))
-            // TODO: all patients should have (Oxaliplatin OR Irinotecan) and (5-FU OR CAPECITABINE) before exhaustion
-        )
-    }
-
     private fun addBevacizumabToTreatment(treatmentCandidate: TreatmentCandidate): TreatmentCandidate {
+        val score = if (treatmentCandidate.treatment.name() == TREATMENT_FOLFOXIRI) {
+            SCORE_FOLFOXIRI_PLUS_BEVACIZUMAB
+        } else {
+            treatmentCandidate.expectedBenefitScore.coerceAtLeast(SCORE_MONOTHERAPY_PLUS_BEVACIZUMAB)
+        }
+
         return TreatmentCandidate(
             treatmentDatabase.findTreatmentByName(treatmentCandidate.treatment.name() + "+Bevacizumab")!!,
             isOptional = true,
-            treatmentCandidate.expectedBenefitScore.coerceAtLeast(SCORE_MONOTHERAPY_PLUS_TARGETED),
+            score,
             treatmentCandidate.eligibilityFunctions
         )
     }
@@ -94,14 +104,38 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
             treatmentDatabase.findTreatmentByName(name)!!,
             isOptional = false,
             expectedBenefitScore = SCORE_TARGETED_THERAPY,
-            eligibilityFunctions = setOf(
-                IS_COLORECTAL_CANCER,
-                eligibleIfGenesAreWildType(listOf("KRAS", "NRAS", "BRAF")),
-                eligibilityFunction(EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR),
-                eligibleForTreatmentLines(setOf(2, 3)),
-                eligibleIfDrugNotInHistory(name)
+            eligibilityFunctions = ANTI_EGFR_ELIGIBILITY_FUNCTIONS + eligibleForTreatmentLines(setOf(2, 3)),
+            additionalCriteriaForRequirement = setOf(
+                eligibilityFunction(
+                    EligibilityRule.AND,
+                    eligibleIfDrugNotInHistory(TREATMENT_CETUXIMAB),
+                    eligibleIfDrugNotInHistory(TREATMENT_PANITUMUMAB)
+                )
             )
         )
+    }
+
+    private fun combinedAntiEGFRTherapies(): List<TreatmentCandidate> {
+        val capecitabine = treatmentDatabase.findDrugByName("CAPECITABINE")
+        return combinableChemotherapies().filterNot { (it.treatment as Therapy).drugs().contains(capecitabine) }
+            .filterNot { it.treatment.name().equals(TREATMENT_FOLFOXIRI, ignoreCase = true) }
+            .flatMap { chemo: TreatmentCandidate ->
+                val combinedEligibilityCriteria = when (chemo.treatment.name().uppercase()) {
+                    TREATMENT_IRINOTECAN -> setOf(eligibleForTreatmentLines(setOf(1, 2)))
+                    "FLUOROURACIL" -> emptySet()
+                    "OXALIPLATIN" -> emptySet()
+                    else -> setOf(IS_YOUNG_AND_FIT)
+                } + ANTI_EGFR_ELIGIBILITY_FUNCTIONS
+
+                antiEGFRTherapies().map { therapy: TreatmentCandidate ->
+                    val combinedName = "${chemo.treatment.name()}+${therapy.treatment.name()}"
+                    therapy.copy(
+                        treatment = treatmentDatabase.findTreatmentByName(combinedName)!!,
+                        eligibilityFunctions = combinedEligibilityCriteria + eligibleIfTreatmentNotInHistory(combinedName),
+                        expectedBenefitScore = chemo.expectedBenefitScore + SCORE_ADDITION_FOR_ANTI_EGFR
+                    )
+                }
+            }
     }
 
     private fun otherTreatments(): List<TreatmentCandidate> {
@@ -115,7 +149,7 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
                 expectedBenefitScore = SCORE_PEMBROLIZUMAB,
                 eligibilityFunctions = setOf(
                     IS_COLORECTAL_CANCER, eligibilityFunction(EligibilityRule.MSI_SIGNATURE),
-                    eligibleForTreatmentLines(setOf(1, 2))
+                    eligibleIfTreatmentNotInHistory(TREATMENT_PEMBROLIZUMAB)
                 )
             ),
             TreatmentCandidate(
@@ -135,20 +169,24 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
         const val TREATMENT_CAPOX = "CAPOX"
         const val TREATMENT_CETUXIMAB = "CETUXIMAB"
         const val TREATMENT_FOLFIRI = "FOLFIRI"
-        const val TREATMENT_FOLFIRINOX = "FOLFIRINOX"
+        const val TREATMENT_FOLFOXIRI = "FOLFOXIRI"
         const val TREATMENT_FOLFOX = "FOLFOX"
+        const val TREATMENT_IRINOTECAN = "IRINOTECAN"
         const val TREATMENT_LONSURF = "LONSURF"
         const val TREATMENT_PANITUMUMAB = "PANITUMUMAB"
         const val TREATMENT_PEMBROLIZUMAB = "PEMBROLIZUMAB"
-        private const val SCORE_CETUXIMAB_PLUS_ENCORAFENIB = 4
+        val EGFR_TREATMENTS = setOf(TREATMENT_CETUXIMAB, TREATMENT_PANITUMUMAB)
         private const val SCORE_LONSURF = 2
         private const val SCORE_MONOTHERAPY = 3
-        private const val SCORE_MONOTHERAPY_PLUS_TARGETED = 4
+        private const val SCORE_CETUXIMAB_PLUS_ENCORAFENIB = 4
+        private const val SCORE_MONOTHERAPY_PLUS_BEVACIZUMAB = 4
         private const val SCORE_MULTITHERAPY = 5
-        private const val SCORE_PEMBROLIZUMAB = 6
         private const val SCORE_TARGETED_THERAPY = 5
+        private const val SCORE_FOLFOXIRI_PLUS_BEVACIZUMAB = 6
+        private const val SCORE_PEMBROLIZUMAB = 8
+        private const val SCORE_ADDITION_FOR_ANTI_EGFR = 2
         private const val CHEMO_MAX_CYCLES = "12"
-        private const val RECENT_TREATMENT_THRESHOLD_WEEKS = "104"
+        private const val RECENT_TREATMENT_THRESHOLD_WEEKS = "26"
 
         private val LOGGER: Logger = LogManager.getLogger(RecommendationDatabase::class.java)
 
@@ -158,7 +196,19 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
         private val IS_YOUNG_AND_FIT: EligibilityFunction = eligibilityFunction(
             EligibilityRule.AND,
             eligibilityFunction(EligibilityRule.NOT, eligibilityFunction(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, "75")),
-            eligibilityFunction(EligibilityRule.HAS_WHO_STATUS_OF_AT_MOST_X, "1")
+            eligibilityFunction(EligibilityRule.HAS_WHO_STATUS_OF_AT_MOST_X, "2")
+        )
+
+        private val ANTI_EGFR_ELIGIBILITY_FUNCTIONS = setOf(
+            IS_COLORECTAL_CANCER,
+            eligibleIfGenesAreWildType(listOf("KRAS", "NRAS", "BRAF")),
+            eligibilityFunction(EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR),
+            eligibilityFunction(
+                EligibilityRule.NOT, eligibilityFunction(EligibilityRule.HAS_HAD_TREATMENT_NAME_X, TREATMENT_CETUXIMAB)
+            ),
+            eligibilityFunction(
+                EligibilityRule.NOT, eligibilityFunction(EligibilityRule.HAS_HAD_TREATMENT_NAME_X, TREATMENT_PANITUMUMAB)
+            )
         )
 
         private fun eligibleIfGenesAreWildType(genes: List<String>): EligibilityFunction {
