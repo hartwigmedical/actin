@@ -108,9 +108,7 @@ class ClinicalIngestion(
                 .medications(extractMedications(patientId, subject))
                 .build()
             val warnings = curation.getWarnings(patientId)
-            IngestionResult(
-                patientId, status(questionnaire, warnings), record, warnings
-            )
+            IngestionResult.create(questionnaire, record, warnings)
         }.sortedWith { o1: IngestionResult, o2: IngestionResult ->
             ClinicalRecordComparator().compare(
                 o1.clinicalRecord,
@@ -122,16 +120,6 @@ class ClinicalIngestion(
         curation.evaluate()
 
         return records
-    }
-
-    private fun status(questionnaire: Questionnaire?, warnings: List<String>): IngestionStatus {
-        return if (questionnaire == null) {
-            IngestionStatus.WARN_NO_QUESTIONNAIRE
-        } else if (warnings.isNotEmpty()) {
-            IngestionStatus.WARN_CURATION_REQUIRED
-        } else {
-            IngestionStatus.PASS
-        }
     }
 
     private fun extractPatientDetails(subject: String, questionnaire: Questionnaire?): PatientDetails {

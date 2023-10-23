@@ -89,9 +89,23 @@ class CurationModel @VisibleForTesting internal constructor(
             val inputPrimaryTumor = fullTrim("$inputTumorLocationString | $inputTumorTypeString")
             val configs: Set<PrimaryTumorConfig?> = find(database.primaryTumorConfigs, inputPrimaryTumor)
             if (configs.isEmpty()) {
-                warnings.add(CurationWarning(patientId, "Could not find primary tumor config for input '$inputPrimaryTumor'"))
+                warnings.add(
+                    CurationWarning(
+                        patientId,
+                        CurationCategory.PRIMARY_TUMOR,
+                        inputPrimaryTumor,
+                        "Could not find primary tumor config for input '$inputPrimaryTumor'"
+                    )
+                )
             } else if (configs.size > 1) {
-                warnings.add(CurationWarning(patientId, "Primary tumor '$inputPrimaryTumor' matched to multiple configs!"))
+                warnings.add(
+                    CurationWarning(
+                        patientId,
+                        CurationCategory.PRIMARY_TUMOR,
+                        inputPrimaryTumor,
+                        "Primary tumor '$inputPrimaryTumor' matched to multiple configs!"
+                    )
+                )
             } else {
                 primaryTumorConfig = configs.iterator().next()
             }
@@ -187,6 +201,8 @@ class CurationModel @VisibleForTesting internal constructor(
                 warnings.add(
                     CurationWarning(
                         patientId,
+                        CurationCategory.ONCOLOGICAL_HISTORY,
+                        trimmedInput,
                         "Could not find treatment history or second primary config for input '$trimmedInput'"
                     )
                 )
@@ -210,6 +226,8 @@ class CurationModel @VisibleForTesting internal constructor(
                     warnings.add(
                         CurationWarning(
                             patientId,
+                            CurationCategory.SECOND_PRIMARY,
+                            trimmedInput,
                             "Could not find second primary or treatment history config for input '$trimmedInput'"
                         )
                     )
@@ -234,7 +252,14 @@ class CurationModel @VisibleForTesting internal constructor(
             val trimmedInput = fullTrim(input)
             val configs: Set<NonOncologicalHistoryConfig> = find(database.nonOncologicalHistoryConfigs, trimmedInput)
             if (configs.isEmpty()) {
-                warnings.add(CurationWarning(patientId, "Could not find non-oncological history config for input '$trimmedInput'"))
+                warnings.add(
+                    CurationWarning(
+                        patientId,
+                        CurationCategory.NON_ONCOLOGICAL_HISTORY,
+                        trimmedInput,
+                        "Could not find non-oncological history config for input '$trimmedInput'"
+                    )
+                )
             }
             configs
                 .filter { config: NonOncologicalHistoryConfig -> !config.ignore }
@@ -257,6 +282,8 @@ class CurationModel @VisibleForTesting internal constructor(
                 warnings.add(
                     CurationWarning(
                         patientId,
+                        CurationCategory.MOLECULAR_TEST,
+                        trimmedInput,
                         "Could not find molecular test config for type '$type' with input: '$trimmedInput'"
                     )
                 )
@@ -281,7 +308,14 @@ class CurationModel @VisibleForTesting internal constructor(
         for (input in inputs) {
             val configs: Set<ComplicationConfig> = find(database.complicationConfigs, input)
             if (configs.isEmpty()) {
-                warnings.add(CurationWarning(patientId, "Could not find complication config for input '$input'"))
+                warnings.add(
+                    CurationWarning(
+                        patientId,
+                        CurationCategory.COMPLICATION,
+                        input,
+                        "Could not find complication config for input '$input'"
+                    )
+                )
             } else {
                 validInputCount++
             }
@@ -311,7 +345,14 @@ class CurationModel @VisibleForTesting internal constructor(
             val trimmedInput = fullTrim(input)
             val configs: Set<ToxicityConfig> = find(database.toxicityConfigs, trimmedInput)
             if (configs.isEmpty()) {
-                warnings.add(CurationWarning(patientId, "Could not find toxicity config for input '$trimmedInput'"))
+                warnings.add(
+                    CurationWarning(
+                        patientId,
+                        CurationCategory.TOXICITY,
+                        trimmedInput,
+                        "Could not find toxicity config for input '$trimmedInput'"
+                    )
+                )
             }
             for (config in configs) {
                 if (!config.ignore) {
@@ -338,11 +379,23 @@ class CurationModel @VisibleForTesting internal constructor(
         val configs: Set<ECGConfig> = find(database.ecgConfigs, input.aberrationDescription()!!)
         if (configs.isEmpty()) {
             warnings.add(
-                CurationWarning(patientId, "Could not find ECG config for input '${input.aberrationDescription()}'")
+                CurationWarning(
+                    patientId,
+                    CurationCategory.ECG,
+                    input.aberrationDescription()!!,
+                    "Could not find ECG config for input '${input.aberrationDescription()}'"
+                )
             )
             return input
         } else if (configs.size > 1) {
-            warnings.add(CurationWarning(patientId, "Multiple ECG configs matched to '${input.aberrationDescription()}'"))
+            warnings.add(
+                CurationWarning(
+                    patientId,
+                    CurationCategory.ECG,
+                    input.aberrationDescription()!!,
+                    "Multiple ECG configs matched to '${input.aberrationDescription()}'"
+                )
+            )
             return null
         }
         val config: ECGConfig = configs.iterator().next()
@@ -367,11 +420,23 @@ class CurationModel @VisibleForTesting internal constructor(
         val configs: Set<InfectionConfig> = find(database.infectionConfigs, input.description()!!)
         if (configs.isEmpty()) {
             warnings.add(
-                CurationWarning(patientId, "Could not find infection config for input '${input.description()}'")
+                CurationWarning(
+                    patientId,
+                    CurationCategory.INFECTION,
+                    input.description()!!,
+                    "Could not find infection config for input '${input.description()}'"
+                )
             )
             return input
         } else if (configs.size > 1) {
-            warnings.add(CurationWarning(patientId, "Multiple infection configs matched to '${input.description()}'"))
+            warnings.add(
+                CurationWarning(
+                    patientId,
+                    CurationCategory.INFECTION,
+                    input.description()!!,
+                    "Multiple infection configs matched to '${input.description()}'"
+                )
+            )
             return null
         }
         val config: InfectionConfig = configs.iterator().next()
@@ -389,10 +454,24 @@ class CurationModel @VisibleForTesting internal constructor(
         }
         val configs: Set<PeriodBetweenUnitConfig> = find(database.periodBetweenUnitConfigs, input)
         if (configs.isEmpty()) {
-            warnings.add(CurationWarning(patientId, "Could not find period between unit config for input '$input'"))
+            warnings.add(
+                CurationWarning(
+                    patientId,
+                    CurationCategory.PERIOD_BETWEEN_UNIT_INTERPRETATION,
+                    input,
+                    "Could not find period between unit config for input '$input'"
+                )
+            )
             return input
         } else if (configs.size > 1) {
-            warnings.add(CurationWarning(patientId, "Multiple period between unit configs matched to '$input'"))
+            warnings.add(
+                CurationWarning(
+                    patientId,
+                    CurationCategory.PERIOD_BETWEEN_UNIT_INTERPRETATION,
+                    input,
+                    "Multiple period between unit configs matched to '$input'"
+                )
+            )
             return null
         }
         val config: PeriodBetweenUnitConfig = configs.first()
@@ -419,7 +498,14 @@ class CurationModel @VisibleForTesting internal constructor(
         for (lesion in otherLesions) {
             val configs: Set<LesionLocationConfig> = find(database.lesionLocationConfigs, lesion)
             if (configs.isEmpty()) {
-                warnings.add(CurationWarning(patientId, "Could not find lesion config for input '$lesion'"))
+                warnings.add(
+                    CurationWarning(
+                        patientId,
+                        CurationCategory.LESION_LOCATION,
+                        lesion,
+                        "Could not find lesion config for input '$lesion'"
+                    )
+                )
             }
             for (config in configs) {
                 // We only want to include lesions from the other lesions in actual other lesions
@@ -441,11 +527,23 @@ class CurationModel @VisibleForTesting internal constructor(
         val configs: Set<LesionLocationConfig> = find(database.lesionLocationConfigs, input)
         if (configs.isEmpty()) {
             warnings.add(
-                CurationWarning(patientId, "Could not find lesion config for biopsy location '$input'")
+                CurationWarning(
+                    patientId,
+                    CurationCategory.LESION_LOCATION,
+                    input,
+                    "Could not find lesion config for biopsy location '$input'"
+                )
             )
             return null
         } else if (configs.size > 1) {
-            warnings.add(CurationWarning(patientId, "Multiple lesion location configs matched for biopsy location '$input'"))
+            warnings.add(
+                CurationWarning(
+                    patientId,
+                    CurationCategory.LESION_LOCATION,
+                    input,
+                    "Multiple lesion location configs matched for biopsy location '$input'"
+                )
+            )
             return null
         }
         return configs.iterator().next().location
@@ -454,10 +552,24 @@ class CurationModel @VisibleForTesting internal constructor(
     fun curateMedicationDosage(patientId: String, input: String): Dosage? {
         val configs: Set<MedicationDosageConfig> = find(database.medicationDosageConfigs, input)
         if (configs.isEmpty()) {
-            warnings.add(CurationWarning(patientId, "Could not find medication dosage config for '$input'"))
+            warnings.add(
+                CurationWarning(
+                    patientId,
+                    CurationCategory.MEDICATION_DOSAGE,
+                    input,
+                    "Could not find medication dosage config for '$input'"
+                )
+            )
             return null
         } else if (configs.size > 1) {
-            warnings.add(CurationWarning(patientId, "Multiple medication dosage configs matched to '$input'"))
+            warnings.add(
+                CurationWarning(
+                    patientId,
+                    CurationCategory.MEDICATION_DOSAGE,
+                    input,
+                    "Multiple medication dosage configs matched to '$input'"
+                )
+            )
             return null
         }
         val config: MedicationDosageConfig = configs.first()
@@ -482,10 +594,24 @@ class CurationModel @VisibleForTesting internal constructor(
 
         val configs: Set<MedicationNameConfig> = find(database.medicationNameConfigs, trimmedInput)
         if (configs.isEmpty()) {
-            warnings.add(CurationWarning(patientId, "Could not find medication name config for '$trimmedInput'"))
+            warnings.add(
+                CurationWarning(
+                    patientId,
+                    CurationCategory.MEDICATION_NAME,
+                    trimmedInput,
+                    "Could not find medication name config for '$trimmedInput'"
+                )
+            )
             return null
         } else if (configs.size > 1) {
-            warnings.add(CurationWarning(patientId, "Multiple medication name configs founds for medication input '$trimmedInput'"))
+            warnings.add(
+                CurationWarning(
+                    patientId,
+                    CurationCategory.MEDICATION_NAME,
+                    trimmedInput,
+                    "Multiple medication name configs founds for medication input '$trimmedInput'"
+                )
+            )
             return null
         }
         val config: MedicationNameConfig = configs.iterator().next()
@@ -505,7 +631,7 @@ class CurationModel @VisibleForTesting internal constructor(
         } else if (status.equals("kuur geannuleerd", ignoreCase = true)) {
             MedicationStatus.CANCELLED
         } else {
-            warnings.add(CurationWarning(patientId, "Could not interpret medication status: $status"))
+            LOGGER.warn("Could not interpret medication status: $status for patient $patientId")
             MedicationStatus.UNKNOWN
         }
     }
@@ -539,6 +665,8 @@ class CurationModel @VisibleForTesting internal constructor(
             warnings.add(
                 CurationWarning(
                     patientId,
+                    CurationCategory.ADMISTRATION_ROUTE_TRANSLATION,
+                    trimmedAdministrationRoute,
                     "No translation found for medication administration route: '$trimmedAdministrationRoute'"
                 )
             )
@@ -564,9 +692,23 @@ class CurationModel @VisibleForTesting internal constructor(
         var name = reformatted
         val builder: ImmutableIntolerance.Builder = ImmutableIntolerance.builder().from(intolerance)
         if (configs.isEmpty()) {
-            warnings.add(CurationWarning(patientId, "Could not find intolerance config for '$reformatted'"))
+            warnings.add(
+                CurationWarning(
+                    patientId,
+                    CurationCategory.INTOLERANCE,
+                    reformatted,
+                    "Could not find intolerance config for '$reformatted'"
+                )
+            )
         } else if (configs.size > 1) {
-            warnings.add(CurationWarning(patientId, "Multiple intolerance configs for intolerance with name '$reformatted'"))
+            warnings.add(
+                CurationWarning(
+                    patientId,
+                    CurationCategory.INTOLERANCE,
+                    reformatted,
+                    "Multiple intolerance configs for intolerance with name '$reformatted'"
+                )
+            )
         } else {
             val config: IntoleranceConfig = configs.iterator().next()
             name = config.name
@@ -597,6 +739,8 @@ class CurationModel @VisibleForTesting internal constructor(
         warnings.add(
             CurationWarning(
                 patientId,
+                CurationCategory.LABORATORY_TRANSLATION,
+                input.code(),
                 "Could not find laboratory translation for lab value with code '${input.code()}' and name '$trimmedName'"
             )
         )
@@ -606,7 +750,14 @@ class CurationModel @VisibleForTesting internal constructor(
     fun translateToxicity(patientId: String, input: Toxicity): Toxicity {
         val translation: ToxicityTranslation? = findToxicityTranslation(input.name())
         if (translation == null) {
-            warnings.add(CurationWarning(patientId, "Could not find translation for toxicity with input '${input.name()}'"))
+            warnings.add(
+                CurationWarning(
+                    patientId,
+                    CurationCategory.TOXICITY_TRANSLATION,
+                    input.name(),
+                    "Could not find translation for toxicity with input '${input.name()}'"
+                )
+            )
             return input
         }
         evaluatedTranslations.put(ToxicityTranslation::class.java, translation)
@@ -641,6 +792,8 @@ class CurationModel @VisibleForTesting internal constructor(
         warnings.add(
             CurationWarning(
                 patientId,
+                CurationCategory.BLOOD_TRANSFUSION_TRANSLATION,
+                trimmedProduct,
                 "Could not find blood transfusion translation for blood transfusion with product '$trimmedProduct'"
             )
         )
@@ -654,7 +807,14 @@ class CurationModel @VisibleForTesting internal constructor(
         val trimmedDosageUnit = dosageUnit.trim { it <= ' ' }
         val translation: DosageUnitTranslation? = findDosageUnitTranslation(trimmedDosageUnit)
         if (translation == null) {
-            warnings.add(CurationWarning(patientId, "No translation found for medication dosage unit: '$trimmedDosageUnit'"))
+            warnings.add(
+                CurationWarning(
+                    patientId,
+                    CurationCategory.DOSAGE_UNIT_TRANSLATION,
+                    trimmedDosageUnit,
+                    "No translation found for medication dosage unit: '$trimmedDosageUnit'"
+                )
+            )
             return null
         }
         evaluatedTranslations.put(DosageUnitTranslation::class.java, translation)
@@ -665,7 +825,7 @@ class CurationModel @VisibleForTesting internal constructor(
         return database.dosageUnitTranslations.firstOrNull { it.dosageUnit.lowercase() == dosageUnit.lowercase() }
     }
 
-    fun getWarnings(patientId: String): List<String> = warnings.filter { it.patientId == patientId }.map { it.message }
+    fun getWarnings(patientId: String): List<CurationWarning> = warnings.filter { it.patientId == patientId }
 
     fun evaluate() {
         var warnCount = 0
