@@ -26,7 +26,7 @@ data class IngestionResult(
                 record.patientId(),
                 status(questionnaire, warnings),
                 record,
-                warnings.groupBy { it.category.sheet }.map {
+                warnings.groupBy { it.category.categoryName }.map {
                     CurationResult(it.key, it.value.map { w -> CurationRequired(w.input, w.message) })
                 }
             )

@@ -2,7 +2,7 @@ package com.hartwig.actin.clinical.curation
 
 data class CurationWarning(val patientId: String, val category: CurationCategory, val input: String, val message: String)
 
-enum class CurationCategory(val sheet: String) {
+enum class CurationCategory(val categoryName: String) {
     PRIMARY_TUMOR("Primary Tumor"),
     ADMISTRATION_ROUTE_TRANSLATION("Administration Route Translation"),
     COMPLICATION("Complication"),
