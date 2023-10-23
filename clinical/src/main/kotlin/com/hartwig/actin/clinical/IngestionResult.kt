@@ -10,15 +10,15 @@ enum class IngestionStatus {
     WARN_NO_QUESTIONNAIRE
 }
 
-data class CurationRequirement(val feedInput: String, val message: String, val patients: List<String>)
+data class CurationRequirement(val feedInput: String, val message: String)
 
 data class CurationResult(val categoryName: String, val requirements: List<CurationRequirement>)
 
 data class IngestionResult(
     val patientId: String,
-    val curationQCStatus: IngestionStatus,
+    val status: IngestionStatus,
     @Transient val clinicalRecord: ClinicalRecord,
-    val curationResults: List<CurationResult>
+    val curationResults: Set<CurationResult>
 ) {
     companion object {
         fun create(questionnaire: Questionnaire?, record: ClinicalRecord, warnings: List<CurationWarning>): IngestionResult {
@@ -26,13 +26,13 @@ data class IngestionResult(
                 record.patientId(),
                 status(questionnaire, warnings),
                 record,
-                warnings.groupBy { it.category.categoryName }.map {
+                warnings.groupBy { it.category.categoryName }.map { (categoryName, warnings) ->
                     CurationResult(
-                        it.key,
-                        it.value.map { warning -> Triple(warning.feedInput, warning.message, warning.patientId) }
-                            .groupBy { t -> t.first to t.second }
-                            .map { t -> CurationRequirement(t.key.first, t.key.second, t.value.map { p -> p.third }) })
-                })
+                        categoryName,
+                        warnings.map { CurationRequirement(it.feedInput, it.message) }
+                    )
+                }.toSet()
+            )
         }
 
         private fun status(questionnaire: Questionnaire?, warnings: List<CurationWarning>): IngestionStatus {
