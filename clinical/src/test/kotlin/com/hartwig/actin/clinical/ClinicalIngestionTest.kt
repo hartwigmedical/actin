@@ -40,6 +40,11 @@ import org.junit.Test
 import java.time.LocalDate
 
 class ClinicalIngestionTest {
+
+    fun curationRequirement(feedInput: String, message: String): CurationRequirement {
+        return CurationRequirement(feedInput, message, listOf(TEST_PATIENT))
+    }
+
     @Test
     fun `Should generate patient ids`() {
         assertEquals("ACTN01029999", toPatientId("ACTN-01-02-9999"))
@@ -66,30 +71,30 @@ class ClinicalIngestionTest {
             CurationResult(
                 "Toxicity Translation",
                 listOf(
-                    CurationRequired("Nausea", "Could not find translation for toxicity with input 'Nausea'"),
-                    CurationRequired("Pain", "Could not find translation for toxicity with input 'Pain'")
+                    curationRequirement("Nausea", "Could not find translation for toxicity with input 'Nausea'"),
+                    curationRequirement("Pain", "Could not find translation for toxicity with input 'Pain'")
                 )
             ),
-            CurationResult("Toxicity", listOf(CurationRequired("toxic", "Could not find toxicity config for input 'toxic'"))),
+            CurationResult("Toxicity", listOf(curationRequirement("toxic", "Could not find toxicity config for input 'toxic'"))),
             CurationResult(
                 "Primary Tumor",
-                listOf(CurationRequired("ovary | serous", "Could not find primary tumor config for input 'ovary | serous'"))
+                listOf(curationRequirement("ovary | serous", "Could not find primary tumor config for input 'ovary | serous'"))
             ),
-            CurationResult("Infection", listOf(CurationRequired("No", "Could not find infection config for input 'No'"))),
-            CurationResult("ECG", listOf(CurationRequired("Sinus", "Could not find ECG config for input 'Sinus'"))),
+            CurationResult("Infection", listOf(curationRequirement("No", "Could not find infection config for input 'No'"))),
+            CurationResult("ECG", listOf(curationRequirement("Sinus", "Could not find ECG config for input 'Sinus'"))),
             CurationResult(
                 "Oncological History",
                 listOf(
-                    CurationRequired("cisplatin", "Could not find treatment history or second primary config for input 'cisplatin'"),
-                    CurationRequired("nivolumab", "Could not find treatment history or second primary config for input 'nivolumab'"),
-                    CurationRequired("surgery", "Could not find treatment history or second primary config for input 'surgery'")
+                    curationRequirement("cisplatin", "Could not find treatment history or second primary config for input 'cisplatin'"),
+                    curationRequirement("nivolumab", "Could not find treatment history or second primary config for input 'nivolumab'"),
+                    curationRequirement("surgery", "Could not find treatment history or second primary config for input 'surgery'")
                 )
             ),
             CurationResult(
                 "Second Primary",
                 listOf(
-                    CurationRequired("surgery", "Could not find second primary or treatment history config for input 'surgery'"),
-                    CurationRequired(
+                    curationRequirement("surgery", "Could not find second primary or treatment history config for input 'surgery'"),
+                    curationRequirement(
                         "sarcoma | Feb 2020",
                         "Could not find second primary or treatment history config for input 'sarcoma | Feb 2020'"
                     )
@@ -97,28 +102,28 @@ class ClinicalIngestionTest {
             ),
             CurationResult(
                 "Non Oncological History",
-                listOf(CurationRequired("diabetes", "Could not find non-oncological history config for input 'diabetes'"))
+                listOf(curationRequirement("diabetes", "Could not find non-oncological history config for input 'diabetes'"))
             ),
             CurationResult(
                 "Molecular Test",
                 listOf(
-                    CurationRequired("ERBB2 3+", "Could not find molecular test config for type 'IHC' with input: 'ERBB2 3+'"),
-                    CurationRequired("Positive", "Could not find molecular test config for type 'PD-L1' with input: 'Positive'")
+                    curationRequirement("ERBB2 3+", "Could not find molecular test config for type 'IHC' with input: 'ERBB2 3+'"),
+                    curationRequirement("Positive", "Could not find molecular test config for type 'PD-L1' with input: 'Positive'")
                 )
             ),
             CurationResult(
                 "Laboratory",
                 listOf(
-                    CurationRequired(
+                    curationRequirement(
                         "LAB1",
                         "Could not find laboratory translation for lab value with code 'LAB1' and name 'Lab Value 1'"
                     ),
-                    CurationRequired("LAB2", "Could not find laboratory translation for lab value with code 'LAB2' and name 'Lab Value 2'"),
-                    CurationRequired("LAB3", "Could not find laboratory translation for lab value with code 'LAB3' and name 'Lab Value 3'"),
-                    CurationRequired("LAB4", "Could not find laboratory translation for lab value with code 'LAB4' and name 'Lab Value 4'")
+                    curationRequirement("LAB2", "Could not find laboratory translation for lab value with code 'LAB2' and name 'Lab Value 2'"),
+                    curationRequirement("LAB3", "Could not find laboratory translation for lab value with code 'LAB3' and name 'Lab Value 3'"),
+                    curationRequirement("LAB4", "Could not find laboratory translation for lab value with code 'LAB4' and name 'Lab Value 4'")
                 )
             ),
-            CurationResult("Intolerance", listOf(CurationRequired("Pills", "Could not find intolerance config for 'Pills'")))
+            CurationResult("Intolerance", listOf(curationRequirement("Pills", "Could not find intolerance config for 'Pills'")))
         )
         val record = results[0].clinicalRecord
         assertEquals(TEST_PATIENT, record.patientId())
