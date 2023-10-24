@@ -17,6 +17,7 @@ import com.hartwig.actin.molecular.filter.GeneFilter;
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory;
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory;
+import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory;
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory;
 import com.hartwig.hmftools.datamodel.gene.TranscriptCodingType;
 import com.hartwig.hmftools.datamodel.gene.TranscriptRegionType;
@@ -25,7 +26,10 @@ import com.hartwig.hmftools.datamodel.linx.LinxBreakend;
 import com.hartwig.hmftools.datamodel.linx.LinxBreakendType;
 import com.hartwig.hmftools.datamodel.linx.LinxRecord;
 import com.hartwig.hmftools.datamodel.linx.LinxSvAnnotation;
+import com.hartwig.hmftools.datamodel.purple.PurpleDriver;
+import com.hartwig.hmftools.datamodel.purple.PurpleDriverType;
 
+import org.assertj.core.util.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
@@ -56,7 +60,9 @@ public class DisruptionExtractorTest {
         GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes(linxBreakend.gene());
         DisruptionExtractor disruptionExtractor = new DisruptionExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase());
 
-        Set<Disruption> disruptions = disruptionExtractor.extractDisruptions(linx, Sets.newHashSet());
+        Set<Disruption> disruptions = disruptionExtractor.extractDisruptions(linx,
+                Sets.newHashSet(),
+                Lists.newArrayList(TestPurpleFactory.driverBuilder().build()));
         assertEquals(1, disruptions.size());
 
         Disruption disruption = disruptions.iterator().next();
@@ -80,7 +86,7 @@ public class DisruptionExtractorTest {
 
         GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes("weird gene");
         DisruptionExtractor disruptionExtractor = new DisruptionExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase());
-        disruptionExtractor.extractDisruptions(linx, Collections.emptySet());
+        disruptionExtractor.extractDisruptions(linx, Collections.emptySet(), Lists.newArrayList(TestPurpleFactory.driverBuilder().build()));
     }
 
     @Test
@@ -90,13 +96,22 @@ public class DisruptionExtractorTest {
         DisruptionExtractor disruptionExtractor =
                 new DisruptionExtractor(TestGeneFilterFactory.createAlwaysValid(), TestEvidenceDatabaseFactory.createEmptyDatabase());
         LinxBreakend breakend1 = TestLinxFactory.breakendBuilder().gene(gene).type(LinxBreakendType.DEL).build();
-        assertEquals(0, disruptionExtractor.extractDisruptions(withBreakend(breakend1), Sets.newHashSet(gene)).size());
+        assertEquals(0,
+                disruptionExtractor.extractDisruptions(withBreakend(breakend1),
+                        Sets.newHashSet(gene),
+                        Lists.newArrayList(TestPurpleFactory.driverBuilder().build())).size());
 
         LinxBreakend breakend2 = TestLinxFactory.breakendBuilder().gene(gene).type(LinxBreakendType.DUP).build();
-        assertEquals(1, disruptionExtractor.extractDisruptions(withBreakend(breakend2), Sets.newHashSet(gene)).size());
+        assertEquals(1,
+                disruptionExtractor.extractDisruptions(withBreakend(breakend2),
+                        Sets.newHashSet(gene),
+                        Lists.newArrayList(TestPurpleFactory.driverBuilder().build())).size());
 
         LinxBreakend breakend3 = TestLinxFactory.breakendBuilder().gene("other").type(LinxBreakendType.DEL).build();
-        assertEquals(1, disruptionExtractor.extractDisruptions(withBreakend(breakend3), Sets.newHashSet(gene)).size());
+        assertEquals(1,
+                disruptionExtractor.extractDisruptions(withBreakend(breakend3),
+                        Sets.newHashSet(gene),
+                        Lists.newArrayList(TestPurpleFactory.driverBuilder().build())).size());
     }
 
     @Test
@@ -122,6 +137,32 @@ public class DisruptionExtractorTest {
                 assertNotNull(DisruptionExtractor.determineCodingContext(codingType));
             }
         }
+    }
+
+    @Test
+    public void canGenerateUndisruptedCopyNumberForHomDupDisruptions() {
+        LinxBreakend linxBreakend = TestLinxFactory.breakendBuilder()
+                .gene("gene")
+                .type(LinxBreakendType.DUP)
+                .junctionCopyNumber(1.2)
+                .undisruptedCopyNumber(1.4)
+                .svId(1)
+                .build();
+
+        LinxSvAnnotation structuralVariant1 = TestLinxFactory.structuralVariantBuilder().svId(1).clusterId(2).build();
+        LinxRecord linx = ImmutableLinxRecord.builder()
+                .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
+                .addAllSomaticStructuralVariants(structuralVariant1)
+                .addAllSomaticBreakends(linxBreakend)
+                .build();
+        PurpleDriver driver = TestPurpleFactory.driverBuilder().gene("gene").driver(PurpleDriverType.HOM_DUP_DISRUPTION).build();
+
+        GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes(linxBreakend.gene());
+        DisruptionExtractor disruptionExtractor = new DisruptionExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase());
+
+        Set<Disruption> disruptions = disruptionExtractor.extractDisruptions(linx, Sets.newHashSet(), Lists.newArrayList(driver));
+        Disruption disruption = disruptions.iterator().next();
+        assertEquals(0.2, disruption.undisruptedCopyNumber(), EPSILON);
     }
 
     @NotNull

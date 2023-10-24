@@ -74,7 +74,8 @@ class DriverExtractor {
                 homozygousDisruptions.size(),
                 reportableCount(homozygousDisruptions));
 
-        Set<Disruption> disruptions = disruptionExtractor.extractDisruptions(record.linx(), reportableLostGenes(copyNumbers));
+        Set<Disruption> disruptions =
+                disruptionExtractor.extractDisruptions(record.linx(), reportableLostGenes(copyNumbers), record.purple().somaticDrivers());
         LOGGER.info(" Extracted {} disruptions of which {} reportable", disruptions.size(), reportableCount(disruptions));
 
         Set<Fusion> fusions = fusionExtractor.extract(record.linx());

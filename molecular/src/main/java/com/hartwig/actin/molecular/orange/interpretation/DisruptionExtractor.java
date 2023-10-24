@@ -20,6 +20,8 @@ import com.hartwig.hmftools.datamodel.linx.LinxBreakend;
 import com.hartwig.hmftools.datamodel.linx.LinxBreakendType;
 import com.hartwig.hmftools.datamodel.linx.LinxRecord;
 import com.hartwig.hmftools.datamodel.linx.LinxSvAnnotation;
+import com.hartwig.hmftools.datamodel.purple.PurpleDriver;
+import com.hartwig.hmftools.datamodel.purple.PurpleDriverType;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +38,8 @@ class DisruptionExtractor {
     }
 
     @NotNull
-    public Set<Disruption> extractDisruptions(@NotNull LinxRecord linx, @NotNull Set<String> lostGenes) {
+    public Set<Disruption> extractDisruptions(@NotNull LinxRecord linx, @NotNull Set<String> lostGenes,
+            @NotNull List<PurpleDriver> drivers) {
         Set<Disruption> disruptions = Sets.newTreeSet(new DisruptionComparator());
         for (LinxBreakend breakend : linx.allSomaticBreakends()) {
             String event = DriverEventFactory.disruptionEvent(breakend);
@@ -51,7 +54,7 @@ class DisruptionExtractor {
                             .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForBreakend(breakend)))
                             .type(determineDisruptionType(breakend.type()))
                             .junctionCopyNumber(ExtractionUtil.keep3Digits(breakend.junctionCopyNumber()))
-                            .undisruptedCopyNumber(ExtractionUtil.keep3Digits(breakend.undisruptedCopyNumber()))
+                            .undisruptedCopyNumber(ExtractionUtil.keep3Digits(correctUndisruptedCopyNumber(breakend, drivers)))
                             .regionType(determineRegionType(breakend.regionType()))
                             .codingContext(determineCodingContext(breakend.codingType()))
                             .clusterGroup(lookupClusterId(breakend, linx.allSomaticStructuralVariants()))
@@ -159,5 +162,17 @@ class DisruptionExtractor {
                 throw new IllegalStateException("Cannot determine coding context for linx coding type: " + codingType);
             }
         }
+    }
+
+    private static double correctUndisruptedCopyNumber(@NotNull LinxBreakend breakend, @NotNull List<PurpleDriver> drivers) {
+        if (breakend.type() == LinxBreakendType.DUP) {
+            for (PurpleDriver driver : drivers) {
+                if (driver.gene().equals(breakend.gene()) && driver.driver() == PurpleDriverType.HOM_DUP_DISRUPTION) {
+                    return Math.max(0.0, breakend.undisruptedCopyNumber() - breakend.junctionCopyNumber());
+                }
+            }
+        }
+
+        return breakend.undisruptedCopyNumber();
     }
 }
