@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
 import java.util.Set;
+import java.util.List;
 
 import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.driver.CodingContext;
@@ -60,9 +61,7 @@ public class DisruptionExtractorTest {
         GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes(linxBreakend.gene());
         DisruptionExtractor disruptionExtractor = new DisruptionExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase());
 
-        Set<Disruption> disruptions = disruptionExtractor.extractDisruptions(linx,
-                Sets.newHashSet(),
-                Lists.newArrayList(TestPurpleFactory.driverBuilder().build()));
+        Set<Disruption> disruptions = disruptionExtractor.extractDisruptions(linx, Sets.newHashSet(), List.of());
         assertEquals(1, disruptions.size());
 
         Disruption disruption = disruptions.iterator().next();
@@ -96,22 +95,13 @@ public class DisruptionExtractorTest {
         DisruptionExtractor disruptionExtractor =
                 new DisruptionExtractor(TestGeneFilterFactory.createAlwaysValid(), TestEvidenceDatabaseFactory.createEmptyDatabase());
         LinxBreakend breakend1 = TestLinxFactory.breakendBuilder().gene(gene).type(LinxBreakendType.DEL).build();
-        assertEquals(0,
-                disruptionExtractor.extractDisruptions(withBreakend(breakend1),
-                        Sets.newHashSet(gene),
-                        Lists.newArrayList(TestPurpleFactory.driverBuilder().build())).size());
+        assertEquals(0, disruptionExtractor.extractDisruptions(withBreakend(breakend1), Sets.newHashSet(gene), List.of()).size());
 
         LinxBreakend breakend2 = TestLinxFactory.breakendBuilder().gene(gene).type(LinxBreakendType.DUP).build();
-        assertEquals(1,
-                disruptionExtractor.extractDisruptions(withBreakend(breakend2),
-                        Sets.newHashSet(gene),
-                        Lists.newArrayList(TestPurpleFactory.driverBuilder().build())).size());
+        assertEquals(1, disruptionExtractor.extractDisruptions(withBreakend(breakend2), Sets.newHashSet(gene), List.of()).size());
 
         LinxBreakend breakend3 = TestLinxFactory.breakendBuilder().gene("other").type(LinxBreakendType.DEL).build();
-        assertEquals(1,
-                disruptionExtractor.extractDisruptions(withBreakend(breakend3),
-                        Sets.newHashSet(gene),
-                        Lists.newArrayList(TestPurpleFactory.driverBuilder().build())).size());
+        assertEquals(1, disruptionExtractor.extractDisruptions(withBreakend(breakend3), Sets.newHashSet(gene), List.of()).size());
     }
 
     @Test
@@ -160,7 +150,7 @@ public class DisruptionExtractorTest {
         GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes(linxBreakend.gene());
         DisruptionExtractor disruptionExtractor = new DisruptionExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase());
 
-        Set<Disruption> disruptions = disruptionExtractor.extractDisruptions(linx, Sets.newHashSet(), Lists.newArrayList(driver));
+        Set<Disruption> disruptions = disruptionExtractor.extractDisruptions(linx, Sets.newHashSet(), List.of(driver));
         Disruption disruption = disruptions.iterator().next();
         assertEquals(0.2, disruption.undisruptedCopyNumber(), EPSILON);
     }
