@@ -30,7 +30,6 @@ import com.hartwig.hmftools.datamodel.linx.LinxSvAnnotation;
 import com.hartwig.hmftools.datamodel.purple.PurpleDriver;
 import com.hartwig.hmftools.datamodel.purple.PurpleDriverType;
 
-import org.assertj.core.util.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
@@ -85,7 +84,7 @@ public class DisruptionExtractorTest {
 
         GeneFilter geneFilter = TestGeneFilterFactory.createValidForGenes("weird gene");
         DisruptionExtractor disruptionExtractor = new DisruptionExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase());
-        disruptionExtractor.extractDisruptions(linx, Collections.emptySet(), Lists.newArrayList(TestPurpleFactory.driverBuilder().build()));
+        disruptionExtractor.extractDisruptions(linx, Collections.emptySet(), List.of());
     }
 
     @Test
