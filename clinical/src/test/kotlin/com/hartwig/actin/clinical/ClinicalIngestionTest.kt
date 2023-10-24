@@ -40,6 +40,7 @@ import org.junit.Test
 import java.time.LocalDate
 
 class ClinicalIngestionTest {
+
     @Test
     fun `Should generate patient ids`() {
         assertEquals("ACTN01029999", toPatientId("ACTN-01-02-9999"))
@@ -51,8 +52,8 @@ class ClinicalIngestionTest {
         val results = createMinimalTestIngestionResults()
         assertEquals(1, results.size.toLong())
         assertThat(results[0].patientId).isEqualTo(TEST_PATIENT)
-        assertThat(results[0].curationQCStatus).isEqualTo(IngestionStatus.WARN_NO_QUESTIONNAIRE)
-        assertThat(results[0].warnings).isEmpty()
+        assertThat(results[0].status).isEqualTo(IngestionStatus.WARN_NO_QUESTIONNAIRE)
+        assertThat(results[0].curationResults).isEmpty()
         assertThat(results[0].clinicalRecord).isNotNull()
     }
 
@@ -61,27 +62,73 @@ class ClinicalIngestionTest {
         val results = createProperTestIngestionResults()
         assertThat(results).hasSize(1)
         assertThat(results[0].patientId).isEqualTo(TEST_PATIENT)
-        assertThat(results[0].curationQCStatus).isEqualTo(IngestionStatus.WARN_CURATION_REQUIRED)
-        assertThat(results[0].warnings).containsOnly(
-            "Could not find translation for toxicity with input 'Nausea'",
-            "Could not find translation for toxicity with input 'Pain'",
-            "Could not find toxicity config for input 'toxic'",
-            "Could not find primary tumor config for input 'ovary | serous'",
-            "Could not find infection config for input 'No'",
-            "Could not find ECG config for input 'Sinus'",
-            "Could not find treatment history or second primary config for input 'cisplatin'",
-            "Could not find treatment history or second primary config for input 'nivolumab'",
-            "Could not find treatment history or second primary config for input 'surgery'",
-            "Could not find second primary or treatment history config for input 'surgery'",
-            "Could not find second primary or treatment history config for input 'sarcoma | Feb 2020'",
-            "Could not find non-oncological history config for input 'diabetes'",
-            "Could not find molecular test config for type 'IHC' with input: 'ERBB2 3+'",
-            "Could not find molecular test config for type 'PD-L1' with input: 'Positive'",
-            "Could not find laboratory translation for lab value with code 'LAB1' and name 'Lab Value 1'",
-            "Could not find laboratory translation for lab value with code 'LAB2' and name 'Lab Value 2'",
-            "Could not find laboratory translation for lab value with code 'LAB3' and name 'Lab Value 3'",
-            "Could not find laboratory translation for lab value with code 'LAB4' and name 'Lab Value 4'",
-            "Could not find intolerance config for 'Pills'"
+        assertThat(results[0].status).isEqualTo(IngestionStatus.WARN_CURATION_REQUIRED)
+        assertThat(results[0].curationResults).containsOnly(
+            CurationResult(
+                "Toxicity Translation",
+                listOf(
+                    CurationRequirement("Nausea", "Could not find translation for toxicity with input 'Nausea'"),
+                    CurationRequirement("Pain", "Could not find translation for toxicity with input 'Pain'")
+                )
+            ),
+            CurationResult("Toxicity", listOf(CurationRequirement("toxic", "Could not find toxicity config for input 'toxic'"))),
+            CurationResult(
+                "Primary Tumor",
+                listOf(CurationRequirement("ovary | serous", "Could not find primary tumor config for input 'ovary | serous'"))
+            ),
+            CurationResult("Infection", listOf(CurationRequirement("No", "Could not find infection config for input 'No'"))),
+            CurationResult("ECG", listOf(CurationRequirement("Sinus", "Could not find ECG config for input 'Sinus'"))),
+            CurationResult(
+                "Oncological History",
+                listOf(
+                    CurationRequirement("cisplatin", "Could not find treatment history or second primary config for input 'cisplatin'"),
+                    CurationRequirement("nivolumab", "Could not find treatment history or second primary config for input 'nivolumab'"),
+                    CurationRequirement("surgery", "Could not find treatment history or second primary config for input 'surgery'")
+                )
+            ),
+            CurationResult(
+                "Second Primary",
+                listOf(
+                    CurationRequirement("surgery", "Could not find second primary or treatment history config for input 'surgery'"),
+                    CurationRequirement(
+                        "sarcoma | Feb 2020",
+                        "Could not find second primary or treatment history config for input 'sarcoma | Feb 2020'"
+                    )
+                )
+            ),
+            CurationResult(
+                "Non Oncological History",
+                listOf(CurationRequirement("diabetes", "Could not find non-oncological history config for input 'diabetes'"))
+            ),
+            CurationResult(
+                "Molecular Test",
+                listOf(
+                    CurationRequirement("ERBB2 3+", "Could not find molecular test config for type 'IHC' with input: 'ERBB2 3+'"),
+                    CurationRequirement("Positive", "Could not find molecular test config for type 'PD-L1' with input: 'Positive'")
+                )
+            ),
+            CurationResult(
+                "Laboratory",
+                listOf(
+                    CurationRequirement(
+                        "LAB1",
+                        "Could not find laboratory translation for lab value with code 'LAB1' and name 'Lab Value 1'"
+                    ),
+                    CurationRequirement(
+                        "LAB2",
+                        "Could not find laboratory translation for lab value with code 'LAB2' and name 'Lab Value 2'"
+                    ),
+                    CurationRequirement(
+                        "LAB3",
+                        "Could not find laboratory translation for lab value with code 'LAB3' and name 'Lab Value 3'"
+                    ),
+                    CurationRequirement(
+                        "LAB4",
+                        "Could not find laboratory translation for lab value with code 'LAB4' and name 'Lab Value 4'"
+                    )
+                )
+            ),
+            CurationResult("Intolerance", listOf(CurationRequirement("Pills", "Could not find intolerance config for 'Pills'")))
         )
         val record = results[0].clinicalRecord
         assertEquals(TEST_PATIENT, record.patientId())
