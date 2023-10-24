@@ -6,8 +6,4 @@ COPY --from=europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-
 
 COPY target/clinical-local-SNAPSHOT-jar-with-dependencies.jar /usr/local/actin.jar
 
-ENTRYPOINT ["java", "-cp", "/usr/local/actin.jar", "com.hartwig.actin.clinical.ClinicalIngestionApplicationKt", \
-    "-doid_json", "/data/resources/public/disease_ontology/doid.json", \
-    "-atc_tsv", "/data/resources/actin/atc_config/atc_tree.tsv", \
-    "-treatment_directory", "/data/resources/actin/treatment_db" \
-]
+ENTRYPOINT ["java", "-cp", "/usr/local/actin.jar", "com.hartwig.actin.clinical.ClinicalIngestionApplicationKt" ]
