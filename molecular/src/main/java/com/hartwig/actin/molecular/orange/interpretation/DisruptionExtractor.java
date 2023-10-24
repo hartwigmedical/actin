@@ -171,7 +171,7 @@ class DisruptionExtractor {
     private static double correctUndisruptedCopyNumber(@NotNull LinxBreakend breakend, @NotNull List<PurpleDriver> drivers) {
         LOGGER.debug("Correcting undisrupted copy number for {}", breakend);
         if (breakend.type() == LinxBreakendType.DUP) {
-            LOGGER.debug("Determined type to be DUP for {}", breakend);
+            LOGGER.debug("Determined type to be DUP for {}. Evaluating drivers {}", breakend, drivers);
             for (PurpleDriver driver : drivers) {
                 if (driver.gene().equals(breakend.gene()) && driver.driver() == PurpleDriverType.HOM_DUP_DISRUPTION) {
                     LOGGER.debug("Found HOM_DUP_DISRUPTION driver for {}", breakend);
