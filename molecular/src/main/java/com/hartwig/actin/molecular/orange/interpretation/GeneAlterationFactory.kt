@@ -1,97 +1,91 @@
-package com.hartwig.actin.molecular.orange.interpretation;
+package com.hartwig.actin.molecular.orange.interpretation
 
-import com.hartwig.actin.molecular.datamodel.driver.GeneAlteration;
-import com.hartwig.actin.molecular.datamodel.driver.GeneRole;
-import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
+import com.hartwig.actin.molecular.datamodel.driver.GeneRole
+import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
+import com.hartwig.serve.datamodel.common.GeneAlteration
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-public final class GeneAlterationFactory {
-
-    private GeneAlterationFactory() {
-    }
-
-    @NotNull
-    public static GeneAlteration convertAlteration(@NotNull String gene,
-            @Nullable com.hartwig.serve.datamodel.common.GeneAlteration input) {
-        return new GeneAlteration() {
-            @NotNull
-            @Override
-            public String gene() {
-                return gene;
+object GeneAlterationFactory {
+    fun convertAlteration(gene: String,
+                          input: GeneAlteration?): com.hartwig.actin.molecular.datamodel.driver.GeneAlteration {
+        return object : com.hartwig.actin.molecular.datamodel.driver.GeneAlteration {
+            override fun gene(): String {
+                return gene
             }
 
-            @NotNull
-            @Override
-            public GeneRole geneRole() {
-                return input != null ? convertGeneRole(input.geneRole()) : GeneRole.UNKNOWN;
+            override fun geneRole(): GeneRole {
+                return if (input != null) convertGeneRole(input.geneRole()) else GeneRole.UNKNOWN
             }
 
-            @NotNull
-            @Override
-            public ProteinEffect proteinEffect() {
-                return input != null ? convertProteinEffect(input.proteinEffect()) : ProteinEffect.UNKNOWN;
+            override fun proteinEffect(): ProteinEffect {
+                return if (input != null) convertProteinEffect(input.proteinEffect()) else ProteinEffect.UNKNOWN
             }
 
-            @Nullable
-            @Override
-            public Boolean isAssociatedWithDrugResistance() {
-                return input != null ? input.associatedWithDrugResistance() : null;
-            }
-        };
-    }
-
-    @NotNull
-    private static GeneRole convertGeneRole(@NotNull com.hartwig.serve.datamodel.common.GeneRole input) {
-        switch (input) {
-            case BOTH: {
-                return GeneRole.BOTH;
-            }
-            case ONCO: {
-                return GeneRole.ONCO;
-            }
-            case TSG: {
-                return GeneRole.TSG;
-            }
-            case UNKNOWN: {
-                return GeneRole.UNKNOWN;
-            }
-            default: {
-                throw new IllegalStateException("Could not convert gene role input: " + input);
+            override fun isAssociatedWithDrugResistance(): Boolean? {
+                return input?.associatedWithDrugResistance()
             }
         }
     }
 
-    @NotNull
-    public static ProteinEffect convertProteinEffect(@NotNull com.hartwig.serve.datamodel.common.ProteinEffect input) {
-        switch (input) {
-            case UNKNOWN: {
-                return ProteinEffect.UNKNOWN;
+    private fun convertGeneRole(input: com.hartwig.serve.datamodel.common.GeneRole): GeneRole {
+        return when (input) {
+            com.hartwig.serve.datamodel.common.GeneRole.BOTH -> {
+                GeneRole.BOTH
             }
-            case AMBIGUOUS: {
-                return ProteinEffect.AMBIGUOUS;
+
+            com.hartwig.serve.datamodel.common.GeneRole.ONCO -> {
+                GeneRole.ONCO
             }
-            case NO_EFFECT: {
-                return ProteinEffect.NO_EFFECT;
+
+            com.hartwig.serve.datamodel.common.GeneRole.TSG -> {
+                GeneRole.TSG
             }
-            case NO_EFFECT_PREDICTED: {
-                return ProteinEffect.NO_EFFECT_PREDICTED;
+
+            com.hartwig.serve.datamodel.common.GeneRole.UNKNOWN -> {
+                GeneRole.UNKNOWN
             }
-            case LOSS_OF_FUNCTION: {
-                return ProteinEffect.LOSS_OF_FUNCTION;
+
+            else -> {
+                throw IllegalStateException("Could not convert gene role input: $input")
             }
-            case LOSS_OF_FUNCTION_PREDICTED: {
-                return ProteinEffect.LOSS_OF_FUNCTION_PREDICTED;
+        }
+    }
+
+    fun convertProteinEffect(input: com.hartwig.serve.datamodel.common.ProteinEffect): ProteinEffect {
+        return when (input) {
+            com.hartwig.serve.datamodel.common.ProteinEffect.UNKNOWN -> {
+                ProteinEffect.UNKNOWN
             }
-            case GAIN_OF_FUNCTION: {
-                return ProteinEffect.GAIN_OF_FUNCTION;
+
+            com.hartwig.serve.datamodel.common.ProteinEffect.AMBIGUOUS -> {
+                ProteinEffect.AMBIGUOUS
             }
-            case GAIN_OF_FUNCTION_PREDICTED: {
-                return ProteinEffect.GAIN_OF_FUNCTION_PREDICTED;
+
+            com.hartwig.serve.datamodel.common.ProteinEffect.NO_EFFECT -> {
+                ProteinEffect.NO_EFFECT
             }
-            default: {
-                throw new IllegalStateException("Could not convert protein effect: " + input);
+
+            com.hartwig.serve.datamodel.common.ProteinEffect.NO_EFFECT_PREDICTED -> {
+                ProteinEffect.NO_EFFECT_PREDICTED
+            }
+
+            com.hartwig.serve.datamodel.common.ProteinEffect.LOSS_OF_FUNCTION -> {
+                ProteinEffect.LOSS_OF_FUNCTION
+            }
+
+            com.hartwig.serve.datamodel.common.ProteinEffect.LOSS_OF_FUNCTION_PREDICTED -> {
+                ProteinEffect.LOSS_OF_FUNCTION_PREDICTED
+            }
+
+            com.hartwig.serve.datamodel.common.ProteinEffect.GAIN_OF_FUNCTION -> {
+                ProteinEffect.GAIN_OF_FUNCTION
+            }
+
+            com.hartwig.serve.datamodel.common.ProteinEffect.GAIN_OF_FUNCTION_PREDICTED -> {
+                ProteinEffect.GAIN_OF_FUNCTION_PREDICTED
+            }
+
+            else -> {
+                throw IllegalStateException("Could not convert protein effect: $input")
             }
         }
     }

@@ -1,26 +1,19 @@
-package com.hartwig.actin.molecular.orange.datamodel.virus;
+package com.hartwig.actin.molecular.orange.datamodel.virus
 
-import com.hartwig.hmftools.datamodel.virus.ImmutableAnnotatedVirus;
-import com.hartwig.hmftools.datamodel.virus.VirusBreakendQCStatus;
-import com.hartwig.hmftools.datamodel.virus.VirusLikelihoodType;
+import com.hartwig.hmftools.datamodel.virus.ImmutableAnnotatedVirus
+import com.hartwig.hmftools.datamodel.virus.VirusBreakendQCStatus
+import com.hartwig.hmftools.datamodel.virus.VirusLikelihoodType
+import org.apache.logging.log4j.util.Strings
 
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
-
-public final class TestVirusInterpreterFactory {
-
-    private TestVirusInterpreterFactory() {
-    }
-
-    @NotNull
-    public static ImmutableAnnotatedVirus.Builder builder() {
+object TestVirusInterpreterFactory {
+    fun builder(): ImmutableAnnotatedVirus.Builder {
         return ImmutableAnnotatedVirus.builder()
-                .reported(true)
-                .name(Strings.EMPTY)
-                .qcStatus(VirusBreakendQCStatus.NO_ABNORMALITIES)
-                .integrations(0)
-                .virusDriverLikelihoodType(VirusLikelihoodType.LOW)
-                .percentageCovered(0D)
-                .meanCoverage(0D);
+            .reported(true)
+            .name(Strings.EMPTY)
+            .qcStatus(VirusBreakendQCStatus.NO_ABNORMALITIES)
+            .integrations(0)
+            .virusDriverLikelihoodType(VirusLikelihoodType.LOW)
+            .percentageCovered(0.0)
+            .meanCoverage(0.0)
     }
 }

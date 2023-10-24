@@ -1,81 +1,63 @@
-package com.hartwig.actin.molecular.orange.interpretation;
+package com.hartwig.actin.molecular.orange.interpretation
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele
+import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
+import com.hartwig.actin.molecular.orange.datamodel.lilac.TestLilacFactory
+import com.hartwig.hmftools.datamodel.hla.ImmutableLilacRecord
+import com.hartwig.hmftools.datamodel.hla.LilacAllele
+import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeRecord
+import com.hartwig.hmftools.datamodel.orange.OrangeRecord
+import org.junit.Assert
+import org.junit.Test
 
-import java.util.Set;
-
-import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele;
-import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
-import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory;
-import com.hartwig.actin.molecular.orange.datamodel.lilac.TestLilacFactory;
-import com.hartwig.hmftools.datamodel.hla.ImmutableLilacRecord;
-import com.hartwig.hmftools.datamodel.hla.LilacAllele;
-import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeRecord;
-import com.hartwig.hmftools.datamodel.orange.OrangeRecord;
-
-import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
-
-public class ImmunologyExtractionTest {
-
-    private static final double EPSILON = 1.0E-10;
-
+class ImmunologyExtractionTest {
     @Test
-    public void canExtractImmunology() {
-        LilacAllele allele1 = TestLilacFactory.builder()
-                .allele("allele 1")
-                .tumorCopyNumber(1.2)
-                .somaticMissense(1)
-                .somaticInframeIndel(1)
-                .somaticSplice(1)
-                .somaticNonsenseOrFrameshift(0)
-                .build();
-
-        LilacAllele allele2 = TestLilacFactory.builder()
-                .allele("allele 2")
-                .tumorCopyNumber(1.3)
-                .somaticMissense(0)
-                .somaticInframeIndel(0)
-                .somaticSplice(0)
-                .somaticNonsenseOrFrameshift(0)
-                .build();
-
-        OrangeRecord orange = withLilacData(ImmunologyExtraction.LILAC_QC_PASS, allele1, allele2);
-        MolecularImmunology immunology = ImmunologyExtraction.extract(orange);
-
-        assertTrue(immunology.isReliable());
-
-        assertEquals(2, immunology.hlaAlleles().size());
-        HlaAllele hlaAllele1 = findByName(immunology.hlaAlleles(), "allele 1");
-
-        assertEquals(1.2, hlaAllele1.tumorCopyNumber(), EPSILON);
-        assertTrue(hlaAllele1.hasSomaticMutations());
-
-        HlaAllele hlaAllele2 = findByName(immunology.hlaAlleles(), "allele 2");
-
-        assertEquals(1.3, hlaAllele2.tumorCopyNumber(), EPSILON);
-        assertFalse(hlaAllele2.hasSomaticMutations());
+    fun canExtractImmunology() {
+        val allele1: LilacAllele? = TestLilacFactory.builder()
+            .allele("allele 1")
+            .tumorCopyNumber(1.2)
+            .somaticMissense(1.0)
+            .somaticInframeIndel(1.0)
+            .somaticSplice(1.0)
+            .somaticNonsenseOrFrameshift(0.0)
+            .build()
+        val allele2: LilacAllele? = TestLilacFactory.builder()
+            .allele("allele 2")
+            .tumorCopyNumber(1.3)
+            .somaticMissense(0.0)
+            .somaticInframeIndel(0.0)
+            .somaticSplice(0.0)
+            .somaticNonsenseOrFrameshift(0.0)
+            .build()
+        val orange = withLilacData(ImmunologyExtraction.LILAC_QC_PASS, allele1, allele2)
+        val immunology = ImmunologyExtraction.extract(orange)
+        Assert.assertTrue(immunology.isReliable())
+        Assert.assertEquals(2, immunology.hlaAlleles().size.toLong())
+        val hlaAllele1 = findByName(immunology.hlaAlleles(), "allele 1")
+        Assert.assertEquals(1.2, hlaAllele1.tumorCopyNumber(), EPSILON)
+        Assert.assertTrue(hlaAllele1.hasSomaticMutations())
+        val hlaAllele2 = findByName(immunology.hlaAlleles(), "allele 2")
+        Assert.assertEquals(1.3, hlaAllele2.tumorCopyNumber(), EPSILON)
+        Assert.assertFalse(hlaAllele2.hasSomaticMutations())
     }
 
-    @NotNull
-    private static HlaAllele findByName(@NotNull Set<HlaAllele> hlaAlleles, @NotNull String nameToFind) {
-        for (HlaAllele hlaAllele : hlaAlleles) {
-            if (hlaAllele.name().equals(nameToFind)) {
-                return hlaAllele;
+    companion object {
+        private const val EPSILON = 1.0E-10
+        private fun findByName(hlaAlleles: MutableSet<HlaAllele?>, nameToFind: String): HlaAllele {
+            for (hlaAllele in hlaAlleles) {
+                if (hlaAllele.name() == nameToFind) {
+                    return hlaAllele
+                }
             }
+            throw IllegalStateException("Could not find hla allele with name: $nameToFind")
         }
 
-        throw new IllegalStateException("Could not find hla allele with name: " + nameToFind);
-    }
-
-    @NotNull
-    private static OrangeRecord withLilacData(@NotNull String lilacQc, @NotNull LilacAllele... alleles) {
-        OrangeRecord base = TestOrangeFactory.createMinimalTestOrangeRecord();
-        return ImmutableOrangeRecord.builder()
+        private fun withLilacData(lilacQc: String, vararg alleles: LilacAllele): OrangeRecord {
+            val base = TestOrangeFactory.createMinimalTestOrangeRecord()
+            return ImmutableOrangeRecord.builder()
                 .from(base)
-                .lilac(ImmutableLilacRecord.builder().from(base.lilac()).qc(lilacQc).addAlleles(alleles).build())
-                .build();
+                .lilac(ImmutableLilacRecord.builder().from(base.lilac()).qc(lilacQc).addAlleles(*alleles).build())
+                .build()
+        }
     }
 }

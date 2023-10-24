@@ -1,50 +1,35 @@
-package com.hartwig.actin.molecular.orange.interpretation;
+package com.hartwig.actin.molecular.orange.interpretation
 
-import java.util.List;
-import java.util.Set;
+import com.google.common.collect.Sets
+import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele
+import com.hartwig.actin.molecular.datamodel.immunology.ImmutableHlaAllele
+import com.hartwig.actin.molecular.datamodel.immunology.ImmutableMolecularImmunology
+import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology
+import com.hartwig.hmftools.datamodel.hla.LilacAllele
+import com.hartwig.hmftools.datamodel.hla.LilacRecord
+import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 
-import com.google.common.collect.Sets;
-import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele;
-import com.hartwig.actin.molecular.datamodel.immunology.ImmutableHlaAllele;
-import com.hartwig.actin.molecular.datamodel.immunology.ImmutableMolecularImmunology;
-import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
-import com.hartwig.hmftools.datamodel.hla.LilacAllele;
-import com.hartwig.hmftools.datamodel.hla.LilacRecord;
-import com.hartwig.hmftools.datamodel.orange.OrangeRecord;
-
-import org.jetbrains.annotations.NotNull;
-
-final class ImmunologyExtraction {
-
-    static final String LILAC_QC_PASS = "PASS";
-
-    private ImmunologyExtraction() {
+internal object ImmunologyExtraction {
+    val LILAC_QC_PASS: String? = "PASS"
+    fun extract(record: OrangeRecord): MolecularImmunology {
+        val lilac = record.lilac()
+        return ImmutableMolecularImmunology.builder().isReliable(isQCPass(lilac)).hlaAlleles(toHlaAlleles(lilac.alleles())).build()
     }
 
-    @NotNull
-    public static MolecularImmunology extract(@NotNull OrangeRecord record) {
-        LilacRecord lilac = record.lilac();
-        return ImmutableMolecularImmunology.builder().isReliable(isQCPass(lilac)).hlaAlleles(toHlaAlleles(lilac.alleles())).build();
+    private fun isQCPass(lilac: LilacRecord): Boolean {
+        return lilac.qc() == LILAC_QC_PASS
     }
 
-    private static boolean isQCPass(@NotNull LilacRecord lilac) {
-        return lilac.qc().equals(LILAC_QC_PASS);
-    }
-
-    @NotNull
-    private static Set<HlaAllele> toHlaAlleles(@NotNull List<LilacAllele> alleles) {
-        Set<HlaAllele> hlaAlleles = Sets.newHashSet();
-        for (LilacAllele allele : alleles) {
-            boolean hasSomaticVariants =
-                    allele.somaticMissense() > 0 || allele.somaticNonsenseOrFrameshift() > 0 || allele.somaticSplice() > 0
-                            || allele.somaticInframeIndel() > 0;
-
+    private fun toHlaAlleles(alleles: MutableList<LilacAllele?>): MutableSet<HlaAllele?> {
+        val hlaAlleles: MutableSet<HlaAllele?>? = Sets.newHashSet()
+        for (allele in alleles) {
+            val hasSomaticVariants = allele.somaticMissense() > 0 || allele.somaticNonsenseOrFrameshift() > 0 || allele.somaticSplice() > 0 || allele.somaticInframeIndel() > 0
             hlaAlleles.add(ImmutableHlaAllele.builder()
-                    .name(allele.allele())
-                    .tumorCopyNumber(allele.tumorCopyNumber())
-                    .hasSomaticMutations(hasSomaticVariants)
-                    .build());
+                .name(allele.allele())
+                .tumorCopyNumber(allele.tumorCopyNumber())
+                .hasSomaticMutations(hasSomaticVariants)
+                .build())
         }
-        return hlaAlleles;
+        return hlaAlleles
     }
 }

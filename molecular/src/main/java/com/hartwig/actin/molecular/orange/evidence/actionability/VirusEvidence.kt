@@ -1,63 +1,45 @@
-package com.hartwig.actin.molecular.orange.evidence.actionability;
+package com.hartwig.actin.molecular.orange.evidence.actionability
 
-import java.util.List;
+import com.google.common.collect.Lists
+import com.hartwig.hmftools.datamodel.virus.AnnotatedVirus
+import com.hartwig.hmftools.datamodel.virus.VirusInterpretation
+import com.hartwig.serve.datamodel.ActionableEvent
+import com.hartwig.serve.datamodel.ActionableEvents
+import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType
 
-import com.google.common.collect.Lists;
-import com.hartwig.hmftools.datamodel.virus.AnnotatedVirus;
-import com.hartwig.hmftools.datamodel.virus.VirusInterpretation;
-import com.hartwig.serve.datamodel.ActionableEvent;
-import com.hartwig.serve.datamodel.ActionableEvents;
-import com.hartwig.serve.datamodel.characteristic.ActionableCharacteristic;
-import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType;
+internal class VirusEvidence private constructor(private val hpvCharacteristics: MutableList<ActionableEvent?>,
+                                                 private val ebvCharacteristics: MutableList<ActionableEvent?>) : EvidenceMatcher<AnnotatedVirus?> {
+    override fun findMatches(virus: AnnotatedVirus): MutableList<ActionableEvent?> {
+        val interpretation = virus.interpretation()
+        return if (interpretation == null || !virus.reported()) {
+            Lists.newArrayList()
+        } else when (interpretation) {
+            VirusInterpretation.HPV -> {
+                hpvCharacteristics
+            }
 
-import org.jetbrains.annotations.NotNull;
+            VirusInterpretation.EBV -> {
+                ebvCharacteristics
+            }
 
-class VirusEvidence implements EvidenceMatcher<AnnotatedVirus> {
-
-    @NotNull
-    private final List<ActionableEvent> hpvCharacteristics;
-    @NotNull
-    private final List<ActionableEvent> ebvCharacteristics;
-
-    @NotNull
-    public static VirusEvidence create(@NotNull ActionableEvents actionableEvents) {
-        List<ActionableEvent> hpvCharacteristics = Lists.newArrayList();
-        List<ActionableEvent> ebvCharacteristics = Lists.newArrayList();
-        for (ActionableCharacteristic actionableCharacteristic : actionableEvents.characteristics()) {
-            if (actionableCharacteristic.type() == TumorCharacteristicType.HPV_POSITIVE) {
-                hpvCharacteristics.add(actionableCharacteristic);
-            } else if (actionableCharacteristic.type() == TumorCharacteristicType.EBV_POSITIVE) {
-                ebvCharacteristics.add(actionableCharacteristic);
+            else -> {
+                Lists.newArrayList()
             }
         }
-
-        return new VirusEvidence(hpvCharacteristics, ebvCharacteristics);
     }
 
-    private VirusEvidence(@NotNull final List<ActionableEvent> hpvCharacteristics,
-            @NotNull final List<ActionableEvent> ebvCharacteristics) {
-        this.hpvCharacteristics = hpvCharacteristics;
-        this.ebvCharacteristics = ebvCharacteristics;
-    }
-
-    @NotNull
-    @Override
-    public List<ActionableEvent> findMatches(@NotNull AnnotatedVirus virus) {
-        VirusInterpretation interpretation = virus.interpretation();
-        if (interpretation == null || !virus.reported()) {
-            return Lists.newArrayList();
-        }
-
-        switch (interpretation) {
-            case HPV: {
-                return hpvCharacteristics;
+    companion object {
+        fun create(actionableEvents: ActionableEvents): VirusEvidence {
+            val hpvCharacteristics: MutableList<ActionableEvent?>? = Lists.newArrayList()
+            val ebvCharacteristics: MutableList<ActionableEvent?>? = Lists.newArrayList()
+            for (actionableCharacteristic in actionableEvents.characteristics()) {
+                if (actionableCharacteristic.type() == TumorCharacteristicType.HPV_POSITIVE) {
+                    hpvCharacteristics.add(actionableCharacteristic)
+                } else if (actionableCharacteristic.type() == TumorCharacteristicType.EBV_POSITIVE) {
+                    ebvCharacteristics.add(actionableCharacteristic)
+                }
             }
-            case EBV: {
-                return ebvCharacteristics;
-            }
-            default: {
-                return Lists.newArrayList();
-            }
+            return VirusEvidence(hpvCharacteristics, ebvCharacteristics)
         }
     }
 }

@@ -1,144 +1,99 @@
-package com.hartwig.actin.molecular.orange.evidence;
+package com.hartwig.actin.molecular.orange.evidence
 
+import com.hartwig.serve.datamodel.MutationType
+import com.hartwig.serve.datamodel.fusion.FusionPair
+import com.hartwig.serve.datamodel.gene.GeneAnnotation
+import com.hartwig.serve.datamodel.gene.GeneEvent
+import com.hartwig.serve.datamodel.hotspot.VariantHotspot
+import com.hartwig.serve.datamodel.range.RangeAnnotation
+import org.apache.logging.log4j.util.Strings
 
-import com.hartwig.serve.datamodel.MutationType;
-import com.hartwig.serve.datamodel.fusion.FusionPair;
-import com.hartwig.serve.datamodel.gene.GeneAnnotation;
-import com.hartwig.serve.datamodel.gene.GeneEvent;
-import com.hartwig.serve.datamodel.hotspot.VariantHotspot;
-import com.hartwig.serve.datamodel.range.RangeAnnotation;
+object TestServeFactory {
+    fun createEmptyHotspot(): VariantHotspot {
+        return object : VariantHotspot {
+            override fun gene(): String {
+                return Strings.EMPTY
+            }
 
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+            override fun ref(): String {
+                return Strings.EMPTY
+            }
 
-public final class TestServeFactory {
+            override fun alt(): String {
+                return Strings.EMPTY
+            }
 
-    private TestServeFactory() {
+            override fun chromosome(): String {
+                return Strings.EMPTY
+            }
+
+            override fun position(): Int {
+                return 0
+            }
+        }
     }
 
-    @NotNull
-    public static VariantHotspot createEmptyHotspot() {
-        return new VariantHotspot() {
-            @NotNull
-            @Override
-            public String gene() {
-                return Strings.EMPTY;
+    fun createEmptyRangeAnnotation(): RangeAnnotation {
+        return object : RangeAnnotation {
+            override fun gene(): String {
+                return Strings.EMPTY
             }
 
-            @NotNull
-            @Override
-            public String ref() {
-                return Strings.EMPTY;
+            override fun applicableMutationType(): MutationType {
+                return MutationType.ANY
             }
 
-            @NotNull
-            @Override
-            public String alt() {
-                return Strings.EMPTY;
+            override fun chromosome(): String {
+                return Strings.EMPTY
             }
 
-            @NotNull
-            @Override
-            public String chromosome() {
-                return Strings.EMPTY;
+            override fun start(): Int {
+                return 0
             }
 
-            @Override
-            public int position() {
-                return 0;
+            override fun end(): Int {
+                return 0
             }
-        };
+        }
     }
 
-    @NotNull
-    public static RangeAnnotation createEmptyRangeAnnotation() {
-        return new RangeAnnotation() {
-            @NotNull
-            @Override
-            public String gene() {
-                return Strings.EMPTY;
+    fun createEmptyGeneAnnotation(): GeneAnnotation {
+        return object : GeneAnnotation {
+            override fun gene(): String {
+                return Strings.EMPTY
             }
 
-            @NotNull
-            @Override
-            public MutationType applicableMutationType() {
-                return MutationType.ANY;
+            override fun event(): GeneEvent {
+                return GeneEvent.ANY_MUTATION
             }
-
-            @NotNull
-            @Override
-            public String chromosome() {
-                return Strings.EMPTY;
-            }
-
-            @Override
-            public int start() {
-                return 0;
-            }
-
-            @Override
-            public int end() {
-                return 0;
-            }
-        };
+        }
     }
 
-    @NotNull
-    public static GeneAnnotation createEmptyGeneAnnotation() {
-        return new GeneAnnotation() {
-            @NotNull
-            @Override
-            public String gene() {
-                return Strings.EMPTY;
+    fun createEmptyFusionPair(): FusionPair {
+        return object : FusionPair {
+            override fun geneUp(): String {
+                return Strings.EMPTY
             }
 
-            @NotNull
-            @Override
-            public GeneEvent event() {
-                return GeneEvent.ANY_MUTATION;
-            }
-        };
-    }
-
-    @NotNull
-    public static FusionPair createEmptyFusionPair() {
-        return new FusionPair() {
-            @NotNull
-            @Override
-            public String geneUp() {
-                return Strings.EMPTY;
+            override fun minExonUp(): Int? {
+                return null
             }
 
-            @Nullable
-            @Override
-            public Integer minExonUp() {
-                return null;
+            override fun maxExonUp(): Int? {
+                return null
             }
 
-            @Nullable
-            @Override
-            public Integer maxExonUp() {
-                return null;
+            override fun geneDown(): String {
+                return Strings.EMPTY
             }
 
-            @NotNull
-            @Override
-            public String geneDown() {
-                return Strings.EMPTY;
+            override fun minExonDown(): Int? {
+                return null
             }
 
-            @Nullable
-            @Override
-            public Integer minExonDown() {
-                return null;
+            override fun maxExonDown(): Int? {
+                return null
             }
-
-            @Nullable
-            @Override
-            public Integer maxExonDown() {
-                return null;
-            }
-        };
+        }
     }
 }

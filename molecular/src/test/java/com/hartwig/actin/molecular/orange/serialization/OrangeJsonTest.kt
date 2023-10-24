@@ -1,22 +1,20 @@
-package com.hartwig.actin.molecular.orange.serialization;
+package com.hartwig.actin.molecular.orange.serialization
 
-import static org.junit.Assert.assertNotNull;
+import com.google.common.io.Resources
+import com.hartwig.hmftools.datamodel.OrangeJson
+import org.junit.Assert
+import org.junit.Test
+import java.io.IOException
 
-import java.io.IOException;
-
-import com.google.common.io.Resources;
-import com.hartwig.hmftools.datamodel.OrangeJson;
-
-import org.junit.Test;
-
-public class OrangeJsonTest {
-    private static final String REAL_ORANGE_JSON = Resources.getResource("serialization/real.v2.6.0.orange.json").getPath();
-
-    private static final double EPSILON = 1.0E-2;
-
+class OrangeJsonTest {
     @Test
-    public void canReadRealOrangeRecordJson() throws IOException {
-        assertNotNull(OrangeJson.getInstance().read(REAL_ORANGE_JSON));
+    @Throws(IOException::class)
+    fun canReadRealOrangeRecordJson() {
+        Assert.assertNotNull(OrangeJson.getInstance().read(REAL_ORANGE_JSON))
     }
 
+    companion object {
+        private val REAL_ORANGE_JSON = Resources.getResource("serialization/real.v2.6.0.orange.json").path
+        private const val EPSILON = 1.0E-2
+    }
 }

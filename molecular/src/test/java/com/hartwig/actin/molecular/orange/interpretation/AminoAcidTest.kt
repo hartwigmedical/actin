@@ -1,14 +1,12 @@
-package com.hartwig.actin.molecular.orange.interpretation;
+package com.hartwig.actin.molecular.orange.interpretation
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Assert
+import org.junit.Test
 
-import org.junit.Test;
-
-public class AminoAcidTest {
-
+class AminoAcidTest {
     @Test
-    public void canConvertAminoAcidsToSingleLetter() {
-        assertEquals("p.V600E", AminoAcid.forceSingleLetterAminoAcids("p.Val600Glu"));
-        assertEquals("p.V600E", AminoAcid.forceSingleLetterAminoAcids("p.V600E"));
+    fun canConvertAminoAcidsToSingleLetter() {
+        Assert.assertEquals("p.V600E", AminoAcid.forceSingleLetterAminoAcids("p.Val600Glu"))
+        Assert.assertEquals("p.V600E", AminoAcid.forceSingleLetterAminoAcids("p.V600E"))
     }
 }

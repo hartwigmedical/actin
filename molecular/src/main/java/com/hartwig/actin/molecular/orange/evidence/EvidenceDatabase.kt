@@ -1,121 +1,84 @@
-package com.hartwig.actin.molecular.orange.evidence;
+package com.hartwig.actin.molecular.orange.evidence
 
-import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityMatch;
-import com.hartwig.actin.molecular.orange.evidence.actionability.ActionableEventMatcher;
-import com.hartwig.actin.molecular.orange.evidence.known.KnownEventResolver;
-import com.hartwig.hmftools.datamodel.linx.HomozygousDisruption;
-import com.hartwig.hmftools.datamodel.linx.LinxBreakend;
-import com.hartwig.hmftools.datamodel.linx.LinxFusion;
-import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss;
-import com.hartwig.hmftools.datamodel.purple.PurpleVariant;
-import com.hartwig.hmftools.datamodel.virus.AnnotatedVirus;
-import com.hartwig.serve.datamodel.common.GeneAlteration;
-import com.hartwig.serve.datamodel.fusion.KnownFusion;
+import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityMatch
+import com.hartwig.actin.molecular.orange.evidence.actionability.ActionableEventMatcher
+import com.hartwig.actin.molecular.orange.evidence.known.KnownEventResolver
+import com.hartwig.hmftools.datamodel.linx.HomozygousDisruption
+import com.hartwig.hmftools.datamodel.linx.LinxBreakend
+import com.hartwig.hmftools.datamodel.linx.LinxFusion
+import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
+import com.hartwig.hmftools.datamodel.purple.PurpleVariant
+import com.hartwig.hmftools.datamodel.virus.AnnotatedVirus
+import com.hartwig.serve.datamodel.common.GeneAlteration
+import com.hartwig.serve.datamodel.fusion.KnownFusion
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-public class EvidenceDatabase {
-
-    @NotNull
-    private final KnownEventResolver knownEventResolver;
-    @NotNull
-    private final ActionableEventMatcher actionableEventMatcher;
-
-    EvidenceDatabase(@NotNull final KnownEventResolver knownEventResolver,
-            @NotNull final ActionableEventMatcher actionableEventMatcher) {
-        this.knownEventResolver = knownEventResolver;
-        this.actionableEventMatcher = actionableEventMatcher;
+class EvidenceDatabase internal constructor(private val knownEventResolver: KnownEventResolver,
+                                            private val actionableEventMatcher: ActionableEventMatcher) {
+    fun evidenceForMicrosatelliteStatus(isMicrosatelliteUnstable: Boolean?): ActionabilityMatch? {
+        return if (isMicrosatelliteUnstable == null) {
+            null
+        } else actionableEventMatcher.matchForMicrosatelliteStatus(isMicrosatelliteUnstable)
     }
 
-    @Nullable
-    public ActionabilityMatch evidenceForMicrosatelliteStatus(@Nullable Boolean isMicrosatelliteUnstable) {
-        if (isMicrosatelliteUnstable == null) {
-            return null;
-        }
-
-        return actionableEventMatcher.matchForMicrosatelliteStatus(isMicrosatelliteUnstable);
+    fun evidenceForHomologousRepairStatus(isHomologousRepairDeficient: Boolean?): ActionabilityMatch? {
+        return if (isHomologousRepairDeficient == null) {
+            null
+        } else actionableEventMatcher.matchForHomologousRepairStatus(isHomologousRepairDeficient)
     }
 
-    @Nullable
-    public ActionabilityMatch evidenceForHomologousRepairStatus(@Nullable Boolean isHomologousRepairDeficient) {
-        if (isHomologousRepairDeficient == null) {
-            return null;
-        }
-
-        return actionableEventMatcher.matchForHomologousRepairStatus(isHomologousRepairDeficient);
+    fun evidenceForTumorMutationalBurdenStatus(hasHighTumorMutationalBurden: Boolean?): ActionabilityMatch? {
+        return if (hasHighTumorMutationalBurden == null) {
+            null
+        } else actionableEventMatcher.matchForHighTumorMutationalBurden(hasHighTumorMutationalBurden)
     }
 
-    @Nullable
-    public ActionabilityMatch evidenceForTumorMutationalBurdenStatus(@Nullable Boolean hasHighTumorMutationalBurden) {
-        if (hasHighTumorMutationalBurden == null) {
-            return null;
-        }
-
-        return actionableEventMatcher.matchForHighTumorMutationalBurden(hasHighTumorMutationalBurden);
+    fun evidenceForTumorMutationalLoadStatus(hasHighTumorMutationalLoad: Boolean?): ActionabilityMatch? {
+        return if (hasHighTumorMutationalLoad == null) {
+            null
+        } else actionableEventMatcher.matchForHighTumorMutationalLoad(hasHighTumorMutationalLoad)
     }
 
-    @Nullable
-    public ActionabilityMatch evidenceForTumorMutationalLoadStatus(@Nullable Boolean hasHighTumorMutationalLoad) {
-        if (hasHighTumorMutationalLoad == null) {
-            return null;
-        }
-
-        return actionableEventMatcher.matchForHighTumorMutationalLoad(hasHighTumorMutationalLoad);
+    fun geneAlterationForVariant(variant: PurpleVariant): GeneAlteration? {
+        return knownEventResolver.resolveForVariant(variant)
     }
 
-    @Nullable
-    public GeneAlteration geneAlterationForVariant(@NotNull PurpleVariant variant) {
-        return knownEventResolver.resolveForVariant(variant);
+    fun evidenceForVariant(variant: PurpleVariant): ActionabilityMatch {
+        return actionableEventMatcher.matchForVariant(variant)
     }
 
-    @NotNull
-    public ActionabilityMatch evidenceForVariant(@NotNull PurpleVariant variant) {
-        return actionableEventMatcher.matchForVariant(variant);
+    fun geneAlterationForCopyNumber(gainLoss: PurpleGainLoss): GeneAlteration? {
+        return knownEventResolver.resolveForCopyNumber(gainLoss)
     }
 
-    @Nullable
-    public GeneAlteration geneAlterationForCopyNumber(@NotNull PurpleGainLoss gainLoss) {
-        return knownEventResolver.resolveForCopyNumber(gainLoss);
+    fun evidenceForCopyNumber(gainLoss: PurpleGainLoss): ActionabilityMatch {
+        return actionableEventMatcher.matchForCopyNumber(gainLoss)
     }
 
-    @NotNull
-    public ActionabilityMatch evidenceForCopyNumber(@NotNull PurpleGainLoss gainLoss) {
-        return actionableEventMatcher.matchForCopyNumber(gainLoss);
+    fun geneAlterationForHomozygousDisruption(homozygousDisruption: HomozygousDisruption): GeneAlteration? {
+        return knownEventResolver.resolveForHomozygousDisruption(homozygousDisruption)
     }
 
-    @Nullable
-    public GeneAlteration geneAlterationForHomozygousDisruption(@NotNull HomozygousDisruption homozygousDisruption) {
-        return knownEventResolver.resolveForHomozygousDisruption(homozygousDisruption);
+    fun evidenceForHomozygousDisruption(homozygousDisruption: HomozygousDisruption): ActionabilityMatch {
+        return actionableEventMatcher.matchForHomozygousDisruption(homozygousDisruption)
     }
 
-    @NotNull
-    public ActionabilityMatch evidenceForHomozygousDisruption(@NotNull HomozygousDisruption homozygousDisruption) {
-        return actionableEventMatcher.matchForHomozygousDisruption(homozygousDisruption);
+    fun geneAlterationForBreakend(breakend: LinxBreakend): GeneAlteration? {
+        return knownEventResolver.resolveForBreakend(breakend)
     }
 
-    @Nullable
-    public GeneAlteration geneAlterationForBreakend(@NotNull LinxBreakend breakend) {
-        return knownEventResolver.resolveForBreakend(breakend);
+    fun evidenceForBreakend(breakend: LinxBreakend): ActionabilityMatch {
+        return actionableEventMatcher.matchForBreakend(breakend)
     }
 
-    @NotNull
-    public ActionabilityMatch evidenceForBreakend(@NotNull LinxBreakend breakend) {
-        return actionableEventMatcher.matchForBreakend(breakend);
+    fun lookupKnownFusion(fusion: LinxFusion): KnownFusion? {
+        return knownEventResolver.resolveForFusion(fusion)
     }
 
-    @Nullable
-    public KnownFusion lookupKnownFusion(@NotNull LinxFusion fusion) {
-        return knownEventResolver.resolveForFusion(fusion);
+    fun evidenceForFusion(fusion: LinxFusion): ActionabilityMatch {
+        return actionableEventMatcher.matchForFusion(fusion)
     }
 
-    @NotNull
-    public ActionabilityMatch evidenceForFusion(@NotNull LinxFusion fusion) {
-        return actionableEventMatcher.matchForFusion(fusion);
-    }
-
-    @NotNull
-    public ActionabilityMatch evidenceForVirus(@NotNull AnnotatedVirus virus) {
-        return actionableEventMatcher.matchForVirus(virus);
+    fun evidenceForVirus(virus: AnnotatedVirus): ActionabilityMatch {
+        return actionableEventMatcher.matchForVirus(virus)
     }
 }

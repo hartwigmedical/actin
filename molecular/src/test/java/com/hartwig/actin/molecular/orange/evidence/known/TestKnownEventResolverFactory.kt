@@ -1,33 +1,22 @@
-package com.hartwig.actin.molecular.orange.evidence.known;
+package com.hartwig.actin.molecular.orange.evidence.known
 
-import java.util.Collections;
+import com.hartwig.serve.datamodel.ImmutableKnownEvents
+import com.hartwig.serve.datamodel.KnownEvents
 
-import com.hartwig.serve.datamodel.ImmutableKnownEvents;
-import com.hartwig.serve.datamodel.KnownEvents;
-
-import org.jetbrains.annotations.NotNull;
-
-public final class TestKnownEventResolverFactory {
-
-    private TestKnownEventResolverFactory() {
+object TestKnownEventResolverFactory {
+    fun createEmpty(): KnownEventResolver {
+        return KnownEventResolver(ImmutableKnownEvents.builder().build(), emptySet())
     }
 
-    @NotNull
-    public static KnownEventResolver createEmpty() {
-        return new KnownEventResolver(ImmutableKnownEvents.builder().build(), Collections.emptySet());
-    }
-
-    @NotNull
-    public static KnownEventResolver createProper() {
-        KnownEvents knownEvents = ImmutableKnownEvents.builder()
-                .addHotspots(TestServeKnownFactory.hotspotBuilder().build())
-                .addCodons(TestServeKnownFactory.codonBuilder().build())
-                .addExons(TestServeKnownFactory.exonBuilder().build())
-                .addGenes(TestServeKnownFactory.geneBuilder().build())
-                .addCopyNumbers(TestServeKnownFactory.copyNumberBuilder().build())
-                .addFusions(TestServeKnownFactory.fusionBuilder().build())
-                .build();
-
-        return new KnownEventResolver(knownEvents, knownEvents.genes());
+    fun createProper(): KnownEventResolver {
+        val knownEvents: KnownEvents? = ImmutableKnownEvents.builder()
+            .addHotspots(TestServeKnownFactory.hotspotBuilder().build())
+            .addCodons(TestServeKnownFactory.codonBuilder().build())
+            .addExons(TestServeKnownFactory.exonBuilder().build())
+            .addGenes(TestServeKnownFactory.geneBuilder().build())
+            .addCopyNumbers(TestServeKnownFactory.copyNumberBuilder().build())
+            .addFusions(TestServeKnownFactory.fusionBuilder().build())
+            .build()
+        return KnownEventResolver(knownEvents, knownEvents.genes())
     }
 }

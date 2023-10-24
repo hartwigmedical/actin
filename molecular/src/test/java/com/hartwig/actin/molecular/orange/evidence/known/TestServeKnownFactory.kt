@@ -1,97 +1,72 @@
-package com.hartwig.actin.molecular.orange.evidence.known;
+package com.hartwig.actin.molecular.orange.evidence.known
 
-import com.hartwig.actin.molecular.orange.evidence.TestServeFactory;
-import com.hartwig.serve.datamodel.common.GeneAlteration;
-import com.hartwig.serve.datamodel.common.GeneRole;
-import com.hartwig.serve.datamodel.common.ProteinEffect;
-import com.hartwig.serve.datamodel.fusion.ImmutableKnownFusion;
-import com.hartwig.serve.datamodel.gene.ImmutableKnownCopyNumber;
-import com.hartwig.serve.datamodel.gene.ImmutableKnownGene;
-import com.hartwig.serve.datamodel.hotspot.ImmutableKnownHotspot;
-import com.hartwig.serve.datamodel.range.ImmutableKnownCodon;
-import com.hartwig.serve.datamodel.range.ImmutableKnownExon;
+import com.hartwig.actin.molecular.orange.evidence.TestServeFactory
+import com.hartwig.serve.datamodel.common.GeneAlteration
+import com.hartwig.serve.datamodel.common.GeneRole
+import com.hartwig.serve.datamodel.common.ProteinEffect
+import com.hartwig.serve.datamodel.fusion.ImmutableKnownFusion
+import com.hartwig.serve.datamodel.gene.ImmutableKnownCopyNumber
+import com.hartwig.serve.datamodel.gene.ImmutableKnownGene
+import com.hartwig.serve.datamodel.hotspot.ImmutableKnownHotspot
+import com.hartwig.serve.datamodel.range.ImmutableKnownCodon
+import com.hartwig.serve.datamodel.range.ImmutableKnownExon
+import org.apache.logging.log4j.util.Strings
 
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-public final class TestServeKnownFactory {
-
-    private TestServeKnownFactory() {
-    }
-
-    @NotNull
-    public static ImmutableKnownHotspot.Builder hotspotBuilder() {
+object TestServeKnownFactory {
+    fun hotspotBuilder(): ImmutableKnownHotspot.Builder {
         return ImmutableKnownHotspot.builder()
-                .from(createEmptyGeneAlteration())
-                .from(TestServeFactory.createEmptyHotspot())
-                .inputProteinAnnotation(Strings.EMPTY);
+            .from(createEmptyGeneAlteration())
+            .from(TestServeFactory.createEmptyHotspot())
+            .inputProteinAnnotation(Strings.EMPTY)
     }
 
-    @NotNull
-    public static ImmutableKnownCodon.Builder codonBuilder() {
+    fun codonBuilder(): ImmutableKnownCodon.Builder {
         return ImmutableKnownCodon.builder()
-                .from(createEmptyGeneAlteration())
-                .from(TestServeFactory.createEmptyRangeAnnotation())
-                .inputTranscript(Strings.EMPTY)
-                .inputCodonRank(0);
+            .from(createEmptyGeneAlteration())
+            .from(TestServeFactory.createEmptyRangeAnnotation())
+            .inputTranscript(Strings.EMPTY)
+            .inputCodonRank(0)
     }
 
-    @NotNull
-    public static ImmutableKnownExon.Builder exonBuilder() {
+    fun exonBuilder(): ImmutableKnownExon.Builder {
         return ImmutableKnownExon.builder()
-                .from(createEmptyGeneAlteration())
-                .from(TestServeFactory.createEmptyRangeAnnotation())
-                .inputTranscript(Strings.EMPTY)
-                .inputExonRank(0);
+            .from(createEmptyGeneAlteration())
+            .from(TestServeFactory.createEmptyRangeAnnotation())
+            .inputTranscript(Strings.EMPTY)
+            .inputExonRank(0)
     }
 
-    @NotNull
-    public static ImmutableKnownGene.Builder geneBuilder() {
-        return ImmutableKnownGene.builder().gene(Strings.EMPTY).geneRole(GeneRole.UNKNOWN);
+    fun geneBuilder(): ImmutableKnownGene.Builder {
+        return ImmutableKnownGene.builder().gene(Strings.EMPTY).geneRole(GeneRole.UNKNOWN)
     }
 
-    @NotNull
-    public static ImmutableKnownCopyNumber.Builder copyNumberBuilder() {
-        return ImmutableKnownCopyNumber.builder().from(createEmptyGeneAlteration()).from(TestServeFactory.createEmptyGeneAnnotation());
+    fun copyNumberBuilder(): ImmutableKnownCopyNumber.Builder {
+        return ImmutableKnownCopyNumber.builder().from(createEmptyGeneAlteration()).from(TestServeFactory.createEmptyGeneAnnotation())
     }
 
-    @NotNull
-    public static ImmutableKnownFusion.Builder fusionBuilder() {
-        return ImmutableKnownFusion.builder().from(TestServeFactory.createEmptyFusionPair()).proteinEffect(ProteinEffect.UNKNOWN);
+    fun fusionBuilder(): ImmutableKnownFusion.Builder {
+        return ImmutableKnownFusion.builder().from(TestServeFactory.createEmptyFusionPair()).proteinEffect(ProteinEffect.UNKNOWN)
     }
 
-    @NotNull
-    public static GeneAlteration createEmptyGeneAlteration() {
-        return createGeneAlteration(GeneRole.UNKNOWN, ProteinEffect.UNKNOWN);
+    fun createEmptyGeneAlteration(): GeneAlteration {
+        return createGeneAlteration(GeneRole.UNKNOWN, ProteinEffect.UNKNOWN)
     }
 
-    @NotNull
-    public static GeneAlteration createGeneAlteration(@NotNull GeneRole geneRole, @NotNull ProteinEffect proteinEffect) {
-        return createGeneAlteration(geneRole, proteinEffect, null);
-    }
-
-    @NotNull
-    public static GeneAlteration createGeneAlteration(@NotNull GeneRole geneRole, @NotNull ProteinEffect proteinEffect,
-            @Nullable Boolean associatedWithDrugResistance) {
-        return new GeneAlteration() {
-            @NotNull
-            @Override
-            public GeneRole geneRole() {
-                return geneRole;
+    @JvmOverloads
+    fun createGeneAlteration(geneRole: GeneRole, proteinEffect: ProteinEffect,
+                             associatedWithDrugResistance: Boolean? = null): GeneAlteration {
+        return object : GeneAlteration {
+            override fun geneRole(): GeneRole {
+                return geneRole
             }
 
-            @NotNull
-            @Override
-            public ProteinEffect proteinEffect() {
-                return proteinEffect;
+            override fun proteinEffect(): ProteinEffect {
+                return proteinEffect
             }
 
-            @Nullable
-            @Override
-            public Boolean associatedWithDrugResistance() {
-                return associatedWithDrugResistance;
+            override fun associatedWithDrugResistance(): Boolean? {
+                return associatedWithDrugResistance
             }
-        };
+        }
     }
 }

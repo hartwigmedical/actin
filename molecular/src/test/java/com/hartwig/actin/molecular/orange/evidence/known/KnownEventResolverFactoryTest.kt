@@ -1,41 +1,33 @@
-package com.hartwig.actin.molecular.orange.evidence.known;
+package com.hartwig.actin.molecular.orange.evidence.known
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import com.hartwig.serve.datamodel.ImmutableKnownEvents
+import com.hartwig.serve.datamodel.Knowledgebase
+import com.hartwig.serve.datamodel.KnownEvents
+import com.hartwig.serve.datamodel.hotspot.KnownHotspot
+import org.junit.Assert
+import org.junit.Test
 
-import com.google.common.collect.Lists;
-import com.hartwig.serve.datamodel.ImmutableKnownEvents;
-import com.hartwig.serve.datamodel.Knowledgebase;
-import com.hartwig.serve.datamodel.KnownEvents;
-import com.hartwig.serve.datamodel.hotspot.KnownHotspot;
-
-import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
-
-public class KnownEventResolverFactoryTest {
-
+class KnownEventResolverFactoryTest {
     @Test
-    public void canCreateFromEmptyInputs() {
-        assertNotNull(KnownEventResolverFactory.create(ImmutableKnownEvents.builder().build()));
+    fun canCreateFromEmptyInputs() {
+        Assert.assertNotNull(KnownEventResolverFactory.create(ImmutableKnownEvents.builder().build()))
     }
 
     @Test
-    public void canFilterKnownEvents() {
-        KnownHotspot hotspot1 = TestServeKnownFactory.hotspotBuilder().addSources(firstAllowedSource(), Knowledgebase.UNKNOWN).build();
-        KnownHotspot hotspot2 = TestServeKnownFactory.hotspotBuilder().addSources(firstAllowedSource()).build();
-        KnownHotspot hotspot3 = TestServeKnownFactory.hotspotBuilder().addSources(Knowledgebase.UNKNOWN).build();
-
-        KnownEvents known = ImmutableKnownEvents.builder().addHotspots(hotspot1, hotspot2, hotspot3).build();
-
-        KnownEvents filtered = KnownEventResolverFactory.filterKnownEvents(known);
-        assertEquals(2, filtered.hotspots().size());
-        assertTrue(filtered.hotspots().contains(hotspot1));
-        assertTrue(filtered.hotspots().contains(hotspot2));
+    fun canFilterKnownEvents() {
+        val hotspot1: KnownHotspot? = TestServeKnownFactory.hotspotBuilder().addSources(firstAllowedSource(), Knowledgebase.UNKNOWN).build()
+        val hotspot2: KnownHotspot? = TestServeKnownFactory.hotspotBuilder().addSources(firstAllowedSource()).build()
+        val hotspot3: KnownHotspot? = TestServeKnownFactory.hotspotBuilder().addSources(Knowledgebase.UNKNOWN).build()
+        val known: KnownEvents? = ImmutableKnownEvents.builder().addHotspots(hotspot1, hotspot2, hotspot3).build()
+        val filtered = KnownEventResolverFactory.filterKnownEvents(known)
+        Assert.assertEquals(2, filtered.hotspots().size.toLong())
+        Assert.assertTrue(filtered.hotspots().contains(hotspot1))
+        Assert.assertTrue(filtered.hotspots().contains(hotspot2))
     }
 
-    @NotNull
-    private static Knowledgebase firstAllowedSource() {
-        return KnownEventResolverFactory.KNOWN_EVENT_SOURCES.iterator().next();
+    companion object {
+        private fun firstAllowedSource(): Knowledgebase {
+            return KnownEventResolverFactory.KNOWN_EVENT_SOURCES.iterator().next()
+        }
     }
 }

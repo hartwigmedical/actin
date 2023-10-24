@@ -1,52 +1,36 @@
-package com.hartwig.actin.molecular.orange.evidence.matching;
+package com.hartwig.actin.molecular.orange.evidence.matching
 
-import com.hartwig.hmftools.datamodel.linx.LinxFusion;
-import com.hartwig.serve.datamodel.fusion.FusionPair;
+import com.hartwig.hmftools.datamodel.linx.LinxFusion
+import com.hartwig.serve.datamodel.fusion.FusionPair
 
-import org.jetbrains.annotations.NotNull;
-
-public final class FusionMatching {
-
-    private FusionMatching() {
+object FusionMatching {
+    fun isGeneMatch(fusionPair: FusionPair, fusion: LinxFusion): Boolean {
+        return fusionPair.geneUp() == fusion.geneStart() && fusionPair.geneDown() == fusion.geneEnd()
     }
 
-    public static boolean isGeneMatch(@NotNull FusionPair fusionPair, @NotNull LinxFusion fusion) {
-        return fusionPair.geneUp().equals(fusion.geneStart()) && fusionPair.geneDown().equals(fusion.geneEnd());
+    fun isExonMatch(fusionPair: FusionPair, fusion: LinxFusion): Boolean {
+        val minExonUp = fusionPair.minExonUp()
+        val maxExonUp = fusionPair.maxExonUp()
+        val meetsExonUp = minExonUp == null || maxExonUp == null || explicitlyMatchesExonUp(fusionPair, fusion)
+        val minExonDown = fusionPair.minExonDown()
+        val maxExonDown = fusionPair.maxExonDown()
+        val meetsExonDown = minExonDown == null || maxExonDown == null || explicitlyMatchesExonDown(fusionPair, fusion)
+        return meetsExonUp && meetsExonDown
     }
 
-    public static boolean isExonMatch(@NotNull FusionPair fusionPair, @NotNull LinxFusion fusion) {
-        Integer minExonUp = fusionPair.minExonUp();
-        Integer maxExonUp = fusionPair.maxExonUp();
-
-        boolean meetsExonUp = minExonUp == null || maxExonUp == null || explicitlyMatchesExonUp(fusionPair, fusion);
-
-        Integer minExonDown = fusionPair.minExonDown();
-        Integer maxExonDown = fusionPair.maxExonDown();
-
-        boolean meetsExonDown = minExonDown == null || maxExonDown == null || explicitlyMatchesExonDown(fusionPair, fusion);
-
-        return meetsExonUp && meetsExonDown;
+    fun explicitlyMatchesExonUp(fusionPair: FusionPair, fusion: LinxFusion): Boolean {
+        val minExonUp = fusionPair.minExonUp()
+        val maxExonUp = fusionPair.maxExonUp()
+        return if (minExonUp == null || maxExonUp == null) {
+            false
+        } else fusion.fusedExonUp() >= minExonUp && fusion.fusedExonUp() <= maxExonUp
     }
 
-    public static boolean explicitlyMatchesExonUp(@NotNull FusionPair fusionPair, @NotNull LinxFusion fusion) {
-        Integer minExonUp = fusionPair.minExonUp();
-        Integer maxExonUp = fusionPair.maxExonUp();
-
-        if (minExonUp == null || maxExonUp == null) {
-            return false;
-        }
-
-        return fusion.fusedExonUp() >= minExonUp && fusion.fusedExonUp() <= maxExonUp;
-    }
-
-    public static boolean explicitlyMatchesExonDown(@NotNull FusionPair fusionPair, @NotNull LinxFusion fusion) {
-        Integer minExonDown = fusionPair.minExonDown();
-        Integer maxExonDown = fusionPair.maxExonDown();
-
-        if (minExonDown == null || maxExonDown == null) {
-            return false;
-        }
-
-        return fusion.fusedExonDown() >= minExonDown && fusion.fusedExonDown() <= maxExonDown;
+    fun explicitlyMatchesExonDown(fusionPair: FusionPair, fusion: LinxFusion): Boolean {
+        val minExonDown = fusionPair.minExonDown()
+        val maxExonDown = fusionPair.maxExonDown()
+        return if (minExonDown == null || maxExonDown == null) {
+            false
+        } else fusion.fusedExonDown() >= minExonDown && fusion.fusedExonDown() <= maxExonDown
     }
 }

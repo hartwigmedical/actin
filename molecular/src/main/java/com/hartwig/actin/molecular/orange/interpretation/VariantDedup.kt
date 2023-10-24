@@ -1,72 +1,60 @@
-package com.hartwig.actin.molecular.orange.interpretation;
+package com.hartwig.actin.molecular.orange.interpretation
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.hartwig.hmftools.datamodel.purple.PurpleTranscriptImpact
+import com.hartwig.hmftools.datamodel.purple.PurpleVariant
+import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
+import org.apache.logging.log4j.LogManager
+import java.util.Set
+import java.util.stream.Collectors
+import kotlin.math.abs
 
-import com.hartwig.hmftools.datamodel.purple.PurpleTranscriptImpact;
-import com.hartwig.hmftools.datamodel.purple.PurpleVariant;
-import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-public final class VariantDedup {
-
-    private static final double EPSILON = 1e-10;
-
-    private static final Logger LOGGER = LogManager.getLogger(VariantDedup.class);
-
-    private static final Set<PurpleVariantEffect> PHASED_EFFECTS =
-            Set.of(PurpleVariantEffect.PHASED_INFRAME_DELETION, PurpleVariantEffect.PHASED_INFRAME_INSERTION);
-
-    public static Set<PurpleVariant> apply(Set<PurpleVariant> variants) {
-        return variants.stream().filter(variant -> include(variant, variants)).collect(Collectors.toSet());
+object VariantDedup {
+    private const val EPSILON = 1e-10
+    private val LOGGER = LogManager.getLogger(VariantDedup::class.java)
+    private val PHASED_EFFECTS = Set.of(PurpleVariantEffect.PHASED_INFRAME_DELETION, PurpleVariantEffect.PHASED_INFRAME_INSERTION)
+    fun apply(variants: MutableSet<PurpleVariant?>?): MutableSet<PurpleVariant?>? {
+        return variants.stream().filter { variant: PurpleVariant? -> include(variant, variants) }.collect(Collectors.toSet())
     }
 
-    private static boolean include(PurpleVariant variant, Set<PurpleVariant> variants) {
-        if (hasCanonicalPhasedEffect(variant) && hasSameEffectWithHigherVCN(variants, variant)) {
-            LOGGER.debug("Dedup'ing variant '{}'", variant);
-            return false;
+    private fun include(variant: PurpleVariant?, variants: MutableSet<PurpleVariant?>?): Boolean {
+        return if (hasCanonicalPhasedEffect(variant) && hasSameEffectWithHigherVCN(variants, variant)) {
+            LOGGER.debug("Dedup'ing variant '{}'", variant)
+            false
         } else {
-            return true;
+            true
         }
     }
 
-    private static boolean hasCanonicalPhasedEffect(PurpleVariant variant) {
-        return variant.canonicalImpact().effects().stream().anyMatch(PHASED_EFFECTS::contains);
+    private fun hasCanonicalPhasedEffect(variant: PurpleVariant?): Boolean {
+        return variant.canonicalImpact().effects().stream().anyMatch { o: PurpleVariantEffect? -> PHASED_EFFECTS.contains(o) }
     }
 
-    private static boolean hasSameEffectWithHigherVCN(Set<PurpleVariant> variants, PurpleVariant variantToMatch) {
+    private fun hasSameEffectWithHigherVCN(variants: MutableSet<PurpleVariant?>?, variantToMatch: PurpleVariant?): Boolean {
         // We assume that variants with same effect have unique hgvs coding impact.
-        Double minVariantCopyNumber = null;
-        String uniqueHgvsCodingImpact = null;
-        PurpleTranscriptImpact variantImpactToMatch = variantToMatch.canonicalImpact();
-
-        for (PurpleVariant variant : variants) {
-            PurpleTranscriptImpact variantImpact = variant.canonicalImpact();
-            if (variantImpact.effects().equals(variantImpactToMatch.effects()) && variant.gene().equals(variantToMatch.gene())
-                    && variantImpact.hgvsProteinImpact().equals(variantImpactToMatch.hgvsProteinImpact())) {
+        var minVariantCopyNumber: Double? = null
+        var uniqueHgvsCodingImpact: String? = null
+        val variantImpactToMatch = variantToMatch.canonicalImpact()
+        for (variant in variants) {
+            val variantImpact: PurpleTranscriptImpact = variant.canonicalImpact()
+            if (variantImpact.effects() == variantImpactToMatch.effects() && variant.gene() == variantToMatch.gene() && variantImpact.hgvsProteinImpact() == variantImpactToMatch.hgvsProteinImpact()) {
                 if (minVariantCopyNumber == null || lessThan(variant.variantCopyNumber(), minVariantCopyNumber)) {
-                    minVariantCopyNumber = variant.variantCopyNumber();
-                    uniqueHgvsCodingImpact = variantImpact.hgvsCodingImpact();
+                    minVariantCopyNumber = variant.variantCopyNumber()
+                    uniqueHgvsCodingImpact = variantImpact.hgvsCodingImpact()
                 } else if (equal(variant.variantCopyNumber(), minVariantCopyNumber)) {
-                    uniqueHgvsCodingImpact = variantImpact.hgvsCodingImpact().compareTo(uniqueHgvsCodingImpact) > 0
-                            ? variantImpact.hgvsCodingImpact()
-                            : uniqueHgvsCodingImpact;
+                    uniqueHgvsCodingImpact = if (variantImpact.hgvsCodingImpact().compareTo(uniqueHgvsCodingImpact) > 0) variantImpact.hgvsCodingImpact() else uniqueHgvsCodingImpact
                 }
             }
         }
-
-        boolean matchesMinVariantCopyNumber = equal(variantToMatch.variantCopyNumber(), minVariantCopyNumber);
-        boolean matchesBestHgvsCodingImpact = variantImpactToMatch.hgvsCodingImpact().equals(uniqueHgvsCodingImpact);
-        return !(matchesMinVariantCopyNumber && matchesBestHgvsCodingImpact);
+        val matchesMinVariantCopyNumber = equal(variantToMatch.variantCopyNumber(), minVariantCopyNumber)
+        val matchesBestHgvsCodingImpact = variantImpactToMatch.hgvsCodingImpact() == uniqueHgvsCodingImpact
+        return !(matchesMinVariantCopyNumber && matchesBestHgvsCodingImpact)
     }
 
-    private static boolean equal(double first, double second) {
-        return Math.abs(first - second) < EPSILON;
+    private fun equal(first: Double, second: Double): Boolean {
+        return abs(first - second) < EPSILON
     }
 
-    public static boolean lessThan(double value, double reference) {
-        return value - reference < -EPSILON;
+    fun lessThan(value: Double, reference: Double): Boolean {
+        return value - reference < -EPSILON
     }
 }

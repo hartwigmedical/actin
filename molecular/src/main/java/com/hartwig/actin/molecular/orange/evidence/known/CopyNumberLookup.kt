@@ -1,55 +1,46 @@
-package com.hartwig.actin.molecular.orange.evidence.known;
+package com.hartwig.actin.molecular.orange.evidence.known
 
-import com.hartwig.hmftools.datamodel.linx.HomozygousDisruption;
-import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation;
-import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss;
-import com.hartwig.serve.datamodel.gene.GeneEvent;
-import com.hartwig.serve.datamodel.gene.KnownCopyNumber;
+import com.hartwig.hmftools.datamodel.linx.HomozygousDisruption
+import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
+import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
+import com.hartwig.serve.datamodel.gene.GeneEvent
+import com.hartwig.serve.datamodel.gene.KnownCopyNumber
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-final class CopyNumberLookup {
-
-    private CopyNumberLookup() {
-    }
-
-    @Nullable
-    public static KnownCopyNumber findForCopyNumber(@NotNull Iterable<KnownCopyNumber> knownCopyNumbers, @NotNull PurpleGainLoss gainLoss) {
-        for (KnownCopyNumber knownCopyNumber : knownCopyNumbers) {
-            boolean geneMatches = knownCopyNumber.gene().equals(gainLoss.gene());
-            boolean interpretationMatches = interpretationMatchesEvent(gainLoss.interpretation(), knownCopyNumber.event());
+internal object CopyNumberLookup {
+    fun findForCopyNumber(knownCopyNumbers: Iterable<KnownCopyNumber?>, gainLoss: PurpleGainLoss): KnownCopyNumber? {
+        for (knownCopyNumber in knownCopyNumbers) {
+            val geneMatches = knownCopyNumber.gene() == gainLoss.gene()
+            val interpretationMatches = interpretationMatchesEvent(gainLoss.interpretation(), knownCopyNumber.event())
             if (geneMatches && interpretationMatches) {
-                return knownCopyNumber;
+                return knownCopyNumber
             }
         }
-        return null;
+        return null
     }
 
-    private static boolean interpretationMatchesEvent(@NotNull CopyNumberInterpretation interpretation, @NotNull GeneEvent event) {
-        switch (interpretation) {
-            case FULL_GAIN:
-            case PARTIAL_GAIN: {
-                return event == GeneEvent.AMPLIFICATION;
+    private fun interpretationMatchesEvent(interpretation: CopyNumberInterpretation, event: GeneEvent): Boolean {
+        return when (interpretation) {
+            CopyNumberInterpretation.FULL_GAIN, CopyNumberInterpretation.PARTIAL_GAIN -> {
+                event == GeneEvent.AMPLIFICATION
             }
-            case FULL_LOSS:
-            case PARTIAL_LOSS: {
-                return event == GeneEvent.DELETION;
+
+            CopyNumberInterpretation.FULL_LOSS, CopyNumberInterpretation.PARTIAL_LOSS -> {
+                event == GeneEvent.DELETION
             }
-            default: {
-                return false;
+
+            else -> {
+                false
             }
         }
     }
 
-    @Nullable
-    public static KnownCopyNumber findForHomozygousDisruption(@NotNull Iterable<KnownCopyNumber> knownCopyNumbers,
-            @NotNull HomozygousDisruption homozygousDisruption) {
-        for (KnownCopyNumber knownCopyNumber : knownCopyNumbers) {
-            if (knownCopyNumber.event() == GeneEvent.DELETION && knownCopyNumber.gene().equals(homozygousDisruption.gene())) {
-                return knownCopyNumber;
+    fun findForHomozygousDisruption(knownCopyNumbers: Iterable<KnownCopyNumber?>,
+                                    homozygousDisruption: HomozygousDisruption): KnownCopyNumber? {
+        for (knownCopyNumber in knownCopyNumbers) {
+            if (knownCopyNumber.event() == GeneEvent.DELETION && knownCopyNumber.gene() == homozygousDisruption.gene()) {
+                return knownCopyNumber
             }
         }
-        return null;
+        return null
     }
 }

@@ -1,59 +1,53 @@
-package com.hartwig.actin.molecular.orange.evidence.known;
+package com.hartwig.actin.molecular.orange.evidence.known
 
-import java.util.Set;
+import com.google.common.annotations.VisibleForTesting
+import com.google.common.collect.Sets
+import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants
+import com.hartwig.serve.datamodel.ImmutableKnownEvents
+import com.hartwig.serve.datamodel.Knowledgebase
+import com.hartwig.serve.datamodel.KnownEvent
+import com.hartwig.serve.datamodel.KnownEvents
+import com.hartwig.serve.datamodel.fusion.KnownFusion
+import com.hartwig.serve.datamodel.gene.KnownCopyNumber
+import com.hartwig.serve.datamodel.gene.KnownGene
+import com.hartwig.serve.datamodel.hotspot.KnownHotspot
+import com.hartwig.serve.datamodel.range.KnownCodon
+import com.hartwig.serve.datamodel.range.KnownExon
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Sets;
-import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants;
-import com.hartwig.serve.datamodel.ImmutableKnownEvents;
-import com.hartwig.serve.datamodel.Knowledgebase;
-import com.hartwig.serve.datamodel.KnownEvent;
-import com.hartwig.serve.datamodel.KnownEvents;
-
-import org.jetbrains.annotations.NotNull;
-
-public final class KnownEventResolverFactory {
-
-    static final Set<Knowledgebase> KNOWN_EVENT_SOURCES = Sets.newHashSet(ActionabilityConstants.EVIDENCE_SOURCE);
-
-    private KnownEventResolverFactory() {
+object KnownEventResolverFactory {
+    val KNOWN_EVENT_SOURCES: MutableSet<Knowledgebase?>? = Sets.newHashSet(ActionabilityConstants.EVIDENCE_SOURCE)
+    fun create(knownEvents: KnownEvents): KnownEventResolver {
+        return KnownEventResolver(filterKnownEvents(knownEvents), GeneAggregator.aggregate(knownEvents.genes()))
     }
 
-    @NotNull
-    public static KnownEventResolver create(@NotNull KnownEvents knownEvents) {
-        return new KnownEventResolver(filterKnownEvents(knownEvents), GeneAggregator.aggregate(knownEvents.genes()));
-    }
-
-    @NotNull
     @VisibleForTesting
-    static KnownEvents filterKnownEvents(@NotNull KnownEvents knownEvents) {
+    fun filterKnownEvents(knownEvents: KnownEvents): KnownEvents {
         return ImmutableKnownEvents.builder()
-                .hotspots(filterKnown(knownEvents.hotspots()))
-                .codons(filterKnown(knownEvents.codons()))
-                .exons(filterKnown(knownEvents.exons()))
-                .genes(filterKnown(knownEvents.genes()))
-                .copyNumbers(filterKnown(knownEvents.copyNumbers()))
-                .fusions(filterKnown(knownEvents.fusions()))
-                .build();
+            .hotspots(filterKnown<KnownHotspot?>(knownEvents.hotspots()))
+            .codons(filterKnown<KnownCodon?>(knownEvents.codons()))
+            .exons(filterKnown<KnownExon?>(knownEvents.exons()))
+            .genes(filterKnown<KnownGene?>(knownEvents.genes()))
+            .copyNumbers(filterKnown<KnownCopyNumber?>(knownEvents.copyNumbers()))
+            .fusions(filterKnown<KnownFusion?>(knownEvents.fusions()))
+            .build()
     }
 
-    @NotNull
-    private static <T extends KnownEvent> Set<T> filterKnown(@NotNull Set<T> knowns) {
-        Set<T> filtered = Sets.newHashSet();
-        for (T known : knowns) {
+    private fun <T : KnownEvent?> filterKnown(knowns: MutableSet<T?>): MutableSet<T?> {
+        val filtered: MutableSet<T?>? = Sets.newHashSet()
+        for (known in knowns) {
             if (hasAtLeastOneSourceToInclude(known.sources(), KNOWN_EVENT_SOURCES)) {
-                filtered.add(known);
+                filtered.add(known)
             }
         }
-        return filtered;
+        return filtered
     }
 
-    private static boolean hasAtLeastOneSourceToInclude(@NotNull Set<Knowledgebase> sources, @NotNull Set<Knowledgebase> sourcesToInclude) {
-        for (Knowledgebase source : sources) {
+    private fun hasAtLeastOneSourceToInclude(sources: MutableSet<Knowledgebase?>, sourcesToInclude: MutableSet<Knowledgebase?>): Boolean {
+        for (source in sources) {
             if (sourcesToInclude.contains(source)) {
-                return true;
+                return true
             }
         }
-        return false;
+        return false
     }
 }

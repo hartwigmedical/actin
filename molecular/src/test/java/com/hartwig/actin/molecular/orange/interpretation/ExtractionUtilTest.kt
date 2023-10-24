@@ -1,17 +1,17 @@
-package com.hartwig.actin.molecular.orange.interpretation;
+package com.hartwig.actin.molecular.orange.interpretation
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Assert
+import org.junit.Test
 
-import org.junit.Test;
-
-public class ExtractionUtilTest {
-
-    private static final double EPSILON = 1.0E-10;
-
+class ExtractionUtilTest {
     @Test
-    public void canKeep3Digits() {
-        assertEquals(3, ExtractionUtil.keep3Digits(3D), EPSILON);
-        assertEquals(3.123, ExtractionUtil.keep3Digits(3.123), EPSILON);
-        assertEquals(3.123, ExtractionUtil.keep3Digits(3.123456789), EPSILON);
+    fun canKeep3Digits() {
+        Assert.assertEquals(3.0, ExtractionUtil.keep3Digits(3.0), EPSILON)
+        Assert.assertEquals(3.123, ExtractionUtil.keep3Digits(3.123), EPSILON)
+        Assert.assertEquals(3.123, ExtractionUtil.keep3Digits(3.123456789), EPSILON)
+    }
+
+    companion object {
+        private const val EPSILON = 1.0E-10
     }
 }

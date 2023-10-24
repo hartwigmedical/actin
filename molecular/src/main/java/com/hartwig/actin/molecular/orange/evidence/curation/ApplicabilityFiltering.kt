@@ -1,66 +1,53 @@
-package com.hartwig.actin.molecular.orange.evidence.curation;
+package com.hartwig.actin.molecular.orange.evidence.curation
 
-import java.util.Set;
+import com.google.common.annotations.VisibleForTesting
+import com.google.common.collect.Sets
+import com.hartwig.serve.datamodel.ActionableEvent
+import com.hartwig.serve.datamodel.gene.ActionableGene
+import com.hartwig.serve.datamodel.gene.GeneEvent
+import com.hartwig.serve.datamodel.hotspot.ActionableHotspot
+import com.hartwig.serve.datamodel.range.ActionableRange
+import org.apache.logging.log4j.LogManager
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Sets;
-import com.hartwig.serve.datamodel.ActionableEvent;
-import com.hartwig.serve.datamodel.gene.ActionableGene;
-import com.hartwig.serve.datamodel.gene.GeneEvent;
-import com.hartwig.serve.datamodel.hotspot.ActionableHotspot;
-import com.hartwig.serve.datamodel.range.ActionableRange;
+object ApplicabilityFiltering {
+    private val LOGGER = LogManager.getLogger(ApplicabilityFiltering::class.java)
+    val NON_APPLICABLE_GENES: MutableSet<String?>? = Sets.newHashSet()
+    val NON_APPLICABLE_AMPLIFICATIONS: MutableSet<String?>? = Sets.newHashSet()
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-
-public final class ApplicabilityFiltering {
-
-    private static final Logger LOGGER = LogManager.getLogger(ApplicabilityFiltering.class);
-
-    static final Set<String> NON_APPLICABLE_GENES = Sets.newHashSet();
-    static final Set<String> NON_APPLICABLE_AMPLIFICATIONS = Sets.newHashSet();
-
-    static {
-        NON_APPLICABLE_GENES.add("CDKN2A");
-        NON_APPLICABLE_GENES.add("TP53");
-
-        NON_APPLICABLE_AMPLIFICATIONS.add("VEGFA");
+    init {
+        NON_APPLICABLE_GENES.add("CDKN2A")
+        NON_APPLICABLE_GENES.add("TP53")
+        NON_APPLICABLE_AMPLIFICATIONS.add("VEGFA")
     }
 
-    private ApplicabilityFiltering() {
+    fun isApplicable(actionableHotspot: ActionableHotspot): Boolean {
+        return eventIsApplicable<ActionableHotspot?>(actionableHotspot.gene(), actionableHotspot)
     }
 
-    public static boolean isApplicable(@NotNull ActionableHotspot actionableHotspot) {
-        return eventIsApplicable(actionableHotspot.gene(), actionableHotspot);
+    fun isApplicable(actionableRange: ActionableRange): Boolean {
+        return eventIsApplicable<ActionableRange?>(actionableRange.gene(), actionableRange)
     }
 
-    public static boolean isApplicable(@NotNull ActionableRange actionableRange) {
-        return eventIsApplicable(actionableRange.gene(), actionableRange);
-    }
-
-    public static boolean isApplicable(@NotNull ActionableGene actionableGene) {
+    fun isApplicable(actionableGene: ActionableGene): Boolean {
         if (actionableGene.event() == GeneEvent.AMPLIFICATION) {
-            for (String nonApplicableGene : NON_APPLICABLE_AMPLIFICATIONS) {
-                if (actionableGene.gene().equals(nonApplicableGene)) {
+            for (nonApplicableGene in NON_APPLICABLE_AMPLIFICATIONS) {
+                if (actionableGene.gene() == nonApplicableGene) {
                     LOGGER.debug("Evidence for '{}' on gene {} is considered non-applicable",
-                            actionableGene.sourceEvent(),
-                            actionableGene.gene());
-                    return false;
+                        actionableGene.sourceEvent(),
+                        actionableGene.gene())
+                    return false
                 }
             }
         }
-
-        return eventIsApplicable(actionableGene.gene(), actionableGene);
+        return eventIsApplicable<ActionableGene?>(actionableGene.gene(), actionableGene)
     }
 
     @VisibleForTesting
-    static <T extends ActionableEvent> boolean eventIsApplicable(@NotNull String gene, @NotNull T event) {
+    fun <T : ActionableEvent?> eventIsApplicable(gene: String, event: T): Boolean {
         if (NON_APPLICABLE_GENES.contains(gene)) {
-            LOGGER.debug("Evidence for '{}' on gene {} is considered non-applicable", event.sourceEvent(), gene);
-            return false;
+            LOGGER.debug("Evidence for '{}' on gene {} is considered non-applicable", event.sourceEvent(), gene)
+            return false
         }
-
-        return true;
+        return true
     }
 }

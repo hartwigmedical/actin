@@ -1,136 +1,100 @@
-package com.hartwig.actin.molecular.orange.evidence.actionability;
+package com.hartwig.actin.molecular.orange.evidence.actionability
 
-import java.util.Set;
+import com.google.common.collect.Sets
+import com.hartwig.actin.molecular.orange.evidence.TestServeFactory
+import com.hartwig.serve.datamodel.ActionableEvent
+import com.hartwig.serve.datamodel.CancerType
+import com.hartwig.serve.datamodel.EvidenceDirection
+import com.hartwig.serve.datamodel.EvidenceLevel
+import com.hartwig.serve.datamodel.ImmutableCancerType
+import com.hartwig.serve.datamodel.ImmutableTreatment
+import com.hartwig.serve.datamodel.Knowledgebase
+import com.hartwig.serve.datamodel.Treatment
+import com.hartwig.serve.datamodel.characteristic.ImmutableActionableCharacteristic
+import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType
+import com.hartwig.serve.datamodel.fusion.ImmutableActionableFusion
+import com.hartwig.serve.datamodel.gene.ImmutableActionableGene
+import com.hartwig.serve.datamodel.hotspot.ImmutableActionableHotspot
+import com.hartwig.serve.datamodel.immuno.ImmutableActionableHLA
+import com.hartwig.serve.datamodel.range.ImmutableActionableRange
+import org.apache.logging.log4j.util.Strings
 
-import com.google.common.collect.Sets;
-import com.hartwig.actin.molecular.orange.evidence.TestServeFactory;
-import com.hartwig.serve.datamodel.ActionableEvent;
-import com.hartwig.serve.datamodel.CancerType;
-import com.hartwig.serve.datamodel.EvidenceDirection;
-import com.hartwig.serve.datamodel.EvidenceLevel;
-import com.hartwig.serve.datamodel.ImmutableCancerType;
-import com.hartwig.serve.datamodel.ImmutableTreatment;
-import com.hartwig.serve.datamodel.Knowledgebase;
-import com.hartwig.serve.datamodel.Treatment;
-import com.hartwig.serve.datamodel.characteristic.ImmutableActionableCharacteristic;
-import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType;
-import com.hartwig.serve.datamodel.fusion.ImmutableActionableFusion;
-import com.hartwig.serve.datamodel.gene.ImmutableActionableGene;
-import com.hartwig.serve.datamodel.hotspot.ImmutableActionableHotspot;
-import com.hartwig.serve.datamodel.immuno.ImmutableActionableHLA;
-import com.hartwig.serve.datamodel.range.ImmutableActionableRange;
-
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
-
-public final class TestServeActionabilityFactory {
-
-    private TestServeActionabilityFactory() {
+object TestServeActionabilityFactory {
+    fun hotspotBuilder(): ImmutableActionableHotspot.Builder {
+        return ImmutableActionableHotspot.builder().from(createEmptyActionableEvent()).from(TestServeFactory.createEmptyHotspot())
     }
 
-    @NotNull
-    public static ImmutableActionableHotspot.Builder hotspotBuilder() {
-        return ImmutableActionableHotspot.builder().from(createEmptyActionableEvent()).from(TestServeFactory.createEmptyHotspot());
+    fun rangeBuilder(): ImmutableActionableRange.Builder {
+        return ImmutableActionableRange.builder().from(createEmptyActionableEvent()).from(TestServeFactory.createEmptyRangeAnnotation())
     }
 
-    @NotNull
-    public static ImmutableActionableRange.Builder rangeBuilder() {
-        return ImmutableActionableRange.builder().from(createEmptyActionableEvent()).from(TestServeFactory.createEmptyRangeAnnotation());
+    fun geneBuilder(): ImmutableActionableGene.Builder {
+        return ImmutableActionableGene.builder().from(createEmptyActionableEvent()).from(TestServeFactory.createEmptyGeneAnnotation())
     }
 
-    @NotNull
-    public static ImmutableActionableGene.Builder geneBuilder() {
-        return ImmutableActionableGene.builder().from(createEmptyActionableEvent()).from(TestServeFactory.createEmptyGeneAnnotation());
+    fun fusionBuilder(): ImmutableActionableFusion.Builder {
+        return ImmutableActionableFusion.builder().from(createEmptyActionableEvent()).from(TestServeFactory.createEmptyFusionPair())
     }
 
-    @NotNull
-    public static ImmutableActionableFusion.Builder fusionBuilder() {
-        return ImmutableActionableFusion.builder().from(createEmptyActionableEvent()).from(TestServeFactory.createEmptyFusionPair());
-    }
-
-    @NotNull
-    public static ImmutableActionableCharacteristic.Builder characteristicBuilder() {
+    fun characteristicBuilder(): ImmutableActionableCharacteristic.Builder {
         return ImmutableActionableCharacteristic.builder()
-                .from(createEmptyActionableEvent())
-                .type(TumorCharacteristicType.MICROSATELLITE_STABLE);
+            .from(createEmptyActionableEvent())
+            .type(TumorCharacteristicType.MICROSATELLITE_STABLE)
     }
 
-    @NotNull
-    public static ImmutableActionableHLA.Builder hlaBuilder() {
-        return ImmutableActionableHLA.builder().from(createEmptyActionableEvent()).hlaAllele(Strings.EMPTY);
+    fun hlaBuilder(): ImmutableActionableHLA.Builder {
+        return ImmutableActionableHLA.builder().from(createEmptyActionableEvent()).hlaAllele(Strings.EMPTY)
     }
 
-    @NotNull
-    public static ImmutableTreatment.Builder treatmentBuilder() {
-        return ImmutableTreatment.builder().name(Strings.EMPTY);
+    fun treatmentBuilder(): ImmutableTreatment.Builder {
+        return ImmutableTreatment.builder().name(Strings.EMPTY)
     }
 
-    @NotNull
-    public static ImmutableCancerType.Builder cancerTypeBuilder() {
-        return ImmutableCancerType.builder().name(Strings.EMPTY).doid(Strings.EMPTY);
+    fun cancerTypeBuilder(): ImmutableCancerType.Builder {
+        return ImmutableCancerType.builder().name(Strings.EMPTY).doid(Strings.EMPTY)
     }
 
-    @NotNull
-    private static ActionableEvent createEmptyActionableEvent() {
-        return createActionableEvent(Knowledgebase.UNKNOWN, Strings.EMPTY);
+    private fun createEmptyActionableEvent(): ActionableEvent {
+        return createActionableEvent(Knowledgebase.UNKNOWN, Strings.EMPTY)
     }
 
-    @NotNull
-    public static ActionableEvent createActionableEvent(@NotNull Knowledgebase source, @NotNull String treatment) {
-        return new ActionableEvent() {
-            @NotNull
-            @Override
-            public Knowledgebase source() {
-                return source;
+    fun createActionableEvent(source: Knowledgebase, treatment: String): ActionableEvent {
+        return object : ActionableEvent {
+            override fun source(): Knowledgebase {
+                return source
             }
 
-            @NotNull
-            @Override
-            public String sourceEvent() {
-                return Strings.EMPTY;
+            override fun sourceEvent(): String {
+                return Strings.EMPTY
             }
 
-            @NotNull
-            @Override
-            public Set<String> sourceUrls() {
-                return Sets.newHashSet();
+            override fun sourceUrls(): MutableSet<String?> {
+                return Sets.newHashSet()
             }
 
-            @NotNull
-            @Override
-            public Treatment treatment() {
-                return treatmentBuilder().name(treatment).build();
+            override fun treatment(): Treatment {
+                return treatmentBuilder().name(treatment).build()
             }
 
-            @NotNull
-            @Override
-            public CancerType applicableCancerType() {
-                return cancerTypeBuilder().build();
+            override fun applicableCancerType(): CancerType {
+                return cancerTypeBuilder().build()
             }
 
-            @NotNull
-            @Override
-            public Set<CancerType> blacklistCancerTypes() {
-                return Sets.newHashSet();
+            override fun blacklistCancerTypes(): MutableSet<CancerType?> {
+                return Sets.newHashSet()
             }
 
-            @NotNull
-            @Override
-            public EvidenceLevel level() {
-                return EvidenceLevel.D;
+            override fun level(): EvidenceLevel {
+                return EvidenceLevel.D
             }
 
-            @NotNull
-            @Override
-            public EvidenceDirection direction() {
-                return EvidenceDirection.NO_BENEFIT;
+            override fun direction(): EvidenceDirection {
+                return EvidenceDirection.NO_BENEFIT
             }
 
-            @NotNull
-            @Override
-            public Set<String> evidenceUrls() {
-                return Sets.newHashSet();
+            override fun evidenceUrls(): MutableSet<String?> {
+                return Sets.newHashSet()
             }
-        };
+        }
     }
 }

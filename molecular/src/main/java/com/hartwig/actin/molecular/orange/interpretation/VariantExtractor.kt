@@ -1,185 +1,158 @@
-package com.hartwig.actin.molecular.orange.interpretation;
+package com.hartwig.actin.molecular.orange.interpretation
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.google.common.annotations.VisibleForTesting
+import com.google.common.collect.Sets
+import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
+import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableTranscriptImpact
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableVariant
+import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact
+import com.hartwig.actin.molecular.datamodel.driver.Variant
+import com.hartwig.actin.molecular.datamodel.driver.VariantEffect
+import com.hartwig.actin.molecular.datamodel.driver.VariantType
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.filter.GeneFilter
+import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase
+import com.hartwig.actin.molecular.sort.driver.VariantComparator
+import com.hartwig.hmftools.datamodel.purple.Hotspot
+import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
+import com.hartwig.hmftools.datamodel.purple.PurpleDriver
+import com.hartwig.hmftools.datamodel.purple.PurpleDriverType
+import com.hartwig.hmftools.datamodel.purple.PurpleRecord
+import com.hartwig.hmftools.datamodel.purple.PurpleTranscriptImpact
+import com.hartwig.hmftools.datamodel.purple.PurpleVariant
+import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
+import com.hartwig.hmftools.datamodel.purple.PurpleVariantType
+import org.apache.logging.log4j.LogManager
+import java.util.stream.Collectors
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Sets;
-import com.hartwig.actin.molecular.datamodel.driver.CodingEffect;
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableTranscriptImpact;
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableVariant;
-import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact;
-import com.hartwig.actin.molecular.datamodel.driver.Variant;
-import com.hartwig.actin.molecular.datamodel.driver.VariantEffect;
-import com.hartwig.actin.molecular.datamodel.driver.VariantType;
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
-import com.hartwig.actin.molecular.filter.GeneFilter;
-import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
-import com.hartwig.actin.molecular.sort.driver.VariantComparator;
-import com.hartwig.hmftools.datamodel.purple.Hotspot;
-import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect;
-import com.hartwig.hmftools.datamodel.purple.PurpleDriver;
-import com.hartwig.hmftools.datamodel.purple.PurpleDriverType;
-import com.hartwig.hmftools.datamodel.purple.PurpleRecord;
-import com.hartwig.hmftools.datamodel.purple.PurpleTranscriptImpact;
-import com.hartwig.hmftools.datamodel.purple.PurpleVariant;
-import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-class VariantExtractor {
-
-    private static final Logger LOGGER = LogManager.getLogger(VariantExtractor.class);
-
-    private static final String ENSEMBL_TRANSCRIPT_IDENTIFIER = "ENST";
-
-    private static final Set<PurpleCodingEffect> RELEVANT_CODING_EFFECTS = Sets.newHashSet(PurpleCodingEffect.MISSENSE,
-            PurpleCodingEffect.SPLICE,
-            PurpleCodingEffect.NONSENSE_OR_FRAMESHIFT,
-            PurpleCodingEffect.SYNONYMOUS);
-
-    private static final Set<PurpleDriverType> MUTATION_DRIVER_TYPES =
-            Sets.newHashSet(PurpleDriverType.MUTATION, PurpleDriverType.GERMLINE_MUTATION);
-
-    @NotNull
-    private final GeneFilter geneFilter;
-    @NotNull
-    private final EvidenceDatabase evidenceDatabase;
-
-    public VariantExtractor(@NotNull final GeneFilter geneFilter, @NotNull final EvidenceDatabase evidenceDatabase) {
-        this.geneFilter = geneFilter;
-        this.evidenceDatabase = evidenceDatabase;
-    }
-
-    @NotNull
-    public Set<Variant> extract(@NotNull PurpleRecord purple) {
-        Set<Variant> variants = Sets.newTreeSet(new VariantComparator());
-        Set<PurpleVariant> purpleVariants = relevantPurpleVariants(purple);
-        Set<PurpleDriver> drivers = relevantPurpleDrivers(purple);
-
-        for (PurpleVariant variant : VariantDedup.apply(purpleVariants)) {
-            boolean reportedOrCoding = variant.reported() || RELEVANT_CODING_EFFECTS.contains(variant.canonicalImpact().codingEffect());
-            String event = DriverEventFactory.variantEvent(variant);
+internal class VariantExtractor(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
+    fun extract(purple: PurpleRecord): MutableSet<Variant?> {
+        val variants: MutableSet<Variant?>? = Sets.newTreeSet(VariantComparator())
+        val purpleVariants = relevantPurpleVariants(purple)
+        val drivers = relevantPurpleDrivers(purple)
+        for (variant in VariantDedup.apply(purpleVariants)) {
+            val reportedOrCoding = variant.reported() || RELEVANT_CODING_EFFECTS.contains(variant.canonicalImpact().codingEffect())
+            val event = DriverEventFactory.variantEvent(variant)
             if (geneFilter.include(variant.gene()) && reportedOrCoding) {
-                PurpleDriver driver = findBestMutationDriver(drivers, variant.gene(), variant.canonicalImpact().transcript());
-                DriverLikelihood driverLikelihood = determineDriverLikelihood(driver);
-
-                ActionableEvidence evidence;
-                if (driverLikelihood == DriverLikelihood.HIGH) {
-                    evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(variant));
+                val driver = findBestMutationDriver(drivers, variant.gene(), variant.canonicalImpact().transcript())
+                val driverLikelihood = determineDriverLikelihood(driver)
+                var evidence: ActionableEvidence?
+                evidence = if (driverLikelihood == DriverLikelihood.HIGH) {
+                    ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(variant))
                 } else {
-                    evidence = ActionableEvidenceFactory.createNoEvidence();
+                    ActionableEvidenceFactory.createNoEvidence()
                 }
                 variants.add(ImmutableVariant.builder()
-                        .from(GeneAlterationFactory.convertAlteration(variant.gene(), evidenceDatabase.geneAlterationForVariant(variant)))
-                        .isReportable(variant.reported())
-                        .event(event)
-                        .driverLikelihood(driverLikelihood)
-                        .evidence(evidence)
-                        .type(determineVariantType(variant))
-                        .variantCopyNumber(ExtractionUtil.keep3Digits(variant.variantCopyNumber()))
-                        .totalCopyNumber(ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()))
-                        .isBiallelic(variant.biallelic())
-                        .isHotspot(variant.hotspot() == Hotspot.HOTSPOT)
-                        .clonalLikelihood(ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()))
-                        .phaseGroups(variant.localPhaseSets())
-                        .canonicalImpact(extractCanonicalImpact(variant))
-                        .otherImpacts(extractOtherImpacts(variant))
-                        .build());
-            } else if (variant.reported()) {
-                throw new IllegalStateException(
-                        "Filtered a reported variant through gene filtering: '" + event + "'. Please make sure '" + variant.gene()
-                                + "' is configured as a known gene.");
+                    .from(GeneAlterationFactory.convertAlteration(variant.gene(), evidenceDatabase.geneAlterationForVariant(variant)))
+                    .isReportable(variant.reported())
+                    .event(event)
+                    .driverLikelihood(driverLikelihood)
+                    .evidence(evidence)
+                    .type(determineVariantType(variant))
+                    .variantCopyNumber(ExtractionUtil.keep3Digits(variant.variantCopyNumber()))
+                    .totalCopyNumber(ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()))
+                    .isBiallelic(variant.biallelic())
+                    .isHotspot(variant.hotspot() == Hotspot.HOTSPOT)
+                    .clonalLikelihood(ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()))
+                    .phaseGroups(variant.localPhaseSets())
+                    .canonicalImpact(extractCanonicalImpact(variant))
+                    .otherImpacts(extractOtherImpacts(variant))
+                    .build())
+            } else check(!variant.reported()) {
+                ("Filtered a reported variant through gene filtering: '" + event + "'. Please make sure '" + variant.gene()
+                        + "' is configured as a known gene.")
             }
         }
-        return variants;
+        return variants
     }
 
-    @NotNull
-    @VisibleForTesting
-    static VariantType determineVariantType(@NotNull PurpleVariant variant) {
-        switch (variant.type()) {
-            case MNP: {
-                return VariantType.MNV;
-            }
-            case SNP: {
-                return VariantType.SNV;
-            }
-            case INDEL: {
-                if (variant.ref().length() > variant.alt().length()) {
-                    return VariantType.DELETE;
-                } else if (variant.alt().length() > variant.ref().length()) {
-                    return VariantType.INSERT;
+    companion object {
+        private val LOGGER = LogManager.getLogger(VariantExtractor::class.java)
+        private val ENSEMBL_TRANSCRIPT_IDENTIFIER: String? = "ENST"
+        private val RELEVANT_CODING_EFFECTS: MutableSet<PurpleCodingEffect?>? = Sets.newHashSet(PurpleCodingEffect.MISSENSE,
+            PurpleCodingEffect.SPLICE,
+            PurpleCodingEffect.NONSENSE_OR_FRAMESHIFT,
+            PurpleCodingEffect.SYNONYMOUS)
+        private val MUTATION_DRIVER_TYPES: MutableSet<PurpleDriverType?>? = Sets.newHashSet(PurpleDriverType.MUTATION, PurpleDriverType.GERMLINE_MUTATION)
+        @VisibleForTesting
+        fun determineVariantType(variant: PurpleVariant): VariantType {
+            return when (variant.type()) {
+                PurpleVariantType.MNP -> {
+                    VariantType.MNV
+                }
+
+                PurpleVariantType.SNP -> {
+                    VariantType.SNV
+                }
+
+                PurpleVariantType.INDEL -> {
+                    run {
+                        if (variant.ref().length > variant.alt().length) {
+                            return VariantType.DELETE
+                        } else if (variant.alt().length > variant.ref().length) {
+                            return VariantType.INSERT
+                        }
+                    }
+                    run { throw IllegalStateException("Cannot convert variant type: " + variant.type()) }
+                }
+
+                else -> {
+                    throw IllegalStateException("Cannot convert variant type: " + variant.type())
                 }
             }
-            default: {
-                throw new IllegalStateException("Cannot convert variant type: " + variant.type());
+        }
+
+        @VisibleForTesting
+        fun determineDriverLikelihood(driver: PurpleDriver?): DriverLikelihood? {
+            if (driver == null) {
+                return null
+            }
+            return if (driver.driverLikelihood() >= 0.8) {
+                DriverLikelihood.HIGH
+            } else if (driver.driverLikelihood() >= 0.2) {
+                DriverLikelihood.MEDIUM
+            } else {
+                DriverLikelihood.LOW
             }
         }
-    }
 
-    @Nullable
-    @VisibleForTesting
-    static DriverLikelihood determineDriverLikelihood(@Nullable PurpleDriver driver) {
-        if (driver == null) {
-            return null;
-        }
-
-        if (driver.driverLikelihood() >= 0.8) {
-            return DriverLikelihood.HIGH;
-        } else if (driver.driverLikelihood() >= 0.2) {
-            return DriverLikelihood.MEDIUM;
-        } else {
-            return DriverLikelihood.LOW;
-        }
-    }
-
-    @Nullable
-    private static PurpleDriver findBestMutationDriver(@NotNull Set<PurpleDriver> drivers, @NotNull String geneToFind,
-            @NotNull String transcriptToFind) {
-        PurpleDriver best = null;
-        for (PurpleDriver driver : drivers) {
-            boolean hasMutationType = MUTATION_DRIVER_TYPES.contains(driver.driver());
-            boolean hasMatchingGeneTranscript = driver.gene().equals(geneToFind) && driver.transcript().equals(transcriptToFind);
-            boolean isBetter = best == null || driver.driverLikelihood() > best.driverLikelihood();
-            if (hasMutationType && hasMatchingGeneTranscript && isBetter) {
-                best = driver;
+        private fun findBestMutationDriver(drivers: MutableSet<PurpleDriver?>, geneToFind: String,
+                                           transcriptToFind: String): PurpleDriver? {
+            var best: PurpleDriver? = null
+            for (driver in drivers) {
+                val hasMutationType = MUTATION_DRIVER_TYPES.contains(driver.driver())
+                val hasMatchingGeneTranscript = driver.gene() == geneToFind && driver.transcript() == transcriptToFind
+                val isBetter = best == null || driver.driverLikelihood() > best.driverLikelihood()
+                if (hasMutationType && hasMatchingGeneTranscript && isBetter) {
+                    best = driver
+                }
             }
-        }
-        return best;
-    }
-
-    @NotNull
-    private static TranscriptImpact extractCanonicalImpact(@NotNull PurpleVariant variant) {
-        if (!isEnsemblTranscript(variant.canonicalImpact())) {
-            LOGGER.warn("Canonical impact defined on non-ensembl transcript for variant '{}'", variant);
+            return best
         }
 
-        return toTranscriptImpact(variant.canonicalImpact());
-    }
+        private fun extractCanonicalImpact(variant: PurpleVariant): TranscriptImpact {
+            if (!isEnsemblTranscript(variant.canonicalImpact())) {
+                LOGGER.warn("Canonical impact defined on non-ensembl transcript for variant '{}'", variant)
+            }
+            return toTranscriptImpact(variant.canonicalImpact())
+        }
 
-    @NotNull
-    private static Set<TranscriptImpact> extractOtherImpacts(@NotNull PurpleVariant variant) {
-        return variant.otherImpacts()
+        private fun extractOtherImpacts(variant: PurpleVariant): MutableSet<TranscriptImpact?> {
+            return variant.otherImpacts()
                 .stream()
-                .filter(VariantExtractor::isEnsemblTranscript)
-                .map(VariantExtractor::toTranscriptImpact)
-                .collect(Collectors.toSet());
-    }
+                .filter { purpleTranscriptImpact: PurpleTranscriptImpact? -> isEnsemblTranscript(purpleTranscriptImpact) }
+                .map { purpleTranscriptImpact: PurpleTranscriptImpact? -> toTranscriptImpact(purpleTranscriptImpact) }
+                .collect(Collectors.toSet())
+        }
 
-    @VisibleForTesting
-    static boolean isEnsemblTranscript(@NotNull PurpleTranscriptImpact purpleTranscriptImpact) {
-        return purpleTranscriptImpact.transcript().startsWith(ENSEMBL_TRANSCRIPT_IDENTIFIER);
-    }
+        @VisibleForTesting
+        fun isEnsemblTranscript(purpleTranscriptImpact: PurpleTranscriptImpact): Boolean {
+            return purpleTranscriptImpact.transcript().startsWith(ENSEMBL_TRANSCRIPT_IDENTIFIER)
+        }
 
-    @NotNull
-    private static TranscriptImpact toTranscriptImpact(@NotNull PurpleTranscriptImpact purpleTranscriptImpact) {
-        return ImmutableTranscriptImpact.builder()
+        private fun toTranscriptImpact(purpleTranscriptImpact: PurpleTranscriptImpact): TranscriptImpact {
+            return ImmutableTranscriptImpact.builder()
                 .transcriptId(purpleTranscriptImpact.transcript())
                 .hgvsCodingImpact(purpleTranscriptImpact.hgvsCodingImpact())
                 .hgvsProteinImpact(AminoAcid.forceSingleLetterAminoAcids(purpleTranscriptImpact.hgvsProteinImpact()))
@@ -188,131 +161,153 @@ class VariantExtractor {
                 .isSpliceRegion(purpleTranscriptImpact.spliceRegion())
                 .effects(toEffects(purpleTranscriptImpact.effects()))
                 .codingEffect(determineCodingEffect(purpleTranscriptImpact.codingEffect()))
-                .build();
-    }
+                .build()
+        }
 
-    @NotNull
-    private static Set<VariantEffect> toEffects(@NotNull Set<PurpleVariantEffect> effects) {
-        return effects.stream().map(VariantExtractor::determineVariantEffect).collect(Collectors.toSet());
-    }
+        private fun toEffects(effects: MutableSet<PurpleVariantEffect?>): MutableSet<VariantEffect?> {
+            return effects.stream().map { effect: PurpleVariantEffect? -> determineVariantEffect(effect) }.collect(Collectors.toSet())
+        }
 
-    @NotNull
-    @VisibleForTesting
-    static VariantEffect determineVariantEffect(@NotNull PurpleVariantEffect effect) {
-        switch (effect) {
-            case STOP_GAINED: {
-                return VariantEffect.STOP_GAINED;
-            }
-            case STOP_LOST: {
-                return VariantEffect.STOP_LOST;
-            }
-            case START_LOST: {
-                return VariantEffect.START_LOST;
-            }
-            case FRAMESHIFT: {
-                return VariantEffect.FRAMESHIFT;
-            }
-            case SPLICE_ACCEPTOR: {
-                return VariantEffect.SPLICE_ACCEPTOR;
-            }
-            case SPLICE_DONOR: {
-                return VariantEffect.SPLICE_DONOR;
-            }
-            case INFRAME_INSERTION: {
-                return VariantEffect.INFRAME_INSERTION;
-            }
-            case INFRAME_DELETION: {
-                return VariantEffect.INFRAME_DELETION;
-            }
-            case MISSENSE: {
-                return VariantEffect.MISSENSE;
-            }
-            case PHASED_MISSENSE: {
-                return VariantEffect.PHASED_MISSENSE;
-            }
-            case PHASED_INFRAME_INSERTION: {
-                return VariantEffect.PHASED_INFRAME_INSERTION;
-            }
-            case PHASED_INFRAME_DELETION: {
-                return VariantEffect.PHASED_INFRAME_DELETION;
-            }
-            case SYNONYMOUS: {
-                return VariantEffect.SYNONYMOUS;
-            }
-            case PHASED_SYNONYMOUS: {
-                return VariantEffect.PHASED_SYNONYMOUS;
-            }
-            case INTRONIC: {
-                return VariantEffect.INTRONIC;
-            }
-            case FIVE_PRIME_UTR: {
-                return VariantEffect.FIVE_PRIME_UTR;
-            }
-            case THREE_PRIME_UTR: {
-                return VariantEffect.THREE_PRIME_UTR;
-            }
-            case UPSTREAM_GENE: {
-                return VariantEffect.UPSTREAM_GENE;
-            }
-            case NON_CODING_TRANSCRIPT: {
-                return VariantEffect.NON_CODING_TRANSCRIPT;
-            }
-            case OTHER: {
-                return VariantEffect.OTHER;
-            }
-            default: {
-                throw new IllegalStateException("Could not convert purple variant effect: " + effect);
+        @VisibleForTesting
+        fun determineVariantEffect(effect: PurpleVariantEffect): VariantEffect {
+            return when (effect) {
+                PurpleVariantEffect.STOP_GAINED -> {
+                    VariantEffect.STOP_GAINED
+                }
+
+                PurpleVariantEffect.STOP_LOST -> {
+                    VariantEffect.STOP_LOST
+                }
+
+                PurpleVariantEffect.START_LOST -> {
+                    VariantEffect.START_LOST
+                }
+
+                PurpleVariantEffect.FRAMESHIFT -> {
+                    VariantEffect.FRAMESHIFT
+                }
+
+                PurpleVariantEffect.SPLICE_ACCEPTOR -> {
+                    VariantEffect.SPLICE_ACCEPTOR
+                }
+
+                PurpleVariantEffect.SPLICE_DONOR -> {
+                    VariantEffect.SPLICE_DONOR
+                }
+
+                PurpleVariantEffect.INFRAME_INSERTION -> {
+                    VariantEffect.INFRAME_INSERTION
+                }
+
+                PurpleVariantEffect.INFRAME_DELETION -> {
+                    VariantEffect.INFRAME_DELETION
+                }
+
+                PurpleVariantEffect.MISSENSE -> {
+                    VariantEffect.MISSENSE
+                }
+
+                PurpleVariantEffect.PHASED_MISSENSE -> {
+                    VariantEffect.PHASED_MISSENSE
+                }
+
+                PurpleVariantEffect.PHASED_INFRAME_INSERTION -> {
+                    VariantEffect.PHASED_INFRAME_INSERTION
+                }
+
+                PurpleVariantEffect.PHASED_INFRAME_DELETION -> {
+                    VariantEffect.PHASED_INFRAME_DELETION
+                }
+
+                PurpleVariantEffect.SYNONYMOUS -> {
+                    VariantEffect.SYNONYMOUS
+                }
+
+                PurpleVariantEffect.PHASED_SYNONYMOUS -> {
+                    VariantEffect.PHASED_SYNONYMOUS
+                }
+
+                PurpleVariantEffect.INTRONIC -> {
+                    VariantEffect.INTRONIC
+                }
+
+                PurpleVariantEffect.FIVE_PRIME_UTR -> {
+                    VariantEffect.FIVE_PRIME_UTR
+                }
+
+                PurpleVariantEffect.THREE_PRIME_UTR -> {
+                    VariantEffect.THREE_PRIME_UTR
+                }
+
+                PurpleVariantEffect.UPSTREAM_GENE -> {
+                    VariantEffect.UPSTREAM_GENE
+                }
+
+                PurpleVariantEffect.NON_CODING_TRANSCRIPT -> {
+                    VariantEffect.NON_CODING_TRANSCRIPT
+                }
+
+                PurpleVariantEffect.OTHER -> {
+                    VariantEffect.OTHER
+                }
+
+                else -> {
+                    throw IllegalStateException("Could not convert purple variant effect: $effect")
+                }
             }
         }
-    }
 
-    @Nullable
-    @VisibleForTesting
-    static CodingEffect determineCodingEffect(@NotNull PurpleCodingEffect codingEffect) {
-        switch (codingEffect) {
-            case NONSENSE_OR_FRAMESHIFT: {
-                return CodingEffect.NONSENSE_OR_FRAMESHIFT;
-            }
-            case SPLICE: {
-                return CodingEffect.SPLICE;
-            }
-            case MISSENSE: {
-                return CodingEffect.MISSENSE;
-            }
-            case SYNONYMOUS: {
-                return CodingEffect.SYNONYMOUS;
-            }
-            case NONE: {
-                return CodingEffect.NONE;
-            }
-            case UNDEFINED: {
-                return null;
-            }
-            default: {
-                throw new IllegalStateException("Could not convert purple coding effect: " + codingEffect);
+        @VisibleForTesting
+        fun determineCodingEffect(codingEffect: PurpleCodingEffect): CodingEffect? {
+            return when (codingEffect) {
+                PurpleCodingEffect.NONSENSE_OR_FRAMESHIFT -> {
+                    CodingEffect.NONSENSE_OR_FRAMESHIFT
+                }
+
+                PurpleCodingEffect.SPLICE -> {
+                    CodingEffect.SPLICE
+                }
+
+                PurpleCodingEffect.MISSENSE -> {
+                    CodingEffect.MISSENSE
+                }
+
+                PurpleCodingEffect.SYNONYMOUS -> {
+                    CodingEffect.SYNONYMOUS
+                }
+
+                PurpleCodingEffect.NONE -> {
+                    CodingEffect.NONE
+                }
+
+                PurpleCodingEffect.UNDEFINED -> {
+                    null
+                }
+
+                else -> {
+                    throw IllegalStateException("Could not convert purple coding effect: $codingEffect")
+                }
             }
         }
-    }
 
-    @NotNull
-    static Set<PurpleVariant> relevantPurpleVariants(PurpleRecord purple) {
-        Set<PurpleVariant> purpleVariants = Sets.newHashSet();
-        purpleVariants.addAll(purple.allSomaticVariants());
-        List<PurpleVariant> reportableGermlineVariants = purple.reportableGermlineVariants();
-        if (reportableGermlineVariants != null) {
-            purpleVariants.addAll(reportableGermlineVariants);
+        fun relevantPurpleVariants(purple: PurpleRecord?): MutableSet<PurpleVariant?> {
+            val purpleVariants: MutableSet<PurpleVariant?>? = Sets.newHashSet()
+            purpleVariants.addAll(purple.allSomaticVariants())
+            val reportableGermlineVariants = purple.reportableGermlineVariants()
+            if (reportableGermlineVariants != null) {
+                purpleVariants.addAll(reportableGermlineVariants)
+            }
+            return purpleVariants
         }
-        return purpleVariants;
-    }
 
-    @NotNull
-    static Set<PurpleDriver> relevantPurpleDrivers(PurpleRecord purple) {
-        Set<PurpleDriver> purpleDrivers = Sets.newHashSet();
-        purpleDrivers.addAll(purple.somaticDrivers());
-        List<PurpleDriver> germlineDrivers = purple.germlineDrivers();
-        if (germlineDrivers != null) {
-            purpleDrivers.addAll(germlineDrivers);
+        fun relevantPurpleDrivers(purple: PurpleRecord?): MutableSet<PurpleDriver?> {
+            val purpleDrivers: MutableSet<PurpleDriver?>? = Sets.newHashSet()
+            purpleDrivers.addAll(purple.somaticDrivers())
+            val germlineDrivers = purple.germlineDrivers()
+            if (germlineDrivers != null) {
+                purpleDrivers.addAll(germlineDrivers)
+            }
+            return purpleDrivers
         }
-        return purpleDrivers;
     }
 }

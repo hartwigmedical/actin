@@ -1,42 +1,29 @@
-package com.hartwig.actin.molecular.orange.evidence.curation;
+package com.hartwig.actin.molecular.orange.evidence.curation
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.List;
-import java.util.Map;
+import com.google.common.collect.Lists
+import com.hartwig.actin.util.TabularFile
+import java.io.File
+import java.io.IOException
+import java.nio.file.Files
 
-import com.google.common.collect.Lists;
-import com.hartwig.actin.util.TabularFile;
-
-import org.jetbrains.annotations.NotNull;
-
-public final class ExternalTrialMappingFile {
-
-    private static final String FIELD_DELIMITER = "\t";
-
-    private ExternalTrialMappingFile() {
-    }
-
-    @NotNull
-    public static List<ExternalTrialMapping> read(@NotNull String tsv) throws IOException {
-        List<String> lines = Files.readAllLines(new File(tsv).toPath());
-
-        List<ExternalTrialMapping> mappings = Lists.newArrayList();
-        Map<String, Integer> fields = TabularFile.createFields(lines.get(0).split(FIELD_DELIMITER));
-        for (String line : lines.subList(1, lines.size())) {
-            mappings.add(fromLine(line, fields));
+object ExternalTrialMappingFile {
+    private val FIELD_DELIMITER: String? = "\t"
+    @Throws(IOException::class)
+    fun read(tsv: String): MutableList<ExternalTrialMapping?> {
+        val lines = Files.readAllLines(File(tsv).toPath())
+        val mappings: MutableList<ExternalTrialMapping?>? = Lists.newArrayList()
+        val fields = TabularFile.createFields(lines[0].split(FIELD_DELIMITER.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
+        for (line in lines.subList(1, lines.size)) {
+            mappings.add(fromLine(line, fields))
         }
-        return mappings;
+        return mappings
     }
 
-    @NotNull
-    private static ExternalTrialMapping fromLine(@NotNull String line, @NotNull Map<String, Integer> fields) {
-        String[] values = line.split(FIELD_DELIMITER, -1);
-
+    private fun fromLine(line: String, fields: MutableMap<String?, Int?>): ExternalTrialMapping {
+        val values: Array<String?> = line.split(FIELD_DELIMITER.toRegex()).toTypedArray()
         return ImmutableExternalTrialMapping.builder()
-                .externalTrial(values[fields.get("externalTrial")])
-                .actinTrial(values[fields.get("actinTrial")])
-                .build();
+            .externalTrial(values.get(fields["externalTrial"]))
+            .actinTrial(values.get(fields["actinTrial"]))
+            .build()
     }
 }

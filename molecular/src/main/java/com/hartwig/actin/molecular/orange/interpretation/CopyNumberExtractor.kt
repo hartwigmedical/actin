@@ -1,97 +1,77 @@
-package com.hartwig.actin.molecular.orange.interpretation;
+package com.hartwig.actin.molecular.orange.interpretation
 
-import java.util.Set;
+import com.google.common.annotations.VisibleForTesting
+import com.google.common.collect.Sets
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.driver.ImmutableCopyNumber
+import com.hartwig.actin.molecular.filter.GeneFilter
+import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase
+import com.hartwig.actin.molecular.sort.driver.CopyNumberComparator
+import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
+import com.hartwig.hmftools.datamodel.purple.PurpleDriver
+import com.hartwig.hmftools.datamodel.purple.PurpleDriverType
+import com.hartwig.hmftools.datamodel.purple.PurpleRecord
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Sets;
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumber;
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType;
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableCopyNumber;
-import com.hartwig.actin.molecular.filter.GeneFilter;
-import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase;
-import com.hartwig.actin.molecular.sort.driver.CopyNumberComparator;
-import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation;
-import com.hartwig.hmftools.datamodel.purple.PurpleDriver;
-import com.hartwig.hmftools.datamodel.purple.PurpleDriverType;
-import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss;
-import com.hartwig.hmftools.datamodel.purple.PurpleRecord;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-class CopyNumberExtractor {
-
-    private static final Set<PurpleDriverType> AMP_DRIVERS = Sets.newHashSet(PurpleDriverType.AMP, PurpleDriverType.PARTIAL_AMP);
-    private static final Set<PurpleDriverType> DEL_DRIVERS = Sets.newHashSet(PurpleDriverType.DEL);
-
-    @NotNull
-    private final GeneFilter geneFilter;
-    @NotNull
-    private final EvidenceDatabase evidenceDatabase;
-
-    public CopyNumberExtractor(@NotNull final GeneFilter geneFilter, @NotNull final EvidenceDatabase evidenceDatabase) {
-        this.geneFilter = geneFilter;
-        this.evidenceDatabase = evidenceDatabase;
-    }
-
-    @NotNull
-    public Set<CopyNumber> extract(@NotNull PurpleRecord purple) {
-        Set<CopyNumber> copyNumbers = Sets.newTreeSet(new CopyNumberComparator());
-        Set<PurpleDriver> drivers = VariantExtractor.relevantPurpleDrivers(purple);
-
-        for (PurpleGainLoss gainLoss : purple.allSomaticGainsLosses()) {
-            PurpleDriver driver = findCopyNumberDriver(drivers, gainLoss.gene());
-            String event = DriverEventFactory.gainLossEvent(gainLoss);
-
+internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
+    fun extract(purple: PurpleRecord): MutableSet<CopyNumber?> {
+        val copyNumbers: MutableSet<CopyNumber?>? = Sets.newTreeSet(CopyNumberComparator())
+        val drivers: MutableSet<PurpleDriver?> = VariantExtractor.Companion.relevantPurpleDrivers(purple)
+        for (gainLoss in purple.allSomaticGainsLosses()) {
+            val driver = findCopyNumberDriver(drivers, gainLoss.gene())
+            val event = DriverEventFactory.gainLossEvent(gainLoss)
             if (geneFilter.include(gainLoss.gene())) {
                 copyNumbers.add(ImmutableCopyNumber.builder()
-                        .from(GeneAlterationFactory.convertAlteration(gainLoss.gene(),
-                                evidenceDatabase.geneAlterationForCopyNumber(gainLoss)))
-                        .isReportable(driver != null)
-                        .event(event)
-                        .driverLikelihood(driver != null ? DriverLikelihood.HIGH : null)
-                        .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(gainLoss)))
-                        .type(determineType(gainLoss.interpretation()))
-                        .minCopies((int) Math.round(gainLoss.minCopies()))
-                        .maxCopies((int) Math.round(gainLoss.maxCopies()))
-                        .build());
-            } else if (driver != null) {
-                throw new IllegalStateException(
-                        "Filtered a reported copy number through gene filtering: '" + event + "'. Please make sure '" + gainLoss.gene()
-                                + "' is configured as a known gene.");
+                    .from(GeneAlterationFactory.convertAlteration(gainLoss.gene(),
+                        evidenceDatabase.geneAlterationForCopyNumber(gainLoss)))
+                    .isReportable(driver != null)
+                    .event(event)
+                    .driverLikelihood(if (driver != null) DriverLikelihood.HIGH else null)
+                    .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(gainLoss)))
+                    .type(determineType(gainLoss.interpretation()))
+                    .minCopies(Math.round(gainLoss.minCopies()).toInt())
+                    .maxCopies(Math.round(gainLoss.maxCopies()).toInt())
+                    .build())
+            } else check(driver == null) {
+                ("Filtered a reported copy number through gene filtering: '" + event + "'. Please make sure '" + gainLoss.gene()
+                        + "' is configured as a known gene.")
             }
         }
-        return copyNumbers;
+        return copyNumbers
     }
 
-    @NotNull
-    @VisibleForTesting
-    static CopyNumberType determineType(@NotNull CopyNumberInterpretation interpretation) {
-        switch (interpretation) {
-            case FULL_GAIN: {
-                return CopyNumberType.FULL_GAIN;
-            }
-            case PARTIAL_GAIN: {
-                return CopyNumberType.PARTIAL_GAIN;
-            }
-            case FULL_LOSS:
-            case PARTIAL_LOSS: {
-                return CopyNumberType.LOSS;
-            }
-            default: {
-                throw new IllegalStateException("Could not determine copy number type for purple interpretation: " + interpretation);
-            }
-        }
-    }
+    companion object {
+        private val AMP_DRIVERS: MutableSet<PurpleDriverType?>? = Sets.newHashSet(PurpleDriverType.AMP, PurpleDriverType.PARTIAL_AMP)
+        private val DEL_DRIVERS: MutableSet<PurpleDriverType?>? = Sets.newHashSet(PurpleDriverType.DEL)
+        @VisibleForTesting
+        fun determineType(interpretation: CopyNumberInterpretation): CopyNumberType {
+            return when (interpretation) {
+                CopyNumberInterpretation.FULL_GAIN -> {
+                    CopyNumberType.FULL_GAIN
+                }
 
-    @Nullable
-    private static PurpleDriver findCopyNumberDriver(@NotNull Set<PurpleDriver> drivers, @NotNull String geneToFind) {
-        for (PurpleDriver driver : drivers) {
-            if ((DEL_DRIVERS.contains(driver.driver()) || AMP_DRIVERS.contains(driver.driver())) && driver.gene().equals(geneToFind)) {
-                return driver;
+                CopyNumberInterpretation.PARTIAL_GAIN -> {
+                    CopyNumberType.PARTIAL_GAIN
+                }
+
+                CopyNumberInterpretation.FULL_LOSS, CopyNumberInterpretation.PARTIAL_LOSS -> {
+                    CopyNumberType.LOSS
+                }
+
+                else -> {
+                    throw IllegalStateException("Could not determine copy number type for purple interpretation: $interpretation")
+                }
             }
         }
-        return null;
+
+        private fun findCopyNumberDriver(drivers: MutableSet<PurpleDriver?>, geneToFind: String): PurpleDriver? {
+            for (driver in drivers) {
+                if ((DEL_DRIVERS.contains(driver.driver()) || AMP_DRIVERS.contains(driver.driver())) && driver.gene() == geneToFind) {
+                    return driver
+                }
+            }
+            return null
+        }
     }
 }

@@ -1,17 +1,14 @@
-package com.hartwig.actin.molecular.orange.evidence.curation;
+package com.hartwig.actin.molecular.orange.evidence.curation
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Assert
+import org.junit.Test
 
-import org.junit.Test;
-
-public class ExternalTrialMapperTest {
-
+class ExternalTrialMapperTest {
     @Test
-    public void canMapExternalTrials() {
-        ExternalTrialMapper mapper = TestExternalTrialMapperFactory.create("EXT 1", "ACT 1");
-
-        assertEquals("ACT 1", mapper.map("EXT 1"));
-        assertEquals("ACT 1", mapper.map("ACT 1"));
-        assertEquals("random", mapper.map("random"));
+    fun canMapExternalTrials() {
+        val mapper = TestExternalTrialMapperFactory.create("EXT 1", "ACT 1")
+        Assert.assertEquals("ACT 1", mapper.map("EXT 1"))
+        Assert.assertEquals("ACT 1", mapper.map("ACT 1"))
+        Assert.assertEquals("random", mapper.map("random"))
     }
 }

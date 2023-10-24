@@ -1,69 +1,53 @@
-package com.hartwig.actin.molecular.orange.evidence.actionability;
+package com.hartwig.actin.molecular.orange.evidence.actionability
 
-import java.util.List;
+import com.google.common.collect.Lists
+import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
+import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
+import com.hartwig.serve.datamodel.ActionableEvent
+import com.hartwig.serve.datamodel.ActionableEvents
+import com.hartwig.serve.datamodel.gene.ActionableGene
+import com.hartwig.serve.datamodel.gene.GeneEvent
 
-import com.google.common.collect.Lists;
-import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss;
-import com.hartwig.serve.datamodel.ActionableEvent;
-import com.hartwig.serve.datamodel.ActionableEvents;
-import com.hartwig.serve.datamodel.gene.ActionableGene;
-import com.hartwig.serve.datamodel.gene.GeneEvent;
-
-import org.jetbrains.annotations.NotNull;
-
-class CopyNumberEvidence implements EvidenceMatcher<PurpleGainLoss>{
-
-    @NotNull
-    private final List<ActionableGene> actionableAmplifications;
-    @NotNull
-    private final List<ActionableGene> actionableLosses;
-
-    @NotNull
-    public static CopyNumberEvidence create(@NotNull ActionableEvents actionableEvents) {
-        List<ActionableGene> actionableAmplifications = Lists.newArrayList();
-        List<ActionableGene> actionableLosses = Lists.newArrayList();
-        for (ActionableGene actionableGene : actionableEvents.genes()) {
-            if (actionableGene.event() == GeneEvent.AMPLIFICATION) {
-                actionableAmplifications.add(actionableGene);
-            } else if (actionableGene.event() == GeneEvent.DELETION) {
-                actionableLosses.add(actionableGene);
+internal class CopyNumberEvidence private constructor(private val actionableAmplifications: MutableList<ActionableGene?>,
+                                                      private val actionableLosses: MutableList<ActionableGene?>) : EvidenceMatcher<PurpleGainLoss?> {
+    override fun findMatches(gainLoss: PurpleGainLoss): MutableList<ActionableEvent?> {
+        return when (gainLoss.interpretation()) {
+            CopyNumberInterpretation.FULL_GAIN, CopyNumberInterpretation.PARTIAL_GAIN -> {
+                findMatches(gainLoss, actionableAmplifications)
             }
-        }
-        return new CopyNumberEvidence(actionableAmplifications, actionableLosses);
-    }
 
-    private CopyNumberEvidence(@NotNull final List<ActionableGene> actionableAmplifications,
-            @NotNull final List<ActionableGene> actionableLosses) {
-        this.actionableAmplifications = actionableAmplifications;
-        this.actionableLosses = actionableLosses;
-    }
+            CopyNumberInterpretation.FULL_LOSS, CopyNumberInterpretation.PARTIAL_LOSS -> {
+                findMatches(gainLoss, actionableLosses)
+            }
 
-    @NotNull
-    @Override
-    public List<ActionableEvent> findMatches(@NotNull PurpleGainLoss gainLoss) {
-        switch (gainLoss.interpretation()) {
-            case FULL_GAIN:
-            case PARTIAL_GAIN: {
-                return findMatches(gainLoss, actionableAmplifications);
-            }
-            case FULL_LOSS:
-            case PARTIAL_LOSS: {
-                return findMatches(gainLoss, actionableLosses);
-            }
-            default: {
-                return Lists.newArrayList();
+            else -> {
+                Lists.newArrayList()
             }
         }
     }
 
-    @NotNull
-    private static List<ActionableEvent> findMatches(@NotNull PurpleGainLoss gainLoss, @NotNull List<ActionableGene> actionableEvents) {
-        List<ActionableEvent> matches = Lists.newArrayList();
-        for (ActionableGene actionableEvent : actionableEvents) {
-            if (actionableEvent.gene().equals(gainLoss.gene())) {
-                matches.add(actionableEvent);
+    companion object {
+        fun create(actionableEvents: ActionableEvents): CopyNumberEvidence {
+            val actionableAmplifications: MutableList<ActionableGene?>? = Lists.newArrayList()
+            val actionableLosses: MutableList<ActionableGene?>? = Lists.newArrayList()
+            for (actionableGene in actionableEvents.genes()) {
+                if (actionableGene.event() == GeneEvent.AMPLIFICATION) {
+                    actionableAmplifications.add(actionableGene)
+                } else if (actionableGene.event() == GeneEvent.DELETION) {
+                    actionableLosses.add(actionableGene)
+                }
             }
+            return CopyNumberEvidence(actionableAmplifications, actionableLosses)
         }
-        return matches;
+
+        private fun findMatches(gainLoss: PurpleGainLoss, actionableEvents: MutableList<ActionableGene?>): MutableList<ActionableEvent?> {
+            val matches: MutableList<ActionableEvent?>? = Lists.newArrayList()
+            for (actionableEvent in actionableEvents) {
+                if (actionableEvent.gene() == gainLoss.gene()) {
+                    matches.add(actionableEvent)
+                }
+            }
+            return matches
+        }
     }
 }
