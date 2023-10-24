@@ -23,9 +23,13 @@ import com.hartwig.hmftools.datamodel.linx.LinxSvAnnotation;
 import com.hartwig.hmftools.datamodel.purple.PurpleDriver;
 import com.hartwig.hmftools.datamodel.purple.PurpleDriverType;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 class DisruptionExtractor {
+
+    private static final Logger LOGGER = LogManager.getLogger(DisruptionExtractor.class);
 
     @NotNull
     private final GeneFilter geneFilter;
@@ -165,9 +169,12 @@ class DisruptionExtractor {
     }
 
     private static double correctUndisruptedCopyNumber(@NotNull LinxBreakend breakend, @NotNull List<PurpleDriver> drivers) {
+        LOGGER.debug("Correcting undisrupted copy number for {}", breakend);
         if (breakend.type() == LinxBreakendType.DUP) {
+            LOGGER.debug("Determined type to be DUP for {}", breakend);
             for (PurpleDriver driver : drivers) {
                 if (driver.gene().equals(breakend.gene()) && driver.driver() == PurpleDriverType.HOM_DUP_DISRUPTION) {
+                    LOGGER.debug("Found HOM_DUP_DISRUPTION driver for {}", breakend);
                     return Math.max(0.0, breakend.undisruptedCopyNumber() - breakend.junctionCopyNumber());
                 }
             }
