@@ -4,7 +4,6 @@ import com.hartwig.actin.database.DatabaseLoaderConfig
 import com.hartwig.actin.util.ApplicationConfig
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
-import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.core.config.Configurator
@@ -24,7 +23,6 @@ data class TreatmentMatchLoaderConfig(
             return options
         }
 
-        @Throws(ParseException::class)
         fun createConfig(cmd: CommandLine): TreatmentMatchLoaderConfig {
             if (cmd.hasOption(LOG_DEBUG)) {
                 Configurator.setRootLevel(Level.DEBUG)

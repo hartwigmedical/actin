@@ -11,7 +11,6 @@ import org.jooq.conf.RenderMapping
 import org.jooq.conf.Settings
 import org.jooq.impl.DSL
 import java.sql.DriverManager
-import java.sql.SQLException
 
 class DatabaseAccess private constructor(
     private val clinicalDAO: ClinicalDAO, private val molecularDAO: MolecularDAO,
@@ -50,10 +49,10 @@ class DatabaseAccess private constructor(
     }
 
     companion object {
+
         private val LOGGER = LogManager.getLogger(DatabaseAccess::class.java)
         private const val DEV_CATALOG = "actin_test"
 
-        @Throws(SQLException::class)
         fun fromCredentials(user: String, pass: String, url: String): DatabaseAccess {
             // Disable annoying jooq self-ad messages
             System.setProperty("org.jooq.no-logo", "true")
