@@ -14,9 +14,9 @@ import org.junit.Test
 class CopyNumberLookupTest {
     @Test
     fun canLookupCopyNumbers() {
-        val amp: KnownCopyNumber? = TestServeKnownFactory.copyNumberBuilder().gene("gene 1").event(GeneEvent.AMPLIFICATION).build()
-        val del: KnownCopyNumber? = TestServeKnownFactory.copyNumberBuilder().gene("gene 2").event(GeneEvent.DELETION).build()
-        val knownCopyNumbers: MutableList<KnownCopyNumber?>? = Lists.newArrayList(amp, del)
+        val amp: KnownCopyNumber = TestServeKnownFactory.copyNumberBuilder().gene("gene 1").event(GeneEvent.AMPLIFICATION).build()
+        val del: KnownCopyNumber = TestServeKnownFactory.copyNumberBuilder().gene("gene 2").event(GeneEvent.DELETION).build()
+        val knownCopyNumbers: MutableList<KnownCopyNumber> = Lists.newArrayList(amp, del)
         val ampOnGene1 = create("gene 1", CopyNumberInterpretation.FULL_GAIN)
         Assert.assertEquals(amp, CopyNumberLookup.findForCopyNumber(knownCopyNumbers, ampOnGene1))
         val ampOnGene2 = create("gene 2", CopyNumberInterpretation.FULL_GAIN)
@@ -29,11 +29,11 @@ class CopyNumberLookupTest {
 
     @Test
     fun canLookupHomozygousDisruptions() {
-        val amp: KnownCopyNumber? = TestServeKnownFactory.copyNumberBuilder().gene("gene 1").event(GeneEvent.AMPLIFICATION).build()
-        val del: KnownCopyNumber? = TestServeKnownFactory.copyNumberBuilder().gene("gene 1").event(GeneEvent.DELETION).build()
-        val knownCopyNumbers: MutableList<KnownCopyNumber?>? = Lists.newArrayList(amp, del)
-        val homDisruptionGene1: HomozygousDisruption? = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build()
-        val homDisruptionGene2: HomozygousDisruption? = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 2").build()
+        val amp: KnownCopyNumber = TestServeKnownFactory.copyNumberBuilder().gene("gene 1").event(GeneEvent.AMPLIFICATION).build()
+        val del: KnownCopyNumber = TestServeKnownFactory.copyNumberBuilder().gene("gene 1").event(GeneEvent.DELETION).build()
+        val knownCopyNumbers: MutableList<KnownCopyNumber> = Lists.newArrayList(amp, del)
+        val homDisruptionGene1: HomozygousDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build()
+        val homDisruptionGene2: HomozygousDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 2").build()
         Assert.assertEquals(del, CopyNumberLookup.findForHomozygousDisruption(knownCopyNumbers, homDisruptionGene1))
         Assert.assertNull(CopyNumberLookup.findForHomozygousDisruption(knownCopyNumbers, homDisruptionGene2))
     }

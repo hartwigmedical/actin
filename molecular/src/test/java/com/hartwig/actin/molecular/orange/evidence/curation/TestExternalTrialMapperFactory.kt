@@ -8,7 +8,10 @@ object TestExternalTrialMapperFactory {
     }
 
     fun create(externalTrial: String, actinTrial: String): ExternalTrialMapper {
-        val mapping: ExternalTrialMapping? = ImmutableExternalTrialMapping.builder().externalTrial(externalTrial).actinTrial(actinTrial).build()
+        val mapping: ExternalTrialMapping? = ExternalTrialMapping(
+            externalTrial = externalTrial,
+            actinTrial = actinTrial
+        )
         return ExternalTrialMapper(Lists.newArrayList(mapping))
     }
 }

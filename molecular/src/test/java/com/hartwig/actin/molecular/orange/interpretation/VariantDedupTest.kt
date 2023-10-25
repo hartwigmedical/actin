@@ -10,13 +10,13 @@ import java.util.Set
 class VariantDedupTest {
     @Test
     fun shouldWorkOnEmptySetOfVariants() {
-        val dedup = VariantDedup.apply(emptySet())
+        val dedup = VariantDedup.apply(mutableSetOf())
         Assertions.assertThat(dedup).isEmpty()
     }
 
     @Test
     fun shouldDedupVariantsThatAreInterpretedAsPhasedInframe() {
-        val variant1: PurpleVariant? = TestPurpleFactory.variantBuilder()
+        val variant1: PurpleVariant = TestPurpleFactory.variantBuilder()
             .gene("EGFR")
             .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder()
                 .hgvsCodingImpact("c.1")
@@ -25,7 +25,7 @@ class VariantDedupTest {
                 .build())
             .variantCopyNumber(0.9)
             .build()
-        val variant2: PurpleVariant? = TestPurpleFactory.variantBuilder()
+        val variant2: PurpleVariant = TestPurpleFactory.variantBuilder()
             .from(variant1)
             .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder()
                 .from(variant1.canonicalImpact())
@@ -33,7 +33,7 @@ class VariantDedupTest {
                 .build())
             .variantCopyNumber(1.2)
             .build()
-        val variant3: PurpleVariant? = TestPurpleFactory.variantBuilder()
+        val variant3: PurpleVariant = TestPurpleFactory.variantBuilder()
             .from(variant1)
             .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder()
                 .from(variant1.canonicalImpact())
@@ -41,7 +41,7 @@ class VariantDedupTest {
                 .build())
             .variantCopyNumber(0.9)
             .build()
-        val variant4: PurpleVariant? = TestPurpleFactory.variantBuilder()
+        val variant4: PurpleVariant = TestPurpleFactory.variantBuilder()
             .gene("APC")
             .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder()
                 .hgvsProteinImpact("p.Met1fs")
@@ -58,8 +58,8 @@ class VariantDedupTest {
 
     @Test
     fun shouldNotDedupUnrelatedVariants() {
-        val variant1: PurpleVariant? = TestPurpleFactory.variantBuilder().gene("gene 1").build()
-        val variant2: PurpleVariant? = TestPurpleFactory.variantBuilder().gene("gene 2").build()
+        val variant1: PurpleVariant = TestPurpleFactory.variantBuilder().gene("gene 1").build()
+        val variant2: PurpleVariant = TestPurpleFactory.variantBuilder().gene("gene 2").build()
         val variants = Set.of(variant1, variant2)
         val dedup = VariantDedup.apply(variants)
         Assertions.assertThat(dedup.size).isEqualTo(2)

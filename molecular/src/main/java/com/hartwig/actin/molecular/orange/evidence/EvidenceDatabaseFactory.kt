@@ -11,7 +11,7 @@ import com.hartwig.serve.datamodel.KnownEvents
 
 object EvidenceDatabaseFactory {
     fun create(knownEvents: KnownEvents, actionableEvents: ActionableEvents,
-               externalTrialMappings: MutableList<ExternalTrialMapping?>, doidEntry: DoidEntry, tumorDoids: MutableSet<String?>?): EvidenceDatabase {
+               externalTrialMappings: MutableList<ExternalTrialMapping>, doidEntry: DoidEntry, tumorDoids: MutableSet<String>): EvidenceDatabase {
         val externalTrialMapper = ExternalTrialMapper(externalTrialMappings)
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
         val factory = ActionableEventMatcherFactory(externalTrialMapper, doidModel, tumorDoids)

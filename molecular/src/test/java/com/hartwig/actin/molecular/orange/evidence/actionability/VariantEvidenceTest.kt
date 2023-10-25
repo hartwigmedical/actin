@@ -17,20 +17,20 @@ import java.util.List
 class VariantEvidenceTest {
     @Test
     fun shouldDetermineEvidenceForHotspots() {
-        val hotspot1: ActionableHotspot? = TestServeActionabilityFactory.hotspotBuilder().gene("gene 1").chromosome("X").position(2).ref("A").alt("G").build()
-        val hotspot2: ActionableHotspot? = TestServeActionabilityFactory.hotspotBuilder().gene("gene 2").chromosome("X").position(2).ref("A").alt("G").build()
-        val hotspot3: ActionableHotspot? = TestServeActionabilityFactory.hotspotBuilder().gene("gene 1").chromosome("X").position(2).ref("A").alt("C").build()
-        val actionable: ActionableEvents? = ImmutableActionableEvents.builder().addAllHotspots(List.of(hotspot1, hotspot2, hotspot3)).build()
+        val hotspot1: ActionableHotspot = TestServeActionabilityFactory.hotspotBuilder().gene("gene 1").chromosome("X").position(2).ref("A").alt("G").build()
+        val hotspot2: ActionableHotspot = TestServeActionabilityFactory.hotspotBuilder().gene("gene 2").chromosome("X").position(2).ref("A").alt("G").build()
+        val hotspot3: ActionableHotspot = TestServeActionabilityFactory.hotspotBuilder().gene("gene 1").chromosome("X").position(2).ref("A").alt("C").build()
+        val actionable: ActionableEvents = ImmutableActionableEvents.builder().addAllHotspots(List.of(hotspot1, hotspot2, hotspot3)).build()
         val variantEvidence: VariantEvidence = VariantEvidence.Companion.create(actionable)
-        val variantGene1: PurpleVariant? = TestPurpleFactory.variantBuilder().gene("gene 1").chromosome("X").position(2).ref("A").alt("G").reported(true).build()
+        val variantGene1: PurpleVariant = TestPurpleFactory.variantBuilder().gene("gene 1").chromosome("X").position(2).ref("A").alt("G").reported(true).build()
         val matchesVariant1 = variantEvidence.findMatches(variantGene1)
         Assert.assertEquals(1, matchesVariant1.size.toLong())
         Assert.assertTrue(matchesVariant1.contains(hotspot1))
-        val variantGene2: PurpleVariant? = TestPurpleFactory.variantBuilder().gene("gene 2").chromosome("X").position(2).ref("A").alt("G").reported(true).build()
+        val variantGene2: PurpleVariant = TestPurpleFactory.variantBuilder().gene("gene 2").chromosome("X").position(2).ref("A").alt("G").reported(true).build()
         val matchesVariant2 = variantEvidence.findMatches(variantGene2)
         Assert.assertEquals(1, matchesVariant2.size.toLong())
         Assert.assertTrue(matchesVariant2.contains(hotspot2))
-        val otherVariantGene1: PurpleVariant? = TestPurpleFactory.variantBuilder().gene("gene 1").chromosome("X").position(2).ref("A").alt("T").reported(true).build()
+        val otherVariantGene1: PurpleVariant = TestPurpleFactory.variantBuilder().gene("gene 1").chromosome("X").position(2).ref("A").alt("T").reported(true).build()
         Assert.assertTrue(variantEvidence.findMatches(otherVariantGene1).isEmpty())
     }
 
@@ -46,7 +46,7 @@ class VariantEvidenceTest {
 
     private fun assertEvidenceDeterminedForRange(actionable: ActionableEvents) {
         val variantEvidence: VariantEvidence = VariantEvidence.Companion.create(actionable)
-        val variantGene1: PurpleVariant? = TestPurpleFactory.variantBuilder()
+        val variantGene1: PurpleVariant = TestPurpleFactory.variantBuilder()
             .gene("gene 1")
             .chromosome("X")
             .position(6)
@@ -56,7 +56,7 @@ class VariantEvidenceTest {
         val matchesVariant1 = variantEvidence.findMatches(variantGene1)
         Assert.assertEquals(1, matchesVariant1.size.toLong())
         Assert.assertTrue(matchesVariant1.contains(ACTIONABLE_RANGE))
-        val otherVariantGene1: PurpleVariant? = TestPurpleFactory.variantBuilder()
+        val otherVariantGene1: PurpleVariant = TestPurpleFactory.variantBuilder()
             .gene("gene 1")
             .chromosome("X")
             .position(2)
@@ -68,12 +68,12 @@ class VariantEvidenceTest {
 
     @Test
     fun shouldDetermineEvidenceForGenes() {
-        val gene1: ActionableGene? = TestServeActionabilityFactory.geneBuilder().gene("gene 1").event(GeneEvent.ANY_MUTATION).build()
-        val gene2: ActionableGene? = TestServeActionabilityFactory.geneBuilder().gene("gene 2").event(GeneEvent.ACTIVATION).build()
-        val gene3: ActionableGene? = TestServeActionabilityFactory.geneBuilder().gene("gene 2").event(GeneEvent.AMPLIFICATION).build()
-        val actionable: ActionableEvents? = ImmutableActionableEvents.builder().addGenes(gene1, gene2, gene3).build()
+        val gene1: ActionableGene = TestServeActionabilityFactory.geneBuilder().gene("gene 1").event(GeneEvent.ANY_MUTATION).build()
+        val gene2: ActionableGene = TestServeActionabilityFactory.geneBuilder().gene("gene 2").event(GeneEvent.ACTIVATION).build()
+        val gene3: ActionableGene = TestServeActionabilityFactory.geneBuilder().gene("gene 2").event(GeneEvent.AMPLIFICATION).build()
+        val actionable: ActionableEvents = ImmutableActionableEvents.builder().addGenes(gene1, gene2, gene3).build()
         val variantEvidence: VariantEvidence = VariantEvidence.Companion.create(actionable)
-        val variantGene1: PurpleVariant? = TestPurpleFactory.variantBuilder()
+        val variantGene1: PurpleVariant = TestPurpleFactory.variantBuilder()
             .gene("gene 1")
             .canonicalImpact(create(PurpleCodingEffect.MISSENSE))
             .reported(true)
@@ -81,7 +81,7 @@ class VariantEvidenceTest {
         val matchesVariant1 = variantEvidence.findMatches(variantGene1)
         Assert.assertEquals(1, matchesVariant1.size.toLong())
         Assert.assertTrue(matchesVariant1.contains(gene1))
-        val variantGene2: PurpleVariant? = TestPurpleFactory.variantBuilder()
+        val variantGene2: PurpleVariant = TestPurpleFactory.variantBuilder()
             .gene("gene 2")
             .canonicalImpact(create(PurpleCodingEffect.MISSENSE))
             .reported(true)

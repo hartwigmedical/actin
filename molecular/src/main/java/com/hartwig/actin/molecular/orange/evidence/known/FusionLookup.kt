@@ -5,7 +5,7 @@ import com.hartwig.hmftools.datamodel.linx.LinxFusion
 import com.hartwig.serve.datamodel.fusion.KnownFusion
 
 internal object FusionLookup {
-    fun find(knownFusions: Iterable<KnownFusion?>, fusion: LinxFusion): KnownFusion? {
+    fun find(knownFusions: Iterable<KnownFusion>, fusion: LinxFusion): KnownFusion? {
         var best: KnownFusion? = null
         for (knownFusion in knownFusions) {
             if (FusionMatching.isGeneMatch(knownFusion, fusion)) {

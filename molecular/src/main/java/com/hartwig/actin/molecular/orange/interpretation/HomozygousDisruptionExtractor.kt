@@ -10,8 +10,8 @@ import com.hartwig.actin.molecular.sort.driver.HomozygousDisruptionComparator
 import com.hartwig.hmftools.datamodel.linx.LinxRecord
 
 internal class HomozygousDisruptionExtractor(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
-    fun extractHomozygousDisruptions(linx: LinxRecord): MutableSet<HomozygousDisruption?> {
-        val homozygousDisruptions: MutableSet<HomozygousDisruption?>? = Sets.newTreeSet(HomozygousDisruptionComparator())
+    fun extractHomozygousDisruptions(linx: LinxRecord): MutableSet<HomozygousDisruption> {
+        val homozygousDisruptions: MutableSet<HomozygousDisruption> = Sets.newTreeSet(HomozygousDisruptionComparator())
         for (homozygousDisruption in relevantHomozygousDisruptions(linx)) {
             if (geneFilter.include(homozygousDisruption.gene())) {
                 homozygousDisruptions.add(ImmutableHomozygousDisruption.builder()
@@ -32,11 +32,12 @@ internal class HomozygousDisruptionExtractor(private val geneFilter: GeneFilter,
     }
 
     companion object {
-        private fun relevantHomozygousDisruptions(linx: LinxRecord): MutableSet<com.hartwig.hmftools.datamodel.linx.HomozygousDisruption?> {
-            val disruptions: MutableSet<com.hartwig.hmftools.datamodel.linx.HomozygousDisruption?>? = Sets.newHashSet()
+        private fun relevantHomozygousDisruptions(linx: LinxRecord): MutableSet<com.hartwig.hmftools.datamodel.linx.HomozygousDisruption> {
+            val disruptions: MutableSet<com.hartwig.hmftools.datamodel.linx.HomozygousDisruption> = Sets.newHashSet()
             disruptions.addAll(linx.somaticHomozygousDisruptions())
-            if (linx.germlineHomozygousDisruptions() != null) {
-                disruptions.addAll(linx.germlineHomozygousDisruptions())
+            val germlineHomozygousDisruptions = linx.germlineHomozygousDisruptions()
+            if (germlineHomozygousDisruptions != null) {
+                disruptions.addAll(germlineHomozygousDisruptions)
             }
             return disruptions
         }

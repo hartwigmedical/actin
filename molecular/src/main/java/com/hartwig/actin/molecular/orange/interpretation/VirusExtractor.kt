@@ -14,8 +14,8 @@ import com.hartwig.hmftools.datamodel.virus.VirusInterpreterData
 import com.hartwig.hmftools.datamodel.virus.VirusLikelihoodType
 
 internal class VirusExtractor(private val evidenceDatabase: EvidenceDatabase) {
-    fun extract(virusInterpreter: VirusInterpreterData): MutableSet<Virus?> {
-        val viruses: MutableSet<Virus?>? = Sets.newTreeSet(VirusComparator())
+    fun extract(virusInterpreter: VirusInterpreterData): MutableSet<Virus> {
+        val viruses: MutableSet<Virus> = Sets.newTreeSet(VirusComparator())
         for (virus in virusInterpreter.allViruses()) {
             viruses.add(ImmutableVirus.builder()
                 .isReportable(virus.reported())
@@ -33,6 +33,7 @@ internal class VirusExtractor(private val evidenceDatabase: EvidenceDatabase) {
 
     companion object {
         val QC_PASS_STATUS: VirusBreakendQCStatus? = VirusBreakendQCStatus.NO_ABNORMALITIES
+
         @VisibleForTesting
         fun determineDriverLikelihood(driverLikelihood: VirusLikelihoodType): DriverLikelihood? {
             return when (driverLikelihood) {

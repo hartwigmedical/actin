@@ -14,6 +14,7 @@ import com.hartwig.hmftools.datamodel.purple.PurpleTumorMutationalStatus
 import org.apache.logging.log4j.util.Strings
 import org.junit.Assert
 import org.junit.Test
+import kotlin.test.assertNotNull
 
 class CharacteristicsExtractorTest {
     @Test
@@ -23,7 +24,7 @@ class CharacteristicsExtractorTest {
         assertDoubleEquals(0.98, characteristics.purity())
         assertDoubleEquals(3.1, characteristics.ploidy())
         val predictedOrigin = characteristics.predictedTumorOrigin()
-        Assert.assertNotNull(predictedOrigin)
+        assertNotNull(predictedOrigin)
         Assert.assertEquals("Melanoma", predictedOrigin.cancerType())
         Assert.assertEquals(0.996, predictedOrigin.likelihood(), EPSILON)
         Assert.assertEquals(1, predictedOrigin.predictions().size.toLong())
@@ -37,7 +38,9 @@ class CharacteristicsExtractorTest {
         Assert.assertNotNull(characteristics.microsatelliteEvidence())
         Assert.assertEquals(false, characteristics.isHomologousRepairDeficient())
         Assert.assertNotNull(characteristics.homologousRepairEvidence())
-        Assert.assertEquals(13.0, characteristics.tumorMutationalBurden(), EPSILON)
+        val tmb = characteristics.tumorMutationalBurden()
+        assertNotNull(tmb)
+        Assert.assertEquals(13.0, tmb, EPSILON)
         Assert.assertEquals(true, characteristics.hasHighTumorMutationalBurden())
         Assert.assertNotNull(characteristics.tumorMutationalBurdenEvidence())
         Assert.assertEquals(189, (characteristics.tumorMutationalLoad() as Int).toLong())
@@ -49,9 +52,9 @@ class CharacteristicsExtractorTest {
     fun canInterpretAllHomologousRepairStates() {
         val extractor = createTestExtractor()
         val deficient = extractor.extract(withHomologousRepairStatus(ChordStatus.HR_DEFICIENT))
-        Assert.assertTrue(deficient.isHomologousRepairDeficient())
+        Assert.assertTrue(deficient.isHomologousRepairDeficient() == true)
         val proficient = extractor.extract(withHomologousRepairStatus(ChordStatus.HR_PROFICIENT))
-        Assert.assertFalse(proficient.isHomologousRepairDeficient())
+        Assert.assertFalse(proficient.isHomologousRepairDeficient() == true)
         val cannotBeDetermined = extractor.extract(withHomologousRepairStatus(ChordStatus.CANNOT_BE_DETERMINED))
         Assert.assertNull(cannotBeDetermined.isHomologousRepairDeficient())
         val unknown = extractor.extract(withHomologousRepairStatus(ChordStatus.UNKNOWN))
@@ -62,9 +65,9 @@ class CharacteristicsExtractorTest {
     fun canInterpretAllMicrosatelliteInstabilityStates() {
         val extractor = createTestExtractor()
         val unstable = extractor.extract(withMicrosatelliteStatus(PurpleMicrosatelliteStatus.MSI))
-        Assert.assertTrue(unstable.isMicrosatelliteUnstable())
+        Assert.assertTrue(unstable.isMicrosatelliteUnstable() == true)
         val stable = extractor.extract(withMicrosatelliteStatus(PurpleMicrosatelliteStatus.MSS))
-        Assert.assertFalse(stable.isMicrosatelliteUnstable())
+        Assert.assertFalse(stable.isMicrosatelliteUnstable() == true)
         val unknown = extractor.extract(withMicrosatelliteStatus(PurpleMicrosatelliteStatus.UNKNOWN))
         Assert.assertNull(unknown.isMicrosatelliteUnstable())
     }
@@ -73,9 +76,9 @@ class CharacteristicsExtractorTest {
     fun canInterpretAllTumorLoadStates() {
         val extractor = createTestExtractor()
         val high = extractor.extract(withTumorLoadStatus(PurpleTumorMutationalStatus.HIGH))
-        Assert.assertTrue(high.hasHighTumorMutationalLoad())
+        Assert.assertTrue(high.hasHighTumorMutationalLoad() == true)
         val low = extractor.extract(withTumorLoadStatus(PurpleTumorMutationalStatus.LOW))
-        Assert.assertFalse(low.hasHighTumorMutationalLoad())
+        Assert.assertFalse(low.hasHighTumorMutationalLoad() == true)
         val unknown = extractor.extract(withTumorLoadStatus(PurpleTumorMutationalStatus.UNKNOWN))
         Assert.assertNull(unknown.hasHighTumorMutationalLoad())
     }
@@ -101,7 +104,7 @@ class CharacteristicsExtractorTest {
 
         private fun assertDoubleEquals(expected: Double, actual: Double?) {
             Assert.assertNotNull(actual)
-            Assert.assertEquals(expected, actual, EPSILON)
+            Assert.assertEquals(expected, actual!!, EPSILON)
         }
 
         private fun withTumorLoadStatus(tumorLoadStatus: PurpleTumorMutationalStatus): OrangeRecord {

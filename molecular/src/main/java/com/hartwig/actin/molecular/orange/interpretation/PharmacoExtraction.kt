@@ -9,23 +9,23 @@ import java.util.function.Function
 import java.util.stream.Collectors
 
 internal object PharmacoExtraction {
-    fun extract(record: OrangeRecord): MutableSet<PharmacoEntry?> {
+    fun extract(record: OrangeRecord): MutableSet<PharmacoEntry> {
         val peach = record.peach()
         return if (peach != null) {
             peach.stream()
-                .collect(Collectors.groupingBy(Function { obj: PeachGenotype? -> obj.gene() }))
+                .collect(Collectors.groupingBy(Function { obj: PeachGenotype -> obj.gene() }))
                 .entries
                 .stream()
-                .map { x: MutableMap.MutableEntry<String?, MutableList<PeachGenotype?>?>? -> createPharmacoEntryForGeneAndPeachGenotypes(x.key, x.value) }
+                .map { x: MutableMap.MutableEntry<String, MutableList<PeachGenotype>> -> createPharmacoEntryForGeneAndPeachGenotypes(x.key, x.value) }
                 .collect(Collectors.toSet())
         } else {
-            emptySet<PharmacoEntry?>()
+            mutableSetOf()
         }
     }
 
-    private fun createPharmacoEntryForGeneAndPeachGenotypes(gene: String?, peachGenotypes: MutableList<PeachGenotype?>?): PharmacoEntry {
+    private fun createPharmacoEntryForGeneAndPeachGenotypes(gene: String, peachGenotypes: MutableList<PeachGenotype>): PharmacoEntry {
         val haplotypes = peachGenotypes.stream()
-            .map { peachGenotype: PeachGenotype? ->
+            .map { peachGenotype: PeachGenotype ->
                 ImmutableHaplotype.builder()
                     .name(peachGenotype.haplotype())
                     .function(peachGenotype.function())

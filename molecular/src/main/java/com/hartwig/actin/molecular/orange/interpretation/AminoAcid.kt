@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.orange.interpretation
 import com.google.common.collect.Maps
 
 internal object AminoAcid {
-    private val TRI_LETTER_AMINO_ACID_TO_SINGLE_LETTER: MutableMap<String?, String?>? = Maps.newHashMap()
+    private val TRI_LETTER_AMINO_ACID_TO_SINGLE_LETTER: MutableMap<String, String> = Maps.newHashMap()
 
     init {
         TRI_LETTER_AMINO_ACID_TO_SINGLE_LETTER["Ala"] = "A" // Alanine
@@ -29,7 +29,7 @@ internal object AminoAcid {
     }
 
     fun forceSingleLetterAminoAcids(impact: String): String {
-        var convertedImpact: String? = impact
+        var convertedImpact: String = impact
         for ((key, value) in TRI_LETTER_AMINO_ACID_TO_SINGLE_LETTER) {
             convertedImpact = convertedImpact.replace(key.toRegex(), value)
         }

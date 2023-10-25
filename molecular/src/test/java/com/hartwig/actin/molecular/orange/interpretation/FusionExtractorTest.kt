@@ -17,7 +17,7 @@ import org.junit.Test
 class FusionExtractorTest {
     @Test
     fun canExtractFusions() {
-        val linxFusion: LinxFusion? = TestLinxFactory.fusionBuilder()
+        val linxFusion: LinxFusion = TestLinxFactory.fusionBuilder()
             .reported(true)
             .reportedType(LinxFusionType.PROMISCUOUS_5)
             .geneStart("gene start")
@@ -28,7 +28,7 @@ class FusionExtractorTest {
             .fusedExonDown(4)
             .likelihood(FusionLikelihoodType.HIGH)
             .build()
-        val linx: LinxRecord? = ImmutableLinxRecord.builder()
+        val linx: LinxRecord = ImmutableLinxRecord.builder()
             .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
             .addAllSomaticFusions(linxFusion)
             .build()
@@ -50,8 +50,8 @@ class FusionExtractorTest {
 
     @Test(expected = IllegalStateException::class)
     fun shouldThrowExceptionWhenFilteringReportedFusion() {
-        val linxFusion: LinxFusion? = TestLinxFactory.fusionBuilder().reported(true).geneStart("other start").geneEnd("other end").build()
-        val linx: LinxRecord? = ImmutableLinxRecord.builder()
+        val linxFusion: LinxFusion = TestLinxFactory.fusionBuilder().reported(true).geneStart("other start").geneEnd("other end").build()
+        val linx: LinxRecord = ImmutableLinxRecord.builder()
             .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
             .addAllSomaticFusions(linxFusion)
             .build()
@@ -63,18 +63,18 @@ class FusionExtractorTest {
     @Test
     fun canDetermineDriverTypeForAllFusions() {
         for (type in LinxFusionType.values()) {
-            val fusion: LinxFusion? = TestLinxFactory.fusionBuilder().reportedType(type).build()
+            val fusion: LinxFusion = TestLinxFactory.fusionBuilder().reportedType(type).build()
             Assert.assertNotNull(FusionExtractor.Companion.determineDriverType(fusion))
         }
     }
 
     @Test
     fun canDetermineDriverLikelihoodForAllFusions() {
-        val high: LinxFusion? = TestLinxFactory.fusionBuilder().likelihood(FusionLikelihoodType.HIGH).build()
+        val high: LinxFusion = TestLinxFactory.fusionBuilder().likelihood(FusionLikelihoodType.HIGH).build()
         Assert.assertEquals(DriverLikelihood.HIGH, FusionExtractor.Companion.determineDriverLikelihood(high))
-        val low: LinxFusion? = TestLinxFactory.fusionBuilder().likelihood(FusionLikelihoodType.LOW).build()
+        val low: LinxFusion = TestLinxFactory.fusionBuilder().likelihood(FusionLikelihoodType.LOW).build()
         Assert.assertEquals(DriverLikelihood.LOW, FusionExtractor.Companion.determineDriverLikelihood(low))
-        val na: LinxFusion? = TestLinxFactory.fusionBuilder().likelihood(FusionLikelihoodType.NA).build()
+        val na: LinxFusion = TestLinxFactory.fusionBuilder().likelihood(FusionLikelihoodType.NA).build()
         Assert.assertNull(FusionExtractor.Companion.determineDriverLikelihood(na))
     }
 }

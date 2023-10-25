@@ -15,9 +15,9 @@ import com.hartwig.hmftools.datamodel.purple.PurpleDriverType
 import com.hartwig.hmftools.datamodel.purple.PurpleRecord
 
 internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
-    fun extract(purple: PurpleRecord): MutableSet<CopyNumber?> {
-        val copyNumbers: MutableSet<CopyNumber?>? = Sets.newTreeSet(CopyNumberComparator())
-        val drivers: MutableSet<PurpleDriver?> = VariantExtractor.Companion.relevantPurpleDrivers(purple)
+    fun extract(purple: PurpleRecord): MutableSet<CopyNumber> {
+        val copyNumbers: MutableSet<CopyNumber> = Sets.newTreeSet(CopyNumberComparator())
+        val drivers: MutableSet<PurpleDriver> = VariantExtractor.relevantPurpleDrivers(purple)
         for (gainLoss in purple.allSomaticGainsLosses()) {
             val driver = findCopyNumberDriver(drivers, gainLoss.gene())
             val event = DriverEventFactory.gainLossEvent(gainLoss)
@@ -42,8 +42,9 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private v
     }
 
     companion object {
-        private val AMP_DRIVERS: MutableSet<PurpleDriverType?>? = Sets.newHashSet(PurpleDriverType.AMP, PurpleDriverType.PARTIAL_AMP)
-        private val DEL_DRIVERS: MutableSet<PurpleDriverType?>? = Sets.newHashSet(PurpleDriverType.DEL)
+        private val AMP_DRIVERS: MutableSet<PurpleDriverType> = Sets.newHashSet(PurpleDriverType.AMP, PurpleDriverType.PARTIAL_AMP)
+        private val DEL_DRIVERS: MutableSet<PurpleDriverType> = Sets.newHashSet(PurpleDriverType.DEL)
+
         @VisibleForTesting
         fun determineType(interpretation: CopyNumberInterpretation): CopyNumberType {
             return when (interpretation) {
@@ -65,7 +66,7 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private v
             }
         }
 
-        private fun findCopyNumberDriver(drivers: MutableSet<PurpleDriver?>, geneToFind: String): PurpleDriver? {
+        private fun findCopyNumberDriver(drivers: MutableSet<PurpleDriver>, geneToFind: String): PurpleDriver? {
             for (driver in drivers) {
                 if ((DEL_DRIVERS.contains(driver.driver()) || AMP_DRIVERS.contains(driver.driver())) && driver.gene() == geneToFind) {
                     return driver

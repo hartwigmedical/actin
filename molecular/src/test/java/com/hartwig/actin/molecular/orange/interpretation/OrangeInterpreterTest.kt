@@ -107,13 +107,13 @@ class OrangeInterpreterTest {
     @Test(expected = IllegalStateException::class)
     fun shouldThrowExceptionOnEmptyQCStates() {
         val interpreter = createTestInterpreter()
-        interpreter.interpret(orangeRecordWithQCStatuses(setOf<PurpleQCStatus?>()))
+        interpreter.interpret(orangeRecordWithQCStatuses(mutableSetOf()))
     }
 
     @Test(expected = IllegalStateException::class)
     fun shouldThrowExceptionOnMissingCuppaPredictionClassifiers() {
         val proper = TestOrangeFactory.createProperTestOrangeRecord()
-        val record: OrangeRecord? = ImmutableOrangeRecord.copyOf(proper)
+        val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
             .withCuppa(ImmutableCuppaData.copyOf(proper.cuppa()).withPredictions(TestCuppaFactory.builder().build()))
         val interpreter = createTestInterpreter()
         interpreter.interpret(record)
@@ -122,7 +122,7 @@ class OrangeInterpreterTest {
     @Test(expected = IllegalStateException::class)
     fun shouldThrowExceptionOnGermlineDisruptionPresent() {
         val proper = TestOrangeFactory.createProperTestOrangeRecord()
-        val record: OrangeRecord? = ImmutableOrangeRecord.copyOf(proper)
+        val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
             .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
                 .withGermlineHomozygousDisruptions(TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build()))
         val interpreter = createTestInterpreter()
@@ -132,7 +132,7 @@ class OrangeInterpreterTest {
     @Test(expected = IllegalStateException::class)
     fun shouldThrowExceptionOnGermlineBreakendPresent() {
         val proper = TestOrangeFactory.createProperTestOrangeRecord()
-        val record: OrangeRecord? = ImmutableOrangeRecord.copyOf(proper)
+        val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
             .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
                 .withAllGermlineBreakends(TestLinxFactory.breakendBuilder().gene("gene 1").build()))
         val interpreter = createTestInterpreter()
@@ -142,7 +142,7 @@ class OrangeInterpreterTest {
     @Test(expected = IllegalStateException::class)
     fun shouldThrowExceptionOnGermlineSVPresentPresent() {
         val proper = TestOrangeFactory.createProperTestOrangeRecord()
-        val record: OrangeRecord? = ImmutableOrangeRecord.copyOf(proper)
+        val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
             .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
                 .withAllGermlineStructuralVariants(TestLinxFactory.structuralVariantBuilder().svId(1).build()))
         val interpreter = createTestInterpreter()

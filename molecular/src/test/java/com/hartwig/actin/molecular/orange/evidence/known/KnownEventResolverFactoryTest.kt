@@ -15,10 +15,10 @@ class KnownEventResolverFactoryTest {
 
     @Test
     fun canFilterKnownEvents() {
-        val hotspot1: KnownHotspot? = TestServeKnownFactory.hotspotBuilder().addSources(firstAllowedSource(), Knowledgebase.UNKNOWN).build()
-        val hotspot2: KnownHotspot? = TestServeKnownFactory.hotspotBuilder().addSources(firstAllowedSource()).build()
-        val hotspot3: KnownHotspot? = TestServeKnownFactory.hotspotBuilder().addSources(Knowledgebase.UNKNOWN).build()
-        val known: KnownEvents? = ImmutableKnownEvents.builder().addHotspots(hotspot1, hotspot2, hotspot3).build()
+        val hotspot1: KnownHotspot = TestServeKnownFactory.hotspotBuilder().addSources(firstAllowedSource(), Knowledgebase.UNKNOWN).build()
+        val hotspot2: KnownHotspot = TestServeKnownFactory.hotspotBuilder().addSources(firstAllowedSource()).build()
+        val hotspot3: KnownHotspot = TestServeKnownFactory.hotspotBuilder().addSources(Knowledgebase.UNKNOWN).build()
+        val known: KnownEvents = ImmutableKnownEvents.builder().addHotspots(hotspot1, hotspot2, hotspot3).build()
         val filtered = KnownEventResolverFactory.filterKnownEvents(known)
         Assert.assertEquals(2, filtered.hotspots().size.toLong())
         Assert.assertTrue(filtered.hotspots().contains(hotspot1))

@@ -7,7 +7,7 @@ import com.hartwig.serve.datamodel.gene.GeneEvent
 import com.hartwig.serve.datamodel.gene.KnownCopyNumber
 
 internal object CopyNumberLookup {
-    fun findForCopyNumber(knownCopyNumbers: Iterable<KnownCopyNumber?>, gainLoss: PurpleGainLoss): KnownCopyNumber? {
+    fun findForCopyNumber(knownCopyNumbers: Iterable<KnownCopyNumber>, gainLoss: PurpleGainLoss): KnownCopyNumber? {
         for (knownCopyNumber in knownCopyNumbers) {
             val geneMatches = knownCopyNumber.gene() == gainLoss.gene()
             val interpretationMatches = interpretationMatchesEvent(gainLoss.interpretation(), knownCopyNumber.event())
@@ -34,7 +34,7 @@ internal object CopyNumberLookup {
         }
     }
 
-    fun findForHomozygousDisruption(knownCopyNumbers: Iterable<KnownCopyNumber?>,
+    fun findForHomozygousDisruption(knownCopyNumbers: Iterable<KnownCopyNumber>,
                                     homozygousDisruption: HomozygousDisruption): KnownCopyNumber? {
         for (knownCopyNumber in knownCopyNumbers) {
             if (knownCopyNumber.event() == GeneEvent.DELETION && knownCopyNumber.gene() == homozygousDisruption.gene()) {

@@ -11,7 +11,7 @@ import com.hartwig.serve.datamodel.gene.GeneEvent
 object TestActionableEventMatcherFactory {
     fun createEmpty(): ActionableEventMatcher {
         val personalizedActionabilityFactory = PersonalizedActionabilityFactory(TestDoidModelFactory.createMinimalTestDoidModel(), Sets.newHashSet())
-        val empty: ActionableEvents? = ImmutableActionableEvents.builder().build()
+        val empty: ActionableEvents = ImmutableActionableEvents.builder().build()
         return ActionableEventMatcher(personalizedActionabilityFactory,
             SignatureEvidence.Companion.create(empty),
             VariantEvidence.Companion.create(empty),
@@ -24,9 +24,9 @@ object TestActionableEventMatcherFactory {
 
     fun createProper(): ActionableEventMatcher {
         val doidModel = TestDoidModelFactory.createWithOneParentChild("parent", "child")
-        val applicableDoids: MutableSet<String?>? = Sets.newHashSet("parent")
+        val applicableDoids: MutableSet<String> = Sets.newHashSet("parent")
         val personalizedActionabilityFactory = PersonalizedActionabilityFactory(doidModel, applicableDoids)
-        val actionableEvents: ActionableEvents? = ImmutableActionableEvents.builder()
+        val actionableEvents: ActionableEvents = ImmutableActionableEvents.builder()
             .addHotspots(TestServeActionabilityFactory.hotspotBuilder().build())
             .addCodons(TestServeActionabilityFactory.rangeBuilder().build())
             .addExons(TestServeActionabilityFactory.rangeBuilder().build())

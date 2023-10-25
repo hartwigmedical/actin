@@ -12,10 +12,10 @@ import org.junit.Test
 class HomozygousDisruptionEvidenceTest {
     @Test
     fun canDetermineHomozygousDisruptionEvidence() {
-        val gene1: ActionableGene? = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.DELETION).gene("gene 1").build()
-        val gene2: ActionableGene? = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.INACTIVATION).gene("gene 2").build()
-        val gene3: ActionableGene? = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.AMPLIFICATION).gene("gene 3").build()
-        val actionable: ActionableEvents? = ImmutableActionableEvents.builder().genes(Lists.newArrayList(gene1, gene2, gene3)).build()
+        val gene1: ActionableGene = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.DELETION).gene("gene 1").build()
+        val gene2: ActionableGene = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.INACTIVATION).gene("gene 2").build()
+        val gene3: ActionableGene = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.AMPLIFICATION).gene("gene 3").build()
+        val actionable: ActionableEvents = ImmutableActionableEvents.builder().genes(Lists.newArrayList(gene1, gene2, gene3)).build()
         val homozygousDisruptionEvidence: HomozygousDisruptionEvidence = HomozygousDisruptionEvidence.Companion.create(actionable)
         val matchGene1 = homozygousDisruptionEvidence.findMatches(TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build())
         Assert.assertEquals(1, matchGene1.size.toLong())

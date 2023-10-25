@@ -27,8 +27,8 @@ import org.apache.logging.log4j.LogManager
 import java.util.stream.Collectors
 
 internal class VariantExtractor(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
-    fun extract(purple: PurpleRecord): MutableSet<Variant?> {
-        val variants: MutableSet<Variant?>? = Sets.newTreeSet(VariantComparator())
+    fun extract(purple: PurpleRecord): MutableSet<Variant> {
+        val variants: MutableSet<Variant> = Sets.newTreeSet(VariantComparator())
         val purpleVariants = relevantPurpleVariants(purple)
         val drivers = relevantPurpleDrivers(purple)
         for (variant in VariantDedup.apply(purpleVariants)) {
@@ -69,12 +69,13 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
 
     companion object {
         private val LOGGER = LogManager.getLogger(VariantExtractor::class.java)
-        private val ENSEMBL_TRANSCRIPT_IDENTIFIER: String? = "ENST"
-        private val RELEVANT_CODING_EFFECTS: MutableSet<PurpleCodingEffect?>? = Sets.newHashSet(PurpleCodingEffect.MISSENSE,
+        private val ENSEMBL_TRANSCRIPT_IDENTIFIER: String = "ENST"
+        private val RELEVANT_CODING_EFFECTS: MutableSet<PurpleCodingEffect> = Sets.newHashSet(PurpleCodingEffect.MISSENSE,
             PurpleCodingEffect.SPLICE,
             PurpleCodingEffect.NONSENSE_OR_FRAMESHIFT,
             PurpleCodingEffect.SYNONYMOUS)
-        private val MUTATION_DRIVER_TYPES: MutableSet<PurpleDriverType?>? = Sets.newHashSet(PurpleDriverType.MUTATION, PurpleDriverType.GERMLINE_MUTATION)
+        private val MUTATION_DRIVER_TYPES: MutableSet<PurpleDriverType> = Sets.newHashSet(PurpleDriverType.MUTATION, PurpleDriverType.GERMLINE_MUTATION)
+
         @VisibleForTesting
         fun determineVariantType(variant: PurpleVariant): VariantType {
             return when (variant.type()) {
@@ -117,7 +118,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
             }
         }
 
-        private fun findBestMutationDriver(drivers: MutableSet<PurpleDriver?>, geneToFind: String,
+        private fun findBestMutationDriver(drivers: MutableSet<PurpleDriver>, geneToFind: String,
                                            transcriptToFind: String): PurpleDriver? {
             var best: PurpleDriver? = null
             for (driver in drivers) {
@@ -138,11 +139,11 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
             return toTranscriptImpact(variant.canonicalImpact())
         }
 
-        private fun extractOtherImpacts(variant: PurpleVariant): MutableSet<TranscriptImpact?> {
+        private fun extractOtherImpacts(variant: PurpleVariant): MutableSet<TranscriptImpact> {
             return variant.otherImpacts()
                 .stream()
-                .filter { purpleTranscriptImpact: PurpleTranscriptImpact? -> isEnsemblTranscript(purpleTranscriptImpact) }
-                .map { purpleTranscriptImpact: PurpleTranscriptImpact? -> toTranscriptImpact(purpleTranscriptImpact) }
+                .filter { purpleTranscriptImpact: PurpleTranscriptImpact -> isEnsemblTranscript(purpleTranscriptImpact) }
+                .map { purpleTranscriptImpact: PurpleTranscriptImpact -> toTranscriptImpact(purpleTranscriptImpact) }
                 .collect(Collectors.toSet())
         }
 
@@ -164,8 +165,8 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
                 .build()
         }
 
-        private fun toEffects(effects: MutableSet<PurpleVariantEffect?>): MutableSet<VariantEffect?> {
-            return effects.stream().map { effect: PurpleVariantEffect? -> determineVariantEffect(effect) }.collect(Collectors.toSet())
+        private fun toEffects(effects: MutableSet<PurpleVariantEffect>): MutableSet<VariantEffect> {
+            return effects.stream().map { effect: PurpleVariantEffect -> determineVariantEffect(effect) }.collect(Collectors.toSet())
         }
 
         @VisibleForTesting
@@ -290,8 +291,8 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
             }
         }
 
-        fun relevantPurpleVariants(purple: PurpleRecord?): MutableSet<PurpleVariant?> {
-            val purpleVariants: MutableSet<PurpleVariant?>? = Sets.newHashSet()
+        fun relevantPurpleVariants(purple: PurpleRecord): MutableSet<PurpleVariant> {
+            val purpleVariants: MutableSet<PurpleVariant> = Sets.newHashSet()
             purpleVariants.addAll(purple.allSomaticVariants())
             val reportableGermlineVariants = purple.reportableGermlineVariants()
             if (reportableGermlineVariants != null) {
@@ -300,8 +301,8 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
             return purpleVariants
         }
 
-        fun relevantPurpleDrivers(purple: PurpleRecord?): MutableSet<PurpleDriver?> {
-            val purpleDrivers: MutableSet<PurpleDriver?>? = Sets.newHashSet()
+        fun relevantPurpleDrivers(purple: PurpleRecord): MutableSet<PurpleDriver> {
+            val purpleDrivers: MutableSet<PurpleDriver> = Sets.newHashSet()
             purpleDrivers.addAll(purple.somaticDrivers())
             val germlineDrivers = purple.germlineDrivers()
             if (germlineDrivers != null) {

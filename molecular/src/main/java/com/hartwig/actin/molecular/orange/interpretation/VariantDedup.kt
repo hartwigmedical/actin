@@ -12,11 +12,11 @@ object VariantDedup {
     private const val EPSILON = 1e-10
     private val LOGGER = LogManager.getLogger(VariantDedup::class.java)
     private val PHASED_EFFECTS = Set.of(PurpleVariantEffect.PHASED_INFRAME_DELETION, PurpleVariantEffect.PHASED_INFRAME_INSERTION)
-    fun apply(variants: MutableSet<PurpleVariant?>?): MutableSet<PurpleVariant?>? {
-        return variants.stream().filter { variant: PurpleVariant? -> include(variant, variants) }.collect(Collectors.toSet())
+    fun apply(variants: MutableSet<PurpleVariant>): MutableSet<PurpleVariant> {
+        return variants.stream().filter { variant: PurpleVariant -> include(variant, variants) }.collect(Collectors.toSet())
     }
 
-    private fun include(variant: PurpleVariant?, variants: MutableSet<PurpleVariant?>?): Boolean {
+    private fun include(variant: PurpleVariant, variants: MutableSet<PurpleVariant>): Boolean {
         return if (hasCanonicalPhasedEffect(variant) && hasSameEffectWithHigherVCN(variants, variant)) {
             LOGGER.debug("Dedup'ing variant '{}'", variant)
             false
@@ -25,11 +25,11 @@ object VariantDedup {
         }
     }
 
-    private fun hasCanonicalPhasedEffect(variant: PurpleVariant?): Boolean {
+    private fun hasCanonicalPhasedEffect(variant: PurpleVariant): Boolean {
         return variant.canonicalImpact().effects().stream().anyMatch { o: PurpleVariantEffect? -> PHASED_EFFECTS.contains(o) }
     }
 
-    private fun hasSameEffectWithHigherVCN(variants: MutableSet<PurpleVariant?>?, variantToMatch: PurpleVariant?): Boolean {
+    private fun hasSameEffectWithHigherVCN(variants: MutableSet<PurpleVariant>, variantToMatch: PurpleVariant): Boolean {
         // We assume that variants with same effect have unique hgvs coding impact.
         var minVariantCopyNumber: Double? = null
         var uniqueHgvsCodingImpact: String? = null
@@ -41,11 +41,11 @@ object VariantDedup {
                     minVariantCopyNumber = variant.variantCopyNumber()
                     uniqueHgvsCodingImpact = variantImpact.hgvsCodingImpact()
                 } else if (equal(variant.variantCopyNumber(), minVariantCopyNumber)) {
-                    uniqueHgvsCodingImpact = if (variantImpact.hgvsCodingImpact().compareTo(uniqueHgvsCodingImpact) > 0) variantImpact.hgvsCodingImpact() else uniqueHgvsCodingImpact
+                    uniqueHgvsCodingImpact = if (uniqueHgvsCodingImpact != null && variantImpact.hgvsCodingImpact().compareTo(uniqueHgvsCodingImpact) > 0) variantImpact.hgvsCodingImpact() else uniqueHgvsCodingImpact
                 }
             }
         }
-        val matchesMinVariantCopyNumber = equal(variantToMatch.variantCopyNumber(), minVariantCopyNumber)
+        val matchesMinVariantCopyNumber = minVariantCopyNumber != null && equal(variantToMatch.variantCopyNumber(), minVariantCopyNumber)
         val matchesBestHgvsCodingImpact = variantImpactToMatch.hgvsCodingImpact() == uniqueHgvsCodingImpact
         return !(matchesMinVariantCopyNumber && matchesBestHgvsCodingImpact)
     }

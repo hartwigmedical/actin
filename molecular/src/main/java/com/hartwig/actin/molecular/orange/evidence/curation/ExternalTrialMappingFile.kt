@@ -7,11 +7,12 @@ import java.io.IOException
 import java.nio.file.Files
 
 object ExternalTrialMappingFile {
-    private val FIELD_DELIMITER: String? = "\t"
+    private val FIELD_DELIMITER: String = "\t"
+
     @Throws(IOException::class)
-    fun read(tsv: String): MutableList<ExternalTrialMapping?> {
+    fun read(tsv: String): MutableList<ExternalTrialMapping> {
         val lines = Files.readAllLines(File(tsv).toPath())
-        val mappings: MutableList<ExternalTrialMapping?>? = Lists.newArrayList()
+        val mappings: MutableList<ExternalTrialMapping> = Lists.newArrayList()
         val fields = TabularFile.createFields(lines[0].split(FIELD_DELIMITER.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
         for (line in lines.subList(1, lines.size)) {
             mappings.add(fromLine(line, fields))
@@ -21,9 +22,10 @@ object ExternalTrialMappingFile {
 
     private fun fromLine(line: String, fields: MutableMap<String?, Int?>): ExternalTrialMapping {
         val values: Array<String?> = line.split(FIELD_DELIMITER.toRegex()).toTypedArray()
-        return ImmutableExternalTrialMapping.builder()
-            .externalTrial(values.get(fields["externalTrial"]))
-            .actinTrial(values.get(fields["actinTrial"]))
-            .build()
+        return ExternalTrialMapping(
+            // TODO (KZ): get rid of the !!'s
+            externalTrial = values.get(fields["externalTrial"]!!)!!,
+            actinTrial = values.get(fields["actinTrial"]!!)!!,
+        )
     }
 }

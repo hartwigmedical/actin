@@ -15,7 +15,7 @@ class ActionableEventMatcherFactoryTest {
     fun canCreateActionableEventMatcherOnEmptyInputs() {
         val externalTrialMapper = TestExternalTrialMapperFactory.createMinimalTestMapper()
         val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
-        val factory = ActionableEventMatcherFactory(externalTrialMapper, doidModel, null)
+        val factory = ActionableEventMatcherFactory(externalTrialMapper, doidModel, mutableSetOf())
         Assert.assertNotNull(factory.create(ImmutableActionableEvents.builder().build()))
         Assert.assertNotNull(factory.create(ImmutableActionableEvents.builder()
             .addHotspots(TestServeActionabilityFactory.hotspotBuilder().build())
@@ -27,7 +27,7 @@ class ActionableEventMatcherFactoryTest {
         val externalTrialMapper = TestExternalTrialMapperFactory.create("external", "actin")
         val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
         val base = TestServeActionabilityFactory.createActionableEvent(Knowledgebase.ICLUSION, "external")
-        val actionable: ActionableEvents? = ImmutableActionableEvents.builder()
+        val actionable: ActionableEvents = ImmutableActionableEvents.builder()
             .addHotspots(hotspot("unknown source", "external", Knowledgebase.UNKNOWN))
             .addHotspots(hotspot(TestApplicabilityFilteringUtil.nonApplicableGene(), "external", Knowledgebase.ICLUSION))
             .addHotspots(hotspot("gene 1", "external", Knowledgebase.ICLUSION))
@@ -44,7 +44,7 @@ class ActionableEventMatcherFactoryTest {
         Assert.assertEquals(4, filteredOnSource.hotspots().size.toLong())
         val filteredOnApplicability: ActionableEvents = ActionableEventMatcherFactory.Companion.filterForApplicability(filteredOnSource)
         Assert.assertEquals(3, filteredOnApplicability.hotspots().size.toLong())
-        val factory = ActionableEventMatcherFactory(externalTrialMapper, doidModel, null)
+        val factory = ActionableEventMatcherFactory(externalTrialMapper, doidModel, mutableSetOf())
         val curated = factory.curateExternalTrials(filteredOnApplicability)
         Assert.assertEquals("actin", findByGene(curated.hotspots(), "gene 1"))
         Assert.assertEquals("internal", findByGene(curated.hotspots(), "gene 2"))
@@ -58,7 +58,7 @@ class ActionableEventMatcherFactoryTest {
     }
 
     companion object {
-        private fun findByGene(hotspots: MutableList<ActionableHotspot?>, geneToFind: String): String {
+        private fun findByGene(hotspots: MutableList<ActionableHotspot>, geneToFind: String): String {
             for (hotspot in hotspots) {
                 if (hotspot.gene() == geneToFind) {
                     return hotspot.treatment().name()

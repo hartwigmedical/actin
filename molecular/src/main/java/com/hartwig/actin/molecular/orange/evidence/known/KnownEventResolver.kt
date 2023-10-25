@@ -15,7 +15,7 @@ import com.hartwig.serve.datamodel.hotspot.KnownHotspot
 import com.hartwig.serve.datamodel.range.KnownCodon
 import com.hartwig.serve.datamodel.range.KnownExon
 
-class KnownEventResolver internal constructor(private val knownEvents: KnownEvents, private val aggregatedKnownGenes: MutableSet<KnownGene?>) {
+class KnownEventResolver internal constructor(private val knownEvents: KnownEvents, private val aggregatedKnownGenes: MutableSet<KnownGene>) {
     fun resolveForVariant(variant: PurpleVariant): GeneAlteration? {
         val hotspot = findHotspot(knownEvents.hotspots(), variant)
         if (hotspot != null) {
@@ -49,7 +49,7 @@ class KnownEventResolver internal constructor(private val knownEvents: KnownEven
     }
 
     companion object {
-        private fun findHotspot(knownHotspots: Iterable<KnownHotspot?>, variant: PurpleVariant): KnownHotspot? {
+        private fun findHotspot(knownHotspots: Iterable<KnownHotspot>, variant: PurpleVariant): KnownHotspot? {
             for (knownHotspot in knownHotspots) {
                 if (HotspotMatching.isMatch(knownHotspot, variant)) {
                     return knownHotspot
@@ -58,7 +58,7 @@ class KnownEventResolver internal constructor(private val knownEvents: KnownEven
             return null
         }
 
-        private fun findCodon(knownCodons: Iterable<KnownCodon?>, variant: PurpleVariant): KnownCodon? {
+        private fun findCodon(knownCodons: Iterable<KnownCodon>, variant: PurpleVariant): KnownCodon? {
             for (knownCodon in knownCodons) {
                 if (RangeMatching.isMatch(knownCodon, variant)) {
                     return knownCodon
@@ -67,7 +67,7 @@ class KnownEventResolver internal constructor(private val knownEvents: KnownEven
             return null
         }
 
-        private fun findExon(knownExons: Iterable<KnownExon?>, variant: PurpleVariant): KnownExon? {
+        private fun findExon(knownExons: Iterable<KnownExon>, variant: PurpleVariant): KnownExon? {
             for (knownExon in knownExons) {
                 if (RangeMatching.isMatch(knownExon, variant)) {
                     return knownExon

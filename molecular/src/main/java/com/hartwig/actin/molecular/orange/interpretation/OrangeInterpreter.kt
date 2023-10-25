@@ -59,7 +59,7 @@ class OrangeInterpreter(private val geneFilter: GeneFilter, private val evidence
             return recordQCStatusesInSet(record, Set.of(PurpleQCStatus.PASS, PurpleQCStatus.WARN_LOW_PURITY))
         }
 
-        private fun recordQCStatusesInSet(record: OrangeRecord?, allowableQCStatuses: MutableSet<PurpleQCStatus?>?): Boolean {
+        private fun recordQCStatusesInSet(record: OrangeRecord, allowableQCStatuses: MutableSet<PurpleQCStatus>): Boolean {
             return allowableQCStatuses.containsAll(record.purple().fit().qc().status())
         }
 
@@ -78,8 +78,9 @@ class OrangeInterpreter(private val geneFilter: GeneFilter, private val evidence
                 ExperimentType.WHOLE_GENOME -> {
                     return com.hartwig.actin.molecular.datamodel.ExperimentType.WHOLE_GENOME
                 }
+
+                null -> throw IllegalStateException("Could not determine experiment type from: $experimentType")
             }
-            throw IllegalStateException("Could not determine experiment type from: $experimentType")
         }
 
         private fun validateOrangeRecord(orange: OrangeRecord) {

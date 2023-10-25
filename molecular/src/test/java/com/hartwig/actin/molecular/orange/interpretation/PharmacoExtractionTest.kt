@@ -12,8 +12,8 @@ import org.junit.Test
 class PharmacoExtractionTest {
     @Test
     fun canExtractPharmaco() {
-        val peachEntry1: PeachGenotype? = TestPeachFactory.builder().gene("gene 1").haplotype("haplotype 1").function("function 1").build()
-        val peachEntry2: PeachGenotype? = TestPeachFactory.builder().gene("gene 1").haplotype("haplotype 2").function("function 2").build()
+        val peachEntry1: PeachGenotype = TestPeachFactory.builder().gene("gene 1").haplotype("haplotype 1").function("function 1").build()
+        val peachEntry2: PeachGenotype = TestPeachFactory.builder().gene("gene 1").haplotype("haplotype 2").function("function 2").build()
         val orange = withPeachEntries(peachEntry1, peachEntry2)
         val entries = PharmacoExtraction.extract(orange)
         Assert.assertEquals(1, entries.size.toLong())
@@ -32,7 +32,7 @@ class PharmacoExtractionTest {
             return ImmutableOrangeRecord.builder().from(base).addPeach(*peachEntries).build()
         }
 
-        private fun findByName(haplotypes: MutableSet<Haplotype?>, nameToFind: String): Haplotype {
+        private fun findByName(haplotypes: MutableSet<Haplotype>, nameToFind: String): Haplotype {
             for (haplotype in haplotypes) {
                 if (haplotype.name() == nameToFind) {
                     return haplotype

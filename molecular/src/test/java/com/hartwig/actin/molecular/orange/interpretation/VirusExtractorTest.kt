@@ -17,7 +17,7 @@ import org.junit.Test
 class VirusExtractorTest {
     @Test
     fun canExtractViruses() {
-        val virusEntry1: AnnotatedVirus? = TestVirusInterpreterFactory.builder()
+        val virusEntry1: AnnotatedVirus = TestVirusInterpreterFactory.builder()
             .reported(true)
             .name("virus 1")
             .qcStatus(VirusExtractor.Companion.QC_PASS_STATUS)
@@ -25,7 +25,7 @@ class VirusExtractorTest {
             .integrations(2)
             .virusDriverLikelihoodType(VirusLikelihoodType.HIGH)
             .build()
-        val virusEntry2: AnnotatedVirus? = TestVirusInterpreterFactory.builder()
+        val virusEntry2: AnnotatedVirus = TestVirusInterpreterFactory.builder()
             .reported(false)
             .name("virus 2")
             .qcStatus(VirusBreakendQCStatus.LOW_VIRAL_COVERAGE)
@@ -33,7 +33,7 @@ class VirusExtractorTest {
             .integrations(0)
             .virusDriverLikelihoodType(VirusLikelihoodType.LOW)
             .build()
-        val virusInterpreter: VirusInterpreterData? = ImmutableVirusInterpreterData.builder().addAllViruses(virusEntry1, virusEntry2).build()
+        val virusInterpreter: VirusInterpreterData = ImmutableVirusInterpreterData.builder().addAllViruses(virusEntry1, virusEntry2).build()
         val virusExtractor = VirusExtractor(TestEvidenceDatabaseFactory.createEmptyDatabase())
         val viruses = virusExtractor.extract(virusInterpreter)
         Assert.assertEquals(2, viruses.size.toLong())
@@ -72,7 +72,7 @@ class VirusExtractorTest {
     }
 
     companion object {
-        private fun findByName(viruses: MutableSet<Virus?>, nameToFind: String): Virus {
+        private fun findByName(viruses: MutableSet<Virus>, nameToFind: String): Virus {
             for (virus in viruses) {
                 if (virus.name() == nameToFind) {
                     return virus

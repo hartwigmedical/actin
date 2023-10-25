@@ -11,8 +11,8 @@ import org.apache.logging.log4j.LogManager
 
 object ApplicabilityFiltering {
     private val LOGGER = LogManager.getLogger(ApplicabilityFiltering::class.java)
-    val NON_APPLICABLE_GENES: MutableSet<String?>? = Sets.newHashSet()
-    val NON_APPLICABLE_AMPLIFICATIONS: MutableSet<String?>? = Sets.newHashSet()
+    val NON_APPLICABLE_GENES: MutableSet<String> = Sets.newHashSet()
+    val NON_APPLICABLE_AMPLIFICATIONS: MutableSet<String> = Sets.newHashSet()
 
     init {
         NON_APPLICABLE_GENES.add("CDKN2A")
@@ -21,11 +21,11 @@ object ApplicabilityFiltering {
     }
 
     fun isApplicable(actionableHotspot: ActionableHotspot): Boolean {
-        return eventIsApplicable<ActionableHotspot?>(actionableHotspot.gene(), actionableHotspot)
+        return eventIsApplicable<ActionableHotspot>(actionableHotspot.gene(), actionableHotspot)
     }
 
     fun isApplicable(actionableRange: ActionableRange): Boolean {
-        return eventIsApplicable<ActionableRange?>(actionableRange.gene(), actionableRange)
+        return eventIsApplicable<ActionableRange>(actionableRange.gene(), actionableRange)
     }
 
     fun isApplicable(actionableGene: ActionableGene): Boolean {
@@ -39,11 +39,11 @@ object ApplicabilityFiltering {
                 }
             }
         }
-        return eventIsApplicable<ActionableGene?>(actionableGene.gene(), actionableGene)
+        return eventIsApplicable<ActionableGene>(actionableGene.gene(), actionableGene)
     }
 
     @VisibleForTesting
-    fun <T : ActionableEvent?> eventIsApplicable(gene: String, event: T): Boolean {
+    fun <T : ActionableEvent> eventIsApplicable(gene: String, event: T): Boolean {
         if (NON_APPLICABLE_GENES.contains(gene)) {
             LOGGER.debug("Evidence for '{}' on gene {} is considered non-applicable", event.sourceEvent(), gene)
             return false

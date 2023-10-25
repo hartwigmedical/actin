@@ -45,6 +45,7 @@ class OrangeInterpreterApplication private constructor(private val config: Orang
         private val LOGGER = LogManager.getLogger(OrangeInterpreterApplication::class.java)
         private val APPLICATION: String? = "ACTIN ORANGE Interpreter"
         private val VERSION = OrangeInterpreterApplication::class.java.getPackage().implementationVersion
+
         @Throws(IOException::class)
         @JvmStatic
         fun main(args: Array<String>) {
@@ -69,8 +70,8 @@ class OrangeInterpreterApplication private constructor(private val config: Orang
             LOGGER.info(" Loaded {} mappings", mappings.size)
             LOGGER.info("Loading clinical json from {}", config.clinicalJson)
             val clinical = ClinicalRecordJson.read(config.clinicalJson)
-            val tumorDoids = clinical.tumor().doids()
-            if (tumorDoids == null || tumorDoids.isEmpty()) {
+            val tumorDoids = clinical.tumor().doids().orEmpty().filterNotNull().toMutableSet()
+            if (tumorDoids.isEmpty()) {
                 LOGGER.warn(" No tumor DOIDs configured in ACTIN clinical data for {}!", clinical.patientId())
             } else {
                 LOGGER.info(" Tumor DOIDs determined to be: {}", concat(tumorDoids))
@@ -94,7 +95,7 @@ class OrangeInterpreterApplication private constructor(private val config: Orang
             throw IllegalStateException("Could not convert ORANGE ref genome version to SERVE ref genome version: $refGenomeVersion")
         }
 
-        private fun concat(strings: MutableSet<String?>): String {
+        private fun concat(strings: MutableSet<String>): String {
             val joiner = StringJoiner(", ")
             for (string in strings) {
                 joiner.add(string)

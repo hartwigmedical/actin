@@ -11,10 +11,10 @@ import com.hartwig.serve.datamodel.fusion.ActionableFusion
 import com.hartwig.serve.datamodel.gene.ActionableGene
 import com.hartwig.serve.datamodel.gene.GeneEvent
 
-internal class FusionEvidence private constructor(private val actionablePromiscuous: MutableList<ActionableGene?>,
-                                                  private val actionableFusions: MutableList<ActionableFusion?>) : EvidenceMatcher<LinxFusion?> {
-    override fun findMatches(fusion: LinxFusion): MutableList<ActionableEvent?> {
-        val matches: MutableList<ActionableEvent?>? = Lists.newArrayList()
+internal class FusionEvidence private constructor(private val actionablePromiscuous: MutableList<ActionableGene>,
+                                                  private val actionableFusions: MutableList<ActionableFusion>) : EvidenceMatcher<LinxFusion> {
+    override fun findMatches(fusion: LinxFusion): MutableList<ActionableEvent> {
+        val matches: MutableList<ActionableEvent> = Lists.newArrayList()
         for (actionable in actionablePromiscuous) {
             if (isPromiscuousMatch(actionable, fusion) && fusion.reported()) {
                 matches.add(actionable)
@@ -29,9 +29,9 @@ internal class FusionEvidence private constructor(private val actionablePromiscu
     }
 
     companion object {
-        private val APPLICABLE_PROMISCUOUS_EVENTS: MutableSet<GeneEvent?>? = Sets.newHashSet(GeneEvent.FUSION, GeneEvent.ACTIVATION, GeneEvent.ANY_MUTATION)
+        private val APPLICABLE_PROMISCUOUS_EVENTS: MutableSet<GeneEvent> = Sets.newHashSet(GeneEvent.FUSION, GeneEvent.ACTIVATION, GeneEvent.ANY_MUTATION)
         fun create(actionableEvents: ActionableEvents): FusionEvidence {
-            val actionablePromiscuous: MutableList<ActionableGene?>? = Lists.newArrayList()
+            val actionablePromiscuous: MutableList<ActionableGene> = Lists.newArrayList()
             for (actionableGene in actionableEvents.genes()) {
                 if (APPLICABLE_PROMISCUOUS_EVENTS.contains(actionableGene.event())) {
                     actionablePromiscuous.add(actionableGene)

@@ -12,10 +12,10 @@ import org.junit.Test
 class BreakendEvidenceTest {
     @Test
     fun canDetermineBreakendEvidence() {
-        val gene1: ActionableGene? = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.ANY_MUTATION).gene("gene 1").build()
-        val gene2: ActionableGene? = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.AMPLIFICATION).gene("gene 2").build()
-        val gene3: ActionableGene? = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.INACTIVATION).gene("gene 1").build()
-        val actionable: ActionableEvents? = ImmutableActionableEvents.builder().genes(Lists.newArrayList(gene1, gene2, gene3)).build()
+        val gene1: ActionableGene = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.ANY_MUTATION).gene("gene 1").build()
+        val gene2: ActionableGene = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.AMPLIFICATION).gene("gene 2").build()
+        val gene3: ActionableGene = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.INACTIVATION).gene("gene 1").build()
+        val actionable: ActionableEvents = ImmutableActionableEvents.builder().genes(Lists.newArrayList(gene1, gene2, gene3)).build()
         val breakendEvidence: BreakendEvidence = BreakendEvidence.Companion.create(actionable)
         val evidencesMatch = breakendEvidence.findMatches(TestLinxFactory.breakendBuilder().gene("gene 1").reportedDisruption(true).build())
         Assert.assertEquals(1, evidencesMatch.size.toLong())

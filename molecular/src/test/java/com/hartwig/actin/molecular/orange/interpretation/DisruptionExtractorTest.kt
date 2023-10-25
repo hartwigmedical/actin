@@ -22,8 +22,8 @@ import org.junit.Test
 class DisruptionExtractorTest {
     @Test
     fun canExtractBreakends() {
-        val structuralVariant1: LinxSvAnnotation? = TestLinxFactory.structuralVariantBuilder().svId(1).clusterId(5).build()
-        val linxBreakend: LinxBreakend? = TestLinxFactory.breakendBuilder()
+        val structuralVariant1: LinxSvAnnotation = TestLinxFactory.structuralVariantBuilder().svId(1).clusterId(5).build()
+        val linxBreakend: LinxBreakend = TestLinxFactory.breakendBuilder()
             .gene("gene 1")
             .reportedDisruption(true)
             .type(LinxBreakendType.DUP)
@@ -33,7 +33,7 @@ class DisruptionExtractorTest {
             .codingType(TranscriptCodingType.CODING)
             .svId(1)
             .build()
-        val linx: LinxRecord? = ImmutableLinxRecord.builder()
+        val linx: LinxRecord = ImmutableLinxRecord.builder()
             .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
             .addAllSomaticStructuralVariants(structuralVariant1)
             .addAllSomaticBreakends(linxBreakend)
@@ -55,25 +55,25 @@ class DisruptionExtractorTest {
 
     @Test(expected = IllegalStateException::class)
     fun shouldThrowExceptionWhenFilteringReportedDisruption() {
-        val linxBreakend: LinxBreakend? = TestLinxFactory.breakendBuilder().gene("gene 1").reportedDisruption(true).build()
-        val linx: LinxRecord? = ImmutableLinxRecord.builder()
+        val linxBreakend: LinxBreakend = TestLinxFactory.breakendBuilder().gene("gene 1").reportedDisruption(true).build()
+        val linx: LinxRecord = ImmutableLinxRecord.builder()
             .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
             .addAllSomaticBreakends(linxBreakend)
             .build()
         val geneFilter = TestGeneFilterFactory.createValidForGenes("weird gene")
         val disruptionExtractor = DisruptionExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase())
-        disruptionExtractor.extractDisruptions(linx, emptySet())
+        disruptionExtractor.extractDisruptions(linx, mutableSetOf())
     }
 
     @Test
     fun canFilterBreakendWithLosses() {
         val gene = "gene"
         val disruptionExtractor = DisruptionExtractor(TestGeneFilterFactory.createAlwaysValid(), TestEvidenceDatabaseFactory.createEmptyDatabase())
-        val breakend1: LinxBreakend? = TestLinxFactory.breakendBuilder().gene(gene).type(LinxBreakendType.DEL).build()
+        val breakend1: LinxBreakend = TestLinxFactory.breakendBuilder().gene(gene).type(LinxBreakendType.DEL).build()
         Assert.assertEquals(0, disruptionExtractor.extractDisruptions(withBreakend(breakend1), Sets.newHashSet(gene)).size.toLong())
-        val breakend2: LinxBreakend? = TestLinxFactory.breakendBuilder().gene(gene).type(LinxBreakendType.DUP).build()
+        val breakend2: LinxBreakend = TestLinxFactory.breakendBuilder().gene(gene).type(LinxBreakendType.DUP).build()
         Assert.assertEquals(1, disruptionExtractor.extractDisruptions(withBreakend(breakend2), Sets.newHashSet(gene)).size.toLong())
-        val breakend3: LinxBreakend? = TestLinxFactory.breakendBuilder().gene("other").type(LinxBreakendType.DEL).build()
+        val breakend3: LinxBreakend = TestLinxFactory.breakendBuilder().gene("other").type(LinxBreakendType.DEL).build()
         Assert.assertEquals(1, disruptionExtractor.extractDisruptions(withBreakend(breakend3), Sets.newHashSet(gene)).size.toLong())
     }
 

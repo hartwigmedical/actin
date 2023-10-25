@@ -10,9 +10,9 @@ import org.junit.Test
 class SignatureEvidenceTest {
     @Test
     fun canDetermineEvidenceForMicrosatelliteInstability() {
-        val characteristic1: ActionableCharacteristic? = TestServeActionabilityFactory.characteristicBuilder().type(TumorCharacteristicType.MICROSATELLITE_UNSTABLE).build()
-        val characteristic2: ActionableCharacteristic? = TestServeActionabilityFactory.characteristicBuilder().type(TumorCharacteristicType.MICROSATELLITE_STABLE).build()
-        val actionable: ActionableEvents? = ImmutableActionableEvents.builder().addCharacteristics(characteristic1, characteristic2).build()
+        val characteristic1: ActionableCharacteristic = TestServeActionabilityFactory.characteristicBuilder().type(TumorCharacteristicType.MICROSATELLITE_UNSTABLE).build()
+        val characteristic2: ActionableCharacteristic = TestServeActionabilityFactory.characteristicBuilder().type(TumorCharacteristicType.MICROSATELLITE_STABLE).build()
+        val actionable: ActionableEvents = ImmutableActionableEvents.builder().addCharacteristics(characteristic1, characteristic2).build()
         val signatureEvidence: SignatureEvidence = SignatureEvidence.Companion.create(actionable)
         val matches = signatureEvidence.findMicrosatelliteMatches(true)
         Assert.assertEquals(1, matches.size.toLong())
@@ -22,10 +22,10 @@ class SignatureEvidenceTest {
 
     @Test
     fun canDetermineEvidenceForHomologousRepairDeficiency() {
-        val characteristic1: ActionableCharacteristic? = TestServeActionabilityFactory.characteristicBuilder()
+        val characteristic1: ActionableCharacteristic = TestServeActionabilityFactory.characteristicBuilder()
             .type(TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT)
             .build()
-        val actionable: ActionableEvents? = ImmutableActionableEvents.builder().addCharacteristics(characteristic1).build()
+        val actionable: ActionableEvents = ImmutableActionableEvents.builder().addCharacteristics(characteristic1).build()
         val signatureEvidence: SignatureEvidence = SignatureEvidence.Companion.create(actionable)
         val matches = signatureEvidence.findHomologousRepairMatches(true)
         Assert.assertEquals(1, matches.size.toLong())
@@ -35,13 +35,13 @@ class SignatureEvidenceTest {
 
     @Test
     fun canDetermineEvidenceForHighTumorMutationalBurden() {
-        val characteristic1: ActionableCharacteristic? = TestServeActionabilityFactory.characteristicBuilder()
+        val characteristic1: ActionableCharacteristic = TestServeActionabilityFactory.characteristicBuilder()
             .type(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN)
             .build()
         val characteristic2: ActionableCharacteristic? = TestServeActionabilityFactory.characteristicBuilder()
             .type(TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_BURDEN)
             .build()
-        val actionable: ActionableEvents? = ImmutableActionableEvents.builder().addCharacteristics(characteristic1, characteristic2).build()
+        val actionable: ActionableEvents = ImmutableActionableEvents.builder().addCharacteristics(characteristic1, characteristic2).build()
         val signatureEvidence: SignatureEvidence = SignatureEvidence.Companion.create(actionable)
         val matches = signatureEvidence.findTumorBurdenMatches(true)
         Assert.assertEquals(1, matches.size.toLong())
@@ -51,13 +51,13 @@ class SignatureEvidenceTest {
 
     @Test
     fun canDetermineEvidenceForHighTumorMutationalLoad() {
-        val characteristic1: ActionableCharacteristic? = TestServeActionabilityFactory.characteristicBuilder()
+        val characteristic1: ActionableCharacteristic = TestServeActionabilityFactory.characteristicBuilder()
             .type(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD)
             .build()
         val characteristic2: ActionableCharacteristic? = TestServeActionabilityFactory.characteristicBuilder()
             .type(TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD)
             .build()
-        val actionable: ActionableEvents? = ImmutableActionableEvents.builder().addCharacteristics(characteristic1, characteristic2).build()
+        val actionable: ActionableEvents = ImmutableActionableEvents.builder().addCharacteristics(characteristic1, characteristic2).build()
         val signatureEvidence: SignatureEvidence = SignatureEvidence.Companion.create(actionable)
         val matches = signatureEvidence.findTumorLoadMatches(true)
         Assert.assertEquals(1, matches.size.toLong())

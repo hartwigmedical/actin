@@ -8,8 +8,8 @@ import java.util.Set
 class GeneLookupTest {
     @Test
     fun canLookupGenes() {
-        val gene1: KnownGene? = TestServeKnownFactory.geneBuilder().gene("gene 1").build()
-        val gene2: KnownGene? = TestServeKnownFactory.geneBuilder().gene("gene 2").build()
+        val gene1: KnownGene = TestServeKnownFactory.geneBuilder().gene("gene 1").build()
+        val gene2: KnownGene = TestServeKnownFactory.geneBuilder().gene("gene 2").build()
         val knownGenes = Set.of(gene1, gene2)
         Assert.assertNotNull(GeneLookup.find(knownGenes, "gene 1"))
         Assert.assertNotNull(GeneLookup.find(knownGenes, "gene 2"))

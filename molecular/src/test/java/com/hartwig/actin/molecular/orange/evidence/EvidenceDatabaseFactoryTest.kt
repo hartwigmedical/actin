@@ -13,11 +13,11 @@ import org.junit.Test
 class EvidenceDatabaseFactoryTest {
     @Test
     fun canCreateFromMinimalInputs() {
-        val knownEvents: KnownEvents? = ImmutableKnownEvents.builder().build()
-        val actionableEvents: ActionableEvents? = ImmutableActionableEvents.builder().build()
-        val externalTrialMappings: MutableList<ExternalTrialMapping?>? = Lists.newArrayList()
+        val knownEvents: KnownEvents = ImmutableKnownEvents.builder().build()
+        val actionableEvents: ActionableEvents = ImmutableActionableEvents.builder().build()
+        val externalTrialMappings: MutableList<ExternalTrialMapping> = Lists.newArrayList()
         val doidEntry = TestDoidEntryFactory.createMinimalTestDoidEntry()
-        val tumorDoids: MutableSet<String?>? = null
+        val tumorDoids: MutableSet<String> = mutableSetOf()
         Assert.assertNotNull(EvidenceDatabaseFactory.create(knownEvents,
             actionableEvents,
             externalTrialMappings,

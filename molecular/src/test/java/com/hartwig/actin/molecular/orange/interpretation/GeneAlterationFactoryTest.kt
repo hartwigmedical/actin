@@ -22,7 +22,7 @@ class GeneAlterationFactoryTest {
         for (geneRole in com.hartwig.serve.datamodel.common.GeneRole.values()) {
             for (proteinEffect in com.hartwig.serve.datamodel.common.ProteinEffect.values()) {
                 val alteration = GeneAlterationFactory.convertAlteration(Strings.EMPTY,
-                    createGeneAlteration(geneRole, proteinEffect))
+                    TestServeKnownFactory.createGeneAlteration(geneRole, proteinEffect))
                 Assert.assertNotNull(alteration.gene())
                 Assert.assertNotNull(alteration.geneRole())
                 Assert.assertNotNull(alteration.proteinEffect())
@@ -34,9 +34,9 @@ class GeneAlterationFactoryTest {
     fun canHandleDrugAssociations() {
         val withDrugAssociation = GeneAlterationFactory.convertAlteration(Strings.EMPTY,
             TestServeKnownFactory.createGeneAlteration(com.hartwig.serve.datamodel.common.GeneRole.UNKNOWN, com.hartwig.serve.datamodel.common.ProteinEffect.UNKNOWN, true))
-        Assert.assertTrue(withDrugAssociation.isAssociatedWithDrugResistance())
+        Assert.assertTrue(withDrugAssociation.isAssociatedWithDrugResistance() == true)
         val withNoDrugAssociation = GeneAlterationFactory.convertAlteration(Strings.EMPTY,
             TestServeKnownFactory.createGeneAlteration(com.hartwig.serve.datamodel.common.GeneRole.UNKNOWN, com.hartwig.serve.datamodel.common.ProteinEffect.UNKNOWN, false))
-        Assert.assertFalse(withNoDrugAssociation.isAssociatedWithDrugResistance())
+        Assert.assertFalse(withNoDrugAssociation.isAssociatedWithDrugResistance() == true)
     }
 }

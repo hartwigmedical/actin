@@ -13,7 +13,7 @@ import org.junit.Test
 class ImmunologyExtractionTest {
     @Test
     fun canExtractImmunology() {
-        val allele1: LilacAllele? = TestLilacFactory.builder()
+        val allele1: LilacAllele = TestLilacFactory.builder()
             .allele("allele 1")
             .tumorCopyNumber(1.2)
             .somaticMissense(1.0)
@@ -21,7 +21,7 @@ class ImmunologyExtractionTest {
             .somaticSplice(1.0)
             .somaticNonsenseOrFrameshift(0.0)
             .build()
-        val allele2: LilacAllele? = TestLilacFactory.builder()
+        val allele2: LilacAllele = TestLilacFactory.builder()
             .allele("allele 2")
             .tumorCopyNumber(1.3)
             .somaticMissense(0.0)
@@ -43,7 +43,7 @@ class ImmunologyExtractionTest {
 
     companion object {
         private const val EPSILON = 1.0E-10
-        private fun findByName(hlaAlleles: MutableSet<HlaAllele?>, nameToFind: String): HlaAllele {
+        private fun findByName(hlaAlleles: MutableSet<HlaAllele>, nameToFind: String): HlaAllele {
             for (hlaAllele in hlaAlleles) {
                 if (hlaAllele.name() == nameToFind) {
                     return hlaAllele

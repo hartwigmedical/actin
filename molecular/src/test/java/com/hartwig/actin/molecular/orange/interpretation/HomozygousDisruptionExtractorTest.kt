@@ -14,8 +14,8 @@ import org.junit.Test
 class HomozygousDisruptionExtractorTest {
     @Test
     fun canExtractHomozygousDisruptions() {
-        val linxHomDisruption: HomozygousDisruption? = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build()
-        val linx: LinxRecord? = ImmutableLinxRecord.builder()
+        val linxHomDisruption: HomozygousDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build()
+        val linx: LinxRecord = ImmutableLinxRecord.builder()
             .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
             .addSomaticHomozygousDisruptions(linxHomDisruption)
             .build()
@@ -32,7 +32,7 @@ class HomozygousDisruptionExtractorTest {
     @Test(expected = IllegalStateException::class)
     fun shouldThrowExceptionWhenFilteringReportedHomozygousDisruption() {
         val linxHomDisruption: HomozygousDisruption? = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build()
-        val linx: LinxRecord? = ImmutableLinxRecord.builder()
+        val linx: LinxRecord = ImmutableLinxRecord.builder()
             .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
             .addSomaticHomozygousDisruptions(linxHomDisruption)
             .build()

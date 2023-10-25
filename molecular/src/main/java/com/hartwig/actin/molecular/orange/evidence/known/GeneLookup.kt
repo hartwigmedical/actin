@@ -6,7 +6,7 @@ import com.hartwig.serve.datamodel.common.ProteinEffect
 import com.hartwig.serve.datamodel.gene.KnownGene
 
 internal object GeneLookup {
-    fun find(knownGenes: MutableSet<KnownGene?>, gene: String): GeneAlteration? {
+    fun find(knownGenes: MutableSet<KnownGene>, gene: String): GeneAlteration? {
         for (knownGene in GeneAggregator.aggregate(knownGenes)) {
             if (knownGene.gene() == gene) {
                 return fromKnownGene(knownGene)

@@ -19,32 +19,32 @@ import org.junit.Test
 class CopyNumberExtractorTest {
     @Test
     fun canExtractCopyNumbers() {
-        val driver1: PurpleDriver? = TestPurpleFactory.driverBuilder().gene("gene 1").driver(PurpleDriverType.DEL).build()
-        val gainLoss1: PurpleGainLoss? = TestPurpleFactory.gainLossBuilder()
+        val driver1: PurpleDriver = TestPurpleFactory.driverBuilder().gene("gene 1").driver(PurpleDriverType.DEL).build()
+        val gainLoss1: PurpleGainLoss = TestPurpleFactory.gainLossBuilder()
             .gene("gene 1")
             .minCopies(0.0)
             .maxCopies(1.0)
             .interpretation(CopyNumberInterpretation.PARTIAL_LOSS)
             .build()
-        val gainLoss2: PurpleGainLoss? = TestPurpleFactory.gainLossBuilder()
+        val gainLoss2: PurpleGainLoss = TestPurpleFactory.gainLossBuilder()
             .gene("gene 2")
             .minCopies(20.0)
             .maxCopies(21.0)
             .interpretation(CopyNumberInterpretation.FULL_GAIN)
             .build()
-        val gainLoss3: PurpleGainLoss? = TestPurpleFactory.gainLossBuilder()
+        val gainLoss3: PurpleGainLoss = TestPurpleFactory.gainLossBuilder()
             .gene("gene 3")
             .minCopies(20.0)
             .maxCopies(20.0)
             .interpretation(CopyNumberInterpretation.FULL_GAIN)
             .build()
-        val gainLoss4: PurpleGainLoss? = TestPurpleFactory.gainLossBuilder()
+        val gainLoss4: PurpleGainLoss = TestPurpleFactory.gainLossBuilder()
             .gene("gene 4")
             .minCopies(19.6)
             .maxCopies(20.4)
             .interpretation(CopyNumberInterpretation.FULL_GAIN)
             .build()
-        val purple: PurpleRecord? = ImmutablePurpleRecord.builder()
+        val purple: PurpleRecord = ImmutablePurpleRecord.builder()
             .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
             .addSomaticDrivers(driver1)
             .addAllSomaticGainsLosses(gainLoss1, gainLoss2, gainLoss3, gainLoss4)
@@ -72,9 +72,9 @@ class CopyNumberExtractorTest {
 
     @Test(expected = IllegalStateException::class)
     fun shouldThrowExceptionWhenFilteringReportedCopyNumber() {
-        val driver: PurpleDriver? = TestPurpleFactory.driverBuilder().gene("gene 1").driver(PurpleDriverType.DEL).build()
-        val gainLoss: PurpleGainLoss? = TestPurpleFactory.gainLossBuilder().gene("gene 1").interpretation(CopyNumberInterpretation.PARTIAL_LOSS).build()
-        val purple: PurpleRecord? = ImmutablePurpleRecord.builder()
+        val driver: PurpleDriver = TestPurpleFactory.driverBuilder().gene("gene 1").driver(PurpleDriverType.DEL).build()
+        val gainLoss: PurpleGainLoss = TestPurpleFactory.gainLossBuilder().gene("gene 1").interpretation(CopyNumberInterpretation.PARTIAL_LOSS).build()
+        val purple: PurpleRecord = ImmutablePurpleRecord.builder()
             .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
             .addSomaticDrivers(driver)
             .addAllSomaticGainsLosses(gainLoss)
@@ -92,7 +92,7 @@ class CopyNumberExtractorTest {
     }
 
     companion object {
-        private fun findByGene(copyNumbers: Iterable<CopyNumber?>, geneToFind: String): CopyNumber {
+        private fun findByGene(copyNumbers: Iterable<CopyNumber>, geneToFind: String): CopyNumber {
             for (copyNumber in copyNumbers) {
                 if (copyNumber.gene() == geneToFind) {
                     return copyNumber

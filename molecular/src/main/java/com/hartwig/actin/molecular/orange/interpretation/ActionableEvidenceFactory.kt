@@ -18,15 +18,15 @@ object ActionableEvidenceFactory {
         if (actionabilityMatch == null) {
             return null
         }
-        val onLabelEvidence = createOnLabelEvidence(actionabilityMatch.onLabelEvents())
-        val offLabelEvidence = createOffLabelEvidence(actionabilityMatch.offLabelEvents())
-        val externalTrialEvidence = createExternalTrialEvidence(actionabilityMatch.onLabelEvents())
-        val merged: ActionableEvidence? = ImmutableActionableEvidence.builder().from(onLabelEvidence).from(offLabelEvidence).from(externalTrialEvidence).build()
+        val onLabelEvidence = createOnLabelEvidence(actionabilityMatch.onLabelEvents)
+        val offLabelEvidence = createOffLabelEvidence(actionabilityMatch.offLabelEvents)
+        val externalTrialEvidence = createExternalTrialEvidence(actionabilityMatch.onLabelEvents)
+        val merged: ActionableEvidence = ImmutableActionableEvidence.builder().from(onLabelEvidence).from(offLabelEvidence).from(externalTrialEvidence).build()
         val simplified = filterRedundantLowerEvidence(merged)
         return filterResistanceEvidence(simplified)
     }
 
-    private fun createOnLabelEvidence(onLabelEvents: MutableList<ActionableEvent?>): ActionableEvidence {
+    private fun createOnLabelEvidence(onLabelEvents: MutableList<ActionableEvent>): ActionableEvidence {
         val builder = ImmutableActionableEvidence.builder()
         for (onLabelEvent in onLabelEvents) {
             if (onLabelEvent.source() == ActionabilityConstants.EVIDENCE_SOURCE) {
@@ -40,7 +40,7 @@ object ActionableEvidenceFactory {
         return builder.build()
     }
 
-    private fun createOffLabelEvidence(offLabelEvents: MutableList<ActionableEvent?>): ActionableEvidence {
+    private fun createOffLabelEvidence(offLabelEvents: MutableList<ActionableEvent>): ActionableEvidence {
         val builder = ImmutableActionableEvidence.builder()
         for (offLabelEvent in offLabelEvents) {
             if (offLabelEvent.source() == ActionabilityConstants.EVIDENCE_SOURCE) {
@@ -54,7 +54,7 @@ object ActionableEvidenceFactory {
         return builder.build()
     }
 
-    private fun createExternalTrialEvidence(onLabelEvents: MutableList<ActionableEvent?>): ActionableEvidence {
+    private fun createExternalTrialEvidence(onLabelEvents: MutableList<ActionableEvent>): ActionableEvidence {
         val builder = ImmutableActionableEvidence.builder()
         for (onLabelEvent in onLabelEvents) {
             if (onLabelEvent.source() == ActionabilityConstants.EXTERNAL_TRIAL_SOURCE && onLabelEvent.direction().isResponsive) {
@@ -134,16 +134,16 @@ object ActionableEvidenceFactory {
     fun filterRedundantLowerEvidence(evidence: ActionableEvidence): ActionableEvidence {
         val treatmentsToExcludeForOnLabel = evidence.approvedTreatments()
         val cleanedOnLabelTreatments = cleanTreatments(evidence.onLabelExperimentalTreatments(), treatmentsToExcludeForOnLabel)
-        val treatmentsToExcludeForOffLabel: MutableSet<String?>? = Sets.newHashSet()
+        val treatmentsToExcludeForOffLabel: MutableSet<String> = Sets.newHashSet()
         treatmentsToExcludeForOffLabel.addAll(evidence.approvedTreatments())
         treatmentsToExcludeForOffLabel.addAll(evidence.onLabelExperimentalTreatments())
         val cleanedOffLabelTreatments = cleanTreatments(evidence.offLabelExperimentalTreatments(), treatmentsToExcludeForOffLabel)
-        val treatmentsToExcludeForPreClinical: MutableSet<String?>? = Sets.newHashSet()
+        val treatmentsToExcludeForPreClinical: MutableSet<String> = Sets.newHashSet()
         treatmentsToExcludeForPreClinical.addAll(evidence.approvedTreatments())
         treatmentsToExcludeForPreClinical.addAll(evidence.onLabelExperimentalTreatments())
         treatmentsToExcludeForPreClinical.addAll(evidence.offLabelExperimentalTreatments())
         val cleanedPreClinicalTreatments = cleanTreatments(evidence.preClinicalTreatments(), treatmentsToExcludeForPreClinical)
-        val treatmentsToExcludeForSuspectResistant: MutableSet<String?>? = Sets.newHashSet()
+        val treatmentsToExcludeForSuspectResistant: MutableSet<String> = Sets.newHashSet()
         treatmentsToExcludeForSuspectResistant.addAll(evidence.knownResistantTreatments())
         val cleanedSuspectResistantTreatments = cleanTreatments(evidence.suspectResistantTreatments(), treatmentsToExcludeForSuspectResistant)
         return ImmutableActionableEvidence.builder()
@@ -156,7 +156,7 @@ object ActionableEvidenceFactory {
     }
 
     private fun filterResistanceEvidence(evidence: ActionableEvidence): ActionableEvidence {
-        val treatmentsToIncludeForResistance: MutableSet<String?>? = Sets.newHashSet()
+        val treatmentsToIncludeForResistance: MutableSet<String> = Sets.newHashSet()
         treatmentsToIncludeForResistance.addAll(evidence.approvedTreatments())
         treatmentsToIncludeForResistance.addAll(evidence.onLabelExperimentalTreatments())
         treatmentsToIncludeForResistance.addAll(evidence.offLabelExperimentalTreatments())
@@ -169,8 +169,8 @@ object ActionableEvidenceFactory {
             .build()
     }
 
-    private fun filterTreatments(treatments: MutableSet<String?>, treatmentsToInclude: MutableSet<String?>): MutableSet<String?> {
-        val filtered: MutableSet<String?>? = Sets.newHashSet()
+    private fun filterTreatments(treatments: MutableSet<String>, treatmentsToInclude: MutableSet<String>): MutableSet<String> {
+        val filtered: MutableSet<String> = Sets.newHashSet()
         for (treatment in treatments) {
             if (treatmentsToInclude.contains(treatment)) {
                 filtered.add(treatment)
@@ -179,8 +179,8 @@ object ActionableEvidenceFactory {
         return filtered
     }
 
-    private fun cleanTreatments(treatments: MutableSet<String?>, treatmentsToExclude: MutableSet<String?>): MutableSet<String?> {
-        val cleaned: MutableSet<String?>? = Sets.newHashSet()
+    private fun cleanTreatments(treatments: MutableSet<String>, treatmentsToExclude: MutableSet<String>): MutableSet<String> {
+        val cleaned: MutableSet<String> = Sets.newHashSet()
         for (treatment in treatments) {
             if (!treatmentsToExclude.contains(treatment)) {
                 cleaned.add(treatment)

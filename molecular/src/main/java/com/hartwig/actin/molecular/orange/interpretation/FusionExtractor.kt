@@ -16,8 +16,8 @@ import com.hartwig.hmftools.datamodel.linx.LinxFusionType
 import com.hartwig.hmftools.datamodel.linx.LinxRecord
 
 internal class FusionExtractor(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
-    fun extract(linx: LinxRecord): MutableSet<Fusion?> {
-        val fusions: MutableSet<Fusion?>? = Sets.newTreeSet(FusionComparator())
+    fun extract(linx: LinxRecord): MutableSet<Fusion> {
+        val fusions: MutableSet<Fusion> = Sets.newTreeSet(FusionComparator())
         for (fusion in linx.allSomaticFusions()) {
             val fusionEvent = DriverEventFactory.fusionEvent(fusion)
             if (geneFilter.include(fusion.geneStart()) || geneFilter.include(fusion.geneEnd())) {

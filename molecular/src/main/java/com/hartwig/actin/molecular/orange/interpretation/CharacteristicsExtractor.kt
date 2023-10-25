@@ -17,12 +17,14 @@ import java.util.stream.Collectors
 
 internal class CharacteristicsExtractor(private val evidenceDatabase: EvidenceDatabase) {
     fun extract(record: OrangeRecord): MolecularCharacteristics {
-        val predictedTumorOrigin: PredictedTumorOrigin? = if (record.cuppa() != null) ImmutablePredictedTumorOrigin.builder()
-            .predictions(determineCupPredictions(record.cuppa().predictions()))
+        val cuppa = record.cuppa()
+        val predictedTumorOrigin: PredictedTumorOrigin? = if (cuppa != null) ImmutablePredictedTumorOrigin.builder()
+            .predictions(determineCupPredictions(cuppa.predictions()))
             .build() else null
         val purple = record.purple()
         val isMicrosatelliteUnstable = isMSI(purple.characteristics().microsatelliteStatus())
-        val isHomologousRepairDeficient = if (record.chord() != null) isHRD(record.chord().hrStatus()) else null
+        val chord = record.chord()
+        val isHomologousRepairDeficient = if (chord != null) isHRD(chord.hrStatus()) else null
         val hasHighTumorMutationalBurden = hasHighStatus(purple.characteristics().tumorMutationalBurdenStatus())
         val hasHighTumorMutationalLoad = hasHighStatus(purple.characteristics().tumorMutationalLoadStatus())
         return ImmutableMolecularCharacteristics.builder()
@@ -94,17 +96,18 @@ internal class CharacteristicsExtractor(private val evidenceDatabase: EvidenceDa
             return null
         }
 
-        private fun determineCupPredictions(cuppaPredictions: MutableList<CuppaPrediction?>): MutableList<CupPrediction?> {
-            return cuppaPredictions.stream().map { cuppaPrediction: CuppaPrediction? -> determineCupPrediction(cuppaPrediction) }.collect(Collectors.toList())
+        private fun determineCupPredictions(cuppaPredictions: MutableList<CuppaPrediction>): MutableList<CupPrediction> {
+            return cuppaPredictions.stream().map { cuppaPrediction: CuppaPrediction -> determineCupPrediction(cuppaPrediction) }.collect(Collectors.toList())
         }
 
         private fun determineCupPrediction(cuppaPrediction: CuppaPrediction): CupPrediction {
+            // TODO (KZ): the classifiers are nullable in the CuppaPrediction class, is there a sane default or should we error out?
             return ImmutableCupPrediction.builder()
                 .cancerType(cuppaPrediction.cancerType())
                 .likelihood(cuppaPrediction.likelihood())
-                .snvPairwiseClassifier(cuppaPrediction.snvPairwiseClassifier())
-                .genomicPositionClassifier(cuppaPrediction.genomicPositionClassifier())
-                .featureClassifier(cuppaPrediction.featureClassifier())
+                .snvPairwiseClassifier(cuppaPrediction.snvPairwiseClassifier()!!)
+                .genomicPositionClassifier(cuppaPrediction.genomicPositionClassifier()!!)
+                .featureClassifier(cuppaPrediction.featureClassifier()!!)
                 .build()
         }
     }
