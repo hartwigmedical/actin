@@ -21,11 +21,11 @@ object ApplicabilityFiltering {
     }
 
     fun isApplicable(actionableHotspot: ActionableHotspot): Boolean {
-        return eventIsApplicable<ActionableHotspot>(actionableHotspot.gene(), actionableHotspot)
+        return eventIsApplicable(actionableHotspot.gene(), actionableHotspot)
     }
 
     fun isApplicable(actionableRange: ActionableRange): Boolean {
-        return eventIsApplicable<ActionableRange>(actionableRange.gene(), actionableRange)
+        return eventIsApplicable(actionableRange.gene(), actionableRange)
     }
 
     fun isApplicable(actionableGene: ActionableGene): Boolean {
@@ -39,7 +39,7 @@ object ApplicabilityFiltering {
                 }
             }
         }
-        return eventIsApplicable<ActionableGene>(actionableGene.gene(), actionableGene)
+        return eventIsApplicable(actionableGene.gene(), actionableGene)
     }
 
     @VisibleForTesting

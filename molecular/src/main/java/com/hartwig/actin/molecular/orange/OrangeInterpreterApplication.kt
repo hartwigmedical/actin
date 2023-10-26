@@ -22,6 +22,7 @@ import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import java.io.IOException
 import java.util.*
+import kotlin.system.exitProcess
 
 class OrangeInterpreterApplication private constructor(private val config: OrangeInterpreterConfig) {
     @Throws(IOException::class)
@@ -43,7 +44,7 @@ class OrangeInterpreterApplication private constructor(private val config: Orang
 
     companion object {
         private val LOGGER = LogManager.getLogger(OrangeInterpreterApplication::class.java)
-        private val APPLICATION: String? = "ACTIN ORANGE Interpreter"
+        private val APPLICATION: String = "ACTIN ORANGE Interpreter"
         private val VERSION = OrangeInterpreterApplication::class.java.getPackage().implementationVersion
 
         @Throws(IOException::class)
@@ -56,7 +57,7 @@ class OrangeInterpreterApplication private constructor(private val config: Orang
             } catch (exception: ParseException) {
                 LOGGER.warn(exception)
                 HelpFormatter().printHelp(APPLICATION, options)
-                System.exit(1)
+                exitProcess(1)
             }
             OrangeInterpreterApplication(config!!).run()
         }

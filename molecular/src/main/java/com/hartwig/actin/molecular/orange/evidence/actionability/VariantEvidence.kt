@@ -31,7 +31,7 @@ internal class VariantEvidence private constructor(private val actionableHotspot
     }
 
     private fun geneMatches(variant: PurpleVariant): MutableList<ActionableEvent> {
-        return filterMatchingEvents<ActionableGene>(applicableActionableGenes, variant) { obj: ActionableGene, geneAnnotation: PurpleVariant -> GeneMatching.isMatch(obj, geneAnnotation) }
+        return filterMatchingEvents(applicableActionableGenes, variant) { obj: ActionableGene, geneAnnotation: PurpleVariant -> GeneMatching.isMatch(obj, geneAnnotation) }
     }
 
     private fun <T : ActionableEvent> filterMatchingEvents(events: List<T>, variant: PurpleVariant,

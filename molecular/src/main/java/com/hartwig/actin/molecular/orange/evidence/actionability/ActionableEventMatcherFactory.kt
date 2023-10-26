@@ -2,7 +2,6 @@ package com.hartwig.actin.molecular.orange.evidence.actionability
 
 import com.google.common.annotations.VisibleForTesting
 import com.hartwig.actin.doid.DoidModel
-import com.hartwig.actin.molecular.orange.evidence.actionability.ActionableEventMatcherFactory.ActionableFactory
 import com.hartwig.actin.molecular.orange.evidence.curation.ApplicabilityFiltering
 import com.hartwig.actin.molecular.orange.evidence.curation.ExternalTrialMapper
 import com.hartwig.serve.datamodel.ActionableEvent
@@ -88,7 +87,7 @@ class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTri
     }
 
     private fun curateCharacteristics(characteristics: MutableList<ActionableCharacteristic>): MutableList<ActionableCharacteristic> {
-        return curateTreatments<ActionableCharacteristic>(characteristics
+        return curateTreatments(characteristics
         ) { event: ActionableCharacteristic, curatedTreatmentName: String ->
             ImmutableActionableCharacteristic.builder()
                 .from(event)
@@ -98,8 +97,8 @@ class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTri
     }
 
     private fun curateHla(hlas: MutableList<ActionableHLA>): MutableList<ActionableHLA> {
-        return curateTreatments<ActionableHLA>(hlas,
-            ActionableFactory<ActionableHLA> { event: ActionableHLA, curatedTreatmentName: String ->
+        return curateTreatments(hlas,
+            { event: ActionableHLA, curatedTreatmentName: String ->
                 ImmutableActionableHLA.builder()
                     .from(event)
                     .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())

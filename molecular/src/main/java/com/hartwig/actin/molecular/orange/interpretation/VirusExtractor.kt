@@ -32,7 +32,7 @@ internal class VirusExtractor(private val evidenceDatabase: EvidenceDatabase) {
     }
 
     companion object {
-        val QC_PASS_STATUS: VirusBreakendQCStatus? = VirusBreakendQCStatus.NO_ABNORMALITIES
+        val QC_PASS_STATUS: VirusBreakendQCStatus = VirusBreakendQCStatus.NO_ABNORMALITIES
 
         @VisibleForTesting
         fun determineDriverLikelihood(driverLikelihood: VirusLikelihoodType): DriverLikelihood? {

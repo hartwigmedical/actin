@@ -69,7 +69,7 @@ class ActionableEvidenceFactoryTest {
 
     @Test
     fun canMapResistanceEvidence() {
-        val match: ActionabilityMatch? = ActionabilityMatch(
+        val match: ActionabilityMatch = ActionabilityMatch(
             onLabelEvents = mutableListOf(
                 evidence("On-label responsive A", EvidenceLevel.A, EvidenceDirection.RESPONSIVE),
                 evidence("On-label responsive A", EvidenceLevel.A, EvidenceDirection.RESISTANT),
@@ -95,7 +95,7 @@ class ActionableEvidenceFactoryTest {
 
     @Test
     fun canMapTrials() {
-        val match: ActionabilityMatch? = ActionabilityMatch(
+        val match: ActionabilityMatch = ActionabilityMatch(
             onLabelEvents = mutableListOf(
                 trial("On-label responsive trial", EvidenceDirection.RESPONSIVE),
                 trial("On-label resistant trial", EvidenceDirection.RESISTANT)
@@ -121,7 +121,7 @@ class ActionableEvidenceFactoryTest {
 
     @Test
     fun ignoresEvidenceWithNoBenefit() {
-        val match: ActionabilityMatch? = ActionabilityMatch(
+        val match: ActionabilityMatch = ActionabilityMatch(
             onLabelEvents = mutableListOf(
                 evidence("A on-label no-benefit", EvidenceLevel.A, EvidenceDirection.NO_BENEFIT)
 

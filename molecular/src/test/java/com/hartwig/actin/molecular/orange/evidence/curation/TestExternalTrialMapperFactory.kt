@@ -8,7 +8,7 @@ object TestExternalTrialMapperFactory {
     }
 
     fun create(externalTrial: String, actinTrial: String): ExternalTrialMapper {
-        val mapping: ExternalTrialMapping? = ExternalTrialMapping(
+        val mapping: ExternalTrialMapping = ExternalTrialMapping(
             externalTrial = externalTrial,
             actinTrial = actinTrial
         )
