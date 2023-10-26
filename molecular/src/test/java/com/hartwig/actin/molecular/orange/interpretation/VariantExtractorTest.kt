@@ -160,46 +160,46 @@ class VariantExtractorTest {
     @Test
     fun shouldDetermineCorrectTypeForAllVariantTypes() {
         val mnp: PurpleVariant = TestPurpleFactory.variantBuilder().type(PurpleVariantType.MNP).build()
-        Assert.assertEquals(VariantType.MNV, VariantExtractor.Companion.determineVariantType(mnp))
+        Assert.assertEquals(VariantType.MNV, VariantExtractor.determineVariantType(mnp))
         val snp: PurpleVariant = TestPurpleFactory.variantBuilder().type(PurpleVariantType.SNP).build()
-        Assert.assertEquals(VariantType.SNV, VariantExtractor.Companion.determineVariantType(snp))
+        Assert.assertEquals(VariantType.SNV, VariantExtractor.determineVariantType(snp))
         val insert: PurpleVariant = TestPurpleFactory.variantBuilder().type(PurpleVariantType.INDEL).ref("A").alt("AT").build()
-        Assert.assertEquals(VariantType.INSERT, VariantExtractor.Companion.determineVariantType(insert))
+        Assert.assertEquals(VariantType.INSERT, VariantExtractor.determineVariantType(insert))
         val delete: PurpleVariant = TestPurpleFactory.variantBuilder().type(PurpleVariantType.INDEL).ref("AT").alt("A").build()
-        Assert.assertEquals(VariantType.DELETE, VariantExtractor.Companion.determineVariantType(delete))
+        Assert.assertEquals(VariantType.DELETE, VariantExtractor.determineVariantType(delete))
     }
 
     @Test
     fun shouldDetermineDriverLikelihoodForAllPurpleDriverLikelihoods() {
-        Assert.assertNull(VariantExtractor.Companion.determineDriverLikelihood(null))
-        Assert.assertEquals(DriverLikelihood.HIGH, VariantExtractor.Companion.determineDriverLikelihood(withDriverLikelihood(1.0)))
-        Assert.assertEquals(DriverLikelihood.HIGH, VariantExtractor.Companion.determineDriverLikelihood(withDriverLikelihood(0.8)))
-        Assert.assertEquals(DriverLikelihood.MEDIUM, VariantExtractor.Companion.determineDriverLikelihood(withDriverLikelihood(0.5)))
-        Assert.assertEquals(DriverLikelihood.MEDIUM, VariantExtractor.Companion.determineDriverLikelihood(withDriverLikelihood(0.2)))
-        Assert.assertEquals(DriverLikelihood.LOW, VariantExtractor.Companion.determineDriverLikelihood(withDriverLikelihood(0.0)))
+        Assert.assertNull(VariantExtractor.determineDriverLikelihood(null))
+        Assert.assertEquals(DriverLikelihood.HIGH, VariantExtractor.determineDriverLikelihood(withDriverLikelihood(1.0)))
+        Assert.assertEquals(DriverLikelihood.HIGH, VariantExtractor.determineDriverLikelihood(withDriverLikelihood(0.8)))
+        Assert.assertEquals(DriverLikelihood.MEDIUM, VariantExtractor.determineDriverLikelihood(withDriverLikelihood(0.5)))
+        Assert.assertEquals(DriverLikelihood.MEDIUM, VariantExtractor.determineDriverLikelihood(withDriverLikelihood(0.2)))
+        Assert.assertEquals(DriverLikelihood.LOW, VariantExtractor.determineDriverLikelihood(withDriverLikelihood(0.0)))
     }
 
     @Test
     fun shouldCorrectlyAssessWhetherTranscriptIsEnsembl() {
         val ensembl: PurpleTranscriptImpact = TestPurpleFactory.transcriptImpactBuilder().transcript("ENST01").build()
-        Assert.assertTrue(VariantExtractor.Companion.isEnsemblTranscript(ensembl))
+        Assert.assertTrue(VariantExtractor.isEnsemblTranscript(ensembl))
         val nonEnsembl: PurpleTranscriptImpact = TestPurpleFactory.transcriptImpactBuilder().transcript("something else").build()
-        Assert.assertFalse(VariantExtractor.Companion.isEnsemblTranscript(nonEnsembl))
+        Assert.assertFalse(VariantExtractor.isEnsemblTranscript(nonEnsembl))
     }
 
     @Test
     fun shouldDetermineAnEffectForAllVariantEffects() {
         for (variantEffect in PurpleVariantEffect.values()) {
-            Assert.assertNotNull(VariantExtractor.Companion.determineVariantEffect(variantEffect))
+            Assert.assertNotNull(VariantExtractor.determineVariantEffect(variantEffect))
         }
     }
 
     @Test
     fun shouldDetermineAnEffectForAllDefinedCodingEffects() {
-        Assert.assertNull(VariantExtractor.Companion.determineCodingEffect(PurpleCodingEffect.UNDEFINED))
+        Assert.assertNull(VariantExtractor.determineCodingEffect(PurpleCodingEffect.UNDEFINED))
         for (codingEffect in PurpleCodingEffect.values()) {
             if (codingEffect != PurpleCodingEffect.UNDEFINED) {
-                Assert.assertNotNull(VariantExtractor.Companion.determineCodingEffect(codingEffect))
+                Assert.assertNotNull(VariantExtractor.determineCodingEffect(codingEffect))
             }
         }
     }

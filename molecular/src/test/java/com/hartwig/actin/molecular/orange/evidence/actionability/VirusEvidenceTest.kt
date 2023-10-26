@@ -15,7 +15,7 @@ class VirusEvidenceTest {
     fun canDetermineEvidenceForHPV() {
         val hpv: ActionableCharacteristic = TestServeActionabilityFactory.characteristicBuilder().type(TumorCharacteristicType.HPV_POSITIVE).build()
         val actionable: ActionableEvents = ImmutableActionableEvents.builder().addCharacteristics(hpv).build()
-        val virusEvidence: VirusEvidence = VirusEvidence.Companion.create(actionable)
+        val virusEvidence: VirusEvidence = VirusEvidence.create(actionable)
         val virusMatch: AnnotatedVirus = TestVirusInterpreterFactory.builder().interpretation(VirusInterpretation.HPV).reported(true).build()
         val matches = virusEvidence.findMatches(virusMatch)
         Assert.assertEquals(1, matches.size.toLong())
@@ -32,7 +32,7 @@ class VirusEvidenceTest {
     fun canDetermineEvidenceForEBV() {
         val ebv: ActionableCharacteristic = TestServeActionabilityFactory.characteristicBuilder().type(TumorCharacteristicType.EBV_POSITIVE).build()
         val actionable: ActionableEvents = ImmutableActionableEvents.builder().addCharacteristics(ebv).build()
-        val virusEvidence: VirusEvidence = VirusEvidence.Companion.create(actionable)
+        val virusEvidence: VirusEvidence = VirusEvidence.create(actionable)
         val virusMatch: AnnotatedVirus = TestVirusInterpreterFactory.builder().interpretation(VirusInterpretation.EBV).reported(true).build()
         val matches = virusEvidence.findMatches(virusMatch)
         Assert.assertEquals(1, matches.size.toLong())

@@ -80,7 +80,7 @@ class DisruptionExtractorTest {
     @Test
     fun canDetermineAllDisruptionTypes() {
         for (breakendType in LinxBreakendType.values()) {
-            Assert.assertNotNull(DisruptionExtractor.Companion.determineDisruptionType(breakendType))
+            Assert.assertNotNull(DisruptionExtractor.determineDisruptionType(breakendType))
         }
     }
 
@@ -88,7 +88,7 @@ class DisruptionExtractorTest {
     fun canDetermineAllRegionTypes() {
         for (regionType in TranscriptRegionType.values()) {
             if (regionType != TranscriptRegionType.UNKNOWN) {
-                Assert.assertNotNull(DisruptionExtractor.Companion.determineRegionType(regionType))
+                Assert.assertNotNull(DisruptionExtractor.determineRegionType(regionType))
             }
         }
     }
@@ -97,7 +97,7 @@ class DisruptionExtractorTest {
     fun canDetermineAllCodingTypes() {
         for (codingType in TranscriptCodingType.values()) {
             if (codingType != TranscriptCodingType.UNKNOWN) {
-                Assert.assertNotNull(DisruptionExtractor.Companion.determineCodingContext(codingType))
+                Assert.assertNotNull(DisruptionExtractor.determineCodingContext(codingType))
             }
         }
     }

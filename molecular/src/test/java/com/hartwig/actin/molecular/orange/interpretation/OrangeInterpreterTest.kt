@@ -60,48 +60,48 @@ class OrangeInterpreterTest {
 
     @Test
     fun shouldBeAbleToConvertSampleIdToPatientId() {
-        Assert.assertEquals("ACTN01029999", OrangeInterpreter.Companion.toPatientId("ACTN01029999T"))
-        Assert.assertEquals("ACTN01029999", OrangeInterpreter.Companion.toPatientId("ACTN01029999T2"))
+        Assert.assertEquals("ACTN01029999", OrangeInterpreter.toPatientId("ACTN01029999T"))
+        Assert.assertEquals("ACTN01029999", OrangeInterpreter.toPatientId("ACTN01029999T2"))
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun shouldThrowExceptionOnInvalidSampleId() {
-        OrangeInterpreter.Companion.toPatientId("no sample")
+        OrangeInterpreter.toPatientId("no sample")
     }
 
     @Test
     fun shouldBeAbleToResolveAllRefGenomeVersions() {
         for (refGenomeVersion in OrangeRefGenomeVersion.values()) {
-            Assert.assertNotNull(OrangeInterpreter.Companion.determineRefGenomeVersion(refGenomeVersion))
+            Assert.assertNotNull(OrangeInterpreter.determineRefGenomeVersion(refGenomeVersion))
         }
     }
 
     @Test
     fun shouldDetermineQualityAndPurityToBeSufficientWhenOnlyPassStatusIsPresent() {
         val record = orangeRecordWithQCStatus(PurpleQCStatus.PASS)
-        Assert.assertTrue(OrangeInterpreter.Companion.hasSufficientQuality(record))
-        Assert.assertTrue(OrangeInterpreter.Companion.hasSufficientQualityAndPurity(record))
+        Assert.assertTrue(OrangeInterpreter.hasSufficientQuality(record))
+        Assert.assertTrue(OrangeInterpreter.hasSufficientQualityAndPurity(record))
     }
 
     @Test
     fun shouldDetermineQualityButNotPurityToBeSufficientWhenOnlyLowPurityWarningIsPresent() {
         val record = orangeRecordWithQCStatus(PurpleQCStatus.WARN_LOW_PURITY)
-        Assert.assertTrue(OrangeInterpreter.Companion.hasSufficientQuality(record))
-        Assert.assertFalse(OrangeInterpreter.Companion.hasSufficientQualityAndPurity(record))
+        Assert.assertTrue(OrangeInterpreter.hasSufficientQuality(record))
+        Assert.assertFalse(OrangeInterpreter.hasSufficientQualityAndPurity(record))
     }
 
     @Test
     fun shouldDetermineQualityAndPurityToNotBeSufficientWhenOtherWarningIsPresent() {
         val record = orangeRecordWithQCStatus(PurpleQCStatus.WARN_DELETED_GENES)
-        Assert.assertFalse(OrangeInterpreter.Companion.hasSufficientQuality(record))
-        Assert.assertFalse(OrangeInterpreter.Companion.hasSufficientQualityAndPurity(record))
+        Assert.assertFalse(OrangeInterpreter.hasSufficientQuality(record))
+        Assert.assertFalse(OrangeInterpreter.hasSufficientQualityAndPurity(record))
     }
 
     @Test
     fun shouldDetermineQualityExcludingPurityToNotBeSufficientWhenOtherWarningIsPresentWithLowPurityWarning() {
         val record = orangeRecordWithQCStatuses(Set.of(PurpleQCStatus.WARN_LOW_PURITY, PurpleQCStatus.WARN_DELETED_GENES))
-        Assert.assertFalse(OrangeInterpreter.Companion.hasSufficientQuality(record))
-        Assert.assertFalse(OrangeInterpreter.Companion.hasSufficientQualityAndPurity(record))
+        Assert.assertFalse(OrangeInterpreter.hasSufficientQuality(record))
+        Assert.assertFalse(OrangeInterpreter.hasSufficientQualityAndPurity(record))
     }
 
     @Test(expected = IllegalStateException::class)

@@ -18,7 +18,7 @@ class CopyNumberEvidenceTest {
         val gene2: ActionableGene = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.DELETION).gene("gene 2").build()
         val gene3: ActionableGene = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.INACTIVATION).gene("gene 1").build()
         val actionable: ActionableEvents = ImmutableActionableEvents.builder().genes(Lists.newArrayList(gene1, gene2, gene3)).build()
-        val copyNumberEvidence: CopyNumberEvidence = CopyNumberEvidence.Companion.create(actionable)
+        val copyNumberEvidence: CopyNumberEvidence = CopyNumberEvidence.create(actionable)
         val ampGene1: PurpleGainLoss = TestPurpleFactory.gainLossBuilder().gene("gene 1").interpretation(CopyNumberInterpretation.FULL_GAIN).build()
         val ampMatches = copyNumberEvidence.findMatches(ampGene1)
         Assert.assertEquals(1, ampMatches.size.toLong())

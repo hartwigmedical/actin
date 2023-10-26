@@ -13,13 +13,13 @@ object TestActionableEventMatcherFactory {
         val personalizedActionabilityFactory = PersonalizedActionabilityFactory(TestDoidModelFactory.createMinimalTestDoidModel(), Sets.newHashSet())
         val empty: ActionableEvents = ImmutableActionableEvents.builder().build()
         return ActionableEventMatcher(personalizedActionabilityFactory,
-            SignatureEvidence.Companion.create(empty),
-            VariantEvidence.Companion.create(empty),
-            CopyNumberEvidence.Companion.create(empty),
-            HomozygousDisruptionEvidence.Companion.create(empty),
-            BreakendEvidence.Companion.create(empty),
-            FusionEvidence.Companion.create(empty),
-            VirusEvidence.Companion.create(empty))
+            SignatureEvidence.create(empty),
+            VariantEvidence.create(empty),
+            CopyNumberEvidence.create(empty),
+            HomozygousDisruptionEvidence.create(empty),
+            BreakendEvidence.create(empty),
+            FusionEvidence.create(empty),
+            VirusEvidence.create(empty))
     }
 
     fun createProper(): ActionableEventMatcher {
@@ -42,13 +42,13 @@ object TestActionableEventMatcherFactory {
             .addCharacteristics(create(TumorCharacteristicType.EBV_POSITIVE))
             .build()
         return ActionableEventMatcher(personalizedActionabilityFactory,
-            SignatureEvidence.Companion.create(actionableEvents),
-            VariantEvidence.Companion.create(actionableEvents),
-            CopyNumberEvidence.Companion.create(actionableEvents),
-            HomozygousDisruptionEvidence.Companion.create(actionableEvents),
-            BreakendEvidence.Companion.create(actionableEvents),
-            FusionEvidence.Companion.create(actionableEvents),
-            VirusEvidence.Companion.create(actionableEvents))
+            SignatureEvidence.create(actionableEvents),
+            VariantEvidence.create(actionableEvents),
+            CopyNumberEvidence.create(actionableEvents),
+            HomozygousDisruptionEvidence.create(actionableEvents),
+            BreakendEvidence.create(actionableEvents),
+            FusionEvidence.create(actionableEvents),
+            VirusEvidence.create(actionableEvents))
     }
 
     private fun create(type: TumorCharacteristicType): ActionableCharacteristic {

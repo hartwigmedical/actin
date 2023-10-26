@@ -12,7 +12,7 @@ class PersonalizedActionabilityFactoryTest {
     fun canDistinguishOnLabelOffLabel() {
         val doidModel = TestDoidModelFactory.createWithOneParentChild("parent", "child")
         val tumorDoids: MutableSet<String> = Sets.newHashSet("child", "blacklist")
-        val factory: PersonalizedActionabilityFactory = PersonalizedActionabilityFactory.Companion.create(doidModel, tumorDoids)
+        val factory: PersonalizedActionabilityFactory = PersonalizedActionabilityFactory.create(doidModel, tumorDoids)
         val event1 = create("parent", "not blacklisted")
         val event2 = create("other doid")
         val event3 = create("parent", "blacklist")
@@ -28,7 +28,7 @@ class PersonalizedActionabilityFactoryTest {
     @Test
     fun everythingIsOffLabelWhenTumorDoidsAreUnknown() {
         val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
-        val factory: PersonalizedActionabilityFactory = PersonalizedActionabilityFactory.Companion.create(doidModel, mutableSetOf())
+        val factory: PersonalizedActionabilityFactory = PersonalizedActionabilityFactory.create(doidModel, mutableSetOf())
         val event1 = create("doid 1")
         val event2 = create("doid 2")
         val event3 = create("doid 1", "blacklist")

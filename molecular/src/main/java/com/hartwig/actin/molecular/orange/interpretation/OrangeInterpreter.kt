@@ -17,7 +17,7 @@ import java.util.Set
 class OrangeInterpreter(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
     fun interpret(record: OrangeRecord): MolecularRecord {
         validateOrangeRecord(record)
-        val driverExtractor: DriverExtractor = DriverExtractor.Companion.create(geneFilter, evidenceDatabase)
+        val driverExtractor: DriverExtractor = DriverExtractor.create(geneFilter, evidenceDatabase)
         val characteristicsExtractor = CharacteristicsExtractor(evidenceDatabase)
         return ImmutableMolecularRecord.builder()
             .patientId(toPatientId(record.sampleId()))

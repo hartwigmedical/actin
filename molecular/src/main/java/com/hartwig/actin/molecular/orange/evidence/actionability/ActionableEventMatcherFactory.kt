@@ -31,7 +31,7 @@ class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTri
     fun create(actionableEvents: ActionableEvents): ActionableEventMatcher {
         val filtered = filterForApplicability(filterForSources(actionableEvents, ACTIONABLE_EVENT_SOURCES))
         val curated = curateExternalTrials(filtered)
-        val personalizedActionabilityFactory: PersonalizedActionabilityFactory = PersonalizedActionabilityFactory.Companion.create(doidModel, tumorDoids)
+        val personalizedActionabilityFactory: PersonalizedActionabilityFactory = PersonalizedActionabilityFactory.create(doidModel, tumorDoids)
         return fromActionableEvents(personalizedActionabilityFactory, curated)
     }
 
@@ -129,13 +129,13 @@ class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTri
         val ACTIONABLE_EVENT_SOURCES = Set.of(ActionabilityConstants.EVIDENCE_SOURCE, ActionabilityConstants.EXTERNAL_TRIAL_SOURCE)
         private fun fromActionableEvents(personalizedActionabilityFactory: PersonalizedActionabilityFactory,
                                          actionableEvents: ActionableEvents): ActionableEventMatcher {
-            val signatureEvidence: SignatureEvidence = SignatureEvidence.Companion.create(actionableEvents)
-            val variantEvidence: VariantEvidence = VariantEvidence.Companion.create(actionableEvents)
-            val copyNumberEvidence: CopyNumberEvidence = CopyNumberEvidence.Companion.create(actionableEvents)
-            val homozygousDisruptionEvidence: HomozygousDisruptionEvidence = HomozygousDisruptionEvidence.Companion.create(actionableEvents)
-            val breakendEvidence: BreakendEvidence = BreakendEvidence.Companion.create(actionableEvents)
-            val fusionEvidence: FusionEvidence = FusionEvidence.Companion.create(actionableEvents)
-            val virusEvidence: VirusEvidence = VirusEvidence.Companion.create(actionableEvents)
+            val signatureEvidence: SignatureEvidence = SignatureEvidence.create(actionableEvents)
+            val variantEvidence: VariantEvidence = VariantEvidence.create(actionableEvents)
+            val copyNumberEvidence: CopyNumberEvidence = CopyNumberEvidence.create(actionableEvents)
+            val homozygousDisruptionEvidence: HomozygousDisruptionEvidence = HomozygousDisruptionEvidence.create(actionableEvents)
+            val breakendEvidence: BreakendEvidence = BreakendEvidence.create(actionableEvents)
+            val fusionEvidence: FusionEvidence = FusionEvidence.create(actionableEvents)
+            val virusEvidence: VirusEvidence = VirusEvidence.create(actionableEvents)
             return ActionableEventMatcher(personalizedActionabilityFactory,
                 signatureEvidence,
                 variantEvidence,

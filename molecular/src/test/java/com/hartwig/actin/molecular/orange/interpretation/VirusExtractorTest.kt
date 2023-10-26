@@ -20,7 +20,7 @@ class VirusExtractorTest {
         val virusEntry1: AnnotatedVirus = TestVirusInterpreterFactory.builder()
             .reported(true)
             .name("virus 1")
-            .qcStatus(VirusExtractor.Companion.QC_PASS_STATUS)
+            .qcStatus(VirusExtractor.QC_PASS_STATUS)
             .interpretation(VirusInterpretation.HPV)
             .integrations(2)
             .virusDriverLikelihoodType(VirusLikelihoodType.HIGH)
@@ -59,15 +59,15 @@ class VirusExtractorTest {
         expectedDriverLikelihoodLookup[VirusLikelihoodType.UNKNOWN] = null
         for (virusDriverLikelihood in VirusLikelihoodType.values()) {
             Assert.assertEquals(expectedDriverLikelihoodLookup[virusDriverLikelihood],
-                VirusExtractor.Companion.determineDriverLikelihood(virusDriverLikelihood))
+                VirusExtractor.determineDriverLikelihood(virusDriverLikelihood))
         }
     }
 
     @Test
     fun canDetermineTypeForAllInterpretations() {
-        Assert.assertEquals(VirusType.OTHER, VirusExtractor.Companion.determineType(null))
+        Assert.assertEquals(VirusType.OTHER, VirusExtractor.determineType(null))
         for (interpretation in VirusInterpretation.values()) {
-            Assert.assertNotNull(VirusExtractor.Companion.determineType(interpretation))
+            Assert.assertNotNull(VirusExtractor.determineType(interpretation))
         }
     }
 

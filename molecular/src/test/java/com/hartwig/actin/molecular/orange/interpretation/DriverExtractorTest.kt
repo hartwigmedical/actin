@@ -44,7 +44,7 @@ class DriverExtractorTest {
         val copyNumbers: MutableList<CopyNumber> = Lists.newArrayList(TestCopyNumberFactory.builder().gene("gene 1").type(CopyNumberType.LOSS).isReportable(true).build(),
             TestCopyNumberFactory.builder().gene("gene 2").type(CopyNumberType.FULL_GAIN).isReportable(true).build(),
             TestCopyNumberFactory.builder().gene("gene 3").type(CopyNumberType.LOSS).isReportable(false).build())
-        val lostGenes: MutableSet<String> = DriverExtractor.Companion.reportableLostGenes(copyNumbers)
+        val lostGenes: MutableSet<String> = DriverExtractor.reportableLostGenes(copyNumbers)
         Assert.assertEquals(1, lostGenes.size.toLong())
         Assert.assertEquals("gene 1", lostGenes.iterator().next())
     }
@@ -55,13 +55,13 @@ class DriverExtractorTest {
             TestCopyNumberFactory.builder().isReportable(false).build(),
             TestFusionFactory.builder().isReportable(true).build(),
             TestVirusFactory.builder().isReportable(false).build())
-        Assert.assertEquals(2, DriverExtractor.Companion.reportableCount(drivers).toLong())
-        Assert.assertEquals(0, DriverExtractor.Companion.reportableCount(emptyList()).toLong())
+        Assert.assertEquals(2, DriverExtractor.reportableCount(drivers).toLong())
+        Assert.assertEquals(0, DriverExtractor.reportableCount(emptyList()).toLong())
     }
 
     companion object {
         private fun createTestExtractor(): DriverExtractor {
-            return DriverExtractor.Companion.create(TestGeneFilterFactory.createAlwaysValid(), TestEvidenceDatabaseFactory.createEmptyDatabase())
+            return DriverExtractor.create(TestGeneFilterFactory.createAlwaysValid(), TestEvidenceDatabaseFactory.createEmptyDatabase())
         }
     }
 }

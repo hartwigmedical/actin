@@ -19,7 +19,7 @@ class FusionEvidenceTest {
         val gene2: ActionableGene = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.ANY_MUTATION).gene("gene 2").build()
         val gene3: ActionableGene = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.INACTIVATION).gene("gene 1").build()
         val actionable: ActionableEvents = ImmutableActionableEvents.builder().genes(Lists.newArrayList(gene1, gene2, gene3)).build()
-        val fusionEvidence: FusionEvidence = FusionEvidence.Companion.create(actionable)
+        val fusionEvidence: FusionEvidence = FusionEvidence.create(actionable)
         val reportedFusionGene1: LinxFusion = TestLinxFactory.fusionBuilder().geneStart("gene 1").reportedType(LinxFusionType.PROMISCUOUS_5).reported(true).build()
         val evidenceMatchGene1 = fusionEvidence.findMatches(reportedFusionGene1)
         Assert.assertEquals(1, evidenceMatchGene1.size.toLong())
@@ -38,7 +38,7 @@ class FusionEvidenceTest {
     fun canDetermineEvidenceForKnownFusions() {
         val actionableFusion: ActionableFusion = TestServeActionabilityFactory.fusionBuilder().geneUp("up").geneDown("down").minExonUp(4).maxExonUp(6).build()
         val actionable: ActionableEvents = ImmutableActionableEvents.builder().addFusions(actionableFusion).build()
-        val fusionEvidence: FusionEvidence = FusionEvidence.Companion.create(actionable)
+        val fusionEvidence: FusionEvidence = FusionEvidence.create(actionable)
         val match: LinxFusion = TestLinxFactory.fusionBuilder().geneStart("up").geneEnd("down").fusedExonUp(5).reported(true).build()
         val evidences = fusionEvidence.findMatches(match)
         Assert.assertEquals(1, evidences.size.toLong())

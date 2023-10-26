@@ -21,7 +21,7 @@ class VariantEvidenceTest {
         val hotspot2: ActionableHotspot = TestServeActionabilityFactory.hotspotBuilder().gene("gene 2").chromosome("X").position(2).ref("A").alt("G").build()
         val hotspot3: ActionableHotspot = TestServeActionabilityFactory.hotspotBuilder().gene("gene 1").chromosome("X").position(2).ref("A").alt("C").build()
         val actionable: ActionableEvents = ImmutableActionableEvents.builder().addAllHotspots(List.of(hotspot1, hotspot2, hotspot3)).build()
-        val variantEvidence: VariantEvidence = VariantEvidence.Companion.create(actionable)
+        val variantEvidence: VariantEvidence = VariantEvidence.create(actionable)
         val variantGene1: PurpleVariant = TestPurpleFactory.variantBuilder().gene("gene 1").chromosome("X").position(2).ref("A").alt("G").reported(true).build()
         val matchesVariant1 = variantEvidence.findMatches(variantGene1)
         Assert.assertEquals(1, matchesVariant1.size.toLong())
@@ -45,7 +45,7 @@ class VariantEvidenceTest {
     }
 
     private fun assertEvidenceDeterminedForRange(actionable: ActionableEvents) {
-        val variantEvidence: VariantEvidence = VariantEvidence.Companion.create(actionable)
+        val variantEvidence: VariantEvidence = VariantEvidence.create(actionable)
         val variantGene1: PurpleVariant = TestPurpleFactory.variantBuilder()
             .gene("gene 1")
             .chromosome("X")
@@ -72,7 +72,7 @@ class VariantEvidenceTest {
         val gene2: ActionableGene = TestServeActionabilityFactory.geneBuilder().gene("gene 2").event(GeneEvent.ACTIVATION).build()
         val gene3: ActionableGene = TestServeActionabilityFactory.geneBuilder().gene("gene 2").event(GeneEvent.AMPLIFICATION).build()
         val actionable: ActionableEvents = ImmutableActionableEvents.builder().addGenes(gene1, gene2, gene3).build()
-        val variantEvidence: VariantEvidence = VariantEvidence.Companion.create(actionable)
+        val variantEvidence: VariantEvidence = VariantEvidence.create(actionable)
         val variantGene1: PurpleVariant = TestPurpleFactory.variantBuilder()
             .gene("gene 1")
             .canonicalImpact(create(PurpleCodingEffect.MISSENSE))

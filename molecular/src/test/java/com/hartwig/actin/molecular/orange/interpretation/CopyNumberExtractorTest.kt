@@ -87,7 +87,7 @@ class CopyNumberExtractorTest {
     @Test
     fun canDetermineTypeForAllInterpretations() {
         for (interpretation in CopyNumberInterpretation.values()) {
-            Assert.assertNotNull(CopyNumberExtractor.Companion.determineType(interpretation))
+            Assert.assertNotNull(CopyNumberExtractor.determineType(interpretation))
         }
     }
 
