@@ -47,7 +47,6 @@ class OrangeInterpreter(private val geneFilter: GeneFilter, private val evidence
                     RefGenomeVersion.V38
                 }
             }
-            throw IllegalStateException("Could not determine ref genome version from: $refGenomeVersion")
         }
 
         fun hasSufficientQualityAndPurity(record: OrangeRecord): Boolean {
@@ -69,13 +68,13 @@ class OrangeInterpreter(private val geneFilter: GeneFilter, private val evidence
         }
 
         fun determineExperimentType(experimentType: ExperimentType?): com.hartwig.actin.molecular.datamodel.ExperimentType {
-            when (experimentType) {
+            return when (experimentType) {
                 ExperimentType.TARGETED -> {
-                    return com.hartwig.actin.molecular.datamodel.ExperimentType.TARGETED
+                    com.hartwig.actin.molecular.datamodel.ExperimentType.TARGETED
                 }
 
                 ExperimentType.WHOLE_GENOME -> {
-                    return com.hartwig.actin.molecular.datamodel.ExperimentType.WHOLE_GENOME
+                    com.hartwig.actin.molecular.datamodel.ExperimentType.WHOLE_GENOME
                 }
 
                 null -> throw IllegalStateException("Could not determine experiment type from: $experimentType")
