@@ -10,7 +10,6 @@ import com.hartwig.serve.datamodel.gene.ActionableGene
 import com.hartwig.serve.datamodel.gene.GeneEvent
 import com.hartwig.serve.datamodel.hotspot.ActionableHotspot
 import com.hartwig.serve.datamodel.range.ActionableRange
-import java.util.Set
 import java.util.function.BiPredicate
 import java.util.stream.Collectors
 import java.util.stream.Stream
@@ -41,7 +40,7 @@ internal class VariantEvidence private constructor(private val actionableHotspot
     }
 
     companion object {
-        private val APPLICABLE_GENE_EVENTS = Set.of(GeneEvent.ACTIVATION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION)
+        private val APPLICABLE_GENE_EVENTS = setOf(GeneEvent.ACTIVATION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION)
         fun create(actionableEvents: ActionableEvents): VariantEvidence {
             val applicableActionableGenes = actionableEvents.genes()
                 .stream()

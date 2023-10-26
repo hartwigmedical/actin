@@ -12,7 +12,6 @@ import com.hartwig.serve.datamodel.gene.GeneEvent
 import com.hartwig.serve.datamodel.hotspot.ActionableHotspot
 import org.junit.Assert
 import org.junit.Test
-import java.util.List
 
 class VariantEvidenceTest {
     @Test
@@ -20,7 +19,7 @@ class VariantEvidenceTest {
         val hotspot1: ActionableHotspot = TestServeActionabilityFactory.hotspotBuilder().gene("gene 1").chromosome("X").position(2).ref("A").alt("G").build()
         val hotspot2: ActionableHotspot = TestServeActionabilityFactory.hotspotBuilder().gene("gene 2").chromosome("X").position(2).ref("A").alt("G").build()
         val hotspot3: ActionableHotspot = TestServeActionabilityFactory.hotspotBuilder().gene("gene 1").chromosome("X").position(2).ref("A").alt("C").build()
-        val actionable: ActionableEvents = ImmutableActionableEvents.builder().addAllHotspots(List.of(hotspot1, hotspot2, hotspot3)).build()
+        val actionable: ActionableEvents = ImmutableActionableEvents.builder().addAllHotspots(listOf(hotspot1, hotspot2, hotspot3)).build()
         val variantEvidence: VariantEvidence = VariantEvidence.create(actionable)
         val variantGene1: PurpleVariant = TestPurpleFactory.variantBuilder().gene("gene 1").chromosome("X").position(2).ref("A").alt("G").reported(true).build()
         val matchesVariant1 = variantEvidence.findMatches(variantGene1)
