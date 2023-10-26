@@ -12,7 +12,6 @@ import com.hartwig.hmftools.datamodel.orange.ExperimentType
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
-import java.util.Set
 
 class OrangeInterpreter(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
     fun interpret(record: OrangeRecord): MolecularRecord {
@@ -52,14 +51,14 @@ class OrangeInterpreter(private val geneFilter: GeneFilter, private val evidence
         }
 
         fun hasSufficientQualityAndPurity(record: OrangeRecord): Boolean {
-            return recordQCStatusesInSet(record, Set.of(PurpleQCStatus.PASS))
+            return recordQCStatusesInSet(record, setOf(PurpleQCStatus.PASS))
         }
 
         fun hasSufficientQuality(record: OrangeRecord): Boolean {
-            return recordQCStatusesInSet(record, Set.of(PurpleQCStatus.PASS, PurpleQCStatus.WARN_LOW_PURITY))
+            return recordQCStatusesInSet(record, setOf(PurpleQCStatus.PASS, PurpleQCStatus.WARN_LOW_PURITY))
         }
 
-        private fun recordQCStatusesInSet(record: OrangeRecord, allowableQCStatuses: MutableSet<PurpleQCStatus>): Boolean {
+        private fun recordQCStatusesInSet(record: OrangeRecord, allowableQCStatuses: Set<PurpleQCStatus>): Boolean {
             return allowableQCStatuses.containsAll(record.purple().fit().qc().status())
         }
 

@@ -4,19 +4,18 @@ import com.hartwig.hmftools.datamodel.purple.PurpleTranscriptImpact
 import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
 import org.apache.logging.log4j.LogManager
-import java.util.Set
 import java.util.stream.Collectors
 import kotlin.math.abs
 
 object VariantDedup {
     private const val EPSILON = 1e-10
     private val LOGGER = LogManager.getLogger(VariantDedup::class.java)
-    private val PHASED_EFFECTS = Set.of(PurpleVariantEffect.PHASED_INFRAME_DELETION, PurpleVariantEffect.PHASED_INFRAME_INSERTION)
-    fun apply(variants: MutableSet<PurpleVariant>): MutableSet<PurpleVariant> {
+    private val PHASED_EFFECTS = setOf(PurpleVariantEffect.PHASED_INFRAME_DELETION, PurpleVariantEffect.PHASED_INFRAME_INSERTION)
+    fun apply(variants: Set<PurpleVariant>): MutableSet<PurpleVariant> {
         return variants.stream().filter { variant: PurpleVariant -> include(variant, variants) }.collect(Collectors.toSet())
     }
 
-    private fun include(variant: PurpleVariant, variants: MutableSet<PurpleVariant>): Boolean {
+    private fun include(variant: PurpleVariant, variants: Set<PurpleVariant>): Boolean {
         return if (hasCanonicalPhasedEffect(variant) && hasSameEffectWithHigherVCN(variants, variant)) {
             LOGGER.debug("Dedup'ing variant '{}'", variant)
             false
@@ -29,7 +28,7 @@ object VariantDedup {
         return variant.canonicalImpact().effects().stream().anyMatch { o: PurpleVariantEffect? -> PHASED_EFFECTS.contains(o) }
     }
 
-    private fun hasSameEffectWithHigherVCN(variants: MutableSet<PurpleVariant>, variantToMatch: PurpleVariant): Boolean {
+    private fun hasSameEffectWithHigherVCN(variants: Set<PurpleVariant>, variantToMatch: PurpleVariant): Boolean {
         // We assume that variants with same effect have unique hgvs coding impact.
         var minVariantCopyNumber: Double? = null
         var uniqueHgvsCodingImpact: String? = null

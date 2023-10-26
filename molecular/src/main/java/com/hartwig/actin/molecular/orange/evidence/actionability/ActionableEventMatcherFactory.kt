@@ -22,12 +22,11 @@ import com.hartwig.serve.datamodel.immuno.ActionableHLA
 import com.hartwig.serve.datamodel.immuno.ImmutableActionableHLA
 import com.hartwig.serve.datamodel.range.ActionableRange
 import com.hartwig.serve.datamodel.range.ImmutableActionableRange
-import java.util.Set
 import java.util.function.Predicate
 import java.util.stream.Collectors
 
 class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTrialMapper, private val doidModel: DoidModel,
-                                    private val tumorDoids: MutableSet<String>) {
+                                    private val tumorDoids: Set<String>) {
     fun create(actionableEvents: ActionableEvents): ActionableEventMatcher {
         val filtered = filterForApplicability(filterForSources(actionableEvents, ACTIONABLE_EVENT_SOURCES))
         val curated = curateExternalTrials(filtered)
@@ -126,7 +125,7 @@ class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTri
     }
 
     companion object {
-        val ACTIONABLE_EVENT_SOURCES = Set.of(ActionabilityConstants.EVIDENCE_SOURCE, ActionabilityConstants.EXTERNAL_TRIAL_SOURCE)
+        val ACTIONABLE_EVENT_SOURCES = setOf(ActionabilityConstants.EVIDENCE_SOURCE, ActionabilityConstants.EXTERNAL_TRIAL_SOURCE)
         private fun fromActionableEvents(personalizedActionabilityFactory: PersonalizedActionabilityFactory,
                                          actionableEvents: ActionableEvents): ActionableEventMatcher {
             val signatureEvidence: SignatureEvidence = SignatureEvidence.create(actionableEvents)
@@ -147,7 +146,7 @@ class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTri
         }
 
         @VisibleForTesting
-        fun filterForSources(actionableEvents: ActionableEvents, sourcesToInclude: MutableSet<Knowledgebase?>): ActionableEvents {
+        fun filterForSources(actionableEvents: ActionableEvents, sourcesToInclude: Set<Knowledgebase?>): ActionableEvents {
             return ImmutableActionableEvents.builder()
                 .hotspots(filterActionableForSources<ActionableHotspot>(actionableEvents.hotspots(), sourcesToInclude))
                 .codons(filterActionableForSources<ActionableRange>(actionableEvents.codons(), sourcesToInclude))
@@ -160,7 +159,7 @@ class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTri
         }
 
         private fun <T : ActionableEvent> filterActionableForSources(actionables: List<T>,
-                                                                     sourcesToInclude: MutableSet<Knowledgebase?>): MutableSet<T> {
+                                                                     sourcesToInclude: Set<Knowledgebase?>): MutableSet<T> {
             return actionables.stream().filter { actionable: T -> sourcesToInclude.contains(actionable.source()) }.collect(Collectors.toSet())
         }
 
