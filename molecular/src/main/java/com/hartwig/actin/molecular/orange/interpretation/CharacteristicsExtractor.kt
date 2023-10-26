@@ -61,11 +61,10 @@ internal class CharacteristicsExtractor(private val evidenceDatabase: EvidenceDa
                 }
 
                 PurpleMicrosatelliteStatus.UNKNOWN -> {
+                    LOGGER.warn("Cannot interpret microsatellite status '{}'", microsatelliteStatus)
                     null
                 }
             }
-            LOGGER.warn("Cannot interpret microsatellite status '{}'", microsatelliteStatus)
-            return null
         }
 
         private fun isHRD(hrStatus: ChordStatus): Boolean? {
