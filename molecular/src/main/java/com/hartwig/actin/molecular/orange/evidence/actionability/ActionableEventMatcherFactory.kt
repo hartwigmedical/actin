@@ -181,15 +181,15 @@ class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTri
         }
 
         private fun filterHotspotsForApplicability(hotspots: List<ActionableHotspot>): MutableList<ActionableHotspot> {
-            return filterEventsForApplicability(hotspots, Predicate { obj: ActionableHotspot -> ApplicabilityFiltering.isApplicable(obj) })
+            return filterEventsForApplicability(hotspots) { obj: ActionableHotspot -> ApplicabilityFiltering.isApplicable(obj) }
         }
 
         private fun filterRangesForApplicability(ranges: List<ActionableRange>): MutableList<ActionableRange> {
-            return filterEventsForApplicability(ranges, Predicate { obj: ActionableRange -> ApplicabilityFiltering.isApplicable(obj) })
+            return filterEventsForApplicability(ranges) { obj: ActionableRange -> ApplicabilityFiltering.isApplicable(obj) }
         }
 
         private fun filterGenesForApplicability(genes: List<ActionableGene>): MutableList<ActionableGene> {
-            return filterEventsForApplicability(genes, Predicate { obj: ActionableGene -> ApplicabilityFiltering.isApplicable(obj) })
+            return filterEventsForApplicability(genes) { obj: ActionableGene -> ApplicabilityFiltering.isApplicable(obj) }
         }
     }
 }
