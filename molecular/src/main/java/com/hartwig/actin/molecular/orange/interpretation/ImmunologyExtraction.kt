@@ -20,7 +20,7 @@ internal object ImmunologyExtraction {
         return lilac.qc() == LILAC_QC_PASS
     }
 
-    private fun toHlaAlleles(alleles: MutableList<LilacAllele>): MutableSet<HlaAllele> {
+    private fun toHlaAlleles(alleles: List<LilacAllele>): MutableSet<HlaAllele> {
         val hlaAlleles: MutableSet<HlaAllele> = Sets.newHashSet()
         for (allele in alleles) {
             val hasSomaticVariants = allele.somaticMissense() > 0 || allele.somaticNonsenseOrFrameshift() > 0 || allele.somaticSplice() > 0 || allele.somaticInframeIndel() > 0

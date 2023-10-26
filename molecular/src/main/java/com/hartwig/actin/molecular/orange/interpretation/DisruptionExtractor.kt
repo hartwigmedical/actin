@@ -19,7 +19,7 @@ import com.hartwig.hmftools.datamodel.linx.LinxRecord
 import com.hartwig.hmftools.datamodel.linx.LinxSvAnnotation
 
 internal class DisruptionExtractor(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
-    fun extractDisruptions(linx: LinxRecord, lostGenes: MutableSet<String>): MutableSet<Disruption> {
+    fun extractDisruptions(linx: LinxRecord, lostGenes: Set<String>): MutableSet<Disruption> {
         val disruptions: MutableSet<Disruption> = Sets.newTreeSet(DisruptionComparator())
         for (breakend in linx.allSomaticBreakends()) {
             val event = DriverEventFactory.disruptionEvent(breakend)
@@ -49,11 +49,11 @@ internal class DisruptionExtractor(private val geneFilter: GeneFilter, private v
     }
 
     companion object {
-        private fun include(breakend: LinxBreakend, lostGenes: MutableSet<String>): Boolean {
+        private fun include(breakend: LinxBreakend, lostGenes: Set<String>): Boolean {
             return breakend.type() != LinxBreakendType.DEL || !lostGenes.contains(breakend.gene())
         }
 
-        private fun lookupClusterId(breakend: LinxBreakend, structuralVariants: MutableList<LinxSvAnnotation>): Int {
+        private fun lookupClusterId(breakend: LinxBreakend, structuralVariants: List<LinxSvAnnotation>): Int {
             for (structuralVariant in structuralVariants) {
                 if (structuralVariant.svId() == breakend.svId()) {
                     return structuralVariant.clusterId()

@@ -23,7 +23,7 @@ internal object PharmacoExtraction {
         }
     }
 
-    private fun createPharmacoEntryForGeneAndPeachGenotypes(gene: String, peachGenotypes: MutableList<PeachGenotype>): PharmacoEntry {
+    private fun createPharmacoEntryForGeneAndPeachGenotypes(gene: String, peachGenotypes: List<PeachGenotype>): PharmacoEntry {
         val haplotypes = peachGenotypes.stream()
             .map { peachGenotype: PeachGenotype ->
                 ImmutableHaplotype.builder()

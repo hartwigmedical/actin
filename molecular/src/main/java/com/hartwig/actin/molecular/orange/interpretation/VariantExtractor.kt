@@ -118,7 +118,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
             }
         }
 
-        private fun findBestMutationDriver(drivers: MutableSet<PurpleDriver>, geneToFind: String,
+        private fun findBestMutationDriver(drivers: Set<PurpleDriver>, geneToFind: String,
                                            transcriptToFind: String): PurpleDriver? {
             var best: PurpleDriver? = null
             for (driver in drivers) {
@@ -165,7 +165,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
                 .build()
         }
 
-        private fun toEffects(effects: MutableSet<PurpleVariantEffect>): MutableSet<VariantEffect> {
+        private fun toEffects(effects: Set<PurpleVariantEffect>): MutableSet<VariantEffect> {
             return effects.stream().map { effect: PurpleVariantEffect -> determineVariantEffect(effect) }.collect(Collectors.toSet())
         }
 

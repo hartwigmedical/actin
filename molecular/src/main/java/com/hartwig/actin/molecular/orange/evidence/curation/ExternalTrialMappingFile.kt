@@ -20,7 +20,7 @@ object ExternalTrialMappingFile {
         return mappings
     }
 
-    private fun fromLine(line: String, fields: MutableMap<String?, Int?>): ExternalTrialMapping {
+    private fun fromLine(line: String, fields: Map<String?, Int?>): ExternalTrialMapping {
         val values: Array<String?> = line.split(FIELD_DELIMITER.toRegex()).toTypedArray()
         return ExternalTrialMapping(
             // TODO (KZ): get rid of the !!'s

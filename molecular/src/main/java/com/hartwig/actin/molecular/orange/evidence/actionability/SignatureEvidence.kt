@@ -6,7 +6,7 @@ import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.characteristic.ActionableCharacteristic
 import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType
 
-internal class SignatureEvidence private constructor(private val signatureCharacteristics: MutableList<ActionableCharacteristic>) {
+internal class SignatureEvidence private constructor(private val signatureCharacteristics: List<ActionableCharacteristic>) {
     fun findMicrosatelliteMatches(isMicrosatelliteUnstable: Boolean): MutableList<ActionableEvent> {
         return findMatches(isMicrosatelliteUnstable, MICROSATELLITE_UNSTABLE_TYPE)
     }

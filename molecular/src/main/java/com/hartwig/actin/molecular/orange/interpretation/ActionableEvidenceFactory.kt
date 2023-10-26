@@ -26,7 +26,7 @@ object ActionableEvidenceFactory {
         return filterResistanceEvidence(simplified)
     }
 
-    private fun createOnLabelEvidence(onLabelEvents: MutableList<ActionableEvent>): ActionableEvidence {
+    private fun createOnLabelEvidence(onLabelEvents: List<ActionableEvent>): ActionableEvidence {
         val builder = ImmutableActionableEvidence.builder()
         for (onLabelEvent in onLabelEvents) {
             if (onLabelEvent.source() == ActionabilityConstants.EVIDENCE_SOURCE) {
@@ -40,7 +40,7 @@ object ActionableEvidenceFactory {
         return builder.build()
     }
 
-    private fun createOffLabelEvidence(offLabelEvents: MutableList<ActionableEvent>): ActionableEvidence {
+    private fun createOffLabelEvidence(offLabelEvents: List<ActionableEvent>): ActionableEvidence {
         val builder = ImmutableActionableEvidence.builder()
         for (offLabelEvent in offLabelEvents) {
             if (offLabelEvent.source() == ActionabilityConstants.EVIDENCE_SOURCE) {
@@ -54,7 +54,7 @@ object ActionableEvidenceFactory {
         return builder.build()
     }
 
-    private fun createExternalTrialEvidence(onLabelEvents: MutableList<ActionableEvent>): ActionableEvidence {
+    private fun createExternalTrialEvidence(onLabelEvents: List<ActionableEvent>): ActionableEvidence {
         val builder = ImmutableActionableEvidence.builder()
         for (onLabelEvent in onLabelEvents) {
             if (onLabelEvent.source() == ActionabilityConstants.EXTERNAL_TRIAL_SOURCE && onLabelEvent.direction().isResponsive) {

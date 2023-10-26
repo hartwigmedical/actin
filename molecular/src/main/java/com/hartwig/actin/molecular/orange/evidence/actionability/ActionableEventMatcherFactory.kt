@@ -159,7 +159,7 @@ class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTri
                 .build()
         }
 
-        private fun <T : ActionableEvent> filterActionableForSources(actionables: MutableList<T>,
+        private fun <T : ActionableEvent> filterActionableForSources(actionables: List<T>,
                                                                      sourcesToInclude: MutableSet<Knowledgebase?>): MutableSet<T> {
             return actionables.stream().filter { actionable: T -> sourcesToInclude.contains(actionable.source()) }.collect(Collectors.toSet())
         }
@@ -175,20 +175,20 @@ class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTri
                 .build()
         }
 
-        private fun <T : ActionableEvent> filterEventsForApplicability(list: MutableList<T>,
+        private fun <T : ActionableEvent> filterEventsForApplicability(list: List<T>,
                                                                        predicate: Predicate<T>): MutableList<T> {
             return list.stream().filter(predicate).collect(Collectors.toList())
         }
 
-        private fun filterHotspotsForApplicability(hotspots: MutableList<ActionableHotspot>): MutableList<ActionableHotspot> {
+        private fun filterHotspotsForApplicability(hotspots: List<ActionableHotspot>): MutableList<ActionableHotspot> {
             return filterEventsForApplicability(hotspots, Predicate { obj: ActionableHotspot -> ApplicabilityFiltering.isApplicable(obj) })
         }
 
-        private fun filterRangesForApplicability(ranges: MutableList<ActionableRange>): MutableList<ActionableRange> {
+        private fun filterRangesForApplicability(ranges: List<ActionableRange>): MutableList<ActionableRange> {
             return filterEventsForApplicability(ranges, Predicate { obj: ActionableRange -> ApplicabilityFiltering.isApplicable(obj) })
         }
 
-        private fun filterGenesForApplicability(genes: MutableList<ActionableGene>): MutableList<ActionableGene> {
+        private fun filterGenesForApplicability(genes: List<ActionableGene>): MutableList<ActionableGene> {
             return filterEventsForApplicability(genes, Predicate { obj: ActionableGene -> ApplicabilityFiltering.isApplicable(obj) })
         }
     }

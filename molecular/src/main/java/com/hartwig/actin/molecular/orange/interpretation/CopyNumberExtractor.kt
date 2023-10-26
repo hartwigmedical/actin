@@ -42,8 +42,8 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private v
     }
 
     companion object {
-        private val AMP_DRIVERS: MutableSet<PurpleDriverType> = Sets.newHashSet(PurpleDriverType.AMP, PurpleDriverType.PARTIAL_AMP)
-        private val DEL_DRIVERS: MutableSet<PurpleDriverType> = Sets.newHashSet(PurpleDriverType.DEL)
+        private val AMP_DRIVERS: Set<PurpleDriverType> = Sets.newHashSet(PurpleDriverType.AMP, PurpleDriverType.PARTIAL_AMP)
+        private val DEL_DRIVERS: Set<PurpleDriverType> = Sets.newHashSet(PurpleDriverType.DEL)
 
         @VisibleForTesting
         fun determineType(interpretation: CopyNumberInterpretation): CopyNumberType {
@@ -66,7 +66,7 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private v
             }
         }
 
-        private fun findCopyNumberDriver(drivers: MutableSet<PurpleDriver>, geneToFind: String): PurpleDriver? {
+        private fun findCopyNumberDriver(drivers: Set<PurpleDriver>, geneToFind: String): PurpleDriver? {
             for (driver in drivers) {
                 if ((DEL_DRIVERS.contains(driver.driver()) || AMP_DRIVERS.contains(driver.driver())) && driver.gene() == geneToFind) {
                     return driver
