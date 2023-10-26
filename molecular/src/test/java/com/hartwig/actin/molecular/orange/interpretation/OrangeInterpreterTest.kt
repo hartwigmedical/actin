@@ -21,7 +21,6 @@ import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
 import org.junit.Assert
 import org.junit.Test
 import java.time.LocalDate
-import java.util.Set
 
 class OrangeInterpreterTest {
     @Test
@@ -99,7 +98,7 @@ class OrangeInterpreterTest {
 
     @Test
     fun shouldDetermineQualityExcludingPurityToNotBeSufficientWhenOtherWarningIsPresentWithLowPurityWarning() {
-        val record = orangeRecordWithQCStatuses(Set.of(PurpleQCStatus.WARN_LOW_PURITY, PurpleQCStatus.WARN_DELETED_GENES))
+        val record = orangeRecordWithQCStatuses(setOf(PurpleQCStatus.WARN_LOW_PURITY, PurpleQCStatus.WARN_DELETED_GENES))
         Assert.assertFalse(OrangeInterpreter.hasSufficientQuality(record))
         Assert.assertFalse(OrangeInterpreter.hasSufficientQualityAndPurity(record))
     }
@@ -150,11 +149,11 @@ class OrangeInterpreterTest {
     }
 
     companion object {
-        private fun orangeRecordWithQCStatus(status: PurpleQCStatus?): OrangeRecord {
-            return orangeRecordWithQCStatuses(Set.of(status))
+        private fun orangeRecordWithQCStatus(status: PurpleQCStatus): OrangeRecord {
+            return orangeRecordWithQCStatuses(setOf(status))
         }
 
-        private fun orangeRecordWithQCStatuses(statuses: MutableSet<PurpleQCStatus?>?): OrangeRecord {
+        private fun orangeRecordWithQCStatuses(statuses: Set<PurpleQCStatus>): OrangeRecord {
             val minimal = TestOrangeFactory.createMinimalTestOrangeRecord()
             return ImmutableOrangeRecord.copyOf(minimal)
                 .withPurple(ImmutablePurpleRecord.copyOf(minimal.purple())

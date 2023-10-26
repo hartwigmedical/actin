@@ -5,7 +5,6 @@ import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
 import org.assertj.core.api.Assertions
 import org.junit.Test
-import java.util.Set
 
 class VariantDedupTest {
     @Test
@@ -49,7 +48,7 @@ class VariantDedupTest {
                 .build())
             .variantCopyNumber(0.8)
             .build()
-        val variants = Set.of(variant1, variant2, variant3, variant4)
+        val variants = setOf(variant1, variant2, variant3, variant4)
         val dedup = VariantDedup.apply(variants)
         Assertions.assertThat(dedup.size).isEqualTo(2)
         Assertions.assertThat(dedup).contains(variant3)
@@ -60,7 +59,7 @@ class VariantDedupTest {
     fun shouldNotDedupUnrelatedVariants() {
         val variant1: PurpleVariant = TestPurpleFactory.variantBuilder().gene("gene 1").build()
         val variant2: PurpleVariant = TestPurpleFactory.variantBuilder().gene("gene 2").build()
-        val variants = Set.of(variant1, variant2)
+        val variants = setOf(variant1, variant2)
         val dedup = VariantDedup.apply(variants)
         Assertions.assertThat(dedup.size).isEqualTo(2)
         Assertions.assertThat(dedup).contains(variant1)
