@@ -8,7 +8,7 @@ internal object GeneAggregator {
     private val ROLE_PRECEDENCE = listOf(GeneRole.BOTH, GeneRole.ONCO, GeneRole.TSG, GeneRole.UNKNOWN)
     fun aggregate(rawGenes: Collection<KnownGene>): MutableSet<KnownGene> {
         return rawGenes.stream()
-            .collect(Collectors.groupingBy({ obj: KnownGene -> obj.gene() }))
+            .collect(Collectors.groupingBy { obj: KnownGene -> obj.gene() })
             .values
             .stream()
             .map { genes: MutableList<KnownGene> -> genes.stream().min(genePrecedenceOrder()).orElseThrow() }

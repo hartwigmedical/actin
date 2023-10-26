@@ -12,7 +12,7 @@ internal object PharmacoExtraction {
         val peach = record.peach()
         return if (peach != null) {
             peach.stream()
-                .collect(Collectors.groupingBy({ obj: PeachGenotype -> obj.gene() }))
+                .collect(Collectors.groupingBy { obj: PeachGenotype -> obj.gene() })
                 .entries
                 .stream()
                 .map { x: MutableMap.MutableEntry<String, MutableList<PeachGenotype>> -> createPharmacoEntryForGeneAndPeachGenotypes(x.key, x.value) }

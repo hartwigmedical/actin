@@ -6,6 +6,7 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.config.Configurator
 
 data class OrangeInterpreterConfig(
@@ -36,7 +37,7 @@ data class OrangeInterpreterConfig(
                 Configurator.setRootLevel(Level.DEBUG)
                 LOGGER.debug("Switched root level logging to DEBUG")
             }
-            return OrangeInterpreterConfig (
+            return OrangeInterpreterConfig(
                 orangeJson = ApplicationConfig.nonOptionalFile(cmd, ORANGE_JSON),
                 serveDirectory = ApplicationConfig.nonOptionalDir(cmd, SERVE_DIRECTORY),
                 externalTrialMappingTsv = ApplicationConfig.nonOptionalFile(cmd, EXTERNAL_TRIAL_MAPPING_TSV),
@@ -46,7 +47,7 @@ data class OrangeInterpreterConfig(
             )
         }
 
-        val LOGGER = LogManager.getLogger(OrangeInterpreterConfig::class.java)
+        val LOGGER: Logger = LogManager.getLogger(OrangeInterpreterConfig::class.java)
         val ORANGE_JSON: String = "orange_json"
 
         // Params for clinical annotation and interpretation

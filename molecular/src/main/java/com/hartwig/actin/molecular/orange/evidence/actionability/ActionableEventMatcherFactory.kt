@@ -47,43 +47,43 @@ class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTri
     }
 
     private fun curateHotspots(hotspots: MutableList<ActionableHotspot>): MutableList<ActionableHotspot> {
-        return curateTreatments(hotspots,
-            { event: ActionableHotspot, curatedTreatmentName: String ->
-                ImmutableActionableHotspot.builder()
-                    .from(event)
-                    .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
-                    .build()
-            })
+        return curateTreatments(hotspots
+        ) { event: ActionableHotspot, curatedTreatmentName: String ->
+            ImmutableActionableHotspot.builder()
+                .from(event)
+                .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
+                .build()
+        }
     }
 
     private fun curateRanges(ranges: MutableList<ActionableRange>): MutableList<ActionableRange> {
-        return curateTreatments(ranges,
-            { event: ActionableRange, curatedTreatmentName: String ->
-                ImmutableActionableRange.builder()
-                    .from(event)
-                    .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
-                    .build()
-            })
+        return curateTreatments(ranges
+        ) { event: ActionableRange, curatedTreatmentName: String ->
+            ImmutableActionableRange.builder()
+                .from(event)
+                .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
+                .build()
+        }
     }
 
     private fun curateGenes(genes: MutableList<ActionableGene>): MutableList<ActionableGene> {
-        return curateTreatments(genes,
-            { event: ActionableGene, curatedTreatmentName: String ->
-                ImmutableActionableGene.builder()
-                    .from(event)
-                    .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
-                    .build()
-            })
+        return curateTreatments(genes
+        ) { event: ActionableGene, curatedTreatmentName: String ->
+            ImmutableActionableGene.builder()
+                .from(event)
+                .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
+                .build()
+        }
     }
 
     private fun curateFusions(fusions: MutableList<ActionableFusion>): MutableList<ActionableFusion> {
-        return curateTreatments(fusions,
-            { event: ActionableFusion, curatedTreatmentName: String ->
-                ImmutableActionableFusion.builder()
-                    .from(event)
-                    .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
-                    .build()
-            })
+        return curateTreatments(fusions
+        ) { event: ActionableFusion, curatedTreatmentName: String ->
+            ImmutableActionableFusion.builder()
+                .from(event)
+                .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
+                .build()
+        }
     }
 
     private fun curateCharacteristics(characteristics: MutableList<ActionableCharacteristic>): MutableList<ActionableCharacteristic> {
@@ -97,13 +97,13 @@ class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTri
     }
 
     private fun curateHla(hlas: MutableList<ActionableHLA>): MutableList<ActionableHLA> {
-        return curateTreatments(hlas,
-            { event: ActionableHLA, curatedTreatmentName: String ->
-                ImmutableActionableHLA.builder()
-                    .from(event)
-                    .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
-                    .build()
-            })
+        return curateTreatments(hlas
+        ) { event: ActionableHLA, curatedTreatmentName: String ->
+            ImmutableActionableHLA.builder()
+                .from(event)
+                .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
+                .build()
+        }
     }
 
     private fun <T : ActionableEvent> curateTreatments(events: MutableList<T>, factory: ActionableFactory<T>): MutableList<T> {

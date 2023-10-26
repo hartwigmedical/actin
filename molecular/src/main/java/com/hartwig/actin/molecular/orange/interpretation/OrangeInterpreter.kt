@@ -77,7 +77,7 @@ class OrangeInterpreter(private val geneFilter: GeneFilter, private val evidence
                     com.hartwig.actin.molecular.datamodel.ExperimentType.WHOLE_GENOME
                 }
 
-                null -> throw IllegalStateException("Could not determine experiment type from: $experimentType")
+                null -> throw IllegalStateException("Experiment type is required but was null")
             }
         }
 

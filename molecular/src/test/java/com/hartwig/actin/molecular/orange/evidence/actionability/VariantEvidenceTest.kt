@@ -10,6 +10,7 @@ import com.hartwig.serve.datamodel.MutationType
 import com.hartwig.serve.datamodel.gene.ActionableGene
 import com.hartwig.serve.datamodel.gene.GeneEvent
 import com.hartwig.serve.datamodel.hotspot.ActionableHotspot
+import com.hartwig.serve.datamodel.range.ImmutableActionableRange
 import org.junit.Assert
 import org.junit.Test
 
@@ -91,7 +92,7 @@ class VariantEvidenceTest {
     }
 
     companion object {
-        val ACTIONABLE_RANGE = TestServeActionabilityFactory.rangeBuilder()
+        val ACTIONABLE_RANGE: ImmutableActionableRange = TestServeActionabilityFactory.rangeBuilder()
             .gene("gene 1")
             .chromosome("X")
             .start(4)

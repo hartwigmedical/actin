@@ -24,8 +24,8 @@ object ExternalTrialMappingFile {
         val values: Array<String?> = line.split(FIELD_DELIMITER.toRegex()).toTypedArray()
         return ExternalTrialMapping(
             // TODO (KZ): get rid of the !!'s
-            externalTrial = values.get(fields["externalTrial"]!!)!!,
-            actinTrial = values.get(fields["actinTrial"]!!)!!,
+            externalTrial = values[fields["externalTrial"]!!]!!,
+            actinTrial = values[fields["actinTrial"]!!]!!,
         )
     }
 }

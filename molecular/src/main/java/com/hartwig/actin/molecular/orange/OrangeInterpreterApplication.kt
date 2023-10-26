@@ -59,7 +59,7 @@ class OrangeInterpreterApplication private constructor(private val config: Orang
                 HelpFormatter().printHelp(APPLICATION, options)
                 exitProcess(1)
             }
-            OrangeInterpreterApplication(config!!).run()
+            OrangeInterpreterApplication(config).run()
         }
 
         @Throws(IOException::class)
