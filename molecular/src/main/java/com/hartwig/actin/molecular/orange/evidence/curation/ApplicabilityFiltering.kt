@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.orange.evidence.curation
 
 import com.google.common.annotations.VisibleForTesting
-import com.google.common.collect.Sets
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.gene.ActionableGene
 import com.hartwig.serve.datamodel.gene.GeneEvent
@@ -11,15 +10,9 @@ import org.apache.logging.log4j.LogManager
 
 object ApplicabilityFiltering {
     private val LOGGER = LogManager.getLogger(ApplicabilityFiltering::class.java)
-    val NON_APPLICABLE_GENES: MutableSet<String> = Sets.newHashSet()
-    val NON_APPLICABLE_AMPLIFICATIONS: MutableSet<String> = Sets.newHashSet()
-
-    init {
-        NON_APPLICABLE_GENES.add("CDKN2A")
-        NON_APPLICABLE_GENES.add("TP53")
-        NON_APPLICABLE_AMPLIFICATIONS.add("VEGFA")
-    }
-
+    val NON_APPLICABLE_GENES = setOf("CDKN2A", "TP53")
+    val NON_APPLICABLE_AMPLIFICATIONS = setOf("VEGFA")
+    
     fun isApplicable(actionableHotspot: ActionableHotspot): Boolean {
         return eventIsApplicable(actionableHotspot.gene(), actionableHotspot)
     }
