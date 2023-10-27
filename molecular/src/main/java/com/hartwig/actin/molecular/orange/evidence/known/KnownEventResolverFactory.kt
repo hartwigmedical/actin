@@ -32,7 +32,7 @@ object KnownEventResolverFactory {
             .build()
     }
 
-    private fun <T : KnownEvent> filterKnown(knowns: MutableSet<T>): MutableSet<T> {
+    private fun <T : KnownEvent> filterKnown(knowns: Set<T>): Set<T> {
         val filtered: MutableSet<T> = Sets.newHashSet()
         for (known in knowns) {
             if (hasAtLeastOneSourceToInclude(known.sources(), KNOWN_EVENT_SOURCES)) {
@@ -42,7 +42,7 @@ object KnownEventResolverFactory {
         return filtered
     }
 
-    private fun hasAtLeastOneSourceToInclude(sources: MutableSet<Knowledgebase>, sourcesToInclude: MutableSet<Knowledgebase>): Boolean {
+    private fun hasAtLeastOneSourceToInclude(sources: Set<Knowledgebase>, sourcesToInclude: Set<Knowledgebase>): Boolean {
         for (source in sources) {
             if (sourcesToInclude.contains(source)) {
                 return true

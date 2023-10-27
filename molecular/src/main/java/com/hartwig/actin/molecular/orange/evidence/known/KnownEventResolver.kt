@@ -15,7 +15,7 @@ import com.hartwig.serve.datamodel.hotspot.KnownHotspot
 import com.hartwig.serve.datamodel.range.KnownCodon
 import com.hartwig.serve.datamodel.range.KnownExon
 
-class KnownEventResolver internal constructor(private val knownEvents: KnownEvents, private val aggregatedKnownGenes: MutableSet<KnownGene>) {
+class KnownEventResolver internal constructor(private val knownEvents: KnownEvents, private val aggregatedKnownGenes: Set<KnownGene>) {
     fun resolveForVariant(variant: PurpleVariant): GeneAlteration? {
         val hotspot = findHotspot(knownEvents.hotspots(), variant)
         if (hotspot != null) {

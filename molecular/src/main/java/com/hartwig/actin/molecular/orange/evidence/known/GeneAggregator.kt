@@ -6,7 +6,7 @@ import java.util.stream.Collectors
 
 internal object GeneAggregator {
     private val ROLE_PRECEDENCE = listOf(GeneRole.BOTH, GeneRole.ONCO, GeneRole.TSG, GeneRole.UNKNOWN)
-    fun aggregate(rawGenes: Collection<KnownGene>): MutableSet<KnownGene> {
+    fun aggregate(rawGenes: Collection<KnownGene>): Set<KnownGene> {
         return rawGenes.stream()
             .collect(Collectors.groupingBy { obj: KnownGene -> obj.gene() })
             .values
