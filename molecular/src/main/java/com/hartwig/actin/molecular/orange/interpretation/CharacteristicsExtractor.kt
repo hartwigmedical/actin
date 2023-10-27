@@ -5,7 +5,6 @@ import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableCupPredict
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics
-import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase
 import com.hartwig.hmftools.datamodel.chord.ChordStatus
 import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
@@ -13,18 +12,17 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.purple.PurpleMicrosatelliteStatus
 import com.hartwig.hmftools.datamodel.purple.PurpleTumorMutationalStatus
 import org.apache.logging.log4j.LogManager
-import java.util.stream.Collectors
 
 internal class CharacteristicsExtractor(private val evidenceDatabase: EvidenceDatabase) {
     fun extract(record: OrangeRecord): MolecularCharacteristics {
-        val cuppa = record.cuppa()
-        val predictedTumorOrigin: PredictedTumorOrigin? = if (cuppa != null) ImmutablePredictedTumorOrigin.builder()
-            .predictions(determineCupPredictions(cuppa.predictions()))
-            .build() else null
+        val predictedTumorOrigin = record.cuppa()?.let {
+            ImmutablePredictedTumorOrigin.builder()
+                .predictions(determineCupPredictions(it.predictions()))
+                .build()
+        }
         val purple = record.purple()
         val isMicrosatelliteUnstable = isMSI(purple.characteristics().microsatelliteStatus())
-        val chord = record.chord()
-        val isHomologousRepairDeficient = if (chord != null) isHRD(chord.hrStatus()) else null
+        val isHomologousRepairDeficient = record.chord()?.let { isHRD(it.hrStatus()) }
         val hasHighTumorMutationalBurden = hasHighStatus(purple.characteristics().tumorMutationalBurdenStatus())
         val hasHighTumorMutationalLoad = hasHighStatus(purple.characteristics().tumorMutationalLoadStatus())
         return ImmutableMolecularCharacteristics.builder()
@@ -71,10 +69,11 @@ internal class CharacteristicsExtractor(private val evidenceDatabase: EvidenceDa
             return when (hrStatus) {
                 ChordStatus.HR_DEFICIENT -> true
                 ChordStatus.HR_PROFICIENT -> false
-                ChordStatus.UNKNOWN, ChordStatus.CANNOT_BE_DETERMINED -> null
+                ChordStatus.UNKNOWN, ChordStatus.CANNOT_BE_DETERMINED -> {
+                    LOGGER.warn("Cannot interpret homologous repair status '{}'", hrStatus)
+                    null
+                }
             }
-            LOGGER.warn("Cannot interpret homologous repair status '{}'", hrStatus)
-            return null
         }
 
         private fun hasHighStatus(tumorMutationalStatus: PurpleTumorMutationalStatus): Boolean? {
@@ -88,15 +87,14 @@ internal class CharacteristicsExtractor(private val evidenceDatabase: EvidenceDa
                 }
 
                 PurpleTumorMutationalStatus.UNKNOWN -> {
+                    LOGGER.warn("Cannot interpret tumor mutational status: {}", tumorMutationalStatus)
                     null
                 }
             }
-            LOGGER.warn("Cannot interpret tumor mutational status: {}", tumorMutationalStatus)
-            return null
         }
 
-        private fun determineCupPredictions(cuppaPredictions: MutableList<CuppaPrediction>): MutableList<CupPrediction> {
-            return cuppaPredictions.stream().map { cuppaPrediction: CuppaPrediction -> determineCupPrediction(cuppaPrediction) }.collect(Collectors.toList())
+        private fun determineCupPredictions(cuppaPredictions: List<CuppaPrediction>): List<CupPrediction> {
+            return cuppaPredictions.map { cuppaPrediction: CuppaPrediction -> determineCupPrediction(cuppaPrediction) }
         }
 
         private fun determineCupPrediction(cuppaPrediction: CuppaPrediction): CupPrediction {
