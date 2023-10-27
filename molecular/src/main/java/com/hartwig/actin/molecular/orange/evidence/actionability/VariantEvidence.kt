@@ -14,7 +14,7 @@ import java.util.function.BiPredicate
 
 internal class VariantEvidence private constructor(private val actionableHotspots: List<ActionableHotspot>,
                                                    private val actionableRanges: List<ActionableRange>, private val applicableActionableGenes: List<ActionableGene>) : EvidenceMatcher<PurpleVariant> {
-    override fun findMatches(variant: PurpleVariant): MutableList<ActionableEvent> {
+    override fun findMatches(variant: PurpleVariant): List<ActionableEvent> {
         return listOf(hotspotMatches(variant), rangeMatches(variant), geneMatches(variant)).flatten().toMutableList()
     }
 

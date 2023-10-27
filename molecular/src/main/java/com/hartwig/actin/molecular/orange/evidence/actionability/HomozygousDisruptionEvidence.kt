@@ -9,7 +9,7 @@ import com.hartwig.serve.datamodel.gene.ActionableGene
 import com.hartwig.serve.datamodel.gene.GeneEvent
 
 internal class HomozygousDisruptionEvidence private constructor(private val actionableGenes: List<ActionableGene>) : EvidenceMatcher<HomozygousDisruption> {
-    override fun findMatches(homozygousDisruption: HomozygousDisruption): MutableList<ActionableEvent> {
+    override fun findMatches(homozygousDisruption: HomozygousDisruption): List<ActionableEvent> {
         val matches: MutableList<ActionableEvent> = Lists.newArrayList()
         for (actionableGene in actionableGenes) {
             if (actionableGene.gene() == homozygousDisruption.gene()) {

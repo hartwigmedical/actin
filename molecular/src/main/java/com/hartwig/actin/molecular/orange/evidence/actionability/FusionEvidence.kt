@@ -13,7 +13,7 @@ import com.hartwig.serve.datamodel.gene.GeneEvent
 
 internal class FusionEvidence private constructor(private val actionablePromiscuous: List<ActionableGene>,
                                                   private val actionableFusions: List<ActionableFusion>) : EvidenceMatcher<LinxFusion> {
-    override fun findMatches(fusion: LinxFusion): MutableList<ActionableEvent> {
+    override fun findMatches(fusion: LinxFusion): List<ActionableEvent> {
         val matches: MutableList<ActionableEvent> = Lists.newArrayList()
         for (actionable in actionablePromiscuous) {
             if (isPromiscuousMatch(actionable, fusion) && fusion.reported()) {

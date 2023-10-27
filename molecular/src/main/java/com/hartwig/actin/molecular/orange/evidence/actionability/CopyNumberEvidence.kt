@@ -10,7 +10,7 @@ import com.hartwig.serve.datamodel.gene.GeneEvent
 
 internal class CopyNumberEvidence private constructor(private val actionableAmplifications: List<ActionableGene>,
                                                       private val actionableLosses: List<ActionableGene>) : EvidenceMatcher<PurpleGainLoss> {
-    override fun findMatches(gainLoss: PurpleGainLoss): MutableList<ActionableEvent> {
+    override fun findMatches(gainLoss: PurpleGainLoss): List<ActionableEvent> {
         return when (gainLoss.interpretation()) {
             CopyNumberInterpretation.FULL_GAIN, CopyNumberInterpretation.PARTIAL_GAIN -> {
                 findMatches(gainLoss, actionableAmplifications)
@@ -40,14 +40,8 @@ internal class CopyNumberEvidence private constructor(private val actionableAmpl
             return CopyNumberEvidence(actionableAmplifications, actionableLosses)
         }
 
-        private fun findMatches(gainLoss: PurpleGainLoss, actionableEvents: List<ActionableGene>): MutableList<ActionableEvent> {
-            val matches: MutableList<ActionableEvent> = Lists.newArrayList()
-            for (actionableEvent in actionableEvents) {
-                if (actionableEvent.gene() == gainLoss.gene()) {
-                    matches.add(actionableEvent)
-                }
-            }
-            return matches
+        private fun findMatches(gainLoss: PurpleGainLoss, actionableEvents: List<ActionableGene>): List<ActionableEvent> {
+            return actionableEvents.filter { it.gene() == gainLoss.gene() }.toList()
         }
     }
 }
