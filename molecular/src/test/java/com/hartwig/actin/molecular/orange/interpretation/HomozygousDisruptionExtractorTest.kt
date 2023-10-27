@@ -5,8 +5,8 @@ import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory
-import com.hartwig.hmftools.datamodel.linx.HomozygousDisruption
 import com.hartwig.hmftools.datamodel.linx.ImmutableLinxRecord
+import com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption
 import com.hartwig.hmftools.datamodel.linx.LinxRecord
 import org.junit.Assert
 import org.junit.Test
@@ -14,7 +14,7 @@ import org.junit.Test
 class HomozygousDisruptionExtractorTest {
     @Test
     fun canExtractHomozygousDisruptions() {
-        val linxHomDisruption: HomozygousDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build()
+        val linxHomDisruption: LinxHomozygousDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build()
         val linx: LinxRecord = ImmutableLinxRecord.builder()
             .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
             .addSomaticHomozygousDisruptions(linxHomDisruption)
@@ -31,7 +31,7 @@ class HomozygousDisruptionExtractorTest {
 
     @Test(expected = IllegalStateException::class)
     fun shouldThrowExceptionWhenFilteringReportedHomozygousDisruption() {
-        val linxHomDisruption: HomozygousDisruption? = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build()
+        val linxHomDisruption: LinxHomozygousDisruption? = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build()
         val linx: LinxRecord = ImmutableLinxRecord.builder()
             .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
             .addSomaticHomozygousDisruptions(linxHomDisruption)

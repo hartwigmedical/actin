@@ -68,7 +68,7 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private v
 
         private fun findCopyNumberDriver(drivers: Set<PurpleDriver>, geneToFind: String): PurpleDriver? {
             for (driver in drivers) {
-                if ((DEL_DRIVERS.contains(driver.driver()) || AMP_DRIVERS.contains(driver.driver())) && driver.gene() == geneToFind) {
+                if ((DEL_DRIVERS.contains(driver.type()) || AMP_DRIVERS.contains(driver.type())) && driver.gene() == geneToFind) {
                     return driver
                 }
             }
