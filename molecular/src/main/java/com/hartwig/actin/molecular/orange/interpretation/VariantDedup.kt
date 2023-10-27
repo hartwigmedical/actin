@@ -4,15 +4,14 @@ import com.hartwig.hmftools.datamodel.purple.PurpleTranscriptImpact
 import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
 import org.apache.logging.log4j.LogManager
-import java.util.stream.Collectors
 import kotlin.math.abs
 
 object VariantDedup {
     private const val EPSILON = 1e-10
     private val LOGGER = LogManager.getLogger(VariantDedup::class.java)
     private val PHASED_EFFECTS = setOf(PurpleVariantEffect.PHASED_INFRAME_DELETION, PurpleVariantEffect.PHASED_INFRAME_INSERTION)
-    fun apply(variants: Set<PurpleVariant>): MutableSet<PurpleVariant> {
-        return variants.stream().filter { variant: PurpleVariant -> include(variant, variants) }.collect(Collectors.toSet())
+    fun apply(variants: Set<PurpleVariant>): Set<PurpleVariant> {
+        return variants.filter { variant: PurpleVariant -> include(variant, variants) }.toSet()
     }
 
     private fun include(variant: PurpleVariant, variants: Set<PurpleVariant>): Boolean {

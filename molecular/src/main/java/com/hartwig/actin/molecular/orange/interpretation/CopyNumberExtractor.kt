@@ -42,8 +42,8 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private v
     }
 
     companion object {
-        private val AMP_DRIVERS: Set<PurpleDriverType> = Sets.newHashSet(PurpleDriverType.AMP, PurpleDriverType.PARTIAL_AMP)
-        private val DEL_DRIVERS: Set<PurpleDriverType> = Sets.newHashSet(PurpleDriverType.DEL)
+        private val AMP_DRIVERS: Set<PurpleDriverType> = setOf(PurpleDriverType.AMP, PurpleDriverType.PARTIAL_AMP)
+        private val DEL_DRIVERS: Set<PurpleDriverType> = setOf(PurpleDriverType.DEL)
 
         @VisibleForTesting
         fun determineType(interpretation: CopyNumberInterpretation): CopyNumberType {

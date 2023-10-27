@@ -25,8 +25,8 @@ class ActionableEvidenceFactoryTest {
 
     @Test
     fun canMapResponsiveEvidence() {
-        val match: ActionabilityMatch = ActionabilityMatch(
-            onLabelEvents = mutableListOf(
+        val match = ActionabilityMatch(
+            onLabelEvents = listOf(
                 evidence("A on-label responsive", EvidenceLevel.A, EvidenceDirection.RESPONSIVE),
                 evidence("A on-label predicted responsive", EvidenceLevel.A, EvidenceDirection.PREDICTED_RESPONSIVE),
                 evidence("B on-label responsive", EvidenceLevel.B, EvidenceDirection.RESPONSIVE),
@@ -34,7 +34,7 @@ class ActionableEvidenceFactoryTest {
                 evidence("C on-label responsive", EvidenceLevel.C, EvidenceDirection.RESPONSIVE),
                 evidence("C on-label predicted responsive", EvidenceLevel.C, EvidenceDirection.PREDICTED_RESPONSIVE)
             ),
-            offLabelEvents = mutableListOf(
+            offLabelEvents = listOf(
                 evidence("A off-label responsive", EvidenceLevel.A, EvidenceDirection.RESPONSIVE),
                 evidence("A off-label predicted responsive", EvidenceLevel.A, EvidenceDirection.PREDICTED_RESPONSIVE),
                 evidence("B off-label responsive", EvidenceLevel.B, EvidenceDirection.RESPONSIVE),
@@ -70,13 +70,13 @@ class ActionableEvidenceFactoryTest {
     @Test
     fun canMapResistanceEvidence() {
         val match: ActionabilityMatch = ActionabilityMatch(
-            onLabelEvents = mutableListOf(
+            onLabelEvents = listOf(
                 evidence("On-label responsive A", EvidenceLevel.A, EvidenceDirection.RESPONSIVE),
                 evidence("On-label responsive A", EvidenceLevel.A, EvidenceDirection.RESISTANT),
                 evidence("On-label responsive C", EvidenceLevel.A, EvidenceDirection.RESPONSIVE),
                 evidence("On-label responsive C", EvidenceLevel.C, EvidenceDirection.RESISTANT)
             ),
-            offLabelEvents = mutableListOf(
+            offLabelEvents = listOf(
                 evidence("Off-label responsive", EvidenceLevel.B, EvidenceDirection.RESPONSIVE),
                 evidence("Off-label responsive", EvidenceLevel.A, EvidenceDirection.PREDICTED_RESISTANT),
                 evidence("Other off-label resistant", EvidenceLevel.A, EvidenceDirection.RESISTANT)
@@ -96,11 +96,11 @@ class ActionableEvidenceFactoryTest {
     @Test
     fun canMapTrials() {
         val match: ActionabilityMatch = ActionabilityMatch(
-            onLabelEvents = mutableListOf(
+            onLabelEvents = listOf(
                 trial("On-label responsive trial", EvidenceDirection.RESPONSIVE),
                 trial("On-label resistant trial", EvidenceDirection.RESISTANT)
             ),
-            offLabelEvents = mutableListOf(
+            offLabelEvents = listOf(
                 trial("Off-label responsive trial", EvidenceDirection.RESPONSIVE),
                 trial("Off-label resistant trial", EvidenceDirection.RESISTANT)
             )
@@ -122,11 +122,11 @@ class ActionableEvidenceFactoryTest {
     @Test
     fun ignoresEvidenceWithNoBenefit() {
         val match: ActionabilityMatch = ActionabilityMatch(
-            onLabelEvents = mutableListOf(
+            onLabelEvents = listOf(
                 evidence("A on-label no-benefit", EvidenceLevel.A, EvidenceDirection.NO_BENEFIT)
 
             ),
-            offLabelEvents = mutableListOf(
+            offLabelEvents = listOf(
                 evidence("A off-label no-benefit", EvidenceLevel.A, EvidenceDirection.NO_BENEFIT)
 
             )

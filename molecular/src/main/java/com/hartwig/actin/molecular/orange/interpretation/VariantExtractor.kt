@@ -69,11 +69,11 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
     companion object {
         private val LOGGER = LogManager.getLogger(VariantExtractor::class.java)
         private const val ENSEMBL_TRANSCRIPT_IDENTIFIER: String = "ENST"
-        private val RELEVANT_CODING_EFFECTS: MutableSet<PurpleCodingEffect> = Sets.newHashSet(PurpleCodingEffect.MISSENSE,
+        private val RELEVANT_CODING_EFFECTS = setOf(PurpleCodingEffect.MISSENSE,
             PurpleCodingEffect.SPLICE,
             PurpleCodingEffect.NONSENSE_OR_FRAMESHIFT,
             PurpleCodingEffect.SYNONYMOUS)
-        private val MUTATION_DRIVER_TYPES: MutableSet<PurpleDriverType> = Sets.newHashSet(PurpleDriverType.MUTATION, PurpleDriverType.GERMLINE_MUTATION)
+        private val MUTATION_DRIVER_TYPES = setOf(PurpleDriverType.MUTATION, PurpleDriverType.GERMLINE_MUTATION)
 
         @VisibleForTesting
         fun determineVariantType(variant: PurpleVariant): VariantType {

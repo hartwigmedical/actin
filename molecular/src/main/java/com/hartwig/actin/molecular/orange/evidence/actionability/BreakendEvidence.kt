@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.orange.evidence.actionability
 
-import com.google.common.collect.Lists
 import com.hartwig.hmftools.datamodel.linx.LinxBreakend
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.ActionableEvents
@@ -9,24 +8,13 @@ import com.hartwig.serve.datamodel.gene.GeneEvent
 
 internal class BreakendEvidence private constructor(private val applicableActionableGenes: List<ActionableGene>) : EvidenceMatcher<LinxBreakend> {
     override fun findMatches(breakend: LinxBreakend): MutableList<ActionableEvent> {
-        val matches: MutableList<ActionableEvent> = Lists.newArrayList()
-        for (actionableGene in applicableActionableGenes) {
-            if (breakend.reportedDisruption() && actionableGene.gene() == breakend.gene()) {
-                matches.add(actionableGene)
-            }
-        }
-        return matches
+        return applicableActionableGenes.filter { breakend.reportedDisruption() && it.gene() == breakend.gene() }.toMutableList()
+
     }
 
     companion object {
         fun create(actionableEvents: ActionableEvents): BreakendEvidence {
-            val applicableActionableGenes: MutableList<ActionableGene> = Lists.newArrayList()
-            for (actionableGene in actionableEvents.genes()) {
-                if (actionableGene.event() == GeneEvent.ANY_MUTATION) {
-                    applicableActionableGenes.add(actionableGene)
-                }
-            }
-            return BreakendEvidence(applicableActionableGenes)
+            return BreakendEvidence(actionableEvents.genes().filter { it.event() == GeneEvent.ANY_MUTATION })
         }
     }
 }
