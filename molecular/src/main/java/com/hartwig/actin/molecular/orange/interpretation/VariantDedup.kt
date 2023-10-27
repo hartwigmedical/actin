@@ -24,7 +24,7 @@ object VariantDedup {
     }
 
     private fun hasCanonicalPhasedEffect(variant: PurpleVariant): Boolean {
-        return variant.canonicalImpact().effects().stream().anyMatch { o: PurpleVariantEffect? -> PHASED_EFFECTS.contains(o) }
+        return variant.canonicalImpact().effects().any { PHASED_EFFECTS.contains(it) }
     }
 
     private fun hasSameEffectWithHigherVCN(variants: Set<PurpleVariant>, variantToMatch: PurpleVariant): Boolean {

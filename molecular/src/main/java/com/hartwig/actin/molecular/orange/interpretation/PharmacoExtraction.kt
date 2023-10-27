@@ -5,7 +5,6 @@ import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutablePharmacoEntry
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.peach.PeachGenotype
-import java.util.stream.Collectors
 
 internal object PharmacoExtraction {
     fun extract(record: OrangeRecord): Set<PharmacoEntry> {
@@ -20,14 +19,13 @@ internal object PharmacoExtraction {
     }
 
     private fun createPharmacoEntryForGeneAndPeachGenotypes(gene: String, peachGenotypes: List<PeachGenotype>): PharmacoEntry {
-        val haplotypes = peachGenotypes.stream()
-            .map { peachGenotype: PeachGenotype ->
+        val haplotypes = peachGenotypes
+            .map {
                 ImmutableHaplotype.builder()
-                    .name(peachGenotype.haplotype())
-                    .function(peachGenotype.function())
+                    .name(it.haplotype())
+                    .function(it.function())
                     .build()
             }
-            .collect(Collectors.toSet())
         return ImmutablePharmacoEntry.builder().gene(gene).haplotypes(haplotypes).build()
     }
 }
