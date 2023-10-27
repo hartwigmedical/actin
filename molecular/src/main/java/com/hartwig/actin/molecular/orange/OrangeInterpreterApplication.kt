@@ -61,7 +61,7 @@ class OrangeInterpreterApplication(private val config: OrangeInterpreterConfig) 
             if (tumorDoids.isEmpty()) {
                 LOGGER.warn(" No tumor DOIDs configured in ACTIN clinical data for {}!", clinical.patientId())
             } else {
-                LOGGER.info(" Tumor DOIDs determined to be: {}", concat(tumorDoids))
+                LOGGER.info(" Tumor DOIDs determined to be: {}", tumorDoids.joinToString(", "))
             }
             LOGGER.info("Loading DOID tree from {}", config.doidJson)
             val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
@@ -79,14 +79,6 @@ class OrangeInterpreterApplication(private val config: OrangeInterpreterConfig) 
                     RefGenome.V38
                 }
             }
-        }
-
-        private fun concat(strings: MutableSet<String>): String {
-            val joiner = StringJoiner(", ")
-            for (string in strings) {
-                joiner.add(string)
-            }
-            return joiner.toString()
         }
     }
 }
