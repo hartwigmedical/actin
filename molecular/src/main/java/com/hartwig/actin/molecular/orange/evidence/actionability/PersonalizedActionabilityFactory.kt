@@ -7,18 +7,7 @@ import com.hartwig.serve.datamodel.ActionableEvent
 internal class PersonalizedActionabilityFactory @VisibleForTesting constructor(private val doidModel: DoidModel, private val applicableDoids: Set<String>) {
     fun create(matches: List<ActionableEvent>): ActionabilityMatch {
         val expandedTumorDoids = expandDoids(doidModel, applicableDoids)
-
-        val onLabelEvents: MutableList<ActionableEvent> = mutableListOf()
-        val offLabelEvents: MutableList<ActionableEvent> = mutableListOf()
-
-        matches.forEach {
-            if (isOnLabel(it, expandedTumorDoids)) {
-                onLabelEvents.add(it)
-            } else {
-                offLabelEvents.add(it)
-            }
-        }
-
+        val (onLabelEvents, offLabelEvents) = matches.partition { isOnLabel(it, expandedTumorDoids) }
         return ActionabilityMatch(onLabelEvents, offLabelEvents)
     }
 
@@ -39,8 +28,8 @@ internal class PersonalizedActionabilityFactory @VisibleForTesting constructor(p
             return PersonalizedActionabilityFactory(doidModel, expandDoids(doidModel, tumorDoids))
         }
 
-        private fun expandDoids(doidModel: DoidModel, doids: Set<String>): MutableSet<String> {
-            return doids.flatMap { doidModel.doidWithParents(it) }.toMutableSet()
+        private fun expandDoids(doidModel: DoidModel, doids: Set<String>): Set<String> {
+            return doids.flatMap { doidModel.doidWithParents(it) }.toSet()
         }
     }
 }
