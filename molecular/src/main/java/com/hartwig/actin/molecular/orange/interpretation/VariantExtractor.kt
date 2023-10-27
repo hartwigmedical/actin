@@ -37,8 +37,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
             if (geneFilter.include(variant.gene()) && reportedOrCoding) {
                 val driver = findBestMutationDriver(drivers, variant.gene(), variant.canonicalImpact().transcript())
                 val driverLikelihood = determineDriverLikelihood(driver)
-                var evidence: ActionableEvidence?
-                evidence = if (driverLikelihood == DriverLikelihood.HIGH) {
+                var evidence: ActionableEvidence? = if (driverLikelihood == DriverLikelihood.HIGH) {
                     ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(variant))
                 } else {
                     ActionableEvidenceFactory.createNoEvidence()
@@ -69,7 +68,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
 
     companion object {
         private val LOGGER = LogManager.getLogger(VariantExtractor::class.java)
-        private val ENSEMBL_TRANSCRIPT_IDENTIFIER: String = "ENST"
+        private const val ENSEMBL_TRANSCRIPT_IDENTIFIER: String = "ENST"
         private val RELEVANT_CODING_EFFECTS: MutableSet<PurpleCodingEffect> = Sets.newHashSet(PurpleCodingEffect.MISSENSE,
             PurpleCodingEffect.SPLICE,
             PurpleCodingEffect.NONSENSE_OR_FRAMESHIFT,

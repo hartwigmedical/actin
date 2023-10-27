@@ -44,7 +44,7 @@ class OrangeInterpreterApplication private constructor(private val config: Orang
 
     companion object {
         private val LOGGER = LogManager.getLogger(OrangeInterpreterApplication::class.java)
-        private val APPLICATION: String = "ACTIN ORANGE Interpreter"
+        private const val APPLICATION: String = "ACTIN ORANGE Interpreter"
         private val VERSION = OrangeInterpreterApplication::class.java.getPackage().implementationVersion
 
         @Throws(IOException::class)

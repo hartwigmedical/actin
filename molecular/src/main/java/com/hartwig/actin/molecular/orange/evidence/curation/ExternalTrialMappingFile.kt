@@ -7,7 +7,7 @@ import java.io.IOException
 import java.nio.file.Files
 
 object ExternalTrialMappingFile {
-    private val FIELD_DELIMITER: String = "\t"
+    private const val FIELD_DELIMITER: String = "\t"
 
     @Throws(IOException::class)
     fun read(tsv: String): MutableList<ExternalTrialMapping> {

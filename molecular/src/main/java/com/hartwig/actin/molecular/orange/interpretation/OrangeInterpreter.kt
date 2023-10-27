@@ -115,7 +115,7 @@ class OrangeInterpreter(private val geneFilter: GeneFilter, private val evidence
         }
 
         private fun throwIfPurpleQCMissing(orange: OrangeRecord) {
-            check(!orange.purple().fit().qc().status().isEmpty()) { "Cannot interpret purple record with empty QC states" }
+            check(orange.purple().fit().qc().status().isNotEmpty()) { "Cannot interpret purple record with empty QC states" }
         }
     }
 }

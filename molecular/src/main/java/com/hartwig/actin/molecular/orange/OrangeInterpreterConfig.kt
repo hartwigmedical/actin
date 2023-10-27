@@ -48,14 +48,14 @@ data class OrangeInterpreterConfig(
         }
 
         val LOGGER: Logger = LogManager.getLogger(OrangeInterpreterConfig::class.java)
-        val ORANGE_JSON: String = "orange_json"
+        const val ORANGE_JSON: String = "orange_json"
 
         // Params for clinical annotation and interpretation
-        val SERVE_DIRECTORY: String = "serve_directory"
-        val EXTERNAL_TRIAL_MAPPING_TSV: String = "external_trial_mapping_tsv"
-        val CLINICAL_JSON: String = "clinical_json"
-        val DOID_JSON: String = "doid_json"
-        val OUTPUT_DIRECTORY: String = "output_directory"
-        val LOG_DEBUG: String = "log_debug"
+        const val SERVE_DIRECTORY: String = "serve_directory"
+        const val EXTERNAL_TRIAL_MAPPING_TSV: String = "external_trial_mapping_tsv"
+        const val CLINICAL_JSON: String = "clinical_json"
+        const val DOID_JSON: String = "doid_json"
+        const val OUTPUT_DIRECTORY: String = "output_directory"
+        const val LOG_DEBUG: String = "log_debug"
     }
 }

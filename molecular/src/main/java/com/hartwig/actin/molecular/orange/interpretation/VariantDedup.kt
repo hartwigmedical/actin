@@ -40,7 +40,7 @@ object VariantDedup {
                     minVariantCopyNumber = variant.variantCopyNumber()
                     uniqueHgvsCodingImpact = variantImpact.hgvsCodingImpact()
                 } else if (equal(variant.variantCopyNumber(), minVariantCopyNumber)) {
-                    uniqueHgvsCodingImpact = if (uniqueHgvsCodingImpact != null && variantImpact.hgvsCodingImpact().compareTo(uniqueHgvsCodingImpact) > 0) variantImpact.hgvsCodingImpact() else uniqueHgvsCodingImpact
+                    uniqueHgvsCodingImpact = if (uniqueHgvsCodingImpact != null && variantImpact.hgvsCodingImpact() > uniqueHgvsCodingImpact) variantImpact.hgvsCodingImpact() else uniqueHgvsCodingImpact
                 }
             }
         }

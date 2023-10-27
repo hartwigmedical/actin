@@ -29,7 +29,7 @@ class GeneAggregatorTest {
     }
 
     companion object {
-        private val GENE: String = "gene"
+        private const val GENE: String = "gene"
         private val ONCO_GENE = gene(GeneRole.ONCO)
         private val BOTH_GENE = gene(GeneRole.BOTH)
         private val UNKNOWN_GENE = gene(GeneRole.UNKNOWN)

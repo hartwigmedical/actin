@@ -21,10 +21,10 @@ object DriverEventFactory {
 
     private fun impact(variant: PurpleVariant): String {
         val canonical = variant.canonicalImpact()
-        if (!canonical.hgvsProteinImpact().isEmpty() && canonical.hgvsProteinImpact() != "p.?") {
+        if (canonical.hgvsProteinImpact().isNotEmpty() && canonical.hgvsProteinImpact() != "p.?") {
             return reformatProteinImpact(canonical.hgvsProteinImpact())
         }
-        if (!canonical.hgvsCodingImpact().isEmpty()) {
+        if (canonical.hgvsCodingImpact().isNotEmpty()) {
             return if (canonical.codingEffect() == PurpleCodingEffect.SPLICE) canonical.hgvsCodingImpact() + " splice" else canonical.hgvsCodingImpact()
         }
         if (canonical.effects().contains(PurpleVariantEffect.UPSTREAM_GENE)) {
