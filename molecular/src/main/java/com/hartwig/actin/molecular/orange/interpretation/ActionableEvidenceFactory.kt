@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
 import com.google.common.annotations.VisibleForTesting
-import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidence
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants
@@ -134,17 +133,11 @@ object ActionableEvidenceFactory {
     fun filterRedundantLowerEvidence(evidence: ActionableEvidence): ActionableEvidence {
         val treatmentsToExcludeForOnLabel = evidence.approvedTreatments()
         val cleanedOnLabelTreatments = cleanTreatments(evidence.onLabelExperimentalTreatments(), treatmentsToExcludeForOnLabel)
-        val treatmentsToExcludeForOffLabel: MutableSet<String> = Sets.newHashSet()
-        treatmentsToExcludeForOffLabel.addAll(evidence.approvedTreatments())
-        treatmentsToExcludeForOffLabel.addAll(evidence.onLabelExperimentalTreatments())
+        val treatmentsToExcludeForOffLabel = evidence.approvedTreatments() + evidence.onLabelExperimentalTreatments()
         val cleanedOffLabelTreatments = cleanTreatments(evidence.offLabelExperimentalTreatments(), treatmentsToExcludeForOffLabel)
-        val treatmentsToExcludeForPreClinical: MutableSet<String> = Sets.newHashSet()
-        treatmentsToExcludeForPreClinical.addAll(evidence.approvedTreatments())
-        treatmentsToExcludeForPreClinical.addAll(evidence.onLabelExperimentalTreatments())
-        treatmentsToExcludeForPreClinical.addAll(evidence.offLabelExperimentalTreatments())
+        val treatmentsToExcludeForPreClinical = evidence.approvedTreatments() + evidence.onLabelExperimentalTreatments() + evidence.offLabelExperimentalTreatments()
         val cleanedPreClinicalTreatments = cleanTreatments(evidence.preClinicalTreatments(), treatmentsToExcludeForPreClinical)
-        val treatmentsToExcludeForSuspectResistant: MutableSet<String> = Sets.newHashSet()
-        treatmentsToExcludeForSuspectResistant.addAll(evidence.knownResistantTreatments())
+        val treatmentsToExcludeForSuspectResistant = evidence.knownResistantTreatments()
         val cleanedSuspectResistantTreatments = cleanTreatments(evidence.suspectResistantTreatments(), treatmentsToExcludeForSuspectResistant)
         return ImmutableActionableEvidence.builder()
             .from(evidence)
@@ -156,10 +149,7 @@ object ActionableEvidenceFactory {
     }
 
     private fun filterResistanceEvidence(evidence: ActionableEvidence): ActionableEvidence {
-        val treatmentsToIncludeForResistance: MutableSet<String> = Sets.newHashSet()
-        treatmentsToIncludeForResistance.addAll(evidence.approvedTreatments())
-        treatmentsToIncludeForResistance.addAll(evidence.onLabelExperimentalTreatments())
-        treatmentsToIncludeForResistance.addAll(evidence.offLabelExperimentalTreatments())
+        val treatmentsToIncludeForResistance = evidence.approvedTreatments() + evidence.onLabelExperimentalTreatments() + evidence.offLabelExperimentalTreatments()
         val applicableKnownResistantTreatments = filterTreatments(evidence.knownResistantTreatments(), treatmentsToIncludeForResistance)
         val applicableSuspectResistantTreatments = filterTreatments(evidence.suspectResistantTreatments(), treatmentsToIncludeForResistance)
         return ImmutableActionableEvidence.builder()
@@ -169,23 +159,12 @@ object ActionableEvidenceFactory {
             .build()
     }
 
-    private fun filterTreatments(treatments: MutableSet<String>, treatmentsToInclude: MutableSet<String>): MutableSet<String> {
-        val filtered: MutableSet<String> = Sets.newHashSet()
-        for (treatment in treatments) {
-            if (treatmentsToInclude.contains(treatment)) {
-                filtered.add(treatment)
-            }
-        }
-        return filtered
+    private fun filterTreatments(treatments: Set<String>, treatmentsToInclude: Set<String>): Set<String> {
+        return treatments.filter { it in treatmentsToInclude }.toSet()
     }
 
-    private fun cleanTreatments(treatments: MutableSet<String>, treatmentsToExclude: MutableSet<String>): MutableSet<String> {
-        val cleaned: MutableSet<String> = Sets.newHashSet()
-        for (treatment in treatments) {
-            if (!treatmentsToExclude.contains(treatment)) {
-                cleaned.add(treatment)
-            }
-        }
-        return cleaned
+    private fun cleanTreatments(treatments: Set<String>, treatmentsToExclude: Set<String>): Set<String> {
+        return treatments.filterNot { it in treatmentsToExclude }.toSet()
     }
+
 }
