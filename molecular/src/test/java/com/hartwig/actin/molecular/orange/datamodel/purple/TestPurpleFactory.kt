@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.orange.datamodel.purple
 
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
-import com.hartwig.hmftools.datamodel.purple.Hotspot
+import com.hartwig.hmftools.datamodel.purple.HotspotType
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleAllelicDepth
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleCharacteristics
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleDriver
@@ -23,8 +23,6 @@ import org.apache.logging.log4j.util.Strings
 object TestPurpleFactory {
     fun fitBuilder(): ImmutablePurpleFit.Builder {
         return ImmutablePurpleFit.builder()
-            .hasSufficientQuality(false)
-            .containsTumorCells(false)
             .purity(0.0)
             .ploidy(0.0)
             .minPloidy(0.0)
@@ -51,7 +49,7 @@ object TestPurpleFactory {
         return ImmutablePurpleDriver.builder()
             .gene(Strings.EMPTY)
             .transcript(Strings.EMPTY)
-            .driver(PurpleDriverType.MUTATION)
+            .type(PurpleDriverType.MUTATION)
             .driverLikelihood(0.0)
             .likelihoodMethod(PurpleLikelihoodMethod.NONE)
             .isCanonical(false)
@@ -68,7 +66,7 @@ object TestPurpleFactory {
             .alt(Strings.EMPTY)
             .adjustedCopyNumber(0.0)
             .variantCopyNumber(0.0)
-            .hotspot(Hotspot.NON_HOTSPOT)
+            .hotspot(HotspotType.NON_HOTSPOT)
             .subclonalLikelihood(0.0)
             .biallelic(false)
             .canonicalImpact(transcriptImpactBuilder().build())
@@ -85,7 +83,7 @@ object TestPurpleFactory {
             .transcript(Strings.EMPTY)
             .hgvsCodingImpact(Strings.EMPTY)
             .hgvsProteinImpact(Strings.EMPTY)
-            .spliceRegion(false)
+            .inSpliceRegion(false)
             .codingEffect(PurpleCodingEffect.UNDEFINED)
     }
 
