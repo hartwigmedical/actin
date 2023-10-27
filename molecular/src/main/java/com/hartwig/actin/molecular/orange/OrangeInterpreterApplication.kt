@@ -20,11 +20,12 @@ import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import java.io.IOException
 import java.util.*
 import kotlin.system.exitProcess
 
-class OrangeInterpreterApplication private constructor(private val config: OrangeInterpreterConfig) {
+class OrangeInterpreterApplication(private val config: OrangeInterpreterConfig) {
     @Throws(IOException::class)
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
@@ -43,24 +44,9 @@ class OrangeInterpreterApplication private constructor(private val config: Orang
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(OrangeInterpreterApplication::class.java)
-        private const val APPLICATION: String = "ACTIN ORANGE Interpreter"
+        val LOGGER: Logger = LogManager.getLogger(OrangeInterpreterApplication::class.java)
+        const val APPLICATION: String = "ACTIN ORANGE Interpreter"
         private val VERSION = OrangeInterpreterApplication::class.java.getPackage().implementationVersion
-
-        @Throws(IOException::class)
-        @JvmStatic
-        fun main(args: Array<String>) {
-            val options: Options = OrangeInterpreterConfig.createOptions()
-            var config: OrangeInterpreterConfig? = null
-            try {
-                config = OrangeInterpreterConfig.createConfig(DefaultParser().parse(options, args))
-            } catch (exception: ParseException) {
-                LOGGER.warn(exception)
-                HelpFormatter().printHelp(APPLICATION, options)
-                exitProcess(1)
-            }
-            OrangeInterpreterApplication(config).run()
-        }
 
         @Throws(IOException::class)
         private fun loadEvidenceDatabase(config: OrangeInterpreterConfig, serveRefGenomeVersion: RefGenome,
@@ -93,7 +79,6 @@ class OrangeInterpreterApplication private constructor(private val config: Orang
                     RefGenome.V38
                 }
             }
-            throw IllegalStateException("Could not convert ORANGE ref genome version to SERVE ref genome version: $refGenomeVersion")
         }
 
         private fun concat(strings: MutableSet<String>): String {
@@ -104,4 +89,17 @@ class OrangeInterpreterApplication private constructor(private val config: Orang
             return joiner.toString()
         }
     }
+}
+
+fun main(args: Array<String>) {
+    val options: Options = OrangeInterpreterConfig.createOptions()
+    val config: OrangeInterpreterConfig?
+    try {
+        config = OrangeInterpreterConfig.createConfig(DefaultParser().parse(options, args))
+    } catch (exception: ParseException) {
+        OrangeInterpreterApplication.LOGGER.warn(exception)
+        HelpFormatter().printHelp(OrangeInterpreterApplication.APPLICATION, options)
+        exitProcess(1)
+    }
+    OrangeInterpreterApplication(config).run()
 }
