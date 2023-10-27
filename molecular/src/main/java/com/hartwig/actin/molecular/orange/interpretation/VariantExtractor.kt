@@ -37,7 +37,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
             if (geneFilter.include(variant.gene()) && reportedOrCoding) {
                 val driver = findBestMutationDriver(drivers, variant.gene(), variant.canonicalImpact().transcript())
                 val driverLikelihood = determineDriverLikelihood(driver)
-                var evidence: ActionableEvidence? = if (driverLikelihood == DriverLikelihood.HIGH) {
+                val evidence: ActionableEvidence? = if (driverLikelihood == DriverLikelihood.HIGH) {
                     ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(variant))
                 } else {
                     ActionableEvidenceFactory.createNoEvidence()
