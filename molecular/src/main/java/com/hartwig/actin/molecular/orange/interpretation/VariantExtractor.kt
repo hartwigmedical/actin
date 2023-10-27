@@ -24,7 +24,6 @@ import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantType
 import org.apache.logging.log4j.LogManager
-import java.util.stream.Collectors
 
 internal class VariantExtractor(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
     fun extract(purple: PurpleRecord): MutableSet<Variant> {
@@ -138,12 +137,12 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
             return toTranscriptImpact(variant.canonicalImpact())
         }
 
-        private fun extractOtherImpacts(variant: PurpleVariant): MutableSet<TranscriptImpact> {
+        private fun extractOtherImpacts(variant: PurpleVariant): Set<TranscriptImpact> {
             return variant.otherImpacts()
-                .stream()
                 .filter { purpleTranscriptImpact: PurpleTranscriptImpact -> isEnsemblTranscript(purpleTranscriptImpact) }
                 .map { purpleTranscriptImpact: PurpleTranscriptImpact -> toTranscriptImpact(purpleTranscriptImpact) }
-                .collect(Collectors.toSet())
+                .toSet()
+
         }
 
         @VisibleForTesting
@@ -164,8 +163,8 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
                 .build()
         }
 
-        private fun toEffects(effects: Set<PurpleVariantEffect>): MutableSet<VariantEffect> {
-            return effects.stream().map { effect: PurpleVariantEffect -> determineVariantEffect(effect) }.collect(Collectors.toSet())
+        private fun toEffects(effects: Set<PurpleVariantEffect>): Set<VariantEffect> {
+            return effects.map { effect: PurpleVariantEffect -> determineVariantEffect(effect) }.toSet()
         }
 
         @VisibleForTesting
