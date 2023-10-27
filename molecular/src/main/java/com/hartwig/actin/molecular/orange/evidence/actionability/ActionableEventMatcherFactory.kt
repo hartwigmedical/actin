@@ -21,8 +21,6 @@ import com.hartwig.serve.datamodel.immuno.ActionableHLA
 import com.hartwig.serve.datamodel.immuno.ImmutableActionableHLA
 import com.hartwig.serve.datamodel.range.ActionableRange
 import com.hartwig.serve.datamodel.range.ImmutableActionableRange
-import java.util.function.Predicate
-import java.util.stream.Collectors
 
 class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTrialMapper, private val doidModel: DoidModel,
                                     private val tumorDoids: Set<String>) {
@@ -47,8 +45,8 @@ class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTri
     }
 
     private fun curateHotspots(hotspots: MutableList<ActionableHotspot>): MutableList<ActionableHotspot> {
-        return curateTreatments(hotspots
-        ) { event: ActionableHotspot, curatedTreatmentName: String ->
+        return curateTreatments(hotspots)
+        { event: ActionableHotspot, curatedTreatmentName: String ->
             ImmutableActionableHotspot.builder()
                 .from(event)
                 .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
@@ -57,8 +55,8 @@ class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTri
     }
 
     private fun curateRanges(ranges: MutableList<ActionableRange>): MutableList<ActionableRange> {
-        return curateTreatments(ranges
-        ) { event: ActionableRange, curatedTreatmentName: String ->
+        return curateTreatments(ranges)
+        { event: ActionableRange, curatedTreatmentName: String ->
             ImmutableActionableRange.builder()
                 .from(event)
                 .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
@@ -67,8 +65,8 @@ class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTri
     }
 
     private fun curateGenes(genes: MutableList<ActionableGene>): MutableList<ActionableGene> {
-        return curateTreatments(genes
-        ) { event: ActionableGene, curatedTreatmentName: String ->
+        return curateTreatments(genes)
+        { event: ActionableGene, curatedTreatmentName: String ->
             ImmutableActionableGene.builder()
                 .from(event)
                 .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
@@ -77,8 +75,8 @@ class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTri
     }
 
     private fun curateFusions(fusions: MutableList<ActionableFusion>): MutableList<ActionableFusion> {
-        return curateTreatments(fusions
-        ) { event: ActionableFusion, curatedTreatmentName: String ->
+        return curateTreatments(fusions)
+        { event: ActionableFusion, curatedTreatmentName: String ->
             ImmutableActionableFusion.builder()
                 .from(event)
                 .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
@@ -87,8 +85,8 @@ class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTri
     }
 
     private fun curateCharacteristics(characteristics: MutableList<ActionableCharacteristic>): MutableList<ActionableCharacteristic> {
-        return curateTreatments(characteristics
-        ) { event: ActionableCharacteristic, curatedTreatmentName: String ->
+        return curateTreatments(characteristics)
+        { event: ActionableCharacteristic, curatedTreatmentName: String ->
             ImmutableActionableCharacteristic.builder()
                 .from(event)
                 .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
@@ -97,8 +95,8 @@ class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTri
     }
 
     private fun curateHla(hlas: MutableList<ActionableHLA>): MutableList<ActionableHLA> {
-        return curateTreatments(hlas
-        ) { event: ActionableHLA, curatedTreatmentName: String ->
+        return curateTreatments(hlas)
+        { event: ActionableHLA, curatedTreatmentName: String ->
             ImmutableActionableHLA.builder()
                 .from(event)
                 .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
@@ -107,10 +105,10 @@ class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTri
     }
 
     private fun <T : ActionableEvent> curateTreatments(events: MutableList<T>, factory: ActionableFactory<T>): MutableList<T> {
-        return events.stream().map { event: T ->
+        return events.map { event: T ->
             val curatedTreatmentName = determineCuratedTreatmentName(event)
             if (curatedTreatmentName != event.treatment().name()) factory.create(event, curatedTreatmentName) else event
-        }.collect(Collectors.toList())
+        }.toMutableList()
     }
 
     private fun determineCuratedTreatmentName(event: ActionableEvent): String {
@@ -159,7 +157,7 @@ class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTri
 
         private fun <T : ActionableEvent> filterActionableForSources(actionables: List<T>,
                                                                      sourcesToInclude: Set<Knowledgebase?>): MutableSet<T> {
-            return actionables.stream().filter { actionable: T -> sourcesToInclude.contains(actionable.source()) }.collect(Collectors.toSet())
+            return actionables.filter { actionable: T -> sourcesToInclude.contains(actionable.source()) }.toMutableSet()
         }
 
         @VisibleForTesting
@@ -174,8 +172,8 @@ class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTri
         }
 
         private fun <T : ActionableEvent> filterEventsForApplicability(list: List<T>,
-                                                                       predicate: Predicate<T>): MutableList<T> {
-            return list.stream().filter(predicate).collect(Collectors.toList())
+                                                                       predicate: (T) -> Boolean): MutableList<T> {
+            return list.filter { predicate(it) }.toMutableList()
         }
 
         private fun filterHotspotsForApplicability(hotspots: List<ActionableHotspot>): MutableList<ActionableHotspot> {
