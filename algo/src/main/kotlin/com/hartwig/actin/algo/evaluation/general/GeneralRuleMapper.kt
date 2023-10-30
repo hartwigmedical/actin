@@ -17,7 +17,6 @@ class GeneralRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
             EligibilityRule.HAS_KARNOFSKY_SCORE_OF_AT_LEAST_X to hasMinimumKarnofskyScoreCreator(),
             EligibilityRule.HAS_LANSKY_SCORE_OF_AT_LEAST_X to hasMinimumLanskyScoreCreator(),
             EligibilityRule.CAN_GIVE_ADEQUATE_INFORMED_CONSENT to canGiveAdequateInformedConsentCreator(),
-            EligibilityRule.HAS_RAPIDLY_DETERIORATING_CONDITION to hasRapidlyDeterioratingConditionCreator(),
             EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS to hasSufficientLifeExpectancyCreator(),
             EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS to hasSufficientLifeExpectancyCreator(),
             EligibilityRule.IS_TREATED_IN_HOSPITAL_X to isTreatedInHospitalCreator,
@@ -73,10 +72,6 @@ class GeneralRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
 
     private val isInvolvedInStudyProceduresCreator: FunctionCreator
         get() = FunctionCreator { IsInvolvedInStudyProcedures() }
-
-    private fun hasRapidlyDeterioratingConditionCreator(): FunctionCreator {
-        return FunctionCreator { HasRapidlyDeterioratingCondition() }
-    }
 
     private fun hasSufficientLifeExpectancyCreator(): FunctionCreator {
         return FunctionCreator { HasSufficientLifeExpectancy() }
