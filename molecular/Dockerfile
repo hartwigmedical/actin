@@ -6,7 +6,7 @@ COPY --from=europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-
 
 COPY target/molecular-local-SNAPSHOT-jar-with-dependencies.jar /usr/local/actin.jar
 
-ENTRYPOINT ["java", "-cp", "/usr/local/actin.jar", "com.hartwig.actin.molecular.orange.OrangeInterpreterApplication", \
+ENTRYPOINT ["java", "-cp", "/usr/local/actin.jar", "com.hartwig.actin.molecular.orange.OrangeInterpreterApplicationKt", \
     "-serve_directory", "/data/resources/actin/serve_db", \
     "-external_trial_mapping_tsv", "/data/resources/actin/evidence_curation/external_trial_mapping.tsv", \
     "-doid_json", "/data/resources/public/disease_ontology/doid.json" \
