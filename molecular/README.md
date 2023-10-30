@@ -8,7 +8,7 @@ results as produced by [HMF Platinum](https://github.com/hartwigmedical/platinum
 The ORANGE interpreter application requires Java 11+ and can be run as follows:
 
 ```
-java -cp actin.jar com.hartwig.actin.molecular.orange.OrangeInterpreterApplication \
+java -cp actin.jar com.hartwig.actin.molecular.orange.OrangeInterpreterApplicationKt \
    -orange_json /path/to/orange.json \
    -serve_directory /path/to/serve_directory \
    -known_genes_tsv /path/to/known_genes.tsv \

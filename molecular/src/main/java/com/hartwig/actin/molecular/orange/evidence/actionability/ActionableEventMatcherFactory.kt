@@ -1,0 +1,191 @@
+package com.hartwig.actin.molecular.orange.evidence.actionability
+
+import com.google.common.annotations.VisibleForTesting
+import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.molecular.orange.evidence.curation.ApplicabilityFiltering
+import com.hartwig.actin.molecular.orange.evidence.curation.ExternalTrialMapper
+import com.hartwig.serve.datamodel.ActionableEvent
+import com.hartwig.serve.datamodel.ActionableEvents
+import com.hartwig.serve.datamodel.ImmutableActionableEvents
+import com.hartwig.serve.datamodel.ImmutableTreatment
+import com.hartwig.serve.datamodel.Knowledgebase
+import com.hartwig.serve.datamodel.characteristic.ActionableCharacteristic
+import com.hartwig.serve.datamodel.characteristic.ImmutableActionableCharacteristic
+import com.hartwig.serve.datamodel.fusion.ActionableFusion
+import com.hartwig.serve.datamodel.fusion.ImmutableActionableFusion
+import com.hartwig.serve.datamodel.gene.ActionableGene
+import com.hartwig.serve.datamodel.gene.ImmutableActionableGene
+import com.hartwig.serve.datamodel.hotspot.ActionableHotspot
+import com.hartwig.serve.datamodel.hotspot.ImmutableActionableHotspot
+import com.hartwig.serve.datamodel.immuno.ActionableHLA
+import com.hartwig.serve.datamodel.immuno.ImmutableActionableHLA
+import com.hartwig.serve.datamodel.range.ActionableRange
+import com.hartwig.serve.datamodel.range.ImmutableActionableRange
+
+class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTrialMapper, private val doidModel: DoidModel,
+                                    private val tumorDoids: Set<String>) {
+    fun create(actionableEvents: ActionableEvents): ActionableEventMatcher {
+        val filtered = filterForApplicability(filterForSources(actionableEvents, ACTIONABLE_EVENT_SOURCES))
+        val curated = curateExternalTrials(filtered)
+        val personalizedActionabilityFactory: PersonalizedActionabilityFactory = PersonalizedActionabilityFactory.create(doidModel, tumorDoids)
+        return fromActionableEvents(personalizedActionabilityFactory, curated)
+    }
+
+    @VisibleForTesting
+    fun curateExternalTrials(actionableEvents: ActionableEvents): ActionableEvents {
+        return ImmutableActionableEvents.builder()
+            .hotspots(curateHotspots(actionableEvents.hotspots()))
+            .codons(curateRanges(actionableEvents.codons()))
+            .exons(curateRanges(actionableEvents.exons()))
+            .genes(curateGenes(actionableEvents.genes()))
+            .fusions(curateFusions(actionableEvents.fusions()))
+            .characteristics(curateCharacteristics(actionableEvents.characteristics()))
+            .hla(curateHla(actionableEvents.hla()))
+            .build()
+    }
+
+    private fun curateHotspots(hotspots: MutableList<ActionableHotspot>): List<ActionableHotspot> {
+        return curateTreatments(hotspots)
+        { event: ActionableHotspot, curatedTreatmentName: String ->
+            ImmutableActionableHotspot.builder()
+                .from(event)
+                .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
+                .build()
+        }
+    }
+
+    private fun curateRanges(ranges: MutableList<ActionableRange>): List<ActionableRange> {
+        return curateTreatments(ranges)
+        { event: ActionableRange, curatedTreatmentName: String ->
+            ImmutableActionableRange.builder()
+                .from(event)
+                .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
+                .build()
+        }
+    }
+
+    private fun curateGenes(genes: MutableList<ActionableGene>): List<ActionableGene> {
+        return curateTreatments(genes)
+        { event: ActionableGene, curatedTreatmentName: String ->
+            ImmutableActionableGene.builder()
+                .from(event)
+                .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
+                .build()
+        }
+    }
+
+    private fun curateFusions(fusions: MutableList<ActionableFusion>): List<ActionableFusion> {
+        return curateTreatments(fusions)
+        { event: ActionableFusion, curatedTreatmentName: String ->
+            ImmutableActionableFusion.builder()
+                .from(event)
+                .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
+                .build()
+        }
+    }
+
+    private fun curateCharacteristics(characteristics: List<ActionableCharacteristic>): List<ActionableCharacteristic> {
+        return curateTreatments(characteristics)
+        { event: ActionableCharacteristic, curatedTreatmentName: String ->
+            ImmutableActionableCharacteristic.builder()
+                .from(event)
+                .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
+                .build()
+        }
+    }
+
+    private fun curateHla(hlas: List<ActionableHLA>): List<ActionableHLA> {
+        return curateTreatments(hlas)
+        { event: ActionableHLA, curatedTreatmentName: String ->
+            ImmutableActionableHLA.builder()
+                .from(event)
+                .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
+                .build()
+        }
+    }
+
+    private fun <T : ActionableEvent> curateTreatments(events: List<T>, factory: ActionableFactory<T>): List<T> {
+        return events.map { event: T ->
+            val curatedTreatmentName = determineCuratedTreatmentName(event)
+            if (curatedTreatmentName != event.treatment().name()) factory.create(event, curatedTreatmentName) else event
+        }.toList()
+    }
+
+    private fun determineCuratedTreatmentName(event: ActionableEvent): String {
+        return if (event.source() == ActionabilityConstants.EXTERNAL_TRIAL_SOURCE) {
+            externalTrialMapper.map(event.treatment().name())
+        } else event.treatment().name()
+    }
+
+    private fun interface ActionableFactory<T : ActionableEvent?> {
+        open fun create(event: T, curatedTreatmentName: String): T
+    }
+
+    companion object {
+        val ACTIONABLE_EVENT_SOURCES = setOf(ActionabilityConstants.EVIDENCE_SOURCE, ActionabilityConstants.EXTERNAL_TRIAL_SOURCE)
+        private fun fromActionableEvents(personalizedActionabilityFactory: PersonalizedActionabilityFactory,
+                                         actionableEvents: ActionableEvents): ActionableEventMatcher {
+            val signatureEvidence: SignatureEvidence = SignatureEvidence.create(actionableEvents)
+            val variantEvidence: VariantEvidence = VariantEvidence.create(actionableEvents)
+            val copyNumberEvidence: CopyNumberEvidence = CopyNumberEvidence.create(actionableEvents)
+            val homozygousDisruptionEvidence: HomozygousDisruptionEvidence = HomozygousDisruptionEvidence.create(actionableEvents)
+            val breakendEvidence: BreakendEvidence = BreakendEvidence.create(actionableEvents)
+            val fusionEvidence: FusionEvidence = FusionEvidence.create(actionableEvents)
+            val virusEvidence: VirusEvidence = VirusEvidence.create(actionableEvents)
+            return ActionableEventMatcher(personalizedActionabilityFactory,
+                signatureEvidence,
+                variantEvidence,
+                copyNumberEvidence,
+                homozygousDisruptionEvidence,
+                breakendEvidence,
+                fusionEvidence,
+                virusEvidence)
+        }
+
+        @VisibleForTesting
+        fun filterForSources(actionableEvents: ActionableEvents, sourcesToInclude: Set<Knowledgebase?>): ActionableEvents {
+            return ImmutableActionableEvents.builder()
+                .hotspots(filterActionableForSources<ActionableHotspot>(actionableEvents.hotspots(), sourcesToInclude))
+                .codons(filterActionableForSources<ActionableRange>(actionableEvents.codons(), sourcesToInclude))
+                .exons(filterActionableForSources<ActionableRange>(actionableEvents.exons(), sourcesToInclude))
+                .genes(filterActionableForSources<ActionableGene>(actionableEvents.genes(), sourcesToInclude))
+                .fusions(filterActionableForSources<ActionableFusion>(actionableEvents.fusions(), sourcesToInclude))
+                .characteristics(filterActionableForSources<ActionableCharacteristic>(actionableEvents.characteristics(), sourcesToInclude))
+                .hla(filterActionableForSources<ActionableHLA>(actionableEvents.hla(), sourcesToInclude))
+                .build()
+        }
+
+        private fun <T : ActionableEvent> filterActionableForSources(actionables: List<T>,
+                                                                     sourcesToInclude: Set<Knowledgebase?>): MutableSet<T> {
+            return actionables.filter { actionable: T -> sourcesToInclude.contains(actionable.source()) }.toMutableSet()
+        }
+
+        @VisibleForTesting
+        fun filterForApplicability(actionableEvents: ActionableEvents): ActionableEvents {
+            return ImmutableActionableEvents.builder()
+                .from(actionableEvents)
+                .hotspots(filterHotspotsForApplicability(actionableEvents.hotspots()))
+                .codons(filterRangesForApplicability(actionableEvents.codons()))
+                .exons(filterRangesForApplicability(actionableEvents.exons()))
+                .genes(filterGenesForApplicability(actionableEvents.genes()))
+                .build()
+        }
+
+        private fun <T : ActionableEvent> filterEventsForApplicability(list: List<T>,
+                                                                       predicate: (T) -> Boolean): List<T> {
+            return list.filter { predicate(it) }.toList()
+        }
+
+        private fun filterHotspotsForApplicability(hotspots: List<ActionableHotspot>): List<ActionableHotspot> {
+            return filterEventsForApplicability(hotspots) { obj: ActionableHotspot -> ApplicabilityFiltering.isApplicable(obj) }
+        }
+
+        private fun filterRangesForApplicability(ranges: List<ActionableRange>): List<ActionableRange> {
+            return filterEventsForApplicability(ranges) { obj: ActionableRange -> ApplicabilityFiltering.isApplicable(obj) }
+        }
+
+        private fun filterGenesForApplicability(genes: List<ActionableGene>): List<ActionableGene> {
+            return filterEventsForApplicability(genes) { obj: ActionableGene -> ApplicabilityFiltering.isApplicable(obj) }
+        }
+    }
+}
