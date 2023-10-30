@@ -73,7 +73,6 @@ public enum DrugType implements TreatmentType {
     IL_15_CYTOKINE(TreatmentCategory.IMMUNOTHERAPY, "IL-15 cytokine"),
     IMMUNE_CHECKPOINT_INHIBITOR(TreatmentCategory.IMMUNOTHERAPY),
     KIT_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "KIT inhibitor"),
-    KRAS_G12C_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "KRAS G12C inhibitor"),
     MEK_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "MEK inhibitor"),
     MET_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "MET inhibitor"),
     MONOCLONAL_ANTIBODY_IMMUNOTHERAPY(TreatmentCategory.IMMUNOTHERAPY, "monoclonal antibody - immunotherapies"),
