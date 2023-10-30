@@ -273,6 +273,7 @@ object TestOrangeFactory {
             .purpleCopyNumberPlot(Strings.EMPTY)
             .purpleVariantCopyNumberPlot(Strings.EMPTY)
             .purplePurityRangePlot(Strings.EMPTY)
+            .purpleKataegisPlot(Strings.EMPTY)
             .build()
     }
 
