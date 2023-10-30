@@ -27,7 +27,6 @@ object EligibilityRuleUsageEvaluator {
         EligibilityRule.HAS_POTENTIAL_HYPOKALEMIA,
         EligibilityRule.HAS_POTENTIAL_HYPOMAGNESEMIA,
         EligibilityRule.HAS_POTENTIAL_HYPOCALCEMIA,
-        EligibilityRule.HAS_RAPIDLY_DETERIORATING_CONDITION,
         EligibilityRule.MUTATION_IN_GENE_X_IN_EXON_Y_TO_EXON_Z,
         EligibilityRule.HAS_HAD_PARTIAL_RESECTION,
         EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_PROMOTER_OF_GENE_X,
