@@ -26,6 +26,7 @@ class OrangeInterpreter(private val geneFilter: GeneFilter, private val evidence
             .date(record.samplingDate())
             .evidenceSource(ActionabilityConstants.EVIDENCE_SOURCE.display())
             .externalTrialSource(ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display())
+            .containsTumorCells(containsTumorCells(record))
             .hasSufficientQualityAndPurity(hasSufficientQualityAndPurity(record))
             .hasSufficientQuality(hasSufficientQuality(record))
             .characteristics(characteristicsExtractor.extract(record))
@@ -46,6 +47,11 @@ class OrangeInterpreter(private val geneFilter: GeneFilter, private val evidence
                     RefGenomeVersion.V38
                 }
             }
+        }
+
+        fun containsTumorCells(record: OrangeRecord): Boolean {
+            // TODO do we care about contamination here?
+            return PurpleQCStatus.FAIL_NO_TUMOR !in record.purple().fit().qc().status();
         }
 
         fun hasSufficientQualityAndPurity(record: OrangeRecord): Boolean {
