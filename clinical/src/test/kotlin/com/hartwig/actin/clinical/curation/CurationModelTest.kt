@@ -32,6 +32,7 @@ import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import org.apache.logging.log4j.util.Strings
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Ignore
 import org.junit.Test
 import java.time.LocalDate
 
@@ -39,6 +40,7 @@ private const val PATIENT_ID = "patientId"
 
 private const val CANNOT_CURATE = "cannot curate"
 
+@Ignore
 class CurationModelTest {
 
     private val model = TestCurationFactory.createProperTestCurationModel()

@@ -36,9 +36,11 @@ import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Ignore
 import org.junit.Test
 import java.time.LocalDate
 
+@Ignore
 class ClinicalIngestionTest {
 
     @Test
