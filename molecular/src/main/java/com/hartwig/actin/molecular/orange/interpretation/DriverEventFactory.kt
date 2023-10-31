@@ -52,8 +52,6 @@ object DriverEventFactory {
                 gainLoss.gene() + " del"
             }
         }
-        LOGGER.warn("Unexpected copy number interpretation for generating event: {}", gainLoss.interpretation())
-        return gainLoss.gene() + " unknown copy number event"
     }
 
     fun homozygousDisruptionEvent(homozygousDisruption: HomozygousDisruption): String {
