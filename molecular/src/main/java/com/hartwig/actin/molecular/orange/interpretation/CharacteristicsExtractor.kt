@@ -50,17 +50,9 @@ internal class CharacteristicsExtractor(private val evidenceDatabase: EvidenceDa
         private val LOGGER = LogManager.getLogger(CharacteristicsExtractor::class.java)
         private fun isMSI(microsatelliteStatus: PurpleMicrosatelliteStatus): Boolean? {
             return when (microsatelliteStatus) {
-                PurpleMicrosatelliteStatus.MSI -> {
-                    true
-                }
-
-                PurpleMicrosatelliteStatus.MSS -> {
-                    false
-                }
-
-                PurpleMicrosatelliteStatus.UNKNOWN -> {
-                    null
-                }
+                PurpleMicrosatelliteStatus.MSI -> true
+                PurpleMicrosatelliteStatus.MSS -> false
+                PurpleMicrosatelliteStatus.UNKNOWN -> null
             }
         }
 
@@ -68,9 +60,7 @@ internal class CharacteristicsExtractor(private val evidenceDatabase: EvidenceDa
             return when (hrStatus) {
                 ChordStatus.HR_DEFICIENT -> true
                 ChordStatus.HR_PROFICIENT -> false
-                ChordStatus.UNKNOWN, ChordStatus.CANNOT_BE_DETERMINED -> {
-                    null
-                }
+                ChordStatus.UNKNOWN, ChordStatus.CANNOT_BE_DETERMINED -> null
             }
         }
 
