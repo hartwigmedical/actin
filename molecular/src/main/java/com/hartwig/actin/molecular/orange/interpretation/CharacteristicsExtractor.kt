@@ -59,7 +59,6 @@ internal class CharacteristicsExtractor(private val evidenceDatabase: EvidenceDa
                 }
 
                 PurpleMicrosatelliteStatus.UNKNOWN -> {
-                    LOGGER.warn("Cannot interpret microsatellite status '{}'", microsatelliteStatus)
                     null
                 }
             }
@@ -70,7 +69,6 @@ internal class CharacteristicsExtractor(private val evidenceDatabase: EvidenceDa
                 ChordStatus.HR_DEFICIENT -> true
                 ChordStatus.HR_PROFICIENT -> false
                 ChordStatus.UNKNOWN, ChordStatus.CANNOT_BE_DETERMINED -> {
-                    LOGGER.warn("Cannot interpret homologous repair status '{}'", hrStatus)
                     null
                 }
             }
@@ -87,7 +85,6 @@ internal class CharacteristicsExtractor(private val evidenceDatabase: EvidenceDa
                 }
 
                 PurpleTumorMutationalStatus.UNKNOWN -> {
-                    LOGGER.warn("Cannot interpret tumor mutational status: {}", tumorMutationalStatus)
                     null
                 }
             }
