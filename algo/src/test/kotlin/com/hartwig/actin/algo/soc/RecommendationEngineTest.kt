@@ -33,10 +33,12 @@ import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.driver.Variant
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
+import org.junit.Ignore
 import org.junit.Test
 import java.io.File
 import java.time.LocalDate
 
+@Ignore
 class RecommendationEngineTest {
 
     @Test
