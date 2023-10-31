@@ -66,28 +66,28 @@ class IsMicrosatelliteUnstable internal constructor() : EvaluationFunction {
                         "Microsatellite instability (MSI) status detected, together with biallelic drivers in MSI genes: "
                                 + Format.concat(msiGenesWithBiallelicDriver)
                     )
-                    .addPassGeneralMessages("MSI")
+                    .addPassGeneralMessages("Tumor is MSI and biallelic drivers in MSI genes detected")
                     .build()
             } else if (msiGenesWithNonBiallelicDriver.isNotEmpty()) {
                 EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
-                    .addInclusionMolecularEvents(MolecularCharacteristicEvents.MICROSATELLITE_POTENTIALLY_UNSTABLE)
+                    .addInclusionMolecularEvents(MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE)
                     .addWarnSpecificMessages(
                         ("Microsatellite instability (MSI) detected, together with non-biallelic drivers in MSI genes ("
                                 + Format.concat(MolecularConstants.MSI_GENES)
                                 ) + ") were detected"
                     )
-                    .addWarnGeneralMessages("MSI")
+                    .addWarnGeneralMessages("Tumor is MSI (but with only non-biallelic drivers in MSI genes)")
                     .build()
             } else {
                 EvaluationFactory.unrecoverable()
                     .result(EvaluationResult.WARN)
-                    .addInclusionMolecularEvents(MolecularCharacteristicEvents.MICROSATELLITE_POTENTIALLY_UNSTABLE)
+                    .addInclusionMolecularEvents(MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE)
                     .addWarnSpecificMessages(
                         ("Microsatellite instability (MSI) detected, without drivers in MSI genes ("
                                 + Format.concat(MolecularConstants.MSI_GENES)) + ") detected"
                     )
-                    .addWarnGeneralMessages("MSI")
+                    .addWarnGeneralMessages("Tumor is MSI (but without detected drivers in MSI genes)")
                     .build()
             }
         }
