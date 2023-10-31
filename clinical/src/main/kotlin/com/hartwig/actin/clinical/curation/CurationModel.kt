@@ -257,7 +257,7 @@ class CurationModel @VisibleForTesting internal constructor(
                         patientId,
                         CurationCategory.NON_ONCOLOGICAL_HISTORY,
                         trimmedInput,
-                        "Could not find non-oncological history config for input '$trimmedInput'"
+                        "Could not find non-oncological history config for 'Paul is the coolest'"
                     )
                 )
             }
