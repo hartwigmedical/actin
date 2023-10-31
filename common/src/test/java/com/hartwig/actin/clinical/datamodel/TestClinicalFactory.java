@@ -8,17 +8,17 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.hartwig.actin.TestDataFactory;
 import com.hartwig.actin.clinical.datamodel.treatment.Drug;
-import com.hartwig.actin.clinical.datamodel.treatment.DrugTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRadiotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy;
-import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
+import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTherapyHistoryDetails;
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
@@ -153,12 +153,14 @@ public final class TestClinicalFactory {
     }
 
     @NotNull
-    private static TreatmentHistoryEntry therapyHistoryEntry(Set<Therapy> therapies, int startYear, Intent intent) {
+    private static TreatmentHistoryEntry treatmentHistoryEntry(Set<Treatment> treatments, int startYear, Intent intent) {
         return ImmutableTreatmentHistoryEntry.builder()
-                .treatments(therapies)
+                .treatments(treatments)
                 .startYear(startYear)
                 .addIntents(intent)
-                .therapyHistoryDetails(ImmutableTherapyHistoryDetails.builder().bestResponse(TreatmentResponse.PARTIAL_RESPONSE).build())
+                .treatmentHistoryDetails(ImmutableTreatmentHistoryDetails.builder()
+                        .bestResponse(TreatmentResponse.PARTIAL_RESPONSE)
+                        .build())
                 .build();
     }
 
@@ -168,27 +170,26 @@ public final class TestClinicalFactory {
         Drug fluorouracil = drug("5-FU", DrugType.ANTIMETABOLITE, TreatmentCategory.CHEMOTHERAPY);
         Drug irinotecan = drug("IRINOTECAN", DrugType.TOPO1_INHIBITOR, TreatmentCategory.CHEMOTHERAPY);
 
-        DrugTherapy folfirinox = ImmutableDrugTherapy.builder()
+        DrugTreatment folfirinox = ImmutableDrugTreatment.builder()
                 .name("FOLFIRINOX")
                 .isSystemic(true)
                 .addDrugs(oxaliplatin, fluorouracil, irinotecan)
                 .maxCycles(8)
                 .build();
 
-        Radiotherapy radioFolfirinox =
-                ImmutableRadiotherapy.builder().name("FOLFIRINOX+RADIOTHERAPY").addAllDrugs(folfirinox.drugs()).isSystemic(true).build();
+        Radiotherapy radiotherapy = ImmutableRadiotherapy.builder().name("RADIOTHERAPY").isSystemic(false).build();
 
         Drug pembrolizumab = drug("PEMBROLIZUMAB", DrugType.ANTI_PD_1, TreatmentCategory.IMMUNOTHERAPY);
 
-        DrugTherapy folfirinoxAndPembrolizumab = ImmutableDrugTherapy.builder()
+        DrugTreatment folfirinoxAndPembrolizumab = ImmutableDrugTreatment.builder()
                 .name("FOLFIRINOX+PEMBROLIZUMAB")
                 .addAllDrugs(folfirinox.drugs())
                 .addDrugs(pembrolizumab)
                 .isSystemic(true)
                 .build();
 
-        DrugTherapy folfirinoxLocoRegional =
-                ImmutableDrugTherapy.copyOf(folfirinox).withName("FOLFIRINOX_LOCO-REGIONAL").withIsSystemic(false);
+        DrugTreatment folfirinoxLocoRegional =
+                ImmutableDrugTreatment.copyOf(folfirinox).withName("FOLFIRINOX_LOCO-REGIONAL").withIsSystemic(false);
 
         OtherTreatment colectomy =
                 ImmutableOtherTreatment.builder().name("COLECTOMY").addCategories(TreatmentCategory.SURGERY).isSystemic(true).build();
@@ -200,10 +201,10 @@ public final class TestClinicalFactory {
                 .isTrial(false)
                 .build();
 
-        return List.of(therapyHistoryEntry(Set.of(folfirinox), 2020, Intent.NEOADJUVANT),
+        return List.of(treatmentHistoryEntry(Set.of(folfirinox), 2020, Intent.NEOADJUVANT),
                 surgeryHistoryEntry,
-                therapyHistoryEntry(Set.of(radioFolfirinox, folfirinoxLocoRegional), 2022, Intent.ADJUVANT),
-                therapyHistoryEntry(Set.of(folfirinoxAndPembrolizumab), 2023, Intent.PALLIATIVE));
+                treatmentHistoryEntry(Set.of(radiotherapy, folfirinoxLocoRegional), 2022, Intent.ADJUVANT),
+                treatmentHistoryEntry(Set.of(folfirinoxAndPembrolizumab), 2023, Intent.PALLIATIVE));
     }
 
     private static List<TreatmentHistoryEntry> createExhaustiveTreatmentHistory() {
@@ -213,20 +214,20 @@ public final class TestClinicalFactory {
 
         TreatmentHistoryEntry hasStartYearHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
                 .startYear(2020)
-                .addTreatments(ImmutableDrugTherapy.builder().name("Therapy1").addDrugs(irinotecan).build())
+                .addTreatments(ImmutableDrugTreatment.builder().name("Therapy1").addDrugs(irinotecan).build())
                 .build();
 
         TreatmentHistoryEntry hasStartYearMonthEndYearMonthHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
                 .startYear(2020)
                 .startMonth(8)
-                .therapyHistoryDetails(ImmutableTherapyHistoryDetails.builder().stopYear(2021).stopMonth(3).build())
-                .addTreatments(ImmutableDrugTherapy.builder().name("Therapy2").addDrugs(irinotecan).build())
+                .treatmentHistoryDetails(ImmutableTreatmentHistoryDetails.builder().stopYear(2021).stopMonth(3).build())
+                .addTreatments(ImmutableDrugTreatment.builder().name("Therapy2").addDrugs(irinotecan).build())
                 .build();
 
         TreatmentHistoryEntry namedTrialHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
                 .isTrial(true)
                 .startYear(2022)
-                .addTreatments(ImmutableDrugTherapy.builder().name("Trial1").addDrugs(irinotecan).build())
+                .addTreatments(ImmutableDrugTreatment.builder().name("Trial1").addDrugs(irinotecan).build())
                 .build();
 
         TreatmentHistoryEntry unknownDetailsHistoryEntry = ImmutableTreatmentHistoryEntry.builder().isTrial(true).startYear(2022).build();
@@ -234,31 +235,31 @@ public final class TestClinicalFactory {
         TreatmentHistoryEntry hasCyclesStopReasonHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
                 .isTrial(true)
                 .startYear(2022)
-                .therapyHistoryDetails(ImmutableTherapyHistoryDetails.builder().cycles(3).stopReasonDetail("toxicity").build())
-                .addTreatments(ImmutableDrugTherapy.builder().name("Trial1").addDrugs(irinotecan).build())
+                .treatmentHistoryDetails(ImmutableTreatmentHistoryDetails.builder().cycles(3).stopReasonDetail("toxicity").build())
+                .addTreatments(ImmutableDrugTreatment.builder().name("Trial1").addDrugs(irinotecan).build())
                 .build();
 
         TreatmentHistoryEntry hasAcronymHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
                 .isTrial(true)
                 .trialAcronym("tr2")
                 .startYear(2022)
-                .therapyHistoryDetails(ImmutableTherapyHistoryDetails.builder().cycles(3).stopReasonDetail("toxicity").build())
-                .addTreatments(ImmutableDrugTherapy.builder().name("Trial2").addDrugs(irinotecan).build())
+                .treatmentHistoryDetails(ImmutableTreatmentHistoryDetails.builder().cycles(3).stopReasonDetail("toxicity").build())
+                .addTreatments(ImmutableDrugTreatment.builder().name("Trial2").addDrugs(irinotecan).build())
                 .build();
 
         TreatmentHistoryEntry hasSingleIntentHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
                 .isTrial(true)
                 .startYear(2022)
-                .therapyHistoryDetails(ImmutableTherapyHistoryDetails.builder().cycles(3).stopReasonDetail("toxicity").build())
-                .addTreatments(ImmutableDrugTherapy.builder().name("Trial4").addDrugs(irinotecan).build())
+                .treatmentHistoryDetails(ImmutableTreatmentHistoryDetails.builder().cycles(3).stopReasonDetail("toxicity").build())
+                .addTreatments(ImmutableDrugTreatment.builder().name("Trial4").addDrugs(irinotecan).build())
                 .intents(Set.of(Intent.ADJUVANT))
                 .build();
 
         TreatmentHistoryEntry hasMultipleIntentsHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
                 .isTrial(true)
                 .startYear(2022)
-                .therapyHistoryDetails(ImmutableTherapyHistoryDetails.builder().cycles(3).stopReasonDetail("toxicity").build())
-                .addTreatments(ImmutableDrugTherapy.builder().name("Trial5").addDrugs(irinotecan).build())
+                .treatmentHistoryDetails(ImmutableTreatmentHistoryDetails.builder().cycles(3).stopReasonDetail("toxicity").build())
+                .addTreatments(ImmutableDrugTreatment.builder().name("Trial5").addDrugs(irinotecan).build())
                 .intents(Set.of(Intent.ADJUVANT, Intent.CONSOLIDATION))
                 .build();
 

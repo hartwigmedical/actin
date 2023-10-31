@@ -7,11 +7,11 @@ import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTherapyHistoryDetails
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryDetails
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
@@ -25,7 +25,7 @@ object TreatmentTestFactory {
     }
 
     fun drugTherapy(name: String, category: TreatmentCategory, types: Set<DrugType> = emptySet()): Treatment {
-        return ImmutableDrugTherapy.builder().name(name).isSystemic(true).addDrugs(
+        return ImmutableDrugTreatment.builder().name(name).isSystemic(true).addDrugs(
             ImmutableDrug.builder()
                 .name(name)
                 .category(category)
@@ -35,7 +35,7 @@ object TreatmentTestFactory {
     }
 
     fun drugTherapyNoDrugs(name: String): Treatment {
-        return ImmutableDrugTherapy.builder().name(name).isSystemic(true).build()
+        return ImmutableDrugTreatment.builder().name(name).isSystemic(true).build()
     }
 
     fun treatmentHistoryEntry(
@@ -51,7 +51,7 @@ object TreatmentTestFactory {
         numCycles: Int? = null
     ): TreatmentHistoryEntry {
         val therapyHistoryDetails = if (stopReason != null || stopYear != null || bestResponse != null) {
-            ImmutableTherapyHistoryDetails.builder()
+            ImmutableTreatmentHistoryDetails.builder()
                 .stopReason(stopReason)
                 .bestResponse(bestResponse)
                 .stopYear(stopYear)
@@ -63,7 +63,7 @@ object TreatmentTestFactory {
             .treatments(treatments)
             .startYear(startYear)
             .startMonth(startMonth)
-            .therapyHistoryDetails(therapyHistoryDetails)
+            .treatmentHistoryDetails(therapyHistoryDetails)
             .intents(intents)
             .isTrial(isTrial)
             .build()

@@ -44,7 +44,7 @@ class HasHadSpecificTreatmentSinceDate(private val treatment: Treatment, private
     }
 
     private fun treatmentSinceMinDate(treatment: TreatmentHistoryEntry, includeUnknown: Boolean): Boolean {
-        return isAfterDate(minDate, treatment.therapyHistoryDetails()?.stopYear(), treatment.therapyHistoryDetails()?.stopMonth())
+        return isAfterDate(minDate, treatment.treatmentHistoryDetails()?.stopYear(), treatment.treatmentHistoryDetails()?.stopMonth())
             ?: isAfterDate(minDate, treatment.startYear(), treatment.startMonth())
             ?: includeUnknown
     }

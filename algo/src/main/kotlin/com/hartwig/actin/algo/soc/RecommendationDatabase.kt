@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.soc
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.soc.datamodel.TreatmentCandidate
-import com.hartwig.actin.clinical.datamodel.treatment.Therapy
+import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction
 import com.hartwig.actin.treatment.datamodel.EligibilityRule
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction
@@ -52,7 +52,7 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
         extraFunctions: Set<EligibilityFunction> = emptySet()
     ): TreatmentCandidate {
         val treatment = treatmentDatabase.findTreatmentByName(name)!!
-        val drugRequirements = (treatment as Therapy).drugs().flatMap { drug ->
+        val drugRequirements = (treatment as DrugTreatment).drugs().flatMap { drug ->
             val drugName = drug.name()
             listOf(setOf("OXALIPLATIN", TREATMENT_IRINOTECAN), setOf("FLUOROURACIL", "CAPECITABINE"))
                 .filter { drugName in it }
@@ -117,7 +117,7 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
 
     private fun combinedAntiEGFRTherapies(): List<TreatmentCandidate> {
         val capecitabine = treatmentDatabase.findDrugByName("CAPECITABINE")
-        return combinableChemotherapies().filterNot { (it.treatment as Therapy).drugs().contains(capecitabine) }
+        return combinableChemotherapies().filterNot { (it.treatment as DrugTreatment).drugs().contains(capecitabine) }
             .filterNot { it.treatment.name().equals(TREATMENT_FOLFOXIRI, ignoreCase = true) }
             .flatMap { chemo: TreatmentCandidate ->
                 val combinedEligibilityCriteria = when (chemo.treatment.name().uppercase()) {

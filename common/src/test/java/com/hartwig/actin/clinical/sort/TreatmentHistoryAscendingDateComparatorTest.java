@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment;
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTherapyHistoryDetails;
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
 
@@ -48,7 +48,7 @@ public class TreatmentHistoryAscendingDateComparatorTest {
                 .addTreatments(ImmutableOtherTreatment.builder().name(name).isSystemic(false).build())
                 .startYear(startYear)
                 .startMonth(startMonth)
-                .therapyHistoryDetails(ImmutableTherapyHistoryDetails.builder().stopYear(stopYear).stopMonth(stopMonth).build())
+                .treatmentHistoryDetails(ImmutableTreatmentHistoryDetails.builder().stopYear(stopYear).stopMonth(stopMonth).build())
                 .build();
     }
 }

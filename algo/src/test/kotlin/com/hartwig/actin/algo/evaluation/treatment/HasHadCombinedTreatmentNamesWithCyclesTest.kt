@@ -7,11 +7,11 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
-import com.hartwig.actin.clinical.datamodel.treatment.DrugTherapy
+import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTherapyHistoryDetails
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryDetails
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import org.junit.Test
@@ -95,12 +95,12 @@ class HasHadCombinedTreatmentNamesWithCyclesTest {
         private fun treatmentHistoryEntry(name: String, numCycles: Int?): TreatmentHistoryEntry {
             return ImmutableTreatmentHistoryEntry.builder()
                 .addTreatments(chemotherapyWithName(name))
-                .therapyHistoryDetails(ImmutableTherapyHistoryDetails.builder().cycles(numCycles).build())
+                .treatmentHistoryDetails(ImmutableTreatmentHistoryDetails.builder().cycles(numCycles).build())
                 .build()
         }
 
-        private fun chemotherapyWithName(name: String): DrugTherapy =
-            ImmutableDrugTherapy.builder()
+        private fun chemotherapyWithName(name: String): DrugTreatment =
+            ImmutableDrugTreatment.builder()
                 .name(name)
                 .addDrugs(ImmutableDrug.builder().name("Chemo drug").category(TreatmentCategory.CHEMOTHERAPY).build())
                 .build()

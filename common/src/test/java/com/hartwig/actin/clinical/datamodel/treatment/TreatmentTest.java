@@ -12,14 +12,14 @@ public class TreatmentTest {
     @Test
     public void shouldDisplayTreatmentNamesWithSpacesAndCapitalizeFirstLetterOfEachComponent() {
         Treatment treatment =
-                ImmutableDrugTherapy.builder().addDrugs(drug("TEST_DRUG"), drug("OTHER_DRUG")).name("TEST_DRUG+OTHER_DRUG").build();
+                ImmutableDrugTreatment.builder().addDrugs(drug("TEST_DRUG"), drug("OTHER_DRUG")).name("TEST_DRUG+OTHER_DRUG").build();
         assertThat(treatment.display()).isEqualTo("Test drug+Other drug");
     }
 
     @Test
     public void shouldDisplayAlternateTreatmentNameWhenProvided() {
         String altName = "a+TOTALLY _different_ name";
-        Treatment treatment = ImmutableDrugTherapy.builder()
+        Treatment treatment = ImmutableDrugTreatment.builder()
                 .addDrugs(drug("TEST_DRUG"), drug("OTHER_DRUG"))
                 .name("TEST_DRUG+OTHER_DRUG")
                 .displayOverride(altName)

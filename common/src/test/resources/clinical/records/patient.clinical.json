@@ -69,7 +69,7 @@
           ],
           "maxCycles": null,
           "isSystemic": true,
-          "treatmentClass": "DRUG_THERAPY"
+          "treatmentClass": "DRUG_TREATMENT"
         }
       ],
       "startYear": 2019,
