@@ -66,7 +66,7 @@ class IsMicrosatelliteUnstable internal constructor() : EvaluationFunction {
                         "Microsatellite instability (MSI) status detected, together with biallelic drivers in MSI genes: "
                                 + Format.concat(msiGenesWithBiallelicDriver)
                     )
-                    .addPassGeneralMessages("MSI")
+                    .addPassGeneralMessages("Tumor is MSI and biallelic drivers in MSI genes detected")
                     .build()
             } else if (msiGenesWithNonBiallelicDriver.isNotEmpty()) {
                 EvaluationFactory.unrecoverable()
