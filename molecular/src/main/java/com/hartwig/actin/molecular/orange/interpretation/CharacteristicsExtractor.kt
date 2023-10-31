@@ -50,18 +50,9 @@ internal class CharacteristicsExtractor(private val evidenceDatabase: EvidenceDa
         private val LOGGER = LogManager.getLogger(CharacteristicsExtractor::class.java)
         private fun isMSI(microsatelliteStatus: PurpleMicrosatelliteStatus): Boolean? {
             return when (microsatelliteStatus) {
-                PurpleMicrosatelliteStatus.MSI -> {
-                    true
-                }
-
-                PurpleMicrosatelliteStatus.MSS -> {
-                    false
-                }
-
-                PurpleMicrosatelliteStatus.UNKNOWN -> {
-                    LOGGER.warn("Cannot interpret microsatellite status '{}'", microsatelliteStatus)
-                    null
-                }
+                PurpleMicrosatelliteStatus.MSI -> true
+                PurpleMicrosatelliteStatus.MSS -> false
+                PurpleMicrosatelliteStatus.UNKNOWN -> null
             }
         }
 
@@ -69,10 +60,7 @@ internal class CharacteristicsExtractor(private val evidenceDatabase: EvidenceDa
             return when (hrStatus) {
                 ChordStatus.HR_DEFICIENT -> true
                 ChordStatus.HR_PROFICIENT -> false
-                ChordStatus.UNKNOWN, ChordStatus.CANNOT_BE_DETERMINED -> {
-                    LOGGER.warn("Cannot interpret homologous repair status '{}'", hrStatus)
-                    null
-                }
+                ChordStatus.UNKNOWN, ChordStatus.CANNOT_BE_DETERMINED -> null
             }
         }
 
@@ -87,7 +75,6 @@ internal class CharacteristicsExtractor(private val evidenceDatabase: EvidenceDa
                 }
 
                 PurpleTumorMutationalStatus.UNKNOWN -> {
-                    LOGGER.warn("Cannot interpret tumor mutational status: {}", tumorMutationalStatus)
                     null
                 }
             }
