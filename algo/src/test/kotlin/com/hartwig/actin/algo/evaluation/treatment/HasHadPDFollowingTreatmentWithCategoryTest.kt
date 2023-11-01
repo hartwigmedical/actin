@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.drugTherapy
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.withTreatmentHistoryEntry
@@ -21,7 +21,7 @@ class HasHadPDFollowingTreatmentWithCategoryTest {
     @Test
     fun shouldFailForWrongCategoryWithPD() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
-            setOf(drugTherapy("test", TreatmentCategory.RADIOTHERAPY)), stopReason = StopReason.PROGRESSIVE_DISEASE
+            setOf(drugTreatment("test", TreatmentCategory.RADIOTHERAPY)), stopReason = StopReason.PROGRESSIVE_DISEASE
         )
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
@@ -57,7 +57,7 @@ class HasHadPDFollowingTreatmentWithCategoryTest {
     @Test
     fun shouldReturnUndeterminedWithTrialTreatmentEntryInHistory() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
-            setOf(drugTherapy("test", TreatmentCategory.IMMUNOTHERAPY)),
+            setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)),
             isTrial = true
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
@@ -66,13 +66,13 @@ class HasHadPDFollowingTreatmentWithCategoryTest {
     @Test
     fun shouldIgnoreTrialMatchesWhenLookingForUnlikelyTrialCategories() {
         val function = HasHadPDFollowingTreatmentWithCategory(TreatmentCategory.TRANSPLANTATION)
-        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTherapy("test", TreatmentCategory.IMMUNOTHERAPY)), isTrial = true)
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)), isTrial = true)
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     companion object {
         private val MATCHING_CATEGORY = TreatmentCategory.TARGETED_THERAPY
-        private val MATCHING_TREATMENT_SET = setOf(drugTherapy("test", MATCHING_CATEGORY))
+        private val MATCHING_TREATMENT_SET = setOf(drugTreatment("test", MATCHING_CATEGORY))
         private val FUNCTION = HasHadPDFollowingTreatmentWithCategory(MATCHING_CATEGORY)
     }
 }

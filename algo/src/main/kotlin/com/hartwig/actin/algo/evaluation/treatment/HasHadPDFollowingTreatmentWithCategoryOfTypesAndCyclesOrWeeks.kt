@@ -30,13 +30,13 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
             if (treatmentHistoryEntry.categories().contains(category)) {
                 if (treatmentHistoryEntry.matchesTypeFromSet(types) == true) {
                     hasHadTreatment = true
-                    val cycles = treatmentHistoryEntry.therapyHistoryDetails()?.cycles()
+                    val cycles = treatmentHistoryEntry.treatmentHistoryDetails()?.cycles()
                     val treatmentResultedInPDOption = ProgressiveDiseaseFunctions.treatmentResultedInPDOption(treatmentHistoryEntry)
                     val durationWeeks: Long? = minWeeksBetweenDates(
                         treatmentHistoryEntry.startYear(),
                         treatmentHistoryEntry.startMonth(),
-                        treatmentHistoryEntry.therapyHistoryDetails()?.stopYear(),
-                        treatmentHistoryEntry.therapyHistoryDetails()?.stopMonth()
+                        treatmentHistoryEntry.treatmentHistoryDetails()?.stopYear(),
+                        treatmentHistoryEntry.treatmentHistoryDetails()?.stopMonth()
                     )
                     if (treatmentResultedInPDOption != null) {
                         val meetsMinCycles = minCycles == null || cycles != null && cycles >= minCycles

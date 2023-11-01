@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.TestTreatmentDatabaseFactory
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryDetails
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -63,6 +64,7 @@ class TreatmentHistoryEntryConfigFactoryTest {
             curated = ImmutableTreatmentHistoryEntry.builder()
                 .startYear(2022)
                 .isTrial(true)
+                .treatmentHistoryDetails(ImmutableTreatmentHistoryDetails.builder().build())
                 .build()
         )
 

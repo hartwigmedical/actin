@@ -17,11 +17,11 @@ import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
-import com.hartwig.actin.clinical.datamodel.treatment.Therapy
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTherapyHistoryDetails
+import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryDetails
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
-import com.hartwig.actin.clinical.datamodel.treatment.history.TherapyHistoryDetails
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord
@@ -44,7 +44,7 @@ class RecommendationEngineTest {
     @Test
     fun `Should not recommend Capecitabine combined with Irinotecan`() {
         assertThat(TYPICAL_TREATMENT_RESULTS).noneMatch {
-            val drugNames = (it.treatment as Therapy).drugs().map(Drug::name).map(String::uppercase)
+            val drugNames = (it.treatment as DrugTreatment).drugs().map(Drug::name).map(String::uppercase)
             drugNames.contains("CAPECITABINE") && drugNames.contains("IRINOTECAN")
         }
     }
@@ -147,7 +147,7 @@ class RecommendationEngineTest {
         CHEMO_TREATMENT_NAMES.forEach { treatmentName: String ->
             val patientRecord: PatientRecord = patientWithTherapyNameAndDetails(
                 treatmentName,
-                ImmutableTherapyHistoryDetails.builder().stopReason(StopReason.PROGRESSIVE_DISEASE).build()
+                ImmutableTreatmentHistoryDetails.builder().stopReason(StopReason.PROGRESSIVE_DISEASE).build()
             )
             assertThat(resultsForPatient(patientRecord)).noneMatch {
                 it.treatment.name().equals(treatmentName, ignoreCase = true)
@@ -160,7 +160,7 @@ class RecommendationEngineTest {
         CHEMO_TREATMENT_NAMES.forEach { treatmentName: String ->
             val patientRecord: PatientRecord = patientWithTherapyNameAndDetails(
                 treatmentName,
-                ImmutableTherapyHistoryDetails.builder().bestResponse(TreatmentResponse.PROGRESSIVE_DISEASE).build()
+                ImmutableTreatmentHistoryDetails.builder().bestResponse(TreatmentResponse.PROGRESSIVE_DISEASE).build()
             )
             assertThat(resultsForPatient(patientRecord)).noneMatch {
                 it.treatment.name().equals(treatmentName, ignoreCase = true)
@@ -173,7 +173,7 @@ class RecommendationEngineTest {
         CHEMO_TREATMENT_NAMES.forEach { treatmentName: String ->
             val patientRecord: PatientRecord = patientWithTherapyNameAndDetails(
                 treatmentName,
-                ImmutableTherapyHistoryDetails.builder().cycles(12).build()
+                ImmutableTreatmentHistoryDetails.builder().cycles(12).build()
             )
             assertThat(resultsForPatient(patientRecord)).noneMatch {
                 it.treatment.name().equals(treatmentName, ignoreCase = true)
@@ -222,7 +222,7 @@ class RecommendationEngineTest {
 
     private fun assertAntiEGFRTreatmentCount(treatmentResults: List<TreatmentCandidate>, count: Int) {
         val matchingTreatments = treatmentResults.filter { candidate ->
-            val drugNames = (candidate.treatment as Therapy).drugs().map(Drug::name).map(String::uppercase)
+            val drugNames = (candidate.treatment as DrugTreatment).drugs().map(Drug::name).map(String::uppercase)
             drugNames.any { it in RecommendationDatabase.EGFR_TREATMENTS } && drugNames.none { it == "ENCORAFENIB" }
         }.distinct()
 
@@ -245,9 +245,9 @@ class RecommendationEngineTest {
         }
     }
 
-    private fun antiEGFRTherapies(): List<Therapy> {
+    private fun antiEGFRTherapies(): List<DrugTreatment> {
         return resultsForPatientWithHistory(listOf(RecommendationDatabase.TREATMENT_CAPOX))
-            .mapNotNull { it.treatment as? Therapy }
+            .mapNotNull { it.treatment as? DrugTreatment }
             .filter {
                 it.drugs().any { drug ->
                     drug.name().uppercase() == RecommendationDatabase.TREATMENT_CETUXIMAB ||
@@ -452,7 +452,7 @@ class RecommendationEngineTest {
             assertThat(
                 resultsForPatient(patientRecord)
                     .map { treatmentCandidate ->
-                        (treatmentCandidate.treatment as Therapy).drugs()
+                        (treatmentCandidate.treatment as DrugTreatment).drugs()
                             .count { chemotherapyComponents.contains(it.name()) }
                     })
                 .noneMatch { it > 1 }
@@ -472,11 +472,11 @@ class RecommendationEngineTest {
             return ImmutablePatientRecord.builder().from(MINIMAL_PATIENT_RECORD).clinical(clinicalRecord).build()
         }
 
-        private fun patientWithTherapyNameAndDetails(therapyName: String, details: TherapyHistoryDetails): ImmutablePatientRecord {
+        private fun patientWithTherapyNameAndDetails(therapyName: String, details: TreatmentHistoryDetails): ImmutablePatientRecord {
             val treatmentHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
                 .addTreatments(TREATMENT_DATABASE.findTreatmentByName(therapyName)!!)
                 .startYear(LocalDate.now().minusYears(3).year)
-                .therapyHistoryDetails(details)
+                .treatmentHistoryDetails(details)
                 .build()
 
             return ImmutablePatientRecord.copyOf(MINIMAL_CRC_PATIENT_RECORD).withClinical(

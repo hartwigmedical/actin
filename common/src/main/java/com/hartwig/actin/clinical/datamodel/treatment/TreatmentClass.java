@@ -4,7 +4,7 @@ import java.lang.reflect.Type;
 
 public enum TreatmentClass {
 
-    DRUG_THERAPY(DrugTherapy.class),
+    DRUG_TREATMENT(DrugTreatment.class),
     OTHER_TREATMENT(OtherTreatment.class),
     RADIOTHERAPY(Radiotherapy.class);
 

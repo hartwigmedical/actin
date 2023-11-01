@@ -7,7 +7,7 @@ import java.util.Set;
 
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
 
 import org.jetbrains.annotations.NotNull;
@@ -89,8 +89,8 @@ public class TreatmentHistoryEntryTest {
     }
 
     @NotNull
-    private static ImmutableDrugTherapy drugTherapy(@NotNull Set<DrugType> types, @NotNull String name) {
-        return ImmutableDrugTherapy.builder()
+    private static ImmutableDrugTreatment drugTherapy(@NotNull Set<DrugType> types, @NotNull String name) {
+        return ImmutableDrugTreatment.builder()
                 .addDrugs(ImmutableDrug.builder().name("test drug").category(TreatmentCategory.CHEMOTHERAPY).drugTypes(types).build())
                 .name(name)
                 .build();

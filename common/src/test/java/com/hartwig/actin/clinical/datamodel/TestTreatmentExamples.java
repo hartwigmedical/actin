@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
+import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
 
@@ -19,9 +19,9 @@ public class TestTreatmentExamples {
             for (Treatment treatment : entry.treatments()) {
                 String categoryString = setToString(treatment.categories());
                 System.out.printf(" - %s: %s, %ssystemic", treatment.name(), categoryString, treatment.isSystemic() ? "" : "non");
-                if (treatment instanceof Therapy && !((Therapy) treatment).drugs().isEmpty()) {
+                if (treatment instanceof DrugTreatment && !((DrugTreatment) treatment).drugs().isEmpty()) {
                     System.out.printf(", with drugs %s",
-                            ((Therapy) treatment).drugs()
+                            ((DrugTreatment) treatment).drugs()
                                     .stream()
                                     .map(drug -> String.format("%s (%s)", drug.name(), setToString(drug.drugTypes())))
                                     .collect(Collectors.joining(", ")));

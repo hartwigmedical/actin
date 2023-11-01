@@ -58,7 +58,7 @@ class HasHadCombinedTreatmentNamesWithCycles(
             entry.treatments().flatMap { it.synonyms() + it.name() }.any { it.lowercase() == query }
         }
             .groupBy {
-                when (it.therapyHistoryDetails()?.cycles()) {
+                when (it.treatmentHistoryDetails()?.cycles()) {
                     null -> EvaluationResult.UNDETERMINED
                     in minCycles..maxCycles -> EvaluationResult.PASS
                     else -> EvaluationResult.FAIL
@@ -95,7 +95,7 @@ class HasHadCombinedTreatmentNamesWithCycles(
 
         private fun formatTreatmentList(treatmentHistoryEntries: List<TreatmentHistoryEntry>, includeCycles: Boolean): String {
             return treatmentHistoryEntries.joinToString(", ") { entry ->
-                val cycleString = if (includeCycles) " (${entry.therapyHistoryDetails()?.cycles()} cycles)" else ""
+                val cycleString = if (includeCycles) " (${entry.treatmentHistoryDetails()?.cycles()} cycles)" else ""
                 entry.treatments().joinToString("+") { it.display() } + cycleString
 
             }

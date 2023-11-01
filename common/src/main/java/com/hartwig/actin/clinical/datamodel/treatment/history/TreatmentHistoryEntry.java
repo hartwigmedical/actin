@@ -39,7 +39,7 @@ public abstract class TreatmentHistoryEntry {
     public abstract String trialAcronym();
 
     @Nullable
-    public abstract TherapyHistoryDetails therapyHistoryDetails();
+    public abstract TreatmentHistoryDetails treatmentHistoryDetails();
 
     @NotNull
     public String treatmentName() {

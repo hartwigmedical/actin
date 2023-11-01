@@ -10,10 +10,10 @@ import java.util.Set;
 
 import com.google.common.io.Resources;
 import com.hartwig.actin.clinical.datamodel.treatment.Drug;
+import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment;
-import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
 
@@ -30,7 +30,7 @@ public class TreatmentDatabaseTest {
         assertThat(treatment).isNotNull();
         assertThat(treatment.categories()).containsExactly(TreatmentCategory.CHEMOTHERAPY);
         assertThat(treatment.isSystemic()).isTrue();
-        assertThat(((Therapy) treatment).drugs()).extracting(Drug::name, Drug::drugTypes)
+        assertThat(((DrugTreatment) treatment).drugs()).extracting(Drug::name, Drug::drugTypes)
                 .containsExactlyInAnyOrder(tuple("CAPECITABINE", Set.of(DrugType.ANTIMETABOLITE)),
                         tuple("OXALIPLATIN", Set.of(DrugType.PLATINUM_COMPOUND)));
     }

@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.drugTherapy
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatment
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
@@ -158,6 +158,6 @@ class TreatmentSummaryForCategoryTest {
         private val TREATMENT_HISTORY_ENTRY_MATCHING_CATEGORY_AND_NAME = treatmentWithCategory(CATEGORY_TO_MATCH, "CUSTOM")
 
         private fun treatmentWithCategory(category: TreatmentCategory, name: String = "", isTrial: Boolean = false): TreatmentHistoryEntry =
-            treatmentHistoryEntry(setOf(drugTherapy(name, category)), isTrial = isTrial)
+            treatmentHistoryEntry(setOf(drugTreatment(name, category)), isTrial = isTrial)
     }
 }

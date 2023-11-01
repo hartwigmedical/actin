@@ -43,7 +43,7 @@ class HasHadAdjuvantTreatmentWithCategoryTest {
         category: TreatmentCategory,
         intents: Set<Intent>
     ) {
-        val treatment = TreatmentTestFactory.drugTherapy("drug therapy", category)
+        val treatment = TreatmentTestFactory.drugTreatment("drug therapy", category)
         val record =
             TreatmentTestFactory.withTreatmentHistoryEntry(TreatmentTestFactory.treatmentHistoryEntry(setOf(treatment), intents = intents))
         assertEvaluation(expectedResult, FUNCTION.evaluate(record))

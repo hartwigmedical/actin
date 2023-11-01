@@ -9,8 +9,8 @@ import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.TumorStatus
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
+import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
-import com.hartwig.actin.clinical.datamodel.treatment.Therapy
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
@@ -62,17 +62,17 @@ class CurationDatabaseReaderTest {
         assertThat(curatedCapox).isNotNull
         assertThat(curatedCapox!!.treatments()).hasSize(1)
 
-        val capoxTreatment = curatedCapox.treatments().iterator().next() as Therapy
+        val capoxTreatment = curatedCapox.treatments().iterator().next() as DrugTreatment
         assertThat(capoxTreatment.name()).isEqualTo("CAPECITABINE+OXALIPLATIN")
         assertThat(curatedCapox.startYear()).isEqualTo(2020)
         assertThat(curatedCapox.startMonth()).isNull()
 
-        val therapyHistoryDetails = curatedCapox.therapyHistoryDetails()
-        assertThat(therapyHistoryDetails!!.stopYear()).isEqualTo(2021)
-        assertThat(therapyHistoryDetails.stopMonth()).isNull()
-        assertThat(therapyHistoryDetails.cycles()).isEqualTo(6)
-        assertThat(therapyHistoryDetails.bestResponse()).isEqualTo(TreatmentResponse.PARTIAL_RESPONSE)
-        assertThat(therapyHistoryDetails.stopReason()).isEqualTo(StopReason.TOXICITY)
+        val treatmentHistoryDetails = curatedCapox.treatmentHistoryDetails()
+        assertThat(treatmentHistoryDetails!!.stopYear()).isEqualTo(2021)
+        assertThat(treatmentHistoryDetails.stopMonth()).isNull()
+        assertThat(treatmentHistoryDetails.cycles()).isEqualTo(6)
+        assertThat(treatmentHistoryDetails.bestResponse()).isEqualTo(TreatmentResponse.PARTIAL_RESPONSE)
+        assertThat(treatmentHistoryDetails.stopReason()).isEqualTo(StopReason.TOXICITY)
 
         assertThat(capoxTreatment.categories()).containsExactly(TreatmentCategory.CHEMOTHERAPY)
         assertThat(capoxTreatment.isSystemic).isTrue
