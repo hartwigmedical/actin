@@ -105,7 +105,8 @@
       "treatmentHistory": "Surgery",
       "lastTreatmentYear": 2016,
       "lastTreatmentMonth": null,
-      "isActive": false
+      "isActive": false,
+      "status": "ACTIVE"
     }
   ],
   "priorOtherConditions": [

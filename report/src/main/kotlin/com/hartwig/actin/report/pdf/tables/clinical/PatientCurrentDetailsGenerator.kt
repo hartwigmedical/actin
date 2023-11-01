@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ECGMeasure
 import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.datamodel.Surgery
+import com.hartwig.actin.clinical.datamodel.Toxicity
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
@@ -66,15 +67,24 @@ class PatientCurrentDetailsGenerator(private val record: ClinicalRecord, private
             table.addCell(Cells.createValue(Formats.twoDigitNumber(measure.value().toDouble())).toString() + " " + measure.unit())
         }
 
-        //TODO: For source EHR, only consider the most recent value of each toxicity and write these with "From EHR: " for clarity
         private fun unresolvedToxicities(record: ClinicalRecord): String {
-            val toxicitySummary = record.toxicities().filter { toxicity ->
-                val grade = toxicity.grade()
-                grade != null && grade >= 2 || toxicity.source() == ToxicitySource.QUESTIONNAIRE
-            }.joinToString(Formats.COMMA_SEPARATOR) { toxicity ->
-                toxicity.name() + (toxicity.grade()?.let { " ($it)" } ?: "")
+            val (questionnaireToxicities, ehrToxicities) = record.toxicities()
+                .partition { it.source() == ToxicitySource.QUESTIONNAIRE }
+
+            val questionnaireSummary = if (questionnaireToxicities.isEmpty()) null else formatToxicities(questionnaireToxicities)
+            val ehrSummary = filterUncuratedToxicities(ehrToxicities).let { filteredEHRToxicities ->
+                if (filteredEHRToxicities.isEmpty()) null else "From EHR: " + formatToxicities(filteredEHRToxicities)
             }
-            return Formats.valueOrDefault(toxicitySummary, "None")
+            return Formats.valueOrDefault(listOfNotNull(questionnaireSummary, ehrSummary).joinToString("; "), "None")
+        }
+
+        private fun formatToxicities(filteredEhrToxicities: List<Toxicity>) =
+            filteredEhrToxicities.joinToString(Formats.COMMA_SEPARATOR) { it.name() + (it.grade()?.let { grade -> " ($grade)" } ?: "") }
+
+        private fun filterUncuratedToxicities(toxicities: List<Toxicity>): List<Toxicity> {
+            return toxicities.filter { (it.grade() ?: -1) >= 2 }
+                .groupBy(Toxicity::name)
+                .map { (_, toxicitiesWithName) -> toxicitiesWithName.maxBy { it.evaluatedDate() } }
         }
 
         private fun complications(record: ClinicalRecord): String {
