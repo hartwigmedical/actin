@@ -22,14 +22,14 @@ class HasToxicityWithGrade internal constructor(
         val unresolvableToxicities: MutableSet<String> = Sets.newHashSet()
         val toxicities: MutableSet<String> = Sets.newHashSet()
         for (toxicity in selectRelevantToxicities(record.clinical())) {
-            var grade = toxicity.grade()
-            if (grade == null && toxicity.source() == ToxicitySource.QUESTIONNAIRE) {
+            val grade = if (toxicity.grade() == null && toxicity.source() == ToxicitySource.QUESTIONNAIRE) {
                 if (minGrade > DEFAULT_QUESTIONNAIRE_GRADE) {
                     hasUnresolvableQuestionnaireToxicities = true
                     unresolvableToxicities.add(toxicity.name())
                 }
-                grade = DEFAULT_QUESTIONNAIRE_GRADE
-            }
+                DEFAULT_QUESTIONNAIRE_GRADE
+            } else toxicity.grade()
+
             val gradeMatch = grade != null && grade >= minGrade
             val nameMatch = nameFilter == null || toxicity.name().lowercase()
                 .contains(nameFilter.lowercase())
@@ -105,7 +105,7 @@ class HasToxicityWithGrade internal constructor(
         }
 
         private fun formatToxicities(toxicityNames: Iterable<String>): String {
-            val toxicityListing = concat(toxicityNames.filter { it.isNotEmpty() })
+            val toxicityListing = concat(toxicityNames.filter(String::isNotEmpty))
             return if (toxicityListing.isNotEmpty()) " ($toxicityListing)" else ""
         }
     }

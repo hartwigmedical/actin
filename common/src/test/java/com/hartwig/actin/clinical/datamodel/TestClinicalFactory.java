@@ -71,7 +71,6 @@ public final class TestClinicalFactory {
                 .priorMolecularTests(createTestPriorMolecularTests())
                 .complications(createTestComplications())
                 .labValues(createTestLabValues())
-                .toxicityEvaluations(createTestToxicityEvaluations())
                 .toxicities(createTestToxicities())
                 .intolerances(createTestIntolerances())
                 .surgeries(createTestSurgeries())
@@ -94,7 +93,6 @@ public final class TestClinicalFactory {
                 .priorMolecularTests(createTestPriorMolecularTests())
                 .complications(createTestComplications())
                 .labValues(createTestLabValues())
-                .toxicityEvaluations(createTestToxicityEvaluations())
                 .toxicities(createTestToxicities())
                 .intolerances(createTestIntolerances())
                 .surgeries(createTestSurgeries())
@@ -448,20 +446,6 @@ public final class TestClinicalFactory {
                         .evaluatedDate(TODAY.minusDays(DAYS_SINCE_TOXICITIES))
                         .source(ToxicitySource.QUESTIONNAIRE)
                         .grade(2)
-                        .build());
-    }
-
-    @NotNull
-    private static List<ToxicityEvaluation> createTestToxicityEvaluations() {
-        return List.of(ImmutableToxicityEvaluation.builder()
-                        .evaluatedDate(TODAY.minusDays(DAYS_SINCE_TOXICITIES))
-                        .source(ToxicitySource.EHR)
-                        .toxicities(Set.of(ImmutableObservedToxicity.builder().name("Nausea").addCategories("Nausea").grade(1).build()))
-                        .build(),
-                ImmutableToxicityEvaluation.builder()
-                        .evaluatedDate(TODAY.minusDays(DAYS_SINCE_TOXICITIES))
-                        .source(ToxicitySource.QUESTIONNAIRE)
-                        .toxicities(Set.of(ImmutableObservedToxicity.builder().name("Fatigue").addCategories("Fatigue").grade(2).build()))
                         .build());
     }
 

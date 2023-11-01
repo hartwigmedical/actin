@@ -71,7 +71,9 @@ class PatientCurrentDetailsGenerator(private val record: ClinicalRecord, private
             val (questionnaireToxicities, ehrToxicities) = record.toxicities()
                 .partition { it.source() == ToxicitySource.QUESTIONNAIRE }
 
-            val questionnaireSummary = if (questionnaireToxicities.isEmpty()) null else formatToxicities(questionnaireToxicities)
+            val questionnaireSummary = if (questionnaireToxicities.isEmpty()) null else {
+                formatToxicities(questionnaireToxicities).ifEmpty { "Yes (details unknown)" }
+            }
             val ehrSummary = filterUncuratedToxicities(ehrToxicities).let { filteredEHRToxicities ->
                 if (filteredEHRToxicities.isEmpty()) null else "From EHR: " + formatToxicities(filteredEHRToxicities)
             }
