@@ -25,16 +25,16 @@ public class TreatmentHistoryAscendingDateComparator implements Comparator<Treat
 
     @Nullable
     private static Integer stopYearForHistoryEntry(@NotNull TreatmentHistoryEntry treatmentHistoryEntry) {
-        return therapyDetailField(treatmentHistoryEntry, TreatmentHistoryDetails::stopYear);
+        return treatmentDetailField(treatmentHistoryEntry, TreatmentHistoryDetails::stopYear);
     }
 
     @Nullable
     private static Integer stopMonthForHistoryEntry(@NotNull TreatmentHistoryEntry treatmentHistoryEntry) {
-        return therapyDetailField(treatmentHistoryEntry, TreatmentHistoryDetails::stopMonth);
+        return treatmentDetailField(treatmentHistoryEntry, TreatmentHistoryDetails::stopMonth);
     }
 
     @Nullable
-    private static Integer therapyDetailField(@NotNull TreatmentHistoryEntry treatmentHistoryEntry,
+    private static Integer treatmentDetailField(@NotNull TreatmentHistoryEntry treatmentHistoryEntry,
             @NotNull Function<TreatmentHistoryDetails, Integer> getField) {
         return (treatmentHistoryEntry.treatmentHistoryDetails() == null)
                 ? null

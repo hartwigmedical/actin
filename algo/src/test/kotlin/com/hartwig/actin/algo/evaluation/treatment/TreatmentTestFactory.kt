@@ -24,7 +24,7 @@ object TreatmentTestFactory {
         return ImmutableOtherTreatment.builder().name(name).isSystemic(isSystemic).categories(categories).build()
     }
 
-    fun drugTherapy(name: String, category: TreatmentCategory, types: Set<DrugType> = emptySet()): Treatment {
+    fun drugTreatment(name: String, category: TreatmentCategory, types: Set<DrugType> = emptySet()): Treatment {
         return ImmutableDrugTreatment.builder().name(name).isSystemic(true).addDrugs(
             ImmutableDrug.builder()
                 .name(name)
@@ -34,7 +34,7 @@ object TreatmentTestFactory {
         ).build()
     }
 
-    fun drugTherapyNoDrugs(name: String): Treatment {
+    fun drugTreatmentNoDrugs(name: String): Treatment {
         return ImmutableDrugTreatment.builder().name(name).isSystemic(true).build()
     }
 
@@ -50,7 +50,7 @@ object TreatmentTestFactory {
         isTrial: Boolean = false,
         numCycles: Int? = null
     ): TreatmentHistoryEntry {
-        val therapyHistoryDetails = if (stopReason != null || stopYear != null || bestResponse != null) {
+        val treatmentHistoryDetails = if (stopReason != null || stopYear != null || bestResponse != null) {
             ImmutableTreatmentHistoryDetails.builder()
                 .stopReason(stopReason)
                 .bestResponse(bestResponse)
@@ -63,7 +63,7 @@ object TreatmentTestFactory {
             .treatments(treatments)
             .startYear(startYear)
             .startMonth(startMonth)
-            .treatmentHistoryDetails(therapyHistoryDetails)
+            .treatmentHistoryDetails(treatmentHistoryDetails)
             .intents(intents)
             .isTrial(isTrial)
             .build()

@@ -77,7 +77,7 @@
       "intents": null,
       "isTrial": false,
       "trialAcronym": null,
-      "therapyHistoryDetails": {
+      "treatmentHistoryDetails": {
         "stopYear": 2020,
         "stopMonth": null,
         "ongoingAsOf": null,

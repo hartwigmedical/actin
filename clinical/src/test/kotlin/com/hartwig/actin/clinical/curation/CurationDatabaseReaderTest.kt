@@ -67,12 +67,12 @@ class CurationDatabaseReaderTest {
         assertThat(curatedCapox.startYear()).isEqualTo(2020)
         assertThat(curatedCapox.startMonth()).isNull()
 
-        val therapyHistoryDetails = curatedCapox.treatmentHistoryDetails()
-        assertThat(therapyHistoryDetails!!.stopYear()).isEqualTo(2021)
-        assertThat(therapyHistoryDetails.stopMonth()).isNull()
-        assertThat(therapyHistoryDetails.cycles()).isEqualTo(6)
-        assertThat(therapyHistoryDetails.bestResponse()).isEqualTo(TreatmentResponse.PARTIAL_RESPONSE)
-        assertThat(therapyHistoryDetails.stopReason()).isEqualTo(StopReason.TOXICITY)
+        val treatmentHistoryDetails = curatedCapox.treatmentHistoryDetails()
+        assertThat(treatmentHistoryDetails!!.stopYear()).isEqualTo(2021)
+        assertThat(treatmentHistoryDetails.stopMonth()).isNull()
+        assertThat(treatmentHistoryDetails.cycles()).isEqualTo(6)
+        assertThat(treatmentHistoryDetails.bestResponse()).isEqualTo(TreatmentResponse.PARTIAL_RESPONSE)
+        assertThat(treatmentHistoryDetails.stopReason()).isEqualTo(StopReason.TOXICITY)
 
         assertThat(capoxTreatment.categories()).containsExactly(TreatmentCategory.CHEMOTHERAPY)
         assertThat(capoxTreatment.isSystemic).isTrue

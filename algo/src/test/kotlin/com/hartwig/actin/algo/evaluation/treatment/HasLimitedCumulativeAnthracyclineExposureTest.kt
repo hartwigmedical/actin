@@ -5,7 +5,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.drugTherapy
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary
@@ -26,7 +26,7 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
 
     @Test
     fun shouldPassWithGenericChemoForNonSuspiciousCancerType() {
-        val genericChemo = drugTherapy("chemo", TreatmentCategory.CHEMOTHERAPY)
+        val genericChemo = drugTreatment("chemo", TreatmentCategory.CHEMOTHERAPY)
         assertEvaluation(
             EvaluationResult.PASS,
             FUNCTION.evaluate(patientRecord(setOf("other cancer type"), emptyList(), listOf(treatmentHistoryEntry(setOf(genericChemo)))))
@@ -62,7 +62,7 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
 
     @Test
     fun shouldReturnUndeterminedWhenChemoWithoutTypeIsProvidedAndTumorTypeIsSuspicious() {
-        val genericChemo = drugTherapy("chemo", TreatmentCategory.CHEMOTHERAPY)
+        val genericChemo = drugTreatment("chemo", TreatmentCategory.CHEMOTHERAPY)
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             FUNCTION.evaluate(patientRecord(setOf(SUSPICIOUS_CANCER_TYPE), emptyList(), listOf(treatmentHistoryEntry(setOf(genericChemo)))))
@@ -71,7 +71,7 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
 
     @Test
     fun shouldReturnUndeterminedWhenActualAnthracyclineIsProvidedRegardlessOfTumorType() {
-        val priorAnthracycline = drugTherapy("chemo", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ANTHRACYCLINE))
+        val priorAnthracycline = drugTreatment("chemo", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ANTHRACYCLINE))
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             FUNCTION.evaluate(patientRecord(null, emptyList(), listOf(treatmentHistoryEntry(setOf(priorAnthracycline)))))
