@@ -680,7 +680,7 @@ class CurationModel @VisibleForTesting internal constructor(
     fun curateIntolerance(patientId: String, intolerance: Intolerance): Intolerance {
         val reformatted = CurationUtil.capitalizeFirstLetterOnly(intolerance.name())
         val configs: Set<IntoleranceConfig> = find(database.intoleranceConfigs, reformatted)
-        val builder: ImmutableIntolerance.Builder = ImmutableIntolerance.builder().from(intolerance).name(reformatted)
+        val builder: ImmutableIntolerance.Builder = ImmutableIntolerance.builder().from(intolerance)
         if (configs.isEmpty()) {
             warnings.add(
                 CurationWarning(
