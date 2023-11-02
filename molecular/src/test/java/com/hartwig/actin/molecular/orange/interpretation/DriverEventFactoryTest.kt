@@ -8,8 +8,8 @@ import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
 import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
 import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
-import com.hartwig.hmftools.datamodel.virus.AnnotatedVirus
 import com.hartwig.hmftools.datamodel.virus.VirusInterpretation
+import com.hartwig.hmftools.datamodel.virus.VirusInterpreterEntry
 import org.apache.logging.log4j.util.Strings
 import org.junit.Assert
 import org.junit.Test
@@ -99,7 +99,7 @@ class DriverEventFactoryTest {
             return TestPurpleFactory.gainLossBuilder().gene(gene).interpretation(interpretation).build()
         }
 
-        private fun virus(name: String, interpretation: VirusInterpretation?): AnnotatedVirus {
+        private fun virus(name: String, interpretation: VirusInterpretation?): VirusInterpreterEntry {
             return TestVirusInterpreterFactory.builder().name(name).interpretation(interpretation).build()
         }
     }

@@ -14,7 +14,7 @@ import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.sort.driver.VariantComparator
-import com.hartwig.hmftools.datamodel.purple.Hotspot
+import com.hartwig.hmftools.datamodel.purple.HotspotType
 import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
 import com.hartwig.hmftools.datamodel.purple.PurpleDriver
 import com.hartwig.hmftools.datamodel.purple.PurpleDriverType
@@ -55,7 +55,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
                         .variantCopyNumber(ExtractionUtil.keep3Digits(variant.variantCopyNumber()))
                         .totalCopyNumber(ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()))
                         .isBiallelic(variant.biallelic())
-                        .isHotspot(variant.hotspot() == Hotspot.HOTSPOT)
+                        .isHotspot(variant.hotspot() == HotspotType.HOTSPOT)
                         .clonalLikelihood(ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()))
                         .phaseGroups(variant.localPhaseSets())
                         .canonicalImpact(extractCanonicalImpact(variant))
@@ -130,7 +130,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
         ): PurpleDriver? {
             var best: PurpleDriver? = null
             for (driver in drivers) {
-                val hasMutationType = MUTATION_DRIVER_TYPES.contains(driver.driver())
+                val hasMutationType = MUTATION_DRIVER_TYPES.contains(driver.type())
                 val hasMatchingGeneTranscript = driver.gene() == geneToFind && driver.transcript() == transcriptToFind
                 val isBetter = best == null || driver.driverLikelihood() > best.driverLikelihood()
                 if (hasMutationType && hasMatchingGeneTranscript && isBetter) {
@@ -167,7 +167,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
                 .hgvsProteinImpact(AminoAcid.forceSingleLetterAminoAcids(purpleTranscriptImpact.hgvsProteinImpact()))
                 .affectedCodon(purpleTranscriptImpact.affectedCodon())
                 .affectedExon(purpleTranscriptImpact.affectedExon())
-                .isSpliceRegion(purpleTranscriptImpact.spliceRegion())
+                .isSpliceRegion(purpleTranscriptImpact.inSpliceRegion())
                 .effects(toEffects(purpleTranscriptImpact.effects()))
                 .codingEffect(determineCodingEffect(purpleTranscriptImpact.codingEffect()))
                 .build()

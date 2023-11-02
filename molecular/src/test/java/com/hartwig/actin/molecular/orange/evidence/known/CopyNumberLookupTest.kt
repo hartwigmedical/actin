@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.orange.evidence.known
 import com.google.common.collect.Lists
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory
-import com.hartwig.hmftools.datamodel.linx.HomozygousDisruption
+import com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
 import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
 import com.hartwig.serve.datamodel.gene.GeneEvent
@@ -32,8 +32,8 @@ class CopyNumberLookupTest {
         val amp: KnownCopyNumber = TestServeKnownFactory.copyNumberBuilder().gene("gene 1").event(GeneEvent.AMPLIFICATION).build()
         val del: KnownCopyNumber = TestServeKnownFactory.copyNumberBuilder().gene("gene 1").event(GeneEvent.DELETION).build()
         val knownCopyNumbers: MutableList<KnownCopyNumber> = Lists.newArrayList(amp, del)
-        val homDisruptionGene1: HomozygousDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build()
-        val homDisruptionGene2: HomozygousDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 2").build()
+        val homDisruptionGene1: LinxHomozygousDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build()
+        val homDisruptionGene2: LinxHomozygousDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 2").build()
         Assert.assertEquals(del, CopyNumberLookup.findForHomozygousDisruption(knownCopyNumbers, homDisruptionGene1))
         Assert.assertNull(CopyNumberLookup.findForHomozygousDisruption(knownCopyNumbers, homDisruptionGene2))
     }

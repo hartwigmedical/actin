@@ -3,12 +3,12 @@ package com.hartwig.actin.molecular.orange.evidence
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionableEventMatcher
 import com.hartwig.actin.molecular.orange.evidence.known.KnownEventResolver
-import com.hartwig.hmftools.datamodel.linx.HomozygousDisruption
 import com.hartwig.hmftools.datamodel.linx.LinxBreakend
 import com.hartwig.hmftools.datamodel.linx.LinxFusion
+import com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption
 import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
 import com.hartwig.hmftools.datamodel.purple.PurpleVariant
-import com.hartwig.hmftools.datamodel.virus.AnnotatedVirus
+import com.hartwig.hmftools.datamodel.virus.VirusInterpreterEntry
 import com.hartwig.serve.datamodel.common.GeneAlteration
 import com.hartwig.serve.datamodel.fusion.KnownFusion
 
@@ -54,12 +54,12 @@ class EvidenceDatabase internal constructor(private val knownEventResolver: Know
         return actionableEventMatcher.matchForCopyNumber(gainLoss)
     }
 
-    fun geneAlterationForHomozygousDisruption(homozygousDisruption: HomozygousDisruption): GeneAlteration? {
-        return knownEventResolver.resolveForHomozygousDisruption(homozygousDisruption)
+    fun geneAlterationForHomozygousDisruption(linxHomozygousDisruption: LinxHomozygousDisruption): GeneAlteration? {
+        return knownEventResolver.resolveForHomozygousDisruption(linxHomozygousDisruption)
     }
 
-    fun evidenceForHomozygousDisruption(homozygousDisruption: HomozygousDisruption): ActionabilityMatch {
-        return actionableEventMatcher.matchForHomozygousDisruption(homozygousDisruption)
+    fun evidenceForHomozygousDisruption(linxHomozygousDisruption: LinxHomozygousDisruption): ActionabilityMatch {
+        return actionableEventMatcher.matchForHomozygousDisruption(linxHomozygousDisruption)
     }
 
     fun geneAlterationForBreakend(breakend: LinxBreakend): GeneAlteration? {
@@ -78,7 +78,7 @@ class EvidenceDatabase internal constructor(private val knownEventResolver: Know
         return actionableEventMatcher.matchForFusion(fusion)
     }
 
-    fun evidenceForVirus(virus: AnnotatedVirus): ActionabilityMatch {
+    fun evidenceForVirus(virus: VirusInterpreterEntry): ActionabilityMatch {
         return actionableEventMatcher.matchForVirus(virus)
     }
 }

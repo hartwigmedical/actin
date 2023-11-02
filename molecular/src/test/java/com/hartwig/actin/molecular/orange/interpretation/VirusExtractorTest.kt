@@ -5,11 +5,11 @@ import com.hartwig.actin.molecular.datamodel.driver.Virus
 import com.hartwig.actin.molecular.datamodel.driver.VirusType
 import com.hartwig.actin.molecular.orange.datamodel.virus.TestVirusInterpreterFactory
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory
-import com.hartwig.hmftools.datamodel.virus.AnnotatedVirus
 import com.hartwig.hmftools.datamodel.virus.ImmutableVirusInterpreterData
 import com.hartwig.hmftools.datamodel.virus.VirusBreakendQCStatus
 import com.hartwig.hmftools.datamodel.virus.VirusInterpretation
 import com.hartwig.hmftools.datamodel.virus.VirusInterpreterData
+import com.hartwig.hmftools.datamodel.virus.VirusInterpreterEntry
 import com.hartwig.hmftools.datamodel.virus.VirusLikelihoodType
 import org.junit.Assert
 import org.junit.Test
@@ -17,21 +17,21 @@ import org.junit.Test
 class VirusExtractorTest {
     @Test
     fun canExtractViruses() {
-        val virusEntry1: AnnotatedVirus = TestVirusInterpreterFactory.builder()
+        val virusEntry1: VirusInterpreterEntry = TestVirusInterpreterFactory.builder()
             .reported(true)
             .name("virus 1")
             .qcStatus(VirusExtractor.QC_PASS_STATUS)
             .interpretation(VirusInterpretation.HPV)
             .integrations(2)
-            .virusDriverLikelihoodType(VirusLikelihoodType.HIGH)
+            .driverLikelihood(VirusLikelihoodType.HIGH)
             .build()
-        val virusEntry2: AnnotatedVirus = TestVirusInterpreterFactory.builder()
+        val virusEntry2: VirusInterpreterEntry = TestVirusInterpreterFactory.builder()
             .reported(false)
             .name("virus 2")
             .qcStatus(VirusBreakendQCStatus.LOW_VIRAL_COVERAGE)
             .interpretation(null)
             .integrations(0)
-            .virusDriverLikelihoodType(VirusLikelihoodType.LOW)
+            .driverLikelihood(VirusLikelihoodType.LOW)
             .build()
         val virusInterpreter: VirusInterpreterData = ImmutableVirusInterpreterData.builder().addAllViruses(virusEntry1, virusEntry2).build()
         val virusExtractor = VirusExtractor(TestEvidenceDatabaseFactory.createEmptyDatabase())

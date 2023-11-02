@@ -1,15 +1,15 @@
 package com.hartwig.actin.molecular.orange.evidence.actionability
 
 import com.google.common.collect.Lists
-import com.hartwig.hmftools.datamodel.virus.AnnotatedVirus
 import com.hartwig.hmftools.datamodel.virus.VirusInterpretation
+import com.hartwig.hmftools.datamodel.virus.VirusInterpreterEntry
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType
 
 internal class VirusEvidence private constructor(private val hpvCharacteristics: List<ActionableEvent>,
-                                                 private val ebvCharacteristics: List<ActionableEvent>) : EvidenceMatcher<AnnotatedVirus> {
-    override fun findMatches(virus: AnnotatedVirus): List<ActionableEvent> {
+                                                 private val ebvCharacteristics: List<ActionableEvent>) : EvidenceMatcher<VirusInterpreterEntry> {
+    override fun findMatches(virus: VirusInterpreterEntry): List<ActionableEvent> {
         val interpretation = virus.interpretation()
         return if (interpretation == null || !virus.reported()) {
             Lists.newArrayList()
