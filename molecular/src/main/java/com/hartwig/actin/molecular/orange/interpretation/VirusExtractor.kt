@@ -14,6 +14,7 @@ import com.hartwig.hmftools.datamodel.virus.VirusInterpreterData
 import com.hartwig.hmftools.datamodel.virus.VirusLikelihoodType
 
 internal class VirusExtractor(private val evidenceDatabase: EvidenceDatabase) {
+
     fun extract(virusInterpreter: VirusInterpreterData): MutableSet<Virus> {
         val viruses: MutableSet<Virus> = Sets.newTreeSet(VirusComparator())
         for (virus in virusInterpreter.allViruses()) {

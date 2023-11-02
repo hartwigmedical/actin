@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager
 import kotlin.math.abs
 
 object VariantDedup {
+
     private const val EPSILON = 1e-10
     private val LOGGER = LogManager.getLogger(VariantDedup::class.java)
     private val PHASED_EFFECTS = setOf(PurpleVariantEffect.PHASED_INFRAME_DELETION, PurpleVariantEffect.PHASED_INFRAME_INSERTION)

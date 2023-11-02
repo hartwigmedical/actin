@@ -26,10 +26,12 @@ import com.hartwig.hmftools.datamodel.purple.PurpleVariantType
 import org.apache.logging.log4j.LogManager
 
 internal class VariantExtractor(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
+
     fun extract(purple: PurpleRecord): MutableSet<Variant> {
         val variants: MutableSet<Variant> = Sets.newTreeSet(VariantComparator())
         val purpleVariants = relevantPurpleVariants(purple)
         val drivers = relevantPurpleDrivers(purple)
+
         for (variant in VariantDedup.apply(purpleVariants)) {
             val reportedOrCoding = variant.reported() || RELEVANT_CODING_EFFECTS.contains(variant.canonicalImpact().codingEffect())
             val event = DriverEventFactory.variantEvent(variant)
@@ -41,22 +43,25 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
                 } else {
                     ActionableEvidenceFactory.createNoEvidence()
                 }
-                variants.add(ImmutableVariant.builder()
-                    .from(GeneAlterationFactory.convertAlteration(variant.gene(), evidenceDatabase.geneAlterationForVariant(variant)))
-                    .isReportable(variant.reported())
-                    .event(event)
-                    .driverLikelihood(driverLikelihood)
-                    .evidence(evidence)
-                    .type(determineVariantType(variant))
-                    .variantCopyNumber(ExtractionUtil.keep3Digits(variant.variantCopyNumber()))
-                    .totalCopyNumber(ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()))
-                    .isBiallelic(variant.biallelic())
-                    .isHotspot(variant.hotspot() == Hotspot.HOTSPOT)
-                    .clonalLikelihood(ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()))
-                    .phaseGroups(variant.localPhaseSets())
-                    .canonicalImpact(extractCanonicalImpact(variant))
-                    .otherImpacts(extractOtherImpacts(variant))
-                    .build())
+
+                variants.add(
+                    ImmutableVariant.builder()
+                        .from(GeneAlterationFactory.convertAlteration(variant.gene(), evidenceDatabase.geneAlterationForVariant(variant)))
+                        .isReportable(variant.reported())
+                        .event(event)
+                        .driverLikelihood(driverLikelihood)
+                        .evidence(evidence)
+                        .type(determineVariantType(variant))
+                        .variantCopyNumber(ExtractionUtil.keep3Digits(variant.variantCopyNumber()))
+                        .totalCopyNumber(ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()))
+                        .isBiallelic(variant.biallelic())
+                        .isHotspot(variant.hotspot() == Hotspot.HOTSPOT)
+                        .clonalLikelihood(ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()))
+                        .phaseGroups(variant.localPhaseSets())
+                        .canonicalImpact(extractCanonicalImpact(variant))
+                        .otherImpacts(extractOtherImpacts(variant))
+                        .build()
+                )
             } else check(!variant.reported()) {
                 ("Filtered a reported variant through gene filtering: '" + event + "'. Please make sure '" + variant.gene()
                         + "' is configured as a known gene.")
@@ -68,10 +73,13 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
     companion object {
         private val LOGGER = LogManager.getLogger(VariantExtractor::class.java)
         private const val ENSEMBL_TRANSCRIPT_IDENTIFIER: String = "ENST"
-        private val RELEVANT_CODING_EFFECTS = setOf(PurpleCodingEffect.MISSENSE,
+        private val RELEVANT_CODING_EFFECTS = setOf(
+            PurpleCodingEffect.MISSENSE,
             PurpleCodingEffect.SPLICE,
             PurpleCodingEffect.NONSENSE_OR_FRAMESHIFT,
-            PurpleCodingEffect.SYNONYMOUS)
+            PurpleCodingEffect.SYNONYMOUS
+        )
+
         private val MUTATION_DRIVER_TYPES = setOf(PurpleDriverType.MUTATION, PurpleDriverType.GERMLINE_MUTATION)
 
         @VisibleForTesting
@@ -116,8 +124,10 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
             }
         }
 
-        private fun findBestMutationDriver(drivers: Set<PurpleDriver>, geneToFind: String,
-                                           transcriptToFind: String): PurpleDriver? {
+        private fun findBestMutationDriver(
+            drivers: Set<PurpleDriver>, geneToFind: String,
+            transcriptToFind: String
+        ): PurpleDriver? {
             var best: PurpleDriver? = null
             for (driver in drivers) {
                 val hasMutationType = MUTATION_DRIVER_TYPES.contains(driver.driver())

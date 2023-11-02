@@ -3,7 +3,6 @@ package com.hartwig.actin.molecular.orange
 import com.hartwig.actin.util.ApplicationConfig
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
-import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -31,7 +30,6 @@ data class OrangeInterpreterConfig(
             return options
         }
 
-        @Throws(ParseException::class)
         fun createConfig(cmd: CommandLine): OrangeInterpreterConfig {
             if (cmd.hasOption(LOG_DEBUG)) {
                 Configurator.setRootLevel(Level.DEBUG)
@@ -48,14 +46,14 @@ data class OrangeInterpreterConfig(
         }
 
         val LOGGER: Logger = LogManager.getLogger(OrangeInterpreterConfig::class.java)
-        const val ORANGE_JSON: String = "orange_json"
+        private const val ORANGE_JSON: String = "orange_json"
 
         // Params for clinical annotation and interpretation
-        const val SERVE_DIRECTORY: String = "serve_directory"
-        const val EXTERNAL_TRIAL_MAPPING_TSV: String = "external_trial_mapping_tsv"
-        const val CLINICAL_JSON: String = "clinical_json"
-        const val DOID_JSON: String = "doid_json"
-        const val OUTPUT_DIRECTORY: String = "output_directory"
-        const val LOG_DEBUG: String = "log_debug"
+        private const val SERVE_DIRECTORY: String = "serve_directory"
+        private const val EXTERNAL_TRIAL_MAPPING_TSV: String = "external_trial_mapping_tsv"
+        private const val CLINICAL_JSON: String = "clinical_json"
+        private const val DOID_JSON: String = "doid_json"
+        private const val OUTPUT_DIRECTORY: String = "output_directory"
+        private const val LOG_DEBUG: String = "log_debug"
     }
 }

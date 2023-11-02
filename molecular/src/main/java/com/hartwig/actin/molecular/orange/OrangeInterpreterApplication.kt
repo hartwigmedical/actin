@@ -21,25 +21,28 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.io.IOException
-import java.util.*
 import kotlin.system.exitProcess
 
 class OrangeInterpreterApplication(private val config: OrangeInterpreterConfig) {
-    @Throws(IOException::class)
+
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
+
         LOGGER.info("Reading ORANGE json from {}", config.orangeJson)
         val orange = OrangeJson.getInstance().read(config.orangeJson)
+
         LOGGER.info("Loading evidence database")
         val serveRefGenomeVersion = toServeRefGenomeVersion(orange.refGenomeVersion())
         val knownEvents = KnownEventsLoader.readFromDir(config.serveDirectory, serveRefGenomeVersion)
         val evidenceDatabase = loadEvidenceDatabase(config, serveRefGenomeVersion, knownEvents)
+
         LOGGER.info("Interpreting ORANGE record")
         val geneFilter = GeneFilterFactory.createFromKnownGenes(knownEvents.genes())
         val molecular = OrangeInterpreter(geneFilter, evidenceDatabase).interpret(orange)
+
         MolecularPrinter.printRecord(molecular)
         MolecularRecordJson.write(molecular, config.outputDirectory)
+
         LOGGER.info("Done!")
     }
 
@@ -48,13 +51,16 @@ class OrangeInterpreterApplication(private val config: OrangeInterpreterConfig) 
         const val APPLICATION: String = "ACTIN ORANGE Interpreter"
         private val VERSION = OrangeInterpreterApplication::class.java.getPackage().implementationVersion
 
-        @Throws(IOException::class)
-        private fun loadEvidenceDatabase(config: OrangeInterpreterConfig, serveRefGenomeVersion: RefGenome,
-                                         knownEvents: KnownEvents): EvidenceDatabase {
+        private fun loadEvidenceDatabase(
+            config: OrangeInterpreterConfig, serveRefGenomeVersion: RefGenome,
+            knownEvents: KnownEvents
+        ): EvidenceDatabase {
             val actionableEvents = ActionableEventsLoader.readFromDir(config.serveDirectory, serveRefGenomeVersion)
             LOGGER.info("Loading external trial to ACTIN mapping TSV from {}", config.externalTrialMappingTsv)
+
             val mappings = ExternalTrialMappingFile.read(config.externalTrialMappingTsv)
             LOGGER.info(" Loaded {} mappings", mappings.size)
+
             LOGGER.info("Loading clinical json from {}", config.clinicalJson)
             val clinical = ClinicalRecordJson.read(config.clinicalJson)
             val tumorDoids = clinical.tumor().doids().orEmpty().filterNotNull().toMutableSet()
@@ -63,8 +69,10 @@ class OrangeInterpreterApplication(private val config: OrangeInterpreterConfig) 
             } else {
                 LOGGER.info(" Tumor DOIDs determined to be: {}", tumorDoids.joinToString(", "))
             }
+
             LOGGER.info("Loading DOID tree from {}", config.doidJson)
             val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
+
             LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size)
             return EvidenceDatabaseFactory.create(knownEvents, actionableEvents, mappings, doidEntry, tumorDoids)
         }
@@ -93,5 +101,6 @@ fun main(args: Array<String>) {
         HelpFormatter().printHelp(OrangeInterpreterApplication.APPLICATION, options)
         exitProcess(1)
     }
+
     OrangeInterpreterApplication(config).run()
 }
