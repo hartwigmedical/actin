@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.drugTherapy
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
@@ -17,7 +17,7 @@ class HasHadLimitedTreatmentsWithCategoryTest {
 
     @Test
     fun shouldPassForWrongTreatmentCategory() {
-        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTherapy("test", TreatmentCategory.IMMUNOTHERAPY)))
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)))
         assertEvaluation(
             EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
         )
@@ -25,7 +25,7 @@ class HasHadLimitedTreatmentsWithCategoryTest {
 
     @Test
     fun shouldFailWhenTreatmentsWithCorrectCategoryExceedLimit() {
-        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTherapy("test", MATCHING_CATEGORY)))
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY)))
         assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
         assertEvaluation(
             EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
@@ -34,7 +34,7 @@ class HasHadLimitedTreatmentsWithCategoryTest {
 
     @Test
     fun shouldReturnUndeterminedWhenTrialTreatmentsExceedLimit() {
-        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTherapy("test", TreatmentCategory.IMMUNOTHERAPY)), isTrial = true)
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)), isTrial = true)
         assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
         assertEvaluation(
             EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
@@ -44,7 +44,7 @@ class HasHadLimitedTreatmentsWithCategoryTest {
     @Test
     fun shouldIgnoreTrialMatchesAndPassWhenLookingForUnlikelyTrialCategories() {
         val function = HasHadLimitedTreatmentsWithCategory(TreatmentCategory.TRANSPLANTATION, 1)
-        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTherapy("test", TreatmentCategory.IMMUNOTHERAPY)), isTrial = true)
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)), isTrial = true)
         assertEvaluation(
             EvaluationResult.PASS, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
         )

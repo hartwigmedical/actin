@@ -3,9 +3,7 @@ package com.hartwig.actin.molecular.util;
 public final class MolecularCharacteristicEvents {
 
     public static final String MICROSATELLITE_UNSTABLE = "MSI";
-    public static final String MICROSATELLITE_POTENTIALLY_UNSTABLE = "Potential MSI";
     public static final String HOMOLOGOUS_REPAIR_DEFICIENT = "HRD";
-    public static final String HOMOLOGOUS_REPAIR_POTENTIALLY_DEFICIENT = "Potential HRD";
     public static final String HIGH_TUMOR_MUTATIONAL_BURDEN = "TMB High";
     public static final String ALMOST_SUFFICIENT_TUMOR_MUTATIONAL_BURDEN = "Almost sufficient TMB";
     public static final String HIGH_TUMOR_MUTATIONAL_LOAD = "TML High";

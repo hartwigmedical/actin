@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatment
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import org.junit.Test
@@ -70,7 +70,7 @@ class HasHadSpecificTreatmentSinceDateTest {
     }
 
     companion object {
-        private val TREATMENT_QUERY = ImmutableDrugTherapy.builder()
+        private val TREATMENT_QUERY = ImmutableDrugTreatment.builder()
             .name("treatment")
             .addDrugs(ImmutableDrug.builder().name("Chemo drug").category(TreatmentCategory.CHEMOTHERAPY).build())
             .build()

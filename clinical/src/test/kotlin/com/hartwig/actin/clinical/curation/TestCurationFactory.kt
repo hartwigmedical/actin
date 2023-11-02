@@ -33,7 +33,7 @@ import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
 import com.hartwig.actin.clinical.datamodel.TumorStatus
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import com.hartwig.actin.doid.TestDoidModelFactory
@@ -139,7 +139,7 @@ object TestCurationFactory {
             .build()
 
         val therapy =
-            ImmutableDrugTherapy.builder().name("Cisplatin").addDrugs(cisplatin).isSystemic(true).build()
+            ImmutableDrugTreatment.builder().name("Cisplatin").addDrugs(cisplatin).isSystemic(true).build()
         return listOf(
             TreatmentHistoryEntryConfig(
                 input = "Cis 2020 2021",

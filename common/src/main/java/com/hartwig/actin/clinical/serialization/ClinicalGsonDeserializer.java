@@ -67,24 +67,23 @@ import com.hartwig.actin.clinical.datamodel.ToxicityEvaluation;
 import com.hartwig.actin.clinical.datamodel.TumorDetails;
 import com.hartwig.actin.clinical.datamodel.VitalFunction;
 import com.hartwig.actin.clinical.datamodel.treatment.Drug;
-import com.hartwig.actin.clinical.datamodel.treatment.DrugTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRadiotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatmentType;
 import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy;
-import com.hartwig.actin.clinical.datamodel.treatment.Therapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentClass;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType;
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTherapyHistoryDetails;
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent;
-import com.hartwig.actin.clinical.datamodel.treatment.history.TherapyHistoryDetails;
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
 
 import org.jetbrains.annotations.NotNull;
@@ -116,13 +115,12 @@ public class ClinicalGsonDeserializer {
                 .registerTypeAdapter(AtcLevel.class, new AbstractClassAdapter<AtcLevel>(ImmutableAtcLevel.class))
                 .registerTypeAdapter(Dosage.class, new AbstractClassAdapter<Dosage>(ImmutableDosage.class))
                 .registerTypeAdapter(Drug.class, new AbstractClassAdapter<Drug>(ImmutableDrug.class))
-                .registerTypeAdapter(DrugTherapy.class, new AbstractClassAdapter<DrugTherapy>(ImmutableDrugTherapy.class))
+                .registerTypeAdapter(DrugTreatment.class, new AbstractClassAdapter<DrugTreatment>(ImmutableDrugTreatment.class))
                 .registerTypeAdapter(OtherTreatment.class, new AbstractClassAdapter<OtherTreatment>(ImmutableOtherTreatment.class))
                 .registerTypeAdapter(Radiotherapy.class, new AbstractClassAdapter<Radiotherapy>(ImmutableRadiotherapy.class))
                 .registerTypeAdapter(Treatment.class, new TreatmentAdapter())
-                .registerTypeAdapter(Therapy.class, new TreatmentAdapter())
-                .registerTypeAdapter(TherapyHistoryDetails.class,
-                        new AbstractClassAdapter<TherapyHistoryDetails>(ImmutableTherapyHistoryDetails.class))
+                .registerTypeAdapter(TreatmentHistoryDetails.class,
+                        new AbstractClassAdapter<TreatmentHistoryDetails>(ImmutableTreatmentHistoryDetails.class))
                 .registerTypeAdapter(new TypeToken<ImmutableList<String>>() {
                 }.getType(), new ImmutableListAdapter<String>(String.class))
                 .registerTypeAdapter(new TypeToken<ImmutableList<TreatmentHistoryEntry>>() {

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Value.Immutable
 @Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class TherapyHistoryDetails {
+public abstract class TreatmentHistoryDetails {
 
     @Nullable
     public abstract Integer stopYear();

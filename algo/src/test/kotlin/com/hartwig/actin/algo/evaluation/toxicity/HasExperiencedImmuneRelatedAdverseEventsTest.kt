@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
@@ -53,7 +53,7 @@ class HasExperiencedImmuneRelatedAdverseEventsTest {
         }
 
         private fun treatment(category: TreatmentCategory): Treatment {
-            return ImmutableDrugTherapy.builder().name("").isSystemic(true).addDrugs(
+            return ImmutableDrugTreatment.builder().name("").isSystemic(true).addDrugs(
                 ImmutableDrug.builder()
                     .name("")
                     .category(category)

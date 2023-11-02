@@ -1,7 +1,7 @@
 [
   {
     "name": "CAPECITABINE+OXALIPLATIN",
-    "treatmentClass": "DRUG_THERAPY",
+    "treatmentClass": "DRUG_TREATMENT",
     "synonyms": [],
     "isSystemic": true,
     "drugs": [

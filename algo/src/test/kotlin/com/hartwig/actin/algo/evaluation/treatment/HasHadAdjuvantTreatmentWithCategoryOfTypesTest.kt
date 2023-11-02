@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.drugTherapy
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.withTreatmentHistoryEntry
@@ -74,7 +74,7 @@ class HasHadAdjuvantTreatmentWithCategoryOfTypesTest {
         types: Set<DrugType>,
         intents: Set<Intent>
     ) {
-        val treatment = drugTherapy("drug therapy", category, types)
+        val treatment = drugTreatment("drug therapy", category, types)
         val record = withTreatmentHistoryEntry(treatmentHistoryEntry(setOf(treatment), intents = intents))
         assertEvaluation(expectedResult, FUNCTION.evaluate(record))
     }

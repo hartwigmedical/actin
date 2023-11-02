@@ -77,28 +77,28 @@ class IsHomologousRepairDeficient internal constructor() : EvaluationFunction {
                         "Homologous repair deficiency (HRD) status detected, together with biallelic drivers in HRD genes: "
                                 + concat(hrdGenesWithBiallelicDriver)
                     )
-                    .addPassGeneralMessages("Tumor is HRD")
+                    .addPassGeneralMessages("Tumor is HRD and biallelic drivers in HRD genes detected")
                     .build()
             } else if (hrdGenesWithNonBiallelicDriver.isNotEmpty()) {
                 unrecoverable()
                     .result(EvaluationResult.WARN)
-                    .addInclusionMolecularEvents(MolecularCharacteristicEvents.HOMOLOGOUS_REPAIR_POTENTIALLY_DEFICIENT)
+                    .addInclusionMolecularEvents(MolecularCharacteristicEvents.HOMOLOGOUS_REPAIR_DEFICIENT)
                     .addWarnSpecificMessages(
                         "Homologous repair deficiency (HRD) status detected, together with non-biallelic drivers in HRD genes ("
                                 + concat(MolecularConstants.HRD_GENES) + ") were detected"
                     )
-                    .addWarnGeneralMessages("Tumor is HRD")
+                    .addWarnGeneralMessages("Tumor is HRD (but with only non-biallelic drivers in HRD genes)")
                     .build()
             } else {
                 unrecoverable()
                     .result(EvaluationResult.WARN)
-                    .addInclusionMolecularEvents(MolecularCharacteristicEvents.HOMOLOGOUS_REPAIR_POTENTIALLY_DEFICIENT)
+                    .addInclusionMolecularEvents(MolecularCharacteristicEvents.HOMOLOGOUS_REPAIR_DEFICIENT)
                     .addWarnSpecificMessages(
                         "Homologous repair deficiency (HRD) status detected, without drivers in HRD genes (" + concat(
                             MolecularConstants.HRD_GENES
                         ) + ") detected"
                     )
-                    .addWarnGeneralMessages("Tumor is HRD")
+                    .addWarnGeneralMessages("Tumor is HRD (but without detected drivers in HRD genes)")
                     .build()
             }
         }

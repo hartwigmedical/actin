@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 import com.hartwig.actin.clinical.datamodel.treatment.Drug;
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTherapy;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTreatment;
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
 
@@ -25,7 +25,7 @@ public final class TestTreatmentDatabaseFactory {
                 .collect(Collectors.toMap(drug -> drug.name().toLowerCase(), Function.identity()));
 
         Treatment capox =
-                ImmutableDrugTherapy.builder().name(CAPECITABINE_OXALIPLATIN).addAllDrugs(drugMap.values()).isSystemic(true).build();
+                ImmutableDrugTreatment.builder().name(CAPECITABINE_OXALIPLATIN).addAllDrugs(drugMap.values()).isSystemic(true).build();
 
         return new TreatmentDatabase(drugMap, Map.of(capox.name().toLowerCase(), capox));
     }

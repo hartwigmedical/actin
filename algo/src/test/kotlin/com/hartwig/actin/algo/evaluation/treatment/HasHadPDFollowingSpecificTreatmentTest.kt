@@ -17,7 +17,7 @@ class HasHadPDFollowingSpecificTreatmentTest {
     @Test
     fun shouldFailForOtherTreatmentWithPD() {
         val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
-            setOf(TreatmentTestFactory.drugTherapy("test", TreatmentCategory.IMMUNOTHERAPY)), stopReason = StopReason.PROGRESSIVE_DISEASE
+            setOf(TreatmentTestFactory.drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)), stopReason = StopReason.PROGRESSIVE_DISEASE
         )
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
@@ -57,7 +57,7 @@ class HasHadPDFollowingSpecificTreatmentTest {
     @Test
     fun shouldReturnUndeterminedWithTrialTreatmentEntryInHistory() {
         val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
-            setOf(TreatmentTestFactory.drugTherapy("test", TreatmentCategory.IMMUNOTHERAPY)),
+            setOf(TreatmentTestFactory.drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)),
             isTrial = true
         )
         assertEvaluation(

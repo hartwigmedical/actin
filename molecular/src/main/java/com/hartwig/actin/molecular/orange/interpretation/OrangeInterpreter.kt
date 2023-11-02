@@ -14,6 +14,7 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
 
 class OrangeInterpreter(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
+
     fun interpret(record: OrangeRecord): MolecularRecord {
         validateOrangeRecord(record)
         val driverExtractor: DriverExtractor = DriverExtractor.create(geneFilter, evidenceDatabase)
