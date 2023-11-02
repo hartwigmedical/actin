@@ -50,7 +50,6 @@ class OrangeInterpreter(private val geneFilter: GeneFilter, private val evidence
         }
 
         fun containsTumorCells(record: OrangeRecord): Boolean {
-            // TODO do we care about contamination here?
             return PurpleQCStatus.FAIL_NO_TUMOR !in record.purple().fit().qc().status();
         }
 
