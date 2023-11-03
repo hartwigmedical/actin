@@ -12,11 +12,9 @@ import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance
-import com.hartwig.actin.clinical.datamodel.ImmutableObservedToxicity
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails
 import com.hartwig.actin.clinical.datamodel.ImmutableSurgery
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity
-import com.hartwig.actin.clinical.datamodel.ImmutableToxicityEvaluation
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
 import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction
 import com.hartwig.actin.clinical.datamodel.Intolerance
@@ -29,7 +27,6 @@ import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.Surgery
 import com.hartwig.actin.clinical.datamodel.SurgeryStatus
 import com.hartwig.actin.clinical.datamodel.Toxicity
-import com.hartwig.actin.clinical.datamodel.ToxicityEvaluation
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.VitalFunction
@@ -70,22 +67,6 @@ class ClinicalIngestion(
             val questionnaire = feed.latestQuestionnaireEntry(subject)?.let { QuestionnaireExtraction.extract(it) }
 
             val extractedToxicities = extractToxicities(patientId, subject, questionnaire)
-            val toxicityEvaluations: List<ToxicityEvaluation> = extractedToxicities
-                .map { toxicity: Toxicity ->
-                    ImmutableToxicityEvaluation.builder()
-                        .toxicities(
-                            setOf(
-                                ImmutableObservedToxicity.builder()
-                                    .name(toxicity.name())
-                                    .addAllCategories(toxicity.categories())
-                                    .grade(toxicity.grade())
-                                    .build()
-                            )
-                        )
-                        .evaluatedDate(toxicity.evaluatedDate())
-                        .source(toxicity.source())
-                        .build()
-                }
 
             val record = ImmutableClinicalRecord.builder()
                 .patientId(patientId)
@@ -99,7 +80,6 @@ class ClinicalIngestion(
                 .complications(extractComplications(patientId, questionnaire))
                 .labValues(extractLabValues(patientId, subject))
                 .toxicities(extractedToxicities)
-                .toxicityEvaluations(toxicityEvaluations)
                 .intolerances(extractIntolerances(patientId, subject))
                 .surgeries(extractSurgeries(subject))
                 .bodyWeights(extractBodyWeights(subject))

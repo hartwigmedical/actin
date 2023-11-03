@@ -322,12 +322,7 @@ class CurationModel @VisibleForTesting internal constructor(
     }
 
     fun curateQuestionnaireToxicities(patientId: String, inputs: List<String>?, date: LocalDate): List<Toxicity> {
-        if (inputs == null) {
-            return Lists.newArrayList()
-        }
-
-        val toxicities: MutableList<Toxicity> = Lists.newArrayList()
-        for (input in inputs) {
+        return inputs?.flatMap { input ->
             val trimmedInput = fullTrim(input)
             val configs: Set<ToxicityConfig> = find(database.toxicityConfigs, trimmedInput)
             if (configs.isEmpty()) {
@@ -340,21 +335,17 @@ class CurationModel @VisibleForTesting internal constructor(
                     )
                 )
             }
-            for (config in configs) {
-                if (!config.ignore) {
-                    toxicities.add(
-                        ImmutableToxicity.builder()
-                            .name(config.name)
-                            .categories(config.categories)
-                            .evaluatedDate(date)
-                            .source(ToxicitySource.QUESTIONNAIRE)
-                            .grade(config.grade)
-                            .build()
-                    )
+            configs.filterNot(ToxicityConfig::ignore)
+                .map { config ->
+                    ImmutableToxicity.builder()
+                        .name(config.name)
+                        .categories(config.categories)
+                        .evaluatedDate(date)
+                        .source(ToxicitySource.QUESTIONNAIRE)
+                        .grade(config.grade)
+                        .build()
                 }
-            }
-        }
-        return toxicities
+        } ?: emptyList()
     }
 
     fun curateECG(patientId: String, input: ECG?): ECG? {
@@ -643,7 +634,6 @@ class CurationModel @VisibleForTesting internal constructor(
     fun curateIntolerance(patientId: String, intolerance: Intolerance): Intolerance {
         val reformatted = CurationUtil.capitalizeFirstLetterOnly(intolerance.name())
         val configs: Set<IntoleranceConfig> = find(database.intoleranceConfigs, reformatted)
-        var name = reformatted
         val builder: ImmutableIntolerance.Builder = ImmutableIntolerance.builder().from(intolerance)
         if (configs.isEmpty()) {
             warnings.add(
@@ -665,8 +655,7 @@ class CurationModel @VisibleForTesting internal constructor(
             )
         } else {
             val config: IntoleranceConfig = configs.iterator().next()
-            name = config.name
-            builder.name(name).doids(config.doids)
+            builder.name(config.name).doids(config.doids)
         }
 
         // TODO: add ATC code of medication to subcategories

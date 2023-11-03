@@ -1,11 +1,11 @@
 package com.hartwig.actin.molecular.orange.evidence.actionability
 
-import com.hartwig.hmftools.datamodel.linx.HomozygousDisruption
 import com.hartwig.hmftools.datamodel.linx.LinxBreakend
 import com.hartwig.hmftools.datamodel.linx.LinxFusion
+import com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption
 import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
 import com.hartwig.hmftools.datamodel.purple.PurpleVariant
-import com.hartwig.hmftools.datamodel.virus.AnnotatedVirus
+import com.hartwig.hmftools.datamodel.virus.VirusInterpreterEntry
 
 class ActionableEventMatcher internal constructor(private val personalizedActionabilityFactory: PersonalizedActionabilityFactory,
                                                   private val signatureEvidence: SignatureEvidence, private val variantEvidence: VariantEvidence,
@@ -36,8 +36,8 @@ class ActionableEventMatcher internal constructor(private val personalizedAction
         return personalizedActionabilityFactory.create(copyNumberEvidence.findMatches(gainLoss))
     }
 
-    fun matchForHomozygousDisruption(homozygousDisruption: HomozygousDisruption): ActionabilityMatch {
-        return personalizedActionabilityFactory.create(homozygousDisruptionEvidence.findMatches(homozygousDisruption))
+    fun matchForHomozygousDisruption(linxHomozygousDisruption: LinxHomozygousDisruption): ActionabilityMatch {
+        return personalizedActionabilityFactory.create(homozygousDisruptionEvidence.findMatches(linxHomozygousDisruption))
     }
 
     fun matchForBreakend(breakend: LinxBreakend): ActionabilityMatch {
@@ -48,7 +48,7 @@ class ActionableEventMatcher internal constructor(private val personalizedAction
         return personalizedActionabilityFactory.create(fusionEvidence.findMatches(fusion))
     }
 
-    fun matchForVirus(virus: AnnotatedVirus): ActionabilityMatch {
+    fun matchForVirus(virus: VirusInterpreterEntry): ActionabilityMatch {
         return personalizedActionabilityFactory.create(virusEvidence.findMatches(virus))
     }
 }

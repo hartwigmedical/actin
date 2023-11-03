@@ -1,15 +1,15 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.hartwig.hmftools.datamodel.linx.HomozygousDisruption
 import com.hartwig.hmftools.datamodel.linx.LinxBreakend
 import com.hartwig.hmftools.datamodel.linx.LinxFusion
+import com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
 import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
 import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
 import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
-import com.hartwig.hmftools.datamodel.virus.AnnotatedVirus
 import com.hartwig.hmftools.datamodel.virus.VirusInterpretation
+import com.hartwig.hmftools.datamodel.virus.VirusInterpreterEntry
 import org.apache.logging.log4j.LogManager
 import java.util.*
 
@@ -54,8 +54,8 @@ object DriverEventFactory {
         }
     }
 
-    fun homozygousDisruptionEvent(homozygousDisruption: HomozygousDisruption): String {
-        return homozygousDisruption.gene() + " hom disruption"
+    fun homozygousDisruptionEvent(linxHomozygousDisruption: LinxHomozygousDisruption): String {
+        return linxHomozygousDisruption.gene() + " hom disruption"
     }
 
     fun disruptionEvent(breakend: LinxBreakend): String {
@@ -66,7 +66,7 @@ object DriverEventFactory {
         return fusion.geneStart() + " - " + fusion.geneEnd() + " fusion"
     }
 
-    fun virusEvent(virus: AnnotatedVirus): String {
+    fun virusEvent(virus: VirusInterpreterEntry): String {
         val interpretation = virus.interpretation()
         return if (interpretation != null) {
             if (virus.interpretation() == VirusInterpretation.HPV) {

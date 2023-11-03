@@ -25,7 +25,7 @@ class DisruptionExtractorTest {
         val structuralVariant1: LinxSvAnnotation = TestLinxFactory.structuralVariantBuilder().svId(1).clusterId(5).build()
         val linxBreakend: LinxBreakend = TestLinxFactory.breakendBuilder()
             .gene("gene 1")
-            .reportedDisruption(true)
+            .reported(true)
             .type(LinxBreakendType.DUP)
             .junctionCopyNumber(0.2)
             .undisruptedCopyNumber(1.6)
@@ -55,7 +55,7 @@ class DisruptionExtractorTest {
 
     @Test(expected = IllegalStateException::class)
     fun shouldThrowExceptionWhenFilteringReportedDisruption() {
-        val linxBreakend: LinxBreakend = TestLinxFactory.breakendBuilder().gene("gene 1").reportedDisruption(true).build()
+        val linxBreakend: LinxBreakend = TestLinxFactory.breakendBuilder().gene("gene 1").reported(true).build()
         val linx: LinxRecord = ImmutableLinxRecord.builder()
             .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
             .addAllSomaticBreakends(linxBreakend)

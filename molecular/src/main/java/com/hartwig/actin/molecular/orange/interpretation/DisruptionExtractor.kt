@@ -28,7 +28,7 @@ internal class DisruptionExtractor(private val geneFilter: GeneFilter, private v
                     disruptions.add(ImmutableDisruption.builder()
                         .from(GeneAlterationFactory.convertAlteration(breakend.gene(),
                             evidenceDatabase.geneAlterationForBreakend(breakend)))
-                        .isReportable(breakend.reportedDisruption())
+                        .isReportable(breakend.reported())
                         .event(event)
                         .driverLikelihood(DriverLikelihood.LOW)
                         .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForBreakend(breakend)))
@@ -40,7 +40,7 @@ internal class DisruptionExtractor(private val geneFilter: GeneFilter, private v
                         .clusterGroup(lookupClusterId(breakend, linx.allSomaticStructuralVariants()))
                         .build())
                 }
-            } else check(!breakend.reportedDisruption()) {
+            } else check(!breakend.reported()) {
                 ("Filtered a reported breakend through gene filtering: '" + event + "'. Please make sure '" + breakend.gene()
                         + "' is configured as a known gene.")
             }

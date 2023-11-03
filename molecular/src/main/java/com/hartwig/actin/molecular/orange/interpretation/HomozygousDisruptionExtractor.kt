@@ -32,8 +32,8 @@ internal class HomozygousDisruptionExtractor(private val geneFilter: GeneFilter,
     }
 
     companion object {
-        private fun relevantHomozygousDisruptions(linx: LinxRecord): MutableSet<com.hartwig.hmftools.datamodel.linx.HomozygousDisruption> {
-            val disruptions: MutableSet<com.hartwig.hmftools.datamodel.linx.HomozygousDisruption> = Sets.newHashSet()
+        private fun relevantHomozygousDisruptions(linx: LinxRecord): MutableSet<com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption> {
+            val disruptions: MutableSet<com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption> = Sets.newHashSet()
             disruptions.addAll(linx.somaticHomozygousDisruptions())
             val germlineHomozygousDisruptions = linx.germlineHomozygousDisruptions()
             if (germlineHomozygousDisruptions != null) {

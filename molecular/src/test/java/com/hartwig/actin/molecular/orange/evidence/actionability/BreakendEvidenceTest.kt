@@ -17,16 +17,16 @@ class BreakendEvidenceTest {
         val gene3: ActionableGene = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.INACTIVATION).gene("gene 1").build()
         val actionable: ActionableEvents = ImmutableActionableEvents.builder().genes(Lists.newArrayList(gene1, gene2, gene3)).build()
         val breakendEvidence: BreakendEvidence = BreakendEvidence.create(actionable)
-        val evidencesMatch = breakendEvidence.findMatches(TestLinxFactory.breakendBuilder().gene("gene 1").reportedDisruption(true).build())
+        val evidencesMatch = breakendEvidence.findMatches(TestLinxFactory.breakendBuilder().gene("gene 1").reported(true).build())
         Assert.assertEquals(1, evidencesMatch.size.toLong())
         Assert.assertTrue(evidencesMatch.contains(gene1))
 
         // Not reported
-        Assert.assertTrue(breakendEvidence.findMatches(TestLinxFactory.breakendBuilder().gene("gene 1").reportedDisruption(false).build())
+        Assert.assertTrue(breakendEvidence.findMatches(TestLinxFactory.breakendBuilder().gene("gene 1").reported(false).build())
             .isEmpty())
 
         // Wrong event
-        Assert.assertTrue(breakendEvidence.findMatches(TestLinxFactory.breakendBuilder().gene("gene 2").reportedDisruption(true).build())
+        Assert.assertTrue(breakendEvidence.findMatches(TestLinxFactory.breakendBuilder().gene("gene 2").reported(true).build())
             .isEmpty())
     }
 }

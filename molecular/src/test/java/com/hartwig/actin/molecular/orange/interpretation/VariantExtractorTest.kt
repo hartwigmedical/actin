@@ -11,7 +11,7 @@ import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory
-import com.hartwig.hmftools.datamodel.purple.Hotspot
+import com.hartwig.hmftools.datamodel.purple.HotspotType
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord
 import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
 import com.hartwig.hmftools.datamodel.purple.PurpleDriver
@@ -30,19 +30,19 @@ class VariantExtractorTest {
         val driver1: PurpleDriver = TestPurpleFactory.driverBuilder()
             .gene("gene 1")
             .transcript("ENST-canonical")
-            .driver(PurpleDriverType.MUTATION)
+            .type(PurpleDriverType.MUTATION)
             .driverLikelihood(0.1)
             .build()
         val driver2: PurpleDriver = TestPurpleFactory.driverBuilder()
             .gene("gene 1")
             .transcript("ENST-canonical")
-            .driver(PurpleDriverType.GERMLINE_MUTATION)
+            .type(PurpleDriverType.GERMLINE_MUTATION)
             .driverLikelihood(0.6)
             .build()
         val driver3: PurpleDriver = TestPurpleFactory.driverBuilder()
             .gene("gene 1")
             .transcript("ENST-weird")
-            .driver(PurpleDriverType.GERMLINE_MUTATION)
+            .type(PurpleDriverType.GERMLINE_MUTATION)
             .driverLikelihood(0.9)
             .build()
         val purpleVariant1: PurpleVariant = TestPurpleFactory.variantBuilder()
@@ -52,7 +52,7 @@ class VariantExtractorTest {
             .variantCopyNumber(0.4)
             .adjustedCopyNumber(0.8)
             .biallelic(false)
-            .hotspot(Hotspot.NON_HOTSPOT)
+            .hotspot(HotspotType.NON_HOTSPOT)
             .subclonalLikelihood(0.3)
             .localPhaseSets(Lists.newArrayList(1))
             .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder().transcript("ENST-canonical")
@@ -60,7 +60,7 @@ class VariantExtractorTest {
                 .hgvsProteinImpact("canonical hgvs protein")
                 .affectedCodon(2)
                 .affectedExon(3)
-                .spliceRegion(false)
+                .inSpliceRegion(false)
                 .addEffects(PurpleVariantEffect.MISSENSE)
                 .codingEffect(PurpleCodingEffect.MISSENSE)
                 .build())
@@ -69,7 +69,7 @@ class VariantExtractorTest {
                 .hgvsProteinImpact("other hgvs protein")
                 .affectedCodon(null)
                 .affectedExon(null)
-                .spliceRegion(true)
+                .inSpliceRegion(true)
                 .addEffects(PurpleVariantEffect.SPLICE_DONOR, PurpleVariantEffect.SYNONYMOUS)
                 .codingEffect(PurpleCodingEffect.SPLICE)
                 .build())

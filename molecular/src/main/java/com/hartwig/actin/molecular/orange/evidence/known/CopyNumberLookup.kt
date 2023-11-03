@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange.evidence.known
 
-import com.hartwig.hmftools.datamodel.linx.HomozygousDisruption
+import com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
 import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
 import com.hartwig.serve.datamodel.gene.GeneEvent
@@ -35,9 +35,9 @@ internal object CopyNumberLookup {
     }
 
     fun findForHomozygousDisruption(knownCopyNumbers: Iterable<KnownCopyNumber>,
-                                    homozygousDisruption: HomozygousDisruption): KnownCopyNumber? {
+                                    linxHomozygousDisruption: LinxHomozygousDisruption): KnownCopyNumber? {
         for (knownCopyNumber in knownCopyNumbers) {
-            if (knownCopyNumber.event() == GeneEvent.DELETION && knownCopyNumber.gene() == homozygousDisruption.gene()) {
+            if (knownCopyNumber.event() == GeneEvent.DELETION && knownCopyNumber.gene() == linxHomozygousDisruption.gene()) {
                 return knownCopyNumber
             }
         }
