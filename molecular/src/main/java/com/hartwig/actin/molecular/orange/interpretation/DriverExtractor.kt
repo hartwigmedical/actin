@@ -22,10 +22,13 @@ internal class DriverExtractor private constructor(private val variantExtractor:
         val copyNumbers = copyNumberExtractor.extract(record.purple())
         LOGGER.info(" Extracted {} copy numbers of which {} reportable", copyNumbers.size, reportableCount(copyNumbers))
         val homozygousDisruptions = homozygousDisruptionExtractor.extractHomozygousDisruptions(record.linx())
-        LOGGER.info(" Extracted {} homozygous disruptions of which {} reportable",
+        LOGGER.info(
+            " Extracted {} homozygous disruptions of which {} reportable",
             homozygousDisruptions.size,
-            reportableCount(homozygousDisruptions))
-        val disruptions = disruptionExtractor.extractDisruptions(record.linx(), reportableLostGenes(copyNumbers))
+            reportableCount(homozygousDisruptions)
+        )
+        val disruptions =
+            disruptionExtractor.extractDisruptions(record.linx(), reportableLostGenes(copyNumbers), record.linx().somaticDrivers())
         LOGGER.info(" Extracted {} disruptions of which {} reportable", disruptions.size, reportableCount(disruptions))
         val fusions = fusionExtractor.extract(record.linx())
         LOGGER.info(" Extracted {} fusions of which {} reportable", fusions.size, reportableCount(fusions))
