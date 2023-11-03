@@ -49,7 +49,7 @@ class DisruptionExtractorTest {
         val disruptions = disruptionExtractor.extractDisruptions(linx, Sets.newHashSet(), listOf())
         Assert.assertEquals(1, disruptions.size.toLong())
         val disruption = disruptions.iterator().next()
-        Assert.assertTrue(disruption.isReportable())
+        Assert.assertTrue(disruption.isReportable)
         Assert.assertEquals(DriverLikelihood.LOW, disruption.driverLikelihood())
         Assert.assertEquals(DisruptionType.DUP, disruption.type())
         Assert.assertEquals(0.2, disruption.junctionCopyNumber(), EPSILON)
