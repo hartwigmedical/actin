@@ -41,9 +41,11 @@ class DriverExtractorTest {
 
     @Test
     fun canDetermineReportableLostGenes() {
-        val copyNumbers: MutableList<CopyNumber> = Lists.newArrayList(TestCopyNumberFactory.builder().gene("gene 1").type(CopyNumberType.LOSS).isReportable(true).build(),
+        val copyNumbers: MutableList<CopyNumber> = Lists.newArrayList(
+            TestCopyNumberFactory.builder().gene("gene 1").type(CopyNumberType.LOSS).isReportable(true).build(),
             TestCopyNumberFactory.builder().gene("gene 2").type(CopyNumberType.FULL_GAIN).isReportable(true).build(),
-            TestCopyNumberFactory.builder().gene("gene 3").type(CopyNumberType.LOSS).isReportable(false).build())
+            TestCopyNumberFactory.builder().gene("gene 3").type(CopyNumberType.LOSS).isReportable(false).build()
+        )
         val lostGenes: MutableSet<String> = DriverExtractor.reportableLostGenes(copyNumbers)
         Assert.assertEquals(1, lostGenes.size.toLong())
         Assert.assertEquals("gene 1", lostGenes.iterator().next())
@@ -51,10 +53,12 @@ class DriverExtractorTest {
 
     @Test
     fun canCountReportableDrivers() {
-        val drivers: MutableList<Driver> = Lists.newArrayList(TestVariantFactory.builder().isReportable(true).build(),
+        val drivers: MutableList<Driver> = Lists.newArrayList(
+            TestVariantFactory.builder().isReportable(true).build(),
             TestCopyNumberFactory.builder().isReportable(false).build(),
             TestFusionFactory.builder().isReportable(true).build(),
-            TestVirusFactory.builder().isReportable(false).build())
+            TestVirusFactory.builder().isReportable(false).build()
+        )
         Assert.assertEquals(2, DriverExtractor.reportableCount(drivers).toLong())
         Assert.assertEquals(0, DriverExtractor.reportableCount(emptyList()).toLong())
     }

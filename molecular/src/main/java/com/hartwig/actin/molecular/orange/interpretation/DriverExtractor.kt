@@ -12,10 +12,12 @@ import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import org.apache.logging.log4j.LogManager
 
-internal class DriverExtractor private constructor(private val variantExtractor: VariantExtractor, private val copyNumberExtractor: CopyNumberExtractor,
-                                                   private val homozygousDisruptionExtractor: HomozygousDisruptionExtractor,
-                                                   private val disruptionExtractor: DisruptionExtractor, private val fusionExtractor: FusionExtractor,
-                                                   private val virusExtractor: VirusExtractor) {
+internal class DriverExtractor private constructor(
+    private val variantExtractor: VariantExtractor, private val copyNumberExtractor: CopyNumberExtractor,
+    private val homozygousDisruptionExtractor: HomozygousDisruptionExtractor,
+    private val disruptionExtractor: DisruptionExtractor, private val fusionExtractor: FusionExtractor,
+    private val virusExtractor: VirusExtractor
+) {
     fun extract(record: OrangeRecord): MolecularDrivers {
         val variants = variantExtractor.extract(record.purple())
         LOGGER.info(" Extracted {} variants of which {} reportable", variants.size, reportableCount(variants))
@@ -48,19 +50,21 @@ internal class DriverExtractor private constructor(private val variantExtractor:
     companion object {
         private val LOGGER = LogManager.getLogger(DriverExtractor::class.java)
         fun create(geneFilter: GeneFilter, evidenceDatabase: EvidenceDatabase): DriverExtractor {
-            return DriverExtractor(VariantExtractor(geneFilter, evidenceDatabase),
+            return DriverExtractor(
+                VariantExtractor(geneFilter, evidenceDatabase),
                 CopyNumberExtractor(geneFilter, evidenceDatabase),
                 HomozygousDisruptionExtractor(geneFilter, evidenceDatabase),
                 DisruptionExtractor(geneFilter, evidenceDatabase),
                 FusionExtractor(geneFilter, evidenceDatabase),
-                VirusExtractor(evidenceDatabase))
+                VirusExtractor(evidenceDatabase)
+            )
         }
 
         @VisibleForTesting
         fun reportableLostGenes(copyNumbers: Iterable<CopyNumber>): MutableSet<String> {
             val lostGenes: MutableSet<String> = Sets.newHashSet()
             for (copyNumber in copyNumbers) {
-                if (copyNumber.isReportable() && copyNumber.type().isLoss) {
+                if (copyNumber.isReportable && copyNumber.type().isLoss) {
                     lostGenes.add(copyNumber.gene())
                 }
             }
@@ -71,7 +75,7 @@ internal class DriverExtractor private constructor(private val variantExtractor:
         fun <T : Driver> reportableCount(drivers: Iterable<T>): Int {
             var count = 0
             for (driver in drivers) {
-                if (driver.isReportable()) {
+                if (driver.isReportable) {
                     count++
                 }
             }
