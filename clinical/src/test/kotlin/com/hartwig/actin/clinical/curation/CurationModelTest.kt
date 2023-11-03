@@ -516,7 +516,7 @@ class CurationModelTest {
                 PATIENT_ID,
                 CurationCategory.TOXICITY_TRANSLATION,
                 CANNOT_CURATE,
-                "Could not find translation for toxicity with input '$CANNOT_CURATE'"
+                "No translation found for toxicity: '$CANNOT_CURATE'"
             )
         )
     }
@@ -536,7 +536,7 @@ class CurationModelTest {
                 PATIENT_ID,
                 CurationCategory.BLOOD_TRANSFUSION_TRANSLATION,
                 CANNOT_CURATE,
-                "Could not find blood transfusion translation for blood transfusion with product '$CANNOT_CURATE'"
+                "No translation found for blood transfusion with product: '$CANNOT_CURATE'"
             )
         )
     }

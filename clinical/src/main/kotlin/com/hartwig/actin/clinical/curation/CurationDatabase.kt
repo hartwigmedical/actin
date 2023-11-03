@@ -16,32 +16,29 @@ import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
-import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation
-import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation
-import com.hartwig.actin.clinical.curation.translation.DosageUnitTranslation
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation
-import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation
+import com.hartwig.actin.clinical.curation.translation.Translation
 
 data class CurationDatabase(
-    val primaryTumorConfigs: List<PrimaryTumorConfig>,
-    val treatmentHistoryEntryConfigs: List<TreatmentHistoryEntryConfig>,
-    val secondPrimaryConfigs: List<SecondPrimaryConfig>,
-    val lesionLocationConfigs: List<LesionLocationConfig>,
-    val nonOncologicalHistoryConfigs: List<NonOncologicalHistoryConfig>,
-    val ecgConfigs: List<ECGConfig>,
-    val infectionConfigs: List<InfectionConfig>,
-    val periodBetweenUnitConfigs: List<PeriodBetweenUnitConfig>,
-    val complicationConfigs: List<ComplicationConfig>,
-    val toxicityConfigs: List<ToxicityConfig>,
-    val molecularTestConfigs: List<MolecularTestConfig>,
-    val medicationNameConfigs: List<MedicationNameConfig>,
-    val medicationDosageConfigs: List<MedicationDosageConfig>,
-    val intoleranceConfigs: List<IntoleranceConfig>,
-    val cypInteractionConfigs: List<CypInteractionConfig>,
-    val qtProlongingConfigs: List<QTProlongatingConfig>,
-    val administrationRouteTranslations: List<AdministrationRouteTranslation>,
-    val laboratoryTranslations: List<LaboratoryTranslation>,
-    val toxicityTranslations: List<ToxicityTranslation>,
-    val bloodTransfusionTranslations: List<BloodTransfusionTranslation>,
-    val dosageUnitTranslations: List<DosageUnitTranslation>
+    val primaryTumorConfigs: Map<String, Set<PrimaryTumorConfig>>,
+    val treatmentHistoryEntryConfigs: Map<String, Set<TreatmentHistoryEntryConfig>>,
+    val secondPrimaryConfigs: Map<String, Set<SecondPrimaryConfig>>,
+    val lesionLocationConfigs: Map<String, Set<LesionLocationConfig>>,
+    val nonOncologicalHistoryConfigs: Map<String, Set<NonOncologicalHistoryConfig>>,
+    val ecgConfigs: Map<String, Set<ECGConfig>>,
+    val infectionConfigs: Map<String, Set<InfectionConfig>>,
+    val periodBetweenUnitConfigs: Map<String, Set<PeriodBetweenUnitConfig>>,
+    val complicationConfigs: Map<String, Set<ComplicationConfig>>,
+    val toxicityConfigs: Map<String, Set<ToxicityConfig>>,
+    val molecularTestConfigs: Map<String, Set<MolecularTestConfig>>,
+    val medicationNameConfigs: Map<String, Set<MedicationNameConfig>>,
+    val medicationDosageConfigs: Map<String, Set<MedicationDosageConfig>>,
+    val intoleranceConfigs: Map<String, Set<IntoleranceConfig>>,
+    val cypInteractionConfigs: Map<String, Set<CypInteractionConfig>>,
+    val qtProlongingConfigs: Map<String, Set<QTProlongatingConfig>>,
+    val administrationRouteTranslations: Map<String, Translation>,
+    val laboratoryTranslations: Map<Pair<String, String>, LaboratoryTranslation>,
+    val toxicityTranslations: Map<String, Translation>,
+    val bloodTransfusionTranslations: Map<String, Translation>,
+    val dosageUnitTranslations: Map<String, Translation>
 )

@@ -1,3 +1,3 @@
 package com.hartwig.actin.clinical.curation.translation
 
-interface Translation 
+data class Translation(val input: String, val translated: String)

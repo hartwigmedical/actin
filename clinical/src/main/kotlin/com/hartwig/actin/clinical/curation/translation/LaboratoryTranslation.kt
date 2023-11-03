@@ -5,4 +5,4 @@ data class LaboratoryTranslation(
     val translatedCode: String,
     val name: String,
     val translatedName: String
-) : Translation
+)

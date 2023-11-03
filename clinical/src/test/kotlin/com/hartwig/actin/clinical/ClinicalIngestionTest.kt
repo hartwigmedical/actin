@@ -67,8 +67,8 @@ class ClinicalIngestionTest {
             CurationResult(
                 "Toxicity Translation",
                 listOf(
-                    CurationRequirement("Nausea", "Could not find translation for toxicity with input 'Nausea'"),
-                    CurationRequirement("Pain", "Could not find translation for toxicity with input 'Pain'")
+                    CurationRequirement("Nausea", "No translation found for toxicity: 'Nausea'"),
+                    CurationRequirement("Pain", "No translation found for toxicity: 'Pain'")
                 )
             ),
             CurationResult("Toxicity", listOf(CurationRequirement("toxic", "Could not find toxicity config for input 'toxic'"))),

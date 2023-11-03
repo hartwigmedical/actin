@@ -2,6 +2,7 @@ package com.hartwig.actin.clinical.curation
 
 import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
+import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
 import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
@@ -18,11 +19,8 @@ import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
-import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation
-import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation
-import com.hartwig.actin.clinical.curation.translation.DosageUnitTranslation
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation
-import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation
+import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication
 import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
@@ -51,9 +49,9 @@ object TestCurationFactory {
     fun createMinimalTestCurationModel(): CurationModel {
         return CurationModel(
             CurationDatabase(
-                emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-                emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
-                emptyList(), emptyList(), emptyList(), emptyList(), emptyList(),
+                emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(),
+                emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(),
+                emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(),
             ), questionnaireRawEntryMapper()
         )
     }
@@ -64,28 +62,32 @@ object TestCurationFactory {
 
     private fun createTestCurationDatabase(): CurationDatabase {
         return CurationDatabase(
-            primaryTumorConfigs = createTestPrimaryTumorConfigs(),
-            treatmentHistoryEntryConfigs = createTestTreatmentHistoryEntryConfigs(),
-            secondPrimaryConfigs = createTestSecondPrimaryConfigs(),
-            lesionLocationConfigs = createTestLesionLocationConfigs(),
-            nonOncologicalHistoryConfigs = createTestNonOncologicalHistoryConfigs(),
-            ecgConfigs = createTestECGConfigs(),
-            infectionConfigs = createTestInfectionConfigs(),
-            periodBetweenUnitConfigs = createTestPeriodBetweenUnitConfigs(),
-            complicationConfigs = createTestComplicationConfigs(),
-            toxicityConfigs = createTestToxicityConfigs(),
-            molecularTestConfigs = createTestMolecularTestConfigs(),
-            medicationNameConfigs = createTestMedicationNameConfigs(),
-            medicationDosageConfigs = createTestMedicationDosageConfigs(),
-            intoleranceConfigs = createTestIntoleranceConfigs(),
-            cypInteractionConfigs = createTestCypInteractionConfig(),
-            qtProlongingConfigs = createTestQTProlongingConfigs(),
-            administrationRouteTranslations = createTestAdministrationRouteTranslations(),
-            dosageUnitTranslations = createTestDosageUnitTranslations(),
-            laboratoryTranslations = createTestLaboratoryTranslations(),
-            toxicityTranslations = createTestToxicityTranslations(),
-            bloodTransfusionTranslations = createTestBloodTransfusionTranslations()
+            primaryTumorConfigs = configsToMap(createTestPrimaryTumorConfigs()),
+            treatmentHistoryEntryConfigs = configsToMap(createTestTreatmentHistoryEntryConfigs()),
+            secondPrimaryConfigs = configsToMap(createTestSecondPrimaryConfigs()),
+            lesionLocationConfigs = configsToMap(createTestLesionLocationConfigs()),
+            nonOncologicalHistoryConfigs = configsToMap(createTestNonOncologicalHistoryConfigs()),
+            ecgConfigs = configsToMap(createTestECGConfigs()),
+            infectionConfigs = configsToMap(createTestInfectionConfigs()),
+            periodBetweenUnitConfigs = configsToMap(createTestPeriodBetweenUnitConfigs()),
+            complicationConfigs = configsToMap(createTestComplicationConfigs()),
+            toxicityConfigs = configsToMap(createTestToxicityConfigs()),
+            molecularTestConfigs = configsToMap(createTestMolecularTestConfigs()),
+            medicationNameConfigs = configsToMap(createTestMedicationNameConfigs()),
+            medicationDosageConfigs = configsToMap(createTestMedicationDosageConfigs()),
+            intoleranceConfigs = configsToMap(createTestIntoleranceConfigs()),
+            cypInteractionConfigs = configsToMap(createTestCypInteractionConfig()),
+            qtProlongingConfigs = configsToMap(createTestQTProlongingConfigs()),
+            administrationRouteTranslations = createTestAdministrationRouteTranslations().associateBy { it.input },
+            dosageUnitTranslations = createTestDosageUnitTranslations().associateBy { it.input },
+            laboratoryTranslations = createTestLaboratoryTranslations().associateBy { Pair(it.code, it.name) },
+            toxicityTranslations = createTestToxicityTranslations().associateBy { it.input },
+            bloodTransfusionTranslations = createTestBloodTransfusionTranslations().associateBy { it.input }
         )
+    }
+
+    private fun <T : CurationConfig> configsToMap(configs: List<T>): Map<String, Set<T>> {
+        return configs.groupBy { it.input.lowercase() }.mapValues { it.value.toSet() }
     }
 
     private fun createTestQTProlongingConfigs(): List<QTProlongatingConfig> {
@@ -346,15 +348,15 @@ object TestCurationFactory {
         return listOf(IntoleranceConfig(input = "Latex type 1", name = "Latex (type 1)", doids = setOf("0060532")))
     }
 
-    private fun createTestAdministrationRouteTranslations(): List<AdministrationRouteTranslation> {
+    private fun createTestAdministrationRouteTranslations(): List<Translation> {
         return listOf(
-            AdministrationRouteTranslation(
-                administrationRoute = "ignore",
-                translatedAdministrationRoute = Strings.EMPTY
+            Translation(
+                input = "ignore",
+                translated = Strings.EMPTY
             ),
-            AdministrationRouteTranslation(
-                administrationRoute = "oraal",
-                translatedAdministrationRoute = "oral"
+            Translation(
+                input = "oraal",
+                translated = "oral"
             )
         )
     }
@@ -363,21 +365,21 @@ object TestCurationFactory {
         return listOf(LaboratoryTranslation(code = "CO", translatedCode = "CODE", name = "naam", translatedName = "Name"))
     }
 
-    private fun createTestToxicityTranslations(): List<ToxicityTranslation> {
-        return listOf(ToxicityTranslation(toxicity = "Pijn", translatedToxicity = "Pain"))
+    private fun createTestToxicityTranslations(): List<Translation> {
+        return listOf(Translation(input = "Pijn", translated = "Pain"))
     }
 
-    private fun createTestBloodTransfusionTranslations(): List<BloodTransfusionTranslation> {
+    private fun createTestBloodTransfusionTranslations(): List<Translation> {
         return listOf(
-            BloodTransfusionTranslation(product = "Product", translatedProduct = "Translated product"),
-            BloodTransfusionTranslation(product = "Not used", translatedProduct = "never used")
+            Translation(input = "Product", translated = "Translated product"),
+            Translation(input = "Not used", translated = "never used")
         )
     }
 
-    private fun createTestDosageUnitTranslations(): List<DosageUnitTranslation> {
+    private fun createTestDosageUnitTranslations(): List<Translation> {
         return listOf(
-            DosageUnitTranslation(dosageUnit = "stuk", translatedDosageUnit = "piece"),
-            DosageUnitTranslation(dosageUnit = "milligram", translatedDosageUnit = "mg")
+            Translation(input = "stuk", translated = "piece"),
+            Translation(input = "milligram", translated = "mg")
         )
     }
 

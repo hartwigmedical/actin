@@ -4,7 +4,6 @@ import com.google.common.annotations.VisibleForTesting
 import com.google.common.collect.HashMultimap
 import com.google.common.collect.Lists
 import com.google.common.collect.Multimap
-import com.google.common.collect.Sets
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.CurationUtil.fullTrim
@@ -26,11 +25,7 @@ import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
-import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation
-import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation
-import com.hartwig.actin.clinical.curation.translation.DosageUnitTranslation
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation
-import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
 import com.hartwig.actin.clinical.datamodel.Complication
@@ -73,8 +68,10 @@ class CurationModel @VisibleForTesting internal constructor(
     private val questionnaireRawEntryMapper: QuestionnaireRawEntryMapper
     private val evaluatedCurationInputs: Multimap<Class<out CurationConfig>, String> =
         HashMultimap.create<Class<out CurationConfig>, String>()
-    private val evaluatedTranslations: Multimap<Class<out Translation>, Translation> =
-        HashMultimap.create<Class<out Translation>, Translation>()
+    private val evaluatedAdministrationRouteTranslations = mutableSetOf<Translation>()
+    private val evaluatedDosageUnitTranslations = mutableSetOf<Translation>()
+    private val evaluatedLaboratoryTranslations = mutableSetOf<LaboratoryTranslation>()
+    private val evaluatedToxicityTranslations = mutableSetOf<Translation>()
     private val warnings = mutableListOf<CurationWarning>()
 
     init {
@@ -129,67 +126,56 @@ class CurationModel @VisibleForTesting internal constructor(
         tumorDetails: TumorDetails, biopsyLocation: String?,
         otherLesions: List<String>?
     ): TumorDetails {
-        val matches: MutableSet<LesionLocationCategory> = Sets.newHashSet<LesionLocationCategory>()
-        val lesionsToCheck: MutableList<String> = Lists.newArrayList()
-        if (otherLesions != null) {
-            lesionsToCheck.addAll(otherLesions)
-        }
+        val lesionsToCheck = (otherLesions ?: emptyList()) + listOfNotNull(biopsyLocation)
 
-        if (biopsyLocation != null) {
-            lesionsToCheck.add(biopsyLocation)
-        }
-
-        for (lesion in lesionsToCheck) {
-            val configs: Set<LesionLocationConfig> = find(database.lesionLocationConfigs, lesion)
-            for (config in configs) {
-                if (config.category != null) {
-                    matches.add(config.category)
-                }
-            }
-        }
+        val matches = lesionsToCheck.flatMap { find(database.lesionLocationConfigs, it).mapNotNull(LesionLocationConfig::category) }
 
         if (matches.isEmpty()) {
             return tumorDetails
         }
 
         val builder: ImmutableTumorDetails.Builder = ImmutableTumorDetails.builder().from(tumorDetails)
-        if (matches.contains(LesionLocationCategory.BRAIN)) {
-            if (tumorDetails.hasBrainLesions() == false) {
-                LOGGER.debug("  Overriding presence of brain lesions")
-            }
-            builder.hasBrainLesions(true)
-        }
-        if (matches.contains(LesionLocationCategory.CNS)) {
-            if (tumorDetails.hasCnsLesions() == false) {
-                LOGGER.debug("  Overriding presence of CNS lesions")
-            }
-            builder.hasCnsLesions(true)
-        }
-        if (matches.contains(LesionLocationCategory.LIVER)) {
-            if (tumorDetails.hasLiverLesions() == false) {
-                LOGGER.debug("  Overriding presence of liver lesions")
-            }
-            builder.hasLiverLesions(true)
-        }
-        if (matches.contains(LesionLocationCategory.BONE)) {
-            if (tumorDetails.hasBoneLesions() == false) {
-                LOGGER.debug("  Overriding presence of bone lesions")
-            }
-            builder.hasBoneLesions(true)
-        }
-        if (matches.contains(LesionLocationCategory.LUNG)) {
-            if (tumorDetails.hasLungLesions() == false) {
-                LOGGER.debug("  Overriding presence of lung lesions")
-            }
-            builder.hasLungLesions(true)
-        }
-        if (matches.contains(LesionLocationCategory.LYMPH_NODE)) {
-            if (tumorDetails.hasLymphNodeLesions() == false) {
-                LOGGER.debug("  Overriding presence of lymph node lesions")
-            }
-            builder.hasLymphNodeLesions(true)
-        }
+        overrideLesionPresence(
+            matches, tumorDetails, builder, LesionLocationCategory.BONE, TumorDetails::hasBoneLesions,
+            ImmutableTumorDetails.Builder::hasBoneLesions
+        )
+        overrideLesionPresence(
+            matches, tumorDetails, builder, LesionLocationCategory.BRAIN, TumorDetails::hasBrainLesions,
+            ImmutableTumorDetails.Builder::hasBrainLesions
+        )
+        overrideLesionPresence(
+            matches, tumorDetails, builder, LesionLocationCategory.CNS, TumorDetails::hasCnsLesions,
+            ImmutableTumorDetails.Builder::hasCnsLesions
+        )
+        overrideLesionPresence(
+            matches, tumorDetails, builder, LesionLocationCategory.LIVER, TumorDetails::hasLiverLesions,
+            ImmutableTumorDetails.Builder::hasLiverLesions
+        )
+        overrideLesionPresence(
+            matches, tumorDetails, builder, LesionLocationCategory.LUNG, TumorDetails::hasLungLesions,
+            ImmutableTumorDetails.Builder::hasLungLesions
+        )
+        overrideLesionPresence(
+            matches, tumorDetails, builder, LesionLocationCategory.LYMPH_NODE, TumorDetails::hasLymphNodeLesions,
+            ImmutableTumorDetails.Builder::hasLymphNodeLesions
+        )
         return builder.build()
+    }
+
+    private fun overrideLesionPresence(
+        matches: List<LesionLocationCategory>,
+        tumorDetails: TumorDetails,
+        builder: ImmutableTumorDetails.Builder,
+        lesionLocationCategory: LesionLocationCategory,
+        hasLesions: (TumorDetails) -> Boolean?,
+        setLesions: (ImmutableTumorDetails.Builder, Boolean) -> ImmutableTumorDetails.Builder
+    ) {
+        if (matches.contains(lesionLocationCategory)) {
+            if (hasLesions.invoke(tumorDetails) == false) {
+                LOGGER.debug("  Overriding presence of ${lesionLocationCategory.name.lowercase()} lesions")
+            }
+            setLesions.invoke(builder, true)
+        }
     }
 
     fun curateTreatmentHistoryEntry(patientId: String, entry: String): List<TreatmentHistoryEntry> {
@@ -213,7 +199,7 @@ class CurationModel @VisibleForTesting internal constructor(
 
     fun curatePriorSecondPrimaries(patientId: String, inputs: List<String>?): List<PriorSecondPrimary> {
         if (inputs == null) {
-            return Lists.newArrayList<PriorSecondPrimary>()
+            return emptyList()
         }
 
         val priorSecondPrimaries: MutableList<PriorSecondPrimary> = Lists.newArrayList<PriorSecondPrimary>()
@@ -244,7 +230,7 @@ class CurationModel @VisibleForTesting internal constructor(
 
     fun curatePriorOtherConditions(patientId: String, inputs: List<String>?): List<PriorOtherCondition> {
         if (inputs == null) {
-            return Lists.newArrayList<PriorOtherCondition>()
+            return emptyList()
         }
 
         val priorOtherConditions: MutableList<PriorOtherCondition> = Lists.newArrayList<PriorOtherCondition>()
@@ -271,7 +257,7 @@ class CurationModel @VisibleForTesting internal constructor(
 
     fun curatePriorMolecularTests(patientId: String, type: String, inputs: List<String>?): List<PriorMolecularTest> {
         if (inputs == null) {
-            return Lists.newArrayList<PriorMolecularTest>()
+            return emptyList()
         }
 
         val priorMolecularTests: MutableList<PriorMolecularTest> = Lists.newArrayList<PriorMolecularTest>()
@@ -654,38 +640,6 @@ class CurationModel @VisibleForTesting internal constructor(
         }
     }
 
-    fun translateAdministrationRoute(patientId: String, administrationRoute: String?): String? {
-        if (administrationRoute.isNullOrEmpty()) {
-            return null
-        }
-
-        val trimmedAdministrationRoute = administrationRoute.trim { it <= ' ' }
-        val translation: AdministrationRouteTranslation? = findAdministrationRouteTranslation(trimmedAdministrationRoute)
-        if (translation == null) {
-            warnings.add(
-                CurationWarning(
-                    patientId,
-                    CurationCategory.ADMISTRATION_ROUTE_TRANSLATION,
-                    trimmedAdministrationRoute,
-                    "No translation found for medication administration route: '$trimmedAdministrationRoute'"
-                )
-            )
-            return null
-        }
-        evaluatedTranslations.put(AdministrationRouteTranslation::class.java, translation)
-
-        return translation.translatedAdministrationRoute.ifEmpty { null }
-    }
-
-    private fun findAdministrationRouteTranslation(administrationRoute: String): AdministrationRouteTranslation? {
-        for (entry in database.administrationRouteTranslations) {
-            if (entry.administrationRoute == administrationRoute) {
-                return entry
-            }
-        }
-        return null
-    }
-
     fun curateIntolerance(patientId: String, intolerance: Intolerance): Intolerance {
         val reformatted = CurationUtil.capitalizeFirstLetterOnly(intolerance.name())
         val configs: Set<IntoleranceConfig> = find(database.intoleranceConfigs, reformatted)
@@ -725,104 +679,83 @@ class CurationModel @VisibleForTesting internal constructor(
 
     fun translateLabValue(patientId: String, input: LabValue): LabValue {
         val translation: LaboratoryTranslation = findLaboratoryTranslation(patientId, input) ?: return input
-        evaluatedTranslations.put(LaboratoryTranslation::class.java, translation)
+        evaluatedLaboratoryTranslations.add(translation)
         return ImmutableLabValue.builder().from(input).code(translation.translatedCode).name(translation.translatedName).build()
     }
 
     private fun findLaboratoryTranslation(patientId: String, input: LabValue): LaboratoryTranslation? {
         val trimmedName: String = input.name().trim { it <= ' ' }
-        for (entry in database.laboratoryTranslations) {
-            if (entry.code == input.code() && entry.name == trimmedName) {
-                return entry
-            }
-        }
-        warnings.add(
-            CurationWarning(
-                patientId,
-                CurationCategory.LABORATORY_TRANSLATION,
-                input.code(),
-                "Could not find laboratory translation for lab value with code '${input.code()}' and name '$trimmedName'"
+        val found = database.laboratoryTranslations[Pair(input.code(), trimmedName)]
+        if (found == null) {
+            warnings.add(
+                CurationWarning(
+                    patientId,
+                    CurationCategory.LABORATORY_TRANSLATION,
+                    input.code(),
+                    "Could not find laboratory translation for lab value with code '${input.code()}' and name '$trimmedName'"
+                )
             )
+        }
+        return found
+    }
+
+    fun translateAdministrationRoute(patientId: String, administrationRoute: String?): String? {
+        val translation = findTranslation(
+            administrationRoute, database.administrationRouteTranslations, patientId, CurationCategory.ADMISTRATION_ROUTE_TRANSLATION,
+            "medication administration route", evaluatedAdministrationRouteTranslations
         )
-        return null
+        return translation?.translated?.ifEmpty { null }
     }
 
     fun translateToxicity(patientId: String, input: Toxicity): Toxicity {
-        val translation: ToxicityTranslation? = findToxicityTranslation(input.name())
-        if (translation == null) {
-            warnings.add(
-                CurationWarning(
-                    patientId,
-                    CurationCategory.TOXICITY_TRANSLATION,
-                    input.name(),
-                    "Could not find translation for toxicity with input '${input.name()}'"
-                )
-            )
-            return input
-        }
-        evaluatedTranslations.put(ToxicityTranslation::class.java, translation)
-        return ImmutableToxicity.builder().from(input).name(translation.translatedToxicity).build()
-    }
-
-    private fun findToxicityTranslation(toxicityName: String): ToxicityTranslation? {
-        val trimmedToxicity = toxicityName.trim { it <= ' ' }
-        for (entry in database.toxicityTranslations) {
-            if (entry.toxicity == trimmedToxicity) {
-                return entry
-            }
-        }
-
-        // No warn since not all toxicities need to be translated.
-        return null
+        return findTranslation(
+            input.name(), database.toxicityTranslations, patientId,
+            CurationCategory.TOXICITY_TRANSLATION, "toxicity", evaluatedToxicityTranslations
+        )?.let { translation ->
+            ImmutableToxicity.builder().from(input).name(translation.translated).build()
+        } ?: input
     }
 
     fun translateBloodTransfusion(patientId: String, input: BloodTransfusion): BloodTransfusion {
-        val translation: BloodTransfusionTranslation = findBloodTransfusionTranslation(patientId, input) ?: return input
-        evaluatedTranslations.put(BloodTransfusionTranslation::class.java, translation)
-        return ImmutableBloodTransfusion.builder().from(input).product(translation.translatedProduct).build()
-    }
-
-    private fun findBloodTransfusionTranslation(patientId: String, input: BloodTransfusion): BloodTransfusionTranslation? {
-        val trimmedProduct: String = input.product().trim { it <= ' ' }
-        for (entry in database.bloodTransfusionTranslations) {
-            if (entry.product == trimmedProduct) {
-                return entry
-            }
-        }
-        warnings.add(
-            CurationWarning(
-                patientId,
-                CurationCategory.BLOOD_TRANSFUSION_TRANSLATION,
-                trimmedProduct,
-                "Could not find blood transfusion translation for blood transfusion with product '$trimmedProduct'"
-            )
-        )
-        return null
+        return findTranslation(
+            input.product(), database.bloodTransfusionTranslations, patientId,
+            CurationCategory.BLOOD_TRANSFUSION_TRANSLATION, "blood transfusion with product"
+        )?.let { translation ->
+            ImmutableBloodTransfusion.builder().from(input).product(translation.translated).build()
+        } ?: input
     }
 
     fun translateDosageUnit(patientId: String, dosageUnit: String?): String? {
-        if (dosageUnit.isNullOrEmpty()) {
+        val translation = findTranslation(
+            dosageUnit, database.dosageUnitTranslations, patientId,
+            CurationCategory.DOSAGE_UNIT_TRANSLATION, "medication dosage unit", evaluatedDosageUnitTranslations
+        )
+        return translation?.translated?.ifEmpty { null }
+    }
+
+    private fun findTranslation(
+        input: String?,
+        translations: Map<String, Translation>,
+        patientId: String,
+        curationCategory: CurationCategory,
+        categoryName: String,
+        evaluatedTranslations: MutableSet<Translation>? = null
+    ): Translation? {
+        if (input.isNullOrEmpty()) {
             return null
         }
-        val trimmedDosageUnit = dosageUnit.trim { it <= ' ' }
-        val translation: DosageUnitTranslation? = findDosageUnitTranslation(trimmedDosageUnit)
+        val trimmedInput = input.trim { it <= ' ' }
+        val translation: Translation? = translations[trimmedInput]
         if (translation == null) {
             warnings.add(
                 CurationWarning(
-                    patientId,
-                    CurationCategory.DOSAGE_UNIT_TRANSLATION,
-                    trimmedDosageUnit,
-                    "No translation found for medication dosage unit: '$trimmedDosageUnit'"
+                    patientId, curationCategory, trimmedInput, "No translation found for ${categoryName}: '$trimmedInput'"
                 )
             )
             return null
         }
-        evaluatedTranslations.put(DosageUnitTranslation::class.java, translation)
-        return translation.translatedDosageUnit.ifEmpty { null }
-    }
-
-    private fun findDosageUnitTranslation(dosageUnit: String): DosageUnitTranslation? {
-        return database.dosageUnitTranslations.firstOrNull { it.dosageUnit.lowercase() == dosageUnit.lowercase() }
+        evaluatedTranslations?.add(translation)
+        return translation
     }
 
     fun getWarnings(patientId: String): List<CurationWarning> = warnings.filter { it.patientId == patientId }
@@ -830,7 +763,7 @@ class CurationModel @VisibleForTesting internal constructor(
     fun evaluate() {
         var warnCount = 0
         for ((key, evaluated) in evaluatedCurationInputs.asMap().entries) {
-            val configs: List<CurationConfig> = configsForClass(key)
+            val configs: List<CurationConfig> = configsForClass(key).values.flatten()
             for (config in configs) {
                 // TODO: Raise warnings for unused medication dosage once more final
                 if (!evaluated.contains(config.input.lowercase()) && isNotIgnored(config)) {
@@ -839,15 +772,17 @@ class CurationModel @VisibleForTesting internal constructor(
                 }
             }
         }
-        for ((key, evaluated) in evaluatedTranslations.asMap().entries) {
-            val translations: List<Translation> = translationsForClass(key)
-            for (translation in translations) {
-                if (!evaluated.contains(translation) && translation !is BloodTransfusionTranslation) {
-                    warnCount++
-                    LOGGER.warn(" Translation '{}' not used", translation)
-                }
+        listOf(
+            database.administrationRouteTranslations to evaluatedAdministrationRouteTranslations,
+            database.laboratoryTranslations to evaluatedLaboratoryTranslations,
+            database.toxicityTranslations to evaluatedToxicityTranslations,
+            database.dosageUnitTranslations to evaluatedDosageUnitTranslations
+        )
+            .flatMap { (allTranslations, evaluated) -> allTranslations.values.filterNot(evaluated::contains) }
+            .forEach { translation ->
+                warnCount++
+                LOGGER.warn(" Translation '{}' not used", translation)
             }
-        }
     }
 
     private fun isNotIgnored(config: CurationConfig) =
@@ -857,7 +792,7 @@ class CurationModel @VisibleForTesting internal constructor(
         return questionnaireRawEntryMapper
     }
 
-    private fun configsForClass(classToLookUp: Class<out CurationConfig>): List<CurationConfig> {
+    private fun configsForClass(classToLookUp: Class<out CurationConfig>): Map<String, Set<CurationConfig>> {
         when (classToLookUp) {
             PrimaryTumorConfig::class.java -> {
                 return database.primaryTumorConfigs
@@ -927,38 +862,11 @@ class CurationModel @VisibleForTesting internal constructor(
         }
     }
 
-    private fun translationsForClass(classToLookup: Class<out Translation>): List<Translation> {
-        when (classToLookup) {
-            AdministrationRouteTranslation::class.java -> {
-                return database.administrationRouteTranslations
-            }
-
-            LaboratoryTranslation::class.java -> {
-                return database.laboratoryTranslations
-            }
-
-            ToxicityTranslation::class.java -> {
-                return database.toxicityTranslations
-            }
-
-            BloodTransfusionTranslation::class.java -> {
-                return database.bloodTransfusionTranslations
-            }
-
-            DosageUnitTranslation::class.java -> {
-                return database.dosageUnitTranslations
-            }
-
-            else -> throw IllegalStateException("Class not found in curation database: $classToLookup")
-        }
-    }
-
-    private fun <T : CurationConfig> find(configs: List<T>, input: String): Set<T> {
+    private inline fun <reified T : CurationConfig> find(configs: Map<String, Set<T>>, input: String): Set<T> {
         if (configs.isNotEmpty()) {
-            evaluatedCurationInputs.put(configs[0].javaClass, input.lowercase())
-            return configs.filter { config: T -> config.input.equals(input, ignoreCase = true) }.toSet()
+            evaluatedCurationInputs.put(T::class.java, input.lowercase())
         }
-        return emptySet()
+        return configs[input.lowercase()] ?: emptySet()
     }
 
     companion object {
@@ -973,12 +881,7 @@ class CurationModel @VisibleForTesting internal constructor(
         }
 
         private fun hasConfigImplyingUnknownState(configs: Set<ComplicationConfig>): Boolean {
-            for (config in configs) {
-                if (config.impliesUnknownComplicationState) {
-                    return true
-                }
-            }
-            return false
+            return configs.any(ComplicationConfig::impliesUnknownComplicationState)
         }
 
         private fun maybeECGMeasure(value: Int?, unit: String?): ImmutableECGMeasure? {

@@ -40,7 +40,8 @@ class CurationDatabaseReader(private val curationValidator: CurationValidator, p
 
         return CurationDatabase(
             primaryTumorConfigs = readConfigs(basePath, PRIMARY_TUMOR_TSV, PrimaryTumorConfigFactory(curationValidator)),
-            treatmentHistoryEntryConfigs = TreatmentHistoryCurationConfigFile.read(basePath + ONCOLOGICAL_HISTORY_TSV, treatmentDatabase),
+            treatmentHistoryEntryConfigs = TreatmentHistoryCurationConfigFile.read(basePath + ONCOLOGICAL_HISTORY_TSV, treatmentDatabase)
+                .groupBy { it.input.lowercase() }.mapValues { it.value.toSet() },
             secondPrimaryConfigs = readConfigs(basePath, SECOND_PRIMARY_TSV, SecondPrimaryConfigFactory(curationValidator)),
             lesionLocationConfigs = readConfigs(basePath, LESION_LOCATION_TSV, LesionLocationConfigFactory()),
             nonOncologicalHistoryConfigs = readConfigs(
@@ -59,21 +60,25 @@ class CurationDatabaseReader(private val curationValidator: CurationValidator, p
             intoleranceConfigs = readConfigs(basePath, INTOLERANCE_TSV, IntoleranceConfigFactory(curationValidator)),
             cypInteractionConfigs = readConfigs(basePath, CYP_INTERACTIONS_TSV, CypInteractionConfigFactory()),
             qtProlongingConfigs = readConfigs(basePath, QT_PROLONGATING_TSV, QTProlongatingConfigFactory()),
-            administrationRouteTranslations = readTranslations(
+            administrationRouteTranslations = readTranslationsToMap(
                 basePath,
                 ADMINISTRATION_ROUTE_TRANSLATION_TSV,
                 AdministrationRouteTranslationFactory()
             ),
-            laboratoryTranslations = readTranslations(basePath, LABORATORY_TRANSLATION_TSV, LaboratoryTranslationFactory()),
-            toxicityTranslations = readTranslations(basePath, TOXICITY_TRANSLATION_TSV, ToxicityTranslationFactory()),
-            bloodTransfusionTranslations = readTranslations(
-                basePath,
-                BLOOD_TRANSFUSION_TRANSLATION_TSV,
-                BloodTransfusionTranslationFactory()
+            laboratoryTranslations = readTranslations(basePath, LABORATORY_TRANSLATION_TSV, LaboratoryTranslationFactory())
+                .associateBy { Pair(it.code, it.name) },
+            toxicityTranslations = readTranslationsToMap(basePath, TOXICITY_TRANSLATION_TSV, ToxicityTranslationFactory()),
+            bloodTransfusionTranslations = readTranslationsToMap(
+                basePath, BLOOD_TRANSFUSION_TRANSLATION_TSV, BloodTransfusionTranslationFactory()
             ),
-            dosageUnitTranslations = readTranslations(basePath, DOSAGE_UNIT_TRANSLATION_TSV, DosageUnitTranslationFactory()),
+            dosageUnitTranslations = readTranslations(basePath, DOSAGE_UNIT_TRANSLATION_TSV, DosageUnitTranslationFactory())
+                .associateBy { it.input.lowercase() },
         )
     }
+
+    private fun readTranslationsToMap(
+        basePath: String, tsv: String, factory: TranslationFactory<Translation>
+    ) = readTranslations(basePath, tsv, factory).associateBy { it.input }
 
     companion object {
         private val LOGGER = LogManager.getLogger(CurationDatabaseReader::class.java)
@@ -101,15 +106,17 @@ class CurationDatabaseReader(private val curationValidator: CurationValidator, p
         private const val DOSAGE_UNIT_TRANSLATION_TSV = "dosage_unit_translation.tsv"
 
         @Throws(IOException::class)
-        private fun <T : CurationConfig> readConfigs(basePath: String, tsv: String, configFactory: CurationConfigFactory<T>): List<T> {
+        private fun <T : CurationConfig> readConfigs(
+            basePath: String, tsv: String, configFactory: CurationConfigFactory<T>
+        ): Map<String, Set<T>> {
             val filePath = basePath + tsv
             val configs = CurationConfigFile.read(filePath, configFactory)
             LOGGER.info(" Read {} configs from {}", configs.size, filePath)
-            return configs
+            return configs.groupBy { it.input.lowercase() }.mapValues { it.value.toSet() }
         }
 
         @Throws(IOException::class)
-        private fun <T : Translation> readTranslations(basePath: String, tsv: String, translationFactory: TranslationFactory<T>): List<T> {
+        private fun <T> readTranslations(basePath: String, tsv: String, translationFactory: TranslationFactory<T>): List<T> {
             val filePath = basePath + tsv
             val translations = TranslationFile.read(filePath, translationFactory)
             LOGGER.info(" Read {} translations from {}", translations.size, filePath)
