@@ -42,9 +42,6 @@ public abstract class ClinicalRecord {
     @NotNull
     public abstract List<LabValue> labValues();
 
-    @Nullable
-    public abstract List<ToxicityEvaluation> toxicityEvaluations();
-
     @NotNull
     public abstract List<Toxicity> toxicities();
 
