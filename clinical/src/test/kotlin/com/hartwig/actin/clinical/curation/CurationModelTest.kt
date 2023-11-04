@@ -236,7 +236,7 @@ class CurationModelTest {
                 PATIENT_ID,
                 CurationCategory.MOLECULAR_TEST,
                 CANNOT_CURATE,
-                "Could not find molecular test config for type 'IHC' with input: '$CANNOT_CURATE'"
+                "Could not find IHC molecular test config for input '$CANNOT_CURATE'"
             )
         )
     }
@@ -376,7 +376,7 @@ class CurationModelTest {
                 PATIENT_ID,
                 CurationCategory.LESION_LOCATION,
                 CANNOT_CURATE,
-                "Could not find lesion config for biopsy location '$CANNOT_CURATE'"
+                "Could not find biopsy location config for input '$CANNOT_CURATE'"
             )
         )
     }
@@ -401,7 +401,7 @@ class CurationModelTest {
                 PATIENT_ID,
                 CurationCategory.MEDICATION_DOSAGE,
                 CANNOT_CURATE,
-                "Could not find medication dosage config for '$CANNOT_CURATE'"
+                "Could not find medication dosage config for input '$CANNOT_CURATE'"
             )
         )
     }
@@ -418,7 +418,7 @@ class CurationModelTest {
                 PATIENT_ID,
                 CurationCategory.MEDICATION_NAME,
                 CANNOT_CURATE,
-                "Could not find medication name config for '$CANNOT_CURATE'"
+                "Could not find medication name config for input '$CANNOT_CURATE'"
             )
         )
     }
@@ -463,7 +463,7 @@ class CurationModelTest {
                 PATIENT_ID,
                 CurationCategory.INTOLERANCE,
                 "Cannot curate",
-                "Could not find intolerance config for 'Cannot curate'"
+                "Could not find intolerance config for input 'Cannot curate'"
             )
         )
     }

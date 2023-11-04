@@ -102,8 +102,8 @@ class ClinicalIngestionTest {
             CurationResult(
                 "Molecular Test",
                 listOf(
-                    CurationRequirement("ERBB2 3+", "Could not find molecular test config for type 'IHC' with input: 'ERBB2 3+'"),
-                    CurationRequirement("Positive", "Could not find molecular test config for type 'PD-L1' with input: 'Positive'")
+                    CurationRequirement("ERBB2 3+", "Could not find IHC molecular test config for input 'ERBB2 3+'"),
+                    CurationRequirement("Positive", "Could not find PD-L1 molecular test config for input 'Positive'")
                 )
             ),
             CurationResult(
@@ -127,7 +127,9 @@ class ClinicalIngestionTest {
                     )
                 )
             ),
-            CurationResult("Intolerance", listOf(CurationRequirement("Pills", "Could not find intolerance config for 'Pills'")))
+            CurationResult(
+                "Intolerance", listOf(CurationRequirement("Pills", "Could not find intolerance config for input 'Pills'"))
+            )
         )
         val record = results[0].clinicalRecord
         assertEquals(TEST_PATIENT, record.patientId())
