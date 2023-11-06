@@ -33,7 +33,7 @@ class CTCModel constructor(private val ctcDatabase: CTCDatabase) {
         }
 
         LOGGER.warn(
-            " No study status found in CTC for trial '{} ({}').",
+            " No study status found in CTC for trial '{} ({})'.",
             trialConfig.trialId,
             trialConfig.acronym
         )
