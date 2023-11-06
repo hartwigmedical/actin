@@ -325,14 +325,14 @@ Molecular characteristics:
 
 Driver events:
 
-| Driver Type           | Algo             | Details                                                                                            |
-|-----------------------|------------------|----------------------------------------------------------------------------------------------------|
-| variants              | PURPLE           | Union of all somatic variants affecting a known gene and either reported or having a coding effect |
-| copyNumbers           | PURPLE           | All somatic amplifications and losses affecting a known gene                                       |
-| homozygousDisruptions | LINX             | All somatic homozygous disruptions affecting a known gene                                          |
-| disruptions           | LINX             | All somatic gene disruptions affecting a known gene that is not also lost                          |
-| fusions               | LINX             | All fusions that have a known gene either as 5' or 3' partner                                      |
-| viruses               | VirusInterpreter | All viruses.                                                                                       |
+| Driver Type           | Algo             | Details                                                                                                                            |
+|-----------------------|------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| variants              | PURPLE           | Union of all somatic variants affecting a known gene and either reported or having a coding effect, and reported germline variants |
+| copyNumbers           | PURPLE           | All somatic amplifications and losses affecting a known gene                                                                       |
+| homozygousDisruptions | LINX             | All somatic homozygous disruptions affecting a known gene                                                                          |
+| disruptions           | LINX             | All somatic gene disruptions affecting a known gene that is not also lost                                                          |
+| fusions               | LINX             | All fusions that have a known gene either as 5' or 3' partner                                                                      |
+| viruses               | VirusInterpreter | All viruses.                                                                                                                       |
 
 Note that all floating point numbers are rounded to 3 digits when ingesting data into ACTIN:
 
