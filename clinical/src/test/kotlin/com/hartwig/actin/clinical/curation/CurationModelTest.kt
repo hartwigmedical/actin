@@ -545,7 +545,7 @@ class CurationModelTest {
     fun canTranslateDosageUnit() {
         assertNull(model.translateDosageUnit(PATIENT_ID, null))
         assertNull(model.translateDosageUnit(PATIENT_ID, Strings.EMPTY))
-        assertEquals("piece", model.translateDosageUnit(PATIENT_ID, "stuk"))
+        assertEquals("piece", model.translateDosageUnit(PATIENT_ID, "STUK"))
     }
 
     private fun assertDoubleEquals(expected: Double, actual: Double?) {

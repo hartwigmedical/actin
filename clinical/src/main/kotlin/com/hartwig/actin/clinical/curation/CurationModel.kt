@@ -548,7 +548,7 @@ class CurationModel @VisibleForTesting internal constructor(
 
     fun translateDosageUnit(patientId: String, dosageUnit: String?): String? {
         val translation = findTranslation(
-            dosageUnit, database.dosageUnitTranslations, patientId,
+            dosageUnit?.lowercase(), database.dosageUnitTranslations, patientId,
             CurationCategory.DOSAGE_UNIT_TRANSLATION, "medication dosage unit", evaluatedDosageUnitTranslations
         )
         return translation?.translated?.ifEmpty { null }
