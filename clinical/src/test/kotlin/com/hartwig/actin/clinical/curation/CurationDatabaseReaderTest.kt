@@ -4,6 +4,7 @@ import com.google.common.io.Resources
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
+import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
@@ -39,7 +40,7 @@ class CurationDatabaseReaderTest {
     fun shouldReadPrimaryTumorConfigs() {
         val configs = database!!.primaryTumorConfigs
         assertThat(configs).hasSize(1)
-        val config = configs[0]
+        val config = firstConfig(configs)
         assertThat(config.input).isEqualTo("Unknown | Carcinoma")
         assertThat(config.primaryTumorLocation).isEqualTo("Unknown")
         assertThat(config.primaryTumorSubLocation).isEqualTo("CUP")
@@ -110,7 +111,7 @@ class CurationDatabaseReaderTest {
     fun shouldReadLesionLocationConfigs() {
         val configs = database!!.lesionLocationConfigs
         assertThat(configs).hasSize(1)
-        val config = configs[0]
+        val config = firstConfig(configs)
         assertThat(config.input).isEqualTo("Lever")
         assertThat(config.location).isEqualTo("Liver")
     }
@@ -227,7 +228,7 @@ class CurationDatabaseReaderTest {
     fun shouldReadToxicityConfigs() {
         val configs = database!!.toxicityConfigs
         assertThat(configs).hasSize(1)
-        val config = configs[0]
+        val config = firstConfig(configs)
         assertThat(config.input).isEqualTo("Neuropathy GR3")
         assertThat(config.name).isEqualTo("Neuropathy")
         assertThat(config.categories).containsExactly("Neuro")
@@ -238,7 +239,7 @@ class CurationDatabaseReaderTest {
     fun shouldReadMolecularTestConfigs() {
         val configs = database!!.molecularTestConfigs
         assertThat(configs).hasSize(1)
-        val config = configs[0]
+        val config = firstConfig(configs)
         assertThat(config.input).isEqualTo("IHC ERBB2 3+")
         assertThat(config.curated).isEqualTo(
             ImmutablePriorMolecularTest.builder()
@@ -291,7 +292,7 @@ class CurationDatabaseReaderTest {
 
     @Test
     fun shouldReadDatabaseFromTsvFile() {
-        assertThat(database!!.cypInteractionConfigs).containsExactly(
+        assertThat(database!!.cypInteractionConfigs.values.flatten()).containsExactly(
             CypInteractionConfig(
                 "abiraterone", false,
                 listOf(
@@ -306,16 +307,16 @@ class CurationDatabaseReaderTest {
     fun shouldReadAdministrationRouteTranslations() {
         val translations = database!!.administrationRouteTranslations
         assertThat(translations).hasSize(1)
-        val translation = translations[0]
-        assertThat(translation.administrationRoute).isEqualTo("ORAAL")
-        assertThat(translation.translatedAdministrationRoute).isEqualTo("Oral")
+        val translation = firstTranslation(translations)
+        assertThat(translation.input).isEqualTo("ORAAL")
+        assertThat(translation.translated).isEqualTo("Oral")
     }
 
     @Test
     fun shouldReadLaboratoryTranslations() {
         val translations = database!!.laboratoryTranslations
         assertThat(translations).hasSize(1)
-        val translation = translations[0]
+        val translation = translations.values.first()
         assertThat(translation.code).isEqualTo("AC")
         assertThat(translation.translatedCode).isEqualTo("AC2")
         assertThat(translation.name).isEqualTo("ACTH")
@@ -326,28 +327,31 @@ class CurationDatabaseReaderTest {
     fun shouldReadToxicityTranslations() {
         val translations = database!!.toxicityTranslations
         assertThat(translations).hasSize(1)
-        val translation = translations[0]
-        assertThat(translation.toxicity).isEqualTo("Pijn")
-        assertThat(translation.translatedToxicity).isEqualTo("Pain")
+        val translation = firstTranslation(translations)
+        assertThat(translation.input).isEqualTo("Pijn")
+        assertThat(translation.translated).isEqualTo("Pain")
     }
 
     @Test
     fun shouldReadBloodTransfusionTranslations() {
         val translations = database!!.bloodTransfusionTranslations
         assertThat(translations).hasSize(1)
-        val translation = translations[0]
-        assertThat(translation.product).isEqualTo("Thrombocytenconcentraat")
-        assertThat(translation.translatedProduct).isEqualTo("Thrombocyte concentrate")
+        val translation = firstTranslation(translations)
+        assertThat(translation.input).isEqualTo("Thrombocytenconcentraat")
+        assertThat(translation.translated).isEqualTo("Thrombocyte concentrate")
     }
 
     @Test
     fun shouldReadDosageUnitTranslations() {
         val translations = database!!.dosageUnitTranslations
         assertThat(translations.size.toLong()).isEqualTo(1)
-        val translation = translations[0]
-        assertThat(translation.dosageUnit).isEqualTo("stuk")
-        assertThat(translation.translatedDosageUnit).isEqualTo("piece")
+        val translation = firstTranslation(translations)
+        assertThat(translation.input).isEqualTo("stuk")
+        assertThat(translation.translated).isEqualTo("piece")
     }
+
+    private fun firstTranslation(translations: Map<String, Translation>) =
+        translations.values.first()
 
     private fun assertDoubleEquals(expected: Double, actual: Double?) {
         assertThat(actual).isNotNull.isEqualTo(expected, within(EPSILON))
@@ -360,13 +364,13 @@ class CurationDatabaseReaderTest {
         private const val EPSILON = 1.0E-10
         private val CURATION_DIRECTORY = Resources.getResource("curation").path
         private val TREATMENT_DIRECTORY = Resources.getResource("treatment_db").path
-        private fun <T : CurationConfig> find(configs: List<T>, input: String): T {
-            for (config in configs) {
-                if (config.input == input) {
-                    return config
-                }
-            }
-            throw IllegalStateException("Could not find input '$input' in configs")
+
+        private fun <T : CurationConfig> find(configs: Map<String, Set<T>>, input: String): T {
+            return configs[input.lowercase()]?.first() ?: throw IllegalStateException("Could not find input '$input' in configs")
         }
+
+        private fun <T : CurationConfig> firstConfig(configs: Map<String, Set<T>>) =
+            configs.values.first().first()
+
     }
 }

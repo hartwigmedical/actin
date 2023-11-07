@@ -45,7 +45,7 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         val feedModel = FeedModel(
             clinicalFeed.copy(
                 questionnaireEntries = QuestionnaireCorrection.correctQuestionnaires(
-                    clinicalFeed.questionnaireEntries, curationModel.questionnaireRawEntryMapper()
+                    clinicalFeed.questionnaireEntries, curationModel.questionnaireRawEntryMapper
                 )
             )
         )

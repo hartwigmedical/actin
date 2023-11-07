@@ -66,8 +66,8 @@ class ClinicalIngestionTest {
             CurationResult(
                 "Toxicity Translation",
                 listOf(
-                    CurationRequirement("Nausea", "Could not find translation for toxicity with input 'Nausea'"),
-                    CurationRequirement("Pain", "Could not find translation for toxicity with input 'Pain'")
+                    CurationRequirement("Nausea", "No translation found for toxicity: 'Nausea'"),
+                    CurationRequirement("Pain", "No translation found for toxicity: 'Pain'")
                 )
             ),
             CurationResult("Toxicity", listOf(CurationRequirement("toxic", "Could not find toxicity config for input 'toxic'"))),
@@ -102,8 +102,8 @@ class ClinicalIngestionTest {
             CurationResult(
                 "Molecular Test",
                 listOf(
-                    CurationRequirement("ERBB2 3+", "Could not find molecular test config for type 'IHC' with input: 'ERBB2 3+'"),
-                    CurationRequirement("Positive", "Could not find molecular test config for type 'PD-L1' with input: 'Positive'")
+                    CurationRequirement("ERBB2 3+", "Could not find IHC molecular test config for input 'ERBB2 3+'"),
+                    CurationRequirement("Positive", "Could not find PD-L1 molecular test config for input 'Positive'")
                 )
             ),
             CurationResult(
@@ -127,7 +127,9 @@ class ClinicalIngestionTest {
                     )
                 )
             ),
-            CurationResult("Intolerance", listOf(CurationRequirement("Pills", "Could not find intolerance config for 'Pills'")))
+            CurationResult(
+                "Intolerance", listOf(CurationRequirement("Pills", "Could not find intolerance config for input 'Pills'"))
+            )
         )
         val record = results[0].clinicalRecord
         assertEquals(TEST_PATIENT, record.patientId())

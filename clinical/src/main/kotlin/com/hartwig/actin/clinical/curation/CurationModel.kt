@@ -4,7 +4,6 @@ import com.google.common.annotations.VisibleForTesting
 import com.google.common.collect.HashMultimap
 import com.google.common.collect.Lists
 import com.google.common.collect.Multimap
-import com.google.common.collect.Sets
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.CurationUtil.fullTrim
@@ -26,11 +25,7 @@ import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
-import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslation
-import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslation
-import com.hartwig.actin.clinical.curation.translation.DosageUnitTranslation
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation
-import com.hartwig.actin.clinical.curation.translation.ToxicityTranslation
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
 import com.hartwig.actin.clinical.datamodel.Complication
@@ -61,54 +56,28 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.doid.DoidModel
 import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.util.Strings
 import java.io.IOException
 import java.time.LocalDate
 import kotlin.jvm.optionals.getOrNull
 
 class CurationModel @VisibleForTesting internal constructor(
     private val database: CurationDatabase,
-    questionnaireRawEntryMapper: QuestionnaireRawEntryMapper
+    val questionnaireRawEntryMapper: QuestionnaireRawEntryMapper
 ) {
-    private val questionnaireRawEntryMapper: QuestionnaireRawEntryMapper
     private val evaluatedCurationInputs: Multimap<Class<out CurationConfig>, String> =
         HashMultimap.create<Class<out CurationConfig>, String>()
-    private val evaluatedTranslations: Multimap<Class<out Translation>, Translation> =
-        HashMultimap.create<Class<out Translation>, Translation>()
+    private val evaluatedAdministrationRouteTranslations = mutableSetOf<Translation>()
+    private val evaluatedDosageUnitTranslations = mutableSetOf<Translation>()
+    private val evaluatedLaboratoryTranslations = mutableSetOf<LaboratoryTranslation>()
+    private val evaluatedToxicityTranslations = mutableSetOf<Translation>()
     private val warnings = mutableListOf<CurationWarning>()
 
-    init {
-        this.questionnaireRawEntryMapper = questionnaireRawEntryMapper
-    }
-
     fun curateTumorDetails(patientId: String, inputTumorLocation: String?, inputTumorType: String?): TumorDetails {
-        var primaryTumorConfig: PrimaryTumorConfig? = null
-        if (inputTumorLocation != null || inputTumorType != null) {
-            val inputTumorLocationString = inputTumorLocation ?: Strings.EMPTY
-            val inputTumorTypeString = inputTumorType ?: Strings.EMPTY
-            val inputPrimaryTumor = fullTrim("$inputTumorLocationString | $inputTumorTypeString")
-            val configs: Set<PrimaryTumorConfig?> = find(database.primaryTumorConfigs, inputPrimaryTumor)
-            if (configs.isEmpty()) {
-                warnings.add(
-                    CurationWarning(
-                        patientId,
-                        CurationCategory.PRIMARY_TUMOR,
-                        inputPrimaryTumor,
-                        "Could not find primary tumor config for input '$inputPrimaryTumor'"
-                    )
-                )
-            } else if (configs.size > 1) {
-                warnings.add(
-                    CurationWarning(
-                        patientId,
-                        CurationCategory.PRIMARY_TUMOR,
-                        inputPrimaryTumor,
-                        "Primary tumor '$inputPrimaryTumor' matched to multiple configs!"
-                    )
-                )
-            } else {
-                primaryTumorConfig = configs.iterator().next()
-            }
+        val primaryTumorConfig = if (inputTumorLocation == null && inputTumorType == null) null else {
+            val inputPrimaryTumor = fullTrim(listOf(inputTumorLocation, inputTumorType).joinToString(" | ") { it ?: "" })
+            findUniqueCurationConfig(
+                inputPrimaryTumor, database.primaryTumorConfigs, patientId, CurationCategory.PRIMARY_TUMOR, "primary tumor"
+            )
         }
 
         return if (primaryTumorConfig == null) {
@@ -129,172 +98,111 @@ class CurationModel @VisibleForTesting internal constructor(
         tumorDetails: TumorDetails, biopsyLocation: String?,
         otherLesions: List<String>?
     ): TumorDetails {
-        val matches: MutableSet<LesionLocationCategory> = Sets.newHashSet<LesionLocationCategory>()
-        val lesionsToCheck: MutableList<String> = Lists.newArrayList()
-        if (otherLesions != null) {
-            lesionsToCheck.addAll(otherLesions)
-        }
+        val lesionsToCheck = (otherLesions ?: emptyList()) + listOfNotNull(biopsyLocation)
 
-        if (biopsyLocation != null) {
-            lesionsToCheck.add(biopsyLocation)
-        }
-
-        for (lesion in lesionsToCheck) {
-            val configs: Set<LesionLocationConfig> = find(database.lesionLocationConfigs, lesion)
-            for (config in configs) {
-                if (config.category != null) {
-                    matches.add(config.category)
-                }
-            }
-        }
+        val matches = lesionsToCheck.flatMap { find(database.lesionLocationConfigs, it).mapNotNull(LesionLocationConfig::category) }
 
         if (matches.isEmpty()) {
             return tumorDetails
         }
 
         val builder: ImmutableTumorDetails.Builder = ImmutableTumorDetails.builder().from(tumorDetails)
-        if (matches.contains(LesionLocationCategory.BRAIN)) {
-            if (tumorDetails.hasBrainLesions() == false) {
-                LOGGER.debug("  Overriding presence of brain lesions")
-            }
-            builder.hasBrainLesions(true)
-        }
-        if (matches.contains(LesionLocationCategory.CNS)) {
-            if (tumorDetails.hasCnsLesions() == false) {
-                LOGGER.debug("  Overriding presence of CNS lesions")
-            }
-            builder.hasCnsLesions(true)
-        }
-        if (matches.contains(LesionLocationCategory.LIVER)) {
-            if (tumorDetails.hasLiverLesions() == false) {
-                LOGGER.debug("  Overriding presence of liver lesions")
-            }
-            builder.hasLiverLesions(true)
-        }
-        if (matches.contains(LesionLocationCategory.BONE)) {
-            if (tumorDetails.hasBoneLesions() == false) {
-                LOGGER.debug("  Overriding presence of bone lesions")
-            }
-            builder.hasBoneLesions(true)
-        }
-        if (matches.contains(LesionLocationCategory.LUNG)) {
-            if (tumorDetails.hasLungLesions() == false) {
-                LOGGER.debug("  Overriding presence of lung lesions")
-            }
-            builder.hasLungLesions(true)
-        }
-        if (matches.contains(LesionLocationCategory.LYMPH_NODE)) {
-            if (tumorDetails.hasLymphNodeLesions() == false) {
-                LOGGER.debug("  Overriding presence of lymph node lesions")
-            }
-            builder.hasLymphNodeLesions(true)
-        }
+        overrideLesionPresence(
+            matches, tumorDetails, builder, LesionLocationCategory.BONE, TumorDetails::hasBoneLesions,
+            ImmutableTumorDetails.Builder::hasBoneLesions
+        )
+        overrideLesionPresence(
+            matches, tumorDetails, builder, LesionLocationCategory.BRAIN, TumorDetails::hasBrainLesions,
+            ImmutableTumorDetails.Builder::hasBrainLesions
+        )
+        overrideLesionPresence(
+            matches, tumorDetails, builder, LesionLocationCategory.CNS, TumorDetails::hasCnsLesions,
+            ImmutableTumorDetails.Builder::hasCnsLesions
+        )
+        overrideLesionPresence(
+            matches, tumorDetails, builder, LesionLocationCategory.LIVER, TumorDetails::hasLiverLesions,
+            ImmutableTumorDetails.Builder::hasLiverLesions
+        )
+        overrideLesionPresence(
+            matches, tumorDetails, builder, LesionLocationCategory.LUNG, TumorDetails::hasLungLesions,
+            ImmutableTumorDetails.Builder::hasLungLesions
+        )
+        overrideLesionPresence(
+            matches, tumorDetails, builder, LesionLocationCategory.LYMPH_NODE, TumorDetails::hasLymphNodeLesions,
+            ImmutableTumorDetails.Builder::hasLymphNodeLesions
+        )
         return builder.build()
     }
 
-    fun curateTreatmentHistoryEntry(patientId: String, entry: String): List<TreatmentHistoryEntry> {
-        val trimmedInput = fullTrim(entry)
-        val treatmentHistoryEntryConfigs = find(database.treatmentHistoryEntryConfigs, trimmedInput)
-        if (treatmentHistoryEntryConfigs.isEmpty()) {
-            // Same input is curated twice, so need to check if used at other place.
-            if (trimmedInput.isNotEmpty() && find(database.secondPrimaryConfigs, trimmedInput).isEmpty()) {
-                warnings.add(
-                    CurationWarning(
-                        patientId,
-                        CurationCategory.ONCOLOGICAL_HISTORY,
-                        trimmedInput,
-                        "Could not find treatment history or second primary config for input '$trimmedInput'"
-                    )
-                )
+    private fun overrideLesionPresence(
+        matches: List<LesionLocationCategory>,
+        tumorDetails: TumorDetails,
+        builder: ImmutableTumorDetails.Builder,
+        lesionLocationCategory: LesionLocationCategory,
+        hasLesions: (TumorDetails) -> Boolean?,
+        setLesions: (ImmutableTumorDetails.Builder, Boolean) -> ImmutableTumorDetails.Builder
+    ) {
+        if (matches.contains(lesionLocationCategory)) {
+            if (hasLesions.invoke(tumorDetails) == false) {
+                LOGGER.debug("  Overriding presence of ${lesionLocationCategory.name.lowercase()} lesions")
             }
+            setLesions.invoke(builder, true)
         }
-        return treatmentHistoryEntryConfigs.filter { !it.ignore }.mapNotNull { it.curated }
+    }
+
+    fun curateTreatmentHistoryEntry(patientId: String, entry: String): List<TreatmentHistoryEntry> {
+        return findCurationConfigs(
+            fullTrim(entry),
+            database.treatmentHistoryEntryConfigs,
+            patientId,
+            CurationCategory.ONCOLOGICAL_HISTORY,
+            "treatment history or second primary",
+            database.secondPrimaryConfigs
+        )
+            .filterNot(CurationConfig::ignore)
+            .map { it.curated!! }
     }
 
     fun curatePriorSecondPrimaries(patientId: String, inputs: List<String>?): List<PriorSecondPrimary> {
-        if (inputs == null) {
-            return Lists.newArrayList<PriorSecondPrimary>()
+        return inputs?.flatMap {
+            findCurationConfigs(
+                fullTrim(it),
+                database.secondPrimaryConfigs,
+                patientId,
+                CurationCategory.SECOND_PRIMARY,
+                "second primary or treatment history",
+                database.treatmentHistoryEntryConfigs
+            )
         }
-
-        val priorSecondPrimaries: MutableList<PriorSecondPrimary> = Lists.newArrayList<PriorSecondPrimary>()
-        for (input in inputs) {
-            val trimmedInput = fullTrim(input)
-            val configs: Set<SecondPrimaryConfig> = find(database.secondPrimaryConfigs, trimmedInput)
-            if (configs.isEmpty()) {
-                // Same input is curated twice, so need to check if used at other place.
-                if (trimmedInput.isNotEmpty() && find(database.treatmentHistoryEntryConfigs, trimmedInput).isEmpty()) {
-                    warnings.add(
-                        CurationWarning(
-                            patientId,
-                            CurationCategory.SECOND_PRIMARY,
-                            trimmedInput,
-                            "Could not find second primary or treatment history config for input '$trimmedInput'"
-                        )
-                    )
-                }
-            }
-            for (config in configs) {
-                if (!config.ignore) {
-                    priorSecondPrimaries.add(config.curated!!)
-                }
-            }
-        }
-        return priorSecondPrimaries
+            ?.filterNot(CurationConfig::ignore)
+            ?.map { it.curated!! }
+            ?: emptyList()
     }
 
     fun curatePriorOtherConditions(patientId: String, inputs: List<String>?): List<PriorOtherCondition> {
         if (inputs == null) {
-            return Lists.newArrayList<PriorOtherCondition>()
+            return emptyList()
         }
-
-        val priorOtherConditions: MutableList<PriorOtherCondition> = Lists.newArrayList<PriorOtherCondition>()
-        for (input in inputs) {
-            val trimmedInput = fullTrim(input)
-            val configs: Set<NonOncologicalHistoryConfig> = find(database.nonOncologicalHistoryConfigs, trimmedInput)
-            if (configs.isEmpty()) {
-                warnings.add(
-                    CurationWarning(
-                        patientId,
-                        CurationCategory.NON_ONCOLOGICAL_HISTORY,
-                        trimmedInput,
-                        "Could not find non-oncological history config for input '$trimmedInput'"
-                    )
-                )
-            }
-            configs
-                .filter { config: NonOncologicalHistoryConfig -> !config.ignore }
-                .mapNotNull { obj: NonOncologicalHistoryConfig -> obj.priorOtherCondition.getOrNull() }
-                .forEach { e: PriorOtherCondition -> priorOtherConditions.add(e) }
+        return inputs.flatMap {
+            findRelevantCurationConfigs(
+                fullTrim(it),
+                database.nonOncologicalHistoryConfigs,
+                patientId,
+                CurationCategory.NON_ONCOLOGICAL_HISTORY,
+                "non-oncological history"
+            )
         }
-        return priorOtherConditions
+            .mapNotNull { obj: NonOncologicalHistoryConfig -> obj.priorOtherCondition.getOrNull() }
     }
 
     fun curatePriorMolecularTests(patientId: String, type: String, inputs: List<String>?): List<PriorMolecularTest> {
-        if (inputs == null) {
-            return Lists.newArrayList<PriorMolecularTest>()
+        return inputs?.flatMap {
+            findRelevantCurationConfigs(
+                fullTrim(it), database.molecularTestConfigs, patientId, CurationCategory.MOLECULAR_TEST, "$type molecular test"
+            )
         }
-
-        val priorMolecularTests: MutableList<PriorMolecularTest> = Lists.newArrayList<PriorMolecularTest>()
-        for (input in inputs) {
-            val trimmedInput = fullTrim(input)
-            val configs: Set<MolecularTestConfig> = find(database.molecularTestConfigs, trimmedInput)
-            if (configs.isEmpty()) {
-                warnings.add(
-                    CurationWarning(
-                        patientId,
-                        CurationCategory.MOLECULAR_TEST,
-                        trimmedInput,
-                        "Could not find molecular test config for type '$type' with input: '$trimmedInput'"
-                    )
-                )
-            }
-            for (config in configs) {
-                if (!config.ignore) {
-                    priorMolecularTests.add(config.curated!!)
-                }
-            }
-        }
-        return priorMolecularTests
+            ?.map { it.curated!! }
+            ?: emptyList()
     }
 
     fun curateComplications(patientId: String, inputs: List<String>?): List<Complication>? {
@@ -306,17 +214,10 @@ class CurationModel @VisibleForTesting internal constructor(
         var unknownStateCount = 0
         var validInputCount = 0
         for (input in inputs) {
-            val configs: Set<ComplicationConfig> = find(database.complicationConfigs, input)
-            if (configs.isEmpty()) {
-                warnings.add(
-                    CurationWarning(
-                        patientId,
-                        CurationCategory.COMPLICATION,
-                        input,
-                        "Could not find complication config for input '$input'"
-                    )
-                )
-            } else {
+            val configs = findCurationConfigs(
+                input, database.complicationConfigs, patientId, CurationCategory.COMPLICATION, "complication"
+            )
+            if (configs.isNotEmpty()) {
                 validInputCount++
             }
             if (hasConfigImplyingUnknownState(configs)) {
@@ -337,139 +238,70 @@ class CurationModel @VisibleForTesting internal constructor(
 
     fun curateQuestionnaireToxicities(patientId: String, inputs: List<String>?, date: LocalDate): List<Toxicity> {
         return inputs?.flatMap { input ->
-            val trimmedInput = fullTrim(input)
-            val configs: Set<ToxicityConfig> = find(database.toxicityConfigs, trimmedInput)
-            if (configs.isEmpty()) {
-                warnings.add(
-                    CurationWarning(
-                        patientId,
-                        CurationCategory.TOXICITY,
-                        trimmedInput,
-                        "Could not find toxicity config for input '$trimmedInput'"
-                    )
-                )
-            }
-            configs.filterNot(ToxicityConfig::ignore)
-                .map { config ->
-                    ImmutableToxicity.builder()
-                        .name(config.name)
-                        .categories(config.categories)
-                        .evaluatedDate(date)
-                        .source(ToxicitySource.QUESTIONNAIRE)
-                        .grade(config.grade)
-                        .build()
-                }
-        } ?: emptyList()
+            findRelevantCurationConfigs(fullTrim(input), database.toxicityConfigs, patientId, CurationCategory.TOXICITY, "toxicity")
+        }
+            ?.map { config ->
+                ImmutableToxicity.builder()
+                    .name(config.name)
+                    .categories(config.categories)
+                    .evaluatedDate(date)
+                    .source(ToxicitySource.QUESTIONNAIRE)
+                    .grade(config.grade)
+                    .build()
+            } ?: emptyList()
     }
 
     fun curateECG(patientId: String, input: ECG?): ECG? {
-        if (input?.aberrationDescription() == null) {
-            return null
-        }
+        val configs = findCurationConfig(
+            input?.aberrationDescription(), database.ecgConfigs, patientId, CurationCategory.ECG, "ECG"
+        )
+        when {
+            configs?.isEmpty() == true -> {
+                return input
+            }
 
-        val configs: Set<ECGConfig> = find(database.ecgConfigs, input.aberrationDescription()!!)
-        if (configs.isEmpty()) {
-            warnings.add(
-                CurationWarning(
-                    patientId,
-                    CurationCategory.ECG,
-                    input.aberrationDescription()!!,
-                    "Could not find ECG config for input '${input.aberrationDescription()}'"
-                )
-            )
-            return input
-        } else if (configs.size > 1) {
-            warnings.add(
-                CurationWarning(
-                    patientId,
-                    CurationCategory.ECG,
-                    input.aberrationDescription()!!,
-                    "Multiple ECG configs matched to '${input.aberrationDescription()}'"
-                )
-            )
-            return null
+            configs?.size == 1 -> {
+                val config = configs.first()
+                if (!config.ignore) {
+                    val description: String? = config.interpretation.ifEmpty { null }
+                    return ImmutableECG.builder()
+                        .from(input!!)
+                        .aberrationDescription(description)
+                        .qtcfMeasure(maybeECGMeasure(config.qtcfValue, config.qtcfUnit))
+                        .jtcMeasure(maybeECGMeasure(config.jtcValue, config.jtcUnit))
+                        .build()
+                }
+            }
         }
-        val config: ECGConfig = configs.iterator().next()
-        if (config.ignore) {
-            return null
-        }
-
-        val description: String? = config.interpretation.ifEmpty { null }
-        return ImmutableECG.builder()
-            .from(input)
-            .aberrationDescription(description)
-            .qtcfMeasure(maybeECGMeasure(config.qtcfValue, config.qtcfUnit))
-            .jtcMeasure(maybeECGMeasure(config.jtcValue, config.jtcUnit))
-            .build()
+        return null
     }
 
     fun curateInfectionStatus(patientId: String, input: InfectionStatus?): InfectionStatus? {
-        if (input?.description() == null) {
-            return null
-        }
+        val configs = findCurationConfig(
+            input?.description(), database.infectionConfigs, patientId, CurationCategory.INFECTION, "infection"
+        )
+        when {
+            configs?.isEmpty() == true -> {
+                return input
+            }
 
-        val configs: Set<InfectionConfig> = find(database.infectionConfigs, input.description()!!)
-        if (configs.isEmpty()) {
-            warnings.add(
-                CurationWarning(
-                    patientId,
-                    CurationCategory.INFECTION,
-                    input.description()!!,
-                    "Could not find infection config for input '${input.description()}'"
-                )
-            )
-            return input
-        } else if (configs.size > 1) {
-            warnings.add(
-                CurationWarning(
-                    patientId,
-                    CurationCategory.INFECTION,
-                    input.description()!!,
-                    "Multiple infection configs matched to '${input.description()}'"
-                )
-            )
-            return null
+            configs?.size == 1 -> {
+                val config = configs.first()
+                if (!config.ignore) {
+                    val description: String? = config.interpretation.ifEmpty { null }
+                    return ImmutableInfectionStatus.builder().from(input!!).description(description).build()
+                }
+            }
         }
-        val config: InfectionConfig = configs.iterator().next()
-        if (config.ignore) {
-            return null
-        }
-        val description: String? = config.interpretation.ifEmpty { null }
-
-        return ImmutableInfectionStatus.builder().from(input).description(description).build()
+        return null
     }
 
     fun curatePeriodBetweenUnit(patientId: String, input: String?): String? {
-        if (input.isNullOrEmpty()) {
-            return null
-        }
-        val configs: Set<PeriodBetweenUnitConfig> = find(database.periodBetweenUnitConfigs, input)
-        if (configs.isEmpty()) {
-            warnings.add(
-                CurationWarning(
-                    patientId,
-                    CurationCategory.PERIOD_BETWEEN_UNIT_INTERPRETATION,
-                    input,
-                    "Could not find period between unit config for input '$input'"
-                )
-            )
-            return input
-        } else if (configs.size > 1) {
-            warnings.add(
-                CurationWarning(
-                    patientId,
-                    CurationCategory.PERIOD_BETWEEN_UNIT_INTERPRETATION,
-                    input,
-                    "Multiple period between unit configs matched to '$input'"
-                )
-            )
-            return null
-        }
-        val config: PeriodBetweenUnitConfig = configs.first()
-        if (config.ignore) {
-            return null
-        }
-        return config.interpretation
+        val config = findUniqueCurationConfig(
+            input, database.periodBetweenUnitConfigs, patientId, CurationCategory.PERIOD_BETWEEN_UNIT_INTERPRETATION,
+            "period between unit"
+        )
+        return config?.interpretation
     }
 
     fun determineLVEF(inputs: List<String>?): Double? {
@@ -481,133 +313,47 @@ class CurationModel @VisibleForTesting internal constructor(
     }
 
     fun curateOtherLesions(patientId: String, otherLesions: List<String>?): List<String>? {
-        if (otherLesions == null) {
-            return null
+        return otherLesions?.flatMap {
+            findCurationConfigs(it, database.lesionLocationConfigs, patientId, CurationCategory.LESION_LOCATION, "lesion")
         }
-
-        val curatedOtherLesions: MutableList<String> = Lists.newArrayList()
-        for (lesion in otherLesions) {
-            val configs: Set<LesionLocationConfig> = find(database.lesionLocationConfigs, lesion)
-            if (configs.isEmpty()) {
-                warnings.add(
-                    CurationWarning(
-                        patientId,
-                        CurationCategory.LESION_LOCATION,
-                        lesion,
-                        "Could not find lesion config for input '$lesion'"
-                    )
-                )
-            }
-            for (config in configs) {
+            ?.filter { config ->
                 // We only want to include lesions from the other lesions in actual other lesions
                 // if it does not override an explicit lesion location
                 val hasRealOtherLesion = config.category == null || config.category == LesionLocationCategory.LYMPH_NODE
-                if (hasRealOtherLesion && config.location.isNotEmpty()) {
-                    curatedOtherLesions.add(config.location)
-                }
+                hasRealOtherLesion && config.location.isNotEmpty()
             }
-        }
-        return curatedOtherLesions
+            ?.map(LesionLocationConfig::location)
     }
 
     fun curateBiopsyLocation(patientId: String, input: String?): String? {
-        if (input.isNullOrEmpty()) {
-            return null
-        }
-
-        val configs: Set<LesionLocationConfig> = find(database.lesionLocationConfigs, input)
-        if (configs.isEmpty()) {
-            warnings.add(
-                CurationWarning(
-                    patientId,
-                    CurationCategory.LESION_LOCATION,
-                    input,
-                    "Could not find lesion config for biopsy location '$input'"
-                )
-            )
-            return null
-        } else if (configs.size > 1) {
-            warnings.add(
-                CurationWarning(
-                    patientId,
-                    CurationCategory.LESION_LOCATION,
-                    input,
-                    "Multiple lesion location configs matched for biopsy location '$input'"
-                )
-            )
-            return null
-        }
-        return configs.iterator().next().location
+        val config = findUniqueCurationConfig(
+            input, database.lesionLocationConfigs, patientId, CurationCategory.LESION_LOCATION, "biopsy location"
+        )
+        return config?.location
     }
 
     fun curateMedicationDosage(patientId: String, input: String): Dosage? {
-        val configs: Set<MedicationDosageConfig> = find(database.medicationDosageConfigs, input)
-        if (configs.isEmpty()) {
-            warnings.add(
-                CurationWarning(
-                    patientId,
-                    CurationCategory.MEDICATION_DOSAGE,
-                    input,
-                    "Could not find medication dosage config for '$input'"
-                )
-            )
-            return null
-        } else if (configs.size > 1) {
-            warnings.add(
-                CurationWarning(
-                    patientId,
-                    CurationCategory.MEDICATION_DOSAGE,
-                    input,
-                    "Multiple medication dosage configs matched to '$input'"
-                )
-            )
-            return null
+        return findUniqueCurationConfig(
+            input, database.medicationDosageConfigs, patientId, CurationCategory.MEDICATION_DOSAGE, "medication dosage"
+        )?.let { config ->
+            ImmutableDosage.builder()
+                .dosageMin(config.dosageMin)
+                .dosageMax(config.dosageMax)
+                .dosageUnit(config.dosageUnit)
+                .frequency(config.frequency)
+                .frequencyUnit(config.frequencyUnit)
+                .periodBetweenValue(config.periodBetweenValue)
+                .periodBetweenUnit(config.periodBetweenUnit)
+                .ifNeeded(config.ifNeeded)
+                .build()
         }
-        val config: MedicationDosageConfig = configs.first()
-
-        return ImmutableDosage.builder()
-            .dosageMin(config.dosageMin)
-            .dosageMax(config.dosageMax)
-            .dosageUnit(config.dosageUnit)
-            .frequency(config.frequency)
-            .frequencyUnit(config.frequencyUnit)
-            .periodBetweenValue(config.periodBetweenValue)
-            .periodBetweenUnit(config.periodBetweenUnit)
-            .ifNeeded(config.ifNeeded)
-            .build()
     }
 
     fun curateMedicationName(patientId: String, input: String): String? {
-        val trimmedInput = fullTrim(input)
-        if (trimmedInput.isEmpty()) {
-            return null
-        }
-
-        val configs: Set<MedicationNameConfig> = find(database.medicationNameConfigs, trimmedInput)
-        if (configs.isEmpty()) {
-            warnings.add(
-                CurationWarning(
-                    patientId,
-                    CurationCategory.MEDICATION_NAME,
-                    trimmedInput,
-                    "Could not find medication name config for '$trimmedInput'"
-                )
-            )
-            return null
-        } else if (configs.size > 1) {
-            warnings.add(
-                CurationWarning(
-                    patientId,
-                    CurationCategory.MEDICATION_NAME,
-                    trimmedInput,
-                    "Multiple medication name configs founds for medication input '$trimmedInput'"
-                )
-            )
-            return null
-        }
-        val config: MedicationNameConfig = configs.iterator().next()
-
-        return if (!config.ignore) config.name else null
+        val config = findUniqueCurationConfig(
+            fullTrim(input), database.medicationNameConfigs, patientId, CurationCategory.MEDICATION_NAME, "medication name"
+        )
+        return config?.name
     }
 
     fun curateMedicationStatus(patientId: String, status: String): MedicationStatus? {
@@ -645,62 +391,13 @@ class CurationModel @VisibleForTesting internal constructor(
         }
     }
 
-    fun translateAdministrationRoute(patientId: String, administrationRoute: String?): String? {
-        if (administrationRoute.isNullOrEmpty()) {
-            return null
-        }
-
-        val trimmedAdministrationRoute = administrationRoute.trim { it <= ' ' }
-        val translation: AdministrationRouteTranslation? = findAdministrationRouteTranslation(trimmedAdministrationRoute)
-        if (translation == null) {
-            warnings.add(
-                CurationWarning(
-                    patientId,
-                    CurationCategory.ADMISTRATION_ROUTE_TRANSLATION,
-                    trimmedAdministrationRoute,
-                    "No translation found for medication administration route: '$trimmedAdministrationRoute'"
-                )
-            )
-            return null
-        }
-        evaluatedTranslations.put(AdministrationRouteTranslation::class.java, translation)
-
-        return translation.translatedAdministrationRoute.ifEmpty { null }
-    }
-
-    private fun findAdministrationRouteTranslation(administrationRoute: String): AdministrationRouteTranslation? {
-        for (entry in database.administrationRouteTranslations) {
-            if (entry.administrationRoute == administrationRoute) {
-                return entry
-            }
-        }
-        return null
-    }
-
     fun curateIntolerance(patientId: String, intolerance: Intolerance): Intolerance {
         val reformatted = CurationUtil.capitalizeFirstLetterOnly(intolerance.name())
-        val configs: Set<IntoleranceConfig> = find(database.intoleranceConfigs, reformatted)
+        val config = findUniqueCurationConfig(
+            reformatted, database.intoleranceConfigs, patientId, CurationCategory.INTOLERANCE, "intolerance"
+        )
         val builder: ImmutableIntolerance.Builder = ImmutableIntolerance.builder().from(intolerance)
-        if (configs.isEmpty()) {
-            warnings.add(
-                CurationWarning(
-                    patientId,
-                    CurationCategory.INTOLERANCE,
-                    reformatted,
-                    "Could not find intolerance config for '$reformatted'"
-                )
-            )
-        } else if (configs.size > 1) {
-            warnings.add(
-                CurationWarning(
-                    patientId,
-                    CurationCategory.INTOLERANCE,
-                    reformatted,
-                    "Multiple intolerance configs for intolerance with name '$reformatted'"
-                )
-            )
-        } else {
-            val config: IntoleranceConfig = configs.iterator().next()
+        if (config != null) {
             builder.name(config.name).doids(config.doids)
         }
 
@@ -712,106 +409,174 @@ class CurationModel @VisibleForTesting internal constructor(
         return builder.build()
     }
 
+    private inline fun <reified T : CurationConfig> findUniqueCurationConfig(
+        input: String?,
+        curationConfigs: Map<String, Set<T>>,
+        patientId: String,
+        curationCategory: CurationCategory,
+        categoryName: String
+    ): T? {
+        val configs = findCurationConfig(input, curationConfigs, patientId, curationCategory, categoryName)
+        if (configs != null && configs.size == 1) {
+            val config = configs.first()
+            if (!config.ignore) {
+                return config
+            }
+        }
+        return null
+    }
+
+    private inline fun <reified T : CurationConfig> findCurationConfig(
+        input: String?,
+        curationConfigs: Map<String, Set<T>>,
+        patientId: String,
+        curationCategory: CurationCategory,
+        categoryName: String
+    ): Set<T>? {
+        if (input.isNullOrEmpty()) {
+            return null
+        }
+        val configs = findCurationConfigs(input, curationConfigs, patientId, curationCategory, categoryName)
+        if (configs.size > 1) {
+            val trimmedInput = input.trim { it <= ' ' }
+            warnings.add(
+                CurationWarning(patientId, curationCategory, trimmedInput, "Multiple $categoryName configs found for input '$trimmedInput'")
+            )
+        }
+        return configs
+    }
+
+    private inline fun <reified T : CurationConfig> findRelevantCurationConfigs(
+        input: String,
+        curationConfigs: Map<String, Set<T>>,
+        patientId: String,
+        curationCategory: CurationCategory,
+        categoryName: String
+    ): List<T> {
+        return findCurationConfigs(input, curationConfigs, patientId, curationCategory, categoryName).filterNot(CurationConfig::ignore)
+    }
+
+    private inline fun <reified T : CurationConfig> findCurationConfigs(
+        input: String,
+        curationConfigs: Map<String, Set<T>>,
+        patientId: String,
+        curationCategory: CurationCategory,
+        categoryName: String
+    ): Set<T> {
+        val trimmedInput = input.trim { it <= ' ' }
+        val configs = find(curationConfigs, trimmedInput)
+        if (configs.isEmpty()) {
+            warnings.add(
+                CurationWarning(patientId, curationCategory, trimmedInput, "Could not find $categoryName config for input '$trimmedInput'")
+            )
+        }
+        return configs
+    }
+
+    private inline fun <reified T : CurationConfig, reified U : CurationConfig> findCurationConfigs(
+        input: String,
+        curationConfigs: Map<String, Set<T>>,
+        patientId: String,
+        curationCategory: CurationCategory,
+        categoryName: String,
+        secondaryConfigLookup: Map<String, Set<U>>
+    ): Set<T> {
+        val trimmedInput = input.trim { it <= ' ' }
+        val configs = find(curationConfigs, trimmedInput)
+        if (configs.isEmpty() && find(secondaryConfigLookup, trimmedInput).isEmpty()) {
+            warnings.add(
+                CurationWarning(patientId, curationCategory, trimmedInput, "Could not find $categoryName config for input '$trimmedInput'")
+            )
+        }
+        return configs
+    }
+
+    private inline fun <reified T : CurationConfig> find(configs: Map<String, Set<T>>, input: String): Set<T> {
+        if (configs.isNotEmpty()) {
+            evaluatedCurationInputs.put(T::class.java, input.lowercase())
+        }
+        return configs[input.lowercase()] ?: emptySet()
+    }
+
     fun translateLabValue(patientId: String, input: LabValue): LabValue {
         val translation: LaboratoryTranslation = findLaboratoryTranslation(patientId, input) ?: return input
-        evaluatedTranslations.put(LaboratoryTranslation::class.java, translation)
+        evaluatedLaboratoryTranslations.add(translation)
         return ImmutableLabValue.builder().from(input).code(translation.translatedCode).name(translation.translatedName).build()
     }
 
     private fun findLaboratoryTranslation(patientId: String, input: LabValue): LaboratoryTranslation? {
         val trimmedName: String = input.name().trim { it <= ' ' }
-        for (entry in database.laboratoryTranslations) {
-            if (entry.code == input.code() && entry.name == trimmedName) {
-                return entry
-            }
-        }
-        warnings.add(
-            CurationWarning(
-                patientId,
-                CurationCategory.LABORATORY_TRANSLATION,
-                input.code(),
-                "Could not find laboratory translation for lab value with code '${input.code()}' and name '$trimmedName'"
+        val found = database.laboratoryTranslations[Pair(input.code(), trimmedName)]
+        if (found == null) {
+            warnings.add(
+                CurationWarning(
+                    patientId,
+                    CurationCategory.LABORATORY_TRANSLATION,
+                    input.code(),
+                    "Could not find laboratory translation for lab value with code '${input.code()}' and name '$trimmedName'"
+                )
             )
+        }
+        return found
+    }
+
+    fun translateAdministrationRoute(patientId: String, administrationRoute: String?): String? {
+        val translation = findTranslation(
+            administrationRoute, database.administrationRouteTranslations, patientId, CurationCategory.ADMISTRATION_ROUTE_TRANSLATION,
+            "medication administration route", evaluatedAdministrationRouteTranslations
         )
-        return null
+        return translation?.translated?.ifEmpty { null }
     }
 
     fun translateToxicity(patientId: String, input: Toxicity): Toxicity {
-        val translation: ToxicityTranslation? = findToxicityTranslation(input.name())
-        if (translation == null) {
-            warnings.add(
-                CurationWarning(
-                    patientId,
-                    CurationCategory.TOXICITY_TRANSLATION,
-                    input.name(),
-                    "Could not find translation for toxicity with input '${input.name()}'"
-                )
-            )
-            return input
-        }
-        evaluatedTranslations.put(ToxicityTranslation::class.java, translation)
-        return ImmutableToxicity.builder().from(input).name(translation.translatedToxicity).build()
-    }
-
-    private fun findToxicityTranslation(toxicityName: String): ToxicityTranslation? {
-        val trimmedToxicity = toxicityName.trim { it <= ' ' }
-        for (entry in database.toxicityTranslations) {
-            if (entry.toxicity == trimmedToxicity) {
-                return entry
-            }
-        }
-
-        // No warn since not all toxicities need to be translated.
-        return null
+        return findTranslation(
+            input.name(), database.toxicityTranslations, patientId,
+            CurationCategory.TOXICITY_TRANSLATION, "toxicity", evaluatedToxicityTranslations
+        )?.let { translation ->
+            ImmutableToxicity.builder().from(input).name(translation.translated).build()
+        } ?: input
     }
 
     fun translateBloodTransfusion(patientId: String, input: BloodTransfusion): BloodTransfusion {
-        val translation: BloodTransfusionTranslation = findBloodTransfusionTranslation(patientId, input) ?: return input
-        evaluatedTranslations.put(BloodTransfusionTranslation::class.java, translation)
-        return ImmutableBloodTransfusion.builder().from(input).product(translation.translatedProduct).build()
-    }
-
-    private fun findBloodTransfusionTranslation(patientId: String, input: BloodTransfusion): BloodTransfusionTranslation? {
-        val trimmedProduct: String = input.product().trim { it <= ' ' }
-        for (entry in database.bloodTransfusionTranslations) {
-            if (entry.product == trimmedProduct) {
-                return entry
-            }
-        }
-        warnings.add(
-            CurationWarning(
-                patientId,
-                CurationCategory.BLOOD_TRANSFUSION_TRANSLATION,
-                trimmedProduct,
-                "Could not find blood transfusion translation for blood transfusion with product '$trimmedProduct'"
-            )
-        )
-        return null
+        return findTranslation(
+            input.product(), database.bloodTransfusionTranslations, patientId,
+            CurationCategory.BLOOD_TRANSFUSION_TRANSLATION, "blood transfusion with product"
+        )?.let { translation ->
+            ImmutableBloodTransfusion.builder().from(input).product(translation.translated).build()
+        } ?: input
     }
 
     fun translateDosageUnit(patientId: String, dosageUnit: String?): String? {
-        if (dosageUnit.isNullOrEmpty()) {
+        val translation = findTranslation(
+            dosageUnit?.lowercase(), database.dosageUnitTranslations, patientId,
+            CurationCategory.DOSAGE_UNIT_TRANSLATION, "medication dosage unit", evaluatedDosageUnitTranslations
+        )
+        return translation?.translated?.ifEmpty { null }
+    }
+
+    private fun findTranslation(
+        input: String?,
+        translations: Map<String, Translation>,
+        patientId: String,
+        curationCategory: CurationCategory,
+        categoryName: String,
+        evaluatedTranslations: MutableSet<Translation>? = null
+    ): Translation? {
+        if (input.isNullOrEmpty()) {
             return null
         }
-        val trimmedDosageUnit = dosageUnit.trim { it <= ' ' }
-        val translation: DosageUnitTranslation? = findDosageUnitTranslation(trimmedDosageUnit)
+        val trimmedInput = input.trim { it <= ' ' }
+        val translation: Translation? = translations[trimmedInput]
         if (translation == null) {
             warnings.add(
                 CurationWarning(
-                    patientId,
-                    CurationCategory.DOSAGE_UNIT_TRANSLATION,
-                    trimmedDosageUnit,
-                    "No translation found for medication dosage unit: '$trimmedDosageUnit'"
+                    patientId, curationCategory, trimmedInput, "No translation found for ${categoryName}: '$trimmedInput'"
                 )
             )
             return null
         }
-        evaluatedTranslations.put(DosageUnitTranslation::class.java, translation)
-        return translation.translatedDosageUnit.ifEmpty { null }
-    }
-
-    private fun findDosageUnitTranslation(dosageUnit: String): DosageUnitTranslation? {
-        return database.dosageUnitTranslations.firstOrNull { it.dosageUnit.lowercase() == dosageUnit.lowercase() }
+        evaluatedTranslations?.add(translation)
+        return translation
     }
 
     fun getWarnings(patientId: String): List<CurationWarning> = warnings.filter { it.patientId == patientId }
@@ -819,7 +584,7 @@ class CurationModel @VisibleForTesting internal constructor(
     fun evaluate() {
         var warnCount = 0
         for ((key, evaluated) in evaluatedCurationInputs.asMap().entries) {
-            val configs: List<CurationConfig> = configsForClass(key)
+            val configs: List<CurationConfig> = configsForClass(key).values.flatten()
             for (config in configs) {
                 // TODO: Raise warnings for unused medication dosage once more final
                 if (!evaluated.contains(config.input.lowercase()) && isNotIgnored(config)) {
@@ -828,25 +593,23 @@ class CurationModel @VisibleForTesting internal constructor(
                 }
             }
         }
-        for ((key, evaluated) in evaluatedTranslations.asMap().entries) {
-            val translations: List<Translation> = translationsForClass(key)
-            for (translation in translations) {
-                if (!evaluated.contains(translation) && translation !is BloodTransfusionTranslation) {
-                    warnCount++
-                    LOGGER.warn(" Translation '{}' not used", translation)
-                }
+        listOf(
+            database.administrationRouteTranslations to evaluatedAdministrationRouteTranslations,
+            database.laboratoryTranslations to evaluatedLaboratoryTranslations,
+            database.toxicityTranslations to evaluatedToxicityTranslations,
+            database.dosageUnitTranslations to evaluatedDosageUnitTranslations
+        )
+            .flatMap { (allTranslations, evaluated) -> allTranslations.values.filterNot(evaluated::contains) }
+            .forEach { translation ->
+                warnCount++
+                LOGGER.warn(" Translation '{}' not used", translation)
             }
-        }
     }
 
     private fun isNotIgnored(config: CurationConfig) =
         (config !is MedicationDosageConfig && config !is CypInteractionConfig && config !is QTProlongatingConfig)
 
-    fun questionnaireRawEntryMapper(): QuestionnaireRawEntryMapper {
-        return questionnaireRawEntryMapper
-    }
-
-    private fun configsForClass(classToLookUp: Class<out CurationConfig>): List<CurationConfig> {
+    private fun configsForClass(classToLookUp: Class<out CurationConfig>): Map<String, Set<CurationConfig>> {
         when (classToLookUp) {
             PrimaryTumorConfig::class.java -> {
                 return database.primaryTumorConfigs
@@ -916,40 +679,6 @@ class CurationModel @VisibleForTesting internal constructor(
         }
     }
 
-    private fun translationsForClass(classToLookup: Class<out Translation>): List<Translation> {
-        when (classToLookup) {
-            AdministrationRouteTranslation::class.java -> {
-                return database.administrationRouteTranslations
-            }
-
-            LaboratoryTranslation::class.java -> {
-                return database.laboratoryTranslations
-            }
-
-            ToxicityTranslation::class.java -> {
-                return database.toxicityTranslations
-            }
-
-            BloodTransfusionTranslation::class.java -> {
-                return database.bloodTransfusionTranslations
-            }
-
-            DosageUnitTranslation::class.java -> {
-                return database.dosageUnitTranslations
-            }
-
-            else -> throw IllegalStateException("Class not found in curation database: $classToLookup")
-        }
-    }
-
-    private fun <T : CurationConfig> find(configs: List<T>, input: String): Set<T> {
-        if (configs.isNotEmpty()) {
-            evaluatedCurationInputs.put(configs[0].javaClass, input.lowercase())
-            return configs.filter { config: T -> config.input.equals(input, ignoreCase = true) }.toSet()
-        }
-        return emptySet()
-    }
-
     companion object {
         private val LOGGER = LogManager.getLogger(CurationModel::class.java)
 
@@ -962,12 +691,7 @@ class CurationModel @VisibleForTesting internal constructor(
         }
 
         private fun hasConfigImplyingUnknownState(configs: Set<ComplicationConfig>): Boolean {
-            for (config in configs) {
-                if (config.impliesUnknownComplicationState) {
-                    return true
-                }
-            }
-            return false
+            return configs.any(ComplicationConfig::impliesUnknownComplicationState)
         }
 
         private fun maybeECGMeasure(value: Int?, unit: String?): ImmutableECGMeasure? {
