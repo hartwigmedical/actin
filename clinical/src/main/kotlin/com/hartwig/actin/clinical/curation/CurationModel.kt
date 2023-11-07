@@ -1,8 +1,6 @@
 package com.hartwig.actin.clinical.curation
 
-import com.google.common.annotations.VisibleForTesting
 import com.google.common.collect.HashMultimap
-import com.google.common.collect.Lists
 import com.google.common.collect.Multimap
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
@@ -24,46 +22,30 @@ import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
-import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
-import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.Dosage
-import com.hartwig.actin.clinical.datamodel.ECG
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion
-import com.hartwig.actin.clinical.datamodel.ImmutableComplication
 import com.hartwig.actin.clinical.datamodel.ImmutableDosage
-import com.hartwig.actin.clinical.datamodel.ImmutableECG
-import com.hartwig.actin.clinical.datamodel.ImmutableECGMeasure
-import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity
-import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
-import com.hartwig.actin.clinical.datamodel.InfectionStatus
 import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.datamodel.MedicationStatus
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
-import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
 import com.hartwig.actin.clinical.datamodel.Toxicity
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
-import com.hartwig.actin.clinical.datamodel.TumorDetails
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.doid.DoidModel
 import org.apache.logging.log4j.LogManager
 import java.io.IOException
 import java.time.LocalDate
-import kotlin.jvm.optionals.getOrNull
 
-class CurationModel @VisibleForTesting internal constructor(
-    private val database: CurationDatabase,
-    val questionnaireRawEntryMapper: QuestionnaireRawEntryMapper
-) {
+data class CurationOutput<T>(val configs: Collection<T>, val warnings: Set<CurationWarning>, val evaluatedInputs: Set<String>)
+
+class CurationModel(private val database: CurationDatabase, val questionnaireRawEntryMapper: QuestionnaireRawEntryMapper) {
     private val evaluatedCurationInputs: Multimap<Class<out CurationConfig>, String> =
         HashMultimap.create<Class<out CurationConfig>, String>()
     private val evaluatedAdministrationRouteTranslations = mutableSetOf<Translation>()
@@ -71,170 +53,6 @@ class CurationModel @VisibleForTesting internal constructor(
     private val evaluatedLaboratoryTranslations = mutableSetOf<LaboratoryTranslation>()
     private val evaluatedToxicityTranslations = mutableSetOf<Translation>()
     private val warnings = mutableListOf<CurationWarning>()
-
-    fun curateTumorDetails(patientId: String, inputTumorLocation: String?, inputTumorType: String?): TumorDetails {
-        val primaryTumorConfig = if (inputTumorLocation == null && inputTumorType == null) null else {
-            val inputPrimaryTumor = fullTrim(listOf(inputTumorLocation, inputTumorType).joinToString(" | ") { it ?: "" })
-            findUniqueCurationConfig(
-                inputPrimaryTumor, database.primaryTumorConfigs, patientId, CurationCategory.PRIMARY_TUMOR, "primary tumor"
-            )
-        }
-
-        return if (primaryTumorConfig == null) {
-            ImmutableTumorDetails.builder().build()
-        } else {
-            ImmutableTumorDetails.builder()
-                .primaryTumorLocation(primaryTumorConfig.primaryTumorLocation)
-                .primaryTumorSubLocation(primaryTumorConfig.primaryTumorSubLocation)
-                .primaryTumorType(primaryTumorConfig.primaryTumorType)
-                .primaryTumorSubType(primaryTumorConfig.primaryTumorSubType)
-                .primaryTumorExtraDetails(primaryTumorConfig.primaryTumorExtraDetails)
-                .doids(primaryTumorConfig.doids)
-                .build()
-        }
-    }
-
-    fun overrideKnownLesionLocations(
-        tumorDetails: TumorDetails, biopsyLocation: String?,
-        otherLesions: List<String>?
-    ): TumorDetails {
-        val lesionsToCheck = (otherLesions ?: emptyList()) + listOfNotNull(biopsyLocation)
-
-        val matches = lesionsToCheck.flatMap { find(database.lesionLocationConfigs, it).mapNotNull(LesionLocationConfig::category) }
-
-        if (matches.isEmpty()) {
-            return tumorDetails
-        }
-
-        val builder: ImmutableTumorDetails.Builder = ImmutableTumorDetails.builder().from(tumorDetails)
-        overrideLesionPresence(
-            matches, tumorDetails, builder, LesionLocationCategory.BONE, TumorDetails::hasBoneLesions,
-            ImmutableTumorDetails.Builder::hasBoneLesions
-        )
-        overrideLesionPresence(
-            matches, tumorDetails, builder, LesionLocationCategory.BRAIN, TumorDetails::hasBrainLesions,
-            ImmutableTumorDetails.Builder::hasBrainLesions
-        )
-        overrideLesionPresence(
-            matches, tumorDetails, builder, LesionLocationCategory.CNS, TumorDetails::hasCnsLesions,
-            ImmutableTumorDetails.Builder::hasCnsLesions
-        )
-        overrideLesionPresence(
-            matches, tumorDetails, builder, LesionLocationCategory.LIVER, TumorDetails::hasLiverLesions,
-            ImmutableTumorDetails.Builder::hasLiverLesions
-        )
-        overrideLesionPresence(
-            matches, tumorDetails, builder, LesionLocationCategory.LUNG, TumorDetails::hasLungLesions,
-            ImmutableTumorDetails.Builder::hasLungLesions
-        )
-        overrideLesionPresence(
-            matches, tumorDetails, builder, LesionLocationCategory.LYMPH_NODE, TumorDetails::hasLymphNodeLesions,
-            ImmutableTumorDetails.Builder::hasLymphNodeLesions
-        )
-        return builder.build()
-    }
-
-    private fun overrideLesionPresence(
-        matches: List<LesionLocationCategory>,
-        tumorDetails: TumorDetails,
-        builder: ImmutableTumorDetails.Builder,
-        lesionLocationCategory: LesionLocationCategory,
-        hasLesions: (TumorDetails) -> Boolean?,
-        setLesions: (ImmutableTumorDetails.Builder, Boolean) -> ImmutableTumorDetails.Builder
-    ) {
-        if (matches.contains(lesionLocationCategory)) {
-            if (hasLesions.invoke(tumorDetails) == false) {
-                LOGGER.debug("  Overriding presence of ${lesionLocationCategory.name.lowercase()} lesions")
-            }
-            setLesions.invoke(builder, true)
-        }
-    }
-
-    fun curateTreatmentHistoryEntry(patientId: String, entry: String): List<TreatmentHistoryEntry> {
-        return findCurationConfigs(
-            fullTrim(entry),
-            database.treatmentHistoryEntryConfigs,
-            patientId,
-            CurationCategory.ONCOLOGICAL_HISTORY,
-            "treatment history or second primary",
-            database.secondPrimaryConfigs
-        )
-            .filterNot(CurationConfig::ignore)
-            .map { it.curated!! }
-    }
-
-    fun curatePriorSecondPrimaries(patientId: String, inputs: List<String>?): List<PriorSecondPrimary> {
-        return inputs?.flatMap {
-            findCurationConfigs(
-                fullTrim(it),
-                database.secondPrimaryConfigs,
-                patientId,
-                CurationCategory.SECOND_PRIMARY,
-                "second primary or treatment history",
-                database.treatmentHistoryEntryConfigs
-            )
-        }
-            ?.filterNot(CurationConfig::ignore)
-            ?.map { it.curated!! }
-            ?: emptyList()
-    }
-
-    fun curatePriorOtherConditions(patientId: String, inputs: List<String>?): List<PriorOtherCondition> {
-        if (inputs == null) {
-            return emptyList()
-        }
-        return inputs.flatMap {
-            findRelevantCurationConfigs(
-                fullTrim(it),
-                database.nonOncologicalHistoryConfigs,
-                patientId,
-                CurationCategory.NON_ONCOLOGICAL_HISTORY,
-                "non-oncological history"
-            )
-        }
-            .mapNotNull { obj: NonOncologicalHistoryConfig -> obj.priorOtherCondition.getOrNull() }
-    }
-
-    fun curatePriorMolecularTests(patientId: String, type: String, inputs: List<String>?): List<PriorMolecularTest> {
-        return inputs?.flatMap {
-            findRelevantCurationConfigs(
-                fullTrim(it), database.molecularTestConfigs, patientId, CurationCategory.MOLECULAR_TEST, "$type molecular test"
-            )
-        }
-            ?.map { it.curated!! }
-            ?: emptyList()
-    }
-
-    fun curateComplications(patientId: String, inputs: List<String>?): List<Complication>? {
-        if (inputs.isNullOrEmpty()) {
-            return null
-        }
-
-        val complications: MutableList<Complication> = Lists.newArrayList()
-        var unknownStateCount = 0
-        var validInputCount = 0
-        for (input in inputs) {
-            val configs = findCurationConfigs(
-                input, database.complicationConfigs, patientId, CurationCategory.COMPLICATION, "complication"
-            )
-            if (configs.isNotEmpty()) {
-                validInputCount++
-            }
-            if (hasConfigImplyingUnknownState(configs)) {
-                unknownStateCount++
-            }
-            for (config in configs) {
-                if (!config.ignore) {
-                    complications.add(ImmutableComplication.builder().from(config.curated!!).build())
-                }
-            }
-        }
-
-        // If there are complications but every single one of them implies an unknown state, return null
-        return if (unknownStateCount == validInputCount) {
-            null
-        } else complications
-    }
 
     fun curateQuestionnaireToxicities(patientId: String, inputs: List<String>?, date: LocalDate): List<Toxicity> {
         return inputs?.flatMap { input ->
@@ -251,85 +69,12 @@ class CurationModel @VisibleForTesting internal constructor(
             } ?: emptyList()
     }
 
-    fun curateECG(patientId: String, input: ECG?): ECG? {
-        val configs = findCurationConfig(
-            input?.aberrationDescription(), database.ecgConfigs, patientId, CurationCategory.ECG, "ECG"
-        )
-        when {
-            configs?.isEmpty() == true -> {
-                return input
-            }
-
-            configs?.size == 1 -> {
-                val config = configs.first()
-                if (!config.ignore) {
-                    val description: String? = config.interpretation.ifEmpty { null }
-                    return ImmutableECG.builder()
-                        .from(input!!)
-                        .aberrationDescription(description)
-                        .qtcfMeasure(maybeECGMeasure(config.qtcfValue, config.qtcfUnit))
-                        .jtcMeasure(maybeECGMeasure(config.jtcValue, config.jtcUnit))
-                        .build()
-                }
-            }
-        }
-        return null
-    }
-
-    fun curateInfectionStatus(patientId: String, input: InfectionStatus?): InfectionStatus? {
-        val configs = findCurationConfig(
-            input?.description(), database.infectionConfigs, patientId, CurationCategory.INFECTION, "infection"
-        )
-        when {
-            configs?.isEmpty() == true -> {
-                return input
-            }
-
-            configs?.size == 1 -> {
-                val config = configs.first()
-                if (!config.ignore) {
-                    val description: String? = config.interpretation.ifEmpty { null }
-                    return ImmutableInfectionStatus.builder().from(input!!).description(description).build()
-                }
-            }
-        }
-        return null
-    }
-
     fun curatePeriodBetweenUnit(patientId: String, input: String?): String? {
         val config = findUniqueCurationConfig(
             input, database.periodBetweenUnitConfigs, patientId, CurationCategory.PERIOD_BETWEEN_UNIT_INTERPRETATION,
             "period between unit"
         )
         return config?.interpretation
-    }
-
-    fun determineLVEF(inputs: List<String>?): Double? {
-        return inputs?.flatMap { input: String -> find(database.nonOncologicalHistoryConfigs, input) }
-            ?.filterNot { it.ignore }
-            ?.map { it.lvef }
-            ?.find { it.isPresent }
-            ?.get()
-    }
-
-    fun curateOtherLesions(patientId: String, otherLesions: List<String>?): List<String>? {
-        return otherLesions?.flatMap {
-            findCurationConfigs(it, database.lesionLocationConfigs, patientId, CurationCategory.LESION_LOCATION, "lesion")
-        }
-            ?.filter { config ->
-                // We only want to include lesions from the other lesions in actual other lesions
-                // if it does not override an explicit lesion location
-                val hasRealOtherLesion = config.category == null || config.category == LesionLocationCategory.LYMPH_NODE
-                hasRealOtherLesion && config.location.isNotEmpty()
-            }
-            ?.map(LesionLocationConfig::location)
-    }
-
-    fun curateBiopsyLocation(patientId: String, input: String?): String? {
-        val config = findUniqueCurationConfig(
-            input, database.lesionLocationConfigs, patientId, CurationCategory.LESION_LOCATION, "biopsy location"
-        )
-        return config?.location
     }
 
     fun curateMedicationDosage(patientId: String, input: String): Dosage? {
@@ -522,7 +267,7 @@ class CurationModel @VisibleForTesting internal constructor(
 
     fun translateAdministrationRoute(patientId: String, administrationRoute: String?): String? {
         val translation = findTranslation(
-            administrationRoute, database.administrationRouteTranslations, patientId, CurationCategory.ADMISTRATION_ROUTE_TRANSLATION,
+            administrationRoute, database.administrationRouteTranslations, patientId, CurationCategory.ADMINISTRATION_ROUTE_TRANSLATION,
             "medication administration route", evaluatedAdministrationRouteTranslations
         )
         return translation?.translated?.ifEmpty { null }
@@ -688,16 +433,6 @@ class CurationModel @VisibleForTesting internal constructor(
             val questionnaireRawEntryMapper: QuestionnaireRawEntryMapper =
                 QuestionnaireRawEntryMapper.createFromCurationDirectory(clinicalCurationDirectory)
             return CurationModel(reader.read(clinicalCurationDirectory), questionnaireRawEntryMapper)
-        }
-
-        private fun hasConfigImplyingUnknownState(configs: Set<ComplicationConfig>): Boolean {
-            return configs.any(ComplicationConfig::impliesUnknownComplicationState)
-        }
-
-        private fun maybeECGMeasure(value: Int?, unit: String?): ImmutableECGMeasure? {
-            return if (value == null || unit == null) {
-                null
-            } else ImmutableECGMeasure.builder().value(value).unit(unit).build()
         }
     }
 }

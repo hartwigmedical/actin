@@ -1,58 +1,59 @@
 package com.hartwig.actin.clinical
 
 import com.google.common.annotations.VisibleForTesting
-import com.hartwig.actin.clinical.curation.CurationModel
-import com.hartwig.actin.clinical.curation.CurationUtil
-import com.hartwig.actin.clinical.datamodel.BloodTransfusion
+import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.extraction.BloodTransfusionsExtractor
+import com.hartwig.actin.clinical.curation.extraction.ClinicalStatusExtractor
+import com.hartwig.actin.clinical.curation.extraction.ComplicationsExtractor
+import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
+import com.hartwig.actin.clinical.curation.extraction.IntoleranceExtractor
+import com.hartwig.actin.clinical.curation.extraction.LabValueExtractor
+import com.hartwig.actin.clinical.curation.extraction.MedicationExtractor
+import com.hartwig.actin.clinical.curation.extraction.PriorMolecularTestsExtractor
+import com.hartwig.actin.clinical.curation.extraction.PriorOtherConditionsExtractor
+import com.hartwig.actin.clinical.curation.extraction.PriorSecondPrimaryExtractor
+import com.hartwig.actin.clinical.curation.extraction.ToxicityExtractor
+import com.hartwig.actin.clinical.curation.extraction.TreatmentHistoryExtractor
+import com.hartwig.actin.clinical.curation.extraction.TumorDetailsExtractor
 import com.hartwig.actin.clinical.datamodel.BodyWeight
-import com.hartwig.actin.clinical.datamodel.ClinicalStatus
-import com.hartwig.actin.clinical.datamodel.Complication
-import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus
-import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance
 import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails
 import com.hartwig.actin.clinical.datamodel.ImmutableSurgery
-import com.hartwig.actin.clinical.datamodel.ImmutableToxicity
-import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
 import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction
-import com.hartwig.actin.clinical.datamodel.Intolerance
-import com.hartwig.actin.clinical.datamodel.LabValue
-import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.PatientDetails
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
-import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.Surgery
 import com.hartwig.actin.clinical.datamodel.SurgeryStatus
-import com.hartwig.actin.clinical.datamodel.Toxicity
-import com.hartwig.actin.clinical.datamodel.ToxicitySource
-import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.VitalFunction
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.feed.FeedModel
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry
-import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry
-import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry
-import com.hartwig.actin.clinical.feed.lab.LabExtraction
 import com.hartwig.actin.clinical.feed.patient.PatientEntry
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction
 import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry
 import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionExtraction
 import com.hartwig.actin.clinical.sort.ClinicalRecordComparator
-import com.hartwig.actin.clinical.sort.LabValueDescendingDateComparator
-import com.hartwig.actin.clinical.sort.MedicationByNameComparator
 import org.apache.logging.log4j.LogManager
 
+data class ExtractionResult<T>(val extracted: T, val evaluation: ExtractionEvaluation)
 
 class ClinicalIngestion(
     private val feed: FeedModel,
-    private val curation: CurationModel,
+    private val curation: CurationDatabase,
     atc: AtcModel
 ) {
+    private val tumorDetailsExtractor = TumorDetailsExtractor(curation)
+    private val complicationsExtractor = ComplicationsExtractor(curation)
+    private val clinicalStatusExtractor = ClinicalStatusExtractor(curation)
+    private val treatmentHistoryExtractor = TreatmentHistoryExtractor(curation)
+    private val priorSecondPrimaryExtractor = PriorSecondPrimaryExtractor(curation)
+    private val priorOtherConditionExtractor = PriorOtherConditionsExtractor(curation)
+    private val priorMolecularTestsExtractor = PriorMolecularTestsExtractor(curation)
+    private val labValueExtractor = LabValueExtractor(curation)
+    private val toxicityExtractor = ToxicityExtractor(curation)
+    private val intoleranceExtractor = IntoleranceExtractor(curation)
     private val medicationExtractor = MedicationExtractor(curation, atc)
+    private val bloodTransfusionsExtractor = BloodTransfusionsExtractor(curation)
 
     fun run(): List<IngestionResult> {
         val processedPatientIds: MutableSet<String> = HashSet()
@@ -65,41 +66,69 @@ class ClinicalIngestion(
             LOGGER.info(" Extracting and curating data for patient {}", patientId)
 
             val questionnaire = feed.latestQuestionnaireEntry(subject)?.let { QuestionnaireExtraction.extract(it) }
-
-            val extractedToxicities = extractToxicities(patientId, subject, questionnaire)
+            val tumorExtraction = tumorDetailsExtractor.extract(patientId, questionnaire)
+            val complicationsExtraction = complicationsExtractor.extract(patientId, questionnaire)
+            val clinicalStatusExtraction =
+                clinicalStatusExtractor.extract(patientId, questionnaire, complicationsExtraction.extracted?.isNotEmpty())
+            val treatmentHistoryExtraction = treatmentHistoryExtractor.extract(patientId, questionnaire)
+            val priorSecondPrimaryExtraction = priorSecondPrimaryExtractor.extract(patientId, questionnaire)
+            val priorOtherConditionsExtraction = priorOtherConditionExtractor.extract(patientId, questionnaire)
+            val priorMolecularTestsExtraction = priorMolecularTestsExtractor.extract(patientId, questionnaire)
+            val labValuesExtraction = labValueExtractor.extract(patientId, feed.labEntries(subject))
+            val toxicityExtraction = toxicityExtractor.extract(patientId, feed.toxicityEntries(subject), questionnaire)
+            val intoleranceExtraction = intoleranceExtractor.extract(patientId, feed.intoleranceEntries(subject))
+            val bloodTransfusionsExtraction = bloodTransfusionsExtractor.extract(patientId, feed.bloodTransfusionEntries(subject))
+            val medicationExtraction = medicationExtractor.extract(patientId, feed.medicationEntries(subject))
 
             val record = ImmutableClinicalRecord.builder()
                 .patientId(patientId)
                 .patient(extractPatientDetails(subject, questionnaire))
-                .tumor(extractTumorDetails(patientId, questionnaire))
-                .clinicalStatus(extractClinicalStatus(patientId, questionnaire))
-                .treatmentHistory(extractTreatmentHistory(patientId, questionnaire))
-                .priorSecondPrimaries(extractPriorSecondPrimaries(patientId, questionnaire))
-                .priorOtherConditions(extractPriorOtherConditions(patientId, questionnaire))
-                .priorMolecularTests(extractPriorMolecularTests(patientId, questionnaire))
-                .complications(extractComplications(patientId, questionnaire))
-                .labValues(extractLabValues(patientId, subject))
-                .toxicities(extractedToxicities)
-                .intolerances(extractIntolerances(patientId, subject))
+                .tumor(tumorExtraction.extracted)
+                .clinicalStatus(clinicalStatusExtraction.extracted)
+                .treatmentHistory(treatmentHistoryExtraction.extracted)
+                .priorSecondPrimaries(priorSecondPrimaryExtraction.extracted)
+                .priorOtherConditions(priorOtherConditionsExtraction.extracted)
+                .priorMolecularTests(priorMolecularTestsExtraction.extracted)
+                .complications(complicationsExtraction.extracted)
+                .labValues(labValuesExtraction.extracted)
+                .toxicities(toxicityExtraction.extracted)
+                .intolerances(intoleranceExtraction.extracted)
                 .surgeries(extractSurgeries(subject))
                 .bodyWeights(extractBodyWeights(subject))
                 .vitalFunctions(extractVitalFunctions(subject))
-                .bloodTransfusions(extractBloodTransfusions(patientId, subject))
-                .medications(extractMedications(patientId, subject))
+                .bloodTransfusions(bloodTransfusionsExtraction.extracted)
+                .medications(medicationExtraction.extracted)
                 .build()
-            val warnings = curation.getWarnings(patientId)
-            IngestionResult.create(questionnaire, record, warnings)
-        }.sortedWith { o1: IngestionResult, o2: IngestionResult ->
+
+            val patientEvaluation = listOf(
+                tumorExtraction,
+                complicationsExtraction,
+                clinicalStatusExtraction,
+                treatmentHistoryExtraction,
+                priorSecondPrimaryExtraction,
+                priorOtherConditionsExtraction,
+                priorMolecularTestsExtraction,
+                labValuesExtraction,
+                toxicityExtraction,
+                intoleranceExtraction,
+                bloodTransfusionsExtraction,
+                medicationExtraction
+            )
+                .map { it.evaluation }
+                .fold(ExtractionEvaluation()) { acc, evaluation -> acc + evaluation }
+
+            Pair(IngestionResult.create(questionnaire, record, patientEvaluation.warnings.toList()), patientEvaluation)
+        }.sortedWith { (result1, _), (result2, _) ->
             ClinicalRecordComparator().compare(
-                o1.clinicalRecord,
-                o2.clinicalRecord
+                result1.clinicalRecord,
+                result2.clinicalRecord
             )
         }
 
         LOGGER.info("Evaluating curation database")
-        curation.evaluate()
+        curation.evaluate(records.fold(ExtractionEvaluation()) { acc, (_, eval) -> acc + eval })
 
-        return records
+        return records.map { it.first }
     }
 
     private fun extractPatientDetails(subject: String, questionnaire: Questionnaire?): PatientDetails {
@@ -111,128 +140,6 @@ class ClinicalIngestion(
             .questionnaireDate(questionnaire?.date)
             .otherMolecularPatientId(questionnaire?.genayaSubjectNumber)
             .build()
-    }
-
-    private fun extractTumorDetails(patientId: String, questionnaire: Questionnaire?): TumorDetails {
-        if (questionnaire == null) {
-            return ImmutableTumorDetails.builder().build()
-        }
-
-        val biopsyLocation: String? = questionnaire.biopsyLocation
-        val otherLesions: List<String>? = questionnaire.otherLesions
-        val curatedOtherLesions: List<String>? = curation.curateOtherLesions(patientId, otherLesions)
-        val tumorDetails: TumorDetails = ImmutableTumorDetails.builder()
-            .from(curation.curateTumorDetails(patientId, questionnaire.tumorLocation, questionnaire.tumorType))
-            .biopsyLocation(curation.curateBiopsyLocation(patientId, biopsyLocation))
-            .stage(questionnaire.stage)
-            .hasMeasurableDisease(questionnaire.hasMeasurableDisease)
-            .hasBrainLesions(questionnaire.hasBrainLesions)
-            .hasActiveBrainLesions(questionnaire.hasActiveBrainLesions)
-            .hasCnsLesions(questionnaire.hasCnsLesions)
-            .hasActiveCnsLesions(questionnaire.hasActiveCnsLesions)
-            .hasBoneLesions(questionnaire.hasBoneLesions)
-            .hasLiverLesions(questionnaire.hasLiverLesions)
-            .otherLesions(curatedOtherLesions)
-            .build()
-
-        return curation.overrideKnownLesionLocations(tumorDetails, biopsyLocation, otherLesions)
-    }
-
-    private fun extractClinicalStatus(patientId: String, questionnaire: Questionnaire?): ClinicalStatus {
-        return if (questionnaire == null) ImmutableClinicalStatus.builder().build() else ImmutableClinicalStatus.builder()
-            .who(questionnaire.whoStatus)
-            .infectionStatus(curation.curateInfectionStatus(patientId, questionnaire.infectionStatus))
-            .ecg(curation.curateECG(patientId, questionnaire.ecg))
-            .lvef(curation.determineLVEF(questionnaire.nonOncologicalHistory))
-            .hasComplications(extractComplications(patientId, questionnaire)?.isNotEmpty())
-            .build()
-    }
-
-    private fun extractTreatmentHistory(patientId: String, questionnaire: Questionnaire?): List<TreatmentHistoryEntry> {
-        if (questionnaire == null) {
-            return emptyList()
-        }
-        return listOfNotNull(
-            questionnaire.treatmentHistoryCurrentTumor,
-            questionnaire.otherOncologicalHistory
-        )
-            .flatten()
-            .flatMap { curation.curateTreatmentHistoryEntry(patientId, it) }
-    }
-
-    private fun extractPriorSecondPrimaries(patientId: String, questionnaire: Questionnaire?): List<PriorSecondPrimary> {
-        return if (questionnaire == null) emptyList() else listOf(
-            questionnaire.otherOncologicalHistory,
-            questionnaire.secondaryPrimaries
-        )
-            .flatMap { curation.curatePriorSecondPrimaries(patientId, it) }
-    }
-
-    private fun extractPriorOtherConditions(patientId: String, questionnaire: Questionnaire?): List<PriorOtherCondition> {
-        return if (questionnaire == null) emptyList() else curation.curatePriorOtherConditions(
-            patientId,
-            questionnaire.nonOncologicalHistory
-        )
-    }
-
-    private fun extractPriorMolecularTests(patientId: String, questionnaire: Questionnaire?): List<PriorMolecularTest> {
-        return if (questionnaire == null) emptyList() else listOf(
-            Pair("IHC", questionnaire.ihcTestResults),
-            Pair("PD-L1", questionnaire.pdl1TestResults)
-        )
-            .flatMap { (key, value) -> curation.curatePriorMolecularTests(patientId, key, value) }
-    }
-
-    private fun extractComplications(patientId: String, questionnaire: Questionnaire?): List<Complication>? {
-        return if (questionnaire != null) curation.curateComplications(patientId, questionnaire.complications) else null
-    }
-
-    private fun extractLabValues(patientId: String, subject: String): List<LabValue> {
-        return feed.labEntries(subject)
-            .map { LabExtraction.extract(it) }
-            .map { curation.translateLabValue(patientId, it) }
-            .sortedWith(LabValueDescendingDateComparator())
-    }
-
-    private fun extractToxicities(patientId: String, subject: String, questionnaire: Questionnaire?): List<Toxicity> {
-        val feedToxicities: List<Toxicity> = feed.toxicityEntries(subject).mapNotNull { toxicityEntry: DigitalFileEntry ->
-            val grade = extractGrade(toxicityEntry)
-            if (grade != null) {
-                ImmutableToxicity.builder()
-                    .name(toxicityEntry.itemText)
-                    .evaluatedDate(toxicityEntry.authored)
-                    .source(ToxicitySource.EHR)
-                    .grade(grade)
-                    .build()
-            } else {
-                null
-            }
-        }
-            .map { curation.translateToxicity(patientId, it) }
-
-        if (questionnaire != null) {
-            return feedToxicities + curation.curateQuestionnaireToxicities(
-                patientId,
-                questionnaire.unresolvedToxicities,
-                questionnaire.date
-            )
-        }
-        return feedToxicities
-    }
-
-    private fun extractIntolerances(patientId: String, subject: String): List<Intolerance> {
-        return feed.intoleranceEntries(subject)
-            .map { entry: IntoleranceEntry ->
-                ImmutableIntolerance.builder()
-                    .name(CurationUtil.capitalizeFirstLetterOnly(entry.codeText))
-                    .category(CurationUtil.capitalizeFirstLetterOnly(entry.category))
-                    .type(CurationUtil.capitalizeFirstLetterOnly(entry.isSideEffect))
-                    .clinicalStatus(CurationUtil.capitalizeFirstLetterOnly(entry.clinicalStatus))
-                    .verificationStatus(CurationUtil.capitalizeFirstLetterOnly(entry.verificationStatus))
-                    .criticality(CurationUtil.capitalizeFirstLetterOnly(entry.criticality))
-                    .build()
-            }
-            .map { curation.curateIntolerance(patientId, it) }
     }
 
     private fun extractSurgeries(subject: String): List<Surgery> {
@@ -262,22 +169,6 @@ class ClinicalIngestion(
         }
     }
 
-    private fun extractBloodTransfusions(patientId: String, subject: String): List<BloodTransfusion> {
-        return feed.bloodTransfusionEntries(subject).map { entry: DigitalFileEntry ->
-            ImmutableBloodTransfusion.builder()
-                .date(entry.authored)
-                .product(entry.itemAnswerValueValueString)
-                .build()
-        }
-            .map { curation.translateBloodTransfusion(patientId, it) }
-    }
-
-    private fun extractMedications(patientId: String, subject: String): List<Medication> {
-        return feed.medicationEntries(subject)
-            .mapNotNull { medicationExtractor.extractMedication(patientId, it) }
-            .sortedWith(MedicationByNameComparator())
-    }
-
     companion object {
         private val LOGGER = LogManager.getLogger(ClinicalIngestion::class.java)
 
@@ -290,21 +181,6 @@ class ClinicalIngestion(
                 adjusted = "ACTN$subject"
             }
             return adjusted.replace("-".toRegex(), "")
-        }
-
-        private fun extractGrade(entry: DigitalFileEntry): Int? {
-            val value: String = entry.itemAnswerValueValueString
-            if (value.isEmpty()) {
-                return null
-            }
-            val curated: String
-            val notApplicableIndex = value.indexOf(". Not applicable")
-            curated = if (notApplicableIndex > 0) {
-                value.substring(0, notApplicableIndex)
-            } else {
-                value
-            }
-            return Integer.valueOf(curated)
         }
 
         private fun resolveSurgeryStatus(status: String): SurgeryStatus {

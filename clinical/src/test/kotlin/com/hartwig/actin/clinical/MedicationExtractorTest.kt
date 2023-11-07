@@ -8,6 +8,7 @@ import com.hartwig.actin.clinical.curation.PHARMACOLOGICAL
 import com.hartwig.actin.clinical.curation.THERAPEUTIC
 import com.hartwig.actin.clinical.curation.TestAtcFactory
 import com.hartwig.actin.clinical.curation.TestCurationFactory
+import com.hartwig.actin.clinical.curation.extraction.MedicationExtractor
 import com.hartwig.actin.clinical.datamodel.AtcLevel
 import com.hartwig.actin.clinical.datamodel.ImmutableAtcClassification
 import com.hartwig.actin.clinical.datamodel.ImmutableAtcLevel
@@ -37,7 +38,7 @@ class MedicationExtractorTest {
             administrationRoute = "oraal"
         )
 
-        assertThat(EXTRACTOR.extractMedication(PATIENT_ID, entry)).isEqualTo(
+        assertThat(EXTRACTOR.extract(PATIENT_ID, entry)).isEqualTo(
             ImmutableMedication.builder()
                 .name("Paracetamol")
                 .status(MedicationStatus.ACTIVE)
@@ -81,7 +82,7 @@ class MedicationExtractorTest {
             end = LocalDate.of(2019, 4, 4),
             active = false,
         )
-        assertThat(EXTRACTOR.extractMedication(PATIENT_ID, entry)).isNull()
+        assertThat(EXTRACTOR.extract(PATIENT_ID, entry)).isNull()
     }
 
     @Test
@@ -95,7 +96,7 @@ class MedicationExtractorTest {
             codeText = "A en B"
         )
 
-        assertThat(EXTRACTOR.extractMedication(PATIENT_ID, entry)!!.isSelfCare).isTrue
+        assertThat(EXTRACTOR.extract(PATIENT_ID, entry)!!.isSelfCare).isTrue
     }
 
     @Test
@@ -110,7 +111,7 @@ class MedicationExtractorTest {
             codeText = "A en B"
         )
 
-        assertThat(EXTRACTOR.extractMedication(PATIENT_ID, entry)!!.isTrialMedication).isTrue
+        assertThat(EXTRACTOR.extract(PATIENT_ID, entry)!!.isTrialMedication).isTrue
     }
 
     companion object {
