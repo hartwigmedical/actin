@@ -5,10 +5,12 @@ import com.hartwig.hmftools.datamodel.gene.TranscriptRegionType
 import com.hartwig.hmftools.datamodel.linx.FusionLikelihoodType
 import com.hartwig.hmftools.datamodel.linx.FusionPhasedType
 import com.hartwig.hmftools.datamodel.linx.ImmutableLinxBreakend
+import com.hartwig.hmftools.datamodel.linx.ImmutableLinxDriver
 import com.hartwig.hmftools.datamodel.linx.ImmutableLinxFusion
 import com.hartwig.hmftools.datamodel.linx.ImmutableLinxHomozygousDisruption
 import com.hartwig.hmftools.datamodel.linx.ImmutableLinxSvAnnotation
 import com.hartwig.hmftools.datamodel.linx.LinxBreakendType
+import com.hartwig.hmftools.datamodel.linx.LinxDriverType
 import com.hartwig.hmftools.datamodel.linx.LinxFusionType
 import org.apache.logging.log4j.util.Strings
 
@@ -66,6 +68,12 @@ object TestLinxFactory {
             .exonUp(0)
             .exonDown(0)
             .id(0)
+    }
+
+    fun driverBuilder(): ImmutableLinxDriver.Builder {
+        return ImmutableLinxDriver.builder()
+            .gene("")
+            .type(LinxDriverType.UNCLEAR)
     }
 
     fun fusionBuilder(): ImmutableLinxFusion.Builder {
