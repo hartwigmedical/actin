@@ -4,11 +4,13 @@ import com.hartwig.hmftools.datamodel.gene.TranscriptCodingType
 import com.hartwig.hmftools.datamodel.gene.TranscriptRegionType
 import com.hartwig.hmftools.datamodel.linx.FusionLikelihoodType
 import com.hartwig.hmftools.datamodel.linx.FusionPhasedType
-import com.hartwig.hmftools.datamodel.linx.ImmutableHomozygousDisruption
 import com.hartwig.hmftools.datamodel.linx.ImmutableLinxBreakend
+import com.hartwig.hmftools.datamodel.linx.ImmutableLinxDriver
 import com.hartwig.hmftools.datamodel.linx.ImmutableLinxFusion
+import com.hartwig.hmftools.datamodel.linx.ImmutableLinxHomozygousDisruption
 import com.hartwig.hmftools.datamodel.linx.ImmutableLinxSvAnnotation
 import com.hartwig.hmftools.datamodel.linx.LinxBreakendType
+import com.hartwig.hmftools.datamodel.linx.LinxDriverType
 import com.hartwig.hmftools.datamodel.linx.LinxFusionType
 import org.apache.logging.log4j.util.Strings
 
@@ -36,8 +38,8 @@ object TestLinxFactory {
             .localTICountEnd(0)
     }
 
-    fun homozygousDisruptionBuilder(): ImmutableHomozygousDisruption.Builder {
-        return ImmutableHomozygousDisruption.builder()
+    fun homozygousDisruptionBuilder(): ImmutableLinxHomozygousDisruption.Builder {
+        return ImmutableLinxHomozygousDisruption.builder()
             .gene(Strings.EMPTY)
             .chromosome(Strings.EMPTY)
             .chromosomeBand(Strings.EMPTY)
@@ -47,7 +49,7 @@ object TestLinxFactory {
 
     fun breakendBuilder(): ImmutableLinxBreakend.Builder {
         return ImmutableLinxBreakend.builder()
-            .reportedDisruption(true)
+            .reported(true)
             .svId(0)
             .gene(Strings.EMPTY)
             .type(LinxBreakendType.BND)
@@ -55,18 +57,23 @@ object TestLinxFactory {
             .undisruptedCopyNumber(0.0)
             .regionType(TranscriptRegionType.INTRONIC)
             .codingType(TranscriptCodingType.NON_CODING)
-            .transcriptId(Strings.EMPTY)
-            .canonical(false)
+            .transcript(Strings.EMPTY)
+            .isCanonical(false)
             .geneOrientation(Strings.EMPTY)
             .disruptive(false)
             .nextSpliceExonRank(0)
             .chromosome(Strings.EMPTY)
             .orientation(0)
-            .strand(0)
-            .chrBand(Strings.EMPTY)
+            .chromosomeBand(Strings.EMPTY)
             .exonUp(0)
             .exonDown(0)
             .id(0)
+    }
+
+    fun driverBuilder(): ImmutableLinxDriver.Builder {
+        return ImmutableLinxDriver.builder()
+            .gene("")
+            .type(LinxDriverType.UNCLEAR)
     }
 
     fun fusionBuilder(): ImmutableLinxFusion.Builder {
@@ -79,8 +86,7 @@ object TestLinxFactory {
             .geneEnd(Strings.EMPTY)
             .geneTranscriptEnd(Strings.EMPTY)
             .fusedExonDown(0)
-            .likelihood(FusionLikelihoodType.LOW)
-            .name(Strings.EMPTY)
+            .driverLikelihood(FusionLikelihoodType.LOW)
             .phased(FusionPhasedType.INFRAME)
             .chainLinks(0)
             .chainTerminated(false)

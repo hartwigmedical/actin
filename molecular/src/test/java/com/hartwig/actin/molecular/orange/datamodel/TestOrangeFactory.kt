@@ -31,7 +31,7 @@ import com.hartwig.hmftools.datamodel.orange.OrangeSample
 import com.hartwig.hmftools.datamodel.peach.ImmutablePeachGenotype
 import com.hartwig.hmftools.datamodel.peach.PeachGenotype
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
-import com.hartwig.hmftools.datamodel.purple.Hotspot
+import com.hartwig.hmftools.datamodel.purple.HotspotType
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord
 import com.hartwig.hmftools.datamodel.purple.PurpleCharacteristics
 import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
@@ -55,7 +55,7 @@ object TestOrangeFactory {
     fun createMinimalTestOrangeRecord(): OrangeRecord {
         return ImmutableOrangeRecord.builder()
             .sampleId(TestDataFactory.TEST_SAMPLE)
-            .experimentDate(LocalDate.of(2021, 5, 6))
+            .samplingDate(LocalDate.of(2021, 5, 6))
             .experimentType(ExperimentType.WHOLE_GENOME)
             .refGenomeVersion(OrangeRefGenomeVersion.V37)
             .purple(createMinimalTestPurpleRecord())
@@ -99,21 +99,21 @@ object TestOrangeFactory {
             .characteristics(createTestPurpleCharacteristics())
             .addSomaticDrivers(TestPurpleFactory.driverBuilder()
                 .gene("BRAF")
-                .driver(PurpleDriverType.MUTATION)
+                .type(PurpleDriverType.MUTATION)
                 .driverLikelihood(1.0)
                 .likelihoodMethod(PurpleLikelihoodMethod.NONE)
                 .isCanonical(false)
                 .build())
             .addSomaticDrivers(TestPurpleFactory.driverBuilder()
                 .gene("MYC")
-                .driver(PurpleDriverType.AMP)
+                .type(PurpleDriverType.AMP)
                 .driverLikelihood(1.0)
                 .likelihoodMethod(PurpleLikelihoodMethod.NONE)
                 .isCanonical(false)
                 .build())
             .addSomaticDrivers(TestPurpleFactory.driverBuilder()
                 .gene("PTEN")
-                .driver(PurpleDriverType.DEL)
+                .type(PurpleDriverType.DEL)
                 .driverLikelihood(1.0)
                 .likelihoodMethod(PurpleLikelihoodMethod.NONE)
                 .isCanonical(false)
@@ -123,13 +123,13 @@ object TestOrangeFactory {
                 .gene("BRAF")
                 .adjustedCopyNumber(6.0)
                 .variantCopyNumber(4.1)
-                .hotspot(Hotspot.HOTSPOT)
+                .hotspot(HotspotType.HOTSPOT)
                 .subclonalLikelihood(0.02)
                 .biallelic(false)
                 .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder()
                     .hgvsCodingImpact("c.something")
                     .hgvsProteinImpact("p.Val600Glu")
-                    .spliceRegion(false)
+                    .inSpliceRegion(false)
                     .addEffects(PurpleVariantEffect.MISSENSE)
                     .codingEffect(PurpleCodingEffect.MISSENSE)
                     .build())
@@ -151,8 +151,6 @@ object TestOrangeFactory {
 
     private fun createTestPurpleFit(): PurpleFit {
         return TestPurpleFactory.fitBuilder()
-            .hasSufficientQuality(true)
-            .containsTumorCells(true)
             .purity(0.98)
             .ploidy(3.1)
             .qc(TestPurpleFactory.purpleQCBuilder().addStatus(PurpleQCStatus.PASS).build())
@@ -174,7 +172,7 @@ object TestOrangeFactory {
             .addAllSomaticStructuralVariants(TestLinxFactory.structuralVariantBuilder().svId(1).clusterId(1).build())
             .addSomaticHomozygousDisruptions(TestLinxFactory.homozygousDisruptionBuilder().gene("TP53").build())
             .addAllSomaticBreakends(TestLinxFactory.breakendBuilder()
-                .reportedDisruption(true)
+                .reported(true)
                 .svId(1)
                 .gene("RB1")
                 .type(LinxBreakendType.DEL)
@@ -182,7 +180,7 @@ object TestOrangeFactory {
                 .undisruptedCopyNumber(2.1)
                 .build())
             .addAllSomaticBreakends(TestLinxFactory.breakendBuilder()
-                .reportedDisruption(true)
+                .reported(true)
                 .svId(1)
                 .gene("PTEN")
                 .type(LinxBreakendType.DEL)
@@ -196,7 +194,7 @@ object TestOrangeFactory {
                 .fusedExonUp(2)
                 .geneEnd("ALK")
                 .fusedExonDown(4)
-                .likelihood(FusionLikelihoodType.HIGH)
+                .driverLikelihood(FusionLikelihoodType.HIGH)
                 .build())
             .build()
     }
@@ -237,7 +235,7 @@ object TestOrangeFactory {
                 .qcStatus(VirusBreakendQCStatus.NO_ABNORMALITIES)
                 .interpretation(VirusInterpretation.HPV)
                 .integrations(3)
-                .virusDriverLikelihoodType(VirusLikelihoodType.HIGH)
+                .driverLikelihood(VirusLikelihoodType.HIGH)
                 .build())
             .build()
     }
@@ -275,6 +273,7 @@ object TestOrangeFactory {
             .purpleCopyNumberPlot(Strings.EMPTY)
             .purpleVariantCopyNumberPlot(Strings.EMPTY)
             .purplePurityRangePlot(Strings.EMPTY)
+            .purpleKataegisPlot(Strings.EMPTY)
             .build()
     }
 

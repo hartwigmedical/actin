@@ -15,32 +15,40 @@ import com.hartwig.hmftools.datamodel.gene.TranscriptCodingType
 import com.hartwig.hmftools.datamodel.gene.TranscriptRegionType
 import com.hartwig.hmftools.datamodel.linx.LinxBreakend
 import com.hartwig.hmftools.datamodel.linx.LinxBreakendType
+import com.hartwig.hmftools.datamodel.linx.LinxDriver
+import com.hartwig.hmftools.datamodel.linx.LinxDriverType
 import com.hartwig.hmftools.datamodel.linx.LinxRecord
 import com.hartwig.hmftools.datamodel.linx.LinxSvAnnotation
 
 internal class DisruptionExtractor(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
-    fun extractDisruptions(linx: LinxRecord, lostGenes: Set<String>): MutableSet<Disruption> {
+    fun extractDisruptions(linx: LinxRecord, lostGenes: Set<String>, drivers: List<LinxDriver>): MutableSet<Disruption> {
         val disruptions: MutableSet<Disruption> = Sets.newTreeSet(DisruptionComparator())
         for (breakend in linx.allSomaticBreakends()) {
             val event = DriverEventFactory.disruptionEvent(breakend)
             if (geneFilter.include(breakend.gene())) {
                 if (include(breakend, lostGenes)) {
-                    disruptions.add(ImmutableDisruption.builder()
-                        .from(GeneAlterationFactory.convertAlteration(breakend.gene(),
-                            evidenceDatabase.geneAlterationForBreakend(breakend)))
-                        .isReportable(breakend.reportedDisruption())
-                        .event(event)
-                        .driverLikelihood(DriverLikelihood.LOW)
-                        .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForBreakend(breakend)))
-                        .type(determineDisruptionType(breakend.type()))
-                        .junctionCopyNumber(ExtractionUtil.keep3Digits(breakend.junctionCopyNumber()))
-                        .undisruptedCopyNumber(ExtractionUtil.keep3Digits(breakend.undisruptedCopyNumber()))
-                        .regionType(determineRegionType(breakend.regionType()))
-                        .codingContext(determineCodingContext(breakend.codingType()))
-                        .clusterGroup(lookupClusterId(breakend, linx.allSomaticStructuralVariants()))
-                        .build())
+                    disruptions.add(
+                        ImmutableDisruption.builder()
+                            .from(
+                                GeneAlterationFactory.convertAlteration(
+                                    breakend.gene(),
+                                    evidenceDatabase.geneAlterationForBreakend(breakend)
+                                )
+                            )
+                            .isReportable(breakend.reported())
+                            .event(event)
+                            .driverLikelihood(DriverLikelihood.LOW)
+                            .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForBreakend(breakend)))
+                            .type(determineDisruptionType(breakend.type()))
+                            .junctionCopyNumber(ExtractionUtil.keep3Digits(breakend.junctionCopyNumber()))
+                            .undisruptedCopyNumber(ExtractionUtil.keep3Digits(correctUndisruptedCopyNumber(breakend, drivers)))
+                            .regionType(determineRegionType(breakend.regionType()))
+                            .codingContext(determineCodingContext(breakend.codingType()))
+                            .clusterGroup(lookupClusterId(breakend, linx.allSomaticStructuralVariants()))
+                            .build()
+                    )
                 }
-            } else check(!breakend.reportedDisruption()) {
+            } else check(!breakend.reported()) {
                 ("Filtered a reported breakend through gene filtering: '" + event + "'. Please make sure '" + breakend.gene()
                         + "' is configured as a known gene.")
             }
@@ -155,6 +163,18 @@ internal class DisruptionExtractor(private val geneFilter: GeneFilter, private v
                     throw IllegalStateException("Cannot determine coding context for linx coding type: $codingType")
                 }
             }
+        }
+
+        fun correctUndisruptedCopyNumber(breakend: LinxBreakend, drivers: List<LinxDriver>): Double {
+            if (breakend.type() == LinxBreakendType.DUP) {
+                for (driver in drivers) {
+                    if (driver.gene() == breakend.gene() && driver.type() == LinxDriverType.HOM_DUP_DISRUPTION) {
+                        return Math.max(0.0, breakend.undisruptedCopyNumber() - breakend.junctionCopyNumber())
+                    }
+                }
+            }
+
+            return breakend.undisruptedCopyNumber()
         }
     }
 }

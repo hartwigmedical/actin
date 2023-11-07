@@ -19,7 +19,7 @@ import org.junit.Test
 class CopyNumberExtractorTest {
     @Test
     fun canExtractCopyNumbers() {
-        val driver1: PurpleDriver = TestPurpleFactory.driverBuilder().gene("gene 1").driver(PurpleDriverType.DEL).build()
+        val driver1: PurpleDriver = TestPurpleFactory.driverBuilder().gene("gene 1").type(PurpleDriverType.DEL).build()
         val gainLoss1: PurpleGainLoss = TestPurpleFactory.gainLossBuilder()
             .gene("gene 1")
             .minCopies(0.0)
@@ -72,7 +72,7 @@ class CopyNumberExtractorTest {
 
     @Test(expected = IllegalStateException::class)
     fun shouldThrowExceptionWhenFilteringReportedCopyNumber() {
-        val driver: PurpleDriver = TestPurpleFactory.driverBuilder().gene("gene 1").driver(PurpleDriverType.DEL).build()
+        val driver: PurpleDriver = TestPurpleFactory.driverBuilder().gene("gene 1").type(PurpleDriverType.DEL).build()
         val gainLoss: PurpleGainLoss = TestPurpleFactory.gainLossBuilder().gene("gene 1").interpretation(CopyNumberInterpretation.PARTIAL_LOSS).build()
         val purple: PurpleRecord = ImmutablePurpleRecord.builder()
             .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())

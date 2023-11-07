@@ -93,7 +93,7 @@ internal class FusionExtractor(private val geneFilter: GeneFilter, private val e
 
         @VisibleForTesting
         fun determineDriverLikelihood(fusion: LinxFusion): DriverLikelihood? {
-            return when (fusion.likelihood()) {
+            return when (fusion.driverLikelihood()) {
                 FusionLikelihoodType.HIGH -> {
                     DriverLikelihood.HIGH
                 }
@@ -107,7 +107,7 @@ internal class FusionExtractor(private val geneFilter: GeneFilter, private val e
                 }
 
                 else -> {
-                    throw IllegalStateException("Cannot determine driver likelihood for fusion driver likelihood: " + fusion.likelihood())
+                    throw IllegalStateException("Cannot determine driver likelihood for fusion driver likelihood: " + fusion.driverLikelihood())
                 }
             }
         }

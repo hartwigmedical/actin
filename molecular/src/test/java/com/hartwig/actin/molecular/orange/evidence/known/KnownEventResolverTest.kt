@@ -2,9 +2,9 @@ package com.hartwig.actin.molecular.orange.evidence.known
 
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory
-import com.hartwig.hmftools.datamodel.linx.HomozygousDisruption
 import com.hartwig.hmftools.datamodel.linx.LinxBreakend
 import com.hartwig.hmftools.datamodel.linx.LinxFusion
+import com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
 import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
 import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
@@ -77,11 +77,11 @@ class KnownEventResolverTest {
         Assert.assertNotNull(resolver.resolveForCopyNumber(ampGene2))
         val ampGene3 = amp("gene 3")
         Assert.assertNull(resolver.resolveForCopyNumber(ampGene3))
-        val homDisruptionGene1: HomozygousDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build()
+        val homDisruptionGene1: LinxHomozygousDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build()
         Assert.assertEquals(knownDel, resolver.resolveForHomozygousDisruption(homDisruptionGene1))
-        val homDisruptionGene2: HomozygousDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 2").build()
+        val homDisruptionGene2: LinxHomozygousDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 2").build()
         Assert.assertNotNull(resolver.resolveForHomozygousDisruption(homDisruptionGene2))
-        val homDisruptionGene3: HomozygousDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 3").build()
+        val homDisruptionGene3: LinxHomozygousDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 3").build()
         Assert.assertNull(resolver.resolveForHomozygousDisruption(homDisruptionGene3))
         val breakendGene1: LinxBreakend = TestLinxFactory.breakendBuilder().gene("gene 1").build()
         Assert.assertNotNull(resolver.resolveForBreakend(breakendGene1))

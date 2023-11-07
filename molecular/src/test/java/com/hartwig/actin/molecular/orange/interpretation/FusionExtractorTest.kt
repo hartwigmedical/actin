@@ -26,7 +26,7 @@ class FusionExtractorTest {
             .geneEnd("gene end")
             .geneTranscriptEnd("trans end")
             .fusedExonDown(4)
-            .likelihood(FusionLikelihoodType.HIGH)
+            .driverLikelihood(FusionLikelihoodType.HIGH)
             .build()
         val linx: LinxRecord = ImmutableLinxRecord.builder()
             .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
@@ -70,11 +70,11 @@ class FusionExtractorTest {
 
     @Test
     fun canDetermineDriverLikelihoodForAllFusions() {
-        val high: LinxFusion = TestLinxFactory.fusionBuilder().likelihood(FusionLikelihoodType.HIGH).build()
+        val high: LinxFusion = TestLinxFactory.fusionBuilder().driverLikelihood(FusionLikelihoodType.HIGH).build()
         Assert.assertEquals(DriverLikelihood.HIGH, FusionExtractor.determineDriverLikelihood(high))
-        val low: LinxFusion = TestLinxFactory.fusionBuilder().likelihood(FusionLikelihoodType.LOW).build()
+        val low: LinxFusion = TestLinxFactory.fusionBuilder().driverLikelihood(FusionLikelihoodType.LOW).build()
         Assert.assertEquals(DriverLikelihood.LOW, FusionExtractor.determineDriverLikelihood(low))
-        val na: LinxFusion = TestLinxFactory.fusionBuilder().likelihood(FusionLikelihoodType.NA).build()
+        val na: LinxFusion = TestLinxFactory.fusionBuilder().driverLikelihood(FusionLikelihoodType.NA).build()
         Assert.assertNull(FusionExtractor.determineDriverLikelihood(na))
     }
 }

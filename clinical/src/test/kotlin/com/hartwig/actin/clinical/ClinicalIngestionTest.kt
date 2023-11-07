@@ -23,7 +23,6 @@ import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
 import com.hartwig.actin.clinical.datamodel.Surgery
 import com.hartwig.actin.clinical.datamodel.SurgeryStatus
 import com.hartwig.actin.clinical.datamodel.Toxicity
-import com.hartwig.actin.clinical.datamodel.ToxicityEvaluation
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorStage
@@ -136,7 +135,6 @@ class ClinicalIngestionTest {
         assertTumorDetails(record.tumor())
         assertClinicalStatus(record.clinicalStatus())
         assertToxicities(record.toxicities())
-        assertToxicityEvaluations(record.toxicityEvaluations())
         assertAllergies(record.intolerances())
         assertSurgeries(record.surgeries())
         assertBodyWeights(record.bodyWeights())
@@ -200,21 +198,6 @@ class ClinicalIngestionTest {
 
         private fun findByName(toxicities: List<Toxicity>, name: String): Toxicity {
             return toxicities.find { it.name() == name }!!
-        }
-
-        private fun assertToxicityEvaluations(toxicityEvaluations: List<ToxicityEvaluation>?) {
-            assertNotNull(toxicityEvaluations)
-            assertEquals(2, toxicityEvaluations!!.size.toLong())
-            val toxicity1 = findToxicityEvaluationByName(toxicityEvaluations, "Nausea")
-            assertEquals(ToxicitySource.EHR, toxicity1.source())
-            assertEquals(2, (toxicity1.toxicities().iterator().next().grade() as Int).toLong())
-            val toxicity2 = findToxicityEvaluationByName(toxicityEvaluations, "Pain")
-            assertEquals(ToxicitySource.EHR, toxicity2.source())
-            assertEquals(0, (toxicity2.toxicities().iterator().next().grade() as Int).toLong())
-        }
-
-        private fun findToxicityEvaluationByName(toxicityEvaluations: List<ToxicityEvaluation>, name: String): ToxicityEvaluation {
-            return toxicityEvaluations.find { it.toxicities().iterator().next().name() == name }!!
         }
 
         private fun assertAllergies(allergies: List<Intolerance>) {

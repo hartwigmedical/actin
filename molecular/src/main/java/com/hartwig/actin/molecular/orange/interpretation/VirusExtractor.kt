@@ -21,7 +21,7 @@ internal class VirusExtractor(private val evidenceDatabase: EvidenceDatabase) {
             viruses.add(ImmutableVirus.builder()
                 .isReportable(virus.reported())
                 .event(DriverEventFactory.virusEvent(virus))
-                .driverLikelihood(determineDriverLikelihood(virus.virusDriverLikelihoodType()))
+                .driverLikelihood(determineDriverLikelihood(virus.driverLikelihood()))
                 .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVirus(virus)))
                 .name(virus.name())
                 .isReliable(virus.qcStatus() == QC_PASS_STATUS)

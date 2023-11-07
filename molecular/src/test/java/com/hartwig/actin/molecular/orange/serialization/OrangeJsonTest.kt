@@ -14,7 +14,7 @@ class OrangeJsonTest {
     }
 
     companion object {
-        private val REAL_ORANGE_JSON = Resources.getResource("serialization/real.v2.6.0.orange.json").path
+        private val REAL_ORANGE_JSON = Resources.getResource("serialization/real.v3.0.0.orange.json").path
         private const val EPSILON = 1.0E-2
     }
 }
