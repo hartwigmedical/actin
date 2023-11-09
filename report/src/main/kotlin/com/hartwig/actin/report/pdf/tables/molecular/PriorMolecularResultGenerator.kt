@@ -55,13 +55,7 @@ class PriorMolecularResultGenerator(
             if (scoreText.length > 1) {
                 builder.append(scoreText.substring(1).lowercase())
             }
-            if (key.test != "") {
-                builder.append(" (")
-                builder.append(key.test)
-                builder.append("): ")
-            } else {
-                builder.append(": ")
-            }
+            builder.append(if (key.test.isNotEmpty()) " (${key.test}): " else ": ")
             builder.append(sorted[0].item())
             for (i in 1 until sorted.size) {
                 if (i < sorted.size - 1) {
