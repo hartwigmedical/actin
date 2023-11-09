@@ -364,6 +364,7 @@ public enum EligibilityRule {
     HAS_PULSE_OXIMETRY_OF_AT_LEAST_X,
     HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y,
     HAS_BODY_WEIGHT_OF_AT_LEAST_X,
+    HAS_BODY_WEIGHT_OF_AT_MOST_X,
     HAS_BMI_OF_AT_MOST_X,
 
     // Rules related to blood transfusions
