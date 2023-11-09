@@ -310,10 +310,10 @@ public final class TestClinicalFactory {
         List<PriorMolecularTest> priorMolecularTests = Lists.newArrayList();
 
         priorMolecularTests.add(ImmutablePriorMolecularTest.builder()
-                .test("Panel NGS")
-                .item("BRAF")
+                .test("")
+                .item("KIT")
                 .measure(null)
-                .scoreText("V600E positive")
+                .scoreText("Exon 11: c.1714_1719dup p.D572_P573dup")
                 .scoreValuePrefix(null)
                 .scoreValue(null)
                 .scoreValueUnit(null)

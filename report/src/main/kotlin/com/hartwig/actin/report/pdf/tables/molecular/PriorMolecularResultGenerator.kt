@@ -13,7 +13,11 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 
-class PriorMolecularResultGenerator(private val clinical: ClinicalRecord, private val keyWidth: Float, private val valueWidth: Float) {
+class PriorMolecularResultGenerator(
+    private val clinical: ClinicalRecord,
+    private val keyWidth: Float,
+    private val valueWidth: Float
+) {
     fun contents(): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
         table.addCell(Cells.createSubTitle("IHC results"))
@@ -40,7 +44,10 @@ class PriorMolecularResultGenerator(private val clinical: ClinicalRecord, privat
             return listOf(sortedTextBasedPriorTests, sortedValueBasedTests).flatten().map { Paragraph(it) }
         }
 
-        private fun formatTextBasedPriorTests(key: PriorMolecularTestKey, values: Collection<PriorMolecularTest>): String {
+        private fun formatTextBasedPriorTests(
+            key: PriorMolecularTestKey,
+            values: Collection<PriorMolecularTest>
+        ): String {
             val sorted = values.sortedWith(PriorMolecularTestComparator())
             val builder = StringBuilder()
             val scoreText = key.scoreText
@@ -48,9 +55,7 @@ class PriorMolecularResultGenerator(private val clinical: ClinicalRecord, privat
             if (scoreText.length > 1) {
                 builder.append(scoreText.substring(1).lowercase())
             }
-            builder.append(" (")
-            builder.append(key.test)
-            builder.append("): ")
+            builder.append(if (key.test.isNotEmpty()) " (${key.test}): " else ": ")
             builder.append(sorted[0].item())
             for (i in 1 until sorted.size) {
                 if (i < sorted.size - 1) {
