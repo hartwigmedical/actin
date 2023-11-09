@@ -13,7 +13,7 @@ class HasLimitedBodyWeight internal constructor(private val maxBodyWeight: Doubl
 
         if (!mostRecent.unit().equals(EXPECTED_UNIT, ignoreCase = true)) {
             return EvaluationFactory.undetermined(
-                "Most recent body weight not measured in ${EXPECTED_UNIT}",
+                "Most recent body weight not measured in $EXPECTED_UNIT",
                 "Invalid body weight unit"
             )
         }
