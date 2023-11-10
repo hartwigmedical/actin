@@ -8,31 +8,52 @@ import org.junit.Test
 import java.time.LocalDate
 
 class HasLimitedBodyWeightTest {
+
+    private val function = HasLimitedBodyWeight(150.0)
+    private val referenceDate = LocalDate.of(2023, 11, 10)
+
     @Test
-    fun canEvaluate() {
-        val referenceDate = LocalDate.of(2023, 11, 9)
-        val function = HasLimitedBodyWeight(150.0)
+    fun `Should evaluate undetermined on no body weight documented`() {
+        val weights: List<BodyWeight> = listOf()
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(VitalFunctionTestFactory.withBodyWeights(weights))
+        )
+    }
 
-        // No weights, cannot determine
-        val weights: MutableList<BodyWeight> = mutableListOf()
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withBodyWeights(weights)))
+    @Test
+    fun `Should evaluate undetermined on weight in wrong unit`() {
+        val weights = listOf(
+            weight().date(referenceDate.minusDays(4)).value(149.0).build(),
+            weight().date(referenceDate.minusDays(3)).value(148.0).unit("pounds").build()
+        )
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(VitalFunctionTestFactory.withBodyWeights(weights))
+        )
+    }
 
-        // Most recent too high
-        weights.add(weight().date(referenceDate.minusDays(5)).value(155.0).build())
+    @Test
+    fun `Should fail on most recent weight too high`() {
+        val weights = listOf(
+            weight().date(referenceDate.minusDays(6)).value(148.0).build(),
+            weight().date(referenceDate.minusDays(5)).value(155.0).build()
+        )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withBodyWeights(weights)))
+    }
 
-        // A later one does succeed
-        weights.add(weight().date(referenceDate.minusDays(4)).value(149.0).build())
+    @Test
+    fun `Should pass on most recent weight below max`() {
+        val weights = listOf(
+            weight().date(referenceDate.minusDays(5)).value(155.0).build(),
+            weight().date(referenceDate.minusDays(4)).value(148.0).build()
+        )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withBodyWeights(weights)))
-
-        // An even later one has wrong unit
-        weights.add(weight().date(referenceDate.minusDays(3)).value(148.0).unit("pounds").build())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withBodyWeights(weights)))
     }
 
     companion object {
         private fun weight(): ImmutableBodyWeight.Builder {
-            return VitalFunctionTestFactory.bodyWeight().unit(HasLimitedBodyWeight.EXPECTED_UNIT)
+            return VitalFunctionTestFactory.bodyWeight().unit(BodyWeightFunctions.EXPECTED_UNIT)
         }
     }
 }

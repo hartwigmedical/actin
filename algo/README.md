@@ -610,7 +610,7 @@ Note for all TOXICITY rules:
 | HAS_PULSE_OXIMETRY_OF_AT_LEAST_X       | vitalFunction > Up to 5 most recent SpO2 measurements (in percent) AND median value => X                                                        |
 | HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y | Vital function > Up to 5 most recent HR measurements (in BPM) AND median value between X and Y                                                  |
 | HAS_BODY_WEIGHT_OF_AT_LEAST_X          | bodyWeight > Latest body weight measurement (in kg) => X                                                                                        |
-| HAS_BODY_WEIGHT_OF_AT_MOST_X           | bodyWeight < Latest body weight measurement (in kg) => X                                                                                        |
+| HAS_BODY_WEIGHT_OF_AT_MOST_X           | bodyWeight > Latest body weight measurement (in kg) <= X                                                                                        |
 | HAS_BMI_OF_AT_MOST_X                   | Patient BMI estimate from body weight <= X for patients between 1.5 and 2.0 m                                                                   |
 
 For Pulse oximetry, evaluation should resolve to `UNDETERMINED` rather than `FAIL` in case of no PASS, but at least 1 of the up
