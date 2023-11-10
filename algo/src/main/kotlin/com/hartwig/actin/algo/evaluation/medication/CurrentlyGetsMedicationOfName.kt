@@ -11,12 +11,12 @@ class CurrentlyGetsMedicationOfName internal constructor(private val selector: M
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasReceivedMedication = selector.activeWithAnyTermInName(record.clinical().medications(), termsToFind).isNotEmpty()
         return if (hasReceivedMedication) {
-            EvaluationFactory.pass(
+            EvaluationFactory.recoverablePass(
                 "Patient currently gets medication with name " + concat(termsToFind),
                 concat(termsToFind) + " medication use"
             )
         } else {
-            EvaluationFactory.fail(
+            EvaluationFactory.recoverableFail(
                 "Patient currently does not get medication with name " + concat(termsToFind),
                 "No " + concat(termsToFind) + " medication use"
             )
