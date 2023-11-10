@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.othercondition
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
-import com.hartwig.actin.algo.evaluation.tumor.HasChildPughClass
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
@@ -37,6 +36,7 @@ class HasChildPughClassTest {
 
     companion object {
         private const val ALCOHOLIC_LIVER_CIRRHOSIS = "14018"
+
         private fun createTestChildPughFunction(): HasChildPughClass {
             return HasChildPughClass(TestDoidModelFactory.createWithOneParentChild(DoidConstants.LIVER_CIRRHOSIS_DOID, ALCOHOLIC_LIVER_CIRRHOSIS))
         }

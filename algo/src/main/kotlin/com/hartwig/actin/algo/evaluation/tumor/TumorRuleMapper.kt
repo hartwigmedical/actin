@@ -59,7 +59,6 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_INTRATUMORAL_HEMORRHAGE_BY_MRI to hasIntratumoralHemorrhageByMRICreator(),
             EligibilityRule.HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT to hasLowRiskOfHemorrhageUponTreatmentCreator(),
             EligibilityRule.HAS_SUPERSCAN_BONE_SCAN to hasSuperScanBoneScanCreator(),
-            EligibilityRule.HAS_CHILD_PUGH_CLASS_X_LIVER_SCORE to hasChildPughClassCreator(),
             EligibilityRule.HAS_BCLC_STAGE_X to hasBCLCStageCreator(),
             EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR to hasLeftSidedColorectalTumorCreator(),
         )
@@ -293,10 +292,6 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasSuperScanBoneScanCreator(): FunctionCreator {
         return FunctionCreator { HasSuperScanBoneScan() }
-    }
-
-    private fun hasChildPughClassCreator(): FunctionCreator {
-        return FunctionCreator { HasChildPughClass(doidModel()) }
     }
 
     private fun hasBCLCStageCreator(): FunctionCreator {

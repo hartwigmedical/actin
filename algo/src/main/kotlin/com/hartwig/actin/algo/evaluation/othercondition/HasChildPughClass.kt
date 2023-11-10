@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.tumor
+package com.hartwig.actin.algo.evaluation.othercondition
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
@@ -15,12 +15,12 @@ class HasChildPughClass(private val doidModel: DoidModel) : EvaluationFunction {
                 return EvaluationFactory.undetermined(
                     "Currently Child-Pugh class cannot be determined",
                     "Undetermined Child-Pugh class"
-                    )
-                }
+                )
             }
+        }
         return EvaluationFactory.notEvaluated(
-            "Not evaluated, since liver cirrhosis not present in medical history",
-            "Not evaluated, no liver cirrhosis present"
+            "Child Pugh Score not relevant since liver cirrhosis not present in medical history",
+            "Child Pugh not relevant since liver cirrhosis not present"
         )
     }
 }
