@@ -296,7 +296,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasChildPughClassCreator(): FunctionCreator {
-        return FunctionCreator { HasChildPughClass() }
+        return FunctionCreator { HasChildPughClass(doidModel()) }
     }
 
     private fun hasBCLCStageCreator(): FunctionCreator {

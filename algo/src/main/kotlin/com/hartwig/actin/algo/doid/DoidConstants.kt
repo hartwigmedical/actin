@@ -80,6 +80,7 @@ object DoidConstants {
     const val INTERSTITIAL_LUNG_DISEASE_DOID = "3082"
     const val LUNG_DISEASE_DOID = "850"
     const val LIVER_DISEASE_DOID = "409"
+    const val LIVER_CIRRHOSIS_DOID = "5082"
     const val MYOCARDIAL_INFARCT_DOID = "5844"
     const val STROKE_DOID = "6713"
     const val VASCULAR_DISEASE_DOID = "178"
