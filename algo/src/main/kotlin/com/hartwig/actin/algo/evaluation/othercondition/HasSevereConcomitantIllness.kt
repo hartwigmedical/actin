@@ -8,10 +8,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasSevereConcomitantIllness internal constructor() : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val whoStatus = record.clinical().clinicalStatus().who()
-            ?: return EvaluationFactory.undetermined(
-                "Undetermined whether patient may have severe concomitant illnesses (who status unknown)",
-                "Undetermined severe concomitant illnesses"
-            )
+
         if (whoStatus == 3 || whoStatus == 4) {
             return EvaluationFactory.warn(
                 "Patient may have severe concomitant illnesses based on WHO status of $whoStatus",
