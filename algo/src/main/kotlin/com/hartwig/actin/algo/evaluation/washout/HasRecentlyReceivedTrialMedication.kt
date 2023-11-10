@@ -30,7 +30,7 @@ class HasRecentlyReceivedTrialMedication(
             val foundMedicationString = if (foundMedicationNames.isNotEmpty()) ": ${concatLowercaseWithAnd(foundMedicationNames)}" else ""
             EvaluationFactory.pass(
                 "Patient recently received trial medication$foundMedicationString",
-                "Recent trial medication"
+                "Recent trial medication$foundMedicationString"
             )
         } else {
             EvaluationFactory.fail(
