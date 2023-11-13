@@ -25,7 +25,7 @@ class ProteinIsExpressedByIHC internal constructor(private val protein: String) 
             if (isExpressed) {
                 return unrecoverable()
                     .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages("Protein $protein has been determined to be expressed (by IHC)")
+                    .addPassSpecificMessages("Protein $protein is expressed according to IHC")
                     .addPassGeneralMessages("$protein has expression by IHC")
                     .build()
             }

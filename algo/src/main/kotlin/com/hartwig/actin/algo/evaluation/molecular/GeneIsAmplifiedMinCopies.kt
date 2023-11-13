@@ -105,7 +105,7 @@ class GeneIsAmplifiedMinCopies(private val gene: String, private val requestedMi
         if (ampsThatAreUnreportable.isNotEmpty()) {
             warnEvents.addAll(ampsThatAreUnreportable)
             warnSpecificMessages.add("Gene $gene is amplified but not considered reportable")
-            warnGeneralMessages.add("$gene amplification considered non-reportable")
+            warnGeneralMessages.add("$gene amplification but considered not reportable")
         }
         if (ampsThatAreNearCutoff.isNotEmpty()) {
             warnEvents.addAll(ampsThatAreNearCutoff)
@@ -117,7 +117,7 @@ class GeneIsAmplifiedMinCopies(private val gene: String, private val requestedMi
             warnSpecificMessages.add(
                 "Gene $gene does not meet cut-off for amplification, but has copy number > $requestedMinCopyNumber"
             )
-            warnGeneralMessages.add("$gene sufficient copies but not reported as amplification")
+            warnGeneralMessages.add("$gene has sufficient copies but not reported as amplification")
         }
         return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {
             unrecoverable()

@@ -98,7 +98,7 @@ class GeneIsAmplified internal constructor(private val gene: String) : Evaluatio
         if (ampsThatAreUnreportable.isNotEmpty()) {
             warnEvents.addAll(ampsThatAreUnreportable)
             warnSpecificMessages.add("Gene $gene is amplified but not considered reportable")
-            warnGeneralMessages.add("$gene amplification considered non-reportable")
+            warnGeneralMessages.add("$gene amplification but considered not reportable")
         }
         if (ampsThatAreNearCutoff.isNotEmpty()) {
             warnEvents.addAll(ampsThatAreNearCutoff)

@@ -104,7 +104,7 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
                 "Gene " + gene + " should have activating mutation(s): " + Format.concat(activatingVariantsAssociatedWithResistance) +
                         ", however, these are (also) associated with drug resistance"
             )
-            warnGeneralMessages.add("$gene activating mutation(s) detected but associated with drug resistance")
+            warnGeneralMessages.add("$gene activating mutation(s) but associated with drug resistance")
         }
 
         if (activatingVariantsInNonOncogene.isNotEmpty()) {
@@ -112,7 +112,7 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
             warnSpecificMessages.add(
                 "Gene " + gene + " has activating mutation(s) " + Format.concat(activatingVariantsInNonOncogene) + " but gene known as TSG"
             )
-            warnGeneralMessages.add("$gene activating mutation(s) detected but $gene known as TSG")
+            warnGeneralMessages.add("$gene activating mutation(s) but gene known as TSG")
         }
 
         if (activatingVariantsNoHotspotAndNoGainOfFunction.isNotEmpty()) {
@@ -124,8 +124,7 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
                         + " that have high driver likelihood, but is not a hotspot and not associated with gain-of-function protein effect evidence"
             )
             warnGeneralMessages.add(
-                "$gene potentially activating mutation(s) detected but is not a hotspot and not associated with " +
-                        "having gain-of-function protein effect evidence"
+                "$gene potentially activating mutation(s) with high driver likelihood but not a hotspot and not associated with gain-of-function protein effect"
             )
         }
 
@@ -133,7 +132,7 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
             warnEvents.addAll(activatingSubclonalVariants)
             warnSpecificMessages.add(
                 "Gene $gene potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) +
-                        " have subclonal likelihood of > " + Format.percentage(1 - CLONAL_CUTOFF)
+                        " but have subclonal likelihood of > " + Format.percentage(1 - CLONAL_CUTOFF)
             )
             warnGeneralMessages.add(
                 gene + " potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) +
@@ -148,21 +147,19 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
                         " that do not have high driver likelihood, but annotated with having gain-of-function protein effect evidence"
             )
             warnGeneralMessages.add(
-                "$gene potentially activating mutation(s) without high driver likelihood but having gain-of-function protein effect evidence"
+                "$gene potentially activating mutation(s) having gain-of-function protein effect evidence but without high driver likelihood"
             )
         }
 
         if (nonHighDriverSubclonalVariants.isNotEmpty()) {
             warnEvents.addAll(nonHighDriverSubclonalVariants)
             warnSpecificMessages.add(
-                "Gene $gene potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) +
+                "Gene $gene has potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) +
                         " have subclonal likelihood of > " + Format.percentage(1 - CLONAL_CUTOFF) +
                         " and no high driver likelihood"
             )
             warnGeneralMessages.add(
-                gene + " potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) +
-                        " but subclonal likelihood > " + Format.percentage(1 - CLONAL_CUTOFF) +
-                        " and no high driver likelihood"
+                "$gene potentially activating mutation(s) without high driver likelihood but subclonal likelihood > " + Format.percentage(1 - CLONAL_CUTOFF)
             )
         }
 
@@ -172,7 +169,7 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
                 "Gene $gene has potentially activating mutation(s) " + Format.concat(nonHighDriverVariants) +
                         " but no high driver likelihood"
             )
-            warnGeneralMessages.add("$gene potentially activating mutation(s) detected but no high driver likelihood")
+            warnGeneralMessages.add("$gene potentially activating mutation(s) but no high driver likelihood")
         }
 
         if (otherMissenseOrHotspotVariants.isNotEmpty()) {
@@ -181,7 +178,7 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
                 "Gene $gene has potentially activating mutation(s) " + Format.concat(otherMissenseOrHotspotVariants) +
                         " that are missense or have hotspot status, but are not considered reportable"
             )
-            warnGeneralMessages.add("$gene potentially activating mutation(s) detected but is unreportable")
+            warnGeneralMessages.add("$gene potentially activating mutation(s) but not reportable")
         }
 
         return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {

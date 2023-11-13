@@ -116,7 +116,7 @@ class HasFusionInGene internal constructor(private val gene: String) : Evaluatio
                 "Fusion(s) " + concat(unreportableFusionsWithGainOfFunction) + " detected in gene " + gene +
                         " but not considered reportable; however fusion is annotated with having gain-of-function evidence"
             )
-            warnGeneralMessages.add("Fusion(s) detected in gene $gene but unreportable but annotated with having gain-of-function evidence")
+            warnGeneralMessages.add("Non-reportable fusion(s) detected in gene $gene but annotated with having gain-of-function evidence")
         }
 
         return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {

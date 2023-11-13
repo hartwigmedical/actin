@@ -146,26 +146,26 @@ class GeneIsInactivated internal constructor(private val gene: String) : Evaluat
         if (inactivationEventsThatAreUnreportable.isNotEmpty()) {
             warnEvents.addAll(inactivationEventsThatAreUnreportable)
             warnSpecificMessages.add(
-                "Inactivation events detected for gene " + gene + ": " + concat(inactivationEventsThatAreUnreportable)
+                "Inactivation event(s) detected for gene " + gene + ": " + concat(inactivationEventsThatAreUnreportable)
                         + ", but considered non-reportable"
             )
-            warnGeneralMessages.add("$gene potential inactivation but not reportable")
+            warnGeneralMessages.add("Inactivation event(s) for $gene but event(s) not reportable")
         }
         if (inactivationEventsNoTSG.isNotEmpty()) {
             warnEvents.addAll(inactivationEventsNoTSG)
             warnSpecificMessages.add(
-                "Inactivation events detected for gene " + gene + ": " + concat(inactivationEventsNoTSG)
-                        + " but gene is annotated with gene role ONCO"
+                "Inactivation event(s) detected for gene " + gene + ": " + concat(inactivationEventsNoTSG)
+                        + " but gene is annotated with gene role oncogene"
             )
-            warnGeneralMessages.add("$gene potential inactivation but gene role ONCO")
+            warnGeneralMessages.add("Inactivation event(s) for $gene but gene is oncogene")
         }
         if (inactivationEventsGainOfFunction.isNotEmpty()) {
             warnEvents.addAll(inactivationEventsGainOfFunction)
             warnSpecificMessages.add(
-                "Inactivation events detected for " + gene + ": " + concat(inactivationEventsGainOfFunction)
+                "Inactivation event(s) detected for " + gene + ": " + concat(inactivationEventsGainOfFunction)
                         + " but no events annotated as having gain-of-function impact"
             )
-            warnGeneralMessages.add("$gene potential inactivation but event annotated with gain-of-function protein impact")
+            warnGeneralMessages.add("Inactivation event(s) for $gene but event(s) annotated with gain-of-function protein impact")
         }
         if (inactivationHighDriverNonBiallelicVariants.isNotEmpty() && eventsThatMayBeTransPhased.size <= 1) {
             warnEvents.addAll(inactivationHighDriverNonBiallelicVariants)
@@ -173,7 +173,7 @@ class GeneIsInactivated internal constructor(private val gene: String) : Evaluat
                 "Inactivation event(s) detected for " + gene + ": " + concat(inactivationHighDriverNonBiallelicVariants)
                         + " but event(s) are not biallelic"
             )
-            warnGeneralMessages.add("$gene potential inactivation but not biallelic")
+            warnGeneralMessages.add("Inactivation event(s) for $gene but event(s) are not biallelic")
         }
         if (inactivationSubclonalVariants.isNotEmpty()) {
             warnEvents.addAll(inactivationSubclonalVariants)
@@ -182,28 +182,28 @@ class GeneIsInactivated internal constructor(private val gene: String) : Evaluat
                         + " but subclonal likelihood > " + percentage(1 - CLONAL_CUTOFF)
             )
             warnGeneralMessages.add(
-                gene + " potentially inactivating event(s) " + concat(inactivationSubclonalVariants)
+                "Inactivation event(s) detected for " + gene + ": " + concat(inactivationSubclonalVariants)
                         + " but subclonal likelihood > " + percentage(1 - CLONAL_CUTOFF)
             )
         }
         if (reportableNonDriverBiallelicVariantsOther.isNotEmpty()) {
             warnEvents.addAll(reportableNonDriverBiallelicVariantsOther)
             warnSpecificMessages.add(
-                "Potential inactivation events detected for " + gene + ": " + concat(reportableNonDriverBiallelicVariantsOther)
+                "Potential inactivation event(s) detected for " + gene + ": " + concat(reportableNonDriverBiallelicVariantsOther)
                         + " but event(s) are not of high driver likelihood"
             )
-            warnGeneralMessages.add("Variant(s) " + concat(reportableNonDriverBiallelicVariantsOther) + " of low driver likelihood")
+            warnGeneralMessages.add("Potential inactivation event(s) " + concat(reportableNonDriverBiallelicVariantsOther) + " but no high driver likelihood")
         }
         if (reportableNonDriverNonBiallelicVariantsOther.isNotEmpty()) {
             warnEvents.addAll(reportableNonDriverNonBiallelicVariantsOther)
             warnSpecificMessages.add(
-                "Potential inactivation events detected for $gene: " + concat(
+                "Potential inactivation event(s) detected for $gene: " + concat(
                     reportableNonDriverNonBiallelicVariantsOther
                 ) + " but event(s) are not biallelic and not of high driver likelihood"
             )
             warnGeneralMessages.add(
-                "Variant(s) " + concat(reportableNonDriverNonBiallelicVariantsOther)
-                        + " not biallelic and no high driver likelihood"
+                "Potential inactivation event(s) " + concat(reportableNonDriverNonBiallelicVariantsOther)
+                        + " but not biallelic and no high driver likelihood"
             )
         }
         if (eventsThatMayBeTransPhased.size > 1) {

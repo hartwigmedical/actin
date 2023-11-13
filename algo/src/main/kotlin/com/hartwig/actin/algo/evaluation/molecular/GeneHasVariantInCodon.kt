@@ -51,7 +51,7 @@ class GeneHasVariantInCodon internal constructor(private val gene: String, priva
                     "Variant(s) in codon(s) " + concat(canonicalCodonMatches) + " in gene " + gene
                             + " detected in canonical transcript"
                 )
-                .addPassGeneralMessages("Variant(s) in codon(s) " + concat(canonicalCodonMatches) + " found in " + gene)
+                .addPassGeneralMessages("Variant(s) in codon(s) " + concat(canonicalCodonMatches) + " in " + gene)
                 .build()
         }
         val potentialWarnEvaluation = evaluatePotentialWarns(
@@ -65,7 +65,7 @@ class GeneHasVariantInCodon internal constructor(private val gene: String, priva
             ?: unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No variants in codon(s) " + concat(codons) + " detected in gene " + gene)
-                .addFailGeneralMessages("No specific variants in codon(s) in $gene detected")
+                .addFailGeneralMessages("No variants in codon(s) " + concat(codons) + " in $gene")
                 .build()
     }
 
@@ -81,10 +81,10 @@ class GeneHasVariantInCodon internal constructor(private val gene: String, priva
             warnEvents.addAll(canonicalReportableSubclonalVariantMatches)
             warnSpecificMessages.add(
                 "Variant(s) in codon(s) " + concat(canonicalReportableSubclonalVariantMatches) + " in " + gene
-                        + " detected in canonical transcript, but subclonal likelihood of > " + percentage(1 - CLONAL_CUTOFF)
+                        + " detected in canonical transcript but subclonal likelihood of > " + percentage(1 - CLONAL_CUTOFF)
             )
             warnGeneralMessages.add(
-                "Variant(s) in codon(s) " + concat(canonicalReportableSubclonalVariantMatches) + " found in " + gene
+                "Variant(s) in codon(s) " + concat(canonicalReportableSubclonalVariantMatches) + " in " + gene
                         + " but subclonal likelihood of > " + percentage(1 - CLONAL_CUTOFF)
             )
         }
@@ -92,21 +92,20 @@ class GeneHasVariantInCodon internal constructor(private val gene: String, priva
             warnEvents.addAll(canonicalUnreportableVariantMatches)
             warnSpecificMessages.add(
                 "Variant(s) in codon(s) " + concat(canonicalCodonMatches) + " in " + gene
-                        + " detected in canonical transcript, but not considered reportable"
+                        + " detected in canonical transcript but not considered reportable"
             )
             warnGeneralMessages.add(
-                "Variant(s) in codon(s) " + concat(canonicalCodonMatches) + " found in canonical transcript of gene " + gene
+                "Variant(s) in codon(s) " + concat(canonicalCodonMatches) + " in " + gene + " but not reportable"
             )
         }
         if (reportableOtherVariantMatches.isNotEmpty()) {
             warnEvents.addAll(reportableOtherVariantMatches)
             warnSpecificMessages.add(
-                "Variant(s) in codon(s) " + concat(reportableOtherCodonMatches) + " in " + gene
-                        + " detected, but in non-canonical transcript"
+                "Variant(s) in codon(s) " + concat(reportableOtherCodonMatches) + " in $gene"
+                        + " detected but in non-canonical transcript"
             )
             warnGeneralMessages.add(
-                "Variant(s) in codon(s) " + concat(canonicalCodonMatches) + " found in non-canonical transcript of gene "
-                        + gene
+                "Variant(s) in codon(s) " + concat(canonicalCodonMatches) + " in $gene" + " but in non-canonical transcript"
             )
         }
         return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {
