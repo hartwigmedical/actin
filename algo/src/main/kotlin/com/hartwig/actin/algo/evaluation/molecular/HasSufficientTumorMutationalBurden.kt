@@ -34,7 +34,7 @@ class HasSufficientTumorMutationalBurden internal constructor(private val minTum
                     "Tumor mutational burden (TMB) of sample " + tumorMutationalBurden + " almost exceeds " + minTumorMutationalBurden
                             + " while purity is low: perhaps a few mutations are missed and TMB is adequate"
                 )
-                .addWarnGeneralMessages("TMB almost sufficient with low purity")
+                .addWarnGeneralMessages("TMB almost sufficient while purity is low")
                 .addInclusionMolecularEvents(MolecularCharacteristicEvents.ALMOST_SUFFICIENT_TUMOR_MUTATIONAL_BURDEN)
                 .build()
         } else unrecoverable()

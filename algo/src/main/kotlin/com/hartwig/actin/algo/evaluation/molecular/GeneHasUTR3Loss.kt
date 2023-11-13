@@ -63,9 +63,9 @@ class GeneHasUTR3Loss internal constructor(private val gene: String) : Evaluatio
             warnEvents.addAll(hotspotsIn3UTRUnreportable)
             warnSpecificMessages.add(
                 "Hotspot mutation(s) detected in 3' UTR region of " + gene + " which may lead to 3' UTR loss: "
-                        + concat(hotspotsIn3UTRUnreportable) + " but variant is not considered reportable"
+                        + concat(hotspotsIn3UTRUnreportable) + " but mutation is not considered reportable"
             )
-            warnGeneralMessages.add("Hotspot mutation(s) in 3' UTR region of $gene may lead to 3' UTR loss but variant is not reportable")
+            warnGeneralMessages.add("Hotspot mutation(s) in 3' UTR region of $gene may lead to 3' UTR loss but mutation is not reportable")
         }
         if (vusIn3UTR.isNotEmpty()) {
             warnEvents.addAll(vusIn3UTR)

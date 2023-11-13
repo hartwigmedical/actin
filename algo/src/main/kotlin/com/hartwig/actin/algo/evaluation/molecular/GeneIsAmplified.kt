@@ -68,7 +68,7 @@ class GeneIsAmplified internal constructor(private val gene: String) : Evaluatio
             ?: unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No amplification detected of gene $gene")
-                .addFailGeneralMessages("No amplification $gene")
+                .addFailGeneralMessages("No amplification of $gene")
                 .build()
     }
 
@@ -88,7 +88,7 @@ class GeneIsAmplified internal constructor(private val gene: String) : Evaluatio
         if (ampsWithLossOfFunction.isNotEmpty()) {
             warnEvents.addAll(ampsWithLossOfFunction)
             warnSpecificMessages.add("Gene $gene is amplified but event is annotated as having loss-of-function impact")
-            warnGeneralMessages.add("$gene amplification with loss-of-function protein impact")
+            warnGeneralMessages.add("$gene amplification but with loss-of-function protein impact")
         }
         if (ampsOnNonOncogenes.isNotEmpty()) {
             warnEvents.addAll(ampsOnNonOncogenes)

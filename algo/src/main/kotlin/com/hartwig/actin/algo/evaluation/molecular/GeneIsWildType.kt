@@ -99,14 +99,14 @@ class GeneIsWildType internal constructor(private val gene: String) : Evaluation
         if (reportableEventsWithNoEffect.isNotEmpty()) {
             warnEvents.addAll(reportableEventsWithNoEffect)
             warnSpecificMessages.add("Reportable event(s) in " + gene + " are detected: " + Format.concat(reportableEventsWithNoEffect) + ", however these are annotated with protein effect 'no effect' and thus may potentially be considered wild-type")
-            warnGeneralMessages.add("$gene potentially wild-type (reportable event(s) but protein effect 'no effect')")
+            warnGeneralMessages.add("$gene potentially wild-type: event(s) are reportable but protein effect 'no effect'")
         }
         if (reportableEventsWithEffectPotentiallyWildtype.isNotEmpty()) {
             warnEvents.addAll(reportableEventsWithEffectPotentiallyWildtype)
             warnSpecificMessages.add(
                 "Reportable event(s) in " + gene + " are detected: " + Format.concat(reportableEventsWithEffectPotentiallyWildtype) + " which may potentially be considered wild-type"
             )
-            warnGeneralMessages.add("$gene potentially wild-type (reportable event(s) with protein effect)")
+            warnGeneralMessages.add("$gene potentially wild-type: event(s) are reportable and have protein effect")
         }
         return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {
             EvaluationFactory.unrecoverable()

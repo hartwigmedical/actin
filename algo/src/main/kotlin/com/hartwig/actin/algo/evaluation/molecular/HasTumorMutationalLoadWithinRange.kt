@@ -54,7 +54,7 @@ class HasTumorMutationalLoadWithinRange internal constructor(
                     "Tumor mutational load (TML) of sample " + tumorMutationalLoad + " almost exceeds " + minTumorMutationalLoad
                             + " while purity is low: perhaps a few mutations are missed and TML is adequate"
                 )
-                .addWarnGeneralMessages("TML almost sufficient with low purity")
+                .addWarnGeneralMessages("TML almost sufficient while purity is low")
                 .addInclusionMolecularEvents(MolecularCharacteristicEvents.ALMOST_SUFFICIENT_TUMOR_MUTATIONAL_LOAD)
                 .build()
         } else unrecoverable()

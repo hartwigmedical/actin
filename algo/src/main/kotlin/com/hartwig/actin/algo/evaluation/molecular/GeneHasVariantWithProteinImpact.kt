@@ -57,7 +57,7 @@ class GeneHasVariantWithProteinImpact internal constructor(private val gene: Str
                     "Variant(s) " + concat(canonicalProteinImpactMatches) + " in gene " + gene
                             + " detected in canonical transcript"
                 )
-                .addPassGeneralMessages(concat(canonicalProteinImpactMatches) + " found in " + gene)
+                .addPassGeneralMessages(concat(canonicalProteinImpactMatches) + " detected in " + gene)
                 .build()
         }
         val potentialWarnEvaluation = evaluatePotentialWarns(
@@ -100,7 +100,7 @@ class GeneHasVariantWithProteinImpact internal constructor(private val gene: Str
                 "Variant(s) " + concat(canonicalProteinImpactMatches) + " in " + gene
                         + " detected in canonical transcript but are not reportable"
             )
-            warnGeneralMessages.add(concat(canonicalProteinImpactMatches) + " found in " + gene)
+            warnGeneralMessages.add(concat(canonicalProteinImpactMatches) + " found in " + gene + " but not reportable")
         }
         if (reportableOtherVariantMatches.isNotEmpty()) {
             warnEvents.addAll(reportableOtherVariantMatches)

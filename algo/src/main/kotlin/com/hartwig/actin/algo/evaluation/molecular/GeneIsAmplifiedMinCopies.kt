@@ -95,7 +95,7 @@ class GeneIsAmplifiedMinCopies(private val gene: String, private val requestedMi
         if (ampsWithLossOfFunction.isNotEmpty()) {
             warnEvents.addAll(ampsWithLossOfFunction)
             warnSpecificMessages.add("Gene $gene is amplified but event is annotated as having loss-of-function impact")
-            warnGeneralMessages.add("$gene amplification with loss-of-function protein impact")
+            warnGeneralMessages.add("$gene amplification but with loss-of-function protein impact")
         }
         if (ampsOnNonOncogenes.isNotEmpty()) {
             warnEvents.addAll(ampsOnNonOncogenes)

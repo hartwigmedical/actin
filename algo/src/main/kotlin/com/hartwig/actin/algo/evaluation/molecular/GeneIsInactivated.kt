@@ -165,7 +165,7 @@ class GeneIsInactivated internal constructor(private val gene: String) : Evaluat
                 "Inactivation event(s) detected for " + gene + ": " + concat(inactivationEventsGainOfFunction)
                         + " but no events annotated as having gain-of-function impact"
             )
-            warnGeneralMessages.add("Inactivation event(s) for $gene but event(s) annotated with gain-of-function protein impact")
+            warnGeneralMessages.add("Inactivation event(s) for $gene but event(s) annotated with gain-of-function protein impact evidence")
         }
         if (inactivationHighDriverNonBiallelicVariants.isNotEmpty() && eventsThatMayBeTransPhased.size <= 1) {
             warnEvents.addAll(inactivationHighDriverNonBiallelicVariants)
