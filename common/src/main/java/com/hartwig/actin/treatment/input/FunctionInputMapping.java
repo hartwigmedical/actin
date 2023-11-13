@@ -76,7 +76,6 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_EVIDENCE_OF_CNS_HEMORRHAGE_BY_MRI, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_INTRATUMORAL_HEMORRHAGE_BY_MRI, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_SUPERSCAN_BONE_SCAN, FunctionInput.NONE);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_CHILD_PUGH_CLASS_X_LIVER_SCORE, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_BCLC_STAGE_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR, FunctionInput.NONE);
@@ -283,6 +282,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_PET_MRI, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_MRI_SCAN_DOCUMENTING_STABLE_DISEASE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.IS_IN_DIALYSIS, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_CHILD_PUGH_CLASS_X_LIVER_SCORE, FunctionInput.ONE_STRING);
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_POTENTIAL_SIGNIFICANT_HEART_DISEASE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_CARDIAC_ARRHYTHMIA, FunctionInput.NONE);

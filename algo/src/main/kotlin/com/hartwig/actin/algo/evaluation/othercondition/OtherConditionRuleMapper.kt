@@ -45,6 +45,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_PET_MRI to hasContraindicationToMRICreator(),
             EligibilityRule.HAS_MRI_SCAN_DOCUMENTING_STABLE_DISEASE to hasMRIScanDocumentingStableDiseaseCreator(),
             EligibilityRule.IS_IN_DIALYSIS to isInDialysisCreator(),
+            EligibilityRule.HAS_CHILD_PUGH_CLASS_X_LIVER_SCORE to hasChildPughClassCreator(),
         )
     }
 
@@ -74,16 +75,49 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
         }
     }
 
-    private fun hasHistoryOfCongestiveHeartFailureWithNYHACreator(): FunctionCreator {
-        return FunctionCreator { HasHistoryOfCongestiveHeartFailureWithNYHA() }
-    }
-
     private fun hasPriorConditionWithNameCreator(nameToFind: String): FunctionCreator {
         return FunctionCreator { HasHadPriorConditionWithName(nameToFind) }
     }
 
+    private fun hasHistoryOfCardiacDiseaseCreator(): FunctionCreator {
+        return FunctionCreator {
+            HasHadPriorConditionWithDoidComplicationOrToxicity(
+                doidModel(),
+                DoidConstants.HEART_DISEASE_DOID,
+                CARDIAC_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY,
+                CARDIAC_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY
+            )
+        }
+    }
+
+    private fun hasHistoryOfCongestiveHeartFailureWithNYHACreator(): FunctionCreator {
+        return FunctionCreator { HasHistoryOfCongestiveHeartFailureWithNYHA() }
+    }
+
+    private fun hasHistoryOfEyeDiseaseCreator(): FunctionCreator {
+        return FunctionCreator {
+            HasHadPriorConditionWithDoidComplicationOrToxicity(
+                doidModel(),
+                DoidConstants.EYE_DISEASE_DOID,
+                EYE_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY,
+                EYE_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY
+            )
+        }
+    }
+
     private fun hasHistoryOfPneumonitisCreator(): FunctionCreator {
         return FunctionCreator { HasHistoryOfPneumonitis(doidModel()) }
+    }
+
+    private fun hasHistoryOfStrokeCreator(): FunctionCreator {
+        return FunctionCreator {
+            HasHadPriorConditionWithDoidComplicationOrToxicity(
+                doidModel(),
+                DoidConstants.STROKE_DOID,
+                CEREBROVASCULAR_ACCIDENT_COMPLICATION_AND_TOXICITY_CATEGORY,
+                CEREBROVASCULAR_ACCIDENT_COMPLICATION_AND_TOXICITY_CATEGORY
+            )
+        }
     }
 
     private fun hasHistoryOfThromboembolicEventCreator(): FunctionCreator {
@@ -130,37 +164,8 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
         return FunctionCreator { IsInDialysis() }
     }
 
-    private fun hasHistoryOfEyeDiseaseCreator(): FunctionCreator {
-        return FunctionCreator {
-            HasHadPriorConditionWithDoidComplicationOrToxicity(
-                doidModel(),
-                DoidConstants.EYE_DISEASE_DOID,
-                EYE_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY,
-                EYE_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY
-            )
-        }
-    }
-
-    private fun hasHistoryOfCardiacDiseaseCreator(): FunctionCreator {
-        return FunctionCreator {
-            HasHadPriorConditionWithDoidComplicationOrToxicity(
-                doidModel(),
-                DoidConstants.HEART_DISEASE_DOID,
-                CARDIAC_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY,
-                CARDIAC_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY
-            )
-        }
-    }
-
-    private fun hasHistoryOfStrokeCreator(): FunctionCreator {
-        return FunctionCreator {
-            HasHadPriorConditionWithDoidComplicationOrToxicity(
-                doidModel(),
-                DoidConstants.STROKE_DOID,
-                CEREBROVASCULAR_ACCIDENT_COMPLICATION_AND_TOXICITY_CATEGORY,
-                CEREBROVASCULAR_ACCIDENT_COMPLICATION_AND_TOXICITY_CATEGORY
-            )
-        }
+    private fun hasChildPughClassCreator(): FunctionCreator {
+        return FunctionCreator { HasChildPughClass(doidModel()) }
     }
 
     companion object {
