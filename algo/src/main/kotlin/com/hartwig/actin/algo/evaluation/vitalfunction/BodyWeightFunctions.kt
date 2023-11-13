@@ -3,15 +3,17 @@ package com.hartwig.actin.algo.evaluation.vitalfunction
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.sort.BodyWeightDescendingDateComparator
 
-open class BodyWeightFunctions(private val referenceBodyWeight: Double, private val referenceIsMinimum: Boolean) :
-    EvaluationFunction {
-    override fun evaluate(record: PatientRecord): Evaluation {
-        val mostRecent = record.clinical().bodyWeights().sortedWith(BodyWeightDescendingDateComparator()).firstOrNull()
-            ?: return EvaluationFactory.undetermined("No body weights found", "No body weights found")
+object BodyWeightFunctions {
 
+    fun evaluatePatientBodyWeightAgainstReference(
+        record: PatientRecord, referenceBodyWeight: Double, referenceIsMinimum: Boolean
+    ): Evaluation {
+        val mostRecent = record.clinical().bodyWeights().sortedWith(BodyWeightDescendingDateComparator()).firstOrNull()
+            ?: return EvaluationFactory.undetermined(
+                "No body weights found", "No body weights found"
+            )
         val comparison = mostRecent.value().compareTo(referenceBodyWeight)
 
         return when {
@@ -25,33 +27,31 @@ open class BodyWeightFunctions(private val referenceBodyWeight: Double, private 
             comparison < 0 -> {
                 val specificMessage = "Patient has body weight below $referenceBodyWeight"
                 val generalMessage = "Body weight below $referenceBodyWeight"
-                if (referenceIsMinimum) EvaluationFactory.fail(
-                    specificMessage,
-                    generalMessage
-                ) else EvaluationFactory.pass(
-                    specificMessage,
-                    generalMessage
-                )
+                if (referenceIsMinimum) {
+                    EvaluationFactory.fail(specificMessage, generalMessage)
+                } else
+                    EvaluationFactory.pass(specificMessage, generalMessage)
+            }
+
+            comparison == 0 -> {
+                val specificMessage = "Patient has body weight equal to $referenceBodyWeight"
+                val generalMessage = "Body weight equal to $referenceBodyWeight"
+
+                return EvaluationFactory.pass(specificMessage, generalMessage)
             }
 
             else -> {
-                val specificMessage = "Patient has body weight equal to or above $referenceBodyWeight"
-                val generalMessage = "Body weight equal to or above $referenceBodyWeight"
-                if (referenceIsMinimum) EvaluationFactory.pass(
-                    specificMessage,
-                    generalMessage
-                ) else EvaluationFactory.fail(
-                    specificMessage,
-                    generalMessage
-                )
+                val specificMessage = "Patient has body weight above $referenceBodyWeight"
+                val generalMessage = "Body weight above $referenceBodyWeight"
+                if (referenceIsMinimum) {
+                    EvaluationFactory.pass(specificMessage, generalMessage)
+                } else
+                    EvaluationFactory.fail(specificMessage, generalMessage)
             }
         }
     }
 
-    companion object {
-        const val EXPECTED_UNIT: String = "kilogram"
-    }
-
+    val EXPECTED_UNIT = "kilogram"
 }
 
 

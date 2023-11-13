@@ -14,7 +14,7 @@ class HasSufficientBodyWeightTest {
 
     @Test
     fun `Should evaluate undetermined on no body weight documented`() {
-        val weights: List<BodyWeight> = listOf()
+        val weights: List<BodyWeight> = emptyList()
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(VitalFunctionTestFactory.withBodyWeights(weights))
@@ -47,6 +47,15 @@ class HasSufficientBodyWeightTest {
         val weights = listOf(
             weight().date(referenceDate.minusDays(5)).value(38.0).build(),
             weight().date(referenceDate.minusDays(4)).value(40.5).build()
+        )
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withBodyWeights(weights)))
+    }
+
+    @Test
+    fun `Should pass on most recent weight equal to min`() {
+        val weights = listOf(
+            weight().date(referenceDate.minusDays(5)).value(38.0).build(),
+            weight().date(referenceDate.minusDays(3)).value(40.0).build()
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withBodyWeights(weights)))
     }
