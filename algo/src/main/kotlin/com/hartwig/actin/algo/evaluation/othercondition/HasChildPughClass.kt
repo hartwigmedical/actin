@@ -9,6 +9,7 @@ import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.doid.DoidModel
 
 class HasChildPughClass(private val doidModel: DoidModel) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         for (condition in OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())) {
             if (condition.doids().any { doidModel.doidWithParents(it).contains(DoidConstants.LIVER_CIRRHOSIS_DOID) }) {

@@ -11,7 +11,7 @@ class HasChildPughClassTest {
     val function = createTestChildPughFunction()
 
     @Test
-    fun `Should not evaluate when liver cirrhosis not present` (){
+    fun `Should not evaluate when liver cirrhosis not present`() {
         val conditions: List<PriorOtherCondition> = listOf(
             OtherConditionTestFactory.builder().addDoids(DoidConstants.HEART_DISEASE_DOID).build(),
             OtherConditionTestFactory.builder().addDoids(DoidConstants.LUNG_DISEASE_DOID).build()
@@ -23,7 +23,7 @@ class HasChildPughClassTest {
     }
 
     @Test
-    fun `Should evaluate undetermined when liver cirrhosis present`(){
+    fun `Should evaluate undetermined when liver cirrhosis present`() {
         val conditions: List<PriorOtherCondition> = listOf(
             OtherConditionTestFactory.builder().addDoids(DoidConstants.LUNG_DISEASE_DOID).build(),
             OtherConditionTestFactory.builder().addDoids(ALCOHOLIC_LIVER_CIRRHOSIS).build()
@@ -38,7 +38,12 @@ class HasChildPughClassTest {
         private const val ALCOHOLIC_LIVER_CIRRHOSIS = "14018"
 
         private fun createTestChildPughFunction(): HasChildPughClass {
-            return HasChildPughClass(TestDoidModelFactory.createWithOneParentChild(DoidConstants.LIVER_CIRRHOSIS_DOID, ALCOHOLIC_LIVER_CIRRHOSIS))
+            return HasChildPughClass(
+                TestDoidModelFactory.createWithOneParentChild(
+                    DoidConstants.LIVER_CIRRHOSIS_DOID,
+                    ALCOHOLIC_LIVER_CIRRHOSIS
+                )
+            )
         }
     }
 
