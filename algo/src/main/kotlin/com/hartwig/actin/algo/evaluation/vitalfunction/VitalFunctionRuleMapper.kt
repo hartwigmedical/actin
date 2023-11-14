@@ -16,6 +16,7 @@ class VitalFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(reso
             EligibilityRule.HAS_PULSE_OXIMETRY_OF_AT_LEAST_X to hasSufficientPulseOximetryCreator(),
             EligibilityRule.HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y to hasRestingHeartRateWithinBoundsCreator(),
             EligibilityRule.HAS_BODY_WEIGHT_OF_AT_LEAST_X to hasSufficientBodyWeightCreator(),
+            EligibilityRule.HAS_BODY_WEIGHT_OF_AT_MOST_X to hasLimitedBodyWeightCreator(),
             EligibilityRule.HAS_BMI_OF_AT_MOST_X to hasBMIUpToLimitCreator()
         )
     }
@@ -52,6 +53,13 @@ class VitalFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(reso
         return FunctionCreator { function: EligibilityFunction ->
             val minBodyWeight = functionInputResolver().createOneDoubleInput(function)
             HasSufficientBodyWeight(minBodyWeight)
+        }
+    }
+
+    private fun hasLimitedBodyWeightCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val maxBodyWeight = functionInputResolver().createOneDoubleInput(function)
+            HasLimitedBodyWeight(maxBodyWeight)
         }
     }
 
