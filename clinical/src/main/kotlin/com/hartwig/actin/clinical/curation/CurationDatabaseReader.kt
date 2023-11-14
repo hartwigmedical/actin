@@ -19,7 +19,7 @@ import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfigFactory
 import com.hartwig.actin.clinical.curation.config.QTProlongatingConfigFactory
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfigFactory
 import com.hartwig.actin.clinical.curation.config.ToxicityConfigFactory
-import com.hartwig.actin.clinical.curation.config.TreatmentHistoryCurationConfigFile
+import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfigFactory
 import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.DosageUnitTranslationFactory
@@ -40,14 +40,13 @@ class CurationDatabaseReader(private val curationValidator: CurationValidator, p
 
         return CurationDatabase(
             primaryTumorConfigs = readConfigs(basePath, PRIMARY_TUMOR_TSV, PrimaryTumorConfigFactory(curationValidator)),
-            treatmentHistoryEntryConfigs = TreatmentHistoryCurationConfigFile.read(basePath + ONCOLOGICAL_HISTORY_TSV, treatmentDatabase)
-                .groupBy { it.input.lowercase() }.mapValues { it.value.toSet() },
+            treatmentHistoryEntryConfigs = readConfigs(
+                basePath, ONCOLOGICAL_HISTORY_TSV, TreatmentHistoryEntryConfigFactory(treatmentDatabase)
+            ),
             secondPrimaryConfigs = readConfigs(basePath, SECOND_PRIMARY_TSV, SecondPrimaryConfigFactory(curationValidator)),
             lesionLocationConfigs = readConfigs(basePath, LESION_LOCATION_TSV, LesionLocationConfigFactory()),
             nonOncologicalHistoryConfigs = readConfigs(
-                basePath,
-                NON_ONCOLOGICAL_HISTORY_TSV,
-                NonOncologicalHistoryConfigFactory(curationValidator)
+                basePath, NON_ONCOLOGICAL_HISTORY_TSV, NonOncologicalHistoryConfigFactory(curationValidator)
             ),
             ecgConfigs = readConfigs(basePath, ECG_TSV, ECGConfigFactory()),
             infectionConfigs = readConfigs(basePath, INFECTION_TSV, InfectionConfigFactory()),
@@ -61,9 +60,7 @@ class CurationDatabaseReader(private val curationValidator: CurationValidator, p
             cypInteractionConfigs = readConfigs(basePath, CYP_INTERACTIONS_TSV, CypInteractionConfigFactory()),
             qtProlongingConfigs = readConfigs(basePath, QT_PROLONGATING_TSV, QTProlongatingConfigFactory()),
             administrationRouteTranslations = readTranslationsToMap(
-                basePath,
-                ADMINISTRATION_ROUTE_TRANSLATION_TSV,
-                AdministrationRouteTranslationFactory()
+                basePath, ADMINISTRATION_ROUTE_TRANSLATION_TSV, AdministrationRouteTranslationFactory()
             ),
             laboratoryTranslations = readTranslations(basePath, LABORATORY_TRANSLATION_TSV, LaboratoryTranslationFactory())
                 .associateBy { Pair(it.code, it.name) },

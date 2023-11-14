@@ -4,6 +4,7 @@ import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryDetails
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.Test
 
 class TreatmentHistoryEntryConfigFactoryTest {
@@ -19,11 +20,11 @@ class TreatmentHistoryEntryConfigFactoryTest {
                 "startYear" to "2022"
             )
         )
-        assertThat(TreatmentHistoryEntryConfigFactory.createConfig(treatmentName, treatmentDatabase, parts, fields)).isNull()
+        assertThatExceptionOfType(IllegalStateException::class.java).isThrownBy { factory.create(fields, parts) }
     }
 
     @Test
-    fun `Should generate treatment for known treatment`() {
+    fun `Should generate treatment history entry for known treatment`() {
         val input = "CAPOX 2023"
         val treatmentName = TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN
         val parts = partsWithMappedValues(
@@ -34,15 +35,13 @@ class TreatmentHistoryEntryConfigFactoryTest {
             )
         )
 
-        val config = TreatmentHistoryEntryConfigFactory.createConfig(treatmentName, treatmentDatabase, parts, fields)
-        assertThat(config).isNotNull
-        assertThat(config!!.input).isEqualTo(input)
+        val config = factory.create(fields, parts)
+        assertThat(config.input).isEqualTo(input)
         assertThat(config.ignore).isFalse
         assertThat(config.curated).isNotNull
 
         val treatments = config.curated!!.treatments()
-        assertThat(treatments).isNotNull
-            .containsExactly(treatmentDatabase.findTreatmentByName(treatmentName))
+        assertThat(treatments).containsExactly(treatmentDatabase.findTreatmentByName(treatmentName))
     }
 
     @Test
@@ -57,7 +56,7 @@ class TreatmentHistoryEntryConfigFactoryTest {
                 "isTrial" to "1"
             )
         )
-        val config = TreatmentHistoryEntryConfigFactory.createConfig(treatmentName, treatmentDatabase, parts, fields)
+        val config = factory.create(fields, parts)
 
         val expected = TreatmentHistoryEntryConfig(
             input = input, ignore = false,
@@ -83,7 +82,7 @@ class TreatmentHistoryEntryConfigFactoryTest {
                 "isTrial" to "1"
             )
         )
-        assertThat(TreatmentHistoryEntryConfigFactory.createConfig(treatmentName, treatmentDatabase, parts, fields)).isNull()
+        assertThatExceptionOfType(IllegalStateException::class.java).isThrownBy { factory.create(fields, parts) }
     }
 
     @Test
@@ -96,17 +95,38 @@ class TreatmentHistoryEntryConfigFactoryTest {
                 "treatmentName" to treatmentName
             )
         )
-        val config = TreatmentHistoryEntryConfigFactory.createConfig(treatmentName, treatmentDatabase, parts, fields)
-        assertThat(config).isNotNull()
-        assertThat(config?.input).isEqualTo("NA")
-        assertThat(config?.ignore).isTrue()
-        assertThat(config?.curated).isNull()
+        val config = factory.create(fields, parts)
+        assertThat(config.input).isEqualTo("NA")
+        assertThat(config.ignore).isTrue
+        assertThat(config.curated).isNull()
     }
 
-    private fun partsWithMappedValues(overrides: Map<String, String>): List<String> {
+    @Test
+    fun `Should generate treatment history entry for multiple known treatments`() {
+        val input = "CAPOX and radiotherapy 2023"
+        val treatmentNames = setOf(TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN, "RADIOTHERAPY")
+        val parts = partsWithMappedValues(
+            mapOf(
+                "input" to input,
+                "treatmentName" to treatmentNames.joinToString(";"),
+                "startYear" to "2023",
+            )
+        )
+
+        val config = factory.create(fields, parts)
+        assertThat(config.input).isEqualTo(input)
+        assertThat(config.ignore).isFalse
+        assertThat(config.curated).isNotNull
+
+        val treatments = config.curated!!.treatments()
+        assertThat(treatments).hasSize(2)
+            .isEqualTo(treatmentNames.mapNotNull(treatmentDatabase::findTreatmentByName).toSet())
+    }
+
+    private fun partsWithMappedValues(overrides: Map<String, String>): Array<String> {
         val emptyMap = (0..24).associateWith { "" }
         val overridesWithIntKeys = overrides.mapKeys { fields[it.key] }
-        return (emptyMap + overridesWithIntKeys).values.toList()
+        return (emptyMap + overridesWithIntKeys).values.toTypedArray()
     }
 
     companion object {
@@ -128,5 +148,7 @@ class TreatmentHistoryEntryConfigFactoryTest {
             "isTrial" to 13,
             "trialAcronym" to 14,
         )
+
+        private val factory = TreatmentHistoryEntryConfigFactory(treatmentDatabase)
     }
 }

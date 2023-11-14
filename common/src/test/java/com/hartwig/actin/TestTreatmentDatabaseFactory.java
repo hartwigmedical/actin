@@ -9,6 +9,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.Drug;
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug;
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTreatment;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRadiotherapy;
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
 
@@ -26,8 +27,9 @@ public final class TestTreatmentDatabaseFactory {
 
         Treatment capox =
                 ImmutableDrugTreatment.builder().name(CAPECITABINE_OXALIPLATIN).addAllDrugs(drugMap.values()).isSystemic(true).build();
+        Treatment radiotherapy = ImmutableRadiotherapy.builder().name("RADIOTHERAPY").build();
 
-        return new TreatmentDatabase(drugMap, Map.of(capox.name().toLowerCase(), capox));
+        return new TreatmentDatabase(drugMap, Map.of(capox.name().toLowerCase(), capox, radiotherapy.name().toLowerCase(), radiotherapy));
     }
 
     @NotNull
