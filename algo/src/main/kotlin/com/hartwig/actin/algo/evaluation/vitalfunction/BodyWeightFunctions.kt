@@ -29,8 +29,9 @@ object BodyWeightFunctions {
                 val generalMessage = "Body weight below $referenceBodyWeight"
                 if (referenceIsMinimum) {
                     EvaluationFactory.fail(specificMessage, generalMessage)
-                } else
+                } else {
                     EvaluationFactory.pass(specificMessage, generalMessage)
+                }
             }
 
             comparison == 0 -> {
@@ -45,13 +46,14 @@ object BodyWeightFunctions {
                 val generalMessage = "Body weight above $referenceBodyWeight"
                 if (referenceIsMinimum) {
                     EvaluationFactory.pass(specificMessage, generalMessage)
-                } else
+                } else {
                     EvaluationFactory.fail(specificMessage, generalMessage)
+                }
             }
         }
     }
 
-    val EXPECTED_UNIT = "kilogram"
+    const val EXPECTED_UNIT = "kilogram"
 }
 
 
