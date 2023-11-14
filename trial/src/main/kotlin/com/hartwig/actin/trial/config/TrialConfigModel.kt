@@ -1,6 +1,6 @@
 package com.hartwig.actin.trial.config
 
-import com.hartwig.actin.trial.TrialWarning
+import com.hartwig.actin.trial.TrialDatabaseValidationWarning
 import com.hartwig.actin.trial.interpretation.EligibilityFactory
 
 class TrialConfigModel(
@@ -9,10 +9,10 @@ class TrialConfigModel(
     private val generalInclusionCriteriaByTrial: Map<String, List<InclusionCriteriaConfig>>,
     private val specificInclusionCriteriaByTrialAndCohort: Map<String, Map<String, List<InclusionCriteriaConfig>>>,
     private val referencesByTrialAndId: Map<String, Map<String, InclusionCriteriaReferenceConfig>>,
-    private val validationWarnings: List<TrialWarning>
+    private val validationWarnings: List<TrialDatabaseValidationWarning>
 ) {
 
-    fun warnings(): List<TrialWarning> {
+    fun warnings(): List<TrialDatabaseValidationWarning> {
         return validationWarnings;
     }
 

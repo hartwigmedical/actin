@@ -1,17 +1,17 @@
 package com.hartwig.actin.trial.config
 
 import com.hartwig.actin.treatment.serialization.TrialJson
-import com.hartwig.actin.trial.TrialCohortValidationWarning
+import com.hartwig.actin.trial.CohortDefinitionValidationWarning
 import com.hartwig.actin.trial.TrialDefinitionValidationWarning
-import com.hartwig.actin.trial.TrialInclusionCriteriaValidationWarning
-import com.hartwig.actin.trial.TrialInclusionReferenceValidationWarning
-import com.hartwig.actin.trial.TrialWarning
+import com.hartwig.actin.trial.InclusionCriteriaValidationWarning
+import com.hartwig.actin.trial.InclusionReferenceValidationWarning
+import com.hartwig.actin.trial.TrialDatabaseValidationWarning
 import com.hartwig.actin.trial.interpretation.EligibilityFactory
 import org.apache.logging.log4j.LogManager
 
 class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFactory) {
 
-    fun validate(database: TrialConfigDatabase): List<TrialWarning> {
+    fun validate(database: TrialConfigDatabase): List<TrialDatabaseValidationWarning> {
         val trialIds = extractTrialIds(database.trialDefinitionConfigs)
         val validTrials = validateTrials(database.trialDefinitionConfigs)
         val validCohorts = validateCohorts(trialIds, database.cohortDefinitionConfigs)
@@ -28,7 +28,7 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
     private fun validateInclusionCriteria(
         trialIds: Set<String>, cohortIdsPerTrial: Map<String, Set<String>>,
         inclusionCriteria: List<InclusionCriteriaConfig>
-    ): List<TrialInclusionCriteriaValidationWarning> {
+    ): List<InclusionCriteriaValidationWarning> {
         if (inclusionCriteria.isEmpty()) {
             return emptyList()
         }
@@ -51,19 +51,19 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
         }
 
         return allCriteriaWithNonExistentTrial.map { criterion ->
-            TrialInclusionCriteriaValidationWarning(
+            InclusionCriteriaValidationWarning(
                 config = criterion,
                 message = "Inclusion criterion defined on non-existing trial"
             )
         } +
                 allNonExistentCohorts.map { (criterion, cohortId) ->
-                    TrialInclusionCriteriaValidationWarning(
+                    InclusionCriteriaValidationWarning(
                         config = criterion,
                         message = "Inclusion criterion defined on non-existing cohort '$cohortId'"
                     )
                 } +
                 allInvalidInclusionCriteria.map { criterion ->
-                    TrialInclusionCriteriaValidationWarning(
+                    InclusionCriteriaValidationWarning(
                         config = criterion,
                         message = "Not a valid inclusion criterion for trial"
                     )
@@ -77,7 +77,7 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
             return configs.map(TrialDefinitionConfig::trialId).toSet()
         }
 
-        private fun validateTrials(trialDefinitions: List<TrialDefinitionConfig>): List<TrialWarning> {
+        private fun validateTrials(trialDefinitions: List<TrialDefinitionConfig>): List<TrialDatabaseValidationWarning> {
             val duplicatedTrialIds = validateNoDuplicates(
                 trialDefinitions,
                 TrialDefinitionConfig::trialId
@@ -100,16 +100,16 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
         private fun validateCohorts(
             trialIds: Set<String>,
             cohortDefinitions: List<CohortDefinitionConfig>
-        ): List<TrialCohortValidationWarning> {
+        ): List<CohortDefinitionValidationWarning> {
             return cohortDefinitions.groupBy(CohortDefinitionConfig::trialId)
                 .flatMap { validateNoDuplicates(it.value, CohortDefinitionConfig::cohortId) }
                 .map {
-                    TrialCohortValidationWarning(
+                    CohortDefinitionValidationWarning(
                         it.second,
                         "cohort ID for trial '${it.first}"
                     )
                 } + cohortDefinitions.filterNot { trialIds.contains(it.trialId) }.map {
-                TrialCohortValidationWarning(it, "Cohort '${it.cohortId}' defined on non-existing trial: '${it.trialId}'")
+                CohortDefinitionValidationWarning(it, "Cohort '${it.cohortId}' defined on non-existing trial: '${it.trialId}'")
             }
         }
 
@@ -135,13 +135,13 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
             trialIds: Set<String>,
             inclusionCriteriaConfigs: List<InclusionCriteriaConfig>,
             inclusionCriteriaReferenceConfigs: List<InclusionCriteriaReferenceConfig>
-        ): List<TrialWarning> {
+        ): List<TrialDatabaseValidationWarning> {
             val referenceConfigsWithNonExistentTrials = inclusionCriteriaReferenceConfigs.filterNot { trialIds.contains(it.trialId) }
 
 
             val referenceIdsAreUniqueByTrial = inclusionCriteriaReferenceConfigs.groupBy(InclusionCriteriaReferenceConfig::trialId)
                 .flatMap { validateNoDuplicates(it.value, InclusionCriteriaReferenceConfig::referenceId) }
-                .map { TrialInclusionReferenceValidationWarning(it.second, "Reference ID for trial '${it.second}") }
+                .map { InclusionReferenceValidationWarning(it.second, "Reference ID for trial '${it.second}") }
 
             val criteriaPerTrial = buildMapPerTrial(inclusionCriteriaConfigs)
             val referenceIdsPerTrial = buildMapPerTrial(inclusionCriteriaReferenceConfigs)
@@ -154,11 +154,11 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
                         .map { Triple(trialId, it, criteriaPerTrial[trialId]!!) }
                 }
             undefinedReferencesWithTrialId.flatMap { (trialId, referenceId, configs) ->
-                configs.map { TrialInclusionCriteriaValidationWarning(it, "Undefined reference ID on trial '$trialId': '$referenceId'") }
+                configs.map { InclusionCriteriaValidationWarning(it, "Undefined reference ID on trial '$trialId': '$referenceId'") }
             }
 
             return referenceConfigsWithNonExistentTrials.map {
-                TrialInclusionReferenceValidationWarning(it, "Reference '${it.referenceId}' defined on non-existing trial: '${it.trialId}'")
+                InclusionReferenceValidationWarning(it, "Reference '${it.referenceId}' defined on non-existing trial: '${it.trialId}'")
             } + referenceIdsAreUniqueByTrial
         }
 

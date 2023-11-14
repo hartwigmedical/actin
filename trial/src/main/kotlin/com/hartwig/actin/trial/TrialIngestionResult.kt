@@ -7,43 +7,43 @@ import com.hartwig.actin.trial.config.InclusionCriteriaReferenceConfig
 import com.hartwig.actin.trial.config.TrialConfig
 import com.hartwig.actin.trial.config.TrialDefinitionConfig
 
-enum class IngestionStatus {
+enum class TrialIngestionStatus {
     PASS,
     WARN
 }
 
-interface TrialWarning {
+interface TrialDatabaseValidationWarning {
     val config: TrialConfig
     val message: String
 }
 
 data class CTCTrialMappingWarning(val trialId: String, val message: String)
 data class CTCCohortMappingWarning(val studyMETC: String, val cohortName: String?, val cohortId: Int?, val message: String)
-data class TrialInclusionCriteriaValidationWarning(
+data class InclusionCriteriaValidationWarning(
     override val config: InclusionCriteriaConfig,
     override val message: String
-) : TrialWarning
+) : TrialDatabaseValidationWarning
 
-data class TrialInclusionReferenceValidationWarning(
+data class InclusionReferenceValidationWarning(
     override val config: InclusionCriteriaReferenceConfig,
     override val message: String
-) : TrialWarning
+) : TrialDatabaseValidationWarning
 
-data class TrialCohortValidationWarning(
+data class CohortDefinitionValidationWarning(
     override val config: CohortDefinitionConfig,
     override val message: String
-) : TrialWarning
+) : TrialDatabaseValidationWarning
 
 data class TrialDefinitionValidationWarning(
     override val config: TrialDefinitionConfig,
     override val message: String
-) : TrialWarning
+) : TrialDatabaseValidationWarning
 
 
 data class TrialIngestionResult(
-    val ingestionStatus: IngestionStatus,
+    val ingestionStatus: TrialIngestionStatus,
     val trialMappingWarnings: List<CTCTrialMappingWarning>,
     val cohortMappingWarnings: List<CTCCohortMappingWarning>,
-    val trialDefinitionWarnings: List<TrialWarning>,
+    val trialDatabaseValidationWarnings: List<TrialDatabaseValidationWarning>,
     @Transient val trials: List<Trial>
 )

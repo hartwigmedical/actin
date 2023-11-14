@@ -17,7 +17,7 @@ import com.hartwig.actin.treatment.input.FunctionInputResolver
 import com.hartwig.actin.treatment.sort.CohortComparator
 import com.hartwig.actin.treatment.sort.CriterionReferenceComparator
 import com.hartwig.actin.treatment.sort.EligibilityComparator
-import com.hartwig.actin.trial.IngestionStatus
+import com.hartwig.actin.trial.TrialIngestionStatus
 import com.hartwig.actin.trial.TrialIngestionResult
 import com.hartwig.actin.trial.config.InclusionCriteriaConfig
 import com.hartwig.actin.trial.config.InclusionCriteriaReferenceConfig
@@ -36,7 +36,7 @@ class TrialFactory(
         val ctcCohortWarnings = ctcModel.checkModelForNewCohorts(trialConfigModel.cohorts())
         val trialDefinitionWarnings = trialConfigModel.warnings()
         return TrialIngestionResult(
-            if ((ctcCohortWarnings + ctcNewTrialWarnings + trialDefinitionWarnings).isEmpty()) IngestionStatus.PASS else IngestionStatus.WARN,
+            if ((ctcCohortWarnings + ctcNewTrialWarnings + trialDefinitionWarnings).isEmpty()) TrialIngestionStatus.PASS else TrialIngestionStatus.WARN,
             ctcNewTrialWarnings,
             ctcCohortWarnings,
             trialDefinitionWarnings,
