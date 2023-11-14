@@ -9,6 +9,7 @@ import com.hartwig.actin.trial.ctc.CTCModel
 import com.hartwig.actin.trial.ctc.config.CTCDatabaseReader
 import com.hartwig.actin.trial.interpretation.EligibilityRuleUsageEvaluator
 import com.hartwig.actin.trial.interpretation.TrialFactory
+import com.hartwig.actin.util.json.GsonSerializer
 import com.hartwig.serve.datamodel.serialization.KnownGeneFile
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -16,6 +17,8 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.nio.file.Files
+import java.nio.file.Paths
 import kotlin.system.exitProcess
 
 class TrialCreatorApplication(private val config: TrialCreatorConfig) {
@@ -48,6 +51,13 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         LOGGER.info("Writing {} trials to {}", result.trials.size, outputDirectory)
         TrialJson.write(result.trials, outputDirectory)
         LOGGER.info("Done!")
+
+        val resultsJson = Paths.get(outputDirectory).resolve("results.json")
+        LOGGER.info("Writing {} trial ingestion results to {}", result.trials.size, resultsJson)
+        Files.write(
+            resultsJson,
+            GsonSerializer.create().toJson(result).toByteArray()
+        )
     }
 
     companion object {
