@@ -13,7 +13,6 @@ object EligibilityRuleUsageEvaluator {
 
     private val UNUSED_RULES_TO_KEEP = setOf(
         EligibilityRule.HAS_LYMPHOCYTES_CELLS_PER_MM3_OF_AT_LEAST_X,
-        EligibilityRule.HAS_QTC_OF_AT_MOST_X,
         EligibilityRule.HAS_HLA_TYPE_X,
         EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X,
         EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_CURRENT_TRIAL,
