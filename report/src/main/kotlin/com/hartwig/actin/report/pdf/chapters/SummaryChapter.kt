@@ -54,7 +54,10 @@ class SummaryChapter(private val report: Report) : ReportChapter {
     private fun addParagraphWithContent(contentFields: List<Pair<String, String>>, document: Document) {
         val paragraph = Paragraph()
         contentFields.flatMap { (label, value) ->
-            listOf(Text(label).addStyle(Styles.reportHeaderLabelStyle()), Text(value).addStyle(Styles.reportHeaderValueStyle()))
+            listOf(
+                Text(label).addStyle(Styles.reportHeaderLabelStyle()),
+                Text(value).addStyle(Styles.reportHeaderValueStyle())
+            )
         }.forEach(paragraph::add)
         document.add(paragraph.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT))
     }
@@ -137,7 +140,8 @@ class SummaryChapter(private val report: Report) : ReportChapter {
             ).filter { it.second == true }.map { it.first }
 
             val lesions =
-                listOfNotNull(categorizedLesions, tumor.otherLesions(), listOfNotNull(tumor.biopsyLocation())).flatten().sorted().distinctBy {it.uppercase()}
+                listOfNotNull(categorizedLesions, tumor.otherLesions(), listOfNotNull(tumor.biopsyLocation())).flatten()
+                    .sorted().distinctBy { it.uppercase() }
 
             return if (lesions.isEmpty()) {
                 Formats.VALUE_UNKNOWN
