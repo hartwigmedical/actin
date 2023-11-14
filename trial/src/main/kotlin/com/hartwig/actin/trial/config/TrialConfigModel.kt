@@ -1,5 +1,6 @@
 package com.hartwig.actin.trial.config
 
+import com.hartwig.actin.trial.TrialWarning
 import com.hartwig.actin.trial.interpretation.EligibilityFactory
 
 class TrialConfigModel(
@@ -7,8 +8,13 @@ class TrialConfigModel(
     private val cohortsByTrialId: Map<String, List<CohortDefinitionConfig>>,
     private val generalInclusionCriteriaByTrial: Map<String, List<InclusionCriteriaConfig>>,
     private val specificInclusionCriteriaByTrialAndCohort: Map<String, Map<String, List<InclusionCriteriaConfig>>>,
-    private val referencesByTrialAndId: Map<String, Map<String, InclusionCriteriaReferenceConfig>>
+    private val referencesByTrialAndId: Map<String, Map<String, InclusionCriteriaReferenceConfig>>,
+    private val validationWarnings: List<TrialWarning>
 ) {
+
+    fun warnings(): List<TrialWarning> {
+        return validationWarnings;
+    }
 
     fun trials(): List<TrialDefinitionConfig> {
         return trialDefinitionConfigs
@@ -38,11 +44,13 @@ class TrialConfigModel(
 
         fun create(trialConfigDirectory: String, eligibilityFactory: EligibilityFactory): TrialConfigModel {
             val database = TrialConfigDatabaseReader.read(trialConfigDirectory)
-            check(TrialConfigDatabaseValidator(eligibilityFactory).isValid(database)) { "Trial config database is not considered valid. Cannot create config model." }
-            return createFromDatabase(database)
+            return createFromDatabase(database, TrialConfigDatabaseValidator(eligibilityFactory))
         }
 
-        fun createFromDatabase(database: TrialConfigDatabase): TrialConfigModel {
+        fun createFromDatabase(
+            database: TrialConfigDatabase,
+            trialConfigDatabaseValidator: TrialConfigDatabaseValidator
+        ): TrialConfigModel {
             val specificInclusionCriteriaByTrialAndCohort =
                 configsByTrial(database.inclusionCriteriaConfigs.filter { it.appliesToCohorts.isNotEmpty() }).mapValues { configsByTrial ->
                     configsByTrial.value.flatMap { config: InclusionCriteriaConfig ->
@@ -59,7 +67,8 @@ class TrialConfigModel(
                 configsByTrial(database.cohortDefinitionConfigs),
                 configsByTrial(database.inclusionCriteriaConfigs.filter { it.appliesToCohorts.isEmpty() }),
                 specificInclusionCriteriaByTrialAndCohort,
-                referencesByTrialAndId
+                referencesByTrialAndId,
+                trialConfigDatabaseValidator.validate(database)
             )
         }
 

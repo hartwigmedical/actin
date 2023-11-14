@@ -39,14 +39,14 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         val trialFactory = TrialFactory.create(config.trialConfigDirectory, ctcModel, doidModel, geneFilter, treatmentDatabase)
 
         LOGGER.info("Creating trial database")
-        val trials = trialFactory.createTrials()
+        val result = trialFactory.createTrials()
 
         LOGGER.info("Evaluating usage of eligibility rules")
-        EligibilityRuleUsageEvaluator.evaluate(trials)
+        EligibilityRuleUsageEvaluator.evaluate(result.trials)
 
         val outputDirectory = config.outputDirectory
-        LOGGER.info("Writing {} trials to {}", trials.size, outputDirectory)
-        TrialJson.write(trials, outputDirectory)
+        LOGGER.info("Writing {} trials to {}", result.trials.size, outputDirectory)
+        TrialJson.write(result.trials, outputDirectory)
         LOGGER.info("Done!")
     }
 

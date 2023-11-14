@@ -10,14 +10,14 @@ class TrialConfigDatabaseValidatorTest {
     @Test
     fun confirmTrialConfigDatabasesAreValid() {
         val validator: TrialConfigDatabaseValidator = createTestValidator()
-        assertThat(validator.isValid(TestTrialConfigDatabaseFactory.createMinimalTestTrialConfigDatabase())).isTrue
-        assertThat(validator.isValid(TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase())).isTrue
+        assertThat(validator.validate(TestTrialConfigDatabaseFactory.createMinimalTestTrialConfigDatabase())).isTrue
+        assertThat(validator.validate(TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase())).isTrue
     }
 
     @Test
     fun canDetectIllDefinedTrialConfigDatabase() {
         val validator: TrialConfigDatabaseValidator = createTestValidator()
-        assertThat(validator.isValid(createInvalidTrialConfigDatabase())).isFalse
+        assertThat(validator.validate(createInvalidTrialConfigDatabase())).isFalse
     }
 
     companion object {

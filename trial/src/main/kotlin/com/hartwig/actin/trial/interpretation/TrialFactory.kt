@@ -12,12 +12,13 @@ import com.hartwig.actin.treatment.datamodel.ImmutableCriterionReference
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibility
 import com.hartwig.actin.treatment.datamodel.ImmutableTrial
 import com.hartwig.actin.treatment.datamodel.ImmutableTrialIdentification
-import com.hartwig.actin.treatment.datamodel.Trial
 import com.hartwig.actin.treatment.datamodel.TrialIdentification
 import com.hartwig.actin.treatment.input.FunctionInputResolver
 import com.hartwig.actin.treatment.sort.CohortComparator
 import com.hartwig.actin.treatment.sort.CriterionReferenceComparator
 import com.hartwig.actin.treatment.sort.EligibilityComparator
+import com.hartwig.actin.trial.IngestionStatus
+import com.hartwig.actin.trial.TrialIngestionResult
 import com.hartwig.actin.trial.config.InclusionCriteriaConfig
 import com.hartwig.actin.trial.config.InclusionCriteriaReferenceConfig
 import com.hartwig.actin.trial.config.TrialConfigModel
@@ -30,19 +31,24 @@ class TrialFactory(
     private val eligibilityFactory: EligibilityFactory
 ) {
 
-    fun createTrials(): List<Trial> {
-        ctcModel.checkModelForNewTrials(trialConfigModel.trials())
-        ctcModel.checkModelForNewCohorts(trialConfigModel.cohorts())
-
-        return trialConfigModel.trials().map { trialConfig ->
-            val trialId = trialConfig.trialId
-            val referencesById = trialConfigModel.referencesForTrial(trialId)
-            ImmutableTrial.builder()
-                .identification(toIdentification(trialConfig))
-                .generalEligibility(toEligibility(trialConfigModel.generalInclusionCriteriaForTrial(trialId), referencesById))
-                .cohorts(cohortsForTrial(trialId, referencesById))
-                .build()
-        }
+    fun createTrials(): TrialIngestionResult {
+        val ctcNewTrialWarnings = ctcModel.checkModelForNewTrials(trialConfigModel.trials())
+        val ctcCohortWarnings = ctcModel.checkModelForNewCohorts(trialConfigModel.cohorts())
+        val trialDefinitionWarnings = trialConfigModel.warnings()
+        return TrialIngestionResult(
+            if ((ctcCohortWarnings + ctcNewTrialWarnings + trialDefinitionWarnings).isEmpty()) IngestionStatus.PASS else IngestionStatus.WARN,
+            ctcNewTrialWarnings,
+            ctcCohortWarnings,
+            trialDefinitionWarnings,
+            trialConfigModel.trials().map { trialConfig ->
+                val trialId = trialConfig.trialId
+                val referencesById = trialConfigModel.referencesForTrial(trialId)
+                ImmutableTrial.builder()
+                    .identification(toIdentification(trialConfig))
+                    .generalEligibility(toEligibility(trialConfigModel.generalInclusionCriteriaForTrial(trialId), referencesById))
+                    .cohorts(cohortsForTrial(trialId, referencesById))
+                    .build()
+            })
     }
 
     private fun cohortsForTrial(trialId: String, referencesById: Map<String, InclusionCriteriaReferenceConfig>): List<Cohort> {

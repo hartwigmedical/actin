@@ -2,6 +2,8 @@ package com.hartwig.actin.trial.ctc
 
 import com.hartwig.actin.treatment.datamodel.CohortMetadata
 import com.hartwig.actin.treatment.datamodel.ImmutableCohortMetadata
+import com.hartwig.actin.trial.CTCCohortMappingWarning
+import com.hartwig.actin.trial.CTCTrialMappingWarning
 import com.hartwig.actin.trial.config.CohortDefinitionConfig
 import com.hartwig.actin.trial.config.TrialDefinitionConfig
 import com.hartwig.actin.trial.ctc.config.CTCDatabase
@@ -52,14 +54,15 @@ class CTCModel constructor(private val ctcDatabase: CTCDatabase) {
             .build()
     }
 
-    fun checkModelForNewTrials(trialConfigs: List<TrialDefinitionConfig>) {
+    fun checkModelForNewTrials(trialConfigs: List<TrialDefinitionConfig>): List<CTCTrialMappingWarning> {
         val newTrialsInCTC = extractNewCTCStudyMETCs(trialConfigs)
 
-        if (newTrialsInCTC.isEmpty()) {
+        return if (newTrialsInCTC.isEmpty()) {
             LOGGER.info(" No new studies found in CTC database that are not explicitly ignored.")
+            emptyList();
         } else {
-            for (newTrialInCTC in newTrialsInCTC) {
-                LOGGER.warn(" New trial detected in CTC that is not configured to be ignored: '{}'", newTrialInCTC)
+            newTrialsInCTC.map {
+                CTCTrialMappingWarning(it, " New trial detected in CTC that is not configured to be ignored")
             }
         }
     }
@@ -73,16 +76,17 @@ class CTCModel constructor(private val ctcDatabase: CTCDatabase) {
             .toSet()
     }
 
-    fun checkModelForNewCohorts(cohortConfigs: List<CohortDefinitionConfig>) {
+    fun checkModelForNewCohorts(cohortConfigs: List<CohortDefinitionConfig>): List<CTCCohortMappingWarning> {
         val newCohortEntriesInCTC = extractNewCTCCohorts(cohortConfigs)
 
-        if (newCohortEntriesInCTC.isEmpty()) {
+        return if (newCohortEntriesInCTC.isEmpty()) {
             LOGGER.info(" No new cohorts found in CTC database that are not explicitly unmapped.")
+            emptyList();
         } else {
-            for (newCohortInCTC in newCohortEntriesInCTC) {
-                LOGGER.warn(
-                    " New cohort detected in CTC that is not configured as unmapped: '{}: {} (ID={})'", newCohortInCTC.studyMETC,
-                    newCohortInCTC.cohortName, newCohortInCTC.cohortId
+            newCohortEntriesInCTC.map {
+                CTCCohortMappingWarning(
+                    it.studyMETC,
+                    it.cohortName, it.cohortId, "New cohort detected in CTC that is not configured as unmapped"
                 )
             }
         }

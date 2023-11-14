@@ -2,7 +2,6 @@ package com.hartwig.actin.trial.config
 
 import com.google.common.io.Resources
 import com.hartwig.actin.trial.TestTrialData
-import com.hartwig.actin.trial.interpretation.TestEligibilityFactoryFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert
 import org.junit.Test
@@ -11,7 +10,7 @@ class TrialConfigModelTest {
 
     @Test
     fun canCreateFromTrialConfigDirectory() {
-        Assert.assertNotNull(TrialConfigModel.create(TRIAL_CONFIG_DIRECTORY, TestEligibilityFactoryFactory.createTestEligibilityFactory()))
+        Assert.assertNotNull(TrialConfigModel.create(TRIAL_CONFIG_DIRECTORY))
     }
 
     @Test
