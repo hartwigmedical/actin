@@ -1,6 +1,6 @@
 steps:
 
-  - id: 'Maven build using cache'
+  - id: 'Set version for maven'
     name: 'eu.gcr.io/hmf-build/maven-cache'
     args: [ 'versions:set -DnewVersion=$TAG_NAME --batch-mode' ]
 
