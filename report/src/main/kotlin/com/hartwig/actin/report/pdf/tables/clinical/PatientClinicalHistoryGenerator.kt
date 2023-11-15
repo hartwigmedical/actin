@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.TumorStatus
+import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.sort.PriorSecondPrimaryDiagnosedDateComparator
@@ -131,7 +132,13 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
 
             val annotation = listOfNotNull(intentString, cyclesString, stopReasonString).joinToString(", ")
 
-            val treatmentWithAnnotation = treatmentHistoryEntry.treatmentDisplay() + if (annotation.isEmpty()) "" else " ($annotation)"
+            val treatmentNames = treatmentHistoryEntry.treatments().map(Treatment::display).map(String::lowercase).toSet()
+            val treatmentDisplay = if (treatmentNames == setOf("chemotherapy", "radiotherapy")) {
+                "Chemoradiation"
+            } else {
+                treatmentHistoryEntry.treatmentDisplay()
+            }
+            val treatmentWithAnnotation = treatmentDisplay + if (annotation.isEmpty()) "" else " ($annotation)"
 
             return if (treatmentHistoryEntry.isTrial) {
                 val acronym = if (treatmentHistoryEntry.trialAcronym().isNullOrEmpty()) "" else "(${treatmentHistoryEntry.trialAcronym()})"
