@@ -251,7 +251,7 @@ public final class TestTreatmentMatchFactory {
 
     @NotNull
     private static Evaluation unrecoverable(@NotNull EvaluationResult result, @NotNull String specificMessage,
-            @Nullable String generalMessage, @Nullable String inclusionMolecularEvent) {
+                                            @Nullable String generalMessage, @Nullable String inclusionMolecularEvent) {
         ImmutableEvaluation.Builder builder = ImmutableEvaluation.builder().result(result).recoverable(false);
 
         switch (result) {
