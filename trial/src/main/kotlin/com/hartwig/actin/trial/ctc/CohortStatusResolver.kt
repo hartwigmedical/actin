@@ -1,5 +1,8 @@
 package com.hartwig.actin.trial.ctc
 
+import com.hartwig.actin.trial.CTCDatabaseValidationError
+import com.hartwig.actin.trial.CohortDefinitionValidationError
+import com.hartwig.actin.trial.config.CohortDefinitionConfig
 import com.hartwig.actin.trial.ctc.config.CTCDatabaseEntry
 import org.apache.logging.log4j.LogManager
 
@@ -7,15 +10,19 @@ object CohortStatusResolver {
 
     private val LOGGER = LogManager.getLogger(CohortStatusResolver::class.java)
 
-    fun resolve(entries: List<CTCDatabaseEntry>, configuredCohortIds: Set<Int>): InterpretedCohortStatus {
+    fun resolve(
+        entries: List<CTCDatabaseEntry>,
+        configuredCohortIds: CohortDefinitionConfig
+    ): Triple<InterpretedCohortStatus, List<CohortDefinitionValidationError>, List<CTCDatabaseValidationError>> {
         val entriesByCohortId = entries.filter { it.cohortId != null }.associateBy { it.cohortId!!.toInt() }
-        val matches: List<CTCDatabaseEntry?> = findEntriesByCohortIds(entriesByCohortId, configuredCohortIds)
+        val (matches, missingCohortErrors) = findEntriesByCohortIds(entriesByCohortId, configuredCohortIds)
 
         if (!hasValidCTCDatabaseMatches(matches)) {
-            LOGGER.warn(" Invalid cohort IDs configured for cohort: '{}'. Assuming cohort is closed without slots", configuredCohortIds)
-            return closedWithoutSlots()
+            return Triple(closedWithoutSlots(), emptyList(), matches.filterNotNull()
+                .map { CTCDatabaseValidationError(it, "Invalid cohort IDs configured for cohort") })
         }
-        return interpretValidMatches(matches.filterNotNull(), entriesByCohortId)
+        val (status, matchErrors) = interpretValidMatches(matches.filterNotNull(), entriesByCohortId)
+        return Triple(status, missingCohortErrors, matchErrors)
     }
 
     internal fun hasValidCTCDatabaseMatches(matches: List<CTCDatabaseEntry?>): Boolean {
@@ -26,34 +33,39 @@ object CohortStatusResolver {
     private fun interpretValidMatches(
         matches: List<CTCDatabaseEntry>,
         entriesByCohortId: Map<Int, CTCDatabaseEntry>
-    ): InterpretedCohortStatus {
+    ): Pair<InterpretedCohortStatus, List<CTCDatabaseValidationError>> {
+        val validationErrors = mutableListOf<CTCDatabaseValidationError>()
         if (isSingleParent(matches)) {
             return fromEntry(matches[0])
         } else if (isListOfChildren(matches)) {
-            val bestChildEntry = matches.map(::fromEntry).maxWith(InterpretedCohortStatusComparator())
+            val statuses = matches.map(::fromEntry)
+            validationErrors.addAll(statuses.map { it.second }.flatten())
+            val bestChildEntry = statuses.map { it.first }.maxWith(InterpretedCohortStatusComparator())
             val firstParentId = matches[0].cohortParentId
             if (matches.size > 1) {
                 if (matches.any { it.cohortParentId != firstParentId }) {
-                    LOGGER.warn(" Multiple parents found for single set of children: {}", matches)
+                    validationErrors.add(CTCDatabaseValidationError(matches[0], "Multiple parents found for single set of children"))
                 }
             }
-            val parentEntry = fromEntry(entriesByCohortId[firstParentId]!!)
+            val parentEntry = fromEntry(entriesByCohortId[firstParentId]!!).first
             if (bestChildEntry.open && !parentEntry.open) {
-                LOGGER.warn(
-                    " Best child from IDs '{}' is open while parent with ID '{}' is closed",
-                    matches.map { it.cohortId },
-                    firstParentId
+                validationErrors.add(
+                    CTCDatabaseValidationError(
+                        matches[0],
+                        " Best child from IDs '${matches.map { it.cohortId }}' is open while parent with ID '$firstParentId' is closed"
+                    )
                 )
             }
 
             if (bestChildEntry.slotsAvailable && !parentEntry.slotsAvailable) {
-                LOGGER.warn(
-                    " Best child from IDs '{}' has slots available while parent with ID '{}' has no slots available",
-                    matches.map { it.cohortId },
-                    firstParentId
+                validationErrors.add(
+                    CTCDatabaseValidationError(
+                        matches[0],
+                        " Best child from IDs '${matches.map { it.cohortId }}' has slots available while parent with ID '$firstParentId' has no slots available",
+                    )
                 )
             }
-            return bestChildEntry
+            return bestChildEntry to validationErrors
         }
         throw IllegalStateException("Unexpected set of CTC database matches: $matches")
     }
@@ -72,30 +84,42 @@ object CohortStatusResolver {
 
     private fun findEntriesByCohortIds(
         entriesByCohortId: Map<Int, CTCDatabaseEntry>,
-        configuredCohortIds: Set<Int>
-    ): List<CTCDatabaseEntry?> {
-        return configuredCohortIds.map { cohortId ->
-            if (!entriesByCohortId.contains(cohortId)) {
-                LOGGER.warn(" Could not find CTC database entry with cohort ID '{}'", cohortId)
+        cohortDefinitionConfig: CohortDefinitionConfig
+    ): Pair<List<CTCDatabaseEntry?>, List<CohortDefinitionValidationError>> {
+        val entriesAndValidationErrors = cohortDefinitionConfig.ctcCohortIds.map { it.toInt() }.toSet().map { cohortId ->
+            entriesByCohortId[cohortId] to if (!entriesByCohortId.contains(cohortId)) {
+                CohortDefinitionValidationError(
+                    cohortDefinitionConfig,
+                    " Could not find CTC database entry with cohort ID '$cohortId'"
+                )
+            } else {
+                null
             }
-            entriesByCohortId[cohortId]
         }
+        return entriesAndValidationErrors.map { it.first } to entriesAndValidationErrors.map { it.second }.filterNotNull()
     }
 
-    private fun fromEntry(entry: CTCDatabaseEntry): InterpretedCohortStatus {
+    private fun fromEntry(entry: CTCDatabaseEntry): Pair<InterpretedCohortStatus, List<CTCDatabaseValidationError>> {
         val cohortStatus = entry.cohortStatus
-        if (cohortStatus == null) {
-            LOGGER.warn(
-                " No cohort status available in CTC for cohort with ID '{}'. Assuming cohort is closed without slots",
-                entry.cohortId
+            ?: return closedWithoutSlots() to listOf(
+                CTCDatabaseValidationError(
+                    entry,
+                    "No cohort status available in CTC for cohort"
+                )
             )
-            return closedWithoutSlots()
-        }
 
         val status: CTCStatus = CTCStatus.fromStatusString(cohortStatus)
         val slotsAvailable: Boolean = entry.cohortSlotsNumberAvailable != null && entry.cohortSlotsNumberAvailable > 0
 
-        return InterpretedCohortStatus(open = status == CTCStatus.OPEN, slotsAvailable = slotsAvailable)
+        return InterpretedCohortStatus(
+            open = status == CTCStatus.OPEN,
+            slotsAvailable = slotsAvailable
+        ) to if (status == CTCStatus.UNINTERPRETABLE) listOf(
+            CTCDatabaseValidationError(
+                entry,
+                "Uninterpretable cohort status"
+            )
+        ) else emptyList()
     }
 
     private fun closedWithoutSlots(): InterpretedCohortStatus {

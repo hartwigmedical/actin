@@ -73,7 +73,7 @@ fun main(args: Array<String>) {
     try {
         config = TrialCreatorConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {
-        TrialCreatorApplication.LOGGER.warn(exception)
+        TrialCreatorApplication.LOGGER.error(exception)
         HelpFormatter().printHelp(TrialCreatorApplication.APPLICATION, options)
         exitProcess(1)
     }
