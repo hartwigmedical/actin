@@ -142,7 +142,7 @@ public final class TestClinicalFactory {
 
         InfectionStatus infectionStatus = ImmutableInfectionStatus.builder().hasActiveInfection(false).build();
 
-        return ImmutableClinicalStatus.builder().who(1).infectionStatus(infectionStatus).ecg(ecg).build();
+        return ImmutableClinicalStatus.builder().who(3).infectionStatus(infectionStatus).ecg(ecg).build();
     }
 
     @NotNull

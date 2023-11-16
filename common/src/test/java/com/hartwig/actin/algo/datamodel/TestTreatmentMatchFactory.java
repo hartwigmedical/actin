@@ -93,18 +93,6 @@ public final class TestTreatmentMatchFactory {
                         .build())
                 .build(), unrecoverable(EvaluationResult.PASS, "Patient has no known brain metastases", "No known brain metastases", null));
 
-        map.put(ImmutableEligibility.builder()
-                        .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS).build())
-                        .addReferences(ImmutableCriterionReference.builder()
-                                .id("I-02")
-                                .text("This rule has 2 conditions:\n 1. Patient has no active brain metastases.\n 2. Patient has exhausted SOC.")
-                                .build())
-                        .build(),
-                unrecoverable(EvaluationResult.UNDETERMINED,
-                        "Could not be determined if patient has exhausted SOC",
-                        "Undetermined SOC exhaustion",
-                        null));
-
         return map;
     }
 
@@ -125,7 +113,7 @@ public final class TestTreatmentMatchFactory {
         List<CohortMatch> cohorts = Lists.newArrayList();
 
         cohorts.add(ImmutableCohortMatch.builder()
-                .metadata(createTestMetadata("A", true, false, false))
+                .metadata(createTestMetadata("A", true, true, false))
                 .isPotentiallyEligible(true)
                 .evaluations(createTestCohortEvaluationsTrial1CohortA())
                 .build());
@@ -154,6 +142,17 @@ public final class TestTreatmentMatchFactory {
                 .addReferences(ImmutableCriterionReference.builder().id("I-01").text("BRAF Activation").build())
                 .build(), unrecoverable(EvaluationResult.PASS, "Patient has BRAF activation", "BRAF Activation", "BRAF V600E"));
 
+        map.put(ImmutableEligibility.builder()
+                        .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_SEVERE_CONCOMITANT_CONDITION).build())
+                        .addReferences(ImmutableCriterionReference.builder()
+                                .id("I-03")
+                                .text("This rule has 2 conditions:\n 1. Patient has no active brain metastases.\n 2. Patient has exhausted SOC.")
+                                .build())
+                        .build(),
+                unrecoverable(EvaluationResult.WARN,
+                        "Patient potentially has severe concomitant disease(s) based on WHO-status",
+                        "Potential severe concomitant disease(s) based on WHO-status",
+                        null));
         return map;
     }
 
