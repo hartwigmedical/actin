@@ -248,7 +248,7 @@ public final class TestClinicalFactory {
         TreatmentHistoryEntry hasSingleIntentHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
                 .isTrial(true)
                 .startYear(2022)
-                .treatmentHistoryDetails(ImmutableTreatmentHistoryDetails.builder().cycles(3).stopReasonDetail("toxicity").build())
+                .treatmentHistoryDetails(ImmutableTreatmentHistoryDetails.builder().cycles(1).stopReasonDetail("toxicity").build())
                 .addTreatments(ImmutableDrugTreatment.builder().name("Trial4").addDrugs(irinotecan).build())
                 .intents(Set.of(Intent.ADJUVANT))
                 .build();
@@ -256,7 +256,7 @@ public final class TestClinicalFactory {
         TreatmentHistoryEntry hasMultipleIntentsHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
                 .isTrial(true)
                 .startYear(2022)
-                .treatmentHistoryDetails(ImmutableTreatmentHistoryDetails.builder().cycles(3).stopReasonDetail("toxicity").build())
+                .treatmentHistoryDetails(ImmutableTreatmentHistoryDetails.builder().cycles(null).stopReasonDetail("toxicity").build())
                 .addTreatments(ImmutableDrugTreatment.builder().name("Trial5").addDrugs(irinotecan).build())
                 .intents(Set.of(Intent.ADJUVANT, Intent.CONSOLIDATION))
                 .build();
