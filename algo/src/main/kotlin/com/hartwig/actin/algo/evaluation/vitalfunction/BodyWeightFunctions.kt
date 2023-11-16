@@ -3,11 +3,20 @@ package com.hartwig.actin.algo.evaluation.vitalfunction
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.sort.BodyWeightDescendingDateComparator
 
 object BodyWeightFunctions {
 
-    fun evaluatePatientBodyWeightAgainstReference(
+    fun evaluatePatientBodyWeightAgainstMax (record: PatientRecord, referenceBodyWeight: Double): Evaluation {
+            return evaluatePatientBodyWeightAgainstReference(record, referenceBodyWeight, false)
+        }
+
+    fun evaluatePatientBodyWeightAgainstMin (record: PatientRecord, referenceBodyWeight: Double): Evaluation {
+        return evaluatePatientBodyWeightAgainstReference(record, referenceBodyWeight, true)
+    }
+
+    private fun evaluatePatientBodyWeightAgainstReference(
         record: PatientRecord, referenceBodyWeight: Double, referenceIsMinimum: Boolean
     ): Evaluation {
         val mostRecent = record.clinical().bodyWeights().sortedWith(BodyWeightDescendingDateComparator()).firstOrNull()
