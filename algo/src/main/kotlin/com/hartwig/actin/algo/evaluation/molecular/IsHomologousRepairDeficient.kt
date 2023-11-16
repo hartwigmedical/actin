@@ -46,20 +46,20 @@ class IsHomologousRepairDeficient internal constructor() : EvaluationFunction {
                 unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages(
-                        "Unknown homologous repair deficiency (HRD) status, but biallelic drivers in HRD genes: " + concat(
+                        "Unknown homologous repair deficiency (HRD) status, but biallelic drivers in HR genes: " + concat(
                             hrdGenesWithBiallelicDriver
                         ) + " are detected; an HRD test may be recommended"
                     )
-                    .addUndeterminedGeneralMessages("Unknown HRD status")
+                    .addUndeterminedGeneralMessages("Unknown HRD status but biallelic drivers in HR genes")
                     .build()
             } else if (hrdGenesWithNonBiallelicDriver.isNotEmpty()) {
                 unrecoverable()
                     .result(EvaluationResult.UNDETERMINED)
                     .addUndeterminedSpecificMessages(
-                        "Unknown homologous repair deficiency (HRD) status, but non-biallelic drivers in HRD genes: "
+                        "Unknown homologous repair deficiency (HRD) status, but non-biallelic drivers in HR genes: "
                                 + concat(hrdGenesWithBiallelicDriver) + " are detected; an HRD test may be recommended"
                     )
-                    .addUndeterminedGeneralMessages("Unknown HRD status")
+                    .addUndeterminedGeneralMessages("Unknown HRD status but non-biallelic drivers in HR genes")
                     .build()
             } else {
                 unrecoverable()
@@ -74,37 +74,37 @@ class IsHomologousRepairDeficient internal constructor() : EvaluationFunction {
                     .result(EvaluationResult.PASS)
                     .addInclusionMolecularEvents(MolecularCharacteristicEvents.HOMOLOGOUS_REPAIR_DEFICIENT)
                     .addPassSpecificMessages(
-                        "Homologous repair deficiency (HRD) status detected, together with biallelic drivers in HRD genes: "
+                        "Homologous repair deficiency (HRD) status detected, together with biallelic drivers in HR genes: "
                                 + concat(hrdGenesWithBiallelicDriver)
                     )
-                    .addPassGeneralMessages("Tumor is HRD and biallelic drivers in HRD genes detected")
+                    .addPassGeneralMessages("Tumor is HRD and biallelic drivers in HR genes detected")
                     .build()
             } else if (hrdGenesWithNonBiallelicDriver.isNotEmpty()) {
                 unrecoverable()
                     .result(EvaluationResult.WARN)
                     .addInclusionMolecularEvents(MolecularCharacteristicEvents.HOMOLOGOUS_REPAIR_DEFICIENT)
                     .addWarnSpecificMessages(
-                        "Homologous repair deficiency (HRD) status detected, together with non-biallelic drivers in HRD genes ("
+                        "Homologous repair deficiency (HRD) status detected, together with non-biallelic drivers in HR genes ("
                                 + concat(MolecularConstants.HRD_GENES) + ") were detected"
                     )
-                    .addWarnGeneralMessages("Tumor is HRD (but with only non-biallelic drivers in HRD genes)")
+                    .addWarnGeneralMessages("Tumor is HRD (but with only non-biallelic drivers in HR genes)")
                     .build()
             } else {
                 unrecoverable()
                     .result(EvaluationResult.WARN)
                     .addInclusionMolecularEvents(MolecularCharacteristicEvents.HOMOLOGOUS_REPAIR_DEFICIENT)
                     .addWarnSpecificMessages(
-                        "Homologous repair deficiency (HRD) status detected, without drivers in HRD genes (" + concat(
+                        "Homologous repair deficiency (HRD) status detected, without drivers in HR genes (" + concat(
                             MolecularConstants.HRD_GENES
                         ) + ") detected"
                     )
-                    .addWarnGeneralMessages("Tumor is HRD (but without detected drivers in HRD genes)")
+                    .addWarnGeneralMessages("Tumor is HRD (but without detected drivers in HR genes)")
                     .build()
             }
         }
         return unrecoverable()
             .result(EvaluationResult.FAIL)
-            .addFailSpecificMessages("No homologous repair deficiency (HRD) status detected")
+            .addFailSpecificMessages("No homologous repair deficiency (HRD) detected")
             .addFailGeneralMessages("Tumor is not HRD")
             .build()
     }

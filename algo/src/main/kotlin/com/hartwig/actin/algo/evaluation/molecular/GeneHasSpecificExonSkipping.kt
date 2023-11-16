@@ -34,7 +34,7 @@ class GeneHasSpecificExonSkipping internal constructor(private val gene: String,
                 .addPassSpecificMessages(
                     "Exon " + exonToSkip + " skipped in gene " + gene + " due to " + concat(fusionSkippingEvents)
                 )
-                .addPassGeneralMessages("Present $gene exon $exonToSkip skipping")
+                .addPassGeneralMessages("Exon $exonToSkip skipping in $gene")
                 .build()
         }
         return if (exonSplicingVariants.isNotEmpty()) {
@@ -44,7 +44,7 @@ class GeneHasSpecificExonSkipping internal constructor(private val gene: String,
                 .addWarnSpecificMessages(
                     "Exon " + exonToSkip + " may be skipped in gene " + gene + " due to " + concat(exonSplicingVariants)
                 )
-                .addWarnGeneralMessages("Potential $gene exon $exonToSkip skipping")
+                .addWarnGeneralMessages("Potential $gene exon $exonToSkip skipping due to splice variant")
                 .build()
         } else unrecoverable()
             .result(EvaluationResult.FAIL)

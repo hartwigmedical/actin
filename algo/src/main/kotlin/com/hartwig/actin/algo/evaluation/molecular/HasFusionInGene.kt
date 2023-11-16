@@ -19,6 +19,7 @@ class HasFusionInGene internal constructor(private val gene: String) : Evaluatio
         val fusionsWithNoHighDriverLikelihoodWithGainOfFunction: MutableSet<String> = Sets.newHashSet()
         val fusionsWithNoHighDriverLikelihoodOther: MutableSet<String> = Sets.newHashSet()
         val unreportableFusionsWithGainOfFunction: MutableSet<String> = Sets.newHashSet()
+        val evidenceSource = record.molecular().evidenceSource()
 
         for (fusion in record.molecular().drivers().fusions()) {
             val isAllowedDriverType =
@@ -62,7 +63,8 @@ class HasFusionInGene internal constructor(private val gene: String) : Evaluatio
             fusionsWithNoEffect,
             fusionsWithNoHighDriverLikelihoodWithGainOfFunction,
             fusionsWithNoHighDriverLikelihoodOther,
-            unreportableFusionsWithGainOfFunction
+            unreportableFusionsWithGainOfFunction,
+            evidenceSource
         )
 
         return potentialWarnEvaluation ?: unrecoverable().result(EvaluationResult.FAIL)
@@ -74,7 +76,8 @@ class HasFusionInGene internal constructor(private val gene: String) : Evaluatio
         fusionsWithNoEffect: Set<String>,
         fusionsWithNoHighDriverLikelihoodWithGainOfFunction: Set<String>,
         fusionsWithNoHighDriverLikelihoodOther: Set<String>,
-        unreportableFusionsWithGainOfFunction: Set<String>
+        unreportableFusionsWithGainOfFunction: Set<String>,
+        evidenceSource: String
     ): Evaluation? {
         val warnEvents: MutableSet<String> = Sets.newHashSet()
         val warnSpecificMessages: MutableSet<String> = Sets.newHashSet()
@@ -84,20 +87,20 @@ class HasFusionInGene internal constructor(private val gene: String) : Evaluatio
             warnEvents.addAll(fusionsWithNoEffect)
             warnSpecificMessages.add(
                 "Fusion(s) " + concat(fusionsWithNoEffect) + " detected in gene " + gene +
-                        " but annotated with having no protein effect evidence"
+                        " but annotated with having no protein effect evidence in $evidenceSource"
             )
-            warnGeneralMessages.add("Fusion(s) detected in $gene but annotated with having no protein effect evidence")
+            warnGeneralMessages.add("Fusion(s) detected in $gene but annotated with having no protein effect evidence in $evidenceSource")
         }
 
         if (fusionsWithNoHighDriverLikelihoodWithGainOfFunction.isNotEmpty()) {
             warnEvents.addAll(fusionsWithNoHighDriverLikelihoodWithGainOfFunction)
             warnSpecificMessages.add(
                 "Fusion(s) " + concat(fusionsWithNoHighDriverLikelihoodWithGainOfFunction) + " detected in gene " + gene +
-                        " without high driver likelihood but annotated with having gain-of-function evidence"
+                        " without high driver likelihood but annotated with having gain-of-function evidence in $evidenceSource"
             )
             warnGeneralMessages.add(
                 "Fusion(s) detected in gene $gene without high driver likelihood " +
-                        "but annotated with having gain-of-function evidence"
+                        "but annotated with having gain-of-function evidence in $evidenceSource"
             )
         }
 
@@ -114,9 +117,9 @@ class HasFusionInGene internal constructor(private val gene: String) : Evaluatio
             warnEvents.addAll(unreportableFusionsWithGainOfFunction)
             warnSpecificMessages.add(
                 "Fusion(s) " + concat(unreportableFusionsWithGainOfFunction) + " detected in gene " + gene +
-                        " but not considered reportable; however fusion is annotated with having gain-of-function evidence"
+                        " but not considered reportable; however fusion is annotated with having gain-of-function evidence in $evidenceSource"
             )
-            warnGeneralMessages.add("Fusion(s) detected in gene $gene but unreportable but annotated with having gain-of-function evidence")
+            warnGeneralMessages.add("No reportable fusion(s) detected in gene $gene but annotated with having gain-of-function evidence in $evidenceSource")
         }
 
         return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {

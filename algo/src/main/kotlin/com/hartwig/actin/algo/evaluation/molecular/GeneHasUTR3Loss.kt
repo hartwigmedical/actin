@@ -62,17 +62,17 @@ class GeneHasUTR3Loss internal constructor(private val gene: String) : Evaluatio
         if (hotspotsIn3UTRUnreportable.isNotEmpty()) {
             warnEvents.addAll(hotspotsIn3UTRUnreportable)
             warnSpecificMessages.add(
-                "Hotspot mutation detected in 3' UTR region of " + gene + " which may lead to 3' UTR loss: "
-                        + concat(hotspotsIn3UTRUnreportable) + " but variant is not considered reportable"
+                "Hotspot mutation(s) detected in 3' UTR region of " + gene + " which may lead to 3' UTR loss: "
+                        + concat(hotspotsIn3UTRUnreportable) + " but mutation is not considered reportable"
             )
-            warnGeneralMessages.add("Potential 3' UTR loss of $gene")
+            warnGeneralMessages.add("Hotspot mutation(s) in 3' UTR region of $gene may lead to 3' UTR loss but mutation is not reportable")
         }
         if (vusIn3UTR.isNotEmpty()) {
             warnEvents.addAll(vusIn3UTR)
             warnSpecificMessages.add(
-                "VUS mutation detected in 3' UTR region of " + gene + " which may lead to 3' UTR loss: " + concat(vusIn3UTR)
+                "VUS mutation(s) detected in 3' UTR region of " + gene + " which may lead to 3' UTR loss: " + concat(vusIn3UTR)
             )
-            warnGeneralMessages.add("Potential 3' UTR loss of $gene")
+            warnGeneralMessages.add("VUS mutation(s) in 3' UTR region of $gene may lead to 3' UTR loss")
         }
         if (disruptionsIn3UTR.isNotEmpty()) {
             warnEvents.addAll(disruptionsIn3UTR)
@@ -81,7 +81,7 @@ class GeneHasUTR3Loss internal constructor(private val gene: String) : Evaluatio
                     disruptionsIn3UTR
                 )
             )
-            warnGeneralMessages.add("Potential 3' UTR loss of $gene")
+            warnGeneralMessages.add("Disruption(s) in 3' UTR region of $gene may lead to 3' UTR loss")
         }
         return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {
             unrecoverable()
