@@ -9,7 +9,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
 class HasSufficientBloodPressure internal constructor(
     private val category: BloodPressureCategory,
-    private val minMedianBloodPressure: Double
+    private val minMedianBloodPressure: Int
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val relevant = VitalFunctionSelector.selectBloodPressures(record.clinical().vitalFunctions(), category)
@@ -24,15 +24,15 @@ class HasSufficientBloodPressure internal constructor(
         return when {
             median.compareTo(minMedianBloodPressure) >= 0 -> {
                 EvaluationFactory.recoverablePass(
-                    "Patient has median $categoryDisplay ($median) exceeding $minMedianBloodPressure",
-                    "Median $categoryDisplay ($median) above limit of $minMedianBloodPressure"
+                    "Patient has median $categoryDisplay (${median.toInt()} mmHg) exceeding $minMedianBloodPressure mmHg",
+                    "Median $categoryDisplay (${median.toInt()} mmHg) above limit of $minMedianBloodPressure mmHg"
                 )
             }
 
             else -> {
                 EvaluationFactory.recoverableFail(
-                    "Patient has median $categoryDisplay ($median) below $minMedianBloodPressure",
-                    "Median $categoryDisplay ($median) below limit of $minMedianBloodPressure"
+                    "Patient has median $categoryDisplay (${median.toInt()} mmHg) below $minMedianBloodPressure mmHg",
+                    "Median $categoryDisplay (${median.toInt()} mmHg) below limit of $minMedianBloodPressure mmHg"
                 )
             }
         }

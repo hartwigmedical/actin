@@ -23,7 +23,7 @@ class VitalFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(reso
 
     private fun hasSufficientBloodPressureCreator(category: BloodPressureCategory): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val minMedianBloodPressure = functionInputResolver().createOneDoubleInput(function)
+            val minMedianBloodPressure = functionInputResolver().createOneIntegerInput(function)
             HasSufficientBloodPressure(category, minMedianBloodPressure)
         }
     }
