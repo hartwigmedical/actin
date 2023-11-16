@@ -3,8 +3,8 @@ package com.hartwig.actin.report.interpretation
 class EvaluatedCohortComparator : Comparator<EvaluatedCohort> {
     override fun compare(evaluatedCohort1: EvaluatedCohort, evaluatedCohort2: EvaluatedCohort): Int {
         return compareByDescending(EvaluatedCohort::hasSlotsAvailable)
-            .thenByDescending { it.warnings.isEmpty() }
             .thenBy { it.molecularEvents.isEmpty() }
+            .thenByDescending { it.warnings.isEmpty() }
             .thenBy(EvaluatedCohort::trialId)
             .thenComparing(::compareCohortNames)
             .thenByDescending { it.molecularEvents.size }
