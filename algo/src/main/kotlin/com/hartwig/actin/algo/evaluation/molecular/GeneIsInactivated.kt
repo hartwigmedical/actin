@@ -20,6 +20,8 @@ class GeneIsInactivated internal constructor(private val gene: String) : Evaluat
         val inactivationEventsThatAreUnreportable: MutableSet<String> = mutableSetOf()
         val inactivationEventsNoTSG: MutableSet<String> = mutableSetOf()
         val inactivationEventsGainOfFunction: MutableSet<String> = mutableSetOf()
+        val evidenceSource = record.molecular().evidenceSource()
+
         for (homozygousDisruption in record.molecular().drivers().homozygousDisruptions()) {
             if (homozygousDisruption.gene() == gene) {
                 val isGainOfFunction = (homozygousDisruption.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
@@ -126,7 +128,8 @@ class GeneIsInactivated internal constructor(private val gene: String) : Evaluat
             inactivationSubclonalVariants,
             reportableNonDriverBiallelicVariantsOther,
             reportableNonDriverNonBiallelicVariantsOther,
-            eventsThatMayBeTransPhased
+            eventsThatMayBeTransPhased,
+            evidenceSource
         )
 
         return potentialWarnEvaluation
@@ -138,7 +141,7 @@ class GeneIsInactivated internal constructor(private val gene: String) : Evaluat
         inactivationEventsNoTSG: Set<String>, inactivationEventsGainOfFunction: Set<String>,
         inactivationHighDriverNonBiallelicVariants: Set<String>, inactivationSubclonalVariants: Set<String>,
         reportableNonDriverBiallelicVariantsOther: Set<String>,
-        reportableNonDriverNonBiallelicVariantsOther: Set<String>, eventsThatMayBeTransPhased: List<String>
+        reportableNonDriverNonBiallelicVariantsOther: Set<String>, eventsThatMayBeTransPhased: List<String>, evidenceSource: String
     ): Evaluation? {
         val warnEvents: MutableSet<String> = mutableSetOf()
         val warnSpecificMessages: MutableSet<String> = mutableSetOf()
@@ -155,17 +158,17 @@ class GeneIsInactivated internal constructor(private val gene: String) : Evaluat
             warnEvents.addAll(inactivationEventsNoTSG)
             warnSpecificMessages.add(
                 "Inactivation event(s) detected for gene " + gene + ": " + concat(inactivationEventsNoTSG)
-                        + " but gene is annotated with gene role oncogene"
+                        + " but gene is annotated with gene role oncogene in $evidenceSource"
             )
-            warnGeneralMessages.add("Inactivation event(s) for $gene but gene is oncogene")
+            warnGeneralMessages.add("Inactivation event(s) for $gene but gene is oncogene in $evidenceSource")
         }
         if (inactivationEventsGainOfFunction.isNotEmpty()) {
             warnEvents.addAll(inactivationEventsGainOfFunction)
             warnSpecificMessages.add(
                 "Inactivation event(s) detected for " + gene + ": " + concat(inactivationEventsGainOfFunction)
-                        + " but no events annotated as having gain-of-function impact"
+                        + " but no events annotated as having gain-of-function impact in $evidenceSource"
             )
-            warnGeneralMessages.add("Inactivation event(s) for $gene but event(s) annotated with gain-of-function protein impact evidence")
+            warnGeneralMessages.add("Inactivation event(s) for $gene but event(s) annotated with gain-of-function protein impact evidence in $evidenceSource")
         }
         if (inactivationHighDriverNonBiallelicVariants.isNotEmpty() && eventsThatMayBeTransPhased.size <= 1) {
             warnEvents.addAll(inactivationHighDriverNonBiallelicVariants)

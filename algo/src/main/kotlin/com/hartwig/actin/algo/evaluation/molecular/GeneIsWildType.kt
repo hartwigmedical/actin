@@ -16,6 +16,8 @@ class GeneIsWildType internal constructor(private val gene: String) : Evaluation
         val reportableEventsWithEffect: MutableSet<String> = mutableSetOf()
         val reportableEventsWithEffectPotentiallyWildtype: MutableSet<String> = mutableSetOf()
         val reportableEventsWithNoEffect: MutableSet<String> = mutableSetOf()
+        val evidenceSource = record.molecular().evidenceSource()
+
         for (variant in record.molecular().drivers().variants()) {
             if (variant.gene() == gene && variant.isReportable) {
                 val hasNoEffect =
@@ -79,7 +81,8 @@ class GeneIsWildType internal constructor(private val gene: String) : Evaluation
                 "$gene not wild-type"
             )
         }
-        val potentialWarnEvaluation = evaluatePotentialWarns(reportableEventsWithNoEffect, reportableEventsWithEffectPotentiallyWildtype)
+        val potentialWarnEvaluation =
+            evaluatePotentialWarns(reportableEventsWithNoEffect, reportableEventsWithEffectPotentiallyWildtype, evidenceSource)
         return potentialWarnEvaluation
             ?: EvaluationFactory.unrecoverable()
                 .result(EvaluationResult.PASS)
@@ -91,22 +94,22 @@ class GeneIsWildType internal constructor(private val gene: String) : Evaluation
 
     private fun evaluatePotentialWarns(
         reportableEventsWithNoEffect: Set<String>,
-        reportableEventsWithEffectPotentiallyWildtype: Set<String>
+        reportableEventsWithEffectPotentiallyWildtype: Set<String>, evidenceSource: String
     ): Evaluation? {
         val warnEvents: MutableSet<String> = mutableSetOf()
         val warnSpecificMessages: MutableSet<String> = mutableSetOf()
         val warnGeneralMessages: MutableSet<String> = mutableSetOf()
         if (reportableEventsWithNoEffect.isNotEmpty()) {
             warnEvents.addAll(reportableEventsWithNoEffect)
-            warnSpecificMessages.add("Reportable event(s) in " + gene + " are detected: " + Format.concat(reportableEventsWithNoEffect) + ", however these are annotated with protein effect 'no effect' and thus may potentially be considered wild-type")
-            warnGeneralMessages.add("$gene potentially wild-type: event(s) are reportable but protein effect 'no effect'")
+            warnSpecificMessages.add("Reportable event(s) in " + gene + " are detected: " + Format.concat(reportableEventsWithNoEffect) + ", however these are annotated with protein effect 'no effect' in $evidenceSource and thus may potentially be considered wild-type")
+            warnGeneralMessages.add("$gene potentially wild-type: event(s) are reportable but protein effect 'no effect' in $evidenceSource")
         }
         if (reportableEventsWithEffectPotentiallyWildtype.isNotEmpty()) {
             warnEvents.addAll(reportableEventsWithEffectPotentiallyWildtype)
             warnSpecificMessages.add(
                 "Reportable event(s) in " + gene + " are detected: " + Format.concat(reportableEventsWithEffectPotentiallyWildtype) + " which may potentially be considered wild-type"
             )
-            warnGeneralMessages.add("$gene potentially wild-type: event(s) are reportable and have protein effect")
+            warnGeneralMessages.add("$gene potentially wild-type but event(s) are reportable and have a protein effect in $evidenceSource")
         }
         return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {
             EvaluationFactory.unrecoverable()

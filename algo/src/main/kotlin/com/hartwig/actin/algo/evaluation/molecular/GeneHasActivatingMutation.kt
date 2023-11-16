@@ -25,6 +25,7 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
         val nonHighDriverVariants: MutableSet<String> = mutableSetOf()
         val otherMissenseOrHotspotVariants: MutableSet<String> = mutableSetOf()
         val hasHighMutationalLoad = record.molecular().characteristics().hasHighTumorMutationalLoad()
+        val evidenceSource = record.molecular().evidenceSource()
 
         for (variant in record.molecular().drivers().variants()) {
             if (variant.gene() == gene) {
@@ -76,7 +77,8 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
             nonHighDriverGainOfFunctionVariants,
             nonHighDriverSubclonalVariants,
             nonHighDriverVariants,
-            otherMissenseOrHotspotVariants
+            otherMissenseOrHotspotVariants,
+            evidenceSource
         )
 
         return potentialWarnEvaluation ?: EvaluationFactory.unrecoverable().result(EvaluationResult.FAIL)
@@ -92,7 +94,8 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
         nonHighDriverGainOfFunctionVariants: Set<String>,
         nonHighDriverSubclonalVariants: Set<String>,
         nonHighDriverVariants: Set<String>,
-        otherMissenseOrHotspotVariants: Set<String>
+        otherMissenseOrHotspotVariants: Set<String>,
+        evidenceSource: String
     ): Evaluation? {
         val warnEvents: MutableSet<String> = mutableSetOf()
         val warnSpecificMessages: MutableSet<String> = mutableSetOf()
@@ -102,17 +105,17 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
             warnEvents.addAll(activatingVariantsAssociatedWithResistance)
             warnSpecificMessages.add(
                 "Gene " + gene + " should have activating mutation(s): " + Format.concat(activatingVariantsAssociatedWithResistance) +
-                        ", however, these are (also) associated with drug resistance"
+                        ", however, these are (also) associated with drug resistance in $evidenceSource"
             )
-            warnGeneralMessages.add("$gene activating mutation(s) but associated with drug resistance")
+            warnGeneralMessages.add("$gene activating mutation(s) but are associated with drug resistance in $evidenceSource")
         }
 
         if (activatingVariantsInNonOncogene.isNotEmpty()) {
             warnEvents.addAll(activatingVariantsInNonOncogene)
             warnSpecificMessages.add(
-                "Gene " + gene + " has activating mutation(s) " + Format.concat(activatingVariantsInNonOncogene) + " but gene known as TSG"
+                "Gene " + gene + " has activating mutation(s) " + Format.concat(activatingVariantsInNonOncogene) + " but gene known as TSG in $evidenceSource"
             )
-            warnGeneralMessages.add("$gene activating mutation(s) but gene known as TSG")
+            warnGeneralMessages.add("$gene activating mutation(s) but gene known as TSG in $evidenceSource")
         }
 
         if (activatingVariantsNoHotspotAndNoGainOfFunction.isNotEmpty()) {
@@ -121,10 +124,10 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
                 "Gene $gene has potentially activating mutation(s) " + Format.concat(
                     activatingVariantsNoHotspotAndNoGainOfFunction
                 )
-                        + " that have high driver likelihood, but is not a hotspot and not associated with gain-of-function protein effect evidence"
+                        + " that have high driver likelihood, but is not a hotspot and not associated with gain-of-function protein effect evidence in $evidenceSource"
             )
             warnGeneralMessages.add(
-                "$gene potentially activating mutation(s) with high driver likelihood but not a hotspot and not associated with gain-of-function protein effect evidence"
+                "$gene potentially activating mutation(s) with high driver likelihood but not a hotspot and not associated with gain-of-function protein effect evidence in $evidenceSource"
             )
         }
 
@@ -144,10 +147,10 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
             warnEvents.addAll(nonHighDriverGainOfFunctionVariants)
             warnSpecificMessages.add(
                 "Gene " + gene + " has potentially activating mutation(s) " + Format.concat(nonHighDriverGainOfFunctionVariants) +
-                        " that do not have high driver likelihood, but annotated with having gain-of-function protein effect evidence"
+                        " that do not have high driver likelihood prediction, but annotated with having gain-of-function protein effect evidence in $evidenceSource"
             )
             warnGeneralMessages.add(
-                "$gene potentially activating mutation(s) having gain-of-function protein effect evidence but without high driver likelihood"
+                "$gene potentially activating mutation(s) having gain-of-function protein effect evidence in $evidenceSource but without high driver prediction"
             )
         }
 

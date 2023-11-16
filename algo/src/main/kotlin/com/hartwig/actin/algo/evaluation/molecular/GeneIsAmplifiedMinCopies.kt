@@ -25,6 +25,8 @@ class GeneIsAmplifiedMinCopies(private val gene: String, private val requestedMi
         val ampsThatAreUnreportable: MutableSet<String> = Sets.newHashSet()
         val ampsThatAreNearCutoff: MutableSet<String> = Sets.newHashSet()
         val nonAmpsWithSufficientCopyNumber: MutableSet<String> = Sets.newHashSet()
+        val evidenceSource = record.molecular().evidenceSource()
+
         for (copyNumber in record.molecular().drivers().copyNumbers()) {
             if (copyNumber.gene() == gene && copyNumber.minCopies() >= requestedMinCopyNumber) {
                 val relativeMinCopies = copyNumber.minCopies() / ploidy
@@ -69,7 +71,8 @@ class GeneIsAmplifiedMinCopies(private val gene: String, private val requestedMi
             ampsOnNonOncogenes,
             ampsThatAreUnreportable,
             ampsThatAreNearCutoff,
-            nonAmpsWithSufficientCopyNumber
+            nonAmpsWithSufficientCopyNumber,
+            evidenceSource
         )
         return potentialWarnEvaluation
             ?: unrecoverable()
@@ -82,7 +85,7 @@ class GeneIsAmplifiedMinCopies(private val gene: String, private val requestedMi
     private fun evaluatePotentialWarns(
         reportablePartialAmps: Set<String>, ampsWithLossOfFunction: Set<String>,
         ampsOnNonOncogenes: Set<String>, ampsThatAreUnreportable: Set<String>,
-        ampsThatAreNearCutoff: Set<String>, nonAmpsWithSufficientCopyNumber: Set<String>
+        ampsThatAreNearCutoff: Set<String>, nonAmpsWithSufficientCopyNumber: Set<String>, evidenceSource: String
     ): Evaluation? {
         val warnEvents: MutableSet<String> = Sets.newHashSet()
         val warnSpecificMessages: MutableSet<String> = Sets.newHashSet()
@@ -94,13 +97,13 @@ class GeneIsAmplifiedMinCopies(private val gene: String, private val requestedMi
         }
         if (ampsWithLossOfFunction.isNotEmpty()) {
             warnEvents.addAll(ampsWithLossOfFunction)
-            warnSpecificMessages.add("Gene $gene is amplified but event is annotated as having loss-of-function impact")
-            warnGeneralMessages.add("$gene amplification but with loss-of-function protein impact")
+            warnSpecificMessages.add("Gene $gene is amplified but event is annotated as having loss-of-function impact in $evidenceSource")
+            warnGeneralMessages.add("$gene amplification but gene associated with loss-of-function protein impact in $evidenceSource")
         }
         if (ampsOnNonOncogenes.isNotEmpty()) {
             warnEvents.addAll(ampsOnNonOncogenes)
-            warnSpecificMessages.add("Gene $gene is amplified but gene $gene is known as TSG")
-            warnGeneralMessages.add("$gene amplification but $gene known as TSG")
+            warnSpecificMessages.add("Gene $gene is amplified but gene $gene is known as TSG in $evidenceSource")
+            warnGeneralMessages.add("$gene amplification but $gene known as TSG in $evidenceSource")
         }
         if (ampsThatAreUnreportable.isNotEmpty()) {
             warnEvents.addAll(ampsThatAreUnreportable)
