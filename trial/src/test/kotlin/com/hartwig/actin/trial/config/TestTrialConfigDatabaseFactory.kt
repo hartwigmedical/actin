@@ -43,8 +43,8 @@ object TestTrialConfigDatabaseFactory {
                 cohortId = "A",
                 ctcCohortIds = setOf("1", "2"),
                 evaluable = true,
-                open = true,
-                slotsAvailable = true,
+                open = null,
+                slotsAvailable = null,
                 blacklist = false,
                 description = "Cohort A"
             ),
@@ -76,7 +76,8 @@ object TestTrialConfigDatabaseFactory {
     }
 
     private fun createTestInclusionCriteriaForTestTrial1(): List<InclusionCriteriaConfig> {
-        val rule1 = EligibilityRule.HAS_SEVERE_CONCOMITANT_CONDITION.toString()
+        val rule1 = EligibilityRule.HAS_ACTIVE_INFECTION.toString()
+        val rule2 = EligibilityRule.HAS_SEVERE_CONCOMITANT_CONDITION.toString()
         return listOf(
             InclusionCriteriaConfig(
                 trialId = TestTrialData.TEST_TRIAL_METC_1,
@@ -91,7 +92,7 @@ object TestTrialConfigDatabaseFactory {
             ), InclusionCriteriaConfig(
                 trialId = TestTrialData.TEST_TRIAL_METC_1,
                 referenceIds = Sets.newHashSet("I-03"),
-                inclusionRule = "NOT($rule1)",
+                inclusionRule = "NOT(OR($rule1, $rule2))",
                 appliesToCohorts = setOf("A")
             )
         )
