@@ -8,7 +8,7 @@ import com.hartwig.actin.treatment.serialization.TrialJson
 import com.hartwig.actin.trial.ctc.CTCModel
 import com.hartwig.actin.trial.ctc.config.CTCDatabaseReader
 import com.hartwig.actin.trial.interpretation.EligibilityRuleUsageEvaluator
-import com.hartwig.actin.trial.interpretation.TrialFactory
+import com.hartwig.actin.trial.interpretation.TrialIngestion
 import com.hartwig.actin.util.json.GsonSerializer
 import com.hartwig.serve.datamodel.serialization.KnownGeneFile
 import org.apache.commons.cli.DefaultParser
@@ -39,10 +39,10 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         val ctcModel = CTCModel(CTCDatabaseReader.read(config.ctcConfigDirectory))
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
 
-        val trialFactory = TrialFactory.create(config.trialConfigDirectory, ctcModel, doidModel, geneFilter, treatmentDatabase)
+        val trialFactory = TrialIngestion.create(config.trialConfigDirectory, ctcModel, doidModel, geneFilter, treatmentDatabase)
 
         LOGGER.info("Creating trial database")
-        val result = trialFactory.createTrials()
+        val result = trialFactory.ingestTrials()
 
         LOGGER.info("Evaluating usage of eligibility rules")
         EligibilityRuleUsageEvaluator.evaluate(result.trials)
@@ -52,7 +52,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         TrialJson.write(result.trials, outputDirectory)
         LOGGER.info("Done!")
 
-        val resultsJson = Paths.get(outputDirectory).resolve("results.json")
+        val resultsJson = Paths.get(outputDirectory).resolve("treatment_ingestion_result.json")
         LOGGER.info("Writing {} trial ingestion results to {}", result.trials.size, resultsJson)
         Files.write(
             resultsJson,

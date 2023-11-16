@@ -21,7 +21,7 @@ class TrialFactoryTest {
     @Test
     fun shouldNotCrashWhenCreatingFromTrialConfigDirectory() {
         assertThat(
-            TrialFactory.create(
+            TrialIngestion.create(
                 TRIAL_CONFIG_DIRECTORY,
                 TestCTCModelFactory.createWithMinimalTestCTCDatabase(),
                 TestDoidModelFactory.createMinimalTestDoidModel(),
@@ -33,12 +33,12 @@ class TrialFactoryTest {
 
     @Test
     fun shouldCreateExpectedTrialsFromProperTestModel() {
-        val factory = TrialFactory(
+        val factory = TrialIngestion(
             TrialConfigModel.createFromDatabase(TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase()),
             TestCTCModelFactory.createWithProperTestCTCDatabase(),
             TestEligibilityFactoryFactory.createTestEligibilityFactory()
         )
-        val trials = factory.createTrials()
+        val trials = factory.ingestTrials()
         assertThat(trials).hasSize(2)
 
         val trial = findTrial(trials, "TEST-1")
@@ -76,7 +76,7 @@ class TrialFactoryTest {
 
     @Test(expected = IllegalStateException::class)
     fun shouldCrashInCaseTrialStatusCannotBeResolved() {
-        val factory = TrialFactory(
+        val factory = TrialIngestion(
             TrialConfigModel.createFromDatabase(
                 TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase().copy(
                     trialDefinitionConfigs = listOf(TestTrialDefinitionConfigFactory.MINIMAL.copy(open = null))
@@ -86,7 +86,7 @@ class TrialFactoryTest {
             TestEligibilityFactoryFactory.createTestEligibilityFactory()
         )
 
-        factory.createTrials()
+        factory.ingestTrials()
     }
 
     companion object {

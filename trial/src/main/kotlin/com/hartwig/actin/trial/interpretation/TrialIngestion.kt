@@ -25,13 +25,13 @@ import com.hartwig.actin.trial.config.TrialConfigModel
 import com.hartwig.actin.trial.config.TrialDefinitionConfig
 import com.hartwig.actin.trial.ctc.CTCModel
 
-class TrialFactory(
+class TrialIngestion(
     private val trialConfigModel: TrialConfigModel,
     private val ctcModel: CTCModel,
     private val eligibilityFactory: EligibilityFactory
 ) {
 
-    fun createTrials(): TrialIngestionResult {
+    fun ingestTrials(): TrialIngestionResult {
         ctcModel.checkModelForNewTrials(trialConfigModel.trials())
         ctcModel.checkModelForNewCohorts(trialConfigModel.cohorts())
         val trialDatabaseValidation = trialConfigModel.validation()
@@ -105,12 +105,12 @@ class TrialFactory(
             doidModel: DoidModel,
             geneFilter: GeneFilter,
             treatmentDatabase: TreatmentDatabase
-        ): TrialFactory {
+        ): TrialIngestion {
             val molecularInputChecker = MolecularInputChecker(geneFilter)
             val functionInputResolver = FunctionInputResolver(doidModel, molecularInputChecker, treatmentDatabase)
             val eligibilityFactory = EligibilityFactory(functionInputResolver)
             val trialConfigModel: TrialConfigModel = TrialConfigModel.create(trialConfigDirectory, eligibilityFactory)
-            return TrialFactory(trialConfigModel, ctcModel, eligibilityFactory)
+            return TrialIngestion(trialConfigModel, ctcModel, eligibilityFactory)
         }
 
         private fun resolveReferences(
