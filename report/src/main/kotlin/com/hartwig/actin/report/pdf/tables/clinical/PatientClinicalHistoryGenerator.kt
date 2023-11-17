@@ -134,13 +134,7 @@ class PatientClinicalHistoryGenerator(
             }
 
             val stopReasonString = treatmentHistoryEntry.treatmentHistoryDetails()?.stopReasonDetail()
-                ?.let {
-                    if (!it.equals(
-                            STOP_REASON_PROGRESSIVE_DISEASE,
-                            ignoreCase = true
-                        )
-                    ) "stop reason: $it" else null
-                }
+                ?.let { if (!it.equals(STOP_REASON_PROGRESSIVE_DISEASE, ignoreCase = true)) "stop reason: $it" else null }
 
             val annotation = listOfNotNull(intentString, cyclesString, stopReasonString).joinToString(", ")
 
