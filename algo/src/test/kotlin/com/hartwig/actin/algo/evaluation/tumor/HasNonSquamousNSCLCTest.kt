@@ -19,7 +19,7 @@ class HasNonSquamousNSCLCTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 TumorTestFactory.withDoids(
-                    DoidConstants.LUNG_ADENOSQUAMOUS_CARCINOMA_DOID,
+                    DoidConstants.LUNG_ADENOSQUAMOUS_CARCINOMA_DOID
                 )
             )
         )
@@ -28,7 +28,16 @@ class HasNonSquamousNSCLCTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 TumorTestFactory.withDoids(
-                    DoidConstants.LUNG_SQUAMOUS_CELL_CARCINOMA_DOID,
+                    DoidConstants.LUNG_SQUAMOUS_CELL_CARCINOMA_DOID
+                )
+            )
+        )
+
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                TumorTestFactory.withDoids(
+                    DoidConstants.LUNG_ADENOCARCINOMA_DOID,
                 )
             )
         )
@@ -38,11 +47,28 @@ class HasNonSquamousNSCLCTest {
             function.evaluate(
                 TumorTestFactory.withDoids(
                     DoidConstants.LUNG_NON_SQUAMOUS_NON_SMALL_CARCINOMA_DOID,
+                    "random DOID"
                 )
             )
         )
 
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(
+                TumorTestFactory.withDoids(
+                    DoidConstants.LUNG_CANCER_DOID
+                )
+            )
+        )
+
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(
+                TumorTestFactory.withDoids(
+                    DoidConstants.LUNG_SARCOMA
+                )
+            )
+        )
 
     }
-
 }
