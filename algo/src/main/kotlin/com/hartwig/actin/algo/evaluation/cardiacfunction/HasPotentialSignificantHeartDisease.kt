@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAndAbbreviationsInCapital
+import com.hartwig.actin.algo.evaluation.util.Format.concatStringsWithAnd
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.doid.DoidModel
@@ -25,8 +25,8 @@ class HasPotentialSignificantHeartDisease internal constructor(private val doidM
 
         return if (heartConditions.isNotEmpty()) {
             EvaluationFactory.pass(
-                "Patient has " + concatLowercaseWithAndAbbreviationsInCapital(heartConditions) + " and therefore potentially significant cardiac disease",
-                "Potentially significant cardiac disease: history of " + concatLowercaseWithAndAbbreviationsInCapital(heartConditions)
+                "Patient has " + concatStringsWithAnd(heartConditions) + " and therefore potentially significant cardiac disease",
+                "Potentially significant cardiac disease: history of " + concatStringsWithAnd(heartConditions)
             )
         } else EvaluationFactory.fail(
             "Patient has no potential significant cardiac disease", "No potential significant cardiac disease"

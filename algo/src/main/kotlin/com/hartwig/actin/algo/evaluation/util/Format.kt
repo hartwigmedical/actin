@@ -26,9 +26,8 @@ object Format {
         return concatStrings(strings.map(String::lowercase), SEPARATOR_AND)
     }
 
-    fun concatLowercaseWithAndAbbreviationsInCapital(strings: Iterable<String>): String {
-        val text = concatStrings(strings.map(String::lowercase), SEPARATOR_AND)
-        return Regex("\\([^() ]*\\)").replace(text) { it.value.uppercase() }
+    fun concatStringsWithAnd(strings: Iterable<String>): String {
+        return concatStrings(strings, SEPARATOR_AND)
     }
 
     fun concatItemsWithAnd(items: Iterable<Displayable>): String {

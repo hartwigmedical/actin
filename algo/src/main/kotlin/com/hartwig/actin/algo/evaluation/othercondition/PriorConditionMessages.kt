@@ -14,7 +14,7 @@ internal object PriorConditionMessages {
     }
 
     fun passGeneral(matches: Iterable<String>): String {
-        return "Patient has ${Format.concatLowercaseWithAndAbbreviationsInCapital(matches)}"
+        return "Patient has ${Format.concatStringsWithAnd(matches)}"
     }
 
     fun passSpecific(characteristic: Characteristic, matches: Iterable<String>, doidTerm: String?): String {
