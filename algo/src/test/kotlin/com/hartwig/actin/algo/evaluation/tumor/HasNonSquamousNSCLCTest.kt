@@ -1,74 +1,81 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
+import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
 
 class HasNonSquamousNSCLCTest {
     @Test
-    fun canEvaluate() {
-        val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
-        val function = HasNonSquamousNSCLC(doidModel)
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids(null)))
-
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids("wrong")))
-
+    fun `Should return undetermined when no tumor doids configured`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(
-                TumorTestFactory.withDoids(
-                    DoidConstants.LUNG_ADENOSQUAMOUS_CARCINOMA_DOID
-                )
+            EvaluationResult.UNDETERMINED, function().evaluate(TestDataFactory.createMinimalTestPatientRecord())
+        )
+    }
+
+    @Test
+    fun `Should return fail when tumor is not lung`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL, function().evaluate(TumorTestFactory.withDoids("wrong"))
+        )
+    }
+
+    @Test
+    fun `Should return fail when squamous NSCLC type`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL, function().evaluate(TumorTestFactory.withDoids(DoidConstants.LUNG_SQUAMOUS_CELL_CARCINOMA_DOID))
+        )
+    }
+
+    @Test
+    fun `Should return fail when adenosquamous NSCLC type`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL, function().evaluate(TumorTestFactory.withDoids(DoidConstants.LUNG_ADENOSQUAMOUS_CARCINOMA_DOID))
+        )
+    }
+
+    @Test
+    fun `Should return pass when known non-squamous NSCLC type`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS, function().evaluate(TumorTestFactory.withDoids(DoidConstants.LUNG_ADENOCARCINOMA_DOID))
+        )
+    }
+
+    @Test
+    fun `Should return pass when known non-squamous NSCLC type with other random DOID`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS, function().evaluate(
+                TumorTestFactory.withDoids(DoidConstants.LUNG_ADENOCARCINOMA_DOID, "random DOID")
             )
         )
+    }
 
+    @Test
+    fun `Should return undetermined when lung cancer that is potentially non-squamous NSCLC`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(
-                TumorTestFactory.withDoids(
-                    DoidConstants.LUNG_SQUAMOUS_CELL_CARCINOMA_DOID
-                )
+            EvaluationResult.UNDETERMINED, function().evaluate(
+                TumorTestFactory.withDoids(DoidConstants.LUNG_CANCER_DOID)
             )
         )
+    }
 
+    @Test
+    fun `Should return fail when lung cancer that is not potentially non-squamous NSCLC`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(
-                TumorTestFactory.withDoids(
-                    DoidConstants.LUNG_ADENOCARCINOMA_DOID,
-                )
+            EvaluationResult.FAIL, function().evaluate(
+                TumorTestFactory.withDoids(DoidConstants.LUNG_SARCOMA)
             )
         )
+    }
 
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(
-                TumorTestFactory.withDoids(
-                    DoidConstants.LUNG_NON_SQUAMOUS_NON_SMALL_CARCINOMA_DOID,
-                    "random DOID"
-                )
-            )
-        )
-
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            function.evaluate(
-                TumorTestFactory.withDoids(
-                    DoidConstants.LUNG_CANCER_DOID
-                )
-            )
-        )
-
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(
-                TumorTestFactory.withDoids(
-                    DoidConstants.LUNG_SARCOMA
-                )
-            )
-        )
-
+    companion object {
+        private fun function(): HasNonSquamousNSCLC {
+            val doidModel: DoidModel =
+                TestDoidModelFactory.createWithOneDoidAndTerm(DoidConstants.COLORECTAL_CANCER_DOID, "colorectal cancer")
+            return HasNonSquamousNSCLC(doidModel)
+        }
     }
 }
