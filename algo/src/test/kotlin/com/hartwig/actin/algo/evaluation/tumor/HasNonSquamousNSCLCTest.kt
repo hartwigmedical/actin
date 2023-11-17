@@ -73,8 +73,7 @@ class HasNonSquamousNSCLCTest {
 
     companion object {
         private fun function(): HasNonSquamousNSCLC {
-            val doidModel: DoidModel =
-                TestDoidModelFactory.createWithOneDoidAndTerm(DoidConstants.COLORECTAL_CANCER_DOID, "colorectal cancer")
+            val doidModel: DoidModel = TestDoidModelFactory.createMinimalTestDoidModel()
             return HasNonSquamousNSCLC(doidModel)
         }
     }
