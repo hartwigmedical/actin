@@ -1,5 +1,6 @@
 package com.hartwig.actin.trial.ctc
 
+import com.hartwig.actin.trial.config.TrialDefinitionConfig
 import com.hartwig.actin.trial.ctc.config.CTCDatabaseEntry
 import com.hartwig.actin.trial.ctc.config.TestCTCDatabaseEntryFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -9,7 +10,7 @@ class TrialStatusInterpreterTest {
 
     @Test
     fun shouldReturnNullForEmptyCTCDatabase() {
-        assertThat(TrialStatusInterpreter.isOpen(listOf(), "trial 1")).isNull()
+        assertThat(TrialStatusInterpreter.isOpen(listOf(), TrialDefinitionConfig("trial-1", true, "", ""))).isNull()
     }
 
     @Test

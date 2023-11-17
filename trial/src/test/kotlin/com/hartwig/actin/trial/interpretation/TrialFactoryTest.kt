@@ -11,6 +11,7 @@ import com.hartwig.actin.treatment.datamodel.EligibilityRule
 import com.hartwig.actin.treatment.datamodel.Trial
 import com.hartwig.actin.trial.config.TestTrialConfigDatabaseFactory
 import com.hartwig.actin.trial.config.TestTrialDefinitionConfigFactory
+import com.hartwig.actin.trial.config.TrialConfigDatabaseValidator
 import com.hartwig.actin.trial.config.TrialConfigModel
 import com.hartwig.actin.trial.ctc.TestCTCModelFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -34,14 +35,17 @@ class TrialFactoryTest {
     @Test
     fun shouldCreateExpectedTrialsFromProperTestModel() {
         val factory = TrialIngestion(
-            TrialConfigModel.createFromDatabase(TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase()),
+            TrialConfigModel.createFromDatabase(
+                TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase(),
+                TrialConfigDatabaseValidator(TestEligibilityFactoryFactory.createTestEligibilityFactory())
+            ),
             TestCTCModelFactory.createWithProperTestCTCDatabase(),
             TestEligibilityFactoryFactory.createTestEligibilityFactory()
         )
         val trials = factory.ingestTrials()
-        assertThat(trials).hasSize(2)
+        assertThat(trials.trials).hasSize(2)
 
-        val trial = findTrial(trials, "TEST-1")
+        val trial = findTrial(trials.trials, "TEST-1")
         assertThat(trial.identification().open()).isTrue
         assertThat(trial.identification().acronym()).isEqualTo("Acronym-TEST-1")
         assertThat(trial.identification().title()).isEqualTo("Title for TEST-1")
@@ -80,7 +84,8 @@ class TrialFactoryTest {
             TrialConfigModel.createFromDatabase(
                 TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase().copy(
                     trialDefinitionConfigs = listOf(TestTrialDefinitionConfigFactory.MINIMAL.copy(open = null))
-                )
+                ),
+                TrialConfigDatabaseValidator(TestEligibilityFactoryFactory.createTestEligibilityFactory())
             ),
             TestCTCModelFactory.createWithMinimalTestCTCDatabase(),
             TestEligibilityFactoryFactory.createTestEligibilityFactory()
