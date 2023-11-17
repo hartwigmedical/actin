@@ -34,7 +34,7 @@ class HasNonSquamousNSCLC internal constructor(private val doidModel: DoidModel)
             )
         } else if (isNonSmallNSCLC || isExactLungCarcinoma || isExactLungCancer) {
             return EvaluationFactory.undetermined(
-                "Patient may have non-squamous non-small cell lung cancer",
+                "Undetermined if patient may have non-squamous non-small cell lung cancer",
                 "Undetermined non-squamous NSCLC"
             )
         } else {
