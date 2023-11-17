@@ -7,9 +7,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasLimitedBodyWeight(val referenceWeight: Double): EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return BodyWeightFunctions.evaluatePatientBodyWeightAgainstMax(
-            record, this.referenceWeight
-        )
+        return BodyWeightFunctions.evaluatePatientBodyWeightAgainstMax(record, this.referenceWeight)
     }
 }
 

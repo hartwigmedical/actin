@@ -2,6 +2,8 @@ package com.hartwig.actin.algo.evaluation.vitalfunction
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions.evaluatePatientBodyWeightAgainstMax
+import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions.evaluatePatientBodyWeightAgainstMin
 import com.hartwig.actin.clinical.datamodel.BodyWeight
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight
 import org.junit.Test
@@ -9,8 +11,6 @@ import java.time.LocalDate
 
 class BodyWeightFunctionsTest {
 
-    private val function1 = HasLimitedBodyWeight(150.0)
-    private val function2 = HasSufficientBodyWeight(40.0)
     private val referenceDate = LocalDate.of(2023, 11, 10)
 
     @Test
@@ -18,11 +18,11 @@ class BodyWeightFunctionsTest {
         val weights: List<BodyWeight> = emptyList()
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function1.evaluate(VitalFunctionTestFactory.withBodyWeights(weights))
+            evaluatePatientBodyWeightAgainstMax(VitalFunctionTestFactory.withBodyWeights(weights), 150.0)
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function2.evaluate(VitalFunctionTestFactory.withBodyWeights(weights))
+            evaluatePatientBodyWeightAgainstMin(VitalFunctionTestFactory.withBodyWeights(weights), 40.0)
         )
     }
 
@@ -34,11 +34,11 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function1.evaluate(VitalFunctionTestFactory.withBodyWeights(weights))
+            evaluatePatientBodyWeightAgainstMax(VitalFunctionTestFactory.withBodyWeights(weights), 150.0)
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function2.evaluate(VitalFunctionTestFactory.withBodyWeights(weights))
+            evaluatePatientBodyWeightAgainstMin(VitalFunctionTestFactory.withBodyWeights(weights), 40.0)
         )
     }
 
@@ -48,7 +48,9 @@ class BodyWeightFunctionsTest {
             weight().date(referenceDate.minusDays(6)).value(148.0).build(),
             weight().date(referenceDate.minusDays(5)).value(155.0).build()
         )
-        assertEvaluation(EvaluationResult.FAIL, function1.evaluate(VitalFunctionTestFactory.withBodyWeights(weights)))
+        assertEvaluation(EvaluationResult.FAIL, evaluatePatientBodyWeightAgainstMax(
+            VitalFunctionTestFactory.withBodyWeights(weights), 150.0)
+        )
     }
 
     @Test
@@ -57,7 +59,9 @@ class BodyWeightFunctionsTest {
             weight().date(referenceDate.minusDays(5)).value(155.0).build(),
             weight().date(referenceDate.minusDays(4)).value(148.0).build()
         )
-        assertEvaluation(EvaluationResult.PASS, function1.evaluate(VitalFunctionTestFactory.withBodyWeights(weights)))
+        assertEvaluation(EvaluationResult.PASS, evaluatePatientBodyWeightAgainstMax(
+            VitalFunctionTestFactory.withBodyWeights(weights), 150.0)
+        )
     }
 
     @Test
@@ -66,7 +70,9 @@ class BodyWeightFunctionsTest {
             weight().date(referenceDate.minusDays(5)).value(155.0).build(),
             weight().date(referenceDate.minusDays(3)).value(150.0).build()
         )
-        assertEvaluation(EvaluationResult.PASS, function1.evaluate(VitalFunctionTestFactory.withBodyWeights(weights)))
+        assertEvaluation(EvaluationResult.PASS, evaluatePatientBodyWeightAgainstMax(
+            VitalFunctionTestFactory.withBodyWeights(weights), 150.0)
+        )
     }
 
     @Test
@@ -75,7 +81,8 @@ class BodyWeightFunctionsTest {
             weight().date(referenceDate.minusDays(6)).value(42.0).build(),
             weight().date(referenceDate.minusDays(5)).value(38.0).build()
         )
-        assertEvaluation(EvaluationResult.FAIL, function2.evaluate(VitalFunctionTestFactory.withBodyWeights(weights)))
+        assertEvaluation(EvaluationResult.FAIL, evaluatePatientBodyWeightAgainstMin(VitalFunctionTestFactory.withBodyWeights(weights), 40.0)
+        )
     }
 
     @Test
@@ -84,7 +91,8 @@ class BodyWeightFunctionsTest {
             weight().date(referenceDate.minusDays(5)).value(38.0).build(),
             weight().date(referenceDate.minusDays(4)).value(41.0).build()
         )
-        assertEvaluation(EvaluationResult.PASS, function2.evaluate(VitalFunctionTestFactory.withBodyWeights(weights)))
+        assertEvaluation(EvaluationResult.PASS, evaluatePatientBodyWeightAgainstMin(VitalFunctionTestFactory.withBodyWeights(weights), 40.0)
+        )
     }
 
     @Test
@@ -93,7 +101,8 @@ class BodyWeightFunctionsTest {
             weight().date(referenceDate.minusDays(5)).value(39.0).build(),
             weight().date(referenceDate.minusDays(3)).value(40.0).build()
         )
-        assertEvaluation(EvaluationResult.PASS, function2.evaluate(VitalFunctionTestFactory.withBodyWeights(weights)))
+        assertEvaluation(EvaluationResult.PASS, evaluatePatientBodyWeightAgainstMin(VitalFunctionTestFactory.withBodyWeights(weights), 40.0)
+        )
     }
 
     companion object {
