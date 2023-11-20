@@ -49,8 +49,8 @@ class HasBreastCancerHormonePositiveHER2Negative internal constructor(private va
 
             isBreastCancer && !isHer2Positive && !isEstrogenNegative && !isProgesteroneNegative -> {
                 EvaluationFactory.undetermined(
-                    "Undetermined if patient may have breast cancer of HR+ HER- subtype",
-                    "Undetermined if breast cancer of HR+ HER- subtype"
+                    "Undetermined if patient may have breast cancer of HR+ HER2- subtype",
+                    "Undetermined if breast cancer of HR+ HER2- subtype"
                 )
             }
 
