@@ -99,7 +99,7 @@ object Styles {
     }
 
     fun disclaimerStyle(): Style {
-        return Style().setFont(fontRegular()).setFontSize(7f).setFontColor(PALETTE_MID_GREY)
+        return Style().setFont(fontRegular()).setFontSize(6f).setFontColor(PALETTE_MID_GREY)
     }
 
     fun fontRegular(): PdfFont {
