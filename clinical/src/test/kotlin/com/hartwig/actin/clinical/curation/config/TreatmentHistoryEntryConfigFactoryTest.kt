@@ -5,6 +5,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
+import org.junit.Assert.assertThrows
 import org.junit.Test
 
 class TreatmentHistoryEntryConfigFactoryTest {
@@ -20,7 +21,12 @@ class TreatmentHistoryEntryConfigFactoryTest {
                 "startYear" to "2022"
             )
         )
-        assertThatExceptionOfType(IllegalStateException::class.java).isThrownBy { factory.create(fields, parts) }
+        assertThat(assertThrows(IllegalStateException::class.java) {
+            factory.create(fields, parts)
+        }.message).isEqualTo("Treatment with name UNKNOWN_THERAPY does not exist in database. Please add with one of the following templates: \n" +
+                "[{\"name\":\"UNKNOWN_THERAPY\",\"synonyms\":[],\"isSystemic\":?,\"drugs\":[],\"treatmentClass\":\"DRUG_TREATMENT\"}, {\"name\":\"UNKNOWN_THERAPY\"," +
+                "\"synonyms\":[],\"isSystemic\":?,\"radioType\":null,\"isInternal\":null,\"treatmentClass\":\"RADIOTHERAPY\"}, {\"name\":\"UNKNOWN_THERAPY\",\"categories\":[]," +
+                "\"synonyms\":[],\"isSystemic\":?,\"types\":[],\"treatmentClass\":\"OTHER_TREATMENT\"}]")
     }
 
     @Test
@@ -82,7 +88,12 @@ class TreatmentHistoryEntryConfigFactoryTest {
                 "isTrial" to "1"
             )
         )
-        assertThatExceptionOfType(IllegalStateException::class.java).isThrownBy { factory.create(fields, parts) }
+        assertThat(assertThrows(IllegalStateException::class.java) {
+            factory.create(fields, parts)
+        }.message).isEqualTo("Treatment with name TRIAL_NAME does not exist in database. Please add with one of the following templates: \n" +
+                "[{\"name\":\"TRIAL_NAME\",\"synonyms\":[],\"isSystemic\":?,\"drugs\":[],\"treatmentClass\":\"DRUG_TREATMENT\"}, {\"name\":\"TRIAL_NAME\"," +
+                "\"synonyms\":[],\"isSystemic\":?,\"radioType\":null,\"isInternal\":null,\"treatmentClass\":\"RADIOTHERAPY\"}, {\"name\":\"TRIAL_NAME\"," +
+                "\"categories\":[],\"synonyms\":[],\"isSystemic\":?,\"types\":[],\"treatmentClass\":\"OTHER_TREATMENT\"}]")
     }
 
     @Test
