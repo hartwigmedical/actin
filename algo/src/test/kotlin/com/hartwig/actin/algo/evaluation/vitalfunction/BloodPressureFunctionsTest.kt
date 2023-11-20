@@ -61,8 +61,8 @@ class BloodPressureFunctionsTest {
     @Test
     fun `Should pass when median diastolic blood pressure above minimum`() {
         val bloodPressures = listOf(
-            systolic().date(referenceDate.minusDays(3)).value(80.0).build(),
-            systolic().date(referenceDate.minusDays(2)).value(75.0).build())
+            diastolic().date(referenceDate.minusDays(3)).value(80.0).build(),
+            diastolic().date(referenceDate.minusDays(2)).value(75.0).build())
 
         assertEvaluation(
             EvaluationResult.PASS,
@@ -90,7 +90,7 @@ class BloodPressureFunctionsTest {
 
         assertEvaluation(
             EvaluationResult.PASS,
-            evaluatePatientBloodPressureAgainstMin(VitalFunctionTestFactory.withVitalFunctions(bloodPressures), SYSTOLIC, 130)
+            evaluatePatientBloodPressureAgainstMax(VitalFunctionTestFactory.withVitalFunctions(bloodPressures), SYSTOLIC, 130)
         )
     }
 
@@ -111,8 +111,8 @@ class BloodPressureFunctionsTest {
 
     @Test
     fun `Should evaluate undetermined when wrong blood pressure category`() {
-        val diastBloodPressures = listOf(diastolic().date(referenceDate).value(110.0).build())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(diastBloodPressures)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluatePatientBloodPressureAgainstMax(
+            VitalFunctionTestFactory.withVitalFunctions(listOf(diastolic().date(referenceDate).value(110.0).build())), SYSTOLIC, 100))
     }
 
     companion object {
