@@ -26,6 +26,10 @@ object Format {
         return concatStrings(strings.map(String::lowercase), SEPARATOR_AND)
     }
 
+    fun concatStringsWithAnd(strings: Iterable<String>): String {
+        return concatStrings(strings, SEPARATOR_AND)
+    }
+
     fun concatItemsWithAnd(items: Iterable<Displayable>): String {
         return concatDisplayables(items, SEPARATOR_AND)
     }
