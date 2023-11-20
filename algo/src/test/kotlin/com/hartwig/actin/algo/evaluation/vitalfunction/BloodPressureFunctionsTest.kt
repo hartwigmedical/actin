@@ -119,13 +119,13 @@ class BloodPressureFunctionsTest {
         private fun systolic(): ImmutableVitalFunction.Builder {
             return VitalFunctionTestFactory.vitalFunction()
                 .category(VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE)
-                .subcategory(BloodPressureCategory.SYSTOLIC.display())
+                .subcategory(SYSTOLIC.display())
         }
 
         private fun diastolic(): ImmutableVitalFunction.Builder {
             return VitalFunctionTestFactory.vitalFunction()
                 .category(VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE)
-                .subcategory(BloodPressureCategory.DIASTOLIC.display())
+                .subcategory(DIASTOLIC.display())
         }
     }
 }
