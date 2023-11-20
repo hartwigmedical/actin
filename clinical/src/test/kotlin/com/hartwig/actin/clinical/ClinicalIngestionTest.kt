@@ -107,7 +107,7 @@ class ClinicalIngestionTest {
                 )
             ),
             CurationResult(
-                "Laboratory",
+                "Laboratory Translation",
                 listOf(
                     CurationRequirement(
                         "LAB1",
