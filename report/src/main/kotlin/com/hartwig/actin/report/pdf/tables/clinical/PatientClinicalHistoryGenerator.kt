@@ -20,11 +20,7 @@ import com.itextpdf.layout.element.BlockElement
 import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Table
 
-class PatientClinicalHistoryGenerator(
-    private val record: ClinicalRecord,
-    private val keyWidth: Float,
-    private val valueWidth: Float
-) :
+class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, private val keyWidth: Float, private val valueWidth: Float) :
     TableGenerator {
     override fun title(): String {
         return "Clinical summary"
@@ -129,17 +125,14 @@ class PatientClinicalHistoryGenerator(
                 else -> null
             }
 
-            val cyclesString = treatmentHistoryEntry.treatmentHistoryDetails()?.cycles()?.let {
-                if (it == 1) "$it cycle" else "$it cycles"
-            }
+            val cyclesString = treatmentHistoryEntry.treatmentHistoryDetails()?.cycles()?.let { if (it == 1) "$it cycle" else "$it cycles" }
 
             val stopReasonString = treatmentHistoryEntry.treatmentHistoryDetails()?.stopReasonDetail()
                 ?.let { if (!it.equals(STOP_REASON_PROGRESSIVE_DISEASE, ignoreCase = true)) "stop reason: $it" else null }
 
             val annotation = listOfNotNull(intentString, cyclesString, stopReasonString).joinToString(", ")
 
-            val treatmentNames =
-                treatmentHistoryEntry.treatments().map(Treatment::display).map(String::lowercase).toSet()
+            val treatmentNames = treatmentHistoryEntry.treatments().map(Treatment::display).map(String::lowercase).toSet()
             val treatmentDisplay = if (treatmentNames == setOf("chemotherapy", "radiotherapy")) {
                 "Chemoradiation"
             } else {
@@ -148,9 +141,7 @@ class PatientClinicalHistoryGenerator(
             val treatmentWithAnnotation = treatmentDisplay + if (annotation.isEmpty()) "" else " ($annotation)"
 
             return if (treatmentHistoryEntry.isTrial) {
-                val acronym = if (treatmentHistoryEntry.trialAcronym()
-                        .isNullOrEmpty()
-                ) "" else "(${treatmentHistoryEntry.trialAcronym()})"
+                val acronym = if (treatmentHistoryEntry.trialAcronym().isNullOrEmpty()) "" else "(${treatmentHistoryEntry.trialAcronym()})"
                 val trial = "Clinical trial"
                 when {
                     acronym.isEmpty() && treatmentWithAnnotation.isEmpty() -> "$trial (details unknown)"
@@ -176,12 +167,10 @@ class PatientClinicalHistoryGenerator(
 
                 else -> tumorLocation
             }
-            val dateAdditionDiagnosis: String =
-                toDateString(priorSecondPrimary.diagnosedYear(), priorSecondPrimary.diagnosedMonth())
+            val dateAdditionDiagnosis: String = toDateString(priorSecondPrimary.diagnosedYear(), priorSecondPrimary.diagnosedMonth())
                     ?.let { "diagnosed $it, " } ?: ""
 
-            val dateAdditionLastTreatment =
-                toDateString(priorSecondPrimary.lastTreatmentYear(), priorSecondPrimary.lastTreatmentMonth())
+            val dateAdditionLastTreatment = toDateString(priorSecondPrimary.lastTreatmentYear(), priorSecondPrimary.lastTreatmentMonth())
                     ?.let { "last treatment $it, " } ?: ""
 
             val status = when (priorSecondPrimary.status()) {
@@ -193,8 +182,7 @@ class PatientClinicalHistoryGenerator(
         }
 
         private fun toPriorOtherConditionString(priorOtherCondition: PriorOtherCondition): String {
-            val note =
-                if (!priorOtherCondition.isContraindicationForTherapy) " (no contraindication for therapy)" else ""
+            val note = if (!priorOtherCondition.isContraindicationForTherapy) " (no contraindication for therapy)" else ""
             return priorOtherCondition.name() + note
         }
 
