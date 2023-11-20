@@ -6,10 +6,11 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverable
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import kotlin.math.roundToInt
 
 class HasSufficientBloodPressure internal constructor(
     private val category: BloodPressureCategory,
-    private val minMedianBloodPressure: Double
+    private val minMedianBloodPressure: Int
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val relevant = VitalFunctionSelector.selectBloodPressures(record.clinical().vitalFunctions(), category)
@@ -24,15 +25,15 @@ class HasSufficientBloodPressure internal constructor(
         return when {
             median.compareTo(minMedianBloodPressure) >= 0 -> {
                 EvaluationFactory.recoverablePass(
-                    "Patient has median $categoryDisplay ($median) exceeding $minMedianBloodPressure",
-                    "Median $categoryDisplay ($median) above limit of $minMedianBloodPressure"
+                    "Patient has median $categoryDisplay (${median.roundToInt()} mmHg) exceeding $minMedianBloodPressure mmHg",
+                    "Median $categoryDisplay (${median.roundToInt()} mmHg) above limit of $minMedianBloodPressure mmHg"
                 )
             }
 
             else -> {
                 EvaluationFactory.recoverableFail(
-                    "Patient has median $categoryDisplay ($median) below $minMedianBloodPressure",
-                    "Median $categoryDisplay ($median) below limit of $minMedianBloodPressure"
+                    "Patient has median $categoryDisplay (${median.roundToInt()} mmHg) below $minMedianBloodPressure mmHg",
+                    "Median $categoryDisplay (${median.roundToInt()} mmHg) below limit of $minMedianBloodPressure mmHg"
                 )
             }
         }

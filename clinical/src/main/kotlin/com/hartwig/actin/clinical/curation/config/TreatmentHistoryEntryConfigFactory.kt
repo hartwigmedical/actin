@@ -18,62 +18,38 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
 import com.hartwig.actin.util.ResourceFile
 import com.hartwig.actin.util.json.GsonSerializer
 import org.apache.logging.log4j.LogManager
+import java.util.*
 
-object TreatmentHistoryEntryConfigFactory {
-    private val LOGGER = LogManager.getLogger(TreatmentHistoryEntryConfigFactory::class.java)
+class TreatmentHistoryEntryConfigFactory(
+    private val treatmentDatabase: TreatmentDatabase
+) : CurationConfigFactory<TreatmentHistoryEntryConfig> {
+
+    private val logger = LogManager.getLogger(TreatmentHistoryEntryConfigFactory::class.java)
     private val gson = GsonSerializer.create()
 
-    fun createConfig(
-        treatmentName: String,
-        treatmentDatabase: TreatmentDatabase,
-        parts: List<String>,
-        fields: Map<String, Int>
-    ): TreatmentHistoryEntryConfig? {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): TreatmentHistoryEntryConfig {
+        val treatmentName = fields["treatmentName"]?.let { ResourceFile.optionalString(parts[it]) } ?: ""
         val ignore: Boolean = CurationUtil.isIgnoreString(treatmentName)
-        val treatmentHistoryEntry = if (ignore) null else {
-            curateObject(fields, parts, treatmentDatabase.findTreatmentByName(treatmentName), treatmentName)
-        }
+        val treatmentHistoryEntry = if (ignore) null else curateObject(fields, parts.toList(), treatmentName)
 
-        return if (ignore || treatmentHistoryEntry != null) {
-            TreatmentHistoryEntryConfig(
-                input = parts[fields["input"]!!],
-                ignore = ignore,
-                curated = treatmentHistoryEntry
-            )
-        } else {
-            null
-        }
+        return TreatmentHistoryEntryConfig(
+            input = parts[fields["input"]!!],
+            ignore = ignore,
+            curated = treatmentHistoryEntry
+        )
     }
 
-    private fun logMissingTreatmentMessage(treatmentName: String) {
-        val formattedTreatmentName = treatmentName.replace(" ", "_").uppercase()
-        LOGGER.warn("  Treatment with name $formattedTreatmentName does not exist in database. Please add with one of the following templates:")
-
-        listOf(
-            ImmutableDrugTreatment.builder().name(formattedTreatmentName).synonyms(emptySet()).isSystemic(false).drugs(emptySet()).build(),
-            ImmutableRadiotherapy.builder().name(formattedTreatmentName).synonyms(emptySet()).isSystemic(false).build(),
-            ImmutableOtherTreatment.builder().name(formattedTreatmentName).synonyms(emptySet()).isSystemic(false).categories(emptySet())
-                .build()
-        ).forEach {
-            val treatmentProposal = gson.toJson(it).replace("isSystemic\":false", "isSystemic\":?")
-                .replace("\"displayOverride\":null,", "")
-                .replace("\"maxCycles\":null,", "")
-            LOGGER.warn("    $treatmentProposal,")
-        }
-    }
-
-    private fun curateObject(
-        fields: Map<String, Int>,
-        parts: List<String>,
-        treatment: Treatment?,
-        treatmentName: String,
-    ): TreatmentHistoryEntry? {
-
+    private fun curateObject(fields: Map<String, Int>, parts: List<String>, treatmentName: String): TreatmentHistoryEntry {
         val isTrial = optionalObjectFromColumn(parts, fields, "isTrial", ResourceFile::optionalBool) ?: false
 
-        if (treatment == null && !(treatmentName.isEmpty() && isTrial)) {
-            logMissingTreatmentMessage(treatmentName)
-            return null
+        val treatments = if (treatmentName.isEmpty() && isTrial) emptyList() else {
+            val treatmentsByName = CurationUtil.toSet(treatmentName).associateWith(treatmentDatabase::findTreatmentByName)
+            val unknownTreatmentNames = treatmentsByName.filterValues(Objects::isNull).keys
+            if (unknownTreatmentNames.isNotEmpty()) {
+                unknownTreatmentNames.forEach(::logMissingTreatmentMessage)
+                throw IllegalStateException("Unable to resolve the following treatment(s): ${unknownTreatmentNames.joinToString(", ")}.")
+            }
+            treatmentsByName.values
         }
 
         val bestResponseString = optionalStringFromColumn(parts, fields, "bestResponse")
@@ -105,7 +81,7 @@ object TreatmentHistoryEntryConfigFactory {
         val intents = entriesFromColumn(parts, fields, "intents")?.map { stringToEnum(it, Intent::valueOf) }
 
         return ImmutableTreatmentHistoryEntry.builder()
-            .treatments(setOfNotNull(treatment))
+            .treatments(treatments)
             .startYear(optionalIntegerFromColumn(parts, fields, "startYear"))
             .startMonth(optionalIntegerFromColumn(parts, fields, "startMonth"))
             .intents(intents)
@@ -113,6 +89,24 @@ object TreatmentHistoryEntryConfigFactory {
             .trialAcronym(optionalStringFromColumn(parts, fields, "trialAcronym"))
             .treatmentHistoryDetails(treatmentHistoryDetails)
             .build()
+    }
+
+    private fun logMissingTreatmentMessage(treatmentName: String): Treatment? {
+        val formattedTreatmentName = treatmentName.replace(" ", "_").uppercase()
+        logger.warn("  Treatment with name $formattedTreatmentName does not exist in database. Please add with one of the following templates:")
+
+        listOf(
+            ImmutableDrugTreatment.builder().name(formattedTreatmentName).synonyms(emptySet()).isSystemic(false).drugs(emptySet()).build(),
+            ImmutableRadiotherapy.builder().name(formattedTreatmentName).synonyms(emptySet()).isSystemic(false).build(),
+            ImmutableOtherTreatment.builder().name(formattedTreatmentName).synonyms(emptySet()).isSystemic(false).categories(emptySet())
+                .build()
+        ).forEach {
+            val treatmentProposal = gson.toJson(it).replace("isSystemic\":false", "isSystemic\":?")
+                .replace("\"displayOverride\":null,", "")
+                .replace("\"maxCycles\":null,", "")
+            logger.warn("    $treatmentProposal,")
+        }
+        return null
     }
 
     private fun optionalIntegerFromColumn(parts: List<String>, fields: Map<String, Int>, colName: String): Int? {

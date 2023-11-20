@@ -7,9 +7,9 @@ import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight
 import org.junit.Test
 import java.time.LocalDate
 
-class HasSufficientBodyWeightTest {
+class HasLimitedBodyWeightTest {
 
-    private val function = HasSufficientBodyWeight(40.0)
+    private val function = HasLimitedBodyWeight(150.0)
     private val referenceDate = LocalDate.of(2023, 11, 10)
 
     @Test
@@ -22,10 +22,10 @@ class HasSufficientBodyWeightTest {
     }
 
     @Test
-    fun `Should evaluate undetermined on most recent weight in wrong unit`() {
+    fun `Should evaluate undetermined on weight in wrong unit`() {
         val weights = listOf(
-            weight().date(referenceDate.minusDays(4)).value(55.0).build(),
-            weight().date(referenceDate.minusDays(3)).value(120.0).unit("pounds").build()
+            weight().date(referenceDate.minusDays(4)).value(149.0).build(),
+            weight().date(referenceDate.minusDays(3)).value(148.0).unit("pounds").build()
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
@@ -34,28 +34,28 @@ class HasSufficientBodyWeightTest {
     }
 
     @Test
-    fun `Should fail on most recent weight too low`() {
+    fun `Should fail on most recent weight too high`() {
         val weights = listOf(
-            weight().date(referenceDate.minusDays(6)).value(41.0).build(),
-            weight().date(referenceDate.minusDays(5)).value(39.0).build()
+            weight().date(referenceDate.minusDays(6)).value(148.0).build(),
+            weight().date(referenceDate.minusDays(5)).value(155.0).build()
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withBodyWeights(weights)))
     }
 
     @Test
-    fun `Should pass on most recent weight above or equal to min`() {
+    fun `Should pass on most recent weight below max`() {
         val weights = listOf(
-            weight().date(referenceDate.minusDays(5)).value(38.0).build(),
-            weight().date(referenceDate.minusDays(4)).value(40.5).build()
+            weight().date(referenceDate.minusDays(5)).value(155.0).build(),
+            weight().date(referenceDate.minusDays(4)).value(148.0).build()
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withBodyWeights(weights)))
     }
 
     @Test
-    fun `Should pass on most recent weight equal to min`() {
+    fun `Should pass on most recent weight equal to max`() {
         val weights = listOf(
-            weight().date(referenceDate.minusDays(5)).value(38.0).build(),
-            weight().date(referenceDate.minusDays(3)).value(40.0).build()
+            weight().date(referenceDate.minusDays(5)).value(155.0).build(),
+            weight().date(referenceDate.minusDays(3)).value(150.0).build()
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withBodyWeights(weights)))
     }

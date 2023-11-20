@@ -37,7 +37,7 @@ class MolecularResultsAreAvailableForGene internal constructor(private val gene:
             return unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages("Patient has had WGS but biopsy contained no tumor cells")
-                .addUndeterminedGeneralMessages("Sample purity too low")
+                .addUndeterminedGeneralMessages("$gene tested but sample purity is too low")
                 .build()
         } else if (hasIndeterminatePriorTestForGene) {
             return unrecoverable()

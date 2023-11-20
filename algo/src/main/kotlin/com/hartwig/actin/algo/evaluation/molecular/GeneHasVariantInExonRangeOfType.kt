@@ -46,15 +46,17 @@ class GeneHasVariantInExonRangeOfType internal constructor(
                     "Variant(s) in exon range " + minExon + " - " + maxExon + " in gene " + gene
                             + " of adequate type detected in canonical transcript"
                 )
-                .addPassGeneralMessages("Adequate variant(s) found in $gene")
+                .addPassGeneralMessages("Variant(s) in exon range " + minExon + " - " + maxExon + " in " + gene
+                        + " of adequate type")
                 .build()
         }
         val potentialWarnEvaluation = evaluatePotentialWarns(canonicalUnreportableVariantMatches, reportableOtherVariantMatches)
         return potentialWarnEvaluation
             ?: unrecoverable()
                 .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("No adequate variant in exon range $minExon - $maxExon detected in gene $gene")
-                .addFailGeneralMessages("No specific variants in $gene detected")
+                .addFailSpecificMessages("No variant in exon range $minExon - $maxExon detected in gene $gene of adequate type")
+                .addFailGeneralMessages("No variant in exon range " + minExon + " - " + maxExon + " in " + gene
+                        + " of adequate type")
                 .build()
     }
 
@@ -69,17 +71,19 @@ class GeneHasVariantInExonRangeOfType internal constructor(
             warnEvents.addAll(canonicalUnreportableVariantMatches)
             warnSpecificMessages.add(
                 "Variant(s) in exon range " + minExon + " - " + maxExon + " in gene " + gene
-                        + " of adequate type detected in canonical transcript, but considered non-reportable"
+                        + " of adequate type detected in canonical transcript but considered not reportable"
             )
-            warnGeneralMessages.add("Adequate variant(s) found in $gene")
+            warnGeneralMessages.add("Variant(s) in exon range " + minExon + " - " + maxExon + " in " + gene
+                    + " of adequate type but not reportable")
         }
         if (reportableOtherVariantMatches.isNotEmpty()) {
             warnEvents.addAll(reportableOtherVariantMatches)
             warnSpecificMessages.add(
                 "Variant(s) in exon range " + minExon + " - " + maxExon + " in gene " + gene
-                        + " of adequate type detected, but in non-canonical transcript"
+                        + " of adequate type detected but in non-canonical transcript"
             )
-            warnGeneralMessages.add("Adequate variant(s) found in non-canonical transcript of gene $gene")
+            warnGeneralMessages.add("Variant(s) in exon range " + minExon + " - " + maxExon + " in " + gene
+                    + " of adequate type but in non-canonical transcript")
         }
         return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {
             unrecoverable()

@@ -21,14 +21,12 @@ class ProteinIsWildTypeByIHC internal constructor(private val protein: String) :
 
         return if (hasOnlyWildTypeResults) {
             unrecoverable().result(EvaluationResult.PASS)
-                .addPassSpecificMessages(String.format("Protein %s is wild type according to IHC", protein))
-                .addPassGeneralMessages(String.format("%s wild type", protein)).build()
+                .addPassSpecificMessages("Protein $protein is wild type according to IHC")
+                .addPassGeneralMessages("$protein is wild type by IHC").build()
         } else {
             unrecoverable().result(EvaluationResult.UNDETERMINED).addUndeterminedSpecificMessages(
-                String.format(
-                    "Could not determine if protein %s is wild type according to IHC", protein
-                )
-            ).addUndeterminedGeneralMessages(String.format("%s wild type status unknown", protein)).build()
+                "Could not determine if protein $protein is wild type according to IHC"
+            ).addUndeterminedGeneralMessages("$protein wild type status unknown by IHC").build()
         }
     }
 

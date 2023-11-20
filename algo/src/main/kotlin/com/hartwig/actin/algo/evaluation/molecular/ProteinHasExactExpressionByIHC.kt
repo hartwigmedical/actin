@@ -18,8 +18,8 @@ class ProteinHasExactExpressionByIHC(private val protein: String, private val ex
                 if (expressionLevel.toLong() == Math.round(scoreValue) && scoreValuePrefix.isNullOrEmpty()) {
                     return unrecoverable()
                         .result(EvaluationResult.PASS)
-                        .addPassSpecificMessages("Protein $protein has exact expression level $expressionLevel (by IHC)")
-                        .addPassGeneralMessages("Protein $protein has expression level $expressionLevel")
+                        .addPassSpecificMessages("Protein $protein has exact expression level $expressionLevel by IHC")
+                        .addPassGeneralMessages("$protein has expression level of exactly $expressionLevel by IHC")
                         .build()
                 }
             }
@@ -32,9 +32,9 @@ class ProteinHasExactExpressionByIHC(private val protein: String, private val ex
             return unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages(
-                    "Unknown if protein $protein expression level is exactly $expressionLevel (by IHC)"
+                    "Unknown if protein $protein expression level is exactly $expressionLevel by IHC"
                 )
-                .addUndeterminedGeneralMessages("Unknown $protein IHC test result")
+                .addUndeterminedGeneralMessages("Exact expression level of $protein by IHC unknown")
                 .build()
         } else if (ihcTests.isEmpty()) {
             return unrecoverable()
@@ -45,8 +45,8 @@ class ProteinHasExactExpressionByIHC(private val protein: String, private val ex
         }
         return unrecoverable()
             .result(EvaluationResult.FAIL)
-            .addFailSpecificMessages("Protein $protein does not have exact expression level $expressionLevel (by IHC)")
-            .addFailGeneralMessages("No $protein expression by IHC")
+            .addFailSpecificMessages("Protein $protein does not have exact expression level $expressionLevel by IHC")
+            .addFailGeneralMessages("Inadequate $protein expression level by IHC")
             .build()
     }
 }

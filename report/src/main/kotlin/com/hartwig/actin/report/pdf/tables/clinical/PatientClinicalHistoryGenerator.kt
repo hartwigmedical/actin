@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.TumorStatus
+import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.sort.PriorSecondPrimaryDiagnosedDateComparator
@@ -124,14 +125,20 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
                 else -> null
             }
 
-            val cyclesString = treatmentHistoryEntry.treatmentHistoryDetails()?.cycles()?.let { "$it cycles" }
+            val cyclesString = treatmentHistoryEntry.treatmentHistoryDetails()?.cycles()?.let { if (it == 1) "$it cycle" else "$it cycles" }
 
             val stopReasonString = treatmentHistoryEntry.treatmentHistoryDetails()?.stopReasonDetail()
                 ?.let { if (!it.equals(STOP_REASON_PROGRESSIVE_DISEASE, ignoreCase = true)) "stop reason: $it" else null }
 
             val annotation = listOfNotNull(intentString, cyclesString, stopReasonString).joinToString(", ")
 
-            val treatmentWithAnnotation = treatmentHistoryEntry.treatmentDisplay() + if (annotation.isEmpty()) "" else " ($annotation)"
+            val treatmentNames = treatmentHistoryEntry.treatments().map(Treatment::display).map(String::lowercase).toSet()
+            val treatmentDisplay = if (treatmentNames == setOf("chemotherapy", "radiotherapy")) {
+                "Chemoradiation"
+            } else {
+                treatmentHistoryEntry.treatmentDisplay()
+            }
+            val treatmentWithAnnotation = treatmentDisplay + if (annotation.isEmpty()) "" else " ($annotation)"
 
             return if (treatmentHistoryEntry.isTrial) {
                 val acronym = if (treatmentHistoryEntry.trialAcronym().isNullOrEmpty()) "" else "(${treatmentHistoryEntry.trialAcronym()})"
@@ -161,10 +168,10 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
                 else -> tumorLocation
             }
             val dateAdditionDiagnosis: String = toDateString(priorSecondPrimary.diagnosedYear(), priorSecondPrimary.diagnosedMonth())
-                ?.let { "diagnosed $it, " } ?: ""
+                    ?.let { "diagnosed $it, " } ?: ""
 
             val dateAdditionLastTreatment = toDateString(priorSecondPrimary.lastTreatmentYear(), priorSecondPrimary.lastTreatmentMonth())
-                ?.let { "last treatment $it, " } ?: ""
+                    ?.let { "last treatment $it, " } ?: ""
 
             val status = when (priorSecondPrimary.status()) {
                 TumorStatus.ACTIVE -> "considered active"
