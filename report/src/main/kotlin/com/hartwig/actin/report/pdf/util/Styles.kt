@@ -35,71 +35,71 @@ object Styles {
     }
 
     fun reportTitleStyle(): Style {
-        return Style().setFont(fontBold()).setFontSize(11f).setFontColor(PALETTE_BLACK)
+        return Style().setFont(fontBold()).setFontSize(13f).setFontColor(PALETTE_BLACK)
     }
 
     fun chapterTitleStyle(): Style {
-        return Style().setFont(fontBold()).setFontSize(10f).setFontColor(PALETTE_BLACK)
+        return Style().setFont(fontBold()).setFontSize(11f).setFontColor(PALETTE_BLACK)
     }
 
     fun tableTitleStyle(): Style {
-        return Style().setFont(fontBold()).setFontSize(8f).setFontColor(PALETTE_BLUE)
+        return Style().setFont(fontBold()).setFontSize(9f).setFontColor(PALETTE_BLUE)
     }
 
     fun tableSubTitleStyle(): Style {
-        return Style().setFont(fontBold()).setFontSize(7f).setFontColor(PALETTE_BLUE)
-    }
-
-    fun tableSubStyle(): Style {
-        return Style().setFont(fontRegular()).setFontSize(6f).setFontColor(PALETTE_BLACK)
-    }
-
-    fun tableHeaderStyle(): Style {
-        return Style().setFont(fontBold()).setFontSize(7f).setFontColor(PALETTE_MID_GREY)
-    }
-
-    fun tableContentStyle(): Style {
-        return Style().setFont(fontRegular()).setFontSize(7f).setFontColor(PALETTE_BLACK)
-    }
-
-    fun tableNoticeStyle(): Style {
-        return Style().setFont(fontBold()).setFontSize(7f).setFontColor(PALETTE_WARN)
-    }
-
-    fun tableKeyStyle(): Style {
-        return Style().setFont(fontRegular()).setFontSize(7f).setFontColor(PALETTE_BLACK)
-    }
-
-    fun tableUnknownStyle(): Style {
-        return Style().setFont(fontRegular()).setFontSize(7f).setFontColor(PALETTE_BLACK)
-    }
-
-    fun tableHighlightStyle(): Style {
-        return Style().setFont(fontBold()).setFontSize(7f).setFontColor(PALETTE_BLACK)
-    }
-
-    fun reportHeaderLabelStyle(): Style {
-        return Style().setFont(fontRegular()).setFontSize(7f).setFontColor(PALETTE_BLACK)
-    }
-
-    fun reportHeaderValueStyle(): Style {
         return Style().setFont(fontBold()).setFontSize(8f).setFontColor(PALETTE_BLUE)
     }
 
+    fun tableSubStyle(): Style {
+        return Style().setFont(fontRegular()).setFontSize(7f).setFontColor(PALETTE_BLACK)
+    }
+
+    fun tableHeaderStyle(): Style {
+        return Style().setFont(fontBold()).setFontSize(8f).setFontColor(PALETTE_MID_GREY)
+    }
+
+    fun tableContentStyle(): Style {
+        return Style().setFont(fontRegular()).setFontSize(8f).setFontColor(PALETTE_BLACK)
+    }
+
+    fun tableNoticeStyle(): Style {
+        return Style().setFont(fontBold()).setFontSize(8f).setFontColor(PALETTE_WARN)
+    }
+
+    fun tableKeyStyle(): Style {
+        return Style().setFont(fontRegular()).setFontSize(8f).setFontColor(PALETTE_BLACK)
+    }
+
+    fun tableUnknownStyle(): Style {
+        return Style().setFont(fontRegular()).setFontSize(8f).setFontColor(PALETTE_BLACK)
+    }
+
+    fun tableHighlightStyle(): Style {
+        return Style().setFont(fontBold()).setFontSize(8f).setFontColor(PALETTE_BLACK)
+    }
+
+    fun reportHeaderLabelStyle(): Style {
+        return Style().setFont(fontRegular()).setFontSize(8f).setFontColor(PALETTE_BLACK)
+    }
+
+    fun reportHeaderValueStyle(): Style {
+        return Style().setFont(fontBold()).setFontSize(9f).setFontColor(PALETTE_BLUE)
+    }
+
     fun pageNumberStyle(): Style {
-        return Style().setFont(fontBold()).setFontSize(7f).setFontColor(PALETTE_BLUE)
+        return Style().setFont(fontBold()).setFontSize(8f).setFontColor(PALETTE_BLUE)
     }
 
     fun sidePanelLabelStyle(): Style {
-        return Style().setFont(fontBold()).setFontSize(7f).setFontColor(PALETTE_WHITE)
+        return Style().setFont(fontBold()).setFontSize(8f).setFontColor(PALETTE_WHITE)
     }
 
     fun sidePanelValueStyle(): Style {
-        return Style().setFont(fontBold()).setFontSize(10f).setFontColor(PALETTE_WHITE)
+        return Style().setFont(fontBold()).setFontSize(11f).setFontColor(PALETTE_WHITE)
     }
 
     fun disclaimerStyle(): Style {
-        return Style().setFont(fontRegular()).setFontSize(6f).setFontColor(PALETTE_MID_GREY)
+        return Style().setFont(fontRegular()).setFontSize(7f).setFontColor(PALETTE_MID_GREY)
     }
 
     fun fontRegular(): PdfFont {
