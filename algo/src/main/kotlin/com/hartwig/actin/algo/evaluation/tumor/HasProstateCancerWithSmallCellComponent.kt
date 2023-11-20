@@ -51,8 +51,9 @@ class HasProstateCancerWithSmallCellComponent internal constructor(private val d
                 "Patient has prostate cancer but with no configured histology subtype",
                 "Undetermined prostate cancer with small cell histology"
             )
-        } else
+        } else {
             EvaluationFactory.fail("Patient has no prostate cancer with small cell histology", "Tumor type")
+        }
     }
 
     companion object {

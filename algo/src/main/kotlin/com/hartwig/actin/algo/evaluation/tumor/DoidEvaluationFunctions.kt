@@ -98,7 +98,7 @@ internal object DoidEvaluationFunctions {
         return false
     }
 
-    private fun createFullExpandedDoidTree(doidModel: DoidModel, doidsToExpand: Set<String>?): Set<String> {
+    fun createFullExpandedDoidTree(doidModel: DoidModel, doidsToExpand: Set<String>?): Set<String> {
         return doidsToExpand?.flatMap { doidModel.doidWithParents(it) }?.toSet() ?: emptySet()
     }
 
