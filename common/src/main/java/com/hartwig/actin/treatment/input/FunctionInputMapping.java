@@ -364,10 +364,10 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_Y, FunctionInput.ONE_INTEGER_ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y, FunctionInput.ONE_INTEGER_MANY_STRINGS);
 
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_SBP_MMHG_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_SBP_MMHG_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_DBP_MMHG_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_DBP_MMHG_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_SBP_MMHG_OF_AT_LEAST_X, FunctionInput.ONE_INTEGER);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_SBP_MMHG_OF_AT_MOST_X, FunctionInput.ONE_INTEGER);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_DBP_MMHG_OF_AT_LEAST_X, FunctionInput.ONE_INTEGER);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_DBP_MMHG_OF_AT_MOST_X, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_PULSE_OXIMETRY_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_BODY_WEIGHT_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_BODY_WEIGHT_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
