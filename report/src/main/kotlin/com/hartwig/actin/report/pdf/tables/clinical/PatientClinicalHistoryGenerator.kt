@@ -125,7 +125,7 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
                 else -> null
             }
 
-            val cyclesString = treatmentHistoryEntry.treatmentHistoryDetails()?.cycles()?.let { "$it cycles" }
+            val cyclesString = treatmentHistoryEntry.treatmentHistoryDetails()?.cycles()?.let { if (it == 1) "$it cycle" else "$it cycles" }
 
             val stopReasonString = treatmentHistoryEntry.treatmentHistoryDetails()?.stopReasonDetail()
                 ?.let { if (!it.equals(STOP_REASON_PROGRESSIVE_DISEASE, ignoreCase = true)) "stop reason: $it" else null }
@@ -168,10 +168,10 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
                 else -> tumorLocation
             }
             val dateAdditionDiagnosis: String = toDateString(priorSecondPrimary.diagnosedYear(), priorSecondPrimary.diagnosedMonth())
-                ?.let { "diagnosed $it, " } ?: ""
+                    ?.let { "diagnosed $it, " } ?: ""
 
             val dateAdditionLastTreatment = toDateString(priorSecondPrimary.lastTreatmentYear(), priorSecondPrimary.lastTreatmentMonth())
-                ?.let { "last treatment $it, " } ?: ""
+                    ?.let { "last treatment $it, " } ?: ""
 
             val status = when (priorSecondPrimary.status()) {
                 TumorStatus.ACTIVE -> "considered active"
