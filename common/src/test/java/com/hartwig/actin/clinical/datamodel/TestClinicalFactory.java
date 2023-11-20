@@ -124,14 +124,17 @@ public final class TestClinicalFactory {
                 .addDoids("8923")
                 .stage(TumorStage.IV)
                 .hasMeasurableDisease(true)
-                .hasBrainLesions(false)
+                .hasBrainLesions(true)
                 .hasActiveBrainLesions(false)
                 .hasCnsLesions(true)
                 .hasActiveCnsLesions(true)
                 .hasBoneLesions(null)
                 .hasLiverLesions(true)
-                .hasLungLesions(false)
+                .hasLungLesions(true)
                 .hasLymphNodeLesions(true)
+                .addOtherLesions("lung")
+                .addOtherLesions("lymph node")
+                .addOtherLesions("Test Lesion")
                 .biopsyLocation("Liver")
                 .build();
     }
@@ -299,6 +302,13 @@ public final class TestClinicalFactory {
                 .name("Pancreatitis")
                 .addDoids("4989")
                 .category("Pancreas disease")
+                .isContraindicationForTherapy(true)
+                .build());
+
+        priorOtherConditions.add(ImmutablePriorOtherCondition.builder()
+                .name("Coronary artery bypass graft (CABG)")
+                .addDoids("3393")
+                .category("Heart disease")
                 .isContraindicationForTherapy(true)
                 .build());
 

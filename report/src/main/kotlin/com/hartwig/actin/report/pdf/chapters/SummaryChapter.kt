@@ -135,13 +135,12 @@ class SummaryChapter(private val report: Report) : ReportChapter {
                 "Brain" to tumor.hasBrainLesions(),
                 "Liver" to tumor.hasLiverLesions(),
                 "Bone" to tumor.hasBoneLesions(),
-                "Lung" to tumor.hasLungLesions(),
-                "Lymph Node" to tumor.hasLymphNodeLesions()
+                "Lung" to tumor.hasLungLesions()
             ).filter { it.second == true }.map { it.first }
 
             val lesions =
                 listOfNotNull(categorizedLesions, tumor.otherLesions(), listOfNotNull(tumor.biopsyLocation())).flatten()
-                    .sorted().distinct()
+                    .sorted().distinctBy { it.uppercase() }
 
             return if (lesions.isEmpty()) {
                 Formats.VALUE_UNKNOWN
