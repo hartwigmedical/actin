@@ -99,7 +99,7 @@ fun main(args: Array<String>) {
     try {
         ClinicalIngestionApplication(config).run()
     } catch (e: Exception) {
-        ClinicalIngestionApplication.LOGGER.error("${ClinicalIngestionApplication.APPLICATION} failed on an unrecoverable error [${e.message}]", e)
+        ClinicalIngestionApplication.LOGGER.error("${ClinicalIngestionApplication.APPLICATION} failed on an unrecoverable error", e)
         exitProcess(1)
     }
 }
