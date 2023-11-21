@@ -113,8 +113,8 @@ class TreatmentHistoryEntryConfigFactory(
     }
 
     private fun missingTreatmentException(treatments: Set<String>): IllegalStateException {
-        return IllegalStateException(treatments.map { it.replace(" ", "_").uppercase() }.map {
-            "Treatment with name $it does not exist in database. Please add with one of the following templates: \n" + listOf(
+        return IllegalStateException(treatments.map { it.replace(" ", "_").uppercase() }.joinToString(",") {
+            "Treatment with name $it does not exist in database. Please add with one of the following templates: " + listOf(
                 ImmutableDrugTreatment.builder().name(it).synonyms(emptySet()).isSystemic(false).drugs(emptySet())
                     .build(),
                 ImmutableRadiotherapy.builder().name(it).synonyms(emptySet()).isSystemic(false).build(),
@@ -126,6 +126,6 @@ class TreatmentHistoryEntryConfigFactory(
                     .replace("\"displayOverride\":null,", "")
                     .replace("\"maxCycles\":null,", "")
             }
-        }.joinToString(","))
+        })
     }
 }
