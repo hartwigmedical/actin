@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.datamodel.treatment.history;
 
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -48,6 +49,25 @@ public abstract class TreatmentHistoryEntry {
 
     @NotNull
     public String treatmentDisplay() {
+        Set<String> treatmentNames = treatments().stream().map(Treatment::display).map(String::toLowerCase).collect(Collectors.toSet());
+        Set<String> chemoradiationTherapyNames = Set.of("chemotherapy", "radiotherapy");
+       
+        if (treatmentNames.containsAll(chemoradiationTherapyNames)) {
+            List<Treatment> remainingTreatments = treatments().stream()
+                    .filter(treatment -> !chemoradiationTherapyNames.contains(treatment.display().toLowerCase()))
+                    .collect(Collectors.toList());
+
+            if (remainingTreatments.isEmpty()) {
+                return "Chemoradiation";
+            } else if (remainingTreatments.size() == 1) {
+                Treatment remainingTreatment = remainingTreatments.get(0);
+                if (remainingTreatment.categories().contains(TreatmentCategory.CHEMOTHERAPY)) {
+                    return String.format("Chemoradiation (with %s)", remainingTreatment.display());
+                } else {
+                    return String.format("Chemoradiation and %s", remainingTreatment.display());
+                }
+            }
+        }
         return treatmentStringUsingFunction(Treatment::display);
     }
 
