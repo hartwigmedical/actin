@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical
 
-import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.datamodel.AtcClassification
 import com.hartwig.actin.clinical.datamodel.AtcLevel
 import com.hartwig.actin.clinical.datamodel.ImmutableAtcClassification
@@ -46,7 +45,8 @@ class WhoAtcModel(private val atcMap: Map<String, String>) : AtcModel {
         atcMap[level] ?: throw IllegalArgumentException("ATC code [$level] not found in tree")
 
     companion object {
-        private val LOGGER = LogManager.getLogger(CurationDatabaseReader::class.java)
+        private val LOGGER = LogManager.getLogger(WhoAtcModel::class.java)
+        
         fun createFromFile(tsvPath: String): WhoAtcModel {
             val lines = Files.readAllLines(File(tsvPath).toPath())
             val fields = TabularFile.createFields(lines[0].split(TabularFile.DELIMITER).dropLastWhile { it.isEmpty() }

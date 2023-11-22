@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
@@ -62,7 +63,12 @@ class TumorDetailsExtractor(private val curation: CurationDatabase) {
         val builder = ImmutableTumorDetails.builder()
         val inputPrimaryTumor = tumorInput(inputTumorLocation, inputTumorType) ?: return Pair(builder.build(), null)
         val primaryTumorCuration = CurationResponse.createFromConfigs(
-            curation.findTumorConfigs(inputPrimaryTumor), patientId, CurationCategory.PRIMARY_TUMOR, inputPrimaryTumor, "tumor", true
+            curation.findTumorConfigs(inputPrimaryTumor),
+            patientId,
+            CurationCategory.PRIMARY_TUMOR,
+            inputPrimaryTumor,
+            "primary tumor",
+            true
         )
 
         primaryTumorCuration.config()?.let {

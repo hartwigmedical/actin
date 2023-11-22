@@ -4,7 +4,7 @@ import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
-import com.hartwig.actin.clinical.curation.CurationDatabaseReader
+import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.CurationUtil.fullTrim
 import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
@@ -211,6 +211,6 @@ class MedicationExtractor(private val curation: CurationDatabase, private val at
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(CurationDatabaseReader::class.java)
+        private val LOGGER = LogManager.getLogger(MedicationExtractor::class.java)
     }
 }

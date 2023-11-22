@@ -1,7 +1,6 @@
-package com.hartwig.actin.clinical.curation.extraction
+package com.hartwig.actin.clinical.curation
 
-import com.hartwig.actin.clinical.curation.CurationCategory
-import com.hartwig.actin.clinical.curation.CurationWarning
+import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
 
 data class CurationResponse<T>(
     val configs: Set<T> = emptySet(), val extractionEvaluation: ExtractionEvaluation = ExtractionEvaluation()
@@ -28,19 +27,19 @@ data class CurationResponse<T>(
             configType: String,
             requireUniqueness: Boolean = false
         ): CurationResponse<T> {
-            val notFoundWarning = if (configs.isNotEmpty()) null else CurationWarning(
+            val notFoundWarning = if (configs.isNotEmpty() || (requireUniqueness && inputText.isEmpty())) null else CurationWarning(
                 patientId = patientId,
                 category = curationCategory,
                 feedInput = inputText,
                 message = "Could not find $configType config for input '$inputText'"
             )
-            val multipleFoundWarning = if (!requireUniqueness || configs.size == 1) null else CurationWarning(
+            val multipleFoundWarning = if (!requireUniqueness || configs.size <= 1) null else CurationWarning(
                 patientId = patientId,
                 category = curationCategory,
                 feedInput = inputText,
                 message = "Multiple $configType configs found for input '$inputText'"
             )
-            return curationResponse(curationCategory, inputText, configs, setOfNotNull(notFoundWarning, multipleFoundWarning))
+            return create(curationCategory, inputText, configs, setOfNotNull(notFoundWarning, multipleFoundWarning))
         }
 
         fun createFromTranslation(
@@ -58,10 +57,10 @@ data class CurationResponse<T>(
                     message = "No translation found for $translationType: '$inputText'"
                 )
             )
-            return curationResponse(curationCategory, inputText, setOfNotNull(translated), warnings)
+            return create(curationCategory, inputText, setOfNotNull(translated), warnings)
         }
 
-        private fun <T> curationResponse(
+        fun <T> create(
             curationCategory: CurationCategory,
             inputText: String,
             configs: Set<T>,

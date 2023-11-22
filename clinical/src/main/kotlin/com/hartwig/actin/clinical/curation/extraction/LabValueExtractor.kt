@@ -3,6 +3,8 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.CurationResponse
+import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.feed.lab.LabEntry
@@ -16,13 +18,18 @@ class LabValueExtractor(private val curation: CurationDatabase) {
             .map { input ->
                 val trimmedName = input.name().trim { it <= ' ' }
                 val translation = curation.translateLabValue(input.code(), trimmedName)
-                val translationResponse = CurationResponse.createFromConfigs(
-                    setOfNotNull(translation),
-                    patientId,
+                val translationResponse = CurationResponse.create(
                     CurationCategory.LABORATORY_TRANSLATION,
-                    "${input.code()}|$trimmedName",
-                    "lab value",
-                    true
+                    input.code(),
+                    setOfNotNull(translation),
+                    translation?.let { emptySet() } ?: setOf(
+                        CurationWarning(
+                            patientId = patientId,
+                            category = CurationCategory.LABORATORY_TRANSLATION,
+                            feedInput = input.code(),
+                            message = "Could not find laboratory translation for lab value with code '${input.code()}' and name '$trimmedName'"
+                        )
+                    )
                 )
                 val newLabValue = translation?.let {
                     ImmutableLabValue.builder().from(input).code(translation.translatedCode).name(translation.translatedName).build()

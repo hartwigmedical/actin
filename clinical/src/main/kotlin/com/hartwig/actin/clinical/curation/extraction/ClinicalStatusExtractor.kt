@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus
@@ -27,7 +28,7 @@ class ClinicalStatusExtractor(private val curation: CurationDatabase) {
         }
         val infectionCuration = questionnaire.infectionStatus?.description()?.let {
             CurationResponse.createFromConfigs(
-                curation.findInfectionStatusConfig(it), patientId, CurationCategory.INFECTION, it, "infection status", true
+                curation.findInfectionStatusConfig(it), patientId, CurationCategory.INFECTION, it, "infection", true
             )
         }
 

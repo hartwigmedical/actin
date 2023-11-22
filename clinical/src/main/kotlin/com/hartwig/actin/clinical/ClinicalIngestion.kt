@@ -37,11 +37,7 @@ import org.apache.logging.log4j.LogManager
 
 data class ExtractionResult<T>(val extracted: T, val evaluation: ExtractionEvaluation)
 
-class ClinicalIngestion(
-    private val feed: FeedModel,
-    private val curation: CurationDatabase,
-    atc: AtcModel
-) {
+class ClinicalIngestion(private val feed: FeedModel, private val curation: CurationDatabase, atc: AtcModel) {
     private val tumorDetailsExtractor = TumorDetailsExtractor(curation)
     private val complicationsExtractor = ComplicationsExtractor(curation)
     private val clinicalStatusExtractor = ClinicalStatusExtractor(curation)

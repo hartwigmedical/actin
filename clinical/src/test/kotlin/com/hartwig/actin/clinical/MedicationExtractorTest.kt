@@ -38,7 +38,7 @@ class MedicationExtractorTest {
             administrationRoute = "oraal"
         )
 
-        assertThat(EXTRACTOR.extract(PATIENT_ID, entry)).isEqualTo(
+        assertThat(EXTRACTOR.extract(PATIENT_ID, listOf(entry)).extracted).containsExactly(
             ImmutableMedication.builder()
                 .name("Paracetamol")
                 .status(MedicationStatus.ACTIVE)
@@ -74,7 +74,7 @@ class MedicationExtractorTest {
     }
 
     @Test
-    fun `should return null for entries with no ATC display or code text`() {
+    fun `should not return medications for entries with no ATC display or code text`() {
         val entry = medicationEntry(
             status = "",
             dosageInstruction = "Irrelevant",
@@ -82,7 +82,7 @@ class MedicationExtractorTest {
             end = LocalDate.of(2019, 4, 4),
             active = false,
         )
-        assertThat(EXTRACTOR.extract(PATIENT_ID, entry)).isNull()
+        assertThat(EXTRACTOR.extract(PATIENT_ID, listOf(entry)).extracted).isEmpty()
     }
 
     @Test
@@ -96,7 +96,7 @@ class MedicationExtractorTest {
             codeText = "A en B"
         )
 
-        assertThat(EXTRACTOR.extract(PATIENT_ID, entry)!!.isSelfCare).isTrue
+        assertThat(EXTRACTOR.extract(PATIENT_ID, listOf(entry)).extracted.first().isSelfCare).isTrue
     }
 
     @Test
@@ -111,12 +111,12 @@ class MedicationExtractorTest {
             codeText = "A en B"
         )
 
-        assertThat(EXTRACTOR.extract(PATIENT_ID, entry)!!.isTrialMedication).isTrue
+        assertThat(EXTRACTOR.extract(PATIENT_ID, listOf(entry)).extracted.first().isTrialMedication).isTrue
     }
 
     companion object {
         private val EXTRACTOR = MedicationExtractor(
-            TestCurationFactory.createProperTestCurationModel(),
+            TestCurationFactory.createProperTestCurationDatabase(),
             TestAtcFactory.createProperAtcModel()
         )
 
