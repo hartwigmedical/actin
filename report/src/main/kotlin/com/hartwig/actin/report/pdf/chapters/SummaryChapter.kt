@@ -142,10 +142,20 @@ class SummaryChapter(private val report: Report) : ReportChapter {
                 listOfNotNull(categorizedLesions, tumor.otherLesions(), listOfNotNull(tumor.biopsyLocation())).flatten()
                     .sorted().distinctBy { it.uppercase() }
 
+            val lymphNodeLesions = lesions.filter { it.lowercase().contains("lymph") }.map {
+                it.split(" ").drop(2).joinToString(" ")
+            }.distinctBy { it.lowercase() }.joinToString(", ", "Lymph nodes (", ")")
+
+            // Huidige probleem: indien alleen lymph node(s) -> Lymph nodes()
+
+            // Cureren: altijd lymph node(s) ... (ook e.g. lymph nodes multiple)
+
+            val otherLesions = lesions.filterNot { it.lowercase().contains("lymph") }
+
             return if (lesions.isEmpty()) {
                 Formats.VALUE_UNKNOWN
             } else {
-                lesions.joinToString(", ")
+                (otherLesions + lymphNodeLesions).joinToString(", ")
             }
         }
     }

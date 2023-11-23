@@ -132,9 +132,9 @@ public final class TestClinicalFactory {
                 .hasLiverLesions(true)
                 .hasLungLesions(true)
                 .hasLymphNodeLesions(true)
-                .addOtherLesions("lung")
-                .addOtherLesions("lymph node")
-                .addOtherLesions("Test Lesion")
+                .addOtherLesions("lymph nodes cervical and supraclavicular")
+                .addOtherLesions("lymph nodes abdominal")
+                .addOtherLesions("lymph node inguinal")
                 .biopsyLocation("Liver")
                 .build();
     }
