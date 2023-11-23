@@ -34,8 +34,10 @@ import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
+import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.apache.logging.log4j.util.Strings
+import java.time.LocalDate
 import java.util.*
 
 private const val PARACETAMOL = "PARACETAMOL"
@@ -77,6 +79,13 @@ object TestCurationFactory {
             laboratoryTranslations = createTestLaboratoryTranslations().associateBy { Pair(it.code, it.name) },
             toxicityTranslations = createTestToxicityTranslations().associateBy { it.input },
             bloodTransfusionTranslations = createTestBloodTransfusionTranslations().associateBy { it.input }
+        )
+    }
+
+    fun emptyQuestionnaire(): Questionnaire {
+        return Questionnaire(
+            LocalDate.now(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null
         )
     }
 

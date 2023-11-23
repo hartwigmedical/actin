@@ -43,7 +43,7 @@ class TumorDetailsExtractor(private val curation: CurationDatabase) {
                 .hasMeasurableDisease(questionnaire.hasMeasurableDisease)
                 .hasBrainLesions(determineLesionPresence(lesionsToCheck, LesionLocationCategory.BRAIN, questionnaire.hasBrainLesions))
                 .hasActiveBrainLesions(questionnaire.hasActiveBrainLesions)
-                .hasCnsLesions(questionnaire.hasCnsLesions)
+                .hasCnsLesions(determineLesionPresence(lesionsToCheck, LesionLocationCategory.CNS, questionnaire.hasCnsLesions))
                 .hasActiveCnsLesions(questionnaire.hasActiveCnsLesions)
                 .hasBoneLesions(determineLesionPresence(lesionsToCheck, LesionLocationCategory.BONE, questionnaire.hasBoneLesions))
                 .hasLiverLesions(determineLesionPresence(lesionsToCheck, LesionLocationCategory.LIVER, questionnaire.hasLiverLesions))
@@ -59,9 +59,9 @@ class TumorDetailsExtractor(private val curation: CurationDatabase) {
         patientId: String,
         inputTumorLocation: String?,
         inputTumorType: String?
-    ): Pair<TumorDetails, ExtractionEvaluation?> {
+    ): Pair<TumorDetails, ExtractionEvaluation> {
         val builder = ImmutableTumorDetails.builder()
-        val inputPrimaryTumor = tumorInput(inputTumorLocation, inputTumorType) ?: return Pair(builder.build(), null)
+        val inputPrimaryTumor = tumorInput(inputTumorLocation, inputTumorType) ?: return Pair(builder.build(), ExtractionEvaluation())
         val primaryTumorCuration = CurationResponse.createFromConfigs(
             curation.findTumorConfigs(inputPrimaryTumor),
             patientId,
@@ -88,9 +88,9 @@ class TumorDetailsExtractor(private val curation: CurationDatabase) {
         }
     }
 
-    fun curateOtherLesions(patientId: String, otherLesions: List<String>?): Pair<List<String>?, ExtractionEvaluation> {
+    fun curateOtherLesions(patientId: String, otherLesions: List<String>?): ExtractionResult<List<String>?> {
         if (otherLesions == null) {
-            return Pair(null, ExtractionEvaluation())
+            return ExtractionResult(null, ExtractionEvaluation())
         }
         val (configs, extractionResult) = otherLesions.asSequence()
             .map(CurationUtil::fullTrim)
@@ -110,7 +110,7 @@ class TumorDetailsExtractor(private val curation: CurationDatabase) {
         }
             .map(LesionLocationConfig::location)
 
-        return Pair(curatedLesions, extractionResult)
+        return ExtractionResult(curatedLesions, extractionResult)
     }
 
     private fun determineLesionPresence(
