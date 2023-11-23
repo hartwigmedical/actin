@@ -150,11 +150,9 @@ class SummaryChapter(private val report: Report) : ReportChapter {
                 it.split(" ").drop(2).joinToString(" ")
             }.distinctBy { it.lowercase() }.joinToString(", ")
 
-            val lymphNodeLesionsString: String
-
-            if (lymphNodeLesions.isNotEmpty()) {
-                lymphNodeLesionsString = "Lymph nodes ($lymphNodeLesions)"
-            } else lymphNodeLesionsString = "Lymph nodes"
+            val lymphNodeLesionsString = if (lymphNodeLesions.isNotEmpty()) {
+                "Lymph nodes ($lymphNodeLesions)"
+            } else "Lymph nodes"
 
             // Indien alleen lymph node -> Lymph nodes
             // Maar, indien lymph node inguinal + lymph node -> Lymph nodes (, inguinal)
