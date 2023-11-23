@@ -19,7 +19,6 @@ class GeneralRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
             EligibilityRule.CAN_GIVE_ADEQUATE_INFORMED_CONSENT to canGiveAdequateInformedConsentCreator(),
             EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS to hasSufficientLifeExpectancyCreator(),
             EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS to hasSufficientLifeExpectancyCreator(),
-            EligibilityRule.IS_TREATED_IN_HOSPITAL_X to isTreatedInHospitalCreator,
             EligibilityRule.WILL_PARTICIPATE_IN_TRIAL_IN_COUNTRY_X to willParticipateInTrialInCountryCreator(),
             EligibilityRule.IS_LEGALLY_INSTITUTIONALIZED to isLegallyInstitutionalizedCreator,
             EligibilityRule.IS_INVOLVED_IN_STUDY_PROCEDURES to isInvolvedInStudyProceduresCreator,
@@ -76,9 +75,6 @@ class GeneralRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
     private fun hasSufficientLifeExpectancyCreator(): FunctionCreator {
         return FunctionCreator { HasSufficientLifeExpectancy() }
     }
-
-    private val isTreatedInHospitalCreator: FunctionCreator
-        get() = FunctionCreator { IsTreatedInHospital() }
 
     private fun willParticipateInTrialInCountryCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
