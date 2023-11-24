@@ -12,7 +12,7 @@ object ProgressiveDiseaseFunctions {
         return when {
             bestResponse == TreatmentResponse.PROGRESSIVE_DISEASE || stopReason == StopReason.PROGRESSIVE_DISEASE -> true
 
-            bestResponse != null && stopReason != null -> false
+            stopReason != null -> false
 
             else -> null
         }
