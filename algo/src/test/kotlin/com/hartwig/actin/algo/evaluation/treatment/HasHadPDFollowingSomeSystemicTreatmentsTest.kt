@@ -74,7 +74,7 @@ class HasHadPDFollowingSomeSystemicTreatmentsTest {
             val evaluation = it.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
             assertEvaluation(EvaluationResult.PASS, evaluation)
             assertThat(evaluation.passGeneralMessages()).hasSize(1)
-            assertThat(evaluation.passGeneralMessages().iterator().next()).contains("PD is assumed")
+            assertThat(evaluation.passGeneralMessages().iterator().next()).contains("with PD")
         }
     }
 
