@@ -56,28 +56,28 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
 
         return when {
             result == EvaluationResult.FAIL && weight == null -> EvaluationFactory.undetermined(
-                "Cockcroft-Gault may be insufficient but weight of patient is not known",
-                "Cockcroft-Gault may be insufficient but patient weight unknown"
+                "eGFR (Cockcroft-Gault) may be insufficient based on creatinine level but weight of patient is not known",
+                "eGFR (CG) may be insufficient based on creatinine level but patient weight unknown"
             )
 
             result == EvaluationResult.FAIL -> EvaluationFactory.recoverableFail(
-                "Cockcroft-Gault below minimum of $minCreatinineClearance",
-                "Cockcroft-Gault below min of $minCreatinineClearance",
+                "eGFR (Cockcroft-Gault) below minimum of $minCreatinineClearance",
+                "eGFR (Cockcroft-Gault) below min of $minCreatinineClearance",
             )
 
             result == EvaluationResult.UNDETERMINED -> EvaluationFactory.undetermined(
-                "Cockcroft-Gault evaluation led to ambiguous results",
-                "Cockcroft-Gault evaluation ambiguous"
+                "eGFR (Cockcroft-Gault) evaluation led to ambiguous results",
+                "eGFR (Cockcroft-Gault) evaluation ambiguous"
             )
 
             result == EvaluationResult.PASS && weight == null -> EvaluationFactory.notEvaluated(
-                "Body weight is unknown but Cockcroft-Gault most likely above minimum of $minCreatinineClearance",
-                "Cockcroft-Gault most likely below min of $minCreatinineClearance but weight unknown",
+                "Body weight unknown but eGFR (Cockcroft-Gault) based on creatinine level most likely above min of $minCreatinineClearance",
+                "eGFR (CG) based on creatinine level most likely above min of $minCreatinineClearance but weight unknown",
             )
 
             result == EvaluationResult.PASS -> EvaluationFactory.recoverablePass(
-                "Cockcroft-Gault above minimum of $minCreatinineClearance",
-                "Cockcroft-Gault above min of $minCreatinineClearance",
+                "eGFR (Cockcroft-Gault) above minimum of $minCreatinineClearance",
+                "eGFR (Cockcroft-Gault) above min of $minCreatinineClearance",
             )
 
             else -> recoverable().result(result).build()
