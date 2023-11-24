@@ -326,7 +326,16 @@ public final class TestClinicalFactory {
                 .scoreText("Exon 11: c.1714_1719dup p.D572_P573dup")
                 .scoreValuePrefix(null)
                 .scoreValue(null)
-                .scoreValueUnit(null)
+                .scoreValueUnit(null).impliesPotentialIndeterminateStatus(false).build());
+
+        priorMolecularTests.add(ImmutablePriorMolecularTest.builder()
+                .test("IHC")
+                .item("PD-L1")
+                .measure(null)
+                .scoreText(null)
+                .scoreValuePrefix(null)
+                .scoreValue(90.0)
+                .scoreValueUnit("%")
                 .impliesPotentialIndeterminateStatus(false)
                 .build());
 
