@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.google.common.annotations.VisibleForTesting
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion
@@ -19,6 +18,7 @@ class OrangeInterpreter(private val geneFilter: GeneFilter, private val evidence
         validateOrangeRecord(record)
         val driverExtractor: DriverExtractor = DriverExtractor.create(geneFilter, evidenceDatabase)
         val characteristicsExtractor = CharacteristicsExtractor(evidenceDatabase)
+
         return ImmutableMolecularRecord.builder()
             .patientId(toPatientId(record.sampleId()))
             .sampleId(record.sampleId())
@@ -66,8 +66,7 @@ class OrangeInterpreter(private val geneFilter: GeneFilter, private val evidence
             return allowableQCStatuses.containsAll(record.purple().fit().qc().status())
         }
 
-        @VisibleForTesting
-        fun toPatientId(sampleId: String): String {
+        internal fun toPatientId(sampleId: String): String {
             require(sampleId.length >= 12) { "Cannot convert sampleId to patientId: $sampleId" }
             return sampleId.substring(0, 12)
         }

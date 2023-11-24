@@ -4,52 +4,61 @@ import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory
 import com.hartwig.actin.molecular.orange.evidence.known.TestServeKnownFactory
 import com.hartwig.hmftools.datamodel.linx.LinxFusion
 import com.hartwig.serve.datamodel.fusion.KnownFusion
-import org.junit.Assert
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class FusionMatchingTest {
+
     @Test
     fun canMatchFusions() {
         val generic: KnownFusion = TestServeKnownFactory.fusionBuilder().geneUp("up").geneDown("down").build()
-        val exonAware: KnownFusion = TestServeKnownFactory.fusionBuilder().from(generic).minExonUp(3).maxExonUp(4).minExonDown(6).maxExonDown(7).build()
+        val exonAware: KnownFusion =
+            TestServeKnownFactory.fusionBuilder().from(generic).minExonUp(3).maxExonUp(4).minExonDown(6).maxExonDown(7).build()
+
         val noMatch: LinxFusion = TestLinxFactory.fusionBuilder().geneStart("down").geneEnd("up").build()
-        Assert.assertFalse(FusionMatching.isGeneMatch(generic, noMatch))
-        Assert.assertFalse(FusionMatching.isGeneMatch(exonAware, noMatch))
-        val genericMatch: LinxFusion = TestLinxFactory.fusionBuilder().geneStart("up").geneEnd("down").fusedExonUp(0).fusedExonDown(0).build()
-        Assert.assertTrue(FusionMatching.isGeneMatch(generic, genericMatch))
-        Assert.assertTrue(FusionMatching.isExonMatch(generic, genericMatch))
-        Assert.assertFalse(FusionMatching.explicitlyMatchesExonUp(generic, genericMatch))
-        Assert.assertFalse(FusionMatching.explicitlyMatchesExonDown(generic, genericMatch))
-        Assert.assertTrue(FusionMatching.isGeneMatch(exonAware, genericMatch))
-        Assert.assertFalse(FusionMatching.isExonMatch(exonAware, genericMatch))
-        Assert.assertFalse(FusionMatching.explicitlyMatchesExonUp(exonAware, genericMatch))
-        Assert.assertFalse(FusionMatching.explicitlyMatchesExonDown(exonAware, genericMatch))
+        assertFalse(FusionMatching.isGeneMatch(generic, noMatch))
+        assertFalse(FusionMatching.isGeneMatch(exonAware, noMatch))
+
+        val genericMatch: LinxFusion =
+            TestLinxFactory.fusionBuilder().geneStart("up").geneEnd("down").fusedExonUp(0).fusedExonDown(0).build()
+        assertTrue(FusionMatching.isGeneMatch(generic, genericMatch))
+        assertTrue(FusionMatching.isExonMatch(generic, genericMatch))
+        assertFalse(FusionMatching.explicitlyMatchesExonUp(generic, genericMatch))
+        assertFalse(FusionMatching.explicitlyMatchesExonDown(generic, genericMatch))
+        assertTrue(FusionMatching.isGeneMatch(exonAware, genericMatch))
+        assertFalse(FusionMatching.isExonMatch(exonAware, genericMatch))
+        assertFalse(FusionMatching.explicitlyMatchesExonUp(exonAware, genericMatch))
+        assertFalse(FusionMatching.explicitlyMatchesExonDown(exonAware, genericMatch))
+
         val exactMatch: LinxFusion = TestLinxFactory.fusionBuilder().from(genericMatch).fusedExonUp(4).fusedExonDown(6).build()
-        Assert.assertTrue(FusionMatching.isGeneMatch(generic, exactMatch))
-        Assert.assertTrue(FusionMatching.isExonMatch(generic, exactMatch))
-        Assert.assertFalse(FusionMatching.explicitlyMatchesExonUp(generic, exactMatch))
-        Assert.assertFalse(FusionMatching.explicitlyMatchesExonDown(generic, exactMatch))
-        Assert.assertTrue(FusionMatching.isGeneMatch(exonAware, exactMatch))
-        Assert.assertTrue(FusionMatching.isExonMatch(exonAware, exactMatch))
-        Assert.assertTrue(FusionMatching.explicitlyMatchesExonUp(exonAware, exactMatch))
-        Assert.assertTrue(FusionMatching.explicitlyMatchesExonDown(exonAware, exactMatch))
+        assertTrue(FusionMatching.isGeneMatch(generic, exactMatch))
+        assertTrue(FusionMatching.isExonMatch(generic, exactMatch))
+        assertFalse(FusionMatching.explicitlyMatchesExonUp(generic, exactMatch))
+        assertFalse(FusionMatching.explicitlyMatchesExonDown(generic, exactMatch))
+        assertTrue(FusionMatching.isGeneMatch(exonAware, exactMatch))
+        assertTrue(FusionMatching.isExonMatch(exonAware, exactMatch))
+        assertTrue(FusionMatching.explicitlyMatchesExonUp(exonAware, exactMatch))
+        assertTrue(FusionMatching.explicitlyMatchesExonDown(exonAware, exactMatch))
+
         val exonUpMatch: LinxFusion = TestLinxFactory.fusionBuilder().from(genericMatch).fusedExonUp(3).fusedExonDown(8).build()
-        Assert.assertTrue(FusionMatching.isGeneMatch(generic, exonUpMatch))
-        Assert.assertTrue(FusionMatching.isExonMatch(generic, exonUpMatch))
-        Assert.assertFalse(FusionMatching.explicitlyMatchesExonUp(generic, exonUpMatch))
-        Assert.assertFalse(FusionMatching.explicitlyMatchesExonDown(generic, exonUpMatch))
-        Assert.assertTrue(FusionMatching.isGeneMatch(exonAware, exonUpMatch))
-        Assert.assertFalse(FusionMatching.isExonMatch(exonAware, exonUpMatch))
-        Assert.assertTrue(FusionMatching.explicitlyMatchesExonUp(exonAware, exonUpMatch))
-        Assert.assertFalse(FusionMatching.explicitlyMatchesExonDown(exonAware, exonUpMatch))
+        assertTrue(FusionMatching.isGeneMatch(generic, exonUpMatch))
+        assertTrue(FusionMatching.isExonMatch(generic, exonUpMatch))
+        assertFalse(FusionMatching.explicitlyMatchesExonUp(generic, exonUpMatch))
+        assertFalse(FusionMatching.explicitlyMatchesExonDown(generic, exonUpMatch))
+        assertTrue(FusionMatching.isGeneMatch(exonAware, exonUpMatch))
+        assertFalse(FusionMatching.isExonMatch(exonAware, exonUpMatch))
+        assertTrue(FusionMatching.explicitlyMatchesExonUp(exonAware, exonUpMatch))
+        assertFalse(FusionMatching.explicitlyMatchesExonDown(exonAware, exonUpMatch))
+
         val exonDownMatch: LinxFusion = TestLinxFactory.fusionBuilder().from(genericMatch).fusedExonUp(2).fusedExonDown(7).build()
-        Assert.assertTrue(FusionMatching.isGeneMatch(generic, exonDownMatch))
-        Assert.assertTrue(FusionMatching.isExonMatch(generic, exonDownMatch))
-        Assert.assertFalse(FusionMatching.explicitlyMatchesExonUp(generic, exonDownMatch))
-        Assert.assertFalse(FusionMatching.explicitlyMatchesExonDown(generic, exonDownMatch))
-        Assert.assertTrue(FusionMatching.isGeneMatch(exonAware, exonDownMatch))
-        Assert.assertFalse(FusionMatching.isExonMatch(exonAware, exonDownMatch))
-        Assert.assertFalse(FusionMatching.explicitlyMatchesExonUp(exonAware, exonDownMatch))
-        Assert.assertTrue(FusionMatching.explicitlyMatchesExonDown(exonAware, exonDownMatch))
+        assertTrue(FusionMatching.isGeneMatch(generic, exonDownMatch))
+        assertTrue(FusionMatching.isExonMatch(generic, exonDownMatch))
+        assertFalse(FusionMatching.explicitlyMatchesExonUp(generic, exonDownMatch))
+        assertFalse(FusionMatching.explicitlyMatchesExonDown(generic, exonDownMatch))
+        assertTrue(FusionMatching.isGeneMatch(exonAware, exonDownMatch))
+        assertFalse(FusionMatching.isExonMatch(exonAware, exonDownMatch))
+        assertFalse(FusionMatching.explicitlyMatchesExonUp(exonAware, exonDownMatch))
+        assertTrue(FusionMatching.explicitlyMatchesExonDown(exonAware, exonDownMatch))
     }
 }

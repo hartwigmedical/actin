@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.google.common.annotations.VisibleForTesting
 import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.ImmutableVirus
@@ -35,8 +34,7 @@ internal class VirusExtractor(private val evidenceDatabase: EvidenceDatabase) {
     companion object {
         val QC_PASS_STATUS: VirusBreakendQCStatus = VirusBreakendQCStatus.NO_ABNORMALITIES
 
-        @VisibleForTesting
-        fun determineDriverLikelihood(driverLikelihood: VirusLikelihoodType): DriverLikelihood? {
+        internal fun determineDriverLikelihood(driverLikelihood: VirusLikelihoodType): DriverLikelihood? {
             return when (driverLikelihood) {
                 VirusLikelihoodType.HIGH -> {
                     DriverLikelihood.HIGH
@@ -57,8 +55,7 @@ internal class VirusExtractor(private val evidenceDatabase: EvidenceDatabase) {
             }
         }
 
-        @VisibleForTesting
-        fun determineType(interpretation: VirusInterpretation?): VirusType {
+        internal fun determineType(interpretation: VirusInterpretation?): VirusType {
             return if (interpretation == null) {
                 VirusType.OTHER
             } else when (interpretation) {

@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.orange.evidence.known
 
-import com.google.common.annotations.VisibleForTesting
 import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants
 import com.hartwig.serve.datamodel.ImmutableKnownEvents
@@ -15,13 +14,14 @@ import com.hartwig.serve.datamodel.range.KnownCodon
 import com.hartwig.serve.datamodel.range.KnownExon
 
 object KnownEventResolverFactory {
+
     val KNOWN_EVENT_SOURCES: MutableSet<Knowledgebase> = Sets.newHashSet(ActionabilityConstants.EVIDENCE_SOURCE)
+
     fun create(knownEvents: KnownEvents): KnownEventResolver {
         return KnownEventResolver(filterKnownEvents(knownEvents), GeneAggregator.aggregate(knownEvents.genes()))
     }
 
-    @VisibleForTesting
-    fun filterKnownEvents(knownEvents: KnownEvents): KnownEvents {
+    internal fun filterKnownEvents(knownEvents: KnownEvents): KnownEvents {
         return ImmutableKnownEvents.builder()
             .hotspots(filterKnown<KnownHotspot>(knownEvents.hotspots()))
             .codons(filterKnown<KnownCodon>(knownEvents.codons()))

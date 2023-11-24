@@ -21,6 +21,7 @@ import com.hartwig.hmftools.datamodel.purple.PurpleVariantType
 import org.apache.logging.log4j.util.Strings
 
 object TestPurpleFactory {
+
     fun fitBuilder(): ImmutablePurpleFit.Builder {
         return ImmutablePurpleFit.builder()
             .purity(0.0)

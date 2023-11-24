@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.google.common.annotations.VisibleForTesting
 import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.datamodel.driver.CodingContext
 import com.hartwig.actin.molecular.datamodel.driver.Disruption
@@ -21,10 +20,12 @@ import com.hartwig.hmftools.datamodel.linx.LinxRecord
 import com.hartwig.hmftools.datamodel.linx.LinxSvAnnotation
 
 internal class DisruptionExtractor(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
+
     fun extractDisruptions(linx: LinxRecord, lostGenes: Set<String>, drivers: List<LinxDriver>): MutableSet<Disruption> {
         val disruptions: MutableSet<Disruption> = Sets.newTreeSet(DisruptionComparator())
         for (breakend in linx.allSomaticBreakends()) {
             val event = DriverEventFactory.disruptionEvent(breakend)
+
             if (geneFilter.include(breakend.gene())) {
                 if (include(breakend, lostGenes)) {
                     disruptions.add(
@@ -70,8 +71,7 @@ internal class DisruptionExtractor(private val geneFilter: GeneFilter, private v
             throw IllegalStateException("Could not find structural variant with ID: " + breakend.svId())
         }
 
-        @VisibleForTesting
-        fun determineDisruptionType(type: LinxBreakendType): DisruptionType {
+        internal fun determineDisruptionType(type: LinxBreakendType): DisruptionType {
             return when (type) {
                 LinxBreakendType.BND -> {
                     DisruptionType.BND
@@ -107,8 +107,7 @@ internal class DisruptionExtractor(private val geneFilter: GeneFilter, private v
             }
         }
 
-        @VisibleForTesting
-        fun determineRegionType(regionType: TranscriptRegionType): RegionType {
+        internal fun determineRegionType(regionType: TranscriptRegionType): RegionType {
             return when (regionType) {
                 TranscriptRegionType.UPSTREAM -> {
                     RegionType.UPSTREAM
@@ -136,8 +135,7 @@ internal class DisruptionExtractor(private val geneFilter: GeneFilter, private v
             }
         }
 
-        @VisibleForTesting
-        fun determineCodingContext(codingType: TranscriptCodingType): CodingContext {
+        internal fun determineCodingContext(codingType: TranscriptCodingType): CodingContext {
             return when (codingType) {
                 TranscriptCodingType.CODING -> {
                     CodingContext.CODING

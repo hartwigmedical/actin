@@ -7,11 +7,14 @@ import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
 import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.hmftools.datamodel.virus.VirusInterpreterEntry
 
-class ActionableEventMatcher internal constructor(private val personalizedActionabilityFactory: PersonalizedActionabilityFactory,
-                                                  private val signatureEvidence: SignatureEvidence, private val variantEvidence: VariantEvidence,
-                                                  private val copyNumberEvidence: CopyNumberEvidence, private val homozygousDisruptionEvidence: HomozygousDisruptionEvidence,
-                                                  private val breakendEvidence: BreakendEvidence, private val fusionEvidence: FusionEvidence,
-                                                  private val virusEvidence: VirusEvidence) {
+class ActionableEventMatcher internal constructor(
+    private val personalizedActionabilityFactory: PersonalizedActionabilityFactory,
+    private val signatureEvidence: SignatureEvidence, private val variantEvidence: VariantEvidence,
+    private val copyNumberEvidence: CopyNumberEvidence, private val homozygousDisruptionEvidence: HomozygousDisruptionEvidence,
+    private val breakendEvidence: BreakendEvidence, private val fusionEvidence: FusionEvidence,
+    private val virusEvidence: VirusEvidence
+) {
+
     fun matchForMicrosatelliteStatus(isMicrosatelliteUnstable: Boolean): ActionabilityMatch {
         return personalizedActionabilityFactory.create(signatureEvidence.findMicrosatelliteMatches(isMicrosatelliteUnstable))
     }

@@ -7,10 +7,13 @@ import com.hartwig.hmftools.datamodel.hla.ImmutableLilacRecord
 import com.hartwig.hmftools.datamodel.hla.LilacAllele
 import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeRecord
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
-import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ImmunologyExtractionTest {
+
     @Test
     fun canExtractImmunology() {
         val allele1: LilacAllele = TestLilacFactory.builder()
@@ -30,19 +33,23 @@ class ImmunologyExtractionTest {
             .somaticNonsenseOrFrameshift(0.0)
             .build()
         val orange = withLilacData(ImmunologyExtraction.LILAC_QC_PASS, allele1, allele2)
+
         val immunology = ImmunologyExtraction.extract(orange)
-        Assert.assertTrue(immunology.isReliable())
-        Assert.assertEquals(2, immunology.hlaAlleles().size.toLong())
+        assertTrue(immunology.isReliable())
+        assertEquals(2, immunology.hlaAlleles().size.toLong())
+
         val hlaAllele1 = findByName(immunology.hlaAlleles(), "allele 1")
-        Assert.assertEquals(1.2, hlaAllele1.tumorCopyNumber(), EPSILON)
-        Assert.assertTrue(hlaAllele1.hasSomaticMutations())
+        assertEquals(1.2, hlaAllele1.tumorCopyNumber(), EPSILON)
+        assertTrue(hlaAllele1.hasSomaticMutations())
+
         val hlaAllele2 = findByName(immunology.hlaAlleles(), "allele 2")
-        Assert.assertEquals(1.3, hlaAllele2.tumorCopyNumber(), EPSILON)
-        Assert.assertFalse(hlaAllele2.hasSomaticMutations())
+        assertEquals(1.3, hlaAllele2.tumorCopyNumber(), EPSILON)
+        assertFalse(hlaAllele2.hasSomaticMutations())
     }
 
     companion object {
         private const val EPSILON = 1.0E-10
+
         private fun findByName(hlaAlleles: MutableSet<HlaAllele>, nameToFind: String): HlaAllele {
             for (hlaAllele in hlaAlleles) {
                 if (hlaAllele.name() == nameToFind) {

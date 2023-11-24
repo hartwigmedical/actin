@@ -4,6 +4,7 @@ import com.hartwig.hmftools.datamodel.peach.ImmutablePeachGenotype
 import org.apache.logging.log4j.util.Strings
 
 object TestPeachFactory {
+
     fun builder(): ImmutablePeachGenotype.Builder {
         return ImmutablePeachGenotype.builder()
             .gene(Strings.EMPTY)

@@ -4,6 +4,7 @@ import com.hartwig.hmftools.datamodel.hla.ImmutableLilacAllele
 import org.apache.logging.log4j.util.Strings
 
 object TestLilacFactory {
+
     fun builder(): ImmutableLilacAllele.Builder {
         return ImmutableLilacAllele.builder()
             .allele(Strings.EMPTY)

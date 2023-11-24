@@ -15,6 +15,7 @@ import com.hartwig.hmftools.datamodel.linx.LinxFusionType
 import org.apache.logging.log4j.util.Strings
 
 object TestLinxFactory {
+
     fun structuralVariantBuilder(): ImmutableLinxSvAnnotation.Builder {
         return ImmutableLinxSvAnnotation.builder()
             .svId(0)

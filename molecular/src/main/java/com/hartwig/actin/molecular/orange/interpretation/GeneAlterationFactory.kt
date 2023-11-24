@@ -5,8 +5,11 @@ import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.serve.datamodel.common.GeneAlteration
 
 object GeneAlterationFactory {
-    fun convertAlteration(gene: String,
-                          input: GeneAlteration?): com.hartwig.actin.molecular.datamodel.driver.GeneAlteration {
+
+    fun convertAlteration(
+        gene: String,
+        input: GeneAlteration?
+    ): com.hartwig.actin.molecular.datamodel.driver.GeneAlteration {
         return object : com.hartwig.actin.molecular.datamodel.driver.GeneAlteration {
             override fun gene(): String {
                 return gene

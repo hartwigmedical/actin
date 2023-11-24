@@ -12,30 +12,41 @@ import com.hartwig.hmftools.datamodel.virus.VirusInterpreterEntry
 import com.hartwig.serve.datamodel.common.GeneAlteration
 import com.hartwig.serve.datamodel.fusion.KnownFusion
 
-class EvidenceDatabase internal constructor(private val knownEventResolver: KnownEventResolver,
-                                            private val actionableEventMatcher: ActionableEventMatcher) {
+class EvidenceDatabase internal constructor(
+    private val knownEventResolver: KnownEventResolver,
+    private val actionableEventMatcher: ActionableEventMatcher
+) {
+
     fun evidenceForMicrosatelliteStatus(isMicrosatelliteUnstable: Boolean?): ActionabilityMatch? {
         return if (isMicrosatelliteUnstable == null) {
             null
-        } else actionableEventMatcher.matchForMicrosatelliteStatus(isMicrosatelliteUnstable)
+        } else {
+            actionableEventMatcher.matchForMicrosatelliteStatus(isMicrosatelliteUnstable)
+        }
     }
 
     fun evidenceForHomologousRepairStatus(isHomologousRepairDeficient: Boolean?): ActionabilityMatch? {
         return if (isHomologousRepairDeficient == null) {
             null
-        } else actionableEventMatcher.matchForHomologousRepairStatus(isHomologousRepairDeficient)
+        } else {
+            actionableEventMatcher.matchForHomologousRepairStatus(isHomologousRepairDeficient)
+        }
     }
 
     fun evidenceForTumorMutationalBurdenStatus(hasHighTumorMutationalBurden: Boolean?): ActionabilityMatch? {
         return if (hasHighTumorMutationalBurden == null) {
             null
-        } else actionableEventMatcher.matchForHighTumorMutationalBurden(hasHighTumorMutationalBurden)
+        } else {
+            actionableEventMatcher.matchForHighTumorMutationalBurden(hasHighTumorMutationalBurden)
+        }
     }
 
     fun evidenceForTumorMutationalLoadStatus(hasHighTumorMutationalLoad: Boolean?): ActionabilityMatch? {
         return if (hasHighTumorMutationalLoad == null) {
             null
-        } else actionableEventMatcher.matchForHighTumorMutationalLoad(hasHighTumorMutationalLoad)
+        } else {
+            actionableEventMatcher.matchForHighTumorMutationalLoad(hasHighTumorMutationalLoad)
+        }
     }
 
     fun geneAlterationForVariant(variant: PurpleVariant): GeneAlteration? {

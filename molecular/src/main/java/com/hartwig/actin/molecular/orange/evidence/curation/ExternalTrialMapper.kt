@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.orange.evidence.curation
 import org.apache.logging.log4j.LogManager
 
 class ExternalTrialMapper(private val mappings: List<ExternalTrialMapping>) {
+
     fun map(externalTrialToMap: String): String {
         for (mapping in mappings) {
             if (mapping.externalTrial == externalTrialToMap) {
