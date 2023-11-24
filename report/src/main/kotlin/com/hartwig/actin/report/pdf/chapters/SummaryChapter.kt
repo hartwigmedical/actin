@@ -142,22 +142,13 @@ class SummaryChapter(private val report: Report) : ReportChapter {
                 listOfNotNull(categorizedLesions, tumor.otherLesions(), listOfNotNull(tumor.biopsyLocation())).flatten()
                     .sorted().distinctBy { it.uppercase() }
 
-//            val lymphNodeLesions = lesions.filter { it.lowercase().contains("lymph") }.map {
-//                it.split(" ").drop(2).joinToString(" ")
-//            }.distinctBy { it.lowercase() }.joinToString(", ", "Lymph nodes (", ")")
-
             val lymphNodeLesions = lesions.filter { it.lowercase().contains("lymph") }.map {
                 it.split(" ").drop(2).joinToString(" ")
-            }.distinctBy { it.lowercase() }.joinToString(", ")
+            }.distinctBy { it.lowercase() }.filterNot { it.equals("") }.joinToString(", ")
 
             val lymphNodeLesionsString = if (lymphNodeLesions.isNotEmpty()) {
                 "Lymph nodes ($lymphNodeLesions)"
             } else "Lymph nodes"
-
-            // Indien alleen lymph node -> Lymph nodes
-            // Maar, indien lymph node inguinal + lymph node -> Lymph nodes (, inguinal)
-
-            // Cureren: altijd lymph node(s) ... (ook e.g. lymph nodes multiple)
 
             val otherLesions = lesions.filterNot { it.lowercase().contains("lymph") }
 
