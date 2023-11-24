@@ -16,8 +16,17 @@ class HasRecentlyReceivedRadiotherapy(private val referenceYear: Int, private va
                 val month = it.startMonth()
                 year == null || year == referenceYear && (month == null || month == referenceMonth)
             }
-        return if (hasReceivedRadiotherapy) {
+
+        val radiotherapyYear = record.clinical().treatmentHistory().filter { it.categories().contains(TreatmentCategory.RADIOTHERAPY) }
+            .any {
+                it.startYear() != null
+            }
+
+        return if (hasReceivedRadiotherapy && radiotherapyYear) {
             EvaluationFactory.pass("Patient has recently received radiotherapy", "Has recently received radiotherapy")
+        } else if (hasReceivedRadiotherapy) {
+            EvaluationFactory.pass("Patient has received prior radiotherapy possible recent but date unknown",
+                "Has received radiotherapy possibly recent but date unknown")
         } else {
             EvaluationFactory.fail("Patient has not recently received radiotherapy", "No recent radiotherapy")
         }
