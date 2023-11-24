@@ -94,15 +94,15 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
             }
 
             hasHadTreatmentWithUnclearPDStatus -> {
-                undetermined(" with unclear PD status")
+                undetermined(" but uncertain if there has been PD")
             }
 
             hasHadTreatmentWithUnclearPDStatusAndUnclearCycles -> {
-                undetermined(" with unclear PD status & nr of cycles")
+                undetermined(" but uncertain if there has been PD & unknown nr of cycles")
             }
 
             hasHadTreatmentWithUnclearPDStatusAndUnclearWeeks -> {
-                undetermined(" with unclear PD status & nr of weeks")
+                undetermined(" but uncertain if there has been PD & unclear nr of weeks")
             }
 
             hasPotentiallyHadTreatment || hasHadTrial -> {
@@ -127,7 +127,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
     }
 
     private fun hasTreatmentGeneralMessage(suffix: String): String {
-        return category.display() + suffix
+        return "Patient has had " + treatment() + suffix
     }
 
     private fun undetermined(suffix: String): Evaluation {
