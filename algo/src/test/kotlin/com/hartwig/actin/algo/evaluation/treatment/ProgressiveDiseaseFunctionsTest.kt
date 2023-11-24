@@ -9,6 +9,13 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 
 class ProgressiveDiseaseFunctionsTest {
+    val startMonth = 1
+    val startYear = 1999
+    val stopMonthSufficientDuration = 9
+    val stopYearSufficientDuration = 1999
+    val stopMonthInsufficientDuration = 4
+    val stopYearInsufficientDuration = 1999
+
     @Test
     fun `Should return true when stop reason is null and best response is PD and duration null`() {
         assertEquals(true, treatmentResultedInPDOption(treatmentHistoryEntry(null, TreatmentResponse.PROGRESSIVE_DISEASE)))
@@ -20,33 +27,78 @@ class ProgressiveDiseaseFunctionsTest {
     }
 
     @Test
-    fun `Should return true when stop reason is null and duration at least 26 weeks`() {
-        assertEquals(true, treatmentResultedInPDOption(treatmentHistoryEntryWithDates(null, null, 1999, 1, 2000, 1)))
+    fun `Should return true when stop reason is null and duration was sufficient`() {
+        assertEquals(
+            true,
+            treatmentResultedInPDOption(
+                treatmentHistoryEntryWithDates(
+                    null,
+                    null,
+                    startYear,
+                    startMonth,
+                    stopYearSufficientDuration,
+                    stopMonthSufficientDuration
+                )
+            )
+        )
     }
 
     @Test
-    fun shouldBeNullWhenStopReasonIsNullAndBestResponseIsNotPD() {
+    fun `Should return null when stop reason is null and duration was insufficient`() {
+        assertNull(
+            treatmentResultedInPDOption(
+                treatmentHistoryEntryWithDates(
+                    null,
+                    null,
+                    startYear,
+                    startMonth,
+                    stopYearInsufficientDuration,
+                    stopMonthInsufficientDuration
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should return null when stop reason is null and best response is not PD`() {
         assertNull(treatmentResultedInPDOption(treatmentHistoryEntry(null, TreatmentResponse.MIXED)))
     }
 
     @Test
-    fun shouldBeNullWhenStopReasonIsNotPDAndBestResponseIsNull() {
+    fun `Should return false when stop reason is not PD and best response is null`() {
         assertEquals(false, treatmentResultedInPDOption(treatmentHistoryEntry(StopReason.TOXICITY, null)))
     }
 
     @Test
-    fun shouldReturnTrueWhenStopReasonIsPDAndBestResponseIsNotPD() {
+    fun `Should return true when stop reason is PD and best response is not PD`() {
         assertEquals(true, treatmentResultedInPDOption(treatmentHistoryEntry(StopReason.PROGRESSIVE_DISEASE, TreatmentResponse.MIXED)))
     }
 
     @Test
-    fun shouldReturnTrueWhenStopReasonIsNotPDAndBestResponseIsPD() {
+    fun `Should return true when stop reason is not PD and best response is PD`() {
         assertEquals(true, treatmentResultedInPDOption(treatmentHistoryEntry(StopReason.TOXICITY, TreatmentResponse.PROGRESSIVE_DISEASE)))
     }
 
     @Test
-    fun shouldReturnFalseWhenStopReasonAndBestResponseAreKnownAndNotPD() {
+    fun `Should return false when stop reason is not PD`() {
         assertEquals(false, treatmentResultedInPDOption(treatmentHistoryEntry(StopReason.TOXICITY, TreatmentResponse.MIXED)))
+    }
+
+    @Test
+    fun `Should return false when stop reason is not PD also if treatment duration was sufficient`() {
+        assertEquals(
+            false,
+            treatmentResultedInPDOption(
+                treatmentHistoryEntryWithDates(
+                    StopReason.TOXICITY,
+                    TreatmentResponse.MIXED,
+                    startYear,
+                    startMonth,
+                    stopYearSufficientDuration,
+                    stopMonthSufficientDuration
+                )
+            )
+        )
     }
 
     companion object {
