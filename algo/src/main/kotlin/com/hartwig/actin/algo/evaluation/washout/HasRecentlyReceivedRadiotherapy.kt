@@ -25,8 +25,8 @@ class HasRecentlyReceivedRadiotherapy(private val referenceYear: Int, private va
         return if (hasReceivedRadiotherapy && radiotherapyYear) {
             EvaluationFactory.pass("Patient has recently received radiotherapy", "Has recently received radiotherapy")
         } else if (hasReceivedRadiotherapy) {
-            EvaluationFactory.pass("Patient has received prior radiotherapy possible recent but date unknown",
-                "Has received radiotherapy possibly recent but date unknown")
+            EvaluationFactory.pass("Patient has received prior radiotherapy (possibly recent but date unknown)",
+                "Has received prior radiotherapy (possibly recent but date unknown)")
         } else {
             EvaluationFactory.fail("Patient has not recently received radiotherapy", "No recent radiotherapy")
         }
