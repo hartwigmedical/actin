@@ -123,8 +123,10 @@ class MedicationExtractor(private val curation: CurationDatabase, private val at
             CurationCategory.DOSAGE_UNIT_TRANSLATION, "medication dosage unit"
         )
 
-    fun curatePeriodBetweenUnit(patientId: String, nullableInput: String?): ExtractionResult<String?> =
-        nullableInput?.let { input ->
+    fun curatePeriodBetweenUnit(patientId: String, input: String?): ExtractionResult<String?> {
+        return if (input.isNullOrEmpty()) {
+            ExtractionResult(null, ExtractionEvaluation())
+        } else {
             val curation = CurationResponse.createFromConfigs(
                 curation.findPeriodBetweenUnitConfigs(input),
                 patientId,
@@ -134,7 +136,8 @@ class MedicationExtractor(private val curation: CurationDatabase, private val at
                 true
             )
             ExtractionResult(curation.config()?.interpretation, curation.extractionEvaluation)
-        } ?: ExtractionResult(null, ExtractionEvaluation())
+        }
+    }
 
     fun curateMedicationStatus(patientId: String, status: String): MedicationStatus? =
         when (status.lowercase()) {

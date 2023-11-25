@@ -35,5 +35,8 @@ class TreatmentHistoryExtractorTest {
                 "Could not find treatment history or second primary config for input '$CANNOT_CURATE'"
             )
         )
+        assertThat(evaluation.treatmentHistoryEntryEvaluatedInputs).isEqualTo(
+            setOf("cis 2020 2021", "no systemic treatment", CANNOT_CURATE)
+        )
     }
 }

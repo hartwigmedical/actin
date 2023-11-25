@@ -14,8 +14,8 @@ import java.time.LocalDate
 
 private const val PATIENT_ID = "patient1"
 private const val CANNOT_CURATE = "cannot curate"
-
 private const val KNOWN_DOSAGE_INSTRUCTION = "once per day 50-60 mg every month"
+private const val KNOWN_MEDICATION_NAME = "A en B"
 
 class MedicationExtractorTest {
     private val extractor =
@@ -23,15 +23,16 @@ class MedicationExtractorTest {
 
     @Test
     fun `Should interpret period between unit`() {
-        assertThat(extractor.curatePeriodBetweenUnit(PATIENT_ID, null)).isNull()
-        assertThat(extractor.curatePeriodBetweenUnit(PATIENT_ID, "")).isNull()
-        assertThat(extractor.curatePeriodBetweenUnit(PATIENT_ID, "mo")).isEqualTo("months")
+        assertThat(extractor.curatePeriodBetweenUnit(PATIENT_ID, null).extracted).isNull()
+        assertThat(extractor.curatePeriodBetweenUnit(PATIENT_ID, "").extracted).isNull()
+        assertThat(extractor.curatePeriodBetweenUnit(PATIENT_ID, "mo").extracted).isEqualTo("months")
     }
 
     @Test
     fun `Should curate known medication dosage`() {
         val (medications, evaluation) = extractor.extract(PATIENT_ID, listOf(medicationEntryWithDosage(KNOWN_DOSAGE_INSTRUCTION)))
         assertThat(evaluation.warnings).isEmpty()
+        assertThat(evaluation.medicationDosageEvaluatedInputs).containsExactly(KNOWN_DOSAGE_INSTRUCTION.lowercase())
         assertThat(medications).hasSize(1)
         assertThat(medications.first().dosage()).isEqualTo(
             ImmutableDosage.builder()
@@ -49,8 +50,7 @@ class MedicationExtractorTest {
 
     @Test
     fun `Should create warning for unknown medication dosage`() {
-        val (medications, evaluation) = extractor.extract(PATIENT_ID, listOf(medicationEntryWithDosage(CANNOT_CURATE)))
-        assertThat(medications).isEmpty()
+        val evaluation = extractor.extract(PATIENT_ID, listOf(medicationEntryWithDosage(CANNOT_CURATE))).evaluation
         assertThat(evaluation.warnings).containsOnly(
             CurationWarning(
                 PATIENT_ID,
@@ -75,7 +75,7 @@ class MedicationExtractorTest {
             )
         )
         assertMedicationForName("No medication", emptyList())
-        assertMedicationForName("A en B", listOf("A and B"))
+        assertMedicationForName(KNOWN_MEDICATION_NAME, listOf("A and B"))
     }
 
     private fun assertMedicationForName(
@@ -84,31 +84,49 @@ class MedicationExtractorTest {
         val (medications, evaluation) = extractor.extract(PATIENT_ID, listOf(medicationEntryWithName(inputText)))
         assertThat(medications.map(Medication::name)).isEqualTo(expectedNames)
         assertThat(evaluation.warnings).containsExactlyElementsOf(expectedWarnings)
+        assertThat(evaluation.medicationNameEvaluatedInputs).containsExactly(inputText.lowercase())
     }
 
     @Test
     fun `Should curate medication status`() {
-        assertThat(extractor.curateMedicationStatus(PATIENT_ID, "")).isNull()
-        assertThat(extractor.curateMedicationStatus(PATIENT_ID, "active")).isEqualTo(MedicationStatus.ACTIVE)
-        assertThat(extractor.curateMedicationStatus(PATIENT_ID, "on-hold")).isEqualTo(MedicationStatus.ON_HOLD)
-        assertThat(extractor.curateMedicationStatus(PATIENT_ID, "Kuur geannuleerd")).isEqualTo(MedicationStatus.CANCELLED)
-        assertThat(extractor.curateMedicationStatus(PATIENT_ID, "not a status")).isEqualTo(MedicationStatus.UNKNOWN)
+        assertStatusExtraction("", null)
+        assertStatusExtraction("active", MedicationStatus.ACTIVE)
+        assertStatusExtraction("on-hold", MedicationStatus.ON_HOLD)
+        assertStatusExtraction("Kuur geannuleerd", MedicationStatus.CANCELLED)
+        assertStatusExtraction("not a status", MedicationStatus.UNKNOWN)
+    }
+
+    private fun assertStatusExtraction(input: String, expected: MedicationStatus?) {
+        assertThat(extractor.curateMedicationStatus(PATIENT_ID, input)).isEqualTo(expected)
     }
 
     @Test
     fun `Should translate administration route`() {
-        assertThat(extractor.translateAdministrationRoute(PATIENT_ID, null)).isNull()
-        assertThat(extractor.translateAdministrationRoute(PATIENT_ID, "")).isNull()
-        assertThat(extractor.translateAdministrationRoute(PATIENT_ID, "not a route")).isNull()
-        assertThat(extractor.translateAdministrationRoute(PATIENT_ID, "ignore")).isNull()
-        assertThat(extractor.translateAdministrationRoute(PATIENT_ID, "oraal")).isEqualTo("oral")
+        assertThat(extractor.translateAdministrationRoute(PATIENT_ID, null).extracted).isNull()
+        assertThat(extractor.translateAdministrationRoute(PATIENT_ID, "").extracted).isNull()
+        assertThat(extractor.translateAdministrationRoute(PATIENT_ID, "not a route").extracted).isNull()
+        assertThat(extractor.translateAdministrationRoute(PATIENT_ID, "ignore").extracted).isNull()
+        val (extracted, evaluation) = extractor.translateAdministrationRoute(PATIENT_ID, "oraal")
+        assertThat(extracted).isEqualTo("oral")
+        assertThat(evaluation.warnings).isEmpty()
+        assertThat(evaluation.administrationRouteEvaluatedInputs).containsExactly("oraal")
     }
 
     private fun medicationEntryWithDosage(dosageInstruction: String) = TestFeedFactory.medicationEntry(
-        "active", dosageInstruction, LocalDate.now(), LocalDate.now(), true, administrationRoute = "oral"
+        "active", dosageInstruction, LocalDate.now(), LocalDate.now(), true, administrationRoute = "oraal", codeText = KNOWN_MEDICATION_NAME
     )
 
     private fun medicationEntryWithName(name: String) = TestFeedFactory.medicationEntry(
-        "active", KNOWN_DOSAGE_INSTRUCTION, LocalDate.now(), LocalDate.now(), true, codeText = name
-    )
+        "active", "", LocalDate.now(), LocalDate.now(), true, administrationRoute = "ignore", codeText = name
+    ).copy(dosageInstructionDoseQuantityUnit = "milligram")
+
+    @Test
+    fun canTranslateDosageUnit() {
+        assertThat(extractor.translateDosageUnit(PATIENT_ID, null).extracted).isNull()
+        assertThat(extractor.translateDosageUnit(PATIENT_ID, "").extracted).isNull()
+        val (translation, evaluation) = extractor.translateDosageUnit(PATIENT_ID, "STUK")
+        assertThat(translation).isEqualTo("piece")
+        assertThat(evaluation.warnings).isEmpty()
+        assertThat(evaluation.dosageUnitEvaluatedInputs).containsExactly("stuk")
+    }
 }
