@@ -9,8 +9,8 @@ import java.time.LocalDate
 
 class HasSufficientBloodPressureTest {
 
-    val referenceDate = LocalDate.of(2020, 11, 19)
-    val function = HasSufficientBloodPressure(BloodPressureCategory.SYSTOLIC, 100)
+    private val referenceDate = LocalDate.of(2020, 11, 19)
+    private val function = HasSufficientBloodPressure(BloodPressureCategory.SYSTOLIC, 100)
 
     @Test
     fun `Should fail when systolic blood pressure under minimum`() {

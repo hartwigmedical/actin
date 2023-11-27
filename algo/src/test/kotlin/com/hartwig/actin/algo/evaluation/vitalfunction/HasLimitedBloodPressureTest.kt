@@ -9,8 +9,8 @@ import java.time.LocalDate
 
 class HasLimitedBloodPressureTest {
 
-    val referenceDate = LocalDate.of(2020, 11, 19)
-    val function = HasLimitedBloodPressure(BloodPressureCategory.SYSTOLIC, 140)
+    private val referenceDate = LocalDate.of(2020, 11, 19)
+    private val function = HasLimitedBloodPressure(BloodPressureCategory.SYSTOLIC, 140)
 
     @Test
     fun `Should fail when systolic blood pressure above maximum`() {

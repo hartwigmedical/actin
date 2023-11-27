@@ -17,7 +17,7 @@ class BloodPressureFunctionsTest {
     val referenceDate = LocalDate.of(2020, 11, 19)
 
     @Test
-    fun `Should evaluate undetermined when no blood pressures known`() {
+    fun `Should evaluate to undetermined when no blood pressures known`() {
         val bloodPressures = emptyList<VitalFunction>()
         assertEvaluation(EvaluationResult.UNDETERMINED,
             evaluatePatientMinimumBloodPressure(VitalFunctionTestFactory.withVitalFunctions(bloodPressures), DIASTOLIC, 60))
@@ -110,7 +110,7 @@ class BloodPressureFunctionsTest {
     }
 
     @Test
-    fun `Should evaluate undetermined when wrong blood pressure category`() {
+    fun `Should evaluate to undetermined when wrong blood pressure category`() {
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluatePatientMaximumBloodPressure(
             VitalFunctionTestFactory.withVitalFunctions(listOf(diastolic().date(referenceDate).value(110.0).build())), SYSTOLIC, 100))
     }
