@@ -49,6 +49,7 @@
         <immutables.version>2.9.2</immutables.version>
 
         <kotlin.version>1.8.21</kotlin.version>
+        <kotlin.jvm.target>11</kotlin.jvm.target>
         <kotlin.code.style>official</kotlin.code.style>
 
         <junit.version>4.13.2</junit.version>
