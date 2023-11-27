@@ -41,7 +41,7 @@ class ToxicityExtractorTest {
 
     @Test
     fun `Should translate toxicities`() {
-        val names = listOf("Pijn", CANNOT_CURATE)
+        val names = setOf("Pijn", CANNOT_CURATE)
         val inputs = names.map { name ->
             DigitalFileEntry(
                 subject = PATIENT_ID,
@@ -62,6 +62,6 @@ class ToxicityExtractorTest {
                 "No translation found for toxicity: '$CANNOT_CURATE'"
             )
         )
-        assertThat(evaluation.toxicityTranslationEvaluatedInputs).isEqualTo(names.map(String::lowercase).toSet())
+        assertThat(evaluation.toxicityTranslationEvaluatedInputs).isEqualTo(names)
     }
 }

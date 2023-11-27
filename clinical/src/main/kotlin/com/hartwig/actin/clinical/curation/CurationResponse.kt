@@ -39,7 +39,7 @@ data class CurationResponse<T>(
                 feedInput = inputText,
                 message = "Multiple $configType configs found for input '$inputText'"
             )
-            return create(curationCategory, inputText, configs, setOfNotNull(notFoundWarning, multipleFoundWarning))
+            return create(curationCategory, inputText.lowercase(), configs, setOfNotNull(notFoundWarning, multipleFoundWarning))
         }
 
         fun createFromTranslation(
@@ -66,7 +66,7 @@ data class CurationResponse<T>(
             configs: Set<T>,
             warnings: Set<CurationWarning>
         ): CurationResponse<T> {
-            val evaluatedInputs = setOf(inputText.lowercase())
+            val evaluatedInputs = setOf(inputText)
             val evaluation = when (curationCategory) {
                 CurationCategory.PRIMARY_TUMOR -> ExtractionEvaluation(primaryTumorEvaluatedInputs = evaluatedInputs)
                 CurationCategory.ONCOLOGICAL_HISTORY -> ExtractionEvaluation(treatmentHistoryEntryEvaluatedInputs = evaluatedInputs)

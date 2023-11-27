@@ -41,13 +41,15 @@ class ToxicityExtractor(private val curation: CurationDatabase) {
             }
         }
             .map {
-                val translationResponse = CurationResponse.createFromTranslation(
-                    curation.translateToxicity(it.name()), patientId, CurationCategory.TOXICITY_TRANSLATION, it.name(), "toxicity"
-                )
-                ExtractionResult(
-                    listOf(translationResponse.config()?.let { translated -> it.withName(translated) } ?: it),
-                    translationResponse.extractionEvaluation
-                )
+                if (it.name().isEmpty()) ExtractionResult(listOf(it), ExtractionEvaluation()) else {
+                    val translationResponse = CurationResponse.createFromTranslation(
+                        curation.translateToxicity(it.name()), patientId, CurationCategory.TOXICITY_TRANSLATION, it.name(), "toxicity"
+                    )
+                    ExtractionResult(
+                        listOf(translationResponse.config()?.let { translated -> it.withName(translated) } ?: it),
+                        translationResponse.extractionEvaluation
+                    )
+                }
             }
             .fold(ExtractionResult(emptyList(), ExtractionEvaluation())) { (toxicities, aggregatedEval), (toxicity, eval) ->
                 ExtractionResult(toxicities + toxicity, aggregatedEval + eval)

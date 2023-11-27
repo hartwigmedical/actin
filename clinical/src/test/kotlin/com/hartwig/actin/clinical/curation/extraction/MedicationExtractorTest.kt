@@ -121,12 +121,18 @@ class MedicationExtractorTest {
     ).copy(dosageInstructionDoseQuantityUnit = "milligram")
 
     @Test
-    fun canTranslateDosageUnit() {
+    fun `Should translate dosage unit`() {
         assertThat(extractor.translateDosageUnit(PATIENT_ID, null).extracted).isNull()
-        assertThat(extractor.translateDosageUnit(PATIENT_ID, "").extracted).isNull()
         val (translation, evaluation) = extractor.translateDosageUnit(PATIENT_ID, "STUK")
         assertThat(translation).isEqualTo("piece")
         assertThat(evaluation.warnings).isEmpty()
         assertThat(evaluation.dosageUnitEvaluatedInputs).containsExactly("stuk")
+    }
+
+    @Test
+    fun `Should not warn for empty dosage unit`() {
+        val (emptyTranslation, evaluation) = extractor.translateDosageUnit(PATIENT_ID, "")
+        assertThat(emptyTranslation).isNull()
+        assertThat(evaluation.warnings).isEmpty()
     }
 }

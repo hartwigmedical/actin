@@ -200,17 +200,19 @@ class MedicationExtractor(private val curation: CurationDatabase, private val at
 
     private fun translateString(
         patientId: String,
-        nullableInput: String?,
+        input: String?,
         translate: (String) -> String?,
         curationCategory: CurationCategory,
         translationType: String
     ): ExtractionResult<String?> {
-        return nullableInput?.let { input ->
+        return if (input.isNullOrEmpty()) {
+            ExtractionResult(null, ExtractionEvaluation())
+        } else { 
             val curationResponse = CurationResponse.createFromTranslation(
                 translate.invoke(input), patientId, curationCategory, input, translationType
             )
             ExtractionResult(curationResponse.config()?.ifEmpty { null }, curationResponse.extractionEvaluation)
-        } ?: ExtractionResult(null, ExtractionEvaluation())
+        }
     }
 
     companion object {
