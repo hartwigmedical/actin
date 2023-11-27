@@ -142,15 +142,18 @@ class SummaryChapter(private val report: Report) : ReportChapter {
                 listOfNotNull(categorizedLesions, tumor.otherLesions(), listOfNotNull(tumor.biopsyLocation())).flatten()
                     .sorted().distinctBy { it.uppercase() }
 
-            val lymphNodeLesions = lesions.filter { it.lowercase().contains("lymph") }.map {
-                it.split(" ").drop(2).joinToString(" ")
-            }.distinctBy { it.lowercase() }.filterNot { it.equals("") }.joinToString(", ")
+            val (lymphNodeLesions, otherLesions) = lesions.partition {
+                it.lowercase().startsWith("lymph node") ||
+                        it.lowercase().startsWith("lymph nodes")
+            }
 
-            val lymphNodeLesionsString = if (lymphNodeLesions.isNotEmpty()) {
-                "Lymph nodes ($lymphNodeLesions)"
+            val filteredLymphNodeLesions = lymphNodeLesions.map { lesion ->
+                lesion.split(" ").filterNot { it.lowercase() in setOf("lymph", "node", "nodes", "") }.joinToString(" ")
+            }
+
+            val lymphNodeLesionsString = if (filteredLymphNodeLesions.isNotEmpty()) {
+                "Lymph nodes (${filteredLymphNodeLesions.joinToString(", ").removePrefix(", ")})"
             } else "Lymph nodes"
-
-            val otherLesions = lesions.filterNot { it.lowercase().contains("lymph") }
 
             return if (lesions.isEmpty()) {
                 Formats.VALUE_UNKNOWN
