@@ -4,6 +4,7 @@ import com.hartwig.actin.molecular.orange.evidence.actionability.TestActionableE
 import com.hartwig.actin.molecular.orange.evidence.known.TestKnownEventResolverFactory
 
 object TestEvidenceDatabaseFactory {
+
     fun createEmptyDatabase(): EvidenceDatabase {
         return EvidenceDatabase(TestKnownEventResolverFactory.createEmpty(), TestActionableEventMatcherFactory.createEmpty())
     }

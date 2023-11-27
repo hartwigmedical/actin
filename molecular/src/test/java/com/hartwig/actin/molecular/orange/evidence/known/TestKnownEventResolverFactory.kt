@@ -4,6 +4,7 @@ import com.hartwig.serve.datamodel.ImmutableKnownEvents
 import com.hartwig.serve.datamodel.KnownEvents
 
 object TestKnownEventResolverFactory {
+
     fun createEmpty(): KnownEventResolver {
         return KnownEventResolver(ImmutableKnownEvents.builder().build(), mutableSetOf())
     }
@@ -17,6 +18,7 @@ object TestKnownEventResolverFactory {
             .addCopyNumbers(TestServeKnownFactory.copyNumberBuilder().build())
             .addFusions(TestServeKnownFactory.fusionBuilder().build())
             .build()
+
         return KnownEventResolver(knownEvents, knownEvents.genes())
     }
 }

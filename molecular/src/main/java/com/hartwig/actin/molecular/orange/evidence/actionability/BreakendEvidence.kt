@@ -6,7 +6,9 @@ import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.gene.ActionableGene
 import com.hartwig.serve.datamodel.gene.GeneEvent
 
-internal class BreakendEvidence private constructor(private val applicableActionableGenes: List<ActionableGene>) : EvidenceMatcher<LinxBreakend> {
+internal class BreakendEvidence private constructor(private val applicableActionableGenes: List<ActionableGene>) :
+    EvidenceMatcher<LinxBreakend> {
+
     override fun findMatches(breakend: LinxBreakend): List<ActionableEvent> {
         return applicableActionableGenes.filter { breakend.reported() && it.gene() == breakend.gene() }.toList()
 

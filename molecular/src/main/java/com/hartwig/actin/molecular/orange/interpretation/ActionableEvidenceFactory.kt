@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.google.common.annotations.VisibleForTesting
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidence
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants
@@ -9,6 +8,7 @@ import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.EvidenceLevel
 
 object ActionableEvidenceFactory {
+
     fun createNoEvidence(): ActionableEvidence {
         return ImmutableActionableEvidence.builder().build()
     }
@@ -17,10 +17,12 @@ object ActionableEvidenceFactory {
         if (actionabilityMatch == null) {
             return null
         }
+
         val onLabelEvidence = createOnLabelEvidence(actionabilityMatch.onLabelEvents)
         val offLabelEvidence = createOffLabelEvidence(actionabilityMatch.offLabelEvents)
         val externalTrialEvidence = createExternalTrialEvidence(actionabilityMatch.onLabelEvents)
-        val merged: ActionableEvidence = ImmutableActionableEvidence.builder().from(onLabelEvidence).from(offLabelEvidence).from(externalTrialEvidence).build()
+        val merged: ActionableEvidence =
+            ImmutableActionableEvidence.builder().from(onLabelEvidence).from(offLabelEvidence).from(externalTrialEvidence).build()
         val simplified = filterRedundantLowerEvidence(merged)
         return filterResistanceEvidence(simplified)
     }
@@ -63,8 +65,10 @@ object ActionableEvidenceFactory {
         return builder.build()
     }
 
-    private fun populateResponsiveOnLabelEvidence(builder: ImmutableActionableEvidence.Builder,
-                                                  onLabelResponsiveEvent: ActionableEvent) {
+    private fun populateResponsiveOnLabelEvidence(
+        builder: ImmutableActionableEvidence.Builder,
+        onLabelResponsiveEvent: ActionableEvent
+    ) {
         val treatment = onLabelResponsiveEvent.treatment().name()
         when (onLabelResponsiveEvent.level()) {
             EvidenceLevel.A -> {
@@ -89,8 +93,10 @@ object ActionableEvidenceFactory {
         }
     }
 
-    private fun populateResponsiveOffLabelEvidence(builder: ImmutableActionableEvidence.Builder,
-                                                   offLabelResponsiveEvent: ActionableEvent) {
+    private fun populateResponsiveOffLabelEvidence(
+        builder: ImmutableActionableEvidence.Builder,
+        offLabelResponsiveEvent: ActionableEvent
+    ) {
         val treatment = offLabelResponsiveEvent.treatment().name()
         when (offLabelResponsiveEvent.level()) {
             EvidenceLevel.A -> {
@@ -111,8 +117,10 @@ object ActionableEvidenceFactory {
         }
     }
 
-    private fun populateResistantEvidence(builder: ImmutableActionableEvidence.Builder,
-                                          resistanceEvent: ActionableEvent) {
+    private fun populateResistantEvidence(
+        builder: ImmutableActionableEvidence.Builder,
+        resistanceEvent: ActionableEvent
+    ) {
         val treatment = resistanceEvent.treatment().name()
         when (resistanceEvent.level()) {
             EvidenceLevel.A, EvidenceLevel.B -> {
@@ -129,16 +137,17 @@ object ActionableEvidenceFactory {
         }
     }
 
-    @VisibleForTesting
-    fun filterRedundantLowerEvidence(evidence: ActionableEvidence): ActionableEvidence {
+    internal fun filterRedundantLowerEvidence(evidence: ActionableEvidence): ActionableEvidence {
         val treatmentsToExcludeForOnLabel = evidence.approvedTreatments()
         val cleanedOnLabelTreatments = cleanTreatments(evidence.onLabelExperimentalTreatments(), treatmentsToExcludeForOnLabel)
         val treatmentsToExcludeForOffLabel = evidence.approvedTreatments() + evidence.onLabelExperimentalTreatments()
         val cleanedOffLabelTreatments = cleanTreatments(evidence.offLabelExperimentalTreatments(), treatmentsToExcludeForOffLabel)
-        val treatmentsToExcludeForPreClinical = evidence.approvedTreatments() + evidence.onLabelExperimentalTreatments() + evidence.offLabelExperimentalTreatments()
+        val treatmentsToExcludeForPreClinical =
+            evidence.approvedTreatments() + evidence.onLabelExperimentalTreatments() + evidence.offLabelExperimentalTreatments()
         val cleanedPreClinicalTreatments = cleanTreatments(evidence.preClinicalTreatments(), treatmentsToExcludeForPreClinical)
         val treatmentsToExcludeForSuspectResistant = evidence.knownResistantTreatments()
-        val cleanedSuspectResistantTreatments = cleanTreatments(evidence.suspectResistantTreatments(), treatmentsToExcludeForSuspectResistant)
+        val cleanedSuspectResistantTreatments =
+            cleanTreatments(evidence.suspectResistantTreatments(), treatmentsToExcludeForSuspectResistant)
         return ImmutableActionableEvidence.builder()
             .from(evidence)
             .onLabelExperimentalTreatments(cleanedOnLabelTreatments)
@@ -149,7 +158,8 @@ object ActionableEvidenceFactory {
     }
 
     private fun filterResistanceEvidence(evidence: ActionableEvidence): ActionableEvidence {
-        val treatmentsToIncludeForResistance = evidence.approvedTreatments() + evidence.onLabelExperimentalTreatments() + evidence.offLabelExperimentalTreatments()
+        val treatmentsToIncludeForResistance =
+            evidence.approvedTreatments() + evidence.onLabelExperimentalTreatments() + evidence.offLabelExperimentalTreatments()
         val applicableKnownResistantTreatments = filterTreatments(evidence.knownResistantTreatments(), treatmentsToIncludeForResistance)
         val applicableSuspectResistantTreatments = filterTreatments(evidence.suspectResistantTreatments(), treatmentsToIncludeForResistance)
         return ImmutableActionableEvidence.builder()
@@ -166,5 +176,4 @@ object ActionableEvidenceFactory {
     private fun cleanTreatments(treatments: Set<String>, treatmentsToExclude: Set<String>): Set<String> {
         return treatments.filterNot { it in treatmentsToExclude }.toSet()
     }
-
 }

@@ -6,10 +6,12 @@ import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.ImmutableActionableEvents
 import com.hartwig.serve.datamodel.gene.ActionableGene
 import com.hartwig.serve.datamodel.gene.GeneEvent
-import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class BreakendEvidenceTest {
+
     @Test
     fun canDetermineBreakendEvidence() {
         val gene1: ActionableGene = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.ANY_MUTATION).gene("gene 1").build()
@@ -17,16 +19,15 @@ class BreakendEvidenceTest {
         val gene3: ActionableGene = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.INACTIVATION).gene("gene 1").build()
         val actionable: ActionableEvents = ImmutableActionableEvents.builder().genes(Lists.newArrayList(gene1, gene2, gene3)).build()
         val breakendEvidence: BreakendEvidence = BreakendEvidence.create(actionable)
+
         val evidencesMatch = breakendEvidence.findMatches(TestLinxFactory.breakendBuilder().gene("gene 1").reported(true).build())
-        Assert.assertEquals(1, evidencesMatch.size.toLong())
-        Assert.assertTrue(evidencesMatch.contains(gene1))
+        assertEquals(1, evidencesMatch.size.toLong())
+        assertTrue(evidencesMatch.contains(gene1))
 
         // Not reported
-        Assert.assertTrue(breakendEvidence.findMatches(TestLinxFactory.breakendBuilder().gene("gene 1").reported(false).build())
-            .isEmpty())
+        assertTrue(breakendEvidence.findMatches(TestLinxFactory.breakendBuilder().gene("gene 1").reported(false).build()).isEmpty())
 
         // Wrong event
-        Assert.assertTrue(breakendEvidence.findMatches(TestLinxFactory.breakendBuilder().gene("gene 2").reported(true).build())
-            .isEmpty())
+        assertTrue(breakendEvidence.findMatches(TestLinxFactory.breakendBuilder().gene("gene 2").reported(true).build()).isEmpty())
     }
 }

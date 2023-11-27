@@ -5,19 +5,24 @@ import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
 import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.serve.datamodel.gene.GeneAnnotation
 import com.hartwig.serve.datamodel.gene.GeneEvent
-import org.junit.Assert
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class GeneMatchingTest {
+
     @Test
     fun canMatchGenes() {
         val annotation = createAnnotation("gene 1")
+
         val match = createVariant("gene 1", PurpleCodingEffect.MISSENSE)
-        Assert.assertTrue(GeneMatching.isMatch(annotation, match))
+        assertTrue(GeneMatching.isMatch(annotation, match))
+
         val wrongGene = createVariant("gene 2", PurpleCodingEffect.MISSENSE)
-        Assert.assertFalse(GeneMatching.isMatch(annotation, wrongGene))
+        assertFalse(GeneMatching.isMatch(annotation, wrongGene))
+
         val nonCoding = createVariant("gene 1", PurpleCodingEffect.NONE)
-        Assert.assertFalse(GeneMatching.isMatch(annotation, nonCoding))
+        assertFalse(GeneMatching.isMatch(annotation, nonCoding))
     }
 
     companion object {

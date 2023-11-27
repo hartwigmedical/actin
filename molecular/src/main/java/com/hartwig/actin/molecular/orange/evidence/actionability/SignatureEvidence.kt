@@ -7,6 +7,7 @@ import com.hartwig.serve.datamodel.characteristic.ActionableCharacteristic
 import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType
 
 internal class SignatureEvidence private constructor(private val signatureCharacteristics: List<ActionableCharacteristic>) {
+
     fun findMicrosatelliteMatches(isMicrosatelliteUnstable: Boolean): List<ActionableEvent> {
         return findMatches(isMicrosatelliteUnstable, MICROSATELLITE_UNSTABLE_TYPE)
     }
@@ -41,10 +42,15 @@ internal class SignatureEvidence private constructor(private val signatureCharac
         private val HOMOLOGOUS_REPAIR_DEFICIENT_TYPE: TumorCharacteristicType = TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT
         private val HIGH_TUMOR_MUTATIONAL_BURDEN_TYPE: TumorCharacteristicType = TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN
         private val HIGH_TUMOR_MUTATIONAL_LOAD_TYPE: TumorCharacteristicType = TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD
+
         fun create(actionableEvents: ActionableEvents): SignatureEvidence {
             val signatureCharacteristics: MutableList<ActionableCharacteristic> = Lists.newArrayList()
             for (actionableCharacteristic in actionableEvents.characteristics()) {
-                if (actionableCharacteristic.type() == MICROSATELLITE_UNSTABLE_TYPE || actionableCharacteristic.type() == HOMOLOGOUS_REPAIR_DEFICIENT_TYPE || actionableCharacteristic.type() == HIGH_TUMOR_MUTATIONAL_BURDEN_TYPE || actionableCharacteristic.type() == HIGH_TUMOR_MUTATIONAL_LOAD_TYPE) {
+                if (actionableCharacteristic.type() == MICROSATELLITE_UNSTABLE_TYPE ||
+                    actionableCharacteristic.type() == HOMOLOGOUS_REPAIR_DEFICIENT_TYPE ||
+                    actionableCharacteristic.type() == HIGH_TUMOR_MUTATIONAL_BURDEN_TYPE ||
+                    actionableCharacteristic.type() == HIGH_TUMOR_MUTATIONAL_LOAD_TYPE
+                ) {
                     signatureCharacteristics.add(actionableCharacteristic)
                 }
             }

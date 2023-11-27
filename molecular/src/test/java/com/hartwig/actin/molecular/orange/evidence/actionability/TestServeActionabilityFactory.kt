@@ -20,6 +20,7 @@ import com.hartwig.serve.datamodel.range.ImmutableActionableRange
 import org.apache.logging.log4j.util.Strings
 
 object TestServeActionabilityFactory {
+
     fun hotspotBuilder(): ImmutableActionableHotspot.Builder {
         return ImmutableActionableHotspot.builder().from(createEmptyActionableEvent()).from(TestServeFactory.createEmptyHotspot())
     }

@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.orange.evidence.curation
 
-import com.google.common.annotations.VisibleForTesting
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.gene.ActionableGene
 import com.hartwig.serve.datamodel.gene.GeneEvent
@@ -9,10 +8,12 @@ import com.hartwig.serve.datamodel.range.ActionableRange
 import org.apache.logging.log4j.LogManager
 
 object ApplicabilityFiltering {
+
     private val LOGGER = LogManager.getLogger(ApplicabilityFiltering::class.java)
+
     val NON_APPLICABLE_GENES = setOf("CDKN2A", "TP53")
     val NON_APPLICABLE_AMPLIFICATIONS = setOf("VEGFA")
-    
+
     fun isApplicable(actionableHotspot: ActionableHotspot): Boolean {
         return eventIsApplicable(actionableHotspot.gene(), actionableHotspot)
     }
@@ -25,9 +26,11 @@ object ApplicabilityFiltering {
         if (actionableGene.event() == GeneEvent.AMPLIFICATION) {
             for (nonApplicableGene in NON_APPLICABLE_AMPLIFICATIONS) {
                 if (actionableGene.gene() == nonApplicableGene) {
-                    LOGGER.debug("Evidence for '{}' on gene {} is considered non-applicable",
+                    LOGGER.debug(
+                        "Evidence for '{}' on gene {} is considered non-applicable",
                         actionableGene.sourceEvent(),
-                        actionableGene.gene())
+                        actionableGene.gene()
+                    )
                     return false
                 }
             }
@@ -35,8 +38,7 @@ object ApplicabilityFiltering {
         return eventIsApplicable(actionableGene.gene(), actionableGene)
     }
 
-    @VisibleForTesting
-    fun <T : ActionableEvent> eventIsApplicable(gene: String, event: T): Boolean {
+    private fun <T : ActionableEvent> eventIsApplicable(gene: String, event: T): Boolean {
         if (NON_APPLICABLE_GENES.contains(gene)) {
             LOGGER.debug("Evidence for '{}' on gene {} is considered non-applicable", event.sourceEvent(), gene)
             return false

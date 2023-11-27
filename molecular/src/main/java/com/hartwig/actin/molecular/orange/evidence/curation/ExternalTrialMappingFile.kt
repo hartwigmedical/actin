@@ -3,13 +3,12 @@ package com.hartwig.actin.molecular.orange.evidence.curation
 import com.google.common.collect.Lists
 import com.hartwig.actin.util.TabularFile
 import java.io.File
-import java.io.IOException
 import java.nio.file.Files
 
 object ExternalTrialMappingFile {
+
     private const val FIELD_DELIMITER: String = "\t"
 
-    @Throws(IOException::class)
     fun read(tsv: String): MutableList<ExternalTrialMapping> {
         val lines = Files.readAllLines(File(tsv).toPath())
         val mappings: MutableList<ExternalTrialMapping> = Lists.newArrayList()

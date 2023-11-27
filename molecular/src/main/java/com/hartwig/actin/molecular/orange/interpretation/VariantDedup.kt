@@ -9,8 +9,10 @@ import kotlin.math.abs
 object VariantDedup {
 
     private const val EPSILON = 1e-10
+
     private val LOGGER = LogManager.getLogger(VariantDedup::class.java)
     private val PHASED_EFFECTS = setOf(PurpleVariantEffect.PHASED_INFRAME_DELETION, PurpleVariantEffect.PHASED_INFRAME_INSERTION)
+
     fun apply(variants: Set<PurpleVariant>): Set<PurpleVariant> {
         return variants.filter { variant: PurpleVariant -> include(variant, variants) }.toSet()
     }
@@ -35,12 +37,16 @@ object VariantDedup {
         val variantImpactToMatch = variantToMatch.canonicalImpact()
         for (variant in variants) {
             val variantImpact: PurpleTranscriptImpact = variant.canonicalImpact()
-            if (variantImpact.effects() == variantImpactToMatch.effects() && variant.gene() == variantToMatch.gene() && variantImpact.hgvsProteinImpact() == variantImpactToMatch.hgvsProteinImpact()) {
+            if (variantImpact.effects() == variantImpactToMatch.effects() && variant.gene() == variantToMatch.gene() &&
+                variantImpact.hgvsProteinImpact() == variantImpactToMatch.hgvsProteinImpact()
+            ) {
                 if (minVariantCopyNumber == null || lessThan(variant.variantCopyNumber(), minVariantCopyNumber)) {
                     minVariantCopyNumber = variant.variantCopyNumber()
                     uniqueHgvsCodingImpact = variantImpact.hgvsCodingImpact()
                 } else if (equal(variant.variantCopyNumber(), minVariantCopyNumber)) {
-                    uniqueHgvsCodingImpact = if (uniqueHgvsCodingImpact != null && variantImpact.hgvsCodingImpact() > uniqueHgvsCodingImpact) variantImpact.hgvsCodingImpact() else uniqueHgvsCodingImpact
+                    uniqueHgvsCodingImpact = if (uniqueHgvsCodingImpact != null &&
+                        variantImpact.hgvsCodingImpact() > uniqueHgvsCodingImpact
+                    ) variantImpact.hgvsCodingImpact() else uniqueHgvsCodingImpact
                 }
             }
         }
@@ -53,7 +59,7 @@ object VariantDedup {
         return abs(first - second) < EPSILON
     }
 
-    fun lessThan(value: Double, reference: Double): Boolean {
+    private fun lessThan(value: Double, reference: Double): Boolean {
         return value - reference < -EPSILON
     }
 }

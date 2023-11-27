@@ -7,8 +7,11 @@ import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType
 
-internal class VirusEvidence private constructor(private val hpvCharacteristics: List<ActionableEvent>,
-                                                 private val ebvCharacteristics: List<ActionableEvent>) : EvidenceMatcher<VirusInterpreterEntry> {
+internal class VirusEvidence private constructor(
+    private val hpvCharacteristics: List<ActionableEvent>,
+    private val ebvCharacteristics: List<ActionableEvent>
+) : EvidenceMatcher<VirusInterpreterEntry> {
+
     override fun findMatches(virus: VirusInterpreterEntry): List<ActionableEvent> {
         val interpretation = virus.interpretation()
         return if (interpretation == null || !virus.reported()) {

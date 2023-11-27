@@ -45,7 +45,7 @@ data class OrangeInterpreterConfig(
             )
         }
 
-        val LOGGER: Logger = LogManager.getLogger(OrangeInterpreterConfig::class.java)
+        private val LOGGER: Logger = LogManager.getLogger(OrangeInterpreterConfig::class.java)
         private const val ORANGE_JSON: String = "orange_json"
 
         // Params for clinical annotation and interpretation

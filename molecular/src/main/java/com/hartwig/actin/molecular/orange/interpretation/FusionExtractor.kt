@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.google.common.annotations.VisibleForTesting
 import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.Fusion
@@ -16,27 +15,35 @@ import com.hartwig.hmftools.datamodel.linx.LinxFusionType
 import com.hartwig.hmftools.datamodel.linx.LinxRecord
 
 internal class FusionExtractor(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
+
     fun extract(linx: LinxRecord): MutableSet<Fusion> {
         val fusions: MutableSet<Fusion> = Sets.newTreeSet(FusionComparator())
+
         for (fusion in linx.allSomaticFusions()) {
             val fusionEvent = DriverEventFactory.fusionEvent(fusion)
+
             if (geneFilter.include(fusion.geneStart()) || geneFilter.include(fusion.geneEnd())) {
                 val knownFusion = evidenceDatabase.lookupKnownFusion(fusion)
-                fusions.add(ImmutableFusion.builder()
-                    .isReportable(fusion.reported())
-                    .event(fusionEvent)
-                    .driverLikelihood(determineDriverLikelihood(fusion))
-                    .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForFusion(fusion)))
-                    .geneStart(fusion.geneStart())
-                    .geneTranscriptStart(fusion.geneTranscriptStart())
-                    .fusedExonUp(fusion.fusedExonUp())
-                    .geneEnd(fusion.geneEnd())
-                    .geneTranscriptEnd(fusion.geneTranscriptEnd())
-                    .fusedExonDown(fusion.fusedExonDown())
-                    .proteinEffect(if (knownFusion != null) GeneAlterationFactory.convertProteinEffect(knownFusion.proteinEffect()) else ProteinEffect.UNKNOWN)
-                    .isAssociatedWithDrugResistance(knownFusion?.associatedWithDrugResistance())
-                    .driverType(determineDriverType(fusion))
-                    .build())
+                fusions.add(
+                    ImmutableFusion.builder()
+                        .isReportable(fusion.reported())
+                        .event(fusionEvent)
+                        .driverLikelihood(determineDriverLikelihood(fusion))
+                        .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForFusion(fusion)))
+                        .geneStart(fusion.geneStart())
+                        .geneTranscriptStart(fusion.geneTranscriptStart())
+                        .fusedExonUp(fusion.fusedExonUp())
+                        .geneEnd(fusion.geneEnd())
+                        .geneTranscriptEnd(fusion.geneTranscriptEnd())
+                        .fusedExonDown(fusion.fusedExonDown())
+                        .proteinEffect(
+                            if (knownFusion != null) GeneAlterationFactory.convertProteinEffect(knownFusion.proteinEffect())
+                            else ProteinEffect.UNKNOWN
+                        )
+                        .isAssociatedWithDrugResistance(knownFusion?.associatedWithDrugResistance())
+                        .driverType(determineDriverType(fusion))
+                        .build()
+                )
             } else check(!fusion.reported()) {
                 ("Filtered a reported fusion through gene filtering: '" + fusionEvent + "'. Please make sure either '"
                         + fusion.geneStart() + "' or '" + fusion.geneEnd() + "' is configured as a known gene.")
@@ -46,8 +53,7 @@ internal class FusionExtractor(private val geneFilter: GeneFilter, private val e
     }
 
     companion object {
-        @VisibleForTesting
-        fun determineDriverType(fusion: LinxFusion): FusionDriverType {
+        internal fun determineDriverType(fusion: LinxFusion): FusionDriverType {
             return when (fusion.reportedType()) {
                 LinxFusionType.PROMISCUOUS_3 -> {
                     FusionDriverType.PROMISCUOUS_3
@@ -91,8 +97,7 @@ internal class FusionExtractor(private val geneFilter: GeneFilter, private val e
             }
         }
 
-        @VisibleForTesting
-        fun determineDriverLikelihood(fusion: LinxFusion): DriverLikelihood? {
+        internal fun determineDriverLikelihood(fusion: LinxFusion): DriverLikelihood? {
             return when (fusion.driverLikelihood()) {
                 FusionLikelihoodType.HIGH -> {
                     DriverLikelihood.HIGH
@@ -107,7 +112,10 @@ internal class FusionExtractor(private val geneFilter: GeneFilter, private val e
                 }
 
                 else -> {
-                    throw IllegalStateException("Cannot determine driver likelihood for fusion driver likelihood: " + fusion.driverLikelihood())
+                    throw IllegalStateException(
+                        "Cannot determine driver likelihood for fusion driver likelihood: " +
+                                fusion.driverLikelihood()
+                    )
                 }
             }
         }

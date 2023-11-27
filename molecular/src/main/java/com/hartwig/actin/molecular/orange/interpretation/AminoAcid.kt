@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.orange.interpretation
 import com.google.common.collect.Maps
 
 internal object AminoAcid {
+
     private val TRI_LETTER_AMINO_ACID_TO_SINGLE_LETTER: MutableMap<String, String> = Maps.newHashMap()
 
     init {

@@ -4,7 +4,6 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.TumorStatus
-import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.sort.PriorSecondPrimaryDiagnosedDateComparator
@@ -14,6 +13,7 @@ import com.hartwig.actin.report.pdf.util.Cells.create
 import com.hartwig.actin.report.pdf.util.Cells.createKey
 import com.hartwig.actin.report.pdf.util.Cells.createSpanningValue
 import com.hartwig.actin.report.pdf.util.Cells.createValue
+import com.hartwig.actin.report.pdf.util.Formats.DATE_UNKNOWN
 import com.hartwig.actin.report.pdf.util.Tables.createFixedWidthCols
 import com.hartwig.actin.report.pdf.util.Tables.createSingleColWithWidth
 import com.itextpdf.layout.element.BlockElement
@@ -105,7 +105,7 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
         private const val STOP_REASON_PROGRESSIVE_DISEASE = "PD"
 
         private fun extractDateRangeString(treatmentHistoryEntry: TreatmentHistoryEntry): String {
-            val startString = toDateString(treatmentHistoryEntry.startYear(), treatmentHistoryEntry.startMonth()) ?: "?"
+            val startString = toDateString(treatmentHistoryEntry.startYear(), treatmentHistoryEntry.startMonth()) ?: DATE_UNKNOWN
             return treatmentHistoryEntry.treatmentHistoryDetails()?.let { toDateString(it.stopYear(), it.stopMonth()) }
                 ?.let { stopString: String -> "$startString-$stopString" } ?: startString
         }
@@ -132,13 +132,7 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
 
             val annotation = listOfNotNull(intentString, cyclesString, stopReasonString).joinToString(", ")
 
-            val treatmentNames = treatmentHistoryEntry.treatments().map(Treatment::display).map(String::lowercase).toSet()
-            val treatmentDisplay = if (treatmentNames == setOf("chemotherapy", "radiotherapy")) {
-                "Chemoradiation"
-            } else {
-                treatmentHistoryEntry.treatmentDisplay()
-            }
-            val treatmentWithAnnotation = treatmentDisplay + if (annotation.isEmpty()) "" else " ($annotation)"
+            val treatmentWithAnnotation = treatmentHistoryEntry.treatmentDisplay() + if (annotation.isEmpty()) "" else " ($annotation)"
 
             return if (treatmentHistoryEntry.isTrial) {
                 val acronym = if (treatmentHistoryEntry.trialAcronym().isNullOrEmpty()) "" else "(${treatmentHistoryEntry.trialAcronym()})"

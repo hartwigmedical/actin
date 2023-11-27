@@ -11,8 +11,11 @@ import com.hartwig.serve.datamodel.fusion.ActionableFusion
 import com.hartwig.serve.datamodel.gene.ActionableGene
 import com.hartwig.serve.datamodel.gene.GeneEvent
 
-internal class FusionEvidence private constructor(private val actionablePromiscuous: List<ActionableGene>,
-                                                  private val actionableFusions: List<ActionableFusion>) : EvidenceMatcher<LinxFusion> {
+internal class FusionEvidence private constructor(
+    private val actionablePromiscuous: List<ActionableGene>,
+    private val actionableFusions: List<ActionableFusion>
+) : EvidenceMatcher<LinxFusion> {
+
     override fun findMatches(fusion: LinxFusion): List<ActionableEvent> {
         val matches: MutableList<ActionableEvent> = Lists.newArrayList()
         for (actionable in actionablePromiscuous) {
@@ -29,7 +32,9 @@ internal class FusionEvidence private constructor(private val actionablePromiscu
     }
 
     companion object {
-        private val APPLICABLE_PROMISCUOUS_EVENTS: MutableSet<GeneEvent> = Sets.newHashSet(GeneEvent.FUSION, GeneEvent.ACTIVATION, GeneEvent.ANY_MUTATION)
+        private val APPLICABLE_PROMISCUOUS_EVENTS: MutableSet<GeneEvent> =
+            Sets.newHashSet(GeneEvent.FUSION, GeneEvent.ACTIVATION, GeneEvent.ANY_MUTATION)
+
         fun create(actionableEvents: ActionableEvents): FusionEvidence {
             val actionablePromiscuous: MutableList<ActionableGene> = Lists.newArrayList()
             for (actionableGene in actionableEvents.genes()) {

@@ -52,6 +52,7 @@ import org.apache.logging.log4j.util.Strings
 import java.time.LocalDate
 
 object TestOrangeFactory {
+
     fun createMinimalTestOrangeRecord(): OrangeRecord {
         return ImmutableOrangeRecord.builder()
             .sampleId(TestDataFactory.TEST_SAMPLE)

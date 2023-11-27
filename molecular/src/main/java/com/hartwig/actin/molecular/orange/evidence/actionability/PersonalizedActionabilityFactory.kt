@@ -1,10 +1,13 @@
 package com.hartwig.actin.molecular.orange.evidence.actionability
 
-import com.google.common.annotations.VisibleForTesting
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.serve.datamodel.ActionableEvent
 
-internal class PersonalizedActionabilityFactory @VisibleForTesting constructor(private val doidModel: DoidModel, private val applicableDoids: Set<String>) {
+internal class PersonalizedActionabilityFactory internal constructor(
+    private val doidModel: DoidModel,
+    private val applicableDoids: Set<String>
+) {
+
     fun create(matches: List<ActionableEvent>): ActionabilityMatch {
         val expandedTumorDoids = expandDoids(doidModel, applicableDoids)
         val (onLabelEvents, offLabelEvents) = matches.partition { isOnLabel(it, expandedTumorDoids) }
