@@ -57,7 +57,9 @@ object Formats {
     }
 
     fun styleForTableValue(value: String): Style {
-        return if (!NON_HIGHLIGHT_VALUES.contains(value)) Styles.tableHighlightStyle() else Styles.tableUnknownStyle()
+        return if (!NON_HIGHLIGHT_VALUES.contains(value) && !DATE_UNKNOWN.equals(value)) {
+            Styles.tableHighlightStyle()
+        } else Styles.tableUnknownStyle()
     }
 
     fun fontColorForEvaluation(evaluation: EvaluationResult): DeviceRgb {
