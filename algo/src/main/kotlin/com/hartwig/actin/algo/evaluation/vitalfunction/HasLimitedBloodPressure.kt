@@ -8,6 +8,6 @@ class HasLimitedBloodPressure(private val category: BloodPressureCategory, priva
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return BloodPressureFuncions.evaluatePatientBloodPressureAgainstMax(record, this.category, this.maxMedianBloodPressure)
+        return BloodPressureFunctions.evaluatePatientMaximumBloodPressure(record, this.category, this.maxMedianBloodPressure)
     }
 }

@@ -8,6 +8,6 @@ class HasSufficientBloodPressure(private val category: BloodPressureCategory, pr
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return BloodPressureFuncions.evaluatePatientBloodPressureAgainstMin(record, this.category, this.minMedianBloodPressure)
+        return BloodPressureFunctions.evaluatePatientMinimumBloodPressure(record, this.category, this.minMedianBloodPressure)
     }
 }

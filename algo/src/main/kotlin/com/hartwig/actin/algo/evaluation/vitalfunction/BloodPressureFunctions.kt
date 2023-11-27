@@ -5,22 +5,18 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import kotlin.math.roundToInt
 
-object BloodPressureFuncions {
+object BloodPressureFunctions {
 
-    fun evaluatePatientBloodPressureAgainstMin(record: PatientRecord, category: BloodPressureCategory, referenceBloodPressure: Int
-    ): Evaluation {
-        return evaluatePatientBloodPressureAgainstReference(record, category, referenceBloodPressure, true)
+    fun evaluatePatientMinimumBloodPressure(record: PatientRecord, category: BloodPressureCategory, minimalBloodPressure: Int): Evaluation {
+        return evaluatePatientBloodPressureAgainstReference(record, category, minimalBloodPressure, true)
     }
 
-    fun evaluatePatientBloodPressureAgainstMax(record: PatientRecord, category: BloodPressureCategory, referenceBloodPressure: Int
-    ): Evaluation {
-        return evaluatePatientBloodPressureAgainstReference(record, category, referenceBloodPressure, false)
+    fun evaluatePatientMaximumBloodPressure(record: PatientRecord, category: BloodPressureCategory, maximumBloodPressure: Int): Evaluation {
+        return evaluatePatientBloodPressureAgainstReference(record, category, maximumBloodPressure, false)
     }
 
     private fun evaluatePatientBloodPressureAgainstReference(
-        record: PatientRecord, category: BloodPressureCategory, referenceBloodPressure: Int, referenceIsMinimum: Boolean
-    ): Evaluation {
-
+        record: PatientRecord, category: BloodPressureCategory, referenceBloodPressure: Int, referenceIsMinimum: Boolean): Evaluation {
         val categoryDisplay = category.display().lowercase()
         val relevant = VitalFunctionSelector.selectBloodPressures(record.clinical().vitalFunctions(), category)
         if (relevant.isEmpty()) return EvaluationFactory.undetermined("No data found for $categoryDisplay")

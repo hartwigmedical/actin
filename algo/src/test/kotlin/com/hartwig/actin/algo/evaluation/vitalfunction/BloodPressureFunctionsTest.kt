@@ -4,8 +4,8 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.vitalfunction.BloodPressureCategory.DIASTOLIC
 import com.hartwig.actin.algo.evaluation.vitalfunction.BloodPressureCategory.SYSTOLIC
-import com.hartwig.actin.algo.evaluation.vitalfunction.BloodPressureFuncions.evaluatePatientBloodPressureAgainstMax
-import com.hartwig.actin.algo.evaluation.vitalfunction.BloodPressureFuncions.evaluatePatientBloodPressureAgainstMin
+import com.hartwig.actin.algo.evaluation.vitalfunction.BloodPressureFunctions.evaluatePatientMaximumBloodPressure
+import com.hartwig.actin.algo.evaluation.vitalfunction.BloodPressureFunctions.evaluatePatientMinimumBloodPressure
 import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
@@ -20,9 +20,9 @@ class BloodPressureFunctionsTest {
     fun `Should evaluate undetermined when no blood pressures known`() {
         val bloodPressures = emptyList<VitalFunction>()
         assertEvaluation(EvaluationResult.UNDETERMINED,
-            evaluatePatientBloodPressureAgainstMin(VitalFunctionTestFactory.withVitalFunctions(bloodPressures), DIASTOLIC, 60))
+            evaluatePatientMinimumBloodPressure(VitalFunctionTestFactory.withVitalFunctions(bloodPressures), DIASTOLIC, 60))
         assertEvaluation(EvaluationResult.UNDETERMINED,
-            evaluatePatientBloodPressureAgainstMax(VitalFunctionTestFactory.withVitalFunctions(bloodPressures), SYSTOLIC, 100))
+            evaluatePatientMaximumBloodPressure(VitalFunctionTestFactory.withVitalFunctions(bloodPressures), SYSTOLIC, 100))
     }
 
     @Test
@@ -30,7 +30,7 @@ class BloodPressureFunctionsTest {
         val bloodPressures = listOf(systolic().date(referenceDate).value(85.0).build(), systolic().date(referenceDate).value(105.0).build())
 
         assertEvaluation(EvaluationResult.FAIL,
-            evaluatePatientBloodPressureAgainstMin(VitalFunctionTestFactory.withVitalFunctions(bloodPressures), SYSTOLIC, 100)
+            evaluatePatientMinimumBloodPressure(VitalFunctionTestFactory.withVitalFunctions(bloodPressures), SYSTOLIC, 100)
         )
     }
 
@@ -42,7 +42,7 @@ class BloodPressureFunctionsTest {
 
         assertEvaluation(
             EvaluationResult.FAIL,
-            evaluatePatientBloodPressureAgainstMin(VitalFunctionTestFactory.withVitalFunctions(bloodPressures), DIASTOLIC, 80)
+            evaluatePatientMinimumBloodPressure(VitalFunctionTestFactory.withVitalFunctions(bloodPressures), DIASTOLIC, 80)
         )
     }
 
@@ -54,7 +54,7 @@ class BloodPressureFunctionsTest {
 
         assertEvaluation(
             EvaluationResult.PASS,
-            evaluatePatientBloodPressureAgainstMin(VitalFunctionTestFactory.withVitalFunctions(bloodPressures), SYSTOLIC, 100)
+            evaluatePatientMinimumBloodPressure(VitalFunctionTestFactory.withVitalFunctions(bloodPressures), SYSTOLIC, 100)
         )
     }
 
@@ -66,7 +66,7 @@ class BloodPressureFunctionsTest {
 
         assertEvaluation(
             EvaluationResult.PASS,
-            evaluatePatientBloodPressureAgainstMin(VitalFunctionTestFactory.withVitalFunctions(bloodPressures), DIASTOLIC, 75)
+            evaluatePatientMinimumBloodPressure(VitalFunctionTestFactory.withVitalFunctions(bloodPressures), DIASTOLIC, 75)
         )
     }
 
@@ -78,7 +78,7 @@ class BloodPressureFunctionsTest {
 
         assertEvaluation(
             EvaluationResult.FAIL,
-            evaluatePatientBloodPressureAgainstMax(VitalFunctionTestFactory.withVitalFunctions(bloodPressures), DIASTOLIC, 100)
+            evaluatePatientMaximumBloodPressure(VitalFunctionTestFactory.withVitalFunctions(bloodPressures), DIASTOLIC, 100)
         )
     }
 
@@ -90,7 +90,7 @@ class BloodPressureFunctionsTest {
 
         assertEvaluation(
             EvaluationResult.PASS,
-            evaluatePatientBloodPressureAgainstMax(VitalFunctionTestFactory.withVitalFunctions(bloodPressures), SYSTOLIC, 130)
+            evaluatePatientMaximumBloodPressure(VitalFunctionTestFactory.withVitalFunctions(bloodPressures), SYSTOLIC, 130)
         )
     }
 
@@ -105,13 +105,13 @@ class BloodPressureFunctionsTest {
             systolic().date(referenceDate.minusDays(7)).value(20.0).build())
         assertEvaluation(
             EvaluationResult.PASS,
-            evaluatePatientBloodPressureAgainstMin(VitalFunctionTestFactory.withVitalFunctions(bloodPressures), SYSTOLIC, 100)
+            evaluatePatientMinimumBloodPressure(VitalFunctionTestFactory.withVitalFunctions(bloodPressures), SYSTOLIC, 100)
         )
     }
 
     @Test
     fun `Should evaluate undetermined when wrong blood pressure category`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluatePatientBloodPressureAgainstMax(
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluatePatientMaximumBloodPressure(
             VitalFunctionTestFactory.withVitalFunctions(listOf(diastolic().date(referenceDate).value(110.0).build())), SYSTOLIC, 100))
     }
 
