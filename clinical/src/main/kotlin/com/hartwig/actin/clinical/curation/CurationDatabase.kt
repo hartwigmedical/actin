@@ -20,9 +20,8 @@ import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation
 import com.hartwig.actin.clinical.curation.translation.Translation
-import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
-private val LOGGER = LogManager.getLogger(CurationDatabase::class.java)
 typealias InputText = String
 
 data class CurationDatabase(
@@ -133,7 +132,7 @@ data class CurationDatabase(
         return laboratoryTranslations[code to name]
     }
 
-    fun evaluate(evaluatedInputs: ExtractionEvaluation) {
+    fun evaluate(evaluatedInputs: ExtractionEvaluation, logger: Logger) {
         listOf(
             Triple(primaryTumorConfigs, evaluatedInputs.primaryTumorEvaluatedInputs, CurationCategory.PRIMARY_TUMOR),
             Triple(
@@ -171,7 +170,7 @@ data class CurationDatabase(
             Triple(dosageUnitTranslations, evaluatedInputs.dosageUnitEvaluatedInputs, CurationCategory.DOSAGE_UNIT_TRANSLATION)
         ).forEach { (configMap, evaluatedInputs, category) ->
             (configMap.keys - evaluatedInputs).forEach { input ->
-                LOGGER.warn(" Curation key '{}' not used for {} curation", input, category.categoryName)
+                logger.warn(" Curation key '{}' not used for {} curation", input, category.categoryName)
             }
         }
     }

@@ -123,7 +123,7 @@ class ClinicalIngestion(private val feed: FeedModel, private val curation: Curat
         }
 
         LOGGER.info("Evaluating curation database")
-        curation.evaluate(records.fold(ExtractionEvaluation()) { acc, (_, eval) -> acc + eval })
+        curation.evaluate(records.fold(ExtractionEvaluation()) { acc, (_, eval) -> acc + eval }, LOGGER)
 
         return records.map { it.first }
     }
