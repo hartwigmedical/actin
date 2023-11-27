@@ -3,17 +3,16 @@ package com.hartwig.actin.algo.evaluation.vitalfunction
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.sort.BodyWeightDescendingDateComparator
 
 object BodyWeightFunctions {
 
-    fun evaluatePatientBodyWeightAgainstMax (record: PatientRecord, referenceBodyWeight: Double): Evaluation {
-            return evaluatePatientBodyWeightAgainstReference(record, referenceBodyWeight, false)
+    fun evaluatePatientForMaximumBodyWeight(record: PatientRecord, maxBodyWeight: Double): Evaluation {
+        return evaluatePatientBodyWeightAgainstReference(record, maxBodyWeight, false)
         }
 
-    fun evaluatePatientBodyWeightAgainstMin (record: PatientRecord, referenceBodyWeight: Double): Evaluation {
-        return evaluatePatientBodyWeightAgainstReference(record, referenceBodyWeight, true)
+    fun evaluatePatientForMinimumBodyWeight(record: PatientRecord, minBodyWeight: Double): Evaluation {
+        return evaluatePatientBodyWeightAgainstReference(record, minBodyWeight, true)
     }
 
     private fun evaluatePatientBodyWeightAgainstReference(
@@ -23,19 +22,21 @@ object BodyWeightFunctions {
             ?: return EvaluationFactory.undetermined(
                 "No body weights found", "No body weights found"
             )
+
+        if (!mostRecent.unit().equals(EXPECTED_UNIT, ignoreCase = true)) {
+            return EvaluationFactory.undetermined(
+                "Most recent body weight not measured in $EXPECTED_UNIT",
+                "Invalid body weight unit"
+            )
+        }
+
         val comparison = mostRecent.value().compareTo(referenceBodyWeight)
 
         return when {
-            !mostRecent.unit().equals(EXPECTED_UNIT, ignoreCase = true) -> {
-                EvaluationFactory.undetermined(
-                    "Most recent body weight not measured in $EXPECTED_UNIT",
-                    "Invalid body weight unit"
-                )
-            }
 
             comparison < 0 -> {
-                val specificMessage = "Patient has body weight below $referenceBodyWeight"
-                val generalMessage = "Body weight below $referenceBodyWeight"
+                val specificMessage = "Patient body weight ({$mostRecent kg}) is below $referenceBodyWeight kg"
+                val generalMessage = "Body weight ({$mostRecent kg}) below $referenceBodyWeight kg"
                 if (referenceIsMinimum) {
                     EvaluationFactory.fail(specificMessage, generalMessage)
                 } else {
@@ -44,15 +45,15 @@ object BodyWeightFunctions {
             }
 
             comparison == 0 -> {
-                val specificMessage = "Patient has body weight equal to $referenceBodyWeight"
-                val generalMessage = "Body weight equal to $referenceBodyWeight"
+                val specificMessage = "Patient body weight ({$mostRecent kg}) is equal to $referenceBodyWeight kg"
+                val generalMessage = "Body weight ({$mostRecent kg}) equal to $referenceBodyWeight kg"
 
                 return EvaluationFactory.pass(specificMessage, generalMessage)
             }
 
             else -> {
-                val specificMessage = "Patient has body weight above $referenceBodyWeight"
-                val generalMessage = "Body weight above $referenceBodyWeight"
+                val specificMessage = "Patient body weight ({$mostRecent kg}) is above $referenceBodyWeight kg"
+                val generalMessage = "Body weight ({$mostRecent kg}) above $referenceBodyWeight kg"
                 if (referenceIsMinimum) {
                     EvaluationFactory.pass(specificMessage, generalMessage)
                 } else {
