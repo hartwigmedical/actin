@@ -14,7 +14,6 @@
     <name>HMF ACTIN - Common</name>
 
     <dependencies>
-
         <dependency>
             <groupId>com.hartwig.serve</groupId>
             <artifactId>datamodel</artifactId>

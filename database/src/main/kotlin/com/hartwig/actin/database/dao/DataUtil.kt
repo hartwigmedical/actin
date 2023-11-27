@@ -3,6 +3,7 @@ package com.hartwig.actin.database.dao
 import java.util.*
 
 internal object DataUtil {
+
     private const val SEPARATOR = ";"
 
     fun toByte(bool: Boolean?): Byte? {

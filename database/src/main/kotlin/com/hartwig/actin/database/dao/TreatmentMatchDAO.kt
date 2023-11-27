@@ -10,6 +10,7 @@ import com.hartwig.actin.treatment.util.EligibilityFunctionDisplay
 import org.jooq.DSLContext
 
 class TreatmentMatchDAO(private val context: DSLContext) {
+
     fun clear(treatmentMatch: TreatmentMatch) {
         val patientId = treatmentMatch.patientId()
         val treatmentMatchResults =

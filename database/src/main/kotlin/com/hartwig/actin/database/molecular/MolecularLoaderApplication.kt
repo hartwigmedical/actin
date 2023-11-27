@@ -10,15 +10,18 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import kotlin.system.exitProcess
 
-class MolecularLoaderApplication constructor(private val config: MolecularLoaderConfig) {
+class MolecularLoaderApplication(private val config: MolecularLoaderConfig) {
 
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
+
         LOGGER.info("Loading molecular record from {}", config.molecularJson)
         val record = MolecularRecordJson.read(config.molecularJson)
         val access: DatabaseAccess = DatabaseAccess.fromCredentials(config.dbUser, config.dbPass, config.dbUrl)
+
         LOGGER.info("Writing molecular record for {}", record.sampleId())
         access.writeMolecularRecord(record)
+
         LOGGER.info("Done!")
     }
 

@@ -27,6 +27,7 @@ import org.jooq.DSLContext
 import java.util.*
 
 internal class ClinicalDAO(private val context: DSLContext) {
+
     fun clear() {
         context.execute("SET FOREIGN_KEY_CHECKS = 0;")
         context.truncate(Tables.PATIENT).execute()

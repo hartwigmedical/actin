@@ -16,7 +16,6 @@ data class MolecularLoaderConfig(
 ) : DatabaseLoaderConfig {
 
     companion object {
-       
         fun createOptions(): Options {
             val options = Options()
             options.addOption(MOLECULAR_JSON, true, "Path of the molecular json to load up")

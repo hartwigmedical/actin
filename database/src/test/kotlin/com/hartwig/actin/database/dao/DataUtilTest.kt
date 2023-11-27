@@ -8,6 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class DataUtilTest {
+
     @Test
     fun `Should convert boolean to byte`() {
         assertThat(toByte(true)).isEqualTo(1.toByte())
@@ -25,8 +26,7 @@ class DataUtilTest {
     @Test
     fun `Should concat and sort objects`() {
         assertThat(concatObjects(listOf(TestObject("hi")))).isEqualTo("TestObject(value=hi)")
-        assertThat(concatObjects(listOf(TestObject("hi"), TestObject("hello"))))
-            .isEqualTo("TestObject(value=hello);TestObject(value=hi)")
+        assertThat(concatObjects(listOf(TestObject("hi"), TestObject("hello")))).isEqualTo("TestObject(value=hello);TestObject(value=hi)")
     }
 
     @Test
