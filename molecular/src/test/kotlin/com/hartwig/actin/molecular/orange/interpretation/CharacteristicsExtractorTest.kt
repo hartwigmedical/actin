@@ -14,10 +14,10 @@ import com.hartwig.hmftools.datamodel.purple.PurpleTumorMutationalStatus
 import org.apache.logging.log4j.util.Strings
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import kotlin.test.assertNotNull
 
 class CharacteristicsExtractorTest {
 
@@ -31,7 +31,7 @@ class CharacteristicsExtractorTest {
         val predictedOrigin = characteristics.predictedTumorOrigin()
         assertNotNull(predictedOrigin)
 
-        assertEquals("Melanoma", predictedOrigin.cancerType())
+        assertEquals("Melanoma", predictedOrigin!!.cancerType())
         assertEquals(0.996, predictedOrigin.likelihood(), EPSILON)
         assertEquals(1, predictedOrigin.predictions().size.toLong())
 
@@ -49,7 +49,7 @@ class CharacteristicsExtractorTest {
 
         val tmb = characteristics.tumorMutationalBurden()
         assertNotNull(tmb)
-        assertEquals(13.0, tmb, EPSILON)
+        assertEquals(13.0, tmb!!, EPSILON)
         assertEquals(true, characteristics.hasHighTumorMutationalBurden())
         assertNotNull(characteristics.tumorMutationalBurdenEvidence())
         assertEquals(189, (characteristics.tumorMutationalLoad() as Int).toLong())
