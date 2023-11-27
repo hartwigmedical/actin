@@ -331,6 +331,17 @@ public final class TestClinicalFactory {
                 .impliesPotentialIndeterminateStatus(false)
                 .build());
 
+        priorMolecularTests.add(ImmutablePriorMolecularTest.builder()
+                .test("IHC")
+                .item("PD-L1")
+                .measure(null)
+                .scoreText(null)
+                .scoreValuePrefix(null)
+                .scoreValue(90.0)
+                .scoreValueUnit("%")
+                .impliesPotentialIndeterminateStatus(false)
+                .build());
+
         return priorMolecularTests;
     }
 
