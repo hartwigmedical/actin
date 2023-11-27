@@ -8,7 +8,9 @@ import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.gene.ActionableGene
 import com.hartwig.serve.datamodel.gene.GeneEvent
 
-internal class HomozygousDisruptionEvidence private constructor(private val actionableGenes: List<ActionableGene>) : EvidenceMatcher<LinxHomozygousDisruption> {
+internal class HomozygousDisruptionEvidence private constructor(private val actionableGenes: List<ActionableGene>) :
+    EvidenceMatcher<LinxHomozygousDisruption> {
+
     override fun findMatches(linxHomozygousDisruption: LinxHomozygousDisruption): List<ActionableEvent> {
         val matches: MutableList<ActionableEvent> = Lists.newArrayList()
         for (actionableGene in actionableGenes) {
@@ -20,7 +22,9 @@ internal class HomozygousDisruptionEvidence private constructor(private val acti
     }
 
     companion object {
-        private val APPLICABLE_GENE_EVENTS: MutableSet<GeneEvent> = Sets.newHashSet(GeneEvent.DELETION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION)
+        private val APPLICABLE_GENE_EVENTS: MutableSet<GeneEvent> =
+            Sets.newHashSet(GeneEvent.DELETION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION)
+
         fun create(actionableEvents: ActionableEvents): HomozygousDisruptionEvidence {
             val actionableGenes: MutableList<ActionableGene> = Lists.newArrayList()
             for (actionableGene in actionableEvents.genes()) {

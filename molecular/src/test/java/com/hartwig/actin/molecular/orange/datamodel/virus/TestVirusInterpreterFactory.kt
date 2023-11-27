@@ -6,6 +6,7 @@ import com.hartwig.hmftools.datamodel.virus.VirusLikelihoodType
 import org.apache.logging.log4j.util.Strings
 
 object TestVirusInterpreterFactory {
+
     fun builder(): ImmutableVirusInterpreterEntry.Builder {
         return ImmutableVirusInterpreterEntry.builder()
             .reported(true)

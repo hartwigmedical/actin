@@ -11,67 +11,100 @@ import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
 import com.hartwig.hmftools.datamodel.virus.VirusInterpretation
 import com.hartwig.hmftools.datamodel.virus.VirusInterpreterEntry
 import org.apache.logging.log4j.util.Strings
-import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class DriverEventFactoryTest {
+
     @Test
     fun canGenerateEventsForVariants() {
-        Assert.assertEquals("BRAF V600E", DriverEventFactory.variantEvent(variant("BRAF", "p.Val600Glu")))
-        Assert.assertEquals("BRAF V600E", DriverEventFactory.variantEvent(variant("BRAF", "p.V600E")))
-        Assert.assertEquals("BRAF V600E", DriverEventFactory.variantEvent(variant("BRAF", "V600E")))
-        Assert.assertEquals("BRAF c.1587-5delT splice",
-            DriverEventFactory.variantEvent(variant("BRAF",
-                "p.?",
-                "c.1587-5delT",
-                PurpleVariantEffect.SPLICE_ACCEPTOR,
-                PurpleCodingEffect.SPLICE)))
-        Assert.assertEquals("BRAF n.271-7395delT",
-            DriverEventFactory.variantEvent(variant("BRAF",
-                Strings.EMPTY,
-                "n.271-7395delT",
-                PurpleVariantEffect.INTRONIC,
-                PurpleCodingEffect.NONE)))
-        Assert.assertEquals("BRAF upstream",
-            DriverEventFactory.variantEvent(variant("BRAF",
-                Strings.EMPTY,
-                Strings.EMPTY,
-                PurpleVariantEffect.UPSTREAM_GENE,
-                PurpleCodingEffect.NONE)))
-        Assert.assertEquals("BRAF NON_CODING_TRANSCRIPT",
-            DriverEventFactory.variantEvent(variant("BRAF",
-                Strings.EMPTY,
-                Strings.EMPTY,
-                PurpleVariantEffect.NON_CODING_TRANSCRIPT,
-                PurpleCodingEffect.NONE)))
+        assertEquals("BRAF V600E", DriverEventFactory.variantEvent(variant("BRAF", "p.Val600Glu")))
+        assertEquals("BRAF V600E", DriverEventFactory.variantEvent(variant("BRAF", "p.V600E")))
+        assertEquals("BRAF V600E", DriverEventFactory.variantEvent(variant("BRAF", "V600E")))
+
+        assertEquals(
+            "BRAF c.1587-5delT splice",
+            DriverEventFactory.variantEvent(
+                variant(
+                    "BRAF",
+                    "p.?",
+                    "c.1587-5delT",
+                    PurpleVariantEffect.SPLICE_ACCEPTOR,
+                    PurpleCodingEffect.SPLICE
+                )
+            )
+        )
+
+        assertEquals(
+            "BRAF n.271-7395delT",
+            DriverEventFactory.variantEvent(
+                variant(
+                    "BRAF",
+                    Strings.EMPTY,
+                    "n.271-7395delT",
+                    PurpleVariantEffect.INTRONIC,
+                    PurpleCodingEffect.NONE
+                )
+            )
+        )
+
+        assertEquals(
+            "BRAF upstream",
+            DriverEventFactory.variantEvent(
+                variant(
+                    "BRAF",
+                    Strings.EMPTY,
+                    Strings.EMPTY,
+                    PurpleVariantEffect.UPSTREAM_GENE,
+                    PurpleCodingEffect.NONE
+                )
+            )
+        )
+
+        assertEquals(
+            "BRAF NON_CODING_TRANSCRIPT",
+            DriverEventFactory.variantEvent(
+                variant(
+                    "BRAF",
+                    Strings.EMPTY,
+                    Strings.EMPTY,
+                    PurpleVariantEffect.NON_CODING_TRANSCRIPT,
+                    PurpleCodingEffect.NONE
+                )
+            )
+        )
     }
 
     @Test
     fun canGenerateEventsForCopyNumbers() {
-        Assert.assertEquals("MYC amp", DriverEventFactory.gainLossEvent(gainLoss("MYC", CopyNumberInterpretation.FULL_GAIN)))
-        Assert.assertEquals("MYC amp", DriverEventFactory.gainLossEvent(gainLoss("MYC", CopyNumberInterpretation.PARTIAL_GAIN)))
-        Assert.assertEquals("PTEN del", DriverEventFactory.gainLossEvent(gainLoss("PTEN", CopyNumberInterpretation.FULL_LOSS)))
-        Assert.assertEquals("PTEN del", DriverEventFactory.gainLossEvent(gainLoss("PTEN", CopyNumberInterpretation.PARTIAL_LOSS)))
+        assertEquals("MYC amp", DriverEventFactory.gainLossEvent(gainLoss("MYC", CopyNumberInterpretation.FULL_GAIN)))
+        assertEquals("MYC amp", DriverEventFactory.gainLossEvent(gainLoss("MYC", CopyNumberInterpretation.PARTIAL_GAIN)))
+        assertEquals("PTEN del", DriverEventFactory.gainLossEvent(gainLoss("PTEN", CopyNumberInterpretation.FULL_LOSS)))
+        assertEquals("PTEN del", DriverEventFactory.gainLossEvent(gainLoss("PTEN", CopyNumberInterpretation.PARTIAL_LOSS)))
     }
 
     @Test
     fun canGenerateEventsForDisruptions() {
-        Assert.assertEquals("TP53 hom disruption",
-            DriverEventFactory.homozygousDisruptionEvent(TestLinxFactory.homozygousDisruptionBuilder().gene("TP53").build()))
-        Assert.assertEquals("TP53 disruption", DriverEventFactory.disruptionEvent(TestLinxFactory.breakendBuilder().gene("TP53").build()))
+        assertEquals(
+            "TP53 hom disruption",
+            DriverEventFactory.homozygousDisruptionEvent(TestLinxFactory.homozygousDisruptionBuilder().gene("TP53").build())
+        )
+        assertEquals("TP53 disruption", DriverEventFactory.disruptionEvent(TestLinxFactory.breakendBuilder().gene("TP53").build()))
     }
 
     @Test
     fun canGenerateEventsForFusions() {
-        Assert.assertEquals("EML4 - ALK fusion",
-            DriverEventFactory.fusionEvent(TestLinxFactory.fusionBuilder().geneStart("EML4").geneEnd("ALK").build()))
+        assertEquals(
+            "EML4 - ALK fusion",
+            DriverEventFactory.fusionEvent(TestLinxFactory.fusionBuilder().geneStart("EML4").geneEnd("ALK").build())
+        )
     }
 
     @Test
     fun canGenerateEventsForViruses() {
-        Assert.assertEquals("HPV (Papilloma) positive", DriverEventFactory.virusEvent(virus("Papilloma", VirusInterpretation.HPV)))
-        Assert.assertEquals("EBV positive", DriverEventFactory.virusEvent(virus("Papilloma", VirusInterpretation.EBV)))
-        Assert.assertEquals("Papilloma positive", DriverEventFactory.virusEvent(virus("Papilloma", null)))
+        assertEquals("HPV (Papilloma) positive", DriverEventFactory.virusEvent(virus("Papilloma", VirusInterpretation.HPV)))
+        assertEquals("EBV positive", DriverEventFactory.virusEvent(virus("Papilloma", VirusInterpretation.EBV)))
+        assertEquals("Papilloma positive", DriverEventFactory.virusEvent(virus("Papilloma", null)))
     }
 
     companion object {
@@ -82,16 +115,20 @@ class DriverEventFactoryTest {
                 .build()
         }
 
-        private fun variant(gene: String, hgvsProteinImpact: String, hgvsCodingImpact: String,
-                            effect: PurpleVariantEffect, codingEffect: PurpleCodingEffect): PurpleVariant {
+        private fun variant(
+            gene: String, hgvsProteinImpact: String, hgvsCodingImpact: String,
+            effect: PurpleVariantEffect, codingEffect: PurpleCodingEffect
+        ): PurpleVariant {
             return TestPurpleFactory.variantBuilder()
                 .gene(gene)
-                .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder()
-                    .hgvsProteinImpact(hgvsProteinImpact)
-                    .hgvsCodingImpact(hgvsCodingImpact)
-                    .addEffects(effect)
-                    .codingEffect(codingEffect)
-                    .build())
+                .canonicalImpact(
+                    TestPurpleFactory.transcriptImpactBuilder()
+                        .hgvsProteinImpact(hgvsProteinImpact)
+                        .hgvsCodingImpact(hgvsCodingImpact)
+                        .addEffects(effect)
+                        .codingEffect(codingEffect)
+                        .build()
+                )
                 .build()
         }
 

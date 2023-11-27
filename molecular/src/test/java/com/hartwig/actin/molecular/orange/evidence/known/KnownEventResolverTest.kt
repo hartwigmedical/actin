@@ -20,13 +20,17 @@ import com.hartwig.serve.datamodel.gene.KnownGene
 import com.hartwig.serve.datamodel.hotspot.KnownHotspot
 import com.hartwig.serve.datamodel.range.KnownCodon
 import com.hartwig.serve.datamodel.range.KnownExon
-import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Test
 
 class KnownEventResolverTest {
+
     @Test
     fun canResolveKnownEventsForVariants() {
-        val hotspot: KnownHotspot = TestServeKnownFactory.hotspotBuilder().gene("gene 1").chromosome("12").position(10).ref("A").alt("T").build()
+        val hotspot: KnownHotspot =
+            TestServeKnownFactory.hotspotBuilder().gene("gene 1").chromosome("12").position(10).ref("A").alt("T").build()
         val codon: KnownCodon = TestServeKnownFactory.codonBuilder()
             .gene("gene 1")
             .chromosome("12")
@@ -42,8 +46,10 @@ class KnownEventResolverTest {
             .applicableMutationType(MutationType.ANY)
             .build()
         val knownGene: KnownGene = knownGeneWithName("gene 1")
-        val known: KnownEvents = ImmutableKnownEvents.builder().addHotspots(hotspot).addCodons(codon).addExons(exon).addGenes(knownGene).build()
+        val known: KnownEvents =
+            ImmutableKnownEvents.builder().addHotspots(hotspot).addCodons(codon).addExons(exon).addGenes(knownGene).build()
         val resolver = KnownEventResolver(known, known.genes())
+
         val hotspotMatch: PurpleVariant = TestPurpleFactory.variantBuilder()
             .gene("gene 1")
             .chromosome("12")
@@ -52,15 +58,19 @@ class KnownEventResolverTest {
             .alt("T")
             .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder().codingEffect(PurpleCodingEffect.MISSENSE).build())
             .build()
-        Assert.assertEquals(hotspot, resolver.resolveForVariant(hotspotMatch))
+        assertEquals(hotspot, resolver.resolveForVariant(hotspotMatch))
+
         val codonMatch: PurpleVariant = TestPurpleFactory.variantBuilder().from(hotspotMatch).position(9).build()
-        Assert.assertEquals(codon, resolver.resolveForVariant(codonMatch))
+        assertEquals(codon, resolver.resolveForVariant(codonMatch))
+
         val exonMatch: PurpleVariant = TestPurpleFactory.variantBuilder().from(hotspotMatch).position(6).build()
-        Assert.assertEquals(exon, resolver.resolveForVariant(exonMatch))
+        assertEquals(exon, resolver.resolveForVariant(exonMatch))
+
         val geneMatch: PurpleVariant = TestPurpleFactory.variantBuilder().from(hotspotMatch).position(1).build()
-        Assert.assertNotNull(resolver.resolveForVariant(geneMatch))
+        assertNotNull(resolver.resolveForVariant(geneMatch))
+
         val wrongGene: PurpleVariant = TestPurpleFactory.variantBuilder().from(hotspotMatch).gene("other").build()
-        Assert.assertNull(resolver.resolveForVariant(wrongGene))
+        assertNull(resolver.resolveForVariant(wrongGene))
     }
 
     @Test
@@ -71,24 +81,33 @@ class KnownEventResolverTest {
         val knownGene2: KnownGene = knownGeneWithName("gene 2")
         val known: KnownEvents = ImmutableKnownEvents.builder().addCopyNumbers(knownAmp, knownDel).addGenes(knownGene1, knownGene2).build()
         val resolver = KnownEventResolver(known, known.genes())
+
         val ampGene1 = amp("gene 1")
-        Assert.assertEquals(knownAmp, resolver.resolveForCopyNumber(ampGene1))
+        assertEquals(knownAmp, resolver.resolveForCopyNumber(ampGene1))
+
         val ampGene2 = amp("gene 2")
-        Assert.assertNotNull(resolver.resolveForCopyNumber(ampGene2))
+        assertNotNull(resolver.resolveForCopyNumber(ampGene2))
+
         val ampGene3 = amp("gene 3")
-        Assert.assertNull(resolver.resolveForCopyNumber(ampGene3))
+        assertNull(resolver.resolveForCopyNumber(ampGene3))
+
         val homDisruptionGene1: LinxHomozygousDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build()
-        Assert.assertEquals(knownDel, resolver.resolveForHomozygousDisruption(homDisruptionGene1))
+        assertEquals(knownDel, resolver.resolveForHomozygousDisruption(homDisruptionGene1))
+
         val homDisruptionGene2: LinxHomozygousDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 2").build()
-        Assert.assertNotNull(resolver.resolveForHomozygousDisruption(homDisruptionGene2))
+        assertNotNull(resolver.resolveForHomozygousDisruption(homDisruptionGene2))
+
         val homDisruptionGene3: LinxHomozygousDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 3").build()
-        Assert.assertNull(resolver.resolveForHomozygousDisruption(homDisruptionGene3))
+        assertNull(resolver.resolveForHomozygousDisruption(homDisruptionGene3))
+
         val breakendGene1: LinxBreakend = TestLinxFactory.breakendBuilder().gene("gene 1").build()
-        Assert.assertNotNull(resolver.resolveForBreakend(breakendGene1))
+        assertNotNull(resolver.resolveForBreakend(breakendGene1))
+
         val breakendGene2: LinxBreakend = TestLinxFactory.breakendBuilder().gene("gene 2").build()
-        Assert.assertNotNull(resolver.resolveForBreakend(breakendGene2))
+        assertNotNull(resolver.resolveForBreakend(breakendGene2))
+
         val breakendGene3: LinxBreakend = TestLinxFactory.breakendBuilder().gene("gene 3").build()
-        Assert.assertNull(resolver.resolveForBreakend(breakendGene3))
+        assertNull(resolver.resolveForBreakend(breakendGene3))
     }
 
     @Test
@@ -96,10 +115,12 @@ class KnownEventResolverTest {
         val fusion: KnownFusion = TestServeKnownFactory.fusionBuilder().geneUp("up").geneDown("down").build()
         val known: KnownEvents = ImmutableKnownEvents.builder().addFusions(fusion).build()
         val resolver = KnownEventResolver(known, known.genes())
+
         val fusionMatch: LinxFusion = TestLinxFactory.fusionBuilder().geneStart("up").geneEnd("down").build()
-        Assert.assertEquals(fusion, resolver.resolveForFusion(fusionMatch))
+        assertEquals(fusion, resolver.resolveForFusion(fusionMatch))
+
         val fusionMismatch: LinxFusion = TestLinxFactory.fusionBuilder().geneStart("down").geneEnd("up").build()
-        Assert.assertNull(resolver.resolveForFusion(fusionMismatch))
+        assertNull(resolver.resolveForFusion(fusionMismatch))
     }
 
     companion object {

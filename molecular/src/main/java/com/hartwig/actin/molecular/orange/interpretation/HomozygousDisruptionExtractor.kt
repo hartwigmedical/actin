@@ -10,22 +10,30 @@ import com.hartwig.actin.molecular.sort.driver.HomozygousDisruptionComparator
 import com.hartwig.hmftools.datamodel.linx.LinxRecord
 
 internal class HomozygousDisruptionExtractor(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
+
     fun extractHomozygousDisruptions(linx: LinxRecord): MutableSet<HomozygousDisruption> {
         val homozygousDisruptions: MutableSet<HomozygousDisruption> = Sets.newTreeSet(HomozygousDisruptionComparator())
         for (homozygousDisruption in relevantHomozygousDisruptions(linx)) {
             if (geneFilter.include(homozygousDisruption.gene())) {
-                homozygousDisruptions.add(ImmutableHomozygousDisruption.builder()
-                    .from(GeneAlterationFactory.convertAlteration(homozygousDisruption.gene(),
-                        evidenceDatabase.geneAlterationForHomozygousDisruption(homozygousDisruption)))
-                    .isReportable(true)
-                    .event(DriverEventFactory.homozygousDisruptionEvent(homozygousDisruption))
-                    .driverLikelihood(DriverLikelihood.HIGH)
-                    .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForHomozygousDisruption(homozygousDisruption)))
-                    .build())
+                homozygousDisruptions.add(
+                    ImmutableHomozygousDisruption.builder()
+                        .from(
+                            GeneAlterationFactory.convertAlteration(
+                                homozygousDisruption.gene(),
+                                evidenceDatabase.geneAlterationForHomozygousDisruption(homozygousDisruption)
+                            )
+                        )
+                        .isReportable(true)
+                        .event(DriverEventFactory.homozygousDisruptionEvent(homozygousDisruption))
+                        .driverLikelihood(DriverLikelihood.HIGH)
+                        .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForHomozygousDisruption(homozygousDisruption)))
+                        .build()
+                )
             } else {
                 throw IllegalStateException(
                     "Filtered a reported homozygous disruption through gene filtering: '" + homozygousDisruption.gene() + "'. "
-                            + "Please make sure '" + homozygousDisruption.gene() + "' is configured as a known gene.")
+                            + "Please make sure '" + homozygousDisruption.gene() + "' is configured as a known gene."
+                )
             }
         }
         return homozygousDisruptions

@@ -7,25 +7,31 @@ import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.ImmutableActionableEvents
 import com.hartwig.serve.datamodel.characteristic.ActionableCharacteristic
 import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType
-import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class VirusEvidenceTest {
+
     @Test
     fun canDetermineEvidenceForHPV() {
         val hpv: ActionableCharacteristic = TestServeActionabilityFactory.characteristicBuilder().type(TumorCharacteristicType.HPV_POSITIVE).build()
         val actionable: ActionableEvents = ImmutableActionableEvents.builder().addCharacteristics(hpv).build()
         val virusEvidence: VirusEvidence = VirusEvidence.create(actionable)
+
         val virusMatch: VirusInterpreterEntry = TestVirusInterpreterFactory.builder().interpretation(VirusInterpretation.HPV).reported(true).build()
         val matches = virusEvidence.findMatches(virusMatch)
-        Assert.assertEquals(1, matches.size.toLong())
-        Assert.assertTrue(matches.contains(hpv))
+        assertEquals(1, matches.size.toLong())
+        assertTrue(matches.contains(hpv))
+
         val noInterpretation: VirusInterpreterEntry = TestVirusInterpreterFactory.builder().interpretation(null).reported(true).build()
-        Assert.assertTrue(virusEvidence.findMatches(noInterpretation).isEmpty())
+        assertTrue(virusEvidence.findMatches(noInterpretation).isEmpty())
+
         val otherInterpretation: VirusInterpreterEntry = TestVirusInterpreterFactory.builder().interpretation(VirusInterpretation.MCV).reported(true).build()
-        Assert.assertTrue(virusEvidence.findMatches(otherInterpretation).isEmpty())
+        assertTrue(virusEvidence.findMatches(otherInterpretation).isEmpty())
+
         val notReported: VirusInterpreterEntry = TestVirusInterpreterFactory.builder().interpretation(VirusInterpretation.HPV).reported(false).build()
-        Assert.assertTrue(virusEvidence.findMatches(notReported).isEmpty())
+        assertTrue(virusEvidence.findMatches(notReported).isEmpty())
     }
 
     @Test
@@ -33,15 +39,19 @@ class VirusEvidenceTest {
         val ebv: ActionableCharacteristic = TestServeActionabilityFactory.characteristicBuilder().type(TumorCharacteristicType.EBV_POSITIVE).build()
         val actionable: ActionableEvents = ImmutableActionableEvents.builder().addCharacteristics(ebv).build()
         val virusEvidence: VirusEvidence = VirusEvidence.create(actionable)
+
         val virusMatch: VirusInterpreterEntry = TestVirusInterpreterFactory.builder().interpretation(VirusInterpretation.EBV).reported(true).build()
         val matches = virusEvidence.findMatches(virusMatch)
-        Assert.assertEquals(1, matches.size.toLong())
-        Assert.assertTrue(matches.contains(ebv))
+        assertEquals(1, matches.size.toLong())
+        assertTrue(matches.contains(ebv))
+
         val noInterpretation: VirusInterpreterEntry = TestVirusInterpreterFactory.builder().interpretation(null).reported(true).build()
-        Assert.assertTrue(virusEvidence.findMatches(noInterpretation).isEmpty())
+        assertTrue(virusEvidence.findMatches(noInterpretation).isEmpty())
+
         val otherInterpretation: VirusInterpreterEntry = TestVirusInterpreterFactory.builder().interpretation(VirusInterpretation.MCV).reported(true).build()
-        Assert.assertTrue(virusEvidence.findMatches(otherInterpretation).isEmpty())
+        assertTrue(virusEvidence.findMatches(otherInterpretation).isEmpty())
+
         val notReported: VirusInterpreterEntry = TestVirusInterpreterFactory.builder().interpretation(VirusInterpretation.EBV).reported(false).build()
-        Assert.assertTrue(virusEvidence.findMatches(notReported).isEmpty())
+        assertTrue(virusEvidence.findMatches(notReported).isEmpty())
     }
 }

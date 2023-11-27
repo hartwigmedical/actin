@@ -18,49 +18,55 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleFit
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
-import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.LocalDate
 
 class OrangeInterpreterTest {
+
     @Test
     fun shouldNotCrashOnMinimalOrangeRecord() {
         val interpreter = createTestInterpreter()
-        Assert.assertNotNull(interpreter.interpret(TestOrangeFactory.createMinimalTestOrangeRecord()))
+        assertNotNull(interpreter.interpret(TestOrangeFactory.createMinimalTestOrangeRecord()))
     }
 
     @Test
     fun shouldInterpretProperOrangeRecord() {
         val interpreter = createTestInterpreter()
         val record = interpreter.interpret(TestOrangeFactory.createProperTestOrangeRecord())
-        Assert.assertEquals(TestDataFactory.TEST_PATIENT, record.patientId())
-        Assert.assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId())
-        Assert.assertEquals(ExperimentType.WHOLE_GENOME, record.type())
-        Assert.assertEquals(RefGenomeVersion.V37, record.refGenomeVersion())
-        Assert.assertEquals(LocalDate.of(2021, 5, 6), record.date())
-        Assert.assertEquals(ActionabilityConstants.EVIDENCE_SOURCE.display(), record.evidenceSource())
-        Assert.assertEquals(ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display(), record.externalTrialSource())
-        Assert.assertTrue(record.containsTumorCells())
-        Assert.assertTrue(record.hasSufficientQualityAndPurity())
-        Assert.assertTrue(record.hasSufficientQuality())
-        Assert.assertNotNull(record.characteristics())
+        assertEquals(TestDataFactory.TEST_PATIENT, record.patientId())
+        assertEquals(TestDataFactory.TEST_SAMPLE, record.sampleId())
+        assertEquals(ExperimentType.WHOLE_GENOME, record.type())
+        assertEquals(RefGenomeVersion.V37, record.refGenomeVersion())
+        assertEquals(LocalDate.of(2021, 5, 6), record.date())
+        assertEquals(ActionabilityConstants.EVIDENCE_SOURCE.display(), record.evidenceSource())
+        assertEquals(ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display(), record.externalTrialSource())
+        assertTrue(record.containsTumorCells())
+        assertTrue(record.hasSufficientQualityAndPurity())
+        assertTrue(record.hasSufficientQuality())
+        assertNotNull(record.characteristics())
+
         val drivers = record.drivers()
-        Assert.assertEquals(1, drivers.variants().size.toLong())
-        Assert.assertEquals(2, drivers.copyNumbers().size.toLong())
-        Assert.assertEquals(1, drivers.homozygousDisruptions().size.toLong())
-        Assert.assertEquals(1, drivers.disruptions().size.toLong())
-        Assert.assertEquals(1, drivers.fusions().size.toLong())
-        Assert.assertEquals(1, drivers.viruses().size.toLong())
+        assertEquals(1, drivers.variants().size.toLong())
+        assertEquals(2, drivers.copyNumbers().size.toLong())
+        assertEquals(1, drivers.homozygousDisruptions().size.toLong())
+        assertEquals(1, drivers.disruptions().size.toLong())
+        assertEquals(1, drivers.fusions().size.toLong())
+        assertEquals(1, drivers.viruses().size.toLong())
+
         val immunology = record.immunology()
-        Assert.assertTrue(immunology.isReliable())
-        Assert.assertEquals(1, immunology.hlaAlleles().size.toLong())
-        Assert.assertEquals(1, record.pharmaco().size.toLong())
+        assertTrue(immunology.isReliable())
+        assertEquals(1, immunology.hlaAlleles().size.toLong())
+        assertEquals(1, record.pharmaco().size.toLong())
     }
 
     @Test
     fun shouldBeAbleToConvertSampleIdToPatientId() {
-        Assert.assertEquals("ACTN01029999", OrangeInterpreter.toPatientId("ACTN01029999T"))
-        Assert.assertEquals("ACTN01029999", OrangeInterpreter.toPatientId("ACTN01029999T2"))
+        assertEquals("ACTN01029999", OrangeInterpreter.toPatientId("ACTN01029999T"))
+        assertEquals("ACTN01029999", OrangeInterpreter.toPatientId("ACTN01029999T2"))
     }
 
     @Test(expected = IllegalArgumentException::class)
@@ -71,36 +77,36 @@ class OrangeInterpreterTest {
     @Test
     fun shouldBeAbleToResolveAllRefGenomeVersions() {
         for (refGenomeVersion in OrangeRefGenomeVersion.values()) {
-            Assert.assertNotNull(OrangeInterpreter.determineRefGenomeVersion(refGenomeVersion))
+            assertNotNull(OrangeInterpreter.determineRefGenomeVersion(refGenomeVersion))
         }
     }
 
     @Test
     fun shouldDetermineQualityAndPurityToBeSufficientWhenOnlyPassStatusIsPresent() {
         val record = orangeRecordWithQCStatus(PurpleQCStatus.PASS)
-        Assert.assertTrue(OrangeInterpreter.hasSufficientQuality(record))
-        Assert.assertTrue(OrangeInterpreter.hasSufficientQualityAndPurity(record))
+        assertTrue(OrangeInterpreter.hasSufficientQuality(record))
+        assertTrue(OrangeInterpreter.hasSufficientQualityAndPurity(record))
     }
 
     @Test
     fun shouldDetermineQualityButNotPurityToBeSufficientWhenOnlyLowPurityWarningIsPresent() {
         val record = orangeRecordWithQCStatus(PurpleQCStatus.WARN_LOW_PURITY)
-        Assert.assertTrue(OrangeInterpreter.hasSufficientQuality(record))
-        Assert.assertFalse(OrangeInterpreter.hasSufficientQualityAndPurity(record))
+        assertTrue(OrangeInterpreter.hasSufficientQuality(record))
+        assertFalse(OrangeInterpreter.hasSufficientQualityAndPurity(record))
     }
 
     @Test
     fun shouldDetermineQualityAndPurityToNotBeSufficientWhenOtherWarningIsPresent() {
         val record = orangeRecordWithQCStatus(PurpleQCStatus.WARN_DELETED_GENES)
-        Assert.assertFalse(OrangeInterpreter.hasSufficientQuality(record))
-        Assert.assertFalse(OrangeInterpreter.hasSufficientQualityAndPurity(record))
+        assertFalse(OrangeInterpreter.hasSufficientQuality(record))
+        assertFalse(OrangeInterpreter.hasSufficientQualityAndPurity(record))
     }
 
     @Test
     fun shouldDetermineQualityExcludingPurityToNotBeSufficientWhenOtherWarningIsPresentWithLowPurityWarning() {
         val record = orangeRecordWithQCStatuses(setOf(PurpleQCStatus.WARN_LOW_PURITY, PurpleQCStatus.WARN_DELETED_GENES))
-        Assert.assertFalse(OrangeInterpreter.hasSufficientQuality(record))
-        Assert.assertFalse(OrangeInterpreter.hasSufficientQualityAndPurity(record))
+        assertFalse(OrangeInterpreter.hasSufficientQuality(record))
+        assertFalse(OrangeInterpreter.hasSufficientQualityAndPurity(record))
     }
 
     @Test(expected = IllegalStateException::class)

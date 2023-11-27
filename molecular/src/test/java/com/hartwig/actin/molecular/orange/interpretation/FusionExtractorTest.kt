@@ -11,10 +11,14 @@ import com.hartwig.hmftools.datamodel.linx.ImmutableLinxRecord
 import com.hartwig.hmftools.datamodel.linx.LinxFusion
 import com.hartwig.hmftools.datamodel.linx.LinxFusionType
 import com.hartwig.hmftools.datamodel.linx.LinxRecord
-import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class FusionExtractorTest {
+
     @Test
     fun canExtractFusions() {
         val linxFusion: LinxFusion = TestLinxFactory.fusionBuilder()
@@ -34,18 +38,20 @@ class FusionExtractorTest {
             .build()
         val geneFilter = TestGeneFilterFactory.createValidForGenes("gene end")
         val fusionExtractor = FusionExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase())
+
         val fusions = fusionExtractor.extract(linx)
-        Assert.assertEquals(1, fusions.size.toLong())
+        assertEquals(1, fusions.size.toLong())
+
         val fusion = fusions.iterator().next()
-        Assert.assertTrue(fusion.isReportable())
-        Assert.assertEquals(DriverLikelihood.HIGH, fusion.driverLikelihood())
-        Assert.assertEquals("gene start", fusion.geneStart())
-        Assert.assertEquals("trans start", fusion.geneTranscriptStart())
-        Assert.assertEquals(1, fusion.fusedExonUp().toLong())
-        Assert.assertEquals("gene end", fusion.geneEnd())
-        Assert.assertEquals("trans end", fusion.geneTranscriptEnd())
-        Assert.assertEquals(4, fusion.fusedExonDown().toLong())
-        Assert.assertEquals(FusionDriverType.PROMISCUOUS_5, fusion.driverType())
+        assertTrue(fusion.isReportable())
+        assertEquals(DriverLikelihood.HIGH, fusion.driverLikelihood())
+        assertEquals("gene start", fusion.geneStart())
+        assertEquals("trans start", fusion.geneTranscriptStart())
+        assertEquals(1, fusion.fusedExonUp().toLong())
+        assertEquals("gene end", fusion.geneEnd())
+        assertEquals("trans end", fusion.geneTranscriptEnd())
+        assertEquals(4, fusion.fusedExonDown().toLong())
+        assertEquals(FusionDriverType.PROMISCUOUS_5, fusion.driverType())
     }
 
     @Test(expected = IllegalStateException::class)
@@ -64,17 +70,19 @@ class FusionExtractorTest {
     fun canDetermineDriverTypeForAllFusions() {
         for (type in LinxFusionType.values()) {
             val fusion: LinxFusion = TestLinxFactory.fusionBuilder().reportedType(type).build()
-            Assert.assertNotNull(FusionExtractor.determineDriverType(fusion))
+            assertNotNull(FusionExtractor.determineDriverType(fusion))
         }
     }
 
     @Test
     fun canDetermineDriverLikelihoodForAllFusions() {
         val high: LinxFusion = TestLinxFactory.fusionBuilder().driverLikelihood(FusionLikelihoodType.HIGH).build()
-        Assert.assertEquals(DriverLikelihood.HIGH, FusionExtractor.determineDriverLikelihood(high))
+        assertEquals(DriverLikelihood.HIGH, FusionExtractor.determineDriverLikelihood(high))
+
         val low: LinxFusion = TestLinxFactory.fusionBuilder().driverLikelihood(FusionLikelihoodType.LOW).build()
-        Assert.assertEquals(DriverLikelihood.LOW, FusionExtractor.determineDriverLikelihood(low))
+        assertEquals(DriverLikelihood.LOW, FusionExtractor.determineDriverLikelihood(low))
+
         val na: LinxFusion = TestLinxFactory.fusionBuilder().driverLikelihood(FusionLikelihoodType.NA).build()
-        Assert.assertNull(FusionExtractor.determineDriverLikelihood(na))
+        assertNull(FusionExtractor.determineDriverLikelihood(na))
     }
 }

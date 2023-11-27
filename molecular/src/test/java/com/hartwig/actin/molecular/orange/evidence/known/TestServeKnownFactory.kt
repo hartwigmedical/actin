@@ -13,6 +13,7 @@ import com.hartwig.serve.datamodel.range.ImmutableKnownExon
 import org.apache.logging.log4j.util.Strings
 
 object TestServeKnownFactory {
+
     fun hotspotBuilder(): ImmutableKnownHotspot.Builder {
         return ImmutableKnownHotspot.builder()
             .from(createEmptyGeneAlteration())
@@ -48,13 +49,15 @@ object TestServeKnownFactory {
         return ImmutableKnownFusion.builder().from(TestServeFactory.createEmptyFusionPair()).proteinEffect(ProteinEffect.UNKNOWN)
     }
 
-    fun createEmptyGeneAlteration(): GeneAlteration {
+    private fun createEmptyGeneAlteration(): GeneAlteration {
         return createGeneAlteration(GeneRole.UNKNOWN, ProteinEffect.UNKNOWN)
     }
 
     @JvmOverloads
-    fun createGeneAlteration(geneRole: GeneRole, proteinEffect: ProteinEffect,
-                             associatedWithDrugResistance: Boolean? = null): GeneAlteration {
+    fun createGeneAlteration(
+        geneRole: GeneRole, proteinEffect: ProteinEffect,
+        associatedWithDrugResistance: Boolean? = null
+    ): GeneAlteration {
         return object : GeneAlteration {
             override fun geneRole(): GeneRole {
                 return geneRole

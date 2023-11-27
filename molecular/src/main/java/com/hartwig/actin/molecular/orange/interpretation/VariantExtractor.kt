@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.google.common.annotations.VisibleForTesting
 import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
@@ -73,6 +72,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
     companion object {
         private val LOGGER = LogManager.getLogger(VariantExtractor::class.java)
         private const val ENSEMBL_TRANSCRIPT_IDENTIFIER: String = "ENST"
+
         private val RELEVANT_CODING_EFFECTS = setOf(
             PurpleCodingEffect.MISSENSE,
             PurpleCodingEffect.SPLICE,
@@ -82,8 +82,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
 
         private val MUTATION_DRIVER_TYPES = setOf(PurpleDriverType.MUTATION, PurpleDriverType.GERMLINE_MUTATION)
 
-        @VisibleForTesting
-        fun determineVariantType(variant: PurpleVariant): VariantType {
+        internal fun determineVariantType(variant: PurpleVariant): VariantType {
             return when (variant.type()) {
                 PurpleVariantType.MNP -> {
                     VariantType.MNV
@@ -110,8 +109,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
             }
         }
 
-        @VisibleForTesting
-        fun determineDriverLikelihood(driver: PurpleDriver?): DriverLikelihood? {
+        internal fun determineDriverLikelihood(driver: PurpleDriver?): DriverLikelihood? {
             if (driver == null) {
                 return null
             }
@@ -155,8 +153,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
 
         }
 
-        @VisibleForTesting
-        fun isEnsemblTranscript(purpleTranscriptImpact: PurpleTranscriptImpact): Boolean {
+        internal fun isEnsemblTranscript(purpleTranscriptImpact: PurpleTranscriptImpact): Boolean {
             return purpleTranscriptImpact.transcript().startsWith(ENSEMBL_TRANSCRIPT_IDENTIFIER)
         }
 
@@ -177,8 +174,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
             return effects.map { effect: PurpleVariantEffect -> determineVariantEffect(effect) }.toSet()
         }
 
-        @VisibleForTesting
-        fun determineVariantEffect(effect: PurpleVariantEffect): VariantEffect {
+        internal fun determineVariantEffect(effect: PurpleVariantEffect): VariantEffect {
             return when (effect) {
                 PurpleVariantEffect.STOP_GAINED -> {
                     VariantEffect.STOP_GAINED
@@ -266,8 +262,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
             }
         }
 
-        @VisibleForTesting
-        fun determineCodingEffect(codingEffect: PurpleCodingEffect): CodingEffect? {
+        internal fun determineCodingEffect(codingEffect: PurpleCodingEffect): CodingEffect? {
             return when (codingEffect) {
                 PurpleCodingEffect.NONSENSE_OR_FRAMESHIFT -> {
                     CodingEffect.NONSENSE_OR_FRAMESHIFT

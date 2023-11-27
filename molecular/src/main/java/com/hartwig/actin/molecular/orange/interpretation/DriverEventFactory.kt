@@ -10,11 +10,10 @@ import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
 import com.hartwig.hmftools.datamodel.virus.VirusInterpretation
 import com.hartwig.hmftools.datamodel.virus.VirusInterpreterEntry
-import org.apache.logging.log4j.LogManager
 import java.util.*
 
 object DriverEventFactory {
-    private val LOGGER = LogManager.getLogger(DriverEventFactory::class.java)
+
     fun variantEvent(variant: PurpleVariant): String {
         return variant.gene() + " " + impact(variant)
     }
@@ -25,7 +24,8 @@ object DriverEventFactory {
             return reformatProteinImpact(canonical.hgvsProteinImpact())
         }
         if (canonical.hgvsCodingImpact().isNotEmpty()) {
-            return if (canonical.codingEffect() == PurpleCodingEffect.SPLICE) canonical.hgvsCodingImpact() + " splice" else canonical.hgvsCodingImpact()
+            return if (canonical.codingEffect() == PurpleCodingEffect.SPLICE)
+                canonical.hgvsCodingImpact() + " splice" else canonical.hgvsCodingImpact()
         }
         if (canonical.effects().contains(PurpleVariantEffect.UPSTREAM_GENE)) {
             return "upstream"

@@ -8,19 +8,22 @@ import com.hartwig.actin.molecular.orange.evidence.actionability.TestServeAction
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.EvidenceDirection
 import com.hartwig.serve.datamodel.EvidenceLevel
-import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import kotlin.test.assertNotNull
 
 class ActionableEvidenceFactoryTest {
+
     @Test
     fun canCreateNoEvidence() {
-        Assert.assertNotNull(ActionableEvidenceFactory.createNoEvidence())
+        assertNotNull(ActionableEvidenceFactory.createNoEvidence())
     }
 
     @Test
     fun handlesNoMatch() {
-        Assert.assertNull(ActionableEvidenceFactory.create(null))
+        assertNull(ActionableEvidenceFactory.create(null))
     }
 
     @Test
@@ -46,30 +49,30 @@ class ActionableEvidenceFactoryTest {
 
         val evidence = ActionableEvidenceFactory.create(match)
         assertNotNull(evidence)
-        Assert.assertEquals(1, evidence.approvedTreatments().size.toLong())
-        Assert.assertTrue(evidence.approvedTreatments().contains("A on-label responsive"))
-        Assert.assertTrue(evidence.externalEligibleTrials().isEmpty())
-        Assert.assertEquals(4, evidence.onLabelExperimentalTreatments().size.toLong())
-        Assert.assertTrue(evidence.onLabelExperimentalTreatments().contains("A on-label predicted responsive"))
-        Assert.assertTrue(evidence.onLabelExperimentalTreatments().contains("B on-label responsive"))
-        Assert.assertTrue(evidence.onLabelExperimentalTreatments().contains("A off-label responsive"))
-        Assert.assertTrue(evidence.onLabelExperimentalTreatments().contains("A off-label predicted responsive"))
-        Assert.assertEquals(1, evidence.offLabelExperimentalTreatments().size.toLong())
-        Assert.assertTrue(evidence.offLabelExperimentalTreatments().contains("B off-label responsive"))
-        Assert.assertEquals(6, evidence.preClinicalTreatments().size.toLong())
-        Assert.assertTrue(evidence.preClinicalTreatments().contains("B on-label predicted responsive"))
-        Assert.assertTrue(evidence.preClinicalTreatments().contains("C on-label responsive"))
-        Assert.assertTrue(evidence.preClinicalTreatments().contains("C on-label predicted responsive"))
-        Assert.assertTrue(evidence.preClinicalTreatments().contains("B off-label predicted responsive"))
-        Assert.assertTrue(evidence.preClinicalTreatments().contains("C off-label responsive"))
-        Assert.assertTrue(evidence.preClinicalTreatments().contains("C off-label predicted responsive"))
-        Assert.assertTrue(evidence.knownResistantTreatments().isEmpty())
-        Assert.assertTrue(evidence.suspectResistantTreatments().isEmpty())
+        assertEquals(1, evidence.approvedTreatments().size.toLong())
+        assertTrue(evidence.approvedTreatments().contains("A on-label responsive"))
+        assertTrue(evidence.externalEligibleTrials().isEmpty())
+        assertEquals(4, evidence.onLabelExperimentalTreatments().size.toLong())
+        assertTrue(evidence.onLabelExperimentalTreatments().contains("A on-label predicted responsive"))
+        assertTrue(evidence.onLabelExperimentalTreatments().contains("B on-label responsive"))
+        assertTrue(evidence.onLabelExperimentalTreatments().contains("A off-label responsive"))
+        assertTrue(evidence.onLabelExperimentalTreatments().contains("A off-label predicted responsive"))
+        assertEquals(1, evidence.offLabelExperimentalTreatments().size.toLong())
+        assertTrue(evidence.offLabelExperimentalTreatments().contains("B off-label responsive"))
+        assertEquals(6, evidence.preClinicalTreatments().size.toLong())
+        assertTrue(evidence.preClinicalTreatments().contains("B on-label predicted responsive"))
+        assertTrue(evidence.preClinicalTreatments().contains("C on-label responsive"))
+        assertTrue(evidence.preClinicalTreatments().contains("C on-label predicted responsive"))
+        assertTrue(evidence.preClinicalTreatments().contains("B off-label predicted responsive"))
+        assertTrue(evidence.preClinicalTreatments().contains("C off-label responsive"))
+        assertTrue(evidence.preClinicalTreatments().contains("C off-label predicted responsive"))
+        assertTrue(evidence.knownResistantTreatments().isEmpty())
+        assertTrue(evidence.suspectResistantTreatments().isEmpty())
     }
 
     @Test
     fun canMapResistanceEvidence() {
-        val match: ActionabilityMatch = ActionabilityMatch(
+        val match = ActionabilityMatch(
             onLabelEvents = listOf(
                 evidence("On-label responsive A", EvidenceLevel.A, EvidenceDirection.RESPONSIVE),
                 evidence("On-label responsive A", EvidenceLevel.A, EvidenceDirection.RESISTANT),
@@ -83,19 +86,18 @@ class ActionableEvidenceFactoryTest {
             )
         )
 
-
         val evidence = ActionableEvidenceFactory.create(match)
         assertNotNull(evidence)
-        Assert.assertEquals(1, evidence.knownResistantTreatments().size.toLong())
-        Assert.assertTrue(evidence.knownResistantTreatments().contains("On-label responsive A"))
-        Assert.assertEquals(2, evidence.suspectResistantTreatments().size.toLong())
-        Assert.assertTrue(evidence.suspectResistantTreatments().contains("Off-label responsive"))
-        Assert.assertTrue(evidence.suspectResistantTreatments().contains("On-label responsive C"))
+        assertEquals(1, evidence.knownResistantTreatments().size.toLong())
+        assertTrue(evidence.knownResistantTreatments().contains("On-label responsive A"))
+        assertEquals(2, evidence.suspectResistantTreatments().size.toLong())
+        assertTrue(evidence.suspectResistantTreatments().contains("Off-label responsive"))
+        assertTrue(evidence.suspectResistantTreatments().contains("On-label responsive C"))
     }
 
     @Test
     fun canMapTrials() {
-        val match: ActionabilityMatch = ActionabilityMatch(
+        val match = ActionabilityMatch(
             onLabelEvents = listOf(
                 trial("On-label responsive trial", EvidenceDirection.RESPONSIVE),
                 trial("On-label resistant trial", EvidenceDirection.RESISTANT)
@@ -106,22 +108,21 @@ class ActionableEvidenceFactoryTest {
             )
         )
 
-
         val evidence = ActionableEvidenceFactory.create(match)
         assertNotNull(evidence)
-        Assert.assertTrue(evidence.approvedTreatments().isEmpty())
-        Assert.assertEquals(1, evidence.externalEligibleTrials().size.toLong())
-        Assert.assertTrue(evidence.externalEligibleTrials().contains("On-label responsive trial"))
-        Assert.assertTrue(evidence.onLabelExperimentalTreatments().isEmpty())
-        Assert.assertTrue(evidence.offLabelExperimentalTreatments().isEmpty())
-        Assert.assertTrue(evidence.preClinicalTreatments().isEmpty())
-        Assert.assertTrue(evidence.knownResistantTreatments().isEmpty())
-        Assert.assertTrue(evidence.suspectResistantTreatments().isEmpty())
+        assertTrue(evidence.approvedTreatments().isEmpty())
+        assertEquals(1, evidence.externalEligibleTrials().size.toLong())
+        assertTrue(evidence.externalEligibleTrials().contains("On-label responsive trial"))
+        assertTrue(evidence.onLabelExperimentalTreatments().isEmpty())
+        assertTrue(evidence.offLabelExperimentalTreatments().isEmpty())
+        assertTrue(evidence.preClinicalTreatments().isEmpty())
+        assertTrue(evidence.knownResistantTreatments().isEmpty())
+        assertTrue(evidence.suspectResistantTreatments().isEmpty())
     }
 
     @Test
     fun ignoresEvidenceWithNoBenefit() {
-        val match: ActionabilityMatch = ActionabilityMatch(
+        val match = ActionabilityMatch(
             onLabelEvents = listOf(
                 evidence("A on-label no-benefit", EvidenceLevel.A, EvidenceDirection.NO_BENEFIT)
 
@@ -134,13 +135,13 @@ class ActionableEvidenceFactoryTest {
 
         val evidence = ActionableEvidenceFactory.create(match)
         assertNotNull(evidence)
-        Assert.assertTrue(evidence.approvedTreatments().isEmpty())
-        Assert.assertTrue(evidence.externalEligibleTrials().isEmpty())
-        Assert.assertTrue(evidence.onLabelExperimentalTreatments().isEmpty())
-        Assert.assertTrue(evidence.offLabelExperimentalTreatments().isEmpty())
-        Assert.assertTrue(evidence.preClinicalTreatments().isEmpty())
-        Assert.assertTrue(evidence.knownResistantTreatments().isEmpty())
-        Assert.assertTrue(evidence.suspectResistantTreatments().isEmpty())
+        assertTrue(evidence.approvedTreatments().isEmpty())
+        assertTrue(evidence.externalEligibleTrials().isEmpty())
+        assertTrue(evidence.onLabelExperimentalTreatments().isEmpty())
+        assertTrue(evidence.offLabelExperimentalTreatments().isEmpty())
+        assertTrue(evidence.preClinicalTreatments().isEmpty())
+        assertTrue(evidence.knownResistantTreatments().isEmpty())
+        assertTrue(evidence.suspectResistantTreatments().isEmpty())
     }
 
     @Test
@@ -159,19 +160,20 @@ class ActionableEvidenceFactoryTest {
             .addSuspectResistantTreatments("known resistant")
             .addSuspectResistantTreatments("suspect resistant")
             .build()
+
         val filtered = ActionableEvidenceFactory.filterRedundantLowerEvidence(evidence)
-        Assert.assertEquals(1, filtered.approvedTreatments().size.toLong())
-        Assert.assertTrue(filtered.approvedTreatments().contains("approved"))
-        Assert.assertEquals(1, filtered.onLabelExperimentalTreatments().size.toLong())
-        Assert.assertTrue(filtered.onLabelExperimentalTreatments().contains("on-label experimental"))
-        Assert.assertEquals(1, filtered.offLabelExperimentalTreatments().size.toLong())
-        Assert.assertTrue(filtered.offLabelExperimentalTreatments().contains("off-label experimental"))
-        Assert.assertEquals(1, filtered.preClinicalTreatments().size.toLong())
-        Assert.assertTrue(filtered.preClinicalTreatments().contains("pre-clinical"))
-        Assert.assertEquals(1, filtered.knownResistantTreatments().size.toLong())
-        Assert.assertTrue(filtered.knownResistantTreatments().contains("known resistant"))
-        Assert.assertEquals(1, filtered.suspectResistantTreatments().size.toLong())
-        Assert.assertTrue(filtered.suspectResistantTreatments().contains("suspect resistant"))
+        assertEquals(1, filtered.approvedTreatments().size.toLong())
+        assertTrue(filtered.approvedTreatments().contains("approved"))
+        assertEquals(1, filtered.onLabelExperimentalTreatments().size.toLong())
+        assertTrue(filtered.onLabelExperimentalTreatments().contains("on-label experimental"))
+        assertEquals(1, filtered.offLabelExperimentalTreatments().size.toLong())
+        assertTrue(filtered.offLabelExperimentalTreatments().contains("off-label experimental"))
+        assertEquals(1, filtered.preClinicalTreatments().size.toLong())
+        assertTrue(filtered.preClinicalTreatments().contains("pre-clinical"))
+        assertEquals(1, filtered.knownResistantTreatments().size.toLong())
+        assertTrue(filtered.knownResistantTreatments().contains("known resistant"))
+        assertEquals(1, filtered.suspectResistantTreatments().size.toLong())
+        assertTrue(filtered.suspectResistantTreatments().contains("suspect resistant"))
     }
 
     companion object {

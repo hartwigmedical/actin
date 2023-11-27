@@ -7,6 +7,7 @@ import org.assertj.core.api.Assertions
 import org.junit.Test
 
 class GeneAggregatorTest {
+
     @Test
     fun shouldUseBothGeneRolesWhenOncoBothAndUnknownInSet() {
         Assertions.assertThat(GeneAggregator.aggregate(setOf(ONCO_GENE, BOTH_GENE, UNKNOWN_GENE))).containsOnly(BOTH_GENE)
@@ -33,6 +34,7 @@ class GeneAggregatorTest {
         private val ONCO_GENE = gene(GeneRole.ONCO)
         private val BOTH_GENE = gene(GeneRole.BOTH)
         private val UNKNOWN_GENE = gene(GeneRole.UNKNOWN)
+
         private fun gene(role: GeneRole?): KnownGene {
             return ImmutableKnownGene.builder().gene(GENE).geneRole(role).build()
         }

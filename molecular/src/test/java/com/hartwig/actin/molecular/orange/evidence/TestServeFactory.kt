@@ -9,6 +9,7 @@ import com.hartwig.serve.datamodel.range.RangeAnnotation
 import org.apache.logging.log4j.util.Strings
 
 object TestServeFactory {
+
     fun createEmptyHotspot(): VariantHotspot {
         return object : VariantHotspot {
             override fun gene(): String {

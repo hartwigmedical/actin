@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.orange.evidence.actionability
 
-import com.google.common.annotations.VisibleForTesting
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.molecular.orange.evidence.curation.ApplicabilityFiltering
 import com.hartwig.actin.molecular.orange.evidence.curation.ExternalTrialMapper
@@ -22,17 +21,20 @@ import com.hartwig.serve.datamodel.immuno.ImmutableActionableHLA
 import com.hartwig.serve.datamodel.range.ActionableRange
 import com.hartwig.serve.datamodel.range.ImmutableActionableRange
 
-class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTrialMapper, private val doidModel: DoidModel,
-                                    private val tumorDoids: Set<String>) {
+class ActionableEventMatcherFactory(
+    private val externalTrialMapper: ExternalTrialMapper, private val doidModel: DoidModel,
+    private val tumorDoids: Set<String>
+) {
+
     fun create(actionableEvents: ActionableEvents): ActionableEventMatcher {
         val filtered = filterForApplicability(filterForSources(actionableEvents, ACTIONABLE_EVENT_SOURCES))
         val curated = curateExternalTrials(filtered)
-        val personalizedActionabilityFactory: PersonalizedActionabilityFactory = PersonalizedActionabilityFactory.create(doidModel, tumorDoids)
+        val personalizedActionabilityFactory: PersonalizedActionabilityFactory =
+            PersonalizedActionabilityFactory.create(doidModel, tumorDoids)
         return fromActionableEvents(personalizedActionabilityFactory, curated)
     }
 
-    @VisibleForTesting
-    fun curateExternalTrials(actionableEvents: ActionableEvents): ActionableEvents {
+    internal fun curateExternalTrials(actionableEvents: ActionableEvents): ActionableEvents {
         return ImmutableActionableEvents.builder()
             .hotspots(curateHotspots(actionableEvents.hotspots()))
             .codons(curateRanges(actionableEvents.codons()))
@@ -118,13 +120,16 @@ class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTri
     }
 
     private fun interface ActionableFactory<T : ActionableEvent?> {
-        open fun create(event: T, curatedTreatmentName: String): T
+        fun create(event: T, curatedTreatmentName: String): T
     }
 
     companion object {
         val ACTIONABLE_EVENT_SOURCES = setOf(ActionabilityConstants.EVIDENCE_SOURCE, ActionabilityConstants.EXTERNAL_TRIAL_SOURCE)
-        private fun fromActionableEvents(personalizedActionabilityFactory: PersonalizedActionabilityFactory,
-                                         actionableEvents: ActionableEvents): ActionableEventMatcher {
+
+        private fun fromActionableEvents(
+            personalizedActionabilityFactory: PersonalizedActionabilityFactory,
+            actionableEvents: ActionableEvents
+        ): ActionableEventMatcher {
             val signatureEvidence: SignatureEvidence = SignatureEvidence.create(actionableEvents)
             val variantEvidence: VariantEvidence = VariantEvidence.create(actionableEvents)
             val copyNumberEvidence: CopyNumberEvidence = CopyNumberEvidence.create(actionableEvents)
@@ -132,18 +137,19 @@ class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTri
             val breakendEvidence: BreakendEvidence = BreakendEvidence.create(actionableEvents)
             val fusionEvidence: FusionEvidence = FusionEvidence.create(actionableEvents)
             val virusEvidence: VirusEvidence = VirusEvidence.create(actionableEvents)
-            return ActionableEventMatcher(personalizedActionabilityFactory,
+            return ActionableEventMatcher(
+                personalizedActionabilityFactory,
                 signatureEvidence,
                 variantEvidence,
                 copyNumberEvidence,
                 homozygousDisruptionEvidence,
                 breakendEvidence,
                 fusionEvidence,
-                virusEvidence)
+                virusEvidence
+            )
         }
 
-        @VisibleForTesting
-        fun filterForSources(actionableEvents: ActionableEvents, sourcesToInclude: Set<Knowledgebase?>): ActionableEvents {
+        internal fun filterForSources(actionableEvents: ActionableEvents, sourcesToInclude: Set<Knowledgebase?>): ActionableEvents {
             return ImmutableActionableEvents.builder()
                 .hotspots(filterActionableForSources<ActionableHotspot>(actionableEvents.hotspots(), sourcesToInclude))
                 .codons(filterActionableForSources<ActionableRange>(actionableEvents.codons(), sourcesToInclude))
@@ -155,13 +161,14 @@ class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTri
                 .build()
         }
 
-        private fun <T : ActionableEvent> filterActionableForSources(actionables: List<T>,
-                                                                     sourcesToInclude: Set<Knowledgebase?>): MutableSet<T> {
+        private fun <T : ActionableEvent> filterActionableForSources(
+            actionables: List<T>,
+            sourcesToInclude: Set<Knowledgebase?>
+        ): MutableSet<T> {
             return actionables.filter { actionable: T -> sourcesToInclude.contains(actionable.source()) }.toMutableSet()
         }
 
-        @VisibleForTesting
-        fun filterForApplicability(actionableEvents: ActionableEvents): ActionableEvents {
+        internal fun filterForApplicability(actionableEvents: ActionableEvents): ActionableEvents {
             return ImmutableActionableEvents.builder()
                 .from(actionableEvents)
                 .hotspots(filterHotspotsForApplicability(actionableEvents.hotspots()))
@@ -171,8 +178,10 @@ class ActionableEventMatcherFactory(private val externalTrialMapper: ExternalTri
                 .build()
         }
 
-        private fun <T : ActionableEvent> filterEventsForApplicability(list: List<T>,
-                                                                       predicate: (T) -> Boolean): List<T> {
+        private fun <T : ActionableEvent> filterEventsForApplicability(
+            list: List<T>,
+            predicate: (T) -> Boolean
+        ): List<T> {
             return list.filter { predicate(it) }.toList()
         }
 

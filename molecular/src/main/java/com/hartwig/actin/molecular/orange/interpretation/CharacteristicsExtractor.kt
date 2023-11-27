@@ -11,9 +11,9 @@ import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.purple.PurpleMicrosatelliteStatus
 import com.hartwig.hmftools.datamodel.purple.PurpleTumorMutationalStatus
-import org.apache.logging.log4j.LogManager
 
 internal class CharacteristicsExtractor(private val evidenceDatabase: EvidenceDatabase) {
+
     fun extract(record: OrangeRecord): MolecularCharacteristics {
         val predictedTumorOrigin = record.cuppa()?.let {
             ImmutablePredictedTumorOrigin.builder()
@@ -25,29 +25,50 @@ internal class CharacteristicsExtractor(private val evidenceDatabase: EvidenceDa
         val isHomologousRepairDeficient = record.chord()?.let { isHRD(it.hrStatus()) }
         val hasHighTumorMutationalBurden = hasHighStatus(purple.characteristics().tumorMutationalBurdenStatus())
         val hasHighTumorMutationalLoad = hasHighStatus(purple.characteristics().tumorMutationalLoadStatus())
+
         return ImmutableMolecularCharacteristics.builder()
             .purity(purple.fit().purity())
             .ploidy(purple.fit().ploidy())
             .predictedTumorOrigin(predictedTumorOrigin)
             .isMicrosatelliteUnstable(isMicrosatelliteUnstable)
-            .microsatelliteEvidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForMicrosatelliteStatus(
-                isMicrosatelliteUnstable)))
+            .microsatelliteEvidence(
+                ActionableEvidenceFactory.create(
+                    evidenceDatabase.evidenceForMicrosatelliteStatus(
+                        isMicrosatelliteUnstable
+                    )
+                )
+            )
             .isHomologousRepairDeficient(isHomologousRepairDeficient)
-            .homologousRepairEvidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForHomologousRepairStatus(
-                isHomologousRepairDeficient)))
+            .homologousRepairEvidence(
+                ActionableEvidenceFactory.create(
+                    evidenceDatabase.evidenceForHomologousRepairStatus(
+                        isHomologousRepairDeficient
+                    )
+                )
+            )
             .tumorMutationalBurden(purple.characteristics().tumorMutationalBurdenPerMb())
             .hasHighTumorMutationalBurden(hasHighTumorMutationalBurden)
-            .tumorMutationalBurdenEvidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForTumorMutationalBurdenStatus(
-                hasHighTumorMutationalBurden)))
+            .tumorMutationalBurdenEvidence(
+                ActionableEvidenceFactory.create(
+                    evidenceDatabase.evidenceForTumorMutationalBurdenStatus(
+                        hasHighTumorMutationalBurden
+                    )
+                )
+            )
             .tumorMutationalLoad(purple.characteristics().tumorMutationalLoad())
             .hasHighTumorMutationalLoad(hasHighTumorMutationalLoad)
-            .tumorMutationalLoadEvidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForTumorMutationalLoadStatus(
-                hasHighTumorMutationalLoad)))
+            .tumorMutationalLoadEvidence(
+                ActionableEvidenceFactory.create(
+                    evidenceDatabase.evidenceForTumorMutationalLoadStatus(
+                        hasHighTumorMutationalLoad
+                    )
+                )
+            )
             .build()
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(CharacteristicsExtractor::class.java)
+
         private fun isMSI(microsatelliteStatus: PurpleMicrosatelliteStatus): Boolean? {
             return when (microsatelliteStatus) {
                 PurpleMicrosatelliteStatus.MSI -> true

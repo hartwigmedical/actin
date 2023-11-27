@@ -5,6 +5,7 @@ import com.hartwig.serve.datamodel.MutationType
 import com.hartwig.serve.datamodel.gene.GeneAnnotation
 
 object GeneMatching {
+
     fun isMatch(geneAnnotation: GeneAnnotation, variant: PurpleVariant): Boolean {
         val geneMatch = geneAnnotation.gene() == variant.gene()
         val typeMatch = MutationTypeMatching.matches(MutationType.ANY, variant)

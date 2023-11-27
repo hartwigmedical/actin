@@ -11,26 +11,29 @@ import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
 import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.hmftools.datamodel.virus.VirusInterpretation
 import com.hartwig.hmftools.datamodel.virus.VirusInterpreterEntry
-import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Test
 
 class EvidenceDatabaseTest {
+
     @Test
     fun canMatchEvidenceForSignatures() {
-        // TODO (KZP): review EvidenceDatabas api to see if reasonable to remove nullability, then clean up !!'s here
+        // TODO (KZP): review EvidenceDatabase api to see if reasonable to remove nullability, then clean up !!'s here
         val database = TestEvidenceDatabaseFactory.createProperDatabase()
-        Assert.assertNull(database.evidenceForMicrosatelliteStatus(null))
-        Assert.assertEquals(0, evidenceCount(database.evidenceForMicrosatelliteStatus(false)!!).toLong())
-        Assert.assertEquals(1, evidenceCount(database.evidenceForMicrosatelliteStatus(true)!!).toLong())
-        Assert.assertNull(database.evidenceForHomologousRepairStatus(null))
-        Assert.assertEquals(0, evidenceCount(database.evidenceForHomologousRepairStatus(false)!!).toLong())
-        Assert.assertEquals(1, evidenceCount(database.evidenceForHomologousRepairStatus(true)!!).toLong())
-        Assert.assertNull(database.evidenceForTumorMutationalBurdenStatus(null))
-        Assert.assertEquals(0, evidenceCount(database.evidenceForTumorMutationalBurdenStatus(false)!!).toLong())
-        Assert.assertEquals(1, evidenceCount(database.evidenceForTumorMutationalBurdenStatus(true)!!).toLong())
-        Assert.assertNull(database.evidenceForTumorMutationalLoadStatus(null))
-        Assert.assertEquals(0, evidenceCount(database.evidenceForTumorMutationalLoadStatus(false)!!).toLong())
-        Assert.assertEquals(1, evidenceCount(database.evidenceForTumorMutationalLoadStatus(true)!!).toLong())
+        assertNull(database.evidenceForMicrosatelliteStatus(null))
+        assertEquals(0, evidenceCount(database.evidenceForMicrosatelliteStatus(false)!!).toLong())
+        assertEquals(1, evidenceCount(database.evidenceForMicrosatelliteStatus(true)!!).toLong())
+        assertNull(database.evidenceForHomologousRepairStatus(null))
+        assertEquals(0, evidenceCount(database.evidenceForHomologousRepairStatus(false)!!).toLong())
+        assertEquals(1, evidenceCount(database.evidenceForHomologousRepairStatus(true)!!).toLong())
+        assertNull(database.evidenceForTumorMutationalBurdenStatus(null))
+        assertEquals(0, evidenceCount(database.evidenceForTumorMutationalBurdenStatus(false)!!).toLong())
+        assertEquals(1, evidenceCount(database.evidenceForTumorMutationalBurdenStatus(true)!!).toLong())
+        assertNull(database.evidenceForTumorMutationalLoadStatus(null))
+        assertEquals(0, evidenceCount(database.evidenceForTumorMutationalLoadStatus(false)!!).toLong())
+        assertEquals(1, evidenceCount(database.evidenceForTumorMutationalLoadStatus(true)!!).toLong())
     }
 
     @Test
@@ -39,22 +42,27 @@ class EvidenceDatabaseTest {
 
         // Assume default ORANGE objects match with default SERVE objects
         val variant: PurpleVariant = TestPurpleFactory.variantBuilder().reported(true).build()
-        Assert.assertNotNull(database.geneAlterationForVariant(variant))
-        Assert.assertEquals(1, evidenceCount(database.evidenceForVariant(variant)).toLong())
+        assertNotNull(database.geneAlterationForVariant(variant))
+        assertEquals(1, evidenceCount(database.evidenceForVariant(variant)).toLong())
+
         val gainLoss: PurpleGainLoss = TestPurpleFactory.gainLossBuilder().build()
-        Assert.assertNotNull(database.geneAlterationForCopyNumber(gainLoss))
-        Assert.assertEquals(1, evidenceCount(database.evidenceForCopyNumber(gainLoss)).toLong())
+        assertNotNull(database.geneAlterationForCopyNumber(gainLoss))
+        assertEquals(1, evidenceCount(database.evidenceForCopyNumber(gainLoss)).toLong())
+
         val homozygousDisruption: LinxHomozygousDisruption = TestLinxFactory.homozygousDisruptionBuilder().build()
-        Assert.assertNotNull(database.geneAlterationForHomozygousDisruption(homozygousDisruption))
-        Assert.assertEquals(2, evidenceCount(database.evidenceForHomozygousDisruption(homozygousDisruption)).toLong())
+        assertNotNull(database.geneAlterationForHomozygousDisruption(homozygousDisruption))
+        assertEquals(2, evidenceCount(database.evidenceForHomozygousDisruption(homozygousDisruption)).toLong())
+
         val breakend: LinxBreakend = TestLinxFactory.breakendBuilder().reported(true).build()
-        Assert.assertNotNull(database.geneAlterationForBreakend(breakend))
-        Assert.assertEquals(1, evidenceCount(database.evidenceForBreakend(breakend)).toLong())
+        assertNotNull(database.geneAlterationForBreakend(breakend))
+        assertEquals(1, evidenceCount(database.evidenceForBreakend(breakend)).toLong())
+
         val fusion: LinxFusion = TestLinxFactory.fusionBuilder().reported(true).build()
-        Assert.assertNotNull(database.lookupKnownFusion(fusion))
-        Assert.assertEquals(2, evidenceCount(database.evidenceForFusion(fusion)).toLong())
+        assertNotNull(database.lookupKnownFusion(fusion))
+        assertEquals(2, evidenceCount(database.evidenceForFusion(fusion)).toLong())
+
         val virus: VirusInterpreterEntry = TestVirusInterpreterFactory.builder().reported(true).interpretation(VirusInterpretation.HPV).build()
-        Assert.assertEquals(1, evidenceCount(database.evidenceForVirus(virus)).toLong())
+        assertEquals(1, evidenceCount(database.evidenceForVirus(virus)).toLong())
     }
 
     companion object {
