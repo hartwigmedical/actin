@@ -10,8 +10,7 @@ import com.hartwig.actin.trial.ctc.config.CTCDatabaseEntry
 
 enum class TrialIngestionStatus {
     PASS,
-    FAIL,
-    WARN;
+    FAIL;
 
     companion object {
         fun from(
@@ -40,16 +39,16 @@ data class CTCUnmappedValidationError(override val config: Int, override val mes
     ValidationError<Int>
 
 data class TrialDatabaseValidation(
-    val inclusionCriteriaValidationErrors: List<InclusionCriteriaValidationError>,
-    val inclusionReferenceValidationErrors: List<InclusionReferenceValidationError>,
-    val cohortDefinitionValidationErrors: List<CohortDefinitionValidationError>,
-    val trialDefinitionValidationErrors: List<TrialDefinitionValidationError>
+    val inclusionCriteriaValidationErrors: Set<InclusionCriteriaValidationError>,
+    val inclusionReferenceValidationErrors: Set<InclusionReferenceValidationError>,
+    val cohortDefinitionValidationErrors: Set<CohortDefinitionValidationError>,
+    val trialDefinitionValidationErrors: Set<TrialDefinitionValidationError>
 ) {
     fun hasErrors(): Boolean {
         return (inclusionCriteriaValidationErrors +
                 inclusionReferenceValidationErrors +
                 cohortDefinitionValidationErrors +
-                trialDefinitionValidationErrors).isEmpty()
+                trialDefinitionValidationErrors).isNotEmpty()
     }
 }
 

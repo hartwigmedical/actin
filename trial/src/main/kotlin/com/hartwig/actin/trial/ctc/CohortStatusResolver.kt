@@ -4,11 +4,8 @@ import com.hartwig.actin.trial.CTCDatabaseValidationError
 import com.hartwig.actin.trial.CohortDefinitionValidationError
 import com.hartwig.actin.trial.config.CohortDefinitionConfig
 import com.hartwig.actin.trial.ctc.config.CTCDatabaseEntry
-import org.apache.logging.log4j.LogManager
 
 object CohortStatusResolver {
-
-    private val LOGGER = LogManager.getLogger(CohortStatusResolver::class.java)
 
     fun resolve(
         entries: List<CTCDatabaseEntry>,
@@ -18,8 +15,11 @@ object CohortStatusResolver {
         val (matches, missingCohortErrors) = findEntriesByCohortIds(entriesByCohortId, configuredCohortIds)
 
         if (!hasValidCTCDatabaseMatches(matches)) {
-            return Triple(closedWithoutSlots(), emptyList(), matches.filterNotNull()
-                .map { CTCDatabaseValidationError(it, "Invalid cohort IDs configured for cohort") })
+            return Triple(
+                closedWithoutSlots(),
+                missingCohortErrors + CohortDefinitionValidationError(configuredCohortIds, "Invalid cohort IDs configured for cohort"),
+                emptyList()
+            )
         }
         val (status, matchErrors) = interpretValidMatches(matches.filterNotNull(), entriesByCohortId)
         return Triple(status, missingCohortErrors, matchErrors)
@@ -43,16 +43,15 @@ object CohortStatusResolver {
             val bestChildEntry = statuses.map { it.first }.maxWith(InterpretedCohortStatusComparator())
             val firstParentId = matches[0].cohortParentId
             if (matches.size > 1) {
-                if (matches.any { it.cohortParentId != firstParentId }) {
-                    validationErrors.add(CTCDatabaseValidationError(matches[0], "Multiple parents found for single set of children"))
-                }
+                validationErrors.addAll(matches.filter { it.cohortParentId != firstParentId }
+                    .map { CTCDatabaseValidationError(matches[0], "Multiple parents found for single set of children") })
             }
             val parentEntry = fromEntry(entriesByCohortId[firstParentId]!!).first
             if (bestChildEntry.open && !parentEntry.open) {
                 validationErrors.add(
                     CTCDatabaseValidationError(
                         matches[0],
-                        " Best child from IDs '${matches.map { it.cohortId }}' is open while parent with ID '$firstParentId' is closed"
+                        "Best child from IDs '${matches.map { it.cohortId }}' is open while parent with ID '$firstParentId' is closed"
                     )
                 )
             }
@@ -61,7 +60,7 @@ object CohortStatusResolver {
                 validationErrors.add(
                     CTCDatabaseValidationError(
                         matches[0],
-                        " Best child from IDs '${matches.map { it.cohortId }}' has slots available while parent with ID '$firstParentId' has no slots available",
+                        "Best child from IDs '${matches.map { it.cohortId }}' has slots available while parent with ID '$firstParentId' has no slots available",
                     )
                 )
             }
@@ -90,7 +89,7 @@ object CohortStatusResolver {
             entriesByCohortId[cohortId] to if (!entriesByCohortId.contains(cohortId)) {
                 CohortDefinitionValidationError(
                     cohortDefinitionConfig,
-                    " Could not find CTC database entry with cohort ID '$cohortId'"
+                    "Could not find CTC database entry with cohort ID '$cohortId'"
                 )
             } else {
                 null

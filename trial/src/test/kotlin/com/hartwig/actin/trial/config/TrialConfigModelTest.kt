@@ -2,6 +2,7 @@ package com.hartwig.actin.trial.config
 
 import com.google.common.io.Resources
 import com.hartwig.actin.trial.TestTrialData
+import com.hartwig.actin.trial.interpretation.TestEligibilityFactoryFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert
 import org.junit.Test
@@ -10,12 +11,15 @@ class TrialConfigModelTest {
 
     @Test
     fun canCreateFromTrialConfigDirectory() {
-        Assert.assertNotNull(TrialConfigModel.create(TRIAL_CONFIG_DIRECTORY))
+        Assert.assertNotNull(TrialConfigModel.create(TRIAL_CONFIG_DIRECTORY, TestEligibilityFactoryFactory.createTestEligibilityFactory()))
     }
 
     @Test
     fun canQueryMinimalModel() {
-        val model = TrialConfigModel.createFromDatabase(TestTrialConfigDatabaseFactory.createMinimalTestTrialConfigDatabase())
+        val model = TrialConfigModel.createFromDatabase(
+            TestTrialConfigDatabaseFactory.createMinimalTestTrialConfigDatabase(),
+            TrialConfigDatabaseValidator(TestEligibilityFactoryFactory.createTestEligibilityFactory())
+        )
         assertThat(model.trials()).isEmpty()
         assertThat(model.cohortsForTrial("any trial")).isEmpty()
         assertThat(model.generalInclusionCriteriaForTrial("any trial")).isEmpty()
@@ -25,7 +29,10 @@ class TrialConfigModelTest {
 
     @Test
     fun canQueryProperModel() {
-        val model = TrialConfigModel.createFromDatabase(TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase())
+        val model = TrialConfigModel.createFromDatabase(
+            TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase(),
+            TrialConfigDatabaseValidator(TestEligibilityFactoryFactory.createTestEligibilityFactory())
+        )
         assertThat(model.trials()).hasSize(2)
         assertThat(model.cohortsForTrial(TestTrialData.TEST_TRIAL_METC_1)).hasSize(3)
         assertThat(model.generalInclusionCriteriaForTrial(TestTrialData.TEST_TRIAL_METC_1)).hasSize(1)

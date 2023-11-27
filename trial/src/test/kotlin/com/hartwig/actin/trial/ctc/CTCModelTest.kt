@@ -77,13 +77,15 @@ class CTCModelTest {
     }
 
     @Test
-    fun shouldClassifyAllStudyMETCsAsNewWhenTrialConfigIsEmpty() {
+    fun shouldClassifyAllStudiesAsNewWhenTrialConfigIsEmpty() {
         // The proper CTC database has 3 trials: TEST_TRIAL_1, TEST_TRIAL_2 and IGNORE_TRIAL
         val trialConfigs: List<TrialDefinitionConfig> = emptyList()
 
-        val newStudyMETCs = model.extractNewCTCStudyMETCs(trialConfigs)
-        assertThat(newStudyMETCs).containsExactly(TestTrialData.TEST_TRIAL_METC_1, TestTrialData.TEST_TRIAL_METC_2)
-
+        val newStudyMETCs = model.extractNewCTCStudies(trialConfigs)
+        assertThat(newStudyMETCs.map { it.studyMETC }.toSet()).containsExactly(
+            TestTrialData.TEST_TRIAL_METC_1,
+            TestTrialData.TEST_TRIAL_METC_2
+        )
         model.checkModelForNewTrials(trialConfigs)
     }
 
@@ -99,7 +101,7 @@ class CTCModelTest {
             )
         )
 
-        assertThat(model.extractNewCTCStudyMETCs(trialConfigs)).isEmpty()
+        assertThat(model.extractNewCTCStudies(trialConfigs)).isEmpty()
 
         model.checkModelForNewTrials(trialConfigs)
     }

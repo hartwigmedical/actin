@@ -50,7 +50,7 @@ class CohortStatusInterpreterTest {
 
     companion object {
         private fun evaluate(cohortConfig: CohortDefinitionConfig): InterpretedCohortStatus? {
-            return CohortStatusInterpreter.interpret(listOf(), cohortConfig)
+            return CohortStatusInterpreter.interpret(listOf(), cohortConfig).first
         }
 
         private fun createWithCTCCohortIDs(vararg ctcCohortIDs: String): CohortDefinitionConfig {

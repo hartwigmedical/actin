@@ -78,7 +78,7 @@ class CTCModel(private val ctcDatabase: CTCDatabase) {
     }
 
     fun checkModelForNewTrials(trialConfigs: List<TrialDefinitionConfig>) {
-        val newTrialsInCTC = extractNewCTCStudyMETCs(trialConfigs)
+        val newTrialsInCTC = extractNewCTCStudies(trialConfigs)
 
         if (newTrialsInCTC.isEmpty()) {
             LOGGER.info(" No new studies found in CTC database that are not explicitly ignored.")
@@ -89,7 +89,7 @@ class CTCModel(private val ctcDatabase: CTCDatabase) {
         }
     }
 
-    internal fun extractNewCTCStudyMETCs(trialConfigs: List<TrialDefinitionConfig>): Set<CTCDatabaseEntry> {
+    internal fun extractNewCTCStudies(trialConfigs: List<TrialDefinitionConfig>): Set<CTCDatabaseEntry> {
         val configuredTrialIds = trialConfigs.map { it.trialId }
 
         return ctcDatabase.entries.filter { !ctcDatabase.studyMETCsToIgnore.contains(it.studyMETC) }

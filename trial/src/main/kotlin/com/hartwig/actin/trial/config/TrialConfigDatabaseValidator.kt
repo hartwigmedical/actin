@@ -18,12 +18,12 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
                 extractCohortIdsPerTrial(trialIds, database.cohortDefinitionConfigs),
                 database.inclusionCriteriaConfigs,
                 database.inclusionCriteriaReferenceConfigs
-            ),
+            ).toSet(),
             inclusionReferenceValidationErrors = validateInclusionCriteriaReferences(
                 trialIds, database.inclusionCriteriaReferenceConfigs
-            ),
-            cohortDefinitionValidationErrors = validateCohorts(trialIds, database.cohortDefinitionConfigs),
-            trialDefinitionValidationErrors = validateTrials(database.trialDefinitionConfigs)
+            ).toSet(),
+            cohortDefinitionValidationErrors = validateCohorts(trialIds, database.cohortDefinitionConfigs).toSet(),
+            trialDefinitionValidationErrors = validateTrials(database.trialDefinitionConfigs).toSet()
         )
     }
 
@@ -104,7 +104,7 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
         return cohortDefinitions.groupBy(CohortDefinitionConfig::trialId)
             .flatMap { validateNoDuplicates(it.value, CohortDefinitionConfig::cohortId) }.map {
                 CohortDefinitionValidationError(
-                    it.second, "cohort ID for trial '${it.first}"
+                    it.second, "Cohort '${it.second.cohortId}' is duplicated."
                 )
             } + cohortDefinitions.filterNot { trialIds.contains(it.trialId) }.map {
             CohortDefinitionValidationError(it, "Cohort '${it.cohortId}' defined on non-existing trial: '${it.trialId}'")
