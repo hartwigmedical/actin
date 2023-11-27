@@ -31,7 +31,6 @@
         <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
         <maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
         <maven.jar.plugin.version>3.2.0</maven.jar.plugin.version>
-        <maven.exec.plugin.version>3.1.0</maven.exec.plugin.version>
         <maven.surefire.plugin.version>3.1.2</maven.surefire.plugin.version>
 
         <google.artifactregistry.version>2.1.0</google.artifactregistry.version>
@@ -121,11 +120,6 @@
                     <groupId>org.jetbrains.kotlin</groupId>
                     <artifactId>kotlin-maven-plugin</artifactId>
                     <version>${kotlin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>exec-maven-plugin</artifactId>
-                    <version>${maven.exec.plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jooq</groupId>
