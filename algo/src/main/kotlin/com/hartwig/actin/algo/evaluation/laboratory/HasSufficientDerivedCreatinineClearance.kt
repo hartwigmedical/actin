@@ -56,8 +56,8 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
 
         return when {
             result == EvaluationResult.FAIL && weight == null -> EvaluationFactory.undetermined(
-                "eGFR (Cockcroft-Gault) may be insufficient based on creatinine level but weight of patient is not known",
-                "eGFR (CG) may be insufficient based on creatinine level but patient weight unknown"
+                "eGFR (Cockcroft-Gault) may be insufficient based on creatinine level (umol/L) but weight of patient is not known",
+                "eGFR (CG) may be insufficient based on creatinine level (umol/L) but patient weight unknown"
             )
 
             result == EvaluationResult.FAIL -> EvaluationFactory.recoverableFail(
@@ -71,8 +71,8 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
             )
 
             result == EvaluationResult.PASS && weight == null -> EvaluationFactory.notEvaluated(
-                "Body weight unknown but eGFR (Cockcroft-Gault) based on creatinine level most likely above min of $minCreatinineClearance",
-                "eGFR (CG) based on creatinine level most likely above min of $minCreatinineClearance but weight unknown",
+                "Body weight unknown but eGFR (Cockcroft-Gault) based on creatinine level (umol/L) most likely above min of $minCreatinineClearance",
+                "eGFR (CG) based on creatinine level (umol/L) most likely above min of $minCreatinineClearance but weight unknown",
             )
 
             result == EvaluationResult.PASS -> EvaluationFactory.recoverablePass(
@@ -91,18 +91,18 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
         val builder = recoverable().result(result)
         when (result) {
             EvaluationResult.FAIL -> {
-                builder.addFailSpecificMessages("$code below minimum of $minCreatinineClearance")
-                builder.addFailGeneralMessages("$code below min of $minCreatinineClearance")
+                builder.addFailSpecificMessages("eGFR ($code) below minimum of $minCreatinineClearance")
+                builder.addFailGeneralMessages("eGFR ($code) below min of $minCreatinineClearance")
             }
 
             EvaluationResult.UNDETERMINED -> {
-                builder.addUndeterminedSpecificMessages("$code evaluation led to ambiguous results")
-                builder.addUndeterminedGeneralMessages("$code could not be determined")
+                builder.addUndeterminedSpecificMessages("eGFR ($code) evaluation led to ambiguous results")
+                builder.addUndeterminedGeneralMessages("eGFR ($code) could not be determined")
             }
 
             EvaluationResult.PASS -> {
-                builder.addPassSpecificMessages("$code exceeds minimum of $minCreatinineClearance")
-                builder.addPassGeneralMessages("$code exceeds min of $minCreatinineClearance")
+                builder.addPassSpecificMessages("eGFR ($code) above minimum of $minCreatinineClearance")
+                builder.addPassGeneralMessages("eGFR ($code) above min of $minCreatinineClearance")
             }
 
             else -> {}
