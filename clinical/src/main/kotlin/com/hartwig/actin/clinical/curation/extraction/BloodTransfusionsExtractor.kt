@@ -18,7 +18,7 @@ class BloodTransfusionsExtractor(private val curation: CurationDatabase) {
                 patientId,
                 CurationCategory.BLOOD_TRANSFUSION_TRANSLATION,
                 transfusionProduct,
-                "blood transfusion product"
+                "blood transfusion with product"
             )
             val transfusion = ImmutableBloodTransfusion.builder()
                 .date(entry.authored)

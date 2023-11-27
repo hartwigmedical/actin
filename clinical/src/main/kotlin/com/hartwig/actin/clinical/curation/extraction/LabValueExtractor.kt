@@ -7,15 +7,12 @@ import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue
 import com.hartwig.actin.clinical.datamodel.LabValue
-import com.hartwig.actin.clinical.feed.lab.LabEntry
-import com.hartwig.actin.clinical.feed.lab.LabExtraction
 import com.hartwig.actin.clinical.sort.LabValueDescendingDateComparator
 
 class LabValueExtractor(private val curation: CurationDatabase) {
 
-    fun extract(patientId: String, labEntries: List<LabEntry>): ExtractionResult<List<LabValue>> {
-        val extractedValues = labEntries.map { LabExtraction.extract(it) }
-            .map { input ->
+    fun extract(patientId: String, rawValues: List<LabValue>): ExtractionResult<List<LabValue>> {
+        val extractedValues = rawValues.map { input ->
                 val trimmedName = input.name().trim { it <= ' ' }
                 val translation = curation.translateLabValue(input.code(), trimmedName)
                 val translationResponse = CurationResponse.create(

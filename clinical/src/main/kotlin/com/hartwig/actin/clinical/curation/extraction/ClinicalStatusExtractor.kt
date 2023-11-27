@@ -4,8 +4,6 @@ import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationResponse
-import com.hartwig.actin.clinical.curation.config.ECGConfig
-import com.hartwig.actin.clinical.curation.config.InfectionConfig
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 import com.hartwig.actin.clinical.datamodel.ECG
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus
@@ -21,72 +19,79 @@ class ClinicalStatusExtractor(private val curation: CurationDatabase) {
         if (questionnaire == null) {
             return ExtractionResult(ImmutableClinicalStatus.builder().build(), ExtractionEvaluation())
         }
-        val ecgCuration = questionnaire.ecg?.aberrationDescription()?.let {
-            CurationResponse.createFromConfigs(
-                curation.findECGConfig(it), patientId, CurationCategory.ECG, it, "ECG", true
-            )
-        }
-        val infectionCuration = questionnaire.infectionStatus?.description()?.let {
-            CurationResponse.createFromConfigs(
-                curation.findInfectionStatusConfig(it), patientId, CurationCategory.INFECTION, it, "infection", true
-            )
-        }
+        val ecgCuration = curateECG(patientId, questionnaire.ecg)
+        val infectionCuration = curateInfection(patientId, questionnaire.infectionStatus)
 
         val clinicalStatus = ImmutableClinicalStatus.builder()
             .who(questionnaire.whoStatus)
-            .infectionStatus(extractInfection(questionnaire.infectionStatus, infectionCuration))
-            .ecg(extractECG(questionnaire.ecg, ecgCuration))
+            .infectionStatus(infectionCuration.extracted)
+            .ecg(ecgCuration.extracted)
             .lvef(determineLVEF(questionnaire.nonOncologicalHistory))
             .hasComplications(hasComplications)
             .build()
 
-        return ExtractionResult(
-            clinicalStatus,
-            ExtractionEvaluation() + ecgCuration?.extractionEvaluation + infectionCuration?.extractionEvaluation
-        )
+        return ExtractionResult(clinicalStatus, ecgCuration.evaluation + infectionCuration.evaluation)
     }
 
-    private fun extractECG(rawECG: ECG?, ecgCuration: CurationResponse<ECGConfig>?): ECG? {
-        when (ecgCuration?.configs?.size) {
+    fun curateECG(patientId: String, rawECG: ECG?): ExtractionResult<ECG?> {
+        val curationResponse = rawECG?.aberrationDescription()?.let {
+            CurationResponse.createFromConfigs(
+                curation.findECGConfig(it), patientId, CurationCategory.ECG, it, "ECG", true
+            )
+        }
+        val ecg = when (curationResponse?.configs?.size) {
             0 -> {
-                return rawECG
+                rawECG
             }
 
             1 -> {
-                val config = ecgCuration.configs.first()
-                if (!config.ignore) {
-                    return ImmutableECG.builder()
-                        .from(rawECG!!)
-                        .aberrationDescription(config.interpretation.ifEmpty { null })
-                        .qtcfMeasure(maybeECGMeasure(config.qtcfValue, config.qtcfUnit))
-                        .jtcMeasure(maybeECGMeasure(config.jtcValue, config.jtcUnit))
-                        .build()
+                val config = curationResponse.configs.first()
+                if (config.ignore) null else {
+                    return ExtractionResult(
+                        ImmutableECG.builder()
+                            .from(rawECG)
+                            .aberrationDescription(config.interpretation.ifEmpty { null })
+                            .qtcfMeasure(maybeECGMeasure(config.qtcfValue, config.qtcfUnit))
+                            .jtcMeasure(maybeECGMeasure(config.jtcValue, config.jtcUnit))
+                            .build(),
+                        curationResponse.extractionEvaluation
+                    )
                 }
             }
+
+            else -> {
+                null
+            }
         }
-        return null
+        return ExtractionResult(ecg, curationResponse?.extractionEvaluation ?: ExtractionEvaluation())
     }
 
-    private fun extractInfection(
-        rawInfectionStatus: InfectionStatus?,
-        infectionCuration: CurationResponse<InfectionConfig>?
-    ): InfectionStatus? {
-        when (infectionCuration?.configs?.size) {
+    fun curateInfection(patientId: String, rawInfectionStatus: InfectionStatus?): ExtractionResult<InfectionStatus?> {
+        val curationResponse = rawInfectionStatus?.description()?.let {
+            CurationResponse.createFromConfigs(
+                curation.findInfectionStatusConfig(it), patientId, CurationCategory.INFECTION, it, "infection", true
+            )
+        }
+        val infectionStatus = when (curationResponse?.configs?.size) {
             0 -> {
-                return rawInfectionStatus
+                rawInfectionStatus
             }
 
             1 -> {
-                val config = infectionCuration.configs.first()
-                if (!config.ignore) {
-                    return ImmutableInfectionStatus.builder()
-                        .from(rawInfectionStatus!!)
+                val config = curationResponse.configs.first()
+                if (config.ignore) null else {
+                    ImmutableInfectionStatus.builder()
+                        .from(rawInfectionStatus)
                         .description(config.interpretation.ifEmpty { null })
                         .build()
                 }
             }
+
+            else -> {
+                null
+            }
         }
-        return null
+        return ExtractionResult(infectionStatus, curationResponse?.extractionEvaluation ?: ExtractionEvaluation())
     }
 
     private fun maybeECGMeasure(value: Int?, unit: String?): ImmutableECGMeasure? {

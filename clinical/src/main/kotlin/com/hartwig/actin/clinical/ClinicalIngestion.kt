@@ -27,6 +27,7 @@ import com.hartwig.actin.clinical.datamodel.SurgeryStatus
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.feed.FeedModel
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry
+import com.hartwig.actin.clinical.feed.lab.LabExtraction
 import com.hartwig.actin.clinical.feed.patient.PatientEntry
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireExtraction
@@ -70,7 +71,7 @@ class ClinicalIngestion(private val feed: FeedModel, private val curation: Curat
             val priorSecondPrimaryExtraction = priorSecondPrimaryExtractor.extract(patientId, questionnaire)
             val priorOtherConditionsExtraction = priorOtherConditionExtractor.extract(patientId, questionnaire)
             val priorMolecularTestsExtraction = priorMolecularTestsExtractor.extract(patientId, questionnaire)
-            val labValuesExtraction = labValueExtractor.extract(patientId, feed.labEntries(subject))
+            val labValuesExtraction = labValueExtractor.extract(patientId, feed.labEntries(subject).map { LabExtraction.extract(it) })
             val toxicityExtraction = toxicityExtractor.extract(patientId, feed.toxicityEntries(subject), questionnaire)
             val intoleranceExtraction = intoleranceExtractor.extract(patientId, feed.intoleranceEntries(subject))
             val bloodTransfusionsExtraction = bloodTransfusionsExtractor.extract(patientId, feed.bloodTransfusionEntries(subject))
