@@ -57,7 +57,7 @@ data class CtcDatabaseValidation(
     val ctcDatabaseValidationErrors: List<CTCDatabaseValidationError>,
 ) {
     fun hasErrors(): Boolean {
-        return (trialDefinitionValidationErrors + ctcDatabaseValidationErrors).isEmpty()
+        return (trialDefinitionValidationErrors + ctcDatabaseValidationErrors).isNotEmpty()
     }
 }
 
