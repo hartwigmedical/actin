@@ -5,30 +5,28 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import java.time.YearMonth
 
 class HasRecentlyReceivedRadiotherapy(private val referenceYear: Int, private val referenceMonth: Int) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasReceivedRadiotherapy = record.clinical().treatmentHistory()
-            .filter { it.categories().contains(TreatmentCategory.RADIOTHERAPY) }
-            .any {
-                val year = it.startYear()
+        val radiotherapyEvaluations = record.clinical().treatmentHistory().filter { it.categories().contains(TreatmentCategory.RADIOTHERAPY) }
+            .map {
+                it.startYear()?.let { year ->
                 val month = it.startMonth()
-                year == null || year == referenceYear && (month == null || month == referenceMonth)
+                    year >= referenceYear && (month == null || month >= referenceMonth || YearMonth.of(year, month).isAfter(YearMonth.of(referenceYear, referenceMonth)))
+                }
             }
 
-        val radiotherapyYear = record.clinical().treatmentHistory().filter { it.categories().contains(TreatmentCategory.RADIOTHERAPY) }
-            .any {
-                it.startYear() != null
-            }
-
-        return if (hasReceivedRadiotherapy && radiotherapyYear) {
-            EvaluationFactory.pass("Patient has recently received radiotherapy", "Has recently received radiotherapy")
-        } else if (hasReceivedRadiotherapy) {
-            EvaluationFactory.pass("Patient has received prior radiotherapy (possibly recent but date unknown)",
-                "Has received prior radiotherapy (possibly recent but date unknown)")
+        return if (radiotherapyEvaluations.any { it == true }) {
+            EvaluationFactory.pass("Patient has recently received radiotherapy (pay attention to washout period)",
+                "Has recently received radiotherapy (pay attention to washout period)")
+        } else if (radiotherapyEvaluations.any { it == null }) {
+            EvaluationFactory.pass("Has received prior radiotherapy with unknown date - if recent: pay attention to washout period",
+                "Has received prior radiotherapy with unknown date - pay attention to washout period")
         } else {
-            EvaluationFactory.fail("Patient has not recently received radiotherapy", "No recent radiotherapy")
+            EvaluationFactory.fail("Patient has not recently received radiotherapy - no concerns related to washout period",
+                "No recent radiotherapy")
         }
     }
 }

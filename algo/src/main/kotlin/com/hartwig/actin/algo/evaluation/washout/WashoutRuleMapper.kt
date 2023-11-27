@@ -94,11 +94,12 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
     }
 
     private fun hasRecentlyReceivedRadiotherapyCreator(): FunctionCreator {
-        return FunctionCreator {
-            HasRecentlyReceivedRadiotherapy(
-                referenceDateProvider().year(),
-                referenceDateProvider().month()
-            )
+        return FunctionCreator { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneIntegerInput(function)
+            val maxStopDate = referenceDateProvider().date().minusWeeks(input.toLong())
+            val maxStopYear = maxStopDate.year
+            val maxStopMonth = maxStopDate.monthValue
+            HasRecentlyReceivedRadiotherapy(maxStopYear, maxStopMonth)
         }
     }
 
