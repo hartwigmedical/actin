@@ -1,7 +1,5 @@
 package com.hartwig.actin.trial.ctc
 
-import com.hartwig.actin.trial.CTCDatabaseValidationError
-import com.hartwig.actin.trial.CohortDefinitionValidationError
 import com.hartwig.actin.trial.config.CohortDefinitionConfig
 import com.hartwig.actin.trial.ctc.config.CTCDatabaseEntry
 import org.apache.logging.log4j.LogManager
@@ -19,7 +17,7 @@ internal object CohortStatusInterpreter {
     fun interpret(
         entries: List<CTCDatabaseEntry>,
         cohortConfig: CohortDefinitionConfig
-    ): Triple<InterpretedCohortStatus?, List<CohortDefinitionValidationError>, List<CTCDatabaseValidationError>> {
+    ): CohortStatusInterpretation {
         val ctcCohortIds: Set<String> = cohortConfig.ctcCohortIds
         if (isNotAvailableOrIncorrect(ctcCohortIds)) {
             LOGGER.debug(
@@ -28,13 +26,13 @@ internal object CohortStatusInterpreter {
                 cohortConfig.cohortId,
                 cohortConfig.trialId
             )
-            return Triple(null, emptyList(), emptyList())
+            return CohortStatusInterpretation(null, emptyList(), emptyList())
         } else if (isMissingBecauseClosedOrUnavailable(ctcCohortIds)) {
             LOGGER.debug(
                 " CTC entry missing for cohort '{}' of trial '{}' because it's assumed closed or not available. "
                         + "Setting cohort to closed without slots", cohortConfig.cohortId, cohortConfig.trialId
             )
-            return Triple(closedWithoutSlots(), emptyList(), emptyList())
+            return CohortStatusInterpretation(closedWithoutSlots(), emptyList(), emptyList())
         }
 
         return CohortStatusResolver.resolve(entries, cohortConfig)

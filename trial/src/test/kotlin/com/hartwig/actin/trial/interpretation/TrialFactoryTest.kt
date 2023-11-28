@@ -20,7 +20,7 @@ import org.junit.Test
 class TrialFactoryTest {
 
     @Test
-    fun shouldNotCrashWhenCreatingFromTrialConfigDirectory() {
+    fun `Should not crash when creating from trial config directory`() {
         assertThat(
             TrialIngestion.create(
                 TRIAL_CONFIG_DIRECTORY,
@@ -33,7 +33,7 @@ class TrialFactoryTest {
     }
 
     @Test
-    fun shouldCreateExpectedTrialsFromProperTestModel() {
+    fun `Should create expected trials from proper test model`() {
         val factory = TrialIngestion(
             TrialConfigModel.createFromDatabase(
                 TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase(),
@@ -79,7 +79,7 @@ class TrialFactoryTest {
     }
 
     @Test(expected = IllegalStateException::class)
-    fun shouldCrashInCaseTrialStatusCannotBeResolved() {
+    fun `Should crash in case trial status cannot be resolved`() {
         val factory = TrialIngestion(
             TrialConfigModel.createFromDatabase(
                 TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase().copy(

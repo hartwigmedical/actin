@@ -10,19 +10,19 @@ object CohortStatusResolver {
     fun resolve(
         entries: List<CTCDatabaseEntry>,
         configuredCohortIds: CohortDefinitionConfig
-    ): Triple<InterpretedCohortStatus, List<CohortDefinitionValidationError>, List<CTCDatabaseValidationError>> {
+    ): CohortStatusInterpretation {
         val entriesByCohortId = entries.filter { it.cohortId != null }.associateBy { it.cohortId!!.toInt() }
         val (matches, missingCohortErrors) = findEntriesByCohortIds(entriesByCohortId, configuredCohortIds)
 
         if (!hasValidCTCDatabaseMatches(matches)) {
-            return Triple(
+            return CohortStatusInterpretation(
                 closedWithoutSlots(),
                 missingCohortErrors + CohortDefinitionValidationError(configuredCohortIds, "Invalid cohort IDs configured for cohort"),
                 emptyList()
             )
         }
         val (status, matchErrors) = interpretValidMatches(matches.filterNotNull(), entriesByCohortId)
-        return Triple(status, missingCohortErrors, matchErrors)
+        return CohortStatusInterpretation(status, missingCohortErrors, matchErrors)
     }
 
     internal fun hasValidCTCDatabaseMatches(matches: List<CTCDatabaseEntry?>): Boolean {
@@ -41,25 +41,23 @@ object CohortStatusResolver {
             val statusValidationErrors = statuses.map { it.second }.flatten()
             val bestChildEntry = statuses.map { it.first }.maxWith(InterpretedCohortStatusComparator())
             val firstParentId = matches[0].cohortParentId
-            val multipleParentValidationErrors = if (matches.size > 1) {
-                matches.filter { it.cohortParentId != firstParentId }
-                    .map { CTCDatabaseValidationError(matches[0], "Multiple parents found for single set of children") }
-            } else emptyList()
+            val multipleParentValidationErrors = matches.find { it.cohortParentId != firstParentId }
+                ?.let { CTCDatabaseValidationError(it, "Multiple parents found for single set of children") }
             val parentEntry = fromEntry(entriesByCohortId[firstParentId]!!).first
-            val openParentClosedChildValidationError = if (bestChildEntry.open && !parentEntry.open) {
+            val closedParentOpenChildValidationError = if (bestChildEntry.open && !parentEntry.open) {
                 CTCDatabaseValidationError(
                     matches[0],
                     "Best child from IDs '${matches.map { it.cohortId }}' is open while parent with ID '$firstParentId' is closed"
                 )
             } else null
 
-            val slotsParentNoSlotsChildValidationError = if (bestChildEntry.slotsAvailable && !parentEntry.slotsAvailable) {
+            val noSlotsParentHasSlotsChildValidationError = if (bestChildEntry.slotsAvailable && !parentEntry.slotsAvailable) {
                 CTCDatabaseValidationError(
                     matches[0],
                     "Best child from IDs '${matches.map { it.cohortId }}' has slots available while parent with ID '$firstParentId' has no slots available",
                 )
             } else null
-            return bestChildEntry to (statusValidationErrors + multipleParentValidationErrors + openParentClosedChildValidationError + slotsParentNoSlotsChildValidationError).filterNotNull()
+            return bestChildEntry to (statusValidationErrors + multipleParentValidationErrors + closedParentOpenChildValidationError + noSlotsParentHasSlotsChildValidationError).filterNotNull()
         }
         throw IllegalStateException("Unexpected set of CTC database matches: $matches")
     }

@@ -37,7 +37,7 @@ class CTCModel(private val ctcDatabase: CTCDatabase) {
         }
 
         val (openInCTC, interpreterValidationErrors) = TrialStatusInterpreter.isOpen(ctcDatabase.entries, trialConfig)
-        interpreterValidationErrors?.let { trialDefinitionValidationErrors.add(it) }
+        trialDefinitionValidationErrors.addAll(interpreterValidationErrors)
         if (openInCTC != null) {
             if (trialConfig.open != null) {
                 trialDefinitionValidationErrors.add(

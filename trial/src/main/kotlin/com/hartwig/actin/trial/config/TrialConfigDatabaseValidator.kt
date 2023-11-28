@@ -58,24 +58,29 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
             it.value.map(InclusionCriteriaReferenceConfig::referenceId).toSet()
         }
 
-        return allCriteriaWithNonExistentTrial.map { criterion ->
+        val allCriteriaWithNonExistentTrialErrors = allCriteriaWithNonExistentTrial.map { criterion ->
             InclusionCriteriaValidationError(
                 config = criterion, message = "Inclusion criterion defined on non-existing trial"
             )
-        } + allNonExistentCohorts.map { (criterion, cohortId) ->
+        }
+        val allNonExistentCohortsErrors = allNonExistentCohorts.map { (criterion, cohortId) ->
             InclusionCriteriaValidationError(
                 config = criterion, message = "Inclusion criterion defined on non-existing cohort '$cohortId'"
             )
-        } + allInvalidInclusionCriteria.map { criterion ->
+        }
+        val allInvalidInclusionCriteriaErrors = allInvalidInclusionCriteria.map { criterion ->
             InclusionCriteriaValidationError(
                 config = criterion, message = "Not a valid inclusion criterion for trial"
             )
-        } + trialIds.filter { it in referenceIdsPerTrial && it in criteriaPerTrial }.flatMap { trialId ->
-            criteriaPerTrial[trialId]!!.flatMap(InclusionCriteriaConfig::referenceIds)
-                .filterNot { referenceIdsPerTrial[trialId]!!.contains(it) }.map { Triple(trialId, it, criteriaPerTrial[trialId]!!) }
-        }.flatMap { (trialId, referenceId, configs) ->
-            configs.map { InclusionCriteriaValidationError(it, "Undefined reference ID on trial '$trialId': '$referenceId'") }
         }
+        val trialsWithUndefinedReferenceIdErrors = trialIds.filter { it in referenceIdsPerTrial && it in criteriaPerTrial }
+            .flatMap { trialId ->
+                criteriaPerTrial[trialId]!!.flatMap(InclusionCriteriaConfig::referenceIds)
+                    .filterNot { referenceIdsPerTrial[trialId]!!.contains(it) }.map { Triple(trialId, it, criteriaPerTrial[trialId]!!) }
+            }.flatMap { (trialId, referenceId, configs) ->
+                configs.map { InclusionCriteriaValidationError(it, "Undefined reference ID on trial '$trialId': '$referenceId'") }
+            }
+        return allCriteriaWithNonExistentTrialErrors + allNonExistentCohortsErrors + allInvalidInclusionCriteriaErrors + trialsWithUndefinedReferenceIdErrors
     }
 
 

@@ -10,12 +10,12 @@ import org.junit.Test
 class TrialConfigModelTest {
 
     @Test
-    fun canCreateFromTrialConfigDirectory() {
+    fun `Should create from trial config directory`() {
         Assert.assertNotNull(TrialConfigModel.create(TRIAL_CONFIG_DIRECTORY, TestEligibilityFactoryFactory.createTestEligibilityFactory()))
     }
 
     @Test
-    fun canQueryMinimalModel() {
+    fun `Should query minimal model`() {
         val model = TrialConfigModel.createFromDatabase(
             TestTrialConfigDatabaseFactory.createMinimalTestTrialConfigDatabase(),
             TrialConfigDatabaseValidator(TestEligibilityFactoryFactory.createTestEligibilityFactory())
@@ -28,7 +28,7 @@ class TrialConfigModelTest {
     }
 
     @Test
-    fun canQueryProperModel() {
+    fun `Should query proper model`() {
         val model = TrialConfigModel.createFromDatabase(
             TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase(),
             TrialConfigDatabaseValidator(TestEligibilityFactoryFactory.createTestEligibilityFactory())

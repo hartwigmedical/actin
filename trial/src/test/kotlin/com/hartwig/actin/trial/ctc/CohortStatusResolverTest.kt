@@ -20,14 +20,14 @@ class CohortStatusResolverTest {
                 entries,
                 doesNotExist
             )
-        assertThat(status.first.open).isFalse
-        assertThat(status.first.slotsAvailable).isFalse
-        assertThat(status.second).containsExactly(
+        assertThatStatus(status, isOpen = false, hasSlotsAvailable = false)
+        assertThat(status.cohortDefinitionErrors).containsExactly(
             CohortDefinitionValidationError(
                 config = doesNotExist,
                 message = "Invalid cohort IDs configured for cohort"
             )
         )
+        assertThat(status.ctcDatabaseValidationErrors).isEmpty()
     }
 
     @Test
@@ -36,16 +36,15 @@ class CohortStatusResolverTest {
             entries,
             cohortDefinitionConfig(PARENT_1_OPEN_WITH_SLOTS_COHORT_ID)
         )
-        assertThat(statusOpen.first.open).isTrue
-        assertThat(statusOpen.first.slotsAvailable).isTrue
+        assertThatStatus(statusOpen, isOpen = true, hasSlotsAvailable = true)
 
         val statusClosed = CohortStatusResolver.resolve(
             entries,
             cohortDefinitionConfig(PARENT_2_CLOSED_WITHOUT_SLOTS_COHORT_ID)
         )
-        assertThat(statusClosed.first.open).isFalse
-        assertThat(statusClosed.first.slotsAvailable).isFalse
-        assertThat(statusClosed.second).isEmpty()
+        assertThatStatus(statusClosed, isOpen = false, hasSlotsAvailable = false)
+        assertThat(statusClosed.cohortDefinitionErrors).isEmpty()
+        assertThat(statusClosed.ctcDatabaseValidationErrors).isEmpty()
     }
 
     @Test
@@ -54,9 +53,9 @@ class CohortStatusResolverTest {
             entries,
             cohortDefinitionConfig(CHILD_OPEN_WITH_SLOTS_COHORT_ID)
         )
-        assertThat(status.first.open).isTrue
-        assertThat(status.first.slotsAvailable).isTrue
-        assertThat(status.second).isEmpty()
+        assertThatStatus(status, isOpen = true, hasSlotsAvailable = true)
+        assertThat(status.cohortDefinitionErrors).isEmpty()
+        assertThat(status.ctcDatabaseValidationErrors).isEmpty()
     }
 
     @Test
@@ -65,9 +64,9 @@ class CohortStatusResolverTest {
             entries,
             cohortDefinitionConfig(CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID)
         )
-        assertThat(status.first.open).isTrue
-        assertThat(status.first.slotsAvailable).isFalse
-        assertThat(status.second).isEmpty()
+        assertThatStatus(status, isOpen = true, hasSlotsAvailable = false)
+        assertThat(status.cohortDefinitionErrors).isEmpty()
+        assertThat(status.ctcDatabaseValidationErrors).isEmpty()
     }
 
     @Test
@@ -76,9 +75,8 @@ class CohortStatusResolverTest {
             entries,
             cohortDefinitionConfig(CHILD_OPEN_WITH_SLOTS_COHORT_ID, ANOTHER_CHILD_OPEN_WITH_SLOTS_COHORT_ID)
         )
-        assertThat(status.first.open).isTrue
-        assertThat(status.first.slotsAvailable).isTrue
-        assertThat(status.second).isEmpty()
+        assertThatStatus(status, isOpen = true, hasSlotsAvailable = true)
+        assertThat(status.cohortDefinitionErrors).isEmpty()
     }
 
     @Test
@@ -87,13 +85,11 @@ class CohortStatusResolverTest {
             entries,
             cohortDefinitionConfig(CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID, CHILD_CLOSED_WITHOUT_SLOTS_COHORT_ID)
         )
-        assertThat(noSlotsStatus.first.open).isTrue
-        assertThat(noSlotsStatus.first.slotsAvailable).isFalse
+        assertThatStatus(noSlotsStatus, isOpen = true, hasSlotsAvailable = false)
 
         val openStatus = CohortStatusResolver.resolve(entries, cohortDefinitionConfig(CHILD_FOR_PARENT_2_OPEN_WITH_SLOTS_COHORT_ID))
-        assertThat(openStatus.first.open).isTrue
-        assertThat(openStatus.first.slotsAvailable).isTrue
-        assertThat(openStatus.second).isEmpty()
+        assertThatStatus(openStatus, isOpen = true, hasSlotsAvailable = true)
+        assertThat(openStatus.cohortDefinitionErrors).isEmpty()
     }
 
     @Test
@@ -112,13 +108,13 @@ class CohortStatusResolverTest {
     @Test
     fun `Should return validation error when multiple parents found for single set of children`() {
         val config = cohortDefinitionConfig(3, 4)
-        val wrongParent = TestCTCDatabaseEntryFactory.createEntry(3, 1, "Open", 1)
+        val wrongParent = TestCTCDatabaseEntryFactory.createEntry(4, 2, "Open", 1)
         val (_, _, ctcDatabaseValidation) = CohortStatusResolver.resolve(
             listOf(
                 TestCTCDatabaseEntryFactory.createEntry(1, null, "Open", 1),
                 TestCTCDatabaseEntryFactory.createEntry(2, null, "Open", 1),
-                wrongParent,
-                TestCTCDatabaseEntryFactory.createEntry(4, 2, "Open", 1)
+                TestCTCDatabaseEntryFactory.createEntry(3, 1, "Open", 1),
+                wrongParent
             ),
             config
         )
@@ -224,6 +220,12 @@ class CohortStatusResolverTest {
         for (entry in entries) {
             assertThat(CohortStatusResolver.hasValidCTCDatabaseMatches(listOf(entry))).isTrue
         }
+    }
+
+    private fun assertThatStatus(status: CohortStatusInterpretation, isOpen: Boolean, hasSlotsAvailable: Boolean) {
+        val interpretedCohortStatus = status.status!!
+        assertThat(interpretedCohortStatus.open).isEqualTo(isOpen)
+        assertThat(interpretedCohortStatus.slotsAvailable).isEqualTo(hasSlotsAvailable)
     }
 
     private fun cohortDefinitionConfig(vararg ctcCohortIds: Int) =

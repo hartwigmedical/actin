@@ -12,14 +12,14 @@ import org.junit.Test
 class TrialConfigDatabaseValidatorTest {
 
     @Test
-    fun confirmTrialConfigDatabasesAreValid() {
+    fun `Should confirm trial config databases are valid`() {
         val validator: TrialConfigDatabaseValidator = createTestValidator()
         assertThat(validator.validate(TestTrialConfigDatabaseFactory.createMinimalTestTrialConfigDatabase()).hasErrors()).isFalse
         assertThat(validator.validate(TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase()).hasErrors()).isFalse
     }
 
     @Test
-    fun canDetectIllDefinedTrialConfigDatabase() {
+    fun `Should detect ill defined trial config database`() {
         val validator: TrialConfigDatabaseValidator = createTestValidator()
         val validation = validator.validate(createInvalidTrialConfigDatabase())
         assertThat(validation.trialDefinitionValidationErrors).containsExactly(

@@ -10,12 +10,17 @@ import org.junit.Test
 class TrialStatusInterpreterTest {
 
     @Test
-    fun shouldReturnNullForEmptyCTCDatabase() {
-        assertThat(TrialStatusInterpreter.isOpen(listOf(), TrialDefinitionConfig("trial-1", true, "", ""))).isEqualTo(null to null)
+    fun `Should return null for empty CTC Database`() {
+        assertThat(
+            TrialStatusInterpreter.isOpen(
+                listOf(),
+                TrialDefinitionConfig("trial-1", true, "", "")
+            )
+        ).isEqualTo(null to emptyList<TrialDefinitionValidationError>())
     }
 
     @Test
-    fun shouldResolveToOpenForTrialsWithExclusivelyOpenEntries() {
+    fun `Should resolve to open for trials with exclusively open entries`() {
         val openMETC1 = createEntry(STUDY_METC_1, "Open")
         val closedMETC2 = createEntry(STUDY_METC_2, "Gesloten")
         assertThat(
@@ -27,7 +32,7 @@ class TrialStatusInterpreterTest {
     }
 
     @Test
-    fun shouldResolveToClosedForTrialsWithInconsistentEntriesAndReturnValidationError() {
+    fun `Should resolve to closed for trials with inconsistent entries and return validation error`() {
         val openMETC1 = createEntry(STUDY_METC_1, "Open")
         val closedMETC1 = createEntry(STUDY_METC_1, "Gesloten")
         val config = TrialDefinitionConfig(CTCModel.constructTrialId(closedMETC1), false, ",", "")
@@ -36,11 +41,11 @@ class TrialStatusInterpreterTest {
             config
         )
         assertThat(isOpen).isFalse
-        assertThat(validation).isEqualTo(TrialDefinitionValidationError(config, "Inconsistent study status found in CTC database"))
+        assertThat(validation).containsExactly(TrialDefinitionValidationError(config, "Inconsistent study status found in CTC database"))
     }
 
     @Test
-    fun shouldResolveToClosedForTrialsWithClosedEntriesExclusively() {
+    fun `Should resolve to closed for trials with closed entries exclusively`() {
         val closedMETC1 = createEntry(STUDY_METC_1, "Gesloten")
         val openMETC2 = createEntry(STUDY_METC_2, "Open")
         assertThat(
