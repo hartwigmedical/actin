@@ -5,6 +5,8 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
 
+private const val MIN_WEEKS_TO_ASSUME_STOP_DUE_TO_PD = 26 // half year
+
 object ProgressiveDiseaseFunctions {
 
     fun treatmentResultedInPDOption(treatment: TreatmentHistoryEntry): Boolean? {
@@ -20,7 +22,7 @@ object ProgressiveDiseaseFunctions {
         return when {
             bestResponse == TreatmentResponse.PROGRESSIVE_DISEASE || stopReason == StopReason.PROGRESSIVE_DISEASE -> true
 
-            stopReason == null && treatmentDuration != null && treatmentDuration > TreatmentConstants.minWeeksToAssumeStopDueToPD -> true
+            stopReason == null && treatmentDuration != null && treatmentDuration > MIN_WEEKS_TO_ASSUME_STOP_DUE_TO_PD -> true
 
             stopReason != null -> false
 
