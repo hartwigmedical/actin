@@ -8,6 +8,7 @@ import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.CurationUtil.fullTrim
 import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
+import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.Dosage
 import com.hartwig.actin.clinical.datamodel.ImmutableDosage
@@ -201,7 +202,7 @@ class MedicationExtractor(private val curation: CurationDatabase, private val at
     private fun translateString(
         patientId: String,
         input: String?,
-        translate: (String) -> String?,
+        translate: (String) -> Translation?,
         curationCategory: CurationCategory,
         translationType: String
     ): ExtractionResult<String?> {
@@ -211,7 +212,7 @@ class MedicationExtractor(private val curation: CurationDatabase, private val at
             val curationResponse = CurationResponse.createFromTranslation(
                 translate.invoke(input), patientId, curationCategory, input, translationType
             )
-            ExtractionResult(curationResponse.config()?.ifEmpty { null }, curationResponse.extractionEvaluation)
+            ExtractionResult(curationResponse.config()?.translated?.ifEmpty { null }, curationResponse.extractionEvaluation)
         }
     }
 

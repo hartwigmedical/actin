@@ -111,20 +111,20 @@ data class CurationDatabase(
     fun findQTProlongingConfigs(input: String): Set<QTProlongatingConfig> {
         return find(qtProlongingConfigs, input)
     }
-   
-    fun translateAdministrationRoute(input: String): String? {
+
+    fun translateAdministrationRoute(input: String): Translation? {
         return findTranslation(administrationRouteTranslations, input)
     }
 
-    fun translateBloodTransfusion(input: String): String? {
+    fun translateBloodTransfusion(input: String): Translation? {
         return findTranslation(bloodTransfusionTranslations, input)
     }
 
-    fun translateDosageUnit(input: String): String? {
+    fun translateDosageUnit(input: String): Translation? {
         return findTranslation(dosageUnitTranslations, input.lowercase())
     }
 
-    fun translateToxicity(input: String): String? {
+    fun translateToxicity(input: String): Translation? {
         return findTranslation(toxicityTranslations, input)
     }
 
@@ -156,22 +156,32 @@ data class CurationDatabase(
             Triple(medicationNameConfigs, evaluatedInputs.medicationNameEvaluatedInputs, CurationCategory.MEDICATION_NAME),
             Triple(medicationDosageConfigs, evaluatedInputs.medicationDosageEvaluatedInputs, CurationCategory.MEDICATION_DOSAGE),
             Triple(intoleranceConfigs, evaluatedInputs.intoleranceEvaluatedInputs, CurationCategory.INTOLERANCE),
+        ).forEach { (configMap, evaluatedInputs, category) ->
+            (configMap.keys - evaluatedInputs).forEach { input ->
+                logger.warn(" Curation key '{}' not used for {} curation", input, category.categoryName)
+            }
+        }
+
+        listOf(
             Triple(
                 administrationRouteTranslations,
                 evaluatedInputs.administrationRouteEvaluatedInputs,
                 CurationCategory.ADMINISTRATION_ROUTE_TRANSLATION
             ),
-            Triple(
-                laboratoryTranslations.mapKeys { (key, _) -> key.toList().joinToString("|") },
-                evaluatedInputs.laboratoryEvaluatedInputs,
-                CurationCategory.LABORATORY_TRANSLATION
-            ),
-            Triple(toxicityTranslations, evaluatedInputs.toxicityEvaluatedInputs, CurationCategory.TOXICITY_TRANSLATION),
+            Triple(toxicityTranslations, evaluatedInputs.toxicityTranslationEvaluatedInputs, CurationCategory.TOXICITY_TRANSLATION),
             Triple(dosageUnitTranslations, evaluatedInputs.dosageUnitEvaluatedInputs, CurationCategory.DOSAGE_UNIT_TRANSLATION)
-        ).forEach { (configMap, evaluatedInputs, category) ->
-            (configMap.keys - evaluatedInputs).forEach { input ->
-                logger.warn(" Curation key '{}' not used for {} curation", input, category.categoryName)
+        ).forEach { (translationMap, evaluatedTranslations, category) ->
+            (translationMap.values - evaluatedTranslations).forEach { translation ->
+                logger.warn(" Curation key '{}' not used for {} translation", translation.input, category.categoryName)
             }
+        }
+        (laboratoryTranslations.values - evaluatedInputs.laboratoryEvaluatedInputs).forEach { translation ->
+            logger.warn(
+                " Curation key '{}|{}' not used for {} translation",
+                translation.code,
+                translation.name,
+                CurationCategory.LABORATORY_TRANSLATION.categoryName
+            )
         }
     }
 
@@ -179,7 +189,7 @@ data class CurationDatabase(
         return configs[input.lowercase()] ?: emptySet()
     }
 
-    private fun findTranslation(translations: Map<String, Translation>, input: String): String? {
-        return translations[input.trim { it <= ' ' }]?.translated
+    private fun findTranslation(translations: Map<String, Translation>, input: String): Translation? {
+        return translations[input.trim { it <= ' ' }]
     }
 }

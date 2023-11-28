@@ -22,7 +22,7 @@ class BloodTransfusionsExtractor(private val curation: CurationDatabase) {
             )
             val transfusion = ImmutableBloodTransfusion.builder()
                 .date(entry.authored)
-                .product(curationResponse.config() ?: transfusionProduct)
+                .product(curationResponse.config()?.translated ?: transfusionProduct)
                 .build()
             ExtractionResult(transfusion, curationResponse.extractionEvaluation)
         }.fold(ExtractionResult(emptyList(), ExtractionEvaluation())) { acc, extractionResult ->

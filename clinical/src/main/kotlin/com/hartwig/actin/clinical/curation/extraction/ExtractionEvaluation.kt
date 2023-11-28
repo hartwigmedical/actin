@@ -1,6 +1,8 @@
 package com.hartwig.actin.clinical.curation.extraction
 
 import com.hartwig.actin.clinical.curation.CurationWarning
+import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation
+import com.hartwig.actin.clinical.curation.translation.Translation
 
 data class ExtractionEvaluation(
     val warnings: Set<CurationWarning> = emptySet(),
@@ -18,10 +20,10 @@ data class ExtractionEvaluation(
     val medicationNameEvaluatedInputs: Set<String> = emptySet(),
     val medicationDosageEvaluatedInputs: Set<String> = emptySet(),
     val intoleranceEvaluatedInputs: Set<String> = emptySet(),
-    val administrationRouteEvaluatedInputs: Set<String> = emptySet(),
-    val laboratoryEvaluatedInputs: Set<String> = emptySet(),
-    val toxicityTranslationEvaluatedInputs: Set<String> = emptySet(),
-    val dosageUnitEvaluatedInputs: Set<String> = emptySet()
+    val administrationRouteEvaluatedInputs: Set<Translation> = emptySet(),
+    val laboratoryEvaluatedInputs: Set<LaboratoryTranslation> = emptySet(),
+    val toxicityTranslationEvaluatedInputs: Set<Translation> = emptySet(),
+    val dosageUnitEvaluatedInputs: Set<Translation> = emptySet()
 ) {
     operator fun plus(other: ExtractionEvaluation?): ExtractionEvaluation {
         return if (other == null) this else ExtractionEvaluation(

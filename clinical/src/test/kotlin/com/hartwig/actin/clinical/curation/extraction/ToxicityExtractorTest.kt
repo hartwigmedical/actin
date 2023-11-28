@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
+import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry
 import org.assertj.core.api.Assertions.assertThat
@@ -41,8 +42,7 @@ class ToxicityExtractorTest {
 
     @Test
     fun `Should translate toxicities`() {
-        val names = setOf("Pijn", CANNOT_CURATE)
-        val inputs = names.map { name ->
+        val inputs = setOf("Pijn", CANNOT_CURATE).map { name ->
             DigitalFileEntry(
                 subject = PATIENT_ID,
                 authored = LocalDate.of(2020, 11, 11),
@@ -62,6 +62,6 @@ class ToxicityExtractorTest {
                 "No translation found for toxicity: '$CANNOT_CURATE'"
             )
         )
-        assertThat(evaluation.toxicityTranslationEvaluatedInputs).isEqualTo(names)
+        assertThat(evaluation.toxicityTranslationEvaluatedInputs).isEqualTo(setOf(Translation("Pijn", "Pain")))
     }
 }

@@ -28,11 +28,9 @@ class LabValueExtractorTest {
         val rawValues = listOf(labValue, ImmutableLabValue.builder().from(labValue).code(CANNOT_CURATE).name(CANNOT_CURATE).build())
         val extractor = LabValueExtractor(TestCurationFactory.createProperTestCurationDatabase())
         val (extractedValues, evaluation) = extractor.extract(PATIENT_ID, rawValues)
+        assertThat(extractedValues).hasSize(1)
         assertThat(extractedValues[0].code()).isEqualTo("CODE")
         assertThat(extractedValues[0].name()).isEqualTo("Name")
-
-        assertThat(extractedValues[1].code()).isEqualTo(CANNOT_CURATE)
-        assertThat(extractedValues[1].name()).isEqualTo(CANNOT_CURATE)
 
         assertThat(evaluation.warnings).containsOnly(
             CurationWarning(

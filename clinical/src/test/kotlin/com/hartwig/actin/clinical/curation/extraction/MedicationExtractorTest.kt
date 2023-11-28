@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestAtcFactory
 import com.hartwig.actin.clinical.curation.TestCurationFactory
+import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.datamodel.ImmutableDosage
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.MedicationStatus
@@ -109,7 +110,7 @@ class MedicationExtractorTest {
         val (extracted, evaluation) = extractor.translateAdministrationRoute(PATIENT_ID, "oraal")
         assertThat(extracted).isEqualTo("oral")
         assertThat(evaluation.warnings).isEmpty()
-        assertThat(evaluation.administrationRouteEvaluatedInputs).containsExactly("oraal")
+        assertThat(evaluation.administrationRouteEvaluatedInputs).containsExactly(Translation("oraal", "oral"))
     }
 
     private fun medicationEntryWithDosage(dosageInstruction: String) = TestFeedFactory.medicationEntry(
@@ -126,7 +127,7 @@ class MedicationExtractorTest {
         val (translation, evaluation) = extractor.translateDosageUnit(PATIENT_ID, "STUK")
         assertThat(translation).isEqualTo("piece")
         assertThat(evaluation.warnings).isEmpty()
-        assertThat(evaluation.dosageUnitEvaluatedInputs).containsExactly("stuk")
+        assertThat(evaluation.dosageUnitEvaluatedInputs).containsExactly(Translation("stuk", "piece"))
     }
 
     @Test

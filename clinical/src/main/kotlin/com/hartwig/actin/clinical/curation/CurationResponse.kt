@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.curation
 
 import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
+import com.hartwig.actin.clinical.curation.translation.Translation
 
 data class CurationResponse<T>(
     val configs: Set<T> = emptySet(), val extractionEvaluation: ExtractionEvaluation = ExtractionEvaluation()
@@ -43,13 +44,14 @@ data class CurationResponse<T>(
         }
 
         fun createFromTranslation(
-            translated: String?,
+            translation: Translation?,
             patientId: String,
             curationCategory: CurationCategory,
             inputText: String,
             translationType: String
-        ): CurationResponse<String> {
-            val warnings = if (translated != null) emptySet() else setOf(
+        ): CurationResponse<Translation> {
+            val foundTranslations = setOfNotNull(translation)
+            val warnings = if (translation != null) emptySet() else setOf(
                 CurationWarning(
                     patientId = patientId,
                     category = curationCategory,
@@ -57,7 +59,18 @@ data class CurationResponse<T>(
                     message = "No translation found for $translationType: '$inputText'"
                 )
             )
-            return create(curationCategory, inputText, setOfNotNull(translated), warnings)
+
+            val evaluation = when (curationCategory) {
+                CurationCategory.ADMINISTRATION_ROUTE_TRANSLATION -> {
+                    ExtractionEvaluation(administrationRouteEvaluatedInputs = foundTranslations)
+                }
+
+                CurationCategory.BLOOD_TRANSFUSION_TRANSLATION -> ExtractionEvaluation()
+                CurationCategory.TOXICITY_TRANSLATION -> ExtractionEvaluation(toxicityTranslationEvaluatedInputs = foundTranslations)
+                CurationCategory.DOSAGE_UNIT_TRANSLATION -> ExtractionEvaluation(dosageUnitEvaluatedInputs = foundTranslations)
+                else -> throw IllegalStateException("Unsupported curation category for translation lookup: $curationCategory")
+            }
+            return CurationResponse(foundTranslations, evaluation.copy(warnings = warnings))
         }
 
         fun <T> create(
@@ -87,14 +100,7 @@ data class CurationResponse<T>(
                 CurationCategory.INTOLERANCE -> ExtractionEvaluation(intoleranceEvaluatedInputs = evaluatedInputs)
                 CurationCategory.CYP_INTERACTION -> ExtractionEvaluation()
                 CurationCategory.QT_PROLONGATION -> ExtractionEvaluation()
-                CurationCategory.ADMINISTRATION_ROUTE_TRANSLATION -> ExtractionEvaluation(
-                    administrationRouteEvaluatedInputs = evaluatedInputs
-                )
-
-                CurationCategory.BLOOD_TRANSFUSION_TRANSLATION -> ExtractionEvaluation()
-                CurationCategory.LABORATORY_TRANSLATION -> ExtractionEvaluation(laboratoryEvaluatedInputs = evaluatedInputs)
-                CurationCategory.TOXICITY_TRANSLATION -> ExtractionEvaluation(toxicityTranslationEvaluatedInputs = evaluatedInputs)
-                CurationCategory.DOSAGE_UNIT_TRANSLATION -> ExtractionEvaluation(dosageUnitEvaluatedInputs = evaluatedInputs)
+                else -> throw IllegalStateException("Unsupported curation category for config lookup: $curationCategory")
             }
             return CurationResponse(configs, evaluation.copy(warnings = warnings))
         }

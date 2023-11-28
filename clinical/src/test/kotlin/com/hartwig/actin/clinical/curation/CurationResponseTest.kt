@@ -75,11 +75,12 @@ class CurationResponseTest {
 
     @Test
     fun `Should create curation response without warnings for found translation`() {
+        val translation = Translation("input", "translated")
         val response = CurationResponse.createFromTranslation(
-            "translated", PATIENT_ID, CurationCategory.DOSAGE_UNIT_TRANSLATION, "input", "dosage unit"
+            translation, PATIENT_ID, CurationCategory.DOSAGE_UNIT_TRANSLATION, "input", "dosage unit"
         )
         assertThat(response).isEqualTo(
-            CurationResponse(setOf("translated"), ExtractionEvaluation(dosageUnitEvaluatedInputs = setOf("input")))
+            CurationResponse(setOf(translation), ExtractionEvaluation(dosageUnitEvaluatedInputs = setOf(translation)))
         )
     }
 
@@ -89,7 +90,6 @@ class CurationResponseTest {
             null, PATIENT_ID, CurationCategory.DOSAGE_UNIT_TRANSLATION, "input", "dosage unit"
         )
         val expectedEvaluation = ExtractionEvaluation(
-            dosageUnitEvaluatedInputs = setOf("input"),
             warnings = setOf(
                 CurationWarning(
                     PATIENT_ID, CurationCategory.DOSAGE_UNIT_TRANSLATION, "input", "No translation found for dosage unit: 'input'"
