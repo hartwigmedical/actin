@@ -58,6 +58,23 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
             resultsJson,
             GsonSerializer.create().toJson(result).toByteArray()
         )
+        printAllValidationErrors(result)
+    }
+
+    private fun printAllValidationErrors(result: TrialIngestionResult) {
+        if (result.ctcDatabaseValidation.hasErrors()) {
+            LOGGER.warn("There were validation errors in the CTC database configuration")
+            result.ctcDatabaseValidation.ctcDatabaseValidationErrors.forEach { LOGGER.warn(it) }
+            result.ctcDatabaseValidation.trialDefinitionValidationErrors.forEach { LOGGER.warn(it) }
+        }
+
+        if (result.trialValidationResult.hasErrors()) {
+            LOGGER.warn("There were validation errors in the trial definition configuration")
+            result.trialValidationResult.cohortDefinitionValidationErrors.forEach { LOGGER.warn(it) }
+            result.trialValidationResult.trialDefinitionValidationErrors.forEach { LOGGER.warn(it) }
+            result.trialValidationResult.inclusionReferenceValidationErrors.forEach { LOGGER.warn(it) }
+            result.trialValidationResult.inclusionCriteriaValidationErrors.forEach { LOGGER.warn(it) }
+        }
     }
 
     companion object {
