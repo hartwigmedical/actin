@@ -54,11 +54,11 @@ class ComplicationsExtractorTest {
     }
 
     @Test
-    fun `Should extract empty list for complications with unknown state`() {
-        val inputs = listOf("none")
+    fun `Should extract null for complication with unknown state`() {
+        val inputs = listOf("Unknown")
         val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(complications = inputs)
         val (unknown, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
-        assertThat(unknown).isEmpty()
+        assertThat(unknown).isNull()
         assertThat(evaluation.warnings).isEmpty()
         assertThat(evaluation.complicationEvaluatedInputs).isEqualTo(inputs.map(String::lowercase).toSet())
     }

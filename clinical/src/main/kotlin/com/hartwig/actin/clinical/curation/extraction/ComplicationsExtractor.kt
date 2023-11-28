@@ -34,9 +34,8 @@ class ComplicationsExtractor(private val curation: CurationDatabase) {
             }
 
         // If there are complications but every single one of them implies an unknown state, return null
-        return if (unknownStateCount == validInputCount) ExtractionResult(null, ExtractionEvaluation()) else {
-            ExtractionResult(curation.configs.mapNotNull { it.curated }, curation.extractionEvaluation)
-        }
+        val curated = if (unknownStateCount == validInputCount) null else curation.configs.mapNotNull(ComplicationConfig::curated)
+        return ExtractionResult(curated, curation.extractionEvaluation)
     }
 
 }
