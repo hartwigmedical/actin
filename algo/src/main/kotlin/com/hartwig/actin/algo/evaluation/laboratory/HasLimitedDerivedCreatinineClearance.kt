@@ -7,12 +7,13 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverable
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMaxValue
 import com.hartwig.actin.clinical.datamodel.LabValue
+import com.hartwig.actin.clinical.interpretation.LabMeasurement
 
 class HasLimitedDerivedCreatinineClearance internal constructor(
     private val referenceYear: Int, private val method: CreatinineClearanceMethod,
     private val maxCreatinineClearance: Double
 ) : LabEvaluationFunction {
-    override fun evaluate(record: PatientRecord, labValue: LabValue): Evaluation {
+    override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
         return when (method) {
             CreatinineClearanceMethod.EGFR_MDRD -> evaluateMDRD(record, labValue)
             CreatinineClearanceMethod.EGFR_CKD_EPI -> evaluateCKDEPI(record, labValue)

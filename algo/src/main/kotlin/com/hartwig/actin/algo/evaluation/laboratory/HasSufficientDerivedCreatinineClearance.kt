@@ -15,7 +15,7 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
 ) : LabEvaluationFunction {
 
     //TODO: Implement logics for method = "measured"
-    override fun evaluate(record: PatientRecord, labValue: LabValue): Evaluation {
+    override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
         return when (method) {
             CreatinineClearanceMethod.EGFR_MDRD -> evaluateMDRD(record, labValue)
             CreatinineClearanceMethod.EGFR_CKD_EPI -> evaluateCKDEPI(record, labValue)

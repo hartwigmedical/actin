@@ -14,18 +14,18 @@ class HasSufficientLabValue internal constructor(
     private val measurement: LabMeasurement,
     private val targetUnit: LabUnit
 ) : LabEvaluationFunction {
-    override fun evaluate(record: PatientRecord, labValue: LabValue): Evaluation {
+    override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
         val convertedValue = LabUnitConverter.convert(measurement, labValue, targetUnit)
             ?: return recoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Could not convert value for ${labValue.code()} to ${targetUnit.display()}")
+                .addUndeterminedSpecificMessages("Could not convert value for ${labMeasurement.display()} to ${targetUnit.display()}")
                 .build()
         val result = evaluateVersusMinValue(convertedValue, labValue.comparator(), minValue)
         val builder = recoverable().result(result)
         when (result) {
             EvaluationResult.FAIL -> {
                 builder.addFailSpecificMessages(
-                    "${labValue.code()} ${
+                    "${labMeasurement.display()} ${
                         String.format(
                             "%.1f",
                             convertedValue
@@ -33,7 +33,7 @@ class HasSufficientLabValue internal constructor(
                     } ${targetUnit.display()} is below minimum of $minValue ${targetUnit.display()}"
                 )
                 builder.addFailGeneralMessages(
-                    "${labValue.code()} ${
+                    "${labMeasurement.display()} ${
                         String.format(
                             "%.1f",
                             convertedValue
@@ -49,14 +49,16 @@ class HasSufficientLabValue internal constructor(
 
             EvaluationResult.PASS -> {
                 builder.addPassSpecificMessages(
-                    "${labValue.code()} ${
+                    "${labMeasurement.display()} ${
                         String.format(
                             "%.1f",
                             convertedValue
                         )
                     } ${targetUnit.display()} exceeds minimum of $minValue ${targetUnit.display()}"
                 )
-                builder.addPassGeneralMessages("${labValue.code()} ${targetUnit.display()} exceeds min of $minValue ${targetUnit.display()}")
+                builder.addPassGeneralMessages(
+                    "${labMeasurement.display()} ${targetUnit.display()} exceeds min of $minValue ${targetUnit.display()}"
+                )
             }
 
             else -> {}

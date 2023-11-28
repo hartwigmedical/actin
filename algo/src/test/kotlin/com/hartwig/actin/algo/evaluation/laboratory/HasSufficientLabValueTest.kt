@@ -15,15 +15,18 @@ class HasSufficientLabValueTest {
         val measurement = LabMeasurement.THROMBOCYTES_ABS
         val function = HasSufficientLabValue(200.0, measurement, measurement.defaultUnit())
         val record = TestDataFactory.createMinimalTestPatientRecord()
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record, LabTestFactory.forMeasurement(measurement).value(300.0).build()))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(record, measurement, LabTestFactory.forMeasurement(measurement).value(300.0).build())
+        )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                record,
+                record, measurement,
                 LabTestFactory.forMeasurement(measurement).value(300.0).comparator(ValueComparison.SMALLER_THAN).build()
             )
         )
-        val actual = function.evaluate(record, LabTestFactory.forMeasurement(measurement).value(100.0).build())
+        val actual = function.evaluate(record, measurement, LabTestFactory.forMeasurement(measurement).value(100.0).build())
         assertEvaluation(EvaluationResult.FAIL, actual)
         assertTrue(actual.recoverable())
     }
@@ -37,22 +40,22 @@ class HasSufficientLabValueTest {
         val offUnit = LabTestFactory.forMeasurement(measurement).unit(LabUnit.GRAMS_PER_DECILITER)
 
         // Standard
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record, targetUnit.value(8.5).build()))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record, targetUnit.value(7.5).build()))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record, targetUnit.value(6.5).build()))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record, measurement, targetUnit.value(8.5).build()))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record, measurement, targetUnit.value(7.5).build()))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record, measurement, targetUnit.value(6.5).build()))
 
         // Different unit
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record, offUnit.value(12.2).build()))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record, offUnit.value(8.2).build()))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record, measurement, offUnit.value(12.2).build()))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record, measurement, offUnit.value(8.2).build()))
 
         // Works with other unit as target unit as well.
         val function2 = HasSufficientLabValue(7.5, measurement, LabUnit.GRAMS_PER_DECILITER)
-        assertEvaluation(EvaluationResult.PASS, function2.evaluate(record, targetUnit.value(6.5).build()))
+        assertEvaluation(EvaluationResult.PASS, function2.evaluate(record, measurement, targetUnit.value(6.5).build()))
 
         // Test that evaluation becomes undetermined if lab evaluation cannot convert.
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(record, LabTestFactory.forMeasurement(measurement).unit(LabUnit.NONE).value(10.0).build())
+            function.evaluate(record, measurement, LabTestFactory.forMeasurement(measurement).unit(LabUnit.NONE).value(10.0).build())
         )
     }
 }
