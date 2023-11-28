@@ -16,7 +16,6 @@ data class TrialLoaderConfig(
 ) : DatabaseLoaderConfig {
 
     companion object {
-       
         fun createOptions(): Options {
             val options = Options()
             options.addOption(TRIAL_DATABASE_DIRECTORY, true, "Directory containing all the trials that are expected to be loaded")

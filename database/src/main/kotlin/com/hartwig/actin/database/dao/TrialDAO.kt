@@ -13,6 +13,7 @@ import com.hartwig.actin.treatment.util.EligibilityFunctionDisplay
 import org.jooq.DSLContext
 
 internal class TrialDAO(private val context: DSLContext) {
+
     fun clear() {
         context.execute("SET FOREIGN_KEY_CHECKS = 0;")
         context.truncate(Tables.TRIAL).execute()

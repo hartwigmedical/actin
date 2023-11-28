@@ -70,8 +70,8 @@ class PriorMolecularResultGenerator(
 
         private fun formatValueBasedPriorTest(valueTest: PriorMolecularTest): String {
             return listOfNotNull(
-                "Score",
                 valueTest.item(),
+                "Score",
                 valueTest.measure(),
                 valueTest.scoreValuePrefix(),
                 Formats.twoDigitNumber(valueTest.scoreValue()!!),

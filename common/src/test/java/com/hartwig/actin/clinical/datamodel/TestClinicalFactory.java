@@ -132,7 +132,8 @@ public final class TestClinicalFactory {
                 .hasLiverLesions(true)
                 .hasLungLesions(true)
                 .hasLymphNodeLesions(true)
-                .addOtherLesions("lung")
+                .addOtherLesions("lymph nodes cervical and supraclavicular")
+                .addOtherLesions("lymph nodes abdominal")
                 .addOtherLesions("lymph node")
                 .addOtherLesions("Test Lesion")
                 .biopsyLocation("Liver")
@@ -211,7 +212,8 @@ public final class TestClinicalFactory {
     private static List<TreatmentHistoryEntry> createExhaustiveTreatmentHistory() {
 
         Drug irinotecan = drug("IRINOTECAN", DrugType.TOPO1_INHIBITOR, TreatmentCategory.CHEMOTHERAPY);
-        TreatmentHistoryEntry emptyHistoryEntry = ImmutableTreatmentHistoryEntry.builder().build();
+        TreatmentHistoryEntry hasNoDateHistoryEntry =
+                ImmutableTreatmentHistoryEntry.builder().addTreatments(ImmutableDrugTreatment.builder().name("Therapy").build()).build();
 
         TreatmentHistoryEntry hasStartYearHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
                 .startYear(2020)
@@ -264,7 +266,7 @@ public final class TestClinicalFactory {
                 .intents(Set.of(Intent.ADJUVANT, Intent.CONSOLIDATION))
                 .build();
 
-        return List.of(emptyHistoryEntry,
+        return List.of(hasNoDateHistoryEntry,
                 hasStartYearHistoryEntry,
                 hasStartYearMonthEndYearMonthHistoryEntry,
                 namedTrialHistoryEntry,
@@ -327,6 +329,17 @@ public final class TestClinicalFactory {
                 .scoreValuePrefix(null)
                 .scoreValue(null)
                 .scoreValueUnit(null)
+                .impliesPotentialIndeterminateStatus(false)
+                .build());
+
+        priorMolecularTests.add(ImmutablePriorMolecularTest.builder()
+                .test("IHC")
+                .item("PD-L1")
+                .measure(null)
+                .scoreText(null)
+                .scoreValuePrefix(null)
+                .scoreValue(90.0)
+                .scoreValueUnit("%")
                 .impliesPotentialIndeterminateStatus(false)
                 .build());
 
