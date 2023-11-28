@@ -19,8 +19,10 @@ class HasRecentlyReceivedRadiotherapy(private val referenceYear: Int, private va
             }
 
         return if (radiotherapyEvaluations.any { it == true }) {
-            EvaluationFactory.pass("Patient has recently received radiotherapy (pay attention to washout period)",
-                "Has recently received radiotherapy (pay attention to washout period)")
+            EvaluationFactory.pass(
+                "Patient has recently received radiotherapy - pay attention to washout period",
+                "Has recently received radiotherapy - pay attention to washout period"
+            )
         } else if (radiotherapyEvaluations.any { it == null }) {
             EvaluationFactory.pass("Has received prior radiotherapy with unknown date - if recent: pay attention to washout period",
                 "Has received prior radiotherapy with unknown date - pay attention to washout period")

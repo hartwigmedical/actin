@@ -23,8 +23,8 @@ class HasRecentlyReceivedCancerTherapyOfName(
 
         return if (namesFound.isNotEmpty()) {
             EvaluationFactory.pass(
-                "Patient has recently received treatment with medication " + concat(namesFound),
-                "Has recently received treatment with medication " + concat(namesFound)
+                "Patient has recently received treatment with medication " + concat(namesFound) + " - pay attention to washout period",
+                "Has recently received treatment with medication " + concat(namesFound) + " - pay attention to washout period"
             )
         } else {
             EvaluationFactory.fail(
