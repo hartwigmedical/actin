@@ -132,7 +132,7 @@ class MedicationExtractorTest {
 
     @Test
     fun `Should curate known medication dosage`() {
-        val (medications, evaluation) = extractor.extract(PATIENT_ID, listOf(medicationEntryWithDosage(KNOWN_DOSAGE_INSTRUCTION)))
+        val (medications, evaluation) = extractor.extract(PATIENT_ID, listOf(medicationEntryWithDosage(" $KNOWN_DOSAGE_INSTRUCTION ")))
         assertThat(evaluation.warnings).isEmpty()
         assertThat(evaluation.medicationDosageEvaluatedInputs).containsExactly(KNOWN_DOSAGE_INSTRUCTION.lowercase())
         assertThat(medications).hasSize(1)

@@ -88,11 +88,12 @@ class MedicationExtractor(private val curation: CurationDatabase, private val at
         administrationRoute: String?, entry: MedicationEntry, patientId: String
     ): ExtractionResult<Dosage> {
         return if (dosageRequiresCuration(administrationRoute, entry)) {
+            val input = entry.dosageInstructionText.trim { it <= ' ' }
             val curationResponse = CurationResponse.createFromConfigs(
-                curation.findMedicationDosageConfigs(entry.dosageInstructionText.trim { it <= ' ' }),
+                curation.findMedicationDosageConfigs(input),
                 patientId,
                 CurationCategory.MEDICATION_DOSAGE,
-                entry.dosageInstructionText,
+                input,
                 "medication dosage",
                 true
             )
