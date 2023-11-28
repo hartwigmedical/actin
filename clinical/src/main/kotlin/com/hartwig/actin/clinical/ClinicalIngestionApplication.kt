@@ -2,7 +2,9 @@ package com.hartwig.actin.clinical
 
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
-import com.hartwig.actin.clinical.curation.CurationModel
+import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
+import com.hartwig.actin.clinical.curation.CurationDatabaseReader
+import com.hartwig.actin.clinical.curation.CurationValidator
 import com.hartwig.actin.clinical.feed.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.FeedModel
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
@@ -29,28 +31,24 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
 
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
 
-        LOGGER.info("Creating clinical curation model from directory {}", config.curationDirectory)
-        val curationModel: CurationModel =
-            CurationModel.create(
-
-                config.curationDirectory, DoidModelFactory.createFromDoidEntry(doidEntry),
-                treatmentDatabase
-            )
+        LOGGER.info("Creating clinical curation database from directory {}", config.curationDirectory)
+        val curationReader = CurationDatabaseReader(CurationValidator(DoidModelFactory.createFromDoidEntry(doidEntry)), treatmentDatabase)
+        val curation = curationReader.read(config.curationDirectory)
 
         LOGGER.info("Creating ATC model from file {}", config.atcTsv)
         val atcModel = WhoAtcModel.createFromFile(config.atcTsv)
 
         LOGGER.info("Creating clinical feed model from directory {}", config.feedDirectory)
-        val clinicalFeed = ClinicalFeedReader.read(config.feedDirectory, atcModel)
+        val clinicalFeed = ClinicalFeedReader.read(config.feedDirectory)
         val feedModel = FeedModel(
             clinicalFeed.copy(
                 questionnaireEntries = QuestionnaireCorrection.correctQuestionnaires(
-                    clinicalFeed.questionnaireEntries, curationModel.questionnaireRawEntryMapper
+                    clinicalFeed.questionnaireEntries, QuestionnaireRawEntryMapper.createFromCurationDirectory(config.curationDirectory)
                 )
             )
         )
 
-        val results = ClinicalIngestion(feedModel, curationModel, atcModel).run()
+        val results = ClinicalIngestion(feedModel, curation, atcModel).run()
         val outputDirectory = config.outputDirectory
         LOGGER.info("Writing {} clinical records to {}", results.size, outputDirectory)
         ClinicalRecordJson.write(results.map { it.clinicalRecord }, outputDirectory)

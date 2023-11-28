@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical.curation
 
-import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
@@ -24,6 +23,7 @@ import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication
 import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
+import com.hartwig.actin.clinical.datamodel.ImmutableDosage
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary
@@ -34,33 +34,29 @@ import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
+import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.apache.logging.log4j.util.Strings
+import java.time.LocalDate
 import java.util.*
 
 private const val PARACETAMOL = "PARACETAMOL"
 
 object TestCurationFactory {
 
-    fun createProperTestCurationModel(): CurationModel {
-        return CurationModel(createTestCurationDatabase(), questionnaireRawEntryMapper())
-    }
-
-    fun createMinimalTestCurationModel(): CurationModel {
-        return CurationModel(
-            CurationDatabase(
-                emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(),
-                emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(),
-                emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(),
-            ), questionnaireRawEntryMapper()
-        )
-    }
-
     fun createMinimalTestCurationDatabaseValidator(): CurationValidator {
         return CurationValidator(TestDoidModelFactory.createMinimalTestDoidModel())
     }
 
-    private fun createTestCurationDatabase(): CurationDatabase {
+    fun createMinimalTestCurationDatabase(): CurationDatabase {
+        return CurationDatabase(
+            emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(),
+            emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(),
+            emptyMap()
+        )
+    }
+
+    fun createProperTestCurationDatabase(): CurationDatabase {
         return CurationDatabase(
             primaryTumorConfigs = configsToMap(createTestPrimaryTumorConfigs()),
             treatmentHistoryEntryConfigs = configsToMap(createTestTreatmentHistoryEntryConfigs()),
@@ -83,6 +79,13 @@ object TestCurationFactory {
             laboratoryTranslations = createTestLaboratoryTranslations().associateBy { Pair(it.code, it.name) },
             toxicityTranslations = createTestToxicityTranslations().associateBy { it.input },
             bloodTransfusionTranslations = createTestBloodTransfusionTranslations().associateBy { it.input }
+        )
+    }
+
+    fun emptyQuestionnaire(): Questionnaire {
+        return Questionnaire(
+            LocalDate.now(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null
         )
     }
 
@@ -332,14 +335,16 @@ object TestCurationFactory {
         return listOf(
             MedicationDosageConfig(
                 input = "once per day 50-60 mg every month",
-                dosageMin = 50.0,
-                dosageMax = 60.0,
-                dosageUnit = "mg",
-                frequency = 1.0,
-                frequencyUnit = "day",
-                periodBetweenValue = 1.0,
-                periodBetweenUnit = "mo",
-                ifNeeded = false
+                curated = ImmutableDosage.builder()
+                    .dosageMin(50.0)
+                    .dosageMax(60.0)
+                    .dosageUnit("mg")
+                    .frequency(1.0)
+                    .frequencyUnit("day")
+                    .periodBetweenValue(1.0)
+                    .periodBetweenUnit("mo")
+                    .ifNeeded(false)
+                    .build()
             )
         )
     }
@@ -381,9 +386,5 @@ object TestCurationFactory {
             Translation(input = "stuk", translated = "piece"),
             Translation(input = "milligram", translated = "mg")
         )
-    }
-
-    private fun questionnaireRawEntryMapper(): QuestionnaireRawEntryMapper {
-        return QuestionnaireRawEntryMapper(emptyMap())
     }
 }

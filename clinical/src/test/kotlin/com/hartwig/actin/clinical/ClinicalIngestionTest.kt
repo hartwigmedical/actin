@@ -62,7 +62,7 @@ class ClinicalIngestionTest {
         assertThat(results).hasSize(1)
         assertThat(results[0].patientId).isEqualTo(TEST_PATIENT)
         assertThat(results[0].status).isEqualTo(IngestionStatus.WARN_CURATION_REQUIRED)
-        assertThat(results[0].curationResults).containsOnly(
+        assertThat(results[0].curationResults).containsExactlyInAnyOrder(
             CurationResult(
                 "Toxicity Translation",
                 listOf(
@@ -283,7 +283,7 @@ class ClinicalIngestionTest {
         private fun createMinimalTestIngestionResults(): List<IngestionResult> {
             return ClinicalIngestion(
                 TestFeedFactory.createMinimalTestFeedModel(),
-                TestCurationFactory.createMinimalTestCurationModel(),
+                TestCurationFactory.createMinimalTestCurationDatabase(),
                 TestAtcFactory.createMinimalAtcModel()
             ).run()
         }
@@ -291,7 +291,7 @@ class ClinicalIngestionTest {
         private fun createProperTestIngestionResults(): List<IngestionResult> {
             return ClinicalIngestion(
                 TestFeedFactory.createProperTestFeedModel(),
-                TestCurationFactory.createProperTestCurationModel(),
+                TestCurationFactory.createProperTestCurationDatabase(),
                 TestAtcFactory.createProperAtcModel()
             ).run()
         }
