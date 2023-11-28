@@ -16,7 +16,7 @@ class HasTumorMutationalLoadWithinRange internal constructor(
             ?: return unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("Unknown tumor mutational load (TML)")
-                .addFailGeneralMessages("Unknown TML")
+                .addFailGeneralMessages("TML unknown")
                 .build()
         val meetsMinTumorLoad = tumorMutationalLoad >= minTumorMutationalLoad
         val meetsMaxTumorLoad = maxTumorMutationalLoad == null || tumorMutationalLoad <= maxTumorMutationalLoad
@@ -26,7 +26,7 @@ class HasTumorMutationalLoadWithinRange internal constructor(
                 unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages(
-                        "TML of sample " + tumorMutationalLoad + " is higher than requested minimal TML of "
+                        "Tumor mutational load (TML) of sample " + tumorMutationalLoad + " is higher than requested minimal TML of "
                                 + minTumorMutationalLoad
                     )
                     .addPassGeneralMessages("Adequate TML")
@@ -36,7 +36,7 @@ class HasTumorMutationalLoadWithinRange internal constructor(
                 unrecoverable()
                     .result(EvaluationResult.PASS)
                     .addPassSpecificMessages(
-                        "TML of sample " + tumorMutationalLoad + " is between requested TML range of " + minTumorMutationalLoad
+                        "Tumor mutational load (TML) of sample " + tumorMutationalLoad + " is between requested TML range of " + minTumorMutationalLoad
                                 + " - " + maxTumorMutationalLoad
                     )
                     .addPassGeneralMessages("Adequate TML")
@@ -51,15 +51,15 @@ class HasTumorMutationalLoadWithinRange internal constructor(
             unrecoverable()
                 .result(EvaluationResult.WARN)
                 .addWarnSpecificMessages(
-                    "TML of sample " + tumorMutationalLoad + " almost exceeds " + minTumorMutationalLoad
+                    "Tumor mutational load (TML) of sample " + tumorMutationalLoad + " almost exceeds " + minTumorMutationalLoad
                             + " while purity is low: perhaps a few mutations are missed and TML is adequate"
                 )
-                .addWarnGeneralMessages("TML almost sufficient with low purity")
+                .addWarnGeneralMessages("TML almost sufficient while purity is low")
                 .addInclusionMolecularEvents(MolecularCharacteristicEvents.ALMOST_SUFFICIENT_TUMOR_MUTATIONAL_LOAD)
                 .build()
         } else unrecoverable()
             .result(EvaluationResult.FAIL)
-            .addFailSpecificMessages("TML of sample $tumorMutationalLoad is not within specified range")
+            .addFailSpecificMessages("Tumor mutational load (TML) of sample $tumorMutationalLoad is not within specified range")
             .addFailGeneralMessages("Inadequate TML")
             .build()
     }

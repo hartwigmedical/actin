@@ -10,7 +10,7 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import kotlin.system.exitProcess
 
-class TreatmentMatchLoaderApplication constructor(private val config: TreatmentMatchLoaderConfig) {
+class TreatmentMatchLoaderApplication(private val config: TreatmentMatchLoaderConfig) {
 
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)

@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 public enum TreatmentCategory implements Displayable {
     CHEMOTHERAPY,
     RADIOTHERAPY,
-    CHEMORADIOTHERAPY,
     TARGETED_THERAPY,
     IMMUNOTHERAPY,
     HORMONE_THERAPY,

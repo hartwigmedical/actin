@@ -46,13 +46,13 @@ class IsMicrosatelliteUnstable internal constructor() : EvaluationFunction {
                 EvaluationFactory.undetermined(
                     "Unknown microsatellite instability (MSI) status, but biallelic drivers in MSI genes: "
                             + Format.concat(msiGenesWithBiallelicDriver) + " are detected; an MSI test may be recommended",
-                    "Unknown MSI status"
+                    "Unknown MSI status but biallelic drivers in MSI genes"
                 )
             } else if (msiGenesWithNonBiallelicDriver.isNotEmpty()) {
                 EvaluationFactory.undetermined(
                     "Unknown microsatellite instability (MSI) status, but non-biallelic drivers in MSI genes: "
                             + Format.concat(msiGenesWithNonBiallelicDriver) + " are detected; an MSI test may be recommended",
-                    "Unknown MSI status"
+                    "Unknown MSI status but non-biallelic drivers in MSI genes"
                 )
             } else {
                 EvaluationFactory.fail("Unknown microsatellite instability (MSI) status", "Unknown MSI status")
@@ -91,6 +91,6 @@ class IsMicrosatelliteUnstable internal constructor() : EvaluationFunction {
                     .build()
             }
         }
-        return EvaluationFactory.fail("No microsatellite instability (MSI) status detected", "MSI")
+        return EvaluationFactory.fail("Tumor is microsatellite stable (MSS)", "Tumor is MSS")
     }
 }

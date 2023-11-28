@@ -11,7 +11,7 @@ class HasSpecificHLAType internal constructor(private val hlaAlleleToFind: Strin
     override fun evaluate(record: PatientRecord): Evaluation {
         val immunology = record.molecular().immunology()
         if (!immunology.isReliable) {
-            return EvaluationFactory.recoverableUndetermined("HLA typing has not been performed reliably", "HLA typing")
+            return EvaluationFactory.recoverableUndetermined("HLA typing has not been performed reliably", "HLA typing unreliable")
         }
         var hasAlleleUnmodifiedInTumor = false
         var hasAlleleModifiedInTumor = false
@@ -34,7 +34,7 @@ class HasSpecificHLAType internal constructor(private val hlaAlleleToFind: Strin
                     "Patient has HLA type " + hlaAlleleToFind + " which is equal to required allele type " + hlaAlleleToFind
                             + ", this allele is present and without somatic variants in tumor"
                 )
-                .addPassGeneralMessages("HLA type")
+                .addPassGeneralMessages("Patient has required HLA type")
                 .build()
         } else if (hasAlleleModifiedInTumor) {
             return unrecoverable()
@@ -42,11 +42,11 @@ class HasSpecificHLAType internal constructor(private val hlaAlleleToFind: Strin
                 .addInclusionMolecularEvents(hlaAlleleToFind)
                 .addWarnSpecificMessages(
                     "Patient has HLA type " + hlaAlleleToFind + " which is equal to required allele type " + hlaAlleleToFind
-                            + ", however, this allele is affected in tumor."
+                            + ", however, somatic mutation found in allele in tumor."
                 )
-                .addWarnGeneralMessages("HLA type")
+                .addWarnGeneralMessages("Patient has required HLA type but somatic mutation present in this allele in tumor")
                 .build()
         }
-        return EvaluationFactory.fail("Patient does not have HLA type '$hlaAlleleToFind'", "HLA typing")
+        return EvaluationFactory.fail("Patient does not have HLA type '$hlaAlleleToFind'", "Patient does not have required HLA type")
     }
 }

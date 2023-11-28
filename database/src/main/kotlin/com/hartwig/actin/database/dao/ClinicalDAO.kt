@@ -24,9 +24,10 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEn
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
 import com.hartwig.actin.database.Tables
 import org.jooq.DSLContext
-import java.util.*
+import java.util.Optional
 
 internal class ClinicalDAO(private val context: DSLContext) {
+
     fun clear() {
         context.execute("SET FOREIGN_KEY_CHECKS = 0;")
         context.truncate(Tables.PATIENT).execute()

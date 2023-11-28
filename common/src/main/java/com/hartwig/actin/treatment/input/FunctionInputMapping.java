@@ -21,7 +21,6 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.CAN_GIVE_ADEQUATE_INFORMED_CONSENT, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_WEEKS, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_LIFE_EXPECTANCY_OF_AT_LEAST_X_MONTHS, FunctionInput.ONE_INTEGER);
-        RULE_INPUT_MAP.put(EligibilityRule.IS_TREATED_IN_HOSPITAL_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.WILL_PARTICIPATE_IN_TRIAL_IN_COUNTRY_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.IS_LEGALLY_INSTITUTIONALIZED, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.IS_INVOLVED_IN_STUDY_PROCEDURES, FunctionInput.NONE);
@@ -34,6 +33,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X, FunctionInput.ONE_TUMOR_TYPE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_CANCER_WITH_NEUROENDOCRINE_COMPONENT, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_CANCER_WITH_SMALL_CELL_COMPONENT, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_NON_SQUAMOUS_NSCLC, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_BREAST_CANCER_HORMONE_POSITIVE_AND_HER2_NEGATIVE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_PROSTATE_CANCER_WITH_SMALL_CELL_COMPONENT, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_OVARIAN_CANCER_WITH_MUCINOUS_COMPONENT, FunctionInput.NONE);
@@ -364,12 +364,13 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_Y, FunctionInput.ONE_INTEGER_ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y, FunctionInput.ONE_INTEGER_MANY_STRINGS);
 
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_SBP_MMHG_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_SBP_MMHG_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_DBP_MMHG_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
-        RULE_INPUT_MAP.put(EligibilityRule.HAS_DBP_MMHG_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_SBP_MMHG_OF_AT_LEAST_X, FunctionInput.ONE_INTEGER);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_SBP_MMHG_OF_AT_MOST_X, FunctionInput.ONE_INTEGER);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_DBP_MMHG_OF_AT_LEAST_X, FunctionInput.ONE_INTEGER);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_DBP_MMHG_OF_AT_MOST_X, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_PULSE_OXIMETRY_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_BODY_WEIGHT_OF_AT_LEAST_X, FunctionInput.ONE_DOUBLE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_BODY_WEIGHT_OF_AT_MOST_X, FunctionInput.ONE_DOUBLE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y, FunctionInput.TWO_DOUBLES);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_BMI_OF_AT_MOST_X, FunctionInput.ONE_INTEGER);
 

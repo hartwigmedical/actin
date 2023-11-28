@@ -22,9 +22,9 @@ class ProteinHasSufficientExpressionByIHC internal constructor(private val prote
                     return unrecoverable()
                         .result(EvaluationResult.PASS)
                         .addPassSpecificMessages(
-                            "Protein $protein has expression level of at least $minExpressionLevel (by IHC)"
+                            "Protein $protein has expression level of at least $minExpressionLevel by IHC"
                         )
-                        .addPassGeneralMessages("Adequate $protein IHC expression level")
+                        .addPassGeneralMessages("Adequate $protein expression level by IHC")
                         .build()
                 } else if (evaluation == EvaluationResult.UNDETERMINED) {
                     mightMeetMinExpressionLevelByIHC = true
@@ -39,9 +39,9 @@ class ProteinHasSufficientExpressionByIHC internal constructor(private val prote
             return unrecoverable()
                 .result(EvaluationResult.UNDETERMINED)
                 .addUndeterminedSpecificMessages(
-                    "Unknown if protein $protein expression level is at least $minExpressionLevel (by IHC)"
+                    "Unknown if protein $protein expression level is at least $minExpressionLevel by IHC"
                 )
-                .addUndeterminedGeneralMessages("Unknown $protein exact IHC expression level")
+                .addUndeterminedGeneralMessages("Exact expression level of $protein by IHC unknown")
                 .build()
         } else if (ihcTests.isEmpty()) {
             return unrecoverable()
@@ -53,9 +53,9 @@ class ProteinHasSufficientExpressionByIHC internal constructor(private val prote
         return unrecoverable()
             .result(EvaluationResult.FAIL)
             .addFailSpecificMessages(
-                "Protein $protein does not meet required expression level $minExpressionLevel (by IHC)"
+                "Protein $protein does not meet required expression level $minExpressionLevel by IHC"
             )
-            .addFailGeneralMessages("Insufficient " + protein + "exact IHC expression level")
+            .addFailGeneralMessages("Inadequate $protein expression level by IHC")
             .build()
     }
 }

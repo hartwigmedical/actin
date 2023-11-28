@@ -14,45 +14,47 @@ class HasBreastCancerHormonePositiveHER2Negative internal constructor(private va
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
             return EvaluationFactory.undetermined(
                 "Could not determine whether patient has hormone-positive HER2-negative breast cancer",
-                "Undetermined HR+ HR- breast cancer type"
+                "Undetermined HR+ HER2- breast cancer type"
             )
         }
-        val isBreastCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.BREAST_CANCER_DOID)
-        val isHer2Negative = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.HER2_NEGATIVE_BREAST_CANCER_DOID)
-        val isProgesteronePositive =
-            DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.PROGESTERONE_POSITIVE_BREAST_CANCER_DOID)
-        val isEstrogenPositive =
-            DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.ESTROGEN_POSITIVE_BREAST_CANCER_DOID)
-        val isHer2Positive = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.HER2_POSITIVE_BREAST_CANCER_DOID)
-        val isProgesteroneNegative =
-            DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.PROGESTERONE_NEGATIVE_BREAST_CANCER_DOID)
-        val isEstrogenNegative =
-            DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.ESTROGEN_NEGATIVE_BREAST_CANCER_DOID)
-        val hasHer2Amplified = geneIsAmplifiedForPatient("ERBB2", record)
+
+        val expandedDoidSet = DoidEvaluationFunctions.createFullExpandedDoidTree(doidModel, tumorDoids)
+        val isBreastCancer = DoidConstants.BREAST_CANCER_DOID in expandedDoidSet
+        val isHer2Negative = DoidConstants.HER2_NEGATIVE_BREAST_CANCER_DOID in expandedDoidSet
+        val isProgesteronePositive = DoidConstants.PROGESTERONE_POSITIVE_BREAST_CANCER_DOID in expandedDoidSet
+        val isEstrogenPositive = DoidConstants.ESTROGEN_POSITIVE_BREAST_CANCER_DOID in expandedDoidSet
+        val isHer2Positive = DoidConstants.HER2_POSITIVE_BREAST_CANCER_DOID in expandedDoidSet
+        val isProgesteroneNegative = DoidConstants.PROGESTERONE_NEGATIVE_BREAST_CANCER_DOID in expandedDoidSet
+        val isEstrogenNegative = DoidConstants.ESTROGEN_NEGATIVE_BREAST_CANCER_DOID in expandedDoidSet
+        val hasERBB2Amplified = geneIsAmplifiedForPatient("ERBB2", record)
+
         return when {
             isHer2Negative && (isProgesteronePositive || isEstrogenPositive) -> {
-                if (hasHer2Amplified) {
+                if (hasERBB2Amplified) {
                     EvaluationFactory.warn(
-                        "Patient has HER2-negative hormone-positive breast cancer but with HER2 amplified",
-                        "Unclear HER2 status"
+                        "Patient has HER2-negative hormone-positive breast cancer but with ERBB2 amplified",
+                        "Undetermined HR+ HER2- breast cancer due to presence of ERBB2 gene amp"
                     )
                 } else {
-                    EvaluationFactory.pass("Patient has her2-negative hormone-positive breast cancer", "Tumor type")
+                    EvaluationFactory.pass("Patient has HER2-negative hormone-positive breast cancer", "Tumor type")
                 }
             }
 
             (isProgesteronePositive || isEstrogenPositive) && !isHer2Positive -> {
                 EvaluationFactory.warn(
                     "Patient has hormone-positive breast cancer but with unclear HER2 status",
-                    "Unclear HER2 status"
+                    "Undetermined HR+ HER2- breast cancer due to HER2 status"
                 )
             }
 
             isBreastCancer && !isHer2Positive && !isEstrogenNegative && !isProgesteroneNegative -> {
-                EvaluationFactory.undetermined("Patient has breast cancer but with unclear sub-type", "Unclear breast cancer type")
+                EvaluationFactory.undetermined(
+                    "Undetermined if patient may have breast cancer of HR+ HER2- subtype",
+                    "Undetermined if breast cancer of HR+ HER2- subtype"
+                )
             }
 
-            else -> EvaluationFactory.fail("Patient has no HER2-negative hormone-positive breast cancer", "Tumor type")
+            else -> EvaluationFactory.fail("Patient has no hormone-positive HER2-negative breast cancer", "Tumor type")
         }
     }
 }

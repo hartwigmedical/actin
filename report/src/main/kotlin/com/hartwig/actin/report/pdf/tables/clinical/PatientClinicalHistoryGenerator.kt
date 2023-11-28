@@ -13,6 +13,7 @@ import com.hartwig.actin.report.pdf.util.Cells.create
 import com.hartwig.actin.report.pdf.util.Cells.createKey
 import com.hartwig.actin.report.pdf.util.Cells.createSpanningValue
 import com.hartwig.actin.report.pdf.util.Cells.createValue
+import com.hartwig.actin.report.pdf.util.Formats.DATE_UNKNOWN
 import com.hartwig.actin.report.pdf.util.Tables.createFixedWidthCols
 import com.hartwig.actin.report.pdf.util.Tables.createSingleColWithWidth
 import com.itextpdf.layout.element.BlockElement
@@ -104,7 +105,7 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
         private const val STOP_REASON_PROGRESSIVE_DISEASE = "PD"
 
         private fun extractDateRangeString(treatmentHistoryEntry: TreatmentHistoryEntry): String {
-            val startString = toDateString(treatmentHistoryEntry.startYear(), treatmentHistoryEntry.startMonth()) ?: "?"
+            val startString = toDateString(treatmentHistoryEntry.startYear(), treatmentHistoryEntry.startMonth()) ?: DATE_UNKNOWN
             return treatmentHistoryEntry.treatmentHistoryDetails()?.let { toDateString(it.stopYear(), it.stopMonth()) }
                 ?.let { stopString: String -> "$startString-$stopString" } ?: startString
         }
@@ -124,7 +125,7 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
                 else -> null
             }
 
-            val cyclesString = treatmentHistoryEntry.treatmentHistoryDetails()?.cycles()?.let { "$it cycles" }
+            val cyclesString = treatmentHistoryEntry.treatmentHistoryDetails()?.cycles()?.let { if (it == 1) "$it cycle" else "$it cycles" }
 
             val stopReasonString = treatmentHistoryEntry.treatmentHistoryDetails()?.stopReasonDetail()
                 ?.let { if (!it.equals(STOP_REASON_PROGRESSIVE_DISEASE, ignoreCase = true)) "stop reason: $it" else null }
@@ -161,10 +162,10 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
                 else -> tumorLocation
             }
             val dateAdditionDiagnosis: String = toDateString(priorSecondPrimary.diagnosedYear(), priorSecondPrimary.diagnosedMonth())
-                ?.let { "diagnosed $it, " } ?: ""
+                    ?.let { "diagnosed $it, " } ?: ""
 
             val dateAdditionLastTreatment = toDateString(priorSecondPrimary.lastTreatmentYear(), priorSecondPrimary.lastTreatmentMonth())
-                ?.let { "last treatment $it, " } ?: ""
+                    ?.let { "last treatment $it, " } ?: ""
 
             val status = when (priorSecondPrimary.status()) {
                 TumorStatus.ACTIVE -> "considered active"

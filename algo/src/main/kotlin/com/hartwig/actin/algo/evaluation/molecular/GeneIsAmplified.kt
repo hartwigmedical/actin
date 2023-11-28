@@ -23,6 +23,7 @@ class GeneIsAmplified internal constructor(private val gene: String) : Evaluatio
         val ampsOnNonOncogenes: MutableSet<String> = Sets.newHashSet()
         val ampsThatAreUnreportable: MutableSet<String> = Sets.newHashSet()
         val ampsThatAreNearCutoff: MutableSet<String> = Sets.newHashSet()
+        val evidenceSource = record.molecular().evidenceSource()
         for (copyNumber in record.molecular().drivers().copyNumbers()) {
             if (copyNumber.gene() == gene) {
                 val relativeMinCopies = copyNumber.minCopies() / ploidy
@@ -62,20 +63,21 @@ class GeneIsAmplified internal constructor(private val gene: String) : Evaluatio
             ampsWithLossOfFunction,
             ampsOnNonOncogenes,
             ampsThatAreUnreportable,
-            ampsThatAreNearCutoff
+            ampsThatAreNearCutoff,
+            evidenceSource
         )
         return potentialWarnEvaluation
             ?: unrecoverable()
                 .result(EvaluationResult.FAIL)
                 .addFailSpecificMessages("No amplification detected of gene $gene")
-                .addFailGeneralMessages("No amplification $gene")
+                .addFailGeneralMessages("No amplification of $gene")
                 .build()
     }
 
     private fun evaluatePotentialWarns(
         reportablePartialAmps: Set<String>, ampsWithLossOfFunction: Set<String>,
         ampsOnNonOncogenes: Set<String>, ampsThatAreUnreportable: Set<String>,
-        ampsThatAreNearCutoff: Set<String>
+        ampsThatAreNearCutoff: Set<String>, evidenceSource: String
     ): Evaluation? {
         val warnEvents: MutableSet<String> = Sets.newHashSet()
         val warnSpecificMessages: MutableSet<String> = Sets.newHashSet()
@@ -87,22 +89,22 @@ class GeneIsAmplified internal constructor(private val gene: String) : Evaluatio
         }
         if (ampsWithLossOfFunction.isNotEmpty()) {
             warnEvents.addAll(ampsWithLossOfFunction)
-            warnSpecificMessages.add("Gene $gene is amplified but event is annotated as having loss-of-function impact")
-            warnGeneralMessages.add("$gene amplification with loss-of-function protein impact")
+            warnSpecificMessages.add("Gene $gene is amplified but event is annotated as having loss-of-function impact in $evidenceSource")
+            warnGeneralMessages.add("$gene amplification but gene associated with loss-of-function protein impact in $evidenceSource")
         }
         if (ampsOnNonOncogenes.isNotEmpty()) {
             warnEvents.addAll(ampsOnNonOncogenes)
-            warnSpecificMessages.add("Gene $gene is amplified but gene $gene is known as TSG")
-            warnGeneralMessages.add("$gene amplification but $gene known as TSG")
+            warnSpecificMessages.add("Gene $gene is amplified but gene $gene is known as TSG in $evidenceSource")
+            warnGeneralMessages.add("$gene amplification but $gene known as TSG in $evidenceSource")
         }
         if (ampsThatAreUnreportable.isNotEmpty()) {
             warnEvents.addAll(ampsThatAreUnreportable)
             warnSpecificMessages.add("Gene $gene is amplified but not considered reportable")
-            warnGeneralMessages.add("$gene amplification considered non-reportable")
+            warnGeneralMessages.add("$gene amplification but considered not reportable")
         }
         if (ampsThatAreNearCutoff.isNotEmpty()) {
             warnEvents.addAll(ampsThatAreNearCutoff)
-            warnSpecificMessages.add("Gene $gene does not meet cut-off for amplification, but is near cut-off")
+            warnSpecificMessages.add("Gene $gene does not meet cut-off for amplification but is near cut-off")
             warnGeneralMessages.add("$gene near cut-off for amplification")
         }
         return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {

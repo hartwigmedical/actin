@@ -54,7 +54,10 @@ class SummaryChapter(private val report: Report) : ReportChapter {
     private fun addParagraphWithContent(contentFields: List<Pair<String, String>>, document: Document) {
         val paragraph = Paragraph()
         contentFields.flatMap { (label, value) ->
-            listOf(Text(label).addStyle(Styles.reportHeaderLabelStyle()), Text(value).addStyle(Styles.reportHeaderValueStyle()))
+            listOf(
+                Text(label).addStyle(Styles.reportHeaderLabelStyle()),
+                Text(value).addStyle(Styles.reportHeaderValueStyle())
+            )
         }.forEach(paragraph::add)
         document.add(paragraph.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT))
     }
@@ -132,17 +135,27 @@ class SummaryChapter(private val report: Report) : ReportChapter {
                 "Brain" to tumor.hasBrainLesions(),
                 "Liver" to tumor.hasLiverLesions(),
                 "Bone" to tumor.hasBoneLesions(),
-                "Lung" to tumor.hasLungLesions(),
-                "Lymph Node" to tumor.hasLymphNodeLesions()
+                "Lung" to tumor.hasLungLesions()
             ).filter { it.second == true }.map { it.first }
 
             val lesions =
-                listOfNotNull(categorizedLesions, tumor.otherLesions(), listOfNotNull(tumor.biopsyLocation())).flatten().sorted().distinct()
+                listOfNotNull(categorizedLesions, tumor.otherLesions(), listOfNotNull(tumor.biopsyLocation())).flatten()
+                    .sorted().distinctBy { it.uppercase() }
+
+            val (lymphNodeLesions, otherLesions) = lesions.partition { it.lowercase().startsWith("lymph node") }
+
+            val filteredLymphNodeLesions = lymphNodeLesions.map { lesion ->
+                lesion.split(" ").filterNot { it.lowercase() in setOf("lymph", "node", "nodes", "") }.joinToString(" ")
+            }.filterNot(String::isEmpty).distinctBy(String::lowercase)
+
+            val lymphNodeLesionsString = if (filteredLymphNodeLesions.isNotEmpty()) {
+                "Lymph nodes (${filteredLymphNodeLesions.joinToString(", ")})"
+            } else "Lymph nodes"
 
             return if (lesions.isEmpty()) {
                 Formats.VALUE_UNKNOWN
             } else {
-                lesions.joinToString(", ")
+                (otherLesions + lymphNodeLesionsString).joinToString(", ")
             }
         }
     }

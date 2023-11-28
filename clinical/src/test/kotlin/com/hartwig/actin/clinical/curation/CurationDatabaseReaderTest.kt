@@ -271,14 +271,14 @@ class CurationDatabaseReaderTest {
         val configs = database!!.medicationDosageConfigs
         assertThat(configs).hasSize(1)
         val config1 = find(configs, "once per day 50-60 mg every month")
-        assertDoubleEquals(50.0, config1.dosageMin)
-        assertDoubleEquals(60.0, config1.dosageMax)
-        assertThat(config1.dosageUnit).isEqualTo("mg")
-        assertDoubleEquals(1.0, config1.frequency)
-        assertThat(config1.frequencyUnit).isEqualTo("day")
-        assertThat(config1.periodBetweenValue).isEqualTo(0.0)
-        assertThat(config1.periodBetweenUnit).isEqualTo("mo")
-        assertThat(config1.ifNeeded).isEqualTo(false)
+        assertDoubleEquals(50.0, config1.curated.dosageMin())
+        assertDoubleEquals(60.0, config1.curated.dosageMax())
+        assertThat(config1.curated.dosageUnit()).isEqualTo("mg")
+        assertDoubleEquals(1.0, config1.curated.frequency())
+        assertThat(config1.curated.frequencyUnit()).isEqualTo("day")
+        assertThat(config1.curated.periodBetweenValue()).isEqualTo(0.0)
+        assertThat(config1.curated.periodBetweenUnit()).isEqualTo("mo")
+        assertThat(config1.curated.ifNeeded()).isEqualTo(false)
     }
 
     @Test

@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical.feed
 
-import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.util.Paths
 import org.apache.logging.log4j.LogManager
 import java.io.IOException
@@ -18,7 +17,7 @@ object ClinicalFeedReader {
     private const val BODY_WEIGHT_TSV = "bodyweight.tsv"
 
     @Throws(IOException::class)
-    fun read(clinicalFeedDirectory: String, atcModel: AtcModel): ClinicalFeed {
+    fun read(clinicalFeedDirectory: String): ClinicalFeed {
         LOGGER.info("Reading clinical feed data from {}", clinicalFeedDirectory)
         val basePath = Paths.forceTrailingFileSeparator(clinicalFeedDirectory)
         val feed = ClinicalFeed(

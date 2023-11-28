@@ -19,7 +19,7 @@ class HasSufficientTumorMutationalBurden internal constructor(private val minTum
         if (tumorMutationalBurdenIsAllowed) {
             return unrecoverable()
                 .result(EvaluationResult.PASS)
-                .addPassSpecificMessages("TMB of sample $tumorMutationalBurden is sufficient")
+                .addPassSpecificMessages("Tumor mutational burden (TMB) of sample $tumorMutationalBurden is sufficient")
                 .addPassGeneralMessages("Adequate TMB")
                 .addInclusionMolecularEvents(MolecularCharacteristicEvents.HIGH_TUMOR_MUTATIONAL_BURDEN)
                 .build()
@@ -31,15 +31,15 @@ class HasSufficientTumorMutationalBurden internal constructor(private val minTum
             unrecoverable()
                 .result(EvaluationResult.WARN)
                 .addWarnSpecificMessages(
-                    "TMB of sample " + tumorMutationalBurden + " almost exceeds " + minTumorMutationalBurden
+                    "Tumor mutational burden (TMB) of sample " + tumorMutationalBurden + " almost exceeds " + minTumorMutationalBurden
                             + " while purity is low: perhaps a few mutations are missed and TMB is adequate"
                 )
-                .addWarnGeneralMessages("TMB almost sufficient with low purity")
+                .addWarnGeneralMessages("TMB almost sufficient while purity is low")
                 .addInclusionMolecularEvents(MolecularCharacteristicEvents.ALMOST_SUFFICIENT_TUMOR_MUTATIONAL_BURDEN)
                 .build()
         } else unrecoverable()
             .result(EvaluationResult.FAIL)
-            .addFailSpecificMessages("TMB of sample $tumorMutationalBurden is not within specified range")
+            .addFailSpecificMessages("Tumor mutational burden (TMB) of sample $tumorMutationalBurden is not within specified range")
             .addFailGeneralMessages("Inadequate TMB")
             .build()
     }

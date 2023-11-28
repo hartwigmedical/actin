@@ -13,7 +13,6 @@ object EligibilityRuleUsageEvaluator {
 
     private val UNUSED_RULES_TO_KEEP = setOf(
         EligibilityRule.HAS_LYMPHOCYTES_CELLS_PER_MM3_OF_AT_LEAST_X,
-        EligibilityRule.HAS_QTC_OF_AT_MOST_X,
         EligibilityRule.HAS_HLA_TYPE_X,
         EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X,
         EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_CURRENT_TRIAL,
@@ -66,7 +65,8 @@ object EligibilityRuleUsageEvaluator {
         EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT,
         EligibilityRule.HAS_PT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS,
         EligibilityRule.HAS_APTT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS,
-        EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL
+        EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL,
+        EligibilityRule.HAS_NON_SQUAMOUS_NSCLC
     )
 
     fun evaluate(trials: List<Trial>) {
