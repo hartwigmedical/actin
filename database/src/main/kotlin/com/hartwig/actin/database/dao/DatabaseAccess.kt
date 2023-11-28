@@ -16,6 +16,7 @@ class DatabaseAccess private constructor(
     private val clinicalDAO: ClinicalDAO, private val molecularDAO: MolecularDAO,
     private val trialDAO: TrialDAO, private val treatmentMatchDAO: TreatmentMatchDAO
 ) {
+
     fun writeClinicalRecords(records: List<ClinicalRecord>) {
         LOGGER.info(" Clearing all clinical data")
         clinicalDAO.clear()
@@ -49,7 +50,6 @@ class DatabaseAccess private constructor(
     }
 
     companion object {
-
         private val LOGGER = LogManager.getLogger(DatabaseAccess::class.java)
         private const val DEV_CATALOG = "actin_test"
 

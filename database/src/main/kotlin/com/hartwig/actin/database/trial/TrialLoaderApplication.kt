@@ -10,16 +10,20 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import kotlin.system.exitProcess
 
-class TrialLoaderApplication constructor(private val config: TrialLoaderConfig) {
+class TrialLoaderApplication(private val config: TrialLoaderConfig) {
 
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
+
         LOGGER.info("Loading trials from {}", config.trialDatabaseDirectory)
         val trials = TrialJson.readFromDir(config.trialDatabaseDirectory)
+
         LOGGER.info(" Loaded {} trials", trials.size)
         val access: DatabaseAccess = DatabaseAccess.fromCredentials(config.dbUser, config.dbPass, config.dbUrl)
+
         LOGGER.info("Writing {} trials to database", trials.size)
         access.writeTrials(trials)
+
         LOGGER.info("Done!")
     }
 

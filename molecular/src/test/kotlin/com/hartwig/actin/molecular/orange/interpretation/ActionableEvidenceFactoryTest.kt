@@ -9,10 +9,10 @@ import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.EvidenceDirection
 import com.hartwig.serve.datamodel.EvidenceLevel
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import kotlin.test.assertNotNull
 
 class ActionableEvidenceFactoryTest {
 
@@ -49,7 +49,7 @@ class ActionableEvidenceFactoryTest {
 
         val evidence = ActionableEvidenceFactory.create(match)
         assertNotNull(evidence)
-        assertEquals(1, evidence.approvedTreatments().size.toLong())
+        assertEquals(1, evidence!!.approvedTreatments().size.toLong())
         assertTrue(evidence.approvedTreatments().contains("A on-label responsive"))
         assertTrue(evidence.externalEligibleTrials().isEmpty())
         assertEquals(4, evidence.onLabelExperimentalTreatments().size.toLong())
@@ -88,7 +88,7 @@ class ActionableEvidenceFactoryTest {
 
         val evidence = ActionableEvidenceFactory.create(match)
         assertNotNull(evidence)
-        assertEquals(1, evidence.knownResistantTreatments().size.toLong())
+        assertEquals(1, evidence!!.knownResistantTreatments().size.toLong())
         assertTrue(evidence.knownResistantTreatments().contains("On-label responsive A"))
         assertEquals(2, evidence.suspectResistantTreatments().size.toLong())
         assertTrue(evidence.suspectResistantTreatments().contains("Off-label responsive"))
@@ -110,7 +110,7 @@ class ActionableEvidenceFactoryTest {
 
         val evidence = ActionableEvidenceFactory.create(match)
         assertNotNull(evidence)
-        assertTrue(evidence.approvedTreatments().isEmpty())
+        assertTrue(evidence!!.approvedTreatments().isEmpty())
         assertEquals(1, evidence.externalEligibleTrials().size.toLong())
         assertTrue(evidence.externalEligibleTrials().contains("On-label responsive trial"))
         assertTrue(evidence.onLabelExperimentalTreatments().isEmpty())
@@ -135,7 +135,7 @@ class ActionableEvidenceFactoryTest {
 
         val evidence = ActionableEvidenceFactory.create(match)
         assertNotNull(evidence)
-        assertTrue(evidence.approvedTreatments().isEmpty())
+        assertTrue(evidence!!.approvedTreatments().isEmpty())
         assertTrue(evidence.externalEligibleTrials().isEmpty())
         assertTrue(evidence.onLabelExperimentalTreatments().isEmpty())
         assertTrue(evidence.offLabelExperimentalTreatments().isEmpty())

@@ -13,7 +13,6 @@ data class ClinicalLoaderConfig(
 ) : DatabaseLoaderConfig {
 
     companion object {
-       
         fun createOptions(): Options {
             val options = Options()
             options.addOption(CLINICAL_DIRECTORY, true, "Directory containing the clinical JSON files to load up")
