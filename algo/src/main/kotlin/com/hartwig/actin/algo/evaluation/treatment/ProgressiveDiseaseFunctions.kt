@@ -16,12 +16,11 @@ object ProgressiveDiseaseFunctions {
             treatment.treatmentHistoryDetails()?.stopYear(),
             treatment.treatmentHistoryDetails()?.stopMonth()
         )
-        val minWeeksToAssumeStopDueToPD = 26 // half year
 
         return when {
             bestResponse == TreatmentResponse.PROGRESSIVE_DISEASE || stopReason == StopReason.PROGRESSIVE_DISEASE -> true
 
-            stopReason == null && treatmentDuration != null && treatmentDuration > minWeeksToAssumeStopDueToPD -> true
+            stopReason == null && treatmentDuration != null && treatmentDuration > TreatmentConstants.minWeeksToAssumeStopDueToPD -> true
 
             stopReason != null -> false
 
