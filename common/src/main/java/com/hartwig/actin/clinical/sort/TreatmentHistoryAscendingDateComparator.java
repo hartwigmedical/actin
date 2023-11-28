@@ -15,12 +15,21 @@ public class TreatmentHistoryAscendingDateComparator implements Comparator<Treat
     public int compare(@NotNull TreatmentHistoryEntry entry1, @NotNull TreatmentHistoryEntry entry2) {
         Comparator<Integer> nullSafeComparator = Comparator.nullsLast(Comparator.naturalOrder());
 
-        return Comparator.comparing(TreatmentHistoryEntry::startYear, nullSafeComparator)
-                .thenComparing(TreatmentHistoryEntry::startMonth, nullSafeComparator)
-                .thenComparing(TreatmentHistoryAscendingDateComparator::stopYearForHistoryEntry, nullSafeComparator)
-                .thenComparing(TreatmentHistoryAscendingDateComparator::stopMonthForHistoryEntry, nullSafeComparator)
-                .thenComparing(TreatmentHistoryEntry::treatmentName)
-                .compare(entry1, entry2);
+        if ((entry1.startYear() == null || entry2.startYear() == null) && (stopYearForHistoryEntry(entry1) != null
+                || stopYearForHistoryEntry(entry2) != null)) {
+
+            return Comparator.comparing(TreatmentHistoryAscendingDateComparator::stopYearForHistoryEntry, nullSafeComparator)
+                    .thenComparing(TreatmentHistoryAscendingDateComparator::stopMonthForHistoryEntry, nullSafeComparator)
+                    .thenComparing(TreatmentHistoryEntry::treatmentName)
+                    .compare(entry1, entry2);
+        } else {
+            return Comparator.comparing(TreatmentHistoryEntry::startYear, nullSafeComparator)
+                    .thenComparing(TreatmentHistoryEntry::startMonth, nullSafeComparator)
+                    .thenComparing(TreatmentHistoryAscendingDateComparator::stopYearForHistoryEntry, nullSafeComparator)
+                    .thenComparing(TreatmentHistoryAscendingDateComparator::stopMonthForHistoryEntry, nullSafeComparator)
+                    .thenComparing(TreatmentHistoryEntry::treatmentName)
+                    .compare(entry1, entry2);
+        }
     }
 
     @Nullable
