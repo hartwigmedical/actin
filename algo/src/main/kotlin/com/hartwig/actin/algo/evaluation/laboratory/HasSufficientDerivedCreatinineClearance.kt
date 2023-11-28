@@ -7,6 +7,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverable
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMinValue
 import com.hartwig.actin.clinical.datamodel.LabValue
+import com.hartwig.actin.clinical.interpretation.LabMeasurement
 
 class HasSufficientDerivedCreatinineClearance internal constructor(
     private val referenceYear: Int, private val method: CreatinineClearanceMethod,
@@ -53,11 +54,12 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
         )
 
         val result = evaluateVersusMinValue(cockcroftGault, creatinine.comparator(), minCreatinineClearance)
+        val unit = LabMeasurement.CREATININE.defaultUnit().display()
 
         return when {
             result == EvaluationResult.FAIL && weight == null -> EvaluationFactory.undetermined(
-                "eGFR (Cockcroft-Gault) may be insufficient based on creatinine level (umol/L) but weight of patient is not known",
-                "eGFR (CG) may be insufficient based on creatinine level (umol/L) but patient weight unknown"
+                "eGFR (Cockcroft-Gault) may be insufficient based on creatinine level ($unit) but weight of patient is not known",
+                "eGFR (CG) may be insufficient based on creatinine level ($unit) but patient weight unknown"
             )
 
             result == EvaluationResult.FAIL -> EvaluationFactory.recoverableFail(
@@ -71,8 +73,8 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
             )
 
             result == EvaluationResult.PASS && weight == null -> EvaluationFactory.notEvaluated(
-                "Body weight unknown but eGFR (Cockcroft-Gault) based on creatinine level (umol/L) most likely above min of $minCreatinineClearance",
-                "eGFR (CG) based on creatinine level (umol/L) most likely above min of $minCreatinineClearance but weight unknown",
+                "Body weight unknown but eGFR (Cockcroft-Gault) based on creatinine level ($unit) most likely above min of $minCreatinineClearance",
+                "eGFR (CG) based on creatinine level ($unit) most likely above min of $minCreatinineClearance but weight unknown",
             )
 
             result == EvaluationResult.PASS -> EvaluationFactory.recoverablePass(
