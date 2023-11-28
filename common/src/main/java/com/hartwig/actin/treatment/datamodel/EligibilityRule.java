@@ -275,7 +275,7 @@ public enum EligibilityRule {
 
     //Rules related to cardiac function
     HAS_POTENTIAL_SIGNIFICANT_HEART_DISEASE,
-    HAS_CARDIAC_ARRHYTHMIA,
+    HAS_ECG_ABERRATION,
     HAS_LVEF_OF_AT_LEAST_X,
     HAS_QTC_OF_AT_MOST_X,
     HAS_QTCF_OF_AT_MOST_X,

@@ -10,7 +10,7 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.HAS_POTENTIAL_SIGNIFICANT_HEART_DISEASE to hasPotentialSignificantHeartDiseaseCreator(),
-            EligibilityRule.HAS_CARDIAC_ARRHYTHMIA to hasAnyTypeOfCardiacArrhythmiaCreator(),
+            EligibilityRule.HAS_ECG_ABERRATION to hasAnyTypeOfCardiacArrhythmiaCreator(),
             EligibilityRule.HAS_LVEF_OF_AT_LEAST_X to hasSufficientLVEFCreator(),
             EligibilityRule.HAS_QTC_OF_AT_MOST_X to hasLimitedQTCFCreator(),
             EligibilityRule.HAS_QTCF_OF_AT_MOST_X to hasLimitedQTCFCreator(),
