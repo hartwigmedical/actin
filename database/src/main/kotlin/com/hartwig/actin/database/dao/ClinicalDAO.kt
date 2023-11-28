@@ -24,7 +24,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEn
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
 import com.hartwig.actin.database.Tables
 import org.jooq.DSLContext
-import java.util.*
+import java.util.Optional
 
 internal class ClinicalDAO(private val context: DSLContext) {
 
