@@ -61,7 +61,25 @@ class HasHadPDFollowingSomeSystemicTreatmentsTest {
     }
 
     @Test
-    fun shouldPassWhenLastSystemicTreatmentHasEndDateAndOtherOrUnknownStopReason() {
+    fun shouldPassWhenLastSystemicTreatmentHasShortEndDateAndOtherOrUnknownStopReason() {
+        val treatments = listOf(
+            treatmentHistoryEntry(
+                setOf(treatment("1", true)),
+                startYear = 2020,
+                stopYear = 2020
+            )
+        )
+
+        FUNCTIONS.forEach {
+            val evaluation = it.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
+            assertEvaluation(EvaluationResult.PASS, evaluation)
+            assertThat(evaluation.passGeneralMessages()).hasSize(1)
+            assertThat(evaluation.passGeneralMessages().iterator().next()).contains("PD is assumed")
+        }
+    }
+
+    @Test
+    fun shouldPassWhenLastSystemicTreatmentHasLateEndDateAndOtherOrUnknownStopReason() {
         val treatments = listOf(
             treatmentHistoryEntry(
                 setOf(treatment("1", true)),
@@ -74,7 +92,7 @@ class HasHadPDFollowingSomeSystemicTreatmentsTest {
             val evaluation = it.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
             assertEvaluation(EvaluationResult.PASS, evaluation)
             assertThat(evaluation.passGeneralMessages()).hasSize(1)
-            assertThat(evaluation.passGeneralMessages().iterator().next()).contains("PD is assumed")
+            assertThat(evaluation.passGeneralMessages().iterator().next()).contains("with PD")
         }
     }
 
