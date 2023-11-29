@@ -10,13 +10,16 @@ import org.junit.Test
 class TrialConfigModelTest {
 
     @Test
-    fun canCreateFromTrialConfigDirectory() {
+    fun `Should create from trial config directory`() {
         Assert.assertNotNull(TrialConfigModel.create(TRIAL_CONFIG_DIRECTORY, TestEligibilityFactoryFactory.createTestEligibilityFactory()))
     }
 
     @Test
-    fun canQueryMinimalModel() {
-        val model = TrialConfigModel.createFromDatabase(TestTrialConfigDatabaseFactory.createMinimalTestTrialConfigDatabase())
+    fun `Should query minimal model`() {
+        val model = TrialConfigModel.createFromDatabase(
+            TestTrialConfigDatabaseFactory.createMinimalTestTrialConfigDatabase(),
+            TrialConfigDatabaseValidator(TestEligibilityFactoryFactory.createTestEligibilityFactory())
+        )
         assertThat(model.trials()).isEmpty()
         assertThat(model.cohortsForTrial("any trial")).isEmpty()
         assertThat(model.generalInclusionCriteriaForTrial("any trial")).isEmpty()
@@ -25,8 +28,11 @@ class TrialConfigModelTest {
     }
 
     @Test
-    fun canQueryProperModel() {
-        val model = TrialConfigModel.createFromDatabase(TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase())
+    fun `Should query proper model`() {
+        val model = TrialConfigModel.createFromDatabase(
+            TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase(),
+            TrialConfigDatabaseValidator(TestEligibilityFactoryFactory.createTestEligibilityFactory())
+        )
         assertThat(model.trials()).hasSize(2)
         assertThat(model.cohortsForTrial(TestTrialData.TEST_TRIAL_METC_1)).hasSize(3)
         assertThat(model.generalInclusionCriteriaForTrial(TestTrialData.TEST_TRIAL_METC_1)).hasSize(1)

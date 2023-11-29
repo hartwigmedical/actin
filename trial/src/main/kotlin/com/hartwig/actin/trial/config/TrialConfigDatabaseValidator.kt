@@ -1,31 +1,40 @@
 package com.hartwig.actin.trial.config
 
 import com.hartwig.actin.treatment.serialization.TrialJson
+import com.hartwig.actin.trial.CohortDefinitionValidationError
+import com.hartwig.actin.trial.InclusionCriteriaValidationError
+import com.hartwig.actin.trial.InclusionReferenceValidationError
+import com.hartwig.actin.trial.TrialDatabaseValidation
+import com.hartwig.actin.trial.TrialDefinitionValidationError
 import com.hartwig.actin.trial.interpretation.EligibilityFactory
-import org.apache.logging.log4j.LogManager
 
 class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFactory) {
 
-    fun isValid(database: TrialConfigDatabase): Boolean {
+    fun validate(database: TrialConfigDatabase): TrialDatabaseValidation {
         val trialIds = extractTrialIds(database.trialDefinitionConfigs)
-        val validTrials = validateTrials(database.trialDefinitionConfigs)
-        val validCohorts = validateCohorts(trialIds, database.cohortDefinitionConfigs)
-        val cohortIdsPerTrial = extractCohortIdsPerTrial(trialIds, database.cohortDefinitionConfigs)
-        val validInclusionCriteria = validateInclusionCriteria(trialIds, cohortIdsPerTrial, database.inclusionCriteriaConfigs)
-        val validInclusionCriteriaReferences = validateInclusionCriteriaReferences(
-            trialIds,
-            database.inclusionCriteriaConfigs,
-            database.inclusionCriteriaReferenceConfigs
+        return TrialDatabaseValidation(
+            inclusionCriteriaValidationErrors = validateInclusionCriteria(
+                trialIds,
+                extractCohortIdsPerTrial(trialIds, database.cohortDefinitionConfigs),
+                database.inclusionCriteriaConfigs,
+                database.inclusionCriteriaReferenceConfigs
+            ).toSet(),
+            inclusionReferenceValidationErrors = validateInclusionCriteriaReferences(
+                trialIds, database.inclusionCriteriaReferenceConfigs
+            ).toSet(),
+            cohortDefinitionValidationErrors = validateCohorts(trialIds, database.cohortDefinitionConfigs).toSet(),
+            trialDefinitionValidationErrors = validateTrials(database.trialDefinitionConfigs).toSet()
         )
-        return validTrials && validCohorts && validInclusionCriteria && validInclusionCriteriaReferences
     }
 
     private fun validateInclusionCriteria(
-        trialIds: Set<String>, cohortIdsPerTrial: Map<String, Set<String>>,
-        inclusionCriteria: List<InclusionCriteriaConfig>
-    ): Boolean {
+        trialIds: Set<String>,
+        cohortIdsPerTrial: Map<String, Set<String>>,
+        inclusionCriteria: List<InclusionCriteriaConfig>,
+        inclusionCriteriaReferenceConfigs: List<InclusionCriteriaReferenceConfig>
+    ): List<InclusionCriteriaValidationError> {
         if (inclusionCriteria.isEmpty()) {
-            return true
+            return emptyList()
         }
         val (allCriteriaWithNonExistentTrial, allNonExistentCohorts, allInvalidInclusionCriteria) = inclusionCriteria.map { criterion ->
             val trialExists = trialIds.contains(criterion.trialId)
@@ -40,95 +49,107 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
             Triple(criterionWithNonExistentTrial, nonExistentCohorts, invalidInclusionCriteria)
         }.reduce { (allTrials, allCohorts, allCriteria), (trial, cohorts, criteria) ->
             Triple(
-                allTrials + trial,
-                allCohorts + cohorts, allCriteria + criteria
+                allTrials + trial, allCohorts + cohorts, allCriteria + criteria
             )
         }
 
-        allCriteriaWithNonExistentTrial.forEach { criterion ->
-            LOGGER.warn("Inclusion criterion '{}' defined on non-existing trial: '{}'", criterion.inclusionRule, criterion.trialId)
+        val criteriaPerTrial = buildMapPerTrial(inclusionCriteria)
+        val referenceIdsPerTrial = buildMapPerTrial(inclusionCriteriaReferenceConfigs).mapValues {
+            it.value.map(InclusionCriteriaReferenceConfig::referenceId).toSet()
         }
-        allNonExistentCohorts.forEach { (criterion, cohortId) ->
-            LOGGER.warn("Inclusion criterion '{}' defined on non-existing cohort: '{}'", criterion.inclusionRule, cohortId)
+
+        val allCriteriaWithNonExistentTrialErrors = allCriteriaWithNonExistentTrial.map { criterion ->
+            InclusionCriteriaValidationError(
+                config = criterion, message = "Inclusion criterion defined on non-existing trial"
+            )
         }
-        allInvalidInclusionCriteria.forEach { criterion ->
-            LOGGER.warn("Not a valid inclusion criterion for trial '{}': '{}'", criterion.trialId, criterion.inclusionRule)
+        val allNonExistentCohortsErrors = allNonExistentCohorts.map { (criterion, cohortId) ->
+            InclusionCriteriaValidationError(
+                config = criterion, message = "Inclusion criterion defined on non-existing cohort '$cohortId'"
+            )
         }
-        return allCriteriaWithNonExistentTrial.isEmpty() && allNonExistentCohorts.isEmpty() && allInvalidInclusionCriteria.isEmpty()
+        val allInvalidInclusionCriteriaErrors = allInvalidInclusionCriteria.map { criterion ->
+            InclusionCriteriaValidationError(
+                config = criterion, message = "Not a valid inclusion criterion for trial"
+            )
+        }
+        val trialsWithUndefinedReferenceIdErrors = trialIds.filter { it in referenceIdsPerTrial && it in criteriaPerTrial }
+            .flatMap { trialId ->
+                criteriaPerTrial[trialId]!!.flatMap(InclusionCriteriaConfig::referenceIds)
+                    .filterNot { referenceIdsPerTrial[trialId]!!.contains(it) }.map { Triple(trialId, it, criteriaPerTrial[trialId]!!) }
+            }.flatMap { (trialId, referenceId, configs) ->
+                configs.map { InclusionCriteriaValidationError(it, "Undefined reference ID on trial '$trialId': '$referenceId'") }
+            }
+        return allCriteriaWithNonExistentTrialErrors + allNonExistentCohortsErrors + allInvalidInclusionCriteriaErrors + trialsWithUndefinedReferenceIdErrors
     }
 
-    companion object {
-        private val LOGGER = LogManager.getLogger(TrialConfigDatabaseValidator::class.java)
 
-        private fun extractTrialIds(configs: List<TrialDefinitionConfig>): Set<String> {
-            return configs.map(TrialDefinitionConfig::trialId).toSet()
+    private fun extractTrialIds(configs: List<TrialDefinitionConfig>): Set<String> {
+        return configs.map(TrialDefinitionConfig::trialId).toSet()
+    }
+
+    private fun validateTrials(trialDefinitions: List<TrialDefinitionConfig>): List<TrialDefinitionValidationError> {
+        val duplicatedTrialIds = validateNoDuplicates(
+            trialDefinitions, TrialDefinitionConfig::trialId
+        ).map { TrialDefinitionValidationError(it.second, "Duplicated trial id of ${it.first}") }
+
+        val duplicatedTrialFileIds = validateNoDuplicates(
+            trialDefinitions,
+        ) { trialDef -> TrialJson.trialFileId(trialDef.trialId) }.map {
+            TrialDefinitionValidationError(
+                it.second, "Duplicated trial file id of ${it.first}"
+            )
         }
+        return duplicatedTrialIds + duplicatedTrialFileIds
+    }
 
-        private fun validateTrials(trialDefinitions: List<TrialDefinitionConfig>): Boolean {
-            return validateNoDuplicates(trialDefinitions, TrialDefinitionConfig::trialId, "trial ID") &&
-                    validateNoDuplicates(trialDefinitions, { trialDef -> TrialJson.trialFileId(trialDef.trialId) }, "trial file ID")
+    private fun validateCohorts(
+        trialIds: Set<String>, cohortDefinitions: List<CohortDefinitionConfig>
+    ): List<CohortDefinitionValidationError> {
+        return cohortDefinitions.groupBy(CohortDefinitionConfig::trialId)
+            .flatMap { validateNoDuplicates(it.value, CohortDefinitionConfig::cohortId) }.map {
+                CohortDefinitionValidationError(
+                    it.second, "Cohort '${it.second.cohortId}' is duplicated."
+                )
+            } + cohortDefinitions.filterNot { trialIds.contains(it.trialId) }.map {
+            CohortDefinitionValidationError(it, "Cohort '${it.cohortId}' defined on non-existing trial: '${it.trialId}'")
         }
+    }
 
-        private fun validateCohorts(trialIds: Set<String>, cohortDefinitions: List<CohortDefinitionConfig>): Boolean {
-            val cohortsWithNonExistentTrial = cohortDefinitions.filterNot { trialIds.contains(it.trialId) }
-            cohortsWithNonExistentTrial.forEach {
-                LOGGER.warn("Cohort '${it.cohortId}' defined on non-existing trial: '${it.trialId}'")
-            }
+    private fun <T> validateNoDuplicates(
+        collection: Collection<T>,
+        extractKey: (T) -> String,
+    ): List<Pair<String, T>> {
+        return collection.groupBy(extractKey).filter { it.value.size > 1 }.entries.flatMap { it.value.map { config -> it.key to config } }
+    }
 
-            val cohortIdsAreUniqueByTrial = cohortDefinitions.groupBy(CohortDefinitionConfig::trialId)
-                .all { validateNoDuplicates(it.value, CohortDefinitionConfig::cohortId, "cohort ID for trial '${it.key}") }
-
-            return cohortsWithNonExistentTrial.isEmpty() && cohortIdsAreUniqueByTrial
-        }
-
-        private fun <T> validateNoDuplicates(collection: Collection<T>, extractKey: (T) -> String, keyName: String): Boolean {
-            val duplicateKeys = collection.groupBy(extractKey).filter { it.value.size > 1 }.keys
-            duplicateKeys.forEach { LOGGER.warn("Duplicate $keyName found: '$it'") }
-            return duplicateKeys.isEmpty()
-        }
-
-        private fun extractCohortIdsPerTrial(
-            trialIds: Set<String>,
-            cohortDefinitions: List<CohortDefinitionConfig>
-        ): Map<String, Set<String>> {
-            val cohortIdsByTrial = cohortDefinitions.filter { it.trialId in trialIds }
-                .groupBy(CohortDefinitionConfig::trialId, CohortDefinitionConfig::cohortId)
+    private fun extractCohortIdsPerTrial(
+        trialIds: Set<String>, cohortDefinitions: List<CohortDefinitionConfig>
+    ): Map<String, Set<String>> {
+        val cohortIdsByTrial =
+            cohortDefinitions.filter { it.trialId in trialIds }.groupBy(CohortDefinitionConfig::trialId, CohortDefinitionConfig::cohortId)
                 .mapValues { it.value.toSet() }
-            return trialIds.associateWith { emptySet<String>() } + cohortIdsByTrial
-        }
+        return trialIds.associateWith { emptySet<String>() } + cohortIdsByTrial
+    }
 
-        private fun validateInclusionCriteriaReferences(
-            trialIds: Set<String>,
-            inclusionCriteriaConfigs: List<InclusionCriteriaConfig>,
-            inclusionCriteriaReferenceConfigs: List<InclusionCriteriaReferenceConfig>
-        ): Boolean {
-            val referenceConfigsWithNonExistentTrials = inclusionCriteriaReferenceConfigs.filterNot { trialIds.contains(it.trialId) }
-            referenceConfigsWithNonExistentTrials.forEach {
-                LOGGER.warn("Reference '${it.referenceId}' defined on non-existing trial: '${it.trialId}'")
-            }
+    private fun validateInclusionCriteriaReferences(
+        trialIds: Set<String>, inclusionCriteriaReferenceConfigs: List<InclusionCriteriaReferenceConfig>
+    ): List<InclusionReferenceValidationError> {
+        val referenceConfigsWithNonExistentTrials = inclusionCriteriaReferenceConfigs.filterNot { trialIds.contains(it.trialId) }
 
-            val referenceIdsAreUniqueByTrial = inclusionCriteriaReferenceConfigs.groupBy(InclusionCriteriaReferenceConfig::trialId)
-                .all { validateNoDuplicates(it.value, InclusionCriteriaReferenceConfig::referenceId, "reference ID for trial '${it.key}") }
 
-            val criteriaPerTrial = buildMapPerTrial(inclusionCriteriaConfigs)
-            val referenceIdsPerTrial = buildMapPerTrial(inclusionCriteriaReferenceConfigs)
-                .mapValues { it.value.map(InclusionCriteriaReferenceConfig::referenceId).toSet() }
+        val referenceIdsAreUniqueByTrial = inclusionCriteriaReferenceConfigs.groupBy(InclusionCriteriaReferenceConfig::trialId)
+            .flatMap { validateNoDuplicates(it.value, InclusionCriteriaReferenceConfig::referenceId) }
+            .map { InclusionReferenceValidationError(it.second, "Reference ID for trial '${it.second}") }
 
-            val undefinedReferencesWithTrialId = trialIds.filter { it in referenceIdsPerTrial && it in criteriaPerTrial }
-                .flatMap { trialId ->
-                    criteriaPerTrial[trialId]!!.flatMap(InclusionCriteriaConfig::referenceIds)
-                        .filterNot { referenceIdsPerTrial[trialId]!!.contains(it) }
-                        .map { Pair(trialId, it) }
-                }
-            undefinedReferencesWithTrialId.forEach { (trialId, referenceId) ->
-                LOGGER.warn("Undefined reference ID on trial '{}': '{}'", trialId, referenceId)
-            }
 
-            return referenceConfigsWithNonExistentTrials.isEmpty() && referenceIdsAreUniqueByTrial && undefinedReferencesWithTrialId.isEmpty()
-        }
 
-        private fun <T : TrialConfig> buildMapPerTrial(configs: List<T>): Map<String, List<T>> {
-            return configs.groupBy(TrialConfig::trialId)
-        }
+        return referenceConfigsWithNonExistentTrials.map {
+            InclusionReferenceValidationError(it, "Reference '${it.referenceId}' defined on non-existing trial: '${it.trialId}'")
+        } + referenceIdsAreUniqueByTrial
+    }
+
+    private fun <T : TrialConfig> buildMapPerTrial(configs: List<T>): Map<String, List<T>> {
+        return configs.groupBy(TrialConfig::trialId)
     }
 }

@@ -2,13 +2,28 @@ package com.hartwig.actin.trial.ctc
 
 import com.hartwig.actin.treatment.datamodel.CohortMetadata
 import com.hartwig.actin.treatment.datamodel.ImmutableCohortMetadata
+import com.hartwig.actin.trial.CTCDatabaseValidationError
+import com.hartwig.actin.trial.CohortDefinitionValidationError
+import com.hartwig.actin.trial.CtcDatabaseValidation
+import com.hartwig.actin.trial.TrialDefinitionValidationError
 import com.hartwig.actin.trial.config.CohortDefinitionConfig
 import com.hartwig.actin.trial.config.TrialDefinitionConfig
 import com.hartwig.actin.trial.ctc.config.CTCDatabase
 import com.hartwig.actin.trial.ctc.config.CTCDatabaseEntry
 import org.apache.logging.log4j.LogManager
 
-class CTCModel constructor(private val ctcDatabase: CTCDatabase) {
+class CTCModel(private val ctcDatabase: CTCDatabase) {
+
+    private val trialDefinitionValidationErrors = mutableListOf<TrialDefinitionValidationError>()
+    private val ctcDatabaseValidationErrors = mutableListOf<CTCDatabaseValidationError>()
+    private val cohortDefinitionValidationErrors = mutableListOf<CohortDefinitionValidationError>()
+
+    fun validation(): CtcDatabaseValidation {
+        return CtcDatabaseValidation(
+            trialDefinitionValidationErrors,
+            ctcDatabaseValidationErrors
+        )
+    }
 
     fun isTrialOpen(trialConfig: TrialDefinitionConfig): Boolean? {
         if (!trialConfig.trialId.startsWith(CTC_TRIAL_PREFIX)) {
@@ -21,27 +36,37 @@ class CTCModel constructor(private val ctcDatabase: CTCDatabase) {
             return null
         }
 
-        val openInCTC: Boolean? = TrialStatusInterpreter.isOpen(ctcDatabase.entries, trialConfig.trialId)
+        val (openInCTC, interpreterValidationErrors) = TrialStatusInterpreter.isOpen(ctcDatabase.entries, trialConfig)
+        trialDefinitionValidationErrors.addAll(interpreterValidationErrors)
         if (openInCTC != null) {
             if (trialConfig.open != null) {
-                LOGGER.warn(
-                    " Trial has a manually configured open status while status could be derived from CTC for {} ({})."
-                            + " Taking CTC study status where open = {}", trialConfig.trialId, trialConfig.acronym, openInCTC
+                trialDefinitionValidationErrors.add(
+                    TrialDefinitionValidationError(
+                        trialConfig,
+                        "Trial has a manually configured open status while status could be derived from CTC"
+                    )
                 )
             }
             return openInCTC
         }
 
-        LOGGER.warn(
-            " No study status found in CTC for trial '{} ({})'.",
-            trialConfig.trialId,
-            trialConfig.acronym
+        trialDefinitionValidationErrors.add(
+            TrialDefinitionValidationError(
+                trialConfig,
+                "No study status found in CTC for trial"
+            )
         )
         return null
     }
 
     fun resolveCohortMetadata(cohortConfig: CohortDefinitionConfig): CohortMetadata {
-        val interpretedCohortStatus = CohortStatusInterpreter.interpret(ctcDatabase.entries, cohortConfig) ?: fromCohortConfig(cohortConfig)
+        val (maybeInterpretedCohortStatus, cohortDefinitionValidationErrors, ctcDatabaseValidationErrors) = CohortStatusInterpreter.interpret(
+            ctcDatabase.entries,
+            cohortConfig
+        )
+        this.cohortDefinitionValidationErrors.addAll(cohortDefinitionValidationErrors)
+        this.ctcDatabaseValidationErrors.addAll(ctcDatabaseValidationErrors)
+        val interpretedCohortStatus = maybeInterpretedCohortStatus ?: fromCohortConfig(cohortConfig)
         return ImmutableCohortMetadata.builder()
             .cohortId(cohortConfig.cohortId)
             .evaluable(cohortConfig.evaluable)
@@ -53,23 +78,22 @@ class CTCModel constructor(private val ctcDatabase: CTCDatabase) {
     }
 
     fun checkModelForNewTrials(trialConfigs: List<TrialDefinitionConfig>) {
-        val newTrialsInCTC = extractNewCTCStudyMETCs(trialConfigs)
+        val newTrialsInCTC = extractNewCTCStudies(trialConfigs)
 
         if (newTrialsInCTC.isEmpty()) {
             LOGGER.info(" No new studies found in CTC database that are not explicitly ignored.")
         } else {
-            for (newTrialInCTC in newTrialsInCTC) {
-                LOGGER.warn(" New trial detected in CTC that is not configured to be ignored: '{}'", newTrialInCTC)
-            }
+            ctcDatabaseValidationErrors.addAll(newTrialsInCTC.map {
+                CTCDatabaseValidationError(it, " New trial detected in CTC that is not configured to be ignored")
+            })
         }
     }
 
-    internal fun extractNewCTCStudyMETCs(trialConfigs: List<TrialDefinitionConfig>): Set<String> {
+    internal fun extractNewCTCStudies(trialConfigs: List<TrialDefinitionConfig>): Set<CTCDatabaseEntry> {
         val configuredTrialIds = trialConfigs.map { it.trialId }
 
         return ctcDatabase.entries.filter { !ctcDatabase.studyMETCsToIgnore.contains(it.studyMETC) }
             .filter { !configuredTrialIds.contains(constructTrialId(it)) }
-            .map { it.studyMETC }
             .toSet()
     }
 
@@ -79,12 +103,11 @@ class CTCModel constructor(private val ctcDatabase: CTCDatabase) {
         if (newCohortEntriesInCTC.isEmpty()) {
             LOGGER.info(" No new cohorts found in CTC database that are not explicitly unmapped.")
         } else {
-            for (newCohortInCTC in newCohortEntriesInCTC) {
-                LOGGER.warn(
-                    " New cohort detected in CTC that is not configured as unmapped: '{}: {} (ID={})'", newCohortInCTC.studyMETC,
-                    newCohortInCTC.cohortName, newCohortInCTC.cohortId
+            ctcDatabaseValidationErrors.addAll(newCohortEntriesInCTC.map {
+                CTCDatabaseValidationError(
+                    it, "New cohort detected in CTC that is not configured as unmapped"
                 )
-            }
+            })
         }
     }
 
@@ -98,7 +121,8 @@ class CTCModel constructor(private val ctcDatabase: CTCDatabase) {
             ctcDatabase.entries.filter { it.cohortParentId != null }
                 .groupBy({ it.cohortParentId }, { it.cohortId })
 
-        return ctcDatabase.entries.asSequence().filter { configuredTrialIds.contains(constructTrialId(it)) }
+        return ctcDatabase.entries.asSequence()
+            .filter { configuredTrialIds.contains(constructTrialId(it)) }
             .filter { !ctcDatabase.studyMETCsToIgnore.contains(it.studyMETC) }
             .filter { it.cohortId != null }
             .filter { !ctcDatabase.unmappedCohortIds.contains(it.cohortId) }
@@ -107,24 +131,26 @@ class CTCModel constructor(private val ctcDatabase: CTCDatabase) {
             .toSet()
     }
 
+    private fun fromCohortConfig(cohortConfig: CohortDefinitionConfig): InterpretedCohortStatus {
+        return if (cohortConfig.open == null || cohortConfig.slotsAvailable == null) {
+            cohortDefinitionValidationErrors.add(
+                CohortDefinitionValidationError(
+                    cohortConfig,
+                    "Missing open and/or slots available data for cohort"
+                )
+            )
+            InterpretedCohortStatus(open = false, slotsAvailable = false)
+        } else {
+            InterpretedCohortStatus(open = cohortConfig.open, slotsAvailable = cohortConfig.slotsAvailable)
+        }
+    }
+
     companion object {
         private val LOGGER = LogManager.getLogger(CTCModel::class.java)
         const val CTC_TRIAL_PREFIX = "MEC"
 
         fun constructTrialId(entry: CTCDatabaseEntry): String {
             return CTC_TRIAL_PREFIX + " " + entry.studyMETC
-        }
-
-        private fun fromCohortConfig(cohortConfig: CohortDefinitionConfig): InterpretedCohortStatus {
-            return if (cohortConfig.open == null || cohortConfig.slotsAvailable == null) {
-                LOGGER.warn(
-                    " Missing open and/or slots available data for cohort '{}' of trial '{}}'. "
-                            + "Assuming cohort is closed with no slots available", cohortConfig.cohortId, cohortConfig.trialId
-                )
-                InterpretedCohortStatus(open = false, slotsAvailable = false)
-            } else {
-                InterpretedCohortStatus(open = cohortConfig.open, slotsAvailable = cohortConfig.slotsAvailable)
-            }
         }
     }
 }

@@ -82,7 +82,7 @@ fun main(args: Array<String>) {
         val config = TreatmentMatcherConfig.createConfig(DefaultParser().parse(options, args))
         TreatmentMatcherApplication(config).run()
     } catch (exception: ParseException) {
-        TreatmentMatcherApplication.LOGGER.warn(exception)
+        TreatmentMatcherApplication.LOGGER.error(exception)
         HelpFormatter().printHelp(TreatmentMatcherApplication.APPLICATION, options)
         exitProcess(1)
     }

@@ -3,7 +3,7 @@ package com.hartwig.actin.trial.ctc
 import org.apache.logging.log4j.LogManager
 
 internal enum class CTCStatus {
-    OPEN, CLOSED;
+    OPEN, CLOSED, UNINTERPRETABLE;
 
     companion object {
         private val LOGGER = LogManager.getLogger(CTCStatus::class.java)
@@ -18,8 +18,7 @@ internal enum class CTCStatus {
                 CLOSED_STATES.any { it.equals(string, ignoreCase = true) } -> CLOSED
 
                 else -> {
-                    LOGGER.warn(" Could not interpret CTC status string: '{}'. Assuming status implies {}}", string, CLOSED.toString())
-                    CLOSED
+                    UNINTERPRETABLE
                 }
             }
         }

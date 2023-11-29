@@ -8,7 +8,8 @@ import com.hartwig.actin.treatment.serialization.TrialJson
 import com.hartwig.actin.trial.ctc.CTCModel
 import com.hartwig.actin.trial.ctc.config.CTCDatabaseReader
 import com.hartwig.actin.trial.interpretation.EligibilityRuleUsageEvaluator
-import com.hartwig.actin.trial.interpretation.TrialFactory
+import com.hartwig.actin.trial.interpretation.TrialIngestion
+import com.hartwig.actin.util.json.GsonSerializer
 import com.hartwig.serve.datamodel.serialization.KnownGeneFile
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -16,6 +17,8 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.nio.file.Files
+import java.nio.file.Paths
 import kotlin.system.exitProcess
 
 class TrialCreatorApplication(private val config: TrialCreatorConfig) {
@@ -36,18 +39,46 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         val ctcModel = CTCModel(CTCDatabaseReader.read(config.ctcConfigDirectory))
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
 
-        val trialFactory = TrialFactory.create(config.trialConfigDirectory, ctcModel, doidModel, geneFilter, treatmentDatabase)
+        val trialFactory = TrialIngestion.create(config.trialConfigDirectory, ctcModel, doidModel, geneFilter, treatmentDatabase)
 
         LOGGER.info("Creating trial database")
-        val trials = trialFactory.createTrials()
+        val result = trialFactory.ingestTrials()
 
         LOGGER.info("Evaluating usage of eligibility rules")
-        EligibilityRuleUsageEvaluator.evaluate(trials)
+        EligibilityRuleUsageEvaluator.evaluate(result.trials)
 
         val outputDirectory = config.outputDirectory
-        LOGGER.info("Writing {} trials to {}", trials.size, outputDirectory)
-        TrialJson.write(trials, outputDirectory)
+        LOGGER.info("Writing {} trials to {}", result.trials.size, outputDirectory)
+        TrialJson.write(result.trials, outputDirectory)
         LOGGER.info("Done!")
+
+        val resultsJson = Paths.get(outputDirectory).resolve("treatment_ingestion_result.json")
+        LOGGER.info("Writing {} trial ingestion results to {}", result.trials.size, resultsJson)
+        Files.write(
+            resultsJson,
+            GsonSerializer.create().toJson(result).toByteArray()
+        )
+        printAllValidationErrors(result)
+    }
+
+    private fun printAllValidationErrors(result: TrialIngestionResult) {
+        if (result.ctcDatabaseValidation.hasErrors()) {
+            LOGGER.warn("There were validation errors in the CTC database configuration")
+            printValidationErrors(result.ctcDatabaseValidation.ctcDatabaseValidationErrors)
+            printValidationErrors(result.ctcDatabaseValidation.trialDefinitionValidationErrors)
+        }
+
+        if (result.trialValidationResult.hasErrors()) {
+            LOGGER.warn("There were validation errors in the trial definition configuration")
+            printValidationErrors(result.trialValidationResult.cohortDefinitionValidationErrors)
+            printValidationErrors(result.trialValidationResult.trialDefinitionValidationErrors)
+            printValidationErrors(result.trialValidationResult.inclusionReferenceValidationErrors)
+            printValidationErrors(result.trialValidationResult.inclusionCriteriaValidationErrors)
+        }
+    }
+
+    private fun printValidationErrors(errors: Collection<ValidationError<*>>) {
+        errors.forEach { LOGGER.warn(it.warningMessage()) }
     }
 
     companion object {
@@ -63,7 +94,7 @@ fun main(args: Array<String>) {
     try {
         config = TrialCreatorConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {
-        TrialCreatorApplication.LOGGER.warn(exception)
+        TrialCreatorApplication.LOGGER.error(exception)
         HelpFormatter().printHelp(TrialCreatorApplication.APPLICATION, options)
         exitProcess(1)
     }

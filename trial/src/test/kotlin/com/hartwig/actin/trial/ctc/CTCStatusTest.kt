@@ -19,6 +19,6 @@ class CTCStatusTest {
 
     @Test
     fun shouldResolveToClosedWhenUnclear() {
-        assertThat(CTCStatus.fromStatusString("This is not clear")).isEqualTo(CTCStatus.CLOSED)
+        assertThat(CTCStatus.fromStatusString("This is not clear")).isEqualTo(CTCStatus.UNINTERPRETABLE)
     }
 }

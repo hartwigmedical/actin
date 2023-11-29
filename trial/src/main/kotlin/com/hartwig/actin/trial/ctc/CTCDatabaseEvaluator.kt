@@ -1,36 +1,42 @@
 package com.hartwig.actin.trial.ctc
 
+import com.hartwig.actin.trial.CTCIgnoreValidationError
+import com.hartwig.actin.trial.CTCUnmappedValidationError
 import com.hartwig.actin.trial.ctc.config.CTCDatabase
 import org.apache.logging.log4j.LogManager
 
-class CTCDatabaseEvaluator constructor(private val ctcDatabase: CTCDatabase) {
+class CTCDatabaseEvaluator(private val ctcDatabase: CTCDatabase) {
 
-    fun evaluateDatabaseConfiguration() {
+    fun evaluateDatabaseConfiguration(): Pair<List<CTCIgnoreValidationError>, List<CTCUnmappedValidationError>> {
         val unusedStudyMETCsToIgnore = extractUnusedStudyMETCsToIgnore()
 
-        if (unusedStudyMETCsToIgnore.isEmpty()) {
+        val ignoreValidationErrors = if (unusedStudyMETCsToIgnore.isEmpty()) {
             LOGGER.info(" No unused study METCs to ignore found")
+            emptyList()
         } else {
-            for (unusedStudyMETCToIgnore in unusedStudyMETCsToIgnore) {
-                LOGGER.warn(
-                    " Study that is configured to be ignored is not actually referenced in CTC database: '{}'",
-                    unusedStudyMETCToIgnore
+            unusedStudyMETCsToIgnore.map {
+                CTCIgnoreValidationError(
+                    it,
+                    "Study that is configured to be ignored is not actually referenced in CTC database"
                 )
             }
         }
 
         val unusedUnmappedCohortIds = extractUnusedUnmappedCohorts()
 
-        if (unusedUnmappedCohortIds.isEmpty()) {
+        val unmappedValidationErrors = if (unusedUnmappedCohortIds.isEmpty()) {
             LOGGER.info(" No unused unmapped cohort IDs found")
+            emptyList()
         } else {
-            for (unusedUnmappedCohortId in unusedUnmappedCohortIds) {
-                LOGGER.warn(
-                    " Cohort ID that is configured to be unmapped is not actually referenced in CTC database: '{}'",
-                    unusedUnmappedCohortId
+            unusedUnmappedCohortIds.map {
+                CTCUnmappedValidationError(
+                    it,
+                    "Cohort ID that is configured to be unmapped is not actually referenced in CTC database"
                 )
             }
         }
+
+        return ignoreValidationErrors to unmappedValidationErrors
     }
 
     internal fun extractUnusedStudyMETCsToIgnore(): List<String> {

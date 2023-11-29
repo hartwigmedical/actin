@@ -1,5 +1,8 @@
 package com.hartwig.actin.trial.ctc
 
+import com.hartwig.actin.trial.CTCDatabaseValidationError
+import com.hartwig.actin.trial.CohortDefinitionValidationError
+import com.hartwig.actin.trial.config.TestCohortDefinitionConfigFactory
 import com.hartwig.actin.trial.ctc.config.CTCDatabaseEntry
 import com.hartwig.actin.trial.ctc.config.TestCTCDatabaseEntryFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -10,79 +13,223 @@ class CohortStatusResolverTest {
     private val entries = createTestEntries()
 
     @Test
-    fun shouldAssumeCohortIsClosedForNonExistingCohortId() {
-        val status = CohortStatusResolver.resolve(entries, setOf(DOES_NOT_EXIST_COHORT_ID))
-        assertThat(status.open).isFalse
-        assertThat(status.slotsAvailable).isFalse
+    fun `Should assume cohort is closed and return validation error for non-existing cohortId`() {
+        val doesNotExist = TestCohortDefinitionConfigFactory.MINIMAL.copy(cohortId = DOES_NOT_EXIST_COHORT_ID.toString())
+        val status =
+            CohortStatusResolver.resolve(
+                entries,
+                doesNotExist
+            )
+        assertThatStatus(status, isOpen = false, hasSlotsAvailable = false)
+        assertThat(status.cohortDefinitionErrors).containsExactly(
+            CohortDefinitionValidationError(
+                config = doesNotExist,
+                message = "Invalid cohort IDs configured for cohort"
+            )
+        )
+        assertThat(status.ctcDatabaseValidationErrors).isEmpty()
     }
 
     @Test
-    fun shouldBeAbleToDetermineStatusForSingleParent() {
-        val statusOpen = CohortStatusResolver.resolve(entries, setOf(PARENT_1_OPEN_WITH_SLOTS_COHORT_ID))
-        assertThat(statusOpen.open).isTrue
-        assertThat(statusOpen.slotsAvailable).isTrue
+    fun `Should be able to determine status for single parent`() {
+        val statusOpen = CohortStatusResolver.resolve(
+            entries,
+            cohortDefinitionConfig(PARENT_1_OPEN_WITH_SLOTS_COHORT_ID)
+        )
+        assertThatStatus(statusOpen, isOpen = true, hasSlotsAvailable = true)
 
-        val statusClosed = CohortStatusResolver.resolve(entries, setOf(PARENT_2_CLOSED_WITHOUT_SLOTS_COHORT_ID))
-        assertThat(statusClosed.open).isFalse
-        assertThat(statusClosed.slotsAvailable).isFalse
+        val statusClosed = CohortStatusResolver.resolve(
+            entries,
+            cohortDefinitionConfig(PARENT_2_CLOSED_WITHOUT_SLOTS_COHORT_ID)
+        )
+        assertThatStatus(statusClosed, isOpen = false, hasSlotsAvailable = false)
+        assertThat(statusClosed.cohortDefinitionErrors).isEmpty()
+        assertThat(statusClosed.ctcDatabaseValidationErrors).isEmpty()
     }
 
     @Test
-    fun shouldBeAbleToDetermineStatusForSingleChildConsistentWithParent() {
-        val status = CohortStatusResolver.resolve(entries, setOf(CHILD_OPEN_WITH_SLOTS_COHORT_ID))
-        assertThat(status.open).isTrue
-        assertThat(status.slotsAvailable).isTrue
+    fun `Should be able to determine status for single child consistent with parent`() {
+        val status = CohortStatusResolver.resolve(
+            entries,
+            cohortDefinitionConfig(CHILD_OPEN_WITH_SLOTS_COHORT_ID)
+        )
+        assertThatStatus(status, isOpen = true, hasSlotsAvailable = true)
+        assertThat(status.cohortDefinitionErrors).isEmpty()
+        assertThat(status.ctcDatabaseValidationErrors).isEmpty()
     }
 
     @Test
-    fun shouldStickToChildWhenInconsistentWithParent() {
-        val status = CohortStatusResolver.resolve(entries, setOf(CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID))
-        assertThat(status.open).isTrue
-        assertThat(status.slotsAvailable).isFalse
+    fun `Should stick to child when inconsistent with parent`() {
+        val status = CohortStatusResolver.resolve(
+            entries,
+            cohortDefinitionConfig(CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID)
+        )
+        assertThatStatus(status, isOpen = true, hasSlotsAvailable = false)
+        assertThat(status.cohortDefinitionErrors).isEmpty()
+        assertThat(status.ctcDatabaseValidationErrors).isEmpty()
     }
 
     @Test
-    fun shouldBeAbleToDetermineStatusForMultipleChildrenConsistentWithParent() {
-        val configuredCohortIds = setOf(CHILD_OPEN_WITH_SLOTS_COHORT_ID, ANOTHER_CHILD_OPEN_WITH_SLOTS_COHORT_ID)
-        val status = CohortStatusResolver.resolve(entries, configuredCohortIds)
-        assertThat(status.open).isTrue
-        assertThat(status.slotsAvailable).isTrue
+    fun `Should be able to determine status for multiple children consistent with parent`() {
+        val status = CohortStatusResolver.resolve(
+            entries,
+            cohortDefinitionConfig(CHILD_OPEN_WITH_SLOTS_COHORT_ID, ANOTHER_CHILD_OPEN_WITH_SLOTS_COHORT_ID)
+        )
+        assertThatStatus(status, isOpen = true, hasSlotsAvailable = true)
+        assertThat(status.cohortDefinitionErrors).isEmpty()
     }
 
     @Test
-    fun shouldPickBestChildWhenBestChildIsInconsistentWithParent() {
-        val childrenNoSlotsWithParentWithSlots = setOf(CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID, CHILD_CLOSED_WITHOUT_SLOTS_COHORT_ID)
-        val noSlotsStatus = CohortStatusResolver.resolve(entries, childrenNoSlotsWithParentWithSlots)
-        assertThat(noSlotsStatus.open).isTrue
-        assertThat(noSlotsStatus.slotsAvailable).isFalse
+    fun `Should pick best child when best child is inconsistent with parent`() {
+        val noSlotsStatus = CohortStatusResolver.resolve(
+            entries,
+            cohortDefinitionConfig(CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID, CHILD_CLOSED_WITHOUT_SLOTS_COHORT_ID)
+        )
+        assertThatStatus(noSlotsStatus, isOpen = true, hasSlotsAvailable = false)
 
-        val childOpenWithParentClosed = setOf(CHILD_FOR_PARENT_2_OPEN_WITH_SLOTS_COHORT_ID)
-        val openStatus = CohortStatusResolver.resolve(entries, childOpenWithParentClosed)
-        assertThat(openStatus.open).isTrue
-        assertThat(openStatus.slotsAvailable).isTrue
+        val openStatus = CohortStatusResolver.resolve(entries, cohortDefinitionConfig(CHILD_FOR_PARENT_2_OPEN_WITH_SLOTS_COHORT_ID))
+        assertThatStatus(openStatus, isOpen = true, hasSlotsAvailable = true)
+        assertThat(openStatus.cohortDefinitionErrors).isEmpty()
     }
 
     @Test
-    fun noCTCDatabaseEntryMatchesIsConsideredInvalid() {
+    fun `Should return validation errors when invalid cohort IDs configured for cohort`() {
+        val config = cohortDefinitionConfig(8)
+        val (_, cohortValidation, _) = CohortStatusResolver.resolve(
+            entries,
+            config
+        )
+        assertThat(cohortValidation).containsExactly(
+            CohortDefinitionValidationError(config = config, message = "Could not find CTC database entry with cohort ID '8'"),
+            CohortDefinitionValidationError(config = config, message = "Invalid cohort IDs configured for cohort")
+        )
+    }
+
+    @Test
+    fun `Should return validation error when multiple parents found for single set of children`() {
+        val config = cohortDefinitionConfig(3, 4)
+        val wrongParent = TestCTCDatabaseEntryFactory.createEntry(4, 2, "Open", 1)
+        val (_, _, ctcDatabaseValidation) = CohortStatusResolver.resolve(
+            listOf(
+                TestCTCDatabaseEntryFactory.createEntry(1, null, "Open", 1),
+                TestCTCDatabaseEntryFactory.createEntry(2, null, "Open", 1),
+                TestCTCDatabaseEntryFactory.createEntry(3, 1, "Open", 1),
+                wrongParent
+            ),
+            config
+        )
+        assertThat(ctcDatabaseValidation).containsExactly(
+            CTCDatabaseValidationError(
+                config = wrongParent,
+                message = "Multiple parents found for single set of children"
+            ),
+        )
+    }
+
+    @Test
+    fun `Should return validation error when best child is open while parent is closed`() {
+        val config = cohortDefinitionConfig(2)
+        val child = TestCTCDatabaseEntryFactory.createEntry(2, 1, "Open", 1)
+        val (_, _, ctcDatabaseValidation) = CohortStatusResolver.resolve(
+            listOf(
+                TestCTCDatabaseEntryFactory.createEntry(1, null, "Closed", 1),
+                child,
+            ),
+            config
+        )
+        assertThat(ctcDatabaseValidation).containsExactly(
+            CTCDatabaseValidationError(
+                config = child,
+                message = "Best child from IDs '[2]' is open while parent with ID '1' is closed"
+            ),
+        )
+    }
+
+    @Test
+    fun `Should return validation error when best child from has slots available while parent has no slots available`() {
+        val config = cohortDefinitionConfig(2)
+        val child = TestCTCDatabaseEntryFactory.createEntry(2, 1, "Open", 1)
+        val (_, _, ctcDatabaseValidation) = CohortStatusResolver.resolve(
+            listOf(
+                TestCTCDatabaseEntryFactory.createEntry(1, null, "Open", 0),
+                child,
+            ),
+            config
+        )
+        assertThat(ctcDatabaseValidation).containsExactly(
+            CTCDatabaseValidationError(
+                config = child,
+                message = "Best child from IDs '[2]' has slots available while parent with ID '1' has no slots available"
+            ),
+        )
+    }
+
+    @Test
+    fun `Should return validation error when  no cohort status available in CTC for cohort`() {
+        val config = cohortDefinitionConfig(1)
+        val noStatus = TestCTCDatabaseEntryFactory.createEntry(1, null, null, 0)
+        val (_, _, ctcDatabaseValidation) = CohortStatusResolver.resolve(
+            listOf(
+                noStatus,
+            ),
+            config
+        )
+        assertThat(ctcDatabaseValidation).containsExactly(
+            CTCDatabaseValidationError(
+                config = noStatus,
+                message = "No cohort status available in CTC for cohort"
+            ),
+        )
+    }
+
+    @Test
+    fun `Should return validation error when uninterpretable cohort status`() {
+        val config = cohortDefinitionConfig(1)
+        val uninterpretable = TestCTCDatabaseEntryFactory.createEntry(1, null, "Uninterpretable", 0)
+        val (_, _, ctcDatabaseValidation) = CohortStatusResolver.resolve(
+            listOf(
+                uninterpretable,
+            ),
+            config
+        )
+        assertThat(ctcDatabaseValidation).containsExactly(
+            CTCDatabaseValidationError(
+                config = uninterpretable,
+                message = "Uninterpretable cohort status"
+            ),
+        )
+    }
+
+    @Test
+    fun `Should consider no CTCDatabaseEntry matches as invalid`() {
         assertThat(CohortStatusResolver.hasValidCTCDatabaseMatches(emptyList())).isFalse
     }
 
     @Test
-    fun nullCTCDatabaseEntryMatchIsConsideredInvalid() {
+    fun `Should consider null CTCDatabaseEntry match as invalid`() {
         assertThat(CohortStatusResolver.hasValidCTCDatabaseMatches(listOf(null))).isFalse
     }
 
     @Test
-    fun matchesWithBothParentsAndChildAreConsideredInvalid() {
+    fun `Should consider matches with both parents and child as invalid`() {
         assertThat(CohortStatusResolver.hasValidCTCDatabaseMatches(entries)).isFalse
     }
 
     @Test
-    fun singleMatchIsAlwaysConsideredValid() {
+    fun `Should consider single match is always considered valid`() {
         for (entry in entries) {
             assertThat(CohortStatusResolver.hasValidCTCDatabaseMatches(listOf(entry))).isTrue
         }
     }
+
+    private fun assertThatStatus(status: CohortStatusInterpretation, isOpen: Boolean, hasSlotsAvailable: Boolean) {
+        val interpretedCohortStatus = status.status!!
+        assertThat(interpretedCohortStatus.open).isEqualTo(isOpen)
+        assertThat(interpretedCohortStatus.slotsAvailable).isEqualTo(hasSlotsAvailable)
+    }
+
+    private fun cohortDefinitionConfig(vararg ctcCohortIds: Int) =
+        TestCohortDefinitionConfigFactory.MINIMAL.copy(ctcCohortIds = ctcCohortIds.map { it.toString() }.toSet())
 
     companion object {
         private const val PARENT_1_OPEN_WITH_SLOTS_COHORT_ID = 1

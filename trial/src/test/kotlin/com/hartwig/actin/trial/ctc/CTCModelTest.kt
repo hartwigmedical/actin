@@ -15,13 +15,13 @@ class CTCModelTest {
     private val model = TestCTCModelFactory.createWithProperTestCTCDatabase()
 
     @Test
-    fun shouldNotDetermineStatusWhenStudyIsNotCTCStudy() {
+    fun `Should not determine status when study is not CTC study`() {
         val nonCTCStudy: TrialDefinitionConfig = TestTrialDefinitionConfigFactory.MINIMAL.copy(trialId = "not a CTC study")
         assertThat(model.isTrialOpen(nonCTCStudy)).isNull()
     }
 
     @Test
-    fun shouldTrustCTCStudyWhenInconsistentWithTrialConfig() {
+    fun `Should trust CTC study when inconsistent with trial config`() {
         val closedStudy: TrialDefinitionConfig = TestTrialDefinitionConfigFactory.MINIMAL.copy(
             trialId = CTCModel.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
             open = false
@@ -32,14 +32,14 @@ class CTCModelTest {
     }
 
     @Test
-    fun shouldNotDetermineStatusIfStudyMissingInCTC() {
+    fun `Should not determine status if study missing in CTC`() {
         val nonExistingCTCStudy: TrialDefinitionConfig =
             TestTrialDefinitionConfigFactory.MINIMAL.copy(trialId = CTCModel.CTC_TRIAL_PREFIX + " non-existing")
         assertThat(model.isTrialOpen(nonExistingCTCStudy)).isNull()
     }
 
     @Test
-    fun shouldTrustCTCCohortWhenInconsistentWithCohortConfig() {
+    fun `Should trust CTC cohort when inconsistent with cohort config`() {
         val closedCohort: CohortDefinitionConfig = TestCohortDefinitionConfigFactory.MINIMAL.copy(ctcCohortIds = setOf("2"), open = false)
 
         // Cohort ID 2 is assumed to be open in proper test CTC database
@@ -47,7 +47,7 @@ class CTCModelTest {
     }
 
     @Test
-    fun shouldFallBackToCohortConfigWhenMissingInCTC() {
+    fun `Should fallback to cohort config when missing in CTC`() {
         val openNotAvailable: CohortDefinitionConfig = TestCohortDefinitionConfigFactory.MINIMAL.copy(
             ctcCohortIds = setOf(CohortStatusInterpreter.NOT_AVAILABLE),
             open = true,
@@ -64,7 +64,7 @@ class CTCModelTest {
     }
 
     @Test
-    fun shouldAssumeClosedWithoutSlotsWhenMissingEntirely() {
+    fun `Should assume closed without slots when missing entirely`() {
         val missing: CohortDefinitionConfig = TestCohortDefinitionConfigFactory.MINIMAL.copy(
             ctcCohortIds = setOf(CohortStatusInterpreter.NOT_AVAILABLE),
             open = null,
@@ -77,18 +77,20 @@ class CTCModelTest {
     }
 
     @Test
-    fun shouldClassifyAllStudyMETCsAsNewWhenTrialConfigIsEmpty() {
+    fun `Should classify all studies as new when trial config is empty`() {
         // The proper CTC database has 3 trials: TEST_TRIAL_1, TEST_TRIAL_2 and IGNORE_TRIAL
         val trialConfigs: List<TrialDefinitionConfig> = emptyList()
 
-        val newStudyMETCs = model.extractNewCTCStudyMETCs(trialConfigs)
-        assertThat(newStudyMETCs).containsExactly(TestTrialData.TEST_TRIAL_METC_1, TestTrialData.TEST_TRIAL_METC_2)
-
+        val newStudyMETCs = model.extractNewCTCStudies(trialConfigs)
+        assertThat(newStudyMETCs.map { it.studyMETC }.toSet()).containsExactly(
+            TestTrialData.TEST_TRIAL_METC_1,
+            TestTrialData.TEST_TRIAL_METC_2
+        )
         model.checkModelForNewTrials(trialConfigs)
     }
 
     @Test
-    fun shouldFindNoNewStudyMETCsWhenAllTrialsAreConfigured() {
+    fun `Should find no new study METCs when all trials are configured`() {
         // The proper CTC database has 3 trials: TEST_TRIAL_1, TEST_TRIAL_2 and IGNORE_TRIAL
         val trialConfigs: List<TrialDefinitionConfig> = listOf(
             TestTrialDefinitionConfigFactory.MINIMAL.copy(
@@ -99,13 +101,13 @@ class CTCModelTest {
             )
         )
 
-        assertThat(model.extractNewCTCStudyMETCs(trialConfigs)).isEmpty()
+        assertThat(model.extractNewCTCStudies(trialConfigs)).isEmpty()
 
         model.checkModelForNewTrials(trialConfigs)
     }
 
     @Test
-    fun shouldFindNoNewCohortIdsWhenAllCohortsAreConfigured() {
+    fun `Should find no new cohortIds when all cohorts are configured`() {
         // The proper CTC database has 3 cohorts: 1, 2 and (unmapped) 3
         val cohortConfigs: List<CohortDefinitionConfig> = listOf(
             TestCohortDefinitionConfigFactory.MINIMAL.copy(
@@ -124,7 +126,7 @@ class CTCModelTest {
     }
 
     @Test
-    fun shouldFindNoNewCohortsWhenCohortConfigIsEmpty() {
+    fun `Should find no new cohorts when cohort config is empty`() {
         // The proper CTC database has 3 cohorts: 1, 2 and (unmapped) 3
         val cohortConfigs: List<CohortDefinitionConfig> = emptyList()
 
@@ -135,7 +137,7 @@ class CTCModelTest {
     }
 
     @Test
-    fun shouldClassifyAllCohortsAsNewWhenCohortsAreNotUsedWhileTrialExists() {
+    fun `Should classify all cohorts as new when cohorts are not used while trial exists`() {
         // The proper CTC database has 3 cohorts: 1, 2 and (unmapped) 3
         val cohortConfigs: List<CohortDefinitionConfig> = listOf(
             TestCohortDefinitionConfigFactory.MINIMAL.copy(
@@ -151,7 +153,7 @@ class CTCModelTest {
     }
 
     @Test
-    fun shouldAssumeParentCohortWithAllChildrenReferencedIsNotNew() {
+    fun `Should assume parent cohort with all children referenced is not new`() {
         val cohortConfigs: List<CohortDefinitionConfig> = listOf(
             TestCohortDefinitionConfigFactory.MINIMAL.copy(
                 trialId = CTCModel.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
