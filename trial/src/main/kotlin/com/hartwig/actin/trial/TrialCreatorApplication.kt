@@ -64,17 +64,21 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
     private fun printAllValidationErrors(result: TrialIngestionResult) {
         if (result.ctcDatabaseValidation.hasErrors()) {
             LOGGER.warn("There were validation errors in the CTC database configuration")
-            result.ctcDatabaseValidation.ctcDatabaseValidationErrors.forEach { LOGGER.warn(it) }
-            result.ctcDatabaseValidation.trialDefinitionValidationErrors.forEach { LOGGER.warn(it) }
+            printValidationErrors(result.ctcDatabaseValidation.ctcDatabaseValidationErrors)
+            printValidationErrors(result.ctcDatabaseValidation.trialDefinitionValidationErrors)
         }
 
         if (result.trialValidationResult.hasErrors()) {
             LOGGER.warn("There were validation errors in the trial definition configuration")
-            result.trialValidationResult.cohortDefinitionValidationErrors.forEach { LOGGER.warn(it) }
-            result.trialValidationResult.trialDefinitionValidationErrors.forEach { LOGGER.warn(it) }
-            result.trialValidationResult.inclusionReferenceValidationErrors.forEach { LOGGER.warn(it) }
-            result.trialValidationResult.inclusionCriteriaValidationErrors.forEach { LOGGER.warn(it) }
+            printValidationErrors(result.trialValidationResult.cohortDefinitionValidationErrors)
+            printValidationErrors(result.trialValidationResult.trialDefinitionValidationErrors)
+            printValidationErrors(result.trialValidationResult.inclusionReferenceValidationErrors)
+            printValidationErrors(result.trialValidationResult.inclusionCriteriaValidationErrors)
         }
+    }
+
+    private fun printValidationErrors(errors: Collection<ValidationError<*>>) {
+        errors.forEach { LOGGER.warn(it.warningMessage()) }
     }
 
     companion object {
