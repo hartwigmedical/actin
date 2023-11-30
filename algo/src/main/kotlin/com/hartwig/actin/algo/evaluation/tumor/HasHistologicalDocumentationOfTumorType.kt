@@ -5,7 +5,8 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-class HasHistologicalDocumentationOfTumorType internal constructor() : EvaluationFunction {
+class HasHistologicalDocumentationOfTumorType : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         return EvaluationFactory.notEvaluated(
             "Currently it is assumed that histological documentation of tumor type has been done or can be done",

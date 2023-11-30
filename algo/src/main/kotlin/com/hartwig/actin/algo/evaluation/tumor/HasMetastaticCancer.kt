@@ -8,7 +8,8 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.doid.DoidModel
 
-class HasMetastaticCancer internal constructor(private val doidModel: DoidModel) : EvaluationFunction {
+class HasMetastaticCancer (private val doidModel: DoidModel) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val stage = record.clinical().tumor().stage()
             ?: return EvaluationFactory.undetermined(

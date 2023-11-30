@@ -5,7 +5,8 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-class HasKnownActiveBrainMetastases internal constructor() : EvaluationFunction {
+class HasKnownActiveBrainMetastases : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasBrainMetastases = record.clinical().tumor().hasBrainLesions()
         var hasActiveBrainMetastases = record.clinical().tumor().hasActiveBrainLesions()

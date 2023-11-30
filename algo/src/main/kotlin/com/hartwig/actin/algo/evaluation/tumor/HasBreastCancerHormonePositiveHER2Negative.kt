@@ -8,7 +8,8 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleEvaluator.geneIsAmplifiedForPatient
 import com.hartwig.actin.doid.DoidModel
 
-class HasBreastCancerHormonePositiveHER2Negative internal constructor(private val doidModel: DoidModel) : EvaluationFunction {
+class HasBreastCancerHormonePositiveHER2Negative (private val doidModel: DoidModel) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.clinical().tumor().doids()
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {

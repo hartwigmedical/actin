@@ -8,7 +8,8 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory.unrecoverable
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.doid.DoidModel
 
-class HasSolidPrimaryTumor internal constructor(private val doidModel: DoidModel) : EvaluationFunction {
+class HasSolidPrimaryTumor (private val doidModel: DoidModel) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.clinical().tumor().doids()
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
