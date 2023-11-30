@@ -9,21 +9,24 @@ import com.hartwig.actin.util.ResourceFile
 import org.apache.logging.log4j.LogManager
 
 class SecondPrimaryConfigFactory(private val curationValidator: CurationValidator) : CurationConfigFactory<SecondPrimaryConfig> {
-    override fun create(fields: Map<String, Int>, parts: Array<String>): SecondPrimaryConfig {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): CurationConfigValidatedResponse<SecondPrimaryConfig> {
         val input = parts[fields["input"]!!]
         val ignore = CurationUtil.isIgnoreString(parts[fields["name"]!!])
-        return SecondPrimaryConfig(
-            input = input,
-            ignore = ignore,
-            curated = if (!ignore) curatedPriorSecondPrimary(fields, input, parts) else null
+        val doids = CurationUtil.toDOIDs(parts[fields["doids"]!!])
+
+        return CurationConfigValidatedResponse(
+            SecondPrimaryConfig(
+                input = input,
+                ignore = ignore,
+                curated = if (!ignore) curatedPriorSecondPrimary(fields, parts, doids) else null
+            ), if (!curationValidator.isValidCancerDoidSet(doids)) {
+                listOf(CurationConfigValidationError("Second primary config with input '$input' contains at least one invalid doid: '$doids')"))
+            } else emptyList()
         )
     }
 
-    private fun curatedPriorSecondPrimary(fields: Map<String, Int>, input: String, parts: Array<String>): PriorSecondPrimary {
-        val doids = CurationUtil.toDOIDs(parts[fields["doids"]!!])
-        if (!curationValidator.isValidCancerDoidSet(doids)) {
-            LOGGER.warn("Second primary config with input '{}' contains at least one invalid doid: '{}'", input, doids)
-        }
+    private fun curatedPriorSecondPrimary(fields: Map<String, Int>, parts: Array<String>, doids: Set<String>): PriorSecondPrimary {
+
         return ImmutablePriorSecondPrimary.builder()
             .tumorLocation(parts[fields["tumorLocation"]!!])
             .tumorSubLocation(parts[fields["tumorSubLocation"]!!])
@@ -37,9 +40,5 @@ class SecondPrimaryConfigFactory(private val curationValidator: CurationValidato
             .lastTreatmentMonth(ResourceFile.optionalInteger(parts[fields["lastTreatmentMonth"]!!]))
             .status(TumorStatus.valueOf(parts[fields["status"]!!]))
             .build()
-    }
-
-    companion object {
-        private val LOGGER = LogManager.getLogger(SecondPrimaryConfigFactory::class.java)
     }
 }

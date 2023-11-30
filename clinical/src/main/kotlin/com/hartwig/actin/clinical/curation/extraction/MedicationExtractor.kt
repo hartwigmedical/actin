@@ -169,7 +169,7 @@ class MedicationExtractor(private val curation: CurationDatabase, private val at
         return curation.findCypInteractionConfigs(medicationName).flatMap(CypInteractionConfig::interactions)
     }
 
-    fun annotateWithQTProlongating(medicationName: String): QTProlongatingRisk {
+    private fun annotateWithQTProlongating(medicationName: String): QTProlongatingRisk {
         val riskConfigs = curation.findQTProlongingConfigs(medicationName)
         return if (riskConfigs.isEmpty()) {
             QTProlongatingRisk.NONE
@@ -209,7 +209,7 @@ class MedicationExtractor(private val curation: CurationDatabase, private val at
     ): ExtractionResult<String?> {
         return if (input.isNullOrEmpty()) {
             ExtractionResult(null, ExtractionEvaluation())
-        } else { 
+        } else {
             val curationResponse = CurationResponse.createFromTranslation(
                 translate.invoke(input), patientId, curationCategory, input, translationType
             )

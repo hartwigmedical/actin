@@ -106,7 +106,6 @@ class ClinicalStatusExtractor(private val curation: CurationDatabase) {
             ?.flatMap { curation.findNonOncologicalHistoryConfigs(it) }
             ?.filterNot { it.ignore }
             ?.map { it.lvef }
-            ?.find { it.isPresent }
-            ?.get()
+            ?.find { it != null }
     }
 }

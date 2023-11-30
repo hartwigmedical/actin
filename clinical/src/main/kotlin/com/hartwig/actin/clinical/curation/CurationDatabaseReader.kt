@@ -5,6 +5,8 @@ import com.hartwig.actin.clinical.curation.config.ComplicationConfigFactory
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfigFactory
 import com.hartwig.actin.clinical.curation.config.CurationConfigFile
+import com.hartwig.actin.clinical.curation.config.CurationConfigValidatedResponse
+import com.hartwig.actin.clinical.curation.config.CurationConfigValidationError
 import com.hartwig.actin.clinical.curation.config.CypInteractionConfigFactory
 import com.hartwig.actin.clinical.curation.config.ECGConfigFactory
 import com.hartwig.actin.clinical.curation.config.InfectionConfigFactory
@@ -30,35 +32,69 @@ import com.hartwig.actin.clinical.curation.translation.TranslationFactory
 import com.hartwig.actin.clinical.curation.translation.TranslationFile
 import com.hartwig.actin.util.Paths
 import org.apache.logging.log4j.LogManager
-import java.io.IOException
 
 class CurationDatabaseReader(private val curationValidator: CurationValidator, private val treatmentDatabase: TreatmentDatabase) {
-    @Throws(IOException::class)
-    fun read(clinicalCurationDirectory: String): CurationDatabase {
+
+    fun read(clinicalCurationDirectory: String): Pair<CurationDatabase, List<CurationConfigValidationError>> {
         LOGGER.info("Reading clinical curation config from {}", clinicalCurationDirectory)
         val basePath = Paths.forceTrailingFileSeparator(clinicalCurationDirectory)
+        val primaryTumorConfigs = readConfigs(basePath, PRIMARY_TUMOR_TSV, PrimaryTumorConfigFactory(curationValidator))
+        val treatmentHistoryEntryConfigs = readConfigs(
+            basePath, ONCOLOGICAL_HISTORY_TSV, TreatmentHistoryEntryConfigFactory(treatmentDatabase)
+        )
+        val secondPrimaryConfigs = readConfigs(basePath, SECOND_PRIMARY_TSV, SecondPrimaryConfigFactory(curationValidator))
+        val lesionLocationConfigs = readConfigs(basePath, LESION_LOCATION_TSV, LesionLocationConfigFactory())
+        val nonOncologicalHistoryConfigs = readConfigs(
+            basePath, NON_ONCOLOGICAL_HISTORY_TSV, NonOncologicalHistoryConfigFactory(curationValidator)
+        )
+        val ecgConfigs = readConfigs(basePath, ECG_TSV, ECGConfigFactory())
+        val infectionConfigs = readConfigs(basePath, INFECTION_TSV, InfectionConfigFactory())
+        val periodBetweenUnitConfigs = readConfigs(basePath, PERIOD_BETWEEN_UNIT_TSV, PeriodBetweenUnitConfigFactory())
+        val complicationConfigs = readConfigs(basePath, COMPLICATION_TSV, ComplicationConfigFactory())
+        val toxicityConfigs = readConfigs(basePath, TOXICITY_TSV, ToxicityConfigFactory())
+        val molecularTestConfigs = readConfigs(basePath, MOLECULAR_TEST_TSV, MolecularTestConfigFactory())
+        val medicationNameConfigs = readConfigs(basePath, MEDICATION_NAME_TSV, MedicationNameConfigFactory())
+        val medicationDosageConfigs = readConfigs(basePath, MEDICATION_DOSAGE_TSV, MedicationDosageConfigFactory())
+        val intoleranceConfigs = readConfigs(basePath, INTOLERANCE_TSV, IntoleranceConfigFactory(curationValidator))
+        val cypInteractionConfigs = readConfigs(basePath, CYP_INTERACTIONS_TSV, CypInteractionConfigFactory())
+        val qtProlongingConfigs = readConfigs(basePath, QT_PROLONGATING_TSV, QTProlongatingConfigFactory())
+
+        val validationErrors = consolidateErrors(
+            primaryTumorConfigs,
+            treatmentHistoryEntryConfigs,
+            secondPrimaryConfigs,
+            lesionLocationConfigs,
+            nonOncologicalHistoryConfigs,
+            ecgConfigs,
+            infectionConfigs,
+            periodBetweenUnitConfigs,
+            complicationConfigs,
+            toxicityConfigs,
+            molecularTestConfigs,
+            medicationNameConfigs,
+            medicationDosageConfigs,
+            intoleranceConfigs,
+            cypInteractionConfigs,
+            qtProlongingConfigs
+        )
 
         return CurationDatabase(
-            primaryTumorConfigs = readConfigs(basePath, PRIMARY_TUMOR_TSV, PrimaryTumorConfigFactory(curationValidator)),
-            treatmentHistoryEntryConfigs = readConfigs(
-                basePath, ONCOLOGICAL_HISTORY_TSV, TreatmentHistoryEntryConfigFactory(treatmentDatabase)
-            ),
-            secondPrimaryConfigs = readConfigs(basePath, SECOND_PRIMARY_TSV, SecondPrimaryConfigFactory(curationValidator)),
-            lesionLocationConfigs = readConfigs(basePath, LESION_LOCATION_TSV, LesionLocationConfigFactory()),
-            nonOncologicalHistoryConfigs = readConfigs(
-                basePath, NON_ONCOLOGICAL_HISTORY_TSV, NonOncologicalHistoryConfigFactory(curationValidator)
-            ),
-            ecgConfigs = readConfigs(basePath, ECG_TSV, ECGConfigFactory()),
-            infectionConfigs = readConfigs(basePath, INFECTION_TSV, InfectionConfigFactory()),
-            periodBetweenUnitConfigs = readConfigs(basePath, PERIOD_BETWEEN_UNIT_TSV, PeriodBetweenUnitConfigFactory()),
-            complicationConfigs = readConfigs(basePath, COMPLICATION_TSV, ComplicationConfigFactory()),
-            toxicityConfigs = readConfigs(basePath, TOXICITY_TSV, ToxicityConfigFactory()),
-            molecularTestConfigs = readConfigs(basePath, MOLECULAR_TEST_TSV, MolecularTestConfigFactory()),
-            medicationNameConfigs = readConfigs(basePath, MEDICATION_NAME_TSV, MedicationNameConfigFactory()),
-            medicationDosageConfigs = readConfigs(basePath, MEDICATION_DOSAGE_TSV, MedicationDosageConfigFactory()),
-            intoleranceConfigs = readConfigs(basePath, INTOLERANCE_TSV, IntoleranceConfigFactory(curationValidator)),
-            cypInteractionConfigs = readConfigs(basePath, CYP_INTERACTIONS_TSV, CypInteractionConfigFactory()),
-            qtProlongingConfigs = readConfigs(basePath, QT_PROLONGATING_TSV, QTProlongatingConfigFactory()),
+            primaryTumorConfigs = asInputMap(primaryTumorConfigs),
+            treatmentHistoryEntryConfigs = asInputMap(treatmentHistoryEntryConfigs),
+            secondPrimaryConfigs = asInputMap(secondPrimaryConfigs),
+            lesionLocationConfigs = asInputMap(lesionLocationConfigs),
+            nonOncologicalHistoryConfigs = asInputMap(nonOncologicalHistoryConfigs),
+            ecgConfigs = asInputMap(ecgConfigs),
+            infectionConfigs = asInputMap(infectionConfigs),
+            periodBetweenUnitConfigs = asInputMap(periodBetweenUnitConfigs),
+            complicationConfigs = asInputMap(complicationConfigs),
+            toxicityConfigs = asInputMap(toxicityConfigs),
+            molecularTestConfigs = asInputMap(molecularTestConfigs),
+            medicationNameConfigs = asInputMap(medicationNameConfigs),
+            medicationDosageConfigs = asInputMap(medicationDosageConfigs),
+            intoleranceConfigs = asInputMap(intoleranceConfigs),
+            cypInteractionConfigs = asInputMap(cypInteractionConfigs),
+            qtProlongingConfigs = asInputMap(qtProlongingConfigs),
             administrationRouteTranslations = readTranslationsToMap(
                 basePath, ADMINISTRATION_ROUTE_TRANSLATION_TSV, AdministrationRouteTranslationFactory()
             ),
@@ -70,12 +106,35 @@ class CurationDatabaseReader(private val curationValidator: CurationValidator, p
             ),
             dosageUnitTranslations = readTranslations(basePath, DOSAGE_UNIT_TRANSLATION_TSV, DosageUnitTranslationFactory())
                 .associateBy { it.input.lowercase() },
-        )
+        ) to validationErrors
     }
 
     private fun readTranslationsToMap(
         basePath: String, tsv: String, factory: TranslationFactory<Translation>
     ) = readTranslations(basePath, tsv, factory).associateBy { it.input }
+
+    private fun <T : CurationConfig> asInputMap(configs: List<CurationConfigValidatedResponse<T>>) =
+        configs.map { it.config }.groupBy { it.input.lowercase() }.mapValues { it.value.toSet() }
+
+    private fun consolidateErrors(vararg curationConfigValidations: List<CurationConfigValidatedResponse<*>>): List<CurationConfigValidationError> {
+        return curationConfigValidations.flatMap { it }.flatMap { it.errors }
+    }
+
+    private fun <T : CurationConfig> readConfigs(
+        basePath: String, tsv: String, configFactory: CurationConfigFactory<T>
+    ): List<CurationConfigValidatedResponse<T>> {
+        val filePath = basePath + tsv
+        val configs = CurationConfigFile.read(filePath, configFactory)
+        LOGGER.info(" Read {} configs from {}", configs.size, filePath)
+        return configs
+    }
+
+    private fun <T> readTranslations(basePath: String, tsv: String, translationFactory: TranslationFactory<T>): List<T> {
+        val filePath = basePath + tsv
+        val translations = TranslationFile.read(filePath, translationFactory)
+        LOGGER.info(" Read {} translations from {}", translations.size, filePath)
+        return translations
+    }
 
     companion object {
         private val LOGGER = LogManager.getLogger(CurationDatabaseReader::class.java)
@@ -102,22 +161,5 @@ class CurationDatabaseReader(private val curationValidator: CurationValidator, p
         private const val BLOOD_TRANSFUSION_TRANSLATION_TSV = "blood_transfusion_translation.tsv"
         private const val DOSAGE_UNIT_TRANSLATION_TSV = "dosage_unit_translation.tsv"
 
-        @Throws(IOException::class)
-        private fun <T : CurationConfig> readConfigs(
-            basePath: String, tsv: String, configFactory: CurationConfigFactory<T>
-        ): Map<String, Set<T>> {
-            val filePath = basePath + tsv
-            val configs = CurationConfigFile.read(filePath, configFactory)
-            LOGGER.info(" Read {} configs from {}", configs.size, filePath)
-            return configs.groupBy { it.input.lowercase() }.mapValues { it.value.toSet() }
-        }
-
-        @Throws(IOException::class)
-        private fun <T> readTranslations(basePath: String, tsv: String, translationFactory: TranslationFactory<T>): List<T> {
-            val filePath = basePath + tsv
-            val translations = TranslationFile.read(filePath, translationFactory)
-            LOGGER.info(" Read {} translations from {}", translations.size, filePath)
-            return translations
-        }
     }
 }

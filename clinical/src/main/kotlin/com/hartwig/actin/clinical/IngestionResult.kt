@@ -1,28 +1,36 @@
 package com.hartwig.actin.clinical
 
 import com.hartwig.actin.clinical.curation.CurationWarning
+import com.hartwig.actin.clinical.curation.config.CurationConfigValidationError
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 
 enum class IngestionStatus {
     PASS,
+    FAIL_CURATION_CONFIG_VALIDATION_ERRORS
+}
+
+data class IngestionResult(
+    val status: IngestionStatus,
+    val curationValidationErrors: List<CurationConfigValidationError>,
+    val patientResults: List<PatientIngestionResult>
+)
+
+enum class PatientIngestionStatus {
+    PASS,
     WARN_CURATION_REQUIRED,
     WARN_NO_QUESTIONNAIRE
 }
 
-data class CurationRequirement(val feedInput: String, val message: String)
-
-data class CurationResult(val categoryName: String, val requirements: List<CurationRequirement>)
-
-data class IngestionResult(
+data class PatientIngestionResult(
     val patientId: String,
-    val status: IngestionStatus,
+    val status: PatientIngestionStatus,
     @Transient val clinicalRecord: ClinicalRecord,
     val curationResults: Set<CurationResult>
 ) {
     companion object {
-        fun create(questionnaire: Questionnaire?, record: ClinicalRecord, warnings: List<CurationWarning>): IngestionResult {
-            return IngestionResult(
+        fun create(questionnaire: Questionnaire?, record: ClinicalRecord, warnings: List<CurationWarning>): PatientIngestionResult {
+            return PatientIngestionResult(
                 record.patientId(),
                 status(questionnaire, warnings),
                 record,
@@ -35,14 +43,17 @@ data class IngestionResult(
             )
         }
 
-        private fun status(questionnaire: Questionnaire?, warnings: List<CurationWarning>): IngestionStatus {
+        private fun status(questionnaire: Questionnaire?, warnings: List<CurationWarning>): PatientIngestionStatus {
             return if (questionnaire == null) {
-                IngestionStatus.WARN_NO_QUESTIONNAIRE
+                PatientIngestionStatus.WARN_NO_QUESTIONNAIRE
             } else if (warnings.isNotEmpty()) {
-                IngestionStatus.WARN_CURATION_REQUIRED
+                PatientIngestionStatus.WARN_CURATION_REQUIRED
             } else {
-                IngestionStatus.PASS
+                PatientIngestionStatus.PASS
             }
         }
     }
 }
+
+data class CurationRequirement(val feedInput: String, val message: String)
+data class CurationResult(val categoryName: String, val requirements: List<CurationRequirement>)

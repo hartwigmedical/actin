@@ -52,7 +52,7 @@ class ClinicalIngestion(private val feed: FeedModel, private val curation: Curat
     private val medicationExtractor = MedicationExtractor(curation, atc)
     private val bloodTransfusionsExtractor = BloodTransfusionsExtractor(curation)
 
-    fun run(): List<IngestionResult> {
+    fun run(): List<PatientIngestionResult> {
         val processedPatientIds: MutableSet<String> = HashSet()
 
         LOGGER.info("Creating clinical model")
@@ -114,7 +114,7 @@ class ClinicalIngestion(private val feed: FeedModel, private val curation: Curat
                 .map { it.evaluation }
                 .fold(ExtractionEvaluation()) { acc, evaluation -> acc + evaluation }
 
-            Pair(IngestionResult.create(questionnaire, record, patientEvaluation.warnings.toList()), patientEvaluation)
+            Pair(PatientIngestionResult.create(questionnaire, record, patientEvaluation.warnings.toList()), patientEvaluation)
         }.sortedWith { (result1, _), (result2, _) ->
             ClinicalRecordComparator().compare(
                 result1.clinicalRecord,

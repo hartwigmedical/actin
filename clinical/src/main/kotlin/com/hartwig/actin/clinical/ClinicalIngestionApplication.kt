@@ -48,31 +48,50 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
             )
         )
 
-        val results = ClinicalIngestion(feedModel, curation, atcModel).run()
-        val outputDirectory = config.outputDirectory
-        LOGGER.info("Writing {} clinical records to {}", results.size, outputDirectory)
-        ClinicalRecordJson.write(results.map { it.clinicalRecord }, outputDirectory)
-        LOGGER.info("Done!")
+        if (curation.second.isNotEmpty()) {
+            LOGGER.warn("Curation input had validation errors persisting them to validation_errors.json and halting ingestion.")
+            writeIngestionResults(
+                config.outputDirectory,
+                IngestionResult(
+                    status = IngestionStatus.FAIL_CURATION_CONFIG_VALIDATION_ERRORS,
+                    curationValidationErrors = curation.second,
+                    patientResults = emptyList()
+                )
+            )
+        } else {
+            val patientResults = ClinicalIngestion(feedModel, curation.first, atcModel).run()
+            val outputDirectory = config.outputDirectory
+            LOGGER.info("Writing {} clinical records to {}", patientResults.size, outputDirectory)
+            ClinicalRecordJson.write(patientResults.map { it.clinicalRecord }, outputDirectory)
+            LOGGER.info("Done!")
 
-        val resultsJson = Paths.get(outputDirectory).resolve("results.json")
-        LOGGER.info("Writing {} ingestion results to {}", results.size, resultsJson)
+            writeIngestionResults(
+                outputDirectory,
+                IngestionResult(status = IngestionStatus.PASS, curationValidationErrors = emptyList(), patientResults = patientResults)
+            )
+
+            if (patientResults.any { it.curationResults.isNotEmpty() }) {
+                LOGGER.warn("Summary of warnings:")
+                patientResults.forEach {
+                    if (it.curationResults.isNotEmpty()) {
+                        LOGGER.warn("Curation warnings for patient ${it.patientId}")
+                        it.curationResults.flatMap { result -> result.requirements }.forEach { requirement ->
+                            LOGGER.warn(requirement.message)
+                        }
+                    }
+                }
+                LOGGER.warn("Summary complete.")
+            }
+        }
+    }
+
+    private fun writeIngestionResults(outputDirectory: String, results: IngestionResult) {
+        val resultsJson = Paths.get(outputDirectory).resolve("clinical_ingestion_results.json")
+        LOGGER.info("Writing {} ingestion results to {}", results.patientResults.size, resultsJson)
         Files.write(
             resultsJson,
             GsonSerializer.create().toJson(results).toByteArray()
         )
-
-        if (results.any { it.curationResults.isNotEmpty() }) {
-            LOGGER.warn("Summary of warnings:")
-            results.forEach {
-                if (it.curationResults.isNotEmpty()) {
-                    LOGGER.warn("Curation warnings for patient ${it.patientId}")
-                    it.curationResults.flatMap { result -> result.requirements }.forEach { requirement ->
-                        LOGGER.warn(requirement.message)
-                    }
-                }
-            }
-            LOGGER.warn("Summary complete.")
-        }
     }
 
     companion object {

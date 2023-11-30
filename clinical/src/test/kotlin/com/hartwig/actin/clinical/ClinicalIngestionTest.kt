@@ -51,7 +51,7 @@ class ClinicalIngestionTest {
         val results = createMinimalTestIngestionResults()
         assertEquals(1, results.size.toLong())
         assertThat(results[0].patientId).isEqualTo(TEST_PATIENT)
-        assertThat(results[0].status).isEqualTo(IngestionStatus.WARN_NO_QUESTIONNAIRE)
+        assertThat(results[0].status).isEqualTo(PatientIngestionStatus.WARN_NO_QUESTIONNAIRE)
         assertThat(results[0].curationResults).isEmpty()
         assertThat(results[0].clinicalRecord).isNotNull()
     }
@@ -61,7 +61,7 @@ class ClinicalIngestionTest {
         val results = createProperTestIngestionResults()
         assertThat(results).hasSize(1)
         assertThat(results[0].patientId).isEqualTo(TEST_PATIENT)
-        assertThat(results[0].status).isEqualTo(IngestionStatus.WARN_CURATION_REQUIRED)
+        assertThat(results[0].status).isEqualTo(PatientIngestionStatus.WARN_CURATION_REQUIRED)
         assertThat(results[0].curationResults).containsExactlyInAnyOrder(
             CurationResult(
                 "Toxicity Translation",
@@ -280,7 +280,7 @@ class ClinicalIngestionTest {
             )
         }
 
-        private fun createMinimalTestIngestionResults(): List<IngestionResult> {
+        private fun createMinimalTestIngestionResults(): List<PatientIngestionResult> {
             return ClinicalIngestion(
                 TestFeedFactory.createMinimalTestFeedModel(),
                 TestCurationFactory.createMinimalTestCurationDatabase(),
@@ -288,7 +288,7 @@ class ClinicalIngestionTest {
             ).run()
         }
 
-        private fun createProperTestIngestionResults(): List<IngestionResult> {
+        private fun createProperTestIngestionResults(): List<PatientIngestionResult> {
             return ClinicalIngestion(
                 TestFeedFactory.createProperTestFeedModel(),
                 TestCurationFactory.createProperTestCurationDatabase(),

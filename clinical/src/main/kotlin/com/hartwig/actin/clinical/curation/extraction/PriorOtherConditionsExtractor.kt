@@ -8,7 +8,6 @@ import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
-import kotlin.jvm.optionals.getOrNull
 
 class PriorOtherConditionsExtractor(private val curation: CurationDatabase) {
 
@@ -30,6 +29,6 @@ class PriorOtherConditionsExtractor(private val curation: CurationDatabase) {
             }
             .fold(CurationResponse<NonOncologicalHistoryConfig>()) { acc, cur -> acc + cur }
 
-        return ExtractionResult(curation.configs.mapNotNull { it.priorOtherCondition.getOrNull() }, curation.extractionEvaluation)
+        return ExtractionResult(curation.configs.mapNotNull { it.priorOtherCondition }, curation.extractionEvaluation)
     }
 }

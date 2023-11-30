@@ -4,8 +4,8 @@ import com.hartwig.actin.clinical.datamodel.ImmutableDosage
 import com.hartwig.actin.util.ResourceFile
 
 class MedicationDosageConfigFactory : CurationConfigFactory<MedicationDosageConfig> {
-    override fun create(fields: Map<String, Int>, parts: Array<String>): MedicationDosageConfig {
-        return MedicationDosageConfig(
+    override fun create(fields: Map<String, Int>, parts: Array<String>): CurationConfigValidatedResponse<MedicationDosageConfig> {
+        return CurationConfigValidatedResponse(MedicationDosageConfig(
             input = parts[fields["input"]!!],
             curated = ImmutableDosage.builder()
                 .dosageMin(ResourceFile.optionalNumber(parts[fields["dosageMin"]!!]))
@@ -17,6 +17,6 @@ class MedicationDosageConfigFactory : CurationConfigFactory<MedicationDosageConf
                 .periodBetweenUnit(ResourceFile.optionalString(parts[fields["periodBetweenUnit"]!!]))
                 .ifNeeded(ResourceFile.optionalBool(parts[fields["ifNeeded"]!!]))
                 .build()
-        )
+        ))
     }
 }

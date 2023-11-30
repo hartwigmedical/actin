@@ -24,26 +24,36 @@ class TreatmentHistoryEntryConfigFactory(
 
     private val gson = GsonSerializer.create()
 
-    override fun create(fields: Map<String, Int>, parts: Array<String>): TreatmentHistoryEntryConfig {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): CurationConfigValidatedResponse<TreatmentHistoryEntryConfig> {
         val treatmentName = fields["treatmentName"]?.let { ResourceFile.optionalString(parts[it]) } ?: ""
         val ignore: Boolean = CurationUtil.isIgnoreString(treatmentName)
-        val treatmentHistoryEntry = if (ignore) null else curateObject(fields, parts.toList(), treatmentName)
+        val (treatmentHistoryEntry, validationErrors) = if (ignore) null to emptyList() else curateObject(
+            fields,
+            parts.toList(),
+            treatmentName
+        )
 
-        return TreatmentHistoryEntryConfig(
-            input = parts[fields["input"]!!],
-            ignore = ignore,
-            curated = treatmentHistoryEntry
+        return CurationConfigValidatedResponse(
+            TreatmentHistoryEntryConfig(
+                input = parts[fields["input"]!!],
+                ignore = ignore,
+                curated = treatmentHistoryEntry
+            ), validationErrors
         )
     }
 
-    private fun curateObject(fields: Map<String, Int>, parts: List<String>, treatmentName: String): TreatmentHistoryEntry {
+    private fun curateObject(
+        fields: Map<String, Int>,
+        parts: List<String>,
+        treatmentName: String
+    ): Pair<TreatmentHistoryEntry?, List<CurationConfigValidationError>> {
         val isTrial = optionalObjectFromColumn(parts, fields, "isTrial", ResourceFile::optionalBool) ?: false
 
         val treatments = if (treatmentName.isEmpty() && isTrial) emptyList() else {
             val treatmentsByName = CurationUtil.toSet(treatmentName).associateWith(treatmentDatabase::findTreatmentByName)
             val unknownTreatmentNames = treatmentsByName.filterValues(Objects::isNull).keys
             if (unknownTreatmentNames.isNotEmpty()) {
-                throw missingTreatmentException(unknownTreatmentNames)
+                return null to listOf(missingTreatmentException(unknownTreatmentNames))
             }
             treatmentsByName.values
         }
@@ -84,7 +94,7 @@ class TreatmentHistoryEntryConfigFactory(
             .isTrial(isTrial)
             .trialAcronym(optionalStringFromColumn(parts, fields, "trialAcronym"))
             .treatmentHistoryDetails(treatmentHistoryDetails)
-            .build()
+            .build() to emptyList()
     }
 
     private fun optionalIntegerFromColumn(parts: List<String>, fields: Map<String, Int>, colName: String): Int? {
@@ -112,8 +122,8 @@ class TreatmentHistoryEntryConfigFactory(
         return enumCreator(input.uppercase().replace(" ", "_"))
     }
 
-    private fun missingTreatmentException(treatments: Set<String>): IllegalStateException {
-        return IllegalStateException(treatments.map { it.replace(" ", "_").uppercase() }.joinToString(",") {
+    private fun missingTreatmentException(treatments: Set<String>): CurationConfigValidationError {
+        return CurationConfigValidationError(treatments.map { it.replace(" ", "_").uppercase() }.joinToString(",") {
             "Treatment with name $it does not exist in database. Please add with one of the following templates: " + listOf(
                 ImmutableDrugTreatment.builder().name(it).synonyms(emptySet()).isSystemic(false).drugs(emptySet())
                     .build(),

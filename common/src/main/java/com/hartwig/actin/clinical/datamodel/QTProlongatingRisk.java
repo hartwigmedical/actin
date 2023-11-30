@@ -4,5 +4,6 @@ public enum QTProlongatingRisk {
     KNOWN,
     POSSIBLE,
     CONDITIONAL,
-    NONE
+    NONE,
+    UNKNOWN
 }

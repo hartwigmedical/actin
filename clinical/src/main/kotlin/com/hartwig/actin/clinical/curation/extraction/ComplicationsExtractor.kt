@@ -26,7 +26,7 @@ class ComplicationsExtractor(private val curation: CurationDatabase) {
                 Triple(
                     it,
                     if (it.configs.isNotEmpty()) 1 else 0,
-                    if (it.configs.any(ComplicationConfig::impliesUnknownComplicationState)) 1 else 0
+                    if (it.configs.any { c -> c.impliesUnknownComplicationState == true }) 1 else 0
                 )
             }
             .fold(Triple(CurationResponse<ComplicationConfig>(), 0, 0)) { acc, cur ->

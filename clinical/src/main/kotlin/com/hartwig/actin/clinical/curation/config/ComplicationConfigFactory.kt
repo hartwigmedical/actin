@@ -6,14 +6,23 @@ import com.hartwig.actin.clinical.datamodel.ImmutableComplication
 import com.hartwig.actin.util.ResourceFile
 
 class ComplicationConfigFactory : CurationConfigFactory<ComplicationConfig> {
-    override fun create(fields: Map<String, Int>, parts: Array<String>): ComplicationConfig {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): CurationConfigValidatedResponse<ComplicationConfig> {
         val ignore = CurationUtil.isIgnoreString(parts[fields["name"]!!])
-        return ComplicationConfig(
-            input = parts[fields["input"]!!],
-            ignore = ignore,
-            impliesUnknownComplicationState = ResourceFile.bool(parts[fields["impliesUnknownComplicationState"]!!]),
-            curated = if (!ignore) toCuratedComplication(fields, parts) else null
-        )
+        val impliesUnknownComplicationState = parts[fields["impliesUnknownComplicationState"]!!].toValidatedBoolean()
+        return CurationConfigValidatedResponse(
+            ComplicationConfig(
+                input = parts[fields["input"]!!],
+                ignore = ignore,
+                impliesUnknownComplicationState = impliesUnknownComplicationState,
+                curated = if (!ignore) toCuratedComplication(fields, parts) else null
+            ),
+            impliesUnknownComplicationState?.let {
+                listOf(
+                    CurationConfigValidationError(
+                        "impliesComplicationState had invalid input of [${parts[fields["impliesUnknownComplicationState"]!!]}]"
+                    )
+                )
+            } ?: emptyList())
     }
 
     companion object {
