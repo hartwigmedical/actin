@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-class HasCardiacArrhythmia internal constructor() : EvaluationFunction {
+class HasECGAberration internal constructor() : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val ecg = record.clinical().clinicalStatus().ecg()
             ?: return EvaluationFactory.fail(
