@@ -4,10 +4,10 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import org.junit.Test
 
-class HasCardiacArrhythmiaTest {
+class HasECGAberrationTest {
     @Test
     fun canEvaluate() {
-        val function = HasCardiacArrhythmia()
+        val function = HasECGAberration()
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(CardiacFunctionTestFactory.withECG(null)))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(CardiacFunctionTestFactory.withHasSignificantECGAberration(false)))
         assertEvaluation(
