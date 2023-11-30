@@ -10,9 +10,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.TumorStage
 
 class HasTumorStage internal constructor(
-    private val tumorStageDerivationFunction: TumorStageDerivationFunction,
-    private val stageToMatch: TumorStage
+    private val tumorStageDerivationFunction: TumorStageDerivationFunction, private val stageToMatch: TumorStage
 ) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val stage = record.clinical().tumor().stage()
         if (stage == null) {

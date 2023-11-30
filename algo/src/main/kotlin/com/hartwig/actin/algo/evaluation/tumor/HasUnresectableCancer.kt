@@ -6,7 +6,8 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.TumorStage
 
-class HasUnresectableCancer internal constructor() : EvaluationFunction {
+class HasUnresectableCancer : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val stage = record.clinical().tumor().stage() ?: return EvaluationFactory.undetermined(
             "Tumor stage details are missing, if cancer is unresectable cannot be determined", "Undetermined unresectable cancer"

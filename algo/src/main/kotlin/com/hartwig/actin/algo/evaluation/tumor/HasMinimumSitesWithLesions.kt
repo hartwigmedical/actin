@@ -7,7 +7,8 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory.pass
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.undetermined
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-class HasMinimumSitesWithLesions internal constructor(private val minimumSitesWithLesions: Int) : EvaluationFunction {
+class HasMinimumSitesWithLesions (private val minimumSitesWithLesions: Int) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDetails = record.clinical().tumor()
         val distinctCategorizedLesionLocations = listOf(

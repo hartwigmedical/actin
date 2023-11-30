@@ -6,7 +6,8 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 
-class CanProvideSampleForFurtherAnalysis internal constructor() : EvaluationFunction {
+class CanProvideSampleForFurtherAnalysis : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         return if (record.molecular().type() != ExperimentType.WHOLE_GENOME) {
             EvaluationFactory.undetermined(

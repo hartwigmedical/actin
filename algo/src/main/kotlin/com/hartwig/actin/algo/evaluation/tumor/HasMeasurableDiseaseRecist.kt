@@ -7,7 +7,8 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.doid.DoidModel
 
-class HasMeasurableDiseaseRecist internal constructor(private val doidModel: DoidModel) : EvaluationFunction {
+class HasMeasurableDiseaseRecist (private val doidModel: DoidModel) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasMeasurableDisease = record.clinical().tumor().hasMeasurableDisease() ?: return EvaluationFactory.recoverableUndetermined(
             "Data regarding measurable disease is missing, unknown if measurable by RECIST", "Undetermined RECIST measurable disease"

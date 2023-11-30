@@ -7,7 +7,8 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.doid.DoidModel
 
-class HasStomachUndifferentiatedTumor internal constructor(private val doidModel: DoidModel) : EvaluationFunction {
+class HasStomachUndifferentiatedTumor (private val doidModel: DoidModel) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.clinical().tumor().doids()
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) || (record.clinical().tumor().primaryTumorType() == null

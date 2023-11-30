@@ -5,7 +5,8 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-class HasBoneMetastasesOnly internal constructor() : EvaluationFunction {
+class HasBoneMetastasesOnly : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasBoneMetastases = record.clinical().tumor().hasBoneLesions() ?: return EvaluationFactory.undetermined(
             "Data regarding presence of bone metastases is missing", "Missing bone metastasis data"

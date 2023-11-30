@@ -6,7 +6,8 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.TumorStage
 
-class HasLocallyAdvancedCancer internal constructor() : EvaluationFunction {
+class HasLocallyAdvancedCancer : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val stage = record.clinical().tumor().stage()
             ?: return EvaluationFactory.undetermined(

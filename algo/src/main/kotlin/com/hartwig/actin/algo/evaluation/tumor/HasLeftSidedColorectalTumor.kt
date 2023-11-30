@@ -9,7 +9,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
 private const val TUMOR_SUB_LOCATION_SIDE_TEMPLATE = "Tumor sub-location %s is on %s side"
 
-class HasLeftSidedColorectalTumor internal constructor(doidModel: DoidModel) : EvaluationFunction {
+class HasLeftSidedColorectalTumor (doidModel: DoidModel) : EvaluationFunction {
     private val doidModel: DoidModel
 
     init {
