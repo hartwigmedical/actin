@@ -6,7 +6,6 @@ import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.TumorStatus
 import com.hartwig.actin.util.ResourceFile
-import org.apache.logging.log4j.LogManager
 
 class SecondPrimaryConfigFactory(private val curationValidator: CurationValidator) : CurationConfigFactory<SecondPrimaryConfig> {
     override fun create(fields: Map<String, Int>, parts: Array<String>): CurationConfigValidatedResponse<SecondPrimaryConfig> {
