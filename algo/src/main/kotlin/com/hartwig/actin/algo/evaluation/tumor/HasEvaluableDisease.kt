@@ -24,7 +24,7 @@ class HasEvaluableDisease : EvaluationFunction {
             }
             else -> {
                 EvaluationFactory.recoverableUndetermined(
-                    "Unknown if patient has measurable disease, hence unknown if patient may have evaluable disease",
+                    "Undetermined if patient may have evaluable disease",
                     "Undetermined evaluable disease"
                 )
             }
