@@ -49,8 +49,8 @@ class HasToxicityWithGrade internal constructor(
                 )
             } else {
                 EvaluationFactory.recoverableWarn(
-                    "Patient has toxicities grade >= $minGrade$toxicityString but source is not questionnaire",
-                    "Has toxicities grade >= $minGrade$toxicityString but source is not questionnaire"
+                    "Patient has toxicities grade >= $minGrade$toxicityString - n.b. different EHR source than questionnaire",
+                    "Has toxicities grade >= $minGrade$toxicityString - n.b. different EHR source than questionnaire"
                 )
             }
         } else if (hasUnresolvableQuestionnaireToxicities) {
