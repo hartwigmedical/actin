@@ -105,7 +105,10 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
         private const val STOP_REASON_PROGRESSIVE_DISEASE = "PD"
 
         private fun extractDateRangeString(treatmentHistoryEntry: TreatmentHistoryEntry): String {
-            val startString = toDateString(treatmentHistoryEntry.startYear(), treatmentHistoryEntry.startMonth()) ?: DATE_UNKNOWN
+            val startString = toDateString(treatmentHistoryEntry.startYear(), treatmentHistoryEntry.startMonth())
+                ?: if (treatmentHistoryEntry.treatmentHistoryDetails()
+                        ?.stopYear() != null
+                ) "?" else DATE_UNKNOWN
             return treatmentHistoryEntry.treatmentHistoryDetails()?.let { toDateString(it.stopYear(), it.stopMonth()) }
                 ?.let { stopString: String -> "$startString-$stopString" } ?: startString
         }
