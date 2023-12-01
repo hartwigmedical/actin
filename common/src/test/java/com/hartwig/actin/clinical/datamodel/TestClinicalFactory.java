@@ -215,7 +215,8 @@ public final class TestClinicalFactory {
         TreatmentHistoryEntry hasNoDateHistoryEntry =
                 ImmutableTreatmentHistoryEntry.builder().addTreatments(ImmutableDrugTreatment.builder().name("Therapy").build()).build();
 
-        TreatmentHistoryEntry hasStartYearHistoryEntry = ImmutableTreatmentHistoryEntry.builder().startYear(2019)
+        TreatmentHistoryEntry hasStartYearHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
+                .startYear(2019)
                 .addTreatments(ImmutableDrugTreatment.builder().name("Therapy1").addDrugs(irinotecan).build())
                 .build();
 
@@ -278,8 +279,10 @@ public final class TestClinicalFactory {
                 .build();
 
         return List.of(hasNoDateHistoryEntry,
-                hasStartYearHistoryEntry, hasStartYearHistoryEntry2,
-                hasStartYearMonthEndYearMonthHistoryEntry, hasEndYearMonthHistoryEntry,
+                hasStartYearHistoryEntry,
+                hasStartYearHistoryEntry2,
+                hasStartYearMonthEndYearMonthHistoryEntry,
+                hasEndYearMonthHistoryEntry,
                 namedTrialHistoryEntry,
                 unknownDetailsHistoryEntry,
                 hasCyclesStopReasonHistoryEntry,
