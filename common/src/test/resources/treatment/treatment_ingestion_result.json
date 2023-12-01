@@ -1,0 +1,13 @@
+{
+  "ingestionStatus": "PASS",
+  "ctcDatabaseValidation": {
+    "trialDefinitionValidationErrors": [],
+    "ctcDatabaseValidationErrors": []
+  },
+  "trialValidationResult": {
+    "inclusionCriteriaValidationErrors": [],
+    "inclusionReferenceValidationErrors": [],
+    "cohortDefinitionValidationErrors": [],
+    "trialDefinitionValidationErrors": []
+  }
+}

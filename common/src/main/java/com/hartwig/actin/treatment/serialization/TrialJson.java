@@ -11,8 +11,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
@@ -107,18 +109,16 @@ public final class TrialJson {
     }
 
     @NotNull
-    public static List<Trial> readFromDir(@NotNull String directory) throws IOException {
-        List<Trial> trials = Lists.newArrayList();
+    public static List<Trial> readFromDir(@NotNull String directory) {
         File[] files = new File(directory).listFiles();
         if (files == null) {
             throw new IllegalArgumentException("Could not retrieve files from " + directory);
         }
 
-        for (File file : files) {
-            trials.add(fromJson(Files.readString(file.toPath())));
-        }
-
-        return trials;
+        return Arrays.stream(files)
+                .filter(file -> file.getName().endsWith(TRIAL_JSON_EXTENSION))
+                .map(TrialJson::fromJsonFile)
+                .collect(Collectors.toList());
     }
 
     @VisibleForTesting
@@ -132,6 +132,15 @@ public final class TrialJson {
     static Trial fromJson(@NotNull String json) {
         Gson gson = new GsonBuilder().registerTypeAdapter(Trial.class, new TrialJson.TrialCreator()).create();
         return gson.fromJson(json, Trial.class);
+    }
+
+    @NotNull
+    private static Trial fromJsonFile(File file) {
+        try {
+            return fromJson(Files.readString(file.toPath()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @NotNull
