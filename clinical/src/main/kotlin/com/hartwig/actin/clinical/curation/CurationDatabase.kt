@@ -2,6 +2,8 @@ package com.hartwig.actin.clinical.curation
 
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfig
+import com.hartwig.actin.clinical.curation.config.CurationConfigValidatedResponse
+import com.hartwig.actin.clinical.curation.config.CurationConfigValidationError
 import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
 import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
@@ -25,28 +27,60 @@ import org.apache.logging.log4j.Logger
 typealias InputText = String
 
 data class CurationDatabase(
-    val primaryTumorConfigs: Map<InputText, Set<PrimaryTumorConfig>>,
-    val treatmentHistoryEntryConfigs: Map<InputText, Set<TreatmentHistoryEntryConfig>>,
-    val secondPrimaryConfigs: Map<InputText, Set<SecondPrimaryConfig>>,
-    val lesionLocationConfigs: Map<InputText, Set<LesionLocationConfig>>,
-    val nonOncologicalHistoryConfigs: Map<InputText, Set<NonOncologicalHistoryConfig>>,
-    val ecgConfigs: Map<InputText, Set<ECGConfig>>,
-    val infectionConfigs: Map<InputText, Set<InfectionConfig>>,
-    val periodBetweenUnitConfigs: Map<InputText, Set<PeriodBetweenUnitConfig>>,
-    val complicationConfigs: Map<InputText, Set<ComplicationConfig>>,
-    val toxicityConfigs: Map<InputText, Set<ToxicityConfig>>,
-    val molecularTestConfigs: Map<InputText, Set<MolecularTestConfig>>,
-    val medicationNameConfigs: Map<InputText, Set<MedicationNameConfig>>,
-    val medicationDosageConfigs: Map<InputText, Set<MedicationDosageConfig>>,
-    val intoleranceConfigs: Map<InputText, Set<IntoleranceConfig>>,
-    val cypInteractionConfigs: Map<InputText, Set<CypInteractionConfig>>,
-    val qtProlongingConfigs: Map<InputText, Set<QTProlongatingConfig>>,
-    val administrationRouteTranslations: Map<InputText, Translation>,
-    val laboratoryTranslations: Map<Pair<InputText, InputText>, LaboratoryTranslation>,
-    val toxicityTranslations: Map<InputText, Translation>,
-    val bloodTransfusionTranslations: Map<InputText, Translation>,
-    val dosageUnitTranslations: Map<InputText, Translation>
+    val validationErrors: List<CurationConfigValidationError> = emptyList(),
+    val primaryTumorConfigs: Map<InputText, Set<PrimaryTumorConfig>> = emptyMap(),
+    val treatmentHistoryEntryConfigs: Map<InputText, Set<TreatmentHistoryEntryConfig>> = emptyMap(),
+    val secondPrimaryConfigs: Map<InputText, Set<SecondPrimaryConfig>> = emptyMap(),
+    val lesionLocationConfigs: Map<InputText, Set<LesionLocationConfig>> = emptyMap(),
+    val nonOncologicalHistoryConfigs: Map<InputText, Set<NonOncologicalHistoryConfig>> = emptyMap(),
+    val ecgConfigs: Map<InputText, Set<ECGConfig>> = emptyMap(),
+    val infectionConfigs: Map<InputText, Set<InfectionConfig>> = emptyMap(),
+    val periodBetweenUnitConfigs: Map<InputText, Set<PeriodBetweenUnitConfig>> = emptyMap(),
+    val complicationConfigs: Map<InputText, Set<ComplicationConfig>> = emptyMap(),
+    val toxicityConfigs: Map<InputText, Set<ToxicityConfig>> = emptyMap(),
+    val molecularTestConfigs: Map<InputText, Set<MolecularTestConfig>> = emptyMap(),
+    val medicationNameConfigs: Map<InputText, Set<MedicationNameConfig>> = emptyMap(),
+    val medicationDosageConfigs: Map<InputText, Set<MedicationDosageConfig>> = emptyMap(),
+    val intoleranceConfigs: Map<InputText, Set<IntoleranceConfig>> = emptyMap(),
+    val cypInteractionConfigs: Map<InputText, Set<CypInteractionConfig>> = emptyMap(),
+    val qtProlongingConfigs: Map<InputText, Set<QTProlongatingConfig>> = emptyMap(),
+    val administrationRouteTranslations: Map<InputText, Translation> = emptyMap(),
+    val laboratoryTranslations: Map<Pair<InputText, InputText>, LaboratoryTranslation> = emptyMap(),
+    val toxicityTranslations: Map<InputText, Translation> = emptyMap(),
+    val bloodTransfusionTranslations: Map<InputText, Translation> = emptyMap(),
+    val dosageUnitTranslations: Map<InputText, Translation> = emptyMap()
 ) {
+
+    operator fun plus(other: CurationDatabase?): CurationDatabase {
+        if (other != null) {
+            return CurationDatabase(
+                validationErrors + other.validationErrors,
+                primaryTumorConfigs + other.primaryTumorConfigs,
+                treatmentHistoryEntryConfigs + other.treatmentHistoryEntryConfigs,
+                secondPrimaryConfigs + other.secondPrimaryConfigs,
+                lesionLocationConfigs + other.lesionLocationConfigs,
+                nonOncologicalHistoryConfigs + other.nonOncologicalHistoryConfigs,
+                ecgConfigs + other.ecgConfigs,
+                infectionConfigs + other.infectionConfigs,
+                periodBetweenUnitConfigs + other.periodBetweenUnitConfigs,
+                complicationConfigs + other.complicationConfigs,
+                toxicityConfigs + other.toxicityConfigs,
+                molecularTestConfigs + other.molecularTestConfigs,
+                medicationNameConfigs + other.medicationNameConfigs,
+                medicationDosageConfigs + other.medicationDosageConfigs,
+                intoleranceConfigs + other.intoleranceConfigs,
+                cypInteractionConfigs + other.cypInteractionConfigs,
+                qtProlongingConfigs + other.qtProlongingConfigs,
+                administrationRouteTranslations + other.administrationRouteTranslations,
+                laboratoryTranslations + other.laboratoryTranslations,
+                toxicityTranslations + other.toxicityTranslations,
+                bloodTransfusionTranslations + other.bloodTransfusionTranslations,
+                dosageUnitTranslations + other.dosageUnitTranslations
+
+            )
+        }
+        return this
+    }
 
     fun findLesionConfigs(lesion: String): Set<LesionLocationConfig> {
         return find(lesionLocationConfigs, lesion)
@@ -191,5 +225,10 @@ data class CurationDatabase(
 
     private fun findTranslation(translations: Map<String, Translation>, input: String): Translation? {
         return translations[input.trim { it <= ' ' }]
+    }
+
+    companion object {
+        fun <T : CurationConfig> asInputMap(configs: List<T>) =
+            configs.groupBy { it.input.lowercase() }.mapValues { it.value.toSet() }
     }
 }

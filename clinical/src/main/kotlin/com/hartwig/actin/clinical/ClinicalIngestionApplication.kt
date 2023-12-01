@@ -48,18 +48,18 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
             )
         )
 
-        if (curation.second.isNotEmpty()) {
+        if (curation.validationErrors.isNotEmpty()) {
             LOGGER.warn("Curation input had validation errors persisting them to validation_errors.json and halting ingestion.")
             writeIngestionResults(
                 config.outputDirectory,
                 IngestionResult(
                     status = IngestionStatus.FAIL_CURATION_CONFIG_VALIDATION_ERRORS,
-                    curationValidationErrors = curation.second,
+                    curationValidationErrors = curation.validationErrors,
                     patientResults = emptyList()
                 )
             )
         } else {
-            val patientResults = ClinicalIngestion(feedModel, curation.first, atcModel).run()
+            val patientResults = ClinicalIngestion(feedModel, curation, atcModel).run()
             val outputDirectory = config.outputDirectory
             LOGGER.info("Writing {} clinical records to {}", patientResults.size, outputDirectory)
             ClinicalRecordJson.write(patientResults.map { it.clinicalRecord }, outputDirectory)
