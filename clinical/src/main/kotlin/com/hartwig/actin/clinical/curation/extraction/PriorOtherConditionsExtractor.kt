@@ -20,7 +20,7 @@ class PriorOtherConditionsExtractor(private val curation: CurationDatabase) {
             .map(CurationUtil::fullTrim)
             .map {
                 CurationResponse.createFromConfigs(
-                    curation.findNonOncologicalHistoryConfigs(it),
+                    curation.curate<NonOncologicalHistoryConfig>(it),
                     patientId,
                     CurationCategory.NON_ONCOLOGICAL_HISTORY,
                     it,

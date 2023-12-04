@@ -5,8 +5,6 @@ import com.hartwig.actin.clinical.curation.config.ComplicationConfigFactory
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfigFactory
 import com.hartwig.actin.clinical.curation.config.CurationConfigFile
-import com.hartwig.actin.clinical.curation.config.CurationConfigValidatedResponse
-import com.hartwig.actin.clinical.curation.config.CurationConfigValidationError
 import com.hartwig.actin.clinical.curation.config.CypInteractionConfigFactory
 import com.hartwig.actin.clinical.curation.config.ECGConfigFactory
 import com.hartwig.actin.clinical.curation.config.InfectionConfigFactory
@@ -38,77 +36,44 @@ class CurationDatabaseReader(private val curationValidator: CurationValidator, p
     fun read(clinicalCurationDirectory: String): CurationDatabase {
         LOGGER.info("Reading clinical curation config from {}", clinicalCurationDirectory)
         val basePath = Paths.forceTrailingFileSeparator(clinicalCurationDirectory)
-        return readConfigs(basePath, PRIMARY_TUMOR_TSV, PrimaryTumorConfigFactory(curationValidator)) { e, c ->
-            CurationDatabase(e, primaryTumorConfigs = c)
-        } + readConfigs(basePath, ONCOLOGICAL_HISTORY_TSV, TreatmentHistoryEntryConfigFactory(treatmentDatabase)) { e, c ->
-            CurationDatabase(e, treatmentHistoryEntryConfigs = c)
-        } + readConfigs(basePath, SECOND_PRIMARY_TSV, SecondPrimaryConfigFactory(curationValidator)) { e, c ->
-            CurationDatabase(e, secondPrimaryConfigs = c)
-        } + readConfigs(basePath, LESION_LOCATION_TSV, LesionLocationConfigFactory()) { e, c ->
-            CurationDatabase(e, lesionLocationConfigs = c)
-        } + readConfigs(
-            basePath, NON_ONCOLOGICAL_HISTORY_TSV, NonOncologicalHistoryConfigFactory(curationValidator)
-        ) { e, c ->
-            CurationDatabase(e, nonOncologicalHistoryConfigs = c)
-        } + readConfigs(basePath, ECG_TSV, ECGConfigFactory()) { e, c ->
-            CurationDatabase(e, ecgConfigs = c)
-        } + readConfigs(basePath, INFECTION_TSV, InfectionConfigFactory()) { e, c ->
-            CurationDatabase(e, infectionConfigs = c)
-        } + readConfigs(basePath, PERIOD_BETWEEN_UNIT_TSV, PeriodBetweenUnitConfigFactory()) { e, c ->
-            CurationDatabase(e, periodBetweenUnitConfigs = c)
-        } + readConfigs(basePath, COMPLICATION_TSV, ComplicationConfigFactory()) { e, c ->
-            CurationDatabase(e, complicationConfigs = c)
-        } + readConfigs(basePath, TOXICITY_TSV, ToxicityConfigFactory()) { e, c ->
-            CurationDatabase(e, toxicityConfigs = c)
-        } + readConfigs(basePath, MOLECULAR_TEST_TSV, MolecularTestConfigFactory()) { e, c ->
-            CurationDatabase(e, molecularTestConfigs = c)
-        } + readConfigs(basePath, MEDICATION_NAME_TSV, MedicationNameConfigFactory()) { e, c ->
-            CurationDatabase(e, medicationNameConfigs = c)
-        } + readConfigs(basePath, MEDICATION_DOSAGE_TSV, MedicationDosageConfigFactory()) { e, c ->
-            CurationDatabase(e, medicationDosageConfigs = c)
-        } + readConfigs(basePath, INTOLERANCE_TSV, IntoleranceConfigFactory(curationValidator)) { e, c ->
-            CurationDatabase(e, intoleranceConfigs = c)
-        } + readConfigs(basePath, CYP_INTERACTIONS_TSV, CypInteractionConfigFactory()) { e, c ->
-            CurationDatabase(e, cypInteractionConfigs = c)
-        } + readConfigs(basePath, QT_PROLONGATING_TSV, QTProlongatingConfigFactory()) { e, c ->
-            CurationDatabase(e, qtProlongingConfigs = c)
-        } + CurationDatabase(
-            administrationRouteTranslations = readTranslationsToMap(
-                basePath, ADMINISTRATION_ROUTE_TRANSLATION_TSV, AdministrationRouteTranslationFactory()
-            ),
-            laboratoryTranslations = readTranslations(basePath, LABORATORY_TRANSLATION_TSV, LaboratoryTranslationFactory())
-                .associateBy { Pair(it.code, it.name) },
-            toxicityTranslations = readTranslationsToMap(basePath, TOXICITY_TRANSLATION_TSV, ToxicityTranslationFactory()),
-            bloodTransfusionTranslations = readTranslationsToMap(
-                basePath, BLOOD_TRANSFUSION_TRANSLATION_TSV, BloodTransfusionTranslationFactory()
-            ),
-            dosageUnitTranslations = readTranslations(basePath, DOSAGE_UNIT_TRANSLATION_TSV, DosageUnitTranslationFactory())
-                .associateBy { it.input.lowercase() }
-        )
+        return readConfigs(basePath, PRIMARY_TUMOR_TSV, PrimaryTumorConfigFactory(curationValidator)) +
+                readConfigs(basePath, ONCOLOGICAL_HISTORY_TSV, TreatmentHistoryEntryConfigFactory(treatmentDatabase)) +
+                readConfigs(basePath, SECOND_PRIMARY_TSV, SecondPrimaryConfigFactory(curationValidator)) +
+                readConfigs(basePath, LESION_LOCATION_TSV, LesionLocationConfigFactory()) +
+                readConfigs(basePath, NON_ONCOLOGICAL_HISTORY_TSV, NonOncologicalHistoryConfigFactory(curationValidator)) +
+                readConfigs(basePath, ECG_TSV, ECGConfigFactory()) +
+                readConfigs(basePath, INFECTION_TSV, InfectionConfigFactory()) +
+                readConfigs(basePath, PERIOD_BETWEEN_UNIT_TSV, PeriodBetweenUnitConfigFactory()) +
+                readConfigs(basePath, COMPLICATION_TSV, ComplicationConfigFactory()) +
+                readConfigs(basePath, TOXICITY_TSV, ToxicityConfigFactory()) +
+                readConfigs(basePath, MOLECULAR_TEST_TSV, MolecularTestConfigFactory()) +
+                readConfigs(basePath, MEDICATION_NAME_TSV, MedicationNameConfigFactory()) +
+                readConfigs(basePath, MEDICATION_DOSAGE_TSV, MedicationDosageConfigFactory()) +
+                readConfigs(basePath, INTOLERANCE_TSV, IntoleranceConfigFactory(curationValidator)) +
+                readConfigs(basePath, CYP_INTERACTIONS_TSV, CypInteractionConfigFactory()) +
+                readConfigs(
+                    basePath,
+                    QT_PROLONGATING_TSV,
+                    QTProlongatingConfigFactory()
+                ) + readTranslationsToMap(
+            basePath,
+            ADMINISTRATION_ROUTE_TRANSLATION_TSV,
+            AdministrationRouteTranslationFactory()
+        ) + readTranslationsToMap(
+            basePath,
+            BLOOD_TRANSFUSION_TRANSLATION_TSV,
+            BloodTransfusionTranslationFactory()
+        ) + readTranslationsToMap(basePath, DOSAGE_UNIT_TRANSLATION_TSV, DosageUnitTranslationFactory()) + readTranslationsToMap(
+            basePath,
+            TOXICITY_TRANSLATION_TSV,
+            ToxicityTranslationFactory()
+        ) + CurationDatabase(laboratoryTranslations = readTranslations(basePath, LABORATORY_TRANSLATION_TSV, LaboratoryTranslationFactory())
+            .associateBy { Pair(it.code, it.name) })
     }
 
     private fun readTranslationsToMap(
         basePath: String, tsv: String, factory: TranslationFactory<Translation>
-    ) = readTranslations(basePath, tsv, factory).associateBy { it.input }
-
-    private fun <T : CurationConfig> asInputMap(configs: List<T>) =
-        configs.groupBy { it.input.lowercase() }.mapValues { it.value.toSet() }
-
-    private fun consolidateErrors(vararg curationConfigValidations: List<CurationConfigValidatedResponse<*>>): List<CurationConfigValidationError> {
-        return curationConfigValidations.flatMap { it }.flatMap { it.errors }
-    }
-
-    private fun <T : CurationConfig> readConfigs(
-        basePath: String,
-        tsv: String,
-        configFactory: CurationConfigFactory<T>,
-        databaseFactory: (e: List<CurationConfigValidationError>, c: Map<InputText, Set<T>>) -> CurationDatabase
-    ): CurationDatabase {
-        val filePath = basePath + tsv
-        val configs = CurationConfigFile.read(filePath, configFactory)
-        LOGGER.info(" Read {} configs from {}", configs.size, filePath)
-        return databaseFactory.invoke(configs.flatMap { it.errors }, asInputMap(configs.map { it.config }))
-    }
+    ) = CurationDatabase(translations = readTranslations(basePath, tsv, factory).associateBy { it.input })
 
     private fun <T> readTranslations(basePath: String, tsv: String, translationFactory: TranslationFactory<T>): List<T> {
         val filePath = basePath + tsv
@@ -118,7 +83,7 @@ class CurationDatabaseReader(private val curationValidator: CurationValidator, p
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(CurationDatabaseReader::class.java)
+        val LOGGER = LogManager.getLogger(CurationDatabaseReader::class.java)
 
         private const val PRIMARY_TUMOR_TSV = "primary_tumor.tsv"
         private const val ONCOLOGICAL_HISTORY_TSV = "oncological_history.tsv"
@@ -144,3 +109,18 @@ class CurationDatabaseReader(private val curationValidator: CurationValidator, p
 
     }
 }
+
+inline private fun <reified T : CurationConfig> readConfigs(
+    basePath: String,
+    tsv: String,
+    configFactory: CurationConfigFactory<T>
+): CurationDatabase {
+    val filePath = basePath + tsv
+    val configs = CurationConfigFile.read(filePath, configFactory)
+    CurationDatabaseReader.LOGGER.info(" Read {} configs from {}", configs.size, filePath)
+    return CurationDatabase(configs.flatMap { it.errors }, asInputMap(T::class.java, configs.map { it.config }))
+}
+
+private fun <T : CurationConfig> asInputMap(clazz: Class<out CurationConfig>, configs: List<T>) =
+    configs.groupBy { it.input.lowercase() }.mapKeys { it.key to clazz }.mapValues { it.value.toSet() }
+

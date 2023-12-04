@@ -6,6 +6,7 @@ import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
+import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorDetails
@@ -21,7 +22,7 @@ class TumorDetailsExtractor(private val curation: CurationDatabase) {
             return ExtractionResult(ImmutableTumorDetails.builder().build(), ExtractionEvaluation())
         }
         val lesionsToCheck = ((questionnaire.otherLesions ?: emptyList()) + listOfNotNull(questionnaire.biopsyLocation)).flatMap {
-            curation.findLesionConfigs(it).mapNotNull(LesionLocationConfig::category)
+            curation.curate<LesionLocationConfig>(it).mapNotNull(LesionLocationConfig::category)
         }
 
         val (primaryTumorDetails, tumorExtractionResult) = curateTumorDetails(
@@ -32,7 +33,7 @@ class TumorDetailsExtractor(private val curation: CurationDatabase) {
         val (curatedOtherLesions, otherLesionsResult) = curateOtherLesions(patientId, questionnaire.otherLesions)
         val biopsyCuration = questionnaire.biopsyLocation?.let {
             CurationResponse.createFromConfigs(
-                curation.findLesionConfigs(it), patientId, CurationCategory.LESION_LOCATION, it, "lesion location", true
+                curation.curate<LesionLocationConfig>(it), patientId, CurationCategory.LESION_LOCATION, it, "lesion location", true
             )
         }
 
@@ -63,7 +64,7 @@ class TumorDetailsExtractor(private val curation: CurationDatabase) {
         val builder = ImmutableTumorDetails.builder()
         val inputPrimaryTumor = tumorInput(inputTumorLocation, inputTumorType) ?: return Pair(builder.build(), ExtractionEvaluation())
         val primaryTumorCuration = CurationResponse.createFromConfigs(
-            curation.findTumorConfigs(inputPrimaryTumor),
+            curation.curate<PrimaryTumorConfig>(inputPrimaryTumor),
             patientId,
             CurationCategory.PRIMARY_TUMOR,
             inputPrimaryTumor,
@@ -94,7 +95,7 @@ class TumorDetailsExtractor(private val curation: CurationDatabase) {
         }
         val (configs, extractionResult) = otherLesions.asSequence()
             .map(CurationUtil::fullTrim)
-            .map { Pair(it, curation.findLesionConfigs(it)) }
+            .map { Pair(it, curation.curate<LesionLocationConfig>(it)) }
             .map { (input, configs) ->
                 CurationResponse.createFromConfigs(
                     configs, patientId, CurationCategory.LESION_LOCATION, input, "lesion location"

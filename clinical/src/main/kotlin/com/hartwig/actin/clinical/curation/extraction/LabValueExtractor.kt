@@ -12,8 +12,8 @@ class LabValueExtractor(private val curation: CurationDatabase) {
 
     fun extract(patientId: String, rawValues: List<LabValue>): ExtractionResult<List<LabValue>> {
         val extractedValues = rawValues.map { input ->
-                val trimmedName = input.name().trim { it <= ' ' }
-                val translation = curation.translateLabValue(input.code(), trimmedName)
+            val trimmedName = input.name().trim { it <= ' ' }
+            val translation = curation.translateLabValue(input.code(), trimmedName)
             if (translation == null) {
                 val warning = CurationWarning(
                     patientId = patientId,
@@ -30,7 +30,7 @@ class LabValueExtractor(private val curation: CurationDatabase) {
                     .build()
                 ExtractionResult(listOf(newLabValue), ExtractionEvaluation(laboratoryEvaluatedInputs = setOf(translation)))
             }
-            }
+        }
             .fold(ExtractionResult(emptyList<LabValue>(), ExtractionEvaluation())) { acc, result ->
                 ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
             }

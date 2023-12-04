@@ -20,6 +20,6 @@ class QTProlongatingConfigFactoryTest {
     fun shouldReturnCorrectEnumValueRegardlessOfCaseOrWhitespace() {
         val victim = QTProlongatingConfigFactory()
         val result = victim.create(mapOf("Name" to 0, "Risk" to 1), arrayOf("medicationName", "known "))
-        assertThat(result).extracting { it.status }.isEqualTo(QTProlongatingRisk.KNOWN)
+        assertThat(result).extracting { it.config.status }.isEqualTo(QTProlongatingRisk.KNOWN)
     }
 }

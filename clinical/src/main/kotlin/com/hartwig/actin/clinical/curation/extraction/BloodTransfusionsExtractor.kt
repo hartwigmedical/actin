@@ -14,7 +14,7 @@ class BloodTransfusionsExtractor(private val curation: CurationDatabase) {
         return entries.map { entry: DigitalFileEntry ->
             val transfusionProduct = entry.itemAnswerValueValueString
             val curationResponse = CurationResponse.createFromTranslation(
-                curation.translateBloodTransfusion(transfusionProduct),
+                curation.translate(transfusionProduct),
                 patientId,
                 CurationCategory.BLOOD_TRANSFUSION_TRANSLATION,
                 transfusionProduct,

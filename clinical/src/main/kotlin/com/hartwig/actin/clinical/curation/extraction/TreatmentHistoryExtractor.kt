@@ -6,6 +6,7 @@ import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.CurationConfig
+import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
@@ -25,7 +26,7 @@ class TreatmentHistoryExtractor(private val curation: CurationDatabase) {
             .map(CurationUtil::fullTrim)
             .map {
                 CurationResponse.createFromConfigs(
-                    curation.findTreatmentHistoryEntryConfigs(it),
+                    curation.curate<TreatmentHistoryEntryConfig>(it),
                     patientId,
                     CurationCategory.ONCOLOGICAL_HISTORY,
                     it,
@@ -34,7 +35,8 @@ class TreatmentHistoryExtractor(private val curation: CurationDatabase) {
             }
             .map {
                 if (it.configs.isEmpty() &&
-                    curation.findSecondPrimaryConfigs(it.extractionEvaluation.treatmentHistoryEntryEvaluatedInputs.first()).isNotEmpty()
+                    curation.curate<SecondPrimaryConfig>(it.extractionEvaluation.treatmentHistoryEntryEvaluatedInputs.first())
+                        .isNotEmpty()
                 ) {
                     it.copy(extractionEvaluation = it.extractionEvaluation.copy(warnings = emptySet()))
                 } else it

@@ -40,7 +40,7 @@ class TreatmentHistoryEntryConfigFactoryTest {
             )
         )
 
-        val config = factory.create(fields, parts)
+        val config = factory.create(fields, parts).config
         assertThat(config.input).isEqualTo(input)
         assertThat(config.ignore).isFalse
         assertThat(config.curated).isNotNull
@@ -105,7 +105,7 @@ class TreatmentHistoryEntryConfigFactoryTest {
                 "treatmentName" to treatmentName
             )
         )
-        val config = factory.create(fields, parts)
+        val config = factory.create(fields, parts).config
         assertThat(config.input).isEqualTo("NA")
         assertThat(config.ignore).isTrue
         assertThat(config.curated).isNull()
@@ -123,7 +123,7 @@ class TreatmentHistoryEntryConfigFactoryTest {
             )
         )
 
-        val config = factory.create(fields, parts)
+        val config = factory.create(fields, parts).config
         assertThat(config.input).isEqualTo(input)
         assertThat(config.ignore).isFalse
         assertThat(config.curated).isNotNull

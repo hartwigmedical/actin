@@ -8,6 +8,10 @@ import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.CurationUtil.fullTrim
 import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
+import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig
+import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
+import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
+import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.Dosage
@@ -60,14 +64,14 @@ class MedicationExtractor(private val curation: CurationDatabase, private val at
         }
     }
 
-    fun curateName(entry: MedicationEntry, patientId: String): ExtractionResult<String?> {
+    private fun curateName(entry: MedicationEntry, patientId: String): ExtractionResult<String?> {
         val atcName = CurationUtil.capitalizeFirstLetterOnly(entry.code5ATCDisplay)
         return if (atcName.isNotEmpty()) {
             ExtractionResult(atcName, ExtractionEvaluation())
         } else {
             val input = fullTrim(entry.codeText)
             val curation = CurationResponse.createFromConfigs(
-                curation.findMedicationNameConfigs(input),
+                curation.curate<MedicationNameConfig>(input),
                 patientId,
                 CurationCategory.MEDICATION_NAME,
                 input,
@@ -80,7 +84,7 @@ class MedicationExtractor(private val curation: CurationDatabase, private val at
 
     fun translateAdministrationRoute(patientId: String, administrationRoute: String?): ExtractionResult<String?> =
         translateString(
-            patientId, administrationRoute, curation::translateAdministrationRoute,
+            patientId, administrationRoute, curation::translate,
             CurationCategory.ADMINISTRATION_ROUTE_TRANSLATION, "medication administration route"
         )
 
@@ -90,7 +94,7 @@ class MedicationExtractor(private val curation: CurationDatabase, private val at
         return if (dosageRequiresCuration(administrationRoute, entry)) {
             val input = entry.dosageInstructionText.trim { it <= ' ' }
             val curationResponse = CurationResponse.createFromConfigs(
-                curation.findMedicationDosageConfigs(input),
+                curation.curate<MedicationDosageConfig>(input),
                 patientId,
                 CurationCategory.MEDICATION_DOSAGE,
                 input,
@@ -121,7 +125,7 @@ class MedicationExtractor(private val curation: CurationDatabase, private val at
 
     fun translateDosageUnit(patientId: String, dosageUnit: String?): ExtractionResult<String?> =
         translateString(
-            patientId, dosageUnit?.lowercase(), curation::translateDosageUnit,
+            patientId, dosageUnit?.lowercase(), curation::translate,
             CurationCategory.DOSAGE_UNIT_TRANSLATION, "medication dosage unit"
         )
 
@@ -130,7 +134,7 @@ class MedicationExtractor(private val curation: CurationDatabase, private val at
             ExtractionResult(null, ExtractionEvaluation())
         } else {
             val curation = CurationResponse.createFromConfigs(
-                curation.findPeriodBetweenUnitConfigs(input),
+                curation.curate<PeriodBetweenUnitConfig>(input),
                 patientId,
                 CurationCategory.PERIOD_BETWEEN_UNIT_INTERPRETATION,
                 input,
@@ -165,12 +169,12 @@ class MedicationExtractor(private val curation: CurationDatabase, private val at
             }
         }
 
-    fun curateMedicationCypInteractions(medicationName: String): List<CypInteraction> {
-        return curation.findCypInteractionConfigs(medicationName).flatMap(CypInteractionConfig::interactions)
+    private fun curateMedicationCypInteractions(medicationName: String): List<CypInteraction> {
+        return curation.curate<CypInteractionConfig>(medicationName).flatMap(CypInteractionConfig::interactions)
     }
 
     private fun annotateWithQTProlongating(medicationName: String): QTProlongatingRisk {
-        val riskConfigs = curation.findQTProlongingConfigs(medicationName)
+        val riskConfigs = curation.curate<QTProlongatingConfig>(medicationName)
         return if (riskConfigs.isEmpty()) {
             QTProlongatingRisk.NONE
         } else if (riskConfigs.size > 1) {

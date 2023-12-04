@@ -5,6 +5,7 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
+import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance
 import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry
@@ -24,7 +25,12 @@ class IntoleranceExtractor(private val curation: CurationDatabase) {
         }
             .map {
                 val curationResponse = CurationResponse.createFromConfigs(
-                    curation.findIntoleranceConfigs(it.name()), patientId, CurationCategory.INTOLERANCE, it.name(), "intolerance", true
+                    curation.curate<IntoleranceConfig>(it.name()),
+                    patientId,
+                    CurationCategory.INTOLERANCE,
+                    it.name(),
+                    "intolerance",
+                    true
                 )
                 val builder = ImmutableIntolerance.builder().from(it)
                 curationResponse.config()?.let { config ->

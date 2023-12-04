@@ -38,7 +38,6 @@ import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.apache.logging.log4j.util.Strings
 import java.time.LocalDate
-import java.util.*
 
 private const val PARACETAMOL = "PARACETAMOL"
 
@@ -50,35 +49,34 @@ object TestCurationFactory {
 
     fun createMinimalTestCurationDatabase(): CurationDatabase {
         return CurationDatabase(
-            emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(),
-            emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(), emptyMap(),
-            emptyMap()
+            emptyList(), emptyMap(), emptyMap(), emptyMap()
         )
     }
 
     fun createProperTestCurationDatabase(): CurationDatabase {
         return CurationDatabase(
-            primaryTumorConfigs = configsToMap(createTestPrimaryTumorConfigs()),
-            treatmentHistoryEntryConfigs = configsToMap(createTestTreatmentHistoryEntryConfigs()),
-            secondPrimaryConfigs = configsToMap(createTestSecondPrimaryConfigs()),
-            lesionLocationConfigs = configsToMap(createTestLesionLocationConfigs()),
-            nonOncologicalHistoryConfigs = configsToMap(createTestNonOncologicalHistoryConfigs()),
-            ecgConfigs = configsToMap(createTestECGConfigs()),
-            infectionConfigs = configsToMap(createTestInfectionConfigs()),
-            periodBetweenUnitConfigs = configsToMap(createTestPeriodBetweenUnitConfigs()),
-            complicationConfigs = configsToMap(createTestComplicationConfigs()),
-            toxicityConfigs = configsToMap(createTestToxicityConfigs()),
-            molecularTestConfigs = configsToMap(createTestMolecularTestConfigs()),
-            medicationNameConfigs = configsToMap(createTestMedicationNameConfigs()),
-            medicationDosageConfigs = configsToMap(createTestMedicationDosageConfigs()),
-            intoleranceConfigs = configsToMap(createTestIntoleranceConfigs()),
-            cypInteractionConfigs = configsToMap(createTestCypInteractionConfig()),
-            qtProlongingConfigs = configsToMap(createTestQTProlongingConfigs()),
-            administrationRouteTranslations = createTestAdministrationRouteTranslations().associateBy { it.input },
-            dosageUnitTranslations = createTestDosageUnitTranslations().associateBy { it.input },
+            validationErrors = emptyList(),
+            configs = configsToMap(createTestPrimaryTumorConfigs()) +
+                    configsToMap(createTestTreatmentHistoryEntryConfigs()) +
+                    configsToMap(createTestSecondPrimaryConfigs()) +
+                    configsToMap(createTestLesionLocationConfigs()) +
+                    configsToMap(createTestNonOncologicalHistoryConfigs()) +
+                    configsToMap(createTestECGConfigs()) +
+                    configsToMap(createTestInfectionConfigs()) +
+                    configsToMap(createTestPeriodBetweenUnitConfigs()) +
+                    configsToMap(createTestComplicationConfigs()) +
+                    configsToMap(createTestToxicityConfigs()) +
+                    configsToMap(createTestMolecularTestConfigs()) +
+                    configsToMap(createTestMedicationNameConfigs()) +
+                    configsToMap(createTestMedicationDosageConfigs()) +
+                    configsToMap(createTestIntoleranceConfigs()) +
+                    configsToMap(createTestCypInteractionConfig()) +
+                    configsToMap(createTestQTProlongingConfigs()),
+            translations = createTestAdministrationRouteTranslations().associateBy { it.input } +
+                    createTestDosageUnitTranslations().associateBy { it.input } +
+                    createTestToxicityTranslations().associateBy { it.input } +
+                    createTestBloodTransfusionTranslations().associateBy { it.input },
             laboratoryTranslations = createTestLaboratoryTranslations().associateBy { Pair(it.code, it.name) },
-            toxicityTranslations = createTestToxicityTranslations().associateBy { it.input },
-            bloodTransfusionTranslations = createTestBloodTransfusionTranslations().associateBy { it.input }
         )
     }
 
@@ -89,8 +87,8 @@ object TestCurationFactory {
         )
     }
 
-    private fun <T : CurationConfig> configsToMap(configs: List<T>): Map<String, Set<T>> {
-        return configs.groupBy { it.input.lowercase() }.mapValues { it.value.toSet() }
+    private inline fun <reified T : CurationConfig> configsToMap(configs: List<T>): Map<Pair<String, Class<T>>, Set<T>> {
+        return configs.groupBy { it.input.lowercase() }.mapKeys { it.key to T::class.java }.mapValues { it.value.toSet() }
     }
 
     private fun createTestQTProlongingConfigs(): List<QTProlongatingConfig> {
@@ -200,26 +198,25 @@ object TestCurationFactory {
             NonOncologicalHistoryConfig(
                 input = "sickness",
                 ignore = false,
-                lvef = Optional.empty(),
-                priorOtherCondition = Optional.of(
-                    ImmutablePriorOtherCondition.builder()
-                        .name("sick")
-                        .category("being sick")
-                        .isContraindicationForTherapy(true)
-                        .build()
-                )
+                lvef = null,
+                priorOtherCondition = ImmutablePriorOtherCondition.builder()
+                    .name("sick")
+                    .category("being sick")
+                    .isContraindicationForTherapy(true)
+                    .build()
+
             ),
             NonOncologicalHistoryConfig(
                 input = "not a condition",
                 ignore = true,
-                lvef = Optional.empty(),
-                priorOtherCondition = Optional.empty()
+                lvef = null,
+                priorOtherCondition = null
             ),
             NonOncologicalHistoryConfig(
                 input = "LVEF 0.17",
                 ignore = false,
-                lvef = Optional.of(0.17),
-                priorOtherCondition = Optional.empty()
+                lvef = null,
+                priorOtherCondition = null
             )
         )
     }

@@ -23,7 +23,7 @@ class PriorMolecularTestsExtractor(private val curation: CurationDatabase) {
                 testResults.map {
                     val input = CurationUtil.fullTrim(it)
                     CurationResponse.createFromConfigs(
-                        curation.findMolecularTestConfigs(input),
+                        curation.curate<MolecularTestConfig>(input),
                         patientId,
                         CurationCategory.MOLECULAR_TEST,
                         input,

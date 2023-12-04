@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation
 
+import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation
 import com.hartwig.actin.clinical.curation.translation.Translation
@@ -16,8 +17,11 @@ class CurationDatabaseTest {
         val arTranslation = Translation("ar1", "t1")
         val labTranslation = LaboratoryTranslation("code1", "newCode", "name1", "newName")
         val database = TestCurationFactory.createMinimalTestCurationDatabase().copy(
-            primaryTumorConfigs = mapOf("pt1" to setOf(mockk()), "pt2" to setOf(mockk())),
-            administrationRouteTranslations = listOf(arTranslation, Translation("ar2", "t2")).associateBy(Translation::input),
+            configs = mapOf(
+                ("pt1" to PrimaryTumorConfig::class.java) to setOf(mockk()),
+                ("pt2" to PrimaryTumorConfig::class.java) to setOf(mockk())
+            ),
+            translations = listOf(arTranslation, Translation("ar2", "t2")).associateBy(Translation::input),
             laboratoryTranslations = listOf(labTranslation, LaboratoryTranslation("code2", "another", "name2", "someName"))
                 .associateBy { it.code to it.name }
         )
