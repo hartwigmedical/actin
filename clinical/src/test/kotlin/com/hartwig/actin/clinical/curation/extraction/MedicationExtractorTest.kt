@@ -164,8 +164,12 @@ class MedicationExtractorTest {
     }
 
     @Test
-    fun `Should curate medication name`() {
+    fun `Should ignore empty medication names`() {
         assertMedicationForName("", emptyList())
+    }
+
+    @Test
+    fun `Should create warning for input medication name that cannot be curated`() {
         assertMedicationForName(
             CANNOT_CURATE, emptyList(), listOf(
                 CurationWarning(
@@ -176,7 +180,15 @@ class MedicationExtractorTest {
                 )
             )
         )
+    }
+
+    @Test
+    fun `Should not extract names for medication name inputs that are mapped to configs with ignore = true`() {
         assertMedicationForName("No medication", emptyList())
+    }
+
+    @Test
+    fun `Should extract correct medication name for known medication name`() {
         assertMedicationForName(KNOWN_MEDICATION_NAME, listOf("A and B"))
     }
 
