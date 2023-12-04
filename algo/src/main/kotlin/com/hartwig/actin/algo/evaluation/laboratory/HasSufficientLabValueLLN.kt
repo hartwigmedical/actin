@@ -32,8 +32,8 @@ class HasSufficientLabValueLLN internal constructor(private val minLLNFactor: Do
             }
 
             EvaluationResult.UNDETERMINED -> {
-                builder.addUndeterminedSpecificMessages("${labValue.code()} could not be evaluated against minimal LLN")
-                builder.addUndeterminedGeneralMessages("${labValue.code()} undetermined")
+                builder.addUndeterminedSpecificMessages("${labMeasurement.display()} could not be evaluated against minimal LLN")
+                builder.addUndeterminedGeneralMessages("${labMeasurement.display()} undetermined")
             }
 
             EvaluationResult.PASS -> {

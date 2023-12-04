@@ -32,8 +32,8 @@ class HasSufficientLabValueULN internal constructor(private val minULNFactor: Do
             }
 
             EvaluationResult.UNDETERMINED -> {
-                builder.addUndeterminedSpecificMessages("${labValue.code()} could not be evaluated versus maximum ULN")
-                builder.addUndeterminedGeneralMessages("${labValue.code()} undetermined")
+                builder.addUndeterminedSpecificMessages("${labMeasurement.display()} could not be evaluated versus maximum ULN")
+                builder.addUndeterminedGeneralMessages("${labMeasurement.display()} undetermined")
             }
 
             EvaluationResult.PASS -> {

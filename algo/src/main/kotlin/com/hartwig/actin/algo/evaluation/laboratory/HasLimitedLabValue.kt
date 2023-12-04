@@ -15,7 +15,7 @@ class HasLimitedLabValue(private val maxValue: Double, private val measurement: 
         val convertedValue = LabUnitConverter.convert(measurement, labValue, targetUnit)
             ?: return recoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Could not convert value for ${labValue.code()} to ${targetUnit.display()}")
+                .addUndeterminedSpecificMessages("Could not convert value for ${labMeasurement.display()} to ${targetUnit.display()}")
                 .build()
         val result = evaluateVersusMaxValue(convertedValue, labValue.comparator(), maxValue)
         val builder = recoverable().result(result)
@@ -40,8 +40,8 @@ class HasLimitedLabValue(private val maxValue: Double, private val measurement: 
             }
 
             EvaluationResult.UNDETERMINED -> {
-                builder.addUndeterminedSpecificMessages("${labValue.code()} requirements could not be determined")
-                builder.addUndeterminedGeneralMessages("${labValue.code()} requirements undetermined")
+                builder.addUndeterminedSpecificMessages("${labMeasurement.display()} requirements could not be determined")
+                builder.addUndeterminedGeneralMessages("${labMeasurement.display()} requirements undetermined")
             }
 
             EvaluationResult.PASS -> {

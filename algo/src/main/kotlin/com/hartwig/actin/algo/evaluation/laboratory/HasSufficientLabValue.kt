@@ -43,8 +43,8 @@ class HasSufficientLabValue internal constructor(
             }
 
             EvaluationResult.UNDETERMINED -> {
-                builder.addUndeterminedSpecificMessages("${labValue.code()} sufficiency could not be evaluated")
-                builder.addUndeterminedGeneralMessages("${labValue.code()} undetermined")
+                builder.addUndeterminedSpecificMessages("${labMeasurement.display()} sufficiency could not be evaluated")
+                builder.addUndeterminedGeneralMessages("${labMeasurement.display()} undetermined")
             }
 
             EvaluationResult.PASS -> {

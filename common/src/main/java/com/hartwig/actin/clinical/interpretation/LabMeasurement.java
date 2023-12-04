@@ -12,11 +12,11 @@ public enum LabMeasurement {
     ALPHA_FETOPROTEIN("AFP", "alpha fetoprotein", LabUnit.MICROGRAMS_PER_LITER),
     ALKALINE_PHOSPHATASE("ALP", "alkaline phosphatase", LabUnit.UNITS_PER_LITER),
     ASPARTATE_AMINOTRANSFERASE("ASAT", "ASAT", LabUnit.UNITS_PER_LITER),
-    CA_125("C125", "CA 125", LabUnit.KILOUNITS_PER_LITER),
-    CA_199("C199", "CA 199", LabUnit.KILOUNITS_PER_LITER),
-    CA_153("C153", "CA 153", LabUnit.KILOUNITS_PER_LITER),
+    CARBOHYDRATE_ANTIGEN_125("C125", "CA 125", LabUnit.KILOUNITS_PER_LITER),
+    CARBOHYDRATE_ANTIGEN_19_9("C199", "CA 19-9", LabUnit.KILOUNITS_PER_LITER),
+    CARBOHYDRATE_ANTIGEN_15_3("C153", "CA 15-3", LabUnit.KILOUNITS_PER_LITER),
     CALCIUM("Ca", "calcium", LabUnit.MILLIMOLES_PER_LITER),
-    CEA("CEA", "CEA", LabUnit.MICROGRAMS_PER_LITER),
+    CARCINOEMBRYONIC_ANTIGEN("CEA", "CEA", LabUnit.MICROGRAMS_PER_LITER),
     CORRECTED_CALCIUM("Ca_C", "corrected calcium", LabUnit.MILLIMOLES_PER_LITER),
     CREATININE("CREA", "creatinine", LabUnit.MICROMOLES_PER_LITER),
     CREATININE_CLEARANCE_CG("CGCRCL", "creatinine clearance (Cockcroft-Gault)", LabUnit.NONE),
@@ -24,7 +24,7 @@ public enum LabMeasurement {
     DIRECT_BILIRUBIN("DBIL", "direct bilirubin", LabUnit.MICROMOLES_PER_LITER),
     EGFR_CKD_EPI("CKD-EPIeGFR", "eGFR (CKD-EPI)", LabUnit.MILLILITERS_PER_MINUTE),
     EGFR_MDRD("MDRDeGFR", "eGFR (MDRD)", LabUnit.NONE),
-    FT4("FT4", "free T4", LabUnit.PICOMOLES_PER_LITER),
+    FREE_T4("FT4", "free T4", LabUnit.PICOMOLES_PER_LITER),
     HCG_AND_BETA_HCG("HCG", "HCG", LabUnit.INTERNATIONAL_UNITS_PER_LITER),
     HEMOGLOBIN("Hb", "hemoglobin", LabUnit.MILLIMOLES_PER_LITER),
     INTERNATIONAL_NORMALIZED_RATIO("INR", "INR", LabUnit.NONE),
@@ -49,7 +49,7 @@ public enum LabMeasurement {
     TOTAL_BILIRUBIN("TBIL", "total bilirubin", LabUnit.MICROMOLES_PER_LITER),
     TOTAL_PROTEIN_URINE("TE_U", "total urine protein", LabUnit.GRAMS_PER_LITER),
     TRIGLYCERIDE("TG", "triglycerides", LabUnit.MILLIMOLES_PER_LITER),
-    TROPONIN_IT("HSTNT", "troponin I and T", LabUnit.NANOGRAMS_PER_LITER);
+    TROPONIN_I_T("HSTNT", "troponin I and T", LabUnit.NANOGRAMS_PER_LITER);
 
     @NotNull
     private final String code;
