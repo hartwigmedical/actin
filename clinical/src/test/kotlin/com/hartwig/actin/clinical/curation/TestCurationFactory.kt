@@ -36,7 +36,6 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 import com.hartwig.actin.doid.TestDoidModelFactory
-import org.apache.logging.log4j.util.Strings
 import java.time.LocalDate
 import java.util.*
 
@@ -111,26 +110,26 @@ object TestCurationFactory {
                 primaryTumorLocation = "Unknown",
                 primaryTumorSubLocation = "CUP",
                 primaryTumorType = "Carcinoma",
-                primaryTumorSubType = Strings.EMPTY,
-                primaryTumorExtraDetails = Strings.EMPTY,
+                primaryTumorSubType = "",
+                primaryTumorExtraDetails = "",
                 doids = setOf("299")
             ),
             PrimaryTumorConfig(
                 input = "Stomach |",
                 primaryTumorLocation = "Stomach",
-                primaryTumorSubLocation = Strings.EMPTY,
-                primaryTumorType = Strings.EMPTY,
-                primaryTumorSubType = Strings.EMPTY,
-                primaryTumorExtraDetails = Strings.EMPTY,
+                primaryTumorSubLocation = "",
+                primaryTumorType = "",
+                primaryTumorSubType = "",
+                primaryTumorExtraDetails = "",
                 doids = setOf("10534")
             ),
             PrimaryTumorConfig(
                 input = "| Carcinoma",
-                primaryTumorLocation = Strings.EMPTY,
-                primaryTumorSubLocation = Strings.EMPTY,
+                primaryTumorLocation = "",
+                primaryTumorSubLocation = "",
                 primaryTumorType = "Carcinoma",
-                primaryTumorSubType = Strings.EMPTY,
-                primaryTumorExtraDetails = Strings.EMPTY,
+                primaryTumorSubType = "",
+                primaryTumorExtraDetails = "",
                 doids = setOf("299")
             )
         )
@@ -169,9 +168,9 @@ object TestCurationFactory {
                 ignore = false,
                 curated = ImmutablePriorSecondPrimary.builder()
                     .tumorLocation("Breast")
-                    .tumorSubLocation(Strings.EMPTY)
+                    .tumorSubLocation("")
                     .tumorType("Carcinoma")
-                    .tumorSubType(Strings.EMPTY)
+                    .tumorSubType("")
                     .diagnosedYear(2018)
                     .diagnosedMonth(1)
                     .treatmentHistory("Surgery")
@@ -190,8 +189,8 @@ object TestCurationFactory {
             LesionLocationConfig(input = "Bone", location = "Bone", category = LesionLocationCategory.BONE),
             LesionLocationConfig(input = "Pulmonal", location = "Lung", category = LesionLocationCategory.LUNG),
             LesionLocationConfig(input = "Lymph node", location = "Lymph node", category = LesionLocationCategory.LYMPH_NODE),
-            LesionLocationConfig(input = "Not a lesion", location = Strings.EMPTY),
-            LesionLocationConfig(input = "No", location = Strings.EMPTY)
+            LesionLocationConfig(input = "Not a lesion", location = ""),
+            LesionLocationConfig(input = "No", location = "")
         )
     }
 
@@ -236,14 +235,14 @@ object TestCurationFactory {
             ECGConfig(
                 input = "No aberration",
                 ignore = true,
-                interpretation = Strings.EMPTY,
+                interpretation = "<ignore>",
                 isQTCF = false,
                 isJTC = false
             ),
             ECGConfig(
                 input = "Yes but unknown what aberration",
                 ignore = false,
-                interpretation = Strings.EMPTY,
+                interpretation = "",
                 isQTCF = false,
                 isJTC = false
             )
@@ -253,14 +252,14 @@ object TestCurationFactory {
     private fun createTestInfectionConfigs(): List<InfectionConfig> {
         return listOf(
             InfectionConfig(input = "Weird infection", interpretation = "Cleaned infection"),
-            InfectionConfig(input = "No infection", interpretation = Strings.EMPTY)
+            InfectionConfig(input = "No infection", interpretation = "")
         )
     }
 
     private fun createTestPeriodBetweenUnitConfigs(): List<PeriodBetweenUnitConfig> {
         return listOf(
             PeriodBetweenUnitConfig(input = "mo", interpretation = "months"),
-            PeriodBetweenUnitConfig(input = "", interpretation = Strings.EMPTY)
+            PeriodBetweenUnitConfig(input = "", interpretation = "")
         )
     }
 
@@ -276,7 +275,7 @@ object TestCurationFactory {
                 input = "Unknown",
                 ignore = false,
                 impliesUnknownComplicationState = true,
-                curated = ImmutableComplication.builder().name(Strings.EMPTY).build()
+                curated = ImmutableComplication.builder().name("").build()
             ),
             ComplicationConfig(
                 input = "None",
@@ -327,7 +326,7 @@ object TestCurationFactory {
     private fun createTestMedicationNameConfigs(): List<MedicationNameConfig> {
         return listOf(
             MedicationNameConfig(input = "A en B", ignore = false, name = "A and B"),
-            MedicationNameConfig(input = "No medication", ignore = true, name = Strings.EMPTY)
+            MedicationNameConfig(input = "No medication", ignore = true, name = "<ignore>")
         )
     }
 
@@ -357,7 +356,7 @@ object TestCurationFactory {
         return listOf(
             Translation(
                 input = "ignore",
-                translated = Strings.EMPTY
+                translated = ""
             ),
             Translation(
                 input = "oraal",

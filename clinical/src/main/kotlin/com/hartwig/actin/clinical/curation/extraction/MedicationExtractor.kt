@@ -60,7 +60,7 @@ class MedicationExtractor(private val curation: CurationDatabase, private val at
         }
     }
 
-    fun curateName(entry: MedicationEntry, patientId: String): ExtractionResult<String?> {
+    private fun curateName(entry: MedicationEntry, patientId: String): ExtractionResult<String?> {
         val atcName = CurationUtil.capitalizeFirstLetterOnly(entry.code5ATCDisplay)
         return if (atcName.isNotEmpty()) {
             ExtractionResult(atcName, ExtractionEvaluation())
@@ -74,7 +74,7 @@ class MedicationExtractor(private val curation: CurationDatabase, private val at
                 "medication name",
                 true
             )
-            ExtractionResult(curation.config()?.name, curation.extractionEvaluation)
+            ExtractionResult(curation.config()?.let { if (!it.ignore) it.name else null }, curation.extractionEvaluation)
         }
     }
 
