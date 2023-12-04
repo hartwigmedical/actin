@@ -11,18 +11,18 @@ import com.hartwig.actin.clinical.interpretation.LabMeasurement
 
 class HasLimitedLabValue(private val maxValue: Double, private val measurement: LabMeasurement, private val targetUnit: LabUnit) :
     LabEvaluationFunction {
-    override fun evaluate(record: PatientRecord, labValue: LabValue): Evaluation {
+    override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
         val convertedValue = LabUnitConverter.convert(measurement, labValue, targetUnit)
             ?: return recoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("Could not convert value for ${labValue.code()} to ${targetUnit.display()}")
+                .addUndeterminedSpecificMessages("Could not convert value for ${labMeasurement.display()} to ${targetUnit.display()}")
                 .build()
         val result = evaluateVersusMaxValue(convertedValue, labValue.comparator(), maxValue)
         val builder = recoverable().result(result)
         when (result) {
             EvaluationResult.FAIL -> {
                 builder.addFailSpecificMessages(
-                    "${labValue.code()} ${
+                    "${labMeasurement.display()} ${
                         String.format(
                             "%.1f",
                             convertedValue
@@ -30,7 +30,7 @@ class HasLimitedLabValue(private val maxValue: Double, private val measurement: 
                     } ${targetUnit.display()} exceeds maximum of $maxValue ${targetUnit.display()}"
                 )
                 builder.addFailGeneralMessages(
-                    "${labValue.code()} ${
+                    "${labMeasurement.display()} ${
                         String.format(
                             "%.1f",
                             convertedValue
@@ -40,13 +40,13 @@ class HasLimitedLabValue(private val maxValue: Double, private val measurement: 
             }
 
             EvaluationResult.UNDETERMINED -> {
-                builder.addUndeterminedSpecificMessages("${labValue.code()} requirements could not be determined")
-                builder.addUndeterminedGeneralMessages("${labValue.code()} requirements undetermined")
+                builder.addUndeterminedSpecificMessages("${labMeasurement.display()} requirements could not be determined")
+                builder.addUndeterminedGeneralMessages("${labMeasurement.display()} requirements undetermined")
             }
 
             EvaluationResult.PASS -> {
                 builder.addPassSpecificMessages(
-                    "${labValue.code()} ${
+                    "${labMeasurement.display()} ${
                         String.format(
                             "%.1f",
                             convertedValue
@@ -54,7 +54,7 @@ class HasLimitedLabValue(private val maxValue: Double, private val measurement: 
                     } below maximum of $maxValue ${targetUnit.display()}"
                 )
                 builder.addPassGeneralMessages(
-                    "${labValue.code()} ${
+                    "${labMeasurement.display()} ${
                         String.format(
                             "%.1f",
                             convertedValue

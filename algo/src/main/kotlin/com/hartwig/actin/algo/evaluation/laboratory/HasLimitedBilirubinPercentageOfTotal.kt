@@ -10,7 +10,7 @@ import java.time.LocalDate
 
 class HasLimitedBilirubinPercentageOfTotal internal constructor(private val maxPercentage: Double, private val minValidDate: LocalDate) :
     LabEvaluationFunction {
-    override fun evaluate(record: PatientRecord, labValue: LabValue): Evaluation {
+    override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
         val interpretation = LabInterpreter.interpret(record.clinical().labValues())
         check(labValue.code() == LabMeasurement.DIRECT_BILIRUBIN.code()) { "Bilirubin percentage must take direct bilirubin as input" }
         val mostRecentTotal = interpretation.mostRecentValue(LabMeasurement.TOTAL_BILIRUBIN)
@@ -20,7 +20,7 @@ class HasLimitedBilirubinPercentageOfTotal internal constructor(private val maxP
                 "Bilirubin percentage of total bilirubin could not be determined"
             )
         }
-        val messageStart = labValue.code() + " as percentage of " + mostRecentTotal.code()
+        val messageStart = labMeasurement.display() + " as percentage of " + mostRecentTotal.code()
         return if ((100 * (labValue.value() / mostRecentTotal.value())).compareTo(maxPercentage) <= 0) {
             EvaluationFactory.recoverablePass(
                 "$messageStart below maximum percentage of $maxPercentage%",
