@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationResponse
+import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 import com.hartwig.actin.clinical.datamodel.ECG
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus
@@ -103,9 +104,9 @@ class ClinicalStatusExtractor(private val curation: CurationDatabase) {
     fun determineLVEF(nonOncologicalHistoryEntries: List<String>?): Double? {
         // We do not raise warnings or propagate evaluated inputs here since we use the same configs for priorOtherConditions
         return nonOncologicalHistoryEntries?.asSequence()
-            ?.flatMap { curation.findNonOncologicalHistoryConfigs(it) }
-            ?.filterNot { it.ignore }
-            ?.map { it.lvef }
+            ?.flatMap(curation::findNonOncologicalHistoryConfigs)
+            ?.filterNot(NonOncologicalHistoryConfig::ignore)
+            ?.map(NonOncologicalHistoryConfig::lvef)
             ?.find { it.isPresent }
             ?.get()
     }
