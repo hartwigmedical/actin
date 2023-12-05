@@ -106,13 +106,13 @@ class ClinicalIngestion(
                 clinicalStatusExtraction,
                 treatmentHistoryExtraction,
                 priorSecondPrimaryExtraction,
-                /*  priorOtherConditionsExtraction,
-                  priorMolecularTestsExtraction,
-                  labValuesExtraction,
-                  toxicityExtraction,
-                  intoleranceExtraction,
-                  bloodTransfusionsExtraction,
-                  medicationExtraction*/
+                priorOtherConditionsExtraction,
+                priorMolecularTestsExtraction,
+                labValuesExtraction,
+                toxicityExtraction,
+                intoleranceExtraction,
+                bloodTransfusionsExtraction,
+                medicationExtraction
             )
                 .map { it.evaluation }
                 .fold(ExtractionEvaluation()) { acc, evaluation -> acc + evaluation }
