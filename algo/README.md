@@ -521,7 +521,7 @@ Azole medication: ATC level code equal to "A07AC", "D01AC", "G01AF", "G01BF", "G
 Bisphosphonates: ATC level code equal to "M05BA" or "M05BB" <br>
 Bone resorptive medication: ATC level code equal to "M05B" or "H05" <br>
 Colony stimulating factors: ATC level code equal to "L03AA" <br>
-Corticosteroids for systemic use: ATC level code equal to "H02" or "M01BA" <br>
+Systemic corticosteroids: ATC level code equal to "H02" or "M01BA" <br>
 Coumarin derivative medication: ATC level code equal to "B01AA" <br>
 Gonadorelin medication: ATC level code equal to "H01CC", "H01CA", "G03XA" or "L02AE" <br>
 Immunosuppressants: ATC level code equal to "L04" <br>

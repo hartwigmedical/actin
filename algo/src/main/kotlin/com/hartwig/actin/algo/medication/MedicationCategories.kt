@@ -35,7 +35,7 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
                             "J04",
                         ), atcTree
                     ),
-                    "Corticosteroids for systemic use" to convertToAtcLevel(setOf("H02", "M01BA"), atcTree),
+                    "Systemic corticosteroids" to convertToAtcLevel(setOf("H02", "M01BA"), atcTree),
                     "Antiepileptics" to convertToAtcLevel(setOf("N03"), atcTree),
                     "Monoclonal antibodies and antibody drug conjugates" to convertToAtcLevel(setOf("L01F"), atcTree),
                     "Endocrine therapy" to convertToAtcLevel(setOf("L02"), atcTree),
