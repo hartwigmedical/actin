@@ -26,7 +26,7 @@ class HasKnownCnsMetastases : EvaluationFunction {
             EvaluationFactory.fail("No known CNS metastases present", "No known CNS metastases")
         } else {
             if (hasAtLeastActiveBrainMetastases) {
-                EvaluationFactory.pass("CNS metastases (Brain) are present", "CNS metastases (Brain)")
+                EvaluationFactory.pass("CNS (Brain) metastases are present", "CNS (Brain) metastases")
             } else {
                 EvaluationFactory.pass("CNS metastases are present", "CNS metastases")
             }
