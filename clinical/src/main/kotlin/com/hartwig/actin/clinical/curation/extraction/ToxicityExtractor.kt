@@ -7,13 +7,17 @@ import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
+import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity
 import com.hartwig.actin.clinical.datamodel.Toxicity
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 
-class ToxicityExtractor(private val curation: CurationDatabase) {
+class ToxicityExtractor(
+    private val toxicityCuration: CurationDatabase<ToxicityConfig>,
+    private val toxicityTranslation: TranslationDatabase<String>
+) {
 
     fun extract(
         patientId: String, toxicityEntries: List<DigitalFileEntry>, questionnaire: Questionnaire?
@@ -44,7 +48,7 @@ class ToxicityExtractor(private val curation: CurationDatabase) {
             .map { rawToxicity ->
                 if (rawToxicity.name().isEmpty()) ExtractionResult(listOf(rawToxicity), ExtractionEvaluation()) else {
                     val translationResponse = CurationResponse.createFromTranslation(
-                        curation.translate(rawToxicity.name()),
+                        toxicityTranslation.translate(rawToxicity.name()),
                         patientId,
                         CurationCategory.TOXICITY_TRANSLATION,
                         rawToxicity.name(),
@@ -65,7 +69,7 @@ class ToxicityExtractor(private val curation: CurationDatabase) {
         return questionnaire.unresolvedToxicities?.map { input ->
             val trimmedInput = CurationUtil.fullTrim(input)
             val curationResponse = CurationResponse.createFromConfigs(
-                curation.curate<ToxicityConfig>(trimmedInput), patientId, CurationCategory.TOXICITY, trimmedInput, "toxicity"
+                toxicityCuration.curate(trimmedInput), patientId, CurationCategory.TOXICITY, trimmedInput, "toxicity"
             )
             val toxicities = curationResponse.configs.filterNot(CurationConfig::ignore).map { config ->
                 ImmutableToxicity.builder()

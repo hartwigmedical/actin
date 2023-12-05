@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.curation.config
 
 data class CurationConfigValidationError(val message: String)
-data class CurationConfigValidatedResponse<T : CurationConfig>(val config: T, val errors: List<CurationConfigValidationError> = emptyList())
+data class ValidatedCurationConfig<T : CurationConfig>(val config: T, val errors: List<CurationConfigValidationError> = emptyList())
 
 fun String.toValidatedBoolean(): Boolean? {
     return if (this == "1") {

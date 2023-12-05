@@ -4,16 +4,18 @@ import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationWarning
+import com.hartwig.actin.clinical.curation.translation.LaboratoryIdentifiers
+import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.sort.LabValueDescendingDateComparator
 
-class LabValueExtractor(private val curation: CurationDatabase) {
+class LabValueExtractor(private val labratoryTranslation: TranslationDatabase<LaboratoryIdentifiers>) {
 
     fun extract(patientId: String, rawValues: List<LabValue>): ExtractionResult<List<LabValue>> {
         val extractedValues = rawValues.map { input ->
             val trimmedName = input.name().trim { it <= ' ' }
-            val translation = curation.translateLabValue(input.code(), trimmedName)
+            val translation = labratoryTranslation.translate(LaboratoryIdentifiers(input.code(), trimmedName))
             if (translation == null) {
                 val warning = CurationWarning(
                     patientId = patientId,
@@ -25,8 +27,8 @@ class LabValueExtractor(private val curation: CurationDatabase) {
             } else {
                 val newLabValue = ImmutableLabValue.builder()
                     .from(input)
-                    .code(translation.translatedCode)
-                    .name(translation.translatedName)
+                    .code(translation.translated.code)
+                    .name(translation.translated.name)
                     .build()
                 ExtractionResult(listOf(newLabValue), ExtractionEvaluation(laboratoryEvaluatedInputs = setOf(translation)))
             }

@@ -4,11 +4,11 @@ import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.CurationValidator
 
 class PrimaryTumorConfigFactory(private val curationValidator: CurationValidator) : CurationConfigFactory<PrimaryTumorConfig> {
-    override fun create(fields: Map<String, Int>, parts: Array<String>): CurationConfigValidatedResponse<PrimaryTumorConfig> {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<PrimaryTumorConfig> {
         val input = parts[fields["input"]!!]
         val doids = CurationUtil.toDOIDs(parts[fields["doids"]!!])
 
-        return CurationConfigValidatedResponse(
+        return ValidatedCurationConfig(
             PrimaryTumorConfig(
                 input = input,
                 primaryTumorLocation = parts[fields["primaryTumorLocation"]!!],

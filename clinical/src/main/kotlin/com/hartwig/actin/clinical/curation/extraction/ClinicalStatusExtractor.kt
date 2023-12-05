@@ -16,7 +16,11 @@ import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus
 import com.hartwig.actin.clinical.datamodel.InfectionStatus
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 
-class ClinicalStatusExtractor(private val curation: CurationDatabase) {
+class ClinicalStatusExtractor(
+    private val ecgCuration: CurationDatabase<ECGConfig>,
+    private val infectionCuration: CurationDatabase<InfectionConfig>,
+    private val nonOncologicalHistoryCuration: CurationDatabase<NonOncologicalHistoryConfig>
+) {
 
     fun extract(patientId: String, questionnaire: Questionnaire?, hasComplications: Boolean?): ExtractionResult<ClinicalStatus> {
         if (questionnaire == null) {
@@ -39,7 +43,7 @@ class ClinicalStatusExtractor(private val curation: CurationDatabase) {
     fun curateECG(patientId: String, rawECG: ECG?): ExtractionResult<ECG?> {
         val curationResponse = rawECG?.aberrationDescription()?.let {
             CurationResponse.createFromConfigs(
-                curation.curate<ECGConfig>(it), patientId, CurationCategory.ECG, it, "ECG", true
+                ecgCuration.curate(it), patientId, CurationCategory.ECG, it, "ECG", true
             )
         }
         val ecg = when (curationResponse?.configs?.size) {
@@ -72,7 +76,7 @@ class ClinicalStatusExtractor(private val curation: CurationDatabase) {
     fun curateInfection(patientId: String, rawInfectionStatus: InfectionStatus?): ExtractionResult<InfectionStatus?> {
         val curationResponse = rawInfectionStatus?.description()?.let {
             CurationResponse.createFromConfigs(
-                curation.curate<InfectionConfig>(it), patientId, CurationCategory.INFECTION, it, "infection", true
+                infectionCuration.curate(it), patientId, CurationCategory.INFECTION, it, "infection", true
             )
         }
         val infectionStatus = when (curationResponse?.configs?.size) {
@@ -106,7 +110,8 @@ class ClinicalStatusExtractor(private val curation: CurationDatabase) {
     fun determineLVEF(nonOncologicalHistoryEntries: List<String>?): Double? {
         // We do not raise warnings or propagate evaluated inputs here since we use the same configs for priorOtherConditions
         return nonOncologicalHistoryEntries?.asSequence()
-            ?.flatMap { curation.curate<NonOncologicalHistoryConfig>(it) }
+            ?.flatMap { nonOncologicalHistoryCuration.curate(it) }
+            ?.map { it.config }
             ?.filterNot { it.ignore }
             ?.map { it.lvef }
             ?.find { it != null }

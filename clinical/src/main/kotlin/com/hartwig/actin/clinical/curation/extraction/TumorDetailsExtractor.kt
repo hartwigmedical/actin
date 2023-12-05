@@ -13,7 +13,10 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 import org.apache.logging.log4j.LogManager
 
-class TumorDetailsExtractor(private val curation: CurationDatabase) {
+class TumorDetailsExtractor(
+    private val lesionLocationCuration: CurationDatabase<LesionLocationConfig>,
+    private val primaryTumorCuration: CurationDatabase<PrimaryTumorConfig>
+) {
 
     private val logger = LogManager.getLogger(TumorDetailsExtractor::class.java)
 
@@ -22,7 +25,7 @@ class TumorDetailsExtractor(private val curation: CurationDatabase) {
             return ExtractionResult(ImmutableTumorDetails.builder().build(), ExtractionEvaluation())
         }
         val lesionsToCheck = ((questionnaire.otherLesions ?: emptyList()) + listOfNotNull(questionnaire.biopsyLocation)).flatMap {
-            curation.curate<LesionLocationConfig>(it).mapNotNull(LesionLocationConfig::category)
+            lesionLocationCuration.curate(it).map { c -> c.config }.mapNotNull(LesionLocationConfig::category)
         }
 
         val (primaryTumorDetails, tumorExtractionResult) = curateTumorDetails(
@@ -33,7 +36,7 @@ class TumorDetailsExtractor(private val curation: CurationDatabase) {
         val (curatedOtherLesions, otherLesionsResult) = curateOtherLesions(patientId, questionnaire.otherLesions)
         val biopsyCuration = questionnaire.biopsyLocation?.let {
             CurationResponse.createFromConfigs(
-                curation.curate<LesionLocationConfig>(it), patientId, CurationCategory.LESION_LOCATION, it, "lesion location", true
+                lesionLocationCuration.curate(it), patientId, CurationCategory.LESION_LOCATION, it, "lesion location", true
             )
         }
 
@@ -56,7 +59,7 @@ class TumorDetailsExtractor(private val curation: CurationDatabase) {
         return ExtractionResult(tumorDetails, otherLesionsResult + tumorExtractionResult + biopsyCuration?.extractionEvaluation)
     }
 
-    fun curateTumorDetails(
+    private fun curateTumorDetails(
         patientId: String,
         inputTumorLocation: String?,
         inputTumorType: String?
@@ -64,7 +67,7 @@ class TumorDetailsExtractor(private val curation: CurationDatabase) {
         val builder = ImmutableTumorDetails.builder()
         val inputPrimaryTumor = tumorInput(inputTumorLocation, inputTumorType) ?: return Pair(builder.build(), ExtractionEvaluation())
         val primaryTumorCuration = CurationResponse.createFromConfigs(
-            curation.curate<PrimaryTumorConfig>(inputPrimaryTumor),
+            primaryTumorCuration.curate(inputPrimaryTumor),
             patientId,
             CurationCategory.PRIMARY_TUMOR,
             inputPrimaryTumor,
@@ -89,13 +92,13 @@ class TumorDetailsExtractor(private val curation: CurationDatabase) {
         }
     }
 
-    fun curateOtherLesions(patientId: String, otherLesions: List<String>?): ExtractionResult<List<String>?> {
+    private fun curateOtherLesions(patientId: String, otherLesions: List<String>?): ExtractionResult<List<String>?> {
         if (otherLesions == null) {
             return ExtractionResult(null, ExtractionEvaluation())
         }
         val (configs, extractionResult) = otherLesions.asSequence()
             .map(CurationUtil::fullTrim)
-            .map { Pair(it, curation.curate<LesionLocationConfig>(it)) }
+            .map { Pair(it, lesionLocationCuration.curate(it)) }
             .map { (input, configs) ->
                 CurationResponse.createFromConfigs(
                     configs, patientId, CurationCategory.LESION_LOCATION, input, "lesion location"

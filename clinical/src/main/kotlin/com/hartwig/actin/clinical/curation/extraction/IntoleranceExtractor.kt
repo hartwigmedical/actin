@@ -10,7 +10,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance
 import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry
 
-class IntoleranceExtractor(private val curation: CurationDatabase) {
+class IntoleranceExtractor(private val intoleranceCuration: CurationDatabase<IntoleranceConfig>) {
 
     fun extract(patientId: String, intoleranceEntries: List<IntoleranceEntry>): ExtractionResult<List<Intolerance>> {
         return intoleranceEntries.map { entry: IntoleranceEntry ->
@@ -25,7 +25,7 @@ class IntoleranceExtractor(private val curation: CurationDatabase) {
         }
             .map {
                 val curationResponse = CurationResponse.createFromConfigs(
-                    curation.curate<IntoleranceConfig>(it.name()),
+                    intoleranceCuration.curate(it.name()),
                     patientId,
                     CurationCategory.INTOLERANCE,
                     it.name(),

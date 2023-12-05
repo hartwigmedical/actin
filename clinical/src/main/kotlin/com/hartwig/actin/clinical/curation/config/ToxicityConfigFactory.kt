@@ -4,8 +4,8 @@ import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.util.ResourceFile
 
 class ToxicityConfigFactory : CurationConfigFactory<ToxicityConfig> {
-    override fun create(fields: Map<String, Int>, parts: Array<String>): CurationConfigValidatedResponse<ToxicityConfig> {
-        return CurationConfigValidatedResponse(
+    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<ToxicityConfig> {
+        return ValidatedCurationConfig(
             ToxicityConfig(
                 input = parts[fields["input"]!!],
                 ignore = CurationUtil.isIgnoreString(parts[fields["name"]!!]),

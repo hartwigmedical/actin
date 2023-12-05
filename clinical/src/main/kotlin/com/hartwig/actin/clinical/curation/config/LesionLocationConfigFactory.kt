@@ -4,7 +4,7 @@ import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import java.util.Locale
 
 class LesionLocationConfigFactory : CurationConfigFactory<LesionLocationConfig> {
-    override fun create(fields: Map<String, Int>, parts: Array<String>): CurationConfigValidatedResponse<LesionLocationConfig> {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<LesionLocationConfig> {
         val categoryInput = parts[fields["category"]!!]
         val (category, validationErrors) = if (categoryInput.isEmpty()) {
             null to emptyList()
@@ -16,7 +16,7 @@ class LesionLocationConfigFactory : CurationConfigFactory<LesionLocationConfig> 
                 null to listOf(enumInvalid<LesionLocationCategory>(categoryEnumName))
             }
         }
-        return CurationConfigValidatedResponse(
+        return ValidatedCurationConfig(
             LesionLocationConfig(
                 input = parts[fields["input"]!!],
                 location = parts[fields["location"]!!],

@@ -18,7 +18,7 @@ import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
-import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslation
+import com.hartwig.actin.clinical.curation.translation.LaboratoryIdentifiers
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication
@@ -363,8 +363,8 @@ object TestCurationFactory {
         )
     }
 
-    private fun createTestLaboratoryTranslations(): List<LaboratoryTranslation> {
-        return listOf(LaboratoryTranslation(code = "CO", translatedCode = "CODE", name = "naam", translatedName = "Name"))
+    private fun createTestLaboratoryTranslations(): List<LaboratoryIdentifiers> {
+        return listOf(LaboratoryIdentifiers(code = "CO", translatedCode = "CODE", name = "naam", translatedName = "Name"))
     }
 
     private fun createTestToxicityTranslations(): List<Translation> {

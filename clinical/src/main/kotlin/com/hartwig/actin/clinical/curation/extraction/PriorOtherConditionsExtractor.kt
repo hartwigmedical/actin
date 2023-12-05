@@ -9,7 +9,7 @@ import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 
-class PriorOtherConditionsExtractor(private val curation: CurationDatabase) {
+class PriorOtherConditionsExtractor(private val nonOncologicalCuration: CurationDatabase<NonOncologicalHistoryConfig>) {
 
     fun extract(patientId: String, questionnaire: Questionnaire?): ExtractionResult<List<PriorOtherCondition>> {
         if (questionnaire?.nonOncologicalHistory == null) {
@@ -20,7 +20,7 @@ class PriorOtherConditionsExtractor(private val curation: CurationDatabase) {
             .map(CurationUtil::fullTrim)
             .map {
                 CurationResponse.createFromConfigs(
-                    curation.curate<NonOncologicalHistoryConfig>(it),
+                    nonOncologicalCuration.curate(it),
                     patientId,
                     CurationCategory.NON_ONCOLOGICAL_HISTORY,
                     it,

@@ -5,6 +5,19 @@ import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
 import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.CurationValidator
+import com.hartwig.actin.clinical.curation.extraction.BloodTransfusionsExtractor
+import com.hartwig.actin.clinical.curation.extraction.ClinicalStatusExtractor
+import com.hartwig.actin.clinical.curation.extraction.ComplicationsExtractor
+import com.hartwig.actin.clinical.curation.extraction.IntoleranceExtractor
+import com.hartwig.actin.clinical.curation.extraction.LabValueExtractor
+import com.hartwig.actin.clinical.curation.extraction.MedicationExtractor
+import com.hartwig.actin.clinical.curation.extraction.PriorMolecularTestsExtractor
+import com.hartwig.actin.clinical.curation.extraction.PriorOtherConditionsExtractor
+import com.hartwig.actin.clinical.curation.extraction.PriorSecondPrimaryExtractor
+import com.hartwig.actin.clinical.curation.extraction.ToxicityExtractor
+import com.hartwig.actin.clinical.curation.extraction.TreatmentHistoryExtractor
+import com.hartwig.actin.clinical.curation.extraction.TumorDetailsExtractor
+import com.hartwig.actin.clinical.curation.translation.TranslationDatabaseReader
 import com.hartwig.actin.clinical.feed.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.FeedModel
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
@@ -32,8 +45,7 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
 
         LOGGER.info("Creating clinical curation database from directory {}", config.curationDirectory)
-        val curationReader = CurationDatabaseReader(CurationValidator(DoidModelFactory.createFromDoidEntry(doidEntry)), treatmentDatabase)
-        val curation = curationReader.read(config.curationDirectory)
+        val curationValidator = CurationValidator(DoidModelFactory.createFromDoidEntry(doidEntry))
 
         LOGGER.info("Creating ATC model from file {}", config.atcTsv)
         val atcModel = WhoAtcModel.createFromFile(config.atcTsv)
@@ -47,42 +59,85 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
                 )
             )
         )
-
-        if (curation.validationErrors.isNotEmpty()) {
-            LOGGER.warn("Curation input had validation errors persisting them to validation_errors.json and halting ingestion.")
-            writeIngestionResults(
-                config.outputDirectory,
-                IngestionResult(
-                    status = IngestionStatus.FAIL_CURATION_CONFIG_VALIDATION_ERRORS,
-                    curationValidationErrors = curation.validationErrors,
-                    patientResults = emptyList()
-                )
+        val curationDatabaseReader = CurationDatabaseReader(config.curationDirectory, curationValidator, treatmentDatabase)
+        val translationDatabaseReader = TranslationDatabaseReader(config.curationDirectory)
+        val clinicalIngestion = ClinicalIngestion(
+            feed = feedModel,
+            priorSecondPrimaryExtractor = PriorSecondPrimaryExtractor(
+                curationDatabaseReader.secondPrimary(),
+                curationDatabaseReader.treatment()
+            ),
+            tumorDetailsExtractor = TumorDetailsExtractor(
+                curationDatabaseReader.lesionLocation(),
+                curationDatabaseReader.primaryTumor()
+            ),
+            complicationsExtractor = ComplicationsExtractor(
+                curationDatabaseReader.complication()
+            ),
+            clinicalStatusExtractor = ClinicalStatusExtractor(
+                curationDatabaseReader.ecg(),
+                curationDatabaseReader.infection(),
+                curationDatabaseReader.nonOncologicalHistory(curationValidator)
+            ),
+            treatmentHistoryExtractor = TreatmentHistoryExtractor(
+                curationDatabaseReader.treatment(),
+                curationDatabaseReader.secondPrimary()
+            ),
+            bloodTransfusionsExtractor = BloodTransfusionsExtractor(translationDatabaseReader.bloodTransfusions()),
+            priorMolecularTestsExtractor = PriorMolecularTestsExtractor(
+                curationDatabaseReader.molecularTest()
+            ),
+            toxicityExtractor = ToxicityExtractor(
+                curationDatabaseReader.toxicity(),
+                translationDatabaseReader.toxicity()
+            ),
+            intoleranceExtractor = IntoleranceExtractor(
+                curationDatabaseReader.intolerance(curationValidator)
+            ),
+            priorOtherConditionExtractor = PriorOtherConditionsExtractor(
+                curationDatabaseReader.nonOncologicalHistory(curationValidator)
+            ),
+            medicationExtractor = MedicationExtractor(
+                curationDatabaseReader.medicationName(),
+                curationDatabaseReader.medicationDosage(),
+                curationDatabaseReader.periodBetweenUnit(),
+                curationDatabaseReader.cypInteraction(),
+                curationDatabaseReader.qtProlongating(),
+                translationDatabaseReader.administrationRoute(),
+                translationDatabaseReader.dosageUnit(),
+                atcModel
+            ),
+            labValueExtractor = LabValueExtractor(
+                translationDatabaseReader.labratoryTranslation()
             )
-        } else {
-            val patientResults = ClinicalIngestion(feedModel, curation, atcModel).run()
-            val outputDirectory = config.outputDirectory
-            LOGGER.info("Writing {} clinical records to {}", patientResults.size, outputDirectory)
-            ClinicalRecordJson.write(patientResults.map { it.clinicalRecord }, outputDirectory)
-            LOGGER.info("Done!")
+        )
 
-            writeIngestionResults(
-                outputDirectory,
-                IngestionResult(status = IngestionStatus.PASS, curationValidationErrors = emptyList(), patientResults = patientResults)
-            )
 
-            if (patientResults.any { it.curationResults.isNotEmpty() }) {
-                LOGGER.warn("Summary of warnings:")
-                patientResults.forEach {
-                    if (it.curationResults.isNotEmpty()) {
-                        LOGGER.warn("Curation warnings for patient ${it.patientId}")
-                        it.curationResults.flatMap { result -> result.requirements }.forEach { requirement ->
-                            LOGGER.warn(requirement.message)
-                        }
+        val patientResults =
+            clinicalIngestion.run()
+        val outputDirectory = config.outputDirectory
+        LOGGER.info("Writing {} clinical records to {}", patientResults.size, outputDirectory)
+        ClinicalRecordJson.write(patientResults.map { it.clinicalRecord }, outputDirectory)
+        LOGGER.info("Done!")
+
+        writeIngestionResults(
+            outputDirectory,
+            IngestionResult(status = IngestionStatus.PASS, curationValidationErrors = emptyList(), patientResults = patientResults)
+        )
+
+        if (patientResults.any { it.curationResults.isNotEmpty() }) {
+            LOGGER.warn("Summary of warnings:")
+            patientResults.forEach {
+                if (it.curationResults.isNotEmpty()) {
+                    LOGGER.warn("Curation warnings for patient ${it.patientId}")
+                    it.curationResults.flatMap { result -> result.requirements }.forEach { requirement ->
+                        LOGGER.warn(requirement.message)
                     }
                 }
-                LOGGER.warn("Summary complete.")
             }
+            LOGGER.warn("Summary complete.")
         }
+
     }
 
     private fun writeIngestionResults(outputDirectory: String, results: IngestionResult) {

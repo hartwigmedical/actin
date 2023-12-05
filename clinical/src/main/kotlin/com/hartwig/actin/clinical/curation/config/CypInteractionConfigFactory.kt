@@ -14,7 +14,7 @@ private const val SUBSTRATE = "SUB"
 
 class CypInteractionConfigFactory : CurationConfigFactory<CypInteractionConfig> {
 
-    override fun create(fields: Map<String, Int>, parts: Array<String>): CurationConfigValidatedResponse<CypInteractionConfig> {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<CypInteractionConfig> {
         val strongInhibitors =
             extractInteractions(parts, fields, fieldName(STRONG, INHIBITOR), CypInteraction.Strength.STRONG, CypInteraction.Type.INHIBITOR)
         val moderateInhibitors =
@@ -48,7 +48,7 @@ class CypInteractionConfigFactory : CurationConfigFactory<CypInteractionConfig> 
         )
         val interactions =
             strongInhibitors + moderateInhibitors + weakInhibitors + strongInducers + moderateInducers + weakInducers + sensitiveSubstrates + moderateSensitiveSubstrates
-        return CurationConfigValidatedResponse(
+        return ValidatedCurationConfig(
             CypInteractionConfig(
                 input = parts[fields["Drug or Other Substance"]!!],
                 ignore = false,

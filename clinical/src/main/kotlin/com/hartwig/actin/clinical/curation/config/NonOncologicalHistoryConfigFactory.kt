@@ -8,12 +8,12 @@ import com.hartwig.actin.util.ResourceFile
 
 class NonOncologicalHistoryConfigFactory(private val curationValidator: CurationValidator) :
     CurationConfigFactory<NonOncologicalHistoryConfig> {
-    override fun create(fields: Map<String, Int>, parts: Array<String>): CurationConfigValidatedResponse<NonOncologicalHistoryConfig> {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<NonOncologicalHistoryConfig> {
         val input = parts[fields["input"]!!]
         val ignore = CurationUtil.isIgnoreString(parts[fields["name"]!!])
         val lvefValue = parts[fields["lvefValue"]!!].toDoubleOrNull()
         val (priorOtherCondition, validationError) = toCuratedPriorOtherCondition(fields, input, parts)
-        return CurationConfigValidatedResponse(
+        return ValidatedCurationConfig(
             NonOncologicalHistoryConfig(
                 input = input,
                 ignore = ignore,

@@ -1,13 +1,13 @@
 package com.hartwig.actin.clinical.curation.config
 
 class ECGConfigFactory : CurationConfigFactory<ECGConfig> {
-    override fun create(fields: Map<String, Int>, parts: Array<String>): CurationConfigValidatedResponse<ECGConfig> {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<ECGConfig> {
         val isQTCF = parts[fields["isQTCF"]!!] == "1"
         val (qtcfValue: Int?, qtcfUnit: String?, qtcfValidationErrors) = extractMeasurement("qtcf", isQTCF, parts, fields)
         val isJTC = parts[fields["isJTC"]!!] == "1"
         val (jtcValue: Int?, jtcUnit: String?, jtcValidationErrors) = extractMeasurement("jtc", isJTC, parts, fields)
         val interpretation = parts[fields["interpretation"]!!]
-        return CurationConfigValidatedResponse(
+        return ValidatedCurationConfig(
             ECGConfig(
                 input = parts[fields["input"]!!],
                 ignore = interpretation == "NULL",

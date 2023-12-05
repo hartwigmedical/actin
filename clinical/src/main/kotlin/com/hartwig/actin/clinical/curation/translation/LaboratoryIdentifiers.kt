@@ -1,8 +1,6 @@
 package com.hartwig.actin.clinical.curation.translation
 
-data class LaboratoryTranslation(
+data class LaboratoryIdentifiers(
     val code: String,
-    val translatedCode: String,
     val name: String,
-    val translatedName: String
 )

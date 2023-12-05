@@ -6,10 +6,10 @@ import com.hartwig.actin.clinical.datamodel.ImmutableComplication
 import com.hartwig.actin.util.ResourceFile
 
 class ComplicationConfigFactory : CurationConfigFactory<ComplicationConfig> {
-    override fun create(fields: Map<String, Int>, parts: Array<String>): CurationConfigValidatedResponse<ComplicationConfig> {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<ComplicationConfig> {
         val ignore = CurationUtil.isIgnoreString(parts[fields["name"]!!])
         val impliesUnknownComplicationState = parts[fields["impliesUnknownComplicationState"]!!].toValidatedBoolean()
-        return CurationConfigValidatedResponse(
+        return ValidatedCurationConfig(
             ComplicationConfig(
                 input = parts[fields["input"]!!],
                 ignore = ignore,

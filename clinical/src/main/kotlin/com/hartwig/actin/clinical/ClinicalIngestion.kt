@@ -38,19 +38,21 @@ import org.apache.logging.log4j.LogManager
 
 data class ExtractionResult<T>(val extracted: T, val evaluation: ExtractionEvaluation)
 
-class ClinicalIngestion(private val feed: FeedModel, private val curation: CurationDatabase, atc: AtcModel) {
-    private val tumorDetailsExtractor = TumorDetailsExtractor(curation)
-    private val complicationsExtractor = ComplicationsExtractor(curation)
-    private val clinicalStatusExtractor = ClinicalStatusExtractor(curation)
-    private val treatmentHistoryExtractor = TreatmentHistoryExtractor(curation)
-    private val priorSecondPrimaryExtractor = PriorSecondPrimaryExtractor(curation)
-    private val priorOtherConditionExtractor = PriorOtherConditionsExtractor(curation)
-    private val priorMolecularTestsExtractor = PriorMolecularTestsExtractor(curation)
-    private val labValueExtractor = LabValueExtractor(curation)
-    private val toxicityExtractor = ToxicityExtractor(curation)
-    private val intoleranceExtractor = IntoleranceExtractor(curation)
-    private val medicationExtractor = MedicationExtractor(curation, atc)
-    private val bloodTransfusionsExtractor = BloodTransfusionsExtractor(curation)
+class ClinicalIngestion(
+    private val feed: FeedModel,
+    private val tumorDetailsExtractor: TumorDetailsExtractor,
+    private val complicationsExtractor: ComplicationsExtractor,
+    private val clinicalStatusExtractor: ClinicalStatusExtractor,
+    private val treatmentHistoryExtractor: TreatmentHistoryExtractor,
+    private val priorSecondPrimaryExtractor: PriorSecondPrimaryExtractor,
+    private val priorOtherConditionExtractor: PriorOtherConditionsExtractor,
+    private val priorMolecularTestsExtractor: PriorMolecularTestsExtractor,
+    private val labValueExtractor: LabValueExtractor,
+    private val toxicityExtractor: ToxicityExtractor,
+    private val intoleranceExtractor: IntoleranceExtractor,
+    private val medicationExtractor: MedicationExtractor,
+    private val bloodTransfusionsExtractor: BloodTransfusionsExtractor,
+) {
 
     fun run(): List<PatientIngestionResult> {
         val processedPatientIds: MutableSet<String> = HashSet()
@@ -81,12 +83,13 @@ class ClinicalIngestion(private val feed: FeedModel, private val curation: Curat
                 .patientId(patientId)
                 .patient(extractPatientDetails(subject, questionnaire))
                 .tumor(tumorExtraction.extracted)
+                .complications(complicationsExtraction.extracted)
                 .clinicalStatus(clinicalStatusExtraction.extracted)
                 .treatmentHistory(treatmentHistoryExtraction.extracted)
                 .priorSecondPrimaries(priorSecondPrimaryExtraction.extracted)
                 .priorOtherConditions(priorOtherConditionsExtraction.extracted)
                 .priorMolecularTests(priorMolecularTestsExtraction.extracted)
-                .complications(complicationsExtraction.extracted)
+
                 .labValues(labValuesExtraction.extracted)
                 .toxicities(toxicityExtraction.extracted)
                 .intolerances(intoleranceExtraction.extracted)
@@ -103,13 +106,13 @@ class ClinicalIngestion(private val feed: FeedModel, private val curation: Curat
                 clinicalStatusExtraction,
                 treatmentHistoryExtraction,
                 priorSecondPrimaryExtraction,
-                priorOtherConditionsExtraction,
-                priorMolecularTestsExtraction,
-                labValuesExtraction,
-                toxicityExtraction,
-                intoleranceExtraction,
-                bloodTransfusionsExtraction,
-                medicationExtraction
+                /*  priorOtherConditionsExtraction,
+                  priorMolecularTestsExtraction,
+                  labValuesExtraction,
+                  toxicityExtraction,
+                  intoleranceExtraction,
+                  bloodTransfusionsExtraction,
+                  medicationExtraction*/
             )
                 .map { it.evaluation }
                 .fold(ExtractionEvaluation()) { acc, evaluation -> acc + evaluation }
@@ -121,9 +124,6 @@ class ClinicalIngestion(private val feed: FeedModel, private val curation: Curat
                 result2.clinicalRecord
             )
         }
-
-        LOGGER.info("Evaluating curation database")
-        curation.evaluate(records.fold(ExtractionEvaluation()) { acc, (_, eval) -> acc + eval }, LOGGER)
 
         return records.map { it.first }
     }

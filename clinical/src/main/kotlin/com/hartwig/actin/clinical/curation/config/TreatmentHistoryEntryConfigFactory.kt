@@ -24,7 +24,7 @@ class TreatmentHistoryEntryConfigFactory(
 
     private val gson = GsonSerializer.create()
 
-    override fun create(fields: Map<String, Int>, parts: Array<String>): CurationConfigValidatedResponse<TreatmentHistoryEntryConfig> {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<TreatmentHistoryEntryConfig> {
         val treatmentName = fields["treatmentName"]?.let { ResourceFile.optionalString(parts[it]) } ?: ""
         val ignore: Boolean = CurationUtil.isIgnoreString(treatmentName)
         val (treatmentHistoryEntry, validationErrors) = if (ignore) null to emptyList() else curateObject(
@@ -33,7 +33,7 @@ class TreatmentHistoryEntryConfigFactory(
             treatmentName
         )
 
-        return CurationConfigValidatedResponse(
+        return ValidatedCurationConfig(
             TreatmentHistoryEntryConfig(
                 input = parts[fields["input"]!!],
                 ignore = ignore,

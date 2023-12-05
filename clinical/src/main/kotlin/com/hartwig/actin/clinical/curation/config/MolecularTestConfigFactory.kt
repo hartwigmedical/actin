@@ -6,9 +6,9 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.util.ResourceFile
 
 class MolecularTestConfigFactory : CurationConfigFactory<MolecularTestConfig> {
-    override fun create(fields: Map<String, Int>, parts: Array<String>): CurationConfigValidatedResponse<MolecularTestConfig> {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<MolecularTestConfig> {
         val ignore = CurationUtil.isIgnoreString(parts[fields["test"]!!])
-        return CurationConfigValidatedResponse(
+        return ValidatedCurationConfig(
             MolecularTestConfig(
                 input = parts[fields["input"]!!],
                 ignore = ignore,

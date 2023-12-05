@@ -9,7 +9,7 @@ import com.hartwig.actin.clinical.curation.config.MolecularTestConfig
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 
-class PriorMolecularTestsExtractor(private val curation: CurationDatabase) {
+class PriorMolecularTestsExtractor(private val molecularTestCuration: CurationDatabase<MolecularTestConfig>) {
 
     fun extract(patientId: String, questionnaire: Questionnaire?): ExtractionResult<List<PriorMolecularTest>> {
         if (questionnaire == null) {
@@ -23,7 +23,7 @@ class PriorMolecularTestsExtractor(private val curation: CurationDatabase) {
                 testResults.map {
                     val input = CurationUtil.fullTrim(it)
                     CurationResponse.createFromConfigs(
-                        curation.curate<MolecularTestConfig>(input),
+                        molecularTestCuration.curate(input),
                         patientId,
                         CurationCategory.MOLECULAR_TEST,
                         input,

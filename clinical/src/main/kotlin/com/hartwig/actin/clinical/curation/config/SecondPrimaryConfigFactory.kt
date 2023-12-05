@@ -8,12 +8,12 @@ import com.hartwig.actin.clinical.datamodel.TumorStatus
 import com.hartwig.actin.util.ResourceFile
 
 class SecondPrimaryConfigFactory(private val curationValidator: CurationValidator) : CurationConfigFactory<SecondPrimaryConfig> {
-    override fun create(fields: Map<String, Int>, parts: Array<String>): CurationConfigValidatedResponse<SecondPrimaryConfig> {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<SecondPrimaryConfig> {
         val input = parts[fields["input"]!!]
         val ignore = CurationUtil.isIgnoreString(parts[fields["name"]!!])
         val doids = CurationUtil.toDOIDs(parts[fields["doids"]!!])
 
-        return CurationConfigValidatedResponse(
+        return ValidatedCurationConfig(
             SecondPrimaryConfig(
                 input = input,
                 ignore = ignore,

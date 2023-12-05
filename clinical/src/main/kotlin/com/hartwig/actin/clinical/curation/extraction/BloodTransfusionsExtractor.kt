@@ -2,19 +2,19 @@ package com.hartwig.actin.clinical.curation.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
-import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationResponse
+import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
 import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion
 import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry
 
-class BloodTransfusionsExtractor(private val curation: CurationDatabase) {
+class BloodTransfusionsExtractor(private val bloodFusionTranslations: TranslationDatabase<String>) {
 
     fun extract(patientId: String, entries: List<DigitalFileEntry>): ExtractionResult<List<BloodTransfusion>> {
         return entries.map { entry: DigitalFileEntry ->
             val transfusionProduct = entry.itemAnswerValueValueString
             val curationResponse = CurationResponse.createFromTranslation(
-                curation.translate(transfusionProduct),
+                bloodFusionTranslations.translate(transfusionProduct),
                 patientId,
                 CurationCategory.BLOOD_TRANSFUSION_TRANSLATION,
                 transfusionProduct,

@@ -1,5 +1,8 @@
 package com.hartwig.actin.clinical.curation
 
+import com.hartwig.actin.clinical.curation.config.CurationConfig
+import com.hartwig.actin.clinical.curation.config.CurationConfigValidationError
+import com.hartwig.actin.clinical.curation.config.ValidatedCurationConfig
 import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
 import com.hartwig.actin.clinical.curation.translation.Translation
 
@@ -20,8 +23,8 @@ data class CurationResponse<T>(
 
     companion object {
 
-        fun <T> createFromConfigs(
-            configs: Set<T>,
+        fun <T : CurationConfig> createFromConfigs(
+            configs: Set<ValidatedCurationConfig<T>>,
             patientId: String,
             curationCategory: CurationCategory,
             inputText: String,
@@ -40,7 +43,12 @@ data class CurationResponse<T>(
                 feedInput = inputText,
                 message = "Multiple $configType configs found for input '$inputText'"
             )
-            return create(curationCategory, inputText.lowercase(), configs, setOfNotNull(notFoundWarning, multipleFoundWarning))
+            return create(
+                curationCategory,
+                inputText.lowercase(),
+                configs,
+                setOfNotNull(notFoundWarning, multipleFoundWarning)
+            )
         }
 
         fun createFromTranslation(
@@ -73,10 +81,10 @@ data class CurationResponse<T>(
             return CurationResponse(foundTranslations, evaluation.copy(warnings = warnings))
         }
 
-        fun <T> create(
+        fun <T : CurationConfig> create(
             curationCategory: CurationCategory,
             inputText: String,
-            configs: Set<T>,
+            configs: Set<ValidatedCurationConfig<T>>,
             warnings: Set<CurationWarning>
         ): CurationResponse<T> {
             val evaluatedInputs = setOf(inputText)
@@ -102,7 +110,10 @@ data class CurationResponse<T>(
                 CurationCategory.QT_PROLONGATION -> ExtractionEvaluation()
                 else -> throw IllegalStateException("Unsupported curation category for config lookup: $curationCategory")
             }
-            return CurationResponse(configs, evaluation.copy(warnings = warnings))
+            return CurationResponse(
+                configs.map { it.config }.toSet(),
+                evaluation.copy(warnings = warnings, validationErrors = configs.flatMap { it.errors }.toSet())
+            )
         }
     }
 }

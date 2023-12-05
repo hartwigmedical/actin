@@ -8,7 +8,7 @@ import java.nio.file.Files
 object CurationConfigFile {
 
     @Throws(IOException::class)
-    fun <T : CurationConfig> read(tsv: String, factory: CurationConfigFactory<T>): List<CurationConfigValidatedResponse<T>> {
+    fun <T : CurationConfig> read(tsv: String, factory: CurationConfigFactory<T>): List<ValidatedCurationConfig<T>> {
         val lines = Files.readAllLines(File(tsv).toPath())
         val fields = TabularFile.createFields(lines[0].split(TabularFile.DELIMITER).dropLastWhile { it.isEmpty() }
             .toTypedArray())
