@@ -34,8 +34,8 @@ class HasKnownActiveCnsMetastases : EvaluationFunction {
 
             hasActiveBrainMetastases == true ->
                 EvaluationFactory.pass(
-                    "Active brain metastases are present, these are considered CNS metastases",
-                    "Active brain (CNS) metastases"
+                    "Active CNS (Brain) metastases are present",
+                    "Active CNS (Brain) metastases"
                 )
 
             else ->
