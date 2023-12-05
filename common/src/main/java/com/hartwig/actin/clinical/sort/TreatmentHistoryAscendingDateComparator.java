@@ -14,17 +14,11 @@ public class TreatmentHistoryAscendingDateComparator implements Comparator<Treat
     @Override
     public int compare(@NotNull TreatmentHistoryEntry entry1, @NotNull TreatmentHistoryEntry entry2) {
         Comparator<Integer> nullSafeComparator = Comparator.nullsLast(Comparator.naturalOrder());
-        Integer startYear1 = entry1.startYear();
-        Integer startYear2 = entry2.startYear();
-        Integer stopYear1 = stopYearForHistoryEntry(entry1);
-        Integer stopYear2 = stopYearForHistoryEntry(entry2);
 
-        if ((startYear1 == null && stopYear1 != null && startYear2 != null && (startYear2 >= stopYear1)) || (startYear2 == null
-                && stopYear2 != null && startYear1 != null && (startYear1 >= stopYear2))) {
-            return Comparator.comparing(TreatmentHistoryAscendingDateComparator::stopYearForHistoryEntry, nullSafeComparator)
-                    .thenComparing(TreatmentHistoryAscendingDateComparator::stopMonthForHistoryEntry, nullSafeComparator)
-                    .thenComparing(TreatmentHistoryEntry::treatmentName)
-                    .compare(entry1, entry2);
+        if (stopsBeforeWithNullStart(entry1, entry2)) {
+            return -1;
+        } else if (stopsBeforeWithNullStart(entry2, entry1)) {
+            return 1;
         }
         return Comparator.comparing(TreatmentHistoryEntry::startYear, nullSafeComparator)
                 .thenComparing(TreatmentHistoryEntry::startMonth, nullSafeComparator)
@@ -32,6 +26,20 @@ public class TreatmentHistoryAscendingDateComparator implements Comparator<Treat
                 .thenComparing(TreatmentHistoryAscendingDateComparator::stopMonthForHistoryEntry, nullSafeComparator)
                 .thenComparing(TreatmentHistoryEntry::treatmentName)
                 .compare(entry1, entry2);
+    }
+
+    private static boolean stopsBeforeWithNullStart(@NotNull TreatmentHistoryEntry entryA, @NotNull TreatmentHistoryEntry entryB) {
+        Integer startYearA = entryA.startYear();
+        Integer stopYearA = stopYearForHistoryEntry(entryA);
+        Integer stopMonthA = stopMonthForHistoryEntry(entryA);
+        Integer startYearB = entryB.startYear();
+        Integer startMonthB = entryB.startMonth();
+
+        if (startYearA == null && stopYearA != null && startYearB != null) {
+            return startYearB > stopYearA || (startYearB.equals(stopYearA) && (startMonthB == null || stopMonthA == null
+                    || startMonthB >= stopMonthA));
+        }
+        return false;
     }
 
     @Nullable
