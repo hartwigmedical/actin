@@ -4,7 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.treatmentResultedInPDOption
+import com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.treatmentResultedInPD
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 
@@ -35,11 +35,12 @@ class HasHadPDFollowingSpecificTreatment(private val treatments: List<Treatment>
         val treatmentHistory = record.clinical().treatmentHistory()
 
         return treatmentHistory.map { entry ->
-            val isPD = treatmentResultedInPDOption(entry)
-            if (treatmentsMatchNameListExactly(entry.treatments(), treatmentNamesToMatch)) {
+            val isPD = treatmentResultedInPD(entry)
+            val treatmentsMatchingNames = treatmentsMatchingNameListExactly(entry.allTreatments(), treatmentNamesToMatch)
+            if (treatmentsMatchingNames.isNotEmpty()) {
                 TreatmentHistoryEvaluation(
-                    matchingTreatmentsWithPD = if (isPD == true) entry.treatments() else emptySet(),
-                    matchingTreatments = entry.treatments(),
+                    matchingTreatmentsWithPD = if (isPD == true) treatmentsMatchingNames else emptySet(),
+                    matchingTreatments = treatmentsMatchingNames,
                     matchesWithUnclearPD = isPD == null,
                     includesTrial = entry.isTrial
                 )
@@ -57,8 +58,8 @@ class HasHadPDFollowingSpecificTreatment(private val treatments: List<Treatment>
     }
 
     companion object {
-        private fun treatmentsMatchNameListExactly(treatments: Set<Treatment>, treatmentNamesToMatch: Set<String>): Boolean {
-            return treatments.map { it.name().lowercase() }.intersect(treatmentNamesToMatch).isNotEmpty()
+        private fun treatmentsMatchingNameListExactly(treatments: Set<Treatment>, treatmentNamesToMatch: Set<String>): Set<Treatment> {
+            return treatments.filter { it.name().lowercase() in treatmentNamesToMatch }.toSet()
         }
     }
 

@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.doid.DoidModel
@@ -27,7 +26,7 @@ class IsEligibleForTreatmentLines(private val doidModel: DoidModel, private val 
     companion object {
         private fun determineTreatmentLine(record: PatientRecord): Int {
             val allTreatmentCategories =
-                record.clinical().treatmentHistory().flatMap(TreatmentHistoryEntry::treatments).flatMap(Treatment::categories)
+                record.clinical().treatmentHistory().flatMap(TreatmentHistoryEntry::categories)
 
             return when {
                 allTreatmentCategories.none { it == TreatmentCategory.CHEMOTHERAPY || it == TreatmentCategory.IMMUNOTHERAPY } -> 1

@@ -10,6 +10,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRadiotherapy
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryDetails
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentStage
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
@@ -62,6 +63,16 @@ class TreatmentHistoryEntryConfigFactory(
         val bodyLocationCategories = entriesFromColumn(parts, fields, "bodyLocationCategories")
             ?.map { stringToEnum(it, BodyLocationCategory::valueOf) }
 
+        val intents = entriesFromColumn(parts, fields, "intents")?.map { stringToEnum(it, Intent::valueOf) }
+
+        val maintenanceTreatmentStage = treatmentStage(
+            parts, fields, "maintenanceTreatment", "maintenanceTreatmentStartYear", "maintenanceTreatmentStartMonth", null
+        )
+
+        val switchToTreatments = treatmentStage(
+            parts, fields, "switchToTreatment", "switchToTreatmentStartYear", "switchToTreatmentStartMonth", "switchToTreatmentCycles"
+        )?.let { setOf(it) }
+        
         val treatmentHistoryDetails = ImmutableTreatmentHistoryDetails.builder()
             .stopYear(optionalIntegerFromColumn(parts, fields, "stopYear"))
             .stopMonth(optionalIntegerFromColumn(parts, fields, "stopMonth"))
@@ -72,9 +83,9 @@ class TreatmentHistoryEntryConfigFactory(
             .toxicities(toxicities)
             .bodyLocationCategories(bodyLocationCategories)
             .bodyLocations(entriesFromColumn(parts, fields, "bodyLocations"))
+            .maintenanceTreatment(maintenanceTreatmentStage)
+            .switchToTreatments(switchToTreatments)
             .build()
-
-        val intents = entriesFromColumn(parts, fields, "intents")?.map { stringToEnum(it, Intent::valueOf) }
 
         return ImmutableTreatmentHistoryEntry.builder()
             .treatments(treatments)
@@ -84,6 +95,24 @@ class TreatmentHistoryEntryConfigFactory(
             .isTrial(isTrial)
             .trialAcronym(optionalStringFromColumn(parts, fields, "trialAcronym"))
             .treatmentHistoryDetails(treatmentHistoryDetails)
+            .build()
+    }
+
+    private fun treatmentStage(
+        parts: List<String>,
+        fields: Map<String, Int>,
+        nameField: String,
+        startYearField: String,
+        startMonthField: String,
+        cycleField: String?
+    ) = optionalStringFromColumn(parts, fields, nameField)?.let { name ->
+        val treatment = treatmentDatabase.findTreatmentByName(name) ?: throw missingTreatmentException(setOf(name))
+
+        ImmutableTreatmentStage.builder()
+            .treatment(treatment)
+            .startYear(optionalIntegerFromColumn(parts, fields, startYearField))
+            .startMonth(optionalIntegerFromColumn(parts, fields, startMonthField))
+            .cycles(cycleField?.let { optionalIntegerFromColumn(parts, fields, it) })
             .build()
     }
 

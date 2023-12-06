@@ -14,7 +14,8 @@ class HasRecentlyReceivedRadiotherapy(private val referenceYear: Int, private va
             .map {
                 it.startYear()?.let { year ->
                 val month = it.startMonth()
-                    year >= referenceYear && (month == null || month >= referenceMonth || YearMonth.of(year, month).isAfter(YearMonth.of(referenceYear, referenceMonth)))
+                    year >= referenceYear && (month == null || month >= referenceMonth ||
+                            YearMonth.of(year, month).isAfter(YearMonth.of(referenceYear, referenceMonth)))
                 }
             }
 

@@ -20,9 +20,11 @@ import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentStage;
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse;
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
 import org.jetbrains.annotations.NotNull;
@@ -203,7 +205,18 @@ public final class TestClinicalFactory {
                 .isTrial(false)
                 .build();
 
-        return List.of(treatmentHistoryEntry(Set.of(folfirinox), 2020, Intent.NEOADJUVANT),
+        TreatmentHistoryEntry folfirinoxEntry = treatmentHistoryEntry(Set.of(folfirinox), 2020, Intent.NEOADJUVANT);
+        Set<TreatmentStage> switchToTreatments =
+                Set.of(ImmutableTreatmentStage.builder().treatment(folfirinoxAndPembrolizumab).cycles(3).build());
+        TreatmentStage maintenanceTreatment = ImmutableTreatmentStage.builder().treatment(folfirinoxLocoRegional).build();
+
+        TreatmentHistoryEntry entryWithSwitchAndMaintenance = ImmutableTreatmentHistoryEntry.copyOf(folfirinoxEntry)
+                .withTreatmentHistoryDetails(ImmutableTreatmentHistoryDetails.copyOf(folfirinoxEntry.treatmentHistoryDetails())
+                        .withCycles(4)
+                        .withSwitchToTreatments(switchToTreatments)
+                        .withMaintenanceTreatment(maintenanceTreatment));
+
+        return List.of(entryWithSwitchAndMaintenance,
                 surgeryHistoryEntry,
                 treatmentHistoryEntry(Set.of(radiotherapy, folfirinoxLocoRegional), 2022, Intent.ADJUVANT),
                 treatmentHistoryEntry(Set.of(folfirinoxAndPembrolizumab), 2023, Intent.PALLIATIVE));

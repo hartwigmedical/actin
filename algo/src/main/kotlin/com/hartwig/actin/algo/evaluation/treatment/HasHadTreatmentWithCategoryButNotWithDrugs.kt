@@ -17,7 +17,7 @@ class HasHadTreatmentWithCategoryButNotWithDrugs(
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentSummary =
             TreatmentSummaryForCategory.createForTreatmentHistory(record.clinical().treatmentHistory(), category) { entry ->
-                entry.treatments().none { (it as? DrugTreatment)?.drugs()?.intersect(ignoreDrugs)?.isNotEmpty() == true }
+                entry.allTreatments().none { (it as? DrugTreatment)?.drugs()?.intersect(ignoreDrugs)?.isNotEmpty() == true }
             }
 
         val ignoreDrugsList = concatItemsWithAnd(ignoreDrugs)

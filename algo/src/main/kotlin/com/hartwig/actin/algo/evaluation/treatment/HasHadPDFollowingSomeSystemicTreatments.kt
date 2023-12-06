@@ -18,7 +18,7 @@ class HasHadPDFollowingSomeSystemicTreatments(
         val lastTreatment = SystemicTreatmentAnalyser.lastSystemicTreatment(treatmentHistory)
         if (minSystemicCount >= minSystemicTreatments) {
             return when {
-                lastTreatment?.let { ProgressiveDiseaseFunctions.treatmentResultedInPDOption(it) } == true -> {
+                lastTreatment?.let { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) } == true -> {
                     val radiologicalNote = if (mustBeRadiological) " (assumed PD is radiological)" else ""
                     EvaluationFactory.pass(
                         "Has received $minSystemicTreatments systemic treatments with PD$radiologicalNote"

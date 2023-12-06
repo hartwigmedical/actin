@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.curation.config
 import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryDetails
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentStage
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert.assertThrows
 import org.junit.Test
@@ -133,6 +134,49 @@ class TreatmentHistoryEntryConfigFactoryTest {
             .isEqualTo(treatmentNames.mapNotNull(treatmentDatabase::findTreatmentByName).toSet())
     }
 
+    @Test
+    fun `Should generate treatment history entry with switch to other treatment and maintenance treatment`() {
+        val input = "Radiotherapy 2023 with switch to CAPOX 2 cycles 4/2023 and maintenance ablation 8/2023"
+        val parts = partsWithMappedValues(
+            mapOf(
+                "input" to input,
+                "treatmentName" to TestTreatmentDatabaseFactory.RADIOTHERAPY,
+                "startYear" to "2023",
+                "maintenanceTreatment" to TestTreatmentDatabaseFactory.ABLATION,
+                "maintenanceTreatmentStartYear" to "2023",
+                "maintenanceTreatmentStartMonth" to "8",
+                "switchToTreatment" to TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN,
+                "switchToTreatmentStartYear" to "2023",
+                "switchToTreatmentStartMonth" to "4",
+                "switchToTreatmentCycles" to "2"
+            )
+        )
+
+        val config = factory.create(fields, parts)
+        assertThat(config.input).isEqualTo(input)
+        assertThat(config.ignore).isFalse
+        assertThat(config.curated).isNotNull
+
+        val treatments = config.curated!!.treatments()
+        assertThat(treatments).containsExactly(treatmentDatabase.findTreatmentByName(TestTreatmentDatabaseFactory.RADIOTHERAPY))
+        val treatmentDetails = config.curated.treatmentHistoryDetails()!!
+        assertThat(treatmentDetails.switchToTreatments()).containsExactly(
+            ImmutableTreatmentStage.builder()
+                .treatment(treatmentDatabase.findTreatmentByName(TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN)!!)
+                .startYear(2023)
+                .startMonth(4)
+                .cycles(2)
+                .build()
+        )
+        assertThat(treatmentDetails.maintenanceTreatment()).isEqualTo(
+            ImmutableTreatmentStage.builder()
+                .treatment(treatmentDatabase.findTreatmentByName(TestTreatmentDatabaseFactory.ABLATION)!!)
+                .startYear(2023)
+                .startMonth(8)
+                .build()
+        )
+    }
+
     private fun partsWithMappedValues(overrides: Map<String, String>): Array<String> {
         val emptyMap = (0..24).associateWith { "" }
         val overridesWithIntKeys = overrides.mapKeys { fields[it.key] }
@@ -157,6 +201,13 @@ class TreatmentHistoryEntryConfigFactoryTest {
             "stopReason" to 12,
             "isTrial" to 13,
             "trialAcronym" to 14,
+            "maintenanceTreatment" to 15,
+            "maintenanceTreatmentStartYear" to 16,
+            "maintenanceTreatmentStartMonth" to 17,
+            "switchToTreatment" to 18,
+            "switchToTreatmentStartYear" to 19,
+            "switchToTreatmentStartMonth" to 20,
+            "switchToTreatmentCycles" to 21
         )
 
         private val factory = TreatmentHistoryEntryConfigFactory(treatmentDatabase)

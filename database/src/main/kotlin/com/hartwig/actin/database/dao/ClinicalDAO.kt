@@ -24,7 +24,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEn
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
 import com.hartwig.actin.database.Tables
 import org.jooq.DSLContext
-import java.util.Optional
+import java.util.*
 
 internal class ClinicalDAO(private val context: DSLContext) {
 
@@ -182,43 +182,56 @@ internal class ClinicalDAO(private val context: DSLContext) {
             .map { entry: ImmutableTreatmentHistoryEntry ->
                 val treatment = entry.treatments().iterator().next()
                 val intentString = DataUtil.concatObjects(entry.intents()) ?: ""
-                val valueMap: MutableMap<String, Any?> = HashMap()
-                valueMap["patientId"] = patientId
-                valueMap["name"] = treatment.name()
-                valueMap["startYear"] = entry.startYear()
-                valueMap["startMonth"] = entry.startMonth()
-                valueMap["intents"] = intentString
-                valueMap["isTrial"] = entry.isTrial
-                valueMap["trialAcronym"] = entry.trialAcronym()
-                valueMap["categories"] = TreatmentCategoryResolver.toStringList(treatment.categories())
-                valueMap["synonyms"] = DataUtil.concat(treatment.synonyms())
-                valueMap["isSystemic"] = treatment.isSystemic
-                if (treatment is DrugTreatment) {
-                    valueMap["drugs"] = DataUtil.concat(
-                        treatment.drugs().map { "${it.name()} (${it.drugTypes().sorted().joinToString(", ")})" }
-                    )
-                    valueMap["maxCycles"] = treatment.maxCycles()
-                }
-                if (treatment is Radiotherapy) {
-                    valueMap["isInternal"] = treatment.isInternal
-                    valueMap["radioType"] = treatment.radioType()
-                }
-                val treatmentHistoryDetails = entry.treatmentHistoryDetails()
-                if (treatmentHistoryDetails != null) {
-                    valueMap["stopYear"] = treatmentHistoryDetails.stopYear()
-                    valueMap["stopMonth"] = treatmentHistoryDetails.stopMonth()
-                    valueMap["ongoingAsOf"] = treatmentHistoryDetails.ongoingAsOf()
-                    valueMap["cycles"] = treatmentHistoryDetails.cycles()
-                    valueMap["bestResponse"] = treatmentHistoryDetails.bestResponse()
-                    valueMap["stopReason"] = treatmentHistoryDetails.stopReason()
-                    valueMap["stopReasonDetail"] = treatmentHistoryDetails.stopReasonDetail()
-                    val toxicities = treatmentHistoryDetails.toxicities()
-                    valueMap["toxicities"] = if (toxicities == null) null else {
+                val drugTreatment = treatment as? DrugTreatment
+                val radiotherapy = treatment as? Radiotherapy
+                val details = entry.treatmentHistoryDetails()
+                val valueMap = mapOf(
+                    "patientId" to patientId,
+                    "name" to treatment.name(),
+                    "startYear" to entry.startYear(),
+                    "startMonth" to entry.startMonth(),
+                    "intents" to intentString,
+                    "isTrial" to entry.isTrial,
+                    "trialAcronym" to entry.trialAcronym(),
+                    "categories" to TreatmentCategoryResolver.toStringList(treatment.categories()),
+                    "synonyms" to DataUtil.concat(treatment.synonyms()),
+                    "isSystemic" to treatment.isSystemic,
+                    "drugs" to drugTreatment?.let { drugTx ->
+                        DataUtil.concat(drugTx.drugs().map { "${it.name()} (${it.drugTypes().sorted().joinToString(", ")})" })
+                    },
+                    "maxCycles" to drugTreatment?.maxCycles(),
+                    "isInternal" to radiotherapy?.isInternal,
+                    "radioType" to radiotherapy?.radioType(),
+                    "stopYear" to details?.stopYear(),
+                    "stopMonth" to details?.stopMonth(),
+                    "ongoingAsOf" to details?.ongoingAsOf(),
+                    "cycles" to details?.cycles(),
+                    "bestResponse" to details?.bestResponse(),
+                    "stopReason" to details?.stopReason(),
+                    "stopReasonDetail" to details?.stopReasonDetail(),
+                    "toxicities" to details?.toxicities()?.let { toxicities ->
                         DataUtil.concat(toxicities.map { "${it.name()} grade ${it.grade()} (${DataUtil.concat(it.categories())})" })
                     }
-                }
+                )
+                val maintenanceTreatmentMap = details?.maintenanceTreatment()?.let { maintenanceTreatment ->
+                    mapOf(
+                        "maintenanceTreatment" to maintenanceTreatment.treatment().name(),
+                        "maintenanceTreatmentStartYear" to maintenanceTreatment.startYear(),
+                        "maintenanceTreatmentStartMonth" to maintenanceTreatment.startMonth(),
+                    )
+                } ?: emptyMap()
+
+                val switchToTreatmentMap = details?.switchToTreatments()?.firstOrNull()?.let { switchToTreatment ->
+                    mapOf(
+                        "switchToTreatment" to switchToTreatment.treatment().name(),
+                        "switchToTreatmentStartYear" to switchToTreatment.startYear(),
+                        "switchToTreatmentStartMonth" to switchToTreatment.startMonth(),
+                        "switchToTreatmentCycles" to switchToTreatment.cycles()
+                    )
+                } ?: emptyMap()
+                
                 val record = context.newRecord(Tables.TREATMENTHISTORYENTRY)
-                record.fromMap(valueMap)
+                record.fromMap(valueMap + maintenanceTreatmentMap + switchToTreatmentMap)
                 record
             }
         context.batchInsert(records).execute()
