@@ -15,14 +15,15 @@ class HasHadAdjuvantTreatmentWithCategoryOfTypes(private val types: Set<Treatmen
     override fun evaluate(record: PatientRecord): Evaluation {
         val adjuvantTreatmentHistory = record.clinical().treatmentHistory().filter { it.intents()?.contains(Intent.ADJUVANT) == true }
 
-        val treatmentSummary =
-            TreatmentSummaryForCategory.createForTreatmentHistory(adjuvantTreatmentHistory, warnCategory) {
-                it.matchesTypeFromSet(types)
-            }
+        val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(adjuvantTreatmentHistory, warnCategory) {
+            it.matchesTypeFromSet(types)
+        }
 
         return when {
             treatmentSummary.hasSpecificMatch() -> {
-                val treatmentsString = Format.concatLowercaseWithAnd(treatmentSummary.specificMatches.map { it.treatmentDisplay() })
+                val treatmentsString = Format.concatLowercaseWithAnd(
+                    treatmentSummary.specificMatches.map(TreatmentHistoryEntryFunctions::fullTreatmentDisplay)
+                )
                 EvaluationFactory.pass("Patient has received adjuvant $treatmentsString", "Received adjuvant $treatmentsString")
             }
 

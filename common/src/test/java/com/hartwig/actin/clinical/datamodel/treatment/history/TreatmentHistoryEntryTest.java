@@ -104,14 +104,8 @@ public class TreatmentHistoryEntryTest {
     }
 
     @Test
-    public void shouldDisplaySwitchAndMaintenanceTreatmentsWhenPresent() {
-        assertThat(TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE.treatmentDisplay()).isEqualTo(
-                "Test treatment with switch to Switch treatment continued with Maintenance treatment maintenance");
-    }
-
-    @Test
     public void shouldDisplayBaseNameWithoutSwitchAndMaintenanceTreatments() {
-        assertThat(TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE.baseTreatmentDisplay()).isEqualTo("Test treatment");
+        assertThat(TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE.treatmentDisplay()).isEqualTo("Test treatment");
     }
     
     @Test

@@ -6,7 +6,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
 import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 
 class HasHadNonInternalRadiotherapy : EvaluationFunction {
 
@@ -17,7 +16,7 @@ class HasHadNonInternalRadiotherapy : EvaluationFunction {
         return if (matchingTreatments.isNotEmpty()) {
             EvaluationFactory.pass(
                 "Has received non-internal radiotherapy in treatment(s) "
-                        + concatLowercaseWithAnd(matchingTreatments.map(TreatmentHistoryEntry::treatmentDisplay))
+                        + concatLowercaseWithAnd(matchingTreatments.map(TreatmentHistoryEntryFunctions::fullTreatmentDisplay))
             )
         } else {
             EvaluationFactory.fail("Has not received any non-internal radiotherapy")

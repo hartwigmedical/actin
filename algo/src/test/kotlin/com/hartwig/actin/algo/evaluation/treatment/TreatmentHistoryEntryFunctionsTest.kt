@@ -179,4 +179,25 @@ class TreatmentHistoryEntryFunctionsTest {
         )
         assertThat(TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry, predicate)).isNull()
     }
+
+    @Test
+    fun `Should display switch and maintenance treatments when present`() {
+        val switchToTreatment = treatmentStage(drugTreatment("switch treatment", TreatmentCategory.CHEMOTHERAPY), cycles = 3)
+        val maintenanceTreatment = treatmentStage(drugTreatment("maintenance treatment", TreatmentCategory.CHEMOTHERAPY))
+        val entry = treatmentHistoryEntry(
+            setOf(drugTreatment("test treatment", TreatmentCategory.CHEMOTHERAPY)),
+            switchToTreatments = listOf(switchToTreatment),
+            maintenanceTreatment = maintenanceTreatment,
+            numCycles = 2
+        )
+        assertThat(TreatmentHistoryEntryFunctions.fullTreatmentDisplay(entry)).isEqualTo(
+            "Test treatment with switch to Switch treatment continued with Maintenance treatment maintenance"
+        )
+    }
+
+    @Test
+    fun `Should display base treatment when no switch and maintenance treatments present`() {
+        val entry = treatmentHistoryEntry(setOf(drugTreatment("test treatment", TreatmentCategory.CHEMOTHERAPY)), numCycles = 2)
+        assertThat(TreatmentHistoryEntryFunctions.fullTreatmentDisplay(entry)).isEqualTo("Test treatment")
+    }
 }

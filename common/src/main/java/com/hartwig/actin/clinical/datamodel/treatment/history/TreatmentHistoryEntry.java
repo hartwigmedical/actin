@@ -67,27 +67,6 @@ public abstract class TreatmentHistoryEntry {
     }
 
     @NotNull
-    public String treatmentDisplay() {
-        TreatmentHistoryDetails details = treatmentHistoryDetails();
-        if (details == null) {
-            return baseTreatmentDisplay();
-        }
-
-        boolean switchToTreatmentsIsNullOrEmpty = details.switchToTreatments() == null || details.switchToTreatments().isEmpty();
-        String switchToTreatmentDisplay = switchToTreatmentsIsNullOrEmpty
-                ? ""
-                : " with switch to " + details.switchToTreatments()
-                        .stream()
-                        .map(stage -> stage.treatment().display())
-                        .collect(Collectors.joining(" then "));
-        String maintenanceTreatmentDisplay = (details.maintenanceTreatment() == null)
-                ? ""
-                : String.format(" continued with %s maintenance", details.maintenanceTreatment().treatment().display());
-
-        return baseTreatmentDisplay() + switchToTreatmentDisplay + maintenanceTreatmentDisplay;
-    }
-
-    @NotNull
     public Set<TreatmentCategory> categories() {
         return allTreatments().stream().flatMap(treatment -> treatment.categories().stream()).collect(Collectors.toSet());
     }
@@ -111,7 +90,7 @@ public abstract class TreatmentHistoryEntry {
     }
 
     @NotNull
-    public String baseTreatmentDisplay() {
+    public String treatmentDisplay() {
         Set<String> treatmentNames = treatments().stream().map(Treatment::display).map(String::toLowerCase).collect(Collectors.toSet());
         Set<String> chemoradiationTherapyNames = Set.of("chemotherapy", "radiotherapy");
 
