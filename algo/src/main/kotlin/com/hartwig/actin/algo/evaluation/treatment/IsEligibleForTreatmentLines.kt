@@ -26,7 +26,7 @@ class IsEligibleForTreatmentLines(private val doidModel: DoidModel, private val 
     companion object {
         private fun determineTreatmentLine(record: PatientRecord): Int {
             val allTreatmentCategories =
-                record.clinical().treatmentHistory().flatMap(TreatmentHistoryEntry::categories)
+                record.clinical().oncologicalHistory().flatMap(TreatmentHistoryEntry::categories)
 
             return when {
                 allTreatmentCategories.none { it == TreatmentCategory.CHEMOTHERAPY || it == TreatmentCategory.IMMUNOTHERAPY } -> 1

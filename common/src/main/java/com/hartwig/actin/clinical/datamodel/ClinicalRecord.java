@@ -25,7 +25,7 @@ public abstract class ClinicalRecord {
     public abstract ClinicalStatus clinicalStatus();
 
     @NotNull
-    public abstract List<TreatmentHistoryEntry> treatmentHistory();
+    public abstract List<TreatmentHistoryEntry> oncologicalHistory();
 
     @NotNull
     public abstract List<PriorSecondPrimary> priorSecondPrimaries();

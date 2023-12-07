@@ -66,43 +66,43 @@ class HasHadAnySurgeryAfterSpecificDateTest {
 
     @Test
     fun shouldFailWithNoPriorTreatments() {
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(SurgeryTestFactory.withTreatmentHistory(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(SurgeryTestFactory.withOncologicalHistory(emptyList())))
     }
 
     @Test
     fun shouldFailWithRecentNonSurgicalTreatment() {
         val treatments = listOf(treatmentHistoryEntry(emptySet(), MIN_DATE.year))
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(SurgeryTestFactory.withTreatmentHistory(treatments)))
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(SurgeryTestFactory.withOncologicalHistory(treatments)))
     }
 
     @Test
     fun shouldFailEvaluationWithTooLongAgoSurgicalTreatment() {
         val treatments = listOf(treatmentHistoryEntry(setOf(TreatmentCategory.SURGERY), MIN_DATE.minusYears(1).year))
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(SurgeryTestFactory.withTreatmentHistory(treatments)))
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(SurgeryTestFactory.withOncologicalHistory(treatments)))
     }
 
     @Test
     fun shouldReturnUndeterminedWithSurgicalTreatmentInSameYear() {
         val treatments = listOf(treatmentHistoryEntry(setOf(TreatmentCategory.SURGERY), MIN_DATE.year))
-        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(SurgeryTestFactory.withTreatmentHistory(treatments)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(SurgeryTestFactory.withOncologicalHistory(treatments)))
     }
 
     @Test
     fun shouldReturnUndeterminedWithSurgicalTreatmentWithoutDate() {
         val treatments = listOf(treatmentHistoryEntry(setOf(TreatmentCategory.SURGERY)))
-        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(SurgeryTestFactory.withTreatmentHistory(treatments)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(SurgeryTestFactory.withOncologicalHistory(treatments)))
     }
 
     @Test
     fun shouldFailWithSurgicalTreatmentInMonthJustBeforeMinDate() {
         val treatments = listOf(treatmentHistoryEntry(setOf(TreatmentCategory.SURGERY), MIN_DATE.year, MIN_DATE.monthValue - 1))
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(SurgeryTestFactory.withTreatmentHistory(treatments)))
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(SurgeryTestFactory.withOncologicalHistory(treatments)))
     }
 
     @Test
     fun shouldPassWithSurgicalTreatmentInMonthJustAfterMinDate() {
         val treatments = listOf(treatmentHistoryEntry(setOf(TreatmentCategory.SURGERY), MIN_DATE.year, MIN_DATE.monthValue + 1))
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(SurgeryTestFactory.withTreatmentHistory(treatments)))
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(SurgeryTestFactory.withOncologicalHistory(treatments)))
     }
 
     companion object {

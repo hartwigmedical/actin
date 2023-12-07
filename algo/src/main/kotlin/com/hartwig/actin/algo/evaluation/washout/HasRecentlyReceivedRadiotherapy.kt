@@ -10,7 +10,8 @@ import java.time.YearMonth
 class HasRecentlyReceivedRadiotherapy(private val referenceYear: Int, private val referenceMonth: Int) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val radiotherapyEvaluations = record.clinical().treatmentHistory().filter { it.categories().contains(TreatmentCategory.RADIOTHERAPY) }
+        val radiotherapyEvaluations =
+            record.clinical().oncologicalHistory().filter { it.categories().contains(TreatmentCategory.RADIOTHERAPY) }
             .map {
                 it.startYear()?.let { year ->
                 val month = it.startMonth()

@@ -6,7 +6,7 @@ import org.junit.Test
 class EligibilityRuleUsageEvaluatorTest {
 
     @Test
-    fun canEvaluateEligibilityRuleUsage() {
+    fun `Should evaluate eligibility rule usage`() {
         val trials = listOf(TestTrialFactory.createMinimalTestTrial(), TestTrialFactory.createProperTestTrial())
         EligibilityRuleUsageEvaluator.evaluate(trials)
     }

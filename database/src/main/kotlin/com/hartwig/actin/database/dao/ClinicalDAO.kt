@@ -54,7 +54,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
         writePatientDetails(patientId, record.patient())
         writeTumorDetails(patientId, record.tumor())
         writeClinicalStatus(patientId, record.clinicalStatus())
-        writeTreatmentHistoryEntries(patientId, record.treatmentHistory())
+        writeTreatmentHistoryEntries(patientId, record.oncologicalHistory())
         writePriorSecondPrimaries(patientId, record.priorSecondPrimaries())
         writePriorOtherConditions(patientId, record.priorOtherConditions())
         writePriorMolecularTests(patientId, record.priorMolecularTests())

@@ -16,18 +16,18 @@ import org.junit.Test
 class HasHadPDFollowingSpecificTreatmentTest {
 
     @Test
-    fun shouldFailForEmptyTreatments() {
+    fun `Should fail for empty treatments`() {
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(emptyList())))
     }
 
     @Test
-    fun shouldFailForOtherTreatmentWithPD() {
+    fun `Should fail for other treatment with PD`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(NON_MATCHING_TREATMENTS, stopReason = StopReason.PROGRESSIVE_DISEASE)
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
-    fun shouldFailForMatchingTreatmentButNoPD() {
+    fun `Should fail for matching treatment but no PD`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             MATCHING_TREATMENTS,
             stopReason = StopReason.TOXICITY,
@@ -37,19 +37,19 @@ class HasHadPDFollowingSpecificTreatmentTest {
     }
 
     @Test
-    fun shouldReturnUndeterminedForMatchingTreatmentMissingStopReason() {
+    fun `Should return undetermined for matching treatment missing stop reason`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(MATCHING_TREATMENTS)
         assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
-    fun shouldPassForMatchingTreatmentAndStopReasonPD() {
+    fun `Should pass for matching treatment and stop reason PD`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(MATCHING_TREATMENTS, stopReason = StopReason.PROGRESSIVE_DISEASE)
         assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
-    fun shouldPassForMatchingSwitchToTreatmentAndStopReasonPD() {
+    fun `Should pass for matching switch to treatment and stop reason PD`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             NON_MATCHING_TREATMENTS,
             stopReason = StopReason.PROGRESSIVE_DISEASE,
@@ -59,13 +59,13 @@ class HasHadPDFollowingSpecificTreatmentTest {
     }
 
     @Test
-    fun shouldPassForMatchingTreatmentWhenPDIsIndicatedInBestResponse() {
+    fun `Should pass for matching treatment when PD is indicated in best response`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(MATCHING_TREATMENTS, bestResponse = TreatmentResponse.PROGRESSIVE_DISEASE)
         assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
-    fun shouldReturnUndeterminedWithTrialTreatmentEntryInHistory() {
+    fun `Should return undetermined with trial treatment entry in history`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)), isTrial = true)
         assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }

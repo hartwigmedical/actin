@@ -18,7 +18,7 @@ class HasHadCombinedTreatmentNamesWithCycles(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val evaluationsByResult: Map<EvaluationResult, List<Evaluation>> = treatments
-            .map { treatment -> evaluatePriorTreatmentsMatchingName(record.clinical().treatmentHistory(), treatment.name()) }
+            .map { treatment -> evaluatePriorTreatmentsMatchingName(record.clinical().oncologicalHistory(), treatment.name()) }
             .groupBy { it.result() }
 
         val builder: ImmutableEvaluation.Builder = EvaluationFactory.unrecoverable()

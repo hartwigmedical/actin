@@ -52,11 +52,11 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
     }
 
     private fun relevantSystemicPreTreatmentHistoryTable(record: ClinicalRecord): Table {
-        return treatmentHistoryTable(record.treatmentHistory(), true)
+        return treatmentHistoryTable(record.oncologicalHistory(), true)
     }
 
     private fun relevantNonSystemicPreTreatmentHistoryTable(record: ClinicalRecord): Table {
-        return treatmentHistoryTable(record.treatmentHistory(), false)
+        return treatmentHistoryTable(record.oncologicalHistory(), false)
     }
 
     private fun treatmentHistoryTable(treatmentHistory: List<TreatmentHistoryEntry>, requireSystemic: Boolean): Table {

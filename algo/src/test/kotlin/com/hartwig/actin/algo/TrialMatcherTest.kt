@@ -23,7 +23,7 @@ import org.junit.Test
 class TrialMatcherTest {
 
     @Test
-    fun canMatchTrialsOnProperTestData() {
+    fun `Should match trials on proper test data`() {
         val patient = TestDataFactory.createProperTestPatientRecord()
         val trial = TestTrialFactory.createProperTestTrial()
         val matcher = TrialMatcher(createTestEvaluationFunctionFactory())
@@ -33,7 +33,7 @@ class TrialMatcherTest {
     }
 
     @Test
-    fun canDeterminePotentialEligibility() {
+    fun `Should determine potential eligibility`() {
         val evaluations: MutableList<Evaluation> = mutableListOf()
         evaluations.add(EvaluationTestFactory.withResult(EvaluationResult.PASS))
         assertTrue(TrialMatcher.isPotentiallyEligible(evaluations))

@@ -82,7 +82,7 @@ class ClinicalIngestion(private val feed: FeedModel, private val curation: Curat
                 .patient(extractPatientDetails(subject, questionnaire))
                 .tumor(tumorExtraction.extracted)
                 .clinicalStatus(clinicalStatusExtraction.extracted)
-                .treatmentHistory(treatmentHistoryExtraction.extracted)
+                .oncologicalHistory(treatmentHistoryExtraction.extracted)
                 .priorSecondPrimaries(priorSecondPrimaryExtraction.extracted)
                 .priorOtherConditions(priorOtherConditionsExtraction.extracted)
                 .priorMolecularTests(priorMolecularTestsExtraction.extracted)
