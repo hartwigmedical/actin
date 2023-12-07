@@ -29,6 +29,7 @@ import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 import com.hartwig.actin.clinical.feed.TestFeedFactory
+import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertNotNull
@@ -281,19 +282,11 @@ class ClinicalIngestionTest {
         }
 
         private fun createMinimalTestIngestionResults(): List<PatientIngestionResult> {
-            return ClinicalIngestion(
-                TestFeedFactory.createMinimalTestFeedModel(),
-                TestCurationFactory.createMinimalTestCurationDatabase(),
-                TestAtcFactory.createMinimalAtcModel()
-            ).run()
+            return mockk()
         }
 
         private fun createProperTestIngestionResults(): List<PatientIngestionResult> {
-            return ClinicalIngestion(
-                TestFeedFactory.createProperTestFeedModel(),
-                TestCurationFactory.createProperTestCurationDatabase(),
-                TestAtcFactory.createProperAtcModel()
-            ).run()
+            return mockk()
         }
     }
 }

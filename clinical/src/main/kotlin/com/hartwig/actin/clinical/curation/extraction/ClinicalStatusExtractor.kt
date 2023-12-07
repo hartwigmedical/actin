@@ -3,10 +3,15 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.CurationResponse
+import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.config.ECGConfig
+import com.hartwig.actin.clinical.curation.config.ECGConfigFactory
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
+import com.hartwig.actin.clinical.curation.config.InfectionConfigFactory
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
+import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfigFactory
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 import com.hartwig.actin.clinical.datamodel.ECG
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus
@@ -115,5 +120,22 @@ class ClinicalStatusExtractor(
             ?.filterNot { it.ignore }
             ?.map { it.lvef }
             ?.find { it != null }
+    }
+
+    companion object {
+        fun create(curationDir: String, curationDoidValidator: CurationDoidValidator) =
+            ClinicalStatusExtractor(
+                ecgCuration = CurationDatabaseReader.read(curationDir, CurationDatabaseReader.ECG_TSV, ECGConfigFactory()),
+                infectionCuration = CurationDatabaseReader.read(
+                    curationDir,
+                    CurationDatabaseReader.INFECTION_TSV,
+                    InfectionConfigFactory()
+                ),
+                nonOncologicalHistoryCuration = CurationDatabaseReader.read(
+                    curationDir,
+                    CurationDatabaseReader.NON_ONCOLOGICAL_HISTORY_TSV,
+                    NonOncologicalHistoryConfigFactory(curationDoidValidator)
+                )
+            )
     }
 }

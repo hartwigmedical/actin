@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -13,7 +14,7 @@ class PriorMolecularTestsExtractorTest {
 
     @Test
     fun `Should curate prior molecular tests`() {
-        val extractor = PriorMolecularTestsExtractor(TestCurationFactory.createProperTestCurationDatabase())
+        val extractor = PriorMolecularTestsExtractor(mockk())
         val inputs = listOf("IHC ERBB2 3+", CANNOT_CURATE)
         val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(ihcTestResults = inputs)
         val (priorMolecularTests, evaluation) = extractor.extract(PATIENT_ID, questionnaire)

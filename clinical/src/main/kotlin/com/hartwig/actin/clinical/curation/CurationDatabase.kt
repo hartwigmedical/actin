@@ -9,5 +9,5 @@ typealias InputText = String
 class CurationDatabase<T : CurationConfig>(
     val configs: Map<InputText, Set<ValidatedCurationConfig<T>>>
 ) {
-    fun curate(input: InputText) = configs[input] ?: emptySet()
+    fun curate(input: InputText) = configs[input.lowercase()] ?: emptySet()
 }

@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.TestCurationFactory.emptyQuestionnaire
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -11,7 +12,7 @@ private const val PATIENT_ID = "patient1"
 private const val CANNOT_CURATE = "cannot curate"
 
 class PriorSecondPrimaryExtractorTest {
-    private val extractor = PriorSecondPrimaryExtractor(TestCurationFactory.createProperTestCurationDatabase())
+    private val extractor = PriorSecondPrimaryExtractor(mockk(), mockk())
 
     @Test
     fun `Should curate prior second primaries`() {

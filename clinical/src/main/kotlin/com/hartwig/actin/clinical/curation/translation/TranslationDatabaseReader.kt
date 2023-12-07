@@ -2,22 +2,7 @@ package com.hartwig.actin.clinical.curation.translation
 
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 
-class TranslationDatabaseReader(private val curationDirectory: String) {
-
-    fun bloodTransfusions() =
-        readTranslationsDatabase(curationDirectory, BLOOD_TRANSFUSION_TRANSLATION_TSV, BloodTransfusionTranslationFactory())
-
-    fun administrationRoute() =
-        readTranslationsDatabase(curationDirectory, ADMINISTRATION_ROUTE_TRANSLATION_TSV, AdministrationRouteTranslationFactory())
-
-    fun toxicity() =
-        readTranslationsDatabase(curationDirectory, TOXICITY_TRANSLATION_TSV, ToxicityTranslationFactory())
-
-    fun dosageUnit() =
-        readTranslationsDatabase(curationDirectory, DOSAGE_UNIT_TRANSLATION_TSV, DosageUnitTranslationFactory())
-
-    fun labratoryTranslation() =
-        readTranslationsDatabase(curationDirectory, LABORATORY_TRANSLATION_TSV, LaboratoryTranslationFactory())
+class TranslationDatabaseReader {
 
     companion object {
         const val ADMINISTRATION_ROUTE_TRANSLATION_TSV = "administration_route_translation.tsv"
@@ -26,7 +11,7 @@ class TranslationDatabaseReader(private val curationDirectory: String) {
         const val BLOOD_TRANSFUSION_TRANSLATION_TSV = "blood_transfusion_translation.tsv"
         const val DOSAGE_UNIT_TRANSLATION_TSV = "dosage_unit_translation.tsv"
 
-        fun <T> readTranslationsDatabase(
+        fun <T> read(
             basePath: String, tsv: String, factory: TranslationFactory<Translation<T>>
         ) = TranslationDatabase(readTranslations(basePath, tsv, factory).associateBy { it.input })
 

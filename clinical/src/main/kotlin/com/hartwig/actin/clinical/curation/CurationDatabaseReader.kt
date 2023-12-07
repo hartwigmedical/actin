@@ -40,66 +40,14 @@ import com.hartwig.actin.util.Paths
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
-class CurationDatabaseReader(
-    private val curationDirectory: String,
-    private val curationValidator: CurationValidator,
-    private val treatmentDatabase: TreatmentDatabase
-) {
-
-    fun secondPrimary() =
-        read(curationDirectory, SECOND_PRIMARY_TSV, SecondPrimaryConfigFactory(curationValidator))
-
-    fun treatment(): CurationDatabase<TreatmentHistoryEntryConfig> =
-        read(curationDirectory, ONCOLOGICAL_HISTORY_TSV, TreatmentHistoryEntryConfigFactory(treatmentDatabase))
-
-    fun lesionLocation(): CurationDatabase<LesionLocationConfig> =
-        read(curationDirectory, LESION_LOCATION_TSV, LesionLocationConfigFactory())
-
-    fun primaryTumor(): CurationDatabase<PrimaryTumorConfig> =
-        read(curationDirectory, PRIMARY_TUMOR_TSV, PrimaryTumorConfigFactory(curationValidator))
-
-    fun complication(): CurationDatabase<ComplicationConfig> =
-        read(curationDirectory, COMPLICATION_TSV, ComplicationConfigFactory())
-
-    fun ecg(): CurationDatabase<ECGConfig> =
-        read(curationDirectory, ECG_TSV, ECGConfigFactory())
-
-    fun infection(): CurationDatabase<InfectionConfig> =
-        read(curationDirectory, INFECTION_TSV, InfectionConfigFactory())
-
-    fun nonOncologicalHistory(curationValidator: CurationValidator): CurationDatabase<NonOncologicalHistoryConfig> =
-        read(curationDirectory, NON_ONCOLOGICAL_HISTORY_TSV, NonOncologicalHistoryConfigFactory(curationValidator))
-
-    fun periodBetweenUnit(): CurationDatabase<PeriodBetweenUnitConfig> =
-        read(curationDirectory, PERIOD_BETWEEN_UNIT_TSV, PeriodBetweenUnitConfigFactory())
-
-    fun toxicity(): CurationDatabase<ToxicityConfig> =
-        read(curationDirectory, INFECTION_TSV, ToxicityConfigFactory())
-
-    fun molecularTest(): CurationDatabase<MolecularTestConfig> =
-        read(curationDirectory, MOLECULAR_TEST_TSV, MolecularTestConfigFactory())
-
-    fun medicationName(): CurationDatabase<MedicationNameConfig> =
-        read(curationDirectory, MEDICATION_NAME_TSV, MedicationNameConfigFactory())
-
-    fun medicationDosage(): CurationDatabase<MedicationDosageConfig> =
-        read(curationDirectory, MEDICATION_DOSAGE_TSV, MedicationDosageConfigFactory())
-
-    fun intolerance(curationValidator: CurationValidator): CurationDatabase<IntoleranceConfig> =
-        read(curationDirectory, INTOLERANCE_TSV, IntoleranceConfigFactory(curationValidator))
-
-    fun cypInteraction(): CurationDatabase<CypInteractionConfig> =
-        read(curationDirectory, CYP_INTERACTIONS_TSV, CypInteractionConfigFactory())
-
-    fun qtProlongating(): CurationDatabase<QTProlongatingConfig> =
-        read(curationDirectory, QT_PROLONGATING_TSV, QTProlongatingConfigFactory())
+class CurationDatabaseReader {
 
     companion object {
         val LOGGER: Logger = LogManager.getLogger(CurationDatabaseReader::class.java)
 
         const val PRIMARY_TUMOR_TSV = "primary_tumor.tsv"
-        private const val ONCOLOGICAL_HISTORY_TSV = "oncological_history.tsv"
-        private const val SECOND_PRIMARY_TSV = "second_primary.tsv"
+        const val ONCOLOGICAL_HISTORY_TSV = "oncological_history.tsv"
+        const val SECOND_PRIMARY_TSV = "second_primary.tsv"
         const val LESION_LOCATION_TSV = "lesion_location.tsv"
         const val NON_ONCOLOGICAL_HISTORY_TSV = "non_oncological_history.tsv"
         const val ECG_TSV = "ecg.tsv"

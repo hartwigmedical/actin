@@ -8,17 +8,25 @@ import com.hartwig.actin.util.ResourceFile
 class MolecularTestConfigFactory : CurationConfigFactory<MolecularTestConfig> {
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<MolecularTestConfig> {
         val ignore = CurationUtil.isIgnoreString(parts[fields["test"]!!])
+        val (priorMolecularTest, validationErrors) = curateObject(fields, parts)
         return ValidatedCurationConfig(
             MolecularTestConfig(
                 input = parts[fields["input"]!!],
                 ignore = ignore,
-                curated = if (!ignore) curateObject(fields, parts) else null
-            )
+                curated = if (!ignore) {
+                    priorMolecularTest
+                } else null
+            ), validationErrors
         )
     }
 
-    companion object {
-        private fun curateObject(fields: Map<String, Int>, parts: Array<String>): PriorMolecularTest {
+    private fun curateObject(
+        fields: Map<String, Int>,
+        parts: Array<String>
+    ): Pair<PriorMolecularTest?, List<CurationConfigValidationError>> {
+        val impliesPotentialIndeterminateStatusInput = parts[fields["impliesPotentialIndeterminateStatus"]!!]
+        val impliesPotentialIndeterminateStatus = impliesPotentialIndeterminateStatusInput.toValidatedBoolean()
+        return impliesPotentialIndeterminateStatus?.let {
             return ImmutablePriorMolecularTest.builder()
                 .test(parts[fields["test"]!!])
                 .item(parts[fields["item"]!!])
@@ -27,8 +35,12 @@ class MolecularTestConfigFactory : CurationConfigFactory<MolecularTestConfig> {
                 .scoreValuePrefix(ResourceFile.optionalString(parts[fields["scoreValuePrefix"]!!]))
                 .scoreValue(ResourceFile.optionalNumber(parts[fields["scoreValue"]!!]))
                 .scoreValueUnit(ResourceFile.optionalString(parts[fields["scoreValueUnit"]!!]))
-                .impliesPotentialIndeterminateStatus(ResourceFile.bool(parts[fields["impliesPotentialIndeterminateStatus"]!!]))
-                .build()
-        }
+                .impliesPotentialIndeterminateStatus(it).build() to emptyList()
+        } ?: (null to listOf(
+            CurationConfigValidationError(
+                "impliesPotentialIndeterminateStatus was configured with an invalid value of '$impliesPotentialIndeterminateStatusInput' " +
+                        "for input '${parts[fields["input"]!!]}'"
+            )
+        ))
     }
 }

@@ -20,6 +20,7 @@ import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.MedicationStatus
 import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
 import com.hartwig.actin.clinical.feed.TestFeedFactory
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
@@ -31,7 +32,7 @@ private const val KNOWN_MEDICATION_NAME = "A en B"
 
 class MedicationExtractorTest {
     private val extractor =
-        MedicationExtractor(TestCurationFactory.createProperTestCurationDatabase(), TestAtcFactory.createProperAtcModel())
+        MedicationExtractor(mockk(), mockk(), mockk(), mockk(), mockk(), mockk(), mockk(), TestAtcFactory.createProperAtcModel())
 
     @Test
     fun `Should extract all medication fields`() {

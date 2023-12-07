@@ -1,9 +1,9 @@
 package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.clinical.curation.CurationUtil
-import com.hartwig.actin.clinical.curation.CurationValidator
+import com.hartwig.actin.clinical.curation.CurationDoidValidator
 
-class IntoleranceConfigFactory(private val curationValidator: CurationValidator) : CurationConfigFactory<IntoleranceConfig> {
+class IntoleranceConfigFactory(private val curationDoidValidator: CurationDoidValidator) : CurationConfigFactory<IntoleranceConfig> {
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<IntoleranceConfig> {
         val input = parts[fields["input"]!!]
         val doids = CurationUtil.toDOIDs(parts[fields["doids"]!!])
@@ -11,7 +11,7 @@ class IntoleranceConfigFactory(private val curationValidator: CurationValidator)
         return ValidatedCurationConfig(
             IntoleranceConfig(input = input, name = parts[fields["name"]!!], doids = doids),
             if (!input.equals(INTOLERANCE_INPUT_TO_IGNORE_FOR_DOID_CURATION, ignoreCase = true)
-                && !curationValidator.isValidDiseaseDoidSet(doids)
+                && !curationDoidValidator.isValidDiseaseDoidSet(doids)
             ) {
                 listOf(
                     CurationConfigValidationError(

@@ -1,13 +1,13 @@
 package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.clinical.curation.CurationUtil
-import com.hartwig.actin.clinical.curation.CurationValidator
+import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.TumorStatus
 import com.hartwig.actin.util.ResourceFile
 
-class SecondPrimaryConfigFactory(private val curationValidator: CurationValidator) : CurationConfigFactory<SecondPrimaryConfig> {
+class SecondPrimaryConfigFactory(private val curationDoidValidator: CurationDoidValidator) : CurationConfigFactory<SecondPrimaryConfig> {
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<SecondPrimaryConfig> {
         val input = parts[fields["input"]!!]
         val ignore = CurationUtil.isIgnoreString(parts[fields["name"]!!])
@@ -18,7 +18,7 @@ class SecondPrimaryConfigFactory(private val curationValidator: CurationValidato
                 input = input,
                 ignore = ignore,
                 curated = if (!ignore) curatedPriorSecondPrimary(fields, parts, doids) else null
-            ), if (!curationValidator.isValidCancerDoidSet(doids)) {
+            ), if (!curationDoidValidator.isValidCancerDoidSet(doids)) {
                 listOf(CurationConfigValidationError("Second primary config with input '$input' contains at least one invalid doid: '$doids')"))
             } else emptyList()
         )

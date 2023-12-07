@@ -52,12 +52,12 @@ data class CurationResponse<T>(
         }
 
         fun createFromTranslation(
-            translation: Translation?,
+            translation: Translation<String>?,
             patientId: String,
             curationCategory: CurationCategory,
             inputText: String,
             translationType: String
-        ): CurationResponse<Translation> {
+        ): CurationResponse<Translation<String>> {
             val foundTranslations = setOfNotNull(translation)
             val warnings = if (translation != null) emptySet() else setOf(
                 CurationWarning(

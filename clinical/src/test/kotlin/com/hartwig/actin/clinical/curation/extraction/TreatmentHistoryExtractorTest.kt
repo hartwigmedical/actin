@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.TestCurationFactory.emptyQuestionnaire
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -19,7 +20,7 @@ class TreatmentHistoryExtractorTest {
             otherOncologicalHistory = listOf(CANNOT_CURATE)
         )
 
-        val (treatmentHistory, evaluation) = TreatmentHistoryExtractor(TestCurationFactory.createProperTestCurationDatabase()).extract(
+        val (treatmentHistory, evaluation) = TreatmentHistoryExtractor(mockk(), mockk()).extract(
             PATIENT_ID,
             questionnaire
         )

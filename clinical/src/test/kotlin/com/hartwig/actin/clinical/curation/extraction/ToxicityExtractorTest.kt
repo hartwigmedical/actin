@@ -6,6 +6,7 @@ import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
@@ -14,7 +15,7 @@ private const val PATIENT_ID = "patient1"
 private const val CANNOT_CURATE = "cannot curate"
 
 class ToxicityExtractorTest {
-    private val extractor = ToxicityExtractor(TestCurationFactory.createProperTestCurationDatabase())
+    private val extractor = ToxicityExtractor(mockk(), mockk())
 
     @Test
     fun `Should curate questionnaire toxicities`() {

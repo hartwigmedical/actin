@@ -3,36 +3,77 @@ package com.hartwig.actin.clinical.curation.config
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication
-import com.hartwig.actin.util.ResourceFile
 
 class ComplicationConfigFactory : CurationConfigFactory<ComplicationConfig> {
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<ComplicationConfig> {
         val ignore = CurationUtil.isIgnoreString(parts[fields["name"]!!])
         val impliesUnknownComplicationState = parts[fields["impliesUnknownComplicationState"]!!].toValidatedBoolean()
-        return ValidatedCurationConfig(
-            ComplicationConfig(
-                input = parts[fields["input"]!!],
-                ignore = ignore,
-                impliesUnknownComplicationState = impliesUnknownComplicationState,
-                curated = if (!ignore) toCuratedComplication(fields, parts) else null
-            ),
-            impliesUnknownComplicationState?.let {
-                listOf(
-                    CurationConfigValidationError(
-                        "impliesComplicationState had invalid input of [${parts[fields["impliesUnknownComplicationState"]!!]}]"
-                    )
-                )
-            } ?: emptyList())
+        val (curatedComplication, complicationValidationErrors) = toCuratedComplication(fields, parts)
+        return createValidatedCurationConfig(
+            ignore,
+            impliesUnknownComplicationState,
+            curatedComplication,
+            complicationValidationErrors,
+            fields,
+            parts
+        )
     }
 
-    companion object {
-        private fun toCuratedComplication(fields: Map<String, Int>, parts: Array<String>): Complication {
-            return ImmutableComplication.builder()
-                .name(parts[fields["name"]!!])
-                .categories(CurationUtil.toCategories(parts[fields["categories"]!!]))
-                .year(ResourceFile.optionalInteger(parts[fields["year"]!!]))
-                .month(ResourceFile.optionalInteger(parts[fields["month"]!!]))
-                .build()
-        }
+    private fun createValidatedCurationConfig(
+        ignore: Boolean,
+        impliesUnknownComplicationState: Boolean?,
+        curatedComplication: Complication?,
+        complicationValidationErrors: List<CurationConfigValidationError>,
+        fields: Map<String, Int>,
+        parts: Array<String>
+    ): ValidatedCurationConfig<ComplicationConfig> {
+
+        val complicationConfig = ComplicationConfig(
+            input = parts[fields["input"]!!],
+            ignore = ignore,
+            impliesUnknownComplicationState = impliesUnknownComplicationState,
+            curated = if (!ignore) curatedComplication else null
+        )
+
+        val errors = if (impliesUnknownComplicationState == null)
+            listOf(
+                CurationConfigValidationError(
+                    "impliesComplicationState had invalid value of '${parts[fields["impliesUnknownComplicationState"]!!]}' for input " +
+                            "'${parts[fields["input"]!!]}"
+                )
+            ) + complicationValidationErrors
+        else
+            complicationValidationErrors
+
+        return ValidatedCurationConfig(complicationConfig, errors)
+    }
+}
+
+private fun toCuratedComplication(
+    fields: Map<String, Int>,
+    parts: Array<String>
+): Pair<Complication, List<CurationConfigValidationError>> {
+    val (year, yearValidationErrors) = validatedInteger("year", fields, parts)
+    val (month, monthValidationErrors) = validatedInteger("month", fields, parts)
+    return ImmutableComplication.builder()
+        .name(parts[fields["name"]!!])
+        .categories(CurationUtil.toCategories(parts[fields["categories"]!!]))
+        .year(year)
+        .month(month)
+        .build() to (yearValidationErrors + monthValidationErrors)
+}
+
+private fun validatedInteger(
+    fieldName: String,
+    fields: Map<String, Int>,
+    parts: Array<String>
+): Pair<Int?, List<CurationConfigValidationError>> {
+    val fieldIndex = fields[fieldName]!!
+    val fieldValue = parts[fieldIndex]
+    return if (fieldValue.isNotEmpty()) {
+        fieldValue.toIntOrNull()?.let { it to emptyList() }
+            ?: (null to listOf(CurationConfigValidationError("'$fieldName' had invalid input of '$fieldValue'")))
+    } else {
+        null to emptyList()
     }
 }

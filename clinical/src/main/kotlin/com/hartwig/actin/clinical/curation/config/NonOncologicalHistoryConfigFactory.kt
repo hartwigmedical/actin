@@ -1,12 +1,12 @@
 package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.clinical.curation.CurationUtil
-import com.hartwig.actin.clinical.curation.CurationValidator
+import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.util.ResourceFile
 
-class NonOncologicalHistoryConfigFactory(private val curationValidator: CurationValidator) :
+class NonOncologicalHistoryConfigFactory(private val curationDoidValidator: CurationDoidValidator) :
     CurationConfigFactory<NonOncologicalHistoryConfig> {
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<NonOncologicalHistoryConfig> {
         val input = parts[fields["input"]!!]
@@ -38,20 +38,30 @@ class NonOncologicalHistoryConfigFactory(private val curationValidator: Curation
     ): Pair<PriorOtherCondition?, List<CurationConfigValidationError>> {
         return if (!isLVEF(fields, parts)) {
             val doids = CurationUtil.toDOIDs(parts[fields["doids"]!!])
+            val isContraindicationForTherapy = parts[fields["isContraindicationForTherapy"]!!].toValidatedBoolean()
             ImmutablePriorOtherCondition.builder()
                 .name(parts[fields["name"]!!])
                 .year(ResourceFile.optionalInteger(parts[fields["year"]!!]))
                 .month(ResourceFile.optionalInteger(parts[fields["month"]!!]))
                 .doids(doids)
                 .category(parts[fields["category"]!!])
-                .isContraindicationForTherapy(ResourceFile.bool(parts[fields["isContraindicationForTherapy"]!!]))
-                .build() to if (!curationValidator.isValidDiseaseDoidSet(doids)) {
-                listOf(CurationConfigValidationError("Non-oncological history config with input '$input' contains at least one invalid doid: '$doids'"))
-            } else emptyList()
+                .isContraindicationForTherapy(isContraindicationForTherapy ?: false)
+                .build() to validationErrors(doids, isContraindicationForTherapy, input)
         } else {
             null to emptyList()
         }
     }
+
+    private fun validationErrors(
+        doids: Set<String>,
+        isContraindicationForTherapy: Boolean?,
+        input: String
+    ) = if (!curationDoidValidator.isValidDiseaseDoidSet(doids)) {
+        listOf(CurationConfigValidationError("Non-oncological history config with input '$input' contains at least one invalid doid: '$doids'"))
+    } else emptyList<CurationConfigValidationError>() + if (isContraindicationForTherapy == null) {
+        listOf(CurationConfigValidationError("isContraindicationForTherapy was not a valid boolean in input '$input'"))
+    } else emptyList()
+
 
     private fun toCuratedLVEF(fields: Map<String, Int>, parts: Array<String>, lvefValue: Double?): Double? {
         return if (isLVEF(fields, parts)) lvefValue else null

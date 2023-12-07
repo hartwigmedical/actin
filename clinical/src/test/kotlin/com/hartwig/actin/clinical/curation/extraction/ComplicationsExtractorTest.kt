@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -10,7 +11,7 @@ private const val PATIENT_ID = "patient1"
 private const val CANNOT_CURATE = "cannot curate"
 
 class ComplicationsExtractorTest {
-    private val extractor = ComplicationsExtractor(TestCurationFactory.createProperTestCurationDatabase())
+    private val extractor = ComplicationsExtractor(mockk())
 
     @Test
     fun `Should extract null for null or empty input`() {

@@ -3,11 +3,15 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
+import com.hartwig.actin.clinical.curation.config.ToxicityConfigFactory
+import com.hartwig.actin.clinical.curation.translation.ToxicityTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
+import com.hartwig.actin.clinical.curation.translation.TranslationDatabaseReader
 import com.hartwig.actin.clinical.datamodel.ImmutableToxicity
 import com.hartwig.actin.clinical.datamodel.Toxicity
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
@@ -94,5 +98,17 @@ class ToxicityExtractor(
         }
         val notApplicableIndex = value.indexOf(". Not applicable")
         return Integer.valueOf(if (notApplicableIndex > 0) value.substring(0, notApplicableIndex) else value)
+    }
+
+    companion object {
+        fun create(curationDir: String) =
+            ToxicityExtractor(
+                toxicityCuration = CurationDatabaseReader.read(curationDir, CurationDatabaseReader.TOXICITY_TSV, ToxicityConfigFactory()),
+                toxicityTranslation = TranslationDatabaseReader.read(
+                    curationDir,
+                    TranslationDatabaseReader.TOXICITY_TRANSLATION_TSV,
+                    ToxicityTranslationFactory()
+                )
+            )
     }
 }

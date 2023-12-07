@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
@@ -12,7 +13,7 @@ private const val PATIENT_ID = "patient1"
 private const val CANNOT_CURATE = "Cannot curate"
 
 class IntoleranceExtractorTest {
-    private val extractor = IntoleranceExtractor(TestCurationFactory.createProperTestCurationDatabase())
+    private val extractor = IntoleranceExtractor(mockk())
 
     @Test
     fun `Should curate intolerances`() {

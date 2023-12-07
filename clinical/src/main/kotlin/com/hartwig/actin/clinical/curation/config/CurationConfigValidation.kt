@@ -19,7 +19,7 @@ inline fun <reified T : Enum<T>> enumContains(name: String): Boolean {
 
 inline fun <reified T : Enum<T>> enumInvalid(name: String): CurationConfigValidationError {
     return CurationConfigValidationError(
-        "Invalid enum value [$name] for enum [${T::class.simpleName}]. Accepted values are " +
-                "[${enumValues<T>().any { it.name == name }}]"
+        "Invalid enum value '$name' for enum '${T::class.simpleName}'. Accepted values are " +
+                "${enumValues<T>().map { it.name }}"
     )
 }

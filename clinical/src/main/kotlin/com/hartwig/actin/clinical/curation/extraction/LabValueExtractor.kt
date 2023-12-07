@@ -2,10 +2,11 @@ package com.hartwig.actin.clinical.curation.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
-import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.translation.LaboratoryIdentifiers
+import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
+import com.hartwig.actin.clinical.curation.translation.TranslationDatabaseReader
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.sort.LabValueDescendingDateComparator
@@ -38,5 +39,16 @@ class LabValueExtractor(private val labratoryTranslation: TranslationDatabase<La
             }
 
         return extractedValues.copy(extracted = extractedValues.extracted.sortedWith(LabValueDescendingDateComparator()))
+    }
+
+    companion object {
+        fun create(curationDir: String) =
+            LabValueExtractor(
+                labratoryTranslation = TranslationDatabaseReader.read(
+                    curationDir,
+                    TranslationDatabaseReader.LABORATORY_TRANSLATION_TSV,
+                    LaboratoryTranslationFactory()
+                )
+            )
     }
 }

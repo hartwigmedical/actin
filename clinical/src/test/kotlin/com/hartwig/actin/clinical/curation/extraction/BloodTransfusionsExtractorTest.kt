@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
@@ -15,7 +16,7 @@ class BloodTransfusionsExtractorTest {
 
     @Test
     fun `Should translate blood transfusions`() {
-        val extractor = BloodTransfusionsExtractor(TestCurationFactory.createProperTestCurationDatabase())
+        val extractor = BloodTransfusionsExtractor(mockk())
         val inputs = listOf("Product", CANNOT_CURATE)
         val entry = DigitalFileEntry(
             subject = PATIENT_ID,

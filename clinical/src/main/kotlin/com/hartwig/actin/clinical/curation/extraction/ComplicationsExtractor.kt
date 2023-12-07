@@ -3,9 +3,11 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
+import com.hartwig.actin.clinical.curation.config.ComplicationConfigFactory
 import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 
@@ -43,4 +45,14 @@ class ComplicationsExtractor(private val complicationCuration: CurationDatabase<
         return ExtractionResult(curated, curation.extractionEvaluation)
     }
 
+    companion object {
+        fun create(curationDir: String) =
+            ComplicationsExtractor(
+                complicationCuration = CurationDatabaseReader.read(
+                    curationDir,
+                    CurationDatabaseReader.COMPLICATION_TSV,
+                    ComplicationConfigFactory()
+                )
+            )
+    }
 }

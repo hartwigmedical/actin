@@ -4,16 +4,25 @@ import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.CurationUtil.fullTrim
 import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
+import com.hartwig.actin.clinical.curation.config.CypInteractionConfigFactory
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig
+import com.hartwig.actin.clinical.curation.config.MedicationDosageConfigFactory
 import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
+import com.hartwig.actin.clinical.curation.config.MedicationNameConfigFactory
 import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
+import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfigFactory
 import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
+import com.hartwig.actin.clinical.curation.config.QTProlongatingConfigFactory
+import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslationFactory
+import com.hartwig.actin.clinical.curation.translation.DosageUnitTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
+import com.hartwig.actin.clinical.curation.translation.TranslationDatabaseReader
 import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.Dosage
 import com.hartwig.actin.clinical.datamodel.ImmutableDosage
@@ -233,5 +242,47 @@ class MedicationExtractor(
 
     companion object {
         private val LOGGER = LogManager.getLogger(MedicationExtractor::class.java)
+        fun create(
+            curationDir: String,
+            atcModel: AtcModel
+        ) =
+            MedicationExtractor(
+                medicationNameCuration = CurationDatabaseReader.read(
+                    curationDir,
+                    CurationDatabaseReader.MEDICATION_NAME_TSV,
+                    MedicationNameConfigFactory()
+                ),
+                medicationDosageCuration = CurationDatabaseReader.read(
+                    curationDir,
+                    CurationDatabaseReader.MEDICATION_DOSAGE_TSV,
+                    MedicationDosageConfigFactory()
+                ),
+                periodBetweenUnitCuration = CurationDatabaseReader.read(
+                    curationDir,
+                    CurationDatabaseReader.PERIOD_BETWEEN_UNIT_TSV,
+                    PeriodBetweenUnitConfigFactory()
+                ),
+                cypInterationCuration = CurationDatabaseReader.read(
+                    curationDir,
+                    CurationDatabaseReader.CYP_INTERACTIONS_TSV,
+                    CypInteractionConfigFactory()
+                ),
+                qtProlongatingCuration = CurationDatabaseReader.read(
+                    curationDir,
+                    CurationDatabaseReader.QT_PROLONGATING_TSV,
+                    QTProlongatingConfigFactory()
+                ),
+                administrationRouteTranslation = TranslationDatabaseReader.read(
+                    curationDir,
+                    TranslationDatabaseReader.ADMINISTRATION_ROUTE_TRANSLATION_TSV,
+                    AdministrationRouteTranslationFactory()
+                ),
+                dosageUnitTranslation = TranslationDatabaseReader.read(
+                    curationDir,
+                    TranslationDatabaseReader.DOSAGE_UNIT_TRANSLATION_TSV,
+                    DosageUnitTranslationFactory()
+                ),
+                atcModel = atcModel
+            )
     }
 }

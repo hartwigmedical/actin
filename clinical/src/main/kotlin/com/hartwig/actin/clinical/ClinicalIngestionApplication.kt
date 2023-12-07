@@ -3,8 +3,7 @@ package com.hartwig.actin.clinical
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
 import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
-import com.hartwig.actin.clinical.curation.CurationDatabaseReader
-import com.hartwig.actin.clinical.curation.CurationValidator
+import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.extraction.BloodTransfusionsExtractor
 import com.hartwig.actin.clinical.curation.extraction.ClinicalStatusExtractor
 import com.hartwig.actin.clinical.curation.extraction.ComplicationsExtractor
@@ -17,7 +16,6 @@ import com.hartwig.actin.clinical.curation.extraction.PriorSecondPrimaryExtracto
 import com.hartwig.actin.clinical.curation.extraction.ToxicityExtractor
 import com.hartwig.actin.clinical.curation.extraction.TreatmentHistoryExtractor
 import com.hartwig.actin.clinical.curation.extraction.TumorDetailsExtractor
-import com.hartwig.actin.clinical.curation.translation.TranslationDatabaseReader
 import com.hartwig.actin.clinical.feed.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.FeedModel
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
@@ -45,7 +43,7 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
 
         LOGGER.info("Creating clinical curation database from directory {}", config.curationDirectory)
-        val curationValidator = CurationValidator(DoidModelFactory.createFromDoidEntry(doidEntry))
+        val curationDoidValidator = CurationDoidValidator(DoidModelFactory.createFromDoidEntry(doidEntry))
 
         LOGGER.info("Creating ATC model from file {}", config.atcTsv)
         val atcModel = WhoAtcModel.createFromFile(config.atcTsv)
@@ -59,57 +57,24 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
                 )
             )
         )
-        val curationDatabaseReader = CurationDatabaseReader(config.curationDirectory, curationValidator, treatmentDatabase)
-        val translationDatabaseReader = TranslationDatabaseReader(config.curationDirectory)
         val clinicalIngestion = ClinicalIngestion(
             feed = feedModel,
-            priorSecondPrimaryExtractor = PriorSecondPrimaryExtractor(
-                curationDatabaseReader.secondPrimary(),
-                curationDatabaseReader.treatment()
+            priorSecondPrimaryExtractor = PriorSecondPrimaryExtractor.create(
+                config.curationDirectory,
+                curationDoidValidator,
+                treatmentDatabase
             ),
-            tumorDetailsExtractor = TumorDetailsExtractor(
-                curationDatabaseReader.lesionLocation(),
-                curationDatabaseReader.primaryTumor()
-            ),
-            complicationsExtractor = ComplicationsExtractor(
-                curationDatabaseReader.complication()
-            ),
-            clinicalStatusExtractor = ClinicalStatusExtractor(
-                curationDatabaseReader.ecg(),
-                curationDatabaseReader.infection(),
-                curationDatabaseReader.nonOncologicalHistory(curationValidator)
-            ),
-            treatmentHistoryExtractor = TreatmentHistoryExtractor(
-                curationDatabaseReader.treatment(),
-                curationDatabaseReader.secondPrimary()
-            ),
-            bloodTransfusionsExtractor = BloodTransfusionsExtractor(translationDatabaseReader.bloodTransfusions()),
-            priorMolecularTestsExtractor = PriorMolecularTestsExtractor(
-                curationDatabaseReader.molecularTest()
-            ),
-            toxicityExtractor = ToxicityExtractor(
-                curationDatabaseReader.toxicity(),
-                translationDatabaseReader.toxicity()
-            ),
-            intoleranceExtractor = IntoleranceExtractor(
-                curationDatabaseReader.intolerance(curationValidator)
-            ),
-            priorOtherConditionExtractor = PriorOtherConditionsExtractor(
-                curationDatabaseReader.nonOncologicalHistory(curationValidator)
-            ),
-            medicationExtractor = MedicationExtractor(
-                curationDatabaseReader.medicationName(),
-                curationDatabaseReader.medicationDosage(),
-                curationDatabaseReader.periodBetweenUnit(),
-                curationDatabaseReader.cypInteraction(),
-                curationDatabaseReader.qtProlongating(),
-                translationDatabaseReader.administrationRoute(),
-                translationDatabaseReader.dosageUnit(),
-                atcModel
-            ),
-            labValueExtractor = LabValueExtractor(
-                translationDatabaseReader.labratoryTranslation()
-            )
+            tumorDetailsExtractor = TumorDetailsExtractor.create(config.curationDirectory, curationDoidValidator),
+            complicationsExtractor = ComplicationsExtractor.create(config.curationDirectory),
+            clinicalStatusExtractor = ClinicalStatusExtractor.create(config.curationDirectory, curationDoidValidator),
+            treatmentHistoryExtractor = TreatmentHistoryExtractor.create(config.curationDirectory, curationDoidValidator, treatmentDatabase),
+            bloodTransfusionsExtractor = BloodTransfusionsExtractor.create(config.curationDirectory),
+            priorMolecularTestsExtractor = PriorMolecularTestsExtractor.create(config.curationDirectory),
+            toxicityExtractor = ToxicityExtractor.create(config.curationDirectory),
+            intoleranceExtractor = IntoleranceExtractor.create(config.curationDirectory, curationDoidValidator),
+            priorOtherConditionExtractor = PriorOtherConditionsExtractor.create(config.curationDirectory, curationDoidValidator),
+            medicationExtractor = MedicationExtractor.create(config.curationDirectory, atcModel),
+            labValueExtractor = LabValueExtractor.create(config.curationDirectory)
         )
 
 

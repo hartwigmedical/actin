@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -10,7 +11,7 @@ private const val PATIENT_ID = "patient1"
 private const val CANNOT_CURATE = "cannot curate"
 
 class PriorOtherConditionsExtractorTest {
-    private val extractor = PriorOtherConditionsExtractor(TestCurationFactory.createProperTestCurationDatabase())
+    private val extractor = PriorOtherConditionsExtractor(mockk())
 
     @Test
     fun `Should curate prior other conditions`() {

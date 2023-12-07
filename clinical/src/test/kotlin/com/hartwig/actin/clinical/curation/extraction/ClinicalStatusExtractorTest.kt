@@ -7,6 +7,7 @@ import com.hartwig.actin.clinical.datamodel.ECG
 import com.hartwig.actin.clinical.datamodel.ImmutableECG
 import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus
 import com.hartwig.actin.clinical.datamodel.InfectionStatus
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -14,7 +15,7 @@ private const val PATIENT_ID = "patient1"
 private const val NO_CURATION_NEEDED = "No curation needed"
 
 class ClinicalStatusExtractorTest {
-    private val extractor = ClinicalStatusExtractor(TestCurationFactory.createProperTestCurationDatabase())
+    private val extractor = ClinicalStatusExtractor(mockk(), mockk(), mockk())
 
     @Test
     fun `Should extract clinical status`() {

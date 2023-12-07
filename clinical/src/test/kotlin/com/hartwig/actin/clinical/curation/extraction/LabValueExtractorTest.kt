@@ -5,6 +5,7 @@ import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue
 import com.hartwig.actin.clinical.datamodel.LabUnit
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
@@ -26,7 +27,7 @@ class LabValueExtractorTest {
             .isOutsideRef(false)
             .build()
         val rawValues = listOf(labValue, ImmutableLabValue.builder().from(labValue).code(CANNOT_CURATE).name(CANNOT_CURATE).build())
-        val extractor = LabValueExtractor(TestCurationFactory.createProperTestCurationDatabase())
+        val extractor = LabValueExtractor(mockk())
         val (extractedValues, evaluation) = extractor.extract(PATIENT_ID, rawValues)
         assertThat(extractedValues).hasSize(1)
         assertThat(extractedValues[0].code()).isEqualTo("CODE")

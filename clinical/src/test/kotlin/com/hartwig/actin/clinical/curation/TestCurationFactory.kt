@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation
 
+import com.google.common.io.Resources
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
@@ -40,44 +41,12 @@ import org.apache.logging.log4j.util.Strings
 import java.time.LocalDate
 
 private const val PARACETAMOL = "PARACETAMOL"
+val CURATION_DIRECTORY: String = Resources.getResource("curation").path + "/"
 
 object TestCurationFactory {
 
-    fun createMinimalTestCurationDatabaseValidator(): CurationValidator {
-        return CurationValidator(TestDoidModelFactory.createMinimalTestDoidModel())
-    }
-
-    fun createMinimalTestCurationDatabase(): CurationDatabase {
-        return CurationDatabase(
-            emptyList(), emptyMap(), emptyMap(), emptyMap()
-        )
-    }
-
-    fun createProperTestCurationDatabase(): CurationDatabase {
-        return CurationDatabase(
-            validationErrors = emptyList(),
-            configs = configsToMap(createTestPrimaryTumorConfigs()) +
-                    configsToMap(createTestTreatmentHistoryEntryConfigs()) +
-                    configsToMap(createTestSecondPrimaryConfigs()) +
-                    configsToMap(createTestLesionLocationConfigs()) +
-                    configsToMap(createTestNonOncologicalHistoryConfigs()) +
-                    configsToMap(createTestECGConfigs()) +
-                    configsToMap(createTestInfectionConfigs()) +
-                    configsToMap(createTestPeriodBetweenUnitConfigs()) +
-                    configsToMap(createTestComplicationConfigs()) +
-                    configsToMap(createTestToxicityConfigs()) +
-                    configsToMap(createTestMolecularTestConfigs()) +
-                    configsToMap(createTestMedicationNameConfigs()) +
-                    configsToMap(createTestMedicationDosageConfigs()) +
-                    configsToMap(createTestIntoleranceConfigs()) +
-                    configsToMap(createTestCypInteractionConfig()) +
-                    configsToMap(createTestQTProlongingConfigs()),
-            translations = createTestAdministrationRouteTranslations().associateBy { it.input } +
-                    createTestDosageUnitTranslations().associateBy { it.input } +
-                    createTestToxicityTranslations().associateBy { it.input } +
-                    createTestBloodTransfusionTranslations().associateBy { it.input },
-            laboratoryTranslations = createTestLaboratoryTranslations().associateBy { Pair(it.code, it.name) },
-        )
+    fun createMinimalTestCurationDatabaseValidator(): CurationDoidValidator {
+        return CurationDoidValidator(TestDoidModelFactory.createMinimalTestDoidModel())
     }
 
     fun emptyQuestionnaire(): Questionnaire {
@@ -350,7 +319,7 @@ object TestCurationFactory {
         return listOf(IntoleranceConfig(input = "Latex type 1", name = "Latex (type 1)", doids = setOf("0060532")))
     }
 
-    private fun createTestAdministrationRouteTranslations(): List<Translation> {
+    private fun createTestAdministrationRouteTranslations(): List<Translation<String>> {
         return listOf(
             Translation(
                 input = "ignore",
@@ -363,22 +332,22 @@ object TestCurationFactory {
         )
     }
 
-    private fun createTestLaboratoryTranslations(): List<LaboratoryIdentifiers> {
-        return listOf(LaboratoryIdentifiers(code = "CO", translatedCode = "CODE", name = "naam", translatedName = "Name"))
+    private fun createTestLaboratoryTranslations(): List<Translation<LaboratoryIdentifiers>> {
+        return listOf(Translation(LaboratoryIdentifiers(code = "CO", name = "naam"), LaboratoryIdentifiers(code = "CODE", name = "Name")))
     }
 
-    private fun createTestToxicityTranslations(): List<Translation> {
+    private fun createTestToxicityTranslations(): List<Translation<String>> {
         return listOf(Translation(input = "Pijn", translated = "Pain"))
     }
 
-    private fun createTestBloodTransfusionTranslations(): List<Translation> {
+    private fun createTestBloodTransfusionTranslations(): List<Translation<String>> {
         return listOf(
             Translation(input = "Product", translated = "Translated product"),
             Translation(input = "Not used", translated = "never used")
         )
     }
 
-    private fun createTestDosageUnitTranslations(): List<Translation> {
+    private fun createTestDosageUnitTranslations(): List<Translation<String>> {
         return listOf(
             Translation(input = "stuk", translated = "piece"),
             Translation(input = "milligram", translated = "mg")

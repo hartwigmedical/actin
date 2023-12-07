@@ -3,10 +3,14 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
+import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
+import com.hartwig.actin.clinical.curation.config.LesionLocationConfigFactory
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
+import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfigFactory
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorDetails
@@ -127,5 +131,21 @@ class TumorDetailsExtractor(
             return true
         }
         return hasLesion
+    }
+
+    companion object {
+        fun create(curationDir: String, curationDoidValidator: CurationDoidValidator) =
+            TumorDetailsExtractor(
+                lesionLocationCuration = CurationDatabaseReader.read(
+                    curationDir,
+                    CurationDatabaseReader.LESION_LOCATION_TSV,
+                    LesionLocationConfigFactory()
+                ),
+                primaryTumorCuration = CurationDatabaseReader.read(
+                    curationDir,
+                    CurationDatabaseReader.PRIMARY_TUMOR_TSV,
+                    PrimaryTumorConfigFactory(curationDoidValidator)
+                ),
+            )
     }
 }
