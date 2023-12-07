@@ -11,7 +11,7 @@ import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 class HasRestingHeartRateWithinBounds(private val minMedianRestingHeartRate: Double, private val maxMedianRestingHeartRate: Double) :
     EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val heartRates = VitalFunctionSelector.select(
+        val heartRates = VitalFunctionSelector.selectMedianPerDay(
             record.clinical().vitalFunctions(),
             VitalFunctionCategory.HEART_RATE,
             UNIT_TO_SELECT,
@@ -26,13 +26,13 @@ class HasRestingHeartRateWithinBounds(private val minMedianRestingHeartRate: Dou
         val median = VitalFunctionFunctions.determineMedianValue(heartRates)
         return if (median.compareTo(minMedianRestingHeartRate) >= 0 && median.compareTo(maxMedianRestingHeartRate) <= 0) {
             EvaluationFactory.recoverablePass(
-                "Patient has median heart rate between $minMedianRestingHeartRate and $maxMedianRestingHeartRate",
-                "Heart rate within range"
+                "Patient has median heart rate of $median bpm - thus between $minMedianRestingHeartRate and $maxMedianRestingHeartRate",
+                "Median heart rate ($median bpm) within range"
             )
         } else {
             EvaluationFactory.recoverableFail(
                 "Patient does not have median heart rate between $minMedianRestingHeartRate and $maxMedianRestingHeartRate",
-                "Heart rate outside range"
+                "Median heart rate ($median bpm) outside range"
             )
         }
     }
