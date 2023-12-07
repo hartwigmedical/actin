@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
-import java.util.Locale
+import java.util.*
 
 class LesionLocationConfigFactory : CurationConfigFactory<LesionLocationConfig> {
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<LesionLocationConfig> {

@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical
 
 import com.google.common.annotations.VisibleForTesting
-import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.extraction.BloodTransfusionsExtractor
 import com.hartwig.actin.clinical.curation.extraction.ClinicalStatusExtractor
 import com.hartwig.actin.clinical.curation.extraction.ComplicationsExtractor
