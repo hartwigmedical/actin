@@ -7,11 +7,11 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryDe
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage
 
-private data class NullableYearMonth(val year: Int?, val month: Int?)
-
 object TreatmentHistoryEntryFunctions {
+    private data class NullableYearMonth(val year: Int?, val month: Int?)
+
     private val nullSafeComparator = Comparator.nullsLast(Comparator.naturalOrder<Int>())
-    private val yearMonthComparatorNullsLast = Comparator.comparing(TreatmentStage::startYear, nullSafeComparator)
+    private val stageDateComparatorNullsLast = Comparator.comparing(TreatmentStage::startYear, nullSafeComparator)
         .thenComparing(TreatmentStage::startMonth, nullSafeComparator)
 
     fun fullTreatmentDisplay(entry: TreatmentHistoryEntry): String {
@@ -30,9 +30,8 @@ object TreatmentHistoryEntryFunctions {
         entry: TreatmentHistoryEntry, predicate: (Treatment) -> Boolean
     ): TreatmentHistoryEntry? {
         val initialTreatmentStageMatches = entry.treatments().any(predicate)
-        val additionalTreatmentStages = (entry.treatmentHistoryDetails()?.switchToTreatments() ?: emptyList()) + listOfNotNull(
-            entry.treatmentHistoryDetails()?.maintenanceTreatment()
-        )
+        val details = entry.treatmentHistoryDetails()
+        val additionalTreatmentStages = (details?.switchToTreatments() ?: emptyList()) + listOfNotNull(details?.maintenanceTreatment())
 
         val matchingAdditionalStages = dropNonMatchingStagesFromStartAndEnd(additionalTreatmentStages, predicate)
 
@@ -41,7 +40,7 @@ object TreatmentHistoryEntryFunctions {
                 Triple(
                     entry.treatments(),
                     NullableYearMonth(entry.startYear(), entry.startMonth()),
-                    listOfNotNull(entry.treatmentHistoryDetails()?.cycles())
+                    listOfNotNull(details?.cycles())
                 )
             } else {
                 Triple(emptySet(), firstStartYearAndMonthFromStageList(matchingAdditionalStages), emptyList())
@@ -49,7 +48,7 @@ object TreatmentHistoryEntryFunctions {
 
             val matchingStageStopYearAndMonth =
                 startYearAndMonthOfFirstTrailingNonMatchingStage(additionalTreatmentStages, predicate)
-                    ?: NullableYearMonth(entry.treatmentHistoryDetails()!!.stopYear(), entry.treatmentHistoryDetails()!!.stopMonth())
+                    ?: NullableYearMonth(details?.stopYear(), details?.stopMonth())
 
             createSubEntryWithMatchingTreatmentsAndDatesAndCycles(
                 entry,
@@ -59,15 +58,12 @@ object TreatmentHistoryEntryFunctions {
                 sumOrNullIfEmpty(matchingAdditionalStages.mapNotNull(TreatmentStage::cycles) + initialMatchingCycles)
             )
         } else if (initialTreatmentStageMatches) {
-            val details = if (additionalTreatmentStages.isEmpty()) entry.treatmentHistoryDetails() else {
+            val newDetails = if (additionalTreatmentStages.isEmpty()) details else {
                 val stopYearAndMonth = firstStartYearAndMonthFromStageList(additionalTreatmentStages)
-
-                createTreatmentHistoryDetailsWithMatchingDateAndCycles(
-                    entry.treatmentHistoryDetails(), stopYearAndMonth, entry.treatmentHistoryDetails()?.cycles()
-                )
+                createTreatmentHistoryDetailsWithMatchingDateAndCycles(details, stopYearAndMonth, details?.cycles())
             }
 
-            ImmutableTreatmentHistoryEntry.copyOf(entry).withTreatmentHistoryDetails(details)
+            ImmutableTreatmentHistoryEntry.copyOf(entry).withTreatmentHistoryDetails(newDetails)
         } else {
             null
         }
@@ -76,7 +72,7 @@ object TreatmentHistoryEntryFunctions {
     private fun sumOrNullIfEmpty(list: List<Int>) = if (list.isEmpty()) null else list.sum()
 
     private fun firstStartYearAndMonthFromStageList(additionalTreatmentStages: List<TreatmentStage>): NullableYearMonth {
-        return additionalTreatmentStages.minWith(yearMonthComparatorNullsLast).let { NullableYearMonth(it.startYear(), it.startMonth()) }
+        return additionalTreatmentStages.minWith(stageDateComparatorNullsLast).let { NullableYearMonth(it.startYear(), it.startMonth()) }
     }
 
     private fun startYearAndMonthOfFirstTrailingNonMatchingStage(
