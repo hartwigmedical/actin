@@ -155,11 +155,12 @@ class TreatmentHistoryEntryConfigFactoryTest {
         val config = factory.create(fields, parts)
         assertThat(config.input).isEqualTo(input)
         assertThat(config.ignore).isFalse
-        assertThat(config.curated).isNotNull
+        val curated = config.curated
+        assertThat(curated).isNotNull
 
-        val treatments = config.curated!!.treatments()
+        val treatments = curated!!.treatments()
         assertThat(treatments).containsExactly(treatmentDatabase.findTreatmentByName(TestTreatmentDatabaseFactory.RADIOTHERAPY))
-        val treatmentDetails = config.curated.treatmentHistoryDetails()!!
+        val treatmentDetails = curated.treatmentHistoryDetails()!!
         assertThat(treatmentDetails.switchToTreatments()).containsExactly(
             ImmutableTreatmentStage.builder()
                 .treatment(treatmentDatabase.findTreatmentByName(TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN)!!)
