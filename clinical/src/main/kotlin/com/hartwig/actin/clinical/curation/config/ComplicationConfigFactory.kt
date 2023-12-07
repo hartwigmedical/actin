@@ -53,27 +53,12 @@ private fun toCuratedComplication(
     fields: Map<String, Int>,
     parts: Array<String>
 ): Pair<Complication, List<CurationConfigValidationError>> {
-    val (year, yearValidationErrors) = validatedInteger("year", fields, parts)
-    val (month, monthValidationErrors) = validatedInteger("month", fields, parts)
+    val (year, yearValidationErrors) = validateInteger("year", fields, parts)
+    val (month, monthValidationErrors) = validateInteger("month", fields, parts)
     return ImmutableComplication.builder()
         .name(parts[fields["name"]!!])
         .categories(CurationUtil.toCategories(parts[fields["categories"]!!]))
         .year(year)
         .month(month)
         .build() to (yearValidationErrors + monthValidationErrors)
-}
-
-private fun validatedInteger(
-    fieldName: String,
-    fields: Map<String, Int>,
-    parts: Array<String>
-): Pair<Int?, List<CurationConfigValidationError>> {
-    val fieldIndex = fields[fieldName]!!
-    val fieldValue = parts[fieldIndex]
-    return if (fieldValue.isNotEmpty()) {
-        fieldValue.toIntOrNull()?.let { it to emptyList() }
-            ?: (null to listOf(CurationConfigValidationError("'$fieldName' had invalid input of '$fieldValue'")))
-    } else {
-        null to emptyList()
-    }
 }
