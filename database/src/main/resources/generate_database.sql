@@ -47,7 +47,7 @@ CREATE TABLE `clinicalStatus`
     `activeInfectionDescription` varchar(50),
     `hasToxicitiesGrade2` BOOLEAN,
     `hasSigAberrationLatestECG` BOOLEAN,
-    `ecgAberrationDescription` varchar(50),
+    `ecgAberrationDescription` varchar(120),
     `qtcfValue` int,
     `qtcfUnit` varchar(50),
     `jtcValue` int,
