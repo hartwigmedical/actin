@@ -7,69 +7,12 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryDe
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage
 
+private data class NullableYearMonth(val year: Int?, val month: Int?)
+
 object TreatmentHistoryEntryFunctions {
-    private val yearMonthComparatorNullsFirst = nullableYearMonthComparator(Comparator.nullsFirst(Comparator.naturalOrder<Int>()))
-    private val yearMonthComparatorNullsLast = nullableYearMonthComparator(Comparator.nullsLast(Comparator.naturalOrder<Int>()))
-
-    fun portionOfTreatmentHistoryEntryMatchingPredicate(
-        entry: TreatmentHistoryEntry,
-        predicate: (Treatment) -> Boolean
-    ): TreatmentHistoryEntry? {
-        val baseMatches = entry.treatments().any(predicate)
-        val additionalStages = entry.treatmentHistoryDetails()?.let { details ->
-            listOfNotNull(details.switchToTreatments(), listOfNotNull(details.maintenanceTreatment())).flatten()
-        } ?: emptyList()
-
-        val matchingStages = additionalStages.dropWhile { !predicate.invoke(it.treatment()) }
-            .dropLastWhile { !predicate.invoke(it.treatment()) }
-
-        return if (matchingStages.isNotEmpty()) {
-            val (matchingStageStopYear, matchingStageStopMonth) = additionalStages.takeLastWhile { !predicate.invoke(it.treatment()) }
-                .maxWithOrNull(yearMonthComparatorNullsFirst)
-                ?.let { Pair(it.startYear(), it.startMonth()) }
-                ?: entry.treatmentHistoryDetails()!!.let { details -> Pair(details.stopYear(), details.stopMonth()) }
-
-            val knownStageCycles = matchingStages.mapNotNull(TreatmentStage::cycles).ifEmpty { null }?.sum()
-
-            if (!baseMatches) {
-                val (matchingStageStartYear, matchingStageStartMonth) = matchingStages.minWith(yearMonthComparatorNullsLast)
-                    .let { Pair(it.startYear(), it.startMonth()) }
-                overrideEntry(
-                    entry,
-                    matchingStages.map(TreatmentStage::treatment),
-                    matchingStageStartYear,
-                    matchingStageStartMonth,
-                    matchingStageStopYear,
-                    matchingStageStopMonth,
-                    knownStageCycles
-                )
-            } else {
-                val knownCycles = listOfNotNull(knownStageCycles, entry.treatmentHistoryDetails()?.cycles()).ifEmpty { null }?.sum()
-                overrideEntry(
-                    entry,
-                    matchingStages.map(TreatmentStage::treatment) + entry.treatments(),
-                    entry.startYear(),
-                    entry.startMonth(),
-                    matchingStageStopYear,
-                    matchingStageStopMonth,
-                    knownCycles
-                )
-            }
-        } else if (baseMatches) {
-            val details = if (additionalStages.isEmpty()) entry.treatmentHistoryDetails() else {
-                val (stopYear, stopMonth) = additionalStages.minWith(yearMonthComparatorNullsLast)
-                    .let { Pair(it.startYear(), it.startMonth()) }
-
-                overrideTreatmentHistoryDetails(
-                    entry.treatmentHistoryDetails(), stopYear, stopMonth, entry.treatmentHistoryDetails()?.cycles()
-                )
-            }
-
-            ImmutableTreatmentHistoryEntry.copyOf(entry).withTreatmentHistoryDetails(details)
-        } else {
-            null
-        }
-    }
+    private val nullSafeComparator = Comparator.nullsLast(Comparator.naturalOrder<Int>())
+    private val yearMonthComparatorNullsLast = Comparator.comparing(TreatmentStage::startYear, nullSafeComparator)
+        .thenComparing(TreatmentStage::startMonth, nullSafeComparator)
 
     fun fullTreatmentDisplay(entry: TreatmentHistoryEntry): String {
         return entry.treatmentHistoryDetails()?.let { details ->
@@ -83,38 +26,97 @@ object TreatmentHistoryEntryFunctions {
         } ?: entry.treatmentDisplay()
     }
 
-    private fun overrideTreatmentHistoryDetails(
-        details: TreatmentHistoryDetails?, stopYear: Int?, stopMonth: Int?, cycles: Int?
+    fun portionOfTreatmentHistoryEntryMatchingPredicate(
+        entry: TreatmentHistoryEntry, predicate: (Treatment) -> Boolean
+    ): TreatmentHistoryEntry? {
+        val initialTreatmentStageMatches = entry.treatments().any(predicate)
+        val additionalTreatmentStages = (entry.treatmentHistoryDetails()?.switchToTreatments() ?: emptyList()) + listOfNotNull(
+            entry.treatmentHistoryDetails()?.maintenanceTreatment()
+        )
+
+        val matchingAdditionalStages = dropNonMatchingStagesFromStartAndEnd(additionalTreatmentStages, predicate)
+
+        return if (matchingAdditionalStages.isNotEmpty()) {
+            val (initialMatchingTreatments, matchStartYearAndMonth, initialMatchingCycles) = if (initialTreatmentStageMatches) {
+                Triple(
+                    entry.treatments(),
+                    NullableYearMonth(entry.startYear(), entry.startMonth()),
+                    listOfNotNull(entry.treatmentHistoryDetails()?.cycles())
+                )
+            } else {
+                Triple(emptySet(), firstStartYearAndMonthFromStageList(matchingAdditionalStages), emptyList())
+            }
+
+            val matchingStageStopYearAndMonth =
+                startYearAndMonthOfFirstTrailingNonMatchingStage(additionalTreatmentStages, predicate)
+                    ?: NullableYearMonth(entry.treatmentHistoryDetails()!!.stopYear(), entry.treatmentHistoryDetails()!!.stopMonth())
+
+            createSubEntryWithMatchingTreatmentsAndDatesAndCycles(
+                entry,
+                matchingAdditionalStages.map(TreatmentStage::treatment) + initialMatchingTreatments,
+                matchStartYearAndMonth,
+                matchingStageStopYearAndMonth,
+                sumOrNullIfEmpty(matchingAdditionalStages.mapNotNull(TreatmentStage::cycles) + initialMatchingCycles)
+            )
+        } else if (initialTreatmentStageMatches) {
+            val details = if (additionalTreatmentStages.isEmpty()) entry.treatmentHistoryDetails() else {
+                val stopYearAndMonth = firstStartYearAndMonthFromStageList(additionalTreatmentStages)
+
+                createTreatmentHistoryDetailsWithMatchingDateAndCycles(
+                    entry.treatmentHistoryDetails(), stopYearAndMonth, entry.treatmentHistoryDetails()?.cycles()
+                )
+            }
+
+            ImmutableTreatmentHistoryEntry.copyOf(entry).withTreatmentHistoryDetails(details)
+        } else {
+            null
+        }
+    }
+
+    private fun sumOrNullIfEmpty(list: List<Int>) = if (list.isEmpty()) null else list.sum()
+
+    private fun firstStartYearAndMonthFromStageList(additionalTreatmentStages: List<TreatmentStage>): NullableYearMonth {
+        return additionalTreatmentStages.minWith(yearMonthComparatorNullsLast).let { NullableYearMonth(it.startYear(), it.startMonth()) }
+    }
+
+    private fun startYearAndMonthOfFirstTrailingNonMatchingStage(
+        additionalStages: List<TreatmentStage>, predicate: (Treatment) -> Boolean
+    ): NullableYearMonth? {
+        val trailingNonMatchingStages = additionalStages.takeLastWhile { !predicate.invoke(it.treatment()) }
+        return if (trailingNonMatchingStages.isEmpty()) null else firstStartYearAndMonthFromStageList(trailingNonMatchingStages)
+    }
+
+    private fun dropNonMatchingStagesFromStartAndEnd(
+        additionalStages: List<TreatmentStage>, predicate: (Treatment) -> Boolean
+    ) = additionalStages.dropWhile { !predicate.invoke(it.treatment()) }
+        .dropLastWhile { !predicate.invoke(it.treatment()) }
+
+    private fun createTreatmentHistoryDetailsWithMatchingDateAndCycles(
+        details: TreatmentHistoryDetails?, stopYearMonth: NullableYearMonth, cycles: Int?
     ): ImmutableTreatmentHistoryDetails {
         return details?.let {
             ImmutableTreatmentHistoryDetails.copyOf(it)
-                .withStopYear(stopYear)
-                .withStopMonth(stopMonth)
+                .withStopYear(stopYearMonth.year)
+                .withStopMonth(stopYearMonth.month)
                 .withMaintenanceTreatment(null)
                 .withSwitchToTreatments(emptyList())
                 .withCycles(cycles)
-        } ?: ImmutableTreatmentHistoryDetails.builder().stopYear(stopYear).stopMonth(stopMonth).cycles(cycles).build()
+        } ?: ImmutableTreatmentHistoryDetails.builder().stopYear(stopYearMonth.year).stopMonth(stopYearMonth.month).cycles(cycles).build()
     }
 
-    private fun overrideEntry(
+    private fun createSubEntryWithMatchingTreatmentsAndDatesAndCycles(
         entry: TreatmentHistoryEntry,
         treatments: List<Treatment>,
-        startYear: Int?,
-        startMonth: Int?,
-        stopYear: Int?,
-        stopMonth: Int?,
+        startYearMonth: NullableYearMonth,
+        stopYearMonth: NullableYearMonth,
         cycles: Int?
     ): ImmutableTreatmentHistoryEntry {
         return ImmutableTreatmentHistoryEntry.copyOf(entry)
             .withTreatments(treatments)
-            .withStartYear(startYear)
-            .withStartMonth(startMonth)
+            .withStartYear(startYearMonth.year)
+            .withStartMonth(startYearMonth.month)
             .withTreatmentHistoryDetails(
-                overrideTreatmentHistoryDetails(entry.treatmentHistoryDetails(), stopYear, stopMonth, cycles)
+                createTreatmentHistoryDetailsWithMatchingDateAndCycles(entry.treatmentHistoryDetails(), stopYearMonth, cycles)
             )
     }
-
-    private fun nullableYearMonthComparator(nullSafeComparator: java.util.Comparator<Int?>): java.util.Comparator<TreatmentStage> =
-        Comparator.comparing(TreatmentStage::startYear, nullSafeComparator)
-            .thenComparing(TreatmentStage::startMonth, nullSafeComparator)
 }
