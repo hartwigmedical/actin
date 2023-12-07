@@ -8,15 +8,11 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class MeetsSpecificCriteriaRegardingBrainMetastases : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        var hasBrainMetastases = record.clinical().tumor().hasBrainLesions()
+        val hasBrainMetastases = record.clinical().tumor().hasBrainLesions()
         val hasActiveBrainMetastases = record.clinical().tumor().hasActiveBrainLesions()
         val hasCNSLesions = record.clinical().tumor().hasCnsLesions()
 
-        // If a patient is known to have active brain metastases, update has brain metastases to true if null or false
-        if (hasActiveBrainMetastases == true) {
-            hasBrainMetastases = true
-        }
-
+        // We assume that if a patient has active brain metastases, hasBrainMetastases is allowed to be (theoretically) null/false
         return if (hasActiveBrainMetastases == true) {
             EvaluationFactory.undetermined(
                 "Patient has brain metastases that are considered active, undetermined if these meet the specific protocol criteria",
