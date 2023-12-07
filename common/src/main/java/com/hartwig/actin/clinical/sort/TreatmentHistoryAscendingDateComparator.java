@@ -15,12 +15,31 @@ public class TreatmentHistoryAscendingDateComparator implements Comparator<Treat
     public int compare(@NotNull TreatmentHistoryEntry entry1, @NotNull TreatmentHistoryEntry entry2) {
         Comparator<Integer> nullSafeComparator = Comparator.nullsLast(Comparator.naturalOrder());
 
+        if (stopsBeforeWithNullStart(entry1, entry2)) {
+            return -1;
+        } else if (stopsBeforeWithNullStart(entry2, entry1)) {
+            return 1;
+        }
         return Comparator.comparing(TreatmentHistoryEntry::startYear, nullSafeComparator)
                 .thenComparing(TreatmentHistoryEntry::startMonth, nullSafeComparator)
                 .thenComparing(TreatmentHistoryAscendingDateComparator::stopYearForHistoryEntry, nullSafeComparator)
                 .thenComparing(TreatmentHistoryAscendingDateComparator::stopMonthForHistoryEntry, nullSafeComparator)
                 .thenComparing(TreatmentHistoryEntry::treatmentName)
                 .compare(entry1, entry2);
+    }
+
+    private static boolean stopsBeforeWithNullStart(@NotNull TreatmentHistoryEntry entryA, @NotNull TreatmentHistoryEntry entryB) {
+        Integer startYearA = entryA.startYear();
+        Integer stopYearA = stopYearForHistoryEntry(entryA);
+        Integer stopMonthA = stopMonthForHistoryEntry(entryA);
+        Integer startYearB = entryB.startYear();
+        Integer startMonthB = entryB.startMonth();
+
+        if (startYearA == null && stopYearA != null && startYearB != null) {
+            return startYearB > stopYearA || (startYearB.equals(stopYearA) && (startMonthB == null || stopMonthA == null
+                    || startMonthB >= stopMonthA));
+        }
+        return false;
     }
 
     @Nullable

@@ -216,15 +216,27 @@ public final class TestClinicalFactory {
                 ImmutableTreatmentHistoryEntry.builder().addTreatments(ImmutableDrugTreatment.builder().name("Therapy").build()).build();
 
         TreatmentHistoryEntry hasStartYearHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
-                .startYear(2020)
+                .startYear(2019)
                 .addTreatments(ImmutableDrugTreatment.builder().name("Therapy1").addDrugs(irinotecan).build())
+                .build();
+
+        TreatmentHistoryEntry hasStartYearHistoryEntry2 = ImmutableTreatmentHistoryEntry.builder()
+                .startYear(2023)
+                .addTreatments(ImmutableDrugTreatment.builder().name("Therapy4").addDrugs(irinotecan).build())
+                .build();
+
+        TreatmentHistoryEntry hasEndYearMonthHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
+                .startYear(null)
+                .startMonth(null)
+                .treatmentHistoryDetails(ImmutableTreatmentHistoryDetails.builder().stopYear(2020).stopMonth(6).build())
+                .addTreatments(ImmutableDrugTreatment.builder().name("Therapy2").addDrugs(irinotecan).build())
                 .build();
 
         TreatmentHistoryEntry hasStartYearMonthEndYearMonthHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
                 .startYear(2020)
                 .startMonth(8)
                 .treatmentHistoryDetails(ImmutableTreatmentHistoryDetails.builder().stopYear(2021).stopMonth(3).build())
-                .addTreatments(ImmutableDrugTreatment.builder().name("Therapy2").addDrugs(irinotecan).build())
+                .addTreatments(ImmutableDrugTreatment.builder().name("Therapy3").addDrugs(irinotecan).build())
                 .build();
 
         TreatmentHistoryEntry namedTrialHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
@@ -268,7 +280,9 @@ public final class TestClinicalFactory {
 
         return List.of(hasNoDateHistoryEntry,
                 hasStartYearHistoryEntry,
+                hasStartYearHistoryEntry2,
                 hasStartYearMonthEndYearMonthHistoryEntry,
+                hasEndYearMonthHistoryEntry,
                 namedTrialHistoryEntry,
                 unknownDetailsHistoryEntry,
                 hasCyclesStopReasonHistoryEntry,
