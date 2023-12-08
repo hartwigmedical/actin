@@ -44,8 +44,8 @@ class GeneHasVariantInExonRangeOfType(
             return unrecoverable()
                 .result(EvaluationResult.PASS)
                 .addAllInclusionMolecularEvents(canonicalReportableVariantMatches)
-                .addPassSpecificMessages("Variant(s) in exon $exonRangeMessage in gene $gene $variantTypeMessage detected in canonical transcript")
-                .addPassGeneralMessages("Variant(s) in exon $exonRangeMessage in gene $gene $variantTypeMessage detected")
+                .addPassSpecificMessages("Variant(s) in exon $exonRangeMessage in gene $gene$variantTypeMessage detected in canonical transcript")
+                .addPassGeneralMessages("Variant(s) in exon $exonRangeMessage in gene $gene$variantTypeMessage detected")
                 .build()
         }
         val potentialWarnEvaluation =
@@ -53,8 +53,8 @@ class GeneHasVariantInExonRangeOfType(
         return potentialWarnEvaluation
             ?: unrecoverable()
                 .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("No variant in exon $exonRangeMessage detected in gene $gene $variantTypeMessage")
-                .addFailGeneralMessages("No variant in exon $exonRangeMessage in gene $gene $variantTypeMessage detected")
+                .addFailSpecificMessages("No variant in exon $exonRangeMessage detected in gene $gene$variantTypeMessage detected in canonical transcript")
+                .addFailGeneralMessages("No variant in exon $exonRangeMessage in gene $gene$variantTypeMessage detected")
                 .build()
     }
 
@@ -70,19 +70,19 @@ class GeneHasVariantInExonRangeOfType(
         if (canonicalUnreportableVariantMatches.isNotEmpty()) {
             warnEvents.addAll(canonicalUnreportableVariantMatches)
             warnSpecificMessages.add(
-                "Variant(s) in exon $exonRangeMessage in gene $gene $variantTypeMessage detected in canonical transcript but considered not reportable"
+                "Variant(s) in exon $exonRangeMessage in gene $gene$variantTypeMessage detected in canonical transcript but considered not reportable"
             )
             warnGeneralMessages.add(
-                "Variant(s) in exon $exonRangeMessage in gene $gene $variantTypeMessage detected but not reportable"
+                "Variant(s) in exon $exonRangeMessage in gene $gene$variantTypeMessage detected but not reportable"
             )
         }
         if (reportableOtherVariantMatches.isNotEmpty()) {
             warnEvents.addAll(reportableOtherVariantMatches)
             warnSpecificMessages.add(
-                "Variant(s) in exon $exonRangeMessage in gene $gene $variantTypeMessage detected but in non-canonical transcript"
+                "Variant(s) in exon $exonRangeMessage in gene $gene$variantTypeMessage detected but in non-canonical transcript"
             )
             warnGeneralMessages.add(
-                "Variant(s) in exon $exonRangeMessage in gene $gene $variantTypeMessage detected but in non-canonical transcript"
+                "Variant(s) in exon $exonRangeMessage in gene $gene$variantTypeMessage detected but in non-canonical transcript"
             )
         }
         return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {
@@ -113,15 +113,15 @@ class GeneHasVariantInExonRangeOfType(
                 Strings.EMPTY
             } else when (requiredVariantType) {
                 VariantTypeInput.SNV, VariantTypeInput.MNV, VariantTypeInput.INDEL -> {
-                    "of type $requiredVariantType"
+                    " of type $requiredVariantType"
                 }
 
                 VariantTypeInput.INSERT -> {
-                    "of type insertion"
+                    " of type insertion"
                 }
 
                 VariantTypeInput.DELETE -> {
-                    "of type deletion"
+                    " of type deletion"
                 }
             }
         }
