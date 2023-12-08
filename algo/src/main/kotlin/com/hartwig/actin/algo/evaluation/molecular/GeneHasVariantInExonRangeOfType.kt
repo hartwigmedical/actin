@@ -8,6 +8,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory.unrecoverable
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.molecular.datamodel.driver.VariantType
 import com.hartwig.actin.treatment.input.datamodel.VariantTypeInput
+import org.apache.logging.log4j.util.Strings
 
 class GeneHasVariantInExonRangeOfType(
     private val gene: String, private val minExon: Int, private val maxExon: Int,
@@ -109,9 +110,19 @@ class GeneHasVariantInExonRangeOfType(
 
         private fun generateRequiredVariantTypeMessage(requiredVariantType: VariantTypeInput?): String {
             return if (requiredVariantType == null) {
-                ""
-            } else {
-                "of type $requiredVariantType"
+                Strings.EMPTY
+            } else when (requiredVariantType) {
+                VariantTypeInput.SNV, VariantTypeInput.MNV, VariantTypeInput.INDEL -> {
+                    "of type $requiredVariantType"
+                }
+
+                VariantTypeInput.INSERT -> {
+                    "of type insertion"
+                }
+
+                VariantTypeInput.DELETE -> {
+                    "of type deletion"
+                }
             }
         }
 
