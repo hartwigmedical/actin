@@ -621,7 +621,7 @@ CREATE TABLE `evaluation`
     `recoverable` BOOLEAN NOT NULL,
     `inclusionMolecularEvents` varchar(300) NOT NULL,
     `exclusionMolecularEvents` varchar(300) NOT NULL,
-    `passSpecificMessages` varchar(2000) NOT NULL,
+    `passSpecificMessages` varchar(1500) NOT NULL,
     `passGeneralMessages` varchar(1000) NOT NULL,
     `warnSpecificMessages` varchar(2000) NOT NULL,
     `warnGeneralMessages` varchar(1000) NOT NULL,
