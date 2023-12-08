@@ -9,11 +9,11 @@ import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
 import com.hartwig.actin.clinical.curation.extraction.IntoleranceExtractor
 import com.hartwig.actin.clinical.curation.extraction.LabValueExtractor
 import com.hartwig.actin.clinical.curation.extraction.MedicationExtractor
+import com.hartwig.actin.clinical.curation.extraction.OncologicalHistoryExtractor
 import com.hartwig.actin.clinical.curation.extraction.PriorMolecularTestsExtractor
 import com.hartwig.actin.clinical.curation.extraction.PriorOtherConditionsExtractor
 import com.hartwig.actin.clinical.curation.extraction.PriorSecondPrimaryExtractor
 import com.hartwig.actin.clinical.curation.extraction.ToxicityExtractor
-import com.hartwig.actin.clinical.curation.extraction.TreatmentHistoryExtractor
 import com.hartwig.actin.clinical.curation.extraction.TumorDetailsExtractor
 import com.hartwig.actin.clinical.datamodel.BodyWeight
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight
@@ -42,7 +42,7 @@ class ClinicalIngestion(private val feed: FeedModel, private val curation: Curat
     private val tumorDetailsExtractor = TumorDetailsExtractor(curation)
     private val complicationsExtractor = ComplicationsExtractor(curation)
     private val clinicalStatusExtractor = ClinicalStatusExtractor(curation)
-    private val treatmentHistoryExtractor = TreatmentHistoryExtractor(curation)
+    private val oncologicalHistoryExtractor = OncologicalHistoryExtractor(curation)
     private val priorSecondPrimaryExtractor = PriorSecondPrimaryExtractor(curation)
     private val priorOtherConditionExtractor = PriorOtherConditionsExtractor(curation)
     private val priorMolecularTestsExtractor = PriorMolecularTestsExtractor(curation)
@@ -67,7 +67,7 @@ class ClinicalIngestion(private val feed: FeedModel, private val curation: Curat
             val complicationsExtraction = complicationsExtractor.extract(patientId, questionnaire)
             val clinicalStatusExtraction =
                 clinicalStatusExtractor.extract(patientId, questionnaire, complicationsExtraction.extracted?.isNotEmpty())
-            val treatmentHistoryExtraction = treatmentHistoryExtractor.extract(patientId, questionnaire)
+            val oncologicalHistoryExtraction = oncologicalHistoryExtractor.extract(patientId, questionnaire)
             val priorSecondPrimaryExtraction = priorSecondPrimaryExtractor.extract(patientId, questionnaire)
             val priorOtherConditionsExtraction = priorOtherConditionExtractor.extract(patientId, questionnaire)
             val priorMolecularTestsExtraction = priorMolecularTestsExtractor.extract(patientId, questionnaire)
@@ -82,7 +82,7 @@ class ClinicalIngestion(private val feed: FeedModel, private val curation: Curat
                 .patient(extractPatientDetails(subject, questionnaire))
                 .tumor(tumorExtraction.extracted)
                 .clinicalStatus(clinicalStatusExtraction.extracted)
-                .oncologicalHistory(treatmentHistoryExtraction.extracted)
+                .oncologicalHistory(oncologicalHistoryExtraction.extracted)
                 .priorSecondPrimaries(priorSecondPrimaryExtraction.extracted)
                 .priorOtherConditions(priorOtherConditionsExtraction.extracted)
                 .priorMolecularTests(priorMolecularTestsExtraction.extracted)
@@ -101,7 +101,7 @@ class ClinicalIngestion(private val feed: FeedModel, private val curation: Curat
                 tumorExtraction,
                 complicationsExtraction,
                 clinicalStatusExtraction,
-                treatmentHistoryExtraction,
+                oncologicalHistoryExtraction,
                 priorSecondPrimaryExtraction,
                 priorOtherConditionsExtraction,
                 priorMolecularTestsExtraction,
