@@ -5,14 +5,8 @@ import com.hartwig.actin.clinical.curation.config.CurationConfigValidationError
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 
-enum class IngestionStatus {
-    PASS,
-    FAIL_CURATION_CONFIG_VALIDATION_ERRORS
-}
-
 data class IngestionResult(
-    val status: IngestionStatus,
-    val curationValidationErrors: List<CurationConfigValidationError>,
+    val curationValidationErrors: Set<CurationConfigValidationError>,
     val patientResults: List<PatientIngestionResult>
 )
 

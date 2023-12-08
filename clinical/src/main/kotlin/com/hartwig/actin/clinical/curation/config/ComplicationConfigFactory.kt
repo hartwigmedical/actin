@@ -39,7 +39,7 @@ class ComplicationConfigFactory : CurationConfigFactory<ComplicationConfig> {
             listOf(
                 CurationConfigValidationError(
                     "impliesComplicationState had invalid value of '${parts[fields["impliesUnknownComplicationState"]!!]}' for input " +
-                            "'${parts[fields["input"]!!]}"
+                            "'${parts[fields["input"]!!]}'"
                 )
             ) + complicationValidationErrors
         else

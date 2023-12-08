@@ -67,7 +67,11 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
             tumorDetailsExtractor = TumorDetailsExtractor.create(config.curationDirectory, curationDoidValidator),
             complicationsExtractor = ComplicationsExtractor.create(config.curationDirectory),
             clinicalStatusExtractor = ClinicalStatusExtractor.create(config.curationDirectory, curationDoidValidator),
-            treatmentHistoryExtractor = TreatmentHistoryExtractor.create(config.curationDirectory, curationDoidValidator, treatmentDatabase),
+            treatmentHistoryExtractor = TreatmentHistoryExtractor.create(
+                config.curationDirectory,
+                curationDoidValidator,
+                treatmentDatabase
+            ),
             bloodTransfusionsExtractor = BloodTransfusionsExtractor.create(config.curationDirectory),
             priorMolecularTestsExtractor = PriorMolecularTestsExtractor.create(config.curationDirectory),
             toxicityExtractor = ToxicityExtractor.create(config.curationDirectory),
@@ -78,21 +82,21 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         )
 
 
-        val patientResults =
+        val ingestionResult =
             clinicalIngestion.run()
         val outputDirectory = config.outputDirectory
-        LOGGER.info("Writing {} clinical records to {}", patientResults.size, outputDirectory)
-        ClinicalRecordJson.write(patientResults.map { it.clinicalRecord }, outputDirectory)
+        LOGGER.info("Writing {} clinical records to {}", ingestionResult.patientResults.size, outputDirectory)
+        ClinicalRecordJson.write(ingestionResult.patientResults.map { it.clinicalRecord }, outputDirectory)
         LOGGER.info("Done!")
 
         writeIngestionResults(
             outputDirectory,
-            IngestionResult(status = IngestionStatus.PASS, curationValidationErrors = emptyList(), patientResults = patientResults)
+            ingestionResult
         )
 
-        if (patientResults.any { it.curationResults.isNotEmpty() }) {
+        if (ingestionResult.patientResults.any { it.curationResults.isNotEmpty() }) {
             LOGGER.warn("Summary of warnings:")
-            patientResults.forEach {
+            ingestionResult.patientResults.forEach {
                 if (it.curationResults.isNotEmpty()) {
                     LOGGER.warn("Curation warnings for patient ${it.patientId}")
                     it.curationResults.flatMap { result -> result.requirements }.forEach { requirement ->

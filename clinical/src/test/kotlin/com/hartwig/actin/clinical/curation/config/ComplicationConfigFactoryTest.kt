@@ -69,8 +69,7 @@ class ComplicationConfigFactoryTest {
                 arrayOf("name", "input", "categories", "2023", "12", "A")
             ).errors
         ).containsExactly(
-            CurationConfigValidationError("impliesComplicationState had invalid input of 'A'")
+            CurationConfigValidationError("impliesComplicationState had invalid value of 'A' for input 'name'")
         )
     }
-
 }

@@ -45,7 +45,7 @@ class ClinicalStatusExtractor(
         return ExtractionResult(clinicalStatus, ecgCuration.evaluation + infectionCuration.evaluation)
     }
 
-    fun curateECG(patientId: String, rawECG: ECG?): ExtractionResult<ECG?> {
+    private fun curateECG(patientId: String, rawECG: ECG?): ExtractionResult<ECG?> {
         val curationResponse = rawECG?.aberrationDescription()?.let {
             CurationResponse.createFromConfigs(
                 ecgCuration.curate(it), patientId, CurationCategory.ECG, it, "ECG", true

@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical
 
-import com.google.common.annotations.VisibleForTesting
 import com.hartwig.actin.clinical.curation.extraction.BloodTransfusionsExtractor
 import com.hartwig.actin.clinical.curation.extraction.ClinicalStatusExtractor
 import com.hartwig.actin.clinical.curation.extraction.ComplicationsExtractor
@@ -53,12 +52,12 @@ class ClinicalIngestion(
     private val bloodTransfusionsExtractor: BloodTransfusionsExtractor,
 ) {
 
-    fun run(): List<PatientIngestionResult> {
+    fun run(): IngestionResult {
         val processedPatientIds: MutableSet<String> = HashSet()
 
         LOGGER.info("Creating clinical model")
         val records = feed.subjects().map { subject ->
-            val patientId = toPatientId(subject)
+            val patientId = PatientId.from(subject)
             check(!processedPatientIds.contains(patientId)) { "Cannot create clinical records. Duplicate patientId: $patientId" }
             processedPatientIds.add(patientId)
             LOGGER.info(" Extracting and curating data for patient {}", patientId)
@@ -124,7 +123,7 @@ class ClinicalIngestion(
             )
         }
 
-        return records.map { it.first }
+        return IngestionResult(records.flatMap { it.second.validationErrors }.toSet(), records.map { it.first })
     }
 
     private fun extractPatientDetails(subject: String, questionnaire: Questionnaire?): PatientDetails {
@@ -165,29 +164,18 @@ class ClinicalIngestion(
         }
     }
 
+    private fun resolveSurgeryStatus(status: String): SurgeryStatus {
+        val valueToFind = status.trim { it <= ' ' }.replace("-".toRegex(), "_")
+        for (option in SurgeryStatus.values()) {
+            if (option.toString().equals(valueToFind, ignoreCase = true)) {
+                return option
+            }
+        }
+        LOGGER.warn("Could not resolve surgery status '{}'", status)
+        return SurgeryStatus.UNKNOWN
+    }
+
     companion object {
         private val LOGGER = LogManager.getLogger(ClinicalIngestion::class.java)
-
-        @VisibleForTesting
-        fun toPatientId(subject: String): String {
-            var adjusted = subject
-            // Subjects have been passed with unexpected subject IDs in the past (e.g. without ACTN prefix)
-            if (subject.length == 10 && !subject.startsWith("ACTN")) {
-                LOGGER.warn("Suspicious subject detected. Pre-fixing with 'ACTN': {}", subject)
-                adjusted = "ACTN$subject"
-            }
-            return adjusted.replace("-".toRegex(), "")
-        }
-
-        private fun resolveSurgeryStatus(status: String): SurgeryStatus {
-            val valueToFind = status.trim { it <= ' ' }.replace("-".toRegex(), "_")
-            for (option in SurgeryStatus.values()) {
-                if (option.toString().equals(valueToFind, ignoreCase = true)) {
-                    return option
-                }
-            }
-            LOGGER.warn("Could not resolve surgery status '{}'", status)
-            return SurgeryStatus.UNKNOWN
-        }
     }
 }
