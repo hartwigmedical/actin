@@ -9,14 +9,16 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.molecular.datamodel.driver.VariantType
 import com.hartwig.actin.treatment.input.datamodel.VariantTypeInput
 
-class GeneHasVariantInExonRangeOfType internal constructor(
+class GeneHasVariantInExonRangeOfType(
     private val gene: String, private val minExon: Int, private val maxExon: Int,
     private val requiredVariantType: VariantTypeInput?
 ) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
-        val allowedVariantTypes = determineAllowedVariantTypes(
-            requiredVariantType
-        )
+        val exonRangeMessage = generateExonRangeMessage(minExon, maxExon)
+        val variantTypeMessage = generateRequiredVariantTypeMessage(requiredVariantType)
+        val baseMessage = "in exon $exonRangeMessage in gene $gene$variantTypeMessage detected"
+        val allowedVariantTypes = determineAllowedVariantTypes(requiredVariantType)
         val canonicalReportableVariantMatches: MutableSet<String> = Sets.newHashSet()
         val canonicalUnreportableVariantMatches: MutableSet<String> = Sets.newHashSet()
         val reportableOtherVariantMatches: MutableSet<String> = Sets.newHashSet()
@@ -42,27 +44,24 @@ class GeneHasVariantInExonRangeOfType internal constructor(
             return unrecoverable()
                 .result(EvaluationResult.PASS)
                 .addAllInclusionMolecularEvents(canonicalReportableVariantMatches)
-                .addPassSpecificMessages(
-                    "Variant(s) in exon range " + minExon + " - " + maxExon + " in gene " + gene
-                            + " of adequate type detected in canonical transcript"
-                )
-                .addPassGeneralMessages("Variant(s) in exon range " + minExon + " - " + maxExon + " in " + gene
-                        + " of adequate type")
+                .addPassSpecificMessages("Variant(s) $baseMessage in canonical transcript")
+                .addPassGeneralMessages("Variant(s) $baseMessage")
                 .build()
         }
-        val potentialWarnEvaluation = evaluatePotentialWarns(canonicalUnreportableVariantMatches, reportableOtherVariantMatches)
+        val potentialWarnEvaluation =
+            evaluatePotentialWarns(canonicalUnreportableVariantMatches, reportableOtherVariantMatches, baseMessage)
         return potentialWarnEvaluation
             ?: unrecoverable()
                 .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("No variant in exon range $minExon - $maxExon detected in gene $gene of adequate type")
-                .addFailGeneralMessages("No variant in exon range " + minExon + " - " + maxExon + " in " + gene
-                        + " of adequate type")
+                .addFailSpecificMessages("No variant $baseMessage in canonical transcript")
+                .addFailGeneralMessages("No variant $baseMessage")
                 .build()
     }
 
     private fun evaluatePotentialWarns(
         canonicalUnreportableVariantMatches: Set<String>,
-        reportableOtherVariantMatches: Set<String>
+        reportableOtherVariantMatches: Set<String>,
+        baseMessage: String
     ): Evaluation? {
         val warnEvents: MutableSet<String> = Sets.newHashSet()
         val warnSpecificMessages: MutableSet<String> = Sets.newHashSet()
@@ -70,20 +69,20 @@ class GeneHasVariantInExonRangeOfType internal constructor(
         if (canonicalUnreportableVariantMatches.isNotEmpty()) {
             warnEvents.addAll(canonicalUnreportableVariantMatches)
             warnSpecificMessages.add(
-                "Variant(s) in exon range " + minExon + " - " + maxExon + " in gene " + gene
-                        + " of adequate type detected in canonical transcript but considered not reportable"
+                "Variant(s) $baseMessage in canonical transcript but considered not reportable"
             )
-            warnGeneralMessages.add("Variant(s) in exon range " + minExon + " - " + maxExon + " in " + gene
-                    + " of adequate type but not reportable")
+            warnGeneralMessages.add(
+                "Variant(s) $baseMessage but not reportable"
+            )
         }
         if (reportableOtherVariantMatches.isNotEmpty()) {
             warnEvents.addAll(reportableOtherVariantMatches)
             warnSpecificMessages.add(
-                "Variant(s) in exon range " + minExon + " - " + maxExon + " in gene " + gene
-                        + " of adequate type detected but in non-canonical transcript"
+                "Variant(s) $baseMessage but in non-canonical transcript"
             )
-            warnGeneralMessages.add("Variant(s) in exon range " + minExon + " - " + maxExon + " in " + gene
-                    + " of adequate type but in non-canonical transcript")
+            warnGeneralMessages.add(
+                "Variant(s) $baseMessage but in non-canonical transcript"
+            )
         }
         return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {
             unrecoverable()
@@ -98,6 +97,32 @@ class GeneHasVariantInExonRangeOfType internal constructor(
     companion object {
         private fun hasEffectInExonRange(affectedExon: Int?, minExon: Int, maxExon: Int): Boolean {
             return affectedExon != null && affectedExon >= minExon && affectedExon <= maxExon
+        }
+
+        private fun generateExonRangeMessage(minExon: Int, maxExon: Int): String {
+            return if (minExon == maxExon) {
+                minExon.toString()
+            } else {
+                "$minExon - $maxExon"
+            }
+        }
+
+        private fun generateRequiredVariantTypeMessage(requiredVariantType: VariantTypeInput?): String {
+            return if (requiredVariantType == null) {
+                ""
+            } else when (requiredVariantType) {
+                VariantTypeInput.SNV, VariantTypeInput.MNV, VariantTypeInput.INDEL -> {
+                    " of type $requiredVariantType"
+                }
+
+                VariantTypeInput.INSERT -> {
+                    " of type insertion"
+                }
+
+                VariantTypeInput.DELETE -> {
+                    " of type deletion"
+                }
+            }
         }
 
         private fun determineAllowedVariantTypes(requiredVariantType: VariantTypeInput?): Set<VariantType> {
