@@ -8,7 +8,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory.unrecoverable
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.molecular.datamodel.driver.VariantType
 import com.hartwig.actin.treatment.input.datamodel.VariantTypeInput
-import org.apache.logging.log4j.util.Strings
 
 class GeneHasVariantInExonRangeOfType(
     private val gene: String, private val minExon: Int, private val maxExon: Int,
@@ -18,6 +17,7 @@ class GeneHasVariantInExonRangeOfType(
     override fun evaluate(record: PatientRecord): Evaluation {
         val exonRangeMessage = generateExonRangeMessage(minExon, maxExon)
         val variantTypeMessage = generateRequiredVariantTypeMessage(requiredVariantType)
+        val baseMessage = "in exon $exonRangeMessage in gene $gene$variantTypeMessage detected"
         val allowedVariantTypes = determineAllowedVariantTypes(requiredVariantType)
         val canonicalReportableVariantMatches: MutableSet<String> = Sets.newHashSet()
         val canonicalUnreportableVariantMatches: MutableSet<String> = Sets.newHashSet()
@@ -44,25 +44,24 @@ class GeneHasVariantInExonRangeOfType(
             return unrecoverable()
                 .result(EvaluationResult.PASS)
                 .addAllInclusionMolecularEvents(canonicalReportableVariantMatches)
-                .addPassSpecificMessages("Variant(s) in exon $exonRangeMessage in gene $gene$variantTypeMessage detected in canonical transcript")
-                .addPassGeneralMessages("Variant(s) in exon $exonRangeMessage in gene $gene$variantTypeMessage detected")
+                .addPassSpecificMessages("Variant(s) $baseMessage in canonical transcript")
+                .addPassGeneralMessages("Variant(s) $baseMessage")
                 .build()
         }
         val potentialWarnEvaluation =
-            evaluatePotentialWarns(canonicalUnreportableVariantMatches, reportableOtherVariantMatches, exonRangeMessage, variantTypeMessage)
+            evaluatePotentialWarns(canonicalUnreportableVariantMatches, reportableOtherVariantMatches, baseMessage)
         return potentialWarnEvaluation
             ?: unrecoverable()
                 .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("No variant in exon $exonRangeMessage detected in gene $gene$variantTypeMessage detected in canonical transcript")
-                .addFailGeneralMessages("No variant in exon $exonRangeMessage in gene $gene$variantTypeMessage detected")
+                .addFailSpecificMessages("No variant $baseMessage in canonical transcript")
+                .addFailGeneralMessages("No variant $baseMessage")
                 .build()
     }
 
     private fun evaluatePotentialWarns(
         canonicalUnreportableVariantMatches: Set<String>,
         reportableOtherVariantMatches: Set<String>,
-        exonRangeMessage: String,
-        variantTypeMessage: String
+        baseMessage: String
     ): Evaluation? {
         val warnEvents: MutableSet<String> = Sets.newHashSet()
         val warnSpecificMessages: MutableSet<String> = Sets.newHashSet()
@@ -70,19 +69,19 @@ class GeneHasVariantInExonRangeOfType(
         if (canonicalUnreportableVariantMatches.isNotEmpty()) {
             warnEvents.addAll(canonicalUnreportableVariantMatches)
             warnSpecificMessages.add(
-                "Variant(s) in exon $exonRangeMessage in gene $gene$variantTypeMessage detected in canonical transcript but considered not reportable"
+                "Variant(s) $baseMessage in canonical transcript but considered not reportable"
             )
             warnGeneralMessages.add(
-                "Variant(s) in exon $exonRangeMessage in gene $gene$variantTypeMessage detected but not reportable"
+                "Variant(s) $baseMessage but not reportable"
             )
         }
         if (reportableOtherVariantMatches.isNotEmpty()) {
             warnEvents.addAll(reportableOtherVariantMatches)
             warnSpecificMessages.add(
-                "Variant(s) in exon $exonRangeMessage in gene $gene$variantTypeMessage detected but in non-canonical transcript"
+                "Variant(s) $baseMessage but in non-canonical transcript"
             )
             warnGeneralMessages.add(
-                "Variant(s) in exon $exonRangeMessage in gene $gene$variantTypeMessage detected but in non-canonical transcript"
+                "Variant(s) $baseMessage but in non-canonical transcript"
             )
         }
         return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {
@@ -110,7 +109,7 @@ class GeneHasVariantInExonRangeOfType(
 
         private fun generateRequiredVariantTypeMessage(requiredVariantType: VariantTypeInput?): String {
             return if (requiredVariantType == null) {
-                Strings.EMPTY
+                ""
             } else when (requiredVariantType) {
                 VariantTypeInput.SNV, VariantTypeInput.MNV, VariantTypeInput.INDEL -> {
                     " of type $requiredVariantType"
