@@ -210,7 +210,7 @@ The fields of the ACTIN clinical datamodel are described below. "Origin" indicat
 
 Note that "if applicable" in 'origin' indicates that the field is derived from a variable of the 'optional' set.
 
-1 patient details
+#### 1 patient details
 
 | Field             | Origin                           |
 |-------------------|----------------------------------|
@@ -219,7 +219,7 @@ Note that "if applicable" in 'origin' indicates that the field is derived from a
 | registrationDate  | Patient: ACTIN registration date |
 | questionnaireDate | If applicable                    |
 
-1 tumor details
+#### 1 tumor details
 
 | Field                    | Origin                                               |
 |--------------------------|------------------------------------------------------|
@@ -241,7 +241,7 @@ Note that "if applicable" in 'origin' indicates that the field is derived from a
 | otherLesions             | Primary tumor details: Lesion sites                  |
 | biopsyLocation           | Molecular test details: Biopsy location              |
 
-1 clinical status
+#### 1 clinical status
 
 | Field                      | Origin                         |
 |----------------------------|--------------------------------|
@@ -256,7 +256,7 @@ Note that "if applicable" in 'origin' indicates that the field is derived from a
 | lvef                       | ECG details                    |
 | hasComplications           | Complication details           |
 
-N treatment history entries in oncological history
+#### N treatment history entries in oncological history
 
 | Field                   | Origin                       |
 |-------------------------|------------------------------|
@@ -294,10 +294,19 @@ Each treatment history entry has 0 or 1 treatment history details records:
 | toxicities             | Added in curation           |
 | bodyLocationCategories | Added in curation           |
 | bodyLocations          | Added in curation           |
-| switchToTreatments     | Added in curation           |
-| maintenanceTreatment   | Added in curation           |
+| switchToTreatments     | Described below             |
+| maintenanceTreatment   | Described below             |
 
-N prior second primaries
+The details may include multiple treatment stages representing switches from the original treatment plan or a maintenance treatment:
+
+| Field      | Origin                   |
+|------------|--------------------------|
+| treatment  | ACTIN treatment database |
+| cycles     | Added in curation        |
+| startYear  | Added in curation        |
+| startMonth | Added in curation        |
+
+#### N prior second primaries
 
 | Field            | Origin                                     |
 |------------------|--------------------------------------------|
@@ -311,7 +320,7 @@ N prior second primaries
 | treatmentHistory | Previous primary tumors: Treatment history |
 | status           | Previous primary tumors: Status            |
 
-N prior other conditions
+#### N prior other conditions
 
 | Field                        | Origin                      |
 |------------------------------|-----------------------------|
@@ -322,7 +331,7 @@ N prior other conditions
 | category                     | Added in curation           |
 | isContraindicationForTherapy | Added in curation           |
 
-N prior (non-WGS) molecular tests
+#### N prior (non-WGS) molecular tests
 
 | Field                                    | Origin                    |
 |------------------------------------------|---------------------------|
@@ -335,7 +344,7 @@ N prior (non-WGS) molecular tests
 | scoreValueUnit                           | Molecular test: Result    |
 | impliesPotentialPriorIndeterminateStatus | Added in curation         |
 
-N cancer related complications
+#### N cancer related complications
 
 | Field      | Origin                   |
 |------------|--------------------------|
@@ -344,7 +353,7 @@ N cancer related complications
 | year       | Complication: start date |
 | month      | Complication: start date |
 
-N lab values
+#### N lab values
 
 | Field        | Origin                                |
 |--------------|---------------------------------------|
@@ -358,7 +367,7 @@ N lab values
 | refLimitUp   | Lab values: Institutional upper limit |
 | isOutsideRef | Added in curation                     |
 
-N toxicities
+#### N toxicities
 
 | Field         | Origin            |
 |---------------|-------------------|
@@ -367,7 +376,7 @@ N toxicities
 | grade         | Toxicities: Grade |
 | source        | If applicable     |
 
-N intolerances
+#### N intolerances
 
 | Field              | Details           |
 |--------------------|-------------------|
@@ -380,14 +389,14 @@ N intolerances
 | verificationStatus | If applicable     |
 | criticality        | If applicable     |
 
-N surgeries
+#### N surgeries
 
 | Field   | Origin        |
 |---------|---------------|
 | endDate | If applicable |
 | status  | If applicable |
 
-N vital function measurements
+#### N vital function measurements
 
 | Field       | Origin                |
 |-------------|-----------------------|
@@ -397,7 +406,7 @@ N vital function measurements
 | value       | Vital function: Value |
 | unit        | Vital function: Unit  |
 
-N body weight measurements
+#### N body weight measurements
 
 | Field | Origin                                              |
 |-------|-----------------------------------------------------|
@@ -405,14 +414,14 @@ N body weight measurements
 | value | Vital function -> Body weight: Value of measurement |
 | unit  | Vital function -> Body weight: Unit of measurement  |
 
-N blood transfusions
+#### N blood transfusions
 
 | Field   | Origin                     |
 |---------|----------------------------|
 | date    | Blood transfusion: Date    |
 | product | Blood transfusion: Product |
 
-N medications
+#### N medications
 
 | Field                            | Example Value                                                     | Origin                                   |
 |----------------------------------|-------------------------------------------------------------------|------------------------------------------|
