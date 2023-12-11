@@ -5,53 +5,60 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.LocalDate
 
 class HasSufficientPulseOximetryTest {
+    val referenceDate = LocalDate.of(2023, 12, 7)
+    val function = HasSufficientPulseOximetry(90.0)
+
     @Test
-    fun canEvaluate() {
-        val referenceDate = LocalDate.of(2021, 11, 19)
-        val function = HasSufficientPulseOximetry(90.0)
-        val pulses: MutableList<VitalFunction> = mutableListOf()
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulses)))
-        pulses.add(pulse().date(referenceDate).value(92.0).build())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulses)))
+    fun `Should evaluate to undetermined when no measurements are present`() {
+        val pulseOximetries: List<VitalFunction> = emptyList()
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)))
+    }
 
-        // Undetermined when the median falls below 90 but one measure above 90.
-        pulses.add(pulse().date(referenceDate.minusDays(1)).value(80.0).build())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulses)))
+    @Test
+    fun `Should only consider measurements within date cutoff for data validity`() {
+        val pulseOximetries: List<VitalFunction> = listOf(
+            pulseOximetry().date(referenceDate.minusMonths(3)).value(92.0).build(),
+            pulseOximetry().date(referenceDate.minusMonths(2)).value(92.0).build(),
+            pulseOximetry().date(referenceDate).value(89.0).build()
+        )
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)))
+    }
 
-        // Succeed when median goes above 90.
-        pulses.add(pulse().date(referenceDate).value(92.0).build())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulses)))
+    @Test
+    fun `Should pass when median SpO2 is above reference value`() {
+        val pulseOximetries: List<VitalFunction> = listOf(
+            pulseOximetry().date(referenceDate).value(90.0).build(),
+            pulseOximetry().date(referenceDate).value(89.0).build(),
+            pulseOximetry().date(referenceDate).value(91.0).build()
+        )
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)))
+    }
 
-        // Still succeed again with multiple more good results.
-        pulses.add(pulse().date(referenceDate.minusDays(2)).value(98.0).build())
-        pulses.add(pulse().date(referenceDate.minusDays(3)).value(99.0).build())
-        pulses.add(pulse().date(referenceDate.minusDays(4)).value(98.0).build())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulses)))
+    @Test
+    fun `Should evaluate to undetermined when median SpO2 is below but one measurement is above reference value`() {
+        val pulseOximetries: List<VitalFunction> = listOf(
+            pulseOximetry().date(referenceDate).value(89.0).build(),
+            pulseOximetry().date(referenceDate.minusDays(4)).value(91.0).build(),
+            pulseOximetry().date(referenceDate.minusDays(5)).value(87.0).build()
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)))
+    }
 
-        // Still succeed since we only take X most recent measures.
-        pulses.add(pulse().date(referenceDate.minusDays(5)).value(20.0).build())
-        pulses.add(pulse().date(referenceDate.minusDays(6)).value(20.0).build())
-        pulses.add(pulse().date(referenceDate.minusDays(7)).value(20.0).build())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulses)))
-
-        // Fail if we add more recent measures that are too low
-        pulses.add(pulse().date(referenceDate.plusDays(1)).value(20.0).build())
-        pulses.add(pulse().date(referenceDate.plusDays(1)).value(20.0).build())
-        pulses.add(pulse().date(referenceDate.plusDays(1)).value(20.0).build())
-        pulses.add(pulse().date(referenceDate.plusDays(1)).value(20.0).build())
-        pulses.add(pulse().date(referenceDate.plusDays(1)).value(20.0).build())
-        val actual = function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulses))
-        assertEvaluation(EvaluationResult.FAIL, actual)
-        assertTrue(actual.recoverable())
+    @Test
+    fun `Should fail when median SpO2 is below reference value`() {
+        val pulseOximetries: List<VitalFunction> = listOf(
+            pulseOximetry().date(referenceDate).value(89.0).build(),
+            pulseOximetry().date(referenceDate.minusDays(4)).value(89.0).build()
+        )
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)))
     }
 
     companion object {
-        private fun pulse(): ImmutableVitalFunction.Builder {
+        private fun pulseOximetry(): ImmutableVitalFunction.Builder {
             return VitalFunctionTestFactory.vitalFunction().category(VitalFunctionCategory.SPO2)
         }
     }

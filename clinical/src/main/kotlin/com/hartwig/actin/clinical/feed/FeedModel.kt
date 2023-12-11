@@ -10,6 +10,7 @@ import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry
 import com.hartwig.actin.clinical.feed.surgery.SurgeryEntry
 import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry
 import java.io.IOException
+import java.time.LocalDate
 
 class FeedModel(private val feed: ClinicalFeed) {
     fun subjects(): Set<String> {
@@ -48,8 +49,18 @@ class FeedModel(private val feed: ClinicalFeed) {
     }
 
     fun vitalFunctionEntries(subject: String): List<VitalFunctionEntry> {
-        return entriesForSubject(feed.vitalFunctionEntries, subject)
+        return entriesForSubject(
+            feed.vitalFunctionEntries,
+            subject
+        ).distinctBy { VitalFunctionProperties(it.effectiveDateTime, it.quantityValue, it.quantityUnit, it.componentCodeDisplay) }
     }
+
+    data class VitalFunctionProperties(
+        val effectiveDateTime: LocalDate,
+        val quantityValue: Double,
+        val quantityUnit: String,
+        val componentCodeDisplay: String
+    )
 
     fun intoleranceEntries(subject: String): List<IntoleranceEntry> {
         return entriesForSubject(feed.intoleranceEntries, subject)

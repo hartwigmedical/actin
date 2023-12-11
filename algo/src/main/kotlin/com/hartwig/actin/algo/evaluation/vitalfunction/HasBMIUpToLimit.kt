@@ -14,7 +14,7 @@ class HasBMIUpToLimit internal constructor(private val maximumBMI: Int) : Evalua
             .bodyWeights()
             .filter { it.unit().equals(EXPECTED_UNIT, ignoreCase = true) }
             .minWithOrNull(BodyWeightDescendingDateComparator())
-            ?: return EvaluationFactory.undetermined("No body weights found in $EXPECTED_UNIT", "Body weight unknown")
+            ?: return EvaluationFactory.recoverableUndetermined("No body weights found in $EXPECTED_UNIT", "Body weight unknown")
 
         val minimumRequiredHeight = calculateHeightForBmiAndWeight(maximumBMI.toDouble(), latestWeight.value())
         return when {

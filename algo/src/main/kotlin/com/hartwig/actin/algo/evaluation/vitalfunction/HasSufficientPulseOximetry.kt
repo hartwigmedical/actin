@@ -18,7 +18,7 @@ class HasSufficientPulseOximetry internal constructor(private val minMedianPulse
         if (pulseOximetries.isEmpty()) {
             return recoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("No pulse oximetries readouts found")
+                .addUndeterminedSpecificMessages("No (recent) pulse oximetries readouts found")
                 .build()
         }
         val median = VitalFunctionFunctions.determineMedianValue(pulseOximetries)

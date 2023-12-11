@@ -218,13 +218,16 @@ class ClinicalIngestionTest {
         }
 
         private fun assertBodyWeights(bodyWeights: List<BodyWeight>) {
-            assertEquals(2, bodyWeights.size.toLong())
+            assertEquals(3, bodyWeights.size.toLong())
             val bodyWeight1 = findByDate(bodyWeights, LocalDate.of(2018, 4, 5))
             assertEquals(58.1, bodyWeight1.value(), EPSILON)
             assertEquals("kilogram", bodyWeight1.unit())
             val bodyWeight2 = findByDate(bodyWeights, LocalDate.of(2018, 5, 5))
             assertEquals(61.1, bodyWeight2.value(), EPSILON)
             assertEquals("kilogram", bodyWeight2.unit())
+            val bodyWeight3 = findByDate(bodyWeights, LocalDate.of(2018, 5, 4))
+            assertEquals(611.0, bodyWeight3.value(), EPSILON)
+            assertEquals("<ignore>", bodyWeight3.unit())
         }
 
         private fun findByDate(bodyWeights: List<BodyWeight>, dateToFind: LocalDate): BodyWeight {
@@ -237,13 +240,16 @@ class ClinicalIngestionTest {
         }
 
         private fun assertVitalFunctions(vitalFunctions: List<VitalFunction>) {
-            assertEquals(1, vitalFunctions.size.toLong())
+            assertEquals(2, vitalFunctions.size.toLong())
             val vitalFunction = vitalFunctions[0]
             assertEquals(LocalDate.of(2021, 2, 27), vitalFunction.date())
             assertEquals(VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE, vitalFunction.category())
             assertEquals("systolic", vitalFunction.subcategory())
             assertEquals(120.0, vitalFunction.value(), EPSILON)
             assertEquals("mm[Hg]", vitalFunction.unit())
+            val vitalFunction2 = vitalFunctions[1]
+            assertEquals(1200.0, vitalFunction2.value(), EPSILON)
+            assertEquals("<ignore>", vitalFunction2.unit())
         }
 
         private fun assertBloodTransfusions(bloodTransfusions: List<BloodTransfusion>) {

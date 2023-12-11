@@ -20,7 +20,7 @@ class HasRestingHeartRateWithinBounds(private val minMedianRestingHeartRate: Dou
         if (heartRates.isEmpty()) {
             return recoverable()
                 .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("No heart rate data found")
+                .addUndeterminedSpecificMessages("No (recent) heart rate data found")
                 .build()
         }
         val median = VitalFunctionFunctions.determineMedianValue(heartRates)

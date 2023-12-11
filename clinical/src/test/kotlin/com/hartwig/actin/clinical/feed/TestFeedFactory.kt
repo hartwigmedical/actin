@@ -205,7 +205,31 @@ object TestFeedFactory {
                 subject = TEST_SUBJECT,
                 effectiveDateTime = LocalDate.of(2021, 2, 27),
                 codeDisplayOriginal = "NIBP",
-                componentCodeDisplay = "systolic",
+                componentCodeDisplay = "Systolic blood pressure",
+                quantityUnit = "mm[Hg]",
+                quantityValue = 120.0
+            ),
+            VitalFunctionEntry(
+                subject = TEST_SUBJECT,
+                effectiveDateTime = LocalDate.of(2021, 2, 26),
+                codeDisplayOriginal = "NIBP",
+                componentCodeDisplay = "Systolic blood pressure",
+                quantityUnit = "mm[Hg]",
+                quantityValue = 1200.0
+            ),
+            VitalFunctionEntry(
+                subject = TEST_SUBJECT,
+                effectiveDateTime = LocalDate.of(2021, 2, 27),
+                codeDisplayOriginal = "NIBP",
+                componentCodeDisplay = "Systolic blood pressure",
+                quantityUnit = "mm[Hg]",
+                quantityValue = 120.0
+            ),
+            VitalFunctionEntry(
+                subject = TEST_SUBJECT,
+                effectiveDateTime = LocalDate.of(2021, 2, 27),
+                codeDisplayOriginal = "NIBP",
+                componentCodeDisplay = "Diastolic blood pressure",
                 quantityUnit = "mm[Hg]",
                 quantityValue = 120.0
             )
@@ -245,6 +269,11 @@ object TestFeedFactory {
                 valueQuantityValue = 61.1,
                 valueQuantityUnit = "kilogram",
                 effectiveDateTime = LocalDate.of(2018, 5, 5)
+            ), BodyWeightEntry(
+                subject = TEST_SUBJECT,
+                valueQuantityValue = 611.0,
+                valueQuantityUnit = "kilogram",
+                effectiveDateTime = LocalDate.of(2018, 5, 4)
             )
         )
     }

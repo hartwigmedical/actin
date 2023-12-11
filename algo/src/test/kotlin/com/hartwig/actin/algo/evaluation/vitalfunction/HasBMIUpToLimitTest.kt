@@ -13,7 +13,7 @@ class HasBMIUpToLimitTest {
     private val lastYear = now.minusYears(1)
 
     @Test
-    fun shouldBeUndeterminedWhenNoBodyWeightsProvided() {
+    fun `Should be undetermined when no body weights provided`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(VitalFunctionTestFactory.withBodyWeights(emptyList()))
@@ -21,7 +21,7 @@ class HasBMIUpToLimitTest {
     }
 
     @Test
-    fun shouldBeUndeterminedWhenNoBodyWeightsProvidedWithExpectedUnit() {
+    fun `Should be undetermined when no body weights provided with expected unit`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
@@ -39,7 +39,7 @@ class HasBMIUpToLimitTest {
     }
 
     @Test
-    fun shouldPassIfLatestWeightIsLessThanWarnThreshold() {
+    fun `Should pass if latest weight is less than warn threshold`() {
         val evaluation = function.evaluate(
             VitalFunctionTestFactory.withBodyWeights(
                 listOf(
@@ -59,7 +59,7 @@ class HasBMIUpToLimitTest {
     }
 
     @Test
-    fun shouldFailIfLatestWeightIsGreaterThanFailThreshold() {
+    fun `Should fail if latest weight is greater than fail threshold`() {
         val evaluation = function.evaluate(
             VitalFunctionTestFactory.withBodyWeights(
                 listOf(
@@ -78,7 +78,7 @@ class HasBMIUpToLimitTest {
     }
 
     @Test
-    fun shouldWarnIfLatestWeightIsGreaterThanWarnThreshold() {
+    fun `Should warn if latest weight is greater than warn threshold`() {
         val evaluation = function.evaluate(
             VitalFunctionTestFactory.withBodyWeights(
                 listOf(
