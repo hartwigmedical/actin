@@ -12,8 +12,9 @@ import org.junit.Test
 import java.time.LocalDate
 
 class VitalFunctionSelectorTest {
-    val date1 = LocalDate.of(2023, 12, 7)
-    val date2 = LocalDate.of(2023, 12, 6)
+    private val date1 = LocalDate.now()
+    private val date2 = LocalDate.now().minusDays(5)
+    private val date3 = LocalDate.now().minusMonths(2)
 
     // Testing selectMedianFunction
     @Test
@@ -89,7 +90,19 @@ class VitalFunctionSelectorTest {
     }
 
     @Test
-    fun `Should select median per day of most recent days`() {
+    fun `Should filter out values with ignore flag`() {
+        val vitalFunctions: List<VitalFunction> = listOf(
+            vitalFunction().category(HEART_RATE).date(date1).value(10.0).unit("<ignore>").build(),
+            vitalFunction().category(HEART_RATE).date(date2).value(20.0).unit("<ignore>").build(),
+            vitalFunction().category(HEART_RATE).date(date2.minusDays(3)).value(2.0).build()
+        )
+        Assert.assertEquals(
+            listOf(2.0), selectMedianPerDay(vitalFunctions, HEART_RATE, null, 3).map { it.value() }
+        )
+    }
+
+    @Test
+    fun `Should select one median per day of most recent dates`() {
         val vitalFunctions: List<VitalFunction> = listOf(
             vitalFunction().category(HEART_RATE).date(date1).value(10.0).build(),
             vitalFunction().category(HEART_RATE).date(date1).value(15.0).build(),
@@ -103,6 +116,18 @@ class VitalFunctionSelectorTest {
         )
         Assert.assertEquals(
             listOf(15.0, 5.0, 8.0), selectMedianPerDay(vitalFunctions, HEART_RATE, null, 3).map { it.value() }
+        )
+    }
+
+    @Test
+    fun `Should not take values outside of date cutoff`() {
+        val vitalFunctions: List<VitalFunction> = listOf(
+            vitalFunction().category(HEART_RATE).date(date1).value(10.0).build(),
+            vitalFunction().category(HEART_RATE).date(date2).value(15.0).build(),
+            vitalFunction().category(HEART_RATE).date(date3).value(20.0).build()
+        )
+        Assert.assertEquals(
+            listOf(10.0, 15.0), selectMedianPerDay(vitalFunctions, HEART_RATE, null, 3).map { it.value() }
         )
     }
 
@@ -123,7 +148,22 @@ class VitalFunctionSelectorTest {
     }
 
     @Test
-    fun `Should select one median per day`() {
+    fun `Should filter out blood pressure values with ignore flag`() {
+        val vitalFunctions: List<VitalFunction> = listOf(
+            vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display()).date(date1)
+                .value(10.0).unit("<ignore>").build(),
+            vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display()).date(date2)
+                .value(20.0).unit("<ignore>").build(),
+            vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display())
+                .date(date2.minusDays(3)).value(2.0).build()
+        )
+        Assert.assertEquals(
+            listOf(2.0), selectBloodPressures(vitalFunctions, BloodPressureCategory.SYSTOLIC).map { it.value() }
+        )
+    }
+
+    @Test
+    fun `Should select one median blood pressure per day`() {
         val vitalFunctions: List<VitalFunction> = listOf(
             vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display()).date(date1)
                 .value(130.0).build(),
@@ -138,14 +178,14 @@ class VitalFunctionSelectorTest {
     }
 
     @Test
-    fun `Should only select values of less than one month old`() {
+    fun `Should not take blood pressure values outside of date cutoff`() {
         val vitalFunctions: List<VitalFunction> = listOf(
             vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display()).date(date1)
                 .value(110.0).build(),
             vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display()).date(date2)
                 .value(120.0).build(),
             vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display())
-                .date(date2.minusMonths(2)).value(130.0).build()
+                .date(date3).value(130.0).build()
         )
         Assert.assertEquals(listOf(110.0, 120.0), selectBloodPressures(vitalFunctions, BloodPressureCategory.SYSTOLIC).map { it.value() })
     }

@@ -24,6 +24,10 @@ import com.hartwig.actin.clinical.datamodel.PatientDetails
 import com.hartwig.actin.clinical.datamodel.Surgery
 import com.hartwig.actin.clinical.datamodel.SurgeryStatus
 import com.hartwig.actin.clinical.datamodel.VitalFunction
+import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory.ARTERIAL_BLOOD_PRESSURE
+import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory.HEART_RATE
+import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE
+import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory.SPO2
 import com.hartwig.actin.clinical.feed.FeedModel
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry
 import com.hartwig.actin.clinical.feed.lab.LabExtraction
@@ -146,23 +150,49 @@ class ClinicalIngestion(
 
     private fun extractBodyWeights(subject: String): List<BodyWeight> {
         return feed.uniqueBodyWeightEntries(subject).map { entry: BodyWeightEntry ->
-            ImmutableBodyWeight.builder()
-                .date(entry.effectiveDateTime)
-                .value(entry.valueQuantityValue)
-                .unit(entry.valueQuantityUnit)
-                .build()
+            val isValidWeight = entry.valueQuantityValue in 20.0..300.0
+
+            if (isValidWeight) {
+                ImmutableBodyWeight.builder()
+                    .date(entry.effectiveDateTime)
+                    .value(entry.valueQuantityValue)
+                    .unit(entry.valueQuantityUnit)
+                    .build()
+            } else {
+                ImmutableBodyWeight.builder()
+                    .date(entry.effectiveDateTime)
+                    .value(entry.valueQuantityValue)
+                    .unit("<ignore>")
+                    .build()
+            }
         }
     }
 
     private fun extractVitalFunctions(subject: String): List<VitalFunction> {
         return feed.vitalFunctionEntries(subject).map { entry: VitalFunctionEntry ->
-            ImmutableVitalFunction.builder()
-                .date(entry.effectiveDateTime)
-                .category(VitalFunctionExtraction.determineCategory(entry.codeDisplayOriginal))
-                .subcategory(entry.componentCodeDisplay)
-                .value(entry.quantityValue)
-                .unit(entry.quantityUnit)
-                .build()
+            val vitalFunctionCategory = VitalFunctionExtraction.determineCategory(entry.codeDisplayOriginal)
+            val isValidBloodPressure = (vitalFunctionCategory == NON_INVASIVE_BLOOD_PRESSURE ||
+                    vitalFunctionCategory == ARTERIAL_BLOOD_PRESSURE) && entry.quantityValue in 10.0..300.0
+            val isValidHeartRate = vitalFunctionCategory == HEART_RATE && entry.quantityValue in 10.0..300.0
+            val isValidPulseOximetry = vitalFunctionCategory == SPO2 && entry.quantityValue in 10.0..100.0
+
+            if (isValidBloodPressure || isValidHeartRate || isValidPulseOximetry) {
+                ImmutableVitalFunction.builder()
+                    .date(entry.effectiveDateTime)
+                    .category(VitalFunctionExtraction.determineCategory(entry.codeDisplayOriginal))
+                    .subcategory(entry.componentCodeDisplay)
+                    .value(entry.quantityValue)
+                    .unit(entry.quantityUnit)
+                    .build()
+            } else {
+                ImmutableVitalFunction.builder()
+                    .date(entry.effectiveDateTime)
+                    .category(VitalFunctionExtraction.determineCategory(entry.codeDisplayOriginal))
+                    .subcategory(entry.componentCodeDisplay)
+                    .value(entry.quantityValue)
+                    .unit("<ignore>")
+                    .build()
+            }
         }
     }
 
