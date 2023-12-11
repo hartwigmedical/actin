@@ -256,20 +256,46 @@ Note that "if applicable" in 'origin' indicates that the field is derived from a
 | lvef                       | ECG details                    |
 | hasComplications           | Complication details           |
 
-N prior tumor treatments (TO BE UPDATED)
+N treatment history entries in oncological history
 
-| Field          | Origin                                          |
-|----------------|-------------------------------------------------|
-| name           | Treatment history name                          |
-| startYear      | Treatment history start date                    |
-| startMonth     | Treatment history start date                    |
-| stopYear       | Treatment history end date                      |
-| stopMonth      | Treatment history end date                      |
-| cycles         | Treatment history administered number of cycles |
-| bestResponse   | Treatment history response                      |
-| stopReason     | Treatment history stop reason                   |
-| categories     | Added in curation                               |
-| isSystemic     | Added in curation                               |
+| Field                   | Origin                       |
+|-------------------------|------------------------------|
+| treatments              | Described below              |
+| startYear               | Treatment history start date |
+| startMonth              | Treatment history start date |
+| intents                 | Treatment history intent     |
+| isTrial                 | Treatment history entry      |
+| trialAcronym            | Treatment history entry      |
+| treatmentHistoryDetails | Described below              |
+
+Each treatment history entry references T treatments from ACTIN's treatment database:
+
+| Field      | Origin               |
+|------------|----------------------|
+| name       | Resolved in curation |
+| categories | Treatment database   |
+| types      | Treatment database   |
+| synonyms   | Treatment database   |
+| isSystemic | Treatment database   |
+
+Some treatments include a curated set of named drugs with categories and types, also maintained in ACTIN's treatment database.
+Radiotherapy treatments may also provide a type and indicate if treatment was internal.
+
+Each treatment history entry has 0 or 1 treatment history details records:
+
+| Field                  | Origin                      |
+|------------------------|-----------------------------|
+| stopYear               | Treatment history stop date |
+| stopMonth              | Treatment history stop date |
+| cycles                 | Added in curation           |
+| bestResponse           | Added in curation           |
+| stopReason             | Added in curation           |
+| stopReasonDetail       | Added in curation           |
+| toxicities             | Added in curation           |
+| bodyLocationCategories | Added in curation           |
+| bodyLocations          | Added in curation           |
+| switchToTreatments     | Added in curation           |
+| maintenanceTreatment   | Added in curation           |
 
 N prior second primaries
 
