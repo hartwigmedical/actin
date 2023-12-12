@@ -287,6 +287,7 @@ Each treatment history entry has 0 or 1 treatment history details records:
 |------------------------|-----------------------------|
 | stopYear               | Treatment history stop date |
 | stopMonth              | Treatment history stop date |
+| ongoingAsOf            | Not set - TODO: ACTIN-463   |
 | cycles                 | Added in curation           |
 | bestResponse           | Added in curation           |
 | stopReason             | Added in curation           |
