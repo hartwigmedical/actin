@@ -52,7 +52,7 @@ class CurationDatabaseReaderTest {
     }
 
     @Test
-    fun shouldReadTreatmentHistoryConfigs() {
+    fun shouldReadTreatmentHistoryEntryConfigs() {
         val configs = database!!.treatmentHistoryEntryConfigs
         assertThat(configs).hasSize(1)
 

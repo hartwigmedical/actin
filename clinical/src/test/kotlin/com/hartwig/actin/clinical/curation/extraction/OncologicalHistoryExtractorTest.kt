@@ -10,7 +10,7 @@ import org.junit.Test
 private const val PATIENT_ID = "patient1"
 private const val CANNOT_CURATE = "cannot curate"
 
-class TreatmentHistoryExtractorTest {
+class OncologicalHistoryExtractorTest {
 
     @Test
     fun shouldCurateTreatmentHistory() {
@@ -19,7 +19,7 @@ class TreatmentHistoryExtractorTest {
             otherOncologicalHistory = listOf(CANNOT_CURATE)
         )
 
-        val (treatmentHistory, evaluation) = TreatmentHistoryExtractor(TestCurationFactory.createProperTestCurationDatabase()).extract(
+        val (treatmentHistory, evaluation) = OncologicalHistoryExtractor(TestCurationFactory.createProperTestCurationDatabase()).extract(
             PATIENT_ID,
             questionnaire
         )

@@ -82,9 +82,11 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentClass;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentStage;
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -118,6 +120,7 @@ public class ClinicalGsonDeserializer {
                 .registerTypeAdapter(DrugTreatment.class, new AbstractClassAdapter<DrugTreatment>(ImmutableDrugTreatment.class))
                 .registerTypeAdapter(OtherTreatment.class, new AbstractClassAdapter<OtherTreatment>(ImmutableOtherTreatment.class))
                 .registerTypeAdapter(Radiotherapy.class, new AbstractClassAdapter<Radiotherapy>(ImmutableRadiotherapy.class))
+                .registerTypeAdapter(TreatmentStage.class, new AbstractClassAdapter<TreatmentStage>(ImmutableTreatmentStage.class))
                 .registerTypeAdapter(Treatment.class, new TreatmentAdapter())
                 .registerTypeAdapter(TreatmentHistoryDetails.class,
                         new AbstractClassAdapter<TreatmentHistoryDetails>(ImmutableTreatmentHistoryDetails.class))
@@ -125,6 +128,8 @@ public class ClinicalGsonDeserializer {
                 }.getType(), new ImmutableListAdapter<String>(String.class))
                 .registerTypeAdapter(new TypeToken<ImmutableList<TreatmentHistoryEntry>>() {
                 }.getType(), new ImmutableListAdapter<TreatmentHistoryEntry>(ImmutableTreatmentHistoryEntry.class))
+                .registerTypeAdapter(new TypeToken<ImmutableList<TreatmentStage>>() {
+                }.getType(), new ImmutableListAdapter<TreatmentStage>(ImmutableTreatmentStage.class))
                 .registerTypeAdapter(new TypeToken<ImmutableList<PriorSecondPrimary>>() {
                 }.getType(), new ImmutableListAdapter<PriorSecondPrimary>(ImmutablePriorSecondPrimary.class))
                 .registerTypeAdapter(new TypeToken<ImmutableList<PriorOtherCondition>>() {

@@ -88,7 +88,7 @@ class HasHadCombinedTreatmentNamesWithCyclesTest {
         private fun patientRecordWithTreatmentHistory(treatmentHistory: List<TreatmentHistoryEntry>): PatientRecord {
             val minimal: PatientRecord = TestDataFactory.createMinimalTestPatientRecord()
             val clinicalRecord: ClinicalRecord =
-                ImmutableClinicalRecord.copyOf(minimal.clinical()).withTreatmentHistory(treatmentHistory)
+                ImmutableClinicalRecord.copyOf(minimal.clinical()).withOncologicalHistory(treatmentHistory)
             return ImmutablePatientRecord.copyOf(minimal).withClinical(clinicalRecord)
         }
 

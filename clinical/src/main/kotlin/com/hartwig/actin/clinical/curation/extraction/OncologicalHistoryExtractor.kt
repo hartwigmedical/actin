@@ -10,7 +10,7 @@ import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 
-class TreatmentHistoryExtractor(private val curation: CurationDatabase) {
+class OncologicalHistoryExtractor(private val curation: CurationDatabase) {
 
     fun extract(patientId: String, questionnaire: Questionnaire?): ExtractionResult<List<TreatmentHistoryEntry>> {
         if (questionnaire == null) {

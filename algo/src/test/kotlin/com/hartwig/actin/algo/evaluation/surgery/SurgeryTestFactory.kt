@@ -32,13 +32,13 @@ internal object SurgeryTestFactory {
             .build()
     }
 
-    fun withTreatmentHistory(treatments: List<TreatmentHistoryEntry>): PatientRecord {
+    fun withOncologicalHistory(treatments: List<TreatmentHistoryEntry>): PatientRecord {
         return ImmutablePatientRecord.builder()
             .from(TestDataFactory.createMinimalTestPatientRecord())
             .clinical(
                 ImmutableClinicalRecord.builder()
                     .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                    .treatmentHistory(treatments)
+                    .oncologicalHistory(treatments)
                     .build()
             )
             .build()
