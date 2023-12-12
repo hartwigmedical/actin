@@ -54,7 +54,7 @@ class PrimaryTumorConfigFactoryTest {
             )
         )
         assertThat(config.errors).containsExactly(
-            CurationConfigValidationError("Primary tumor config with input 'input' contains at least one invalid doid: 'input'")
+            CurationConfigValidationError("Primary tumor config with input 'input' contains at least one invalid doid: '[123]'")
         )
     }
 }
