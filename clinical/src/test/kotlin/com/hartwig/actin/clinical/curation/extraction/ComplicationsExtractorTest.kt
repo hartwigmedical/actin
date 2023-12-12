@@ -1,11 +1,9 @@
 package com.hartwig.actin.clinical.curation.extraction
 
 import com.hartwig.actin.clinical.curation.CurationCategory
-import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
-import com.hartwig.actin.clinical.curation.config.ValidatedCurationConfig
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -14,38 +12,24 @@ private const val PATIENT_ID = "patient1"
 private const val CANNOT_CURATE = "cannot curate"
 
 class ComplicationsExtractorTest {
-    private val curationDatabase = CurationDatabase(
-        mapOf(
-            "term" to setOf(
-                ValidatedCurationConfig(
-                    ComplicationConfig(
-                        input = "term",
-                        ignore = false,
-                        curated = ImmutableComplication.builder().name("Curated").build(),
-                        impliesUnknownComplicationState = false
-                    )
-                )
-            ),
-            "none" to setOf(
-                ValidatedCurationConfig(
-                    ComplicationConfig(
-                        input = "none",
-                        ignore = true,
-                        curated = null,
-                        impliesUnknownComplicationState = false
-                    )
-                )
-            ),
-            "unknown" to setOf(
-                ValidatedCurationConfig(
-                    ComplicationConfig(
-                        input = "unknown",
-                        ignore = false,
-                        curated = null,
-                        impliesUnknownComplicationState = true
-                    )
-                )
-            )
+    private val curationDatabase = TestCurationFactory.curationDatabase(
+        ComplicationConfig(
+            input = "term",
+            ignore = false,
+            curated = ImmutableComplication.builder().name("Curated").build(),
+            impliesUnknownComplicationState = false
+        ),
+        ComplicationConfig(
+            input = "none",
+            ignore = true,
+            curated = null,
+            impliesUnknownComplicationState = false
+        ),
+        ComplicationConfig(
+            input = "unknown",
+            ignore = false,
+            curated = null,
+            impliesUnknownComplicationState = true
         )
     )
 

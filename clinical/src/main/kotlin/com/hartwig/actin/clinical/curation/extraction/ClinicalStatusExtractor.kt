@@ -78,7 +78,7 @@ class ClinicalStatusExtractor(
         return ExtractionResult(ecg, curationResponse?.extractionEvaluation ?: ExtractionEvaluation())
     }
 
-    fun curateInfection(patientId: String, rawInfectionStatus: InfectionStatus?): ExtractionResult<InfectionStatus?> {
+    private fun curateInfection(patientId: String, rawInfectionStatus: InfectionStatus?): ExtractionResult<InfectionStatus?> {
         val curationResponse = rawInfectionStatus?.description()?.let {
             CurationResponse.createFromConfigs(
                 infectionCuration.curate(it), patientId, CurationCategory.INFECTION, it, "infection", true
@@ -112,7 +112,7 @@ class ClinicalStatusExtractor(
         } else ImmutableECGMeasure.builder().value(value).unit(unit).build()
     }
 
-    fun determineLVEF(nonOncologicalHistoryEntries: List<String>?): Double? {
+    private fun determineLVEF(nonOncologicalHistoryEntries: List<String>?): Double? {
         // We do not raise warnings or propagate evaluated inputs here since we use the same configs for priorOtherConditions
         return nonOncologicalHistoryEntries?.asSequence()
             ?.flatMap { nonOncologicalHistoryCuration.curate(it) }

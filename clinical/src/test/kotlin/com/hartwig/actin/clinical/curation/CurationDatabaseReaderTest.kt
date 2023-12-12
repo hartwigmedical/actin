@@ -19,7 +19,7 @@ class CurationDatabaseReaderTest {
 
     @Test
     fun `Should read a curation database from TSV file`() {
-        val input = "Unknown | Carcinoma"
+        val input = "Carcinoma | Unknown"
         assertThat(
             CurationDatabaseReader.read(
                 CURATION_DIRECTORY,

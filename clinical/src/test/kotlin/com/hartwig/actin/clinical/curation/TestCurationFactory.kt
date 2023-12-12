@@ -18,6 +18,7 @@ import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
+import com.hartwig.actin.clinical.curation.config.ValidatedCurationConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import com.hartwig.actin.clinical.curation.translation.LaboratoryIdentifiers
 import com.hartwig.actin.clinical.curation.translation.Translation
@@ -45,6 +46,7 @@ val CURATION_DIRECTORY: String = Resources.getResource("curation").path + "/"
 
 object TestCurationFactory {
 
+
     fun createMinimalTestCurationDatabaseValidator(): CurationDoidValidator {
         return CurationDoidValidator(TestDoidModelFactory.createMinimalTestDoidModel())
     }
@@ -56,9 +58,11 @@ object TestCurationFactory {
         )
     }
 
-    private inline fun <reified T : CurationConfig> configsToMap(configs: List<T>): Map<Pair<String, Class<T>>, Set<T>> {
-        return configs.groupBy { it.input.lowercase() }.mapKeys { it.key to T::class.java }.mapValues { it.value.toSet() }
-    }
+    fun <T : CurationConfig> curationDatabase(vararg configs: T) = CurationDatabase(configsToMap(configs.toList()))
+
+    private fun <T : CurationConfig> configsToMap(configs: List<T>) =
+        configs.groupBy { it.input.lowercase() }.mapValues { it.value.map { c -> ValidatedCurationConfig(c) }.toSet() }
+
 
     private fun createTestQTProlongingConfigs(): List<QTProlongatingConfig> {
         return listOf(QTProlongatingConfig(PARACETAMOL, false, QTProlongatingRisk.POSSIBLE))

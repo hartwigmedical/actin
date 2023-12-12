@@ -63,13 +63,14 @@ class TumorDetailsExtractor(
         return ExtractionResult(tumorDetails, otherLesionsResult + tumorExtractionResult + biopsyCuration?.extractionEvaluation)
     }
 
-    private fun curateTumorDetails(
+    fun curateTumorDetails(
         patientId: String,
         inputTumorLocation: String?,
         inputTumorType: String?
     ): Pair<TumorDetails, ExtractionEvaluation> {
         val builder = ImmutableTumorDetails.builder()
-        val inputPrimaryTumor = tumorInput(inputTumorLocation, inputTumorType) ?: return Pair(builder.build(), ExtractionEvaluation())
+        val inputPrimaryTumor =
+            (tumorInput(inputTumorLocation, inputTumorType) ?: return Pair(builder.build(), ExtractionEvaluation())).lowercase()
         val primaryTumorCuration = CurationResponse.createFromConfigs(
             primaryTumorCuration.curate(inputPrimaryTumor),
             patientId,
@@ -96,7 +97,7 @@ class TumorDetailsExtractor(
         }
     }
 
-    private fun curateOtherLesions(patientId: String, otherLesions: List<String>?): ExtractionResult<List<String>?> {
+    fun curateOtherLesions(patientId: String, otherLesions: List<String>?): ExtractionResult<List<String>?> {
         if (otherLesions == null) {
             return ExtractionResult(null, ExtractionEvaluation())
         }

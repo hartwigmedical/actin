@@ -4,18 +4,6 @@ import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
 import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
-import com.hartwig.actin.clinical.curation.extraction.BloodTransfusionsExtractor
-import com.hartwig.actin.clinical.curation.extraction.ClinicalStatusExtractor
-import com.hartwig.actin.clinical.curation.extraction.ComplicationsExtractor
-import com.hartwig.actin.clinical.curation.extraction.IntoleranceExtractor
-import com.hartwig.actin.clinical.curation.extraction.LabValueExtractor
-import com.hartwig.actin.clinical.curation.extraction.MedicationExtractor
-import com.hartwig.actin.clinical.curation.extraction.PriorMolecularTestsExtractor
-import com.hartwig.actin.clinical.curation.extraction.PriorOtherConditionsExtractor
-import com.hartwig.actin.clinical.curation.extraction.PriorSecondPrimaryExtractor
-import com.hartwig.actin.clinical.curation.extraction.ToxicityExtractor
-import com.hartwig.actin.clinical.curation.extraction.TreatmentHistoryExtractor
-import com.hartwig.actin.clinical.curation.extraction.TumorDetailsExtractor
 import com.hartwig.actin.clinical.feed.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.FeedModel
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
@@ -57,29 +45,8 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
                 )
             )
         )
-        val clinicalIngestion = ClinicalIngestion(
-            feed = feedModel,
-            priorSecondPrimaryExtractor = PriorSecondPrimaryExtractor.create(
-                config.curationDirectory,
-                curationDoidValidator,
-                treatmentDatabase
-            ),
-            tumorDetailsExtractor = TumorDetailsExtractor.create(config.curationDirectory, curationDoidValidator),
-            complicationsExtractor = ComplicationsExtractor.create(config.curationDirectory),
-            clinicalStatusExtractor = ClinicalStatusExtractor.create(config.curationDirectory, curationDoidValidator),
-            treatmentHistoryExtractor = TreatmentHistoryExtractor.create(
-                config.curationDirectory,
-                curationDoidValidator,
-                treatmentDatabase
-            ),
-            bloodTransfusionsExtractor = BloodTransfusionsExtractor.create(config.curationDirectory),
-            priorMolecularTestsExtractor = PriorMolecularTestsExtractor.create(config.curationDirectory),
-            toxicityExtractor = ToxicityExtractor.create(config.curationDirectory),
-            intoleranceExtractor = IntoleranceExtractor.create(config.curationDirectory, curationDoidValidator),
-            priorOtherConditionExtractor = PriorOtherConditionsExtractor.create(config.curationDirectory, curationDoidValidator),
-            medicationExtractor = MedicationExtractor.create(config.curationDirectory, atcModel),
-            labValueExtractor = LabValueExtractor.create(config.curationDirectory)
-        )
+        val clinicalIngestion =
+            ClinicalIngestion.create(config.curationDirectory, feedModel, curationDoidValidator, treatmentDatabase, atcModel)
 
 
         val ingestionResult =

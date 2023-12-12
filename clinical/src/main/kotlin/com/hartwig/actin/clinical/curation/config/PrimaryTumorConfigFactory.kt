@@ -18,7 +18,7 @@ class PrimaryTumorConfigFactory(private val curationDoidValidator: CurationDoidV
                 primaryTumorExtraDetails = parts[fields["primaryTumorExtraDetails"]!!],
                 doids = doids
             ), if (!curationDoidValidator.isValidCancerDoidSet(doids)) {
-                listOf(CurationConfigValidationError("Primary tumor config with input '$input' contains at least one invalid doid: '$input'"))
+                listOf(CurationConfigValidationError("Primary tumor config with input '$input' contains at least one invalid doid: '$doids'"))
             } else emptyList()
         )
     }

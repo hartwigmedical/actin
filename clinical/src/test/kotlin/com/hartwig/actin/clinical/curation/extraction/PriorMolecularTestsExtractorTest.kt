@@ -3,23 +3,38 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
-import io.mockk.mockk
+import com.hartwig.actin.clinical.curation.config.MolecularTestConfig
+import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val PATIENT_ID = "patient1"
 private const val CANNOT_CURATE = "cannot curate"
 
+private const val MOLECULAR_TEST_INPUT = "Molecular test input"
+
+private const val MOLECULAR_TEST_INTERPRETATION = "Molecular test interpretation"
+
 class PriorMolecularTestsExtractorTest {
+
+    val extractor = PriorMolecularTestsExtractor(
+        TestCurationFactory.curationDatabase(
+            MolecularTestConfig(
+                input = MOLECULAR_TEST_INPUT,
+                ignore = false,
+                curated = ImmutablePriorMolecularTest.builder().impliesPotentialIndeterminateStatus(false)
+                    .test(MOLECULAR_TEST_INTERPRETATION).item("item").build()
+            )
+        )
+    )
 
     @Test
     fun `Should curate prior molecular tests`() {
-        val extractor = PriorMolecularTestsExtractor(mockk())
-        val inputs = listOf("IHC ERBB2 3+", CANNOT_CURATE)
+        val inputs = listOf(MOLECULAR_TEST_INPUT, CANNOT_CURATE)
         val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(ihcTestResults = inputs)
         val (priorMolecularTests, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
         assertThat(priorMolecularTests).hasSize(1)
-        assertThat(priorMolecularTests[0].test()).isEqualTo("IHC")
+        assertThat(priorMolecularTests[0].test()).isEqualTo(MOLECULAR_TEST_INTERPRETATION)
 
         assertThat(evaluation.warnings).containsOnly(
             CurationWarning(

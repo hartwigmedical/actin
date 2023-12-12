@@ -1,5 +1,7 @@
 package com.hartwig.actin.clinical
 
+import com.hartwig.actin.TreatmentDatabase
+import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.extraction.BloodTransfusionsExtractor
 import com.hartwig.actin.clinical.curation.extraction.ClinicalStatusExtractor
 import com.hartwig.actin.clinical.curation.extraction.ComplicationsExtractor
@@ -177,5 +179,35 @@ class ClinicalIngestion(
 
     companion object {
         private val LOGGER = LogManager.getLogger(ClinicalIngestion::class.java)
+
+        fun create(
+            curationDirectory: String,
+            feedModel: FeedModel,
+            curationDoidValidator: CurationDoidValidator,
+            treatmentDatabase: TreatmentDatabase,
+            atcModel: WhoAtcModel
+        ) = ClinicalIngestion(
+            feed = feedModel,
+            priorSecondPrimaryExtractor = PriorSecondPrimaryExtractor.create(
+                curationDirectory,
+                curationDoidValidator,
+                treatmentDatabase
+            ),
+            tumorDetailsExtractor = TumorDetailsExtractor.create(curationDirectory, curationDoidValidator),
+            complicationsExtractor = ComplicationsExtractor.create(curationDirectory),
+            clinicalStatusExtractor = ClinicalStatusExtractor.create(curationDirectory, curationDoidValidator),
+            treatmentHistoryExtractor = TreatmentHistoryExtractor.create(
+                curationDirectory,
+                curationDoidValidator,
+                treatmentDatabase
+            ),
+            bloodTransfusionsExtractor = BloodTransfusionsExtractor.create(curationDirectory),
+            priorMolecularTestsExtractor = PriorMolecularTestsExtractor.create(curationDirectory),
+            toxicityExtractor = ToxicityExtractor.create(curationDirectory),
+            intoleranceExtractor = IntoleranceExtractor.create(curationDirectory, curationDoidValidator),
+            priorOtherConditionExtractor = PriorOtherConditionsExtractor.create(curationDirectory, curationDoidValidator),
+            medicationExtractor = MedicationExtractor.create(curationDirectory, atcModel),
+            labValueExtractor = LabValueExtractor.create(curationDirectory)
+        )
     }
 }

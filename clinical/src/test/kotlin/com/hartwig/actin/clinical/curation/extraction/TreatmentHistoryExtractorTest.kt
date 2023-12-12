@@ -4,29 +4,54 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.TestCurationFactory.emptyQuestionnaire
-import io.mockk.mockk
+import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
+import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val PATIENT_ID = "patient1"
 private const val CANNOT_CURATE = "cannot curate"
 
+private const val SECOND_PRIMARY_INPUT = "Second primary input"
+
+private const val TREATMENT_HISTORY_INPUT = "Treatment history input"
+
+private const val CURATED_TREATMENT_NAME = "Curated treatment name"
+
 class TreatmentHistoryExtractorTest {
 
+    private val extractor = TreatmentHistoryExtractor(
+        TestCurationFactory.curationDatabase(
+            TreatmentHistoryEntryConfig(
+                input = TREATMENT_HISTORY_INPUT,
+                ignore = false,
+                curated = ImmutableTreatmentHistoryEntry.builder()
+                    .addTreatments(ImmutableDrugTreatment.builder().name(CURATED_TREATMENT_NAME).build()).build()
+            )
+        ), TestCurationFactory.curationDatabase(
+            SecondPrimaryConfig(
+                input = SECOND_PRIMARY_INPUT,
+                ignore = false,
+                curated = null
+            )
+        )
+    )
+
     @Test
-    fun shouldCurateTreatmentHistory() {
+    fun `Should extract and curate treatment history`() {
         val questionnaire = emptyQuestionnaire().copy(
-            treatmentHistoryCurrentTumor = listOf("Cis 2020 2021", "no systemic treatment"),
+            treatmentHistoryCurrentTumor = listOf(TREATMENT_HISTORY_INPUT),
             otherOncologicalHistory = listOf(CANNOT_CURATE)
         )
 
-        val (treatmentHistory, evaluation) = TreatmentHistoryExtractor(mockk(), mockk()).extract(
+        val (treatmentHistory, evaluation) = extractor.extract(
             PATIENT_ID,
             questionnaire
         )
-        assertThat(treatmentHistory).hasSize(2)
-        assertThat(treatmentHistory).anyMatch { 2020 == it.startYear() }
-        assertThat(treatmentHistory).anyMatch { 2021 == it.startYear() }
+        assertThat(treatmentHistory).hasSize(1)
+        assertThat(treatmentHistory[0].treatmentName()).isEqualTo(CURATED_TREATMENT_NAME)
 
         assertThat(evaluation.warnings).containsExactly(
             CurationWarning(
@@ -37,7 +62,15 @@ class TreatmentHistoryExtractorTest {
             )
         )
         assertThat(evaluation.treatmentHistoryEntryEvaluatedInputs).isEqualTo(
-            setOf("cis 2020 2021", "no systemic treatment", CANNOT_CURATE)
+            setOf(TREATMENT_HISTORY_INPUT.lowercase(), CANNOT_CURATE.lowercase())
         )
+    }
+
+    @Test
+    fun `Should suppress warnings when prior second primaries from treatment history`() {
+        val inputs = listOf(SECOND_PRIMARY_INPUT)
+        val questionnaire = emptyQuestionnaire().copy(secondaryPrimaries = inputs)
+        val (_, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
+        assertThat(evaluation.warnings).isEmpty()
     }
 }
