@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation
 
+import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
 import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
 import com.hartwig.actin.clinical.curation.config.ValidatedCurationConfig
@@ -19,7 +20,12 @@ class CurationResponseTest {
         val response = CurationResponse.createFromConfigs(
             configs, PATIENT_ID, CurationCategory.MEDICATION_NAME, "input", "medication name", true
         )
-        assertThat(response).isEqualTo(CurationResponse(configs, ExtractionEvaluation(medicationNameEvaluatedInputs = setOf("input"))))
+        assertThat(response).isEqualTo(
+            CurationResponse(
+                configSet(configs),
+                ExtractionEvaluation(medicationNameEvaluatedInputs = setOf("input"))
+            )
+        )
     }
 
     @Test
@@ -42,7 +48,7 @@ class CurationResponseTest {
                 )
             )
         )
-        assertThat(response).isEqualTo(CurationResponse(configs, expectedEvaluation))
+        assertThat(response).isEqualTo(CurationResponse(configSet(configs), expectedEvaluation))
     }
 
     @Test
@@ -54,7 +60,12 @@ class CurationResponseTest {
         val response = CurationResponse.createFromConfigs(
             configs, PATIENT_ID, CurationCategory.LESION_LOCATION, "input", "lesion location", false
         )
-        assertThat(response).isEqualTo(CurationResponse(configs, ExtractionEvaluation(lesionLocationEvaluatedInputs = setOf("input"))))
+        assertThat(response).isEqualTo(
+            CurationResponse(
+                configSet(configs),
+                ExtractionEvaluation(lesionLocationEvaluatedInputs = setOf("input"))
+            )
+        )
     }
 
     @Test
@@ -102,4 +113,7 @@ class CurationResponseTest {
         )
         assertThat(response).isEqualTo(CurationResponse(emptySet<Translation<String>>(), expectedEvaluation))
     }
+
+    private fun <T : CurationConfig> configSet(configs: Set<ValidatedCurationConfig<T>>) =
+        configs.map { it.config }.toSet()
 }
