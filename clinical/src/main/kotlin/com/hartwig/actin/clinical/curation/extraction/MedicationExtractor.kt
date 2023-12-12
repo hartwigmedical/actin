@@ -97,7 +97,7 @@ class MedicationExtractor(
                 "medication name",
                 true
             )
-            ExtractionResult(curation.config()?.name, curation.extractionEvaluation)
+            ExtractionResult(curation.config()?.let { if (!it.ignore) it.name else null }, curation.extractionEvaluation)
         }
     }
 

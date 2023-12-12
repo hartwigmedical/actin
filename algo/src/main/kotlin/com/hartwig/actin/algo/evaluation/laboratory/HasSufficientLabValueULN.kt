@@ -5,15 +5,16 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverable
 import com.hartwig.actin.clinical.datamodel.LabValue
+import com.hartwig.actin.clinical.interpretation.LabMeasurement
 
 class HasSufficientLabValueULN internal constructor(private val minULNFactor: Double) : LabEvaluationFunction {
-    override fun evaluate(record: PatientRecord, labValue: LabValue): Evaluation {
+    override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
         val result = LabEvaluation.evaluateVersusMinULN(labValue, minULNFactor)
         val builder = recoverable().result(result)
         when (result) {
             EvaluationResult.FAIL -> {
                 builder.addFailSpecificMessages(
-                    "${labValue.code()} ${
+                    "${labMeasurement.display()} ${
                         String.format(
                             "%.1f",
                             labValue.value()
@@ -21,7 +22,7 @@ class HasSufficientLabValueULN internal constructor(private val minULNFactor: Do
                     } is below minimum of $minULNFactor*ULN ($minULNFactor*${labValue.refLimitUp()})"
                 )
                 builder.addFailGeneralMessages(
-                    "${labValue.code()} ${
+                    "${labMeasurement.display()} ${
                         String.format(
                             "%.1f",
                             labValue.value()
@@ -31,13 +32,13 @@ class HasSufficientLabValueULN internal constructor(private val minULNFactor: Do
             }
 
             EvaluationResult.UNDETERMINED -> {
-                builder.addUndeterminedSpecificMessages("${labValue.code()} could not be evaluated versus maximum ULN")
-                builder.addUndeterminedGeneralMessages("${labValue.code()} undetermined")
+                builder.addUndeterminedSpecificMessages("${labMeasurement.display()} could not be evaluated versus maximum ULN")
+                builder.addUndeterminedGeneralMessages("${labMeasurement.display()} undetermined")
             }
 
             EvaluationResult.PASS -> {
                 builder.addPassSpecificMessages(
-                    "${labValue.code()} ${
+                    "${labMeasurement.display()} ${
                         String.format(
                             "%.1f",
                             labValue.value()
@@ -45,7 +46,7 @@ class HasSufficientLabValueULN internal constructor(private val minULNFactor: Do
                     } above minimum of $minULNFactor*ULN ($minULNFactor*${labValue.refLimitUp()})"
                 )
                 builder.addPassGeneralMessages(
-                    "${labValue.code()} ${
+                    "${labMeasurement.display()} ${
                         String.format(
                             "%.1f",
                             labValue.value()

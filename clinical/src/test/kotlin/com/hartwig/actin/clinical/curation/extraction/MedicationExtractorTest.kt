@@ -18,8 +18,10 @@ import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.datamodel.AtcLevel
+import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutableAtcClassification
 import com.hartwig.actin.clinical.datamodel.ImmutableAtcLevel
+import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutableDosage
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication
 import com.hartwig.actin.clinical.datamodel.Medication
@@ -62,6 +64,8 @@ private const val CURATED_PERIOD_BETWEEN_UNIT = "Curated period between unit"
 private const val NO_MEDICATION_NAME_INPUT = "No medication name input"
 
 private const val DOSAGE_TRANSLATION_INPUT_MILLIGRAM = "milligram"
+fun createTestCypInteraction(): ImmutableCypInteraction =
+    ImmutableCypInteraction.builder().cyp("2D6").strength(CypInteraction.Strength.WEAK).type(CypInteraction.Type.INHIBITOR).build()
 
 class MedicationExtractorTest {
     private val extractor =
@@ -96,7 +100,7 @@ class MedicationExtractorTest {
                 CypInteractionConfig(
                     input = CURATED_MEDICATION_NAME,
                     ignore = false,
-                    interactions = listOf(TestCurationFactory.createTestCypInteraction())
+                    interactions = listOf(createTestCypInteraction())
                 )
             ),
             TestCurationFactory.curationDatabase(
@@ -147,7 +151,7 @@ class MedicationExtractorTest {
                 .dosage(DOSAGE)
                 .startDate(LocalDate.of(2023, 12, 12))
                 .stopDate(LocalDate.of(2023, 12, 13))
-                .addCypInteractions(TestCurationFactory.createTestCypInteraction())
+                .addCypInteractions(createTestCypInteraction())
                 .qtProlongatingRisk(QTProlongatingRisk.POSSIBLE)
                 .atc(
                     ImmutableAtcClassification.builder()
@@ -240,8 +244,12 @@ class MedicationExtractorTest {
     }
 
     @Test
-    fun `Should curate medication name`() {
+    fun `Should ignore empty medication names`() {
         assertMedicationForName("", emptyList())
+    }
+
+    @Test
+    fun `Should create warning for input medication name that cannot be curated`() {
         assertMedicationForName(
             CANNOT_CURATE, emptyList(), listOf(
                 CurationWarning(
@@ -253,6 +261,16 @@ class MedicationExtractorTest {
             )
         )
         assertMedicationForName(NO_MEDICATION_NAME_INPUT, emptyList())
+        assertMedicationForName(MEDICATION_NAME_INPUT, listOf(CURATED_MEDICATION_NAME))
+    }
+
+    @Test
+    fun `Should not extract names for medication name inputs that are mapped to configs with ignore = true`() {
+        assertMedicationForName(NO_MEDICATION_NAME_INPUT, emptyList())
+    }
+
+    @Test
+    fun `Should extract correct medication name for known medication name`() {
         assertMedicationForName(MEDICATION_NAME_INPUT, listOf(CURATED_MEDICATION_NAME))
     }
 

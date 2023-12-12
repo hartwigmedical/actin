@@ -90,14 +90,14 @@ class LabMeasurementEvaluatorTest {
         private val ALWAYS_VALID_DATE = TEST_DATE.minusDays(2)
 
         private val passingLabEvaluationFunction: LabEvaluationFunction = object : LabEvaluationFunction {
-            override fun evaluate(record: PatientRecord, labValue: LabValue): Evaluation {
+            override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
                 return EvaluationTestFactory.withResult(EvaluationResult.PASS)
             }
         }
 
         private fun firstFailAndRestWithParam(defaultEvaluation: EvaluationResult): LabEvaluationFunction {
             return object : LabEvaluationFunction {
-                override fun evaluate(record: PatientRecord, labValue: LabValue): Evaluation {
+                override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
                     return if (labValue.date() == TEST_DATE) {
                         EvaluationTestFactory.withResult(EvaluationResult.FAIL)
                     } else {

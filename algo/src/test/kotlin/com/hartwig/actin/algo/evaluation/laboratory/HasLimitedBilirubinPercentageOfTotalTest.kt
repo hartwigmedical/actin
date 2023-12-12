@@ -17,27 +17,34 @@ class HasLimitedBilirubinPercentageOfTotalTest {
             LabTestFactory.forMeasurement(LabMeasurement.TOTAL_BILIRUBIN).date(LocalDate.of(2020, 4, 4)).value(10.0).build()
         val valid = LabTestFactory.withLabValue(validBilirubin)
         val directBili = LabTestFactory.forMeasurement(LabMeasurement.DIRECT_BILIRUBIN)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(valid, directBili.value(3.0).build()))
-        val actual = function.evaluate(valid, directBili.value(8.0).build())
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(valid, LabMeasurement.DIRECT_BILIRUBIN, directBili.value(3.0).build()))
+        val actual = function.evaluate(valid, LabMeasurement.DIRECT_BILIRUBIN, directBili.value(8.0).build())
         assertEvaluation(EvaluationResult.FAIL, actual)
         assertTrue(actual.recoverable())
 
         // Cannot determine if no total bilirubin
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TestDataFactory.createMinimalTestPatientRecord(), directBili.build())
+            function.evaluate(TestDataFactory.createMinimalTestPatientRecord(), LabMeasurement.DIRECT_BILIRUBIN, directBili.build())
         )
 
         // Cannot determine in case of old bilirubin.
         val invalidBilirubin: LabValue =
             LabTestFactory.forMeasurement(LabMeasurement.TOTAL_BILIRUBIN).date(LocalDate.of(2019, 4, 4)).value(10.0).build()
         val invalid = LabTestFactory.withLabValue(invalidBilirubin)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(invalid, directBili.value(3.0).build()))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(invalid, LabMeasurement.DIRECT_BILIRUBIN, directBili.value(3.0).build())
+        )
     }
 
     @Test(expected = IllegalStateException::class)
     fun crashOnWrongInputLabValue() {
         val function = HasLimitedBilirubinPercentageOfTotal(50.0, LocalDate.of(2020, 3, 3))
-        function.evaluate(TestDataFactory.createMinimalTestPatientRecord(), LabTestFactory.forMeasurement(LabMeasurement.ALBUMIN).build())
+        function.evaluate(
+            TestDataFactory.createMinimalTestPatientRecord(),
+            LabMeasurement.ALBUMIN,
+            LabTestFactory.forMeasurement(LabMeasurement.ALBUMIN).build()
+        )
     }
 }

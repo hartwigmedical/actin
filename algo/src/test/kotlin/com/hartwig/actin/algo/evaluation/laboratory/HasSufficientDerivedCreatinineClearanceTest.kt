@@ -27,11 +27,11 @@ class HasSufficientDerivedCreatinineClearanceTest {
 
         // MDRD between 103 and 125
         val male = create(1971, Gender.MALE, Lists.newArrayList(creatinine), Lists.newArrayList())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(male, creatinine))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(male, LabMeasurement.CREATININE, creatinine))
 
         // MDRD between 73 and 95
         val female = create(1971, Gender.FEMALE, Lists.newArrayList(creatinine), Lists.newArrayList())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(female, creatinine))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(female, LabMeasurement.CREATININE, creatinine))
     }
 
     @Test
@@ -41,11 +41,11 @@ class HasSufficientDerivedCreatinineClearanceTest {
 
         // CDK-EPI between 104 and 125
         val male = create(1971, Gender.MALE, Lists.newArrayList(creatinine), Lists.newArrayList())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(male, creatinine))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(male, LabMeasurement.CREATININE, creatinine))
 
         // CDK-EPI between 87 and 101
         val female = create(1971, Gender.FEMALE, Lists.newArrayList(creatinine), Lists.newArrayList())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(female, creatinine))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(female, LabMeasurement.CREATININE, creatinine))
     }
 
     @Test
@@ -58,20 +58,20 @@ class HasSufficientDerivedCreatinineClearanceTest {
 
         // CG 95
         val maleLight = create(1971, Gender.MALE, Lists.newArrayList(creatinine), weights)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(maleLight, creatinine))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(maleLight, LabMeasurement.CREATININE, creatinine))
 
         // CG 80
         val femaleLight = create(1971, Gender.FEMALE, Lists.newArrayList(creatinine), weights)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(femaleLight, creatinine))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(femaleLight, LabMeasurement.CREATININE, creatinine))
         weights.add(ImmutableBodyWeight.builder().date(LocalDate.of(2021, 2, 2)).value(70.0).unit(Strings.EMPTY).build())
 
         // CG 111
         val maleHeavy = create(1971, Gender.MALE, Lists.newArrayList(creatinine), weights)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(maleHeavy, creatinine))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(maleHeavy, LabMeasurement.CREATININE, creatinine))
 
         // CG 94
         val femaleHeavy = create(1971, Gender.FEMALE, Lists.newArrayList(creatinine), weights)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(femaleHeavy, creatinine))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(femaleHeavy, LabMeasurement.CREATININE, creatinine))
     }
 
     @Test
@@ -81,11 +81,11 @@ class HasSufficientDerivedCreatinineClearanceTest {
 
         // CG 103
         val fallBack1 = create(1971, Gender.MALE, Lists.newArrayList(creatinine), Lists.newArrayList())
-        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(fallBack1, creatinine))
+        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(fallBack1, LabMeasurement.CREATININE, creatinine))
 
         // CG 67
         val fallBack2 = create(1971, Gender.FEMALE, Lists.newArrayList(creatinine), Lists.newArrayList())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(fallBack2, creatinine))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(fallBack2, LabMeasurement.CREATININE, creatinine))
     }
 
     companion object {

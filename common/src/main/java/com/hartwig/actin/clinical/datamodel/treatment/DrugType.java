@@ -65,6 +65,7 @@ public enum DrugType implements TreatmentType {
     HER2_ANTIBODY(TreatmentCategory.TARGETED_THERAPY, "HER2 antibody"),
     HER2_CAR_T(TreatmentCategory.CAR_T, "HER2 antibody"),
     HER2_IMMUNOTHERAPY(TreatmentCategory.IMMUNOTHERAPY, "HER2 antibody"),
+    HER3_ANTIBODY(TreatmentCategory.TARGETED_THERAPY, "HER3 antibody"),
     HPV_VACCINE(TreatmentCategory.IMMUNOTHERAPY, "HPV vaccine"),
     HPV16_VACCINE(TreatmentCategory.IMMUNOTHERAPY, "HPV-16 vaccine"),
     HORMONE_ANTINEOPLASTIC(TreatmentCategory.HORMONE_THERAPY),

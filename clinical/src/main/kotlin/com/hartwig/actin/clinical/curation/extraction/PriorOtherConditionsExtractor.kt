@@ -31,8 +31,9 @@ class PriorOtherConditionsExtractor(private val nonOncologicalCuration: Curation
                 )
             }
             .fold(CurationResponse<NonOncologicalHistoryConfig>()) { acc, cur -> acc + cur }
-
-        return ExtractionResult(curation.configs.mapNotNull { it.priorOtherCondition }, curation.extractionEvaluation)
+        val priorOtherConditions = curation.configs.filterNot { it.ignore }
+            .mapNotNull { it.priorOtherCondition }
+        return ExtractionResult(priorOtherConditions, curation.extractionEvaluation)
     }
 
     companion object {

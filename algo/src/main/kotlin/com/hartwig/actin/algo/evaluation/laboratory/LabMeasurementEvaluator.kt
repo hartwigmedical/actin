@@ -21,23 +21,23 @@ class LabMeasurementEvaluator(
         if (!isValid(mostRecent, measurement)) {
             val builder = recoverable().result(EvaluationResult.UNDETERMINED)
             if (mostRecent == null) {
-                builder.addUndeterminedSpecificMessages("No measurement found for " + measurement.code())
+                builder.addUndeterminedSpecificMessages("No measurement found for " + measurement.display())
             } else if (mostRecent.unit() != measurement.defaultUnit()) {
-                builder.addUndeterminedSpecificMessages("Unexpected unit specified for " + measurement.code() + ": " + mostRecent.unit())
+                builder.addUndeterminedSpecificMessages("Unexpected unit specified for " + measurement.display() + ": " + mostRecent.unit())
             } else if (mostRecent.date().isBefore(minValidDate)) {
-                builder.addUndeterminedSpecificMessages("Most recent measurement too old for " + measurement.code())
+                builder.addUndeterminedSpecificMessages("Most recent measurement too old for " + measurement.display())
             }
             return builder.build()
         }
-        val evaluation = function.evaluate(record, mostRecent!!)
+        val evaluation = function.evaluate(record, measurement, mostRecent!!)
         if (evaluation.result() == EvaluationResult.FAIL) {
             val secondMostRecent = interpretation.secondMostRecentValue(measurement)
             if (isValid(secondMostRecent, measurement)) {
-                val secondEvaluation = function.evaluate(record, secondMostRecent!!)
+                val secondEvaluation = function.evaluate(record, measurement, secondMostRecent!!)
                 if (secondEvaluation.result() == EvaluationResult.PASS) {
                     return recoverable()
                         .result(EvaluationResult.WARN)
-                        .addWarnSpecificMessages("Latest measurement fails for " + measurement.code() + ", but second-latest succeeded")
+                        .addWarnSpecificMessages("Latest measurement fails for " + measurement.display() + ", but second-latest succeeded")
                         .build()
                 }
             }

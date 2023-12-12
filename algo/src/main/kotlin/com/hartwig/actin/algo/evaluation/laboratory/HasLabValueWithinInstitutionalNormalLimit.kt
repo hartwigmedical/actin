@@ -4,25 +4,26 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.clinical.datamodel.LabValue
+import com.hartwig.actin.clinical.interpretation.LabMeasurement
 
 class HasLabValueWithinInstitutionalNormalLimit internal constructor() : LabEvaluationFunction {
 
-    override fun evaluate(record: PatientRecord, labValue: LabValue): Evaluation {
+    override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
         val isOutsideRef = labValue.isOutsideRef
             ?: return EvaluationFactory.recoverableUndetermined(
-                "Could not determine whether ${labValue.code()} is within institutional normal limits",
-                "Undetermined if ${labValue.code()} is within institutional normal limits"
+                "Could not determine whether ${labMeasurement.display()} is within institutional normal limits",
+                "Undetermined if ${labMeasurement.display()} is within institutional normal limits"
             )
 
         return if (isOutsideRef) {
             EvaluationFactory.recoverableFail(
-                "${labValue.code()} exceeds institutional normal limits",
-                "${labValue.code()} exceeds normal limits"
+                "${labMeasurement.display()} exceeds institutional normal limits",
+                "${labMeasurement.display()} exceeds normal limits"
             )
         } else {
             EvaluationFactory.recoverablePass(
-                "${labValue.code()} within institutional normal limits",
-                "${labValue.code()} within normal limits"
+                "${labMeasurement.display()} within institutional normal limits",
+                "${labMeasurement.display()} within normal limits"
             )
         }
     }
