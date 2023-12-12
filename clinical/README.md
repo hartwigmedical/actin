@@ -278,8 +278,8 @@ Each treatment history entry references T treatments from ACTIN's treatment data
 | synonyms   | Treatment database   |
 | isSystemic | Treatment database   |
 
-Some treatments include a curated set of named drugs with categories and types, also maintained in ACTIN's treatment database.
-Radiotherapy treatments may also provide a type and indicate if treatment was internal.
+Drug treatments inherit their categories and types from a curated set of named drugs, also maintained in ACTIN's treatment database.
+Radiotherapy treatments always have RADIOTHERAPY as their sole category and may also indicate if treatment was internal.
 
 Each treatment history entry has 0 or 1 treatment history details records:
 
