@@ -15,6 +15,7 @@
     "predictedTumorOrigin": null,
     "isMicrosatelliteUnstable": null,
     "microsatelliteEvidence": null,
+    "homologousRepairScore": null,
     "isHomologousRepairDeficient": null,
     "homologousRepairEvidence": null,
     "tumorMutationalBurden": null,
