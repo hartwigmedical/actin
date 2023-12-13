@@ -48,7 +48,7 @@ class ClinicalIngestion(private val feed: FeedModel, private val curation: Curat
     private val priorMolecularTestsExtractor = PriorMolecularTestsExtractor(curation)
     private val labValueExtractor = LabValueExtractor(curation)
     private val toxicityExtractor = ToxicityExtractor(curation)
-    private val intoleranceExtractor = IntoleranceExtractor(curation)
+    private val intoleranceExtractor = IntoleranceExtractor(curation, atc)
     private val medicationExtractor = MedicationExtractor(curation, atc)
     private val bloodTransfusionsExtractor = BloodTransfusionsExtractor(curation)
 

@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation.extraction
 
+import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
@@ -9,7 +10,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance
 import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry
 
-class IntoleranceExtractor(private val curation: CurationDatabase) {
+class IntoleranceExtractor(private val curation: CurationDatabase, private val atcModel: AtcModel) {
 
     fun extract(patientId: String, intoleranceEntries: List<IntoleranceEntry>): ExtractionResult<List<Intolerance>> {
         return intoleranceEntries.map { entry: IntoleranceEntry ->
@@ -30,9 +31,15 @@ class IntoleranceExtractor(private val curation: CurationDatabase) {
                 curationResponse.config()?.let { config ->
                     builder.name(config.name).doids(config.doids)
                 }
-                // TODO: add ATC code of medication to subcategories
+
                 if (it.category().equals("medication", ignoreCase = true)) {
-                    builder.subcategories(emptySet())
+                    val atcCode = atcModel.lookupByName(it.name().lowercase())
+                    if (atcCode != null) {
+                        builder.subcategories(setOf(atcCode))
+                    }
+                    else {
+                        builder.subcategories(setOf())
+                    }
                 }
                 ExtractionResult(listOf(builder.build()), curationResponse.extractionEvaluation)
             }
