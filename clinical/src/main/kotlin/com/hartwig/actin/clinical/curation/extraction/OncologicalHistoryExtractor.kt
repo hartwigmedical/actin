@@ -1,18 +1,14 @@
 package com.hartwig.actin.clinical.curation.extraction
 
-import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
-import com.hartwig.actin.clinical.curation.CurationDatabaseReader
-import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.CurationResponse
+import com.hartwig.actin.clinical.curation.CurationService
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
-import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfigFactory
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
-import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfigFactory
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 
@@ -58,18 +54,10 @@ class OncologicalHistoryExtractor(
     }
 
     companion object {
-        fun create(curationDir: String, curationDoidValidator: CurationDoidValidator, treatmentDatabase: TreatmentDatabase) =
+        fun create(curationService: CurationService) =
             OncologicalHistoryExtractor(
-                secondPrimaryCuration = CurationDatabaseReader.read(
-                    curationDir,
-                    CurationDatabaseReader.SECOND_PRIMARY_TSV,
-                    SecondPrimaryConfigFactory(curationDoidValidator)
-                ),
-                treatmentHistoryCuration = CurationDatabaseReader.read(
-                    curationDir,
-                    CurationDatabaseReader.SECOND_PRIMARY_TSV,
-                    TreatmentHistoryEntryConfigFactory(treatmentDatabase)
-                )
+                treatmentHistoryCuration = curationService.treatmentHistoryEntryCuration,
+                secondPrimaryCuration = curationService.secondPrimaryCuration
             )
     }
 }

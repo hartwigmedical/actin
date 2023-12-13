@@ -2,7 +2,6 @@ package com.hartwig.actin.clinical.curation
 
 import com.google.common.io.Resources
 import com.hartwig.actin.clinical.curation.config.CurationConfig
-import com.hartwig.actin.clinical.curation.config.ValidatedCurationConfig
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 import java.time.LocalDate
 
@@ -17,8 +16,11 @@ object TestCurationFactory {
         )
     }
 
-    fun <T : CurationConfig> curationDatabase(vararg configs: T) = CurationDatabase(configsToMap(configs.toList()))
+    fun <T : CurationConfig> curationDatabase(vararg configs: T) =
+        CurationDatabase(configs = configsToMap(configs.toList()), validationErrors = emptyList(), category = CurationCategory.ECG) {
+            emptySet()
+        }
 
     private fun <T : CurationConfig> configsToMap(configs: List<T>) =
-        configs.groupBy { it.input.lowercase() }.mapValues { it.value.map { c -> ValidatedCurationConfig(c) }.toSet() }
+        configs.groupBy { it.input.lowercase() }.mapValues { it.value.toSet() }
 }

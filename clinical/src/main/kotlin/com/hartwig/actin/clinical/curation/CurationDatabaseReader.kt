@@ -3,7 +3,7 @@ package com.hartwig.actin.clinical.curation
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfigFactory
 import com.hartwig.actin.clinical.curation.config.CurationConfigFile
-import com.hartwig.actin.clinical.curation.config.ValidatedCurationConfig
+import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
 import com.hartwig.actin.util.Paths
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -33,26 +33,17 @@ class CurationDatabaseReader {
         fun <T : CurationConfig> read(
             clinicalCurationDirectory: String,
             tsv: String,
-            factory: CurationConfigFactory<T>
+            factory: CurationConfigFactory<T>,
+            category: CurationCategory,
+            evaluatedInputFunction: (ExtractionEvaluation) -> Set<String>
         ): CurationDatabase<T> {
             LOGGER.info("Reading clinical curation config from {}", clinicalCurationDirectory)
             val basePath = Paths.forceTrailingFileSeparator(clinicalCurationDirectory)
-            return readConfigs(basePath, tsv, factory)
-        }
-
-        private fun <T : CurationConfig> readConfigs(
-            basePath: String,
-            tsv: String,
-            configFactory: CurationConfigFactory<T>
-        ): CurationDatabase<T> {
             val filePath = basePath + tsv
-            val configs = CurationConfigFile.read(filePath, configFactory)
+            val configs = CurationConfigFile.read(filePath, factory)
             LOGGER.info(" Read {} configs from {}", configs.size, filePath)
-            return CurationDatabase(asInputMap(configs.map { it }))
+            return CurationDatabase.create(category, evaluatedInputFunction, configs)
         }
-
-        private fun <T : CurationConfig> asInputMap(configs: List<ValidatedCurationConfig<T>>) =
-            configs.groupBy { it.config.input.lowercase() }.mapValues { it.value.toSet() }
 
 
     }

@@ -2,7 +2,6 @@ package com.hartwig.actin.clinical.curation
 
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfigFactory
-import com.hartwig.actin.clinical.curation.config.ValidatedCurationConfig
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -24,19 +23,18 @@ class CurationDatabaseReaderTest {
             CurationDatabaseReader.read(
                 CURATION_DIRECTORY,
                 CurationDatabaseReader.PRIMARY_TUMOR_TSV,
-                PrimaryTumorConfigFactory(curationDoidValidator)
-            ).curate(input)
+                PrimaryTumorConfigFactory(curationDoidValidator),
+                CurationCategory.PRIMARY_TUMOR
+            ) { emptySet() }.curate(input)
         ).containsOnly(
-            ValidatedCurationConfig(
-                PrimaryTumorConfig(
-                    primaryTumorLocation = "Unknown",
-                    primaryTumorType = "Carcinoma",
-                    primaryTumorSubLocation = "CUP",
-                    primaryTumorExtraDetails = "",
-                    primaryTumorSubType = "",
-                    doids = setOf("299"),
-                    input = input
-                )
+            PrimaryTumorConfig(
+                primaryTumorLocation = "Unknown",
+                primaryTumorType = "Carcinoma",
+                primaryTumorSubLocation = "CUP",
+                primaryTumorExtraDetails = "",
+                primaryTumorSubType = "",
+                doids = setOf("299"),
+                input = input
             )
         )
     }

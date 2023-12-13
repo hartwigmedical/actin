@@ -3,12 +3,10 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
-import com.hartwig.actin.clinical.curation.CurationDatabaseReader
-import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.CurationResponse
+import com.hartwig.actin.clinical.curation.CurationService
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
-import com.hartwig.actin.clinical.curation.config.IntoleranceConfigFactory
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance
 import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry
@@ -51,13 +49,6 @@ class IntoleranceExtractor(private val intoleranceCuration: CurationDatabase<Int
     }
 
     companion object {
-        fun create(curationDir: String, curationDoidValidator: CurationDoidValidator) =
-            IntoleranceExtractor(
-                intoleranceCuration = CurationDatabaseReader.read(
-                    curationDir,
-                    CurationDatabaseReader.INTOLERANCE_TSV,
-                    IntoleranceConfigFactory(curationDoidValidator)
-                )
-            )
+        fun create(curationService: CurationService) = IntoleranceExtractor(curationService.intoleranceCuration)
     }
 }

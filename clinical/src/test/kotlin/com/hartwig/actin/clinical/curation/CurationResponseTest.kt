@@ -1,9 +1,7 @@
 package com.hartwig.actin.clinical.curation
 
-import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
 import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
-import com.hartwig.actin.clinical.curation.config.ValidatedCurationConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
 import com.hartwig.actin.clinical.curation.translation.Translation
@@ -16,13 +14,13 @@ class CurationResponseTest {
 
     @Test
     fun `Should create curation response with no warning for unique config`() {
-        val configs = setOf(ValidatedCurationConfig(MedicationNameConfig("input", false, "test")))
+        val configs = setOf(MedicationNameConfig("input", false, "test"))
         val response = CurationResponse.createFromConfigs(
             configs, PATIENT_ID, CurationCategory.MEDICATION_NAME, "input", "medication name", true
         )
         assertThat(response).isEqualTo(
             CurationResponse(
-                configSet(configs),
+                configs,
                 ExtractionEvaluation(medicationNameEvaluatedInputs = setOf("input"))
             )
         )
@@ -31,8 +29,8 @@ class CurationResponseTest {
     @Test
     fun `Should create curation response with multiple result warning for config that should be unique`() {
         val configs = setOf(
-            ValidatedCurationConfig(MedicationNameConfig("input", false, "test")),
-            ValidatedCurationConfig(MedicationNameConfig("input", false, "another"))
+            MedicationNameConfig("input", false, "test"),
+            MedicationNameConfig("input", false, "another")
         )
         val response = CurationResponse.createFromConfigs(
             configs, PATIENT_ID, CurationCategory.MEDICATION_NAME, "input", "medication name", true
@@ -48,21 +46,21 @@ class CurationResponseTest {
                 )
             )
         )
-        assertThat(response).isEqualTo(CurationResponse(configSet(configs), expectedEvaluation))
+        assertThat(response).isEqualTo(CurationResponse(configs, expectedEvaluation))
     }
 
     @Test
     fun `Should create curation response without multiple result warning for config that allows multiple results`() {
         val configs = setOf(
-            ValidatedCurationConfig(LesionLocationConfig("input", false, "test", LesionLocationCategory.LYMPH_NODE)),
-            ValidatedCurationConfig(LesionLocationConfig("input", false, "another", LesionLocationCategory.LYMPH_NODE))
+            LesionLocationConfig("input", false, "test", LesionLocationCategory.LYMPH_NODE),
+            LesionLocationConfig("input", false, "another", LesionLocationCategory.LYMPH_NODE)
         )
         val response = CurationResponse.createFromConfigs(
             configs, PATIENT_ID, CurationCategory.LESION_LOCATION, "input", "lesion location", false
         )
         assertThat(response).isEqualTo(
             CurationResponse(
-                configSet(configs),
+                configs,
                 ExtractionEvaluation(lesionLocationEvaluatedInputs = setOf("input"))
             )
         )
@@ -70,7 +68,7 @@ class CurationResponseTest {
 
     @Test
     fun `Should create curation response with config not found warning when no configs found`() {
-        val configs = emptySet<ValidatedCurationConfig<LesionLocationConfig>>()
+        val configs = emptySet<LesionLocationConfig>()
         val response = CurationResponse.createFromConfigs(
             configs, PATIENT_ID, CurationCategory.LESION_LOCATION, "input", "lesion location"
         )
@@ -113,7 +111,4 @@ class CurationResponseTest {
         )
         assertThat(response).isEqualTo(CurationResponse(emptySet<Translation<String>>(), expectedEvaluation))
     }
-
-    private fun <T : CurationConfig> configSet(configs: Set<ValidatedCurationConfig<T>>) =
-        configs.map { it.config }.toSet()
 }

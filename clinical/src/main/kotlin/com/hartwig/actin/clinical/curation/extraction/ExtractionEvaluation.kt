@@ -1,12 +1,10 @@
 package com.hartwig.actin.clinical.curation.extraction
 
 import com.hartwig.actin.clinical.curation.CurationWarning
-import com.hartwig.actin.clinical.curation.config.CurationConfigValidationError
 import com.hartwig.actin.clinical.curation.translation.LaboratoryIdentifiers
 import com.hartwig.actin.clinical.curation.translation.Translation
 
 data class ExtractionEvaluation(
-    val validationErrors: Set<CurationConfigValidationError> = emptySet(),
     val warnings: Set<CurationWarning> = emptySet(),
     val primaryTumorEvaluatedInputs: Set<String> = emptySet(),
     val treatmentHistoryEntryEvaluatedInputs: Set<String> = emptySet(),
@@ -29,7 +27,6 @@ data class ExtractionEvaluation(
 ) {
     operator fun plus(other: ExtractionEvaluation?): ExtractionEvaluation {
         return if (other == null) this else ExtractionEvaluation(
-            validationErrors = validationErrors + other.validationErrors,
             warnings = warnings + other.warnings,
             primaryTumorEvaluatedInputs = primaryTumorEvaluatedInputs + other.primaryTumorEvaluatedInputs,
             treatmentHistoryEntryEvaluatedInputs = treatmentHistoryEntryEvaluatedInputs + other.treatmentHistoryEntryEvaluatedInputs,

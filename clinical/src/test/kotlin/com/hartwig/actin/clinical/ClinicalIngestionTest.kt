@@ -4,6 +4,7 @@ import com.google.common.io.Resources
 import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
+import com.hartwig.actin.clinical.curation.CurationService
 import com.hartwig.actin.clinical.curation.TestAtcFactory
 import com.hartwig.actin.clinical.feed.FEED_DIRECTORY
 import com.hartwig.actin.clinical.feed.FeedModel
@@ -17,16 +18,18 @@ class ClinicalIngestionTest {
     @Test
     fun `Should run ingestion from proper curation and feed files, read from filesystem`() {
         val ingestion = ClinicalIngestion.create(
-            CURATION_DIRECTORY,
             FeedModel.fromFeedDirectory(FEED_DIRECTORY),
-            CurationDoidValidator(
-                DoidModelFactory.createFromDoidEntry(
-                    DoidJson.readDoidOwlEntry(
-                        Resources.getResource("doids/doid.json").path
+            CurationService.create(
+                CURATION_DIRECTORY,
+                CurationDoidValidator(
+                    DoidModelFactory.createFromDoidEntry(
+                        DoidJson.readDoidOwlEntry(
+                            Resources.getResource("doids/doid.json").path
+                        )
                     )
-                )
+                ),
+                TestTreatmentDatabaseFactory.createProper()
             ),
-            TestTreatmentDatabaseFactory.createProper(),
             TestAtcFactory.createProperAtcModel()
         )
 

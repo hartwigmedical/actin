@@ -3,11 +3,10 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
-import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.CurationResponse
+import com.hartwig.actin.clinical.curation.CurationService
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.MolecularTestConfig
-import com.hartwig.actin.clinical.curation.config.MolecularTestConfigFactory
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 
@@ -39,13 +38,6 @@ class PriorMolecularTestsExtractor(private val molecularTestCuration: CurationDa
     }
 
     companion object {
-        fun create(curationDir: String) =
-            PriorMolecularTestsExtractor(
-                molecularTestCuration = CurationDatabaseReader.read(
-                    curationDir,
-                    CurationDatabaseReader.MOLECULAR_TEST_TSV,
-                    MolecularTestConfigFactory()
-                )
-            )
+        fun create(curationService: CurationService) = PriorMolecularTestsExtractor(curationService.molecularTestCuration)
     }
 }

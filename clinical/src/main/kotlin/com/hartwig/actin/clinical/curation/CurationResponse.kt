@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical.curation
 
 import com.hartwig.actin.clinical.curation.config.CurationConfig
-import com.hartwig.actin.clinical.curation.config.ValidatedCurationConfig
 import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
 import com.hartwig.actin.clinical.curation.translation.Translation
 
@@ -23,7 +22,7 @@ data class CurationResponse<T>(
     companion object {
 
         fun <T : CurationConfig> createFromConfigs(
-            configs: Set<ValidatedCurationConfig<T>>,
+            configs: Set<T>,
             patientId: String,
             curationCategory: CurationCategory,
             inputText: String,
@@ -83,7 +82,7 @@ data class CurationResponse<T>(
         fun <T : CurationConfig> create(
             curationCategory: CurationCategory,
             inputText: String,
-            configs: Set<ValidatedCurationConfig<T>>,
+            configs: Set<T>,
             warnings: Set<CurationWarning>
         ): CurationResponse<T> {
             val evaluatedInputs = setOf(inputText)
@@ -110,8 +109,8 @@ data class CurationResponse<T>(
                 else -> throw IllegalStateException("Unsupported curation category for config lookup: $curationCategory")
             }
             return CurationResponse(
-                configs.map { it.config }.toSet(),
-                evaluation.copy(warnings = warnings, validationErrors = configs.flatMap { it.errors }.toSet())
+                configs.map { it }.toSet(),
+                evaluation.copy(warnings = warnings)
             )
         }
     }

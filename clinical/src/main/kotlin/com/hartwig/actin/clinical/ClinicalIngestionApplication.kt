@@ -4,6 +4,7 @@ import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
 import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
+import com.hartwig.actin.clinical.curation.CurationService
 import com.hartwig.actin.clinical.feed.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.FeedModel
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
@@ -46,11 +47,13 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
             )
         )
         val clinicalIngestion =
-            ClinicalIngestion.create(config.curationDirectory, feedModel, curationDoidValidator, treatmentDatabase, atcModel)
+            ClinicalIngestion.create(
+                feedModel,
+                CurationService.create(config.curationDirectory, curationDoidValidator, treatmentDatabase),
+                atcModel
+            )
 
-
-        val ingestionResult =
-            clinicalIngestion.run()
+        val ingestionResult = clinicalIngestion.run()
         val outputDirectory = config.outputDirectory
         LOGGER.info("Writing {} clinical records to {}", ingestionResult.patientResults.size, outputDirectory)
         ClinicalRecordJson.write(ingestionResult.patientResults.map { it.clinicalRecord }, outputDirectory)

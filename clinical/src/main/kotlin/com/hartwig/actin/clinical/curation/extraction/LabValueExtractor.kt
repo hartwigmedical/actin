@@ -2,21 +2,20 @@ package com.hartwig.actin.clinical.curation.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
+import com.hartwig.actin.clinical.curation.CurationService
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.translation.LaboratoryIdentifiers
-import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
-import com.hartwig.actin.clinical.curation.translation.TranslationDatabaseReader
 import com.hartwig.actin.clinical.datamodel.ImmutableLabValue
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.sort.LabValueDescendingDateComparator
 
-class LabValueExtractor(private val labratoryTranslation: TranslationDatabase<LaboratoryIdentifiers>) {
+class LabValueExtractor(private val laboratoryTranslation: TranslationDatabase<LaboratoryIdentifiers>) {
 
     fun extract(patientId: String, rawValues: List<LabValue>): ExtractionResult<List<LabValue>> {
         val extractedValues = rawValues.map { input ->
             val trimmedName = input.name().trim { it <= ' ' }
-            val translation = labratoryTranslation.translate(LaboratoryIdentifiers(input.code(), trimmedName))
+            val translation = laboratoryTranslation.translate(LaboratoryIdentifiers(input.code(), trimmedName))
             if (translation == null) {
                 val warning = CurationWarning(
                     patientId = patientId,
@@ -42,13 +41,6 @@ class LabValueExtractor(private val labratoryTranslation: TranslationDatabase<La
     }
 
     companion object {
-        fun create(curationDir: String) =
-            LabValueExtractor(
-                labratoryTranslation = TranslationDatabaseReader.read(
-                    curationDir,
-                    TranslationDatabaseReader.LABORATORY_TRANSLATION_TSV,
-                    LaboratoryTranslationFactory()
-                )
-            )
+        fun create(curationService: CurationService) = LabValueExtractor(laboratoryTranslation = curationService.laboratoryTranslation)
     }
 }
