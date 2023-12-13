@@ -22,7 +22,7 @@ private const val CURATED_TREATMENT_NAME = "Curated treatment name"
 
 class TreatmentHistoryExtractorTest {
 
-    private val extractor = TreatmentHistoryExtractor(
+    private val extractor = OncologicalHistoryExtractor(
         TestCurationFactory.curationDatabase(
             TreatmentHistoryEntryConfig(
                 input = TREATMENT_HISTORY_INPUT,

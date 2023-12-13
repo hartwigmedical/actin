@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
@@ -43,15 +44,56 @@ public abstract class TreatmentHistoryEntry {
     public abstract TreatmentHistoryDetails treatmentHistoryDetails();
 
     @NotNull
+    public Set<Treatment> allTreatments() {
+        TreatmentHistoryDetails details = treatmentHistoryDetails();
+        if (details == null) {
+            return treatments();
+        }
+        Stream<Treatment> maintenanceTreatmentStream =
+                details.maintenanceTreatment() == null ? Stream.empty() : Stream.of(details.maintenanceTreatment().treatment());
+
+        Stream<Treatment> switchToTreatmentStream = details.switchToTreatments() == null
+                ? Stream.empty()
+                : details.switchToTreatments().stream().map(TreatmentStage::treatment);
+
+        return Stream.of(treatments().stream(), maintenanceTreatmentStream, switchToTreatmentStream)
+                .flatMap(Function.identity())
+                .collect(Collectors.toSet());
+    }
+
+    @NotNull
     public String treatmentName() {
-        return treatmentStringUsingFunction(Treatment::name);
+        return treatmentStringUsingFunction(allTreatments(), Treatment::name);
+    }
+
+    @NotNull
+    public Set<TreatmentCategory> categories() {
+        return allTreatments().stream().flatMap(treatment -> treatment.categories().stream()).collect(Collectors.toSet());
+    }
+
+    @Nullable
+    public Boolean isOfType(TreatmentType typeToFind) {
+        return matchesTypeFromSet(Set.of(typeToFind));
+    }
+
+    @Nullable
+    public Boolean matchesTypeFromSet(Set<TreatmentType> types) {
+        return hasTypeConfigured() ? isTypeFromCollection(types) : null;
+    }
+
+    public boolean hasTypeConfigured() {
+        return allTreatments().stream().noneMatch(treatment -> treatment.types().isEmpty());
+    }
+
+    private boolean isTypeFromCollection(Set<TreatmentType> types) {
+        return allTreatments().stream().flatMap(treatment -> treatment.types().stream()).anyMatch(types::contains);
     }
 
     @NotNull
     public String treatmentDisplay() {
         Set<String> treatmentNames = treatments().stream().map(Treatment::display).map(String::toLowerCase).collect(Collectors.toSet());
         Set<String> chemoradiationTherapyNames = Set.of("chemotherapy", "radiotherapy");
-       
+
         if (treatmentNames.containsAll(chemoradiationTherapyNames)) {
             List<Treatment> remainingTreatments = treatments().stream()
                     .filter(treatment -> !chemoradiationTherapyNames.contains(treatment.display().toLowerCase()))
@@ -68,42 +110,18 @@ public abstract class TreatmentHistoryEntry {
                 }
             }
         }
-        return treatmentStringUsingFunction(Treatment::display);
+        return treatmentStringUsingFunction(treatments(), Treatment::display);
     }
 
     @NotNull
-    public Set<TreatmentCategory> categories() {
-        return treatments().stream().flatMap(treatment -> treatment.categories().stream()).collect(Collectors.toSet());
-    }
-
-    @Nullable
-    public Boolean isOfType(TreatmentType typeToFind) {
-        return matchesTypeFromSet(Set.of(typeToFind));
-    }
-
-    @Nullable
-    public Boolean matchesTypeFromSet(Set<TreatmentType> types) {
-        return hasTypeConfigured() ? isTypeFromCollection(types) : null;
-    }
-
-    public boolean hasTypeConfigured() {
-        return treatments().stream().noneMatch(treatment -> treatment.types().isEmpty());
-    }
-
-    private boolean isTypeFromCollection(Set<TreatmentType> types) {
-        return treatments().stream().flatMap(treatment -> treatment.types().stream()).anyMatch(types::contains);
+    private static String treatmentStringUsingFunction(Set<Treatment> treatments, Function<Treatment, String> treatmentField) {
+        String nameString = treatments.stream().map(treatmentField).distinct().collect(Collectors.joining(DELIMITER));
+        return !nameString.isEmpty() ? nameString : treatmentCategoryDisplay(treatments);
     }
 
     @NotNull
-    private String treatmentStringUsingFunction(Function<Treatment, String> treatmentField) {
-        String nameString = treatments().stream().map(treatmentField).collect(Collectors.joining(DELIMITER));
-        return !nameString.isEmpty() ? nameString : treatmentCategoryDisplay();
-    }
-
-    @NotNull
-    private String treatmentCategoryDisplay() {
-        return treatments().stream()
-                .flatMap(t -> t.categories().stream().map(TreatmentCategory::display))
+    private static String treatmentCategoryDisplay(Set<Treatment> treatments) {
+        return treatments.stream().flatMap(t -> t.categories().stream().map(TreatmentCategory::display)).distinct()
                 .collect(Collectors.joining(DELIMITER));
     }
 }

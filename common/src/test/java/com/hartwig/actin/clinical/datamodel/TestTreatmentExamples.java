@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public class TestTreatmentExamples {
 
     public static void main(@NotNull String... args) throws IOException {
-        for (TreatmentHistoryEntry entry : TestClinicalFactory.createProperTestClinicalRecord().treatmentHistory()) {
+        for (TreatmentHistoryEntry entry : TestClinicalFactory.createProperTestClinicalRecord().oncologicalHistory()) {
             System.out.printf("In %s, administered the following treatment(s) with %s intent:\n", entry.startYear(), entry.intents());
             for (Treatment treatment : entry.treatments()) {
                 String categoryString = setToString(treatment.categories());

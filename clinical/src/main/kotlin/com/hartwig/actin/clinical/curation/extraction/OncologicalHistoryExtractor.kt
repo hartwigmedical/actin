@@ -16,7 +16,7 @@ import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfigFac
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 
-class TreatmentHistoryExtractor(
+class OncologicalHistoryExtractor(
     private val treatmentHistoryCuration: CurationDatabase<TreatmentHistoryEntryConfig>,
     private val secondPrimaryCuration: CurationDatabase<SecondPrimaryConfig>
 ) {
@@ -59,7 +59,7 @@ class TreatmentHistoryExtractor(
 
     companion object {
         fun create(curationDir: String, curationDoidValidator: CurationDoidValidator, treatmentDatabase: TreatmentDatabase) =
-            TreatmentHistoryExtractor(
+            OncologicalHistoryExtractor(
                 secondPrimaryCuration = CurationDatabaseReader.read(
                     curationDir,
                     CurationDatabaseReader.SECOND_PRIMARY_TSV,

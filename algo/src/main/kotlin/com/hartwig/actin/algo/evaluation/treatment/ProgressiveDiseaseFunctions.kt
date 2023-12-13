@@ -9,10 +9,10 @@ private const val MIN_WEEKS_TO_ASSUME_STOP_DUE_TO_PD = 26 // half year
 
 object ProgressiveDiseaseFunctions {
 
-    fun treatmentResultedInPDOption(treatment: TreatmentHistoryEntry): Boolean? {
+    fun treatmentResultedInPD(treatment: TreatmentHistoryEntry): Boolean? {
         val bestResponse = treatment.treatmentHistoryDetails()?.bestResponse()
         val stopReason = treatment.treatmentHistoryDetails()?.stopReason()
-        val treatmentDuration: Long? = DateComparison.minWeeksBetweenDates(
+        val treatmentDuration = DateComparison.minWeeksBetweenDates(
             treatment.startYear(),
             treatment.startMonth(),
             treatment.treatmentHistoryDetails()?.stopYear(),

@@ -16,7 +16,7 @@ class TranslationDatabaseReader {
         ) = TranslationDatabase(readTranslations(basePath, tsv, factory).associateBy { it.input })
 
         private fun <T> readTranslations(basePath: String, tsv: String, translationFactory: TranslationFactory<T>): List<T> {
-            val filePath = basePath + tsv
+            val filePath = "$basePath/$tsv"
             val translations = TranslationFile.read(filePath, translationFactory)
             CurationDatabaseReader.LOGGER.info(" Read {} translations from {}", translations.size, filePath)
             return translations

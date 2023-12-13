@@ -58,7 +58,7 @@ class HasHadAnySurgeryAfterSpecificDate(private val minDate: LocalDate, private 
             )
         }
 
-        val surgicalTreatmentsOccurredAfterMinDate = record.clinical().treatmentHistory()
+        val surgicalTreatmentsOccurredAfterMinDate = record.clinical().oncologicalHistory()
             .filter { it.categories().contains(TreatmentCategory.SURGERY) }
             .map { isAfterDate(minDate, it.startYear(), it.startMonth()) }
 
