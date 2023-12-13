@@ -29,7 +29,7 @@ class MedicationExtractor(private val curation: CurationDatabase, private val at
                 val administrationRouteCuration = translateAdministrationRoute(patientId, entry.dosageInstructionRouteDisplay)
                 val dosage = curateDosage(administrationRouteCuration.extracted, entry, patientId)
 
-                val atc = atcModel.resolve(entry.code5ATCCode)
+                val atc = atcModel.resolveByCode(entry.code5ATCCode)
                 val isSelfCare = entry.code5ATCDisplay.isEmpty() && entry.code5ATCCode.isEmpty()
                 val isTrialMedication =
                     entry.code5ATCDisplay.isEmpty() && entry.code5ATCCode.isNotEmpty() && entry.code5ATCCode[0].lowercaseChar() !in 'a'..'z'

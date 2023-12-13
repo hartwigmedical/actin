@@ -33,7 +33,7 @@ class IntoleranceExtractor(private val curation: CurationDatabase, private val a
                 }
 
                 if (it.category().equals("medication", ignoreCase = true)) {
-                    val atcCode = atcModel.lookupByName(it.name().lowercase())
+                    val atcCode = atcModel.resolveByName(it.name().lowercase())
                     if (atcCode != null) {
                         builder.subcategories(setOf(atcCode))
                     }

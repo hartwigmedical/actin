@@ -16,21 +16,21 @@ class AtcModelTest {
 
     @Test
     fun shouldReturnNullForTrialMedication() {
-        assertThat(WhoAtcModel(emptyMap()).resolve("123")).isNull()
+        assertThat(WhoAtcModel(emptyMap()).resolveByCode("123")).isNull()
     }
 
     @Test
     fun shouldThrowWhenAtcCodeNotFound() {
         assertThatThrownBy {
             val victim = WhoAtcModel(mapOf("A" to ANATOMICAL))
-            victim.resolve("notacod")
+            victim.resolveByCode("notacod")
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
 
     @Test
     fun shouldResolveFiveLevelsOfAtcClassification() {
         val victim = createAtcModel()
-        val result = victim.resolve(FULL_ATC_CODE)!!
+        val result = victim.resolveByCode(FULL_ATC_CODE)!!
         assertThat(result.anatomicalMainGroup()).isEqualTo(
             ImmutableAtcLevel.builder().code("N").name(ANATOMICAL).build()
         )
@@ -51,14 +51,14 @@ class AtcModelTest {
     @Test
     fun shouldReturnClassificationForFourLevelsAtcClassification() {
         val victim = createAtcModel()
-        val result = victim.resolve("N02BE")!!
+        val result = victim.resolveByCode("N02BE")!!
         assertThat(result.chemicalSubstance()).isNull()
     }
 
     @Test
     fun shouldReturnNullForLessThanFourLevelsAtcClassification() {
         val victim = createAtcModel()
-        val result = victim.resolve("N02B")
+        val result = victim.resolveByCode("N02B")
         assertThat(result).isNull()
     }
 
