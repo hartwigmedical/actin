@@ -1,27 +1,18 @@
-package com.hartwig.actin.algo.datamodel;
+package com.hartwig.actin.algo.datamodel
 
-import java.util.List;
-import java.util.Map;
-
-import com.hartwig.actin.treatment.datamodel.Eligibility;
-import com.hartwig.actin.treatment.datamodel.TrialIdentification;
-
-import org.immutables.value.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.hartwig.actin.treatment.datamodel.Eligibility
+import com.hartwig.actin.treatment.datamodel.TrialIdentification
+import org.immutables.value.Value
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 
 @Value.Immutable
-@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class TrialMatch {
+@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
+abstract class TrialMatch {
+    abstract fun identification(): TrialIdentification
 
-    @NotNull
-    public abstract TrialIdentification identification();
-
-    public abstract boolean isPotentiallyEligible();
-
-    @NotNull
-    public abstract Map<Eligibility, Evaluation> evaluations();
-
-    @NotNull
-    public abstract List<CohortMatch> cohorts();
+    @JvmField
+    abstract val isPotentiallyEligible: Boolean
+    abstract fun evaluations(): Map<Eligibility?, Evaluation>
+    abstract fun cohorts(): List<CohortMatch?>
 }

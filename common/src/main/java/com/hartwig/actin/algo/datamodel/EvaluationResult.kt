@@ -1,8 +1,6 @@
-package com.hartwig.actin.algo.datamodel;
+package com.hartwig.actin.algo.datamodel
 
-import org.jetbrains.annotations.NotNull;
-
-public enum EvaluationResult {
+enum class EvaluationResult {
     PASS,
     WARN,
     FAIL,
@@ -10,28 +8,34 @@ public enum EvaluationResult {
     NOT_EVALUATED,
     NOT_IMPLEMENTED;
 
-    public boolean isWorseThan(@NotNull EvaluationResult otherResult) {
-        switch (otherResult) {
-            case NOT_IMPLEMENTED: {
-                return false;
+    fun isWorseThan(otherResult: EvaluationResult): Boolean {
+        return when (otherResult) {
+            NOT_IMPLEMENTED -> {
+                false
             }
-            case FAIL: {
-                return this == NOT_IMPLEMENTED;
+
+            FAIL -> {
+                this == NOT_IMPLEMENTED
             }
-            case WARN: {
-                return this == NOT_IMPLEMENTED || this == FAIL;
+
+            WARN -> {
+                this == NOT_IMPLEMENTED || this == FAIL
             }
-            case UNDETERMINED: {
-                return this == NOT_IMPLEMENTED || this == FAIL || this == WARN;
+
+            UNDETERMINED -> {
+                this == NOT_IMPLEMENTED || this == FAIL || this == WARN
             }
-            case PASS: {
-                return this == NOT_IMPLEMENTED || this == FAIL || this == WARN || this == UNDETERMINED;
+
+            PASS -> {
+                this == NOT_IMPLEMENTED || this == FAIL || this == WARN || this == UNDETERMINED
             }
-            case NOT_EVALUATED: {
-                return this == NOT_IMPLEMENTED || this == FAIL || this == WARN || this == UNDETERMINED || this == PASS;
+
+            NOT_EVALUATED -> {
+                this == NOT_IMPLEMENTED || this == FAIL || this == WARN || this == UNDETERMINED || this == PASS
             }
-            default: {
-                throw new IllegalStateException("Cannot compare evaluation result with " + otherResult);
+
+            else -> {
+                throw IllegalStateException("Cannot compare evaluation result with $otherResult")
             }
         }
     }

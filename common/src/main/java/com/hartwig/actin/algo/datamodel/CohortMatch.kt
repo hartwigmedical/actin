@@ -1,23 +1,17 @@
-package com.hartwig.actin.algo.datamodel;
+package com.hartwig.actin.algo.datamodel
 
-import java.util.Map;
-
-import com.hartwig.actin.treatment.datamodel.CohortMetadata;
-import com.hartwig.actin.treatment.datamodel.Eligibility;
-
-import org.immutables.value.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.hartwig.actin.treatment.datamodel.CohortMetadata
+import com.hartwig.actin.treatment.datamodel.Eligibility
+import org.immutables.value.Value
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 
 @Value.Immutable
-@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class CohortMatch {
+@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
+abstract class CohortMatch {
+    abstract fun metadata(): CohortMetadata
 
-    @NotNull
-    public abstract CohortMetadata metadata();
-
-    public abstract boolean isPotentiallyEligible();
-
-    @NotNull
-    public abstract Map<Eligibility, Evaluation> evaluations();
+    @JvmField
+    abstract val isPotentiallyEligible: Boolean
+    abstract fun evaluations(): Map<Eligibility?, Evaluation>
 }

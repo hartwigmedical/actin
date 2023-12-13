@@ -1,47 +1,22 @@
-package com.hartwig.actin.algo.datamodel;
+package com.hartwig.actin.algo.datamodel
 
-import java.util.Set;
-
-import org.immutables.value.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.immutables.value.Value
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 
 @Value.Immutable
-@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class Evaluation {
-
-    @NotNull
-    public abstract EvaluationResult result();
-
-    public abstract boolean recoverable();
-
-    @NotNull
-    public abstract Set<String> inclusionMolecularEvents();
-
-    @NotNull
-    public abstract Set<String> exclusionMolecularEvents();
-
-    @NotNull
-    public abstract Set<String> passSpecificMessages();
-
-    @NotNull
-    public abstract Set<String> passGeneralMessages();
-
-    @NotNull
-    public abstract Set<String> warnSpecificMessages();
-
-    @NotNull
-    public abstract Set<String> warnGeneralMessages();
-
-    @NotNull
-    public abstract Set<String> undeterminedSpecificMessages();
-
-    @NotNull
-    public abstract Set<String> undeterminedGeneralMessages();
-
-    @NotNull
-    public abstract Set<String> failSpecificMessages();
-
-    @NotNull
-    public abstract Set<String> failGeneralMessages();
+@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
+abstract class Evaluation {
+    abstract fun result(): EvaluationResult
+    abstract fun recoverable(): Boolean
+    abstract fun inclusionMolecularEvents(): Set<String?>
+    abstract fun exclusionMolecularEvents(): Set<String?>
+    abstract fun passSpecificMessages(): Set<String?>
+    abstract fun passGeneralMessages(): Set<String?>
+    abstract fun warnSpecificMessages(): Set<String?>
+    abstract fun warnGeneralMessages(): Set<String?>
+    abstract fun undeterminedSpecificMessages(): Set<String?>
+    abstract fun undeterminedGeneralMessages(): Set<String?>
+    abstract fun failSpecificMessages(): Set<String?>
+    abstract fun failGeneralMessages(): Set<String?>
 }
