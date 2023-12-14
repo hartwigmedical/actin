@@ -109,7 +109,7 @@ data class CurationResponse<T>(
                 else -> throw IllegalStateException("Unsupported curation category for config lookup: $curationCategory")
             }
             return CurationResponse(
-                configs.map { it }.toSet(),
+                configs,
                 evaluation.copy(warnings = warnings)
             )
         }

@@ -3,7 +3,7 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
-import com.hartwig.actin.clinical.curation.CurationDatabases
+import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.MolecularTestConfig
@@ -38,6 +38,6 @@ class PriorMolecularTestsExtractor(private val molecularTestCuration: CurationDa
     }
 
     companion object {
-        fun create(curationDatabases: CurationDatabases) = PriorMolecularTestsExtractor(curationDatabases.molecularTestCuration)
+        fun create(curationDatabaseContext: CurationDatabaseContext) = PriorMolecularTestsExtractor(curationDatabaseContext.molecularTestCuration)
     }
 }

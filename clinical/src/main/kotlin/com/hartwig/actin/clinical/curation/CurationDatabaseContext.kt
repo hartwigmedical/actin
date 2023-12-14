@@ -36,13 +36,15 @@ import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfigFactory
 import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
 import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslationFactory
+import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslationFactory
+import com.hartwig.actin.clinical.curation.translation.DosageUnitTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.LaboratoryIdentifiers
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.ToxicityTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabaseReader
 
-data class CurationDatabases(
+data class CurationDatabaseContext(
     val primaryTumorCuration: CurationDatabase<PrimaryTumorConfig>,
     val treatmentHistoryEntryCuration: CurationDatabase<TreatmentHistoryEntryConfig>,
     val secondPrimaryCuration: CurationDatabase<SecondPrimaryConfig>,
@@ -108,7 +110,7 @@ data class CurationDatabases(
             curationDir: String,
             curationDoidValidator: CurationDoidValidator,
             treatmentDatabase: TreatmentDatabase
-        ) = CurationDatabases(
+        ) = CurationDatabaseContext(
             ecgCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.ECG_TSV,
@@ -220,13 +222,13 @@ data class CurationDatabases(
             ),
             dosageUnitTranslation = TranslationDatabaseReader.read(
                 curationDir,
-                TranslationDatabaseReader.ADMINISTRATION_ROUTE_TRANSLATION_TSV,
-                AdministrationRouteTranslationFactory()
+                TranslationDatabaseReader.DOSAGE_UNIT_TRANSLATION_TSV,
+                DosageUnitTranslationFactory()
             ),
             bloodTransfusionTranslation = TranslationDatabaseReader.read(
                 curationDir,
-                TranslationDatabaseReader.ADMINISTRATION_ROUTE_TRANSLATION_TSV,
-                AdministrationRouteTranslationFactory()
+                TranslationDatabaseReader.BLOOD_TRANSFUSION_TRANSLATION_TSV,
+                BloodTransfusionTranslationFactory()
             )
         )
     }

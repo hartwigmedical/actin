@@ -34,21 +34,11 @@ class NonOncologicalHistoryConfigFactory(private val curationDoidValidator: Cura
         if (ignore) return null to emptyList()
 
         return when (isLVEF(fields, parts)) {
-            true -> validateLvefValue(input, parts, fields)
+            true -> validateDouble(input, "lvefValue", fields, parts)
             false -> null to emptyList()
         }
     }
 
-    private fun validateLvefValue(
-        input: String,
-        parts: Array<String>,
-        fields: Map<String, Int>
-    ): Pair<Double?, List<CurationConfigValidationError>> {
-        val lvefInput = parts[fields["lvefValue"]!!]
-        val lvefValue = lvefInput.toDoubleOrNull()
-        return lvefValue to (lvefValue?.let { emptyList() }
-            ?: listOf(CurationConfigValidationError("lvefValue was not a valid double '$lvefInput' for input '$input'")))
-    }
 
     private fun toCuratedPriorOtherCondition(
         ignore: Boolean,
@@ -58,9 +48,14 @@ class NonOncologicalHistoryConfigFactory(private val curationDoidValidator: Cura
     ): Pair<PriorOtherCondition?, List<CurationConfigValidationError>> {
         return if (!ignore && !isLVEF(fields, parts)) {
             val doids = CurationUtil.toDOIDs(parts[fields["doids"]!!])
-            val isContraindicationForTherapy = parts[fields["isContraindicationForTherapy"]!!].toValidatedBoolean()
-            val (year, yearValidationErrors) = validateInteger("year", fields, parts)
-            val (month, monthValidationErrors) = validateInteger("month", fields, parts)
+            val (isContraindicationForTherapy, isContraindicationForTherapyValidationErrors) = validateBoolean(
+                input,
+                "isContraindicationForTherapy",
+                fields,
+                parts
+            )
+            val (year, yearValidationErrors) = validateInteger(input, "year", fields, parts)
+            val (month, monthValidationErrors) = validateInteger(input, "month", fields, parts)
 
             ImmutablePriorOtherCondition.builder()
                 .name(parts[fields["name"]!!])
@@ -69,7 +64,10 @@ class NonOncologicalHistoryConfigFactory(private val curationDoidValidator: Cura
                 .doids(doids)
                 .category(parts[fields["category"]!!])
                 .isContraindicationForTherapy(isContraindicationForTherapy ?: false)
-                .build() to validationErrors(doids, isContraindicationForTherapy, input) + yearValidationErrors + monthValidationErrors
+                .build() to validationErrors(
+                doids,
+                input
+            ) + isContraindicationForTherapyValidationErrors + yearValidationErrors + monthValidationErrors
         } else {
             null to emptyList()
         }
@@ -77,12 +75,9 @@ class NonOncologicalHistoryConfigFactory(private val curationDoidValidator: Cura
 
     private fun validationErrors(
         doids: Set<String>,
-        isContraindicationForTherapy: Boolean?,
         input: String
     ) = if (!curationDoidValidator.isValidDiseaseDoidSet(doids)) {
         listOf(CurationConfigValidationError("Non-oncological history config with input '$input' contains at least one invalid doid: '$doids'"))
-    } else emptyList<CurationConfigValidationError>() + if (isContraindicationForTherapy == null) {
-        listOf(CurationConfigValidationError("isContraindicationForTherapy was not a valid boolean in input '$input'"))
     } else emptyList()
 
 

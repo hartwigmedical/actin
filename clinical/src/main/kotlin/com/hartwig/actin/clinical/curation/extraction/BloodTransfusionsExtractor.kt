@@ -2,7 +2,7 @@ package com.hartwig.actin.clinical.curation.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
-import com.hartwig.actin.clinical.curation.CurationDatabases
+import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
@@ -32,6 +32,6 @@ class BloodTransfusionsExtractor(private val bloodFusionTranslations: Translatio
     }
 
     companion object {
-        fun create(curationDatabases: CurationDatabases) = BloodTransfusionsExtractor(curationDatabases.bloodTransfusionTranslation)
+        fun create(curationDatabaseContext: CurationDatabaseContext) = BloodTransfusionsExtractor(curationDatabaseContext.bloodTransfusionTranslation)
     }
 }

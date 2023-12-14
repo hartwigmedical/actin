@@ -3,7 +3,7 @@ package com.hartwig.actin.clinical
 import com.google.common.io.Resources
 import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
-import com.hartwig.actin.clinical.curation.CurationDatabases
+import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestAtcFactory
 import com.hartwig.actin.clinical.feed.FEED_DIRECTORY
@@ -19,7 +19,7 @@ class ClinicalIngestionTest {
     fun `Should run ingestion from proper curation and feed files, read from filesystem`() {
         val ingestion = ClinicalIngestion.create(
             FeedModel.fromFeedDirectory(FEED_DIRECTORY),
-            CurationDatabases.create(
+            CurationDatabaseContext.create(
                 CURATION_DIRECTORY,
                 CurationDoidValidator(
                     DoidModelFactory.createFromDoidEntry(

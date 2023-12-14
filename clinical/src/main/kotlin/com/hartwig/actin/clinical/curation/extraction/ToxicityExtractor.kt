@@ -3,7 +3,7 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
-import com.hartwig.actin.clinical.curation.CurationDatabases
+import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.CurationConfig
@@ -98,9 +98,9 @@ class ToxicityExtractor(
     }
 
     companion object {
-        fun create(curationDatabases: CurationDatabases) = ToxicityExtractor(
-            toxicityCuration = curationDatabases.toxicityCuration,
-            toxicityTranslation = curationDatabases.toxicityTranslation
+        fun create(curationDatabaseContext: CurationDatabaseContext) = ToxicityExtractor(
+            toxicityCuration = curationDatabaseContext.toxicityCuration,
+            toxicityTranslation = curationDatabaseContext.toxicityTranslation
         )
     }
 }

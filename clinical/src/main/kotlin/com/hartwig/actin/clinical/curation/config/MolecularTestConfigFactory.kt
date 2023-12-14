@@ -8,39 +8,34 @@ import com.hartwig.actin.util.ResourceFile
 class MolecularTestConfigFactory : CurationConfigFactory<MolecularTestConfig> {
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<MolecularTestConfig> {
         val ignore = CurationUtil.isIgnoreString(parts[fields["test"]!!])
-        val (priorMolecularTest, validationErrors) = curateObject(fields, parts)
+        val input = parts[fields["input"]!!]
+        val (impliesPotentialIndeterminateStatus, impliesPotentialIndeterminateStatusValidationErrors)
+                = validateBoolean(input, "impliesPotentialIndeterminateStatus", fields, parts)
+        val priorMolecularTest = impliesPotentialIndeterminateStatus?.let { curateObject(it, fields, parts) }
         return ValidatedCurationConfig(
             MolecularTestConfig(
-                input = parts[fields["input"]!!],
+                input = input,
                 ignore = ignore,
                 curated = if (!ignore) {
                     priorMolecularTest
                 } else null
-            ), validationErrors
+            ), impliesPotentialIndeterminateStatusValidationErrors
         )
     }
 
     private fun curateObject(
+        impliesPotentialIndeterminateStatus: Boolean,
         fields: Map<String, Int>,
         parts: Array<String>
-    ): Pair<PriorMolecularTest?, List<CurationConfigValidationError>> {
-        val impliesPotentialIndeterminateStatusInput = parts[fields["impliesPotentialIndeterminateStatus"]!!]
-        val impliesPotentialIndeterminateStatus = impliesPotentialIndeterminateStatusInput.toValidatedBoolean()
-        return impliesPotentialIndeterminateStatus?.let {
-            return ImmutablePriorMolecularTest.builder()
-                .test(parts[fields["test"]!!])
-                .item(parts[fields["item"]!!])
-                .measure(ResourceFile.optionalString(parts[fields["measure"]!!]))
-                .scoreText(ResourceFile.optionalString(parts[fields["scoreText"]!!]))
-                .scoreValuePrefix(ResourceFile.optionalString(parts[fields["scoreValuePrefix"]!!]))
-                .scoreValue(ResourceFile.optionalNumber(parts[fields["scoreValue"]!!]))
-                .scoreValueUnit(ResourceFile.optionalString(parts[fields["scoreValueUnit"]!!]))
-                .impliesPotentialIndeterminateStatus(it).build() to emptyList()
-        } ?: (null to listOf(
-            CurationConfigValidationError(
-                "impliesPotentialIndeterminateStatus was configured with an invalid value of '$impliesPotentialIndeterminateStatusInput' " +
-                        "for input '${parts[fields["input"]!!]}'"
-            )
-        ))
+    ): PriorMolecularTest {
+        return ImmutablePriorMolecularTest.builder()
+            .test(parts[fields["test"]!!])
+            .item(parts[fields["item"]!!])
+            .measure(ResourceFile.optionalString(parts[fields["measure"]!!]))
+            .scoreText(ResourceFile.optionalString(parts[fields["scoreText"]!!]))
+            .scoreValuePrefix(ResourceFile.optionalString(parts[fields["scoreValuePrefix"]!!]))
+            .scoreValue(ResourceFile.optionalNumber(parts[fields["scoreValue"]!!]))
+            .scoreValueUnit(ResourceFile.optionalString(parts[fields["scoreValueUnit"]!!]))
+            .impliesPotentialIndeterminateStatus(impliesPotentialIndeterminateStatus).build()
     }
 }

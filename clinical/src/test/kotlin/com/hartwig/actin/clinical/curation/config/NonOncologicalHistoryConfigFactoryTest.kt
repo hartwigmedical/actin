@@ -55,8 +55,8 @@ class NonOncologicalHistoryConfigFactoryTest {
             arrayOf("input", "name", "year", "month", "123", "category", "0", "", "1")
         )
         assertThat(config.errors).containsExactly(
-            CurationConfigValidationError("'year' had invalid input of 'year'"),
-            CurationConfigValidationError("'month' had invalid input of 'month'")
+            CurationConfigValidationError("'year' had invalid value of 'year' for input 'input'"),
+            CurationConfigValidationError("'month' had invalid value of 'month' for input 'input'")
         )
     }
 
@@ -68,7 +68,7 @@ class NonOncologicalHistoryConfigFactoryTest {
             arrayOf("input", "name", "2023", "12", "123", "category", "1", "value", "1")
         )
         assertThat(config.errors).containsExactly(
-            CurationConfigValidationError("lvefValue was not a valid double 'value' for input 'input'"),
+            CurationConfigValidationError("'lvefValue' had invalid value of 'value' for input 'input'"),
         )
     }
 
@@ -80,7 +80,7 @@ class NonOncologicalHistoryConfigFactoryTest {
             arrayOf("input", "name", "2023", "12", "123", "category", "string", "1.0", "no")
         )
         assertThat(config.errors).containsExactly(
-            CurationConfigValidationError("isContraindicationForTherapy was not a valid boolean in input 'input'"),
+            CurationConfigValidationError("'isContraindicationForTherapy' had invalid value of 'no' for input 'input'"),
         )
     }
 

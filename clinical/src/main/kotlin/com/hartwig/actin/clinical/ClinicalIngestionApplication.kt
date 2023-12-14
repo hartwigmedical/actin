@@ -3,7 +3,7 @@ package com.hartwig.actin.clinical
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
 import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
-import com.hartwig.actin.clinical.curation.CurationDatabases
+import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.feed.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.FeedModel
@@ -47,10 +47,10 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         LOGGER.info("Creating clinical curation database from directory {}", config.curationDirectory)
         val curationDoidValidator = CurationDoidValidator(DoidModelFactory.createFromDoidEntry(doidEntry))
         val outputDirectory: String = config.outputDirectory
-        val curationDatabases = CurationDatabases.create(config.curationDirectory, curationDoidValidator, treatmentDatabase)
-        val validationErrors = curationDatabases.validate()
+        val curationDatabaseContext = CurationDatabaseContext.create(config.curationDirectory, curationDoidValidator, treatmentDatabase)
+        val validationErrors = curationDatabaseContext.validate()
         if (validationErrors.isNotEmpty()) {
-            LOGGER.warn("Curation had validation errors. Writing to validation errors json and exiting 1")
+            LOGGER.warn("Curation input had validation errors. Writing to validation errors json and exiting 1")
             writeIngestionResults(outputDirectory, IngestionResult(validationErrors))
             exitProcess(1)
         }
@@ -58,7 +58,7 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         val clinicalIngestion =
             ClinicalIngestion.create(
                 feedModel,
-                curationDatabases,
+                curationDatabaseContext,
                 atcModel
             )
 

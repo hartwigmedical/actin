@@ -3,7 +3,7 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
-import com.hartwig.actin.clinical.curation.CurationDatabases
+import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
@@ -35,7 +35,7 @@ class PriorOtherConditionsExtractor(private val nonOncologicalCuration: Curation
     }
 
     companion object {
-        fun create(curationDatabases: CurationDatabases) =
-            PriorOtherConditionsExtractor(nonOncologicalCuration = curationDatabases.nonOncologicalHistoryCuration)
+        fun create(curationDatabaseContext: CurationDatabaseContext) =
+            PriorOtherConditionsExtractor(nonOncologicalCuration = curationDatabaseContext.nonOncologicalHistoryCuration)
     }
 }

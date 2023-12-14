@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical
 
-import com.hartwig.actin.clinical.curation.CurationDatabases
+import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.extraction.BloodTransfusionsExtractor
 import com.hartwig.actin.clinical.curation.extraction.ClinicalStatusExtractor
 import com.hartwig.actin.clinical.curation.extraction.ComplicationsExtractor
@@ -39,7 +39,7 @@ data class ExtractionResult<T>(val extracted: T, val evaluation: ExtractionEvalu
 
 class ClinicalIngestion(
     private val feed: FeedModel,
-    private val curationDatabases: CurationDatabases,
+    private val curationDatabaseContext: CurationDatabaseContext,
     private val tumorDetailsExtractor: TumorDetailsExtractor,
     private val complicationsExtractor: ComplicationsExtractor,
     private val clinicalStatusExtractor: ClinicalStatusExtractor,
@@ -58,12 +58,13 @@ class ClinicalIngestion(
         val processedPatientIds: MutableSet<String> = HashSet()
 
         LOGGER.info("Creating clinical model")
-        val records = feed.subjects().map { patientId ->
+        val records = feed.subjects().map { subject ->
+            val patientId = subject.replace("-".toRegex(), "")
             check(!processedPatientIds.contains(patientId)) { "Cannot create clinical records. Duplicate patientId: $patientId" }
             processedPatientIds.add(patientId)
             LOGGER.info(" Extracting and curating data for patient {}", patientId)
 
-            val questionnaire = feed.latestQuestionnaireEntry(patientId)?.let { QuestionnaireExtraction.extract(it) }
+            val questionnaire = feed.latestQuestionnaireEntry(subject)?.let { QuestionnaireExtraction.extract(it) }
             val tumorExtraction = tumorDetailsExtractor.extract(patientId, questionnaire)
             val complicationsExtraction = complicationsExtractor.extract(patientId, questionnaire)
             val clinicalStatusExtraction =
@@ -80,7 +81,7 @@ class ClinicalIngestion(
 
             val record = ImmutableClinicalRecord.builder()
                 .patientId(patientId)
-                .patient(extractPatientDetails(patientId, questionnaire))
+                .patient(extractPatientDetails(subject, questionnaire))
                 .tumor(tumorExtraction.extracted)
                 .complications(complicationsExtraction.extracted)
                 .clinicalStatus(clinicalStatusExtraction.extracted)
@@ -91,9 +92,9 @@ class ClinicalIngestion(
                 .labValues(labValuesExtraction.extracted)
                 .toxicities(toxicityExtraction.extracted)
                 .intolerances(intoleranceExtraction.extracted)
-                .surgeries(extractSurgeries(patientId))
-                .bodyWeights(extractBodyWeights(patientId))
-                .vitalFunctions(extractVitalFunctions(patientId))
+                .surgeries(extractSurgeries(subject))
+                .bodyWeights(extractBodyWeights(subject))
+                .vitalFunctions(extractVitalFunctions(subject))
                 .bloodTransfusions(bloodTransfusionsExtraction.extracted)
                 .medications(medicationExtraction.extracted)
                 .build()
@@ -123,7 +124,8 @@ class ClinicalIngestion(
             )
         }
         return IngestionResult(
-            unusedConfigs = curationDatabases.allUnusedConfig(records.map { it.second }),
+
+            unusedConfigs = curationDatabaseContext.allUnusedConfig(records.map { it.second }),
             patientResults = records.map { it.first })
     }
 
@@ -181,23 +183,23 @@ class ClinicalIngestion(
 
         fun create(
             feedModel: FeedModel,
-            curationDatabases: CurationDatabases,
+            curationDatabaseContext: CurationDatabaseContext,
             atcModel: WhoAtcModel
         ) = ClinicalIngestion(
             feed = feedModel,
-            curationDatabases = curationDatabases,
-            priorSecondPrimaryExtractor = PriorSecondPrimaryExtractor.create(curationDatabases),
-            tumorDetailsExtractor = TumorDetailsExtractor.create(curationDatabases),
-            complicationsExtractor = ComplicationsExtractor.create(curationDatabases),
-            clinicalStatusExtractor = ClinicalStatusExtractor.create(curationDatabases),
-            oncologicalHistoryExtractor = OncologicalHistoryExtractor.create(curationDatabases),
-            bloodTransfusionsExtractor = BloodTransfusionsExtractor.create(curationDatabases),
-            priorMolecularTestsExtractor = PriorMolecularTestsExtractor.create(curationDatabases),
-            toxicityExtractor = ToxicityExtractor.create(curationDatabases),
-            intoleranceExtractor = IntoleranceExtractor.create(curationDatabases),
-            priorOtherConditionExtractor = PriorOtherConditionsExtractor.create(curationDatabases),
-            medicationExtractor = MedicationExtractor.create(curationDatabases, atcModel),
-            labValueExtractor = LabValueExtractor.create(curationDatabases)
+            curationDatabaseContext = curationDatabaseContext,
+            priorSecondPrimaryExtractor = PriorSecondPrimaryExtractor.create(curationDatabaseContext),
+            tumorDetailsExtractor = TumorDetailsExtractor.create(curationDatabaseContext),
+            complicationsExtractor = ComplicationsExtractor.create(curationDatabaseContext),
+            clinicalStatusExtractor = ClinicalStatusExtractor.create(curationDatabaseContext),
+            oncologicalHistoryExtractor = OncologicalHistoryExtractor.create(curationDatabaseContext),
+            bloodTransfusionsExtractor = BloodTransfusionsExtractor.create(curationDatabaseContext),
+            priorMolecularTestsExtractor = PriorMolecularTestsExtractor.create(curationDatabaseContext),
+            toxicityExtractor = ToxicityExtractor.create(curationDatabaseContext),
+            intoleranceExtractor = IntoleranceExtractor.create(curationDatabaseContext),
+            priorOtherConditionExtractor = PriorOtherConditionsExtractor.create(curationDatabaseContext),
+            medicationExtractor = MedicationExtractor.create(curationDatabaseContext, atcModel),
+            labValueExtractor = LabValueExtractor.create(curationDatabaseContext)
         )
     }
 }

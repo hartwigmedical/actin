@@ -49,7 +49,7 @@ class MolecularTestConfigFactoryTest {
         )
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
-                "impliesPotentialIndeterminateStatus was configured with an invalid value of 'invalid' for input 'input'"
+                "'impliesPotentialIndeterminateStatus' had invalid value of 'invalid' for input 'input'"
             )
         )
         assertThat(config.config.input).isEqualTo("input")

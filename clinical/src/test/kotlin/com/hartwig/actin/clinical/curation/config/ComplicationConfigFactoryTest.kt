@@ -45,7 +45,7 @@ class ComplicationConfigFactoryTest {
                 arrayOf("input", "name", "categories", "year", "12", "1")
             ).errors
         ).containsExactly(
-            CurationConfigValidationError("'year' had invalid input of 'year'")
+            CurationConfigValidationError("'year' had invalid value of 'year' for input 'input'")
         )
     }
 
@@ -57,7 +57,7 @@ class ComplicationConfigFactoryTest {
                 arrayOf("input", "name", "categories", "2023", "month", "1")
             ).errors
         ).containsExactly(
-            CurationConfigValidationError("'month' had invalid input of 'month'")
+            CurationConfigValidationError("'month' had invalid value of 'month' for input 'input'")
         )
     }
 
@@ -66,10 +66,10 @@ class ComplicationConfigFactoryTest {
         assertThat(
             ComplicationConfigFactory().create(
                 fields,
-                arrayOf("name", "input", "categories", "2023", "12", "A")
+                arrayOf("input", "name", "categories", "2023", "12", "A")
             ).errors
         ).containsExactly(
-            CurationConfigValidationError("impliesComplicationState had invalid value of 'A' for input 'name'")
+            CurationConfigValidationError("'impliesUnknownComplicationState' had invalid value of 'A' for input 'input'")
         )
     }
 }

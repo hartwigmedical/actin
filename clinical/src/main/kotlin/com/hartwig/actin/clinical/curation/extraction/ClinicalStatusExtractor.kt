@@ -3,7 +3,7 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
-import com.hartwig.actin.clinical.curation.CurationDatabases
+import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
@@ -119,11 +119,11 @@ class ClinicalStatusExtractor(
     }
 
     companion object {
-        fun create(curationDatabases: CurationDatabases) =
+        fun create(curationDatabaseContext: CurationDatabaseContext) =
             ClinicalStatusExtractor(
-                ecgCuration = curationDatabases.ecgCuration,
-                infectionCuration = curationDatabases.infectionCuration,
-                nonOncologicalHistoryCuration = curationDatabases.nonOncologicalHistoryCuration
+                ecgCuration = curationDatabaseContext.ecgCuration,
+                infectionCuration = curationDatabaseContext.infectionCuration,
+                nonOncologicalHistoryCuration = curationDatabaseContext.nonOncologicalHistoryCuration
             )
     }
 }

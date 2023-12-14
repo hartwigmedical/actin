@@ -4,7 +4,7 @@ import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
-import com.hartwig.actin.clinical.curation.CurationDatabases
+import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.CurationUtil.fullTrim
@@ -235,17 +235,17 @@ class MedicationExtractor(
     companion object {
         private val LOGGER = LogManager.getLogger(MedicationExtractor::class.java)
         fun create(
-            curationDatabases: CurationDatabases,
+            curationDatabaseContext: CurationDatabaseContext,
             atcModel: AtcModel
         ) =
             MedicationExtractor(
-                medicationNameCuration = curationDatabases.medicationNameCuration,
-                medicationDosageCuration = curationDatabases.medicationDosageCuration,
-                periodBetweenUnitCuration = curationDatabases.periodBetweenUnitCuration,
-                cypInterationCuration = curationDatabases.cypInteractionCuration,
-                qtProlongatingCuration = curationDatabases.qtProlongingCuration,
-                administrationRouteTranslation = curationDatabases.administrationRouteTranslation,
-                dosageUnitTranslation = curationDatabases.dosageUnitTranslation,
+                medicationNameCuration = curationDatabaseContext.medicationNameCuration,
+                medicationDosageCuration = curationDatabaseContext.medicationDosageCuration,
+                periodBetweenUnitCuration = curationDatabaseContext.periodBetweenUnitCuration,
+                cypInterationCuration = curationDatabaseContext.cypInteractionCuration,
+                qtProlongatingCuration = curationDatabaseContext.qtProlongingCuration,
+                administrationRouteTranslation = curationDatabaseContext.administrationRouteTranslation,
+                dosageUnitTranslation = curationDatabaseContext.dosageUnitTranslation,
                 atcModel = atcModel
             )
     }

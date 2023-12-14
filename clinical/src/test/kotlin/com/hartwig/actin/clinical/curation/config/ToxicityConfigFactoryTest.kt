@@ -17,4 +17,10 @@ class ToxicityConfigFactoryTest {
         assertThat(config.config.categories).containsExactly("categories")
         assertThat(config.config.grade).isEqualTo(3)
     }
+
+    @Test
+    fun `Should return validation error when grade is not an integer`() {
+        val config = ToxicityConfigFactory().create(fields, arrayOf("input", "name", "categories", "abc"))
+        assertThat(config.errors).containsExactly(CurationConfigValidationError("'grade' had invalid value of 'abc' for input 'input'"))
+    }
 }
