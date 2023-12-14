@@ -260,7 +260,7 @@ object TestOrangeFactory {
             .hrStatus(ChordStatus.HR_PROFICIENT)
             .brca1Value(0.0)
             .brca2Value(0.0)
-            .hrdValue(0.0)
+            .hrdValue(0.45)
             .hrdType(Strings.EMPTY)
             .build()
     }
