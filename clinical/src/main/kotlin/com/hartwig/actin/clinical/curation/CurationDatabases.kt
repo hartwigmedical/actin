@@ -1,9 +1,9 @@
 package com.hartwig.actin.clinical.curation
 
 import com.hartwig.actin.TreatmentDatabase
+import com.hartwig.actin.clinical.UnusedCurationConfig
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
 import com.hartwig.actin.clinical.curation.config.ComplicationConfigFactory
-import com.hartwig.actin.clinical.curation.config.CurationConfigValidationError
 import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
 import com.hartwig.actin.clinical.curation.config.CypInteractionConfigFactory
 import com.hartwig.actin.clinical.curation.config.ECGConfig
@@ -42,7 +42,7 @@ import com.hartwig.actin.clinical.curation.translation.ToxicityTranslationFactor
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabaseReader
 
-data class CurationService(
+data class CurationDatabases(
     val primaryTumorCuration: CurationDatabase<PrimaryTumorConfig>,
     val treatmentHistoryEntryCuration: CurationDatabase<TreatmentHistoryEntryConfig>,
     val secondPrimaryCuration: CurationDatabase<SecondPrimaryConfig>,
@@ -65,7 +65,7 @@ data class CurationService(
     val bloodTransfusionTranslation: TranslationDatabase<String>,
     val dosageUnitTranslation: TranslationDatabase<String>,
 ) {
-    fun validate(extractionEvaluations: List<ExtractionEvaluation>): Set<CurationConfigValidationError> =
+    fun allUnusedConfig(extractionEvaluations: List<ExtractionEvaluation>): Set<UnusedCurationConfig> =
         setOf(
             primaryTumorCuration,
             treatmentHistoryEntryCuration,
@@ -83,14 +83,32 @@ data class CurationService(
             intoleranceCuration,
             cypInteractionCuration,
             qtProlongingCuration
-        ).flatMap { it.validate(extractionEvaluations) }.toSet()
+        ).flatMap { it.reportUnusedConfig(extractionEvaluations) }.toSet()
+
+    fun validate() = (primaryTumorCuration.validationErrors +
+            treatmentHistoryEntryCuration.validationErrors +
+            secondPrimaryCuration.validationErrors +
+            lesionLocationCuration.validationErrors +
+            nonOncologicalHistoryCuration.validationErrors +
+            ecgCuration.validationErrors +
+            infectionCuration.validationErrors +
+            periodBetweenUnitCuration.validationErrors +
+            complicationCuration.validationErrors +
+            toxicityCuration.validationErrors +
+            molecularTestCuration.validationErrors +
+            medicationNameCuration.validationErrors +
+            medicationDosageCuration.validationErrors +
+            intoleranceCuration.validationErrors +
+            cypInteractionCuration.validationErrors +
+            qtProlongingCuration.validationErrors).toSet()
+
 
     companion object {
         fun create(
             curationDir: String,
             curationDoidValidator: CurationDoidValidator,
             treatmentDatabase: TreatmentDatabase
-        ) = CurationService(
+        ) = CurationDatabases(
             ecgCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.ECG_TSV,

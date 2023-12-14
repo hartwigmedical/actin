@@ -1,13 +1,15 @@
 package com.hartwig.actin.clinical
 
+import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.config.CurationConfigValidationError
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 
 data class IngestionResult(
-    val curationValidationErrors: Set<CurationConfigValidationError>,
-    val patientResults: List<PatientIngestionResult>
+    val configValidationErrors: Set<CurationConfigValidationError> = emptySet(),
+    val patientResults: List<PatientIngestionResult> = emptyList(),
+    val unusedConfigs: Set<UnusedCurationConfig> = emptySet()
 )
 
 enum class PatientIngestionStatus {
@@ -51,3 +53,4 @@ data class PatientIngestionResult(
 
 data class CurationRequirement(val feedInput: String, val message: String)
 data class CurationResult(val categoryName: String, val requirements: List<CurationRequirement>)
+data class UnusedCurationConfig(val category: CurationCategory, val input: String)

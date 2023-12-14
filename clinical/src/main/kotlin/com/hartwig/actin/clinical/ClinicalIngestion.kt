@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical
 
-import com.hartwig.actin.clinical.curation.CurationService
+import com.hartwig.actin.clinical.curation.CurationDatabases
 import com.hartwig.actin.clinical.curation.extraction.BloodTransfusionsExtractor
 import com.hartwig.actin.clinical.curation.extraction.ClinicalStatusExtractor
 import com.hartwig.actin.clinical.curation.extraction.ComplicationsExtractor
@@ -39,7 +39,7 @@ data class ExtractionResult<T>(val extracted: T, val evaluation: ExtractionEvalu
 
 class ClinicalIngestion(
     private val feed: FeedModel,
-    private val curationService: CurationService,
+    private val curationDatabases: CurationDatabases,
     private val tumorDetailsExtractor: TumorDetailsExtractor,
     private val complicationsExtractor: ComplicationsExtractor,
     private val clinicalStatusExtractor: ClinicalStatusExtractor,
@@ -122,7 +122,9 @@ class ClinicalIngestion(
                 result2.clinicalRecord
             )
         }
-        return IngestionResult(curationService.validate(records.map { it.second }), records.map { it.first })
+        return IngestionResult(
+            unusedConfigs = curationDatabases.allUnusedConfig(records.map { it.second }),
+            patientResults = records.map { it.first })
     }
 
     private fun extractPatientDetails(subject: String, questionnaire: Questionnaire?): PatientDetails {
@@ -179,23 +181,23 @@ class ClinicalIngestion(
 
         fun create(
             feedModel: FeedModel,
-            curationService: CurationService,
+            curationDatabases: CurationDatabases,
             atcModel: WhoAtcModel
         ) = ClinicalIngestion(
             feed = feedModel,
-            curationService = curationService,
-            priorSecondPrimaryExtractor = PriorSecondPrimaryExtractor.create(curationService),
-            tumorDetailsExtractor = TumorDetailsExtractor.create(curationService),
-            complicationsExtractor = ComplicationsExtractor.create(curationService),
-            clinicalStatusExtractor = ClinicalStatusExtractor.create(curationService),
-            oncologicalHistoryExtractor = OncologicalHistoryExtractor.create(curationService),
-            bloodTransfusionsExtractor = BloodTransfusionsExtractor.create(curationService),
-            priorMolecularTestsExtractor = PriorMolecularTestsExtractor.create(curationService),
-            toxicityExtractor = ToxicityExtractor.create(curationService),
-            intoleranceExtractor = IntoleranceExtractor.create(curationService),
-            priorOtherConditionExtractor = PriorOtherConditionsExtractor.create(curationService),
-            medicationExtractor = MedicationExtractor.create(curationService, atcModel),
-            labValueExtractor = LabValueExtractor.create(curationService)
+            curationDatabases = curationDatabases,
+            priorSecondPrimaryExtractor = PriorSecondPrimaryExtractor.create(curationDatabases),
+            tumorDetailsExtractor = TumorDetailsExtractor.create(curationDatabases),
+            complicationsExtractor = ComplicationsExtractor.create(curationDatabases),
+            clinicalStatusExtractor = ClinicalStatusExtractor.create(curationDatabases),
+            oncologicalHistoryExtractor = OncologicalHistoryExtractor.create(curationDatabases),
+            bloodTransfusionsExtractor = BloodTransfusionsExtractor.create(curationDatabases),
+            priorMolecularTestsExtractor = PriorMolecularTestsExtractor.create(curationDatabases),
+            toxicityExtractor = ToxicityExtractor.create(curationDatabases),
+            intoleranceExtractor = IntoleranceExtractor.create(curationDatabases),
+            priorOtherConditionExtractor = PriorOtherConditionsExtractor.create(curationDatabases),
+            medicationExtractor = MedicationExtractor.create(curationDatabases, atcModel),
+            labValueExtractor = LabValueExtractor.create(curationDatabases)
         )
     }
 }

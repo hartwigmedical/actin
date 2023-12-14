@@ -3,8 +3,8 @@ package com.hartwig.actin.clinical
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
 import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
+import com.hartwig.actin.clinical.curation.CurationDatabases
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
-import com.hartwig.actin.clinical.curation.CurationService
 import com.hartwig.actin.clinical.feed.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.FeedModel
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
@@ -31,9 +31,6 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
 
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
 
-        LOGGER.info("Creating clinical curation database from directory {}", config.curationDirectory)
-        val curationDoidValidator = CurationDoidValidator(DoidModelFactory.createFromDoidEntry(doidEntry))
-
         LOGGER.info("Creating ATC model from file {}", config.atcTsv)
         val atcModel = WhoAtcModel.createFromFile(config.atcTsv)
 
@@ -46,23 +43,31 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
                 )
             )
         )
+
+        LOGGER.info("Creating clinical curation database from directory {}", config.curationDirectory)
+        val curationDoidValidator = CurationDoidValidator(DoidModelFactory.createFromDoidEntry(doidEntry))
+        val outputDirectory: String = config.outputDirectory
+        val curationDatabases = CurationDatabases.create(config.curationDirectory, curationDoidValidator, treatmentDatabase)
+        val validationErrors = curationDatabases.validate()
+        if (validationErrors.isNotEmpty()) {
+            LOGGER.warn("Curation had validation errors. Writing to validation errors json and exiting 1")
+            writeIngestionResults(outputDirectory, IngestionResult(validationErrors))
+            exitProcess(1)
+        }
+
         val clinicalIngestion =
             ClinicalIngestion.create(
                 feedModel,
-                CurationService.create(config.curationDirectory, curationDoidValidator, treatmentDatabase),
+                curationDatabases,
                 atcModel
             )
 
         val ingestionResult = clinicalIngestion.run()
-        val outputDirectory = config.outputDirectory
         LOGGER.info("Writing {} clinical records to {}", ingestionResult.patientResults.size, outputDirectory)
         ClinicalRecordJson.write(ingestionResult.patientResults.map { it.clinicalRecord }, outputDirectory)
         LOGGER.info("Done!")
 
-        writeIngestionResults(
-            outputDirectory,
-            ingestionResult
-        )
+        writeIngestionResults(outputDirectory, ingestionResult)
 
         if (ingestionResult.patientResults.any { it.curationResults.isNotEmpty() }) {
             LOGGER.warn("Summary of warnings:")

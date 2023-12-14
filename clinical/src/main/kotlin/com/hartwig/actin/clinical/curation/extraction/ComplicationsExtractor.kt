@@ -3,8 +3,8 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.CurationDatabases
 import com.hartwig.actin.clinical.curation.CurationResponse
-import com.hartwig.actin.clinical.curation.CurationService
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
 import com.hartwig.actin.clinical.datamodel.Complication
@@ -47,9 +47,9 @@ class ComplicationsExtractor(private val complicationCuration: CurationDatabase<
     }
 
     companion object {
-        fun create(curationService: CurationService) =
+        fun create(curationDatabases: CurationDatabases) =
             ComplicationsExtractor(
-                complicationCuration = curationService.complicationCuration
+                complicationCuration = curationDatabases.complicationCuration
             )
     }
 }

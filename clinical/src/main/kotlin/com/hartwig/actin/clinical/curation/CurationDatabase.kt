@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation
 
+import com.hartwig.actin.clinical.UnusedCurationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfigValidationError
 import com.hartwig.actin.clinical.curation.config.ValidatedCurationConfig
@@ -9,17 +10,19 @@ typealias InputText = String
 
 class CurationDatabase<T : CurationConfig>(
     private val configs: Map<InputText, Set<T>>,
-    private val validationErrors: List<CurationConfigValidationError>,
+    val validationErrors: List<CurationConfigValidationError>,
     private val category: CurationCategory,
     private val evaluatedInputFunction: (ExtractionEvaluation) -> Set<String>
 ) {
     fun curate(input: InputText) = configs[input.lowercase()] ?: emptySet()
 
-    fun validate(evaluations: List<ExtractionEvaluation>): List<CurationConfigValidationError> {
+    fun reportUnusedConfig(evaluations: List<ExtractionEvaluation>): List<UnusedCurationConfig> {
         val evaluatedInputs = evaluations.flatMap(evaluatedInputFunction)
         return configs.values.flatten()
             .filter { !evaluatedInputs.contains(it.input) }
-            .map { CurationConfigValidationError("Curation key '${it.input}' not used for '${category}' curation") } + validationErrors
+            .map {
+                UnusedCurationConfig(category, it.input)
+            }
     }
 
     companion object {

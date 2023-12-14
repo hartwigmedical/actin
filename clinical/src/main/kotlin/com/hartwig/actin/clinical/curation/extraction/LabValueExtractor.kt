@@ -2,7 +2,7 @@ package com.hartwig.actin.clinical.curation.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
-import com.hartwig.actin.clinical.curation.CurationService
+import com.hartwig.actin.clinical.curation.CurationDatabases
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.translation.LaboratoryIdentifiers
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
@@ -41,6 +41,6 @@ class LabValueExtractor(private val laboratoryTranslation: TranslationDatabase<L
     }
 
     companion object {
-        fun create(curationService: CurationService) = LabValueExtractor(laboratoryTranslation = curationService.laboratoryTranslation)
+        fun create(curationDatabases: CurationDatabases) = LabValueExtractor(laboratoryTranslation = curationDatabases.laboratoryTranslation)
     }
 }

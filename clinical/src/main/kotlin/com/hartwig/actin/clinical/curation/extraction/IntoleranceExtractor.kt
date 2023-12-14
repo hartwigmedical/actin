@@ -3,8 +3,8 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.CurationDatabases
 import com.hartwig.actin.clinical.curation.CurationResponse
-import com.hartwig.actin.clinical.curation.CurationService
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance
@@ -49,6 +49,6 @@ class IntoleranceExtractor(private val intoleranceCuration: CurationDatabase<Int
     }
 
     companion object {
-        fun create(curationService: CurationService) = IntoleranceExtractor(curationService.intoleranceCuration)
+        fun create(curationDatabases: CurationDatabases) = IntoleranceExtractor(curationDatabases.intoleranceCuration)
     }
 }

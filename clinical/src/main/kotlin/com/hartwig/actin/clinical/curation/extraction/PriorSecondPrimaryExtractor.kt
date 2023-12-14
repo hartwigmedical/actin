@@ -3,8 +3,8 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.CurationDatabases
 import com.hartwig.actin.clinical.curation.CurationResponse
-import com.hartwig.actin.clinical.curation.CurationService
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
@@ -54,10 +54,10 @@ class PriorSecondPrimaryExtractor(
     }
 
     companion object {
-        fun create(curationService: CurationService) =
+        fun create(curationDatabases: CurationDatabases) =
             PriorSecondPrimaryExtractor(
-                secondPrimaryCuration = curationService.secondPrimaryCuration,
-                treatmentHistoryCuration = curationService.treatmentHistoryEntryCuration
+                secondPrimaryCuration = curationDatabases.secondPrimaryCuration,
+                treatmentHistoryCuration = curationDatabases.treatmentHistoryEntryCuration
             )
     }
 }

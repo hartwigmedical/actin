@@ -4,8 +4,8 @@ import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.CurationDatabases
 import com.hartwig.actin.clinical.curation.CurationResponse
-import com.hartwig.actin.clinical.curation.CurationService
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.CurationUtil.fullTrim
 import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
@@ -235,17 +235,17 @@ class MedicationExtractor(
     companion object {
         private val LOGGER = LogManager.getLogger(MedicationExtractor::class.java)
         fun create(
-            curationService: CurationService,
+            curationDatabases: CurationDatabases,
             atcModel: AtcModel
         ) =
             MedicationExtractor(
-                medicationNameCuration = curationService.medicationNameCuration,
-                medicationDosageCuration = curationService.medicationDosageCuration,
-                periodBetweenUnitCuration = curationService.periodBetweenUnitCuration,
-                cypInterationCuration = curationService.cypInteractionCuration,
-                qtProlongatingCuration = curationService.qtProlongingCuration,
-                administrationRouteTranslation = curationService.administrationRouteTranslation,
-                dosageUnitTranslation = curationService.dosageUnitTranslation,
+                medicationNameCuration = curationDatabases.medicationNameCuration,
+                medicationDosageCuration = curationDatabases.medicationDosageCuration,
+                periodBetweenUnitCuration = curationDatabases.periodBetweenUnitCuration,
+                cypInterationCuration = curationDatabases.cypInteractionCuration,
+                qtProlongatingCuration = curationDatabases.qtProlongingCuration,
+                administrationRouteTranslation = curationDatabases.administrationRouteTranslation,
+                dosageUnitTranslation = curationDatabases.dosageUnitTranslation,
                 atcModel = atcModel
             )
     }
