@@ -454,6 +454,41 @@ The details may include multiple treatment stages representing switches from the
 | atc.chemicalSubstance.name       | codeine and ibuprofen 	                                           | Optional/added in curation               |
 | qtProlongatingRisk               | NONE 	                                                            | Added in curation                        |
 
+## Treatment Database
+
+The treatment database is loaded from 2 JSON files that define its contents.
+
+### treatment.json
+
+treatment.json consists of an array of treatment entries with some common fields:
+
+- name: The unique identifier for the treatment.
+- synonyms: A list of synonyms for the treatment used for matching.
+- isSystemic: Boolean indicating whether the treatment is systemic or not.
+- treatmentClass: The class of treatment described by this entry - OtherTreatment, DrugTreatment, or Radiotherapy.
+
+Each treatment can be described by a set of categories (defined in TreatmentCategory) and a set of types, each of which belongs to a
+category.
+OtherTreatment entries define these directly in these fields:
+
+- categories: The list of categories that apply to the treatment, which can be inferred by the types when they're provided.
+- types: The list of types that describe the treatment.
+
+DrugTreatment entries omit the "categories" and "types" fields because these attributes are inherited from the drugs included in the "drugs"
+field.
+Each entry in "drugs" corresponds to the name of a drug defined in drug.json. A DrugTreatment may also include a "maxCycles" integer field.
+
+Radiotherapy entries also omit the "categories" and "types" fields. A Radiotherapy's category is always RADIOTHERAPY, and it may optionally
+have a RadiotherapyType provided in "radioType".
+
+### drug.json
+
+drug.json consists of an array of drug entries with the following fields:
+
+- name: The unique name of this drug used to reference it elsewhere, such as in treatment.json.
+- drugTypes: The list of entries from DrugType that describe this drug.
+- category: The TreatmentCategory of this drug.
+
 ### Version History and Download Links
 
 - Upcoming (first release) 
