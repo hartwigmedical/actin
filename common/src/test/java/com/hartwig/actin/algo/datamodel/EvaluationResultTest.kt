@@ -1,24 +1,20 @@
-package com.hartwig.actin.algo.datamodel;
+package com.hartwig.actin.algo.datamodel
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.Assert
+import org.junit.Test
 
-import org.junit.Test;
-
-public class EvaluationResultTest {
-
+class EvaluationResultTest {
     @Test
-    public void canCompareEvaluationResults() {
-        assertTrue(EvaluationResult.FAIL.isWorseThan(EvaluationResult.PASS));
-        assertTrue(EvaluationResult.WARN.isWorseThan(EvaluationResult.UNDETERMINED));
-
-        assertFalse(EvaluationResult.NOT_EVALUATED.isWorseThan(EvaluationResult.NOT_IMPLEMENTED));
+    fun canCompareEvaluationResults() {
+        Assert.assertTrue(EvaluationResult.FAIL.isWorseThan(EvaluationResult.PASS))
+        Assert.assertTrue(EvaluationResult.WARN.isWorseThan(EvaluationResult.UNDETERMINED))
+        Assert.assertFalse(EvaluationResult.NOT_EVALUATED.isWorseThan(EvaluationResult.NOT_IMPLEMENTED))
     }
 
     @Test
-    public void noEvaluationResultIsWorseThanItself() {
-        for (EvaluationResult result : EvaluationResult.values()) {
-            assertFalse(result.isWorseThan(result));
+    fun noEvaluationResultIsWorseThanItself() {
+        for (result in EvaluationResult.values()) {
+            Assert.assertFalse(result.isWorseThan(result))
         }
     }
 }
