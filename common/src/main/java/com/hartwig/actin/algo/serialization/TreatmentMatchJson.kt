@@ -1,23 +1,14 @@
 package com.hartwig.actin.algo.serialization
 
-import com.google.common.annotations.VisibleForTesting
-import com.google.common.collect.Lists
-import com.google.common.collect.Maps
-import com.google.common.collect.Sets
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
-import com.google.gson.JsonParseException
 import com.hartwig.actin.algo.datamodel.CohortMatch
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.datamodel.ImmutableCohortMatch
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation
-import com.hartwig.actin.algo.datamodel.ImmutableTreatmentMatch
-import com.hartwig.actin.algo.datamodel.ImmutableTrialMatch
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.treatment.datamodel.CohortMetadata
@@ -40,7 +31,6 @@ import org.apache.logging.log4j.LogManager
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
-import java.io.IOException
 import java.lang.reflect.Type
 import java.nio.file.Files
 
@@ -48,67 +38,56 @@ object TreatmentMatchJson {
     private val LOGGER = LogManager.getLogger(TreatmentMatchJson::class.java)
     private const val TREATMENT_MATCH_EXTENSION = ".treatment_match.json"
 
-    @Throws(IOException::class)
     fun write(match: TreatmentMatch, directory: String) {
         val path = Paths.forceTrailingFileSeparator(directory)
-        val jsonFile = path + match.patientId() + TREATMENT_MATCH_EXTENSION
+        val jsonFile = path + match.patientId + TREATMENT_MATCH_EXTENSION
         LOGGER.info("Writing patient treatment match to {}", jsonFile)
         val writer = BufferedWriter(FileWriter(jsonFile))
         writer.write(toJson(match))
         writer.close()
     }
 
-    @JvmStatic
-    @Throws(IOException::class)
     fun read(treatmentMatchJson: String): TreatmentMatch {
         return fromJson(Files.readString(File(treatmentMatchJson).toPath()))
     }
 
-    @JvmStatic
-    @VisibleForTesting
     fun toJson(match: TreatmentMatch): String {
         return GsonSerializer.create().toJson(match)
     }
 
-    @JvmStatic
-    @VisibleForTesting
     fun fromJson(json: String): TreatmentMatch {
         val gson = GsonBuilder().registerTypeAdapter(TreatmentMatch::class.java, TreatmentMatchCreator()).create()
         return gson.fromJson(json, TreatmentMatch::class.java)
     }
 
     private class TreatmentMatchCreator : JsonDeserializer<TreatmentMatch> {
-        @Throws(JsonParseException::class)
+
         override fun deserialize(
             jsonElement: JsonElement, type: Type,
             jsonDeserializationContext: JsonDeserializationContext
         ): TreatmentMatch {
             val match = jsonElement.asJsonObject
-            return ImmutableTreatmentMatch.builder()
-                .patientId(Json.string(match, "patientId"))
-                .sampleId(Json.string(match, "sampleId"))
-                .referenceDate(Json.date(match, "referenceDate"))
-                .referenceDateIsLive(Json.bool(match, "referenceDateIsLive"))
-                .trialMatches(toTrialMatches(Json.array(match, "trialMatches")))
-                .build()
+            return TreatmentMatch(
+                patientId = Json.string(match, "patientId"),
+                sampleId = Json.string(match, "sampleId"),
+                referenceDate = Json.date(match, "referenceDate"),
+                referenceDateIsLive = Json.bool(match, "referenceDateIsLive"),
+                trialMatches = toTrialMatches(Json.array(match, "trialMatches"))
+            )
         }
 
         companion object {
             private fun toTrialMatches(trialMatches: JsonArray): List<TrialMatch> {
-                val trialEligibilities: MutableList<TrialMatch> = Lists.newArrayList()
-                for (element in trialMatches) {
-                    trialEligibilities.add(toTrialMatch(element.asJsonObject))
-                }
-                return trialEligibilities
+                return trialMatches.map { toTrialMatch(it.asJsonObject) }
             }
 
             private fun toTrialMatch(`object`: JsonObject): TrialMatch {
-                return ImmutableTrialMatch.builder()
-                    .identification(toIdentification(Json.`object`(`object`, "identification")))
-                    .isPotentiallyEligible(Json.bool(`object`, "isPotentiallyEligible"))
-                    .evaluations(toEvaluations(`object`["evaluations"]))
-                    .cohorts(toCohorts(Json.array(`object`, "cohorts")))
-                    .build()
+                return TrialMatch(
+                    identification = toIdentification(Json.`object`(`object`, "identification")),
+                    isPotentiallyEligible = Json.bool(`object`, "isPotentiallyEligible"),
+                    evaluations = toEvaluations(`object`["evaluations"]),
+                    cohorts = toCohorts(Json.array(`object`, "cohorts"))
+                )
             }
 
             private fun toIdentification(identification: JsonObject): TrialIdentification {
@@ -121,18 +100,14 @@ object TreatmentMatchJson {
             }
 
             private fun toCohorts(cohorts: JsonArray): List<CohortMatch> {
-                val cohortEligibilities: MutableList<CohortMatch> = Lists.newArrayList()
-                for (element in cohorts) {
+                return cohorts.map { element ->
                     val cohort = element.asJsonObject
-                    cohortEligibilities.add(
-                        ImmutableCohortMatch.builder()
-                            .metadata(toMetadata(Json.`object`(cohort, "metadata")))
-                            .isPotentiallyEligible(Json.bool(cohort, "isPotentiallyEligible"))
-                            .evaluations(toEvaluations(cohort["evaluations"]))
-                            .build()
+                    CohortMatch(
+                        metadata = toMetadata(Json.`object`(cohort, "metadata")),
+                        isPotentiallyEligible = Json.bool(cohort, "isPotentiallyEligible"),
+                        evaluations = toEvaluations(cohort["evaluations"])
                     )
                 }
-                return cohortEligibilities
             }
 
             private fun toMetadata(cohort: JsonObject): CohortMetadata {
@@ -147,16 +122,11 @@ object TreatmentMatchJson {
             }
 
             private fun toEvaluations(evaluations: JsonElement): Map<Eligibility, Evaluation> {
-                val map: MutableMap<Eligibility, Evaluation> = Maps.newTreeMap(EligibilityComparator())
-                if (evaluations.isJsonArray) {
-                    for (element in evaluations.asJsonArray) {
-                        val array = element.asJsonArray
-                        map[toEligibility(array[0].asJsonObject)] = toEvaluation(
-                            array[1].asJsonObject
-                        )
-                    }
+                return if (!evaluations.isJsonArray) emptyMap() else evaluations.asJsonArray.associate { element ->
+                    val array = element.asJsonArray
+                    toEligibility(array[0].asJsonObject) to toEvaluation(array[1].asJsonObject)
                 }
-                return map
+                    .toSortedMap(EligibilityComparator())
             }
 
             private fun toEligibility(eligibility: JsonObject): Eligibility {
@@ -167,29 +137,28 @@ object TreatmentMatchJson {
             }
 
             private fun toEvaluation(evaluation: JsonObject): Evaluation {
-                return ImmutableEvaluation.builder()
-                    .result(EvaluationResult.valueOf(Json.string(evaluation, "result")))
-                    .recoverable(Json.bool(evaluation, "recoverable"))
-                    .inclusionMolecularEvents(Json.stringList(evaluation, "inclusionMolecularEvents"))
-                    .exclusionMolecularEvents(Json.stringList(evaluation, "exclusionMolecularEvents"))
-                    .passSpecificMessages(Json.stringList(evaluation, "passSpecificMessages"))
-                    .passGeneralMessages(Json.stringList(evaluation, "passGeneralMessages"))
-                    .warnSpecificMessages(Json.stringList(evaluation, "warnSpecificMessages"))
-                    .warnGeneralMessages(Json.stringList(evaluation, "warnGeneralMessages"))
-                    .undeterminedSpecificMessages(Json.stringList(evaluation, "undeterminedSpecificMessages"))
-                    .undeterminedGeneralMessages(Json.stringList(evaluation, "undeterminedGeneralMessages"))
-                    .failSpecificMessages(Json.stringList(evaluation, "failSpecificMessages"))
-                    .failGeneralMessages(Json.stringList(evaluation, "failGeneralMessages"))
-                    .build()
+                return Evaluation(
+                    result = EvaluationResult.valueOf(Json.string(evaluation, "result")),
+                    recoverable = Json.bool(evaluation, "recoverable"),
+                    inclusionMolecularEvents = Json.stringSet(evaluation, "inclusionMolecularEvents"),
+                    exclusionMolecularEvents = Json.stringSet(evaluation, "exclusionMolecularEvents"),
+                    passSpecificMessages = Json.stringSet(evaluation, "passSpecificMessages"),
+                    passGeneralMessages = Json.stringSet(evaluation, "passGeneralMessages"),
+                    warnSpecificMessages = Json.stringSet(evaluation, "warnSpecificMessages"),
+                    warnGeneralMessages = Json.stringSet(evaluation, "warnGeneralMessages"),
+                    undeterminedSpecificMessages = Json.stringSet(evaluation, "undeterminedSpecificMessages"),
+                    undeterminedGeneralMessages = Json.stringSet(evaluation, "undeterminedGeneralMessages"),
+                    failSpecificMessages = Json.stringSet(evaluation, "failSpecificMessages"),
+                    failGeneralMessages = Json.stringSet(evaluation, "failGeneralMessages"),
+                )
             }
 
             private fun toReferences(referenceArray: JsonArray): Set<CriterionReference> {
-                val references: MutableSet<CriterionReference> = Sets.newTreeSet(CriterionReferenceComparator())
-                for (element in referenceArray) {
+                return referenceArray.map { element ->
                     val obj = element.asJsonObject
-                    references.add(ImmutableCriterionReference.builder().id(Json.string(obj, "id")).text(Json.string(obj, "text")).build())
+                    ImmutableCriterionReference.builder().id(Json.string(obj, "id")).text(Json.string(obj, "text")).build() 
                 }
-                return references
+                    .toSortedSet(CriterionReferenceComparator())
             }
 
             private fun toEligibilityFunction(function: JsonObject): EligibilityFunction {
@@ -200,15 +169,19 @@ object TreatmentMatchJson {
             }
 
             private fun toParameters(parameterArray: JsonArray): List<Any> {
-                val parameters: MutableList<Any> = Lists.newArrayList()
-                for (element in parameterArray) {
-                    if (element.isJsonObject) {
-                        parameters.add(toEligibilityFunction(element.asJsonObject))
-                    } else if (element.isJsonPrimitive) {
-                        parameters.add(element.asJsonPrimitive.asString)
+                return parameterArray.mapNotNull { element ->
+                    when {
+                        element.isJsonObject -> {
+                            toEligibilityFunction(element.asJsonObject)
+                        }
+
+                        element.isJsonPrimitive -> {
+                            element.asJsonPrimitive.asString
+                        }
+
+                        else -> null
                     }
                 }
-                return parameters
             }
         }
     }

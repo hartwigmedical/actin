@@ -1,6 +1,7 @@
 package com.hartwig.actin.util.json;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -74,6 +75,11 @@ public final class Json {
         return values;
     }
 
+    @NotNull
+    public static Set<String> stringSet(@NotNull JsonObject object, @NotNull String field) {
+        return new HashSet<>(stringList(object, field));
+    }
+ 
     @Nullable
     public static List<Integer> nullableIntegerList(@NotNull JsonObject object, @NotNull String field) {
         return !isNull(object, field) ? integerList(object, field) : null;

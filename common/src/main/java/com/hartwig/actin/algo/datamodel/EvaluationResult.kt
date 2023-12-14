@@ -33,10 +33,6 @@ enum class EvaluationResult {
             NOT_EVALUATED -> {
                 this == NOT_IMPLEMENTED || this == FAIL || this == WARN || this == UNDETERMINED || this == PASS
             }
-
-            else -> {
-                throw IllegalStateException("Cannot compare evaluation result with $otherResult")
-            }
         }
     }
 }
