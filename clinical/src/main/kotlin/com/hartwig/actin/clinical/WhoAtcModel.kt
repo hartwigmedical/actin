@@ -11,7 +11,7 @@ import java.nio.file.Files
 
 interface AtcModel {
     fun resolveByCode(rawAtcCode: String): AtcClassification?
-    fun resolveByName(name: String): String?
+    fun resolveByName(name: String): Set<String>
 }
 
 private const val ATC_LENGTH_4_LEVELS = 5
@@ -37,8 +37,8 @@ class WhoAtcModel(private val atcMap: Map<String, String>) : AtcModel {
         }
     }
 
-    override fun resolveByName(name: String): String? =
-        atcMap.entries.associateBy({it.value}) { it.key }[name]
+    override fun resolveByName(name: String): Set<String> =
+        atcMap.filterValues { it == name }.keys
 
     private fun maybeAtcLevel(levelCode: String?): AtcLevel? =
         levelCode?.let { atcLevel(it) }
