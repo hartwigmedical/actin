@@ -1,12 +1,12 @@
 package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
+import com.hartwig.actin.clinical.curation.TestCurationFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class ToxicityConfigFactoryTest {
-    private val fields: Map<String, Int> = CurationConfigFile.readTsv(CURATION_DIRECTORY + CurationDatabaseReader.TOXICITY_TSV).second
+    private val fields: Map<String, Int> = TestCurationFactory.curationHeaders(CurationDatabaseReader.TOXICITY_TSV)
 
     @Test
     fun `Should return ToxicityConfig from valid inputs`() {

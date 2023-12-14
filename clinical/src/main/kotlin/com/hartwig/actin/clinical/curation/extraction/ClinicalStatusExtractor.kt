@@ -112,7 +112,6 @@ class ClinicalStatusExtractor(
         // We do not raise warnings or propagate evaluated inputs here since we use the same configs for priorOtherConditions
         return nonOncologicalHistoryEntries?.asSequence()
             ?.flatMap { nonOncologicalHistoryCuration.curate(it) }
-            ?.map { it }
             ?.filterNot { it.ignore }
             ?.map { it.lvef }
             ?.find { it != null }

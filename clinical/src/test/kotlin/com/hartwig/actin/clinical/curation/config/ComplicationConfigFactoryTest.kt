@@ -1,23 +1,18 @@
 package com.hartwig.actin.clinical.curation.config
 
+import com.hartwig.actin.clinical.curation.CurationDatabaseReader
+import com.hartwig.actin.clinical.curation.TestCurationFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class ComplicationConfigFactoryTest {
 
-    private val fields: Map<String, Int> = mapOf(
-        "input" to 0,
-        "name" to 1,
-        "categories" to 2,
-        "year" to 3,
-        "month" to 4,
-        "impliesUnknownComplicationState" to 5,
-    )
+    private val fields: Map<String, Int> = TestCurationFactory.curationHeaders(CurationDatabaseReader.COMPLICATION_TSV)
 
     @Test
     fun `Should return complication config from valid data`() {
         val configFactory = ComplicationConfigFactory()
-        val data = arrayOf("input", "name", "categories", "2023", "12", "1")
+        val data = arrayOf("input", "1", "name", "categories", "2023", "12")
         val config = configFactory.create(fields, data)
 
         val errors = config.errors
@@ -42,7 +37,7 @@ class ComplicationConfigFactoryTest {
         assertThat(
             ComplicationConfigFactory().create(
                 fields,
-                arrayOf("input", "name", "categories", "year", "12", "1")
+                arrayOf("input", "1", "name", "categories", "year", "12")
             ).errors
         ).containsExactly(
             CurationConfigValidationError("'year' had invalid value of 'year' for input 'input'")
@@ -54,7 +49,7 @@ class ComplicationConfigFactoryTest {
         assertThat(
             ComplicationConfigFactory().create(
                 fields,
-                arrayOf("input", "name", "categories", "2023", "month", "1")
+                arrayOf("input", "1", "name", "categories", "2023", "month")
             ).errors
         ).containsExactly(
             CurationConfigValidationError("'month' had invalid value of 'month' for input 'input'")

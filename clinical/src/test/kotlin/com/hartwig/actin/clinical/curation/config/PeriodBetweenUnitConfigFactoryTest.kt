@@ -1,14 +1,14 @@
 package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
+import com.hartwig.actin.clinical.curation.TestCurationFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class PeriodBetweenUnitConfigFactoryTest {
 
     private val fields: Map<String, Int> =
-        CurationConfigFile.readTsv(CURATION_DIRECTORY + CurationDatabaseReader.PERIOD_BETWEEN_UNIT_TSV).second
+        TestCurationFactory.curationHeaders(CurationDatabaseReader.PERIOD_BETWEEN_UNIT_TSV)
 
     @Test
     fun `Should return PeriodBetweenUnitConfig from valid inputs`() {

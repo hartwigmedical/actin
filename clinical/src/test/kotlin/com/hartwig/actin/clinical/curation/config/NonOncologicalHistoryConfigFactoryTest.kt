@@ -1,8 +1,8 @@
 package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
+import com.hartwig.actin.clinical.curation.TestCurationFactory
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -10,7 +10,7 @@ import org.junit.Test
 
 class NonOncologicalHistoryConfigFactoryTest {
     private val fields: Map<String, Int> =
-        CurationConfigFile.readTsv(CURATION_DIRECTORY + CurationDatabaseReader.NON_ONCOLOGICAL_HISTORY_TSV).second
+        TestCurationFactory.curationHeaders(CurationDatabaseReader.NON_ONCOLOGICAL_HISTORY_TSV)
 
     @Test
     fun `Should return NonOncologicalHistoryConfig with no prior other condition from valid inputs is lvef`() {

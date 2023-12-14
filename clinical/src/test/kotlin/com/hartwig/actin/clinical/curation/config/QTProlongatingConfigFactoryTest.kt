@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
+import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -10,7 +10,7 @@ import org.junit.Test
 class QTProlongatingConfigFactoryTest {
 
     private val fields: Map<String, Int> =
-        CurationConfigFile.readTsv(CURATION_DIRECTORY + CurationDatabaseReader.QT_PROLONGATING_TSV).second
+        TestCurationFactory.curationHeaders(CurationDatabaseReader.QT_PROLONGATING_TSV)
 
     @Test
     fun `Should return QTProlongatingConfig from valid inputs`() {

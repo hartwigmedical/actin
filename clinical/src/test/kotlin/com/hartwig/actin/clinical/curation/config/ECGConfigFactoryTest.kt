@@ -1,26 +1,26 @@
 package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
+import com.hartwig.actin.clinical.curation.TestCurationFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 
 class ECGConfigFactoryTest {
-    private val fields: Map<String, Int> = CurationConfigFile.readTsv(CURATION_DIRECTORY + CurationDatabaseReader.ECG_TSV).second
+    private val fields: Map<String, Int> = TestCurationFactory.curationHeaders(CurationDatabaseReader.ECG_TSV)
 
     @Test
     fun `Should return ECGConfig from valid inputs`() {
-        val config = ECGConfigFactory().create(fields, arrayOf("input", "interpretation", "1", "1", "ms", "1", "1", "ms"))
+        val config = ECGConfigFactory().create(fields, arrayOf("input", "interpretation", "1", "1", "ms", "0", "", ""))
         assertThat(config.errors).isEmpty()
         assertThat(config.config.input).isEqualTo("input")
         assertThat(config.config.interpretation).isEqualTo("interpretation")
         assertThat(config.config.isQTCF).isEqualTo(true)
         assertThat(config.config.qtcfValue).isEqualTo(1)
         assertThat(config.config.qtcfUnit).isEqualTo("ms")
-        assertThat(config.config.isJTC).isEqualTo(true)
-        assertThat(config.config.jtcValue).isEqualTo(1)
-        assertThat(config.config.jtcUnit).isEqualTo("ms")
+        assertThat(config.config.isJTC).isEqualTo(false)
+        assertThat(config.config.jtcValue).isNull()
+        assertThat(config.config.jtcUnit).isNull()
     }
 
     @Test

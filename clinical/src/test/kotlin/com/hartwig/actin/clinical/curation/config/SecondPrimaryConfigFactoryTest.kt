@@ -1,16 +1,15 @@
 package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
+import com.hartwig.actin.clinical.curation.TestCurationFactory
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class SecondPrimaryConfigFactoryTest {
-    private val fields: Map<String, Int> =
-        CurationConfigFile.readTsv(CURATION_DIRECTORY + CurationDatabaseReader.SECOND_PRIMARY_TSV).second
+    private val fields: Map<String, Int> = TestCurationFactory.curationHeaders(CurationDatabaseReader.SECOND_PRIMARY_TSV)
 
     @Test
     fun `Should return SecondPrimaryConfig from valid inputs`() {

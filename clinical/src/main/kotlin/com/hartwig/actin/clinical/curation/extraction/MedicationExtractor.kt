@@ -181,7 +181,7 @@ class MedicationExtractor(
         }
 
     private fun curateMedicationCypInteractions(medicationName: String): List<CypInteraction> {
-        return this.cypInterationCuration.curate(medicationName).map { it }.flatMap(CypInteractionConfig::interactions)
+        return this.cypInterationCuration.curate(medicationName).flatMap(CypInteractionConfig::interactions)
     }
 
     private fun annotateWithQTProlongating(medicationName: String): QTProlongatingRisk {

@@ -1,14 +1,14 @@
 package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
+import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class LesionLocationConfigFactoryTest {
     private val fields: Map<String, Int> =
-        CurationConfigFile.readTsv(CURATION_DIRECTORY + CurationDatabaseReader.LESION_LOCATION_TSV).second
+        TestCurationFactory.curationHeaders(CurationDatabaseReader.LESION_LOCATION_TSV)
 
     @Test
     fun `Should return LesionLocationConfig from valid inputs`() {

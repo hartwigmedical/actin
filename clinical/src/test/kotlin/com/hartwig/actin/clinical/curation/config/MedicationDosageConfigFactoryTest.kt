@@ -1,14 +1,13 @@
 package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
-import com.hartwig.actin.clinical.datamodel.Dosage
+import com.hartwig.actin.clinical.curation.TestCurationFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class MedicationDosageConfigFactoryTest {
     private val fields: Map<String, Int> =
-        CurationConfigFile.readTsv(CURATION_DIRECTORY + CurationDatabaseReader.MEDICATION_DOSAGE_TSV).second
+        TestCurationFactory.curationHeaders(CurationDatabaseReader.MEDICATION_DOSAGE_TSV)
 
     @Test
     fun `Should return MedicationDosageConfig from valid inputs`() {
