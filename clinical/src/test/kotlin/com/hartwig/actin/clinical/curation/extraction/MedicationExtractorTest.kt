@@ -116,16 +116,16 @@ class MedicationExtractorTest {
                         ADMINISTRATION_ROUTE_INPUT_ORAL,
                         TRANSLATED_ADMINISTRATION_ROUTE_ORAL
                     )
-                )
-            ),
+                ), CurationCategory.ADMINISTRATION_ROUTE_TRANSLATION
+            ) { emptySet() },
             TranslationDatabase(
                 mapOf(
                     DOSAGE_TRANSLATION_INPUT_MILLIGRAM to Translation(
                         DOSAGE_TRANSLATION_INPUT_MILLIGRAM,
                         DOSAGE_UNIT_TRANSLATED_MG
                     )
-                )
-            ),
+                ), CurationCategory.DOSAGE_UNIT_TRANSLATION
+            ) { emptySet() },
             TestAtcFactory.createProperAtcModel()
         )
 

@@ -95,7 +95,7 @@ class MedicationExtractor(
 
     fun translateAdministrationRoute(patientId: String, administrationRoute: String?): ExtractionResult<String?> =
         translateString(
-            patientId, administrationRoute, administrationRouteTranslation::translate,
+            patientId, administrationRoute, administrationRouteTranslation::find,
             CurationCategory.ADMINISTRATION_ROUTE_TRANSLATION, "medication administration route"
         )
 
@@ -136,7 +136,7 @@ class MedicationExtractor(
 
     fun translateDosageUnit(patientId: String, dosageUnit: String?): ExtractionResult<String?> =
         translateString(
-            patientId, dosageUnit?.lowercase(), dosageUnitTranslation::translate,
+            patientId, dosageUnit?.lowercase(), dosageUnitTranslation::find,
             CurationCategory.DOSAGE_UNIT_TRANSLATION, "medication dosage unit"
         )
 

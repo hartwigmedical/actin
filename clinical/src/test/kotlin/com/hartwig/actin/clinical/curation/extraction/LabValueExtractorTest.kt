@@ -35,8 +35,8 @@ class LabValueExtractorTest {
                             LAB_TRANSLATION_INPUTS,
                             LaboratoryIdentifiers(LAB_CODE_TRANSLATED, LAB_NAME_TRANSLATED)
                         )
-            )
-        )
+            ), CurationCategory.LABORATORY_TRANSLATION
+        ) { emptySet() }
     )
 
     @Test

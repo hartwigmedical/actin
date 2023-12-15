@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.curation.translation
 
 import com.google.common.io.Resources
+import com.hartwig.actin.clinical.curation.CurationCategory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -12,8 +13,9 @@ class TranslationDatabaseReaderTest {
             TranslationDatabaseReader.read(
                 CURATION_DIRECTORY,
                 TranslationDatabaseReader.ADMINISTRATION_ROUTE_TRANSLATION_TSV,
-                AdministrationRouteTranslationFactory()
-            ).translate("ORAAL")!!.translated
+                AdministrationRouteTranslationFactory(),
+                CurationCategory.ADMINISTRATION_ROUTE_TRANSLATION
+            ) { emptySet() }.find("ORAAL")!!.translated
         ).isEqualTo("Oral")
     }
 

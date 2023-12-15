@@ -85,7 +85,13 @@ data class CurationDatabaseContext(
             intoleranceCuration,
             cypInteractionCuration,
             qtProlongingCuration
-        ).flatMap { it.reportUnusedConfig(extractionEvaluations) }.toSet()
+        ).flatMap { it.reportUnusedConfig(extractionEvaluations) }.toSet() + listOf(
+            laboratoryTranslation,
+            administrationRouteTranslation,
+            bloodTransfusionTranslation,
+            toxicityTranslation,
+            dosageUnitTranslation
+        ).flatMap { it.reportUnusedTranslations(extractionEvaluations) }
 
     fun validate() = (primaryTumorCuration.validationErrors +
             treatmentHistoryEntryCuration.validationErrors +
@@ -138,12 +144,6 @@ data class CurationDatabaseContext(
                 IntoleranceConfigFactory(curationDoidValidator),
                 CurationCategory.INTOLERANCE
             ) { it.intoleranceEvaluatedInputs },
-
-            laboratoryTranslation = TranslationDatabaseReader.read(
-                curationDir,
-                TranslationDatabaseReader.LABORATORY_TRANSLATION_TSV,
-                LaboratoryTranslationFactory()
-            ),
             secondPrimaryCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.SECOND_PRIMARY_TSV,
@@ -168,11 +168,6 @@ data class CurationDatabaseContext(
                 ToxicityConfigFactory(),
                 CurationCategory.TOXICITY
             ) { it.toxicityEvaluatedInputs },
-            toxicityTranslation = TranslationDatabaseReader.read(
-                curationDir,
-                TranslationDatabaseReader.TOXICITY_TRANSLATION_TSV,
-                ToxicityTranslationFactory()
-            ),
             lesionLocationCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.LESION_LOCATION_TSV,
@@ -218,18 +213,33 @@ data class CurationDatabaseContext(
             administrationRouteTranslation = TranslationDatabaseReader.read(
                 curationDir,
                 TranslationDatabaseReader.ADMINISTRATION_ROUTE_TRANSLATION_TSV,
-                AdministrationRouteTranslationFactory()
-            ),
+                AdministrationRouteTranslationFactory(),
+                CurationCategory.ADMINISTRATION_ROUTE_TRANSLATION
+            ) { it.administrationRouteEvaluatedInputs },
             dosageUnitTranslation = TranslationDatabaseReader.read(
                 curationDir,
                 TranslationDatabaseReader.DOSAGE_UNIT_TRANSLATION_TSV,
-                DosageUnitTranslationFactory()
-            ),
+                DosageUnitTranslationFactory(),
+                CurationCategory.DOSAGE_UNIT_TRANSLATION
+            ) { it.dosageUnitEvaluatedInputs },
             bloodTransfusionTranslation = TranslationDatabaseReader.read(
                 curationDir,
                 TranslationDatabaseReader.BLOOD_TRANSFUSION_TRANSLATION_TSV,
-                BloodTransfusionTranslationFactory()
-            )
+                BloodTransfusionTranslationFactory(),
+                CurationCategory.BLOOD_TRANSFUSION_TRANSLATION
+            ) { emptySet() },
+            toxicityTranslation = TranslationDatabaseReader.read(
+                curationDir,
+                TranslationDatabaseReader.TOXICITY_TRANSLATION_TSV,
+                ToxicityTranslationFactory(),
+                CurationCategory.TOXICITY_TRANSLATION,
+            ) { it.toxicityTranslationEvaluatedInputs },
+            laboratoryTranslation = TranslationDatabaseReader.read(
+                curationDir,
+                TranslationDatabaseReader.LABORATORY_TRANSLATION_TSV,
+                LaboratoryTranslationFactory(),
+                CurationCategory.LABORATORY_TRANSLATION
+            ) { it.laboratoryEvaluatedInputs },
         )
     }
 

@@ -23,8 +23,9 @@ class BloodTransfusionsExtractorTest {
 
         val extractor = BloodTransfusionsExtractor(
             TranslationDatabase(
-                mapOf(BLOOD_TRANFUSION_INPUT to Translation(BLOOD_TRANFUSION_INPUT, TRANSLATED_BLOOD_TRANSFUSION))
-            )
+                mapOf(BLOOD_TRANFUSION_INPUT to Translation(BLOOD_TRANFUSION_INPUT, TRANSLATED_BLOOD_TRANSFUSION)),
+                CurationCategory.BLOOD_TRANSFUSION_TRANSLATION
+            ) { emptySet() }
         )
         val inputs = listOf(BLOOD_TRANFUSION_INPUT, CANNOT_TRANSLATE)
         val entry = DigitalFileEntry(

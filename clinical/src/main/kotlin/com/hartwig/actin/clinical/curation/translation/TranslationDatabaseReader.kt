@@ -1,6 +1,8 @@
 package com.hartwig.actin.clinical.curation.translation
 
+import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
+import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
 
 class TranslationDatabaseReader {
 
@@ -12,8 +14,12 @@ class TranslationDatabaseReader {
         const val DOSAGE_UNIT_TRANSLATION_TSV = "dosage_unit_translation.tsv"
 
         fun <T> read(
-            basePath: String, tsv: String, factory: TranslationFactory<Translation<T>>
-        ) = TranslationDatabase(readTranslations(basePath, tsv, factory).associateBy { it.input })
+            basePath: String,
+            tsv: String,
+            factory: TranslationFactory<Translation<T>>,
+            category: CurationCategory,
+            evaluatedInputFunction: (ExtractionEvaluation) -> Set<Translation<T>>
+        ) = TranslationDatabase(readTranslations(basePath, tsv, factory).associateBy { it.input }, category, evaluatedInputFunction)
 
         private fun <T> readTranslations(basePath: String, tsv: String, translationFactory: TranslationFactory<T>): List<T> {
             val filePath = "$basePath/$tsv"

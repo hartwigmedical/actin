@@ -15,7 +15,7 @@ class LabValueExtractor(private val laboratoryTranslation: TranslationDatabase<L
     fun extract(patientId: String, rawValues: List<LabValue>): ExtractionResult<List<LabValue>> {
         val extractedValues = rawValues.map { input ->
             val trimmedName = input.name().trim { it <= ' ' }
-            val translation = laboratoryTranslation.translate(LaboratoryIdentifiers(input.code(), trimmedName))
+            val translation = laboratoryTranslation.find(LaboratoryIdentifiers(input.code(), trimmedName))
             if (translation == null) {
                 val warning = CurationWarning(
                     patientId = patientId,

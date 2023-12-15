@@ -49,7 +49,7 @@ class ToxicityExtractor(
             .map { rawToxicity ->
                 if (rawToxicity.name().isEmpty()) ExtractionResult(listOf(rawToxicity), ExtractionEvaluation()) else {
                     val translationResponse = CurationResponse.createFromTranslation(
-                        toxicityTranslation.translate(rawToxicity.name()),
+                        toxicityTranslation.find(rawToxicity.name()),
                         patientId,
                         CurationCategory.TOXICITY_TRANSLATION,
                         rawToxicity.name(),

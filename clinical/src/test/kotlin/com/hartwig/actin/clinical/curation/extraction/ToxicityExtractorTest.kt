@@ -34,7 +34,11 @@ class ToxicityExtractorTest {
                 categories = setOf(TOXICITY_CATEGORY),
                 3
             )
-        ), TranslationDatabase(mapOf(TOXICITY_INPUT to Translation(TOXICITY_INPUT, TOXICITY_TRANSLATED)))
+        ),
+        TranslationDatabase(
+            mapOf(TOXICITY_INPUT to Translation(TOXICITY_INPUT, TOXICITY_TRANSLATED)),
+            CurationCategory.TOXICITY_TRANSLATION
+        ) { emptySet() }
     )
 
     @Test
