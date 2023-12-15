@@ -55,7 +55,7 @@ private const val TRANSLATED_ADMINISTRATION_ROUTE_ORAL = "oral"
 
 private const val CURATED_MEDICATION_NAME = "Paracetamol"
 
-private const val MEDICATION_NAME_INPUT = "Medication name input"
+private const val MEDICATION_NAME_INPUT = "PARACETAMOL"
 
 private const val PERIOD_BETWEEN_UNIT_INPUT = "Period between unit input"
 
@@ -139,7 +139,7 @@ class MedicationExtractorTest {
             end = LocalDate.of(2023, 12, 13),
             active = true,
             code5ATCCode = FULL_ATC_CODE,
-            code5ATCDisplay = "PARACETAMOL",
+            code5ATCDisplay = MEDICATION_NAME_INPUT,
             administrationRoute = ADMINISTRATION_ROUTE_INPUT_ORAL
         )
 
