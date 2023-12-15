@@ -4,11 +4,17 @@ import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.CurationUtil.fullTrim
 import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
+import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig
+import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
+import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
+import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
 import com.hartwig.actin.clinical.curation.translation.Translation
+import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.Dosage
 import com.hartwig.actin.clinical.datamodel.ImmutableDosage
@@ -19,7 +25,16 @@ import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
 import com.hartwig.actin.clinical.feed.medication.MedicationEntry
 import org.apache.logging.log4j.LogManager
 
-class MedicationExtractor(private val curation: CurationDatabase, private val atcModel: AtcModel) {
+class MedicationExtractor(
+    private val medicationNameCuration: CurationDatabase<MedicationNameConfig>,
+    private val medicationDosageCuration: CurationDatabase<MedicationDosageConfig>,
+    private val periodBetweenUnitCuration: CurationDatabase<PeriodBetweenUnitConfig>,
+    private val cypInterationCuration: CurationDatabase<CypInteractionConfig>,
+    private val qtProlongatingCuration: CurationDatabase<QTProlongatingConfig>,
+    private val administrationRouteTranslation: TranslationDatabase<String>,
+    private val dosageUnitTranslation: TranslationDatabase<String>,
+    private val atcModel: AtcModel
+) {
 
     fun extract(patientId: String, entries: List<MedicationEntry>): ExtractionResult<List<Medication>> {
         return entries.map { entry ->
@@ -67,7 +82,7 @@ class MedicationExtractor(private val curation: CurationDatabase, private val at
         } else {
             val input = fullTrim(entry.codeText)
             val curation = CurationResponse.createFromConfigs(
-                curation.findMedicationNameConfigs(input),
+                medicationNameCuration.find(input),
                 patientId,
                 CurationCategory.MEDICATION_NAME,
                 input,
@@ -80,7 +95,7 @@ class MedicationExtractor(private val curation: CurationDatabase, private val at
 
     fun translateAdministrationRoute(patientId: String, administrationRoute: String?): ExtractionResult<String?> =
         translateString(
-            patientId, administrationRoute, curation::translateAdministrationRoute,
+            patientId, administrationRoute, administrationRouteTranslation::find,
             CurationCategory.ADMINISTRATION_ROUTE_TRANSLATION, "medication administration route"
         )
 
@@ -90,7 +105,7 @@ class MedicationExtractor(private val curation: CurationDatabase, private val at
         return if (dosageRequiresCuration(administrationRoute, entry)) {
             val input = entry.dosageInstructionText.trim { it <= ' ' }
             val curationResponse = CurationResponse.createFromConfigs(
-                curation.findMedicationDosageConfigs(input),
+                medicationDosageCuration.find(input),
                 patientId,
                 CurationCategory.MEDICATION_DOSAGE,
                 input,
@@ -121,7 +136,7 @@ class MedicationExtractor(private val curation: CurationDatabase, private val at
 
     fun translateDosageUnit(patientId: String, dosageUnit: String?): ExtractionResult<String?> =
         translateString(
-            patientId, dosageUnit?.lowercase(), curation::translateDosageUnit,
+            patientId, dosageUnit?.lowercase(), dosageUnitTranslation::find,
             CurationCategory.DOSAGE_UNIT_TRANSLATION, "medication dosage unit"
         )
 
@@ -130,7 +145,7 @@ class MedicationExtractor(private val curation: CurationDatabase, private val at
             ExtractionResult(null, ExtractionEvaluation())
         } else {
             val curation = CurationResponse.createFromConfigs(
-                curation.findPeriodBetweenUnitConfigs(input),
+                periodBetweenUnitCuration.find(input),
                 patientId,
                 CurationCategory.PERIOD_BETWEEN_UNIT_INTERPRETATION,
                 input,
@@ -165,12 +180,12 @@ class MedicationExtractor(private val curation: CurationDatabase, private val at
             }
         }
 
-    fun curateMedicationCypInteractions(medicationName: String): List<CypInteraction> {
-        return curation.findCypInteractionConfigs(medicationName).flatMap(CypInteractionConfig::interactions)
+    private fun curateMedicationCypInteractions(medicationName: String): List<CypInteraction> {
+        return this.cypInterationCuration.find(medicationName).flatMap(CypInteractionConfig::interactions)
     }
 
-    fun annotateWithQTProlongating(medicationName: String): QTProlongatingRisk {
-        val riskConfigs = curation.findQTProlongingConfigs(medicationName)
+    private fun annotateWithQTProlongating(medicationName: String): QTProlongatingRisk {
+        val riskConfigs = this.qtProlongatingCuration.find(medicationName)
         return if (riskConfigs.isEmpty()) {
             QTProlongatingRisk.NONE
         } else if (riskConfigs.size > 1) {
@@ -203,13 +218,13 @@ class MedicationExtractor(private val curation: CurationDatabase, private val at
     private fun translateString(
         patientId: String,
         input: String?,
-        translate: (String) -> Translation?,
+        translate: (String) -> Translation<String>?,
         curationCategory: CurationCategory,
         translationType: String
     ): ExtractionResult<String?> {
         return if (input.isNullOrEmpty()) {
             ExtractionResult(null, ExtractionEvaluation())
-        } else { 
+        } else {
             val curationResponse = CurationResponse.createFromTranslation(
                 translate.invoke(input), patientId, curationCategory, input, translationType
             )
@@ -219,5 +234,19 @@ class MedicationExtractor(private val curation: CurationDatabase, private val at
 
     companion object {
         private val LOGGER = LogManager.getLogger(MedicationExtractor::class.java)
+        fun create(
+            curationDatabaseContext: CurationDatabaseContext,
+            atcModel: AtcModel
+        ) =
+            MedicationExtractor(
+                medicationNameCuration = curationDatabaseContext.medicationNameCuration,
+                medicationDosageCuration = curationDatabaseContext.medicationDosageCuration,
+                periodBetweenUnitCuration = curationDatabaseContext.periodBetweenUnitCuration,
+                cypInterationCuration = curationDatabaseContext.cypInteractionCuration,
+                qtProlongatingCuration = curationDatabaseContext.qtProlongingCuration,
+                administrationRouteTranslation = curationDatabaseContext.administrationRouteTranslation,
+                dosageUnitTranslation = curationDatabaseContext.dosageUnitTranslation,
+                atcModel = atcModel
+            )
     }
 }
