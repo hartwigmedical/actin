@@ -489,6 +489,18 @@ drug.json consists of an array of drug entries with the following fields:
 - drugTypes: The list of entries from DrugType that describe this drug.
 - category: The TreatmentCategory of this drug.
 
+### Filtering of Clinical Data
+
+When the clinical data is mapped onto the ACTIN clinical data model, as described above, filtering is applied to exclude non-valid
+measurements.
+Filtering is applied for the following variables (excluded values in parentheses):
+
+- Body weight (<20 or >300 kg)
+- Vital functions: heart rate (<10, >300), blood pressure (<10, >300) , pulse oximetry (<10, >100).
+
+To prevent loss of data, excluded values are mapped like all other values. However, the unit is changed to \<ignore>, excluding them from
+further evaluation.
+
 ### Version History and Download Links
 
 - Upcoming (first release) 
