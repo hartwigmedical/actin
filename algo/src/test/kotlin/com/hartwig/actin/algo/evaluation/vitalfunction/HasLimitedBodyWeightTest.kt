@@ -12,18 +12,18 @@ class HasLimitedBodyWeightTest {
     private val referenceDate = LocalDate.of(2023, 11, 10)
 
     @Test
-    fun `Should fail on most recent weight too high`() {
+    fun `Should fail on median weight too high`() {
         val weights = listOf(
             weight().date(referenceDate.minusDays(6)).value(148.0).build(),
-            weight().date(referenceDate.minusDays(5)).value(155.0).build()
+            weight().date(referenceDate.minusDays(5)).value(153.0).build()
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withBodyWeights(weights)))
     }
 
     @Test
-    fun `Should pass on most recent weight below max`() {
+    fun `Should pass on median weight below max`() {
         val weights = listOf(
-            weight().date(referenceDate.minusDays(5)).value(155.0).build(),
+            weight().date(referenceDate.minusDays(5)).value(151.0).build(),
             weight().date(referenceDate.minusDays(4)).value(148.0).build()
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withBodyWeights(weights)))

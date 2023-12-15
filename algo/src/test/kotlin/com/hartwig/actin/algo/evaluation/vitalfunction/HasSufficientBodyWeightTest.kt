@@ -12,19 +12,19 @@ class HasSufficientBodyWeightTest {
     private val referenceDate = LocalDate.of(2023, 11, 10)
 
     @Test
-    fun `Should fail on most recent weight too low`() {
+    fun `Should fail on median weight too low`() {
         val weights = listOf(
-            weight().date(referenceDate.minusDays(6)).value(41.0).build(),
-            weight().date(referenceDate.minusDays(5)).value(39.0).build()
+            weight().date(referenceDate).value(40.0).build(),
+            weight().date(referenceDate.minusDays(1)).value(39.0).build()
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withBodyWeights(weights)))
     }
 
     @Test
-    fun `Should pass on most recent weight above min`() {
+    fun `Should pass on median weight above min`() {
         val weights = listOf(
-            weight().date(referenceDate.minusDays(5)).value(38.0).build(),
-            weight().date(referenceDate.minusDays(4)).value(40.5).build()
+            weight().date(referenceDate).value(39.0).build(),
+            weight().date(referenceDate.minusDays(4)).value(41.5).build()
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withBodyWeights(weights)))
     }
