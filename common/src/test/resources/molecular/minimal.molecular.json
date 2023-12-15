@@ -4,7 +4,7 @@
   "type": "WHOLE_GENOME",
   "refGenomeVersion": "V37",
   "date": null,
-  "evidenceSource": "CKB",
+  "evidenceSource": "CKB_EVIDENCE",
   "externalTrialSource": "iClusion",
   "containsTumorCells": false,
   "hasSufficientQuality": false,
