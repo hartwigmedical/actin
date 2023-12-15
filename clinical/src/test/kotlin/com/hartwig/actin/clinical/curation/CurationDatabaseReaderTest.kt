@@ -25,7 +25,7 @@ class CurationDatabaseReaderTest {
                 CurationDatabaseReader.PRIMARY_TUMOR_TSV,
                 PrimaryTumorConfigFactory(curationDoidValidator),
                 CurationCategory.PRIMARY_TUMOR
-            ) { emptySet() }.curate(input)
+            ) { emptySet() }.find(input)
         ).containsOnly(
             PrimaryTumorConfig(
                 primaryTumorLocation = "Unknown",

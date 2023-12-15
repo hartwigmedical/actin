@@ -26,7 +26,7 @@ class IntoleranceExtractor(private val intoleranceCuration: CurationDatabase<Int
         }
             .map {
                 val curationResponse = CurationResponse.createFromConfigs(
-                    intoleranceCuration.curate(it.name()),
+                    intoleranceCuration.find(it.name()),
                     patientId,
                     CurationCategory.INTOLERANCE,
                     it.name(),

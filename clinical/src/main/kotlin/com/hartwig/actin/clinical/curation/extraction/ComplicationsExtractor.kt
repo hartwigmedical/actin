@@ -19,7 +19,7 @@ class ComplicationsExtractor(private val complicationCuration: CurationDatabase<
         val (curation, validInputCount, unknownStateCount) = questionnaire!!.complications!!
             .map { CurationUtil.fullTrim(it) }
             .map {
-                val configs = complicationCuration.curate(it)
+                val configs = complicationCuration.find(it)
                 CurationResponse.createFromConfigs(
                     configs,
                     patientId,

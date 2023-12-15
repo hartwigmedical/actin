@@ -26,7 +26,7 @@ class TumorDetailsExtractor(
             return ExtractionResult(ImmutableTumorDetails.builder().build(), ExtractionEvaluation())
         }
         val lesionsToCheck = ((questionnaire.otherLesions ?: emptyList()) + listOfNotNull(questionnaire.biopsyLocation)).flatMap {
-            lesionLocationCuration.curate(it).mapNotNull(LesionLocationConfig::category)
+            lesionLocationCuration.find(it).mapNotNull(LesionLocationConfig::category)
         }
 
         val (primaryTumorDetails, tumorExtractionResult) = curateTumorDetails(
@@ -37,7 +37,7 @@ class TumorDetailsExtractor(
         val (curatedOtherLesions, otherLesionsResult) = curateOtherLesions(patientId, questionnaire.otherLesions)
         val biopsyCuration = questionnaire.biopsyLocation?.let {
             CurationResponse.createFromConfigs(
-                lesionLocationCuration.curate(it), patientId, CurationCategory.LESION_LOCATION, it, "lesion location", true
+                lesionLocationCuration.find(it), patientId, CurationCategory.LESION_LOCATION, it, "lesion location", true
             )
         }
 
@@ -69,7 +69,7 @@ class TumorDetailsExtractor(
         val inputPrimaryTumor =
             (tumorInput(inputTumorLocation, inputTumorType) ?: return Pair(builder.build(), ExtractionEvaluation())).lowercase()
         val primaryTumorCuration = CurationResponse.createFromConfigs(
-            primaryTumorCuration.curate(inputPrimaryTumor),
+            primaryTumorCuration.find(inputPrimaryTumor),
             patientId,
             CurationCategory.PRIMARY_TUMOR,
             inputPrimaryTumor,
@@ -100,7 +100,7 @@ class TumorDetailsExtractor(
         }
         val (configs, extractionResult) = otherLesions.asSequence()
             .map(CurationUtil::fullTrim)
-            .map { Pair(it, lesionLocationCuration.curate(it)) }
+            .map { Pair(it, lesionLocationCuration.find(it)) }
             .map { (input, configs) ->
                 CurationResponse.createFromConfigs(
                     configs, patientId, CurationCategory.LESION_LOCATION, input, "lesion location"

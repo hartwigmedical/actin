@@ -30,7 +30,7 @@ class PriorSecondPrimaryExtractor(
             .map(CurationUtil::fullTrim)
             .map {
                 CurationResponse.createFromConfigs(
-                    secondPrimaryCuration.curate(it),
+                    secondPrimaryCuration.find(it),
                     patientId,
                     CurationCategory.SECOND_PRIMARY,
                     it,
@@ -39,7 +39,7 @@ class PriorSecondPrimaryExtractor(
             }
             .map {
                 if (it.configs.isEmpty() &&
-                    treatmentHistoryCuration.curate(it.extractionEvaluation.secondPrimaryEvaluatedInputs.first())
+                    treatmentHistoryCuration.find(it.extractionEvaluation.secondPrimaryEvaluatedInputs.first())
                         .isNotEmpty()
                 ) {
                     it.copy(extractionEvaluation = it.extractionEvaluation.copy(warnings = emptySet()))

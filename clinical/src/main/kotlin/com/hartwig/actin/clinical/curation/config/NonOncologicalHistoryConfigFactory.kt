@@ -64,7 +64,7 @@ class NonOncologicalHistoryConfigFactory(private val curationDoidValidator: Cura
                 .doids(doids)
                 .category(parts[fields["category"]!!])
                 .isContraindicationForTherapy(isContraindicationForTherapy ?: false)
-                .build() to validationErrors(
+                .build() to validateDoids(
                 doids,
                 input
             ) + isContraindicationForTherapyValidationErrors + yearValidationErrors + monthValidationErrors
@@ -73,7 +73,7 @@ class NonOncologicalHistoryConfigFactory(private val curationDoidValidator: Cura
         }
     }
 
-    private fun validationErrors(
+    private fun validateDoids(
         doids: Set<String>,
         input: String
     ) = if (!curationDoidValidator.isValidDiseaseDoidSet(doids)) {

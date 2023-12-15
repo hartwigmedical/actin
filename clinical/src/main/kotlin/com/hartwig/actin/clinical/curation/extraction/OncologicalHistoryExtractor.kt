@@ -30,7 +30,7 @@ class OncologicalHistoryExtractor(
             .map(CurationUtil::fullTrim)
             .map {
                 CurationResponse.createFromConfigs(
-                    treatmentHistoryCuration.curate(it),
+                    treatmentHistoryCuration.find(it),
                     patientId,
                     CurationCategory.ONCOLOGICAL_HISTORY,
                     it,
@@ -39,7 +39,7 @@ class OncologicalHistoryExtractor(
             }
             .map {
                 if (it.configs.isEmpty() &&
-                    secondPrimaryCuration.curate(it.extractionEvaluation.treatmentHistoryEntryEvaluatedInputs.first())
+                    secondPrimaryCuration.find(it.extractionEvaluation.treatmentHistoryEntryEvaluatedInputs.first())
                         .isNotEmpty()
                 ) {
                     it.copy(extractionEvaluation = it.extractionEvaluation.copy(warnings = emptySet()))

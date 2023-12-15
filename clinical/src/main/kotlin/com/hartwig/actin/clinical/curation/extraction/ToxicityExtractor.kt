@@ -70,7 +70,7 @@ class ToxicityExtractor(
         return questionnaire.unresolvedToxicities?.map { input ->
             val trimmedInput = CurationUtil.fullTrim(input)
             val curationResponse = CurationResponse.createFromConfigs(
-                toxicityCuration.curate(trimmedInput), patientId, CurationCategory.TOXICITY, trimmedInput, "toxicity"
+                toxicityCuration.find(trimmedInput), patientId, CurationCategory.TOXICITY, trimmedInput, "toxicity"
             )
             val toxicities = curationResponse.configs.filterNot(CurationConfig::ignore).map { config ->
                 ImmutableToxicity.builder()

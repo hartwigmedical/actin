@@ -82,7 +82,7 @@ class MedicationExtractor(
         } else {
             val input = fullTrim(entry.codeText)
             val curation = CurationResponse.createFromConfigs(
-                medicationNameCuration.curate(input),
+                medicationNameCuration.find(input),
                 patientId,
                 CurationCategory.MEDICATION_NAME,
                 input,
@@ -105,7 +105,7 @@ class MedicationExtractor(
         return if (dosageRequiresCuration(administrationRoute, entry)) {
             val input = entry.dosageInstructionText.trim { it <= ' ' }
             val curationResponse = CurationResponse.createFromConfigs(
-                medicationDosageCuration.curate(input),
+                medicationDosageCuration.find(input),
                 patientId,
                 CurationCategory.MEDICATION_DOSAGE,
                 input,
@@ -145,7 +145,7 @@ class MedicationExtractor(
             ExtractionResult(null, ExtractionEvaluation())
         } else {
             val curation = CurationResponse.createFromConfigs(
-                periodBetweenUnitCuration.curate(input),
+                periodBetweenUnitCuration.find(input),
                 patientId,
                 CurationCategory.PERIOD_BETWEEN_UNIT_INTERPRETATION,
                 input,
@@ -181,11 +181,11 @@ class MedicationExtractor(
         }
 
     private fun curateMedicationCypInteractions(medicationName: String): List<CypInteraction> {
-        return this.cypInterationCuration.curate(medicationName).flatMap(CypInteractionConfig::interactions)
+        return this.cypInterationCuration.find(medicationName).flatMap(CypInteractionConfig::interactions)
     }
 
     private fun annotateWithQTProlongating(medicationName: String): QTProlongatingRisk {
-        val riskConfigs = this.qtProlongatingCuration.curate(medicationName)
+        val riskConfigs = this.qtProlongatingCuration.find(medicationName)
         return if (riskConfigs.isEmpty()) {
             QTProlongatingRisk.NONE
         } else if (riskConfigs.size > 1) {

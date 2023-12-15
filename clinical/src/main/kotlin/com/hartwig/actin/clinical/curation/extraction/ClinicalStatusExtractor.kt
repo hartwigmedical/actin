@@ -44,7 +44,7 @@ class ClinicalStatusExtractor(
     private fun curateECG(patientId: String, rawECG: ECG?): ExtractionResult<ECG?> {
         val curationResponse = rawECG?.aberrationDescription()?.let {
             CurationResponse.createFromConfigs(
-                ecgCuration.curate(it), patientId, CurationCategory.ECG, it, "ECG", true
+                ecgCuration.find(it), patientId, CurationCategory.ECG, it, "ECG", true
             )
         }
         val ecg = when (curationResponse?.configs?.size) {
@@ -77,7 +77,7 @@ class ClinicalStatusExtractor(
     private fun curateInfection(patientId: String, rawInfectionStatus: InfectionStatus?): ExtractionResult<InfectionStatus?> {
         val curationResponse = rawInfectionStatus?.description()?.let {
             CurationResponse.createFromConfigs(
-                infectionCuration.curate(it), patientId, CurationCategory.INFECTION, it, "infection", true
+                infectionCuration.find(it), patientId, CurationCategory.INFECTION, it, "infection", true
             )
         }
         val infectionStatus = when (curationResponse?.configs?.size) {
@@ -111,7 +111,7 @@ class ClinicalStatusExtractor(
     private fun determineLVEF(nonOncologicalHistoryEntries: List<String>?): Double? {
         // We do not raise warnings or propagate evaluated inputs here since we use the same configs for priorOtherConditions
         return nonOncologicalHistoryEntries?.asSequence()
-            ?.flatMap { nonOncologicalHistoryCuration.curate(it) }
+            ?.flatMap { nonOncologicalHistoryCuration.find(it) }
             ?.filterNot { it.ignore }
             ?.map { it.lvef }
             ?.find { it != null }
