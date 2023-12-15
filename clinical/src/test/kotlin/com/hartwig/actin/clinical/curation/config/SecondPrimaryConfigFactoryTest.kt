@@ -104,8 +104,34 @@ class SecondPrimaryConfigFactoryTest {
         assertThat(config.errors)
             .containsExactly(
                 CurationConfigValidationError(
-                    "Invalid enum value 'not a status' for enum 'TumorStatus'. Accepted values are [ACTIVE, INACTIVE, EXPECTATIVE]"
+                    "Invalid enum value 'not a status' for enum 'TumorStatus' from input 'input'. " +
+                            "Accepted values are [ACTIVE, INACTIVE, EXPECTATIVE]"
                 )
             )
+    }
+
+    @Test
+    fun `Should return no validation errors and null second primary when ignore string as input`() {
+        val curationDoidValidator = mockk<CurationDoidValidator>()
+        val config = SecondPrimaryConfigFactory(curationDoidValidator).create(
+            fields,
+            arrayOf(
+                "input",
+                "<ignore>",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            )
+        )
+        assertThat(config.config.curated).isNull()
+        assertThat(config.errors).isEmpty()
     }
 }

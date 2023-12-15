@@ -32,13 +32,14 @@ fun validateDouble(
 
 inline fun <reified T : Enum<T>> validateEnum(
     toValidate: String,
-    enumCreator: (String) -> T
+    input: String,
+    enumCreator: (String) -> T,
 ): Pair<T?, List<CurationConfigValidationError>> {
     val trimmedUppercase = toValidate.trim().uppercase()
     return if (enumContains<T>(trimmedUppercase)) {
         enumCreator.invoke(trimmedUppercase) to emptyList()
     } else {
-        null to listOf(enumInvalid<T>(toValidate))
+        null to listOf(enumInvalid<T>(toValidate, input))
     }
 }
 
@@ -56,9 +57,9 @@ inline fun <reified T : Enum<T>> enumContains(name: String): Boolean {
     return enumValues<T>().any { it.name == name }
 }
 
-inline fun <reified T : Enum<T>> enumInvalid(name: String): CurationConfigValidationError {
+inline fun <reified T : Enum<T>> enumInvalid(name: String, input: String): CurationConfigValidationError {
     return CurationConfigValidationError(
-        "Invalid enum value '$name' for enum '${T::class.simpleName}'. Accepted values are " +
+        "Invalid enum value '$name' for enum '${T::class.simpleName}' from input '$input'. Accepted values are " +
                 "${enumValues<T>().map { it.name }}"
     )
 }

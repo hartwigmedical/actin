@@ -35,7 +35,7 @@ class QTProlongatingConfigFactoryTest {
         val config = QTProlongatingConfigFactory().create(fields, arrayOf("name", "not known"))
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
-                "Invalid enum value 'NOT KNOWN' for enum 'QTProlongatingRisk'. " +
+                "Invalid enum value 'NOT KNOWN' for enum 'QTProlongatingRisk' from input 'name'. " +
                         "Accepted values are [KNOWN, POSSIBLE, CONDITIONAL, NONE, UNKNOWN]"
             )
         )

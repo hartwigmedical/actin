@@ -12,18 +12,18 @@ class SecondPrimaryConfigFactory(private val curationDoidValidator: CurationDoid
         val input = parts[fields["input"]!!]
         val ignore = CurationUtil.isIgnoreString(parts[fields["name"]!!])
         val doids = CurationUtil.toDOIDs(parts[fields["doids"]!!])
-        val (validatedTumorStatus, tumorStatusValidationErrors) = validateEnum<TumorStatus>(parts[fields["status"]!!]) {
+        val (validatedTumorStatus, tumorStatusValidationErrors) = if (!ignore) validateEnum<TumorStatus>(parts[fields["status"]!!], input) {
             TumorStatus.valueOf(
                 it
             )
-        }
+        } else null to emptyList()
         val curatedPriorSecondPrimary = validatedTumorStatus?.let { curatedPriorSecondPrimary(ignore, it, fields, parts, doids) }
         return ValidatedCurationConfig(
             SecondPrimaryConfig(
                 input = input,
                 ignore = ignore,
                 curated = curatedPriorSecondPrimary
-            ), tumorStatusValidationErrors + if (!curationDoidValidator.isValidCancerDoidSet(doids)) {
+            ), tumorStatusValidationErrors + if (!ignore && !curationDoidValidator.isValidCancerDoidSet(doids)) {
                 listOf(CurationConfigValidationError("Second primary config with input '$input' contains at least one invalid doid: '$doids'"))
             } else emptyList()
         )
