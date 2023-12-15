@@ -27,16 +27,6 @@ private const val BIOPSY_LOCATION_INPUT = "Biopsy location input"
 
 class TumorDetailsExtractorTest {
 
-    private fun locationLesionInput(category: LesionLocationCategory): String {
-        return "${category.name.lowercase()} lesion input"
-    }
-
-    private fun curatedLocationLesionInput(category: LesionLocationCategory): String {
-        return "Curated ${category.name.lowercase()}"
-    }
-
-    private val baseTumor = ImmutableTumorDetails.builder().build()
-
     @Test
     fun `Should curate tumor with location only`() {
         val (curatedWithoutType, evaluation) = TumorDetailsExtractor(
@@ -250,4 +240,14 @@ class TumorDetailsExtractorTest {
         location = curatedLocationLesionInput(category),
         category
     )
+
+    private fun locationLesionInput(category: LesionLocationCategory): String {
+        return "${category.name.lowercase()} lesion input"
+    }
+
+    private fun curatedLocationLesionInput(category: LesionLocationCategory): String {
+        return "Curated ${category.name.lowercase()}"
+    }
+
+    private val baseTumor = ImmutableTumorDetails.builder().build()
 }
