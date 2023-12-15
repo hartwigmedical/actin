@@ -279,6 +279,7 @@ CREATE TABLE `molecular`
     `predictedTumorType` varchar(50),
     `predictedTumorLikelihood` double precision,
     `isMicrosatelliteUnstable` BOOLEAN,
+    `homologousRepairScore` double precision,
     `isHomologousRepairDeficient` BOOLEAN,
     `tumorMutationalBurden` double precision,
     `hasHighTumorMutationalBurden` BOOLEAN,
