@@ -110,8 +110,10 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
         return createCellForCharacteristic(createMSStabilityString(), molecular.characteristics().isMicrosatelliteUnstable)
     }
 
-    fun createHRStatusString(): String? {
-        return molecular.characteristics().isHomologousRepairDeficient?.let { deficient -> if (deficient) "Deficient" else "Proficient" }
+    fun createHRStatusString(): String {
+        val homologousRepairScore = molecular.characteristics().homologousRepairScore()
+        return String.format("%s (%d)", molecular.characteristics().isHomologousRepairDeficient?.let { deficient -> if (deficient)
+            "Deficient" else "Proficient" }, homologousRepairScore)
     }
 
     private fun createHRStatusCell(): Cell {
