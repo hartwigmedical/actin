@@ -62,5 +62,19 @@ class AtcModelTest {
         assertThat(result).isNull()
     }
 
+    @Test
+    fun shouldReturnSetOfAtcCodesForCorrectMedicationName() {
+        val victim = createAtcModel()
+        val result = victim.resolveByName("paracetamol")
+        assertThat(result).isEqualTo(setOf("N02BE01"))
+    }
+
+    @Test
+    fun shouldReturnEmptySetWhenMedicationNameNotFound() {
+        val victim = createAtcModel()
+        val result = victim.resolveByName("not a medication name")
+        assertThat(result).isNullOrEmpty()
+    }
+
     private fun createAtcModel() = WhoAtcModel.createFromFile(Resources.getResource("atc_config/atc_tree.tsv").path)
 }
