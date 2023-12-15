@@ -61,7 +61,7 @@ class ComplicationConfigFactoryTest {
         assertThat(
             ComplicationConfigFactory().create(
                 fields,
-                arrayOf("input", "name", "categories", "2023", "12", "A")
+                arrayOf("input", "A", "name", "categories", "2023", "12")
             ).errors
         ).containsExactly(
             CurationConfigValidationError("'impliesUnknownComplicationState' had invalid value of 'A' for input 'input'")
