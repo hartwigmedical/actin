@@ -15,7 +15,7 @@ class ComplicationConfigFactory : CurationConfigFactory<ComplicationConfig> {
         )
         val (year, yearValidationErrors) = validateInteger(input, "year", fields, parts)
         val (month, monthValidationErrors) = validateInteger(input, "month", fields, parts)
-        val curated = year?.let { y -> month?.let { m -> toCuratedComplication(fields, parts, y, m) } }
+        val curated = toCuratedComplication(fields, parts, year, month)
         return ValidatedCurationConfig(
             ComplicationConfig(
                 input = input,
@@ -29,8 +29,8 @@ class ComplicationConfigFactory : CurationConfigFactory<ComplicationConfig> {
     private fun toCuratedComplication(
         fields: Map<String, Int>,
         parts: Array<String>,
-        year: Int,
-        month: Int,
+        year: Int?,
+        month: Int?,
 
         ) = ImmutableComplication.builder()
         .name(parts[fields["name"]!!])
