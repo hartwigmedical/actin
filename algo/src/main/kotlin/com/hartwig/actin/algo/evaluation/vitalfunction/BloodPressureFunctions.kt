@@ -19,7 +19,7 @@ object BloodPressureFunctions {
         record: PatientRecord, category: BloodPressureCategory, referenceBloodPressure: Int, referenceIsMinimum: Boolean): Evaluation {
         val categoryDisplay = category.display().lowercase()
         val relevant = VitalFunctionSelector.selectBloodPressures(record.clinical().vitalFunctions(), category)
-        if (relevant.isEmpty()) return EvaluationFactory.undetermined("No data found for $categoryDisplay")
+        if (relevant.isEmpty()) return EvaluationFactory.recoverableUndetermined("No (recent) data found for $categoryDisplay")
         val median = VitalFunctionFunctions.determineMedianValue(relevant)
         val comparison = median.compareTo(referenceBloodPressure)
 
