@@ -50,7 +50,11 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         val curationDatabaseContext = CurationDatabaseContext.create(config.curationDirectory, curationDoidValidator, treatmentDatabase)
         val validationErrors = curationDatabaseContext.validate()
         if (validationErrors.isNotEmpty()) {
-            LOGGER.warn("Curation input had validation errors. Writing to validation errors json and exiting 1")
+            LOGGER.warn("Curation input had validation errors:")
+            for (validationError in validationErrors) {
+                LOGGER.warn(" ${validationError.message}")
+            }
+            LOGGER.warn("Please correct all errors before running the ingestion again. Exiting 1")
             writeIngestionResults(outputDirectory, IngestionResult(validationErrors))
             exitProcess(1)
         }
