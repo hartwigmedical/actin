@@ -141,6 +141,7 @@ internal class MolecularDAO(private val context: DSLContext) {
                 predictedTumorOrigin?.cancerType(),
                 predictedTumorOrigin?.likelihood(),
                 record.characteristics().isMicrosatelliteUnstable,
+                record.characteristics().homologousRepairScore(),
                 record.characteristics().isHomologousRepairDeficient,
                 record.characteristics().tumorMutationalBurden(),
                 record.characteristics().hasHighTumorMutationalBurden(),
