@@ -1,43 +1,42 @@
 package com.hartwig.actin.treatment.sort
 
-import com.google.common.collect.Lists
+import com.hartwig.actin.treatment.datamodel.CriterionReference
 import com.hartwig.actin.treatment.datamodel.Eligibility
-import com.hartwig.actin.treatment.datamodel.ImmutableCriterionReference
-import org.apache.logging.log4j.util.Strings
-import org.junit.Assert
+import com.hartwig.actin.treatment.datamodel.EligibilityFunction
+import com.hartwig.actin.treatment.datamodel.EligibilityRule
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class EligibilityComparatorTest {
     @Test
-    fun canSortEligibility() {
-        val eligibilities: MutableList<Eligibility> = Lists.newArrayList()
-        eligibilities.add(createWithoutReferences())
-        eligibilities.add(createWithReferenceId("Else"))
-        eligibilities.add(createWithReferenceId("I-01"))
-        eligibilities.add(createWithReferenceId("I-01"))
-        eligibilities.add(createWithReferenceId("AAA"))
-        eligibilities.add(createWithoutReferences())
-        eligibilities.sort(EligibilityComparator())
-        assertEquals("I-01", eligibilities[0].references().iterator().next().id())
-        assertEquals("I-01", eligibilities[1].references().iterator().next().id())
-        assertEquals("AAA", eligibilities[2].references().iterator().next().id())
-        assertEquals("Else", eligibilities[3].references().iterator().next().id())
-        Assert.assertTrue(eligibilities[4].references().isEmpty())
-        Assert.assertTrue(eligibilities[5].references().isEmpty())
+    fun `Should sort eligibilities`() {
+        val eligibilities = listOf(
+            createWithoutReferences(),
+            createWithReferenceId("Else"),
+            createWithReferenceId("I-01"),
+            createWithReferenceId("I-01"),
+            createWithReferenceId("AAA"),
+            createWithoutReferences()
+        ).sortedWith(EligibilityComparator())
+
+        assertThat(eligibilities[0].references.first().id).isEqualTo("I-01")
+        assertThat(eligibilities[1].references.first().id).isEqualTo("I-01")
+        assertThat(eligibilities[2].references.first().id).isEqualTo("AAA")
+        assertThat(eligibilities[3].references.first().id).isEqualTo("Else")
+        assertThat(eligibilities[4].references).isEmpty()
+        assertThat(eligibilities[5].references).isEmpty()
     }
 
     companion object {
         private fun createWithReferenceId(id: String): Eligibility {
-            return ImmutableEligibility.builder()
-                .from(createWithoutReferences())
-                .addReferences(ImmutableCriterionReference.builder().id(id).text(Strings.EMPTY).build())
-                .build()
+            return createWithoutReferences().copy(references = setOf(CriterionReference(id = id, text = "")))
         }
 
         private fun createWithoutReferences(): Eligibility {
-            return ImmutableEligibility.builder()
-                .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD).build())
-                .build()
+            return Eligibility(
+                function = EligibilityFunction(rule = EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, parameters = emptyList()),
+                references = emptySet()
+            )
         }
     }
 }

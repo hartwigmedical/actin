@@ -57,18 +57,18 @@ class TreatmentMatchPrinter(private val printer: DatamodelPrinter) {
         }
 
         private fun trialName(trial: TrialIdentification): String {
-            return trial.trialId() + " (" + trial.acronym() + ")"
+            return trial.trialId + " (" + trial.acronym + ")"
         }
 
         private fun recruitingCohortString(eligibleTrialMap: Map<TrialIdentification, List<CohortMetadata>>): String {
             val recruitingCohorts = eligibleTrialMap.flatMap { (trial, cohorts) ->
-                cohorts.filter { it.open() && it.slotsAvailable() }.map { cohortName(trial, it) }
+                cohorts.filter { it.open && it.slotsAvailable }.map { cohortName(trial, it) }
             }
             return if (recruitingCohorts.isNotEmpty()) "${recruitingCohorts.size} (${recruitingCohorts.joinToString(", ")})" else "None"
         }
 
         private fun cohortName(trial: TrialIdentification, cohort: CohortMetadata): String {
-            return trial.trialId() + " - " + cohort.description()
+            return trial.trialId + " - " + cohort.description
         }
     }
 }

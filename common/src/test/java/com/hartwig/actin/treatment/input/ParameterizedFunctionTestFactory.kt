@@ -1,171 +1,141 @@
 package com.hartwig.actin.treatment.input
 
-import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction
+import com.hartwig.actin.clinical.datamodel.TumorStage
+import com.hartwig.actin.clinical.datamodel.treatment.DrugType
+import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatmentType
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import com.hartwig.actin.treatment.datamodel.EligibilityFunction
+import com.hartwig.actin.treatment.datamodel.EligibilityRule
+import com.hartwig.actin.treatment.input.composite.CompositeInput
+import com.hartwig.actin.treatment.input.composite.CompositeRules
+import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput
+import com.hartwig.actin.treatment.input.single.FunctionInput
 
 class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
+
     fun create(rule: EligibilityRule): EligibilityFunction {
-        return ImmutableEligibilityFunction.builder().rule(rule).parameters(createTestParameters(rule)).build()
+        return EligibilityFunction(rule, createTestParameters(rule))
     }
 
     private fun createTestParameters(rule: EligibilityRule): List<Any> {
         return if (CompositeRules.isComposite(rule)) {
-            val inputs: CompositeInput = CompositeRules.inputsForCompositeRule(rule)
-            if (inputs == CompositeInput.EXACTLY_1) {
-                java.util.List.of<Any>(create(MOCK_RULE))
-            } else if (inputs == CompositeInput.AT_LEAST_2) {
-                java.util.List.of<Any>(
-                    create(MOCK_RULE),
-                    create(MOCK_RULE)
-                )
-            } else {
-                throw IllegalStateException("Cannot interpret composite input: $inputs")
+            when (CompositeRules.inputsForCompositeRule(rule)) {
+                CompositeInput.EXACTLY_1 -> {
+                    listOf(create(MOCK_RULE))
+                }
+
+                CompositeInput.AT_LEAST_2 -> {
+                    listOf(create(MOCK_RULE), create(MOCK_RULE))
+                }
             }
         } else {
-            createForInputs(FunctionInputMapping.RULE_INPUT_MAP[rule])
+            createForInputs(FunctionInputMapping.RULE_INPUT_MAP[rule]!!)
         }
     }
 
     private fun createForInputs(input: FunctionInput): List<Any> {
         return when (input) {
             FunctionInput.NONE -> {
-                emptyList<Any>()
+                emptyList()
             }
-
             FunctionInput.ONE_INTEGER, FunctionInput.ONE_DOUBLE -> {
-                listOf<Any>("1")
+                listOf("1")
             }
 
-            FunctionInput.MANY_INTEGERS -> listOf<Any>("1;2")
+            FunctionInput.MANY_INTEGERS -> {
+                listOf("1;2")
+            }
             FunctionInput.TWO_INTEGERS, FunctionInput.TWO_DOUBLES -> {
-                listOf<Any>("1", "2")
+                listOf("1", "2")
             }
-
             FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE -> {
-                java.util.List.of<Any>(TreatmentCategory.IMMUNOTHERAPY.display())
+                listOf(TreatmentCategory.IMMUNOTHERAPY.display())
             }
-
             FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES -> {
-                java.util.List.of<Any>(
-                    TreatmentCategory.IMMUNOTHERAPY.display(),
-                    DrugType.ANTI_PD_L1.toString() + ";" + DrugType.ANTI_PD_1
-                )
+                listOf(TreatmentCategory.IMMUNOTHERAPY.display(), DrugType.ANTI_PD_L1.toString() + ";" + DrugType.ANTI_PD_1)
             }
-
             FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE_ONE_INTEGER -> {
-                java.util.List.of<Any>(OtherTreatmentType.ALLOGENIC.display(), "1")
+                listOf(OtherTreatmentType.ALLOGENIC.display(), "1")
             }
-
             FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES_ONE_INTEGER -> {
-                java.util.List.of<Any>(
-                    TreatmentCategory.IMMUNOTHERAPY.display(),
-                    DrugType.ANTI_PD_L1.toString() + ";" + DrugType.ANTI_PD_1,
-                    "1"
-                )
+                listOf(TreatmentCategory.IMMUNOTHERAPY.display(), DrugType.ANTI_PD_L1.toString() + ";" + DrugType.ANTI_PD_1, "1")
             }
-
             FunctionInput.ONE_SPECIFIC_TREATMENT -> {
-                listOf<Any>("CAPECITABINE+OXALIPLATIN")
+                listOf("CAPECITABINE+OXALIPLATIN")
             }
-
             FunctionInput.ONE_SPECIFIC_TREATMENT_ONE_INTEGER -> {
-                listOf<Any>("CAPECITABINE+OXALIPLATIN", "1")
+                listOf("CAPECITABINE+OXALIPLATIN", "1")
             }
-
             FunctionInput.MANY_SPECIFIC_TREATMENTS_TWO_INTEGERS -> {
-                listOf<Any>("CAPECITABINE+OXALIPLATIN;CAPECITABINE+OXALIPLATIN", "1", "2")
+                listOf("CAPECITABINE+OXALIPLATIN;CAPECITABINE+OXALIPLATIN", "1", "2")
             }
-
             FunctionInput.ONE_TREATMENT_CATEGORY_MANY_DRUGS -> {
-                java.util.List.of<Any>(TreatmentCategory.CHEMOTHERAPY.display(), "CAPECITABINE;OXALIPLATIN")
+                listOf(TreatmentCategory.CHEMOTHERAPY.display(), "CAPECITABINE;OXALIPLATIN")
             }
-
             FunctionInput.MANY_DRUGS -> {
-                listOf<Any>("CAPECITABINE;OXALIPLATIN")
+                listOf("CAPECITABINE;OXALIPLATIN")
             }
-
             FunctionInput.ONE_TUMOR_TYPE -> {
-                java.util.List.of<Any>(TumorTypeInput.SQUAMOUS_CELL_CARCINOMA.display())
+                listOf(TumorTypeInput.SQUAMOUS_CELL_CARCINOMA.display())
             }
-
             FunctionInput.ONE_STRING -> {
-                listOf<Any>("string")
+                listOf("string")
             }
-
             FunctionInput.ONE_STRING_ONE_INTEGER -> {
-                listOf<Any>("string", "1")
+                listOf("string", "1")
             }
-
             FunctionInput.MANY_STRINGS_ONE_INTEGER -> {
-                listOf<Any>("string1;string2", "1")
+                listOf("string1;string2", "1")
             }
-
             FunctionInput.MANY_STRINGS_TWO_INTEGERS -> {
-                listOf<Any>("string1;string2", "1", "2")
+                listOf("string1;string2", "1", "2")
             }
-
             FunctionInput.ONE_INTEGER_ONE_STRING -> {
-                listOf<Any>("1", "string")
+                listOf("1", "string")
             }
-
             FunctionInput.ONE_INTEGER_MANY_STRINGS -> {
-                listOf<Any>("1", "string1;string2")
+                listOf("1", "string1;string2")
             }
-
             FunctionInput.ONE_TUMOR_STAGE -> {
-                java.util.List.of<Any>(TumorStage.I.display())
+                listOf(TumorStage.I.display())
             }
-
             FunctionInput.ONE_HLA_ALLELE -> {
-                listOf<Any>("A*02:01")
+                listOf("A*02:01")
             }
-
             FunctionInput.ONE_GENE -> {
-                listOf<Any>("gene")
+                listOf("gene")
             }
-
             FunctionInput.ONE_GENE_ONE_INTEGER -> {
-                listOf<Any>("gene", "1")
+                listOf("gene", "1")
             }
-
             FunctionInput.ONE_GENE_ONE_INTEGER_ONE_VARIANT_TYPE -> {
-                listOf<Any>("gene", "1", "INDEL")
+                listOf("gene", "1", "INDEL")
             }
-
             FunctionInput.ONE_GENE_TWO_INTEGERS -> {
-                listOf<Any>("gene", "1", "2")
+                listOf("gene", "1", "2")
             }
-
             FunctionInput.ONE_GENE_MANY_CODONS -> {
-                listOf<Any>("gene", "V600;V601")
+                listOf("gene", "V600;V601")
             }
-
             FunctionInput.ONE_GENE_MANY_PROTEIN_IMPACTS -> {
-                listOf<Any>("gene", "V600E;V601E")
+                listOf("gene", "V600E;V601E")
             }
-
             FunctionInput.MANY_GENES -> {
-                listOf<Any>("gene1;gene2")
+                listOf("gene1;gene2")
             }
-
             FunctionInput.ONE_DOID_TERM -> {
-                java.util.List.of<Any>(doidTermToUse)
-            }
-
-            else -> {
-                throw IllegalStateException("Could not create inputs for $input")
+                listOf(doidTermToUse)
             }
         }
     }
 
     companion object {
         private val MOCK_RULE: EligibilityRule = firstNonComposite()
+
         private fun firstNonComposite(): EligibilityRule {
-            for (rule in EligibilityRule.values()) {
-                if (!CompositeRules.isComposite(rule)) {
-                    return rule
-                }
-            }
-            throw IllegalStateException("Only composite functions defined!")
+            return EligibilityRule.values().find { rule ->
+                !CompositeRules.isComposite(rule)
+            } ?: throw IllegalStateException("Only composite functions defined!")
         }
     }
 }

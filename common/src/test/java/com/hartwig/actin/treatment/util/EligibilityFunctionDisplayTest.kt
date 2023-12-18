@@ -2,15 +2,16 @@ package com.hartwig.actin.treatment.util
 
 import com.hartwig.actin.treatment.datamodel.TestTrialFactory
 import com.hartwig.actin.treatment.util.EligibilityFunctionDisplay.format
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class EligibilityFunctionDisplayTest {
+
     @Test
-    fun canFormatAllTestFunctions() {
+    fun `Should format all test functions`() {
         val trial = TestTrialFactory.createProperTestTrial()
-        for (eligibility in trial.generalEligibility()) {
-            Assert.assertNotNull(format(eligibility.function()))
+        for (eligibility in trial.generalEligibility) {
+            assertThat(format(eligibility.function)).isNotNull()
         }
     }
 }

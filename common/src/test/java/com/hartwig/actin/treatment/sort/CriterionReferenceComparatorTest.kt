@@ -1,34 +1,33 @@
 package com.hartwig.actin.treatment.sort
 
-import com.google.common.collect.Lists
-import com.hartwig.actin.treatment.datamodel.ImmutableCriterionReference
-import org.apache.logging.log4j.util.Strings
+import com.hartwig.actin.treatment.datamodel.CriterionReference
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class CriterionReferenceComparatorTest {
+
     @Test
-    fun canSortCriterionReferences() {
-        val references: MutableList<CriterionReference> = Lists.newArrayList<CriterionReference>()
-        references.add(createReference("E-05"))
-        references.add(createReference("I-02"))
-        references.add(createReference("I-02"))
-        references.add(createReference("Something else"))
-        references.add(createReference("AAA"))
-        references.add(createReference("I-03"))
-        references.add(createReference("E-01"))
-        references.sort(CriterionReferenceComparator())
-        assertEquals("I-02", references[0].id())
-        assertEquals("I-02", references[1].id())
-        assertEquals("I-03", references[2].id())
-        assertEquals("AAA", references[3].id())
-        assertEquals("E-01", references[4].id())
-        assertEquals("E-05", references[5].id())
-        assertEquals("Something else", references[6].id())
+    fun `Should sort criterion references`() {
+        val references = listOf(
+            createReference("E-05"),
+            createReference("I-02"),
+            createReference("I-02"),
+            createReference("Something else"),
+            createReference("AAA"),
+            createReference("I-03"),
+            createReference("E-01")
+        ).sortedWith(CriterionReferenceComparator())
+
+        assertThat(references[0].id).isEqualTo("I-02")
+        assertThat(references[1].id).isEqualTo("I-02")
+        assertThat(references[2].id).isEqualTo("I-03")
+        assertThat(references[3].id).isEqualTo("AAA")
+        assertThat(references[4].id).isEqualTo("E-01")
+        assertThat(references[5].id).isEqualTo("E-05")
+        assertThat(references[6].id).isEqualTo("Something else")
     }
 
-    companion object {
-        private fun createReference(id: String): CriterionReference {
-            return ImmutableCriterionReference.builder().id(id).text(Strings.EMPTY).build()
-        }
+    private fun createReference(id: String): CriterionReference {
+        return CriterionReference(id, "")
     }
 }

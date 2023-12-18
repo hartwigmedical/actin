@@ -1,28 +1,23 @@
 package com.hartwig.actin.treatment.sort
 
-import com.hartwig.actin.treatment.datamodel.ImmutableTrialIdentification
+import com.hartwig.actin.treatment.datamodel.TrialIdentification
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Test
 
 class TrialIdentificationComparatorTest {
-    @org.junit.Test
-    fun canSortTrialIdentifications() {
-        val identification1: TrialIdentification =
-            ImmutableTrialIdentification.builder().trialId("1").open(true).acronym("First").title("Real First").build()
-        val identification2: TrialIdentification =
-            ImmutableTrialIdentification.builder().trialId("1").open(true).acronym("First").title("Wants to be first").build()
-        val identification3: TrialIdentification =
-            ImmutableTrialIdentification.builder().trialId("1").open(true).acronym("Second").title("Second").build()
-        val identification4: TrialIdentification =
-            ImmutableTrialIdentification.builder().trialId("2").open(true).acronym("Third").title("Third").build()
-        val identifications: List<TrialIdentification> = com.google.common.collect.Lists.newArrayList<TrialIdentification>(
-            identification1,
-            identification2,
-            identification3,
-            identification4
-        )
-        identifications.sort(TrialIdentificationComparator())
-        org.junit.Assert.assertEquals(identification1, identifications[0])
-        org.junit.Assert.assertEquals(identification2, identifications[1])
-        org.junit.Assert.assertEquals(identification3, identifications[2])
-        org.junit.Assert.assertEquals(identification4, identifications[3])
+
+    @Test
+    fun `Should sort trial identifications`() {
+        val identification1 = TrialIdentification(trialId = "1", open = true, acronym = "First", title = "Real First")
+        val identification2 = TrialIdentification(trialId = "1", open = true, acronym = "First", title = "Wants to be first")
+        val identification3 = TrialIdentification(trialId = "1", open = true, acronym = "Second", title = "Second")
+        val identification4 = TrialIdentification(trialId = "2", open = true, acronym = "Third", title = "Third")
+        val identifications = listOf(identification1, identification2, identification3, identification4)
+            .sortedWith(TrialIdentificationComparator())
+
+        assertThat(identifications[0]).isEqualTo(identification1)
+        assertThat(identifications[1]).isEqualTo(identification2)
+        assertThat(identifications[2]).isEqualTo(identification3)
+        assertThat(identifications[3]).isEqualTo(identification4)
     }
 }

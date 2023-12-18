@@ -16,11 +16,6 @@ import com.hartwig.actin.treatment.datamodel.CriterionReference
 import com.hartwig.actin.treatment.datamodel.Eligibility
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction
 import com.hartwig.actin.treatment.datamodel.EligibilityRule
-import com.hartwig.actin.treatment.datamodel.ImmutableCohortMetadata
-import com.hartwig.actin.treatment.datamodel.ImmutableCriterionReference
-import com.hartwig.actin.treatment.datamodel.ImmutableEligibility
-import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction
-import com.hartwig.actin.treatment.datamodel.ImmutableTrialIdentification
 import com.hartwig.actin.treatment.datamodel.TrialIdentification
 import com.hartwig.actin.treatment.sort.CriterionReferenceComparator
 import com.hartwig.actin.treatment.sort.EligibilityComparator
@@ -91,12 +86,12 @@ object TreatmentMatchJson {
             }
 
             private fun toIdentification(identification: JsonObject): TrialIdentification {
-                return ImmutableTrialIdentification.builder()
-                    .trialId(Json.string(identification, "trialId"))
-                    .open(Json.bool(identification, "open"))
-                    .acronym(Json.string(identification, "acronym"))
-                    .title(Json.string(identification, "title"))
-                    .build()
+                return TrialIdentification(
+                    trialId = Json.string(identification, "trialId"),
+                    open = Json.bool(identification, "open"),
+                    acronym = Json.string(identification, "acronym"),
+                    title = Json.string(identification, "title")
+                )
             }
 
             private fun toCohorts(cohorts: JsonArray): List<CohortMatch> {
@@ -111,14 +106,14 @@ object TreatmentMatchJson {
             }
 
             private fun toMetadata(cohort: JsonObject): CohortMetadata {
-                return ImmutableCohortMetadata.builder()
-                    .cohortId(Json.string(cohort, "cohortId"))
-                    .evaluable(Json.bool(cohort, "evaluable"))
-                    .open(Json.bool(cohort, "open"))
-                    .slotsAvailable(Json.bool(cohort, "slotsAvailable"))
-                    .blacklist(Json.bool(cohort, "blacklist"))
-                    .description(Json.string(cohort, "description"))
-                    .build()
+                return CohortMetadata(
+                    cohortId = Json.string(cohort, "cohortId"),
+                    evaluable = Json.bool(cohort, "evaluable"),
+                    open = Json.bool(cohort, "open"),
+                    slotsAvailable = Json.bool(cohort, "slotsAvailable"),
+                    blacklist = Json.bool(cohort, "blacklist"),
+                    description = Json.string(cohort, "description")
+                )
             }
 
             private fun toEvaluations(evaluations: JsonElement): Map<Eligibility, Evaluation> {
@@ -130,10 +125,10 @@ object TreatmentMatchJson {
             }
 
             private fun toEligibility(eligibility: JsonObject): Eligibility {
-                return ImmutableEligibility.builder()
-                    .references(toReferences(Json.array(eligibility, "references")))
-                    .function(toEligibilityFunction(Json.`object`(eligibility, "function")))
-                    .build()
+                return Eligibility(
+                    references = toReferences(Json.array(eligibility, "references")),
+                    function = toEligibilityFunction(Json.`object`(eligibility, "function"))
+                )
             }
 
             private fun toEvaluation(evaluation: JsonObject): Evaluation {
@@ -156,16 +151,19 @@ object TreatmentMatchJson {
             private fun toReferences(referenceArray: JsonArray): Set<CriterionReference> {
                 return referenceArray.map { element ->
                     val obj = element.asJsonObject
-                    ImmutableCriterionReference.builder().id(Json.string(obj, "id")).text(Json.string(obj, "text")).build() 
+                    CriterionReference(
+                        id = Json.string(obj, "id"),
+                        text = Json.string(obj, "text")
+                    )
                 }
                     .toSortedSet(CriterionReferenceComparator())
             }
 
             private fun toEligibilityFunction(function: JsonObject): EligibilityFunction {
-                return ImmutableEligibilityFunction.builder()
-                    .rule(EligibilityRule.valueOf(Json.string(function, "rule")))
-                    .parameters(toParameters(Json.array(function, "parameters")))
-                    .build()
+                return EligibilityFunction(
+                    rule = EligibilityRule.valueOf(Json.string(function, "rule")),
+                    parameters = toParameters(Json.array(function, "parameters"))
+                )
             }
 
             private fun toParameters(parameterArray: JsonArray): List<Any> {

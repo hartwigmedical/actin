@@ -1,59 +1,64 @@
 package com.hartwig.actin.treatment.sort
 
-import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction
+import com.hartwig.actin.treatment.datamodel.EligibilityFunction
+import com.hartwig.actin.treatment.datamodel.EligibilityRule
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Test
 
 class EligibilityFunctionComparatorTest {
-    @org.junit.Test
-    fun canSortEligibilityFunctions() {
-        val functions: MutableList<EligibilityFunction> = com.google.common.collect.Lists.newArrayList<EligibilityFunction>()
-        functions.add(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD).build())
-        functions.add(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD).build())
-        functions.add(
-            ImmutableEligibilityFunction.builder()
-                .rule(EligibilityRule.NOT)
-                .addParameters(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS).build())
-                .build()
-        )
-        functions.add(
-            ImmutableEligibilityFunction.builder()
-                .rule(EligibilityRule.NOT)
-                .addParameters(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS).build())
-                .build()
-        )
-        functions.add(
-            ImmutableEligibilityFunction.builder()
-                .rule(EligibilityRule.AND)
-                .addParameters(
-                    ImmutableEligibilityFunction.builder()
-                        .rule(EligibilityRule.NOT)
-                        .addParameters(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS).build())
-                        .build()
+
+    @Test
+    fun `Should sort eligibility functions`() {
+        val functions = listOf(
+            EligibilityFunction(rule = EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, parameters = emptyList()),
+            EligibilityFunction(rule = EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, parameters = emptyList()),
+            EligibilityFunction(
+                rule = EligibilityRule.NOT,
+                parameters = listOf(EligibilityFunction(rule = EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS, parameters = emptyList()))
+            ),
+            EligibilityFunction(
+                rule = EligibilityRule.NOT,
+                parameters = listOf(EligibilityFunction(rule = EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS, parameters = emptyList()))
+            ),
+            EligibilityFunction(
+                rule = EligibilityRule.AND,
+                parameters = listOf(
+                    EligibilityFunction(
+                        rule = EligibilityRule.NOT,
+                        parameters = listOf(
+                            EligibilityFunction(rule = EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS, parameters = emptyList())
+                        )
+                    ),
+                    EligibilityFunction(rule = EligibilityRule.HAS_ACTIVE_INFECTION, parameters = emptyList())
                 )
-                .addParameters(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_ACTIVE_INFECTION).build())
-                .build()
-        )
-        functions.add(
-            ImmutableEligibilityFunction.builder()
-                .rule(EligibilityRule.AND)
-                .addParameters(
-                    ImmutableEligibilityFunction.builder()
-                        .rule(EligibilityRule.NOT)
-                        .addParameters(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS).build())
-                        .build()
+            ),
+            EligibilityFunction(
+                rule = EligibilityRule.AND,
+                parameters = listOf(
+                    EligibilityFunction(
+                        rule = EligibilityRule.NOT,
+                        parameters = listOf(
+                            EligibilityFunction(rule = EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS, parameters = emptyList())
+                        )
+                    ),
+                    EligibilityFunction(rule = EligibilityRule.HAS_ACTIVE_INFECTION, parameters = emptyList())
                 )
-                .addParameters(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_ACTIVE_INFECTION).build())
-                .build()
-        )
-        functions.add(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X).addParameters("5").build())
-        functions.add(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X).addParameters("6").build())
-        functions.sort(EligibilityFunctionComparator())
-        assertEquals(EligibilityRule.AND, functions[0].rule())
-        assertEquals(EligibilityRule.AND, functions[1].rule())
-        assertEquals(EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X, functions[2].rule())
-        assertEquals(EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X, functions[3].rule())
-        assertEquals(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, functions[4].rule())
-        assertEquals(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, functions[5].rule())
-        assertEquals(EligibilityRule.NOT, functions[6].rule())
-        assertEquals(EligibilityRule.NOT, functions[7].rule())
+            ),
+            EligibilityFunction(rule = EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X, parameters = listOf("5")),
+            EligibilityFunction(rule = EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X, parameters = listOf("6"))
+        ).sortedWith(EligibilityFunctionComparator())
+
+        listOf(
+            EligibilityRule.AND,
+            EligibilityRule.AND,
+            EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X,
+            EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X,
+            EligibilityRule.IS_AT_LEAST_X_YEARS_OLD,
+            EligibilityRule.IS_AT_LEAST_X_YEARS_OLD,
+            EligibilityRule.NOT,
+            EligibilityRule.NOT
+        ).zip(functions).forEach { (expected, actual) ->
+            assertThat(actual.rule).isEqualTo(expected)
+        }
     }
 }

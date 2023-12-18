@@ -1,12 +1,13 @@
 package com.hartwig.actin.treatment.input.datamodel
 
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class TumorTypeInputTest {
     @Test
-    fun canConvertAllTumorTypeInputs() {
+    fun `Should convert all tumor type inputs`() {
         for (category in TumorTypeInput.values()) {
-            assertEquals(category, TumorTypeInput.fromString(category.display()))
+            assertThat(TumorTypeInput.fromString(category.display())).isEqualTo(category)
         }
     }
 }
