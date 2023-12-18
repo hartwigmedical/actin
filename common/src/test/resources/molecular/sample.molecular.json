@@ -33,7 +33,11 @@
     "homologousRepairEvidence": {
       "approvedTreatments": [],
       "externalEligibleTrials": [
-        "PARP trial"
+        {
+          "title": "PARP trial",
+          "countries": ["Netherlands", "Germany"],
+          "website": "website"
+        }
       ],
       "onLabelExperimentalTreatments": [
         "PARP on label"

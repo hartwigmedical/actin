@@ -69,8 +69,8 @@ object TestServeActionabilityFactory {
                 return Strings.EMPTY
             }
 
-            override fun sourceUrls(): MutableSet<String?> {
-                return Sets.newHashSet()
+            override fun sourceUrls(): Set<String> {
+                return Sets.newHashSet("website")
             }
 
             override fun treatment(): Treatment {
@@ -94,7 +94,7 @@ object TestServeActionabilityFactory {
             }
 
             override fun evidenceUrls(): MutableSet<String?> {
-                return Sets.newHashSet()
+                return Sets.newHashSet("Netherlands", "Germany")
             }
         }
     }

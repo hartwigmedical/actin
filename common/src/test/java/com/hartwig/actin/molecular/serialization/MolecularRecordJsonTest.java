@@ -38,6 +38,7 @@ import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.VariantEffect;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.datamodel.driver.VirusType;
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableEligibleTrial;
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory;
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele;
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
@@ -113,7 +114,11 @@ public class MolecularRecordJsonTest {
         assertNull(characteristics.microsatelliteEvidence());
         assertTrue(characteristics.isHomologousRepairDeficient());
         assertEquals(TestActionableEvidenceFactory.builder()
-                .addExternalEligibleTrials("PARP trial")
+                .addExternalEligibleTrials(ImmutableEligibleTrial.builder()
+                        .title("PARP trial")
+                        .countries(Sets.newHashSet("Netherlands", "Germany"))
+                        .website("website")
+                        .build())
                 .addOnLabelExperimentalTreatments("PARP on label")
                 .addOffLabelExperimentalTreatments("PARP off label")
                 .build(), characteristics.homologousRepairEvidence());

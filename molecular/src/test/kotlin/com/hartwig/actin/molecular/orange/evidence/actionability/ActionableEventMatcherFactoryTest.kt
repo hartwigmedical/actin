@@ -32,13 +32,13 @@ class ActionableEventMatcherFactoryTest {
     fun canFilterAndCurateExternalTrials() {
         val externalTrialMapper = TestExternalTrialMapperFactory.create("external", "actin")
         val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
-        val base = TestServeActionabilityFactory.createActionableEvent(Knowledgebase.ICLUSION, "external")
+        val base = TestServeActionabilityFactory.createActionableEvent(Knowledgebase.CKB_TRIAL, "external")
 
         val actionable: ActionableEvents = ImmutableActionableEvents.builder()
             .addHotspots(hotspot("unknown source", "external", Knowledgebase.UNKNOWN))
-            .addHotspots(hotspot(TestApplicabilityFilteringUtil.nonApplicableGene(), "external", Knowledgebase.ICLUSION))
-            .addHotspots(hotspot("gene 1", "external", Knowledgebase.ICLUSION))
-            .addHotspots(hotspot("gene 2", "internal", Knowledgebase.ICLUSION))
+            .addHotspots(hotspot(TestApplicabilityFilteringUtil.nonApplicableGene(), "external", Knowledgebase.CKB_TRIAL))
+            .addHotspots(hotspot("gene 1", "external", Knowledgebase.CKB_TRIAL))
+            .addHotspots(hotspot("gene 2", "internal", Knowledgebase.CKB_TRIAL))
             .addHotspots(hotspot("gene 3", "external", Knowledgebase.CKB_EVIDENCE))
             .addCodons(TestServeActionabilityFactory.rangeBuilder().from(base).build())
             .addExons(TestServeActionabilityFactory.rangeBuilder().from(base).build())

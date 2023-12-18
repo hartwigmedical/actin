@@ -10,6 +10,7 @@ import java.util.StringJoiner;
 import com.google.common.collect.Multimap;
 import com.hartwig.actin.molecular.datamodel.MolecularRecord;
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin;
+import com.hartwig.actin.molecular.datamodel.evidence.EligibleTrial;
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidence;
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory;
 import com.hartwig.actin.util.DatamodelPrinter;
@@ -48,7 +49,7 @@ public class MolecularPrinter {
 
         AggregatedEvidence evidence = AggregatedEvidenceFactory.create(record);
         printer.print(" Events with evidence for approved treatment: " + keys(evidence.approvedTreatmentsPerEvent()));
-        printer.print(" Events associated with external trials: " + keys(evidence.externalEligibleTrialsPerEvent()));
+        printer.print(" Events associated with external trials: " + keys2(evidence.externalEligibleTrialsPerEvent()));
         printer.print(
                 " Events with evidence for on-label experimental treatment: " + keys(evidence.onLabelExperimentalTreatmentsPerEvent()));
         printer.print(
@@ -98,6 +99,11 @@ public class MolecularPrinter {
 
     @NotNull
     private static String keys(@NotNull Multimap<String, String> multimap) {
+        return concat(multimap.keySet());
+    }
+
+    @NotNull
+    private static String keys2(@NotNull Multimap<String, EligibleTrial> multimap) {
         return concat(multimap.keySet());
     }
 

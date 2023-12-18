@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.treatment
 
 import com.google.common.collect.Multimap
+import com.hartwig.actin.molecular.datamodel.evidence.EligibleTrial
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats.COMMA_SEPARATOR
@@ -9,7 +10,7 @@ import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
 class EligibleExternalTrialsGenerator(
-    private val source: String, private val externalTrialsPerEvent: Multimap<String, String>,
+    private val source: String, private val externalTrialsPerEvent: Multimap<String, EligibleTrial>,
     private val keyWidth: Float, private val valueWidth: Float
 ) : TableGenerator {
     override fun title(): String {

@@ -75,7 +75,9 @@ import com.hartwig.actin.molecular.datamodel.driver.VariantType;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.datamodel.driver.VirusType;
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.EligibleTrial;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableEligibleTrial;
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele;
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableHlaAllele;
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableMolecularImmunology;
@@ -403,13 +405,23 @@ public class MolecularRecordJson {
         private static ActionableEvidence toActionableEvidence(@NotNull JsonObject evidence) {
             return ImmutableActionableEvidence.builder()
                     .approvedTreatments(stringList(evidence, "approvedTreatments"))
-                    .externalEligibleTrials(stringList(evidence, "externalEligibleTrials"))
+                    .externalEligibleTrials(toEligibleTrials(array(evidence, "externalEligibleTrials")))
                     .onLabelExperimentalTreatments(stringList(evidence, "onLabelExperimentalTreatments"))
                     .offLabelExperimentalTreatments(stringList(evidence, "offLabelExperimentalTreatments"))
                     .preClinicalTreatments(stringList(evidence, "preClinicalTreatments"))
                     .knownResistantTreatments(stringList(evidence, "knownResistantTreatments"))
                     .suspectResistantTreatments(stringList(evidence, "suspectResistantTreatments"))
                     .build();
+        }
+
+        @NotNull
+        private static Set<EligibleTrial> toEligibleTrials(@NotNull JsonArray eligibleTrialArray) {
+            return extractSetFromJson(eligibleTrialArray,
+                    eligibleTrial -> ImmutableEligibleTrial.builder()
+                            .title(string(eligibleTrial, "title"))
+                            .countries(stringList(eligibleTrial, "countries"))
+                            .website(string(eligibleTrial, "website"))
+                            .build());
         }
 
         @NotNull

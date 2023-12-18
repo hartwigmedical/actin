@@ -1,5 +1,7 @@
 package com.hartwig.actin.molecular.datamodel.evidence;
 
+import static java.util.Collections.emptySet;
+
 import org.jetbrains.annotations.NotNull;
 
 public final class TestActionableEvidenceFactory {
@@ -20,7 +22,11 @@ public final class TestActionableEvidenceFactory {
     @NotNull
     public static ActionableEvidence createExhaustive() {
         return builder().addApprovedTreatments("approved")
-                .addExternalEligibleTrials("external trial")
+                .addExternalEligibleTrials(ImmutableEligibleTrial.builder()
+                        .title("external trial")
+                        .countries(emptySet())
+                        .website("website")
+                        .build())
                 .addOnLabelExperimentalTreatments("on-label experimental")
                 .addOffLabelExperimentalTreatments("off-label experimental")
                 .addPreClinicalTreatments("pre-clinical")
@@ -36,7 +42,11 @@ public final class TestActionableEvidenceFactory {
 
     @NotNull
     public static ActionableEvidence withExternalEligibleTrial(@NotNull String treatment) {
-        return builder().addExternalEligibleTrials(treatment).build();
+        return builder().addExternalEligibleTrials(ImmutableEligibleTrial.builder()
+                .title(treatment)
+                .countries(emptySet())
+                .website("website")
+                .build()).build();
     }
 
     @NotNull

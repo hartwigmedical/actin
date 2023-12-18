@@ -5,7 +5,7 @@
   "refGenomeVersion": "V37",
   "date": null,
   "evidenceSource": "CKB_EVIDENCE",
-  "externalTrialSource": "iClusion",
+  "externalTrialSource": "CKB_TRIAL",
   "containsTumorCells": false,
   "hasSufficientQuality": false,
   "hasSufficientQualityAndPurity": false,

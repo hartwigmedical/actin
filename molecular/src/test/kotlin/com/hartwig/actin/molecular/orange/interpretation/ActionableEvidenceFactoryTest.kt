@@ -112,7 +112,7 @@ class ActionableEvidenceFactoryTest {
         assertNotNull(evidence)
         assertTrue(evidence!!.approvedTreatments().isEmpty())
         assertEquals(1, evidence.externalEligibleTrials().size.toLong())
-        assertTrue(evidence.externalEligibleTrials().contains("On-label responsive trial"))
+        assertTrue(evidence.externalEligibleTrials().iterator().next().title().contains("On-label responsive trial"))
         assertTrue(evidence.onLabelExperimentalTreatments().isEmpty())
         assertTrue(evidence.offLabelExperimentalTreatments().isEmpty())
         assertTrue(evidence.preClinicalTreatments().isEmpty())
