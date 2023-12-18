@@ -30,11 +30,11 @@ class IntoleranceExtractor(private val curation: CurationDatabase, private val a
                 val builder = ImmutableIntolerance.builder().from(it)
                 curationResponse.config()?.let { config ->
                     builder.name(config.name).doids(config.doids)
+                    if (it.category().equals("medication", ignoreCase = true)) {
+                        builder.subcategories(atcModel.resolveByName(config.name.lowercase()))
+                    }
                 }
 
-                if (it.category().equals("medication", ignoreCase = true)) {
-                    builder.subcategories(atcModel.resolveByName(it.name().lowercase()))
-                }
                 ExtractionResult(listOf(builder.build()), curationResponse.extractionEvaluation)
             }
             .fold(ExtractionResult(emptyList(), ExtractionEvaluation())) { (intolerances, aggregatedEval), (intolerance, eval) ->
