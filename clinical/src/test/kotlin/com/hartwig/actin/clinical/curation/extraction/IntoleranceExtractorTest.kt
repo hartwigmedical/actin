@@ -17,7 +17,13 @@ private const val INTOLERANCE_INPUT = "Intolerance input"
 
 private const val CURATED_INTOLERANCE = "Curated intolerance"
 
+private const val INTOLERANCE_MEDICATION_INPUT = "Paracetamol"
+
+private const val CURATED_MEDICATION_INTOLERANCE = "Paracetamol"
+
 private const val DOID = "1"
+
+private const val ATC = "N02BE01"
 
 private const val CANNOT_CURATE = "Cannot curate"
 
@@ -29,6 +35,12 @@ class IntoleranceExtractorTest {
                 input = INTOLERANCE_INPUT,
                 ignore = false,
                 name = CURATED_INTOLERANCE,
+                doids = setOf(DOID)
+            ),
+            IntoleranceConfig(
+                input = INTOLERANCE_MEDICATION_INPUT,
+                ignore = false,
+                name = CURATED_MEDICATION_INTOLERANCE,
                 doids = setOf(DOID)
             )
         ), atcModel
@@ -55,10 +67,10 @@ class IntoleranceExtractorTest {
 
     @Test
     fun `Should curate medication intolerance`() {
-        val (curated, _) = extractor.extract(PATIENT_ID, listOf(entry.copy(codeText = "Paracetamol", category= "medication")))
+        val (curated, _) = extractor.extract(PATIENT_ID, listOf(entry.copy(codeText = INTOLERANCE_MEDICATION_INPUT, category= "medication")))
         assertThat(curated).hasSize(1)
-        assertThat(curated[0].name()).isEqualTo("Paracetamol")
-        assertThat(curated[0].subcategories()).isEqualTo(setOf("N02BE01"))
+        assertThat(curated[0].name()).isEqualTo(CURATED_MEDICATION_INTOLERANCE)
+        assertThat(curated[0].subcategories()).isEqualTo(setOf(ATC))
     }
 
     companion object {
