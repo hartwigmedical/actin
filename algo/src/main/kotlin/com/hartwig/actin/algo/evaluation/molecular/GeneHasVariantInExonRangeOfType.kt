@@ -1,11 +1,10 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.unrecoverable
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.molecular.datamodel.driver.Variant
 import com.hartwig.actin.molecular.datamodel.driver.VariantType
 import com.hartwig.actin.treatment.input.datamodel.VariantTypeInput
 
@@ -19,43 +18,44 @@ class GeneHasVariantInExonRangeOfType(
         val variantTypeMessage = generateRequiredVariantTypeMessage(requiredVariantType)
         val baseMessage = "in exon $exonRangeMessage in gene $gene$variantTypeMessage detected"
         val allowedVariantTypes = determineAllowedVariantTypes(requiredVariantType)
-        val canonicalReportableVariantMatches: MutableSet<String> = Sets.newHashSet()
-        val canonicalUnreportableVariantMatches: MutableSet<String> = Sets.newHashSet()
-        val reportableOtherVariantMatches: MutableSet<String> = Sets.newHashSet()
-        for (variant in record.molecular().drivers().variants()) {
-            if (variant.gene() == gene && allowedVariantTypes.contains(variant.type())) {
-                if (hasEffectInExonRange(variant.canonicalImpact().affectedExon(), minExon, maxExon)) {
-                    if (variant.isReportable) {
-                        canonicalReportableVariantMatches.add(variant.event())
-                    } else {
-                        canonicalUnreportableVariantMatches.add(variant.event())
+
+        val (canonicalReportableVariantMatches, canonicalUnreportableVariantMatches, reportableOtherVariantMatches) =
+            record.molecular().drivers().variants().filter { it.gene() == gene && allowedVariantTypes.contains(it.type()) }
+                .map { variant ->
+                    val (reportableMatches, unreportableMatches) = listOf(variant)
+                        .filter { hasEffectInExonRange(variant.canonicalImpact().affectedExon(), minExon, maxExon) }
+                        .partition(Variant::isReportable)
+
+                    val otherImpactMatches = if (!variant.isReportable) emptySet() else {
+                        setOfNotNull(variant.otherImpacts().find { hasEffectInExonRange(it.affectedExon(), minExon, maxExon) }
+                            ?.let { variant.event() })
                     }
+                    Triple(
+                        reportableMatches.map(Variant::event).toSet(),
+                        unreportableMatches.map(Variant::event).toSet(),
+                        otherImpactMatches
+                    )
+                }.fold(
+                    Triple(
+                        emptySet<String>(),
+                        emptySet<String>(),
+                        emptySet<String>()
+                    )
+                ) { (allReportable, allUnreportable, allOther), (reportable, unreportable, other) ->
+                    Triple(allReportable + reportable, allUnreportable + unreportable, allOther + other)
                 }
-                if (variant.isReportable) {
-                    for (otherImpact in variant.otherImpacts()) {
-                        if (hasEffectInExonRange(otherImpact.affectedExon(), minExon, maxExon)) {
-                            reportableOtherVariantMatches.add(variant.event())
-                        }
-                    }
-                }
-            }
-        }
+        
         if (canonicalReportableVariantMatches.isNotEmpty()) {
-            return unrecoverable()
-                .result(EvaluationResult.PASS)
-                .addAllInclusionMolecularEvents(canonicalReportableVariantMatches)
-                .addPassSpecificMessages("Variant(s) $baseMessage in canonical transcript")
-                .addPassGeneralMessages("Variant(s) $baseMessage")
-                .build()
+            return EvaluationFactory.pass(
+                "Variant(s) $baseMessage in canonical transcript",
+                "Variant(s) $baseMessage",
+                inclusionEvents = canonicalReportableVariantMatches
+            )
         }
         val potentialWarnEvaluation =
             evaluatePotentialWarns(canonicalUnreportableVariantMatches, reportableOtherVariantMatches, baseMessage)
         return potentialWarnEvaluation
-            ?: unrecoverable()
-                .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("No variant $baseMessage in canonical transcript")
-                .addFailGeneralMessages("No variant $baseMessage")
-                .build()
+            ?: EvaluationFactory.fail("No variant $baseMessage in canonical transcript", "No variant $baseMessage")
     }
 
     private fun evaluatePotentialWarns(
@@ -63,35 +63,20 @@ class GeneHasVariantInExonRangeOfType(
         reportableOtherVariantMatches: Set<String>,
         baseMessage: String
     ): Evaluation? {
-        val warnEvents: MutableSet<String> = Sets.newHashSet()
-        val warnSpecificMessages: MutableSet<String> = Sets.newHashSet()
-        val warnGeneralMessages: MutableSet<String> = Sets.newHashSet()
-        if (canonicalUnreportableVariantMatches.isNotEmpty()) {
-            warnEvents.addAll(canonicalUnreportableVariantMatches)
-            warnSpecificMessages.add(
-                "Variant(s) $baseMessage in canonical transcript but considered not reportable"
-            )
-            warnGeneralMessages.add(
+        return MolecularEventUtil.evaluatePotentialWarnsForEventGroups(
+            listOf(
+                EventsWithMessages(
+                    canonicalUnreportableVariantMatches,
+                    "Variant(s) $baseMessage in canonical transcript but considered not reportable",
                 "Variant(s) $baseMessage but not reportable"
-            )
-        }
-        if (reportableOtherVariantMatches.isNotEmpty()) {
-            warnEvents.addAll(reportableOtherVariantMatches)
-            warnSpecificMessages.add(
+                ),
+                EventsWithMessages(
+                    reportableOtherVariantMatches,
+                    "Variant(s) $baseMessage but in non-canonical transcript",
                 "Variant(s) $baseMessage but in non-canonical transcript"
             )
-            warnGeneralMessages.add(
-                "Variant(s) $baseMessage but in non-canonical transcript"
             )
-        }
-        return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {
-            unrecoverable()
-                .result(EvaluationResult.WARN)
-                .addAllInclusionMolecularEvents(warnEvents)
-                .addAllWarnSpecificMessages(warnSpecificMessages)
-                .addAllWarnGeneralMessages(warnGeneralMessages)
-                .build()
-        } else null
+        )
     }
 
     companion object {
@@ -127,26 +112,26 @@ class GeneHasVariantInExonRangeOfType(
 
         private fun determineAllowedVariantTypes(requiredVariantType: VariantTypeInput?): Set<VariantType> {
             return if (requiredVariantType == null) {
-                Sets.newHashSet(*VariantType.values())
+                VariantType.values().toSet()
             } else when (requiredVariantType) {
                 VariantTypeInput.SNV -> {
-                    Sets.newHashSet(VariantType.SNV)
+                    setOf(VariantType.SNV)
                 }
 
                 VariantTypeInput.MNV -> {
-                    Sets.newHashSet(VariantType.MNV)
+                    setOf(VariantType.MNV)
                 }
 
                 VariantTypeInput.INSERT -> {
-                    Sets.newHashSet(VariantType.INSERT)
+                    setOf(VariantType.INSERT)
                 }
 
                 VariantTypeInput.DELETE -> {
-                    Sets.newHashSet(VariantType.DELETE)
+                    setOf(VariantType.DELETE)
                 }
 
                 VariantTypeInput.INDEL -> {
-                    Sets.newHashSet(VariantType.INSERT, VariantType.DELETE)
+                    setOf(VariantType.INSERT, VariantType.DELETE)
                 }
 
                 else -> {

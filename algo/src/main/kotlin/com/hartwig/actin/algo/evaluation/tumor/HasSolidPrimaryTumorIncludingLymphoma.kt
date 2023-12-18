@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.unrecoverable
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.doid.DoidModel
 
@@ -26,26 +25,24 @@ class HasSolidPrimaryTumorIncludingLymphoma (private val doidModel: DoidModel) :
             NON_SOLID_CANCER_DOIDS,
             WARN_SOLID_CANCER_DOIDS
         )
-        val builder = unrecoverable().result(result)
-        when (result) {
+        return when (result) {
             EvaluationResult.FAIL -> {
-                builder.addFailSpecificMessages("Patient has non-solid primary tumor")
-                builder.addFailGeneralMessages("Tumor type")
+                EvaluationFactory.fail("Patient has non-solid primary tumor", "Tumor type")
             }
-
             EvaluationResult.WARN -> {
-                builder.addWarnSpecificMessages("Unclear if tumor type of patient should be considered solid or non-solid")
-                builder.addWarnGeneralMessages("Unclear if primary tumor is considered solid")
+                EvaluationFactory.warn(
+                    "Unclear if tumor type of patient should be considered solid or non-solid",
+                    "Unclear if primary tumor is considered solid"
+                )
             }
-
             EvaluationResult.PASS -> {
-                builder.addPassSpecificMessages("Patient has solid primary tumor (including lymphoma)")
-                builder.addPassGeneralMessages("Tumor type")
+                EvaluationFactory.pass("Patient has solid primary tumor (including lymphoma)", "Tumor type")
             }
 
-            else -> {}
+            else -> {
+                Evaluation(result = result, recoverable = false)
+            }
         }
-        return builder.build()
     }
 
     companion object {

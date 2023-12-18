@@ -1,20 +1,20 @@
 package com.hartwig.actin.algo.datamodel
 
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class EvaluationResultTest {
     @Test
     fun canCompareEvaluationResults() {
-        Assert.assertTrue(EvaluationResult.FAIL.isWorseThan(EvaluationResult.PASS))
-        Assert.assertTrue(EvaluationResult.WARN.isWorseThan(EvaluationResult.UNDETERMINED))
-        Assert.assertFalse(EvaluationResult.NOT_EVALUATED.isWorseThan(EvaluationResult.NOT_IMPLEMENTED))
+        assertThat(EvaluationResult.FAIL.isWorseThan(EvaluationResult.PASS)).isTrue
+        assertThat(EvaluationResult.WARN.isWorseThan(EvaluationResult.UNDETERMINED)).isTrue
+        assertThat(EvaluationResult.NOT_EVALUATED.isWorseThan(EvaluationResult.NOT_IMPLEMENTED)).isFalse
     }
 
     @Test
     fun noEvaluationResultIsWorseThanItself() {
         for (result in EvaluationResult.values()) {
-            Assert.assertFalse(result.isWorseThan(result))
+            assertThat(result.isWorseThan(result)).isFalse
         }
     }
 }

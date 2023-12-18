@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
@@ -64,9 +63,11 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
         }
 
         if (activatingVariants.isNotEmpty()) {
-            return EvaluationFactory.unrecoverable().result(EvaluationResult.PASS).addAllInclusionMolecularEvents(activatingVariants)
-                .addPassSpecificMessages("Activating mutation(s) detected in gene + " + gene + ": " + Format.concat(activatingVariants))
-                .addPassGeneralMessages("$gene activating mutation(s)").build()
+            return EvaluationFactory.pass(
+                "Activating mutation(s) detected in gene + $gene: ${Format.concat(activatingVariants)}",
+                "$gene activating mutation(s)",
+                inclusionEvents = activatingVariants
+            )
         }
 
         val potentialWarnEvaluation = evaluatePotentialWarns(
@@ -81,9 +82,9 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
             evidenceSource
         )
 
-        return potentialWarnEvaluation ?: EvaluationFactory.unrecoverable().result(EvaluationResult.FAIL)
-            .addFailSpecificMessages("No activating mutation(s) detected in gene $gene")
-            .addFailGeneralMessages("No $gene activating mutation(s)").build()
+        return potentialWarnEvaluation ?: EvaluationFactory.fail(
+            "No activating mutation(s) detected in gene $gene", "No $gene activating mutation(s)"
+        )
     }
 
     private fun evaluatePotentialWarns(
@@ -97,97 +98,60 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
         otherMissenseOrHotspotVariants: Set<String>,
         evidenceSource: String
     ): Evaluation? {
-        val warnEvents: MutableSet<String> = mutableSetOf()
-        val warnSpecificMessages: MutableSet<String> = mutableSetOf()
-        val warnGeneralMessages: MutableSet<String> = mutableSetOf()
-
-        if (activatingVariantsAssociatedWithResistance.isNotEmpty()) {
-            warnEvents.addAll(activatingVariantsAssociatedWithResistance)
-            warnSpecificMessages.add(
-                "Gene " + gene + " should have activating mutation(s): " + Format.concat(activatingVariantsAssociatedWithResistance) +
-                        ", however, these are (also) associated with drug resistance in $evidenceSource"
-            )
-            warnGeneralMessages.add("$gene activating mutation(s) but are associated with drug resistance in $evidenceSource")
-        }
-
-        if (activatingVariantsInNonOncogene.isNotEmpty()) {
-            warnEvents.addAll(activatingVariantsInNonOncogene)
-            warnSpecificMessages.add(
-                "Gene " + gene + " has activating mutation(s) " + Format.concat(activatingVariantsInNonOncogene) + " but gene known as TSG in $evidenceSource"
-            )
-            warnGeneralMessages.add("$gene activating mutation(s) but gene known as TSG in $evidenceSource")
-        }
-
-        if (activatingVariantsNoHotspotAndNoGainOfFunction.isNotEmpty()) {
-            warnEvents.addAll(activatingVariantsNoHotspotAndNoGainOfFunction)
-            warnSpecificMessages.add(
-                "Gene $gene has potentially activating mutation(s) " + Format.concat(
-                    activatingVariantsNoHotspotAndNoGainOfFunction
-                )
-                        + " that have high driver likelihood, but is not a hotspot and not associated with gain-of-function protein effect evidence in $evidenceSource"
-            )
-            warnGeneralMessages.add(
-                "$gene potentially activating mutation(s) with high driver likelihood but not a hotspot and not associated with gain-of-function protein effect evidence in $evidenceSource"
-            )
-        }
-
-        if (activatingSubclonalVariants.isNotEmpty()) {
-            warnEvents.addAll(activatingSubclonalVariants)
-            warnSpecificMessages.add(
+        return MolecularEventUtil.evaluatePotentialWarnsForEventGroups(
+            listOf(
+                EventsWithMessages(
+                    activatingVariantsAssociatedWithResistance,
+                    "Gene $gene should have activating mutation(s): ${Format.concat(activatingVariantsAssociatedWithResistance)}, "
+                            + "however, these are (also) associated with drug resistance in $evidenceSource",
+                    "$gene activating mutation(s) but are associated with drug resistance in $evidenceSource"
+                ),
+                EventsWithMessages(
+                    activatingVariantsInNonOncogene,
+                    "Gene $gene has activating mutation(s) ${Format.concat(activatingVariantsInNonOncogene)} but gene known as TSG in $evidenceSource",
+                    "$gene activating mutation(s) but gene known as TSG in $evidenceSource"
+                ),
+                EventsWithMessages(
+                    activatingVariantsNoHotspotAndNoGainOfFunction,
+                    "Gene $gene has potentially activating mutation(s) " + Format.concat(activatingVariantsNoHotspotAndNoGainOfFunction)
+                            + " that have high driver likelihood,"
+                            + " but is not a hotspot and not associated with gain-of-function protein effect evidence in $evidenceSource",
+                    "$gene potentially activating mutation(s) with high driver likelihood but not a hotspot"
+                            + " and not associated with gain-of-function protein effect evidence in $evidenceSource"
+                ),
+                EventsWithMessages(
+                    activatingSubclonalVariants,
                 "Gene $gene potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) +
-                        " but have subclonal likelihood of > " + Format.percentage(1 - CLONAL_CUTOFF)
-            )
-            warnGeneralMessages.add(
+                        " but have subclonal likelihood of > " + Format.percentage(1 - CLONAL_CUTOFF),
                 gene + " potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) +
                         " but subclonal likelihood > " + Format.percentage(1 - CLONAL_CUTOFF)
-            )
-        }
-
-        if (nonHighDriverGainOfFunctionVariants.isNotEmpty()) {
-            warnEvents.addAll(nonHighDriverGainOfFunctionVariants)
-            warnSpecificMessages.add(
+                ),
+                EventsWithMessages(
+                    nonHighDriverGainOfFunctionVariants,
                 "Gene " + gene + " has potentially activating mutation(s) " + Format.concat(nonHighDriverGainOfFunctionVariants) +
-                        " that do not have high driver likelihood prediction, but annotated with having gain-of-function protein effect evidence in $evidenceSource"
-            )
-            warnGeneralMessages.add(
+                        " that do not have high driver likelihood prediction, but annotated with having gain-of-function protein effect evidence in $evidenceSource",
                 "$gene potentially activating mutation(s) having gain-of-function protein effect evidence in $evidenceSource but without high driver prediction"
-            )
-        }
-
-        if (nonHighDriverSubclonalVariants.isNotEmpty()) {
-            warnEvents.addAll(nonHighDriverSubclonalVariants)
-            warnSpecificMessages.add(
+                ),
+                EventsWithMessages(
+                    nonHighDriverSubclonalVariants,
                 "Gene $gene has potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) +
-                        " have subclonal likelihood of > " + Format.percentage(1 - CLONAL_CUTOFF) +
-                        " and no high driver likelihood"
-            )
-            warnGeneralMessages.add(
+                        " have subclonal likelihood of > ${Format.percentage(1 - CLONAL_CUTOFF)} and no high driver likelihood",
                 "$gene potentially activating mutation(s) without high driver likelihood and subclonal likelihood > " + Format.percentage(1 - CLONAL_CUTOFF)
-            )
-        }
-
-        if (nonHighDriverVariants.isNotEmpty()) {
-            warnEvents.addAll(nonHighDriverVariants)
-            warnSpecificMessages.add(
+                ),
+                EventsWithMessages(
+                    nonHighDriverVariants,
                 "Gene $gene has potentially activating mutation(s) " + Format.concat(nonHighDriverVariants) +
-                        " but no high driver likelihood"
-            )
-            warnGeneralMessages.add("$gene potentially activating mutation(s) but no high driver likelihood")
-        }
-
-        if (otherMissenseOrHotspotVariants.isNotEmpty()) {
-            warnEvents.addAll(otherMissenseOrHotspotVariants)
-            warnSpecificMessages.add(
+                        " but no high driver likelihood",
+                    "$gene potentially activating mutation(s) but no high driver likelihood"
+                ),
+                EventsWithMessages(
+                    otherMissenseOrHotspotVariants,
                 "Gene $gene has potentially activating mutation(s) " + Format.concat(otherMissenseOrHotspotVariants) +
-                        " that are missense or have hotspot status, but are not considered reportable"
+                        " that are missense or have hotspot status, but are not considered reportable",
+                    "$gene potentially activating mutation(s) but mutation(s) not reportable"
             )
-            warnGeneralMessages.add("$gene potentially activating mutation(s) but mutation(s) not reportable")
-        }
-
-        return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {
-            EvaluationFactory.unrecoverable().result(EvaluationResult.WARN).addAllInclusionMolecularEvents(warnEvents)
-                .addAllWarnSpecificMessages(warnSpecificMessages).addAllWarnGeneralMessages(warnGeneralMessages).build()
-        } else null
+            )
+        )
     }
 
     companion object {

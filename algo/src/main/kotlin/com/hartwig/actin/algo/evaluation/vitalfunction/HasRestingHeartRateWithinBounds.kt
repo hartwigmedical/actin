@@ -2,9 +2,7 @@ package com.hartwig.actin.algo.evaluation.vitalfunction
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverable
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 
@@ -18,10 +16,7 @@ class HasRestingHeartRateWithinBounds(private val minMedianRestingHeartRate: Dou
             MAX_HEART_RATES_TO_USE
         )
         if (heartRates.isEmpty()) {
-            return recoverable()
-                .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("No heart rate data found")
-                .build()
+            return EvaluationFactory.recoverableUndetermined("No heart rate data found")
         }
         val median = VitalFunctionFunctions.determineMedianValue(heartRates)
         return if (median.compareTo(minMedianRestingHeartRate) >= 0 && median.compareTo(maxMedianRestingHeartRate) <= 0) {

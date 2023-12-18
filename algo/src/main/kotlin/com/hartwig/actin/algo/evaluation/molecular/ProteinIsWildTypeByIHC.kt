@@ -2,31 +2,23 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.unrecoverable
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 
-class ProteinIsWildTypeByIHC internal constructor(private val protein: String) : EvaluationFunction {
+class ProteinIsWildTypeByIHC(private val protein: String) : EvaluationFunction {
+    
     override fun evaluate(record: PatientRecord): Evaluation {
         val allIHCTestsForProtein = PriorMolecularTestFunctions.allIHCTestsForProtein(record.clinical().priorMolecularTests(), protein)
-        val hasOnlyWildTypeResults = allIHCTestsForProtein.isNotEmpty() && allIHCTestsForProtein.all { test: PriorMolecularTest ->
-            WILD_TYPE_QUERY_STRINGS.any {
-                it.equals(
-                    test.scoreText(),
-                    ignoreCase = true
-                )
-            }
+        val hasOnlyWildTypeResults = allIHCTestsForProtein.isNotEmpty() && allIHCTestsForProtein.all { test ->
+            WILD_TYPE_QUERY_STRINGS.any { it.equals(test.scoreText(), ignoreCase = true) }
         }
 
         return if (hasOnlyWildTypeResults) {
-            unrecoverable().result(EvaluationResult.PASS)
-                .addPassSpecificMessages("Protein $protein is wild type according to IHC")
-                .addPassGeneralMessages("$protein is wild type by IHC").build()
+            EvaluationFactory.pass("Protein $protein is wild type according to IHC", "$protein is wild type by IHC")
         } else {
-            unrecoverable().result(EvaluationResult.UNDETERMINED).addUndeterminedSpecificMessages(
-                "Could not determine if protein $protein is wild type according to IHC"
-            ).addUndeterminedGeneralMessages("$protein wild type status unknown by IHC").build()
+            EvaluationFactory.undetermined(
+                "Could not determine if protein $protein is wild type according to IHC", "$protein wild type status unknown by IHC"
+            )
         }
     }
 

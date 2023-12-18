@@ -4,7 +4,6 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverable
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMaxValue
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
@@ -79,33 +78,34 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
                 "Cockcroft-Gault below max of $maxCreatinineClearance",
             )
 
-            else -> recoverable().result(result).build()
+            else -> Evaluation(result = result, recoverable = true)
         }
     }
 
     private fun evaluateValues(code: String, values: List<Double>, comparator: String): Evaluation {
         val evaluations = values.map { evaluateVersusMaxValue(it, comparator, maxCreatinineClearance) }.toSet()
 
-        val result = CreatinineFunctions.interpretEGFREvaluations(evaluations)
-        val builder = recoverable().result(result)
-        when (result) {
+        return when (val result = CreatinineFunctions.interpretEGFREvaluations(evaluations)) {
             EvaluationResult.FAIL -> {
-                builder.addFailSpecificMessages("$code exceeds maximum of $maxCreatinineClearance")
-                builder.addFailGeneralMessages("$code exceeds max of $maxCreatinineClearance")
+                EvaluationFactory.recoverableFail(
+                    "$code exceeds maximum of $maxCreatinineClearance", "$code exceeds max of $maxCreatinineClearance"
+                )
             }
-
             EvaluationResult.UNDETERMINED -> {
-                builder.addUndeterminedSpecificMessages("$code evaluation led to ambiguous results")
-                builder.addUndeterminedGeneralMessages("$code could not be determined")
+                EvaluationFactory.recoverableUndetermined(
+                    "$code evaluation led to ambiguous results", "$code could not be determined"
+                )
             }
 
             EvaluationResult.PASS -> {
-                builder.addPassSpecificMessages("$code below maximum of $maxCreatinineClearance")
-                builder.addPassGeneralMessages("$code below max of $maxCreatinineClearance")
+                EvaluationFactory.recoverablePass(
+                    "$code below maximum of $maxCreatinineClearance", "$code below max of $maxCreatinineClearance"
+                )
             }
 
-            else -> {}
+            else -> {
+                Evaluation(result = result, recoverable = true)
+            }
         }
-        return builder.build()
     }
 }

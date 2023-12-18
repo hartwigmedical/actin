@@ -2,10 +2,7 @@ package com.hartwig.actin.algo.evaluation.cardiacfunction
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverable
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.unrecoverable
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.ECG
 import com.hartwig.actin.clinical.datamodel.ECGMeasure
@@ -43,40 +40,23 @@ class ECGMeasureEvaluationFunction internal constructor(
 
     private fun evaluate(measure: ECGMeasure): Evaluation {
         if (measure.unit() != expectedUnit.symbol()) {
-            return unrecoverable().result(EvaluationResult.UNDETERMINED).addUndeterminedSpecificMessages(
-                "%s measure not in '%s': %s", measureName.name, expectedUnit.symbol(), measure.unit()
-            ).addUndeterminedGeneralMessages(String.format("Unrecognized unit of %s evaluation", measureName)).build()
+            return EvaluationFactory.undetermined(
+                "${measureName.name} measure not in '${expectedUnit.symbol()}': ${measure.unit()}",
+                "Unrecognized unit of $measureName evaluation"
+            )
         }
 
-        val result =
-            if (thresholdCriteria.comparator.compare(
-                    measure.value(),
-                    threshold
-                ) >= 0
-            ) EvaluationResult.PASS else EvaluationResult.FAIL
-        val builder = recoverable().result(result)
-        if (result == EvaluationResult.FAIL) {
-            builder.addFailSpecificMessages(
-                String.format(
-                    thresholdCriteria.failMessageTemplate,
-                    measureName,
-                    measure.value(),
-                    measure.unit(),
-                    threshold
-                )
-            ).addFailGeneralMessages(generalMessage(measureName.name))
+        return if (thresholdCriteria.comparator.compare(measure.value(), threshold) >= 0) {
+            EvaluationFactory.recoverablePass(
+                String.format(thresholdCriteria.passMessageTemplate, measureName, measure.value(), measure.unit(), threshold),
+                generalMessage(measureName.name)
+            )
         } else {
-            builder.addPassSpecificMessages(
-                String.format(
-                    thresholdCriteria.passMessageTemplate,
-                    measureName,
-                    measure.value(),
-                    measure.unit(),
-                    threshold
-                )
-            ).addPassGeneralMessages(generalMessage(measureName.name))
+            EvaluationFactory.recoverableFail(
+                String.format(thresholdCriteria.failMessageTemplate, measureName, measure.value(), measure.unit(), threshold),
+                generalMessage(measureName.name)
+            )
         }
-        return builder.build()
     }
 
     companion object {

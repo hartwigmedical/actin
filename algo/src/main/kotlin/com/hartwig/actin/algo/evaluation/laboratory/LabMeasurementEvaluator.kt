@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.laboratory
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverable
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.date
 import com.hartwig.actin.clinical.datamodel.LabValue
@@ -15,38 +15,49 @@ class LabMeasurementEvaluator(
     private val measurement: LabMeasurement, private val function: LabEvaluationFunction,
     private val minValidDate: LocalDate, private val minPassDate: LocalDate
 ) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val interpretation = LabInterpreter.interpret(record.clinical().labValues())
         val mostRecent = interpretation.mostRecentValue(measurement)
         if (!isValid(mostRecent, measurement)) {
-            val builder = recoverable().result(EvaluationResult.UNDETERMINED)
-            if (mostRecent == null) {
-                builder.addUndeterminedSpecificMessages("No measurement found for " + measurement.display())
-            } else if (mostRecent.unit() != measurement.defaultUnit()) {
-                builder.addUndeterminedSpecificMessages("Unexpected unit specified for " + measurement.display() + ": " + mostRecent.unit())
-            } else if (mostRecent.date().isBefore(minValidDate)) {
-                builder.addUndeterminedSpecificMessages("Most recent measurement too old for " + measurement.display())
-            }
-            return builder.build()
-        }
-        val evaluation = function.evaluate(record, measurement, mostRecent!!)
-        if (evaluation.result() == EvaluationResult.FAIL) {
-            val secondMostRecent = interpretation.secondMostRecentValue(measurement)
-            if (isValid(secondMostRecent, measurement)) {
-                val secondEvaluation = function.evaluate(record, measurement, secondMostRecent!!)
-                if (secondEvaluation.result() == EvaluationResult.PASS) {
-                    return recoverable()
-                        .result(EvaluationResult.WARN)
-                        .addWarnSpecificMessages("Latest measurement fails for " + measurement.display() + ", but second-latest succeeded")
-                        .build()
+            return when {
+                mostRecent == null -> {
+                    EvaluationFactory.recoverableUndetermined("No measurement found for " + measurement.display())
+                }
+
+                mostRecent.unit() != measurement.defaultUnit() -> {
+                    EvaluationFactory.recoverableUndetermined("Unexpected unit specified for " + measurement.display() + ": " + mostRecent.unit())
+                }
+
+                mostRecent.date().isBefore(minValidDate) -> {
+                    EvaluationFactory.recoverableUndetermined("Most recent measurement too old for " + measurement.display())
+                }
+
+                else -> {
+                    Evaluation(result = EvaluationResult.UNDETERMINED, recoverable = true)
                 }
             }
         }
-        return if (evaluation.result() == EvaluationResult.PASS && !mostRecent.date().isAfter(minPassDate)) {
-            recoverable()
-                .result(EvaluationResult.WARN)
-                .addAllWarnSpecificMessages(appendPastMinPassDate(evaluation.passSpecificMessages()))
-                .build()
+        
+        val evaluation = function.evaluate(record, measurement, mostRecent!!)
+        if (evaluation.result == EvaluationResult.FAIL) {
+            val secondMostRecent = interpretation.secondMostRecentValue(measurement)
+            if (isValid(secondMostRecent, measurement)) {
+                val secondEvaluation = function.evaluate(record, measurement, secondMostRecent!!)
+                if (secondEvaluation.result == EvaluationResult.PASS) {
+                    return EvaluationFactory.recoverableWarn(
+                        "Latest measurement fails for ${measurement.display()}, but second-latest succeeded"
+                    )
+                }
+            }
+        }
+
+        return if (evaluation.result == EvaluationResult.PASS && !mostRecent.date().isAfter(minPassDate)) {
+            Evaluation(
+                result = EvaluationResult.WARN,
+                recoverable = true,
+                warnSpecificMessages = appendPastMinPassDate(evaluation.passSpecificMessages).toSet()
+            )
         } else evaluation
     }
 

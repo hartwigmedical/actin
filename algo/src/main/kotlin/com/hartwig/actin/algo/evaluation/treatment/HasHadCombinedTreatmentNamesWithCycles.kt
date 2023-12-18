@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate
@@ -19,36 +18,43 @@ class HasHadCombinedTreatmentNamesWithCycles(
     override fun evaluate(record: PatientRecord): Evaluation {
         val evaluationsByResult: Map<EvaluationResult, List<Evaluation>> = treatments
             .map { treatment -> evaluatePriorTreatmentsMatchingName(record.clinical().oncologicalHistory(), treatment.name()) }
-            .groupBy { it.result() }
+            .groupBy { it.result }
 
-        val builder: ImmutableEvaluation.Builder = EvaluationFactory.unrecoverable()
         return when {
             evaluationsByResult.containsKey(EvaluationResult.FAIL) -> {
                 val failEvaluations = evaluationsByResult[EvaluationResult.FAIL]!!
-                builder.result(EvaluationResult.FAIL)
-                    .addAllFailSpecificMessages(getMessagesForEvaluations(failEvaluations, Evaluation::failSpecificMessages))
-                    .addAllFailGeneralMessages(getMessagesForEvaluations(failEvaluations, Evaluation::failGeneralMessages))
-                    .build()
+                Evaluation(
+                    result = EvaluationResult.FAIL,
+                    recoverable = false,
+                    failSpecificMessages = getMessagesForEvaluations(failEvaluations, Evaluation::failSpecificMessages),
+                    failGeneralMessages = getMessagesForEvaluations(failEvaluations, Evaluation::failGeneralMessages)
+                )
             }
 
             evaluationsByResult.containsKey(EvaluationResult.UNDETERMINED) -> {
                 val undeterminedEvaluations = evaluationsByResult[EvaluationResult.UNDETERMINED]!!
-                builder.result(EvaluationResult.UNDETERMINED)
-                    .addAllUndeterminedSpecificMessages(
-                        getMessagesForEvaluations(undeterminedEvaluations, Evaluation::undeterminedSpecificMessages)
+                Evaluation(
+                    result = EvaluationResult.UNDETERMINED,
+                    recoverable = false,
+                    undeterminedSpecificMessages = getMessagesForEvaluations(
+                        undeterminedEvaluations,
+                        Evaluation::undeterminedSpecificMessages
+                    ),
+                    undeterminedGeneralMessages = getMessagesForEvaluations(
+                        undeterminedEvaluations,
+                        Evaluation::undeterminedGeneralMessages
                     )
-                    .addAllUndeterminedGeneralMessages(
-                        getMessagesForEvaluations(undeterminedEvaluations, Evaluation::undeterminedGeneralMessages)
-                    )
-                    .build()
+                )
             }
 
             evaluationsByResult.containsKey(EvaluationResult.PASS) && evaluationsByResult.size == 1 -> {
                 val passEvaluations = evaluationsByResult[EvaluationResult.PASS]!!
-                builder.result(EvaluationResult.PASS)
-                    .addAllPassSpecificMessages(getMessagesForEvaluations(passEvaluations, Evaluation::passSpecificMessages))
-                    .addPassGeneralMessages("Found matching treatments")
-                    .build()
+                Evaluation(
+                    result = EvaluationResult.PASS,
+                    recoverable = false,
+                    passSpecificMessages = getMessagesForEvaluations(passEvaluations, Evaluation::passSpecificMessages),
+                    passGeneralMessages = setOf("Found matching treatments")
+                )
             }
 
             else -> {

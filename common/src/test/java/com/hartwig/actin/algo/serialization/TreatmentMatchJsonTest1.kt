@@ -1,54 +1,50 @@
 package com.hartwig.actin.algo.serialization
 
-import com.google.common.collect.ImmutableSet
 import com.google.common.io.Resources
+import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation
-import com.hartwig.actin.algo.datamodel.ImmutableTreatmentMatch
-import com.hartwig.actin.algo.datamodel.ImmutableTrialMatch
 import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson.fromJson
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson.read
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson.toJson
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.io.File
 import java.io.IOException
-import java.util.Map
 
 class TreatmentMatchJsonTest {
     @Test
     fun canConvertBackAndForthJson() {
         val minimal = TestTreatmentMatchFactory.createMinimalTreatmentMatch()
         val convertedMinimal = fromJson(toJson(minimal))
-        Assert.assertEquals(minimal, convertedMinimal)
+        assertThat(convertedMinimal).isEqualTo(minimal)
         val proper = TestTreatmentMatchFactory.createProperTreatmentMatch()
         val convertedProper = fromJson(toJson(proper))
-        Assert.assertEquals(proper, convertedProper)
+        assertThat(convertedProper).isEqualTo(proper)
     }
 
     @Test
     fun shouldSortMessageSetsBeforeSerialization() {
         val proper = TestTreatmentMatchFactory.createProperTreatmentMatch()
-        val trialMatch: TrialMatch = proper.trialMatches().get(0)
-        val (key) = trialMatch.evaluations().entrySet().iterator().next()
-        val match: TreatmentMatch = ImmutableTreatmentMatch.copyOf(proper)
-            .withTrialMatches(
-                ImmutableTrialMatch.copyOf(trialMatch)
-                    .withEvaluations(
-                        Map.of(
-                            key,
-                            ImmutableEvaluation.builder()
-                                .recoverable(false)
-                                .result(EvaluationResult.PASS)
-                                .passSpecificMessages(ImmutableSet.of("msg 2", "msg 1", "msg 3"))
-                                .build()
-                        )
-                    )
-                    .withCohorts()
+        val trialMatch: TrialMatch = proper.trialMatches[0]
+        val key = trialMatch.evaluations.keys.first()
+        val match: TreatmentMatch = proper.copy(
+            trialMatches = listOf(
+                trialMatch.copy(
+                    evaluations = mapOf(
+                        key to
+                                Evaluation(
+                                    result = EvaluationResult.PASS,
+                                    recoverable = false,
+                                    passSpecificMessages = setOf("msg 2", "msg 1", "msg 3"),
+                                )
+                    ),
+                    cohorts = emptyList()
+                )
             )
+        )
         val expectedJson = ("{\"patientId\":\"ACTN01029999\",\"sampleId\":\"ACTN01029999T\","
                 + "\"referenceDate\":{\"year\":2021,\"month\":8,\"day\":2},\"referenceDateIsLive\":true,\"trialMatches\":["
                 + "{\"identification\":{\"trialId\":\"Test Trial 1\",\"open\":true,\"acronym\":\"TEST-1\","
@@ -59,18 +55,18 @@ class TreatmentMatchJsonTest {
                 + "\"passSpecificMessages\":[\"msg 1\",\"msg 2\",\"msg 3\"],\"passGeneralMessages\":[],"
                 + "\"warnSpecificMessages\":[],\"warnGeneralMessages\":[],\"undeterminedSpecificMessages\":[],\"undeterminedGeneralMessages\":[],"
                 + "\"failSpecificMessages\":[],\"failGeneralMessages\":[]}]],\"cohorts\":[]}]}")
-        Assert.assertEquals(expectedJson, toJson(match))
+        assertThat(toJson(match)).isEqualTo(expectedJson)
     }
 
     @Test
     @Throws(IOException::class)
     fun canReadTreatmentMatchJson() {
         val match = read(TREATMENT_MATCH_JSON)
-        assertEquals("ACTN01029999", match.patientId())
-        assertEquals(1, match.trialMatches().size())
-        val trialMatch: TrialMatch = match.trialMatches().get(0)
-        assertEquals(1, trialMatch.evaluations().size())
-        assertEquals(3, trialMatch.cohorts().size())
+        assertThat(match.patientId).isEqualTo("ACTN01029999")
+        assertThat(match.trialMatches).hasSize(1)
+        val trialMatch = match.trialMatches[0]
+        assertThat(trialMatch.evaluations).hasSize(1)
+        assertThat(trialMatch.cohorts).hasSize(3)
     }
 
     companion object {

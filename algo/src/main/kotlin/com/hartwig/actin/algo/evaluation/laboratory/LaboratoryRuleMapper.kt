@@ -2,9 +2,8 @@ package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverable
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
@@ -271,10 +270,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             return FunctionCreator {
                 object : EvaluationFunction {
                     override fun evaluate(record: PatientRecord): Evaluation {
-                        return recoverable()
-                            .result(EvaluationResult.UNDETERMINED)
-                            .addUndeterminedSpecificMessages("It is not clear yet under what code '$measure' is measured")
-                            .build()
+                        return EvaluationFactory.recoverableUndetermined("It is not clear yet under what code '$measure' is measured")
                     }
                 }
             }

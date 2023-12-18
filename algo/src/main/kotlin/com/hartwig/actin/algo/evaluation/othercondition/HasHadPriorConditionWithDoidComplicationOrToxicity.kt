@@ -4,7 +4,6 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.fail
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.unrecoverable
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.complication.ComplicationFunctions.findComplicationNamesMatchingAnyCategory
 import com.hartwig.actin.algo.evaluation.othercondition.PriorConditionMessages.Characteristic
@@ -19,38 +18,40 @@ class HasHadPriorConditionWithDoidComplicationOrToxicity internal constructor(
     private val complicationCategoryToFind: String,
     private val toxicityCategoryToFind: String
 ) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val doidTerm = doidModel.resolveTermForDoid(doidToFind) ?: "unknown doid"
         val matchingConditions =
             OtherConditionSelector.selectConditionsMatchingDoid(record.clinical().priorOtherConditions(), doidToFind, doidModel)
-        val matchingComplications: Set<String> = findComplicationNamesMatchingAnyCategory(
-            record, listOf(
-                complicationCategoryToFind
-            )
-        )
-        val matchingToxicities =
-            record.clinical().toxicities().filter { (it.grade() ?: 0) >= 2 || (it.source() == ToxicitySource.QUESTIONNAIRE) }
-                .filter { stringCaseInsensitivelyMatchesQueryCollection(toxicityCategoryToFind, it.categories()) }.map { it.name() }.toSet()
+        val matchingComplications = findComplicationNamesMatchingAnyCategory(record, listOf(complicationCategoryToFind))
+        val matchingToxicities = record.clinical().toxicities().filter { toxicity ->
+            (toxicity.grade() ?: 0) >= 2 || (toxicity.source() == ToxicitySource.QUESTIONNAIRE)
+        }
+            .filter { stringCaseInsensitivelyMatchesQueryCollection(toxicityCategoryToFind, it.categories()) }
+            .map { it.name() }
+            .toSet()
 
         return if (matchingConditions.isNotEmpty() || matchingComplications.isNotEmpty() || matchingToxicities.isNotEmpty()) {
-            unrecoverable().result(EvaluationResult.PASS).addAllPassSpecificMessages(
-                passSpecificMessages(
-                    doidTerm, matchingConditions, matchingComplications, matchingToxicities
+            Evaluation(
+                result = EvaluationResult.PASS,
+                recoverable = false,
+                passSpecificMessages = passSpecificMessages(doidTerm, matchingConditions, matchingComplications, matchingToxicities),
+                passGeneralMessages = setOf(
+                    PriorConditionMessages.passGeneral(matchingConditions + matchingComplications + matchingToxicities)
                 )
-            ).addPassGeneralMessages(PriorConditionMessages.passGeneral(matchingConditions + matchingComplications + matchingToxicities))
-                .build()
+            )
         } else fail(PriorConditionMessages.failSpecific(doidTerm), PriorConditionMessages.failGeneral())
     }
 
     companion object {
         private fun passSpecificMessages(
             doidTerm: String, matchingConditions: Set<String>, matchingComplications: Set<String>, matchingToxicities: Set<String>
-        ): List<String> {
+        ): Set<String> {
             return listOf(
                 matchingConditions to Characteristic.CONDITION,
                 matchingComplications to Characteristic.COMPLICATION,
                 matchingToxicities to Characteristic.TOXICITY
-            ).filter { it.first.isNotEmpty() }.map { PriorConditionMessages.passSpecific(it.second, it.first, doidTerm) }
+            ).filter { it.first.isNotEmpty() }.map { PriorConditionMessages.passSpecific(it.second, it.first, doidTerm) }.toSet()
         }
     }
 }

@@ -2,9 +2,7 @@ package com.hartwig.actin.algo.evaluation.vitalfunction
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverable
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 
@@ -17,10 +15,7 @@ class HasSufficientPulseOximetry internal constructor(private val minMedianPulse
             MAX_PULSE_OXIMETRY_TO_USE
         )
         if (pulseOximetries.isEmpty()) {
-            return recoverable()
-                .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("No pulse oximetries readouts found")
-                .build()
+            return EvaluationFactory.recoverableUndetermined("No pulse oximetries readouts found")
         }
         val median = VitalFunctionFunctions.determineMedianValue(pulseOximetries)
         return if (median.compareTo(minMedianPulseOximetry) >= 0) {

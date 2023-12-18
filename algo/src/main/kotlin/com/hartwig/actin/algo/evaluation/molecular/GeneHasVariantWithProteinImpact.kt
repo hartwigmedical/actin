@@ -1,11 +1,9 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.google.common.annotations.VisibleForTesting
-import com.google.common.collect.Sets
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.unrecoverable
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.percentage
@@ -13,15 +11,15 @@ import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import org.apache.logging.log4j.LogManager
 
-class GeneHasVariantWithProteinImpact internal constructor(private val gene: String, private val allowedProteinImpacts: List<String>) :
-    EvaluationFunction {
+class GeneHasVariantWithProteinImpact(private val gene: String, private val allowedProteinImpacts: List<String>) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val canonicalReportableVariantMatches: MutableSet<String> = Sets.newHashSet()
-        val canonicalReportableSubclonalVariantMatches: MutableSet<String> = Sets.newHashSet()
-        val canonicalUnreportableVariantMatches: MutableSet<String> = Sets.newHashSet()
-        val canonicalProteinImpactMatches: MutableSet<String> = Sets.newHashSet()
-        val reportableOtherVariantMatches: MutableSet<String> = Sets.newHashSet()
-        val reportableOtherProteinImpactMatches: MutableSet<String> = Sets.newHashSet()
+        val canonicalReportableVariantMatches: MutableSet<String> = mutableSetOf()
+        val canonicalReportableSubclonalVariantMatches: MutableSet<String> = mutableSetOf()
+        val canonicalUnreportableVariantMatches: MutableSet<String> = mutableSetOf()
+        val canonicalProteinImpactMatches: MutableSet<String> = mutableSetOf()
+        val reportableOtherVariantMatches: MutableSet<String> = mutableSetOf()
+        val reportableOtherProteinImpactMatches: MutableSet<String> = mutableSetOf()
+        
         for (variant in record.molecular().drivers().variants()) {
             if (variant.gene() == gene) {
                 val canonicalProteinImpact = toProteinImpact(variant.canonicalImpact().hgvsProteinImpact())
@@ -50,15 +48,11 @@ class GeneHasVariantWithProteinImpact internal constructor(private val gene: Str
             }
         }
         if (canonicalReportableVariantMatches.isNotEmpty()) {
-            return unrecoverable()
-                .result(EvaluationResult.PASS)
-                .addAllInclusionMolecularEvents(canonicalReportableVariantMatches)
-                .addPassSpecificMessages(
-                    "Variant(s) " + concat(canonicalProteinImpactMatches) + " in gene " + gene
-                            + " detected in canonical transcript"
-                )
-                .addPassGeneralMessages(concat(canonicalProteinImpactMatches) + " detected in " + gene)
-                .build()
+            return EvaluationFactory.pass(
+                "Variant(s) ${concat(canonicalProteinImpactMatches)} in gene $gene detected in canonical transcript",
+                "${concat(canonicalProteinImpactMatches)} detected in $gene",
+                inclusionEvents = canonicalReportableVariantMatches
+            )
         }
         val potentialWarnEvaluation = evaluatePotentialWarns(
             canonicalReportableSubclonalVariantMatches,
@@ -67,12 +61,9 @@ class GeneHasVariantWithProteinImpact internal constructor(private val gene: Str
             reportableOtherVariantMatches,
             reportableOtherProteinImpactMatches
         )
-        return potentialWarnEvaluation
-            ?: unrecoverable()
-                .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("None of " + concat(allowedProteinImpacts) + " detected in gene " + gene)
-                .addFailGeneralMessages(concat(allowedProteinImpacts) + " not detected in $gene")
-                .build()
+        return potentialWarnEvaluation ?: EvaluationFactory.fail(
+            "None of ${concat(allowedProteinImpacts)} detected in gene $gene", "${concat(allowedProteinImpacts)} not detected in $gene"
+        )
     }
 
     private fun evaluatePotentialWarns(
@@ -80,46 +71,27 @@ class GeneHasVariantWithProteinImpact internal constructor(private val gene: Str
         canonicalUnreportableVariantMatches: Set<String>, canonicalProteinImpactMatches: Set<String>,
         reportableOtherVariantMatches: Set<String>, reportableOtherProteinImpactMatches: Set<String>
     ): Evaluation? {
-        val warnEvents: MutableSet<String> = Sets.newHashSet()
-        val warnSpecificMessages: MutableSet<String> = Sets.newHashSet()
-        val warnGeneralMessages: MutableSet<String> = Sets.newHashSet()
-        if (canonicalReportableSubclonalVariantMatches.isNotEmpty()) {
-            warnEvents.addAll(canonicalReportableSubclonalVariantMatches)
-            warnSpecificMessages.add(
-                "Variant(s) " + concat(canonicalReportableSubclonalVariantMatches) + " in " + gene
-                        + " detected in canonical transcript but subclonal likelihood of > " + percentage(1 - CLONAL_CUTOFF)
+        return MolecularEventUtil.evaluatePotentialWarnsForEventGroups(
+            listOf(
+                EventsWithMessages(
+                    canonicalReportableSubclonalVariantMatches,
+                    "Variant(s) ${concat(canonicalReportableSubclonalVariantMatches)} in $gene"
+                            + " detected in canonical transcript but subclonal likelihood of > " + percentage(1 - CLONAL_CUTOFF),
+                    "Variant(s) ${concat(canonicalReportableSubclonalVariantMatches)} in $gene but subclonal likelihood of > "
+                            + percentage(1 - CLONAL_CUTOFF)
+                ),
+                EventsWithMessages(
+                    canonicalUnreportableVariantMatches,
+                    "Variant(s) ${concat(canonicalProteinImpactMatches)} in $gene detected in canonical transcript but are not reportable",
+                    "${concat(canonicalProteinImpactMatches)} found in $gene but not reportable"
+                ),
+                EventsWithMessages(
+                    reportableOtherVariantMatches,
+                    "Variant(s) ${concat(reportableOtherProteinImpactMatches)} in $gene detected but in non-canonical transcript",
+                    "${concat(reportableOtherProteinImpactMatches)} found in non-canonical transcript of gene $gene"
             )
-            warnGeneralMessages.add(
-                "Variant(s) " + concat(canonicalReportableSubclonalVariantMatches) + " in " + gene
-                        + " but subclonal likelihood of > " + percentage(1 - CLONAL_CUTOFF)
             )
-        }
-        if (canonicalUnreportableVariantMatches.isNotEmpty()) {
-            warnEvents.addAll(canonicalUnreportableVariantMatches)
-            warnSpecificMessages.add(
-                "Variant(s) " + concat(canonicalProteinImpactMatches) + " in " + gene
-                        + " detected in canonical transcript but are not reportable"
-            )
-            warnGeneralMessages.add(concat(canonicalProteinImpactMatches) + " found in " + gene + " but not reportable")
-        }
-        if (reportableOtherVariantMatches.isNotEmpty()) {
-            warnEvents.addAll(reportableOtherVariantMatches)
-            warnSpecificMessages.add(
-                "Variant(s) " + concat(reportableOtherProteinImpactMatches) + " in " + gene
-                        + " detected but in non-canonical transcript"
-            )
-            warnGeneralMessages.add(
-                concat(reportableOtherProteinImpactMatches) + " found in non-canonical transcript of gene " + gene
-            )
-        }
-        return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {
-            unrecoverable()
-                .result(EvaluationResult.WARN)
-                .addAllInclusionMolecularEvents(warnEvents)
-                .addAllWarnSpecificMessages(warnSpecificMessages)
-                .addAllWarnGeneralMessages(warnGeneralMessages)
-                .build()
-        } else null
+        )
     }
 
     companion object {
@@ -128,11 +100,7 @@ class GeneHasVariantWithProteinImpact internal constructor(private val gene: Str
         )
         private const val CLONAL_CUTOFF = 0.5
         private fun toProteinImpacts(impacts: Set<TranscriptImpact>): Set<String> {
-            val proteinImpacts: MutableSet<String> = Sets.newHashSet()
-            for (impact in impacts) {
-                proteinImpacts.add(toProteinImpact(impact.hgvsProteinImpact()))
-            }
-            return proteinImpacts
+            return impacts.map { toProteinImpact(it.hgvsProteinImpact()) }.toSet()
         }
 
         @VisibleForTesting
