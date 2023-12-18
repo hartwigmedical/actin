@@ -67,7 +67,7 @@ class IntoleranceExtractorTest {
 
     @Test
     fun `Should curate medication intolerance`() {
-        val (curated, _) = extractor.extract(PATIENT_ID, listOf(entry.copy(codeText = INTOLERANCE_MEDICATION_INPUT, category= "medication")))
+        val (curated, _) = extractor.extract(PATIENT_ID, listOf(entry.copy(codeText = INTOLERANCE_MEDICATION_INPUT, category = "medication")))
         assertThat(curated).hasSize(1)
         assertThat(curated[0].name()).isEqualTo(CURATED_MEDICATION_INTOLERANCE)
         assertThat(curated[0].subcategories()).isEqualTo(setOf(ATC))

@@ -50,6 +50,7 @@ class IntoleranceExtractor(private val intoleranceCuration: CurationDatabase<Int
     }
 
     companion object {
-        fun create(curationDatabaseContext: CurationDatabaseContext, atcModel: AtcModel) = IntoleranceExtractor(curationDatabaseContext.intoleranceCuration, atcModel)
+        fun create(curationDatabaseContext: CurationDatabaseContext, atcModel: AtcModel) =
+            IntoleranceExtractor(curationDatabaseContext.intoleranceCuration, atcModel)
     }
 }
