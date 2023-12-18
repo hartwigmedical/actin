@@ -1,7 +1,6 @@
 package com.hartwig.actin.treatment.input.datamodel
 
 import com.hartwig.actin.Displayable
-import java.util.*
 
 enum class TumorTypeInput(private val doid: String) : Displayable {
     CARCINOMA("305"),
@@ -13,14 +12,13 @@ enum class TumorTypeInput(private val doid: String) : Displayable {
         return doid
     }
 
-    public override fun display(): String {
-        return this.toString().replace("_".toRegex(), " ").lowercase(Locale.getDefault())
+    override fun display(): String {
+        return this.toString().replace("_".toRegex(), " ").lowercase()
     }
 
     companion object {
-        @JvmStatic
         fun fromString(string: String): TumorTypeInput {
-            return valueOf(string.trim({ it <= ' ' }).replace(" ".toRegex(), "_").uppercase(Locale.getDefault()))
+            return valueOf(string.trim { it <= ' ' }.replace(" ".toRegex(), "_").uppercase())
         }
     }
 }

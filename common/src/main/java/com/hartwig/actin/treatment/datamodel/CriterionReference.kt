@@ -1,12 +1,3 @@
 package com.hartwig.actin.treatment.datamodel
 
-import org.immutables.value.Value
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
-
-@Value.Immutable
-@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
-abstract class CriterionReference {
-    abstract fun id(): String
-    abstract fun text(): String
-}
+data class CriterionReference(val id: String, val text: String)

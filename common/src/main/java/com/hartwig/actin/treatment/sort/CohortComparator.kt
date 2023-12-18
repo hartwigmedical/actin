@@ -4,25 +4,20 @@ import com.hartwig.actin.treatment.datamodel.Cohort
 import com.hartwig.actin.treatment.datamodel.CohortMetadata
 import com.hartwig.actin.treatment.datamodel.Eligibility
 
-class CohortComparator() : Comparator<Cohort> {
-    public override fun compare(cohort1: Cohort, cohort2: Cohort): Int {
-        val metadataCompare: Int = METADATA_COMPARATOR.compare(cohort1.metadata(), cohort2.metadata())
-        if (metadataCompare != 0) {
-            return metadataCompare
+class CohortComparator : Comparator<Cohort> {
+    private val comparator = Comparator.comparing(Cohort::metadata, METADATA_COMPARATOR)
+        .thenComparing({ it.eligibility.size }, Int::compareTo)
+        .thenComparing(Cohort::eligibility, ::compareCohortEligibilities)
+
+    override fun compare(cohort1: Cohort, cohort2: Cohort): Int {
+        return comparator.compare(cohort1, cohort2)
+    }
+
+    private fun compareCohortEligibilities(eligibilities1: List<Eligibility>, eligibilities2: List<Eligibility>): Int {
+        return eligibilities1.zip(eligibilities2).map { (eligibility1, eligibility2) ->
+            ELIGIBILITY_COMPARATOR.compare(eligibility1, eligibility2)
         }
-        val sizeCompare: Int = cohort1.eligibility().size - cohort2.eligibility().size
-        if (sizeCompare != 0) {
-            return if (sizeCompare > 0) 1 else -1
-        }
-        var index: Int = 0
-        while (index < cohort1.eligibility().size) {
-            val eligibilityCompare: Int = ELIGIBILITY_COMPARATOR.compare(cohort1.eligibility().get(index), cohort2.eligibility().get(index))
-            if (eligibilityCompare != 0) {
-                return eligibilityCompare
-            }
-            index++
-        }
-        return 0
+            .find { it != 0 } ?: 0
     }
 
     companion object {

@@ -6,19 +6,19 @@ import com.hartwig.actin.treatment.sort.TrialIdentificationComparator
 import kotlin.Int
 
 class TrialMatchComparator : Comparator<TrialMatch> {
+    private val comparator = Comparator.comparing(TrialMatch::identification, TrialIdentificationComparator())
+        .thenComparing(TrialMatch::isPotentiallyEligible)
+        .thenComparing({ it.cohorts.size }, Int::compareTo)
+        .thenComparing({ it.cohorts }, ::compareCohortMatches)
+        .thenComparing(TrialMatch::evaluations, EvaluationMapComparator())
 
     override fun compare(match1: TrialMatch, match2: TrialMatch): Int {
-        return Comparator.comparing(TrialMatch::identification, TrialIdentificationComparator())
-            .thenComparing(TrialMatch::isPotentiallyEligible)
-            .thenComparing({ it.cohorts.size }, Int::compareTo)
-            .thenComparing({ it.cohorts }, ::compareCohortMatches)
-            .thenComparing(TrialMatch::evaluations, EvaluationMapComparator())
-            .compare(match1, match2)
+        return comparator.compare(match1, match2)
     }
 
-    private fun compareCohortMatches(match1: List<CohortMatch>, match2: List<CohortMatch>): Int {
-        return match1.indices.map { index ->
-            COHORT_ELIGIBILITY_COMPARATOR.compare(match1[index], match2[index])
+    private fun compareCohortMatches(matches1: List<CohortMatch>, matches2: List<CohortMatch>): Int {
+        return matches1.zip(matches2).map { (match1, match2) ->
+            COHORT_ELIGIBILITY_COMPARATOR.compare(match1, match2)
         }
             .find { it != 0 } ?: 0
     }

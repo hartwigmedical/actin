@@ -1,28 +1,20 @@
 package com.hartwig.actin.treatment.input.composite
 
-import com.google.common.annotations.VisibleForTesting
-import com.google.common.collect.Maps
 import com.hartwig.actin.treatment.datamodel.EligibilityRule
 
 object CompositeRules {
-    @JvmField
-    @VisibleForTesting
-    val COMPOSITE_RULE_MAPPING: Map<EligibilityRule, CompositeInput> = Maps.newHashMap()
+    val COMPOSITE_RULE_MAPPING = mapOf(
+        EligibilityRule.AND to CompositeInput.AT_LEAST_2,
+        EligibilityRule.OR to CompositeInput.AT_LEAST_2,
+        EligibilityRule.NOT to CompositeInput.EXACTLY_1,
+        EligibilityRule.WARN_IF to CompositeInput.EXACTLY_1,
+    )
 
-    init {
-        COMPOSITE_RULE_MAPPING.put(EligibilityRule.AND, CompositeInput.AT_LEAST_2)
-        COMPOSITE_RULE_MAPPING.put(EligibilityRule.OR, CompositeInput.AT_LEAST_2)
-        COMPOSITE_RULE_MAPPING.put(EligibilityRule.NOT, CompositeInput.EXACTLY_1)
-        COMPOSITE_RULE_MAPPING.put(EligibilityRule.WARN_IF, CompositeInput.EXACTLY_1)
-    }
-
-    @JvmStatic
     fun isComposite(rule: EligibilityRule): Boolean {
         return COMPOSITE_RULE_MAPPING.containsKey(rule)
     }
 
-    @JvmStatic
     fun inputsForCompositeRule(compositeRule: EligibilityRule): CompositeInput {
-        return (COMPOSITE_RULE_MAPPING.get(compositeRule))!!
+        return (COMPOSITE_RULE_MAPPING[compositeRule])!!
     }
 }

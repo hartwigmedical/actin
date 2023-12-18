@@ -1,13 +1,41 @@
 package com.hartwig.actin.treatment.input
 
+import com.hartwig.actin.TreatmentDatabase
+import com.hartwig.actin.clinical.datamodel.TumorStage
+import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
+import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
+import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
+import com.hartwig.actin.treatment.datamodel.EligibilityFunction
+import com.hartwig.actin.treatment.input.composite.CompositeInput
+import com.hartwig.actin.treatment.input.composite.CompositeRules
+import com.hartwig.actin.treatment.input.datamodel.TreatmentCategoryInput
+import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput
 import com.hartwig.actin.treatment.input.datamodel.VariantTypeInput
-import com.hartwig.actin.treatment.input.single.ImmutableManyGenes
+import com.hartwig.actin.treatment.input.single.FunctionInput
+import com.hartwig.actin.treatment.input.single.ManyGenes
+import com.hartwig.actin.treatment.input.single.ManySpecificTreatmentsTwoIntegers
+import com.hartwig.actin.treatment.input.single.OneGene
+import com.hartwig.actin.treatment.input.single.OneGeneManyCodons
+import com.hartwig.actin.treatment.input.single.OneGeneManyProteinImpacts
+import com.hartwig.actin.treatment.input.single.OneGeneOneInteger
+import com.hartwig.actin.treatment.input.single.OneGeneOneIntegerOneVariantType
+import com.hartwig.actin.treatment.input.single.OneGeneTwoIntegers
+import com.hartwig.actin.treatment.input.single.OneHlaAllele
+import com.hartwig.actin.treatment.input.single.OneIntegerManyStrings
+import com.hartwig.actin.treatment.input.single.OneIntegerOneString
+import com.hartwig.actin.treatment.input.single.OneSpecificTreatmentOneInteger
+import com.hartwig.actin.treatment.input.single.OneTreatmentCategoryManyDrugs
+import com.hartwig.actin.treatment.input.single.OneTreatmentCategoryManyTypes
+import com.hartwig.actin.treatment.input.single.OneTreatmentCategoryManyTypesOneInteger
+import com.hartwig.actin.treatment.input.single.OneTreatmentCategoryOrTypeOneInteger
+import com.hartwig.actin.treatment.input.single.TwoDoubles
+import com.hartwig.actin.treatment.input.single.TwoIntegers
+import com.hartwig.actin.treatment.input.single.TwoIntegersManyStrings
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.util.*
-import java.util.function.Function
-import java.util.stream.Stream
 
 class FunctionInputResolver(
     doidModel: DoidModel, molecularInputChecker: MolecularInputChecker,
@@ -24,18 +52,14 @@ class FunctionInputResolver(
     }
 
     fun hasValidInputs(function: EligibilityFunction): Boolean? {
-        if (CompositeRules.isComposite(function.rule())) {
-            return hasValidCompositeInputs(function)
-        } else {
-            return hasValidSingleInputs(function)
-        }
+        return if (CompositeRules.isComposite(function.rule)) hasValidCompositeInputs(function) else hasValidSingleInputs(function)
     }
 
     private fun hasValidSingleInputs(function: EligibilityFunction): Boolean? {
         try {
-            when (FunctionInputMapping.RULE_INPUT_MAP.get(function.rule())) {
+            when (FunctionInputMapping.RULE_INPUT_MAP[function.rule]) {
                 FunctionInput.NONE -> {
-                    return function.parameters().isEmpty()
+                    return function.parameters.isEmpty()
                 }
 
                 FunctionInput.ONE_INTEGER -> {
@@ -194,7 +218,7 @@ class FunctionInputResolver(
                 }
 
                 else -> {
-                    LOGGER.warn("Rule '{}' not defined in parameter type map!", function.rule())
+                    LOGGER.warn("Rule '{}' not defined in parameter type map!", function.rule)
                     return null
                 }
             }
@@ -206,342 +230,309 @@ class FunctionInputResolver(
 
     fun createOneIntegerInput(function: EligibilityFunction): Int {
         assertParamConfig(function, FunctionInput.ONE_INTEGER, 1)
-        return (function.parameters().get(0) as String).toInt()
+        return (function.parameters[0] as String).toInt()
     }
 
     fun createTwoIntegersInput(function: EligibilityFunction): TwoIntegers {
         assertParamConfig(function, FunctionInput.TWO_INTEGERS, 2)
-        return ImmutableTwoIntegers.builder()
-            .integer1((function.parameters().get(0) as String).toInt())
-            .integer2((function.parameters().get(1) as String).toInt())
-            .build()
+        return TwoIntegers(
+            integer1 = (function.parameters[0] as String).toInt(),
+            integer2 = (function.parameters[1] as String).toInt(),
+        )
     }
 
     fun createManyIntegersInput(function: EligibilityFunction): List<Int> {
         assertParamConfig(function, FunctionInput.MANY_INTEGERS, 1)
-        return toStringStream(function.parameters().get(0)).map<Int>(Function<String, Int>({ s: String -> s.toInt() }))
-            .collect(Collectors.toList<Int>())
+        return toStringList(function.parameters.first()).map(String::toInt)
     }
 
     fun createOneDoubleInput(function: EligibilityFunction): Double {
         assertParamConfig(function, FunctionInput.ONE_DOUBLE, 1)
-        return (function.parameters().get(0) as String).toDouble()
+        return parameterAsString(function, 0).toDouble()
     }
 
     fun createTwoDoublesInput(function: EligibilityFunction): TwoDoubles {
         assertParamConfig(function, FunctionInput.TWO_DOUBLES, 2)
-        return ImmutableTwoDoubles.builder()
-            .double1((function.parameters().get(0) as String).toDouble())
-            .double2((function.parameters().get(1) as String).toDouble())
-            .build()
+        return TwoDoubles(
+            double1 = parameterAsString(function, 0).toDouble(),
+            double2 = parameterAsString(function, 1).toDouble()
+        )
     }
 
     fun createOneTreatmentCategoryOrTypeInput(function: EligibilityFunction): TreatmentCategoryInput {
         assertParamConfig(function, FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE, 1)
-        return TreatmentCategoryInput.Companion.fromString(function.parameters().get(0) as String?)
+        return TreatmentCategoryInput.fromString(parameterAsString(function, 0))
     }
 
     fun createOneTreatmentCategoryOrTypeOneIntegerInput(function: EligibilityFunction): OneTreatmentCategoryOrTypeOneInteger {
         assertParamConfig(function, FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE_ONE_INTEGER, 2)
-        return ImmutableOneTreatmentCategoryOrTypeOneInteger.builder()
-            .treatment(TreatmentCategoryInput.Companion.fromString(function.parameters().get(0) as String?))
-            .integer((function.parameters().get(1) as String).toInt())
-            .build()
+        return OneTreatmentCategoryOrTypeOneInteger(
+            treatment = TreatmentCategoryInput.fromString(parameterAsString(function, 0)),
+            integer = parameterAsString(function, 1).toInt()
+        )
     }
 
     fun createOneTreatmentCategoryManyTypesInput(function: EligibilityFunction): OneTreatmentCategoryManyTypes {
         assertParamConfig(function, FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES, 2)
-        return ImmutableOneTreatmentCategoryManyTypes.builder()
-            .category(TreatmentCategoryResolver.fromString(function.parameters().get(0) as String?))
-            .types(toTreatmentTypeSet(function.parameters().get(1)))
-            .build()
+        return OneTreatmentCategoryManyTypes(
+            category = TreatmentCategoryResolver.fromString(parameterAsString(function, 0)),
+            types = toTreatmentTypeSet(function.parameters[1])
+        )
     }
 
     fun createOneTreatmentCategoryManyTypesOneIntegerInput(
         function: EligibilityFunction
     ): OneTreatmentCategoryManyTypesOneInteger {
         assertParamConfig(function, FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES_ONE_INTEGER, 3)
-        return ImmutableOneTreatmentCategoryManyTypesOneInteger.builder()
-            .category(TreatmentCategoryResolver.fromString(function.parameters().get(0) as String?))
-            .types(toTreatmentTypeSet(function.parameters().get(1)))
-            .integer((function.parameters().get(2) as String).toInt())
-            .build()
+        return OneTreatmentCategoryManyTypesOneInteger(
+            category = TreatmentCategoryResolver.fromString(parameterAsString(function, 0)),
+            types = toTreatmentTypeSet(function.parameters[1]),
+            integer = parameterAsString(function, 2).toInt()
+        )
     }
 
     fun createOneSpecificTreatmentInput(function: EligibilityFunction): Treatment {
         assertParamConfig(function, FunctionInput.ONE_SPECIFIC_TREATMENT, 1)
-        return toTreatment(function.parameters().get(0) as String)
+        return toTreatment(parameterAsString(function, 0))
     }
 
     fun createOneSpecificTreatmentOneIntegerInput(function: EligibilityFunction): OneSpecificTreatmentOneInteger {
         assertParamConfig(function, FunctionInput.ONE_SPECIFIC_TREATMENT_ONE_INTEGER, 2)
-        return ImmutableOneSpecificTreatmentOneInteger.builder()
-            .treatment(toTreatment(function.parameters().get(0) as String))
-            .integer((function.parameters().get(1) as String).toInt())
-            .build()
+        return OneSpecificTreatmentOneInteger(
+            treatment = toTreatment(parameterAsString(function, 0)),
+            integer = parameterAsString(function, 1).toInt()
+        )
     }
 
     fun createManySpecificTreatmentsTwoIntegerInput(function: EligibilityFunction): ManySpecificTreatmentsTwoIntegers {
         assertParamConfig(function, FunctionInput.MANY_SPECIFIC_TREATMENTS_TWO_INTEGERS, 3)
-        return ImmutableManySpecificTreatmentsTwoIntegers.builder()
-            .treatments(toTreatments(function.parameters().get(0)))
-            .integer1((function.parameters().get(1) as String).toInt())
-            .integer2((function.parameters().get(2) as String).toInt())
-            .build()
+        return ManySpecificTreatmentsTwoIntegers(
+            treatments = toTreatments(function.parameters.first()),
+            integer1 = parameterAsString(function, 1).toInt(),
+            integer2 = parameterAsString(function, 2).toInt()
+        )
     }
 
     private fun toTreatments(input: Any): List<Treatment> {
-        return toStringStream(input).map<Treatment>(Function<String, Treatment>({ treatmentName: String -> toTreatment(treatmentName) }))
-            .collect(Collectors.toList<Treatment>())
+        return toStringList(input).map(::toTreatment)
     }
 
     private fun toTreatment(treatmentName: String): Treatment {
-        val treatment: Treatment = treatmentDatabase.findTreatmentByName(treatmentName)
-        if (treatment == null) {
-            throw IllegalStateException("Treatment not found in DB: " + treatmentName)
-        }
-        return treatment
+        return treatmentDatabase.findTreatmentByName(treatmentName)
+            ?: throw IllegalStateException("Treatment not found in DB: $treatmentName")
     }
 
     private fun toTreatmentTypeSet(input: Any): Set<TreatmentType> {
-        return toStringStream(input).map<TreatmentType>(Function<String, TreatmentType>({ input: String? ->
-            TreatmentCategoryInput.Companion.treatmentTypeFromString(
-                input
-            )
-        })).collect<Set<TreatmentType>, Any>(Collectors.toSet<TreatmentType>())
+        return toStringList(input).map(TreatmentCategoryInput::treatmentTypeFromString).toSet()
     }
 
     fun createOneTreatmentCategoryManyDrugsInput(function: EligibilityFunction): OneTreatmentCategoryManyDrugs {
         assertParamConfig(function, FunctionInput.ONE_TREATMENT_CATEGORY_MANY_DRUGS, 2)
-        return ImmutableOneTreatmentCategoryManyDrugs.builder()
-            .category(TreatmentCategoryResolver.fromString(function.parameters().get(0) as String?))
-            .drugs(toDrugSet(function.parameters().get(1)))
-            .build()
+        return OneTreatmentCategoryManyDrugs(
+            category = TreatmentCategoryResolver.fromString(parameterAsString(function, 0)),
+            drugs = toDrugSet(function.parameters[1])
+        )
     }
 
     fun createManyDrugsInput(function: EligibilityFunction): Set<Drug> {
         assertParamConfig(function, FunctionInput.MANY_DRUGS, 1)
-        return toDrugSet(function.parameters().get(0))
+        return toDrugSet(function.parameters.first())
     }
 
     private fun toDrugSet(input: Any): Set<Drug> {
-        return toStringStream(input).map<Drug>(Function<String, Drug>({ drugName: String -> toDrug(drugName) }))
-            .collect<Set<Drug>, Any>(Collectors.toSet<Drug>())
+        return toStringList(input).map(::toDrug).toSet()
     }
 
     private fun toDrug(drugName: String): Drug {
-        val drug: Drug? = treatmentDatabase.findDrugByName(drugName)
-        if (drug == null) {
-            throw IllegalStateException("Drug not found in DB: " + drugName)
-        }
-        return drug
+        return treatmentDatabase.findDrugByName(drugName) ?: throw IllegalStateException("Drug not found in DB: $drugName")
     }
 
     fun createOneTumorTypeInput(function: EligibilityFunction): TumorTypeInput {
         assertParamConfig(function, FunctionInput.ONE_TUMOR_TYPE, 1)
-        return TumorTypeInput.Companion.fromString(function.parameters().get(0) as String?)
+        return TumorTypeInput.fromString(parameterAsString(function, 0))
     }
 
     fun createOneStringInput(function: EligibilityFunction): String {
         assertParamConfig(function, FunctionInput.ONE_STRING, 1)
-        return function.parameters().get(0)
+        return parameterAsString(function, 0)
     }
 
     fun createOneStringOneIntegerInput(function: EligibilityFunction): OneIntegerOneString {
         assertParamConfig(function, FunctionInput.ONE_STRING_ONE_INTEGER, 2)
-        return ImmutableOneIntegerOneString.builder()
-            .string(function.parameters().get(0) as String?)
-            .integer((function.parameters().get(1) as String).toInt())
-            .build()
+        return OneIntegerOneString(
+            string = parameterAsString(function, 0),
+            integer = parameterAsString(function, 1).toInt()
+        )
     }
 
     fun createManyStringsOneIntegerInput(function: EligibilityFunction): OneIntegerManyStrings {
         assertParamConfig(function, FunctionInput.MANY_STRINGS_ONE_INTEGER, 2)
-        return ImmutableOneIntegerManyStrings.builder()
-            .strings(toStringList(function.parameters().get(0)))
-            .integer((function.parameters().get(1) as String).toInt())
-            .build()
+        return OneIntegerManyStrings(
+            strings = toStringList(function.parameters.first()),
+            integer = parameterAsString(function, 1).toInt()
+        )
     }
 
     fun createManyStringsTwoIntegersInput(function: EligibilityFunction): TwoIntegersManyStrings {
         assertParamConfig(function, FunctionInput.MANY_STRINGS_TWO_INTEGERS, 3)
-        return ImmutableTwoIntegersManyStrings.builder()
-            .strings(toStringList(function.parameters().get(0)))
-            .integer1((function.parameters().get(1) as String).toInt())
-            .integer2((function.parameters().get(2) as String).toInt())
-            .build()
+        return TwoIntegersManyStrings(
+            strings = toStringList(function.parameters.first()),
+            integer1 = parameterAsString(function, 1).toInt(),
+            integer2 = parameterAsString(function, 2).toInt()
+        )
     }
 
     fun createOneIntegerOneStringInput(function: EligibilityFunction): OneIntegerOneString {
         assertParamConfig(function, FunctionInput.ONE_INTEGER_ONE_STRING, 2)
-        return ImmutableOneIntegerOneString.builder()
-            .integer((function.parameters().get(0) as String).toInt())
-            .string(function.parameters().get(1) as String?)
-            .build()
+        return OneIntegerOneString(
+            integer = (parameterAsString(function, 0)).toInt(),
+            string = parameterAsString(function, 1)
+        )
     }
 
     fun createOneIntegerManyStringsInput(function: EligibilityFunction): OneIntegerManyStrings {
         assertParamConfig(function, FunctionInput.ONE_INTEGER_MANY_STRINGS, 2)
-        return ImmutableOneIntegerManyStrings.builder()
-            .integer((function.parameters().get(0) as String).toInt())
-            .strings(toStringList(function.parameters().get(1)))
-            .build()
+        return OneIntegerManyStrings(
+            integer = parameterAsString(function, 0).toInt(),
+            strings = toStringList(function.parameters[1])
+        )
     }
 
     fun createOneTumorStageInput(function: EligibilityFunction): TumorStage {
         assertParamConfig(function, FunctionInput.ONE_TUMOR_STAGE, 1)
-        return TumorStage.valueOf(function.parameters().get(0) as String?)
+        return TumorStage.valueOf(parameterAsString(function, 0))
     }
 
     fun createOneHlaAlleleInput(function: EligibilityFunction): OneHlaAllele {
         assertParamConfig(function, FunctionInput.ONE_HLA_ALLELE, 1)
-        val allele: String = function.parameters().get(0)
+        val allele = function.parameters.first() as String
         if (!MolecularInputChecker.isHlaAllele(allele)) {
-            throw IllegalArgumentException("Not a proper HLA allele: " + allele)
+            throw IllegalArgumentException("Not a proper HLA allele: $allele")
         }
-        return ImmutableOneHlaAllele.builder().allele(allele).build()
+        return OneHlaAllele(allele)
     }
 
     fun createOneGeneInput(function: EligibilityFunction): OneGene {
         assertParamConfig(function, FunctionInput.ONE_GENE, 1)
-        val gene: String = function.parameters().get(0)
-        if (!molecularInputChecker.isGene(gene)) {
-            throw IllegalStateException("Not a valid gene: " + gene)
-        }
-        return ImmutableOneGene.builder().geneName(gene).build()
+        return OneGene(firstParameterAsGene(function))
     }
 
     fun createOneGeneOneIntegerInput(function: EligibilityFunction): OneGeneOneInteger {
         assertParamConfig(function, FunctionInput.ONE_GENE_ONE_INTEGER, 2)
-        val gene: String = function.parameters().get(0)
-        if (!molecularInputChecker.isGene(gene)) {
-            throw IllegalStateException("Not a valid gene: " + gene)
-        }
-        return ImmutableOneGeneOneInteger.builder().geneName(gene).integer((function.parameters().get(1) as String).toInt()).build()
+        return OneGeneOneInteger(geneName = firstParameterAsGene(function), integer = (function.parameters[1] as String).toInt())
     }
 
     fun createOneGeneOneIntegerOneVariantTypeInput(function: EligibilityFunction): OneGeneOneIntegerOneVariantType {
         assertParamConfig(function, FunctionInput.ONE_GENE_ONE_INTEGER_ONE_VARIANT_TYPE, 3)
-        val gene: String = function.parameters().get(0)
-        if (!molecularInputChecker.isGene(gene)) {
-            throw IllegalStateException("Not a valid gene: " + gene)
-        }
-        return ImmutableOneGeneOneIntegerOneVariantType.builder()
-            .geneName(gene)
-            .integer((function.parameters().get(1) as String).toInt())
-            .variantType(VariantTypeInput.valueOf((function.parameters().get(2) as String?)!!))
-            .build()
+        return OneGeneOneIntegerOneVariantType(
+            geneName = firstParameterAsGene(function),
+            integer = (function.parameters[1] as String).toInt(),
+            variantType = VariantTypeInput.valueOf(function.parameters[2] as String)
+        )
     }
 
     fun createOneGeneTwoIntegersInput(function: EligibilityFunction): OneGeneTwoIntegers {
         assertParamConfig(function, FunctionInput.ONE_GENE_TWO_INTEGERS, 3)
-        val gene: String = function.parameters().get(0)
-        if (!molecularInputChecker.isGene(gene)) {
-            throw IllegalStateException("Not a valid gene: " + gene)
-        }
-        return ImmutableOneGeneTwoIntegers.builder()
-            .geneName(gene)
-            .integer1((function.parameters().get(1) as String).toInt())
-            .integer2((function.parameters().get(2) as String).toInt())
-            .build()
+        return OneGeneTwoIntegers(
+            geneName = firstParameterAsGene(function),
+            integer1 = (function.parameters[1] as String).toInt(),
+            integer2 = (function.parameters[2] as String).toInt()
+        )
     }
 
     fun createOneGeneManyCodonsInput(function: EligibilityFunction): OneGeneManyCodons {
         assertParamConfig(function, FunctionInput.ONE_GENE_MANY_CODONS, 2)
-        val gene: String = function.parameters().get(0)
-        if (!molecularInputChecker.isGene(gene)) {
-            throw IllegalStateException("Not a valid gene: " + gene)
-        }
-        val codons: List<String> = toStringList(function.parameters().get(1))
-        for (codon: String in codons) {
+        val codons = toStringList(function.parameters[1])
+        for (codon in codons) {
             if (!MolecularInputChecker.isCodon(codon)) {
-                throw IllegalStateException("Not a valid codon: " + codon)
+                throw IllegalStateException("Not a valid codon: $codon")
             }
         }
-        return ImmutableOneGeneManyCodons.builder().geneName(gene).codons(codons).build()
+        return OneGeneManyCodons(geneName = firstParameterAsGene(function), codons = codons)
     }
 
     fun createOneGeneManyProteinImpactsInput(function: EligibilityFunction): OneGeneManyProteinImpacts {
         assertParamConfig(function, FunctionInput.ONE_GENE_MANY_PROTEIN_IMPACTS, 2)
-        val gene: String = function.parameters().get(0)
-        if (!molecularInputChecker.isGene(gene)) {
-            throw IllegalStateException("Not a valid gene: " + gene)
-        }
-        val proteinImpacts: List<String> = toStringList(function.parameters().get(1))
-        for (proteinImpact: String in proteinImpacts) {
+        val gene = firstParameterAsGene(function)
+        val proteinImpacts = toStringList(function.parameters[1])
+        for (proteinImpact in proteinImpacts) {
             if (!MolecularInputChecker.isProteinImpact(proteinImpact)) {
-                throw IllegalStateException("Not a valid protein impact: " + proteinImpact)
+                throw IllegalStateException("Not a valid protein impact: $proteinImpact")
             }
         }
-        return ImmutableOneGeneManyProteinImpacts.builder().geneName(gene).proteinImpacts(proteinImpacts).build()
+        return OneGeneManyProteinImpacts(geneName = gene, proteinImpacts = proteinImpacts)
     }
 
     fun createManyGenesInput(function: EligibilityFunction): ManyGenes {
         assertParamConfig(function, FunctionInput.MANY_GENES, 1)
-        val genes: List<String> = toStringList(function.parameters().get(0))
-        for (gene: String in genes) {
+        val geneNames = toStringList(function.parameters.first())
+        for (gene in geneNames) {
             if (!molecularInputChecker.isGene(gene)) {
-                throw IllegalStateException("Not a valid gene: " + gene)
+                throw IllegalStateException("Not a valid gene: $gene")
             }
         }
-        return ImmutableManyGenes.builder().geneNames(genes).build()
+        return ManyGenes(geneNames = geneNames)
     }
 
     fun createOneDoidTermInput(function: EligibilityFunction): String {
         assertParamConfig(function, FunctionInput.ONE_DOID_TERM, 1)
-        val param: String = function.parameters().get(0)
+        val param = parameterAsString(function, 0)
         if (doidModel.resolveDoidForTerm(param) == null) {
-            throw IllegalStateException("Not a valid DOID term: " + param)
+            throw IllegalStateException("Not a valid DOID term: $param")
         }
         return param
     }
 
+    private fun parameterAsString(function: EligibilityFunction, i: Int) = function.parameters[i] as String
+
+    private fun firstParameterAsGene(function: EligibilityFunction): String {
+        val gene = parameterAsString(function, 0)
+        if (!molecularInputChecker.isGene(gene)) {
+            throw IllegalStateException("Not a valid gene: $gene")
+        }
+        return gene
+    }
+
     companion object {
         private val LOGGER: Logger = LogManager.getLogger(FunctionInputResolver::class.java)
-        private val MANY_STRING_SEPARATOR: String = ";"
+        private const val MANY_STRING_SEPARATOR: String = ";"
+        
         private fun hasValidCompositeInputs(function: EligibilityFunction): Boolean {
-            try {
-                val requiredInputs: CompositeInput = CompositeRules.inputsForCompositeRule(function.rule())
-                if (requiredInputs == CompositeInput.AT_LEAST_2) {
-                    createAtLeastTwoCompositeParameters(function)
-                } else if (requiredInputs == CompositeInput.EXACTLY_1) {
-                    createOneCompositeParameter(function)
-                } else {
-                    throw IllegalStateException(
-                        "Could not interpret composite inputs for rule '" + function.rule() + "': " + requiredInputs
-                    )
+            return try {
+                when (CompositeRules.inputsForCompositeRule(function.rule)) {
+                    CompositeInput.AT_LEAST_2 -> {
+                        createAtLeastTwoCompositeParameters(function)
+                    }
+
+                    CompositeInput.EXACTLY_1 -> {
+                        createOneCompositeParameter(function)
+                    }
                 }
-                return true
+                true
             } catch (exception: Exception) {
-                return false
+                LOGGER.warn(exception.message)
+                false
             }
         }
 
         fun createOneCompositeParameter(function: EligibilityFunction): EligibilityFunction {
             assertParamCount(function, 1)
-            return function.parameters().get(0) as EligibilityFunction
+            return function.parameters.first() as EligibilityFunction
         }
 
         fun createAtLeastTwoCompositeParameters(function: EligibilityFunction): List<EligibilityFunction> {
-            if (function.parameters().size < 2) {
+            if (function.parameters.size < 2) {
                 throw IllegalArgumentException(
-                    "Not enough parameters passed into '" + function.rule() + "': " + function.parameters().size
+                    "Not enough parameters passed into '${function.rule}': ${function.parameters.size}"
                 )
             }
-            return function.parameters().stream()
-                .map<EligibilityFunction>(Function<Any, EligibilityFunction?>({ input: Any? -> input as EligibilityFunction? }))
-                .collect<List<EligibilityFunction>, Any>(Collectors.toList<EligibilityFunction>())
+            return function.parameters.map { it as EligibilityFunction }
         }
 
         private fun toStringList(param: Any): List<String> {
-            return toStringStream(param).collect(Collectors.toList<String>())
-        }
-
-        private fun toStringStream(param: Any): Stream<String> {
-            return Arrays.stream((param as String).split(MANY_STRING_SEPARATOR.toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray())
-                .map(
-                    Function({ obj: String -> obj.trim({ it <= ' ' }) })
-                )
+            return (param as String).split(MANY_STRING_SEPARATOR.toRegex())
+                .dropLastWhile(String::isEmpty)
+                .map { str -> str.trim { it <= ' ' } }
         }
 
         private fun assertParamConfig(function: EligibilityFunction, requestedInput: FunctionInput, expectedCount: Int) {
@@ -550,15 +541,15 @@ class FunctionInputResolver(
         }
 
         private fun assertParamType(function: EligibilityFunction, requestedInput: FunctionInput) {
-            if (requestedInput != FunctionInputMapping.RULE_INPUT_MAP.get(function.rule())) {
-                throw IllegalStateException("Incorrect type of inputs requested for '" + function.rule() + "': " + requestedInput)
+            if (requestedInput != FunctionInputMapping.RULE_INPUT_MAP[function.rule]) {
+                throw IllegalStateException("Incorrect type of inputs requested for '${function.rule}': $requestedInput")
             }
         }
 
         private fun assertParamCount(function: EligibilityFunction, expectedCount: Int) {
-            if (function.parameters().size != expectedCount) {
+            if (function.parameters.size != expectedCount) {
                 throw IllegalArgumentException(
-                    "Invalid number of inputs passed to '" + function.rule() + "': " + function.parameters().size
+                    "Invalid number of inputs passed to '${function.rule}': ${function.parameters.size}"
                 )
             }
         }

@@ -1,13 +1,7 @@
 package com.hartwig.actin.treatment.input.single
 
-import org.immutables.value.Value
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
-
-@Value.Immutable
-@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
-abstract class TwoIntegersManyStrings() {
-    abstract fun integer1(): Int
-    abstract fun integer2(): Int
-    abstract fun strings(): List<String?>
-}
+data class TwoIntegersManyStrings(
+    val integer1: Int,
+    val integer2: Int,
+    val strings: List<String>
+)

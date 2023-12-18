@@ -1,38 +1,44 @@
 package com.hartwig.actin.treatment.serialization
 
-import com.google.common.annotations.VisibleForTesting
-import com.google.common.collect.Lists
-import com.google.common.collect.Sets
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import com.hartwig.actin.treatment.datamodel.Cohort
+import com.hartwig.actin.treatment.datamodel.CohortMetadata
+import com.hartwig.actin.treatment.datamodel.CriterionReference
 import com.hartwig.actin.treatment.datamodel.Eligibility
+import com.hartwig.actin.treatment.datamodel.EligibilityFunction
 import com.hartwig.actin.treatment.datamodel.EligibilityRule
-import com.hartwig.actin.treatment.datamodel.ImmutableCohort
 import com.hartwig.actin.treatment.datamodel.Trial
+import com.hartwig.actin.treatment.datamodel.TrialIdentification
+import com.hartwig.actin.treatment.sort.CriterionReferenceComparator
 import com.hartwig.actin.util.Paths
+import com.hartwig.actin.util.json.GsonSerializer
+import com.hartwig.actin.util.json.Json
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.io.BufferedWriter
 import java.io.File
+import java.io.FileWriter
 import java.io.IOException
 import java.lang.reflect.Type
 import java.nio.file.Files
-import java.util.*
-import java.util.function.Function
-import java.util.function.Predicate
 
 object TrialJson {
     private val LOGGER: Logger = LogManager.getLogger(TrialJson::class.java)
-    private val TRIAL_JSON_EXTENSION: String = ".trial.json"
-    private val JSON_REFERENCE_TEXT_LINE_BREAK: String = "<enter>"
-    private val JAVA_REFERENCE_TEXT_LINE_BREAK: String = "\n"
+    private const val TRIAL_JSON_EXTENSION: String = ".trial.json"
+    private const val JSON_REFERENCE_TEXT_LINE_BREAK: String = "<enter>"
+    private const val JAVA_REFERENCE_TEXT_LINE_BREAK: String = "\n"
 
-    @Throws(IOException::class)
     fun write(trials: List<Trial>, directory: String) {
         val path: String = Paths.forceTrailingFileSeparator(directory)
         for (trial: Trial in trials) {
-            val jsonFile: String = path + trialFileId(trial.identification().trialId()) + TRIAL_JSON_EXTENSION
-            LOGGER.info(" Writing '{} ({})' to {}", trial.identification().trialId(), trial.identification().acronym(), jsonFile)
-            val writer: BufferedWriter = BufferedWriter(FileWriter(jsonFile))
+            val jsonFile: String = path + trialFileId(trial.identification.trialId) + TRIAL_JSON_EXTENSION
+            LOGGER.info(" Writing '{} ({})' to {}", trial.identification.trialId, trial.identification.acronym, jsonFile)
+            val writer = BufferedWriter(FileWriter(jsonFile))
             writer.write(toJson(reformatTrial(trial)))
             writer.close()
         }
@@ -43,59 +49,33 @@ object TrialJson {
     }
 
     private fun reformatTrial(trial: Trial): Trial {
-        val reformattedCohorts: MutableList<Cohort> = Lists.newArrayList()
-        for (cohort: Cohort? in trial.cohorts()) {
-            reformattedCohorts.add(
-                ImmutableCohort.builder().from(cohort).eligibility(reformatEligibilities(cohort!!.eligibility())).build()
-            )
-        }
-        return ImmutableTrial.builder()
-            .from(trial)
-            .cohorts(reformattedCohorts)
-            .generalEligibility(reformatEligibilities(trial.generalEligibility()))
-            .build()
+        val reformattedCohorts = trial.cohorts.map { it.copy(eligibility = reformatEligibilities(it.eligibility)) }
+        return trial.copy(
+            cohorts = reformattedCohorts,
+            generalEligibility = reformatEligibilities(trial.generalEligibility)
+        )
     }
 
     private fun reformatEligibilities(eligibilities: List<Eligibility>): List<Eligibility> {
-        val reformattedEligibility: MutableList<Eligibility> = Lists.newArrayList()
-        for (eligibility: Eligibility in eligibilities) {
-            val reformattedReferences: MutableSet<CriterionReference> = Sets.newTreeSet<CriterionReference>(CriterionReferenceComparator())
-            for (reference: CriterionReference? in eligibility.references()) {
-                reformattedReferences.add(
-                    ImmutableCriterionReference.builder()
-                        .from(reference)
-                        .text(toJsonReferenceText(reference.text()))
-                        .build()
-                )
-            }
-            reformattedEligibility.add(ImmutableEligibility.builder().from(eligibility).references(reformattedReferences).build())
+        return eligibilities.map { eligibility ->
+            eligibility.copy(references = eligibility.references.map { reference ->
+                reference.copy(text = toJsonReferenceText(reference.text))
+            }.toSortedSet(CriterionReferenceComparator()))
         }
-        return reformattedEligibility
     }
 
-    @JvmStatic
     fun readFromDir(directory: String): List<Trial> {
-        val files: Array<File>? = File(directory).listFiles()
-        if (files == null) {
-            throw IllegalArgumentException("Could not retrieve files from " + directory)
-        }
-        return Arrays.stream<File>(files)
-            .filter(Predicate<File>({ file: File -> file.getName().endsWith(TRIAL_JSON_EXTENSION) }))
-            .map<Trial>(Function<File, Trial>({ obj: File? -> fromJsonFile() }))
-            .collect(Collectors.toList<Trial>())
+        val files = File(directory).listFiles() ?: throw IllegalArgumentException("Could not retrieve files from $directory")
+        return files.filter { it.getName().endsWith(TRIAL_JSON_EXTENSION) }.map(::fromJsonFile)
     }
 
-    @JvmStatic
-    @VisibleForTesting
     fun toJson(trial: Trial): String {
         return GsonSerializer.create().toJson(trial)
     }
 
-    @JvmStatic
-    @VisibleForTesting
     fun fromJson(json: String): Trial {
-        val gson: Gson = GsonBuilder().registerTypeAdapter(Trial::class.java, TrialCreator()).create()
-        return gson.fromJson<Trial>(json, Trial::class.java)
+        val gson = GsonBuilder().registerTypeAdapter(Trial::class.java, TrialCreator()).create()
+        return gson.fromJson(json, Trial::class.java)
     }
 
     private fun fromJsonFile(file: File): Trial {
@@ -114,100 +94,83 @@ object TrialJson {
         return text.replace(JAVA_REFERENCE_TEXT_LINE_BREAK.toRegex(), JSON_REFERENCE_TEXT_LINE_BREAK)
     }
 
-    private class TrialCreator() : JsonDeserializer<Trial?> {
-        @Throws(JsonParseException::class)
-        public override fun deserialize(
-            jsonElement: JsonElement, type: Type,
-            jsonDeserializationContext: JsonDeserializationContext
-        ): Trial {
-            val trial: JsonObject = jsonElement.getAsJsonObject()
-            return ImmutableTrial.builder()
-                .identification(toTrialIdentification(Json.`object`(trial, "identification")))
-                .generalEligibility(toEligibility(Json.array(trial, "generalEligibility")))
-                .cohorts(toCohorts(Json.array(trial, "cohorts")))
-                .build()
+    private class TrialCreator : JsonDeserializer<Trial> {
+
+        override fun deserialize(jsonElement: JsonElement, type: Type, jsonDeserializationContext: JsonDeserializationContext): Trial {
+            val trial: JsonObject = jsonElement.asJsonObject
+            return Trial(
+                identification = toTrialIdentification(Json.`object`(trial, "identification")),
+                generalEligibility = toEligibility(Json.array(trial, "generalEligibility")),
+                cohorts = toCohorts(Json.array(trial, "cohorts"))
+            )
         }
 
         companion object {
             private fun toTrialIdentification(trial: JsonObject): TrialIdentification {
-                return ImmutableTrialIdentification.builder()
-                    .trialId(Json.string(trial, "trialId"))
-                    .open(Json.bool(trial, "open"))
-                    .acronym(Json.string(trial, "acronym"))
-                    .title(Json.string(trial, "title"))
-                    .build()
+                return TrialIdentification(
+                    trialId = Json.string(trial, "trialId"),
+                    open = Json.bool(trial, "open"),
+                    acronym = Json.string(trial, "acronym"),
+                    title = Json.string(trial, "title")
+                )
             }
 
             private fun toCohorts(cohortArray: JsonArray): List<Cohort> {
-                val cohorts: MutableList<Cohort> = Lists.newArrayList()
-                for (element: JsonElement in cohortArray) {
-                    val cohort: JsonObject = element.getAsJsonObject()
-                    cohorts.add(
-                        ImmutableCohort.builder()
-                            .metadata(toMetadata(Json.`object`(cohort, "metadata")))
-                            .eligibility(toEligibility(Json.array(cohort, "eligibility")))
-                            .build()
+                return cohortArray.map { element ->
+                    val cohort: JsonObject = element.asJsonObject
+                    Cohort(
+                        metadata = toMetadata(Json.`object`(cohort, "metadata")),
+                        eligibility = toEligibility(Json.array(cohort, "eligibility"))
                     )
                 }
-                return cohorts
             }
 
             private fun toMetadata(cohort: JsonObject): CohortMetadata {
-                return ImmutableCohortMetadata.builder()
-                    .cohortId(Json.string(cohort, "cohortId"))
-                    .evaluable(Json.bool(cohort, "evaluable"))
-                    .open(Json.bool(cohort, "open"))
-                    .slotsAvailable(Json.bool(cohort, "slotsAvailable"))
-                    .blacklist(Json.bool(cohort, "blacklist"))
-                    .description(Json.string(cohort, "description"))
-                    .build()
+                return CohortMetadata(
+                    cohortId = Json.string(cohort, "cohortId"),
+                    evaluable = Json.bool(cohort, "evaluable"),
+                    open = Json.bool(cohort, "open"),
+                    slotsAvailable = Json.bool(cohort, "slotsAvailable"),
+                    blacklist = Json.bool(cohort, "blacklist"),
+                    description = Json.string(cohort, "description")
+                )
             }
 
             private fun toEligibility(eligibilityFunctionArray: JsonArray): List<Eligibility> {
-                val eligibility: MutableList<Eligibility> = Lists.newArrayList()
-                for (element: JsonElement in eligibilityFunctionArray) {
-                    val obj: JsonObject = element.getAsJsonObject()
-                    eligibility.add(
-                        ImmutableEligibility.builder()
-                            .references(toReferences(Json.array(obj, "references")))
-                            .function(toEligibilityFunction(Json.`object`(obj, "function")))
-                            .build()
+                return eligibilityFunctionArray.map { element ->
+                    val obj: JsonObject = element.asJsonObject
+                    Eligibility(
+                        references = toReferences(Json.array(obj, "references")),
+                        function = toEligibilityFunction(Json.`object`(obj, "function"))
                     )
                 }
-                return eligibility
             }
 
             private fun toReferences(referenceArray: JsonArray): Set<CriterionReference> {
-                val references: MutableSet<CriterionReference> = Sets.newTreeSet<CriterionReference>(CriterionReferenceComparator())
-                for (element: JsonElement in referenceArray) {
-                    val obj: JsonObject = element.getAsJsonObject()
-                    references.add(
-                        ImmutableCriterionReference.builder()
-                            .id(Json.string(obj, "id"))
-                            .text(fromJsonReferenceText(Json.string(obj, "text")))
-                            .build()
+                return referenceArray.map { element ->
+                    val obj: JsonObject = element.asJsonObject
+                    CriterionReference(
+                        id = Json.string(obj, "id"),
+                        text = fromJsonReferenceText(Json.string(obj, "text"))
                     )
-                }
-                return references
+                }.toSortedSet(CriterionReferenceComparator())
             }
 
             private fun toEligibilityFunction(function: JsonObject): EligibilityFunction {
-                return ImmutableEligibilityFunction.builder()
-                    .rule(EligibilityRule.valueOf(Json.string(function, "rule")))
-                    .parameters(toParameters(Json.array(function, "parameters")))
-                    .build()
+                return EligibilityFunction(
+                    rule = EligibilityRule.valueOf(Json.string(function, "rule")),
+                    parameters = toParameters(Json.array(function, "parameters"))
+                )
             }
 
             private fun toParameters(parameterArray: JsonArray): List<Any> {
-                val parameters: MutableList<Any> = Lists.newArrayList()
-                for (element: JsonElement in parameterArray) {
-                    if (element.isJsonObject()) {
-                        parameters.add(toEligibilityFunction(element.getAsJsonObject()))
-                    } else if (element.isJsonPrimitive()) {
-                        parameters.add(element.getAsJsonPrimitive().getAsString())
-                    }
+                return parameterArray.mapNotNull { element ->
+                    if (element.isJsonObject) {
+                        toEligibilityFunction(element.asJsonObject)
+                    } else if (element.isJsonPrimitive) {
+                        element.asJsonPrimitive.asString
+                    } else null
                 }
-                return parameters
             }
         }
     }
