@@ -90,7 +90,7 @@ class HasRecentlyReceivedRadiotherapyTest {
                 .clinical(
                     ImmutableClinicalRecord.builder()
                         .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                        .treatmentHistory(treatmentHistory)
+                        .oncologicalHistory(treatmentHistory)
                         .build()
                 )
                 .build()

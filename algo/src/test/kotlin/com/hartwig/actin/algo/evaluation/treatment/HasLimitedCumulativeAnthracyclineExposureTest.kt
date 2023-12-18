@@ -93,7 +93,7 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
                     ImmutableClinicalRecord.builder()
                         .from(base.clinical())
                         .tumor(ImmutableTumorDetails.builder().from(base.clinical().tumor()).doids(tumorDoids).build())
-                        .treatmentHistory(treatmentHistory)
+                        .oncologicalHistory(treatmentHistory)
                         .priorSecondPrimaries(priorSecondPrimaries)
                         .build()
                 )

@@ -10,6 +10,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRadiotherapy
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryDetails
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentStage
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
@@ -24,26 +25,36 @@ class TreatmentHistoryEntryConfigFactory(
 
     private val gson = GsonSerializer.create()
 
-    override fun create(fields: Map<String, Int>, parts: Array<String>): TreatmentHistoryEntryConfig {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<TreatmentHistoryEntryConfig> {
         val treatmentName = fields["treatmentName"]?.let { ResourceFile.optionalString(parts[it]) } ?: ""
         val ignore: Boolean = CurationUtil.isIgnoreString(treatmentName)
-        val treatmentHistoryEntry = if (ignore) null else curateObject(fields, parts.toList(), treatmentName)
+        val (treatmentHistoryEntry, validationErrors) = if (ignore) null to emptyList() else curateObject(
+            fields,
+            parts.toList(),
+            treatmentName
+        )
 
-        return TreatmentHistoryEntryConfig(
-            input = parts[fields["input"]!!],
-            ignore = ignore,
-            curated = treatmentHistoryEntry
+        return ValidatedCurationConfig(
+            TreatmentHistoryEntryConfig(
+                input = parts[fields["input"]!!],
+                ignore = ignore,
+                curated = treatmentHistoryEntry
+            ), validationErrors
         )
     }
 
-    private fun curateObject(fields: Map<String, Int>, parts: List<String>, treatmentName: String): TreatmentHistoryEntry {
+    private fun curateObject(
+        fields: Map<String, Int>,
+        parts: List<String>,
+        treatmentName: String
+    ): Pair<TreatmentHistoryEntry?, List<CurationConfigValidationError>> {
         val isTrial = optionalObjectFromColumn(parts, fields, "isTrial", ResourceFile::optionalBool) ?: false
 
         val treatments = if (treatmentName.isEmpty() && isTrial) emptyList() else {
             val treatmentsByName = CurationUtil.toSet(treatmentName).associateWith(treatmentDatabase::findTreatmentByName)
             val unknownTreatmentNames = treatmentsByName.filterValues(Objects::isNull).keys
             if (unknownTreatmentNames.isNotEmpty()) {
-                throw missingTreatmentException(unknownTreatmentNames)
+                return null to listOf(missingTreatmentException(unknownTreatmentNames))
             }
             treatmentsByName.values
         }
@@ -62,6 +73,16 @@ class TreatmentHistoryEntryConfigFactory(
         val bodyLocationCategories = entriesFromColumn(parts, fields, "bodyLocationCategories")
             ?.map { stringToEnum(it, BodyLocationCategory::valueOf) }
 
+        val intents = entriesFromColumn(parts, fields, "intents")?.map { stringToEnum(it, Intent::valueOf) }
+
+        val (maintenanceTreatmentStage, maintenanceValidationErrors) = treatmentStage(
+            parts, fields, "maintenanceTreatment", "maintenanceTreatmentStartYear", "maintenanceTreatmentStartMonth", null
+        )
+
+        val (switchToTreatments, switchToValidationErrors) = treatmentStage(
+            parts, fields, "switchToTreatment", "switchToTreatmentStartYear", "switchToTreatmentStartMonth", "switchToTreatmentCycles"
+        )
+
         val treatmentHistoryDetails = ImmutableTreatmentHistoryDetails.builder()
             .stopYear(optionalIntegerFromColumn(parts, fields, "stopYear"))
             .stopMonth(optionalIntegerFromColumn(parts, fields, "stopMonth"))
@@ -72,9 +93,9 @@ class TreatmentHistoryEntryConfigFactory(
             .toxicities(toxicities)
             .bodyLocationCategories(bodyLocationCategories)
             .bodyLocations(entriesFromColumn(parts, fields, "bodyLocations"))
+            .maintenanceTreatment(maintenanceTreatmentStage)
+            .switchToTreatments(switchToTreatments?.let { setOf(it) })
             .build()
-
-        val intents = entriesFromColumn(parts, fields, "intents")?.map { stringToEnum(it, Intent::valueOf) }
 
         return ImmutableTreatmentHistoryEntry.builder()
             .treatments(treatments)
@@ -84,8 +105,26 @@ class TreatmentHistoryEntryConfigFactory(
             .isTrial(isTrial)
             .trialAcronym(optionalStringFromColumn(parts, fields, "trialAcronym"))
             .treatmentHistoryDetails(treatmentHistoryDetails)
-            .build()
+            .build() to switchToValidationErrors + maintenanceValidationErrors
     }
+
+    private fun treatmentStage(
+        parts: List<String>,
+        fields: Map<String, Int>,
+        nameField: String,
+        startYearField: String,
+        startMonthField: String,
+        cycleField: String?
+    ) = optionalStringFromColumn(parts, fields, nameField)?.let { name ->
+        val treatment = treatmentDatabase.findTreatmentByName(name) ?: return null to listOf(missingTreatmentException(setOf(name)))
+
+        ImmutableTreatmentStage.builder()
+            .treatment(treatment)
+            .startYear(optionalIntegerFromColumn(parts, fields, startYearField))
+            .startMonth(optionalIntegerFromColumn(parts, fields, startMonthField))
+            .cycles(cycleField?.let { optionalIntegerFromColumn(parts, fields, it) })
+            .build() to emptyList<CurationConfigValidationError>()
+    } ?: (null to emptyList())
 
     private fun optionalIntegerFromColumn(parts: List<String>, fields: Map<String, Int>, colName: String): Int? {
         return optionalObjectFromColumn(parts, fields, colName, ResourceFile::optionalInteger)
@@ -112,8 +151,8 @@ class TreatmentHistoryEntryConfigFactory(
         return enumCreator(input.uppercase().replace(" ", "_"))
     }
 
-    private fun missingTreatmentException(treatments: Set<String>): IllegalStateException {
-        return IllegalStateException(treatments.map { it.replace(" ", "_").uppercase() }.joinToString(",") {
+    private fun missingTreatmentException(treatments: Set<String>): CurationConfigValidationError {
+        return CurationConfigValidationError(treatments.map { it.replace(" ", "_").uppercase() }.joinToString(",") {
             "Treatment with name $it does not exist in database. Please add with one of the following templates: " + listOf(
                 ImmutableDrugTreatment.builder().name(it).synonyms(emptySet()).isSystemic(false).drugs(emptySet())
                     .build(),

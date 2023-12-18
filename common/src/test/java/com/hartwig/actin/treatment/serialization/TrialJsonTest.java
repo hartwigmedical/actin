@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.util.List;
 
 import com.google.common.io.Resources;
@@ -12,7 +11,7 @@ import com.hartwig.actin.treatment.datamodel.Cohort;
 import com.hartwig.actin.treatment.datamodel.Eligibility;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
-import com.hartwig.actin.treatment.datamodel.TestTreatmentFactory;
+import com.hartwig.actin.treatment.datamodel.TestTrialFactory;
 import com.hartwig.actin.treatment.datamodel.Trial;
 
 import org.jetbrains.annotations.NotNull;
@@ -24,19 +23,19 @@ public class TrialJsonTest {
 
     @Test
     public void canConvertBackAndForthJson() {
-        Trial minimal = TestTreatmentFactory.createMinimalTestTrial();
+        Trial minimal = TestTrialFactory.createMinimalTestTrial();
         Trial convertedMinimal = TrialJson.fromJson(TrialJson.toJson(minimal));
 
         assertEquals(minimal, convertedMinimal);
 
-        Trial proper = TestTreatmentFactory.createProperTestTrial();
+        Trial proper = TestTrialFactory.createProperTestTrial();
         Trial convertedProper = TrialJson.fromJson(TrialJson.toJson(proper));
 
         assertEquals(proper, convertedProper);
     }
 
     @Test
-    public void canReadTreatmentDirectory() throws IOException {
+    public void canReadTreatmentDirectory() {
         List<Trial> trials = TrialJson.readFromDir(TREATMENT_DIRECTORY);
         assertEquals(1, trials.size());
 
@@ -44,7 +43,7 @@ public class TrialJsonTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void cannotReadFilesFromNonDir() throws IOException {
+    public void cannotReadFilesFromNonDir() {
         TrialJson.readFromDir(TREATMENT_DIRECTORY + "/file.json");
     }
 

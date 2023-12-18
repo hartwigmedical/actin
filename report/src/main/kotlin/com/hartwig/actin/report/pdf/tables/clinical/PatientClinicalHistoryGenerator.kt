@@ -52,11 +52,11 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
     }
 
     private fun relevantSystemicPreTreatmentHistoryTable(record: ClinicalRecord): Table {
-        return treatmentHistoryTable(record.treatmentHistory(), true)
+        return treatmentHistoryTable(record.oncologicalHistory(), true)
     }
 
     private fun relevantNonSystemicPreTreatmentHistoryTable(record: ClinicalRecord): Table {
-        return treatmentHistoryTable(record.treatmentHistory(), false)
+        return treatmentHistoryTable(record.oncologicalHistory(), false)
     }
 
     private fun treatmentHistoryTable(treatmentHistory: List<TreatmentHistoryEntry>, requireSystemic: Boolean): Table {
@@ -72,7 +72,7 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
     }
 
     private fun treatmentHistoryEntryIsSystemic(treatmentHistoryEntry: TreatmentHistoryEntry): Boolean {
-        return treatmentHistoryEntry.treatments().any { it.isSystemic }
+        return treatmentHistoryEntry.allTreatments().any { it.isSystemic }
     }
 
     private fun secondPrimaryHistoryTable(record: ClinicalRecord): Table {
@@ -138,7 +138,17 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
 
             val annotation = listOfNotNull(intentString, cyclesString, stopReasonString).joinToString(", ")
 
-            val treatmentWithAnnotation = treatmentHistoryEntry.treatmentDisplay() + if (annotation.isEmpty()) "" else " ($annotation)"
+            val treatmentWithAnnotation = listOfNotNull(
+                treatmentHistoryEntry.treatmentDisplay() + if (annotation.isEmpty()) "" else " ($annotation)",
+                treatmentHistoryEntry.treatmentHistoryDetails()?.switchToTreatments()?.let { switchToTreatments ->
+                    "with switch to " + switchToTreatments.joinToString(" then ") {
+                        it.treatment().display() + it.cycles()?.let { cycles -> " (${cycles} cycles)" }
+                    }
+                },
+                treatmentHistoryEntry.treatmentHistoryDetails()?.maintenanceTreatment()?.let { maintenanceTreatment ->
+                    "continued with ${maintenanceTreatment.treatment().display()} maintenance"
+                }
+            ).joinToString(" ")
 
             return if (treatmentHistoryEntry.isTrial) {
                 val acronym = if (treatmentHistoryEntry.trialAcronym().isNullOrEmpty()) "" else "(${treatmentHistoryEntry.trialAcronym()})"

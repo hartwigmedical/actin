@@ -3,8 +3,8 @@ package com.hartwig.actin.clinical
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
 import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
-import com.hartwig.actin.clinical.curation.CurationDatabaseReader
-import com.hartwig.actin.clinical.curation.CurationValidator
+import com.hartwig.actin.clinical.curation.CurationDatabaseContext
+import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.feed.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.FeedModel
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
@@ -31,10 +31,6 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
 
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
 
-        LOGGER.info("Creating clinical curation database from directory {}", config.curationDirectory)
-        val curationReader = CurationDatabaseReader(CurationValidator(DoidModelFactory.createFromDoidEntry(doidEntry)), treatmentDatabase)
-        val curation = curationReader.read(config.curationDirectory)
-
         LOGGER.info("Creating ATC model from file {}", config.atcTsv)
         val atcModel = WhoAtcModel.createFromFile(config.atcTsv)
 
@@ -48,22 +44,38 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
             )
         )
 
-        val results = ClinicalIngestion(feedModel, curation, atcModel).run()
-        val outputDirectory = config.outputDirectory
-        LOGGER.info("Writing {} clinical records to {}", results.size, outputDirectory)
-        ClinicalRecordJson.write(results.map { it.clinicalRecord }, outputDirectory)
+        LOGGER.info("Creating clinical curation database from directory {}", config.curationDirectory)
+        val curationDoidValidator = CurationDoidValidator(DoidModelFactory.createFromDoidEntry(doidEntry))
+        val outputDirectory: String = config.outputDirectory
+        val curationDatabaseContext = CurationDatabaseContext.create(config.curationDirectory, curationDoidValidator, treatmentDatabase)
+        val validationErrors = curationDatabaseContext.validate()
+        if (validationErrors.isNotEmpty()) {
+            LOGGER.warn("Curation input had validation errors:")
+            for (validationError in validationErrors) {
+                LOGGER.warn(" ${validationError.message}")
+            }
+            LOGGER.warn("Please correct all errors before running the ingestion again. Exiting 1")
+            writeIngestionResults(outputDirectory, IngestionResult(validationErrors))
+            exitProcess(1)
+        }
+
+        val clinicalIngestion =
+            ClinicalIngestion.create(
+                feedModel,
+                curationDatabaseContext,
+                atcModel
+            )
+
+        val ingestionResult = clinicalIngestion.run()
+        LOGGER.info("Writing {} clinical records to {}", ingestionResult.patientResults.size, outputDirectory)
+        ClinicalRecordJson.write(ingestionResult.patientResults.map { it.clinicalRecord }, outputDirectory)
         LOGGER.info("Done!")
 
-        val resultsJson = Paths.get(outputDirectory).resolve("results.json")
-        LOGGER.info("Writing {} ingestion results to {}", results.size, resultsJson)
-        Files.write(
-            resultsJson,
-            GsonSerializer.create().toJson(results).toByteArray()
-        )
+        writeIngestionResults(outputDirectory, ingestionResult)
 
-        if (results.any { it.curationResults.isNotEmpty() }) {
+        if (ingestionResult.patientResults.any { it.curationResults.isNotEmpty() }) {
             LOGGER.warn("Summary of warnings:")
-            results.forEach {
+            ingestionResult.patientResults.forEach {
                 if (it.curationResults.isNotEmpty()) {
                     LOGGER.warn("Curation warnings for patient ${it.patientId}")
                     it.curationResults.flatMap { result -> result.requirements }.forEach { requirement ->
@@ -73,6 +85,16 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
             }
             LOGGER.warn("Summary complete.")
         }
+
+    }
+
+    private fun writeIngestionResults(outputDirectory: String, results: IngestionResult) {
+        val resultsJson = Paths.get(outputDirectory).resolve("clinical_ingestion_results.json")
+        LOGGER.info("Writing {} ingestion results to {}", results.patientResults.size, resultsJson)
+        Files.write(
+            resultsJson,
+            GsonSerializer.create().toJson(results).toByteArray()
+        )
     }
 
     companion object {

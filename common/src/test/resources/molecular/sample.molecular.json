@@ -29,6 +29,7 @@
     },
     "isMicrosatelliteUnstable": false,
     "microsatelliteEvidence": null,
+    "homologousRepairScore": 0.85,
     "isHomologousRepairDeficient": true,
     "homologousRepairEvidence": {
       "approvedTreatments": [],

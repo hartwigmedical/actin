@@ -14,8 +14,8 @@ class HasHadTreatmentWithDrug(private val drugs: Set<Drug>) : EvaluationFunction
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val namesToMatch = drugs.map { it.name().lowercase() }.toSet()
-        val matchingDrugs = record.clinical().treatmentHistory()
-            .flatMap(TreatmentHistoryEntry::treatments)
+        val matchingDrugs = record.clinical().oncologicalHistory()
+            .flatMap(TreatmentHistoryEntry::allTreatments)
             .flatMap { (it as? DrugTreatment)?.drugs() ?: emptyList() }
             .filter { it.name().lowercase() in namesToMatch }
 
@@ -25,8 +25,8 @@ class HasHadTreatmentWithDrug(private val drugs: Set<Drug>) : EvaluationFunction
                 EvaluationFactory.pass("Has received treatments with ${concatItemsWithAnd(matchingDrugs)}")
             }
 
-            record.clinical().treatmentHistory().any {
-                it.isTrial && it.treatments().any { treatment ->
+            record.clinical().oncologicalHistory().any {
+                it.isTrial && it.allTreatments().any { treatment ->
                     (treatment as? DrugTreatment)?.drugs()?.isEmpty() ?: treatment.categories().isEmpty()
                 }
             } -> {

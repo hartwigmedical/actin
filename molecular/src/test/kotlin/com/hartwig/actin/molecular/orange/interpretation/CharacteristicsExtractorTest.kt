@@ -44,6 +44,9 @@ class CharacteristicsExtractorTest {
 
         assertEquals(false, characteristics.isMicrosatelliteUnstable())
         assertNotNull(characteristics.microsatelliteEvidence())
+        val hrScore = characteristics.homologousRepairScore()
+        assertNotNull(hrScore)
+        assertEquals(0.45, hrScore!!, EPSILON)
         assertEquals(false, characteristics.isHomologousRepairDeficient())
         assertNotNull(characteristics.homologousRepairEvidence())
 

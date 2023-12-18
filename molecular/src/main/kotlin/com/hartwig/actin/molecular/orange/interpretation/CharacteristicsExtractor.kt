@@ -22,6 +22,7 @@ internal class CharacteristicsExtractor(private val evidenceDatabase: EvidenceDa
         }
         val purple = record.purple()
         val isMicrosatelliteUnstable = isMSI(purple.characteristics().microsatelliteStatus())
+        val homologousRepairScore = record.chord()?.hrdValue()
         val isHomologousRepairDeficient = record.chord()?.let { isHRD(it.hrStatus()) }
         val hasHighTumorMutationalBurden = hasHighStatus(purple.characteristics().tumorMutationalBurdenStatus())
         val hasHighTumorMutationalLoad = hasHighStatus(purple.characteristics().tumorMutationalLoadStatus())
@@ -38,6 +39,7 @@ internal class CharacteristicsExtractor(private val evidenceDatabase: EvidenceDa
                     )
                 )
             )
+            .homologousRepairScore(homologousRepairScore)
             .isHomologousRepairDeficient(isHomologousRepairDeficient)
             .homologousRepairEvidence(
                 ActionableEvidenceFactory.create(

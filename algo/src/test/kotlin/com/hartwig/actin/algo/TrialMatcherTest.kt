@@ -14,7 +14,7 @@ import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.treatment.datamodel.Eligibility
 import com.hartwig.actin.treatment.datamodel.EligibilityRule
-import com.hartwig.actin.treatment.datamodel.TestTreatmentFactory
+import com.hartwig.actin.treatment.datamodel.TestTrialFactory
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -23,9 +23,9 @@ import org.junit.Test
 class TrialMatcherTest {
 
     @Test
-    fun canMatchTrialsOnProperTestData() {
+    fun `Should match trials on proper test data`() {
         val patient = TestDataFactory.createProperTestPatientRecord()
-        val trial = TestTreatmentFactory.createProperTestTrial()
+        val trial = TestTrialFactory.createProperTestTrial()
         val matcher = TrialMatcher(createTestEvaluationFunctionFactory())
         val matches = matcher.determineEligibility(patient, listOf(trial))
         assertEquals(1, matches.size.toLong())
@@ -33,7 +33,7 @@ class TrialMatcherTest {
     }
 
     @Test
-    fun canDeterminePotentialEligibility() {
+    fun `Should determine potential eligibility`() {
         val evaluations: MutableList<Evaluation> = mutableListOf()
         evaluations.add(EvaluationTestFactory.withResult(EvaluationResult.PASS))
         assertTrue(TrialMatcher.isPotentiallyEligible(evaluations))
