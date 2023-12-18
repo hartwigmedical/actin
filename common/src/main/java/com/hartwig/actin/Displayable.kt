@@ -1,5 +1,5 @@
 package com.hartwig.actin
 
-open interface Displayable {
+interface Displayable {
     fun display(): String
 }

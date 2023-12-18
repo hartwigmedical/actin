@@ -1,54 +1,50 @@
-package com.hartwig.actin;
+package com.hartwig.actin
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
 
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails;
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory;
-import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord;
-import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory;
-
-import org.junit.Test;
-
-public class PatientRecordFactoryTest {
-
-    @Test
-    public void canCreatePatientRecordFromTestRecords() {
-        assertNotNull(PatientRecordFactory.fromInputs(TestClinicalFactory.createMinimalTestClinicalRecord(),
-                TestMolecularFactory.createMinimalTestMolecularRecord()));
-
-        assertNotNull(PatientRecordFactory.fromInputs(TestClinicalFactory.createProperTestClinicalRecord(),
-                TestMolecularFactory.createProperTestMolecularRecord()));
+class PatientRecordFactoryTest {
+    @org.junit.Test
+    fun canCreatePatientRecordFromTestRecords() {
+        org.junit.Assert.assertNotNull(
+            PatientRecordFactory.fromInputs(
+                TestClinicalFactory.createMinimalTestClinicalRecord(),
+                TestMolecularFactory.createMinimalTestMolecularRecord()
+            )
+        )
+        org.junit.Assert.assertNotNull(
+            PatientRecordFactory.fromInputs(
+                TestClinicalFactory.createProperTestClinicalRecord(),
+                TestMolecularFactory.createProperTestMolecularRecord()
+            )
+        )
     }
 
-    @Test
-    public void doNotCrashOnMissingTumorDoids() {
-        ClinicalRecord base = TestClinicalFactory.createMinimalTestClinicalRecord();
-
-        ClinicalRecord noTumorDoid = ImmutableClinicalRecord.builder()
-                .from(base)
-                .tumor(ImmutableTumorDetails.builder().from(base.tumor()).doids(null).build())
-                .build();
-
-        assertNotNull(PatientRecordFactory.fromInputs(noTumorDoid, TestMolecularFactory.createMinimalTestMolecularRecord()));
+    @org.junit.Test
+    fun doNotCrashOnMissingTumorDoids() {
+        val base: ClinicalRecord = TestClinicalFactory.createMinimalTestClinicalRecord()
+        val noTumorDoid: ClinicalRecord = ImmutableClinicalRecord.builder()
+            .from(base)
+            .tumor(ImmutableTumorDetails.builder().from(base.tumor()).doids(null).build())
+            .build()
+        org.junit.Assert.assertNotNull(
+            PatientRecordFactory.fromInputs(
+                noTumorDoid,
+                TestMolecularFactory.createMinimalTestMolecularRecord()
+            )
+        )
     }
 
-    @Test
-    public void clinicalPatientBeatsMolecularPatient() {
-        ClinicalRecord clinical = ImmutableClinicalRecord.builder()
-                .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                .patientId("clinical")
-                .build();
-
-        MolecularRecord molecular = ImmutableMolecularRecord.builder()
-                .from(TestMolecularFactory.createMinimalTestMolecularRecord())
-                .patientId("molecular")
-                .build();
-
-        PatientRecord patient = PatientRecordFactory.fromInputs(clinical, molecular);
-        assertEquals("clinical", patient.patientId());
+    @org.junit.Test
+    fun clinicalPatientBeatsMolecularPatient() {
+        val clinical: ClinicalRecord = ImmutableClinicalRecord.builder()
+            .from(TestClinicalFactory.createMinimalTestClinicalRecord())
+            .patientId("clinical")
+            .build()
+        val molecular: com.hartwig.actin.molecular.datamodel.MolecularRecord = ImmutableMolecularRecord.builder()
+            .from(TestMolecularFactory.createMinimalTestMolecularRecord())
+            .patientId("molecular")
+            .build()
+        val patient = PatientRecordFactory.fromInputs(clinical, molecular)
+        assertEquals("clinical", patient.patientId())
     }
 }

@@ -10,13 +10,13 @@ object PatientRecordFactory {
 
     @JvmStatic
     fun fromInputs(clinical: ClinicalRecord, molecular: MolecularRecord): PatientRecord {
-        if (!(clinical.patientId() == molecular.patientId())) {
+        if (clinical.patientId() != molecular.patientId()) {
             LOGGER.warn(
                 "Clinical patientId '{}' not the same as molecular patientId '{}'! Using clinical patientId",
                 clinical.patientId(),
                 molecular.patientId()
             )
         }
-        return ImmutablePatientRecord.builder().patientId(clinical.patientId()).clinical(clinical).molecular(molecular).build()
+        return PatientRecord(patientId = clinical.patientId(), clinical = clinical, molecular = molecular)
     }
 }

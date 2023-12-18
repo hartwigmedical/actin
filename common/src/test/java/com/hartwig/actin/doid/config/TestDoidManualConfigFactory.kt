@@ -1,29 +1,23 @@
-package com.hartwig.actin.doid.config;
+package com.hartwig.actin.doid.config
 
-import org.jetbrains.annotations.NotNull;
-
-public final class TestDoidManualConfigFactory {
-
-    private TestDoidManualConfigFactory() {
+object TestDoidManualConfigFactory {
+    @JvmStatic
+    fun createMinimalTestDoidManualConfig(): DoidManualConfig {
+        return ImmutableDoidManualConfig.builder().build()
     }
 
-    @NotNull
-    public static DoidManualConfig createMinimalTestDoidManualConfig() {
-        return ImmutableDoidManualConfig.builder().build();
+    @JvmStatic
+    fun createWithOneMainCancerDoid(mainCancerDoid: String): DoidManualConfig {
+        return ImmutableDoidManualConfig.builder().addMainCancerDoids(mainCancerDoid).build()
     }
 
-    @NotNull
-    public static DoidManualConfig createWithOneMainCancerDoid(@NotNull String mainCancerDoid) {
-        return ImmutableDoidManualConfig.builder().addMainCancerDoids(mainCancerDoid).build();
+    @JvmStatic
+    fun createWithOneAdenoSquamousMapping(mapping: AdenoSquamousMapping): DoidManualConfig {
+        return ImmutableDoidManualConfig.builder().addAdenoSquamousMappings(mapping).build()
     }
 
-    @NotNull
-    public static DoidManualConfig createWithOneAdenoSquamousMapping(@NotNull AdenoSquamousMapping mapping) {
-        return ImmutableDoidManualConfig.builder().addAdenoSquamousMappings(mapping).build();
-    }
-
-    @NotNull
-    public static DoidManualConfig createWithOneAdditionalDoid(@NotNull String baseDoid, @NotNull String expandedDoid) {
-        return ImmutableDoidManualConfig.builder().putAdditionalDoidsPerDoid(baseDoid, expandedDoid).build();
+    @JvmStatic
+    fun createWithOneAdditionalDoid(baseDoid: String, expandedDoid: String): DoidManualConfig {
+        return ImmutableDoidManualConfig.builder().putAdditionalDoidsPerDoid(baseDoid, expandedDoid).build()
     }
 }

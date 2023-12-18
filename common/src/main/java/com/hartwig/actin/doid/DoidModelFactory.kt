@@ -1,62 +1,49 @@
-package com.hartwig.actin.doid;
+package com.hartwig.actin.doid
 
-import java.util.Collection;
-import java.util.Map;
+import com.google.common.collect.ArrayListMultimap
+import com.google.common.collect.Maps
+import com.google.common.collect.Multimap
+import com.hartwig.actin.doid.config.DoidManualConfigFactory
+import com.hartwig.actin.doid.datamodel.DoidEntry
+import org.apache.logging.log4j.LogManager
+import java.util.*
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.hartwig.actin.doid.config.DoidManualConfigFactory;
-import com.hartwig.actin.doid.datamodel.DoidEntry;
-import com.hartwig.actin.doid.datamodel.Edge;
-import com.hartwig.actin.doid.datamodel.Node;
+object DoidModelFactory {
+    private val LOGGER = LogManager.getLogger(DoidModelFactory::class.java)
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
-
-public final class DoidModelFactory {
-
-    private static final Logger LOGGER = LogManager.getLogger(DoidModelFactory.class);
-
-    private DoidModelFactory() {
-    }
-
-    @NotNull
-    public static DoidModel createFromDoidEntry(@NotNull DoidEntry doidEntry) {
-        Multimap<String, String> childToParentsMap = ArrayListMultimap.create();
-        for (Edge edge : doidEntry.edges()) {
-            if (edge.predicate().equals("is_a")) {
-                String child = edge.subjectDoid();
-                String parent = edge.objectDoid();
-
+    @JvmStatic
+    fun createFromDoidEntry(doidEntry: DoidEntry): DoidModel {
+        val childToParentsMap: Multimap<String, String> = ArrayListMultimap.create()
+        for (edge in doidEntry.edges()) {
+            if (edge!!.predicate() == "is_a") {
+                val child = edge.subjectDoid()
+                val parent = edge.objectDoid()
                 if (childToParentsMap.containsKey(child)) {
-                    Collection<String> parents = childToParentsMap.get(child);
+                    val parents = childToParentsMap[child]
                     if (!parents.contains(parent)) {
-                        parents.add(parent);
+                        parents.add(parent)
                     }
                 } else {
-                    childToParentsMap.put(child, parent);
+                    childToParentsMap.put(child, parent)
                 }
             }
         }
 
         // Assume both doid and term are unique.
-        Map<String, String> termPerDoidMap = Maps.newHashMap();
-        Map<String, String> doidPerLowerCaseTermMap = Maps.newHashMap();
-        for (Node node : doidEntry.nodes()) {
-            String term = node.term();
+        val termPerDoidMap: MutableMap<String, String> = Maps.newHashMap()
+        val doidPerLowerCaseTermMap: MutableMap<String, String> = Maps.newHashMap()
+        for (node in doidEntry.nodes()) {
+            val term = node!!.term()
             if (term != null) {
-                termPerDoidMap.put(node.doid(), term);
-                String lowerCaseTerm = term.toLowerCase();
+                termPerDoidMap[node.doid()] = term
+                val lowerCaseTerm = term.lowercase(Locale.getDefault())
                 if (doidPerLowerCaseTermMap.containsKey(lowerCaseTerm)) {
-                    LOGGER.warn("DOID term (in lower-case) is not unique: '{}'", term);
+                    LOGGER.warn("DOID term (in lower-case) is not unique: '{}'", term)
                 } else {
-                    doidPerLowerCaseTermMap.put(lowerCaseTerm, node.doid());
+                    doidPerLowerCaseTermMap[lowerCaseTerm] = node.doid()
                 }
             }
         }
-
-        return new DoidModel(childToParentsMap, termPerDoidMap, doidPerLowerCaseTermMap, DoidManualConfigFactory.create());
+        return DoidModel(childToParentsMap, termPerDoidMap, doidPerLowerCaseTermMap, DoidManualConfigFactory.create())
     }
 }

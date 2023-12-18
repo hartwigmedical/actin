@@ -1,4 +1,4 @@
-package com.hartwig.actin.doid.config
+package com.hartwig.actin.doid.datamodel
 
 import org.immutables.value.Value
 import org.jetbrains.annotations.NotNull
@@ -6,8 +6,7 @@ import org.jetbrains.annotations.Nullable
 
 @Value.Immutable
 @Value.Style(passAnnotations = [NotNull::class, Nullable::class])
-abstract class AdenoSquamousMapping {
-    abstract fun adenoSquamousDoid(): String
-    abstract fun squamousDoid(): String
-    abstract fun adenoDoid(): String
+abstract class Restriction {
+    abstract fun propertyId(): String
+    abstract fun fillerId(): String
 }

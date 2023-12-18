@@ -1,66 +1,63 @@
-package com.hartwig.actin;
+package com.hartwig.actin
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
+import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-
-import com.google.common.io.Resources;
-import com.hartwig.actin.clinical.datamodel.treatment.Drug;
-import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment;
-import com.hartwig.actin.clinical.datamodel.treatment.DrugType;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug;
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment;
-import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
-
-import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
-
-public class TreatmentDatabaseTest {
-
-    @Test
-    public void shouldFindExistingTreatmentByName() throws IOException {
-        assertThat(treatmentDatabase().findTreatmentByName("nonexistent")).isNull();
-
-        Treatment treatment = treatmentDatabase().findTreatmentByName("Capecitabine+Oxaliplatin");
-        assertThat(treatment).isNotNull();
-        assertThat(treatment.categories()).containsExactly(TreatmentCategory.CHEMOTHERAPY);
-        assertThat(treatment.isSystemic()).isTrue();
-        assertThat(((DrugTreatment) treatment).drugs()).extracting(Drug::name, Drug::drugTypes)
-                .containsExactlyInAnyOrder(tuple("CAPECITABINE", Set.of(DrugType.ANTIMETABOLITE)),
-                        tuple("OXALIPLATIN", Set.of(DrugType.PLATINUM_COMPOUND)));
+class TreatmentDatabaseTest {
+    @org.junit.Test
+    @Throws(java.io.IOException::class)
+    fun shouldFindExistingTreatmentByName() {
+        org.assertj.core.api.Assertions.assertThat(treatmentDatabase().findTreatmentByName("nonexistent")).isNull()
+        val treatment = treatmentDatabase().findTreatmentByName("Capecitabine+Oxaliplatin")
+        org.assertj.core.api.Assertions.assertThat(treatment).isNotNull()
+        org.assertj.core.api.Assertions.assertThat<TreatmentCategory>(treatment!!.categories())
+            .containsExactly(TreatmentCategory.CHEMOTHERAPY)
+        org.assertj.core.api.Assertions.assertThat(treatment!!.isSystemic()).isTrue()
+        org.assertj.core.api.Assertions.assertThat<Drug>((treatment as DrugTreatment?).drugs())
+            .extracting(java.util.function.Function<Drug, Any> { obj: Drug -> obj.name() },
+                java.util.function.Function<Drug, Any> { obj: Drug -> obj.drugTypes() })
+            .containsExactlyInAnyOrder(
+                org.assertj.core.api.Assertions.tuple("CAPECITABINE", java.util.Set.of<DrugType>(DrugType.ANTIMETABOLITE)),
+                org.assertj.core.api.Assertions.tuple("OXALIPLATIN", java.util.Set.of<DrugType>(DrugType.PLATINUM_COMPOUND))
+            )
     }
 
-    @Test
-    public void shouldEquateSpacesAndUnderscoresInTreatmentLookups() {
-        Treatment treatment = ImmutableOtherTreatment.builder().isSystemic(false).name("MULTIWORD_NAME").build();
-        TreatmentDatabase treatmentDatabase =
-                new TreatmentDatabase(Collections.emptyMap(), Map.of(treatment.name().toLowerCase(), treatment));
-        assertThat(treatmentDatabase.findTreatmentByName("Multiword name")).isEqualTo(treatment);
+    @org.junit.Test
+    fun shouldEquateSpacesAndUnderscoresInTreatmentLookups() {
+        val treatment: com.hartwig.actin.clinical.datamodel.treatment.Treatment =
+            ImmutableOtherTreatment.builder().isSystemic(false).name("MULTIWORD_NAME").build()
+        val treatmentDatabase = TreatmentDatabase(
+            emptyMap<String, Drug>(),
+            java.util.Map.of<String, com.hartwig.actin.clinical.datamodel.treatment.Treatment>(
+                treatment.name().lowercase(Locale.getDefault()), treatment
+            )
+        )
+        org.assertj.core.api.Assertions.assertThat(treatmentDatabase.findTreatmentByName("Multiword name")).isEqualTo(treatment)
     }
 
-    @Test
-    public void shouldFindExistingDrugByName() throws IOException {
-        assertThat(treatmentDatabase().findDrugByName("nonexistent")).isNull();
-        Drug drug = treatmentDatabase().findDrugByName("Capecitabine");
-        assertThat(drug).isNotNull();
-        assertThat(drug.name()).isEqualTo("CAPECITABINE");
-        assertThat(drug.drugTypes()).containsExactly(DrugType.ANTIMETABOLITE);
+    @org.junit.Test
+    @Throws(java.io.IOException::class)
+    fun shouldFindExistingDrugByName() {
+        org.assertj.core.api.Assertions.assertThat<Drug>(treatmentDatabase().findDrugByName("nonexistent")).isNull()
+        val drug: Drug? = treatmentDatabase().findDrugByName("Capecitabine")
+        org.assertj.core.api.Assertions.assertThat<Drug>(drug).isNotNull()
+        org.assertj.core.api.Assertions.assertThat(drug.name()).isEqualTo("CAPECITABINE")
+        org.assertj.core.api.Assertions.assertThat<DrugType>(drug.drugTypes()).containsExactly(DrugType.ANTIMETABOLITE)
     }
 
-    @Test
-    public void shouldEquateSpacesAndUnderscoresInDrugLookups() {
-        Drug drug = ImmutableDrug.builder().name("MULTIWORD_NAME").category(TreatmentCategory.CHEMOTHERAPY).build();
-        TreatmentDatabase treatmentDatabase = new TreatmentDatabase(Map.of(drug.name().toLowerCase(), drug), Collections.emptyMap());
-        assertThat(treatmentDatabase.findDrugByName("Multiword name")).isEqualTo(drug);
+    @org.junit.Test
+    fun shouldEquateSpacesAndUnderscoresInDrugLookups() {
+        val drug: Drug = ImmutableDrug.builder().name("MULTIWORD_NAME").category(TreatmentCategory.CHEMOTHERAPY).build()
+        val treatmentDatabase = TreatmentDatabase(
+            java.util.Map.of<String, Drug>(drug.name().lowercase(Locale.getDefault()), drug),
+            emptyMap<String, com.hartwig.actin.clinical.datamodel.treatment.Treatment>()
+        )
+        org.assertj.core.api.Assertions.assertThat<Drug>(treatmentDatabase.findDrugByName("Multiword name")).isEqualTo(drug)
     }
 
-    @NotNull
-    private static TreatmentDatabase treatmentDatabase() throws IOException {
-        return TreatmentDatabaseFactory.createFromPath(Resources.getResource("clinical").getPath());
+    companion object {
+        @Throws(java.io.IOException::class)
+        private fun treatmentDatabase(): TreatmentDatabase {
+            return TreatmentDatabaseFactory.createFromPath(com.google.common.io.Resources.getResource("clinical").path)
+        }
     }
 }

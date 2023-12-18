@@ -1,89 +1,83 @@
-package com.hartwig.actin.doid;
+package com.hartwig.actin.doid
 
-import java.util.Map;
+import com.google.common.collect.ArrayListMultimap
+import com.google.common.collect.Maps
+import com.google.common.collect.Multimap
+import com.hartwig.actin.doid.config.DoidManualConfig
+import com.hartwig.actin.doid.config.TestDoidManualConfigFactory.createMinimalTestDoidManualConfig
+import com.hartwig.actin.doid.config.TestDoidManualConfigFactory.createWithOneMainCancerDoid
+import java.util.*
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.hartwig.actin.doid.config.DoidManualConfig;
-import com.hartwig.actin.doid.config.TestDoidManualConfigFactory;
-
-import org.jetbrains.annotations.NotNull;
-
-public final class TestDoidModelFactory {
-
-    private TestDoidModelFactory() {
+object TestDoidModelFactory {
+    fun createMinimalTestDoidModel(): DoidModel {
+        return create(
+            ArrayListMultimap.create(),
+            Maps.newHashMap(),
+            Maps.newHashMap(),
+            createMinimalTestDoidManualConfig()
+        )
     }
 
-    @NotNull
-    public static DoidModel createMinimalTestDoidModel() {
-        return create(ArrayListMultimap.create(),
-                Maps.newHashMap(),
-                Maps.newHashMap(),
-                TestDoidManualConfigFactory.createMinimalTestDoidManualConfig());
+    fun createWithOneParentChild(parent: String, child: String): DoidModel {
+        val childToParentsMap: Multimap<String, String> = ArrayListMultimap.create()
+        childToParentsMap.put(child, parent)
+        return createWithChildToParentsMap(childToParentsMap)
     }
 
-    @NotNull
-    public static DoidModel createWithOneParentChild(@NotNull String parent, @NotNull String child) {
-        Multimap<String, String> childToParentsMap = ArrayListMultimap.create();
-        childToParentsMap.put(child, parent);
-
-        return createWithChildToParentsMap(childToParentsMap);
-    }
-
-    @NotNull
-    public static DoidModel createWithChildToParentMap(@NotNull Map<String, String> childToParentMap) {
-        Multimap<String, String> childToParentsMap = ArrayListMultimap.create();
-        for (Map.Entry<String, String> entry : childToParentMap.entrySet()) {
-            childToParentsMap.put(entry.getKey(), entry.getValue());
+    fun createWithChildToParentMap(childToParentMap: Map<String, String>): DoidModel {
+        val childToParentsMap: Multimap<String, String> = ArrayListMultimap.create()
+        for ((key, value) in childToParentMap) {
+            childToParentsMap.put(key, value)
         }
-        return createWithChildToParentsMap(childToParentsMap);
+        return createWithChildToParentsMap(childToParentsMap)
     }
 
-    @NotNull
-    public static DoidModel createWithMainCancerTypeAndChildToParentMap(@NotNull String mainCancerDoid,
-            @NotNull Map<String, String> childToParentMap) {
-        Multimap<String, String> childToParentsMap = ArrayListMultimap.create();
-        for (Map.Entry<String, String> entry : childToParentMap.entrySet()) {
-            childToParentsMap.put(entry.getKey(), entry.getValue());
+    fun createWithMainCancerTypeAndChildToParentMap(
+        mainCancerDoid: String,
+        childToParentMap: Map<String, String>
+    ): DoidModel {
+        val childToParentsMap: Multimap<String, String> = ArrayListMultimap.create()
+        for ((key, value) in childToParentMap) {
+            childToParentsMap.put(key, value)
         }
-
-        return create(childToParentsMap,
-                Maps.newHashMap(),
-                Maps.newHashMap(),
-                TestDoidManualConfigFactory.createWithOneMainCancerDoid(mainCancerDoid));
+        return create(
+            childToParentsMap,
+            Maps.newHashMap(),
+            Maps.newHashMap(),
+            createWithOneMainCancerDoid(mainCancerDoid)
+        )
     }
 
-    @NotNull
-    public static DoidModel createWithOneDoidAndTerm(@NotNull String doid, @NotNull String term) {
-        Map<String, String> termPerDoidMap = Maps.newHashMap();
-        termPerDoidMap.put(doid, term);
-
-        Map<String, String> doidPerLowerCaseTermMap = Maps.newHashMap();
-        doidPerLowerCaseTermMap.put(term.toLowerCase(), doid);
-
-        return create(ArrayListMultimap.create(),
-                termPerDoidMap,
-                doidPerLowerCaseTermMap,
-                TestDoidManualConfigFactory.createMinimalTestDoidManualConfig());
+    fun createWithOneDoidAndTerm(doid: String, term: String): DoidModel {
+        val termPerDoidMap: MutableMap<String, String> = Maps.newHashMap()
+        termPerDoidMap[doid] = term
+        val doidPerLowerCaseTermMap: MutableMap<String, String> = Maps.newHashMap()
+        doidPerLowerCaseTermMap[term.lowercase(Locale.getDefault())] = doid
+        return create(
+            ArrayListMultimap.create(),
+            termPerDoidMap,
+            doidPerLowerCaseTermMap,
+            createMinimalTestDoidManualConfig()
+        )
     }
 
-    @NotNull
-    public static DoidModel createWithDoidManualConfig(@NotNull DoidManualConfig config) {
-        return create(ArrayListMultimap.create(), Maps.newHashMap(), Maps.newHashMap(), config);
+    fun createWithDoidManualConfig(config: DoidManualConfig): DoidModel {
+        return create(ArrayListMultimap.create(), Maps.newHashMap(), Maps.newHashMap(), config)
     }
 
-    @NotNull
-    private static DoidModel createWithChildToParentsMap(@NotNull Multimap<String, String> childToParentsMap) {
-        return create(childToParentsMap,
-                Maps.newHashMap(),
-                Maps.newHashMap(),
-                TestDoidManualConfigFactory.createMinimalTestDoidManualConfig());
+    private fun createWithChildToParentsMap(childToParentsMap: Multimap<String, String>): DoidModel {
+        return create(
+            childToParentsMap,
+            Maps.newHashMap(),
+            Maps.newHashMap(),
+            createMinimalTestDoidManualConfig()
+        )
     }
 
-    @NotNull
-    private static DoidModel create(@NotNull Multimap<String, String> childToParentsMap, @NotNull Map<String, String> termPerDoidMap,
-            @NotNull Map<String, String> doidPerLowerCaseTermMap, @NotNull DoidManualConfig config) {
-        return new DoidModel(childToParentsMap, termPerDoidMap, doidPerLowerCaseTermMap, config);
+    private fun create(
+        childToParentsMap: Multimap<String, String>, termPerDoidMap: Map<String, String>,
+        doidPerLowerCaseTermMap: Map<String, String>, config: DoidManualConfig
+    ): DoidModel {
+        return DoidModel(childToParentsMap, termPerDoidMap, doidPerLowerCaseTermMap, config)
     }
 }
