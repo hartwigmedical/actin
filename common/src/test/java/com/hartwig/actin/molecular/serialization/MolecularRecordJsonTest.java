@@ -111,6 +111,7 @@ public class MolecularRecordJsonTest {
 
         assertFalse(characteristics.isMicrosatelliteUnstable());
         assertNull(characteristics.microsatelliteEvidence());
+        assertEquals(0.85,characteristics.homologousRepairScore(), EPSILON);
         assertTrue(characteristics.isHomologousRepairDeficient());
         assertEquals(TestActionableEvidenceFactory.builder()
                 .addExternalEligibleTrials("PARP trial")

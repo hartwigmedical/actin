@@ -1,18 +1,5 @@
 package com.hartwig.actin.clinical.curation
 
-enum class CurationWarningType { NOT_FOUND, MULTIPLE_FOUND }
-
-data class CurationWarningTemplate(val input: String, val type: CurationWarningType) {
-
-    fun toCurationWarning(patientId: String, category: CurationCategory, configType: String): CurationWarning {
-        val message = when (type) {
-            CurationWarningType.NOT_FOUND -> "Could not find $configType config for input '$input'"
-            CurationWarningType.MULTIPLE_FOUND -> "Multiple $configType configs found for input '$input'"
-        }
-        return CurationWarning(patientId, category, input, message)
-    }
-}
-
 data class CurationWarning(val patientId: String, val category: CurationCategory, val feedInput: String, val message: String)
 
 enum class CurationCategory(val categoryName: String) {
@@ -36,5 +23,5 @@ enum class CurationCategory(val categoryName: String) {
     PERIOD_BETWEEN_UNIT_INTERPRETATION("Period Between Unit Interpretation"),
     SECOND_PRIMARY("Second Primary"),
     TOXICITY("Toxicity"),
-    TOXICITY_TRANSLATION("Toxicity Translation")
+    TOXICITY_TRANSLATION("Toxicity Translation"),
 }

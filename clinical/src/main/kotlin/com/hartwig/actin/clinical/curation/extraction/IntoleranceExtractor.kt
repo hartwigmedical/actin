@@ -3,13 +3,15 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
+import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
 import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance
 import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry
 
-class IntoleranceExtractor(private val curation: CurationDatabase) {
+class IntoleranceExtractor(private val intoleranceCuration: CurationDatabase<IntoleranceConfig>) {
 
     fun extract(patientId: String, intoleranceEntries: List<IntoleranceEntry>): ExtractionResult<List<Intolerance>> {
         return intoleranceEntries.map { entry: IntoleranceEntry ->
@@ -24,7 +26,12 @@ class IntoleranceExtractor(private val curation: CurationDatabase) {
         }
             .map {
                 val curationResponse = CurationResponse.createFromConfigs(
-                    curation.findIntoleranceConfigs(it.name()), patientId, CurationCategory.INTOLERANCE, it.name(), "intolerance", true
+                    intoleranceCuration.find(it.name()),
+                    patientId,
+                    CurationCategory.INTOLERANCE,
+                    it.name(),
+                    "intolerance",
+                    true
                 )
                 val builder = ImmutableIntolerance.builder().from(it)
                 curationResponse.config()?.let { config ->
@@ -39,5 +46,9 @@ class IntoleranceExtractor(private val curation: CurationDatabase) {
             .fold(ExtractionResult(emptyList(), ExtractionEvaluation())) { (intolerances, aggregatedEval), (intolerance, eval) ->
                 ExtractionResult(intolerances + intolerance, aggregatedEval + eval)
             }
+    }
+
+    companion object {
+        fun create(curationDatabaseContext: CurationDatabaseContext) = IntoleranceExtractor(curationDatabaseContext.intoleranceCuration)
     }
 }

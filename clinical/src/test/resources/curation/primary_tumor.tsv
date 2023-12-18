@@ -1,2 +1,2 @@
 input	primaryTumorLocation	primaryTumorSubLocation	primaryTumorType	primaryTumorSubType	primaryTumorExtraDetails	doids
-Unknown | Carcinoma	Unknown	CUP	Carcinoma			299
+Carcinoma | Unknown	Unknown	CUP	Carcinoma			299

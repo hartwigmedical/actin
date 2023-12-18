@@ -3,7 +3,10 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
+import com.hartwig.actin.clinical.curation.config.ECGConfig
+import com.hartwig.actin.clinical.curation.config.InfectionConfig
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 import com.hartwig.actin.clinical.datamodel.ECG
@@ -14,7 +17,11 @@ import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus
 import com.hartwig.actin.clinical.datamodel.InfectionStatus
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 
-class ClinicalStatusExtractor(private val curation: CurationDatabase) {
+class ClinicalStatusExtractor(
+    private val ecgCuration: CurationDatabase<ECGConfig>,
+    private val infectionCuration: CurationDatabase<InfectionConfig>,
+    private val nonOncologicalHistoryCuration: CurationDatabase<NonOncologicalHistoryConfig>
+) {
 
     fun extract(patientId: String, questionnaire: Questionnaire?, hasComplications: Boolean?): ExtractionResult<ClinicalStatus> {
         if (questionnaire == null) {
@@ -34,10 +41,10 @@ class ClinicalStatusExtractor(private val curation: CurationDatabase) {
         return ExtractionResult(clinicalStatus, ecgCuration.evaluation + infectionCuration.evaluation)
     }
 
-    fun curateECG(patientId: String, rawECG: ECG?): ExtractionResult<ECG?> {
+    private fun curateECG(patientId: String, rawECG: ECG?): ExtractionResult<ECG?> {
         val curationResponse = rawECG?.aberrationDescription()?.let {
             CurationResponse.createFromConfigs(
-                curation.findECGConfig(it), patientId, CurationCategory.ECG, it, "ECG", true
+                ecgCuration.find(it), patientId, CurationCategory.ECG, it, "ECG", true
             )
         }
         val ecg = when (curationResponse?.configs?.size) {
@@ -67,10 +74,10 @@ class ClinicalStatusExtractor(private val curation: CurationDatabase) {
         return ExtractionResult(ecg, curationResponse?.extractionEvaluation ?: ExtractionEvaluation())
     }
 
-    fun curateInfection(patientId: String, rawInfectionStatus: InfectionStatus?): ExtractionResult<InfectionStatus?> {
+    private fun curateInfection(patientId: String, rawInfectionStatus: InfectionStatus?): ExtractionResult<InfectionStatus?> {
         val curationResponse = rawInfectionStatus?.description()?.let {
             CurationResponse.createFromConfigs(
-                curation.findInfectionStatusConfig(it), patientId, CurationCategory.INFECTION, it, "infection", true
+                infectionCuration.find(it), patientId, CurationCategory.INFECTION, it, "infection", true
             )
         }
         val infectionStatus = when (curationResponse?.configs?.size) {
@@ -101,13 +108,21 @@ class ClinicalStatusExtractor(private val curation: CurationDatabase) {
         } else ImmutableECGMeasure.builder().value(value).unit(unit).build()
     }
 
-    fun determineLVEF(nonOncologicalHistoryEntries: List<String>?): Double? {
+    private fun determineLVEF(nonOncologicalHistoryEntries: List<String>?): Double? {
         // We do not raise warnings or propagate evaluated inputs here since we use the same configs for priorOtherConditions
         return nonOncologicalHistoryEntries?.asSequence()
-            ?.flatMap(curation::findNonOncologicalHistoryConfigs)
-            ?.filterNot(NonOncologicalHistoryConfig::ignore)
-            ?.map(NonOncologicalHistoryConfig::lvef)
-            ?.find { it.isPresent }
-            ?.get()
+            ?.flatMap { nonOncologicalHistoryCuration.find(it) }
+            ?.filterNot { it.ignore }
+            ?.map { it.lvef }
+            ?.find { it != null }
+    }
+
+    companion object {
+        fun create(curationDatabaseContext: CurationDatabaseContext) =
+            ClinicalStatusExtractor(
+                ecgCuration = curationDatabaseContext.ecgCuration,
+                infectionCuration = curationDatabaseContext.infectionCuration,
+                nonOncologicalHistoryCuration = curationDatabaseContext.nonOncologicalHistoryCuration
+            )
     }
 }

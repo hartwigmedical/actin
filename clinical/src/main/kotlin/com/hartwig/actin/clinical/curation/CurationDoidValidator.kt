@@ -2,7 +2,7 @@ package com.hartwig.actin.clinical.curation
 
 import com.hartwig.actin.doid.DoidModel
 
-class CurationValidator(private val doidModel: DoidModel) {
+class CurationDoidValidator(private val doidModel: DoidModel) {
     fun isValidCancerDoidSet(doids: Set<String>): Boolean {
         return hasValidDoids(doids, doidModel, DISEASE_OF_CELLULAR_PROLIFERATION_DOID)
     }

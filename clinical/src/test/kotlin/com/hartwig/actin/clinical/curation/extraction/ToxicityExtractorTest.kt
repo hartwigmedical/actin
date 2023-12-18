@@ -3,7 +3,9 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
+import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.translation.Translation
+import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry
 import org.assertj.core.api.Assertions.assertThat
@@ -13,19 +15,42 @@ import java.time.LocalDate
 private const val PATIENT_ID = "patient1"
 private const val CANNOT_CURATE = "cannot curate"
 
+
+private const val TOXICITY_INPUT = "Toxicity input"
+
+private const val TOXICITY_NAME = "Toxicity name"
+
+private const val TOXICITY_CATEGORY = "Toxicity category"
+
+private const val TOXICITY_TRANSLATED = "Toxicity translated"
+
 class ToxicityExtractorTest {
-    private val extractor = ToxicityExtractor(TestCurationFactory.createProperTestCurationDatabase())
+    private val extractor = ToxicityExtractor(
+        TestCurationFactory.curationDatabase(
+            ToxicityConfig(
+                input = TOXICITY_INPUT,
+                ignore = false,
+                name = TOXICITY_NAME,
+                categories = setOf(TOXICITY_CATEGORY),
+                3
+            )
+        ),
+        TranslationDatabase(
+            mapOf(TOXICITY_INPUT to Translation(TOXICITY_INPUT, TOXICITY_TRANSLATED)),
+            CurationCategory.TOXICITY_TRANSLATION
+        ) { emptySet() }
+    )
 
     @Test
-    fun `Should curate questionnaire toxicities`() {
+    fun `Should curate and translate questionnaire toxicities`() {
         val date = LocalDate.of(2018, 5, 21)
-        val inputs = listOf("neuropathy gr3", CANNOT_CURATE)
+        val inputs = listOf(TOXICITY_INPUT, CANNOT_CURATE)
         val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(date = date, unresolvedToxicities = inputs)
         val (toxicities, evaluation) = extractor.extract(PATIENT_ID, emptyList(), questionnaire)
         assertThat(toxicities).hasSize(1)
         val toxicity = toxicities[0]
-        assertThat(toxicity.name()).isEqualTo("neuropathy")
-        assertThat(toxicity.categories()).containsExactly("neuro")
+        assertThat(toxicity.name()).isEqualTo(TOXICITY_NAME)
+        assertThat(toxicity.categories()).containsExactly(TOXICITY_CATEGORY)
         assertThat(toxicity.evaluatedDate()).isEqualTo(date)
         assertThat(toxicity.source()).isEqualTo(ToxicitySource.QUESTIONNAIRE)
         assertThat(toxicity.grade()).isEqualTo(Integer.valueOf(3))
@@ -41,8 +66,8 @@ class ToxicityExtractorTest {
     }
 
     @Test
-    fun `Should translate toxicities`() {
-        val inputs = setOf("Pijn", CANNOT_CURATE).map { name ->
+    fun `Should translate feed toxicities`() {
+        val inputs = setOf(TOXICITY_INPUT, CANNOT_CURATE).map { name ->
             DigitalFileEntry(
                 subject = PATIENT_ID,
                 authored = LocalDate.of(2020, 11, 11),
@@ -52,7 +77,7 @@ class ToxicityExtractorTest {
             )
         }
         val (toxicities, evaluation) = extractor.extract(PATIENT_ID, inputs, null)
-        assertThat(toxicities).hasSize(2).anyMatch { it.name() == "Pain" }
+        assertThat(toxicities).hasSize(2).anyMatch { it.name() == TOXICITY_TRANSLATED }
 
         assertThat(evaluation.warnings).containsOnly(
             CurationWarning(
@@ -62,6 +87,6 @@ class ToxicityExtractorTest {
                 "No translation found for toxicity: '$CANNOT_CURATE'"
             )
         )
-        assertThat(evaluation.toxicityTranslationEvaluatedInputs).isEqualTo(setOf(Translation("Pijn", "Pain")))
+        assertThat(evaluation.toxicityTranslationEvaluatedInputs).isEqualTo(setOf(Translation(TOXICITY_INPUT, TOXICITY_TRANSLATED)))
     }
 }
