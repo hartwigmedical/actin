@@ -39,7 +39,7 @@ class ActionableEventMatcherFactoryTest {
             .addHotspots(hotspot(TestApplicabilityFilteringUtil.nonApplicableGene(), "external", Knowledgebase.ICLUSION))
             .addHotspots(hotspot("gene 1", "external", Knowledgebase.ICLUSION))
             .addHotspots(hotspot("gene 2", "internal", Knowledgebase.ICLUSION))
-            .addHotspots(hotspot("gene 3", "external", Knowledgebase.CKB))
+            .addHotspots(hotspot("gene 3", "external", Knowledgebase.CKB_EVIDENCE))
             .addCodons(TestServeActionabilityFactory.rangeBuilder().from(base).build())
             .addExons(TestServeActionabilityFactory.rangeBuilder().from(base).build())
             .addGenes(TestServeActionabilityFactory.geneBuilder().from(base).build())
