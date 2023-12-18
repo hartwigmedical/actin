@@ -349,7 +349,10 @@ object TestCurationFactory {
     }
 
     private fun createTestIntoleranceConfigs(): List<IntoleranceConfig> {
-        return listOf(IntoleranceConfig(input = "Latex type 1", name = "Latex (type 1)", doids = setOf("0060532")))
+        return listOf(
+            IntoleranceConfig(input = "Latex type 1", name = "Latex (type 1)", doids = setOf("0060532")),
+            IntoleranceConfig(input = "Paracetamol", name = "Paracetamol", doids = setOf("0060500"))
+        )
     }
 
     private fun createTestAdministrationRouteTranslations(): List<Translation> {
