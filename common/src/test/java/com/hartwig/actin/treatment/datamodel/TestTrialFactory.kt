@@ -1,110 +1,106 @@
-package com.hartwig.actin.treatment.datamodel;
+package com.hartwig.actin.treatment.datamodel
 
-import java.util.List;
+import com.google.common.collect.Lists
+import org.apache.logging.log4j.util.Strings
 
-import com.google.common.collect.Lists;
-
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
-
-public final class TestTrialFactory {
-
-    private static final String TEST_TRIAL = "test trial";
-
-    private TestTrialFactory() {
-    }
-
-    @NotNull
-    public static Trial createMinimalTestTrial() {
+object TestTrialFactory {
+    private const val TEST_TRIAL = "test trial"
+    fun createMinimalTestTrial(): Trial {
         return ImmutableTrial.builder()
-                .identification(ImmutableTrialIdentification.builder()
-                        .trialId(TEST_TRIAL)
-                        .open(true)
-                        .acronym(Strings.EMPTY)
-                        .title(Strings.EMPTY)
-                        .build())
-                .build();
+            .identification(
+                ImmutableTrialIdentification.builder()
+                    .trialId(TEST_TRIAL)
+                    .open(true)
+                    .acronym(Strings.EMPTY)
+                    .title(Strings.EMPTY)
+                    .build()
+            )
+            .build()
     }
 
-    @NotNull
-    public static Trial createProperTestTrial() {
-        Trial minimal = createMinimalTestTrial();
+    fun createProperTestTrial(): Trial {
+        val minimal = createMinimalTestTrial()
         return ImmutableTrial.builder()
-                .from(minimal)
-                .identification(ImmutableTrialIdentification.builder()
-                        .from(minimal.identification())
-                        .acronym("TEST-TRIAL")
-                        .title("This is an ACTIN test trial")
-                        .build())
-                .generalEligibility(createGeneralEligibility())
-                .cohorts(createTestCohorts())
-                .build();
+            .from(minimal)
+            .identification(
+                ImmutableTrialIdentification.builder()
+                    .from(minimal.identification())
+                    .acronym("TEST-TRIAL")
+                    .title("This is an ACTIN test trial")
+                    .build()
+            )
+            .generalEligibility(createGeneralEligibility())
+            .cohorts(createTestCohorts())
+            .build()
     }
 
-    @NotNull
-    private static List<Eligibility> createGeneralEligibility() {
-        List<Eligibility> functions = Lists.newArrayList();
-
-        functions.add(ImmutableEligibility.builder()
+    private fun createGeneralEligibility(): List<Eligibility> {
+        val functions: MutableList<Eligibility> = Lists.newArrayList()
+        functions.add(
+            ImmutableEligibility.builder()
                 .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD).addParameters("18").build())
                 .addReferences(ImmutableCriterionReference.builder().id("I-01").text("Is adult").build())
-                .build());
-
-        return functions;
+                .build()
+        )
+        return functions
     }
 
-    @NotNull
-    private static List<Cohort> createTestCohorts() {
-        List<Cohort> cohorts = Lists.newArrayList();
-
-        cohorts.add(ImmutableCohort.builder()
+    private fun createTestCohorts(): List<Cohort> {
+        val cohorts: MutableList<Cohort> = Lists.newArrayList()
+        cohorts.add(
+            ImmutableCohort.builder()
                 .metadata(createTestMetadata("A"))
-                .addEligibility(ImmutableEligibility.builder()
-                        .function(ImmutableEligibilityFunction.builder()
+                .addEligibility(
+                    ImmutableEligibility.builder()
+                        .function(
+                            ImmutableEligibilityFunction.builder()
                                 .rule(EligibilityRule.NOT)
-                                .addParameters(ImmutableEligibilityFunction.builder()
+                                .addParameters(
+                                    ImmutableEligibilityFunction.builder()
                                         .rule(EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES)
-                                        .build())
-                                .build())
-                        .addReferences(ImmutableCriterionReference.builder()
+                                        .build()
+                                )
+                                .build()
+                        )
+                        .addReferences(
+                            ImmutableCriterionReference.builder()
                                 .id("E-01")
                                 .text("Has no active CNS metastases and has exhausted SOC")
-                                .build())
-                        .build())
-                .build());
-
-        cohorts.add(ImmutableCohort.builder()
+                                .build()
+                        )
+                        .build()
+                )
+                .build()
+        )
+        cohorts.add(
+            ImmutableCohort.builder()
                 .metadata(createTestMetadata("B"))
-                .addEligibility(ImmutableEligibility.builder()
+                .addEligibility(
+                    ImmutableEligibility.builder()
                         .function(ImmutableEligibilityFunction.builder().rule(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS).build())
-                        .addReferences(ImmutableCriterionReference.builder()
+                        .addReferences(
+                            ImmutableCriterionReference.builder()
                                 .id("E-01")
                                 .text("Has no active CNS metastases and has exhausted SOC")
-                                .build())
-                        .build())
-                .build());
-
-        cohorts.add(ImmutableCohort.builder().metadata(createTestMetadata("C")).build());
-
-        cohorts.add(ImmutableCohort.builder().metadata(createTestMetadata("D", false)).build());
-
-        return cohorts;
+                                .build()
+                        )
+                        .build()
+                )
+                .build()
+        )
+        cohorts.add(ImmutableCohort.builder().metadata(createTestMetadata("C")).build())
+        cohorts.add(ImmutableCohort.builder().metadata(createTestMetadata("D", false)).build())
+        return cohorts
     }
 
-    @NotNull
-    private static CohortMetadata createTestMetadata(@NotNull String cohortId) {
-        return createTestMetadata(cohortId, true);
-    }
-
-    @NotNull
-    private static CohortMetadata createTestMetadata(@NotNull String cohortId, boolean evaluable) {
+    private fun createTestMetadata(cohortId: String, evaluable: Boolean = true): CohortMetadata {
         return ImmutableCohortMetadata.builder()
-                .cohortId(cohortId)
-                .evaluable(evaluable)
-                .open(true)
-                .slotsAvailable(true)
-                .blacklist(false)
-                .description("Cohort " + cohortId)
-                .build();
+            .cohortId(cohortId)
+            .evaluable(evaluable)
+            .open(true)
+            .slotsAvailable(true)
+            .blacklist(false)
+            .description("Cohort $cohortId")
+            .build()
     }
 }
