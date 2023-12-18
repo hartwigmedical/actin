@@ -1,10 +1,6 @@
-package com.hartwig.actin.treatment;
+package com.hartwig.actin.treatment
 
-public final class TreatmentConstants {
-
+object TreatmentConstants {
     // TODO Improve configuration, potentially add "locations" to a trial.
-    public static final String ACTIN_SOURCE = "EMC";
-
-    private TreatmentConstants() {
-    }
+    val ACTIN_SOURCE: String = "EMC"
 }

@@ -1,9 +1,5 @@
-package com.hartwig.actin;
+package com.hartwig.actin
 
-import org.jetbrains.annotations.NotNull;
-
-public interface Displayable {
-
-    @NotNull
-    String display();
+open interface Displayable {
+    fun display(): String
 }

@@ -1,6 +1,6 @@
-package com.hartwig.actin.treatment.datamodel;
+package com.hartwig.actin.treatment.datamodel
 
-public enum EligibilityRule {
+enum class EligibilityRule {
     // Composite rules combining other rules.
     AND,
     OR,

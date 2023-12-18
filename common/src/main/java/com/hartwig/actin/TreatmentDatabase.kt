@@ -1,32 +1,15 @@
-package com.hartwig.actin;
+package com.hartwig.actin
 
-import java.util.Map;
+import com.hartwig.actin.clinical.datamodel.treatment.Drug
+import com.hartwig.actin.clinical.datamodel.treatment.Treatment
+import java.util.*
 
-import com.hartwig.actin.clinical.datamodel.treatment.Drug;
-import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-public class TreatmentDatabase {
-
-    @NotNull
-    private final Map<String, Drug> drugsByName;
-    @NotNull
-    private final Map<String, Treatment> treatmentsByName;
-
-    public TreatmentDatabase(@NotNull Map<String, Drug> drugsByName, @NotNull Map<String, Treatment> treatmentsByName) {
-        this.drugsByName = drugsByName;
-        this.treatmentsByName = treatmentsByName;
+class TreatmentDatabase(private val drugsByName: Map<String, Drug>, private val treatmentsByName: Map<String, Treatment>) {
+    fun findTreatmentByName(treatmentName: String): Treatment? {
+        return treatmentsByName.get(treatmentName.replace(" ", "_").lowercase(Locale.getDefault()))
     }
 
-    @Nullable
-    public Treatment findTreatmentByName(@NotNull String treatmentName) {
-        return treatmentsByName.get(treatmentName.replace(" ", "_").toLowerCase());
-    }
-
-    @Nullable
-    public Drug findDrugByName(@NotNull String drugName) {
-        return drugsByName.get(drugName.replace(" ", "_").toLowerCase());
+    fun findDrugByName(drugName: String): Drug? {
+        return drugsByName.get(drugName.replace(" ", "_").lowercase(Locale.getDefault()))
     }
 }

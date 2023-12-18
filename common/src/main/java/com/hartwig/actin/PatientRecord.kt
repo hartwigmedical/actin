@@ -1,22 +1,15 @@
-package com.hartwig.actin;
+package com.hartwig.actin
 
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
-import com.hartwig.actin.molecular.datamodel.MolecularRecord;
-
-import org.immutables.value.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import org.immutables.value.Value
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 
 @Value.Immutable
-@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class PatientRecord {
-
-    @NotNull
-    public abstract String patientId();
-
-    @NotNull
-    public abstract ClinicalRecord clinical();
-
-    @NotNull
-    public abstract MolecularRecord molecular();
+@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
+abstract class PatientRecord() {
+    abstract fun patientId(): String
+    abstract fun clinical(): ClinicalRecord
+    abstract fun molecular(): MolecularRecord
 }

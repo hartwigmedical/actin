@@ -1,25 +1,16 @@
-package com.hartwig.actin.treatment.datamodel;
+package com.hartwig.actin.treatment.datamodel
 
-import org.immutables.value.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.immutables.value.Value
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 
 @Value.Immutable
-@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class CohortMetadata {
-
-    @NotNull
-    public abstract String cohortId();
-
-    public abstract boolean evaluable();
-    
-    public abstract boolean open();
-
-    public abstract boolean slotsAvailable();
-
-    public abstract boolean blacklist();
-
-    @NotNull
-    public abstract String description();
-
+@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
+abstract class CohortMetadata {
+    abstract fun cohortId(): String
+    abstract fun evaluable(): Boolean
+    abstract fun open(): Boolean
+    abstract fun slotsAvailable(): Boolean
+    abstract fun blacklist(): Boolean
+    abstract fun description(): String
 }

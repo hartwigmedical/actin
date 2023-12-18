@@ -1,27 +1,22 @@
-package com.hartwig.actin;
+package com.hartwig.actin
 
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
-import com.hartwig.actin.molecular.datamodel.MolecularRecord;
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
+object PatientRecordFactory {
+    private val LOGGER: Logger = LogManager.getLogger(PatientRecordFactory::class.java)
 
-public final class PatientRecordFactory {
-
-    private static final Logger LOGGER = LogManager.getLogger(PatientRecordFactory.class);
-
-    private PatientRecordFactory() {
-    }
-
-    @NotNull
-    public static PatientRecord fromInputs(@NotNull ClinicalRecord clinical, @NotNull MolecularRecord molecular) {
-        if (!clinical.patientId().equals(molecular.patientId())) {
-            LOGGER.warn("Clinical patientId '{}' not the same as molecular patientId '{}'! Using clinical patientId",
-                    clinical.patientId(),
-                    molecular.patientId());
+    @JvmStatic
+    fun fromInputs(clinical: ClinicalRecord, molecular: MolecularRecord): PatientRecord {
+        if (!(clinical.patientId() == molecular.patientId())) {
+            LOGGER.warn(
+                "Clinical patientId '{}' not the same as molecular patientId '{}'! Using clinical patientId",
+                clinical.patientId(),
+                molecular.patientId()
+            )
         }
-
-        return ImmutablePatientRecord.builder().patientId(clinical.patientId()).clinical(clinical).molecular(molecular).build();
+        return ImmutablePatientRecord.builder().patientId(clinical.patientId()).clinical(clinical).molecular(molecular).build()
     }
 }
